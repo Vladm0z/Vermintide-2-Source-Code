@@ -110,11 +110,7 @@ end
 
 WorldManager.has_world = function (self, name)
 	-- function 5
-	local _worlds = self._worlds
-
-	_worlds = not not _worlds and self._worlds[name] ~= nil
-
-	return _worlds
+	return not not self._worlds
 end
 
 WorldManager.world = function (self, name)

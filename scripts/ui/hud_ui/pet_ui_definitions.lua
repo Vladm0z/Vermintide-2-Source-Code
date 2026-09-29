@@ -31,7 +31,7 @@ local ROOT_SIZE = {
 	1920,
 	1080
 }
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -40,51 +40,45 @@ local tbl = {
 			UILayer.hud
 		},
 		size = ROOT_SIZE
+	},
+	screen = {
+		position = {
+			0,
+			0,
+			UILayer.hud_inventory
+		},
+		size = ROOT_SIZE,
+		scale = IS_CONSOLE and not not "hud_fit" or not IS_CONSOLE and not not "fit"
+	},
+	container = {
+		vertical_alignment = "bottom",
+		parent = "screen",
+		horizontal_alignment = "center",
+		position = {
+			460,
+			0,
+			0
+		},
+		size = {
+			300,
+			80
+		}
+	},
+	skull_pivot = {
+		vertical_alignment = "top",
+		parent = "container",
+		horizontal_alignment = "left",
+		position = {
+			2,
+			-11,
+			5
+		},
+		size = {
+			64,
+			64
+		}
 	}
 }
-local tbl_2 = {
-	position = {
-		0,
-		0,
-		UILayer.hud_inventory
-	},
-	size = ROOT_SIZE
-}
-local flag
-
-flag = (not IS_CONSOLE or not "hud_fit") and not not "fit"
-tbl_2.scale = flag
-tbl.screen = tbl_2
-tbl.container = {
-	vertical_alignment = "bottom",
-	parent = "screen",
-	horizontal_alignment = "center",
-	position = {
-		460,
-		0,
-		0
-	},
-	size = {
-		300,
-		80
-	}
-}
-tbl.skull_pivot = {
-	vertical_alignment = "top",
-	parent = "container",
-	horizontal_alignment = "left",
-	position = {
-		2,
-		-11,
-		5
-	},
-	size = {
-		64,
-		64
-	}
-}
-
-local scenegraph_definition = tbl
 local container_widget_definition = {
 	scenegraph_id = "container",
 	element = {
@@ -353,7 +347,7 @@ end
 
 local function set_progress(immediate_materials, retained_materials, t)
 	-- function 6
-	local materials = (not RETAINED_MODE_ENABLED or not retained_materials) and not not immediate_materials
+	local materials = RETAINED_MODE_ENABLED and (not not retained_materials or not not immediate_materials) or not RETAINED_MODE_ENABLED and not not immediate_materials
 
 	for i = 1, #materials do
 		Material.set_scalar(materials[i], "progress", t)
@@ -376,11 +370,7 @@ local animation_definitions = {
 			end,
 			on_complete = function (ui_scenegraph, _, container_widget, command_state)
 				-- function 9
-				local content = container_widget.content
-				local var_9_1 = COMMAND_TO_ICON[command_state]
-
-				var_9_1 = not not var_9_1 or not not "icons_placeholder"
-				content.state_icon = var_9_1
+				container_widget.content.state_icon = not not COMMAND_TO_ICON[command_state]
 			end
 		},
 		{

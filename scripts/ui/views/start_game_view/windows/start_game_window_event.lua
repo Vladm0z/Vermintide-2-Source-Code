@@ -75,18 +75,7 @@ StartGameWindowEvent._setup_content_from_backend = function (self)
 	local icon_id = game_mode_data.icon_id
 	local event_texture_widget = widgets_by_name.event_texture
 	local reference_name = "event_mode_texture"
-	local image_id = game_mode_data.image_id
-
-	if not image_id then
-		-- Nothing
-	end
-
-	image_id = "event_default_ui_art"
-
-	local texture_name = image_id
-
-	::label_3_0::
-
+	local texture_name = not not game_mode_data.image_id
 	local ui_renderer = self._ui_renderer
 	local gui = ui_renderer.gui
 	local material_name = self._parent:setup_backend_image_material(gui, reference_name, texture_name)

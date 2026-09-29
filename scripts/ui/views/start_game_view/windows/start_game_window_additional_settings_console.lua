@@ -356,13 +356,7 @@ StartGameWindowAdditionalSettingsConsole._handle_input = function (self, dt, t)
 		local consume = true
 
 		if input_service:get("back_menu", consume) or input_service:get("refresh", consume) or input_service:get("right_stick_press", consume) then
-			local var_18_0 = parent
-			local set_window_input_focus = parent.set_window_input_focus
-			local _parent_window_name = self._parent_window_name
-
-			_parent_window_name = not not _parent_window_name or not not "custom_game_overview"
-
-			set_window_input_focus(var_18_0, _parent_window_name)
+			parent:set_window_input_focus(not not self._parent_window_name)
 		end
 	end
 end
@@ -378,18 +372,7 @@ StartGameWindowAdditionalSettingsConsole._update_additional_options = function (
 	local private_enabled = parent:is_private_option_enabled()
 	local always_host_enabled = parent:is_always_host_option_enabled()
 	local strict_matchmaking_enabled = parent:is_strict_matchmaking_option_enabled()
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local twitch_active = twitch
-
-	::label_20_0::
-
+	local twitch_active = not not Managers.twitch
 	local lobby = self._network_lobby
 	local num_members = lobby:members():get_member_count()
 	local is_alone = num_members == 1
@@ -457,14 +440,7 @@ StartGameWindowAdditionalSettingsConsole._handle_gamepad_activity = function (se
 		self.gamepad_active_last_frame = false
 
 		if self._is_focused then
-			local parent = self.parent
-			local var_22_1 = parent
-			local set_window_input_focus = parent.set_window_input_focus
-			local _parent_window_name = self._parent_window_name
-
-			_parent_window_name = not not _parent_window_name or not not "custom_game_overview"
-
-			set_window_input_focus(var_22_1, _parent_window_name)
+			self.parent:set_window_input_focus(not not self._parent_window_name)
 		end
 
 		self.render_settings.alpha_multiplier = 1

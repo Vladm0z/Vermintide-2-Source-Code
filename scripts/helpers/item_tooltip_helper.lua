@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/item_tooltip_helper.lua
 
-local ItemTooltipHelper = ItemTooltipHelper
-
-ItemTooltipHelper = not not ItemTooltipHelper or not not {}
-ItemTooltipHelper = ItemTooltipHelper
+ItemTooltipHelper = not not ItemTooltipHelper
 
 local formatting_functions = {
 	damage = function (value)
@@ -79,22 +76,7 @@ ItemTooltipHelper.get_damage = function (unit, item, armor_type, primary_armor_t
 	local damage_source = item.name
 	local hit_zone_name = "torso"
 	local target_index = 1
-	local var_10_0
-
-	if damage_profile.targets then
-		var_10_0 = damage_profile.targets[target_index]
-
-		if not var_10_0 then
-			-- Nothing
-		end
-	end
-
-	var_10_0 = damage_profile.default_target
-
-	local target_settings = var_10_0
-
-	::label_10_0::
-
+	local target_settings = damage_profile.targets and not not damage_profile.targets[target_index] or not damage_profile.targets and not not damage_profile.default_target
 	local boost_curve = BoostCurves[target_settings.boost_curve_type]
 	local boost_damage_multiplier
 	local is_critical_strike = false
@@ -139,7 +121,7 @@ ItemTooltipHelper.get_next_action_names = function (action, charge_type)
 	local wanted_index = 1
 
 	for index, chain_action in ipairs(chain_actions) do
-		if (charge_type ~= "light" or index ~= wanted_index) and (charge_type ~= "heavy" or not chain_action.auto_chain) and no_auto_chain and charge_type == "heavy" and index == wanted_index then
+		if charge_type ~= "heavy" or not chain_action.auto_chain then
 			if chain_action.input ~= "action_wield" then
 				next_action_name = chain_action.action
 				next_sub_action_name = chain_action.sub_action
@@ -162,18 +144,7 @@ ItemTooltipHelper.get_action = function (unit, item, stat_descriptor)
 	local item_data = item.data
 	local item_template = BackendUtils.get_item_template(item_data)
 	local actions = item_template.actions
-	local charge_type_2 = stat_descriptor.charge_type
-
-	if not charge_type_2 then
-		-- Nothing
-	end
-
-	charge_type_2 = "light"
-
-	local charge_type = charge_type_2
-
-	::label_13_0::
-
+	local charge_type = not not stat_descriptor.charge_type
 	local compare_table = item_template.tooltip_compare
 	local compare_actions = compare_table[charge_type]
 	local action = actions[compare_actions.action_name][compare_actions.sub_action_name]
@@ -188,82 +159,12 @@ ItemTooltipHelper.get_chain_damages = function (values, action, unit, item, stat
 	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 	local power_level = career_extension:get_career_power_level()
 	local difficulty_level = Managers.state.difficulty:get_difficulty()
-	local armor_types_2 = stat_descriptor.armor_types
-
-	if not armor_types_2 then
-		-- Nothing
-	end
-
-	armor_types_2 = {}
-
-	local armor_types = armor_types_2
-
-	::label_14_0::
-
-	local var_14_1 = armor_types[1]
-
-	if not var_14_1 then
-		-- Nothing
-	end
-
-	var_14_1 = 1
-
-	local armor_type = var_14_1
-
-	::label_14_1::
-
+	local armor_types = not not stat_descriptor.armor_types
+	local armor_type = not not armor_types[1]
 	local primary_armor_type = armor_types[2]
-	local damage_profile_2
-
-	if impact_data then
-		damage_profile_2 = impact_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_2 = action.damage_profile
-
-	local damage_profile_name = damage_profile_2
-
-	do
-		local damage_profile_left_2
-	end
-
-	::label_14_2::
-
-	if impact_data then
-		damage_profile_left_2 = impact_data.damage_profile_left
-
-		if not damage_profile_left_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_left_2 = action.damage_profile_left
-
-	local damage_profile_name_left = damage_profile_left_2
-
-	do
-		local damage_profile_right_2
-	end
-
-	::label_14_3::
-
-	if impact_data then
-		damage_profile_right_2 = impact_data.damage_profile_right
-
-		if not damage_profile_right_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_right_2 = action.damage_profile_right
-
-	local damage_profile_name_right = damage_profile_right_2
-
-	::label_14_4::
+	local damage_profile_name = impact_data and not not impact_data.damage_profile or not impact_data and not not action.damage_profile
+	local damage_profile_name_left = impact_data and not not impact_data.damage_profile_left or not impact_data and not not action.damage_profile_left
+	local damage_profile_name_right = impact_data and not not impact_data.damage_profile_right or not impact_data and not not action.damage_profile_right
 
 	if damage_profile_name then
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
@@ -292,49 +193,13 @@ ItemTooltipHelper.get_chain_damages = function (values, action, unit, item, stat
 			}
 		else
 			local damage = ItemTooltipHelper.get_damage(unit, item, armor_type, primary_armor_type, damage_profile, power_level, difficulty_level)
-			local shot_count_2
+			local shot_count = impact_data and not not impact_data.shot_count or not impact_data and not not action.shot_count
 
-			if impact_data then
-				shot_count_2 = impact_data.shot_count
-
-				if not shot_count_2 then
-					-- Nothing
-				end
-
-				shot_count_2 = impact_data.num_projectiles
-
-				if not shot_count_2 then
-					-- Nothing
-				end
-			end
-
-			shot_count_2 = action.shot_count
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = action.num_projectiles
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = 1
-
-			local shot_count = shot_count_2
-
-			::label_14_5::
-
-			local num = #values + 1
-			local tbl = {}
-			local flag
-
-			flag = (not (shot_count > 1) or not "multi") and not not "single"
-			tbl.type = flag
-			tbl.shot_count = shot_count
-			tbl.value = damage
-			values[num] = tbl
+			values[#values + 1] = {
+				type = shot_count > 1 and not not "multi" or not (shot_count > 1) and not not "single",
+				shot_count = shot_count,
+				value = damage
+			}
 		end
 	elseif damage_profile_name_left and damage_profile_name_right then
 		local damage_profile_left = DamageProfileTemplates[damage_profile_name_left]
@@ -357,57 +222,9 @@ ItemTooltipHelper.get_chain_max_targets = function (values, action, unit, item, 
 	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 	local power_level = career_extension:get_career_power_level()
 	local difficulty_level = Managers.state.difficulty:get_difficulty()
-	local damage_profile_2
-
-	if impact_data then
-		damage_profile_2 = impact_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_2 = action.damage_profile
-
-	local damage_profile_name = damage_profile_2
-
-	do
-		local damage_profile_left_2
-	end
-
-	::label_15_0::
-
-	if impact_data then
-		damage_profile_left_2 = impact_data.damage_profile_left
-
-		if not damage_profile_left_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_left_2 = action.damage_profile_left
-
-	local damage_profile_name_left = damage_profile_left_2
-
-	do
-		local damage_profile_right_2
-	end
-
-	::label_15_1::
-
-	if impact_data then
-		damage_profile_right_2 = impact_data.damage_profile_right
-
-		if not damage_profile_right_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_right_2 = action.damage_profile_right
-
-	local damage_profile_name_right = damage_profile_right_2
-
-	::label_15_2::
+	local damage_profile_name = impact_data and not not impact_data.damage_profile or not impact_data and not not action.damage_profile
+	local damage_profile_name_left = impact_data and not not impact_data.damage_profile_left or not impact_data and not not action.damage_profile_left
+	local damage_profile_name_right = impact_data and not not impact_data.damage_profile_right or not impact_data and not not action.damage_profile_right
 
 	if damage_profile_name then
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
@@ -419,8 +236,8 @@ ItemTooltipHelper.get_chain_max_targets = function (values, action, unit, item, 
 			local cleave_power_level_max = ActionUtils.scale_power_levels(power_level_max, "cleave", unit, difficulty_level)
 			local max_targets_attack_min, max_targets_impact_min = ActionUtils.get_max_targets(damage_profile, cleave_power_level_min)
 			local max_targets_attack_max, max_targets_impact_max = ActionUtils.get_max_targets(damage_profile, cleave_power_level_max)
-			local max_targets_min = (not (max_targets_impact_min < max_targets_attack_min) or not max_targets_attack_min) and not not max_targets_impact_min
-			local max_targets_max = (not (max_targets_impact_max < max_targets_attack_max) or not max_targets_attack_max) and not not max_targets_impact_max
+			local max_targets_min = max_targets_impact_min < max_targets_attack_min and (not not max_targets_attack_min or not not max_targets_impact_min) or not (max_targets_impact_min < max_targets_attack_min) and not not max_targets_impact_min
+			local max_targets_max = max_targets_impact_max < max_targets_attack_max and (not not max_targets_attack_max or not not max_targets_impact_max) or not (max_targets_impact_max < max_targets_attack_max) and not not max_targets_impact_max
 
 			values[#values + 1] = {
 				type = "charge",
@@ -435,50 +252,14 @@ ItemTooltipHelper.get_chain_max_targets = function (values, action, unit, item, 
 		else
 			local cleave_power_level = ActionUtils.scale_power_levels(power_level, "cleave", unit, difficulty_level)
 			local max_targets_attack, max_targets_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
-			local max_targets = (not (max_targets_impact < max_targets_attack) or not max_targets_attack) and not not max_targets_impact
-			local shot_count_2
+			local max_targets = max_targets_impact < max_targets_attack and (not not max_targets_attack or not not max_targets_impact) or not (max_targets_impact < max_targets_attack) and not not max_targets_impact
+			local shot_count = impact_data and not not impact_data.shot_count or not impact_data and not not action.shot_count
 
-			if impact_data then
-				shot_count_2 = impact_data.shot_count
-
-				if not shot_count_2 then
-					-- Nothing
-				end
-
-				shot_count_2 = impact_data.num_projectiles
-
-				if not shot_count_2 then
-					-- Nothing
-				end
-			end
-
-			shot_count_2 = action.shot_count
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = action.num_projectiles
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = 1
-
-			local shot_count = shot_count_2
-
-			::label_15_3::
-
-			local num = #values + 1
-			local tbl = {}
-			local flag
-
-			flag = (not (shot_count > 1) or not "multi") and not not "single"
-			tbl.type = flag
-			tbl.shot_count = shot_count
-			tbl.value = max_targets
-			values[num] = tbl
+			values[#values + 1] = {
+				type = shot_count > 1 and not not "multi" or not (shot_count > 1) and not not "single",
+				shot_count = shot_count,
+				value = max_targets
+			}
 		end
 	elseif damage_profile_name_left and damage_profile_name_right then
 		local damage_profile_left = DamageProfileTemplates[damage_profile_name_left]
@@ -486,8 +267,8 @@ ItemTooltipHelper.get_chain_max_targets = function (values, action, unit, item, 
 		local cleave_power_level = ActionUtils.scale_power_levels(power_level, "cleave", unit, difficulty_level)
 		local max_targets_attack_left, max_targets_impact_left = ActionUtils.get_max_targets(damage_profile_left, cleave_power_level)
 		local max_targets_attack_right, max_targets_impact_right = ActionUtils.get_max_targets(damage_profile_right, cleave_power_level)
-		local max_targets_left = (not (max_targets_impact_left < max_targets_attack_left) or not max_targets_attack_left) and not not max_targets_impact_left
-		local max_targets_right = (not (max_targets_impact_right < max_targets_attack_right) or not max_targets_attack_right) and not not max_targets_impact_right
+		local max_targets_left = max_targets_impact_left < max_targets_attack_left and (not not max_targets_attack_left or not not max_targets_impact_left) or not (max_targets_impact_left < max_targets_attack_left) and not not max_targets_impact_left
+		local max_targets_right = max_targets_impact_right < max_targets_attack_right and (not not max_targets_attack_right or not not max_targets_impact_right) or not (max_targets_impact_right < max_targets_attack_right) and not not max_targets_impact_right
 
 		values[#values + 1] = {
 			type = "dual",
@@ -504,57 +285,9 @@ ItemTooltipHelper.get_chain_stagger_strengths = function (values, action, unit, 
 	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 	local power_level = career_extension:get_career_power_level()
 	local difficulty_level = Managers.state.difficulty:get_difficulty()
-	local damage_profile_2
-
-	if impact_data then
-		damage_profile_2 = impact_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_2 = action.damage_profile
-
-	local damage_profile_name = damage_profile_2
-
-	do
-		local damage_profile_left_2
-	end
-
-	::label_16_0::
-
-	if impact_data then
-		damage_profile_left_2 = impact_data.damage_profile_left
-
-		if not damage_profile_left_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_left_2 = action.damage_profile_left
-
-	local damage_profile_name_left = damage_profile_left_2
-
-	do
-		local damage_profile_right_2
-	end
-
-	::label_16_1::
-
-	if impact_data then
-		damage_profile_right_2 = impact_data.damage_profile_right
-
-		if not damage_profile_right_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_right_2 = action.damage_profile_right
-
-	local damage_profile_name_right = damage_profile_right_2
-
-	::label_16_2::
+	local damage_profile_name = impact_data and not not impact_data.damage_profile or not impact_data and not not action.damage_profile
+	local damage_profile_name_left = impact_data and not not impact_data.damage_profile_left or not impact_data and not not action.damage_profile_left
+	local damage_profile_name_right = impact_data and not not impact_data.damage_profile_right or not impact_data and not not action.damage_profile_right
 
 	if damage_profile_name then
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
@@ -583,49 +316,13 @@ ItemTooltipHelper.get_chain_stagger_strengths = function (values, action, unit, 
 			}
 		else
 			local type, duration, distance, value, strength = ItemTooltipHelper.get_stagger_strength(unit, item, damage_profile, power_level, difficulty_level)
-			local shot_count_2
+			local shot_count = impact_data and not not impact_data.shot_count or not impact_data and not not action.shot_count
 
-			if impact_data then
-				shot_count_2 = impact_data.shot_count
-
-				if not shot_count_2 then
-					-- Nothing
-				end
-
-				shot_count_2 = impact_data.num_projectiles
-
-				if not shot_count_2 then
-					-- Nothing
-				end
-			end
-
-			shot_count_2 = action.shot_count
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = action.num_projectiles
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = 1
-
-			local shot_count = shot_count_2
-
-			::label_16_3::
-
-			local num = #values + 1
-			local tbl = {}
-			local flag
-
-			flag = (not (shot_count > 1) or not "multi") and not not "single"
-			tbl.type = flag
-			tbl.shot_count = shot_count
-			tbl.value = strength
-			values[num] = tbl
+			values[#values + 1] = {
+				type = shot_count > 1 and not not "multi" or not (shot_count > 1) and not not "single",
+				shot_count = shot_count,
+				value = strength
+			}
 		end
 	elseif damage_profile_name_left and damage_profile_name_right then
 		local damage_profile_left = DamageProfileTemplates[damage_profile_name_left]
@@ -644,57 +341,9 @@ end
 ItemTooltipHelper.get_chain_critical_hit_chances = function (values, action, unit, item, stat_descriptor)
 	-- function 17
 	local impact_data = action.impact_data
-	local damage_profile
-
-	if impact_data then
-		damage_profile = impact_data.damage_profile
-
-		if not damage_profile then
-			-- Nothing
-		end
-	end
-
-	damage_profile = action.damage_profile
-
-	local damage_profile_name = damage_profile
-
-	do
-		local damage_profile_left
-	end
-
-	::label_17_0::
-
-	if impact_data then
-		damage_profile_left = impact_data.damage_profile_left
-
-		if not damage_profile_left then
-			-- Nothing
-		end
-	end
-
-	damage_profile_left = action.damage_profile_left
-
-	local damage_profile_name_left = damage_profile_left
-
-	do
-		local damage_profile_right
-	end
-
-	::label_17_1::
-
-	if impact_data then
-		damage_profile_right = impact_data.damage_profile_right
-
-		if not damage_profile_right then
-			-- Nothing
-		end
-	end
-
-	damage_profile_right = action.damage_profile_right
-
-	local damage_profile_name_right = damage_profile_right
-
-	::label_17_2::
+	local damage_profile_name = impact_data and not not impact_data.damage_profile or not impact_data and not not action.damage_profile
+	local damage_profile_name_left = impact_data and not not impact_data.damage_profile_left or not impact_data and not not action.damage_profile_left
+	local damage_profile_name_right = impact_data and not not impact_data.damage_profile_right or not impact_data and not not action.damage_profile_right
 
 	if damage_profile_name or damage_profile_name_left and damage_profile_name_right then
 		local crit_chance = ActionUtils.get_critical_strike_chance(unit, action)
@@ -720,90 +369,14 @@ local ranged_actions = {
 ItemTooltipHelper.get_time_between_damage = function (values, action, unit, item, stat_descriptor)
 	-- function 18
 	local impact_data = action.impact_data
-	local damage_profile
-
-	if impact_data then
-		damage_profile = impact_data.damage_profile
-
-		if not damage_profile then
-			-- Nothing
-		end
-	end
-
-	damage_profile = action.damage_profile
-
-	local damage_profile_name = damage_profile
-
-	do
-		local damage_profile_left
-	end
-
-	::label_18_0::
-
-	if impact_data then
-		damage_profile_left = impact_data.damage_profile_left
-
-		if not damage_profile_left then
-			-- Nothing
-		end
-	end
-
-	damage_profile_left = action.damage_profile_left
-
-	local damage_profile_name_left = damage_profile_left
-
-	do
-		local damage_profile_right
-	end
-
-	::label_18_1::
-
-	if impact_data then
-		damage_profile_right = impact_data.damage_profile_right
-
-		if not damage_profile_right then
-			-- Nothing
-		end
-	end
-
-	damage_profile_right = action.damage_profile_right
-
-	local damage_profile_name_right = damage_profile_right
-
-	::label_18_2::
+	local damage_profile_name = impact_data and not not impact_data.damage_profile or not impact_data and not not action.damage_profile
+	local damage_profile_name_left = impact_data and not not impact_data.damage_profile_left or not impact_data and not not action.damage_profile_left
+	local damage_profile_name_right = impact_data and not not impact_data.damage_profile_right or not impact_data and not not action.damage_profile_right
 
 	if damage_profile_name or damage_profile_name_left and damage_profile_name_right then
 		if ranged_actions[action.kind] then
-			local chain_start_time_2 = stat_descriptor.chain_start_time
-
-			if not chain_start_time_2 then
-				-- Nothing
-			end
-
-			chain_start_time_2 = 0
-
-			local chain_start_time = chain_start_time_2
-
-			::label_18_3::
-
-			local damage_interval = action.damage_interval
-
-			if not damage_interval then
-				-- Nothing
-			end
-
-			damage_interval = action.fire_time
-
-			if not damage_interval then
-				-- Nothing
-			end
-
-			damage_interval = 0
-
-			local start_time = damage_interval
-
-			::label_18_4::
-
+			local chain_start_time = not not stat_descriptor.chain_start_time
+			local start_time = not not action.damage_interval
 			local attack_time = chain_start_time + start_time
 
 			values[#values + 1] = {
@@ -811,42 +384,9 @@ ItemTooltipHelper.get_time_between_damage = function (values, action, unit, item
 				value = attack_time
 			}
 		elseif action.kind == "sweep" or action.kind == "shield_slam" then
-			local chain_start_time_3 = stat_descriptor.chain_start_time
-
-			if not chain_start_time_3 then
-				-- Nothing
-			end
-
-			chain_start_time_3 = 0
-
-			local chain_start_time = chain_start_time_3
-
-			::label_18_5::
-
-			local damage_window_start_2 = action.damage_window_start
-
-			if not damage_window_start_2 then
-				-- Nothing
-			end
-
-			damage_window_start_2 = 0
-
-			local damage_window_start = damage_window_start_2
-
-			::label_18_6::
-
-			local damage_window_end_2 = action.damage_window_end
-
-			if not damage_window_end_2 then
-				-- Nothing
-			end
-
-			damage_window_end_2 = 0
-
-			local damage_window_end = damage_window_end_2
-
-			::label_18_7::
-
+			local chain_start_time = not not stat_descriptor.chain_start_time
+			local damage_window_start = not not action.damage_window_start
+			local damage_window_end = not not action.damage_window_end
 			local attack_time = chain_start_time + damage_window_start
 
 			values[#values + 1] = {
@@ -862,195 +402,30 @@ end
 ItemTooltipHelper.get_chain_boost_coefficients = function (values, action, unit, item, stat_descriptor)
 	-- function 19
 	local impact_data = action.impact_data
-	local damage_profile_2
-
-	if impact_data then
-		damage_profile_2 = impact_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_2 = action.damage_profile
-
-	local damage_profile_name = damage_profile_2
-
-	do
-		local damage_profile_left_2
-	end
-
-	::label_19_0::
-
-	if impact_data then
-		damage_profile_left_2 = impact_data.damage_profile_left
-
-		if not damage_profile_left_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_left_2 = action.damage_profile_left
-
-	local damage_profile_name_left = damage_profile_left_2
-
-	do
-		local damage_profile_right_2
-	end
-
-	::label_19_1::
-
-	if impact_data then
-		damage_profile_right_2 = impact_data.damage_profile_right
-
-		if not damage_profile_right_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_right_2 = action.damage_profile_right
-
-	local damage_profile_name_right = damage_profile_right_2
-
-	::label_19_2::
+	local damage_profile_name = impact_data and not not impact_data.damage_profile or not impact_data and not not action.damage_profile
+	local damage_profile_name_left = impact_data and not not impact_data.damage_profile_left or not impact_data and not not action.damage_profile_left
+	local damage_profile_name_right = impact_data and not not impact_data.damage_profile_right or not impact_data and not not action.damage_profile_right
 
 	if damage_profile_name then
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local target_index = 1
-		local var_19_3
+		local target_settings = damage_profile.targets and not not damage_profile.targets[target_index] or not damage_profile.targets and not not damage_profile.default_target
+		local boost_coefficient = not not target_settings.boost_curve_coefficient
+		local shot_count = impact_data and not not impact_data.shot_count or not impact_data and not not action.shot_count
 
-		if damage_profile.targets then
-			var_19_3 = damage_profile.targets[target_index]
-
-			if not var_19_3 then
-				-- Nothing
-			end
-		end
-
-		var_19_3 = damage_profile.default_target
-
-		local target_settings = var_19_3
-
-		::label_19_3::
-
-		local boost_curve_coefficient = target_settings.boost_curve_coefficient
-
-		if not boost_curve_coefficient then
-			-- Nothing
-		end
-
-		boost_curve_coefficient = DefaultBoostCurveCoefficient
-
-		local boost_coefficient = boost_curve_coefficient
-
-		do
-			local shot_count_2
-		end
-
-		::label_19_4::
-
-		if impact_data then
-			shot_count_2 = impact_data.shot_count
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = impact_data.num_projectiles
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-		end
-
-		shot_count_2 = action.shot_count
-
-		if not shot_count_2 then
-			-- Nothing
-		end
-
-		shot_count_2 = action.num_projectiles
-
-		if not shot_count_2 then
-			-- Nothing
-		end
-
-		shot_count_2 = 1
-
-		local shot_count = shot_count_2
-
-		::label_19_5::
-
-		local num = #values + 1
-		local tbl = {}
-		local flag
-
-		flag = (not (shot_count > 1) or not "multi") and not not "single"
-		tbl.type = flag
-		tbl.shot_count = shot_count
-		tbl.value = boost_coefficient
-		values[num] = tbl
+		values[#values + 1] = {
+			type = shot_count > 1 and not not "multi" or not (shot_count > 1) and not not "single",
+			shot_count = shot_count,
+			value = boost_coefficient
+		}
 	elseif damage_profile_name_left and damage_profile_name_right then
 		local damage_profile_left = DamageProfileTemplates[damage_profile_name_left]
 		local damage_profile_right = DamageProfileTemplates[damage_profile_name_right]
 		local target_index = 1
-		local var_19_9
-
-		if damage_profile_left.targets then
-			var_19_9 = damage_profile_left.targets[target_index]
-
-			if not var_19_9 then
-				-- Nothing
-			end
-		end
-
-		var_19_9 = damage_profile_left.default_target
-
-		local target_settings_left = var_19_9
-
-		::label_19_6::
-
-		local boost_curve_coefficient_2 = target_settings_left.boost_curve_coefficient
-
-		if not boost_curve_coefficient_2 then
-			-- Nothing
-		end
-
-		boost_curve_coefficient_2 = DefaultBoostCurveCoefficient
-
-		local boost_coefficient_left = boost_curve_coefficient_2
-
-		do
-			local var_19_11
-		end
-
-		::label_19_7::
-
-		if damage_profile_right.targets then
-			var_19_11 = damage_profile_right.targets[target_index]
-
-			if not var_19_11 then
-				-- Nothing
-			end
-		end
-
-		var_19_11 = damage_profile_right.default_target
-
-		local target_settings_right = var_19_11
-
-		::label_19_8::
-
-		local boost_curve_coefficient_3 = target_settings_right.boost_curve_coefficient
-
-		if not boost_curve_coefficient_3 then
-			-- Nothing
-		end
-
-		boost_curve_coefficient_3 = DefaultBoostCurveCoefficient
-
-		local boost_coefficient_right = boost_curve_coefficient_3
-
-		::label_19_9::
+		local target_settings_left = damage_profile_left.targets and not not damage_profile_left.targets[target_index] or not damage_profile_left.targets and not not damage_profile_left.default_target
+		local boost_coefficient_left = not not target_settings_left.boost_curve_coefficient
+		local target_settings_right = damage_profile_right.targets and not not damage_profile_right.targets[target_index] or not damage_profile_right.targets and not not damage_profile_right.default_target
+		local boost_coefficient_right = not not target_settings_right.boost_curve_coefficient
 
 		values[#values + 1] = {
 			type = "dual",
@@ -1063,195 +438,30 @@ end
 ItemTooltipHelper.get_chain_headshot_boost_coefficients = function (values, action, unit, item, stat_descriptor)
 	-- function 20
 	local impact_data = action.impact_data
-	local damage_profile_2
-
-	if impact_data then
-		damage_profile_2 = impact_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_2 = action.damage_profile
-
-	local damage_profile_name = damage_profile_2
-
-	do
-		local damage_profile_left_2
-	end
-
-	::label_20_0::
-
-	if impact_data then
-		damage_profile_left_2 = impact_data.damage_profile_left
-
-		if not damage_profile_left_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_left_2 = action.damage_profile_left
-
-	local damage_profile_name_left = damage_profile_left_2
-
-	do
-		local damage_profile_right_2
-	end
-
-	::label_20_1::
-
-	if impact_data then
-		damage_profile_right_2 = impact_data.damage_profile_right
-
-		if not damage_profile_right_2 then
-			-- Nothing
-		end
-	end
-
-	damage_profile_right_2 = action.damage_profile_right
-
-	local damage_profile_name_right = damage_profile_right_2
-
-	::label_20_2::
+	local damage_profile_name = impact_data and not not impact_data.damage_profile or not impact_data and not not action.damage_profile
+	local damage_profile_name_left = impact_data and not not impact_data.damage_profile_left or not impact_data and not not action.damage_profile_left
+	local damage_profile_name_right = impact_data and not not impact_data.damage_profile_right or not impact_data and not not action.damage_profile_right
 
 	if damage_profile_name then
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local target_index = 1
-		local var_20_3
+		local target_settings = damage_profile.targets and not not damage_profile.targets[target_index] or not damage_profile.targets and not not damage_profile.default_target
+		local boost_coefficient_headshot = not not target_settings.boost_curve_coefficient_headshot
+		local shot_count = impact_data and not not impact_data.shot_count or not impact_data and not not action.shot_count
 
-		if damage_profile.targets then
-			var_20_3 = damage_profile.targets[target_index]
-
-			if not var_20_3 then
-				-- Nothing
-			end
-		end
-
-		var_20_3 = damage_profile.default_target
-
-		local target_settings = var_20_3
-
-		::label_20_3::
-
-		local boost_curve_coefficient_headshot = target_settings.boost_curve_coefficient_headshot
-
-		if not boost_curve_coefficient_headshot then
-			-- Nothing
-		end
-
-		boost_curve_coefficient_headshot = DefaultBoostCurveCoefficient
-
-		local boost_coefficient_headshot = boost_curve_coefficient_headshot
-
-		do
-			local shot_count_2
-		end
-
-		::label_20_4::
-
-		if impact_data then
-			shot_count_2 = impact_data.shot_count
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-
-			shot_count_2 = impact_data.num_projectiles
-
-			if not shot_count_2 then
-				-- Nothing
-			end
-		end
-
-		shot_count_2 = action.shot_count
-
-		if not shot_count_2 then
-			-- Nothing
-		end
-
-		shot_count_2 = action.num_projectiles
-
-		if not shot_count_2 then
-			-- Nothing
-		end
-
-		shot_count_2 = 1
-
-		local shot_count = shot_count_2
-
-		::label_20_5::
-
-		local num = #values + 1
-		local tbl = {}
-		local flag
-
-		flag = (not (shot_count > 1) or not "multi") and not not "single"
-		tbl.type = flag
-		tbl.shot_count = shot_count
-		tbl.value = boost_coefficient_headshot
-		values[num] = tbl
+		values[#values + 1] = {
+			type = shot_count > 1 and not not "multi" or not (shot_count > 1) and not not "single",
+			shot_count = shot_count,
+			value = boost_coefficient_headshot
+		}
 	elseif damage_profile_name_left and damage_profile_name_right then
 		local damage_profile_left = DamageProfileTemplates[damage_profile_name_left]
 		local damage_profile_right = DamageProfileTemplates[damage_profile_name_right]
 		local target_index = 1
-		local var_20_9
-
-		if damage_profile_left.targets then
-			var_20_9 = damage_profile_left.targets[target_index]
-
-			if not var_20_9 then
-				-- Nothing
-			end
-		end
-
-		var_20_9 = damage_profile_left.default_target
-
-		local target_settings_left = var_20_9
-
-		::label_20_6::
-
-		local boost_curve_coefficient_headshot_2 = target_settings_left.boost_curve_coefficient_headshot
-
-		if not boost_curve_coefficient_headshot_2 then
-			-- Nothing
-		end
-
-		boost_curve_coefficient_headshot_2 = DefaultBoostCurveCoefficient
-
-		local boost_coefficient_headshot_left = boost_curve_coefficient_headshot_2
-
-		do
-			local var_20_11
-		end
-
-		::label_20_7::
-
-		if damage_profile_right.targets then
-			var_20_11 = damage_profile_right.targets[target_index]
-
-			if not var_20_11 then
-				-- Nothing
-			end
-		end
-
-		var_20_11 = damage_profile_right.default_target
-
-		local target_settings_right = var_20_11
-
-		::label_20_8::
-
-		local boost_curve_coefficient_headshot_3 = target_settings_right.boost_curve_coefficient_headshot
-
-		if not boost_curve_coefficient_headshot_3 then
-			-- Nothing
-		end
-
-		boost_curve_coefficient_headshot_3 = DefaultBoostCurveCoefficient
-
-		local boost_coefficient_headshot_right = boost_curve_coefficient_headshot_3
-
-		::label_20_9::
+		local target_settings_left = damage_profile_left.targets and not not damage_profile_left.targets[target_index] or not damage_profile_left.targets and not not damage_profile_left.default_target
+		local boost_coefficient_headshot_left = not not target_settings_left.boost_curve_coefficient_headshot
+		local target_settings_right = damage_profile_right.targets and not not damage_profile_right.targets[target_index] or not damage_profile_right.targets and not not damage_profile_right.default_target
+		local boost_coefficient_headshot_right = not not target_settings_right.boost_curve_coefficient_headshot
 
 		values[#values + 1] = {
 			type = "dual",

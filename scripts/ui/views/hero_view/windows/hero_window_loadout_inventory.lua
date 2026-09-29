@@ -16,30 +16,8 @@ local function item_sort_func(item_1, item_2)
 	local item_data_2 = item_2.data
 	local item_key_1 = item_data_1.key
 	local item_key_2 = item_data_2.key
-	local power_level = item_1.power_level
-
-	if not power_level then
-		-- Nothing
-	end
-
-	power_level = 0
-
-	local item_1_power_level = power_level
-
-	::label_1_0::
-
-	local power_level_2 = item_2.power_level
-
-	if not power_level_2 then
-		-- Nothing
-	end
-
-	power_level_2 = 0
-
-	local item_2_power_level = power_level_2
-
-	::label_1_1::
-
+	local item_1_power_level = not not item_1.power_level
+	local item_2_power_level = not not item_2.power_level
 	local item_1_backend_id = item_1.backend_id
 	local item_2_backend_id = item_2.backend_id
 	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -47,30 +25,8 @@ local function item_sort_func(item_1, item_2)
 
 	if item_1_favorited == item_2_favorited then
 		if item_1_power_level == item_2_power_level then
-			local rarity = item_1.rarity
-
-			if not rarity then
-				-- Nothing
-			end
-
-			rarity = item_data_1.rarity
-
-			local item_1_rarity = rarity
-
-			::label_1_2::
-
-			local rarity_2 = item_2.rarity
-
-			if not rarity_2 then
-				-- Nothing
-			end
-
-			rarity_2 = item_data_2.rarity
-
-			local item_2_rarity = rarity_2
-
-			::label_1_3::
-
+			local item_1_rarity = not not item_1.rarity
+			local item_2_rarity = not not item_2.rarity
 			local item_rarity_order = UISettings.item_rarity_order
 			local item_1_rarity_order = item_rarity_order[item_1_rarity]
 			local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -483,18 +439,7 @@ HeroWindowLoadoutInventory._handle_input = function (self, dt, t)
 		self:_play_sound("play_gui_inventory_tab_click")
 	elseif Managers.input:is_device_active("gamepad") then
 		local input_service = Managers.input:get_service("hero_view")
-		local _selected_loadout_slot_index = parent._selected_loadout_slot_index
-
-		if not _selected_loadout_slot_index then
-			-- Nothing
-		end
-
-		_selected_loadout_slot_index = 1
-
-		local current_index = _selected_loadout_slot_index
-
-		::label_15_0::
-
+		local current_index = not not parent._selected_loadout_slot_index
 		local num_tabs = #self._categories
 
 		if input_service:get("cycle_previous") and current_index > 1 then

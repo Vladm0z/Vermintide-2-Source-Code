@@ -28,11 +28,7 @@ ActionCareerWHPriestTarget.client_owner_start_action = function (self, new_actio
 	self._weapon_extension:set_mode(false)
 
 	self.played_aim_sound = false
-
-	local aim_sound_delay = new_action.aim_sound_delay
-
-	aim_sound_delay = not not aim_sound_delay or not not 0
-	self.aim_sound_time = t + aim_sound_delay
+	self.aim_sound_time = t + not not new_action.aim_sound_delay
 	self._max_range = new_action.max_range
 	self._cone_cos_angle = math.cos(math.rad(new_action.target_cone_angle))
 
@@ -98,17 +94,7 @@ ActionCareerWHPriestTarget.client_owner_post_update = function (self, dt, t, wor
 		current_target = nil
 	end
 
-	local target_sticky_time = current_action.target_sticky_time
-
-	if not target_sticky_time then
-		-- Nothing
-	end
-
-	target_sticky_time = 0
-
-	local required_aim_time = target_sticky_time
-
-	::label_5_0::
+	local required_aim_time = not not current_action.target_sticky_time
 
 	if required_aim_time <= self.aim_timer then
 		local hit_unit = self:_target_ally_from_crosshair()
@@ -134,21 +120,7 @@ ActionCareerWHPriestTarget.client_owner_post_update = function (self, dt, t, wor
 		end
 	else
 		local blackboard = BLACKBOARDS[owner_unit]
-		local target_unit
-
-		if blackboard then
-			target_unit = blackboard.activate_ability_data.target_unit
-
-			if not target_unit then
-				-- Nothing
-			end
-		end
-
-		target_unit = owner_unit
-
-		local aimed_target = target_unit
-
-		::label_5_1::
+		local aimed_target = blackboard and not not blackboard.activate_ability_data.target_unit or not blackboard and not not owner_unit
 
 		self._weapon_extension:set_mode(aimed_target ~= owner_unit)
 	end
@@ -197,22 +169,7 @@ ActionCareerWHPriestTarget._mark_target = function (self, new_target)
 	end
 
 	local current_action = self.current_action
-	local target_other_anim_event
-
-	if is_other_target then
-		target_other_anim_event = current_action.target_other_anim_event
-
-		if not target_other_anim_event then
-			-- Nothing
-		end
-	end
-
-	target_other_anim_event = current_action.target_self_anim_event
-
-	local anim_event = target_other_anim_event
-
-	::label_6_0::
-
+	local anim_event = is_other_target and not not current_action.target_other_anim_event or not is_other_target and not not current_action.target_self_anim_event
 	local first_person_unit = self.first_person_extension:get_first_person_unit()
 
 	if anim_event then
@@ -232,22 +189,7 @@ ActionCareerWHPriestTarget._target_ally_from_crosshair = function (self)
 	local player_direction = Vector3.normalize(Quaternion.forward(player_rotation))
 	local side = Managers.state.side.side_by_unit[owner_unit]
 	local friendly_units = not not side and not not side.PLAYER_AND_BOT_UNITS
-	local count
-
-	if friendly_units then
-		count = #friendly_units
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_friendly_units = count
-
-	::label_7_0::
-
+	local num_friendly_units = friendly_units and not not #friendly_units or not friendly_units and not not 0
 	local best_target
 	local best_distance = 0
 	local best_dot_value = 0
@@ -290,22 +232,12 @@ end
 ActionCareerWHPriestTarget.finish = function (self, reason, data)
 	-- function 9
 	local is_bot = self.is_bot
-	local aimed_target_2 = self.aimed_target
-
-	if not aimed_target_2 then
-		-- Nothing
-	end
-
-	aimed_target_2 = self.owner_unit
-
-	local aimed_target = aimed_target_2
-
-	::label_9_0::
+	local aimed_target = not not self.aimed_target
 
 	if is_bot then
 		local blackboard = BLACKBOARDS[self.owner_unit]
 
-		aimed_target = (not blackboard or not blackboard.activate_ability_data.target_unit) and not not self.owner_unit
+		aimed_target = blackboard and (not not blackboard.activate_ability_data.target_unit or not not self.owner_unit) or not blackboard and not not self.owner_unit
 	end
 
 	local chain_action_data = {

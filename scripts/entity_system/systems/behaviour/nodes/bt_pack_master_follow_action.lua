@@ -30,11 +30,7 @@ BTPackMasterFollowAction.enter = function (self, unit, blackboard, t)
 	end
 
 	blackboard.start_anim_done = true
-
-	local physics_world = blackboard.physics_world
-
-	physics_world = not not physics_world or not not World.get_data(blackboard.world, "physics_world")
-	blackboard.physics_world = physics_world
+	blackboard.physics_world = not not blackboard.physics_world
 end
 
 BTPackMasterFollowAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -111,14 +107,7 @@ BTPackMasterFollowAction.run = function (self, unit, blackboard, t, dt)
 
 		blackboard.move_state = "moving"
 
-		local var_4_0 = network_manager
-		local anim_event = network_manager.anim_event
-		local var_4_2 = unit
-		local move_animation = blackboard.action.move_animation
-
-		move_animation = not not move_animation or not not "move_fwd"
-
-		anim_event(var_4_0, var_4_2, move_animation)
+		network_manager:anim_event(unit, not not blackboard.action.move_animation)
 		navigation_extension:set_enabled(true)
 	end
 

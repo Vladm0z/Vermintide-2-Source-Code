@@ -124,21 +124,7 @@ CharacterSelectionView.input_service = function (self, ignore_input_blocked)
 	if ignore_input_blocked then
 		return self.input_manager:get_service("character_selection_view")
 	else
-		local FAKE_INPUT_SERVICE
-
-		if self._input_blocked then
-			FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-			if not FAKE_INPUT_SERVICE then
-				-- Nothing
-			end
-		end
-
-		FAKE_INPUT_SERVICE = self.input_manager:get_service("character_selection_view")
-
-		::label_7_0::
-
-		return FAKE_INPUT_SERVICE
+		return self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self.input_manager:get_service("character_selection_view")
 	end
 end
 
@@ -278,21 +264,7 @@ CharacterSelectionView.update = function (self, dt, t)
 	local input_manager = self.input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local input_blocked = self:input_blocked()
-	local FAKE_INPUT_SERVICE
-
-	if input_blocked and not gamepad_active then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = input_manager:get_service("character_selection_view")
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_19_0::
+	local input_service = not not FAKE_INPUT_SERVICE
 
 	self._state_machine_params.input_service = input_service
 
@@ -327,17 +299,7 @@ end
 CharacterSelectionView._has_active_level_vote = function (self)
 	-- function 20
 	local voting_manager = self.voting_manager
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local is_mission_vote = vote_in_progress
-
-	::label_20_0::
+	local is_mission_vote = not not voting_manager:vote_in_progress()
 
 	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
@@ -442,11 +404,7 @@ CharacterSelectionView._get_sorted_players = function (self)
 
 	table.sort(player_order, function (a, b)
 		-- function 24
-		local local_player = a.local_player
-
-		local_player = not not local_player and not not not b.local_player
-
-		return local_player
+		return not not a.local_player
 	end)
 
 	return player_order
@@ -498,17 +456,7 @@ CharacterSelectionView.hotkey_allowed = function (self, input, mapping_data)
 		local name = current_screen_settings.name
 
 		if name == transition_state then
-			local get_selected_layout_name = current_state.get_selected_layout_name
-
-			if get_selected_layout_name then
-				-- Nothing
-			end
-
-			get_selected_layout_name = current_state:get_selected_layout_name()
-
-			local active_sub_settings_name = get_selected_layout_name
-
-			::label_28_0::
+			local active_sub_settings_name = not not current_state.get_selected_layout_name
 
 			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
@@ -658,23 +606,7 @@ end
 
 CharacterSelectionView.exit = function (self, return_to_game)
 	-- function 36
-	local _exit_transition = self._exit_transition
-
-	if not _exit_transition then
-		-- Nothing
-	end
-
-	if self:initial_profile_view() then
-		_exit_transition = "exit_initial_character_selection"
-
-		goto label_36_0
-	end
-
-	_exit_transition = "exit_menu"
-
-	local exit_transition = _exit_transition
-
-	::label_36_0::
+	local exit_transition = not not self._exit_transition
 
 	self.ingame_ui:transition_with_fade(exit_transition, self._exit_transition_params)
 

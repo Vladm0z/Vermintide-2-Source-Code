@@ -1,16 +1,6 @@
 -- chunkname: @scripts/unit_extensions/objectives/versus_volume_objective_extension.lua
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/unit_extensions/objectives/testify/versus_volume_objective_extension_testify")
-
-local versus_volume_objective_extension_testify = testify
-
-::label_0_0::
+local versus_volume_objective_extension_testify = not not script_data.testify
 
 VersusVolumeObjectiveExtension = class(VersusVolumeObjectiveExtension, BaseObjectiveExtension)
 VersusVolumeObjectiveExtension.NAME = "VersusVolumeObjectiveExtension"
@@ -31,41 +21,15 @@ end
 VersusVolumeObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 2
 	local volume_default_settings = GameModeSettings.versus.objectives.volume
-	local score_for_completion = objective_data.score_for_completion
 
-	score_for_completion = not not score_for_completion or not not volume_default_settings.score_for_completion
-	self._score_for_completion = score_for_completion
-
-	local time_for_completion = objective_data.time_for_completion
-
-	time_for_completion = not not time_for_completion or not not volume_default_settings.time_for_completion
-	self._time_for_completion = time_for_completion
-
-	local score_for_each_player_inside = objective_data.score_for_each_player_inside
-
-	score_for_each_player_inside = not not score_for_each_player_inside or not not volume_default_settings.score_for_each_player_inside
-	self._score_for_each_player_inside = score_for_each_player_inside
-
-	local time_for_each_player_inside = objective_data.time_for_each_player_inside
-
-	time_for_each_player_inside = not not time_for_each_player_inside or not not volume_default_settings.time_for_each_player_inside
-	self._time_for_each_player_inside = time_for_each_player_inside
+	self._score_for_completion = not not objective_data.score_for_completion
+	self._time_for_completion = not not objective_data.time_for_completion
+	self._score_for_each_player_inside = not not objective_data.score_for_each_player_inside
+	self._time_for_each_player_inside = not not objective_data.time_for_each_player_inside
 	self._volume_name = objective_data.volume_name
-
-	local volume_type = objective_data.volume_type
-
-	volume_type = not not volume_type or not not volume_default_settings.volume_type
-	self._volume_type = volume_type
-
-	local on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
-
-	on_last_leaf_complete_sound_event = not not on_last_leaf_complete_sound_event or not not volume_default_settings.on_last_leaf_complete_sound_event
-	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
-
-	local on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
-
-	on_leaf_complete_sound_event = not not on_leaf_complete_sound_event or not not volume_default_settings.on_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
+	self._volume_type = not not objective_data.volume_type
+	self._on_last_leaf_complete_sound_event = not not objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = not not objective_data.on_leaf_complete_sound_event
 
 	local name = VOLUME_TYPE_TO_FUNC_NAME[self._volume_type]
 
@@ -123,17 +87,7 @@ VersusVolumeObjectiveExtension._get_num_players_inside = function (self)
 	if self._volume_type == "all_alive_human_players_inside" then
 		for i = 1, #player_and_bot_units do
 			local player_unit = player_and_bot_units[i]
-			local var_9_0 = ALIVE[player_unit]
-
-			if var_9_0 then
-				-- Nothing
-			end
-
-			var_9_0 = ScriptUnit.has_extension(player_unit, "status_system")
-
-			local status_ext = var_9_0
-
-			::label_9_0::
+			local status_ext = not not ALIVE[player_unit]
 
 			if status_ext and not status_ext:is_disabled() then
 				num_players = num_players + 1
@@ -142,19 +96,9 @@ VersusVolumeObjectiveExtension._get_num_players_inside = function (self)
 	else
 		for i = 1, #player_and_bot_units do
 			local player_unit = player_and_bot_units[i]
-			local var_9_1 = ALIVE[player_unit]
+			local status_ext = not not ALIVE[player_unit]
 
-			if var_9_1 then
-				-- Nothing
-			end
-
-			var_9_1 = ScriptUnit.has_extension(player_unit, "status_system")
-
-			local status_ext = var_9_1
-
-			::label_9_1::
-
-			if status_ext and not status_ext:is_disabled() and (status_ext.is_bot or self._volume_system:player_inside(self._volume_name, player_unit)) then
+			if status_ext.is_bot or self._volume_system:player_inside(self._volume_name, player_unit) then
 				num_players = num_players + 1
 			end
 		end

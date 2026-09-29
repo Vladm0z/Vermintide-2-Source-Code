@@ -49,17 +49,7 @@ local rpcs = {}
 local settings = require("scripts/ui/views/ingame_ui_settings")
 local view_settings = settings.view_settings
 local transitions = settings.transitions
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/ui/views/ingame_ui_testify")
-
-local ingame_ui_testify = testify
-
-::label_0_0::
+local ingame_ui_testify = not not script_data.testify
 
 IngameUI = class(IngameUI)
 
@@ -143,17 +133,7 @@ IngameUI.init = function (self, ingame_ui_context)
 	Managers.chat:set_wwise_world(wwise_world)
 	Managers.chat:set_input_manager(input_manager)
 
-	local network_server = ingame_ui_context.network_server
-
-	if not network_server then
-		-- Nothing
-	end
-
-	network_server = ingame_ui_context.network_client
-
-	local network_handler = network_server
-
-	::label_2_0::
+	local network_handler = not not ingame_ui_context.network_server
 
 	self._profile_requester = network_handler:profile_requester()
 	self.telemetry_time_view_enter = 0
@@ -208,11 +188,7 @@ IngameUI.can_view_lobby_browser = function (self)
 	return not not is_server and not not not is_game_matchmaking
 end
 
-local script_data = script_data
-local lorebook_enabled = script_data.lorebook_enabled
-
-lorebook_enabled = not not lorebook_enabled or not not Development.parameter("lorebook_enabled")
-script_data.lorebook_enabled = lorebook_enabled
+script_data.lorebook_enabled = not not script_data.lorebook_enabled
 
 IngameUI.is_lorebook_enabled = function (self)
 	-- function 8
@@ -244,17 +220,7 @@ IngameUI.is_in_view_state = function (self, state_name)
 	end
 
 	local view = self.views[self.current_view]
-	local current_state_2 = view.current_state
-
-	if current_state_2 then
-		-- Nothing
-	end
-
-	current_state_2 = view:current_state()
-
-	local current_state = current_state_2
-
-	::label_11_0::
+	local current_state = not not view.current_state
 
 	if not current_state then
 		return false
@@ -363,23 +329,7 @@ IngameUI.weaves_requirements_fulfilled = function (self)
 		return true
 	end
 
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	if not twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_activated()
-
-	local twitch_connection = twitch
-
-	::label_13_0::
+	local twitch_connection = not not Managers.twitch
 
 	if twitch_connection then
 		Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.twitch_not_supported_for_weaves)
@@ -471,17 +421,7 @@ IngameUI.handle_menu_hotkeys = function (self, dt, input_service, hotkeys_enable
 	local player_ready_for_game = self:is_local_player_ready_for_game()
 	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 	local voting_manager = Managers.state.voting
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local currently_voting = vote_in_progress
-
-	::label_16_0::
+	local currently_voting = not not voting_manager:vote_in_progress()
 
 	for input, mapping_data in pairs(hotkey_mapping) do
 		if current_view then
@@ -499,18 +439,8 @@ IngameUI.handle_menu_hotkeys = function (self, dt, input_service, hotkeys_enable
 					local matching_sub_state = menu_sub_state_name == mapping_data.transition_sub_state
 					local ignore_sub_state_on_exit = not not transition_params and not not transition_params.ignore_sub_state_on_exit
 
-					if (not matching_state or not matching_sub_state) and matching_state and ignore_sub_state_on_exit then
-						local hotkey_allowed_2 = active_view.hotkey_allowed
-
-						if hotkey_allowed_2 then
-							-- Nothing
-						end
-
-						hotkey_allowed_2 = active_view:hotkey_allowed(input, mapping_data)
-
-						local hotkey_allowed = hotkey_allowed_2
-
-						::label_16_1::
+					if matching_state and ignore_sub_state_on_exit then
+						local hotkey_allowed = not not active_view.hotkey_allowed
 
 						hotkey_allowed = hotkey_allowed ~= false
 
@@ -527,17 +457,7 @@ IngameUI.handle_menu_hotkeys = function (self, dt, input_service, hotkeys_enable
 		else
 			local disable_when_matchmaking, disable_when_matchmaking_ready, disable_not_matchmaking
 			local mechanism_name = Managers.mechanism:current_mechanism_name()
-			local disable_for_mechanism_2 = mapping_data.disable_for_mechanism
-
-			if disable_for_mechanism_2 then
-				-- Nothing
-			end
-
-			disable_for_mechanism_2 = mapping_data.disable_for_mechanism[mechanism_name]
-
-			local disable_for_mechanism = disable_for_mechanism_2
-
-			::label_16_2::
+			local disable_for_mechanism = not not mapping_data.disable_for_mechanism
 
 			if disable_for_mechanism then
 				disable_when_matchmaking = disable_for_mechanism.matchmaking
@@ -546,7 +466,7 @@ IngameUI.handle_menu_hotkeys = function (self, dt, input_service, hotkeys_enable
 			end
 
 			local vote_blocked = table.contains(hotkeys_blocked_during_vote, input)
-			local transition_not_allowed = (not player_ready_for_game or not disable_when_matchmaking_ready) and (not is_game_matchmaking or not disable_when_matchmaking) and not not vote_blocked and not not currently_voting
+			local transition_not_allowed = not not vote_blocked and not not currently_voting
 
 			transition_not_allowed = not not transition_not_allowed or not not disable_not_matchmaking
 
@@ -583,23 +503,8 @@ IngameUI.handle_menu_hotkeys = function (self, dt, input_service, hotkeys_enable
 						break
 					end
 
-					local in_transition_menu
-
-					if menu_active then
-						in_transition_menu = mapping_data.in_transition_menu
-
-						if not in_transition_menu then
-							-- Nothing
-						end
-					end
-
-					in_transition_menu = mapping_data.in_transition
-
 					do
-						local transition = in_transition_menu
-
-						::label_16_3::
-
+						local transition = menu_active and not not mapping_data.in_transition_menu or not menu_active and not not mapping_data.in_transition
 						local transition_params = {
 							menu_state_name = mapping_data.transition_state,
 							menu_sub_state_name = mapping_data.transition_sub_state
@@ -685,17 +590,7 @@ IngameUI.update = function (self, dt, t, disable_ingame_ui, end_of_level_ui)
 	end
 
 	if is_in_inn then
-		local has_left_menu = self.has_left_menu
-
-		if has_left_menu then
-			-- Nothing
-		end
-
-		has_left_menu = self.hud_visible
-
-		local is_not_in_menu = has_left_menu
-
-		::label_19_0::
+		local is_not_in_menu = not not self.has_left_menu
 
 		self.text_popup_ui:update(dt)
 
@@ -734,9 +629,7 @@ IngameUI.update = function (self, dt, t, disable_ingame_ui, end_of_level_ui)
 		local versus_tab_ui = ingame_hud:component("VersusTabUI")
 		local versus_slot_status_ui = ingame_hud:component("VersusSlotStatusUI")
 
-		if (not versus_tab_ui or not versus_tab_ui:is_active()) and versus_slot_status_ui and not versus_slot_status_ui:is_active() then
-			-- Nothing
-		end
+		player_list_active = versus_tab_ui and (not not versus_tab_ui:is_active() or not versus_slot_status_ui or not not versus_slot_status_ui:is_active() or not not player_list_active) or not versus_tab_ui and (not versus_slot_status_ui or not not versus_slot_status_ui:is_active() or not not player_list_active)
 
 		local game_mode = Managers.state.game_mode:game_mode()
 
@@ -747,38 +640,13 @@ IngameUI.update = function (self, dt, t, disable_ingame_ui, end_of_level_ui)
 		local fade_active = Managers.transition:in_fade_active()
 
 		if allowed_to_access_menu and not player_list_active and not disable_toggle_menu and not self:pending_transition() and not fade_active and not self:end_screen_active() and not self.menu_active and not self.leave_game and not self.return_to_title_screen and not self:get_active_popup("profile_picker") and input_service:get("toggle_menu", true) then
-			local IS_CONSOLE = IS_CONSOLE
-
-			if not IS_CONSOLE and not gamepad_active then
-				-- Nothing
-			end
-
-			::label_19_2::
-
-			IS_CONSOLE = not UISettings.use_pc_menu_layout
-
-			local use_gamepad_layout = IS_CONSOLE
-
-			::label_19_3::
+			local use_gamepad_layout = not not IS_CONSOLE
 
 			if use_gamepad_layout then
 				local menu_state_name = "overview"
 
 				if is_in_inn and gamepad_active then
-					local str
-
-					if gamepad_active then
-						str = "equipment"
-
-						goto label_19_4
-					end
-
-					str = "system"
-
-					local menu_sub_state_name = str
-
-					::label_19_4::
-
+					local menu_sub_state_name = gamepad_active and not not "equipment" or not gamepad_active and not not "system"
 					local transition_params = {
 						menu_state_name = menu_state_name,
 						menu_sub_state_name = menu_sub_state_name
@@ -912,18 +780,7 @@ end
 IngameUI._menu_blocking_information = function (self, input_service, end_of_level_ui)
 	-- function 27
 	local ingame_hud = self.ingame_hud
-	local component = ingame_hud:component("IngamePlayerListUI")
-
-	if not component then
-		-- Nothing
-	end
-
-	component = ingame_hud:component("VersusTabUI")
-
-	local ingame_player_list_ui = component
-
-	::label_27_0::
-
+	local ingame_player_list_ui = not not ingame_hud:component("IngamePlayerListUI")
 	local player_list_focused = not not ingame_player_list_ui and not not ingame_player_list_ui:is_focused()
 	local gift_popup_ui = ingame_hud:component("GiftPopupUI")
 	local gift_popup_active = not not gift_popup_ui and not not gift_popup_ui:active()
@@ -932,43 +789,8 @@ IngameUI._menu_blocking_information = function (self, input_service, end_of_leve
 	local mission_vote_active = not not mission_voting_ui and not not mission_voting_ui:is_active()
 	local cutscene_system = self.cutscene_system
 	local profile_picker = self:get_active_popup("profile_picker")
-	local menu_active = self.menu_active
-
-	if not menu_active then
-		if end_of_level_ui then
-			menu_active = end_of_level_ui:enable_chat()
-
-			if not menu_active then
-				-- Nothing
-			end
-		end
-
-		if self.current_view ~= nil then
-			menu_active = not self.views[self.current_view].normal_chat
-		else
-			menu_active = false
-		end
-	end
-
-	goto label_27_1
-
-	menu_active = true
-
-	local in_view = menu_active
-
-	::label_27_1::
-
-	local active_camera = cutscene_system.active_camera
-
-	if active_camera then
-		-- Nothing
-	end
-
-	active_camera = not cutscene_system.ingame_hud_enabled
-
-	local active_cutscene = active_camera
-
-	::label_27_2::
+	local in_view = not not self.menu_active
+	local active_cutscene = not not cutscene_system.active_camera
 
 	if self.current_view then
 		local active_view = self.views[self.current_view]
@@ -1031,41 +853,9 @@ IngameUI.show_info = function (self)
 	local tome_mission_data = mission_system:get_level_end_mission_data("tome_bonus_mission")
 	local w, h = Application.resolution()
 	local pos = Vector3(100, h - 100, 999)
-	local var_29_0 = self
-	local _show_text = self._show_text
-	local current_amount
 
-	if grimoire_mission_data then
-		current_amount = grimoire_mission_data.current_amount
-
-		if not current_amount then
-			-- Nothing
-		end
-	end
-
-	current_amount = ""
-
-	::label_29_0::
-
-	pos = _show_text(var_29_0, current_amount, pos)
-
-	local var_29_3 = self
-	local _show_text_2 = self._show_text
-	local current_amount_2
-
-	if tome_mission_data then
-		current_amount_2 = tome_mission_data.current_amount
-
-		if not current_amount_2 then
-			-- Nothing
-		end
-	end
-
-	current_amount_2 = ""
-
-	::label_29_1::
-
-	pos = _show_text_2(var_29_3, current_amount_2, pos)
+	pos = self:_show_text(grimoire_mission_data and not not grimoire_mission_data.current_amount or not grimoire_mission_data and not not "", pos)
+	pos = self:_show_text(tome_mission_data and not not tome_mission_data.current_amount or not tome_mission_data and not not "", pos)
 end
 
 IngameUI._show_text = function (self, text, pos)
@@ -1081,7 +871,7 @@ IngameUI._update_system_message_cooldown = function (self, dt)
 
 	if system_message_delay then
 		system_message_delay = system_message_delay - dt
-		self.system_message_delay = (not (system_message_delay > 0) or not system_message_delay) and not not nil
+		self.system_message_delay = system_message_delay > 0 and (not not system_message_delay or not not nil) or not (system_message_delay > 0) and not not nil
 	end
 end
 
@@ -1378,30 +1168,8 @@ IngameUI._render_version_info = function (self)
 	local ui_top_renderer = self.ui_top_renderer
 	local res_width, res_height = 1920, 1080
 	local text_size = 18
-	local build_identifier = script_data.build_identifier
-
-	if not build_identifier then
-		-- Nothing
-	end
-
-	build_identifier = "???"
-
-	local build = build_identifier
-
-	::label_48_0::
-
-	local content_revision = script_data.settings.content_revision
-
-	if not content_revision then
-		-- Nothing
-	end
-
-	content_revision = "???"
-
-	local revision = content_revision
-
-	::label_48_1::
-
+	local build = not not script_data.build_identifier
+	local revision = not not script_data.settings.content_revision
 	local build_hash = tostring(Application.make_hash(build, revision)):sub(1, 4):upper()
 
 	if build == "???" and revision == "???" then
@@ -1435,10 +1203,7 @@ end
 
 IngameUI._render_fps = function (self, dt)
 	-- function 49
-	local _fpses = self._fpses
-
-	_fpses = not not _fpses or not not {}
-	self._fpses = _fpses
+	self._fpses = not not self._fpses
 
 	local ui_top_renderer = self.ui_top_renderer
 

@@ -2,17 +2,7 @@
 
 require("scripts/settings/end_zone_settings")
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/unit_extensions/generic/end_zone_extension_testify")
-
-local end_zone_extension_testify = testify
-
-::label_0_0::
+local end_zone_extension_testify = not not script_data.testify
 
 EndZoneExtension = class(EndZoneExtension)
 
@@ -35,23 +25,11 @@ EndZoneExtension.init = function (self, extension_init_context, unit)
 	self._current_end_zone_visible_long_timer = self:end_zone_visible_long_timer()
 	self._end_zone_timer_started = false
 	self._end_zone_time_since_notify = self:end_zone_long_timer_settings().notify_long_interval
-
-	local get_data = Unit.get_data(unit, "visible_from_start")
-
-	get_data = not not get_data or not not true
-	self._visible_from_start = get_data
+	self._visible_from_start = not not Unit.get_data(unit, "visible_from_start")
 	self._waystone_type = Unit.get_data(unit, "waystone_type")
-
-	local flag
-
-	flag = (self._waystone_type ~= 3 or not 3.8) and not not EndZoneSettings.size
-	self.waystone_size = flag
+	self.waystone_size = self._waystone_type ~= 3 and not not EndZoneSettings.size or not (self._waystone_type ~= 3) and not not 3.8
 	self._always_activated = Unit.get_data(unit, "always_activated")
-
-	local get_data_2 = Unit.get_data(unit, "activation_name")
-
-	get_data_2 = not not get_data_2 or not not ""
-	self._activation_name = get_data_2
+	self._activation_name = not not Unit.get_data(unit, "activation_name")
 	self._side = Managers.state.side:get_side_from_name("heroes")
 
 	if Unit.get_data(self._unit, "game_start_waystone") then
@@ -104,19 +82,7 @@ EndZoneExtension.activate_waystone_portal = function (self, wanted_waystone_type
 		return
 	end
 
-	local str
-
-	if waystone_type == wanted_waystone_type then
-		str = "activate"
-
-		goto label_4_0
-	end
-
-	str = "deactivate"
-
-	local event = str
-
-	::label_4_0::
+	local event = waystone_type ~= wanted_waystone_type and not not "deactivate" or not (waystone_type ~= wanted_waystone_type) and not not "activate"
 
 	Unit.flow_event(unit, event)
 end
@@ -194,20 +160,12 @@ end
 
 EndZoneExtension.end_time = function (self)
 	-- function 9
-	local _game_start_time = self._game_start_time
-
-	_game_start_time = not not _game_start_time or not not EndZoneSettings.end_zone_timer
-
-	return _game_start_time
+	return not not self._game_start_time
 end
 
 EndZoneExtension.end_time_left = function (self)
 	-- function 10
-	local end_zone_timer = self._state_data.end_zone_timer
-
-	end_zone_timer = not not end_zone_timer or not not self:end_time()
-
-	return end_zone_timer
+	return not not self._state_data.end_zone_timer
 end
 
 EndZoneExtension.end_zone_long_timer_settings = function (self)
@@ -227,11 +185,7 @@ end
 
 EndZoneExtension.end_long_time_left = function (self)
 	-- function 14
-	local end_zone_long_timer = self._state_data.end_zone_long_timer
-
-	end_zone_long_timer = not not end_zone_long_timer or not not self:end_long_time()
-
-	return end_zone_long_timer
+	return not not self._state_data.end_zone_long_timer
 end
 
 EndZoneExtension.update = function (self, unit, input, dt, context, t)
@@ -263,18 +217,7 @@ EndZoneExtension._activate = function (self, activate)
 			Unit.set_unit_visibility(self._unit, true)
 		end
 
-		local _get_wind_name = self:_get_wind_name()
-
-		if not _get_wind_name then
-			-- Nothing
-		end
-
-		_get_wind_name = "none"
-
-		local wind = _get_wind_name
-
-		::label_17_0::
-
+		local wind = not not self:_get_wind_name()
 		local wind_name_id = NetworkLookup.weave_winds[wind]
 
 		if wind ~= "none" then
@@ -386,7 +329,7 @@ EndZoneExtension._check_proximity = function (self)
 		if player_pos then
 			local distance_squared = Vector3.distance_squared(end_zone_pos, player_pos)
 
-			self._closest_player = (not (distance_squared < self._closest_player) or not distance_squared) and not not self._closest_player
+			self._closest_player = distance_squared < self._closest_player and (not not distance_squared or not not self._closest_player) or not (distance_squared < self._closest_player) and not not self._closest_player
 
 			if table.contains(player_units, player_unit) then
 				self._player_distances[player_unit] = distance_squared
@@ -420,18 +363,7 @@ end
 EndZoneExtension.hot_join_sync = function (self, sender)
 	-- function 24
 	if self._activated then
-		local _get_wind_name = self:_get_wind_name()
-
-		if not _get_wind_name then
-			-- Nothing
-		end
-
-		_get_wind_name = "none"
-
-		local wind = _get_wind_name
-
-		::label_24_0::
-
+		local wind = not not self:_get_wind_name()
 		local wind_name_id = NetworkLookup.weave_winds[wind]
 		local channel_id = PEER_ID_TO_CHANNEL[sender]
 
@@ -475,17 +407,7 @@ end
 EndZoneExtension._open = function (self, dt, t)
 	-- function 27
 	if self._activated and (self._always_activated or self._closest_player <= EndZoneSettings.activate_size^2) then
-		local animation_time_2 = EndZoneSettings.animation_time
-
-		if not animation_time_2 then
-			-- Nothing
-		end
-
-		animation_time_2 = 0.5
-
-		local animation_time = animation_time_2
-
-		::label_27_0::
+		local animation_time = not not EndZoneSettings.animation_time
 
 		self._state_data.timer = math.clamp(self._state_data.timer + dt, 0, animation_time)
 
@@ -515,17 +437,7 @@ EndZoneExtension._close = function (self, dt, t)
 
 		Unit.flow_event(self._unit, "opening_end_zone")
 	else
-		local animation_time_2 = EndZoneSettings.animation_time
-
-		if not animation_time_2 then
-			-- Nothing
-		end
-
-		animation_time_2 = 0.5
-
-		local animation_time = animation_time_2
-
-		::label_28_0::
+		local animation_time = not not EndZoneSettings.animation_time
 
 		self._state_data.timer = math.clamp(self._state_data.timer - dt, 0, animation_time)
 

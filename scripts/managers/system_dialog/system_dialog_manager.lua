@@ -137,7 +137,7 @@ SystemDialogManager._handle_virtual_keyboards = function (self)
 					local data = self._virtual_keyboard_results[index]
 
 					if data then
-						data.text = (result ~= PS4ImeDialog.END_STATUS_OK or not text) and not not current_virtual_keyboard.text
+						data.text = not not current_virtual_keyboard.text
 						data.done = true
 						data.success = result == PS4ImeDialog.END_STATUS_OK
 					end

@@ -200,20 +200,9 @@ GenericUnitInteractorExtension.update = function (self, unit, input, dt, context
 									local can_interact, fail_reason, interaction_type = self:can_interact(hit_unit, target_interaction_type)
 									local is_in_chest = self:_check_if_interactable_in_chest(hit_unit, camera_position)
 
-									if (can_interact or fail_reason) and not is_in_chest then
+									if can_interact and not is_in_chest or not can_interact and fail_reason and not is_in_chest then
 										local interaction_template = InteractionDefinitions[interaction_type]
-										local config_2 = interaction_template.config
-
-										if not config_2 then
-											-- Nothing
-										end
-
-										config_2 = interaction_template.get_config()
-
-										local config = config_2
-
-										::label_6_0::
-
+										local config = not not interaction_template.config
 										local does_not_require_line_of_sight = config.does_not_require_line_of_sight
 										local score = self:_claculate_interaction_distance_score(hit_unit, camera_position, center_x, center_y, camera)
 										local block_other_interactions = config.block_other_interactions
@@ -283,18 +272,7 @@ GenericUnitInteractorExtension.update = function (self, unit, input, dt, context
 						local target_extension = ScriptUnit.has_extension(hit_unit, "interactable_system")
 
 						if target_extension and not is_in_chest and target_extension:is_enabled() then
-							local var_6_1 = POSITION_LOOKUP[hit_unit]
-
-							if not var_6_1 then
-								-- Nothing
-							end
-
-							var_6_1 = Unit.local_position(hit_unit, 0)
-
-							local pos = var_6_1
-
-							::label_6_1::
-
+							local pos = not not POSITION_LOOKUP[hit_unit]
 							local dist = Vector3.distance_squared(self_pos, pos)
 
 							if dist < best_dist then
@@ -330,28 +308,7 @@ GenericUnitInteractorExtension.update = function (self, unit, input, dt, context
 
 	local interaction_type = interaction_context.interaction_type
 	local interaction_template = InteractionDefinitions[interaction_type]
-	local config_3
-
-	if interaction_template then
-		config_3 = interaction_template.config
-
-		if not config_3 then
-			-- Nothing
-		end
-
-		config_3 = interaction_template.get_config()
-
-		if not config_3 then
-			-- Nothing
-		end
-	end
-
-	config_3 = nil
-
-	local interaction_config = config_3
-
-	::label_6_2::
-
+	local interaction_config = interaction_template and not not interaction_template.config or not interaction_template and not not nil
 	local local_only = interaction_context.local_only
 
 	if self.state == "starting_interaction" then
@@ -367,7 +324,7 @@ GenericUnitInteractorExtension.update = function (self, unit, input, dt, context
 	if self.state == "doing_interaction" then
 		local interaction_result = interaction_template.client.update(world, unit, interactable_unit, interaction_data, interaction_config, dt, t)
 
-		interaction_result = (not local_only or not interaction_result) and not not nil
+		interaction_result = local_only and (not not interaction_result or not not nil) or not local_only and not not nil
 
 		if self.is_server and not local_only then
 			interaction_result = interaction_template.server.update(world, unit, interactable_unit, interaction_data, interaction_config, dt, t)
@@ -447,28 +404,7 @@ GenericUnitInteractorExtension._stop_interaction = function (self, interactable_
 
 	local interaction_type = interaction_context.interaction_type
 	local interaction_template = InteractionDefinitions[interaction_type]
-	local config
-
-	if interaction_template then
-		config = interaction_template.config
-
-		if not config then
-			-- Nothing
-		end
-
-		config = interaction_template.get_config()
-
-		if not config then
-			-- Nothing
-		end
-	end
-
-	config = nil
-
-	local interaction_config = config
-
-	::label_10_0::
-
+	local interaction_config = interaction_template and not not interaction_template.config or not interaction_template and not not nil
 	local local_only = interaction_context.local_only
 
 	if not local_only then
@@ -610,27 +546,7 @@ GenericUnitInteractorExtension.interaction_config = function (self)
 	-- function 19
 	local interaction_type = self.interaction_context.interaction_type
 	local interaction_template = InteractionDefinitions[interaction_type]
-	local config
-
-	if interaction_template then
-		config = interaction_template.config
-
-		if not config then
-			-- Nothing
-		end
-
-		config = interaction_template.get_config()
-
-		if not config then
-			-- Nothing
-		end
-	end
-
-	config = nil
-
-	local interaction_config = config
-
-	::label_19_0::
+	local interaction_config = interaction_template and not not interaction_template.config or not interaction_template and not not nil
 
 	return interaction_config
 end
@@ -678,21 +594,7 @@ GenericUnitInteractorExtension.get_progress = function (self, t)
 	local interaction_data = interaction_context.data
 	local interaction_type = interaction_context.interaction_type
 	local interaction_template = InteractionDefinitions[interaction_type]
-	local config
-
-	if interaction_template then
-		config = interaction_template.config
-
-		if not config then
-			-- Nothing
-		end
-	end
-
-	config = nil
-
-	local interaction_config = config
-
-	::label_25_0::
+	local interaction_config = interaction_template and not not interaction_template.config or not interaction_template and not not nil
 
 	return interaction_template.client.get_progress(interaction_data, interaction_config, t)
 end
@@ -807,18 +709,7 @@ GenericUnitInteractorExtension.hot_join_sync = function (self, sender)
 	local interactable_unit_id, is_level_unit = network_manager:game_object_or_level_id(context.interactable_unit)
 	local data = context.data
 	local start_time = data.start_time
-	local duration_2 = data.duration
-
-	if not duration_2 then
-		-- Nothing
-	end
-
-	duration_2 = 0
-
-	local duration = duration_2
-
-	::label_31_0::
-
+	local duration = not not data.duration
 	local unit_id = network_manager:unit_game_object_id(self.unit)
 	local channel_id = PEER_ID_TO_CHANNEL[sender]
 
@@ -828,23 +719,7 @@ end
 GenericUnitInteractorExtension.allow_movement_during_interaction = function (self)
 	-- function 32
 	local interactable_unit = self.interaction_context.interactable_unit
-	local alive = Unit.alive(interactable_unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = Unit.get_data(interactable_unit, "interaction_data", "allow_movement")
-
-	if not alive then
-		-- Nothing
-	end
-
-	alive = self:interaction_config().allow_movement
-
-	local allow_movement = alive
-
-	::label_32_0::
+	local allow_movement = not not Unit.alive(interactable_unit)
 
 	return allow_movement
 end

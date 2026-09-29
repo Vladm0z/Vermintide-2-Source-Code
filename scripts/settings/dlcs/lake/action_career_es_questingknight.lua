@@ -18,10 +18,7 @@ ActionCareerESQuestingKnight.client_owner_start_action = function (self, new_act
 
 	ActionCareerESQuestingKnight.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
-	local combo_no_wield = new_action.combo_no_wield
-
-	combo_no_wield = not not combo_no_wield or not not false
-	self._combo_no_wield = combo_no_wield
+	self._combo_no_wield = not not new_action.combo_no_wield
 	self._hit_fx_triggered = false
 
 	self:_play_vo()
@@ -29,21 +26,7 @@ ActionCareerESQuestingKnight.client_owner_start_action = function (self, new_act
 	self.inventory_extension:check_and_drop_pickups("career_ability")
 	self.status_extension:set_stagger_immune(true)
 
-	local cooldown_started
-
-	if chain_action_data then
-		cooldown_started = chain_action_data.cooldown_started
-
-		if not cooldown_started then
-			-- Nothing
-		end
-	end
-
-	cooldown_started = false
-
-	::label_2_0::
-
-	self._cooldown_started = cooldown_started
+	self._cooldown_started = chain_action_data and not not chain_action_data.cooldown_started or not chain_action_data and not not false
 end
 
 ActionCareerESQuestingKnight.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
@@ -61,46 +44,10 @@ ActionCareerESQuestingKnight.client_owner_post_update = function (self, dt, t, w
 		local effect_name_id = NetworkLookup.effects[effect_name]
 		local node_id = 0
 		local vfx_settings = self.current_action.vfx_settings
-		local forward = vfx_settings.forward
-
-		if not forward then
-			-- Nothing
-		end
-
-		forward = 0
-
-		local forward_offset = forward
-
-		::label_3_0::
-
-		local up = vfx_settings.up
-
-		if not up then
-			-- Nothing
-		end
-
-		up = 0
-
-		local up_offset = up
-
-		::label_3_1::
-
+		local forward_offset = not not vfx_settings.forward
+		local up_offset = not not vfx_settings.up
 		local start_position = POSITION_LOOKUP[self.owner_unit] + direction * forward_offset + Vector3.up() * up_offset
-		local multiply
-
-		if vfx_settings.pitch then
-			multiply = Quaternion.multiply(rot, Quaternion(Vector3.right(), vfx_settings.pitch))
-
-			if not multiply then
-				-- Nothing
-			end
-		end
-
-		multiply = Quaternion.identity()
-
-		local rotation_offset = multiply
-
-		::label_3_2::
+		local rotation_offset = vfx_settings.pitch and not not Quaternion.multiply(rot, Quaternion(Vector3.right(), vfx_settings.pitch)) or not vfx_settings.pitch and not not Quaternion.identity()
 
 		network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, start_position, rotation_offset, false)
 	end

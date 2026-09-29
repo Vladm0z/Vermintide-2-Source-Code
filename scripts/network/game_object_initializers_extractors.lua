@@ -2,10 +2,8 @@
 
 local go_type_table
 local temp_table = {}
-local EnergyData = EnergyData
 
-EnergyData = not not EnergyData or not not {}
-EnergyData = EnergyData
+EnergyData = not not EnergyData
 
 local function enemy_unit_common_extractor(unit, game_session, game_object_id)
 	-- function 1
@@ -26,29 +24,8 @@ local function setup_blackboard(player, profile, career, unit)
 	local status = Managers.party:get_status_from_unique_id(unique_id)
 	local party = Managers.party:get_party(status.party_id)
 	local side = Managers.state.side.side_by_party[party]
-	local breed_2 = career.breed
-
-	if not breed_2 then
-		-- Nothing
-	end
-
-	breed_2 = profile.breed
-
-	local breed = breed_2
-
-	::label_2_0::
-
-	local var_2_1 = BLACKBOARDS[unit]
-
-	if not var_2_1 then
-		-- Nothing
-	end
-
-	var_2_1 = {}
-
-	local blackboard = var_2_1
-
-	::label_2_1::
+	local breed = not not career.breed
+	local blackboard = not not BLACKBOARDS[unit]
 
 	blackboard.is_player = true
 	blackboard.side = side
@@ -82,22 +59,7 @@ go_type_table = {
 			local level = ExperienceSettings.get_level(experience)
 			local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
 			local versus_experience = ExperienceSettings.get_versus_experience()
-			local get_versus_level_from_experience
-
-			if is_versus or Application.user_setting("toggle_versus_level_in_all_game_modes") then
-				get_versus_level_from_experience = ExperienceSettings.get_versus_level_from_experience(versus_experience)
-
-				if not get_versus_level_from_experience then
-					-- Nothing
-				end
-			end
-
-			get_versus_level_from_experience = 0
-
-			local versus_level = get_versus_level_from_experience
-
-			::label_3_0::
-
+			local versus_level = not not ExperienceSettings.get_versus_level_from_experience(versus_experience)
 			local max_wounds = ScriptUnit.extension(unit, "status_system"):max_wounds_network_safe()
 			local career = profile.careers[career_index]
 
@@ -171,7 +133,7 @@ go_type_table = {
 			setup_blackboard(player, profile, career, unit)
 
 			local rotation = Unit.local_rotation(unit, 0)
-			local tbl = {
+			local data_table = {
 				moving_platform_soft_linked = false,
 				ammo_percentage = 1,
 				overcharge_threshold_percentage = 0,
@@ -185,34 +147,18 @@ go_type_table = {
 				husk_unit = NetworkLookup.husks[husk_unit],
 				skin_name = NetworkLookup.cosmetics[skin_name],
 				frame_name = NetworkLookup.cosmetics[frame_name],
-				wounds = max_wounds
+				wounds = max_wounds,
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				pitch = Quaternion.pitch(rotation),
+				yaw = Quaternion.yaw(rotation),
+				velocity = Vector3(0, 0, 0),
+				average_velocity = Vector3(0, 0, 0),
+				owner_peer_id = player:network_id(),
+				local_player_id = player:local_player_id(),
+				aim_direction = Vector3(1, 0, 0),
+				profile_id = profile_id,
+				career_id = career_index
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_4_0::
-
-			tbl.position = position
-			tbl.pitch = Quaternion.pitch(rotation)
-			tbl.yaw = Quaternion.yaw(rotation)
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.average_velocity = Vector3(0, 0, 0)
-			tbl.owner_peer_id = player:network_id()
-			tbl.local_player_id = player:local_player_id()
-			tbl.aim_direction = Vector3(1, 0, 0)
-			tbl.profile_id = profile_id
-			tbl.career_id = career_index
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -226,36 +172,20 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_5_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -278,45 +208,29 @@ go_type_table = {
 			local spawn_type = pickup_extension.spawn_type
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				damage = 0,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_training_dummy_bob,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid,
+				rotation = Unit.local_rotation(unit, 0),
+				network_position = network_position,
+				network_rotation = network_rotation,
+				network_velocity = network_velocity,
+				network_angular_velocity = network_angular_velocity,
+				pickup_name = NetworkLookup.pickup_names[pickup_name],
+				has_physics = has_physics,
+				spawn_type = NetworkLookup.pickup_spawn_types[spawn_type]
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_6_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-			tbl.rotation = Unit.local_rotation(unit, 0)
-			tbl.network_position = network_position
-			tbl.network_rotation = network_rotation
-			tbl.network_velocity = network_velocity
-			tbl.network_angular_velocity = network_angular_velocity
-			tbl.pickup_name = NetworkLookup.pickup_names[pickup_name]
-			tbl.has_physics = has_physics
-			tbl.spawn_type = NetworkLookup.pickup_spawn_types[spawn_type]
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -331,37 +245,21 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_beastmen_bestigor,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_7_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -376,38 +274,22 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				lean_downwards = false,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_beastmen_minotaur,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_8_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -421,37 +303,21 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				show_health_bar = false,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_9_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -467,39 +333,23 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				reach_distance = 0,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_tentacle,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				rotation = Unit.local_rotation(unit, 0),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				portal_unit_id = Managers.state.network:unit_game_object_id(portal_unit),
+				tentacle_template_id = NetworkLookup.tentacle_templates[tentacle_spline_extension.tentacle_template_name],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_10_0::
-
-			tbl.position = position
-			tbl.rotation = Unit.local_rotation(unit, 0)
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.portal_unit_id = Managers.state.network:unit_game_object_id(portal_unit)
-			tbl.tentacle_template_id = NetworkLookup.tentacle_templates[tentacle_spline_extension.tentacle_template_name]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -533,41 +383,25 @@ go_type_table = {
 
 			local side = Managers.state.side.side_by_unit[unit]
 			local side_id = side.side_id
-			local tbl = {
+			local data_table = {
 				height_percentage = 0,
 				fx_radius_percentage = 0,
 				has_teleported = 1,
 				inner_radius_percentage = 0,
 				go_type = NetworkLookup.go_types.ai_unit_vortex,
-				husk_unit = NetworkLookup.husks[unit_name]
+				husk_unit = NetworkLookup.husks[unit_name],
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				vortex_template_id = NetworkLookup.vortex_templates[vortex_extension.vortex_template_name],
+				inner_decal_unit_id = inner_decal_unit_id,
+				outer_decal_unit_id = outer_decal_unit_id,
+				owner_unit_id = owner_unit_id,
+				side_id = side_id
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_11_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.vortex_template_id = NetworkLookup.vortex_templates[vortex_extension.vortex_template_name]
-			tbl.inner_decal_unit_id = inner_decal_unit_id
-			tbl.outer_decal_unit_id = outer_decal_unit_id
-			tbl.owner_unit_id = owner_unit_id
-			tbl.side_id = side_id
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -614,49 +448,22 @@ go_type_table = {
 			local side = Managers.state.side.side_by_unit[unit]
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
-			local get_group_id = ai_group_system:get_group_id(unit)
-
-			if not get_group_id then
-				-- Nothing
-			end
-
-			get_group_id = 0
-
-			local ai_group_id = get_group_id
-
-			::label_14_0::
-
-			local tbl = {
+			local ai_group_id = not not ai_group_system:get_group_id(unit)
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_with_inventory,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_14_1::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -673,38 +480,22 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_with_inventory_and_shield,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				is_blocking = is_blocking,
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_15_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.is_blocking = is_blocking
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -722,40 +513,24 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				show_health_bar = false,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_storm_vermin_warlord,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				is_blocking = is_blocking,
+				is_dodging = is_dodging,
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_16_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.is_blocking = is_blocking
-			tbl.is_dodging = is_dodging
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -770,37 +545,21 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_chaos_troll,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_17_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -815,38 +574,22 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				show_health_bar = false,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_lord_with_inventory,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_18_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -859,37 +602,21 @@ go_type_table = {
 			local inventory_configuration_name = ScriptUnit.extension(unit, "ai_inventory_system").inventory_configuration_name
 			local side = Managers.state.side.side_by_unit[unit]
 			local side_id = side.side_id
-			local tbl = {
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_pack_master,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				aim_target = Vector3.zero(),
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_19_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.aim_target = Vector3.zero()
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -904,38 +631,22 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_ratling_gunner,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				aim_target = Vector3.zero(),
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_20_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.aim_target = Vector3.zero()
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -950,38 +661,22 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_warpfire_thrower,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3(0, 0, 0),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				aim_target = Vector3.zero(),
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_21_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3(0, 0, 0)
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.aim_target = Vector3.zero()
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -996,39 +691,23 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				attack_arm = 1,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_stormfiend,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3.zero(),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				aim_target = Vector3.zero(),
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_22_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3.zero()
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.aim_target = Vector3.zero()
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -1043,40 +722,24 @@ go_type_table = {
 			local side_id = side.side_id
 			local ai_group_system = Managers.state.entity:system("ai_group_system")
 			local ai_group_id = ai_group_system:get_group_id(unit)
-			local tbl = {
+			local data_table = {
 				show_health_bar = false,
 				attack_arm = 1,
 				has_teleported = 1,
 				go_type = NetworkLookup.go_types.ai_unit_stormfiend,
 				husk_unit = NetworkLookup.husks[unit_name],
-				health = ScriptUnit.extension(unit, "health_system"):get_max_health()
+				health = ScriptUnit.extension(unit, "health_system"):get_max_health(),
+				position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+				yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+				velocity = Vector3.zero(),
+				breed_name = NetworkLookup.breeds[breed.name],
+				uniform_scale = size_variation,
+				inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name],
+				aim_target = Vector3.zero(),
+				bt_action_name = NetworkLookup.bt_action_names["n/a"],
+				side_id = side_id,
+				ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
 			}
-			local position
-
-			if mover then
-				position = Mover.position(mover)
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.local_position(unit, 0)
-
-			::label_23_0::
-
-			tbl.position = position
-			tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-			tbl.velocity = Vector3.zero()
-			tbl.breed_name = NetworkLookup.breeds[breed.name]
-			tbl.uniform_scale = size_variation
-			tbl.inventory_configuration = NetworkLookup.ai_inventory[inventory_configuration_name]
-			tbl.aim_target = Vector3.zero()
-			tbl.bt_action_name = NetworkLookup.bt_action_names["n/a"]
-			tbl.side_id = side_id
-			tbl.ai_group_id = not not ai_group_id or not not AIGroupSystem.invalid_group_uid
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -1100,7 +763,7 @@ go_type_table = {
 			local sub_action_name = projectile_extension.action_lookup_data.sub_action_name
 			local scale = projectile_extension.scale * 100
 			local power_level = projectile_extension.power_level
-			local tbl = {
+			local data_table = {
 				go_type = NetworkLookup.go_types.player_projectile_unit,
 				husk_unit = NetworkLookup.husks[unit_name],
 				position = Unit.local_position(unit, 0),
@@ -1110,33 +773,17 @@ go_type_table = {
 				target_vector = target_vector,
 				speed = speed,
 				gravity_settings = NetworkLookup.projectile_gravity_settings[gravity_settings],
-				trajectory_template_name = NetworkLookup.projectile_templates[trajectory_template_name]
+				trajectory_template_name = NetworkLookup.projectile_templates[trajectory_template_name],
+				owner_unit = Unit.alive(owner_unit) and not not Managers.state.network:unit_game_object_id(owner_unit) or not Unit.alive(owner_unit) and not not 0,
+				item_name = NetworkLookup.item_names[item_name],
+				item_template_name = NetworkLookup.item_template_names[item_template_name],
+				action_name = NetworkLookup.actions[action_name],
+				sub_action_name = NetworkLookup.sub_actions[sub_action_name],
+				scale = scale,
+				fast_forward_time = fast_forward_time,
+				rotation_speed = rotation_speed,
+				power_level = power_level
 			}
-			local unit_game_object_id
-
-			if Unit.alive(owner_unit) then
-				unit_game_object_id = Managers.state.network:unit_game_object_id(owner_unit)
-
-				if not unit_game_object_id then
-					-- Nothing
-				end
-			end
-
-			unit_game_object_id = 0
-
-			::label_24_0::
-
-			tbl.owner_unit = unit_game_object_id
-			tbl.item_name = NetworkLookup.item_names[item_name]
-			tbl.item_template_name = NetworkLookup.item_template_names[item_template_name]
-			tbl.action_name = NetworkLookup.actions[action_name]
-			tbl.sub_action_name = NetworkLookup.sub_actions[sub_action_name]
-			tbl.scale = scale
-			tbl.fast_forward_time = fast_forward_time
-			tbl.rotation_speed = rotation_speed
-			tbl.power_level = power_level
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -1159,57 +806,26 @@ go_type_table = {
 			local scale = projectile_extension.scale * 100
 			local power_level = projectile_extension.power_level
 			local charge_level = projectile_extension.charge_level * 100
-			local tbl = {
+			local data_table = {
 				go_type = NetworkLookup.go_types.sticky_projectile_unit,
 				husk_unit = NetworkLookup.husks[unit_name],
 				position = Unit.local_position(unit, 0),
 				rotation = Unit.local_rotation(unit, 0),
 				initial_position = initial_position,
 				target_vector = target_vector,
-				speed = speed
+				speed = speed,
+				owner_unit = Unit.alive(owner_unit) and not not Managers.state.network:unit_game_object_id(owner_unit) or not Unit.alive(owner_unit) and not not 0,
+				item_name = NetworkLookup.item_names[item_name],
+				item_template_name = NetworkLookup.item_template_names[item_template_name],
+				action_name = NetworkLookup.actions[action_name],
+				sub_action_name = NetworkLookup.sub_actions[sub_action_name],
+				scale = scale,
+				power_level = power_level,
+				target_unit = Unit.alive(target_unit) and not not Managers.state.network:unit_game_object_id(target_unit) or not Unit.alive(target_unit) and not not 0,
+				stopped = stopped,
+				seed = seed,
+				charge_level = charge_level
 			}
-			local unit_game_object_id
-
-			if Unit.alive(owner_unit) then
-				unit_game_object_id = Managers.state.network:unit_game_object_id(owner_unit)
-
-				if not unit_game_object_id then
-					-- Nothing
-				end
-			end
-
-			unit_game_object_id = 0
-
-			::label_25_0::
-
-			tbl.owner_unit = unit_game_object_id
-			tbl.item_name = NetworkLookup.item_names[item_name]
-			tbl.item_template_name = NetworkLookup.item_template_names[item_template_name]
-			tbl.action_name = NetworkLookup.actions[action_name]
-			tbl.sub_action_name = NetworkLookup.sub_actions[sub_action_name]
-			tbl.scale = scale
-			tbl.power_level = power_level
-
-			local unit_game_object_id_2
-
-			if Unit.alive(target_unit) then
-				unit_game_object_id_2 = Managers.state.network:unit_game_object_id(target_unit)
-
-				if not unit_game_object_id_2 then
-					-- Nothing
-				end
-			end
-
-			unit_game_object_id_2 = 0
-
-			::label_25_1::
-
-			tbl.target_unit = unit_game_object_id_2
-			tbl.stopped = stopped
-			tbl.seed = seed
-			tbl.charge_level = charge_level
-
-			local data_table = tbl
 
 			return data_table
 		end,
@@ -1625,17 +1241,7 @@ go_type_table = {
 			local explode_time = 0
 			local fuse_time = 0
 			local tutorial_extension = ScriptUnit.extension(unit, "tutorial_system")
-			local always_show_2 = tutorial_extension.always_show
-
-			if not always_show_2 then
-				-- Nothing
-			end
-
-			always_show_2 = false
-
-			local always_show = always_show_2
-
-			::label_44_0::
+			local always_show = not not tutorial_extension.always_show
 
 			if health_extension.ignited then
 				local data = health_extension:health_data()
@@ -1644,18 +1250,7 @@ go_type_table = {
 				fuse_time = data.fuse_time
 			end
 
-			local item_name_2 = death_extension.item_name
-
-			if not item_name_2 then
-				-- Nothing
-			end
-
-			item_name_2 = AllPickups[pickup_name].item_name
-
-			local item_name = item_name_2
-
-			::label_44_1::
-
+			local item_name = not not death_extension.item_name
 			local data_table = {
 				go_type = NetworkLookup.go_types.explosive_pickup_projectile_unit,
 				husk_unit = NetworkLookup.husks[unit_name],
@@ -1698,17 +1293,7 @@ go_type_table = {
 			local explode_time = 0
 			local fuse_time = 0
 			local tutorial_extension = ScriptUnit.extension(unit, "tutorial_system")
-			local always_show_2 = tutorial_extension.always_show
-
-			if not always_show_2 then
-				-- Nothing
-			end
-
-			always_show_2 = false
-
-			local always_show = always_show_2
-
-			::label_45_0::
+			local always_show = not not tutorial_extension.always_show
 
 			if health_extension.ignited then
 				local data = health_extension:health_data()
@@ -1717,18 +1302,7 @@ go_type_table = {
 				fuse_time = data.fuse_time
 			end
 
-			local item_name_2 = death_extension.item_name
-
-			if not item_name_2 then
-				-- Nothing
-			end
-
-			item_name_2 = AllPickups[pickup_name].item_name
-
-			local item_name = item_name_2
-
-			::label_45_1::
-
+			local item_name = not not death_extension.item_name
 			local spawner_unit_index, spawner_unit_is_level_unit = Managers.state.network:game_object_or_level_id(spawner_unit)
 			local data_table = {
 				go_type = NetworkLookup.go_types.explosive_pickup_projectile_unit_limited,
@@ -2296,18 +1870,7 @@ go_type_table = {
 			local spawn_type = pickup_extension.spawn_type
 			local owner_peer_id = pickup_extension.owner_peer_id
 			local spawn_limit = pickup_extension.spawn_limit
-			local material_settings_name_2 = pickup_extension.material_settings_name
-
-			if not material_settings_name_2 then
-				-- Nothing
-			end
-
-			material_settings_name_2 = "n/a"
-
-			local material_settings_name = material_settings_name_2
-
-			::label_61_0::
-
+			local material_settings_name = not not pickup_extension.material_settings_name
 			local data_table = {
 				go_type = NetworkLookup.go_types.limited_owned_pickup_unit,
 				husk_unit = NetworkLookup.husks[unit_name],
@@ -2358,22 +1921,7 @@ go_type_table = {
 			local has_physics = pickup_system.has_physics
 			local spawn_type = pickup_system.spawn_type
 			local tutorial_extension = ScriptUnit.has_extension(unit, "tutorial_system")
-			local always_show_2
-
-			if tutorial_extension then
-				always_show_2 = tutorial_extension.always_show
-
-				if not always_show_2 then
-					-- Nothing
-				end
-			end
-
-			always_show_2 = false
-
-			local always_show = always_show_2
-
-			::label_63_0::
-
+			local always_show = tutorial_extension and not not tutorial_extension.always_show or not tutorial_extension and not not false
 			local data_table = {
 				go_type = NetworkLookup.go_types.objective_pickup_unit,
 				husk_unit = NetworkLookup.husks[unit_name],
@@ -2602,7 +2150,7 @@ go_type_table = {
 				go_type = NetworkLookup.go_types.dialogue_node,
 				husk_unit = NetworkLookup.husks[unit_name],
 				dialogue_profile = NetworkLookup.dialogue_profiles[dialogue_profile],
-				side_id = (not side_id or not (side_id > 0) or not side_id) and not not nil
+				side_id = side_id and (side_id > 0 and (not not side_id or not not nil) or not (side_id > 0) and not not nil) or not side_id and not not nil
 			}
 
 			return data_table
@@ -2631,18 +2179,7 @@ go_type_table = {
 
 			fassert(profile, "No such profile with index %s", tostring(profile_id))
 
-			local aim_template_2 = profile.aim_template
-
-			if not aim_template_2 then
-				-- Nothing
-			end
-
-			aim_template_2 = "player"
-
-			local aim_template = aim_template_2
-
-			::label_82_0::
-
+			local aim_template = not not profile.aim_template
 			local career = profile.careers[career_id]
 			local sound_character = career.sound_character
 
@@ -2668,31 +2205,9 @@ go_type_table = {
 			local skin_name = NetworkLookup.cosmetics[skin_id]
 			local frame_name = NetworkLookup.cosmetics[frame_id]
 			local career_name = career.name
-			local var_82_1 = OverchargeData[career_name]
-
-			if not var_82_1 then
-				-- Nothing
-			end
-
-			var_82_1 = {}
-
-			local overcharge_data = var_82_1
-
-			::label_82_1::
-
+			local overcharge_data = not not OverchargeData[career_name]
 			local overcharge_max_value = GameSession.game_object_field(game_session, go_id, "overcharge_max_value")
-			local var_82_2 = EnergyData[career_name]
-
-			if not var_82_2 then
-				-- Nothing
-			end
-
-			var_82_2 = {}
-
-			local energy_data = var_82_2
-
-			::label_82_2::
-
+			local energy_data = not not EnergyData[career_name]
 			local energy_max_value = GameSession.game_object_field(game_session, go_id, "energy_max_value")
 			local unique_id = player:unique_id()
 			local status = Managers.party:get_status_from_unique_id(unique_id)
@@ -2818,17 +2333,7 @@ go_type_table = {
 					player = player
 				}
 			}
-			local unit_template_name_2 = profile.unit_template_name
-
-			if not unit_template_name_2 then
-				-- Nothing
-			end
-
-			unit_template_name_2 = "player_unit_3rd"
-
-			local unit_template_name = unit_template_name_2
-
-			::label_82_3::
+			local unit_template_name = not not profile.unit_template_name
 
 			return unit_template_name, extension_init_data
 		end,
@@ -2869,31 +2374,9 @@ go_type_table = {
 			local skin_name = NetworkLookup.cosmetics[skin_id]
 			local frame_name = NetworkLookup.cosmetics[frame_id]
 			local career_name = career.name
-			local var_83_0 = OverchargeData[career_name]
-
-			if not var_83_0 then
-				-- Nothing
-			end
-
-			var_83_0 = {}
-
-			local overcharge_data = var_83_0
-
-			::label_83_0::
-
+			local overcharge_data = not not OverchargeData[career_name]
 			local overcharge_max_value = GameSession.game_object_field(game_session, go_id, "overcharge_max_value")
-			local var_83_1 = EnergyData[career_name]
-
-			if not var_83_1 then
-				-- Nothing
-			end
-
-			var_83_1 = {}
-
-			local energy_data = var_83_1
-
-			::label_83_1::
-
+			local energy_data = not not EnergyData[career_name]
 			local energy_max_value = GameSession.game_object_field(game_session, go_id, "energy_max_value")
 			local unique_id = player:unique_id()
 			local status = Managers.party:get_status_from_unique_id(unique_id)
@@ -3905,22 +3388,7 @@ go_type_table = {
 			local action_name = NetworkLookup.actions[action_name_id]
 			local sub_action_name = NetworkLookup.sub_actions[sub_action_name_id]
 			local power_level = GameSession.game_object_field(game_session, go_id, "power_level")
-			local unit_2
-
-			if owner_unit_id ~= 0 then
-				unit_2 = Managers.state.unit_storage:unit(owner_unit_id)
-
-				if not unit_2 then
-					-- Nothing
-				end
-			end
-
-			unit_2 = nil
-
-			local owner_unit = unit_2
-
-			::label_103_0::
-
+			local owner_unit = owner_unit_id == 0 and not not nil or not (owner_unit_id == 0) and not not Managers.state.unit_storage:unit(owner_unit_id)
 			local extension_init_data = {
 				projectile_locomotion_system = {
 					is_husk = true,
@@ -3951,17 +3419,7 @@ go_type_table = {
 			local item_template = WeaponUtils.get_weapon_template(item_template_name)
 			local action = item_template.actions[action_name][sub_action_name]
 			local projectile_info = action.projectile_info
-			local projectile_unit_template_name = projectile_info.projectile_unit_template_name
-
-			if not projectile_unit_template_name then
-				-- Nothing
-			end
-
-			projectile_unit_template_name = "player_projectile_unit"
-
-			local unit_template_name = projectile_unit_template_name
-
-			::label_103_1::
+			local unit_template_name = not not projectile_info.projectile_unit_template_name
 
 			return unit_template_name, extension_init_data
 		end,
@@ -3985,40 +3443,8 @@ go_type_table = {
 			local action_name = NetworkLookup.actions[action_name_id]
 			local sub_action_name = NetworkLookup.sub_actions[sub_action_name_id]
 			local power_level = GameSession.game_object_field(game_session, go_id, "power_level")
-			local unit_2
-
-			if owner_unit_id ~= 0 then
-				unit_2 = Managers.state.unit_storage:unit(owner_unit_id)
-
-				if not unit_2 then
-					-- Nothing
-				end
-			end
-
-			unit_2 = nil
-
-			local owner_unit = unit_2
-
-			do
-				local unit_3
-			end
-
-			::label_104_0::
-
-			if target_unit_id ~= 0 then
-				unit_3 = Managers.state.unit_storage:unit(target_unit_id)
-
-				if not unit_3 then
-					-- Nothing
-				end
-			end
-
-			unit_3 = nil
-
-			local target_unit = unit_3
-
-			::label_104_1::
-
+			local owner_unit = owner_unit_id == 0 and not not nil or not (owner_unit_id == 0) and not not Managers.state.unit_storage:unit(owner_unit_id)
+			local target_unit = target_unit_id == 0 and not not nil or not (target_unit_id == 0) and not not Managers.state.unit_storage:unit(target_unit_id)
 			local extension_init_data = {
 				projectile_locomotion_system = {
 					is_husk = true,
@@ -4049,17 +3475,7 @@ go_type_table = {
 			local item_template = WeaponUtils.get_weapon_template(item_template_name)
 			local action = item_template.actions[action_name][sub_action_name]
 			local projectile_info = action.projectile_info
-			local projectile_unit_template_name = projectile_info.projectile_unit_template_name
-
-			if not projectile_unit_template_name then
-				-- Nothing
-			end
-
-			projectile_unit_template_name = "player_projectile_unit"
-
-			local unit_template_name = projectile_unit_template_name
-
-			::label_104_2::
+			local unit_template_name = not not projectile_info.projectile_unit_template_name
 
 			return unit_template_name, extension_init_data
 		end,
@@ -5392,7 +4808,7 @@ go_type_table = {
 			local dialogue_profile_id = GameSession.game_object_field(game_session, go_id, "dialogue_profile")
 			local side_id = GameSession.game_object_field(game_session, go_id, "side_id")
 
-			side_id = (not (side_id > 0) or not side_id) and not not nil
+			side_id = side_id > 0 and (not not side_id or not not nil) or not (side_id > 0) and not not nil
 
 			local extension_init_data = {
 				dialogue_system = {

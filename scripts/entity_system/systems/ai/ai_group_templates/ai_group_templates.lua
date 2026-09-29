@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/ai/ai_group_templates/ai_group_templates.lua
 
-local AIGroupTemplates = AIGroupTemplates
-
-AIGroupTemplates = not not AIGroupTemplates or not not {}
-AIGroupTemplates = AIGroupTemplates
+AIGroupTemplates = not not AIGroupTemplates
 
 local ScriptUnit_extension = ScriptUnit.extension
 local BLACKBOARDS = BLACKBOARDS
@@ -51,24 +48,7 @@ AIGroupTemplates.horde = {
 	end,
 	destroy = function (world, nav_world, group)
 		-- function 8
-		local conflict = Managers.state.conflict
-		local var_8_1 = conflict
-		local horde_killed = conflict.horde_killed
-		local horde_wave
-
-		if group.group_data then
-			horde_wave = group.group_data.horde_wave
-
-			if not horde_wave then
-				-- Nothing
-			end
-		end
-
-		horde_wave = "?"
-
-		::label_8_0::
-
-		horde_killed(var_8_1, horde_wave)
+		Managers.state.conflict:horde_killed(group.group_data and not not group.group_data.horde_wave or not group.group_data and not not "?")
 		Managers.state.conflict.horde_spawner:set_horde_is_done(group.id)
 	end
 }

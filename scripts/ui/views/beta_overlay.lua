@@ -1,16 +1,7 @@
 -- chunkname: @scripts/ui/views/beta_overlay.lua
 
-local script_data = script_data
-local text_watermark = script_data.text_watermark
-
-text_watermark = not not text_watermark or not not script_data.settings.text_watermark
-script_data.text_watermark = text_watermark
-
-local script_data_2 = script_data
-local qr_watermark = script_data.qr_watermark
-
-qr_watermark = not not qr_watermark or not not script_data.settings.qr_watermark
-script_data_2.qr_watermark = qr_watermark
+script_data.text_watermark = not not script_data.text_watermark
+script_data.qr_watermark = not not script_data.qr_watermark
 
 local Vector3, Gui = Vector3, Gui
 
@@ -37,10 +28,8 @@ BetaOverlay.init = function (self, world)
 	self._mechanism_key = Managers.mechanism:current_mechanism_name()
 
 	local disclaimer = script_data.text_watermark_disclaimer
-	local flag
 
-	flag = (type(disclaimer) == "string" or not "May not be representative of final product.") and not not disclaimer
-	self._disclaimer = flag
+	self._disclaimer = type(disclaimer) == "string" and not not disclaimer or not (type(disclaimer) == "string") and not not "May not be representative of final product."
 
 	print("beta overlay got watermark:", self._watermark, self._label, self._disclaimer)
 end
@@ -126,31 +115,7 @@ end
 
 BetaOverlay._generate_qr = function (self)
 	-- function 7
-	local format = string.format
-	local str = "%16s:%8s:%12s:%08x"
-	local user_id
-
-	if HAS_STEAM then
-		user_id = Steam.user_id()
-
-		if not user_id then
-			-- Nothing
-		end
-	end
-
-	user_id = ""
-
-	::label_7_0::
-
-	local content_revision = script_data.settings.content_revision
-
-	content_revision = not not content_revision or not not ""
-
-	local build_identifier = script_data.build_identifier
-
-	build_identifier = not not build_identifier or not not ""
-
-	local message = format(str, user_id, content_revision, build_identifier, os.time()):gsub(" ", "0")
+	local message = string.format("%16s:%8s:%12s:%08x", HAS_STEAM and not not Steam.user_id() or not HAS_STEAM and not not "", not not script_data.settings.content_revision, not not script_data.build_identifier, os.time()):gsub(" ", "0")
 	local QR = dofile("scripts/ui/qr/qrencode")
 	local ok, data_or_err = QR.qrcode(message)
 
@@ -210,17 +175,7 @@ BetaOverlay._reload = function (self)
 	self._label_id = nil
 	self._disclaimer_id = nil
 
-	local _watermark = self._watermark
-
-	if not _watermark then
-		-- Nothing
-	end
-
-	_watermark = script_data.watermark
-
-	local watermark = _watermark
-
-	::label_11_0::
+	local watermark = not not self._watermark
 
 	if watermark then
 		local watermark_func = watermarks[watermark]

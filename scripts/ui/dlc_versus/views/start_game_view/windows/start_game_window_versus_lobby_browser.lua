@@ -32,16 +32,7 @@ StartGameWindowVersusLobbyBrowser.on_enter = function (self, params, offset)
 	self._stats_id = local_player:stats_id()
 	self._friend_names = {}
 
-	local LobbyFinder = LobbyFinder
-	local var_1_1 = LobbyFinder
-	local new = LobbyFinder.new
-	local var_1_3 = network_options
-	local MAX_NUM_LOBBIES = MatchmakingSettings.MAX_NUM_LOBBIES
-	local IS_WINDOWS = IS_WINDOWS
-
-	IS_WINDOWS = not not IS_WINDOWS and not not true
-
-	local lobby_finder = new(var_1_1, var_1_3, MAX_NUM_LOBBIES, IS_WINDOWS)
+	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, not not IS_WINDOWS)
 
 	self._lobby_finder = lobby_finder
 
@@ -93,15 +84,5 @@ StartGameWindowVersusLobbyBrowser.update = function (self, dt, t)
 	end
 
 	self:_update_auto_refresh(dt)
-
-	local _lobby_browser_console_ui = self._lobby_browser_console_ui
-	local var_4_1 = _lobby_browser_console_ui
-	local update = _lobby_browser_console_ui.update
-	local var_4_3 = dt
-	local var_4_4 = t
-	local _searching = self._searching
-
-	_searching = not not _searching and not not self._do_populate
-
-	update(var_4_1, var_4_3, var_4_4, _searching)
+	self._lobby_browser_console_ui:update(dt, t, not not self._searching)
 end

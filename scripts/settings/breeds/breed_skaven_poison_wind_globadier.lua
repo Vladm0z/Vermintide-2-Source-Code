@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_poison_wind_globadier.lua
 
-local tbl = {
+local breed_data = {
 	flingable = true,
 	walk_speed = 2.5,
 	minion_detection_radius = 20,
@@ -69,164 +69,158 @@ local tbl = {
 		200,
 		200,
 		0
-	}
-}
-local setting = Development.setting("disable_globadier")
+	},
+	disabled = not not Development.setting("disable_globadier"),
+	hitzone_multiplier_types = {
+		head = "headshot"
+	},
+	hit_zones = {
+		head = {
+			prio = 1,
+			actors = {
+				"c_head"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		neck = {
+			prio = 1,
+			actors = {
+				"c_neck"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		torso = {
+			prio = 2,
+			actors = {
+				"c_hips",
+				"c_spine",
+				"c_spine2",
+				"c_leftshoulder",
+				"c_rightshoulder"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_arm = {
+			prio = 3,
+			actors = {
+				"c_leftarm",
+				"c_leftforearm",
+				"c_lefthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		right_arm = {
+			prio = 3,
+			actors = {
+				"c_rightarm",
+				"c_rightforearm",
+				"c_righthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_leg = {
+			prio = 3,
+			actors = {
+				"c_leftleg",
+				"c_leftupleg",
+				"c_leftfoot",
+				"c_lefttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		right_leg = {
+			prio = 3,
+			actors = {
+				"c_rightleg",
+				"c_rightupleg",
+				"c_rightfoot",
+				"c_righttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		tail = {
+			prio = 3,
+			actors = {
+				"c_tail1",
+				"c_tail2",
+				"c_tail3",
+				"c_tail4",
+				"c_tail5",
+				"c_tail6"
+			},
+			push_actors = {
+				"j_hips"
+			}
+		},
+		aux = {
+			prio = 4,
+			actors = {
+				"c_compressor_valve",
+				"c_compressor",
+				"c_backpack_can",
+				"c_backpack_bag",
+				"c_ballsling_ball"
+			},
+			push_actors = {
+				"j_backpack_root"
+			}
+		},
+		full = {
+			prio = 5,
+			actors = {}
+		},
+		afro = {
+			prio = 6,
+			actors = {
+				"c_afro"
+			}
+		}
+	},
+	allowed_layers = {
+		planks = 1.5,
+		ledges = 5,
+		bot_ratling_gun_fire = 10,
+		jumps = 5,
+		destructible_wall = 0,
+		temporary_wall = 0,
+		ledges_with_fence = 5,
+		doors = 1.5,
+		teleporters = 5,
+		bot_poison_wind = 2,
+		fire_grenade = 10
+	},
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
+		-- function 1
+		local blackboard = BLACKBOARDS[unit]
 
-setting = not not setting or not not false
-tbl.disabled = setting
-tbl.hitzone_multiplier_types = {
-	head = "headshot"
-}
-tbl.hit_zones = {
-	head = {
-		prio = 1,
-		actors = {
-			"c_head"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	neck = {
-		prio = 1,
-		actors = {
-			"c_neck"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	torso = {
-		prio = 2,
-		actors = {
-			"c_hips",
-			"c_spine",
-			"c_spine2",
-			"c_leftshoulder",
-			"c_rightshoulder"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_arm = {
-		prio = 3,
-		actors = {
-			"c_leftarm",
-			"c_leftforearm",
-			"c_lefthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	right_arm = {
-		prio = 3,
-		actors = {
-			"c_rightarm",
-			"c_rightforearm",
-			"c_righthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_leg = {
-		prio = 3,
-		actors = {
-			"c_leftleg",
-			"c_leftupleg",
-			"c_leftfoot",
-			"c_lefttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	right_leg = {
-		prio = 3,
-		actors = {
-			"c_rightleg",
-			"c_rightupleg",
-			"c_rightfoot",
-			"c_righttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	tail = {
-		prio = 3,
-		actors = {
-			"c_tail1",
-			"c_tail2",
-			"c_tail3",
-			"c_tail4",
-			"c_tail5",
-			"c_tail6"
-		},
-		push_actors = {
-			"j_hips"
-		}
-	},
-	aux = {
-		prio = 4,
-		actors = {
-			"c_compressor_valve",
-			"c_compressor",
-			"c_backpack_can",
-			"c_backpack_bag",
-			"c_ballsling_ball"
-		},
-		push_actors = {
-			"j_backpack_root"
-		}
-	},
-	full = {
-		prio = 5,
-		actors = {}
-	},
-	afro = {
-		prio = 6,
-		actors = {
-			"c_afro"
-		}
-	}
-}
-tbl.allowed_layers = {
-	planks = 1.5,
-	ledges = 5,
-	bot_ratling_gun_fire = 10,
-	jumps = 5,
-	destructible_wall = 0,
-	temporary_wall = 0,
-	ledges_with_fence = 5,
-	doors = 1.5,
-	teleporters = 5,
-	bot_poison_wind = 2,
-	fire_grenade = 10
-}
+		if not Unit.alive(killer_unit) then
+			return
+		end
 
-tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
-	-- function 1
-	local blackboard = BLACKBOARDS[unit]
-
-	if not Unit.alive(killer_unit) then
-		return
+		QuestSettings.check_globadier_kill_before_throwing(blackboard, killer_unit)
+		QuestSettings.check_globadier_kill_during_suicide(blackboard, unit, killer_unit)
 	end
-
-	QuestSettings.check_globadier_kill_before_throwing(blackboard, killer_unit)
-	QuestSettings.check_globadier_kill_during_suicide(blackboard, unit, killer_unit)
-end
-
-local breed_data = tbl
+}
 
 Breeds.skaven_poison_wind_globadier = table.create_copy(Breeds.skaven_poison_wind_globadier, breed_data)
 

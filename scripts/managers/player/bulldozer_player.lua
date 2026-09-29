@@ -1,11 +1,7 @@
 -- chunkname: @scripts/managers/player/bulldozer_player.lua
 
 BulldozerPlayer = class(BulldozerPlayer, Player)
-
-local EnergyData = EnergyData
-
-EnergyData = not not EnergyData or not not {}
-EnergyData = EnergyData
+EnergyData = not not EnergyData
 
 BulldozerPlayer.init = function (self, network_manager, input_source, viewport_name, viewport_world_name, is_server, local_player_id, unique_id, ui_id, backend_id)
 	-- function 1
@@ -191,18 +187,7 @@ BulldozerPlayer.spawn = function (self, optional_position, optional_rotation, is
 		self.spawn_rotation = nil
 	end
 
-	local aim_template_2 = profile.aim_template
-
-	if not aim_template_2 then
-		-- Nothing
-	end
-
-	aim_template_2 = "player"
-
-	local aim_template = aim_template_2
-
-	::label_14_0::
-
+	local aim_template = not not profile.aim_template
 	local initial_inventory = game_mode_manager:get_initial_inventory(healthkit, potion, grenade, additional_items, profile)
 	local hero_name = profile.display_name
 	local career = profile.careers[career_index]
@@ -219,22 +204,7 @@ BulldozerPlayer.spawn = function (self, optional_position, optional_rotation, is
 
 	skin_item = not not skin_item or not not BackendUtils.try_set_loadout_item(career_name, "slot_skin", base_skin)
 
-	local name
-
-	if skin_item then
-		name = skin_item.data.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = base_skin
-
-	local skin_name = name
-
-	::label_14_1::
-
+	local skin_name = skin_item and not not skin_item.data.name or not skin_item and not not base_skin
 	local skin_data = Cosmetics[skin_name]
 	local frame_item = BackendUtils.get_loadout_item(career_name, "slot_frame")
 
@@ -244,115 +214,19 @@ BulldozerPlayer.spawn = function (self, optional_position, optional_rotation, is
 
 	pose_item = not not pose_item or not not BackendUtils.try_set_loadout_item(career_name, "slot_pose", "default_weapon_pose_01")
 
-	local data
-
-	if pose_item then
-		data = pose_item.data
-
-		if not data then
-			-- Nothing
-		end
-	end
-
-	data = nil
-
-	local pose_data = data
-
-	do
-		local name_2
-	end
-
-	::label_14_2::
-
-	if pose_data then
-		name_2 = pose_data.name
-
-		if not name_2 then
-			-- Nothing
-		end
-	end
-
-	name_2 = nil
-
-	local pose_name = name_2
-
-	do
-		local name_3
-	end
-
-	::label_14_3::
-
-	if frame_item then
-		name_3 = frame_item.data.name
-
-		if not name_3 then
-			-- Nothing
-		end
-	end
-
-	name_3 = base_frame
-
-	local frame_name = name_3
-
-	::label_14_4::
-
-	local var_14_5 = OverchargeData[career_name]
-
-	if not var_14_5 then
-		-- Nothing
-	end
-
-	var_14_5 = {}
-
-	local overcharge_data = var_14_5
-
-	::label_14_5::
-
-	local var_14_6 = EnergyData[career_name]
-
-	if not var_14_6 then
-		-- Nothing
-	end
-
-	var_14_6 = {}
-
-	local energy_data = var_14_6
-
-	::label_14_6::
-
-	local dialogue_faction = profile.dialogue_faction
-
-	if not dialogue_faction then
-		-- Nothing
-	end
-
-	dialogue_faction = "player"
-
-	local faction = dialogue_faction
-
-	::label_14_7::
-
+	local pose_data = pose_item and not not pose_item.data or not pose_item and not not nil
+	local pose_name = pose_data and not not pose_data.name or not pose_data and not not nil
+	local frame_name = frame_item and not not frame_item.data.name or not frame_item and not not base_frame
+	local overcharge_data = not not OverchargeData[career_name]
+	local energy_data = not not EnergyData[career_name]
+	local faction = not not profile.dialogue_faction
 	local status = Managers.party:get_status_from_unique_id(self._unique_id)
-	local game_mode_data = status.game_mode_data
-	local flag
 
-	flag = (status.game_mode_data.first_spawn ~= nil or not true) and not not false
-	game_mode_data.first_spawn = flag
+	status.game_mode_data.first_spawn = status.game_mode_data.first_spawn ~= nil and not not false or not (status.game_mode_data.first_spawn ~= nil) and not not true
 
 	local party = Managers.party:get_party(status.party_id)
 	local side = Managers.state.side.side_by_party[party]
-	local breed_2 = career.breed
-
-	if not breed_2 then
-		-- Nothing
-	end
-
-	breed_2 = profile.breed
-
-	local breed = breed_2
-
-	::label_14_8::
-
+	local breed = not not career.breed
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 	local extension_init_data = {
 		input_system = {
@@ -555,24 +429,15 @@ end
 
 BulldozerPlayer.create_game_object = function (self)
 	-- function 15
-	local tbl = {
+	local game_object_data_table = {
 		ping = 0,
 		player_controlled = true,
 		go_type = NetworkLookup.go_types.player,
 		network_id = self:network_id(),
-		local_player_id = self:local_player_id()
+		local_player_id = self:local_player_id(),
+		clan_tag = not not Application.user_setting("clan_tag"),
+		account_id = not not Managers.account:account_id()
 	}
-	local user_setting = Application.user_setting("clan_tag")
-
-	user_setting = not not user_setting or not not "0"
-	tbl.clan_tag = user_setting
-
-	local account_id = Managers.account:account_id()
-
-	account_id = not not account_id or not not "0"
-	tbl.account_id = account_id
-
-	local game_object_data_table = tbl
 	local callback = callback(self, "cb_game_session_disconnect")
 	local game_object_id = self.network_manager:create_player_game_object("player", game_object_data_table, callback)
 
@@ -642,11 +507,7 @@ end
 
 BulldozerPlayer.telemetry_id = function (self)
 	-- function 26
-	local _backend_id = self._backend_id
-
-	_backend_id = not not _backend_id or not not self._unique_id
-
-	return _backend_id
+	return not not self._backend_id
 end
 
 BulldozerPlayer.is_player_controlled = function (self)
@@ -661,11 +522,7 @@ end
 
 BulldozerPlayer.sync_data_active = function (self)
 	-- function 29
-	local _player_sync_data = self._player_sync_data
-
-	_player_sync_data = not not _player_sync_data and not not self._player_sync_data:active()
-
-	return _player_sync_data
+	return not not self._player_sync_data
 end
 
 BulldozerPlayer.set_data = function (self, key, value)
@@ -707,11 +564,7 @@ end
 
 BulldozerPlayer.cached_name = function (self)
 	-- function 34
-	local _cached_name = self._cached_name
-
-	_cached_name = not not _cached_name or not not self._debug_name
-
-	return _cached_name
+	return not not self._cached_name
 end
 
 BulldozerPlayer.destroy = function (self)

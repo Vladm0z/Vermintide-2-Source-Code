@@ -14,30 +14,12 @@ end
 VersusMissionObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 2
 	local mission_default_settings = GameModeSettings.versus.objectives.mission
-	local score_for_completion = objective_data.score_for_completion
 
-	score_for_completion = not not score_for_completion or not not mission_default_settings.score_for_completion
-	self._score_for_completion = score_for_completion
-
-	local time_for_completion = objective_data.time_for_completion
-
-	time_for_completion = not not time_for_completion or not not mission_default_settings.time_for_completion
-	self._time_for_completion = time_for_completion
-
-	local on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
-
-	on_last_leaf_complete_sound_event = not not on_last_leaf_complete_sound_event or not not mission_default_settings.on_last_leaf_complete_sound_event
-	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
-
-	local on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
-
-	on_leaf_complete_sound_event = not not on_leaf_complete_sound_event or not not mission_default_settings.on_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
-
-	local on_section_progress_sound_event = objective_data.on_section_progress_sound_event
-
-	on_section_progress_sound_event = not not on_section_progress_sound_event or not not mission_default_settings.on_section_progress_sound_event
-	self._on_section_progress_sound_event = on_section_progress_sound_event
+	self._score_for_completion = not not objective_data.score_for_completion
+	self._time_for_completion = not not objective_data.time_for_completion
+	self._on_last_leaf_complete_sound_event = not not objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = not not objective_data.on_leaf_complete_sound_event
+	self._on_section_progress_sound_event = not not objective_data.on_section_progress_sound_event
 	self._mission_name = objective_data.mission_name
 end
 

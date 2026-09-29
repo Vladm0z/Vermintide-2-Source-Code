@@ -37,13 +37,8 @@ BTPackMasterDragAction.enter = function (self, unit, blackboard, t)
 
 	local walk_speed = blackboard.breed.walk_speed
 	local navigation_extension = blackboard.navigation_extension
-	local var_2_0 = navigation_extension
-	local set_max_speed = navigation_extension.set_max_speed
-	local override_movement_speed = action.override_movement_speed
 
-	override_movement_speed = not not override_movement_speed or not not walk_speed
-
-	set_max_speed(var_2_0, override_movement_speed)
+	navigation_extension:set_max_speed(not not action.override_movement_speed)
 	AiUtils.allow_smart_object_layers(navigation_extension, false)
 
 	blackboard.destination_test_astar = GwNavAStar.create()
@@ -318,27 +313,7 @@ BTPackMasterDragAction.find_destinations = function (self, unit, blackboard, t, 
 
 	if script_data.debug_ai_movement then
 		QuickDrawerStay:vector(position, blackboard.last_path_direction:unbox() * 2, Colors.get("purple"))
-
-		local QuickDrawerStay = QuickDrawerStay
-		local var_9_1 = QuickDrawerStay
-		local sphere = QuickDrawerStay.sphere
-		local num = position + Vector3.up() * 1.7
-		local num_2 = 0.5
-		local get
-
-		if blackboard.threatened then
-			get = Colors.get("red")
-
-			if not get then
-				-- Nothing
-			end
-		end
-
-		get = Colors.get("yellow")
-
-		::label_9_0::
-
-		sphere(var_9_1, num, num_2, get)
+		QuickDrawerStay:sphere(position + Vector3.up() * 1.7, 0.5, blackboard.threatened and not not Colors.get("red") or not blackboard.threatened and not not Colors.get("yellow"))
 	end
 end
 
@@ -529,47 +504,8 @@ BTPackMasterDragAction.find_nav_group_neighbour = function (self, blackboard, po
 		local dir_score_modifier = math.max(0, dir_dot)
 
 		if script_data.debug_ai_movement then
-			local QuickDrawerStay = QuickDrawerStay
-			local var_14_1 = QuickDrawerStay
-			local sphere = QuickDrawerStay.sphere
-			local var_14_3 = nav_group_position
-			local num = 3
-			local get
-
-			if dir_dot > -0.25 then
-				get = Colors.get("yellow")
-
-				if not get then
-					-- Nothing
-				end
-			end
-
-			get = Colors.get("red")
-
-			::label_14_0::
-
-			sphere(var_14_1, var_14_3, num, get)
-
-			local QuickDrawerStay_2 = QuickDrawerStay
-			local var_14_7 = QuickDrawerStay_2
-			local line = QuickDrawerStay_2.line
-			local var_14_9 = nav_group_position
-			local var_14_10 = position
-			local get_2
-
-			if dir_dot > -0.25 then
-				get_2 = Colors.get("yellow")
-
-				if not get_2 then
-					-- Nothing
-				end
-			end
-
-			get_2 = Colors.get("red")
-
-			::label_14_1::
-
-			line(var_14_7, var_14_9, var_14_10, get_2)
+			QuickDrawerStay:sphere(nav_group_position, 3, dir_dot > -0.25 and not not Colors.get("yellow") or not (dir_dot > -0.25) and not not Colors.get("red"))
+			QuickDrawerStay:line(nav_group_position, position, dir_dot > -0.25 and not not Colors.get("yellow") or not (dir_dot > -0.25) and not not Colors.get("red"))
 		end
 
 		if dir_dot > -0.25 then
@@ -786,50 +722,13 @@ BTPackMasterDragAction.test_destinations = function (self, unit, blackboard)
 
 				for i = 1, count do
 					local node = GwNavAStar.node_at_index(astar, i)
-					local QuickDrawerStay = QuickDrawerStay
-					local var_17_1 = QuickDrawerStay
-					local sphere = QuickDrawerStay.sphere
-					local var_17_3 = node
-					local num = 0.1
-					local get
 
-					if good_path then
-						get = Colors.get("yellow")
-
-						if not get then
-							-- Nothing
-						end
-					end
-
-					get = Colors.get("red")
-
-					::label_17_0::
-
-					sphere(var_17_1, var_17_3, num, get)
+					QuickDrawerStay:sphere(node, 0.1, good_path and not not Colors.get("yellow") or not good_path and not not Colors.get("red"))
 
 					local next_node = GwNavAStar.node_at_index(astar, i + 1)
 
 					if next_node then
-						local QuickDrawerStay_2 = QuickDrawerStay
-						local var_17_7 = QuickDrawerStay_2
-						local line = QuickDrawerStay_2.line
-						local var_17_9 = node
-						local var_17_10 = next_node
-						local get_2
-
-						if good_path then
-							get_2 = Colors.get("yellow")
-
-							if not get_2 then
-								-- Nothing
-							end
-						end
-
-						get_2 = Colors.get("red")
-
-						::label_17_1::
-
-						line(var_17_7, var_17_9, var_17_10, get_2)
+						QuickDrawerStay:line(node, next_node, good_path and not not Colors.get("yellow") or not good_path and not not Colors.get("red"))
 					end
 				end
 			end

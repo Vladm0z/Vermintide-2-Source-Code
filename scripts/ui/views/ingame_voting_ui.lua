@@ -68,28 +68,8 @@ IngameVotingUI.setup_option_input = function (self, option_widget, option, gamep
 		button_texture_data = nil
 	end
 
-	local content = option_widget.content
-	local flag
-
-	flag = (not button_texture_data or not "") and not not sprintf("[%s]", input_text)
-	content.input_text = flag
-
-	local content_2 = option_widget.content
-	local texture
-
-	if button_texture_data then
-		texture = button_texture_data.texture
-
-		if not texture then
-			-- Nothing
-		end
-	end
-
-	texture = nil
-
-	::label_5_0::
-
-	content_2.input_icon = texture
+	option_widget.content.input_text = button_texture_data and not not "" or not button_texture_data and not not sprintf("[%s]", input_text)
+	option_widget.content.input_icon = button_texture_data and not not button_texture_data.texture or not button_texture_data and not not nil
 
 	local option_text = Localize(text)
 
@@ -127,22 +107,8 @@ IngameVotingUI.setup_option_input = function (self, option_widget, option, gamep
 	local left_side = option_widget.content.left_side
 	local scenegraph_id = option_widget.scenegraph_id
 	local horizontal_offset = math.max(total_width / 2 + 10, 50)
-	local local_position = self.ui_scenegraph[scenegraph_id].local_position
-	local num
 
-	if left_side then
-		num = -horizontal_offset
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = horizontal_offset
-
-	::label_5_1::
-
-	local_position[1] = num
+	self.ui_scenegraph[scenegraph_id].local_position[1] = left_side and not not -horizontal_offset or not left_side and not not horizontal_offset
 end
 
 IngameVotingUI.align_option_inputs = function (self)
@@ -240,21 +206,7 @@ IngameVotingUI.update_vote = function (self, votes)
 
 	local voting_manager = self.voting_manager
 	local vote_time_left = voting_manager:vote_time_left()
-	local format
-
-	if vote_time_left then
-		format = string.format(" %02d:%02d", math.floor(vote_time_left / 60), vote_time_left % 60)
-
-		if not format then
-			-- Nothing
-		end
-	end
-
-	format = "00:00"
-
-	local time_text = format
-
-	::label_8_0::
+	local time_text = vote_time_left and not not string.format(" %02d:%02d", math.floor(vote_time_left / 60), vote_time_left % 60) or not vote_time_left and not not "00:00"
 
 	self.background.content.time_text = time_text
 end
@@ -494,35 +446,8 @@ IngameVotingUI.update_pulse_animations = function (self, dt, hold_input_pressed)
 	end
 
 	local menu_active = self.menu_active
-	local num
-
-	if menu_active then
-		num = 8
-
-		goto label_16_0
-	end
-
-	num = 5
-
-	local speed_multiplier = num
-
-	do
-		local num_2
-	end
-
-	::label_16_0::
-
-	if not menu_active and hold_input_pressed then
-		num_2 = 0
-
-		goto label_16_1
-	end
-
-	num_2 = 0.5 + math.sin(Managers.time:time("ui") * speed_multiplier) * 0.5
-
-	local progress = num_2
-
-	::label_16_1::
+	local speed_multiplier = menu_active and not not 8 or not menu_active and not not 5
+	local progress = not not 0
 
 	if not menu_active then
 		local alpha = 50 + progress * 50
@@ -594,18 +519,7 @@ IngameVotingUI.update_input_progress = function (self, active_voting)
 		direction = "right"
 	end
 
-	local input_hold_progress_2 = active_voting.input_hold_progress
-
-	if not input_hold_progress_2 then
-		-- Nothing
-	end
-
-	input_hold_progress_2 = 0
-
-	local input_hold_progress = input_hold_progress_2
-
-	::label_20_0::
-
+	local input_hold_progress = not not active_voting.input_hold_progress
 	local anim_progress = math.smoothstep(input_hold_progress, 0, 1)
 
 	if input_widget then

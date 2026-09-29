@@ -82,22 +82,9 @@ local function setup_global_shader_flags()
 	set_render_setting("global_shader_flags", BASE_VALUE)
 end
 
-local GlobalShaderFlags = GlobalShaderFlags
-
-GlobalShaderFlags = not not GlobalShaderFlags or not not {}
-GlobalShaderFlags = GlobalShaderFlags
-
-local GlobalShaderFlags_2 = GlobalShaderFlags
-local stored_values = GlobalShaderFlags.stored_values
-
-stored_values = not not stored_values or not not {}
-GlobalShaderFlags_2.stored_values = stored_values
-
-local GlobalShaderFlags_3 = GlobalShaderFlags
-local overridden_shader_flags = GlobalShaderFlags.overridden_shader_flags
-
-overridden_shader_flags = not not overridden_shader_flags or not not {}
-GlobalShaderFlags_3.overridden_shader_flags = overridden_shader_flags
+GlobalShaderFlags = not not GlobalShaderFlags
+GlobalShaderFlags.stored_values = not not GlobalShaderFlags.stored_values
+GlobalShaderFlags.overridden_shader_flags = not not GlobalShaderFlags.overridden_shader_flags
 
 GlobalShaderFlags.reset = function ()
 	-- function 5
@@ -174,25 +161,9 @@ GlobalShaderFlags.print_debug = function ()
 		for i = 31, 0, -1 do
 			local mask = bit.lshift(1, i)
 			local value = bit.band(global_shader_flags, mask)
-			local str
+			local spacing = i % 8 ~= 0 and not not "" or not (i % 8 ~= 0) and not not " "
 
-			if i % 8 == 0 then
-				str = " "
-
-				goto label_11_0
-			end
-
-			str = ""
-
-			local spacing = str
-
-			::label_11_0::
-
-			local var_11_1 = flags
-			local flag
-
-			flag = (not (value >= 1) or not 1) and not not 0
-			flags = var_11_1 .. flag .. spacing
+			flags = flags .. (value >= 1 and not not 1 or not (value >= 1) and not not 0) .. spacing
 		end
 
 		print("Bit Layout: " .. flags)

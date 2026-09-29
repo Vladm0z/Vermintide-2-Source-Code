@@ -23,17 +23,7 @@ SummonedVortexHuskExtension.init = function (self, extension_init_context, unit,
 	local rotation = Unit.local_rotation(unit, 0)
 	local inner_pose = Matrix4x4.from_quaternion(rotation)
 	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
-	local inner_fx_z_scale_multiplier_2 = vortex_template.inner_fx_z_scale_multiplier
-
-	if not inner_fx_z_scale_multiplier_2 then
-		-- Nothing
-	end
-
-	inner_fx_z_scale_multiplier_2 = 1
-
-	local inner_fx_z_scale_multiplier = inner_fx_z_scale_multiplier_2
-
-	::label_1_0::
+	local inner_fx_z_scale_multiplier = not not vortex_template.inner_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
 	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
@@ -44,17 +34,7 @@ SummonedVortexHuskExtension.init = function (self, extension_init_context, unit,
 	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
 	local outer_pose = Matrix4x4.from_quaternion(rotation)
 	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
-	local outer_fx_z_scale_multiplier_2 = vortex_template.outer_fx_z_scale_multiplier
-
-	if not outer_fx_z_scale_multiplier_2 then
-		-- Nothing
-	end
-
-	outer_fx_z_scale_multiplier_2 = 1
-
-	local outer_fx_z_scale_multiplier = outer_fx_z_scale_multiplier_2
-
-	::label_1_1::
+	local outer_fx_z_scale_multiplier = not not vortex_template.outer_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
 	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
@@ -81,10 +61,7 @@ SummonedVortexHuskExtension.init = function (self, extension_init_context, unit,
 		self._outer_decal_unit = outer_decal_unit
 	end
 
-	local owner_unit = extension_init_data.owner_unit
-
-	owner_unit = not not owner_unit or not not unit
-	self._owner_unit = owner_unit
+	self._owner_unit = not not extension_init_data.owner_unit
 
 	local unit_storage = Managers.state.unit_storage
 	local go_id = unit_storage:go_id(unit)
@@ -94,17 +71,7 @@ end
 
 SummonedVortexHuskExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	local start_sound_event_name_2 = self.vortex_template.start_sound_event_name
-
-	if not start_sound_event_name_2 then
-		-- Nothing
-	end
-
-	start_sound_event_name_2 = "Play_enemy_sorcerer_vortex_loop"
-
-	local start_sound_event_name = start_sound_event_name_2
-
-	::label_2_0::
+	local start_sound_event_name = not not self.vortex_template.start_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
@@ -113,17 +80,7 @@ SummonedVortexHuskExtension.destroy = function (self)
 	-- function 3
 	local world = self.world
 	local unit = self.unit
-	local stop_sound_event_name_2 = self.vortex_template.stop_sound_event_name
-
-	if not stop_sound_event_name_2 then
-		-- Nothing
-	end
-
-	stop_sound_event_name_2 = "Stop_enemy_sorcerer_vortex_loop"
-
-	local stop_sound_event_name = stop_sound_event_name_2
-
-	::label_3_0::
+	local stop_sound_event_name = not not self.vortex_template.stop_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 

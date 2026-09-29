@@ -52,14 +52,7 @@ ImguiLuaMemorySnapshot.draw = function (self)
 			snapshot_data.window_height = nil
 		end
 
-		local begin_window = Imgui.begin_window
-		local format = string.format
-		local str = "%s (%s)"
-		local name = snapshot_data.name
-
-		name = not not name or not not "Memory Snapshot"
-
-		local do_close = begin_window(format(str, name, snapshot_data.snapshot_id), "horizontal_scrollbar")
+		local do_close = Imgui.begin_window(string.format("%s (%s)", not not snapshot_data.name, snapshot_data.snapshot_id), "horizontal_scrollbar")
 
 		if do_close then
 			table.remove(self._snapshots, i)
@@ -217,24 +210,9 @@ ImguiLuaMemorySnapshot._recursive_header = function (self, snapshot_data, id, ov
 		local header_name = string.format("%s%s (self: %sb)%s##%s", string.pad_right(name, name_length + 4, " ", pad_cache), string.pad_right(string.chunk_from_right(tostring(size), 3, "'") .. "b", 15, " ", pad_cache), string.chunk_from_right(tostring(one_layer_size), 3, "'"), right_padding, id)
 
 		if Imgui.collapsing_header(header_name, open) then
-			local remember_open = snapshot_data.remember_open
-			local flag
+			snapshot_data.remember_open[id] = filtered and not not snapshot_data.remember_open[id] or not filtered and not not true
 
-			flag = (filtered or not true) and not not snapshot_data.remember_open[id]
-			remember_open[id] = flag
-
-			local var_8_2 = snapshot_data.max_children[id]
-
-			if not var_8_2 then
-				-- Nothing
-			end
-
-			var_8_2 = MAX_CHILDREN
-
-			local max_children = var_8_2
-
-			::label_8_0::
-
+			local max_children = not not snapshot_data.max_children[id]
 			local children_cache = snapshot_data.children_cache[depth]
 
 			if not children_cache then
@@ -248,21 +226,7 @@ ImguiLuaMemorySnapshot._recursive_header = function (self, snapshot_data, id, ov
 				Imgui.indent()
 
 				local drawable_children = 0
-				local find
-
-				if override_draw == nil and filtered then
-					find = string.find(name, snapshot_data.filter)
-
-					if not find then
-						-- Nothing
-					end
-				end
-
-				find = override_draw
-
-				local override_draw_children = find
-
-				::label_8_1::
+				local override_draw_children = not not string.find(name, snapshot_data.filter)
 
 				for i = 1, num_children do
 					local drawn, can_draw = self:_recursive_header(snapshot_data, children[i], override_draw_children, depth + 1)
@@ -282,11 +246,7 @@ ImguiLuaMemorySnapshot._recursive_header = function (self, snapshot_data, id, ov
 					local num_to_add = math.min(MAX_CHILDREN, num_hidden)
 
 					if Imgui.button(string.format("Show %s (out of %s) more...", num_to_add, num_hidden)) then
-						local max_children_2 = snapshot_data.max_children
-						local var_8_5 = snapshot_data.max_children[id]
-
-						var_8_5 = not not var_8_5 or not not MAX_CHILDREN
-						max_children_2[id] = var_8_5 + num_to_add
+						snapshot_data.max_children[id] = not not snapshot_data.max_children[id] + num_to_add
 					end
 				end
 

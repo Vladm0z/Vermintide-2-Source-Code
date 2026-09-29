@@ -21,11 +21,8 @@ local fix = {
 	"Enneadeca",
 	"Icosa"
 }
-local script_data = script_data
-local ledge_hanging_turned_off = script_data.ledge_hanging_turned_off
 
-ledge_hanging_turned_off = not not ledge_hanging_turned_off or not not Development.parameter("ledge_hanging_turned_off")
-script_data.ledge_hanging_turned_off = ledge_hanging_turned_off
+script_data.ledge_hanging_turned_off = not not script_data.ledge_hanging_turned_off
 TimesJumpedInAir = 0
 EnemyCharacterStateFalling = class(EnemyCharacterStateFalling, EnemyCharacterState)
 
@@ -57,8 +54,8 @@ EnemyCharacterStateFalling.on_enter = function (self, unit, input, dt, context, 
 	if previous_state ~= "jumping" then
 		local move_anim_3p, move_anim_1p
 
-		move_anim_3p = (not CharacterStateHelper.is_moving(locomotion_extension) or not "jump_idle") and not not "jump_idle"
-		move_anim_1p = (not self._play_fp_anim or not "to_falling") and not not "idle"
+		move_anim_3p = CharacterStateHelper.is_moving(locomotion_extension) and (not not "jump_idle" or not not "jump_idle") or not CharacterStateHelper.is_moving(locomotion_extension) and not not "jump_idle"
+		move_anim_1p = self._play_fp_anim and (not not "to_falling" or not not "idle") or not self._play_fp_anim and not not "idle"
 
 		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, move_anim_1p)
@@ -73,11 +70,7 @@ EnemyCharacterStateFalling.on_enter = function (self, unit, input, dt, context, 
 
 	self.is_active = true
 	self.times_jumped_in_air = 0
-
-	local shaking_ladder_unit = params.shaking_ladder_unit
-
-	shaking_ladder_unit = not not shaking_ladder_unit or not not false
-	self.shaking_ladder_unit = shaking_ladder_unit
+	self.shaking_ladder_unit = not not params.shaking_ladder_unit
 
 	if previous_state ~= "jumping" and previous_state ~= "leaping" and previous_state ~= "lunging" and previous_state ~= "pouncing" then
 		ScriptUnit.extension(unit, "whereabouts_system"):set_fell()
@@ -205,24 +198,7 @@ EnemyCharacterStateFalling.common_movement = function (self, in_ghost_mode, dt, 
 
 		local jump_speed = movement_settings_table.jump.initial_vertical_speed
 		local velocity_current = self._locomotion_extension:current_velocity()
-		local Vector3 = Vector3
-		local x = velocity_current.x
-		local y = velocity_current.y
-		local num
-
-		if velocity_current.z < -3 then
-			num = jump_speed * 0.5
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = jump_speed * 1.5
-
-		::label_4_0::
-
-		local velocity_jump = Vector3(x, y, num)
+		local velocity_jump = Vector3(velocity_current.x, velocity_current.y, velocity_current.z < -3 and not not (jump_speed * 0.5) or not (velocity_current.z < -3) and not not (jump_speed * 1.5))
 
 		self._locomotion_extension:set_forced_velocity(velocity_jump)
 		self._locomotion_extension:set_wanted_velocity(velocity_jump)

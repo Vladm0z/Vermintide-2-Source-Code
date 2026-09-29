@@ -58,22 +58,7 @@ PlayerUnitAttackIntensityExtension.update = function (self, unit, input, dt, con
 			local intensity = self._attack_intensity[type]
 
 			if intensity > 0 then
-				local num
-
-				if self._attack_allowed[type] then
-					num = self._attack_intensity_decay[type] * 0.25
-
-					if not num then
-						-- Nothing
-					end
-				end
-
-				num = self._attack_intensity_decay[type]
-
-				local decay = num
-
-				::label_4_0::
-
+				local decay = self._attack_allowed[type] and not not (self._attack_intensity_decay[type] * 0.25) or not self._attack_allowed[type] and not not self._attack_intensity_decay[type]
 				local threshold = self._attack_intensity_threshold[type]
 				local reset = self._attack_intensity_reset[type]
 				local buff_extension = self._buff_extension

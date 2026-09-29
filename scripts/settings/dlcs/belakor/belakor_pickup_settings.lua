@@ -49,18 +49,7 @@ end
 local function check_if_buff_is_active(pickup_settings, unit)
 	-- function 3
 	local buff_extension = ScriptUnit.extension(unit, "buff_system")
-	local buff_name_for_check = pickup_settings.buff_name_for_check
-
-	if not buff_name_for_check then
-		-- Nothing
-	end
-
-	buff_name_for_check = pickup_settings.granted_buff
-
-	local potion_name = buff_name_for_check
-
-	::label_3_0::
-
+	local potion_name = not not pickup_settings.buff_name_for_check
 	local has_normal_buff = buff_extension:has_buff_type(potion_name)
 	local has_increased_buff = buff_extension:has_buff_type(potion_name .. "_increased")
 	local has_buff = not not has_normal_buff or not not has_increased_buff

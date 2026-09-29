@@ -43,11 +43,7 @@ StartGameWindowDeusTwitch.on_enter = function (self, params, offset)
 	self._play_button_pressed = false
 	self._show_additional_settings = false
 	self._previous_can_play = nil
-
-	local get_difficulty_option = self._parent:get_difficulty_option(true)
-
-	get_difficulty_option = not not get_difficulty_option or not not Managers.state.difficulty:get_difficulty()
-	self._current_difficulty = get_difficulty_option
+	self._current_difficulty = not not self._parent:get_difficulty_option(true)
 	self._dlc_name = nil
 	self._backend_deus = Managers.backend:get_interface("deus")
 	self._animations = {}
@@ -55,28 +51,12 @@ StartGameWindowDeusTwitch.on_enter = function (self, params, offset)
 	self:_create_ui_elements(params, offset)
 
 	if self._is_server then
-		local var_1_1 = self
-		local _gamepad_selector_input_func = self._gamepad_selector_input_func
-		local input_index = params.input_index
-
-		input_index = not not input_index or not not 1
-
-		_gamepad_selector_input_func(var_1_1, input_index)
+		self:_gamepad_selector_input_func(not not params.input_index)
 		self:_update_expedition_option()
 		self:_update_difficulty_option(self._current_difficulty)
 	end
 
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local connected = twitch
-
-	::label_1_0::
+	local connected = not not Managers.twitch
 
 	self:_set_input_description(connected)
 	self:_set_disconnect_button_text()
@@ -129,10 +109,8 @@ StartGameWindowDeusTwitch._create_ui_elements = function (self, params, offset)
 	if IS_PS4 then
 		local frame_widget = self._widgets_by_name.frame_widget
 		local frame_widget_content = frame_widget.content
-		local twitch_user_name = PlayerData.twitch_user_name
 
-		twitch_user_name = not not twitch_user_name or not not ""
-		frame_widget_content.twitch_name = twitch_user_name
+		frame_widget_content.twitch_name = not not PlayerData.twitch_user_name
 	end
 
 	self._widgets_by_name.difficulty_info.content.visible = false
@@ -163,21 +141,7 @@ StartGameWindowDeusTwitch._set_disconnect_button_text = function (self)
 	local disconnect_button_widget = self._widgets_by_name.button_2
 
 	if disconnect_button_widget then
-		local user_name_2
-
-		if Managers.twitch then
-			user_name_2 = Managers.twitch:user_name()
-
-			if not user_name_2 then
-				-- Nothing
-			end
-		end
-
-		user_name_2 = "N/A"
-
-		local user_name = user_name_2
-
-		::label_5_0::
+		local user_name = Managers.twitch and not not Managers.twitch:user_name() or not Managers.twitch and not not "N/A"
 
 		disconnect_button_widget.content.button_hotspot.text = string.format(Localize("start_game_window_twitch_disconnect"), user_name)
 	end
@@ -345,21 +309,7 @@ end
 
 StartGameWindowDeusTwitch._setup_connected_status = function (self)
 	-- function 10
-	local user_name_2
-
-	if Managers.twitch then
-		user_name_2 = Managers.twitch:user_name()
-
-		if not user_name_2 then
-			-- Nothing
-		end
-	end
-
-	user_name_2 = "N/A"
-
-	local user_name = user_name_2
-
-	::label_10_0::
+	local user_name = Managers.twitch and not not Managers.twitch:user_name() or not Managers.twitch and not not "N/A"
 
 	self._widgets_by_name.frame_widget.content.connected = Localize("start_game_window_twitch_connected_to") .. user_name
 end
@@ -429,11 +379,7 @@ StartGameWindowDeusTwitch._setup_journey_widgets = function (self)
 		content.locked = not is_unlocked
 		content.frame = selection_frame_texture
 		content.journey_name = journey_name
-
-		local flag
-
-		flag = (not with_belakor or not "morris_expedition_select_border_belakor") and not not "morris_expedition_select_border"
-		content.level_icon_frame = flag
+		content.level_icon_frame = with_belakor and not not "morris_expedition_select_border_belakor" or not with_belakor and not not "morris_expedition_select_border"
 		content.draw_path = next_journey ~= nil
 		content.draw_path_fill = unlocked_journeys[next_journey]
 		widget.style.path.texture_size[1] = settings.spacing_x
@@ -565,11 +511,7 @@ StartGameWindowDeusTwitch._handle_input = function (self, dt, t)
 				end
 
 				if widget_name == "difficulty_stepper" then
-					local content = widget.content
-					local is_button_hover = UIUtils.is_button_hover(widget, "left_arrow_hotspot")
-
-					is_button_hover = not not is_button_hover or not not UIUtils.is_button_hover(widget, "right_arrow_hotspot")
-					content.is_selected = is_button_hover
+					widget.content.is_selected = not not UIUtils.is_button_hover(widget, "left_arrow_hotspot")
 				else
 					widget.content.is_selected = UIUtils.is_button_hover(widget)
 				end
@@ -617,17 +559,7 @@ StartGameWindowDeusTwitch._handle_input = function (self, dt, t)
 			end
 
 			if input_service:get(START_GAME_INPUT) or UIUtils.is_button_pressed(selection_widgets_by_name.play_button) then
-				local get_twitch_settings = parent:get_twitch_settings(self._mechanism_name)
-
-				if not get_twitch_settings then
-					-- Nothing
-				end
-
-				get_twitch_settings = parent:get_twitch_settings("adventure")
-
-				local twitch_settings = get_twitch_settings
-
-				::label_19_0::
+				local twitch_settings = not not parent:get_twitch_settings(self._mechanism_name)
 
 				self._parent:set_difficulty_option(self._current_difficulty)
 				parent:play(t, twitch_settings.game_mode_type)
@@ -643,17 +575,7 @@ end
 
 StartGameWindowDeusTwitch._update_input_description = function (self, dt, t)
 	-- function 20
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local connected = twitch
-
-	::label_20_0::
+	local connected = not not Managers.twitch
 
 	self:_set_input_description(connected)
 end
@@ -767,67 +689,18 @@ StartGameWindowDeusTwitch._animate_button = function (self, widget, dt)
 	local hotspot_name = "button_hotspot"
 	local hotspot = content[hotspot_name]
 	local input_speed = 20
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_27_0::
-
-	local is_clicked = hotspot.is_clicked
-
-	if is_clicked then
-		-- Nothing
-	end
-
-	if hotspot.is_clicked ~= 0 then
-		is_clicked = false
-
-		goto label_27_1
-	end
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_27_1::
+	local input_progress = not not hotspot.input_progress
+	local input_pressed = not not hotspot.is_clicked
 
 	input_progress = UIUtils.animate_value(input_progress, dt * input_speed, input_pressed)
 
 	local speed = 8
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_27_2::
-
+	local hover_progress = not not hotspot.hover_progress
 	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
 
 	hover_progress = UIUtils.animate_value(hover_progress, dt * speed, is_hover)
 
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_27_3::
-
+	local selection_progress = not not hotspot.selection_progress
 	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
 
 	selection_progress = UIUtils.animate_value(selection_progress, dt * speed, is_selected)
@@ -861,18 +734,7 @@ StartGameWindowDeusTwitch._animate_expedition_widget = function (self, widget, d
 	local content = widget.content
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
-	local selected_progress_2 = hotspot.selected_progress
-
-	if not selected_progress_2 then
-		-- Nothing
-	end
-
-	selected_progress_2 = 0
-
-	local selected_progress = selected_progress_2
-
-	::label_28_0::
-
+	local selected_progress = not not hotspot.selected_progress
 	local selected_speed = 1.5
 
 	selected_progress = UIUtils.animate_value(selected_progress, selected_speed * dt, is_selected)
@@ -1035,17 +897,7 @@ end
 StartGameWindowDeusTwitch._option_selected = function (self, widget_name, button_name, t)
 	-- function 35
 	local parent = self._parent
-	local get_twitch_settings = parent:get_twitch_settings(self._mechanism_name)
-
-	if not get_twitch_settings then
-		-- Nothing
-	end
-
-	get_twitch_settings = parent:get_twitch_settings("adventure")
-
-	local twitch_settings = get_twitch_settings
-
-	::label_35_0::
+	local twitch_settings = not not parent:get_twitch_settings(self._mechanism_name)
 
 	if widget_name == "difficulty_stepper" then
 		local difficulty_key = self._current_difficulty
@@ -1080,35 +932,11 @@ StartGameWindowDeusTwitch._set_input_description = function (self, connected)
 	-- function 36
 	if self._is_server then
 		if connected then
-			local str
-
-			if self._dlc_locked then
-				str = "deus_twitch_buy_connected"
-
-				goto label_36_0
-			end
-
-			str = "deus_default_twitch_connected"
-
-			local input_actions = str
-
-			::label_36_0::
+			local input_actions = self._dlc_locked and not not "deus_twitch_buy_connected" or not self._dlc_locked and not not "deus_default_twitch_connected"
 
 			self._parent:change_generic_actions(input_actions)
 		else
-			local str_2
-
-			if self._dlc_locked then
-				str_2 = "deus_twitch_buy"
-
-				goto label_36_1
-			end
-
-			str_2 = "deus_default_twitch"
-
-			local input_actions = str_2
-
-			::label_36_1::
+			local input_actions = self._dlc_locked and not not "deus_twitch_buy" or not self._dlc_locked and not not "deus_default_twitch"
 
 			self._parent:change_generic_actions(input_actions)
 		end
@@ -1150,18 +978,7 @@ StartGameWindowDeusTwitch._can_play = function (self)
 
 	local parent = self._parent
 	local selected_level_id = parent:get_selected_level_id()
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local connected = twitch
-
-	::label_38_0::
-
+	local connected = not not Managers.twitch
 	local can_play = selected_level_id ~= nil and not not connected and not not not self._dlc_locked
 
 	return can_play
@@ -1207,23 +1024,7 @@ StartGameWindowDeusTwitch._update_difficulty_lock = function (self)
 		if not approved then
 			if extra_requirement_failed then
 				difficulty_info_widget.content.should_show_diff_lock_text = true
-
-				local content = difficulty_info_widget.content
-				local var_41_1
-
-				if extra_requirement_failed then
-					var_41_1 = Localize(extra_requirement_failed)
-
-					if not var_41_1 then
-						-- Nothing
-					end
-				end
-
-				var_41_1 = ""
-
-				::label_41_0::
-
-				content.difficulty_lock_text = var_41_1
+				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
 			else
 				difficulty_info_widget.content.should_show_diff_lock_text = false
 			end
@@ -1346,9 +1147,7 @@ StartGameWindowDeusTwitch._update_additional_curse_frame = function (self, journ
 	for _, widget in ipairs(self._expedition_widgets) do
 		local content = widget.content
 		local with_belakor = content.journey_name == journey_name
-		local flag
 
-		flag = (not with_belakor or not "morris_expedition_select_border_belakor") and not not "morris_expedition_select_border"
-		content.level_icon_frame = flag
+		content.level_icon_frame = with_belakor and not not "morris_expedition_select_border_belakor" or not with_belakor and not not "morris_expedition_select_border"
 	end
 end

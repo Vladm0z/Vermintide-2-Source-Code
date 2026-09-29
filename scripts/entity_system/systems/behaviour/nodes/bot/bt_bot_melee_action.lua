@@ -121,12 +121,7 @@ BTBotMeleeAction.run = function (self, unit, blackboard, t, dt)
 	if done then
 		return "done", "evaluate"
 	else
-		local str = "running"
-		local flag
-
-		flag = (not evaluate or not "evaluate") and not not nil
-
-		return str, flag
+		return "running", evaluate and not not "evaluate" or not evaluate and not not nil
 	end
 end
 
@@ -152,7 +147,7 @@ BTBotMeleeAction._update_engage_position = function (self, unit, target_unit, bl
 		end
 	end
 
-	if breed and (not targeting_me or breed.bots_flank_while_targeted) and breed.bots_should_flank then
+	if breed.bots_flank_while_targeted and breed and not targeting_me and breed.bots_should_flank then
 		local enemy_rot = Unit.local_rotation(target_unit, 0)
 		local enemy_dir = Quaternion.forward(enemy_rot)
 
@@ -241,31 +236,11 @@ end
 BTBotMeleeAction._is_in_melee_range = function (self, current_position, aim_position, melee_range, attack_input, t, blackboard, target_unit)
 	-- function 9
 	local target_locomotion_extension = ScriptUnit.has_extension(target_unit, "locomotion_system")
-	local current_velocity_2
-
-	if target_locomotion_extension then
-		current_velocity_2 = target_locomotion_extension:current_velocity()
-
-		if not current_velocity_2 then
-			-- Nothing
-		end
-	end
-
-	current_velocity_2 = Vector3.zero()
-
-	local target_velocity = current_velocity_2
-
-	::label_9_0::
-
+	local target_velocity = target_locomotion_extension and not not target_locomotion_extension:current_velocity() or not target_locomotion_extension and not not Vector3.zero()
 	local locomotion_extension = blackboard.locomotion_extension
 	local current_velocity = locomotion_extension:current_velocity()
 	local relative_velocity = current_velocity - target_velocity
-	local max = math.max
-	local _time_to_next_attack = self:_time_to_next_attack(attack_input, blackboard, t)
-
-	_time_to_next_attack = not not _time_to_next_attack or not not 0
-
-	local time_to_next_attack = max(_time_to_next_attack, 0)
+	local time_to_next_attack = math.max(not not self:_time_to_next_attack(attack_input, blackboard, t), 0)
 	local check_position = current_position + relative_velocity * time_to_next_attack
 	local melee_range_sq = melee_range^2
 
@@ -302,22 +277,7 @@ BTBotMeleeAction._target_unit_position = function (self, self_position, target_u
 			target_unit_position = math.closest_position(self_position, entrance_position, exit_position)
 		else
 			local node_name = "rp_center"
-			local node_2
-
-			if Unit.has_node(target_unit, node_name) then
-				node_2 = Unit.node(target_unit, node_name)
-
-				if not node_2 then
-					-- Nothing
-				end
-			end
-
-			node_2 = 0
-
-			local node = node_2
-
-			::label_11_0::
-
+			local node = Unit.has_node(target_unit, node_name) and not not Unit.node(target_unit, node_name) or not Unit.has_node(target_unit, node_name) and not not 0
 			local node_position = Unit.world_position(target_unit, node)
 
 			target_unit_position = not not LocomotionUtils.pos_on_mesh(nav_world, node_position, 0.5, 2) or not not node_position
@@ -387,26 +347,14 @@ BTBotMeleeAction._allow_engage = function (self, self_unit, target_unit, blackbo
 	local threat_override_range = action_data.override_engage_range_to_follow_pos_threat
 	local override_range = math.lerp(override_range_default, threat_override_range, party_danger)
 	local distance_to_follow_pos = Vector3.distance(aim_position, follow_pos)
-	local num
-
-	if already_engaged then
-		num = 3
-
-		goto label_14_0
-	end
-
-	num = 0
-
-	local fuzziness = num
-
-	::label_14_0::
+	local fuzziness = already_engaged and not not 3 or not already_engaged and not not 0
 
 	if override_range < distance_to_follow_pos - fuzziness then
 		return false
 	end
 
 	local target_ally_unit = blackboard.target_ally_unit
-	local follow_unit = (not blackboard.target_ally_need_type or not target_ally_unit) and not not blackboard.ai_bot_group_extension.data.follow_unit
+	local follow_unit = blackboard.target_ally_need_type and (not not target_ally_unit or not not blackboard.ai_bot_group_extension.data.follow_unit) or not blackboard.target_ally_need_type and not not blackboard.ai_bot_group_extension.data.follow_unit
 
 	if follow_unit then
 		local self_segment = conflict_director:get_player_unit_segment(self_unit)
@@ -463,14 +411,7 @@ BTBotMeleeAction._allow_engage = function (self, self_unit, target_unit, blackbo
 		return false
 	end
 
-	local system = Managers.state.entity:system("darkness_system")
-	local var_14_2 = system
-	local is_in_darkness = system.is_in_darkness
-	local var_14_4 = POSITION_LOOKUP[target_unit]
-
-	var_14_4 = not not var_14_4 or not not Unit.world_position(target_unit, 0)
-
-	local in_total_darkness = is_in_darkness(var_14_2, var_14_4, DarknessSystem.TOTAL_DARKNESS_THRESHOLD)
+	local in_total_darkness = Managers.state.entity:system("darkness_system"):is_in_darkness(not not POSITION_LOOKUP[target_unit], DarknessSystem.TOTAL_DARKNESS_THRESHOLD)
 
 	if in_total_darkness and target_unit ~= blackboard.breakable_object and target_unit ~= priority_target and target_unit ~= blackboard.urgent_target_enemy and target_unit ~= blackboard.opportunity_target_enemy and not blackboard.aggressive_mode and not blackboard.target_ally_needs_aid then
 		return false
@@ -483,28 +424,7 @@ BTBotMeleeAction._calculate_melee_range = function (self, target_unit, attack_me
 	-- function 15
 	local attack_range = attack_meta_data.max_range
 	local breed = Unit.get_data(target_unit, "breed")
-	local bot_hitbox_radius_approximation
-
-	if breed then
-		bot_hitbox_radius_approximation = breed.bot_hitbox_radius_approximation
-
-		if not bot_hitbox_radius_approximation then
-			-- Nothing
-		end
-
-		bot_hitbox_radius_approximation = DEFAULT_ENEMY_HITBOX_RADIUS_APPROXIMATION
-
-		if not bot_hitbox_radius_approximation then
-			-- Nothing
-		end
-	end
-
-	bot_hitbox_radius_approximation = 0
-
-	local target_hitbox_radius_approximation = bot_hitbox_radius_approximation
-
-	::label_15_0::
-
+	local target_hitbox_radius_approximation = breed and not not breed.bot_hitbox_radius_approximation or not breed and not not 0
 	local melee_range = attack_range + target_hitbox_radius_approximation
 
 	return melee_range
@@ -513,21 +433,7 @@ end
 BTBotMeleeAction._update_melee = function (self, unit, blackboard, dt, t)
 	-- function 16
 	local action_data = self._tree_node.action_data
-	local breakable_object
-
-	if action_data.destroy_object then
-		breakable_object = blackboard.breakable_object
-
-		if not breakable_object then
-			-- Nothing
-		end
-	end
-
-	breakable_object = blackboard.target_unit
-
-	local target_unit = breakable_object
-
-	::label_16_0::
+	local target_unit = action_data.destroy_object and not not blackboard.breakable_object or not action_data.destroy_object and not not blackboard.target_unit
 
 	if not HEALTH_ALIVE[target_unit] then
 		return true
@@ -548,22 +454,7 @@ BTBotMeleeAction._update_melee = function (self, unit, blackboard, dt, t)
 
 	local wants_engage, eval_timer
 	local current_position = blackboard.first_person_extension:current_position()
-	local unbox
-
-	if blackboard.follow then
-		unbox = blackboard.follow.target_position:unbox()
-
-		if not unbox then
-			-- Nothing
-		end
-	end
-
-	unbox = current_position
-
-	local follow_pos = unbox
-
-	::label_16_1::
-
+	local follow_pos = blackboard.follow and not not blackboard.follow.target_position:unbox() or not blackboard.follow and not not current_position
 	local attack_input, attack_meta_data = self:_choose_attack(blackboard, target_unit)
 	local melee_range = self:_calculate_melee_range(target_unit, attack_meta_data)
 	local attack_performed = false
@@ -577,7 +468,7 @@ BTBotMeleeAction._update_melee = function (self, unit, blackboard, dt, t)
 			attack_performed = true
 		end
 
-		wants_engage = (not not blackboard.aggressive_mode or not not melee_bb.engaging) and t - melee_bb.engage_change_time < 5
+		wants_engage = not not blackboard.aggressive_mode or not not melee_bb.engaging and t - melee_bb.engage_change_time < 5
 		eval_timer = 2
 	elseif self:_is_in_engage_range(unit, target_unit, blackboard.nav_world, action_data, follow_pos) then
 		self:_defend(unit, blackboard, target_unit, input_ext, t, false, dt)
@@ -609,7 +500,7 @@ BTBotMeleeAction._update_melee = function (self, unit, blackboard, dt, t)
 		already_engaged = false
 	end
 
-	if already_engaged and (not melee_bb.engage_update_time or t > melee_bb.engage_update_time) and not action_data.do_not_update_engage_position then
+	if t > melee_bb.engage_update_time and already_engaged and not melee_bb.engage_update_time and not action_data.do_not_update_engage_position then
 		self:_update_engage_position(unit, target_unit, blackboard, t, melee_range)
 	end
 
@@ -622,32 +513,21 @@ local DEFAULT_DEFENSE_META_DATA = {
 
 BTBotMeleeAction._defend = function (self, unit, blackboard, target_unit, input_ext, t, in_melee_range, dt)
 	-- function 17
-	local defense_meta_data_2 = blackboard.wielded_item_template.defense_meta_data
-
-	if not defense_meta_data_2 then
-		-- Nothing
-	end
-
-	defense_meta_data_2 = DEFAULT_DEFENSE_META_DATA
-
-	local defense_meta_data = defense_meta_data_2
-
-	::label_17_0::
-
+	local defense_meta_data = not not blackboard.wielded_item_template.defense_meta_data
 	local current_fatigue, max_fatigue = ScriptUnit.extension(unit, "status_system"):current_fatigue_points()
 	local stamina_left = max_fatigue - current_fatigue
 	local push_type = defense_meta_data.push
-	local low_stamina = (push_type ~= "light" or not (stamina_left <= 2)) and stamina_left <= 3
+	local low_stamina = stamina_left <= 3
 	local is_being_attacked = self:_is_being_attacked(unit, blackboard, t)
 	local is_pushable_shield_wearer = not low_stamina and push_type ~= "light" and not not self:_is_pushable_shield_wearer(target_unit)
-	local can_push = (is_being_attacked or not not is_pushable_shield_wearer) and not not self:_can_stagger_target(unit, target_unit, blackboard.wielded_item_template)
+	local can_push = is_being_attacked and not not self:_can_stagger_target(unit, target_unit, blackboard.wielded_item_template) or not is_being_attacked and not not is_pushable_shield_wearer and not not self:_can_stagger_target(unit, target_unit, blackboard.wielded_item_template)
 
 	if is_being_attacked or is_pushable_shield_wearer and can_push then
 		self:_clear_pending_attack(blackboard)
 
 		local num_enemies = #blackboard.proximite_enemies
 
-		if (not can_push or not in_melee_range or push_type ~= "light" or not (num_enemies > 2)) and low_stamina then
+		if not can_push or not in_melee_range or push_type ~= "light" then
 			input_ext:defend()
 		else
 			input_ext:melee_push()
@@ -699,25 +579,7 @@ BTBotMeleeAction._can_stagger_target = function (self, attacker_unit, target_uni
 
 	local is_critical_strike = false
 	local actions = wielded_item_template.actions
-
-	if actions then
-		-- Nothing
-	end
-
-	::label_19_0::
-
-	local action_one = actions.action_one
-
-	if action_one then
-		-- Nothing
-	end
-
-	action_one = actions.action_one.push
-
-	local push = action_one
-
-	::label_19_1::
-
+	local push = not not actions and not not actions.action_one
 	local damage_profile = not not push and not not DamageProfileTemplates[push.damage_profile_inner]
 
 	if not damage_profile then
@@ -740,18 +602,7 @@ BTBotMeleeAction._time_to_next_attack = function (self, attack_input, blackboard
 
 	if weapon_extension then
 		local wielded_item_template = blackboard.wielded_item_template
-		local attack_meta_data_2 = wielded_item_template.attack_meta_data
-
-		if not attack_meta_data_2 then
-			-- Nothing
-		end
-
-		attack_meta_data_2 = DEFAULT_ATTACK_META_DATA
-
-		local weapon_meta_data = attack_meta_data_2
-
-		::label_20_0::
-
+		local weapon_meta_data = not not wielded_item_template.attack_meta_data
 		local attack_meta_data = weapon_meta_data[attack_input]
 
 		return weapon_extension:time_to_next_attack(attack_input, wielded_item_template.actions, wielded_item_template.name, t, attack_meta_data.attack_chain)
@@ -764,18 +615,7 @@ BTBotMeleeAction._attack = function (self, attack_input, blackboard, dt)
 
 	if weapon_extension then
 		local wielded_item_template = blackboard.wielded_item_template
-		local attack_meta_data_2 = wielded_item_template.attack_meta_data
-
-		if not attack_meta_data_2 then
-			-- Nothing
-		end
-
-		attack_meta_data_2 = DEFAULT_ATTACK_META_DATA
-
-		local weapon_meta_data = attack_meta_data_2
-
-		::label_21_0::
-
+		local weapon_meta_data = not not wielded_item_template.attack_meta_data
 		local attack_meta_data = weapon_meta_data[attack_input]
 
 		weapon_extension:request_bot_attack_action(attack_input, wielded_item_template.actions, wielded_item_template.name, attack_meta_data.attack_chain)
@@ -870,43 +710,14 @@ BTBotMeleeAction._debug_draw_melee_range = function (self, unit, target_unit, bl
 	local attack_max_range = attack_meta_data.max_range
 	local melee_range = self:_calculate_melee_range(target_unit, attack_meta_data)
 	local in_range = self:_is_in_melee_range(current_position, aim_position, melee_range, attack_input, t, blackboard, target_unit)
-	local get
-
-	if in_range then
-		get = Colors.get("green")
-
-		if not get then
-			-- Nothing
-		end
-	end
-
-	get = Colors.get("red")
-
-	local debug_color = get
-
-	::label_29_0::
+	local debug_color = in_range and not not Colors.get("green") or not in_range and not not Colors.get("red")
 
 	QuickDrawer:sphere(current_position, attack_max_range, debug_color)
 
 	local offset = Vector3(0, 0, 2.5)
 	local viewport_name = "player_1"
 	local head_node = 0
-	local get_table
-
-	if attack_performed then
-		get_table = Colors.get_table("green")
-
-		if not get_table then
-			-- Nothing
-		end
-	end
-
-	get_table = Colors.get_table("red")
-
-	local color_table = get_table
-
-	::label_29_1::
-
+	local color_table = attack_performed and not not Colors.get_table("green") or not attack_performed and not not Colors.get_table("red")
 	local color_vector = Vector3(color_table[2], color_table[3], color_table[4])
 	local text_size = 0.25
 	local text = string.format("%s %sm", attack_input, attack_max_range)

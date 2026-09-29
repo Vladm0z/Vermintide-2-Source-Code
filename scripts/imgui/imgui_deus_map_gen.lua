@@ -56,10 +56,7 @@ local RELOAD = true
 
 ImguiDeusMapGen.init = function (self)
 	-- function 3
-	local var_3_0 = tonumber(script_data.debug_draw_base_map_seed)
-
-	var_3_0 = not not var_3_0 or not not 0
-	self._seed = var_3_0
+	self._seed = not not tonumber(script_data.debug_draw_base_map_seed)
 	self._journey_index = 1
 	self._dominant_god_index = 1
 
@@ -93,15 +90,9 @@ end
 ImguiDeusMapGen._reset_configs_for_journey = function (self)
 	-- function 7
 	local journey_name = journey_names[self._journey_index]
-	local var_7_0 = DEUS_MAP_POPULATE_SETTINGS[journey_name]
 
-	var_7_0 = not not var_7_0 or not not DEUS_MAP_POPULATE_SETTINGS.default
-	self._original_populate_config = var_7_0
-
-	local var_7_1 = self._populate_configs[journey_name]
-
-	var_7_1 = not not var_7_1 or not not self._populate_configs.default
-	self._populate_config = var_7_1
+	self._original_populate_config = not not DEUS_MAP_POPULATE_SETTINGS[journey_name]
+	self._populate_config = not not self._populate_configs[journey_name]
 end
 
 ImguiDeusMapGen.draw = function (self, is_open)
@@ -117,17 +108,7 @@ ImguiDeusMapGen.draw = function (self, is_open)
 
 	self._dominant_god_index = Imgui.combo("Dominant God", self._dominant_god_index, gods)
 
-	local _with_belakor = self._with_belakor
-
-	if not _with_belakor then
-		-- Nothing
-	end
-
-	_with_belakor = false
-
-	local with_belakor = _with_belakor
-
-	::label_8_0::
+	local with_belakor = not not self._with_belakor
 
 	with_belakor = Imgui.checkbox("With Be'lakor", with_belakor)
 	self._with_belakor = with_belakor
@@ -139,13 +120,7 @@ ImguiDeusMapGen.draw = function (self, is_open)
 
 	Imgui.spacing()
 
-	local script_data = script_data
-	local checkbox = Imgui.checkbox
-	local str = "print populate debug info"
-	local deus_populate_graph_debug = script_data.deus_populate_graph_debug
-
-	deus_populate_graph_debug = not not deus_populate_graph_debug or not not false
-	script_data.deus_populate_graph_debug = checkbox(str, deus_populate_graph_debug)
+	script_data.deus_populate_graph_debug = Imgui.checkbox("print populate debug info", not not script_data.deus_populate_graph_debug)
 
 	Imgui.spacing()
 

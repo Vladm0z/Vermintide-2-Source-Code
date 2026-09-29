@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_ai_breed_snippets.lua
 
-local AiBreedSnippets = AiBreedSnippets
-
-AiBreedSnippets = not not AiBreedSnippets or not not {}
-AiBreedSnippets = AiBreedSnippets
+AiBreedSnippets = not not AiBreedSnippets
 
 local function check_for_recent_attackers_drachenfels(unit, blackboard, t, ranged_range)
 	-- function 1
@@ -82,21 +79,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (unit, bl
 	local physics_world = World.get_data(blackboard.world, "physics_world")
 	local level_analysis = Managers.state.conflict.level_analysis
 	local node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
-	local var_2_0
-
-	if node_units then
-		var_2_0 = node_units[1]
-
-		if not var_2_0 then
-			-- Nothing
-		end
-	end
-
-	var_2_0 = unit
-
-	local center_unit = var_2_0
-
-	::label_2_0::
+	local center_unit = node_units and not not node_units[1] or not node_units and not not unit
 
 	blackboard.no_kill_achievement = true
 	blackboard.ring_center_position = Vector3Box(Unit.local_position(center_unit, 0))
@@ -232,24 +215,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (unit, bl
 	local level_analysis = Managers.state.conflict.level_analysis
 	local center_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
 	local wall_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_wall
-
-	if center_node_units and wall_node_units then
-		-- Nothing
-	end
-
-	::label_2_2::
-
-	local sorcerer_boss_drachenfels = id_lookup.sorcerer_boss_drachenfels
-
-	if sorcerer_boss_drachenfels then
-		-- Nothing
-	end
-
-	sorcerer_boss_drachenfels = id_lookup.sorcerer_boss_drachenfels_minion
-
-	local level_has_boss_arena = sorcerer_boss_drachenfels
-
-	::label_2_3::
+	local level_has_boss_arena = not not center_node_units and not not wall_node_units and not not id_lookup.sorcerer_boss_drachenfels
 
 	if level_has_boss_arena then
 		local center_marker = center_node_units[1]
@@ -432,21 +398,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (unit, b
 				local position = POSITION_LOOKUP[player_unit]
 				local distance_squared = Vector3.distance_squared(position, origin_pos)
 				local catapult_direction = "in"
-				local num_2
-
-				if catapult_direction == "in" then
-					num_2 = origin_pos - position
-
-					if not num_2 then
-						-- Nothing
-					end
-				end
-
-				num_2 = position - origin_pos
-
-				local direction = num_2
-
-				::label_5_0::
+				local direction = catapult_direction ~= "in" and not not (position - origin_pos) or not (catapult_direction ~= "in") and not not (origin_pos - position)
 
 				direction = Vector3.normalize(direction)
 
@@ -456,19 +408,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (unit, b
 					local difficulty_rank = Managers.state.difficulty:get_difficulty()
 					local player = Managers.player:owner(player_unit)
 					local is_bot = not not player and not not not player:is_player_controlled()
-					local num_3
-
-					if is_bot then
-						num_3 = 0
-
-						goto label_5_1
-					end
-
-					num_3 = power_level[difficulty_rank]
-
-					local actual_power_level = num_3
-
-					::label_5_1::
+					local actual_power_level = is_bot and not not 0 or not is_bot and not not power_level[difficulty_rank]
 
 					DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, player_unit, unit, "torso", POSITION_LOOKUP[player_unit], Vector3.up(), "undefined")
 

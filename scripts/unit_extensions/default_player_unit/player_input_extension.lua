@@ -150,27 +150,7 @@ local is_windows_platform = IS_WINDOWS
 
 PlayerInputExtension.is_input_blocked = function (self)
 	-- function 10
-	local HAS_STEAM
-
-	if not self.input_service:is_blocked() and (not is_windows_platform or Window.has_focus()) then
-		HAS_STEAM = HAS_STEAM
-
-		if HAS_STEAM then
-			-- Nothing
-		end
-
-		HAS_STEAM = Managers.steam:is_overlay_active()
-
-		if HAS_STEAM then
-			-- Nothing
-		end
-	end
-
-	HAS_STEAM = not DamageUtils.is_in_inn and not not not Managers.state.entity:system("cutscene_system"):is_active()
-
-	::label_10_0::
-
-	return HAS_STEAM
+	return self.input_service:is_blocked() and not DamageUtils.is_in_inn and not not not Managers.state.entity:system("cutscene_system"):is_active() or not self.input_service:is_blocked() and (is_windows_platform and (Window.has_focus() and not not HAS_STEAM or not Window.has_focus() and not DamageUtils.is_in_inn and not not not Managers.state.entity:system("cutscene_system"):is_active()) or not is_windows_platform and not not HAS_STEAM)
 end
 
 PlayerInputExtension.get = function (self, input_key, consume)
@@ -218,22 +198,7 @@ PlayerInputExtension.set_input_key_scale = function (self, input_key, scale, ler
 
 	local start_scale = 1
 	local t = self._t
-	local num
-
-	if lerp_time then
-		num = t + lerp_time
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = nil
-
-	local lerp_end_t = num
-
-	::label_13_0::
-
+	local lerp_end_t = lerp_time and not not (t + lerp_time) or not lerp_time and not not nil
 	local input_key_scale_data = self.input_key_scale[input_key]
 
 	if input_key_scale_data then
@@ -313,21 +278,7 @@ end
 
 PlayerInputExtension.reset_release_input_with_delay = function (self, delay)
 	-- function 20
-	local num
-
-	if self._release_input_delay then
-		num = self._release_input_delay + delay
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = delay
-
-	::label_20_0::
-
-	self._release_input_delay = num
+	self._release_input_delay = self._release_input_delay and not not (self._release_input_delay + delay) or not self._release_input_delay and not not delay
 end
 
 PlayerInputExtension.get_wield_cooldown = function (self, override_cooldown_time)
@@ -422,17 +373,7 @@ PlayerInputExtension.add_buffer = function (self, input_key, doubleclick_window)
 		local priority = priority_lookup[input_key]
 
 		if priority then
-			local var_26_0 = priority_lookup[self.buffer_key]
-
-			if not var_26_0 then
-				-- Nothing
-			end
-
-			var_26_0 = -1
-
-			local last_priority = var_26_0
-
-			::label_26_0::
+			local last_priority = not not priority_lookup[self.buffer_key]
 
 			if last_priority <= priority then
 				self.input_buffer_timer = self.priority_input_buffer_user_setting
@@ -443,7 +384,7 @@ PlayerInputExtension.add_buffer = function (self, input_key, doubleclick_window)
 			self.new_input_buffer_timer = self.input_buffer_user_setting
 			self.new_input_buffer = value
 
-			if self.buffer_key and self.buffer_key ~= input_key and (not action_one_variants[self.buffer_key] or not action_one_variants[input_key]) then
+			if not action_one_variants[self.buffer_key] or not action_one_variants[input_key] then
 				self.new_buffer_key_doubleclick_window = 0
 			else
 				self.new_buffer_key_doubleclick_window = not not doubleclick_window or not not 0.1

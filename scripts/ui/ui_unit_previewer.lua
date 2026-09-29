@@ -82,18 +82,7 @@ UIUnitPreviewer.update = function (self, dt, t, input_service)
 		Unit.set_local_rotation(unit, 0, rotation)
 
 		if self._zoom_dirty then
-			local _zoom_fraction = self._zoom_fraction
-
-			if not _zoom_fraction then
-				-- Nothing
-			end
-
-			_zoom_fraction = 0
-
-			local zoom_fraction = _zoom_fraction
-
-			::label_6_0::
-
+			local zoom_fraction = not not self._zoom_fraction
 			local unit_start_position = self._unit_start_position_boxed:unbox()
 
 			unit_start_position[1] = unit_start_position[1] * (1 - zoom_fraction)
@@ -120,11 +109,7 @@ end
 
 UIUnitPreviewer.zoom_fraction = function (self)
 	-- function 9
-	local _zoom_fraction = self._zoom_fraction
-
-	_zoom_fraction = not not _zoom_fraction or not not 0
-
-	return _zoom_fraction
+	return not not self._zoom_fraction
 end
 
 UIUnitPreviewer._auto_spin_values = function (self, dt, t)

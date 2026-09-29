@@ -316,11 +316,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 3
-						local taken = content.taken
-
-						taken = not not taken and not not not content.locked
-
-						return taken
+						return not not content.taken
 					end
 				},
 				{
@@ -394,23 +390,8 @@ local function create_hero_widget(scenegraph_id, size)
 					content_check_function = function (content)
 						-- function 10
 						local button_hotspot = content.button_hotspot
-						local dlc_name = content.dlc_name
 
-						if dlc_name then
-							if not button_hotspot.is_hover then
-								dlc_name = button_hotspot.is_selected
-
-								if dlc_name then
-									-- Nothing
-								end
-							end
-
-							dlc_name = content.locked
-						end
-
-						::label_10_0::
-
-						return dlc_name
+						return not not content.dlc_name
 					end
 				},
 				{
@@ -821,19 +802,7 @@ local empty_hero_widget = {
 				pass_type = "texture",
 				content_change_function = function (content, style)
 					-- function 16
-					local num
-
-					if content.is_hover then
-						num = 255
-
-						goto label_16_0
-					end
-
-					num = 184
-
-					local target = num
-
-					::label_16_0::
+					local target = content.is_hover and not not 255 or not content.is_hover and not not 184
 
 					style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 				end

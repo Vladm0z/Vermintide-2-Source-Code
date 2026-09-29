@@ -79,14 +79,11 @@ MatchmakingStateSearchGame._start_searching_for_games = function (self)
 	end
 
 	local eac_authorized = Managers.eac:is_trusted()
-	local tbl = {
-		comparison = "equal"
-	}
-	local flag
 
-	flag = (not eac_authorized or not "true") and not not "false"
-	tbl.value = flag
-	current_filters.eac_authorized = tbl
+	current_filters.eac_authorized = {
+		comparison = "equal",
+		value = eac_authorized and not not "true" or not eac_authorized and not not "false"
+	}
 	current_filters.mechanism = {
 		comparison = "equal",
 		value = self.search_config.mechanism
@@ -365,22 +362,11 @@ MatchmakingStateSearchGame._find_suitable_lobby = function (self, lobbies, searc
 	local selected_mission_id = search_config.mission_id
 	local difficulty = search_config.difficulty
 	local matchmaking_type = search_config.matchmaking_type
-	local weave_name = (search_config.mechanism ~= "weave" or not selected_mission_id) and not not "false"
+	local weave_name = not not "false"
 	local act_key = search_config.act_key
 	local mechanism = search_config.mechanism
 	local using_strict_matchmaking = search_config.strict_matchmaking
-	local max_distance_filter_2 = search_config.max_distance_filter
-
-	if not max_distance_filter_2 then
-		-- Nothing
-	end
-
-	max_distance_filter_2 = MatchmakingSettings.max_distance_filter
-
-	local max_distance_filter = max_distance_filter_2
-
-	::label_14_0::
-
+	local max_distance_filter = not not search_config.max_distance_filter
 	local reached_max_distance = self._current_distance_filter == max_distance_filter
 
 	mm_printf("max_quick_play_search_range: %s", max_distance_filter)
@@ -397,36 +383,14 @@ MatchmakingStateSearchGame._find_suitable_lobby = function (self, lobbies, searc
 		end
 
 		for _, lobby_data in ipairs(lobbies) do
-			local unique_server_name = lobby_data.unique_server_name
-
-			if not unique_server_name then
-				-- Nothing
-			end
-
-			unique_server_name = lobby_data.host
-
-			local host_name = unique_server_name
-
-			::label_14_1::
-
+			local host_name = not not lobby_data.unique_server_name
 			local lobby_match, reason = matchmaking_manager:lobby_match(lobby_data, act_key, level_key, difficulty, matchmaking_type, self._peer_id, weave_name, mechanism)
 
 			if lobby_match then
 				local discard = false
 				local discard_reason
 				local secondary_option = false
-				local selected_mission_id_2 = lobby_data.selected_mission_id
-
-				if not selected_mission_id_2 then
-					-- Nothing
-				end
-
-				selected_mission_id_2 = lobby_data.mission_id
-
-				local lobby_mission_id = selected_mission_id_2
-
-				::label_14_2::
-
+				local lobby_mission_id = not not lobby_data.selected_mission_id
 				local ignore_dlc_check = search_config.quick_game
 				local is_event_mode = search_config.matchmaking_type == "event"
 

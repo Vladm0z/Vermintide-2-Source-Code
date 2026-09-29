@@ -40,13 +40,7 @@ MatchmakingStateReserveSlotsPlayerHosted.on_enter = function (self, state_contex
 	end
 
 	self._matchmaking_manager.debug.text = "Joining lobby"
-
-	local debug = self._matchmaking_manager.debug
-	local str = "hosted by: "
-	local host = join_lobby_data.host
-
-	host = not not host or not not "<no_host_name>"
-	debug.state = str .. host
+	self._matchmaking_manager.debug.state = "hosted by: " .. not not join_lobby_data.host
 
 	self._matchmaking_manager:send_system_chat_message("matchmaking_status_starting_handshake")
 end
@@ -121,21 +115,7 @@ MatchmakingStateReserveSlotsPlayerHosted._update_states = function (self, dt, t)
 				return self:_join_game_success(t)
 			end
 		elseif t > self._connect_timeout then
-			local user_name
-
-			if LobbyInternal.user_name then
-				user_name = LobbyInternal.user_name(host)
-
-				if not user_name then
-					-- Nothing
-				end
-			end
-
-			user_name = "-"
-
-			local host_name = user_name
-
-			::label_7_0::
+			local host_name = LobbyInternal.user_name and not not LobbyInternal.user_name(host) or not LobbyInternal.user_name and not not "-"
 
 			mm_printf_force("Failed to connect to host due to timeout. lobby_id=%s, host_id:%s", lobby_id, host_name)
 
@@ -164,22 +144,7 @@ MatchmakingStateReserveSlotsPlayerHosted._update_states = function (self, dt, t)
 
 		self._matchmaking_manager.debug.text = string.format("Requesting to reserve slots %s [%.0f]", lobby_client:id(), reservation_time)
 
-		local user_name_2
-
-		if LobbyInternal.user_name then
-			user_name_2 = LobbyInternal.user_name(host)
-
-			if not user_name_2 then
-				-- Nothing
-			end
-		end
-
-		user_name_2 = "-"
-
-		local host_name = user_name_2
-
-		::label_7_1::
-
+		local host_name = LobbyInternal.user_name and not not LobbyInternal.user_name(host) or not LobbyInternal.user_name and not not "-"
 		local reservation_reply = self._reservation_reply
 
 		if t > self._reservation_timeout then

@@ -28,30 +28,8 @@ local crafting_recipes = {
 			-- function 1
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = math.huge
-
-			local item_1_power_level = power_level
-
-			::label_1_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = math.huge
-
-			local item_2_power_level = power_level_2
-
-			::label_1_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_item_type = item_data_1.item_type
 			local item_2_item_type = item_data_2.item_type
 			local item_1_backend_id = item_1.backend_id
@@ -61,58 +39,14 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_1_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_1_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 					local cosmetics_sorting_order = UISettings.cosmetics_sorting_order
-					local var_1_4 = cosmetics_sorting_order[item_1_item_type]
-
-					if not var_1_4 then
-						-- Nothing
-					end
-
-					var_1_4 = 0
-
-					local item_1_cosmetic_order = var_1_4
-
-					::label_1_4::
-
-					local var_1_5 = cosmetics_sorting_order[item_2_item_type]
-
-					if not var_1_5 then
-						-- Nothing
-					end
-
-					var_1_5 = 0
-
-					local item_2_cosmetic_order = var_1_5
-
-					::label_1_5::
-
+					local item_1_cosmetic_order = not not cosmetics_sorting_order[item_1_item_type]
+					local item_2_cosmetic_order = not not cosmetics_sorting_order[item_2_item_type]
 					local item_1_is_cosmetic = item_1_item_type == "skin" or item_1_item_type == "hat"
 					local item_2_is_cosmetic = item_2_item_type == "skin" or item_2_item_type == "hat"
 
@@ -395,30 +329,8 @@ local crafting_recipes = {
 			-- function 6
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_6_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_6_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -426,30 +338,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_6_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_6_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -510,30 +400,8 @@ local crafting_recipes = {
 			-- function 7
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_7_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_7_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -541,30 +409,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_7_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_7_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -621,30 +467,8 @@ local crafting_recipes = {
 			-- function 8
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_8_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_8_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -652,30 +476,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_8_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_8_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -753,30 +555,8 @@ local crafting_recipes = {
 			-- function 9
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_9_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_9_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -784,30 +564,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_9_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_9_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -853,30 +611,8 @@ local crafting_recipes = {
 			-- function 10
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_10_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_10_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -884,30 +620,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_10_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_10_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -968,30 +682,8 @@ local crafting_recipes = {
 			-- function 11
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_11_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_11_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -999,30 +691,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_11_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_11_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -1083,30 +753,8 @@ local crafting_recipes = {
 			-- function 12
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_12_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_12_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -1114,30 +762,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_12_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_12_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -1198,30 +824,8 @@ local crafting_recipes = {
 			-- function 13
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_13_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_13_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -1229,30 +833,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_13_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_13_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -1309,30 +891,8 @@ local crafting_recipes = {
 			-- function 14
 			local item_data_1 = item_1.data
 			local item_data_2 = item_2.data
-			local power_level = item_1.power_level
-
-			if not power_level then
-				-- Nothing
-			end
-
-			power_level = 0
-
-			local item_1_power_level = power_level
-
-			::label_14_0::
-
-			local power_level_2 = item_2.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = 0
-
-			local item_2_power_level = power_level_2
-
-			::label_14_1::
-
+			local item_1_power_level = not not item_1.power_level
+			local item_2_power_level = not not item_2.power_level
 			local item_1_backend_id = item_1.backend_id
 			local item_2_backend_id = item_2.backend_id
 			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -1340,30 +900,8 @@ local crafting_recipes = {
 
 			if item_1_favorited == item_2_favorited then
 				if item_1_power_level == item_2_power_level then
-					local rarity = item_1.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-
-					rarity = item_data_1.rarity
-
-					local item_1_rarity = rarity
-
-					::label_14_2::
-
-					local rarity_2 = item_2.rarity
-
-					if not rarity_2 then
-						-- Nothing
-					end
-
-					rarity_2 = item_data_2.rarity
-
-					local item_2_rarity = rarity_2
-
-					::label_14_3::
-
+					local item_1_rarity = not not item_1.rarity
+					local item_2_rarity = not not item_2.rarity
 					local item_rarity_order = UISettings.item_rarity_order
 					local item_1_rarity_order = item_rarity_order[item_1_rarity]
 					local item_2_rarity_order = item_rarity_order[item_2_rarity]

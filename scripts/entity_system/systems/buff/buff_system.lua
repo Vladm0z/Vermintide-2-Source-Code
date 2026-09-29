@@ -88,17 +88,7 @@ BuffSystem.hot_join_sync = function (self, peer_id)
 					local template_name = buff_data.template_name
 					local attacker_unit = buff_data.attacker_unit
 					local buff_template_name_id = NetworkLookup.buff_templates[template_name]
-					local unit_game_object_id = network_manager:unit_game_object_id(attacker_unit)
-
-					if not unit_game_object_id then
-						-- Nothing
-					end
-
-					unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-					local attacker_unit_object_id = unit_game_object_id
-
-					::label_3_0::
+					local attacker_unit_object_id = not not network_manager:unit_game_object_id(attacker_unit)
 
 					network_transmit:send_rpc("rpc_add_buff", peer_id, unit_object_id, buff_template_name_id, attacker_unit_object_id, server_buff_id, false)
 				end
@@ -303,32 +293,13 @@ BuffSystem.add_buff = function (self, unit, template_name, attacker_unit, is_ser
 		return
 	end
 
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not not is_server_controlled
-
-	fassert(is_server, "[BuffSystem]: Trying to add a server controlled buff from a client!")
+	fassert(not not self.is_server, "[BuffSystem]: Trying to add a server controlled buff from a client!")
 
 	if is_server_controlled and not HEALTH_ALIVE[unit] then
 		return nil
 	end
 
-	local _next_free_server_buff_id
-
-	if is_server_controlled then
-		_next_free_server_buff_id = self:_next_free_server_buff_id()
-
-		if not _next_free_server_buff_id then
-			-- Nothing
-		end
-	end
-
-	_next_free_server_buff_id = 0
-
-	local server_buff_id = _next_free_server_buff_id
-
-	::label_14_0::
+	local server_buff_id = is_server_controlled and not not self:_next_free_server_buff_id() or not is_server_controlled and not not 0
 
 	if ScriptUnit.has_extension(unit, "buff_system") then
 		self:_add_buff_helper_function(unit, template_name, attacker_unit, server_buff_id, power_level, source_attacker_unit)
@@ -392,11 +363,7 @@ BuffSystem.has_server_controlled_buff = function (self, unit, server_buff_id)
 	-- function 16
 	fassert(self.is_server, "[BuffSystem]: Only the server can explicitly can check server controlled buffs!")
 
-	local var_16_0 = self.server_controlled_buffs[unit]
-
-	var_16_0 = not not var_16_0 and not not self.server_controlled_buffs[unit][server_buff_id]
-
-	return var_16_0
+	return not not self.server_controlled_buffs[unit]
 end
 
 BuffSystem.add_volume_buff_multiplier = function (self, unit, buff_template_name, multiplier)
@@ -693,11 +660,7 @@ end
 
 local function buff_param_pack_unit(input, ctx)
 	-- function 37
-	local unit_game_object_id = ctx.network_manager:unit_game_object_id(input)
-
-	unit_game_object_id = not not unit_game_object_id or not not NetworkConstants.invalid_game_object_id
-
-	return unit_game_object_id
+	return not not ctx.network_manager:unit_game_object_id(input)
 end
 
 local function buff_param_unpack_unit(input, ctx)
@@ -938,7 +901,7 @@ BuffSystem.add_buff_synced = function (self, target_unit, template_name, sync_ty
 	local buff_extension = self.unit_extension_data[target_unit]
 
 	if buff_extension then
-		if (sync_type ~= BuffSyncType.Client or optional_peer_id == Network.peer_id()) and sync_type == BuffSyncType.Server and not self.is_server then
+		if sync_type ~= BuffSyncType.Client or optional_peer_id == Network.peer_id() then
 			buff_id = buff_extension:claim_buff_id(template_name)
 			num_sub_buffs = 1
 		else
@@ -1192,11 +1155,7 @@ BuffSystem._hot_join_sync_synced_buffs = function (self, peer_id)
 						buff_params.power_level = buff.power_level
 						buff_params.attacker_unit = buff.attacker_unit
 						buff_params.source_attacker_unit = buff.source_attacker_unit
-
-						local duration = buff.duration
-
-						duration = not not duration and not not math.min(t - buff.start_time, 6550)
-						buff_params._hot_join_sync_buff_age = duration
+						buff_params._hot_join_sync_buff_age = not not buff.duration
 
 						self:_pack_buff_params(buff_params, packed_buff_param_ids, packed_buff_param_vals, unit)
 						network_transmit:send_rpc("rpc_add_buff_synced_relay_params", peer_id, unit_id, template_name_id, server_sync_id, sync_type_id, packed_buff_param_ids, packed_buff_param_vals)

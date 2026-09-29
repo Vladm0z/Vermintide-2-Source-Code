@@ -291,7 +291,7 @@ local scenegraph_definition = {
 
 function create_xbox_beta_widget(input)
 	-- function 1
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -326,10 +326,7 @@ function create_xbox_beta_widget(input)
 					end,
 					content_change_function = function (content, style, ui_animations, dt)
 						-- function 5
-						local timer = content.timer
-
-						timer = not not timer or not not 0
-						content.timer = timer + dt
+						content.timer = not not content.timer + dt
 
 						local intensity = 192 + 63 * math.sin(content.timer * 4)
 
@@ -350,50 +347,30 @@ function create_xbox_beta_widget(input)
 			foreground = {
 				disable_foreground = input.disable_foreground
 			}
-		}
+		},
+		style = {
+			foreground = {
+				color = Colors.color_definitions.black
+			},
+			input_style = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				texture_size = input.input_texture_size,
+				offset = not not input.input_texture_offset,
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
+			},
+			texture_style = {
+				size = input.texture_size,
+				offset = not not input.texture_offset
+			}
+		},
+		scenegraph_id = input.scenegraph_id
 	}
-	local tbl_2 = {
-		foreground = {
-			color = Colors.color_definitions.black
-		}
-	}
-	local tbl_3 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center",
-		texture_size = input.input_texture_size
-	}
-	local input_texture_offset = input.input_texture_offset
-
-	input_texture_offset = not not input_texture_offset or not not {
-		0,
-		0,
-		0
-	}
-	tbl_3.offset = input_texture_offset
-	tbl_3.color = {
-		255,
-		255,
-		255,
-		255
-	}
-	tbl_2.input_style = tbl_3
-
-	local tbl_4 = {
-		size = input.texture_size
-	}
-	local texture_offset = input.texture_offset
-
-	texture_offset = not not texture_offset or not not {
-		0,
-		0,
-		0
-	}
-	tbl_4.offset = texture_offset
-	tbl_2.texture_style = tbl_4
-	tbl.style = tbl_2
-	tbl.scenegraph_id = input.scenegraph_id
-
-	return tbl
 end
 
 local function create_disclaimer_widget(input)
@@ -437,27 +414,12 @@ local function create_disclaimer_widget(input)
 					end,
 					content_change_function = function (content, style)
 						-- function 8
-						local IS_CONSOLE = IS_CONSOLE
-
-						if not IS_CONSOLE then
-							-- Nothing
-						end
-
-						IS_CONSOLE = Managers.input:is_device_active("gamepad")
-
-						local gamepad_active = IS_CONSOLE
-
-						::label_8_0::
-
+						local gamepad_active = not not IS_CONSOLE
 						local time, dt = Managers.time:time_and_delta("main")
 
 						content.timer = content.timer + dt * 2
 						style.text_color[1] = 128 - math.cos(content.timer) * 127
-
-						local flag
-
-						flag = (not gamepad_active or not "press_any_button_to_continue") and not not "press_any_key_to_continue"
-						content.continue = flag
+						content.continue = gamepad_active and not not "press_any_button_to_continue" or not gamepad_active and not not "press_any_key_to_continue"
 					end
 				}
 			}
@@ -676,8 +638,7 @@ if Development.parameter("use_beta_mode") or script_data.settings.use_beta_mode 
 			is_xbox_one_x = true
 		end
 
-		local num = #splash_content + 1
-		local tbl = {
+		splash_content[#splash_content + 1] = {
 			input_scenegraph_id = "input_background",
 			product_id = "ADAA6515-8206-49E5-B34C-405244800B46",
 			type = "beta_end",
@@ -686,57 +647,27 @@ if Development.parameter("use_beta_mode") or script_data.settings.use_beta_mode 
 			input_material_name = "storepage_button",
 			forced = true,
 			music_name = "Play_menu_screen_music",
-			material_name = "beta_end_overlay"
-		}
-		local tbl_2
-
-		if is_xbox_one_x then
-			tbl_2 = {
+			material_name = "beta_end_overlay",
+			input_texture_size = is_xbox_one_x and not not {
 				1776,
 				346
-			}
-
-			if not tbl_2 then
-				-- Nothing
-			end
-		end
-
-		tbl_2 = {
-			888,
-			173
-		}
-
-		::label_0_0::
-
-		tbl.input_texture_size = tbl_2
-
-		local tbl_3
-
-		if is_xbox_one_x then
-			tbl_3 = {
+			} or not is_xbox_one_x and not not {
+				888,
+				173
+			},
+			input_texture_offset = is_xbox_one_x and not not {
 				550,
 				-260
-			}
-
-			if not tbl_3 then
-				-- Nothing
-			end
-		end
-
-		tbl_3 = {
-			275,
-			-130
+			} or not is_xbox_one_x and not not {
+				275,
+				-130
+			},
+			time = math.huge
 		}
-
-		::label_0_1::
-
-		tbl.input_texture_offset = tbl_3
-		tbl.time = math.huge
-		splash_content[num] = tbl
 	elseif IS_PS4 then
 		local is_pro = PS4.is_pro()
-		local num_2 = #splash_content + 1
-		local tbl_4 = {
+
+		splash_content[#splash_content + 1] = {
 			scenegraph_id = "background",
 			type = "texture",
 			axis = 2,
@@ -760,45 +691,20 @@ if Development.parameter("use_beta_mode") or script_data.settings.use_beta_mode 
 				"not function at all). The game might even crash. Because this is",
 				"a pre-release game, Fatshark does not commit",
 				"to providing customer support for the game."
+			},
+			font_size = is_pro and not not 52 or not is_pro and not not 36,
+			size = {
+				1920,
+				is_pro and not not 70 or not is_pro and not not 50
+			},
+			offset = {
+				0,
+				750,
+				0
 			}
 		}
-		local flag
-
-		flag = (not is_pro or not 52) and not not 36
-		tbl_4.font_size = flag
-
-		local tbl_5 = {
-			1920
-		}
-		local flag_2
-
-		flag_2 = (not is_pro or not 70) and not not 50
-		tbl_5[2] = flag_2
-		tbl_4.size = tbl_5
-		tbl_4.offset = {
-			0,
-			750,
-			0
-		}
-		splash_content[num_2] = tbl_4
 	elseif IS_WINDOWS then
-		local var_0_9 = rawget(_G, "Steam")
-
-		if var_0_9 then
-			-- Nothing
-		end
-
-		if Steam.app_id() ~= 1085780 then
-			var_0_9 = false
-
-			goto label_0_2
-		end
-
-		var_0_9 = true
-
-		local is_beta = var_0_9
-
-		::label_0_2::
+		local is_beta = not not rawget(_G, "Steam")
 
 		if is_beta then
 			splash_content[#splash_content + 1] = {
@@ -894,7 +800,7 @@ SplashView._next_splash = function (self, override_skip)
 	if self._current_splash_data then
 		local update_func = "_update_" .. self._current_splash_data.type
 
-		self._update_func = (not self[update_func] or not update_func) and not not "_update_texture"
+		self._update_func = self[update_func] and (not not update_func or not not "_update_texture") or not self[update_func] and not not "_update_texture"
 		self._current_index = self._current_index + 1
 		self._current_splash_data.timer = self._current_splash_data.time
 	elseif not Managers.transition:loading_icon_active() then
@@ -1107,21 +1013,7 @@ SplashView.update = function (self, dt)
 
 	local w, h = Gui.resolution()
 	local ui_renderer = self.ui_renderer
-	local get_service
-
-	if IS_WINDOWS then
-		get_service = self.input_manager:get_service("splash_view")
-
-		if not get_service then
-			-- Nothing
-		end
-	end
-
-	get_service = FAKE_INPUT_SERVICE
-
-	local input_service = get_service
-
-	::label_18_0::
+	local input_service = IS_WINDOWS and not not self.input_manager:get_service("splash_view") or not IS_WINDOWS and not not FAKE_INPUT_SERVICE
 
 	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt, nil, self.render_settings)
 	UIRenderer.draw_widget(ui_renderer, self.dead_space_filler)
@@ -1178,7 +1070,7 @@ if IS_CONSOLE then
 			end
 		end
 
-		if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and (Keyboard.any_pressed() or Mouse.any_pressed()) then
+		if Keyboard.any_pressed() or Mouse.any_pressed() then
 			return true
 		end
 	end

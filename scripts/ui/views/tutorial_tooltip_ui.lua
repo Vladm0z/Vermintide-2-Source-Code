@@ -74,37 +74,12 @@ TutorialTooltipUI.update = function (self, tooltip_tutorial, player_unit, dt)
 	local active_tooltip_name = self.active_tooltip_name
 	local widget_style = self.tutorial_tooltip_widget.style
 	local widget_content = self.tutorial_tooltip_widget.content
-	local text_2 = active_template.text
-
-	if not text_2 then
-		-- Nothing
-	end
-
-	text_2 = "-no text assigned-"
-
-	local text = text_2
-
-	::label_5_0::
-
+	local text = not not active_template.text
 	local tooltip_action = active_template.action
 	local force_update = active_template.force_update
 	local texture_size_y, texture_size_x = 0, 0
 	local gamepad_active = self.input_manager:is_device_active("gamepad")
-	local gamepad_inputs
-
-	if gamepad_active then
-		gamepad_inputs = active_template.gamepad_inputs
-
-		if not gamepad_inputs then
-			-- Nothing
-		end
-	end
-
-	gamepad_inputs = active_template.inputs
-
-	local inputs = gamepad_inputs
-
-	::label_5_1::
+	local inputs = gamepad_active and not not active_template.gamepad_inputs or not gamepad_active and not not active_template.inputs
 
 	if inputs and #inputs > 0 then
 		if not active_tooltip_name then
@@ -173,10 +148,7 @@ TutorialTooltipUI.update = function (self, tooltip_tutorial, player_unit, dt)
 								end
 							else
 								texture_size_x = texture_size_x + sizes[i][1]
-
-								if texture_size_y < sizes[i][2] and not sizes[i][2] then
-									-- Nothing
-								end
+								texture_size_y = not (texture_size_y < sizes[i][2]) or not not sizes[i][2] or not not texture_size_y
 							end
 						end
 
@@ -188,22 +160,7 @@ TutorialTooltipUI.update = function (self, tooltip_tutorial, player_unit, dt)
 
 					ui_scenegraph["input_description_icon_" .. i].size[1] = texture_size_x
 					ui_scenegraph["input_description_icon_" .. i].size[2] = texture_size_y
-
-					local var_5_2
-
-					if input.prefix and input.prefix ~= "" then
-						var_5_2 = Localize(input.prefix)
-
-						if not var_5_2 then
-							-- Nothing
-						end
-					end
-
-					var_5_2 = ""
-
-					::label_5_2::
-
-					widget_content.prefix_text = var_5_2
+					widget_content.prefix_text = not not Localize(input.prefix)
 					widget_content.suffix_text = input.suffix
 
 					local prefix_font, prefix_scaled_font_size = UIFontByResolution(widget_style.prefix_text)

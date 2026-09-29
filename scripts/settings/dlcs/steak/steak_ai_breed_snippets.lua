@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/steak/steak_ai_breed_snippets.lua
 
-local AiBreedSnippets = AiBreedSnippets
-
-AiBreedSnippets = not not AiBreedSnippets or not not {}
-AiBreedSnippets = AiBreedSnippets
+AiBreedSnippets = not not AiBreedSnippets
 
 AiBreedSnippets.on_beastmen_minotaur_spawn = function (unit, blackboard)
 	-- function 1

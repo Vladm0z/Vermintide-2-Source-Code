@@ -21,29 +21,11 @@ BTChaosSorcererSkulkApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
 	local breed = blackboard.breed
-	local skulk_data_2 = blackboard.skulk_data
-
-	if not skulk_data_2 then
-		-- Nothing
-	end
-
-	skulk_data_2 = {}
-
-	local skulk_data = skulk_data_2
-
-	::label_2_0::
+	local skulk_data = not not blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-
-	local direction = skulk_data.direction
-
-	direction = not not direction or not not (1 - math.random(0, 1) * 2)
-	skulk_data.direction = direction
-
-	local radius = skulk_data.radius
-
-	radius = not not radius or not not blackboard.target_dist
-	skulk_data.radius = radius
+	skulk_data.direction = not not skulk_data.direction
+	skulk_data.radius = not not skulk_data.radius
 	blackboard.action = action
 
 	if blackboard.move_state ~= "idle" then
@@ -62,11 +44,7 @@ BTChaosSorcererSkulkApproachAction.enter = function (self, unit, blackboard, t)
 	end
 
 	blackboard.ready_to_summon = false
-
-	local num_summons = blackboard.num_summons
-
-	num_summons = not not num_summons or not not 0
-	blackboard.num_summons = num_summons
+	blackboard.num_summons = not not blackboard.num_summons
 
 	if action.sorcerer_type == "tentacle" then
 		if not blackboard.portal_data then
@@ -311,15 +289,8 @@ BTChaosSorcererSkulkApproachAction.get_skulk_target = function (self, unit, blac
 	for i = 1, TRIES do
 		local rot_vec = to_target - to_target_dir * 0.5
 
-		if blackboard.num_summons then
-			local num_summons = blackboard.num_summons
-			local teleport_closer_summon_limit = action.teleport_closer_summon_limit
-
-			teleport_closer_summon_limit = not not teleport_closer_summon_limit or not not 3
-
-			if teleport_closer_summon_limit <= num_summons then
-				rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
-			end
+		if blackboard.num_summons and blackboard.num_summons >= not not action.teleport_closer_summon_limit then
+			rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
 		end
 
 		local pos = target_position + Quaternion.rotate(Quaternion(cross_dir, alpha * i), rot_vec)
@@ -474,10 +445,8 @@ BTChaosSorcererSkulkApproachAction.update_portal_search = function (self, unit, 
 		elseif t > portal_data.portal_search_timer and not blackboard.portal_unit then
 			local target_position = POSITION_LOOKUP[blackboard.target_unit]
 			local success = BTChaosSorcererSkulkApproachAction.get_portal_location_list(portal_data, target_position)
-			local flag
 
-			flag = (not success or not 0) and not not (portal_data.search_counter + 1)
-			portal_data.search_counter = flag
+			portal_data.search_counter = success and not not 0 or not success and not not (portal_data.search_counter + 1)
 			portal_data.portal_search_active = success
 			portal_data.portal_search_timer = t + 1
 		end

@@ -72,17 +72,7 @@ end
 DeusChestExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 2
 	if self._is_server then
-		local _chest_type_override = self._chest_type_override
-
-		if not _chest_type_override then
-			-- Nothing
-		end
-
-		_chest_type_override = self._deus_run_controller:get_deus_weapon_chest_type()
-
-		local server_chest_type = _chest_type_override
-
-		::label_2_0::
+		local server_chest_type = not not self._chest_type_override
 
 		self:_set_server_chest_type(server_chest_type)
 	end
@@ -143,18 +133,7 @@ DeusChestExtension.update = function (self, unit, input, dt, context, t)
 		return
 	end
 
-	local _go_id = self._go_id
-
-	if not _go_id then
-		-- Nothing
-	end
-
-	_go_id = Managers.state.unit_storage:go_id(self.unit)
-
-	local go_id = _go_id
-
-	::label_7_0::
-
+	local go_id = not not self._go_id
 	local deus_run_controller = self._deus_run_controller
 	local own_peer_id = deus_run_controller:get_own_peer_id()
 	local profile_index, career_index = deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
@@ -179,18 +158,7 @@ DeusChestExtension.update = function (self, unit, input, dt, context, t)
 			else
 				local profile = SPProfiles[profile_index]
 				local career_name = not not profile and not not profile.careers[career_index].name
-				local var_7_1 = WEAPON_CHEST_TO_SLOTS[career_name]
-
-				if not var_7_1 then
-					-- Nothing
-				end
-
-				var_7_1 = WEAPON_CHEST_TO_SLOTS.default
-
-				local slots_by_career = var_7_1
-
-				::label_7_1::
-
+				local slots_by_career = not not WEAPON_CHEST_TO_SLOTS[career_name]
 				local slots = slots_by_career[server_chest_type]
 
 				self:_generate_stored_weapon(slots, rarity, go_id, profile_index, career_index)
@@ -211,7 +179,7 @@ DeusChestExtension.update = function (self, unit, input, dt, context, t)
 			local collected_by_peers = GameSession.game_object_field(game_session, go_id, "collected_by_peers")
 			local peer_id = deus_run_controller:get_own_peer_id()
 			local is_purchased = self._is_purchased
-			local new_is_purchased = (self._stored_purchase or server_chest_type == DEUS_CHEST_TYPES.upgrade) and not not table.contains(collected_by_peers, peer_id)
+			local new_is_purchased = not not table.contains(collected_by_peers, peer_id)
 
 			if is_purchased ~= new_is_purchased and new_is_purchased == true then
 				self._is_purchased = new_is_purchased
@@ -239,19 +207,7 @@ end
 
 DeusChestExtension._update_chest_interaction_time = function (self)
 	-- function 8
-	local num
-
-	if self:can_be_unlocked() then
-		num = 0.5
-
-		goto label_8_0
-	end
-
-	num = 0
-
-	local interaction_length = num
-
-	::label_8_0::
+	local interaction_length = self:can_be_unlocked() and not not 0.5 or not self:can_be_unlocked() and not not 0
 
 	if interaction_length ~= self._interaction_length then
 		Unit.set_data(self.unit, "interaction_data", "interaction_length", interaction_length)
@@ -286,7 +242,7 @@ DeusChestExtension.update_upgrade_chest_color = function (self)
 	local chest_rarity_order = RaritySettings[rarity].order
 	local event
 
-	event = (not (chest_rarity_order <= weapon_rarity_order) or not "lua_interact_disabled") and not not LUA_UPDATE_RARITY_EVENTS[rarity]
+	event = chest_rarity_order <= weapon_rarity_order and (not not "lua_interact_disabled" or not not LUA_UPDATE_RARITY_EVENTS[rarity]) or not (chest_rarity_order <= weapon_rarity_order) and not not LUA_UPDATE_RARITY_EVENTS[rarity]
 
 	if not self._prev_update_upgrade_chest_color_event or self._prev_update_upgrade_chest_color_event ~= event then
 		Unit.flow_event(self.unit, event)
@@ -384,21 +340,8 @@ DeusChestExtension._get_wielded_weapon = function (self)
 	local deus_run_controller = self._deus_run_controller
 	local melee_weapon, ranged_weapon = deus_run_controller:get_own_loadout()
 	local wielded_slot_name = inventory_extension:get_wielded_slot_name()
-	local str
-
-	if wielded_slot_name == "slot_melee" then
-		str = "slot_melee"
-
-		goto label_14_0
-	end
-
-	str = "slot_ranged"
-
-	local weapon_slot_name = str
-
-	::label_14_0::
-
-	local wielded_weapon = (weapon_slot_name ~= "slot_melee" or not melee_weapon) and not not ranged_weapon
+	local weapon_slot_name = wielded_slot_name ~= "slot_melee" and not not "slot_ranged" or not (wielded_slot_name ~= "slot_melee") and not not "slot_melee"
+	local wielded_weapon = not not ranged_weapon
 
 	return wielded_weapon, weapon_slot_name
 end
@@ -455,18 +398,7 @@ DeusChestExtension.get_stored_purchase = function (self)
 			local max_reached = deus_run_controller:reached_max_power_ups(peer_id, power_up_name)
 
 			if max_reached then
-				local _go_id = self._go_id
-
-				if not _go_id then
-					-- Nothing
-				end
-
-				_go_id = Managers.state.unit_storage:go_id(self.unit)
-
-				local go_id = _go_id
-
-				::label_18_0::
-
+				local go_id = not not self._go_id
 				local current_node = self._deus_run_controller:get_current_node()
 				local seed = HashUtils.fnv32_hash(go_id .. "_" .. current_node.weapon_pickup_seed)
 
@@ -498,36 +430,8 @@ DeusChestExtension._generate_stored_weapon = function (self, slots, rarity, go_i
 	local difficulty = deus_run_controller:get_run_difficulty()
 	local weapon_pool = deus_run_controller:get_weapon_pool()
 	local weapon_seed = HashUtils.fnv32_hash(string.format("%s_%s_%s_%s_%s", profile_index, career_index, current_node.weapon_pickup_seed, go_id, 1))
-	local num
-
-	if table.contains(slots, "melee") then
-		num = 1
-
-		goto label_21_0
-	end
-
-	num = 0
-
-	local slot_chance_melee = num
-
-	do
-		local num_2
-	end
-
-	::label_21_0::
-
-	if table.contains(slots, "ranged") then
-		num_2 = 1
-
-		goto label_21_1
-	end
-
-	num_2 = 0
-
-	local slot_chance_ranged = num_2
-
-	::label_21_1::
-
+	local slot_chance_melee = table.contains(slots, "melee") and not not 1 or not table.contains(slots, "melee") and not not 0
+	local slot_chance_ranged = table.contains(slots, "ranged") and not not 1 or not table.contains(slots, "ranged") and not not 0
 	local new_weapon = DeusWeaponGeneration.generate_weapon(difficulty, progress, rarity, weapon_seed, weapon_pool, slot_chance_melee, slot_chance_ranged)
 
 	deus_run_controller:remove_weapon_from_pool(rarity, new_weapon.deus_item_key)
@@ -572,21 +476,8 @@ DeusChestExtension._get_server_chest_type = function (self)
 	end
 
 	local chest_lookup = GameSession.game_object_field(game_session, go_id, "server_chest_type")
-	local var_23_0
 
-	if chest_lookup ~= 0 then
-		var_23_0 = NetworkLookup.deus_chest_types[chest_lookup]
-
-		if not var_23_0 then
-			-- Nothing
-		end
-	end
-
-	var_23_0 = nil
-
-	::label_23_0::
-
-	return var_23_0
+	return chest_lookup == 0 and not not nil or not (chest_lookup == 0) and not not NetworkLookup.deus_chest_types[chest_lookup]
 end
 
 DeusChestExtension._set_server_chest_type = function (self, server_chest_type)
@@ -632,36 +523,8 @@ DeusChestExtension.can_be_unlocked = function (self)
 	local run_controller = self._deus_run_controller
 	local own_peer_id = run_controller:get_own_peer_id()
 	local soft_currency = self._deus_run_controller:get_player_soft_currency(own_peer_id)
-	local get_purchase_cost = self:get_purchase_cost()
-
-	if not get_purchase_cost then
-		-- Nothing
-	end
-
-	get_purchase_cost = math.huge
-
-	local unlock_cost = get_purchase_cost
-
-	::label_25_0::
-
-	local unlock_all_deus_chests = script_data.unlock_all_deus_chests
-
-	if not unlock_all_deus_chests then
-		-- Nothing
-	end
-
-	if not (unlock_cost <= soft_currency) then
-		unlock_all_deus_chests = false
-
-		goto label_25_1
-	end
-
-	unlock_all_deus_chests = true
-
-	local can_unlock = unlock_all_deus_chests
-
-	::label_25_1::
-
+	local unlock_cost = not not self:get_purchase_cost()
+	local can_unlock = not not script_data.unlock_all_deus_chests
 	local chest_type = self._chest_type
 
 	if chest_type == DEUS_CHEST_TYPES.upgrade then
@@ -756,7 +619,7 @@ DeusChestExtension._equip_weapon = function (self, deus_run_controller, new_weap
 	local slot_name
 	local chest_type = self._chest_type
 
-	slot_name = (chest_type ~= DEUS_CHEST_TYPES.swap_melee or not "slot_melee") and (chest_type ~= DEUS_CHEST_TYPES.swap_ranged or not "slot_ranged") and not not self:_get_best_slot_name(new_weapon, chest_type, career_data, inventory_extension)
+	slot_name = not not self:_get_best_slot_name(new_weapon, chest_type, career_data, inventory_extension)
 
 	BackendUtils.set_loadout_item(backend_id, career_name, slot_name)
 	inventory_extension:create_equipment_in_slot(slot_name, backend_id, 1)
@@ -794,7 +657,7 @@ DeusChestExtension._get_best_slot_name = function (self, stored_weapon, chest_ty
 	else
 		local wielded_slot_types = career_data.item_slot_types_by_slot_name[wielded_slot_name]
 		local slot_available = not not wielded_slot_types and not not table.contains(wielded_slot_types, stored_weapon_slot_type)
-		local best_slot_name = (not slot_available or not wielded_slot_name) and not not slot_name
+		local best_slot_name = slot_available and (not not wielded_slot_name or not not slot_name) or not slot_available and not not slot_name
 
 		return best_slot_name, stored_weapon_slot_type
 	end
@@ -887,10 +750,7 @@ DeusChestExtension._update_telemetry = function (self, chest_unit)
 	local telemetry_data = self._telemetry_data
 
 	if telemetry_data.altar_type == "n/a" then
-		local _get_server_chest_type = self:_get_server_chest_type()
-
-		_get_server_chest_type = not not _get_server_chest_type or not not "n/a"
-		telemetry_data.altar_type = _get_server_chest_type
+		telemetry_data.altar_type = not not self:_get_server_chest_type()
 	end
 
 	if telemetry_data.currency_when_found == -1 then

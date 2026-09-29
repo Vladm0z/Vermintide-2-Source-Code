@@ -175,7 +175,7 @@ local function create_party_entry(name, career, offset_y)
 		career_portrait = "small_" .. career.portrait_image
 	end
 
-	local tbl = {
+	return {
 		scenegraph_id = "party_header",
 		element = {
 			passes = {
@@ -194,70 +194,53 @@ local function create_party_entry(name, career, offset_y)
 		content = {
 			text_id = not not name or not not Localize("friends_view_free_slot"),
 			texture_id = career_portrait
-		}
-	}
-	local tbl_2 = {}
-	local tbl_3 = {
-		vertical_alignment = "center",
-		font_size = 24,
-		localize = false,
-		horizontal_alignment = "left",
-		word_wrap = true,
-		font_type = "hell_shark"
-	}
-	local get_color_table_with_alpha
-
-	if career then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("white", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = {
-		255,
-		80,
-		80,
-		80
-	}
-
-	::label_1_0::
-
-	tbl_3.text_color = get_color_table_with_alpha
-	tbl_3.offset = {
-		35,
-		0,
-		1
-	}
-	tbl_2.text = tbl_3
-	tbl_2.texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		texture_size = {
-			30,
-			35
 		},
-		color = Colors.get_color_table_with_alpha("white", 255),
+		style = {
+			text = {
+				vertical_alignment = "center",
+				font_size = 24,
+				localize = false,
+				horizontal_alignment = "left",
+				word_wrap = true,
+				font_type = "hell_shark",
+				text_color = career and not not Colors.get_color_table_with_alpha("white", 255) or not career and not not {
+					255,
+					80,
+					80,
+					80
+				},
+				offset = {
+					35,
+					0,
+					1
+				}
+			},
+			texture = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				texture_size = {
+					30,
+					35
+				},
+				color = Colors.get_color_table_with_alpha("white", 255),
+				offset = {
+					0,
+					0,
+					0
+				}
+			}
+		},
 		offset = {
 			0,
-			0,
+			offset_y and (not not offset_y or not not 0) or not offset_y and not not 0,
 			0
 		}
 	}
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		(not offset_y or not offset_y) and not not 0,
-		0
-	}
-
-	return tbl
 end
 
 local function create_friend_entry(name, online, offset_y, friend)
 	-- function 2
-	local tbl = {
+	return {
 		scenegraph_id = "friends_base",
 		element = {
 			passes = {
@@ -291,11 +274,7 @@ local function create_friend_entry(name, online, offset_y, friend)
 					texture_id = "texture_id",
 					content_check_function = function (content)
 						-- function 4
-						local is_hover = content.entry_hotspot.is_hover
-
-						is_hover = not not is_hover and not not not content.selected
-
-						return is_hover
+						return not not content.entry_hotspot.is_hover
 					end
 				},
 				{
@@ -313,170 +292,122 @@ local function create_friend_entry(name, online, offset_y, friend)
 			entry_hotspot = {},
 			text_id = name,
 			friend = friend
-		}
-	}
-	local tbl_2 = {}
-	local tbl_3 = {
-		vertical_alignment = "center",
-		font_size = 20,
-		localize = false,
-		horizontal_alignment = "left",
-		word_wrap = true,
-		font_type = "hell_shark_masked"
-	}
-	local get_color_table_with_alpha
-
-	if online then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_title", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = {
-		255,
-		80,
-		80,
-		80
-	}
-
-	::label_2_0::
-
-	tbl_3.text_color = get_color_table_with_alpha
-	tbl_3.offset = {
-		35,
-		0,
-		2
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {}
-	local tbl_5
-
-	if online then
-		tbl_5 = {
-			255,
+		},
+		style = {
+			text = {
+				vertical_alignment = "center",
+				font_size = 20,
+				localize = false,
+				horizontal_alignment = "left",
+				word_wrap = true,
+				font_type = "hell_shark_masked",
+				text_color = online and not not Colors.get_color_table_with_alpha("font_title", 255) or not online and not not {
+					255,
+					80,
+					80,
+					80
+				},
+				offset = {
+					35,
+					0,
+					2
+				}
+			},
+			texture = {
+				color = online and not not {
+					255,
+					0,
+					255,
+					0
+				} or not online and not not {
+					255,
+					255,
+					0,
+					0
+				},
+				offset = {
+					0,
+					0,
+					0
+				}
+			},
+			selected_texture = {
+				color = {
+					200,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					1
+				}
+			},
+			hover = {
+				color = {
+					128,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					1
+				}
+			},
+			invite_texture = {
+				vertical_alignment = "center",
+				horizontal_alignment = "right",
+				texture_size = {
+					32,
+					32
+				},
+				color = {
+					0,
+					255,
+					255,
+					255
+				},
+				offset = {
+					40,
+					0,
+					10
+				}
+			},
+			indicator_texture = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "left",
+				texture_size = {
+					20,
+					20
+				},
+				color = online and not not {
+					255,
+					0,
+					255,
+					0
+				} or not online and not not {
+					255,
+					255,
+					0,
+					0
+				},
+				offset = {
+					10,
+					0,
+					2
+				}
+			}
+		},
+		offset = {
 			0,
-			255,
+			offset_y and (not not offset_y or not not 0) or not offset_y and not not 0,
 			0
 		}
-
-		if not tbl_5 then
-			-- Nothing
-		end
-	end
-
-	tbl_5 = {
-		255,
-		255,
-		0,
-		0
 	}
-
-	::label_2_1::
-
-	tbl_4.color = tbl_5
-	tbl_4.offset = {
-		0,
-		0,
-		0
-	}
-	tbl_2.texture = tbl_4
-	tbl_2.selected_texture = {
-		color = {
-			200,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			1
-		}
-	}
-	tbl_2.hover = {
-		color = {
-			128,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			1
-		}
-	}
-	tbl_2.invite_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "right",
-		texture_size = {
-			32,
-			32
-		},
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			40,
-			0,
-			10
-		}
-	}
-
-	local tbl_6 = {
-		vertical_alignment = "center",
-		masked = true,
-		horizontal_alignment = "left",
-		texture_size = {
-			20,
-			20
-		}
-	}
-	local tbl_7
-
-	if online then
-		tbl_7 = {
-			255,
-			0,
-			255,
-			0
-		}
-
-		if not tbl_7 then
-			-- Nothing
-		end
-	end
-
-	tbl_7 = {
-		255,
-		255,
-		0,
-		0
-	}
-
-	::label_2_2::
-
-	tbl_6.color = tbl_7
-	tbl_6.offset = {
-		10,
-		0,
-		2
-	}
-	tbl_2.indicator_texture = tbl_6
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		(not offset_y or not offset_y) and not not 0,
-		0
-	}
-
-	return tbl
 end
 
 function create_selection_handler(scenegraph_id)
@@ -742,96 +673,80 @@ local function create_loading_icon()
 	}
 end
 
-local tbl = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "back",
 			priority = 5,
 			description_text = "input_description_back"
 		}
-	}
-}
-local tbl_2 = {}
-local tbl_3 = {}
-local tbl_4 = {
-	input_action = "special_1",
-	priority = 1
-}
-local flag
-
-flag = (not IS_PS4 or not "matchmaking_join_game") and not not "menu_description_refresh"
-tbl_4.description_text = flag
-tbl_3[1] = tbl_4
-tbl_2.actions = tbl_3
-tbl.only_refresh = tbl_2
-tbl.friend = {
-	actions = {
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = "input_description_show_profile"
+	},
+	only_refresh = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = IS_PS4 and not not "matchmaking_join_game" or not IS_PS4 and not not "menu_description_refresh"
+			}
+		}
+	},
+	friend = {
+		actions = {
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_show_profile"
+			}
+		}
+	},
+	friend_refresh = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = IS_PS4 and not not "matchmaking_join_game" or not IS_PS4 and not not "menu_description_refresh"
+			},
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_show_profile"
+			}
+		}
+	},
+	friend_invite = {
+		actions = {
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_show_profile"
+			},
+			{
+				input_action = "refresh",
+				priority = 3,
+				description_text = "input_description_invite"
+			}
+		}
+	},
+	friend_invite_refresh = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = IS_PS4 and not not "matchmaking_join_game" or not IS_PS4 and not not "menu_description_refresh"
+			},
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_show_profile"
+			},
+			{
+				input_action = "refresh",
+				priority = 3,
+				description_text = "input_description_invite"
+			}
 		}
 	}
 }
-
-local tbl_5 = {}
-local tbl_6 = {}
-local tbl_7 = {
-	input_action = "special_1",
-	priority = 1
-}
-local flag_2
-
-flag_2 = (not IS_PS4 or not "matchmaking_join_game") and not not "menu_description_refresh"
-tbl_7.description_text = flag_2
-tbl_6[1] = tbl_7
-tbl_6[2] = {
-	input_action = "confirm",
-	priority = 2,
-	description_text = "input_description_show_profile"
-}
-tbl_5.actions = tbl_6
-tbl.friend_refresh = tbl_5
-tbl.friend_invite = {
-	actions = {
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = "input_description_show_profile"
-		},
-		{
-			input_action = "refresh",
-			priority = 3,
-			description_text = "input_description_invite"
-		}
-	}
-}
-
-local tbl_8 = {}
-local tbl_9 = {}
-local tbl_10 = {
-	input_action = "special_1",
-	priority = 1
-}
-local flag_3
-
-flag_3 = (not IS_PS4 or not "matchmaking_join_game") and not not "menu_description_refresh"
-tbl_10.description_text = flag_3
-tbl_9[1] = tbl_10
-tbl_9[2] = {
-	input_action = "confirm",
-	priority = 2,
-	description_text = "input_description_show_profile"
-}
-tbl_9[3] = {
-	input_action = "refresh",
-	priority = 3,
-	description_text = "input_description_invite"
-}
-tbl_8.actions = tbl_9
-tbl.friend_invite_refresh = tbl_8
-
-local generic_input_actions = tbl
 local header_text_style = {
 	vertical_alignment = "top",
 	font_size = 56,

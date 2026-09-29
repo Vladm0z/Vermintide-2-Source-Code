@@ -40,22 +40,7 @@ ActionBeam.client_owner_start_action = function (self, new_action, t, chain_acti
 	self.damage_interval = new_action.damage_interval
 	self.charge_damage_profiles = new_action.charge_damage_profiles
 	self.damage_profile = new_action.damage_profile
-
-	local charge_level
-
-	if chain_action_data then
-		charge_level = chain_action_data.charge_level
-
-		if not charge_level then
-			-- Nothing
-		end
-	end
-
-	charge_level = 0
-
-	::label_2_0::
-
-	self.charge_level = charge_level
+	self.charge_level = chain_action_data and not not chain_action_data.charge_level or not chain_action_data and not not 0
 	self.power_level = power_level + power_level * self.charge_level
 	self.damage_interval = self.damage_interval - self.damage_interval / 2 * self.charge_level
 
@@ -200,18 +185,7 @@ ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
 		local current_position, current_rotation = first_person_extension:get_projectile_start_position_rotation()
 		local direction = Quaternion.forward(current_rotation)
 		local physics_world = World.get_data(self.world, "physics_world")
-		local range_2 = current_action.range
-
-		if not range_2 then
-			-- Nothing
-		end
-
-		range_2 = 30
-
-		local range = range_2
-
-		::label_5_0::
-
+		local range = not not current_action.range
 		local result = PhysicsWorld.immediate_raycast_actors(physics_world, current_position, direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
 		local beam_end_position = current_position + direction * range
 		local hit_unit, hit_position
@@ -238,7 +212,7 @@ ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
 						local hit_zone = breed.hit_zones_lookup[node]
 						local hit_zone_name = hit_zone.name
 
-						hit_enemy = (not allow_friendly_fire or not breed.is_player) and not is_enemy or hit_zone_name ~= "afro"
+						hit_enemy = allow_friendly_fire and (breed.is_player and hit_zone_name ~= "afro" or not breed.is_player and not not is_enemy and hit_zone_name ~= "afro") or not allow_friendly_fire and not not is_enemy and hit_zone_name ~= "afro"
 					else
 						hit_enemy = true
 					end
@@ -330,18 +304,7 @@ ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
 
 		if self.beam_effect_id then
 			local weapon_unit = self.weapon_unit
-			local weapon_muzzle_2 = current_action.weapon_muzzle
-
-			if not weapon_muzzle_2 then
-				-- Nothing
-			end
-
-			weapon_muzzle_2 = Unit.node(weapon_unit, "fx_muzzle")
-
-			local weapon_muzzle = weapon_muzzle_2
-
-			::label_5_1::
-
+			local weapon_muzzle = not not current_action.weapon_muzzle
 			local end_of_staff_position = Unit.world_position(weapon_unit, weapon_muzzle)
 			local distance = Vector3.distance(end_of_staff_position, beam_end_position)
 			local beam_direction = Vector3.normalize(end_of_staff_position - beam_end_position)

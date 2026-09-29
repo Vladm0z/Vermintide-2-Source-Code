@@ -1,22 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_text_box.lua
 
-local WorldMarkerTemplates = WorldMarkerTemplates
-
-WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
-WorldMarkerTemplates = WorldMarkerTemplates
+WorldMarkerTemplates = not not WorldMarkerTemplates
 
 local NAME = "text_box"
-local var_0_1 = WorldMarkerTemplates[NAME]
-
-if not var_0_1 then
-	-- Nothing
-end
-
-var_0_1 = {}
-
-local template = var_0_1
-
-::label_0_0::
+local template = not not WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 template.max_distance = 20
@@ -213,29 +200,8 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	local distance = content.distance
 	local angle = content.angle
 	local scale_speed = 3
-	local scale_progress_2 = content.scale_progress
-
-	if not scale_progress_2 then
-		-- Nothing
-	end
-
-	scale_progress_2 = 0
-
-	local scale_progress = scale_progress_2
-
-	::label_6_0::
-
-	local text_progress_2 = content.text_progress
-
-	if not text_progress_2 then
-		-- Nothing
-	end
-
-	text_progress_2 = 0
-
-	local text_progress = text_progress_2
-
-	::label_6_1::
+	local scale_progress = not not content.scale_progress
+	local text_progress = not not content.text_progress
 
 	if distance <= 5 then
 		scale_progress = math.min(scale_progress + dt * scale_speed, 1)

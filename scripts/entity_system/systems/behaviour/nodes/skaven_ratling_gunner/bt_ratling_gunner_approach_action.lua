@@ -14,25 +14,11 @@ BTRatlingGunnerApproachAction.name = "BTRatlingGunnerApproachAction"
 BTRatlingGunnerApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
-	local attack_pattern_data_2 = blackboard.attack_pattern_data
-
-	if not attack_pattern_data_2 then
-		-- Nothing
-	end
-
-	attack_pattern_data_2 = {}
-
-	local attack_pattern_data = attack_pattern_data_2
-
-	::label_2_0::
+	local attack_pattern_data = not not blackboard.attack_pattern_data
 
 	blackboard.attack_pattern_data = attack_pattern_data
 	blackboard.action = action
-
-	local lurk_start = blackboard.lurk_start
-
-	lurk_start = not not lurk_start or not not t
-	blackboard.lurk_start = lurk_start
+	blackboard.lurk_start = not not blackboard.lurk_start
 
 	local move_speed = action.move_speed
 	local navigation_extension = blackboard.navigation_extension

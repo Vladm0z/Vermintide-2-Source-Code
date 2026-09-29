@@ -2,22 +2,10 @@
 
 local json = require("PlayFab.json")
 local PlayFabSettings = require("PlayFab.PlayFabSettings")
-local PlayFabHttpsCurlData = PlayFabHttpsCurlData
 
-PlayFabHttpsCurlData = not not PlayFabHttpsCurlData or not not {}
-PlayFabHttpsCurlData = PlayFabHttpsCurlData
-
-local PlayFabHttpsCurlData_2 = PlayFabHttpsCurlData
-local request_id = PlayFabHttpsCurlData.request_id
-
-request_id = not not request_id or not not 0
-PlayFabHttpsCurlData_2.request_id = request_id
-
-local PlayFabHttpsCurlData_3 = PlayFabHttpsCurlData
-local active_requests = PlayFabHttpsCurlData.active_requests
-
-active_requests = not not active_requests or not not {}
-PlayFabHttpsCurlData_3.active_requests = active_requests
+PlayFabHttpsCurlData = not not PlayFabHttpsCurlData
+PlayFabHttpsCurlData.request_id = not not PlayFabHttpsCurlData.request_id
+PlayFabHttpsCurlData.active_requests = not not PlayFabHttpsCurlData.active_requests
 
 local MAX_RETRIES = 2
 local retry_codes = {
@@ -97,28 +85,12 @@ local function on_error(request_data, result, id, error_override)
 
 		request_data.retries = request_data.retries + 1
 
-		local format
-
-		if error_override then
-			format = string.format(" | Error Override: %s", error_override)
-
-			if not format then
-				-- Nothing
-			end
-		end
-
-		format = ""
-
-		local override = format
-
-		::label_1_0::
+		local override = error_override and not not string.format(" | Error Override: %s", error_override) or not error_override and not not ""
 
 		printf("[PLAYFAB HTTPS CURL] RESENDING REQUEST. Id: %s | Error Code: %s%s", id, error_code, override)
 		Crashify.print_exception("Backend_Error", "RESENDING REQUEST: %s", request_data)
 	else
-		if error_override and not error_override then
-			-- Nothing
-		end
+		error_code = not error_override or not not error_override or not not error_code
 
 		Managers.backend:playfab_api_error(result, error_code)
 

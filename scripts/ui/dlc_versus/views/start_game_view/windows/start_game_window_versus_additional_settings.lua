@@ -77,13 +77,7 @@ StartGameWindowVersusAdditionalSettings._handle_input = function (self, dt, t)
 		local consume = true
 
 		if input_service:get("back_menu", consume) or input_service:get("refresh", consume) or input_service:get("right_stick_press", consume) then
-			local var_3_0 = parent
-			local set_window_input_focus = parent.set_window_input_focus
-			local _parent_window_name = self._parent_window_name
-
-			_parent_window_name = not not _parent_window_name or not not "custom_game_overview"
-
-			set_window_input_focus(var_3_0, _parent_window_name)
+			parent:set_window_input_focus(not not self._parent_window_name)
 		end
 	end
 end

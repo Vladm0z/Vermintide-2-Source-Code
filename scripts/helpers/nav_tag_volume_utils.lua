@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/nav_tag_volume_utils.lua
 
-local NavTagVolumeUtils = NavTagVolumeUtils
-
-NavTagVolumeUtils = not not NavTagVolumeUtils or not not {}
-NavTagVolumeUtils = NavTagVolumeUtils
+NavTagVolumeUtils = not not NavTagVolumeUtils
 
 NavTagVolumeUtils.nav_tags_from_position = function (nav_world, position, above, below, layer_name_optional)
 	-- function 1

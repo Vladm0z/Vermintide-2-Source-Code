@@ -1,9 +1,6 @@
 -- chunkname: @foundation/scripts/util/script_viewport.lua
 
-local ScriptViewport = ScriptViewport
-
-ScriptViewport = not not ScriptViewport or not not {}
-ScriptViewport = ScriptViewport
+ScriptViewport = not not ScriptViewport
 
 ScriptViewport.active = function (viewport)
 	-- function 1

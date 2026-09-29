@@ -9,7 +9,7 @@ require("scripts/managers/player/player_sync_data")
 require("scripts/ui/views/crosshair_kill_confirm_settings")
 
 local dlss_supported, dlss_g_supported, reflex_supported = Application.render_caps("dlss_supported", "dlss_g_supported", "reflex_supported")
-local tbl = {
+local default_user_settings = {
 	gamepad_left_handed = false,
 	gamepad_auto_aim_enabled = true,
 	play_intro_cinematic = true,
@@ -125,62 +125,24 @@ local tbl = {
 	weapon_trails = "normal",
 	chat_font_size = 20,
 	char_texture_quality = TextureQuality.default_characters,
-	env_texture_quality = TextureQuality.default_environment
+	env_texture_quality = TextureQuality.default_environment,
+	local_light_shadow_quality = not not script_data.settings.default_local_light_shadow_quality,
+	particles_quality = not not script_data.settings.default_particles_quality,
+	sun_shadow_quality = not not script_data.settings.default_sun_shadow_quality,
+	use_physic_debris = not not script_data.settings.default_use_physic_debris,
+	num_blood_decals = not not BloodSettings.blood_decals.num_decals,
+	volumetric_fog_quality = not not script_data.settings.default_volumetric_fog_quality,
+	ambient_light_quality = not not script_data.settings.default_ambient_light_quality,
+	ao_quality = not not script_data.settings.default_ao_quality,
+	playerlist_build_privacy = PrivacyLevels.friends,
+	crosshair_kill_confirm = CrosshairKillConfirmSettingsGroups.off,
+	sound_channel_configuration = Wwise.AK_SPEAKER_SETUP_AUTO,
+	overriden_settings = {
+		dlss_frame_generation = not not dlss_g_supported,
+		dlss_super_resolution = dlss_supported and not not "auto" or not dlss_supported and not not "none"
+	}
 }
-local default_local_light_shadow_quality = script_data.settings.default_local_light_shadow_quality
-
-default_local_light_shadow_quality = not not default_local_light_shadow_quality or not not "high"
-tbl.local_light_shadow_quality = default_local_light_shadow_quality
-
-local default_particles_quality = script_data.settings.default_particles_quality
-
-default_particles_quality = not not default_particles_quality or not not "high"
-tbl.particles_quality = default_particles_quality
-
-local default_sun_shadow_quality = script_data.settings.default_sun_shadow_quality
-
-default_sun_shadow_quality = not not default_sun_shadow_quality or not not "high"
-tbl.sun_shadow_quality = default_sun_shadow_quality
-
-local default_use_physic_debris = script_data.settings.default_use_physic_debris
-
-default_use_physic_debris = not not default_use_physic_debris or not not true
-tbl.use_physic_debris = default_use_physic_debris
-
-local num_decals = BloodSettings.blood_decals.num_decals
-
-num_decals = not not num_decals or not not 100
-tbl.num_blood_decals = num_decals
-
-local default_volumetric_fog_quality = script_data.settings.default_volumetric_fog_quality
-
-default_volumetric_fog_quality = not not default_volumetric_fog_quality or not not "lowest"
-tbl.volumetric_fog_quality = default_volumetric_fog_quality
-
-local default_ambient_light_quality = script_data.settings.default_ambient_light_quality
-
-default_ambient_light_quality = not not default_ambient_light_quality or not not "high"
-tbl.ambient_light_quality = default_ambient_light_quality
-
-local default_ao_quality = script_data.settings.default_ao_quality
-
-default_ao_quality = not not default_ao_quality or not not "medium"
-tbl.ao_quality = default_ao_quality
-tbl.playerlist_build_privacy = PrivacyLevels.friends
-tbl.crosshair_kill_confirm = CrosshairKillConfirmSettingsGroups.off
-tbl.sound_channel_configuration = Wwise.AK_SPEAKER_SETUP_AUTO
-
-local tbl_2 = {
-	dlss_frame_generation = not not dlss_g_supported
-}
-local flag
-
-flag = (not dlss_supported or not "auto") and not not "none"
-tbl_2.dlss_super_resolution = flag
-tbl.overriden_settings = tbl_2
-
-local default_user_settings = tbl
-local tbl_3 = {
+local default_render_settings = {
 	lod_scatter_density = 1,
 	local_probes_enabled = true,
 	upscaling_mode = "none",
@@ -210,20 +172,11 @@ local tbl_3 = {
 	sharpen_enabled = false,
 	nv_low_latency_boost = false,
 	upscaling_enabled = false,
-	motion_blur_enabled = true
+	motion_blur_enabled = true,
+	max_shadow_casting_lights = IS_WINDOWS and not not 1 or not IS_WINDOWS and not not 2,
+	fov = not not script_data.settings.default_fov,
+	nv_low_latency_mode = not not reflex_supported
 }
-local flag_2
-
-flag_2 = (not IS_WINDOWS or not 1) and not not 2
-tbl_3.max_shadow_casting_lights = flag_2
-
-local default_fov = script_data.settings.default_fov
-
-default_fov = not not default_fov or not not CameraSettings.first_person._node.vertical_fov
-tbl_3.fov = default_fov
-tbl_3.nv_low_latency_mode = not not reflex_supported
-
-local default_render_settings = tbl_3
 local default_versus_settings = {
 	tagging_enabled = true,
 	early_win_enabled = true,
@@ -391,17 +344,7 @@ DefaultUserSettings.setup_resolution = function ()
 	local set_user_setting = Application.set_user_setting
 	local save_user_settings = Application.save_user_settings
 	local apply_user_settings = Application.apply_user_settings
-	local settings = Application:settings()
-
-	if not settings then
-		-- Nothing
-	end
-
-	settings = {}
-
-	local application_settings = settings
-
-	::label_4_0::
+	local application_settings = not not Application:settings()
 
 	table.dump(application_settings, "Application Settings", 4)
 
@@ -422,7 +365,7 @@ DefaultUserSettings.setup_resolution = function ()
 
 	print("SAFE MODE:", safe_mode)
 
-	if (not application_settings.auto_detect_video or user_settings) and safe_mode then
+	if application_settings.auto_detect_video and (not user_settings or safe_mode) or not application_settings.auto_detect_video and safe_mode then
 		print("################### AUTO DETECT VIDEO ###################")
 
 		local resolution = get_user_setting("screen_resolution")
@@ -430,17 +373,7 @@ DefaultUserSettings.setup_resolution = function ()
 		table.dump(resolution, "resolution", 2)
 
 		local fullscreen_output = 0
-		local enum_display_modes = Application.enum_display_modes()
-
-		if not enum_display_modes then
-			-- Nothing
-		end
-
-		enum_display_modes = {}
-
-		local display_modes = enum_display_modes
-
-		::label_4_1::
+		local display_modes = not not Application.enum_display_modes()
 
 		if #display_modes == 0 then
 			display_modes = DefaultDisplayModes
@@ -456,7 +389,7 @@ DefaultUserSettings.setup_resolution = function ()
 		print("lowest available", highest_available)
 
 		for _, mode in ipairs(display_modes) do
-			if (mode[1] >= highest_available[1] or mode[2] >= highest_available[2]) and mode[3] == fullscreen_output then
+			if mode[1] >= highest_available[1] and mode[3] == fullscreen_output or not (mode[1] >= highest_available[1]) and mode[2] >= highest_available[2] and mode[3] == fullscreen_output then
 				highest_available = mode
 			end
 		end

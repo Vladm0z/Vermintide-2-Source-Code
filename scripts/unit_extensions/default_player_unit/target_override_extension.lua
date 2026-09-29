@@ -41,7 +41,7 @@ TargetOverrideExtension.taunt = function (self, radius, duration, do_stagger, ta
 		local ai_extension = ScriptUnit.extension(ai_unit, "ai_system")
 		local ai_blackboard = ai_extension:blackboard()
 		local ai_breed = ai_extension:breed()
-		local taunt_target = not ai_breed.ignore_taunts and not ai_breed.boss or not not taunt_bosses
+		local taunt_target = not ai_breed.ignore_taunts and (not ai_breed.boss or not not taunt_bosses)
 
 		if taunt_target then
 			if ai_blackboard.target_unit == self_unit then
@@ -64,18 +64,7 @@ end
 
 TargetOverrideExtension.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	local var_4_0 = POSITION_LOOKUP[unit]
-
-	if not var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = Unit.world_position(unit, 0)
-
-	local position = var_4_0
-
-	::label_4_0::
-
+	local position = not not POSITION_LOOKUP[unit]
 	local radius = OVERRIDE_RADIUS
 	local result_table = self._result_table
 	local override_time = t + OVERRIDE_LIFETIME

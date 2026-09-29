@@ -27,11 +27,7 @@ end
 WeaveProgressUI._create_ui_elements = function (self)
 	-- function 3
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-
-	local _render_settings = self._render_settings
-
-	_render_settings = not not _render_settings or not not {}
-	self._render_settings = _render_settings
+	self._render_settings = not not self._render_settings
 	self._bonus_objective_widgets = {}
 	self._bonus_objective_stack_widgets = {}
 	self._bonus_objective_lookup = {}
@@ -134,18 +130,7 @@ WeaveProgressUI._update_bonus_objectives = function (self, dt, t)
 		return
 	end
 
-	local state = Managers.state
-
-	if state then
-		-- Nothing
-	end
-
-	state = Managers.state.entity
-
-	local entity_system = state
-
-	::label_7_0::
-
+	local entity_system = not not Managers.state
 	local objective_system = not not entity_system and not not entity_system:system("objective_system")
 	local current_objective_index = Managers.weave:get_active_objective()
 	local objectives_ordered = weave_template.objectives_ordered
@@ -183,17 +168,7 @@ WeaveProgressUI._update_bonus_objectives = function (self, dt, t)
 			if stack then
 				if not STACKS_ADDED[stack] then
 					local widget_definition = definitions.create_bonus_objective_func(display_name, table.size(bonus_objective_widgets) + table.size(bonus_objective_stack_widgets), stack, objective_name)
-					local var_7_1 = bonus_objective_stack_widgets[stack]
-
-					if not var_7_1 then
-						-- Nothing
-					end
-
-					var_7_1 = {}
-
-					local stack_widgets = var_7_1
-
-					::label_7_1::
+					local stack_widgets = not not bonus_objective_stack_widgets[stack]
 
 					stack_widgets[#stack_widgets + 1] = UIWidget.init(widget_definition)
 					bonus_objective_stack_widgets[stack] = stack_widgets
@@ -286,19 +261,7 @@ WeaveProgressUI._update_animations = function (self, dt)
 	end
 end
 
-local num
-
-if DEBUG then
-	num = 0
-
-	goto label_0_0
-end
-
-num = nil
-
-local WEAVE_SCORE = num
-
-::label_0_0::
+local WEAVE_SCORE = DEBUG and not not 0 or not DEBUG and not not nil
 
 WeaveProgressUI._update_bar = function (self, dt, t)
 	-- function 12

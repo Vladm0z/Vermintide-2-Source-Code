@@ -227,381 +227,67 @@ end
 
 ImguiCombatLog.log_damage = function (self, attacker_unit, victim_unit, networkified_damage_amount, hit_zone_name, damage_type, damage_source, is_critical_strike, backstab_multiplier, added_dot, target_index, first_hit, total_hits, power_level)
 	-- function 11
-	local alive = Unit.alive(attacker_unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = Unit.get_data(attacker_unit, "breed")
-
-	local attacker_unit_breed = alive
-
-	::label_11_0::
-
-	local alive_2 = Unit.alive(victim_unit)
-
-	if alive_2 then
-		-- Nothing
-	end
-
-	alive_2 = Unit.get_data(victim_unit, "breed")
-
-	local victim_unit_breed = alive_2
-
-	::label_11_1::
-
+	local attacker_unit_breed = not not Unit.alive(attacker_unit)
+	local victim_unit_breed = not not Unit.alive(victim_unit)
 	local network_manager = Managers.state.network
 	local unit_id = not not network_manager and not not network_manager:unit_game_object_id(victim_unit)
 	local line = self:_add_line("damage")
-	local var_11_2 = self
-	local _add_colored_segment = self._add_colored_segment
-	local var_11_4 = line
-	local format = string.format
-	local str = "%s -> %s (%d) (%.2f %s), Power(%.2f), hit (%s) using (%s) Crit: %s, Backstab Mult: %.2f, Target Index: %d"
-	local tostring = tostring
-	local name
 
-	if attacker_unit_breed then
-		name = attacker_unit_breed.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = attacker_unit
-
-	::label_11_2::
-
-	local var_11_9 = tostring(name)
-	local tostring_2 = tostring
-	local name_2
-
-	if victim_unit_breed then
-		name_2 = victim_unit_breed.name
-
-		if not name_2 then
-			-- Nothing
-		end
-	end
-
-	name_2 = victim_unit
-
-	::label_11_3::
-
-	_add_colored_segment(var_11_2, var_11_4, format(str, var_11_9, tostring_2(name_2), not not unit_id or not not 0, not not networkified_damage_amount or not not 0, tostring(damage_type), not not power_level or not not 0, tostring(hit_zone_name), tostring(damage_source), tostring(is_critical_strike), not not backstab_multiplier or not not 1, not not target_index or not not 0), Colors.get_table("orange"))
+	self:_add_colored_segment(line, string.format("%s -> %s (%d) (%.2f %s), Power(%.2f), hit (%s) using (%s) Crit: %s, Backstab Mult: %.2f, Target Index: %d", tostring(attacker_unit_breed and not not attacker_unit_breed.name or not attacker_unit_breed and not not attacker_unit), tostring(victim_unit_breed and not not victim_unit_breed.name or not victim_unit_breed and not not victim_unit), not not unit_id or not not 0, not not networkified_damage_amount or not not 0, tostring(damage_type), not not power_level or not not 0, tostring(hit_zone_name), tostring(damage_source), tostring(is_critical_strike), not not backstab_multiplier or not not 1, not not target_index or not not 0), Colors.get_table("orange"))
 end
 
 ImguiCombatLog.log_heal = function (self, healer_unit, unit, buffed_heal_amount, heal_type)
 	-- function 12
-	local alive = Unit.alive(healer_unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = Unit.get_data(healer_unit, "breed")
-
-	local healer_unit_breed = alive
-
-	::label_12_0::
-
-	local alive_2 = Unit.alive(unit)
-
-	if alive_2 then
-		-- Nothing
-	end
-
-	alive_2 = Unit.get_data(unit, "breed")
-
-	local unit_breed = alive_2
-
-	::label_12_1::
-
+	local healer_unit_breed = not not Unit.alive(healer_unit)
+	local unit_breed = not not Unit.alive(unit)
 	local line = self:_add_line("heal")
-	local var_12_2 = self
-	local _add_colored_segment = self._add_colored_segment
-	local var_12_4 = line
-	local format = string.format
-	local str = "%s -> %s (%.2f %s)"
-	local tostring = tostring
-	local name
 
-	if healer_unit_breed then
-		name = healer_unit_breed.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = healer_unit
-
-	::label_12_2::
-
-	local var_12_9 = tostring(name)
-	local tostring_2 = tostring
-	local name_2
-
-	if unit_breed then
-		name_2 = unit_breed.name
-
-		if not name_2 then
-			-- Nothing
-		end
-	end
-
-	name_2 = unit
-
-	::label_12_3::
-
-	_add_colored_segment(var_12_2, var_12_4, format(str, var_12_9, tostring_2(name_2), not not buffed_heal_amount or not not 0, tostring(heal_type)), Colors.get_table("lime"))
+	self:_add_colored_segment(line, string.format("%s -> %s (%.2f %s)", tostring(healer_unit_breed and not not healer_unit_breed.name or not healer_unit_breed and not not healer_unit), tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), not not buffed_heal_amount or not not 0, tostring(heal_type)), Colors.get_table("lime"))
 end
 
 ImguiCombatLog.log_action = function (self, unit, item_name, kind, action_name, sub_action_name, power_level, started, reason)
 	-- function 13
-	local alive = Unit.alive(unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = Unit.get_data(unit, "breed")
-
-	local unit_breed = alive
-
-	::label_13_0::
-
+	local unit_breed = not not Unit.alive(unit)
 	local line = self:_add_line("action")
 
 	if started then
-		local var_13_1 = self
-		local _add_colored_segment = self._add_colored_segment
-		local var_13_3 = line
-		local format = string.format
-		local str = "[Start] %s (%s - power %.2f) - %s/%s/%s"
-		local tostring = tostring
-		local name
-
-		if unit_breed then
-			name = unit_breed.name
-
-			if not name then
-				-- Nothing
-			end
-		end
-
-		name = unit
-
-		::label_13_1::
-
-		_add_colored_segment(var_13_1, var_13_3, format(str, tostring(name), tostring(kind), not not power_level or not not 0, tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
+		self:_add_colored_segment(line, string.format("[Start] %s (%s - power %.2f) - %s/%s/%s", tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), tostring(kind), not not power_level or not not 0, tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
 	else
-		local var_13_8 = self
-		local _add_colored_segment_2 = self._add_colored_segment
-		local var_13_10 = line
-		local format_2 = string.format
-		local str_2 = "[End] %s (%s - power %.2f), Reason: %s - %s/%s/%s "
-		local tostring_2 = tostring
-		local name_2
-
-		if unit_breed then
-			name_2 = unit_breed.name
-
-			if not name_2 then
-				-- Nothing
-			end
-		end
-
-		name_2 = unit
-
-		::label_13_2::
-
-		_add_colored_segment_2(var_13_8, var_13_10, format_2(str_2, tostring_2(name_2), tostring(kind), not not power_level or not not 0, tostring(reason), tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
+		self:_add_colored_segment(line, string.format("[End] %s (%s - power %.2f), Reason: %s - %s/%s/%s ", tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), tostring(kind), not not power_level or not not 0, tostring(reason), tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
 	end
 end
 
 ImguiCombatLog.log_proc = function (self, player, event, buff, params, success)
 	-- function 14
 	local unit = not not player and not not player.player_unit
-	local alive = Unit.alive(unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = Unit.get_data(unit, "breed")
-
-	local unit_breed = alive
-
-	::label_14_0::
-
+	local unit_breed = not not Unit.alive(unit)
 	local line = self:_add_line("buff_proc")
-	local var_14_1 = self
-	local _add_colored_segment = self._add_colored_segment
-	local var_14_3 = line
-	local format = string.format
-	local str = "%s (%s) -> %s"
-	local tostring = tostring
-	local name
 
-	if unit_breed then
-		name = unit_breed.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = unit
-
-	::label_14_1::
-
-	_add_colored_segment(var_14_1, var_14_3, format(str, tostring(name), not not event or not not "-", tostring(buff.buff_type)), Colors.get_table("silver"))
+	self:_add_colored_segment(line, string.format("%s (%s) -> %s", tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), not not event or not not "-", tostring(buff.buff_type)), Colors.get_table("silver"))
 end
 
 ImguiCombatLog.log_buff = function (self, unit, buff, added, stack_count, max_stacks)
 	-- function 15
-	local alive = Unit.alive(unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = Unit.get_data(unit, "breed")
-
-	local owner_breed = alive
-
-	::label_15_0::
-
+	local owner_breed = not not Unit.alive(unit)
 	local attacker_unit = not not buff and not not buff.attacker_unit
-	local alive_2 = Unit.alive(attacker_unit)
-
-	if alive_2 then
-		-- Nothing
-	end
-
-	alive_2 = Unit.get_data(attacker_unit, "breed")
-
-	local attacker_breed = alive_2
-
-	::label_15_1::
-
+	local attacker_breed = not not Unit.alive(attacker_unit)
 	local line = self:_add_line("buff")
 
 	if added then
-		local var_15_2 = self
-		local _add_colored_segment = self._add_colored_segment
-		local var_15_4 = line
-		local format = string.format
-		local str = "[Added] %s -> %s (mult: %.2f)"
-		local tostring = tostring
-		local name
-
-		if owner_breed then
-			name = owner_breed.name
-
-			if not name then
-				-- Nothing
-			end
-		end
-
-		name = unit
-
-		::label_15_2::
-
-		local var_15_9 = tostring(name)
-		local var_15_10 = tostring(buff.buff_type)
-		local multiplier
-
-		if type(buff.multiplier) == "function" then
-			multiplier = buff.multiplier(unit, ScriptUnit.extension(unit, "buff_system"))
-
-			if not multiplier then
-				-- Nothing
-			end
-		end
-
-		multiplier = buff.multiplier
-		multiplier = not not multiplier or not not 1
-
-		::label_15_3::
-
-		_add_colored_segment(var_15_2, var_15_4, format(str, var_15_9, var_15_10, multiplier), Colors.get_table("lime"))
+		self:_add_colored_segment(line, string.format("[Added] %s -> %s (mult: %.2f)", tostring(owner_breed and not not owner_breed.name or not owner_breed and not not unit), tostring(buff.buff_type), type(buff.multiplier) ~= "function" and not not buff.multiplier or not (type(buff.multiplier) ~= "function") and not not buff.multiplier(unit, ScriptUnit.extension(unit, "buff_system"))), Colors.get_table("lime"))
 
 		if stack_count and max_stacks then
 			self:_add_colored_segment(line, string.format("(stacks: %d/%d)", stack_count, max_stacks), Colors.get_table("lime"))
 		end
 
 		if attacker_unit then
-			local var_15_12 = self
-			local _add_colored_segment_2 = self._add_colored_segment
-			local var_15_14 = line
-			local format_2 = string.format
-			local str_2 = "(%s)"
-			local tostring_2 = tostring
-			local name_2
-
-			if attacker_breed then
-				name_2 = attacker_breed.name
-
-				if not name_2 then
-					-- Nothing
-				end
-			end
-
-			name_2 = attacker_unit
-
-			::label_15_4::
-
-			_add_colored_segment_2(var_15_12, var_15_14, format_2(str_2, tostring_2(name_2)), Colors.get_table("lime"))
+			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and not not attacker_breed.name or not attacker_breed and not not attacker_unit)), Colors.get_table("lime"))
 		end
 	else
-		local var_15_19 = self
-		local _add_colored_segment_3 = self._add_colored_segment
-		local var_15_21 = line
-		local format_3 = string.format
-		local str_3 = "[Removed] %s -> %s"
-		local tostring_3 = tostring
-		local name_3
-
-		if owner_breed then
-			name_3 = owner_breed.name
-
-			if not name_3 then
-				-- Nothing
-			end
-		end
-
-		name_3 = unit
-
-		::label_15_5::
-
-		_add_colored_segment_3(var_15_19, var_15_21, format_3(str_3, tostring_3(name_3), tostring(buff.buff_type)), Colors.get_table("yellow"))
+		self:_add_colored_segment(line, string.format("[Removed] %s -> %s", tostring(owner_breed and not not owner_breed.name or not owner_breed and not not unit), tostring(buff.buff_type)), Colors.get_table("yellow"))
 
 		if attacker_unit then
-			local var_15_26 = self
-			local _add_colored_segment_4 = self._add_colored_segment
-			local var_15_28 = line
-			local format_4 = string.format
-			local str_4 = "(%s)"
-			local tostring_4 = tostring
-			local name_4
-
-			if attacker_breed then
-				name_4 = attacker_breed.name
-
-				if not name_4 then
-					-- Nothing
-				end
-			end
-
-			name_4 = attacker_unit
-
-			::label_15_6::
-
-			_add_colored_segment_4(var_15_26, var_15_28, format_4(str_4, tostring_4(name_4)), Colors.get_table("yellow"))
+			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and not not attacker_breed.name or not attacker_breed and not not attacker_unit)), Colors.get_table("yellow"))
 		end
 	end
 end
@@ -620,21 +306,7 @@ ImguiCombatLog._get_type_name = function (self, type)
 	if type then
 		local id = self._type_ids[type]
 		local category = self.categories[id]
-		local name
-
-		if category then
-			name = category.name
-
-			if not name then
-				-- Nothing
-			end
-		end
-
-		name = tostring(type)
-
-		local type_name = name
-
-		::label_17_0::
+		local type_name = category and not not category.name or not category and not not tostring(type)
 
 		return type_name
 	end
@@ -648,11 +320,7 @@ ImguiCombatLog._add_line = function (self, type)
 
 	new_line.timestamp = "[" .. format_timestamp(self._start_time + os.clock()) .. "]"
 	new_line.content = {}
-
-	local var_18_0 = self._type_ids[type]
-
-	var_18_0 = not not var_18_0 or not not 0
-	new_line.type_id = var_18_0
+	new_line.type_id = not not self._type_ids[type]
 	new_line.type_name = "[" .. self:_get_type_name(type) .. "]"
 
 	table.insert(self._log, 1, new_line)

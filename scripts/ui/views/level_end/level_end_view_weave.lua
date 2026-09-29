@@ -11,17 +11,7 @@ local animation_definitions = definitions.animations
 local generic_input_actions = definitions.generic_input_actions
 local debug_draw_scenegraph = false
 local debug_menu = false
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/ui/views/level_end/level_end_view_weave_testify")
-
-local level_end_view_weave_testify = testify
-
-::label_0_0::
+local level_end_view_weave_testify = not not script_data.testify
 
 LevelEndViewWeave = class(LevelEndViewWeave, LevelEndViewBase)
 
@@ -39,16 +29,8 @@ LevelEndViewWeave.start = function (self)
 	LevelEndViewWeave.super.start(self)
 
 	self._playing_music = nil
-
-	local flag
-
-	flag = (not self.game_won or not "Play_won_music") and not not "Play_lost_music"
-	self._start_music_event = flag
-
-	local flag_2
-
-	flag_2 = (not self.game_won or not "Stop_won_music") and not not "Stop_lost_music"
-	self._stop_music_event = flag_2
+	self._start_music_event = self.game_won and not not "Play_won_music" or not self.game_won and not not "Play_lost_music"
+	self._stop_music_event = self.game_won and not not "Stop_won_music" or not self.game_won and not not "Stop_lost_music"
 end
 
 LevelEndViewWeave.destroy = function (self)
@@ -146,21 +128,7 @@ end
 
 LevelEndViewWeave.active_input_service = function (self)
 	-- function 13
-	local FAKE_INPUT_SERVICE
-
-	if self.input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	::label_13_0::
-
-	return FAKE_INPUT_SERVICE
+	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
 end
 
 LevelEndViewWeave._retry_level = function (self)
@@ -362,17 +330,7 @@ LevelEndViewWeave.get_hero_from_score = function (self, player_data)
 	local careers = profile_data.careers
 	local career_settings = careers[career_index]
 	local weapon_pose_anim_event, weapon_pose_weapon, weapon_pose_slot
-	local weapon_pose_2 = player_data.weapon_pose
-
-	if weapon_pose_2 then
-		-- Nothing
-	end
-
-	weapon_pose_2 = player_data.weapon_pose.item_name
-
-	local weapon_pose = weapon_pose_2
-
-	::label_21_0::
+	local weapon_pose = not not player_data.weapon_pose
 
 	if weapon_pose then
 		local item = ItemMasterList[weapon_pose]
@@ -393,43 +351,18 @@ LevelEndViewWeave.get_hero_from_score = function (self, player_data)
 		end
 	end
 
-	local tbl = {
+	return {
 		profile_index = profile_index,
 		career_index = career_index,
 		hero_name = career_settings.profile_name,
-		skin_name = player_data.hero_skin
+		skin_name = player_data.hero_skin,
+		weapon_slot = not not career_settings.preview_wield_slot,
+		weapon_pose_anim_event = weapon_pose_anim_event,
+		preview_items = {
+			player_data.hat,
+			not not weapon_pose_weapon or not not player_data.weapon
+		}
 	}
-
-	if not weapon_pose_slot then
-		-- Nothing
-	end
-
-	do
-		local preview_wield_slot
-	end
-
-	::label_21_1::
-
-	if player_data.weapon then
-		preview_wield_slot = career_settings.preview_wield_slot
-
-		if not preview_wield_slot then
-			-- Nothing
-		end
-	end
-
-	preview_wield_slot = nil
-
-	::label_21_2::
-
-	tbl.weapon_slot = preview_wield_slot
-	tbl.weapon_pose_anim_event = weapon_pose_anim_event
-	tbl.preview_items = {
-		player_data.hat,
-		not not weapon_pose_weapon or not not player_data.weapon
-	}
-
-	return tbl
 end
 
 local level_name = "levels/end_screen_victory/world"

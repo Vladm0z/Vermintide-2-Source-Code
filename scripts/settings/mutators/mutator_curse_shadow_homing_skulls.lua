@@ -135,24 +135,7 @@ return {
 		end
 
 		if script_data.shadow_homing_skulls_debug then
-			local text = Debug.text
-			local str = "homing skulls state state: %s - %s"
-			local state = data.state
-			local num
-
-			if data.next_spawn_t then
-				num = data.next_spawn_t - t
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 0
-
-			::label_6_0::
-
-			text(str, state, num)
+			Debug.text("homing skulls state state: %s - %s", data.state, data.next_spawn_t and not not (data.next_spawn_t - t) or not data.next_spawn_t and not not 0)
 		end
 	end,
 	server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)

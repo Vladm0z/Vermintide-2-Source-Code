@@ -26,11 +26,7 @@ ActionGrenadeThrower.client_owner_start_action = function (self, new_action, t, 
 	self.current_action = new_action
 	self.extra_buff_shot = false
 	self.num_projectiles = new_action.num_projectiles
-
-	local multi_projectile_spread = new_action.multi_projectile_spread
-
-	multi_projectile_spread = not not multi_projectile_spread or not not 0.075
-	self.multi_projectile_spread = multi_projectile_spread
+	self.multi_projectile_spread = not not new_action.multi_projectile_spread
 
 	if self.ammo_extension and self.num_projectiles then
 		self.num_projectiles = math.min(self.num_projectiles, self.ammo_extension:current_ammo())
@@ -38,16 +34,8 @@ ActionGrenadeThrower.client_owner_start_action = function (self, new_action, t, 
 
 	self.num_projectiles_shot = 1
 	self.state = "waiting_to_shoot"
-
-	local fire_time = new_action.fire_time
-
-	fire_time = not not fire_time or not not 0
-	self.time_to_shoot = t + fire_time
-
-	local active_reload_time = new_action.active_reload_time
-
-	active_reload_time = not not active_reload_time and not not (t + new_action.active_reload_time)
-	self.active_reload_time = active_reload_time
+	self.time_to_shoot = t + not not new_action.fire_time
+	self.active_reload_time = not not new_action.active_reload_time
 
 	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
@@ -127,7 +115,7 @@ ActionGrenadeThrower.client_owner_post_update = function (self, dt, t, world, ca
 		if t > self.active_reload_time then
 			local ammo_extension = self.ammo_extension
 
-			if (input_extension:get("weapon_reload") or input_extension:get_buffer("weapon_reload")) and ammo_extension:can_reload() then
+			if input_extension:get("weapon_reload") and ammo_extension:can_reload() or not input_extension:get("weapon_reload") and input_extension:get_buffer("weapon_reload") and ammo_extension:can_reload() then
 				local status_extension = ScriptUnit.extension(self.owner_unit, "status_system")
 
 				status_extension:set_zooming(false)
@@ -154,19 +142,7 @@ ActionGrenadeThrower.finish = function (self, reason)
 		status_extension:set_zooming(false)
 
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local flag
-
-		if not reload_when_out_of_ammo_condition_func then
-			flag = true
-
-			goto label_4_0
-		end
-
-		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-		local do_out_of_ammo_reload = flag
-
-		::label_4_0::
+		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true

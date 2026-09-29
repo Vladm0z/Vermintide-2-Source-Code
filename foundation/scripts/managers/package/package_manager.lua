@@ -7,10 +7,7 @@ local function debug_print(format, ...)
 	end
 end
 
-local PackageManager = PackageManager
-
-PackageManager = not not PackageManager or not not {}
-PackageManager = PackageManager
+PackageManager = not not PackageManager
 
 PackageManager.init = function (self)
 	-- function 2
@@ -24,29 +21,13 @@ end
 
 PackageManager.load = function (self, package_name, reference_name, callback, asynchronous, prioritize)
 	-- function 3
-	local var_3_0 = debug_print
-	local str = "Load:  %s, %s, %s, %s"
-	local var_3_2 = package_name
-	local var_3_3 = reference_name
-	local flag
-
-	flag = (not asynchronous or not "async-read") and not not "sync-read"
-
-	local flag_2
-
-	flag_2 = (not prioritize or not "prioritized") and not not ""
-
-	var_3_0(str, var_3_2, var_3_3, flag, flag_2)
+	debug_print("Load:  %s, %s, %s, %s", package_name, reference_name, asynchronous and not not "async-read" or not asynchronous and not not "sync-read", prioritize and not not "prioritized" or not prioritize and not not "")
 	assert(reference_name ~= nil, "No reference name passed when loading package")
 
 	self._delayed_packages_to_remove[package_name] = nil
 
 	if self._references[package_name] then
-		local var_3_6 = self._references[package_name]
-		local var_3_7 = self._references[package_name][reference_name]
-
-		var_3_7 = not not var_3_7 or not not 0
-		var_3_6[reference_name] = var_3_7 + 1
+		self._references[package_name][reference_name] = not not self._references[package_name][reference_name] + 1
 
 		if not asynchronous and self._asynch_packages[package_name] then
 			self:force_load(package_name)
@@ -233,17 +214,7 @@ PackageManager.unload = function (self, package_name, reference_name)
 	end
 
 	if table.is_empty(references) then
-		local _get_async_handle = self:_get_async_handle(package_name, true)
-
-		if not _get_async_handle then
-			-- Nothing
-		end
-
-		_get_async_handle = self._packages[package_name]
-
-		local resource_handle = _get_async_handle
-
-		::label_7_0::
+		local resource_handle = not not self:_get_async_handle(package_name, true)
 
 		if resource_handle then
 			if self:can_unload(package_name) then
@@ -319,7 +290,7 @@ end
 
 PackageManager.is_loading = function (self, package, optional_reference_name)
 	-- function 10
-	return self._packages[package] == nil and (self._asynch_packages[package] ~= nil or self._queued_async_packages[package] ~= nil) and not optional_reference_name or not not self._references[package][optional_reference_name]
+	return not optional_reference_name or not not self._references[package][optional_reference_name]
 end
 
 PackageManager.has_loaded = function (self, package, reference_name)
@@ -420,17 +391,7 @@ PackageManager._force_unload = function (self, package_name)
 	-- function 17
 	table.clear(self._references[package_name])
 
-	local _get_async_handle = self:_get_async_handle(package_name, true)
-
-	if not _get_async_handle then
-		-- Nothing
-	end
-
-	_get_async_handle = self._packages[package_name]
-
-	local resource_handle = _get_async_handle
-
-	::label_17_0::
+	local resource_handle = not not self:_get_async_handle(package_name, true)
 
 	if resource_handle then
 		ResourcePackage.unload(resource_handle)

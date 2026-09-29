@@ -31,17 +31,7 @@ BTCrazyJumpAction.enter = function (self, unit, blackboard, t)
 	local data = blackboard.jump_data
 	local network_manager = Managers.state.network
 	local ai_extension = ScriptUnit.extension(unit, "ai_system")
-	local var_3_0 = action.difficulty_jump_delay_time[Managers.state.difficulty:get_difficulty_rank()]
-
-	if not var_3_0 then
-		-- Nothing
-	end
-
-	var_3_0 = action.difficulty_jump_delay_time[2]
-
-	local prepare_jump_time = var_3_0
-
-	::label_3_0::
+	local prepare_jump_time = not not action.difficulty_jump_delay_time[Managers.state.difficulty:get_difficulty_rank()]
 
 	if data.delay_jump_start then
 		data.state = "align_for_push_off"

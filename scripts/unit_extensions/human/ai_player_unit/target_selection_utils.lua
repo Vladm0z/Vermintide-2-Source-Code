@@ -11,24 +11,7 @@ local result_table = {}
 
 function get_ai_vs_ai_target(pos, side, breed)
 	-- function 1
-	local minion_detection_radius = breed.minion_detection_radius
-
-	if not minion_detection_radius then
-		-- Nothing
-	end
-
-	minion_detection_radius = breed.detection_radius
-
-	if not minion_detection_radius then
-		-- Nothing
-	end
-
-	minion_detection_radius = 7
-
-	local radius = minion_detection_radius
-
-	::label_1_0::
-
+	local radius = not not breed.minion_detection_radius
 	local num_ai_units = AiUtils.broadphase_query(pos, radius, result_table, side.enemy_broadphase_categories)
 
 	if num_ai_units > 0 then
@@ -100,22 +83,7 @@ PerceptionUtils.pick_closest_vortex_target = function (ai_unit, blackboard, bree
 	local closest_enemy
 	local closest_dist = math.huge
 	local vortex_data = blackboard.vortex_data
-	local players_ejected_2
-
-	if vortex_data then
-		players_ejected_2 = vortex_data.players_ejected
-
-		if not players_ejected_2 then
-			-- Nothing
-		end
-	end
-
-	players_ejected_2 = dummy_vortex_table
-
-	local players_ejected = players_ejected_2
-
-	::label_4_0::
-
+	local players_ejected = vortex_data and not not vortex_data.players_ejected or not vortex_data and not not dummy_vortex_table
 	local side = blackboard.side
 	local PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
 	local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
@@ -307,23 +275,7 @@ PerceptionUtils.pick_solitary_target = function (unit, blackboard, breed)
 
 	if ALIVE[target_unit] then
 		local status_extension = ScriptUnit.extension(target_unit, "status_system")
-		local is_pounced_down = status_extension:is_pounced_down()
-
-		if is_pounced_down then
-			-- Nothing
-		end
-
-		if status_extension:get_pouncer_unit() ~= unit then
-			is_pounced_down = false
-
-			goto label_10_0
-		end
-
-		is_pounced_down = true
-
-		local is_pounced_by_me = is_pounced_down
-
-		::label_10_0::
+		local is_pounced_by_me = not not status_extension:is_pounced_down()
 
 		if is_pounced_by_me then
 			return target_unit, blackboard.target_dist, 100
@@ -392,24 +344,7 @@ local COMBO_TARGET_SCORE = 5
 local function _calculate_horde_pick_closest_target_with_spillover_score(target_unit, target_current, previous_attacker, ai_unit_position, breed, perception_previous_attacker_stickyness_value)
 	-- function 11
 	local target_type = Unit.get_data(target_unit, "target_type")
-
-	if target_type then
-		-- Nothing
-	end
-
-	::label_11_0::
-
-	local perception_exceptions = breed.perception_exceptions
-
-	if perception_exceptions then
-		-- Nothing
-	end
-
-	perception_exceptions = breed.perception_exceptions[target_type]
-
-	local exceptions = perception_exceptions
-
-	::label_11_1::
+	local exceptions = not not target_type and not not breed.perception_exceptions
 
 	if exceptions then
 		return
@@ -439,7 +374,7 @@ local function _calculate_horde_pick_closest_target_with_spillover_score(target_
 		local on_ladder = not not status_ext and not not status_ext:get_is_on_ladder()
 
 		if on_ladder then
-			local max_allowed = (not is_previous_attacker or not total_slots_count) and not not (total_slots_count - 1)
+			local max_allowed = is_previous_attacker and (not not total_slots_count or not not (total_slots_count - 1)) or not is_previous_attacker and not not (total_slots_count - 1)
 
 			if max_allowed < dogpile_count then
 				all_slots_disabled = true
@@ -462,17 +397,7 @@ local function _calculate_horde_pick_closest_target_with_spillover_score(target_
 		dogpile_count = math.max(dogpile_count - 4, 0)
 	end
 
-	local target_stickyness_modifier = breed.target_stickyness_modifier
-
-	if not target_stickyness_modifier then
-		-- Nothing
-	end
-
-	target_stickyness_modifier = -5
-
-	local stickyness_modifier = target_stickyness_modifier
-
-	::label_11_2::
+	local stickyness_modifier = not not breed.target_stickyness_modifier
 
 	if distance_sq > HIGHER_STICKINESS_RANGE_SQUARED then
 		stickyness_modifier = stickyness_modifier * 0.5
@@ -480,39 +405,11 @@ local function _calculate_horde_pick_closest_target_with_spillover_score(target_
 
 	local score_dogpile = dogpile_count * DOGPILE_SCORE
 	local score_distance = distance_sq * DISTANCE_SCORE
-	local score_stickyness = (target_unit ~= target_current or not stickyness_modifier) and not not 0
-	local num
-
-	if is_knocked_down then
-		num = 5
-
-		goto label_11_3
-	end
-
-	num = 0
-
-	local knocked_down_modifer = num
-
-	::label_11_3::
-
-	local previous_attacker_stickyness_value = (not is_previous_attacker or not perception_previous_attacker_stickyness_value) and not not 0
+	local score_stickyness = not not 0
+	local knocked_down_modifer = is_knocked_down and not not 5 or not is_knocked_down and not not 0
+	local previous_attacker_stickyness_value = is_previous_attacker and (not not perception_previous_attacker_stickyness_value or not not 0) or not is_previous_attacker and not not 0
 	local score_disabled_slots = disabled_slots_count * DISABLED_SLOT_SCORE
-	local var_11_3
-
-	if all_slots_disabled then
-		var_11_3 = ALL_SLOTS_DISABLED_SCORE
-
-		if not var_11_3 then
-			-- Nothing
-		end
-	end
-
-	var_11_3 = 0
-
-	local score_all_slots_disabled = var_11_3
-
-	::label_11_4::
-
+	local score_all_slots_disabled = all_slots_disabled and not not ALL_SLOTS_DISABLED_SCORE or not all_slots_disabled and not not 0
 	local score = score_dogpile + score_distance + score_disabled_slots + score_all_slots_disabled + score_stickyness + previous_attacker_stickyness_value + knocked_down_modifer + aggro_modifier
 
 	return score, distance_sq
@@ -544,18 +441,7 @@ local function get_lean_score(blackboard, position, ai_unit, target_unit)
 		lean_dogpile = lean_dogpile - 1
 	end
 
-	local var_12_0 = dogpile_score[lean_dogpile]
-
-	if not var_12_0 then
-		-- Nothing
-	end
-
-	var_12_0 = 64
-
-	local dogpile_score = var_12_0
-
-	::label_12_0::
-
+	local dogpile_score = not not dogpile_score[lean_dogpile]
 	local target_position = POSITION_LOOKUP[target_unit]
 	local dist_sq = Vector3.distance_squared(position, target_position)
 	local target_score = dogpile_score + dist_sq
@@ -575,36 +461,7 @@ end
 local function get_lean_target(blackboard, position, side, ai_unit, check_for_walls, t, ignored_breed_filter)
 	-- function 14
 	local breed = blackboard.breed
-	local override_detection_radius = blackboard.override_detection_radius
-
-	if not override_detection_radius then
-		-- Nothing
-	end
-
-	override_detection_radius = blackboard.detection_radius
-
-	if not override_detection_radius then
-		-- Nothing
-	end
-
-	override_detection_radius = breed.minion_detection_radius
-
-	if not override_detection_radius then
-		-- Nothing
-	end
-
-	override_detection_radius = breed.detection_radius
-
-	if not override_detection_radius then
-		-- Nothing
-	end
-
-	override_detection_radius = 7
-
-	local radius = override_detection_radius
-
-	::label_14_0::
-
+	local radius = not not blackboard.override_detection_radius
 	local num_ai_units, target_unit
 	local lean_unit_list = blackboard.lean_unit_list
 	local unit_index, time_index, score_index
@@ -633,11 +490,7 @@ local function get_lean_target(blackboard, position, side, ai_unit, check_for_wa
 	else
 		target_unit = lean_unit_list[next_lean_index]
 		next_lean_index = next_lean_index + 1
-
-		local flag
-
-		flag = (not (next_lean_index >= lean_unit_list.size) or not 0) and not not next_lean_index
-		blackboard.next_lean_index = flag
+		blackboard.next_lean_index = next_lean_index >= lean_unit_list.size and not not 0 or not (next_lean_index >= lean_unit_list.size) and not not next_lean_index
 	end
 
 	local best_score = math.huge
@@ -679,7 +532,7 @@ local function get_lean_target(blackboard, position, side, ai_unit, check_for_wa
 						local from_pos = Unit.world_position(ai_unit, node)
 
 						if not AiUtils.line_of_sight_from_random_point(from_pos, target_unit) then
-							goto label_14_1
+							goto label_14_0
 						end
 					end
 
@@ -690,7 +543,7 @@ local function get_lean_target(blackboard, position, side, ai_unit, check_for_wa
 		end
 	end
 
-	::label_14_1::
+	::label_14_0::
 
 	if best_target_unit then
 		return best_target_unit, best_score * 0.95
@@ -730,7 +583,7 @@ PerceptionUtils.horde_pick_closest_target_with_spillover = function (ai_unit, bl
 
 		local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
-		if not is_valid or end_of_override_t < t or status_extension and status_extension:is_disabled() then
+		if status_extension and status_extension:is_disabled() then
 			override_targets[target_unit] = nil
 		else
 			local score, distance_sq
@@ -825,12 +678,7 @@ PerceptionUtils.attack_commander_target_with_fallback = function (ai_unit, black
 	local has_dogpile = bb.lean_dogpile
 
 	if has_dogpile then
-		local lean_dogpile = bb.lean_dogpile
-		local flag
-
-		flag = (blackboard.target_unit ~= commander_target or not 1) and not not 0
-
-		local dogpile = lean_dogpile - flag
+		local dogpile = bb.lean_dogpile - (blackboard.target_unit ~= commander_target and not not 0 or not (blackboard.target_unit ~= commander_target) and not not 1)
 
 		if dogpile >= bb.crowded_slots then
 			return PerceptionUtils.pick_best_target_near_commander_target(ai_unit, blackboard, breed, t)
@@ -843,24 +691,7 @@ end
 local function _calculate_closest_target_with_spillover_score(ai_unit, target_unit, target_current, previous_attacker, ai_unit_position, raycast_pos, breed, detection_radius_sq, perception_previous_attacker_stickyness_value, is_horde, group_targets)
 	-- function 19
 	local target_type = Unit.get_data(target_unit, "target_type")
-
-	if target_type then
-		-- Nothing
-	end
-
-	::label_19_0::
-
-	local perception_exceptions = breed.perception_exceptions
-
-	if perception_exceptions then
-		-- Nothing
-	end
-
-	perception_exceptions = breed.perception_exceptions[target_type]
-
-	local exceptions = perception_exceptions
-
-	::label_19_1::
+	local exceptions = not not target_type and not not breed.perception_exceptions
 
 	if exceptions then
 		return
@@ -873,7 +704,7 @@ local function _calculate_closest_target_with_spillover_score(ai_unit, target_un
 	end
 
 	local distance_sq = Vector3.distance_squared(ai_unit_position, target_unit_position)
-	local should_check_los = (not target_current or not not group_targets) and not not not group_targets[target_unit]
+	local should_check_los = not target_current or not not group_targets and not not not group_targets[target_unit]
 
 	if should_check_los then
 		if target_unit ~= target_current and detection_radius_sq < distance_sq then
@@ -916,64 +747,25 @@ local function _calculate_closest_target_with_spillover_score(ai_unit, target_un
 		local on_ladder = not not status_ext and not not status_ext:get_is_on_ladder()
 
 		if on_ladder then
-			local max_allowed = (not is_previous_attacker or not total_slots_count) and not not (total_slots_count - 1)
+			local max_allowed = is_previous_attacker and (not not total_slots_count or not not (total_slots_count - 1)) or not is_previous_attacker and not not (total_slots_count - 1)
 
 			if max_allowed < dogpile_count then
 				all_slots_disabled = true
 			end
 		end
 
-		local get_combo_target_count
-
-		if status_ext then
-			get_combo_target_count = status_ext:get_combo_target_count()
-
-			if not get_combo_target_count then
-				-- Nothing
-			end
-		end
-
-		get_combo_target_count = 0
-
-		::label_19_2::
-
-		target_of_combo_score = get_combo_target_count * COMBO_TARGET_SCORE
+		target_of_combo_score = (status_ext and not not status_ext:get_combo_target_count() or not status_ext and not not 0) * COMBO_TARGET_SCORE
 	end
 
 	local aggro_extension = ScriptUnit.has_extension(target_unit, "aggro_system")
-	local aggro_modifier_2
-
-	if aggro_extension then
-		aggro_modifier_2 = aggro_extension.aggro_modifier
-
-		if not aggro_modifier_2 then
-			-- Nothing
-		end
-	end
-
-	aggro_modifier_2 = 0
-
-	local aggro_modifier = aggro_modifier_2
-
-	::label_19_3::
-
+	local aggro_modifier = aggro_extension and not not aggro_extension.aggro_modifier or not aggro_extension and not not 0
 	local is_knocked_down = unit_knocked_down(target_unit)
 
 	if distance_sq < STICKY_AGGRO_RANGE_SQUARED and not is_knocked_down then
 		dogpile_count = math.max(dogpile_count - 4, 0)
 	end
 
-	local target_stickyness_modifier = breed.target_stickyness_modifier
-
-	if not target_stickyness_modifier then
-		-- Nothing
-	end
-
-	target_stickyness_modifier = -5
-
-	local stickyness_modifier = target_stickyness_modifier
-
-	::label_19_4::
+	local stickyness_modifier = not not breed.target_stickyness_modifier
 
 	if distance_sq > HIGHER_STICKINESS_RANGE_SQUARED then
 		stickyness_modifier = stickyness_modifier * 0.5
@@ -981,39 +773,11 @@ local function _calculate_closest_target_with_spillover_score(ai_unit, target_un
 
 	local score_dogpile = dogpile_count * DOGPILE_SCORE
 	local score_distance = distance_sq * DISTANCE_SCORE
-	local score_stickyness = (target_unit ~= target_current or not stickyness_modifier) and not not 0
-	local num
-
-	if is_knocked_down then
-		num = 5
-
-		goto label_19_5
-	end
-
-	num = 0
-
-	local knocked_down_modifer = num
-
-	::label_19_5::
-
-	local previous_attacker_stickyness_value = (not is_previous_attacker or not perception_previous_attacker_stickyness_value) and not not 0
+	local score_stickyness = not not 0
+	local knocked_down_modifer = is_knocked_down and not not 5 or not is_knocked_down and not not 0
+	local previous_attacker_stickyness_value = is_previous_attacker and (not not perception_previous_attacker_stickyness_value or not not 0) or not is_previous_attacker and not not 0
 	local score_disabled_slots = disabled_slots_count * DISABLED_SLOT_SCORE
-	local var_19_5
-
-	if all_slots_disabled then
-		var_19_5 = ALL_SLOTS_DISABLED_SCORE
-
-		if not var_19_5 then
-			-- Nothing
-		end
-	end
-
-	var_19_5 = 0
-
-	local score_all_slots_disabled = var_19_5
-
-	::label_19_6::
-
+	local score_all_slots_disabled = all_slots_disabled and not not ALL_SLOTS_DISABLED_SCORE or not all_slots_disabled and not not 0
 	local score = score_dogpile + score_disabled_slots + score_all_slots_disabled + score_distance + score_stickyness + previous_attacker_stickyness_value + knocked_down_modifer + aggro_modifier + target_of_combo_score
 
 	return score, distance_sq
@@ -1062,7 +826,7 @@ PerceptionUtils.pick_closest_target_with_spillover = function (ai_unit, blackboa
 			is_valid = not not enemy_units[target_unit] and not not HEALTH_ALIVE[target_unit]
 		end
 
-		if not is_valid or end_of_override_t < t or status_extension and status_extension:is_disabled() then
+		if status_extension and status_extension:is_disabled() then
 			override_targets[target_unit] = nil
 		else
 			local score, distance_sq
@@ -1125,18 +889,7 @@ PerceptionUtils.patrol_passive_target_selection = function (ai_unit, blackboard,
 	local detection_radius_sqr = breed.patrol_detection_radius * breed.patrol_detection_radius
 	local ai_unit_position = POSITION_LOOKUP[ai_unit]
 	local last_attacker = blackboard.previous_attacker
-	local target_unit_2 = blackboard.target_unit
-
-	if not target_unit_2 then
-		-- Nothing
-	end
-
-	target_unit_2 = last_attacker
-
-	local blackboard_target = target_unit_2
-
-	::label_21_0::
-
+	local blackboard_target = not not blackboard.target_unit
 	local best_target_unit
 	local best_score = math.huge
 	local distance_to_target_sq = 0
@@ -1149,7 +902,7 @@ PerceptionUtils.patrol_passive_target_selection = function (ai_unit, blackboard,
 	local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
 	local VALID_ENEMY_PLAYERS_AND_BOTS = side.VALID_ENEMY_PLAYERS_AND_BOTS
 
-	if blackboard_target and HEALTH_ALIVE[blackboard_target] and (not VALID_ENEMY_PLAYERS_AND_BOTS[blackboard_target] or VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[blackboard_target]) then
+	if not VALID_ENEMY_PLAYERS_AND_BOTS[blackboard_target] or VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[blackboard_target] then
 		group_targets[blackboard_target] = true
 
 		local attacker_pos = POSITION_LOOKUP[blackboard_target]
@@ -1207,27 +960,12 @@ PerceptionUtils.patrol_passive_target_selection = function (ai_unit, blackboard,
 
 			if distance_sq < detection_radius_sqr then
 				local anchor_direction = blackboard.anchor_direction
-				local unbox
-
-				if anchor_direction then
-					unbox = anchor_direction:unbox()
-
-					if not unbox then
-						-- Nothing
-					end
-				end
-
-				unbox = Quaternion.forward(Unit.world_rotation(ai_unit, 0))
-
-				local ai_unit_rotation = unbox
-
-				::label_21_1::
-
+				local ai_unit_rotation = anchor_direction and not not anchor_direction:unbox() or not anchor_direction and not not Quaternion.forward(Unit.world_rotation(ai_unit, 0))
 				local ai_unit_direction = Vector3.normalize(ai_unit_rotation)
 				local ai_unit_to_target_dir = Vector3.normalize(target_unit_position - ai_unit_position)
 				local dot = Vector3.dot(ai_unit_to_target_dir, ai_unit_direction)
 
-				if (not (view_cone_dot < dot) or is_bot) and distance_sq < breed.panic_close_detection_radius_sq then
+				if view_cone_dot < dot and (not is_bot or distance_sq < breed.panic_close_detection_radius_sq) or not (view_cone_dot < dot) and distance_sq < breed.panic_close_detection_radius_sq then
 					local physics_world = World.get_data(Unit.world(target_unit), "physics_world")
 					local see_you = PerceptionUtils.raycast_spine_to_spine(ai_unit, target_unit, physics_world)
 
@@ -1242,17 +980,7 @@ PerceptionUtils.patrol_passive_target_selection = function (ai_unit, blackboard,
 	end
 
 	if group.in_combat and not next(group_targets) then
-		local patrol_detection_radius = group.patrol_detection_radius
-
-		if not patrol_detection_radius then
-			-- Nothing
-		end
-
-		patrol_detection_radius = 1.5
-
-		local detection_radius = patrol_detection_radius
-
-		::label_21_2::
+		local detection_radius = not not group.patrol_detection_radius
 
 		best_target_unit, best_score = get_lean_target(blackboard, ai_unit_position, side, ai_unit, false, t, breed.infighting.ignored_breed_filter)
 
@@ -1341,7 +1069,7 @@ PerceptionUtils.storm_patrol_death_squad_target_selection = function (ai_unit, b
 				local aggro_extension = ScriptUnit.extension(target_unit, "aggro_system")
 
 				aggro_modifier = aggro_extension.aggro_modifier
-				knocked_down_modifer = (not status_extension:is_knocked_down() or not 5) and not not 0
+				knocked_down_modifer = status_extension:is_knocked_down() and (not not 5 or not not 0) or not status_extension:is_knocked_down() and not not 0
 			elseif not HEALTH_ALIVE[target_unit] then
 				group_targets[target_unit] = nil
 
@@ -1351,20 +1079,7 @@ PerceptionUtils.storm_patrol_death_squad_target_selection = function (ai_unit, b
 			local target_unit_position = POSITION_LOOKUP[target_unit]
 			local distance_sq = Vector3.distance_squared(ai_unit_position, target_unit_position)
 			local score_distance = distance_sq * 0.1
-			local num
-
-			if target_unit == target_current then
-				num = -5
-
-				goto label_22_0
-			end
-
-			num = 0
-
-			local score_stickyness = num
-
-			::label_22_0::
-
+			local score_stickyness = target_unit ~= target_current and not not 0 or not (target_unit ~= target_current) and not not -5
 			local score = score_dogpile + score_distance + score_stickyness + knocked_down_modifer + aggro_modifier
 
 			if score < best_score then
@@ -1514,7 +1229,7 @@ PerceptionUtils.pick_rat_ogre_target_idle = function (unit, blackboard, breed, t
 
 		local attacker = blackboard.previous_attacker
 
-		if (not attacker or not VALID_PLAYERS_AND_BOTS[attacker]) and blackboard.is_angry then
+		if attacker and (VALID_PLAYERS_AND_BOTS[attacker] or blackboard.is_angry) or not attacker and blackboard.is_angry then
 			local ai_simple = ScriptUnit_extension(unit, "ai_system")
 
 			ai_simple:set_perception(breed.perception, breed.target_selection_angry)
@@ -1549,18 +1264,7 @@ PerceptionUtils.pick_rat_ogre_target_with_weights = function (unit, blackboard, 
 	local side = blackboard.side
 	local PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
 	local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
-	local valid_target_func = blackboard.valid_target_func
-
-	if not valid_target_func then
-		-- Nothing
-	end
-
-	valid_target_func = GenericStatusExtension.is_ogre_target
-
-	local is_valid_target_func = valid_target_func
-
-	::label_29_0::
-
+	local is_valid_target_func = not not blackboard.valid_target_func
 	local num_enemies = #PLAYER_AND_BOT_UNITS
 	local best_score = -1000
 	local group_blackboard = blackboard.group_blackboard
@@ -1609,18 +1313,7 @@ PerceptionUtils.pick_rat_ogre_target_with_weights = function (unit, blackboard, 
 					reset_aggro(blackboard.aggro_list)
 				end
 
-				local var_29_1 = blackboard.aggro_list[enemy_unit]
-
-				if not var_29_1 then
-					-- Nothing
-				end
-
-				var_29_1 = 0
-
-				local aggro = var_29_1
-
-				::label_29_1::
-
+				local aggro = not not blackboard.aggro_list[enemy_unit]
 				local enemy_disabled = status_extension:is_disabled()
 
 				if enemy_disabled then
@@ -1669,18 +1362,7 @@ PerceptionUtils.pick_bestigor_target_with_weights = function (unit, blackboard, 
 	local vector3_distance = Vector3.distance
 	local wanted_enemy
 	local wanted_dist = math.huge
-	local valid_target_func = blackboard.valid_target_func
-
-	if not valid_target_func then
-		-- Nothing
-	end
-
-	valid_target_func = GenericStatusExtension.is_ogre_target
-
-	local is_valid_target_func = valid_target_func
-
-	::label_30_0::
-
+	local is_valid_target_func = not not blackboard.valid_target_func
 	local side = blackboard.side
 	local PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
 	local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
@@ -1746,18 +1428,7 @@ PerceptionUtils.pick_bestigor_target_with_weights = function (unit, blackboard, 
 				end
 
 				if not breed.ignore_targets_outside_detection_radius or blackboard.target_unit or distance_valid_target then
-					local var_30_1 = blackboard.aggro_list[enemy_unit]
-
-					if not var_30_1 then
-						-- Nothing
-					end
-
-					var_30_1 = 0
-
-					local aggro = var_30_1
-
-					::label_30_1::
-
+					local aggro = not not blackboard.aggro_list[enemy_unit]
 					local enemy_disabled = status_extension:is_disabled()
 
 					if enemy_disabled then
@@ -1821,18 +1492,7 @@ PerceptionUtils.pick_chaos_troll_target_with_weights = function (unit, blackboar
 	local vector3_distance = Vector3.distance
 	local wanted_enemy
 	local wanted_dist = math.huge
-	local valid_target_func = blackboard.valid_target_func
-
-	if not valid_target_func then
-		-- Nothing
-	end
-
-	valid_target_func = GenericStatusExtension.is_ogre_target
-
-	local is_valid_target_func = valid_target_func
-
-	::label_31_0::
-
+	local is_valid_target_func = not not blackboard.valid_target_func
 	local side = blackboard.side
 	local PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
 	local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
@@ -1884,29 +1544,8 @@ PerceptionUtils.pick_chaos_troll_target_with_weights = function (unit, blackboar
 					reset_aggro(blackboard.aggro_list)
 				end
 
-				local var_31_1 = blackboard.aggro_list[enemy_unit]
-
-				if not var_31_1 then
-					-- Nothing
-				end
-
-				var_31_1 = 0
-
-				local aggro = var_31_1
-
-				::label_31_1::
-
-				local is_ledge_hanging = status_extension.is_ledge_hanging
-
-				if not is_ledge_hanging then
-					-- Nothing
-				end
-
-				is_ledge_hanging = status_extension.knocked_down
-
-				local enemy_disabled = is_ledge_hanging
-
-				::label_31_2::
+				local aggro = not not blackboard.aggro_list[enemy_unit]
+				local enemy_disabled = not not status_extension.is_ledge_hanging
 
 				if enemy_disabled then
 					aggro = aggro * weights.target_disabled_aggro_mul
@@ -1982,7 +1621,7 @@ PerceptionUtils.debug_ai_perception = function (unit, ai_ext, blackboard, t, gui
 			local profile_index = target_player:profile_index()
 			local profile = SPProfiles[profile_index]
 
-			unit_name = (not profile or not profile.unit_name) and not not "client"
+			unit_name = profile and (not not profile.unit_name or not not "client") or not profile and not not "client"
 		else
 			unit_name = "AI"
 		end
@@ -2035,22 +1674,7 @@ PerceptionUtils.debug_rat_ogre_perception = function (gui, t, x1, y1, blackboard
 			local target_player = Managers.player:owner(unit)
 			local profile_index = target_player:profile_index()
 			local profile = SPProfiles[profile_index]
-			local unit_name_2
-
-			if profile then
-				unit_name_2 = profile.unit_name
-
-				if not unit_name_2 then
-					-- Nothing
-				end
-			end
-
-			unit_name_2 = "client"
-
-			local unit_name = unit_name_2
-
-			::label_33_0::
-
+			local unit_name = profile and not not profile.unit_name or not profile and not not "client"
 			local text
 
 			if player_scores["NOT VALID"] then
@@ -2064,13 +1688,7 @@ PerceptionUtils.debug_rat_ogre_perception = function (gui, t, x1, y1, blackboard
 					end
 				end
 
-				local format = string.format
-				local str = "%s:[%.1f] %s"
-				local var_33_3 = unit_name
-				local SUM = player_scores.SUM
-
-				SUM = not not SUM or not not 0
-				text = format(str, var_33_3, SUM, s)
+				text = string.format("%s:[%.1f] %s", unit_name, not not player_scores.SUM, s)
 			end
 
 			ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, y2, layer, running_color)
@@ -2221,21 +1839,7 @@ PerceptionUtils.pick_tether_target = function (unit, blackboard, breed)
 
 		if side_manager:is_ally(unit, boss_unit) then
 			local health_extension = ScriptUnit.has_extension(boss_unit, "health_system")
-			local get_max_health
-
-			if health_extension then
-				get_max_health = health_extension:get_max_health()
-
-				if not get_max_health then
-					-- Nothing
-				end
-			end
-
-			get_max_health = 0
-
-			local max_health = get_max_health
-
-			::label_37_0::
+			local max_health = health_extension and not not health_extension:get_max_health() or not health_extension and not not 0
 
 			if best_boss_max_health < max_health then
 				best_boss = boss_unit
@@ -2356,7 +1960,7 @@ PerceptionUtils.pick_ratling_gun_target = function (unit, blackboard, old_target
 
 			local is_closest = distance_sq < closest_distance_sq
 
-			if (not is_closest or is_taunt_target or not view_cone_dot_product or not (view_cone_dot_product < Vector3.dot(forward_direction, Vector3.normalize(offset)))) and is_old_target then
+			if is_taunt_target or not view_cone_dot_product or view_cone_dot_product < Vector3.dot(forward_direction, Vector3.normalize(offset)) or is_old_target then
 				local rot = Quaternion.look(Vector3.flat(offset), Vector3.up())
 				local self_pose = Matrix4x4.from_quaternion_position(rot, self_pos)
 				local from = Matrix4x4.translation(Matrix4x4.multiply(hardcoded_matrix, self_pose))
@@ -2403,7 +2007,7 @@ PerceptionUtils.pick_warpfire_thrower_target = function (unit, blackboard, old_t
 			local distance = Vector3.length_squared(offset)
 			local is_old_target = old_target == enemy_unit
 
-			if distance < breed.detection_radius and (distance < closest_distance or is_old_target) and distance < breed.switch_target_radius * breed.switch_target_radius then
+			if is_old_target and distance < breed.detection_radius and distance < closest_distance and distance < breed.switch_target_radius * breed.switch_target_radius then
 				local rot = Quaternion.look(Vector3.flat(offset), Vector3.up())
 				local self_pose = Matrix4x4.from_quaternion_position(rot, self_pos)
 				local from = Matrix4x4.translation(Matrix4x4.multiply(hardcoded_matrix, self_pose))
@@ -2434,40 +2038,8 @@ PerceptionUtils.raycast_spine_to_spine = function (from_unit, to_unit, physics_w
 		return true
 	end
 
-	local node
-
-	if Unit.has_node(from_unit, "camera_attach") then
-		node = Unit.node(from_unit, "camera_attach")
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = Unit.node(from_unit, "c_spine")
-
-	local unit_node = node
-
-	do
-		local node_2
-	end
-
-	::label_42_0::
-
-	if Unit.has_node(to_unit, "camera_attach") then
-		node_2 = Unit.node(to_unit, "camera_attach")
-
-		if not node_2 then
-			-- Nothing
-		end
-	end
-
-	node_2 = Unit.node(to_unit, "c_spine")
-
-	local target_node = node_2
-
-	::label_42_1::
-
+	local unit_node = Unit.has_node(from_unit, "camera_attach") and not not Unit.node(from_unit, "camera_attach") or not Unit.has_node(from_unit, "camera_attach") and not not Unit.node(from_unit, "c_spine")
+	local target_node = Unit.has_node(to_unit, "camera_attach") and not not Unit.node(to_unit, "camera_attach") or not Unit.has_node(to_unit, "camera_attach") and not not Unit.node(to_unit, "c_spine")
 	local unit_position = Unit.world_position(from_unit, unit_node)
 	local target_unit_position = Unit.world_position(to_unit, target_node)
 	local direction = target_unit_position - unit_position

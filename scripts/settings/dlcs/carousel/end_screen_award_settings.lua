@@ -19,21 +19,8 @@ local function max_value(session_scores, key)
 
 	local no_winner
 	local winner = TEMP_TABLE[1]
-	local stats_id
 
-	if winner and winner.scores[key] > 0 then
-		stats_id = winner.stats_id
-
-		if not stats_id then
-			-- Nothing
-		end
-	end
-
-	stats_id = no_winner
-
-	::label_1_0::
-
-	return stats_id, not not winner and not not winner.scores[key]
+	return not not winner.stats_id, not not winner and not not winner.scores[key]
 end
 
 EndScreenAwardSettings = {}
@@ -229,11 +216,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 		return max_value(session_scores, "damage_to_monster")
 	end
 }
-
-local EndScreenAwardSettingsLookup = EndScreenAwardSettingsLookup
-
-EndScreenAwardSettingsLookup = not not EndScreenAwardSettingsLookup or not not {}
-EndScreenAwardSettingsLookup = EndScreenAwardSettingsLookup
+EndScreenAwardSettingsLookup = not not EndScreenAwardSettingsLookup
 
 for _, award_settings in ipairs(EndScreenAwardSettings) do
 	EndScreenAwardSettingsLookup[award_settings.stat_key] = award_settings

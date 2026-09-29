@@ -52,10 +52,7 @@ for i = 1, math.min(#experience_levels, level_used_for_extra_levels_experience) 
 	max_reward_experience = max_reward_experience + experience_levels[i]
 end
 
-local ExperienceSettings = ExperienceSettings
-
-ExperienceSettings = not not ExperienceSettings or not not {}
-ExperienceSettings = ExperienceSettings
+ExperienceSettings = not not ExperienceSettings
 
 ExperienceSettings.get_player_level = function (player)
 	-- function 1
@@ -125,21 +122,15 @@ end
 ExperienceSettings.get_experience = function (hero_name)
 	-- function 4
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local get = hero_attributes:get(hero_name, "experience")
 
-	get = not not get or not not 0
-
-	return get
+	return not not hero_attributes:get(hero_name, "experience")
 end
 
 ExperienceSettings.get_experience_pool = function (hero_name)
 	-- function 5
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local get = hero_attributes:get(hero_name, "experience_pool")
 
-	get = not not get or not not 0
-
-	return get
+	return not not hero_attributes:get(hero_name, "experience_pool")
 end
 
 ExperienceSettings.get_level = function (experience)
@@ -193,17 +184,7 @@ ExperienceSettings.get_total_experience_required_for_level = function (level)
 	local experience = 0
 
 	for i = 1, level do
-		local var_8_0 = experience_levels[i]
-
-		if not var_8_0 then
-			-- Nothing
-		end
-
-		var_8_0 = experience_for_extra_levels
-
-		local level_experience = var_8_0
-
-		::label_8_0::
+		local level_experience = not not experience_levels[i]
 
 		experience = experience + level_experience
 	end
@@ -213,11 +194,7 @@ end
 
 ExperienceSettings.get_experience_required_for_level = function (level)
 	-- function 9
-	local var_9_0 = experience_levels[level]
-
-	var_9_0 = not not var_9_0 or not not experience_for_extra_levels
-
-	return var_9_0
+	return not not experience_levels[level]
 end
 
 ExperienceSettings.get_highest_character_level = function ()
@@ -241,17 +218,7 @@ end
 ExperienceSettings.get_character_level = function (display_name)
 	-- function 11
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local get = hero_attributes:get(display_name, "experience")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = 0
-
-	local hero_experience = get
-
-	::label_11_0::
+	local hero_experience = not not hero_attributes:get(display_name, "experience")
 
 	return ExperienceSettings.get_level(hero_experience)
 end

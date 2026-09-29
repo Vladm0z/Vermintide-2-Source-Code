@@ -963,21 +963,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 2
-				local hover_color
-
-				if content.left_hotspot.is_hover then
-					hover_color = style.hover_color
-
-					if not hover_color then
-						-- Nothing
-					end
-				end
-
-				hover_color = style.base_color
-
-				::label_2_0::
-
-				style.color = hover_color
+				style.color = content.left_hotspot.is_hover and not not style.hover_color or not content.left_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -985,21 +971,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 3
-				local hover_color
-
-				if content.left_hotspot.is_hover then
-					hover_color = style.hover_color
-
-					if not hover_color then
-						-- Nothing
-					end
-				end
-
-				hover_color = style.base_color
-
-				::label_3_0::
-
-				style.color = hover_color
+				style.color = content.left_hotspot.is_hover and not not style.hover_color or not content.left_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -1007,21 +979,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 4
-				local hover_color
-
-				if content.right_hotspot.is_hover then
-					hover_color = style.hover_color
-
-					if not hover_color then
-						-- Nothing
-					end
-				end
-
-				hover_color = style.base_color
-
-				::label_4_0::
-
-				style.color = hover_color
+				style.color = content.right_hotspot.is_hover and not not style.hover_color or not content.right_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -1029,21 +987,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 5
-				local hover_color
-
-				if content.right_hotspot.is_hover then
-					hover_color = style.hover_color
-
-					if not hover_color then
-						-- Nothing
-					end
-				end
-
-				hover_color = style.base_color
-
-				::label_5_0::
-
-				style.color = hover_color
+				style.color = content.right_hotspot.is_hover and not not style.hover_color or not content.right_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -1654,10 +1598,7 @@ local function create_chat_output_widget(in_scenegraph_id, offset)
 					return false
 				end
 
-				local var_10_0 = content.channel_messages_table[content.channel_name]
-
-				var_10_0 = not not var_10_0 or not not {}
-				content.message_tables = var_10_0
+				content.message_tables = not not content.channel_messages_table[content.channel_name]
 
 				return true
 			end
@@ -1672,10 +1613,7 @@ local function create_chat_output_widget(in_scenegraph_id, offset)
 					return false
 				end
 
-				local var_11_0 = content.private_messages_table[content.private_user_name]
-
-				var_11_0 = not not var_11_0 or not not {}
-				content.message_tables = var_11_0
+				content.message_tables = not not content.private_messages_table[content.private_user_name]
 
 				return true
 			end
@@ -1796,10 +1734,7 @@ local function create_chat_user_list_widget(in_scenegraph_id, offset)
 			text_id = "text_field",
 			content_check_function = function (content, style)
 				-- function 13
-				local var_13_0 = content.channel_messages_table[content.channel_name]
-
-				var_13_0 = not not var_13_0 or not not {}
-				content.message_tables = var_13_0
+				content.message_tables = not not content.channel_messages_table[content.channel_name]
 
 				return true
 			end
@@ -1943,23 +1878,8 @@ local function create_user_entry(index)
 					content_check_function = function (content)
 						-- function 16
 						local button_hotspot = content.button_hotspot
-						local is_selected
 
-						if not button_hotspot.disable_button then
-							is_selected = button_hotspot.is_selected
-
-							if not is_selected then
-								is_selected = button_hotspot.is_hover
-							end
-						else
-							is_selected = false
-						end
-
-						if false then
-							is_selected = true
-						end
-
-						return is_selected
+						return not not button_hotspot.is_hover
 					end
 				},
 				{
@@ -1969,23 +1889,8 @@ local function create_user_entry(index)
 					content_check_function = function (content)
 						-- function 17
 						local button_hotspot = content.button_hotspot
-						local is_selected
 
-						if not button_hotspot.disable_button then
-							is_selected = button_hotspot.is_selected
-
-							if not is_selected then
-								is_selected = button_hotspot.is_hover
-							end
-						else
-							is_selected = false
-						end
-
-						if false then
-							is_selected = true
-						end
-
-						return is_selected
+						return not not button_hotspot.is_hover
 					end
 				}
 			}
@@ -3265,23 +3170,9 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 	background_texture = not not background_texture or not not "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local var_37_0
+	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
 
-	if frame_name then
-		var_37_0 = UIFrameSettings[frame_name]
-
-		if not var_37_0 then
-			-- Nothing
-		end
-	end
-
-	var_37_0 = UIFrameSettings.button_frame_01
-
-	local frame_settings = var_37_0
-
-	::label_37_0::
-
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -3370,23 +3261,8 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 					content_check_function = function (content)
 						-- function 43
 						local button_hotspot = content.button_hotspot
-						local is_selected
 
-						if not button_hotspot.disable_button then
-							is_selected = button_hotspot.is_selected
-
-							if not is_selected then
-								is_selected = button_hotspot.is_hover
-							end
-						else
-							is_selected = false
-						end
-
-						if false then
-							is_selected = true
-						end
-
-						return is_selected
+						return not not button_hotspot.is_hover
 					end
 				},
 				{
@@ -3420,247 +3296,215 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 					end
 				}
 			}
+		},
+		content = {
+			speech_bubble_id = "speech_bubble",
+			message_number_text = "",
+			num_private_messages = 0,
+			glass_top = "button_glass_01",
+			has_private_conversations = false,
+			hover_glow = optional_color_name and not not ("button_state_hover_" .. optional_color_name) or not optional_color_name and not not "button_state_hover",
+			glow = optional_color_name and not not ("button_state_normal_" .. optional_color_name) or not optional_color_name and not not "button_state_normal",
+			button_hotspot = {},
+			title_text = not not text or not not "n/a",
+			frame = frame_settings.texture,
+			background = {
+				uvs = {
+					{
+						0,
+						1 - size[2] / background_texture_settings.size[2]
+					},
+					{
+						size[1] / background_texture_settings.size[1],
+						1
+					}
+				},
+				texture_id = background_texture
+			},
+			new_per_user = {}
+		},
+		style = {
+			background = {
+				color = background_color,
+				offset = {
+					0,
+					0,
+					0
+				}
+			},
+			clicked_rect = {
+				color = {
+					100,
+					0,
+					0,
+					0
+				},
+				offset = {
+					0,
+					0,
+					6
+				}
+			},
+			disabled_rect = {
+				color = {
+					150,
+					5,
+					5,
+					5
+				},
+				offset = {
+					0,
+					0,
+					6
+				}
+			},
+			title_text = {
+				vertical_alignment = "center",
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+				offset = {
+					0,
+					0,
+					5
+				}
+			},
+			title_text_disabled = {
+				vertical_alignment = "center",
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("gray", 255),
+				offset = {
+					0,
+					0,
+					5
+				}
+			},
+			title_text_shadow = {
+				vertical_alignment = "center",
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					2,
+					-2,
+					4
+				}
+			},
+			frame = {
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					7
+				}
+			},
+			hover_glow = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					frame_settings.texture_sizes.horizontal[2],
+					1
+				},
+				size = {
+					size[1],
+					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
+				}
+			},
+			glass_top = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					size[2] - frame_settings.texture_sizes.horizontal[2] - 4,
+					3
+				},
+				size = {
+					size[1],
+					5
+				}
+			},
+			glow = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					frame_settings.texture_sizes.horizontal[2] - 1,
+					2
+				},
+				size = {
+					size[1],
+					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
+				}
+			},
+			speech_bubble = {
+				vertical_alignment = "top",
+				horizontal_alignment = "right",
+				texture_size = {
+					35,
+					35
+				},
+				offset = {
+					10,
+					10,
+					10
+				}
+			},
+			message_number = {
+				vertical_alignment = "center",
+				font_size = 18,
+				horizontal_alignment = "center",
+				word_wrap = true,
+				font_type = "hell_shark_arial",
+				text_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				offset = {
+					57,
+					17,
+					11
+				}
+			}
+		},
+		scenegraph_id = scenegraph_id,
+		offset = {
+			0,
+			0,
+			0
 		}
 	}
-	local tbl_2 = {
-		speech_bubble_id = "speech_bubble",
-		message_number_text = "",
-		num_private_messages = 0,
-		glass_top = "button_glass_01",
-		has_private_conversations = false
-	}
-	local str
-
-	if optional_color_name then
-		str = "button_state_hover_" .. optional_color_name
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = "button_state_hover"
-
-	::label_37_1::
-
-	tbl_2.hover_glow = str
-
-	local str_2
-
-	if optional_color_name then
-		str_2 = "button_state_normal_" .. optional_color_name
-
-		if not str_2 then
-			-- Nothing
-		end
-	end
-
-	str_2 = "button_state_normal"
-
-	::label_37_2::
-
-	tbl_2.glow = str_2
-	tbl_2.button_hotspot = {}
-	tbl_2.title_text = not not text or not not "n/a"
-	tbl_2.frame = frame_settings.texture
-	tbl_2.background = {
-		uvs = {
-			{
-				0,
-				1 - size[2] / background_texture_settings.size[2]
-			},
-			{
-				size[1] / background_texture_settings.size[1],
-				1
-			}
-		},
-		texture_id = background_texture
-	}
-	tbl_2.new_per_user = {}
-	tbl.content = tbl_2
-	tbl.style = {
-		background = {
-			color = background_color,
-			offset = {
-				0,
-				0,
-				0
-			}
-		},
-		clicked_rect = {
-			color = {
-				100,
-				0,
-				0,
-				0
-			},
-			offset = {
-				0,
-				0,
-				6
-			}
-		},
-		disabled_rect = {
-			color = {
-				150,
-				5,
-				5,
-				5
-			},
-			offset = {
-				0,
-				0,
-				6
-			}
-		},
-		title_text = {
-			vertical_alignment = "center",
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-			offset = {
-				0,
-				0,
-				5
-			}
-		},
-		title_text_disabled = {
-			vertical_alignment = "center",
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("gray", 255),
-			offset = {
-				0,
-				0,
-				5
-			}
-		},
-		title_text_shadow = {
-			vertical_alignment = "center",
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				2,
-				-2,
-				4
-			}
-		},
-		frame = {
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes,
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				0,
-				7
-			}
-		},
-		hover_glow = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				frame_settings.texture_sizes.horizontal[2],
-				1
-			},
-			size = {
-				size[1],
-				math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
-			}
-		},
-		glass_top = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				size[2] - frame_settings.texture_sizes.horizontal[2] - 4,
-				3
-			},
-			size = {
-				size[1],
-				5
-			}
-		},
-		glow = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				frame_settings.texture_sizes.horizontal[2] - 1,
-				2
-			},
-			size = {
-				size[1],
-				math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
-			}
-		},
-		speech_bubble = {
-			vertical_alignment = "top",
-			horizontal_alignment = "right",
-			texture_size = {
-				35,
-				35
-			},
-			offset = {
-				10,
-				10,
-				10
-			}
-		},
-		message_number = {
-			vertical_alignment = "center",
-			font_size = 18,
-			horizontal_alignment = "center",
-			word_wrap = true,
-			font_type = "hell_shark_arial",
-			text_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			offset = {
-				57,
-				17,
-				11
-			}
-		}
-	}
-	tbl.scenegraph_id = scenegraph_id
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-
-	return tbl
 end
 
 local function create_emoji()
@@ -3678,11 +3522,7 @@ local function create_emoji()
 					pass_type = "rounded_background",
 					content_check_function = function (content)
 						-- function 47
-						local texture_id = content.texture_id
-
-						texture_id = not not texture_id and not not content.hotspot.is_hover
-
-						return texture_id
+						return not not content.texture_id
 					end
 				},
 				{
@@ -3916,40 +3756,8 @@ end
 
 local function create_channel_list_entry(scenegraph_id, frame_setting, selected_frame_setting)
 	-- function 53
-	local var_53_0
-
-	if frame_setting then
-		var_53_0 = UIFrameSettings[frame_setting]
-
-		if not var_53_0 then
-			-- Nothing
-		end
-	end
-
-	var_53_0 = UIFrameSettings.menu_frame_06
-
-	local frame_settings = var_53_0
-
-	do
-		local var_53_1
-	end
-
-	::label_53_0::
-
-	if selected_frame_setting then
-		var_53_1 = UIFrameSettings[selected_frame_setting]
-
-		if not var_53_1 then
-			-- Nothing
-		end
-	end
-
-	var_53_1 = UIFrameSettings.frame_outer_glow_01
-
-	local selected_frame_settings = var_53_1
-
-	::label_53_1::
-
+	local frame_settings = frame_setting and not not UIFrameSettings[frame_setting] or not frame_setting and not not UIFrameSettings.menu_frame_06
+	local selected_frame_settings = selected_frame_setting and not not UIFrameSettings[selected_frame_setting] or not selected_frame_setting and not not UIFrameSettings.frame_outer_glow_01
 	local widget = {
 		element = {}
 	}
@@ -3983,21 +3791,7 @@ local function create_channel_list_entry(scenegraph_id, frame_setting, selected_
 			pass_type = "rect",
 			content_check_function = function (content, style)
 				-- function 54
-				local hover_color
-
-				if content.hotspot.is_hover then
-					hover_color = style.hover_color
-
-					if not hover_color then
-						-- Nothing
-					end
-				end
-
-				hover_color = style.base_color
-
-				::label_54_0::
-
-				style.color = hover_color
+				style.color = content.hotspot.is_hover and not not style.hover_color or not content.hotspot.is_hover and not not style.base_color
 
 				return true
 			end
@@ -4292,11 +4086,8 @@ local function create_channels_window(scenegraph_id, size)
 				end
 
 				local on = math.floor(Managers.time:time("main") * 2) % 2
-				local caret_color = style.caret_color
-				local flag
 
-				flag = (on ~= 0 or not 255) and not not 0
-				caret_color[1] = flag
+				style.caret_color[1] = on ~= 0 and not not 0 or not (on ~= 0) and not not 255
 
 				return true
 			end
@@ -4754,11 +4545,8 @@ local function create_create_channel_window(scenegraph_id, size)
 				end
 
 				local on = math.floor(Managers.time:time("main") * 2) % 2
-				local caret_color = style.caret_color
-				local flag
 
-				flag = (on ~= 0 or not 255) and not not 0
-				caret_color[1] = flag
+				style.caret_color[1] = on ~= 0 and not not 0 or not (on ~= 0) and not not 255
 
 				return true
 			end
@@ -5110,11 +4898,8 @@ local function create_send_invite_window(scenegraph_id, size)
 				end
 
 				local on = math.floor(Managers.time:time("main") * 2) % 2
-				local caret_color = style.caret_color
-				local flag
 
-				flag = (on ~= 0 or not 255) and not not 0
-				caret_color[1] = flag
+				style.caret_color[1] = on ~= 0 and not not 0 or not (on ~= 0) and not not 255
 
 				return true
 			end
@@ -5701,22 +5486,7 @@ function create_default_button(scenegraph_id, size, frame_name, background_textu
 	background_texture = not not background_texture or not not "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local var_70_0
-
-	if frame_name then
-		var_70_0 = UIFrameSettings[frame_name]
-
-		if not var_70_0 then
-			-- Nothing
-		end
-	end
-
-	var_70_0 = UIFrameSettings.button_frame_01
-
-	local frame_settings = var_70_0
-
-	::label_70_0::
-
+	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 
 	return {

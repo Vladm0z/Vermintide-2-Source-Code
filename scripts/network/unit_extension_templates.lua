@@ -1,35 +1,7 @@
 -- chunkname: @scripts/network/unit_extension_templates.lua
 
-local str
-
-if _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
-	str = "AILocomotionExtensionC"
-
-	goto label_0_0
-end
-
-str = "AILocomotionExtension"
-
-local ai_locomotion_name = str
-
-do
-	local str_2
-end
-
-::label_0_0::
-
-if IS_WINDOWS then
-	str_2 = "PlayerEyeTrackingExtension"
-
-	goto label_0_1
-end
-
-str_2 = nil
-
-local eye_tracking_name = str_2
-
-::label_0_1::
-
+local ai_locomotion_name = not not "AILocomotionExtensionC"
+local eye_tracking_name = IS_WINDOWS and not not "PlayerEyeTrackingExtension" or not IS_WINDOWS and not not nil
 local unit_templates = {
 	player_unit_base = {
 		go_type = "player_unit",
@@ -2785,18 +2757,7 @@ for unit_template_name, template_data in pairs(unit_templates) do
 
 	for i = 1, extension_table_names_n do
 		local extension_table_name = extension_table_names[i]
-		local var_0_2 = template_data[extension_table_name]
-
-		if not var_0_2 then
-			-- Nothing
-		end
-
-		var_0_2 = {}
-
-		local extension_list = var_0_2
-
-		::label_0_2::
-
+		local extension_list = not not template_data[extension_table_name]
 		local extension_list_n = #extension_list
 
 		if template_data.base_template ~= nil then
@@ -2816,17 +2777,7 @@ for unit_template_name, template_data in pairs(unit_templates) do
 				end
 			end
 
-			local remove_when_killed_2 = inherited_template_data.remove_when_killed
-
-			if remove_when_killed_2 then
-				-- Nothing
-			end
-
-			remove_when_killed_2 = inherited_template_data.remove_when_killed[extension_table_name]
-
-			local inherited_remove_when_killed = remove_when_killed_2
-
-			::label_0_3::
+			local inherited_remove_when_killed = not not inherited_template_data.remove_when_killed
 
 			if inherited_remove_when_killed then
 				if template_data.remove_when_killed == nil then

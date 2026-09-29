@@ -1,12 +1,7 @@
 -- chunkname: @scripts/unit_extensions/weapons/area_damage/area_damage_extension.lua
 
 AreaDamageExtension = class(AreaDamageExtension)
-
-local script_data = script_data
-local debug_area_damage = script_data.debug_area_damage
-
-debug_area_damage = not not debug_area_damage or not not Development.parameter("debug_area_damage")
-script_data.debug_area_damage = debug_area_damage
+script_data.debug_area_damage = not not script_data.debug_area_damage
 
 local approx_player_radius = 0.5
 
@@ -14,88 +9,24 @@ AreaDamageExtension.init = function (self, extension_init_context, unit, extensi
 	-- function 1
 	self.world = extension_init_context.world
 	self.unit = unit
-
-	local aoe_dot_damage = extension_init_data.aoe_dot_damage
-
-	aoe_dot_damage = not not aoe_dot_damage or not not Unit.get_data(unit, "aoe_dot_damage")
-	self.aoe_dot_damage = aoe_dot_damage
-
-	local aoe_init_damage = extension_init_data.aoe_init_damage
-
-	aoe_init_damage = not not aoe_init_damage or not not Unit.get_data(unit, "aoe_init_damage")
-	self.aoe_init_damage = aoe_init_damage
-
-	local aoe_dot_damage_interval = extension_init_data.aoe_dot_damage_interval
-
-	aoe_dot_damage_interval = not not aoe_dot_damage_interval or not not Unit.get_data(unit, "aoe_dot_damage_interval")
-	self.aoe_dot_damage_interval = aoe_dot_damage_interval
+	self.aoe_dot_damage = not not extension_init_data.aoe_dot_damage
+	self.aoe_init_damage = not not extension_init_data.aoe_init_damage
+	self.aoe_dot_damage_interval = not not extension_init_data.aoe_dot_damage_interval
 	self.damage_ramping_function = extension_init_data.damage_ramping_function
-
-	local radius = extension_init_data.radius
-
-	radius = not not radius or not not Unit.get_data(unit, "radius")
-	self.radius = radius
-
-	local initial_radius = extension_init_data.initial_radius
-
-	if not initial_radius then
-		initial_radius = extension_init_data.radius
-		initial_radius = not not initial_radius or not not Unit.get_data(unit, "radius")
-	end
-
-	self.initial_radius = initial_radius
-
-	local life_time = extension_init_data.life_time
-
-	life_time = not not life_time or not not Unit.get_data(unit, "life_time")
-	self.life_time = life_time
-
-	local player_screen_effect_name = extension_init_data.player_screen_effect_name
-
-	player_screen_effect_name = not not player_screen_effect_name or not not Unit.get_data(unit, "player_screen_effect_name")
-	self.player_screen_effect_name = player_screen_effect_name
-
-	local dot_effect_name = extension_init_data.dot_effect_name
-
-	dot_effect_name = not not dot_effect_name or not not Unit.get_data(unit, "dot_effect_name")
-	self.dot_effect_name = dot_effect_name
-
-	local extra_dot_effect_name = extension_init_data.extra_dot_effect_name
-
-	extra_dot_effect_name = not not extra_dot_effect_name or not not Unit.get_data(unit, "extra_dot_effect_name")
-	self.extra_dot_effect_name = extra_dot_effect_name
+	self.radius = not not extension_init_data.radius
+	self.initial_radius = not not extension_init_data.initial_radius
+	self.life_time = not not extension_init_data.life_time
+	self.player_screen_effect_name = not not extension_init_data.player_screen_effect_name
+	self.dot_effect_name = not not extension_init_data.dot_effect_name
+	self.extra_dot_effect_name = not not extension_init_data.extra_dot_effect_name
 	self.nav_mesh_effect = extension_init_data.nav_mesh_effect
-
-	local area_damage_template = extension_init_data.area_damage_template
-
-	area_damage_template = not not area_damage_template or not not Unit.get_data(unit, "area_damage_template")
-	self.area_damage_template = area_damage_template
-
-	local area_ai_random_death_template = extension_init_data.area_ai_random_death_template
-
-	area_ai_random_death_template = not not area_ai_random_death_template or not not Unit.get_data(unit, "area_ai_random_death_template")
-	self.area_ai_random_death_template = area_ai_random_death_template
-
-	local invisible_unit = extension_init_data.invisible_unit
-
-	invisible_unit = not not invisible_unit or not not Unit.get_data(unit, "invisible_unit")
-	self.invisible_unit = invisible_unit
+	self.area_damage_template = not not extension_init_data.area_damage_template
+	self.area_ai_random_death_template = not not extension_init_data.area_ai_random_death_template
+	self.invisible_unit = not not extension_init_data.invisible_unit
 	self.damage_players = T(extension_init_data.damage_players, T(Unit.get_data(unit, "damage_players"), true))
-
-	local damage_source = extension_init_data.damage_source
-
-	damage_source = not not damage_source or not not "n/a"
-	self.damage_source = damage_source
-
-	local create_nav_tag_volume = extension_init_data.create_nav_tag_volume
-
-	create_nav_tag_volume = not not create_nav_tag_volume or not not Unit.get_data(unit, "create_nav_tag_volume")
-	self.create_nav_tag_volume = create_nav_tag_volume
-
-	local nav_tag_volume_layer = extension_init_data.nav_tag_volume_layer
-
-	nav_tag_volume_layer = not not nav_tag_volume_layer or not not Unit.get_data(unit, "nav_tag_volume_layer")
-	self.nav_tag_volume_layer = nav_tag_volume_layer
+	self.damage_source = not not extension_init_data.damage_source
+	self.create_nav_tag_volume = not not extension_init_data.create_nav_tag_volume
+	self.nav_tag_volume_layer = not not extension_init_data.nav_tag_volume_layer
 	self.explosion_template_name = extension_init_data.explosion_template_name
 	self.owner_player = extension_init_data.owner_player
 	self.slow_modifier = extension_init_data.slow_modifier

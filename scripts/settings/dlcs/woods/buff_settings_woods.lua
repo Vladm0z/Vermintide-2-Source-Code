@@ -482,7 +482,7 @@ settings.proc_functions = {
 		-- function 11
 		local attack_type = params[7]
 
-		if ALIVE[owner_unit] and attack_type and (attack_type == "projectile" or attack_type == "instant_projectile" or attack_type == "heavy_instant_projectile") then
+		if attack_type == "projectile" or attack_type == "instant_projectile" or attack_type == "heavy_instant_projectile" then
 			if Managers.state.network.is_server then
 				local amount_to_heal = buff.template.amount_to_heal
 
@@ -534,17 +534,7 @@ settings.proc_functions = {
 		if ALIVE[owner_unit] then
 			local career_extension = ScriptUnit.extension(owner_unit, "career_system")
 			local template = buff.template
-			local time_removed_per_kill = template.time_removed_per_kill
-
-			if not time_removed_per_kill then
-				-- Nothing
-			end
-
-			time_removed_per_kill = 0
-
-			local time_to_remove = time_removed_per_kill
-
-			::label_14_0::
+			local time_to_remove = not not template.time_removed_per_kill
 
 			career_extension:modify_extra_ability_charge(time_to_remove)
 		end
@@ -637,17 +627,7 @@ settings.buff_function_templates = {
 
 		for i = 1, num_units do
 			local unit = player_and_bot_units[i]
-			local buff_instances = buff.buff_instances
-
-			if buff_instances then
-				-- Nothing
-			end
-
-			buff_instances = buff.buff_instances[unit]
-
-			local buff_instance = buff_instances
-
-			::label_18_0::
+			local buff_instance = not not buff.buff_instances
 
 			if ALIVE[unit] then
 				local unit_position = POSITION_LOOKUP[unit]

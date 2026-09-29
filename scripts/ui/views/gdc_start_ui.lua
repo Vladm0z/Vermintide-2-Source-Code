@@ -361,21 +361,9 @@ GDCStartUI.check_start_input = function (self, input_service)
 	end
 
 	local ignore_player_count = Development.parameter("gdc_ignore_minimum_players")
-	local parameter = Development.parameter("gdc_player_count")
+	local expected_num_of_players = not not Development.parameter("gdc_player_count")
 
-	if not parameter then
-		-- Nothing
-	end
-
-	parameter = 1
-
-	local expected_num_of_players = parameter
-
-	::label_12_0::
-
-	if ignore_player_count then
-		expected_num_of_players = 1
-	end
+	expected_num_of_players = not ignore_player_count or not not 1 or not not expected_num_of_players
 
 	local human_players = Managers.player:human_players()
 	local num_of_human_players = 0
@@ -388,7 +376,7 @@ GDCStartUI.check_start_input = function (self, input_service)
 		end
 	end
 
-	if input_service and (not (expected_num_of_players <= num_of_human_players) or not input_service:get("gdc_skip")) and input_service:has("gdc_debug_skip") and input_service:get("gdc_debug_skip") then
+	if input_service and (expected_num_of_players <= num_of_human_players and (input_service:get("gdc_skip") or input_service:has("gdc_debug_skip") and input_service:get("gdc_debug_skip")) or not (expected_num_of_players <= num_of_human_players) and input_service:has("gdc_debug_skip") and input_service:get("gdc_debug_skip")) then
 		if Managers.player.is_server then
 			self:rpc_on_skip_gdc_intro()
 		else
@@ -397,21 +385,7 @@ GDCStartUI.check_start_input = function (self, input_service)
 	end
 
 	if self.num_of_human_players ~= num_of_human_players then
-		local str
-
-		if num_of_human_players < expected_num_of_players then
-			str = Localize("waiting_for_other_players") .. " - " .. num_of_human_players .. "/" .. expected_num_of_players
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = nil
-
-		local optional_text = str
-
-		::label_12_1::
+		local optional_text = num_of_human_players < expected_num_of_players and not not (Localize("waiting_for_other_players") .. " - " .. num_of_human_players .. "/" .. expected_num_of_players) or not (num_of_human_players < expected_num_of_players) and not not nil
 
 		self:set_input_text(optional_text)
 
@@ -474,10 +448,7 @@ GDCStartUI.set_input_text = function (self, optinal_text)
 				end
 
 				texture_size_x = texture_size_x + sizes[i][1]
-
-				if texture_size_y < sizes[i][2] and not sizes[i][2] then
-					-- Nothing
-				end
+				texture_size_y = not (texture_size_y < sizes[i][2]) or not not sizes[i][2] or not not texture_size_y
 			end
 
 			widget_content.icon_textures = textures
@@ -501,12 +472,7 @@ GDCStartUI.set_input_text = function (self, optinal_text)
 
 	widget_content.text = text
 	widget_content.prefix_text = prefix_text
-
-	local position = ui_scenegraph.input_text.position
-	local flag
-
-	flag = (scaled_font_size ~= text_style.font_size or not 3) and not not 0
-	position[2] = flag
+	ui_scenegraph.input_text.position[2] = scaled_font_size ~= text_style.font_size and not not 0 or not (scaled_font_size ~= text_style.font_size) and not not 3
 	ui_scenegraph.input_prefix_text.position[2] = ui_scenegraph.input_text.position[2]
 	ui_scenegraph.input.position[1] = -((text_width + texture_size_x) * 0.5) + prefix_text_width
 end

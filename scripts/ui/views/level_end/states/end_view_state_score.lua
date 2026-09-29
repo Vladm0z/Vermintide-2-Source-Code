@@ -65,11 +65,7 @@ end
 
 EndViewStateScore.exit_done = function (self)
 	-- function 3
-	local _exit_started = self._exit_started
-
-	_exit_started = not not _exit_started and self._animations.on_enter == nil
-
-	return _exit_started
+	return not not self._exit_started
 end
 
 EndViewStateScore.create_ui_elements = function (self, params)
@@ -458,37 +454,11 @@ EndViewStateScore._transform_player_session_score = function (self, players_sess
 					}
 				end
 
-				local highscore_2 = transformed_player_session_score.group_scores[group_name][index].highscore
-
-				if not highscore_2 then
-					-- Nothing
-				end
-
-				highscore_2 = 0
-
-				local highscore = highscore_2
-
-				::label_26_0::
+				local highscore = not not transformed_player_session_score.group_scores[group_name][index].highscore
 
 				transformed_player_session_score.group_scores[group_name][index].stat_name = score_data.stat_name
 				transformed_player_session_score.group_scores[group_name][index].display_name = score_data.display_name
-
-				local var_26_1 = transformed_player_session_score.group_scores[group_name][index]
-				local score
-
-				if highscore < score_data.score then
-					score = score_data.score
-
-					if not score then
-						-- Nothing
-					end
-				end
-
-				score = highscore
-
-				::label_26_1::
-
-				var_26_1.highscore = score
+				transformed_player_session_score.group_scores[group_name][index].highscore = highscore < score_data.score and not not score_data.score or not (highscore < score_data.score) and not not highscore
 				transformed_player_session_score.group_scores[group_name][index].player_scores[stats_id] = score_data.score
 			end
 		end
@@ -513,18 +483,7 @@ EndViewStateScore._group_scores_by_player_and_topic = function (self, score_pane
 				}
 			end
 
-			local highscore_2 = score_panel_scores[group_name][index].highscore
-
-			if not highscore_2 then
-				-- Nothing
-			end
-
-			highscore_2 = 0
-
-			local highscore = highscore_2
-
-			::label_27_0::
-
+			local highscore = not not score_panel_scores[group_name][index].highscore
 			local stat_name = score_data.stat_name
 
 			score_panel_scores[group_name][index].stat_name = stat_name
@@ -532,39 +491,11 @@ EndViewStateScore._group_scores_by_player_and_topic = function (self, score_pane
 			score_panel_scores[group_name][index].player_scores[player_index] = score_data.score
 
 			if stat_name == "damage_taken" then
-				local score
-
-				if highscore > score_data.score then
-					score = score_data.score
-
-					if not score then
-						-- Nothing
-					end
-				end
-
-				score = highscore
-
-				local new_highscore = score
-
-				::label_27_1::
+				local new_highscore = highscore > score_data.score and not not score_data.score or not (highscore > score_data.score) and not not highscore
 
 				score_panel_scores[group_name][index].highscore = new_highscore
 			else
-				local score_2
-
-				if highscore < score_data.score then
-					score_2 = score_data.score
-
-					if not score_2 then
-						-- Nothing
-					end
-				end
-
-				score_2 = highscore
-
-				local new_highscore = score_2
-
-				::label_27_2::
+				local new_highscore = highscore < score_data.score and not not score_data.score or not (highscore < score_data.score) and not not highscore
 
 				score_panel_scores[group_name][index].highscore = new_highscore
 			end
@@ -599,18 +530,7 @@ EndViewStateScore._setup_player_scores = function (self, players_session_scores)
 		local careers = profile_data.careers
 		local career_settings = careers[career_index]
 		local portrait_image = career_settings.portrait_image
-		local portrait_frame_2 = player_data.portrait_frame
-
-		if not portrait_frame_2 then
-			-- Nothing
-		end
-
-		portrait_frame_2 = "default"
-
-		local portrait_frame = portrait_frame_2
-
-		::label_28_0::
-
+		local portrait_frame = not not player_data.portrait_frame
 		local player_level = player_data.player_level
 		local is_player_controlled = player_data.is_player_controlled
 
@@ -618,28 +538,7 @@ EndViewStateScore._setup_player_scores = function (self, players_session_scores)
 			num_human_players = num_human_players + 1
 		end
 
-		local var_28_1
-
-		if is_player_controlled then
-			if player_level then
-				var_28_1 = tostring(player_level)
-
-				if not var_28_1 then
-					-- Nothing
-				end
-			end
-
-			var_28_1 = "-"
-
-			goto label_28_1
-		end
-
-		var_28_1 = "BOT"
-
-		local level_text = var_28_1
-
-		::label_28_1::
-
+		local level_text = is_player_controlled and (player_level and not not tostring(player_level) or not player_level and not not "-") or not is_player_controlled and not not "BOT"
 		local widget_definition = UIWidgets.create_portrait_frame("player_frame_" .. widget_index, portrait_frame, level_text, 1, nil, portrait_image)
 
 		hero_widgets[widget_index] = UIWidget.init(widget_definition, self.ui_renderer)
@@ -658,41 +557,13 @@ EndViewStateScore._setup_level_widget = function (self)
 	local content = self._widgets_by_name.level.content
 	local level_key = self._context.level_key
 	local level_settings = LevelSettings[level_key]
-	local level_image_2
-
-	if level_settings then
-		level_image_2 = level_settings.level_image
-
-		if not level_image_2 then
-			-- Nothing
-		end
-	end
-
-	level_image_2 = "level_image_any"
-
-	local level_image = level_image_2
-
-	::label_29_0::
+	local level_image = level_settings and not not level_settings.level_image or not level_settings and not not "level_image_any"
 
 	content.icon = level_image
 
 	local difficulty_key = self._context.difficulty
 	local difficulty_settings = DifficultySettings[difficulty_key]
-	local completed_frame_texture
-
-	if difficulty_settings then
-		completed_frame_texture = difficulty_settings.completed_frame_texture
-
-		if not completed_frame_texture then
-			-- Nothing
-		end
-	end
-
-	completed_frame_texture = "map_frame_00"
-
-	local frame_image = completed_frame_texture
-
-	::label_29_1::
+	local frame_image = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
 
 	content.frame = frame_image
 end
@@ -752,21 +623,7 @@ EndViewStateScore._setup_score_panel = function (self, score_panel_scores, playe
 				local score_text_name = "score_text" .. line_suffix
 				local row_name = "row_bg" .. line_suffix
 				local row_content = content[row_name]
-				local crop_text_width
-
-				if Utf8.length(player_name) > PLAYER_NAME_MAX_LENGTH then
-					crop_text_width = UIRenderer.crop_text_width(self.ui_renderer, player_name, player_score_size[1] - 40, style[score_text_name])
-
-					if not crop_text_width then
-						-- Nothing
-					end
-				end
-
-				crop_text_width = player_name
-
-				local name = crop_text_width
-
-				::label_31_0::
+				local name = Utf8.length(player_name) > PLAYER_NAME_MAX_LENGTH and not not UIRenderer.crop_text_width(self.ui_renderer, player_name, player_score_size[1] - 40, style[score_text_name]) or not (Utf8.length(player_name) > PLAYER_NAME_MAX_LENGTH) and not not player_name
 
 				row_content[score_text_name] = name
 			end

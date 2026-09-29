@@ -1,10 +1,7 @@
 -- chunkname: @scripts/managers/light_fx/light_fx_manager.lua
 
 if script_data.debug_lightfx then
-	local LightFX = LightFX
-
-	LightFX = not not LightFX or not not {}
-	LightFX = LightFX
+	LightFX = not not LightFX
 
 	LightFX.set_color_in_cube = function (red, green, blue, intensity, blendtime)
 		-- function 1

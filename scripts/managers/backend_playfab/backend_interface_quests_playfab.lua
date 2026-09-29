@@ -345,17 +345,7 @@ BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (self, data, r
 		for i = 1, #items do
 			local item = items[i]
 			local backend_id = item.ItemInstanceId
-			local UsesIncrementedBy = item.UsesIncrementedBy
-
-			if not UsesIncrementedBy then
-				-- Nothing
-			end
-
-			UsesIncrementedBy = 1
-
-			local amount = UsesIncrementedBy
-
-			::label_21_0::
+			local amount = not not item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -428,7 +418,7 @@ BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (self, data, r
 			local amount = data.amount
 			local current_amount = rewarded_currency[code]
 
-			rewarded_currency[code] = (not current_amount or not current_amount) and not not (0 + amount)
+			rewarded_currency[code] = current_amount and (not not current_amount or not not (0 + amount)) or not current_amount and not not (0 + amount)
 			loot[#loot + 1] = {
 				type = "currency",
 				currency_code = code,
@@ -489,58 +479,15 @@ BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (self, data, r
 		backend_mirror:add_claimed_event_quest(claimed_quest_name)
 	end
 
-	local current_daily_quests_2 = function_result.current_daily_quests
-
-	if not current_daily_quests_2 then
-		-- Nothing
-	end
-
-	current_daily_quests_2 = {}
-
-	local current_daily_quests = current_daily_quests_2
-
-	::label_21_1::
-
-	local current_weekly_quests_2 = function_result.current_weekly_quests
-
-	if not current_weekly_quests_2 then
-		-- Nothing
-	end
-
-	current_weekly_quests_2 = {}
-
-	local current_weekly_quests = current_weekly_quests_2
-
-	::label_21_2::
-
-	local current_event_quests_2 = function_result.current_event_quests
-
-	if not current_event_quests_2 then
-		-- Nothing
-	end
-
-	current_event_quests_2 = {}
-
-	local current_event_quests = current_event_quests_2
-
-	::label_21_3::
+	local current_daily_quests = not not function_result.current_daily_quests
+	local current_weekly_quests = not not function_result.current_weekly_quests
+	local current_event_quests = not not function_result.current_event_quests
 
 	backend_mirror:set_quest_data("current_daily_quests", current_daily_quests)
 	backend_mirror:set_quest_data("current_weekly_quests", current_weekly_quests)
 	backend_mirror:set_quest_data("current_event_quests", current_event_quests)
 
-	local player_2 = Managers.player
-
-	if player_2 then
-		-- Nothing
-	end
-
-	player_2 = Managers.player:local_player()
-
-	local player = player_2
-
-	::label_21_4::
-
+	local player = not not Managers.player
 	local statistics_db = Managers.player:statistics_db()
 
 	if not player or not statistics_db then
@@ -633,17 +580,7 @@ BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function
 		for i = 1, #items do
 			local item = items[i]
 			local backend_id = item.ItemInstanceId
-			local UsesIncrementedBy = item.UsesIncrementedBy
-
-			if not UsesIncrementedBy then
-				-- Nothing
-			end
-
-			UsesIncrementedBy = 1
-
-			local amount = UsesIncrementedBy
-
-			::label_23_0::
+			local amount = not not item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -716,7 +653,7 @@ BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function
 			local amount = data.amount
 			local current_amount = rewarded_currency[code]
 
-			rewarded_currency[code] = (not current_amount or not current_amount) and not not (0 + amount)
+			rewarded_currency[code] = current_amount and (not not current_amount or not not (0 + amount)) or not current_amount and not not (0 + amount)
 			loot[#loot + 1] = {
 				type = "currency",
 				currency_code = code,
@@ -789,18 +726,7 @@ BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function
 	backend_mirror:set_quest_data("current_weekly_quests", current_weekly_quests)
 	backend_mirror:set_quest_data("current_event_quests", current_event_quests)
 
-	local player_2 = Managers.player
-
-	if player_2 then
-		-- Nothing
-	end
-
-	player_2 = Managers.player:local_player()
-
-	local player = player_2
-
-	::label_23_1::
-
+	local player = not not Managers.player
 	local statistics_db = Managers.player:statistics_db()
 
 	if not player or not statistics_db then

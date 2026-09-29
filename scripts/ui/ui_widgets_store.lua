@@ -3,10 +3,7 @@
 require("scripts/settings/ui_frame_settings")
 require("scripts/settings/ui_player_portrait_frame_settings")
 
-local UIWidgets = UIWidgets
-
-UIWidgets = not not UIWidgets or not not {}
-UIWidgets = UIWidgets
+UIWidgets = not not UIWidgets
 
 UIWidgets.create_store_category_entry_definition = function (scenegraph_id, size, masked)
 	-- function 1
@@ -84,7 +81,7 @@ UIWidgets.create_store_category_entry_definition = function (scenegraph_id, size
 		frame = frame_settings.texture,
 		size = size
 	}
-	local tbl = {
+	local style = {
 		hotspot = {
 			size = size,
 			offset = {
@@ -221,62 +218,51 @@ UIWidgets.create_store_category_entry_definition = function (scenegraph_id, size
 				0,
 				3
 			}
+		},
+		title = {
+			word_wrap = true,
+			upper_case = false,
+			localize = false,
+			font_size = 42,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			select_text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				30,
+				0,
+				5
+			},
+			size = {
+				size[1] - 40,
+				size[2]
+			}
+		},
+		title_shadow = {
+			word_wrap = true,
+			upper_case = false,
+			localize = false,
+			font_size = 42,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			normal_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				32,
+				-2,
+				4
+			},
+			size = {
+				size[1] - 40,
+				size[2]
+			}
 		}
 	}
-	local tbl_2 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 42,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_2.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_2.select_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_2.offset = {
-		30,
-		0,
-		5
-	}
-	tbl_2.size = {
-		size[1] - 40,
-		size[2]
-	}
-	tbl.title = tbl_2
-
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 42,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.normal_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		32,
-		-2,
-		4
-	}
-	tbl_3.size = {
-		size[1] - 40,
-		size[2]
-	}
-	tbl.title_shadow = tbl_3
-
-	local style = tbl
 
 	widget.element.passes = passes
 	widget.content = content
@@ -399,7 +385,7 @@ UIWidgets.create_store_collection_entry_definition = function (scenegraph_id, si
 		},
 		size = size
 	}
-	local tbl = {
+	local style = {
 		hotspot = {
 			size = size,
 			offset = {
@@ -536,110 +522,99 @@ UIWidgets.create_store_collection_entry_definition = function (scenegraph_id, si
 				0,
 				3
 			}
+		},
+		title = {
+			word_wrap = false,
+			upper_case = false,
+			localize = false,
+			font_size = 42,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			select_text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				30,
+				0,
+				5
+			},
+			size = {
+				size[1] - 170,
+				size[2]
+			}
+		},
+		title_shadow = {
+			word_wrap = false,
+			upper_case = false,
+			localize = false,
+			font_size = 42,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			normal_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				32,
+				-2,
+				4
+			},
+			size = {
+				size[1] - 170,
+				size[2]
+			}
+		},
+		owned_icon = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				53,
+				53
+			},
+			default_texture_size = {
+				53,
+				53
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				size[1] - 45,
+				0,
+				12
+			}
+		},
+		owned_icon_bg = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				34,
+				50
+			},
+			default_texture_size = {
+				34,
+				50
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				size[1] - 35,
+				-15,
+				11
+			}
 		}
 	}
-	local tbl_2 = {
-		word_wrap = false,
-		upper_case = false,
-		localize = false,
-		font_size = 42,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_2.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_2.select_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_2.offset = {
-		30,
-		0,
-		5
-	}
-	tbl_2.size = {
-		size[1] - 170,
-		size[2]
-	}
-	tbl.title = tbl_2
-
-	local tbl_3 = {
-		word_wrap = false,
-		upper_case = false,
-		localize = false,
-		font_size = 42,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.normal_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		32,
-		-2,
-		4
-	}
-	tbl_3.size = {
-		size[1] - 170,
-		size[2]
-	}
-	tbl.title_shadow = tbl_3
-	tbl.owned_icon = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			53,
-			53
-		},
-		default_texture_size = {
-			53,
-			53
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			size[1] - 45,
-			0,
-			12
-		}
-	}
-	tbl.owned_icon_bg = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			34,
-			50
-		},
-		default_texture_size = {
-			34,
-			50
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			size[1] - 35,
-			-15,
-			11
-		}
-	}
-
-	local style = tbl
 
 	widget.element.passes = passes
 	widget.content = content
@@ -666,43 +641,8 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 	local pulse_frame_name = "frame_outer_glow_04_big"
 	local pulse_frame_settings = UIFrameSettings[pulse_frame_name]
 	local pulse_frame_spacing = pulse_frame_settings.texture_sizes.horizontal[2]
-
-	if not settings then
-		-- Nothing
-	end
-
-	::label_7_0::
-
-	local parent_settings = product.parent_settings
-
-	if not parent_settings then
-		-- Nothing
-	end
-
-	parent_settings = product.settings
-
-	if not parent_settings then
-		-- Nothing
-	end
-
-	parent_settings = dummy_table
-
-	local settings = parent_settings
-
-	::label_7_1::
-
-	local dlc_settings_2 = product.dlc_settings
-
-	if not dlc_settings_2 then
-		-- Nothing
-	end
-
-	dlc_settings_2 = dummy_table
-
-	local dlc_settings = dlc_settings_2
-
-	::label_7_2::
-
+	local settings = not not settings or not not product.parent_settings
+	local dlc_settings = not not product.dlc_settings
 	local icon_size = settings.icon_size
 	local widget = {
 		element = {}
@@ -747,7 +687,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "background_price",
 			content_check_function = function (content)
 				-- function 10
-				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
@@ -756,7 +696,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "background_price_center",
 			content_check_function = function (content)
 				-- function 11
-				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
@@ -765,7 +705,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "background_price_right",
 			content_check_function = function (content)
 				-- function 12
-				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
@@ -774,7 +714,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "price_gradient",
 			content_check_function = function (content)
 				-- function 13
-				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not content.old_price
 			end
 		},
 		{
@@ -783,23 +723,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			pass_type = "rotated_texture",
 			content_check_function = function (content)
 				-- function 14
-				local old_price
-
-				if not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price then
-					old_price = content.old_price
-
-					if old_price then
-						old_price = content.discount
-					end
-				else
-					old_price = false
-				end
-
-				if false then
-					old_price = true
-				end
-
-				return old_price
+				return not content.owned and (IS_WINDOWS and not content.hide_price and not not content.old_price or not IS_WINDOWS and not content.real_currency and not content.hide_price and not not content.old_price)
 			end
 		},
 		{
@@ -835,7 +759,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 18
-				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
@@ -844,7 +768,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "price_text_now",
 			content_check_function = function (content)
 				-- function 19
-				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not content.old_price
 			end
 		},
 		{
@@ -853,23 +777,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "price_text_before",
 			content_check_function = function (content)
 				-- function 20
-				local old_price
-
-				if not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price then
-					old_price = content.old_price
-
-					if old_price then
-						old_price = content.discount
-					end
-				else
-					old_price = false
-				end
-
-				if false then
-					old_price = true
-				end
-
-				return old_price
+				return not content.owned and (IS_WINDOWS and not content.hide_price and not not content.old_price or not IS_WINDOWS and not content.real_currency and not content.hide_price and not not content.old_price)
 			end
 		},
 		{
@@ -896,11 +804,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "discount_bg",
 			content_check_function = function (content)
 				-- function 23
-				local discount = content.discount
-
-				discount = not not discount and not not not content.hide_price
-
-				return discount
+				return not not content.discount
 			end
 		},
 		{
@@ -909,11 +813,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "discont_number_icons",
 			content_check_function = function (content)
 				-- function 24
-				local discount = content.discount
-
-				discount = not not discount and not not not content.hide_price
-
-				return discount
+				return not not content.discount
 			end
 		},
 		{
@@ -941,17 +841,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			end,
 			content_change_function = function (content, style, _, dt)
 				-- function 26
-				local progress_2 = style.progress
-
-				if not progress_2 then
-					-- Nothing
-				end
-
-				progress_2 = 0
-
-				local progress = progress_2
-
-				::label_26_0::
+				local progress = not not style.progress
 
 				progress = (progress + dt) % 1
 
@@ -967,11 +857,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 27
-				local icon = content.icon
-
-				icon = not not icon and not not not content.rendering_loading_icon
-
-				return icon
+				return not not content.icon
 			end
 		},
 		{
@@ -994,14 +880,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "psplus_icon",
 			content_check_function = function (content)
 				-- function 29
-				local show_ps4_plus = content.show_ps4_plus
-
-				if show_ps4_plus then
-					show_ps4_plus = IS_PS4
-					show_ps4_plus = not not show_ps4_plus and not not content.real_currency
-				end
-
-				return show_ps4_plus
+				return not not content.show_ps4_plus
 			end
 		},
 		{
@@ -1019,31 +898,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "console_background_rect",
 			content_check_function = function (content)
 				-- function 31
-				local real_currency
-
-				if not IS_WINDOWS then
-					real_currency = content.real_currency
-
-					if real_currency then
-						-- Nothing
-					end
-
-					if content.console_secondary_price_text == "" then
-						-- Nothing
-					end
-				end
-
-				real_currency = false
-
-				goto label_31_1
-
-				::label_31_0::
-
-				real_currency = true
-
-				::label_31_1::
-
-				return real_currency
+				return not IS_WINDOWS and not not content.real_currency
 			end
 		},
 		{
@@ -1052,11 +907,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 32
-				local show_secondary_stroke = content.show_secondary_stroke
-
-				show_secondary_stroke = not not show_secondary_stroke and not IS_WINDOWS and not not content.real_currency
-
-				return show_secondary_stroke
+				return not not content.show_secondary_stroke
 			end
 		},
 		{
@@ -1065,14 +916,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 33
-				local show_third_stroke = content.show_third_stroke
-
-				if show_third_stroke then
-					show_third_stroke = IS_PS4
-					show_third_stroke = not not show_third_stroke and not not content.real_currency
-				end
-
-				return show_third_stroke
+				return not not content.show_third_stroke
 			end
 		},
 		{
@@ -1085,21 +929,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			end,
 			content_change_function = function (content, style)
 				-- function 35
-				local ps_plus_color
-
-				if content.show_ps4_plus then
-					ps_plus_color = style.ps_plus_color
-
-					if not ps_plus_color then
-						-- Nothing
-					end
-				end
-
-				ps_plus_color = style.base_color
-
-				::label_35_0::
-
-				style.text_color = ps_plus_color
+				style.text_color = content.show_ps4_plus and not not style.ps_plus_color or not content.show_ps4_plus and not not style.base_color
 			end
 		},
 		{
@@ -1117,23 +947,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "console_third_price_text",
 			content_check_function = function (content)
 				-- function 37
-				local IS_PS4
-
-				if content.console_third_price_text ~= "" then
-					IS_PS4 = IS_PS4
-
-					if IS_PS4 then
-						IS_PS4 = content.real_currency
-					end
-				else
-					IS_PS4 = false
-				end
-
-				if false then
-					IS_PS4 = true
-				end
-
-				return IS_PS4
+				return content.console_third_price_text ~= "" and not not IS_PS4
 			end
 		},
 		{
@@ -1163,14 +977,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "additional_content_added",
 			content_check_function = function (content)
 				-- function 40
-				local IS_CONSOLE = IS_CONSOLE
-
-				if IS_CONSOLE then
-					IS_CONSOLE = dlc_settings.additional_content_added
-					IS_CONSOLE = not not IS_CONSOLE and not not not content.owned
-				end
-
-				return IS_CONSOLE
+				return not not IS_CONSOLE
 			end,
 			content_change_function = function (content, style)
 				-- function 41
@@ -1188,14 +995,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "additional_content_added",
 			content_check_function = function (content)
 				-- function 42
-				local IS_CONSOLE = IS_CONSOLE
-
-				if IS_CONSOLE then
-					IS_CONSOLE = dlc_settings.additional_content_added
-					IS_CONSOLE = not not IS_CONSOLE and not not not content.owned
-				end
-
-				return IS_CONSOLE
+				return not not IS_CONSOLE
 			end
 		},
 		{
@@ -1217,7 +1017,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			end
 		}
 	}
-	local tbl = {
+	local content = {
 		expire_time_icon = "icon_store_timer",
 		old_price = false,
 		price_strike_through = "shop_bundle_line",
@@ -1256,35 +1056,18 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 		hide_price = settings.hide_price,
 		masked_price_strike_through = not settings.mask_price_strike_through_hack,
 		draw_price_icon = not settings.hide_price,
-		discont_number_icons = {}
+		discont_number_icons = {},
+		rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		frame = frame_settings.texture,
+		hover_frame = hover_frame_settings.texture,
+		pulse_frame = pulse_frame_settings.texture,
+		size = size,
+		console_background_rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		console_secondary_price_stroke = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		console_third_price_stroke = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		additional_content_added = Localize("title_screen_store_new_additional_content")
 	}
-	local flag
-
-	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.rect = flag
-	tbl.frame = frame_settings.texture
-	tbl.hover_frame = hover_frame_settings.texture
-	tbl.pulse_frame = pulse_frame_settings.texture
-	tbl.size = size
-
-	local flag_2
-
-	flag_2 = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.console_background_rect = flag_2
-
-	local flag_3
-
-	flag_3 = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.console_secondary_price_stroke = flag_3
-
-	local flag_4
-
-	flag_4 = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.console_third_price_stroke = flag_4
-	tbl.additional_content_added = Localize("title_screen_store_new_additional_content")
-
-	local content = tbl
-	local tbl_2 = {
+	local style = {
 		hotspot = {
 			size = size,
 			offset = {
@@ -1317,920 +1100,801 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				100,
 				100
 			}
+		},
+		price_text = {
+			upper_case = false,
+			localize = false,
+			font_size = 28,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = false,
+			size = {
+				45,
+				40
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				50,
+				-(size[2] + 4),
+				12
+			}
+		},
+		optional_item_name = {
+			upper_case = false,
+			localize = false,
+			font_size = 40,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = true,
+			size = {
+				320,
+				60
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				40,
+				-100,
+				12
+			}
+		},
+		optional_subtitle = {
+			upper_case = false,
+			localize = false,
+			font_size = 28,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = true,
+			size = {
+				320,
+				60
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				40,
+				-150,
+				12
+			}
+		},
+		price_text_now = {
+			upper_case = false,
+			localize = false,
+			font_size = 28,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = false,
+			size = {
+				45,
+				40
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				50,
+				-(size[2] + 0),
+				12
+			}
+		},
+		price_text_before = {
+			upper_case = false,
+			localize = false,
+			font_size = 24,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = false,
+			size = {
+				45,
+				40
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("slate_gray", 255),
+			offset = {
+				50,
+				-(size[2] - 1),
+				12
+			}
+		},
+		price_strike_through = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			angle = -0.17,
+			masked = content.masked_price_strike_through,
+			pivot = {
+				0,
+				0
+			},
+			color = {
+				255,
+				255,
+				0,
+				0
+			},
+			offset = {
+				50,
+				-(size[2] - 12),
+				13
+			},
+			texture_size = {
+				110,
+				3
+			}
+		},
+		background_rect = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = size,
+			color = {
+				200,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				0,
+				0
+			}
+		},
+		background = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = size,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				1
+			}
+		},
+		expire_time_icon = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				49.5,
+				58.5
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				3,
+				9,
+				10
+			}
+		},
+		overlay = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = size,
+			color = {
+				0,
+				5,
+				5,
+				5
+			},
+			offset = {
+				0,
+				0,
+				8
+			}
+		},
+		bundle_content_amount_text = {
+			upper_case = false,
+			localize = false,
+			font_size = 28,
+			horizontal_alignment = "left",
+			text_horizontal_alignment = "right",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				30,
+				30
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = {
+				255,
+				255,
+				116,
+				246
+			},
+			offset = {
+				size[1] - 80,
+				-44,
+				12
+			}
+		},
+		type_tag_icon = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				56,
+				56
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				size[1] - 56,
+				0,
+				9
+			}
+		},
+		background_price = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				64,
+				92
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				-6,
+				-(size[2] - 90),
+				11
+			}
+		},
+		background_price_center = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				0,
+				36
+			},
+			texture_tiling_size = {
+				12,
+				36
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				58,
+				-(size[2] - 34),
+				11
+			}
+		},
+		background_price_right = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				32,
+				40
+			},
+			default_size = {
+				32,
+				40
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				58,
+				-(size[2] - 38),
+				11
+			},
+			default_offset = {
+				58,
+				-(size[2] - 38),
+				11
+			}
+		},
+		price_gradient = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				313,
+				34
+			},
+			color = {
+				255,
+				255,
+				0,
+				0
+			},
+			offset = {
+				6,
+				-(size[2] - 40),
+				10
+			}
+		},
+		price_icon = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				58,
+				58
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				3,
+				-(size[2] - 47),
+				11
+			}
+		},
+		owned_icon = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				53,
+				53
+			},
+			default_texture_size = {
+				53,
+				53
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				5,
+				-(size[2] - 5),
+				12
+			},
+			default_offset = {
+				5,
+				-(size[2] - 5),
+				12
+			}
+		},
+		owned_icon_bg = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				34,
+				50
+			},
+			default_texture_size = {
+				34,
+				50
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				15,
+				-(size[2] + 8),
+				11
+			},
+			default_offset = {
+				15,
+				-(size[2] + 8),
+				11
+			}
+		},
+		discount_bg = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				124,
+				112
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				-3,
+				4,
+				11
+			}
+		},
+		discont_number_icons = {
+			axis = 1,
+			direction = 1,
+			masked = masked,
+			texture_sizes = {},
+			texture_offsets = {},
+			spacing = {
+				0,
+				0,
+				0
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				25,
+				-82,
+				12
+			},
+			default_offset = {
+				25,
+				-82,
+				12
+			}
+		},
+		icon = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = not not icon_size or not not size,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				icon_size and not not ((size[1] - icon_size[1]) * 0.5) or not icon_size and not not 0,
+				icon_size and not not (-(size[2] - icon_size[2]) * 0.5) or not icon_size and not not 0,
+				7
+			}
+		},
+		frame = {
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			masked = masked,
+			area_size = size,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			frame_margins = {
+				0,
+				0
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				10
+			}
+		},
+		hover_frame = {
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			masked = masked,
+			area_size = size,
+			texture_size = hover_frame_settings.texture_size,
+			texture_sizes = hover_frame_settings.texture_sizes,
+			frame_margins = {
+				-hover_frame_spacing,
+				-hover_frame_spacing
+			},
+			color = {
+				0,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				6
+			}
+		},
+		pulse_frame = {
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			masked = masked,
+			area_size = size,
+			texture_size = pulse_frame_settings.texture_size,
+			texture_sizes = pulse_frame_settings.texture_sizes,
+			frame_margins = {
+				-pulse_frame_spacing,
+				-pulse_frame_spacing
+			},
+			color = {
+				0,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				12
+			}
+		},
+		console_background_rect_bottom = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				size[1],
+				-42.5
+			},
+			color = {
+				192,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				-size[2],
+				9
+			}
+		},
+		console_background_rect_top = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				size[1],
+				-32.5
+			},
+			color = {
+				192,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				-size[2] + 42.5,
+				9
+			}
+		},
+		console_first_price_text = {
+			upper_case = false,
+			localize = false,
+			font_size = 28,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = false,
+			size = {
+				45,
+				40
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("white", 255),
+			base_color = Colors.get_color_table_with_alpha("white", 255),
+			ps_plus_color = {
+				255,
+				255,
+				205,
+				0
+			},
+			offset = {
+				size[1],
+				-(size[2] - 4),
+				12
+			}
+		},
+		console_secondary_price_text = {
+			upper_case = false,
+			localize = false,
+			font_size = 28,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = false,
+			size = {
+				45,
+				40
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				size[1],
+				-(size[2] - 4 - 30),
+				12
+			}
+		},
+		console_third_price_text = {
+			upper_case = false,
+			localize = false,
+			font_size = 20,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = false,
+			size = {
+				45,
+				40
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				size[1],
+				-(size[2] - 4 - 30),
+				12
+			}
+		},
+		console_secondary_price_stroke = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				0,
+				2
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				size[1],
+				-(size[2] - 4 - 50),
+				13
+			}
+		},
+		console_third_price_stroke = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				0,
+				2
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				size[1],
+				-(size[2] - 4 - 50),
+				13
+			}
+		},
+		psplus_icon = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				20,
+				20
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				size[1],
+				-size[2] + 25,
+				10
+			}
+		},
+		new_marker = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				math.floor(88.19999999999999),
+				math.floor(35.699999999999996)
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				-35,
+				-size[2] - 5,
+				10
+			},
+			size = size
+		},
+		additional_content_added = {
+			font_size = 24,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			dynamic_font_size = false,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = {
+				255,
+				159,
+				144,
+				101
+			},
+			base_text_color = {
+				255,
+				159,
+				144,
+				101
+			},
+			offset = {
+				20,
+				-180,
+				12
+			}
+		},
+		additional_content_added_shadow = {
+			font_size = 24,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			dynamic_font_size = false,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = {
+				255,
+				0,
+				0,
+				0
+			},
+			offset = {
+				22,
+				-182,
+				11
+			}
+		},
+		disclaimer_marker = {
+			masked = true,
+			texture_size = {
+				20,
+				20
+			},
+			offset = {
+				40,
+				76,
+				15
+			},
+			color = Colors.get_color_table_with_alpha("white", 255)
+		},
+		additional_disclaimer = {
+			upper_case = false,
+			localize = false,
+			use_shadow = true,
+			font_size = 24,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			size = {
+				size[1] - 80,
+				30
+			},
+			area_size = {
+				size[1] - 80,
+				30
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("white", 180),
+			offset = {
+				62,
+				70,
+				15
+			}
 		}
 	}
-	local tbl_3 = {
-		upper_case = false,
-		localize = false,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = false,
-		size = {
-			45,
-			40
-		}
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag_5
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		50,
-		-(size[2] + 4),
-		12
-	}
-	tbl_2.price_text = tbl_3
-
-	local tbl_4 = {
-		upper_case = false,
-		localize = false,
-		font_size = 40,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = true,
-		size = {
-			320,
-			60
-		}
-	}
-	local flag_6
-
-	flag_6 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_4.font_type = flag_6
-	tbl_4.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_4.offset = {
-		40,
-		-100,
-		12
-	}
-	tbl_2.optional_item_name = tbl_4
-
-	local tbl_5 = {
-		upper_case = false,
-		localize = false,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = true,
-		size = {
-			320,
-			60
-		}
-	}
-	local flag_7
-
-	flag_7 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_5.font_type = flag_7
-	tbl_5.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_5.offset = {
-		40,
-		-150,
-		12
-	}
-	tbl_2.optional_subtitle = tbl_5
-
-	local tbl_6 = {
-		upper_case = false,
-		localize = false,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = false,
-		size = {
-			45,
-			40
-		}
-	}
-	local flag_8
-
-	flag_8 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_6.font_type = flag_8
-	tbl_6.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_6.offset = {
-		50,
-		-(size[2] + 0),
-		12
-	}
-	tbl_2.price_text_now = tbl_6
-
-	local tbl_7 = {
-		upper_case = false,
-		localize = false,
-		font_size = 24,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = false,
-		size = {
-			45,
-			40
-		}
-	}
-	local flag_9
-
-	flag_9 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_7.font_type = flag_9
-	tbl_7.text_color = Colors.get_color_table_with_alpha("slate_gray", 255)
-	tbl_7.offset = {
-		50,
-		-(size[2] - 1),
-		12
-	}
-	tbl_2.price_text_before = tbl_7
-	tbl_2.price_strike_through = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		angle = -0.17,
-		masked = content.masked_price_strike_through,
-		pivot = {
-			0,
-			0
-		},
-		color = {
-			255,
-			255,
-			0,
-			0
-		},
-		offset = {
-			50,
-			-(size[2] - 12),
-			13
-		},
-		texture_size = {
-			110,
-			3
-		}
-	}
-	tbl_2.background_rect = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = size,
-		color = {
-			200,
-			0,
-			0,
-			0
-		},
-		offset = {
-			0,
-			0,
-			0
-		}
-	}
-	tbl_2.background = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = size,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			1
-		}
-	}
-	tbl_2.expire_time_icon = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			49.5,
-			58.5
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			3,
-			9,
-			10
-		}
-	}
-	tbl_2.overlay = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = size,
-		color = {
-			0,
-			5,
-			5,
-			5
-		},
-		offset = {
-			0,
-			0,
-			8
-		}
-	}
-
-	local tbl_8 = {
-		upper_case = false,
-		localize = false,
-		font_size = 28,
-		horizontal_alignment = "left",
-		text_horizontal_alignment = "right",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			30,
-			30
-		}
-	}
-	local flag_10
-
-	flag_10 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_8.font_type = flag_10
-	tbl_8.text_color = {
-		255,
-		255,
-		116,
-		246
-	}
-	tbl_8.offset = {
-		size[1] - 80,
-		-44,
-		12
-	}
-	tbl_2.bundle_content_amount_text = tbl_8
-	tbl_2.type_tag_icon = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			56,
-			56
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			size[1] - 56,
-			0,
-			9
-		}
-	}
-	tbl_2.background_price = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			64,
-			92
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			-6,
-			-(size[2] - 90),
-			11
-		}
-	}
-	tbl_2.background_price_center = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			0,
-			36
-		},
-		texture_tiling_size = {
-			12,
-			36
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			58,
-			-(size[2] - 34),
-			11
-		}
-	}
-	tbl_2.background_price_right = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			32,
-			40
-		},
-		default_size = {
-			32,
-			40
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			58,
-			-(size[2] - 38),
-			11
-		},
-		default_offset = {
-			58,
-			-(size[2] - 38),
-			11
-		}
-	}
-	tbl_2.price_gradient = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			313,
-			34
-		},
-		color = {
-			255,
-			255,
-			0,
-			0
-		},
-		offset = {
-			6,
-			-(size[2] - 40),
-			10
-		}
-	}
-	tbl_2.price_icon = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			58,
-			58
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			3,
-			-(size[2] - 47),
-			11
-		}
-	}
-	tbl_2.owned_icon = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			53,
-			53
-		},
-		default_texture_size = {
-			53,
-			53
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			5,
-			-(size[2] - 5),
-			12
-		},
-		default_offset = {
-			5,
-			-(size[2] - 5),
-			12
-		}
-	}
-	tbl_2.owned_icon_bg = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			34,
-			50
-		},
-		default_texture_size = {
-			34,
-			50
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			15,
-			-(size[2] + 8),
-			11
-		},
-		default_offset = {
-			15,
-			-(size[2] + 8),
-			11
-		}
-	}
-	tbl_2.discount_bg = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			124,
-			112
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			-3,
-			4,
-			11
-		}
-	}
-	tbl_2.discont_number_icons = {
-		axis = 1,
-		direction = 1,
-		masked = masked,
-		texture_sizes = {},
-		texture_offsets = {},
-		spacing = {
-			0,
-			0,
-			0
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			25,
-			-82,
-			12
-		},
-		default_offset = {
-			25,
-			-82,
-			12
-		}
-	}
-
-	local tbl_9 = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = not not icon_size or not not size,
-		color = {
-			255,
-			255,
-			255,
-			255
-		}
-	}
-	local tbl_10 = {
-		nil,
-		nil,
-		7
-	}
-	local num
-
-	if icon_size then
-		num = (size[1] - icon_size[1]) * 0.5
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	::label_7_3::
-
-	tbl_10[1] = num
-
-	local num_2
-
-	if icon_size then
-		num_2 = -(size[2] - icon_size[2]) * 0.5
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = 0
-
-	::label_7_4::
-
-	tbl_10[2] = num_2
-	tbl_9.offset = tbl_10
-	tbl_2.icon = tbl_9
-	tbl_2.frame = {
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		masked = masked,
-		area_size = size,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		frame_margins = {
-			0,
-			0
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			10
-		}
-	}
-	tbl_2.hover_frame = {
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		masked = masked,
-		area_size = size,
-		texture_size = hover_frame_settings.texture_size,
-		texture_sizes = hover_frame_settings.texture_sizes,
-		frame_margins = {
-			-hover_frame_spacing,
-			-hover_frame_spacing
-		},
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			6
-		}
-	}
-	tbl_2.pulse_frame = {
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		masked = masked,
-		area_size = size,
-		texture_size = pulse_frame_settings.texture_size,
-		texture_sizes = pulse_frame_settings.texture_sizes,
-		frame_margins = {
-			-pulse_frame_spacing,
-			-pulse_frame_spacing
-		},
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			12
-		}
-	}
-
-	local tbl_11 = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			size[1],
-			-42.5
-		},
-		color = {
-			192,
-			0,
-			0,
-			0
-		},
-		offset = {
-			0,
-			-size[2],
-			9
-		}
-	}
-
-	tbl_2.console_background_rect_bottom = tbl_11
-
-	local tbl_12 = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			size[1],
-			-32.5
-		},
-		color = {
-			192,
-			0,
-			0,
-			0
-		},
-		offset = {
-			0,
-			-size[2] + 42.5,
-			9
-		}
-	}
-
-	tbl_2.console_background_rect_top = tbl_12
-
-	local tbl_13 = {
-		upper_case = false,
-		localize = false,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = false,
-		size = {
-			45,
-			40
-		}
-	}
-	local flag_11
-
-	flag_11 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_13.font_type = flag_11
-	tbl_13.text_color = Colors.get_color_table_with_alpha("white", 255)
-
-	local get_color_table_with_alpha = Colors.get_color_table_with_alpha("white", 255)
-
-	tbl_13.base_color = get_color_table_with_alpha
-
-	local tbl_14 = {
-		255,
-		255,
-		205,
-		0
-	}
-
-	tbl_13.ps_plus_color = tbl_14
-	tbl_13.offset = {
-		size[1],
-		-(size[2] - 4),
-		12
-	}
-	tbl_2.console_first_price_text = tbl_13
-
-	local tbl_15 = {
-		upper_case = false,
-		localize = false,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = false,
-		size = {
-			45,
-			40
-		}
-	}
-	local flag_12
-
-	flag_12 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_15.font_type = flag_12
-	tbl_15.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_15.offset = {
-		size[1],
-		-(size[2] - 4 - 30),
-		12
-	}
-	tbl_2.console_secondary_price_text = tbl_15
-
-	local tbl_16 = {
-		upper_case = false,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = false,
-		size = {
-			45,
-			40
-		}
-	}
-	local flag_13
-
-	flag_13 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_16.font_type = flag_13
-	tbl_16.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_16.offset = {
-		size[1],
-		-(size[2] - 4 - 30),
-		12
-	}
-	tbl_2.console_third_price_text = tbl_16
-	tbl_2.console_secondary_price_stroke = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			0,
-			2
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			size[1],
-			-(size[2] - 4 - 50),
-			13
-		}
-	}
-	tbl_2.console_third_price_stroke = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			0,
-			2
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			size[1],
-			-(size[2] - 4 - 50),
-			13
-		}
-	}
-
-	local tbl_17 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			20,
-			20
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			size[1],
-			-size[2] + 25,
-			10
-		}
-	}
-
-	tbl_2.psplus_icon = tbl_17
-
-	local tbl_18 = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			math.floor(88.19999999999999),
-			math.floor(35.699999999999996)
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			-35,
-			-size[2] - 5,
-			10
-		},
-		size = size
-	}
-
-	tbl_2.new_marker = tbl_18
-
-	local tbl_19 = {
-		font_size = 24,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = false
-	}
-	local flag_14
-
-	flag_14 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_19.font_type = flag_14
-	tbl_19.text_color = {
-		255,
-		159,
-		144,
-		101
-	}
-
-	local tbl_20 = {
-		255,
-		159,
-		144,
-		101
-	}
-
-	tbl_19.base_text_color = tbl_20
-	tbl_19.offset = {
-		20,
-		-180,
-		12
-	}
-	tbl_2.additional_content_added = tbl_19
-
-	local tbl_21 = {
-		font_size = 24,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = false
-	}
-	local flag_15
-
-	flag_15 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_21.font_type = flag_15
-	tbl_21.text_color = {
-		255,
-		0,
-		0,
-		0
-	}
-	tbl_21.offset = {
-		22,
-		-182,
-		11
-	}
-	tbl_2.additional_content_added_shadow = tbl_21
-
-	local tbl_22 = {
-		masked = true,
-		texture_size = {
-			20,
-			20
-		},
-		offset = {
-			40,
-			76,
-			15
-		},
-		color = Colors.get_color_table_with_alpha("white", 255)
-	}
-
-	tbl_2.disclaimer_marker = tbl_22
-
-	local tbl_23 = {
-		upper_case = false,
-		localize = false,
-		use_shadow = true,
-		font_size = 24,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		size = {
-			size[1] - 80,
-			30
-		},
-		area_size = {
-			size[1] - 80,
-			30
-		}
-	}
-	local flag_16
-
-	flag_16 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_23.font_type = flag_16
-	tbl_23.text_color = Colors.get_color_table_with_alpha("white", 180)
-	tbl_23.offset = {
-		62,
-		70,
-		15
-	}
-	tbl_2.additional_disclaimer = tbl_23
-
-	local style = tbl_2
 
 	widget.element.passes = passes
 	widget.content = content
@@ -2275,58 +1939,48 @@ UIWidgets.create_store_header_text_definition = function (scenegraph_id, size, m
 		text = "n/a",
 		size = size
 	}
-	local tbl = {}
-	local tbl_2 = {
-		font_size = 32,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
+	local style = {
+		text = {
+			font_size = 32,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("font_title", 255),
+			offset = {
+				edge_spacing,
+				default_height_offset,
+				9
+			}
+		},
+		text_shadow = {
+			font_size = 32,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				edge_spacing + 2,
+				default_height_offset - 2,
+				8
+			}
 		}
 	}
-	local flag
-
-	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_2.offset = {
-		edge_spacing,
-		default_height_offset,
-		9
-	}
-	tbl.text = tbl_2
-
-	local tbl_3 = {
-		font_size = 32,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		edge_spacing + 2,
-		default_height_offset - 2,
-		8
-	}
-	tbl.text_shadow = tbl_3
-
-	local style = tbl
 
 	widget.element.passes = passes
 	widget.content = content
@@ -2364,58 +2018,48 @@ UIWidgets.create_store_body_text_definition = function (scenegraph_id, size, mas
 		text = "n/a",
 		size = size
 	}
-	local tbl = {}
-	local tbl_2 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
+	local style = {
+		text = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				edge_spacing,
+				default_height_offset,
+				9
+			}
+		},
+		text_shadow = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				edge_spacing + 2,
+				default_height_offset - 2,
+				8
+			}
 		}
 	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.offset = {
-		edge_spacing,
-		default_height_offset,
-		9
-	}
-	tbl.text = tbl_2
-
-	local tbl_3 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		edge_spacing + 2,
-		default_height_offset - 2,
-		8
-	}
-	tbl.text_shadow = tbl_3
-
-	local style = tbl
 
 	widget.element.passes = passes
 	widget.content = content
@@ -2475,154 +2119,129 @@ UIWidgets.create_store_currency_summary_title_definition = function (scenegraph_
 			texture_id = "rect"
 		}
 	}
-	local tbl = {
+	local content = {
 		text = "n/a",
 		text2 = "n/a",
-		size = size
+		size = size,
+		rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture"
 	}
-	local flag
-
-	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.rect = flag
-
-	local content = tbl
-	local tbl_2 = {}
-	local tbl_3 = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = color
-	tbl_3.offset = {
-		edge_spacing,
-		default_height_offset,
-		9
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		edge_spacing + 2,
-		default_height_offset - 2,
-		8
-	}
-	tbl_2.text_shadow = tbl_4
-
-	local tbl_5 = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "right",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_4
-	tbl_5.text_color = color
-	tbl_5.offset = {
-		edge_spacing,
-		default_height_offset,
-		9
-	}
-	tbl_2.text2 = tbl_5
-
-	local tbl_6 = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "right",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_5
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		edge_spacing + 2,
-		default_height_offset - 2,
-		8
-	}
-	tbl_2.text2_shadow = tbl_6
-	tbl_2.divider = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			size[1] - edge_spacing * 2,
-			2
+	local style = {
+		text = {
+			font_size = 16,
+			upper_case = true,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = color,
+			offset = {
+				edge_spacing,
+				default_height_offset,
+				9
+			}
 		},
-		color = color,
-		offset = {
-			edge_spacing,
-			0,
-			8
+		text_shadow = {
+			font_size = 16,
+			upper_case = true,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				edge_spacing + 2,
+				default_height_offset - 2,
+				8
+			}
+		},
+		text2 = {
+			font_size = 16,
+			upper_case = true,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "right",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = color,
+			offset = {
+				edge_spacing,
+				default_height_offset,
+				9
+			}
+		},
+		text2_shadow = {
+			font_size = 16,
+			upper_case = true,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "right",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				edge_spacing + 2,
+				default_height_offset - 2,
+				8
+			}
+		},
+		divider = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				size[1] - edge_spacing * 2,
+				2
+			},
+			color = color,
+			offset = {
+				edge_spacing,
+				0,
+				8
+			}
+		},
+		divider_shadow = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				size[1] - edge_spacing * 2,
+				2
+			},
+			color = {
+				255,
+				0,
+				0,
+				0
+			},
+			offset = {
+				edge_spacing + 2,
+				0,
+				7
+			}
 		}
 	}
-	tbl_2.divider_shadow = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			size[1] - edge_spacing * 2,
-			2
-		},
-		color = {
-			255,
-			0,
-			0,
-			0
-		},
-		offset = {
-			edge_spacing + 2,
-			0,
-			7
-		}
-	}
-
-	local style = tbl_2
 
 	widget.element.passes = passes
 	widget.content = content
@@ -2677,108 +2296,88 @@ UIWidgets.create_store_currency_summary_entry_definition = function (scenegraph_
 		text2 = "n/a",
 		size = size
 	}
-	local tbl = {}
-	local tbl_2 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
+	local style = {
+		text = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = color,
+			offset = {
+				edge_spacing,
+				default_height_offset,
+				9
+			}
+		},
+		text_shadow = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				edge_spacing + 2,
+				default_height_offset - 2,
+				8
+			}
+		},
+		text2 = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "right",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = color,
+			offset = {
+				edge_spacing,
+				default_height_offset,
+				9
+			}
+		},
+		text2_shadow = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			word_wrap = true,
+			horizontal_alignment = "right",
+			vertical_alignment = "top",
+			dynamic_font_size = false,
+			size = {
+				size[1] - edge_spacing * 2,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				edge_spacing + 2,
+				default_height_offset - 2,
+				8
+			}
 		}
 	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_2.font_type = flag
-	tbl_2.text_color = color
-	tbl_2.offset = {
-		edge_spacing,
-		default_height_offset,
-		9
-	}
-	tbl.text = tbl_2
-
-	local tbl_3 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		edge_spacing + 2,
-		default_height_offset - 2,
-		8
-	}
-	tbl.text_shadow = tbl_3
-
-	local tbl_4 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "right",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = color
-	tbl_4.offset = {
-		edge_spacing,
-		default_height_offset,
-		9
-	}
-	tbl.text2 = tbl_4
-
-	local tbl_5 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "right",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			size[1] - edge_spacing * 2,
-			size[2]
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_4
-	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.offset = {
-		edge_spacing + 2,
-		default_height_offset - 2,
-		8
-	}
-	tbl.text2_shadow = tbl_5
-
-	local style = tbl
 
 	widget.element.passes = passes
 	widget.content = content
@@ -2803,18 +2402,7 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (scenegraph_id
 	}
 	local default_height_offset = -size[2]
 	local edge_spacing = 5
-	local settings_2 = product.settings
-
-	if not settings_2 then
-		-- Nothing
-	end
-
-	settings_2 = dummy_table
-
-	local settings = settings_2
-
-	::label_50_0::
-
+	local settings = not not product.settings
 	local add_frame = settings.add_frame
 	local widget = {
 		element = {}
@@ -2854,136 +2442,121 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (scenegraph_id
 			end
 		}
 	}
-	local tbl = {
+	local content = {
 		text = "n/a",
-		background = "store_thumbnail_bg_promo"
+		background = "store_thumbnail_bg_promo",
+		image = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		size = size,
+		frame = frame_settings.texture,
+		add_frame = add_frame
 	}
-	local flag
-
-	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.image = flag
-	tbl.size = size
-	tbl.frame = frame_settings.texture
-	tbl.add_frame = add_frame
-
-	local content = tbl
-	local tbl_2 = {}
-	local tbl_3 = {
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = true,
-		word_wrap = true,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			image_size[1] - edge_spacing,
-			size[2] - image_size[2]
+	local style = {
+		text = {
+			upper_case = false,
+			localize = false,
+			dynamic_font_size_word_wrap = true,
+			word_wrap = true,
+			font_size = 20,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			size = {
+				image_size[1] - edge_spacing,
+				size[2] - image_size[2]
+			},
+			area_size = {
+				image_size[1] - edge_spacing,
+				size[2] - image_size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				edge_spacing,
+				default_height_offset - 0,
+				9
+			}
 		},
-		area_size = {
-			image_size[1] - edge_spacing,
-			size[2] - image_size[2]
+		text_shadow = {
+			upper_case = false,
+			localize = false,
+			dynamic_font_size_word_wrap = true,
+			word_wrap = true,
+			font_size = 20,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			size = {
+				image_size[1] - edge_spacing,
+				size[2] - image_size[2]
+			},
+			area_size = {
+				image_size[1] - edge_spacing,
+				size[2] - image_size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				edge_spacing + 2,
+				default_height_offset - 0 - 2,
+				8
+			}
+		},
+		image = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = image_size,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				8
+			}
+		},
+		background = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = image_size,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				1
+			}
+		},
+		frame = {
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			masked = masked,
+			area_size = image_size,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			frame_margins = {
+				0,
+				0
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				9
+			}
 		}
 	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_3.offset = {
-		edge_spacing,
-		default_height_offset - 0,
-		9
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = true,
-		word_wrap = true,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			image_size[1] - edge_spacing,
-			size[2] - image_size[2]
-		},
-		area_size = {
-			image_size[1] - edge_spacing,
-			size[2] - image_size[2]
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		edge_spacing + 2,
-		default_height_offset - 0 - 2,
-		8
-	}
-	tbl_2.text_shadow = tbl_4
-	tbl_2.image = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = image_size,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			8
-		}
-	}
-	tbl_2.background = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = image_size,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			1
-		}
-	}
-	tbl_2.frame = {
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		masked = masked,
-		area_size = image_size,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		frame_margins = {
-			0,
-			0
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			9
-		}
-	}
-
-	local style = tbl_2
 
 	widget.element.passes = passes
 	widget.content = content
@@ -3046,106 +2619,91 @@ UIWidgets.create_store_dlc_feature_horizontal_definition = function (scenegraph_
 			end
 		}
 	}
-	local tbl = {
-		text = "n/a"
+	local content = {
+		text = "n/a",
+		image = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		size = size,
+		show_frame = settings.show_frame,
+		frame = frame_settings.texture
 	}
-	local flag
-
-	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.image = flag
-	tbl.size = size
-	tbl.show_frame = settings.show_frame
-	tbl.frame = frame_settings.texture
-
-	local content = tbl
-	local tbl_2 = {}
-	local tbl_3 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			size[1] - image_size[1] - edge_spacing,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_3.offset = {
-		image_size[1] + edge_spacing,
-		default_height_offset - 0,
-		9
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			size[1] - image_size[1] - edge_spacing,
-			size[2]
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		image_size[1] + edge_spacing + 2,
-		default_height_offset - 0 - 2,
-		8
-	}
-	tbl_2.text_shadow = tbl_4
-	tbl_2.image = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = image_size,
-		color = {
-			255,
-			255,
-			255,
-			255
+	local style = {
+		text = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			dynamic_font_size_word_wrap = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			size = {
+				size[1] - image_size[1] - edge_spacing,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				image_size[1] + edge_spacing,
+				default_height_offset - 0,
+				9
+			}
 		},
-		offset = {
-			0,
-			0,
-			8
-		}
-	}
-	tbl_2.frame = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
+		text_shadow = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			dynamic_font_size_word_wrap = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			size = {
+				size[1] - image_size[1] - edge_spacing,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				image_size[1] + edge_spacing + 2,
+				default_height_offset - 0 - 2,
+				8
+			}
 		},
-		size = image_size,
-		offset = {
-			0,
-			-image_size[2],
-			9
+		image = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = image_size,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				8
+			}
+		},
+		frame = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			size = image_size,
+			offset = {
+				0,
+				-image_size[2],
+				9
+			}
 		}
 	}
-
-	local style = tbl_2
 
 	widget.element.passes = passes
 	widget.content = content
@@ -3193,75 +2751,65 @@ UIWidgets.create_store_dlc_feature_pullet_point_definition = function (scenegrap
 		image = "chain_link_horizontal_01_end",
 		size = size
 	}
-	local tbl = {}
-	local tbl_2 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			size[1] - image_size[1] - edge_spacing,
-			size[2]
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.offset = {
-		image_size[1] + edge_spacing,
-		default_height_offset - 0,
-		9
-	}
-	tbl.text = tbl_2
-
-	local tbl_3 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			size[1] - image_size[1] - edge_spacing,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		image_size[1] + edge_spacing + 2,
-		default_height_offset - 0 - 2,
-		8
-	}
-	tbl.text_shadow = tbl_3
-	tbl.image = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = image_size,
-		color = {
-			255,
-			255,
-			255,
-			255
+	local style = {
+		text = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			dynamic_font_size_word_wrap = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			size = {
+				size[1] - image_size[1] - edge_spacing,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				image_size[1] + edge_spacing,
+				default_height_offset - 0,
+				9
+			}
 		},
-		offset = {
-			edge_spacing / 2,
-			0,
-			8
+		text_shadow = {
+			font_size = 20,
+			upper_case = false,
+			localize = false,
+			dynamic_font_size_word_wrap = false,
+			word_wrap = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			size = {
+				size[1] - image_size[1] - edge_spacing,
+				size[2]
+			},
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				image_size[1] + edge_spacing + 2,
+				default_height_offset - 0 - 2,
+				8
+			}
+		},
+		image = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = image_size,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				edge_spacing / 2,
+				0,
+				8
+			}
 		}
 	}
-
-	local style = tbl
 
 	widget.element.passes = passes
 	widget.content = content
@@ -3317,14 +2865,10 @@ UIWidgets.create_store_dlc_logo_definition = function (scenegraph_id, size, mask
 			texture_id = "image"
 		}
 	}
-	local tbl = {}
-	local flag
-
-	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.image = flag
-	tbl.size = size
-
-	local content = tbl
+	local content = {
+		image = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		size = size
+	}
 	local style = {
 		image = {
 			vertical_alignment = "top",
@@ -3458,7 +3002,7 @@ UIWidgets.create_store_header_video_definition = function (scenegraph_id, size, 
 			texture_id = "top_fade"
 		}
 	}
-	local tbl = {
+	local content = {
 		top_fade = "edge_fade_small",
 		icon = "expand_video_icon",
 		button_hotspot = {},
@@ -3477,15 +3021,10 @@ UIWidgets.create_store_header_video_definition = function (scenegraph_id, size, 
 		},
 		video_content = {
 			video_completed = false
-		}
+		},
+		rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		size = size
 	}
-	local flag
-
-	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.rect = flag
-	tbl.size = size
-
-	local content = tbl
 	local style = {
 		button_hotspot = {
 			size = size,
@@ -3641,22 +3180,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 	end
 
 	local frame_name = "button_frame_01_gold"
-	local var_60_0
-
-	if frame_name then
-		var_60_0 = UIFrameSettings[frame_name]
-
-		if not var_60_0 then
-			-- Nothing
-		end
-	end
-
-	var_60_0 = UIFrameSettings.button_frame_01
-
-	local frame_settings = var_60_0
-
-	::label_60_0::
-
+	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 	local side_detail_texture = "button_detail_09_gold"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
@@ -3700,11 +3224,8 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					content_check_function = function (content)
 						-- function 61
 						local button_hotspot = content.button_hotspot
-						local disable_button = button_hotspot.disable_button
 
-						disable_button = not not disable_button and not not not content.owned
-
-						return disable_button
+						return not not button_hotspot.disable_button
 					end
 				},
 				{
@@ -3781,23 +3302,8 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					content_check_function = function (content)
 						-- function 68
 						local button_hotspot = content.button_hotspot
-						local present_currency
 
-						if not content.owned then
-							present_currency = content.present_currency
-
-							if present_currency then
-								present_currency = button_hotspot.disable_button
-							end
-						else
-							present_currency = false
-						end
-
-						if false then
-							present_currency = true
-						end
-
-						return present_currency
+						return not content.owned and not not content.present_currency
 					end
 				},
 				{
@@ -3816,27 +3322,8 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					content_check_function = function (content)
 						-- function 70
 						local button_hotspot = content.button_hotspot
-						local title_text
 
-						if not button_hotspot.disable_button then
-							title_text = content.title_text
-
-							if title_text then
-								title_text = IS_WINDOWS
-
-								if not title_text then
-									title_text = not content.real_currency
-								end
-							end
-						else
-							title_text = false
-						end
-
-						if false then
-							title_text = true
-						end
-
-						return title_text
+						return not button_hotspot.disable_button and not not content.title_text
 					end
 				},
 				{
@@ -3846,29 +3333,8 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					content_check_function = function (content)
 						-- function 71
 						local button_hotspot = content.button_hotspot
-						local disable_button = button_hotspot.disable_button
 
-						if disable_button then
-							if not content.owned then
-								disable_button = content.title_text
-
-								if disable_button then
-									disable_button = IS_WINDOWS
-
-									if not disable_button then
-										disable_button = not content.real_currency
-									end
-								end
-							else
-								disable_button = false
-							end
-						end
-
-						if false then
-							disable_button = true
-						end
-
-						return disable_button
+						return not not button_hotspot.disable_button
 					end
 				},
 				{
@@ -3877,27 +3343,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					text_id = "title_text",
 					content_check_function = function (content)
 						-- function 72
-						local title_text
-
-						if not content.owned then
-							title_text = content.title_text
-
-							if title_text then
-								title_text = IS_WINDOWS
-
-								if not title_text then
-									title_text = not content.real_currency
-								end
-							end
-						else
-							title_text = false
-						end
-
-						if false then
-							title_text = true
-						end
-
-						return title_text
+						return not content.owned and not not content.title_text
 					end
 				},
 				{
@@ -3907,27 +3353,8 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					content_check_function = function (content)
 						-- function 73
 						local button_hotspot = content.button_hotspot
-						local title_text
 
-						if not button_hotspot.disable_button then
-							title_text = content.title_text
-
-							if title_text then
-								title_text = IS_WINDOWS
-
-								if not title_text then
-									title_text = not content.real_currency
-								end
-							end
-						else
-							title_text = false
-						end
-
-						if false then
-							title_text = true
-						end
-
-						return title_text
+						return not button_hotspot.disable_button and not not content.title_text
 					end
 				},
 				{
@@ -3937,23 +3364,8 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					content_check_function = function (content)
 						-- function 74
 						local button_hotspot = content.button_hotspot
-						local IS_WINDOWS
 
-						if not button_hotspot.disable_button then
-							IS_WINDOWS = IS_WINDOWS
-
-							if not IS_WINDOWS then
-								IS_WINDOWS = not content.real_currency
-							end
-						else
-							IS_WINDOWS = false
-						end
-
-						if false then
-							IS_WINDOWS = true
-						end
-
-						return IS_WINDOWS
+						return not not not content.real_currency
 					end
 				},
 				{
@@ -3992,23 +3404,8 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					content_check_function = function (content)
 						-- function 78
 						local button_hotspot = content.button_hotspot
-						local present_currency
 
-						if not content.owned then
-							present_currency = content.present_currency
-
-							if present_currency then
-								present_currency = button_hotspot.disable_button
-							end
-						else
-							present_currency = false
-						end
-
-						if false then
-							present_currency = true
-						end
-
-						return present_currency
+						return not content.owned and not not content.present_currency
 					end
 				},
 				{
@@ -4017,14 +3414,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					texture_id = "psplus_icon",
 					content_check_function = function (content)
 						-- function 79
-						local show_ps4_plus = content.show_ps4_plus
-
-						if show_ps4_plus then
-							show_ps4_plus = IS_PS4
-							show_ps4_plus = not not show_ps4_plus and not not content.real_currency
-						end
-
-						return show_ps4_plus
+						return not not content.show_ps4_plus
 					end
 				},
 				{
@@ -4042,11 +3432,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 81
-						local show_secondary_stroke = content.show_secondary_stroke
-
-						show_secondary_stroke = not not show_secondary_stroke and not IS_WINDOWS and not not content.real_currency
-
-						return show_secondary_stroke
+						return not not content.show_secondary_stroke
 					end
 				},
 				{
@@ -4055,14 +3441,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 82
-						local show_third_stroke = content.show_third_stroke
-
-						if show_third_stroke then
-							show_third_stroke = IS_PS4
-							show_third_stroke = not not show_third_stroke and not not content.real_currency
-						end
-
-						return show_third_stroke
+						return not not content.show_third_stroke
 					end
 				},
 				{
@@ -4075,21 +3454,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					end,
 					content_change_function = function (content, style)
 						-- function 84
-						local ps_plus_color
-
-						if content.show_ps4_plus then
-							ps_plus_color = style.ps_plus_color
-
-							if not ps_plus_color then
-								-- Nothing
-							end
-						end
-
-						ps_plus_color = style.base_color
-
-						::label_84_0::
-
-						style.text_color = ps_plus_color
+						style.text_color = content.show_ps4_plus and not not style.ps_plus_color or not content.show_ps4_plus and not not style.base_color
 					end
 				},
 				{
@@ -4107,23 +3472,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					text_id = "console_third_price_text",
 					content_check_function = function (content)
 						-- function 86
-						local IS_PS4
-
-						if content.console_third_price_text ~= "" then
-							IS_PS4 = IS_PS4
-
-							if IS_PS4 then
-								IS_PS4 = content.real_currency
-							end
-						else
-							IS_PS4 = false
-						end
-
-						if false then
-							IS_PS4 = true
-						end
-
-						return IS_PS4
+						return content.console_third_price_text ~= "" and not not IS_PS4
 					end
 				},
 				{
@@ -4826,23 +4175,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 89
-						local is_hover
-
-						if not content.button_hotspot.disable_button then
-							is_hover = content.button_hotspot.is_hover
-
-							if not is_hover then
-								is_hover = content.button_hotspot.is_selected
-							end
-						else
-							is_hover = false
-						end
-
-						if false then
-							is_hover = true
-						end
-
-						return is_hover
+						return not not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -4869,11 +4202,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 92
-						local new = content.new
-
-						new = not not new and not not not content.timer
-
-						return new
+						return not not content.new
 					end
 				},
 				{
@@ -5028,21 +4357,7 @@ end
 
 UIWidgets.create_store_panel_currency_widget = function (scenegraph_id, frame_texture, currency_icon, background_texture, background_tile_size)
 	-- function 95
-	local var_95_0
-
-	if frame_texture then
-		var_95_0 = UIFrameSettings[frame_texture]
-
-		if not var_95_0 then
-			-- Nothing
-		end
-	end
-
-	var_95_0 = UIFrameSettings.button_frame_01_gold
-
-	local unit_frame_settings = var_95_0
-
-	::label_95_0::
+	local unit_frame_settings = frame_texture and not not UIFrameSettings[frame_texture] or not frame_texture and not not UIFrameSettings.button_frame_01_gold
 
 	return {
 		element = {

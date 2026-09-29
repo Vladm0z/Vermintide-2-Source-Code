@@ -25,11 +25,7 @@ BTVomitAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 	blackboard.active_node = BTVomitAction
-
-	local physics_world = blackboard.physics_world
-
-	physics_world = not not physics_world or not not World.get_data(world, "physics_world")
-	blackboard.physics_world = physics_world
+	blackboard.physics_world = not not blackboard.physics_world
 	blackboard.rotation_time = t + action.rotation_time
 	blackboard.check_puke_time = nil
 
@@ -127,29 +123,7 @@ BTVomitAction.init_attack = function (self, unit, blackboard, action, t)
 	blackboard.puke_position = Vector3Box(puke_position)
 	blackboard.puke_direction = Vector3Box(puke_direction)
 
-	local bot_threats_2 = action.bot_threats
-
-	if bot_threats_2 then
-		-- Nothing
-	end
-
-	bot_threats_2 = action.bot_threats[vomit_animation]
-
-	if not bot_threats_2 then
-		-- Nothing
-	end
-
-	bot_threats_2 = action.bot_threats[1]
-
-	if bot_threats_2 then
-		-- Nothing
-	end
-
-	bot_threats_2 = action.bot_threats
-
-	local bot_threats = bot_threats_2
-
-	::label_6_0::
+	local bot_threats = not not action.bot_threats
 
 	if bot_threats then
 		local current_threat_index = 1
@@ -230,7 +204,7 @@ BTVomitAction.run = function (self, unit, blackboard, t, dt)
 			if t > blackboard.check_puke_time then
 				self.player_vomit_hit_check(unit, blackboard.puke_position:unbox(), blackboard.physics_world, blackboard)
 			end
-		elseif t < blackboard.rotation_time and (not target_unit_status_extension or not target_unit_status_extension:get_is_dodging() and not target_unit_status_extension:is_invisible()) and t > blackboard.update_puke_pos_at_t then
+		elseif t < blackboard.rotation_time and (not target_unit_status_extension and t > blackboard.update_puke_pos_at_t or not not target_unit_status_extension and not target_unit_status_extension:get_is_dodging() and not target_unit_status_extension:is_invisible() and t > blackboard.update_puke_pos_at_t) then
 			local puke_position, puke_distance_sq, puke_direction = self:_get_vomit_position(unit, blackboard)
 
 			if puke_position and puke_direction then
@@ -330,28 +304,13 @@ BTVomitAction.create_aoe = function (self, unit, blackboard, action)
 
 	if puke_pos then
 		local dir = blackboard.puke_direction:unbox()
-		local tbl = {}
-		local tbl_2 = {
-			flow_dir = dir
+		local extension_init_data = {
+			area_damage_system = {
+				flow_dir = dir,
+				liquid_template = blackboard.near_vomit and not not blackboard.breed.near_vomit or not blackboard.near_vomit and not not blackboard.breed.far_vomit,
+				source_unit = unit
+			}
 		}
-		local near_vomit
-
-		if blackboard.near_vomit then
-			near_vomit = blackboard.breed.near_vomit
-
-			if not near_vomit then
-				near_vomit = "bile_troll_vomit_near"
-			end
-		else
-			near_vomit = blackboard.breed.far_vomit
-			near_vomit = not not near_vomit or not not "bile_troll_vomit"
-		end
-
-		tbl_2.liquid_template = near_vomit
-		tbl_2.source_unit = unit
-		tbl.area_damage_system = tbl_2
-
-		local extension_init_data = tbl
 		local aoe_unit_name = "units/hub_elements/empty"
 		local liquid_aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "liquid_aoe_unit", extension_init_data, puke_pos)
 		local liquid_area_damage_extension = ScriptUnit.extension(liquid_aoe_unit, "area_damage_system")

@@ -1,16 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_bot_conditions.lua
 
-local BTConditions = BTConditions
-local can_activate = BTConditions.can_activate
-
-can_activate = not not can_activate or not not {}
-BTConditions.can_activate = can_activate
-
-local BTConditions_2 = BTConditions
-local can_activate_non_combat = BTConditions.can_activate_non_combat
-
-can_activate_non_combat = not not can_activate_non_combat or not not {}
-BTConditions_2.can_activate_non_combat = can_activate_non_combat
+BTConditions.can_activate = not not BTConditions.can_activate
+BTConditions.can_activate_non_combat = not not BTConditions.can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -48,21 +39,7 @@ BTConditions.can_activate.we_thornsister = function (blackboard)
 		if wall_target_distance_sq <= wall_max_distance_sq and wall_target_distance_sq >= 4 then
 			if is_smiter_ability then
 				local target_breed = not not target_blackboard and not not target_blackboard.breed
-				local threat_value
-
-				if target_breed then
-					threat_value = target_breed.threat_value
-
-					if not threat_value then
-						-- Nothing
-					end
-				end
-
-				threat_value = 0
-
-				local target_threat_value = threat_value
-
-				::label_1_0::
+				local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
 
 				if target_unit == blackboard.priority_target_enemy or target_unit == blackboard.urgent_target_enemy or target_unit == blackboard.opportunity_target_enemy or target_threat_value >= 8 then
 					wall_target = target_unit

@@ -129,30 +129,8 @@ end
 
 BTJumpSlamAction._calculate_sphere_collision = function (self, action, bot_threat, self_pos, self_rot)
 	-- function 5
-	local radius_2 = bot_threat.radius
-
-	if not radius_2 then
-		-- Nothing
-	end
-
-	radius_2 = action.radius
-
-	local radius = radius_2
-
-	::label_5_0::
-
-	local offset_forward_2 = bot_threat.offset_forward
-
-	if not offset_forward_2 then
-		-- Nothing
-	end
-
-	offset_forward_2 = action.forward_offset
-
-	local offset_forward = offset_forward_2
-
-	::label_5_1::
-
+	local radius = not not bot_threat.radius
+	local offset_forward = not not bot_threat.offset_forward
 	local forward = Quaternion.forward(self_rot)
 	local sphere_center = self_pos + forward * offset_forward
 

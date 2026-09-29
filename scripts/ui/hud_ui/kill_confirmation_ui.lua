@@ -100,22 +100,7 @@ end
 
 KillConfirmationUI.event_add_player_kill_confirmation = function (self, side, victim_player)
 	-- function 7
-	local kill_hero
-
-	if side == "dark_pact" then
-		kill_hero = NetworkLookup.badges.kill_hero
-
-		if not kill_hero then
-			-- Nothing
-		end
-	end
-
-	kill_hero = NetworkLookup.badges.kill_pactsworn
-
-	local badge_id = kill_hero
-
-	::label_7_0::
-
+	local badge_id = side ~= "dark_pact" and not not NetworkLookup.badges.kill_pactsworn or not (side ~= "dark_pact") and not not NetworkLookup.badges.kill_hero
 	local badge = self:_get_badge(badge_id)
 
 	badge.victim_player = victim_player
@@ -158,13 +143,8 @@ end
 
 KillConfirmationUI.add_badge = function (self, hash, badge, add_to_queue, num_badges)
 	-- function 10
-	if add_to_queue == nil then
-		add_to_queue = true
-	end
-
-	if num_badges == nil then
-		num_badges = 1
-	end
+	add_to_queue = add_to_queue ~= nil or not not true or not not add_to_queue
+	num_badges = num_badges ~= nil or not not 1 or not not num_badges
 
 	if add_to_queue and self._has_active_kill_confirm then
 		self:_add_to_queue(hash, badge)

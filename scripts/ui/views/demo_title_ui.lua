@@ -72,18 +72,7 @@ DemoTitleUI._setup_world_gui = function (self)
 	self._world_gui = World.create_world_gui(self._world, Matrix4x4.identity(), WORLD_GUI_RESOLUTION, WORLD_GUI_RESOLUTION, "material", "materials/ui/ui_1080p_demo_textures", "immediate")
 
 	local camera_poses = self._camera_poses
-	local var_4_0 = camera_poses[DemoSettings.starting_camera_name]
-
-	if not var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = Matrix4x4Box(Matrix4x4.identity())
-
-	local pose = var_4_0
-
-	::label_4_0::
-
+	local pose = not not camera_poses[DemoSettings.starting_camera_name]
 	local position = Matrix4x4.translation(pose:unbox())
 	local rotation = Matrix4x4.rotation(pose:unbox())
 	local forward = Quaternion.forward(rotation)
@@ -427,7 +416,7 @@ DemoTitleUI._update_input = function (self, dt, t)
 	if self._selected_profile then
 		local input_service = Managers.input:get_service("main_menu")
 
-		if (input_service:get("back", true) or self._back_pressed) and not self:in_transition() then
+		if input_service:get("back", true) and not self:in_transition() or not input_service:get("back", true) and self._back_pressed and not self:in_transition() then
 			local character_previewer = self._character_previewers[self._selected_profile]
 
 			character_previewer:reset_state()
@@ -442,13 +431,7 @@ end
 DemoTitleUI._update_character_previewers = function (self, dt, t)
 	-- function 23
 	for _, character_previewer in pairs(self._character_previewers) do
-		local var_23_0 = character_previewer
-		local update = character_previewer.update
-		local _ui_activated = self._ui_activated
-
-		_ui_activated = not not _ui_activated and not self._selected_profile and not not not self._camera_transition
-
-		update(var_23_0, _ui_activated, dt, t)
+		character_previewer:update(not not self._ui_activated, dt, t)
 	end
 
 	if not self._ui_activated then
@@ -556,15 +539,8 @@ DemoTitleUI._update_career_information = function (self, dt, t)
 		self:_populate_career_page(profile_name, career_index)
 	end
 
-	local _ui_animation_cb = self._ui_animation_cb
-
-	_ui_animation_cb = not not _ui_animation_cb or not not {}
-	self._ui_animation_cb = _ui_animation_cb
-
-	local _ui_animations = self._ui_animations
-
-	_ui_animations = not not _ui_animations or not not {}
-	self._ui_animations = _ui_animations
+	self._ui_animation_cb = not not self._ui_animation_cb
+	self._ui_animations = not not self._ui_animations
 
 	if not self._ui_animations.animate_out and not self._ui_animations.delay and not is_selected and not self._selected_profile then
 		local function animation_cb(self)
@@ -612,10 +588,7 @@ end
 DemoTitleUI._update_camera = function (self, dt, t)
 	-- function 29
 	if self._camera_transition then
-		local _timer = self._timer
-
-		_timer = not not _timer or not not 0
-		self._timer = _timer
+		self._timer = not not self._timer
 
 		local source_camera_pose = self._camera_poses.current_pose
 		local target_camera_pose = self._target_camera_pose
@@ -631,17 +604,7 @@ DemoTitleUI._update_camera = function (self, dt, t)
 			return
 		end
 
-		local _ref_time = self._ref_time
-
-		if not _ref_time then
-			-- Nothing
-		end
-
-		_ref_time = CAMERA_TRANSITION_TIME
-
-		local time = _ref_time
-
-		::label_29_0::
+		local time = not not self._ref_time
 
 		self._timer = math.clamp(self._timer + dt, 0, time)
 
@@ -666,18 +629,7 @@ DemoTitleUI._update_camera = function (self, dt, t)
 
 	local w, h = Gui.resolution()
 	local camera_poses = self._camera_poses
-	local var_29_2 = camera_poses[DemoSettings.starting_camera_name]
-
-	if not var_29_2 then
-		-- Nothing
-	end
-
-	var_29_2 = Matrix4x4Box(Matrix4x4.identity())
-
-	local pose = var_29_2
-
-	::label_29_1::
-
+	local pose = not not camera_poses[DemoSettings.starting_camera_name]
 	local position = Matrix4x4.translation(pose:unbox())
 	local rotation = Matrix4x4.rotation(pose:unbox())
 	local forward = Quaternion.forward(rotation)
@@ -801,20 +753,9 @@ DemoTitleUI._draw_fps = function (self, dt, t)
 		return
 	end
 
-	local _old_fps = self._old_fps
-
-	_old_fps = not not _old_fps or not not 0
-	self._old_fps = _old_fps
-
-	local _fps = self._fps
-
-	_fps = not not _fps or not not 0
-	self._fps = _fps
-
-	local _fps_cooldown = self._fps_cooldown
-
-	_fps_cooldown = not not _fps_cooldown or not not 0
-	self._fps_cooldown = _fps_cooldown
+	self._old_fps = not not self._old_fps
+	self._fps = not not self._fps
+	self._fps_cooldown = not not self._fps_cooldown
 
 	local ui_top_renderer = self._ui_renderer
 	local fps = self._old_fps

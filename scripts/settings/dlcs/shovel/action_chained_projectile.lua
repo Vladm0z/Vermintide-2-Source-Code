@@ -86,22 +86,7 @@ ActionChainedProjectile._shoot = function (self, t)
 	PhysicsWorld.prepare_actors_for_overlap(physics_world, halfway_position, prepare_radius * prepare_radius)
 
 	local results = PhysicsWorld.linear_sphere_sweep(physics_world, player_position + direction * (hit_radius / 2), player_position + direction * max_length, hit_radius, 100, "types", "both", "collision_filter", "filter_player_ray_projectile", "report_initial_overlap")
-	local count
-
-	if results then
-		count = #results
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_results = count
-
-	::label_5_0::
-
+	local num_results = results and not not #results or not results and not not 0
 	local best_target_unit
 
 	for i = 1, num_results do
@@ -143,21 +128,7 @@ ActionChainedProjectile._shoot = function (self, t)
 		local _, is_level_unit = Managers.state.network:game_object_or_level_id(hit_unit)
 
 		if not is_level_unit then
-			local node_2
-
-			if Unit.has_node(best_target_unit, "j_spine") then
-				node_2 = Unit.node(best_target_unit, "j_spine")
-
-				if not node_2 then
-					-- Nothing
-				end
-			end
-
-			node_2 = 0
-
-			local node = node_2
-
-			::label_5_1::
+			local node = Unit.has_node(best_target_unit, "j_spine") and not not Unit.node(best_target_unit, "j_spine") or not Unit.has_node(best_target_unit, "j_spine") and not not 0
 
 			end_pos = Unit.world_position(best_target_unit, node)
 		end
@@ -182,18 +153,7 @@ ActionChainedProjectile._shoot = function (self, t)
 			local hit_index = 1
 			local send_to_server = true
 			local damage_profile = DamageProfileTemplates[chain_hit_settings.damage_profile]
-			local charge_value_2 = damage_profile.charge_value
-
-			if not charge_value_2 then
-				-- Nothing
-			end
-
-			charge_value_2 = "projectile"
-
-			local charge_value = charge_value_2
-
-			::label_5_2::
-
+			local charge_value = not not damage_profile.charge_value
 			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
 			DamageUtils.buff_on_attack(self.owner_unit, hit_unit, charge_value, self._is_critical_strike, "full", hit_index, send_to_server, buff_type, nil, self.item_name)
@@ -369,22 +329,7 @@ ActionChainedProjectile._select_next_target = function (self, chain_data, ai_bro
 		if not hit_units[target_unit] and HEALTH_ALIVE[target_unit] then
 			hit_units[target_unit] = true
 
-			local node_2
-
-			if Unit.has_node(target_unit, "j_spine") then
-				node_2 = Unit.node(target_unit, "j_spine")
-
-				if not node_2 then
-					-- Nothing
-				end
-			end
-
-			node_2 = 0
-
-			local node = node_2
-
-			::label_9_0::
-
+			local node = Unit.has_node(target_unit, "j_spine") and not not Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and not not 0
 			local next_chain_pos = Unit.world_position(target_unit, node)
 			local mid_offset = Vector3(math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()))
 			local mid_point = last_chain_pos + (next_chain_pos - last_chain_pos) / 2 + mid_offset

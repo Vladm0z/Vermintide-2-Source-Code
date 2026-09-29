@@ -127,18 +127,7 @@ HoverUI.update = function (self, dt)
 		return
 	end
 
-	local input_service_2 = self.input_service
-
-	if not input_service_2 then
-		-- Nothing
-	end
-
-	input_service_2 = FAKE_INPUT_SERVICE
-
-	local input_service = input_service_2
-
-	::label_4_0::
-
+	local input_service = not not self.input_service
 	local ui_scenegraph = self.ui_scenegraph
 
 	self:update_widget_pivot_position(ui_scenegraph, input_service)

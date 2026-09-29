@@ -399,7 +399,7 @@ end
 
 function create_gamepad_input(scenegraph_id, color)
 	-- function 3
-	local tbl = {
+	local definition = {
 		element = {
 			passes = {
 				{
@@ -437,46 +437,37 @@ function create_gamepad_input(scenegraph_id, color)
 					end
 				}
 			}
-		}
-	}
-	local tbl_2 = {}
-	local flag
-
-	flag = (not IS_CONSOLE or not "xbone_button_icon_menu_large") and not not "xbone_button_icon_x"
-	tbl_2.xb_input = flag
-
-	local flag_2
-
-	flag_2 = (not IS_CONSOLE or not "ps4_button_icon_options") and not not "ps4_button_icon_square"
-	tbl_2.ps_input = flag_2
-	tbl.content = tbl_2
-	tbl.style = {
-		texture_id = {
-			texture_size = {
-				34,
-				34
-			},
-			color = not not color or not not {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				-12,
-				-17,
-				1
+		},
+		content = {
+			xb_input = IS_CONSOLE and not not "xbone_button_icon_menu_large" or not IS_CONSOLE and not not "xbone_button_icon_x",
+			ps_input = IS_CONSOLE and not not "ps4_button_icon_options" or not IS_CONSOLE and not not "ps4_button_icon_square"
+		},
+		style = {
+			texture_id = {
+				texture_size = {
+					34,
+					34
+				},
+				color = not not color or not not {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					-12,
+					-17,
+					1
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	local definition = tbl
 
 	return definition
 end
@@ -505,19 +496,7 @@ local function create_switch_panel(information_data)
 		content_change_function = function (content, style)
 			-- function 8
 			local hotspot = content.parent.right_arrow_hotspot
-			local num
-
-			if hotspot.is_hover then
-				num = 1
-
-				goto label_8_0
-			end
-
-			num = 0.6
-
-			local intensity_multiplier = num
-
-			::label_8_0::
+			local intensity_multiplier = hotspot.is_hover and not not 1 or not hotspot.is_hover and not not 0.6
 
 			style.color[2] = 255 * intensity_multiplier
 			style.color[3] = 255 * intensity_multiplier
@@ -546,17 +525,7 @@ local function create_switch_panel(information_data)
 			end
 
 			local use_ps4_input_icons = UISettings.use_ps4_input_icons
-			local input = Managers.input
-
-			if input then
-				-- Nothing
-			end
-
-			input = Managers.input:get_most_recent_device()
-
-			local input_device = input
-
-			::label_10_0::
+			local input_device = not not Managers.input
 
 			if input_device then
 				local device_type = input_device.type()
@@ -565,10 +534,7 @@ local function create_switch_panel(information_data)
 				use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
 			end
 
-			local flag
-
-			flag = (not use_ps4_input_icons or not "ps4_button_icon_r1") and not not "xbone_button_icon_rb"
-			content.right_shoulder = flag
+			content.right_shoulder = use_ps4_input_icons and not not "ps4_button_icon_r1" or not use_ps4_input_icons and not not "xbone_button_icon_rb"
 		end
 	}
 	style.right_arrow = {
@@ -617,11 +583,7 @@ local function create_switch_panel(information_data)
 			}
 		}
 	}
-
-	local flag
-
-	flag = (not IS_PS4 or not "ps4_button_icon_r1") and not not "xbone_button_icon_rb"
-	content.right_shoulder = flag
+	content.right_shoulder = IS_PS4 and not not "ps4_button_icon_r1" or not IS_PS4 and not not "xbone_button_icon_rb"
 	content.current_index = nil
 
 	local slate_size = {
@@ -643,92 +605,13 @@ local function create_switch_panel(information_data)
 				-- function 11
 				local alert_color = style.alert_color
 				local hotspot = content.parent[slate_name .. "_hotspot"]
-				local is_hover = hotspot.is_hover
-
-				if not is_hover then
-					-- Nothing
-				end
-
-				if content.index ~= content.parent.current_index then
-					is_hover = false
-
-					goto label_11_0
-				end
-
-				is_hover = true
-
-				local is_selected = is_hover
-
-				do
-					local num
-				end
-
-				::label_11_0::
-
-				if hotspot.is_hover then
-					num = 1
-
-					goto label_11_1
-				end
-
-				num = 0.8
-
-				local intensity_multiplier = num
-
-				::label_11_1::
+				local is_selected = not not hotspot.is_hover
+				local intensity_multiplier = hotspot.is_hover and not not 1 or not hotspot.is_hover and not not 0.8
 
 				style.color[1] = 255
-
-				local color = style.color
-				local var_11_3
-
-				if is_selected then
-					var_11_3 = alert_color[2]
-
-					if not var_11_3 then
-						-- Nothing
-					end
-				end
-
-				var_11_3 = 255
-
-				::label_11_2::
-
-				color[2] = var_11_3 * intensity_multiplier
-
-				local color_2 = style.color
-				local var_11_5
-
-				if is_selected then
-					var_11_5 = alert_color[3]
-
-					if not var_11_5 then
-						-- Nothing
-					end
-				end
-
-				var_11_5 = 255
-
-				::label_11_3::
-
-				color_2[3] = var_11_5 * intensity_multiplier
-
-				local color_3 = style.color
-				local var_11_7
-
-				if is_selected then
-					var_11_7 = alert_color[4]
-
-					if not var_11_7 then
-						-- Nothing
-					end
-				end
-
-				var_11_7 = 255
-
-				::label_11_4::
-
-				color_3[4] = var_11_7 * intensity_multiplier
+				style.color[2] = (is_selected and not not alert_color[2] or not is_selected and not not 255) * intensity_multiplier
+				style.color[3] = (is_selected and not not alert_color[3] or not is_selected and not not 255) * intensity_multiplier
+				style.color[4] = (is_selected and not not alert_color[4] or not is_selected and not not 255) * intensity_multiplier
 			end
 		}
 		passes[#passes + 1] = {
@@ -778,19 +661,7 @@ local function create_switch_panel(information_data)
 		content_change_function = function (content, style)
 			-- function 13
 			local hotspot = content.left_arrow_hotspot
-			local num
-
-			if hotspot.is_hover then
-				num = 1
-
-				goto label_13_0
-			end
-
-			num = 0.6
-
-			local intensity_multiplier = num
-
-			::label_13_0::
+			local intensity_multiplier = hotspot.is_hover and not not 1 or not hotspot.is_hover and not not 0.6
 
 			style.color[2] = 255 * intensity_multiplier
 			style.color[3] = 255 * intensity_multiplier
@@ -814,17 +685,7 @@ local function create_switch_panel(information_data)
 			end
 
 			local use_ps4_input_icons = UISettings.use_ps4_input_icons
-			local input = Managers.input
-
-			if input then
-				-- Nothing
-			end
-
-			input = Managers.input:get_most_recent_device()
-
-			local input_device = input
-
-			::label_15_0::
+			local input_device = not not Managers.input
 
 			if input_device then
 				local device_type = input_device.type()
@@ -833,10 +694,7 @@ local function create_switch_panel(information_data)
 				use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
 			end
 
-			local flag
-
-			flag = (not use_ps4_input_icons or not "ps4_button_icon_l1") and not not "xbone_button_icon_lb"
-			content.left_shoulder = flag
+			content.left_shoulder = use_ps4_input_icons and not not "ps4_button_icon_l1" or not use_ps4_input_icons and not not "xbone_button_icon_lb"
 		end
 	}
 	passes[#passes + 1] = {
@@ -888,11 +746,7 @@ local function create_switch_panel(information_data)
 	}
 	content.left_arrow_hotspot = {}
 	content.left_arrow = "info_slate_arrow"
-
-	local flag_2
-
-	flag_2 = (not IS_PS4 or not "ps4_button_icon_l1") and not not "xbone_button_icon_lb"
-	content.left_shoulder = flag_2
+	content.left_shoulder = IS_PS4 and not not "ps4_button_icon_l1" or not IS_PS4 and not not "xbone_button_icon_lb"
 	widget_def.element = element
 	widget_def.content = content
 	widget_def.style = style
@@ -907,7 +761,7 @@ local function create_switch_panel(information_data)
 end
 
 local disable_with_gamepad = true
-local tbl = {
+local widgets = {
 	panel = UIWidgets.create_simple_rect("panel", {
 		192,
 		0,
@@ -963,67 +817,34 @@ local tbl = {
 		255,
 		255,
 		255
-	}, sub_header_text_style)
+	}, sub_header_text_style),
+	more_information = create_hotspot_text(Managers.localizer:exists("info_slate_more_information") and not not Localize("info_slate_more_information") or not Managers.localizer:exists("info_slate_more_information") and not not "More Information", "information", info_text_style),
+	less_information = create_hotspot_text(Managers.localizer:exists("info_slate_less_information") and not not Localize("info_slate_less_information") or not Managers.localizer:exists("info_slate_less_information") and not not "Less Information", "information", info_text_style),
+	triangle_right = UIWidgets.create_simple_triangle("triangle", {
+		255,
+		255,
+		255,
+		255
+	}, "right", {
+		10,
+		10
+	}, disable_with_gamepad),
+	triangle_down = UIWidgets.create_simple_triangle("triangle", {
+		255,
+		255,
+		255,
+		255
+	}, "down", {
+		10,
+		10
+	}, disable_with_gamepad),
+	input = create_gamepad_input("triangle", {
+		255,
+		255,
+		255,
+		255
+	})
 }
-local create_hotspot_text = create_hotspot_text
-local var_0_2
-
-if Managers.localizer:exists("info_slate_more_information") then
-	var_0_2 = Localize("info_slate_more_information")
-
-	if not var_0_2 then
-		-- Nothing
-	end
-end
-
-var_0_2 = "More Information"
-
-::label_0_0::
-
-tbl.more_information = create_hotspot_text(var_0_2, "information", info_text_style)
-
-local create_hotspot_text_2 = create_hotspot_text
-local var_0_4
-
-if Managers.localizer:exists("info_slate_less_information") then
-	var_0_4 = Localize("info_slate_less_information")
-
-	if not var_0_4 then
-		-- Nothing
-	end
-end
-
-var_0_4 = "Less Information"
-
-::label_0_1::
-
-tbl.less_information = create_hotspot_text_2(var_0_4, "information", info_text_style)
-tbl.triangle_right = UIWidgets.create_simple_triangle("triangle", {
-	255,
-	255,
-	255,
-	255
-}, "right", {
-	10,
-	10
-}, disable_with_gamepad)
-tbl.triangle_down = UIWidgets.create_simple_triangle("triangle", {
-	255,
-	255,
-	255,
-	255
-}, "down", {
-	10,
-	10
-}, disable_with_gamepad)
-tbl.input = create_gamepad_input("triangle", {
-	255,
-	255,
-	255,
-	255
-})
-
-local widgets = tbl
 local animation_definitions = {
 	animate_switch_panel_in = {
 		{

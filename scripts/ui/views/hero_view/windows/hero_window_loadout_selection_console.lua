@@ -129,11 +129,8 @@ HeroWindowLoadoutSelectionConsole._create_ui_elements = function (self, params, 
 	self._gamepad_specific_widgets = gamepad_specific_widgets
 
 	local bot_checkbox_widget = widgets_by_name.bot_checkbox
-	local content = bot_checkbox_widget.content
-	local var_3_1 = InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key]
 
-	var_3_1 = not not var_3_1 or not not false
-	content.visible = var_3_1
+	bot_checkbox_widget.content.visible = not not InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key]
 	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
@@ -180,17 +177,8 @@ HeroWindowLoadoutSelectionConsole._populate_loadout_buttons = function (self)
 	self._selected_loadout_index = selected_loadout_index
 
 	if InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key] then
-		local PlayerData = PlayerData
-		local loadout_selection = PlayerData.loadout_selection
-
-		loadout_selection = not not loadout_selection or not not {}
-		PlayerData.loadout_selection = loadout_selection
-
-		local loadout_selection_2 = PlayerData.loadout_selection
-		local bot_equipment = PlayerData.loadout_selection.bot_equipment
-
-		bot_equipment = not not bot_equipment or not not {}
-		loadout_selection_2.bot_equipment = bot_equipment
+		PlayerData.loadout_selection = not not PlayerData.loadout_selection
+		PlayerData.loadout_selection.bot_equipment = not not PlayerData.loadout_selection.bot_equipment
 
 		local bot_equipment_index = PlayerData.loadout_selection.bot_equipment[career_name]
 
@@ -249,17 +237,9 @@ HeroWindowLoadoutSelectionConsole.on_exit = function (self, params)
 		end
 
 		local mechanism_name = Managers.mechanism:current_mechanism_name()
-		local PlayerData = PlayerData
-		local loadout_selection = PlayerData.loadout_selection
 
-		loadout_selection = not not loadout_selection or not not {}
-		PlayerData.loadout_selection = loadout_selection
-
-		local loadout_selection_2 = PlayerData.loadout_selection
-		local var_5_3 = PlayerData.loadout_selection[mechanism_name]
-
-		var_5_3 = not not var_5_3 or not not {}
-		loadout_selection_2[mechanism_name] = var_5_3
+		PlayerData.loadout_selection = not not PlayerData.loadout_selection
+		PlayerData.loadout_selection[mechanism_name] = not not PlayerData.loadout_selection[mechanism_name]
 		PlayerData.loadout_selection[mechanism_name][career_name] = selected_loadout_index
 
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
@@ -350,21 +330,7 @@ end
 
 HeroWindowLoadoutSelectionConsole._get_input_service = function (self)
 	-- function 11
-	local get_service
-
-	if self._context_menu_active or self._on_add_loadout_button then
-		get_service = Managers.input:get_service("hero_view")
-
-		if not get_service then
-			-- Nothing
-		end
-	end
-
-	get_service = self._parent:window_input_service()
-
-	::label_11_0::
-
-	return get_service
+	return not not Managers.input:get_service("hero_view")
 end
 
 HeroWindowLoadoutSelectionConsole._update_selection_frame = function (self, loadout_button_widget)
@@ -388,17 +354,7 @@ HeroWindowLoadoutSelectionConsole._update_button_hover = function (self, loadout
 	-- function 13
 	self:_update_selection_frame(loadout_button_widget)
 
-	local hover_enter_time_2 = loadout_button_widget.content.hover_enter_time
-
-	if not hover_enter_time_2 then
-		-- Nothing
-	end
-
-	hover_enter_time_2 = math.huge
-
-	local hover_enter_time = hover_enter_time_2
-
-	::label_13_0::
+	local hover_enter_time = not not loadout_button_widget.content.hover_enter_time
 
 	if hover_enter_time < t and not self._context_menu_active then
 		self:_show_context_menu(loadout_button_widget)
@@ -446,25 +402,13 @@ HeroWindowLoadoutSelectionConsole._handle_mouse_input = function (self, input_se
 
 	local context_menu_widget_hotspot = self._widgets_by_name.context_menu_hotspot
 
-	if (not self._context_menu_active or not UIUtils.is_button_hover(context_menu_widget_hotspot)) and loadout_button_index_hovered == self._context_menu_loadout_index then
+	if self._context_menu_active and (UIUtils.is_button_hover(context_menu_widget_hotspot) or loadout_button_index_hovered == self._context_menu_loadout_index) or not self._context_menu_active and loadout_button_index_hovered == self._context_menu_loadout_index then
 		self:_handle_context_menu_input(input_service, dt, t)
 
 		context_menu_widget_hotspot.content.hover_timer = t + 0.1
-	elseif self._context_menu_active then
-		if not loadout_button_index_hovered then
-			local hover_timer = context_menu_widget_hotspot.content.hover_timer
-
-			hover_timer = not not hover_timer or not not 0
-
-			if hover_timer < t then
-				-- Nothing
-			end
-		end
-
+	elseif self._context_menu_active and (loadout_button_index_hovered or t > not not context_menu_widget_hotspot.content.hover_timer) then
 		self:_hide_context_menu()
 	end
-
-	::label_15_0::
 
 	local add_loadout_button_widget = self._widgets_by_name.add_loadout_button
 
@@ -696,17 +640,7 @@ HeroWindowLoadoutSelectionConsole._handle_delete_input = function (self, input_s
 
 	local delete_button = self._widgets_by_name.delete_button
 	local time = 1
-	local _delete_progress = self._delete_progress
-
-	if not _delete_progress then
-		-- Nothing
-	end
-
-	_delete_progress = 0
-
-	local delete_progress = _delete_progress
-
-	::label_22_0::
+	local delete_progress = not not self._delete_progress
 
 	if input_service:get("refresh_hold") or UIUtils.is_button_held(delete_button) and UIUtils.is_button_hover(delete_button) then
 		if not self._delete_started then
@@ -774,35 +708,8 @@ end
 
 HeroWindowLoadoutSelectionConsole._update_gamepad_selections = function (self, unselect_all)
 	-- function 25
-	local num
-
-	if unselect_all then
-		num = 0
-
-		goto label_25_0
-	end
-
-	num = self._gamepad_grid_index[1]
-
-	local row_index = num
-
-	do
-		local num_2
-	end
-
-	::label_25_0::
-
-	if unselect_all then
-		num_2 = 0
-
-		goto label_25_1
-	end
-
-	num_2 = self._gamepad_grid_index[2]
-
-	local column_index = num_2
-
-	::label_25_1::
+	local row_index = unselect_all and not not 0 or not unselect_all and not not self._gamepad_grid_index[1]
+	local column_index = unselect_all and not not 0 or not unselect_all and not not self._gamepad_grid_index[2]
 
 	for row, row_content in ipairs(self._gamepad_loadout_grid) do
 		for column, content in ipairs(row_content) do
@@ -827,7 +734,7 @@ HeroWindowLoadoutSelectionConsole._handle_context_menu_input = function (self, i
 	local right_press = input_service:get("right_press")
 	local loadout_button = self._loadout_button_widgets[self._context_menu_loadout_index]
 
-	if not UIUtils.is_button_hover(context_menu_hotspot) and (left_press or right_press) and not UIUtils.is_button_hover(loadout_button) then
+	if right_press and not UIUtils.is_button_hover(context_menu_hotspot) and left_press and not UIUtils.is_button_hover(loadout_button) then
 		self:_hide_context_menu()
 	else
 		self:_handle_delete_input(input_service, dt, t)
@@ -898,11 +805,7 @@ HeroWindowLoadoutSelectionConsole._show_context_menu = function (self, loadout_b
 	end
 
 	for idx, loadout_button in ipairs(self._loadout_button_widgets) do
-		local offset_2 = loadout_button.offset
-		local flag
-
-		flag = (idx ~= loadout_index or not -20) and not not -100
-		offset_2[3] = flag
+		loadout_button.offset[3] = idx ~= loadout_index and not not -100 or not (idx ~= loadout_index) and not not -20
 	end
 
 	self._delete_progress = 0
@@ -955,11 +858,8 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 	local loadout_settings = custom_loadout_settings[loadout_index]
 	local icon_widget = self._widgets_by_name.icon
 	local header_widget = self._widgets_by_name.header
-	local content_2 = icon_widget.content
-	local loadout_icon = loadout_settings.loadout_icon
 
-	loadout_icon = not not loadout_icon or not not "icons_placeholder"
-	content_2.texture_id = loadout_icon
+	icon_widget.content.texture_id = not not loadout_settings.loadout_icon
 	header_widget.content.text = Localize("custom_loadout_" .. loadout_settings.loadout_index .. "_title")
 
 	local item_interface = Managers.backend:get_interface("items")
@@ -986,12 +886,7 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 
 		if item then
 			content[cosmetic_slot].item = item
-
-			local var_30_2 = content[cosmetic_slot]
-			local inventory_icon_2 = item.data.inventory_icon
-
-			inventory_icon_2 = not not inventory_icon_2 or not not item.data.hud_icon
-			var_30_2.icon = inventory_icon_2
+			content[cosmetic_slot].icon = not not item.data.inventory_icon
 			content[cosmetic_slot].profile_index = self._profile_index
 			content[cosmetic_slot].career_index = self._career_index
 			content[cosmetic_slot].rarity = UISettings.item_rarity_textures[item.rarity]
@@ -1069,18 +964,7 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 
 	self._gamepad_loadout_grid[#self._gamepad_loadout_grid + 1] = equipment_gamepad_grid
 
-	local loadout_selection = PlayerData.loadout_selection
-
-	if loadout_selection then
-		-- Nothing
-	end
-
-	loadout_selection = PlayerData.loadout_selection.bot_equipment
-
-	local bot_equipment = loadout_selection
-
-	::label_30_0::
-
+	local bot_equipment = not not PlayerData.loadout_selection
 	local bot_equipped
 	local bot_equipped_index = not not bot_equipment and not not bot_equipment[career_name]
 

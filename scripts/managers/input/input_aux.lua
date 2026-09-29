@@ -1,38 +1,10 @@
 -- chunkname: @scripts/managers/input/input_aux.lua
 
-local InputAux_2 = InputAux
-
-InputAux_2 = not not InputAux_2 or not not {}
-InputAux = InputAux_2
+InputAux = not not InputAux
 
 local InputAux = InputAux
-local input_device_mapping = InputAux.input_device_mapping
 
-input_device_mapping = not not input_device_mapping or not not {
-	gamepad = {
-		rawget(_G, "Pad1"),
-		rawget(_G, "Pad2"),
-		rawget(_G, "Pad3"),
-		rawget(_G, "Pad4"),
-		rawget(_G, "Pad5"),
-		rawget(_G, "Pad6"),
-		rawget(_G, "Pad7"),
-		rawget(_G, "Pad8")
-	},
-	mouse = {
-		rawget(_G, "Mouse")
-	},
-	keyboard = {
-		rawget(_G, "Keyboard")
-	},
-	network = {
-		NetworkInputDevice
-	},
-	recording = {
-		PlayRecordingInputDevice
-	}
-}
-InputAux.input_device_mapping = input_device_mapping
+InputAux.input_device_mapping = not not InputAux.input_device_mapping
 
 if not InputAux.input_device_mapping.ps_pad then
 	InputAux.input_device_mapping.ps_pad = {}

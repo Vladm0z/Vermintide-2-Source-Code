@@ -170,10 +170,7 @@ local RELOAD = true
 
 ImguiDeusMapBaseGen.init = function (self)
 	-- function 7
-	local var_7_0 = tonumber(script_data.debug_draw_base_map_seed)
-
-	var_7_0 = not not var_7_0 or not not 0
-	self._seed = var_7_0
+	self._seed = not not tonumber(script_data.debug_draw_base_map_seed)
 	self._journey_index = 1
 	self._draw_realtime = false
 	self._start_paused = false
@@ -306,25 +303,11 @@ end
 ImguiDeusMapBaseGen._reset_configs_for_journey = function (self)
 	-- function 11
 	local journey_name = journey_names[self._journey_index]
-	local var_11_0 = DEUS_MAP_LAYOUT_SETTINGS[journey_name]
 
-	var_11_0 = not not var_11_0 or not not DEUS_MAP_LAYOUT_SETTINGS.default
-	self._original_layout_config = var_11_0
-
-	local var_11_1 = self._layout_configs[journey_name]
-
-	var_11_1 = not not var_11_1 or not not self._layout_configs.default
-	self._layout_config = var_11_1
-
-	local var_11_2 = DEUS_BASE_MAP_GEN_SETTINGS[journey_name]
-
-	var_11_2 = not not var_11_2 or not not DEUS_BASE_MAP_GEN_SETTINGS.default
-	self._original_base_config = var_11_2
-
-	local var_11_3 = self._base_configs[journey_name]
-
-	var_11_3 = not not var_11_3 or not not self._base_configs.default
-	self._base_config = var_11_3
+	self._original_layout_config = not not DEUS_MAP_LAYOUT_SETTINGS[journey_name]
+	self._layout_config = not not self._layout_configs[journey_name]
+	self._original_base_config = not not DEUS_BASE_MAP_GEN_SETTINGS[journey_name]
+	self._base_config = not not self._base_configs[journey_name]
 end
 
 ImguiDeusMapBaseGen.draw = function (self, is_open)
@@ -354,10 +337,7 @@ ImguiDeusMapBaseGen.draw = function (self, is_open)
 			Imgui.tree_pop()
 		end
 
-		local var_12_0 = have_configs_changed(base_gen_editable_keys, self._base_config, self._original_base_config)
-
-		var_12_0 = not not var_12_0 or not not have_configs_changed(layout_editable_keys, self._layout_config, self._original_layout_config)
-		self._configs_changed = var_12_0
+		self._configs_changed = not not have_configs_changed(base_gen_editable_keys, self._base_config, self._original_base_config)
 
 		Imgui.spacing()
 	end
@@ -365,13 +345,7 @@ ImguiDeusMapBaseGen.draw = function (self, is_open)
 	self._draw_realtime = Imgui.checkbox("see realtime layouting", self._draw_realtime)
 
 	if self._draw_realtime then
-		local script_data = script_data
-		local checkbox = Imgui.checkbox
-		local str = "print gen debug info"
-		local deus_base_graph_generator_debug = script_data.deus_base_graph_generator_debug
-
-		deus_base_graph_generator_debug = not not deus_base_graph_generator_debug or not not false
-		script_data.deus_base_graph_generator_debug = checkbox(str, deus_base_graph_generator_debug)
+		script_data.deus_base_graph_generator_debug = Imgui.checkbox("print gen debug info", not not script_data.deus_base_graph_generator_debug)
 	else
 		script_data.deus_base_graph_generator_debug = false
 	end

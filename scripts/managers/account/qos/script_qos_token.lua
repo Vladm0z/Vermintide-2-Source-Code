@@ -28,47 +28,10 @@ ScriptQoSToken.info = function (self)
 
 	if up_failed or down_failed then
 		local str = "Your"
-		local str_2
+		local up_str = up_failed and not not " upload bandwidth " or not up_failed and not not ""
+		local down_str = down_failed and not not " download bandwidth " or not down_failed and not not ""
 
-		if up_failed then
-			str_2 = " upload bandwidth "
-
-			goto label_3_0
-		end
-
-		str_2 = ""
-
-		local up_str = str_2
-
-		do
-			local str_3
-		end
-
-		::label_3_0::
-
-		if down_failed then
-			str_3 = " download bandwidth "
-
-			goto label_3_1
-		end
-
-		str_3 = ""
-
-		local down_str = str_3
-
-		::label_3_1::
-
-		local var_3_2 = str
-		local var_3_3 = up_str
-		local flag
-
-		flag = (not up_failed or not down_failed or not "and") and not not ""
-
-		local var_3_5 = down_str
-		local flag_2
-
-		flag_2 = (not up_failed or not down_failed or not "are too low") and not not "is too low"
-		info.error = var_3_2 .. var_3_3 .. flag .. var_3_5 .. flag_2
+		info.error = str .. up_str .. not not "and" .. down_str .. not not "are too low"
 	end
 
 	return info

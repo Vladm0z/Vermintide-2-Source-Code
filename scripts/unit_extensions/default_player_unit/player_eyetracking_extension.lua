@@ -193,42 +193,14 @@ end
 
 PlayerEyeTrackingExtension.get_forward_rayhit = function (self)
 	-- function 12
-	local unbox
-
-	if self.forward_rayhit_position then
-		unbox = self.forward_rayhit_position:unbox()
-
-		if not unbox then
-			-- Nothing
-		end
-	end
-
-	unbox = nil
-
-	::label_12_0::
-
-	return unbox
+	return self.forward_rayhit_position and not not self.forward_rayhit_position:unbox() or not self.forward_rayhit_position and not not nil
 end
 
 PlayerEyeTrackingExtension.get_gaze_rayhit = function (self)
 	-- function 13
 	self:update_gaze_rayhit()
 
-	local unbox
-
-	if self.gaze_rayhit_position then
-		unbox = self.gaze_rayhit_position:unbox()
-
-		if not unbox then
-			-- Nothing
-		end
-	end
-
-	unbox = nil
-
-	::label_13_0::
-
-	return unbox
+	return self.gaze_rayhit_position and not not self.gaze_rayhit_position:unbox() or not self.gaze_rayhit_position and not not nil
 end
 
 PlayerEyeTrackingExtension.get_is_aiming = function (self)
@@ -253,34 +225,9 @@ end
 
 PlayerEyeTrackingExtension.get_is_feature_enabled = function (self, feature)
 	-- function 18
-	local var_18_0 = rawget(_G, "Tobii")
+	local HAS_TOBII = not not rawget(_G, "Tobii")
 
-	if var_18_0 then
-		-- Nothing
-	end
-
-	var_18_0 = Application.user_setting("tobii_eyetracking")
-
-	local HAS_TOBII = var_18_0
-
-	::label_18_0::
-
-	if HAS_TOBII then
-		-- Nothing
-	end
-
-	::label_18_1::
-
-	local is_connected = self.is_connected
-
-	if is_connected then
-		is_connected = Application.user_setting(feature)
-		is_connected = not not is_connected and Tobii.get_time_since_last_gaze_point() < 5
-	end
-
-	::label_18_2::
-
-	return is_connected
+	return not not HAS_TOBII and not not self.is_connected
 end
 
 PlayerEyeTrackingExtension.get_is_connected = function (self)

@@ -305,24 +305,7 @@ CraftPageExtractSkinConsole._update_craft_items = function (self)
 	-- function 16
 	local super_parent = self.super_parent
 	local item_grid = self._item_grid
-	local is_dragging_item = item_grid:is_dragging_item()
-
-	if not is_dragging_item then
-		-- Nothing
-	end
-
-	if item_grid:is_item_dragged() == nil then
-		is_dragging_item = false
-
-		goto label_16_0
-	end
-
-	is_dragging_item = true
-
-	local is_dragging_craft_item = is_dragging_item
-
-	::label_16_0::
-
+	local is_dragging_craft_item = not not item_grid:is_dragging_item()
 	local pressed_backend_id, is_drag_item = super_parent:get_pressed_item_backend_id()
 
 	if pressed_backend_id then
@@ -365,12 +348,7 @@ CraftPageExtractSkinConsole._remove_craft_item = function (self, backend_id, slo
 		self._item_grid:add_item_to_slot_index(slot_index, nil)
 
 		craft_items[slot_index] = nil
-
-		local max = math.max
-		local _num_craft_items = self._num_craft_items
-
-		_num_craft_items = not not _num_craft_items or not not 0
-		self._num_craft_items = max(_num_craft_items - 1, 0)
+		self._num_craft_items = math.max(not not self._num_craft_items - 1, 0)
 
 		if self._num_craft_items == 0 then
 			self:_set_craft_button_disabled(true)
@@ -405,11 +383,7 @@ CraftPageExtractSkinConsole._add_craft_item = function (self, backend_id, slot_i
 		self._item_grid:add_item_to_slot_index(slot_index, item)
 		self.super_parent:set_disabled_backend_id(backend_id, true)
 
-		local min = math.min
-		local _num_craft_items = self._num_craft_items
-
-		_num_craft_items = not not _num_craft_items or not not 0
-		self._num_craft_items = min(_num_craft_items + 1, NUM_CRAFT_SLOTS)
+		self._num_craft_items = math.min(not not self._num_craft_items + 1, NUM_CRAFT_SLOTS)
 
 		if self._num_craft_items > 0 then
 			self:_set_craft_button_disabled(false)
@@ -453,24 +427,7 @@ CraftPageExtractSkinConsole._set_craft_button_disabled = function (self, disable
 	-- function 21
 	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
 
-	local parent = self.parent
-	local var_21_1 = parent
-	local set_input_description = parent.set_input_description
-	local name
-
-	if not disabled then
-		name = self.settings.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "disabled"
-
-	::label_21_0::
-
-	set_input_description(var_21_1, name)
+	self.parent:set_input_description(disabled and not not "disabled" or not disabled and not not self.settings.name)
 end
 
 CraftPageExtractSkinConsole._exit = function (self, selected_level)
@@ -504,20 +461,6 @@ CraftPageExtractSkinConsole._set_craft_button_text = function (self, text, local
 	-- function 25
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
-	local content = widget.content
-	local var_25_1
 
-	if localize then
-		var_25_1 = Localize(text)
-
-		if not var_25_1 then
-			-- Nothing
-		end
-	end
-
-	var_25_1 = text
-
-	::label_25_0::
-
-	content.button_text = var_25_1
+	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
 end

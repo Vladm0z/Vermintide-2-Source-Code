@@ -45,33 +45,16 @@ PlayerProjectileImpactUnitExtension.init = function (self, extension_init_contex
 		collision_filter = "filter_player_ray_projectile"
 	end
 
-	local collision_filter_2 = extension_init_data.collision_filter
-
-	collision_filter_2 = not not collision_filter_2 or not not enemy_collision_filter
-	self.enemy_collision_filter = collision_filter_2
-
-	local collision_filter_3 = extension_init_data.collision_filter
-
-	collision_filter_3 = not not collision_filter_3 or not not static_collision_filter
-	self.static_collision_filter = collision_filter_3
-
-	local collision_filter_4 = extension_init_data.collision_filter
-
-	collision_filter_4 = not not collision_filter_4 or not not collision_filter
-	self.collision_filter = collision_filter_4
+	self.enemy_collision_filter = not not extension_init_data.collision_filter
+	self.static_collision_filter = not not extension_init_data.collision_filter
+	self.collision_filter = not not extension_init_data.collision_filter
 	self.radius = extension_init_data.radius
-
-	local scene_query_height_offset = projectile_info.scene_query_height_offset
-
-	scene_query_height_offset = not not scene_query_height_offset or not not 0
-	self.scene_query_height_offset = scene_query_height_offset
+	self.scene_query_height_offset = not not projectile_info.scene_query_height_offset
 	self.last_position = nil
 
 	local t = Managers.time:time("game")
-	local friendly_fire_grace_period = projectile_info.friendly_fire_grace_period
 
-	friendly_fire_grace_period = not not friendly_fire_grace_period or not not 0
-	self._friendly_fire_grace_period = t + friendly_fire_grace_period
+	self._friendly_fire_grace_period = t + not not projectile_info.friendly_fire_grace_period
 end
 
 PlayerProjectileImpactUnitExtension.extensions_ready = function (self, world, unit)

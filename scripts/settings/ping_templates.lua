@@ -74,19 +74,7 @@ PingTemplates = {
 	generic_item = {
 		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 1
-			if pinged_unit then
-				-- Nothing
-			end
-
-			::label_1_0::
-
-			local has_extension = ScriptUnit.has_extension(pinged_unit, "pickup_system")
-
-			has_extension = not not has_extension or not not Managers.state.network:level_object_id(pinged_unit)
-
-			::label_1_1::
-
-			return has_extension
+			return not not Managers.state.network:level_object_id(pinged_unit)
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
@@ -150,10 +138,8 @@ PingTemplates = {
 
 					if lookat_tag then
 						local do_ping, chat_messages, ping_icon = unpack(response)
-						local var_2_0 = messages[lookat_tag]
 
-						var_2_0 = not not var_2_0 or not not messages.default
-						chat_messages[1] = var_2_0
+						chat_messages[1] = not not messages[lookat_tag]
 
 						return do_ping, chat_messages, ping_icon
 					end
@@ -223,10 +209,8 @@ PingTemplates = {
 					if breed then
 						local do_ping, chat_messages, ping_icon = unpack(response)
 						local breed_name = breed.name
-						local var_4_0 = messages[breed_name]
 
-						var_4_0 = not not var_4_0 or not not messages.default
-						chat_messages[1] = var_4_0
+						chat_messages[1] = not not messages[breed_name]
 
 						return do_ping, chat_messages, ping_icon
 					end

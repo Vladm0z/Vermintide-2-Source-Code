@@ -82,17 +82,7 @@ NavTagVolumeHandler.create_tag_volume_from_mappings = function (self, level_volu
 
 	self.created_tag_volumes[level_volume_name] = tag_volume
 
-	local var_2_0 = self.level_volumes_by_layer[mapping.layer_name]
-
-	if not var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = {}
-
-	local volumes = var_2_0
-
-	::label_2_0::
+	local volumes = not not self.level_volumes_by_layer[mapping.layer_name]
 
 	volumes[#volumes + 1] = level_volume_name
 	self.level_volumes_by_layer[mapping.layer_name] = volumes

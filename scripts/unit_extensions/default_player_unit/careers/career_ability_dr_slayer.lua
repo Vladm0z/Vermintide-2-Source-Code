@@ -135,11 +135,8 @@ CareerAbilityDRSlayer._ability_available = function (self)
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
 	local locomotion_extension = self._locomotion_extension
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	can_use_activated_ability = not not can_use_activated_ability and not status_extension:is_disabled() and not not locomotion_extension:is_on_ground()
-
-	return can_use_activated_ability
+	return not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityDRSlayer._start_priming = function (self)
@@ -250,7 +247,7 @@ CareerAbilityDRSlayer._do_common_stuff = function (self)
 		end
 	end
 
-	if (not is_server or not bot_player) and local_player then
+	if is_server and (bot_player or local_player) or not is_server and local_player then
 		local first_person_extension = self._first_person_extension
 
 		first_person_extension:play_hud_sound_event("Play_career_ability_bardin_slayer_enter")
@@ -284,27 +281,9 @@ CareerAbilityDRSlayer._do_stomp = function (self, t)
 	local has_impact_damage_buff = talent_extension:has_talent("bardin_slayer_activated_ability_impact_damage")
 	local position = POSITION_LOOKUP[owner_unit]
 	local rotation = Quaternion.identity()
-	local str
-
-	if has_impact_damage_buff then
-		str = "bardin_slayer_activated_ability_landing_stagger_impact"
-
-		goto label_12_0
-	end
-
-	str = "bardin_slayer_activated_ability_landing_stagger"
-
-	local explosion_template = str
-
-	::label_12_0::
-
+	local explosion_template = has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger_impact" or not has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger"
 	local scale = 1
-	local get_career_power_level = career_extension:get_career_power_level()
-	local flag
-
-	flag = (not has_impact_damage_buff or not 2) and not not 1
-
-	local career_power_level = get_career_power_level * flag
+	local career_power_level = career_extension:get_career_power_level() * (has_impact_damage_buff and not not 2 or not has_impact_damage_buff and not not 1)
 	local area_damage_system = Managers.state.entity:system("area_damage_system")
 
 	area_damage_system:create_explosion(owner_unit, position, rotation, explosion_template, scale, "career_ability", career_power_level, false)
@@ -384,27 +363,9 @@ CareerAbilityDRSlayer._do_leap = function (self)
 
 				if not aborted then
 					local rotation = Quaternion.identity()
-					local str
-
-					if has_impact_damage_buff then
-						str = "bardin_slayer_activated_ability_landing_stagger_impact"
-
-						goto label_15_0
-					end
-
-					str = "bardin_slayer_activated_ability_landing_stagger"
-
-					local explosion_template = str
-
-					::label_15_0::
-
+					local explosion_template = has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger_impact" or not has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger"
 					local scale = 1
-					local get_career_power_level = career_extension:get_career_power_level()
-					local flag
-
-					flag = (not has_impact_damage_buff or not 2) and not not 1
-
-					local career_power_level = get_career_power_level * flag
+					local career_power_level = career_extension:get_career_power_level() * (has_impact_damage_buff and not not 2 or not has_impact_damage_buff and not not 1)
 					local area_damage_system = Managers.state.entity:system("area_damage_system")
 
 					area_damage_system:create_explosion(unit_3p, final_position, rotation, explosion_template, scale, "career_ability", career_power_level, false)

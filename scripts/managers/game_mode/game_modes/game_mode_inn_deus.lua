@@ -318,18 +318,11 @@ GameModeInnDeus.local_player_game_starts = function (self, player, loading_conte
 			local first_hero_selection_made = SaveData.first_hero_selection_made
 			local backend_waiting_for_input = Managers.backend:is_waiting_for_user_input()
 			local show_hero_selection = not backend_waiting_for_input and not not not first_hero_selection_made
-			local ui = Managers.ui
-			local var_25_1 = ui
-			local handle_transition = ui.handle_transition
-			local str = "initial_start_menu_view_force"
-			local tbl = {}
-			local flag
 
-			flag = (not show_hero_selection or not "character") and not not "overview"
-			tbl.menu_state_name = flag
-			tbl.on_exit_callback = callback(self, "_cb_start_menu_closed")
-
-			handle_transition(var_25_1, str, tbl)
+			Managers.ui:handle_transition("initial_start_menu_view_force", {
+				menu_state_name = show_hero_selection and not not "character" or not show_hero_selection and not not "overview",
+				on_exit_callback = callback(self, "_cb_start_menu_closed")
+			})
 		else
 			Managers.ui:handle_transition("initial_character_selection_force", {
 				menu_state_name = "character",

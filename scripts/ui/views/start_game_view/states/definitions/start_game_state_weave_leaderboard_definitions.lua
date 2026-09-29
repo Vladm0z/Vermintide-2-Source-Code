@@ -1191,7 +1191,7 @@ local function create_refresh_button(scenegraph_id, size)
 end
 
 local disable_with_gamepad = true
-local tbl = {
+local widgets = {
 	window = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_11"),
 	window_background = UIWidgets.create_tiled_texture("window_background", "quests_background", {
 		50,
@@ -1211,50 +1211,33 @@ local tbl = {
 	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
 	title_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title"), "title_text", nil, nil, title_text_style),
 	option_tabs_divider = create_window_divider("option_tabs_divider", scenegraph_definition.option_tabs_divider.size),
-	list_title_rank = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_rank"), "list_title_rank", nil, nil, list_title_text_style)
+	list_title_rank = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_rank"), "list_title_rank", nil, nil, list_title_text_style),
+	list_title_name = UIWidgets.create_simple_text(IS_XB1 and not not Localize("menu_weave_leaderboard_title_gamertag") or not IS_XB1 and not not Localize("menu_weave_leaderboard_title_player_name"), "list_title_name", nil, nil, list_title_text_style),
+	list_title_weave = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_number"), "list_title_weave", nil, nil, list_title_text_style),
+	list_title_score = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_score"), "list_title_score", nil, nil, list_title_text_style),
+	no_placement_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_no_placement_text"), "no_placement_text", nil, nil, no_placement_text_style),
+	refresh_button = create_refresh_button("refresh_button", scenegraph_definition.refresh_button.size),
+	refresh_text = UIWidgets.create_simple_text(Localize("menu_description_refresh"), "refresh_text", nil, nil, refresh_text_style),
+	list_window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "list_window", nil, nil, nil, -1),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_mask", scenegraph_definition.list_scrollbar.size),
+	list_mask = create_list_mask("list_mask", scenegraph_definition.list_mask.size, list_fade_height),
+	list_mask_window = UIWidgets.create_rect_with_outer_frame("list_mask", scenegraph_definition.list_mask.size, "shadow_frame_02", nil, {
+		100,
+		0,
+		0,
+		0
+	}, {
+		255,
+		0,
+		0,
+		0
+	}),
+	setting_stepper_1 = create_stepper("setting_stepper_1", scenegraph_definition.setting_stepper_1.size),
+	setting_stepper_2 = create_stepper("setting_stepper_2", scenegraph_definition.setting_stepper_2.size),
+	loading_icon = UIWidgets.create_leaderboard_loading_icon("loading_icon", {
+		"list_mask"
+	})
 }
-local create_simple_text = UIWidgets.create_simple_text
-local var_0_2
-
-if not IS_XB1 then
-	var_0_2 = Localize("menu_weave_leaderboard_title_player_name")
-
-	if not var_0_2 then
-		-- Nothing
-	end
-end
-
-var_0_2 = Localize("menu_weave_leaderboard_title_gamertag")
-
-::label_0_0::
-
-tbl.list_title_name = create_simple_text(var_0_2, "list_title_name", nil, nil, list_title_text_style)
-tbl.list_title_weave = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_number"), "list_title_weave", nil, nil, list_title_text_style)
-tbl.list_title_score = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_score"), "list_title_score", nil, nil, list_title_text_style)
-tbl.no_placement_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_no_placement_text"), "no_placement_text", nil, nil, no_placement_text_style)
-tbl.refresh_button = create_refresh_button("refresh_button", scenegraph_definition.refresh_button.size)
-tbl.refresh_text = UIWidgets.create_simple_text(Localize("menu_description_refresh"), "refresh_text", nil, nil, refresh_text_style)
-tbl.list_window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "list_window", nil, nil, nil, -1)
-tbl.list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_mask", scenegraph_definition.list_scrollbar.size)
-tbl.list_mask = create_list_mask("list_mask", scenegraph_definition.list_mask.size, list_fade_height)
-tbl.list_mask_window = UIWidgets.create_rect_with_outer_frame("list_mask", scenegraph_definition.list_mask.size, "shadow_frame_02", nil, {
-	100,
-	0,
-	0,
-	0
-}, {
-	255,
-	0,
-	0,
-	0
-})
-tbl.setting_stepper_1 = create_stepper("setting_stepper_1", scenegraph_definition.setting_stepper_1.size)
-tbl.setting_stepper_2 = create_stepper("setting_stepper_2", scenegraph_definition.setting_stepper_2.size)
-tbl.loading_icon = UIWidgets.create_leaderboard_loading_icon("loading_icon", {
-	"list_mask"
-})
-
-local widgets = tbl
 
 if not IS_WINDOWS then
 	widgets.setting_stepper_3 = create_stepper("setting_stepper_3", scenegraph_definition.setting_stepper_3.size)

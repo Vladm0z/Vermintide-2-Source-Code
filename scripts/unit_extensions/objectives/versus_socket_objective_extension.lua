@@ -23,40 +23,14 @@ end
 VersusSocketObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 3
 	local socket_default_settings = GameModeSettings.versus.objectives.socket
-	local score_per_socket = objective_data.score_per_socket
 
-	score_per_socket = not not score_per_socket or not not socket_default_settings.score_per_socket
-	self._score_per_section = score_per_socket
-
-	local time_per_socket = objective_data.time_per_socket
-
-	time_per_socket = not not time_per_socket or not not socket_default_settings.time_per_socket
-	self._time_per_section = time_per_socket
-
-	local score_for_completion = objective_data.score_for_completion
-
-	score_for_completion = not not score_for_completion or not not socket_default_settings.score_for_completion
-	self._score_for_completion = score_for_completion
-
-	local time_for_completion = objective_data.time_for_completion
-
-	time_for_completion = not not time_for_completion or not not socket_default_settings.time_for_completion
-	self._time_for_completion = time_for_completion
-
-	local on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
-
-	on_last_leaf_complete_sound_event = not not on_last_leaf_complete_sound_event or not not socket_default_settings.on_last_leaf_complete_sound_event
-	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
-
-	local on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
-
-	on_leaf_complete_sound_event = not not on_leaf_complete_sound_event or not not socket_default_settings.on_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
-
-	local on_section_progress_sound_event = objective_data.on_section_progress_sound_event
-
-	on_section_progress_sound_event = not not on_section_progress_sound_event or not not socket_default_settings.on_section_progress_sound_event
-	self._on_section_progress_sound_event = on_section_progress_sound_event
+	self._score_per_section = not not objective_data.score_per_socket
+	self._time_per_section = not not objective_data.time_per_socket
+	self._score_for_completion = not not objective_data.score_for_completion
+	self._time_for_completion = not not objective_data.time_for_completion
+	self._on_last_leaf_complete_sound_event = not not objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = not not objective_data.on_leaf_complete_sound_event
+	self._on_section_progress_sound_event = not not objective_data.on_section_progress_sound_event
 end
 
 VersusSocketObjectiveExtension._activate = function (self)

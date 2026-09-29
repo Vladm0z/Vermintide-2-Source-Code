@@ -1,17 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_ui_settings.lua
 
 local settings = DLCSettings.carousel
-local UNASSIGNED_KEY_2 = UNASSIGNED_KEY
-
-if not UNASSIGNED_KEY_2 then
-	-- Nothing
-end
-
-UNASSIGNED_KEY_2 = "unassigned_keymap"
-
-local UNASSIGNED_KEY = UNASSIGNED_KEY_2
-
-::label_0_0::
+local UNASSIGNED_KEY = not not UNASSIGNED_KEY
 
 settings.ui_views = {
 	{
@@ -594,11 +584,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 7
-				local is_in_mechanism = overview:is_in_mechanism("versus")
-
-				is_in_mechanism = not not is_in_mechanism and not not not IS_XB1
-
-				return is_in_mechanism
+				return not not overview:is_in_mechanism("versus")
 			end,
 			save_data_table = versus_save_data_table_map_console.lobby_browser
 		}

@@ -1,16 +1,9 @@
 -- chunkname: @scripts/settings/camera_settings.lua
 
-local CameraSettings = CameraSettings
-
-CameraSettings = not not CameraSettings or not not {}
-CameraSettings = CameraSettings
+CameraSettings = not not CameraSettings
 PITCH_SPEED = 480
 YAW_SPEED = 480
-
-local CameraTweaks = CameraTweaks
-
-CameraTweaks = not not CameraTweaks or not not {}
-CameraTweaks = CameraTweaks
+CameraTweaks = not not CameraTweaks
 CameraTweaks.zoom = {
 	scale = 0.1,
 	interpolation_function = function (current, target, dt)

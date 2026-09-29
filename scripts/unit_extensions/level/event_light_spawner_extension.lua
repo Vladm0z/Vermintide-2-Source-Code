@@ -18,43 +18,11 @@ EventLightSpawnerExtension.init = function (self, extension_init_context, unit, 
 	self._spawn_pool_spawn_index = 1
 	self._spawn_pool_add_index = 1
 	self._num_raycasts = 0
-
-	local speed = extension_init_data.speed
-
-	if not speed then
-		speed = Unit.get_data(unit, "speed")
-		speed = not not speed or not not 1
-	end
-
-	self._speed = speed
-
-	local respawn_timer = extension_init_data.respawn_timer
-
-	if not respawn_timer then
-		respawn_timer = Unit.get_data(unit, "respawn_timer")
-		respawn_timer = not not respawn_timer or not not 10
-	end
-
-	self._respawn_timer = respawn_timer
-
-	local first_spawn_delay = extension_init_data.first_spawn_delay
-
-	if not first_spawn_delay then
-		first_spawn_delay = Unit.get_data(unit, "first_spawn_delay")
-		first_spawn_delay = not not first_spawn_delay or not not 0
-	end
-
-	self._first_spawn_delay = first_spawn_delay
-
-	local unit_to_spawn = extension_init_data.unit_to_spawn
-
-	unit_to_spawn = not not unit_to_spawn or not not Unit.get_data(unit, "unit_to_spawn")
-	self._unit_to_spawn = unit_to_spawn
-
-	local get_data = Unit.get_data(unit, "light_intensity")
-
-	get_data = not not get_data or not not 1
-	self._light_intensity = get_data
+	self._speed = not not extension_init_data.speed
+	self._respawn_timer = not not extension_init_data.respawn_timer
+	self._first_spawn_delay = not not extension_init_data.first_spawn_delay
+	self._unit_to_spawn = not not extension_init_data.unit_to_spawn
+	self._light_intensity = not not Unit.get_data(unit, "light_intensity")
 	self._active = false
 
 	Unit.set_unit_visibility(self.unit, false)
@@ -130,7 +98,7 @@ EventLightSpawnerExtension._update_units = function (self, context, dt)
 			local physics_world = World.physics_world(context.world)
 			local direction = player_pos - unit_position
 
-			direction = (Vector3.length(direction) ~= 0 or not Vector3.down()) and not not Vector3.normalize(direction)
+			direction = not not Vector3.normalize(direction)
 
 			local length = 1
 
@@ -200,21 +168,7 @@ EventLightSpawnerExtension._update_units = function (self, context, dt)
 					local chase_target_position = player_pos + Vector3(0, 0, 1)
 					local direction_vector = chase_target_position - unit_position
 					local magnitude = Vector3.length(direction_vector)
-					local max
-
-					if magnitude < 3 then
-						max = math.max(0, magnitude - 2)
-
-						if not max then
-							-- Nothing
-						end
-					end
-
-					max = 1
-
-					local move_vector_modifier = max
-
-					::label_3_0::
+					local move_vector_modifier = magnitude < 3 and not not math.max(0, magnitude - 2) or not (magnitude < 3) and not not 1
 
 					direction_vector = Vector3.normalize(direction_vector)
 

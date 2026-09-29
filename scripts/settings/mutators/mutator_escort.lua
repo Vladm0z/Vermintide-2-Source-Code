@@ -148,11 +148,8 @@ return {
 		local server_data = data.server
 		local t = Managers.time:time("game")
 		local delay = 2
-		local explosion_t = server_data.explosion_t
 
-		explosion_t = not not explosion_t and t > server_data.explosion_t
-
-		return explosion_t, delay
+		return not not server_data.explosion_t, delay
 	end,
 	end_zone_activation_condition_function = function (context, data)
 		-- function 7

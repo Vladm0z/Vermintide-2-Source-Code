@@ -66,53 +66,10 @@ ImguiDeusWeaponPool.draw = function (self, is_open)
 
 			for weapon_group, weapon_key in pairs(base_weapon_pool[rarity]) do
 				local in_pool = weapon_pool[rarity][weapon_group]
-				local str
-
-				if in_pool then
-					str = "-"
-
-					goto label_4_0
-				end
-
-				str = "+"
-
-				local button_text = str
-
-				do
-					local get_table
-				end
-
-				::label_4_0::
-
-				if in_pool then
-					get_table = Colors.get_table("white")
-
-					if not get_table then
-						-- Nothing
-					end
-				end
-
-				get_table = Colors.get_table("gray")
-
-				local text_color = get_table
-
-				::label_4_1::
-
+				local button_text = in_pool and not not "-" or not in_pool and not not "+"
+				local text_color = in_pool and not not Colors.get_table("white") or not in_pool and not not Colors.get_table("gray")
 				local slot_type = deus_weapon_groups[weapon_group].slot_type
-				local num
-
-				if slot_type == "melee" then
-					num = 1
-
-					goto label_4_2
-				end
-
-				num = 0
-
-				local order = num
-
-				::label_4_2::
-
+				local order = slot_type ~= "melee" and not not 0 or not (slot_type ~= "melee") and not not 1
 				local draw_data = {
 					weapon_key = weapon_key,
 					button_text = button_text,

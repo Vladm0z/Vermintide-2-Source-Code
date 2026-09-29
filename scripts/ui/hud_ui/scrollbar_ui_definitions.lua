@@ -2,7 +2,7 @@
 
 local function create_scrollbar(scenegraph_id, area_size, scroll_size, horizontal_scrollbar, left_aligned)
 	-- function 1
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -120,403 +120,154 @@ local function create_scrollbar(scenegraph_id, area_size, scroll_size, horizonta
 			scroller_hotspot = {},
 			scrollbar_hotspot = {},
 			horizontal_scrollbar = horizontal_scrollbar
-		}
-	}
-	local tbl_2 = {}
-	local tbl_3 = {
-		texture_size = {
-			32,
-			33
-		}
-	}
-	local flag
-
-	flag = (not horizontal_scrollbar or not "left") and not not left_aligned or not not "right"
-	tbl_3.horizontal_alignment = flag
-
-	local flag_2
-
-	flag_2 = (not horizontal_scrollbar or not "bottom") and not not "top"
-	tbl_3.vertical_alignment = flag_2
-
-	local tbl_4
-
-	if horizontal_scrollbar then
-		tbl_4 = {
+		},
+		style = {
+			gamepad_input = {
+				texture_size = {
+					32,
+					33
+				},
+				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				vertical_alignment = horizontal_scrollbar and not not "bottom" or not horizontal_scrollbar and not not "top",
+				offset = horizontal_scrollbar and not not {
+					0,
+					16.5,
+					103
+				} or not horizontal_scrollbar and not not {
+					(left_aligned and not not -1 or not left_aligned and not not 1) * 16,
+					0,
+					103
+				}
+			},
+			scroller_hotspot = {
+				area_size = horizontal_scrollbar and not not {
+					math.max((1 - scroll_size / (scroll_size + area_size[1])) * area_size[1], 40),
+					18
+				} or not horizontal_scrollbar and not not {
+					18,
+					math.max((1 - scroll_size / (scroll_size + area_size[2])) * area_size[2], 40)
+				},
+				vertical_alignment = horizontal_scrollbar and not not "bottom" or not horizontal_scrollbar and not not "top",
+				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				offset = horizontal_scrollbar and not not {
+					0,
+					-1,
+					102
+				} or not horizontal_scrollbar and not not {
+					(left_aligned and not not -1 or not left_aligned and not not 1) * 9,
+					0,
+					102
+				}
+			},
+			scrollbar_hotspot = {
+				vertical_alignment = "bottom",
+				area_size = horizontal_scrollbar and not not {
+					area_size[1] + 2,
+					22
+				} or not horizontal_scrollbar and not not {
+					22,
+					area_size[2] + 2
+				},
+				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				offset = horizontal_scrollbar and not not {
+					-1,
+					1,
+					101
+				} or not horizontal_scrollbar and not not {
+					(left_aligned and not not -1 or not left_aligned and not not 1) * 11,
+					-1,
+					101
+				}
+			},
+			scroller = {
+				corner_radius = 4,
+				rect_size = horizontal_scrollbar and not not {
+					math.max((1 - scroll_size / (scroll_size + area_size[1])) * area_size[1], 40),
+					8
+				} or not horizontal_scrollbar and not not {
+					8,
+					math.max((1 - scroll_size / (scroll_size + area_size[2])) * area_size[2], 40)
+				},
+				vertical_alignment = horizontal_scrollbar and not not "bottom" or not horizontal_scrollbar and not not "top",
+				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				color = {
+					128,
+					255,
+					255,
+					255
+				},
+				offset = horizontal_scrollbar and not not {
+					0,
+					6,
+					102
+				} or not horizontal_scrollbar and not not {
+					(left_aligned and not not -1 or not left_aligned and not not 1) * 4,
+					0,
+					102
+				}
+			},
+			scrollbar_bg = {
+				vertical_alignment = "bottom",
+				corner_radius = 4,
+				rect_size = horizontal_scrollbar and not not {
+					area_size[1],
+					10
+				} or not horizontal_scrollbar and not not {
+					10,
+					area_size[2]
+				},
+				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				color = {
+					255,
+					0,
+					0,
+					0
+				},
+				offset = horizontal_scrollbar and not not {
+					0,
+					5,
+					101
+				} or not horizontal_scrollbar and not not {
+					(left_aligned and not not -1 or not left_aligned and not not 1) * 5,
+					0,
+					101
+				}
+			},
+			scrollbar_bg_bg = {
+				vertical_alignment = "bottom",
+				corner_radius = 4,
+				rect_size = horizontal_scrollbar and not not {
+					area_size[1] + 2,
+					12
+				} or not horizontal_scrollbar and not not {
+					12,
+					area_size[2] + 2
+				},
+				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				color = {
+					128,
+					255,
+					255,
+					255
+				},
+				offset = horizontal_scrollbar and not not {
+					-1,
+					4,
+					100
+				} or not horizontal_scrollbar and not not {
+					(left_aligned and not not -1 or not left_aligned and not not 1) * 6,
+					-1,
+					100
+				}
+			}
+		},
+		offset = {
 			0,
-			16.5,
-			103
-		}
-
-		if not tbl_4 then
-			-- Nothing
-		end
-	end
-
-	tbl_4 = {
-		nil,
-		0,
-		103
-	}
-
-	do
-		local flag_3
-
-		flag_3 = (not left_aligned or not -1) and not not 1
-		tbl_4[1] = flag_3 * 16
-	end
-
-	::label_1_0::
-
-	tbl_3.offset = tbl_4
-	tbl_2.gamepad_input = tbl_3
-
-	local tbl_5 = {}
-	local tbl_6
-
-	if horizontal_scrollbar then
-		tbl_6 = {
-			math.max((1 - scroll_size / (scroll_size + area_size[1])) * area_size[1], 40),
-			18
-		}
-
-		if not tbl_6 then
-			-- Nothing
-		end
-	end
-
-	tbl_6 = {
-		18,
-		math.max((1 - scroll_size / (scroll_size + area_size[2])) * area_size[2], 40)
-	}
-
-	::label_1_1::
-
-	tbl_5.area_size = tbl_6
-
-	local flag_4
-
-	flag_4 = (not horizontal_scrollbar or not "bottom") and not not "top"
-	tbl_5.vertical_alignment = flag_4
-
-	local flag_5
-
-	flag_5 = (not horizontal_scrollbar or not "left") and not not left_aligned or not not "right"
-	tbl_5.horizontal_alignment = flag_5
-
-	local tbl_7
-
-	if horizontal_scrollbar then
-		tbl_7 = {
 			0,
-			-1,
-			102
-		}
-
-		if not tbl_7 then
-			-- Nothing
-		end
-	end
-
-	tbl_7 = {
-		nil,
-		0,
-		102
-	}
-
-	do
-		local flag_6
-
-		flag_6 = (not left_aligned or not -1) and not not 1
-		tbl_7[1] = flag_6 * 9
-	end
-
-	::label_1_2::
-
-	tbl_5.offset = tbl_7
-	tbl_2.scroller_hotspot = tbl_5
-
-	local tbl_8 = {
-		vertical_alignment = "bottom"
-	}
-	local tbl_9
-
-	if horizontal_scrollbar then
-		tbl_9 = {
-			area_size[1] + 2,
-			22
-		}
-
-		if not tbl_9 then
-			-- Nothing
-		end
-	end
-
-	tbl_9 = {
-		22,
-		area_size[2] + 2
-	}
-
-	::label_1_3::
-
-	tbl_8.area_size = tbl_9
-
-	local flag_7
-
-	flag_7 = (not horizontal_scrollbar or not "left") and not not left_aligned or not not "right"
-	tbl_8.horizontal_alignment = flag_7
-
-	local tbl_10
-
-	if horizontal_scrollbar then
-		tbl_10 = {
-			-1,
-			1,
-			101
-		}
-
-		if not tbl_10 then
-			-- Nothing
-		end
-	end
-
-	tbl_10 = {
-		nil,
-		-1,
-		101
-	}
-
-	do
-		local flag_8
-
-		flag_8 = (not left_aligned or not -1) and not not 1
-		tbl_10[1] = flag_8 * 11
-	end
-
-	::label_1_4::
-
-	tbl_8.offset = tbl_10
-	tbl_2.scrollbar_hotspot = tbl_8
-
-	local tbl_11 = {
-		corner_radius = 4
-	}
-	local tbl_12
-
-	if horizontal_scrollbar then
-		tbl_12 = {
-			math.max((1 - scroll_size / (scroll_size + area_size[1])) * area_size[1], 40),
-			8
-		}
-
-		if not tbl_12 then
-			-- Nothing
-		end
-	end
-
-	tbl_12 = {
-		8,
-		math.max((1 - scroll_size / (scroll_size + area_size[2])) * area_size[2], 40)
-	}
-
-	::label_1_5::
-
-	tbl_11.rect_size = tbl_12
-
-	local flag_9
-
-	flag_9 = (not horizontal_scrollbar or not "bottom") and not not "top"
-	tbl_11.vertical_alignment = flag_9
-
-	local flag_10
-
-	flag_10 = (not horizontal_scrollbar or not "left") and not not left_aligned or not not "right"
-	tbl_11.horizontal_alignment = flag_10
-	tbl_11.color = {
-		128,
-		255,
-		255,
-		255
-	}
-
-	local tbl_13
-
-	if horizontal_scrollbar then
-		tbl_13 = {
-			0,
-			6,
-			102
-		}
-
-		if not tbl_13 then
-			-- Nothing
-		end
-	end
-
-	tbl_13 = {
-		nil,
-		0,
-		102
-	}
-
-	do
-		local flag_11
-
-		flag_11 = (not left_aligned or not -1) and not not 1
-		tbl_13[1] = flag_11 * 4
-	end
-
-	::label_1_6::
-
-	tbl_11.offset = tbl_13
-	tbl_2.scroller = tbl_11
-
-	local tbl_14 = {
-		vertical_alignment = "bottom",
-		corner_radius = 4
-	}
-	local tbl_15
-
-	if horizontal_scrollbar then
-		tbl_15 = {
-			area_size[1],
-			10
-		}
-
-		if not tbl_15 then
-			-- Nothing
-		end
-	end
-
-	tbl_15 = {
-		10,
-		area_size[2]
-	}
-
-	::label_1_7::
-
-	tbl_14.rect_size = tbl_15
-
-	local flag_12
-
-	flag_12 = (not horizontal_scrollbar or not "left") and not not left_aligned or not not "right"
-	tbl_14.horizontal_alignment = flag_12
-	tbl_14.color = {
-		255,
-		0,
-		0,
-		0
-	}
-
-	local tbl_16
-
-	if horizontal_scrollbar then
-		tbl_16 = {
-			0,
-			5,
-			101
-		}
-
-		if not tbl_16 then
-			-- Nothing
-		end
-	end
-
-	tbl_16 = {
-		nil,
-		0,
-		101
-	}
-
-	do
-		local flag_13
-
-		flag_13 = (not left_aligned or not -1) and not not 1
-		tbl_16[1] = flag_13 * 5
-	end
-
-	::label_1_8::
-
-	tbl_14.offset = tbl_16
-	tbl_2.scrollbar_bg = tbl_14
-
-	local tbl_17 = {
-		vertical_alignment = "bottom",
-		corner_radius = 4
-	}
-	local tbl_18
-
-	if horizontal_scrollbar then
-		tbl_18 = {
-			area_size[1] + 2,
-			12
-		}
-
-		if not tbl_18 then
-			-- Nothing
-		end
-	end
-
-	tbl_18 = {
-		12,
-		area_size[2] + 2
-	}
-
-	::label_1_9::
-
-	tbl_17.rect_size = tbl_18
-
-	local flag_14
-
-	flag_14 = (not horizontal_scrollbar or not "left") and not not left_aligned or not not "right"
-	tbl_17.horizontal_alignment = flag_14
-	tbl_17.color = {
-		128,
-		255,
-		255,
-		255
-	}
-
-	local tbl_19
-
-	if horizontal_scrollbar then
-		tbl_19 = {
-			-1,
-			4,
 			100
-		}
-
-		if not tbl_19 then
-			-- Nothing
-		end
-	end
-
-	tbl_19 = {
-		nil,
-		-1,
-		100
+		},
+		scenegraph_id = scenegraph_id
 	}
-
-	do
-		local flag_15
-
-		flag_15 = (not left_aligned or not -1) and not not 1
-		tbl_19[1] = flag_15 * 6
-	end
-
-	::label_1_10::
-
-	tbl_17.offset = tbl_19
-	tbl_2.scrollbar_bg_bg = tbl_17
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		100
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local widget_func_definitions = {

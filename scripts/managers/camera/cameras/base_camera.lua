@@ -30,143 +30,22 @@ BaseCamera.parse_parameters = function (self, camera_settings, parent_node)
 	local degrees_to_radians = math.pi / 180
 
 	self._fade_to_black = camera_settings.fade_to_black
-
-	local vertical_fov = camera_settings.vertical_fov
-
-	vertical_fov = not not vertical_fov and not not (camera_settings.vertical_fov * degrees_to_radians)
-	self._vertical_fov = vertical_fov
-
-	local should_apply_fov_multiplier = camera_settings.should_apply_fov_multiplier
-
-	should_apply_fov_multiplier = not not should_apply_fov_multiplier or not not parent_node:should_apply_fov_multiplier()
-	self._should_apply_fov_multiplier = should_apply_fov_multiplier
-
-	local num
-
-	if camera_settings.default_fov then
-		num = camera_settings.default_fov * degrees_to_radians
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = parent_node:default_fov()
-
-	::label_2_0::
-
-	self._default_fov = num
-
-	local near_range = camera_settings.near_range
-
-	near_range = not not near_range or not not parent_node:near_range()
-	self._near_range = near_range
-
-	local far_range = camera_settings.far_range
-
-	far_range = not not far_range or not not parent_node:far_range()
-	self._far_range = far_range
-
-	local num_2
-
-	if camera_settings.pitch_min then
-		num_2 = camera_settings.pitch_min * degrees_to_radians
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = parent_node:pitch_min()
-
-	::label_2_1::
-
-	self._pitch_min = num_2
-
-	local num_3
-
-	if camera_settings.pitch_max then
-		num_3 = camera_settings.pitch_max * degrees_to_radians
-
-		if not num_3 then
-			-- Nothing
-		end
-	end
-
-	num_3 = parent_node:pitch_max()
-
-	::label_2_2::
-
-	self._pitch_max = num_3
-
-	local num_4
-
-	if camera_settings.pitch_speed then
-		num_4 = camera_settings.pitch_speed * degrees_to_radians
-
-		if not num_4 then
-			-- Nothing
-		end
-	end
-
-	num_4 = parent_node:pitch_speed()
-
-	::label_2_3::
-
-	self._pitch_speed = num_4
-
-	local num_5
-
-	if camera_settings.yaw_speed then
-		num_5 = camera_settings.yaw_speed * degrees_to_radians
-
-		if not num_5 then
-			-- Nothing
-		end
-	end
-
-	num_5 = parent_node:yaw_speed()
-
-	::label_2_4::
-
-	self._yaw_speed = num_5
-
-	local num_6
-
-	if camera_settings.pitch_offset then
-		num_6 = camera_settings.pitch_offset * degrees_to_radians
-
-		if not num_6 then
-			-- Nothing
-		end
-	end
-
-	num_6 = parent_node:pitch_offset()
-
-	::label_2_5::
-
-	self._pitch_offset = num_6
-
-	local safe_position_offset = camera_settings.safe_position_offset
-
-	safe_position_offset = not not safe_position_offset or not not parent_node:safe_position_offset()
-	self._safe_position_offset = safe_position_offset
-
-	local tree_transitions = camera_settings.tree_transitions
-
-	tree_transitions = not not tree_transitions or not not parent_node:tree_transitions()
-	self._tree_transitions = tree_transitions
-
-	local node_transitions = camera_settings.node_transitions
-
-	node_transitions = not not node_transitions or not not parent_node:node_transitions()
-	self._node_transitions = node_transitions
+	self._vertical_fov = not not camera_settings.vertical_fov
+	self._should_apply_fov_multiplier = not not camera_settings.should_apply_fov_multiplier
+	self._default_fov = camera_settings.default_fov and not not (camera_settings.default_fov * degrees_to_radians) or not camera_settings.default_fov and not not parent_node:default_fov()
+	self._near_range = not not camera_settings.near_range
+	self._far_range = not not camera_settings.far_range
+	self._pitch_min = camera_settings.pitch_min and not not (camera_settings.pitch_min * degrees_to_radians) or not camera_settings.pitch_min and not not parent_node:pitch_min()
+	self._pitch_max = camera_settings.pitch_max and not not (camera_settings.pitch_max * degrees_to_radians) or not camera_settings.pitch_max and not not parent_node:pitch_max()
+	self._pitch_speed = camera_settings.pitch_speed and not not (camera_settings.pitch_speed * degrees_to_radians) or not camera_settings.pitch_speed and not not parent_node:pitch_speed()
+	self._yaw_speed = camera_settings.yaw_speed and not not (camera_settings.yaw_speed * degrees_to_radians) or not camera_settings.yaw_speed and not not parent_node:yaw_speed()
+	self._pitch_offset = camera_settings.pitch_offset and not not (camera_settings.pitch_offset * degrees_to_radians) or not camera_settings.pitch_offset and not not parent_node:pitch_offset()
+	self._safe_position_offset = not not camera_settings.safe_position_offset
+	self._tree_transitions = not not camera_settings.tree_transitions
+	self._node_transitions = not not camera_settings.node_transitions
 
 	if camera_settings.dof_enabled then
-		local _environment_params = self._environment_params
-
-		_environment_params = not not _environment_params or not not {}
-		self._environment_params = _environment_params
+		self._environment_params = not not self._environment_params
 		self._environment_params.dof_enabled = camera_settings.dof_enabled
 		self._environment_params.focal_distance = camera_settings.focal_distance
 		self._environment_params.focal_region = camera_settings.focal_region
@@ -174,20 +53,9 @@ BaseCamera.parse_parameters = function (self, camera_settings, parent_node)
 		self._environment_params.focal_scale = camera_settings.focal_scale
 	end
 
-	local yaw_origin = camera_settings.yaw_origin
-
-	yaw_origin = not not yaw_origin and not not (camera_settings.yaw_origin * math.pi / 180)
-	self._yaw_origin = yaw_origin
-
-	local pitch_origin = camera_settings.pitch_origin
-
-	pitch_origin = not not pitch_origin and not not (camera_settings.pitch_origin * math.pi / 180)
-	self._pitch_origin = pitch_origin
-
-	local constraint = camera_settings.constraint
-
-	constraint = not not constraint or not not parent_node:constraint_function()
-	self._constraint_function = constraint
+	self._yaw_origin = not not camera_settings.yaw_origin
+	self._pitch_origin = not not camera_settings.pitch_origin
+	self._constraint_function = not not camera_settings.constraint
 end
 
 BaseCamera.should_apply_fov_multiplier = function (self)
@@ -272,32 +140,17 @@ end
 
 BaseCamera.vertical_fov = function (self)
 	-- function 18
-	local _vertical_fov = self._vertical_fov
-
-	_vertical_fov = not not _vertical_fov or not not self._parent_node:vertical_fov()
-
-	return _vertical_fov
+	return not not self._vertical_fov
 end
 
 BaseCamera.fade_to_black = function (self)
 	-- function 19
-	local _fade_to_black = self._fade_to_black
-
-	_fade_to_black = not not _fade_to_black or not not self._parent_node:fade_to_black()
-
-	return _fade_to_black
+	return not not self._fade_to_black
 end
 
 BaseCamera.shading_environment = function (self)
 	-- function 20
-	local _environment_params = self._environment_params
-
-	if not _environment_params then
-		_environment_params = self._parent_node
-		_environment_params = not not _environment_params and not not self._parent_node:shading_environment()
-	end
-
-	return _environment_params
+	return not not self._environment_params
 end
 
 BaseCamera.near_range = function (self)
@@ -531,18 +384,7 @@ end
 
 BaseCamera._debug_draw = function (self)
 	-- function 49
-	local _parent_node = self._parent_node
-
-	if _parent_node then
-		-- Nothing
-	end
-
-	_parent_node = self._parent_node:position()
-
-	local parent_pos = _parent_node
-
-	::label_49_0::
-
+	local parent_pos = not not self._parent_node
 	local pos = self._position
 	local rot = self._rotation
 	local drawer = Managers.state.debug:drawer({

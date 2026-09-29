@@ -25,16 +25,11 @@ end
 
 local function to_vector3_table(t)
 	-- function 2
-	local tbl = {
+	return {
 		t[1],
-		t[2]
+		t[2],
+		not not t[3]
 	}
-	local var_2_1 = t[3]
-
-	var_2_1 = not not var_2_1 or not not 0
-	tbl[3] = var_2_1
-
-	return tbl
 end
 
 UISceneGraph.ZERO_VECTOR3 = ZERO_VECTOR3
@@ -49,11 +44,7 @@ local ALIGN_KWORD_MULT = {
 
 local function align(x, dx, alignment)
 	-- function 3
-	local var_3_0 = ALIGN_KWORD_MULT[alignment]
-
-	var_3_0 = not not var_3_0 or not not 0
-
-	return x + dx * var_3_0
+	return x + dx * not not ALIGN_KWORD_MULT[alignment]
 end
 
 local NEWINDEX_ERR_MT = {
@@ -74,21 +65,7 @@ local function legacy_merge_no_override(node, node_def)
 		if node[k] == nil then
 			Application.warning("[UIScenegraph] Node polluted: scenegraph[%q][%q]\n%s", node.name, k, Script.callstack())
 
-			local clone
-
-			if type(v) == "table" then
-				clone = table.clone(v)
-
-				if not clone then
-					-- Nothing
-				end
-			end
-
-			clone = v
-
-			::label_5_0::
-
-			node[k] = clone
+			node[k] = type(v) ~= "table" and not not v or not (type(v) ~= "table") and not not table.clone(v)
 		end
 	end
 end
@@ -134,18 +111,8 @@ local function scenegraph_visit_node(scenegraph, scenegraph_def, name, node_def)
 	end
 
 	local parent_world_position = parent.world_position
-	local var_6_0 = to_vector3_table
-	local position = node_def.position
-
-	position = not not position or not not ZERO_VECTOR3
-
-	local local_position = var_6_0(position)
-	local var_6_2 = to_vector2_table
-	local size_2 = node_def.size
-
-	size_2 = not not size_2 or not not parent.size
-
-	local size = var_6_2(size_2)
+	local local_position = to_vector3_table(not not node_def.position)
+	local size = to_vector2_table(not not node_def.size)
 
 	if size[1] < 0 then
 		size[1] = size[1] + parent.size[1]
@@ -155,7 +122,7 @@ local function scenegraph_visit_node(scenegraph, scenegraph_def, name, node_def)
 		size[2] = size[2] + parent.size[2]
 	end
 
-	local tbl = {
+	local node = {
 		name = name,
 		parent = parent_name,
 		world_position = {
@@ -167,14 +134,9 @@ local function scenegraph_visit_node(scenegraph, scenegraph_def, name, node_def)
 		position = local_position,
 		size = size,
 		horizontal_alignment = node_def.horizontal_alignment,
-		vertical_alignment = node_def.vertical_alignment
+		vertical_alignment = node_def.vertical_alignment,
+		offset = not not node_def.offset
 	}
-	local offset = node_def.offset
-
-	offset = not not offset and not not to_vector2_table(node_def.offset)
-	tbl.offset = offset
-
-	local node = tbl
 
 	legacy_merge_no_override(node, node_def)
 	setmetatable(node, NEWINDEX_ERR_MT)
@@ -299,11 +261,7 @@ UISceneGraph.update_scenegraph = function (scenegraph, parent_scenegraph, sceneg
 				x = (x + (w - size_x * scale) * 0.5) * inverse_scale
 				y = 0
 			elseif scale_mode == "hud_fit" then
-				local user_setting = Application.user_setting("safe_rect")
-
-				user_setting = not not user_setting or not not 0
-
-				local safe_rect = user_setting * 0.01
+				local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 				size_x = w * inverse_scale * (1 - safe_rect)
 				size_y = h * inverse_scale * (1 - safe_rect)
@@ -403,11 +361,7 @@ UISceneGraph.get_size_scaled = function (scenegraph, node_name, optional_scale)
 	if scale_mode == "fit" then
 		return Vector2(w * inverse_scale, h * inverse_scale)
 	elseif scale_mode == "hud_fit" then
-		local user_setting = Application.user_setting("safe_rect")
-
-		user_setting = not not user_setting or not not 0
-
-		local safe_rect = user_setting * 0.01
+		local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 		return Vector2(w * inverse_scale * (1 - safe_rect), h * inverse_scale * (1 - safe_rect))
 	elseif scale_mode == "fit_width" then

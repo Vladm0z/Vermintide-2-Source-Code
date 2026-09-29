@@ -443,11 +443,7 @@ local function create_level_widget(scenegraph_id, optional_offset)
 			texture_id = "icon_glow",
 			content_check_function = function (content)
 				-- function 10
-				local is_hover = content.button_hotspot.is_hover
-
-				is_hover = not not is_hover or not not content.button_hotspot.is_selected
-
-				return is_hover
+				return not not content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -511,14 +507,7 @@ local function create_level_widget(scenegraph_id, optional_offset)
 			texture_id = "path_glow",
 			content_check_function = function (content)
 				-- function 16
-				local draw_path = content.draw_path
-
-				if draw_path then
-					draw_path = content.draw_path_fill
-					draw_path = not not draw_path and not not not content.locked
-				end
-
-				return draw_path
+				return not not content.draw_path
 			end
 		},
 		{

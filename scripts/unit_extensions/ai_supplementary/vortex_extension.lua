@@ -32,17 +32,7 @@ VortexExtension.init = function (self, extension_init_context, unit, extension_i
 	local rotation = Unit.local_rotation(unit, 0)
 	local inner_pose = Matrix4x4.from_quaternion(rotation)
 	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
-	local inner_fx_z_scale_multiplier_2 = vortex_template.inner_fx_z_scale_multiplier
-
-	if not inner_fx_z_scale_multiplier_2 then
-		-- Nothing
-	end
-
-	inner_fx_z_scale_multiplier_2 = 1
-
-	local inner_fx_z_scale_multiplier = inner_fx_z_scale_multiplier_2
-
-	::label_1_0::
+	local inner_fx_z_scale_multiplier = not not vortex_template.inner_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
 	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
@@ -53,17 +43,7 @@ VortexExtension.init = function (self, extension_init_context, unit, extension_i
 	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
 	local outer_pose = Matrix4x4.from_quaternion(rotation)
 	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
-	local outer_fx_z_scale_multiplier_2 = vortex_template.outer_fx_z_scale_multiplier
-
-	if not outer_fx_z_scale_multiplier_2 then
-		-- Nothing
-	end
-
-	outer_fx_z_scale_multiplier_2 = 1
-
-	local outer_fx_z_scale_multiplier = outer_fx_z_scale_multiplier_2
-
-	::label_1_1::
+	local outer_fx_z_scale_multiplier = not not vortex_template.outer_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
 	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
@@ -103,10 +83,7 @@ VortexExtension.init = function (self, extension_init_context, unit, extension_i
 		self._use_nav_cost_map_volumes = true
 	end
 
-	local owner_unit = extension_init_data.owner_unit
-
-	owner_unit = not not owner_unit or not not unit
-	self._owner_unit = owner_unit
+	self._owner_unit = not not extension_init_data.owner_unit
 end
 
 VortexExtension._create_nav_cost_maps = function (self, ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
@@ -140,7 +117,8 @@ VortexExtension.extensions_ready = function (self, world, unit)
 	local time_manager = Managers.time
 	local t = time_manager:time("game")
 	local max_size = NUMBER_OF_RAYCASTS
-	local tbl = {
+
+	blackboard.vortex_data = {
 		idle_time = 0,
 		height = 5,
 		inner_radius = 2,
@@ -154,30 +132,26 @@ VortexExtension.extensions_ready = function (self, world, unit)
 		ai_units_inside = {},
 		players_inside = {},
 		players_ejected = {},
-		physics_world = World.get_data(world, "physics_world")
+		physics_world = World.get_data(world, "physics_world"),
+		wander_state = vortex_template.forced_standing_still and not not "forced_standing_still" or not vortex_template.forced_standing_still and not not "recalc_path",
+		wanted_height = vortex_template.max_height,
+		height_ring_buffer = {
+			write_index = 1,
+			buffer = Script.new_array(max_size),
+			max_size = max_size
+		},
+		fx_radius = vortex_template.start_radius,
+		wanted_inner_radius = vortex_template.full_inner_radius,
+		wanted_fx_radius = vortex_template.full_fx_radius,
+		inner_radius_ring_buffer = {
+			write_index = 1,
+			buffer = Script.new_array(max_size),
+			max_size = max_size
+		},
+		windup_time = t + vortex_template.windup_time,
+		time_of_death = t + ConflictUtils.random_interval(vortex_template.time_of_life),
+		vortex_template = vortex_template
 	}
-	local flag
-
-	flag = (not vortex_template.forced_standing_still or not "forced_standing_still") and not not "recalc_path"
-	tbl.wander_state = flag
-	tbl.wanted_height = vortex_template.max_height
-	tbl.height_ring_buffer = {
-		write_index = 1,
-		buffer = Script.new_array(max_size),
-		max_size = max_size
-	}
-	tbl.fx_radius = vortex_template.start_radius
-	tbl.wanted_inner_radius = vortex_template.full_inner_radius
-	tbl.wanted_fx_radius = vortex_template.full_fx_radius
-	tbl.inner_radius_ring_buffer = {
-		write_index = 1,
-		buffer = Script.new_array(max_size),
-		max_size = max_size
-	}
-	tbl.windup_time = t + vortex_template.windup_time
-	tbl.time_of_death = t + ConflictUtils.random_interval(vortex_template.time_of_life)
-	tbl.vortex_template = vortex_template
-	blackboard.vortex_data = tbl
 
 	local locomotion_extension = blackboard.locomotion_extension
 
@@ -191,17 +165,7 @@ VortexExtension.extensions_ready = function (self, world, unit)
 		navigation_extension:set_max_speed(vortex_template.override_movement_speed)
 	end
 
-	local start_sound_event_name_2 = vortex_template.start_sound_event_name
-
-	if not start_sound_event_name_2 then
-		-- Nothing
-	end
-
-	start_sound_event_name_2 = "Play_enemy_sorcerer_vortex_loop"
-
-	local start_sound_event_name = start_sound_event_name_2
-
-	::label_3_0::
+	local start_sound_event_name = not not vortex_template.start_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
@@ -257,17 +221,7 @@ VortexExtension.destroy = function (self)
 				locomotion_extension:set_affected_by_gravity(true)
 				locomotion_extension:set_movement_type("constrained_by_mover")
 
-				local ejected_from_vortex_2 = target_blackboard.ejected_from_vortex
-
-				if not ejected_from_vortex_2 then
-					-- Nothing
-				end
-
-				ejected_from_vortex_2 = Vector3Box()
-
-				local ejected_from_vortex = ejected_from_vortex_2
-
-				::label_4_0::
+				local ejected_from_vortex = not not target_blackboard.ejected_from_vortex
 
 				ejected_from_vortex:store(velocity)
 
@@ -294,17 +248,7 @@ VortexExtension.destroy = function (self)
 	blackboard.vortex_data = nil
 
 	local world = self.world
-	local stop_sound_event_name_2 = self.vortex_template.stop_sound_event_name
-
-	if not stop_sound_event_name_2 then
-		-- Nothing
-	end
-
-	stop_sound_event_name_2 = "Stop_enemy_sorcerer_vortex_loop"
-
-	local stop_sound_event_name = stop_sound_event_name_2
-
-	::label_4_1::
+	local stop_sound_event_name = not not self.vortex_template.stop_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 
@@ -433,7 +377,7 @@ VortexExtension._update_height = function (self, unit, t, dt, vortex_template, v
 	local current_height = vortex_data.height
 	local max_height = vortex_template.max_height - check_z_offset
 	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, ray_source, Vector3.up(), max_height, "closest", "collision_filter", "filter_ai_mover")
-	local new_height = (not hit or not hit_distance) and not not max_height
+	local new_height = hit and (not not hit_distance or not not max_height) or not hit and not not max_height
 
 	new_height = math.max(new_height, 4)
 
@@ -538,22 +482,7 @@ VortexExtension._update_radius = function (self, unit, t, dt, nav_world, travers
 	if wanted_fx_radius ~= current_fx_radius then
 		local start_lerp_fx_radius = vortex_data.start_lerp_fx_radius
 		local current_lerp_value = math.abs(current_fx_radius - start_lerp_fx_radius) / math.abs(wanted_fx_radius - start_lerp_fx_radius)
-		local var_9_0
-
-		if current_fx_radius < wanted_fx_radius then
-			var_9_0 = INCREASE_RADIUS_LERP_PROGRESS_PER_SECOND
-
-			if not var_9_0 then
-				-- Nothing
-			end
-		end
-
-		var_9_0 = DECREASE_RADIUS_LERP_PROGRESS_PER_SECOND
-
-		local lerp_constant = var_9_0
-
-		::label_9_0::
-
+		local lerp_constant = current_fx_radius < wanted_fx_radius and not not INCREASE_RADIUS_LERP_PROGRESS_PER_SECOND or not (current_fx_radius < wanted_fx_radius) and not not DECREASE_RADIUS_LERP_PROGRESS_PER_SECOND
 		local new_lerp_value = math.clamp(current_lerp_value + dt * lerp_constant, 0, 1)
 
 		vortex_data.fx_radius = math.lerp(start_lerp_fx_radius, wanted_fx_radius, new_lerp_value)
@@ -617,18 +546,7 @@ VortexExtension._update_attract_players = function (self, unit, blackboard, vort
 			local player_blackboard = BLACKBOARDS[player_unit]
 			local player_breed = player_blackboard.breed
 			local target_status_extension = ScriptUnit.extension(player_unit, "status_system")
-			local vortexable = player_breed.vortexable
-
-			if vortexable then
-				-- Nothing
-			end
-
-			vortexable = target_status_extension:is_valid_vortex_target()
-
-			local valid_vortex_target = vortexable
-
-			::label_11_0::
-
+			local valid_vortex_target = not not player_breed.vortexable
 			local locomotion_extension = ScriptUnit.extension(player_unit, "locomotion_system")
 			local player_position = position_lookup[player_unit]
 			local suck_dir = center_pos - player_position
@@ -805,17 +723,7 @@ VortexExtension._update_attract_inside_ai = function (self, blackboard, vortex_d
 				locomotion_extension:set_wanted_velocity(velocity)
 
 				if new_height > target_blackboard.eject_height or vortex_height < new_height or allowed_distance < new_radius then
-					local ejected_from_vortex_2 = target_blackboard.ejected_from_vortex
-
-					if not ejected_from_vortex_2 then
-						-- Nothing
-					end
-
-					ejected_from_vortex_2 = Vector3Box()
-
-					local ejected_from_vortex = ejected_from_vortex_2
-
-					::label_13_0::
+					local ejected_from_vortex = not not target_blackboard.ejected_from_vortex
 
 					ejected_from_vortex:store(velocity)
 

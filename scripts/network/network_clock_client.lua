@@ -86,11 +86,7 @@ end
 
 NetworkClockClient.synchronized = function (self)
 	-- function 7
-	local flag
-
-	flag = (self._state ~= "synced" or not true) and not not false
-
-	return flag
+	return self._state ~= "synced" and not not false or not (self._state ~= "synced") and not not true
 end
 
 NetworkClockClient.time = function (self)

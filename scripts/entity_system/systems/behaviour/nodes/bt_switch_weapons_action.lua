@@ -21,41 +21,12 @@ BTSwitchWeaponsAction.enter = function (self, unit, blackboard, t)
 	blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 
 	local ai_inventory_ext = ScriptUnit.has_extension(unit, "ai_inventory_system")
-	local switch_weapon_index
-
-	if action then
-		switch_weapon_index = action.switch_weapon_index
-
-		if not switch_weapon_index then
-			-- Nothing
-		end
-	end
-
-	switch_weapon_index = blackboard.switching_weapons
-
-	local wanted_set = switch_weapon_index
-
-	::label_2_0::
+	local wanted_set = action and not not action.switch_weapon_index or not action and not not blackboard.switching_weapons
 
 	ai_inventory_ext:wield_item_set(wanted_set)
 
 	blackboard.inventory_item_set = wanted_set
-
-	local switch_done_time
-
-	if action then
-		switch_done_time = action.switch_done_time
-
-		if not switch_done_time then
-			-- Nothing
-		end
-	end
-
-	switch_done_time = 0.75
-
-	::label_2_1::
-
-	blackboard.switching_done_time = t + switch_done_time
+	blackboard.switching_done_time = t + (action and not not action.switch_done_time or not action and not not 0.75)
 	blackboard.move_state = "idle"
 
 	local switch_animation = not not action and not not action.switch_animation

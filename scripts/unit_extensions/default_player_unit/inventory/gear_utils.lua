@@ -57,17 +57,7 @@ GearUtils.create_equipment = function (world, slot_name, item_data, unit_1p, uni
 	local is_ammo_weapon = item_units.is_ammo_weapon
 
 	if is_ammo_weapon then
-		local material_settings_name_2 = item_units.material_settings_name
-
-		if not material_settings_name_2 then
-			-- Nothing
-		end
-
-		material_settings_name_2 = item_template.material_settings_name
-
-		local material_settings_name = material_settings_name_2
-
-		::label_1_0::
+		local material_settings_name = not not item_units.material_settings_name
 
 		if material_settings_name then
 			if right_hand_ammo_unit_3p then
@@ -183,24 +173,7 @@ GearUtils.spawn_inventory_unit = function (world, hand, item_template, item_unit
 	end
 
 	local attachment_node_linking_3p = node_linking_settings.third_person.wielded
-	local third_person_extension_template = item_data.third_person_extension_template
-
-	if not third_person_extension_template then
-		-- Nothing
-	end
-
-	third_person_extension_template = item_template.third_person_extension_template
-
-	if not third_person_extension_template then
-		-- Nothing
-	end
-
-	third_person_extension_template = "weapon_unit_3p"
-
-	local unit_template_3p_name = third_person_extension_template
-
-	::label_3_0::
-
+	local unit_template_3p_name = not not item_data.third_person_extension_template
 	local extension_init_data_3p
 
 	if owner_unit_1p then
@@ -278,9 +251,9 @@ GearUtils.spawn_inventory_unit = function (world, hand, item_template, item_unit
 				ammo_unit_1p = GearUtils._attach_ammo_unit(world, ammo_unit_name, ammo_unit_attachment_node_linking.first_person.wielded, owner_unit_1p)
 			end
 
-			unit_template_1p = (not default_spread_template or not "weapon_unit_ammo_spread") and not not "weapon_unit_ammo"
+			unit_template_1p = default_spread_template and (not not "weapon_unit_ammo_spread" or not not "weapon_unit_ammo") or not default_spread_template and not not "weapon_unit_ammo"
 		else
-			unit_template_1p = (not default_spread_template or not "weapon_unit_spread") and not not "weapon_unit"
+			unit_template_1p = default_spread_template and (not not "weapon_unit_spread" or not not "weapon_unit") or not default_spread_template and not not "weapon_unit"
 		end
 
 		if unit_template then
@@ -327,39 +300,8 @@ GearUtils.link_units = function (world, attachment_node_linking, link_table, sou
 	for i, attachment_nodes in ipairs(attachment_node_linking) do
 		local source_node = attachment_nodes.source
 		local target_node = attachment_nodes.target
-		local node
-
-		if type(source_node) == "string" then
-			node = Unit.node(source, source_node)
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = source_node
-
-		local source_node_index = node
-
-		do
-			local node_2
-		end
-
-		::label_6_0::
-
-		if type(target_node) == "string" then
-			node_2 = Unit.node(target, target_node)
-
-			if not node_2 then
-				-- Nothing
-			end
-		end
-
-		node_2 = target_node
-
-		local target_node_index = node_2
-
-		::label_6_1::
+		local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(source, source_node)
+		local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(target, target_node)
 
 		link_table[#link_table + 1] = {
 			unit = target,
@@ -468,7 +410,7 @@ GearUtils.destroy_slot = function (world, unit, slot_data, equipment, allow_dest
 	local item_data = slot_data.item_data
 	local slot_name = slot_data.id
 
-	fassert((not not allow_destroy_weapon or slot_name ~= "slot_ranged") and slot_name ~= "slot_melee", "Trying to destroy weapon without permission")
+	fassert(not not allow_destroy_weapon or slot_name ~= "slot_ranged" and slot_name ~= "slot_melee", "Trying to destroy weapon without permission")
 
 	if item_data == equipment.wielded then
 		GearUtils.destroy_equipment(world, equipment)
@@ -552,12 +494,7 @@ GearUtils.hot_join_sync = function (peer_id, unit, equipment, additional_items)
 			local slot_id = NetworkLookup.equipment_slots[slot_name]
 			local item_data = slot_data.item_data
 			local item_id = NetworkLookup.item_names[item_data.name]
-			local weapon_skins = NetworkLookup.weapon_skins
-			local skin = slot_data.skin
-
-			skin = not not skin or not not "n/a"
-
-			local weapon_skin_id = weapon_skins[skin]
+			local weapon_skin_id = NetworkLookup.weapon_skins[not not slot_data.skin]
 
 			RPC.rpc_add_equipment(channel_id, unit_object_id, slot_id, item_id, weapon_skin_id)
 		until true
@@ -682,37 +619,12 @@ GearUtils.get_property_and_trait_buffs = function (backend_items, backend_id, bu
 	local properties = not not item and not not item.properties
 
 	if properties then
-		local properties_2
-
-		if item.rarity == "magic" then
-			properties_2 = WeaveProperties.properties
-
-			if not properties_2 then
-				-- Nothing
-			end
-		end
-
-		properties_2 = WeaponProperties.properties
-
-		local properties_data = properties_2
-
-		::label_17_0::
+		local properties_data = item.rarity ~= "magic" and not not WeaponProperties.properties or not (item.rarity ~= "magic") and not not WeaveProperties.properties
 
 		for property_key, property_value in pairs(properties) do
 			local property_data = properties_data[property_key]
 			local buff_name = property_data.buff_name
-			local buffer_2 = property_data.buffer
-
-			if not buffer_2 then
-				-- Nothing
-			end
-
-			buffer_2 = "client"
-
-			local buffer = buffer_2
-
-			::label_17_1::
-
+			local buffer = not not property_data.buffer
 			local no_wield_required = property_data.no_wield_required
 
 			if BuffTemplates[buff_name] then
@@ -732,40 +644,15 @@ GearUtils.get_property_and_trait_buffs = function (backend_items, backend_id, bu
 	local traits = not not item and not not item.traits
 
 	if traits then
-		local traits_2
-
-		if item.rarity == "magic" then
-			traits_2 = WeaveTraits.traits
-
-			if not traits_2 then
-				-- Nothing
-			end
-		end
-
-		traits_2 = WeaponTraits.traits
-
-		local traits_data = traits_2
-
-		::label_17_2::
+		local traits_data = item.rarity ~= "magic" and not not WeaponTraits.traits or not (item.rarity ~= "magic") and not not WeaveTraits.traits
 
 		for _, trait_key in pairs(traits) do
 			local trait_data = traits_data[trait_key]
 			local buff_name = trait_data.buff_name
-			local buffer_3 = trait_data.buffer
-
-			if not buffer_3 then
-				-- Nothing
-			end
-
-			buffer_3 = "client"
-
-			local buffer = buffer_3
-
-			::label_17_3::
-
+			local buffer = not not trait_data.buffer
 			local no_wield_required = traits_data.no_wield_required
 
-			if BuffTemplates[buff_name] and (not only_no_wield_required or not no_wield_required) and not only_no_wield_required and not no_wield_required then
+			if BuffTemplates[buff_name] and (only_no_wield_required and (no_wield_required or not only_no_wield_required and not no_wield_required) or not only_no_wield_required and not only_no_wield_required and not no_wield_required) then
 				buffs_table[buffer][buff_name] = {
 					variable_value = 1
 				}
@@ -781,9 +668,9 @@ local function _get_item_particle_link_target(fx, equipment, unit_3p, unit_1p, i
 	local link_target
 
 	if fx.link_target == "left_weapon" then
-		link_target = (not is_first_person or not equipment.left_hand_wielded_unit) and not not equipment.left_hand_wielded_unit_3p
+		link_target = is_first_person and (not not equipment.left_hand_wielded_unit or not not equipment.left_hand_wielded_unit_3p) or not is_first_person and not not equipment.left_hand_wielded_unit_3p
 	elseif fx.link_target == "right_weapon" then
-		link_target = (not is_first_person or not equipment.right_hand_wielded_unit) and not not equipment.right_hand_wielded_unit_3p
+		link_target = is_first_person and (not not equipment.right_hand_wielded_unit or not not equipment.right_hand_wielded_unit_3p) or not is_first_person and not not equipment.right_hand_wielded_unit_3p
 	elseif fx.link_target == "owner_3p" then
 		link_target = unit_3p
 	elseif fx.link_target == "owner_1p" then
@@ -795,21 +682,7 @@ end
 
 local function _get_item_particle_link_node(fx, link_target)
 	-- function 19
-	local var_19_0
-
-	if fx.link_node then
-		var_19_0 = unit_node(link_target, fx.link_node)
-
-		if not var_19_0 then
-			-- Nothing
-		end
-	end
-
-	var_19_0 = 0
-
-	::label_19_0::
-
-	return var_19_0
+	return fx.link_node and not not unit_node(link_target, fx.link_node) or not fx.link_node and not not 0
 end
 
 GearUtils.create_attached_particles = function (world, particle_fx, equipment, unit_3p, unit_1p, is_first_person)
@@ -828,7 +701,7 @@ GearUtils.create_attached_particles = function (world, particle_fx, equipment, u
 	for i = 1, #particle_fx do
 		local fx = particle_fx[i]
 
-		if (not is_first_person or not fx.first_person) and not is_first_person and fx.third_person then
+		if not is_first_person and fx.third_person then
 			local link_target = _get_item_particle_link_target(fx, equipment, unit_3p, unit_1p, is_first_person)
 
 			if link_target then

@@ -20,52 +20,16 @@ BTAdvanceTowardsPlayersAction.enter = function (self, unit, blackboard, t)
 
 	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-	local throw_at_distance_2
+	local throw_at_distance = blackboard.has_thrown and not not action.throw_at_distance or not blackboard.has_thrown and not not action.throw_at_distance_first_time
+	local advance_towards_players = not not blackboard.advance_towards_players
 
-	if blackboard.has_thrown then
-		throw_at_distance_2 = action.throw_at_distance
-
-		if not throw_at_distance_2 then
-			-- Nothing
-		end
-	end
-
-	throw_at_distance_2 = action.throw_at_distance_first_time
-
-	local throw_at_distance = throw_at_distance_2
-
-	::label_2_0::
-
-	local advance_towards_players_2 = blackboard.advance_towards_players
-
-	if not advance_towards_players_2 then
-		-- Nothing
-	end
-
-	advance_towards_players_2 = {}
-
-	local advance_towards_players = advance_towards_players_2
-
-	::label_2_1::
-
-	local timer = advance_towards_players.timer
-
-	timer = not not timer or not not 0
-	advance_towards_players.timer = timer
+	advance_towards_players.timer = not not advance_towards_players.timer
 	advance_towards_players.time_before_throw_timer = 0
 	advance_towards_players.evaluate_timer = EVALUATE_TIME
-
-	local direction = advance_towards_players.direction
-
-	direction = not not direction or not not (1 - math.random(0, 1) * 2)
-	advance_towards_players.direction = direction
+	advance_towards_players.direction = not not advance_towards_players.direction
 	advance_towards_players.time_until_first_throw = AiUtils.random(action.time_until_first_throw[1], action.time_until_first_throw[2])
 	advance_towards_players.throw_at_distance = AiUtils.random(throw_at_distance[1], throw_at_distance[2])
-
-	local goal_get_fails = advance_towards_players.goal_get_fails
-
-	goal_get_fails = not not goal_get_fails or not not 0
-	advance_towards_players.goal_get_fails = goal_get_fails
+	advance_towards_players.goal_get_fails = not not advance_towards_players.goal_get_fails
 	blackboard.advance_towards_players = advance_towards_players
 
 	if blackboard.move_state ~= "idle" then
@@ -119,10 +83,8 @@ BTAdvanceTowardsPlayersAction.run = function (self, unit, blackboard, t, dt)
 	local breed = blackboard.breed
 	local action = blackboard.action
 	local advance_towards_players = blackboard.advance_towards_players
-	local flag
 
-	flag = (blackboard.times_thrown == 0 or not 0) and not not (advance_towards_players.evaluate_timer - dt)
-	advance_towards_players.evaluate_timer = flag
+	advance_towards_players.evaluate_timer = blackboard.times_thrown == 0 and not not (advance_towards_players.evaluate_timer - dt) or not (blackboard.times_thrown == 0) and not not 0
 	advance_towards_players.timer = advance_towards_players.timer + dt
 	advance_towards_players.time_before_throw_timer = advance_towards_players.time_before_throw_timer + dt
 
@@ -219,13 +181,7 @@ BTAdvanceTowardsPlayersAction._calculate_trajectory_to_target = function (self, 
 	local hit, angle, speed = WeaponHelper:calculate_trajectory(world, throw_pos, target_position, ProjectileGravitySettings.default, blackboard.breed.max_globe_throw_speed)
 
 	if hit then
-		local throw_globe_data = blackboard.throw_globe_data
-
-		throw_globe_data = not not throw_globe_data or not not {
-			throw_pos = Vector3Box(),
-			target_direction = Vector3Box()
-		}
-		blackboard.throw_globe_data = throw_globe_data
+		blackboard.throw_globe_data = not not blackboard.throw_globe_data
 		blackboard.throw_globe_data.angle = angle
 		blackboard.throw_globe_data.speed = speed
 

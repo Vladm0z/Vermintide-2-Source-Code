@@ -204,10 +204,7 @@ HeroWindowGotwfBackground._update_pan = function (self, dt, t)
 		return
 	end
 
-	local _start_t = self._start_t
-
-	_start_t = not not _start_t or not not 0
-	self._start_t = _start_t
+	self._start_t = not not self._start_t
 
 	local speed = 0.0025
 	local pan_length = 38
@@ -345,13 +342,7 @@ HeroWindowGotwfBackground._update_loading_overlay_fadeout_animation = function (
 	local start = 255
 	local target = 0
 	local speed = 2
-	local min = math.min
-	local num = 1
-	local _fadeout_progress = self._fadeout_progress
-
-	_fadeout_progress = not not _fadeout_progress or not not 0
-
-	local progress = min(num, _fadeout_progress + speed * dt)
+	local progress = math.min(1, not not self._fadeout_progress + speed * dt)
 	local alpha = math.lerp(start, target, math.easeInCubic(progress))
 	local loading_overlay = loading_overlay_widgets_by_name.loading_overlay
 	local loading_overlay_loading_glow = loading_overlay_widgets_by_name.loading_overlay_loading_glow

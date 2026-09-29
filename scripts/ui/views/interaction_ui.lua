@@ -173,11 +173,7 @@ local widget_definitions = {
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 3
-						local text = content.text
-
-						text = not not text and content.text ~= ""
-
-						return text
+						return not not content.text
 					end
 				},
 				{
@@ -186,11 +182,7 @@ local widget_definitions = {
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 4
-						local text = content.text
-
-						text = not not text and content.text ~= ""
-
-						return text
+						return not not content.text
 					end
 				},
 				{
@@ -217,11 +209,7 @@ local widget_definitions = {
 					text_id = "hotkey_text",
 					content_check_function = function (content)
 						-- function 7
-						local has_hotkey = content.has_hotkey
-
-						has_hotkey = not not has_hotkey and not not not content.gamepad_active
-
-						return has_hotkey
+						return not not content.has_hotkey
 					end
 				},
 				{
@@ -230,11 +218,7 @@ local widget_definitions = {
 					text_id = "hotkey_text",
 					content_check_function = function (content)
 						-- function 8
-						local has_hotkey = content.has_hotkey
-
-						has_hotkey = not not has_hotkey and not not not content.gamepad_active
-
-						return has_hotkey
+						return not not content.has_hotkey
 					end
 				}
 			}
@@ -715,26 +699,14 @@ InteractionUI.update = function (self, dt, t, my_player)
 	title_text, action_text, interact_action, failed_reason, override_text_color, interaction_component, hotkey_text = self:_get_interaction_text(player_unit, is_channeling)
 
 	if action_text then
-		title_text = (not title_text or not Localize(title_text)) and not not ""
+		title_text = title_text and (not not Localize(title_text) or not not "") or not title_text and not not ""
 
 		if failed_reason == "ammo_blocked" or failed_reason == "throwing_axe" then
-			local str
+			local hold_to_reload_key = Managers.input:is_device_active("gamepad") and not not "$KEY;Player__weapon_reload_hold_input:" or not Managers.input:is_device_active("gamepad") and not not "$KEY;Player__weapon_reload_hold:"
 
-			if Managers.input:is_device_active("gamepad") then
-				str = "$KEY;Player__weapon_reload_hold_input:"
-
-				goto label_18_0
-			end
-
-			str = "$KEY;Player__weapon_reload_hold:"
-
-			local hold_to_reload_key = str
-
-			::label_18_0::
-
-			action_text = (not action_text or not (TextToUpper(Localize(action_text)) .. hold_to_reload_key)) and not not ""
+			action_text = action_text and (not not (TextToUpper(Localize(action_text)) .. hold_to_reload_key) or not not "") or not action_text and not not ""
 		else
-			action_text = (not action_text or not Localize(action_text)) and not not ""
+			action_text = action_text and (not not Localize(action_text) or not not "") or not action_text and not not ""
 		end
 
 		self:_assign_button_info(interact_action, failed_reason, is_channeling, override_text_color)
@@ -893,39 +865,13 @@ InteractionUI._get_wielded_interaction_text = function (self, player_unit)
 
 	for action_name, sub_actions in pairs(item_template.actions) do
 		for sub_action_name, action_settings in pairs(sub_actions) do
-			local interaction_priority_2 = action_settings.interaction_priority
-
-			if not interaction_priority_2 then
-				-- Nothing
-			end
-
-			interaction_priority_2 = -1000
-
-			local interaction_priority = interaction_priority_2
-
-			::label_21_0::
+			local interaction_priority = not not action_settings.interaction_priority
 
 			if action_settings.interaction_type ~= nil and highest_prio < interaction_priority then
-				local show_interaction_ui_2 = action_settings.show_interaction_ui
+				local show_interaction_ui = not not action_settings.show_interaction_ui
 
-				if show_interaction_ui_2 then
-					-- Nothing
-				end
-
-				show_interaction_ui_2 = action_settings.show_interaction_ui(player_unit)
-
-				local show_interaction_ui = show_interaction_ui_2
-
-				::label_21_1::
-
-				if show_interaction_ui or action_settings.condition_func(player_unit) or is_interacting and action_settings.interaction_type == interaction_type then
-					local var_21_2 = self
-					local button_texture_data_by_input_action = self.button_texture_data_by_input_action
-					local hold_input = action_settings.hold_input
-
-					hold_input = not not hold_input or not not action_name
-
-					local input_device_supports_action = button_texture_data_by_input_action(var_21_2, hold_input)
+				if is_interacting and action_settings.interaction_type == interaction_type then
+					local input_device_supports_action = self:button_texture_data_by_input_action(not not action_settings.hold_input)
 
 					if input_device_supports_action then
 						highest_prio = action_settings.interaction_priority

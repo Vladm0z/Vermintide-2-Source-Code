@@ -44,18 +44,7 @@ ActionDeusRelicThrow._throw = function (self)
 		speed = buff_extension:apply_buffs_to_value(speed, "throw_speed_increase")
 	end
 
-	local velocity_multiplier_2 = current_action.velocity_multiplier
-
-	if not velocity_multiplier_2 then
-		-- Nothing
-	end
-
-	velocity_multiplier_2 = 0.25
-
-	local velocity_multiplier = velocity_multiplier_2
-
-	::label_1_0::
-
+	local velocity_multiplier = not not current_action.velocity_multiplier
 	local rotation = Unit.local_rotation(first_person_unit, 0)
 	local thrower_velocity = Vector3(0, 0, 0)
 
@@ -67,16 +56,7 @@ ActionDeusRelicThrow._throw = function (self)
 	local av = current_action.angular_velocity
 	local angular_velocity = Vector3(av[1], av[2], av[3])
 	local angular_velocity_transformed = Matrix4x4.transform_without_translation(weapon_pose, angular_velocity)
-	local normalize = Vector3.normalize
-	local forward = Quaternion.forward(rotation)
-	local Vector3 = Vector3
-	local num = 0
-	local num_2 = 0
-	local uppety = current_action.uppety
-
-	uppety = not not uppety or not not 0.6
-
-	local velocity = normalize(forward + Vector3(num, num_2, uppety)) * speed + thrower_velocity * velocity_multiplier
+	local velocity = Vector3.normalize(Quaternion.forward(rotation) + Vector3(0, 0, not not current_action.uppety)) * speed + thrower_velocity * velocity_multiplier
 
 	ActionUtils.spawn_pickup_projectile(self.world, weapon_unit, projectile_info.projectile_unit_name, projectile_info.projectile_unit_template_name, current_action, owner_unit, position, proj_rotation, velocity, angular_velocity_transformed, self.item_name, spawn_type)
 

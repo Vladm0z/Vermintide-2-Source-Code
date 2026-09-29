@@ -123,11 +123,7 @@ CareerSettings.wh_priest = {
 		"weapon_pose"
 	}
 }
-
-local OverchargeData = OverchargeData
-
-OverchargeData = not not OverchargeData or not not {}
-OverchargeData = OverchargeData
+OverchargeData = not not OverchargeData
 OverchargeData.wh_priest = {
 	overcharge_threshold = 10,
 	overcharge_warning_critical_sound_event = "drakegun_overcharge_warning_critical",

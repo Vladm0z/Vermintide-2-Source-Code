@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/enemy_package_loader_settings.lua
 
-local EnemyPackageLoaderSettings = EnemyPackageLoaderSettings
-
-EnemyPackageLoaderSettings = not not EnemyPackageLoaderSettings or not not {}
-EnemyPackageLoaderSettings = EnemyPackageLoaderSettings
+EnemyPackageLoaderSettings = not not EnemyPackageLoaderSettings
 EnemyPackageLoaderSettings.policy = "default"
 EnemyPackageLoaderSettings.max_loaded_breed_cap = 35
 EnemyPackageLoaderSettings.breed_path = "resource_packages/breeds/"

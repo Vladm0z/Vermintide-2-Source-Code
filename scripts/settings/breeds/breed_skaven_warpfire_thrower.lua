@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_warpfire_thrower.lua
 
 local stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local breed_data = {
 	threat_value = 8,
 	walk_speed = 2,
 	race = "skaven",
@@ -84,157 +84,151 @@ local tbl = {
 		200,
 		200,
 		0
-	}
-}
-local setting = Development.setting("disable_warpfire_thrower")
+	},
+	disabled = not not Development.setting("disable_warpfire_thrower"),
+	hitzone_multiplier_types = {
+		head = "headshot"
+	},
+	hit_zones = {
+		head = {
+			prio = 1,
+			actors = {
+				"c_head"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		neck = {
+			prio = 1,
+			actors = {
+				"c_neck",
+				"c_neck1"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		torso = {
+			prio = 2,
+			actors = {
+				"c_hips",
+				"c_spine",
+				"c_spine2",
+				"c_leftshoulder",
+				"c_rightshoulder"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_arm = {
+			prio = 3,
+			actors = {
+				"c_leftarm",
+				"c_leftforearm",
+				"c_lefthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		right_arm = {
+			prio = 3,
+			actors = {
+				"c_rightarm",
+				"c_rightforearm",
+				"c_righthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_leg = {
+			prio = 3,
+			actors = {
+				"c_leftleg",
+				"c_leftupleg",
+				"c_leftfoot",
+				"c_lefttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		right_leg = {
+			prio = 3,
+			actors = {
+				"c_rightleg",
+				"c_rightupleg",
+				"c_rightfoot",
+				"c_righttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		tail = {
+			prio = 3,
+			actors = {
+				"c_tail1",
+				"c_tail2",
+				"c_tail3",
+				"c_tail4",
+				"c_tail5",
+				"c_tail6"
+			},
+			push_actors = {
+				"j_hips"
+			}
+		},
+		aux = {
+			prio = 4,
+			actors = {
+				"c_backpack"
+			},
+			push_actors = {
+				"j_backpack"
+			}
+		},
+		full = {
+			prio = 5,
+			actors = {}
+		},
+		afro = {
+			prio = 6,
+			actors = {
+				"c_afro"
+			}
+		}
+	},
+	nav_cost_map_allowed_layers = {
+		plague_wave = 20,
+		troll_bile = 20,
+		lamp_oil_fire = 10,
+		warpfire_thrower_warpfire = 1,
+		vortex_near = 1,
+		stormfiend_warpfire = 1,
+		vortex_danger_zone = 1
+	},
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
+		-- function 1
+		local blackboard = BLACKBOARDS[unit]
 
-setting = not not setting or not not false
-tbl.disabled = setting
-tbl.hitzone_multiplier_types = {
-	head = "headshot"
-}
-tbl.hit_zones = {
-	head = {
-		prio = 1,
-		actors = {
-			"c_head"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	neck = {
-		prio = 1,
-		actors = {
-			"c_neck",
-			"c_neck1"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	torso = {
-		prio = 2,
-		actors = {
-			"c_hips",
-			"c_spine",
-			"c_spine2",
-			"c_leftshoulder",
-			"c_rightshoulder"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_arm = {
-		prio = 3,
-		actors = {
-			"c_leftarm",
-			"c_leftforearm",
-			"c_lefthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	right_arm = {
-		prio = 3,
-		actors = {
-			"c_rightarm",
-			"c_rightforearm",
-			"c_righthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_leg = {
-		prio = 3,
-		actors = {
-			"c_leftleg",
-			"c_leftupleg",
-			"c_leftfoot",
-			"c_lefttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	right_leg = {
-		prio = 3,
-		actors = {
-			"c_rightleg",
-			"c_rightupleg",
-			"c_rightfoot",
-			"c_righttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	tail = {
-		prio = 3,
-		actors = {
-			"c_tail1",
-			"c_tail2",
-			"c_tail3",
-			"c_tail4",
-			"c_tail5",
-			"c_tail6"
-		},
-		push_actors = {
-			"j_hips"
-		}
-	},
-	aux = {
-		prio = 4,
-		actors = {
-			"c_backpack"
-		},
-		push_actors = {
-			"j_backpack"
-		}
-	},
-	full = {
-		prio = 5,
-		actors = {}
-	},
-	afro = {
-		prio = 6,
-		actors = {
-			"c_afro"
-		}
-	}
-}
-tbl.nav_cost_map_allowed_layers = {
-	plague_wave = 20,
-	troll_bile = 20,
-	lamp_oil_fire = 10,
-	warpfire_thrower_warpfire = 1,
-	vortex_near = 1,
-	stormfiend_warpfire = 1,
-	vortex_danger_zone = 1
-}
+		if not Unit.alive(killer_unit) then
+			return
+		end
 
-tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
-	-- function 1
-	local blackboard = BLACKBOARDS[unit]
-
-	if not Unit.alive(killer_unit) then
-		return
+		QuestSettings.check_warpfire_kill_before_shooting(blackboard, killer_unit)
+		QuestSettings.check_warpfire_kill_on_power_cell(death_hit_zone, killer_unit)
 	end
-
-	QuestSettings.check_warpfire_kill_before_shooting(blackboard, killer_unit)
-	QuestSettings.check_warpfire_kill_on_power_cell(death_hit_zone, killer_unit)
-end
-
-local breed_data = tbl
+}
 
 Breeds.skaven_warpfire_thrower = table.create_copy(Breeds.skaven_warpfire_thrower, breed_data)
 

@@ -40,18 +40,7 @@ local running_pushed_data = {
 		0
 	}
 }
-local BotConstants = BotConstants
-
-if BotConstants then
-	-- Nothing
-end
-
-BotConstants = BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
-
-local default_bot_threat_difficulty_data = BotConstants
-
-::label_0_0::
-
+local default_bot_threat_difficulty_data = not not BotConstants
 local breed_data = {
 	detection_radius = 9999999,
 	target_selection = "pick_rat_ogre_target_idle",
@@ -1193,11 +1182,7 @@ local action_data = {
 					blackboard.chunk_event_socket_handles = unit_handles
 					blackboard.chunk_event_socket_units = {}
 					blackboard.chunk_event_fused_units = {}
-
-					local phase_one_buffs = blackboard.phase_one_buffs
-
-					phase_one_buffs = not not phase_one_buffs or not not {}
-					blackboard.phase_one_buffs = phase_one_buffs
+					blackboard.phase_one_buffs = not not blackboard.phase_one_buffs
 
 					local difficulty = Managers.state.difficulty:get_difficulty()
 					local num_sockets_per_difficulty = {
@@ -1208,18 +1193,7 @@ local action_data = {
 						cataclysm = 4,
 						normal = 2
 					}
-					local var_3_1 = num_sockets_per_difficulty[difficulty]
-
-					if not var_3_1 then
-						-- Nothing
-					end
-
-					var_3_1 = num_sockets_per_difficulty.default
-
-					local num_sockets = var_3_1
-
-					::label_3_0::
-
+					local num_sockets = not not num_sockets_per_difficulty[difficulty]
 					local socket_offset = 1.75
 					local socket_space = 2
 					local socket_unit = "units/gameplay/explosive_oil_jug_socket_01"
@@ -1236,22 +1210,7 @@ local action_data = {
 					local num_on_left = math.ceil(num_sockets * 0.5)
 
 					for i = 1, num_on_left do
-						local num
-
-						if num_on_left > 1 then
-							num = socket_space / ((num_on_left - 1) * 0.5)
-
-							if not num then
-								-- Nothing
-							end
-						end
-
-						num = 0
-
-						local fit_space = num
-
-						::label_3_1::
-
+						local fit_space = num_on_left > 1 and not not (socket_space / ((num_on_left - 1) * 0.5)) or not (num_on_left > 1) and not not 0
 						local slot = (i - 1 - (num_on_left - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, left_reference + unit_forward * slot, 1, 1)
 
@@ -1265,22 +1224,7 @@ local action_data = {
 					local num_on_right = num_sockets - num_on_left
 
 					for i = 1, num_on_right do
-						local num_2
-
-						if num_on_right > 1 then
-							num_2 = socket_space / ((num_on_right - 1) * 0.5)
-
-							if not num_2 then
-								-- Nothing
-							end
-						end
-
-						num_2 = 0
-
-						local fit_space = num_2
-
-						::label_3_2::
-
+						local fit_space = num_on_right > 1 and not not (socket_space / ((num_on_right - 1) * 0.5)) or not (num_on_right > 1) and not not 0
 						local slot = (i - 1 - (num_on_right - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, right_reference + unit_forward * slot, 1, 1)
 
@@ -1294,22 +1238,7 @@ local action_data = {
 					local num_forward = num_sockets - num_on_left - num_on_right
 
 					for i = 1, num_forward do
-						local num_3
-
-						if num_forward > 1 then
-							num_3 = socket_space / ((num_forward - 1) * 0.5)
-
-							if not num_3 then
-								-- Nothing
-							end
-						end
-
-						num_3 = 0
-
-						local fit_space = num_3
-
-						::label_3_3::
-
+						local fit_space = num_forward > 1 and not not (socket_space / ((num_forward - 1) * 0.5)) or not (num_forward > 1) and not not 0
 						local slot = (i - 1 - (num_forward - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, forward_reference + unit_right * slot, 1, 1)
 
@@ -1323,22 +1252,7 @@ local action_data = {
 					local num_back = num_sockets - num_on_left - num_on_right - num_forward
 
 					for i = 1, num_back do
-						local num_4
-
-						if num_back > 1 then
-							num_4 = socket_space / ((num_back - 1) * 0.5)
-
-							if not num_4 then
-								-- Nothing
-							end
-						end
-
-						num_4 = 0
-
-						local fit_space = num_4
-
-						::label_3_4::
-
+						local fit_space = num_back > 1 and not not (socket_space / ((num_back - 1) * 0.5)) or not (num_back > 1) and not not 0
 						local slot = (i - 1 - (num_back - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, back_reference + unit_right * slot, 1, 1)
 
@@ -1368,21 +1282,7 @@ local action_data = {
 						local num_spawners = not not barrel_spawners and not not #barrel_spawners
 
 						for i = 1, num_barrels do
-							local local_position
-
-							if barrel_spawners then
-								local_position = Unit.local_position(barrel_spawners[math.index_wrapper(i, num_spawners)], 0)
-
-								if not local_position then
-									-- Nothing
-								end
-							end
-
-							local_position = Unit.local_position(unit, 0)
-
-							local barrel_pos = local_position
-
-							::label_4_0::
+							local barrel_pos = barrel_spawners and not not Unit.local_position(barrel_spawners[math.index_wrapper(i, num_spawners)], 0) or not barrel_spawners and not not Unit.local_position(unit, 0)
 
 							if barrel_pos then
 								local rot = Quaternion.axis_angle(Vector3.up(), math.random() * math.tau)
@@ -1573,10 +1473,7 @@ local action_data = {
 						return false
 					end
 
-					local wizards_delay = blackboard.wizards_delay
-
-					wizards_delay = not not wizards_delay or not not (t + 1.5)
-					blackboard.wizards_delay = wizards_delay
+					blackboard.wizards_delay = not not blackboard.wizards_delay
 
 					if t > blackboard.wizards_delay then
 						return true
@@ -1595,18 +1492,7 @@ local action_data = {
 						cataclysm = 4,
 						normal = 1
 					}
-					local var_10_0 = num_sorcerers_per_difficulty[difficulty]
-
-					if not var_10_0 then
-						-- Nothing
-					end
-
-					var_10_0 = num_sorcerers_per_difficulty.default
-
-					local num_sorcerers = var_10_0
-
-					::label_10_0::
-
+					local num_sorcerers = not not num_sorcerers_per_difficulty[difficulty]
 					local spawner_system = Managers.state.entity:system("spawner_system")
 					local spawners = spawner_system:get_raw_spawner_units("boss_sorcerer")
 
@@ -1637,21 +1523,7 @@ local action_data = {
 					local breed = Breeds.chaos_tether_sorcerer
 
 					for i = 1, num_sorcerers do
-						local local_position
-
-						if spawners then
-							local_position = Unit.local_position(spawners[math.index_wrapper(i, num_spawners)], 0)
-
-							if not local_position then
-								-- Nothing
-							end
-						end
-
-						local_position = Unit.local_position(unit, 0)
-
-						local spawn_pos = local_position
-
-						::label_10_1::
+						local spawn_pos = spawners and not not Unit.local_position(spawners[math.index_wrapper(i, num_spawners)], 0) or not spawners and not not Unit.local_position(unit, 0)
 
 						Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(Quaternion.identity()), nil, nil, "terror_event", optional_data)
 					end

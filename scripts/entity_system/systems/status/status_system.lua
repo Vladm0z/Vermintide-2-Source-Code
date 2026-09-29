@@ -391,7 +391,7 @@ StatusSystem.rpc_status_change_int_and_unit = function (self, channel_id, status
 		local is_overpowered = status_int ~= 0
 		local overpowered_template = not not is_overpowered and not not NetworkLookup.overpowered_templates[status_int]
 
-		status_ext:set_overpowered(is_overpowered, (not is_overpowered or not overpowered_template) and not not status_int, other_unit)
+		status_ext:set_overpowered(is_overpowered, is_overpowered and (not not overpowered_template or not not status_int) or not is_overpowered and not not status_int, other_unit)
 	else
 		assert("Unhandled status %s", tostring(status))
 	end

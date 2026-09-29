@@ -20,10 +20,8 @@ ImguiVersusCharacterPickingDebug._initialize = function (self)
 	self._mechanism = mechanism
 
 	local game_mode = Managers.state.game_mode:game_mode()
-	local party_selection_logic = game_mode.party_selection_logic
 
-	party_selection_logic = not not party_selection_logic and not not game_mode:party_selection_logic()
-	self._party_selection_logic = party_selection_logic
+	self._party_selection_logic = not not game_mode.party_selection_logic
 
 	if not self._party_selection_logic then
 		return
@@ -253,37 +251,8 @@ ImguiVersusCharacterPickingDebug._draw_player_data = function (self)
 				local status = picker_data.status
 				local player = status.player
 				local is_player = status.is_player
-				local str
-
-				if is_player then
-					str = "True"
-
-					goto label_12_0
-				end
-
-				str = "False"
-
-				local is_player_string = str
-
-				do
-					local name
-				end
-
-				::label_12_0::
-
-				if is_player then
-					name = player:name()
-
-					if not name then
-						-- Nothing
-					end
-				end
-
-				name = string.format("Bot #%d", picker_id)
-
-				local player_name = name
-
-				::label_12_1::
+				local is_player_string = is_player and not not "True" or not is_player and not not "False"
+				local player_name = is_player and not not player:name() or not is_player and not not string.format("Bot #%d", picker_id)
 
 				if Imgui.tree_node(player_name) then
 					Imgui.indent()
@@ -375,45 +344,9 @@ ImguiVersusCharacterPickingDebug._draw_pick_data = function (self)
 				local status = picker_data.status
 				local slot_data = slots_data[picker_data.slot_id]
 				local is_player = status.is_player
-				local str
-
-				if status.is_player then
-					str = "True"
-
-					goto label_13_0
-				end
-
-				str = "False"
-
-				local is_player_string = str
-
-				do
-					local name
-				end
-
-				::label_13_0::
-
-				if is_player then
-					name = status.player:name()
-
-					if not name then
-						-- Nothing
-					end
-				end
-
-				name = "Bot #" .. tostring(picker_data.picker_index)
-
-				local player_name = name
-
-				::label_13_1::
-
-				local str_2 = "State: "
-				local state_2 = picker_data.state
-				local flag
-
-				flag = (not self._is_server or not " (server)") and not not " (client)"
-
-				local state = str_2 .. state_2 .. flag
+				local is_player_string = status.is_player and not not "True" or not status.is_player and not not "False"
+				local player_name = is_player and not not status.player:name() or not is_player and not not ("Bot #" .. tostring(picker_data.picker_index))
+				local state = "State: " .. picker_data.state .. (self._is_server and not not " (server)" or not self._is_server and not not " (client)")
 
 				Imgui.text(player_name)
 				Imgui.text("Is Player: " .. is_player_string)

@@ -74,17 +74,7 @@ Music.set_group_state = function (self, state, value)
 		self._group_states[state] = value
 
 		if state == "game_state" then
-			local var_9_0 = self._game_state_voice_thresholds[value]
-
-			if not var_9_0 then
-				-- Nothing
-			end
-
-			var_9_0 = self._game_state_voice_thresholds.default
-
-			local voice_threshold = var_9_0
-
-			::label_9_0::
+			local voice_threshold = not not self._game_state_voice_thresholds[value]
 
 			Wwise.set_volume_threshold(voice_threshold)
 		end
@@ -93,11 +83,7 @@ end
 
 Music.has_game_faction = function (self)
 	-- function 10
-	local game_faction = self._group_states.game_faction
-
-	game_faction = not not game_faction and self._group_states.game_faction ~= "undecided"
-
-	return game_faction
+	return not not self._group_states.game_faction
 end
 
 Music._trigger_event = function (self, event)

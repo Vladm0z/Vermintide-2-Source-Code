@@ -171,38 +171,10 @@ StartGameWindowAdventureSettings._handle_input = function (self, dt, t)
 
 	local input_service = self.parent:window_input_service()
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if gamepad_active then
-		-- Nothing
-	end
-
-	::label_10_0::
-
-	local _enable_play = self._enable_play
-
-	if _enable_play then
-		-- Nothing
-	end
-
-	_enable_play = input_service:get("refresh_press")
-
-	local play_pressed = _enable_play
-
-	::label_10_1::
+	local play_pressed = not not gamepad_active and not not self._enable_play
 
 	if self:_is_button_released(widgets_by_name.play_button) or play_pressed then
-		local get_quickplay_settings = parent:get_quickplay_settings(self._mechanism_name)
-
-		if not get_quickplay_settings then
-			-- Nothing
-		end
-
-		get_quickplay_settings = parent:get_quickplay_settings("adventure")
-
-		local custom_game_settings = get_quickplay_settings
-
-		::label_10_2::
-
+		local custom_game_settings = not not parent:get_quickplay_settings(self._mechanism_name)
 		local game_mode_type = custom_game_settings.game_mode_type
 
 		parent:set_private_option_enabled(false)
@@ -241,39 +213,10 @@ StartGameWindowAdventureSettings._set_difficulty_option = function (self, diffic
 	local difficulty_settings = DifficultySettings[difficulty_key]
 	local display_name = not not difficulty_settings and not not difficulty_settings.display_name
 	local display_image = not not difficulty_settings and not not difficulty_settings.display_image
-	local completed_frame_texture_2
-
-	if difficulty_settings then
-		completed_frame_texture_2 = difficulty_settings.completed_frame_texture
-
-		if not completed_frame_texture_2 then
-			-- Nothing
-		end
-	end
-
-	completed_frame_texture_2 = "map_frame_00"
-
-	local completed_frame_texture = completed_frame_texture_2
-
-	::label_13_0::
-
+	local completed_frame_texture = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
 	local widgets_by_name = self._widgets_by_name
-	local content = widgets_by_name.game_option_difficulty.content
-	local var_13_2
 
-	if display_name then
-		var_13_2 = Localize(display_name)
-
-		if not var_13_2 then
-			-- Nothing
-		end
-	end
-
-	var_13_2 = ""
-
-	::label_13_1::
-
-	content.option_text = var_13_2
+	widgets_by_name.game_option_difficulty.content.option_text = display_name and not not Localize(display_name) or not display_name and not not ""
 	widgets_by_name.game_option_difficulty.content.icon = not not display_image or not not nil
 	widgets_by_name.game_option_difficulty.content.icon_frame = completed_frame_texture
 end

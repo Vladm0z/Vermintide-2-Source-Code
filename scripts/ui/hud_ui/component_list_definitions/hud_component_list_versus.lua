@@ -443,23 +443,7 @@ local components = {
 			if is_in_inn then
 				return true
 			else
-				local twitch = Managers.twitch
-
-				if twitch then
-					-- Nothing
-				end
-
-				twitch = Managers.twitch:is_connected()
-
-				if not twitch then
-					-- Nothing
-				end
-
-				twitch = Managers.twitch:is_activated()
-
-				local use_twitch_ui = twitch
-
-				::label_16_0::
+				local use_twitch_ui = not not Managers.twitch
 
 				if not use_twitch_ui then
 					return true
@@ -641,17 +625,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 25
 			local cutscene_system = Managers.state.entity:system("cutscene_system")
-			local active_camera = cutscene_system.active_camera
-
-			if active_camera then
-				-- Nothing
-			end
-
-			active_camera = not cutscene_system.ingame_hud_enabled
-
-			local cutscene_active = active_camera
-
-			::label_25_0::
+			local cutscene_active = not not cutscene_system.active_camera
 
 			return cutscene_active
 		end
@@ -689,24 +663,7 @@ local visibility_groups = {
 			-- function 29
 			local game_mode_manager = Managers.state.game_mode
 			local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-
-			if game_mode then
-				-- Nothing
-			end
-
-			::label_29_0::
-
-			local game_mode_hud_disabled = game_mode.game_mode_hud_disabled
-
-			if game_mode_hud_disabled then
-				-- Nothing
-			end
-
-			game_mode_hud_disabled = game_mode:game_mode_hud_disabled()
-
-			local game_mode_disable_hud = game_mode_hud_disabled
-
-			::label_29_1::
+			local game_mode_disable_hud = not not game_mode and not not game_mode.game_mode_hud_disabled
 
 			return game_mode_disable_hud
 		end
@@ -734,11 +691,7 @@ local visibility_groups = {
 				player_ready = Managers.state.game_mode:game_mode():player_ready()
 			end
 
-			local is_own_player_dead = ingame_hud:is_own_player_dead()
-
-			is_own_player_dead = not not is_own_player_dead and not not player_ready
-
-			return is_own_player_dead
+			return not not ingame_hud:is_own_player_dead()
 		end
 	},
 	{
@@ -749,19 +702,7 @@ local visibility_groups = {
 			local player_unit = local_player.player_unit
 			local player_ready = Managers.state.game_mode:game_mode():player_ready()
 
-			if player_unit then
-				-- Nothing
-			end
-
-			::label_32_0::
-
-			local alive = Unit.alive(player_unit)
-
-			alive = not not alive and not not player_ready
-
-			::label_32_1::
-
-			return alive
+			return not not player_unit and not not Unit.alive(player_unit)
 		end
 	},
 	{

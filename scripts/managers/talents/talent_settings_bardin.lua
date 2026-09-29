@@ -278,10 +278,8 @@ local buff_tweak_data = {
 		duration = CareerConstants.dr_ranger.ability_duration
 	}
 }
-local TalentBuffTemplates = TalentBuffTemplates
 
-TalentBuffTemplates = not not TalentBuffTemplates or not not {}
-TalentBuffTemplates = TalentBuffTemplates
+TalentBuffTemplates = not not TalentBuffTemplates
 TalentBuffTemplates.dwarf_ranger = {
 	bardin_ironbreaker_ability_cooldown_on_hit = {
 		buffs = {
@@ -1309,11 +1307,7 @@ TalentBuffTemplates.dwarf_ranger = {
 		}
 	}
 }
-
-local TalentTrees = TalentTrees
-
-TalentTrees = not not TalentTrees or not not {}
-TalentTrees = TalentTrees
+TalentTrees = not not TalentTrees
 TalentTrees.dwarf_ranger = {
 	{
 		{

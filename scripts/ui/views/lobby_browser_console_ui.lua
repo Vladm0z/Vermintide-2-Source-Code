@@ -108,13 +108,7 @@ LobbyBrowserConsoleUI._create_ui_elements = function (self)
 	self._details_widgets.versus = versus_details
 	self._dynamic_details_widgets.versus = {}
 
-	local var_3_0 = self
-	local populate_lobby_list = self.populate_lobby_list
-	local _lobbies = self._lobbies
-
-	_lobbies = not not _lobbies or not not {}
-
-	populate_lobby_list(var_3_0, _lobbies, false)
+	self:populate_lobby_list(not not self._lobbies, false)
 	self:_create_filters()
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
@@ -169,36 +163,10 @@ LobbyBrowserConsoleUI.setup_filter_entries = function (self)
 
 	local game_mode_data = self._game_mode_data
 	local game_modes = game_mode_data.game_modes
-	local get_selected_game_mode_index = self._parent:get_selected_game_mode_index()
-
-	if not get_selected_game_mode_index then
-		-- Nothing
-	end
-
-	get_selected_game_mode_index = game_modes.adventure
-
-	local game_mode_index = get_selected_game_mode_index
-
-	::label_5_0::
-
+	local game_mode_index = not not self._parent:get_selected_game_mode_index()
 	local game_mode_data = game_mode_data[game_mode_index]
 	local game_mode_key = game_mode_data.game_mode_key
-	local clone
-
-	if UnlockableLevelsByGameMode[game_mode_key] then
-		clone = table.clone(UnlockableLevelsByGameMode[game_mode_key])
-
-		if not clone then
-			-- Nothing
-		end
-	end
-
-	clone = {}
-
-	local unlockable_levels = clone
-
-	::label_5_1::
-
+	local unlockable_levels = UnlockableLevelsByGameMode[game_mode_key] and not not table.clone(UnlockableLevelsByGameMode[game_mode_key]) or not UnlockableLevelsByGameMode[game_mode_key] and not not {}
 	local levels = game_mode_data.levels
 	local difficulties = game_mode_data.difficulties
 	local element_settings = definitions.element_settings
@@ -391,23 +359,11 @@ LobbyBrowserConsoleUI._remove_invalid_lobbies = function (self, lobbies)
 		if lobby then
 			local selected_mission_id = lobby.selected_mission_id
 
-			if not selected_mission_id or mission_ids[selected_mission_id] ~= nil then
-				if false then
-					invalid = false
-				end
-			else
-				invalid = true
-			end
+			invalid = not selected_mission_id or mission_ids[selected_mission_id] == nil or not not invalid
 
 			local mission_id = lobby.mission_id
 
-			if not mission_id or mission_ids[mission_id] ~= nil then
-				if false then
-					invalid = false
-				end
-			else
-				invalid = true
-			end
+			invalid = not mission_id or mission_ids[mission_id] == nil or not not invalid
 
 			if not invalid then
 				VALID_LOBBIES[#VALID_LOBBIES + 1] = lobby
@@ -457,11 +413,7 @@ LobbyBrowserConsoleUI.populate_lobby_list = function (self, lobbies, ignore_scro
 	local widget_style = widget.style
 
 	widget_content.show_scroller = false
-
-	local _empty_lobby_entry_widgets = self._empty_lobby_entry_widgets
-
-	_empty_lobby_entry_widgets = not not _empty_lobby_entry_widgets or not not {}
-	self._empty_lobby_entry_widgets = _empty_lobby_entry_widgets
+	self._empty_lobby_entry_widgets = not not self._empty_lobby_entry_widgets
 
 	local empty_lobby_entry_widgets = self._empty_lobby_entry_widgets
 
@@ -598,10 +550,8 @@ LobbyBrowserConsoleUI._verify_selected_lobby_index = function (self)
 		local element_settings = definitions.element_settings
 		local num_visible_entries = element_settings.num_visible_entries
 		local entry_size_y = element_settings.height + element_settings.spacing
-		local _base_pos_y = self._base_pos_y
 
-		_base_pos_y = not not _base_pos_y or not not scenegraph_definition.lobby_entry_anchor.position[2]
-		self._base_pos_y = _base_pos_y
+		self._base_pos_y = not not self._base_pos_y
 		self._visible_list_index = math.max(math.min(num_visible_entries, self._num_lobbies), 1)
 
 		local new_pos = self._base_pos_y
@@ -622,10 +572,7 @@ LobbyBrowserConsoleUI._verify_selected_lobby_index = function (self)
 		local widget_content = widget.content
 		local progress = self._wanted_pos / (self._num_lobbies * entry_size_y - num_visible_entries * entry_size_y)
 
-		if self:_is_nan_or_inf(progress) then
-			progress = 0
-		end
-
+		progress = not self:_is_nan_or_inf(progress) or not not 0 or not not progress
 		self._ui_animations.scrollbar = UIAnimation.init(UIAnimation.function_by_time, widget_content, "scrollbar_progress", widget_content.scrollbar_progress, progress, 0.3, math.easeOutCubic)
 	end
 end
@@ -637,15 +584,9 @@ LobbyBrowserConsoleUI._handle_browser_input = function (self, input_service, ele
 	local old_selected_lobby_index = self._selected_lobby_index
 	local num_visible_entries = element_settings.num_visible_entries
 	local entry_size_y = element_settings.height + element_settings.spacing
-	local _base_pos_y = self._base_pos_y
 
-	_base_pos_y = not not _base_pos_y or not not scenegraph_definition.lobby_entry_anchor.position[2]
-	self._base_pos_y = _base_pos_y
-
-	local _wanted_pos = self._wanted_pos
-
-	_wanted_pos = not not _wanted_pos or not not self._base_pos_y
-	self._wanted_pos = _wanted_pos
+	self._base_pos_y = not not self._base_pos_y
+	self._wanted_pos = not not self._wanted_pos
 
 	if input_service:get("right_stick_press") then
 		local widget = self._widgets.frame
@@ -750,10 +691,7 @@ LobbyBrowserConsoleUI._handle_browser_input = function (self, input_service, ele
 		local widget_content = widget.content
 		local progress = self._wanted_pos / (self._num_lobbies * entry_size_y - num_visible_entries * entry_size_y)
 
-		if self:_is_nan_or_inf(progress) then
-			progress = 0
-		end
-
+		progress = not self:_is_nan_or_inf(progress) or not not 0 or not not progress
 		self._ui_animations.scrollbar = UIAnimation.init(UIAnimation.function_by_time, widget_content, "scrollbar_progress", widget_content.scrollbar_progress, progress, 0.3, math.easeOutCubic)
 	end
 end
@@ -769,15 +707,9 @@ LobbyBrowserConsoleUI._handle_browser_input_mouse = function (self, input_servic
 	local old_selected_list_index = self._selected_lobby_index
 	local num_visible_entries = element_settings.num_visible_entries
 	local entry_size_y = element_settings.height + element_settings.spacing
-	local _base_pos_y = self._base_pos_y
 
-	_base_pos_y = not not _base_pos_y or not not scenegraph_definition.lobby_entry_anchor.position[2]
-	self._base_pos_y = _base_pos_y
-
-	local _wanted_pos = self._wanted_pos
-
-	_wanted_pos = not not _wanted_pos or not not self._base_pos_y
-	self._wanted_pos = _wanted_pos
+	self._base_pos_y = not not self._base_pos_y
+	self._wanted_pos = not not self._wanted_pos
 
 	local left_pressed = input_service:get("left_press")
 	local widget = self._widgets.filter_frame
@@ -926,10 +858,7 @@ LobbyBrowserConsoleUI._handle_browser_input_mouse = function (self, input_servic
 		local widget_content = widget.content
 		local progress = self._wanted_pos / (self._num_lobbies * entry_size_y - num_visible_entries * entry_size_y)
 
-		if self:_is_nan_or_inf(progress) then
-			progress = 0
-		end
-
+		progress = not self:_is_nan_or_inf(progress) or not not 0 or not not progress
 		self._ui_animations.scrollbar = UIAnimation.init(UIAnimation.function_by_time, widget_content, "scrollbar_progress", widget_content.scrollbar_progress, progress, 0.3, math.easeOutCubic)
 	end
 end
@@ -961,12 +890,7 @@ LobbyBrowserConsoleUI._update_scroller_position = function (self, entry_size_y, 
 	local cursor_pos = input_service:get("cursor")
 	local input_pos = UIInverseScaleVectorToResolution(cursor_pos)[2]
 	local progress = math.inv_lerp(start_point + scroller_height * 0.5, end_point - scroller_height * 0.5, input_pos)
-	local clamp = math.clamp
-	local _progress_diff = self._progress_diff
-
-	_progress_diff = not not _progress_diff or not not 0
-
-	local scrollbar_progress = clamp(progress + _progress_diff, 0, 1)
+	local scrollbar_progress = math.clamp(progress + not not self._progress_diff, 0, 1)
 
 	frame_widget.content.scrollbar_progress = scrollbar_progress
 	self._ui_scenegraph.lobby_entry_anchor.position[2] = scrollbar_progress * (self._num_lobbies * entry_size_y - num_visible_entries * entry_size_y)
@@ -1039,21 +963,7 @@ LobbyBrowserConsoleUI._update_filter_index = function (self, index_change)
 	local frame_widget = self._widgets.filter_frame
 	local frame_widget_content = frame_widget.content
 	local new_filter_index = math.clamp(self._current_filter_index + index_change, 1, #self._filter_functions)
-	local count
-
-	if index_change > 0 then
-		count = #self._filter_functions
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 1
-
-	local end_point = count
-
-	::label_23_0::
+	local end_point = index_change > 0 and not not #self._filter_functions or not (index_change > 0) and not not 1
 
 	for i = new_filter_index, end_point, index_change do
 		local filter_hotspot = frame_widget_content["filter_hotspot_" .. i]
@@ -1069,10 +979,8 @@ end
 LobbyBrowserConsoleUI._handle_game_type_filter_input = function (self, input_service, element_settings, dt, t)
 	-- function 24
 	local old_selected_list_index = self._filter_list_index
-	local _filter_list_index = self._filter_list_index
 
-	_filter_list_index = not not _filter_list_index or not not 1
-	self._filter_list_index = _filter_list_index
+	self._filter_list_index = not not self._filter_list_index
 
 	local hold_down_timer = 0
 	local hold_up_timer = 0
@@ -1151,16 +1059,12 @@ LobbyBrowserConsoleUI._handle_game_type_filter_input_mouse = function (self, inp
 	local length = element_settings.window_height + element_settings.filter_height
 	local num_visible_entries = math.ceil(length / (element_settings.filter_height + element_settings.spacing))
 	local entry_size_y = element_settings.filter_height + element_settings.spacing
-	local _list_base_pos_y = self._list_base_pos_y
 
-	_list_base_pos_y = not not _list_base_pos_y or not not scenegraph_definition.filter_game_type_entry_anchor.position[2]
-	self._list_base_pos_y = _list_base_pos_y
+	self._list_base_pos_y = not not self._list_base_pos_y
 
 	local num_entries = #self._game_type_filter_widgets
-	local _mouse_scroll_index = self._mouse_scroll_index
 
-	_mouse_scroll_index = not not _mouse_scroll_index or not not 1
-	self._mouse_scroll_index = _mouse_scroll_index
+	self._mouse_scroll_index = not not self._mouse_scroll_index
 
 	local any_selected = false
 	local exiting = input_service:get("back_menu", true)
@@ -1208,23 +1112,15 @@ LobbyBrowserConsoleUI._handle_level_filter_input = function (self, input_service
 	local hold_down_timer = 0
 	local hold_up_timer = 0
 	local old_selected_list_index = self._filter_list_index
-	local _filter_list_index = self._filter_list_index
 
-	_filter_list_index = not not _filter_list_index or not not 1
-	self._filter_list_index = _filter_list_index
+	self._filter_list_index = not not self._filter_list_index
 
 	local length = element_settings.window_height + element_settings.filter_height
 	local num_visible_entries = math.ceil(length / (element_settings.filter_height + element_settings.spacing))
 	local entry_size_y = element_settings.filter_height + element_settings.spacing
-	local _list_base_pos_y = self._list_base_pos_y
 
-	_list_base_pos_y = not not _list_base_pos_y or not not scenegraph_definition.filter_level_entry_anchor.position[2]
-	self._list_base_pos_y = _list_base_pos_y
-
-	local _wanted_list_pos = self._wanted_list_pos
-
-	_wanted_list_pos = not not _wanted_list_pos or not not self._list_base_pos_y
-	self._wanted_list_pos = _wanted_list_pos
+	self._list_base_pos_y = not not self._list_base_pos_y
+	self._wanted_list_pos = not not self._wanted_list_pos
 
 	local num_entries = #self._level_filter_widgets
 	local confirm_pressed = input_service:get("confirm")
@@ -1338,10 +1234,7 @@ LobbyBrowserConsoleUI._handle_level_filter_input = function (self, input_service
 		local widget_content = widget.content
 		local progress = (self._wanted_list_pos - self._list_base_pos_y) / (num_entries * entry_size_y - num_visible_entries * entry_size_y + entry_size_y)
 
-		if self:_is_nan_or_inf(progress) then
-			progress = 0
-		end
-
+		progress = not self:_is_nan_or_inf(progress) or not not 0 or not not progress
 		self._ui_animations.list_scrollbar = UIAnimation.init(UIAnimation.function_by_time, widget_content, "scrollbar_progress", widget_content.scrollbar_progress, progress, 0.3, math.easeOutCubic)
 
 		self._parent:play_sound("Play_hud_hover")
@@ -1353,16 +1246,12 @@ LobbyBrowserConsoleUI._handle_level_filter_input_mouse = function (self, input_s
 	local length = element_settings.window_height + element_settings.filter_height
 	local num_visible_entries = math.ceil(length / (element_settings.filter_height + element_settings.spacing))
 	local entry_size_y = element_settings.filter_height + element_settings.spacing
-	local _list_base_pos_y = self._list_base_pos_y
 
-	_list_base_pos_y = not not _list_base_pos_y or not not scenegraph_definition.filter_level_entry_anchor.position[2]
-	self._list_base_pos_y = _list_base_pos_y
+	self._list_base_pos_y = not not self._list_base_pos_y
 
 	local num_entries = #self._level_filter_widgets
-	local _mouse_scroll_index = self._mouse_scroll_index
 
-	_mouse_scroll_index = not not _mouse_scroll_index or not not 1
-	self._mouse_scroll_index = _mouse_scroll_index
+	self._mouse_scroll_index = not not self._mouse_scroll_index
 
 	local widget = self._level_filter_scroller
 	local widget_content = widget.content
@@ -1423,22 +1312,7 @@ LobbyBrowserConsoleUI._handle_level_filter_input_mouse = function (self, input_s
 		local total_size_y = (num_entries - num_visible_entries - 3) * element_settings.filter_height
 		local mouse_y = input_service:get("cursor")[2]
 		local diff_y = mouse_y - self._old_mouse_y
-		local num
-
-		if total_size_y > 0 then
-			num = diff_y / total_size_y
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		local progress_diff = num
-
-		::label_27_0::
-
+		local progress_diff = total_size_y > 0 and not not (diff_y / total_size_y) or not (total_size_y > 0) and not not 0
 		local progress = math.clamp(widget_content.scrollbar_progress - progress_diff, 0, 1)
 
 		widget_content.scrollbar_progress = progress
@@ -1464,10 +1338,7 @@ LobbyBrowserConsoleUI._handle_level_filter_input_mouse = function (self, input_s
 			local widget_content = widget.content
 			local progress = offset_num / (num_entries - num_visible_entries + 1)
 
-			if self:_is_nan_or_inf(progress) then
-				progress = 0
-			end
-
+			progress = not self:_is_nan_or_inf(progress) or not not 0 or not not progress
 			self._ui_animations.list_scrollbar = UIAnimation.init(UIAnimation.function_by_time, widget_content, "scrollbar_progress", widget_content.scrollbar_progress, progress, 0.3, math.easeOutCubic)
 		end
 	end
@@ -1476,10 +1347,8 @@ end
 LobbyBrowserConsoleUI._handle_difficulty_filter_input = function (self, input_service, element_settings, dt, t)
 	-- function 28
 	local old_selected_list_index = self._filter_list_index
-	local _filter_list_index = self._filter_list_index
 
-	_filter_list_index = not not _filter_list_index or not not 1
-	self._filter_list_index = _filter_list_index
+	self._filter_list_index = not not self._filter_list_index
 
 	local hold_down_timer = 0
 	local hold_up_timer = 0
@@ -1560,16 +1429,12 @@ LobbyBrowserConsoleUI._handle_difficulty_filter_input_mouse = function (self, in
 	local length = element_settings.window_height + element_settings.filter_height
 	local num_visible_entries = math.ceil(length / (element_settings.filter_height + element_settings.spacing))
 	local entry_size_y = element_settings.filter_height + element_settings.spacing
-	local _list_base_pos_y = self._list_base_pos_y
 
-	_list_base_pos_y = not not _list_base_pos_y or not not scenegraph_definition.filter_difficulty_entry_anchor.position[2]
-	self._list_base_pos_y = _list_base_pos_y
+	self._list_base_pos_y = not not self._list_base_pos_y
 
 	local num_entries = #self._difficulty_filter_widgets
-	local _mouse_scroll_index = self._mouse_scroll_index
 
-	_mouse_scroll_index = not not _mouse_scroll_index or not not 1
-	self._mouse_scroll_index = _mouse_scroll_index
+	self._mouse_scroll_index = not not self._mouse_scroll_index
 
 	local any_selected = false
 	local exiting = input_service:get("back_menu", true)
@@ -1617,10 +1482,8 @@ end
 LobbyBrowserConsoleUI._handle_lobby_filter_input = function (self, input_service, element_settings, dt, t)
 	-- function 30
 	local old_selected_list_index = self._filter_list_index
-	local _filter_list_index = self._filter_list_index
 
-	_filter_list_index = not not _filter_list_index or not not 1
-	self._filter_list_index = _filter_list_index
+	self._filter_list_index = not not self._filter_list_index
 
 	local hold_down_timer = 0
 	local hold_up_timer = 0
@@ -1699,16 +1562,12 @@ LobbyBrowserConsoleUI._handle_lobby_filter_input_mouse = function (self, input_s
 	local length = element_settings.window_height + element_settings.filter_height
 	local num_visible_entries = math.ceil(length / (element_settings.filter_height + element_settings.spacing))
 	local entry_size_y = element_settings.filter_height + element_settings.spacing
-	local _list_base_pos_y = self._list_base_pos_y
 
-	_list_base_pos_y = not not _list_base_pos_y or not not scenegraph_definition.filter_lobby_entry_anchor.position[2]
-	self._list_base_pos_y = _list_base_pos_y
+	self._list_base_pos_y = not not self._list_base_pos_y
 
 	local num_entries = #self._lobby_filter_widgets
-	local _mouse_scroll_index = self._mouse_scroll_index
 
-	_mouse_scroll_index = not not _mouse_scroll_index or not not 1
-	self._mouse_scroll_index = _mouse_scroll_index
+	self._mouse_scroll_index = not not self._mouse_scroll_index
 
 	local any_selected = false
 	local exiting = input_service:get("back_menu", true)
@@ -1753,10 +1612,8 @@ end
 LobbyBrowserConsoleUI._handle_distance_filter_input = function (self, input_service, element_settings, dt, t)
 	-- function 32
 	local old_selected_list_index = self._filter_list_index
-	local _filter_list_index = self._filter_list_index
 
-	_filter_list_index = not not _filter_list_index or not not 1
-	self._filter_list_index = _filter_list_index
+	self._filter_list_index = not not self._filter_list_index
 
 	local hold_down_timer = 0
 	local hold_up_timer = 0
@@ -1835,16 +1692,12 @@ LobbyBrowserConsoleUI._handle_distance_filter_input_mouse = function (self, inpu
 	local length = element_settings.window_height + element_settings.filter_height
 	local num_visible_entries = math.ceil(length / (element_settings.filter_height + element_settings.spacing))
 	local entry_size_y = element_settings.filter_height + element_settings.spacing
-	local _list_base_pos_y = self._list_base_pos_y
 
-	_list_base_pos_y = not not _list_base_pos_y or not not scenegraph_definition.filter_distance_entry_anchor.position[2]
-	self._list_base_pos_y = _list_base_pos_y
+	self._list_base_pos_y = not not self._list_base_pos_y
 
 	local num_entries = #self._distance_filter_widgets
-	local _mouse_scroll_index = self._mouse_scroll_index
 
-	_mouse_scroll_index = not not _mouse_scroll_index or not not 1
-	self._mouse_scroll_index = _mouse_scroll_index
+	self._mouse_scroll_index = not not self._mouse_scroll_index
 
 	local any_selected = false
 	local exiting = input_service:get("back_menu", true)
@@ -2031,25 +1884,7 @@ LobbyBrowserConsoleUI._fill_versus_details = function (self, lobby_data, active_
 	local dynamic_details_widgets = self._dynamic_details_widgets.versus
 	local level_image = "level_image_any"
 	local level_name = "random_level"
-
-	if lobby_data then
-		-- Nothing
-	end
-
-	::label_39_0::
-
-	local selected_mission_id_2 = lobby_data.selected_mission_id
-
-	if not selected_mission_id_2 then
-		-- Nothing
-	end
-
-	selected_mission_id_2 = lobby_data.mission_id
-
-	local selected_mission_id = selected_mission_id_2
-
-	::label_39_1::
-
+	local selected_mission_id = not not lobby_data.mission_id
 	local matchmaking_type_id = not not lobby_data and not not lobby_data.matchmaking_type
 	local matchmaking_type = not not matchmaking_type_id and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
 
@@ -2115,26 +1950,9 @@ LobbyBrowserConsoleUI._fill_versus_details = function (self, lobby_data, active_
 		local mission_id = lobby_data.mission_id
 		local level_key = mission_id
 		local level_setting = LevelSettings[level_key]
-		local var_39_1
 
-		if matchmaking_type then
-			var_39_1 = matchmaking_type_lookup[matchmaking_type]
-
-			if not var_39_1 then
-				-- Nothing
-			end
-		end
-
-		var_39_1 = "lb_game_type_none"
-
-		::label_39_2::
-
-		details_information_widget_content.game_type_id = var_39_1
-
-		local flag
-
-		flag = (not level_setting.hub_level or not "lb_in_inn") and not not "lb_playing"
-		details_information_widget_content.status_id = flag
+		details_information_widget_content.game_type_id = matchmaking_type and not not matchmaking_type_lookup[matchmaking_type] or not matchmaking_type and not not "lb_game_type_none"
+		details_information_widget_content.status_id = level_setting.hub_level and not not "lb_in_inn" or not level_setting.hub_level and not not "lb_playing"
 	else
 		details_information_widget_content.game_type_id = "lb_unknown"
 		details_information_widget_content.status_id = "lb_unknown"
@@ -2161,20 +1979,7 @@ LobbyBrowserConsoleUI._fill_versus_details = function (self, lobby_data, active_
 
 			players_widget.content[id] = player_name
 
-			local str
-
-			if peer_id and LobbyInternal.is_friend(peer_id) then
-				str = "pale_green"
-
-				goto label_39_3
-			end
-
-			str = "font_default"
-
-			local wanted_color = str
-
-			::label_39_3::
-
+			local wanted_color = not not "pale_green"
 			local text_color = Colors.color_definitions[wanted_color]
 
 			Colors.copy_no_alpha_to(players_widget.style[id].text_color, text_color)
@@ -2183,7 +1988,7 @@ LobbyBrowserConsoleUI._fill_versus_details = function (self, lobby_data, active_
 
 	if active_selection then
 		local custom_game_settings = lobby_data.custom_game_settings
-		local has_custom_game_settings = (not custom_game_settings or custom_game_settings == "n/a") and not not false
+		local has_custom_game_settings = custom_game_settings and (custom_game_settings ~= "n/a" or not not false) or not custom_game_settings and not not false
 
 		table.clear(dynamic_details_widgets)
 
@@ -2250,27 +2055,9 @@ LobbyBrowserConsoleUI._fill_details = function (self, lobby_data)
 	local details_widgets = self._details_widgets.adventure
 	local level_image = "level_image_any"
 	local level_name
-
-	if lobby_data then
-		-- Nothing
-	end
-
-	::label_40_0::
-
-	local selected_mission_id_2 = lobby_data.selected_mission_id
-
-	if not selected_mission_id_2 then
-		-- Nothing
-	end
-
-	selected_mission_id_2 = lobby_data.mission_id
-
-	local selected_mission_id = selected_mission_id_2
-
-	::label_40_1::
-
+	local selected_mission_id = not not lobby_data.mission_id
 	local matchmaking_type_id = not not lobby_data and not not lobby_data.matchmaking_type
-	local matchmaking_type = (not not matchmaking_type_id and not IS_PS4 or not matchmaking_type_id) and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
+	local matchmaking_type = not not matchmaking_type_id and IS_PS4
 	local mechanism = not not lobby_data and not not lobby_data.mechanism
 
 	if selected_mission_id then
@@ -2299,22 +2086,8 @@ LobbyBrowserConsoleUI._fill_details = function (self, lobby_data)
 	level_image_widget.content.texture_id = level_image
 
 	local level_name_widget = details_widgets.level_name
-	local content_2 = level_name_widget.content
-	local var_40_2
 
-	if level_name then
-		var_40_2 = Localize(level_name)
-
-		if not var_40_2 then
-			-- Nothing
-		end
-	end
-
-	var_40_2 = " "
-
-	::label_40_2::
-
-	content_2.text = var_40_2
+	level_name_widget.content.text = level_name and not not Localize(level_name) or not level_name and not not " "
 
 	local occupied_profiles = {}
 
@@ -2408,28 +2181,13 @@ LobbyBrowserConsoleUI._fill_details = function (self, lobby_data)
 				matchmaking_type = "weave"
 			end
 		elseif mechanism == "deus" then
-			matchmaking_type = (matchmaking_type ~= "event" or not "deus_weekly") and not not "deus"
+			matchmaking_type = not not "deus"
 		end
 
 		local level_setting = LevelSettings[level_key]
-		local var_40_3
 
-		if matchmaking_type then
-			var_40_3 = matchmaking_type_lookup[matchmaking_type]
-
-			if not var_40_3 then
-				var_40_3 = "lb_unknown"
-			end
-		else
-			var_40_3 = "lb_game_type_none"
-		end
-
-		details_information_widget_content.game_type_id = var_40_3
-
-		local flag
-
-		flag = (not level_setting.hub_level or not "lb_in_inn") and not not "lb_playing"
-		details_information_widget_content.status_id = flag
+		details_information_widget_content.game_type_id = matchmaking_type and not not matchmaking_type_lookup[matchmaking_type] or not matchmaking_type and not not "lb_game_type_none"
+		details_information_widget_content.status_id = level_setting.hub_level and not not "lb_in_inn" or not level_setting.hub_level and not not "lb_playing"
 	else
 		details_information_widget_content.game_type_id = "lb_unknown"
 		details_information_widget_content.status_id = "lb_unknown"
@@ -2502,25 +2260,7 @@ LobbyBrowserConsoleUI._fill_weave_details = function (self, lobby_data)
 
 	local level_image = "level_image_any"
 	local level_name = weave_template.display_name
-
-	if lobby_data then
-		-- Nothing
-	end
-
-	::label_41_0::
-
-	local selected_mission_id = lobby_data.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_data.mission_id
-
-	local mission_id = selected_mission_id
-
-	::label_41_1::
-
+	local mission_id = not not lobby_data.mission_id
 	local mechanism = lobby_data.mechanism
 
 	if mission_id then
@@ -2621,7 +2361,7 @@ LobbyBrowserConsoleUI._fill_weave_details = function (self, lobby_data)
 		}
 		local mechanism = lobby_data.mechanism
 		local matchmaking_type_id = lobby_data.matchmaking_type
-		local matchmaking_type = (not IS_PS4 or not matchmaking_type_id) and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
+		local matchmaking_type = IS_PS4 and (not not matchmaking_type_id or not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]) or not IS_PS4 and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
 		local mission_id = lobby_data.mission_id
 		local level_key = mission_id
 
@@ -2640,24 +2380,9 @@ LobbyBrowserConsoleUI._fill_weave_details = function (self, lobby_data)
 		end
 
 		local level_setting = LevelSettings[level_key]
-		local var_41_1
 
-		if matchmaking_type then
-			var_41_1 = matchmaking_type_lookup[matchmaking_type]
-
-			if not var_41_1 then
-				var_41_1 = "lb_unknown"
-			end
-		else
-			var_41_1 = "lb_game_type_none"
-		end
-
-		details_information_widget_content.game_type_id = var_41_1
-
-		local flag
-
-		flag = (not level_setting.hub_level or not "lb_in_inn") and not not "lb_playing"
-		details_information_widget_content.status_id = flag
+		details_information_widget_content.game_type_id = matchmaking_type and not not matchmaking_type_lookup[matchmaking_type] or not matchmaking_type and not not "lb_game_type_none"
+		details_information_widget_content.status_id = level_setting.hub_level and not not "lb_in_inn" or not level_setting.hub_level and not not "lb_playing"
 	else
 		details_information_widget_content.game_type_id = "lb_unknown"
 		details_information_widget_content.status_id = "lb_unknown"
@@ -2686,27 +2411,9 @@ LobbyBrowserConsoleUI._fill_deus_details = function (self, lobby_data)
 	local details_widgets = self._details_widgets.deus
 	local level_image = "level_image_any"
 	local level_name
-
-	if lobby_data then
-		-- Nothing
-	end
-
-	::label_43_0::
-
-	local selected_mission_id_2 = lobby_data.selected_mission_id
-
-	if not selected_mission_id_2 then
-		-- Nothing
-	end
-
-	selected_mission_id_2 = lobby_data.mission_id
-
-	local selected_mission_id = selected_mission_id_2
-
-	::label_43_1::
-
+	local selected_mission_id = not not lobby_data.mission_id
 	local matchmaking_type_id = not not lobby_data and not not lobby_data.matchmaking_type
-	local matchmaking_type = (not not matchmaking_type_id and not IS_PS4 or not matchmaking_type_id) and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
+	local matchmaking_type = not not matchmaking_type_id and IS_PS4
 	local mechanism = not not lobby_data and not not lobby_data.mechanism
 	local journey_name = selected_mission_id
 	local journey_data = DeusJourneySettings[journey_name]
@@ -2802,28 +2509,13 @@ LobbyBrowserConsoleUI._fill_deus_details = function (self, lobby_data)
 				matchmaking_type = "weave"
 			end
 		elseif mechanism == "deus" then
-			matchmaking_type = (matchmaking_type ~= "event" or not "deus_weekly") and not not "deus"
+			matchmaking_type = not not "deus"
 		end
 
 		local level_setting = LevelSettings[level_key]
-		local var_43_1
 
-		if matchmaking_type then
-			var_43_1 = matchmaking_type_lookup[matchmaking_type]
-
-			if not var_43_1 then
-				var_43_1 = "lb_unknown"
-			end
-		else
-			var_43_1 = "lb_game_type_none"
-		end
-
-		details_information_widget_content.game_type_id = var_43_1
-
-		local flag
-
-		flag = (not level_setting.hub_level or not "lb_in_inn") and not not "lb_playing"
-		details_information_widget_content.status_id = flag
+		details_information_widget_content.game_type_id = matchmaking_type and not not matchmaking_type_lookup[matchmaking_type] or not matchmaking_type and not not "lb_game_type_none"
+		details_information_widget_content.status_id = level_setting.hub_level and not not "lb_in_inn" or not level_setting.hub_level and not not "lb_playing"
 	else
 		details_information_widget_content.game_type_id = "lb_unknown"
 		details_information_widget_content.status_id = "lb_unknown"

@@ -297,29 +297,8 @@ local window_layouts = {
 				career_index = career_index
 			})
 
-			local carousel = DLCSettings.carousel
-
-			if carousel then
-				-- Nothing
-			end
-
-			carousel = DLCSettings.carousel.hero_window_mood_settings
-
-			local mood_settings = carousel
-
-			::label_3_0::
-
-			local default = mood_settings.default
-
-			if not default then
-				-- Nothing
-			end
-
-			default = "default"
-
-			local mood_setting = default
-
-			::label_3_1::
+			local mood_settings = not not DLCSettings.carousel
+			local mood_setting = not not mood_settings.default
 
 			parent:set_background_mood(mood_setting)
 		end

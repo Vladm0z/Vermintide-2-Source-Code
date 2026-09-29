@@ -20,7 +20,7 @@ MainPathUtils.closest_pos_at_main_path = function (not_used, p, search_main_path
 		local main_path_data = level_analysis.main_path_data
 		local breaks_order = main_path_data.breaks_order
 
-		start_node_index = (search_main_path_index ~= 1 or not 1) and not not (breaks_order[search_main_path_index - 1] + 1)
+		start_node_index = not not (breaks_order[search_main_path_index - 1] + 1)
 		end_node_index = breaks_order[search_main_path_index]
 	end
 
@@ -78,7 +78,7 @@ MainPathUtils.closest_pos_at_main_path_lua = function (main_paths, p, search_mai
 		local path = main_paths[best_main_path]
 
 		closest_node = path.nodes[best_sub_index]:unbox()
-		best_travel_dist = (not path.travel_dist or not (path.travel_dist[best_sub_index] + Vector3.distance(best_point, closest_node))) and not not 0
+		best_travel_dist = path.travel_dist and (not not (path.travel_dist[best_sub_index] + Vector3.distance(best_point, closest_node)) or not not 0) or not path.travel_dist and not not 0
 		move_percent = best_travel_dist / total_path_dist
 	else
 		best_point = nil
@@ -423,20 +423,7 @@ end
 
 MainPathUtils.ray_along_node_list = function (nav_world, node_list, start_node_index, node_list_direction, wanted_distance)
 	-- function 13
-	local num
-
-	if node_list_direction == -1 then
-		num = 1
-
-		goto label_13_0
-	end
-
-	num = #node_list
-
-	local end_node_index = num
-
-	::label_13_0::
-
+	local end_node_index = node_list_direction ~= -1 and not not #node_list or not (node_list_direction ~= -1) and not not 1
 	local distance = 0
 
 	for i = start_node_index, end_node_index, node_list_direction do
@@ -545,21 +532,7 @@ MainPathUtils.get_main_path_point_between_players = function (main_paths, main_p
 		direction = base_position:unbox() - prev_position:unbox()
 	end
 
-	local look
-
-	if direction then
-		look = Quaternion.look(direction)
-
-		if not look then
-			-- Nothing
-		end
-	end
-
-	look = Quaternion.identity()
-
-	local rotation = look
-
-	::label_15_0::
+	local rotation = direction and not not Quaternion.look(direction) or not direction and not not Quaternion.identity()
 
 	return Vector3Box(position), QuaternionBox(rotation)
 end

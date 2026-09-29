@@ -80,10 +80,8 @@ return {
 			buff_system:add_buff(unit, BOSS_BUFF, unit)
 
 			local blackboard = BLACKBOARDS[unit]
-			local optional_spawn_data = blackboard.optional_spawn_data
 
-			optional_spawn_data = not not optional_spawn_data or not not {}
-			blackboard.optional_spawn_data = optional_spawn_data
+			blackboard.optional_spawn_data = not not blackboard.optional_spawn_data
 			blackboard.optional_spawn_data.prevent_killed_enemy_dialogue = true
 
 			local dialogue_system = Managers.state.entity:system("dialogue_system")

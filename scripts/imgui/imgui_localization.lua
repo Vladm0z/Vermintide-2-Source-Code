@@ -117,35 +117,10 @@ ImguiLocalization.draw = function (self)
 		end)
 	end
 
-	local progress_bar = Imgui.progress_bar
-	local num
-
-	if queue.n > 0 then
-		num = 1 - queue_n / queue.n
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	::label_4_0::
-
-	progress_bar(num)
+	Imgui.progress_bar(queue.n > 0 and not not (1 - queue_n / queue.n) or not (queue.n > 0) and not not 0)
 
 	for i, locale in ipairs(LOCALES) do
-		local var_4_2 = cache[i]
-
-		if not var_4_2 then
-			-- Nothing
-		end
-
-		var_4_2 = ""
-
-		local loc_text = var_4_2
-
-		::label_4_1::
+		local loc_text = not not cache[i]
 
 		Imgui.text_colored(locale, 200, 200, 200, 255)
 		Imgui.same_line(50 - Imgui.calculate_text_size(locale))
@@ -177,12 +152,7 @@ ImguiLocalization.draw = function (self)
 
 		for _, unloc_key in ipairs(sorted_strings) do
 			if Imgui.tree_node(unloc_key) then
-				local text_2 = Imgui.text
-				local var_4_4 = UnlocalizedStrings[unloc_key]
-
-				var_4_4 = not not var_4_4 or not not "?"
-
-				text_2(var_4_4)
+				Imgui.text(not not UnlocalizedStrings[unloc_key])
 				Imgui.tree_pop()
 			end
 		end

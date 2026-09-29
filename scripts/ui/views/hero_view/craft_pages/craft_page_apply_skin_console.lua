@@ -119,21 +119,7 @@ CraftPageApplySkinConsole.setup_recipe_requirements = function (self)
 			end
 
 			local has_required_amount = required_amount <= amount_owned
-			local var_2_0
-
-			if amount_owned < UISettings.max_craft_material_presentation_amount then
-				var_2_0 = tostring(amount_owned)
-
-				if not var_2_0 then
-					-- Nothing
-				end
-			end
-
-			var_2_0 = "*"
-
-			::label_2_0::
-
-			local presentation_amount = var_2_0 .. "/" .. tostring(required_amount)
+			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and not not tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and not not "*") .. "/" .. tostring(required_amount)
 
 			self:_add_crafting_material_requirement(requirement_index, item_key, presentation_amount, has_required_amount)
 
@@ -323,7 +309,7 @@ CraftPageApplySkinConsole._handle_input = function (self, dt, t)
 
 	if input_service:get("special_1") or self._craft_item and input_service:get("toggle_menu", true) then
 		self:reset()
-	elseif (craft_input == 0 or craft_input_gamepad or craft_input_keyboard) and self._craft_item and self._skin_item and self._has_all_requirements then
+	elseif craft_input == 0 and self._craft_item and self._skin_item and self._has_all_requirements or not (craft_input == 0) and (craft_input_gamepad and self._craft_item and self._skin_item and self._has_all_requirements or not craft_input_gamepad and craft_input_keyboard and self._craft_item and self._skin_item and self._has_all_requirements) then
 		if not self._craft_input_time then
 			self._craft_input_time = 0
 
@@ -564,24 +550,7 @@ CraftPageApplySkinConsole._set_craft_button_disabled = function (self, disabled)
 	-- function 22
 	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
 
-	local parent = self.parent
-	local var_22_1 = parent
-	local set_input_description = parent.set_input_description
-	local name
-
-	if not disabled then
-		name = self.settings.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "disabled"
-
-	::label_22_0::
-
-	set_input_description(var_22_1, name)
+	self.parent:set_input_description(disabled and not not "disabled" or not disabled and not not self.settings.name)
 end
 
 CraftPageApplySkinConsole._exit = function (self, selected_level)
@@ -615,22 +584,8 @@ CraftPageApplySkinConsole._set_craft_button_text = function (self, text, localiz
 	-- function 26
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
-	local content = widget.content
-	local var_26_1
 
-	if localize then
-		var_26_1 = Localize(text)
-
-		if not var_26_1 then
-			-- Nothing
-		end
-	end
-
-	var_26_1 = text
-
-	::label_26_0::
-
-	content.button_text = var_26_1
+	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
 end
 
 CraftPageApplySkinConsole._add_crafting_material_requirement = function (self, index, item_key, amount_text, has_required_amount)

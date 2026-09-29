@@ -215,346 +215,338 @@ VolumetricFogQuality = {
 		}
 	}
 }
-
-local tbl = {}
-local default_characters_texture_quality = script_data.settings.default_characters_texture_quality
-
-default_characters_texture_quality = not not default_characters_texture_quality or not not "high"
-tbl.default_characters = default_characters_texture_quality
-
-local default_environment_texture_quality = script_data.settings.default_environment_texture_quality
-
-default_environment_texture_quality = not not default_environment_texture_quality or not not "high"
-tbl.default_environment = default_environment_texture_quality
-tbl.characters = {
-	low = {
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/character_df"
+TextureQuality = {
+	default_characters = not not script_data.settings.default_characters_texture_quality,
+	default_environment = not not script_data.settings.default_environment_texture_quality,
+	characters = {
+		low = {
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/character_df"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/character_dfa"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/character_ma"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/character_nm"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/character_df_1p"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/character_ma_1p"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/character_nm_1p"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_df_3p"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_ma_3p"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_nm_3p"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_df"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_ma"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_mae"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_nm"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/weapon_dfa"
+			}
 		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/character_dfa"
+		medium = {
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/character_df"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/character_dfa"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/character_ma"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/character_nm"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/character_df_1p"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/character_ma_1p"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/character_nm_1p"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_df_3p"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_ma_3p"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_nm_3p"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_df"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_ma"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_mae"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_nm"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/weapon_dfa"
+			}
 		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/character_ma"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/character_nm"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/character_df_1p"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/character_ma_1p"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/character_nm_1p"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_df_3p"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_ma_3p"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_nm_3p"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_df"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_ma"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_mae"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_nm"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/weapon_dfa"
+		high = {
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/character_df"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/character_dfa"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/character_ma"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/character_nm"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/character_df_1p"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/character_ma_1p"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/character_nm_1p"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_df_3p"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_ma_3p"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_nm_3p"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_df"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_ma"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_mae"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_nm"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/weapon_dfa"
+			}
 		}
 	},
-	medium = {
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/character_df"
+	environment = {
+		low = {
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_df"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_dfa"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_dfa1"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_gsm"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_nm"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_hm"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_hma"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_streamable_df"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_streamable_dfa"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_streamable_nm"
+			},
+			{
+				mip_level = 2,
+				texture_setting = "texture_categories/environment_streamable_ma"
+			}
 		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/character_dfa"
+		medium = {
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_df"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_dfa"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_dfa1"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_gsm"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_nm"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_hm"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_hma"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_streamable_df"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_streamable_dfa"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_streamable_nm"
+			},
+			{
+				mip_level = 1,
+				texture_setting = "texture_categories/environment_streamable_ma"
+			}
 		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/character_ma"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/character_nm"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/character_df_1p"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/character_ma_1p"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/character_nm_1p"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_df_3p"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_ma_3p"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_nm_3p"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_df"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_ma"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_mae"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_nm"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/weapon_dfa"
-		}
-	},
-	high = {
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/character_df"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/character_dfa"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/character_ma"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/character_nm"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/character_df_1p"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/character_ma_1p"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/character_nm_1p"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_df_3p"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_ma_3p"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_nm_3p"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_df"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_ma"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_mae"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_nm"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/weapon_dfa"
+		high = {
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_df"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_dfa"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_dfa1"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_gsm"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_nm"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_hm"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_hma"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_streamable_df"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_streamable_dfa"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_streamable_nm"
+			},
+			{
+				mip_level = 0,
+				texture_setting = "texture_categories/environment_streamable_ma"
+			}
 		}
 	}
 }
-tbl.environment = {
-	low = {
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_df"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_dfa"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_dfa1"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_gsm"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_nm"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_hm"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_hma"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_streamable_df"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_streamable_dfa"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_streamable_nm"
-		},
-		{
-			mip_level = 2,
-			texture_setting = "texture_categories/environment_streamable_ma"
-		}
-	},
-	medium = {
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_df"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_dfa"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_dfa1"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_gsm"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_nm"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_hm"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_hma"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_streamable_df"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_streamable_dfa"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_streamable_nm"
-		},
-		{
-			mip_level = 1,
-			texture_setting = "texture_categories/environment_streamable_ma"
-		}
-	},
-	high = {
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_df"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_dfa"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_dfa1"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_gsm"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_nm"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_hm"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_hma"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_streamable_df"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_streamable_dfa"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_streamable_nm"
-		},
-		{
-			mip_level = 0,
-			texture_setting = "texture_categories/environment_streamable_ma"
-		}
-	}
-}
-TextureQuality = tbl
 GraphicsQuality = {
 	lowest = {
 		user_settings = {

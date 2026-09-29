@@ -11,11 +11,7 @@ PassiveAbilityRatOgre.init = function (self, extension_init_context, unit, exten
 	-- function 1
 	self._unit = unit
 	self._is_server = extension_init_context.is_server
-
-	local player = extension_init_data.player
-
-	player = not not player and not not extension_init_data.player.remote
-	self._is_remote_player = player
+	self._is_remote_player = not not extension_init_data.player
 	self._jump_from_pos = Vector3Box(0, 0, 0)
 	self._jump_to_pos = Vector3Box(0, 0, 0)
 	self._update_anim_variables = false

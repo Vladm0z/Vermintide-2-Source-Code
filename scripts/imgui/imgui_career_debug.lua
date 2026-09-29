@@ -35,17 +35,7 @@ ImguiCareerDebug._get_profile_requester = function (self)
 	local network_manager = Managers.state.network
 
 	if network_manager then
-		local network_server = network_manager.network_server
-
-		if not network_server then
-			-- Nothing
-		end
-
-		network_server = network_manager.network_client
-
-		local network = network_server
-
-		::label_2_0::
+		local network = not not network_manager.network_server
 
 		self._profile_requester = not not network and not not network:profile_requester()
 	end
@@ -62,17 +52,7 @@ ImguiCareerDebug._get_profile_synchronizer = function (self)
 	local network_manager = Managers.state.network
 
 	if network_manager then
-		local network_server = network_manager.network_server
-
-		if not network_server then
-			-- Nothing
-		end
-
-		network_server = network_manager.network_client
-
-		local network = network_server
-
-		::label_3_0::
+		local network = not not network_manager.network_server
 
 		self._profile_synchronizer = not not network and not not network.profile_synchronizer
 	end
@@ -154,13 +134,7 @@ ImguiCareerDebug.draw = function (self)
 	Imgui.same_line()
 	Imgui.push_item_width(100)
 
-	local script_data = script_data
-	local combo = Imgui.combo
-	local str = "Num bots"
-	local cap_num_bots = script_data.cap_num_bots
-
-	cap_num_bots = not not cap_num_bots or not not MAX_BOTS
-	script_data.cap_num_bots = combo(str, cap_num_bots + 1, BOT_COUNT_TABLE) - 1
+	script_data.cap_num_bots = Imgui.combo("Num bots", not not script_data.cap_num_bots + 1, BOT_COUNT_TABLE) - 1
 
 	Imgui.pop_item_width()
 	Imgui.separator()
@@ -200,14 +174,7 @@ ImguiCareerDebug._draw_players = function (self)
 		Imgui.next_column()
 		self:_draw_career_combo(player)
 		Imgui.next_column()
-
-		local text_2 = Imgui.text
-		local tostring = tostring
-		local bot_player = player.bot_player
-
-		bot_player = not not bot_player or not player:is_player_controlled() or not not false
-
-		text_2(tostring(bot_player))
+		Imgui.text(tostring(not not player.bot_player))
 		Imgui.next_column()
 		Imgui.text(tostring(is_server))
 		Imgui.next_column()

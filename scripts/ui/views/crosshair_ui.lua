@@ -164,18 +164,7 @@ CrosshairUI.update_crosshair_style = function (self, equipment)
 	local wielded_item_data = equipment.wielded
 	local item_template = BackendUtils.get_item_template(wielded_item_data)
 	local crosshair_style = item_template.crosshair_style
-	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-
-	if not right_hand_wielded_unit then
-		-- Nothing
-	end
-
-	right_hand_wielded_unit = equipment.left_hand_wielded_unit
-
-	local weapon_unit = right_hand_wielded_unit
-
-	::label_5_0::
-
+	local weapon_unit = not not equipment.right_hand_wielded_unit
 	local fire_at_gaze_setting = item_template.fire_at_gaze_setting
 
 	if Unit.alive(weapon_unit) then
@@ -355,17 +344,7 @@ CrosshairUI.update_spread = function (self, dt, t, equipment)
 	local pitch, yaw = 0, 0
 
 	if item_template.default_spread_template then
-		local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-
-		if not right_hand_wielded_unit then
-			-- Nothing
-		end
-
-		right_hand_wielded_unit = equipment.left_hand_wielded_unit
-
-		local weapon_unit = right_hand_wielded_unit
-
-		::label_11_0::
+		local weapon_unit = not not equipment.right_hand_wielded_unit
 
 		if weapon_unit and ScriptUnit.has_extension(weapon_unit, "spread_system") then
 			local spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
@@ -543,9 +522,9 @@ CrosshairUI._set_crosshair_target_info = function (self, portrait, state)
 	local content = self.wh_priest.content
 
 	content.state = state
-	content.career_portrait = (not portrait or not portrait) and not not self._small_career_portrait
+	content.career_portrait = portrait and (not not portrait or not not self._small_career_portrait) or not portrait and not not self._small_career_portrait
 	content.text_id = "$KEY;Player__action_one:"
-	self._small_career_portrait = (not portrait or not portrait) and not not self._small_career_portrait
+	self._small_career_portrait = portrait and (not not portrait or not not self._small_career_portrait) or not portrait and not not self._small_career_portrait
 end
 
 CrosshairUI._update_self_to_ally_transition = function (self)
@@ -553,19 +532,7 @@ CrosshairUI._update_self_to_ally_transition = function (self)
 	local content = self.wh_priest.content
 
 	if content.state ~= self.state then
-		local str
-
-		if content.state == "wh_priest_self" then
-			str = "ally_to_self"
-
-			goto label_23_0
-		end
-
-		str = "self_to_ally"
-
-		local animation_name = str
-
-		::label_23_0::
+		local animation_name = content.state ~= "wh_priest_self" and not not "self_to_ally" or not (content.state ~= "wh_priest_self") and not not "ally_to_self"
 
 		self.wh_crosshair_anim = self._ui_animator:start_animation(animation_name, self.wh_priest, scenegraph_definition)
 	end

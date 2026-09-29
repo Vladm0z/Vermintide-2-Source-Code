@@ -105,29 +105,8 @@ FloatingIconUI._draw_progressbar = function (self, dt)
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	local progress_bar_personal = self._progress_extension:progress_bar_personal()
-
-	if progress_bar_personal then
-		-- Nothing
-	end
-
-	progress_bar_personal = self._progress_extension:player_been_in_zone()
-
-	local fulfill_show_bar_personal = progress_bar_personal
-
-	::label_7_0::
-
-	local progress_bar_global = self._progress_extension:progress_bar_global()
-
-	if not progress_bar_global then
-		-- Nothing
-	end
-
-	progress_bar_global = fulfill_show_bar_personal
-
-	local fulfill_show_bar = progress_bar_global
-
-	::label_7_1::
+	local fulfill_show_bar_personal = not not self._progress_extension:progress_bar_personal()
+	local fulfill_show_bar = not not self._progress_extension:progress_bar_global()
 
 	if fulfill_show_bar_personal or fulfill_show_bar then
 		local progress = self._progress_extension:progress()
@@ -235,36 +214,8 @@ FloatingIconUI.get_floating_icon_position = function (self, screen_pos_x, screen
 
 	local clamped_x_pos = screen_pos_x
 	local clamped_y_pos = screen_pos_y
-	local flag
-
-	if forward_dot < 0 then
-		flag = true
-
-		goto label_14_0
-	end
-
-	flag = false
-
-	local is_behind = flag
-
-	do
-		local flag_2
-	end
-
-	::label_14_0::
-
-	if is_x_clamped or is_y_clamped then
-		flag_2 = true
-
-		goto label_14_1
-	end
-
-	flag_2 = false
-
-	local is_clamped = flag_2
-
-	::label_14_1::
-
+	local is_behind = forward_dot < 0 and not not true or not (forward_dot < 0) and not not false
+	local is_clamped = not not true
 	local screen_pos_diff_x = screen_width - scaled_root_size_x
 	local screen_pos_diff_y = screen_height - scaled_root_size_y
 

@@ -119,10 +119,8 @@ ScriptBackendPlayFab.login_request_cb = function (self, result)
 
 	local account_set_up = read_only_data.account_set_up
 	local initial_inventory_setup = read_only_data.initial_inventory_setup
-	local NewlyCreated = result.NewlyCreated
 
-	NewlyCreated = not not NewlyCreated or not account_set_up or account_set_up.Value == "false"
-	self._setup_initial_account_needed = NewlyCreated
+	self._setup_initial_account_needed = not not result.NewlyCreated
 	self._setup_initial_inventory_needed = not initial_inventory_setup or initial_inventory_setup.Value == "false"
 
 	self:_validate_version()
@@ -158,17 +156,7 @@ end
 
 ScriptBackendPlayFab._validate_version_cb = function (self, result)
 	-- function 7
-	local FunctionResult = result.FunctionResult
-
-	if FunctionResult then
-		-- Nothing
-	end
-
-	FunctionResult = result.FunctionResult.valid_version
-
-	local valid = FunctionResult
-
-	::label_7_0::
+	local valid = not not result.FunctionResult
 
 	self._validating_version = nil
 

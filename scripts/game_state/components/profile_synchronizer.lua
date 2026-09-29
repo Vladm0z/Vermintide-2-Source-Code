@@ -97,22 +97,7 @@ local function profile_packages(profile_index, career_index, is_first_person, is
 
 	local base_skin_name = career.base_skin
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin", is_bot)
-	local name
-
-	if skin_item then
-		name = skin_item.data.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = base_skin_name
-
-	local skin_name = name
-
-	::label_6_0::
-
+	local skin_name = skin_item and not not skin_item.data.name or not skin_item and not not base_skin_name
 	local skin_packages = CosmeticsUtils.retrieve_skin_packages(skin_name, is_first_person)
 
 	for i = 1, #skin_packages do
@@ -329,21 +314,7 @@ local function update_local_packages(state)
 
 		if inventory_data then
 			local is_owner = peer_id == own_peer_id
-			local first_person
-
-			if is_owner then
-				first_person = inventory_data.first_person
-
-				if not first_person then
-					-- Nothing
-				end
-			end
-
-			first_person = inventory_data.third_person
-
-			local needed_packages = first_person
-
-			::label_13_0::
+			local needed_packages = is_owner and not not inventory_data.first_person or not is_owner and not not inventory_data.third_person
 
 			for needed_package, _ in pairs(needed_packages) do
 				all_needed_packages[needed_package] = true
@@ -689,20 +660,7 @@ end
 ProfileSynchronizer._all_synced_for_peer = function (self, peer_id, local_player_id, ignore_loading_peers)
 	-- function 36
 	local current_revision = self._state:get_revision()
-	local str
-
-	if ignore_loading_peers then
-		str = "ingame"
-
-		goto label_36_0
-	end
-
-	str = "any"
-
-	local cache_type = str
-
-	::label_36_0::
-
+	local cache_type = ignore_loading_peers and not not "ingame" or not ignore_loading_peers and not not "any"
 	local cache_for_peer = self._cached_all_synced_for_peer[cache_type][peer_id]
 	local cached_data = not not cache_for_peer and not not cache_for_peer[local_player_id]
 	local cached_data_revision_key = 1
@@ -752,17 +710,7 @@ end
 
 ProfileSynchronizer.rpc_assign_peer_to_profile = function (self, channel_id, peer_id, local_player_id, profile_index, career_index, is_bot)
 	-- function 39
-	local var_39_0 = printf
-	local str = "rpc_assign_peer_to_profile peer_id:%s local_player_id:%d profile_index:%d career_index:%d is_bot:%s"
-	local var_39_2 = peer_id
-	local var_39_3 = local_player_id
-	local var_39_4 = profile_index
-	local var_39_5 = career_index
-	local flag
-
-	flag = (not is_bot or not "true") and not not "false"
-
-	var_39_0(str, var_39_2, var_39_3, var_39_4, var_39_5, flag)
+	printf("rpc_assign_peer_to_profile peer_id:%s local_player_id:%d profile_index:%d career_index:%d is_bot:%s", peer_id, local_player_id, profile_index, career_index, is_bot and not not "true" or not is_bot and not not "false")
 
 	local status = Managers.party:get_player_status(peer_id, local_player_id)
 

@@ -538,22 +538,7 @@ end
 
 UnitSpawner.add_destroy_listener = function (self, unit, identifier, callback, post_cleanup_listener)
 	-- function 31
-	local unit_destroy_listeners_post_cleanup
-
-	if post_cleanup_listener then
-		unit_destroy_listeners_post_cleanup = self.unit_destroy_listeners_post_cleanup
-
-		if not unit_destroy_listeners_post_cleanup then
-			-- Nothing
-		end
-	end
-
-	unit_destroy_listeners_post_cleanup = self.unit_destroy_listeners
-
-	local destroy_listeners = unit_destroy_listeners_post_cleanup
-
-	::label_31_0::
-
+	local destroy_listeners = post_cleanup_listener and not not self.unit_destroy_listeners_post_cleanup or not post_cleanup_listener and not not self.unit_destroy_listeners
 	local listeners = destroy_listeners[unit]
 
 	if not listeners then
@@ -568,22 +553,7 @@ end
 
 UnitSpawner.remove_destroy_listener = function (self, unit, identifier, post_cleanup_listener)
 	-- function 32
-	local unit_destroy_listeners_post_cleanup
-
-	if post_cleanup_listener then
-		unit_destroy_listeners_post_cleanup = self.unit_destroy_listeners_post_cleanup
-
-		if not unit_destroy_listeners_post_cleanup then
-			-- Nothing
-		end
-	end
-
-	unit_destroy_listeners_post_cleanup = self.unit_destroy_listeners
-
-	local destroy_listeners = unit_destroy_listeners_post_cleanup
-
-	::label_32_0::
-
+	local destroy_listeners = post_cleanup_listener and not not self.unit_destroy_listeners_post_cleanup or not post_cleanup_listener and not not self.unit_destroy_listeners
 	local listeners = destroy_listeners[unit]
 
 	if listeners then

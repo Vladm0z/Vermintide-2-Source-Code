@@ -73,18 +73,7 @@ AbilityUI._update_ability_widget = function (self, dt, t)
 		table.clear(self._ability_charge_widgets)
 	end
 
-	local var_4_0 = UISettings.ability_ui_data[career_name]
-
-	if not var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = UISettings.ability_ui_data.default
-
-	local career_data = var_4_0
-
-	::label_4_0::
-
+	local career_data = not not UISettings.ability_ui_data[career_name]
 	local ability_widget = self._widgets_by_name.ability
 	local content = ability_widget.content
 	local style = ability_widget.style
@@ -192,7 +181,7 @@ end
 AbilityUI._handle_gamepad = function (self)
 	-- function 9
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local should_render = (UISettings.use_gamepad_hud_layout ~= "auto" or not gamepad_active) and UISettings.use_gamepad_hud_layout ~= "always" and not not not IS_CONSOLE
+	local should_render = UISettings.use_gamepad_hud_layout ~= "auto" and UISettings.use_gamepad_hud_layout ~= "always" and not not not IS_CONSOLE or not (UISettings.use_gamepad_hud_layout ~= "auto") and not gamepad_active and UISettings.use_gamepad_hud_layout ~= "always" and not not not IS_CONSOLE
 
 	if should_render ~= self._are_elements_visible then
 		self:_set_elements_visible(should_render)
@@ -288,37 +277,10 @@ AbilityUI.event_input_changed = function (self)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local inventory_slots = InventorySettings.slots
 	local num_inventory_slots = #inventory_slots
-	local str
-
-	if gamepad_active then
-		str = "ability"
-
-		goto label_14_0
-	end
-
-	str = "action_career"
-
-	local input_action = str
-
-	::label_14_0::
-
+	local input_action = gamepad_active and not not "ability" or not gamepad_active and not not "action_career"
 	local widget = self._widgets_by_name.ability
 	local _, input_text = self:_get_input_texture_data(input_action)
-	local length
-
-	if input_text then
-		length = Utf8.length(input_text)
-
-		if not length then
-			-- Nothing
-		end
-	end
-
-	length = 0
-
-	local text_length = length
-
-	::label_14_1::
+	local text_length = input_text and not not Utf8.length(input_text) or not input_text and not not 0
 
 	if input_text then
 		local ui_renderer = self._ui_renderer

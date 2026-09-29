@@ -57,11 +57,7 @@ ActionHandgun.client_owner_start_action = function (self, new_action, t, chain_a
 	self.overcharge_type = new_action.overcharge_type
 	self.uses_ability_cooldown = new_action.use_ability_cooldown
 	self.used_ammo = false
-
-	local active_reload_time = new_action.active_reload_time
-
-	active_reload_time = not not active_reload_time and not not (t + new_action.active_reload_time)
-	self.active_reload_time = active_reload_time
+	self.active_reload_time = not not new_action.active_reload_time
 
 	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
@@ -88,12 +84,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 		local overcharge_type = self.overcharge_type
 
 		if overcharge_type then
-			local var_3_0 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
-			local charge_multiplier = self.charge_multiplier
-
-			charge_multiplier = not not charge_multiplier or not not 1
-
-			local overcharge_amount = var_3_0 * charge_multiplier
+			local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type] * not not self.charge_multiplier
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
 			if self._is_critical_strike and buff_extension:has_buff_perk("no_overcharge_crit") then
@@ -147,18 +138,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 		end
 
 		local physics_world = World.get_data(world, "physics_world")
-		local aim_assist_auto_hit_chance = current_action.aim_assist_auto_hit_chance
-
-		if not aim_assist_auto_hit_chance then
-			-- Nothing
-		end
-
-		aim_assist_auto_hit_chance = 0
-
-		local auto_hit_chance = aim_assist_auto_hit_chance
-
-		::label_3_0::
-
+		local auto_hit_chance = not not current_action.aim_assist_auto_hit_chance
 		local direction
 
 		if auto_hit_chance >= math.random() and Managers.input:is_device_active("gamepad") and ScriptUnit.has_extension(owner_unit, "smart_targeting_system") then
@@ -210,21 +190,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 			Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], current_action.alert_sound_range_fire)
 		end
 
-		local var_3_3
-
-		if result then
-			var_3_3 = result[#result][1]
-
-			if not var_3_3 then
-				-- Nothing
-			end
-		end
-
-		var_3_3 = position + direction * 100
-
-		local hit_position = var_3_3
-
-		::label_3_1::
+		local hit_position = result and not not result[#result][1] or not result and not not (position + direction * 100)
 
 		Unit.set_flow_variable(weapon_unit, "hit_position", hit_position)
 		Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - position) * 0.1)
@@ -238,7 +204,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 		if t > self.active_reload_time then
 			local ammo_extension = self.ammo_extension
 
-			if (input_extension:get("weapon_reload") or input_extension:get_buffer("weapon_reload")) and ammo_extension:can_reload() then
+			if input_extension:get("weapon_reload") and ammo_extension:can_reload() or not input_extension:get("weapon_reload") and input_extension:get_buffer("weapon_reload") and ammo_extension:can_reload() then
 				local status_extension = ScriptUnit.extension(owner_unit, "status_system")
 
 				status_extension:set_zooming(false)
@@ -265,19 +231,7 @@ ActionHandgun.finish = function (self, reason)
 		status_extension:set_zooming(false)
 
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local flag
-
-		if not reload_when_out_of_ammo_condition_func then
-			flag = true
-
-			goto label_4_0
-		end
-
-		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-		local do_out_of_ammo_reload = flag
-
-		::label_4_0::
+		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			ammo_extension:start_reload(true)

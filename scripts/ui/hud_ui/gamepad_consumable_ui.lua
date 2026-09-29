@@ -311,21 +311,7 @@ GamepadConsumableUI._update_slot_icon = function (self, widget, item_data, wield
 	local dirty = false
 	local widget_style = widget.style
 	local widget_content = widget.content
-	local hud_icon
-
-	if item_data then
-		hud_icon = item_data.hud_icon
-
-		if not hud_icon then
-			-- Nothing
-		end
-	end
-
-	hud_icon = temp_slot_texture_mapping[slot_name]
-
-	local hud_icon_texture = hud_icon
-
-	::label_13_0::
+	local hud_icon_texture = item_data and not not item_data.hud_icon or not item_data and not not temp_slot_texture_mapping[slot_name]
 
 	if not hud_icon_texture_lit_lookup_table[hud_icon_texture] then
 		hud_icon_texture_lit_lookup_table[hud_icon_texture] = hud_icon_texture .. "_lit"
@@ -335,21 +321,7 @@ GamepadConsumableUI._update_slot_icon = function (self, widget, item_data, wield
 		dirty = true
 		widget_content.texture_icon = hud_icon_texture
 
-		local name
-
-		if item_data then
-			name = item_data.name
-
-			if not name then
-				-- Nothing
-			end
-		end
-
-		name = "no_master_item_found"
-
-		local master_item_name = name
-
-		::label_13_1::
+		local master_item_name = item_data and not not item_data.name or not item_data and not not "no_master_item_found"
 
 		assert(widget_content.texture_icon, "No hud icon for weapon %s", master_item_name)
 

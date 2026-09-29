@@ -24,11 +24,7 @@ PlayerUnitHealthExtension.init = function (self, extension_init_context, unit, e
 	self._shield_duration_left = 0
 	self._end_reason = ""
 	self.wounded_degen_timer = 0
-
-	local remote = player.remote
-
-	remote = not not remote or not not player.bot_player
-	self._is_husk = remote
+	self._is_husk = not not player.remote
 
 	self:update_options()
 
@@ -46,39 +42,21 @@ end
 PlayerUnitHealthExtension.update_options = function (self)
 	-- function 2
 	local game_mode_settings = Managers.state.game_mode:settings()
-	local use_floating_damage_numbers = game_mode_settings.use_floating_damage_numbers
 
-	use_floating_damage_numbers = not not use_floating_damage_numbers and not not not DEDICATED_SERVER
-	self._use_floating_damage_numbers = use_floating_damage_numbers
+	self._use_floating_damage_numbers = not not game_mode_settings.use_floating_damage_numbers
 
 	local setting = Application.user_setting("vs_floating_damage")
 
 	self._show_floating_damage = setting == "floating" or setting == "both"
 	self._show_floating_streak_damage = setting == "streak" or setting == "both"
-
-	local min_streak_font_size = game_mode_settings.min_streak_font_size
-
-	min_streak_font_size = not not min_streak_font_size or not not 30
-	self._min_streak_font_size = min_streak_font_size
-
-	local max_streak_font_size = game_mode_settings.max_streak_font_size
-
-	max_streak_font_size = not not max_streak_font_size or not not 60
-	self._max_streak_font_size = max_streak_font_size
+	self._min_streak_font_size = not not game_mode_settings.min_streak_font_size
+	self._max_streak_font_size = not not game_mode_settings.max_streak_font_size
 
 	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
 
 	self._temp_hp_degen_delay_when_wounded = difficulty_settings.no_wound_dependent_temp_hp_degen
-
-	local percent_health_on_revive = difficulty_settings.percent_health_on_revive
-
-	percent_health_on_revive = not not percent_health_on_revive or not not 0
-	self._percent_health_on_revive = percent_health_on_revive
-
-	local percent_temp_health_on_revive = difficulty_settings.percent_temp_health_on_revive
-
-	percent_temp_health_on_revive = not not percent_temp_health_on_revive or not not 0.5
-	self._percent_temp_health_on_revive = percent_temp_health_on_revive
+	self._percent_health_on_revive = not not difficulty_settings.percent_health_on_revive
+	self._percent_temp_health_on_revive = not not difficulty_settings.percent_temp_health_on_revive
 end
 
 PlayerUnitHealthExtension.hot_join_sync = function (self, sender)
@@ -264,18 +242,7 @@ PlayerUnitHealthExtension.knock_down = function (self, unit)
 	StatusUtils.set_wounded_network(unit, false, "knocked_down")
 
 	local recent_damages = self:recent_damages()
-	local var_13_0 = recent_damages[DamageDataIndex.SOURCE_ATTACKER_UNIT]
-
-	if not var_13_0 then
-		-- Nothing
-	end
-
-	var_13_0 = recent_damages[DamageDataIndex.ATTACKER]
-
-	local attacker_unit = var_13_0
-
-	::label_13_0::
-
+	local attacker_unit = not not recent_damages[DamageDataIndex.SOURCE_ATTACKER_UNIT]
 	local attacker_player = Managers.player:owner(attacker_unit)
 
 	if attacker_player and Managers.mechanism:current_mechanism_name() == "versus" then
@@ -451,20 +418,7 @@ PlayerUnitHealthExtension.update = function (self, dt, context, t)
 					end
 
 					local new_temporary_health = temporary_health - degen_amount
-					local num
-
-					if health <= 0 then
-						num = 1
-
-						goto label_15_0
-					end
-
-					num = 0
-
-					local min_temporary_health_left = num
-
-					::label_15_0::
-
+					local min_temporary_health_left = health <= 0 and not not 1 or not (health <= 0) and not not 0
 					local damage = temporary_health - math.max(new_temporary_health, min_temporary_health_left)
 
 					if damage > 0 then
@@ -621,35 +575,7 @@ PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 	end
 
 	local bb = BLACKBOARDS[source_attacker_unit]
-	local get_data
-
-	if ALIVE[source_attacker_unit] then
-		get_data = Unit.get_data(source_attacker_unit, "breed")
-
-		if not get_data then
-			-- Nothing
-		end
-	end
-
-	if bb then
-		get_data = bb.breed
-
-		if not get_data then
-			-- Nothing
-		end
-	end
-
-	get_data = ALIVE[attacker_unit]
-
-	if get_data then
-		-- Nothing
-	end
-
-	get_data = Unit.get_data(attacker_unit, "breed")
-
-	local attacker_breed = get_data
-
-	::label_19_0::
+	local attacker_breed = ALIVE[source_attacker_unit] and not not Unit.get_data(source_attacker_unit, "breed") or not ALIVE[source_attacker_unit] and (bb and not not bb.breed or not bb and not not ALIVE[attacker_unit])
 
 	attacker_breed = AiUtils.get_actual_attacker_breed(attacker_breed, unit, damage_source_name, attacker_unit, attacker_player)
 
@@ -670,30 +596,8 @@ PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 			local show_hud_damage_feedback_in_world = Application.user_setting("hud_damage_feedback_in_world")
 
 			if attacker_player and attacker_player.local_player and attacker_breed.is_player and not attacker_breed.is_hero and show_hud_damage_feedback_in_world then
-				local _streak_damage = self._streak_damage
-
-				if not _streak_damage then
-					-- Nothing
-				end
-
-				_streak_damage = 0
-
-				local streak_damage = _streak_damage
-
-				::label_19_1::
-
-				local _streak_damage_time = self._streak_damage_time
-
-				if not _streak_damage_time then
-					-- Nothing
-				end
-
-				_streak_damage_time = 0
-
-				local last_dmg_time = _streak_damage_time
-
-				::label_19_2::
-
+				local streak_damage = not not self._streak_damage
+				local last_dmg_time = not not self._streak_damage_time
 				local t = Managers.time:time("game")
 				local time_since_last_dmg = t - last_dmg_time
 
@@ -753,25 +657,7 @@ PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 
 		if attacker_breed.boss or attributes.grudge_marked then
 			local owner_player = Managers.player:owner(self.unit)
-
-			if owner_player then
-				-- Nothing
-			end
-
-			::label_19_3::
-
-			local local_player_2 = owner_player.local_player
-
-			if local_player_2 then
-				-- Nothing
-			end
-
-			local_player_2 = not owner_player.bot_player
-
-			local is_local_and_not_bot = local_player_2
-
-			::label_19_4::
-
+			local is_local_and_not_bot = not not owner_player and not not owner_player.local_player
 			local not_same_player = not not owner_player and not not attacker_player and owner_player ~= attacker_player
 
 			if not_same_player and is_local_and_not_bot then
@@ -836,19 +722,7 @@ PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 		buff_extension:trigger_procs("on_damage_taken", attacker_unit, damage_amount, damage_type)
 	end
 
-	local num
-
-	if buff_extension:has_buff_perk("ignore_death") then
-		num = 1
-
-		goto label_19_5
-	end
-
-	num = 0
-
-	local min_health = num
-
-	::label_19_5::
+	local min_health = buff_extension:has_buff_perk("ignore_death") and not not 1 or not buff_extension:has_buff_perk("ignore_death") and not not 0
 
 	if damage_source_name ~= "dot_debuff" and damage_type ~= "temporary_health_degen" and damage_type ~= "overcharge" then
 		local is_enemy = Managers.state.side:is_enemy(source_attacker_unit, unit)
@@ -932,43 +806,17 @@ PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 			local current_temporary_health = GameSession.game_object_field(game, game_object_id, "current_temporary_health")
 			local permanent_damage_amount, temporary_damage_amount
 			local total_health = current_health + current_temporary_health
-			local num_2
-
-			if total_health <= damage_amount then
-				num_2 = total_health - min_health
-
-				if not num_2 then
-					-- Nothing
-				end
-			end
-
-			num_2 = damage_amount
-
-			local modified_damage_amount = num_2
-
-			::label_19_6::
+			local modified_damage_amount = total_health <= damage_amount and not not (total_health - min_health) or not (total_health <= damage_amount) and not not damage_amount
 
 			if force_permanent_damage then
-				permanent_damage_amount = (not (current_health < modified_damage_amount) or not current_health) and not not modified_damage_amount
-				temporary_damage_amount = (not (current_health < modified_damage_amount) or not (modified_damage_amount - current_health)) and not not 0
+				permanent_damage_amount = current_health < modified_damage_amount and (not not current_health or not not modified_damage_amount) or not (current_health < modified_damage_amount) and not not modified_damage_amount
+				temporary_damage_amount = current_health < modified_damage_amount and (not not (modified_damage_amount - current_health) or not not 0) or not (current_health < modified_damage_amount) and not not 0
 			else
-				permanent_damage_amount = (not (current_temporary_health < modified_damage_amount) or not (modified_damage_amount - current_temporary_health)) and not not 0
-				temporary_damage_amount = (not (current_temporary_health < modified_damage_amount) or not current_temporary_health) and not not modified_damage_amount
+				permanent_damage_amount = current_temporary_health < modified_damage_amount and (not not (modified_damage_amount - current_temporary_health) or not not 0) or not (current_temporary_health < modified_damage_amount) and not not 0
+				temporary_damage_amount = current_temporary_health < modified_damage_amount and (not not current_temporary_health or not not modified_damage_amount) or not (current_temporary_health < modified_damage_amount) and not not modified_damage_amount
 			end
 
-			local num_3
-
-			if current_health < permanent_damage_amount then
-				num_3 = 0
-
-				goto label_19_7
-			end
-
-			num_3 = current_health - permanent_damage_amount
-
-			local new_health = num_3
-
-			::label_19_7::
+			local new_health = current_health < permanent_damage_amount and not not 0 or not (current_health < permanent_damage_amount) and not not (current_health - permanent_damage_amount)
 
 			if script_data.player_unkillable then
 				new_health = math.max(new_health, 1)
@@ -976,23 +824,11 @@ PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 
 			GameSession.set_game_object_field(game, game_object_id, "current_health", new_health)
 
-			local num_4
-
-			if current_temporary_health < temporary_damage_amount then
-				num_4 = 0
-
-				goto label_19_8
-			end
-
-			num_4 = current_temporary_health - temporary_damage_amount
-
-			local new_temporary_health = num_4
-
-			::label_19_8::
+			local new_temporary_health = current_temporary_health < temporary_damage_amount and not not 0 or not (current_temporary_health < temporary_damage_amount) and not not (current_temporary_health - temporary_damage_amount)
 
 			GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", new_temporary_health)
 
-			local is_dead = new_health + new_temporary_health <= 0 and self.state ~= "alive" or not not not status_extension:has_wounds_remaining()
+			local is_dead = new_health + new_temporary_health <= 0 and (self.state ~= "alive" or not not not status_extension:has_wounds_remaining())
 
 			if is_dead and self.state ~= "dead" then
 				local death_system = Managers.state.entity:system("death_system")
@@ -1002,18 +838,7 @@ PlayerUnitHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 
 			local unit_id = self.unit_storage:go_id(unit)
 			local attacker_unit_id, attacker_is_level_unit = self.network_manager:game_object_or_level_id(attacker_unit)
-			local unit_game_object_id = self.network_manager:unit_game_object_id(source_attacker_unit)
-
-			if not unit_game_object_id then
-				-- Nothing
-			end
-
-			unit_game_object_id = attacker_unit_id
-
-			local source_attacker_unit_id = unit_game_object_id
-
-			::label_19_9::
-
+			local source_attacker_unit_id = not not self.network_manager:unit_game_object_id(source_attacker_unit)
 			local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
 			local damage_type_id = NetworkLookup.damage_types[damage_type]
 			local damage_source_id = NetworkLookup.damage_sources[not not damage_source_name or not not "n/a"]
@@ -1058,41 +883,15 @@ PlayerUnitHealthExtension.add_heal = function (self, healer_unit, heal_amount, h
 			local max_health = GameSession.game_object_field(game, game_object_id, "max_health")
 
 			if status_extension:is_permanent_heal(heal_type) and not status_extension:is_knocked_down() then
-				local num
-
-				if current_temporary_health < heal_amount then
-					num = 0
-
-					goto label_20_0
-				end
-
-				num = current_temporary_health - heal_amount
-
-				local new_temporary_health = num
-
-				::label_20_0::
+				local new_temporary_health = current_temporary_health < heal_amount and not not 0 or not (current_temporary_health < heal_amount) and not not (current_temporary_health - heal_amount)
 
 				GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", new_temporary_health)
 
-				local new_health = (not (max_health < current_health + new_temporary_health + heal_amount) or not max_health) and not not (current_health + heal_amount)
+				local new_health = max_health < current_health + new_temporary_health + heal_amount and (not not max_health or not not (current_health + heal_amount)) or not (max_health < current_health + new_temporary_health + heal_amount) and not not (current_health + heal_amount)
 
 				GameSession.set_game_object_field(game, game_object_id, "current_health", new_health)
 			else
-				local num_2
-
-				if max_health < current_health + current_temporary_health + heal_amount then
-					num_2 = max_health - current_health
-
-					if not num_2 then
-						-- Nothing
-					end
-				end
-
-				num_2 = current_temporary_health + heal_amount
-
-				local new_temporary_health = num_2
-
-				::label_20_1::
+				local new_temporary_health = max_health < current_health + current_temporary_health + heal_amount and not not (max_health - current_health) or not (max_health < current_health + current_temporary_health + heal_amount) and not not (current_temporary_health + heal_amount)
 
 				GameSession.set_game_object_field(game, game_object_id, "current_temporary_health", new_temporary_health)
 			end

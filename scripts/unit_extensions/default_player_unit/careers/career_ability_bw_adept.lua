@@ -227,7 +227,7 @@ CareerAbilityBWAdept._run_ability = function (self)
 	local physics_world = World.get_data(world, "physics_world")
 	local direction, speed, hit_pos = get_leap_data(physics_world, POSITION_LOOKUP[owner_unit], landing_position)
 
-	if (local_player or is_server and bot_player) and not talent_extension:has_talent("sienna_adept_activated_ability_explosion") then
+	if is_server and bot_player and not talent_extension:has_talent("sienna_adept_activated_ability_explosion") then
 		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 		local unit_pos = POSITION_LOOKUP[owner_unit]
 		local above = 2
@@ -290,18 +290,7 @@ CareerAbilityBWAdept._run_ability = function (self)
 					-- function 13
 					local unit_3p = this.unit
 					local career_ext = ScriptUnit.extension(unit_3p, "career_system")
-					local var_13_0 = POSITION_LOOKUP[unit_3p]
-
-					if not var_13_0 then
-						-- Nothing
-					end
-
-					var_13_0 = Unit.world_position(unit_3p, 0)
-
-					local position = var_13_0
-
-					::label_13_0::
-
+					local position = not not POSITION_LOOKUP[unit_3p]
 					local rotation = Unit.local_rotation(unit_3p, 0)
 					local explosion_template = "sienna_adept_activated_ability_step_stagger"
 					local scale = 1
@@ -315,18 +304,7 @@ CareerAbilityBWAdept._run_ability = function (self)
 				-- function 14
 				local unit_3p = this.unit
 				local career_ext = ScriptUnit.extension(unit_3p, "career_system")
-				local var_14_0 = POSITION_LOOKUP[unit_3p]
-
-				if not var_14_0 then
-					-- Nothing
-				end
-
-				var_14_0 = Unit.world_position(unit_3p, 0)
-
-				local position = var_14_0
-
-				::label_14_0::
-
+				local position = not not POSITION_LOOKUP[unit_3p]
 				local rotation = Unit.local_rotation(unit_3p, 0)
 				local explosion_template = "sienna_adept_activated_ability_start_stagger"
 				local scale = 1

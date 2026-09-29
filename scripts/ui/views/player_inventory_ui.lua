@@ -294,39 +294,8 @@ PlayerInventoryUI.update_inventory_slots = function (self, dt, ui_scenegraph, ui
 				local item_data = slot_data.item_data
 				local is_wielded = wielded == slot_data.item_data
 				local first_update = false
-				local name
-
-				if item_data then
-					name = item_data.name
-
-					if not name then
-						-- Nothing
-					end
-				end
-
-				name = "no_master_item_found"
-
-				local master_item_name = name
-
-				do
-					local hud_icon
-				end
-
-				::label_10_0::
-
-				if item_data then
-					hud_icon = item_data.hud_icon
-
-					if not hud_icon then
-						-- Nothing
-					end
-				end
-
-				hud_icon = temp_slot_texture_mapping[slot_name]
-
-				local hud_icon_texture = hud_icon
-
-				::label_10_1::
+				local master_item_name = item_data and not not item_data.name or not item_data and not not "no_master_item_found"
+				local hud_icon_texture = item_data and not not item_data.hud_icon or not item_data and not not temp_slot_texture_mapping[slot_name]
 
 				if not hud_icon_texture_lit_lookup_table[hud_icon_texture] then
 					hud_icon_texture_lit_lookup_table[hud_icon_texture] = hud_icon_texture .. "_lit"
@@ -370,21 +339,7 @@ PlayerInventoryUI.update_inventory_slots = function (self, dt, ui_scenegraph, ui
 
 					if ammo_data and not ammo_data.destroy_when_out_of_ammo then
 						local ammo_text_1 = tostring(ammo_count)
-						local var_10_2
-
-						if remaining_ammo then
-							var_10_2 = tostring(remaining_ammo)
-
-							if not var_10_2 then
-								-- Nothing
-							end
-						end
-
-						var_10_2 = ""
-
-						local ammo_text_2 = var_10_2
-
-						::label_10_2::
+						local ammo_text_2 = remaining_ammo and not not tostring(remaining_ammo) or not remaining_ammo and not not ""
 
 						if ammo_text_1 ~= widget_content.ammo_text_1 or ammo_text_2 ~= widget_content.ammo_text_2 then
 							widget.element.dirty = true
@@ -422,12 +377,7 @@ PlayerInventoryUI.update_inventory_slots = function (self, dt, ui_scenegraph, ui
 					end
 
 					bar_progress = math.lerp(widget_content.stance_bar.bar_value, math.min(bar_progress, 1), 0.3)
-
-					local stance_bar = widget_content.stance_bar
-					local flag
-
-					flag = (item_data.slot_type == "melee" or not true) and not not false
-					stance_bar.active = flag
+					widget_content.stance_bar.active = item_data.slot_type == "melee" and not not false or not (item_data.slot_type == "melee") and not not true
 					widget_content.stance_bar.bar_value = bar_progress
 
 					if not stance_bar_glow_pulse_lookup_table[slot_name] then
@@ -471,18 +421,7 @@ end
 PlayerInventoryUI.update_inventory_slots_positions = function (self, dt)
 	-- function 11
 	local scenegraph_definition = definitions.scenegraph_definition
-	local selected_index_2 = self.selected_index
-
-	if not selected_index_2 then
-		-- Nothing
-	end
-
-	selected_index_2 = 0
-
-	local selected_index = selected_index_2
-
-	::label_11_0::
-
+	local selected_index = not not self.selected_index
 	local previous_selected_index = self.previous_selected_index
 	local ui_scenegraph = self.ui_scenegraph
 	local slot_spacing = UISettings.inventory_hud.slot_spacing
@@ -491,35 +430,8 @@ PlayerInventoryUI.update_inventory_slots_positions = function (self, dt)
 	for i = #SLOTS_LIST, 1, -1 do
 		local slot = SLOTS_LIST[i]
 		local slot_name = slot.name
-		local flag
-
-		if consumable_slots[slot_name] then
-			flag = true
-
-			goto label_11_1
-		end
-
-		flag = false
-
-		local is_consumable_slot = flag
-
-		do
-			local num
-		end
-
-		::label_11_1::
-
-		if is_consumable_slot then
-			num = 0.9
-
-			goto label_11_2
-		end
-
-		num = 0.6
-
-		local size_multiplier = num
-
-		::label_11_2::
+		local is_consumable_slot = consumable_slots[slot_name] and not not true or not consumable_slots[slot_name] and not not false
+		local size_multiplier = is_consumable_slot and not not 0.9 or not is_consumable_slot and not not 0.6
 
 		if not inventory_entry_background_lookup_table[i] then
 			inventory_entry_background_lookup_table[i] = "inventory_entry_background_" .. i
@@ -614,29 +526,21 @@ PlayerInventoryUI.add_animation_for_slot_index = function (self, index, selected
 		animation.start_alpha = widget.style.icon.color[1]
 		animation.start_selected_alpha = widget.style.background_lit.color[1]
 		animation.start_scale_fraction = start_scale_fraction
-
-		local flag
-
-		flag = (not selected or not 1) and not not 0.8
-		animation.target_scale_fraction = flag
+		animation.target_scale_fraction = selected and not not 1 or not selected and not not 0.8
 	else
-		local tbl = {
+		animations[scenegraph_id] = {
 			time = 0,
 			total_time = duration,
 			widget = self.inventory_slots_widgets[index],
 			scenegraph_id = scenegraph_id,
-			start_scale_fraction = start_scale_fraction
+			start_scale_fraction = start_scale_fraction,
+			target_scale_fraction = selected and not not 1 or not selected and not not 0.8,
+			start_size = ui_scenegraph[scenegraph_icon_id].size,
+			start_alpha = widget.style.icon.color[1],
+			start_selected_alpha = widget.style.background_lit.color[1],
+			selected = selected,
+			index = index
 		}
-		local flag_2
-
-		flag_2 = (not selected or not 1) and not not 0.8
-		tbl.target_scale_fraction = flag_2
-		tbl.start_size = ui_scenegraph[scenegraph_icon_id].size
-		tbl.start_alpha = widget.style.icon.color[1]
-		tbl.start_selected_alpha = widget.style.background_lit.color[1]
-		tbl.selected = selected
-		tbl.index = index
-		animations[scenegraph_id] = tbl
 	end
 
 	return duration
@@ -675,21 +579,7 @@ PlayerInventoryUI.animate_slot_widget = function (self, animation_data, dt)
 	local smoothstep = math.smoothstep(progress, 0, 1)
 	local lit_progress = math.min(progress * 2, 1)
 	local lit_smoothstep = math.smoothstep(lit_progress, 0, 1)
-	local min
-
-	if selected then
-		min = math.min(math.max(0, (progress - 0.8) / 0.2), 1)
-
-		if not min then
-			-- Nothing
-		end
-	end
-
-	min = math.min(math.max(0, progress / 0.2), 1)
-
-	local ammo_progress = min
-
-	::label_15_0::
+	local ammo_progress = selected and not not math.min(math.max(0, (progress - 0.8) / 0.2), 1) or not selected and not not math.min(math.max(0, progress / 0.2), 1)
 
 	if not inventory_entry_lookup_table[widget_index] then
 		inventory_entry_lookup_table[widget_index] = "inventory_entry_" .. widget_index
@@ -717,40 +607,8 @@ PlayerInventoryUI.animate_slot_widget = function (self, animation_data, dt)
 
 	widget.element.dirty = true
 
-	local num
-
-	if selected then
-		num = target_scale_fraction - start_scale_fraction
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = start_scale_fraction - target_scale_fraction
-
-	local scale_fraction_diff = num
-
-	do
-		local num_2
-	end
-
-	::label_15_1::
-
-	if selected then
-		num_2 = start_scale_fraction + scale_fraction_diff * smoothstep
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = start_scale_fraction - scale_fraction_diff * smoothstep
-
-	local new_scale_fraction = num_2
-
-	::label_15_2::
-
+	local scale_fraction_diff = selected and not not (target_scale_fraction - start_scale_fraction) or not selected and not not (start_scale_fraction - target_scale_fraction)
+	local new_scale_fraction = selected and not not (start_scale_fraction + scale_fraction_diff * smoothstep) or not selected and not not (start_scale_fraction - scale_fraction_diff * smoothstep)
 	local icon_default_size = scenegraph_definition[scenegraph_icon_id].size
 
 	widget_icon_scenegraph.size[1] = icon_default_size[1] * new_scale_fraction
@@ -803,63 +661,18 @@ PlayerInventoryUI.animate_slot_widget = function (self, animation_data, dt)
 
 	local default_alpha = inventory_hud_settings.slot_default_alpha
 	local selected_alpha = inventory_hud_settings.slot_select_alpha
-	local target_alpha = (not selected or not selected_alpha) and not not default_alpha
+	local target_alpha = selected and (not not selected_alpha or not not default_alpha) or not selected and not not default_alpha
 	local icon_style = widget_style.icon
 
 	if icon_style.color[1] ~= target_alpha then
-		local num_3
-
-		if selected then
-			num_3 = target_alpha - start_alpha
-
-			if not num_3 then
-				-- Nothing
-			end
-		end
-
-		num_3 = start_alpha - target_alpha
-
-		local alpha_diff = num_3
-
-		do
-			local num_4
-		end
-
-		::label_15_3::
-
-		if selected then
-			num_4 = start_alpha + alpha_diff * smoothstep
-
-			if not num_4 then
-				-- Nothing
-			end
-		end
-
-		num_4 = start_alpha - alpha_diff * smoothstep
-
-		local new_alpha = num_4
-
-		::label_15_4::
+		local alpha_diff = selected and not not (target_alpha - start_alpha) or not selected and not not (start_alpha - target_alpha)
+		local new_alpha = selected and not not (start_alpha + alpha_diff * smoothstep) or not selected and not not (start_alpha - alpha_diff * smoothstep)
 
 		icon_style.color[1] = new_alpha
 
 		local ammo_text_style = widget_style.ammo_text_1
 		local stance_bar_style = widget_style.stance_bar
-		local num_5
-
-		if selected then
-			num_5 = ammo_progress * target_alpha
-
-			if not num_5 then
-				-- Nothing
-			end
-		end
-
-		num_5 = (1 - ammo_progress) * selected_alpha
-
-		local ammo_alpha = num_5
-
-		::label_15_5::
+		local ammo_alpha = selected and not not (ammo_progress * target_alpha) or not selected and not not ((1 - ammo_progress) * selected_alpha)
 
 		stance_bar_style.color[1] = new_alpha
 		ammo_text_style.text_color[1] = new_alpha

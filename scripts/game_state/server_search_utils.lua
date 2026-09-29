@@ -131,29 +131,8 @@ ServerSearchUtils.filter_game_server_search = function (servers, network_options
 				return false
 			end
 
-			local num_players_2 = server_info.num_players
-
-			if not num_players_2 then
-				-- Nothing
-			end
-
-			num_players_2 = 0
-
-			local num_players = num_players_2
-
-			::label_10_0::
-
-			local max_players_2 = server_info.max_players
-
-			if not max_players_2 then
-				-- Nothing
-			end
-
-			max_players_2 = 1
-
-			local max_players = max_players_2
-
-			::label_10_1::
+			local num_players = not not server_info.num_players
+			local max_players = not not server_info.max_players
 
 			return max_players <= num_players
 		end)
@@ -167,17 +146,7 @@ ServerSearchUtils.filter_game_server_search = function (servers, network_options
 	end)
 	table.array_remove_if(servers, function (server)
 		-- function 12
-		local ping_2 = server.server_info.ping
-
-		if not ping_2 then
-			-- Nothing
-		end
-
-		ping_2 = math.huge
-
-		local ping = ping_2
-
-		::label_12_0::
+		local ping = not not server.server_info.ping
 
 		if search_time >= 300 then
 			return false

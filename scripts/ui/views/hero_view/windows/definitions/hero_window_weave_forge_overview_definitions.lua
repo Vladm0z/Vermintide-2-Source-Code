@@ -1479,11 +1479,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 					},
 					content_check_function = function (content)
 						-- function 4
-						local tooltip = content.tooltip
-
-						tooltip = not not tooltip and not not content.tooltip_hotspot.is_hover
-
-						return tooltip
+						return not not content.tooltip
 					end
 				},
 				{
@@ -1518,17 +1514,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 8
-						local progress_2 = style.progress
-
-						if not progress_2 then
-							-- Nothing
-						end
-
-						progress_2 = 0
-
-						local progress = progress_2
-
-						::label_8_0::
+						local progress = not not style.progress
 
 						progress = (progress + dt) % 1
 
@@ -1545,11 +1531,8 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 					content_check_function = function (content)
 						-- function 9
 						local button_hotspot = content.button_hotspot
-						local icon = content.icon
 
-						icon = not not icon and not button_hotspot.disable_button and not not not content.upgrading
-
-						return icon
+						return not not content.icon
 					end
 				},
 				{
@@ -1559,14 +1542,8 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 					content_check_function = function (content)
 						-- function 10
 						local button_hotspot = content.button_hotspot
-						local disable_button = button_hotspot.disable_button
 
-						if disable_button then
-							disable_button = content.icon
-							disable_button = not not disable_button and not not not content.upgrading
-						end
-
-						return disable_button
+						return not not button_hotspot.disable_button
 					end
 				},
 				{

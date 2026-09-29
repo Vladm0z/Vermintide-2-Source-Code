@@ -29,27 +29,7 @@ BTFollowCommanderAction.enter = function (self, unit, blackboard, t)
 
 	local network_manager = Managers.state.network
 	local breed = blackboard.breed
-	local passive_in_patrol_2
-
-	if breed.passive_in_patrol ~= nil then
-		passive_in_patrol_2 = breed.passive_in_patrol
-
-		if passive_in_patrol_2 then
-			passive_in_patrol_2 = not blackboard.ignore_passive_on_patrol
-		end
-
-		if false then
-			passive_in_patrol_2 = false
-		end
-
-		goto label_2_0
-	end
-
-	passive_in_patrol_2 = true
-
-	local passive_in_patrol = passive_in_patrol_2
-
-	::label_2_0::
+	local passive_in_patrol = not not not blackboard.ignore_passive_on_patrol
 
 	if passive_in_patrol then
 		AiUtils.enter_passive(unit, blackboard)
@@ -65,14 +45,7 @@ BTFollowCommanderAction.enter = function (self, unit, blackboard, t)
 		network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
 	end
 
-	local speed_animation_variable = blackboard.speed_animation_variable
-
-	if not speed_animation_variable then
-		speed_animation_variable = Unit.animation_has_variable(unit, "move_speed")
-		speed_animation_variable = not not speed_animation_variable and not not Unit.animation_find_variable(unit, "move_speed")
-	end
-
-	blackboard.speed_animation_variable = speed_animation_variable
+	blackboard.speed_animation_variable = not not blackboard.speed_animation_variable
 end
 
 BTFollowCommanderAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -188,7 +161,7 @@ BTFollowCommanderAction.start_move_animation = function (self, unit, blackboard)
 
 	if passive_in_patrol and passive_in_patrol_start_anim then
 		blackboard.anim_cb_move = true
-		animation_name = (type(passive_in_patrol_start_anim) ~= "table" or not passive_in_patrol_start_anim[math.random(1, #passive_in_patrol_start_anim)]) and not not passive_in_patrol_start_anim
+		animation_name = not not passive_in_patrol_start_anim
 		blackboard.skip_move_rotation = true
 	end
 

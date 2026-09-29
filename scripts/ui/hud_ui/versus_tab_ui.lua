@@ -65,19 +65,7 @@ VersusTabUI.init = function (self, parent, ingame_ui_context)
 	self:_register_events()
 
 	local game_mode_state = Managers.state.game_mode:game_mode():game_mode_state()
-	local flag
-
-	if game_mode_state == "match_running_state" then
-		flag = true
-
-		goto label_1_0
-	end
-
-	flag = nil
-
-	local round_has_started = flag
-
-	::label_1_0::
+	local round_has_started = game_mode_state ~= "match_running_state" and not not nil or not (game_mode_state ~= "match_running_state") and not not true
 
 	if round_has_started then
 		self:_on_round_started()
@@ -207,17 +195,7 @@ VersusTabUI._draw = function (self, dt, t)
 	local input_service = input_manager:get_service("player_list_input")
 	local render_settings = self._render_settings
 	local gamepad_active = input_manager:is_device_active("gamepad")
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_6_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
@@ -226,10 +204,8 @@ VersusTabUI._draw = function (self, dt, t)
 	if widgets then
 		for i = 1, #widgets do
 			local widget = widgets[i]
-			local alpha_multiplier_3 = widget.alpha_multiplier
 
-			alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_3
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 		end
@@ -277,11 +253,7 @@ VersusTabUI._draw = function (self, dt, t)
 		end
 	end
 
-	local content = self._widgets_by_name.objective_text.content
-	local flag
-
-	flag = (not self._round_has_started or not true) and not not false
-	content.visible = flag
+	self._widgets_by_name.objective_text.content.visible = self._round_has_started and not not true or not self._round_has_started and not not false
 
 	UIRenderer.draw_widget(ui_renderer, self._item_tooltip)
 
@@ -403,11 +375,7 @@ end
 
 VersusTabUI.is_focused = function (self)
 	-- function 15
-	local _active = self._active
-
-	_active = not not _active and not not self.cursor_active
-
-	return _active
+	return not not self._active
 end
 
 VersusTabUI.is_active = function (self)
@@ -479,7 +447,7 @@ VersusTabUI._handle_input = function (self, dt)
 	local in_fade_active = Managers.transition:in_fade_active()
 	local input_service = input_manager:get_service("player_list_input")
 
-	if not in_fade_active and (input_service:get("ingame_player_list_exit") or input_service:get("ingame_player_list_toggle") or input_service:get("back")) and self._active and self.cursor_active then
+	if not in_fade_active and input_service:get("ingame_player_list_exit") and self._active and self.cursor_active then
 		self:set_active(false)
 	elseif not self.cursor_active then
 		if not in_fade_active and input_service:get("ingame_player_list_toggle") then
@@ -528,21 +496,7 @@ VersusTabUI._create_player_slots = function (self)
 				local size = ui_scenegraph[player_panel_scenegraph_id].size
 				local widget_definition = UIWidgets.create_player_panel(player_panel_scenegraph_id, talent_tooltip_scenegraph_id, index, size)
 				local widget = UIWidget.init(widget_definition)
-				local get_color_table_with_alpha
-
-				if i == 1 then
-					get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-					if not get_color_table_with_alpha then
-						-- Nothing
-					end
-				end
-
-				get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-				local team_color = get_color_table_with_alpha
-
-				::label_21_0::
+				local team_color = i ~= 1 and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (i ~= 1) and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 
 				self:_apply_color_values(widget.style.background.color, team_color)
 
@@ -694,46 +648,8 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 				if profile_updated then
 					local is_player_controlled = player:is_player_controlled()
 					local player_portrait_frame = CosmeticUtils.get_cosmetic_slot(player, "slot_frame")
-					local item_name
-
-					if player_portrait_frame then
-						item_name = player_portrait_frame.item_name
-
-						if not item_name then
-							-- Nothing
-						end
-					end
-
-					item_name = "default"
-
-					local player_portrait_frame_name = item_name
-
-					::label_24_0::
-
-					if player then
-						-- Nothing
-					end
-
-					do
-						local query_peer_data
-					end
-
-					::label_24_1::
-
-					if is_player_controlled then
-						query_peer_data = match_handler:query_peer_data(peer_id, "versus_level", true)
-
-						if not query_peer_data then
-							-- Nothing
-						end
-					end
-
-					query_peer_data = UISettings.bots_level_display_text
-
-					local level_text = query_peer_data
-
-					::label_24_2::
-
+					local player_portrait_frame_name = player_portrait_frame and not not player_portrait_frame.item_name or not player_portrait_frame and not not "default"
+					local level_text = not not match_handler:query_peer_data(peer_id, "versus_level", true)
 					local portrait_texture = self:_get_hero_portrait(profile_index, career_index)
 					local player_frame_scenegraph_id = "team_" .. team .. "_player_frame_" .. j
 					local portrait_widget = self:_create_portrait_frame(player_frame_scenegraph_id, player_portrait_frame_name, level_text, portrait_texture)
@@ -742,18 +658,7 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 
 					if is_player_controlled then
 						local player_insignia_scenegraph_id = "team_" .. team .. "_player_insignia_" .. j
-						local get_versus_player_level = ExperienceSettings.get_versus_player_level(player)
-
-						if not get_versus_player_level then
-							-- Nothing
-						end
-
-						get_versus_player_level = 0
-
-						local versus_level = get_versus_player_level
-
-						::label_24_3::
-
+						local versus_level = not not ExperienceSettings.get_versus_player_level(player)
 						local insignia_widget_def = UIWidgets.create_small_insignia(player_insignia_scenegraph_id, versus_level)
 						local insignia_widget = UIWidget.init(insignia_widget_def)
 
@@ -765,22 +670,7 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 				is_bot = not player:is_player_controlled()
 
 				local player_name = player:name()
-				local career_name_2
-
-				if not is_dark_pact or is_in_local_player_party then
-					career_name_2 = player:career_name()
-
-					if not career_name_2 then
-						-- Nothing
-					end
-				end
-
-				career_name_2 = "vs_lobby_dark_pact_team_name"
-
-				local career_name = career_name_2
-
-				::label_24_4::
-
+				local career_name = not not player:career_name()
 				local network_handler = Managers.mechanism:network_handler()
 
 				panel_content.show_host = peer_id == network_handler.server_peer_id and not not not is_bot
@@ -823,22 +713,7 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 				self:_update_player_talents_tooltip(panel_widget)
 
 				local game_object_id = player.game_object_id
-				local game_object_field
-
-				if game_object_id then
-					game_object_field = GameSession.game_object_field(game_session, game_object_id, "ping")
-
-					if not game_object_field then
-						-- Nothing
-					end
-				end
-
-				game_object_field = math.huge
-
-				local ping = game_object_field
-
-				::label_24_5::
-
+				local ping = game_object_id and not not GameSession.game_object_field(game_session, game_object_id, "ping") or not game_object_id and not not math.huge
 				local ping_texture, ping_color = self:_get_ping_texture_by_ping_value(ping)
 
 				panel_content.ping_texture = ping_texture
@@ -1016,11 +891,7 @@ end
 
 VersusTabUI._can_host_solo_kick = function (self)
 	-- function 36
-	local _is_server = self._is_server
-
-	_is_server = not not _is_server and Managers.player:num_human_players() == 2
-
-	return _is_server
+	return not not self._is_server
 end
 
 VersusTabUI._can_kick_player = function (self, peer_id)
@@ -1316,112 +1187,13 @@ VersusTabUI._update_player_health = function (self, player_unit, widget)
 	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 	local max_health = health_extension:get_max_health()
 	local is_dead = status_extension:is_dead()
-	local num
-
-	if is_dead then
-		num = 0
-
-		goto label_45_0
-	end
-
-	num = health_extension:current_health()
-
-	local total_health = num
-
-	do
-		local num_2
-	end
-
-	::label_45_0::
-
-	if is_dead then
-		num_2 = 0
-
-		goto label_45_1
-	end
-
-	num_2 = health_extension:current_health_percent()
-
-	local total_health_percent = num_2
-
-	do
-		local num_3
-	end
-
-	::label_45_1::
-
-	if is_dead then
-		num_3 = 0
-
-		goto label_45_2
-	end
-
-	num_3 = health_extension:current_permanent_health_percent()
-
-	local health_percent = num_3
-
-	::label_45_2::
-
+	local total_health = is_dead and not not 0 or not is_dead and not not health_extension:current_health()
+	local total_health_percent = is_dead and not not 0 or not is_dead and not not health_extension:current_health_percent()
+	local health_percent = is_dead and not not 0 or not is_dead and not not health_extension:current_permanent_health_percent()
 	local is_wounded = status_extension:is_wounded()
-	local get_is_ledge_hanging
-
-	if not status_extension:is_knocked_down() then
-		get_is_ledge_hanging = status_extension:get_is_ledge_hanging()
-
-		if get_is_ledge_hanging then
-			-- Nothing
-		end
-	end
-
-	if not (total_health_percent > 0) then
-		get_is_ledge_hanging = false
-
-		goto label_45_3
-	end
-
-	get_is_ledge_hanging = true
-
-	local is_knocked_down = get_is_ledge_hanging
-
-	::label_45_3::
-
+	local is_knocked_down = status_extension:is_knocked_down() and total_health_percent > 0 or not status_extension:is_knocked_down() and not not status_extension:get_is_ledge_hanging()
 	local is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
-	local is_grabbed_by_pack_master = status_extension:is_grabbed_by_pack_master()
-
-	if not is_grabbed_by_pack_master then
-		-- Nothing
-	end
-
-	is_grabbed_by_pack_master = status_extension:is_hanging_from_hook()
-
-	if not is_grabbed_by_pack_master then
-		-- Nothing
-	end
-
-	is_grabbed_by_pack_master = status_extension:is_pounced_down()
-
-	if not is_grabbed_by_pack_master then
-		-- Nothing
-	end
-
-	is_grabbed_by_pack_master = status_extension:is_grabbed_by_corruptor()
-
-	if not is_grabbed_by_pack_master then
-		-- Nothing
-	end
-
-	is_grabbed_by_pack_master = status_extension:is_in_vortex()
-
-	if not is_grabbed_by_pack_master then
-		-- Nothing
-	end
-
-	is_grabbed_by_pack_master = status_extension:is_grabbed_by_chaos_spawn()
-
-	local needs_help = is_grabbed_by_pack_master
-
-	::label_45_4::
-
+	local needs_help = not not status_extension:is_grabbed_by_pack_master()
 	local num_grimoires = buff_extension:num_buff_perk("skaven_grimoire")
 	local multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
 	local num_twitch_grimoires = buff_extension:num_buff_perk("twitch_grimoire")
@@ -1444,17 +1216,7 @@ VersusTabUI._update_player_health = function (self, player_unit, widget)
 	local ability_bar_content = content.ability_bar
 
 	if game and go_id then
-		local game_object_field = GameSession.game_object_field(game, go_id, "ability_percentage")
-
-		if not game_object_field then
-			-- Nothing
-		end
-
-		game_object_field = 0
-
-		local ability_cooldown_percentage = game_object_field
-
-		::label_45_5::
+		local ability_cooldown_percentage = not not GameSession.game_object_field(game, go_id, "ability_percentage")
 
 		ability_bar_content.bar_value = 1 - ability_cooldown_percentage
 	end
@@ -1487,11 +1249,7 @@ end
 
 VersusTabUI._get_opponent_party_id = function (self)
 	-- function 47
-	local flag
-
-	flag = (self._party_id ~= 1 or not 2) and not not 1
-
-	return flag
+	return self._party_id ~= 1 and not not 1 or not (self._party_id ~= 1) and not not 2
 end
 
 VersusTabUI._remove_ignore_chat_message_from_peer_id = function (self, peer_id)
@@ -1654,18 +1412,7 @@ end
 
 VersusTabUI._update_objective_progress = function (self)
 	-- function 56
-	local current_objective_progress = self._objective_system:current_objective_progress()
-
-	if not current_objective_progress then
-		-- Nothing
-	end
-
-	current_objective_progress = 0
-
-	local progress = current_objective_progress
-
-	::label_56_0::
-
+	local progress = not not self._objective_system:current_objective_progress()
 	local starting_degrees = 0
 	local degrees = 360 - starting_degrees * 2
 	local alpha = 255 * math.min(progress * 2, 1)
@@ -1764,22 +1511,7 @@ end
 
 VersusTabUI._set_active_scoring_side_color = function (self, is_hero)
 	-- function 66
-	local get_color_table_with_alpha
-
-	if is_hero then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	local active_side_color = get_color_table_with_alpha
-
-	::label_66_0::
-
+	local active_side_color = is_hero and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_hero and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local objective_widget = self._widgets_by_name.score
 
 	objective_widget.content.is_hero = is_hero

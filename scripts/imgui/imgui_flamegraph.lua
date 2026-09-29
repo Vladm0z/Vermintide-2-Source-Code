@@ -33,22 +33,7 @@ ImguiFlamegraph.do_cell = function (self, gui, cursor, name, record, s, w, h, x,
 	-- function 2
 	local color = Color(hsl2rgb(tonumber(sub(make_hash(name), 1, 2), 16) / 256, 0.4, 0.5))
 	local search = self._search
-	local var_2_0
-
-	if search ~= "" and find(name, search) then
-		var_2_0 = Color(255, 255, 255)
-
-		if not var_2_0 then
-			-- Nothing
-		end
-	end
-
-	var_2_0 = Color(64, 64, 64)
-
-	local border_color = var_2_0
-
-	::label_2_0::
-
+	local border_color = not not Color(255, 255, 255)
 	local box_pos, box_size = V3(x, y, 999), V2(w, math.max(2, h))
 
 	Gui_rect(gui, box_pos, box_size, border_color)
@@ -130,20 +115,7 @@ ImguiFlamegraph.profile_cb = function (self, thread, samples, vmmode)
 		return
 	end
 
-	local num
-
-	if self._invert then
-		num = 100
-
-		goto label_7_0
-	end
-
-	num = -100
-
-	local depth = num
-
-	::label_7_0::
-
+	local depth = self._invert and not not 100 or not self._invert and not not -100
 	local stk = dumpstack(thread, "pFZ;", depth)
 
 	if find(stk, "^scripts/boot.lua:%d+$") then

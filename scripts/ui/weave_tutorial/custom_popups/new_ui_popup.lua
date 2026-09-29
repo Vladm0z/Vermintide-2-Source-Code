@@ -251,18 +251,7 @@ NewUIPopup._handle_keyboard_input = function (self, dt, input_service)
 	end
 
 	local num_buttons = #button_widgets
-	local _button_index = self._button_index
-
-	if not _button_index then
-		-- Nothing
-	end
-
-	_button_index = num_buttons
-
-	local index = _button_index
-
-	::label_11_0::
-
+	local index = not not self._button_index
 	local input_service = Managers.input:get_service("popup")
 
 	if input_service:get("move_right_hold_continuous") then

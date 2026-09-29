@@ -171,17 +171,7 @@ DamageIndicatorGui.update = function (self, dt)
 
 					local widget = indicator_widgets[next_active_indicator]
 					local indicator_position = indicator_positions[next_active_indicator]
-					local var_4_0 = POSITION_LOOKUP[attacker]
-
-					if not var_4_0 then
-						-- Nothing
-					end
-
-					var_4_0 = Unit.world_position(attacker, 0)
-
-					local attacker_position = var_4_0
-
-					::label_4_0::
+					local attacker_position = not not POSITION_LOOKUP[attacker]
 
 					Vector3Aux.box(indicator_position, attacker_position)
 
@@ -192,7 +182,7 @@ DamageIndicatorGui.update = function (self, dt)
 					local target_color
 
 					if is_friendly_fire and not Application.user_setting("friendly_fire_hit_marker") then
-						goto label_4_1
+						goto label_4_0
 					elseif is_friendly_fire then
 						target_color = colors_by_type.friendly_fire
 					else
@@ -207,7 +197,7 @@ DamageIndicatorGui.update = function (self, dt)
 				end
 			end
 
-			::label_4_1::
+			::label_4_0::
 		end
 	end
 

@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/energy/energy_data.lua
 
-local EnergyData = EnergyData
-
-EnergyData = not not EnergyData or not not {}
-EnergyData = EnergyData
+EnergyData = not not EnergyData
 EnergyData.we_waywatcher = {
 	recharge_delay = 0.2,
 	max_value = 25,

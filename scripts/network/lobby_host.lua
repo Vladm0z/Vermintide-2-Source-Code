@@ -26,21 +26,7 @@ LobbyHost.init = function (self, network_options, lobby)
 		fassert(network_options.max_members, "Must provide max members to LobbyHost")
 	end
 
-	local IS_LINUX
-
-	if not IS_WINDOWS then
-		IS_LINUX = IS_LINUX
-
-		if IS_LINUX then
-			-- Nothing
-		end
-	end
-
-	IS_LINUX = network_options.max_members
-
-	::label_2_0::
-
-	self.max_members = IS_LINUX
+	self.max_members = IS_WINDOWS and not not network_options.max_members or not IS_WINDOWS and not not IS_LINUX
 	self.lobby = not not lobby or not not LobbyInternal.create_lobby(network_options)
 	self.peer_id = Network.peer_id()
 	self._network_initialized = false
@@ -78,17 +64,7 @@ LobbyHost.update = function (self, dt)
 	-- function 5
 	local lobby = self.lobby
 	local new_state = lobby:state()
-	local state = self.state
-
-	if not state then
-		-- Nothing
-	end
-
-	state = 0
-
-	local old_state = state
-
-	::label_5_0::
+	local old_state = not not self.state
 
 	if new_state ~= old_state then
 		printf("[LobbyHost] Changed state from %s to %s", old_state, new_state)
@@ -97,17 +73,7 @@ LobbyHost.update = function (self, dt)
 
 		if new_state == LobbyState.JOINED then
 			if IS_PS4 then
-				local lobby_data_table_2 = self.lobby_data_table
-
-				if not lobby_data_table_2 then
-					-- Nothing
-				end
-
-				lobby_data_table_2 = {}
-
-				local lobby_data_table = lobby_data_table_2
-
-				::label_5_1::
+				local lobby_data_table = not not self.lobby_data_table
 
 				lobby_data_table.network_hash = self.network_hash
 
@@ -124,10 +90,7 @@ LobbyHost.update = function (self, dt)
 				end
 			end
 
-			local lobby_members = self.lobby_members
-
-			lobby_members = not not lobby_members or not not LobbyMembers:new(lobby)
-			self.lobby_members = lobby_members
+			self.lobby_members = not not self.lobby_members
 
 			Managers.party:set_leader(lobby:lobby_host())
 			Managers.account:update_presence()
@@ -164,38 +127,17 @@ LobbyHost._update_debug = function (self)
 			local peer_id = members[i]
 
 			if peer_id ~= my_peer_id then
-				local _min_remaining_buffer = self._min_remaining_buffer
-
-				_min_remaining_buffer = not not _min_remaining_buffer or not not {}
-				self._min_remaining_buffer = _min_remaining_buffer
+				self._min_remaining_buffer = not not self._min_remaining_buffer
 
 				local remaining_buffer_size = Network.reliable_send_buffer_left(peer_id)
 				local min_buffer = self._min_remaining_buffer[peer_id]
 
-				if (not min_buffer or not (remaining_buffer_size < min_buffer)) and min_buffer == nil and remaining_buffer_size > 0 then
+				if min_buffer == nil and remaining_buffer_size > 0 then
 					min_buffer = remaining_buffer_size
 					self._min_remaining_buffer[peer_id] = min_buffer
 				end
 
-				local text = Debug.text
-				local str = "    %s : %d %s"
-				local var_7_3 = peer_id
-				local var_7_4 = remaining_buffer_size
-				local format
-
-				if min_buffer then
-					format = string.format("(min: %d)", min_buffer)
-
-					if not format then
-						-- Nothing
-					end
-				end
-
-				format = ""
-
-				::label_7_0::
-
-				text(str, var_7_3, var_7_4, format)
+				Debug.text("    %s : %d %s", peer_id, remaining_buffer_size, min_buffer and not not string.format("(min: %d)", min_buffer) or not min_buffer and not not "")
 			end
 		end
 	end
@@ -282,21 +224,7 @@ end
 
 LobbyHost.id = function (self)
 	-- function 19
-	local lobby_id
-
-	if LobbyInternal.lobby_id then
-		lobby_id = LobbyInternal.lobby_id(self.lobby)
-
-		if not lobby_id then
-			-- Nothing
-		end
-	end
-
-	lobby_id = "no_id"
-
-	::label_19_0::
-
-	return lobby_id
+	return LobbyInternal.lobby_id and not not LobbyInternal.lobby_id(self.lobby) or not LobbyInternal.lobby_id and not not "no_id"
 end
 
 LobbyHost.is_joined = function (self)
@@ -328,17 +256,7 @@ LobbyHost.set_lobby = function (self, lobby)
 
 	self.lobby = lobby
 
-	local lobby_data_table_2 = self.lobby_data_table
-
-	if not lobby_data_table_2 then
-		-- Nothing
-	end
-
-	lobby_data_table_2 = {}
-
-	local lobby_data_table = lobby_data_table_2
-
-	::label_24_0::
+	local lobby_data_table = not not self.lobby_data_table
 
 	self:set_lobby_data(lobby_data_table)
 

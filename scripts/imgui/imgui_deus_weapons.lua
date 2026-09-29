@@ -126,24 +126,7 @@ ImguiDeusWeapons.update = function (self)
 	end
 
 	local mechanism = Managers.mechanism:game_mechanism()
-
-	if mechanism then
-		-- Nothing
-	end
-
-	::label_7_0::
-
-	local get_deus_run_controller = mechanism.get_deus_run_controller
-
-	if get_deus_run_controller then
-		-- Nothing
-	end
-
-	get_deus_run_controller = mechanism:get_deus_run_controller()
-
-	local deus_run_controller = get_deus_run_controller
-
-	::label_7_1::
+	local deus_run_controller = not not mechanism and not not mechanism.get_deus_run_controller
 
 	if not deus_run_controller then
 		return
@@ -185,25 +168,7 @@ ImguiDeusWeapons.update = function (self)
 			local inventory_extension = self:_get_inventory_extension()
 
 			if inventory_extension and not inventory_extension:resyncing_loadout() then
-				local var_7_1 = equip_random_weapon
-				local var_7_2 = deus_run_controller
-				local var_7_3 = inventory_extension
-				local var_7_4 = rarities
-				local _selected_rarity_index = self._selected_rarity_index
-
-				_selected_rarity_index = not not _selected_rarity_index or not not 1
-
-				local var_7_6 = var_7_4[_selected_rarity_index]
-				local _run_progress = self._run_progress
-
-				_run_progress = not not _run_progress or not not 0
-
-				local var_7_8 = difficulties
-				local _difficulty_index = self._difficulty_index
-
-				_difficulty_index = not not _difficulty_index or not not 1
-
-				var_7_1(var_7_2, var_7_3, var_7_6, _run_progress, var_7_8[_difficulty_index], self._career_name)
+				equip_random_weapon(deus_run_controller, inventory_extension, rarities[not not self._selected_rarity_index], not not self._run_progress, difficulties[not not self._difficulty_index], self._career_name)
 			end
 
 			self._next_weapon_time = t + 2
@@ -248,7 +213,11 @@ ImguiDeusWeapons.draw = function (self, is_open)
 	local difficulty = difficulties[self._difficulty_index]
 	local rarity = rarities[self._selected_rarity_index]
 	local items_for_rarity = group.items_per_rarity[rarity]
-	local available_items = (not items_for_rarity or not (#items_for_rarity > 0) or not items_for_rarity) and not not {
+	local available_items = items_for_rarity and (#items_for_rarity > 0 and (not not items_for_rarity or not not {
+		group.default
+	}) or not (#items_for_rarity > 0) and not not {
+		group.default
+	}) or not items_for_rarity and not not {
 		group.default
 	}
 
@@ -268,77 +237,10 @@ ImguiDeusWeapons.draw = function (self, is_open)
 		self._prev_run_progress = self._run_progress
 	end
 
-	local _available_archetypes = self._available_archetypes
-
-	if _available_archetypes then
-		-- Nothing
-	end
-
-	if not (#self._available_archetypes > 0) then
-		_available_archetypes = false
-
-		goto label_11_0
-	end
-
-	_available_archetypes = true
-
-	local archetypes_available = _available_archetypes
-
-	::label_11_0::
-
-	local _available_property_combinations = self._available_property_combinations
-
-	if _available_property_combinations then
-		-- Nothing
-	end
-
-	if not (#self._available_property_combinations > 0) then
-		_available_property_combinations = false
-
-		goto label_11_1
-	end
-
-	_available_property_combinations = true
-
-	local properties_available = _available_property_combinations
-
-	::label_11_1::
-
-	local _available_trait_combinations = self._available_trait_combinations
-
-	if _available_trait_combinations then
-		-- Nothing
-	end
-
-	if not (#self._available_trait_combinations > 0) then
-		_available_trait_combinations = false
-
-		goto label_11_2
-	end
-
-	_available_trait_combinations = true
-
-	local traits_available = _available_trait_combinations
-
-	::label_11_2::
-
-	local _available_skins = self._available_skins
-
-	if _available_skins then
-		-- Nothing
-	end
-
-	if not (#self._available_skins > 0) then
-		_available_skins = false
-
-		goto label_11_3
-	end
-
-	_available_skins = true
-
-	local skins_available = _available_skins
-
-	::label_11_3::
+	local archetypes_available = not not self._available_archetypes
+	local properties_available = not not self._available_property_combinations
+	local traits_available = not not self._available_trait_combinations
+	local skins_available = not not self._available_skins
 
 	if archetypes_available or properties_available or traits_available or skins_available then
 		Imgui.spacing()
@@ -394,16 +296,7 @@ ImguiDeusWeapons.draw = function (self, is_open)
 	generate = not not generate or self._weapon.power_level ~= self._powerlevel
 
 	if generate then
-		local create_weapon = DeusWeaponGeneration.create_weapon
-		local var_11_5 = item_key
-		local _properties = self._properties
-
-		_properties = not not _properties and not not table.clone(self._properties)
-
-		local _traits = self._traits
-
-		_traits = not not _traits and not not table.clone(self._traits)
-		self._weapon = create_weapon(var_11_5, _properties, _traits, self._skin, self._powerlevel, rarity)
+		self._weapon = DeusWeaponGeneration.create_weapon(item_key, not not self._properties, not not self._traits, self._skin, self._powerlevel, rarity)
 	end
 
 	if self._weapon then
@@ -439,12 +332,7 @@ ImguiDeusWeapons.draw = function (self, is_open)
 	Imgui.spacing()
 	Imgui.spacing()
 
-	local checkbox = Imgui.checkbox
-	local str = "equip random weapons automatically"
-	local _equip_random_weapon = self._equip_random_weapon
-
-	_equip_random_weapon = not not _equip_random_weapon or not not false
-	self._equip_random_weapon = checkbox(str, _equip_random_weapon)
+	self._equip_random_weapon = Imgui.checkbox("equip random weapons automatically", not not self._equip_random_weapon)
 
 	Imgui.end_window()
 

@@ -136,84 +136,18 @@ ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (self)
 	local local_player_id = 1
 	local party_manager = Managers.party
 	local _, party_id = party_manager:get_party_from_player_id(peer_id, local_player_id)
-	local _local_player_party_id
-
-	if self._local_player_party_id then
-		_local_player_party_id = self._local_player_party_id
-
-		if not _local_player_party_id then
-			-- Nothing
-		end
-	end
-
-	if party_id == 0 then
-		_local_player_party_id = 1
-
-		goto label_12_0
-	end
-
-	_local_player_party_id = party_id
-
-	local local_player_party_id = _local_player_party_id
-
-	do
-		local _opponent_party_id
-	end
-
-	::label_12_0::
-
-	if self._opponent_party_id then
-		_opponent_party_id = self._opponent_party_id
-
-		if not _opponent_party_id then
-			-- Nothing
-		end
-	end
-
-	if party_id == 1 then
-		_opponent_party_id = 2
-
-		goto label_12_1
-	end
-
-	_opponent_party_id = 1
-
-	local opponent_party_id = _opponent_party_id
-
-	::label_12_1::
-
+	local local_player_party_id = self._local_player_party_id and not not self._local_player_party_id or not self._local_player_party_id and (party_id ~= 0 and not not party_id or not (party_id ~= 0) and not not 1)
+	local opponent_party_id = self._opponent_party_id and not not self._opponent_party_id or not self._opponent_party_id and (party_id ~= 1 and not not 1 or not (party_id ~= 1) and not not 2)
 	local local_player_team_score = win_conditions:get_total_score(local_player_party_id)
 	local local_player_team_sets_data = win_conditions:get_sets_data_for_party(local_player_party_id)
 	local opponent_team_score = win_conditions:get_total_score(opponent_party_id)
 	local opponent_team_sets_data = win_conditions:get_sets_data_for_party(opponent_party_id)
 	local local_player_available_score, opponent_team_available_score = max_level_score, max_level_score
 	local player = Managers.player:local_player()
-	local side_2 = Managers.state.side
-
-	if side_2 then
-		-- Nothing
-	end
-
-	side_2 = Managers.state.side:get_side_from_player_unique_id(player:unique_id())
-
-	local side = side_2
-
-	::label_12_2::
-
+	local side = not not Managers.state.side
 	local is_hero = not not side and side:name() == "heroes"
 	local match_state = Managers.mechanism:get_state()
-	local game_mode_2 = Managers.state.game_mode
-
-	if game_mode_2 then
-		-- Nothing
-	end
-
-	game_mode_2 = Managers.state.game_mode:game_mode()
-
-	local game_mode = game_mode_2
-
-	::label_12_3::
-
+	local game_mode = not not Managers.state.game_mode
 	local is_round_over = not not game_mode and not not game_mode:match_in_round_over_state()
 	local local_player_has_played_round, opponent_has_played_round = false, false
 
@@ -230,17 +164,7 @@ ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (self)
 		local opponent_team_set_data = opponent_team_sets_data[i]
 
 		if i < current_set then
-			local num = local_player_set_data.max_points - local_player_set_data.claimed_points
-
-			if not num then
-				-- Nothing
-			end
-
-			num = 0
-
-			local unclaimed_points = num
-
-			::label_12_4::
+			local unclaimed_points = not not (local_player_set_data.max_points - local_player_set_data.claimed_points)
 
 			local_player_available_score = local_player_available_score - unclaimed_points
 			unclaimed_points = not not (opponent_team_set_data.max_points - opponent_team_set_data.claimed_points) or not not 0
@@ -248,25 +172,10 @@ ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (self)
 		end
 	end
 
-	local score_threshold = (not (local_player_available_score < opponent_team_available_score) or not local_player_available_score) and not not opponent_team_available_score
+	local score_threshold = local_player_available_score < opponent_team_available_score and (not not local_player_available_score or not not opponent_team_available_score) or not (local_player_available_score < opponent_team_available_score) and not not opponent_team_available_score
 	local local_player_score_to_win = score_threshold - local_player_team_score
 	local opponent_team_score_to_win = score_threshold - opponent_team_score
-	local num_2
-
-	if num_rounds >= current_set + 1 then
-		num_2 = current_set + 1
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = num_rounds
-
-	local next_round_id = num_2
-
-	::label_12_5::
-
+	local next_round_id = num_rounds >= current_set + 1 and not not (current_set + 1) or not (num_rounds >= current_set + 1) and not not num_rounds
 	local is_next_round_last = next_round_id == num_rounds
 	local opp_predicted_score = 0
 	local loc_predicted_score = 0

@@ -3,16 +3,8 @@
 local_require("scripts/settings/material_effect_mappings")
 require("scripts/helpers/network_utils")
 
-local script_data = script_data
-local debug_material_effects = script_data.debug_material_effects
-
-debug_material_effects = not not debug_material_effects or not not Development.parameter("debug_material_effects")
-script_data.debug_material_effects = debug_material_effects
-
-local EffectHelper = EffectHelper
-
-EffectHelper = not not EffectHelper or not not {}
-EffectHelper = EffectHelper
+script_data.debug_material_effects = not not script_data.debug_material_effects
+EffectHelper = not not EffectHelper
 EffectHelper.temporary_material_drawer_mapping = {}
 
 EffectHelper.play_surface_material_effects = function (effect_name, world, hit_unit, position, rotation, normal, sound_character, husk, unit, hit_actor)
@@ -64,41 +56,11 @@ EffectHelper.play_surface_material_effects = function (effect_name, world, hit_u
 	end
 
 	local breed = Unit.get_data(hit_unit, "breed")
-	local fassert = fassert
-	local is_player
 
-	if breed then
-		is_player = breed.is_player
-
-		if not is_player then
-			-- Nothing
-		end
-
-		if breed.race ~= "dummy" then
-			is_player = false
-
-			goto label_1_0
-		end
-	end
-
-	is_player = true
-
-	::label_1_0::
-
-	fassert(is_player, "Trying to apply surface material effect to unit %q an ai unit.", hit_unit)
+	fassert(not breed or not not breed.is_player, "Trying to apply surface material effect to unit %q an ai unit.", hit_unit)
 	fassert(not ScriptUnit.has_extension(hit_unit, "ai_inventory_item_system"), "Trying to apply surface material effect to unit %q with ai_inventory_item extension.", hit_unit)
 
-	local decal = effect_settings.decal
-
-	if decal then
-		-- Nothing
-	end
-
-	decal = effect_settings.decal.settings
-
-	local decal_settings = decal
-
-	::label_1_1::
+	local decal_settings = not not effect_settings.decal
 
 	if decal_settings then
 		local decal_system = Managers.state.decal
@@ -148,41 +110,9 @@ EffectHelper.play_surface_material_effects = function (effect_name, world, hit_u
 		end
 	end
 
-	local sound_2 = effect_settings.sound
-
-	if sound_2 then
-		-- Nothing
-	end
-
-	sound_2 = effect_settings.sound[material]
-
-	local sound = sound_2
-
-	::label_1_2::
-
-	local additional_sound_parameters = effect_settings.additional_sound_parameters
-
-	if additional_sound_parameters then
-		-- Nothing
-	end
-
-	additional_sound_parameters = effect_settings.additional_sound_parameters.switch_params
-
-	local switches = additional_sound_parameters
-
-	::label_1_3::
-
-	local additional_sound_parameters_2 = effect_settings.additional_sound_parameters
-
-	if additional_sound_parameters_2 then
-		-- Nothing
-	end
-
-	additional_sound_parameters_2 = effect_settings.additional_sound_parameters.rtpc_params
-
-	local rtpcs = additional_sound_parameters_2
-
-	::label_1_4::
+	local sound = not not effect_settings.sound
+	local switches = not not effect_settings.additional_sound_parameters
+	local rtpcs = not not effect_settings.additional_sound_parameters
 
 	if sound then
 		local wwise_source_id, wwise_world = WwiseUtils.make_position_auto_source(world, position)
@@ -225,28 +155,11 @@ EffectHelper.play_surface_material_effects = function (effect_name, world, hit_u
 			end
 		end
 
-		local set_switch = WwiseWorld.set_switch
-		local var_1_7 = wwise_world
-		local str = "husk"
-		local flag
-
-		flag = (not husk or not "true") and not not "false"
-
-		set_switch(var_1_7, str, flag, wwise_source_id)
+		WwiseWorld.set_switch(wwise_world, "husk", husk and not not "true" or not husk and not not "false", wwise_source_id)
 		WwiseWorld.trigger_event(wwise_world, sound.event, true, wwise_source_id)
 	end
 
-	local particles_2 = effect_settings.particles
-
-	if particles_2 then
-		-- Nothing
-	end
-
-	particles_2 = effect_settings.particles[material]
-
-	local particles = particles_2
-
-	::label_1_5::
+	local particles = not not effect_settings.particles
 
 	if particles then
 		local normal_rotation = Quaternion.look(normal, Vector3.up())
@@ -264,17 +177,7 @@ EffectHelper.play_surface_material_effects = function (effect_name, world, hit_u
 		end
 	end
 
-	local world_interaction_2 = effect_settings.world_interaction
-
-	if world_interaction_2 then
-		-- Nothing
-	end
-
-	world_interaction_2 = effect_settings.world_interaction[material]
-
-	local world_interaction = world_interaction_2
-
-	::label_1_6::
+	local world_interaction = not not effect_settings.world_interaction
 
 	if Unit.alive(unit) then
 		if world_interaction then
@@ -310,7 +213,7 @@ EffectHelper.play_skinned_surface_material_effects = function (effect_name, worl
 		material = "armored"
 	else
 		skip_particles = not BloodSettings.enemy_blood.enabled
-		material = (not breed or not breed.flesh_material) and not not "flesh"
+		material = breed and (not not breed.flesh_material or not not "flesh") or not breed and not not "flesh"
 	end
 
 	if shield_blocked then
@@ -321,17 +224,7 @@ EffectHelper.play_skinned_surface_material_effects = function (effect_name, worl
 		end
 	end
 
-	local sound_2 = effect_settings.sound
-
-	if sound_2 then
-		-- Nothing
-	end
-
-	sound_2 = effect_settings.sound[material]
-
-	local sound = sound_2
-
-	::label_2_0::
+	local sound = not not effect_settings.sound
 
 	if sound then
 		local wwise_world = Managers.world:wwise_world(world)
@@ -355,37 +248,11 @@ EffectHelper.play_skinned_surface_material_effects = function (effect_name, worl
 			WwiseWorld.set_switch(wwise_world, "hit_zone", hit_zone_name, source_id)
 		end
 
-		local str
-
-		if husk then
-			str = "true"
-
-			goto label_2_1
-		end
-
-		str = "false"
-
-		local husk_value = str
-
-		::label_2_1::
+		local husk_value = husk and not not "true" or not husk and not not "false"
 
 		WwiseWorld.set_switch(wwise_world, "husk", husk_value, source_id)
 
-		local no_damage_event
-
-		if no_damage then
-			no_damage_event = sound.no_damage_event
-
-			if not no_damage_event then
-				-- Nothing
-			end
-		end
-
-		no_damage_event = sound.event
-
-		local event = no_damage_event
-
-		::label_2_2::
+		local event = no_damage and not not sound.no_damage_event or not no_damage and not not sound.event
 
 		if script_data.debug_material_effects then
 			print("playing event ", event)
@@ -405,24 +272,7 @@ EffectHelper.play_skinned_surface_material_effects = function (effect_name, worl
 	end
 
 	if not skip_particles then
-		if breed then
-			-- Nothing
-		end
-
-		::label_2_3::
-
-		local blocking_hit_effect = breed.blocking_hit_effect
-
-		if blocking_hit_effect then
-			-- Nothing
-		end
-
-		blocking_hit_effect = shield_blocked
-
-		local custom_shield_block_particles = blocking_hit_effect
-
-		::label_2_4::
-
+		local custom_shield_block_particles = not not breed and not not breed.blocking_hit_effect
 		local particles
 
 		if custom_shield_block_particles then
@@ -438,17 +288,7 @@ EffectHelper.play_skinned_surface_material_effects = function (effect_name, worl
 		end
 	end
 
-	local flow_event_2 = effect_settings.flow_event
-
-	if flow_event_2 then
-		-- Nothing
-	end
-
-	flow_event_2 = effect_settings.flow_event[material]
-
-	local flow_event = flow_event_2
-
-	::label_2_5::
+	local flow_event = not not effect_settings.flow_event
 
 	if flow_event and hit_unit then
 		Unit.flow_event(hit_unit, flow_event)
@@ -471,17 +311,7 @@ EffectHelper.player_critical_hit = function (world, is_critical_hit, attacker_un
 		return
 	end
 
-	local local_player = player.local_player
-
-	if local_player then
-		-- Nothing
-	end
-
-	local_player = not player.bot_player
-
-	local local_real_player = local_player
-
-	::label_3_0::
+	local local_real_player = not not player.local_player
 
 	if not local_real_player then
 		return
@@ -545,35 +375,10 @@ local projectile_attack_types = table.enum_safe("projectile", "instant_projectil
 EffectHelper.vs_play_hit_sound = function (world, victim_unit, attack_type, damage_type, damage_source_name)
 	-- function 7
 	local owner = Managers.player:owner(victim_unit)
-	local remote = owner.remote
-
-	if not remote then
-		-- Nothing
-	end
-
-	remote = owner.bot_player
-
-	if not remote then
-		-- Nothing
-	end
-
-	remote = false
-
-	local is_husk = remote
-
-	::label_7_0::
-
+	local is_husk = not not owner.remote
 	local enemy_hit_sound
 
-	if burning_damage_types[damage_type] or damage_type == "grenade" and damage_source_name == "grenade_fire_01" then
-		enemy_hit_sound = "fire"
-	elseif projectile_attack_types[attack_type] then
-		enemy_hit_sound = "bullet"
-	elseif damage_type == "gas" or damage_type == "arrow_poison_dot" or damage_type == "vomit_face" then
-		enemy_hit_sound = "gas"
-	else
-		enemy_hit_sound = "sword"
-	end
+	enemy_hit_sound = damage_type == "grenade" and damage_source_name == "grenade_fire_01" and not not "fire"
 
 	if enemy_hit_sound then
 		local source_id, wwise_world = WwiseUtils.make_unit_auto_source(world, victim_unit)
@@ -729,27 +534,7 @@ EffectHelper.flow_cb_play_footstep_surface_material_effects = function (effect_n
 	local physics_world = World.get_data(world, "physics_world")
 	local hit, position, _, normal, actor = PhysicsWorld.immediate_raycast(physics_world, raycast_position, raycast_direction, raycast_range, "closest", "types", "both", "collision_filter", "filter_ground_material_check")
 	local player = Managers.player:owner(unit)
-	local remote
-
-	if player then
-		remote = player.remote
-
-		if not remote then
-			remote = player.bot_player
-		end
-
-		if false then
-			remote = false
-		end
-
-		goto label_14_0
-	end
-
-	remote = true
-
-	local husk = remote
-
-	::label_14_0::
+	local husk = not player or not not player.remote
 
 	if hit then
 		local hit_unit = Actor.unit(actor)
@@ -763,64 +548,15 @@ EffectHelper.flow_cb_play_footstep_surface_material_effects = function (effect_n
 	else
 		local effect_settings = MaterialEffectMappingsUtility.get(effect_name)
 		local level_settings = LevelHelper:current_level_settings()
-		local default_surface_material = level_settings.default_surface_material
-
-		if not default_surface_material then
-			-- Nothing
-		end
-
-		default_surface_material = DefaultSurfaceMaterial
-
-		local material = default_surface_material
-
-		::label_14_1::
-
-		local additional_sound_parameters = effect_settings.additional_sound_parameters
-
-		if additional_sound_parameters then
-			-- Nothing
-		end
-
-		additional_sound_parameters = effect_settings.additional_sound_parameters.switch_params
-
-		local switches = additional_sound_parameters
-
-		::label_14_2::
-
-		local additional_sound_parameters_2 = effect_settings.additional_sound_parameters
-
-		if additional_sound_parameters_2 then
-			-- Nothing
-		end
-
-		additional_sound_parameters_2 = effect_settings.additional_sound_parameters.rtpc_params
-
-		local rtpcs = additional_sound_parameters_2
-
-		::label_14_3::
-
-		local sound_2 = effect_settings.sound
-
-		if sound_2 then
-			-- Nothing
-		end
-
-		sound_2 = effect_settings.sound[material]
-
-		local sound = sound_2
-
-		::label_14_4::
+		local material = not not level_settings.default_surface_material
+		local switches = not not effect_settings.additional_sound_parameters
+		local rtpcs = not not effect_settings.additional_sound_parameters
+		local sound = not not effect_settings.sound
 
 		if sound then
 			local wwise_source_id, wwise_world = WwiseUtils.make_position_auto_source(world, raycast_position + raycast_direction * raycast_range)
-			local set_switch = WwiseWorld.set_switch
-			local var_14_6 = wwise_world
-			local str = "husk"
-			local flag
 
-			flag = (not husk or not "true") and not not "false"
-
-			set_switch(var_14_6, str, flag, wwise_source_id)
+			WwiseWorld.set_switch(wwise_world, "husk", husk and not not "true" or not husk and not not "false", wwise_source_id)
 
 			if sound.parameters then
 				for parameter_name, parameter_value in pairs(sound.parameters) do

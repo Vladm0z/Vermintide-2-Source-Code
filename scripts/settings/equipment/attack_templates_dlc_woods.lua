@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/equipment/attack_templates_dlc_woods.lua
 
-local AttackTemplates = AttackTemplates
-
-AttackTemplates = not not AttackTemplates or not not {}
-AttackTemplates = AttackTemplates
+AttackTemplates = not not AttackTemplates
 AttackTemplates.projectile_javelin = {
 	stagger_angle = "stab",
 	stagger_value = 1,

@@ -79,19 +79,13 @@ end
 ImguiGeneratePowerLevelPivots._lazy_init = function (self)
 	-- function 5
 	local power_level_settings = self:_power_level_settings()
-	local _default_settings = self._default_settings
 
-	_default_settings = not not _default_settings or not not table.clone(power_level_settings)
-	self._default_settings = _default_settings
+	self._default_settings = not not self._default_settings
 	self._tabs = {
 		"Graph",
 		"Code"
 	}
-
-	local _selected_tab = self._selected_tab
-
-	_selected_tab = not not _selected_tab or not not "Graph"
-	self._selected_tab = _selected_tab
+	self._selected_tab = not not self._selected_tab
 
 	local max_power_level = 0
 	local min_power_level = math.huge
@@ -159,18 +153,8 @@ ImguiGeneratePowerLevelPivots._lazy_init = function (self)
 		-- function 6
 		return v.ease
 	end)
-
-	local _easing_func_index = self._easing_func_index
-
-	_easing_func_index = not not _easing_func_index or not not 1
-	self._easing_func_index = _easing_func_index
-
-	local _history = self._history
-
-	_history = not not _history or not not {
-		table.clone(self._default_settings)
-	}
-	self._history = _history
+	self._easing_func_index = not not self._easing_func_index
+	self._history = not not self._history
 	self._history_index = 1
 	self._filter = ""
 end
@@ -247,21 +231,7 @@ ImguiGeneratePowerLevelPivots.draw = function (self)
 
 	if Imgui.begin_menu_bar() then
 		for i, tab in ipairs(self._tabs) do
-			local str
-
-			if self._selected_tab ~= tab then
-				str = " " .. tab .. " "
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = "[" .. tab .. "]"
-
-			local label = str
-
-			::label_11_0::
+			local label = self._selected_tab == tab and not not ("[" .. tab .. "]") or not (self._selected_tab == tab) and not not (" " .. tab .. " ")
 
 			if Imgui.menu_item(label) then
 				self._selected_tab = tab
@@ -381,40 +351,8 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, size)
 			end
 
 			local color_tbl = self:_graph_colors(pivot_key)
-			local get
-
-			if Colors.color_definitions[color_tbl.hi] then
-				get = Colors.get(color_tbl.hi)
-
-				if not get then
-					-- Nothing
-				end
-			end
-
-			get = Colors.get(self._fallback_color)
-
-			local color_hi = get
-
-			do
-				local get_2
-			end
-
-			::label_15_0::
-
-			if Colors.color_definitions[color_tbl.low] then
-				get_2 = Colors.get(color_tbl.low)
-
-				if not get_2 then
-					-- Nothing
-				end
-			end
-
-			get_2 = Colors.get(self._fallback_color)
-
-			local color_low = get_2
-
-			::label_15_1::
-
+			local color_hi = Colors.color_definitions[color_tbl.hi] and not not Colors.get(color_tbl.hi) or not Colors.color_definitions[color_tbl.hi] and not not Colors.get(self._fallback_color)
+			local color_low = Colors.color_definitions[color_tbl.low] and not not Colors.get(color_tbl.low) or not Colors.color_definitions[color_tbl.low] and not not Colors.get(self._fallback_color)
 			local low_min, low_max = pivot_data.low.min, pivot_data.low.max
 			local hi_min, hi_max = pivot_data.hi.min, pivot_data.hi.max
 			local last_x = 1 / MAX_LEVEL
@@ -505,40 +443,8 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, size)
 				end
 
 				local color_tbl = self:_graph_colors(pivot_key)
-				local get_3
-
-				if Colors.color_definitions[color_tbl.hi] then
-					get_3 = Colors.get(color_tbl.hi)
-
-					if not get_3 then
-						-- Nothing
-					end
-				end
-
-				get_3 = Colors.get(self._fallback_color)
-
-				local color_hi = get_3
-
-				do
-					local get_4
-				end
-
-				::label_15_2::
-
-				if Colors.color_definitions[color_tbl.low] then
-					get_4 = Colors.get(color_tbl.low)
-
-					if not get_4 then
-						-- Nothing
-					end
-				end
-
-				get_4 = Colors.get(self._fallback_color)
-
-				local color_low = get_4
-
-				::label_15_3::
-
+				local color_hi = Colors.color_definitions[color_tbl.hi] and not not Colors.get(color_tbl.hi) or not Colors.color_definitions[color_tbl.hi] and not not Colors.get(self._fallback_color)
+				local color_low = Colors.color_definitions[color_tbl.low] and not not Colors.get(color_tbl.low) or not Colors.color_definitions[color_tbl.low] and not not Colors.get(self._fallback_color)
 				local last_x = 1 / MAX_LEVEL
 				local pl_low, pl_hi = LootChestData.calculate_power_level(level, pivot_data)
 
@@ -628,30 +534,14 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, size)
 			Imgui.same_line()
 			Imgui.push_item_width(85)
 
-			local input_text = Imgui.input_text
-			local str = ""
-			local _pivot_key_edit
-
-			if self._pivot_key_original == pivot_key then
-				_pivot_key_edit = self._pivot_key_edit
-
-				if not _pivot_key_edit then
-					-- Nothing
-				end
-			end
-
-			_pivot_key_edit = pivot_key
-
-			::label_15_4::
-
-			local new_key = input_text(str, _pivot_key_edit)
+			local new_key = Imgui.input_text("", self._pivot_key_original ~= pivot_key and not not pivot_key or not (self._pivot_key_original ~= pivot_key) and not not self._pivot_key_edit)
 			local focused = Imgui.is_item_active()
 
 			Imgui.indent()
 			Imgui.tree_pop()
 			Imgui.pop_item_width()
 
-			if (focused or pivot_key == self._pivot_key_original) and new_key ~= pivot_key then
+			if focused and new_key ~= pivot_key or not focused and pivot_key == self._pivot_key_original and new_key ~= pivot_key then
 				if focused then
 					self._pivot_key_edit = new_key
 					self._pivot_key_original = pivot_key
@@ -682,15 +572,7 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, size)
 			name = name .. " "
 		end
 
-		local clone = table.clone(last_pivot)
-
-		clone = not not clone or not not {
-			pivot_level = 30,
-			min = 10,
-			pivot_power = 300,
-			max = 300
-		}
-		pivots[name] = clone
+		pivots[name] = not not table.clone(last_pivot)
 	end
 
 	Imgui.same_line()
@@ -725,71 +607,14 @@ ImguiGeneratePowerLevelPivots._draw_pivot_edit_row = function (self, pivot_key, 
 		Imgui.next_column()
 
 		local pass = pivot_data_passes[i]
-		local data_2
-
-		if pass.data then
-			data_2 = pass.data(self, pivot_key, pivot_data, label, indent, color_key)
-
-			if not data_2 then
-				-- Nothing
-			end
-		end
-
-		data_2 = pivot_data
-
-		local data = data_2
-
-		::label_16_0::
-
+		local data = pass.data and not not pass.data(self, pivot_key, pivot_data, label, indent, color_key) or not pass.data and not not pivot_data
 		local column_width = pass.column_width
-		local label_2 = pass.label
-
-		if not label_2 then
-			-- Nothing
-		end
-
-		label_2 = pass.key
-
-		local label = label_2
-
-		do
-			local key_2
-		end
-
-		::label_16_1::
-
-		if type(pass.key) == "function" then
-			key_2 = pass.key(self, pivot_key, pivot_data, label, indent, color_key)
-
-			if not key_2 then
-				-- Nothing
-			end
-		end
-
-		key_2 = pass.key
-
-		local key = key_2
-
-		::label_16_2::
+		local label = not not pass.label
+		local key = type(pass.key) ~= "function" and not not pass.key or not (type(pass.key) ~= "function") and not not pass.key(self, pivot_key, pivot_data, label, indent, color_key)
 
 		key = string.split(key, ".")
 
-		local max_2
-
-		if type(pass.max) == "function" then
-			max_2 = pass.max(self, pivot_key, pivot_data, label, indent, color_key)
-
-			if not max_2 then
-				-- Nothing
-			end
-		end
-
-		max_2 = pass.max
-
-		local max = max_2
-
-		::label_16_3::
-
+		local max = type(pass.max) ~= "function" and not not pass.max or not (type(pass.max) ~= "function") and not not pass.max(self, pivot_key, pivot_data, label, indent, color_key)
 		local type = pass.type
 
 		Imgui.set_column_width(column_width)
@@ -818,47 +643,14 @@ ImguiGeneratePowerLevelPivots._draw_pivot_edit_row = function (self, pivot_key, 
 			Imgui.push_item_width(column_width - label_width)
 
 			if type == "float" then
-				local input_text = Imgui.input_text
-				local str = ""
-				local tostring = tostring
-				local var_16_7 = data[key]
-
-				var_16_7 = not not var_16_7 or not not 0
-				data[key] = input_text(str, tostring(var_16_7))
-
-				local var_16_8 = tonumber(data[key])
-
-				var_16_8 = not not var_16_8 or not not 0
-				data[key] = var_16_8
+				data[key] = Imgui.input_text("", tostring(not not data[key]))
+				data[key] = not not tonumber(data[key])
 			elseif type == "slider_float" then
-				local slider_float = Imgui.slider_float
-				local str_2 = ""
-				local var_16_11 = data[key]
-				local min = pass.min
-
-				min = not not min or not not 0
-
-				local var_16_13 = slider_float(str_2, var_16_11, min, not not max or not not 1)
-
-				var_16_13 = not not var_16_13 or not not 0
-				data[key] = var_16_13
+				data[key] = not not Imgui.slider_float("", data[key], not not pass.min, not not max or not not 1)
 			elseif type == "slider_int" then
-				local slider_int = Imgui.slider_int
-				local str_3 = ""
-				local var_16_16 = data[key]
-				local min_2 = pass.min
-
-				min_2 = not not min_2 or not not 0
-
-				local var_16_18 = slider_int(str_3, var_16_16, min_2, not not max or not not 1)
-
-				var_16_18 = not not var_16_18 or not not 0
-				data[key] = var_16_18
+				data[key] = not not Imgui.slider_int("", data[key], not not pass.min, not not max or not not 1)
 			elseif type == "text" then
-				local input_text_2 = Imgui.input_text("", data[key])
-
-				input_text_2 = not not input_text_2 or not not ""
-				data[key] = input_text_2
+				data[key] = not not Imgui.input_text("", data[key])
 			end
 
 			Imgui.pop_item_width()
@@ -914,21 +706,7 @@ ImguiGeneratePowerLevelPivots._draw_summary = function (self, width)
 		local pivot_key = pivot_keys[i]
 		local pivot_data = pivots[pivot_key]
 		local difficulty_settings = DifficultySettings[pivot_key]
-		local var_19_0
-
-		if difficulty_settings and difficulty_settings.display_name then
-			var_19_0 = Localize(difficulty_settings.display_name)
-
-			if not var_19_0 then
-				-- Nothing
-			end
-		end
-
-		var_19_0 = pivot_key
-
-		local name = var_19_0
-
-		::label_19_0::
+		local name = not not Localize(difficulty_settings.display_name)
 
 		Imgui.next_column()
 		Imgui.set_column_width(column_width)
@@ -978,12 +756,7 @@ ImguiGeneratePowerLevelPivots._sorted_pivot_keys = function (self, pivots)
 	table.sort(keys, function (a, b)
 		-- function 21
 		if self._display_order[a] then
-			local var_21_0 = self._display_order[a]
-			local var_21_1 = self._display_order[b]
-
-			var_21_1 = not not var_21_1 or not not math.huge
-
-			return var_21_0 < var_21_1
+			return self._display_order[a] < not not self._display_order[b]
 		elseif self._display_order[b] then
 			return false
 		end
@@ -996,49 +769,12 @@ end
 
 ImguiGeneratePowerLevelPivots._graph_colors = function (self, key)
 	-- function 22
-	local _colors = self._colors
-	local var_22_1 = self._colors[key]
+	self._colors[key] = not not self._colors[key]
 
-	var_22_1 = not not var_22_1 or not not {
-		hi = self._fallback_color,
-		low = self._fallback_color
+	local parsed = {
+		hi = Colors.color_definitions[self._colors[key].hi] and not not self._colors[key].hi or not Colors.color_definitions[self._colors[key].hi] and not not self._fallback_color,
+		low = Colors.color_definitions[self._colors[key].low] and not not self._colors[key].low or not Colors.color_definitions[self._colors[key].low] and not not self._fallback_color
 	}
-	_colors[key] = var_22_1
-
-	local tbl = {}
-	local hi
-
-	if Colors.color_definitions[self._colors[key].hi] then
-		hi = self._colors[key].hi
-
-		if not hi then
-			-- Nothing
-		end
-	end
-
-	hi = self._fallback_color
-
-	::label_22_0::
-
-	tbl.hi = hi
-
-	local low
-
-	if Colors.color_definitions[self._colors[key].low] then
-		low = self._colors[key].low
-
-		if not low then
-			-- Nothing
-		end
-	end
-
-	low = self._fallback_color
-
-	::label_22_1::
-
-	tbl.low = low
-
-	local parsed = tbl
 
 	return parsed
 end

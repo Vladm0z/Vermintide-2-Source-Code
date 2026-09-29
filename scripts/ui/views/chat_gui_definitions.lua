@@ -415,21 +415,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 2
-					local selected_color
-
-					if content.info_hotspot.is_hover then
-						selected_color = style.selected_color
-
-						if not selected_color then
-							-- Nothing
-						end
-					end
-
-					selected_color = style.base_color
-
-					::label_2_0::
-
-					style.color = selected_color
+					style.color = content.info_hotspot.is_hover and not not style.selected_color or not content.info_hotspot.is_hover and not not style.base_color
 				end
 			},
 			{
@@ -450,21 +436,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 5
-					local selected_color
-
-					if content.info_hotspot.is_hover then
-						selected_color = style.selected_color
-
-						if not selected_color then
-							-- Nothing
-						end
-					end
-
-					selected_color = style.base_color
-
-					::label_5_0::
-
-					style.text_color = selected_color
+					style.text_color = content.info_hotspot.is_hover and not not style.selected_color or not content.info_hotspot.is_hover and not not style.base_color
 				end
 			},
 			{
@@ -481,21 +453,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 7
-					local selected_color
-
-					if content.enlarge_hotspot.is_hover then
-						selected_color = style.selected_color
-
-						if not selected_color then
-							-- Nothing
-						end
-					end
-
-					selected_color = style.base_color
-
-					::label_7_0::
-
-					style.color = selected_color
+					style.color = content.enlarge_hotspot.is_hover and not not style.selected_color or not content.enlarge_hotspot.is_hover and not not style.base_color
 				end
 			},
 			{
@@ -520,21 +478,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 10
-					local selected_color
-
-					if content.filter_hotspot.is_hover then
-						selected_color = style.selected_color
-
-						if not selected_color then
-							-- Nothing
-						end
-					end
-
-					selected_color = style.base_color
-
-					::label_10_0::
-
-					style.color = selected_color
+					style.color = content.filter_hotspot.is_hover and not not style.selected_color or not content.filter_hotspot.is_hover and not not style.base_color
 				end
 			},
 			{
@@ -559,21 +503,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 13
-					local selected_color
-
-					if content.target_hotspot.is_hover then
-						selected_color = style.selected_color
-
-						if not selected_color then
-							-- Nothing
-						end
-					end
-
-					selected_color = style.base_color
-
-					::label_13_0::
-
-					style.color = selected_color
+					style.color = content.target_hotspot.is_hover and not not style.selected_color or not content.target_hotspot.is_hover and not not style.base_color
 				end
 			},
 			{
@@ -1293,14 +1223,7 @@ function create_additional_chat_tooltip(scenegraph_id, size, content_passes, too
 					},
 					content_check_function = function (content)
 						-- function 25
-						local tooltip = content.tooltip
-
-						if tooltip then
-							tooltip = content.button_hotspot.is_hover
-							tooltip = not not tooltip and not not GameSettingsDevelopment.use_global_chat
-						end
-
-						return tooltip
+						return not not content.tooltip
 					end
 				}
 			}

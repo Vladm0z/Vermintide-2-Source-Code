@@ -82,11 +82,7 @@ end
 
 BaseEndScreenUI.completed = function (self)
 	-- function 11
-	local _completed = self._completed
-
-	_completed = not not _completed and not not self._rewards_popup:all_presentations_done()
-
-	return _completed
+	return not not self._completed
 end
 
 BaseEndScreenUI._play_sound = function (self, event)
@@ -135,10 +131,8 @@ BaseEndScreenUI.draw = function (self, dt)
 	local input_service = self._input_service
 	local render_settings = self._render_settings
 	local draw_flags = self._draw_flags
-	local alpha_multiplier = draw_flags.alpha_multiplier
 
-	alpha_multiplier = not not alpha_multiplier or not not 0
-	render_settings.alpha_multiplier = alpha_multiplier
+	render_settings.alpha_multiplier = not not draw_flags.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 	UIRenderer.draw_all_widgets(ui_renderer, self._widgets)

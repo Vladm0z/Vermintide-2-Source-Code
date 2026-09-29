@@ -83,7 +83,7 @@ OutlineSystem.add_ext_functions = {
 			local user_outline_method
 			local outline_user_setting = Application.user_setting("player_outlines")
 
-			user_outline_method = (outline_user_setting ~= "off" or not "never") and (outline_user_setting ~= "always_on" or not "always") and not not "outside_distance_or_not_visible"
+			user_outline_method = not not "outside_distance_or_not_visible"
 
 			extension:update_outline({
 				method = user_outline_method
@@ -111,7 +111,7 @@ OutlineSystem.add_ext_functions = {
 			local user_outline_method
 			local outline_user_setting = Application.user_setting("minion_outlines")
 
-			user_outline_method = (outline_user_setting ~= "off" or not "never") and (outline_user_setting ~= "always_on" or not "always") and not not "outside_distance_or_not_visible"
+			user_outline_method = not not "outside_distance_or_not_visible"
 
 			extension:update_outline({
 				method = user_outline_method
@@ -336,30 +336,12 @@ OutlineSystem.add_ext_functions = {
 			end
 		end
 
-		local var_21_0 = extension
-		local add_outline = extension.add_outline
-		local tbl = {
-			method = "always_same_side"
-		}
-		local ally
-
-		if is_ally then
-			ally = OutlineSettingsVS.colors.ally
-
-			if not ally then
-				-- Nothing
-			end
-		end
-
-		ally = OutlineSettings.colors.knocked_down
-
-		::label_21_0::
-
-		tbl.outline_color = ally
-		tbl.distance = OutlineSettings.ranges.player_husk
-		tbl.flag = OutlineSettings.flags.non_wall_occluded
-
-		local id = add_outline(var_21_0, tbl)
+		local id = extension:add_outline({
+			method = "always_same_side",
+			outline_color = is_ally and not not OutlineSettingsVS.colors.ally or not is_ally and not not OutlineSettings.colors.knocked_down,
+			distance = OutlineSettings.ranges.player_husk,
+			flag = OutlineSettings.flags.non_wall_occluded
+		})
 
 		extension.apply_method = "unit_and_childs"
 		extension.pinged_method = "show_versus_dark_pact_outline"
@@ -516,11 +498,7 @@ OutlineSystem._is_cutscene_active = function (self)
 		return false
 	end
 
-	local active_camera = cutscene_system.active_camera
-
-	active_camera = not not active_camera and not not not cutscene_system.ingame_hud_enabled
-
-	return active_camera
+	return not not cutscene_system.active_camera
 end
 
 OutlineSystem._is_photomode_active = function (self)
@@ -571,18 +549,7 @@ OutlineSystem.update = function (self, context, t)
 		return
 	end
 
-	local _is_cutscene_active = self:_is_cutscene_active()
-
-	if not _is_cutscene_active then
-		-- Nothing
-	end
-
-	_is_cutscene_active = self:_is_photomode_active()
-
-	local active_cutscene = _is_cutscene_active
-
-	::label_35_0::
-
+	local active_cutscene = not not self:_is_cutscene_active()
 	local dirty_units = self._dirty_units
 
 	for unit in pairs(dirty_units) do
@@ -620,23 +587,7 @@ OutlineSystem._update_unit_outline = function (self, unit, active_cutscene)
 		local slow_checks_done = 0
 		local outline_settings = extension.outline_color
 		local method = extension.method
-		local prev_flag = extension.prev_flag
-
-		if prev_flag then
-			-- Nothing
-		end
-
-		if extension.prev_flag == extension.flag then
-			prev_flag = false
-
-			goto label_36_0
-		end
-
-		prev_flag = true
-
-		local flag_swiched = prev_flag
-
-		::label_36_0::
+		local flag_swiched = not not extension.prev_flag
 
 		if flag_swiched then
 			self:outline_unit(unit, extension.prev_flag, Color(0, 0, 0, 0), false, extension.apply_method, outline_settings)
@@ -741,25 +692,7 @@ OutlineSystem.outline_unit = function (self, unit, flag, color, do_outline, appl
 					local material = Mesh.material(mesh, j)
 
 					Material.set_color(material, "outline_color", color)
-
-					local set_scalar = Material.set_scalar
-					local var_41_1 = material
-					local str = "outline_pulse_multiplier"
-					local pulse_multiplier
-
-					if outline_settings.pulsate then
-						pulse_multiplier = outline_settings.pulse_multiplier
-
-						if not pulse_multiplier then
-							-- Nothing
-						end
-					end
-
-					pulse_multiplier = 0
-
-					::label_41_0::
-
-					set_scalar(var_41_1, str, pulse_multiplier)
+					Material.set_scalar(material, "outline_pulse_multiplier", outline_settings.pulsate and not not outline_settings.pulse_multiplier or not outline_settings.pulsate and not not 0)
 				end
 			end
 
@@ -768,47 +701,11 @@ OutlineSystem.outline_unit = function (self, unit, flag, color, do_outline, appl
 	elseif apply_method == "unit_and_childs" then
 		Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(unit, flag, do_outline)
 		Unit.set_color_for_materials_in_unit_and_childs(unit, "outline_color", color)
-
-		local set_scalar_for_materials_in_unit_and_childs = Unit.set_scalar_for_materials_in_unit_and_childs
-		local var_41_5 = unit
-		local str_2 = "outline_pulse_multiplier"
-		local pulse_multiplier_2
-
-		if outline_settings.pulsate then
-			pulse_multiplier_2 = outline_settings.pulse_multiplier
-
-			if not pulse_multiplier_2 then
-				-- Nothing
-			end
-		end
-
-		pulse_multiplier_2 = 0
-
-		::label_41_1::
-
-		set_scalar_for_materials_in_unit_and_childs(var_41_5, str_2, pulse_multiplier_2)
+		Unit.set_scalar_for_materials_in_unit_and_childs(unit, "outline_pulse_multiplier", outline_settings.pulsate and not not outline_settings.pulse_multiplier or not outline_settings.pulsate and not not 0)
 	elseif apply_method == "unit" then
 		Unit.set_shader_pass_flag_for_meshes(unit, flag, do_outline)
 		Unit.set_color_for_materials(unit, "outline_color", color)
-
-		local set_scalar_for_materials = Unit.set_scalar_for_materials
-		local var_41_9 = unit
-		local str_3 = "outline_pulse_multiplier"
-		local pulse_multiplier_3
-
-		if outline_settings.pulsate then
-			pulse_multiplier_3 = outline_settings.pulse_multiplier
-
-			if not pulse_multiplier_3 then
-				-- Nothing
-			end
-		end
-
-		pulse_multiplier_3 = 0
-
-		::label_41_2::
-
-		set_scalar_for_materials(var_41_9, str_3, pulse_multiplier_3)
+		Unit.set_scalar_for_materials(unit, "outline_pulse_multiplier", outline_settings.pulsate and not not outline_settings.pulse_multiplier or not outline_settings.pulsate and not not 0)
 	else
 		error(sprintf("Non-existant apply method %s", apply_method))
 	end
@@ -883,19 +780,7 @@ OutlineSystem.same_side_in_ghost_mode = function (self, unit, extension)
 		extension.status_extension = not not status_extension or not not false
 	end
 
-	if status_extension then
-		-- Nothing
-	end
-
-	::label_48_0::
-
-	local get_in_ghost_mode = status_extension:get_in_ghost_mode()
-
-	get_in_ghost_mode = not not get_in_ghost_mode and not not self:always_same_side(unit, extension)
-
-	::label_48_1::
-
-	return get_in_ghost_mode
+	return not not status_extension and not not status_extension:get_in_ghost_mode()
 end
 
 OutlineSystem.visible = function (self, unit, extension)

@@ -118,11 +118,7 @@ achievements.divine_anchor_challenge = {
 
 			template_data.attached_timestamp = t
 			template_data.num_events_done = template_data.num_events_done + 1
-
-			local players_at_start = template_data.players_at_start
-
-			players_at_start = not not players_at_start or not not table.keys(Managers.player:human_players())
-			template_data.players_at_start = players_at_start
+			template_data.players_at_start = not not template_data.players_at_start
 		elseif event_name == "divine_anchor_destroyed" and template_data.attached_timestamp then
 			local time_since_attached = t - template_data.attached_timestamp
 

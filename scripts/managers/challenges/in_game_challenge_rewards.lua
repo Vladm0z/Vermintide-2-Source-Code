@@ -3,10 +3,7 @@
 require("scripts/managers/challenges/boon_reactivation_rules")
 require("scripts/managers/challenges/pickup_spawn_type")
 
-local InGameChallengeRewards = InGameChallengeRewards
-
-InGameChallengeRewards = not not InGameChallengeRewards or not not {}
-InGameChallengeRewards = InGameChallengeRewards
+InGameChallengeRewards = not not InGameChallengeRewards
 InGameChallengeRewards.test_buff = {
 	target = "party",
 	type = "buff",

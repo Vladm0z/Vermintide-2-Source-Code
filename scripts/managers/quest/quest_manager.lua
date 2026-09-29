@@ -258,11 +258,7 @@ QuestManager.get_quest_outline = function (self)
 
 					if order then
 						for i = 1, #category_entries do
-							local custom_order = quest_templates.quests[category_entries[i]].custom_order
-
-							custom_order = not not custom_order or not not math.huge
-
-							if order < custom_order then
+							if order < not not quest_templates.quests[category_entries[i]].custom_order then
 								insert_idx = i
 
 								break
@@ -279,11 +275,7 @@ QuestManager.get_quest_outline = function (self)
 
 					if order then
 						for i = 1, #entries do
-							local custom_order_2 = quest_templates.quests[entries[i]].custom_order
-
-							custom_order_2 = not not custom_order_2 or not not math.huge
-
-							if order < custom_order_2 then
+							if order < not not quest_templates.quests[entries[i]].custom_order then
 								insert_idx = i
 
 								break
@@ -461,11 +453,7 @@ end
 
 QuestManager.polling_quest_refresh = function (self)
 	-- function 11
-	local flag
-
-	flag = (not self._refresh_poll_id or not true) and not not false
-
-	return flag
+	return self._refresh_poll_id and not not true or not self._refresh_poll_id and not not false
 end
 
 QuestManager.claim_reward = function (self, quest_id)
@@ -519,11 +507,7 @@ end
 
 QuestManager.polling_quest_reward = function (self)
 	-- function 14
-	local flag
-
-	flag = (not self._reward_poll_id or not true) and not not false
-
-	return flag
+	return self._reward_poll_id and not not true or not self._reward_poll_id and not not false
 end
 
 QuestManager.can_claim_quest_rewards = function (self, quest_id)
@@ -634,18 +618,7 @@ QuestManager.on_quests_updated = function (self)
 	-- function 21
 	local quest_event_mapping = {}
 	local quests = self._backend_interface_quests:get_quests()
-	local event = quests.event
-
-	if not event then
-		-- Nothing
-	end
-
-	event = EMPTY_TABLE
-
-	local event_quests = event
-
-	::label_21_0::
-
+	local event_quests = not not quests.event
 	local templates = quest_templates.quests
 
 	for quest_key, quest_data in pairs(event_quests) do
@@ -656,10 +629,8 @@ QuestManager.on_quests_updated = function (self)
 		if events then
 			for i = 1, #events do
 				local event_name = events[i]
-				local var_21_1 = quest_event_mapping[event_name]
 
-				var_21_1 = not not var_21_1 or not not {}
-				quest_event_mapping[event_name] = var_21_1
+				quest_event_mapping[event_name] = not not quest_event_mapping[event_name]
 				quest_event_mapping[event_name][#quest_event_mapping[event_name] + 1] = quest_key
 			end
 		end

@@ -114,17 +114,7 @@ LootObjectiveUI._sync_missions = function (self, initialize)
 
 	for _, data in pairs(settings_data) do
 		local mission_name = data.mission_name
-		local _get_item_amount_by_mission_name = self:_get_item_amount_by_mission_name(mission_name)
-
-		if not _get_item_amount_by_mission_name then
-			-- Nothing
-		end
-
-		_get_item_amount_by_mission_name = 0
-
-		local amount = _get_item_amount_by_mission_name
-
-		::label_5_0::
+		local amount = not not self:_get_item_amount_by_mission_name(mission_name)
 
 		if not data.amount then
 			data.amount = not not amount or not not 0
@@ -279,22 +269,7 @@ LootObjectiveUI._animate_out = function (self, widget)
 
 	for i = 1, amount do
 		if i <= draw_count then
-			local num
-
-			if i == draw_count then
-				num = duration + 1
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = duration
-
-			local icon_duration = num
-
-			::label_11_0::
-
+			local icon_duration = i ~= draw_count and not not duration or not (i ~= draw_count) and not not (duration + 1)
 			local color = texture_colors[i]
 
 			animations["icon_textures_" .. i] = UIAnimation.init(func, color, target, 255, to, duration, easing)

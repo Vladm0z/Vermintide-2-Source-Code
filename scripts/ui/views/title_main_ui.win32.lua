@@ -192,10 +192,7 @@ TitleMainUI._create_menu_option_widget = function (self, layout, menu_hierarchy)
 			menu_hierarchy[index] = widget
 
 			if menu_option_layout then
-				local sub_menu = menu_hierarchy.sub_menu
-
-				sub_menu = not not sub_menu or not not {}
-				menu_hierarchy.sub_menu = sub_menu
+				menu_hierarchy.sub_menu = not not menu_hierarchy.sub_menu
 				menu_hierarchy.sub_menu[index] = {}
 
 				local sub_menu_hierarchy = menu_hierarchy.sub_menu[index]
@@ -277,17 +274,7 @@ end
 TitleMainUI._update_information_text = function (self, dt, t)
 	-- function 14
 	if not self._show_menu then
-		local backend = Managers.backend
-
-		if backend then
-			-- Nothing
-		end
-
-		backend = Managers.backend:get_current_api_call()
-
-		local current_api_call = backend
-
-		::label_14_0::
+		local current_api_call = not not Managers.backend
 
 		if current_api_call and Managers.localizer:exists(current_api_call) then
 			local widget = self._information_text
@@ -408,18 +395,7 @@ TitleMainUI._activate_menu_widget = function (self, index)
 	local current_index = self._current_menu_index
 	local menu_widget = self._current_menu_widgets[index]
 	local content = menu_widget.content
-	local callback_2 = content.callback
-
-	if not callback_2 then
-		-- Nothing
-	end
-
-	callback_2 = NULL_FUNC
-
-	local callback = callback_2
-
-	::label_21_0::
-
+	local callback = not not content.callback
 	local result = callback()
 
 	if result then
@@ -434,17 +410,7 @@ TitleMainUI._activate_menu_widget = function (self, index)
 			menu_hierarchy = menu_hierarchy.sub_menu[breadcrumb_index]
 		end
 
-		local sub_menu_2 = menu_hierarchy.sub_menu
-
-		if sub_menu_2 then
-			-- Nothing
-		end
-
-		sub_menu_2 = menu_hierarchy.sub_menu[index]
-
-		local sub_menu = sub_menu_2
-
-		::label_21_1::
+		local sub_menu = not not menu_hierarchy.sub_menu
 
 		if sub_menu then
 			table.clear(self._menu_item_animations)
@@ -464,18 +430,7 @@ end
 
 TitleMainUI._update_mouse_input = function (self, dt, t, input_service)
 	-- function 22
-	local _current_menu_index = self._current_menu_index
-
-	if not _current_menu_index then
-		-- Nothing
-	end
-
-	_current_menu_index = 1
-
-	local current_index = _current_menu_index
-
-	::label_22_0::
-
+	local current_index = not not self._current_menu_index
 	local menu_item = self._current_menu_widgets[current_index]
 	local menu_item_content = menu_item.content
 	local breadcrumbs = self._breadcrumbs
@@ -500,18 +455,7 @@ end
 
 TitleMainUI._update_gamepad_input = function (self, dt, t, input_service)
 	-- function 23
-	local _current_menu_index = self._current_menu_index
-
-	if not _current_menu_index then
-		-- Nothing
-	end
-
-	_current_menu_index = 1
-
-	local current_index = _current_menu_index
-
-	::label_23_0::
-
+	local current_index = not not self._current_menu_index
 	local menu_item = self._current_menu_widgets[current_index]
 	local menu_item_content = menu_item.content
 	local breadcrumbs = self._breadcrumbs
@@ -557,34 +501,12 @@ local EMPTY_TABLE = {}
 TitleMainUI._populate_additional_data = function (self, menu_option_widget)
 	-- function 25
 	local content = menu_option_widget.content
-	local menu_option_data_2 = content.menu_option_data
-
-	if not menu_option_data_2 then
-		-- Nothing
-	end
-
-	menu_option_data_2 = EMPTY_TABLE
-
-	local menu_option_data = menu_option_data_2
-
-	::label_25_0::
-
+	local menu_option_data = not not content.menu_option_data
 	local tag = menu_option_data.tag
 	local logo_texture = menu_option_data.logo_texture
 	local description = menu_option_data.description
 	local info_slate = menu_option_data.info_slate
-	local video_2 = menu_option_data.video
-
-	if not video_2 then
-		-- Nothing
-	end
-
-	video_2 = "main_menu"
-
-	local video = video_2
-
-	::label_25_1::
-
+	local video = not not menu_option_data.video
 	local info_slate_widget = self._info_slate_widget
 
 	info_slate_widget.content.text = info_slate
@@ -596,22 +518,7 @@ TitleMainUI._populate_additional_data = function (self, menu_option_widget)
 	local game_type_description_widget = self._game_type_description_widget
 
 	game_type_description_widget.content.text = description
-
-	local var_25_2
-
-	if logo_texture then
-		var_25_2 = UIWidget.init(create_sub_logo_func(logo_texture))
-
-		if not var_25_2 then
-			-- Nothing
-		end
-	end
-
-	var_25_2 = nil
-
-	::label_25_2::
-
-	self._sub_logo_widget = var_25_2
+	self._sub_logo_widget = logo_texture and not not UIWidget.init(create_sub_logo_func(logo_texture)) or not logo_texture and not not nil
 
 	self:_change_video(video)
 end
@@ -652,17 +559,7 @@ TitleMainUI._draw_menu_background = function (self, dt, t, ui_renderer, ui_scene
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_27_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	render_settings.alpha_multiplier = self._alpha_multiplier
 
@@ -830,48 +727,14 @@ TitleMainUI.anim_select_button = function (self, animation_data, index, dt)
 		return
 	end
 
-	local timer = animation_data.timer
-
-	timer = not not timer or not not (animation_data.progress * MENU_ITEM_FADE_IN)
-	animation_data.timer = timer
+	animation_data.timer = not not animation_data.timer
 	animation_data.timer = animation_data.timer + dt
 	animation_data.progress = math.clamp(animation_data.timer / MENU_ITEM_FADE_IN, 0, 1)
 
 	local menu_item = self._current_menu_widgets[index]
 	local item_disabled = menu_item.content.disabled
-	local gray
-
-	if item_disabled then
-		gray = Colors.color_definitions.gray
-
-		if not gray then
-			-- Nothing
-		end
-	end
-
-	gray = Colors.color_definitions.font_title
-
-	local color = gray
-
-	do
-		local gray_2
-	end
-
-	::label_36_0::
-
-	if item_disabled then
-		gray_2 = Colors.color_definitions.gray
-
-		if not gray_2 then
-			-- Nothing
-		end
-	end
-
-	gray_2 = Colors.color_definitions.white
-
-	local select_color = gray_2
-
-	::label_36_1::
+	local color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.font_title
+	local select_color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.white
 
 	if menu_item.style.text then
 		menu_item.style.text.text_color[2] = math.lerp(color[2], select_color[2], math.smoothstep(animation_data.progress, 0, 1))
@@ -910,10 +773,7 @@ TitleMainUI.anim_deselect_button = function (self, animation_data, index, dt, op
 	local progress = 0
 
 	if not optional_progress then
-		local timer = animation_data.timer
-
-		timer = not not timer or not not (animation_data.progress * MENU_ITEM_FADE_OUT)
-		animation_data.timer = timer
+		animation_data.timer = not not animation_data.timer
 		animation_data.timer = animation_data.timer - dt
 		animation_data.progress = math.clamp(animation_data.timer / MENU_ITEM_FADE_OUT, 0, 1)
 		progress = animation_data.progress
@@ -923,39 +783,8 @@ TitleMainUI.anim_deselect_button = function (self, animation_data, index, dt, op
 
 	local menu_item = self._current_menu_widgets[index]
 	local item_disabled = not not menu_item and not not menu_item.content.disabled
-	local gray
-
-	if item_disabled then
-		gray = Colors.color_definitions.gray
-
-		if not gray then
-			-- Nothing
-		end
-	end
-
-	gray = Colors.color_definitions.font_title
-
-	local color = gray
-
-	do
-		local gray_2
-	end
-
-	::label_37_0::
-
-	if item_disabled then
-		gray_2 = Colors.color_definitions.gray
-
-		if not gray_2 then
-			-- Nothing
-		end
-	end
-
-	gray_2 = Colors.color_definitions.white
-
-	local select_color = gray_2
-
-	::label_37_1::
+	local color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.font_title
+	local select_color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.white
 
 	if menu_item and menu_item.style.text then
 		menu_item.style.text.text_color[2] = math.lerp(color[2], select_color[2], math.smoothstep(progress, 0, 1))
@@ -991,25 +820,10 @@ end
 
 TitleMainUI._add_menu_item_animation = function (self, index, func, widgets)
 	-- function 40
-	local _menu_item_animations = self._menu_item_animations
-	local tbl = {}
-	local progress
-
-	if self._menu_item_animations[index] then
-		progress = self._menu_item_animations[index].progress
-
-		if not progress then
-			-- Nothing
-		end
-	end
-
-	progress = 0
-
-	::label_40_0::
-
-	tbl.progress = progress
-	tbl.func = func
-	_menu_item_animations[index] = tbl
+	self._menu_item_animations[index] = {
+		progress = self._menu_item_animations[index] and not not self._menu_item_animations[index].progress or not self._menu_item_animations[index] and not not 0,
+		func = func
+	}
 end
 
 TitleMainUI.set_information_text = function (self, optinal_text)

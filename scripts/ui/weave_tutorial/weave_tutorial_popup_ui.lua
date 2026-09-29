@@ -237,7 +237,7 @@ WeaveTutorialPopupUI.populate_message = function (self, title_text, sub_title_te
 		button_2.content.visible = false
 	end
 
-	local localized_body_text = (not disable_body_localization or not body_text) and not not Localize(body_text)
+	local localized_body_text = disable_body_localization and (not not body_text or not not Localize(body_text)) or not disable_body_localization and not not Localize(body_text)
 
 	self.body_paragraphs = UIRenderer.break_paragraphs(localized_body_text, {})
 
@@ -282,41 +282,13 @@ WeaveTutorialPopupUI.resize_to_fit = function (self)
 
 	local title_visible = self.title_text.content.visible
 	local original_subtitle_pos = scenegraph_definition.sub_title.position
-	local position = sub_title_text_def.position
-	local var_13_1
 
-	if title_visible then
-		var_13_1 = original_subtitle_pos[2]
-
-		if not var_13_1 then
-			-- Nothing
-		end
-	end
-
-	var_13_1 = 0
-
-	::label_13_0::
-
-	position[2] = var_13_1
+	sub_title_text_def.position[2] = title_visible and not not original_subtitle_pos[2] or not title_visible and not not 0
 
 	local sub_title_visible = self.sub_title_text.content.visible
 	local original_body_pos = scenegraph_definition.body.position
-	local position_2 = body_text_def.position
-	local var_13_3
 
-	if sub_title_visible then
-		var_13_3 = original_body_pos[2]
-
-		if not var_13_3 then
-			-- Nothing
-		end
-	end
-
-	var_13_3 = original_subtitle_pos[2]
-
-	::label_13_1::
-
-	position_2[2] = var_13_3
+	body_text_def.position[2] = sub_title_visible and not not original_body_pos[2] or not sub_title_visible and not not original_subtitle_pos[2]
 
 	local base_window_height = self:calculate_base_window_height()
 
@@ -339,35 +311,9 @@ end
 WeaveTutorialPopupUI.calculate_base_window_height = function (self)
 	-- function 14
 	local title_size = self.title_start_y - self.sub_title_start_y
-	local num
-
-	if self.title_text.content.visible then
-		num = 0
-
-		goto label_14_0
-	end
-
-	num = title_size
-
-	local title_offset = num
-
-	::label_14_0::
-
+	local title_offset = self.title_text.content.visible and not not 0 or not self.title_text.content.visible and not not title_size
 	local sub_title_size = self.sub_title_start_y - self.body_start_y
-	local num_2
-
-	if self.sub_title_text.content.visible then
-		num_2 = 0
-
-		goto label_14_1
-	end
-
-	num_2 = sub_title_size
-
-	local sub_title_offset = num_2
-
-	::label_14_1::
-
+	local sub_title_offset = self.sub_title_text.content.visible and not not 0 or not self.sub_title_text.content.visible and not not sub_title_size
 	local window_height = self.button_height - self.body_start_y - title_offset + 50
 
 	return window_height

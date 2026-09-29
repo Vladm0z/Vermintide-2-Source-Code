@@ -107,7 +107,7 @@ local breed_data = {
 			blackboard.death_sequence = true
 		end
 
-		if (not blackboard.mounted_data or blackboard.knocked_off_mount) and blackboard.stagger_count >= 5 then
+		if blackboard.mounted_data and (not blackboard.knocked_off_mount or blackboard.stagger_count >= 5) or not blackboard.mounted_data and blackboard.stagger_count >= 5 then
 			stagger_type = stagger_types.none
 			blackboard.stagger_ignore_anim_cb = true
 		else

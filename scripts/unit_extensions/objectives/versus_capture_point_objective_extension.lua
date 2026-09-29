@@ -1,16 +1,6 @@
 -- chunkname: @scripts/unit_extensions/objectives/versus_capture_point_objective_extension.lua
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/unit_extensions/objectives/testify/versus_capture_point_objective_extension_testify")
-
-local versus_capture_point_objective_extension_testify = testify
-
-::label_0_0::
+local versus_capture_point_objective_extension_testify = not not script_data.testify
 
 VersusCapturePointObjectiveExtension = class(VersusCapturePointObjectiveExtension, BaseObjectiveExtension)
 VersusCapturePointObjectiveExtension.NAME = "VersusCapturePointObjectiveExtension"
@@ -29,55 +19,17 @@ end
 VersusCapturePointObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 2
 	local capture_point_default_settings = GameModeSettings.versus.objectives.capture_point
-	local capture_rate_multiplier = objective_data.capture_rate_multiplier
 
-	capture_rate_multiplier = not not capture_rate_multiplier or not not capture_point_default_settings.capture_rate_multiplier
-	self._capture_rate_multiplier = capture_rate_multiplier
-
-	local capture_time = objective_data.capture_time
-
-	capture_time = not not capture_time or not not capture_point_default_settings.capture_time
-	self._capture_time = capture_time
-
-	local num_sections = objective_data.num_sections
-
-	num_sections = not not num_sections or not not capture_point_default_settings.num_sections
-	self._num_sections = num_sections
-
-	local score_per_section = objective_data.score_per_section
-
-	score_per_section = not not score_per_section or not not capture_point_default_settings.score_per_section
-	self._score_per_section = score_per_section
-
-	local time_per_section = objective_data.time_per_section
-
-	time_per_section = not not time_per_section or not not capture_point_default_settings.time_per_section
-	self._time_per_section = time_per_section
-
-	local score_for_completion = objective_data.score_for_completion
-
-	score_for_completion = not not score_for_completion or not not capture_point_default_settings.score_for_completion
-	self._score_for_completion = score_for_completion
-
-	local time_for_completion = objective_data.time_for_completion
-
-	time_for_completion = not not time_for_completion or not not capture_point_default_settings.time_for_completion
-	self._time_for_completion = time_for_completion
-
-	local on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
-
-	on_last_leaf_complete_sound_event = not not on_last_leaf_complete_sound_event or not not capture_point_default_settings.on_last_leaf_complete_sound_event
-	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
-
-	local on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
-
-	on_leaf_complete_sound_event = not not on_leaf_complete_sound_event or not not capture_point_default_settings.on_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
-
-	local on_section_progress_sound_event = objective_data.on_section_progress_sound_event
-
-	on_section_progress_sound_event = not not on_section_progress_sound_event or not not capture_point_default_settings.on_section_progress_sound_event
-	self._on_section_progress_sound_event = on_section_progress_sound_event
+	self._capture_rate_multiplier = not not objective_data.capture_rate_multiplier
+	self._capture_time = not not objective_data.capture_time
+	self._num_sections = not not objective_data.num_sections
+	self._score_per_section = not not objective_data.score_per_section
+	self._time_per_section = not not objective_data.time_per_section
+	self._score_for_completion = not not objective_data.score_for_completion
+	self._time_for_completion = not not objective_data.time_for_completion
+	self._on_last_leaf_complete_sound_event = not not objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = not not objective_data.on_leaf_complete_sound_event
+	self._on_section_progress_sound_event = not not objective_data.on_section_progress_sound_event
 	self._capture_time_remaining = self._capture_time
 end
 

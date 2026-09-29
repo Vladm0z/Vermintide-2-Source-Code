@@ -4,17 +4,7 @@ require("scripts/managers/conflict_director/weave_spawner")
 require("scripts/settings/wind_settings")
 require("scripts/settings/weave_settings")
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/managers/weave/weave_manager_testify")
-
-local weave_manager_testify = testify
-
-::label_0_0::
+local weave_manager_testify = not not script_data.testify
 
 WeaveManager = class(WeaveManager)
 
@@ -135,60 +125,10 @@ WeaveManager._setup_weave_data = function (self, is_server)
 		return
 	end
 
-	local _next_weave_name = self._next_weave_name
-
-	if not _next_weave_name then
-		-- Nothing
-	end
-
-	_next_weave_name = Development.parameter("weave_name")
-
-	local weave_name = _next_weave_name
-
-	::label_8_0::
-
-	local _next_objective_index = self._next_objective_index
-
-	if not _next_objective_index then
-		-- Nothing
-	end
-
-	_next_objective_index = Development.parameter("weave_name")
-
-	if _next_objective_index then
-		-- Nothing
-	end
-
-	_next_objective_index = 1
-
-	local weave_objective_index = _next_objective_index
-
-	::label_8_1::
-
-	local _remaining_time = self._remaining_time
-
-	if not _remaining_time then
-		-- Nothing
-	end
-
-	_remaining_time = WeaveSettings.starting_time
-
-	local time_left = _remaining_time
-
-	::label_8_2::
-
-	local _damage_taken = self._damage_taken
-
-	if not _damage_taken then
-		-- Nothing
-	end
-
-	_damage_taken = 0
-
-	local damage_taken = _damage_taken
-
-	::label_8_3::
-
+	local weave_name = not not self._next_weave_name
+	local weave_objective_index = not not self._next_objective_index
+	local time_left = not not self._remaining_time
+	local damage_taken = not not self._damage_taken
 	local player_ids = self._player_ids
 
 	self:_set_active_weave(weave_name)
@@ -411,17 +351,7 @@ WeaveManager.store_saved_game_mode_data = function (self)
 		return
 	end
 
-	local game_mode = Managers.state.game_mode
-
-	if game_mode then
-		-- Nothing
-	end
-
-	game_mode = Managers.state.game_mode:get_saved_game_mode_data()
-
-	local saved_game_mode_data = game_mode
-
-	::label_21_0::
+	local saved_game_mode_data = not not Managers.state.game_mode
 
 	if saved_game_mode_data then
 		for _, slot_data in pairs(saved_game_mode_data) do
@@ -699,7 +629,7 @@ WeaveManager.current_bar_score = function (self)
 	if game and self._go_id then
 		local game_object_score = GameSession.game_object_field(game, self._go_id, "bar_score")
 		local bar_score = self._bar_score
-		local score = (not (game_object_score < bar_score) or not bar_score) and not not game_object_score
+		local score = game_object_score < bar_score and (not not bar_score or not not game_object_score) or not (game_object_score < bar_score) and not not game_object_score
 
 		return score
 	else
@@ -804,21 +734,8 @@ end
 WeaveManager.get_wind_strength = function (self)
 	-- function 56
 	local weave_template = WeaveSettings.templates[self._active_weave_name]
-	local wind_strength
 
-	if weave_template then
-		wind_strength = weave_template.wind_strength
-
-		if not wind_strength then
-			-- Nothing
-		end
-	end
-
-	wind_strength = 1
-
-	::label_56_0::
-
-	return wind_strength
+	return weave_template and not not weave_template.wind_strength or not weave_template and not not 1
 end
 
 WeaveManager._create_game_object = function (self)
@@ -989,11 +906,7 @@ end
 WeaveManager._track_ai_killed = function (self, breed_name)
 	-- function 72
 	if self._is_server then
-		local _enemies_killed = self._enemies_killed
-		local var_72_1 = self._enemies_killed[breed_name]
-
-		var_72_1 = not not var_72_1 or not not 0
-		_enemies_killed[breed_name] = var_72_1
+		self._enemies_killed[breed_name] = not not self._enemies_killed[breed_name]
 		self._enemies_killed[breed_name] = self._enemies_killed[breed_name] + 1
 		self._num_enemies_killed = self._num_enemies_killed + 1
 

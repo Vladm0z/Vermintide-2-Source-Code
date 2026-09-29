@@ -18,10 +18,7 @@ function aiprint(...)
 	end
 end
 
-local AiUtils = AiUtils
-
-AiUtils = not not AiUtils or not not {}
-AiUtils = AiUtils
+AiUtils = not not AiUtils
 BreedCategory = {
 	Boss = 8,
 	Special = 64,
@@ -250,42 +247,11 @@ end
 
 AiUtils.calculate_ai_stagger_strength = function (attacker_blackboard, target_blackboard, t, apply_toughness_break, reset_stagger_level, reset_multiplier)
 	-- function 20
-	local ai_toughness_break_t = target_blackboard.ai_toughness_break_t
-
-	if not ai_toughness_break_t then
-		-- Nothing
-	end
-
-	ai_toughness_break_t = 0
-
-	local target_break_t = ai_toughness_break_t
-
-	::label_20_0::
-
+	local target_break_t = not not target_blackboard.ai_toughness_break_t
 	local toughness_break_decay = t - target_break_t
-	local max = math.max
-	local ai_toughness_break = target_blackboard.ai_toughness_break
-
-	ai_toughness_break = not not ai_toughness_break or not not 0
-
-	local toughness_break = max(ai_toughness_break - toughness_break_decay, 0)
-	local ai_toughness = target_blackboard.breed.ai_toughness
-
-	ai_toughness = not not ai_toughness or not not 0
-
-	local target_toughness = ai_toughness - toughness_break
-	local ai_strength = attacker_blackboard.breed.ai_strength
-
-	if not ai_strength then
-		-- Nothing
-	end
-
-	ai_strength = 0
-
-	local attacker_strength = ai_strength
-
-	::label_20_1::
-
+	local toughness_break = math.max(not not target_blackboard.ai_toughness_break - toughness_break_decay, 0)
+	local target_toughness = not not target_blackboard.breed.ai_toughness - toughness_break
+	local attacker_strength = not not attacker_blackboard.breed.ai_strength
 	local stagger_strength = math.round(math.clamp(attacker_strength - target_toughness, stagger_types.none, stagger_types.heavy))
 
 	if apply_toughness_break then
@@ -314,30 +280,8 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 	-- function 22
 	damage = DamageUtils.calculate_damage(damage, target_unit, attacker_unit)
 
-	local var_22_0 = POSITION_LOOKUP[attacker_unit]
-
-	if not var_22_0 then
-		-- Nothing
-	end
-
-	var_22_0 = Unit.world_position(attacker_unit, 0)
-
-	local attacker_pos = var_22_0
-
-	::label_22_0::
-
-	local var_22_1 = POSITION_LOOKUP[target_unit]
-
-	if not var_22_1 then
-		-- Nothing
-	end
-
-	var_22_1 = Unit.world_position(target_unit, 0)
-
-	local target_pos = var_22_1
-
-	::label_22_1::
-
+	local attacker_pos = not not POSITION_LOOKUP[attacker_unit]
+	local target_pos = not not POSITION_LOOKUP[target_unit]
 	local damage_direction = Vector3.normalize(target_pos - attacker_pos)
 	local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
 
@@ -385,17 +329,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 				local player_status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
 				if player_status_extension and player_status_extension:is_knocked_down() then
-					local knocked_down_damage_multiplier_2 = difficulty_settings.knocked_down_damage_multiplier
-
-					if not knocked_down_damage_multiplier_2 then
-						-- Nothing
-					end
-
-					knocked_down_damage_multiplier_2 = 1
-
-					local knocked_down_damage_multiplier = knocked_down_damage_multiplier_2
-
-					::label_22_2::
+					local knocked_down_damage_multiplier = not not difficulty_settings.knocked_down_damage_multiplier
 
 					damage = damage * knocked_down_damage_multiplier
 				end
@@ -410,17 +344,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 					damage = math.clamp(damage, 0, damage_cap)
 				end
 
-				local damage_multiplier_2 = difficulty_settings.damage_multiplier
-
-				if not damage_multiplier_2 then
-					-- Nothing
-				end
-
-				damage_multiplier_2 = 1
-
-				local damage_multiplier = damage_multiplier_2
-
-				::label_22_3::
+				local damage_multiplier = not not difficulty_settings.damage_multiplier
 
 				damage = damage * damage_multiplier
 			end
@@ -440,7 +364,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 				stagger_strength = not not stagger_strength or not not AiUtils.calculate_ai_stagger_strength(attacker_blackboard, target_blackboard, t, true, stagger_types.medium, 0.25)
 
 				if stagger_strength <= 0 then
-					if target_breed.strong_hit_reacts and target_blackboard.past_damage_in_attack ~= false and (not target_blackboard.stagger or target_blackboard.stagger_anim_done) then
+					if not target_blackboard.stagger or target_blackboard.stagger_anim_done then
 						local hit_unit_dir = Quaternion.forward(unit_local_rotation(target_unit, 0))
 						local angle_difference = Vector3.flat_angle(damage_direction, hit_unit_dir)
 						local hit_anim_list
@@ -465,7 +389,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 						local angle_difference = Vector3.flat_angle(hit_unit_dir, damage_direction)
 						local hit_anim
 
-						hit_anim = ((angle_difference < -math.pi * 0.75 or angle_difference > math.pi * 0.75) and not not "hit_reaction_backward" or not (angle_difference < -math.pi * 0.25) or not "hit_reaction_left") and (not (angle_difference < math.pi * 0.25) or not "hit_reaction_forward") and not not "hit_reaction_right"
+						hit_anim = angle_difference < -math.pi * 0.75 and (not not "hit_reaction_backward" or angle_difference < -math.pi * 0.25 and (not not "hit_reaction_left" or angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right")) or not (angle_difference < -math.pi * 0.75) and (angle_difference > math.pi * 0.75 and (not not "hit_reaction_backward" or angle_difference < -math.pi * 0.25 and (not not "hit_reaction_left" or angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right")) or not (angle_difference > math.pi * 0.75) and (angle_difference < -math.pi * 0.25 and (not not "hit_reaction_left" or angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right")))
 
 						if hit_anim then
 							unit_animation_event(target_unit, hit_anim)
@@ -477,37 +401,13 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 					AiUtils.stagger_target(attacker_unit, target_unit, distance, impact, damage_direction, t)
 				end
 
-				local damage_multiplier_vs_ai_2 = attacker_breed.damage_multiplier_vs_ai
-
-				if not damage_multiplier_vs_ai_2 then
-					-- Nothing
-				end
-
-				damage_multiplier_vs_ai_2 = 0.25
-
-				local damage_multiplier_vs_ai = damage_multiplier_vs_ai_2
-
-				::label_22_4::
+				local damage_multiplier_vs_ai = not not attacker_breed.damage_multiplier_vs_ai
 
 				damage = damage * damage_multiplier_vs_ai
 
 				local hit_effect
 				local hitzone_armor_categories = target_breed.hitzone_armor_categories
-				local torso
-
-				if hitzone_armor_categories then
-					torso = hitzone_armor_categories.torso
-
-					if not torso then
-						-- Nothing
-					end
-				end
-
-				torso = target_breed.armor_category
-
-				local target_unit_armor = torso
-
-				::label_22_5::
+				local target_unit_armor = hitzone_armor_categories and not not hitzone_armor_categories.torso or not hitzone_armor_categories and not not target_breed.armor_category
 
 				if damage < 0.25 and target_unit_armor == 2 then
 					hit_effect = "fx/hit_armored"
@@ -517,18 +417,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 
 				if hit_effect then
 					local world = target_blackboard.world
-					local torso_2 = target_breed.hit_zones_lookup.torso
-
-					if not torso_2 then
-						-- Nothing
-					end
-
-					torso_2 = 0
-
-					local hit_node_id = torso_2
-
-					::label_22_6::
-
+					local hit_node_id = not not target_breed.hit_zones_lookup.torso
 					local hit_position = Unit.world_position(target_unit, hit_node_id) + Vector3(0, 0, math.random() * target_breed.aoe_height * 0.1)
 
 					EffectHelper.player_melee_hit_particles(world, hit_effect, hit_position, damage_direction, action.damage_type, target_unit, damage)
@@ -575,17 +464,7 @@ AiUtils.add_attack_intensity = function (target_unit, action, blackboard)
 	end
 
 	local difficulty = Managers.state.difficulty:get_difficulty()
-	local difficulty_attack_intensity = action.difficulty_attack_intensity
-
-	if difficulty_attack_intensity then
-		-- Nothing
-	end
-
-	difficulty_attack_intensity = action.difficulty_attack_intensity[attack_intensity_type][difficulty]
-
-	local difficulty_attack_intensity_settings = difficulty_attack_intensity
-
-	::label_23_0::
+	local difficulty_attack_intensity_settings = not not action.difficulty_attack_intensity
 
 	if not difficulty_attack_intensity_settings then
 		return
@@ -594,22 +473,7 @@ AiUtils.add_attack_intensity = function (target_unit, action, blackboard)
 	local add_random_intensity = action.add_random_intensity
 
 	for intensity_type, intensity in pairs(difficulty_attack_intensity_settings) do
-		local num
-
-		if add_random_intensity then
-			num = 0.75 + 0.5 * math.random()
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		local random_intensity = num
-
-		::label_23_1::
-
+		local random_intensity = add_random_intensity and not not (0.75 + 0.5 * math.random()) or not add_random_intensity and not not 1
 		local final_attack_intensity = intensity * random_intensity
 
 		target_unit_attack_intensity_extension:add_attack_intensity(intensity_type, final_attack_intensity)
@@ -620,31 +484,9 @@ AiUtils.poison_explode_unit = function (unit, action, blackboard)
 	-- function 24
 	local position = Unit.local_position(unit, 0)
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_24_0 = action.aoe_dot_damage[difficulty_rank]
-
-	if not var_24_0 then
-		-- Nothing
-	end
-
-	var_24_0 = action.aoe_dot_damage[2]
-
-	local aoe_dot_damage_table = var_24_0
-
-	::label_24_0::
-
+	local aoe_dot_damage_table = not not action.aoe_dot_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local var_24_1 = action.aoe_init_damage[difficulty_rank]
-
-	if not var_24_1 then
-		-- Nothing
-	end
-
-	var_24_1 = action.aoe_init_damage[2]
-
-	local aoe_init_damage_table = var_24_1
-
-	::label_24_1::
-
+	local aoe_init_damage_table = not not action.aoe_init_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
 	local radius = action.radius
@@ -916,18 +758,7 @@ local previous_random_value = 0
 AiUtils.calculate_bot_threat_time = function (bot_threat)
 	-- function 36
 	local duration = bot_threat.duration
-	local max_start_delay_2 = bot_threat.max_start_delay
-
-	if not max_start_delay_2 then
-		-- Nothing
-	end
-
-	max_start_delay_2 = 0
-
-	local max_start_delay = max_start_delay_2
-
-	::label_36_0::
-
+	local max_start_delay = not not bot_threat.max_start_delay
 	local current_random_value = math.random()
 	local sum_random = previous_random_value + current_random_value
 
@@ -1357,21 +1188,8 @@ AiUtils.stagger = function (unit, blackboard, attacker_unit, stagger_direction, 
 	blackboard.stagger_time = stagger_duration * difficulty_modifier + t
 
 	local stagger_value_to_add = not not stagger_value or not not 1
-	local num
 
-	if blackboard.stagger then
-		num = blackboard.stagger + stagger_value_to_add
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = stagger_value_to_add
-
-	::label_56_0::
-
-	blackboard.stagger = num
+	blackboard.stagger = blackboard.stagger and not not (blackboard.stagger + stagger_value_to_add) or not blackboard.stagger and not not stagger_value_to_add
 	blackboard.stagger_type = stagger_type
 	blackboard.stagger_animation_scale = stagger_animation_scale
 	blackboard.always_stagger_suffered = always_stagger
@@ -1400,17 +1218,7 @@ AiUtils.stagger = function (unit, blackboard, attacker_unit, stagger_direction, 
 	end
 
 	if should_play_push_sound then
-		local push_sound_event_2 = blackboard.breed.push_sound_event
-
-		if not push_sound_event_2 then
-			-- Nothing
-		end
-
-		push_sound_event_2 = "Play_generic_pushed_impact_small"
-
-		local push_sound_event = push_sound_event_2
-
-		::label_56_1::
+		local push_sound_event = not not blackboard.breed.push_sound_event
 
 		Managers.state.entity:system("audio_system"):play_audio_unit_event(push_sound_event, unit)
 	end
@@ -1577,27 +1385,7 @@ end
 AiUtils.initialize_nav_cost_map_cost_table = function (cost_table, allowed_layers, default_cost)
 	-- function 68
 	for layer_id, layer_name in ipairs(NAV_COST_MAP_LAYER_ID_MAPPING) do
-		local var_68_0
-
-		if allowed_layers then
-			var_68_0 = allowed_layers[layer_name]
-
-			if not var_68_0 then
-				-- Nothing
-			end
-		end
-
-		if not default_cost then
-			-- Nothing
-		end
-
-		::label_68_0::
-
-		var_68_0 = 0
-
-		local layer_cost = var_68_0
-
-		::label_68_1::
+		local layer_cost = allowed_layers and not not allowed_layers[layer_name] or not allowed_layers and (not not default_cost or not not 0)
 
 		GwNavCostMap.cost_table_set_cost(cost_table, layer_id, layer_cost)
 	end
@@ -1641,17 +1429,7 @@ AiUtils.update_aggro = function (unit, blackboard, breed, t, dt)
 		aggro_list[enemy_unit] = math.clamp(aggro - aggro_decay, 0, 100)
 	end
 
-	local aggro_multipliers_2 = breed.perception_weights.aggro_multipliers
-
-	if not aggro_multipliers_2 then
-		-- Nothing
-	end
-
-	aggro_multipliers_2 = DEFAULT_AGGRO_MULTIPLIERS
-
-	local aggro_multipliers = aggro_multipliers_2
-
-	::label_70_0::
+	local aggro_multipliers = not not breed.perception_weights.aggro_multipliers
 
 	if array_length > 0 then
 		local stride = DamageDataIndex.STRIDE
@@ -1665,17 +1443,7 @@ AiUtils.update_aggro = function (unit, blackboard, breed, t, dt)
 
 			if master_list_item then
 				local slot_type = master_list_item.slot_type
-				local var_70_1 = aggro_multipliers[slot_type]
-
-				if not var_70_1 then
-					-- Nothing
-				end
-
-				var_70_1 = 1
-
-				local multiplier = var_70_1
-
-				::label_70_1::
+				local multiplier = not not aggro_multipliers[slot_type]
 
 				damage_amount = damage_amount * multiplier
 			end
@@ -1758,38 +1526,9 @@ AiUtils.push_intersecting_players = function (unit, source_unit, displaced_units
 	local self_pos = Unit.local_position(unit, 0)
 	local push_pos = self_pos + self_forward * data.push_forward_offset
 	local radius = data.push_width * 1.5
-	local dodged_width = data.dodged_width
-
-	if dodged_width then
-		-- Nothing
-	end
-
-	dodged_width = data.dodged_width * 1.5
-
-	local dodge_radius = dodged_width
-
-	::label_72_0::
-
+	local dodge_radius = not not data.dodged_width
 	local forward_pos = self_pos + self_forward * 3
-
-	if not HEALTH_ALIVE[source_unit] or not source_unit then
-		-- Nothing
-	end
-
-	::label_72_1::
-
-	local var_72_1 = HEALTH_ALIVE[unit]
-
-	if var_72_1 then
-		-- Nothing
-	end
-
-	var_72_1 = unit
-
-	local side_unit = var_72_1
-
-	::label_72_2::
-
+	local side_unit = not not HEALTH_ALIVE[unit]
 	local side = Managers.state.side.side_by_unit[side_unit]
 	local enemy_player_and_bot_units = not not side and not not side.ENEMY_PLAYER_AND_BOT_UNITS
 
@@ -1992,35 +1731,11 @@ AiUtils.get_combat_conditions = function (blackboard)
 	if target_unit then
 		local num_enemies = #blackboard.proximite_enemies
 		local target_breed = Unit.get_data(target_unit, "breed")
-		local tbl = {}
-		local flag
 
-		flag = (not (num_enemies > 3) or not 2) and (not (num_enemies > 1) or not 1) and not not 0
-		tbl.enemy_arc = flag
-
-		local primary_armor_category
-
-		if target_breed then
-			primary_armor_category = target_breed.primary_armor_category
-
-			if not primary_armor_category then
-				-- Nothing
-			end
-
-			primary_armor_category = target_breed.armor_category
-
-			if not primary_armor_category then
-				-- Nothing
-			end
-		end
-
-		primary_armor_category = 1
-
-		::label_81_0::
-
-		tbl.target_armor = primary_armor_category
-
-		return tbl
+		return {
+			enemy_arc = num_enemies > 3 and not not 2 or not (num_enemies > 3) and (num_enemies > 1 and not not 1 or not (num_enemies > 1) and not not 0),
+			target_armor = target_breed and not not target_breed.primary_armor_category or not target_breed and not not 1
+		}
 	end
 
 	return nil
@@ -2081,22 +1796,7 @@ local math_abs = math.abs
 
 AiUtils.get_melee_weapon_score = function (conditions, weapon_item_template)
 	-- function 82
-	local attack_meta_data_2
-
-	if weapon_item_template then
-		attack_meta_data_2 = weapon_item_template.attack_meta_data
-
-		if not attack_meta_data_2 then
-			-- Nothing
-		end
-	end
-
-	attack_meta_data_2 = DEFAULT_ATTACK_META_DATA
-
-	local weapon_meta_data = attack_meta_data_2
-
-	::label_82_0::
-
+	local weapon_meta_data = weapon_item_template and not not weapon_item_template.attack_meta_data or not weapon_item_template and not not DEFAULT_ATTACK_META_DATA
 	local best_utility = -1
 	local best_attack_input = "tap_attack"
 	local best_attack_meta_data = weapon_meta_data[best_attack_input]
@@ -2114,35 +1814,10 @@ AiUtils.get_melee_weapon_score = function (conditions, weapon_item_template)
 			local armor_modifiers = attack_meta_data.armor_modifiers
 
 			if armor_modifiers then
-				local var_82_1 = armor_modifiers[target_armor]
+				local armor_mod = not not armor_modifiers[target_armor]
+				local armor_relevence = not not ARMOR_MOD_IMPORTANCE[target_armor]
 
-				if not var_82_1 then
-					-- Nothing
-				end
-
-				var_82_1 = 0
-
-				local armor_mod = var_82_1
-
-				::label_82_1::
-
-				local var_82_2 = ARMOR_MOD_IMPORTANCE[target_armor]
-
-				if not var_82_2 then
-					-- Nothing
-				end
-
-				var_82_2 = 1
-
-				local armor_relevence = var_82_2
-
-				::label_82_2::
-
-				local num = armor_mod * armor_relevence
-				local speed_mod = attack_meta_data.speed_mod
-
-				speed_mod = not not speed_mod or not not 1
-				utility = utility + num * speed_mod
+				utility = utility + armor_mod * armor_relevence * not not attack_meta_data.speed_mod
 			end
 
 			if best_utility < utility then
@@ -2202,7 +1877,7 @@ AiUtils.taunt_unit = function (ai_unit, taunt_unit, duration, taunt_bosses)
 
 	if blackboard then
 		local breed = blackboard.breed
-		local taunt_target = not not breed and not breed.ignore_taunts and not breed.boss or not not taunt_bosses
+		local taunt_target = not breed.boss or not not taunt_bosses
 
 		if taunt_target then
 			local t = Managers.time:time("game")
@@ -2382,22 +2057,7 @@ end
 AiUtils.breed_height = function (unit)
 	-- function 91
 	local bb = BLACKBOARDS[unit]
-	local breed_2
-
-	if bb then
-		breed_2 = bb.breed
-
-		if not breed_2 then
-			-- Nothing
-		end
-	end
-
-	breed_2 = Unit.get_data(unit, "breed")
-
-	local breed = breed_2
-
-	::label_91_0::
-
+	local breed = bb and not not bb.breed or not bb and not not Unit.get_data(unit, "breed")
 	local height = breed.height
 
 	if not height then
@@ -2466,24 +2126,7 @@ AiUtils.bot_melee_aim_pos = function (targeting_unit, target, optional_aim_posit
 	-- function 94
 	local target_unit_blackboard = BLACKBOARDS[target]
 	local target_breed = not not target_unit_blackboard and not not target_unit_blackboard.breed
-	local bot_melee_aim_node
-
-	if target_breed then
-		bot_melee_aim_node = target_breed.bot_melee_aim_node
-
-		if not bot_melee_aim_node then
-			bot_melee_aim_node = "j_spine"
-		end
-
-		goto label_94_0
-	end
-
-	bot_melee_aim_node = "rp_center"
-
-	local aim_node = bot_melee_aim_node
-
-	::label_94_0::
-
+	local aim_node = target_breed and not not target_breed.bot_melee_aim_node or not target_breed and not not "rp_center"
 	local targeting_unit_pos = Unit.local_position(targeting_unit, 0)
 	local aim_pos
 
@@ -2507,7 +2150,7 @@ AiUtils.bot_melee_aim_pos = function (targeting_unit, target, optional_aim_posit
 
 		aim_pos = not not closest_pos or not not Unit.world_position(target, 0)
 	else
-		aim_pos = (not Unit.has_node(target, aim_node) or not Unit.world_position(target, Unit.node(target, aim_node))) and not not Unit.world_position(target, 0)
+		aim_pos = Unit.has_node(target, aim_node) and (not not Unit.world_position(target, Unit.node(target, aim_node)) or not not Unit.world_position(target, 0)) or not Unit.has_node(target, aim_node) and not not Unit.world_position(target, 0)
 	end
 
 	if optional_aim_position then

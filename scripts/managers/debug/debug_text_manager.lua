@@ -184,17 +184,9 @@ DebugTextManager.output_unit_text = function (self, text, text_size, unit, node_
 		fade = fade,
 		starting_time = self._time
 	}
-	local _unit_texts = self._unit_texts
-	local var_6_1 = self._unit_texts[unit]
 
-	var_6_1 = not not var_6_1 or not not {}
-	_unit_texts[unit] = var_6_1
-
-	local var_6_2 = self._unit_texts[unit]
-	local var_6_3 = self._unit_texts[unit][category]
-
-	var_6_3 = not not var_6_3 or not not {}
-	var_6_2[category] = var_6_3
+	self._unit_texts[unit] = not not self._unit_texts[unit]
+	self._unit_texts[unit][category] = not not self._unit_texts[unit][category]
 	self._unit_texts[unit][category][#self._unit_texts[unit][category] + 1] = new_text
 end
 
@@ -236,22 +228,7 @@ DebugTextManager.output_world_text = function (self, text, text_size, position, 
 
 		tm = Matrix4x4.from_quaternion_position(camera_rotation, position)
 	else
-		local from_quaternion_position = Matrix4x4.from_quaternion_position
-		local inverse
-
-		if rotation then
-			inverse = Quaternion.inverse(rotation)
-
-			if not inverse then
-				-- Nothing
-			end
-		end
-
-		inverse = Quaternion.identity()
-
-		::label_8_0::
-
-		tm = from_quaternion_position(inverse, position)
+		tm = Matrix4x4.from_quaternion_position(rotation and not not Quaternion.inverse(rotation) or not rotation and not not Quaternion.identity(), position)
 	end
 
 	local text_extent_min, text_extent_max = Gui.text_extents(gui, text, font, text_size)
@@ -283,11 +260,8 @@ DebugTextManager.output_world_text = function (self, text, text_size, position, 
 		},
 		time = self._time + (not not time or not not self._world_text_time)
 	}
-	local _world_texts = self._world_texts
-	local var_8_3 = self._world_texts[category]
 
-	var_8_3 = not not var_8_3 or not not {}
-	_world_texts[category] = var_8_3
+	self._world_texts[category] = not not self._world_texts[category]
 	self._world_texts[category][#self._world_texts[category] + 1] = new_text
 end
 

@@ -272,17 +272,7 @@ AccountManager._verify_profile = function (self)
 				self._user_detached = true
 			elseif self._active_controller then
 				local controller_changed = false
-				local _active_controller = self._active_controller
-
-				if _active_controller then
-					-- Nothing
-				end
-
-				_active_controller = self._active_controller.user_id()
-
-				local user_id = _active_controller
-
-				::label_26_0::
+				local user_id = not not self._active_controller
 
 				if not self._active_controller or not self._active_controller.user_id() or self._active_controller.disconnected() or controller_changed then
 					self:_queue_popup(Localize("controller_disconnected"), Localize("controller_disconnected_header"), "retry_verify_profile", Localize("button_retry"))
@@ -344,10 +334,7 @@ AccountManager._update_psn_client = function (self, dt)
 		if LobbyInternal.client_lost_context() or LobbyInternal.client_failed() then
 			self._psn_client_error = "lost_context"
 		else
-			local _psn_client_timeout_timer = self._psn_client_timeout_timer
-
-			_psn_client_timeout_timer = not not _psn_client_timeout_timer or not not 0
-			self._psn_client_timeout_timer = _psn_client_timeout_timer + dt
+			self._psn_client_timeout_timer = not not self._psn_client_timeout_timer + dt
 
 			if self._psn_client_timeout_timer > PSN_CLIENT_READY_TIMEOUT then
 				self._psn_client_error = "ready_timeout"
@@ -682,18 +669,7 @@ AccountManager.cb_fetch_friends = function (self, num_to_fetch, offset, external
 		local presence = entry.presence
 		local primary_info = presence.primaryInfo
 		local online_status = primary_info.onlineStatus
-		local gameData = primary_info.gameData
-
-		if gameData then
-			-- Nothing
-		end
-
-		gameData = from_base64(primary_info.gameData)
-
-		local room_id = gameData
-
-		::label_53_0::
-
+		local room_id = not not primary_info.gameData
 		local status, playing_this_game
 
 		if online_status and online_status == "online" then
@@ -1020,14 +996,7 @@ AccountManager._format_session_parameters = function (self, params)
 	end
 
 	str = str .. string.format("  \"availablePlatforms\":%s,\r\n", params.platforms)
-
-	local var_70_0 = str
-	local format = string.format
-	local str_2 = "  \"sessionLockFlag\":%s\r\n"
-	local flag
-
-	flag = (not params.lock_flag or not "true") and not not "false"
-	str = var_70_0 .. format(str_2, flag)
+	str = str .. string.format("  \"sessionLockFlag\":%s\r\n", params.lock_flag and not not "true" or not params.lock_flag and not not "false")
 	str = str .. "}"
 
 	return str
@@ -1036,19 +1005,7 @@ end
 AccountManager._set_presence_status_content = function (self, presence, append)
 	-- function 71
 	local append = append
-	local var_71_0 = PresenceSet[presence]
-
-	if not var_71_0 then
-		-- Nothing
-	end
-
-	var_71_0 = {
-		"en"
-	}
-
-	local presence_data = var_71_0
-
-	::label_71_0::
+	local presence_data = not not PresenceSet[presence]
 
 	if not PresenceSet[presence] then
 		Application.error(string.format("[AccountManager:set_presence] \"%s\" could not be found in PresenceSet - defaulting to english", presence))
@@ -1057,58 +1014,15 @@ AccountManager._set_presence_status_content = function (self, presence, append)
 	local str = ""
 
 	str = str .. "{\r\n"
-
-	local var_71_1 = str
-	local format = string.format
-	local str_2 = "  \"gameStatus\":%q,\r\n"
-	local var_71_4 = Localize(presence .. "_en")
-	local str_3
-
-	if append then
-		str_3 = " " .. Localize(append)
-
-		if not str_3 then
-			-- Nothing
-		end
-	end
-
-	str_3 = ""
-
-	::label_71_1::
-
-	str = var_71_1 .. format(str_2, var_71_4 .. str_3)
+	str = str .. string.format("  \"gameStatus\":%q,\r\n", Localize(presence .. "_en") .. (append and not not (" " .. Localize(append)) or not append and not not ""))
 	str = str .. "  \"localizedGameStatus\":[\r\n"
 
 	if presence_data then
 		for idx, language in ipairs(presence_data) do
 			str = str .. "    {\r\n"
 			str = str .. string.format("      \"npLanguage\":%q,\r\n", language)
-
-			local var_71_6 = str
-			local format_2 = string.format
-			local str_4 = "      \"gameStatus\":%q\r\n"
-			local var_71_9 = Localize(presence .. "_" .. language)
-			local str_5
-
-			if append then
-				str_5 = " " .. Localize(append)
-
-				if not str_5 then
-					-- Nothing
-				end
-			end
-
-			str_5 = ""
-
-			::label_71_2::
-
-			str = var_71_6 .. format_2(str_4, var_71_9 .. str_5)
-
-			local var_71_11 = str
-			local flag
-
-			flag = (not (idx < #presence_data) or not "    },\r\n") and not not "    }\r\n"
-			str = var_71_11 .. flag
+			str = str .. string.format("      \"gameStatus\":%q\r\n", Localize(presence .. "_" .. language) .. (append and not not (" " .. Localize(append)) or not append and not not ""))
+			str = str .. (idx < #presence_data and not not "    },\r\n" or not (idx < #presence_data) and not not "    }\r\n")
 		end
 	end
 
@@ -1180,17 +1094,7 @@ end
 AccountManager.console_type_setting = function (self, setting)
 	-- function 81
 	local console_type = self:console_type()
-	local var_81_0 = CONSOLE_TYPE_SETTINGS[console_type]
-
-	if not var_81_0 then
-		-- Nothing
-	end
-
-	var_81_0 = CONSOLE_TYPE_SETTINGS.default
-
-	local console_settings = var_81_0
-
-	::label_81_0::
+	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings[setting]
 end

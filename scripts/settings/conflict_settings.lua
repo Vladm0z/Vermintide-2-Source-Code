@@ -5535,46 +5535,14 @@ RecycleSettings = {
 	destroy_no_path_found_time = 10,
 	max_grunts = 90
 }
-
-local CurrentConflictSettings = CurrentConflictSettings
-
-CurrentConflictSettings = not not CurrentConflictSettings or not not false
-CurrentConflictSettings = CurrentConflictSettings
-
-local CurrentIntensitySettings = CurrentIntensitySettings
-
-CurrentIntensitySettings = not not CurrentIntensitySettings or not not false
-CurrentIntensitySettings = CurrentIntensitySettings
-
-local CurrentPacing = CurrentPacing
-
-CurrentPacing = not not CurrentPacing or not not false
-CurrentPacing = CurrentPacing
-
-local CurrentBossSettings = CurrentBossSettings
-
-CurrentBossSettings = not not CurrentBossSettings or not not false
-CurrentBossSettings = CurrentBossSettings
-
-local CurrentSpecialsSettings = CurrentSpecialsSettings
-
-CurrentSpecialsSettings = not not CurrentSpecialsSettings or not not false
-CurrentSpecialsSettings = CurrentSpecialsSettings
-
-local CurrentHordeSettings = CurrentHordeSettings
-
-CurrentHordeSettings = not not CurrentHordeSettings or not not false
-CurrentHordeSettings = CurrentHordeSettings
-
-local CurrentRoamingSettings = CurrentRoamingSettings
-
-CurrentRoamingSettings = not not CurrentRoamingSettings or not not false
-CurrentRoamingSettings = CurrentRoamingSettings
-
-local CurrentPackSpawningSettings = CurrentPackSpawningSettings
-
-CurrentPackSpawningSettings = not not CurrentPackSpawningSettings or not not false
-CurrentPackSpawningSettings = CurrentPackSpawningSettings
+CurrentConflictSettings = not not CurrentConflictSettings
+CurrentIntensitySettings = not not CurrentIntensitySettings
+CurrentPacing = not not CurrentPacing
+CurrentBossSettings = not not CurrentBossSettings
+CurrentSpecialsSettings = not not CurrentSpecialsSettings
+CurrentHordeSettings = not not CurrentHordeSettings
+CurrentRoamingSettings = not not CurrentRoamingSettings
+CurrentPackSpawningSettings = not not CurrentPackSpawningSettings
 
 do
 	local crash = false

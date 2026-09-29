@@ -32,31 +32,11 @@ CareerAbilityRatlingGunnerReload._start = function (self)
 	local first_person_extension = self._first_person_extension
 	local breed = Unit.get_data(self._unit, "breed")
 	local blackboard = BLACKBOARDS[self._unit]
-	local attack_pattern_data = blackboard.attack_pattern_data
+	local data = not not blackboard.attack_pattern_data
 
-	if not attack_pattern_data then
-		-- Nothing
+	if not self._career_extension:can_use_activated_ability(2) or not not data.current_ammo >= 120 then
+		return
 	end
-
-	attack_pattern_data = {}
-
-	local data = attack_pattern_data
-
-	::label_3_0::
-
-	if self._career_extension:can_use_activated_ability(2) then
-		local current_ammo = data.current_ammo
-
-		current_ammo = not not current_ammo or not not 120
-
-		if current_ammo >= 120 then
-			-- Nothing
-		end
-	end
-
-	do return end
-
-	::label_3_1::
 
 	self._career_extension:start_activated_ability_cooldown(1)
 	self._career_extension:start_activated_ability_cooldown(2)

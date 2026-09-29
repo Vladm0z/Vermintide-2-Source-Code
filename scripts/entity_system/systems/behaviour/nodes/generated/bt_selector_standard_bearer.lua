@@ -96,23 +96,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_falling = children[4]
-		local is_falling = blackboard.is_falling
-
-		if not is_falling then
-			-- Nothing
-		end
-
-		if blackboard.fall_state == nil then
-			is_falling = false
-
-			goto label_4_0
-		end
-
-		is_falling = true
-
-		local condition_result = is_falling
-
-		::label_4_0::
+		local condition_result = not not blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -133,17 +117,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_switch_weapons = children[5]
-		local switching_weapons = blackboard.switching_weapons
-
-		if switching_weapons then
-			-- Nothing
-		end
-
-		switching_weapons = not blackboard.defensive_mode_duration
-
-		local condition_result = switching_weapons
-
-		::label_4_1::
+		local condition_result = not not blackboard.switching_weapons
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_switch_weapons, "aborted")
@@ -174,18 +148,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_data = next_smart_object_data.smart_object_data
-
-		if smart_object_data then
-			-- Nothing
-		end
-
-		smart_object_data = next_smart_object_data.smart_object_data.unit
-
-		local smart_object_unit = smart_object_data
-
-		::label_4_2::
-
+		local smart_object_unit = not not next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -196,7 +159,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = (not is_in_smartobject_range or not moving_state) and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
 		end
 
 		if condition_result then
@@ -325,17 +288,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_enemy_spotted = children[11]
-		local var_4_3 = unit_alive(blackboard.target_unit)
-
-		if var_4_3 then
-			-- Nothing
-		end
-
-		var_4_3 = not blackboard.has_placed_standard
-
-		local condition_result = var_4_3
-
-		::label_4_3::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_enemy_spotted, "aborted")
@@ -358,24 +311,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 		local node_defend_standard = children[12]
 		local pickup_standard_distance = blackboard.breed.pickup_standard_distance
 		local defensive_threshold_distance = blackboard.breed.defensive_threshold_distance
-		local var_4_4 = unit_alive(blackboard.target_unit)
-
-		if var_4_4 then
-			-- Nothing
-		end
-
-		var_4_4 = blackboard.confirmed_player_sighting
-
-		if var_4_4 then
-			-- Nothing
-		end
-
-		var_4_4 = blackboard.has_placed_standard
-
-		local in_combat = var_4_4
-
-		::label_4_4::
-
+		local in_combat = not not unit_alive(blackboard.target_unit)
 		local target_distance_to_standard = blackboard.target_distance_to_standard
 		local target_is_within_range = not not target_distance_to_standard and defensive_threshold_distance <= target_distance_to_standard and target_distance_to_standard <= pickup_standard_distance
 		local not_attacking = blackboard.move_state ~= "attacking"
@@ -400,23 +336,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_in_combat = children[13]
-		local var_4_5 = unit_alive(blackboard.target_unit)
-
-		if var_4_5 then
-			-- Nothing
-		end
-
-		var_4_5 = blackboard.confirmed_player_sighting
-
-		if var_4_5 then
-			-- Nothing
-		end
-
-		var_4_5 = blackboard.has_placed_standard
-
-		local condition_result = var_4_5
-
-		::label_4_5::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_in_combat, "aborted")
@@ -458,17 +378,7 @@ BTSelector_standard_bearer.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_alerted = children[15]
-		local var_4_6 = unit_alive(blackboard.target_unit)
-
-		if var_4_6 then
-			-- Nothing
-		end
-
-		var_4_6 = not blackboard.confirmed_player_sighting
-
-		local condition_result = var_4_6
-
-		::label_4_6::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_alerted, "aborted")

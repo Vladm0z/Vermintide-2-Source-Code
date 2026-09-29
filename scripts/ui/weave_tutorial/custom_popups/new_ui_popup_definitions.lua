@@ -428,20 +428,7 @@ local function create_video_hover()
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 3
-						local num
-
-						if content.button_hotspot.is_hover then
-							num = 1
-
-							goto label_3_0
-						end
-
-						num = -1
-
-						local increase = num
-
-						::label_3_0::
-
+						local increase = content.button_hotspot.is_hover and not not 1 or not content.button_hotspot.is_hover and not not -1
 						local dt = Managers.time:mean_dt()
 						local progress = style.progress
 

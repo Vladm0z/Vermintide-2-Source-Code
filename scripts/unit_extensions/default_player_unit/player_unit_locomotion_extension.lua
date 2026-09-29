@@ -99,7 +99,7 @@ PlayerUnitLocomotionExtension.set_mover_filter_property = function (self, proper
 
 	local filter
 
-	filter = (not modes.ladder or not "filter_player_ladder_mover") and (not modes.enemy_noclip or not "filter_player_enemy_noclip_mover") and (not modes.dark_pact_noclip or not "filter_player_mover_pactsworn_ghost_mode") and (not modes.enemy_leap_state or not "filter_player_enemy_leap_state_noclip_mover") and not not self._default_mover_filter
+	filter = modes.ladder and (not not "filter_player_ladder_mover" or modes.enemy_noclip and (not not "filter_player_enemy_noclip_mover" or modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter)) or not modes.enemy_noclip and (modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter))) or not modes.ladder and (modes.enemy_noclip and (not not "filter_player_enemy_noclip_mover" or modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter)) or not modes.enemy_noclip and (modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter)))
 
 	local mover = Unit.mover(self.unit)
 
@@ -303,22 +303,7 @@ end
 
 PlayerUnitLocomotionExtension.post_update = function (self, unit, input, dt, context, t)
 	-- function 18
-	local length
-
-	if self.on_ground then
-		length = Vector3.length(self.velocity_current:unbox())
-
-		if not length then
-			-- Nothing
-		end
-	end
-
-	length = 0
-
-	local move_speed = length
-
-	::label_18_0::
-
+	local move_speed = self.on_ground and not not Vector3.length(self.velocity_current:unbox()) or not self.on_ground and not not 0
 	local move_speed_lerp_val = self.anim_move_speed
 	local speed_difference = math.abs(move_speed_lerp_val - move_speed)
 
@@ -328,18 +313,7 @@ PlayerUnitLocomotionExtension.post_update = function (self, unit, input, dt, con
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val + delta, 0, move_speed)
 		self._move_speed_top = move_speed_lerp_val
 	else
-		local _move_speed_top = self._move_speed_top
-
-		if not _move_speed_top then
-			-- Nothing
-		end
-
-		_move_speed_top = move_speed
-
-		local ms = _move_speed_top
-
-		::label_18_1::
-
+		local ms = not not self._move_speed_top
 		local delta = math.min(ms / MOVE_SPEED_ANIM_LERP_TIME * dt, speed_difference)
 
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val - delta, 0, move_speed_lerp_val)
@@ -405,29 +379,8 @@ PlayerUnitLocomotionExtension.moving_on_slope = function (self, calculate_fall_v
 	end
 
 	local on_slope = Mover.standing_frames(mover) == 0 or not not slippery
-	local on_ground
 
-	if calculate_fall_velocity then
-		if self.allow_jump then
-			on_ground = self.on_ground
-
-			if not on_ground then
-				-- Nothing
-			end
-		end
-
-		if Mover.flying_frames(mover) == 0 then
-			on_ground = not slippery
-		else
-			on_ground = false
-		end
-	else
-		on_ground = true
-	end
-
-	::label_19_0::
-
-	self.allow_jump = on_ground
+	self.allow_jump = not calculate_fall_velocity or self.allow_jump and not not self.on_ground or not self.allow_jump and Mover.flying_frames(mover) == 0 and not not not slippery
 
 	return not not on_slope and not not calculate_fall_velocity
 end
@@ -441,37 +394,8 @@ PlayerUnitLocomotionExtension.update_script_driven_movement = function (self, un
 		self._script_movement_time_scale = nil
 	end
 
-	local external_velocity_2 = self.external_velocity
-
-	if external_velocity_2 then
-		-- Nothing
-	end
-
-	external_velocity_2 = self.external_velocity:unbox()
-
-	local external_velocity = external_velocity_2
-
-	::label_20_0::
-
-	local unbox = self.velocity_current:unbox()
-	local Vector3 = Vector3
-	local num = 0
-	local num_2 = 0
-	local z
-
-	if external_velocity then
-		z = external_velocity.z
-
-		if not z then
-			-- Nothing
-		end
-	end
-
-	z = 0
-
-	::label_20_1::
-
-	local velocity_current = unbox + Vector3(num, num_2, z)
+	local external_velocity = not not self.external_velocity
+	local velocity_current = self.velocity_current:unbox() + Vector3(0, 0, external_velocity and not not external_velocity.z or not external_velocity and not not 0)
 	local velocity_wanted = self.velocity_wanted:unbox()
 	local mover = Unit.mover(unit)
 
@@ -525,20 +449,7 @@ PlayerUnitLocomotionExtension.update_script_driven_movement = function (self, un
 		end
 	end
 
-	local num_3
-
-	if self.use_drag then
-		num_3 = 0.00255
-
-		goto label_20_2
-	end
-
-	num_3 = 1
-
-	local drag_koeff = num_3
-
-	::label_20_2::
-
+	local drag_koeff = self.use_drag and not not 0.00255 or not self.use_drag and not not 1
 	local speed = Vector3.length(velocity_wanted)
 	local drag_force = drag_koeff * speed * speed * Vector3.normalize(-velocity_wanted)
 	local dragged_velocity = velocity_wanted + drag_force * dt
@@ -999,11 +910,7 @@ end
 
 PlayerUnitLocomotionExtension.current_velocity = function (self)
 	-- function 49
-	local velocity_current = self.velocity_current
-
-	velocity_current = not not velocity_current and not not self.velocity_current:unbox()
-
-	return velocity_current
+	return not not self.velocity_current
 end
 
 PlayerUnitLocomotionExtension.current_rotation = function (self)

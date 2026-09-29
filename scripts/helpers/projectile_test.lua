@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/projectile_test.lua
 
-local ProjectileTest = ProjectileTest
-
-ProjectileTest = not not ProjectileTest or not not {}
-ProjectileTest = ProjectileTest
+ProjectileTest = not not ProjectileTest
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 local projectiles = {}
@@ -67,22 +64,7 @@ ProjectileTest.simulate_projectiles = function (physics_world, dt)
 
 	for i = 1, #projectiles do
 		local p = projectiles[i]
-		local var_2_0
-
-		if p.type == "known_angle" then
-			var_2_0 = Color(180, 180, 0)
-
-			if not var_2_0 then
-				-- Nothing
-			end
-		end
-
-		var_2_0 = Color(80, 180, 70)
-
-		local color = var_2_0
-
-		::label_2_0::
-
+		local color = p.type ~= "known_angle" and not not Color(80, 180, 70) or not (p.type ~= "known_angle") and not not Color(180, 180, 0)
 		local target_pos = p.p2:unbox()
 		local last_pos = p.last_pos:unbox()
 		local pos = WeaponHelper.draw_ball_at_time(physics_world, p.p1:unbox(), p.vec_flat:unbox(), -p.gravity, p.x_vel_0, p.y_vel_0, p.t, color)

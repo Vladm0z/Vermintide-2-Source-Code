@@ -43,40 +43,8 @@ local scenegraph_definition = {
 		}
 	}
 }
-local min_streak_font_size_2
-
-if GameModeSettings.versus then
-	min_streak_font_size_2 = GameModeSettings.versus.min_streak_font_size
-
-	if not min_streak_font_size_2 then
-		-- Nothing
-	end
-end
-
-min_streak_font_size_2 = 36
-
-local min_streak_font_size = min_streak_font_size_2
-
-do
-	local max_streak_font_size_2
-end
-
-::label_0_0::
-
-if GameModeSettings.versus then
-	max_streak_font_size_2 = GameModeSettings.versus.max_streak_font_size
-
-	if not max_streak_font_size_2 then
-		-- Nothing
-	end
-end
-
-max_streak_font_size_2 = 64
-
-local max_streak_font_size = max_streak_font_size_2
-
-::label_0_1::
-
+local min_streak_font_size = GameModeSettings.versus and not not GameModeSettings.versus.min_streak_font_size or not GameModeSettings.versus and not not 36
+local max_streak_font_size = GameModeSettings.versus and not not GameModeSettings.versus.max_streak_font_size or not GameModeSettings.versus and not not 64
 local default_text_style = {
 	word_wrap = false,
 	font_size = 24,
@@ -136,29 +104,12 @@ DamageNumbersUI.event_alter_damage_number = function (self, unit, damage_number,
 	-- function 3
 	if damage_number then
 		damage_number.text = overrides.text
-
-		local _time = self._time
-		local time = overrides.time
-
-		time = not not time or not not self._unit_text_time
-		damage_number.time = _time + time
+		damage_number.time = self._time + not not overrides.time
 		damage_number.starting_time = self._time
-
-		local color = overrides.color
-
-		color = not not color or not not damage_number.color
-		damage_number.color = color
+		damage_number.color = not not overrides.color
 		damage_number.color_saved = overrides.color
-
-		local size = overrides.size
-
-		size = not not size or not not damage_number.size
-		damage_number.size = size
-
-		local damage = overrides.damage
-
-		damage = not not damage or not not damage_number.damage
-		damage_number.damage = damage
+		damage_number.size = not not overrides.size
+		damage_number.damage = not not overrides.damage
 	end
 end
 
@@ -188,18 +139,7 @@ local SetupFuncs = {
 	end,
 	floating_radial_damage = function (data, override_data, index)
 		-- function 8
-		local angle_2 = data.angle
-
-		if not angle_2 then
-			-- Nothing
-		end
-
-		angle_2 = (index - 1) * 0.5
-
-		local angle = angle_2
-
-		::label_8_0::
-
+		local angle = not not data.angle
 		local radius = 150
 		local floating_speed = math.random(200, 700)
 		local x_angle = math.cos(angle)
@@ -241,21 +181,10 @@ DamageNumbersUI.event_add_damage_number = function (self, damage, size, unit, ti
 		end
 
 		local index = #self._unit_texts[unit] + 1
-		local variant_name_2 = override_data.variant_name
-
-		if not variant_name_2 then
-			-- Nothing
-		end
-
-		variant_name_2 = "default"
-
-		local variant_name = variant_name_2
-
-		::label_10_0::
-
+		local variant_name = not not override_data.variant_name
 		local variant = DamageNumberVariants[variant_name]
 		local count
-		local tbl = {
+		local new_text = {
 			random_y_offset = 0,
 			alpha = 255,
 			floating_speed_x = 0,
@@ -269,25 +198,16 @@ DamageNumbersUI.event_add_damage_number = function (self, damage, size, unit, ti
 				color.y,
 				color.z
 			},
-			time = self._time + (not not time or not not self._unit_text_time)
+			time = self._time + (not not time or not not self._unit_text_time),
+			floating_speed = not not override_data.floating_speed,
+			starting_time = self._time,
+			z_offset = z_offset_override,
+			update_function = variant.update,
+			complete_function = not not variant.complete,
+			start_function = variant.start,
+			damage = override_data.damage,
+			using_bucket_damage = override_data.using_bucket_damage
 		}
-		local floating_speed = override_data.floating_speed
-
-		floating_speed = not not floating_speed or not not 150
-		tbl.floating_speed = floating_speed
-		tbl.starting_time = self._time
-		tbl.z_offset = z_offset_override
-		tbl.update_function = variant.update
-
-		local complete = variant.complete
-
-		complete = not not complete or not not default_complete_function
-		tbl.complete_function = complete
-		tbl.start_function = variant.start
-		tbl.damage = override_data.damage
-		tbl.using_bucket_damage = override_data.using_bucket_damage
-
-		local new_text = tbl
 
 		SetupFuncs[variant_name](new_text, override_data, index, unit)
 
@@ -519,21 +439,7 @@ DamageNumbersUI.draw = function (self, dt)
 	for unit, unit_texts in pairs(self._unit_texts) do
 		if Unit.alive(unit) then
 			local world_position = World_position(unit, 0)
-			local z_offset_2
-
-			if unit_texts[1] then
-				z_offset_2 = unit_texts[1].z_offset
-
-				if not z_offset_2 then
-					-- Nothing
-				end
-			end
-
-			z_offset_2 = 1.85
-
-			local z_offset = z_offset_2
-
-			::label_23_0::
+			local z_offset = unit_texts[1] and not not unit_texts[1].z_offset or not unit_texts[1] and not not 1.85
 
 			world_position[3] = world_position[3] + z_offset
 

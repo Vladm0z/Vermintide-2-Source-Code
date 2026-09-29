@@ -413,54 +413,17 @@ local icon_text_style = {
 
 local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, size, color, text_style)
 	-- function 1
-	local offset
-
-	if text_style then
-		offset = text_style.offset
-
-		if not offset then
-			-- Nothing
-		end
-	end
-
-	offset = {
+	local text_offset = text_style and not not text_style.offset or not text_style and not not {
 		0,
 		0,
 		2
 	}
-
-	local text_offset = offset
-
-	do
-		local text_color_2
-	end
-
-	::label_1_0::
-
-	if text_style then
-		text_color_2 = text_style.text_color
-
-		if not text_color_2 then
-			-- Nothing
-		end
-	end
-
-	if not color then
-		-- Nothing
-	end
-
-	::label_1_1::
-
-	text_color_2 = {
+	local text_color = text_style and not not text_style.text_color or not text_style and (not not color or not not {
 		255,
 		255,
 		255,
 		255
-	}
-
-	local text_color = text_color_2
-
-	::label_1_2::
+	})
 
 	text_style = not not text_style or not not {
 		vertical_alignment = "center",
@@ -474,38 +437,8 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 	}
 
 	local text_shadow_style = table.clone(text_style)
-	local shadow_color = text_style.shadow_color
-
-	if not shadow_color then
-		-- Nothing
-	end
-
-	shadow_color = {
-		255,
-		0,
-		0,
-		0
-	}
-
-	local text_shadow_style_color = shadow_color
-
-	::label_1_3::
-
-	local shadow_offset = text_style.shadow_offset
-
-	if not shadow_offset then
-		-- Nothing
-	end
-
-	shadow_offset = {
-		2,
-		2,
-		0
-	}
-
-	local text_shadow_offset = shadow_offset
-
-	::label_1_4::
+	local text_shadow_style_color = not not text_style.shadow_color
+	local text_shadow_offset = not not text_style.shadow_offset
 
 	text_shadow_style_color[1] = text_color[1]
 	text_shadow_style.text_color = text_shadow_style_color
@@ -516,7 +449,7 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 	}
 	text_shadow_style.skip_button_rendering = true
 
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -537,11 +470,8 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 					content_check_function = function (content)
 						-- function 3
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local use_shadow = content.use_shadow
 
-						use_shadow = not not use_shadow and not not not gamepad_active
-
-						return use_shadow
+						return not not content.use_shadow
 					end
 				},
 				{
@@ -562,52 +492,32 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 					content_check_function = function (content)
 						-- function 5
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local use_shadow = content.use_shadow
 
-						use_shadow = not not use_shadow and not not gamepad_active
-
-						return use_shadow
+						return not not content.use_shadow
 					end
 				}
 			}
-		}
+		},
+		content = {
+			text = text,
+			gamepad_text = gamepad_text,
+			original_text = text,
+			color = text_color,
+			use_shadow = text_style and not not text_style.use_shadow or not text_style and not not false
+		},
+		style = {
+			text = text_style,
+			text_shadow = text_shadow_style,
+			gamepad_text = table.clone(text_style),
+			gamepad_text_shadow = table.clone(text_shadow_style)
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_2 = {
-		text = text,
-		gamepad_text = gamepad_text,
-		original_text = text,
-		color = text_color
-	}
-	local use_shadow
-
-	if text_style then
-		use_shadow = text_style.use_shadow
-
-		if not use_shadow then
-			-- Nothing
-		end
-	end
-
-	use_shadow = false
-
-	::label_1_5::
-
-	tbl_2.use_shadow = use_shadow
-	tbl.content = tbl_2
-	tbl.style = {
-		text = text_style,
-		text_shadow = text_shadow_style,
-		gamepad_text = table.clone(text_style),
-		gamepad_text_shadow = table.clone(text_shadow_style)
-	}
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local item_attack_multiplier = SHOVEL_BUFF_TWEAK_DATA.sienna_necromancer_command_item_attack.multiplier * 100

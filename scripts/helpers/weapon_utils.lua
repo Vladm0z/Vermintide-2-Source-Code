@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/weapon_utils.lua
 
-local WeaponUtils = WeaponUtils
-
-WeaponUtils = not not WeaponUtils or not not {}
-WeaponUtils = WeaponUtils
+WeaponUtils = not not WeaponUtils
 
 WeaponUtils.add_bot_meta_data_chain_actions = function (actions, attack_chain_transitions)
 	-- function 1
@@ -42,21 +39,7 @@ end
 
 WeaponUtils.get_item_state_machine = function (item_template, career_name)
 	-- function 3
-	local var_3_0
-
-	if item_template.state_machine_career then
-		var_3_0 = item_template.state_machine_career[career_name]
-
-		if not var_3_0 then
-			-- Nothing
-		end
-	end
-
-	var_3_0 = item_template.state_machine
-
-	::label_3_0::
-
-	return var_3_0
+	return item_template.state_machine_career and not not item_template.state_machine_career[career_name] or not item_template.state_machine_career and not not item_template.state_machine
 end
 
 WeaponUtils.get_weapon_packages = function (item_template, item_units, first_person, career_name)
@@ -109,11 +92,7 @@ WeaponUtils.get_weapon_packages = function (item_template, item_units, first_per
 			packages[#packages + 1] = ammo_unit_name
 		end
 
-		local num = #packages + 1
-		local ammo_unit_3p = item_units.ammo_unit_3p
-
-		ammo_unit_3p = not not ammo_unit_3p or not not (ammo_unit_name .. "_3p")
-		packages[num] = ammo_unit_3p
+		packages[#packages + 1] = not not item_units.ammo_unit_3p
 
 		local wwise_deps = item_template.wwise_dep_ammo
 
@@ -138,21 +117,7 @@ WeaponUtils.get_weapon_packages = function (item_template, item_units, first_per
 
 	if required_projectile_unit_templates then
 		for projectile_units_template, use_skin in pairs(required_projectile_unit_templates) do
-			local var_4_2
-
-			if use_skin then
-				var_4_2 = ProjectileUnits[item_units.projectile_units_template]
-
-				if not var_4_2 then
-					-- Nothing
-				end
-			end
-
-			var_4_2 = ProjectileUnits[projectile_units_template]
-
-			local projectile_units = var_4_2
-
-			::label_4_0::
+			local projectile_units = use_skin and not not ProjectileUnits[item_units.projectile_units_template] or not use_skin and not not ProjectileUnits[projectile_units_template]
 
 			if projectile_units.projectile_unit_name then
 				packages[#packages + 1] = projectile_units.projectile_unit_name
@@ -207,7 +172,7 @@ WeaponUtils.get_used_actions = function (template)
 					local chain_sub_action = not not chain_action and not not chain_action[chain_sub_action_name]
 
 					if chain_sub_action then
-						if (not checked_actions[chain_action_name] or not checked_actions[chain_action_name][chain_sub_action_name]) and (not pending_actions[chain_action_name] or not pending_actions[chain_action_name][chain_sub_action_name]) then
+						if not pending_actions[chain_action_name] or not pending_actions[chain_action_name][chain_sub_action_name] then
 							if not pending_actions[chain_action_name] then
 								pending_actions[chain_action_name] = {}
 							end
@@ -243,23 +208,7 @@ end
 
 WeaponUtils.is_valid_weapon_override = function (source_slot_data, destination_item_data)
 	-- function 6
-	if source_slot_data then
-		-- Nothing
-	end
-
-	::label_6_0::
-
-	local item_template_name = source_slot_data.item_template_name
-
-	if not item_template_name then
-		-- Nothing
-	end
-
-	item_template_name = source_slot_data.item_template.name
-
-	local source_slot_weapon_template = item_template_name
-
-	::label_6_1::
+	local source_slot_weapon_template = not not source_slot_data.item_template.name
 
 	return not destination_item_data.valid_templates_to_replace or not not destination_item_data.valid_templates_to_replace[source_slot_weapon_template]
 end

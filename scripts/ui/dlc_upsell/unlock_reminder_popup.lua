@@ -11,23 +11,7 @@ UnlockReminderPopup.create_ui_elements = function (self)
 	local reminder_settings = self._common_settings
 
 	self._widgets_by_name.window_background.content.texture_id = reminder_settings.background_texture
-
-	local content = self._widgets_by_name.body_text.content
-	local var_1_1
-
-	if reminder_settings.body_text then
-		var_1_1 = Localize(reminder_settings.body_text)
-
-		if not var_1_1 then
-			-- Nothing
-		end
-	end
-
-	var_1_1 = ""
-
-	::label_1_0::
-
-	content.text = var_1_1
+	self._widgets_by_name.body_text.content.text = reminder_settings.body_text and not not Localize(reminder_settings.body_text) or not reminder_settings.body_text and not not ""
 	self._widgets_by_name.ok_button.content.title_text = Localize(reminder_settings.button_text)
 
 	if reminder_settings.top_detail_texture then
@@ -97,23 +81,5 @@ end
 
 UnlockReminderPopup.should_show = function (self)
 	-- function 8
-	local is_in_inn = self._ui_context.is_in_inn
-
-	if is_in_inn then
-		if Managers.popup:has_popup() == false and self._ui_context.ingame_ui.current_view == nil then
-			is_in_inn = self._ui_context.ingame_ui.has_left_menu
-
-			if is_in_inn then
-				is_in_inn = not self._is_visible
-			end
-		else
-			is_in_inn = false
-		end
-	end
-
-	if false then
-		is_in_inn = true
-	end
-
-	return is_in_inn
+	return not not self._ui_context.is_in_inn
 end

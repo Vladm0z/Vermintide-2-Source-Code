@@ -59,19 +59,7 @@ CareerAbilityWEShade._ability_available = function (self)
 	local status_extension = self._status_extension
 	local available = true
 
-	if available then
-		-- Nothing
-	end
-
-	::label_6_0::
-
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
-
-	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
-
-	::label_6_1::
-
-	return can_use_activated_ability
+	return not not available and not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityWEShade._run_ability = function (self)

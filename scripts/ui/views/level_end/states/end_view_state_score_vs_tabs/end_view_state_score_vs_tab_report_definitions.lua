@@ -936,7 +936,7 @@ local challenge_desc_text_style = {
 
 local function create_summery_entry(index, header, xp, force)
 	-- function 10
-	local tbl = {
+	return {
 		scenegraph_id = "versus_progress_anchor",
 		element = {
 			passes = {
@@ -951,82 +951,51 @@ local function create_summery_entry(index, header, xp, force)
 					text_id = "experience"
 				}
 			}
+		},
+		content = {
+			header = header,
+			experience = force and not not tostring(xp) or not force and not not "0",
+			xp = xp
+		},
+		style = {
+			header = {
+				font_size = 28,
+				localize = false,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = true,
+				font_type = "hell_shark",
+				area_size = {
+					275,
+					50
+				},
+				text_color = Colors.get_color_table_with_alpha("font_button_normal", force and not not 255 or not force and not not 0),
+				offset = {
+					5,
+					0,
+					0
+				}
+			},
+			experience = {
+				vertical_alignment = "top",
+				horizontal_alignment = "right",
+				localize = false,
+				font_size = 28,
+				font_type = "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", force and not not 255 or not force and not not 0),
+				offset = {
+					-5,
+					0,
+					0
+				}
+			}
+		},
+		offset = {
+			0,
+			-50 + (index - 1) * -35,
+			5
 		}
 	}
-	local tbl_2 = {
-		header = header
-	}
-	local var_10_2
-
-	if force then
-		var_10_2 = tostring(xp)
-
-		if not var_10_2 then
-			-- Nothing
-		end
-	end
-
-	var_10_2 = "0"
-
-	::label_10_0::
-
-	tbl_2.experience = var_10_2
-	tbl_2.xp = xp
-	tbl.content = tbl_2
-
-	local tbl_3 = {}
-	local tbl_4 = {
-		font_size = 28,
-		localize = false,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = true,
-		font_type = "hell_shark",
-		area_size = {
-			275,
-			50
-		}
-	}
-	local get_color_table_with_alpha = Colors.get_color_table_with_alpha
-	local str = "font_button_normal"
-	local flag
-
-	flag = (not force or not 255) and not not 0
-	tbl_4.text_color = get_color_table_with_alpha(str, flag)
-	tbl_4.offset = {
-		5,
-		0,
-		0
-	}
-	tbl_3.header = tbl_4
-
-	local tbl_5 = {
-		vertical_alignment = "top",
-		horizontal_alignment = "right",
-		localize = false,
-		font_size = 28,
-		font_type = "hell_shark"
-	}
-	local get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha
-	local str_2 = "font_default"
-	local flag_2
-
-	flag_2 = (not force or not 255) and not not 0
-	tbl_5.text_color = get_color_table_with_alpha_2(str_2, flag_2)
-	tbl_5.offset = {
-		-5,
-		0,
-		0
-	}
-	tbl_3.experience = tbl_5
-	tbl.style = tbl_3
-	tbl.offset = {
-		0,
-		-50 + (index - 1) * -35,
-		5
-	}
-
-	return tbl
 end
 
 local function create_challenge_entry(id, start_progress, end_progress, offset, force)
@@ -1034,22 +1003,7 @@ local function create_challenge_entry(id, start_progress, end_progress, offset, 
 	local achievement_template = AchievementTemplates.achievements[id]
 	local icon = achievement_template.icon
 	local name = achievement_template.name
-	local desc_2
-
-	if type(achievement_template.desc) == "function" then
-		desc_2 = achievement_template.desc()
-
-		if not desc_2 then
-			-- Nothing
-		end
-	end
-
-	desc_2 = Localize(achievement_template.desc)
-
-	local desc = desc_2
-
-	::label_11_0::
-
+	local desc = type(achievement_template.desc) ~= "function" and not not Localize(achievement_template.desc) or not (type(achievement_template.desc) ~= "function") and not not achievement_template.desc()
 	local widget_def = {}
 	local element = {
 		passes = {}
@@ -1140,11 +1094,7 @@ local function create_challenge_entry(id, start_progress, end_progress, offset, 
 	content.is_completed = end_progress >= 1
 	content.masked_rect = "rect_masked"
 	content.progress = end_progress
-
-	local flag
-
-	flag = (not force or not 1) and not not 0
-	content.alpha_multiplier = flag
+	content.alpha_multiplier = force and not not 1 or not force and not not 0
 	style.completed = challenge_completed_text_style
 	style.name = challenge_name_text_style
 	style.desc = challenge_desc_text_style
@@ -1271,20 +1221,7 @@ end
 
 local function create_item_widget(item, offset, force)
 	-- function 13
-	local num
-
-	if force then
-		num = 255
-
-		goto label_13_0
-	end
-
-	num = 0
-
-	local alpha = num
-
-	::label_13_0::
-
+	local alpha = force and not not 255 or not force and not not 0
 	local size = table.clone(ITEM_SIZE)
 	local rarity = item.rarity
 	local rarity_texture = UISettings.item_rarity_textures[not not rarity or not not "default"]
@@ -1607,54 +1544,14 @@ local animation_definitions = {
 
 				widget.offset[1] = math.lerp(-100, 0, anim_progress)
 				widget.style.level_text.offset[1] = math.lerp(-100, 0, anim_progress)
-
-				local color = widget.style.level_text.color
-				local alpha_value = widget.style.level_text.alpha_value
-
-				alpha_value = not not alpha_value or not not 255
-				color[1] = alpha_value
-
-				local color_2 = widget.style.pattern_1.color
-				local alpha_value_2 = widget.style.pattern_1.alpha_value
-
-				alpha_value_2 = not not alpha_value_2 or not not 255
-				color_2[1] = alpha_value_2
-
-				local color_3 = widget.style.pattern_2.color
-				local alpha_value_3 = widget.style.pattern_2.alpha_value
-
-				alpha_value_3 = not not alpha_value_3 or not not 255
-				color_3[1] = alpha_value_3
-
-				local color_4 = widget.style.mask.color
-				local alpha_value_4 = widget.style.mask.alpha_value
-
-				alpha_value_4 = not not alpha_value_4 or not not 255
-				color_4[1] = alpha_value_4
-
-				local color_5 = widget.style.versus_static_circle.color
-				local alpha_value_5 = widget.style.versus_static_circle.alpha_value
-
-				alpha_value_5 = not not alpha_value_5 or not not 255
-				color_5[1] = alpha_value_5
-
-				local color_6 = widget.style.static_progress_marker.color
-				local alpha_value_6 = widget.style.static_progress_marker.alpha_value
-
-				alpha_value_6 = not not alpha_value_6 or not not 255
-				color_6[1] = alpha_value_6
-
-				local color_7 = widget.style.versus_progress_circle.color
-				local alpha_value_7 = widget.style.versus_progress_circle.alpha_value
-
-				alpha_value_7 = not not alpha_value_7 or not not 255
-				color_7[1] = alpha_value_7
-
-				local color_8 = widget.style.progress_marker.color
-				local alpha_value_8 = widget.style.progress_marker.alpha_value
-
-				alpha_value_8 = not not alpha_value_8 or not not 255
-				color_8[1] = alpha_value_8
+				widget.style.level_text.color[1] = not not widget.style.level_text.alpha_value
+				widget.style.pattern_1.color[1] = not not widget.style.pattern_1.alpha_value
+				widget.style.pattern_2.color[1] = not not widget.style.pattern_2.alpha_value
+				widget.style.mask.color[1] = not not widget.style.mask.alpha_value
+				widget.style.versus_static_circle.color[1] = not not widget.style.versus_static_circle.alpha_value
+				widget.style.static_progress_marker.color[1] = not not widget.style.static_progress_marker.alpha_value
+				widget.style.versus_progress_circle.color[1] = not not widget.style.versus_progress_circle.alpha_value
+				widget.style.progress_marker.color[1] = not not widget.style.progress_marker.alpha_value
 
 				local widget = widgets.insignia
 
@@ -1691,54 +1588,14 @@ local animation_definitions = {
 
 				widget.offset[1] = math.lerp(-100, 0, anim_progress)
 				widget.style.level_text.offset[1] = math.lerp(-100, 0, anim_progress)
-
-				local color = widget.style.level_text.color
-				local alpha_value = widget.style.level_text.alpha_value
-
-				alpha_value = not not alpha_value or not not 255
-				color[1] = alpha_value
-
-				local color_2 = widget.style.pattern_1.color
-				local alpha_value_2 = widget.style.pattern_1.alpha_value
-
-				alpha_value_2 = not not alpha_value_2 or not not 255
-				color_2[1] = alpha_value_2
-
-				local color_3 = widget.style.pattern_2.color
-				local alpha_value_3 = widget.style.pattern_2.alpha_value
-
-				alpha_value_3 = not not alpha_value_3 or not not 255
-				color_3[1] = alpha_value_3
-
-				local color_4 = widget.style.mask.color
-				local alpha_value_4 = widget.style.mask.alpha_value
-
-				alpha_value_4 = not not alpha_value_4 or not not 255
-				color_4[1] = alpha_value_4
-
-				local color_5 = widget.style.versus_static_circle.color
-				local alpha_value_5 = widget.style.versus_static_circle.alpha_value
-
-				alpha_value_5 = not not alpha_value_5 or not not 255
-				color_5[1] = alpha_value_5
-
-				local color_6 = widget.style.static_progress_marker.color
-				local alpha_value_6 = widget.style.static_progress_marker.alpha_value
-
-				alpha_value_6 = not not alpha_value_6 or not not 255
-				color_6[1] = alpha_value_6
-
-				local color_7 = widget.style.versus_progress_circle.color
-				local alpha_value_7 = widget.style.versus_progress_circle.alpha_value
-
-				alpha_value_7 = not not alpha_value_7 or not not 255
-				color_7[1] = alpha_value_7
-
-				local color_8 = widget.style.progress_marker.color
-				local alpha_value_8 = widget.style.progress_marker.alpha_value
-
-				alpha_value_8 = not not alpha_value_8 or not not 255
-				color_8[1] = alpha_value_8
+				widget.style.level_text.color[1] = not not widget.style.level_text.alpha_value
+				widget.style.pattern_1.color[1] = not not widget.style.pattern_1.alpha_value
+				widget.style.pattern_2.color[1] = not not widget.style.pattern_2.alpha_value
+				widget.style.mask.color[1] = not not widget.style.mask.alpha_value
+				widget.style.versus_static_circle.color[1] = not not widget.style.versus_static_circle.alpha_value
+				widget.style.static_progress_marker.color[1] = not not widget.style.static_progress_marker.alpha_value
+				widget.style.versus_progress_circle.color[1] = not not widget.style.versus_progress_circle.alpha_value
+				widget.style.progress_marker.color[1] = not not widget.style.progress_marker.alpha_value
 
 				local widget = widgets.insignia
 
@@ -1820,11 +1677,8 @@ local animation_definitions = {
 				local entry_widget = widgets[entry_name]
 				local entry_experience = entry_widget.content.xp
 				local widget = widgets.summary_value_text
-				local content = widget.content
-				local value = widget.content.value
 
-				value = not not value or not not 0
-				content.value = value + entry_experience
+				widget.content.value = not not widget.content.value + entry_experience
 			end,
 			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 28
@@ -1956,18 +1810,8 @@ local animation_definitions = {
 				local widget = widgets.level_up
 
 				widget.content.level_text = params.data.level
-
-				local content = widget.content
-				local on_complete_optional_starting_progress = params.data.on_complete_optional_starting_progress
-
-				on_complete_optional_starting_progress = not not on_complete_optional_starting_progress or not not 0
-				content.starting_progress = on_complete_optional_starting_progress
-
-				local content_2 = widget.content
-				local on_complete_optional_final_progress = params.data.on_complete_optional_final_progress
-
-				on_complete_optional_final_progress = not not on_complete_optional_final_progress or not not 0
-				content_2.final_progress = on_complete_optional_final_progress
+				widget.content.starting_progress = not not params.data.on_complete_optional_starting_progress
+				widget.content.final_progress = not not params.data.on_complete_optional_final_progress
 
 				local insignia_widget = widgets.insignia
 				local insignia_main_uvs, insignia_addon_uvs = UIAtlasHelper.get_insignia_texture_settings_from_level(params.data.level)

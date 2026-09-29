@@ -14,30 +14,25 @@ PlayerSyncData.init = function (self, player, network_manager)
 
 	if player.local_player or player.bot_player and player.is_server then
 		local highest_unlocked_difficulty = self:_calc_highest_unlocked_difficulty()
-		local tbl = {
+		local game_object_data_table = {
 			power_level = 0,
 			go_type = NetworkLookup.go_types.player_sync_data,
 			network_id = player:network_id(),
 			local_player_id = player:local_player_id(),
-			is_dev = not player.bot_player and not not SteamHelper.is_dev()
+			is_dev = not player.bot_player and not not SteamHelper.is_dev(),
+			best_aquired_power_level = DEDICATED_SERVER and not not 0 or not DEDICATED_SERVER and not not BackendUtils.best_aquired_power_level(),
+			highest_unlocked_difficulty = NetworkLookup.difficulties[highest_unlocked_difficulty],
+			slot_frame = NetworkLookup.cosmetics.default,
+			slot_skin = NetworkLookup.cosmetics.default,
+			slot_hat = NetworkLookup.item_names["n/a"],
+			slot_melee = NetworkLookup.item_names["n/a"],
+			slot_melee_skin = NetworkLookup.weapon_skins["n/a"],
+			slot_ranged = NetworkLookup.item_names["n/a"],
+			slot_ranged_skin = NetworkLookup.weapon_skins["n/a"],
+			slot_pose = NetworkLookup.item_names["n/a"],
+			slot_pose_skin = NetworkLookup.item_names["n/a"],
+			playerlist_build_privacy = Application.user_setting("playerlist_build_privacy")
 		}
-		local flag
-
-		flag = (not DEDICATED_SERVER or not 0) and not not BackendUtils.best_aquired_power_level()
-		tbl.best_aquired_power_level = flag
-		tbl.highest_unlocked_difficulty = NetworkLookup.difficulties[highest_unlocked_difficulty]
-		tbl.slot_frame = NetworkLookup.cosmetics.default
-		tbl.slot_skin = NetworkLookup.cosmetics.default
-		tbl.slot_hat = NetworkLookup.item_names["n/a"]
-		tbl.slot_melee = NetworkLookup.item_names["n/a"]
-		tbl.slot_melee_skin = NetworkLookup.weapon_skins["n/a"]
-		tbl.slot_ranged = NetworkLookup.item_names["n/a"]
-		tbl.slot_ranged_skin = NetworkLookup.weapon_skins["n/a"]
-		tbl.slot_pose = NetworkLookup.item_names["n/a"]
-		tbl.slot_pose_skin = NetworkLookup.item_names["n/a"]
-		tbl.playerlist_build_privacy = Application.user_setting("playerlist_build_privacy")
-
-		local game_object_data_table = tbl
 		local callback = callback(self, "cb_game_session_disconnect")
 		local game_object_id = network_manager:create_game_object("player_sync_data", game_object_data_table, callback)
 
@@ -134,7 +129,7 @@ PlayerSyncData.destroy = function (self)
 	-- function 8
 	local player = self._player
 
-	if (player.local_player or player.bot_player and player.is_server) and self._game_object_id then
+	if player.bot_player and player.is_server and self._game_object_id then
 		local game = self._network_manager:game()
 
 		if GameSession.game_object_exists(game, self._game_object_id) then

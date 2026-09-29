@@ -270,24 +270,10 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 	icon_texture = not not icon_texture or not not "level_icon_01"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local size_2
-
-	if icon_texture_settings then
-		size_2 = icon_texture_settings.size
-
-		if not size_2 then
-			-- Nothing
-		end
-	end
-
-	size_2 = {
+	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
 		150,
 		150
 	}
-
-	local icon_texture_size = size_2
-
-	::label_7_0::
 
 	background_texture = not not background_texture or not not "game_options_bg_02"
 
@@ -329,7 +315,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 9
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and content.option_text == "" or content.option_text == "n/a"
+						return not button_hotspot.disable_button and (content.option_text == "" or content.option_text == "n/a")
 					end
 				},
 				{
@@ -432,11 +418,8 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 					content_check_function = function (content)
 						-- function 18
 						local button_hotspot = content.button_hotspot
-						local disable_button = button_hotspot.disable_button
 
-						disable_button = not not disable_button and not not not content.icon
-
-						return disable_button
+						return not not button_hotspot.disable_button
 					end
 				},
 				{
@@ -501,11 +484,8 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 					content_check_function = function (content)
 						-- function 24
 						local button_hotspot = content.button_hotspot
-						local disable_button = button_hotspot.disable_button
 
-						disable_button = not not disable_button and not not content.icon
-
-						return disable_button
+						return not not button_hotspot.disable_button
 					end
 				},
 				{

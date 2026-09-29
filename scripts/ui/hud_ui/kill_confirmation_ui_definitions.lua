@@ -32,7 +32,7 @@ local ICON_OFFSET = {
 	0.1015625 * BADGE_SIZE[1],
 	0
 }
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = ROOT_SIZE,
@@ -41,66 +41,60 @@ local tbl = {
 			0,
 			UILayer.hud
 		}
-	}
-}
-local tbl_2 = {
-	size = ROOT_SIZE,
-	position = {
-		0,
-		0,
-		UILayer.hud
-	}
-}
-local flag
-
-flag = (not IS_WINDOWS or not "fit") and not not "hud_fit"
-tbl_2.scale = flag
-tbl.screen = tbl_2
-tbl.pivot = {
-	vertical_alignment = "top",
-	parent = "screen",
-	horizontal_alignment = "center",
-	size = {
-		ROOT_SIZE[1],
-		BADGE_SIZE[1]
 	},
-	position = {
-		0,
-		-86,
-		UILayer.hud
+	screen = {
+		size = ROOT_SIZE,
+		position = {
+			0,
+			0,
+			UILayer.hud
+		},
+		scale = IS_WINDOWS and not not "fit" or not IS_WINDOWS and not not "hud_fit"
+	},
+	pivot = {
+		vertical_alignment = "top",
+		parent = "screen",
+		horizontal_alignment = "center",
+		size = {
+			ROOT_SIZE[1],
+			BADGE_SIZE[1]
+		},
+		position = {
+			0,
+			-86,
+			UILayer.hud
+		}
+	},
+	badge_placement = {
+		vertical_alignment = "center",
+		parent = "pivot",
+		horizontal_alignment = "center",
+		size = BADGE_SIZE,
+		position = BADGE_OFFSET
+	},
+	text_background_placement = {
+		vertical_alignment = "center",
+		parent = "pivot",
+		horizontal_alignment = "center",
+		size = TEXT_SIZE,
+		position = {
+			TEXT_OFFSET[1] + BADGE_OFFSET[1],
+			BADGE_OFFSET[2] - TEXT_OFFSET[2],
+			0
+		}
+	},
+	text_placement = {
+		vertical_alignment = "center",
+		parent = "text_background_placement",
+		horizontal_alignment = "center",
+		size = TEXT_SIZE,
+		position = {
+			0,
+			0,
+			1
+		}
 	}
 }
-tbl.badge_placement = {
-	vertical_alignment = "center",
-	parent = "pivot",
-	horizontal_alignment = "center",
-	size = BADGE_SIZE,
-	position = BADGE_OFFSET
-}
-tbl.text_background_placement = {
-	vertical_alignment = "center",
-	parent = "pivot",
-	horizontal_alignment = "center",
-	size = TEXT_SIZE,
-	position = {
-		TEXT_OFFSET[1] + BADGE_OFFSET[1],
-		BADGE_OFFSET[2] - TEXT_OFFSET[2],
-		0
-	}
-}
-tbl.text_placement = {
-	vertical_alignment = "center",
-	parent = "text_background_placement",
-	horizontal_alignment = "center",
-	size = TEXT_SIZE,
-	position = {
-		0,
-		0,
-		1
-	}
-}
-
-local scenegraph_definition = tbl
 local badge_widget_definition = {
 	scenegraph_id = "badge_placement",
 	element = {

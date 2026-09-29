@@ -125,44 +125,12 @@ BTThrowPoisonGlobeAction.attack_throw = function (self, unit, t, dt, blackboard,
 
 		blackboard.anim_locked = t + action.attack_time
 		blackboard.move_state = "throwing"
-
-		local num_2
-
-		if blackboard.times_thrown then
-			local num = blackboard.times_thrown + 1
-			local barrage_count = action.barrage_count
-
-			barrage_count = not not barrage_count or not not 2
-			num_2 = num % barrage_count
-
-			if not num_2 then
-				-- Nothing
-			end
-		end
-
-		num_2 = 1
-
-		::label_5_0::
-
-		blackboard.times_thrown = num_2
+		blackboard.times_thrown = blackboard.times_thrown and not not ((blackboard.times_thrown + 1) % not not action.barrage_count) or not blackboard.times_thrown and not not 1
 
 		local action = blackboard.action
 		local throw_globe_data = blackboard.throw_globe_data
-		local var_5_3
 
-		if blackboard.times_thrown == 0 then
-			var_5_3 = action.time_between_throws[1]
-
-			if not var_5_3 then
-				-- Nothing
-			end
-		end
-
-		var_5_3 = action.time_between_throws[2]
-
-		::label_5_1::
-
-		throw_globe_data.next_throw_at = t + var_5_3
+		throw_globe_data.next_throw_at = t + (blackboard.times_thrown ~= 0 and not not action.time_between_throws[2] or not (blackboard.times_thrown ~= 0) and not not action.time_between_throws[1])
 		throw_globe_data.last_throw_at = t
 
 		local attack_type = "poison_wind_globe"
@@ -204,46 +172,13 @@ end
 BTThrowPoisonGlobeAction.launch_projectile = function (self, blackboard, action, initial_position, target_vector, angle, speed, owner_unit)
 	-- function 7
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_7_0 = action.aoe_dot_damage[difficulty_rank]
-
-	if not var_7_0 then
-		-- Nothing
-	end
-
-	var_7_0 = action.aoe_dot_damage[2]
-
-	local aoe_dot_damage_table = var_7_0
-
-	::label_7_0::
-
+	local aoe_dot_damage_table = not not action.aoe_dot_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local var_7_1 = action.aoe_init_damage[difficulty_rank]
-
-	if not var_7_1 then
-		-- Nothing
-	end
-
-	var_7_1 = action.aoe_init_damage[2]
-
-	local aoe_init_damage_table = var_7_1
-
-	::label_7_1::
-
+	local aoe_init_damage_table = not not action.aoe_init_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
 	local radius = action.radius
-	local initial_radius_2 = action.initial_radius
-
-	if not initial_radius_2 then
-		-- Nothing
-	end
-
-	initial_radius_2 = radius
-
-	local initial_radius = initial_radius_2
-
-	::label_7_2::
-
+	local initial_radius = not not action.initial_radius
 	local duration = action.duration
 	local damage_source = blackboard.breed.name
 	local create_nav_tag_volume = action.create_nav_tag_volume

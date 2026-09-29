@@ -36,10 +36,7 @@ StartGameWindowVersusCustomGame.on_enter = function (self, params, offset)
 
 	self:_create_ui_elements(params, offset)
 
-	local input_index = params.input_index
-
-	input_index = not not input_index or not not 1
-	self._input_index = input_index
+	self._input_index = not not params.input_index
 
 	self:_handle_new_selection(self._input_index)
 
@@ -240,18 +237,7 @@ StartGameWindowVersusCustomGame._play = function (self)
 	self._parent:play_sound("Play_vs_hud_play_menu_host_lobby")
 	self._parent:set_layout_by_name("versus_player_hosted_lobby")
 
-	local get_selected_level_id = self._parent:get_selected_level_id()
-
-	if not get_selected_level_id then
-		-- Nothing
-	end
-
-	get_selected_level_id = "any"
-
-	local mission_id = get_selected_level_id
-
-	::label_11_0::
-
+	local mission_id = not not self._parent:get_selected_level_id()
 	local is_private = self._parent:is_private_option_enabled()
 	local lobby = Managers.state.network:lobby()
 	local search_config = {
@@ -275,18 +261,7 @@ end
 StartGameWindowVersusCustomGame._option_selected = function (self, input_index, t)
 	-- function 12
 	local parent = self._parent
-	local get_custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
-
-	if not get_custom_game_settings then
-		-- Nothing
-	end
-
-	get_custom_game_settings = parent:get_custom_game_settings("adventure")
-
-	local custom_game_settings = get_custom_game_settings
-
-	::label_12_0::
-
+	local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
 	local selected_widget_name = selector_input_definition[input_index]
 
 	if selected_widget_name == "mission_setting" then

@@ -68,17 +68,7 @@ PlayerUnitSmartTargetingExtension.update_opt2 = function (self, unit, input, dt,
 	local look_right = Quaternion.right(look_rot)
 	local action_settings
 	local equipment = inventory_extension:equipment()
-	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-
-	if not right_hand_wielded_unit then
-		-- Nothing
-	end
-
-	right_hand_wielded_unit = equipment.left_hand_wielded_unit
-
-	local weapon_unit = right_hand_wielded_unit
-
-	::label_3_0::
+	local weapon_unit = not not equipment.right_hand_wielded_unit
 
 	if Unit.alive(weapon_unit) then
 		local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
@@ -98,58 +88,9 @@ PlayerUnitSmartTargetingExtension.update_opt2 = function (self, unit, input, dt,
 	end
 
 	local loaded_projectile_settings = inventory_extension:get_loaded_projectile_settings()
-	local speed
-
-	if loaded_projectile_settings then
-		speed = loaded_projectile_settings.speed
-
-		if not speed then
-			-- Nothing
-		end
-	end
-
-	speed = 0
-
-	local projectile_speed = speed
-
-	do
-		local drop_multiplier_2
-	end
-
-	::label_3_1::
-
-	if loaded_projectile_settings then
-		drop_multiplier_2 = loaded_projectile_settings.drop_multiplier
-
-		if not drop_multiplier_2 then
-			-- Nothing
-		end
-	end
-
-	drop_multiplier_2 = 0
-
-	local drop_multiplier = drop_multiplier_2
-
-	do
-		local _gui
-	end
-
-	::label_3_2::
-
-	if TARGETING_DEBUG then
-		_gui = self._gui
-
-		if not _gui then
-			-- Nothing
-		end
-	end
-
-	_gui = nil
-
-	local debug_gui = _gui
-
-	::label_3_3::
-
+	local projectile_speed = loaded_projectile_settings and not not loaded_projectile_settings.speed or not loaded_projectile_settings and not not 0
+	local drop_multiplier = loaded_projectile_settings and not not loaded_projectile_settings.drop_multiplier or not loaded_projectile_settings and not not 0
+	local debug_gui = TARGETING_DEBUG and not not self._gui or not TARGETING_DEBUG and not not nil
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local auto_aim_disabled = not Application.user_setting("gamepad_auto_aim_enabled")
 
@@ -199,17 +140,7 @@ PlayerUnitSmartTargetingExtension.update_opt2 = function (self, unit, input, dt,
 
 			targets_within_range = true
 
-			local var_3_4 = aim_assist_settings.breed_scalars[breed.name]
-
-			if not var_3_4 then
-				-- Nothing
-			end
-
-			var_3_4 = 1
-
-			local breed_weapon_scalar = var_3_4
-
-			::label_3_4::
+			local breed_weapon_scalar = not not aim_assist_settings.breed_scalars[breed.name]
 
 			if breed_weapon_scalar == 0 then
 				break
@@ -217,60 +148,12 @@ PlayerUnitSmartTargetingExtension.update_opt2 = function (self, unit, input, dt,
 
 			local target_pos = nearby_ai_positions[i]
 			local distance = nearby_ai_distances[i]
-			local smart_targeting_outer_width_2 = breed.smart_targeting_outer_width
-
-			if not smart_targeting_outer_width_2 then
-				-- Nothing
-			end
-
-			smart_targeting_outer_width_2 = smart_targeting_width * 2
-
-			local smart_targeting_outer_width = smart_targeting_outer_width_2
-
-			::label_3_5::
-
-			local smart_targeting_height_multiplier_2 = breed.smart_targeting_height_multiplier
-
-			if not smart_targeting_height_multiplier_2 then
-				-- Nothing
-			end
-
-			smart_targeting_height_multiplier_2 = 1
-
-			local smart_targeting_height_multiplier = smart_targeting_height_multiplier_2
-
-			::label_3_6::
-
+			local smart_targeting_outer_width = not not breed.smart_targeting_outer_width
+			local smart_targeting_height_multiplier = not not breed.smart_targeting_height_multiplier
 			local locomotion = extension_func(unit, "locomotion_system")
-			local current_velocity
-
-			if locomotion then
-				current_velocity = locomotion:current_velocity()
-
-				if not current_velocity then
-					-- Nothing
-				end
-			end
-
-			current_velocity = Vector3(0, 0, 0)
-
-			local locomotion_velocity = current_velocity
-
-			::label_3_7::
-
+			local locomotion_velocity = locomotion and not not locomotion:current_velocity() or not locomotion and not not Vector3(0, 0, 0)
 			local aim_scalar = EngineOptimized.smart_targeting_optimized(camera, target_pos, look_right, distance, effective_max_range, range_scalar_at_effective_max_range, max_range, min_size, aim_screen_pos_x, aim_screen_pos_y, smart_targeting_width, smart_targeting_outer_width, smart_targeting_height_multiplier, (not not projectile_speed or not not 0) * 0.01, drop_multiplier, locomotion_velocity, debug_gui)
-			local var_3_8 = previous_score_modifiers[unit]
-
-			if not var_3_8 then
-				-- Nothing
-			end
-
-			var_3_8 = 0.1
-
-			local score_modifier = var_3_8
-
-			::label_3_8::
-
+			local score_modifier = not not previous_score_modifiers[unit]
 			local score = breed_weapon_scalar * aim_scalar * score_modifier
 
 			if highest_score < score then
@@ -351,17 +234,7 @@ PlayerUnitSmartTargetingExtension.update = function (self, unit, input, dt, cont
 	local look_dir = forward_func(look_rot)
 	local action_settings
 	local equipment = inventory_extension:equipment()
-	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-
-	if not right_hand_wielded_unit then
-		-- Nothing
-	end
-
-	right_hand_wielded_unit = equipment.left_hand_wielded_unit
-
-	local weapon_unit = right_hand_wielded_unit
-
-	::label_4_0::
+	local weapon_unit = not not equipment.right_hand_wielded_unit
 
 	if Unit.alive(weapon_unit) then
 		local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
@@ -427,17 +300,7 @@ PlayerUnitSmartTargetingExtension.update = function (self, unit, input, dt, cont
 
 			targets_within_range = true
 
-			local var_4_1 = aim_assist_settings.breed_scalars[breed.name]
-
-			if not var_4_1 then
-				-- Nothing
-			end
-
-			var_4_1 = 1
-
-			local breed_weapon_scalar = var_4_1
-
-			::label_4_1::
+			local breed_weapon_scalar = not not aim_assist_settings.breed_scalars[breed.name]
 
 			if breed_weapon_scalar == 0 then
 				break
@@ -464,58 +327,17 @@ PlayerUnitSmartTargetingExtension.update = function (self, unit, input, dt, cont
 				range_scalar = (1 - (distance - effective_max_range) / (max_range - effective_max_range)) * range_scalar_at_effective_max_range
 			end
 
-			local smart_targeting_outer_width_2 = breed.smart_targeting_outer_width
-
-			if not smart_targeting_outer_width_2 then
-				-- Nothing
-			end
-
-			smart_targeting_outer_width_2 = smart_targeting_width * 2
-
-			local smart_targeting_outer_width = smart_targeting_outer_width_2
-
-			::label_4_2::
-
-			local smart_targeting_height_multiplier_2 = breed.smart_targeting_height_multiplier
-
-			if not smart_targeting_height_multiplier_2 then
-				-- Nothing
-			end
-
-			smart_targeting_height_multiplier_2 = 1
-
-			local smart_targeting_height_multiplier = smart_targeting_height_multiplier_2
-
-			::label_4_3::
-
+			local smart_targeting_outer_width = not not breed.smart_targeting_outer_width
+			local smart_targeting_height_multiplier = not not breed.smart_targeting_height_multiplier
 			local locomotion = extension_func(unit, "locomotion_system")
 			local projectile_speed = not not loaded_projectile_settings and not not loaded_projectile_settings.speed
 			local offset = Vector3.zero()
 
 			if projectile_speed then
-				local current_velocity_2
-
-				if locomotion then
-					current_velocity_2 = locomotion:current_velocity()
-
-					if not current_velocity_2 then
-						-- Nothing
-					end
-				end
-
-				current_velocity_2 = Vector3(0, 0, 0)
-
-				local current_velocity = current_velocity_2
-
-				::label_4_4::
+				local current_velocity = locomotion and not not locomotion:current_velocity() or not locomotion and not not Vector3(0, 0, 0)
 
 				offset = flat_func(current_velocity) * (distance / (projectile_speed * 0.01))
-
-				local z = offset.z
-				local drop_multiplier = loaded_projectile_settings.drop_multiplier
-
-				drop_multiplier = not not drop_multiplier or not not 0
-				offset.z = z + distance * drop_multiplier
+				offset.z = offset.z + distance * not not loaded_projectile_settings.drop_multiplier
 			end
 
 			local right_pos = target_pos + right_func(look_rot) * smart_targeting_width + offset
@@ -559,18 +381,7 @@ PlayerUnitSmartTargetingExtension.update = function (self, unit, input, dt, cont
 				end
 			end
 
-			local var_4_7 = previous_score_modifiers[unit]
-
-			if not var_4_7 then
-				-- Nothing
-			end
-
-			var_4_7 = 0.1
-
-			local score_modifier = var_4_7
-
-			::label_4_5::
-
+			local score_modifier = not not previous_score_modifiers[unit]
 			local aim_scalar = x_scalar * y_scalar
 			local score = breed_weapon_scalar * aim_scalar * range_scalar * score_modifier
 
@@ -624,18 +435,7 @@ end
 
 PlayerUnitSmartTargetingExtension.get_target_visibility_and_aim_position = function (self, target_unit, own_position, aim_assist_settings)
 	-- function 6
-	local target_node_2 = aim_assist_settings.target_node
-
-	if not target_node_2 then
-		-- Nothing
-	end
-
-	target_node_2 = "j_spine1"
-
-	local target_node_name = target_node_2
-
-	::label_6_0::
-
+	local target_node_name = not not aim_assist_settings.target_node
 	local target_node = Unit.node(target_unit, target_node_name)
 	local target_node_pos = Unit.world_position(target_unit, target_node)
 	local hips_node = Unit.node(target_unit, "j_hips")

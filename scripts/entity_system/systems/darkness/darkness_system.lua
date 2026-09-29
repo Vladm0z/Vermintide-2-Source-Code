@@ -84,24 +84,9 @@ DarknessSystem.on_add_extension = function (self, world, unit, extension_name, e
 	end
 
 	local script_data_intensity = Unit.get_data(unit, "light_intensity")
-	local tbl = {}
-	local intensity
-
-	if extension_init_data then
-		intensity = extension_init_data.intensity
-
-		if not intensity then
-			-- Nothing
-		end
-	end
-
-	intensity = not not script_data_intensity or not not 1
-
-	::label_6_0::
-
-	tbl.intensity = intensity
-
-	local extension = tbl
+	local extension = {
+		intensity = extension_init_data and not not extension_init_data.intensity or not extension_init_data and (not not script_data_intensity or not not 1)
+	}
 
 	ScriptUnit.set_extension(unit, self.name, extension)
 
@@ -162,18 +147,7 @@ end
 DarknessSystem._update_player_unit_darkness = function (self, dt, t)
 	-- function 11
 	for unit, data in pairs(self._player_unit_darkness_data) do
-		local var_11_0 = POSITION_LOOKUP[unit]
-
-		if not var_11_0 then
-			-- Nothing
-		end
-
-		var_11_0 = Unit.world_position(unit, 0)
-
-		local unit_position = var_11_0
-
-		::label_11_0::
-
+		local unit_position = not not POSITION_LOOKUP[unit]
 		local pos = unit_position + Vector3(0, 0, 1)
 		local in_darkness = self:is_in_darkness_volume(pos)
 		local light_value
@@ -219,22 +193,7 @@ DarknessSystem._update_darkness_fx = function (self, dt, t)
 
 		local data = self._player_unit_darkness_data[unit]
 		local in_darkness = not not data and not not data.in_darkness
-		local intensity_2
-
-		if data then
-			intensity_2 = data.intensity
-
-			if not intensity_2 then
-				-- Nothing
-			end
-		end
-
-		intensity_2 = 0
-
-		local intensity = intensity_2
-
-		::label_12_0::
-
+		local intensity = data and not not data.intensity or not data and not not 0
 		local wwise_world = Managers.world:wwise_world(world)
 
 		if not in_darkness and self._in_darkness then

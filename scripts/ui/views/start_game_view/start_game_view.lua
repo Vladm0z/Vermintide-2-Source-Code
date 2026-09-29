@@ -170,21 +170,7 @@ end
 
 StartGameView.input_service = function (self)
 	-- function 13
-	local FAKE_INPUT_SERVICE
-
-	if self._draw_loading then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self.input_manager:get_service("start_game_view")
-
-	::label_13_0::
-
-	return FAKE_INPUT_SERVICE
+	return self._draw_loading and not not FAKE_INPUT_SERVICE or not self._draw_loading and not not self.input_manager:get_service("start_game_view")
 end
 
 StartGameView.set_input_blocked = function (self, blocked)
@@ -204,17 +190,7 @@ end
 
 StartGameView.play_mechanism_sound = function (self, event_setting_name, default_event)
 	-- function 17
-	local mechanism_setting = Managers.mechanism:mechanism_setting(event_setting_name)
-
-	if not mechanism_setting then
-		-- Nothing
-	end
-
-	mechanism_setting = default_event
-
-	local sound_event = mechanism_setting
-
-	::label_17_0::
+	local sound_event = not not Managers.mechanism:mechanism_setting(event_setting_name)
 
 	if sound_event then
 		self:play_sound(sound_event)
@@ -301,21 +277,7 @@ StartGameView.update = function (self, dt, t)
 	local input_manager = self.input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local input_blocked = self:input_blocked()
-	local FAKE_INPUT_SERVICE
-
-	if input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_21_0::
+	local input_service = input_blocked and not not FAKE_INPUT_SERVICE or not input_blocked and not not self:input_service()
 
 	self._state_machine_params.input_service = input_service
 
@@ -400,34 +362,9 @@ StartGameView._handle_new_ui_disclaimer = function (self)
 			leaderboard = false
 		}
 	}
-	local var_23_0 = global_disclaimer_states[mechanism_name]
-
-	if not var_23_0 then
-		-- Nothing
-	end
-
-	var_23_0 = global_disclaimer_states.default
-
-	local disclaimer_states = var_23_0
-
-	::label_23_0::
-
+	local disclaimer_states = not not global_disclaimer_states[mechanism_name]
 	local on_enter_transition_params = self._on_enter_transition_params
-	local menu_state_name_2
-
-	if on_enter_transition_params then
-		menu_state_name_2 = on_enter_transition_params.menu_state_name
-
-		if not menu_state_name_2 then
-			-- Nothing
-		end
-	end
-
-	menu_state_name_2 = "default"
-
-	local menu_state_name = menu_state_name_2
-
-	::label_23_1::
+	local menu_state_name = on_enter_transition_params and not not on_enter_transition_params.menu_state_name or not on_enter_transition_params and not not "default"
 
 	Managers.ui:handle_new_ui_disclaimer(disclaimer_states, menu_state_name)
 end
@@ -461,11 +398,7 @@ StartGameView._get_sorted_players = function (self)
 
 	table.sort(player_order, function (a, b)
 		-- function 27
-		local local_player = a.local_player
-
-		local_player = not not local_player and not not not b.local_player
-
-		return local_player
+		return not not a.local_player
 	end)
 
 	return player_order
@@ -532,17 +465,7 @@ StartGameView.hotkey_allowed = function (self, input, mapping_data)
 		local name = current_screen_settings.name
 
 		if name == transition_state then
-			local get_selected_layout_name = current_state.get_selected_layout_name
-
-			if get_selected_layout_name then
-				-- Nothing
-			end
-
-			get_selected_layout_name = current_state:get_selected_layout_name()
-
-			local active_sub_settings_name = get_selected_layout_name
-
-			::label_31_0::
+			local active_sub_settings_name = not not current_state.get_selected_layout_name
 
 			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
@@ -664,19 +587,7 @@ end
 
 StartGameView.exit = function (self, return_to_game, ignore_sound)
 	-- function 39
-	local str
-
-	if return_to_game then
-		str = "exit_menu"
-
-		goto label_39_0
-	end
-
-	str = "ingame_menu"
-
-	local exit_transition = str
-
-	::label_39_0::
+	local exit_transition = return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu"
 
 	self.ingame_ui:transition_with_fade(exit_transition)
 
@@ -751,17 +662,7 @@ end
 StartGameView._has_active_level_vote = function (self)
 	-- function 46
 	local voting_manager = self.voting_manager
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local is_mission_vote = vote_in_progress
-
-	::label_46_0::
+	local is_mission_vote = not not voting_manager:vote_in_progress()
 
 	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
@@ -771,19 +672,7 @@ StartGameView._set_loading_overlay_enabled = function (self, enabled, message)
 	local loading_widgets = self._loading_widgets
 	local loading_text_widget = loading_widgets.text
 	local loading_bg_widget = loading_widgets.background
-	local num
-
-	if enabled then
-		num = 255
-
-		goto label_47_0
-	end
-
-	num = 0
-
-	local alpha = num
-
-	::label_47_0::
+	local alpha = enabled and not not 255 or not enabled and not not 0
 
 	loading_bg_widget.style.color[1] = alpha
 	loading_text_widget.style.text.text_color[1] = alpha

@@ -13,10 +13,7 @@ BTTentacleIdleAction.name = "BTTentacleIdleAction"
 
 BTTentacleIdleAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local next_attack_time = blackboard.next_attack_time
-
-	next_attack_time = not not next_attack_time or not not (t + 0.5)
-	blackboard.next_attack_time = next_attack_time
+	blackboard.next_attack_time = not not blackboard.next_attack_time
 end
 
 BTTentacleIdleAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -39,17 +36,7 @@ BTTentacleIdleAction.run = function (self, unit, blackboard, t, dt, bt_name)
 		tentacle_extension:set_reach_dist(current_length)
 	end
 
-	local current_unit = blackboard.current_unit
-
-	if not current_unit then
-		-- Nothing
-	end
-
-	current_unit = blackboard.target_unit
-
-	local target_unit = current_unit
-
-	::label_4_0::
+	local target_unit = not not blackboard.current_unit
 
 	if not Unit.alive(target_unit) then
 		return "running"

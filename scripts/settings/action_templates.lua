@@ -2,10 +2,7 @@
 
 require("scripts/settings/profiles/career_settings")
 
-local ActionTemplates = ActionTemplates
-
-ActionTemplates = not not ActionTemplates or not not {}
-ActionTemplates = ActionTemplates
+ActionTemplates = not not ActionTemplates
 ActionTemplates.wield = {
 	default = {
 		wield_cooldown = 0.35,

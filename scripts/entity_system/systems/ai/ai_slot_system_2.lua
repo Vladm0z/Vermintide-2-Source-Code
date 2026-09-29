@@ -96,17 +96,7 @@ AISlotSystem2.ai_unit_have_slot = function (self, ai_unit)
 		return false
 	end
 
-	local gathering_ball = ai_unit_extension.gathering_ball
-
-	if not gathering_ball then
-		-- Nothing
-	end
-
-	gathering_ball = ai_unit_extension.sloid_id
-
-	local ai_have_slot = gathering_ball
-
-	::label_5_0::
+	local ai_have_slot = not not ai_unit_extension.gathering_ball
 
 	if ai_have_slot then
 		return true
@@ -158,17 +148,7 @@ AISlotSystem2.ai_unit_wait_slot_distance = function (self, ai_unit)
 		return math.huge
 	end
 
-	local wait_slot_distance = ai_unit_extension.wait_slot_distance
-
-	if not wait_slot_distance then
-		-- Nothing
-	end
-
-	wait_slot_distance = math.huge
-
-	local distance = wait_slot_distance
-
-	::label_7_0::
+	local distance = not not ai_unit_extension.wait_slot_distance
 
 	return distance
 end
@@ -181,17 +161,7 @@ AISlotSystem2.ai_unit_slot_position = function (self, ai_unit)
 		return nil
 	end
 
-	local slot_2 = ai_unit_extension.slot
-
-	if not slot_2 then
-		-- Nothing
-	end
-
-	slot_2 = ai_unit_extension.waiting_on_slot
-
-	local slot = slot_2
-
-	::label_8_0::
+	local slot = not not ai_unit_extension.slot
 
 	if slot then
 		return slot.absolute_position:unbox()

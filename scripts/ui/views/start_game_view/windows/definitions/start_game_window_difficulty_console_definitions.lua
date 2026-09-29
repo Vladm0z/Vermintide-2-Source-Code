@@ -966,23 +966,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 21
-						local is_hover
-
-						if not content.button_hotspot.disable_button then
-							is_hover = content.button_hotspot.is_hover
-
-							if not is_hover then
-								is_hover = content.button_hotspot.is_selected
-							end
-						else
-							is_hover = false
-						end
-
-						if false then
-							is_hover = true
-						end
-
-						return is_hover
+						return not not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -1115,14 +1099,7 @@ local function create_difficulty_reward_widget(difficulty_key, item_name, reward
 		texture_id = "reward_hover",
 		content_check_function = function (content)
 			-- function 25
-			local is_hover = content.hotspot.is_hover
-
-			if is_hover then
-				is_hover = content.item
-				is_hover = not not is_hover and not not content.tooltip
-			end
-
-			return is_hover
+			return not not content.hotspot.is_hover
 		end
 	}
 	passes[#passes + 1] = {
@@ -1132,14 +1109,7 @@ local function create_difficulty_reward_widget(difficulty_key, item_name, reward
 		text_id = "tooltip",
 		content_check_function = function (content)
 			-- function 26
-			local is_hover = content.hotspot.is_hover
-
-			if is_hover then
-				is_hover = content.item
-				is_hover = not not is_hover and not not content.tooltip
-			end
-
-			return is_hover
+			return not not content.hotspot.is_hover
 		end
 	}
 
@@ -1157,11 +1127,7 @@ local function create_difficulty_reward_widget(difficulty_key, item_name, reward
 	content.item_tooltip = {}
 	content.hotspot = {}
 	content.frame = "button_frame_01"
-
-	local inventory_icon = reward_item.inventory_icon
-
-	inventory_icon = not not inventory_icon or not not "icons_placeholder"
-	content.icon = inventory_icon
+	content.icon = not not reward_item.inventory_icon
 	content.visible = false
 	content.difficulty_key = difficulty_key
 	content.item = {

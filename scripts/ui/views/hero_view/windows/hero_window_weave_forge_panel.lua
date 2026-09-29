@@ -341,18 +341,7 @@ HeroWindowWeaveForgePanel._update_animations = function (self, dt)
 	-- function 17
 	local params = self._params
 	local is_upgrading = params.upgrading
-	local _upgrading_anim_progress = self._upgrading_anim_progress
-
-	if not _upgrading_anim_progress then
-		-- Nothing
-	end
-
-	_upgrading_anim_progress = 0
-
-	local upgrading_anim_progress = _upgrading_anim_progress
-
-	::label_17_0::
-
+	local upgrading_anim_progress = not not self._upgrading_anim_progress
 	local upgrading_speed = 3
 
 	if is_upgrading then
@@ -406,10 +395,7 @@ HeroWindowWeaveForgePanel._draw = function (self, dt)
 	local alpha_multiplier = render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._bottom_hdr_widgets) do
-		local alpha_multiplier_2 = widget.alpha_multiplier
-
-		alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_2
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_renderer, widget)
 	end
@@ -420,10 +406,7 @@ HeroWindowWeaveForgePanel._draw = function (self, dt)
 	local alpha_multiplier = render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._bottom_widgets) do
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -432,10 +415,7 @@ HeroWindowWeaveForgePanel._draw = function (self, dt)
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for _, widget in ipairs(self._top_widgets) do
-		local alpha_multiplier_4 = widget.alpha_multiplier
-
-		alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_4
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end

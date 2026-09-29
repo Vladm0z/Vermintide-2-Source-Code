@@ -147,11 +147,8 @@ ContractPresentationScreenUI._draw = function (self, dt)
 
 	if self.waiting_for_input and not self.exit_anim_id then
 		local input_widgets = self._input_widgets
-		local content = self.input_description_text.content
-		local flag
 
-		flag = (not gamepad_active or not "press_any_button_to_continue") and not not "press_any_key_to_continue"
-		content.text = flag
+		self.input_description_text.content.text = gamepad_active and not not "press_any_button_to_continue" or not gamepad_active and not not "press_any_key_to_continue"
 
 		UIRenderer.draw_widget(ui_renderer, self.input_description_text)
 	end
@@ -265,39 +262,11 @@ ContractPresentationScreenUI._set_contract_start_info_by_contract_id = function 
 		tasks_total_end_values = tasks_total_end_values + task_required
 	end
 
-	local num
-
-	if tasks_total_end_values > 0 then
-		num = tasks_total_start_values / tasks_total_end_values
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	local tasks_total_progress = num
-
-	::label_10_0::
+	local tasks_total_progress = tasks_total_end_values > 0 and not not (tasks_total_start_values / tasks_total_end_values) or not (tasks_total_end_values > 0) and not not 0
 
 	tasks_total_progress = math.max(math.min(tasks_total_progress, 1), 0)
 
-	local num_2
-
-	if tasks_total_end_values > 0 then
-		num_2 = tasks_total_session_values / tasks_total_end_values
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = 0
-
-	local tasks_total_session_progress = num_2
-
-	::label_10_1::
+	local tasks_total_session_progress = tasks_total_end_values > 0 and not not (tasks_total_session_values / tasks_total_end_values) or not (tasks_total_end_values > 0) and not not 0
 
 	tasks_total_session_progress = math.max(math.min(tasks_total_session_progress, 1), 0)
 
@@ -528,20 +497,7 @@ ContractPresentationScreenUI._handle_animations = function (self)
 						end
 					elseif not entry.summary_anim_done then
 						if not entry.summary_started then
-							local str
-
-							if entry.contract_session_progress > 0 then
-								str = "contract_summary"
-
-								goto label_17_0
-							end
-
-							str = "no_progress"
-
-							local animation_name = str
-
-							::label_17_0::
-
+							local animation_name = entry.contract_session_progress > 0 and not not "contract_summary" or not (entry.contract_session_progress > 0) and not not "no_progress"
 							local anim_id = self:_start_contract_animation(contract_id, animation_name)
 
 							entry.summary_anim_id = anim_id

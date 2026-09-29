@@ -106,7 +106,7 @@ BackendInterfaceWeavesPlayFab._validate_backend_progression_settings = function 
 		local rarity = item_data.rarity
 		local slot_type = item_data.slot_type
 
-		if rarity and rarity == "magic" and slot_type and (slot_type == "melee" or slot_type == "ranged") then
+		if slot_type == "melee" or slot_type == "ranged" then
 			local progression_data = progression_settings.items[item_name]
 
 			if not progression_data then
@@ -218,21 +218,7 @@ end
 
 BackendInterfaceWeavesPlayFab._new_id = function (self)
 	-- function 7
-	local num
-
-	if self._last_id then
-		num = self._last_id + 1
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 1
-
-	::label_7_0::
-
-	self._last_id = num
+	self._last_id = self._last_id and not not (self._last_id + 1) or not self._last_id and not not 1
 
 	return self._last_id
 end
@@ -434,19 +420,7 @@ BackendInterfaceWeavesPlayFab.request_player_rank = function (self, stat_name, l
 	local success_callback = callback(self, "player_rank_request_cb")
 	local fail_callback = callback(self, "player_rank_request_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local str
-
-	if leaderboard_type == "friends" then
-		str = "GetFriendLeaderboardAroundPlayer"
-
-		goto label_15_0
-	end
-
-	str = "GetLeaderboardAroundPlayer"
-
-	local request_function = str
-
-	::label_15_0::
+	local request_function = leaderboard_type ~= "friends" and not not "GetLeaderboardAroundPlayer" or not (leaderboard_type ~= "friends") and not not "GetFriendLeaderboardAroundPlayer"
 
 	request_queue:enqueue_api_request(request_function, player_rank_request, success_callback, fail_callback)
 
@@ -486,19 +460,7 @@ BackendInterfaceWeavesPlayFab.request_leaderboard_around_player = function (self
 	local success_callback = callback(self, "request_leaderboard_around_player_cb")
 	local fail_callback = callback(self, "request_leaderboard_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local str
-
-	if leaderboard_type == "friends" then
-		str = "GetFriendLeaderboardAroundPlayer"
-
-		goto label_17_0
-	end
-
-	str = "GetLeaderboardAroundPlayer"
-
-	local request_function = str
-
-	::label_17_0::
+	local request_function = leaderboard_type ~= "friends" and not not "GetLeaderboardAroundPlayer" or not (leaderboard_type ~= "friends") and not not "GetFriendLeaderboardAroundPlayer"
 
 	request_queue:enqueue_api_request(request_function, request_leaderboard_around_player, success_callback, fail_callback)
 
@@ -558,19 +520,7 @@ BackendInterfaceWeavesPlayFab.request_leaderboard = function (self, stat_name, s
 	local success_callback = callback(self, "leaderboard_request_cb")
 	local fail_callback = callback(self, "request_leaderboard_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local str
-
-	if leaderboard_type == "friends" then
-		str = "GetFriendLeaderboard"
-
-		goto label_20_0
-	end
-
-	str = "GetLeaderboard"
-
-	local request_function = str
-
-	::label_20_0::
+	local request_function = leaderboard_type ~= "friends" and not not "GetLeaderboard" or not (leaderboard_type ~= "friends") and not not "GetFriendLeaderboard"
 
 	request_queue:enqueue_api_request(request_function, leaderboard_request, success_callback, fail_callback)
 
@@ -608,11 +558,7 @@ end
 
 BackendInterfaceWeavesPlayFab.has_leaderboard_request_failed = function (self)
 	-- function 24
-	local _leaderboard_player_rank_error = self._leaderboard_player_rank_error
-
-	_leaderboard_player_rank_error = not not _leaderboard_player_rank_error or not not self._leaderboard_request_error
-
-	return _leaderboard_player_rank_error
+	return not not self._leaderboard_player_rank_error
 end
 
 BackendInterfaceWeavesPlayFab.player_rank_request_failed_cb = function (self, external_error_cb, result, reenable_queue_function)
@@ -668,22 +614,7 @@ BackendInterfaceWeavesPlayFab.get_mastery = function (self, career_name, optiona
 		end
 	end
 
-	local _get_loadout_mastery_cost
-
-	if loadout then
-		_get_loadout_mastery_cost = self:_get_loadout_mastery_cost(loadout)
-
-		if not _get_loadout_mastery_cost then
-			-- Nothing
-		end
-	end
-
-	_get_loadout_mastery_cost = 0
-
-	local total_cost = _get_loadout_mastery_cost
-
-	::label_27_0::
-
+	local total_cost = loadout and not not self:_get_loadout_mastery_cost(loadout) or not loadout and not not 0
 	local current_mastery = initial_mastery - total_cost
 
 	return initial_mastery, current_mastery
@@ -1233,7 +1164,7 @@ BackendInterfaceWeavesPlayFab.get_loadout_properties = function (self, career_na
 	if optional_item_backend_id then
 		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		properties = (not item_loadout or not item_loadout.properties) and not not {}
+		properties = item_loadout and (not not item_loadout.properties or not not {}) or not item_loadout and not not {}
 	else
 		properties = loadout.properties
 	end
@@ -1325,7 +1256,7 @@ BackendInterfaceWeavesPlayFab.get_loadout_traits = function (self, career_name, 
 	if optional_item_backend_id then
 		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		traits = (not item_loadout or not item_loadout.traits) and not not {}
+		traits = item_loadout and (not not item_loadout.traits or not not {}) or not item_loadout and not not {}
 	else
 		traits = loadout.traits
 	end
@@ -1343,17 +1274,7 @@ BackendInterfaceWeavesPlayFab.apply_career_item_loadouts = function (self, caree
 			local melee_item = loadout.slot_melee
 
 			if melee_item then
-				local var_63_0 = item_loadouts[melee_item]
-
-				if not var_63_0 then
-					-- Nothing
-				end
-
-				var_63_0 = {}
-
-				local melee_loadout = var_63_0
-
-				::label_63_0::
+				local melee_loadout = not not item_loadouts[melee_item]
 
 				self:_update_item_custom_data(melee_item, melee_loadout)
 			end
@@ -1361,17 +1282,7 @@ BackendInterfaceWeavesPlayFab.apply_career_item_loadouts = function (self, caree
 			local ranged_item = loadout.slot_ranged
 
 			if ranged_item then
-				local var_63_1 = item_loadouts[ranged_item]
-
-				if not var_63_1 then
-					-- Nothing
-				end
-
-				var_63_1 = {}
-
-				local ranged_loadout = var_63_1
-
-				::label_63_1::
+				local ranged_loadout = not not item_loadouts[ranged_item]
 
 				self:_update_item_custom_data(ranged_item, ranged_loadout)
 			end
@@ -1574,11 +1485,7 @@ BackendInterfaceWeavesPlayFab.get_dirty_user_data = function (self)
 
 	for career_name, _ in pairs(dirty_loadouts) do
 		has_dirty_data = true
-
-		local loadouts_2 = dirty_data.loadouts
-
-		loadouts_2 = not not loadouts_2 or not not {}
-		dirty_data.loadouts = loadouts_2
+		dirty_data.loadouts = not not dirty_data.loadouts
 		dirty_data.loadouts[career_name] = table.clone(loadouts[career_name])
 	end
 

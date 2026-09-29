@@ -74,19 +74,7 @@ ActionBlock.finish = function (self, reason, data)
 		local ammo_extension = self._ammo_extension
 		local current_action = self.current_action
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local flag
-
-		if not reload_when_out_of_ammo_condition_func then
-			flag = true
-
-			goto label_4_0
-		end
-
-		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-		local do_out_of_ammo_reload = flag
-
-		::label_4_0::
+		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true

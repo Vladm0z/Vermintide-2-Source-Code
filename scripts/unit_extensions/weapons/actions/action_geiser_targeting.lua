@@ -50,11 +50,7 @@ ActionGeiserTargeting.client_owner_start_action = function (self, new_action, t)
 	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
 	self.speed = new_action.speed
 	self.gravity = new_action.gravity
-
-	local height = new_action.height
-
-	height = not not height or not not 1
-	self.height = height
+	self.height = not not new_action.height
 	self.debug_draw = new_action.debug_draw
 
 	local owner_player = Managers.player:owner(owner_unit)

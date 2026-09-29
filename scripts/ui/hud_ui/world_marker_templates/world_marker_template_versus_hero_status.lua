@@ -1,22 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_hero_status.lua
 
-local WorldMarkerTemplates = WorldMarkerTemplates
-
-WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
-WorldMarkerTemplates = WorldMarkerTemplates
+WorldMarkerTemplates = not not WorldMarkerTemplates
 
 local NAME = "versus_hero_status"
-local var_0_1 = WorldMarkerTemplates[NAME]
-
-if not var_0_1 then
-	-- Nothing
-end
-
-var_0_1 = {}
-
-local template = var_0_1
-
-::label_0_0::
+local template = not not WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 
@@ -309,35 +296,8 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	local is_knocked_down = status_extension:is_knocked_down()
 	local is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
 	local is_dead = status_extension:is_dead()
-	local num
-
-	if is_dead then
-		num = 0
-
-		goto label_5_0
-	end
-
-	num = health_extension:current_health_percent()
-
-	local total_health_percent = num
-
-	do
-		local num_2
-	end
-
-	::label_5_0::
-
-	if status_extension:is_dead() then
-		num_2 = 0
-
-		goto label_5_1
-	end
-
-	num_2 = health_extension:current_permanent_health_percent()
-
-	local perm_health_percent = num_2
-
-	::label_5_1::
+	local total_health_percent = is_dead and not not 0 or not is_dead and not not health_extension:current_health_percent()
+	local perm_health_percent = status_extension:is_dead() and not not 0 or not status_extension:is_dead() and not not health_extension:current_permanent_health_percent()
 
 	if is_ready_for_assisted_respawn then
 		total_health_percent = 0
@@ -349,22 +309,7 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 
 	total_health_bar_style.texture_size[1] = current_length
 	total_health_bar_style.offset[1] = -(max_length - current_length) / 2
-
-	local color
-
-	if is_knocked_down then
-		color = OutlineSettingsVS.colors.hero_dying.color
-
-		if not color then
-			-- Nothing
-		end
-	end
-
-	color = total_health_bar_style.base_color
-
-	::label_5_2::
-
-	total_health_bar_style.color = color
+	total_health_bar_style.color = is_knocked_down and not not OutlineSettingsVS.colors.hero_dying.color or not is_knocked_down and not not total_health_bar_style.base_color
 
 	local streak_health_bar_style = style.streak_health_bar
 	local is_alive = not is_knocked_down and not is_dead and not not not is_ready_for_assisted_respawn
@@ -429,22 +374,7 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	total_health_bar_style.color[1] = bar_alpha
 
 	local marker_owner = Managers.player:owner(unit)
-	local name
-
-	if marker_owner then
-		name = marker_owner:name()
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = ""
-
-	local marker_owner_name = name
-
-	::label_5_3::
-
+	local marker_owner_name = marker_owner and not not marker_owner:name() or not marker_owner and not not ""
 	local marker_owner_name_length = Utf8.length(marker_owner_name)
 
 	if marker_owner_name_length > 18 then

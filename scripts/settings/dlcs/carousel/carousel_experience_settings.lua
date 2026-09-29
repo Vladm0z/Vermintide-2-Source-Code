@@ -259,10 +259,7 @@ for i = 1, num_defined_versus_levels do
 	total_defined_versus_experience = total_defined_versus_experience + versus_experience_levels[i]
 end
 
-local ExperienceSettings = ExperienceSettings
-
-ExperienceSettings = not not ExperienceSettings or not not {}
-ExperienceSettings = ExperienceSettings
+ExperienceSettings = not not ExperienceSettings
 
 ExperienceSettings.get_versus_level = function ()
 	-- function 1
@@ -343,7 +340,7 @@ ExperienceSettings.get_versus_progress_breakdown = function (start_experience, t
 		if not versus_experience_levels[i + 1] then
 			breakdown[i] = 0
 		else
-			local end_level_experience = versus_experience_levels[i + 1] * ((i ~= end_level or not end_experience_level_progress) and not not 1)
+			local end_level_experience = versus_experience_levels[i + 1] * not not 1
 			local start_level_experience = end_level_experience * start_experience_level_progress
 
 			breakdown[i] = (end_level_experience - start_level_experience) / total_experience_gained

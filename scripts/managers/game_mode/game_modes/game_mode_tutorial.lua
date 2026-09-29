@@ -2,11 +2,7 @@
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 
-local script_data = script_data
-local disable_gamemode_end = script_data.disable_gamemode_end
-
-disable_gamemode_end = not not disable_gamemode_end or not not Development.parameter("disable_gamemode_end")
-script_data.disable_gamemode_end = disable_gamemode_end
+script_data.disable_gamemode_end = not not script_data.disable_gamemode_end
 GameModeTutorial = class(GameModeTutorial, GameModeBase)
 
 local COMPLETE_LEVEL_VAR = false
@@ -294,17 +290,7 @@ GameModeTutorial.get_end_screen_config = function (self, game_won, game_lost, pl
 		local stats_id = player:stats_id()
 		local statistics_db = self._statistics_db
 		local level_key = self._level_key
-		local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
-
-		if not completed_level_difficulty_index then
-			-- Nothing
-		end
-
-		completed_level_difficulty_index = 0
-
-		local previous_completed_difficulty_index = completed_level_difficulty_index
-
-		::label_39_0::
+		local previous_completed_difficulty_index = not not LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
 
 		screen_config = {
 			level_key = level_key,

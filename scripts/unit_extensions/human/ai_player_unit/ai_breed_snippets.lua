@@ -1,10 +1,8 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_breed_snippets.lua
 
 local script_data = script_data
-local AiBreedSnippets = AiBreedSnippets
 
-AiBreedSnippets = not not AiBreedSnippets or not not {}
-AiBreedSnippets = AiBreedSnippets
+AiBreedSnippets = not not AiBreedSnippets
 
 local vector3_distance = Vector3.distance
 
@@ -357,15 +355,9 @@ AiBreedSnippets.on_chaos_troll_spawn = function (unit, blackboard)
 
 	local breed = blackboard.breed
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_17_0 = breed.max_health_regen_per_sec[difficulty_rank]
 
-	var_17_0 = not not var_17_0 or not not breed.max_health_regen_per_sec[2]
-	blackboard.max_health_regen_per_sec = var_17_0
-
-	local var_17_1 = breed.max_health_regen_time[difficulty_rank]
-
-	var_17_1 = not not var_17_1 or not not breed.max_health_regen_time[2]
-	blackboard.max_health_regen_time = var_17_1
+	blackboard.max_health_regen_per_sec = not not breed.max_health_regen_per_sec[difficulty_rank]
+	blackboard.max_health_regen_time = not not breed.max_health_regen_time[difficulty_rank]
 
 	local can_start_angry = true
 
@@ -399,15 +391,9 @@ AiBreedSnippets.on_chaos_troll_chief_spawn = function (unit, blackboard)
 
 	local breed = blackboard.breed
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_18_0 = breed.max_health_regen_per_sec[difficulty_rank]
 
-	var_18_0 = not not var_18_0 or not not breed.max_health_regen_per_sec[2]
-	blackboard.max_health_regen_per_sec = var_18_0
-
-	local var_18_1 = breed.max_health_regen_time[difficulty_rank]
-
-	var_18_1 = not not var_18_1 or not not breed.max_health_regen_time[2]
-	blackboard.max_health_regen_time = var_18_1
+	blackboard.max_health_regen_per_sec = not not breed.max_health_regen_per_sec[difficulty_rank]
+	blackboard.max_health_regen_time = not not breed.max_health_regen_time[difficulty_rank]
 
 	local can_start_angry = true
 
@@ -451,7 +437,7 @@ AiBreedSnippets.on_chaos_troll_chief_update = function (unit, blackboard, t, dt)
 		if not running_downed_chunk_events[phase] then
 			for chunk_phase, chunk_event in pairs(BreedActions[blackboard.breed.name].downed.downed_chunk_events) do
 				repeat
-					if (chunk_phase == phase or type(chunk_phase) == "table" and table.contains(chunk_phase, phase)) and (not chunk_event.condition_func or chunk_event.condition_func(unit, blackboard, phase, t, dt)) then
+					if chunk_phase == phase and (not chunk_event.condition_func or chunk_event.condition_func(unit, blackboard, phase, t, dt)) or not (chunk_phase == phase) and type(chunk_phase) == "table" and table.contains(chunk_phase, phase) then
 						chunk_event.start(unit, blackboard, phase, t, dt)
 
 						running_downed_chunk_events[phase] = chunk_event
@@ -477,7 +463,7 @@ AiBreedSnippets.on_chaos_troll_chief_update = function (unit, blackboard, t, dt)
 		if not running_upped_chunk_events[phase] then
 			for chunk_phase, chunk_event in pairs(BreedActions[blackboard.breed.name].downed.upped_chunk_events) do
 				repeat
-					if (chunk_phase == phase or type(chunk_phase) == "table" and table.contains(chunk_phase, phase)) and (not chunk_event.condition_func or chunk_event.condition_func(unit, blackboard, phase, t, dt)) then
+					if chunk_phase == phase and (not chunk_event.condition_func or chunk_event.condition_func(unit, blackboard, phase, t, dt)) or not (chunk_phase == phase) and type(chunk_phase) == "table" and table.contains(chunk_phase, phase) then
 						chunk_event.start(unit, blackboard, phase, t, dt)
 
 						running_upped_chunk_events[phase] = chunk_event
@@ -583,15 +569,9 @@ AiBreedSnippets.on_chaos_dummy_troll_spawn = function (unit, blackboard)
 
 	local breed = blackboard.breed
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_24_0 = breed.max_health_regen_per_sec[difficulty_rank]
 
-	var_24_0 = not not var_24_0 or not not breed.max_health_regen_per_sec[2]
-	blackboard.max_health_regen_per_sec = var_24_0
-
-	local var_24_1 = breed.max_health_regen_time[difficulty_rank]
-
-	var_24_1 = not not var_24_1 or not not breed.max_health_regen_time[2]
-	blackboard.max_health_regen_time = var_24_1
+	blackboard.max_health_regen_per_sec = not not breed.max_health_regen_per_sec[difficulty_rank]
+	blackboard.max_health_regen_time = not not breed.max_health_regen_time[difficulty_rank]
 	blackboard.idle_sound_timer = Managers.time:time("game") + 2
 	blackboard.play_alert = true
 end
@@ -756,7 +736,7 @@ AiBreedSnippets.on_storm_vermin_champion_update = function (unit, blackboard, t,
 	local breed = blackboard.breed
 
 	if blackboard.dual_wield_mode then
-		if (not (t > blackboard.dual_wield_timer) or blackboard.active_node) and blackboard.defensive_mode_duration then
+		if t > blackboard.dual_wield_timer and (not blackboard.active_node or blackboard.defensive_mode_duration) or not (t > blackboard.dual_wield_timer) and blackboard.defensive_mode_duration then
 			blackboard.dual_wield_timer = t + 20
 			blackboard.dual_wield_mode = false
 		end
@@ -1193,24 +1173,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_spawn = function (unit, blackboard)
 	local level_analysis = Managers.state.conflict.level_analysis
 	local center_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_center
 	local wall_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_wall
-
-	if center_node_units and wall_node_units then
-		-- Nothing
-	end
-
-	::label_45_1::
-
-	local sorcerer_boss = id_lookup.sorcerer_boss
-
-	if sorcerer_boss then
-		-- Nothing
-	end
-
-	sorcerer_boss = id_lookup.sorcerer_boss_minion
-
-	local level_has_boss_arena = sorcerer_boss
-
-	::label_45_2::
+	local level_has_boss_arena = not not center_node_units and not not wall_node_units and not not id_lookup.sorcerer_boss
 
 	if level_has_boss_arena then
 		local center_marker = center_node_units[1]
@@ -1433,18 +1396,7 @@ AiBreedSnippets.reward_boss_kill_loot = function (unit, blackboard)
 	}
 	local pickup_settings = AllPickups[pickup_name]
 	local unit_name = pickup_settings.unit_name
-	local unit_template_name_2 = pickup_settings.unit_template_name
-
-	if not unit_template_name_2 then
-		-- Nothing
-	end
-
-	unit_template_name_2 = "pickup_unit"
-
-	local unit_template_name = unit_template_name_2
-
-	::label_50_0::
-
+	local unit_template_name = not not pickup_settings.unit_template_name
 	local rotation = Quaternion.identity()
 	local offset = Vector3(0, 0, 0.6)
 
@@ -1475,18 +1427,7 @@ AiBreedSnippets.drop_loot = function (num_die, pos, has_physics, unit)
 		}
 		local pickup_settings = AllPickups[pickup_name]
 		local unit_name = pickup_settings.unit_name
-		local unit_template_name_2 = pickup_settings.unit_template_name
-
-		if not unit_template_name_2 then
-			-- Nothing
-		end
-
-		unit_template_name_2 = "pickup_unit"
-
-		local unit_template_name = unit_template_name_2
-
-		::label_51_0::
-
+		local unit_template_name = not not pickup_settings.unit_template_name
 		local angle = i / num_die * 2 * math.pi
 		local position = pos + Vector3(math.cos(angle), math.sin(angle), 0)
 		local rotation = Quaternion.identity()
@@ -2080,24 +2021,7 @@ AiBreedSnippets.on_grey_seer_update = function (unit, blackboard, t)
 
 	if blackboard.knocked_off_mount and HEALTH_ALIVE[mount_unit] then
 		local mount_blackboard = BLACKBOARDS[mount_unit]
-		local knocked_off_mounted_timer = mounted_data.knocked_off_mounted_timer
-
-		if knocked_off_mounted_timer then
-			-- Nothing
-		end
-
-		if not (t >= mounted_data.knocked_off_mounted_timer) then
-			knocked_off_mounted_timer = false
-
-			goto label_66_0
-		end
-
-		knocked_off_mounted_timer = true
-
-		local mounted_timer_finished = knocked_off_mounted_timer
-
-		::label_66_0::
-
+		local mounted_timer_finished = not not mounted_data.knocked_off_mounted_timer
 		local should_call_stormfiend = not blackboard.call_stormfiend and not mount_blackboard.intro_rage and not not mounted_timer_finished and not mount_blackboard.goal_position and not not not mount_blackboard.anim_cb_move
 
 		if should_call_stormfiend then
@@ -2251,21 +2175,7 @@ AiBreedSnippets.update_enemy_sighting_within_commander_sticky = function (blackb
 		end
 	until true
 
-	local target_unit
-
-	if within_commander_range then
-		target_unit = blackboard.target_unit
-
-		if not target_unit then
-			-- Nothing
-		end
-	end
-
-	target_unit = nil
-
-	::label_70_0::
-
-	blackboard.target_unit = target_unit
+	blackboard.target_unit = within_commander_range and not not blackboard.target_unit or not within_commander_range and not not nil
 	blackboard.confirmed_enemy_sighting_within_commander = within_commander_range
 
 	blackboard.commander_extension:set_in_combat(blackboard.unit, within_commander_range)
@@ -2274,10 +2184,8 @@ AiBreedSnippets.update_enemy_sighting_within_commander_sticky = function (blackb
 
 	if commanded_aggro_sound then
 		local t = Managers.time:time("game")
-		local last_in_combat_t = blackboard.last_in_combat_t
 
-		last_in_combat_t = not not last_in_combat_t or not not t
-		blackboard.last_in_combat_t = last_in_combat_t
+		blackboard.last_in_combat_t = not not blackboard.last_in_combat_t
 
 		local required_time_out_of_combat = 2
 
@@ -2285,7 +2193,7 @@ AiBreedSnippets.update_enemy_sighting_within_commander_sticky = function (blackb
 			Managers.state.entity:system("dialogue_system"):trigger_general_unit_event(blackboard.unit, commanded_aggro_sound)
 		end
 
-		blackboard.last_in_combat_t = (not blackboard.target_unit or not t) and not not blackboard.last_in_combat_t
+		blackboard.last_in_combat_t = blackboard.target_unit and (not not t or not not blackboard.last_in_combat_t) or not blackboard.target_unit and not not blackboard.last_in_combat_t
 	end
 end
 

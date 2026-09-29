@@ -25,36 +25,12 @@ ThornSisterWallExtension.init = function (self, extension_init_context, unit, ex
 		self._is_explosive_wall = true
 
 		local career_extension = ScriptUnit.has_extension(self._owner_unit, "career_system")
-		local get_career_power_level
 
-		if career_extension then
-			get_career_power_level = career_extension:get_career_power_level()
-
-			if not get_career_power_level then
-				-- Nothing
-			end
-		end
-
-		get_career_power_level = 100
-
-		::label_1_0::
-
-		self._owner_career_power_level = get_career_power_level
+		self._owner_career_power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not 100
 	end
 
 	local side_manager = Managers.state.side
-	local var_1_1 = side_manager.side_by_unit[self._owner_unit]
-
-	if not var_1_1 then
-		-- Nothing
-	end
-
-	var_1_1 = Managers.state.side:get_side_from_name("heroes")
-
-	local side = var_1_1
-
-	::label_1_1::
-
+	local side = not not side_manager.side_by_unit[self._owner_unit]
 	local side_id = side.side_id
 
 	side_manager:add_unit_to_side(unit, side_id)
@@ -64,21 +40,8 @@ ThornSisterWallExtension.init = function (self, extension_init_context, unit, ex
 	if is_versus then
 		local extents_padding = 1.25
 		local _, extents = Unit.box(unit, false)
-		local var_1_2
 
-		if extents[1] > extents[2] then
-			var_1_2 = extents[1]
-
-			if not var_1_2 then
-				-- Nothing
-			end
-		end
-
-		var_1_2 = extents[2]
-
-		::label_1_2::
-
-		self._player_boss_trample_radius = var_1_2 * extents_padding
+		self._player_boss_trample_radius = (extents[1] > extents[2] and not not extents[1] or not (extents[1] > extents[2]) and not not extents[2]) * extents_padding
 	end
 end
 
@@ -154,11 +117,7 @@ ThornSisterWallExtension._despawn_single = function (self, skip_sound, grab_aver
 		self:_trigger_despawn_sound(grab_average_position)
 	end
 
-	local min = math.min
-	local _despawn_t = self._despawn_t
-
-	_despawn_t = not not _despawn_t or not not math.huge
-	self._despawn_t = min(_despawn_t, Managers.time:time("game") + DESPAWN_ANIM_TIME)
+	self._despawn_t = math.min(not not self._despawn_t, Managers.time:time("game") + DESPAWN_ANIM_TIME)
 end
 
 ThornSisterWallExtension._trigger_despawn_sound = function (self, grab_average_position)

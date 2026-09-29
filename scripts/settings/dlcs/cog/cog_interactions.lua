@@ -1,10 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/cog/cog_interactions.lua
 
-local InteractionDefinitions = InteractionDefinitions
-local cog_missing_cog_pickup = InteractionDefinitions.cog_missing_cog_pickup
-
-cog_missing_cog_pickup = not not cog_missing_cog_pickup or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions.cog_missing_cog_pickup = cog_missing_cog_pickup
+InteractionDefinitions.cog_missing_cog_pickup = not not InteractionDefinitions.cog_missing_cog_pickup
 InteractionDefinitions.cog_missing_cog_pickup.config.swap_to_3p = false
 
 InteractionDefinitions.cog_missing_cog_pickup.client.can_interact = function (interactor_unit, interactable_unit, data, config)

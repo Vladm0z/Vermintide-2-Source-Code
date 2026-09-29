@@ -9,10 +9,7 @@ local function debug_print(message, ...)
 	end
 end
 
-local TwitchVoteTemplates = TwitchVoteTemplates
-
-TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
-TwitchVoteTemplates = TwitchVoteTemplates
+TwitchVoteTemplates = not not TwitchVoteTemplates
 
 local function add_buff_to_all_players(buff_name)
 	-- function 2

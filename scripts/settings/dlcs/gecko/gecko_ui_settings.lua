@@ -41,11 +41,7 @@ settings.start_game_window_layout = {
 			},
 			can_add_function = function (overview)
 				-- function 1
-				local is_in_mechanism = overview:is_in_mechanism("adventure")
-
-				is_in_mechanism = not not is_in_mechanism and not not overview:is_weekly_event_active()
-
-				return is_in_mechanism
+				return not not overview:is_in_mechanism("adventure")
 			end
 		},
 		{
@@ -93,11 +89,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 2
-				local is_in_mechanism = overview:is_in_mechanism("adventure")
-
-				is_in_mechanism = not not is_in_mechanism and not not overview:is_weekly_event_active()
-
-				return is_in_mechanism
+				return not not overview:is_in_mechanism("adventure")
 			end
 		},
 		{

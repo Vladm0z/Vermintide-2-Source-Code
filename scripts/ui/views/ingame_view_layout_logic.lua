@@ -12,22 +12,7 @@ IngameViewLayoutLogic.init = function (self, ingame_ui_context, params, menu_lay
 	local is_in_inn = ingame_ui_context.is_in_inn
 
 	self.is_server = ingame_ui_context.is_server
-
-	local in_menu
-
-	if is_in_inn then
-		in_menu = menu_layouts.in_menu
-
-		if not in_menu then
-			-- Nothing
-		end
-	end
-
-	in_menu = menu_layouts.in_game
-
-	::label_1_0::
-
-	self.layout_list = in_menu
+	self.layout_list = is_in_inn and not not menu_layouts.in_menu or not is_in_inn and not not menu_layouts.in_game
 end
 
 IngameViewLayoutLogic.setup_button_layout = function (self, layout_data)
@@ -86,23 +71,7 @@ IngameViewLayoutLogic._update_menu_options = function (self)
 		end
 	else
 		local num_human_players = Managers.player:num_human_players()
-		local pause_menu_full_access = self.pause_menu_full_access
-
-		if not pause_menu_full_access then
-			-- Nothing
-		end
-
-		if self.num_players == num_human_players then
-			pause_menu_full_access = false
-
-			goto label_3_0
-		end
-
-		pause_menu_full_access = true
-
-		local update_layout = pause_menu_full_access
-
-		::label_3_0::
+		local update_layout = not not self.pause_menu_full_access
 
 		self.pause_menu_full_access = nil
 
@@ -147,17 +116,7 @@ IngameViewLayoutLogic._update_menu_options_enabled_states = function (self)
 
 		for index, menu_option in ipairs(active_button_data) do
 			local disable_when_matchmaking, disable_when_matchmaking_ready, disable_not_matchmaking
-			local disable_for_mechanism_2 = menu_option.disable_for_mechanism
-
-			if disable_for_mechanism_2 then
-				-- Nothing
-			end
-
-			disable_for_mechanism_2 = menu_option.disable_for_mechanism[mechanism_name]
-
-			local disable_for_mechanism = disable_for_mechanism_2
-
-			::label_4_0::
+			local disable_for_mechanism = not not menu_option.disable_for_mechanism
 
 			if disable_for_mechanism then
 				disable_when_matchmaking = disable_for_mechanism.matchmaking
@@ -166,7 +125,7 @@ IngameViewLayoutLogic._update_menu_options_enabled_states = function (self)
 			end
 
 			local requires_player_unit = menu_option.requires_player_unit
-			local transition_not_allowed = (not player_ready_for_game or not disable_when_matchmaking_ready) and (not is_game_matchmaking or not disable_when_matchmaking) and (not requires_player_unit or not not has_player) and not not disable_not_matchmaking and not not not is_game_matchmaking
+			local transition_not_allowed = not not disable_not_matchmaking and not not not is_game_matchmaking
 
 			if transition_not_allowed and not menu_option.disabled then
 				menu_option.disabled = true

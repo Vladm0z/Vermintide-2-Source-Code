@@ -41,17 +41,7 @@ DeathSystem.on_add_extension = function (self, world, unit, extension_name, exte
 
 	self.unit_extensions[unit] = extension
 
-	local death_reaction_template = extension_init_data.death_reaction_template
-
-	if not death_reaction_template then
-		-- Nothing
-	end
-
-	death_reaction_template = Unit.get_data(unit, "death_reaction")
-
-	local template = death_reaction_template
-
-	::label_3_0::
+	local template = not not extension_init_data.death_reaction_template
 
 	self:set_death_reaction_template(unit, template)
 	fassert(extension.death_reaction_template, "Missing death reaction template in unit data or extension init data.")
@@ -131,10 +121,8 @@ DeathSystem.set_death_reaction_template = function (self, unit, template_name)
 
 	local network_type = extension.network_type
 	local active_reactions = self.active_reactions[network_type]
-	local var_11_0 = active_reactions[template_name]
 
-	var_11_0 = not not var_11_0 or not not {}
-	active_reactions[template_name] = var_11_0
+	active_reactions[template_name] = not not active_reactions[template_name]
 
 	if not extension.is_alive and not extension.death_is_done then
 		self.active_reactions[network_type][template_name][unit] = extension

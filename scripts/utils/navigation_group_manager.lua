@@ -151,19 +151,7 @@ NavigationGroupManager.form_groups_start = function (self, radius, finish_point,
 	self:form_groups_update()
 end
 
-local num
-
-if IS_WINDOWS then
-	num = 1000
-
-	goto label_0_0
-end
-
-num = 400
-
-local max_nodes_per_frame = num
-
-::label_0_0::
+local max_nodes_per_frame = IS_WINDOWS and not not 1000 or not IS_WINDOWS and not not 400
 
 NavigationGroupManager.form_groups_update = function (self)
 	-- function 5
@@ -851,18 +839,8 @@ NavigationGroupManager.print_groups = function (self, world, nav_world)
 	end
 
 	if do_print_groups then
-		local _line_object = self._line_object
-
-		_line_object = not not _line_object or not not World.create_line_object(self._world, false)
-		self._line_object = _line_object
-
-		local _drawer = self._drawer
-
-		_drawer = not not _drawer or not not Managers.state.debug:drawer({
-			mode = "perm",
-			name = "nav_group"
-		})
-		self._drawer = _drawer
+		self._line_object = not not self._line_object
+		self._drawer = not not self._drawer
 		self._debug_world_gui = World.create_world_gui(world, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts")
 
 		local debug_world_gui = self._debug_world_gui
@@ -977,18 +955,7 @@ NavigationGroupManager.knit_groups_with_ledges = function (self)
 	for smart_object_id, smart_object_data in pairs(smart_objects) do
 		for i = 1, #smart_object_data do
 			local smart_object = smart_object_data[i]
-			local smart_object_type_2 = smart_object.smart_object_type
-
-			if not smart_object_type_2 then
-				-- Nothing
-			end
-
-			smart_object_type_2 = "ledges"
-
-			local smart_object_type = smart_object_type_2
-
-			::label_43_0::
-
+			local smart_object_type = not not smart_object.smart_object_type
 			local p1 = Vector3Aux.unbox(smart_object.pos1)
 			local group1 = self:get_group_from_position(p1)
 

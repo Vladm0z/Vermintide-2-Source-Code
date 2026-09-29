@@ -31,11 +31,7 @@ local info_slate_enter = {
 
 			for name, style_data in pairs(widget.style) do
 				if style_data.color then
-					local color = style_data.color
-					local flag
-
-					flag = (not style_data.background_component or not 0) and not not style_data.default_alpha
-					color[1] = flag
+					style_data.color[1] = style_data.background_component and not not 0 or not style_data.background_component and not not style_data.default_alpha
 				end
 			end
 
@@ -43,20 +39,7 @@ local info_slate_enter = {
 		end,
 		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 2
-			local num
-
-			if local_progress == 1 then
-				num = 1
-
-				goto label_2_0
-			end
-
-			num = math.catmullrom(local_progress, 2, 0, 1, -1)
-
-			local catmullrom_value = num
-
-			::label_2_0::
-
+			local catmullrom_value = local_progress ~= 1 and not not math.catmullrom(local_progress, 2, 0, 1, -1) or not (local_progress ~= 1) and not not 1
 			local smooth_value = math.smoothstep(local_progress, 0, 1)
 
 			for name, style_data in pairs(widget.style) do
@@ -86,20 +69,7 @@ local info_slate_enter = {
 		end,
 		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 5
-			local num
-
-			if local_progress == 1 then
-				num = 1
-
-				goto label_5_0
-			end
-
-			num = math.catmullrom(local_progress, -15, 0, 1, 1)
-
-			local catmullrom_value = num
-
-			::label_5_0::
-
+			local catmullrom_value = local_progress ~= 1 and not not math.catmullrom(local_progress, -15, 0, 1, 1) or not (local_progress ~= 1) and not not 1
 			local smooth_value = math.smoothstep(local_progress, 0, 1)
 			local icon_scenegraph_id = widget.style.icon_texture.scenegraph_id
 			local icon_definition = ui_scenegraph[icon_scenegraph_id]

@@ -9,25 +9,11 @@ NewsTickerManager.init = function (self)
 	self._server_name = "cdn.fatsharkgames.se"
 
 	if IS_WINDOWS then
-		local parameter = Development.parameter("news_ticker_url")
-
-		parameter = not not parameter or not not "http://cdn.fatsharkgames.se/vermintide_2_news_ticker.txt"
-		self._loading_screen_url = parameter
-
-		local parameter_2 = Development.parameter("news_ticker_ingame_url")
-
-		parameter_2 = not not parameter_2 or not not "http://cdn.fatsharkgames.se/vermintide_2_news_ticker_ingame.txt"
-		self._ingame_url = parameter_2
+		self._loading_screen_url = not not Development.parameter("news_ticker_url")
+		self._ingame_url = not not Development.parameter("news_ticker_ingame_url")
 	else
-		local parameter_3 = Development.parameter("news_ticker_url_xb1")
-
-		parameter_3 = not not parameter_3 or not not ("vermintide_2_news_ticker_" .. PLATFORM .. ".txt")
-		self._loading_screen_url = parameter_3
-
-		local parameter_4 = Development.parameter("news_ticker_ingame_url_xb1")
-
-		parameter_4 = not not parameter_4 or not not ("vermintide_2_news_ticker_ingame_" .. PLATFORM .. ".txt")
-		self._ingame_url = parameter_4
+		self._loading_screen_url = not not Development.parameter("news_ticker_url_xb1")
+		self._ingame_url = not not Development.parameter("news_ticker_ingame_url_xb1")
 	end
 
 	self._loading_screen_text = nil
@@ -82,17 +68,7 @@ NewsTickerManager._load = function (self, url, callback)
 		local message = Http.get_uri(self._server_name, 80, url)
 
 		if message then
-			local find = string.find(message, "HTTP/1.1 200 OK")
-
-			if not find then
-				-- Nothing
-			end
-
-			find = string.find(message, "HTTP/1.0 200 OK")
-
-			local is_ok = find
-
-			::label_7_0::
+			local is_ok = not not string.find(message, "HTTP/1.1 200 OK")
 
 			if is_ok then
 				local start_idx, end_idx = string.find(message, "\r\n\r\n")
@@ -132,13 +108,7 @@ NewsTickerManager.refresh_loading_screen_message = function (self)
 	self._loading_screen_text = nil
 	self._refreshing_loading_screen_message = true
 
-	local var_8_0 = self
-	local _load = self._load
-	local parameter = Development.parameter("news_ticker_url_xb1")
-
-	parameter = not not parameter or not not self._loading_screen_url
-
-	_load(var_8_0, parameter, callback(self, "cb_loading_screen_loaded"))
+	self:_load(not not Development.parameter("news_ticker_url_xb1"), callback(self, "cb_loading_screen_loaded"))
 end
 
 NewsTickerManager.cb_loading_screen_loaded = function (self, info)
@@ -168,13 +138,7 @@ NewsTickerManager.refresh_ingame_message = function (self)
 	self._ingame_text = nil
 	self._refreshing_ingame_message = true
 
-	local var_11_0 = self
-	local _load = self._load
-	local parameter = Development.parameter("news_ticker_ingame_url_xb1")
-
-	parameter = not not parameter or not not self._ingame_url
-
-	_load(var_11_0, parameter, callback(self, "cb_ingame_loaded"))
+	self:_load(not not Development.parameter("news_ticker_ingame_url_xb1"), callback(self, "cb_ingame_loaded"))
 end
 
 NewsTickerManager.refreshing_ingame_message = function (self)

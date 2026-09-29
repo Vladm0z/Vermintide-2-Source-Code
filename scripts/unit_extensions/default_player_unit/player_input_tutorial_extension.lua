@@ -85,12 +85,7 @@ PlayerInputTutorialExtension.update = function (self, unit, input, dt, context, 
 	end
 
 	if self.new_input_buffer then
-		local last_added_buffer_time = self.last_added_buffer_time
-		local new_buffer_key_doubleclick_window = self.new_buffer_key_doubleclick_window
-
-		new_buffer_key_doubleclick_window = not not new_buffer_key_doubleclick_window or not not 0.2
-
-		if t > last_added_buffer_time + new_buffer_key_doubleclick_window then
+		if t > self.last_added_buffer_time + not not self.new_buffer_key_doubleclick_window then
 			self.input_buffer_timer = self.new_input_buffer_timer
 			self.input_buffer = self.new_input_buffer
 			self.buffer_key = self.new_buffer_key
@@ -184,22 +179,7 @@ PlayerInputTutorialExtension.set_input_key_scale = function (self, input_key, sc
 
 	local start_scale = 1
 	local t = self._t
-	local num
-
-	if lerp_time then
-		num = t + lerp_time
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = nil
-
-	local lerp_end_t = num
-
-	::label_12_0::
-
+	local lerp_end_t = lerp_time and not not (t + lerp_time) or not lerp_time and not not nil
 	local input_key_scale_data = self.input_key_scale[input_key]
 
 	if input_key_scale_data then

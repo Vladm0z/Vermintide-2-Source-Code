@@ -12,19 +12,7 @@ local function has_loot_objective(objective)
 	local level_settings = not not level_key and not not LevelSettings[level_key]
 	local loot_objectives = not not level_settings and not not level_settings.loot_objectives
 
-	if loot_objectives then
-		-- Nothing
-	end
-
-	::label_1_0::
-
-	local var_1_0 = loot_objectives[objective]
-
-	var_1_0 = not not var_1_0 and loot_objectives[objective] > 0
-
-	::label_1_1::
-
-	return var_1_0
+	return not not loot_objectives and not not loot_objectives[objective]
 end
 
 local function only_when_tomes_allowed_and_there_from_the_start()
@@ -384,18 +372,7 @@ end
 PassiveAbilityQuestingKnight._get_possible_challenges = function (self)
 	-- function 8
 	local game_mode_name = Managers.state.game_mode:game_mode_key()
-	local var_8_0 = challenge_settings[game_mode_name]
-
-	if not var_8_0 then
-		-- Nothing
-	end
-
-	var_8_0 = challenge_settings.default
-
-	local settings = var_8_0
-
-	::label_8_0::
-
+	local settings = not not challenge_settings[game_mode_name]
 	local possible_challenges = settings.possible_challenges
 
 	fassert(possible_challenges, "[PassiveAbilityQuestingKnight] possible_challenges not defined for the current game mode")
@@ -416,18 +393,7 @@ end
 PassiveAbilityQuestingKnight._get_side_quest_challenge = function (self)
 	-- function 9
 	local game_mode_name = Managers.state.game_mode:game_mode_key()
-	local var_9_0 = challenge_settings[game_mode_name]
-
-	if not var_9_0 then
-		-- Nothing
-	end
-
-	var_9_0 = challenge_settings.default
-
-	local settings = var_9_0
-
-	::label_9_0::
-
+	local settings = not not challenge_settings[game_mode_name]
 	local side_quest_challenge = settings.side_quest_challenge
 
 	fassert(side_quest_challenge, "[PassiveAbilityQuestingKnight] side_quest_challenge not defined for the current game mode")
@@ -438,23 +404,9 @@ end
 PassiveAbilityQuestingKnight._always_reset_quest_pool = function (self)
 	-- function 10
 	local game_mode_name = Managers.state.game_mode:game_mode_key()
-	local var_10_0 = challenge_settings[game_mode_name]
+	local settings = not not challenge_settings[game_mode_name]
 
-	if not var_10_0 then
-		-- Nothing
-	end
-
-	var_10_0 = challenge_settings.default
-
-	local settings = var_10_0
-
-	::label_10_0::
-
-	local always_reset_quest_pool = settings.always_reset_quest_pool
-
-	always_reset_quest_pool = not not always_reset_quest_pool or not not false
-
-	return always_reset_quest_pool
+	return not not settings.always_reset_quest_pool
 end
 
 PassiveAbilityQuestingKnight._start_quest_from_pool = function (self, quest_pool, num_to_start)

@@ -252,7 +252,7 @@ settings.buff_function_templates = {
 			frag_settings = fire_settings
 		end
 
-		local pickup_settings = (not pick_frag or not frag_settings) and not not fire_settings
+		local pickup_settings = pick_frag and (not not frag_settings or not not fire_settings) or not pick_frag and not not fire_settings
 		local item_name = pickup_settings.item_name
 		local item_data = ItemMasterList[item_name]
 		local player = Managers.player:owner(unit)

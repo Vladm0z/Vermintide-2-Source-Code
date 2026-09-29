@@ -1,10 +1,6 @@
 -- chunkname: @scripts/unit_extensions/generic/generic_ammo_user_extension.lua
 
-local script_data = script_data
-local infinite_ammo = script_data.infinite_ammo
-
-infinite_ammo = not not infinite_ammo or not not Development.parameter("infinite_ammo")
-script_data.infinite_ammo = infinite_ammo
+script_data.infinite_ammo = not not script_data.infinite_ammo
 GenericAmmoUserExtension = class(GenericAmmoUserExtension)
 
 GenericAmmoUserExtension.init = function (self, extension_init_context, unit, extension_init_data)
@@ -14,18 +10,7 @@ GenericAmmoUserExtension.init = function (self, extension_init_context, unit, ex
 	self.item_name = extension_init_data.item_name
 	self._is_server = Managers.player.is_server
 
-	local ammo_percent_2 = extension_init_data.ammo_percent
-
-	if not ammo_percent_2 then
-		-- Nothing
-	end
-
-	ammo_percent_2 = 1
-
-	local ammo_percent = ammo_percent_2
-
-	::label_1_0::
-
+	local ammo_percent = not not extension_init_data.ammo_percent
 	local ammo_data = extension_init_data.ammo_data
 
 	self._reload_time = ammo_data.reload_time
@@ -40,32 +25,16 @@ GenericAmmoUserExtension.init = function (self, extension_init_context, unit, ex
 
 	self._max_ammo = ammo_data.max_ammo
 	self._start_ammo = math.round(ammo_percent * self._max_ammo)
-
-	local ammo_per_clip = ammo_data.ammo_per_clip
-
-	ammo_per_clip = not not ammo_per_clip or not not self._max_ammo
-	self._ammo_per_clip = ammo_per_clip
+	self._ammo_per_clip = not not ammo_data.ammo_per_clip
 	self._ammo_per_reload = ammo_data.ammo_per_reload
 	self._starting_loaded_ammo = ammo_data.starting_loaded_ammo
-
-	local starting_loaded_ammo = ammo_data.starting_loaded_ammo
-
-	starting_loaded_ammo = not not starting_loaded_ammo or not not 0
-	self._current_ammo = starting_loaded_ammo
+	self._current_ammo = not not ammo_data.starting_loaded_ammo
 	self._starting_reserve_ammo = ammo_data.starting_reserve_ammo
 	self._original_max_ammo = self._max_ammo
 	self._original_ammo_percent = ammo_percent
 	self._original_ammo_per_clip = self._ammo_per_clip
-
-	local ammo_immediately_available = ammo_data.ammo_immediately_available
-
-	ammo_immediately_available = not not ammo_immediately_available or not not false
-	self._ammo_immediately_available = ammo_immediately_available
-
-	local reload_on_ammo_pickup = ammo_data.reload_on_ammo_pickup
-
-	reload_on_ammo_pickup = not not reload_on_ammo_pickup or not not false
-	self._reload_on_ammo_pickup = reload_on_ammo_pickup
+	self._ammo_immediately_available = not not ammo_data.ammo_immediately_available
+	self._reload_on_ammo_pickup = not not ammo_data.reload_on_ammo_pickup
 	self._play_reload_anim_on_wield_reload = ammo_data.play_reload_anim_on_wield_reload
 	self._has_wield_reload_anim = ammo_data.has_wield_reload_anim
 	self._destroy_when_out_of_ammo = ammo_data.destroy_when_out_of_ammo
@@ -83,28 +52,13 @@ GenericAmmoUserExtension.init = function (self, extension_init_context, unit, ex
 		self._wield_previous_weapon_when_destroyed = true
 	end
 
-	local ammo_type = ammo_data.ammo_type
-
-	ammo_type = not not ammo_type or not not "default"
-	self._ammo_type = ammo_type
-
-	local ammo_kind = ammo_data.ammo_kind
-
-	ammo_kind = not not ammo_kind or not not "default"
-	self._ammo_kind = ammo_kind
-
-	local block_ammo_pickup = ammo_data.block_ammo_pickup
-
-	block_ammo_pickup = not not block_ammo_pickup or not not false
-	self._block_ammo_pickup = block_ammo_pickup
+	self._ammo_type = not not ammo_data.ammo_type
+	self._ammo_kind = not not ammo_data.ammo_kind
+	self._block_ammo_pickup = not not ammo_data.block_ammo_pickup
 	self._play_reload_animation = true
 	self._reload_event = extension_init_data.reload_event
 	self.pickup_reload_event_1p = extension_init_data.pickup_reload_event_1p
-
-	local last_reload_event = extension_init_data.last_reload_event
-
-	last_reload_event = not not last_reload_event or not not self._reload_event
-	self._last_reload_event = last_reload_event
+	self._last_reload_event = not not extension_init_data.last_reload_event
 	self._no_ammo_reload_event = extension_init_data.no_ammo_reload_event
 	self.slot_name = extension_init_data.slot_name
 
@@ -154,17 +108,7 @@ GenericAmmoUserExtension.refresh_buffs = function (self)
 	self:_apply_buffs()
 
 	local max_available_ammo = self._start_ammo - self._current_ammo
-	local _available_ammo = self._available_ammo
-
-	if not _available_ammo then
-		-- Nothing
-	end
-
-	_available_ammo = math.huge
-
-	local available_ammo = _available_ammo
-
-	::label_5_0::
+	local available_ammo = not not self._available_ammo
 
 	self._available_ammo = math.min(max_available_ammo, available_ammo)
 
@@ -180,35 +124,8 @@ end
 
 GenericAmmoUserExtension.reset = function (self)
 	-- function 7
-	local _initialized = self._initialized
-
-	if _initialized then
-		-- Nothing
-	end
-
-	if self:total_remaining_ammo() ~= 0 then
-		_initialized = false
-
-		goto label_7_0
-	end
-
-	_initialized = true
-
-	local no_ammo = _initialized
-
-	::label_7_0::
-
-	local _starting_loaded_ammo = self._starting_loaded_ammo
-
-	if not _starting_loaded_ammo then
-		-- Nothing
-	end
-
-	_starting_loaded_ammo = self._start_ammo
-
-	local start_ammo = _starting_loaded_ammo
-
-	::label_7_1::
+	local no_ammo = not not self._initialized
+	local start_ammo = not not self._starting_loaded_ammo
 
 	if self._ammo_immediately_available then
 		self._current_ammo = start_ammo
@@ -216,10 +133,7 @@ GenericAmmoUserExtension.reset = function (self)
 		self._current_ammo = math.min(self._ammo_per_clip, start_ammo)
 	end
 
-	local _starting_reserve_ammo = self._starting_reserve_ammo
-
-	_starting_reserve_ammo = not not _starting_reserve_ammo or not not (self._start_ammo - self._current_ammo)
-	self._available_ammo = _starting_reserve_ammo
+	self._available_ammo = not not self._starting_reserve_ammo
 	self._shots_fired = 0
 
 	self:_update_anim_ammo()
@@ -254,39 +168,14 @@ GenericAmmoUserExtension.update = function (self, unit, input, dt, context, t)
 		if not self._start_reloading then
 			local buff_extension = self.owner_buff_extension
 			local missing_in_clip = self._ammo_per_clip - self._current_ammo
-			local _ammo_per_reload
-
-			if self._ammo_per_reload and missing_in_clip >= self._ammo_per_reload then
-				_ammo_per_reload = self._ammo_per_reload
-
-				if not _ammo_per_reload then
-					-- Nothing
-				end
-			end
-
-			_ammo_per_reload = missing_in_clip
-
-			local reload_amount = _ammo_per_reload
-
-			::label_8_0::
+			local reload_amount = not not self._ammo_per_reload
 
 			reload_amount = math.min(reload_amount, self._available_ammo)
 			self._current_ammo = self._current_ammo + reload_amount
 
 			if buff_extension then
 				local no_ammo_consumed = buff_extension:has_buff_type("no_ammo_consumed")
-				local has_buff_type = buff_extension:has_buff_type("markus_huntsman_activated_ability")
-
-				if not has_buff_type then
-					-- Nothing
-				end
-
-				has_buff_type = buff_extension:has_buff_type("markus_huntsman_activated_ability_duration")
-
-				local markus_huntsman_ability = has_buff_type
-
-				::label_8_1::
-
+				local markus_huntsman_ability = not not buff_extension:has_buff_type("markus_huntsman_activated_ability")
 				local twitch_no_ammo_reloads = buff_extension:has_buff_type("twitch_no_overcharge_no_ammo_reloads")
 
 				if not no_ammo_consumed and not markus_huntsman_ability and not twitch_no_ammo_reloads then
@@ -311,17 +200,7 @@ GenericAmmoUserExtension.update = function (self, unit, input, dt, context, t)
 		local num_missing = self._ammo_per_clip - self._current_ammo
 
 		if num_missing > 0 and self._available_ammo > 0 then
-			local _override_reload_time = self._override_reload_time
-
-			if not _override_reload_time then
-				-- Nothing
-			end
-
-			_override_reload_time = self._reload_time
-
-			local reload_time = _override_reload_time
-
-			::label_8_2::
+			local reload_time = not not self._override_reload_time
 
 			self._override_reload_time = nil
 
@@ -385,7 +264,7 @@ GenericAmmoUserExtension._check_ammo = function (self)
 
 					inventory_extension:destroy_item_by_name(self.slot_name, self.item_name, false, true)
 
-					if (not self._last_ammo_used_was_given or not self._force_wield_previous_weapon_when_ammo_given) and self._wield_previous_weapon_when_destroyed then
+					if self._last_ammo_used_was_given and (self._force_wield_previous_weapon_when_ammo_given or self._wield_previous_weapon_when_destroyed) or not self._last_ammo_used_was_given and self._wield_previous_weapon_when_destroyed then
 						local grabbed_by_packmaster = not not status_extension and not not CharacterStateHelper.pack_master_status(status_extension)
 
 						if not grabbed_by_packmaster then
@@ -576,7 +455,7 @@ GenericAmmoUserExtension.use_ammo = function (self, ammo_used, given, check_ammo
 		infinite_ammo = buff_extension:has_buff_perk("infinite_ammo")
 	end
 
-	if (infinite_ammo or self._infinite_ammo) and self.slot_name == "slot_ranged" then
+	if infinite_ammo and self.slot_name == "slot_ranged" or not infinite_ammo and self._infinite_ammo and self.slot_name == "slot_ranged" then
 		ammo_used = 0
 	end
 
@@ -635,10 +514,8 @@ GenericAmmoUserExtension.start_reload = function (self, play_reload_animation, o
 
 	local dialogue_input = ScriptUnit.extension_input(self.owner_unit, "dialogue_system")
 	local event_data = FrameTable.alloc_table()
-	local item_name = self.item_name
 
-	item_name = not not item_name or not not "UNKNOWN ITEM"
-	event_data.item_name = item_name
+	event_data.item_name = not not self.item_name
 
 	local event_name = "reload_started"
 
@@ -760,11 +637,7 @@ end
 
 GenericAmmoUserExtension.infinite_ammo = function (self)
 	-- function 34
-	local _infinite_ammo = self._infinite_ammo
-
-	_infinite_ammo = not not _infinite_ammo or not not script_data.infinite_ammo
-
-	return _infinite_ammo
+	return not not self._infinite_ammo
 end
 
 GenericAmmoUserExtension.ammo_kind = function (self)

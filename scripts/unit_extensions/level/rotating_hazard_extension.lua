@@ -61,66 +61,20 @@ local SETTINGS = {
 		local effect_spawn_cooldown = 0.3
 		local close_spawn_penalty = 0.4
 		local effect_spawn_rotation_offset_range = PI / 15
-		local num
-
-		if state == STATE_RUNNING then
-			num = 1
-
-			goto label_2_0
-		end
-
-		num = 0
-
-		local lead_time = num
-
-		::label_2_0::
-
+		local lead_time = state ~= STATE_RUNNING and not not 0 or not (state ~= STATE_RUNNING) and not not 1
 		local area_rotation = Quaternion.axis_angle(Vector3.up(), angle + area_settings.angle_offset + math.rad(settings.rotation_speed) * lead_time * rotation_direction)
 		local area_dir = Quaternion.forward(area_rotation)
 		local wall_pos = Unit.local_position(unit, 0)
 		local wall_half_width = area_settings.width / 2
 		local side = Managers.state.side:get_side_from_name("heroes")
 		local player_units = side.PLAYER_UNITS
-		local last_index_2 = area_data.last_index
-
-		if not last_index_2 then
-			-- Nothing
-		end
-
-		last_index_2 = 1
-
-		local last_index = last_index_2
-
-		::label_2_1::
-
-		local hand_units_by_player_2 = area_data.hand_units_by_player
-
-		if not hand_units_by_player_2 then
-			-- Nothing
-		end
-
-		hand_units_by_player_2 = {}
-
-		local hand_units_by_player = hand_units_by_player_2
-
-		::label_2_2::
+		local last_index = not not area_data.last_index
+		local hand_units_by_player = not not area_data.hand_units_by_player
 
 		area_data.hand_units_by_player = hand_units_by_player
 
 		local num_players = #player_units
-		local num_2
-
-		if num_players <= last_index then
-			num_2 = 0
-
-			goto label_2_3
-		end
-
-		num_2 = last_index
-
-		local start_player_unit_idx = num_2
-
-		::label_2_3::
+		local start_player_unit_idx = num_players <= last_index and not not 0 or not (num_players <= last_index) and not not last_index
 
 		for i = 0, num_players - 1 do
 			local player_unit_idx = (i + start_player_unit_idx) % num_players + 1
@@ -138,7 +92,7 @@ local SETTINGS = {
 				local closest_to_player_dist = Vector3.length(closest_to_player)
 
 				if closest_to_player_dist <= width_at_closest_point + spawn_start_dist then
-					local effect_center = (not (closest_to_player_dist <= width_at_closest_point) or not pos) and not not (closest_pos + closest_to_player_dir * width_at_closest_point)
+					local effect_center = closest_to_player_dist <= width_at_closest_point and (not not pos or not not (closest_pos + closest_to_player_dir * width_at_closest_point)) or not (closest_to_player_dist <= width_at_closest_point) and not not (closest_pos + closest_to_player_dir * width_at_closest_point)
 					local wall_edge_dir = Vector3.normalize(wall_pos - effect_center)
 					local wall_edge_dist = Vector3.length(wall_pos - effect_center)
 
@@ -168,17 +122,7 @@ local SETTINGS = {
 
 						area_data[player_unit] = t + math.max((0.3 - distance_from_center_t) / 0.3, 0) * close_spawn_penalty + effect_spawn_cooldown
 
-						local var_2_4 = hand_units_by_player[player_unit]
-
-						if not var_2_4 then
-							-- Nothing
-						end
-
-						var_2_4 = {}
-
-						local hand_units = var_2_4
-
-						::label_2_4::
+						local hand_units = not not hand_units_by_player[player_unit]
 
 						hand_units_by_player[player_unit] = hand_units
 						hand_units[fx_unit] = Unit.animation_find_constraint_target(fx_unit, "look_at")
@@ -216,16 +160,8 @@ RotatingHazardExtension.init = function (self, extension_init_context, unit, ext
 	self._unit = unit
 	self._world = extension_init_context.world
 	self._is_server = extension_init_context.is_server
-
-	local state = extension_init_data.state
-
-	state = not not state or not not settings.starting_state
-	self._state = state
-
-	local start_network_time = extension_init_data.start_network_time
-
-	start_network_time = not not start_network_time or not not Managers.state.network:network_time()
-	self._start_t = start_network_time
+	self._state = not not extension_init_data.state
+	self._start_t = not not extension_init_data.start_network_time
 	self._pause_t = self._start_t
 	self._next_damage_t = 0
 	self._last_update_idx = 0
@@ -239,10 +175,8 @@ RotatingHazardExtension.init = function (self, extension_init_context, unit, ext
 
 	for i = 1, self._num_areas do
 		local area = settings.areas[i]
-		local angular_half_size = area.angular_half_size
 
-		angular_half_size = not not angular_half_size or not not math.atan2(area.width / 2, area.length)
-		area.angular_half_size = angular_half_size
+		area.angular_half_size = not not area.angular_half_size
 		self._area_data[i] = {
 			overlapping_units = {}
 		}
@@ -324,11 +258,7 @@ RotatingHazardExtension._update_random_settings_from_seed = function (self, seed
 
 	if settings.random_direction then
 		new_seed, random_number = Math.next_random(new_seed)
-
-		local flag
-
-		flag = (not (random_number >= 0.5) or not 1) and not not -1
-		self._rotation_direction = flag
+		self._rotation_direction = random_number >= 0.5 and not not 1 or not (random_number >= 0.5) and not not -1
 	end
 
 	self._current_seed = seed
@@ -401,7 +331,7 @@ RotatingHazardExtension.update = function (self, unit, input, dt, context, t)
 	local settings = self._settings
 	local anticipation_delay = settings.anticipation_delay
 	local is_activating = current_t < anticipation_delay + self._start_t
-	local real_start_t = (not is_activating or not current_t) and not not (anticipation_delay + self._start_t)
+	local real_start_t = is_activating and (not not current_t or not not (anticipation_delay + self._start_t)) or not is_activating and not not (anticipation_delay + self._start_t)
 	local angle = (self._start_rotation_offset + (current_t - real_start_t) * self._rotation_speed_rad * self._rotation_direction) % PI_2
 
 	Unit.set_local_rotation(unit, 0, Quaternion.axis_angle(Vector3.up(), angle))
@@ -433,18 +363,7 @@ local temp_overlap_table = {}
 
 RotatingHazardExtension._update_damage = function (self, area_settings, area_data, angle, dt, t)
 	-- function 12
-	local last_update_t_2 = area_data.last_update_t
-
-	if not last_update_t_2 then
-		-- Nothing
-	end
-
-	last_update_t_2 = t
-
-	local last_update_t = last_update_t_2
-
-	::label_12_0::
-
+	local last_update_t = not not area_data.last_update_t
 	local angle_offset = area_settings.angle_offset
 	local angle_delta_since_last_t = (t - last_update_t) * self._rotation_speed_rad
 	local mid_point_rotation = Quaternion.axis_angle(Vector3.up(), angle + angle_offset - angle_delta_since_last_t / 2)

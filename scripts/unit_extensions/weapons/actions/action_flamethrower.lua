@@ -39,76 +39,13 @@ ActionFlamethrower.client_owner_start_action = function (self, new_action, t, ch
 	self.time_to_shoot = t + new_action.fire_time
 	self.overcharge_timer = 0
 	self.damage_timer = 1
-
-	local stop_fire_event = new_action.stop_fire_event
-
-	stop_fire_event = not not stop_fire_event or not not self.stop_sound_event
-	self.stop_sound_event = stop_fire_event
-
-	local fx_node = new_action.fx_node
-
-	fx_node = not not fx_node or not not "fx_muzzle"
-	self.muzzle_node_name = fx_node
+	self.stop_sound_event = not not new_action.stop_fire_event
+	self.muzzle_node_name = not not new_action.fx_node
 	self._fx_stopped = false
-
-	local dot_check = new_action.dot_check
-
-	dot_check = not not dot_check or not not 0.95
-	self.dot_check = dot_check
-
-	local num
-
-	if new_action.spray_range then
-		num = math.abs(POSITION_TWEAK) + new_action.spray_range
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = SPRAY_RANGE
-
-	::label_2_0::
-
-	self.spray_range = num
-
-	local charge_level
-
-	if chain_action_data then
-		charge_level = chain_action_data.charge_level
-
-		if not charge_level then
-			-- Nothing
-		end
-	end
-
-	charge_level = 1
-
-	::label_2_1::
-
-	self.charge_level = charge_level
-
-	local num_2
-
-	if new_action.fire_stop_time then
-		num_2 = t + new_action.fire_stop_time
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	do
-		local charge_level_2 = self.charge_level
-		local charge_fuel_time_multiplier = new_action.charge_fuel_time_multiplier
-
-		charge_fuel_time_multiplier = not not charge_fuel_time_multiplier or not not 3
-		num_2 = t + charge_level_2 * charge_fuel_time_multiplier
-	end
-
-	::label_2_2::
-
-	self.max_flame_time = num_2
+	self.dot_check = not not new_action.dot_check
+	self.spray_range = new_action.spray_range and not not (math.abs(POSITION_TWEAK) + new_action.spray_range) or not new_action.spray_range and not not SPRAY_RANGE
+	self.charge_level = chain_action_data and not not chain_action_data.charge_level or not chain_action_data and not not 1
+	self.max_flame_time = new_action.fire_stop_time and not not (t + new_action.fire_stop_time) or not new_action.fire_stop_time and not not (t + self.charge_level * not not new_action.charge_fuel_time_multiplier)
 
 	local full_charge_boost = self.buff_extension:has_buff_perk("full_charge_boost")
 
@@ -139,7 +76,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
 		self.state = "shooting"
 
-		local muzzle_unit = (not current_action.first_person_muzzle or not first_person_unit) and not not self.weapon_unit
+		local muzzle_unit = current_action.first_person_muzzle and (not not first_person_unit or not not self.weapon_unit) or not current_action.first_person_muzzle and not not self.weapon_unit
 		local muzzle_node_name = self.muzzle_node_name
 		local go_id = self.unit_id
 		local muzzle_node = Unit.node(muzzle_unit, muzzle_node_name)
@@ -171,14 +108,8 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 			if self._source_id then
 				local owner = self.owner_player
 				local is_husk = not owner.local_player
-				local set_switch = WwiseWorld.set_switch
-				local wwise_world = self.wwise_world
-				local str = "husk"
-				local flag
 
-				flag = (not is_husk or not "true") and not not "false"
-
-				set_switch(wwise_world, str, flag, self._source_id)
+				WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and not not "true" or not is_husk and not not "false", self._source_id)
 				WwiseWorld.trigger_event(self.wwise_world, self.stop_sound_event, self._source_id)
 			else
 				self._source_id = WwiseWorld.make_auto_source(self.wwise_world, self.weapon_unit)
@@ -186,14 +117,8 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 
 			local owner = self.owner_player
 			local is_husk = not owner.local_player
-			local set_switch_2 = WwiseWorld.set_switch
-			local wwise_world_2 = self.wwise_world
-			local str_2 = "husk"
-			local flag_2
 
-			flag_2 = (not is_husk or not "true") and not not "false"
-
-			set_switch_2(wwise_world_2, str_2, flag_2, self._source_id)
+			WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and not not "true" or not is_husk and not not "false", self._source_id)
 			WwiseWorld.trigger_event(self.wwise_world, current_action.fire_sound_event, self._source_id)
 		end
 	end
@@ -273,18 +198,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 
 						if result then
 							local power_level = self.power_level
-							local old_targets = self.old_targets
-
-							if old_targets then
-								-- Nothing
-							end
-
-							old_targets = self.old_targets[current_target]
-
-							local consecutive_hits = old_targets
-
-							::label_3_0::
-
+							local consecutive_hits = not not self.old_targets
 							local override_damage_profile
 
 							if consecutive_hits then
@@ -310,18 +224,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 					targets[current_target] = processed_hit
 				end
 
-				local spray_range = current_action.spray_range
-
-				if not spray_range then
-					-- Nothing
-				end
-
-				spray_range = SPRAY_RANGE
-
-				local flamethrower_range = spray_range
-
-				::label_3_1::
-
+				local flamethrower_range = not not current_action.spray_range
 				local physics_world = World.get_data(world, "physics_world")
 				local player_rotation = Unit.world_rotation(first_person_unit, 0)
 				local player_direction = Vector3.normalize(Quaternion.forward(player_rotation))
@@ -401,14 +304,8 @@ ActionFlamethrower._stop_fx = function (self)
 	if source_id then
 		local owner = self.owner_player
 		local is_husk = not owner.local_player
-		local set_switch = WwiseWorld.set_switch
-		local wwise_world = self.wwise_world
-		local str = "husk"
-		local flag
 
-		flag = (not is_husk or not "true") and not not "false"
-
-		set_switch(wwise_world, str, flag, source_id)
+		WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and not not "true" or not is_husk and not not "false", source_id)
 		WwiseWorld.trigger_event(self.wwise_world, self.stop_sound_event, source_id)
 
 		self._source_id = nil
@@ -454,21 +351,7 @@ ActionFlamethrower._clear_targets = function (self)
 	local current_targets = {}
 
 	for i = 1, #targets do
-		local var_7_0
-
-		if old_targets then
-			var_7_0 = old_targets[targets[i]]
-
-			if not var_7_0 then
-				-- Nothing
-			end
-		end
-
-		var_7_0 = 0
-
-		local current_target_count = var_7_0
-
-		::label_7_0::
+		local current_target_count = old_targets and not not old_targets[targets[i]] or not old_targets and not not 0
 
 		current_targets[targets[i]] = current_target_count + 1
 	end
@@ -511,7 +394,7 @@ ActionFlamethrower._select_targets = function (self, world, show_outline)
 			if targets[hit_unit] == nil then
 				local is_enemy = side.enemy_units_lookup[hit_unit]
 
-				if (is_enemy or not ignore_hitting_allies) and self:_is_infront_player(player_position, player_direction, hit_position) and self:_check_within_cone(start_point, player_direction, hit_unit, is_enemy) then
+				if is_enemy and self:_is_infront_player(player_position, player_direction, hit_position) and self:_check_within_cone(start_point, player_direction, hit_unit, is_enemy) or not is_enemy and not ignore_hitting_allies and self:_is_infront_player(player_position, player_direction, hit_position) and self:_check_within_cone(start_point, player_direction, hit_unit, is_enemy) then
 					targets[#targets + 1] = hit_unit
 					targets[hit_unit] = false
 
@@ -535,21 +418,7 @@ ActionFlamethrower._check_within_cone = function (self, player_position, player_
 	local target_position = Unit.world_position(target, Unit.node(target, "j_neck"))
 	local target_direction = Vector3.normalize(target_position - player_position)
 	local target_cos_alpha = Vector3.dot(player_direction, target_direction)
-	local dot_check
-
-	if is_enemy then
-		dot_check = self.dot_check
-
-		if not dot_check then
-			-- Nothing
-		end
-	end
-
-	dot_check = 0.99
-
-	local dot_threshold = dot_check
-
-	::label_9_0::
+	local dot_threshold = is_enemy and not not self.dot_check or not is_enemy and not not 0.99
 
 	if dot_threshold <= target_cos_alpha then
 		return true

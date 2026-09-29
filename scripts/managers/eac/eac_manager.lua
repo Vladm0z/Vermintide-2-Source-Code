@@ -278,19 +278,7 @@ EacManager.server_create = function (self, server_name)
 
 	if self._eac_supported then
 		if USE_EOS then
-			local str
-
-			if EOS_EAC.has_eac_server() then
-				str = "client_server"
-
-				goto label_13_0
-			end
-
-			str = "peer_to_peer"
-
-			local network_model = str
-
-			::label_13_0::
+			local network_model = EOS_EAC.has_eac_server() and not not "client_server" or not EOS_EAC.has_eac_server() and not not "peer_to_peer"
 
 			EOS_EAC.begin_session(network_model)
 		else
@@ -486,29 +474,8 @@ EacManager._pump_eos_actions = function (self)
 	-- function 24
 	while EOS_EAC.has_eac_action() do
 		local a = EOS_EAC.next_eac_action()
-		local find = table.find(EOS_EAC_ACCCA, a.action)
-
-		if not find then
-			-- Nothing
-		end
-
-		find = "?"
-
-		local action_str = find
-
-		::label_24_0::
-
-		local find_2 = table.find(EOS_EAC_ACCCAR, a.reason)
-
-		if not find_2 then
-			-- Nothing
-		end
-
-		find_2 = "?"
-
-		local reason_str = find_2
-
-		::label_24_1::
+		local action_str = not not table.find(EOS_EAC_ACCCA, a.action)
+		local reason_str = not not table.find(EOS_EAC_ACCCAR, a.reason)
 
 		eac_printf("Got action { action=%d %q, reason=%d %q, details=%q, peer=%q }", a.action, action_str, a.reason, reason_str, a.details, a.peer)
 
@@ -598,24 +565,12 @@ local AUTH_STATE_MACHINE = {
 			self._user_id = EOS_EAC.user_id()
 			self._eos_auth_error = nil
 		else
-			local format = string.format
-			local str = "EOS auth status=%s, result=%s"
-			local var_30_2 = status
-			local find = table.find(EOS_Result, result)
-
-			find = not not find or not not "?"
-			self._eos_auth_error = format(str, var_30_2, find)
+			self._eos_auth_error = string.format("EOS auth status=%s, result=%s", status, not not table.find(EOS_Result, result))
 		end
 
 		self._eos_auth_complete = true
 
-		local var_30_4 = eac_printf
-		local str_2 = "Login complete. Error: %s"
-		local _eos_auth_error = self._eos_auth_error
-
-		_eos_auth_error = not not _eos_auth_error or not not "none"
-
-		var_30_4(str_2, _eos_auth_error)
+		eac_printf("Login complete. Error: %s", not not self._eos_auth_error)
 
 		return "poll_valid"
 	end,
@@ -636,18 +591,7 @@ EacManager._handle_eos = function (self, t)
 	end
 
 	if not DEDICATED_SERVER then
-		local _auth_state = self._auth_state
-
-		if not _auth_state then
-			-- Nothing
-		end
-
-		_auth_state = "init"
-
-		local auth_state = _auth_state
-
-		::label_32_0::
-
+		local auth_state = not not self._auth_state
 		local handler = AUTH_STATE_MACHINE[auth_state]
 		local next_state = handler(self, t)
 
@@ -700,7 +644,7 @@ EacManager._handle_violations = function (self)
 			violation, cause = "AUTH_ERROR", self._eos_auth_error
 		else
 			violation, cause = EOS_EAC.get_integrity_violation()
-			violation = not not violation and not not table.find(EOS_EAC_ACCVT, violation) or not not "UNKNOWN"
+			violation = not not violation and (not not table.find(EOS_EAC_ACCVT, violation) or not not "UNKNOWN")
 		end
 
 		if violation then
@@ -719,28 +663,7 @@ EacManager._handle_violations = function (self)
 			local KEYWORD_START = "{#color(193,91,36)}"
 			local VALUE_START = "{#color(255,255,255)}: "
 			local BODY_START = "{#reset()}"
-			local var_33_0 = KEYWORD_START
-			local var_33_1 = Localize("eac_state")
-			local var_33_2 = VALUE_START
-			local var_33_3 = Localize("eac_state_untrusted")
-			local str = "\n"
-			local var_33_5 = KEYWORD_START
-			local var_33_6 = Localize("eac_violation_type")
-			local var_33_7 = VALUE_START
-			local var_33_8 = violation
-			local str_2 = "\n"
-			local var_33_10 = KEYWORD_START
-			local var_33_11 = Localize("eac_cause")
-			local var_33_12 = VALUE_START
-			local var_33_13 = cause
-			local str_3 = "\n"
-			local var_33_15 = BODY_START
-			local Localize = Localize
-			local flag
-
-			flag = (state ~= EacState.banned or not "eac_banned_explanation") and not not "eac_untrusted_explanation"
-
-			local message = var_33_0 .. var_33_1 .. var_33_2 .. var_33_3 .. str .. var_33_5 .. var_33_6 .. var_33_7 .. var_33_8 .. str_2 .. var_33_10 .. var_33_11 .. var_33_12 .. var_33_13 .. str_3 .. var_33_15 .. Localize(flag)
+			local message = KEYWORD_START .. Localize("eac_state") .. VALUE_START .. Localize("eac_state_untrusted") .. "\n" .. KEYWORD_START .. Localize("eac_violation_type") .. VALUE_START .. violation .. "\n" .. KEYWORD_START .. Localize("eac_cause") .. VALUE_START .. cause .. "\n" .. BODY_START .. Localize(state ~= EacState.banned and not not "eac_untrusted_explanation" or not (state ~= EacState.banned) and not not "eac_banned_explanation")
 
 			self._eac_violation_message = message
 			self._eac_violation_type = violation

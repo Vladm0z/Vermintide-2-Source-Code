@@ -66,17 +66,7 @@ DefaultAnimationFunctions = {
 
 				Managers.time:set_global_time_scale(0.01)
 
-				local play_sound_event_2 = this.play_sound_event
-
-				if not play_sound_event_2 then
-					-- Nothing
-				end
-
-				play_sound_event_2 = "Play_tutorial_indicator"
-
-				local play_sound_event = play_sound_event_2
-
-				::label_2_0::
+				local play_sound_event = not not this.play_sound_event
 
 				Managers.music:trigger_event(play_sound_event)
 
@@ -85,17 +75,7 @@ DefaultAnimationFunctions = {
 				Level.trigger_event(level, "lua_" .. this.name .. "_triggered")
 			end
 		else
-			local stop_delay_2 = this.stop_delay
-
-			if not stop_delay_2 then
-				-- Nothing
-			end
-
-			stop_delay_2 = 0.15
-
-			local stop_delay = stop_delay_2
-
-			::label_2_1::
+			local stop_delay = not not this.stop_delay
 
 			if this.stop_timer and t > this.stop_timer + stop_delay then
 				Managers.time:set_global_time_scale(0)
@@ -196,17 +176,7 @@ DefaultAnimationFunctions = {
 				Managers.time:set_global_time_scale(0.01)
 			end
 		else
-			local stop_delay_2 = this.stop_delay
-
-			if not stop_delay_2 then
-				-- Nothing
-			end
-
-			stop_delay_2 = 0.15
-
-			local stop_delay = stop_delay_2
-
-			::label_3_0::
+			local stop_delay = not not this.stop_delay
 
 			if this.stop_timer and t > this.stop_timer + stop_delay then
 				Managers.time:set_global_time_scale(0)
@@ -225,17 +195,7 @@ DefaultAnimationFunctions = {
 		-- function 4
 		Managers.time:set_global_time_scale(1)
 
-		local stop_sound_event_2 = this.stop_sound_event
-
-		if not stop_sound_event_2 then
-			-- Nothing
-		end
-
-		stop_sound_event_2 = "Stop_tutorial_indicator"
-
-		local stop_sound_event = stop_sound_event_2
-
-		::label_4_0::
+		local stop_sound_event = not not this.stop_sound_event
 
 		Managers.music:trigger_event(stop_sound_event)
 

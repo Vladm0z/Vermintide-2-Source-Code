@@ -84,20 +84,12 @@ end
 
 EndViewStateWeave.exit_done = function (self)
 	-- function 4
-	local _exit_started = self._exit_started
-
-	_exit_started = not not _exit_started and self._animations.on_enter == nil
-
-	return _exit_started
+	return not not self._exit_started
 end
 
 EndViewStateWeave.done = function (self)
 	-- function 5
-	local _screen_done = self._screen_done
-
-	_screen_done = not not _screen_done or not not self.parent:get_all_signaled_done()
-
-	return _screen_done
+	return not not self._screen_done
 end
 
 EndViewStateWeave.create_ui_elements = function (self, params)
@@ -435,45 +427,8 @@ EndViewStateWeave._setup_team_results = function (self, players_session_scores)
 		local portrait_frame = player_data.portrait_frame
 		local player_level = player_data.player_level
 		local is_player_controlled = player_data.is_player_controlled
-		local var_22_0
-
-		if is_player_controlled then
-			if player_level then
-				var_22_0 = tostring(player_level)
-
-				if not var_22_0 then
-					-- Nothing
-				end
-			end
-
-			var_22_0 = "-"
-
-			goto label_22_0
-		end
-
-		var_22_0 = "BOT"
-
-		local level_text = var_22_0
-
-		do
-			local versus_player_level
-		end
-
-		::label_22_0::
-
-		if is_player_controlled and Application.user_setting("toggle_versus_level_in_all_game_modes") then
-			versus_player_level = player_data.versus_player_level
-
-			if not versus_player_level then
-				-- Nothing
-			end
-		end
-
-		versus_player_level = 0
-
-		local versus_level = versus_player_level
-
-		::label_22_1::
+		local level_text = is_player_controlled and (player_level and not not tostring(player_level) or not player_level and not not "-") or not is_player_controlled and not not "BOT"
+		local versus_level = not not player_data.versus_player_level
 
 		self:_fill_portrait(i, portrait_frame, level_text, portrait_image, player_data.name, versus_level)
 	end
@@ -564,18 +519,7 @@ EndViewStateWeave._setup_score_panel = function (self)
 	-- function 25
 	local weave_manager = Managers.weave
 	local game_won = self.game_won
-	local _completed_weave = self._completed_weave
-
-	if _completed_weave then
-		-- Nothing
-	end
-
-	_completed_weave = WeaveSettings.templates[self._completed_weave]
-
-	local weave_template = _completed_weave
-
-	::label_25_0::
-
+	local weave_template = not not self._completed_weave
 	local weave_display_name = ""
 	local weave_number_display_name = ""
 
@@ -588,22 +532,7 @@ EndViewStateWeave._setup_score_panel = function (self)
 	local time = math.max(WeaveSettings.max_time - math.floor(time_left), 0)
 	local seconds = time % 60
 	local minutes = math.floor(time / 60)
-	local get_score
-
-	if game_won then
-		get_score = weave_manager:get_score()
-
-		if not get_score then
-			-- Nothing
-		end
-	end
-
-	get_score = 0
-
-	local total_score = get_score
-
-	::label_25_1::
-
+	local total_score = game_won and not not weave_manager:get_score() or not game_won and not not 0
 	local time_score = weave_manager:get_time_score()
 	local damage_score = weave_manager:get_damage_score()
 	local widgets_by_name = self._widgets_by_name

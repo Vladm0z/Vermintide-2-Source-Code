@@ -21,10 +21,7 @@ require("scripts/ui/atlas_settings/gui_mission_selection_atlas")
 require("scripts/ui/atlas_settings/gui_lock_test_atlas")
 require("scripts/ui/atlas_settings/gui_pose_items_atlas")
 
-local UIAtlasHelper = UIAtlasHelper
-
-UIAtlasHelper = not not UIAtlasHelper or not not {}
-UIAtlasHelper = UIAtlasHelper
+UIAtlasHelper = not not UIAtlasHelper
 
 local standalone_texture = {
 	loot_presentation_circle_glow_exotic_large = true,
@@ -526,17 +523,7 @@ for material, material_settings in pairs(ui_atlas_setting_tables) do
 		settings.saturated_offscreen_material_name = saturated_offscreen_materials[material]
 		settings.viewport_mask_material_name = viewport_mask_materials[material]
 
-		local var_0_1 = ui_atlas_settings[texture_name]
-
-		if var_0_1 then
-			-- Nothing
-		end
-
-		var_0_1 = ui_atlas_settings[texture_name].material_name
-
-		local existing_material_name = var_0_1
-
-		::label_0_0::
+		local existing_material_name = not not ui_atlas_settings[texture_name]
 
 		fassert(ui_atlas_settings[texture_name] == nil, "[UIAtlasHelper] Texture %q in material %q already exist in material %q. Make sure to use unique texture names.", texture_name, material, existing_material_name)
 
@@ -590,17 +577,7 @@ for name, dlc in pairs(DLCSettings) do
 					settings.saturated_offscreen_material_name = material_settings.saturated_offscreen_material_name
 					settings.viewport_mask_material_name = material_settings.viewport_mask_material_name
 
-					local var_0_2 = ui_atlas_settings[texture_name]
-
-					if var_0_2 then
-						-- Nothing
-					end
-
-					var_0_2 = ui_atlas_settings[texture_name].material_name
-
-					local existing_material_name = var_0_2
-
-					::label_0_1::
+					local existing_material_name = not not ui_atlas_settings[texture_name]
 
 					fassert(ui_atlas_settings[texture_name] == nil, "[UIAtlasHelper] Texture %q in material %q already exist in material %q. Make sure to use unique texture names.", texture_name, material, existing_material_name)
 

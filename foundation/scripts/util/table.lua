@@ -342,21 +342,7 @@ end
 
 table.sorted = function (t, order_func, use_frame_table)
 	-- function 26
-	local alloc_table
-
-	if use_frame_table then
-		alloc_table = FrameTable.alloc_table()
-
-		if not alloc_table then
-			-- Nothing
-		end
-	end
-
-	alloc_table = {}
-
-	local keys = alloc_table
-
-	::label_26_0::
+	local keys = use_frame_table and not not FrameTable.alloc_table() or not use_frame_table and not not {}
 
 	for k, _ in pairs(t) do
 		keys[#keys + 1] = k
@@ -416,19 +402,10 @@ local function table_dump(key, value, depth, max_depth, print_func)
 		return
 	end
 
-	local rep = string.rep("  ", depth + 1)
-	local flag
-
-	flag = (key ~= nil or not "") and not not ("[" .. tostring(key) .. "]")
-
-	local prefix = rep .. flag
+	local prefix = string.rep("  ", depth + 1) .. (key ~= nil and not not ("[" .. tostring(key) .. "]") or not (key ~= nil) and not not "")
 
 	if type(value) == "table" then
-		local var_32_2 = prefix
-		local flag_2
-
-		flag_2 = (key ~= nil or not "") and not not " = "
-		prefix = var_32_2 .. flag_2
+		prefix = prefix .. (key ~= nil and not not " = " or not (key ~= nil) and not not "")
 
 		print(prefix .. "table")
 
@@ -692,7 +669,7 @@ function _table_tostring_array(t, depth, max_depth, skip_private)
 	for key, value in pairs(t) do
 		local is_number = type(key) == "number"
 
-		if (is_number or not skip_private or key:sub(1, 1) ~= "_") and (not is_number or key < 1 or len < key) then
+		if not is_number or key < 1 or len < key then
 			local key_str
 
 			if is_number then
@@ -1055,11 +1032,7 @@ end
 
 table.get_value_or_last = function (t, index)
 	-- function 76
-	local var_76_0 = t[index]
-
-	var_76_0 = not not var_76_0 or not not t[#t]
-
-	return var_76_0
+	return not not t[index]
 end
 
 table.autovivified = function (new)
@@ -1306,12 +1279,7 @@ end
 table.array_average = function (t, max_num, next_val)
 	-- function 97
 	if next_val then
-		local index_wrapper = math.index_wrapper
-		local index = t.index
-
-		index = not not index or not not 0
-
-		local idx = index_wrapper(index + 1, max_num)
+		local idx = math.index_wrapper(not not t.index + 1, max_num)
 
 		t[idx] = next_val
 		t.index = idx
@@ -1324,14 +1292,8 @@ table.array_average = function (t, max_num, next_val)
 		local d = t[i]
 
 		sum = sum + d
-
-		if d < min and not d then
-			-- Nothing
-		end
-
-		if max < d and not d then
-			-- Nothing
-		end
+		min = not (d < min) or not not d or not not min
+		max = not (max < d) or not not d or not not max
 	end
 
 	return sum / num_elements, min, max

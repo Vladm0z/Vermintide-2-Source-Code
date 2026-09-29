@@ -1,9 +1,6 @@
 -- chunkname: @scripts/managers/conflict_director/a_star.lua
 
-local LuaAStar = LuaAStar
-
-LuaAStar = not not LuaAStar or not not {}
-LuaAStar = LuaAStar
+LuaAStar = not not LuaAStar
 LuaAStar.cached_paths = {}
 
 local cached_paths = LuaAStar.cached_paths

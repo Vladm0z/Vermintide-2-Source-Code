@@ -1,23 +1,12 @@
 -- chunkname: @foundation/scripts/util/reportify.lua
 
-local Reportify = Reportify
-
-Reportify = not not Reportify or not not {}
-Reportify = Reportify
+Reportify = not not Reportify
 
 Reportify.setup = function (self)
 	-- function 1
 	self.has_setup = true
-
-	local content_revision = script_data.settings.content_revision
-
-	content_revision = not not content_revision or not not ""
-	self.content_revision = content_revision
-
-	local build_identifier = Application.build_identifier()
-
-	build_identifier = not not build_identifier or not not ""
-	self.engine_revision = build_identifier
+	self.content_revision = not not script_data.settings.content_revision
+	self.engine_revision = not not Application.build_identifier()
 	self.project = "HON"
 end
 
@@ -95,20 +84,9 @@ Reportify._get_player_info = function (self)
 	local inventory_extension = ScriptUnit.has_extension(local_player.player_unit, "inventory_system")
 
 	if inventory_extension then
-		local get_wielded_slot_name = inventory_extension:get_wielded_slot_name()
-
-		get_wielded_slot_name = not not get_wielded_slot_name or not not ""
-		ret.wielded_slot = get_wielded_slot_name
-
-		local get_item_name = inventory_extension:get_item_name("slot_melee")
-
-		get_item_name = not not get_item_name or not not ""
-		ret.primary_name = get_item_name
-
-		local get_item_name_2 = inventory_extension:get_item_name("slot_ranged")
-
-		get_item_name_2 = not not get_item_name_2 or not not ""
-		ret.secondary_name = get_item_name_2
+		ret.wielded_slot = not not inventory_extension:get_wielded_slot_name()
+		ret.primary_name = not not inventory_extension:get_item_name("slot_melee")
+		ret.secondary_name = not not inventory_extension:get_item_name("slot_ranged")
 	end
 
 	return ret

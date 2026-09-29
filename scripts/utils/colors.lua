@@ -2,10 +2,7 @@
 
 require("foundation/scripts/util/table")
 
-local Colors = Colors
-
-Colors = not not Colors or not not {}
-Colors = Colors
+Colors = not not Colors
 Colors.color_definitions = {
 	maroon = {
 		255,
@@ -1756,22 +1753,7 @@ Colors.hsl2rgb = function (h, s, l)
 	local r, g, b
 
 	if s ~= 0 then
-		local num
-
-		if l < 0.5 then
-			num = l * (1 + s)
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = s + l * (1 - s)
-
-		local q = num
-
-		::label_14_0::
-
+		local q = l < 0.5 and not not (l * (1 + s)) or not (l < 0.5) and not not (s + l * (1 - s))
 		local p = 2 * l - q
 
 		r = hue2rgb(p, q, h + 0.3333333333333333)

@@ -106,18 +106,7 @@ StoreWindowPanel._create_ui_elements = function (self, params, offset)
 
 	for index, page_name in ipairs(menu_options) do
 		local page_settings = pages[page_name]
-		local display_name_2 = page_settings.display_name
-
-		if not display_name_2 then
-			-- Nothing
-		end
-
-		display_name_2 = "n/a"
-
-		local display_name = display_name_2
-
-		::label_2_0::
-
+		local display_name = not not page_settings.display_name
 		local text_width = self:_get_text_width(temp_text_style, display_name)
 		local option_size = {
 			math.min(text_width + 40, 400),
@@ -323,36 +312,11 @@ StoreWindowPanel._handle_input = function (self, dt, t)
 	end
 
 	if not input_made then
-		local _selected_index = self._selected_index
-
-		if not _selected_index then
-			-- Nothing
-		end
-
-		_selected_index = 1
-
-		local current_index = _selected_index
-
-		::label_8_0::
-
+		local current_index = not not self._selected_index
 		local max_index = #title_button_widgets
 
 		if input_service:get(INPUT_ACTION_PREVIOUS) then
-			local num
-
-			if current_index > 1 then
-				num = current_index - 1
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = max_index
-
-			local next_index = num
-
-			::label_8_1::
+			local next_index = current_index > 1 and not not (current_index - 1) or not (current_index > 1) and not not max_index
 
 			self:_on_panel_button_selected(next_index)
 		elseif input_service:get(INPUT_ACTION_NEXT) then
@@ -482,7 +446,7 @@ StoreWindowPanel._handle_gamepad_activity = function (self)
 	-- function 17
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local most_recent_device = Managers.input:get_most_recent_device()
-	local force_update = (self.gamepad_active_last_frame == nil or not not gamepad_active) and most_recent_device ~= self._most_recent_device
+	local force_update = self.gamepad_active_last_frame == nil or not not gamepad_active and most_recent_device ~= self._most_recent_device
 
 	if gamepad_active then
 		if not self.gamepad_active_last_frame or force_update then
@@ -562,68 +526,10 @@ StoreWindowPanel._animate_title_entry = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_21_1
-
-	::label_21_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_21_1::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_21_2::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_21_3::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_21_4::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -667,68 +573,10 @@ StoreWindowPanel._animate_back_button = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_22_1
-
-	::label_22_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_22_1::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_22_2::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_22_3::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_22_4::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -761,20 +609,7 @@ StoreWindowPanel._sync_wallet_matchmaking_location = function (self)
 		self._is_game_matchmaking = is_game_matchmaking
 
 		local ui_scenegraph = self._ui_scenegraph
-		local num
-
-		if is_game_matchmaking then
-			num = 26
-
-			goto label_23_0
-		end
-
-		num = 0
-
-		local offset_value = num
-
-		::label_23_0::
-
+		local offset_value = is_game_matchmaking and not not 26 or not is_game_matchmaking and not not 0
 		local currency_types = self._currency_types
 
 		for i = 1, #currency_types do
@@ -833,19 +668,7 @@ StoreWindowPanel._sync_player_wallet = function (self)
 			scenegraph_definition["currency_node_" .. currency_type].position[1] = -92 - background_total_size
 
 			local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
-			local num
-
-			if is_game_matchmaking then
-				num = 26
-
-				goto label_24_0
-			end
-
-			num = 0
-
-			local offset_value = num
-
-			::label_24_0::
+			local offset_value = is_game_matchmaking and not not 26 or not is_game_matchmaking and not not 0
 
 			ui_scenegraph["currency_node_" .. currency_type].position[1] = scenegraph_definition["currency_node_" .. currency_type].position[1] - offset_value
 			background_total_size = background_total_size + background_size
@@ -859,17 +682,7 @@ StoreWindowPanel._start_panel_selection_animation = function (self, previous_sel
 	local entry_panel_selection = widgets_by_name.entry_panel_selection
 	local selection_offset = entry_panel_selection.offset
 	local selection_size = entry_panel_selection.content.size
-	local _panel_selection_animation = self._panel_selection_animation
-
-	if not _panel_selection_animation then
-		-- Nothing
-	end
-
-	_panel_selection_animation = {}
-
-	local panel_selection_animation = _panel_selection_animation
-
-	::label_25_0::
+	local panel_selection_animation = not not self._panel_selection_animation
 
 	self._panel_selection_animation = panel_selection_animation
 

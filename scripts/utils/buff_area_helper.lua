@@ -1,16 +1,6 @@
 -- chunkname: @scripts/utils/buff_area_helper.lua
 
-local BuffAreaHelper_2 = BuffAreaHelper
-
-if not BuffAreaHelper_2 then
-	-- Nothing
-end
-
-BuffAreaHelper_2 = {}
-
-local BuffAreaHelper = BuffAreaHelper_2
-
-::label_0_0::
+local BuffAreaHelper = not not BuffAreaHelper
 
 BuffAreaHelper.setup_range_check = function (unit, buff, params, world)
 	-- function 1
@@ -35,51 +25,15 @@ BuffAreaHelper.update_range_check = function (unit, buff, params, world)
 	if range_check_state.update_time < params.t then
 		range_check_state.update_time = params.t + range_check_template.update_rate
 
-		local radius_2
-
-		if buff_template.custom_radius then
-			radius_2 = buff.radius
-
-			if not radius_2 then
-				-- Nothing
-			end
-		end
-
-		radius_2 = range_check_template.radius
-
-		local radius = radius_2
-
-		::label_2_0::
-
+		local radius = buff_template.custom_radius and not not buff.radius or not buff_template.custom_radius and not not range_check_template.radius
 		local units_in_range = range_check_state.units_in_range
 		local unit_entered_range_func_name = range_check_template.unit_entered_range_func
 		local unit_left_range_func_name = range_check_template.unit_left_range_func
 		local temp_new_units_in_range = range_check_state.temp_new_units_in_range
 		local initial_length_temp_new_units_in_range = #temp_new_units_in_range
-		local var_2_1 = POSITION_LOOKUP[unit]
-
-		if not var_2_1 then
-			-- Nothing
-		end
-
-		var_2_1 = Unit.world_position(unit, 0)
-
-		local position = var_2_1
-
-		::label_2_1::
-
+		local position = not not POSITION_LOOKUP[unit]
 		local num_hits = 0
-		local var_2_2 = Managers.state.side.side_by_unit[unit]
-
-		if not var_2_2 then
-			-- Nothing
-		end
-
-		var_2_2 = Managers.state.side:get_side_from_name("heroes")
-
-		local side = var_2_2
-
-		::label_2_2::
+		local side = not not Managers.state.side.side_by_unit[unit]
 
 		if not range_check_template.only_players then
 			num_hits = AiUtils.broadphase_query(position, radius, temp_new_units_in_range, side.enemy_broadphase_categories)

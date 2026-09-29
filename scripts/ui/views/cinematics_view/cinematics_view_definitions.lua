@@ -281,24 +281,9 @@ local function create_scrollbar(num_elements)
 						local is_hover = content.is_hover
 						local t, dt = Managers.time:time_and_delta("main")
 						local speed = 4
-						local scrollbar_hover_progress_2 = parent_content.scrollbar_hover_progress
+						local scrollbar_hover_progress = not not parent_content.scrollbar_hover_progress
 
-						if not scrollbar_hover_progress_2 then
-							-- Nothing
-						end
-
-						scrollbar_hover_progress_2 = 0
-
-						local scrollbar_hover_progress = scrollbar_hover_progress_2
-
-						::label_3_0::
-
-						local clamp = math.clamp
-						local num = dt * speed
-						local flag
-
-						flag = (not is_hover or not 1) and not not -1
-						scrollbar_hover_progress = clamp(scrollbar_hover_progress + num * flag, 0, 1)
+						scrollbar_hover_progress = math.clamp(scrollbar_hover_progress + dt * speed * (is_hover and not not 1 or not is_hover and not not -1), 0, 1)
 						parent_content.scrollbar_hover_progress = scrollbar_hover_progress
 					end
 				},
@@ -309,38 +294,12 @@ local function create_scrollbar(num_elements)
 					content_change_function = function (content, style)
 						-- function 4
 						local parent_content = content.parent
-						local is_hover_2 = content.is_hover
-
-						if not is_hover_2 then
-							-- Nothing
-						end
-
-						is_hover_2 = content.selected
-
-						local is_hover = is_hover_2
-
-						::label_4_0::
-
+						local is_hover = not not content.is_hover
 						local t, dt = Managers.time:time_and_delta("main")
 						local speed = 4
-						local hover_progress_2 = parent_content.hover_progress
+						local hover_progress = not not parent_content.hover_progress
 
-						if not hover_progress_2 then
-							-- Nothing
-						end
-
-						hover_progress_2 = 0
-
-						local hover_progress = hover_progress_2
-
-						::label_4_1::
-
-						local clamp = math.clamp
-						local num = dt * speed
-						local flag
-
-						flag = (not is_hover or not 1) and not not -1
-						hover_progress = clamp(hover_progress + num * flag, 0, 1)
+						hover_progress = math.clamp(hover_progress + dt * speed * (is_hover and not not 1 or not is_hover and not not -1), 0, 1)
 						parent_content.hover_progress = hover_progress
 					end
 				},
@@ -495,21 +454,8 @@ local function create_video_entry(parent)
 					content_check_function = function (content, style)
 						-- function 9
 						local active = parent:is_video_active(content.video_content.video_player_reference)
-						local fade_progress
 
-						if active then
-							fade_progress = content.fade_progress
-
-							if not fade_progress then
-								-- Nothing
-							end
-						end
-
-						fade_progress = 0
-
-						::label_9_0::
-
-						content.fade_progress = fade_progress
+						content.fade_progress = active and not not content.fade_progress or not active and not not 0
 
 						return active
 					end,
@@ -624,11 +570,7 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 
 	local video_player = video_renderer.video_players[reference_name]
 	local num_frames = VideoPlayer.number_of_frames(video_player)
-	local frames_per_second = video_data.frames_per_second
-
-	frames_per_second = not not frames_per_second or not not 30
-
-	local seconds = num_frames / frames_per_second
+	local seconds = num_frames / not not video_data.frames_per_second
 	local time = UIUtils.format_time(seconds)
 
 	UIRenderer.destroy_video_player(video_renderer, reference_name, video_renderer.world)
@@ -687,17 +629,7 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 					end,
 					content_change_function = function (content, style)
 						-- function 14
-						local is_device_active = Managers.input:is_device_active("gamepad")
-
-						if not is_device_active then
-							-- Nothing
-						end
-
-						is_device_active = Managers.input:is_device_active("keyboard")
-
-						local gamepad_active = is_device_active
-
-						::label_14_0::
+						local gamepad_active = not not Managers.input:is_device_active("gamepad")
 
 						if gamepad_active then
 							if index == parent:current_gamepad_selection() then
@@ -753,12 +685,8 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 						local t, dt = Managers.time:time_and_delta("main")
 						local speed = 4
 						local hover_progress = parent_content.hover_progress
-						local clamp = math.clamp
-						local num = dt * speed
-						local flag
 
-						flag = (not content.is_hover or not 1) and not not -1
-						hover_progress = clamp(hover_progress + num * flag, 0, 1)
+						hover_progress = math.clamp(hover_progress + dt * speed * (content.is_hover and not not 1 or not content.is_hover and not not -1), 0, 1)
 						parent_content.hover_progress = hover_progress
 					end
 				},
@@ -792,17 +720,7 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 					end,
 					content_change_function = function (content, style)
 						-- function 18
-						local is_device_active = Managers.input:is_device_active("gamepad")
-
-						if not is_device_active then
-							-- Nothing
-						end
-
-						is_device_active = Managers.input:is_device_active("keyboard")
-
-						local gamepad_active = is_device_active
-
-						::label_18_0::
+						local gamepad_active = not not Managers.input:is_device_active("gamepad")
 
 						if gamepad_active then
 							if index == parent:current_gamepad_selection() then

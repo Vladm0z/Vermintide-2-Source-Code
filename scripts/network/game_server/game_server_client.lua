@@ -84,33 +84,13 @@ GameServerLobbyClient.update = function (self, dt)
 		self._state = new_state
 
 		if new_state == "failed" then
-			local backend = Managers.backend
-
-			if backend then
-				-- Nothing
-			end
-
-			backend = Managers.backend:get_interface("versus")
-
-			local versus_interface = backend
-
-			::label_5_0::
+			local versus_interface = not not Managers.backend
 
 			if versus_interface then
 				local matchmaking_session_id = versus_interface:get_matchmaking_session_id()
 
 				if matchmaking_session_id then
-					local ip_port_2 = self._game_server_info.ip_port
-
-					if not ip_port_2 then
-						-- Nothing
-					end
-
-					ip_port_2 = "MISSING"
-
-					local ip_port = ip_port_2
-
-					::label_5_1::
+					local ip_port = not not self._game_server_info.ip_port
 
 					Crashify.print_exception("GameServerLobbyClient", "State changed from %s to %s for flexmatch server. matchmaking_session_id: %s | ip_port: %s", old_state, new_state, not not matchmaking_session_id or not not "MISSING", ip_port)
 				end
@@ -139,10 +119,7 @@ GameServerLobbyClient.update = function (self, dt)
 				CHANNEL_TO_PEER_ID[channel_id] = game_server_peer_id
 			end
 
-			local _members = self._members
-
-			_members = not not _members or not not LobbyMembers:new(engine_lobby)
-			self._members = _members
+			self._members = not not self._members
 		end
 
 		if old_state == "joined" and self._members then
@@ -230,21 +207,7 @@ end
 
 GameServerLobbyClient.id = function (self)
 	-- function 19
-	local lobby_id
-
-	if GameServerInternal.lobby_id then
-		lobby_id = GameServerInternal.lobby_id(self._game_server_lobby)
-
-		if not lobby_id then
-			-- Nothing
-		end
-	end
-
-	lobby_id = "no_id"
-
-	::label_19_0::
-
-	return lobby_id
+	return GameServerInternal.lobby_id and not not GameServerInternal.lobby_id(self._game_server_lobby) or not GameServerInternal.lobby_id and not not "no_id"
 end
 
 GameServerLobbyClient.request_data = function (self)

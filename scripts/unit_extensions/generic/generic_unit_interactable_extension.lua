@@ -6,11 +6,7 @@ GenericUnitInteractableExtension.init = function (self, extension_init_context, 
 	-- function 1
 	self.unit = unit
 	self._is_level_object = Unit.level(unit) ~= nil
-
-	local get_data = Unit.get_data(unit, "interaction_data", "interaction_type")
-
-	get_data = not not get_data or not not "player_generic"
-	self.interactable_type = get_data
+	self.interactable_type = not not Unit.get_data(unit, "interaction_data", "interaction_type")
 	self._override_interactable_action = Unit.get_data(unit, "override_interactable_action")
 	self.interactor_unit = nil
 	self._enabled = true
@@ -87,29 +83,8 @@ GenericUnitInteractableExtension.hot_join_sync = function (self, sender)
 	if only_once then
 		local network_manager = Managers.state.network
 		local interactable_unit_id = network_manager:game_object_or_level_id(self.unit)
-		local get_data = Unit.get_data(interactable_unit, "interaction_data", "used")
-
-		if not get_data then
-			-- Nothing
-		end
-
-		get_data = false
-
-		local used = get_data
-
-		::label_8_0::
-
-		local get_data_2 = Unit.get_data(interactable_unit, "interaction_data", "individual_pickup")
-
-		if not get_data_2 then
-			-- Nothing
-		end
-
-		get_data_2 = false
-
-		local individual_pickup = get_data_2
-
-		::label_8_1::
+		local used = not not Unit.get_data(interactable_unit, "interaction_data", "used")
+		local individual_pickup = not not Unit.get_data(interactable_unit, "interaction_data", "individual_pickup")
 
 		if not individual_pickup and used then
 			local channel_id = PEER_ID_TO_CHANNEL[sender]

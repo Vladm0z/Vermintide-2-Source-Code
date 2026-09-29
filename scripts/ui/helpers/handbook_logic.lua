@@ -9,11 +9,7 @@ HandbookLogic.init = function (self, context, blueprints)
 	}, context)
 
 	self._context = context_copy
-
-	local reference_name = context.reference_name
-
-	reference_name = not not reference_name or not not "HandbookLogic"
-	self._reference_name = reference_name
+	self._reference_name = not not context.reference_name
 	self._blueprints = blueprints
 	self._video_references = {}
 	self._loaded_packages = {}
@@ -163,17 +159,7 @@ HandbookLogic.create_entry_widgets = function (self, page_settings)
 
 			local content = widget.content
 			local widget_height = content.size[2]
-			local padding_2 = content.padding
-
-			if not padding_2 then
-				-- Nothing
-			end
-
-			padding_2 = 0
-
-			local padding = padding_2
-
-			::label_9_0::
+			local padding = not not content.padding
 
 			total_height = total_height + widget_height + padding
 			widget.offset[2] = -total_height

@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/player_movement_settings.lua
 
-local PlayerUnitMovementSettings = PlayerUnitMovementSettings
-
-PlayerUnitMovementSettings = not not PlayerUnitMovementSettings or not not {}
-PlayerUnitMovementSettings = PlayerUnitMovementSettings
+PlayerUnitMovementSettings = not not PlayerUnitMovementSettings
 
 local units_player_movement_setting = {}
 
@@ -42,12 +39,7 @@ end
 PlayerUnitMovementSettings.FWD_MOVE_SPEED_SCALE = 1
 PlayerUnitMovementSettings.BWD_MOVE_SPEED_SCALE = 0.65
 PlayerUnitMovementSettings.STRAFE_MOVE_SPEED_SCALE = 1
-
-local PlayerUnitMovementSettings_2 = PlayerUnitMovementSettings
-local slope_traversion = PlayerUnitMovementSettings.slope_traversion
-
-slope_traversion = not not slope_traversion or not not {}
-PlayerUnitMovementSettings_2.slope_traversion = slope_traversion
+PlayerUnitMovementSettings.slope_traversion = not not PlayerUnitMovementSettings.slope_traversion
 PlayerUnitMovementSettings.slope_traversion.max_angle = math.pi * 0.27
 PlayerUnitMovementSettings.slope_traversion.standing_frames = 1
 PlayerUnitMovementSettings.slope_traversion.jump_disallowed_frames = 10
@@ -67,12 +59,7 @@ PlayerUnitMovementSettings.backwards_jump_velocity_scale = 0.35
 PlayerUnitMovementSettings.look_input_limit = -1
 PlayerUnitMovementSettings.look_input_limit_multiplier = 1
 PlayerUnitMovementSettings.look_input_sensitivity = 1
-
-local PlayerUnitMovementSettings_3 = PlayerUnitMovementSettings
-local rig_movement = PlayerUnitMovementSettings.rig_movement
-
-rig_movement = not not rig_movement or not not {}
-PlayerUnitMovementSettings_3.rig_movement = rig_movement
+PlayerUnitMovementSettings.rig_movement = not not PlayerUnitMovementSettings.rig_movement
 PlayerUnitMovementSettings.rig_movement.mass = 8
 PlayerUnitMovementSettings.rig_movement.tension = 600
 PlayerUnitMovementSettings.rig_movement.damping = 40
@@ -81,12 +68,7 @@ PlayerUnitMovementSettings.rig_movement.horizontal_motion_damping = 0.8
 PlayerUnitMovementSettings.rig_movement.vertical_motion_damping = 0.2
 PlayerUnitMovementSettings.rig_movement.vertical_look_multiplier_ranged = 0.25
 PlayerUnitMovementSettings.rig_movement.vertical_look_multiplier_melee = 0.1
-
-local PlayerUnitMovementSettings_4 = PlayerUnitMovementSettings
-local ladder = PlayerUnitMovementSettings.ladder
-
-ladder = not not ladder or not not {}
-PlayerUnitMovementSettings_4.ladder = ladder
+PlayerUnitMovementSettings.ladder = not not PlayerUnitMovementSettings.ladder
 PlayerUnitMovementSettings.ladder.player_ladder_speed_scale = 1
 PlayerUnitMovementSettings.ladder.climb_speed = 3
 PlayerUnitMovementSettings.ladder.climb_move_acceleration_up = 4
@@ -122,18 +104,8 @@ PlayerUnitMovementSettings.soft_collision.grace_time_pushed_entering_standing = 
 PlayerUnitMovementSettings.soft_collision.max_distance = 0.65
 PlayerUnitMovementSettings.soft_collision.max_height_diference = 0.1
 PlayerUnitMovementSettings.soft_collision.idle_speed_threshold = 0.05
-
-local PlayerUnitMovementSettings_5 = PlayerUnitMovementSettings
-local catapulted = PlayerUnitMovementSettings.catapulted
-
-catapulted = not not catapulted or not not {}
-PlayerUnitMovementSettings_5.catapulted = catapulted
-
-local catapulted_2 = PlayerUnitMovementSettings.catapulted
-local directions = PlayerUnitMovementSettings.catapulted.directions
-
-directions = not not directions or not not {}
-catapulted_2.directions = directions
+PlayerUnitMovementSettings.catapulted = not not PlayerUnitMovementSettings.catapulted
+PlayerUnitMovementSettings.catapulted.directions = not not PlayerUnitMovementSettings.catapulted.directions
 PlayerUnitMovementSettings.catapulted.directions.forward = {
 	wall_collide_animation = "airtime_end",
 	start_animation = "airtime_bwd",
@@ -225,23 +197,13 @@ PlayerUnitMovementSettings.slowing_damage_types = {
 	cutting = true,
 	crush = true
 }
-
-local PlayerUnitMovementSettings_6 = PlayerUnitMovementSettings
-local charged_settings = PlayerUnitMovementSettings.charged_settings
-
-charged_settings = not not charged_settings or not not {}
-PlayerUnitMovementSettings_6.charged_settings = charged_settings
+PlayerUnitMovementSettings.charged_settings = not not PlayerUnitMovementSettings.charged_settings
 PlayerUnitMovementSettings.charged_settings.charged = {
 	duration = 1,
 	first_person_anim_name = "interrupt",
 	third_person_anim_name = "idle"
 }
-
-local PlayerUnitMovementSettings_7 = PlayerUnitMovementSettings
-local stun_settings = PlayerUnitMovementSettings.stun_settings
-
-stun_settings = not not stun_settings or not not {}
-PlayerUnitMovementSettings_7.stun_settings = stun_settings
+PlayerUnitMovementSettings.stun_settings = not not PlayerUnitMovementSettings.stun_settings
 PlayerUnitMovementSettings.stun_settings.parry_broken = {
 	duration = 1,
 	first_person_anim_name = "parry_break",
@@ -446,73 +408,33 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		end
 	}
 }
-
-local PlayerUnitMovementSettings_8 = PlayerUnitMovementSettings
-local overpowered_templates = PlayerUnitMovementSettings.overpowered_templates
-
-overpowered_templates = not not overpowered_templates or not not {}
-PlayerUnitMovementSettings_8.overpowered_templates = overpowered_templates
+PlayerUnitMovementSettings.overpowered_templates = not not PlayerUnitMovementSettings.overpowered_templates
 PlayerUnitMovementSettings.overpowered_templates.slow_bomb = {}
 PlayerUnitMovementSettings.overpowered_templates.fly_bomb = {
 	end_sound_event = "Stop_sorcerer_boss_flies_curse_loop",
 	start_sound_event = "Play_sorcerer_boss_flies_curse_loop"
 }
 PlayerUnitMovementSettings.gravity_acceleration = 11
-
-local PlayerUnitMovementSettings_9 = PlayerUnitMovementSettings
-local jump = PlayerUnitMovementSettings.jump
-
-jump = not not jump or not not {}
-PlayerUnitMovementSettings_9.jump = jump
+PlayerUnitMovementSettings.jump = not not PlayerUnitMovementSettings.jump
 PlayerUnitMovementSettings.jump.stamina_cost = 0
 PlayerUnitMovementSettings.jump.initial_vertical_speed = 4.25
-
-local PlayerUnitMovementSettings_10 = PlayerUnitMovementSettings
-local leap = PlayerUnitMovementSettings.leap
-
-leap = not not leap or not not {}
-PlayerUnitMovementSettings_10.leap = leap
+PlayerUnitMovementSettings.leap = not not PlayerUnitMovementSettings.leap
 PlayerUnitMovementSettings.leap.jump_speed = 6.5
 PlayerUnitMovementSettings.leap.move_speed = 13.5
 PlayerUnitMovementSettings.leap.slam_speed = 18
-
-local PlayerUnitMovementSettings_11 = PlayerUnitMovementSettings
-local teleleap = PlayerUnitMovementSettings.teleleap
-
-teleleap = not not teleleap or not not {}
-PlayerUnitMovementSettings_11.teleleap = teleleap
+PlayerUnitMovementSettings.teleleap = not not PlayerUnitMovementSettings.teleleap
 PlayerUnitMovementSettings.teleleap.jump_speed = 12
 PlayerUnitMovementSettings.teleleap.move_speed = 60
-
-local PlayerUnitMovementSettings_12 = PlayerUnitMovementSettings
-local fall = PlayerUnitMovementSettings.fall
-
-fall = not not fall or not not {}
-PlayerUnitMovementSettings_12.fall = fall
-
-local fall_2 = PlayerUnitMovementSettings.fall
-local heights = PlayerUnitMovementSettings.fall.heights
-
-heights = not not heights or not not {}
-fall_2.heights = heights
+PlayerUnitMovementSettings.fall = not not PlayerUnitMovementSettings.fall
+PlayerUnitMovementSettings.fall.heights = not not PlayerUnitMovementSettings.fall.heights
 PlayerUnitMovementSettings.fall.heights.FALL_DAMAGE_MULTIPLIER = 14
 PlayerUnitMovementSettings.fall.heights.MIN_FALL_DAMAGE_HEIGHT = 7
 PlayerUnitMovementSettings.fall.heights.MIN_FALL_DAMAGE_PERCENTAGE = 0
 PlayerUnitMovementSettings.fall.heights.MAX_FALL_DAMAGE_PERCENTAGE = 1
 PlayerUnitMovementSettings.fall.heights.HARD_LANDING_FALL_HEIGHT = 7
-
-local PlayerUnitMovementSettings_13 = PlayerUnitMovementSettings
-local landing = PlayerUnitMovementSettings.landing
-
-landing = not not landing or not not {}
-PlayerUnitMovementSettings_13.landing = landing
+PlayerUnitMovementSettings.landing = not not PlayerUnitMovementSettings.landing
 PlayerUnitMovementSettings.landing.anim_forced_upper_body_block = 0.3
-
-local PlayerUnitMovementSettings_14 = PlayerUnitMovementSettings
-local swing = PlayerUnitMovementSettings.swing
-
-swing = not not swing or not not {}
-PlayerUnitMovementSettings_14.swing = swing
+PlayerUnitMovementSettings.swing = not not PlayerUnitMovementSettings.swing
 PlayerUnitMovementSettings.swing.REQUIRED_MOVEMENT_TO_POSE = 0.003
 PlayerUnitMovementSettings.swing.REQUIRED_MOVEMENT_TO_POSE_SCALE_Y_UP = 2.5
 PlayerUnitMovementSettings.swing.REQUIRED_MOVEMENT_TO_POSE_SCALE_Y_DOWN = 0
@@ -522,49 +444,24 @@ PlayerUnitMovementSettings.swing.invert_pose_control_y = false
 PlayerUnitMovementSettings.swing.keyboard_controlled = false
 PlayerUnitMovementSettings.swing.mounted_lean_swing_top = 0
 PlayerUnitMovementSettings.swing.mounted_lean_swing_range = 30
-
-local swing_2 = PlayerUnitMovementSettings.swing
-local stamina_settings = PlayerUnitMovementSettings.swing.stamina_settings
-
-stamina_settings = not not stamina_settings or not not {}
-swing_2.stamina_settings = stamina_settings
+PlayerUnitMovementSettings.swing.stamina_settings = not not PlayerUnitMovementSettings.swing.stamina_settings
 PlayerUnitMovementSettings.swing.stamina_settings.minimum_activation_cost = 0.1
 PlayerUnitMovementSettings.swing.stamina_settings.activation_cost = 0.2
-
-local PlayerUnitMovementSettings_15 = PlayerUnitMovementSettings
-local parry = PlayerUnitMovementSettings.parry
-
-parry = not not parry or not not {}
-PlayerUnitMovementSettings_15.parry = parry
+PlayerUnitMovementSettings.parry = not not PlayerUnitMovementSettings.parry
 PlayerUnitMovementSettings.parry.stamina_per_damage = 0.001375
 PlayerUnitMovementSettings.parry.override_recharge_rate = 0.025
-
-local PlayerUnitMovementSettings_16 = PlayerUnitMovementSettings
-local block = PlayerUnitMovementSettings.block
-
-block = not not block or not not {}
-PlayerUnitMovementSettings_16.block = block
+PlayerUnitMovementSettings.block = not not PlayerUnitMovementSettings.block
 PlayerUnitMovementSettings.block.stamina_per_damage = 0.001375
 PlayerUnitMovementSettings.block.consecutive_block_impact_time = 3
 PlayerUnitMovementSettings.block.consecutive_block_impact_multiplier = 1
 PlayerUnitMovementSettings.block.override_recharge_rate = 0.025
-
-local PlayerUnitMovementSettings_17 = PlayerUnitMovementSettings
-local parry_2 = PlayerUnitMovementSettings.parry
-
-parry_2 = not not parry_2 or not not {}
-PlayerUnitMovementSettings_17.parry = parry_2
+PlayerUnitMovementSettings.parry = not not PlayerUnitMovementSettings.parry
 PlayerUnitMovementSettings.parry.REQUIRED_MOVEMENT_TO_POSE = 0.003
 PlayerUnitMovementSettings.parry.invert_parry_control_x = false
 PlayerUnitMovementSettings.parry.invert_parry_control_y = false
 PlayerUnitMovementSettings.parry.keyboard_controlled = false
 PlayerUnitMovementSettings.parry.raise_delay = 0.18
-
-local PlayerUnitMovementSettings_18 = PlayerUnitMovementSettings
-local block_2 = PlayerUnitMovementSettings.block
-
-block_2 = not not block_2 or not not {}
-PlayerUnitMovementSettings_18.block = block_2
+PlayerUnitMovementSettings.block = not not PlayerUnitMovementSettings.block
 PlayerUnitMovementSettings.block.raise_delay = 0.18
 
 DLCUtils.require("player_movement_settings")

@@ -9,15 +9,9 @@ require("scripts/settings/profiles/sp_profiles")
 require("scripts/network/network_match_handler")
 
 local ReservationHandlerTypes = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
-local PEER_ID_TO_CHANNEL = PEER_ID_TO_CHANNEL
 
-PEER_ID_TO_CHANNEL = not not PEER_ID_TO_CHANNEL or not not {}
-PEER_ID_TO_CHANNEL = PEER_ID_TO_CHANNEL
-
-local CHANNEL_TO_PEER_ID = CHANNEL_TO_PEER_ID
-
-CHANNEL_TO_PEER_ID = not not CHANNEL_TO_PEER_ID or not not {}
-CHANNEL_TO_PEER_ID = CHANNEL_TO_PEER_ID
+PEER_ID_TO_CHANNEL = not not PEER_ID_TO_CHANNEL
+CHANNEL_TO_PEER_ID = not not CHANNEL_TO_PEER_ID
 
 local NUM_PROFILES = #PROFILES_BY_AFFILIATION.heroes
 local KICK_PEER_WAIT_TIMER = 5
@@ -29,10 +23,7 @@ local function network_printf(format, ...)
 	end
 end
 
-local PeerState = PeerState
-
-PeerState = not not PeerState or not not CreateStrictEnumTable("Broken", "Connecting", "Connected", "Disconnected", "Loading", "LoadingLevelComplete", "WaitingForEnter", "WaitingForGameObjectSync", "WaitingForSpawnPlayer", "InGame", "InPostGame")
-PeerState = PeerState
+PeerState = not not PeerState
 NetworkServer = class(NetworkServer)
 
 NetworkServer.init = function (self, player_manager, lobby_host, wanted_profile_index, game_server_manager)
@@ -90,49 +81,15 @@ NetworkServer.init = function (self, player_manager, lobby_host, wanted_profile_
 	end
 
 	if not DEDICATED_SERVER then
-		if not wanted_profile_index then
-			-- Nothing
-		end
-
-		::label_2_0::
-
-		local wanted_profile_index_2 = SaveData.wanted_profile_index
-
-		wanted_profile_index_2 = not not wanted_profile_index_2 or not not 1
-
-		::label_2_1::
-
-		self.wanted_profile_index = wanted_profile_index_2
+		self.wanted_profile_index = not not wanted_profile_index or not not SaveData.wanted_profile_index
 
 		local profile = SPProfiles[self.wanted_profile_index]
 
 		if profile then
 			local hero_name = profile.display_name
 			local hero_attributes = Managers.backend:get_interface("hero_attributes")
-			local get = hero_attributes:get(hero_name, "career")
-
-			if not get then
-				-- Nothing
-			end
-
-			get = 1
-
-			local wanted_career_index = get
-
-			::label_2_2::
-
-			local get_2 = hero_attributes:get(hero_name, "experience")
-
-			if not get_2 then
-				-- Nothing
-			end
-
-			get_2 = 0
-
-			local hero_experience = get_2
-
-			::label_2_3::
-
+			local wanted_career_index = not not hero_attributes:get(hero_name, "career")
+			local hero_experience = not not hero_attributes:get(hero_name, "experience")
 			local hero_level = ExperienceSettings.get_level(hero_experience)
 			local career = profile.careers[wanted_career_index]
 
@@ -158,10 +115,7 @@ NetworkServer.init = function (self, player_manager, lobby_host, wanted_profile_
 
 	Managers.eac:server_create(server_name)
 
-	local DEDICATED_SERVER = DEDICATED_SERVER
-
-	DEDICATED_SERVER = not not DEDICATED_SERVER and rawget(_G, "GameliftServer") ~= nil
-	self._using_gamelift = DEDICATED_SERVER
+	self._using_gamelift = not not DEDICATED_SERVER
 
 	if DEDICATED_SERVER then
 		if self._using_gamelift then
@@ -252,35 +206,8 @@ NetworkServer.rpc_notify_connected = function (self, channel_id)
 		if level_settings and level_settings.game_mode == "tutorial" then
 			profile_index = self.wanted_profile_index
 		else
-			local var_7_0 = FindProfileIndex(Development.parameter("wanted_profile"))
-
-			if not var_7_0 then
-				-- Nothing
-			end
-
-			var_7_0 = self.wanted_profile_index
-
-			if not var_7_0 then
-				-- Nothing
-			end
-
-			var_7_0 = SaveData.wanted_profile_index
-
-			local wanted_profile_index = var_7_0
-
-			::label_7_0::
-
-			local wanted_party_index = self.wanted_party_index
-
-			if not wanted_party_index then
-				-- Nothing
-			end
-
-			wanted_party_index = 1
-
-			local any_party = wanted_party_index
-
-			::label_7_1::
+			local wanted_profile_index = not not FindProfileIndex(Development.parameter("wanted_profile"))
+			local any_party = not not self.wanted_party_index
 
 			profile_index = not not wanted_profile_index or not not self.profile_synchronizer:get_first_free_profile(any_party)
 		end
@@ -422,21 +349,7 @@ NetworkServer.rpc_is_ingame = function (self, channel_id)
 	local peer_state_machine = self.peer_state_machines[peer_id]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_is_ingame") then
-		local state_name_2
-
-		if peer_state_machine and peer_state_machine.current_state then
-			state_name_2 = peer_state_machine.current_state.state_name
-
-			if not state_name_2 then
-				-- Nothing
-			end
-		end
-
-		state_name_2 = "no_state"
-
-		local state_name = state_name_2
-
-		::label_20_0::
+		local state_name = not not peer_state_machine.current_state.state_name
 
 		printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_is_ingame", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -751,21 +664,7 @@ NetworkServer.rpc_notify_lobby_joined = function (self, channel_id, wanted_profi
 	local peer_state_machine = self.peer_state_machines[remote_peer]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_notify_lobby_joined") then
-		local state_name_2
-
-		if peer_state_machine and peer_state_machine.current_state then
-			state_name_2 = peer_state_machine.current_state.state_name
-
-			if not state_name_2 then
-				-- Nothing
-			end
-		end
-
-		state_name_2 = "no_state"
-
-		local state_name = state_name_2
-
-		::label_38_0::
+		local state_name = not not peer_state_machine.current_state.state_name
 
 		network_printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_notify_lobby_joined", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -791,21 +690,7 @@ NetworkServer.rpc_provide_slot_reservation_info = function (self, channel_id, pe
 	local peer_state_machine = self.peer_state_machines[sender_peer_id]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_provide_slot_reservation_info") then
-		local state_name_2
-
-		if peer_state_machine and peer_state_machine.current_state then
-			state_name_2 = peer_state_machine.current_state.state_name
-
-			if not state_name_2 then
-				-- Nothing
-			end
-		end
-
-		state_name_2 = "no_state"
-
-		local state_name = state_name_2
-
-		::label_39_0::
+		local state_name = not not peer_state_machine.current_state.state_name
 
 		network_printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_provide_slot_reservation_info", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -823,21 +708,7 @@ NetworkServer.rpc_post_game_notified = function (self, channel_id, in_post_game)
 	local peer_state_machine = self.peer_state_machines[remote_peer]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_post_game_notified") then
-		local state_name_2
-
-		if peer_state_machine and peer_state_machine.current_state then
-			state_name_2 = peer_state_machine.current_state.state_name
-
-			if not state_name_2 then
-				-- Nothing
-			end
-		end
-
-		state_name_2 = "no_state"
-
-		local state_name = state_name_2
-
-		::label_40_0::
+		local state_name = not not peer_state_machine.current_state.state_name
 
 		network_printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_post_game_notified", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -906,29 +777,10 @@ NetworkServer.game_object_sync_done = function (self, peer_id)
 	if IS_XB1 then
 		local session_id = self._host_migration_session_id
 		local session_template_name = self.lobby_host:session_template_name()
-		local rpc_set_migration_host_xbox = RPC.rpc_set_migration_host_xbox
-		local var_44_1 = channel_id
-		local host_to_migrate_to = self.host_to_migrate_to
 
-		host_to_migrate_to = not not host_to_migrate_to or not not ""
-
-		local flag
-
-		flag = (not self.host_to_migrate_to or not true) and not not false
-
-		rpc_set_migration_host_xbox(var_44_1, host_to_migrate_to, flag, session_id, session_template_name)
+		RPC.rpc_set_migration_host_xbox(channel_id, not not self.host_to_migrate_to, self.host_to_migrate_to and not not true or not self.host_to_migrate_to and not not false, session_id, session_template_name)
 	else
-		local rpc_set_migration_host = RPC.rpc_set_migration_host
-		local var_44_5 = channel_id
-		local host_to_migrate_to_2 = self.host_to_migrate_to
-
-		host_to_migrate_to_2 = not not host_to_migrate_to_2 or not not ""
-
-		local flag_2
-
-		flag_2 = (not self.host_to_migrate_to or not true) and not not false
-
-		rpc_set_migration_host(var_44_5, host_to_migrate_to_2, flag_2)
+		RPC.rpc_set_migration_host(channel_id, not not self.host_to_migrate_to, self.host_to_migrate_to and not not true or not self.host_to_migrate_to and not not false)
 	end
 end
 
@@ -1038,26 +890,7 @@ NetworkServer._update_connections = function (self, peer_state_machines)
 		local state, reason = Network.channel_state(connection.channel_id)
 
 		if state ~= connection.channel_state then
-			local printf = printf
-			local str = "CHANNEL_STATE changed: %s -> %s for peer_id: '%s'%s"
-			local channel_state = connection.channel_state
-			local var_51_3 = state
-			local var_51_4 = peer_id
-			local str_2
-
-			if reason then
-				str_2 = ". With reason: " .. reason
-
-				if not str_2 then
-					-- Nothing
-				end
-			end
-
-			str_2 = ""
-
-			::label_51_0::
-
-			printf(str, channel_state, var_51_3, var_51_4, str_2)
+			printf("CHANNEL_STATE changed: %s -> %s for peer_id: '%s'%s", connection.channel_state, state, peer_id, reason and not not (". With reason: " .. reason) or not reason and not not "")
 
 			if state == "connected" then
 				local state_id = NetworkLookup.connection_states[state]
@@ -1140,17 +973,7 @@ NetworkServer.update = function (self, dt, t)
 		table.clear(joined_peers)
 	end
 
-	local game_network_manager = self.game_network_manager
-
-	if game_network_manager then
-		-- Nothing
-	end
-
-	game_network_manager = self.game_network_manager:game()
-
-	local game_session = game_network_manager
-
-	::label_56_0::
+	local game_session = not not self.game_network_manager
 
 	if game_session then
 		local peer_id = GameSession.wants_to_leave(game_session)
@@ -1210,27 +1033,10 @@ NetworkServer.update = function (self, dt, t)
 			if IS_XB1 then
 				local session_id = self._host_migration_session_id
 				local session_template_name = self.lobby_host:session_template_name()
-				local network_transmit = self.network_transmit
-				local var_56_2 = network_transmit
-				local send_rpc_clients = network_transmit.send_rpc_clients
-				local str = "rpc_set_migration_host_xbox"
-				local flag = not not host_to_migrate_to or not not ""
-				local flag_2
 
-				flag_2 = (not host_to_migrate_to or not true) and not not false
-
-				send_rpc_clients(var_56_2, str, flag, flag_2, session_id, session_template_name)
+				self.network_transmit:send_rpc_clients("rpc_set_migration_host_xbox", not not host_to_migrate_to or not not "", host_to_migrate_to and not not true or not host_to_migrate_to and not not false, session_id, session_template_name)
 			else
-				local network_transmit_2 = self.network_transmit
-				local var_56_8 = network_transmit_2
-				local send_rpc_clients_2 = network_transmit_2.send_rpc_clients
-				local str_2 = "rpc_set_migration_host"
-				local flag_3 = not not host_to_migrate_to or not not ""
-				local flag_4
-
-				flag_4 = (not host_to_migrate_to or not true) and not not false
-
-				send_rpc_clients_2(var_56_8, str_2, flag_3, flag_4)
+				self.network_transmit:send_rpc_clients("rpc_set_migration_host", not not host_to_migrate_to or not not "", host_to_migrate_to and not not true or not host_to_migrate_to and not not false)
 			end
 		end
 	end
@@ -1240,23 +1046,7 @@ NetworkServer.update = function (self, dt, t)
 	self:_update_eac_match()
 
 	if DEDICATED_SERVER then
-		local DEDICATED_SERVER = DEDICATED_SERVER
-
-		if DEDICATED_SERVER then
-			-- Nothing
-		end
-
-		if rawget(_G, "GameliftServer") == nil then
-			DEDICATED_SERVER = false
-
-			goto label_56_1
-		end
-
-		DEDICATED_SERVER = true
-
-		local using_gamelift = DEDICATED_SERVER
-
-		::label_56_1::
+		local using_gamelift = not not DEDICATED_SERVER
 
 		if using_gamelift then
 			if GameliftServer.should_terminate() then
@@ -1660,21 +1450,7 @@ end
 
 NetworkServer.get_peers = function (self)
 	-- function 75
-	local get_peers
-
-	if self._network_state then
-		get_peers = self._network_state:get_peers()
-
-		if not get_peers then
-			-- Nothing
-		end
-	end
-
-	get_peers = {}
-
-	::label_75_0::
-
-	return get_peers
+	return self._network_state and not not self._network_state:get_peers() or not self._network_state and not not {}
 end
 
 NetworkServer.hot_join_sync_party_and_profiles = function (self, peer_id)
@@ -1701,11 +1477,7 @@ end
 
 NetworkServer.get_side_order_state = function (self, side_order_state)
 	-- function 78
-	local _network_state = self._network_state
-
-	_network_state = not not _network_state and not not self._network_state:get_side_order_state()
-
-	return _network_state
+	return not not self._network_state
 end
 
 NetworkServer.get_network_state = function (self)
@@ -1745,17 +1517,7 @@ NetworkServer.rpc_slot_reservation_request_party_change = function (self, channe
 		local mechanism = Managers.mechanism:game_mechanism()
 
 		if mechanism.get_slot_reservation_handler then
-			local get_slot_reservation_handler = mechanism:get_slot_reservation_handler(match_host, ReservationHandlerTypes.pending_custom_game)
-
-			if not get_slot_reservation_handler then
-				-- Nothing
-			end
-
-			get_slot_reservation_handler = mechanism:get_slot_reservation_handler(match_host, ReservationHandlerTypes.session)
-
-			local slot_reservation_handler = get_slot_reservation_handler
-
-			::label_82_0::
+			local slot_reservation_handler = not not mechanism:get_slot_reservation_handler(match_host, ReservationHandlerTypes.pending_custom_game)
 
 			slot_reservation_handler:move_player(peer_id, wanted_party_index)
 		end

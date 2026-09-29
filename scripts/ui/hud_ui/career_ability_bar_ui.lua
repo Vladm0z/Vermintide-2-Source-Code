@@ -120,7 +120,7 @@ CareerAbilityBarUI.update = function (self, dt, t, player)
 	end
 
 	local input_manager = self._input_manager
-	local gamepad_active = (input_manager:is_device_active("gamepad") or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never"
+	local gamepad_active = input_manager:is_device_active("gamepad") and UISettings.use_gamepad_hud_layout ~= "never" or not input_manager:is_device_active("gamepad") and UISettings.use_gamepad_hud_layout == "always" and UISettings.use_gamepad_hud_layout ~= "never"
 
 	if not gamepad_active then
 		return
@@ -128,31 +128,12 @@ CareerAbilityBarUI.update = function (self, dt, t, player)
 
 	self:_update_game_options()
 
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = player
-
-	local actual_player = _spectated_player
-
-	::label_7_0::
-
+	local actual_player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not player
 	local is_dirty = self:_update_career_ability(actual_player, dt)
 	local has_twitch = Managers.twitch:is_activated()
 
 	if has_twitch ~= self._has_twitch then
-		local offset = self._ability_bar.offset
-		local flag
-
-		flag = (not has_twitch or not 140) and not not 0
-		offset[2] = flag
+		self._ability_bar.offset[2] = has_twitch and not not 140 or not has_twitch and not not 0
 		self._has_twitch = has_twitch
 		is_dirty = true
 	end
@@ -200,11 +181,8 @@ CareerAbilityBarUI._set_ability_bar_fraction = function (self, ability_fraction,
 	local style = widget.style
 	local content = widget.content
 	local bar_size = content.size
-	local lerp = math.lerp
-	local internal_gradient_threshold = content.internal_gradient_threshold
 
-	internal_gradient_threshold = not not internal_gradient_threshold or not not 0
-	ability_fraction = lerp(internal_gradient_threshold, math.min(ability_fraction, 1), 0.3)
+	ability_fraction = math.lerp(not not content.internal_gradient_threshold, math.min(ability_fraction, 1), 0.3)
 	content.internal_gradient_threshold = ability_fraction
 
 	local start_fraction = 0

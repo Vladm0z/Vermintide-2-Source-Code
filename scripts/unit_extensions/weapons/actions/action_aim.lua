@@ -37,34 +37,10 @@ ActionAim.client_owner_start_action = function (self, new_action, t)
 
 	self.buff_extension = buff_extension
 
-	local var_3_0 = scale_delay_value
-	local var_3_1 = new_action
-	local aim_sound_delay_2 = new_action.aim_sound_delay
-
-	aim_sound_delay_2 = not not aim_sound_delay_2 or not not 0
-
-	local aim_sound_delay = var_3_0(var_3_1, aim_sound_delay_2, owner_unit, buff_extension)
-	local var_3_3 = scale_delay_value
-	local var_3_4 = new_action
-	local aim_zoom_delay_2 = new_action.aim_zoom_delay
-
-	aim_zoom_delay_2 = not not aim_zoom_delay_2 or not not 0
-
-	local aim_zoom_delay = var_3_3(var_3_4, aim_zoom_delay_2, owner_unit, buff_extension)
-	local var_3_6 = scale_delay_value
-	local var_3_7 = new_action
-	local heavy_aim_flow_delay_2 = new_action.heavy_aim_flow_delay
-
-	heavy_aim_flow_delay_2 = not not heavy_aim_flow_delay_2 or not not 0
-
-	local heavy_aim_flow_delay = var_3_6(var_3_7, heavy_aim_flow_delay_2, owner_unit, buff_extension)
-	local var_3_9 = scale_delay_value
-	local var_3_10 = new_action
-	local charge_time_2 = new_action.charge_time
-
-	charge_time_2 = not not charge_time_2 or not not 0
-
-	local charge_time = var_3_9(var_3_10, charge_time_2, owner_unit, buff_extension)
+	local aim_sound_delay = scale_delay_value(new_action, not not new_action.aim_sound_delay, owner_unit, buff_extension)
+	local aim_zoom_delay = scale_delay_value(new_action, not not new_action.aim_zoom_delay, owner_unit, buff_extension)
+	local heavy_aim_flow_delay = scale_delay_value(new_action, not not new_action.heavy_aim_flow_delay, owner_unit, buff_extension)
+	local charge_time = scale_delay_value(new_action, not not new_action.charge_time, owner_unit, buff_extension)
 
 	self.aim_sound_time = t + aim_sound_delay
 	self.aim_zoom_time = t + aim_zoom_delay
@@ -143,29 +119,8 @@ ActionAim.client_owner_post_update = function (self, dt, t, world, can_damage)
 
 		if eyetracking_extension:get_is_feature_enabled("tobii_aim_at_gaze") and not eyetracking_extension:get_aim_at_gaze_cancelled() then
 			local input_extension = ScriptUnit.extension(owner_unit, "input_system")
-			local get = input_extension:get("look_raw")
-
-			if not get then
-				-- Nothing
-			end
-
-			get = Vector3(0, 0, 0)
-
-			local move_input = get
-
-			::label_6_0::
-
-			local get_2 = input_extension:get("look_raw_controller")
-
-			if not get_2 then
-				-- Nothing
-			end
-
-			get_2 = Vector3(0, 0, 0)
-
-			local move_input_controller = get_2
-
-			::label_6_1::
+			local move_input = not not input_extension:get("look_raw")
+			local move_input_controller = not not input_extension:get("look_raw_controller")
 
 			if Vector3.length(move_input) > 0.01 or Vector3.length(move_input_controller) > 0.01 then
 				local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
@@ -262,19 +217,7 @@ ActionAim.finish = function (self, reason)
 	first_person_extension:stop_force_look_rotation()
 
 	local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-	local flag
-
-	if not reload_when_out_of_ammo_condition_func then
-		flag = true
-
-		goto label_7_0
-	end
-
-	flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-	local do_out_of_ammo_reload = flag
-
-	::label_7_0::
+	local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 	if ammo_extension and ammo_extension:can_reload() and ammo_extension:ammo_count() == 0 and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload then
 		local play_reload_animation = true

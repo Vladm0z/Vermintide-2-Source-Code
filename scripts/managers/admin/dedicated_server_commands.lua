@@ -289,14 +289,8 @@ Commands = {
 
 				for i = 1, #peers do
 					local peer_id = peers[i]
-					local format = string.format
-					local str = "%s%s - %s\n"
-					local var_13_2 = response
-					local flag = not not peer_id or not not "-"
-					local peer_name = Managers.game_server:peer_name(peer_id)
 
-					peer_name = not not peer_name or not not "-"
-					response = format(str, var_13_2, flag, peer_name)
+					response = string.format("%s%s - %s\n", response, not not peer_id or not not "-", not not Managers.game_server:peer_name(peer_id))
 				end
 
 				return true, response
@@ -305,21 +299,7 @@ Commands = {
 			local players = Managers.player:human_and_bot_players()
 
 			for _, player in pairs(players) do
-				local format_2 = string.format
-				local str_2 = "%s%s - %s (%s)\n"
-				local var_13_7 = response
-				local peer_id_2 = player.peer_id
-
-				peer_id_2 = not not peer_id_2 or not not "-"
-
-				local name = player:name()
-
-				name = not not name or not not "-"
-
-				local career_name = player:career_name()
-
-				career_name = not not career_name or not not "-"
-				response = format_2(str_2, var_13_7, peer_id_2, name, career_name)
+				response = string.format("%s%s - %s (%s)\n", response, not not player.peer_id, not not player:name(), not not player:career_name())
 			end
 
 			return true, response
@@ -582,17 +562,7 @@ Commands = {
 				return false, "No active mechanism"
 			end
 
-			local game_mode_2 = Managers.state.game_mode
-
-			if game_mode_2 then
-				-- Nothing
-			end
-
-			game_mode_2 = Managers.state.game_mode:game_mode()
-
-			local game_mode = game_mode_2
-
-			::label_26_0::
+			local game_mode = not not Managers.state.game_mode
 
 			if not game_mode then
 				return false, "No current game mode is active"
@@ -624,17 +594,7 @@ Commands = {
 				return false, "No active mechanism"
 			end
 
-			local game_mode_2 = Managers.state.game_mode
-
-			if game_mode_2 then
-				-- Nothing
-			end
-
-			game_mode_2 = Managers.state.game_mode:game_mode()
-
-			local game_mode = game_mode_2
-
-			::label_27_0::
+			local game_mode = not not Managers.state.game_mode
 
 			if not game_mode then
 				return false, "No current game mode is active"

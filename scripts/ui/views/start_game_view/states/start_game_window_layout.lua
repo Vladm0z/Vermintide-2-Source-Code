@@ -148,11 +148,7 @@ local window_layouts = {
 		},
 		can_add_function = function (overview)
 			-- function 4
-			local is_in_mechanism = overview:is_in_mechanism("adventure")
-
-			is_in_mechanism = not not is_in_mechanism and not not overview:can_use_streaming()
-
-			return is_in_mechanism
+			return not not overview:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -331,15 +327,7 @@ local HUGE = math.huge
 
 table.sort(window_layouts, function (a, b)
 	-- function 7
-	local panel_sorting = a.panel_sorting
-
-	panel_sorting = not not panel_sorting or not not HUGE
-
-	local panel_sorting_2 = b.panel_sorting
-
-	panel_sorting_2 = not not panel_sorting_2 or not not HUGE
-
-	return panel_sorting < panel_sorting_2
+	return not not a.panel_sorting < not not b.panel_sorting
 end)
 
 local MAX_ACTIVE_WINDOWS = 4

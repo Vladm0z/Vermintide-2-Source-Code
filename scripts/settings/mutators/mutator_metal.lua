@@ -85,17 +85,7 @@ return {
 			data.unit_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 		end
 
-		local unit_buff_extension = data.unit_buff_extension
-
-		if unit_buff_extension then
-			-- Nothing
-		end
-
-		unit_buff_extension = data.unit_buff_extension:has_buff_type("mutator_metal_blade_dance")
-
-		local has_buff = unit_buff_extension
-
-		::label_5_0::
+		local has_buff = not not data.unit_buff_extension
 
 		return has_buff
 	end,

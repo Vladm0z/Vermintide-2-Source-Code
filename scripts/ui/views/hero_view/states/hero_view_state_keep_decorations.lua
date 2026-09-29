@@ -89,17 +89,8 @@ HeroViewStateKeepDecorations.on_enter = function (self, params)
 	local player = Managers.player:local_player()
 
 	if player then
-		local map = UISettings.map
-		local get_data = Unit.get_data(interactable_unit, "interaction_data", "camera_transition_time_in")
-
-		get_data = not not get_data or not not 0.5
-		map.camera_time_enter = get_data
-
-		local map_2 = UISettings.map
-		local get_data_2 = Unit.get_data(interactable_unit, "interaction_data", "camera_transition_time_out")
-
-		get_data_2 = not not get_data_2 or not not 0.5
-		map_2.camera_time_exit = get_data_2
+		UISettings.map.camera_time_enter = not not Unit.get_data(interactable_unit, "interaction_data", "camera_transition_time_in")
+		UISettings.map.camera_time_exit = not not Unit.get_data(interactable_unit, "interaction_data", "camera_transition_time_out")
 
 		local params = {
 			camera_interaction_name = camera_interaction_name
@@ -137,17 +128,7 @@ HeroViewStateKeepDecorations.on_enter = function (self, params)
 
 		self._keep_decoration_extension = keep_decoration_extension
 
-		local get_data_3 = Unit.get_data(interactable_unit, "interaction_data", "view_only")
-
-		if not get_data_3 then
-			-- Nothing
-		end
-
-		get_data_3 = not self._is_server
-
-		local view_only = get_data_3
-
-		::label_1_0::
+		local view_only = not not Unit.get_data(interactable_unit, "interaction_data", "view_only")
 
 		if view_only then
 			self:_set_info_by_decoration_key(selected_decoration, false)
@@ -202,22 +183,7 @@ HeroViewStateKeepDecorations._initialize_simple_decoration_preview = function (s
 
 	if sound_event and sound_event ~= "" then
 		self._sound_event = sound_event
-
-		local var_3_0
-
-		if self._sound_event then
-			var_3_0 = DIALOGUE_DELAY
-
-			if not var_3_0 then
-				-- Nothing
-			end
-		end
-
-		var_3_0 = nil
-
-		::label_3_0::
-
-		self._sound_event_delay = var_3_0
+		self._sound_event_delay = self._sound_event and not not DIALOGUE_DELAY or not self._sound_event and not not nil
 	end
 
 	local title = Localize(hud_text_line_1)
@@ -259,17 +225,7 @@ HeroViewStateKeepDecorations.on_exit = function (self, params)
 			first_person_extension:abort_toggle_visibility_timer()
 			first_person_extension:abort_first_person_units_visibility_timer()
 
-			local camera_time_exit = UISettings.map.camera_time_exit
-
-			if not camera_time_exit then
-				-- Nothing
-			end
-
-			camera_time_exit = 0.5
-
-			local delay = camera_time_exit
-
-			::label_4_0::
+			local delay = not not UISettings.map.camera_time_exit
 
 			if not first_person_extension:first_person_mode_active() then
 				first_person_extension:toggle_visibility(delay)
@@ -373,11 +329,8 @@ end
 HeroViewStateKeepDecorations._is_list_hovered = function (self)
 	-- function 15
 	local widget = self._widgets_by_name.list_mask
-	local is_hover = widget.content.hotspot.is_hover
 
-	is_hover = not not is_hover or not not false
-
-	return is_hover
+	return not not widget.content.hotspot.is_hover
 end
 
 HeroViewStateKeepDecorations.update = function (self, dt, t)
@@ -390,21 +343,7 @@ HeroViewStateKeepDecorations.update = function (self, dt, t)
 		self:_create_ui_elements()
 	end
 
-	local FAKE_INPUT_SERVICE
-
-	if self._input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_16_0::
+	local input_service = self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
 
 	if self._type == "painting" then
 		self:_update_client_paintings(dt)
@@ -461,17 +400,7 @@ end
 HeroViewStateKeepDecorations._has_active_level_vote = function (self)
 	-- function 18
 	local voting_manager = self._voting_manager
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local is_mission_vote = vote_in_progress
-
-	::label_18_0::
+	local is_mission_vote = not not voting_manager:vote_in_progress()
 
 	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
@@ -514,17 +443,7 @@ end
 HeroViewStateKeepDecorations._is_button_hover_enter = function (self, widget)
 	-- function 21
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_21_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.on_hover_enter
 end
@@ -532,17 +451,7 @@ end
 HeroViewStateKeepDecorations._is_button_hover_exit = function (self, widget)
 	-- function 22
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_22_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.on_hover_exit
 end
@@ -550,39 +459,14 @@ end
 HeroViewStateKeepDecorations._is_button_hover = function (self, widget)
 	-- function 23
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_23_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.is_hover
 end
 
 HeroViewStateKeepDecorations._handle_input = function (self, dt, t)
 	-- function 24
-	local FAKE_INPUT_SERVICE
-
-	if self._input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_24_0::
-
+	local input_service = self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
 	local mouse_active = Managers.input:is_device_active("mouse")
 	local input_pressed = input_service:get("toggle_menu")
 	local input_close_pressed = not mouse_active and not not input_service:get("back")
@@ -712,18 +596,7 @@ HeroViewStateKeepDecorations.draw = function (self, input_service, dt)
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_27_0::
-
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 	local list_widgets = self._list_widgets
 
 	if list_widgets then
@@ -745,10 +618,7 @@ HeroViewStateKeepDecorations.draw = function (self, input_service, dt)
 			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -767,17 +637,7 @@ end
 HeroViewStateKeepDecorations._is_button_pressed = function (self, widget)
 	-- function 28
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_28_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -809,23 +669,8 @@ HeroViewStateKeepDecorations.set_fullscreen_effect_enable_state = function (self
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_31_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_31_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_31_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local flag_2
-
-		flag_2 = (not enabled or not 0.75) and not not 0
-
-		set_scalar_2(var_31_5, str_2, flag_2)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -853,39 +698,8 @@ HeroViewStateKeepDecorations._set_info_by_decoration_key = function (self, key, 
 	local display_name = settings.display_name
 	local description = settings.description
 	local artist = settings.artist
-	local var_35_0
-
-	if locked then
-		var_35_0 = Localize("interaction_unavailable")
-
-		if not var_35_0 then
-			-- Nothing
-		end
-	end
-
-	var_35_0 = Localize(description)
-
-	local description_text = var_35_0
-
-	do
-		local var_35_1
-	end
-
-	::label_35_0::
-
-	if artist and not locked then
-		var_35_1 = Localize(artist)
-
-		if not var_35_1 then
-			-- Nothing
-		end
-	end
-
-	var_35_1 = ""
-
-	local artist_text = var_35_1
-
-	::label_35_1::
+	local description_text = locked and not not Localize("interaction_unavailable") or not locked and not not Localize(description)
+	local artist_text = not not Localize(artist)
 
 	self._selected_decoration = key
 
@@ -894,21 +708,8 @@ HeroViewStateKeepDecorations._set_info_by_decoration_key = function (self, key, 
 
 	if not locked then
 		local sound_event = settings.sound_event
-		local var_35_2
 
-		if sound_event then
-			var_35_2 = DIALOGUE_DELAY
-
-			if not var_35_2 then
-				-- Nothing
-			end
-		end
-
-		var_35_2 = nil
-
-		::label_35_2::
-
-		self._sound_event_delay = var_35_2
+		self._sound_event_delay = sound_event and not not DIALOGUE_DELAY or not sound_event and not not nil
 	end
 end
 
@@ -993,36 +794,14 @@ HeroViewStateKeepDecorations._on_list_index_selected = function (self, index, sc
 
 	self:_update_confirm_button()
 
-	local str
-
-	if self._selected_equipped_decoration then
-		str = "remove"
-
-		goto label_38_0
-	end
-
-	str = "default"
-
-	local input_action_key = str
-
-	::label_38_0::
+	local input_action_key = self._selected_equipped_decoration and not not "remove" or not self._selected_equipped_decoration and not not "default"
 
 	self._menu_input_description:set_input_description(not not input_action_key and not not input_actions[input_action_key])
 
 	if list_widgets then
 		for i, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot_2 = content.hotspot
-
-			if not hotspot_2 then
-				-- Nothing
-			end
-
-			hotspot_2 = content.button_hotspot
-
-			local hotspot = hotspot_2
-
-			::label_38_1::
+			local hotspot = not not content.hotspot
 
 			if hotspot then
 				local is_selected = i == index
@@ -1085,22 +864,7 @@ HeroViewStateKeepDecorations._set_info_texts = function (self, title_text, descr
 	-- function 40
 	local title_height = self:_set_selected_title(title_text)
 	local description_height = self:_set_selected_description(description_text)
-	local _set_selected_artist
-
-	if artist_text then
-		_set_selected_artist = self:_set_selected_artist(artist_text)
-
-		if not _set_selected_artist then
-			-- Nothing
-		end
-	end
-
-	_set_selected_artist = 0
-
-	local artist_height = _set_selected_artist
-
-	::label_40_0::
-
+	local artist_height = artist_text and not not self:_set_selected_artist(artist_text) or not artist_text and not not 0
 	local ui_scenegraph = self._ui_scenegraph
 	local title_scenegraph = ui_scenegraph.title_text
 
@@ -1386,17 +1150,7 @@ HeroViewStateKeepDecorations._list_index_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot_2 = content.hotspot
-
-			if not hotspot_2 then
-				-- Nothing
-			end
-
-			hotspot_2 = content.button_hotspot
-
-			local hotspot = hotspot_2
-
-			::label_52_0::
+			local hotspot = not not content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -1410,22 +1164,7 @@ end
 HeroViewStateKeepDecorations._setup_decorations_list = function (self)
 	-- function 53
 	local backend_interface = self._keep_decoration_backend_interface
-	local get_unlocked_keep_decorations
-
-	if backend_interface then
-		get_unlocked_keep_decorations = backend_interface:get_unlocked_keep_decorations()
-
-		if not get_unlocked_keep_decorations then
-			-- Nothing
-		end
-	end
-
-	get_unlocked_keep_decorations = {}
-
-	local unlocked_decorations = get_unlocked_keep_decorations
-
-	::label_53_0::
-
+	local unlocked_decorations = backend_interface and not not backend_interface:get_unlocked_keep_decorations() or not backend_interface and not not {}
 	local widgets = {}
 	local index = 0
 
@@ -1526,18 +1265,7 @@ HeroViewStateKeepDecorations._animate_list_widget = function (self, widget, dt, 
 	local offset = widget.offset
 	local content = widget.content
 	local style = widget.style
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_56_0::
-
+	local hotspot = not not content.button_hotspot
 	local on_hover_enter = hotspot.on_hover_enter
 	local is_hover = hotspot.is_hover
 
@@ -1547,108 +1275,13 @@ HeroViewStateKeepDecorations._animate_list_widget = function (self, widget, dt, 
 	end
 
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_56_2
-
-	::label_56_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_56_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_56_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_56_4::
-
-	local pulse_progress_2 = hotspot.pulse_progress
-
-	if not pulse_progress_2 then
-		-- Nothing
-	end
-
-	pulse_progress_2 = 1
-
-	local pulse_progress = pulse_progress_2
-
-	::label_56_5::
-
-	local offset_progress_2 = hotspot.offset_progress
-
-	if not offset_progress_2 then
-		-- Nothing
-	end
-
-	offset_progress_2 = 1
-
-	local offset_progress = offset_progress_2
-
-	::label_56_6::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	do
-		local num
-	end
-
-	::label_56_7::
-
-	if is_hover or is_selected then
-		num = 14
-
-		goto label_56_8
-	end
-
-	num = 3
-
-	local speed = num
-
-	::label_56_8::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local pulse_progress = not not hotspot.pulse_progress
+	local offset_progress = not not hotspot.offset_progress
+	local selection_progress = not not hotspot.selection_progress
+	local speed = not not 14
 	local pulse_speed = 3
 	local input_speed = 20
 	local offset_speed = 5

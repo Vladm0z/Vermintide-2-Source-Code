@@ -12,18 +12,7 @@ return {
 		end,
 		sound_function = function ()
 			-- function 2
-			local reinforcement_ui_local_sound = script_data.reinforcement_ui_local_sound
-
-			if not reinforcement_ui_local_sound then
-				reinforcement_ui_local_sound = "hud_achievement_unlock_02"
-			end
-
-			if false then
-				reinforcement_ui_local_sound = script_data.enable_reinforcement_ui_remote_sound
-				reinforcement_ui_local_sound = not not reinforcement_ui_local_sound and not not "hud_info"
-			end
-
-			return reinforcement_ui_local_sound
+			return not not script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 3
@@ -41,18 +30,7 @@ return {
 		end,
 		sound_function = function ()
 			-- function 5
-			local reinforcement_ui_local_sound = script_data.reinforcement_ui_local_sound
-
-			if not reinforcement_ui_local_sound then
-				reinforcement_ui_local_sound = "hud_achievement_unlock_02"
-			end
-
-			if false then
-				reinforcement_ui_local_sound = script_data.enable_reinforcement_ui_remote_sound
-				reinforcement_ui_local_sound = not not reinforcement_ui_local_sound and not not "hud_info"
-			end
-
-			return reinforcement_ui_local_sound
+			return not not script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 6
@@ -70,18 +48,7 @@ return {
 		end,
 		sound_function = function ()
 			-- function 8
-			local reinforcement_ui_local_sound = script_data.reinforcement_ui_local_sound
-
-			if not reinforcement_ui_local_sound then
-				reinforcement_ui_local_sound = "hud_achievement_unlock_02"
-			end
-
-			if false then
-				reinforcement_ui_local_sound = script_data.enable_reinforcement_ui_remote_sound
-				reinforcement_ui_local_sound = not not reinforcement_ui_local_sound and not not "hud_info"
-			end
-
-			return reinforcement_ui_local_sound
+			return not not script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 9
@@ -163,18 +130,7 @@ return {
 	collected_isha_reward = {
 		sound_function = function ()
 			-- function 22
-			local reinforcement_ui_local_sound = script_data.reinforcement_ui_local_sound
-
-			if not reinforcement_ui_local_sound then
-				reinforcement_ui_local_sound = "hud_achievement_unlock_02"
-			end
-
-			if false then
-				reinforcement_ui_local_sound = script_data.enable_reinforcement_ui_remote_sound
-				reinforcement_ui_local_sound = not not reinforcement_ui_local_sound and not not "hud_info"
-			end
-
-			return reinforcement_ui_local_sound
+			return not not script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 23
@@ -184,18 +140,7 @@ return {
 	collected_grimnir_reward = {
 		sound_function = function ()
 			-- function 24
-			local reinforcement_ui_local_sound = script_data.reinforcement_ui_local_sound
-
-			if not reinforcement_ui_local_sound then
-				reinforcement_ui_local_sound = "hud_achievement_unlock_02"
-			end
-
-			if false then
-				reinforcement_ui_local_sound = script_data.enable_reinforcement_ui_remote_sound
-				reinforcement_ui_local_sound = not not reinforcement_ui_local_sound and not not "hud_info"
-			end
-
-			return reinforcement_ui_local_sound
+			return not not script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 25

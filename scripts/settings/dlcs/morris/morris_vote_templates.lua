@@ -76,7 +76,7 @@ VoteTemplates.deus_settings_vote = {
 				excluded_level_keys = excluded_level_keys
 			}
 
-			if Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
+			if Managers.twitch:is_connected() and Managers.twitch and Managers.twitch:is_connecting() and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
 				Managers.twitch:disconnect()
 			end
 
@@ -96,48 +96,15 @@ VoteTemplates.deus_settings_vote = {
 	end,
 	pack_sync_data = function (data)
 		-- function 4
-		local mission_id_2 = data.mission_id
-
-		if not mission_id_2 then
-			-- Nothing
-		end
-
-		mission_id_2 = "n/a"
-
-		local mission_id = mission_id_2
-
-		::label_4_0::
-
-		local act_key_2 = data.act_key
-
-		if not act_key_2 then
-			-- Nothing
-		end
-
-		act_key_2 = "n/a"
-
-		local act_key = act_key_2
-
-		::label_4_1::
-
+		local mission_id = not not data.mission_id
+		local act_key = not not data.act_key
 		local difficulty = data.difficulty
 		local quick_game = data.quick_game
 		local private_game = data.private_game
 		local always_host = data.always_host
 		local strict_matchmaking = data.strict_matchmaking
 		local matchmaking_type = data.matchmaking_type
-		local twitch = Managers.twitch
-
-		if twitch then
-			-- Nothing
-		end
-
-		twitch = Managers.twitch:is_connected()
-
-		local twitch_enabled = twitch
-
-		::label_4_2::
-
+		local twitch_enabled = not not Managers.twitch
 		local dominant_god = data.dominant_god
 		local mechanism = data.mechanism
 
@@ -146,54 +113,23 @@ VoteTemplates.deus_settings_vote = {
 			dominant_god = nil
 		end
 
-		local tbl = {
+		local sync_data = {
 			NetworkLookup.mission_ids[mission_id],
 			NetworkLookup.act_keys[act_key],
-			NetworkLookup.difficulties[difficulty]
+			NetworkLookup.difficulties[difficulty],
+			quick_game and not not 1 or not quick_game and not not 2,
+			private_game and not not 1 or not private_game and not not 2,
+			always_host and not not 1 or not always_host and not not 2,
+			strict_matchmaking and not not 1 or not strict_matchmaking and not not 2,
+			NetworkLookup.matchmaking_types[matchmaking_type],
+			twitch_enabled and not not 1 or not twitch_enabled and not not 2,
+			NetworkLookup.mechanisms[mechanism],
+			not not dominant_god and not not NetworkLookup.deus_themes[dominant_god]
 		}
-		local flag
-
-		flag = (not quick_game or not 1) and not not 2
-		tbl[4] = flag
-
-		local flag_2
-
-		flag_2 = (not private_game or not 1) and not not 2
-		tbl[5] = flag_2
-
-		local flag_3
-
-		flag_3 = (not always_host or not 1) and not not 2
-		tbl[6] = flag_3
-
-		local flag_4
-
-		flag_4 = (not strict_matchmaking or not 1) and not not 2
-		tbl[7] = flag_4
-		tbl[8] = NetworkLookup.matchmaking_types[matchmaking_type]
-
-		local flag_5
-
-		flag_5 = (not twitch_enabled or not 1) and not not 2
-		tbl[9] = flag_5
-		tbl[10] = NetworkLookup.mechanisms[mechanism]
-		tbl[11] = not not dominant_god and not not NetworkLookup.deus_themes[dominant_god]
-
-		local sync_data = tbl
 
 		if matchmaking_type == "event" then
 			local event_data = data.event_data
-			local mutators_2 = event_data.mutators
-
-			if not mutators_2 then
-				-- Nothing
-			end
-
-			mutators_2 = {}
-
-			local mutators = mutators_2
-
-			::label_4_3::
+			local mutators = not not event_data.mutators
 
 			sync_data[#sync_data + 1] = #mutators
 
@@ -204,17 +140,7 @@ VoteTemplates.deus_settings_vote = {
 				sync_data[#sync_data + 1] = mutator_id
 			end
 
-			local boons_2 = event_data.boons
-
-			if not boons_2 then
-				-- Nothing
-			end
-
-			boons_2 = {}
-
-			local boons = boons_2
-
-			::label_4_4::
+			local boons = not not event_data.boons
 
 			sync_data[#sync_data + 1] = #boons
 
@@ -290,7 +216,10 @@ VoteTemplates.deus_settings_vote = {
 			mission_id = mission_id,
 			act_key = act_key,
 			difficulty = difficulty,
-			event_data = (mutators or not not boons) and not not {
+			event_data = mutators and not not {
+				mutators = mutators,
+				boons = boons
+			} or not mutators and not not boons and not not {
 				mutators = mutators,
 				boons = boons
 			},

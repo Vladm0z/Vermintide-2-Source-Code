@@ -222,22 +222,7 @@ local function spawn_graph_units(world, level_ref_values, graph)
 			local new_distance_squared = Vector3.length_squared(next_pos - pos)
 			local lerp_ratio = (new_distance_squared - distance_a_squared) / (distance_b_squared - distance_a_squared)
 			local distance_to_edge_squared = math.lerp(distance_to_edge_a_squared, distance_to_edge_b_squared, lerp_ratio)
-			local sqrt
-
-			if distance_to_edge_squared >= 0 then
-				sqrt = math.sqrt(distance_to_edge_squared)
-
-				if not sqrt then
-					-- Nothing
-				end
-			end
-
-			sqrt = 0
-
-			local distance_to_edge = sqrt
-
-			::label_4_0::
-
+			local distance_to_edge = distance_to_edge_squared >= 0 and not not math.sqrt(distance_to_edge_squared) or not (distance_to_edge_squared >= 0) and not not 0
 			local edge_pos = pos + direction * distance_to_edge
 
 			edge_pos.z = edge_pos.z + random_z_offset_to_fix_z_fighting()
@@ -343,22 +328,7 @@ local function setup_fog_plane(world, level_ref_values, graph_data, visibility_d
 		local distance = math.sqrt(vector_x * vector_x + vector_y * vector_y)
 		local unit_vector_x = vector_x / distance
 		local unit_vector_y = vector_y / distance
-		local var_10_0
-
-		if start_node_key == "final" then
-			var_10_0 = FINAL_HOLE_RADIUS
-
-			if not var_10_0 then
-				-- Nothing
-			end
-		end
-
-		var_10_0 = HOLE_RADIUS
-
-		local hole_radius = var_10_0
-
-		::label_10_0::
-
+		local hole_radius = start_node_key ~= "final" and not not HOLE_RADIUS or not (start_node_key ~= "final") and not not FINAL_HOLE_RADIUS
 		local hole_width = hole_radius * w
 		local hole_height = hole_radius * width_ratio * h
 		local start_a_x = start_layout_x + unit_vector_y * hole_width
@@ -382,22 +352,7 @@ local function setup_fog_plane(world, level_ref_values, graph_data, visibility_d
 		layout_x = layout_x * w
 		layout_y = layout_y * h
 
-		local var_11_0
-
-		if node_key == "final" then
-			var_11_0 = FINAL_HOLE_RADIUS
-
-			if not var_11_0 then
-				-- Nothing
-			end
-		end
-
-		var_11_0 = HOLE_RADIUS
-
-		local hole_radius = var_11_0
-
-		::label_11_0::
-
+		local hole_radius = node_key ~= "final" and not not HOLE_RADIUS or not (node_key ~= "final") and not not FINAL_HOLE_RADIUS
 		local hole_width = hole_radius * w
 		local hole_height = hole_radius * width_ratio * h
 		local start_a_x = layout_x - hole_width
@@ -554,17 +509,7 @@ end
 
 DeusMapScene.update = function (self, dt, t, gamepad_active)
 	-- function 20
-	local modified = RESOLUTION_LOOKUP.modified
-
-	if not modified then
-		-- Nothing
-	end
-
-	modified = self._game_options_changed
-
-	local should_regenerate_fog = modified
-
-	::label_20_0::
+	local should_regenerate_fog = not not RESOLUTION_LOOKUP.modified
 
 	if should_regenerate_fog and self._last_visibility_data then
 		self:setup_fog(self._last_visibility_data)
@@ -648,18 +593,7 @@ local NilCursor = {
 
 DeusMapScene._update_cursor = function (self, gamepad_active)
 	-- function 25
-	local get = self._input_service:get("cursor")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = NilCursor
-
-	local cursor = get
-
-	::label_25_0::
-
+	local cursor = not not self._input_service:get("cursor")
 	local cursor_position
 
 	if IS_XB1 and not gamepad_active then
@@ -680,7 +614,7 @@ DeusMapScene._update_cursor = function (self, gamepad_active)
 	end
 
 	if node_key_under_cursor then
-		if self._selectables and (self._input_service:get("confirm_press") or self._input_service:get("left_press")) and table.contains(self._selectables, node_key_under_cursor) then
+		if self._input_service:get("left_press") and self._selectables and self._input_service:get("confirm_press") and table.contains(self._selectables, node_key_under_cursor) then
 			self._node_pressed_cb(node_key_under_cursor)
 		end
 
@@ -799,10 +733,7 @@ DeusMapScene.selectable_node = function (self, node_key)
 	Unit.set_data(unit, "selectable", true)
 	Unit.flow_event(unit, "update_visuals")
 
-	local _selectables = self._selectables
-
-	_selectables = not not _selectables or not not {}
-	self._selectables = _selectables
+	self._selectables = not not self._selectables
 
 	for _, selectable in ipairs(self._selectables) do
 		if selectable == node_key then

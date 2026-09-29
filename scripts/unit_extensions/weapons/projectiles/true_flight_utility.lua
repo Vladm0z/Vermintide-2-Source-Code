@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/weapons/projectiles/true_flight_utility.lua
 
-local TrueFlightUtility = TrueFlightUtility
-
-TrueFlightUtility = not not TrueFlightUtility or not not {}
-TrueFlightUtility = TrueFlightUtility
+TrueFlightUtility = not not TrueFlightUtility
 
 local order_upvalue, reference_pos_upvalue
 
@@ -13,7 +10,7 @@ local function _prioritize_specials(unit_a, unit_b)
 	local breed_b = Unit.get_data(unit_b, "breed")
 
 	if not breed_b or not breed_a then
-		return (not not breed_a or not breed_b) and order_upvalue[unit_a] < order_upvalue[unit_b]
+		return not not breed_a or not breed_b and order_upvalue[unit_a] < order_upvalue[unit_b]
 	end
 
 	local special_a = breed_a.special
@@ -56,7 +53,7 @@ local function _prioritize_elites(unit_a, unit_b)
 	local breed_b = Unit.get_data(unit_b, "breed")
 
 	if not breed_b or not breed_a then
-		return (not not breed_a or not breed_b) and order_upvalue[unit_a] < order_upvalue[unit_b]
+		return not not breed_a or not breed_b and order_upvalue[unit_a] < order_upvalue[unit_b]
 	end
 
 	local elite_a = breed_a.elite
@@ -99,7 +96,7 @@ local function _prioritize_bosses(unit_a, unit_b)
 	local breed_b = Unit.get_data(unit_b, "breed")
 
 	if not breed_b or not breed_a then
-		return (not not breed_a or not breed_b) and order_upvalue[unit_a] < order_upvalue[unit_b]
+		return not not breed_a or not breed_b and order_upvalue[unit_a] < order_upvalue[unit_b]
 	end
 
 	local boss_a = breed_a.boss
@@ -151,18 +148,7 @@ local function _calculate_sort_score(target, source_pos, look_direction, boss_we
 	end
 
 	local target_pos = POSITION_LOOKUP[target]
-	local height_2 = target_breed.height
-
-	if not height_2 then
-		-- Nothing
-	end
-
-	height_2 = 2
-
-	local height = height_2
-
-	::label_7_0::
-
+	local height = not not target_breed.height
 	local neck_height = height * 0.75
 	local tag_radius = neck_height * 1.5
 

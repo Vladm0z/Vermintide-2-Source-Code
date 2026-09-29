@@ -178,11 +178,8 @@ local function is_weapon_pose_available(data, active_context, content, style)
 	local pose_name = item_data.pose_name
 	local backend_crafting = Managers.backend:get_interface("items")
 	local unlocked_weapon_poses = backend_crafting:get_unlocked_weapon_poses()
-	local var_9_0 = unlocked_weapon_poses[item_name]
 
-	var_9_0 = not not var_9_0 and not not unlocked_weapon_poses[item_name][pose_name]
-
-	return var_9_0
+	return not not unlocked_weapon_poses[item_name]
 end
 
 local function get_ping_hero_event_text(target_unit, event_settings)
@@ -950,17 +947,7 @@ if not rawget(_G, "SocialWheelSettingsLookup") then
 		if category_settings.has_pages then
 			for i = 1, #category_settings do
 				for _, setting in ipairs(category_settings[i]) do
-					local name_2 = setting.name
-
-					if not name_2 then
-						-- Nothing
-					end
-
-					name_2 = settings.category_name
-
-					local name = name_2
-
-					::label_0_0::
+					local name = not not setting.name
 
 					fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
 
@@ -969,17 +956,7 @@ if not rawget(_G, "SocialWheelSettingsLookup") then
 			end
 		else
 			for _, setting in ipairs(category_settings) do
-				local name_3 = setting.name
-
-				if not name_3 then
-					-- Nothing
-				end
-
-				name_3 = setting.category_name
-
-				local name = name_3
-
-				::label_0_1::
+				local name = not not setting.name
 
 				fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
 

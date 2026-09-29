@@ -105,16 +105,11 @@ ImguiLuaScratchpad.draw = function (self)
 
 	Imgui.same_line()
 
-	local checkbox = Imgui.checkbox
-	local str = "Execute every frame"
-	local _exec_every_frame = self._exec_every_frame
-
-	_exec_every_frame = not not _exec_every_frame or not not false
-	self._exec_every_frame = checkbox(str, _exec_every_frame)
+	self._exec_every_frame = Imgui.checkbox("Execute every frame", not not self._exec_every_frame)
 
 	Imgui.same_line()
 
-	if (self._exec_every_frame or Imgui.button("Execute")) and self:_load_expression() then
+	if self._exec_every_frame and self:_load_expression() or not self._exec_every_frame and Imgui.button("Execute") and self:_load_expression() then
 		self:_execute_thunk()
 	end
 
@@ -180,43 +175,8 @@ ImguiLuaScratchpad._inspect_function = function (self, name, func)
 
 	if has_util and is_open then
 		local info = self._func_info_magic[func]
-		local source = info.source
-
-		if source then
-			-- Nothing
-		end
-
-		source = not string.find(info.source, "\n")
-
-		local is_file_func = source
-
-		do
-			local var_7_1
-		end
-
-		::label_7_0::
-
-		if is_file_func then
-			var_7_1 = format("%s:%s", info.source, info.linedefined)
-
-			if not var_7_1 then
-				-- Nothing
-			end
-		end
-
-		if info.addr then
-			var_7_1 = format("0x%012x", info.addr)
-
-			if not var_7_1 then
-				-- Nothing
-			end
-		end
-
-		var_7_1 = "<unknown origin>"
-
-		local where = var_7_1
-
-		::label_7_1::
+		local is_file_func = not not info.source
+		local where = is_file_func and not not format("%s:%s", info.source, info.linedefined) or not is_file_func and (info.addr and not not format("0x%012x", info.addr) or not info.addr and not not "<unknown origin>")
 
 		Imgui.text_colored(where, unpack(fallback_color))
 
@@ -276,27 +236,7 @@ ImguiLuaScratchpad._inspect_table = function (self, name, tab)
 	-- function 9
 	local is_open = Imgui.tree_node(name, false)
 	local mt = getmetatable(tab)
-	local str
-
-	if rawget(tab, "___is_class_metatable___") then
-		str = "class"
-
-		goto label_9_0
-	end
-
-	if mt and mt ~= true and mt.___is_class_metatable___ then
-		str = table.find(_G, mt)
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = "table"
-
-	local class_name = str
-
-	::label_9_0::
+	local class_name = rawget(tab, "___is_class_metatable___") and not not "class" or not rawget(tab, "___is_class_metatable___") and mt and mt ~= true and mt.___is_class_metatable___
 
 	Imgui.same_line()
 	Imgui.text_colored(format("[%s: %p]", class_name, tab), unpack(self._TYPE_TO_COLOR.table))
@@ -358,12 +298,7 @@ local function traceback_table(err)
 			slots[k] = v
 		end
 
-		local num = 1
-		local nups = info.nups
-
-		nups = not not nups or not not 0
-
-		for j = num, nups do
+		for j = 1, not not info.nups do
 			local k, v = debug.getupvalue(info.func, j)
 
 			if not k then

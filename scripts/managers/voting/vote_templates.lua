@@ -189,21 +189,7 @@ VoteTemplates = {
 		modify_title_text = function (text, data)
 			-- function 13
 			local player = Managers.player:player_from_peer_id(data.kick_peer_id)
-			local name_2
-
-			if player then
-				name_2 = player:name()
-
-				if not name_2 then
-					-- Nothing
-				end
-			end
-
-			name_2 = "n/a"
-
-			local name = name_2
-
-			::label_13_0::
+			local name = player and not not player:name() or not player and not not "n/a"
 
 			return sprintf("%s\n%s", text, tostring(name))
 		end,
@@ -414,7 +400,7 @@ VoteTemplates = {
 					mechanism = mechanism
 				}
 
-				if (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
+				if Managers.twitch:is_connecting() and not Managers.twitch:game_mode_supported(vote_type, difficulty) or not Managers.twitch:is_connecting() and Managers.twitch:is_connected() and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
 					Managers.twitch:disconnect()
 				end
 
@@ -427,82 +413,28 @@ VoteTemplates = {
 		end,
 		pack_sync_data = function (data)
 			-- function 26
-			local mission_id_2 = data.mission_id
-
-			if not mission_id_2 then
-				-- Nothing
-			end
-
-			mission_id_2 = "n/a"
-
-			local mission_id = mission_id_2
-
-			::label_26_0::
-
-			local act_key_2 = data.act_key
-
-			if not act_key_2 then
-				-- Nothing
-			end
-
-			act_key_2 = "n/a"
-
-			local act_key = act_key_2
-
-			::label_26_1::
-
+			local mission_id = not not data.mission_id
+			local act_key = not not data.act_key
 			local difficulty = data.difficulty
 			local quick_game = data.quick_game
 			local private_game = data.private_game
 			local always_host = data.always_host
 			local strict_matchmaking = data.strict_matchmaking
 			local matchmaking_type = data.matchmaking_type
-			local twitch = Managers.twitch
-
-			if twitch then
-				-- Nothing
-			end
-
-			twitch = Managers.twitch:is_connected()
-
-			local twitch_enabled = twitch
-
-			::label_26_2::
-
+			local twitch_enabled = not not Managers.twitch
 			local mechanism = data.mechanism
-			local tbl = {
+			local sync_data = {
 				NetworkLookup.mission_ids[mission_id],
 				NetworkLookup.act_keys[act_key],
-				NetworkLookup.difficulties[difficulty]
+				NetworkLookup.difficulties[difficulty],
+				quick_game and not not 1 or not quick_game and not not 2,
+				private_game and not not 1 or not private_game and not not 2,
+				always_host and not not 1 or not always_host and not not 2,
+				strict_matchmaking and not not 1 or not strict_matchmaking and not not 2,
+				NetworkLookup.matchmaking_types[matchmaking_type],
+				twitch_enabled and not not 1 or not twitch_enabled and not not 2,
+				NetworkLookup.mechanisms[mechanism]
 			}
-			local flag
-
-			flag = (not quick_game or not 1) and not not 2
-			tbl[4] = flag
-
-			local flag_2
-
-			flag_2 = (not private_game or not 1) and not not 2
-			tbl[5] = flag_2
-
-			local flag_3
-
-			flag_3 = (not always_host or not 1) and not not 2
-			tbl[6] = flag_3
-
-			local flag_4
-
-			flag_4 = (not strict_matchmaking or not 1) and not not 2
-			tbl[7] = flag_4
-			tbl[8] = NetworkLookup.matchmaking_types[matchmaking_type]
-
-			local flag_5
-
-			flag_5 = (not twitch_enabled or not 1) and not not 2
-			tbl[9] = flag_5
-			tbl[10] = NetworkLookup.mechanisms[mechanism]
-
-			local sync_data = tbl
 
 			return sync_data
 		end,
@@ -533,39 +465,18 @@ VoteTemplates = {
 			local difficulty = NetworkLookup.difficulties[difficulty_id]
 			local matchmaking_type = NetworkLookup.matchmaking_types[matchmaking_type_id]
 			local mechanism = NetworkLookup.mechanisms[mechanism_id]
-			local tbl = {
+			local data = {
 				mission_id = mission_id,
 				act_key = act_key,
-				difficulty = difficulty
+				difficulty = difficulty,
+				quick_game = quick_game_id ~= 1 and not not false or not (quick_game_id ~= 1) and not not true,
+				private_game = private_game_id ~= 1 and not not false or not (private_game_id ~= 1) and not not true,
+				always_host = always_host_id ~= 1 and not not false or not (always_host_id ~= 1) and not not true,
+				strict_matchmaking = strict_matchmaking_id ~= 1 and not not false or not (strict_matchmaking_id ~= 1) and not not true,
+				matchmaking_type = matchmaking_type,
+				twitch_enabled = twitch_enabled_id ~= 1 and not not false or not (twitch_enabled_id ~= 1) and not not true,
+				mechanism = mechanism
 			}
-			local flag
-
-			flag = (quick_game_id ~= 1 or not true) and not not false
-			tbl.quick_game = flag
-
-			local flag_2
-
-			flag_2 = (private_game_id ~= 1 or not true) and not not false
-			tbl.private_game = flag_2
-
-			local flag_3
-
-			flag_3 = (always_host_id ~= 1 or not true) and not not false
-			tbl.always_host = flag_3
-
-			local flag_4
-
-			flag_4 = (strict_matchmaking_id ~= 1 or not true) and not not false
-			tbl.strict_matchmaking = flag_4
-			tbl.matchmaking_type = matchmaking_type
-
-			local flag_5
-
-			flag_5 = (twitch_enabled_id ~= 1 or not true) and not not false
-			tbl.twitch_enabled = flag_5
-			tbl.mechanism = mechanism
-
-			local data = tbl
 
 			return data
 		end,
@@ -647,7 +558,7 @@ VoteTemplates = {
 					mechanism = mechanism
 				}
 
-				if (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
+				if Managers.twitch:is_connecting() and not Managers.twitch:game_mode_supported(vote_type, difficulty) or not Managers.twitch:is_connecting() and Managers.twitch:is_connected() and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
 					Managers.twitch:disconnect()
 				end
 
@@ -662,31 +573,15 @@ VoteTemplates = {
 			local item_name = data.item_name
 			local mission_id = data.mission_id
 			local difficulty = data.difficulty
-			local twitch = Managers.twitch
-
-			if twitch then
-				-- Nothing
-			end
-
-			twitch = Managers.twitch:is_connected()
-
-			local twitch_enabled = twitch
-
-			::label_32_0::
-
+			local twitch_enabled = not not Managers.twitch
 			local mechanism = data.mechanism
-			local tbl = {
+			local sync_data = {
 				NetworkLookup.item_names[item_name],
 				NetworkLookup.mission_ids[mission_id],
-				NetworkLookup.difficulties[difficulty]
+				NetworkLookup.difficulties[difficulty],
+				twitch_enabled and not not 1 or not twitch_enabled and not not 2,
+				NetworkLookup.mechanisms[mechanism]
 			}
-			local flag
-
-			flag = (not twitch_enabled or not 1) and not not 2
-			tbl[4] = flag
-			tbl[5] = NetworkLookup.mechanisms[mechanism]
-
-			local sync_data = tbl
 
 			return sync_data
 		end,
@@ -705,19 +600,14 @@ VoteTemplates = {
 			end
 
 			local difficulty = NetworkLookup.difficulties[difficulty_id]
-			local tbl = {
+			local data = {
 				matchmaking_type = "deed",
 				item_name = item_name,
 				mission_id = mission_id,
-				difficulty = difficulty
+				difficulty = difficulty,
+				twitch_enabled = twitch_enabled_id ~= 1 and not not false or not (twitch_enabled_id ~= 1) and not not true,
+				mechanism = NetworkLookup.mechanisms[mechanism_id]
 			}
-			local flag
-
-			flag = (twitch_enabled_id ~= 1 or not true) and not not false
-			tbl.twitch_enabled = flag
-			tbl.mechanism = NetworkLookup.mechanisms[mechanism_id]
-
-			local data = tbl
 
 			return data
 		end,
@@ -799,7 +689,7 @@ VoteTemplates = {
 					mechanism = mechanism
 				}
 
-				if (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
+				if Managers.twitch:is_connecting() and not Managers.twitch:game_mode_supported(vote_type, difficulty) or not Managers.twitch:is_connecting() and Managers.twitch:is_connected() and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
 					Managers.twitch:disconnect()
 				end
 
@@ -814,45 +704,18 @@ VoteTemplates = {
 		end,
 		pack_sync_data = function (data)
 			-- function 38
-			local mission_id_2 = data.mission_id
-
-			if not mission_id_2 then
-				-- Nothing
-			end
-
-			mission_id_2 = "n/a"
-
-			local mission_id = mission_id_2
-
-			::label_38_0::
-
+			local mission_id = not not data.mission_id
 			local difficulty = data.difficulty
 			local event_data = data.event_data
 			local mutators = event_data.mutators
-			local twitch = Managers.twitch
-
-			if twitch then
-				-- Nothing
-			end
-
-			twitch = Managers.twitch:is_connected()
-
-			local twitch_enabled = twitch
-
-			::label_38_1::
-
+			local twitch_enabled = not not Managers.twitch
 			local mechanism = data.mechanism
-			local tbl = {
+			local sync_data = {
 				NetworkLookup.mission_ids[mission_id],
-				NetworkLookup.difficulties[difficulty]
+				NetworkLookup.difficulties[difficulty],
+				twitch_enabled and not not 1 or not twitch_enabled and not not 2,
+				NetworkLookup.mechanisms[mechanism]
 			}
-			local flag
-
-			flag = (not twitch_enabled or not 1) and not not 2
-			tbl[3] = flag
-			tbl[4] = NetworkLookup.mechanisms[mechanism]
-
-			local sync_data = tbl
 
 			for i = 1, #mutators do
 				local mutator_name = mutators[i]
@@ -886,21 +749,16 @@ VoteTemplates = {
 
 			local difficulty = NetworkLookup.difficulties[difficulty_id]
 			local mechanism = NetworkLookup.mechanisms[mechanism_id]
-			local tbl = {
+			local data = {
 				matchmaking_type = "event",
 				mission_id = mission_id,
 				difficulty = difficulty,
 				event_data = {
 					mutators = mutators
-				}
+				},
+				twitch_enabled = twitch_enabled_id ~= 1 and not not false or not (twitch_enabled_id ~= 1) and not not true,
+				mechanism = mechanism
 			}
-			local flag
-
-			flag = (twitch_enabled_id ~= 1 or not true) and not not false
-			tbl.twitch_enabled = flag
-			tbl.mechanism = mechanism
-
-			local data = tbl
 
 			return data
 		end,
@@ -1028,18 +886,13 @@ VoteTemplates = {
 			local private_game = data.private_game
 			local mechanism = data.mechanism
 			local matchmaking_type = data.matchmaking_type
-			local tbl = {
+			local sync_data = {
 				NetworkLookup.mission_ids[weave_name],
-				objective_index
+				objective_index,
+				private_game and not not 1 or not private_game and not not 2,
+				NetworkLookup.mechanisms[mechanism],
+				NetworkLookup.matchmaking_types[matchmaking_type]
 			}
-			local flag
-
-			flag = (not private_game or not 1) and not not 2
-			tbl[3] = flag
-			tbl[4] = NetworkLookup.mechanisms[mechanism]
-			tbl[5] = NetworkLookup.matchmaking_types[matchmaking_type]
-
-			local sync_data = tbl
 
 			return sync_data
 		end,
@@ -1050,20 +903,7 @@ VoteTemplates = {
 			local objective_index = sync_data[2]
 			local weave_template = WeaveSettings.templates[weave_name]
 			local difficulty = weave_template.difficulty_key
-			local flag
-
-			if sync_data[3] == 1 then
-				flag = true
-
-				goto label_46_0
-			end
-
-			flag = false
-
-			local private_game = flag
-
-			::label_46_0::
-
+			local private_game = sync_data[3] ~= 1 and not not false or not (sync_data[3] ~= 1) and not not true
 			local mechanism_id = sync_data[4]
 			local mechanism = NetworkLookup.mechanisms[mechanism_id]
 			local matchmaking_type_id = sync_data[5]

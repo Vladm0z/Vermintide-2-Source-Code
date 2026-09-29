@@ -10,18 +10,13 @@ local spawn_unit_templates_vs = {
 			local function safe_navigation_callback()
 				-- function 2
 				local dir = Quaternion.forward(rotation:unbox())
-				local tbl = {}
-				local tbl_2 = {
-					flow_dir = dir
+				local extension_init_data = {
+					area_damage_system = {
+						flow_dir = dir,
+						liquid_template = state_int ~= 1 and not not "vs_bile_troll_vomit" or not (state_int ~= 1) and not not "vs_bile_troll_vomit_near",
+						source_unit = source_unit
+					}
 				}
-				local flag
-
-				flag = (state_int ~= 1 or not "vs_bile_troll_vomit_near") and not not "vs_bile_troll_vomit"
-				tbl_2.liquid_template = flag
-				tbl_2.source_unit = source_unit
-				tbl.area_damage_system = tbl_2
-
-				local extension_init_data = tbl
 				local aoe_unit_name = "units/hub_elements/empty"
 				local liquid_aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "liquid_aoe_unit", extension_init_data, position:unbox())
 				local liquid_area_damage_extension = ScriptUnit.extension(liquid_aoe_unit, "area_damage_system")
@@ -44,10 +39,7 @@ local spawn_unit_templates_vs = {
 				BLACKBOARDS[source_unit] = blackboard
 			end
 
-			local world = blackboard.world
-
-			world = not not world or not not Managers.state.conflict._world
-			blackboard.world = world
+			blackboard.world = not not blackboard.world
 
 			local t = Managers.time:time("game")
 			local dt = 0
@@ -111,15 +103,8 @@ local spawn_unit_templates_vs = {
 				BLACKBOARDS[source_unit] = blackboard
 			end
 
-			local world = blackboard.world
-
-			world = not not world or not not Managers.state.conflict._world
-			blackboard.world = world
-
-			local vortex_data_2 = blackboard.vortex_data
-
-			vortex_data_2 = not not vortex_data_2 or not not {}
-			blackboard.vortex_data = vortex_data_2
+			blackboard.world = not not blackboard.world
+			blackboard.vortex_data = not not blackboard.vortex_data
 
 			local vortex_data = blackboard.vortex_data
 
@@ -128,22 +113,7 @@ local spawn_unit_templates_vs = {
 			vortex_data.num_dummy_missiles = 0
 
 			local action = BreedActions.chaos_vortex_sorcerer.spawn_vortex
-			local unbox
-
-			if vortex_data.summon_position then
-				unbox = vortex_data.summon_position:unbox()
-
-				if not unbox then
-					-- Nothing
-				end
-			end
-
-			unbox = POSITION_LOOKUP[source_unit]
-
-			local summon_position = unbox
-
-			::label_4_0::
-
+			local summon_position = vortex_data.summon_position and not not vortex_data.summon_position:unbox() or not vortex_data.summon_position and not not POSITION_LOOKUP[source_unit]
 			local summon_direction = Quaternion.forward(summon_rotation)
 
 			return BTChaosSorcererSummoningAction._launch_vortex_dummy_missile(nil, source_unit, action, vortex_data, hand_position, summon_position, summon_direction)

@@ -306,24 +306,7 @@ ImguiLevelDebug.draw_respawn_debug = function (self, respawn_handler)
 					Imgui.next_column()
 					Imgui.text(tostring(gate_dist))
 					Imgui.next_column()
-
-					local var_10_0 = text_colored
-					local var_10_1 = tostring(gate.enabled)
-					local var_10_2
-
-					if gate.enabled then
-						var_10_2 = color_green
-
-						if not var_10_2 then
-							-- Nothing
-						end
-					end
-
-					var_10_2 = color_red
-
-					::label_10_0::
-
-					var_10_0(var_10_1, var_10_2)
+					text_colored(tostring(gate.enabled), gate.enabled and not not color_green or not gate.enabled and not not color_red)
 					Imgui.next_column()
 					Imgui.tree_push(i)
 
@@ -368,18 +351,7 @@ ImguiLevelDebug.draw_respawn_debug = function (self, respawn_handler)
 
 				Imgui.tree_pop()
 				Imgui.same_line()
-
-				local text = Imgui.text
-				local var_10_4 = tostring(respawn_unit.id)
-				local flag
-
-				flag = (not is_best or not " BEST") and not not ""
-
-				local flag_2
-
-				flag_2 = (not was_best or not "*") and not not ""
-
-				text(var_10_4 .. flag .. flag_2)
+				Imgui.text(tostring(respawn_unit.id) .. (is_best and not not " BEST" or not is_best and not not "") .. (was_best and not not "*" or not was_best and not not ""))
 				Imgui.next_column()
 
 				local is_free = respawn_unit.available
@@ -390,90 +362,17 @@ ImguiLevelDebug.draw_respawn_debug = function (self, respawn_handler)
 
 				text_colored(tostring(respawn_unit.distance_through_level), spawn_preference_color)
 				Imgui.next_column()
-
-				local var_10_7 = text_colored
-				local var_10_8 = tostring(respawn_unit.group_id)
-				local var_10_9
-
-				if group_active then
-					var_10_9 = color_green
-
-					if not var_10_9 then
-						-- Nothing
-					end
-				end
-
-				if is_enabled then
-					var_10_9 = color_white
-
-					if not var_10_9 then
-						-- Nothing
-					end
-				end
-
-				var_10_9 = color_red
-
-				::label_10_1::
-
-				var_10_7(var_10_8, var_10_9)
+				text_colored(tostring(respawn_unit.group_id), group_active and not not color_green or not group_active and (is_enabled and not not color_white or not is_enabled and not not color_red))
 				Imgui.next_column()
-
-				local var_10_10 = text_colored
-				local var_10_11 = tostring(respawn_unit.available)
-				local var_10_12
-
-				if respawn_unit.available then
-					var_10_12 = color_green
-
-					if not var_10_12 then
-						-- Nothing
-					end
-				end
-
-				var_10_12 = color_red
-
-				::label_10_2::
-
-				var_10_10(var_10_11, var_10_12)
+				text_colored(tostring(respawn_unit.available), respawn_unit.available and not not color_green or not respawn_unit.available and not not color_red)
 				Imgui.next_column()
-
-				local var_10_13 = text_colored
-				local var_10_14 = tostring(is_reachable)
-				local var_10_15
-
-				if is_reachable then
-					var_10_15 = color_green
-
-					if not var_10_15 then
-						-- Nothing
-					end
-				end
-
-				var_10_15 = color_red
-
-				::label_10_3::
-
-				var_10_13(var_10_14, var_10_15)
+				text_colored(tostring(is_reachable), is_reachable and not not color_green or not is_reachable and not not color_red)
 				Imgui.next_column()
 			end
 
 			if self._draw_respawn_points then
 				local pos = Unit.local_position(respawn_unit.unit, 0) + up
-				local var_10_16
-
-				if is_best then
-					var_10_16 = Color(0, 255, 0)
-
-					if not var_10_16 then
-						-- Nothing
-					end
-				end
-
-				var_10_16 = Color(255, 200, 0)
-
-				local color = var_10_16
-
-				::label_10_4::
+				local color = is_best and not not Color(0, 255, 0) or not is_best and not not Color(255, 200, 0)
 
 				QuickDrawer:sphere(pos, 0.5, color)
 

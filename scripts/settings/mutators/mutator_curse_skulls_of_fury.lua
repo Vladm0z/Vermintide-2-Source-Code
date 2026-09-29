@@ -57,22 +57,7 @@ return {
 		data.seed, random = Math.next_random(data.seed)
 
 		local breed = Unit.get_data(killed_unit, "breed")
-		local var_2_0
-
-		if breed then
-			var_2_0 = breed_additional_spawn_chance[breed.name]
-
-			if not var_2_0 then
-				-- Nothing
-			end
-		end
-
-		var_2_0 = 0
-
-		local breed_spawn_chance = var_2_0
-
-		::label_2_0::
-
+		local breed_spawn_chance = breed and not not breed_additional_spawn_chance[breed.name] or not breed and not not 0
 		local spawn_chance = BASE_SPAWN_CHANCE + breed_spawn_chance
 
 		if random < spawn_chance then

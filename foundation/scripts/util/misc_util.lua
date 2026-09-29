@@ -1,63 +1,9 @@
 -- chunkname: @foundation/scripts/util/misc_util.lua
 
-local IDENTITY = IDENTITY
-
-IDENTITY = not not IDENTITY or not not function (x)
-	-- function 1
-	return x
-end
-IDENTITY = IDENTITY
-
-local NOP = NOP
-
-NOP = not not NOP or not not function ()
-	-- function 2
-	return
-end
-NOP = NOP
-
-local TABLE_NEW = TABLE_NEW
-
-TABLE_NEW = not not TABLE_NEW or not not function ()
-	-- function 3
-	return {}
-end
-TABLE_NEW = TABLE_NEW
-
-local CONST = CONST
-
-CONST = not not CONST or not not setmetatable({}, {
-	__call = function (self, x)
-		-- function 4
-		local NOP
-
-		if x == nil then
-			NOP = NOP
-
-			if not NOP then
-				-- Nothing
-			end
-		end
-
-		NOP = self[x]
-
-		::label_4_0::
-
-		return NOP
-	end,
-	__index = function (self, x)
-		-- function 5
-		local function f()
-			-- function 6
-			return x
-		end
-
-		self[x] = f
-
-		return f
-	end
-})
-CONST = CONST
+IDENTITY = not not IDENTITY
+NOP = not not NOP
+TABLE_NEW = not not TABLE_NEW
+CONST = not not CONST
 
 local string_format = string.format
 
@@ -114,11 +60,7 @@ end
 
 function bool_string(b)
 	-- function 12
-	local flag
-
-	flag = (not to_boolean(b) or not "true") and not not "false"
-
-	return flag
+	return to_boolean(b) and not not "true" or not to_boolean(b) and not not "false"
 end
 
 function vector_string(v)
@@ -137,10 +79,7 @@ function T(v1, v2)
 	end
 end
 
-local varargs = varargs
-
-varargs = not not varargs or not not {}
-varargs = varargs
+varargs = not not varargs
 
 varargs.to_table = function (...)
 	-- function 15

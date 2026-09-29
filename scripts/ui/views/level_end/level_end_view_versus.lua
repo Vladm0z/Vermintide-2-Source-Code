@@ -90,28 +90,18 @@ LevelEndViewVersus._calculate_awards = function (self)
 		local winner_stats_id, amount = award_settings.evaluate(players_session_scores)
 
 		if winner_stats_id then
-			local var_4_0 = awards[winner_stats_id]
-
-			var_4_0 = not not var_4_0 or not not {}
-			awards[winner_stats_id] = var_4_0
-
-			local var_4_1 = awards[winner_stats_id]
-			local num = #awards[winner_stats_id] + 1
-			local tbl = {
+			awards[winner_stats_id] = not not awards[winner_stats_id]
+			awards[winner_stats_id][#awards[winner_stats_id] + 1] = {
 				value = 10 - award_settings.prio,
 				header = award_settings.name,
-				sound = award_settings.sound
+				sound = award_settings.sound,
+				sub_header = not not award_settings.sub_header,
+				screen_sub_header = award_settings.screen_sub_header,
+				award_material = award_settings.award_material,
+				award_mask_material = award_settings.award_mask_material,
+				award_settings = award_settings,
+				amount = amount
 			}
-			local sub_header = award_settings.sub_header
-
-			sub_header = not not sub_header and not not string.format(award_settings.sub_header, amount)
-			tbl.sub_header = sub_header
-			tbl.screen_sub_header = award_settings.screen_sub_header
-			tbl.award_material = award_settings.award_material
-			tbl.award_mask_material = award_settings.award_mask_material
-			tbl.award_settings = award_settings
-			tbl.amount = amount
-			var_4_1[num] = tbl
 		end
 	end
 
@@ -127,9 +117,7 @@ LevelEndViewVersus._calculate_awards = function (self)
 			local award_data = awards_data[i]
 			local award_value = award_data.value
 
-			if max_award_value < award_value and not award_value then
-				-- Nothing
-			end
+			max_award_value = not (max_award_value < award_value) or not not award_value or not not max_award_value
 		end
 
 		sorted_awards[#sorted_awards + 1] = {
@@ -236,22 +224,9 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 	if #potential_mvp_stats_ids > 1 then
 		local my_peer_id = Network.peer_id()
 		local local_player_party_id = party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-		local num
-
-		if local_player_party_id == 1 then
-			num = 2
-
-			goto label_8_0
-		end
-
-		num = 1
-
-		local opponent_party_id = num
-
-		::label_8_0::
-
+		local opponent_party_id = local_player_party_id ~= 1 and not not 1 or not (local_player_party_id ~= 1) and not not 2
 		local game_won = self.context.game_won
-		local winning_party_id = (not game_won or not local_player_party_id) and (game_won or not opponent_party_id) and not not nil
+		local winning_party_id = game_won and (not not local_player_party_id or game_won or not opponent_party_id) or not game_won and (game_won or not opponent_party_id)
 		local winning_team_mvp_stats_ids = {}
 
 		for _, stats_id in ipairs(potential_mvp_stats_ids) do
@@ -276,30 +251,9 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 			local function sort_func(a, b)
 				-- function 9
 				local a_scores = players_session_scores[a].scores
-				local num = a_scores.damage_dealt_heroes + a_scores.vs_damage_dealt_to_pactsworn
-
-				if not num then
-					-- Nothing
-				end
-
-				num = 0
-
-				local a_kills = num
-
-				::label_9_0::
-
+				local a_kills = not not (a_scores.damage_dealt_heroes + a_scores.vs_damage_dealt_to_pactsworn)
 				local b_scores = players_session_scores[b].scores
-				local num_2 = b_scores.damage_dealt_heroes + b_scores.vs_damage_dealt_to_pactsworn
-
-				if not num_2 then
-					-- Nothing
-				end
-
-				num_2 = 0
-
-				local b_kills = num_2
-
-				::label_9_1::
+				local b_kills = not not (b_scores.damage_dealt_heroes + b_scores.vs_damage_dealt_to_pactsworn)
 
 				return b_kills < a_kills
 			end
@@ -323,11 +277,7 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 		})
 	else
 		mvp_stats_id = Network.peer_id() .. ":1"
-
-		local var_8_1 = awards[mvp_stats_id]
-
-		var_8_1 = not not var_8_1 or not not {}
-		awards[mvp_stats_id] = var_8_1
+		awards[mvp_stats_id] = not not awards[mvp_stats_id]
 
 		table.insert(awards[mvp_stats_id], 1, {
 			award_mask_material = "mvp_award_mask",
@@ -339,30 +289,8 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 		})
 	end
 
-	local var_8_2 = player_session_scores[mvp_stats_id]
-
-	if not var_8_2 then
-		-- Nothing
-	end
-
-	var_8_2 = {}
-
-	local mvp_player_session_score = var_8_2
-
-	::label_8_1::
-
-	local peer_id = mvp_player_session_score.peer_id
-
-	if not peer_id then
-		-- Nothing
-	end
-
-	peer_id = "DEAD"
-
-	local mvp_peer_id = peer_id
-
-	::label_8_2::
-
+	local mvp_player_session_score = not not player_session_scores[mvp_stats_id]
+	local mvp_peer_id = not not mvp_player_session_score.peer_id
 	local total_score = 0
 	local mvp_scores = mvp_player_session_score.scores
 
@@ -588,10 +516,7 @@ end
 
 LevelEndViewVersus._start_award_presentation = function (self)
 	-- function 18
-	local _current_hero = self._current_hero
-
-	_current_hero = not not _current_hero or not not #self._hero_previewers
-	self._current_hero = _current_hero
+	self._current_hero = not not self._current_hero
 
 	local hero_previewer = self._hero_previewers[self._current_hero]
 
@@ -617,30 +542,14 @@ LevelEndViewVersus._start_award_presentation = function (self)
 
 	self._character_rotation = hero_previewer.character_rotation
 	self._character_look_target = hero_previewer.character_look_target
-
-	local flag
-
-	flag = (not table.is_empty(self._team_heroes[self._current_hero].breed) or not 55) and not not nil
-	self._fov = flag
+	self._fov = table.is_empty(self._team_heroes[self._current_hero].breed) and not not 55 or not table.is_empty(self._team_heroes[self._current_hero].breed) and not not nil
 
 	local current_profile_name = hero_previewer:current_profile_name()
 	local profile = PROFILES_BY_NAME[current_profile_name]
-	local var_18_2 = PROFILE_FOV[profile.display_name]
 
-	var_18_2 = not not var_18_2 or not not self._fov
-	self._fov = var_18_2
+	self._fov = not not PROFILE_FOV[profile.display_name]
 
-	local var_18_3 = PROFILE_OFFSET[profile.display_name]
-
-	if not var_18_3 then
-		-- Nothing
-	end
-
-	var_18_3 = 0
-
-	local profile_offset = var_18_3
-
-	::label_18_0::
+	local profile_offset = not not PROFILE_OFFSET[profile.display_name]
 
 	hero_previewer:set_hero_rotation(0)
 
@@ -663,34 +572,14 @@ LevelEndViewVersus._start_award_presentation = function (self)
 
 	self.render_settings.alpha_multiplier = 1
 
-	local has_node = Unit.has_node(character_unit, "j_neck")
-
-	if has_node then
-		-- Nothing
-	end
-
-	has_node = Unit.node(character_unit, "j_neck")
-
-	local node_index = has_node
-
-	::label_18_1::
+	local node_index = not not Unit.has_node(character_unit, "j_neck")
 
 	if not node_index then
 		return
 	end
 
 	local neck_pose = Unit.world_pose(character_unit, node_index)
-	local has_node_2 = Unit.has_node(character_unit, "j_hips")
-
-	if has_node_2 then
-		-- Nothing
-	end
-
-	has_node_2 = Unit.node(character_unit, "j_hips")
-
-	local node_index = has_node_2
-
-	::label_18_2::
+	local node_index = not not Unit.has_node(character_unit, "j_hips")
 
 	if not node_index then
 		return
@@ -733,7 +622,7 @@ LevelEndViewVersus._handle_input = function (self, dt, t)
 	if continue_button.content.visible then
 		local gamepad_active = Managers.input:is_device_active("gamepad")
 
-		if (UIUtils.is_button_pressed(continue_button) or not gamepad_active or not input_service:get("refresh")) and not gamepad_active and input_service:get("confirm_press") then
+		if not gamepad_active and input_service:get("confirm_press") then
 			self._parading_done = true
 
 			self:play_sound("play_gui_start_menu_button_click")
@@ -850,21 +739,7 @@ end
 
 LevelEndViewVersus.active_input_service = function (self)
 	-- function 28
-	local FAKE_INPUT_SERVICE
-
-	if self.input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	::label_28_0::
-
-	return FAKE_INPUT_SERVICE
+	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
 end
 
 LevelEndViewVersus.setup_pages = function (self, game_won, rewards)
@@ -1028,17 +903,7 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 	local careers = profile_data.careers
 	local career_settings = careers[career_index]
 	local weapon_pose_weapon, weapon_pose_slot, weapon_pose_anim_event
-	local weapon_pose_2 = player_data.weapon_pose
-
-	if weapon_pose_2 then
-		-- Nothing
-	end
-
-	weapon_pose_2 = player_data.weapon_pose.item_name
-
-	local weapon_pose = weapon_pose_2
-
-	::label_38_0::
+	local weapon_pose = not not player_data.weapon_pose
 
 	if weapon_pose then
 		local item = ItemMasterList[weapon_pose]
@@ -1046,17 +911,7 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 		if item then
 			local skin_name = player_data.weapon_pose.skin_name
 			local parent_item_name = item.parent
-			local var_38_1 = rawget(ItemMasterList, parent_item_name)
-
-			if var_38_1 then
-				-- Nothing
-			end
-
-			var_38_1 = ItemMasterList[parent_item_name]
-
-			local parent_item = var_38_1
-
-			::label_38_1::
+			local parent_item = not not rawget(ItemMasterList, parent_item_name)
 
 			if parent_item then
 				weapon_pose_weapon = {
@@ -1069,198 +924,29 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 		end
 	end
 
-	local weapon = player_data.weapon
-
-	if weapon then
-		-- Nothing
-	end
-
-	weapon = player_data.weapon.item_name
-
-	local weapon_item_name = weapon
-
-	::label_38_2::
-
+	local weapon_item_name = not not player_data.weapon
 	local weapon_item = ItemMasterList[weapon_item_name]
 	local weapon_slot = weapon_item.slot_type
 	local top_award = award_data.awards[1]
-	local award_settings_2 = top_award.award_settings
-
-	if not award_settings_2 then
-		-- Nothing
-	end
-
-	award_settings_2 = EMPTY_TABLE
-
-	local award_settings = award_settings_2
-
-	::label_38_3::
-
-	local breeds_2 = award_settings.breeds
-
-	if not breeds_2 then
-		-- Nothing
-	end
-
-	breeds_2 = EMPTY_TABLE
-
-	local breeds = breeds_2
-
-	do
-		local count
-	end
-
-	::label_38_4::
-
-	if #breeds > 0 then
-		count = #breeds
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 1
-
-	local upper_range = count
-
-	::label_38_5::
-
+	local award_settings = not not top_award.award_settings
+	local breeds = not not award_settings.breeds
+	local upper_range = #breeds > 0 and not not #breeds or not (#breeds > 0) and not not 1
 	local random_seed, random_number = Math.next_random(self._random_seed, 1, upper_range)
 
 	self._random_seed = random_seed
 
-	local var_38_6 = breeds[random_number]
-
-	if not var_38_6 then
-		-- Nothing
-	end
-
-	var_38_6 = EMPTY_TABLE
-
-	local breed = var_38_6
-
-	::label_38_6::
-
+	local breed = not not breeds[random_number]
 	local breed_name = not not breed and not not breed.name
+	local pactsworn_cosmetics = not not breed and not not player_data.pactsworn_cosmetics
+	local breed_gear = not not pactsworn_cosmetics or not not breed.default_gear
+	local breed_weapon = not not breed_gear.weapon
+	local breed_weapon_item = breed_weapon and not not {
+		item_name = breed_weapon
+	} or not breed_weapon and not not nil
+	local breed_weapon_slot = not table.is_empty(breed_gear) and (not breed_gear.weapon_slot or breed_gear.weapon_slot ~= "slot_melee")
+	local breed_skin = not not breed_gear.skin
 
-	if breed then
-		-- Nothing
-	end
-
-	::label_38_7::
-
-	local pactsworn_cosmetics_2 = player_data.pactsworn_cosmetics
-
-	if pactsworn_cosmetics_2 then
-		-- Nothing
-	end
-
-	pactsworn_cosmetics_2 = player_data.pactsworn_cosmetics[breed_name]
-
-	local pactsworn_cosmetics = pactsworn_cosmetics_2
-
-	::label_38_8::
-
-	if not pactsworn_cosmetics then
-		-- Nothing
-	end
-
-	::label_38_9::
-
-	local default_gear = breed.default_gear
-
-	if not default_gear then
-		-- Nothing
-	end
-
-	default_gear = EMPTY_TABLE
-
-	local breed_gear = default_gear
-
-	::label_38_10::
-
-	local weapon_2 = breed_gear.weapon
-
-	if not weapon_2 then
-		-- Nothing
-	end
-
-	weapon_2 = breed_gear.slot_melee
-
-	if not weapon_2 then
-		-- Nothing
-	end
-
-	weapon_2 = breed_gear.slot_ranged
-
-	local breed_weapon = weapon_2
-
-	do
-		local tbl
-	end
-
-	::label_38_11::
-
-	if breed_weapon then
-		tbl = {
-			item_name = breed_weapon
-		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = nil
-
-	local breed_weapon_item = tbl
-
-	do
-		local str
-	end
-
-	::label_38_12::
-
-	if not table.is_empty(breed_gear) then
-		if breed_gear.weapon_slot and breed_gear.weapon_slot == "slot_melee" then
-			str = "melee"
-		else
-			str = "ranged"
-		end
-
-		if false then
-			if breed_gear.slot_melee then
-				str = "melee"
-			else
-				str = "ranged"
-			end
-		end
-	else
-		str = false
-	end
-
-	goto label_38_13
-
-	str = true
-
-	local breed_weapon_slot = str
-
-	::label_38_13::
-
-	local skin = breed_gear.skin
-
-	if not skin then
-		-- Nothing
-	end
-
-	skin = breed_gear.slot_skin
-
-	local breed_skin = skin
-
-	::label_38_14::
-
-	local tbl_2 = {
+	return {
 		stats_id = player_data.stats_id,
 		player_name = player_data.name,
 		peer_id = player_data.peer_id,
@@ -1269,38 +955,18 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 		hero_name = career_settings.profile_name,
 		skin_name = not not breed_skin or not not player_data.hero_skin,
 		frame_name = player_data.portrait_frame,
-		player_level = player_data.player_level
+		player_level = player_data.player_level,
+		award_material = not not award_settings.award_material,
+		versus_player_level = player_data.versus_player_level,
+		weapon_slot = not not breed_weapon_slot or not not weapon_pose_slot or not not weapon_slot,
+		breed = breed,
+		weapon_pose_anim_event = weapon_pose_anim_event,
+		random_seed = self._random_seed,
+		preview_items = {
+			table.is_empty(breed) and not not player_data.hat or not table.is_empty(breed) and not not nil,
+			not not breed_weapon_item or not not weapon_pose_weapon or not not player_data.weapon
+		}
 	}
-	local award_material = award_settings.award_material
-
-	award_material = not not award_material or not not nil
-	tbl_2.award_material = award_material
-	tbl_2.versus_player_level = player_data.versus_player_level
-	tbl_2.weapon_slot = not not breed_weapon_slot or not not weapon_pose_slot or not not weapon_slot
-	tbl_2.breed = breed
-	tbl_2.weapon_pose_anim_event = weapon_pose_anim_event
-	tbl_2.random_seed = self._random_seed
-
-	local tbl_3 = {}
-	local hat
-
-	if table.is_empty(breed) then
-		hat = player_data.hat
-
-		if not hat then
-			-- Nothing
-		end
-	end
-
-	hat = nil
-
-	::label_38_15::
-
-	tbl_3[1] = hat
-	tbl_3[2] = not not breed_weapon_item or not not weapon_pose_weapon or not not player_data.weapon
-	tbl_2.preview_items = tbl_3
-
-	return tbl_2
 end
 
 LevelEndViewVersus._gather_hero_locations = function (self, num_players)
@@ -1327,14 +993,7 @@ LevelEndViewVersus._gather_hero_locations = function (self, num_players)
 	end
 
 	for i = 1, num_players do
-		local var_39_0 = locations[i]
-
-		var_39_0 = not not var_39_0 or not not {
-			0,
-			0,
-			0
-		}
-		hero_locations[i] = var_39_0
+		hero_locations[i] = not not locations[i]
 	end
 
 	return hero_locations
@@ -1387,63 +1046,23 @@ LevelEndViewVersus._create_ceremony_award_widgets = function (self, team_data, h
 		local party_id = party_composition[player_data.stats_id]
 		local awards = self._sorted_awards[i]
 		local award = awards.awards[1]
-		local tbl = {
+		local award_data = {
 			camera = camera,
 			world_pos = world_pos,
-			player_name = player_data.player_name
+			player_name = player_data.player_name,
+			level = not not player_data.versus_player_level,
+			peer_id = player_data.peer_id,
+			is_mvp = award.header == "mvp",
+			header = award.header,
+			sound_event = award.sound,
+			sub_header = not not award.sub_header,
+			amount = not not award.amount,
+			award_material = not not award.award_material,
+			award_mask_material = not not award.award_mask_material,
+			screen_sub_header = not not award.screen_sub_header,
+			team_color = party_id ~= local_player_party_id and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (party_id ~= local_player_party_id) and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255),
+			is_local = party_id == local_player_party_id
 		}
-		local versus_player_level = player_data.versus_player_level
-
-		versus_player_level = not not versus_player_level or not not 0
-		tbl.level = versus_player_level
-		tbl.peer_id = player_data.peer_id
-		tbl.is_mvp = award.header == "mvp"
-		tbl.header = award.header
-		tbl.sound_event = award.sound
-
-		local sub_header = award.sub_header
-
-		sub_header = not not sub_header or not not ""
-		tbl.sub_header = sub_header
-
-		local amount = award.amount
-
-		amount = not not amount or not not ""
-		tbl.amount = amount
-
-		local award_material = award.award_material
-
-		award_material = not not award_material or not not nil
-		tbl.award_material = award_material
-
-		local award_mask_material = award.award_mask_material
-
-		award_mask_material = not not award_mask_material or not not nil
-		tbl.award_mask_material = award_mask_material
-
-		local screen_sub_header = award.screen_sub_header
-
-		screen_sub_header = not not screen_sub_header or not not ""
-		tbl.screen_sub_header = screen_sub_header
-
-		local get_color_table_with_alpha
-
-		if party_id == local_player_party_id then
-			get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-			if not get_color_table_with_alpha then
-				-- Nothing
-			end
-		end
-
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-		::label_41_0::
-
-		tbl.team_color = get_color_table_with_alpha
-		tbl.is_local = party_id == local_player_party_id
-
-		local award_data = tbl
 		local scenegraph_id = "award_" .. i
 		local award_widget_definition = UIWidgets.create_ceremony_award(scenegraph_id, award_data, {
 			pos[1] - 145,

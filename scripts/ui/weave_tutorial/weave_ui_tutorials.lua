@@ -7,10 +7,7 @@ local after_second_weave = 9
 
 require("scripts/ui/weave_tutorial/custom_popups/new_ui_popup")
 
-local WeaveUITutorials = WeaveUITutorials
-
-WeaveUITutorials = not not WeaveUITutorials or not not {}
-WeaveUITutorials = WeaveUITutorials
+WeaveUITutorials = not not WeaveUITutorials
 WeaveUITutorials.forge_initial = {
 	ui_onboarding_bit = 1,
 	popup_title = "menu_weave_tutorial_athanor_01_title",
@@ -88,23 +85,7 @@ WeaveUITutorials.twitch_not_supported_for_weaves = {
 	popup_body = "menu_weave_area_locked_twitch_body",
 	optional_button_2_func = function (self)
 		-- function 1
-		local twitch = Managers.twitch
-
-		if twitch then
-			-- Nothing
-		end
-
-		twitch = Managers.twitch:is_connected()
-
-		if not twitch then
-			-- Nothing
-		end
-
-		twitch = Managers.twitch:is_activated()
-
-		local twitch_connection = twitch
-
-		::label_1_0::
+		local twitch_connection = not not Managers.twitch
 
 		if twitch_connection then
 			Managers.twitch:disconnect()

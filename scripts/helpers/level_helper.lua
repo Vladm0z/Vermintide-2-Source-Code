@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/level_helper.lua
 
-local LevelHelper = LevelHelper
-
-LevelHelper = not not LevelHelper or not not {}
-LevelHelper = LevelHelper
+LevelHelper = not not LevelHelper
 LevelHelper.INGAME_WORLD_NAME = "level_world"
 
 LevelHelper.current_level_settings = function (self)
@@ -86,21 +83,8 @@ LevelHelper.get_random_variation_id = function (self, level_key)
 	-- function 4
 	local settings = rawget(LevelSettings, level_key)
 	local variations = not not settings and not not settings.environment_variations
-	local random
 
-	if variations then
-		random = math.random(0, #variations)
-
-		if not random then
-			-- Nothing
-		end
-	end
-
-	random = 0
-
-	::label_4_0::
-
-	return random
+	return variations and not not math.random(0, #variations) or not variations and not not 0
 end
 
 LevelHelper.flow_event = function (self, world, event)
@@ -157,37 +141,14 @@ end
 LevelHelper.get_base_level = function (self, level_key)
 	-- function 10
 	local level_settings = LevelSettings[level_key]
-	local base_level_name
 
-	if level_settings then
-		base_level_name = level_settings.base_level_name
-
-		if not base_level_name then
-			-- Nothing
-		end
-	end
-
-	base_level_name = level_key
-
-	::label_10_0::
-
-	return base_level_name
+	return level_settings and not not level_settings.base_level_name or not level_settings and not not level_key
 end
 
 LevelHelper.get_small_level_image = function (self, level_key)
 	-- function 11
 	local level_settings = LevelSettings[level_key]
-	local small_level_image = level_settings.small_level_image
-
-	if not small_level_image then
-		-- Nothing
-	end
-
-	small_level_image = level_key .. "_small_image"
-
-	local level_image = small_level_image
-
-	::label_11_0::
+	local level_image = not not level_settings.small_level_image
 
 	if not UIAtlasHelper.has_texture_by_name(level_image) then
 		level_image = "any_small_image"

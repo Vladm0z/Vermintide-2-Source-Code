@@ -505,7 +505,7 @@ local selector_input_definitions = {
 		end,
 		update = function (self, input_service, can_play, dt, t)
 			-- function 24
-			if (not input_service:get("confirm_press") or not can_play) and input_service:get("skip_press") then
+			if input_service:get("confirm_press") and (can_play or input_service:get("skip_press")) or not input_service:get("confirm_press") and input_service:get("skip_press") then
 				self:_option_selected("play_button", nil, t)
 			end
 		end,

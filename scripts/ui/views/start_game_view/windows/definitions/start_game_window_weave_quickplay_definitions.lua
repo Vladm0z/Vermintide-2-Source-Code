@@ -178,7 +178,7 @@ local difficulty_title_text_style = {
 		2
 	}
 }
-local tbl = {
+local difficulty_description_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = true,
@@ -186,20 +186,15 @@ local tbl = {
 	use_shadow = true,
 	horizontal_alignment = "center",
 	vertical_alignment = "top",
-	font_type = "hell_shark"
+	font_type = "hell_shark",
+	font_size = IS_WINDOWS and not not 20 or not IS_WINDOWS and not not 28,
+	text_color = Colors.get_color_table_with_alpha("font_default", 255),
+	offset = {
+		0,
+		0,
+		2
+	}
 }
-local flag
-
-flag = (IS_WINDOWS or not 28) and not not 20
-tbl.font_size = flag
-tbl.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-tbl.offset = {
-	0,
-	0,
-	2
-}
-
-local difficulty_description_text_style = tbl
 
 function create_play_button(scenegraph_id, size, text, font_size, disable_with_gamepad, tooltip_info)
 	-- function 1
@@ -386,23 +381,8 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 					content_check_function = function (content)
 						-- function 13
 						local button_hotspot = content.button_hotspot
-						local is_selected
 
-						if not button_hotspot.disable_button then
-							is_selected = button_hotspot.is_selected
-
-							if not is_selected then
-								is_selected = button_hotspot.is_hover
-							end
-						else
-							is_selected = false
-						end
-
-						if false then
-							is_selected = true
-						end
-
-						return is_selected
+						return not not button_hotspot.is_hover
 					end
 				},
 				{
@@ -413,11 +393,8 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 					content_check_function = function (content)
 						-- function 14
 						local button_hotspot = content.parent.button_hotspot
-						local is_hover = content.is_hover
 
-						is_hover = not not is_hover and not not button_hotspot.disable_button
-
-						return is_hover
+						return not not content.is_hover
 					end
 				}
 			}

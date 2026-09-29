@@ -203,76 +203,10 @@ end
 
 SplitscreenTester._resize_viewports = function (self)
 	-- function 11
-	local SPLITSCREEN_WIDTH
-
-	if self._splitscreen_active then
-		SPLITSCREEN_WIDTH = SPLITSCREEN_WIDTH
-
-		if not SPLITSCREEN_WIDTH then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_WIDTH = 1 / SPLITSCREEN_WIDTH
-
-	local multiplier_x = SPLITSCREEN_WIDTH
-
-	do
-		local SPLITSCREEN_HEIGHT
-	end
-
-	::label_11_0::
-
-	if self._splitscreen_active then
-		SPLITSCREEN_HEIGHT = SPLITSCREEN_HEIGHT
-
-		if not SPLITSCREEN_HEIGHT then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_HEIGHT = 1 / SPLITSCREEN_HEIGHT
-
-	local multiplier_y = SPLITSCREEN_HEIGHT
-
-	do
-		local SPLITSCREEN_OFFSET_X
-	end
-
-	::label_11_1::
-
-	if self._splitscreen_active then
-		SPLITSCREEN_OFFSET_X = SPLITSCREEN_OFFSET_X
-
-		if not SPLITSCREEN_OFFSET_X then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_OFFSET_X = 0
-
-	local extra_offset_x = SPLITSCREEN_OFFSET_X
-
-	do
-		local SPLITSCREEN_OFFSET_Y
-	end
-
-	::label_11_2::
-
-	if self._splitscreen_active then
-		SPLITSCREEN_OFFSET_Y = SPLITSCREEN_OFFSET_Y
-
-		if not SPLITSCREEN_OFFSET_Y then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_OFFSET_Y = 0
-
-	local extra_offset_y = SPLITSCREEN_OFFSET_Y
-
-	::label_11_3::
-
+	local multiplier_x = self._splitscreen_active and not not SPLITSCREEN_WIDTH or not self._splitscreen_active and not not (1 / SPLITSCREEN_WIDTH)
+	local multiplier_y = self._splitscreen_active and not not SPLITSCREEN_HEIGHT or not self._splitscreen_active and not not (1 / SPLITSCREEN_HEIGHT)
+	local extra_offset_x = self._splitscreen_active and not not SPLITSCREEN_OFFSET_X or not self._splitscreen_active and not not 0
+	local extra_offset_y = self._splitscreen_active and not not SPLITSCREEN_OFFSET_Y or not self._splitscreen_active and not not 0
 	local worlds = Managers.world._worlds
 
 	for _, world in pairs(worlds) do
@@ -301,10 +235,7 @@ SplitscreenTester.destroy = function (self)
 	Managers.world:destroy_world(self._world_name)
 end
 
-local viewport_set_rect = viewport_set_rect
-
-viewport_set_rect = not not viewport_set_rect or not not Viewport.set_rect
-viewport_set_rect = viewport_set_rect
+viewport_set_rect = not not viewport_set_rect
 
 Viewport.set_rect = function (viewport, offset_x, offset_y, size_x, size_y, extra_offset_x, extra_offset_y)
 	-- function 14
@@ -320,129 +251,25 @@ Viewport.set_rect = function (viewport, offset_x, offset_y, size_x, size_y, extr
 	viewport_set_rect(viewport, offset_x + extra_offset_x, offset_y + extra_offset_y, size_x, size_y)
 end
 
-local application_resolution = application_resolution
-
-application_resolution = not not application_resolution or not not Application.resolution
-application_resolution = application_resolution
+application_resolution = not not application_resolution
 
 Application.resolution = function ()
 	-- function 15
-	local active
-
-	if Managers.splitscreen then
-		active = Managers.splitscreen:active()
-
-		if not active then
-			-- Nothing
-		end
-	end
-
-	active = false
-
-	local splitscreen = active
-
-	do
-		local SPLITSCREEN_WIDTH
-	end
-
-	::label_15_0::
-
-	if splitscreen then
-		SPLITSCREEN_WIDTH = SPLITSCREEN_WIDTH
-
-		if not SPLITSCREEN_WIDTH then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_WIDTH = 1
-
-	local multiplier_x = SPLITSCREEN_WIDTH
-
-	do
-		local SPLITSCREEN_HEIGHT
-	end
-
-	::label_15_1::
-
-	if splitscreen then
-		SPLITSCREEN_HEIGHT = SPLITSCREEN_HEIGHT
-
-		if not SPLITSCREEN_HEIGHT then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_HEIGHT = 1
-
-	local multiplier_y = SPLITSCREEN_HEIGHT
-
-	::label_15_2::
-
+	local splitscreen = Managers.splitscreen and not not Managers.splitscreen:active() or not Managers.splitscreen and not not false
+	local multiplier_x = splitscreen and not not SPLITSCREEN_WIDTH or not splitscreen and not not 1
+	local multiplier_y = splitscreen and not not SPLITSCREEN_HEIGHT or not splitscreen and not not 1
 	local w, h = application_resolution()
 
 	return w * multiplier_x, h * multiplier_y
 end
 
-local gui_resolution = gui_resolution
-
-gui_resolution = not not gui_resolution or not not Gui.resolution
-gui_resolution = gui_resolution
+gui_resolution = not not gui_resolution
 
 Gui.resolution = function ()
 	-- function 16
-	local active
-
-	if Managers.splitscreen then
-		active = Managers.splitscreen:active()
-
-		if not active then
-			-- Nothing
-		end
-	end
-
-	active = false
-
-	local splitscreen = active
-
-	do
-		local SPLITSCREEN_WIDTH
-	end
-
-	::label_16_0::
-
-	if splitscreen then
-		SPLITSCREEN_WIDTH = SPLITSCREEN_WIDTH
-
-		if not SPLITSCREEN_WIDTH then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_WIDTH = 1
-
-	local multiplier_x = SPLITSCREEN_WIDTH
-
-	do
-		local SPLITSCREEN_HEIGHT
-	end
-
-	::label_16_1::
-
-	if splitscreen then
-		SPLITSCREEN_HEIGHT = SPLITSCREEN_HEIGHT
-
-		if not SPLITSCREEN_HEIGHT then
-			-- Nothing
-		end
-	end
-
-	SPLITSCREEN_HEIGHT = 1
-
-	local multiplier_y = SPLITSCREEN_HEIGHT
-
-	::label_16_2::
-
+	local splitscreen = Managers.splitscreen and not not Managers.splitscreen:active() or not Managers.splitscreen and not not false
+	local multiplier_x = splitscreen and not not SPLITSCREEN_WIDTH or not splitscreen and not not 1
+	local multiplier_y = splitscreen and not not SPLITSCREEN_HEIGHT or not splitscreen and not not 1
 	local w, h = gui_resolution()
 
 	return w * multiplier_x, h * multiplier_y
@@ -453,10 +280,7 @@ Application.screen_resolution = function ()
 	return application_resolution()
 end
 
-local camera_world_to_screen = camera_world_to_screen
-
-camera_world_to_screen = not not camera_world_to_screen or not not Camera.world_to_screen
-camera_world_to_screen = camera_world_to_screen
+camera_world_to_screen = not not camera_world_to_screen
 
 Camera.world_to_screen = function (...)
 	-- function 18

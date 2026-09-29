@@ -148,7 +148,7 @@ GutterRunnerStatePinning.update = function (self, unit, input, dt, context, t)
 	local buff_extension = self._buff_extension
 	local unmount_buff = buff_extension:has_buff_type("vs_gutter_runner_allow_dismount")
 
-	if (not CharacterStateHelper.is_viable_stab_target(unit, target_unit, target_status_extension) or input_extension:get("jump") or input_extension:get("action_two")) and unmount_buff then
+	if not CharacterStateHelper.is_viable_stab_target(unit, target_unit, target_status_extension) or input_extension:get("jump") then
 		target_status_extension:set_pounced_down(false, unit)
 
 		local params = self._temp_params

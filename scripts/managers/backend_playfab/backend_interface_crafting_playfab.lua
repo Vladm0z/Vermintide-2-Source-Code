@@ -74,17 +74,7 @@ BackendInterfaceCraftingPlayfab.craft_request_cb = function (self, id, result)
 		for i = 1, #items do
 			local item = items[i]
 			local backend_id = item.ItemInstanceId
-			local UsesIncrementedBy = item.UsesIncrementedBy
-
-			if not UsesIncrementedBy then
-				-- Nothing
-			end
-
-			UsesIncrementedBy = 1
-
-			local amount = UsesIncrementedBy
-
-			::label_6_0::
+			local amount = not not item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -113,17 +103,7 @@ BackendInterfaceCraftingPlayfab.craft_request_cb = function (self, id, result)
 		for i = 1, #modified_items do
 			local item = modified_items[i]
 			local backend_id = item.ItemInstanceId
-			local UsesIncrementedBy_2 = item.UsesIncrementedBy
-
-			if not UsesIncrementedBy_2 then
-				-- Nothing
-			end
-
-			UsesIncrementedBy_2 = 1
-
-			local amount = UsesIncrementedBy_2
-
-			::label_6_1::
+			local amount = not not item.UsesIncrementedBy
 
 			backend_mirror:update_item(backend_id, item)
 

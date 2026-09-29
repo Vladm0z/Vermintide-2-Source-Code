@@ -33,10 +33,7 @@ BTMutatorSorcererFollowAction.enter = function (self, unit, blackboard, t)
 	network_manager:anim_event(unit, "float_into")
 	network_manager:anim_event(unit, start_animation)
 
-	local physics_world = blackboard.physics_world
-
-	physics_world = not not physics_world or not not World.get_data(blackboard.world, "physics_world")
-	blackboard.physics_world = physics_world
+	blackboard.physics_world = not not blackboard.physics_world
 
 	local audio_system = Managers.state.entity:system("audio_system")
 	local skulking_sound_event = action.skulking_sound_event
@@ -208,21 +205,7 @@ BTMutatorSorcererFollowAction.handle_movement_speed_bonus = function (self, unit
 	local distance = Vector3.distance(current_position, POSITION_LOOKUP[blackboard.target_unit])
 
 	if is_infront and Vector3.length(current_position - target_position) > 0 and has_line_of_sight then
-		local slow_move_speed
-
-		if action.slow_down_on_look_at then
-			slow_move_speed = action.slow_move_speed
-
-			if not slow_move_speed then
-				-- Nothing
-			end
-		end
-
-		slow_move_speed = action.fast_move_speed * movement_value
-
-		local move_speed = slow_move_speed
-
-		::label_6_0::
+		local move_speed = action.slow_down_on_look_at and not not action.slow_move_speed or not action.slow_down_on_look_at and not not (action.fast_move_speed * movement_value)
 
 		navigation_extension:set_max_speed(move_speed)
 
@@ -246,21 +229,7 @@ BTMutatorSorcererFollowAction.handle_movement_speed_bonus = function (self, unit
 			blackboard.played_fast_movespeed_sound = true
 		end
 	else
-		local num
-
-		if action.slow_down_on_look_at then
-			num = action.fast_move_speed * 4
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = action.slow_move_speed
-
-		local move_speed = num
-
-		::label_6_1::
+		local move_speed = action.slow_down_on_look_at and not not (action.fast_move_speed * 4) or not action.slow_down_on_look_at and not not action.slow_move_speed
 
 		navigation_extension:set_max_speed(move_speed)
 

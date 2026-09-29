@@ -90,7 +90,7 @@ AchievementManager.init = function (self, world, statistics_db)
 	local template_count = 0
 
 	for _, template in pairs(AchievementTemplates.achievements) do
-		if (self.platform ~= "steam" or not template.ID_STEAM) and (not IS_PS4 or not template.ID_PS4) and (not IS_XB1 or not template.ID_XB1) and self.platform == "debug" then
+		if IS_PS4 and (template.ID_PS4 or IS_XB1 and (template.ID_XB1 or self.platform == "debug") or not IS_XB1 and self.platform == "debug") or not IS_PS4 and (IS_XB1 and (template.ID_XB1 or self.platform == "debug") or not IS_XB1 and self.platform == "debug") then
 			local idx = template_count + 1
 
 			self._templates[idx] = template
@@ -101,11 +101,7 @@ AchievementManager.init = function (self, world, statistics_db)
 
 		if events then
 			for _, event_name in ipairs(events) do
-				local _event_mappings = self._event_mappings
-				local var_1_1 = self._event_mappings[event_name]
-
-				var_1_1 = not not var_1_1 or not not {}
-				_event_mappings[event_name] = var_1_1
+				self._event_mappings[event_name] = not not self._event_mappings[event_name]
 				self._event_mappings[event_name][#self._event_mappings[event_name] + 1] = template
 				self._template_event_data[template.id] = {}
 			end
@@ -186,21 +182,10 @@ AchievementManager.trigger_event = function (self, event_name, ...)
 			local completed = unlocked_achievements[template.id]
 			local required_career = template.required_career
 			local required_career_in_play = not required_career or not not available_careers[required_career]
-			local allow_in_inn = template.allow_in_inn
-
-			if not allow_in_inn then
-				-- Nothing
-			end
-
-			allow_in_inn = not global_is_inside_inn
-
-			local allowed_level = allow_in_inn
-
-			::label_2_0::
-
+			local allowed_level = not not template.allow_in_inn
 			local always_run = template.always_run
 
-			if allowed_level and required_career_in_play and (not completed or always_run) then
+			if not completed or always_run then
 				template.on_event(statistics_db, stats_id, template_event_data[template.id], event_name, event_data)
 			end
 		end
@@ -635,31 +620,7 @@ AchievementManager.has_any_unclaimed_achievement = function (self)
 		if data.completed and not data.claimed then
 			local required_dlc = data.required_dlc
 			local required_dlc_extra = data.required_dlc_extra
-			local is_dlc_unlocked
-
-			if required_dlc then
-				is_dlc_unlocked = unlock_manager:is_dlc_unlocked(required_dlc)
-
-				if is_dlc_unlocked then
-					-- Nothing
-				end
-			end
-
-			if required_dlc_extra then
-				is_dlc_unlocked = unlock_manager:is_dlc_unlocked(required_dlc_extra)
-
-				if false then
-					is_dlc_unlocked = false
-				end
-
-				goto label_26_0
-			end
-
-			is_dlc_unlocked = true
-
-			local is_unlocked = is_dlc_unlocked
-
-			::label_26_0::
+			local is_unlocked = required_dlc and not not unlock_manager:is_dlc_unlocked(required_dlc) or not required_dlc and (not required_dlc_extra or not not unlock_manager:is_dlc_unlocked(required_dlc_extra))
 
 			if is_unlocked then
 				return true
@@ -681,7 +642,7 @@ AchievementManager.evaluate_end_of_level_achievements = function (self, statisti
 			local evaluation_func = data.evaluation_func
 			local allowed_difficulties = data.allowed_difficulties
 
-			if (not allowed_difficulties or allowed_difficulties[difficulty_key]) and evaluation_func(statistics_db, stats_id) then
+			if not allowed_difficulties and evaluation_func(statistics_db, stats_id) or not not allowed_difficulties and allowed_difficulties[difficulty_key] and evaluation_func(statistics_db, stats_id) then
 				local stat_to_increment = data.stat_to_increment
 
 				statistics_db:increment_stat(stats_id, stat_to_increment)
@@ -948,7 +909,7 @@ AchievementManager._setup_achievement_data = function (self, achievement_id, ach
 		end
 	end
 
-	if AchievementManager.STORE_COMPLETED_LEVEL and completed and not claimed and (not achievement_reward_levels or not achievement_reward_levels[achievement_id]) then
+	if not achievement_reward_levels or not achievement_reward_levels[achievement_id] then
 		self._state_completed_achievements[#self._state_completed_achievements + 1] = achievement_id
 	end
 
@@ -981,17 +942,7 @@ end
 AchievementManager._verify_platform_achievements = function (self)
 	-- function 38
 	local platform_functions = self._platform_functions
-	local _verify_platform_achievements_data = self._verify_platform_achievements_data
-
-	if not _verify_platform_achievements_data then
-		-- Nothing
-	end
-
-	_verify_platform_achievements_data = {}
-
-	local verify_data = _verify_platform_achievements_data
-
-	::label_38_0::
+	local verify_data = not not self._verify_platform_achievements_data
 
 	if verify_data.in_progress then
 		local done = platform_functions.unlock_result(verify_data.token, verify_data.template_id)
@@ -1090,10 +1041,7 @@ AchievementManager.get_challenge_progression = function (self, optional_category
 
 				achievement_progress[achievement_id] = progress_data[1] / progress_data[2]
 			elseif achievement_data then
-				local flag
-
-				flag = (not achievement_data.completed(statistics_db, stats_id) or not 1) and not not 0
-				achievement_progress[achievement_id] = flag
+				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and not not 1 or not achievement_data.completed(statistics_db, stats_id) and not not 0
 			end
 		end
 	else
@@ -1103,10 +1051,7 @@ AchievementManager.get_challenge_progression = function (self, optional_category
 
 				achievement_progress[achievement_id] = progress_data[1] / progress_data[2]
 			elseif achievement_data then
-				local flag_2
-
-				flag_2 = (not achievement_data.completed(statistics_db, stats_id) or not 1) and not not 0
-				achievement_progress[achievement_id] = flag_2
+				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and not not 1 or not achievement_data.completed(statistics_db, stats_id) and not not 0
 			end
 		end
 	end

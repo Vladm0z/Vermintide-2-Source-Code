@@ -1,9 +1,6 @@
 -- chunkname: @foundation/scripts/util/bezier.lua
 
-local Bezier = Bezier
-
-Bezier = not not Bezier or not not {}
-Bezier = Bezier
+Bezier = not not Bezier
 
 Bezier.calc_point = function (t, p1, c1, c2, p2)
 	-- function 1
@@ -67,7 +64,7 @@ Bezier.next_index = function (points, index)
 	local next_index = index + 3
 	local next_index_end_point = next_index + 3
 
-	return (not points[next_index_end_point] or not next_index) and not not nil
+	return points[next_index_end_point] and (not not next_index or not not nil) or not points[next_index_end_point] and not not nil
 end
 
 Bezier.spline_points = function (points, index)

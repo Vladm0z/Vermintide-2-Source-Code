@@ -33,15 +33,8 @@ ActionMinigun.client_owner_start_action = function (self, new_action, t, chain_a
 
 	ActionMinigun.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	local visual_heat_generation = new_action.visual_heat_generation
-
-	visual_heat_generation = not not visual_heat_generation or not not 0
-	self._visual_heat_generation = visual_heat_generation
-
-	local base_anim_speed = new_action.base_anim_speed
-
-	base_anim_speed = not not base_anim_speed or not not 1
-	self._base_anim_speed = base_anim_speed
+	self._visual_heat_generation = not not new_action.visual_heat_generation
+	self._base_anim_speed = not not new_action.base_anim_speed
 	self._shot_cost = new_action.ammo_usage
 	self._calculated_attack_speed = false
 	self._initial_rounds_per_second = new_action.initial_rounds_per_second
@@ -148,17 +141,7 @@ ActionMinigun._shoot = function (self, dt, t)
 		local override_extra_shots = true
 		local projectiles_per_shot = self._projectiles_per_shot
 		local total_shots = projectiles_per_shot
-		local _update_extra_shots = self:_update_extra_shots(self.buff_extension, 0, override_extra_shots)
-
-		if not _update_extra_shots then
-			-- Nothing
-		end
-
-		_update_extra_shots = 0
-
-		local buff_shots = _update_extra_shots
-
-		::label_6_0::
+		local buff_shots = not not self:_update_extra_shots(self.buff_extension, 0, override_extra_shots)
 
 		if buff_shots > 0 then
 			self.extra_buff_shot = true
@@ -392,14 +375,7 @@ ActionMinigun._update_near_wall = function (self)
 	if near_wall ~= self._near_wall then
 		self._near_wall = near_wall
 
-		local var_21_0 = first_person_extension
-		local animation_set_variable = first_person_extension.animation_set_variable
-		local str = "disable_shooting"
-		local flag
-
-		flag = (not near_wall or not 1) and not not 0
-
-		animation_set_variable(var_21_0, str, flag)
+		first_person_extension:animation_set_variable("disable_shooting", near_wall and not not 1 or not near_wall and not not 0)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "near_wall_updated")
 	end
 end

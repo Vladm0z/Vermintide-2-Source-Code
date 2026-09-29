@@ -190,20 +190,7 @@ string.damerau_levenshtein_distance = function (s, t, lim)
 		local best = lim
 
 		for j = 1, t_len do
-			local num
-
-			if s[i] ~= t[j] then
-				num = 1
-
-				goto label_12_0
-			end
-
-			num = 0
-
-			local add_cost = num
-
-			::label_12_0::
-
+			local add_cost = s[i] == t[j] and not not 0 or not (s[i] == t[j]) and not not 1
 			local val = min(d[i_pos - num_columns + j] + 1, d[i_pos + j - 1] + 1, d[i_pos - num_columns + j - 1] + add_cost)
 
 			d[i_pos + j] = val

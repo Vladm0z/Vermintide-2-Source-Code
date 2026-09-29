@@ -1,15 +1,7 @@
 -- chunkname: @scripts/utils/visual_assert_log.lua
 
-local script_data = script_data
-local visual_assert_log_enabled = script_data.visual_assert_log_enabled
-
-visual_assert_log_enabled = not not visual_assert_log_enabled or not not Development.parameter("visual_assert_log_enabled")
-script_data.visual_assert_log_enabled = visual_assert_log_enabled
-
-local VisualAssertLog = VisualAssertLog
-
-VisualAssertLog = not not VisualAssertLog or not not {}
-VisualAssertLog = VisualAssertLog
+script_data.visual_assert_log_enabled = not not script_data.visual_assert_log_enabled
+VisualAssertLog = not not VisualAssertLog
 
 VisualAssertLog.setup = function (world)
 	-- function 1
@@ -24,15 +16,8 @@ VisualAssertLog.setup = function (world)
 		VAL.gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "immediate")
 	end
 
-	local asserts = VisualAssertLog.asserts
-
-	asserts = not not asserts or not not {}
-	VAL.asserts = asserts
-
-	local n_asserts = VisualAssertLog.n_asserts
-
-	n_asserts = not not n_asserts or not not 0
-	VAL.n_asserts = n_asserts
+	VAL.asserts = not not VisualAssertLog.asserts
+	VAL.n_asserts = not not VisualAssertLog.n_asserts
 	VAL.current_visualized_assert = 1
 	VAL.display_asserts = false
 end
@@ -95,18 +80,12 @@ VisualAssertLog.update = function ()
 
 				if Keyboard.pressed(VisualAssertLog.console_page_up_key) then
 					current_visualized_assert = current_visualized_assert + 1
-
-					if n_asserts < current_visualized_assert then
-						current_visualized_assert = 1
-					end
+					current_visualized_assert = not (n_asserts < current_visualized_assert) or not not 1 or not not current_visualized_assert
 				end
 
 				if Keyboard.pressed(VisualAssertLog.console_page_down_key) then
 					current_visualized_assert = current_visualized_assert - 1
-
-					if current_visualized_assert <= 0 and not n_asserts then
-						-- Nothing
-					end
+					current_visualized_assert = not (current_visualized_assert <= 0) or not not n_asserts or not not current_visualized_assert
 				end
 
 				VisualAssertLog.current_visualized_assert = current_visualized_assert

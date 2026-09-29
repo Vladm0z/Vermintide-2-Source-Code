@@ -1,21 +1,6 @@
 -- chunkname: @scripts/ui/mission_vote_ui/mission_voting_ui_definitions.lua
 
-local game_start_windows
-
-if not IS_PS4 then
-	game_start_windows = UISettings.game_start_windows
-
-	if not game_start_windows then
-		-- Nothing
-	end
-end
-
-game_start_windows = UISettings.game_start_windows_console
-
-local window_default_settings = game_start_windows
-
-::label_0_0::
-
+local window_default_settings = IS_PS4 and not not UISettings.game_start_windows_console or not IS_PS4 and not not UISettings.game_start_windows
 local window_frame = window_default_settings.frame
 local small_window_size = window_default_settings.size
 local small_window_spacing = window_default_settings.spacing
@@ -48,7 +33,7 @@ local info_frame_size = {
 	400,
 	inner_window_size[2]
 }
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -161,648 +146,628 @@ local tbl = {
 			0,
 			2
 		}
-	}
-}
-local tbl_2 = {
-	vertical_alignment = "top",
-	parent = "button_confirm",
-	horizontal_alignment = "center",
-	size = {
-		500,
-		16
-	}
-}
-local tbl_3 = {
-	0,
-	nil,
-	3
-}
-local flag
-
-flag = (IS_PS4 or not 25) and not not 15
-tbl_3[2] = flag
-tbl_2.position = tbl_3
-tbl.timer_bg = tbl_2
-tbl.timer_fg = {
-	vertical_alignment = "center",
-	parent = "timer_bg",
-	horizontal_alignment = "left",
-	size = {
-		490,
-		16
 	},
-	position = {
-		5,
-		0,
-		3
-	}
-}
-tbl.timer_glow = {
-	vertical_alignment = "center",
-	parent = "timer_fg",
-	horizontal_alignment = "right",
-	size = {
-		45,
-		80
+	timer_bg = {
+		vertical_alignment = "top",
+		parent = "button_confirm",
+		horizontal_alignment = "center",
+		size = {
+			500,
+			16
+		},
+		position = {
+			0,
+			IS_PS4 and not not 15 or not IS_PS4 and not not 25,
+			3
+		}
 	},
-	position = {
-		22,
-		0,
-		3
-	}
-}
-
-local tbl_4 = {
-	vertical_alignment = "bottom",
-	parent = "window",
-	horizontal_alignment = "center"
-}
-local tbl_5 = {
-	game_option_size[1] - 60
-}
-local flag_2
-
-flag_2 = (IS_PS4 or not 72) and not not 0
-tbl_5[2] = flag_2
-tbl_4.size = tbl_5
-tbl_4.position = {
-	0,
-	38,
-	20
-}
-tbl.deus_button_confirm = tbl_4
-
-local tbl_6 = {
-	vertical_alignment = "bottom",
-	parent = "window",
-	horizontal_alignment = "center"
-}
-local tbl_7 = {
-	game_option_size[1]
-}
-local flag_3
-
-flag_3 = (IS_PS4 or not 72) and not not 0
-tbl_7[2] = flag_3
-tbl_6.size = tbl_7
-tbl_6.position = {
-	0,
-	38,
-	20
-}
-tbl.button_confirm = tbl_6
-tbl.button_abort = {
-	vertical_alignment = "bottom",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = {
-		380,
-		42
+	timer_fg = {
+		vertical_alignment = "center",
+		parent = "timer_bg",
+		horizontal_alignment = "left",
+		size = {
+			490,
+			16
+		},
+		position = {
+			5,
+			0,
+			3
+		}
 	},
-	position = {
-		0,
-		-16,
-		22
-	}
-}
-tbl.game_options_right_chain = {
-	vertical_alignment = "top",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = {
-		16,
-		window_size[2]
+	timer_glow = {
+		vertical_alignment = "center",
+		parent = "timer_fg",
+		horizontal_alignment = "right",
+		size = {
+			45,
+			80
+		},
+		position = {
+			22,
+			0,
+			3
+		}
 	},
-	position = {
-		195,
-		0,
-		2
-	}
-}
-tbl.game_options_left_chain = {
-	vertical_alignment = "top",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = {
-		16,
-		window_size[2]
+	deus_button_confirm = {
+		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 60,
+			IS_PS4 and not not 0 or not IS_PS4 and not not 72
+		},
+		position = {
+			0,
+			38,
+			20
+		}
 	},
-	position = {
-		-195,
-		0,
-		2
-	}
-}
-tbl.title = {
-	vertical_alignment = "top",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = {
-		570,
-		60
+	button_confirm = {
+		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			IS_PS4 and not not 0 or not IS_PS4 and not not 72
+		},
+		position = {
+			0,
+			38,
+			20
+		}
 	},
-	position = {
-		0,
-		34,
-		22
-	}
-}
-tbl.title_bg = {
-	vertical_alignment = "top",
-	parent = "title",
-	horizontal_alignment = "center",
-	size = {
-		410,
-		40
+	button_abort = {
+		vertical_alignment = "bottom",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			380,
+			42
+		},
+		position = {
+			0,
+			-16,
+			22
+		}
 	},
-	position = {
-		0,
-		-15,
-		-1
-	}
-}
-tbl.title_text = {
-	vertical_alignment = "center",
-	parent = "title",
-	horizontal_alignment = "center",
-	size = {
-		350,
-		50
+	game_options_right_chain = {
+		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			16,
+			window_size[2]
+		},
+		position = {
+			195,
+			0,
+			2
+		}
 	},
-	position = {
-		0,
-		-3,
-		2
-	}
-}
-tbl.game_option_1 = {
-	vertical_alignment = "top",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = game_option_size,
-	position = {
-		0,
-		-36,
-		3
-	}
-}
-tbl.game_option_2 = {
-	vertical_alignment = "bottom",
-	parent = "game_option_1",
-	horizontal_alignment = "center",
-	size = game_option_size,
-	position = {
-		0,
-		-249,
-		0
-	}
-}
-tbl.versus_reward_presentation = {
-	vertical_alignment = "top",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		game_option_size[2] + 470
+	game_options_left_chain = {
+		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			16,
+			window_size[2]
+		},
+		position = {
+			-195,
+			0,
+			2
+		}
 	},
-	position = {
-		0,
-		-36,
-		3
-	}
-}
-tbl.switch_mechanism_title = {
-	vertical_alignment = "top",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		100
+	title = {
+		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			570,
+			60
+		},
+		position = {
+			0,
+			34,
+			22
+		}
 	},
-	position = {
-		0,
-		-66,
-		2
-	}
-}
-tbl.switch_mechanism_subtitle = {
-	vertical_alignment = "bottom",
-	parent = "switch_mechanism_title",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		40
+	title_bg = {
+		vertical_alignment = "top",
+		parent = "title",
+		horizontal_alignment = "center",
+		size = {
+			410,
+			40
+		},
+		position = {
+			0,
+			-15,
+			-1
+		}
 	},
-	position = {
-		0,
-		10,
-		2
-	}
-}
-tbl.switch_mechanism_description = {
-	vertical_alignment = "bottom",
-	parent = "switch_mechanism_subtitle",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 40,
-		100
+	title_text = {
+		vertical_alignment = "center",
+		parent = "title",
+		horizontal_alignment = "center",
+		size = {
+			350,
+			50
+		},
+		position = {
+			0,
+			-3,
+			2
+		}
 	},
-	position = {
-		0,
-		-150,
-		2
-	}
-}
-tbl.journey_name = {
-	vertical_alignment = "top",
-	parent = "game_option_1",
-	horizontal_alignment = "left",
-	size = {
-		game_option_size[1] / 2,
-		30
+	game_option_1 = {
+		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = game_option_size,
+		position = {
+			0,
+			-36,
+			3
+		}
 	},
-	position = {
-		15,
-		-55,
-		1
-	}
-}
-tbl.journey_theme = {
-	vertical_alignment = "center",
-	parent = "game_option_1",
-	horizontal_alignment = "left",
-	size = {
-		game_option_size[1] / 2,
-		30
+	game_option_2 = {
+		vertical_alignment = "bottom",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
+		size = game_option_size,
+		position = {
+			0,
+			-249,
+			0
+		}
 	},
-	position = {
-		15,
-		10,
-		1
-	}
-}
-tbl.event_summary_frame = {
-	vertical_alignment = "bottom",
-	parent = "game_option_1",
-	horizontal_alignment = "center",
-	size = event_summary_frame_size,
-	position = {
-		0,
-		-465,
-		0
-	}
-}
-tbl.event_summary = {
-	vertical_alignment = "top",
-	parent = "event_summary_frame",
-	horizontal_alignment = "center",
-	size = event_summary_size,
-	position = {
-		0,
-		-10,
-		0
-	}
-}
-tbl.additional_option = {
-	vertical_alignment = "bottom",
-	parent = "game_option_2",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		200
+	versus_reward_presentation = {
+		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			game_option_size[2] + 470
+		},
+		position = {
+			0,
+			-36,
+			3
+		}
 	},
-	position = {
-		0,
-		-216,
-		0
-	}
-}
-tbl.private_button = {
-	vertical_alignment = "bottom",
-	parent = "additional_option",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 20,
-		40
+	switch_mechanism_title = {
+		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			100
+		},
+		position = {
+			0,
+			-66,
+			2
+		}
 	},
-	position = {
-		0,
-		12,
-		10
-	}
-}
-tbl.private_button_frame = {
-	vertical_alignment = "bottom",
-	parent = "private_button",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 20,
-		45
+	switch_mechanism_subtitle = {
+		vertical_alignment = "bottom",
+		parent = "switch_mechanism_title",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			40
+		},
+		position = {
+			0,
+			10,
+			2
+		}
 	},
-	position = {
-		0,
-		0,
-		10
-	}
-}
-tbl.host_button = {
-	vertical_alignment = "top",
-	parent = "private_button",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 20,
-		40
+	switch_mechanism_description = {
+		vertical_alignment = "bottom",
+		parent = "switch_mechanism_subtitle",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 40,
+			100
+		},
+		position = {
+			0,
+			-150,
+			2
+		}
 	},
-	position = {
-		0,
-		45,
-		10
-	}
-}
-tbl.host_button_frame = {
-	vertical_alignment = "bottom",
-	parent = "host_button",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 20,
-		45
+	journey_name = {
+		vertical_alignment = "top",
+		parent = "game_option_1",
+		horizontal_alignment = "left",
+		size = {
+			game_option_size[1] / 2,
+			30
+		},
+		position = {
+			15,
+			-55,
+			1
+		}
 	},
-	position = {
-		0,
-		0,
-		10
-	}
-}
-tbl.strict_matchmaking_button = {
-	vertical_alignment = "top",
-	parent = "host_button",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 20,
-		40
+	journey_theme = {
+		vertical_alignment = "center",
+		parent = "game_option_1",
+		horizontal_alignment = "left",
+		size = {
+			game_option_size[1] / 2,
+			30
+		},
+		position = {
+			15,
+			10,
+			1
+		}
 	},
-	position = {
-		0,
-		45,
-		10
-	}
-}
-tbl.strict_matchmaking_button_frame = {
-	vertical_alignment = "bottom",
-	parent = "strict_matchmaking_button",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 20,
-		45
+	event_summary_frame = {
+		vertical_alignment = "bottom",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
+		size = event_summary_frame_size,
+		position = {
+			0,
+			-465,
+			0
+		}
 	},
-	position = {
-		0,
-		0,
-		10
-	}
-}
-tbl.reward_presentation = {
-	vertical_alignment = "bottom",
-	parent = "game_option_1",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		449
+	event_summary = {
+		vertical_alignment = "top",
+		parent = "event_summary_frame",
+		horizontal_alignment = "center",
+		size = event_summary_size,
+		position = {
+			0,
+			-10,
+			0
+		}
 	},
-	position = {
-		0,
-		-465,
-		0
-	}
-}
-tbl.weave_quickplay_presentation = {
-	vertical_alignment = "bottom",
-	parent = "game_option_1",
-	horizontal_alignment = "center",
-	size = {
-		246,
-		252
+	additional_option = {
+		vertical_alignment = "bottom",
+		parent = "game_option_2",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			200
+		},
+		position = {
+			0,
+			-216,
+			0
+		}
 	},
-	position = {
-		0,
-		-465,
-		0
-	}
-}
-tbl.deed_option_bg = {
-	vertical_alignment = "top",
-	parent = "window",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		700
+	private_button = {
+		vertical_alignment = "bottom",
+		parent = "additional_option",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 20,
+			40
+		},
+		position = {
+			0,
+			12,
+			10
+		}
 	},
-	position = {
-		0,
-		-36,
-		3
-	}
-}
-tbl.item_presentation = {
-	vertical_alignment = "top",
-	parent = "game_option_1",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 10,
-		0
+	private_button_frame = {
+		vertical_alignment = "bottom",
+		parent = "private_button",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 20,
+			45
+		},
+		position = {
+			0,
+			0,
+			10
+		}
 	},
-	position = {
-		0,
-		-deed_frame_width,
-		1
-	}
-}
-tbl.mutator_icon = {
-	vertical_alignment = "top",
-	parent = "event_summary_frame",
-	horizontal_alignment = "left",
-	size = {
-		40,
-		40
+	host_button = {
+		vertical_alignment = "top",
+		parent = "private_button",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 20,
+			40
+		},
+		position = {
+			0,
+			45,
+			10
+		}
 	},
-	position = {
-		15,
-		-50,
-		5
-	}
-}
-tbl.mutator_icon_frame = {
-	vertical_alignment = "center",
-	parent = "mutator_icon",
-	horizontal_alignment = "center",
-	size = {
-		60,
-		60
+	host_button_frame = {
+		vertical_alignment = "bottom",
+		parent = "host_button",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 20,
+			45
+		},
+		position = {
+			0,
+			0,
+			10
+		}
 	},
-	position = {
-		0,
-		0,
-		1
-	}
-}
-tbl.mutator_title_text = {
-	vertical_alignment = "top",
-	parent = "event_summary_frame",
-	horizontal_alignment = "left",
-	size = {
-		info_frame_size[1] * 0.6,
-		50
+	strict_matchmaking_button = {
+		vertical_alignment = "top",
+		parent = "host_button",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 20,
+			40
+		},
+		position = {
+			0,
+			45,
+			10
+		}
 	},
-	position = {
-		15,
-		-5,
-		1
-	}
-}
-tbl.mutator_title_divider = {
-	vertical_alignment = "bottom",
-	parent = "mutator_title_text",
-	horizontal_alignment = "left",
-	size = {
-		450,
-		4
+	strict_matchmaking_button_frame = {
+		vertical_alignment = "bottom",
+		parent = "strict_matchmaking_button",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 20,
+			45
+		},
+		position = {
+			0,
+			0,
+			10
+		}
 	},
-	position = {
-		0,
-		10,
-		1
-	}
-}
-tbl.mutator_description_text = {
-	vertical_alignment = "top",
-	parent = "mutator_icon",
-	horizontal_alignment = "left",
-	size = {
-		game_option_size[1] - 100,
-		100
+	reward_presentation = {
+		vertical_alignment = "bottom",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			449
+		},
+		position = {
+			0,
+			-465,
+			0
+		}
 	},
-	position = {
-		50,
-		0,
-		1
-	}
-}
-tbl.objective_title = {
-	vertical_alignment = "top",
-	parent = "event_summary_frame",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		40
+	weave_quickplay_presentation = {
+		vertical_alignment = "bottom",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
+		size = {
+			246,
+			252
+		},
+		position = {
+			0,
+			-465,
+			0
+		}
 	},
-	position = {
-		0,
-		-175,
-		3
-	}
-}
-tbl.objective_title_bg = {
-	vertical_alignment = "center",
-	parent = "objective_title",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		59
+	deed_option_bg = {
+		vertical_alignment = "top",
+		parent = "window",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			700
+		},
+		position = {
+			0,
+			-36,
+			3
+		}
 	},
-	position = {
-		0,
-		0,
-		-1
-	}
-}
-tbl.objective_1 = {
-	vertical_alignment = "bottom",
-	parent = "objective_title",
-	horizontal_alignment = "center",
-	size = {
-		info_frame_size[1],
-		30
+	item_presentation = {
+		vertical_alignment = "top",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 10,
+			0
+		},
+		position = {
+			0,
+			-deed_frame_width,
+			1
+		}
 	},
-	position = {
-		0,
-		-35,
-		3
-	}
-}
-tbl.objective_2 = {
-	vertical_alignment = "bottom",
-	parent = "objective_1",
-	horizontal_alignment = "center",
-	size = {
-		info_frame_size[1],
-		30
+	mutator_icon = {
+		vertical_alignment = "top",
+		parent = "event_summary_frame",
+		horizontal_alignment = "left",
+		size = {
+			40,
+			40
+		},
+		position = {
+			15,
+			-50,
+			5
+		}
 	},
-	position = {
-		0,
-		-35,
-		0
-	}
-}
-tbl.private_checkbox = {
-	vertical_alignment = "bottom",
-	parent = "event_summary_frame",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 20,
-		40
+	mutator_icon_frame = {
+		vertical_alignment = "center",
+		parent = "mutator_icon",
+		horizontal_alignment = "center",
+		size = {
+			60,
+			60
+		},
+		position = {
+			0,
+			0,
+			1
+		}
 	},
-	position = {
-		0,
-		5,
-		1
-	}
-}
-tbl.game_option_deus_weekly_event = {
-	vertical_alignment = "bottom",
-	parent = "game_option_1",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1],
-		449
+	mutator_title_text = {
+		vertical_alignment = "top",
+		parent = "event_summary_frame",
+		horizontal_alignment = "left",
+		size = {
+			info_frame_size[1] * 0.6,
+			50
+		},
+		position = {
+			15,
+			-5,
+			1
+		}
 	},
-	position = {
-		0,
-		-465,
-		0
-	}
-}
-tbl.game_option_deus_weekly = {
-	vertical_alignment = "bottom",
-	parent = "game_option_1",
-	horizontal_alignment = "center",
-	size = {
-		game_option_size[1] - 50,
-		439
+	mutator_title_divider = {
+		vertical_alignment = "bottom",
+		parent = "mutator_title_text",
+		horizontal_alignment = "left",
+		size = {
+			450,
+			4
+		},
+		position = {
+			0,
+			10,
+			1
+		}
 	},
-	position = {
-		0,
-		-465,
-		0
-	}
-}
-tbl.game_option_deus_weekly_anchor = {
-	vertical_alignment = "center",
-	parent = "game_option_deus_weekly"
-}
-tbl.scrollbar_window = {
-	parent = "game_option_deus_weekly",
-	position = {
-		-45,
-		12.5,
-		0
+	mutator_description_text = {
+		vertical_alignment = "top",
+		parent = "mutator_icon",
+		horizontal_alignment = "left",
+		size = {
+			game_option_size[1] - 100,
+			100
+		},
+		position = {
+			50,
+			0,
+			1
+		}
 	},
-	size = {
-		game_option_size[1],
-		424
+	objective_title = {
+		vertical_alignment = "top",
+		parent = "event_summary_frame",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			40
+		},
+		position = {
+			0,
+			-175,
+			3
+		}
+	},
+	objective_title_bg = {
+		vertical_alignment = "center",
+		parent = "objective_title",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			59
+		},
+		position = {
+			0,
+			0,
+			-1
+		}
+	},
+	objective_1 = {
+		vertical_alignment = "bottom",
+		parent = "objective_title",
+		horizontal_alignment = "center",
+		size = {
+			info_frame_size[1],
+			30
+		},
+		position = {
+			0,
+			-35,
+			3
+		}
+	},
+	objective_2 = {
+		vertical_alignment = "bottom",
+		parent = "objective_1",
+		horizontal_alignment = "center",
+		size = {
+			info_frame_size[1],
+			30
+		},
+		position = {
+			0,
+			-35,
+			0
+		}
+	},
+	private_checkbox = {
+		vertical_alignment = "bottom",
+		parent = "event_summary_frame",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 20,
+			40
+		},
+		position = {
+			0,
+			5,
+			1
+		}
+	},
+	game_option_deus_weekly_event = {
+		vertical_alignment = "bottom",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1],
+			449
+		},
+		position = {
+			0,
+			-465,
+			0
+		}
+	},
+	game_option_deus_weekly = {
+		vertical_alignment = "bottom",
+		parent = "game_option_1",
+		horizontal_alignment = "center",
+		size = {
+			game_option_size[1] - 50,
+			439
+		},
+		position = {
+			0,
+			-465,
+			0
+		}
+	},
+	game_option_deus_weekly_anchor = {
+		vertical_alignment = "center",
+		parent = "game_option_deus_weekly"
+	},
+	scrollbar_window = {
+		parent = "game_option_deus_weekly",
+		position = {
+			-45,
+			12.5,
+			0
+		},
+		size = {
+			game_option_size[1],
+			424
+		}
 	}
 }
-
-local scenegraph_definition = tbl
 local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
@@ -839,11 +804,7 @@ local function deus_weekly_event_create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 2
-			local var_2_0 = header_type
-
-			var_2_0 = not not var_2_0 and header_type == "boon"
-
-			return var_2_0
+			return not not header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -852,11 +813,7 @@ local function deus_weekly_event_create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 3
-			local var_3_0 = header_type
-
-			var_3_0 = not not var_3_0 and header_type == "boon"
-
-			return var_3_0
+			return not not header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -865,37 +822,28 @@ local function deus_weekly_event_create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 4
-			local var_4_0 = header_type
-
-			var_4_0 = not not var_4_0 and header_type == "curse"
-
-			return var_4_0
+			return not not header_type
 		end
 	}
 	content.header = header
 	content.masked_rect = "rect_masked"
 
 	local font_size = 32
-	local tbl = {
+
+	style.header = {
 		vertical_alignment = "top",
 		upper_case = true,
 		localize = true,
 		horizontal_alignment = "left",
 		font_type = "hell_shark_header_masked",
 		font_size = font_size,
-		text_color = Colors.get_color_table_with_alpha("white", 255)
+		text_color = Colors.get_color_table_with_alpha("white", 255),
+		offset = {
+			header_type and not not 25 or not header_type and not not 0,
+			0,
+			2
+		}
 	}
-	local tbl_2 = {
-		nil,
-		0,
-		2
-	}
-	local flag
-
-	flag = (not header_type or not 25) and not not 0
-	tbl_2[1] = flag
-	tbl.offset = tbl_2
-	style.header = tbl
 	style.plus_horizontal = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
@@ -1072,24 +1020,10 @@ local function create_settings_option(scenegraph_id, size, title_text, icon_text
 	icon_texture = not not icon_texture or not not "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local size_2
-
-	if icon_texture_settings then
-		size_2 = icon_texture_settings.size
-
-		if not size_2 then
-			-- Nothing
-		end
-	end
-
-	size_2 = {
+	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
 		150,
 		150
 	}
-
-	local icon_texture_size = size_2
-
-	::label_6_0::
 
 	icon_visible = icon_visible == nil or not not icon_visible
 	background_texture = not not background_texture or not not "game_options_bg_02"
@@ -1368,24 +1302,10 @@ local function create_settings_option_deus(scenegraph_id, size, title_text, icon
 	icon_texture = not not icon_texture or not not "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local size_2
-
-	if icon_texture_settings then
-		size_2 = icon_texture_settings.size
-
-		if not size_2 then
-			-- Nothing
-		end
-	end
-
-	size_2 = {
+	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
 		150,
 		150
 	}
-
-	local icon_texture_size = size_2
-
-	::label_9_0::
 
 	icon_visible = icon_visible == nil or not not icon_visible
 
@@ -1429,14 +1349,7 @@ local function create_settings_option_deus(scenegraph_id, size, title_text, icon
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 12
-						local icon_visible = content.icon_visible
-
-						if icon_visible then
-							icon_visible = content.show_journey_border
-							icon_visible = not not icon_visible and not not not content.with_belakor
-						end
-
-						return icon_visible
+						return not not content.icon_visible
 					end
 				},
 				{
@@ -1445,14 +1358,7 @@ local function create_settings_option_deus(scenegraph_id, size, title_text, icon
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 13
-						local icon_visible = content.icon_visible
-
-						if icon_visible then
-							icon_visible = content.show_journey_border
-							icon_visible = not not icon_visible and not not content.with_belakor
-						end
-
-						return icon_visible
+						return not not content.icon_visible
 					end
 				},
 				{
@@ -1680,24 +1586,10 @@ local function create_settings_option_deus_weekly_event(scenegraph_id, size, tit
 	icon_texture = not not icon_texture or not not "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local size_2
-
-	if icon_texture_settings then
-		size_2 = icon_texture_settings.size
-
-		if not size_2 then
-			-- Nothing
-		end
-	end
-
-	size_2 = {
+	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
 		150,
 		150
 	}
-
-	local icon_texture_size = size_2
-
-	::label_14_0::
 
 	icon_visible = icon_visible == nil or not not icon_visible
 
@@ -1741,14 +1633,7 @@ local function create_settings_option_deus_weekly_event(scenegraph_id, size, tit
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 17
-						local icon_visible = content.icon_visible
-
-						if icon_visible then
-							icon_visible = content.show_journey_border
-							icon_visible = not not icon_visible and not not not content.with_belakor
-						end
-
-						return icon_visible
+						return not not content.icon_visible
 					end
 				},
 				{
@@ -1757,14 +1642,7 @@ local function create_settings_option_deus_weekly_event(scenegraph_id, size, tit
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 18
-						local icon_visible = content.icon_visible
-
-						if icon_visible then
-							icon_visible = content.show_journey_border
-							icon_visible = not not icon_visible and not not content.with_belakor
-						end
-
-						return icon_visible
+						return not not content.icon_visible
 					end
 				},
 				{
@@ -2061,24 +1939,10 @@ local function create_weave_settings_option(scenegraph_id, size, title_text, ico
 	icon_texture = not not icon_texture or not not "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local size_2
-
-	if icon_texture_settings then
-		size_2 = icon_texture_settings.size
-
-		if not size_2 then
-			-- Nothing
-		end
-	end
-
-	size_2 = {
+	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
 		150,
 		150
 	}
-
-	local icon_texture_size = size_2
-
-	::label_19_0::
 
 	icon_visible = icon_visible == nil or not not icon_visible
 	background_texture = not not background_texture or not not "game_options_bg_02"
@@ -2688,7 +2552,7 @@ local function create_additional_settings_option(scenegraph_id, size, title_text
 
 	local frame_settings = UIFrameSettings[frame_settings_name]
 	local frame_width = frame_settings.texture_sizes.corner[1]
-	local tbl = {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -2752,156 +2616,147 @@ local function create_additional_settings_option(scenegraph_id, size, title_text
 				},
 				texture_id = background_texture_settings.texture_name
 			}
-		}
-	}
-	local tbl_2 = {
-		frame = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				0,
-				10
-			},
-			size = size,
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes
-		}
-	}
-	local tbl_3 = {
-		texture_tiling_size = {
-			400,
-			150
-		}
-	}
-	local tbl_4 = {
-		nil,
-		255,
-		255,
-		255
-	}
-	local flag
-
-	flag = (not background_texture or not 255) and not not 0
-	tbl_4[1] = flag
-	tbl_3.color = tbl_4
-	tbl_3.offset = {
-		0,
-		0,
-		0
-	}
-	tbl_2.background = tbl_3
-	tbl_2.title_bg = {
-		size = {
-			size[1],
-			40
 		},
-		color = {
-			255,
-			255,
-			255,
-			255
+		style = {
+			frame = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					10
+				},
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
+			},
+			background = {
+				texture_tiling_size = {
+					400,
+					150
+				},
+				color = {
+					background_texture and not not 255 or not background_texture and not not 0,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					0
+				}
+			},
+			title_bg = {
+				size = {
+					size[1],
+					40
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					size[2] - 38 - frame_width,
+					2
+				}
+			},
+			title_edge = {
+				size = {
+					size[1],
+					5
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					size[2] - 38 - frame_width,
+					4
+				}
+			},
+			title_text = {
+				font_size = 32,
+				upper_case = true,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				font_type = "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					frame_width + 5,
+					-frame_width,
+					10
+				}
+			},
+			title_text_shadow = {
+				font_size = 32,
+				upper_case = true,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				font_type = "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				default_text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					frame_width + 5 + 2,
+					-(frame_width + 2),
+					9
+				}
+			},
+			option_text = {
+				font_size = 28,
+				upper_case = false,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				font_type = "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					frame_width + 5,
+					-55,
+					10
+				}
+			},
+			option_text_shadow = {
+				font_size = 28,
+				upper_case = false,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				font_type = "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				default_text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					frame_width + 5 + 2,
+					-57,
+					9
+				}
+			}
 		},
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
-			size[2] - 38 - frame_width,
-			2
-		}
-	}
-	tbl_2.title_edge = {
-		size = {
-			size[1],
-			5
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
 			0,
-			size[2] - 38 - frame_width,
-			4
+			0
 		}
 	}
-	tbl_2.title_text = {
-		font_size = 32,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		font_type = "hell_shark_header",
-		text_color = Colors.get_color_table_with_alpha("font_title", 255),
-		default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
-		offset = {
-			frame_width + 5,
-			-frame_width,
-			10
-		}
-	}
-	tbl_2.title_text_shadow = {
-		font_size = 32,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		font_type = "hell_shark_header",
-		text_color = Colors.get_color_table_with_alpha("black", 255),
-		default_text_color = Colors.get_color_table_with_alpha("black", 255),
-		offset = {
-			frame_width + 5 + 2,
-			-(frame_width + 2),
-			9
-		}
-	}
-	tbl_2.option_text = {
-		font_size = 28,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		font_type = "hell_shark_header",
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		offset = {
-			frame_width + 5,
-			-55,
-			10
-		}
-	}
-	tbl_2.option_text_shadow = {
-		font_size = 28,
-		upper_case = false,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		font_type = "hell_shark_header",
-		text_color = Colors.get_color_table_with_alpha("black", 255),
-		default_text_color = Colors.get_color_table_with_alpha("black", 255),
-		offset = {
-			frame_width + 5 + 2,
-			-57,
-			9
-		}
-	}
-	tbl.style = tbl_2
-	tbl.scenegraph_id = scenegraph_id
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-
-	local widget = tbl
 
 	return widget
 end
@@ -3828,20 +3683,7 @@ function create_twitch_disclaimer(is_server)
 		108 / size[2]
 	}
 	local service_name = "Twitch"
-	local str
-
-	if is_server then
-		str = "twitch_warning_text_server"
-
-		goto label_30_0
-	end
-
-	str = "twitch_warning_text_client"
-
-	local disclaimer_text_id = str
-
-	::label_30_0::
-
+	local disclaimer_text_id = is_server and not not "twitch_warning_text_server" or not is_server and not not "twitch_warning_text_client"
 	local disclaimer_text = string.format(Localize(disclaimer_text_id), service_name, service_name)
 	local widget = {
 		element = {

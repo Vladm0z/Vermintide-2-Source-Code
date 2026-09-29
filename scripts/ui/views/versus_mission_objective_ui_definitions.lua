@@ -13,330 +13,325 @@ local mission_background_size = {
 	BACKGROUND_SIZE[1],
 	BACKGROUND_SIZE[2]
 }
-local tbl = {}
-local tbl_2 = {
-	size = {
-		SIZE_X,
-		SIZE_Y
+local scenegraph_definition = {
+	screen = {
+		size = {
+			SIZE_X,
+			SIZE_Y
+		},
+		position = {
+			0,
+			0,
+			UILayer.hud
+		},
+		scale = IS_WINDOWS and not not "fit" or not IS_WINDOWS and not not "hud_fit"
 	},
-	position = {
-		0,
-		0,
-		UILayer.hud
-	}
-}
-local flag
-
-flag = (IS_WINDOWS or not "hud_fit") and not not "fit"
-tbl_2.scale = flag
-tbl.screen = tbl_2
-tbl.pivot = {
-	vertical_alignment = "top",
-	parent = "screen",
-	horizontal_alignment = "center",
-	size = {
-		0,
-		0
+	pivot = {
+		vertical_alignment = "top",
+		parent = "screen",
+		horizontal_alignment = "center",
+		size = {
+			0,
+			0
+		},
+		position = {
+			0,
+			0,
+			100
+		}
 	},
-	position = {
-		0,
-		0,
-		100
-	}
-}
-tbl.objective_detail = {
-	vertical_alignment = "top",
-	parent = "pivot",
-	horizontal_alignment = "center",
-	size = {
-		0,
-		0
+	objective_detail = {
+		vertical_alignment = "top",
+		parent = "pivot",
+		horizontal_alignment = "center",
+		size = {
+			0,
+			0
+		},
+		position = {
+			0,
+			-25,
+			0
+		}
 	},
-	position = {
-		0,
-		-25,
-		0
-	}
-}
-tbl.objective_text = {
-	vertical_alignment = "top",
-	parent = "pivot",
-	horizontal_alignment = "center",
-	size = {
-		544,
-		50
+	objective_text = {
+		vertical_alignment = "top",
+		parent = "pivot",
+		horizontal_alignment = "center",
+		size = {
+			544,
+			50
+		},
+		position = {
+			0,
+			-10,
+			0
+		}
 	},
-	position = {
-		0,
-		-10,
-		0
-	}
-}
-tbl.objective = {
-	vertical_alignment = "top",
-	parent = "pivot",
-	horizontal_alignment = "center",
-	size = {
-		302.4,
-		117.6
+	objective = {
+		vertical_alignment = "top",
+		parent = "pivot",
+		horizontal_alignment = "center",
+		size = {
+			302.4,
+			117.6
+		},
+		position = {
+			0,
+			-60,
+			10
+		}
 	},
-	position = {
-		0,
-		-60,
-		10
-	}
-}
-tbl.mission_pivot = {
-	vertical_alignment = "top",
-	parent = "pivot",
-	horizontal_alignment = "center",
-	size = {
-		0,
-		0
+	mission_pivot = {
+		vertical_alignment = "top",
+		parent = "pivot",
+		horizontal_alignment = "center",
+		size = {
+			0,
+			0
+		},
+		position = {
+			0,
+			-250,
+			1
+		}
 	},
-	position = {
-		0,
-		-250,
-		1
-	}
-}
-tbl.mission_widget = {
-	vertical_alignment = "top",
-	parent = "pivot",
-	horizontal_alignment = "center",
-	size = mission_background_size,
-	position = {
-		0,
-		0,
-		0
-	}
-}
-tbl.background = {
-	vertical_alignment = "center",
-	parent = "mission_pivot",
-	horizontal_alignment = "center",
-	size = {
-		574,
-		90
+	mission_widget = {
+		vertical_alignment = "top",
+		parent = "pivot",
+		horizontal_alignment = "center",
+		size = mission_background_size,
+		position = {
+			0,
+			0,
+			0
+		}
 	},
-	position = {
-		0,
-		-1,
-		0
-	}
-}
-tbl.area_text_background = {
-	vertical_alignment = "center",
-	parent = "background",
-	horizontal_alignment = "center",
-	size = {
-		1800,
-		90
+	background = {
+		vertical_alignment = "center",
+		parent = "mission_pivot",
+		horizontal_alignment = "center",
+		size = {
+			574,
+			90
+		},
+		position = {
+			0,
+			-1,
+			0
+		}
 	},
-	position = {
-		0,
-		0,
-		0
-	}
-}
-tbl.duration_text_background = {
-	vertical_alignment = "center",
-	parent = "background",
-	horizontal_alignment = "center",
-	size = {
-		1800,
-		90
+	area_text_background = {
+		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "center",
+		size = {
+			1800,
+			90
+		},
+		position = {
+			0,
+			0,
+			0
+		}
 	},
-	position = {
-		0,
-		0,
-		0
-	}
-}
-tbl.top_center = {
-	vertical_alignment = "center",
-	parent = "mission_pivot",
-	horizontal_alignment = "center",
-	size = {
-		54,
-		22
+	duration_text_background = {
+		vertical_alignment = "center",
+		parent = "background",
+		horizontal_alignment = "center",
+		size = {
+			1800,
+			90
+		},
+		position = {
+			0,
+			0,
+			0
+		}
 	},
-	position = {
-		0,
-		0,
-		5
-	}
-}
-tbl.top_left = {
-	vertical_alignment = "center",
-	parent = "top_center",
-	horizontal_alignment = "right",
-	size = {
-		264,
-		6
+	top_center = {
+		vertical_alignment = "center",
+		parent = "mission_pivot",
+		horizontal_alignment = "center",
+		size = {
+			54,
+			22
+		},
+		position = {
+			0,
+			0,
+			5
+		}
 	},
-	position = {
-		-31,
-		0,
-		-1
-	}
-}
-tbl.top_right = {
-	vertical_alignment = "center",
-	parent = "top_center",
-	horizontal_alignment = "left",
-	size = {
-		264,
-		6
+	top_left = {
+		vertical_alignment = "center",
+		parent = "top_center",
+		horizontal_alignment = "right",
+		size = {
+			264,
+			6
+		},
+		position = {
+			-31,
+			0,
+			-1
+		}
 	},
-	position = {
-		31,
-		0,
-		-1
-	}
-}
-tbl.top_detail = {
-	vertical_alignment = "center",
-	parent = "top_center",
-	horizontal_alignment = "center",
-	size = {
-		54,
-		22
+	top_right = {
+		vertical_alignment = "center",
+		parent = "top_center",
+		horizontal_alignment = "left",
+		size = {
+			264,
+			6
+		},
+		position = {
+			31,
+			0,
+			-1
+		}
 	},
-	position = {
-		0,
-		0,
-		8
-	}
-}
-tbl.bottom_center = {
-	vertical_alignment = "center",
-	parent = "mission_pivot",
-	horizontal_alignment = "center",
-	size = {
-		54,
-		22
+	top_detail = {
+		vertical_alignment = "center",
+		parent = "top_center",
+		horizontal_alignment = "center",
+		size = {
+			54,
+			22
+		},
+		position = {
+			0,
+			0,
+			8
+		}
 	},
-	position = {
-		0,
-		-1,
-		6
-	}
-}
-tbl.bottom_left = {
-	vertical_alignment = "center",
-	parent = "bottom_center",
-	horizontal_alignment = "right",
-	size = {
-		264,
-		6
+	bottom_center = {
+		vertical_alignment = "center",
+		parent = "mission_pivot",
+		horizontal_alignment = "center",
+		size = {
+			54,
+			22
+		},
+		position = {
+			0,
+			-1,
+			6
+		}
 	},
-	position = {
-		-31,
-		-3,
-		-1
-	}
-}
-tbl.bottom_right = {
-	vertical_alignment = "center",
-	parent = "bottom_center",
-	horizontal_alignment = "left",
-	size = {
-		264,
-		6
+	bottom_left = {
+		vertical_alignment = "center",
+		parent = "bottom_center",
+		horizontal_alignment = "right",
+		size = {
+			264,
+			6
+		},
+		position = {
+			-31,
+			-3,
+			-1
+		}
 	},
-	position = {
-		31,
-		-3,
-		-1
-	}
-}
-tbl.mission_icon_left = {
-	vertical_alignment = "center",
-	parent = "mission_widget",
-	horizontal_alignment = "center",
-	size = {
-		ICON_SIZE[1],
-		ICON_SIZE[2]
+	bottom_right = {
+		vertical_alignment = "center",
+		parent = "bottom_center",
+		horizontal_alignment = "left",
+		size = {
+			264,
+			6
+		},
+		position = {
+			31,
+			-3,
+			-1
+		}
 	},
-	position = {
-		0,
-		0,
-		1
-	}
-}
-tbl.mission_icon_right = {
-	vertical_alignment = "center",
-	parent = "mission_widget",
-	horizontal_alignment = "center",
-	size = {
-		ICON_SIZE[1],
-		ICON_SIZE[2]
+	mission_icon_left = {
+		vertical_alignment = "center",
+		parent = "mission_widget",
+		horizontal_alignment = "center",
+		size = {
+			ICON_SIZE[1],
+			ICON_SIZE[2]
+		},
+		position = {
+			0,
+			0,
+			1
+		}
 	},
-	position = {
-		0,
-		0,
-		1
-	}
-}
-tbl.frame_top_right = {
-	vertical_alignment = "top",
-	parent = "mission_widget",
-	horizontal_alignment = "left",
-	size = {
-		450,
-		4
+	mission_icon_right = {
+		vertical_alignment = "center",
+		parent = "mission_widget",
+		horizontal_alignment = "center",
+		size = {
+			ICON_SIZE[1],
+			ICON_SIZE[2]
+		},
+		position = {
+			0,
+			0,
+			1
+		}
 	},
-	position = {
-		BACKGROUND_SIZE[1] / 2,
-		2,
-		3
-	}
-}
-tbl.frame_top_left = {
-	vertical_alignment = "top",
-	parent = "mission_widget",
-	horizontal_alignment = "right",
-	size = {
-		450,
-		4
+	frame_top_right = {
+		vertical_alignment = "top",
+		parent = "mission_widget",
+		horizontal_alignment = "left",
+		size = {
+			450,
+			4
+		},
+		position = {
+			BACKGROUND_SIZE[1] / 2,
+			2,
+			3
+		}
 	},
-	position = {
-		-BACKGROUND_SIZE[1] / 2,
-		2,
-		3
-	}
-}
-tbl.frame_bottom_right = {
-	vertical_alignment = "bottom",
-	parent = "mission_widget",
-	horizontal_alignment = "left",
-	size = {
-		450,
-		4
+	frame_top_left = {
+		vertical_alignment = "top",
+		parent = "mission_widget",
+		horizontal_alignment = "right",
+		size = {
+			450,
+			4
+		},
+		position = {
+			-BACKGROUND_SIZE[1] / 2,
+			2,
+			3
+		}
 	},
-	position = {
-		BACKGROUND_SIZE[1] / 2,
-		-2,
-		3
-	}
-}
-tbl.frame_bottom_left = {
-	vertical_alignment = "bottom",
-	parent = "mission_widget",
-	horizontal_alignment = "right",
-	size = {
-		450,
-		4
+	frame_bottom_right = {
+		vertical_alignment = "bottom",
+		parent = "mission_widget",
+		horizontal_alignment = "left",
+		size = {
+			450,
+			4
+		},
+		position = {
+			BACKGROUND_SIZE[1] / 2,
+			-2,
+			3
+		}
 	},
-	position = {
-		-BACKGROUND_SIZE[1] / 2,
-		-2,
-		3
+	frame_bottom_left = {
+		vertical_alignment = "bottom",
+		parent = "mission_widget",
+		horizontal_alignment = "right",
+		size = {
+			450,
+			4
+		},
+		position = {
+			-BACKGROUND_SIZE[1] / 2,
+			-2,
+			3
+		}
 	}
 }
-
-local scenegraph_definition = tbl
 local objective_text_style = {
 	word_wrap = true,
 	localize = false,
@@ -1409,18 +1404,7 @@ local animation_definitions = {
 				local anim_progress_inverted = 1 - math.easeOutCubic(progress)
 				local style = widget.style
 				local content = widget.content
-				local text_height_2 = content.text_height
-
-				if not text_height_2 then
-					-- Nothing
-				end
-
-				text_height_2 = 45
-
-				local text_height = text_height_2
-
-				::label_33_0::
-
+				local text_height = not not content.text_height
 				local anim_distance = (90 - text_height) / 2
 
 				ui_scenegraph.top_center.local_position[2] = scenegraph_definition.top_center.position[2] + 45 - anim_distance * anim_progress

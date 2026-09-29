@@ -57,12 +57,7 @@ end
 
 TerrorEventUtils.random = function (...)
 	-- function 8
-	local next_random = Math.next_random
-	local var_8_1 = terror_seed
-
-	var_8_1 = not not var_8_1 or not not 0
-
-	local seed, value = next_random(var_8_1, ...)
+	local seed, value = Math.next_random(not not terror_seed, ...)
 
 	terror_seed = seed
 
@@ -73,23 +68,7 @@ TerrorEventUtils.get_grudge_marked_name = function (breed_name, magic_number, br
 	-- function 9
 	local breed = Breeds[breed_name]
 	local faction = breed.race
-	local var_9_0 = GrudgeMarkedNames[BreedEnhancements]
-
-	if not var_9_0 then
-		-- Nothing
-	end
-
-	var_9_0 = GrudgeMarkedNames[breed_name]
-
-	if not var_9_0 then
-		-- Nothing
-	end
-
-	var_9_0 = GrudgeMarkedNames[faction]
-
-	local name_list = var_9_0
-
-	::label_9_0::
+	local name_list = not not GrudgeMarkedNames[BreedEnhancements]
 
 	if breed_enhancement_attributes then
 		for k, v in pairs(breed_enhancement_attributes) do
@@ -110,17 +89,7 @@ end
 TerrorEventUtils.apply_breed_enhancements = function (unit, breed, optional_data)
 	-- function 10
 	local ai_system = Managers.state.entity:system("ai_system")
-	local name_index_2 = optional_data.name_index
-
-	if not name_index_2 then
-		-- Nothing
-	end
-
-	name_index_2 = TerrorEventUtils.random(16384)
-
-	local name_index = name_index_2
-
-	::label_10_0::
+	local name_index = not not optional_data.name_index
 
 	ai_system:set_attribute(unit, "name_index", "grudge_marked", name_index)
 
@@ -236,17 +205,7 @@ TerrorEventUtils.add_enhancements_for_difficulty = function (optional_data, diff
 	-- function 14
 	optional_data = not not optional_data or not not {}
 
-	local closest_tweak_match = DifficultyTweak.converters.closest_tweak_match(difficulty, difficulty_tweak, BREED_ENHANCEMENTS_PER_DIFFICULTY)
-
-	if not closest_tweak_match then
-		-- Nothing
-	end
-
-	closest_tweak_match = 0
-
-	local num_enhancements = closest_tweak_match
-
-	::label_14_0::
+	local num_enhancements = not not DifficultyTweak.converters.closest_tweak_match(difficulty, difficulty_tweak, BREED_ENHANCEMENTS_PER_DIFFICULTY)
 
 	if num_enhancements > 0 then
 		enhancement_set = not not enhancement_set or not not BossGrudgeMarks

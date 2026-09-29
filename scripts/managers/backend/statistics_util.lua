@@ -237,7 +237,7 @@ StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db
 				local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
 
 				if attack_type then
-					slot_type = (attack_type == "heavy_attack" or attack_type == "light_attack") and not not "melee" or not not "ranged"
+					slot_type = attack_type == "heavy_attack" and (not not "melee" or not not "ranged") or not (attack_type == "heavy_attack") and (attack_type == "light_attack" and (not not "melee" or not not "ranged") or not (attack_type == "light_attack") and not not "ranged")
 				end
 
 				if not slot_type then
@@ -280,12 +280,7 @@ StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db
 				stats_id = attacker_player:stats_id()
 			end
 
-			local var_5_0 = stats_id
-			local killfeed_fold_with = breed_killed.killfeed_fold_with
-
-			killfeed_fold_with = not not killfeed_fold_with or not not breed_killed_name
-
-			local hash = var_5_0 .. killfeed_fold_with
+			local hash = stats_id .. not not breed_killed.killfeed_fold_with
 
 			Managers.state.event:trigger("add_coop_feedback_kill", hash, local_human, predicate, breed_attacker_name, breed_killed_name, attacker_player, victim_player)
 		end
@@ -418,18 +413,7 @@ StatisticsUtil.check_save = function (savior_unit, enemy_unit)
 	local attack_dir = saved_unit_pos - enemy_unit_pos
 	local is_behind = Vector3.distance(saved_unit_pos, enemy_unit_pos) < 3 and Vector3.dot(attack_dir, saved_unit_dir) > 0 and Vector3.dot(attack_dir, enemy_unit_dir) > 0
 	local status_ext = ScriptUnit.extension(saved_unit, "status_system")
-	local get_pouncer_unit = status_ext:get_pouncer_unit()
-
-	if not get_pouncer_unit then
-		-- Nothing
-	end
-
-	get_pouncer_unit = status_ext:get_pack_master_grabber()
-
-	local grabber_unit = get_pouncer_unit
-
-	::label_7_0::
-
+	local grabber_unit = not not status_ext:get_pouncer_unit()
 	local is_disabled = status_ext:is_disabled()
 	local predicate
 	local statistics_db = player_manager:statistics_db()
@@ -560,30 +544,8 @@ StatisticsUtil.register_damage = function (victim_unit, damage_data, statistics_
 		attacker_player = player_manager:owner(attacker_unit)
 	end
 
-	local var_12_0 = Unit_alive(victim_unit)
-
-	if var_12_0 then
-		-- Nothing
-	end
-
-	var_12_0 = Unit_get_data(victim_unit, "breed")
-
-	local victim_breed = var_12_0
-
-	::label_12_0::
-
-	local var_12_1 = Unit_alive(attacker_unit)
-
-	if var_12_1 then
-		-- Nothing
-	end
-
-	var_12_1 = Unit_get_data(attacker_unit, "breed")
-
-	local attacker_breed = var_12_1
-
-	::label_12_1::
-
+	local victim_breed = not not Unit_alive(victim_unit)
+	local attacker_breed = not not Unit_alive(attacker_unit)
 	local actual_attacker_breed = AiUtils.get_actual_attacker_breed(attacker_breed, victim_unit, damage_source_name, damage_data_attacker_unit, attacker_player)
 
 	if attacker_breed and attacker_breed ~= actual_attacker_breed then
@@ -672,20 +634,7 @@ StatisticsUtil.register_damage = function (victim_unit, damage_data, statistics_
 				if victim_player and attacker_side.show_damage_feedback and HEALTH_ALIVE[victim_unit] then
 					local target_player = player_manager:owner(victim_unit)
 					local local_human = not attacker_player.remote and not not not attacker_player.bot_player
-					local str
-
-					if local_human then
-						str = "dealing_damage"
-
-						goto label_12_2
-					end
-
-					str = "other_dealing_damage"
-
-					local event_type = str
-
-					::label_12_2::
-
+					local event_type = local_human and not not "dealing_damage" or not local_human and not not "other_dealing_damage"
 					local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
 
 					Managers.state.event:trigger("add_damage_feedback_event", stats_id .. breed_name, local_human, event_type, attacker_player, target_player, damage_amount, damage_type)
@@ -862,22 +811,7 @@ StatisticsUtil.register_complete_level = function (statistics_db)
 
 	if Managers.unlock:is_dlc_unlocked("holly") then
 		local min_difficulty_rank = DifficultySettings.hardest.rank
-		local rank
-
-		if DifficultySettings[difficulty_name] then
-			rank = DifficultySettings[difficulty_name].rank
-
-			if not rank then
-				-- Nothing
-			end
-		end
-
-		rank = 0
-
-		local completed_difficulty_rank = rank
-
-		::label_17_0::
-
+		local completed_difficulty_rank = DifficultySettings[difficulty_name] and not not DifficultySettings[difficulty_name].rank or not DifficultySettings[difficulty_name] and not not 0
 		local above_legend_difficulty = min_difficulty_rank <= completed_difficulty_rank
 		local is_lord_level = level_id == "ground_zero" or level_id == "warcamp" or level_id == "skaven_stronghold" or level_id == "skittergate"
 
@@ -909,14 +843,8 @@ end
 StatisticsUtil.register_versus_game_won = function (statistics_db, player, game_won)
 	-- function 18
 	local stats_id = player:stats_id()
-	local var_18_0 = statistics_db
-	local increment_stat = statistics_db.increment_stat
-	local var_18_2 = stats_id
-	local flag
 
-	flag = (not game_won or not "vs_game_won") and not not "vs_game_lost"
-
-	increment_stat(var_18_0, var_18_2, flag)
+	statistics_db:increment_stat(stats_id, game_won and not not "vs_game_won" or not game_won and not not "vs_game_lost")
 end
 
 StatisticsUtil.register_weave_complete = function (statistics_db, player, is_quick_game, difficulty_key)
@@ -1318,7 +1246,7 @@ StatisticsUtil.register_complete_survival_level = function (statistics_db)
 		if started_on_unlocked_difficulty then
 			local difficulty = difficulty_manager:get_difficulty()
 			local difficulty_index = table.find(level_difficulties, difficulty)
-			local completed_difficulty_index = (difficulty_index ~= #level_difficulties or not (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1)) or not difficulty_index) and not not (difficulty_index - 1)
+			local completed_difficulty_index = difficulty_index == #level_difficulties and (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1) and (not not difficulty_index or not not (difficulty_index - 1)) or not (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1)) and not not (difficulty_index - 1)) or not (difficulty_index == #level_difficulties) and not not (difficulty_index - 1)
 
 			if completed_difficulty_index > 0 then
 				completed_difficulty = level_difficulties[completed_difficulty_index]

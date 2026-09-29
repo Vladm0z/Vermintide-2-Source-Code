@@ -497,18 +497,7 @@ HeroStatisticsTemplate = {
 			-- function 33
 			local player_unit = Managers.player:local_player().player_unit
 			local status_extension = ScriptUnit.has_extension(player_unit, "status_system")
-			local get_max_fatigue_points = status_extension:get_max_fatigue_points()
-
-			if not get_max_fatigue_points then
-				-- Nothing
-			end
-
-			get_max_fatigue_points = 0
-
-			local max_fatigue_points = get_max_fatigue_points
-
-			::label_33_0::
-
+			local max_fatigue_points = not not status_extension:get_max_fatigue_points()
 			local shields = max_fatigue_points / 2
 			local rounded_shields = shields
 			local value = rounded_shields
@@ -519,18 +508,7 @@ HeroStatisticsTemplate = {
 			-- function 34
 			local player_unit = Managers.player:local_player().player_unit
 			local status_extension = ScriptUnit.has_extension(player_unit, "status_system")
-			local get_max_fatigue_points = status_extension:get_max_fatigue_points()
-
-			if not get_max_fatigue_points then
-				-- Nothing
-			end
-
-			get_max_fatigue_points = 0
-
-			local max_fatigue_points = get_max_fatigue_points
-
-			::label_34_0::
-
+			local max_fatigue_points = not not status_extension:get_max_fatigue_points()
 			local shields = max_fatigue_points / 2
 			local modifier = max_fatigue_points
 			local desc_key = "tooltip_hero_stats_shields_and_stamina_description"
@@ -547,18 +525,7 @@ HeroStatisticsTemplate = {
 			local player_unit = Managers.player:local_player().player_unit
 			local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
 			local status_extension = ScriptUnit.has_extension(player_unit, "status_system")
-			local get_max_fatigue_points = status_extension:get_max_fatigue_points()
-
-			if not get_max_fatigue_points then
-				-- Nothing
-			end
-
-			get_max_fatigue_points = 0
-
-			local max_fatigue_points = get_max_fatigue_points
-
-			::label_35_0::
-
+			local max_fatigue_points = not not status_extension:get_max_fatigue_points()
 			local base_regen_speed = PlayerUnitStatusSettings.FATIGUE_POINTS_DEGEN_AMOUNT
 			local regen_speed = buff_extension:apply_buffs_to_value(base_regen_speed, "fatigue_regen")
 			local value = regen_speed
@@ -570,18 +537,7 @@ HeroStatisticsTemplate = {
 			local player_unit = Managers.player:local_player().player_unit
 			local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
 			local status_extension = ScriptUnit.has_extension(player_unit, "status_system")
-			local get_max_fatigue_points = status_extension:get_max_fatigue_points()
-
-			if not get_max_fatigue_points then
-				-- Nothing
-			end
-
-			get_max_fatigue_points = 0
-
-			local max_fatigue_points = get_max_fatigue_points
-
-			::label_36_0::
-
+			local max_fatigue_points = not not status_extension:get_max_fatigue_points()
 			local base_regen_speed = PlayerUnitStatusSettings.FATIGUE_POINTS_DEGEN_AMOUNT
 			local regen_speed = buff_extension:apply_buffs_to_value(base_regen_speed, "fatigue_regen")
 			local modifier = (regen_speed / base_regen_speed - 1) * 100

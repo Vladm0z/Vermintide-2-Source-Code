@@ -40,18 +40,7 @@ WeaveSplashUI._create_ui_elements = function (self)
 		self._widgets[name] = UIWidget.init(widget_definition)
 	end
 
-	local mechanism_setting = Managers.mechanism:mechanism_setting("loading_screen_override")
-
-	if not mechanism_setting then
-		-- Nothing
-	end
-
-	mechanism_setting = weave_splash_images[1]
-
-	local image_name = mechanism_setting
-
-	::label_3_0::
-
+	local image_name = not not Managers.mechanism:mechanism_setting("loading_screen_override")
 	local widget_definition = create_weave_image_func(image_name, 255)
 
 	self._weave_splash_widgets[#self._weave_splash_widgets + 1] = UIWidget.init(widget_definition)

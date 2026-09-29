@@ -96,23 +96,7 @@ BTSelector_bestigor.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_falling = children[4]
-		local is_falling = blackboard.is_falling
-
-		if not is_falling then
-			-- Nothing
-		end
-
-		if blackboard.fall_state == nil then
-			is_falling = false
-
-			goto label_4_0
-		end
-
-		is_falling = true
-
-		local condition_result = is_falling
-
-		::label_4_0::
+		local condition_result = not not blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -206,17 +190,7 @@ BTSelector_bestigor.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_in_combat = children[8]
-		local var_4_1 = unit_alive(blackboard.target_unit)
-
-		if var_4_1 then
-			-- Nothing
-		end
-
-		var_4_1 = blackboard.confirmed_player_sighting
-
-		local condition_result = var_4_1
-
-		::label_4_1::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_in_combat, "aborted")
@@ -258,17 +232,7 @@ BTSelector_bestigor.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_alerted = children[10]
-		local var_4_2 = unit_alive(blackboard.target_unit)
-
-		if var_4_2 then
-			-- Nothing
-		end
-
-		var_4_2 = not blackboard.confirmed_player_sighting
-
-		local condition_result = var_4_2
-
-		::label_4_2::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_alerted, "aborted")

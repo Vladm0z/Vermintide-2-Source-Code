@@ -41,17 +41,7 @@ VCEManager._register_vce = function (self, vce_unit, wwise_world, vce_id)
 	vce_data.vce_id = vce_id
 	vce_data.wwise_world = wwise_world
 
-	local var_4_0 = self._vce_by_unit[vce_unit]
-
-	if not var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = {}
-
-	local vce = var_4_0
-
-	::label_4_0::
+	local vce = not not self._vce_by_unit[vce_unit]
 
 	self._vce_by_unit[vce_unit] = vce
 	vce[#vce + 1] = vce_data
@@ -84,17 +74,7 @@ VCEManager._rent_vce_data = function (self)
 	-- function 6
 	local free_list = self._vce_free_list
 	local last_idx = #free_list
-	local var_6_0 = free_list[last_idx]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = {}
-
-	local to_return = var_6_0
-
-	::label_6_0::
+	local to_return = not not free_list[last_idx]
 
 	free_list[last_idx] = nil
 

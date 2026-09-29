@@ -664,21 +664,7 @@ local action_data = {
 			local combo = blackboard.combo_attack_data
 
 			if combo and combo.aborted then
-				local clamp
-
-				if blackboard.stagger_type < stagger_types.heavy then
-					clamp = math.clamp(blackboard.stagger_type - 1, 1, 1.5)
-
-					if not clamp then
-						-- Nothing
-					end
-				end
-
-				clamp = 1
-
-				local berzerker_stagger_multiplier = clamp
-
-				::label_3_0::
+				local berzerker_stagger_multiplier = blackboard.stagger_type < stagger_types.heavy and not not math.clamp(blackboard.stagger_type - 1, 1, 1.5) or not (blackboard.stagger_type < stagger_types.heavy) and not not 1
 
 				if blackboard.stagger_type ~= stagger_types.explosion and blackboard.stagger_type ~= stagger_types.heavy then
 					blackboard.stagger_ignore_anim_cb = true

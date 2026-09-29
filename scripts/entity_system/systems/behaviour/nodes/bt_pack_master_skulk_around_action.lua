@@ -24,16 +24,8 @@ BTPackMasterSkulkAroundAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 
 	blackboard.action = action
-
-	local skulk_time = blackboard.skulk_time
-
-	skulk_time = not not skulk_time or not not (t + action.skulk_time)
-	blackboard.skulk_time = skulk_time
-
-	local skulk_time_force_attack = blackboard.skulk_time_force_attack
-
-	skulk_time_force_attack = not not skulk_time_force_attack or not not (t + action.skulk_time_force_attack)
-	blackboard.skulk_time_force_attack = skulk_time_force_attack
+	blackboard.skulk_time = not not blackboard.skulk_time
+	blackboard.skulk_time_force_attack = not not blackboard.skulk_time_force_attack
 	blackboard.skulk_goal_get_fails = 0
 	blackboard.skulk_debug_state = "enter"
 
@@ -41,10 +33,7 @@ BTPackMasterSkulkAroundAction.enter = function (self, unit, blackboard, t)
 
 	locomotion_extension:set_rotation_speed(5)
 
-	local attack_cooldown = blackboard.attack_cooldown
-
-	attack_cooldown = not not attack_cooldown or not not 0
-	blackboard.attack_cooldown = attack_cooldown
+	blackboard.attack_cooldown = not not blackboard.attack_cooldown
 end
 
 BTPackMasterSkulkAroundAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -121,14 +110,7 @@ BTPackMasterSkulkAroundAction.run = function (self, unit, blackboard, t, dt)
 
 		blackboard.move_state = "moving"
 
-		local var_4_0 = network_manager
-		local anim_event = network_manager.anim_event
-		local var_4_2 = unit
-		local skulk_animation = blackboard.action.skulk_animation
-
-		skulk_animation = not not skulk_animation or not not "move_fwd"
-
-		anim_event(var_4_0, var_4_2, skulk_animation)
+		network_manager:anim_event(unit, not not blackboard.action.skulk_animation)
 		navigation_extension:set_enabled(true)
 	end
 

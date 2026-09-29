@@ -19,18 +19,7 @@ BTBlockedAction.enter = function (self, unit, blackboard, t)
 
 	local action = self._tree_node.action_data
 	local anim_table = action.blocked_anims
-	local blocked_anim = blackboard.blocked_anim
-
-	if not blocked_anim then
-		-- Nothing
-	end
-
-	blocked_anim = anim_table[Math.random(1, #anim_table)]
-
-	local block_anim = blocked_anim
-
-	::label_2_0::
-
+	local block_anim = not not blackboard.blocked_anim
 	local network_manager = Managers.state.network
 
 	network_manager:anim_event(unit, block_anim)

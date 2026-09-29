@@ -1,33 +1,15 @@
 -- chunkname: @scripts/managers/network/lobby_setup.lua
 
-local tbl = {
+local network_options = {
 	max_members = 4,
 	project_hash = "bulldozer",
 	config_file_name = "global",
-	map = "None"
+	map = "None",
+	lobby_port = LEVEL_EDITOR_TEST and not not GameSettingsDevelopment.editor_lobby_port or not LEVEL_EDITOR_TEST and not not GameSettingsDevelopment.network_port,
+	ip_address = Network.default_network_address()
 }
-local editor_lobby_port
 
-if LEVEL_EDITOR_TEST then
-	editor_lobby_port = GameSettingsDevelopment.editor_lobby_port
-
-	if not editor_lobby_port then
-		-- Nothing
-	end
-end
-
-editor_lobby_port = GameSettingsDevelopment.network_port
-
-::label_0_0::
-
-tbl.lobby_port = editor_lobby_port
-tbl.ip_address = Network.default_network_address()
-
-local network_options = tbl
-local LobbySetup = LobbySetup
-
-LobbySetup = not not LobbySetup or not not {}
-LobbySetup = LobbySetup
+LobbySetup = not not LobbySetup
 LobbySetup._lobby_port_increment = 0
 
 LobbySetup.network_hash = function ()
@@ -66,77 +48,10 @@ LobbySetup.setup_network_options = function (increment_lobby_port)
 		printf("steam_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.steam_port, script_data.settings.steam_port, Managers.mechanism:mechanism_setting("steam_port"))
 		printf("rcon_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.rcon_port, script_data.settings.rcon_port, Managers.mechanism:mechanism_setting("rcon_port"))
 
-		local server_port_2 = script_data.server_port
-
-		if not server_port_2 then
-			-- Nothing
-		end
-
-		server_port_2 = script_data.settings.server_port
-
-		if not server_port_2 then
-			-- Nothing
-		end
-
-		server_port_2 = Managers.mechanism:mechanism_setting("server_port")
-
-		local server_port = server_port_2
-
-		::label_3_0::
-
-		local query_port_2 = script_data.query_port
-
-		if not query_port_2 then
-			-- Nothing
-		end
-
-		query_port_2 = script_data.settings.query_port
-
-		if not query_port_2 then
-			-- Nothing
-		end
-
-		query_port_2 = Managers.mechanism:mechanism_setting("query_port")
-
-		local query_port = query_port_2
-
-		::label_3_1::
-
-		local steam_port_2 = script_data.steam_port
-
-		if not steam_port_2 then
-			-- Nothing
-		end
-
-		steam_port_2 = script_data.settings.steam_port
-
-		if not steam_port_2 then
-			-- Nothing
-		end
-
-		steam_port_2 = Managers.mechanism:mechanism_setting("steam_port")
-
-		local steam_port = steam_port_2
-
-		::label_3_2::
-
-		local rcon_port_2 = script_data.rcon_port
-
-		if not rcon_port_2 then
-			-- Nothing
-		end
-
-		rcon_port_2 = script_data.settings.rcon_port
-
-		if not rcon_port_2 then
-			-- Nothing
-		end
-
-		rcon_port_2 = Managers.mechanism:mechanism_setting("rcon_port")
-
-		local rcon_port = rcon_port_2
-
-		::label_3_3::
+		local server_port = not not script_data.server_port
+		local query_port = not not script_data.query_port
+		local steam_port = not not script_data.steam_port
+		local rcon_port = not not script_data.rcon_port
 
 		if increment_lobby_port and BUILD ~= "release" then
 			LobbySetup._lobby_port_increment = LobbySetup._lobby_port_increment + 1

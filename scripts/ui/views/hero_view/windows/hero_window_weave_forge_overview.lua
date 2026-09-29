@@ -394,19 +394,7 @@ end
 
 HeroWindowWeaveForgeOverview._create_viewport_definition = function (self, scenegraph_id, invert_rendering)
 	-- function 11
-	local str
-
-	if invert_rendering then
-		str = "environment/ui_weave_forge_preview_inverted"
-
-		goto label_11_0
-	end
-
-	str = "environment/ui_weave_forge_preview"
-
-	local shading_environment = str
-
-	::label_11_0::
+	local shading_environment = invert_rendering and not not "environment/ui_weave_forge_preview_inverted" or not invert_rendering and not not "environment/ui_weave_forge_preview"
 
 	return {
 		element = UIElements.Viewport,
@@ -492,18 +480,7 @@ HeroWindowWeaveForgeOverview.update = function (self, dt, t)
 			local unit_previewer = data.unit_previewer
 			local is_hover = self:_is_button_hover(viewport_button)
 			local allow_preview_input = false
-			local hover_progress_2 = data.hover_progress
-
-			if not hover_progress_2 then
-				-- Nothing
-			end
-
-			hover_progress_2 = 0
-
-			local hover_progress = hover_progress_2
-
-			::label_13_0::
-
+			local hover_progress = not not data.hover_progress
 			local hover_speed = 5
 			local zoom_easing_function
 
@@ -624,17 +601,7 @@ end
 HeroWindowWeaveForgeOverview._is_button_pressed = function (self, widget, allow_double_click)
 	-- function 16
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_16_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_pressed or allow_double_click and hotspot.on_double_click then
 		hotspot.on_pressed = false
@@ -648,39 +615,15 @@ end
 HeroWindowWeaveForgeOverview._is_button_hover_enter = function (self, widget)
 	-- function 17
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
+	local hotspot = not not content.button_hotspot
 
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_17_0::
-
-	local on_hover_enter = hotspot.on_hover_enter
-
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 HeroWindowWeaveForgeOverview._is_button_hover = function (self, widget)
 	-- function 18
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_18_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.is_hover
 end
@@ -688,39 +631,15 @@ end
 HeroWindowWeaveForgeOverview._is_button_hover_exit = function (self, widget)
 	-- function 19
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
+	local hotspot = not not content.button_hotspot
 
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_19_0::
-
-	local on_hover_exit = hotspot.on_hover_exit
-
-	on_hover_exit = not not on_hover_exit and not not not hotspot.is_selected
-
-	return on_hover_exit
+	return not not hotspot.on_hover_exit
 end
 
 HeroWindowWeaveForgeOverview._is_button_selected = function (self, widget)
 	-- function 20
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_20_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.is_selected
 end
@@ -736,13 +655,8 @@ HeroWindowWeaveForgeOverview._sync_backend_loadout = function (self)
 	self._forge_level = forge_level
 
 	local can_upgrade = forge_level < forge_max_level
-	local var_21_0 = self
-	local _set_forge_upgrade_price_by_level = self._set_forge_upgrade_price_by_level
-	local flag
 
-	flag = (not can_upgrade or not 1) and not not 0
-
-	_set_forge_upgrade_price_by_level(var_21_0, forge_level + flag)
+	self:_set_forge_upgrade_price_by_level(forge_level + (can_upgrade and not not 1 or not can_upgrade and not not 0))
 	self:_setup_upgrade_tooltip(1)
 end
 
@@ -827,10 +741,7 @@ HeroWindowWeaveForgeOverview._draw = function (self, dt)
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
 	for _, widget in ipairs(self._bottom_hdr_widgets) do
-		local alpha_multiplier_2 = widget.alpha_multiplier
-
-		alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_2
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_renderer, widget)
 	end
@@ -841,10 +752,7 @@ HeroWindowWeaveForgeOverview._draw = function (self, dt)
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
 	for _, widget in ipairs(self._top_hdr_widgets) do
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_top_renderer, widget)
 	end
@@ -855,10 +763,7 @@ HeroWindowWeaveForgeOverview._draw = function (self, dt)
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
 	for _, widget in ipairs(self._top_widgets) do
-		local alpha_multiplier_4 = widget.alpha_multiplier
-
-		alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_4
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
@@ -869,20 +774,15 @@ HeroWindowWeaveForgeOverview._draw = function (self, dt)
 	if self._viewports_data then
 		for _, data in ipairs(self._viewports_data) do
 			local widget = data.widget
-			local alpha_multiplier_5 = widget.alpha_multiplier
 
-			alpha_multiplier_5 = not not alpha_multiplier_5 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_5
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 
 	for _, widget in ipairs(self._bottom_widgets) do
-		local alpha_multiplier_6 = widget.alpha_multiplier
-
-		alpha_multiplier_6 = not not alpha_multiplier_6 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_6
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -897,7 +797,7 @@ HeroWindowWeaveForgeOverview._set_forge_upgrade_price_by_level = function (self,
 	local backend_interface_weaves = Managers.backend:get_interface("weaves")
 	local current_essence_amount = backend_interface_weaves:get_essence()
 	local cost = backend_interface_weaves:forge_upgrade_cost(forge_level - self._forge_level)
-	local can_afford = (not cost or not (cost <= current_essence_amount)) and not not false
+	local can_afford = cost and (cost <= current_essence_amount or not not false) or not cost and not not false
 
 	self:_set_essence_upgrade_cost(cost, can_afford)
 end
@@ -989,31 +889,10 @@ HeroWindowWeaveForgeOverview._setup_upgrade_tooltip = function (self, num_levels
 		local properties = WeaveProperties.properties
 
 		for property_key, property_data in pairs(properties) do
-			local get_property_required_forge_level = backend_interface_weaves:get_property_required_forge_level(property_key)
-
-			if not get_property_required_forge_level then
-				-- Nothing
-			end
-
-			get_property_required_forge_level = 0
-
-			local required_forge_level = get_property_required_forge_level
-
-			::label_28_0::
+			local required_forge_level = not not backend_interface_weaves:get_property_required_forge_level(property_key)
 
 			if athanor_level < required_forge_level and required_forge_level <= next_athanor_level then
-				local icon_2 = property_data.icon
-
-				if not icon_2 then
-					-- Nothing
-				end
-
-				icon_2 = "icons_placeholder"
-
-				local icon = icon_2
-
-				::label_28_1::
-
+				local icon = not not property_data.icon
 				local mastery_costs = backend_interface_weaves:get_property_mastery_costs(property_key)
 				local title_text = UIUtils.get_weave_property_description(property_key, property_data, mastery_costs)
 
@@ -1045,17 +924,7 @@ HeroWindowWeaveForgeOverview._setup_upgrade_tooltip = function (self, num_levels
 		local weave_traits = WeaveTraits.traits
 
 		for trait_key, trait_data in pairs(weave_traits) do
-			local get_trait_required_forge_level = backend_interface_weaves:get_trait_required_forge_level(trait_key)
-
-			if not get_trait_required_forge_level then
-				-- Nothing
-			end
-
-			get_trait_required_forge_level = 0
-
-			local required_forge_level = get_trait_required_forge_level
-
-			::label_28_2::
+			local required_forge_level = not not backend_interface_weaves:get_trait_required_forge_level(trait_key)
 
 			if athanor_level < required_forge_level and required_forge_level <= next_athanor_level then
 				local display_name = trait_data.display_name
@@ -1143,11 +1012,8 @@ HeroWindowWeaveForgeOverview._set_essence_upgrade_cost = function (self, essence
 	local size = button_content.size
 	local button_length = size[1]
 	local button_text_width_offset = text_width_offset + (button_length / 2 - text_width / 2)
-	local button_hotspot = button_content.button_hotspot
-	local read_only_backend = GameSettingsDevelopment.read_only_backend
 
-	read_only_backend = not not read_only_backend or not essence_amount or not not not can_afford
-	button_hotspot.disable_button = read_only_backend
+	button_content.button_hotspot.disable_button = not not GameSettingsDevelopment.read_only_backend
 	button_content.title_text = button_text
 	button_style.title_text.size[1] = text_width
 	button_style.title_text_shadow.size[1] = text_width

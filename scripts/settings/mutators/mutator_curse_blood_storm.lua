@@ -62,17 +62,7 @@ curse_blood_storm.server_update_function = function (context, data, dt, t)
 	end
 
 	local vortex_unit = data.summoned_vortex_unit
-	local var_2_0 = ALIVE[vortex_unit]
-
-	if var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = ScriptUnit.has_extension(vortex_unit, "ai_supplementary_system")
-
-	local vortex_extension = var_2_0
-
-	::label_2_0::
+	local vortex_extension = not not ALIVE[vortex_unit]
 
 	if not vortex_extension then
 		return
@@ -91,21 +81,7 @@ curse_blood_storm.server_update_function = function (context, data, dt, t)
 				local buff_system = Managers.state.entity:system("buff_system")
 				local difficulty = Managers.state.difficulty:get_difficulty()
 				local power_level = DIFFICULTY_POWER_LEVEL[difficulty]
-				local bleed_buff_bots
-
-				if player.bot_player then
-					bleed_buff_bots = data.bleed_buff_bots
-
-					if not bleed_buff_bots then
-						-- Nothing
-					end
-				end
-
-				bleed_buff_bots = data.bleed_buff
-
-				local buff = bleed_buff_bots
-
-				::label_2_1::
+				local buff = player.bot_player and not not data.bleed_buff_bots or not player.bot_player and not not data.bleed_buff
 
 				buff_system:add_buff(player_unit, buff, vortex_unit, false, power_level)
 			end

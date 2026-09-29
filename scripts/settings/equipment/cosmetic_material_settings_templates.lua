@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/equipment/cosmetic_material_settings_templates.lua
 
-local MaterialSettingsTemplates = MaterialSettingsTemplates
-
-MaterialSettingsTemplates = not not MaterialSettingsTemplates or not not {}
-MaterialSettingsTemplates = MaterialSettingsTemplates
+MaterialSettingsTemplates = not not MaterialSettingsTemplates
 MaterialSettingsTemplates.frame_0094 = {
 	portrait_frame = {
 		texture = "gui/1080p/single_textures/store_item_icons/store_item_icon_frame_0094/store_item_icon_frame_0094",

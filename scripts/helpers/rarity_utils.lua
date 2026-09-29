@@ -2,10 +2,7 @@
 
 require("scripts/settings/dlcs/morris/rarity_settings")
 
-local RarityUtils = RarityUtils
-
-RarityUtils = not not RarityUtils or not not {}
-RarityUtils = RarityUtils
+RarityUtils = not not RarityUtils
 
 RarityUtils.get_previous_rarity = function (rarity)
 	-- function 1

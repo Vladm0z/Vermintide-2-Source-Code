@@ -63,19 +63,7 @@ VersusMissionObjectiveUI.init = function (self, parent, ingame_ui_context)
 	self._win_conditions = Managers.mechanism:game_mechanism():win_conditions()
 
 	local game_mode_state = Managers.state.game_mode:game_mode():game_mode_state()
-	local flag
-
-	if game_mode_state == "match_running_state" then
-		flag = true
-
-		goto label_1_0
-	end
-
-	flag = nil
-
-	local round_has_started = flag
-
-	::label_1_0::
+	local round_has_started = game_mode_state ~= "match_running_state" and not not nil or not (game_mode_state ~= "match_running_state") and not not true
 
 	if round_has_started then
 		self:_on_round_started()
@@ -226,22 +214,7 @@ end
 
 VersusMissionObjectiveUI._set_active_scoring_side_color = function (self, is_hero)
 	-- function 10
-	local get_color_table_with_alpha
-
-	if is_hero then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	local active_side_color = get_color_table_with_alpha
-
-	::label_10_0::
-
+	local active_side_color = is_hero and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_hero and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local objective_widget = self._widgets_by_name.objective
 
 	objective_widget.content.is_hero = is_hero
@@ -267,21 +240,7 @@ VersusMissionObjectiveUI._update_objective_status = function (self, current_obje
 			local widget = self._objectives_widgets[i]
 			local style = widget.style
 			local content = widget.content
-			local current_objective_progress
-
-			if is_current_objective then
-				current_objective_progress = self._objective_system:current_objective_progress()
-
-				if not current_objective_progress then
-					-- Nothing
-				end
-			end
-
-			current_objective_progress = 0
-
-			local objective_progress = current_objective_progress
-
-			::label_12_0::
+			local objective_progress = is_current_objective and not not self._objective_system:current_objective_progress() or not is_current_objective and not not 0
 
 			content.objective_progress = objective_progress
 			content.current_objective = is_current_objective
@@ -341,11 +300,7 @@ end
 
 VersusMissionObjectiveUI._get_opponent_party_id = function (self)
 	-- function 18
-	local flag
-
-	flag = (self:_get_local_player_party_id() ~= 1 or not 2) and not not 1
-
-	return flag
+	return self:_get_local_player_party_id() ~= 1 and not not 1 or not (self:_get_local_player_party_id() ~= 1) and not not 2
 end
 
 VersusMissionObjectiveUI._reset_timer_size = function (self)
@@ -435,17 +390,7 @@ VersusMissionObjectiveUI._draw = function (self, dt)
 	local input_manager = self._input_manager
 	local input_service = input_manager:get_service("ingame_menu")
 	local render_settings = self._render_settings
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_27_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
@@ -454,10 +399,8 @@ VersusMissionObjectiveUI._draw = function (self, dt)
 	if widgets then
 		for i = 1, #widgets do
 			local widget = widgets[i]
-			local alpha_multiplier_3 = widget.alpha_multiplier
 
-			alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_3
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 		end
@@ -468,10 +411,7 @@ VersusMissionObjectiveUI._draw = function (self, dt)
 	end
 
 	if self._objective_text_widget then
-		local alpha_multiplier_4 = self._objective_text_widget.alpha_multiplier
-
-		alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_4
+		render_settings.alpha_multiplier = not not self._objective_text_widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, self._objective_text_widget)
 	end
@@ -649,12 +589,7 @@ VersusMissionObjectiveUI._on_round_started = function (self)
 	round_starting_text_widget.content.visible = false
 	obj_text_widget.content.visible = true
 	objective_widget.content.pre_round_timer_done = remove_timer
-
-	local pre_round_timer = objective_widget.style.pre_round_timer
-	local flag
-
-	flag = (not remove_timer or not 50) and not not 32
-	pre_round_timer.font_size = flag
+	objective_widget.style.pre_round_timer.font_size = remove_timer and not not 50 or not remove_timer and not not 32
 
 	if not remove_timer then
 		local widget = self._widgets_by_name.objective
@@ -705,18 +640,7 @@ end
 
 VersusMissionObjectiveUI._update_objective_progress = function (self)
 	-- function 42
-	local current_objective_progress = self._objective_system:current_objective_progress()
-
-	if not current_objective_progress then
-		-- Nothing
-	end
-
-	current_objective_progress = 0
-
-	local progress = current_objective_progress
-
-	::label_42_0::
-
+	local progress = not not self._objective_system:current_objective_progress()
 	local starting_degrees = 0
 	local degrees = 360 - starting_degrees * 2
 	local alpha = 255 * math.min(progress * 2, 1)

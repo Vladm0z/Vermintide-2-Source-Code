@@ -145,39 +145,8 @@ end
 BreedFreezer._setup_freeze_box = function (self, breed_freezer_settings)
 	-- function 3
 	local offset_z = 0
-	local unbox
-
-	if script_data.debug_breed_freeze then
-		unbox = Vector3Aux.unbox(breed_freezer_settings.freezer_pos_debug)
-
-		if not unbox then
-			-- Nothing
-		end
-	end
-
-	unbox = Vector3Aux.unbox(breed_freezer_settings.freezer_pos)
-
-	local freezer_pos = unbox
-
-	do
-		local unbox_2
-	end
-
-	::label_3_0::
-
-	if script_data.debug_breed_freeze then
-		unbox_2 = Vector3Aux.unbox(breed_freezer_settings.freezer_offset_debug)
-
-		if not unbox_2 then
-			-- Nothing
-		end
-	end
-
-	unbox_2 = Vector3Aux.unbox(breed_freezer_settings.freezer_offset)
-
-	local freezer_offset = unbox_2
-
-	::label_3_1::
+	local freezer_pos = script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_pos_debug) or not script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_pos)
+	local freezer_offset = script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_offset_debug) or not script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_offset)
 
 	self.freezer_pos = Vector3Box(freezer_pos)
 	self.freezer_offset = Vector3Box(freezer_offset)
@@ -214,22 +183,7 @@ BreedFreezer._setup_freeze_box = function (self, breed_freezer_settings)
 			end
 		end
 
-		local opt_base_unit
-
-		if script_data.use_optimized_breed_units then
-			opt_base_unit = breed.opt_base_unit
-
-			if not opt_base_unit then
-				-- Nothing
-			end
-		end
-
-		opt_base_unit = breed.base_unit
-
-		local base_unit = opt_base_unit
-
-		::label_3_2::
-
+		local base_unit = script_data.use_optimized_breed_units and not not breed.opt_base_unit or not script_data.use_optimized_breed_units and not not breed.base_unit
 		local variants = 0
 
 		if base_unit and type(base_unit) == "table" then
@@ -298,14 +252,7 @@ BreedFreezer.try_mark_unit_for_freeze = function (self, breed, unit)
 
 	for i = 1, #units_to_freeze do
 		if units_to_freeze[i] == unit then
-			local rawset = rawset
-			local _G = _G
-			local str = "DoubleFreezeContext"
-			local var_6_3 = rawget(_G, "DoubleFreezeContext")
-
-			var_6_3 = not not var_6_3 or not not {}
-
-			rawset(_G, str, var_6_3)
+			rawset(_G, "DoubleFreezeContext", not not rawget(_G, "DoubleFreezeContext"))
 
 			DoubleFreezeContext[unit] = true
 

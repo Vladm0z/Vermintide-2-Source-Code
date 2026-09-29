@@ -1,16 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/objective/objective_system.lua
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/entity_system/systems/objective/objective_system_testify")
-
-local objective_system_testify = testify
-
-::label_0_0::
+local objective_system_testify = not not script_data.testify
 
 require("scripts/entity_system/systems/weaves/weave_essence_handler")
 require("scripts/unit_extensions/objectives/base_objective_extension")
@@ -387,17 +377,7 @@ ObjectiveSystem.on_add_extension = function (self, world, unit, extension_name, 
 	local progress_listener = Unit.get_data(unit, "listen_to_progress")
 
 	if progress_listener then
-		local var_17_0 = self._progress_listeners[progress_listener]
-
-		if not var_17_0 then
-			-- Nothing
-		end
-
-		var_17_0 = {}
-
-		local listeners = var_17_0
-
-		::label_17_0::
+		local listeners = not not self._progress_listeners[progress_listener]
 
 		listeners[0] = #listeners + 1
 		listeners[listeners[0]] = unit
@@ -415,11 +395,7 @@ ObjectiveSystem.on_add_extension = function (self, world, unit, extension_name, 
 		extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
 	end
 
-	local extensions = self.extensions
-	local var_17_2 = self.extensions[extension_name]
-
-	var_17_2 = not not var_17_2 or not not 0
-	extensions[extension_name] = var_17_2 + 1
+	self.extensions[extension_name] = not not self.extensions[extension_name] + 1
 	self._units[extension] = unit
 	self._extensions[unit] = extension
 
@@ -649,14 +625,7 @@ ObjectiveSystem._complete_objective_server = function (self, extension, objects_
 	end
 
 	if self._weave_manager then
-		local _weave_manager = self._weave_manager
-		local var_26_1 = _weave_manager
-		local increase_bar_score = _weave_manager.increase_bar_score
-		local get_score_for_completion = extension:get_score_for_completion()
-
-		get_score_for_completion = not not get_score_for_completion or not not 0
-
-		increase_bar_score(var_26_1, get_score_for_completion)
+		self._weave_manager:increase_bar_score(not not extension:get_score_for_completion())
 	end
 
 	if not extension.keep_alive then
@@ -709,11 +678,7 @@ end
 
 ObjectiveSystem.is_last_leaf_objective = function (self, objective_name)
 	-- function 30
-	local is_leaf_objective = self:is_leaf_objective(objective_name)
-
-	is_leaf_objective = not not is_leaf_objective and not not table.is_empty(self._active_leaf_objectives)
-
-	return is_leaf_objective
+	return not not self:is_leaf_objective(objective_name)
 end
 
 ObjectiveSystem._get_first_objective = function (self)
@@ -759,17 +724,7 @@ ObjectiveSystem.first_active_objective_description = function (self)
 		local objective_name = active_objectives[i]
 		local extension = self._objective_by_name[objective_name]
 		local objective_data = self._data_by_name[objective_name]
-		local description_2 = extension:description()
-
-		if not description_2 then
-			-- Nothing
-		end
-
-		description_2 = objective_data.description
-
-		local description = description_2
-
-		::label_36_0::
+		local description = not not extension:description()
 
 		if description then
 			return Localize(description)
@@ -796,7 +751,7 @@ ObjectiveSystem.current_objective_progress = function (self)
 		if extension.get_percentage_done then
 			total_progress = total_progress + extension:get_percentage_done()
 		else
-			total_progress = (not extension:is_done() or not 1) and not not 0
+			total_progress = extension:is_done() and (not not 1 or not not 0) or not extension:is_done() and not not 0
 		end
 	end
 
@@ -813,17 +768,7 @@ ObjectiveSystem.current_objective_icon = function (self)
 		local objective_name = active_objectives[i]
 		local extension = self._objective_by_name[objective_name]
 		local objective_data = self._data_by_name[objective_name]
-		local objective_icon_2 = extension:objective_icon()
-
-		if not objective_icon_2 then
-			-- Nothing
-		end
-
-		objective_icon_2 = objective_data.objective_type
-
-		local objective_icon = objective_icon_2
-
-		::label_38_0::
+		local objective_icon = not not extension:objective_icon()
 
 		if objective_icon then
 			return objective_icon
@@ -841,17 +786,7 @@ ObjectiveSystem.current_objective_type = function (self)
 		local objective_name = active_objectives[i]
 		local extension = self._objective_by_name[objective_name]
 		local objective_data = self._data_by_name[objective_name]
-		local objective_type_2 = extension:objective_type()
-
-		if not objective_type_2 then
-			-- Nothing
-		end
-
-		objective_type_2 = objective_data.objective_type
-
-		local objective_type = objective_type_2
-
-		::label_39_0::
+		local objective_type = not not extension:objective_type()
 
 		if objective_type then
 			return objective_type

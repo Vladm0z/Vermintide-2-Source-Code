@@ -275,7 +275,7 @@ DeusCursedChestExtension.can_interact = function (self)
 	-- function 13
 	local state = self:_get_state()
 
-	return (state == STATES.WAITING or state == STATES.OPEN) and not not not self._reward_collected
+	return state == STATES.WAITING and not not not self._reward_collected or not (state == STATES.WAITING) and state == STATES.OPEN and not not not self._reward_collected
 end
 
 DeusCursedChestExtension.get_interaction_length = function (self)

@@ -663,14 +663,8 @@ local function create_difficulty_button(scenegraph_id, size, background_icon, ba
 					content_check_function = function (content)
 						-- function 8
 						local button_hotspot = content.button_hotspot
-						local background_icon = content.background_icon
 
-						if background_icon then
-							background_icon = button_hotspot.is_hover
-							background_icon = not not background_icon or not not button_hotspot.is_selected
-						end
-
-						return background_icon
+						return not not content.background_icon
 					end
 				},
 				{
@@ -680,11 +674,8 @@ local function create_difficulty_button(scenegraph_id, size, background_icon, ba
 					content_check_function = function (content)
 						-- function 9
 						local button_hotspot = content.button_hotspot
-						local background_icon_unlit = content.background_icon_unlit
 
-						background_icon_unlit = not not background_icon_unlit and not not not button_hotspot.is_hover
-
-						return background_icon_unlit
+						return not not content.background_icon_unlit
 					end
 				},
 				{
@@ -1262,22 +1253,7 @@ function create_buy_button(scenegraph_id, size, frame_name, background_texture, 
 	background_texture = not not background_texture or not not "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local var_17_0
-
-	if frame_name then
-		var_17_0 = UIFrameSettings[frame_name]
-
-		if not var_17_0 then
-			-- Nothing
-		end
-	end
-
-	var_17_0 = UIFrameSettings.button_frame_01
-
-	local frame_settings = var_17_0
-
-	::label_17_0::
-
+	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)

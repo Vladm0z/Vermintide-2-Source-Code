@@ -151,21 +151,10 @@ end
 
 BackendInterfaceStatisticsPlayFab.get_stat_save_request = function (self)
 	-- function 13
-	local _stats_to_save = self._stats_to_save
-
-	if not _stats_to_save then
-		-- Nothing
-	end
-
-	_stats_to_save = {}
-
-	local stats_to_save = _stats_to_save
-
-	::label_13_0::
-
+	local stats_to_save = not not self._stats_to_save
 	local state_completed_achievements = self._state_completed_achievements
 
-	if (not stats_to_save or table.is_empty(stats_to_save)) and (not state_completed_achievements or table.is_empty(state_completed_achievements)) then
+	if not state_completed_achievements or table.is_empty(state_completed_achievements) then
 		print("[BackendInterfaceStatisticsPlayFab] No modified player statistics or achievements to save...")
 
 		return false

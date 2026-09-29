@@ -35,29 +35,8 @@ local ammo_colors = {
 
 local function sort_by_hud_index(a, b)
 	-- function 1
-	local hud_index = a.hud_index
-
-	if not hud_index then
-		-- Nothing
-	end
-
-	hud_index = 0
-
-	local a_hud_index = hud_index
-
-	::label_1_0::
-
-	local hud_index_2 = b.hud_index
-
-	if not hud_index_2 then
-		-- Nothing
-	end
-
-	hud_index_2 = 0
-
-	local b_hud_index = hud_index_2
-
-	::label_1_1::
+	local a_hud_index = not not a.hud_index
+	local b_hud_index = not not b.hud_index
 
 	return a_hud_index < b_hud_index
 end
@@ -230,18 +209,7 @@ EquipmentUI.event_swap_equipment_from_storage = function (self, slot_name, addit
 			content.texture_glow = hud_icon .. "_glow"
 			style.texture_icon.color[1] = 255
 
-			local var_7_0 = Colors.color_definitions[item.key]
-
-			if not var_7_0 then
-				-- Nothing
-			end
-
-			var_7_0 = Colors.color_definitions.black
-
-			local color_src = var_7_0
-
-			::label_7_0::
-
+			local color_src = not not Colors.color_definitions[item.key]
 			local color_dst = style.texture_glow.color
 
 			color_dst[1] = 255
@@ -258,22 +226,7 @@ EquipmentUI._set_slot_input = function (self, widget, slot_name)
 	-- function 8
 	local input_action = input_actions_by_slot[slot_name]
 	local texture_data, input_text, prefix_text = self:_get_input_texture_data(input_action)
-	local length
-
-	if input_text then
-		length = Utf8.length(input_text)
-
-		if not length then
-			-- Nothing
-		end
-	end
-
-	length = 0
-
-	local text_length = length
-
-	::label_8_0::
-
+	local text_length = input_text and not not Utf8.length(input_text) or not input_text and not not 0
 	local max_length = 40
 	local input_style = widget.style.input_text
 	local ui_renderer = self.ui_renderer
@@ -296,22 +249,7 @@ EquipmentUI._get_input_texture_data = function (self, input_action)
 
 	local keymap_binding = input_service:get_keymapping(input_action, platform)
 	local device_type = not not keymap_binding and not not keymap_binding[1]
-	local var_9_0
-
-	if keymap_binding then
-		var_9_0 = keymap_binding[2]
-
-		if not var_9_0 then
-			-- Nothing
-		end
-	end
-
-	var_9_0 = UNASSIGNED_KEY
-
-	local key_index = var_9_0
-
-	::label_9_0::
-
+	local key_index = keymap_binding and not not keymap_binding[2] or not keymap_binding and not not UNASSIGNED_KEY
 	local key_action_type = not not keymap_binding and not not keymap_binding[3]
 	local prefix_text
 
@@ -323,15 +261,15 @@ EquipmentUI._get_input_texture_data = function (self, input_action)
 	local button_name = ""
 
 	if device_type == "keyboard" then
-		button_name = (not is_button_unassigned or not "") and not not Keyboard.button_locale_name(key_index)
+		button_name = is_button_unassigned and (not not "" or not not Keyboard.button_locale_name(key_index)) or not is_button_unassigned and not not Keyboard.button_locale_name(key_index)
 
 		return nil, button_name, prefix_text
 	elseif device_type == "mouse" then
-		button_name = (not is_button_unassigned or not "") and not not Mouse.button_name(key_index)
+		button_name = is_button_unassigned and (not not "" or not not Mouse.button_name(key_index)) or not is_button_unassigned and not not Mouse.button_name(key_index)
 
 		return nil, button_name, prefix_text
 	elseif device_type == "gamepad" then
-		button_name = (not is_button_unassigned or not "") and not not Pad1.button_name(key_index)
+		button_name = is_button_unassigned and (not not "" or not not Pad1.button_name(key_index)) or not is_button_unassigned and not not Pad1.button_name(key_index)
 
 		local button_texture_data = ButtonTextureByName(button_name, platform)
 
@@ -355,22 +293,7 @@ end
 EquipmentUI._get_wield_scroll_input = function (self)
 	-- function 11
 	local player_manager = self.player_manager
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = self.player
-
-	local player = _spectated_player
-
-	::label_11_0::
-
+	local player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not self.player
 	local player_unit = player.player_unit
 
 	if not player_unit then
@@ -416,22 +339,7 @@ local verified_widgets = {}
 
 EquipmentUI._sync_player_equipment = function (self)
 	-- function 13
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = self.player
-
-	local player = _spectated_player
-
-	::label_13_0::
-
+	local player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not self.player
 	local player_unit = player.player_unit
 
 	if not player_unit then
@@ -455,17 +363,7 @@ EquipmentUI._sync_player_equipment = function (self)
 	local num_inventory_slots = #inventory_slots
 	local career_name = player:career_name()
 	local hud_inventory_widget_content = self._widgets_by_name.background_panel.content
-	local var_13_1 = UISettings.hud_inventory_panel_data[career_name]
-
-	if not var_13_1 then
-		-- Nothing
-	end
-
-	var_13_1 = UISettings.hud_inventory_panel_data.default
-
-	local career_data = var_13_1
-
-	::label_13_1::
+	local career_data = not not UISettings.hud_inventory_panel_data[career_name]
 
 	hud_inventory_widget_content.texture_id = career_data.texture_id
 
@@ -487,7 +385,7 @@ EquipmentUI._sync_player_equipment = function (self)
 			local item_data = not not slot_data and not not slot_data.item_data
 			local item_name = not not item_data and not not item_data.name
 			local item_id = not not item_data and not not item_data.backend_id
-			local is_wielded = (not slot_name or wielded ~= slot_name) and not not false
+			local is_wielded = slot_name and (wielded == slot_name or not not false) or not slot_name and not not false
 			local verified = false
 			local widget_id = 0
 
@@ -537,7 +435,7 @@ EquipmentUI._sync_player_equipment = function (self)
 				wielded_slot_name = slot_name
 			end
 
-			if slot_name == "slot_ranged" and item_data and (slot_data.left_unit_1p or slot_data.right_unit_1p) then
+			if slot_data.left_unit_1p or slot_data.right_unit_1p then
 				self:_update_ammo_count(item_data, slot_data, player_unit)
 			end
 
@@ -622,17 +520,7 @@ EquipmentUI._sync_player_equipment = function (self)
 								end
 
 								local default_angle = UISettings.additional_inventory_slot_angles.default
-								local var_13_2 = UISettings.additional_inventory_slot_angles[next_additional_item.key]
-
-								if not var_13_2 then
-									-- Nothing
-								end
-
-								var_13_2 = default_angle
-
-								local slot_rotation = var_13_2
-
-								::label_13_2::
+								local slot_rotation = not not UISettings.additional_inventory_slot_angles[next_additional_item.key]
 
 								style.secondary_texture_icon.angle = slot_rotation
 								style.secondary_texture_icon_glow.angle = slot_rotation
@@ -690,17 +578,8 @@ EquipmentUI._sync_player_equipment = function (self)
 						widget.style.reload_icon.color[1] = 235
 					end
 
-					local color = widget.style.reload_icon.color
-					local flag
-
-					flag = (not is_exhausted or not 100) and not not 255
-					color[3] = flag
-
-					local color_2 = widget.style.reload_icon.color
-					local flag_2
-
-					flag_2 = (not is_exhausted or not 69) and not not 255
-					color_2[4] = flag_2
+					widget.style.reload_icon.color[3] = is_exhausted and not not 100 or not is_exhausted and not not 255
+					widget.style.reload_icon.color[4] = is_exhausted and not not 69 or not is_exhausted and not not 255
 				end
 			end
 		end
@@ -736,7 +615,7 @@ EquipmentUI._sync_player_equipment = function (self)
 		self:_set_ammo_text_focus(false)
 	end
 
-	if (not wielded_slot_name or self._wielded_slot_name == wielded_slot_name) and inventory_modified then
+	if wielded_slot_name and (self._wielded_slot_name ~= wielded_slot_name or inventory_modified) or not wielded_slot_name and inventory_modified then
 		wielded_slot_name = not not wielded_slot_name or not not self._wielded_slot_name
 
 		self:_set_wielded_item(wielded_slot_name)
@@ -793,21 +672,7 @@ EquipmentUI._update_ammo_count = function (self, item_data, slot_data, player_un
 
 				self:_set_ammo_counter_alpha(255)
 
-				local empty
-
-				if ammo_empty then
-					empty = ammo_colors.empty
-
-					if not empty then
-						-- Nothing
-					end
-				end
-
-				empty = ammo_colors.normal
-
-				local ammo_text_color = empty
-
-				::label_14_0::
+				local ammo_text_color = ammo_empty and not not ammo_colors.empty or not ammo_empty and not not ammo_colors.normal
 
 				self:_set_ammo_counter_color(ammo_text_color)
 				self:set_dirty()
@@ -937,22 +802,7 @@ EquipmentUI._set_ammo_text_focus = function (self, focus)
 	if self._draw_overheat then
 		if self._overcharge_fraction ~= nil then
 			local multiplier = 1
-			local focus_2
-
-			if focus then
-				focus_2 = ammo_colors.focus
-
-				if not focus_2 then
-					-- Nothing
-				end
-			end
-
-			focus_2 = ammo_colors.unfocused
-
-			local color = focus_2
-
-			::label_18_0::
-
+			local color = focus and not not ammo_colors.focus or not focus and not not ammo_colors.unfocused
 			local widgets_by_name = self._widgets_by_name
 			local fg_widget = widgets_by_name.overcharge
 			local bg_widget = widgets_by_name.overcharge_background
@@ -979,22 +829,7 @@ EquipmentUI._set_ammo_text_focus = function (self, focus)
 
 		if not PERSISTENT_AMMO_COUNTER and (self._ammo_count ~= nil or self._remaining_ammo ~= nil) then
 			local multiplier = 1
-			local focus_3
-
-			if focus then
-				focus_3 = ammo_colors.focus
-
-				if not focus_3 then
-					-- Nothing
-				end
-			end
-
-			focus_3 = ammo_colors.unfocused
-
-			local color = focus_3
-
-			::label_18_1::
-
+			local color = focus and not not ammo_colors.focus or not focus and not not ammo_colors.unfocused
 			local ammo_background_widget = self._widgets_by_name.ammo_background
 
 			ammo_background_widget.content.visible = focus
@@ -1166,7 +1001,7 @@ EquipmentUI._animate_slot_wield = function (self, animation_data, dt)
 	widget.style.texture_selected.color[1] = 255 * anim_progress
 	animation_data.time = time
 
-	return (not (progress < 1) or not animation_data) and not not nil
+	return progress < 1 and (not not animation_data or not not nil) or not (progress < 1) and not not nil
 end
 
 EquipmentUI._animate_slot_unwield = function (self, animation_data, dt)
@@ -1184,7 +1019,7 @@ EquipmentUI._animate_slot_unwield = function (self, animation_data, dt)
 	widget.style.texture_selected.color[1] = 255 * anim_progress
 	animation_data.time = time
 
-	return (not (progress < 1) or not animation_data) and not not nil
+	return progress < 1 and (not not animation_data or not not nil) or not (progress < 1) and not not nil
 end
 
 EquipmentUI._animate_slot_equip = function (self, animation_data, dt)
@@ -1202,23 +1037,12 @@ EquipmentUI._animate_slot_equip = function (self, animation_data, dt)
 	style.color[1] = 255 * anim_progress
 	animation_data.time = time
 
-	return (not (progress < 1) or not animation_data) and not not nil
+	return progress < 1 and (not not animation_data or not not nil) or not (progress < 1) and not not nil
 end
 
 EquipmentUI._add_item = function (self, slot_data, data)
 	-- function 26
-	local _num_added_items = self._num_added_items
-
-	if not _num_added_items then
-		-- Nothing
-	end
-
-	_num_added_items = 0
-
-	local num_added_items = _num_added_items
-
-	::label_26_0::
-
+	local num_added_items = not not self._num_added_items
 	local use_existing_data = data ~= nil
 
 	if not use_existing_data and num_added_items >= NUM_SLOTS then
@@ -1267,17 +1091,7 @@ EquipmentUI._add_item = function (self, slot_data, data)
 	if texture_background_style then
 		local inventory_consumable_slot_colors = UISettings.inventory_consumable_slot_colors
 		local default_background_color = inventory_consumable_slot_colors.default
-		local var_26_1 = inventory_consumable_slot_colors[item_name]
-
-		if not var_26_1 then
-			-- Nothing
-		end
-
-		var_26_1 = default_background_color
-
-		local slot_background_color = var_26_1
-
-		::label_26_1::
+		local slot_background_color = not not inventory_consumable_slot_colors[item_name]
 
 		Colors.copy_to(texture_background_style.color, slot_background_color)
 	end
@@ -1305,17 +1119,7 @@ end
 
 EquipmentUI._remove_item = function (self, index)
 	-- function 27
-	local _num_added_items = self._num_added_items
-
-	if not _num_added_items then
-		-- Nothing
-	end
-
-	_num_added_items = 0
-
-	local num_added_items = _num_added_items
-
-	::label_27_0::
+	local num_added_items = not not self._num_added_items
 
 	if num_added_items <= 0 then
 		return
@@ -1499,19 +1303,9 @@ end
 
 EquipmentUI._handle_gamepad = function (self)
 	-- function 35
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local gamepad_active = not not Managers.input:is_device_active("gamepad")
 
-	if not is_device_active then
-		-- Nothing
-	end
-
-	is_device_active = not IS_WINDOWS
-
-	local gamepad_active = is_device_active
-
-	::label_35_0::
-
-	if (gamepad_active or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never" then
+	if gamepad_active and UISettings.use_gamepad_hud_layout ~= "never" or not gamepad_active and UISettings.use_gamepad_hud_layout == "always" and UISettings.use_gamepad_hud_layout ~= "never" then
 		if self._retained_elements_visible then
 			self:_set_elements_visible(false)
 		end
@@ -1548,11 +1342,7 @@ EquipmentUI.draw = function (self, dt)
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	render_settings.snap_pixel_positions = true
-
-	local panel_alpha_multiplier = self.panel_alpha_multiplier
-
-	panel_alpha_multiplier = not not panel_alpha_multiplier or not not alpha_multiplier
-	render_settings.alpha_multiplier = panel_alpha_multiplier
+	render_settings.alpha_multiplier = not not self.panel_alpha_multiplier
 
 	for _, widget in ipairs(self._slot_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
@@ -1569,10 +1359,7 @@ EquipmentUI.draw = function (self, dt)
 	end
 
 	if PERSISTENT_AMMO_COUNTER or self._show_ammo_meter or self._ammo_dirty then
-		local ammo_alpha_multiplier = self.ammo_alpha_multiplier
-
-		ammo_alpha_multiplier = not not ammo_alpha_multiplier or not not alpha_multiplier
-		render_settings.alpha_multiplier = ammo_alpha_multiplier
+		render_settings.alpha_multiplier = not not self.ammo_alpha_multiplier
 		render_settings.snap_pixel_positions = true
 
 		for _, widget in ipairs(self._ammo_widgets) do
@@ -1749,22 +1536,7 @@ end
 
 EquipmentUI._show_hold_to_reload = function (self, t)
 	-- function 49
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = self.player
-
-	local player = _spectated_player
-
-	::label_49_0::
-
+	local player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not self.player
 	local player_unit = player.player_unit
 
 	if not player_unit then
@@ -1782,17 +1554,7 @@ EquipmentUI._show_hold_to_reload = function (self, t)
 		local temp_item_template = BackendUtils.get_item_template(temp_item_data)
 
 		if temp_slot_data.id == wielded_slot then
-			local ammo_data = temp_item_template.ammo_data
-
-			if ammo_data then
-				-- Nothing
-			end
-
-			ammo_data = temp_item_template.ammo_data.unique_ammo_type
-
-			local unique_ammo_type = ammo_data
-
-			::label_49_1::
+			local unique_ammo_type = not not temp_item_template.ammo_data
 
 			if unique_ammo_type then
 				slot_data = temp_slot_data
@@ -1857,23 +1619,7 @@ EquipmentUI._update_reload_ui_state = function (self, t, item_template)
 		end
 	else
 		local reload_time = item_template.actions.weapon_reload.default.anim_time_scale
-		local _reload_start_time = self._reload_start_time
-
-		if _reload_start_time then
-			-- Nothing
-		end
-
-		if not (reload_time > t - self._reload_start_time) then
-			_reload_start_time = false
-
-			goto label_50_0
-		end
-
-		_reload_start_time = true
-
-		local failed_reload = _reload_start_time
-
-		::label_50_0::
+		local failed_reload = not not self._reload_start_time
 
 		if failed_reload then
 			self._reload_attempts = self._reload_attempts + 1
@@ -1890,7 +1636,7 @@ EquipmentUI._update_reload_ui_state = function (self, t, item_template)
 		end_time = self._listening_timer_start + listening_duration
 	end
 
-	if (end_time == 0 or not (end_time < t)) and self._reload_tip_text_shown then
+	if self._reload_tip_text_shown then
 		self._listening_timer_start = nil
 		self._reload_attempts = 0
 		self._reload_tip_text_shown = false

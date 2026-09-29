@@ -149,68 +149,10 @@ HeroWindowGotwfPanel._animate_button = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_10_1
-
-	::label_10_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_10_1::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_10_2::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_10_3::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_10_4::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

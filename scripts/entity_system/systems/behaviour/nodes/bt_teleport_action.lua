@@ -50,10 +50,7 @@ BTTeleportAction.run = function (self, unit, blackboard, t, dt)
 	local target_dir = Vector3.normalize(navigation_extension:desired_velocity())
 
 	if Vector3.length(Vector3.flat(target_dir)) < 0.05 and Vector3.dot(target_dir, Vector3.normalize(target_offset)) > 0.99 then
-		local teleport_timeout = blackboard.teleport_timeout
-
-		teleport_timeout = not not teleport_timeout or not not (t + 0.3)
-		blackboard.teleport_timeout = teleport_timeout
+		blackboard.teleport_timeout = not not blackboard.teleport_timeout
 	else
 		blackboard.teleport_timeout = nil
 	end

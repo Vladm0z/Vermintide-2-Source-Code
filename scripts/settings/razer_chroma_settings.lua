@@ -50,17 +50,7 @@ RazerChromaSettings = {
 				return false
 			end
 
-			local network = Managers.state.network
-
-			if network then
-				-- Nothing
-			end
-
-			network = Managers.state.network:game()
-
-			local game = network
-
-			::label_1_0::
+			local game = not not Managers.state.network
 
 			if not game then
 				return false
@@ -95,17 +85,7 @@ RazerChromaSettings = {
 				return false
 			end
 
-			local network = Managers.state.network
-
-			if network then
-				-- Nothing
-			end
-
-			network = Managers.state.network:game()
-
-			local game = network
-
-			::label_2_0::
+			local game = not not Managers.state.network
 
 			if not game then
 				return false
@@ -139,17 +119,7 @@ RazerChromaSettings = {
 		end,
 		condition_stop_func = function (manager)
 			-- function 3
-			local network = Managers.state.network
-
-			if network then
-				-- Nothing
-			end
-
-			network = Managers.state.network:game()
-
-			local game = network
-
-			::label_3_0::
+			local game = not not Managers.state.network
 
 			if not game then
 				return true

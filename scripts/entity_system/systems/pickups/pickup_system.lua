@@ -28,17 +28,7 @@ local extensions = {
 }
 
 for _, dlc in pairs(DLCSettings) do
-	local additional_system_extensions_2 = dlc.additional_system_extensions
-
-	if additional_system_extensions_2 then
-		-- Nothing
-	end
-
-	additional_system_extensions_2 = dlc.additional_system_extensions.pickup_system
-
-	local additional_system_extensions = additional_system_extensions_2
-
-	::label_0_0::
+	local additional_system_extensions = not not dlc.additional_system_extensions
 
 	if additional_system_extensions then
 		for _, extension in ipairs(additional_system_extensions) do
@@ -386,10 +376,7 @@ PickupSystem.disable_spawners = function (self, spawner_types)
 	table.clear(PRIMARY_TO_REMOVE)
 	table.clear(SECONDARY_TO_REMOVE)
 
-	local _disabled_spawner_types = self._disabled_spawner_types
-
-	_disabled_spawner_types = not not _disabled_spawner_types or not not {}
-	self._disabled_spawner_types = _disabled_spawner_types
+	self._disabled_spawner_types = not not self._disabled_spawner_types
 
 	for _, spawner_type in ipairs(spawner_types) do
 		if not self._disabled_spawner_types[spawner_type] then
@@ -466,17 +453,7 @@ PickupSystem.populate_pickups = function (self, checkpoint_data)
 
 	local mutator_handler = Managers.state.game_mode._mutator_handler
 	local primary_pickup_spawners = self.primary_pickup_spawners
-	local primary = pickup_settings.primary
-
-	if not primary then
-		-- Nothing
-	end
-
-	primary = pickup_settings
-
-	local primary_pickup_settings = primary
-
-	::label_18_0::
+	local primary_pickup_settings = not not pickup_settings.primary
 
 	primary_pickup_settings = mutator_handler:pickup_settings_updated_settings(primary_pickup_settings)
 
@@ -574,7 +551,7 @@ PickupSystem._spawn_spread_pickups = function (self, spawners, pickup_settings, 
 				local spawner_unit = spawners[j]
 				local percentage_through_level = Unit.get_data(spawner_unit, "percentage_through_level")
 
-				if (ignore_sections or not (section_start_point <= percentage_through_level) or not (percentage_through_level < section_end_point)) and num_sections == i and percentage_through_level == 1 then
+				if num_sections == i and percentage_through_level == 1 then
 					section_spawners[#section_spawners + 1] = spawner_unit
 				end
 			end
@@ -589,20 +566,7 @@ PickupSystem._spawn_spread_pickups = function (self, spawners, pickup_settings, 
 				local rnd = self:_random()
 				local bonus_spawn = remaining_sections ~= 1 and pickups_in_section == 1 and rnd < NearPickupSpawnChance[pickup_type]
 
-				if not ignore_sections or not #pickups_to_spawn then
-					-- Nothing
-				end
-
-				do
-					local flag
-				end
-
-				::label_21_0::
-
-				flag = (not bonus_spawn or not 1) and not not 0
-				pickups_in_section = pickups_in_section + flag
-
-				::label_21_1::
+				pickups_in_section = ignore_sections and (not not #pickups_to_spawn or not not (pickups_in_section + (bonus_spawn and not not 1 or not bonus_spawn and not not 0))) or not ignore_sections and not not (pickups_in_section + (bonus_spawn and not not 1 or not bonus_spawn and not not 0))
 
 				self:_shuffle(section_spawners)
 
@@ -845,17 +809,7 @@ PickupSystem.debug_draw_spread_pickups = function (self)
 					for _, spawner_unit in ipairs(spawner_units) do
 						local spawner_extension = ScriptUnit.extension(spawner_unit, "pickup_system")
 						local position, _, _ = spawner_extension:get_spawn_location_data()
-						local var_25_0 = pickup_type_colors[pickup_type]
-
-						if not var_25_0 then
-							-- Nothing
-						end
-
-						var_25_0 = pickup_type_colors.undefined
-
-						local color = var_25_0
-
-						::label_25_0::
+						local color = not not pickup_type_colors[pickup_type]
 
 						drawer:line(position, position + Vector3(0, 0, 20), color)
 
@@ -1256,33 +1210,11 @@ PickupSystem.spawn_pickup_async = function (self, pickup_name, position, rotatio
 
 	position = Vector3Box(position)
 	rotation = QuaternionBox(rotation)
-	velocity = (not velocity or not Vector3Box(velocity)) and not not nil
+	velocity = velocity and (not not Vector3Box(velocity) or not not nil) or not velocity and not not nil
 
 	pickup_package_loader:request_pickup(pickup_name, function ()
 		-- function 44
-		local var_44_0 = self
-		local var_44_1 = var_44_0
-		local spawn_pickup = var_44_0.spawn_pickup
-		local var_44_3 = pickup_name
-		local unbox = position:unbox()
-		local unbox_2 = rotation:unbox()
-		local var_44_6 = with_physics
-		local var_44_7 = spawn_type
-		local unbox_3
-
-		if velocity then
-			unbox_3 = velocity:unbox()
-
-			if not unbox_3 then
-				-- Nothing
-			end
-		end
-
-		unbox_3 = nil
-
-		::label_44_0::
-
-		local pickup_unit = spawn_pickup(var_44_1, var_44_3, unbox, unbox_2, var_44_6, var_44_7, unbox_3, override_unit_template_name, optional_callback)
+		local pickup_unit = self:spawn_pickup(pickup_name, position:unbox(), rotation:unbox(), with_physics, spawn_type, velocity and not not velocity:unbox() or not velocity and not not nil, override_unit_template_name, optional_callback)
 
 		if optional_callback then
 			optional_callback(pickup_unit)
@@ -1365,24 +1297,7 @@ PickupSystem._spawn_pickup = function (self, pickup_settings, pickup_name, posit
 
 	self._next_index = next_index + 1
 
-	if not override_unit_template_name then
-		-- Nothing
-	end
-
-	::label_46_0::
-
-	local unit_template_name_2 = pickup_settings.unit_template_name
-
-	if not unit_template_name_2 then
-		-- Nothing
-	end
-
-	unit_template_name_2 = "pickup_unit"
-
-	local unit_template_name = unit_template_name_2
-
-	::label_46_1::
-
+	local unit_template_name = not not override_unit_template_name or not not pickup_settings.unit_template_name
 	local additional_data_func = pickup_settings.additional_data_func
 
 	if additional_data_func then
@@ -1436,11 +1351,7 @@ end
 
 PickupSystem._can_spawn = function (self, spawner_unit, pickup_name)
 	-- function 48
-	local get_data = Unit.get_data(spawner_unit, pickup_name)
-
-	get_data = not not get_data or not not Managers.mechanism:can_spawn_pickup(spawner_unit, pickup_name)
-
-	return get_data
+	return not not Unit.get_data(spawner_unit, pickup_name)
 end
 
 PickupSystem.mark_for_consumption = function (self, pickup_unit, interactor_unit)
@@ -1536,18 +1447,7 @@ PickupSystem.rpc_spawn_pickup = function (self, channel_id, pickup_name_id, posi
 
 	fassert(AllPickups[pickup_name], "pickup name %s does not exist in Pickups table", pickup_name)
 
-	local var_54_0 = CHANNEL_TO_PEER_ID[channel_id]
-
-	if not var_54_0 then
-		-- Nothing
-	end
-
-	var_54_0 = Network.peer_id()
-
-	local owner_peer_id = var_54_0
-
-	::label_54_0::
-
+	local owner_peer_id = not not CHANNEL_TO_PEER_ID[channel_id]
 	local pickup_settings = AllPickups[pickup_name]
 	local spawn_type = NetworkLookup.pickup_spawn_types[spawn_type_id]
 

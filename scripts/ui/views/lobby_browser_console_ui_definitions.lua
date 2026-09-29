@@ -825,60 +825,48 @@ local scenegraph_definition = {
 		}
 	}
 }
-local tbl = {}
-local tbl_2 = {}
-local tbl_3 = {
-	name = "fade_in",
-	start_progress = 0
-}
-local flag
+local animation_definitions = {
+	on_enter = {
+		{
+			name = "fade_in",
+			start_progress = 0,
+			end_progress = IS_WINDOWS and not not 0.05 or not IS_WINDOWS and not not 0.5,
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+				-- function 1
+				params.render_settings.alpha_multiplier = 0
+			end,
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
+				-- function 2
+				local anim_progress = math.easeInCubic(progress)
 
-flag = (not IS_WINDOWS or not 0.05) and not not 0.5
-tbl_3.end_progress = flag
-
-tbl_3.init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-	-- function 1
-	params.render_settings.alpha_multiplier = 0
-end
-
-tbl_3.update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-	-- function 2
-	local anim_progress = math.easeInCubic(progress)
-
-	params.render_settings.alpha_multiplier = anim_progress
-end
-
-tbl_3.on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
-	-- function 3
-	return
-end
-
-tbl_2[1] = tbl_3
-tbl.on_enter = tbl_2
-
-local tbl_4 = {
-	{
-		name = "fade_out",
-		start_progress = 0,
-		end_progress = 0.3,
-		init = function (ui_scenegraph, scenegraph_definition, widgets, params)
-			-- function 4
-			params.render_settings.alpha_multiplier = 1
-		end,
-		update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
-			-- function 5
-			params.render_settings.alpha_multiplier = 1
-		end,
-		on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
-			-- function 6
-			return
-		end
+				params.render_settings.alpha_multiplier = anim_progress
+			end,
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+				-- function 3
+				return
+			end
+		}
+	},
+	on_exit = {
+		{
+			name = "fade_out",
+			start_progress = 0,
+			end_progress = 0.3,
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
+				-- function 4
+				params.render_settings.alpha_multiplier = 1
+			end,
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
+				-- function 5
+				params.render_settings.alpha_multiplier = 1
+			end,
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
+				-- function 6
+				return
+			end
+		}
 	}
 }
-
-tbl.on_exit = tbl_4
-
-local animation_definitions = tbl
 local flag_test = {
 	"ad",
 	"ae",
@@ -1197,10 +1185,7 @@ local function create_lobby_browser_frame(scenegraph_id)
 					text_id = "timer_text_id",
 					content_change_function = function (content, style, _, dt)
 						-- function 11
-						local timer = content.timer
-
-						timer = not not timer or not not 0
-						content.timer = timer + dt
+						content.timer = not not content.timer + dt
 
 						local seconds = math.max(content.timer, 0)
 						local minutes = math.floor(seconds / 60)
@@ -1224,11 +1209,7 @@ local function create_lobby_browser_frame(scenegraph_id)
 					pass_type = "rect",
 					content_check_function = function (content, style)
 						-- function 12
-						local show_scroller = content.show_scroller
-
-						show_scroller = not not show_scroller and not not not content.filter_active
-
-						return show_scroller
+						return not not content.show_scroller
 					end,
 					content_change_function = function (content, style)
 						-- function 13
@@ -1239,57 +1220,9 @@ local function create_lobby_browser_frame(scenegraph_id)
 						local offset_y = -element_spacing - scrollbar_progress * (window_height + texture_size_y)
 
 						style.offset[2] = offset_y
-
-						local offset = style.offset
-						local var_13_1
-
-						if Math.is_valid(style.offset[1]) then
-							var_13_1 = style.offset[1]
-
-							if not var_13_1 then
-								-- Nothing
-							end
-						end
-
-						var_13_1 = 0
-
-						::label_13_0::
-
-						offset[1] = var_13_1
-
-						local offset_2 = style.offset
-						local var_13_3
-
-						if Math.is_valid(style.offset[2]) then
-							var_13_3 = style.offset[2]
-
-							if not var_13_3 then
-								-- Nothing
-							end
-						end
-
-						var_13_3 = 0
-
-						::label_13_1::
-
-						offset_2[2] = var_13_3
-
-						local offset_3 = style.offset
-						local var_13_5
-
-						if Math.is_valid(style.offset[3]) then
-							var_13_5 = style.offset[3]
-
-							if not var_13_5 then
-								-- Nothing
-							end
-						end
-
-						var_13_5 = 0
-
-						::label_13_2::
-
-						offset_3[3] = var_13_5
+						style.offset[1] = Math.is_valid(style.offset[1]) and not not style.offset[1] or not Math.is_valid(style.offset[1]) and not not 0
+						style.offset[2] = Math.is_valid(style.offset[2]) and not not style.offset[2] or not Math.is_valid(style.offset[2]) and not not 0
+						style.offset[3] = Math.is_valid(style.offset[3]) and not not style.offset[3] or not Math.is_valid(style.offset[3]) and not not 0
 					end
 				},
 				{
@@ -1297,11 +1230,7 @@ local function create_lobby_browser_frame(scenegraph_id)
 					pass_type = "rect",
 					content_check_function = function (content, style)
 						-- function 14
-						local show_scroller = content.show_scroller
-
-						show_scroller = not not show_scroller and not not not content.filter_active
-
-						return show_scroller
+						return not not content.show_scroller
 					end,
 					content_change_function = function (content, style)
 						-- function 15
@@ -1309,57 +1238,9 @@ local function create_lobby_browser_frame(scenegraph_id)
 						local offset_y = -element_settings.spacing - content.scrollbar_progress * (window_height + style.texture_size[2])
 
 						style.offset[2] = offset_y
-
-						local offset = style.offset
-						local var_15_1
-
-						if Math.is_valid(style.offset[1]) then
-							var_15_1 = style.offset[1]
-
-							if not var_15_1 then
-								-- Nothing
-							end
-						end
-
-						var_15_1 = 0
-
-						::label_15_0::
-
-						offset[1] = var_15_1
-
-						local offset_2 = style.offset
-						local var_15_3
-
-						if Math.is_valid(style.offset[2]) then
-							var_15_3 = style.offset[2]
-
-							if not var_15_3 then
-								-- Nothing
-							end
-						end
-
-						var_15_3 = 0
-
-						::label_15_1::
-
-						offset_2[2] = var_15_3
-
-						local offset_3 = style.offset
-						local var_15_5
-
-						if Math.is_valid(style.offset[3]) then
-							var_15_5 = style.offset[3]
-
-							if not var_15_5 then
-								-- Nothing
-							end
-						end
-
-						var_15_5 = 0
-
-						::label_15_2::
-
-						offset_3[3] = var_15_5
+						style.offset[1] = Math.is_valid(style.offset[1]) and not not style.offset[1] or not Math.is_valid(style.offset[1]) and not not 0
+						style.offset[2] = Math.is_valid(style.offset[2]) and not not style.offset[2] or not Math.is_valid(style.offset[2]) and not not 0
+						style.offset[3] = Math.is_valid(style.offset[3]) and not not style.offset[3] or not Math.is_valid(style.offset[3]) and not not 0
 
 						if content.inner_scroller_hotspot.is_hover then
 							style.color = style.selected_color
@@ -1374,11 +1255,7 @@ local function create_lobby_browser_frame(scenegraph_id)
 					content_id = "inner_scroller_hotspot",
 					content_check_function = function (content, style)
 						-- function 16
-						local show_scroller = content.parent.show_scroller
-
-						show_scroller = not not show_scroller and not not not content.parent.filter_active
-
-						return show_scroller
+						return not not content.parent.show_scroller
 					end,
 					content_change_function = function (content, style)
 						-- function 17
@@ -1869,12 +1746,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 1) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 1 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 20
-						if (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+						if content.filter_selection and (content.filter_index == 1 or content.filter_hotspot_1.is_hover) or not content.filter_selection and content.filter_hotspot_1.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -1891,12 +1768,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 1) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 1 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 22
-						if (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+						if content.filter_selection and (content.filter_index == 1 or content.filter_hotspot_1.is_hover) or not content.filter_selection and content.filter_hotspot_1.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -1913,12 +1790,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 2) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 2 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 24
-						if (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+						if content.filter_selection and (content.filter_index == 2 or content.filter_hotspot_2.is_hover) or not content.filter_selection and content.filter_hotspot_2.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -1935,12 +1812,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 2) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 2 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 26
-						if (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+						if content.filter_selection and (content.filter_index == 2 or content.filter_hotspot_2.is_hover) or not content.filter_selection and content.filter_hotspot_2.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -1957,12 +1834,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 3) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 3 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 28
-						if (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+						if content.filter_selection and (content.filter_index == 3 or content.filter_hotspot_3.is_hover) or not content.filter_selection and content.filter_hotspot_3.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -1979,12 +1856,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 3) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 3 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 30
-						if (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+						if content.filter_selection and (content.filter_index == 3 or content.filter_hotspot_3.is_hover) or not content.filter_selection and content.filter_hotspot_3.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -2001,12 +1878,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 4) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 4 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 32
-						if (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+						if content.filter_selection and (content.filter_index == 4 or content.filter_hotspot_4.is_hover) or not content.filter_selection and content.filter_hotspot_4.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -2023,12 +1900,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 4) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 4 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 34
-						if (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+						if content.filter_selection and (content.filter_index == 4 or content.filter_hotspot_4.is_hover) or not content.filter_selection and content.filter_hotspot_4.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -2045,12 +1922,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 5) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 5 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 36
-						if (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+						if content.filter_selection and (content.filter_index == 5 or content.filter_hotspot_5.is_hover) or not content.filter_selection and content.filter_hotspot_5.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -2067,12 +1944,12 @@ local function create_filter_frame(scenegraph_id)
 						else
 							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return (not content.filter_selection or content.filter_index ~= 5) and not not not gamepad_active
+							return content.filter_selection and (content.filter_index == 5 or not not not gamepad_active) or not content.filter_selection and not not not gamepad_active
 						end
 					end,
 					content_change_function = function (content, style)
 						-- function 38
-						if (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+						if content.filter_selection and (content.filter_index == 5 or content.filter_hotspot_5.is_hover) or not content.filter_selection and content.filter_hotspot_5.is_hover then
 							style.color = style.select_color
 						else
 							style.color = style.base_color
@@ -2089,7 +1966,7 @@ local function create_filter_frame(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 39
-						if (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+						if content.filter_selection and (content.filter_index == 1 or content.filter_hotspot_1.is_hover) or not content.filter_selection and content.filter_hotspot_1.is_hover then
 							style.color = style.selection_color
 						else
 							style.color = style.base_color
@@ -2106,7 +1983,7 @@ local function create_filter_frame(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 40
-						if (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+						if content.filter_selection and (content.filter_index == 2 or content.filter_hotspot_2.is_hover) or not content.filter_selection and content.filter_hotspot_2.is_hover then
 							style.color = style.selection_color
 						else
 							style.color = style.base_color
@@ -2123,7 +2000,7 @@ local function create_filter_frame(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 41
-						if (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+						if content.filter_selection and (content.filter_index == 3 or content.filter_hotspot_3.is_hover) or not content.filter_selection and content.filter_hotspot_3.is_hover then
 							style.color = style.selection_color
 						else
 							style.color = style.base_color
@@ -2140,7 +2017,7 @@ local function create_filter_frame(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 42
-						if (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+						if content.filter_selection and (content.filter_index == 4 or content.filter_hotspot_4.is_hover) or not content.filter_selection and content.filter_hotspot_4.is_hover then
 							style.color = style.selection_color
 						else
 							style.color = style.base_color
@@ -2157,7 +2034,7 @@ local function create_filter_frame(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 43
-						if (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+						if content.filter_selection and (content.filter_index == 5 or content.filter_hotspot_5.is_hover) or not content.filter_selection and content.filter_hotspot_5.is_hover then
 							style.color = style.selection_color
 						else
 							style.color = style.base_color
@@ -2197,7 +2074,7 @@ local function create_filter_frame(scenegraph_id)
 						-- function 44
 						if content.filter_hotspot_1.disable_button then
 							style.text_color = style.disabled_color
-						elseif (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+						elseif content.filter_selection and (content.filter_index == 1 or content.filter_hotspot_1.is_hover) or not content.filter_selection and content.filter_hotspot_1.is_hover then
 							style.text_color = style.selection_color
 						else
 							style.text_color = style.base_color
@@ -2212,7 +2089,7 @@ local function create_filter_frame(scenegraph_id)
 						-- function 45
 						if content.filter_hotspot_2.disable_button then
 							style.text_color = style.disabled_color
-						elseif (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+						elseif content.filter_selection and (content.filter_index == 2 or content.filter_hotspot_2.is_hover) or not content.filter_selection and content.filter_hotspot_2.is_hover then
 							style.text_color = style.selection_color
 						else
 							style.text_color = style.base_color
@@ -2227,7 +2104,7 @@ local function create_filter_frame(scenegraph_id)
 						-- function 46
 						if content.filter_hotspot_3.disable_button then
 							style.text_color = style.disabled_color
-						elseif (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+						elseif content.filter_selection and (content.filter_index == 3 or content.filter_hotspot_3.is_hover) or not content.filter_selection and content.filter_hotspot_3.is_hover then
 							style.text_color = style.selection_color
 						else
 							style.text_color = style.base_color
@@ -2242,7 +2119,7 @@ local function create_filter_frame(scenegraph_id)
 						-- function 47
 						if content.filter_hotspot_4.disable_button then
 							style.text_color = style.disabled_color
-						elseif (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+						elseif content.filter_selection and (content.filter_index == 4 or content.filter_hotspot_4.is_hover) or not content.filter_selection and content.filter_hotspot_4.is_hover then
 							style.text_color = style.selection_color
 						else
 							style.text_color = style.base_color
@@ -2257,7 +2134,7 @@ local function create_filter_frame(scenegraph_id)
 						-- function 48
 						if content.filter_hotspot_5.disable_button then
 							style.text_color = style.disabled_color
-						elseif (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+						elseif content.filter_selection and (content.filter_index == 5 or content.filter_hotspot_5.is_hover) or not content.filter_selection and content.filter_hotspot_5.is_hover then
 							style.text_color = style.selection_color
 						else
 							style.text_color = style.base_color
@@ -2996,22 +2873,7 @@ local function create_level_filter_scroller_func(num_elements)
 	local max_length = element_settings.window_height + element_settings.filter_height + element_settings.spacing
 	local max_entries = math.ceil(max_length / (element_settings.filter_height + element_settings.spacing) - 1)
 	local visible = max_entries < num_elements
-	local max
-
-	if visible then
-		max = math.max(max_length / (num_elements / max_entries), 30)
-
-		if not max then
-			-- Nothing
-		end
-	end
-
-	max = 0
-
-	local size_y = max
-
-	::label_49_0::
-
+	local size_y = visible and not not math.max(max_length / (num_elements / max_entries), 30) or not visible and not not 0
 	local border_length = math.clamp(num_elements * (element_settings.filter_height + element_settings.spacing), 0, max_length)
 
 	return {
@@ -3032,11 +2894,7 @@ local function create_level_filter_scroller_func(num_elements)
 					content_id = "scroller_hotspot",
 					content_check_function = function (content, style)
 						-- function 50
-						local show_scroller = content.parent.show_scroller
-
-						show_scroller = not not show_scroller and not not content.parent.active
-
-						return show_scroller
+						return not not content.parent.show_scroller
 					end,
 					content_change_function = function (content, style)
 						-- function 51
@@ -3046,57 +2904,9 @@ local function create_level_filter_scroller_func(num_elements)
 						local offset_y = start_pos - element_settings.spacing - content.parent.scrollbar_progress * (scrollbar_length - style.area_size[2] - start_pos)
 
 						style.offset[2] = offset_y
-
-						local offset = style.offset
-						local var_51_1
-
-						if Math.is_valid(style.offset[1]) then
-							var_51_1 = style.offset[1]
-
-							if not var_51_1 then
-								-- Nothing
-							end
-						end
-
-						var_51_1 = 0
-
-						::label_51_0::
-
-						offset[1] = var_51_1
-
-						local offset_2 = style.offset
-						local var_51_3
-
-						if Math.is_valid(style.offset[2]) then
-							var_51_3 = style.offset[2]
-
-							if not var_51_3 then
-								-- Nothing
-							end
-						end
-
-						var_51_3 = 0
-
-						::label_51_1::
-
-						offset_2[2] = var_51_3
-
-						local offset_3 = style.offset
-						local var_51_5
-
-						if Math.is_valid(style.offset[3]) then
-							var_51_5 = style.offset[3]
-
-							if not var_51_5 then
-								-- Nothing
-							end
-						end
-
-						var_51_5 = 0
-
-						::label_51_2::
-
-						offset_3[3] = var_51_5
+						style.offset[1] = Math.is_valid(style.offset[1]) and not not style.offset[1] or not Math.is_valid(style.offset[1]) and not not 0
+						style.offset[2] = Math.is_valid(style.offset[2]) and not not style.offset[2] or not Math.is_valid(style.offset[2]) and not not 0
+						style.offset[3] = Math.is_valid(style.offset[3]) and not not style.offset[3] or not Math.is_valid(style.offset[3]) and not not 0
 					end
 				},
 				{
@@ -3109,11 +2919,7 @@ local function create_level_filter_scroller_func(num_elements)
 					pass_type = "rect",
 					content_check_function = function (content, style)
 						-- function 52
-						local show_scroller = content.show_scroller
-
-						show_scroller = not not show_scroller and not not content.active
-
-						return show_scroller
+						return not not content.show_scroller
 					end,
 					content_change_function = function (content, style)
 						-- function 53
@@ -3123,73 +2929,10 @@ local function create_level_filter_scroller_func(num_elements)
 						local offset_y = start_pos - element_settings.spacing - content.scrollbar_progress * (scrollbar_length - style.texture_size[2] - start_pos)
 
 						style.offset[2] = offset_y
-
-						local offset = style.offset
-						local var_53_1
-
-						if Math.is_valid(style.offset[1]) then
-							var_53_1 = style.offset[1]
-
-							if not var_53_1 then
-								-- Nothing
-							end
-						end
-
-						var_53_1 = 0
-
-						::label_53_0::
-
-						offset[1] = var_53_1
-
-						local offset_2 = style.offset
-						local var_53_3
-
-						if Math.is_valid(style.offset[2]) then
-							var_53_3 = style.offset[2]
-
-							if not var_53_3 then
-								-- Nothing
-							end
-						end
-
-						var_53_3 = 0
-
-						::label_53_1::
-
-						offset_2[2] = var_53_3
-
-						local offset_3 = style.offset
-						local var_53_5
-
-						if Math.is_valid(style.offset[3]) then
-							var_53_5 = style.offset[3]
-
-							if not var_53_5 then
-								-- Nothing
-							end
-						end
-
-						var_53_5 = 0
-
-						::label_53_2::
-
-						offset_3[3] = var_53_5
-
-						local highlight_color
-
-						if content.scroller_hotspot.is_hover then
-							highlight_color = style.highlight_color
-
-							if not highlight_color then
-								-- Nothing
-							end
-						end
-
-						highlight_color = style.default_color
-
-						::label_53_3::
-
-						style.color = highlight_color
+						style.offset[1] = Math.is_valid(style.offset[1]) and not not style.offset[1] or not Math.is_valid(style.offset[1]) and not not 0
+						style.offset[2] = Math.is_valid(style.offset[2]) and not not style.offset[2] or not Math.is_valid(style.offset[2]) and not not 0
+						style.offset[3] = Math.is_valid(style.offset[3]) and not not style.offset[3] or not Math.is_valid(style.offset[3]) and not not 0
+						style.color = content.scroller_hotspot.is_hover and not not style.highlight_color or not content.scroller_hotspot.is_hover and not not style.default_color
 					end
 				}
 			}
@@ -4017,66 +3760,17 @@ end
 
 local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinable, completed_difficulty_index)
 	-- function 73
-	local unique_server_name
-
-	if IS_WINDOWS then
-		unique_server_name = lobby_data.unique_server_name
-
-		if not unique_server_name then
-			-- Nothing
-		end
-
-		unique_server_name = lobby_data.host
-
-		if not unique_server_name then
-			-- Nothing
-		end
-	end
-
-	unique_server_name = lobby_data.name
-
-	if not unique_server_name then
-		-- Nothing
-	end
-
-	unique_server_name = "UNKNOWN"
-
-	local host_name = unique_server_name
-
-	::label_73_0::
-
+	local host_name = IS_WINDOWS and not not lobby_data.unique_server_name or not IS_WINDOWS and not not lobby_data.name
 	local lobby_name = host_name
 
 	if lobby_data.custom_server_name and lobby_data.custom_server_name ~= "n/a" and lobby_data.custom_server_name ~= "" then
 		lobby_name = string.format("%s: %s", host_name, lobby_data.custom_server_name)
 	end
 
-	local num_players_2 = lobby_data.num_players
-
-	if not num_players_2 then
-		-- Nothing
-	end
-
-	num_players_2 = 0
-
-	local num_players = num_players_2
-
-	::label_73_1::
-
+	local num_players = not not lobby_data.num_players
 	local mechanism = lobby_data.mechanism
 	local is_versus_custom_game = mechanism == "versus" and NetworkLookup.matchmaking_types[tonumber(lobby_data.matchmaking_type)] == "custom"
-	local difficulty_2 = lobby_data.difficulty
-
-	if not difficulty_2 then
-		-- Nothing
-	end
-
-	difficulty_2 = "UNKNOWN"
-
-	local difficulty = difficulty_2
-
-	::label_73_2::
-
+	local difficulty = not not lobby_data.difficulty
 	local difficulty_settings = DifficultySettings[difficulty]
 
 	if difficulty_settings then
@@ -4098,13 +3792,10 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 
 		if not weave_template then
 			local level_settings = LevelSettings[selected_mission_id]
-			local Localize = Localize
-			local display_name_2 = level_settings.display_name
 
-			display_name_2 = not not display_name_2 or not not "UNKNOWN"
-			selected_level_name = Localize(display_name_2)
+			selected_level_name = Localize(not not level_settings.display_name)
 		elseif lobby_data.weave_quick_game == "true" then
-			selected_level_name = (not weave_template or not Localize(weave_template.display_name)) and not not Localize("start_game_window_weave_quickplay_title")
+			selected_level_name = weave_template and (not not Localize(weave_template.display_name) or not not Localize("start_game_window_weave_quickplay_title")) or not weave_template and not not Localize("start_game_window_weave_quickplay_title")
 		else
 			selected_level_name = weave_index .. ". " .. Localize(weave_template.display_name)
 		end
@@ -4112,19 +3803,13 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 		level_image = "deus_small_image"
 
 		local level_settings = LevelSettings[selected_mission_id]
-		local Localize_2 = Localize
-		local display_name_3 = level_settings.display_name
 
-		display_name_3 = not not display_name_3 or not not "UNKNOWN"
-		selected_level_name = Localize_2(display_name_3)
+		selected_level_name = Localize(not not level_settings.display_name)
 	elseif mechanism == "versus" then
 		if selected_mission_id and selected_mission_id ~= "any" then
 			local level_settings = LevelSettings[selected_mission_id]
-			local Localize_3 = Localize
-			local display_name_4 = level_settings.display_name
 
-			display_name_4 = not not display_name_4 or not not "UNKNOWN"
-			selected_level_name = Localize_3(display_name_4)
+			selected_level_name = Localize(not not level_settings.display_name)
 			level_image = LevelHelper:get_small_level_image(selected_mission_id)
 		else
 			level_image = "any_small_image"
@@ -4138,11 +3823,8 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 		end
 	elseif selected_mission_id then
 		local level_settings = LevelSettings[selected_mission_id]
-		local Localize_4 = Localize
-		local display_name_5 = level_settings.display_name
 
-		display_name_5 = not not display_name_5 or not not "UNKNOWN"
-		selected_level_name = Localize_4(display_name_5)
+		selected_level_name = Localize(not not level_settings.display_name)
 		level_image = LevelHelper:get_small_level_image(selected_mission_id)
 	end
 
@@ -4158,29 +3840,11 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 		end
 
 		local level_settings = LevelSettings[current_level_name]
-		local Localize_5 = Localize
-		local display_name_6 = level_settings.display_name
 
-		display_name_6 = not not display_name_6 or not not "UNKNOWN"
-		current_level_name = Localize_5(display_name_6)
+		current_level_name = Localize(not not level_settings.display_name)
 	end
 
-	local lower
-
-	if lobby_data.country_code then
-		lower = string.lower(lobby_data.country_code)
-
-		if not lower then
-			-- Nothing
-		end
-	end
-
-	lower = Localize("lb_unknown")
-
-	local country_code = lower
-
-	::label_73_3::
-
+	local country_code = lobby_data.country_code and not not string.lower(lobby_data.country_code) or not lobby_data.country_code and not not Localize("lb_unknown")
 	local flag_size = {
 		30,
 		50
@@ -4200,7 +3864,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 	if rawget(_G, "Steam") then
 		local user_country_code = Managers.account:region()
 
-		if (user_country_code == "cn" or user_country_code == "hk") and country_code == "tw" then
+		if user_country_code == "cn" and country_code == "tw" or not (user_country_code == "cn") and user_country_code == "hk" and country_code == "tw" then
 			flag_size = {
 				30,
 				50
@@ -4219,7 +3883,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 		level_frame = settings.completed_frame_texture
 	end
 
-	local tbl = {
+	return {
 		scenegraph_id = "lobby_entry_anchor",
 		element = {
 			passes = {
@@ -4282,7 +3946,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 						end
 
 						local custom_game_settings = lobby_data.custom_game_settings
-						local has_custom_game_settings = (not custom_game_settings or custom_game_settings == "n/a") and not not false
+						local has_custom_game_settings = custom_game_settings and (custom_game_settings ~= "n/a" or not not false) or not custom_game_settings and not not false
 
 						return not not has_custom_game_settings and not not content.joinable
 					end
@@ -4298,7 +3962,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 						end
 
 						local custom_game_settings = lobby_data.custom_game_settings
-						local has_custom_game_settings = (not custom_game_settings or custom_game_settings == "n/a") and not not false
+						local has_custom_game_settings = custom_game_settings and (custom_game_settings ~= "n/a" or not not false) or not custom_game_settings and not not false
 
 						return not not has_custom_game_settings and not not content.joinable
 					end
@@ -4309,21 +3973,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 					texture_id = "background_id",
 					content_check_function = function (content, style)
 						-- function 81
-						local is_hover
-
-						if not content.selected then
-							is_hover = content.lobby_hotspot.is_hover
-
-							if is_hover then
-								-- Nothing
-							end
-						end
-
-						is_hover = not Managers.matchmaking:is_game_matchmaking()
-
-						::label_81_0::
-
-						return is_hover
+						return content.selected and not not not Managers.matchmaking:is_game_matchmaking() or not content.selected and not not content.lobby_hotspot.is_hover
 					end
 				},
 				{
@@ -4361,7 +4011,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 					text_id = "selected_level_name",
 					content_check_function = function (content, style)
 						-- function 84
-						return (not not content.joinable or not content.selected) and not not not content.lobby_hotspot.is_hover
+						return not not content.joinable or not content.selected and not not not content.lobby_hotspot.is_hover
 					end
 				},
 				{
@@ -4407,7 +4057,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 					text_id = "no_flag_id",
 					content_check_function = function (content, style)
 						-- function 89
-						return (content.joinable or not content.selected and not content.lobby_hotspot.is_hover) and not not not content.flag_id
+						return not content.selected and not content.lobby_hotspot.is_hover and not not not content.flag_id
 					end
 				},
 				{
@@ -4446,7 +4096,7 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 					text_id = "difficulty_id",
 					content_check_function = function (content, style)
 						-- function 92
-						return (not not content.joinable or not content.selected) and not not not content.lobby_hotspot.is_hover
+						return not not content.joinable or not content.selected and not not not content.lobby_hotspot.is_hover
 					end
 				},
 				{
@@ -4455,527 +4105,519 @@ local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinabl
 					text_id = "num_players_id",
 					content_check_function = function (content, style)
 						-- function 93
-						return (not not content.joinable or not content.selected) and not not not content.lobby_hotspot.is_hover
+						return not not content.joinable or not content.selected and not not not content.lobby_hotspot.is_hover
 					end
 				}
 			}
+		},
+		content = {
+			frame_id = "rect_masked",
+			background_id = "rect_masked",
+			selected = false,
+			custom_game_settings = "versus_custom_settings",
+			lock_icon_id = "lobby_icon_lock",
+			lobby_hotspot = {},
+			host_name = lobby_name,
+			num_players_id = num_players .. "/" .. (is_versus_custom_game and not not "8" or not is_versus_custom_game and not not "4"),
+			difficulty_id = difficulty,
+			selected_level_name = selected_level_name,
+			current_level_name = current_level_name,
+			lobby_data = lobby_data,
+			level_image_id = level_image,
+			flag_id = flag_name,
+			flag_index = flag_index,
+			no_flag_id = country_code,
+			joinable = joinable
+		},
+		style = {
+			background = {
+				color = {
+					96,
+					0,
+					0,
+					0
+				},
+				size = {
+					element_settings.width,
+					element_settings.height
+				},
+				offset = {
+					0,
+					0,
+					0
+				}
+			},
+			selected_background = {
+				color = Colors.get_color_table_with_alpha("font_default", 96),
+				size = {
+					element_settings.width,
+					element_settings.height
+				},
+				offset = {
+					0,
+					0,
+					0
+				}
+			},
+			disabled_background = {
+				color = {
+					196,
+					0,
+					0,
+					0
+				},
+				size = {
+					element_settings.width,
+					element_settings.height
+				},
+				offset = {
+					0,
+					0,
+					11
+				}
+			},
+			lock_icon = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "left",
+				color = Colors.get_color_table_with_alpha("font_default", 96),
+				base_color = Colors.get_color_table_with_alpha("font_default", 96),
+				selected_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				texture_size = {
+					29,
+					42
+				},
+				offset = {
+					580,
+					-0,
+					3
+				}
+			},
+			lock_icon_shadow = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "left",
+				color = {
+					255,
+					0,
+					0,
+					0
+				},
+				texture_size = {
+					29,
+					42
+				},
+				offset = {
+					582,
+					-0 - 2,
+					2
+				}
+			},
+			custom_game_settings = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "left",
+				color = Colors.get_color_table_with_alpha("font_default", 96),
+				base_color = Colors.get_color_table_with_alpha("font_default", 96),
+				selected_color = Colors.get_color_table_with_alpha("font_title", 255),
+				texture_size = {
+					45,
+					45
+				},
+				offset = {
+					570,
+					-0,
+					3
+				}
+			},
+			custom_game_settings_shadow = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "left",
+				color = {
+					255,
+					0,
+					0,
+					0
+				},
+				texture_size = {
+					45,
+					45
+				},
+				offset = {
+					572,
+					-0 - 2,
+					2
+				}
+			},
+			host_name = {
+				vertical_alignment = "top",
+				horizontal_alignment = "left",
+				localize = false,
+				font_size = 22,
+				font_type = "arial_masked",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					110 + element_settings.spacing,
+					0,
+					2
+				}
+			},
+			selected_level_name = {
+				vertical_alignment = "bottom",
+				localize = false,
+				font_size = 32,
+				horizontal_alignment = "left",
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				selected_unjoinable_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				base_color = {
+					255,
+					128,
+					128,
+					128
+				},
+				joinable_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					110 + element_settings.spacing,
+					-5,
+					2
+				}
+			},
+			selected_level_name_shadow = {
+				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
+				localize = false,
+				font_size = 32,
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				offset = {
+					110 + element_settings.spacing + 2,
+					-7,
+					1
+				}
+			},
+			host_name_shadow = {
+				vertical_alignment = "top",
+				localize = false,
+				font_size = 26,
+				horizontal_alignment = "left",
+				font_type = "arial_masked",
+				text_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				selected_unjoinable_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				base_color = {
+					255,
+					128,
+					128,
+					128
+				},
+				joinable_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					132,
+					-4,
+					1
+				}
+			},
+			difficulty = {
+				vertical_alignment = "center",
+				localize = false,
+				font_size = 26,
+				horizontal_alignment = "center",
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				selected_unjoinable_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				base_color = {
+					255,
+					128,
+					128,
+					128
+				},
+				joinable_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					315,
+					-4,
+					2
+				}
+			},
+			difficulty_shadow = {
+				vertical_alignment = "center",
+				localize = false,
+				font_size = 26,
+				horizontal_alignment = "center",
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				selected_unjoinable_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				base_color = {
+					255,
+					128,
+					128,
+					128
+				},
+				joinable_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					317,
+					-6,
+					1
+				}
+			},
+			num_players = {
+				vertical_alignment = "center",
+				localize = false,
+				font_size = 26,
+				horizontal_alignment = "left",
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				selected_unjoinable_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				base_color = {
+					255,
+					128,
+					128,
+					128
+				},
+				joinable_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					1090,
+					-4,
+					2
+				}
+			},
+			num_players_shadow = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				localize = false,
+				font_size = 26,
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				offset = {
+					1092,
+					-6,
+					1
+				}
+			},
+			level_image = {
+				vertical_alignment = "center",
+				masked = true,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				texture_size = {
+					(element_settings.height - 10) * 1.6724137931034482,
+					element_settings.height - 10
+				},
+				offset = {
+					10,
+					0,
+					1
+				}
+			},
+			level_image_frame = {
+				vertical_alignment = "center",
+				masked = true,
+				color = {
+					255,
+					0,
+					0,
+					0
+				},
+				texture_size = {
+					(element_settings.height - 10) * 1.6724137931034482 + 4,
+					element_settings.height - 10 + 4
+				},
+				offset = {
+					8,
+					0,
+					0
+				}
+			},
+			flag = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "center",
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				texture_size = flag_size,
+				offset = {
+					105,
+					0,
+					10
+				}
+			},
+			flag_shadow = {
+				vertical_alignment = "center",
+				color = {
+					255,
+					0,
+					0,
+					0
+				},
+				texture_size = {
+					90,
+					45
+				},
+				offset = {
+					659,
+					-4,
+					9
+				}
+			},
+			no_flag = {
+				vertical_alignment = "center",
+				localize = false,
+				font_size = 26,
+				horizontal_alignment = "center",
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				selected_unjoinable_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				base_color = {
+					255,
+					128,
+					128,
+					128
+				},
+				joinable_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					110,
+					-5,
+					10
+				}
+			},
+			no_flag_shadow = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				localize = false,
+				font_size = 26,
+				font_type = "hell_shark_masked",
+				text_color = {
+					255,
+					0,
+					0,
+					0
+				},
+				offset = {
+					112,
+					-7,
+					9
+				}
+			}
+		},
+		offset = {
+			0,
+			offset_y,
+			0
 		}
 	}
-	local tbl_2 = {
-		frame_id = "rect_masked",
-		background_id = "rect_masked",
-		selected = false,
-		custom_game_settings = "versus_custom_settings",
-		lock_icon_id = "lobby_icon_lock",
-		lobby_hotspot = {},
-		host_name = lobby_name
-	}
-	local var_73_16 = num_players
-	local str = "/"
-	local flag
-
-	flag = (not is_versus_custom_game or not "8") and not not "4"
-	tbl_2.num_players_id = var_73_16 .. str .. flag
-	tbl_2.difficulty_id = difficulty
-	tbl_2.selected_level_name = selected_level_name
-	tbl_2.current_level_name = current_level_name
-	tbl_2.lobby_data = lobby_data
-	tbl_2.level_image_id = level_image
-	tbl_2.flag_id = flag_name
-	tbl_2.flag_index = flag_index
-	tbl_2.no_flag_id = country_code
-	tbl_2.joinable = joinable
-	tbl.content = tbl_2
-	tbl.style = {
-		background = {
-			color = {
-				96,
-				0,
-				0,
-				0
-			},
-			size = {
-				element_settings.width,
-				element_settings.height
-			},
-			offset = {
-				0,
-				0,
-				0
-			}
-		},
-		selected_background = {
-			color = Colors.get_color_table_with_alpha("font_default", 96),
-			size = {
-				element_settings.width,
-				element_settings.height
-			},
-			offset = {
-				0,
-				0,
-				0
-			}
-		},
-		disabled_background = {
-			color = {
-				196,
-				0,
-				0,
-				0
-			},
-			size = {
-				element_settings.width,
-				element_settings.height
-			},
-			offset = {
-				0,
-				0,
-				11
-			}
-		},
-		lock_icon = {
-			vertical_alignment = "center",
-			masked = true,
-			horizontal_alignment = "left",
-			color = Colors.get_color_table_with_alpha("font_default", 96),
-			base_color = Colors.get_color_table_with_alpha("font_default", 96),
-			selected_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			texture_size = {
-				29,
-				42
-			},
-			offset = {
-				580,
-				-0,
-				3
-			}
-		},
-		lock_icon_shadow = {
-			vertical_alignment = "center",
-			masked = true,
-			horizontal_alignment = "left",
-			color = {
-				255,
-				0,
-				0,
-				0
-			},
-			texture_size = {
-				29,
-				42
-			},
-			offset = {
-				582,
-				-0 - 2,
-				2
-			}
-		},
-		custom_game_settings = {
-			vertical_alignment = "center",
-			masked = true,
-			horizontal_alignment = "left",
-			color = Colors.get_color_table_with_alpha("font_default", 96),
-			base_color = Colors.get_color_table_with_alpha("font_default", 96),
-			selected_color = Colors.get_color_table_with_alpha("font_title", 255),
-			texture_size = {
-				45,
-				45
-			},
-			offset = {
-				570,
-				-0,
-				3
-			}
-		},
-		custom_game_settings_shadow = {
-			vertical_alignment = "center",
-			masked = true,
-			horizontal_alignment = "left",
-			color = {
-				255,
-				0,
-				0,
-				0
-			},
-			texture_size = {
-				45,
-				45
-			},
-			offset = {
-				572,
-				-0 - 2,
-				2
-			}
-		},
-		host_name = {
-			vertical_alignment = "top",
-			horizontal_alignment = "left",
-			localize = false,
-			font_size = 22,
-			font_type = "arial_masked",
-			text_color = Colors.get_color_table_with_alpha("font_title", 255),
-			offset = {
-				110 + element_settings.spacing,
-				0,
-				2
-			}
-		},
-		selected_level_name = {
-			vertical_alignment = "bottom",
-			localize = false,
-			font_size = 32,
-			horizontal_alignment = "left",
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			selected_unjoinable_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			base_color = {
-				255,
-				128,
-				128,
-				128
-			},
-			joinable_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				110 + element_settings.spacing,
-				-5,
-				2
-			}
-		},
-		selected_level_name_shadow = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "left",
-			localize = false,
-			font_size = 32,
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			offset = {
-				110 + element_settings.spacing + 2,
-				-7,
-				1
-			}
-		},
-		host_name_shadow = {
-			vertical_alignment = "top",
-			localize = false,
-			font_size = 26,
-			horizontal_alignment = "left",
-			font_type = "arial_masked",
-			text_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			selected_unjoinable_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			base_color = {
-				255,
-				128,
-				128,
-				128
-			},
-			joinable_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				132,
-				-4,
-				1
-			}
-		},
-		difficulty = {
-			vertical_alignment = "center",
-			localize = false,
-			font_size = 26,
-			horizontal_alignment = "center",
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			selected_unjoinable_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			base_color = {
-				255,
-				128,
-				128,
-				128
-			},
-			joinable_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				315,
-				-4,
-				2
-			}
-		},
-		difficulty_shadow = {
-			vertical_alignment = "center",
-			localize = false,
-			font_size = 26,
-			horizontal_alignment = "center",
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			selected_unjoinable_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			base_color = {
-				255,
-				128,
-				128,
-				128
-			},
-			joinable_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				317,
-				-6,
-				1
-			}
-		},
-		num_players = {
-			vertical_alignment = "center",
-			localize = false,
-			font_size = 26,
-			horizontal_alignment = "left",
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			selected_unjoinable_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			base_color = {
-				255,
-				128,
-				128,
-				128
-			},
-			joinable_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				1090,
-				-4,
-				2
-			}
-		},
-		num_players_shadow = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			localize = false,
-			font_size = 26,
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			offset = {
-				1092,
-				-6,
-				1
-			}
-		},
-		level_image = {
-			vertical_alignment = "center",
-			masked = true,
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			texture_size = {
-				(element_settings.height - 10) * 1.6724137931034482,
-				element_settings.height - 10
-			},
-			offset = {
-				10,
-				0,
-				1
-			}
-		},
-		level_image_frame = {
-			vertical_alignment = "center",
-			masked = true,
-			color = {
-				255,
-				0,
-				0,
-				0
-			},
-			texture_size = {
-				(element_settings.height - 10) * 1.6724137931034482 + 4,
-				element_settings.height - 10 + 4
-			},
-			offset = {
-				8,
-				0,
-				0
-			}
-		},
-		flag = {
-			vertical_alignment = "center",
-			masked = true,
-			horizontal_alignment = "center",
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			texture_size = flag_size,
-			offset = {
-				105,
-				0,
-				10
-			}
-		},
-		flag_shadow = {
-			vertical_alignment = "center",
-			color = {
-				255,
-				0,
-				0,
-				0
-			},
-			texture_size = {
-				90,
-				45
-			},
-			offset = {
-				659,
-				-4,
-				9
-			}
-		},
-		no_flag = {
-			vertical_alignment = "center",
-			localize = false,
-			font_size = 26,
-			horizontal_alignment = "center",
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			selected_unjoinable_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			base_color = {
-				255,
-				128,
-				128,
-				128
-			},
-			joinable_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				110,
-				-5,
-				10
-			}
-		},
-		no_flag_shadow = {
-			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			localize = false,
-			font_size = 26,
-			font_type = "hell_shark_masked",
-			text_color = {
-				255,
-				0,
-				0,
-				0
-			},
-			offset = {
-				112,
-				-7,
-				9
-			}
-		}
-	}
-	tbl.offset = {
-		0,
-		offset_y,
-		0
-	}
-
-	return tbl
 end
 
 local function create_empty_lobby_entry_func(offset_y)
@@ -5048,7 +4690,7 @@ local function create_unavailable_lobby_entry_func(offset_y)
 					texture_id = "background_id",
 					content_check_function = function (content, style)
 						-- function 96
-						return (content.selected or not not content.lobby_hotspot.is_hover) and not not Managers.matchmaking:is_game_matchmaking()
+						return not not Managers.matchmaking:is_game_matchmaking()
 					end
 				},
 				{
@@ -5057,21 +4699,7 @@ local function create_unavailable_lobby_entry_func(offset_y)
 					texture_id = "background_id",
 					content_check_function = function (content, style)
 						-- function 97
-						local is_hover
-
-						if not content.selected then
-							is_hover = content.lobby_hotspot.is_hover
-
-							if is_hover then
-								-- Nothing
-							end
-						end
-
-						is_hover = not Managers.matchmaking:is_game_matchmaking()
-
-						::label_97_0::
-
-						return is_hover
+						return content.selected and not not not Managers.matchmaking:is_game_matchmaking() or not content.selected and not not content.lobby_hotspot.is_hover
 					end
 				}
 			}
@@ -5563,11 +5191,7 @@ local function create_level_decoration_widget(icon, tooltip_text)
 					text_id = "tooltip_text",
 					content_check_function = function (content)
 						-- function 106
-						local is_hover = content.is_hover
-
-						is_hover = not not is_hover and not not content.tooltip_text
-
-						return is_hover
+						return not not content.is_hover
 					end
 				}
 			}
@@ -5699,28 +5323,9 @@ local SETTINGS_UI_DATA = DLCSettings.carousel.custom_game_ui_settings
 local function create_custom_setting_func(setting_name, setting_value, setting_template, offset_y)
 	-- function 108
 	local setting_ui_data = SETTINGS_UI_DATA[setting_name]
+	local localized_value = not not setting_ui_data and not not setting_ui_data.localization_options
 
-	if setting_ui_data then
-		-- Nothing
-	end
-
-	::label_108_0::
-
-	local localization_options = setting_ui_data.localization_options
-
-	if localization_options then
-		-- Nothing
-	end
-
-	localization_options = setting_ui_data.localization_options[setting_value]
-
-	local localized_value = localization_options
-
-	::label_108_1::
-
-	if localized_value and not Localize(localized_value) then
-		-- Nothing
-	end
+	setting_value = not localized_value or not not Localize(localized_value) or not not setting_value
 
 	return {
 		scenegraph_id = "custom_settings_window",

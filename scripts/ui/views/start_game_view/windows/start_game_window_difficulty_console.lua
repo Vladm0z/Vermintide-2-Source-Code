@@ -38,13 +38,7 @@ StartGameWindowDifficultyConsole.on_enter = function (self, params, offset)
 	self:create_ui_elements(params, offset)
 	self:_setup_difficulties()
 
-	local var_1_0 = self
-	local _verify_difficulty = self._verify_difficulty
-	local get_difficulty_option = self.parent:get_difficulty_option()
-
-	get_difficulty_option = not not get_difficulty_option or not not Managers.state.difficulty:get_difficulty()
-
-	local difficulty_key = _verify_difficulty(var_1_0, get_difficulty_option)
+	local difficulty_key = self:_verify_difficulty(not not self.parent:get_difficulty_option())
 
 	self:_update_selected_difficulty_option(difficulty_key)
 
@@ -238,11 +232,8 @@ StartGameWindowDifficultyConsole._is_button_hover_enter = function (self, widget
 	-- function 13
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 StartGameWindowDifficultyConsole._handle_input = function (self, dt, t)
@@ -314,17 +305,7 @@ StartGameWindowDifficultyConsole._on_difficulty_selection_confirmed = function (
 	parent:set_difficulty_option(self._selected_difficulty_key)
 
 	local difficulties_select_sounds = UISettings.difficulties_select_sounds
-	local var_15_0 = difficulties_select_sounds[self._difficulty_navigation_id]
-
-	if not var_15_0 then
-		-- Nothing
-	end
-
-	var_15_0 = difficulties_select_sounds[#difficulties_select_sounds]
-
-	local sound_event = var_15_0
-
-	::label_15_0::
+	local sound_event = not not difficulties_select_sounds[self._difficulty_navigation_id]
 
 	self:_play_sound(sound_event)
 
@@ -397,18 +378,7 @@ StartGameWindowDifficultyConsole._set_info_window = function (self, difficulty_k
 	local description = difficulty_settings.description
 	local display_name = difficulty_settings.display_name
 	local display_image = difficulty_settings.display_image
-	local xp_multiplier = difficulty_settings.xp_multiplier
-
-	if not xp_multiplier then
-		-- Nothing
-	end
-
-	xp_multiplier = 1
-
-	local xp_multiplier_number = xp_multiplier
-
-	::label_19_0::
-
+	local xp_multiplier_number = not not difficulty_settings.xp_multiplier
 	local chest_max_powerlevel = difficulty_settings.max_chest_power_level
 	local widgets_by_name = self._widgets_by_name
 
@@ -437,23 +407,7 @@ StartGameWindowDifficultyConsole._update_difficulty_locks = function (self)
 		local widget = widgets_by_name[widget_name]
 
 		widget.content.locked = not approved
-
-		local offset = widget.style.icon_texture.offset
-		local icon_unlocked_z_offset
-
-		if approved then
-			icon_unlocked_z_offset = widget.content.icon_unlocked_z_offset
-
-			if not icon_unlocked_z_offset then
-				-- Nothing
-			end
-		end
-
-		icon_unlocked_z_offset = widget.content.icon_locked_z_offset
-
-		::label_20_0::
-
-		offset[3] = icon_unlocked_z_offset
+		widget.style.icon_texture.offset[3] = approved and not not widget.content.icon_unlocked_z_offset or not approved and not not widget.content.icon_locked_z_offset
 	end
 
 	local buy_button = widgets_by_name.buy_button
@@ -496,40 +450,9 @@ StartGameWindowDifficultyConsole._update_difficulty_locks = function (self)
 					local difficulty_lock_text = Localize("required_power_level")
 
 					widgets_by_name.difficulty_lock_text.content.text = string.format("%s: %s", difficulty_lock_text, tostring(UIUtils.presentable_hero_power_level(required_power_level)))
-
-					local content = widgets_by_name.difficulty_second_lock_text.content
-					local var_20_3
-
-					if extra_requirement_failed then
-						var_20_3 = Localize(extra_requirement_failed)
-
-						if not var_20_3 then
-							-- Nothing
-						end
-					end
-
-					var_20_3 = ""
-
-					::label_20_1::
-
-					content.text = var_20_3
+					widgets_by_name.difficulty_second_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
 				else
-					local content_2 = widgets_by_name.difficulty_lock_text.content
-					local var_20_5
-
-					if extra_requirement_failed then
-						var_20_5 = Localize(extra_requirement_failed)
-
-						if not var_20_5 then
-							-- Nothing
-						end
-					end
-
-					var_20_5 = ""
-
-					::label_20_2::
-
-					content_2.text = var_20_5
+					widgets_by_name.difficulty_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
 				end
 			end
 

@@ -133,7 +133,7 @@ StartGameStateSettingsOverview._calculate_current_weave = function (self)
 		local template = weave_templates[i]
 		local weave_completed = LevelUnlockUtils.weave_unlocked(statistics_db, stats_id, template.name, ignore_dlc_check)
 
-		if (weave_completed or highest_consecutive_unlocked_weave == i) and not LevelUnlockUtils.weave_disabled(template.name) then
+		if weave_completed and not LevelUnlockUtils.weave_disabled(template.name) or not weave_completed and highest_consecutive_unlocked_weave == i and not LevelUnlockUtils.weave_disabled(template.name) then
 			if weave_completed and not highest_consecutive_unlocked_weave_found then
 				if weave_templates[i + 1] then
 					highest_consecutive_unlocked_weave = i + 1
@@ -144,22 +144,7 @@ StartGameStateSettingsOverview._calculate_current_weave = function (self)
 		end
 	end
 
-	local var_2_0
-
-	if highest_consecutive_unlocked_weave then
-		var_2_0 = weave_templates[highest_consecutive_unlocked_weave]
-
-		if not var_2_0 then
-			-- Nothing
-		end
-	end
-
-	var_2_0 = weave_templates[1]
-
-	local weave_template = var_2_0
-
-	::label_2_0::
-
+	local weave_template = highest_consecutive_unlocked_weave and not not weave_templates[highest_consecutive_unlocked_weave] or not highest_consecutive_unlocked_weave and not not weave_templates[1]
 	local weave_name = weave_template.name
 
 	self._next_weave = weave_name
@@ -173,33 +158,7 @@ end
 StartGameStateSettingsOverview._setup_menu_layout = function (self, mechanism_name)
 	-- function 3
 	local layout_settings
-	local IS_CONSOLE = IS_CONSOLE
-
-	if not IS_CONSOLE then
-		-- Nothing
-	end
-
-	IS_CONSOLE = Managers.input:is_device_active("gamepad")
-
-	if not IS_CONSOLE then
-		-- Nothing
-	end
-
-	if UISettings.use_pc_menu_layout then
-		IS_CONSOLE = MechanismSettings[mechanism_name].use_gamepad_layout
-
-		if false then
-			IS_CONSOLE = false
-		end
-
-		goto label_3_0
-	end
-
-	IS_CONSOLE = true
-
-	local use_gamepad_layout = IS_CONSOLE
-
-	::label_3_0::
+	local use_gamepad_layout = not not IS_CONSOLE
 
 	if use_gamepad_layout then
 		layout_settings = local_require("scripts/ui/views/start_game_view/states/start_game_window_layout_console")
@@ -441,23 +400,7 @@ StartGameStateSettingsOverview._initial_windows_setups = function (self, params)
 
 	local start_layout_name
 
-	if Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) then
-		if Managers.mechanism:current_mechanism_name() == "deus" then
-			start_layout_name = "deus_twitch"
-		else
-			start_layout_name = "twitch"
-		end
-	else
-		if not params.start_state then
-			-- Nothing
-		end
-
-		::label_18_0::
-
-		start_layout_name = self:_start_layout_name()
-	end
-
-	::label_18_1::
+	start_layout_name = Managers.twitch and (Managers.twitch:is_connecting() and (Managers.mechanism:current_mechanism_name() ~= "deus" or not "deus_twitch") or not Managers.twitch:is_connecting() and (Managers.twitch:is_connected() and (Managers.mechanism:current_mechanism_name() ~= "deus" or not "deus_twitch") or not Managers.twitch:is_connected() and (not not params.start_state or not not self:_start_layout_name()))) or not Managers.twitch and (not not params.start_state or not not self:_start_layout_name())
 
 	self:set_layout_by_name(start_layout_name)
 	self:set_top_level_layout_name(start_layout_name)
@@ -465,21 +408,7 @@ end
 
 StartGameStateSettingsOverview.window_input_service = function (self)
 	-- function 19
-	local FAKE_INPUT_SERVICE
-
-	if self._show_difficulty_option then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	::label_19_0::
-
-	return FAKE_INPUT_SERVICE
+	return self._show_difficulty_option and not not FAKE_INPUT_SERVICE or not self._show_difficulty_option and not not self:input_service()
 end
 
 StartGameStateSettingsOverview._close_window_at_index = function (self, window_index)
@@ -519,31 +448,9 @@ StartGameStateSettingsOverview._change_window = function (self, window_index, wi
 	if not ignore_alignment then
 		local window_default_settings = UISettings.game_start_windows
 		local window_size = window_default_settings.size
-		local spacing = window_default_settings.spacing
-
-		if not spacing then
-			-- Nothing
-		end
-
-		spacing = 10
-
-		local window_spacing = spacing
-
-		::label_21_0::
-
+		local window_spacing = not not window_default_settings.spacing
 		local window_width = window_size[1]
-		local _max_alignment_windows = self._max_alignment_windows
-
-		if not _max_alignment_windows then
-			-- Nothing
-		end
-
-		_max_alignment_windows = self._max_active_windows
-
-		local max_active_windows = _max_alignment_windows
-
-		::label_21_1::
-
+		local max_active_windows = not not self._max_alignment_windows
 		local total_spacing = window_spacing * (max_active_windows - 1)
 		local total_windows_width = max_active_windows * window_width
 		local start_width_offset = -(total_windows_width / 2 + window_width / 2) - (total_spacing / 2 + window_spacing)
@@ -701,21 +608,9 @@ StartGameStateSettingsOverview.set_layout = function (self, index)
 	end
 
 	local save_data_table_name = layout_setting.save_data_table
-	local get_save_data_table_map = self:get_save_data_table_map(self._mechanism_name)
+	local save_data_table_map = not not self:get_save_data_table_map(self._mechanism_name)
 
-	if not get_save_data_table_map then
-		-- Nothing
-	end
-
-	get_save_data_table_map = self:get_quickplay_settings("adventure")
-
-	local save_data_table_map = get_save_data_table_map
-
-	::label_37_0::
-
-	if save_data_table_map and not save_data_table_map[save_data_table_name] then
-		-- Nothing
-	end
+	save_data_table_name = not save_data_table_map or not not save_data_table_map[save_data_table_name] or not not save_data_table_name
 
 	self:_set_new_save_data_table(save_data_table_name)
 
@@ -1211,9 +1106,7 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		local num_members = network_lobby:members():get_member_count()
 		local is_private = self:is_private_option_enabled()
 
-		if IS_CONSOLE and not is_offline then
-			-- Nothing
-		end
+		is_private = not IS_CONSOLE or not not is_offline or not not is_private
 
 		local is_alone = num_members == 1
 		local always_host = not not is_private or not not self:is_always_host_option_enabled()
@@ -1351,7 +1244,7 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		local journey_cycle = backend_deus:get_journey_cycle()
 		local journey_name = self:get_selected_level_id()
 
-		journey_name = (not DeusJourneySettings[journey_name] or not journey_name) and not not AvailableJourneyOrder[1]
+		journey_name = DeusJourneySettings[journey_name] and (not not journey_name or not not AvailableJourneyOrder[1]) or not DeusJourneySettings[journey_name] and not not AvailableJourneyOrder[1]
 
 		local dominant_god = journey_cycle.journey_data[journey_name].dominant_god
 		local params = {
@@ -1373,7 +1266,7 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		local journey_cycle = backend_deus:get_journey_cycle()
 		local journey_name = self:get_selected_level_id()
 
-		journey_name = (not DeusJourneySettings[journey_name] or not journey_name) and not not AvailableJourneyOrder[1]
+		journey_name = DeusJourneySettings[journey_name] and (not not journey_name or not not AvailableJourneyOrder[1]) or not DeusJourneySettings[journey_name] and not not AvailableJourneyOrder[1]
 
 		local dominant_god = journey_cycle.journey_data[journey_name].dominant_god
 		local params = {
@@ -1406,18 +1299,7 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		self.parent:start_game(params)
 	elseif vote_type == "deus_weekly" then
 		local live_event_interface = Managers.backend:get_interface("live_events")
-		local get_weekly_chaos_wastes_game_mode_data = live_event_interface:get_weekly_chaos_wastes_game_mode_data()
-
-		if not get_weekly_chaos_wastes_game_mode_data then
-			-- Nothing
-		end
-
-		get_weekly_chaos_wastes_game_mode_data = EMPTY_TABLE
-
-		local game_mode_data = get_weekly_chaos_wastes_game_mode_data
-
-		::label_69_0::
-
+		local game_mode_data = not not live_event_interface:get_weekly_chaos_wastes_game_mode_data()
 		local event_data
 
 		if game_mode_data.mutators then
@@ -1525,17 +1407,7 @@ end
 StartGameStateSettingsOverview._is_button_pressed = function (self, widget)
 	-- function 75
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_75_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -1610,17 +1482,7 @@ StartGameStateSettingsOverview.get_selected_level_id = function (self)
 	-- function 85
 	local dlc_approved = true
 	local extra_requirements_approved = true
-	local _specific_level_id = self._specific_level_id
-
-	if _specific_level_id then
-		-- Nothing
-	end
-
-	_specific_level_id = LevelSettings[self._specific_level_id]
-
-	local level_settings = _specific_level_id
-
-	::label_85_0::
+	local level_settings = not not self._specific_level_id
 
 	if level_settings and level_settings.dlc_name then
 		dlc_approved = Managers.unlock:is_dlc_unlocked(level_settings.dlc_name)
@@ -1636,21 +1498,7 @@ StartGameStateSettingsOverview.get_selected_level_id = function (self)
 		end
 	end
 
-	local _specific_level_id_2
-
-	if dlc_approved and extra_requirements_approved then
-		_specific_level_id_2 = self._specific_level_id
-
-		if not _specific_level_id_2 then
-			-- Nothing
-		end
-	end
-
-	_specific_level_id_2 = nil
-
-	::label_85_1::
-
-	return _specific_level_id_2
+	return not not self._specific_level_id
 end
 
 StartGameStateSettingsOverview.set_selected_level_id = function (self, level_id)
@@ -1844,17 +1692,7 @@ StartGameStateSettingsOverview.get_difficulty_option = function (self, ignore_ap
 	-- function 99
 	local default_mechanism_difficulty = Managers.mechanism:mechanism_setting("default_difficulty")
 	local selected_difficulty_key = self._selected_difficulty_key
-	local find = table.find(Difficulties, selected_difficulty_key)
-
-	if not find then
-		-- Nothing
-	end
-
-	find = table.index_of(Difficulties, default_mechanism_difficulty)
-
-	local difficulty_index = find
-
-	::label_99_0::
+	local difficulty_index = not not table.find(Difficulties, selected_difficulty_key)
 
 	for i = difficulty_index, 1, -1 do
 		selected_difficulty_key = Difficulties[i]
@@ -1871,20 +1709,9 @@ end
 
 StartGameStateSettingsOverview.set_dedicated_or_player_hosted_search = function (self, use_dedicated_win_servers, use_dedicated_aws_servers, use_player_hosted)
 	-- function 100
-	local flag
-
-	flag = (use_dedicated_win_servers ~= nil or not true) and not not use_dedicated_win_servers
-	self._use_dedicated_win_servers = flag
-
-	local flag_2
-
-	flag_2 = (use_dedicated_aws_servers ~= nil or not true) and not not use_dedicated_aws_servers
-	self._use_dedicated_aws_servers = flag_2
-
-	local flag_3
-
-	flag_3 = (use_player_hosted ~= nil or not true) and not not use_player_hosted
-	self._use_player_hosted = flag_3
+	self._use_dedicated_win_servers = use_dedicated_win_servers ~= nil and not not use_dedicated_win_servers or not (use_dedicated_win_servers ~= nil) and not not true
+	self._use_dedicated_aws_servers = use_dedicated_aws_servers ~= nil and not not use_dedicated_aws_servers or not (use_dedicated_aws_servers ~= nil) and not not true
+	self._use_player_hosted = use_player_hosted ~= nil and not not use_player_hosted or not (use_player_hosted ~= nil) and not not true
 
 	if self._layout_save_settings then
 		self._layout_save_settings.use_dedicated_win_servers = use_dedicated_win_servers
@@ -1919,23 +1746,8 @@ StartGameStateSettingsOverview.set_fullscreen_effect_enable_state = function (se
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_105_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_105_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_105_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local flag_2
-
-		flag_2 = (not enabled or not 0.75) and not not 0
-
-		set_scalar_2(var_105_5, str_2, flag_2)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -1954,18 +1766,7 @@ end
 
 StartGameStateSettingsOverview.get_completed_level_difficulty_index = function (self, statistics_db, stats_id, level_id)
 	-- function 108
-	local get_custom_game_settings = self:get_custom_game_settings(self._mechanism_name)
-
-	if not get_custom_game_settings then
-		-- Nothing
-	end
-
-	get_custom_game_settings = self:get_custom_game_settings("adventure")
-
-	local settings = get_custom_game_settings
-
-	::label_108_0::
-
+	local settings = not not self:get_custom_game_settings(self._mechanism_name)
 	local function_name = settings.difficulty_index_getter_name
 
 	return LevelUnlockUtils[function_name](statistics_db, stats_id, level_id)
@@ -1992,19 +1793,7 @@ StartGameStateSettingsOverview.setup_backend_image_material = function (self, gu
 		return material_name
 	end
 
-	local str
-
-	if masked then
-		str = "template_menu_diffuse_masked"
-
-		goto label_110_0
-	end
-
-	str = "template_menu_diffuse"
-
-	local template_material_name = str
-
-	::label_110_0::
+	local template_material_name = masked and not not "template_menu_diffuse_masked" or not masked and not not "template_menu_diffuse"
 
 	self:_create_material_instance(gui, material_name, template_material_name, reference_name)
 

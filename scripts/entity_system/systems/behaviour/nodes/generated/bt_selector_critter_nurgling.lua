@@ -75,17 +75,7 @@ BTSelector_critter_nurgling.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_flee_sequence = children[3]
-		local var_4_0 = unit_alive(blackboard.target_unit)
-
-		if not var_4_0 then
-			-- Nothing
-		end
-
-		var_4_0 = blackboard.is_fleeing
-
-		local condition_result = var_4_0
-
-		::label_4_0::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_flee_sequence, "aborted")

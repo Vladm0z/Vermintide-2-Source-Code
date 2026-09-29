@@ -19,40 +19,10 @@ ChaosTrollStateVomiting.init = function (self, character_state_init_context)
 		-- function 2
 		if ALIVE[self._unit] then
 			local puke_position, puke_distance_sq, puke_direction = self:_get_vomit_position(self._unit)
-			local var_2_0 = self
-			local var_2_1
 
-			if puke_position then
-				var_2_1 = Vector3Box(puke_position)
-
-				if not var_2_1 then
-					-- Nothing
-				end
-			end
-
-			var_2_1 = nil
-
-			::label_2_0::
-
-			var_2_0._puke_position_on_nav = var_2_1
-
-			local var_2_2 = self
-			local var_2_3
-
-			if puke_direction then
-				var_2_3 = Vector3Box(puke_direction)
-
-				if not var_2_3 then
-					-- Nothing
-				end
-			end
-
-			var_2_3 = nil
-
-			::label_2_1::
-
-			var_2_2._puke_direction = var_2_3
-			self._puke_distance_sq = (not puke_distance_sq or not puke_distance_sq) and not not nil
+			self._puke_position_on_nav = puke_position and not not Vector3Box(puke_position) or not puke_position and not not nil
+			self._puke_direction = puke_direction and not not Vector3Box(puke_direction) or not puke_direction and not not nil
+			self._puke_distance_sq = puke_distance_sq and (not not puke_distance_sq or not not nil) or not puke_distance_sq and not not nil
 		end
 	end
 end
@@ -323,21 +293,7 @@ ChaosTrollStateVomiting._calculate_trajectory = function (self)
 		sweep_positions[#sweep_positions + 1] = Vector3Box(new_position)
 
 		local result = PhysicsWorld.linear_sphere_sweep(physics_world, current_position, new_position, radius, max_hits, "collision_filter", "filter_player_ray_projectile_static_only")
-		local count
-
-		if result then
-			count = #result
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local num_results = count
-
-		::label_8_0::
+		local num_results = result and not not #result or not result and not not 0
 
 		if num_results > 0 then
 			local done = false
@@ -397,21 +353,7 @@ ChaosTrollStateVomiting._sweep_trajectory_for_heroes = function (self)
 		local from_pos = sweep_positions[i]:unbox()
 		local to_pos = sweep_positions[i + 1]:unbox()
 		local result = PhysicsWorld.linear_sphere_sweep(physics_world, from_pos, to_pos, radius, max_hits, "collision_filter", "filter_player")
-		local count
-
-		if result then
-			count = #result
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local num_results = count
-
-		::label_9_0::
+		local num_results = result and not not #result or not result and not not 0
 
 		if num_results > 0 then
 			local hero_hit_index = 1
@@ -518,19 +460,7 @@ ChaosTrollStateVomiting.spawn_vomit = function (self, unit)
 	if puke_pos then
 		local dir = self._puke_direction:unbox()
 		local puke_rot = Quaternion.look(dir)
-		local num
-
-		if self._near_vomit then
-			num = 1
-
-			goto label_13_0
-		end
-
-		num = 2
-
-		local state_int = num
-
-		::label_13_0::
+		local state_int = self._near_vomit and not not 1 or not self._near_vomit and not not 2
 
 		Managers.state.unit_spawner:request_spawn_template_unit("troll_puke", puke_pos, puke_rot, unit, state_int)
 	end
@@ -577,7 +507,7 @@ ChaosTrollStateVomiting._update_movement = function (self, unit, t, dt, progress
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = (not is_moving or not 1) and not not 0
+		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
 	end
 
 	local vomit_speed = self._breed.vomit_movement_speed

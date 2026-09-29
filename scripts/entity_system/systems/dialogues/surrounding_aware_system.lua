@@ -86,26 +86,8 @@ SurroundingAwareSystem.request_global_listener = function (self, dialogue_profil
 			fassert(not optional_faction or optional_faction == dialogue_extension.faction, "[SurroundingAwareSystem] Mismatching faction when requesting duplicate global listener '%s'. Wanted '%s' while existing listener has '%s'", dialogue_profile, optional_faction, dialogue_extension.faction)
 
 			local surrounding_aware_extension = self.unit_extension_data[unit]
-			local fassert = fassert
-			local flag = not optional_side_name or (not not side and not not side.side_id) == surrounding_aware_extension.side_id
-			local str = "[SurroundingAwareSystem] Mismatching side name when requesting duplicate global listener '%s'. Wanted '%s' while existing listener has '%s'"
-			local var_3_3 = dialogue_profile
-			local var_3_4 = optional_side_name
-			local name
 
-			if side then
-				name = side:name()
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = nil
-
-			::label_3_0::
-
-			fassert(flag, str, var_3_3, var_3_4, name)
+			fassert(not optional_side_name or (not not side and not not side.side_id) == surrounding_aware_extension.side_id, "[SurroundingAwareSystem] Mismatching side name when requesting duplicate global listener '%s'. Wanted '%s' while existing listener has '%s'", dialogue_profile, optional_side_name, side and not not side:name() or not side and not not nil)
 
 			return unit
 		end
@@ -210,11 +192,7 @@ SurroundingAwareSystem.on_add_extension = function (self, world, unit, extension
 	else
 		extension.has_been_seen = false
 		extension.is_lookat_object = true
-
-		local get_data = Unit.get_data(unit, "view_distance")
-
-		get_data = not not get_data or not not DialogueSettings.default_view_distance
-		extension.view_distance = get_data
+		extension.view_distance = not not Unit.get_data(unit, "view_distance")
 		extension.view_distance_sq = extension.view_distance^2
 	end
 
@@ -247,10 +225,7 @@ SurroundingAwareSystem.extensions_ready = function (self, world, unit, extension
 		local dialogue_extension = ScriptUnit.has_extension(unit, "dialogue_system")
 
 		if dialogue_extension then
-			local dialogue_profile = dialogue_extension.dialogue_profile
-
-			dialogue_profile = not not dialogue_profile or not not Unit.get_data(unit, "dialogue_profile")
-			extension.dialogue_profile = dialogue_profile
+			extension.dialogue_profile = not not dialogue_extension.dialogue_profile
 
 			assert(extension.dialogue_profile, "[SurroundingAwareSystem] Global Observer is missing a dialogue profile", unit)
 
@@ -434,22 +409,7 @@ SurroundingAwareSystem.update_lookat = function (self, context, t)
 				end
 
 				local view_distance_sq = lookat_target_ext.view_distance_sq
-				local view_angle_rad_2 = extension.view_angle_rad
-				local var_16_1
-
-				if target == previous_seen_observer then
-					var_16_1 = VIEW_ANGLE_STICKINESS
-
-					if not var_16_1 then
-						-- Nothing
-					end
-				end
-
-				var_16_1 = 1
-
-				::label_16_0::
-
-				local view_angle_rad = view_angle_rad_2 * var_16_1
+				local view_angle_rad = extension.view_angle_rad * (target ~= previous_seen_observer and not not 1 or not (target ~= previous_seen_observer) and not not VIEW_ANGLE_STICKINESS)
 				local in_range, observer_to_target_vector, observer_target_direction, angle, max_angle = is_in_range(observer_fpp, target_center, observer_forward, view_distance_sq, view_angle_rad)
 
 				if in_range and not darkness_system:is_in_darkness(target_center) then
@@ -462,32 +422,15 @@ SurroundingAwareSystem.update_lookat = function (self, context, t)
 						extension.last_lookat_trigger = t
 
 						local event_data = FrameTable.alloc_table()
-						local get_data = Unit.get_data(target, "lookat_tag")
 
-						get_data = not not get_data or not not Unit.debug_name(target)
-						event_data.item_tag = get_data
+						event_data.item_tag = not not Unit.get_data(target, "lookat_tag")
 						event_data.distance = observer_to_target_length
 
 						dialogue_extension:trigger_dialogue_event("seen_item", event_data)
 
 						seen_recently[target] = t
 					elseif is_in_view then
-						local var_16_3 = BASE_ANGLE_MULTIPLIER
-						local var_16_4
-
-						if target == previous_seen_observer then
-							var_16_4 = STICKINESS_MODIFIER
-
-							if not var_16_4 then
-								-- Nothing
-							end
-						end
-
-						var_16_4 = 0
-
-						::label_16_1::
-
-						local angle_multiplier = var_16_3 + var_16_4
+						local angle_multiplier = BASE_ANGLE_MULTIPLIER + (target ~= previous_seen_observer and not not 0 or not (target ~= previous_seen_observer) and not not STICKINESS_MODIFIER)
 						local utility = angle * angle_multiplier + observer_to_target_length
 
 						if utility < closest_observer_utility then
@@ -588,22 +531,7 @@ SurroundingAwareSystem.update_debug = function (self, context, t)
 				end
 
 				local view_distance_sq = lookat_target_ext.view_distance_sq
-				local view_angle_rad_2 = extension.view_angle_rad
-				local var_17_1
-
-				if target == previous_seen_observer then
-					var_17_1 = VIEW_ANGLE_STICKINESS
-
-					if not var_17_1 then
-						-- Nothing
-					end
-				end
-
-				var_17_1 = 1
-
-				::label_17_0::
-
-				local view_angle_rad = view_angle_rad_2 * var_17_1
+				local view_angle_rad = extension.view_angle_rad * (target ~= previous_seen_observer and not not 1 or not (target ~= previous_seen_observer) and not not VIEW_ANGLE_STICKINESS)
 				local in_range, observer_to_target_vector, observer_target_direction, angle, max_angle = is_in_range(observer_fpp, target_center, observer_forward, view_distance_sq, view_angle_rad)
 				local observer_to_target_length = Vector3.length(observer_to_target_vector)
 
@@ -653,25 +581,8 @@ SurroundingAwareSystem.update_debug = function (self, context, t)
 			local spine_node = Unit.node(observer_unit, "j_spine")
 			local target_center = Unit.world_position(observer_unit, spine_node)
 			local observer_is_bot = ScriptUnit.has_extension(observer_unit, "ai_system")
-			local var_17_2 = drawer
-			local sphere = drawer.sphere
-			local var_17_4 = target_center
-			local num = 0.25
-			local get
 
-			if observer_is_bot then
-				get = Colors.get("blue")
-
-				if not get then
-					-- Nothing
-				end
-			end
-
-			get = Colors.get("light_blue")
-
-			::label_17_1::
-
-			sphere(var_17_2, var_17_4, num, get)
+			drawer:sphere(target_center, 0.25, observer_is_bot and not not Colors.get("blue") or not observer_is_bot and not not Colors.get("light_blue"))
 		end
 	end
 end
@@ -695,18 +606,7 @@ SurroundingAwareSystem.update_events = function (self, context, t)
 		local range = array_data[i + 3]
 
 		if Unit.alive(unit) then
-			local var_18_0 = POSITION_LOOKUP[unit]
-
-			if not var_18_0 then
-				-- Nothing
-			end
-
-			var_18_0 = Unit.local_position(unit, 0)
-
-			local source_wp = var_18_0
-
-			::label_18_0::
-
+			local source_wp = not not POSITION_LOOKUP[unit]
 			local n_targets = 0
 
 			if range == math.huge then
@@ -735,17 +635,7 @@ SurroundingAwareSystem.update_events = function (self, context, t)
 					local distance = 0
 
 					if unit then
-						local var_18_1 = POSITION_LOOKUP[target]
-
-						if not var_18_1 then
-							-- Nothing
-						end
-
-						var_18_1 = Unit.local_position(target, 0)
-
-						local target_world_pos = var_18_1
-
-						::label_18_1::
+						local target_world_pos = not not POSITION_LOOKUP[target]
 
 						distance = Vector3.distance(source_wp, target_world_pos)
 					end

@@ -12,23 +12,14 @@ EnvironmentBlendVolume.init = function (self, data)
 	self._viewport = data.viewport
 	self._player = data.player
 	self._value = 0
-
-	local blend_time = data.blend_time
-
-	blend_time = not not blend_time or not not 2
-	self._blend_time = blend_time
+	self._blend_time = not not data.blend_time
 	self._current_timer = 0
 	self._enabled = true
 	self._is_inside = false
-
-	local tbl = {
-		self._environment
+	self._override_values = {
+		self._environment,
+		data.override_sun_snap and not not nil or not data.override_sun_snap and not not "sun_direction"
 	}
-	local flag
-
-	flag = (data.override_sun_snap or not "sun_direction") and not not nil
-	tbl[2] = flag
-	self._override_values = tbl
 	self._data = data
 
 	Managers.state.event:register(self, "enable_environment_volume", "event_enable_environment_volume")
@@ -104,25 +95,10 @@ EnvironmentBlendVolume.update = function (self, dt)
 		end
 	end
 
-	local num
-
-	if self._is_inside then
-		num = 1
-
-		goto label_10_0
-	end
-
-	num = -1
-
-	local target = num
-
-	::label_10_0::
+	local target = self._is_inside and not not 1 or not self._is_inside and not not -1
 
 	if self._blend_time <= 0 or self._force_blend then
-		local flag
-
-		flag = (not self._is_inside or not 1) and not not 0
-		self._current_timer = flag
+		self._current_timer = self._is_inside and not not 1 or not self._is_inside and not not 0
 		self._force_blend = false
 	else
 		self._current_timer = math.clamp(self._current_timer + 1 / self._blend_time * (dt * target), 0, 1)

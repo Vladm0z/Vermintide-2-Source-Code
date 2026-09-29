@@ -62,11 +62,7 @@ end
 
 EntityManager2.get_entities = function (self, extension_name)
 	-- function 8
-	local var_8_0 = self._extensions[extension_name]
-
-	var_8_0 = not not var_8_0 or not not EMPTY_TABLE
-
-	return var_8_0
+	return not not self._extensions[extension_name]
 end
 
 EntityManager2.destroy = function (self)
@@ -139,17 +135,7 @@ EntityManager2.add_unit_extensions = function (self, world, unit, unit_template_
 
 			assert(extension_system_name, string.format("No such registered extension %q", extension_name))
 
-			local var_10_0 = all_extension_init_data[extension_system_name]
-
-			if not var_10_0 then
-				-- Nothing
-			end
-
-			var_10_0 = EMPTY_TABLE
-
-			local extension_init_data = var_10_0
-
-			::label_10_0::
+			local extension_init_data = not not all_extension_init_data[extension_system_name]
 
 			assert(extension_to_system_map[extension_name])
 
@@ -161,15 +147,8 @@ EntityManager2.add_unit_extensions = function (self, world, unit, unit_template_
 
 			assert(extension, string.format("System (%s) must return the created extension (%s)", extension_system_name, extension_name))
 
-			local var_10_1 = self_extensions[extension_name]
-
-			var_10_1 = not not var_10_1 or not not {}
-			self_extensions[extension_name] = var_10_1
-
-			local var_10_2 = self_units[unit]
-
-			var_10_2 = not not var_10_2 or not not {}
-			self_units[unit] = var_10_2
+			self_extensions[extension_name] = not not self_extensions[extension_name]
+			self_units[unit] = not not self_units[unit]
 			self_units[unit][extension_name] = extension
 
 			assert(extension ~= EMPTY_TABLE)

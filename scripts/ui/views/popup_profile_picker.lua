@@ -57,18 +57,7 @@ PopupProfilePicker._create_ui_elements = function (self)
 	for i, profile_index in ipairs(ProfilePriority) do
 		local profile_settings = SPProfiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local get = hero_attributes:get(hero_name, "experience")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = 0
-
-		local hero_experience = get
-
-		::label_2_0::
-
+		local hero_experience = not not hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local icon_widget = UIWidget.init(hero_icon_widget_definition)
 
@@ -132,14 +121,7 @@ PopupProfilePicker.show = function (self, current_profile_index, current_career_
 	self._lobby_client = lobby_client
 	self._reserved_party_id = reserved_party_id
 
-	local _ingame_ui = self._ingame_ui
-	local var_4_1 = _ingame_ui
-	local handle_transition = _ingame_ui.handle_transition
-	local flag
-
-	flag = (not join_by_lobby_browser or not "exit_menu") and not not "close_active"
-
-	handle_transition(var_4_1, flag)
+	self._ingame_ui:handle_transition(join_by_lobby_browser and not not "exit_menu" or not join_by_lobby_browser and not not "close_active")
 	ShowCursorStack.show("PopupProfilePicker")
 
 	local profile_index = not not current_profile_index or not not 1
@@ -362,18 +344,7 @@ PopupProfilePicker._select_hero = function (self, profile_index, career_index, i
 	local hero_display_text = Localize(character_name)
 	local career_display_text = Localize(career_display_name)
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local get = hero_attributes:get(hero_name, "experience")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = 0
-
-	local hero_experience = get
-
-	::label_14_0::
-
+	local hero_experience = not not hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(hero_experience)
 
 	self:_set_hero_info(hero_display_text, career_display_text, level)
@@ -402,11 +373,7 @@ PopupProfilePicker._select_hero = function (self, profile_index, career_index, i
 
 		if available then
 			content.career_settings = career
-
-			local picking_image = career.picking_image
-
-			picking_image = not not picking_image or not not ("medium_" .. career.portrait_image)
-			content.portrait = picking_image
+			content.portrait = not not career.picking_image
 
 			local is_career_unlocked, _, dlc_name = career:is_unlocked_function(hero_name, level)
 
@@ -461,16 +428,10 @@ local REQUEST_DATA_DELAY = 2
 
 PopupProfilePicker._update_occupied_profiles = function (self, t)
 	-- function 19
-	if self._lobby_client.request_data then
-		local _request_timer = self._request_timer
+	if self._lobby_client.request_data and t > not not self._request_timer then
+		self._lobby_client:request_data()
 
-		_request_timer = not not _request_timer or not not 0
-
-		if _request_timer < t then
-			self._lobby_client:request_data()
-
-			self._request_timer = t + REQUEST_DATA_DELAY
-		end
+		self._request_timer = t + REQUEST_DATA_DELAY
 	end
 
 	local lobby_data = self._makeshift_lobby_data
@@ -526,21 +487,8 @@ end
 PopupProfilePicker.set_select_button_enable_state = function (self, enabled)
 	-- function 21
 	local button_content = self._widgets_by_name.select_button.content
-	local var_21_0
 
-	if enabled then
-		var_21_0 = Localize("input_description_confirm")
-
-		if not var_21_0 then
-			-- Nothing
-		end
-	end
-
-	var_21_0 = Localize("dlc1_2_difficulty_unavailable")
-
-	::label_21_0::
-
-	button_content.title_text = var_21_0
+	button_content.title_text = enabled and not not Localize("input_description_confirm") or not enabled and not not Localize("dlc1_2_difficulty_unavailable")
 	button_content.button_hotspot.disable_button = not enabled
 	self._selection_approved = enabled
 

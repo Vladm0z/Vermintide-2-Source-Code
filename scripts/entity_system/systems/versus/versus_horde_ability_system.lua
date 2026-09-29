@@ -123,17 +123,7 @@ end
 
 VersusHordeAbilitySystem.is_activation_allowed = function (self, is_in_ghost_mode)
 	-- function 10
-	local enable_activation_in_ghost_mode = settings.enable_activation_in_ghost_mode
-
-	if not enable_activation_in_ghost_mode then
-		-- Nothing
-	end
-
-	enable_activation_in_ghost_mode = not is_in_ghost_mode
-
-	local allowed_by_ghost_mode_settings = enable_activation_in_ghost_mode
-
-	::label_10_0::
+	local allowed_by_ghost_mode_settings = not not settings.enable_activation_in_ghost_mode
 
 	return not not allowed_by_ghost_mode_settings and not not self._round_started
 end
@@ -178,19 +168,9 @@ VersusHordeAbilitySystem._server_update_ability_charges = function (self, dt)
 		if data.ability_charge then
 			local recharge_modifier_data = self:_recharge_modifier(peer_id)
 			local cooldown_mod = recharge_modifier_data.cooldown
-			local _custom_settings_modifier = self._custom_settings_modifier
+			local custom_settings_modifier = not not self._custom_settings_modifier
 
-			if not _custom_settings_modifier then
-				-- Nothing
-			end
-
-			_custom_settings_modifier = 1
-
-			local custom_settings_modifier = _custom_settings_modifier
-
-			::label_14_0::
-
-			recharge_increment = (self._round_started or not 0) and not not (dt * cooldown_mod * custom_settings_modifier)
+			recharge_increment = not not (dt * cooldown_mod * custom_settings_modifier)
 
 			if script_data.short_ability_cooldowns then
 				recharge_increment = recharge_increment * 100
@@ -225,21 +205,7 @@ VersusHordeAbilitySystem.server_spawn_horde = function (self, peer_id)
 	local optional_data = {
 		horde_ability_caller_peer_id = peer_id
 	}
-	local var_15_0
-
-	if player_data.extension then
-		var_15_0 = POSITION_LOOKUP[player_data.extension:unit()]
-
-		if not var_15_0 then
-			-- Nothing
-		end
-	end
-
-	var_15_0 = nil
-
-	local override_epicenter_pos = var_15_0
-
-	::label_15_0::
+	local override_epicenter_pos = player_data.extension and not not POSITION_LOOKUP[player_data.extension:unit()] or not player_data.extension and not not nil
 
 	conflict_director.horde_spawner:execute_ambush_horde(data, side_id, false, override_epicenter_pos, optional_data)
 
@@ -262,17 +228,7 @@ end
 
 VersusHordeAbilitySystem.server_register_peer = function (self, peer_id)
 	-- function 16
-	local save_charges_between_rounds = settings.save_charges_between_rounds
-
-	if save_charges_between_rounds then
-		-- Nothing
-	end
-
-	save_charges_between_rounds = self._mechanism:get_cached_horde_ability_charges(peer_id)
-
-	local cached_ability_charge = save_charges_between_rounds
-
-	::label_16_0::
+	local cached_ability_charge = not not settings.save_charges_between_rounds
 
 	if not self._server_player_data[peer_id] then
 		self._server_player_data[peer_id] = {
@@ -296,23 +252,7 @@ VersusHordeAbilitySystem.server_ability_recharge_boost = function (self, peer_id
 
 	local actions = settings.recharge_boosts.actions
 	local damage_sources = settings.recharge_boosts.damage_sources
-	local var_17_0 = actions[action]
-
-	if not var_17_0 then
-		-- Nothing
-	end
-
-	var_17_0 = damage_sources[damage_source]
-
-	if not var_17_0 then
-		-- Nothing
-	end
-
-	var_17_0 = damage_sources[damage_type]
-
-	local recharge_value = var_17_0
-
-	::label_17_0::
+	local recharge_value = not not actions[action]
 
 	if recharge_value then
 		recharge_value = recharge_value * self:_recharge_modifier(peer_id).boost
@@ -332,41 +272,8 @@ VersusHordeAbilitySystem.on_player_unit_spawned = function (self, player, unit, 
 	end
 
 	local peer_id = player.peer_id
-	local var_18_0 = self._server_player_data[peer_id]
-
-	if not var_18_0 then
-		-- Nothing
-	end
-
-	var_18_0 = {}
-
-	local player_data = var_18_0
-
-	do
-		local ability_charge_2
-	end
-
-	::label_18_0::
-
-	if player_data then
-		ability_charge_2 = player_data.ability_charge
-
-		if not ability_charge_2 then
-			-- Nothing
-		end
-	end
-
-	ability_charge_2 = self._mechanism:get_cached_horde_ability_charges(peer_id)
-
-	if not ability_charge_2 then
-		-- Nothing
-	end
-
-	ability_charge_2 = 0
-
-	local ability_charge = ability_charge_2
-
-	::label_18_1::
+	local player_data = not not self._server_player_data[peer_id]
+	local ability_charge = player_data and not not player_data.ability_charge or not player_data and not not self._mechanism:get_cached_horde_ability_charges(peer_id)
 
 	player_data.player_unit = unit
 	player_data.extension = self._extensions[unit]
@@ -467,18 +374,7 @@ VersusHordeAbilitySystem._recharge_modifier = function (self)
 	local sign = math.sign(score_difference)
 	local rounded_score_difference = math.floor(math.abs(score_difference / factor)) * factor * sign
 	local max_score_difference = settings.max_score_difference_modifier
-	local var_24_0 = settings.score_difference_recharge_modifier[rounded_score_difference]
-
-	if not var_24_0 then
-		-- Nothing
-	end
-
-	var_24_0 = settings.score_difference_recharge_modifier[max_score_difference * sign]
-
-	local score_modifier = var_24_0
-
-	::label_24_0::
-
+	local score_modifier = not not settings.score_difference_recharge_modifier[rounded_score_difference]
 	local max_modifier = settings.team_size_difference_recharge_modifier[3]
 	local recharge_modifier = {
 		cooldown = math.min(score_modifier.cooldown_mod * team_size_modifier, max_modifier),

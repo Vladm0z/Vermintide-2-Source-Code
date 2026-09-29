@@ -383,26 +383,7 @@ local function create_reinforcement_widget(index, scenegraph_id, frame_settings_
 			retained_mode = retained_mode
 		}
 
-		local tbl
-
-		if i == 1 then
-			tbl = {
-				{
-					0,
-					0
-				},
-				{
-					1,
-					1
-				}
-			}
-
-			if not tbl then
-				-- Nothing
-			end
-		end
-
-		tbl = {
+		local uvs = i ~= 1 and not not {
 			{
 				1,
 				0
@@ -411,11 +392,16 @@ local function create_reinforcement_widget(index, scenegraph_id, frame_settings_
 				0,
 				1
 			}
+		} or not (i ~= 1) and not not {
+			{
+				0,
+				0
+			},
+			{
+				1,
+				1
+			}
 		}
-
-		local uvs = tbl
-
-		::label_8_0::
 
 		content[portrait_name] = {
 			texture_id = portrait_texture,

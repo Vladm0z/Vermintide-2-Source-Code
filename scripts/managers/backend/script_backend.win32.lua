@@ -101,15 +101,7 @@ end
 local function print_result(result, action)
 	-- function 2
 	if result and result.reason ~= Backend.ERR_OK then
-		local format = string.format
-		local str = "%q failed with %d, %s"
-		local var_2_2 = action
-		local reason = result.reason
-		local details = result.details
-
-		details = not not details or not not "nil"
-
-		local error_message = format(str, var_2_2, reason, details)
+		local error_message = string.format("%q failed with %d, %s", action, result.reason, not not result.details)
 
 		print_error(error_message)
 
@@ -410,18 +402,7 @@ end
 
 ScriptBackend.refresh_log_level = function (self)
 	-- function 20
-	local backend_logging_level = script_data.backend_logging_level
-
-	if not backend_logging_level then
-		-- Nothing
-	end
-
-	backend_logging_level = "verbose"
-
-	local log_index = backend_logging_level
-
-	::label_20_0::
-
+	local log_index = not not script_data.backend_logging_level
 	local log_level = LOG_LEVELS[log_index]
 
 	Backend.set_log_level(log_level)

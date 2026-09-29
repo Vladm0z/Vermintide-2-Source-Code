@@ -1029,21 +1029,7 @@ local function create_info_text(text, scenegraph_id)
 					text_id = "text",
 					content_change_function = function (content, style)
 						-- function 2
-						local locked_text_color
-
-						if content.locked then
-							locked_text_color = style.locked_text_color
-
-							if not locked_text_color then
-								-- Nothing
-							end
-						end
-
-						locked_text_color = style.default_text_color
-
-						::label_2_0::
-
-						style.text_color = locked_text_color
+						style.text_color = content.locked and not not style.locked_text_color or not content.locked and not not style.default_text_color
 					end
 				},
 				{
@@ -1150,11 +1136,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			style_id = slot_name .. "_lock",
 			content_check_function = function (content, style)
 				-- function 7
-				local is_hover = content[slot_name].is_hover
-
-				is_hover = not not is_hover and not not content[slot_name].locked
-
-				return is_hover
+				return not not content[slot_name].is_hover
 			end
 		}
 		passes[#passes + 1] = {
@@ -1163,11 +1145,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			style_id = slot_name .. "_lock_shadow",
 			content_check_function = function (content, style)
 				-- function 8
-				local is_hover = content[slot_name].is_hover
-
-				is_hover = not not is_hover and not not content[slot_name].locked
-
-				return is_hover
+				return not not content[slot_name].is_hover
 			end
 		}
 		passes[#passes + 1] = {
@@ -1177,11 +1155,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			content_id = slot_name,
 			content_check_function = function (content)
 				-- function 9
-				local item = content.item
-
-				item = not not item and not not content.icon
-
-				return item
+				return not not content.item
 			end
 		}
 		passes[#passes + 1] = {
@@ -1202,11 +1176,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			content_id = slot_name,
 			content_check_function = function (content)
 				-- function 10
-				local item = content.item
-
-				item = not not item and not not content.is_hover
-
-				return item
+				return not not content.item
 			end
 		}
 		content[slot_name] = {
@@ -1384,11 +1354,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			content_id = talent_id,
 			content_check_function = function (content)
 				-- function 13
-				local talent = content.talent
-
-				talent = not not talent and not not content.icon
-
-				return talent
+				return not not content.talent
 			end
 		}
 		passes[#passes + 1] = {
@@ -1397,14 +1363,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			style_id = talent_id .. "_lock",
 			content_check_function = function (content)
 				-- function 14
-				local talent = content[talent_id].talent
-
-				if talent then
-					talent = content[talent_id].is_hover
-					talent = not not talent and not not content.locked
-				end
-
-				return talent
+				return not not content[talent_id].talent
 			end
 		}
 		passes[#passes + 1] = {
@@ -1413,14 +1372,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			style_id = talent_id .. "_lock_shadow",
 			content_check_function = function (content)
 				-- function 15
-				local talent = content[talent_id].talent
-
-				if talent then
-					talent = content[talent_id].is_hover
-					talent = not not talent and not not content.locked
-				end
-
-				return talent
+				return not not content[talent_id].talent
 			end
 		}
 		passes[#passes + 1] = {
@@ -1431,11 +1383,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			content_id = talent_id,
 			content_check_function = function (content)
 				-- function 16
-				local talent = content.talent
-
-				talent = not not talent and not not content.is_hover
-
-				return talent
+				return not not content.talent
 			end
 		}
 		content[talent_id] = {
@@ -1639,11 +1587,7 @@ local function create_talent_grid(scenegraph_id, offset)
 				content_id = talent_id,
 				content_check_function = function (content)
 					-- function 20
-					local talent = content.talent
-
-					talent = not not talent and not not content.icon
-
-					return talent
+					return not not content.talent
 				end
 			}
 			passes[#passes + 1] = {
@@ -1654,11 +1598,7 @@ local function create_talent_grid(scenegraph_id, offset)
 				content_id = talent_id,
 				content_check_function = function (content)
 					-- function 21
-					local talent = content.talent
-
-					talent = not not talent and not not content.is_hover
-
-					return talent
+					return not not content.talent
 				end
 			}
 			content[talent_id] = {
@@ -1733,11 +1673,7 @@ local function create_header(text, scenegraph_id, text_style)
 					text_id = "text",
 					content_change_function = function (content, style)
 						-- function 23
-						local offset = style.offset
-						local flag
-
-						flag = (not content.default_loadout or not 25) and not not 0
-						offset[1] = flag
+						style.offset[1] = content.default_loadout and not not 25 or not content.default_loadout and not not 0
 					end
 				},
 				{
@@ -1780,24 +1716,10 @@ end
 local function create_back_button(scenegraph_id, texture, hover_texture, offset, size_multiplier)
 	-- function 25
 	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
-	local tbl
-
-	if size_multiplier then
-		tbl = {
-			texture_settings.size[1] * size_multiplier,
-			texture_settings.size[2] * size_multiplier
-		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = texture_settings.size
-
-	local texture_size = tbl
-
-	::label_25_0::
+	local texture_size = size_multiplier and not not {
+		texture_settings.size[1] * size_multiplier,
+		texture_settings.size[2] * size_multiplier
+	} or not size_multiplier and not not texture_settings.size
 
 	return {
 		element = {
@@ -1990,19 +1912,7 @@ local loadout_selection_widgets = {
 local loadout_button_widgets = {}
 
 for idx, loadout_data in ipairs(InventorySettings.loadouts) do
-	local num
-
-	if loadout_data.loadout_type == "custom" then
-		num = -20
-
-		goto label_0_0
-	end
-
-	num = 0
-
-	local offset = num
-
-	::label_0_0::
+	local offset = loadout_data.loadout_type ~= "custom" and not not 0 or not (loadout_data.loadout_type ~= "custom") and not not -20
 
 	loadout_button_widgets[#loadout_button_widgets + 1] = UIWidgets.create_default_button("button", button_size, button_frame_name, button_background_texture, button_text, button_font_size, button_optional_color_name, button_optional_detail_texture, button_optional_detail_offset, button_disable_with_gamepad, button_skip_side_detail, button_masked, {
 		0,

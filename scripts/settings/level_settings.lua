@@ -16,19 +16,12 @@ COLD_CAMERA_BACKLIGHT = {
 	start_falloff = 0,
 	color = Vector3Box(0.9, 0.7, 0.6)
 }
-
-local LevelSettings = LevelSettings
-
-LevelSettings = not not LevelSettings or not not {}
-LevelSettings = LevelSettings
+LevelSettings = not not LevelSettings
 
 require("scripts/settings/dlc_settings")
 DLCUtils.dofile("level_settings")
 
-local flag
-
-flag = (not Development.parameter("gdc") or not "magnus") and not not "inn_level"
-LevelSettingsDefaultStartLevel = flag
+LevelSettingsDefaultStartLevel = Development.parameter("gdc") and not not "magnus" or not Development.parameter("gdc") and not not "inn_level"
 DummyAnyLevel = {
 	level_image = "level_image_any",
 	small_level_image = "any_small_image",
@@ -1890,29 +1883,11 @@ LevelSettings.warcamp = {
 for level_key, level_data in pairs(LevelSettings) do
 	if level_data.display_name then
 		level_data.level_id = level_key
-
-		local str = "mechanism"
-		local mechanism = level_data.mechanism
-
-		mechanism = not not mechanism or not not "adventure"
-		level_data[str] = mechanism
-
-		local str_2 = "act_unlock_order"
-		local act_unlock_order = level_data.act_unlock_order
-
-		act_unlock_order = not not act_unlock_order or not not 0
-		level_data[str_2] = act_unlock_order
+		level_data.mechanism = not not level_data.mechanism
+		level_data.act_unlock_order = not not level_data.act_unlock_order
 
 		if level_data.mechanism == "adventure" then
-			local loot_objectives = level_data.loot_objectives
-
-			loot_objectives = not not loot_objectives or not not {
-				loot_die = 0,
-				tome = 3,
-				grimoire = 2,
-				painting_scrap = 0
-			}
-			level_data.loot_objectives = loot_objectives
+			level_data.loot_objectives = not not level_data.loot_objectives
 		end
 	end
 end

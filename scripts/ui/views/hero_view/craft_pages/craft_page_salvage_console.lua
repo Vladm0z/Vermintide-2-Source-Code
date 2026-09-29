@@ -54,12 +54,7 @@ CraftPageSalvageConsole.on_enter = function (self, params, settings)
 	self.super_parent:clear_disabled_backend_ids()
 	self.super_parent:set_disabled_item_icon("salvage_item_icon")
 
-	local tostring = tostring
-	local _num_craft_items = self._num_craft_items
-
-	_num_craft_items = not not _num_craft_items or not not 0
-
-	local counter_text = tostring(_num_craft_items)
+	local counter_text = tostring(not not self._num_craft_items)
 
 	self:_set_craft_counter_text(counter_text, true)
 	self:_start_transition_animation("on_enter")
@@ -185,21 +180,10 @@ CraftPageSalvageConsole._handle_input = function (self, dt, t)
 	local auto_fill_rarity
 
 	if unblocked then
-		if UIUtils.is_button_pressed(widgets_by_name.auto_fill_plentiful) then
-			auto_fill_rarity = "plentiful"
-		end
-
-		if UIUtils.is_button_pressed(widgets_by_name.auto_fill_common) then
-			auto_fill_rarity = "common"
-		end
-
-		if UIUtils.is_button_pressed(widgets_by_name.auto_fill_rare) then
-			auto_fill_rarity = "rare"
-		end
-
-		if UIUtils.is_button_pressed(widgets_by_name.auto_fill_exotic) then
-			auto_fill_rarity = "exotic"
-		end
+		auto_fill_rarity = not UIUtils.is_button_pressed(widgets_by_name.auto_fill_plentiful) or not not "plentiful" or not not auto_fill_rarity
+		auto_fill_rarity = not UIUtils.is_button_pressed(widgets_by_name.auto_fill_common) or not not "common" or not not auto_fill_rarity
+		auto_fill_rarity = not UIUtils.is_button_pressed(widgets_by_name.auto_fill_rare) or not not "rare" or not not auto_fill_rarity
+		auto_fill_rarity = not UIUtils.is_button_pressed(widgets_by_name.auto_fill_exotic) or not not "exotic" or not not auto_fill_rarity
 
 		self.super_parent:set_auto_fill_rarity(auto_fill_rarity)
 	end
@@ -210,9 +194,9 @@ CraftPageSalvageConsole._handle_input = function (self, dt, t)
 	local craft_input_keyboard = not not is_button_enabled and not gamepad_active and not not input_service:get("skip")
 	local craft_input_accepted = false
 
-	if (input_service:get("special_1") or clear_input) and unblocked then
+	if input_service:get("special_1") and unblocked or not input_service:get("special_1") and clear_input and unblocked then
 		self:reset()
-	elseif (craft_input_held or craft_input_gamepad or craft_input_keyboard) and unblocked then
+	elseif craft_input_held and unblocked or not craft_input_held and (craft_input_gamepad and unblocked or not craft_input_gamepad and craft_input_keyboard and unblocked) then
 		if not self._craft_input_time then
 			self._craft_input_time = 0
 
@@ -324,14 +308,8 @@ CraftPageSalvageConsole._update_craft_items = function (self)
 	if pressed_backend_id then
 		if self:_has_added_item_by_id(pressed_backend_id) then
 			self:_remove_craft_item(pressed_backend_id)
-		else
-			local _num_craft_items = self._num_craft_items
-
-			_num_craft_items = not not _num_craft_items or not not 0
-
-			if _num_craft_items < CraftingSettings.NUM_SALVAGE_SLOTS then
-				self:_add_craft_item(pressed_backend_id)
-			end
+		elseif not not self._num_craft_items < CraftingSettings.NUM_SALVAGE_SLOTS then
+			self:_add_craft_item(pressed_backend_id)
 		end
 	end
 
@@ -341,16 +319,10 @@ CraftPageSalvageConsole._update_craft_items = function (self)
 		local item_added = false
 
 		for _, selected_backend_id in ipairs(selected_items_backend_ids) do
-			if not self:_has_added_item_by_id(selected_backend_id) then
-				local _num_craft_items_2 = self._num_craft_items
+			if not self:_has_added_item_by_id(selected_backend_id) and not not self._num_craft_items < CraftingSettings.NUM_SALVAGE_SLOTS then
+				item_added = true
 
-				_num_craft_items_2 = not not _num_craft_items_2 or not not 0
-
-				if _num_craft_items_2 < CraftingSettings.NUM_SALVAGE_SLOTS then
-					item_added = true
-
-					self:_add_craft_item(selected_backend_id, true)
-				end
+				self:_add_craft_item(selected_backend_id, true)
 			end
 		end
 
@@ -368,12 +340,7 @@ CraftPageSalvageConsole._remove_craft_item = function (self, backend_id)
 		self.super_parent:set_disabled_backend_id(backend_id, false)
 
 		craft_items[backend_id] = nil
-
-		local max = math.max
-		local _num_craft_items = self._num_craft_items
-
-		_num_craft_items = not not _num_craft_items or not not 0
-		self._num_craft_items = max(_num_craft_items - 1, 0)
+		self._num_craft_items = math.max(not not self._num_craft_items - 1, 0)
 
 		if self._num_craft_items == 0 then
 			self:_set_craft_button_disabled(true)
@@ -407,10 +374,7 @@ CraftPageSalvageConsole._add_craft_item = function (self, backend_id, ignore_sou
 
 	self.super_parent:set_disabled_backend_id(backend_id, true)
 
-	local _num_craft_items = self._num_craft_items
-
-	_num_craft_items = not not _num_craft_items or not not 0
-	self._num_craft_items = _num_craft_items + 1
+	self._num_craft_items = not not self._num_craft_items + 1
 
 	if self._num_craft_items > 0 then
 		self:_set_craft_button_disabled(false)
@@ -444,27 +408,9 @@ CraftPageSalvageConsole._set_craft_button_disabled = function (self, disabled)
 	-- function 18
 	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
 
-	local name
+	local input_settings = disabled and not not "disabled" or not disabled and not not self.settings.name
 
-	if not disabled then
-		name = self.settings.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "disabled"
-
-	local input_settings = name
-
-	::label_18_0::
-
-	local _num_craft_items = self._num_craft_items
-
-	_num_craft_items = not not _num_craft_items or not not 0
-
-	if _num_craft_items < CraftingSettings.NUM_SALVAGE_SLOTS then
+	if not not self._num_craft_items < CraftingSettings.NUM_SALVAGE_SLOTS then
 		input_settings = input_settings .. "_auto"
 	end
 
@@ -502,22 +448,8 @@ CraftPageSalvageConsole._set_craft_button_text = function (self, text, localize)
 	-- function 22
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
-	local content = widget.content
-	local var_22_1
 
-	if localize then
-		var_22_1 = Localize(text)
-
-		if not var_22_1 then
-			-- Nothing
-		end
-	end
-
-	var_22_1 = text
-
-	::label_22_0::
-
-	content.button_text = var_22_1
+	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
 end
 
 CraftPageSalvageConsole._has_added_item_by_id = function (self, backend_id)
@@ -553,12 +485,7 @@ CraftPageSalvageConsole._on_craft_material_fade_complete = function (self)
 
 	self:_reset_reward_materials(false)
 
-	local tostring = tostring
-	local _num_craft_items = self._num_craft_items
-
-	_num_craft_items = not not _num_craft_items or not not 0
-
-	local counter_text = tostring(_num_craft_items)
+	local counter_text = tostring(not not self._num_craft_items)
 
 	self:_set_craft_counter_text(counter_text)
 
@@ -615,20 +542,7 @@ CraftPageSalvageConsole._set_material_enabled_state = function (self, index, ena
 	local style = widget.style
 	local text_style = style.text
 	local icon_style = style.icon
-	local num
-
-	if enabled then
-		num = 255
-
-		goto label_28_0
-	end
-
-	num = 100
-
-	local color_value = num
-
-	::label_28_0::
-
+	local color_value = enabled and not not 255 or not enabled and not not 100
 	local text_color = text_style.text_color
 
 	text_color[2] = color_value

@@ -106,21 +106,7 @@ ChaosTrollHuskHealthExtension.update = function (self, dt, context, t)
 		if t > self.start_reset_time then
 			self.down_reset_timer = self.down_reset_timer + dt
 
-			local num
-
-			if self.action.reset_duration > 0 then
-				num = self.down_reset_timer / self.action.reset_duration
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 0
-
-			::label_6_0::
-
-			local percent_damage = 1 - num
+			local percent_damage = 1 - (self.action.reset_duration > 0 and not not (self.down_reset_timer / self.action.reset_duration) or not (self.action.reset_duration > 0) and not not 0)
 
 			if self.skin_unit ~= nil then
 				set_material_property(self.skin_unit, "damage_value", "mtr_skin", percent_damage, true)
@@ -211,17 +197,7 @@ end
 
 ChaosTrollHuskHealthExtension.rpc_sync_current_max_health = function (self, channel_id, go_id, new_max_health)
 	-- function 11
-	local game_object_id_2 = self.game_object_id
-
-	if not game_object_id_2 then
-		-- Nothing
-	end
-
-	game_object_id_2 = Managers.state.unit_storage:go_id(self.unit)
-
-	local game_object_id = game_object_id_2
-
-	::label_11_0::
+	local game_object_id = not not self.game_object_id
 
 	if game_object_id ~= go_id then
 		return

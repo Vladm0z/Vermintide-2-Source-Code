@@ -143,12 +143,7 @@ TestCases.run_through_level = function (case_settings, skip_cinematic)
 			ai_bots_disabled = false
 		})
 
-		local decode = cjson.decode
-		local var_15_1 = case_settings
-
-		var_15_1 = not not var_15_1 or not not "{}"
-
-		local settings = decode(var_15_1)
+		local settings = cjson.decode(not not case_settings)
 		local level_key = settings.level_key
 		local memory_usage = settings.memory_usage
 
@@ -194,10 +189,7 @@ TestCases.run_through_level = function (case_settings, skip_cinematic)
 
 			local player_point = Testify:make_request("closest_travel_distance_to_player")
 
-			if main_path_point < player_point and not player_point then
-				-- Nothing
-			end
-
+			main_path_point = not (main_path_point < player_point) or not not player_point or not not main_path_point
 			main_path_point = main_path_point + player_teleportation_speed_factor * delta_time
 
 			Testify:make_request("teleport_player_to_main_path_point", main_path_point)
@@ -254,12 +246,7 @@ TestCases.run_through_weave = function (case_settings)
 			ai_bots_disabled = false
 		})
 
-		local decode = cjson.decode
-		local var_17_1 = case_settings
-
-		var_17_1 = not not var_17_1 or not not "{}"
-
-		local settings = decode(var_17_1)
+		local settings = cjson.decode(not not case_settings)
 		local memory_usage = settings.memory_usage
 		local weave_number = settings.weave_number
 		local weave_name = "weave_" .. weave_number
@@ -510,15 +497,8 @@ TestCases.run_through_deus_level_terror_event = function (level_key, terror_even
 	-- function 24
 	Testify:run_case(function (dt, t)
 		-- function 25
-		local var_25_0 = terror_event_name
-
-		var_25_0 = not not var_25_0 or not not "deus_TEST_ALL_BREED"
-		terror_event_name = var_25_0
-
-		local var_25_1 = peak_offset
-
-		var_25_1 = not not var_25_1 or not not 10
-		peak_offset = var_25_1
+		terror_event_name = not not terror_event_name
+		peak_offset = not not peak_offset
 
 		local result = ""
 
@@ -638,12 +618,7 @@ TestCases.run_through_pvp_level = function (case_settings)
 			ai_bots_disabled = false
 		})
 
-		local decode = cjson.decode
-		local var_27_1 = case_settings
-
-		var_27_1 = not not var_27_1 or not not "{}"
-
-		local settings = decode(var_27_1)
+		local settings = cjson.decode(not not case_settings)
 		local level_key = settings.level_key
 		local memory_usage = settings.memory_usage
 
@@ -760,47 +735,10 @@ TestCases.spawn_all_enemies = function (case_settings)
 		local result = ""
 		local minions_auto_killed = {}
 		local spawned_minions = {}
-		local decode = cjson.decode
-		local var_29_1 = case_settings
-
-		var_29_1 = not not var_29_1 or not not "{}"
-
-		local settings = decode(var_29_1)
-		local kill_timer_2 = settings.kill_timer
-
-		if not kill_timer_2 then
-			-- Nothing
-		end
-
-		kill_timer_2 = 30
-
-		local kill_timer = kill_timer_2
-
-		::label_29_0::
-
-		local spawn_simultaneously_2 = settings.spawn_simultaneously
-
-		if not spawn_simultaneously_2 then
-			-- Nothing
-		end
-
-		spawn_simultaneously_2 = true
-
-		local spawn_simultaneously = spawn_simultaneously_2
-
-		::label_29_1::
-
-		local difficulty_2 = settings.difficulty
-
-		if not difficulty_2 then
-			-- Nothing
-		end
-
-		difficulty_2 = "hard"
-
-		local difficulty = difficulty_2
-
-		::label_29_2::
+		local settings = cjson.decode(not not case_settings)
+		local kill_timer = not not settings.kill_timer
+		local spawn_simultaneously = not not settings.spawn_simultaneously
+		local difficulty = not not settings.difficulty
 
 		Testify:make_request("set_difficulty", difficulty)
 		TestifySnippets.load_level({
@@ -859,7 +797,7 @@ TestCases.spawn_all_enemies = function (case_settings)
 			end
 		end
 
-		local wait_duration = (not spawn_simultaneously or not kill_timer) and not not 5
+		local wait_duration = spawn_simultaneously and (not not kill_timer or not not 5) or not spawn_simultaneously and not not 5
 
 		TestifySnippets.wait(wait_duration)
 
@@ -897,12 +835,7 @@ TestCases.equip_deus_power_ups = function (case_settings)
 	-- function 30
 	Testify:run_case(function (dt, t)
 		-- function 31
-		local decode = cjson.decode
-		local var_31_1 = case_settings
-
-		var_31_1 = not not var_31_1 or not not "{}"
-
-		local settings = decode(var_31_1)
+		local settings = cjson.decode(not not case_settings)
 		local power_up_type = settings.power_up_type
 		local terror_event_name = settings.terror_event_name
 		local level_key = settings.level_key
@@ -1052,35 +985,9 @@ TestCases.versus_multiplayer_server = function (case_settings)
 	-- function 36
 	Testify:run_case(function (dt, t)
 		-- function 37
-		local decode = cjson.decode
-		local var_37_1 = case_settings
-
-		var_37_1 = not not var_37_1 or not not "{}"
-
-		local settings = decode(var_37_1)
-		local do_early_win_2 = settings.do_early_win
-
-		if not do_early_win_2 then
-			-- Nothing
-		end
-
-		do_early_win_2 = false
-
-		local do_early_win = do_early_win_2
-
-		::label_37_0::
-
-		local match_outcome_2 = settings.match_outcome
-
-		if not match_outcome_2 then
-			-- Nothing
-		end
-
-		match_outcome_2 = "draw"
-
-		local match_outcome = match_outcome_2
-
-		::label_37_1::
+		local settings = cjson.decode(not not case_settings)
+		local do_early_win = not not settings.do_early_win
+		local match_outcome = not not settings.match_outcome
 
 		fassert(match_outcome == "party_one" or match_outcome == "party_two" or match_outcome == "draw", "Unexpected 'match_outcome' setting. Expected 'party_one', 'party_two' or 'draw'")
 		fassert(not do_early_win or match_outcome ~= "draw", "Unable to do early win and expect a draw")
@@ -1113,7 +1020,7 @@ TestCases.versus_multiplayer_server = function (case_settings)
 			})
 
 			local current_round = i % 2
-			local is_winning_partys_turn = (match_outcome == "draw" or match_outcome ~= "party_one" or current_round ~= 1) and match_outcome == "party_two" and current_round == 0
+			local is_winning_partys_turn = current_round == 0
 
 			Testify:make_request("wait_for_game_mode_state", {
 				state = "pre_start_round_state",

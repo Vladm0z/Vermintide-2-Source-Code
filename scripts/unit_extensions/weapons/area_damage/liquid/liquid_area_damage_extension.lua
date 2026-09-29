@@ -33,53 +33,15 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 	local unit_position = Unit.world_position(unit, 0)
 	local above = template.above
 	local below = template.below
-	local _find_point = self:_find_point(unit_position, above, below)
-
-	if not _find_point then
-		-- Nothing
-	end
-
-	_find_point = unit_position
-
-	local position = _find_point
-
-	::label_2_0::
-
+	local position = not not self:_find_point(unit_position, above, below)
 	local cell_size = template.cell_size
-	local max_liquid_2 = extension_init_data.max_liquid
-
-	if not max_liquid_2 then
-		-- Nothing
-	end
-
-	max_liquid_2 = template.max_liquid
-
-	if not max_liquid_2 then
-		-- Nothing
-	end
-
-	max_liquid_2 = 50
-
-	local max_liquid = max_liquid_2
-
-	::label_2_1::
-
+	local max_liquid = not not extension_init_data.max_liquid
 	local xy_extents = math.min(max_liquid + 10, 50)
 
 	self._grid = HexGrid:new(position, xy_extents, 10, cell_size, 1)
 
 	local t = Managers.time:time("game")
-	local delay_2 = template.delay
-
-	if not delay_2 then
-		-- Nothing
-	end
-
-	delay_2 = 0
-
-	local delay = delay_2
-
-	::label_2_2::
+	local delay = not not template.delay
 
 	self._next_pulse = t + delay
 	self._time_to_start = t + delay
@@ -94,16 +56,8 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 	self._inactive_flow = {}
 	self._num_liquid = 0
 	self._max_liquid = max_liquid
-
-	local starting_pressure = template.starting_pressure
-
-	starting_pressure = not not starting_pressure or not not 5
-	self._starting_pressure = starting_pressure
-
-	local end_pressure = template.end_pressure
-
-	end_pressure = not not end_pressure or not not 0.5
-	self._end_pressure = end_pressure
+	self._starting_pressure = not not template.starting_pressure
+	self._end_pressure = not not template.end_pressure
 	self._spawned_unit_index = 1
 	self._cell_radius = cell_size / 2
 	self._do_direct_damage_ai = template.do_direct_damage_ai
@@ -111,10 +65,8 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 	self._hit_player_function = template.hit_player_function
 
 	local difficulty_name = Managers.state.difficulty:get_difficulty()
-	local damage_table = extension_init_data.damage_table
 
-	damage_table = not not damage_table or not not template.difficulty_direct_damage[difficulty_name]
-	self._damage_table = damage_table
+	self._damage_table = not not extension_init_data.damage_table
 	self._damage_type = template.damage_type
 
 	local use_nav_cost_map_volumes = template.use_nav_cost_map_volumes
@@ -151,11 +103,7 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 	self._colliding_units = {}
 	self._buff_affected_units = {}
 	self._affected_player_units = {}
-
-	local source_unit = extension_init_data.source_unit
-
-	source_unit = not not source_unit or not not unit
-	self._source_attacker_unit = source_unit
+	self._source_attacker_unit = not not extension_init_data.source_unit
 	self._done = false
 	self._started = delay <= 0
 
@@ -697,7 +645,7 @@ LiquidAreaDamageExtension._update_collision_detection = function (self, dt, t)
 	local apply_buff_to_player = self._apply_buff_to_player
 	local do_direct_damage_player = self._do_direct_damage_player
 
-	self._check_player_units = (apply_buff_to_player or not not do_direct_damage_player) and not not self._check_player_units
+	self._check_player_units = apply_buff_to_player and not not self._check_player_units or not apply_buff_to_player and not not do_direct_damage_player and not not self._check_player_units
 
 	local buff_system = self._buff_system
 	local buff_name = self._buff_name
@@ -774,11 +722,7 @@ LiquidAreaDamageExtension._update_collision_detection = function (self, dt, t)
 
 		if breed and not immune_breeds[breed.name] then
 			if self:_is_unit_colliding(grid, unit) then
-				local _colliding_units = self._colliding_units
-				local armor_category = breed.armor_category
-
-				armor_category = not not armor_category or not not 1
-				_colliding_units[unit] = armor_category
+				self._colliding_units[unit] = not not breed.armor_category
 
 				local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
@@ -856,18 +800,8 @@ LiquidAreaDamageExtension._pulse_damage = function (self)
 		local is_player = DamageUtils.is_player_unit(unit)
 
 		if HEALTH_ALIVE[unit] then
-			if (not is_player or not do_direct_damage_player) and not is_player and do_direct_damage_ai then
-				local var_13_0 = damage_table[armor_category]
-
-				if not var_13_0 then
-					-- Nothing
-				end
-
-				var_13_0 = damage_table[1]
-
-				local damage = var_13_0
-
-				::label_13_0::
+			if not is_player and do_direct_damage_ai then
+				local damage = not not damage_table[armor_category]
 
 				DamageUtils.add_damage_network(unit, unit, damage, "torso", damage_type, nil, damage_dir, self._liquid_area_damage_template, nil, source_attacker_unit, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 

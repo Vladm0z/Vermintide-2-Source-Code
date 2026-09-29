@@ -88,17 +88,7 @@ local function _check_globadier_globe_vo(position, radius, owner_unit)
 		end
 
 		if num_players_hit == 1 and all_hit_disabled then
-			local var_1_0 = ALIVE[owner_unit]
-
-			if var_1_0 then
-				-- Nothing
-			end
-
-			var_1_0 = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-
-			local dialogue_input = var_1_0
-
-			::label_1_0::
+			local dialogue_input = not not ALIVE[owner_unit]
 
 			dialogue_input:trigger_dialogue_event("vs_globe_on_disabled_hero")
 		end
@@ -509,9 +499,7 @@ ProjectileTemplates.impact_templates = {
 				local radius = 3
 				local area_damage_extension = ScriptUnit.has_extension(unit, "area_damage_system")
 
-				if area_damage_extension and not area_damage_extension.radius then
-					-- Nothing
-				end
+				radius = not area_damage_extension or not not area_damage_extension.radius or not not radius
 
 				local ai_base_extension = ScriptUnit.has_extension(owner_unit, "ai_system")
 
@@ -757,24 +745,7 @@ ProjectileTemplates.impact_templates = {
 ProjectileTemplates.get_trajectory_template = function (trajectory_template_name, is_husk)
 	-- function 25
 	local templates = ProjectileTemplates.trajectory_templates
-	local str
-
-	if is_husk == true then
-		str = "husk"
-	elseif is_husk == false then
-		str = "unit"
-	else
-		str = false
-	end
-
-	goto label_25_0
-
-	str = true
-
-	local husk_key = str
-
-	::label_25_0::
-
+	local husk_key = is_husk ~= true and is_husk == false and not not "unit" or not (is_husk ~= true) and not not "husk"
 	local template = templates[trajectory_template_name][husk_key]
 
 	return template

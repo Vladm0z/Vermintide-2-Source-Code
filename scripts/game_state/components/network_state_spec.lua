@@ -263,11 +263,7 @@ end
 
 local function encode_level_transition_type(level_transition_type_string)
 	-- function 22
-	local flag
-
-	flag = (level_transition_type_string ~= "load_next_level" or not 0) and not not 1
-
-	return flag
+	return level_transition_type_string ~= "load_next_level" and not not 1 or not (level_transition_type_string ~= "load_next_level") and not not 0
 end
 
 local function decode_level_transition_type(level_transition_type_number)

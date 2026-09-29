@@ -103,22 +103,7 @@ local IS_LOCAL_HOST = "IS_LOCAL_HOST"
 
 InteractableSystem.rpc_generic_interaction_request = function (self, channel_id, interactor_go_id, interactable_go_id, is_level_unit, interaction_type_id)
 	-- function 8
-	local peer_id_2
-
-	if channel_id == IS_LOCAL_HOST then
-		peer_id_2 = Network.peer_id()
-
-		if not peer_id_2 then
-			-- Nothing
-		end
-	end
-
-	peer_id_2 = CHANNEL_TO_PEER_ID[channel_id]
-
-	local peer_id = peer_id_2
-
-	::label_8_0::
-
+	local peer_id = channel_id ~= IS_LOCAL_HOST and not not CHANNEL_TO_PEER_ID[channel_id] or not (channel_id ~= IS_LOCAL_HOST) and not not Network.peer_id()
 	local interaction_type = NetworkLookup.interactions[interaction_type_id]
 
 	InteractionHelper.printf("rpc_generic_interaction_request(%s, %s, %s, %s, %s)", peer_id, tostring(interactor_go_id), tostring(interactable_go_id), tostring(is_level_unit), interaction_type)

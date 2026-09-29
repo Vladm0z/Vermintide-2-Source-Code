@@ -4154,7 +4154,7 @@ local function add_alignment_pattern(tab_x)
 
 	for x = 1, #ap do
 		for y = 1, #ap do
-			if (x ~= 1 or y ~= 1) and (x ~= #ap or y ~= 1) and (x ~= 1 or y ~= #ap) then
+			if x ~= 1 or y ~= #ap then
 				pos_x = ap[x] + 1
 				pos_y = ap[y] + 1
 				tab_x[pos_x][pos_y] = 2
@@ -4582,15 +4582,15 @@ local function calculate_penalty(matrix)
 
 	for x = 1, size do
 		for y = 1, size do
-			if y < size - 1 and x < size - 1 and (not (matrix[x][y] < 0) or not (matrix[x + 1][y] < 0) or not (matrix[x][y + 1] < 0) or not (matrix[x + 1][y + 1] < 0)) and matrix[x][y] > 0 and matrix[x + 1][y] > 0 and matrix[x][y + 1] > 0 and matrix[x + 1][y + 1] > 0 then
+			if y < size - 1 and x < size - 1 and (matrix[x][y] < 0 and (matrix[x + 1][y] < 0 and (matrix[x][y + 1] < 0 and (matrix[x + 1][y + 1] < 0 or matrix[x][y] > 0 and matrix[x + 1][y] > 0 and matrix[x][y + 1] > 0 and matrix[x + 1][y + 1] > 0) or not (matrix[x][y + 1] < 0) and matrix[x][y] > 0 and matrix[x + 1][y] > 0 and matrix[x][y + 1] > 0 and matrix[x + 1][y + 1] > 0) or not (matrix[x + 1][y] < 0) and matrix[x][y] > 0 and matrix[x + 1][y] > 0 and matrix[x][y + 1] > 0 and matrix[x + 1][y + 1] > 0) or not (matrix[x][y] < 0) and matrix[x][y] > 0 and matrix[x + 1][y] > 0 and matrix[x][y + 1] > 0 and matrix[x + 1][y + 1] > 0) then
 				penalty2 = penalty2 + 3
 			end
 
-			if size > y + 6 and matrix[x][y] > 0 and matrix[x][y + 1] < 0 and matrix[x][y + 2] > 0 and matrix[x][y + 3] > 0 and matrix[x][y + 4] > 0 and matrix[x][y + 5] < 0 and matrix[x][y + 6] > 0 and (not (size > y + 10) or not (matrix[x][y + 7] < 0) or not (matrix[x][y + 8] < 0) or not (matrix[x][y + 9] < 0) or not (matrix[x][y + 10] < 0)) and y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0 then
+			if size > y + 6 and matrix[x][y] > 0 and matrix[x][y + 1] < 0 and matrix[x][y + 2] > 0 and matrix[x][y + 3] > 0 and matrix[x][y + 4] > 0 and matrix[x][y + 5] < 0 and matrix[x][y + 6] > 0 and (size > y + 10 and (matrix[x][y + 7] < 0 and (matrix[x][y + 8] < 0 and (matrix[x][y + 9] < 0 and (matrix[x][y + 10] < 0 or y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0) or not (matrix[x][y + 9] < 0) and y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0) or not (matrix[x][y + 8] < 0) and y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0) or not (matrix[x][y + 7] < 0) and y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0) or not (size > y + 10) and y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0) then
 				penalty3 = penalty3 + 40
 			end
 
-			if size >= x + 6 and matrix[x][y] > 0 and matrix[x + 1][y] < 0 and matrix[x + 2][y] > 0 and matrix[x + 3][y] > 0 and matrix[x + 4][y] > 0 and matrix[x + 5][y] < 0 and matrix[x + 6][y] > 0 and (not (size >= x + 10) or not (matrix[x + 7][y] < 0) or not (matrix[x + 8][y] < 0) or not (matrix[x + 9][y] < 0) or not (matrix[x + 10][y] < 0)) and x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0 then
+			if size >= x + 6 and matrix[x][y] > 0 and matrix[x + 1][y] < 0 and matrix[x + 2][y] > 0 and matrix[x + 3][y] > 0 and matrix[x + 4][y] > 0 and matrix[x + 5][y] < 0 and matrix[x + 6][y] > 0 and (size >= x + 10 and (matrix[x + 7][y] < 0 and (matrix[x + 8][y] < 0 and (matrix[x + 9][y] < 0 and (matrix[x + 10][y] < 0 or x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0) or not (matrix[x + 9][y] < 0) and x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0) or not (matrix[x + 8][y] < 0) and x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0) or not (matrix[x + 7][y] < 0) and x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0) or not (size >= x + 10) and x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0) then
 				penalty3 = penalty3 + 40
 			end
 		end

@@ -749,14 +749,7 @@ local function create_level_widget(i, specific_scenegraph_id)
 			texture_id = "path_glow",
 			content_check_function = function (content)
 				-- function 22
-				local draw_path = content.draw_path
-
-				if draw_path then
-					draw_path = content.draw_path_fill
-					draw_path = not not draw_path and not not not content.locked
-				end
-
-				return draw_path
+				return not not content.draw_path
 			end
 		},
 		{

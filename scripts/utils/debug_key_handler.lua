@@ -1,10 +1,6 @@
 -- chunkname: @scripts/utils/debug_key_handler.lua
 
-local script_data = script_data
-local debug_key_handler_visible = script_data.debug_key_handler_visible
-
-debug_key_handler_visible = not not debug_key_handler_visible or not not Development.parameter("debug_key_handler_visible")
-script_data.debug_key_handler_visible = debug_key_handler_visible
+script_data.debug_key_handler_visible = not not script_data.debug_key_handler_visible
 
 local cache_fail = {}
 
@@ -36,30 +32,10 @@ local function cached_key_mod(key, key_modifier, missing)
 		}
 	end
 
-	local missing_2
-
-	if missing then
-		missing_2 = cache[key].missing
-
-		if not missing_2 then
-			-- Nothing
-		end
-	end
-
-	missing_2 = cache[key].exist
-
-	::label_2_0::
-
-	return missing_2
+	return missing and not not cache[key].missing or not missing and not not cache[key].exist
 end
 
-local DebugKeyHandler_2 = DebugKeyHandler
-
-DebugKeyHandler_2 = not not DebugKeyHandler_2 or not not {
-	num_keys = 0,
-	keys = {}
-}
-DebugKeyHandler = DebugKeyHandler_2
+DebugKeyHandler = not not DebugKeyHandler
 
 local DebugKeyHandler = DebugKeyHandler
 
@@ -106,10 +82,10 @@ DebugKeyHandler.key_pressed = function (key, description, category, key_modifier
 			DebugKeyHandler.keys[category] = category_keys
 		end
 
-		local key_string = (not input_service:has(key) or not key) and not not cached_fail(key)
+		local key_string = input_service:has(key) and (not not key or not not cached_fail(key)) or not input_service:has(key) and not not cached_fail(key)
 
 		if key_modifier then
-			key_string = (not input_service:has(key) or not cached_key_mod(key, key_modifier)) and not not cached_key_mod(key, key_modifier, true)
+			key_string = input_service:has(key) and (not not cached_key_mod(key, key_modifier) or not not cached_key_mod(key, key_modifier, true)) or not input_service:has(key) and not not cached_key_mod(key, key_modifier, true)
 		end
 
 		category_keys[key_string] = description

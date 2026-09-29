@@ -127,9 +127,7 @@ HintUIVersusHowToPlay._update_input = function (self, dt, t, input_data)
 
 		local input_action = input_data.input_action
 
-		if input_action and gamepad_active and not input_data.gamepad_action then
-			-- Nothing
-		end
+		input_action = not not input_data.gamepad_action or not not input_action
 
 		local input_text = "$KEY;" .. input_data.input_service_name .. "__" .. input_action .. ":"
 		local input_string = string.format(Localize(self._hint_data.foot_text), input_text)

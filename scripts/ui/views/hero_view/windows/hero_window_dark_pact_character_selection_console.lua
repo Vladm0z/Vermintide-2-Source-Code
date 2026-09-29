@@ -27,16 +27,8 @@ HeroWindowDarkPactCharacterSelectionConsole.on_enter = function (self, params, o
 		snap_pixel_positions = true
 	}
 	self._hero_name = params.hero_name
-
-	local career_index = params.career_index
-
-	career_index = not not career_index or not not 0
-	self._career_index = career_index
-
-	local profile_index = params.profile_index
-
-	profile_index = not not profile_index or not not 0
-	self._profile_index = profile_index
+	self._career_index = not not params.career_index
+	self._profile_index = not not params.profile_index
 	self._profile_selectable = false
 	self._animations = {}
 	self._ui_animations = {}
@@ -61,29 +53,8 @@ HeroWindowDarkPactCharacterSelectionConsole.on_enter = function (self, params, o
 	self:_start_transition_animation("on_enter", "on_enter")
 	self:_first_pactsworn_setup(self._profile_index, self._career_index)
 
-	local carousel = DLCSettings.carousel
-
-	if carousel then
-		-- Nothing
-	end
-
-	carousel = DLCSettings.carousel.hero_window_mood_settings
-
-	local mood_settings = carousel
-
-	::label_1_0::
-
-	local pactsworn = mood_settings.pactsworn
-
-	if not pactsworn then
-		-- Nothing
-	end
-
-	pactsworn = "default"
-
-	local mood_setting = pactsworn
-
-	::label_1_1::
+	local mood_settings = not not DLCSettings.carousel
+	local mood_setting = not not mood_settings.pactsworn
 
 	self._parent:set_background_mood(mood_setting)
 end
@@ -96,17 +67,7 @@ HeroWindowDarkPactCharacterSelectionConsole._first_pactsworn_setup = function (s
 	if profile_settings.affiliation ~= "dark_pact" then
 		row = Math.random(1, self._num_max_rows)
 
-		local var_2_0 = self._num_hero_columns[row]
-
-		if not var_2_0 then
-			-- Nothing
-		end
-
-		var_2_0 = 1
-
-		local max_columns_per_row = var_2_0
-
-		::label_2_0::
+		local max_columns_per_row = not not self._num_hero_columns[row]
 
 		column = Math.random(1, max_columns_per_row)
 		self._selected_row = row
@@ -204,17 +165,7 @@ HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_loadut_data = funct
 	local cosmetic_slot = "slot_skin"
 	local item = BackendUtils.get_loadout_item(career_name, cosmetic_slot)
 	local settings = DLCSettings.carousel
-	local var_6_0 = settings.hero_window_pactsworn_stats_by_name[career_name]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = settings.hero_window_pactsworn_stats_by_name.default
-
-	local dark_pact_stats = var_6_0
-
-	::label_6_0::
+	local dark_pact_stats = not not settings.hero_window_pactsworn_stats_by_name[career_name]
 
 	for i = 1, NUM_VISIBLE_STATS do
 		local stat_text = self._widgets_by_name["pactsworn_stat_" .. i]
@@ -347,39 +298,9 @@ HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_selection_widgets =
 		local even_row = rows % 2 == 0
 		local x = 140 * column - 1 + 10 * column - 1
 		local y = 140 * rows - 1 + 10 * rows - 1
-		local offset = widget.offset
-		local num
 
-		if even_row then
-			num = x + 70
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = x
-
-		::label_10_0::
-
-		offset[1] = num
-
-		local offset_2 = widget.offset
-		local num_2
-
-		if even_row then
-			num_2 = -y + 35
-
-			if not num_2 then
-				-- Nothing
-			end
-		end
-
-		num_2 = -y
-
-		::label_10_1::
-
-		offset_2[2] = num_2
+		widget.offset[1] = even_row and not not (x + 70) or not even_row and not not x
+		widget.offset[2] = even_row and not not (-y + 35) or not even_row and not not -y
 		widget.offset[3] = -i * 10
 		self._num_hero_columns[rows] = column
 
@@ -488,10 +409,8 @@ HeroWindowDarkPactCharacterSelectionConsole._update_input = function (self, dt)
 	local slot_skin_widget = self._widgets_by_name.equipment_skin
 	local slot_skin_widget_content = slot_skin_widget.content
 	local slot_skin_widget_hotspot = slot_skin_widget_content.slot_skin
-	local _higlight_inventory_selection = self._higlight_inventory_selection
 
-	_higlight_inventory_selection = not not _higlight_inventory_selection and not not gamepad_active
-	slot_skin_widget_hotspot.highlight = _higlight_inventory_selection
+	slot_skin_widget_hotspot.highlight = not not self._higlight_inventory_selection
 end
 
 HeroWindowDarkPactCharacterSelectionConsole._handle_mouse_selection = function (self)
@@ -651,30 +570,8 @@ HeroWindowDarkPactCharacterSelectionConsole._update_portraits = function (self, 
 		local widget = portrait_widgets[i]
 		local content = widget.content
 		local hotspot = content.hotspot
-		local hover_progress_2 = hotspot.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_23_0::
-
-		local selection_progress_2 = hotspot.selection_progress
-
-		if not selection_progress_2 then
-			-- Nothing
-		end
-
-		selection_progress_2 = 0
-
-		local selection_progress = selection_progress_2
-
-		::label_23_1::
-
+		local hover_progress = not not hotspot.hover_progress
+		local selection_progress = not not hotspot.selection_progress
 		local is_selected, is_hover
 
 		if gamepad_active then

@@ -352,11 +352,7 @@ InventorySettings.equipment_slots_by_mechanism = {}
 
 for mechanism, mechanism_equipment_slots in pairs(equipment_slots) do
 	for index, slot in ipairs(InventorySettings.slots) do
-		local equipment_slots_by_mechanism_2 = InventorySettings.equipment_slots_by_mechanism
-		local var_0_1 = InventorySettings.equipment_slots_by_mechanism[mechanism]
-
-		var_0_1 = not not var_0_1 or not not {}
-		equipment_slots_by_mechanism_2[mechanism] = var_0_1
+		InventorySettings.equipment_slots_by_mechanism[mechanism] = not not InventorySettings.equipment_slots_by_mechanism[mechanism]
 
 		local equipment_slots_by_mechanism = InventorySettings.equipment_slots_by_mechanism[mechanism]
 

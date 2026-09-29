@@ -227,11 +227,7 @@ end
 
 RemotePlayer.cached_name = function (self)
 	-- function 23
-	local _cached_name = self._cached_name
-
-	_cached_name = not not _cached_name or not not self._debug_name
-
-	return _cached_name
+	return not not self._cached_name
 end
 
 RemotePlayer.destroy = function (self)
@@ -295,11 +291,7 @@ end
 
 RemotePlayer.sync_data_active = function (self)
 	-- function 30
-	local _player_sync_data = self._player_sync_data
-
-	_player_sync_data = not not _player_sync_data and not not self._player_sync_data:active()
-
-	return _player_sync_data
+	return not not self._player_sync_data
 end
 
 RemotePlayer.get_party = function (self)

@@ -9,20 +9,8 @@ TargetHealthExtension.init = function (self, extension_init_context, unit, exten
 	self._dead = false
 	self._out_of_combat_timer = 0
 	self._health_regen_timer = 0
-
-	local damage_per_hit = extension_init_data.damage_per_hit
-
-	damage_per_hit = not not damage_per_hit or not not 1
-	self._damage_per_hit = damage_per_hit
-
-	local health = extension_init_data.health
-
-	if not health then
-		health = Unit.get_data(unit, "health")
-		health = not not health or not not 1
-	end
-
-	self._health = health
+	self._damage_per_hit = not not extension_init_data.damage_per_hit
+	self._health = not not extension_init_data.health
 	self._max_health = self._health
 	self._health_regen = {
 		interval = 1,
@@ -31,12 +19,7 @@ TargetHealthExtension.init = function (self, extension_init_context, unit, exten
 		amount = 0
 	}
 
-	local pairs = pairs
-	local health_regen = extension_init_data.health_regen
-
-	health_regen = not not health_regen or not not {}
-
-	for key, value in pairs(health_regen) do
+	for key, value in pairs(not not extension_init_data.health_regen) do
 		self._health_regen[key] = value
 	end
 

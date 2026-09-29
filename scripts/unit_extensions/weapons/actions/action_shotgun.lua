@@ -28,11 +28,7 @@ ActionShotgun.client_owner_start_action = function (self, new_action, t, chain_a
 	self.current_action = new_action
 	self.state = "waiting_to_shoot"
 	self.time_to_shoot = t + new_action.fire_time
-
-	local active_reload_time = new_action.active_reload_time
-
-	active_reload_time = not not active_reload_time and not not (t + new_action.active_reload_time)
-	self.active_reload_time = active_reload_time
+	self.active_reload_time = not not new_action.active_reload_time
 
 	local owner_unit = self.owner_unit
 	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
@@ -61,17 +57,7 @@ ActionShotgun.client_owner_start_action = function (self, new_action, t, chain_a
 	self.extra_buff_shot = false
 	self.shield_users_blocking = {}
 
-	local var_2_1 = rawget(_G, "Tobii")
-
-	if var_2_1 then
-		-- Nothing
-	end
-
-	var_2_1 = Application.user_setting("tobii_eyetracking")
-
-	local HAS_TOBII = var_2_1
-
-	::label_2_0::
+	local HAS_TOBII = not not rawget(_G, "Tobii")
 
 	if HAS_TOBII and new_action.fire_at_gaze_setting and Application.user_setting("tobii_fire_at_gaze") then
 		local eyetracking_extension = ScriptUnit.has_extension(owner_unit, "eyetracking_system")
@@ -87,17 +73,7 @@ ActionShotgun._use_ammo = function (self)
 	local current_action = self.current_action
 	local ammo_extension = self.ammo_extension
 	local ammo_usage = current_action.ammo_usage
-	local shot_count = current_action.shot_count
-
-	if not shot_count then
-		-- Nothing
-	end
-
-	shot_count = 1
-
-	local num_shots_total = shot_count
-
-	::label_3_0::
+	local num_shots_total = not not current_action.shot_count
 
 	if current_action.special_ammo_thing then
 		ammo_usage = ammo_extension:current_ammo()
@@ -208,42 +184,9 @@ ActionShotgun._shoot = function (self, num_shots_total, num_shots_this_frame)
 	local world = self.world
 	local physics_world = self.physics_world
 	local check_buffs = self._check_buffs
-	local num_layers_spread_2 = current_action.num_layers_spread
-
-	if not num_layers_spread_2 then
-		-- Nothing
-	end
-
-	num_layers_spread_2 = 1
-
-	local num_layers_spread = num_layers_spread_2
-
-	::label_7_0::
-
-	local bullseye_2 = current_action.bullseye
-
-	if not bullseye_2 then
-		-- Nothing
-	end
-
-	bullseye_2 = false
-
-	local bullseye = bullseye_2
-
-	::label_7_1::
-
-	local spread_pitch_2 = current_action.spread_pitch
-
-	if not spread_pitch_2 then
-		-- Nothing
-	end
-
-	spread_pitch_2 = 0.8
-
-	local spread_pitch = spread_pitch_2
-
-	::label_7_2::
-
+	local num_layers_spread = not not current_action.num_layers_spread
+	local bullseye = not not current_action.bullseye
+	local spread_pitch = not not current_action.spread_pitch
 	local weapon_unit = self.weapon_unit
 	local item_name = self.item_name
 	local owner_unit = self.owner_unit
@@ -268,21 +211,7 @@ ActionShotgun._shoot = function (self, num_shots_total, num_shots_this_frame)
 			end
 		end
 
-		local var_7_3
-
-		if result then
-			var_7_3 = result[#result][1]
-
-			if not var_7_3 then
-				-- Nothing
-			end
-		end
-
-		var_7_3 = current_position + direction * current_action.range
-
-		local hit_position = var_7_3
-
-		::label_7_3::
+		local hit_position = result and not not result[#result][1] or not result and not not (current_position + direction * current_action.range)
 
 		unit_set_flow_variable(weapon_unit, "hit_position", hit_position)
 		unit_set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - current_position) * 0.1)
@@ -323,7 +252,7 @@ ActionShotgun.client_owner_post_update = function (self, dt, t, world, can_damag
 		if t > self.active_reload_time then
 			local ammo_extension = self.ammo_extension
 
-			if (input_extension:get("weapon_reload") or input_extension:get_buffer("weapon_reload")) and ammo_extension:can_reload() then
+			if input_extension:get("weapon_reload") and ammo_extension:can_reload() or not input_extension:get("weapon_reload") and input_extension:get_buffer("weapon_reload") and ammo_extension:can_reload() then
 				local weapon_extension = ScriptUnit.extension(self.weapon_unit, "weapon_system")
 
 				weapon_extension:stop_action("reload")
@@ -343,19 +272,7 @@ ActionShotgun.reload = function (self, current_action)
 	end
 
 	local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-	local flag
-
-	if not reload_when_out_of_ammo_condition_func then
-		flag = true
-
-		goto label_9_0
-	end
-
-	flag = reload_when_out_of_ammo_condition_func(self.owner_unit)
-
-	local do_out_of_ammo_reload = flag
-
-	::label_9_0::
+	local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(self.owner_unit) or not reload_when_out_of_ammo_condition_func and not not true
 
 	if ammo_extension:can_reload() and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 then
 		local play_reload_animation = current_action.play_reload_animation

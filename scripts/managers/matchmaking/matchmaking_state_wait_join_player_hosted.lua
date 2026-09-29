@@ -27,10 +27,8 @@ MatchmakingStateWaitJoinPlayerHosted.on_enter = function (self, state_context)
 
 	local lobby_client = Managers.lobby:get_lobby("matchmaking_join_lobby")
 	local match_started = lobby_client:lobby_data("match_started") == "true"
-	local flag
 
-	flag = (not match_started or not "start_lobby") and not not nil
-	self._next_transition_state = flag
+	self._next_transition_state = match_started and not not "start_lobby" or not match_started and not not nil
 	self._match_host = lobby_client:lobby_host()
 	self._friend_joining = state_context.friend_join
 

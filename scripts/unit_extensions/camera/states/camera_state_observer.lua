@@ -1,16 +1,6 @@
 -- chunkname: @scripts/unit_extensions/camera/states/camera_state_observer.lua
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/unit_extensions/camera/states/camera_state_observer_testify")
-
-local camera_state_observer_testify = testify
-
-::label_0_0::
+local camera_state_observer_testify = not not script_data.testify
 
 CameraStateObserver = class(CameraStateObserver, CameraState)
 
@@ -27,28 +17,14 @@ CameraStateObserver.on_enter = function (self, unit, input, dt, context, t, prev
 	self._network_transmit = context.network_transmit
 	self._is_server = context.network_transmit.is_server
 	self._default_observed_node_name = "camera_attach"
-
-	local input_service_name = params.input_service_name
-
-	input_service_name = not not input_service_name or not not "Player"
-	self._input_service_name = input_service_name
+	self._input_service_name = not not params.input_service_name
 	self._has_read_camera_input = false
 
 	local override_observed_node = params.override_observed_node
 
 	self._observed_node_name = not not override_observed_node or not not self._default_observed_node_name
 
-	local override_follow_unit = params.override_follow_unit
-
-	if not override_follow_unit then
-		-- Nothing
-	end
-
-	override_follow_unit = self._observed_unit
-
-	local observed_unit = override_follow_unit
-
-	::label_2_0::
+	local observed_unit = not not params.override_follow_unit
 
 	if Unit.alive(observed_unit) then
 		local observed_node = Unit.node(observed_unit, self._observed_node_name)
@@ -89,18 +65,7 @@ CameraStateObserver.update = function (self, unit, input, dt, context, t)
 	end
 
 	local input_source = Managers.input:get_service(self._input_service_name)
-	local get = input_source:get("next_observer_target")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = not Unit.alive(self._observed_unit)
-
-	local find_next_observer_target = get
-
-	::label_5_0::
-
+	local find_next_observer_target = not not input_source:get("next_observer_target")
 	local find_previous_observer_target = input_source:get("previous_observer_target")
 
 	if find_next_observer_target or find_previous_observer_target then
@@ -134,24 +99,7 @@ CameraStateObserver.update = function (self, unit, input, dt, context, t)
 	local position = Unit.world_position(observed_unit, observed_node)
 	local is_player = Managers.player:is_player_unit(observed_unit)
 	local observed_unit_status = not not is_player and not not ScriptUnit.extension(observed_unit, "status_system")
-
-	if observed_unit_status then
-		-- Nothing
-	end
-
-	::label_5_1::
-
-	local is_hanging_from_hook = observed_unit_status:is_hanging_from_hook()
-
-	if not is_hanging_from_hook then
-		-- Nothing
-	end
-
-	is_hanging_from_hook = observed_unit_status:is_grabbed_by_pack_master()
-
-	local is_hoisted = is_hanging_from_hook
-
-	::label_5_2::
+	local is_hoisted = not not observed_unit_status:is_grabbed_by_pack_master()
 
 	if is_hoisted then
 		position = Unit.world_position(observed_unit, 0)
@@ -178,21 +126,7 @@ CameraStateObserver.follow_next_unit = function (self, reverse)
 	local new_target = next_unit ~= self._observed_unit
 
 	if new_target then
-		local node
-
-		if Unit.alive(next_unit) and Unit.has_node(next_unit, self._observed_node_name) then
-			node = Unit.node(next_unit, self._observed_node_name)
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = 0
-
-		local observed_node = node
-
-		::label_6_0::
+		local observed_node = not not Unit.node(next_unit, self._observed_node_name)
 
 		self:_set_observed_unit(next_unit, observed_node)
 	end
@@ -203,30 +137,7 @@ end
 CameraStateObserver._set_observed_unit = function (self, observed_unit, observed_node)
 	-- function 7
 	self._observed_unit = observed_unit
-
-	if not observed_node and observed_unit then
-		-- Nothing
-	end
-
-	do
-		local node
-	end
-
-	::label_7_1::
-
-	if Unit.has_node(observed_unit, self._default_observed_node_name) then
-		node = Unit.node(observed_unit, self._default_observed_node_name)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	::label_7_2::
-
-	self._observed_node = node
+	self._observed_node = not not Unit.node(observed_unit, self._default_observed_node_name)
 
 	if not Unit.alive(observed_unit) then
 		return false

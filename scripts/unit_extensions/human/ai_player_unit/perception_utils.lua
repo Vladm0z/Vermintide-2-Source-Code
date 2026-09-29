@@ -20,7 +20,7 @@ PerceptionUtils.troll_crouch_check = function (unit, blackboard, t)
 	local infront_pos = above_pos + fwd
 	local result, hit_position = PhysicsWorld.immediate_raycast(physics_world, infront_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
 	local result2, hit_position2 = PhysicsWorld.immediate_raycast(physics_world, above_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
-	local crouching = (not result or not hit_position) and not not result2 and not not hit_position2
+	local crouching = not not result2 and not not hit_position2
 
 	if crouching then
 		blackboard.crouch_sticky_timer = t + 1
@@ -59,23 +59,8 @@ PerceptionUtils.perception_continuous_keep_target = function (unit, blackboard, 
 	local target_unit = blackboard.target_unit
 	local side = blackboard.side
 	local target_alive = HEALTH_ALIVE[target_unit]
-	local is_player_unit
 
-	if target_alive then
-		is_player_unit = DamageUtils.is_player_unit(target_unit)
-
-		if is_player_unit then
-			is_player_unit = not side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
-		end
-
-		if false then
-			is_player_unit = false
-		end
-	else
-		is_player_unit = true
-	end
-
-	return is_player_unit
+	return not not not side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
 end
 
 PerceptionUtils.perception_no_seeing = function (self, unit, blackboard, breed, pick_target_func, t)
@@ -131,19 +116,11 @@ PerceptionUtils.perception_all_seeing_boss = function (unit, blackboard, breed, 
 		if breed.trigger_dialogue_on_target_switch and new_aggro_unit then
 			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
 			local event_data = FrameTable.alloc_table()
-			local dialogue_target_switch_attack_tag = breed.dialogue_target_switch_attack_tag
 
-			dialogue_target_switch_attack_tag = not not dialogue_target_switch_attack_tag or not not "enemy_target_changed"
-			event_data.attack_tag = dialogue_target_switch_attack_tag
+			event_data.attack_tag = not not breed.dialogue_target_switch_attack_tag
 			event_data.target_name = ScriptUnit.extension(new_aggro_unit, "dialogue_system").context.player_profile
 
-			local var_8_1 = dialogue_input
-			local trigger_networked_dialogue_event = dialogue_input.trigger_networked_dialogue_event
-			local dialogue_target_switch_event = breed.dialogue_target_switch_event
-
-			dialogue_target_switch_event = not not dialogue_target_switch_event or not not "enemy_target_changed"
-
-			trigger_networked_dialogue_event(var_8_1, dialogue_target_switch_event, event_data)
+			dialogue_input:trigger_networked_dialogue_event(not not breed.dialogue_target_switch_event, event_data)
 		end
 
 		local sound_effect_system = Managers.state.entity:system("sound_effect_system")
@@ -303,19 +280,11 @@ PerceptionUtils.perception_rat_ogre = function (unit, blackboard, breed, pick_ta
 		if breed.trigger_dialogue_on_target_switch and new_aggro_unit then
 			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
 			local event_data = FrameTable.alloc_table()
-			local dialogue_target_switch_attack_tag = breed.dialogue_target_switch_attack_tag
 
-			dialogue_target_switch_attack_tag = not not dialogue_target_switch_attack_tag or not not "rat_ogre_change_target"
-			event_data.attack_tag = dialogue_target_switch_attack_tag
+			event_data.attack_tag = not not breed.dialogue_target_switch_attack_tag
 			event_data.target_name = ScriptUnit.extension(new_aggro_unit, "dialogue_system").context.player_profile
 
-			local var_12_1 = dialogue_input
-			local trigger_networked_dialogue_event = dialogue_input.trigger_networked_dialogue_event
-			local dialogue_target_switch_event = breed.dialogue_target_switch_event
-
-			dialogue_target_switch_event = not not dialogue_target_switch_event or not not "enemy_attack"
-
-			trigger_networked_dialogue_event(var_12_1, dialogue_target_switch_event, event_data)
+			dialogue_input:trigger_networked_dialogue_event(not not breed.dialogue_target_switch_event, event_data)
 		end
 
 		local sound_effect_system = Managers.state.entity:system("sound_effect_system")
@@ -424,7 +393,7 @@ PerceptionUtils.keep_target_until_invalid = function (unit, blackboard, breed, p
 	local health_ext = ScriptUnit.has_extension(target_unit, "health_system")
 	local status_ext = ScriptUnit.has_extension(target_unit, "status_system")
 
-	if (not ALIVE[target_unit] or not health_ext or not health_ext:is_dead()) and status_ext and status_ext:is_invisible() then
+	if status_ext and status_ext:is_invisible() then
 		blackboard.override_target_selection_name = nil
 	end
 

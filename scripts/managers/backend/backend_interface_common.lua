@@ -17,14 +17,8 @@ end
 BackendInterfaceCommon.can_wield = function (self, career_name, item_data)
 	-- function 3
 	local can_wield = item_data.can_wield
-	local assert = assert
-	local var_3_1 = can_wield
-	local str = "BackendInterfaceCommon - Item %q has not specified what profiles that can use it."
-	local name = item_data.name
 
-	name = not not name or not not "(item_data missing name)"
-
-	assert(var_3_1, str, name)
+	assert(can_wield, "BackendInterfaceCommon - Item %q has not specified what profiles that can use it.", not not item_data.name)
 
 	for _, wield_career_name in ipairs(can_wield) do
 		if career_name == wield_career_name then
@@ -315,40 +309,8 @@ local filter_macros = {
 		local item_data = item.data
 		local profile_synchronizer = Managers.state.network.profile_synchronizer
 		local player = Managers.player:local_player()
-		local profile_index_2
-
-		if params then
-			profile_index_2 = params.profile_index
-
-			if not profile_index_2 then
-				-- Nothing
-			end
-		end
-
-		profile_index_2 = player:profile_index()
-
-		local profile_index = profile_index_2
-
-		do
-			local career_index_2
-		end
-
-		::label_32_0::
-
-		if params then
-			career_index_2 = params.career_index
-
-			if not career_index_2 then
-				-- Nothing
-			end
-		end
-
-		career_index_2 = player:career_index()
-
-		local career_index = career_index_2
-
-		::label_32_1::
-
+		local profile_index = params and not not params.profile_index or not params and not not player:profile_index()
+		local career_index = params and not not params.career_index or not params and not not player:career_index()
 		local hero_data = SPProfiles[profile_index]
 		local career_data = hero_data.careers[career_index]
 		local career_name = career_data.name
@@ -361,40 +323,8 @@ local filter_macros = {
 		local item_data = item.data
 		local profile_synchronizer = Managers.state.network.profile_synchronizer
 		local player = Managers.player:local_player()
-		local profile_index_2
-
-		if params then
-			profile_index_2 = params.profile_index
-
-			if not profile_index_2 then
-				-- Nothing
-			end
-		end
-
-		profile_index_2 = player:profile_index()
-
-		local profile_index = profile_index_2
-
-		do
-			local career_index_2
-		end
-
-		::label_33_0::
-
-		if params then
-			career_index_2 = params.career_index
-
-			if not career_index_2 then
-				-- Nothing
-			end
-		end
-
-		career_index_2 = player:career_index()
-
-		local career_index = career_index_2
-
-		::label_33_1::
-
+		local profile_index = params and not not params.profile_index or not params and not not player:profile_index()
+		local career_index = params and not not params.career_index or not params and not not player:career_index()
 		local hero_data = SPProfiles[profile_index]
 		local careers = hero_data.careers
 		local item_can_wield = item_data.can_wield
@@ -641,7 +571,7 @@ local filter_macros = {
 			"weapon_pose"
 		}, item_data.slot_type)
 
-		return (not not is_cosmetic or not not mechanisms) and not not table.contains(mechanisms, "versus")
+		return not not is_cosmetic or not not mechanisms and not not table.contains(mechanisms, "versus")
 	end,
 	available_in_mechanism_adventure = function (item, backend_id)
 		-- function 53
@@ -714,17 +644,7 @@ local filter_macros = {
 			if rarity == "default" then
 				local unlocked_weapon_poses = backend_items:get_unlocked_weapon_poses()
 				local item_id = string.gsub(item.ItemId, "^vs_", "")
-				local var_57_0 = unlocked_weapon_poses[item_id]
-
-				if not var_57_0 then
-					-- Nothing
-				end
-
-				var_57_0 = EMPTY_TABLE
-
-				local item_weapon_poses = var_57_0
-
-				::label_57_0::
+				local item_weapon_poses = not not unlocked_weapon_poses[item_id]
 
 				return not table.is_empty(item_weapon_poses)
 			end
@@ -778,11 +698,8 @@ local filter_macros = {
 		return is_part_of_active_event
 	end
 }
-local BackendInterfaceCommon = BackendInterfaceCommon
-local filter_postfix_cache = BackendInterfaceCommon.filter_postfix_cache
 
-filter_postfix_cache = not not filter_postfix_cache or not not {}
-BackendInterfaceCommon.filter_postfix_cache = filter_postfix_cache
+BackendInterfaceCommon.filter_postfix_cache = not not BackendInterfaceCommon.filter_postfix_cache
 
 local empty_params = {}
 local _filter_items_stack = {}

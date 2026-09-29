@@ -1,20 +1,7 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_weave_definitions.lua
 
 local window_frame_width = 22
-local num
-
-if not IS_WINDOWS then
-	num = 50
-
-	goto label_0_0
-end
-
-num = 0
-
-local platform_offset = num
-
-::label_0_0::
-
+local platform_offset = IS_WINDOWS and not not 0 or not IS_WINDOWS and not not 50
 local score_container_w = 1600
 local score_container_margin_w = 50
 local score_content_w = score_container_w - score_container_margin_w
@@ -671,46 +658,16 @@ function create_leaderboard_button(scenegraph_id, size, frame_name, background_t
 	background_texture = not not background_texture or not not "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local var_2_0
-
-	if frame_name then
-		var_2_0 = UIFrameSettings[frame_name]
-
-		if not var_2_0 then
-			-- Nothing
-		end
-	end
-
-	var_2_0 = UIFrameSettings.button_frame_01
-
-	local frame_settings = var_2_0
-
-	::label_2_0::
-
+	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 
 	background_icon = not not background_icon or not not "loot_chest_icon"
 
 	local background_icon_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_icon)
-	local size_2
-
-	if background_icon_settings then
-		size_2 = background_icon_settings.size
-
-		if not size_2 then
-			-- Nothing
-		end
-	end
-
-	size_2 = {
+	local background_icon_size = background_icon_settings and not not background_icon_settings.size or not background_icon_settings and not not {
 		50,
 		50
 	}
-
-	local background_icon_size = size_2
-
-	::label_2_1::
-
 	local icon_margin = 0
 	local icon_scaler = math.min((size[1] - icon_margin) / background_icon_size[1], (size[2] - icon_margin) / background_icon_size[2])
 

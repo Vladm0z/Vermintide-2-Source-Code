@@ -160,20 +160,7 @@ StoreWindowItemDetails._present_item = function (self, item)
 	local can_wield_all = table.compare(can_wield, CanWieldAllItemTemplates)
 	local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
 	local profile = SPProfiles[profile_index]
-	local str
-
-	if can_wield_all then
-		str = "store_can_be_wielded_by_all"
-
-		goto label_10_0
-	end
-
-	str = profile.character_name
-
-	local hero_display_name = str
-
-	::label_10_0::
-
+	local hero_display_name = can_wield_all and not not "store_can_be_wielded_by_all" or not can_wield_all and not not profile.character_name
 	local sub_title_text = ""
 
 	if item_type == "weapon_skin" then
@@ -247,12 +234,7 @@ StoreWindowItemDetails._setup_career_icons = function (self, careers)
 
 			tooltip_data.title = Localize(display_name)
 			tooltip_data.description = Localize("menu_store_product_wieldable_tooltip_desc")
-
-			local content = widget.content
-			local store_tag_icon = settings.store_tag_icon
-
-			store_tag_icon = not not store_tag_icon or not not ("store_tag_icon_" .. career_name)
-			content.icon = store_tag_icon
+			widget.content.icon = not not settings.store_tag_icon
 			career_icon_widgets[i] = widget
 		end
 	end
@@ -324,17 +306,7 @@ end
 StoreWindowItemDetails._is_button_pressed = function (self, widget)
 	-- function 19
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.button_text
-
-	local hotspot = button_hotspot
-
-	::label_19_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false

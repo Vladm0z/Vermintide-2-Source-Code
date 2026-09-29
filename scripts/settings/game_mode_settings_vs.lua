@@ -44,14 +44,7 @@ GameModeSettings.versus.ping_mode = {
 
 GameModeSettings.versus.positive_reinforcement_check = function (predicate, breed_attacker, breed_killed)
 	-- function 1
-	local is_player = breed_killed.is_player
-
-	if not is_player then
-		is_player = breed_killed.boss
-		is_player = not not is_player or not not breed_killed.special
-	end
-
-	return is_player
+	return not not breed_killed.is_player
 end
 
 GameModeSettings.versus.display_character_picking_view = true

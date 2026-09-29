@@ -144,7 +144,7 @@ RewardsPopupUI.present_rewards = function (self, rewards)
 							-- function 5
 							return piece.name == name and piece.rarity == rarity
 						end) then
-							sounds = (not sounds or not table.shallow_copy(sounds)) and not not {}
+							sounds = sounds and (not not table.shallow_copy(sounds) or not not {}) or not sounds and not not {}
 							sounds[#sounds + 1] = power_up_set.progress_sfx
 
 							break
@@ -152,7 +152,7 @@ RewardsPopupUI.present_rewards = function (self, rewards)
 							-- function 6
 							return piece.name == name and piece.rarity == rarity
 						end) then
-							sounds = (not sounds or not table.shallow_copy(sounds)) and not not {}
+							sounds = sounds and (not not table.shallow_copy(sounds) or not not {}) or not sounds and not not {}
 							sounds[#sounds + 1] = power_up_set.completed_sfx
 
 							break

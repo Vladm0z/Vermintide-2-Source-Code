@@ -49,7 +49,7 @@ ActionThrowGrimoire.finish = function (self, reason)
 	local owner_name = player:name()
 
 	if not IS_CONSOLE then
-		owner_name = (not is_player_controlled or not rawget(_G, "Steam") or not Steam.user_name(peer_id)) and not tostring(peer_id) and not not player:name()
+		owner_name = is_player_controlled and rawget(_G, "Steam")
 	end
 
 	local pop_chat = true

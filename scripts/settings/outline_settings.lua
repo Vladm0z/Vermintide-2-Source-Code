@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/outline_settings.lua
 
-local OutlineSettings = OutlineSettings
-
-OutlineSettings = not not OutlineSettings or not not {}
-OutlineSettings = OutlineSettings
+OutlineSettings = not not OutlineSettings
 OutlineSettings.colors = {
 	ally = {
 		pulse_multiplier = 50,

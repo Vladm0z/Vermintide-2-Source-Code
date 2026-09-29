@@ -17,13 +17,7 @@ EventManager.register = function (self, object, ...)
 
 		fassert(type(object) == "table" and type(object[callback_name]) == "function", "No function found with name %q on supplied object", callback_name)
 
-		local _events = self._events
-		local var_2_1 = self._events[event_name]
-
-		var_2_1 = not not var_2_1 or not not setmetatable({}, {
-			__mode = "v"
-		})
-		_events[event_name] = var_2_1
+		self._events[event_name] = not not self._events[event_name]
 		self._events[event_name][object] = callback_name
 	end
 end
@@ -59,29 +53,15 @@ end
 EventManager.register_referenced = function (self, reference, object, ...)
 	-- function 5
 	local referenced_events = self._referenced_events
-	local var_5_0 = referenced_events[reference]
-
-	if not var_5_0 then
-		-- Nothing
-	end
-
-	var_5_0 = {}
-
-	local registered_events = var_5_0
-
-	::label_5_0::
+	local registered_events = not not referenced_events[reference]
 
 	referenced_events[reference] = registered_events
 
 	for i = 1, select("#", ...), 2 do
 		local event_name = select(i, ...)
 		local callback_name = select(i + 1, ...)
-		local var_5_1 = registered_events[event_name]
 
-		var_5_1 = not not var_5_1 or not not setmetatable({}, {
-			__mode = "v"
-		})
-		registered_events[event_name] = var_5_1
+		registered_events[event_name] = not not registered_events[event_name]
 		registered_events[event_name][object] = callback_name
 	end
 end

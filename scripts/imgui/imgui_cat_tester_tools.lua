@@ -1,68 +1,8 @@
 -- chunkname: @scripts/imgui/imgui_cat_tester_tools.lua
 
 ImguiCatTesterTools = class(ImguiCatTesterTools)
-
-local ImguiCatTesterTools = ImguiCatTesterTools
-local curated_pickup_list = ImguiCatTesterTools.curated_pickup_list
-
-curated_pickup_list = not not curated_pickup_list or not not {
-	"all_ammo_small",
-	"cooldown_reduction_potion",
-	"damage_boost_potion",
-	"deus_relic_01",
-	"deus_soft_currency",
-	"deus_weapon_chest",
-	"explosive_barrel",
-	"fire_grenade_t1",
-	"first_aid_kit",
-	"frag_grenade_t1",
-	"engineer_grenade_t1",
-	"grimoire",
-	"healing_draught",
-	"lamp_oil",
-	"speed_boost_potion",
-	"tome",
-	"torch"
-}
-ImguiCatTesterTools.curated_pickup_list = curated_pickup_list
-
-local ImguiCatTesterTools_2 = ImguiCatTesterTools
-local curated_breed_list = ImguiCatTesterTools.curated_breed_list
-
-curated_breed_list = not not curated_breed_list or not not {
-	"beastmen_bestigor",
-	"beastmen_gor",
-	"beastmen_minotaur",
-	"beastmen_standard_bearer",
-	"beastmen_ungor_archer",
-	"beastmen_ungor",
-	"chaos_berzerker",
-	"chaos_corruptor_sorcerer",
-	"chaos_fanatic",
-	"chaos_marauder_with_shield",
-	"chaos_marauder",
-	"chaos_raider",
-	"chaos_spawn",
-	"chaos_troll",
-	"chaos_troll_chief",
-	"chaos_vortex_sorcerer",
-	"chaos_warrior",
-	"critter_pig",
-	"skaven_clan_rat_with_shield",
-	"skaven_clan_rat",
-	"skaven_gutter_runner",
-	"skaven_pack_master",
-	"skaven_plague_monk",
-	"skaven_poison_wind_globadier",
-	"skaven_rat_ogre",
-	"skaven_ratling_gunner",
-	"skaven_slave",
-	"skaven_storm_vermin_with_shield",
-	"skaven_storm_vermin",
-	"skaven_stormfiend",
-	"skaven_warpfire_thrower"
-}
-ImguiCatTesterTools_2.curated_breed_list = curated_breed_list
+ImguiCatTesterTools.curated_pickup_list = not not ImguiCatTesterTools.curated_pickup_list
+ImguiCatTesterTools.curated_breed_list = not not ImguiCatTesterTools.curated_breed_list
 
 local localization_placeholders = {
 	beastmen_ungor = "Ungor",
@@ -109,22 +49,8 @@ ImguiCatTesterTools.init = function (self)
 	self._pickup_names = table.map(ImguiCatTesterTools.curated_pickup_list, function (pickup_name)
 		-- function 4
 		local pickup_settings = AllPickups[pickup_name]
-		local var_4_0 = custom_localize
-		local hud_description
 
-		if pickup_settings then
-			hud_description = pickup_settings.hud_description
-
-			if not hud_description then
-				-- Nothing
-			end
-		end
-
-		hud_description = "_UNKNOWN"
-
-		::label_4_0::
-
-		return var_4_0(hud_description)
+		return custom_localize(pickup_settings and not not pickup_settings.hud_description or not pickup_settings and not not "_UNKNOWN")
 	end)
 	self._pickup_results = table.shallow_copy(self._pickup_names)
 
@@ -164,45 +90,11 @@ ImguiCatTesterTools.draw = function (self)
 	Imgui.end_child_window()
 	Imgui.begin_child_window("Settings", 0, 150, true)
 
-	local script_data = script_data
-	local checkbox = Imgui.checkbox
-	local str = "Disable AI Perception"
-	local disable_ai_perception = script_data.disable_ai_perception
-
-	disable_ai_perception = not not disable_ai_perception or not not false
-	script_data.disable_ai_perception = checkbox(str, disable_ai_perception)
-
-	local script_data_2 = script_data
-	local checkbox_2 = Imgui.checkbox
-	local str_2 = "Player Invincible"
-	local player_invincible = script_data.player_invincible
-
-	player_invincible = not not player_invincible or not not false
-	script_data_2.player_invincible = checkbox_2(str_2, player_invincible)
-
-	local script_data_3 = script_data
-	local checkbox_3 = Imgui.checkbox
-	local str_3 = "Infinite Ammo"
-	local infinite_ammo = script_data.infinite_ammo
-
-	infinite_ammo = not not infinite_ammo or not not false
-	script_data_3.infinite_ammo = checkbox_3(str_3, infinite_ammo)
-
-	local script_data_4 = script_data
-	local checkbox_4 = Imgui.checkbox
-	local str_4 = "Disable Overcharge"
-	local disable_overcharge = script_data.disable_overcharge
-
-	disable_overcharge = not not disable_overcharge or not not false
-	script_data_4.disable_overcharge = checkbox_4(str_4, disable_overcharge)
-
-	local script_data_5 = script_data
-	local checkbox_5 = Imgui.checkbox
-	local str_5 = "Short Ability Cooldowns"
-	local short_ability_cooldowns = script_data.short_ability_cooldowns
-
-	short_ability_cooldowns = not not short_ability_cooldowns or not not false
-	script_data_5.short_ability_cooldowns = checkbox_5(str_5, short_ability_cooldowns)
+	script_data.disable_ai_perception = Imgui.checkbox("Disable AI Perception", not not script_data.disable_ai_perception)
+	script_data.player_invincible = Imgui.checkbox("Player Invincible", not not script_data.player_invincible)
+	script_data.infinite_ammo = Imgui.checkbox("Infinite Ammo", not not script_data.infinite_ammo)
+	script_data.disable_overcharge = Imgui.checkbox("Disable Overcharge", not not script_data.disable_overcharge)
+	script_data.short_ability_cooldowns = Imgui.checkbox("Short Ability Cooldowns", not not script_data.short_ability_cooldowns)
 
 	if Imgui.radio_button("Normal crit", not script_data.no_critical_strikes and not not not script_data.always_critical_strikes) then
 		script_data.no_critical_strikes = false

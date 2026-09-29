@@ -162,20 +162,15 @@ HeroViewStateStore.on_enter = function (self, params)
 
 	self._menu_input_description:set_input_description(nil)
 
-	local tbl = {
+	local window_params = {
 		wwise_world = self._wwise_world,
 		ingame_ui_context = ingame_ui_context,
 		parent = self,
 		windows_settings = self._windows_settings,
-		input_service = FAKE_INPUT_SERVICE
+		input_service = FAKE_INPUT_SERVICE,
+		start_state = not not params.start_state,
+		layout_settings = self._layout_settings
 	}
-	local start_state = params.start_state
-
-	start_state = not not start_state or not not params.state_params.start_state
-	tbl.start_state = start_state
-	tbl.layout_settings = self._layout_settings
-
-	local window_params = tbl
 
 	self:_initial_windows_setups(window_params)
 	UISettings.hero_fullscreen_menu_on_enter()
@@ -197,29 +192,8 @@ HeroViewStateStore.on_enter = function (self, params)
 			local currency_type = reward.currency_type
 			local rewarded_from = reward.rewarded_from
 			local currency_amount = reward.currency_amount
-			local var_1_2 = self._rewards_data[currency_type]
-
-			if not var_1_2 then
-				-- Nothing
-			end
-
-			var_1_2 = {}
-
-			local currency_data = var_1_2
-
-			::label_1_0::
-
-			local var_1_3 = currency_data[rewarded_from]
-
-			if not var_1_3 then
-				-- Nothing
-			end
-
-			var_1_3 = 0
-
-			local current_amount = var_1_3
-
-			::label_1_1::
+			local currency_data = not not self._rewards_data[currency_type]
+			local current_amount = not not currency_data[rewarded_from]
 
 			currency_data[rewarded_from] = current_amount + currency_amount
 			self._rewards_data[currency_type] = currency_data
@@ -466,23 +440,7 @@ end
 
 HeroViewStateStore._setup_menu_layout = function (self)
 	-- function 10
-	local IS_CONSOLE = IS_CONSOLE
-
-	if not IS_CONSOLE then
-		-- Nothing
-	end
-
-	IS_CONSOLE = Managers.input:is_device_active("gamepad")
-
-	if not IS_CONSOLE then
-		-- Nothing
-	end
-
-	IS_CONSOLE = not UISettings.use_pc_menu_layout
-
-	local use_gamepad_layout = IS_CONSOLE
-
-	::label_10_0::
+	local use_gamepad_layout = not not IS_CONSOLE
 
 	if use_gamepad_layout then
 		self._layout_settings = local_require("scripts/ui/views/hero_view/states/store_window_layout")
@@ -694,32 +652,10 @@ HeroViewStateStore._change_window = function (self, window_index, window_name)
 	local window_offset
 
 	if not ignore_alignment then
-		local alignment_index_2 = new_window_settings.alignment_index
-
-		if not alignment_index_2 then
-			-- Nothing
-		end
-
-		alignment_index_2 = window_index
-
-		local alignment_index = alignment_index_2
-
-		::label_22_0::
-
+		local alignment_index = not not new_window_settings.alignment_index
 		local window_default_settings = UISettings.game_start_windows
 		local window_size = window_default_settings.size
-		local spacing = window_default_settings.spacing
-
-		if not spacing then
-			-- Nothing
-		end
-
-		spacing = 10
-
-		local window_spacing = spacing
-
-		::label_22_1::
-
+		local window_spacing = not not window_default_settings.spacing
 		local window_width = window_size[1]
 		local total_spacing = window_spacing * 2
 		local total_windows_width = 3 * window_width
@@ -888,11 +824,7 @@ end
 
 HeroViewStateStore.get_page = function (self, page_name)
 	-- function 35
-	local var_35_0 = StoreLayoutConfig.pages[page_name]
-
-	var_35_0 = not not var_35_0 or not not self._temporary_pages[page_name]
-
-	return var_35_0
+	return not not StoreLayoutConfig.pages[page_name]
 end
 
 HeroViewStateStore.go_to_store_path = function (self, path_array, keep_global_shader_flags, page_override)
@@ -903,25 +835,7 @@ HeroViewStateStore.go_to_store_path = function (self, path_array, keep_global_sh
 
 	local pages = StoreLayoutConfig.pages
 	local page_name = path_array[#path_array]
-
-	if not page_override then
-		-- Nothing
-	end
-
-	::label_36_0::
-
-	local var_36_0 = pages[path_array[#path_array]]
-
-	if not var_36_0 then
-		-- Nothing
-	end
-
-	var_36_0 = self._temporary_pages[page_name]
-
-	local page = var_36_0
-
-	::label_36_1::
-
+	local page = not not page_override or not not pages[path_array[#path_array]]
 	local layout = page.layout
 	local sound_event_enter = page.sound_event_enter
 
@@ -968,18 +882,7 @@ HeroViewStateStore._remove_page_global_shader_flag_overrides = function (self)
 	end
 
 	local page_name = path_array[#path_array]
-	local var_39_0 = pages[page_name]
-
-	if not var_39_0 then
-		-- Nothing
-	end
-
-	var_39_0 = self._temporary_pages[page_name]
-
-	local page = var_39_0
-
-	::label_39_0::
-
+	local page = not not pages[page_name]
 	local global_shader_flag_overrides = page.global_shader_flag_overrides
 
 	if not global_shader_flag_overrides then
@@ -1012,12 +915,7 @@ HeroViewStateStore.go_to_product = function (self, product_id, optional_path, op
 
 		if not new_path then
 			new_path = table.clone(current_store_path)
-
-			local num = #new_path + 1
-			local flag
-
-			flag = (not dlc_settings.is_bundle or not "bundles") and not not "dlc"
-			new_path[num] = flag
+			new_path[#new_path + 1] = dlc_settings.is_bundle and not not "bundles" or not dlc_settings.is_bundle and not not "dlc"
 		end
 	else
 		local item = self:get_item_by_key(product_id)
@@ -1200,7 +1098,7 @@ HeroViewStateStore.on_exit = function (self, params)
 	local login_rewards_popup = self._login_rewards_popup
 	local flow_event
 
-	flow_event = (not (self._items_bought > 0) or not "shop_closed_item_bought") and (not self._login_rewards_popup or not self._login_rewards_popup:has_claimed_rewards() or not "shop_closed_login_reward_claimed") and not not "shop_closed"
+	flow_event = self._items_bought > 0 and (not not "shop_closed_item_bought" or self._login_rewards_popup and (self._login_rewards_popup:has_claimed_rewards() and (not not "shop_closed_login_reward_claimed" or not not "shop_closed") or not self._login_rewards_popup:has_claimed_rewards() and not not "shop_closed") or not self._login_rewards_popup and not not "shop_closed") or not (self._items_bought > 0) and (self._login_rewards_popup and (self._login_rewards_popup:has_claimed_rewards() and (not not "shop_closed_login_reward_claimed" or not not "shop_closed") or not self._login_rewards_popup:has_claimed_rewards() and not not "shop_closed") or not self._login_rewards_popup and not not "shop_closed")
 
 	if GameSettingsDevelopment.store_nags then
 		LevelHelper:flow_event(self._world, flow_event)
@@ -1444,18 +1342,7 @@ HeroViewStateStore.can_afford_item = function (self, item)
 		end
 	end
 
-	local var_58_0 = current_prices[currency_type]
-
-	if not var_58_0 then
-		-- Nothing
-	end
-
-	var_58_0 = regular_prices[currency_type]
-
-	local item_price = var_58_0
-
-	::label_58_0::
-
+	local item_price = not not current_prices[currency_type]
 	local owned_currency_amount = self:get_wallet_currency_amount(currency_type)
 
 	return item_price <= owned_currency_amount
@@ -1570,18 +1457,7 @@ HeroViewStateStore._handle_input = function (self, dt, t)
 
 	local widgets_by_name = self._widgets_by_name
 	local input_service = self:input_service()
-	local get = input_service:get("toggle_menu", true)
-
-	if not get then
-		-- Nothing
-	end
-
-	get = input_service:get("back_menu_alt", true)
-
-	local input_pressed = get
-
-	::label_66_0::
-
+	local input_pressed = not not input_service:get("toggle_menu", true)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local back_pressed = not not gamepad_active and not not input_service:get("back_menu", true)
 	local close_on_exit = self._close_on_exit
@@ -1677,17 +1553,7 @@ end
 HeroViewStateStore._is_button_pressed = function (self, widget)
 	-- function 69
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_69_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -1846,17 +1712,7 @@ HeroViewStateStore._show_storepage = function (self, url, dlc_name)
 		local user_id = Managers.account:user_id()
 
 		if dlc_name then
-			local dlc_exists = Managers.unlock:dlc_exists(dlc_name)
-
-			if dlc_exists then
-				-- Nothing
-			end
-
-			dlc_exists = Managers.unlock:dlc_id(dlc_name)
-
-			local product_id = dlc_exists
-
-			::label_80_0::
+			local product_id = not not Managers.unlock:dlc_exists(dlc_name)
 
 			if product_id then
 				XboxLive.show_product_details(user_id, product_id)
@@ -1870,17 +1726,7 @@ HeroViewStateStore._show_storepage = function (self, url, dlc_name)
 		local user_id = Managers.account:user_id()
 
 		if dlc_name then
-			local dlc_exists_2 = Managers.unlock:dlc_exists(dlc_name)
-
-			if dlc_exists_2 then
-				-- Nothing
-			end
-
-			dlc_exists_2 = Managers.unlock:ps4_dlc_product_label(dlc_name)
-
-			local product_label = dlc_exists_2
-
-			::label_80_1::
+			local product_label = not not Managers.unlock:dlc_exists(dlc_name)
 
 			if product_label then
 				Managers.system_dialog:open_commerce_dialog(NpCommerceDialog.MODE_PRODUCT, user_id, {
@@ -1899,10 +1745,7 @@ HeroViewStateStore._complete_item_purchase_request = function (self)
 	-- function 81
 	self:_abort_item_purchase_request()
 
-	local _products_version_id = self._products_version_id
-
-	_products_version_id = not not _products_version_id or not not 0
-	self._products_version_id = _products_version_id + 1
+	self._products_version_id = not not self._products_version_id + 1
 	self._items_bought = self._items_bought + 1
 end
 
@@ -1917,11 +1760,7 @@ end
 
 HeroViewStateStore.products_version_id = function (self)
 	-- function 83
-	local _products_version_id = self._products_version_id
-
-	_products_version_id = not not _products_version_id or not not 0
-
-	return _products_version_id
+	return not not self._products_version_id
 end
 
 HeroViewStateStore.create_item_widget = function (self, product, scenegraph_id, masked)
@@ -1935,35 +1774,14 @@ HeroViewStateStore.create_item_widget = function (self, product, scenegraph_id, 
 	elseif product_type == "item" then
 		local item = product.item
 		local item_data = item.data
-		local item_type_2 = item_data.item_type
-
-		if not item_type_2 then
-			-- Nothing
-		end
-
-		item_type_2 = item.item_type
-
-		local item_type = item_type_2
-
-		::label_84_0::
+		local item_type = not not item_data.item_type
 
 		size = not not item_widget_size_by_type[item_type] or not not item_widget_size_by_type[product_type] or not not item_widget_size_by_type.default
 	else
 		size = not not item_widget_size_by_type[product_type] or not not item_widget_size_by_type.default
 	end
 
-	local var_84_1 = item_widget_definition_functions[product_type]
-
-	if not var_84_1 then
-		-- Nothing
-	end
-
-	var_84_1 = item_widget_definition_functions.default
-
-	local definition_function_name = var_84_1
-
-	::label_84_1::
-
+	local definition_function_name = not not item_widget_definition_functions[product_type]
 	local definition_function = UIWidgets[definition_function_name]
 
 	if definition_function then
@@ -2118,18 +1936,7 @@ HeroViewStateStore._populate_item_widget = function (self, widget, product, prod
 	local settings = product.settings
 	local inventory_icon, display_name, description = UIUtils.get_ui_information_from_item(item)
 	local item_data = item.data
-	local rarity_2 = item.rarity
-
-	if not rarity_2 then
-		-- Nothing
-	end
-
-	rarity_2 = item_data.rarity
-
-	local rarity = rarity_2
-
-	::label_88_0::
-
+	local rarity = not not item.rarity
 	local item_type = item_data.item_type
 	local content = widget.content
 	local style = widget.style
@@ -2248,78 +2055,19 @@ HeroViewStateStore._populate_item_widget = function (self, widget, product, prod
 
 	local backend_items = Managers.backend:get_interface("items")
 	local item_key = item.key
-	local has_item = backend_items:has_item(item_key)
-
-	if not has_item then
-		-- Nothing
-	end
-
-	has_item = backend_items:has_weapon_illusion(item_key)
-
-	if not has_item then
-		-- Nothing
-	end
-
-	has_item = backend_items:has_bundle_contents(item.data.bundle_contains)
-
-	local item_owned = has_item
-
-	::label_88_1::
-
+	local item_owned = not not backend_items:has_item(item_key)
 	local item_data = item.data
 	local item_type = item_data.item_type
 
 	content.owned = item_owned
 
-	local var_88_2 = item_type_store_icons[item_type]
+	local item_type_icon = not not item_type_store_icons[item_type]
 
-	if not var_88_2 then
-		-- Nothing
-	end
-
-	var_88_2 = item_type_store_icons.default
-
-	local item_type_icon = var_88_2
-
-	do
-		local str
-	end
-
-	::label_88_2::
-
-	if rarity and item_type_icon then
-		str = item_type_icon .. "_" .. rarity
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = item_type_icon
-
-	::label_88_3::
-
-	content.type_tag_icon = str
+	content.type_tag_icon = not not (item_type_icon .. "_" .. rarity)
 
 	if item_data.item_type == "bundle" and item_data.bundle_contains and #item_data.bundle_contains ~= 0 then
 		content.bundle_content_amount_text = string.format("%dx ", #item_data.bundle_contains)
-
-		local offset = style.bundle_content_amount_text.offset
-		local num
-
-		if #item_data.bundle_contains < 10 then
-			num = content.size[1] - 70
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = content.size[1] - 80
-
-		::label_88_4::
-
-		offset[1] = num
+		style.bundle_content_amount_text.offset[1] = #item_data.bundle_contains < 10 and not not (content.size[1] - 70) or not (#item_data.bundle_contains < 10) and not not (content.size[1] - 80)
 	end
 
 	if item_data.item_type == "bundle" then
@@ -2362,78 +2110,26 @@ HeroViewStateStore._populate_item_widget = function (self, widget, product, prod
 	local ui_top_renderer = self._ui_top_renderer
 	local top_gui = ui_top_renderer.gui
 	local store_icon_override_key = item_data.store_icon_override_key
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = product_id .. "_" .. self._reference_id
 	local texture_name = "store_item_icon_" .. (not not store_icon_override_key or not not product_id)
-	local store_texture_package = item_data.store_texture_package
-
-	if not store_texture_package then
-		-- Nothing
-	end
-
-	store_texture_package = "resource_packages/store/item_icons/" .. texture_name
-
-	local package_name = store_texture_package
-
-	::label_88_5::
-
+	local package_name = not not item_data.store_texture_package
 	local package_available = Application.can_get("package", package_name)
 
 	if package_available then
 		content.reference_name = reference_name
 		content.icon = nil
 
-		local str_2
-
-		if masked then
-			str_2 = texture_name .. "_masked"
-
-			if not str_2 then
-				-- Nothing
-			end
-		end
-
-		str_2 = texture_name
-
-		local new_material_name = str_2
-
-		do
-			local str_3
-		end
-
-		::label_88_6::
-
-		if masked then
-			str_3 = "template_store_diffuse_masked"
-
-			goto label_88_7
-		end
-
-		str_3 = "template_store_diffuse"
-
-		local template_material_name = str_3
-
-		::label_88_7::
+		local new_material_name = masked and not not (texture_name .. "_masked") or not masked and not not texture_name
+		local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
 
 		local function callback()
 			-- function 89
-			local store_texture = item_data.store_texture
-
-			if not store_texture then
-				-- Nothing
-			end
-
-			store_texture = "gui/1080p/single_textures/store_item_icons/" .. texture_name .. "/" .. texture_name
-
-			local texture_path = store_texture
-
-			::label_89_0::
+			local texture_path = not not item_data.store_texture
 
 			self:_set_material_diffuse(top_gui, new_material_name, texture_path)
 
@@ -2481,78 +2177,26 @@ HeroViewStateStore._populate_collection_item = function (self, widget, product, 
 	end
 
 	local store_icon_override_key = item_data.store_icon_override_key
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = product_id .. "_" .. self._reference_id
 	local texture_name = "store_item_icon_" .. (not not store_icon_override_key or not not product_id)
-	local store_texture_package = item_data.store_texture_package
-
-	if not store_texture_package then
-		-- Nothing
-	end
-
-	store_texture_package = "resource_packages/store/item_icons/" .. texture_name
-
-	local package_name = store_texture_package
-
-	::label_90_0::
-
+	local package_name = not not item_data.store_texture_package
 	local package_available = Application.can_get("package", package_name)
 
 	if package_available then
 		content.reference_name = reference_name
 		content.category_texture.texture_id = nil
 
-		local str
-
-		if masked then
-			str = texture_name .. "_masked"
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = texture_name
-
-		local new_material_name = str
-
-		do
-			local str_2
-		end
-
-		::label_90_1::
-
-		if masked then
-			str_2 = "template_store_diffuse_masked"
-
-			goto label_90_2
-		end
-
-		str_2 = "template_store_diffuse"
-
-		local template_material_name = str_2
-
-		::label_90_2::
+		local new_material_name = masked and not not (texture_name .. "_masked") or not masked and not not texture_name
+		local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
 
 		local function callback()
 			-- function 91
-			local store_texture = item_data.store_texture
-
-			if not store_texture then
-				-- Nothing
-			end
-
-			store_texture = "gui/1080p/single_textures/store_item_icons/" .. texture_name .. "/" .. texture_name
-
-			local texture_path = store_texture
-
-			::label_91_0::
+			local texture_path = not not item_data.store_texture
 
 			self:_set_material_diffuse(top_gui, new_material_name, texture_path)
 
@@ -2578,35 +2222,9 @@ HeroViewStateStore._populate_pose_item = function (self, widget, product, produc
 	local content = widget.content
 	local style = widget.style
 	local item_type_store_icons = UISettings.item_type_store_icons
-	local var_92_0 = item_type_store_icons[item_type]
+	local item_type_icon = not not item_type_store_icons[item_type]
 
-	if not var_92_0 then
-		-- Nothing
-	end
-
-	var_92_0 = item_type_store_icons.default
-
-	local item_type_icon = var_92_0
-
-	do
-		local str
-	end
-
-	::label_92_0::
-
-	if rarity and item_type_icon then
-		str = item_type_icon .. "_" .. rarity
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = item_type_icon
-
-	::label_92_1::
-
-	content.type_tag_icon = str
+	content.type_tag_icon = not not (item_type_icon .. "_" .. rarity)
 
 	local rarity_background = item_backgrounds_by_rarirty[rarity]
 
@@ -2619,10 +2237,8 @@ HeroViewStateStore._populate_pose_item = function (self, widget, product, produc
 	local masked = true
 	local ui_top_renderer = self._ui_top_renderer
 	local top_gui = ui_top_renderer.gui
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = product_id .. "_" .. self._reference_id
 	local texture_name = parent_item .. string.format("_%02d", pose_index)
@@ -2633,53 +2249,14 @@ HeroViewStateStore._populate_pose_item = function (self, widget, product, produc
 		content.reference_name = reference_name
 		content.icon = nil
 
-		local str_2
-
-		if masked then
-			str_2 = texture_name .. "_masked"
-
-			if not str_2 then
-				-- Nothing
-			end
-		end
-
-		str_2 = texture_name
-
-		local new_material_name = str_2
-
-		do
-			local str_3
-		end
-
-		::label_92_2::
-
-		if masked then
-			str_3 = "template_store_diffuse_masked"
-
-			goto label_92_3
-		end
-
-		str_3 = "template_store_diffuse"
-
-		local template_material_name = str_3
-
-		::label_92_3::
+		local new_material_name = masked and not not (texture_name .. "_masked") or not masked and not not texture_name
+		local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
 
 		local function callback()
 			-- function 93
-			local store_texture = item.store_texture
-
-			if not store_texture then
-				-- Nothing
-			end
-
-			store_texture = "gui/1080p/single_textures/icons_poses_social_wheel/" .. texture_name .. "_glow"
-
-			local texture_path = store_texture
-
-			::label_93_0::
+			local texture_path = not not item.store_texture
 
 			self:_set_material_diffuse(top_gui, new_material_name, texture_path)
 
@@ -2868,22 +2445,7 @@ HeroViewStateStore._setup_xb1_price_data = function (self, widget, price_data)
 	local style = widget.style
 	local spacing = 20
 	local size = content.size
-	local var_98_0
-
-	if price_data.availabilities then
-		var_98_0 = price_data.availabilities[1]
-
-		if not var_98_0 then
-			-- Nothing
-		end
-	end
-
-	var_98_0 = {}
-
-	local availability = var_98_0
-
-	::label_98_0::
-
+	local availability = price_data.availabilities and not not price_data.availabilities[1] or not price_data.availabilities and not not {}
 	local display_original_price = availability.DisplayListPrice
 	local display_price = availability.DisplayPrice
 
@@ -2962,32 +2524,14 @@ HeroViewStateStore.get_steam_item_price_text = function (self, steam_itemdefid, 
 	local price_text, price_text_original
 
 	if not content.can_use_item then
-		local Localize = Localize
-		local can_not_use_item_reason = content.can_not_use_item_reason
-
-		can_not_use_item_reason = not not can_not_use_item_reason or not not "dlc_price_unavailable"
-		price_text = Localize(can_not_use_item_reason)
+		price_text = Localize(not not content.can_not_use_item_reason)
 	elseif price then
 		local currency_label = tostring(currency)
 
 		price_text = string.format("%s %.2f", currency_label, price * 0.01)
 
 		if item_data and item_data.item_type == "bundle" then
-			local var_99_2
-
-			if steam_data then
-				var_99_2 = steam_data.regular_prices[currency]
-
-				if not var_99_2 then
-					-- Nothing
-				end
-			end
-
-			var_99_2 = item_data.bundle_price
-
-			local regular_price = var_99_2
-
-			::label_99_0::
+			local regular_price = steam_data and not not steam_data.regular_prices[currency] or not steam_data and not not item_data.bundle_price
 
 			price_text_original = string.format("%s %.2f", currency_label, regular_price * 0.01)
 		else
@@ -3031,18 +2575,7 @@ HeroViewStateStore.can_use_item = function (self, item)
 	for i = 1, #careers do
 		local career = careers[i]
 		local profile = PROFILES_BY_CAREER_NAMES[career]
-		local get = hero_attributes:get(profile.display_name, "experience")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = 0
-
-		local hero_experience = get
-
-		::label_100_0::
-
+		local hero_experience = not not hero_attributes:get(profile.display_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 
 		if CareerSettings[career]:is_unlocked_function(profile.display_name, hero_level) then
@@ -3055,31 +2588,9 @@ end
 
 HeroViewStateStore.get_dlc_price_text = function (self, dlc_name)
 	-- function 101
-	local dlc_exists = Managers.unlock:dlc_exists(dlc_name)
-
-	if dlc_exists then
-		-- Nothing
-	end
-
-	dlc_exists = Managers.unlock:dlc_id(dlc_name)
-
-	local dlc_id = dlc_exists
-
-	::label_101_0::
-
+	local dlc_id = not not Managers.unlock:dlc_exists(dlc_name)
 	local backend_store = Managers.backend:get_interface("peddler")
-	local get_app_price = backend_store:get_app_price((not IS_WINDOWS or not dlc_id) and not not dlc_name)
-
-	if not get_app_price then
-		-- Nothing
-	end
-
-	get_app_price = {}
-
-	local price_data = get_app_price
-
-	::label_101_1::
-
+	local price_data = not not backend_store:get_app_price(IS_WINDOWS and (not not dlc_id or not not dlc_name) or not IS_WINDOWS and not not dlc_name)
 	local price_text = Localize("dlc_price_unavailable")
 
 	if price_data then
@@ -3097,7 +2608,7 @@ HeroViewStateStore.get_dlc_price_text = function (self, dlc_name)
 		elseif IS_PS4 then
 			price_text = not not price_data.display_price or not not Localize("dlc_price_unavailable")
 		elseif IS_XB1 then
-			price_text = (not price_data.availabilities or not price_data.availabilities[1] or not price_data.availabilities[1].DisplayPrice) and not not Localize("dlc_price_unavailable")
+			price_text = price_data.availabilities and (price_data.availabilities[1] and (not not price_data.availabilities[1].DisplayPrice or not not Localize("dlc_price_unavailable")) or not price_data.availabilities[1] and not not Localize("dlc_price_unavailable")) or not price_data.availabilities and not not Localize("dlc_price_unavailable")
 		end
 	end
 
@@ -3118,25 +2629,11 @@ end
 
 HeroViewStateStore._populate_video_widget = function (self, widget, settings, product_id)
 	-- function 103
-	local _reference_id = self._reference_id
-
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = product_id .. "_" .. self._reference_id
 	local set_loop = true
-	local masked_material_name = settings.masked_material_name
-
-	if not masked_material_name then
-		-- Nothing
-	end
-
-	masked_material_name = settings.material_name
-
-	local material_name = masked_material_name
-
-	::label_103_0::
-
+	local material_name = not not settings.masked_material_name
 	local resource = settings.resource
 	local ui_top_renderer = self._ui_top_renderer
 
@@ -3173,18 +2670,7 @@ HeroViewStateStore._populate_text_widget = function (self, widget, settings, pro
 	local text_offset = text_style.offset
 	local text_shadow_style = style.text_shadow
 	local ui_top_renderer = self._ui_top_renderer
-	local height_offset_2 = settings.height_offset
-
-	if not height_offset_2 then
-		-- Nothing
-	end
-
-	height_offset_2 = 0
-
-	local height_offset = height_offset_2
-
-	::label_104_0::
-
+	local height_offset = not not settings.height_offset
 	local font_type = settings.font_type
 
 	if font_type then
@@ -3207,17 +2693,7 @@ HeroViewStateStore._populate_text_widget = function (self, widget, settings, pro
 	text_shadow_style.size[2] = text_size[2]
 	text_shadow_style.offset[2] = -(text_size[2] + 2) + height_offset
 
-	local alignment_2 = settings.alignment
-
-	if not alignment_2 then
-		-- Nothing
-	end
-
-	alignment_2 = "center"
-
-	local alignment = alignment_2
-
-	::label_104_1::
+	local alignment = not not settings.alignment
 
 	text_style.horizontal_alignment = alignment
 	text_shadow_style.horizontal_alignment = alignment
@@ -3256,17 +2732,7 @@ HeroViewStateStore._populate_dlc_feature_horizontal_widget = function (self, wid
 	local image_size = image_style.texture_size
 	local image_offset = image_style.offset
 	local image_height = image_size[2]
-	local alignment_2 = settings.alignment
-
-	if not alignment_2 then
-		-- Nothing
-	end
-
-	alignment_2 = "center"
-
-	local alignment = alignment_2
-
-	::label_105_0::
+	local alignment = not not settings.alignment
 
 	if alignment == "top" then
 		image_offset[2] = 0
@@ -3290,10 +2756,8 @@ HeroViewStateStore._populate_dlc_feature_horizontal_widget = function (self, wid
 	local top_gui = ui_top_renderer.gui
 	local package_name = settings.texture_package
 	local texture_path = settings.texture_path
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = "dlc_feature_reference_name_" .. self._reference_id
 	local package_available = Application.can_get("package", package_name)
@@ -3301,37 +2765,8 @@ HeroViewStateStore._populate_dlc_feature_horizontal_widget = function (self, wid
 	if package_available then
 		content.reference_name = reference_name
 
-		local str
-
-		if masked then
-			str = "dlc_feature_masked_" .. product_id
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = "dlc_feature_" .. product_id
-
-		local new_material_name = str
-
-		do
-			local str_2
-		end
-
-		::label_105_1::
-
-		if masked then
-			str_2 = "template_store_diffuse_masked"
-
-			goto label_105_2
-		end
-
-		str_2 = "template_store_diffuse"
-
-		local template_material_name = str_2
-
-		::label_105_2::
+		local new_material_name = masked and not not ("dlc_feature_masked_" .. product_id) or not masked and not not ("dlc_feature_" .. product_id)
+		local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
 
@@ -3381,10 +2816,7 @@ HeroViewStateStore._populate_dlc_logo_widget = function (self, widget, settings,
 		image_offset[2] = image_size[2]
 	end
 
-	local _reference_id = self._reference_id
-
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = "dlc_feature_reference_name_" .. self._reference_id
 	local package_available = Application.can_get("package", package_name)
@@ -3392,37 +2824,8 @@ HeroViewStateStore._populate_dlc_logo_widget = function (self, widget, settings,
 	if package_available then
 		content.reference_name = reference_name
 
-		local str
-
-		if masked then
-			str = "dlc_feature_masked_" .. product_id
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = "dlc_feature_" .. product_id
-
-		local new_material_name = str
-
-		do
-			local str_2
-		end
-
-		::label_107_0::
-
-		if masked then
-			str_2 = "template_store_diffuse_masked"
-
-			goto label_107_1
-		end
-
-		str_2 = "template_store_diffuse"
-
-		local template_material_name = str_2
-
-		::label_107_1::
+		local new_material_name = masked and not not ("dlc_feature_masked_" .. product_id) or not masked and not not ("dlc_feature_" .. product_id)
+		local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
 
@@ -3473,17 +2876,7 @@ HeroViewStateStore._populate_dlc_feature_vertical_widget = function (self, widge
 	text_shadow_style.size[2] = text_size[2]
 	text_shadow_style.offset[2] = text_offset[2] - 2
 
-	local alignment_2 = settings.alignment
-
-	if not alignment_2 then
-		-- Nothing
-	end
-
-	alignment_2 = "center"
-
-	local alignment = alignment_2
-
-	::label_109_0::
+	local alignment = not not settings.alignment
 
 	text_style.horizontal_alignment = alignment
 	text_shadow_style.horizontal_alignment = alignment
@@ -3495,10 +2888,8 @@ HeroViewStateStore._populate_dlc_feature_vertical_widget = function (self, widge
 	local top_gui = ui_top_renderer.gui
 	local package_name = settings.texture_package
 	local texture_path = settings.texture_path
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = "dlc_feature_reference_name_" .. self._reference_id
 	local package_available = Application.can_get("package", package_name)
@@ -3506,37 +2897,8 @@ HeroViewStateStore._populate_dlc_feature_vertical_widget = function (self, widge
 	if package_available then
 		content.reference_name = reference_name
 
-		local str
-
-		if masked then
-			str = "dlc_feature_masked_" .. product_id
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = "dlc_feature_" .. product_id
-
-		local new_material_name = str
-
-		do
-			local str_2
-		end
-
-		::label_109_1::
-
-		if masked then
-			str_2 = "template_store_diffuse_masked"
-
-			goto label_109_2
-		end
-
-		str_2 = "template_store_diffuse"
-
-		local template_material_name = str_2
-
-		::label_109_2::
+		local new_material_name = masked and not not ("dlc_feature_masked_" .. product_id) or not masked and not not ("dlc_feature_" .. product_id)
+		local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
 
@@ -3561,56 +2923,15 @@ HeroViewStateStore._populate_dlc_widget = function (self, widget, settings, prod
 	local display_name = settings.name
 	local texture = settings.store_banner_texture
 	local dlc_name = settings.dlc_name
-	local str
-
-	if settings.is_bundle then
-		str = "bundle"
-
-		goto label_111_0
-	end
-
-	str = "dlc"
-
-	local item_type = str
-
-	::label_111_0::
-
+	local item_type = settings.is_bundle and not not "bundle" or not settings.is_bundle and not not "dlc"
 	local currency_type = "SM"
 	local style = widget.style
 	local content = widget.content
 	local optional_name = settings.optional_dlc_display_name
 	local optional_subtitle = settings.optional_dlc_subtitle
-	local var_111_1
 
-	if optional_name then
-		var_111_1 = Localize(optional_name)
-
-		if not var_111_1 then
-			-- Nothing
-		end
-	end
-
-	var_111_1 = ""
-
-	::label_111_1::
-
-	content.optional_item_name = var_111_1
-
-	local var_111_2
-
-	if optional_subtitle then
-		var_111_2 = Localize(optional_subtitle)
-
-		if not var_111_2 then
-			-- Nothing
-		end
-	end
-
-	var_111_2 = ""
-
-	::label_111_2::
-
-	content.optional_subtitle = var_111_2
+	content.optional_item_name = optional_name and not not Localize(optional_name) or not optional_name and not not ""
+	content.optional_subtitle = optional_subtitle and not not Localize(optional_subtitle) or not optional_subtitle and not not ""
 
 	local price_text, platform_price_data = self:get_dlc_price_text(dlc_name)
 	local real_currency = true
@@ -3625,44 +2946,16 @@ HeroViewStateStore._populate_dlc_widget = function (self, widget, settings, prod
 	content.owned = Managers.unlock:is_dlc_unlocked(dlc_name)
 
 	local masked = style.icon.masked
-	local var_111_3 = item_type_store_icons[item_type]
+	local item_type_icon = not not item_type_store_icons[item_type]
 
-	if not var_111_3 then
-		-- Nothing
-	end
-
-	var_111_3 = item_type_store_icons.default
-
-	local item_type_icon = var_111_3
-
-	do
-		local str_2
-	end
-
-	::label_111_3::
-
-	if settings.is_bundle then
-		str_2 = item_type_icon .. "_promo"
-
-		if not str_2 then
-			-- Nothing
-		end
-	end
-
-	str_2 = item_type_icon
-
-	::label_111_4::
-
-	content.type_tag_icon = str_2
+	content.type_tag_icon = settings.is_bundle and not not (item_type_icon .. "_promo") or not settings.is_bundle and not not item_type_icon
 
 	local ui_top_renderer = self._ui_top_renderer
 	local top_gui = ui_top_renderer.gui
 	local package_name = settings.store_texture_package
 	local banner_texture_path = settings.store_texture
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = product_id .. "_" .. self._reference_id
 	local package_available = Application.can_get("package", package_name)
@@ -3671,37 +2964,8 @@ HeroViewStateStore._populate_dlc_widget = function (self, widget, settings, prod
 		content.reference_name = reference_name
 		content.icon = nil
 
-		local str_3
-
-		if masked then
-			str_3 = "store_dlc_banner_masked_" .. product_id
-
-			if not str_3 then
-				-- Nothing
-			end
-		end
-
-		str_3 = "store_dlc_banner_" .. product_id
-
-		local new_banner_material_name = str_3
-
-		do
-			local str_4
-		end
-
-		::label_111_5::
-
-		if masked then
-			str_4 = "template_store_diffuse_masked"
-
-			goto label_111_6
-		end
-
-		str_4 = "template_store_diffuse"
-
-		local banner_template_material_name = str_4
-
-		::label_111_6::
+		local new_banner_material_name = masked and not not ("store_dlc_banner_masked_" .. product_id) or not masked and not not ("store_dlc_banner_" .. product_id)
+		local banner_template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(top_gui, new_banner_material_name, banner_template_material_name, reference_name)
 
@@ -3750,17 +3014,7 @@ HeroViewStateStore.set_list_details_length = function (self, length, animation_d
 	local target_length = math.max(length - (left_detail_size[1] + right_detail_size[1]), 0)
 	local list_detail_top_center = list_detail_widgets_by_name.list_detail_top_center
 	local start_length = ui_scenegraph[list_detail_top_center.scenegraph_id].size[1]
-	local _list_detail_animation_data = self._list_detail_animation_data
-
-	if not _list_detail_animation_data then
-		-- Nothing
-	end
-
-	_list_detail_animation_data = {}
-
-	local list_detail_animation_data = _list_detail_animation_data
-
-	::label_114_0::
+	local list_detail_animation_data = not not self._list_detail_animation_data
 
 	self._list_detail_animation_data = list_detail_animation_data
 	list_detail_animation_data.duration = animation_duration
@@ -3867,17 +3121,8 @@ HeroViewStateStore._unload_texture_by_reference = function (self, reference_name
 
 		loaded_package_names[reference_name] = nil
 	else
-		local _unload_list = self._unload_list
-		local var_120_1 = self._unload_list[package_name]
-
-		var_120_1 = not not var_120_1 or not not {}
-		_unload_list[package_name] = var_120_1
-
-		local var_120_2 = self._unload_list[package_name]
-		local var_120_3 = self._unload_list[package_name][reference_name]
-
-		var_120_3 = not not var_120_3 or not not 0
-		var_120_2[reference_name] = var_120_3 + 1
+		self._unload_list[package_name] = not not self._unload_list[package_name]
+		self._unload_list[package_name][reference_name] = not not self._unload_list[package_name][reference_name] + 1
 	end
 
 	if self:_is_unique_reference_to_material(reference_name) then
@@ -4028,56 +3273,9 @@ HeroViewStateStore._animate_dlc_video_button = function (self, widget, dt, optio
 	end
 
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_129_1
-
-	::label_129_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_129_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_129_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_129_3::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 12
 
 	if is_hover then
@@ -4105,18 +3303,7 @@ HeroViewStateStore._animate_item_product = function (self, widget, dt, optional_
 	-- function 130
 	local content = widget.content
 	local style = widget.style
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_130_0::
-
+	local hotspot = not not content.button_hotspot
 	local on_hover_enter = hotspot.on_hover_enter
 	local is_hover = hotspot.is_hover
 
@@ -4132,96 +3319,12 @@ HeroViewStateStore._animate_item_product = function (self, widget, dt, optional_
 		hotspot.was_selected = true
 	end
 
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_130_2
-
-	::label_130_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_130_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_130_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_130_4::
-
-	local pulse_progress_2 = hotspot.pulse_progress
-
-	if not pulse_progress_2 then
-		-- Nothing
-	end
-
-	pulse_progress_2 = 1
-
-	local pulse_progress = pulse_progress_2
-
-	::label_130_5::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	do
-		local num
-	end
-
-	::label_130_6::
-
-	if is_hover or is_selected then
-		num = 14
-
-		goto label_130_7
-	end
-
-	num = 3
-
-	local speed = num
-
-	::label_130_7::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local pulse_progress = not not hotspot.pulse_progress
+	local selection_progress = not not hotspot.selection_progress
+	local speed = not not 14
 	local pulse_speed = 3
 	local input_speed = 20
 

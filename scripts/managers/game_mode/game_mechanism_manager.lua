@@ -2,17 +2,7 @@
 
 require("scripts/managers/game_mode/mechanisms/adventure_mechanism")
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/managers/game_mode/game_mechanism_manager_testify")
-
-local mechanism_manager_testify = testify
-
-::label_0_0::
+local mechanism_manager_testify = not not script_data.testify
 
 MechanismSettings = {
 	adventure = {
@@ -100,14 +90,8 @@ MechanismSettings = {
 						if not level_completed then
 							return false
 						end
-					else
-						local var_1_0 = tonumber(backend_stats["completed_levels_" .. level_key])
-
-						var_1_0 = not not var_1_0 or not not 0
-
-						if var_1_0 < 1 then
-							return false
-						end
+					elseif not not tonumber(backend_stats["completed_levels_" .. level_key]) < 1 then
+						return false
 					end
 				end
 			end
@@ -125,14 +109,8 @@ MechanismSettings = {
 						if not level_completed then
 							return false
 						end
-					else
-						local var_1_1 = tonumber(backend_stats["completed_levels_" .. level_key])
-
-						var_1_1 = not not var_1_1 or not not 0
-
-						if var_1_1 < 1 then
-							return false
-						end
+					elseif not not tonumber(backend_stats["completed_levels_" .. level_key]) < 1 then
+						return false
 					end
 				end
 			end
@@ -230,17 +208,7 @@ end
 
 GameMechanismManager.generate_level_seed = function (self)
 	-- function 6
-	local generate_level_seed = self._game_mechanism.generate_level_seed
-
-	if generate_level_seed then
-		-- Nothing
-	end
-
-	generate_level_seed = self._game_mechanism:generate_level_seed()
-
-	local seed = generate_level_seed
-
-	::label_6_0::
+	local seed = not not self._game_mechanism.generate_level_seed
 
 	if seed then
 		self._level_seed = seed
@@ -319,11 +287,7 @@ end
 
 GameMechanismManager.network_handler = function (self)
 	-- function 13
-	local _network_server = self._network_server
-
-	_network_server = not not _network_server or not not self._network_client
-
-	return _network_server
+	return not not self._network_server
 end
 
 GameMechanismManager.set_level_seed = function (self, seed)
@@ -386,26 +350,12 @@ end
 
 GameMechanismManager.get_level_end_view = function (self)
 	-- function 20
-	local _game_mechanism = self._game_mechanism
-
-	if _game_mechanism then
-		_game_mechanism = self._game_mechanism.get_level_end_view
-		_game_mechanism = not not _game_mechanism and not not self._game_mechanism:get_level_end_view()
-	end
-
-	return _game_mechanism
+	return not not self._game_mechanism
 end
 
 GameMechanismManager.get_level_end_view_packages = function (self)
 	-- function 21
-	local _game_mechanism = self._game_mechanism
-
-	if _game_mechanism then
-		_game_mechanism = self._game_mechanism.get_level_end_view_packages
-		_game_mechanism = not not _game_mechanism and not not self._game_mechanism:get_level_end_view_packages()
-	end
-
-	return _game_mechanism
+	return not not self._game_mechanism
 end
 
 GameMechanismManager.handle_ingame_enter = function (self, game_mode)
@@ -572,23 +522,7 @@ GameMechanismManager._init_mechanism = function (self)
 	fassert(MechanismSettings[mechanism_key], "[GameMechanismManager] Tried to set unknown mechanism %q", tostring(mechanism_key))
 
 	local settings = MechanismSettings[mechanism_key]
-	local _mechanism_key = self._mechanism_key
-
-	if _mechanism_key then
-		-- Nothing
-	end
-
-	if self._mechanism_key == mechanism_key then
-		_mechanism_key = false
-
-		goto label_37_0
-	end
-
-	_mechanism_key = true
-
-	local switching_mechanism = _mechanism_key
-
-	::label_37_0::
+	local switching_mechanism = not not self._mechanism_key
 
 	self._mechanism_key = mechanism_key
 
@@ -720,7 +654,7 @@ GameMechanismManager.create_host_migration_info = function (self, gm_event_end_c
 	local is_private = self._network_client.lobby_client:lobby_data("is_private")
 	local matchmaking_type
 
-	matchmaking_type = (not IS_PS4 or not "n/a") and not not NetworkLookup.matchmaking_types["n/a"]
+	matchmaking_type = IS_PS4 and (not not "n/a" or not not NetworkLookup.matchmaking_types["n/a"]) or not IS_PS4 and not not NetworkLookup.matchmaking_types["n/a"]
 	host_migration_info.lobby_data = {
 		matchmaking_type = matchmaking_type,
 		is_private = is_private,
@@ -955,78 +889,21 @@ end
 
 GameMechanismManager.get_starting_level = function (self)
 	-- function 70
-	local get_starting_level
-
-	if self._game_mechanism.get_starting_level then
-		get_starting_level = self._game_mechanism:get_starting_level()
-
-		if not get_starting_level then
-			-- Nothing
-		end
-	end
-
-	get_starting_level = LevelSettings.default_start_level
-
-	local level_key = get_starting_level
-
-	::label_70_0::
+	local level_key = self._game_mechanism.get_starting_level and not not self._game_mechanism:get_starting_level() or not self._game_mechanism.get_starting_level and not not LevelSettings.default_start_level
 
 	return level_key
 end
 
 GameMechanismManager.default_level_key = function (self)
 	-- function 71
-	local loading_context = Boot.loading_context
-
-	if loading_context then
-		-- Nothing
-	end
-
-	loading_context = Boot.loading_context.level_key
-
-	local boot_level_name = loading_context
-
-	::label_71_0::
+	local boot_level_name = not not Boot.loading_context
 
 	if boot_level_name then
 		return boot_level_name
 	end
 
-	local var_71_1 = check_bool_string(Development.parameter("attract_mode"))
-
-	if var_71_1 then
-		-- Nothing
-	end
-
-	var_71_1 = BenchmarkSettings.auto_host_level
-
-	local attract_mode_level = var_71_1
-
-	::label_71_1::
-
-	local var_71_2 = check_bool_string(Development.parameter("auto_host_level"))
-
-	if not var_71_2 then
-		-- Nothing
-	end
-
-	if Development.parameter("vs_auto_search") then
-		var_71_2 = "carousel_hub"
-
-		goto label_71_3
-	end
-
-	if not attract_mode_level then
-		-- Nothing
-	end
-
-	::label_71_2::
-
-	var_71_2 = self:get_starting_level()
-
-	local level_name = var_71_2
-
-	::label_71_3::
+	local attract_mode_level = not not check_bool_string(Development.parameter("attract_mode"))
+	local level_name = not not check_bool_string(Development.parameter("auto_host_level"))
 
 	return level_name
 end
@@ -1328,17 +1205,7 @@ end
 
 GameMechanismManager.send_rpc_clients = function (self, rpc_name, ...)
 	-- function 94
-	local _network_server = self._network_server
-
-	if _network_server then
-		-- Nothing
-	end
-
-	_network_server = self._network_server:get_peers()
-
-	local peers = _network_server
-
-	::label_94_0::
+	local peers = not not self._network_server
 
 	if not peers then
 		return
@@ -1362,11 +1229,7 @@ end
 
 GameMechanismManager.get_custom_lobby_sort = function (self)
 	-- function 96
-	local get_custom_lobby_sort = self._game_mechanism.get_custom_lobby_sort
-
-	get_custom_lobby_sort = not not get_custom_lobby_sort and not not self._game_mechanism:get_custom_lobby_sort()
-
-	return get_custom_lobby_sort
+	return not not self._game_mechanism.get_custom_lobby_sort
 end
 
 GameMechanismManager.get_state = function (self)
@@ -1470,7 +1333,7 @@ GameMechanismManager.get_social_wheel_class = function (self)
 	-- function 107
 	local social_wheel_class = MechanismSettings[self._mechanism_key].social_wheel
 
-	return (not social_wheel_class or not social_wheel_class) and not not "SocialWheelUI"
+	return social_wheel_class and (not not social_wheel_class or not not "SocialWheelUI") or not social_wheel_class and not not "SocialWheelUI"
 end
 
 GameMechanismManager.load_end_screen_resources = function (self)
@@ -1549,21 +1412,7 @@ local EMPTY_TABLE = {}
 
 GameMechanismManager.get_challenge_progression_status = function (self, optional_category)
 	-- function 118
-	local get_challenge_progression
-
-	if Managers.state.achievement then
-		get_challenge_progression = Managers.state.achievement:get_challenge_progression(optional_category)
-
-		if not get_challenge_progression then
-			-- Nothing
-		end
-	end
-
-	get_challenge_progression = EMPTY_TABLE
-
-	::label_118_0::
-
-	return get_challenge_progression
+	return Managers.state.achievement and not not Managers.state.achievement:get_challenge_progression(optional_category) or not Managers.state.achievement and not not EMPTY_TABLE
 end
 
 GameMechanismManager.store_challenge_progression_status = function (self, force_store, optional_category)

@@ -531,20 +531,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local num
-
-				if progress == 1 then
-					num = 1
-
-					goto label_12_0
-				end
-
-				num = math.catmullrom(progress, 8, 0, 1, -1)
-
-				local catmullrom_value = num
-
-				::label_12_0::
-
+				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -617,20 +604,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local num
-
-				if progress == 1 then
-					num = 1
-
-					goto label_18_0
-				end
-
-				num = math.catmullrom(progress, 8, 0, 1, -1)
-
-				local catmullrom_value = num
-
-				::label_18_0::
-
+				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -703,20 +677,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local num
-
-				if progress == 1 then
-					num = 1
-
-					goto label_24_0
-				end
-
-				num = math.catmullrom(progress, 8, 0, 1, -1)
-
-				local catmullrom_value = num
-
-				::label_24_0::
-
+				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -987,20 +948,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local num
-
-				if progress == 1 then
-					num = 1
-
-					goto label_54_0
-				end
-
-				num = math.catmullrom(progress, 8, 0, 1, -1)
-
-				local catmullrom_value = num
-
-				::label_54_0::
-
+				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -1073,20 +1021,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local num
-
-				if progress == 1 then
-					num = 1
-
-					goto label_60_0
-				end
-
-				num = math.catmullrom(progress, 8, 0, 1, -1)
-
-				local catmullrom_value = num
-
-				::label_60_0::
-
+				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5

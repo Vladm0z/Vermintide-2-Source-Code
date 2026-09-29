@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_gutter_runner.lua
 
-local tbl = {
+local breed_data = {
 	initial_is_passive = false,
 	has_inventory = true,
 	no_stagger_duration = true,
@@ -82,147 +82,139 @@ local tbl = {
 		200,
 		200,
 		0
-	}
-}
-local setting = Development.setting("disable_gutter_runner")
+	},
+	disabled = not not Development.setting("disable_gutter_runner"),
+	hitzone_multiplier_types = {
+		head = "headshot"
+	},
+	hit_zones = {
+		head = {
+			prio = 1,
+			actors = {
+				"c_head"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		neck = {
+			prio = 1,
+			actors = {
+				"c_neck"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		torso = {
+			prio = 2,
+			actors = {
+				"c_hips",
+				"c_spine",
+				"c_spine2",
+				"c_leftshoulder",
+				"c_rightshoulder"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_arm = {
+			prio = 3,
+			actors = {
+				"c_leftarm",
+				"c_leftforearm",
+				"c_lefthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		right_arm = {
+			prio = 3,
+			actors = {
+				"c_rightarm",
+				"c_rightforearm",
+				"c_righthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_leg = {
+			prio = 3,
+			actors = {
+				"c_leftleg",
+				"c_leftupleg",
+				"c_leftfoot",
+				"c_lefttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		right_leg = {
+			prio = 3,
+			actors = {
+				"c_rightleg",
+				"c_rightupleg",
+				"c_rightfoot",
+				"c_righttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		tail = {
+			prio = 3,
+			actors = {
+				"c_tail1",
+				"c_tail2",
+				"c_tail3",
+				"c_tail4",
+				"c_tail5",
+				"c_tail6"
+			},
+			push_actors = {
+				"j_hips"
+			}
+		},
+		full = {
+			prio = 4,
+			actors = {}
+		},
+		afro = {
+			prio = 5,
+			actors = {
+				"c_afro"
+			}
+		}
+	},
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
+		-- function 1
+		local blackboard = BLACKBOARDS[unit]
 
-setting = not not setting or not not false
-tbl.disabled = setting
-tbl.hitzone_multiplier_types = {
-	head = "headshot"
-}
-tbl.hit_zones = {
-	head = {
-		prio = 1,
-		actors = {
-			"c_head"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	neck = {
-		prio = 1,
-		actors = {
-			"c_neck"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	torso = {
-		prio = 2,
-		actors = {
-			"c_hips",
-			"c_spine",
-			"c_spine2",
-			"c_leftshoulder",
-			"c_rightshoulder"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_arm = {
-		prio = 3,
-		actors = {
-			"c_leftarm",
-			"c_leftforearm",
-			"c_lefthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	right_arm = {
-		prio = 3,
-		actors = {
-			"c_rightarm",
-			"c_rightforearm",
-			"c_righthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_leg = {
-		prio = 3,
-		actors = {
-			"c_leftleg",
-			"c_leftupleg",
-			"c_leftfoot",
-			"c_lefttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	right_leg = {
-		prio = 3,
-		actors = {
-			"c_rightleg",
-			"c_rightupleg",
-			"c_rightfoot",
-			"c_righttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	tail = {
-		prio = 3,
-		actors = {
-			"c_tail1",
-			"c_tail2",
-			"c_tail3",
-			"c_tail4",
-			"c_tail5",
-			"c_tail6"
-		},
-		push_actors = {
-			"j_hips"
-		}
-	},
-	full = {
-		prio = 4,
-		actors = {}
-	},
-	afro = {
-		prio = 5,
-		actors = {
-			"c_afro"
-		}
-	}
-}
+		if not Unit.alive(killer_unit) then
+			return
+		end
 
-tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
-	-- function 1
-	local blackboard = BLACKBOARDS[unit]
-
-	if not Unit.alive(killer_unit) then
-		return
+		QuestSettings.check_gutter_killed_while_pouncing(blackboard, killer_unit, damage_source)
+	end,
+	run_on_spawn = AiBreedSnippets.on_gutter_runner_spawn,
+	before_stagger_enter_function = function (unit, blackboard, attacker_unit, is_push)
+		-- function 2
+		if is_push then
+			QuestSettings.check_gutter_runner_push_on_pounce(blackboard, attacker_unit)
+			QuestSettings.check_gutter_runner_push_on_target_pounced(blackboard, attacker_unit)
+		end
 	end
-
-	QuestSettings.check_gutter_killed_while_pouncing(blackboard, killer_unit, damage_source)
-end
-
-tbl.run_on_spawn = AiBreedSnippets.on_gutter_runner_spawn
-
-tbl.before_stagger_enter_function = function (unit, blackboard, attacker_unit, is_push)
-	-- function 2
-	if is_push then
-		QuestSettings.check_gutter_runner_push_on_pounce(blackboard, attacker_unit)
-		QuestSettings.check_gutter_runner_push_on_target_pounced(blackboard, attacker_unit)
-	end
-end
-
-local breed_data = tbl
+}
 
 Breeds.skaven_gutter_runner = table.create_copy(Breeds.skaven_gutter_runner, breed_data)
 

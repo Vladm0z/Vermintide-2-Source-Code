@@ -321,34 +321,12 @@ settings.buff_function_templates = {
 			end
 		end
 
-		local start_time = buff.start_time
-
-		start_time = not not start_time or not not 0
-
-		local duration = buff.duration
-
-		duration = not not duration or not not 0
-
-		local end_t = start_time + duration
+		local end_t = not not buff.start_time + not not buff.duration
 
 		if end_t and end_t <= params.t then
 			local buff_system = Managers.state.entity:system("buff_system")
 			local buff_stacks = buff_extension:get_stacking_buff("skulls_2023_buff")
-			local count
-
-			if buff_stacks then
-				count = #buff_stacks
-
-				if not count then
-					-- Nothing
-				end
-			end
-
-			count = 0
-
-			local num_buff_stacks = count
-
-			::label_8_0::
+			local num_buff_stacks = buff_stacks and not not #buff_stacks or not buff_stacks and not not 0
 
 			for i = 1, num_buff_stacks do
 				buff_system:add_buff_synced(unit, "skulls_2023_debuff", BuffSyncType.LocalAndServer, {
@@ -382,21 +360,7 @@ settings.buff_function_templates = {
 
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 		local buff_stacks = buff_extension:get_stacking_buff("skulls_2023_debuff")
-		local count
-
-		if buff_stacks then
-			count = #buff_stacks
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local num_buff_stacks = count
-
-		::label_10_0::
+		local num_buff_stacks = buff_stacks and not not #buff_stacks or not buff_stacks and not not 0
 
 		if num_buff_stacks <= 0 then
 			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
@@ -406,11 +370,7 @@ settings.buff_function_templates = {
 
 			local effect_id = buff.effect_id
 			local effect_size_id = buff.effect_size_id
-			local value = params.value
-
-			value = not not value or not not 1
-
-			local effect_lerp = (value - 1) / (MAX_STACKS - 1)
+			local effect_lerp = (not not params.value - 1) / (MAX_STACKS - 1)
 			local effect_opacity = math.lerp(1, 0.95, effect_lerp)
 			local effect_size = math.lerp(5.5, 4, effect_lerp)
 

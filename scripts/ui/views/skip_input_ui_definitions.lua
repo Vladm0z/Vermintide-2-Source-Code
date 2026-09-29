@@ -78,28 +78,14 @@ local function create_skip_widget(parent, ui_renderer, input_service)
 						local speed = 2
 						local t, dt = Managers.time:time_and_delta("main")
 						local input = input_service:get("cancel_video")
-						local num
-
-						if input then
-							num = 1
-
-							goto label_2_0
-						end
-
-						num = -1
-
-						local dir = num
-
-						::label_2_0::
+						local dir = input and not not 1 or not input and not not -1
 
 						content.progress = math.clamp(content.progress + dt * speed * dir, 0, 1)
 
 						if input ~= content.input and input then
 							local double_click_threshold = UISettings.double_click_threshold * 2
-							local flag
 
-							flag = (not (double_click_threshold >= math.abs(content.input_time - t)) or not 1) and not not content.progress
-							content.progress = flag
+							content.progress = double_click_threshold >= math.abs(content.input_time - t) and not not 1 or not (double_click_threshold >= math.abs(content.input_time - t)) and not not content.progress
 							content.input_time = t
 						end
 
@@ -125,11 +111,7 @@ local function create_skip_widget(parent, ui_renderer, input_service)
 					texture_id = "gamepad_input_icon",
 					content_check_function = function (content)
 						-- function 4
-						local gamepad_input_icon = content.gamepad_input_icon
-
-						gamepad_input_icon = not not gamepad_input_icon and not not content.gamepad_active
-
-						return gamepad_input_icon
+						return not not content.gamepad_input_icon
 					end
 				},
 				{
@@ -156,11 +138,7 @@ local function create_skip_widget(parent, ui_renderer, input_service)
 					texture_id = "kbm_input_icon_left",
 					content_check_function = function (content)
 						-- function 7
-						local kbm_input_icon_left = content.kbm_input_icon_left
-
-						kbm_input_icon_left = not not kbm_input_icon_left and not not not content.gamepad_active
-
-						return kbm_input_icon_left
+						return not not content.kbm_input_icon_left
 					end
 				},
 				{
@@ -169,11 +147,7 @@ local function create_skip_widget(parent, ui_renderer, input_service)
 					texture_id = "kbm_input_icon_middle",
 					content_check_function = function (content)
 						-- function 8
-						local kbm_input_icon_middle = content.kbm_input_icon_middle
-
-						kbm_input_icon_middle = not not kbm_input_icon_middle and not not not content.gamepad_active
-
-						return kbm_input_icon_middle
+						return not not content.kbm_input_icon_middle
 					end
 				},
 				{
@@ -182,11 +156,7 @@ local function create_skip_widget(parent, ui_renderer, input_service)
 					texture_id = "kbm_input_icon_right",
 					content_check_function = function (content)
 						-- function 9
-						local kbm_input_icon_right = content.kbm_input_icon_right
-
-						kbm_input_icon_right = not not kbm_input_icon_right and not not not content.gamepad_active
-
-						return kbm_input_icon_right
+						return not not content.kbm_input_icon_right
 					end
 				},
 				{
@@ -219,11 +189,7 @@ local function create_skip_widget(parent, ui_renderer, input_service)
 					pass_type = "gradient_mask_texture",
 					content_check_function = function (content)
 						-- function 14
-						local gamepad_active = content.gamepad_active
-
-						gamepad_active = not not gamepad_active and not not content.gamepad_input_icon
-
-						return gamepad_active
+						return not not content.gamepad_active
 					end,
 					content_change_function = function (content, style)
 						-- function 15

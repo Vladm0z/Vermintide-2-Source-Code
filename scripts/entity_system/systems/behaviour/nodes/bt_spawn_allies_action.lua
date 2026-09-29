@@ -117,10 +117,8 @@ BTSpawnAllies.leave = function (self, unit, blackboard, t, reason)
 		if blackboard.action.defensive_mode_duration then
 			if type(blackboard.action.defensive_mode_duration) == "table" then
 				local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-				local var_4_0 = blackboard.action.defensive_mode_duration[difficulty_rank]
 
-				var_4_0 = not not var_4_0 or not not blackboard.action.defensive_mode_duration[2]
-				blackboard.defensive_mode_duration = var_4_0
+				blackboard.defensive_mode_duration = not not blackboard.action.defensive_mode_duration[difficulty_rank]
 			else
 				blackboard.defensive_mode_duration = blackboard.action.defensive_mode_duration
 			end
@@ -136,15 +134,10 @@ BTSpawnAllies.leave = function (self, unit, blackboard, t, reason)
 
 		if blackboard.action.defensive_mode_duration and type(blackboard.action.defensive_mode_duration) == "table" then
 			local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-			local var_4_1 = blackboard.action.defensive_mode_duration[difficulty_rank]
 
-			var_4_1 = not not var_4_1 or not not blackboard.action.defensive_mode_duration[2]
-			blackboard.defensive_mode_duration = var_4_1
+			blackboard.defensive_mode_duration = not not blackboard.action.defensive_mode_duration[difficulty_rank]
 		else
-			local defensive_mode_duration = blackboard.action.defensive_mode_duration
-
-			defensive_mode_duration = not not defensive_mode_duration or not not 20
-			blackboard.defensive_mode_duration = defensive_mode_duration
+			blackboard.defensive_mode_duration = not not blackboard.action.defensive_mode_duration
 		end
 
 		blackboard.action = nil
@@ -188,24 +181,7 @@ local SPAWN_POS_TEMP = {}
 
 BTSpawnAllies.find_spawn_point = function (unit, blackboard, action, data, override_spawn_group)
 	-- function 8
-	if not override_spawn_group then
-		-- Nothing
-	end
-
-	::label_8_0::
-
-	local optional_go_to_spawn = action.optional_go_to_spawn
-
-	if not optional_go_to_spawn then
-		-- Nothing
-	end
-
-	optional_go_to_spawn = action.spawn_group
-
-	local spawn_group = optional_go_to_spawn
-
-	::label_8_1::
-
+	local spawn_group = not not override_spawn_group or not not action.optional_go_to_spawn
 	local spawner_system = Managers.state.entity:system("spawner_system")
 	local spawners_raw = spawner_system._id_lookup[spawn_group]
 
@@ -362,24 +338,7 @@ BTSpawnAllies._spawn = function (self, unit, data, blackboard, t)
 	local difficulty = Managers.state.difficulty:get_difficulty()
 
 	if action.difficulty_spawn_list or action.spawn_list then
-		local difficulty_spawn_list = action.difficulty_spawn_list
-
-		if not difficulty_spawn_list then
-			-- Nothing
-		end
-
-		difficulty_spawn_list = action.difficulty_spawn_list[difficulty]
-
-		if not difficulty_spawn_list then
-			-- Nothing
-		end
-
-		difficulty_spawn_list = action.spawn_list
-
-		local spawn_list = difficulty_spawn_list
-
-		::label_9_0::
-
+		local spawn_list = not not action.difficulty_spawn_list
 		local spawners = data.spawners
 
 		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.enemy_spawn_allies, "attack_tag", "spawn_allies")
@@ -402,7 +361,7 @@ BTSpawnAllies._spawn = function (self, unit, data, blackboard, t)
 
 		spawn = action.phase_spawn[phase]
 	else
-		spawn = (not action.difficulty_spawn or not action.difficulty_spawn[difficulty]) and not not action.spawn
+		spawn = action.difficulty_spawn and (not not action.difficulty_spawn[difficulty] or not not action.spawn) or not action.difficulty_spawn and not not action.spawn
 	end
 
 	if spawn then

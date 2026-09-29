@@ -182,17 +182,7 @@ FriendsUIComponent._update_refresh_animations = function (self, dt)
 		local start = 0
 		local target = math.pi
 		local speed = 20
-		local rotate_progress_2 = content.rotate_progress
-
-		if not rotate_progress_2 then
-			-- Nothing
-		end
-
-		rotate_progress_2 = start
-
-		local rotate_progress = rotate_progress_2
-
-		::label_14_0::
+		local rotate_progress = not not content.rotate_progress
 
 		rotate_progress = math.min(rotate_progress + dt * speed, target)
 
@@ -302,18 +292,7 @@ FriendsUIComponent._update_list = function (self, active_tab)
 	local item_styles = list_style.item_styles
 	local num_draws = list_style.num_draws
 	local is_in_dedicated_server_lobby = false
-	local matchmaking = Managers.matchmaking
-
-	if matchmaking then
-		-- Nothing
-	end
-
-	matchmaking = Managers.matchmaking
-
-	local matchmaking_manager = matchmaking
-
-	::label_18_0::
-
+	local matchmaking_manager = not not Managers.matchmaking
 	local matchmaking_type = not not matchmaking_manager and not not matchmaking_manager.lobby:lobby_data("matchmaking_type")
 	local mechanism_name = Managers.level_transition_handler:get_current_mechanism()
 	local is_in_inn = Managers.level_transition_handler:in_hub_level()

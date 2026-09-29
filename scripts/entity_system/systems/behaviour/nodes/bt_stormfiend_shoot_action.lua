@@ -26,11 +26,7 @@ local SPHERE_CAST_MAX_NUM_HITS = 10
 BTStormfiendShootAction.enter = function (self, unit, blackboard, t)
 	-- function 3
 	self.unit_ids[unit] = Managers.state.network.unit_storage:go_id(unit)
-
-	local network_transmit = self.network_transmit
-
-	network_transmit = not not network_transmit or not not Managers.state.network.network_transmit
-	self.network_transmit = network_transmit
+	self.network_transmit = not not self.network_transmit
 
 	local action = self._tree_node.action_data
 	local world = blackboard.world
@@ -38,16 +34,8 @@ BTStormfiendShootAction.enter = function (self, unit, blackboard, t)
 	blackboard.action = action
 	blackboard.active_node = BTStormfiendShootAction
 	blackboard.attack_finished = false
-
-	local shoot_data = blackboard.shoot_data
-
-	shoot_data = not not shoot_data or not not {}
-	blackboard.shoot_data = shoot_data
-
-	local physics_world = blackboard.physics_world
-
-	physics_world = not not physics_world or not not World.get_data(world, "physics_world")
-	blackboard.physics_world = physics_world
+	blackboard.shoot_data = not not blackboard.shoot_data
+	blackboard.physics_world = not not blackboard.physics_world
 	blackboard.attacking_target = blackboard.target_unit
 
 	if self:init_attack(unit, blackboard, action, t) then
@@ -82,18 +70,7 @@ end
 BTStormfiendShootAction.set_global_environment_intensity = function (self, unit, group_blackboard, action)
 	-- function 4
 	local max_intensity = action.environment_max_intensity
-	local firewall_environment_intensity = group_blackboard.firewall_environment_intensity
-
-	if not firewall_environment_intensity then
-		-- Nothing
-	end
-
-	firewall_environment_intensity = 0
-
-	local old_intensity = firewall_environment_intensity
-
-	::label_4_0::
-
+	local old_intensity = not not group_blackboard.firewall_environment_intensity
 	local new_intensity = math.min(old_intensity + action.environment_intensity_increase_per_firewall, max_intensity)
 	local sound_parameter = action.global_sound_parameter
 	local audio_system = Managers.state.entity:system("audio_system")
@@ -219,23 +196,9 @@ BTStormfiendShootAction._calculate_aim = function (self, unit, unit_position, at
 
 	if can_hit_target then
 		local _, projected_start_position, _, hit_position = LocomotionUtils.raycast_on_navmesh(nav_world, start_position, end_check_position, traverse_logic, above, below)
-		local distance_squared
+		local end_position_distance_sq = projected_start_position and not not Vector3.distance_squared(projected_start_position, hit_position) or not projected_start_position and not not 0
 
-		if projected_start_position then
-			distance_squared = Vector3.distance_squared(projected_start_position, hit_position)
-
-			if not distance_squared then
-				-- Nothing
-			end
-		end
-
-		distance_squared = 0
-
-		local end_position_distance_sq = distance_squared
-
-		::label_6_0::
-
-		firewall_start_position = (not (attack_minimum_length_sq < end_position_distance_sq) or not projected_start_position) and not not nil
+		firewall_start_position = attack_minimum_length_sq < end_position_distance_sq and (not not projected_start_position or not not nil) or not (attack_minimum_length_sq < end_position_distance_sq) and not not nil
 		aim_start_position = projected_start_position
 		aim_end_position = not not aim_end_position or not not hit_position
 	end
@@ -263,10 +226,7 @@ BTStormfiendShootAction.init_attack = function (self, unit, blackboard, action, 
 			blackboard.weapon_setup = "ratling_gun"
 		end
 	else
-		local weapon_setup = action.weapon_setup
-
-		weapon_setup = not not weapon_setup or not not "warpfire_thrower"
-		blackboard.weapon_setup = weapon_setup
+		blackboard.weapon_setup = not not action.weapon_setup
 	end
 
 	local unit_position = POSITION_LOOKUP[unit]
@@ -312,22 +272,7 @@ BTStormfiendShootAction.init_attack = function (self, unit, blackboard, action, 
 		data.aim_start_position = Vector3Box(aim_start_position)
 		data.current_aim_position = Vector3Box(aim_start_position)
 		data.aim_end_position = Vector3Box(aim_end_position)
-
-		local var_7_1
-
-		if firewall_start_position then
-			var_7_1 = Vector3Box(firewall_start_position)
-
-			if not var_7_1 then
-				-- Nothing
-			end
-		end
-
-		var_7_1 = nil
-
-		::label_7_0::
-
-		data.firewall_start_position = var_7_1
+		data.firewall_start_position = firewall_start_position and not not Vector3Box(firewall_start_position) or not firewall_start_position and not not nil
 		data.direction = Vector3Box(target_direction)
 		data.aim_constraint_target_var = Unit.animation_find_constraint_target(unit, aim_constraint_target_name)
 		data.attack_arm = attack_arm
@@ -353,29 +298,7 @@ BTStormfiendShootAction.init_attack = function (self, unit, blackboard, action, 
 		blackboard.attack_rotation = QuaternionBox(attack_rotation)
 		blackboard.attack_started_at_t = t
 
-		local bot_threats_2 = action.bot_threats
-
-		if bot_threats_2 then
-			-- Nothing
-		end
-
-		bot_threats_2 = action.bot_threats[attack_animation]
-
-		if not bot_threats_2 then
-			-- Nothing
-		end
-
-		bot_threats_2 = action.bot_threats[1]
-
-		if bot_threats_2 then
-			-- Nothing
-		end
-
-		bot_threats_2 = action.bot_threats
-
-		local bot_threats = bot_threats_2
-
-		::label_7_1::
+		local bot_threats = not not action.bot_threats
 
 		if bot_threats then
 			local current_threat_index = 1
@@ -728,18 +651,7 @@ BTStormfiendShootAction.shoot_hit_check = function (self, unit, blackboard)
 					end
 				elseif breed and not immune_breeds[breed.name] and not hit_enemies[hit_unit] then
 					local attacker_unit = unit
-					local armor_category = breed.armor_category
-
-					if not armor_category then
-						-- Nothing
-					end
-
-					armor_category = 1
-
-					local armor_type = armor_category
-
-					::label_14_0::
-
+					local armor_type = not not breed.armor_category
 					local damage_type = action.damage_type
 					local damage = action.damage[armor_type]
 					local damage_direction = data.direction:unbox()
@@ -839,18 +751,7 @@ BTStormfiendShootAction._shoot_ratling_gun = function (self, unit, blackboard, t
 	local spread_direction = Quaternion.forward(spread_rot)
 	local collision_filter = "filter_enemy_player_ray_projectile"
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_19_0 = light_weight_projectile_template.attack_power_level[difficulty_rank]
-
-	if not var_19_0 then
-		-- Nothing
-	end
-
-	var_19_0 = light_weight_projectile_template.attack_power_level[2]
-
-	local power_level = var_19_0
-
-	::label_19_0::
-
+	local power_level = not not light_weight_projectile_template.attack_power_level[difficulty_rank]
 	local action_data = {
 		power_level = power_level,
 		damage_profile = light_weight_projectile_template.damage_profile,
@@ -895,29 +796,14 @@ BTStormfiendShootAction._debug_firewall = function (self, minimum_length, start_
 			name = "BTStormfiendShootAction"
 		})
 		local success_color, neutral_color, fail_color = Colors.get("green"), Colors.get("yellow"), Colors.get("red")
-		local distance_2
-
-		if projected_start_pos then
-			distance_2 = Vector3.distance(projected_start_pos, projected_end_pos)
-
-			if not distance_2 then
-				-- Nothing
-			end
-		end
-
-		distance_2 = 0
-
-		local distance = distance_2
-
-		::label_21_0::
-
+		local distance = projected_start_pos and not not Vector3.distance(projected_start_pos, projected_end_pos) or not projected_start_pos and not not 0
 		local debug_start_pos = not not projected_start_pos or not not start_position
 		local debug_end_pos = not not projected_end_pos or not not wanted_end_pos
 		local to_wanted_pos = wanted_end_pos - debug_start_pos
 
-		drawer:sphere(debug_start_pos, 0.25, (not projected_start_pos or not success_color) and not not fail_color)
+		drawer:sphere(debug_start_pos, 0.25, projected_start_pos and (not not success_color or not not fail_color) or not projected_start_pos and not not fail_color)
 		drawer:vector(debug_start_pos, to_wanted_pos, neutral_color)
-		drawer:sphere(debug_end_pos, 0.25, (not (minimum_length < distance) or not success_color) and not not fail_color)
+		drawer:sphere(debug_end_pos, 0.25, minimum_length < distance and (not not success_color or not not fail_color) or not (minimum_length < distance) and not not fail_color)
 		debug_print("FIREWALL DISTANCE", distance, "MINIMUM DISTANCE", minimum_length)
 	end
 end
@@ -940,9 +826,9 @@ BTStormfiendShootAction._debug_fire_beam = function (self, start_position, end_p
 			drawer = QuickDrawer
 		end
 
-		drawer:sphere(start_position, SPHERE_CAST_RADIUS, (not success or not success_color) and not not fail_color)
-		drawer:line(start_position, end_position, (not success or not success_color) and not not fail_color)
-		drawer:sphere(end_position, SPHERE_CAST_RADIUS, (not success or not success_color) and not not fail_color)
+		drawer:sphere(start_position, SPHERE_CAST_RADIUS, success and (not not success_color or not not fail_color) or not success and not not fail_color)
+		drawer:line(start_position, end_position, success and (not not success_color or not not fail_color) or not success and not not fail_color)
+		drawer:sphere(end_position, SPHERE_CAST_RADIUS, success and (not not success_color or not not fail_color) or not success and not not fail_color)
 
 		if hits then
 			local num_hits = #hits

@@ -309,20 +309,15 @@ SpawnerSystem._try_spawn_breed = function (self, breed_name, spawn_list_per_bree
 					for i = 1, exchanged_amount do
 						local breed_index = Math.random(1, num_breeds)
 						local exchange_breed_name = exchange_breed[breed_index]
-						local var_21_0 = spawn_list_per_breed[exchange_breed_name]
 
-						var_21_0 = not not var_21_0 or not not 0
-						spawn_list_per_breed[exchange_breed_name] = var_21_0 + 1
+						spawn_list_per_breed[exchange_breed_name] = not not spawn_list_per_breed[exchange_breed_name] + 1
 					end
 
 					for i = 1, num_breeds do
 						active_enemies = active_enemies + self:_try_spawn_breed(exchange_breed[i], spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
 					end
 				else
-					local var_21_1 = spawn_list_per_breed[exchange_breed]
-
-					var_21_1 = not not var_21_1 or not not 0
-					spawn_list_per_breed[exchange_breed] = var_21_1 + exchanged_amount
+					spawn_list_per_breed[exchange_breed] = not not spawn_list_per_breed[exchange_breed] + exchanged_amount
 					active_enemies = active_enemies + self:_try_spawn_breed(exchange_breed, spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
 				end
 			end
@@ -496,22 +491,7 @@ SpawnerSystem.spawn_horde_from_terror_event_ids = function (self, event_ids, var
 
 	local difficulty = Managers.state.difficulty.difficulty
 	local difficulty_breeds = variant.difficulty_breeds
-	local var_23_0
-
-	if difficulty_breeds then
-		var_23_0 = difficulty_breeds[difficulty]
-
-		if not var_23_0 then
-			-- Nothing
-		end
-	end
-
-	var_23_0 = variant.breeds
-
-	local breed_list = var_23_0
-
-	::label_23_0::
-
+	local breed_list = difficulty_breeds and not not difficulty_breeds[difficulty] or not difficulty_breeds and not not variant.breeds
 	local spawn_list = spawn_list
 
 	table.clear_array(spawn_list, #spawn_list)
@@ -532,11 +512,7 @@ SpawnerSystem.spawn_horde_from_terror_event_ids = function (self, event_ids, var
 		end
 
 		if script_data.big_hordes then
-			local round = math.round
-			local var_23_2 = tonumber(script_data.big_hordes)
-
-			var_23_2 = not not var_23_2 or not not 1
-			num_to_spawn = round(num_to_spawn * var_23_2)
+			num_to_spawn = math.round(num_to_spawn * not not tonumber(script_data.big_hordes))
 		end
 
 		temp_spawn_list_per_breed[breed_name] = num_to_spawn
@@ -641,17 +617,7 @@ end
 
 SpawnerSystem.get_raw_spawner_unit = function (self, terror_id)
 	-- function 25
-	local var_25_0 = self._raw_id_lookup[terror_id]
-
-	if not var_25_0 then
-		-- Nothing
-	end
-
-	var_25_0 = self._id_lookup[terror_id]
-
-	local spawners = var_25_0
-
-	::label_25_0::
+	local spawners = not not self._raw_id_lookup[terror_id]
 
 	if spawners then
 		local spawner_unit = spawners[math.random(1, #spawners)]
@@ -663,11 +629,7 @@ end
 
 SpawnerSystem.get_raw_spawner_units = function (self, terror_id)
 	-- function 26
-	local var_26_0 = self._raw_id_lookup[terror_id]
-
-	var_26_0 = not not var_26_0 or not not self._id_lookup[terror_id]
-
-	return var_26_0
+	return not not self._raw_id_lookup[terror_id]
 end
 
 SpawnerSystem.deactivate_spawner = function (self, spawner)

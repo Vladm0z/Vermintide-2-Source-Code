@@ -219,10 +219,8 @@ local buff_tweak_data = {
 		required_targets = 10
 	}
 }
-local TalentBuffTemplates = TalentBuffTemplates
 
-TalentBuffTemplates = not not TalentBuffTemplates or not not {}
-TalentBuffTemplates = TalentBuffTemplates
+TalentBuffTemplates = not not TalentBuffTemplates
 TalentBuffTemplates.witch_hunter = {
 	victor_zealot_ability_cooldown_on_hit = {
 		buffs = {
@@ -1255,11 +1253,7 @@ TalentBuffTemplates.witch_hunter = {
 		}
 	}
 }
-
-local TalentTrees = TalentTrees
-
-TalentTrees = not not TalentTrees or not not {}
-TalentTrees = TalentTrees
+TalentTrees = not not TalentTrees
 TalentTrees.witch_hunter = {
 	{
 		{

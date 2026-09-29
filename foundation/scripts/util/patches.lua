@@ -4,17 +4,7 @@ require("foundation/scripts/util/misc_util")
 
 local function auto_patch_missing_methods(library_name)
 	-- function 1
-	local var_1_0 = rawget(_G, library_name)
-
-	if not var_1_0 then
-		-- Nothing
-	end
-
-	var_1_0 = {}
-
-	local library = var_1_0
-
-	::label_1_0::
+	local library = not not rawget(_G, library_name)
 
 	assert(getmetatable(library) == nil, "It's not safe auto-patching methods on a table that already has a metatable. Set them to NOP manually.")
 
@@ -32,10 +22,7 @@ local function auto_patch_missing_methods(library_name)
 	}))
 end
 
-local MockClass = MockClass
-
-MockClass = not not MockClass or not not {}
-MockClass = MockClass
+MockClass = not not MockClass
 
 MockClass.new = function ()
 	-- function 3
@@ -146,19 +133,13 @@ if not Presence then
 end
 
 ColorBox = QuaternionBox
-
-local __STRING_FORMAT = __STRING_FORMAT
-
-__STRING_FORMAT = not not __STRING_FORMAT or not not nil
-__STRING_FORMAT = __STRING_FORMAT
+__STRING_FORMAT = not not __STRING_FORMAT
 
 if not __STRING_FORMAT then
 	local VALIDATED_STRINGS = {}
 	local INVALID_STRINGS = {}
-	local __STRING_FORMAT_2 = __STRING_FORMAT
 
-	__STRING_FORMAT_2 = not not __STRING_FORMAT_2 or not not string.format
-	__STRING_FORMAT = __STRING_FORMAT_2
+	__STRING_FORMAT = not not __STRING_FORMAT
 	string._format = string.format
 
 	string.format = function (str, ...)

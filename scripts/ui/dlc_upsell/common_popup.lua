@@ -202,23 +202,8 @@ CommonPopup.set_fullscreen_effect_enable_state = function (self, enabled)
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_19_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_19_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_19_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local flag_2
-
-		flag_2 = (not enabled or not 0.75) and not not 0
-
-		set_scalar_2(var_19_5, str_2, flag_2)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 

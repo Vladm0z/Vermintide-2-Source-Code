@@ -14,57 +14,13 @@ BTSkulkApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
 	local target_dist = blackboard.target_dist
-	local min
-
-	if target_dist then
-		min = math.min(action.skulk_init_distance, target_dist)
-
-		if not min then
-			-- Nothing
-		end
-	end
-
-	min = action.skulk_init_distance
-
-	local skulk_start_radius = min
-
-	::label_2_0::
-
-	local skulk_data_2 = blackboard.skulk_data
-
-	if not skulk_data_2 then
-		-- Nothing
-	end
-
-	skulk_data_2 = {}
-
-	local skulk_data = skulk_data_2
-
-	::label_2_1::
-
-	local direction_2 = skulk_data.direction
-
-	if not direction_2 then
-		-- Nothing
-	end
-
-	direction_2 = 1 - math.random(0, 1) * 2
-
-	local direction = direction_2
-
-	::label_2_2::
+	local skulk_start_radius = target_dist and not not math.min(action.skulk_init_distance, target_dist) or not target_dist and not not action.skulk_init_distance
+	local skulk_data = not not blackboard.skulk_data
+	local direction = not not skulk_data.direction
 
 	skulk_data.direction = direction
-
-	local radius = skulk_data.radius
-
-	radius = not not radius or not not skulk_start_radius
-	skulk_data.radius = radius
-
-	local skulk_around_time = skulk_data.skulk_around_time
-
-	skulk_around_time = not not skulk_around_time or not not 0
-	skulk_data.skulk_around_time = skulk_around_time
+	skulk_data.radius = not not skulk_data.radius
+	skulk_data.skulk_around_time = not not skulk_data.skulk_around_time
 	skulk_data.next_random_goal_at_radius = skulk_data.radius
 	blackboard.skulk_data = skulk_data
 	blackboard.action = action

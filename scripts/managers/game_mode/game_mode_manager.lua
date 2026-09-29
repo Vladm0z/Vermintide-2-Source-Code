@@ -18,18 +18,7 @@ local RPCS = {
 	"rpc_change_game_mode_state",
 	"rpc_trigger_level_event"
 }
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/managers/game_mode/game_mode_manager_testify")
-
-local game_mode_manager_testify = testify
-
-::label_0_0::
-
+local game_mode_manager_testify = not not script_data.testify
 local GAME_MODE_STATE_NETWORK_IDS = {}
 
 for game_mode_key, settings in pairs(GameModeSettings) do
@@ -405,17 +394,7 @@ GameModeManager._set_flow_object_set_enabled = function (self, set, enable, set_
 		local unit = Level.unit_by_index(level, unit_index)
 
 		if unit then
-			local get_data = Unit.get_data(unit, "flow_object_set_references")
-
-			if not get_data then
-				-- Nothing
-			end
-
-			get_data = 1
-
-			local refs = get_data
-
-			::label_41_0::
+			local refs = not not Unit.get_data(unit, "flow_object_set_references")
 
 			if enable then
 				refs = refs + 1
@@ -458,22 +437,7 @@ GameModeManager.update_flow_object_set_enable = function (self, dt)
 	local flush = self._flush_object_set_enable
 
 	if size > 0 then
-		local huge
-
-		if flush then
-			huge = math.huge
-
-			if not huge then
-				-- Nothing
-			end
-		end
-
-		huge = data.units_per_frame
-
-		local units_per_frame = huge
-
-		::label_44_0::
-
+		local units_per_frame = flush and not not math.huge or not flush and not not data.units_per_frame
 		local num_units = math.min(units_per_frame, size)
 		local read_index = data.read_index
 		local max_size = data.max_size
@@ -717,21 +681,7 @@ end
 
 GameModeManager.is_round_started = function (self)
 	-- function 57
-	local num
-
-	if self._round_start_time then
-		num = Managers.time:time("game") - self._round_start_time
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = nil
-
-	local time_since_round_started = num
-
-	::label_57_0::
+	local time_since_round_started = self._round_start_time and not not (Managers.time:time("game") - self._round_start_time) or not self._round_start_time and not not nil
 
 	return self._round_started, time_since_round_started
 end
@@ -936,20 +886,7 @@ GameModeManager.server_update = function (self, dt, t)
 				self._end_conditions_met = true
 				self._end_reason = reason
 
-				local flag
-
-				if reason == "lost" and Managers.state.spawn:checkpoint_data() then
-					flag = true
-
-					goto label_74_0
-				end
-
-				flag = false
-
-				local checkpoint_available = flag
-
-				::label_74_0::
-
+				local checkpoint_available = not not true
 				local mission_system = Managers.state.entity:system("mission_system")
 				local percentages_completed = mission_system:percentages_completed()
 
@@ -1234,26 +1171,8 @@ GameModeManager._update_end_level_areas = function (self)
 		QuickDrawer:quaternion(object_pos, rot)
 
 		local enabled = self._end_level_areas[unit]
-		local QuickDrawer = QuickDrawer
-		local var_102_1 = QuickDrawer
-		local box = QuickDrawer.box
-		local var_102_3 = pose
-		local var_102_4 = extents
-		local var_102_5
 
-		if enabled then
-			var_102_5 = Color(0, 255, 0)
-
-			if not var_102_5 then
-				-- Nothing
-			end
-		end
-
-		var_102_5 = Color(255, 0, 0)
-
-		::label_102_0::
-
-		box(var_102_1, var_102_3, var_102_4, var_102_5)
+		QuickDrawer:box(pose, extents, enabled and not not Color(0, 255, 0) or not enabled and not not Color(255, 0, 0))
 	end
 
 	if table.is_empty(self._end_level_areas) then
@@ -1265,17 +1184,7 @@ GameModeManager._update_end_level_areas = function (self)
 
 		for _, player in pairs(Managers.player:human_players()) do
 			local player_unit = player.player_unit
-			local alive = Unit.alive(player_unit)
-
-			if alive then
-				-- Nothing
-			end
-
-			alive = not ScriptUnit.extension(player_unit, "status_system"):is_disabled()
-
-			local non_disabled = alive
-
-			::label_102_1::
+			local non_disabled = not not Unit.alive(player_unit)
 
 			if non_disabled then
 				num_non_disabled_players = num_non_disabled_players + 1

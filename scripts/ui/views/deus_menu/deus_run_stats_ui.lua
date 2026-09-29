@@ -209,7 +209,7 @@ DeusRunStatsUi._handle_input = function (self, dt, t)
 	local input_service = self._parent:input_service()
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	if (gamepad_active or not input_service:get("hotkey_inventory", false)) and input_service:get("toggle_menu") or input_service:get("back") then
+	if gamepad_active or not input_service:get("hotkey_inventory", false) then
 		self:lock(false)
 	end
 
@@ -222,19 +222,7 @@ DeusRunStatsUi._handle_input = function (self, dt, t)
 	for i = 1, #power_up_widgets do
 		local widget = self._power_up_widgets[i]
 		local row_index = math.ceil(i / 2)
-		local num
-
-		if i % 2 == 0 then
-			num = 2
-
-			goto label_11_0
-		end
-
-		num = 1
-
-		local column_index = num
-
-		::label_11_0::
+		local column_index = i % 2 ~= 0 and not not 1 or not (i % 2 ~= 0) and not not 2
 
 		if UIUtils.is_button_hover(widget) or gamepad_active and self._gamepad_row_index == row_index and self._gamepad_column_index == column_index then
 			local scenegraph_id = widget.scenegraph_id
@@ -275,19 +263,8 @@ DeusRunStatsUi._handle_input = function (self, dt, t)
 				end
 
 				if content.input_made and (input_service:get("mouse_middle_held") or input_service:get("special_1_hold")) then
-					local end_time_2 = content.end_time
-
-					if not end_time_2 then
-						-- Nothing
-					end
-
-					end_time_2 = t + content.remove_interaction_duration
-
 					do
-						local end_time = end_time_2
-
-						::label_11_1::
-
+						local end_time = not not content.end_time
 						local progress = (end_time - t) / content.remove_interaction_duration
 
 						style.remove_frame.color[1] = 255 * (1 - progress)
@@ -417,18 +394,7 @@ DeusRunStatsUi._populate_power_up = function (self, power_up_name, power_up_rari
 	style.rarity_text_left.text_color = rarity_color
 	power_up_description_widget.content.visible = true
 
-	local var_13_0 = DeusPowerUpSetLookup[rarity]
-
-	if var_13_0 then
-		-- Nothing
-	end
-
-	var_13_0 = DeusPowerUpSetLookup[rarity][power_up.name]
-
-	local power_up_sets = var_13_0
-
-	::label_13_0::
-
+	local power_up_sets = not not DeusPowerUpSetLookup[rarity]
 	local is_part_of_set = false
 
 	if power_up_sets then
@@ -449,17 +415,7 @@ DeusRunStatsUi._populate_power_up = function (self, power_up_name, power_up_rari
 
 		is_part_of_set = true
 
-		local num_required_pieces_2 = set.num_required_pieces
-
-		if not num_required_pieces_2 then
-			-- Nothing
-		end
-
-		num_required_pieces_2 = #pieces
-
-		local num_required_pieces = num_required_pieces_2
-
-		::label_13_1::
+		local num_required_pieces = not not set.num_required_pieces
 
 		content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -605,11 +561,8 @@ DeusRunStatsUi._update_blessings = function (self, blessings)
 	-- function 20
 	local has_blessings = #blessings > 0
 	local no_blessings_text_widget = self._widgets_by_name.no_blessings_text
-	local content = no_blessings_text_widget.content
-	local flag
 
-	flag = (not has_blessings or not "") and not not Localize("no_active_blessings_text")
-	content.text = flag
+	no_blessings_text_widget.content.text = has_blessings and not not "" or not has_blessings and not not Localize("no_active_blessings_text")
 
 	local widget_prefix = "blessing_"
 
@@ -701,22 +654,7 @@ DeusRunStatsUi._update_power_ups = function (self, party_power_ups, power_ups, p
 			local text_color = Colors.get_table(power_up.rarity)
 			local power_up_template = power_up_templates[power_up.name]
 			local is_rectangular_icon = power_up_template.rectangular_icon
-			local rectangular_power_up_widget_data
-
-			if is_rectangular_icon then
-				rectangular_power_up_widget_data = definitions.rectangular_power_up_widget_data
-
-				if not rectangular_power_up_widget_data then
-					-- Nothing
-				end
-			end
-
-			rectangular_power_up_widget_data = definitions.round_power_up_widget_data
-
-			local widget_data = rectangular_power_up_widget_data
-
-			::label_21_0::
-
+			local widget_data = is_rectangular_icon and not not definitions.rectangular_power_up_widget_data or not is_rectangular_icon and not not definitions.round_power_up_widget_data
 			local hide_text = true
 			local masked = true
 			local icon_hotspot = {
@@ -736,12 +674,7 @@ DeusRunStatsUi._update_power_ups = function (self, party_power_ups, power_ups, p
 			widget.content.power_up_name = power_up.name
 			widget.content.power_up_rarity = power_up.rarity
 			widget.content.locked = not not is_party_power_up or not not talent_power_ups[power_up.name]
-
-			local content = widget.content
-			local flag
-
-			flag = (not is_party_power_up or not "party_locked") and (not talent_power_ups[power_up.name] or not "talent_locked") and not not "search_filter_locked"
-			content.locked_text_id = flag
+			widget.content.locked_text_id = is_party_power_up and not not "party_locked" or not is_party_power_up and (talent_power_ups[power_up.name] and not not "talent_locked" or not talent_power_ups[power_up.name] and not not "search_filter_locked")
 
 			local column = (i - 1) % 2
 
@@ -800,56 +733,10 @@ DeusRunStatsUi.set_loadout = function (self, melee, ranged, healing_slot, potion
 	local potion_widget = self._equipment_widgets_by_name.potion_slot
 	local grenade_widget = self._equipment_widgets_by_name.grenade_slot
 	local healing_item = not not healing_slot and not not ItemMasterList[healing_slot]
-	local content = healing_widget.content
-	local hud_icon
 
-	if healing_item then
-		hud_icon = healing_item.hud_icon
-
-		if not hud_icon then
-			-- Nothing
-		end
-	end
-
-	hud_icon = "consumables_empty_medpack"
-
-	::label_23_0::
-
-	content.icon = hud_icon
-
-	local content_2 = healing_widget.content
-	local var_23_3
-
-	if healing_item then
-		var_23_3 = Localize(healing_slot)
-
-		if not var_23_3 then
-			-- Nothing
-		end
-	end
-
-	var_23_3 = Localize("deus_weapon_inspect_title_unavailable")
-
-	::label_23_1::
-
-	content_2.title_text = var_23_3
-
-	local content_3 = healing_widget.content
-	local var_23_5
-
-	if healing_item then
-		var_23_5 = Localize(healing_item.description)
-
-		if not var_23_5 then
-			-- Nothing
-		end
-	end
-
-	var_23_5 = Localize("deus_weapon_inspect_info_unavailable")
-
-	::label_23_2::
-
-	content_3.info_text = var_23_5
+	healing_widget.content.icon = healing_item and not not healing_item.hud_icon or not healing_item and not not "consumables_empty_medpack"
+	healing_widget.content.title_text = healing_item and not not Localize(healing_slot) or not healing_item and not not Localize("deus_weapon_inspect_title_unavailable")
+	healing_widget.content.info_text = healing_item and not not Localize(healing_item.description) or not healing_item and not not Localize("deus_weapon_inspect_info_unavailable")
 	healing_widget.content.visible = healing_item ~= nil
 
 	local potion_item = not not potion_slot and not not ItemMasterList[potion_slot]
@@ -869,56 +756,10 @@ DeusRunStatsUi.set_loadout = function (self, melee, ranged, healing_slot, potion
 	potion_widget.content.visible = potion_item ~= nil
 
 	local grenade_item = not not grenade_slot and not not ItemMasterList[grenade_slot]
-	local content_4 = grenade_widget.content
-	local hud_icon_2
 
-	if grenade_item then
-		hud_icon_2 = grenade_item.hud_icon
-
-		if not hud_icon_2 then
-			-- Nothing
-		end
-	end
-
-	hud_icon_2 = "consumables_empty_grenade"
-
-	::label_23_3::
-
-	content_4.icon = hud_icon_2
-
-	local content_5 = grenade_widget.content
-	local var_23_9
-
-	if grenade_item then
-		var_23_9 = Localize(grenade_slot)
-
-		if not var_23_9 then
-			-- Nothing
-		end
-	end
-
-	var_23_9 = Localize("deus_weapon_inspect_title_unavailable")
-
-	::label_23_4::
-
-	content_5.title_text = var_23_9
-
-	local content_6 = grenade_widget.content
-	local var_23_11
-
-	if grenade_item then
-		var_23_11 = Localize(grenade_item.description)
-
-		if not var_23_11 then
-			-- Nothing
-		end
-	end
-
-	var_23_11 = Localize("deus_weapon_inspect_info_unavailable")
-
-	::label_23_5::
-
-	content_6.info_text = var_23_11
+	grenade_widget.content.icon = grenade_item and not not grenade_item.hud_icon or not grenade_item and not not "consumables_empty_grenade"
+	grenade_widget.content.title_text = grenade_item and not not Localize(grenade_slot) or not grenade_item and not not Localize("deus_weapon_inspect_title_unavailable")
+	grenade_widget.content.info_text = grenade_item and not not Localize(grenade_item.description) or not grenade_item and not not Localize("deus_weapon_inspect_info_unavailable")
 	grenade_widget.content.visible = grenade_item ~= nil
 end
 

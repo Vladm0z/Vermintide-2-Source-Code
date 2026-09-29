@@ -86,11 +86,8 @@ CareerAbilityBWUnchained._ability_available = function (self)
 	-- function 6
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
-
-	return can_use_activated_ability
+	return not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityBWUnchained._start_priming = function (self)
@@ -157,7 +154,7 @@ CareerAbilityBWUnchained._run_ability = function (self, new_initial_speed)
 		attacker_unit = owner_unit
 	})
 
-	if (not is_server or not bot_player) and local_player then
+	if is_server and (bot_player or local_player) or not is_server and local_player then
 		local overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
 
 		overcharge_extension:reset()
@@ -277,13 +274,13 @@ CareerAbilityBWUnchained._run_ability = function (self, new_initial_speed)
 	local rh_weapon_extension = not not rh_weapon_unit and not not ScriptUnit.has_extension(rh_weapon_unit, "weapon_system")
 	local has_action = not not lh_weapon_extension and not not lh_weapon_extension:has_current_action()
 
-	has_action = (not not has_action or not not rh_weapon_extension) and not not rh_weapon_extension:has_current_action()
+	has_action = not not has_action or not not rh_weapon_extension and not not rh_weapon_extension:has_current_action()
 
 	if not has_action then
 		CharacterStateHelper.play_animation_event(owner_unit, "unchained_ability_explosion")
 	end
 
-	if (not is_server or not bot_player) and local_player then
+	if is_server and (bot_player or local_player) or not is_server and local_player then
 		local first_person_extension = self._first_person_extension
 
 		if not has_action then

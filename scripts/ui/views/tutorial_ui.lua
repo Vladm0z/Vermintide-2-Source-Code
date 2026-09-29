@@ -3,17 +3,9 @@
 require("scripts/ui/views/tutorial_tooltip_ui")
 
 local definitions = local_require("scripts/ui/views/tutorial_ui_definitions")
-local script_data = script_data
-local disable_tutorial_ui = script_data.disable_tutorial_ui
 
-disable_tutorial_ui = not not disable_tutorial_ui or not not Development.parameter("disable_tutorial_ui")
-script_data.disable_tutorial_ui = disable_tutorial_ui
-
-local script_data_2 = script_data
-local disable_info_slate_ui = script_data.disable_info_slate_ui
-
-disable_info_slate_ui = not not disable_info_slate_ui or not not Development.parameter("disable_info_slate_ui")
-script_data_2.disable_info_slate_ui = disable_info_slate_ui
+script_data.disable_tutorial_ui = not not script_data.disable_tutorial_ui
+script_data.disable_info_slate_ui = not not script_data.disable_info_slate_ui
 
 local INFO_SLATES = {
 	"mission_goal",
@@ -361,41 +353,11 @@ TutorialUI.update_mission_tooltip = function (self, tooltip_tutorial, player_uni
 
 	if not active_tooltip_name or active_tooltip_name ~= tooltip_name then
 		local active_template = TutorialTemplates[tooltip_name]
-		local var_8_0
-
-		if active_template.text then
-			var_8_0 = Localize(active_template.text)
-
-			if not var_8_0 then
-				-- Nothing
-			end
-		end
-
-		var_8_0 = ""
-
-		local text = var_8_0
-
-		::label_8_0::
+		local text = active_template.text and not not Localize(active_template.text) or not active_template.text and not not ""
 
 		widget.content.text = text
 		self.active_tooltip_name = tooltip_name
-
-		local content = widget.content
-		local icon
-
-		if active_template.icon then
-			icon = active_template.icon
-
-			if not icon then
-				-- Nothing
-			end
-		end
-
-		icon = "hud_tutorial_icon_info"
-
-		::label_8_1::
-
-		content.texture_id = icon
+		widget.content.texture_id = active_template.icon and not not active_template.icon or not active_template.icon and not not "hud_tutorial_icon_info"
 		widget.style.texture_id.color[1] = 0
 		widget.style.arrow.color[1] = 0
 		self.mission_tooltip_animation_in_time = 0
@@ -487,7 +449,7 @@ TutorialUI.update_mission_tooltip = function (self, tooltip_tutorial, player_uni
 		local ui_local_position = ui_scenegraph.tooltip_mission_root.local_position
 		local used_screen_position_last_frame = self.mission_tooltip_use_screen_position
 
-		if (not used_screen_position_last_frame or use_screen_position) and not used_screen_position_last_frame and use_screen_position then
+		if not used_screen_position_last_frame and use_screen_position then
 			self.mission_tooltip_lerp_speed = 0
 		end
 
@@ -641,81 +603,20 @@ TutorialUI.setup_objective_tooltip_widget = function (self, widget_holder, objec
 	local template_name = objective_tooltips.name
 	local template = TutorialTemplates[template_name]
 	local unit = widget_holder.unit
-	local alive = Unit.alive(unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = Unit.get_data(unit, "tutorial_text_id")
-
-	local unit_text = alive
-
-	::label_10_0::
-
-	if not unit_text then
-		-- Nothing
-	end
-
-	::label_10_1::
-
-	local text_2 = template.text
-
-	if not text_2 then
-		-- Nothing
-	end
-
-	text_2 = ""
-
-	local text = text_2
-
-	::label_10_2::
+	local unit_text = not not Unit.alive(unit)
+	local text = not not unit_text or not not template.text
 
 	if template.alerts_horde then
 		text = text .. "_alert_horde"
 	end
 
-	local content = widget.content
-	local var_10_3
-
-	if text ~= "" then
-		var_10_3 = Localize(text)
-
-		if not var_10_3 then
-			-- Nothing
-		end
-	end
-
-	var_10_3 = ""
-
-	::label_10_3::
-
-	content.text = var_10_3
+	widget.content.text = text == "" and not not "" or not (text == "") and not not Localize(text)
 
 	if template.wave then
-		local content_2 = widget.content
-		local str
-
-		if text ~= "" then
-			str = Localize(text) .. template.wave
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = ""
-
-		::label_10_4::
-
-		content_2.text = str
+		widget.content.text = text == "" and not not "" or not (text == "") and not not (Localize(text) .. template.wave)
 	end
 
-	local content_3 = widget.content
-	local icon = template.icon
-
-	icon = not not icon or not not "hud_tutorial_icon_info"
-	content_3.texture_id = icon
+	widget.content.texture_id = not not template.icon
 
 	local game_mode = Managers.state.game_mode:game_mode_key()
 
@@ -725,12 +626,7 @@ TutorialUI.setup_objective_tooltip_widget = function (self, widget_holder, objec
 
 	widget.style.texture_id.color[1] = 0
 	widget.style.arrow.color[1] = 0
-
-	local content_4 = widget.content
-	local get_data = Unit.get_data(unit, "tutorial_size_scale")
-
-	get_data = not not get_data or not not 1
-	content_4.size_scale = get_data
+	widget.content.size_scale = not not Unit.get_data(unit, "tutorial_size_scale")
 
 	local position_offset_x = Unit.get_data(unit, "tutorial_position_offset", "x")
 
@@ -748,7 +644,7 @@ TutorialUI._floating_icon_overlap = function (self, widget_holder, x, y, scale)
 	local overlap
 
 	for _, pos in pairs(lookup) do
-		if ((not (x >= pos[1]) or not (x <= pos[1] + 200 * scale)) and x <= pos[1] and not (x + 200 * scale >= pos[1]) or not (y >= pos[2]) or not (y <= pos[2] + definitions.FLOATING_ICON_SIZE[2] * scale)) and y <= pos[2] and y + definitions.FLOATING_ICON_SIZE[2] * scale >= pos[2] then
+		if x >= pos[1] and (x <= pos[1] + 200 * scale and (y >= pos[2] and (y <= pos[2] + definitions.FLOATING_ICON_SIZE[2] * scale or y <= pos[2] and y + definitions.FLOATING_ICON_SIZE[2] * scale >= pos[2]) or not (y >= pos[2]) and y <= pos[2] and y + definitions.FLOATING_ICON_SIZE[2] * scale >= pos[2]) or not (x <= pos[1] + 200 * scale) and x <= pos[1] and x + 200 * scale >= pos[1] and (y >= pos[2] and (y <= pos[2] + definitions.FLOATING_ICON_SIZE[2] * scale or y <= pos[2] and y + definitions.FLOATING_ICON_SIZE[2] * scale >= pos[2]) or not (y >= pos[2]) and y <= pos[2] and y + definitions.FLOATING_ICON_SIZE[2] * scale >= pos[2])) or not (x >= pos[1]) and x <= pos[1] and x + 200 * scale >= pos[1] and (y >= pos[2] and (y <= pos[2] + definitions.FLOATING_ICON_SIZE[2] * scale or y <= pos[2] and y + definitions.FLOATING_ICON_SIZE[2] * scale >= pos[2]) or not (y >= pos[2]) and y <= pos[2] and y + definitions.FLOATING_ICON_SIZE[2] * scale >= pos[2]) then
 			if y < pos[2] then
 				overlap = -definitions.FLOATING_ICON_SIZE[2] * 0.75 * scale
 
@@ -795,17 +691,7 @@ TutorialUI.update_objective_tooltip_widget = function (self, widget_holder, play
 	end
 
 	local widget = widget_holder.widget
-	local position_offset_2 = widget.content.position_offset
-
-	if position_offset_2 then
-		-- Nothing
-	end
-
-	position_offset_2 = Vector3.up() + widget.content.position_offset:unbox()
-
-	local position_offset = position_offset_2
-
-	::label_12_0::
+	local position_offset = not not widget.content.position_offset
 
 	if Unit.get_data(objective_unit, "breed") then
 		position_offset = Vector3(0, 0, AiUtils.breed_height(objective_unit) + 0.75)
@@ -878,12 +764,7 @@ TutorialUI.update_objective_tooltip_widget = function (self, widget_holder, play
 		widget.style.texture_id.size[2] = new_icon_size
 		widget.style.texture_id.offset[2] = new_icon_size * (1 - new_icon_scale)
 
-		local lerp = math.lerp
-		local current_font_size = widget_holder.current_font_size
-
-		current_font_size = not not current_font_size or not not 30
-
-		local font_size = lerp(current_font_size, new_icon_scale * 30, 0.2)
+		local font_size = math.lerp(not not widget_holder.current_font_size, new_icon_scale * 30, 0.2)
 
 		widget.style.text.font_size = font_size
 
@@ -920,7 +801,7 @@ TutorialUI.update_objective_tooltip_widget = function (self, widget_holder, play
 
 	local used_screen_position_last_frame = widget_holder.use_screen_position
 
-	if (not used_screen_position_last_frame or use_screen_position) and not used_screen_position_last_frame and use_screen_position then
+	if not used_screen_position_last_frame and use_screen_position then
 		widget_holder.lerp_speed = 0
 	end
 
@@ -972,35 +853,8 @@ TutorialUI.get_floating_icon_position = function (self, screen_pos_x, screen_pos
 
 	local clamped_x_pos = screen_pos_x
 	local clamped_y_pos = screen_pos_y
-	local flag
-
-	if forward_dot < 0 then
-		flag = true
-
-		goto label_13_0
-	end
-
-	flag = false
-
-	local is_behind = flag
-
-	do
-		local flag_2
-	end
-
-	::label_13_0::
-
-	if is_x_clamped or is_y_clamped then
-		flag_2 = true
-
-		goto label_13_1
-	end
-
-	flag_2 = false
-
-	local is_clamped = flag_2
-
-	::label_13_1::
+	local is_behind = forward_dot < 0 and not not true or not (forward_dot < 0) and not not false
+	local is_clamped = not not true
 
 	if is_clamped or is_behind then
 		local distance_from_center = tooltip_settings.distance_from_center
@@ -1125,13 +979,8 @@ TutorialUI.distance_between_screen_positions = function (self, position_a, posit
 	local width = position_a[1] - position_b[1]
 	local height = position_a[2] - position_b[2]
 
-	if width < 0 and not (-1 * width) then
-		-- Nothing
-	end
-
-	if height < 0 and not (-1 * height) then
-		-- Nothing
-	end
+	width = not (width < 0) or not not (-1 * width) or not not width
+	height = not (height < 0) or not not (-1 * height) or not not height
 
 	return {
 		width,
@@ -1167,21 +1016,7 @@ TutorialUI.animate_in_mission_tooltip = function (self, time, render_text, dt, w
 	size_target[2] = icon_size
 	icon_style.color[1] = math.min(progress * 4, 1) * 255
 
-	local num
-
-	if render_text then
-		num = 255 * text_progress
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	local text_alpha = num
-
-	::label_20_0::
+	local text_alpha = render_text and not not (255 * text_progress) or not render_text and not not 0
 
 	widget.style.text.text_color[1] = text_alpha
 
@@ -1189,7 +1024,7 @@ TutorialUI.animate_in_mission_tooltip = function (self, time, render_text, dt, w
 		widget.style.text_shadow.text_color[1] = text_alpha
 	end
 
-	return (not (progress < 1) or not time) and not not nil
+	return progress < 1 and (not not time or not not nil) or not (progress < 1) and not not nil
 end
 
 TutorialUI.add_info_slate_entries = function (self)
@@ -1320,10 +1155,8 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 			local mission_goal_slate = self.info_slate_entries[INFO_SLATES.mission_goal]
 			local widget = mission_goal_slate.widget
 			local scenegraph_definition = definitions.scenegraph[widget.scenegraph_id]
-			local mission_goal_state = self.mission_goal_state
 
-			mission_goal_state = not not mission_goal_state or not not "invisible"
-			self.mission_goal_state = mission_goal_state
+			self.mission_goal_state = not not self.mission_goal_state
 
 			if self.mission_goal_state == "invisible" and self.mission_objective_state == "invisible" then
 				local entry_id = next(queue)
@@ -1378,10 +1211,8 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 			local info_slate = self.info_slate_entries[INFO_SLATES.mission_objective]
 			local widget = info_slate.widget
 			local scenegraph_definition = definitions.scenegraph[widget.scenegraph_id]
-			local mission_objective_state = self.mission_objective_state
 
-			mission_objective_state = not not mission_objective_state or not not "invisible"
-			self.mission_objective_state = mission_objective_state
+			self.mission_objective_state = not not self.mission_objective_state
 
 			if self.mission_objective_state == "invisible" then
 				local entry_id = next(queue)
@@ -1399,17 +1230,7 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 
 							self.mission_objective_entry = entry
 							widget.content.description_text = text
-
-							local var_26_2 = ui_animator
-							local start_animation = ui_animator.start_animation
-							local str = "info_slate_enter"
-							local var_26_5 = widget
-							local var_26_6 = scenegraph_definition
-							local var_26_7 = anim_params
-							local flag
-
-							flag = (i ~= 1 or not "slot_1") and not not "slot_2"
-							self.mission_objective_anim_id = start_animation(var_26_2, str, var_26_5, var_26_6, var_26_7[flag])
+							self.mission_objective_anim_id = ui_animator:start_animation("info_slate_enter", widget, scenegraph_definition, anim_params[i ~= 1 and not not "slot_2" or not (i ~= 1) and not not "slot_1"])
 
 							local entry_size = definitions.INFO_SLATE_ENTRY_SIZE
 							local text_scenegraph_id = info_slate.text_scenegraph_id
@@ -1424,18 +1245,8 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 
 							ui_scenegraph[widget.scenegraph_id].size[2] = entry_height
 							ui_scenegraph[widget.scenegraph_id].position[2] = ui_scenegraph[widget.scenegraph_id].position[2] - entry_height + entry_size[2]
-
-							local var_26_9 = ui_scenegraph[info_slate.icon_root_scenegraph_id]
-							local flag_2
-
-							flag_2 = (not (num_texts > 1) or not "top") and not not "center"
-							var_26_9.vertical_alignment = flag_2
-
-							local position = ui_scenegraph[info_slate.icon_root_scenegraph_id].position
-							local flag_3
-
-							flag_3 = (not (num_texts > 1) or not -10) and not not 0
-							position[2] = flag_3
+							ui_scenegraph[info_slate.icon_root_scenegraph_id].vertical_alignment = num_texts > 1 and not not "top" or not (num_texts > 1) and not not "center"
+							ui_scenegraph[info_slate.icon_root_scenegraph_id].position[2] = num_texts > 1 and not not -10 or not (num_texts > 1) and not not 0
 
 							self:play_sound("hud_info_slate_mission_entry")
 
@@ -1481,10 +1292,8 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 			local info_slate = self.info_slate_entries[INFO_SLATES.side_mission]
 			local widget = info_slate.widget
 			local scenegraph_definition = definitions.scenegraph[widget.scenegraph_id]
-			local side_mission_state = self.side_mission_state
 
-			side_mission_state = not not side_mission_state or not not "invisible"
-			self.side_mission_state = side_mission_state
+			self.side_mission_state = not not self.side_mission_state
 
 			if self.side_mission_state == "invisible" then
 				for entry_id, entry in pairs(queue) do
@@ -1508,25 +1317,7 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 						self.side_mission_entry = entry
 						widget.content.description_text = text
 
-						local str_2
-
-						if i == 1 then
-							str_2 = "slot_1"
-
-							goto label_26_0
-						end
-
-						if i == 2 then
-							str_2 = "slot_2"
-
-							goto label_26_0
-						end
-
-						str_2 = "slot_3"
-
-						local anim_param_name = str_2
-
-						::label_26_0::
+						local anim_param_name = i ~= 1 and (i ~= 2 and not not "slot_3" or not (i ~= 2) and not not "slot_2") or not (i ~= 1) and not not "slot_1"
 
 						self.side_mission_anim_id = ui_animator:start_animation("info_slate_enter", widget, scenegraph_definition, anim_params[anim_param_name])
 						self.side_mission_state = "animating_in"
@@ -1545,25 +1336,7 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 
 				if self.side_mission_visible_timer > 1 then
 					local slot = self.side_mission_entry.slot
-					local str_3
-
-					if slot == 1 then
-						str_3 = "slot_1"
-
-						goto label_26_1
-					end
-
-					if slot == 2 then
-						str_3 = "slot_2"
-
-						goto label_26_1
-					end
-
-					str_3 = "slot_3"
-
-					local anim_param_name = str_3
-
-					::label_26_1::
+					local anim_param_name = slot ~= 1 and (slot ~= 2 and not not "slot_3" or not (slot ~= 2) and not not "slot_2") or not (slot ~= 1) and not not "slot_1"
 
 					self.side_mission_anim_id = ui_animator:start_animation("info_slate_exit", widget, scenegraph_definition, anim_params[anim_param_name])
 					self.side_mission_state = "animating_out"
@@ -1598,10 +1371,8 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 		local info_slate = self.info_slate_entries[INFO_SLATES.tutorial]
 		local widget = info_slate.widget
 		local scenegraph_definition = definitions.scenegraph[widget.scenegraph_id]
-		local tutorial_state = self.tutorial_state
 
-		tutorial_state = not not tutorial_state or not not "invisible"
-		self.tutorial_state = tutorial_state
+		self.tutorial_state = not not self.tutorial_state
 
 		local entry_id = self:_get_next_verified(queue, t)
 
@@ -1619,17 +1390,7 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 
 						self.tutorial_entry = entry
 						widget.content.description_text = text
-
-						local var_26_17 = ui_animator
-						local start_animation_2 = ui_animator.start_animation
-						local str_4 = "info_slate_enter"
-						local var_26_20 = widget
-						local var_26_21 = scenegraph_definition
-						local var_26_22 = anim_params
-						local flag_4
-
-						flag_4 = (i ~= 1 or not "slot_1") and not not "slot_2"
-						self.tutorial_anim_id = start_animation_2(var_26_17, str_4, var_26_20, var_26_21, var_26_22[flag_4])
+						self.tutorial_anim_id = ui_animator:start_animation("info_slate_enter", widget, scenegraph_definition, anim_params[i ~= 1 and not not "slot_2" or not (i ~= 1) and not not "slot_1"])
 
 						local entry_size = definitions.INFO_SLATE_ENTRY_SIZE
 						local text_scenegraph_id = info_slate.text_scenegraph_id
@@ -1644,18 +1405,8 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 
 						ui_scenegraph[widget.scenegraph_id].size[2] = entry_height
 						ui_scenegraph[widget.scenegraph_id].position[2] = ui_scenegraph[widget.scenegraph_id].position[2] - entry_height + entry_size[2]
-
-						local var_26_24 = ui_scenegraph[info_slate.icon_root_scenegraph_id]
-						local flag_5
-
-						flag_5 = (not (num_texts > 1) or not "top") and not not "center"
-						var_26_24.vertical_alignment = flag_5
-
-						local position_2 = ui_scenegraph[info_slate.icon_root_scenegraph_id].position
-						local flag_6
-
-						flag_6 = (not (num_texts > 1) or not -10) and not not 0
-						position_2[2] = flag_6
+						ui_scenegraph[info_slate.icon_root_scenegraph_id].vertical_alignment = num_texts > 1 and not not "top" or not (num_texts > 1) and not not "center"
+						ui_scenegraph[info_slate.icon_root_scenegraph_id].position[2] = num_texts > 1 and not not -10 or not (num_texts > 1) and not not 0
 						self.tutorial_state = "animating_in"
 
 						break
@@ -1673,25 +1424,7 @@ TutorialUI.update_info_slate_entries = function (self, dt, t)
 
 			if self.tutorial_visible_timer > 10 then
 				local slot = self.tutorial_entry.slot
-				local str_5
-
-				if slot == 1 then
-					str_5 = "slot_1"
-
-					goto label_26_2
-				end
-
-				if slot == 2 then
-					str_5 = "slot_2"
-
-					goto label_26_2
-				end
-
-				str_5 = "slot_3"
-
-				local anim_param_name = str_5
-
-				::label_26_2::
+				local anim_param_name = slot ~= 1 and (slot ~= 2 and not not "slot_3" or not (slot ~= 2) and not not "slot_2") or not (slot ~= 1) and not not "slot_1"
 
 				self.tutorial_anim_id = ui_animator:start_animation("info_slate_exit", widget, scenegraph_definition, anim_params[anim_param_name])
 				self.tutorial_state = "animating_out"
@@ -1754,25 +1487,7 @@ TutorialUI._get_next_verified = function (self, queue, t)
 				local info_slate = self.info_slate_entries[INFO_SLATES.tutorial]
 				local widget = info_slate.widget
 				local scenegraph_definition = definitions.scenegraph[widget.scenegraph_id]
-				local str
-
-				if slot == 1 then
-					str = "slot_1"
-
-					goto label_27_0
-				end
-
-				if slot == 2 then
-					str = "slot_2"
-
-					goto label_27_0
-				end
-
-				str = "slot_3"
-
-				local anim_param_name = str
-
-				::label_27_0::
+				local anim_param_name = slot ~= 1 and (slot ~= 2 and not not "slot_3" or not (slot ~= 2) and not not "slot_2") or not (slot ~= 1) and not not "slot_1"
 
 				self.ui_animator:stop_animation(self.tutorial_anim_id)
 
@@ -1822,22 +1537,7 @@ TutorialUI.add_health_bar = function (self, unit, replace_hidden)
 		end
 
 		if not health_bar then
-			local get_data
-
-			if Unit.has_data(unit, "health_bar_color") then
-				get_data = Unit.get_data(unit, "health_bar_color")
-
-				if not get_data then
-					-- Nothing
-				end
-			end
-
-			get_data = "red"
-
-			local color = get_data
-
-			::label_30_0::
-
+			local color = Unit.has_data(unit, "health_bar_color") and not not Unit.get_data(unit, "health_bar_color") or not Unit.has_data(unit, "health_bar_color") and not not "red"
 			local widget_definition = definitions.health_bar_definitions[i]
 			local widget = UIWidget.init(widget_definition)
 
@@ -1941,22 +1641,7 @@ TutorialUI.update_health_bars = function (self, dt, player_unit)
 
 		if hb_unit and Unit.alive(hb_unit) then
 			local hb_node_name = Unit.get_data(hb_unit, "health_bar_node")
-			local node
-
-			if hb_node_name then
-				node = Unit.node(hb_unit, hb_node_name)
-
-				if not node then
-					-- Nothing
-				end
-			end
-
-			node = 0
-
-			local hb_node = node
-
-			::label_34_0::
-
+			local hb_node = hb_node_name and not not Unit.node(hb_unit, hb_node_name) or not hb_node_name and not not 0
 			local world_position = Unit.world_position(hb_unit, hb_node)
 			local player_to_hb = Vector3.normalize(world_position - camera_position)
 			local dot = Vector3.dot(camera_forward, player_to_hb)

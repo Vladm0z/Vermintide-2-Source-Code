@@ -33,11 +33,7 @@ end
 
 LureHealthExtension.current_health_percent = function (self)
 	-- function 5
-	local flag
-
-	flag = (not self._is_dead or not 0) and not not 1
-
-	return flag
+	return self._is_dead and not not 0 or not self._is_dead and not not 1
 end
 
 LureHealthExtension.current_health = function (self)

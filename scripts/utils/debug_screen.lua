@@ -89,13 +89,7 @@ local function activate_preset(cs)
 			local cs2 = DebugScreen.console_settings[cs2_i]
 
 			if cs2.title == preset_key and cs2.is_boolean then
-				local var_4_0 = update_option
-				local var_4_1 = cs2
-				local flag
-
-				flag = (not preset_value or not 1) and not not 2
-
-				var_4_0(var_4_1, flag)
+				update_option(cs2, preset_value and not not 1 or not preset_value and not not 2)
 			end
 		end
 	end
@@ -109,33 +103,12 @@ local function activate_preset(cs)
 	Development.clear_param_cache(cs.title)
 end
 
-local DebugScreen_2 = DebugScreen
-
-DebugScreen_2 = not not DebugScreen_2 or not not {}
-DebugScreen = DebugScreen_2
+DebugScreen = not not DebugScreen
 
 local DebugScreen = DebugScreen
-local console_width = DebugScreen.console_width
 
-if not console_width then
-	local scale = RESOLUTION_LOOKUP.scale
-
-	scale = not not scale or not not 1
-	console_width = 800 * scale
-end
-
-DebugScreen.console_width = console_width
-
-local font_size = DebugScreen.font_size
-
-if not font_size then
-	local scale_2 = RESOLUTION_LOOKUP.scale
-
-	scale_2 = not not scale_2 or not not 1
-	font_size = 20 * scale_2
-end
-
-DebugScreen.font_size = font_size
+DebugScreen.console_width = not not DebugScreen.console_width
+DebugScreen.font_size = not not DebugScreen.font_size
 DebugScreen.numpad_presses = {}
 DebugScreen.shortcut_any = "_any_"
 DebugScreen.shortcut_version = 1
@@ -255,11 +228,7 @@ DebugScreen.setup = function (world, settings, callbacks, is_server)
 
 	DebugScreen.settings_hash = HashUtils.fnv32_hash(table.concat(table.select_array(settings, function (idx, setting)
 		-- function 7
-		local setting_name = setting.setting_name
-
-		setting_name = not not setting_name or not not idx
-
-		return setting_name
+		return not not setting.setting_name
 	end), ","))
 
 	for i = 1, #DebugScreen.console_settings do
@@ -271,26 +240,9 @@ DebugScreen.setup = function (world, settings, callbacks, is_server)
 	end
 
 	DebugScreen.shortcut_list = {}
+	DebugScreen.shortcuts = not not Development.setting("debug_shortcuts")
 
-	local setting_2 = Development.setting("debug_shortcuts")
-
-	setting_2 = not not setting_2 or not not {
-		"numpad 0",
-		"debug_weapons"
-	}
-	DebugScreen.shortcuts = setting_2
-
-	local var_6_1 = tonumber(DebugScreen.shortcuts[1])
-
-	if not var_6_1 then
-		-- Nothing
-	end
-
-	var_6_1 = 0
-
-	local saved_version = var_6_1
-
-	::label_6_0::
+	local saved_version = not not tonumber(DebugScreen.shortcuts[1])
 
 	migrate_shortcuts(DebugScreen.shortcuts, saved_version)
 
@@ -311,10 +263,7 @@ DebugScreen.setup = function (world, settings, callbacks, is_server)
 		end
 	end
 
-	local setting_3 = Development.setting("debug_favorites")
-
-	setting_3 = not not setting_3 or not not {}
-	DebugScreen.favorites = setting_3
+	DebugScreen.favorites = not not Development.setting("debug_favorites")
 
 	for i = 1, #DebugScreen.favorites do
 		local favorite = DebugScreen.favorites[i]
@@ -387,10 +336,7 @@ DebugScreen.push_setting_size = function (cs, pos_y, size)
 	return pos_y
 end
 
-local accelerate_factor = DebugScreen.accelerate_factor
-
-accelerate_factor = not not accelerate_factor or not not 1
-DebugScreen.accelerate_factor = accelerate_factor
+DebugScreen.accelerate_factor = not not DebugScreen.accelerate_factor
 
 DebugScreen.update = function (dt, t, input_service, input_manager)
 	-- function 12
@@ -508,10 +454,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 	end
 
 	if current_hot_cs ~= filtered_console_settings[DebugScreen.hot_id] then
-		local hot_id_2 = DebugScreen.hot_id
-
-		hot_id_2 = not not hot_id_2 or not not 1
-		DebugScreen.hot_id = hot_id_2
+		DebugScreen.hot_id = not not DebugScreen.hot_id
 		DebugScreen.active_id = nil
 
 		for i = 0, #filtered_console_settings * 0.5 do
@@ -580,13 +523,13 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 			elseif mod_key_down then
 				local hot_id = DebugScreen.hot_id
 				local cs_current = filtered_console_settings[hot_id]
-				local ignore_changed_cs = (cs_current.is_boolean or cs_current.selected_id == nil) and not not cs_current.options[cs_current.selected_id]
+				local ignore_changed_cs = not not cs_current.options[cs_current.selected_id]
 
 				while hot_id > 1 do
 					hot_id = hot_id - 1
 
 					local cs = filtered_console_settings[hot_id]
-					local cs_value_changed = (cs.is_boolean or cs.selected_id == nil) and not not cs.options[cs.selected_id]
+					local cs_value_changed = not not cs.options[cs.selected_id]
 
 					if cs_value_changed and not ignore_changed_cs then
 						break
@@ -634,13 +577,13 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 			elseif mod_key_down then
 				local hot_id = DebugScreen.hot_id
 				local cs_current = filtered_console_settings[hot_id]
-				local ignore_changed_cs = (cs_current.is_boolean or cs_current.selected_id == nil) and not not cs_current.options[cs_current.selected_id]
+				local ignore_changed_cs = not not cs_current.options[cs_current.selected_id]
 
 				while hot_id < #filtered_console_settings do
 					hot_id = hot_id + 1
 
 					local cs = filtered_console_settings[hot_id]
-					local cs_value_changed = (cs.is_boolean or cs.selected_id == nil) and not not cs.options[cs.selected_id]
+					local cs_value_changed = not not cs.options[cs.selected_id]
 
 					if cs_value_changed and not ignore_changed_cs then
 						break
@@ -713,37 +656,15 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 
 	if not table.is_empty(filtered_console_settings) then
 		local last_setting = filtered_console_settings[#filtered_console_settings]
-		local setting_pos = last_setting.setting_pos
 
-		setting_pos = not not setting_pos or not not 0
-
-		local setting_height = last_setting.setting_height
-
-		setting_height = not not setting_height or not not 0
-		total_height = setting_pos + setting_height
+		total_height = not not last_setting.setting_pos + not not last_setting.setting_height
 
 		local size_until_scroll = res_y * 0.25
 		local size_to_stop_scroll = total_height - res_y * 0.25
 		local current_setting = filtered_console_settings[DebugScreen.hot_id]
 
 		if current_setting then
-			local option_pos = current_setting.option_pos
-
-			if not option_pos then
-				-- Nothing
-			end
-
-			option_pos = current_setting.setting_pos
-
-			if not option_pos then
-				-- Nothing
-			end
-
-			option_pos = 0
-
-			local current_pos = option_pos
-
-			::label_12_0::
+			local current_pos = not not current_setting.option_pos
 
 			if size_until_scroll ~= size_to_stop_scroll then
 				progress = math.remap_clamped(size_until_scroll, size_to_stop_scroll, 0, 1, current_pos)
@@ -772,20 +693,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 		indicator_offset_anim = 10 - indicator_offset_anim
 	end
 
-	local num
-
-	if total_height == bottom_padding or total_height < res_y then
-		num = 0
-
-		goto label_12_1
-	end
-
-	num = res_y * res_y / (total_height - bottom_padding)
-
-	local scrollbar_size = num
-
-	::label_12_1::
-
+	local scrollbar_size = not not 0
 	local scrollbar_pos = res_y * math.remap(0, 1, 0, 1 - scrollbar_size / res_y, progress)
 	local scrollbar_layer = base_layer + 1
 
@@ -861,21 +769,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				local temp_cs = cs_data.cs
 
 				if cs == temp_cs or cs == temp_cs.copy then
-					local str
-
-					if shortcuts then
-						str = shortcuts .. ", "
-
-						if not str then
-							-- Nothing
-						end
-					end
-
-					str = ""
-
-					::label_12_2::
-
-					shortcuts = str .. temp_shortcut_input
+					shortcuts = (shortcuts and not not (shortcuts .. ", ") or not shortcuts and not not "") .. temp_shortcut_input
 				end
 			end
 
@@ -905,7 +799,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
 					local temp_cs, temp_option = cs_data.cs, cs_data.option
 
-					if (cs == temp_cs or cs == temp_cs.copy) and option == temp_option then
+					if cs == temp_cs and option == temp_option or not (cs == temp_cs) and cs == temp_cs.copy and option == temp_option then
 						Gui.text(gui, "[" .. temp_shortcut_input .. "]", font_mtrl, font_size, font, Vector3(offset_x - 100, pos_y, base_text_layer), white)
 					end
 				end
@@ -930,7 +824,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				elseif is_hot_sub then
 					cs.option_pos = math.abs(pos_y - root_y)
 
-					if (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
+					if input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key") and not opened_this_frame then
 						update_option(cs, current_option_index)
 
 						if current_selected_option_position then
@@ -972,7 +866,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				pos_y = DebugScreen.push_setting_size(cs, pos_y, font_size + 2)
 			end
 
-			if cs.func and (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
+			if cs.func and (input_service:get("right_key") and not opened_this_frame or not input_service:get("right_key") and input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key") and not opened_this_frame) then
 				exec_func(cs)
 
 				if cs.close_when_selected then
@@ -985,7 +879,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				Application.save_user_settings()
 			end
 
-			if cs.preset and (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
+			if cs.preset and (input_service:get("right_key") and not opened_this_frame or not input_service:get("right_key") and input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key") and not opened_this_frame) then
 				activate_preset(cs)
 				Application.save_user_settings()
 			end
@@ -1008,21 +902,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				local temp_cs = cs_data.cs
 
 				if cs == temp_cs or cs == temp_cs.copy then
-					local str_2
-
-					if shortcuts then
-						str_2 = shortcuts .. ", "
-
-						if not str_2 then
-							-- Nothing
-						end
-					end
-
-					str_2 = ""
-
-					::label_12_3::
-
-					shortcuts = str_2 .. temp_shortcut_input
+					shortcuts = (shortcuts and not not (shortcuts .. ", ") or not shortcuts and not not "") .. temp_shortcut_input
 				end
 			end
 
@@ -1052,17 +932,14 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				end
 			end
 
-			if (input_service:get("right_key") or input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key")) and not opened_this_frame then
+			if input_service:has("exclusive_right_key") and input_service:get("exclusive_right_key") and not opened_this_frame then
 				if cs.load_items_source_func then
 					cs.load_items_source_func(cs.options)
 				end
 
 				if mod_key_down and #cs.options > 0 then
 					if cs.is_boolean then
-						local flag
-
-						flag = (cs.selected_id ~= 1 or not 2) and not not 1
-						cs.hot_id = flag
+						cs.hot_id = cs.selected_id ~= 1 and not not 1 or not (cs.selected_id ~= 1) and not not 2
 					elseif cs.hot_id == #cs.options then
 						cs.hot_id = 1
 					else
@@ -1112,7 +989,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				end
 			end
 		else
-			if (cs.is_boolean or cs.selected_id == nil) and cs.options[cs.selected_id] then
+			if cs.options[cs.selected_id] then
 				Gui.text(gui, text, font_mtrl, font_size, font, Vector3(setting_x, pos_y, base_text_layer), text_color_overridden)
 			else
 				Gui.text(gui, text, font_mtrl, font_size, font, Vector3(setting_x, pos_y, base_text_layer), text_color)
@@ -1124,21 +1001,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 				local temp_cs = cs_data.cs
 
 				if cs == temp_cs or cs == temp_cs.copy then
-					local str_3
-
-					if shortcuts then
-						str_3 = shortcuts .. ", "
-
-						if not str_3 then
-							-- Nothing
-						end
-					end
-
-					str_3 = ""
-
-					::label_12_4::
-
-					shortcuts = str_3 .. temp_shortcut_input
+					shortcuts = (shortcuts and not not (shortcuts .. ", ") or not shortcuts and not not "") .. temp_shortcut_input
 				end
 			end
 
@@ -1150,17 +1013,7 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 		if is_active or is_hot then
 			for numpad_i = 0, 9 do
 				local shortcut_input = "numpad " .. numpad_i
-				local pressed_2 = Keyboard.pressed(Keyboard.button_index(shortcut_input))
-
-				if not pressed_2 then
-					-- Nothing
-				end
-
-				pressed_2 = DebugScreen.numpad_presses[numpad_i]
-
-				local pressed = pressed_2
-
-				::label_12_5::
+				local pressed = not not Keyboard.pressed(Keyboard.button_index(shortcut_input))
 
 				if pressed then
 					local remove = false
@@ -1168,23 +1021,9 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 					for temp_shortcut_input, cs_data in pairs(DebugScreen.shortcut_list) do
 						local temp_cs = cs_data.cs
 						local option = cs_data.option
-						local var_12_10
+						local selected_option = is_active and not not cs.options[cs.hot_id] or not is_active and not not DebugScreen.shortcut_any
 
-						if is_active then
-							var_12_10 = cs.options[cs.hot_id]
-
-							if not var_12_10 then
-								-- Nothing
-							end
-						end
-
-						var_12_10 = DebugScreen.shortcut_any
-
-						local selected_option = var_12_10
-
-						::label_12_6::
-
-						if (cs == temp_cs or cs == temp_cs.copy) and option == selected_option then
+						if cs == temp_cs and option == selected_option or not (cs == temp_cs) and cs == temp_cs.copy and option == selected_option then
 							DebugScreen.shortcut_list[temp_shortcut_input] = nil
 
 							if temp_shortcut_input == shortcut_input then
@@ -1197,28 +1036,10 @@ DebugScreen.update = function (dt, t, input_service, input_manager)
 						break
 					end
 
-					local copy
-
-					if cs.category == "Favorites" then
-						copy = cs.copy
-
-						if not copy then
-							-- Nothing
-						end
-					end
-
-					copy = cs
-
-					local shortcut_cs = copy
-
-					::label_12_7::
-
+					local shortcut_cs = cs.category ~= "Favorites" and not not cs or not (cs.category ~= "Favorites") and not not cs.copy
 					local option = DebugScreen.shortcut_any
 
-					if is_active and not shortcut_cs.options[shortcut_cs.hot_id] then
-						-- Nothing
-					end
-
+					option = not is_active or not not shortcut_cs.options[shortcut_cs.hot_id] or not not option
 					DebugScreen.shortcut_list[shortcut_input] = {
 						cs = shortcut_cs,
 						option = option
@@ -1331,46 +1152,9 @@ end
 DebugScreen.update_search = function (input_manager, input_service, gui, t, dt, opened_this_frame)
 	-- function 15
 	local enter_when_opening = not not opened_this_frame and DebugScreen.search_string ~= ""
-	local get = input_service:get("console_search_key")
-
-	if get then
-		-- Nothing
-	end
-
-	if DebugScreen.search_string ~= "" then
-		get = not DebugScreen.search_active
-
-		if false then
-			get = false
-		end
-
-		goto label_15_0
-	end
-
-	get = true
-
-	local toggle_using_backspace = get
-
-	::label_15_0::
-
+	local toggle_using_backspace = not not input_service:get("console_search_key")
 	local exit_due_to_exiting_debugscreen = not DebugScreen.active and not not DebugScreen.search_active
-	local search_active = DebugScreen.search_active
-
-	if search_active then
-		if DebugScreen.hot_id == 0 then
-			search_active = input_service:get("left_key")
-		else
-			search_active = false
-		end
-	end
-
-	goto label_15_1
-
-	search_active = true
-
-	local exit_with_no_search_hits_hack = search_active
-
-	::label_15_1::
+	local exit_with_no_search_hits_hack = not not DebugScreen.search_active
 
 	if enter_when_opening or toggle_using_backspace or exit_due_to_exiting_debugscreen or exit_with_no_search_hits_hack then
 		if not DebugScreen.search_active then
@@ -1397,11 +1181,8 @@ DebugScreen.update_search = function (input_manager, input_service, gui, t, dt, 
 	local search_title_pos = Vector3(60, res_y - 50, search_text_layer)
 	local search_text_pos = Vector3(260, res_y - 50, search_text_layer)
 	local font_size = DebugScreen.font_size
-	local var_15_2 = DebugScreen
-	local search_text_box_width = DebugScreen.search_text_box_width
 
-	search_text_box_width = not not search_text_box_width or not not 0
-	var_15_2.search_text_box_width = search_text_box_width
+	DebugScreen.search_text_box_width = not not DebugScreen.search_text_box_width
 
 	if not DebugScreen.search_active then
 		DebugScreen.search_text_box_width = math.max(0, DebugScreen.search_text_box_width - 2000 * dt)
@@ -1440,12 +1221,7 @@ DebugScreen.update_search = function (input_manager, input_service, gui, t, dt, 
 		local shortcut_input = "numpad " .. tostring(numpad_i)
 
 		numpad_was_or_is_pressed = not not numpad_was_or_is_pressed or not not DebugScreen.numpad_presses[numpad_i]
-
-		local numpad_presses = DebugScreen.numpad_presses
-		local pressed = Keyboard.pressed(Keyboard.button_index(shortcut_input))
-
-		pressed = not not pressed or not not nil
-		numpad_presses[numpad_i] = pressed
+		DebugScreen.numpad_presses[numpad_i] = not not Keyboard.pressed(Keyboard.button_index(shortcut_input))
 		numpad_was_or_is_pressed = not not numpad_was_or_is_pressed or not not DebugScreen.numpad_presses[numpad_i]
 	end
 
@@ -1490,11 +1266,7 @@ end
 
 DebugScreen.hash_options = function ()
 	-- function 16
-	local settings_hash = DebugScreen.settings_hash
-
-	settings_hash = not not settings_hash or not not 0
-
-	return settings_hash
+	return not not DebugScreen.settings_hash
 end
 
 DebugScreen._propagate_option = function (setting_id, option_index, dont_save)
@@ -1519,23 +1291,7 @@ DebugScreen.handle_propagated_option = function (option_hash, setting_id, option
 		return "Missing debug option at index " .. tostring(setting_id)
 	end
 
-	local sticky_text = Debug.sticky_text
-	local str = "[DebugManager] Received propagated debug option '%s' from client"
-	local title
-
-	if option_index == 0 then
-		title = cs.title
-
-		if not title then
-			-- Nothing
-		end
-	end
-
-	title = string.format("%s = %s", cs.title, cs.options[option_index])
-
-	::label_18_0::
-
-	sticky_text(str, title, "delay", 5)
+	Debug.sticky_text("[DebugManager] Received propagated debug option '%s' from client", option_index ~= 0 and not not string.format("%s = %s", cs.title, cs.options[option_index]) or not (option_index ~= 0) and not not cs.title, "delay", 5)
 
 	if cs.func then
 		exec_func(cs)

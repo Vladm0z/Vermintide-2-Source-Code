@@ -316,7 +316,7 @@ settings.proc_functions = {
 			local increased_duration_talent = talent_extension:has_talent("markus_questing_knight_passive_longer_duration", "empire_soldier", true)
 			local buff_to_add
 
-			buff_to_add = (not increased_duration_talent or not "markus_questing_knight_passive_boss_kill_buff_increased_duration") and not not "markus_questing_knight_passive_boss_kill_buff"
+			buff_to_add = increased_duration_talent and (not not "markus_questing_knight_passive_boss_kill_buff_increased_duration" or not not "markus_questing_knight_passive_boss_kill_buff") or not increased_duration_talent and not not "markus_questing_knight_passive_boss_kill_buff"
 
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
@@ -365,7 +365,7 @@ settings.buff_function_templates = {
 		local super_buff_talent = talent_extension:has_talent("markus_questing_knight_passive_longer_duration", "empire_soldier", true)
 		local tank_buff_talent = talent_extension:has_talent("markus_questing_knight_passive_tanking_improved", "empire_soldier", true)
 		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-		local tbl = {
+		local buff_list = {
 			{
 				buff_to_add = "markus_questing_knight_boss_aura_party",
 				apply_to_party = true,
@@ -383,57 +383,20 @@ settings.buff_function_templates = {
 				apply_to_party = true,
 				apply_to_self = false,
 				apply = buff_extension:has_buff_perk("elites_aura")
+			},
+			{
+				buff_to_add = "markus_questing_knight_super_aura_party",
+				apply_to_party = true,
+				apply_to_self = true,
+				apply = not not super_buff_talent and not not buff_extension:has_buff_perk("boss_aura")
+			},
+			{
+				buff_to_add = "markus_questing_knight_passive_tank_buff",
+				apply_to_party = false,
+				apply_to_self = true,
+				apply = not not buff_extension:has_buff_perk("specials_aura")
 			}
 		}
-		local tbl_2 = {
-			buff_to_add = "markus_questing_knight_super_aura_party",
-			apply_to_party = true,
-			apply_to_self = true
-		}
-
-		if super_buff_talent then
-			-- Nothing
-		end
-
-		::label_6_0::
-
-		local has_buff_perk = buff_extension:has_buff_perk("boss_aura")
-
-		if has_buff_perk then
-			has_buff_perk = buff_extension:has_buff_perk("specials_aura")
-			has_buff_perk = not not has_buff_perk and not not buff_extension:has_buff_perk("elites_aura")
-		end
-
-		::label_6_1::
-
-		tbl_2.apply = has_buff_perk
-		tbl[4] = tbl_2
-
-		local tbl_3 = {
-			buff_to_add = "markus_questing_knight_passive_tank_buff",
-			apply_to_party = false,
-			apply_to_self = true
-		}
-
-		if tank_buff_talent then
-			-- Nothing
-		end
-
-		::label_6_2::
-
-		local has_buff_perk_2 = buff_extension:has_buff_perk("boss_aura")
-
-		if not has_buff_perk_2 then
-			has_buff_perk_2 = buff_extension:has_buff_perk("specials_aura")
-			has_buff_perk_2 = not not has_buff_perk_2 or not not buff_extension:has_buff_perk("elites_aura")
-		end
-
-		::label_6_3::
-
-		tbl_3.apply = has_buff_perk_2
-		tbl[5] = tbl_3
-
-		local buff_list = tbl
 		local num_buffs = #buff_list
 
 		for i = 1, num_units do
@@ -442,32 +405,7 @@ settings.buff_function_templates = {
 			if Unit.alive(unit) then
 				for b = 1, num_buffs do
 					local current_buff = buff_list[b]
-					local apply_2 = current_buff.apply
-
-					if apply_2 then
-						if unit == owner_unit then
-							apply_2 = current_buff.apply_to_self
-
-							if not apply_2 then
-								-- Nothing
-							end
-						end
-
-						if unit ~= owner_unit then
-							apply_2 = current_buff.apply_to_party
-						else
-							apply_2 = false
-						end
-					end
-
-					goto label_6_4
-
-					apply_2 = true
-
-					local apply = apply_2
-
-					::label_6_4::
-
+					local apply = not not current_buff.apply
 					local buff_to_add = current_buff.buff_to_add
 					local unit_position = POSITION_LOOKUP[unit]
 					local distance_squared = Vector3.distance_squared(owner_position, unit_position)
@@ -505,23 +443,7 @@ settings.buff_function_templates = {
 			end
 
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-			local has_buff_perk_3 = buff_extension:has_buff_perk("boss_aura")
-
-			if has_buff_perk_3 then
-				-- Nothing
-			end
-
-			has_buff_perk_3 = buff_extension:has_buff_perk("specials_aura")
-
-			if has_buff_perk_3 then
-				-- Nothing
-			end
-
-			has_buff_perk_3 = buff_extension:has_buff_perk("elites_aura")
-
-			local all_buffs_active = has_buff_perk_3
-
-			::label_6_5::
+			local all_buffs_active = not not buff_extension:has_buff_perk("boss_aura")
 
 			if all_buffs_active then
 				local boss_buff = buff_extension:get_non_stacking_buff("markus_questing_knight_passive_boss_kill_buff")

@@ -14,17 +14,7 @@ GenericHitReactionExtension = class(GenericHitReactionExtension)
 
 local function get_damage_direction(unit, direction_vector)
 	-- function 1
-	local has_node = Unit.has_node(unit, "j_spine1")
-
-	if has_node then
-		-- Nothing
-	end
-
-	has_node = Unit.node(unit, "j_spine1")
-
-	local node = has_node
-
-	::label_1_0::
+	local node = not not Unit.has_node(unit, "j_spine1")
 
 	if node then
 		local unit_rotation = Unit.world_rotation(unit, node)
@@ -160,10 +150,7 @@ GenericHitReactionExtension.init = function (self, extension_init_context, unit,
 		self.is_husk = not Managers.player.is_server
 	end
 
-	local hit_reaction_template = extension_init_data.hit_reaction_template
-
-	hit_reaction_template = not not hit_reaction_template or not not Unit.get_data(unit, "hit_reaction")
-	self.hit_reaction_template = hit_reaction_template
+	self.hit_reaction_template = not not extension_init_data.hit_reaction_template
 
 	fassert(self.hit_reaction_template)
 
@@ -182,37 +169,10 @@ GenericHitReactionExtension.extensions_ready = function (self, world, unit)
 	fassert(self.health_extension)
 
 	self.death_extension = ScriptUnit.extension(unit, "death_system")
-
-	local has_extension = ScriptUnit.has_extension(unit, "dialogue_system")
-
-	has_extension = not not has_extension and not not ScriptUnit.extension(unit, "dialogue_system")
-	self.dialogue_extension = has_extension
-
-	local has_extension_2 = ScriptUnit.has_extension(unit, "locomotion_system")
-
-	has_extension_2 = not not has_extension_2 and not not ScriptUnit.extension(unit, "locomotion_system")
-	self.locomotion_extension = has_extension_2
-
-	local has_extension_3 = ScriptUnit.has_extension(unit, "ai_system")
-
-	has_extension_3 = not not has_extension_3 and not not ScriptUnit.extension(unit, "ai_system")
-	self.ai_extension = has_extension_3
-
-	local breed
-
-	if BLACKBOARDS[unit] then
-		breed = BLACKBOARDS[unit].breed
-
-		if not breed then
-			-- Nothing
-		end
-	end
-
-	breed = nil
-
-	::label_11_0::
-
-	self._breed = breed
+	self.dialogue_extension = not not ScriptUnit.has_extension(unit, "dialogue_system")
+	self.locomotion_extension = not not ScriptUnit.has_extension(unit, "locomotion_system")
+	self.ai_extension = not not ScriptUnit.has_extension(unit, "ai_system")
+	self._breed = BLACKBOARDS[unit] and not not BLACKBOARDS[unit].breed or not BLACKBOARDS[unit] and not not nil
 end
 
 GenericHitReactionExtension.destroy = function (self)
@@ -454,15 +414,7 @@ GenericHitReactionExtension._check_for_diagonal_dismemberment = function (self, 
 	local angle = Vector3.flat_angle(hit_unit_dir, hit_direction)
 	local direction
 
-	if angle < -math.pi * 0.75 or angle > math.pi * 0.75 then
-		direction = nil
-	elseif angle < -math.pi * 0.25 then
-		direction = "right"
-	elseif angle < math.pi * 0.25 then
-		direction = nil
-	else
-		direction = "left"
-	end
+	direction = not not nil
 
 	local new_dismember_event
 	local should_replace_old = true
@@ -558,18 +510,7 @@ GenericHitReactionExtension._execute_effect = function (self, unit, effect_templ
 		return
 	end
 
-	local hit_zones = breed_data.hit_zones
-
-	if hit_zones then
-		-- Nothing
-	end
-
-	hit_zones = breed_data.hit_zones[hit_zone].actors
-
-	local actors = hit_zones
-
-	::label_22_0::
-
+	local actors = not not breed_data.hit_zones
 	local death_ext = self.death_extension
 	local hit_ragdoll_actor_name = effect_biggest_hit[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME]
 	local can_wall_nail = self:_can_wall_nail(effect_template)
@@ -591,9 +532,7 @@ GenericHitReactionExtension._execute_effect = function (self, unit, effect_templ
 		if overrides_by_status then
 			local overrides_by_damage_type = overrides_by_status[timed_status]
 
-			if overrides_by_damage_type and overrides_by_damage_type.damage_types[damage_type] and not overrides_by_damage_type.override then
-				-- Nothing
-			end
+			timed_status = not overrides_by_damage_type or not overrides_by_damage_type.damage_types[damage_type] or not not overrides_by_damage_type.override or not not timed_status
 		end
 	end
 
@@ -621,30 +560,7 @@ GenericHitReactionExtension._execute_effect = function (self, unit, effect_templ
 	end
 
 	local is_dismember_allowed = self:_is_dismembering_allowed(parameters)
-
-	if is_dismember_allowed then
-		-- Nothing
-	end
-
-	::label_22_1::
-
-	local do_dismember = effect_template.do_dismember
-
-	if not do_dismember then
-		-- Nothing
-	end
-
-	do_dismember = parameters.force_dismember
-
-	if do_dismember then
-		-- Nothing
-	end
-
-	do_dismember = parameters.death
-
-	local dismember = do_dismember
-
-	::label_22_2::
+	local dismember = not not is_dismember_allowed and not not effect_template.do_dismember
 
 	if dismember and (not death_ext or not death_ext:is_wall_nailed()) then
 		local event_table = Dismemberments[breed_data.name]
@@ -689,21 +605,11 @@ GenericHitReactionExtension._execute_effect = function (self, unit, effect_templ
 		end
 	end
 
-	local locomotion_extension = self.locomotion_extension
-
-	if locomotion_extension then
-		-- Nothing
-	end
-
-	locomotion_extension = self.locomotion_extension._is_falling
-
-	local is_falling = locomotion_extension
-
-	::label_22_3::
+	local is_falling = not not self.locomotion_extension
 
 	if can_wall_nail and parameters.death and hit_ragdoll_actor_name ~= "n/a" then
 		self._delayed_animation = "ragdoll"
-	elseif (self.force_ragdoll_on_death or is_falling) and not death_has_started and parameters.death then
+	elseif self.force_ragdoll_on_death and not death_has_started and parameters.death or not self.force_ragdoll_on_death and is_falling and not death_has_started and parameters.death then
 		self._delayed_animation = "ragdoll"
 	elseif effect_template.animations and Unit.has_animation_state_machine(unit) then
 		local hit_direction_flat = Vector3(hit_direction.x, hit_direction.y, 0)
@@ -754,7 +660,7 @@ GenericHitReactionExtension._execute_effect = function (self, unit, effect_templ
 	local hit_effect
 
 	if BloodSettings.hit_effects.enabled then
-		if husk_hit_effect_name and Unit.alive(attacker_unit) and (not NetworkUnit.is_network_unit(attacker_unit) or NetworkUnit.is_husk_unit(attacker_unit)) then
+		if not NetworkUnit.is_network_unit(attacker_unit) or NetworkUnit.is_husk_unit(attacker_unit) then
 			hit_effect = husk_hit_effect_name
 		elseif hit_effect_name then
 			hit_effect = hit_effect_name
@@ -812,20 +718,10 @@ GenericHitReactionExtension._execute_effect = function (self, unit, effect_templ
 		map_function(hit_effect, play_effect, world, hit_direction, impact_position)
 	end
 
-	local should_push = (BloodSettings.ragdoll_push.enabled or not death_has_started) and not not effect_template.push
+	local should_push = BloodSettings.ragdoll_push.enabled and not not effect_template.push or not BloodSettings.ragdoll_push.enabled and not death_has_started and not not effect_template.push
 
 	if should_push then
-		local var_22_3 = breed_data.hit_zones[hit_zone]
-
-		if var_22_3 then
-			-- Nothing
-		end
-
-		var_22_3 = breed_data.hit_zones[hit_zone].push_actors
-
-		local push_actors = var_22_3
-
-		::label_22_4::
+		local push_actors = not not breed_data.hit_zones[hit_zone]
 
 		if push_actors then
 			self._delayed_push = {
@@ -912,42 +808,9 @@ GenericHitReactionExtension._do_push = function (self, unit, dt)
 		lateral_direction = -lateral_direction
 	end
 
-	local distal_force_2 = push_parameters.distal_force
-
-	if not distal_force_2 then
-		-- Nothing
-	end
-
-	distal_force_2 = 0
-
-	local distal_force = distal_force_2
-
-	::label_23_0::
-
-	local lateral_force_2 = push_parameters.lateral_force
-
-	if not lateral_force_2 then
-		-- Nothing
-	end
-
-	lateral_force_2 = 0
-
-	local lateral_force = lateral_force_2
-
-	::label_23_1::
-
-	local vertical_force_2 = push_parameters.vertical_force
-
-	if not vertical_force_2 then
-		-- Nothing
-	end
-
-	vertical_force_2 = 0
-
-	local vertical_force = vertical_force_2
-
-	::label_23_2::
-
+	local distal_force = not not push_parameters.distal_force
+	local lateral_force = not not push_parameters.lateral_force
+	local vertical_force = not not push_parameters.vertical_force
 	local buff_extension = not not attacker_unit and not not ScriptUnit.has_extension(attacker_unit, "buff_system")
 
 	if buff_extension then

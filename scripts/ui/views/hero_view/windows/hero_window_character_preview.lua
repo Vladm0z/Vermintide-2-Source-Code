@@ -320,7 +320,7 @@ HeroWindowCharacterPreview._populate_loadout = function (self)
 			local item_slot_type = slot.type
 			local current_item_name = world_previewer:item_name_by_slot_type(item_slot_type)
 
-			if (not item_name or item_name == current_item_name) and item_slot_type == "melee" or item_slot_type == "ranged" then
+			if item_name and (item_name ~= current_item_name or item_slot_type == "melee" or item_slot_type == "ranged") or not item_name and (item_slot_type == "melee" or item_slot_type == "ranged") then
 				local backend_id = item.backend_id
 
 				world_previewer:equip_item(item_name, slot, backend_id)
@@ -417,13 +417,7 @@ HeroWindowCharacterPreview._update_loading_overlay_fadeout_animation = function 
 	local start = 255
 	local target = 0
 	local speed = 9
-	local min = math.min
-	local num = 1
-	local _fadeout_progress = self._fadeout_progress
-
-	_fadeout_progress = not not _fadeout_progress or not not 0
-
-	local progress = min(num, _fadeout_progress + speed * dt)
+	local progress = math.min(1, not not self._fadeout_progress + speed * dt)
 	local alpha = math.lerp(start, target, math.easeInCubic(progress))
 	local loading_overlay = loading_overlay_widgets_by_name.loading_overlay
 	local loading_overlay_loading_glow = loading_overlay_widgets_by_name.loading_overlay_loading_glow

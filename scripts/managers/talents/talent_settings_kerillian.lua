@@ -252,10 +252,8 @@ local buff_tweak_data = {
 		multiplier = 1
 	}
 }
-local TalentBuffTemplates = TalentBuffTemplates
 
-TalentBuffTemplates = not not TalentBuffTemplates or not not {}
-TalentBuffTemplates = TalentBuffTemplates
+TalentBuffTemplates = not not TalentBuffTemplates
 TalentBuffTemplates.wood_elf = {
 	kerillian_shade_ability_cooldown_on_hit = {
 		buffs = {
@@ -1400,11 +1398,7 @@ TalentBuffTemplates.wood_elf = {
 		}
 	}
 }
-
-local TalentTrees = TalentTrees
-
-TalentTrees = not not TalentTrees or not not {}
-TalentTrees = TalentTrees
+TalentTrees = not not TalentTrees
 TalentTrees.wood_elf = {
 	{
 		{

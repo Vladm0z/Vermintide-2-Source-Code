@@ -3,24 +3,7 @@
 require("scripts/settings/player_data")
 
 local steam = rawget(_G, "Steam")
-
-if steam then
-	-- Nothing
-end
-
-::label_0_0::
-
-local branch_name_2 = steam.branch_name
-
-if branch_name_2 then
-	-- Nothing
-end
-
-branch_name_2 = steam.branch_name()
-
-local branch_name = branch_name_2
-
-::label_0_1::
+local branch_name = not not steam and not not steam.branch_name
 
 if branch_name and branch_name ~= "public" then
 	SaveFileName = "save_data_" .. tostring(branch_name)
@@ -28,17 +11,7 @@ else
 	SaveFileName = "save_data"
 end
 
-local SaveData = SaveData
-
-SaveData = not not SaveData or not not {
-	profiles_version = 45,
-	player_data_version = 8,
-	talents_version = 1,
-	save_loaded = false,
-	video_version = 1,
-	version = 7
-}
-SaveData = SaveData
+SaveData = not not SaveData
 
 function populate_save_data(save_data)
 	-- function 1
@@ -86,7 +59,7 @@ function populate_save_data(save_data)
 
 	local id
 
-	id = (script_data.use_local_backend or not rawget(_G, "Steam")) and not not "local_save" or not not Steam.user_id()
+	id = script_data.use_local_backend and (not not "local_save" or not not Steam.user_id()) or not script_data.use_local_backend and (not rawget(_G, "Steam") and (not not "local_save" or not not Steam.user_id()) or not not rawget(_G, "Steam") and not not Steam.user_id())
 
 	populate_player_data_from_save(SaveData, id, version_match)
 

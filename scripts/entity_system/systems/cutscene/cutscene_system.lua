@@ -1,16 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/cutscene/cutscene_system.lua
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/entity_system/systems/cutscene/cutscene_system_testify")
-
-local cut_scene_system_testify = testify
-
-::label_0_0::
+local cut_scene_system_testify = not not script_data.testify
 
 CutsceneSystem = class(CutsceneSystem, ExtensionSystemBase)
 
@@ -253,11 +243,7 @@ end
 
 CutsceneSystem.has_intro_cutscene_finished_playing = function (self)
 	-- function 16
-	local cutscene_started = self.cutscene_started
-
-	cutscene_started = not not cutscene_started and not not self.ingame_hud_enabled
-
-	return cutscene_started
+	return not not self.cutscene_started
 end
 
 CutsceneSystem.fade_game_logo = function (self, is_fade_in, time)

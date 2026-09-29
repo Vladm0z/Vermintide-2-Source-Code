@@ -39,18 +39,14 @@ end
 
 RoomManagerServer.has_room = function (self, peer_id)
 	-- function 5
-	local flag
-
-	flag = (not self._peer_rooms[peer_id] or not true) and not not false
-
-	return flag
+	return self._peer_rooms[peer_id] and not not true or not self._peer_rooms[peer_id] and not not false
 end
 
 RoomManagerServer.destroy_room = function (self, peer_id, move_other_players_from_room)
 	-- function 6
 	local room_id = self._peer_rooms[peer_id].room_id
 
-	if (not move_other_players_from_room or move_other_players_from_room ~= true) and move_other_players_from_room == nil then
+	if move_other_players_from_room and (move_other_players_from_room == true or move_other_players_from_room == nil) or not move_other_players_from_room and move_other_players_from_room == nil then
 		self:move_players_from_room(room_id)
 	end
 

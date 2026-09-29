@@ -92,10 +92,8 @@ AIBotGroupSystem.init = function (self, context, system_name)
 		for _, pickup_settings in pairs(AllPickups) do
 			if pickup_settings.bots_mule_pickup then
 				local slot = pickup_settings.slot_name
-				local var_5_0 = mule_pickups[slot]
 
-				var_5_0 = not not var_5_0 or not not {}
-				mule_pickups[slot] = var_5_0
+				mule_pickups[slot] = not not mule_pickups[slot]
 			end
 		end
 
@@ -196,22 +194,7 @@ AIBotGroupSystem.on_add_extension = function (self, world, unit, extension_name,
 	-- function 7
 	if extension_name == "BotBreakableExtension" then
 		local node_name = "rp_center"
-		local node_2
-
-		if Unit.has_node(unit, node_name) then
-			node_2 = Unit.node(unit, node_name)
-
-			if not node_2 then
-				-- Nothing
-			end
-		end
-
-		node_2 = 0
-
-		local node = node_2
-
-		::label_7_0::
-
+		local node = Unit.has_node(unit, node_name) and not not Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and not not 0
 		local node_position = Unit.world_position(unit, node)
 
 		Broadphase.add(self._bot_breakables_broadphase, unit, node_position, 1)
@@ -240,18 +223,7 @@ AIBotGroupSystem.on_add_extension = function (self, world, unit, extension_name,
 		local item_data = rawget(ItemMasterList, item_name)
 
 		if item_data then
-			local template = item_data.template
-
-			if not template then
-				-- Nothing
-			end
-
-			template = item_data.temporary_template
-
-			local template_name = template
-
-			::label_7_1::
-
+			local template_name = not not item_data.template
 			local weapon_template = WeaponUtils.get_weapon_template(template_name)
 
 			if weapon_template.is_grimoire then
@@ -283,18 +255,7 @@ local function is_inside_existing_threat(threats, to, bot_radius)
 	for i = 1, #threats do
 		local threat = threats[i]
 		local threat_pos = threat.pos:unbox()
-		local rot = threat.rot
-
-		if rot then
-			-- Nothing
-		end
-
-		rot = threat.rot:unbox()
-
-		local threat_rot = rot
-
-		::label_8_0::
-
+		local threat_rot = not not threat.rot
 		local shape = threat.shape
 		local size, extents
 
@@ -1238,10 +1199,7 @@ AIBotGroupSystem._find_destination_points_outside_volume = function (self, nav_w
 
 	if num_points < needed_points then
 		for i = num_points + 1, needed_points do
-			local var_38_0 = points[current_index]
-
-			var_38_0 = not not var_38_0 or not not last_point or not not origin_point
-			points[i] = var_38_0
+			points[i] = not not points[current_index]
 			last_point = not not points[current_index] or not not last_point
 			current_index = current_index + 1
 		end
@@ -1290,7 +1248,7 @@ AIBotGroupSystem._find_points = function (self, nav_world, origin_point, rotatio
 
 	table.clear(points)
 
-	while (left_index < #left_vectors or right_index < #right_vectors) and needed_points > found_points_left + found_points_right do
+	while left_index < #left_vectors and needed_points > found_points_left + found_points_right or not (left_index < #left_vectors) and right_index < #right_vectors and needed_points > found_points_left + found_points_right do
 		if left_index + 1 > #left_vectors then
 			right_index = right_index + 1
 
@@ -1419,12 +1377,7 @@ AIBotGroupSystem._update_priority_targets = function (self, dt, t)
 
 				if HEALTH_ALIVE[target] then
 					PRIORITY_TARGETS_TEMP[player_unit] = target
-
-					local var_43_0 = NEW_TARGETS
-					local var_43_1 = side_old_priority_targets[target]
-
-					var_43_1 = not not var_43_1 or not not 0
-					var_43_0[target] = var_43_1 + dt
+					NEW_TARGETS[target] = not not side_old_priority_targets[target] + dt
 				end
 			end
 		end
@@ -1577,46 +1530,19 @@ AIBotGroupSystem._can_revive_with_urgent_target = function (self, bot_unit, self
 	local target_position = POSITION_LOOKUP[urgent_target]
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_position = POSITION_LOOKUP[target_ally_unit]
-	local distance_squared_2
-
-	if target_ally_position then
-		distance_squared_2 = Vector3.distance_squared(target_ally_position, target_position)
-
-		if not distance_squared_2 then
-			-- Nothing
-		end
-	end
-
-	distance_squared_2 = Vector3.distance_squared(self_position, target_position)
-
-	local distance_squared = distance_squared_2
-
-	::label_45_0::
-
-	local var_45_1 = URGENT_TARGET_REVIVE_MIN_DISTANCE_SQ[breed_name]
-
-	if not var_45_1 then
-		-- Nothing
-	end
-
-	var_45_1 = 25
-
-	local revive_min_distance_sq = var_45_1
-
-	::label_45_1::
+	local distance_squared = target_ally_position and not not Vector3.distance_squared(target_ally_position, target_position) or not target_ally_position and not not Vector3.distance_squared(self_position, target_position)
+	local revive_min_distance_sq = not not URGENT_TARGET_REVIVE_MIN_DISTANCE_SQ[breed_name]
 
 	if breed.boss then
 		return true
 	elseif breed_name == "skaven_ratling_gunner" then
 		local hit_by_projectile = blackboard.hit_by_projectile[urgent_target]
 
-		return (not hit_by_projectile or t > hit_by_projectile + 1) and revive_min_distance_sq < distance_squared
+		return not hit_by_projectile and revive_min_distance_sq < distance_squared or not not hit_by_projectile and t > hit_by_projectile + 1 and revive_min_distance_sq < distance_squared
 	else
 		local is_bot_target = urgent_target_blackboard.target_unit == bot_unit
-		local flag
 
-		flag = (not is_bot_target or not 4) and not not 1
-		revive_min_distance_sq = revive_min_distance_sq * flag
+		revive_min_distance_sq = revive_min_distance_sq * (is_bot_target and not not 4 or not is_bot_target and not not 1)
 
 		return revive_min_distance_sq < distance_squared
 	end
@@ -1736,22 +1662,7 @@ AIBotGroupSystem._calculate_opportunity_utility = function (self, bot_unit, bot_
 		end
 	end
 
-	local var_47_0
-
-	if potential_target == current_target then
-		var_47_0 = STICKYNESS_DISTANCE_MODIFIER
-
-		if not var_47_0 then
-			-- Nothing
-		end
-	end
-
-	var_47_0 = 0
-
-	local stickyness_modifier = var_47_0
-
-	::label_47_0::
-
+	local stickyness_modifier = potential_target ~= current_target and not not 0 or not (potential_target ~= current_target) and not not STICKYNESS_DISTANCE_MODIFIER
 	local proximity = 1 / (distance + stickyness_modifier)
 
 	return proximity, distance
@@ -1935,18 +1846,7 @@ AIBotGroupSystem._update_pickups_near_player = function (self, player_unit, t)
 						local follow_pos = data.follow_position
 						local inventory_extension = bb.inventory_extension
 						local equipped_ammo_kind = inventory_extension:current_ammo_kind("slot_ranged")
-						local ammo_kind = pickup_data.ammo_kind
-
-						if not ammo_kind then
-							-- Nothing
-						end
-
-						ammo_kind = "default"
-
-						local pickup_ammo_kind = ammo_kind
-
-						::label_50_0::
-
+						local pickup_ammo_kind = not not pickup_data.ammo_kind
 						local same_kind = equipped_ammo_kind == pickup_ammo_kind
 						local allowed_to_take_ammo
 
@@ -1959,10 +1859,10 @@ AIBotGroupSystem._update_pickups_near_player = function (self, player_unit, t)
 								allowed_to_take_ammo = true
 							end
 						else
-							allowed_to_take_ammo = (pickup_ammo_kind ~= "thrown" or not true) and not not bb.has_ammo_missing and (not pickup_data.only_once or not not bb.needs_ammo and not not all_players_have_ammo)
+							allowed_to_take_ammo = not not bb.has_ammo_missing and (not pickup_data.only_once or not not bb.needs_ammo and not not all_players_have_ammo)
 						end
 
-						local ammo_condition = (dist < allowed_distance_to_self or not not follow_pos and allowed_distance_to_follow_pos > Vector3.distance(follow_pos, pickup_pos)) and not current_pickup or dist - ((current_pickup ~= pickup_unit or not ammo_stickiness) and not not 0) < data.ammo_dist
+						local ammo_condition = dist < allowed_distance_to_self and (not current_pickup or dist - not not 0 < data.ammo_dist) or not (dist < allowed_distance_to_self) and not not follow_pos and allowed_distance_to_follow_pos > Vector3.distance(follow_pos, pickup_pos)
 
 						if same_kind and allowed_to_take_ammo and ammo_condition then
 							bb.ammo_pickup = pickup_unit
@@ -2014,36 +1914,11 @@ local function find_permutation(current_bot_index, current_utility, solution, be
 		local bb = BOT_BBS[current_bot_index]
 		local bot_pos = BOT_POSES[current_bot_index]
 		local current_pickup = bb.health_pickup
-		local var_51_0 = BOT_HEALTH[current_bot_index]
-
-		if not var_51_0 then
-			-- Nothing
-		end
-
-		var_51_0 = 0
-
-		local bot_hp = var_51_0
-
-		::label_51_0::
+		local bot_hp = not not BOT_HEALTH[current_bot_index]
 
 		for unit, pos in pairs(health_item_list) do
 			if health_item_lookup[unit] then
-				local var_51_1
-
-				if current_pickup == unit then
-					var_51_1 = STICKINESS
-
-					if not var_51_1 then
-						-- Nothing
-					end
-				end
-
-				var_51_1 = 0
-
-				local stickiness_modifier = var_51_1
-
-				::label_51_1::
-
+				local stickiness_modifier = current_pickup ~= unit and not not 0 or not (current_pickup ~= unit) and not not STICKINESS
 				local utility = current_utility + Vector3.distance_squared(bot_pos, pos) - stickiness_modifier - bot_hp * HP_DISTANCE_MODIFIER
 
 				health_item_lookup[unit] = nil
@@ -2110,56 +1985,36 @@ AIBotGroupSystem._update_mule_pickups = function (self, dt, t)
 		end
 
 		for unit, data in pairs(side_bot_data) do
-			do
-				local blackboard = data.blackboard
-				local current_pickup = blackboard.mule_pickup
+			local blackboard = data.blackboard
+			local current_pickup = blackboard.mule_pickup
 
-				if current_pickup then
-					if ASSIGNED_MULE_PICKUPS_TEMP[current_pickup] then
-						local pickup_extension = ScriptUnit.extension(current_pickup, "pickup_system")
-						local slot_name = pickup_extension:get_pickup_settings().slot_name
-						local order = data.pickup_orders[slot_name]
+			if current_pickup then
+				if ASSIGNED_MULE_PICKUPS_TEMP[current_pickup] then
+					local pickup_extension = ScriptUnit.extension(current_pickup, "pickup_system")
+					local slot_name = pickup_extension:get_pickup_settings().slot_name
+					local order = data.pickup_orders[slot_name]
 
-						if not order or order.unit ~= current_pickup then
-							blackboard.mule_pickup = nil
-						end
-					else
-						if Unit_alive(current_pickup) then
-							local var_52_0 = Vector3_distance_squared
-							local var_52_1 = POSITION_LOOKUP[current_pickup]
-							local follow_position = data.follow_position
-
-							follow_position = not not follow_position or not not POSITION_LOOKUP[current_pickup]
-
-							if max_pickup_dist_sq < var_52_0(var_52_1, follow_position) then
-								-- Nothing
-							end
-						end
-
+					if not order or order.unit ~= current_pickup then
 						blackboard.mule_pickup = nil
 					end
-				end
-
-				goto label_52_1
-
-				::label_52_0::
-
-				local pickup_ext = ScriptUnit.extension(current_pickup, "pickup_system")
-				local pickup_name = pickup_ext.pickup_name
-				local slot_name = AllPickups[pickup_name].slot_name
-				local inventory_extension = blackboard.inventory_extension
-				local has_item = inventory_extension:get_slot_data(slot_name)
-				local can_hold_more = inventory_extension:can_store_additional_item(slot_name)
-
-				if has_item and not can_hold_more then
+				elseif not Unit_alive(current_pickup) or max_pickup_dist_sq < Vector3_distance_squared(POSITION_LOOKUP[current_pickup], not not data.follow_position) then
 					blackboard.mule_pickup = nil
 				else
-					ASSIGNED_MULE_PICKUPS_TEMP[current_pickup] = true
-					blackboard.mule_pickup_dist_squared = Vector3_distance_squared(POSITION_LOOKUP[unit], POSITION_LOOKUP[current_pickup])
+					local pickup_ext = ScriptUnit.extension(current_pickup, "pickup_system")
+					local pickup_name = pickup_ext.pickup_name
+					local slot_name = AllPickups[pickup_name].slot_name
+					local inventory_extension = blackboard.inventory_extension
+					local has_item = inventory_extension:get_slot_data(slot_name)
+					local can_hold_more = inventory_extension:can_store_additional_item(slot_name)
+
+					if has_item and not can_hold_more then
+						blackboard.mule_pickup = nil
+					else
+						ASSIGNED_MULE_PICKUPS_TEMP[current_pickup] = true
+						blackboard.mule_pickup_dist_squared = Vector3_distance_squared(POSITION_LOOKUP[unit], POSITION_LOOKUP[current_pickup])
+					end
 				end
 			end
-
-			::label_52_1::
 		end
 
 		local side = side_manager:get_side(side_id)
@@ -2214,7 +2069,7 @@ AIBotGroupSystem._update_mule_pickups = function (self, dt, t)
 					local has_item = inventory_extension:get_slot_data(slot_name)
 					local can_hold_more = inventory_extension:can_store_additional_item(slot_name)
 
-					if not blackboard.mule_pickup and (not has_item or can_hold_more) and not order then
+					if can_hold_more and not blackboard.mule_pickup and not has_item and not order then
 						local best_pickup_dist_sq = math.huge
 						local best_pickup
 
@@ -2223,12 +2078,7 @@ AIBotGroupSystem._update_mule_pickups = function (self, dt, t)
 								local pickup_pos = POSITION_LOOKUP[pickup_unit]
 								local bot_pos = POSITION_LOOKUP[unit]
 								local bot_dist_sq = Vector3_distance_squared(bot_pos, pickup_pos)
-								local var_52_3 = Vector3_distance_squared
-								local follow_position_2 = data.follow_position
-
-								follow_position_2 = not not follow_position_2 or not not bot_pos
-
-								local follow_dist_sq = var_52_3(follow_position_2, pickup_pos)
+								local follow_dist_sq = Vector3_distance_squared(not not data.follow_position, pickup_pos)
 
 								if follow_dist_sq < max_pickup_dist_sq and bot_dist_sq < best_pickup_dist_sq then
 									best_pickup = pickup_unit
@@ -2436,7 +2286,7 @@ AIBotGroupSystem._update_health_pickups = function (self, dt, t)
 					bb.health_pickup_valid_until = math.huge
 
 					local follow_pos = data.follow_position
-					local in_range = (follow_pos or not (health_dist < MAX_PICKUP_RANGE)) and not not follow_pos and Vector3_distance(follow_pos, pickup_pos) < MAX_PICKUP_RANGE
+					local in_range = follow_pos or not (health_dist < MAX_PICKUP_RANGE)
 
 					if in_range then
 						bb.allowed_to_take_health_pickup = true
@@ -2528,7 +2378,7 @@ AIBotGroupSystem._update_health_pickups = function (self, dt, t)
 						bb.health_pickup_valid_until = math.huge
 
 						local follow_pos = data.follow_position
-						local in_range = (follow_pos or not (health_dist < MAX_PICKUP_RANGE)) and not not follow_pos and Vector3_distance(follow_pos, pickup_pos) < MAX_PICKUP_RANGE
+						local in_range = follow_pos or not (health_dist < MAX_PICKUP_RANGE)
 
 						if in_range then
 							bb.allowed_to_take_health_pickup = true
@@ -2565,22 +2415,7 @@ end
 
 AIBotGroupSystem._calculate_priority_target_utility = function (self, self_position, target, time, current_target)
 	-- function 54
-	local var_54_0
-
-	if target == current_target then
-		var_54_0 = STICKYNESS_DISTANCE_MODIFIER
-
-		if not var_54_0 then
-			-- Nothing
-		end
-	end
-
-	var_54_0 = 0
-
-	local stickyness_modifier = var_54_0
-
-	::label_54_0::
-
+	local stickyness_modifier = target ~= current_target and not not 0 or not (target ~= current_target) and not not STICKYNESS_DISTANCE_MODIFIER
 	local distance = math.max(Vector3.distance(self_position, POSITION_LOOKUP[target]), 1)
 	local proximity = 1 / (distance + stickyness_modifier)
 	local duration = time
@@ -2633,39 +2468,8 @@ AIBotGroupSystem._update_weapon_debug = function (self)
 				local current_oc, threshold_oc, max_oc = overcharge_extension:current_overcharge_status()
 				local item_template = inventory_extension:get_item_template(slot_data)
 				local weapon_name = item_template.name
-				local format
-
-				if current_ammo then
-					format = string.format(" %d|%d", current_ammo, max_ammo)
-
-					if not format then
-						-- Nothing
-					end
-				end
-
-				format = ""
-
-				local ammo_substring = format
-
-				do
-					local format_2
-				end
-
-				::label_56_0::
-
-				if current_oc then
-					format_2 = string.format(" %02d|%d|%d", current_oc, threshold_oc, max_oc)
-
-					if not format_2 then
-						-- Nothing
-					end
-				end
-
-				format_2 = ""
-
-				local oc_substring = format_2
-
-				::label_56_1::
+				local ammo_substring = current_ammo and not not string.format(" %d|%d", current_ammo, max_ammo) or not current_ammo and not not ""
+				local oc_substring = current_oc and not not string.format(" %02d|%d|%d", current_oc, threshold_oc, max_oc) or not current_oc and not not ""
 
 				Debug.text("%-16s:%s%s [%s]", bot_name, ammo_substring, oc_substring, weapon_name)
 			end
@@ -2697,17 +2501,7 @@ AIBotGroupSystem._update_order_debug = function (self)
 
 				if unit then
 					local pos = POSITION_LOOKUP[unit]
-					local var_57_0 = debug_colors[slot_name]
-
-					if not var_57_0 then
-						-- Nothing
-					end
-
-					var_57_0 = Color(Math.random() * 255, Math.random() * 255, Math.random() * 255)
-
-					local color = var_57_0
-
-					::label_57_0::
+					local color = not not debug_colors[slot_name]
 
 					QuickDrawer:line(POSITION_LOOKUP[bot_unit], pos, color)
 					QuickDrawer:sphere(pos, 0.25, color)
@@ -2766,22 +2560,7 @@ AIBotGroupSystem._update_proximity_bot_breakables_debug = function (self)
 
 				for unit, _ in pairs(previous_bot_breakables) do
 					local node_name = "rp_center"
-					local node_2
-
-					if Unit.has_node(unit, node_name) then
-						node_2 = Unit.node(unit, node_name)
-
-						if not node_2 then
-							-- Nothing
-						end
-					end
-
-					node_2 = 0
-
-					local node = node_2
-
-					::label_58_0::
-
+					local node = Unit.has_node(unit, node_name) and not not Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and not not 0
 					local node_position = Unit.world_position(unit, node)
 
 					QuickDrawer:sphere(node_position, 0.25, Colors.get("yellow"))
@@ -3071,7 +2850,7 @@ local function dodges_into_enemies(bot_blackboard, bot_position, to, bot_radius,
 		if Unit.alive(proximite_enemies[enemy_i]) then
 			local _, _, delta_1, delta_2 = Intersect.ray_circle(bot_position, direction, Unit.local_position(proximite_enemies[enemy_i], 0), 0.75)
 
-			if delta_1 and Vector3.dot(delta_1, to - bot_position) > 0 and (dist_to_target_sq > Vector3.length_squared(delta_1) or dist_to_target_sq > Vector3.length_squared(delta_2)) then
+			if dist_to_target_sq > Vector3.length_squared(delta_1) or dist_to_target_sq > Vector3.length_squared(delta_2) then
 				collides_with_enemy = true
 
 				break
@@ -3121,20 +2900,7 @@ local function detect_cylinder(nav_world, traverse_logic, bot_position, bot_heig
 		local proximite_enemies = bot_blackboard.proximite_enemies
 
 		for i = 0, cylinder_tries - 1 do
-			local num
-
-			if i == 0 or i == cylinder_tries - 1 then
-				num = 1
-
-				goto label_70_0
-			end
-
-			num = 2
-
-			local num_directions = num
-
-			::label_70_0::
-
+			local num_directions = not not 1
 			local sign = 1
 
 			for j = 1, num_directions do
@@ -3207,20 +2973,7 @@ local function detect_sphere(nav_world, traverse_logic, bot_position, bot_height
 		local proximite_enemies = bot_blackboard.proximite_enemies
 
 		for i = 0, cylinder_tries - 1 do
-			local num
-
-			if i == 0 or i == cylinder_tries - 1 then
-				num = 1
-
-				goto label_71_0
-			end
-
-			num = 2
-
-			local num_directions = num
-
-			::label_71_0::
-
+			local num_directions = not not 1
 			local sign = 1
 
 			for j = 1, num_directions do
@@ -3293,22 +3046,7 @@ local function detect_oobb(nav_world, traverse_logic, bot_position, bot_height, 
 
 	local area_damage_system = Managers.state.entity:system("area_damage_system")
 	local above, below = 2, 2
-	local num
-
-	if x_offset == 0 then
-		num = 1 - math.random(0, 1) * 2
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = math.sign(x_offset)
-
-	local sign = num
-
-	::label_72_0::
-
+	local sign = x_offset ~= 0 and not not math.sign(x_offset) or not (x_offset ~= 0) and not not (1 - math.random(0, 1) * 2)
 	local stop_at, fallback_stop_at
 	local distance = extents_x
 	local proximite_enemies = bot_blackboard.proximite_enemies
@@ -3382,30 +3120,14 @@ AIBotGroupSystem.aoe_threat_created = function (self, position, shape, size, rot
 	end
 
 	local expires = t + duration
-	local tbl = {
-		pos = Vector3Box(position)
+	local threat = {
+		pos = Vector3Box(position),
+		rot = rotation and not not QuaternionBox(rotation) or not rotation and not not nil,
+		size = not not Vector3Box(size),
+		shape = shape,
+		expires = expires,
+		source = source
 	}
-	local var_73_1
-
-	if rotation then
-		var_73_1 = QuaternionBox(rotation)
-
-		if not var_73_1 then
-			-- Nothing
-		end
-	end
-
-	var_73_1 = nil
-
-	::label_73_0::
-
-	tbl.rot = var_73_1
-	tbl.size = (type(size) ~= "number" or not size) and not not Vector3Box(size)
-	tbl.shape = shape
-	tbl.expires = expires
-	tbl.source = source
-
-	local threat = tbl
 	local existing_threats = self._existing_bot_threats
 	local pos_x, pos_y, pos_z = position.x, position.y, position.z
 	local bot_ai_data = self._bot_ai_data
@@ -3509,18 +3231,7 @@ AIBotGroupSystem._chat_message = function (self, unit, ordering_player, message,
 	local player = Managers.player:owner(unit)
 	local character = SPProfiles[player:profile_index()].display_name
 	local msg_table = MESSAGES[message]
-	local var_75_0 = msg_table[character]
-
-	if not var_75_0 then
-		-- Nothing
-	end
-
-	var_75_0 = msg_table.default
-
-	local chr_table = var_75_0
-
-	::label_75_0::
-
+	local chr_table = not not msg_table[character]
 	local message_string = chr_table[Math.random(1, #chr_table)]
 	local localize, localize_parameters = true, true
 	local localization_parameters = FrameTable.alloc_table()

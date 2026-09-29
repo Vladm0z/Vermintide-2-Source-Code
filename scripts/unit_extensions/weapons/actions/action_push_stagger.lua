@@ -57,52 +57,12 @@ ActionPushStagger.client_owner_start_action = function (self, new_action, t, cha
 	end
 
 	local action_hand = not not action_init_data and not not action_init_data.action_hand
-	local var_2_0
-
-	if action_hand then
-		var_2_0 = new_action["damage_profile_inner_" .. action_hand]
-
-		if not var_2_0 then
-			-- Nothing
-		end
-	end
-
-	var_2_0 = new_action.damage_profile_inner
-
-	if not var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = "default"
-
-	local damage_profile_name_inner = var_2_0
-
-	::label_2_0::
+	local damage_profile_name_inner = action_hand and not not new_action["damage_profile_inner_" .. action_hand] or not action_hand and not not new_action.damage_profile_inner
 
 	self.damage_profile_inner_id = NetworkLookup.damage_profiles[damage_profile_name_inner]
 	self.damage_profile_inner = DamageProfileTemplates[damage_profile_name_inner]
 
-	local var_2_1
-
-	if action_hand then
-		var_2_1 = new_action["damage_profile_outer_" .. action_hand]
-
-		if not var_2_1 then
-			-- Nothing
-		end
-	end
-
-	var_2_1 = new_action.damage_profile_outer
-
-	if not var_2_1 then
-		-- Nothing
-	end
-
-	var_2_1 = "default"
-
-	local damage_profile_name_outer = var_2_1
-
-	::label_2_1::
+	local damage_profile_name_outer = action_hand and not not new_action["damage_profile_outer_" .. action_hand] or not action_hand and not not new_action.damage_profile_outer
 
 	self.damage_profile_outer_id = NetworkLookup.damage_profiles[damage_profile_name_outer]
 	self.damage_profile_outer = DamageProfileTemplates[damage_profile_name_outer]
@@ -210,22 +170,8 @@ ActionPushStagger.client_owner_post_update = function (self, dt, t, world, can_d
 		local player_direction = self._player_direction:unbox()
 		local player_direction_flat = Vector3.flat(player_direction)
 		local buff_extension = self.owner_buff_extension
-		local rad = math.rad
-		local var_4_1 = buff_extension
-		local apply_buffs_to_value = buff_extension.apply_buffs_to_value
-		local push_angle = current_action.push_angle
-
-		push_angle = not not push_angle or not not 90
-
-		local push_half_angle = rad(apply_buffs_to_value(var_4_1, push_angle, "block_angle") * 0.5)
-		local rad_2 = math.rad
-		local var_4_5 = buff_extension
-		local apply_buffs_to_value_2 = buff_extension.apply_buffs_to_value
-		local outer_push_angle = current_action.outer_push_angle
-
-		outer_push_angle = not not outer_push_angle or not not 0
-
-		local outer_push_half_angle = rad_2(apply_buffs_to_value_2(var_4_5, outer_push_angle, "block_angle") * 0.5)
+		local push_half_angle = math.rad(buff_extension:apply_buffs_to_value(not not current_action.push_angle, "block_angle") * 0.5)
+		local outer_push_half_angle = math.rad(buff_extension:apply_buffs_to_value(not not current_action.outer_push_angle, "block_angle") * 0.5)
 		local total_hits = 0
 
 		for i = 1, num_hits do
@@ -301,114 +247,24 @@ ActionPushStagger.client_owner_post_update = function (self, dt, t, world, can_d
 				local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
 				local hit_zone_id = NetworkLookup.hit_zones[info.hit_zone_name]
 				local power_level = self.power_level
-				local damage_profile_inner_id
-
-				if info.inner_push then
-					damage_profile_inner_id = self.damage_profile_inner_id
-
-					if not damage_profile_inner_id then
-						-- Nothing
-					end
-				end
-
-				damage_profile_inner_id = self.damage_profile_outer_id
-
-				local damage_profile_id_to_use = damage_profile_inner_id
-
-				do
-					local damage_profile_inner
-				end
-
-				::label_4_0::
-
-				if info.inner_push then
-					damage_profile_inner = self.damage_profile_inner
-
-					if not damage_profile_inner then
-						-- Nothing
-					end
-				end
-
-				damage_profile_inner = self.damage_profile_outer
-
-				local damage_profile_to_use = damage_profile_inner
-
-				::label_4_1::
-
+				local damage_profile_id_to_use = info.inner_push and not not self.damage_profile_inner_id or not info.inner_push and not not self.damage_profile_outer_id
+				local damage_profile_to_use = info.inner_push and not not self.damage_profile_inner or not info.inner_push and not not self.damage_profile_outer
 				local target_settings = damage_profile_to_use.default_target
 				local hit_position = Unit.world_position(hit_unit, info.node)
-				local impact_particle_effect = current_action.impact_particle_effect
-
-				if not impact_particle_effect then
-					-- Nothing
-				end
-
-				impact_particle_effect = "fx/impact_block_push"
-
-				local hit_effect = impact_particle_effect
-
-				::label_4_2::
-
-				local var_4_11 = POSITION_LOOKUP[hit_unit]
-
-				if not var_4_11 then
-					-- Nothing
-				end
-
-				var_4_11 = Unit.world_position(hit_unit, 0)
-
-				local hit_unit_root_pos = var_4_11
-
-				::label_4_3::
-
-				local var_4_12 = POSITION_LOOKUP[owner_unit]
-
-				if not var_4_12 then
-					-- Nothing
-				end
-
-				var_4_12 = Unit.world_position(owner_unit, 0)
-
-				local attacker_unit_root_pos = var_4_12
-
-				::label_4_4::
-
+				local hit_effect = not not current_action.impact_particle_effect
+				local hit_unit_root_pos = not not POSITION_LOOKUP[hit_unit]
+				local attacker_unit_root_pos = not not POSITION_LOOKUP[owner_unit]
 				local attack_direction = Vector3.normalize(hit_unit_root_pos - attacker_unit_root_pos)
 
 				if hit_effect then
 					EffectHelper.player_melee_hit_particles(world, hit_effect, hit_position, attack_direction, nil, hit_unit)
 				end
 
-				local stagger_impact_sound_event = current_action.stagger_impact_sound_event
-
-				if not stagger_impact_sound_event then
-					-- Nothing
-				end
-
-				stagger_impact_sound_event = "blunt_hit"
-
-				local sound_event = stagger_impact_sound_event
-
-				::label_4_5::
+				local sound_event = not not current_action.stagger_impact_sound_event
 
 				if sound_event then
 					local attack_template = DamageUtils.get_attack_template(target_settings.attack_template)
-					local sound_type_2
-
-					if attack_template then
-						sound_type_2 = attack_template.sound_type
-
-						if not sound_type_2 then
-							-- Nothing
-						end
-					end
-
-					sound_type_2 = "stun_heavy"
-
-					local sound_type = sound_type_2
-
-					::label_4_6::
-
+					local sound_type = attack_template and not not attack_template.sound_type or not attack_template and not not "stun_heavy"
 					local husk = self.bot_player
 
 					EffectHelper.play_melee_hit_effects(sound_event, world, hit_position, sound_type, husk, hit_unit)
@@ -431,17 +287,7 @@ ActionPushStagger.client_owner_post_update = function (self, dt, t, world, can_d
 				local damage_source = self.item_name
 				local damage_source_id = NetworkLookup.damage_sources[damage_source]
 				local is_critical_strike = self._is_critical_strike
-				local target_index_2 = info.target_index
-
-				if not target_index_2 then
-					-- Nothing
-				end
-
-				target_index_2 = nil
-
-				local target_index = target_index_2
-
-				::label_4_7::
+				local target_index = not not info.target_index
 
 				weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id_to_use, "power_level", power_level, "hit_target_index", target_index, "blocking", shield_blocked, "shield_break_procced", false, "boost_curve_multiplier", self.melee_boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", false, "can_stagger", true, "total_hits", total_hits)
 
@@ -496,19 +342,7 @@ ActionPushStagger.finish = function (self, reason)
 
 	if reason ~= "new_interupting_action" then
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local flag
-
-		if not reload_when_out_of_ammo_condition_func then
-			flag = true
-
-			goto label_5_0
-		end
-
-		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-		local do_out_of_ammo_reload = flag
-
-		::label_5_0::
+		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true

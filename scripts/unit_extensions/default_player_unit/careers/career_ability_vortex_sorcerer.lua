@@ -148,25 +148,8 @@ CareerAbilityVortexSorcerer._ability_available = function (self)
 	local locomotion_extension = self.locomotion_extension
 	local ghost_mode_extension = self.ghost_mode_extension
 	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	if can_use_activated_ability then
-		if not status_extension:is_disabled() then
-			can_use_activated_ability = locomotion_extension:is_on_ground()
-
-			if can_use_activated_ability then
-				can_use_activated_ability = not in_ghost_mode
-			end
-		else
-			can_use_activated_ability = false
-		end
-	end
-
-	if false then
-		can_use_activated_ability = true
-	end
-
-	return can_use_activated_ability
+	return not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityVortexSorcerer._start_priming = function (self)
@@ -193,9 +176,7 @@ CareerAbilityVortexSorcerer._landing_postion_valid = function (self, start_pos, 
 		if done then
 			local path_found = GwNavAStar.path_found(astar)
 
-			if path_found then
-				valid_pos = true
-			end
+			valid_pos = not path_found or not not true or not not valid_pos
 
 			GwNavAStar.destroy(astar)
 

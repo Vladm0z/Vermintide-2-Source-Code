@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/weave_utils.lua
 
-local WeaveUtils = WeaveUtils
-
-WeaveUtils = not not WeaveUtils or not not {}
-WeaveUtils = WeaveUtils
+WeaveUtils = not not WeaveUtils
 
 WeaveUtils.get_rating = function (score)
 	-- function 1

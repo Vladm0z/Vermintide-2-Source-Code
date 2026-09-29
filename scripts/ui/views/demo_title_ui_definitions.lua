@@ -560,23 +560,14 @@ local scenegraph_definition = {
 		}
 	}
 }
-local tbl = {
+local attract_mode_video = {
 	video_name = "video/vermintide_2_reveal",
 	scenegraph_id = "splash_video",
 	loop = false,
-	material_name = "vermintide_2_reveal"
+	material_name = "vermintide_2_reveal",
+	sound_start = IS_XB1 and not not "Play_reveal_trailer" or not IS_XB1 and not not "Play_vermintide_2_reveal",
+	sound_stop = IS_XB1 and not not "Stop_reveal_trailer" or not IS_XB1 and not not "Stop_vermintide_2_reveal"
 }
-local flag
-
-flag = (not IS_XB1 or not "Play_reveal_trailer") and not not "Play_vermintide_2_reveal"
-tbl.sound_start = flag
-
-local flag_2
-
-flag_2 = (not IS_XB1 or not "Stop_reveal_trailer") and not not "Stop_vermintide_2_reveal"
-tbl.sound_stop = flag_2
-
-local attract_mode_video = tbl
 local skill_title_style = {
 	vertical_alignment = "bottom",
 	font_size = 18,
@@ -736,7 +727,7 @@ end
 
 local function create_simple_pulsating_text(text, scenegraph_id, size, color, text_style, optional_font_style)
 	-- function 3
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -751,51 +742,34 @@ local function create_simple_pulsating_text(text, scenegraph_id, size, color, te
 					end
 				}
 			}
-		}
-	}
-	local tbl_2 = {
-		text = text
-	}
-	local text_color
-
-	if text_style then
-		text_color = text_style.text_color
-
-		if not text_color then
-			-- Nothing
-		end
-	end
-
-	text_color = color
-
-	::label_3_0::
-
-	tbl_2.color = text_color
-	tbl.content = tbl_2
-	tbl.style = {
-		text = not not text_style or not not {
-			vertical_alignment = "center",
-			localize = true,
-			horizontal_alignment = "center",
-			word_wrap = true,
-			font_size = size,
-			font_type = not not optional_font_style or not not "hell_shark",
-			text_color = color,
-			offset = {
-				0,
-				0,
-				2
+		},
+		content = {
+			text = text,
+			color = text_style and not not text_style.text_color or not text_style and not not color
+		},
+		style = {
+			text = not not text_style or not not {
+				vertical_alignment = "center",
+				localize = true,
+				horizontal_alignment = "center",
+				word_wrap = true,
+				font_size = size,
+				font_type = not not optional_font_style or not not "hell_shark",
+				text_color = color,
+				offset = {
+					0,
+					0,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local widget_definitions = {
@@ -824,7 +798,8 @@ local career_widget_definitions = {
 	player_hero_name = UIWidgets.create_simple_text("n/a", "player_hero_name", 22, nil, player_hero_name_style),
 	player_name_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "player_name_divider")
 }
-local tbl_2 = {
+
+return {
 	career_widget_definitions = career_widget_definitions,
 	widget_definitions = widget_definitions,
 	attract_mode_video = attract_mode_video,
@@ -838,12 +813,6 @@ local tbl_2 = {
 	create_video_func = create_video,
 	start_game_button_widget = UIWidgets.create_default_button("start_game_button", scenegraph_definition.start_game_button.size, nil, nil, Localize("start_game_menu_button_name")),
 	back_button_widget = UIWidgets.create_default_button("back_button", scenegraph_definition.start_game_button.size, nil, nil, Localize("back_menu_button_name")),
-	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor")
+	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
+	press_start_widget = create_simple_pulsating_text(IS_WINDOWS and not not "press_any_key_to_continue" or not IS_WINDOWS and not not "press_any_button_to_continue", "press_start", nil, nil, press_start_style)
 }
-local var_0_4 = create_simple_pulsating_text
-local flag_3
-
-flag_3 = (not IS_WINDOWS or not "press_any_key_to_continue") and not not "press_any_button_to_continue"
-tbl_2.press_start_widget = var_0_4(flag_3, "press_start", nil, nil, press_start_style)
-
-return tbl_2

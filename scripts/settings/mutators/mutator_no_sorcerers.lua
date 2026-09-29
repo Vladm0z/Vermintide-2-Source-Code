@@ -50,11 +50,7 @@ return {
 			local new_breeds = {}
 
 			for _, breed in ipairs(breeds) do
-				local num = #new_breeds + 1
-				local var_5_1 = conversion_table[breed]
-
-				var_5_1 = not not var_5_1 or not not breed
-				new_breeds[num] = var_5_1
+				new_breeds[#new_breeds + 1] = not not conversion_table[breed]
 			end
 
 			return new_breeds

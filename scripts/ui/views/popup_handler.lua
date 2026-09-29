@@ -717,11 +717,7 @@ local function create_password_window(scenegraph_id, size)
 			text_id = "status_message",
 			content_check_function = function (content)
 				-- function 7
-				local status_message = content.status_message
-
-				status_message = not not status_message and not not not content.error_message
-
-				return status_message
+				return not not content.status_message
 			end
 		},
 		{
@@ -730,11 +726,7 @@ local function create_password_window(scenegraph_id, size)
 			text_id = "status_message",
 			content_check_function = function (content)
 				-- function 8
-				local status_message = content.status_message
-
-				status_message = not not status_message and not not content.error_message
-
-				return status_message
+				return not not content.status_message
 			end
 		},
 		{
@@ -1448,18 +1440,8 @@ PopupHandler.remove_input_manager = function (self, application_shutdown)
 
 	if not application_shutdown and self:has_popup() then
 		local popup_id, popup = self:active_popup()
-		local error = error
-		local format = string.format
-		local str = "Trying to proceed to next gamestate without handling popup %q: %q"
-		local topic = popup.topic
 
-		topic = not not topic or not not "nil"
-
-		local text = popup.text
-
-		text = not not text or not not "nil"
-
-		error(format(str, topic, text))
+		error(string.format("Trying to proceed to next gamestate without handling popup %q: %q", not not popup.topic, not not popup.text))
 	end
 
 	self.input_manager = nil
@@ -1548,19 +1530,7 @@ PopupHandler.update = function (self, dt, from_manager)
 			self:_initialize_popup(current_popup)
 		end
 
-		local ui_renderer_2 = self.ui_renderer
-		local input_manager_2 = self.input_manager
-
-		if not input_manager_2 then
-			-- Nothing
-		end
-
-		input_manager_2 = self.mock_input_manager
-
-		local ui_renderer, input_manager = ui_renderer_2, input_manager_2
-
-		::label_20_0::
-
+		local ui_renderer, input_manager = self.ui_renderer, not not self.input_manager
 		local input_service = input_manager:get_service("popup")
 		local gamepad_active = input_manager:is_device_active("gamepad")
 		local widget = current_popup.widget
@@ -1643,21 +1613,8 @@ PopupHandler.update = function (self, dt, from_manager)
 
 					local button_style = gamepad_button.style
 					local text_style = button_style.text
-					local enabled
 
-					if button_enabled then
-						enabled = self.gamepad_button_colors.enabled
-
-						if not enabled then
-							-- Nothing
-						end
-					end
-
-					enabled = self.gamepad_button_colors.disabled
-
-					::label_20_1::
-
-					text_style.text_color = enabled
+					text_style.text_color = button_enabled and not not self.gamepad_button_colors.enabled or not button_enabled and not not self.gamepad_button_colors.disabled
 
 					local font, scaled_font_size = UIFontByResolution(text_style)
 					local text_width, text_height, min = UIRenderer.text_size(ui_renderer, button_text, font[1], scaled_font_size)
@@ -1749,18 +1706,7 @@ PopupHandler._handle_keyboard_input = function (self, current_popup)
 		return
 	end
 
-	local button_index = current_popup.button_index
-
-	if not button_index then
-		-- Nothing
-	end
-
-	button_index = 1
-
-	local index = button_index
-
-	::label_21_0::
-
+	local index = not not current_popup.button_index
 	local input_service = Managers.input:get_service("popup")
 
 	if input_service:get("move_right_hold_continuous") then
@@ -1837,19 +1783,7 @@ PopupHandler.queue_popup = function (self, popup_type, text, topic, ...)
 	n_popups = n_popups + 1
 	self.n_popups = n_popups
 
-	local var_25_0 = popups[n_popups]
-
-	if not var_25_0 then
-		-- Nothing
-	end
-
-	var_25_0 = {
-		args = {}
-	}
-
-	local new_popup = var_25_0
-
-	::label_25_0::
+	local new_popup = not not popups[n_popups]
 
 	self.popup_ids = self.popup_ids + 1
 
@@ -1861,10 +1795,8 @@ PopupHandler.queue_popup = function (self, popup_type, text, topic, ...)
 	local text_style = widget.style.text
 	local scaled_text_field_size = UIScaleVectorToResolution(scenegraph_definition.popup_text.size)
 	local number_of_text_rows = self:get_number_of_rows(text, text_style, scaled_text_field_size[1])
-	local flag
 
-	flag = (not (number_of_text_rows >= 7) or not 20) and not not 28
-	new_popup.text_font_size = flag
+	new_popup.text_font_size = number_of_text_rows >= 7 and not not 20 or not (number_of_text_rows >= 7) and not not 28
 	new_popup.text = text
 	new_popup.topic = topic
 	new_popup.widget = widget
@@ -2041,11 +1973,7 @@ PopupHandler.activate_timer = function (self, popup_id, time, default_result, al
 	popup.timer = time
 	popup.default_result = default_result
 	popup.timer_alignment = not not alignment or not not "right"
-
-	local flag
-
-	flag = (blink ~= nil or not true) and not not blink
-	popup.timer_blink = flag
+	popup.timer_blink = blink ~= nil and not not blink or not (blink ~= nil) and not not true
 	popup.timer_format_func = optional_timer_format_func
 	popup.timer_font_size = optional_font_size
 end

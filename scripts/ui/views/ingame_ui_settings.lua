@@ -47,21 +47,7 @@ local transitions = {
 			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 		else
 			local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
-			local str
-
-			if warning_message_data ~= nil and warning_message_data.is_allowed() then
-				str = Localize("leave_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = Localize("leave_game_popup_text")
-
-			local text = str
-
-			::label_1_0::
+			local text = not not (Localize("leave_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message))
 
 			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_leave_game_topic"), "leave_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 		end
@@ -78,21 +64,7 @@ local transitions = {
 			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
 			local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
-			local str
-
-			if warning_message_data ~= nil and warning_message_data.is_allowed() then
-				str = Localize("leave_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = Localize("leave_game_popup_text")
-
-			local text = str
-
-			::label_2_0::
+			local text = not not (Localize("leave_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message))
 
 			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_leave_game_topic"), "leave_game_hero_view", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 		end
@@ -105,42 +77,14 @@ local transitions = {
 		local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
 
 		if network_server and network_server:num_active_peers() > 1 and network_server:are_all_peers_ingame(nil, true) then
-			local str
-
-			if warning_message_data ~= nil and warning_message_data.is_allowed() then
-				str = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players") .. "\n\n\n" .. Localize(warning_message_data.message)
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players")
-
-			local text = str
-
-			::label_3_0::
+			local text = not not (Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players") .. "\n\n\n" .. Localize(warning_message_data.message))
 
 			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 
 			return
 		end
 
-		local str_2
-
-		if warning_message_data ~= nil and warning_message_data.is_allowed() then
-			str_2 = Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
-
-			if not str_2 then
-				-- Nothing
-			end
-		end
-
-		str_2 = Localize("quit_game_popup_text")
-
-		local text = str_2
-
-		::label_3_1::
+		local text = not not (Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message))
 
 		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 	end,
@@ -149,21 +93,7 @@ local transitions = {
 		self:_cancel_popup()
 
 		local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
-		local str
-
-		if warning_message_data ~= nil and warning_message_data.is_allowed() then
-			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = Localize("quit_game_popup_text")
-
-		local text = str
-
-		::label_4_0::
+		local text = not not (Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message))
 
 		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 	end,
@@ -172,21 +102,7 @@ local transitions = {
 		self:_cancel_popup()
 
 		local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
-		local str
-
-		if warning_message_data ~= nil and warning_message_data.is_allowed() then
-			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = Localize("quit_game_popup_text")
-
-		local text = str
-
-		::label_5_0::
+		local text = not not (Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message))
 
 		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 	end,
@@ -323,59 +239,32 @@ local transitions = {
 			local input_filters = input_service:get_active_filters(platform_key)
 			local look_filter = input_filters.look
 			local function_data = look_filter.function_data
-			local flag
 
-			flag = (function_data.filter_type ~= "scale_vector3" or not "scale_vector3_invert_y") and not not "scale_vector3"
-			function_data.filter_type = flag
+			function_data.filter_type = function_data.filter_type ~= "scale_vector3" and not not "scale_vector3" or not (function_data.filter_type ~= "scale_vector3") and not not "scale_vector3_invert_y"
 		end
 
-		local str
-
-		if IS_PS4 then
-			str = "ps4"
-
-			goto label_12_0
-		end
-
-		str = "xb1"
-
-		local platform_key = str
-
-		::label_12_0::
-
+		local platform_key = IS_PS4 and not not "ps4" or not IS_PS4 and not not "xb1"
 		local input_filters = input_service:get_active_filters(platform_key)
 		local look_filter = input_filters.look_controller
 		local function_data = look_filter.function_data
-		local flag_2
 
-		flag_2 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
-		function_data.filter_type = flag_2
+		function_data.filter_type = function_data.filter_type ~= "scale_vector3_xy_accelerated_x" and not not "scale_vector3_xy_accelerated_x" or not (function_data.filter_type ~= "scale_vector3_xy_accelerated_x") and not not "scale_vector3_xy_accelerated_x_inverted"
 
 		local look_filter = input_filters.look_controller_ranged
 		local function_data = look_filter.function_data
-		local flag_3
 
-		flag_3 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
-		function_data.filter_type = flag_3
+		function_data.filter_type = function_data.filter_type ~= "scale_vector3_xy_accelerated_x" and not not "scale_vector3_xy_accelerated_x" or not (function_data.filter_type ~= "scale_vector3_xy_accelerated_x") and not not "scale_vector3_xy_accelerated_x_inverted"
 
 		local look_filter = input_filters.look_controller_melee
 		local function_data = look_filter.function_data
-		local flag_4
 
-		flag_4 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
-		function_data.filter_type = flag_4
+		function_data.filter_type = function_data.filter_type ~= "scale_vector3_xy_accelerated_x" and not not "scale_vector3_xy_accelerated_x" or not (function_data.filter_type ~= "scale_vector3_xy_accelerated_x") and not not "scale_vector3_xy_accelerated_x_inverted"
 
 		local look_filter = input_filters.look_controller_zoom
 		local function_data = look_filter.function_data
-		local flag_5
 
-		flag_5 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
-		function_data.filter_type = flag_5
-
-		local flag_6
-
-		flag_6 = (button_name ~= "menu_invert_controls" or not "menu_non_invert_controls") and not not "menu_invert_controls"
-		invert_button_data.display_name = flag_6
+		function_data.filter_type = function_data.filter_type ~= "scale_vector3_xy_accelerated_x" and not not "scale_vector3_xy_accelerated_x" or not (function_data.filter_type ~= "scale_vector3_xy_accelerated_x") and not not "scale_vector3_xy_accelerated_x_inverted"
+		invert_button_data.display_name = button_name ~= "menu_invert_controls" and not not "menu_invert_controls" or not (button_name ~= "menu_invert_controls") and not not "menu_non_invert_controls"
 	end,
 	end_game = function (self)
 		-- function 13
@@ -387,25 +276,14 @@ local transitions = {
 		local telemetry_survey_view = self.views.telemetry_survey
 		local level_key = Managers.state.game_mode:level_key()
 		local level_setting = LevelSettings[level_key]
-		local send = TelemetrySettings.send
-
-		if send then
-			-- Nothing
-		end
-
-		send = TelemetrySettings.use_session_survey
-
-		local use_survey = send
-
-		::label_13_0::
-
+		local use_survey = not not TelemetrySettings.send
 		local is_answered = telemetry_survey_view:is_survey_answered()
 		local is_timed_out = telemetry_survey_view:is_survey_timed_out()
 		local backend_manager = Managers.backend
 
 		local function commit_complete_callback()
 			-- function 14
-			if not use_survey or is_answered or not is_timed_out and not use_survey or level_setting.hub_level then
+			if is_answered or is_timed_out or not use_survey or level_setting.hub_level then
 				self.quit_game = true
 				self.current_view = nil
 			else
@@ -902,7 +780,7 @@ local view_settings = {
 	end,
 	views_function = function (ingame_ui_context)
 		-- function 51
-		local tbl = {
+		local views = {
 			credits_view = CreditsView:new(ingame_ui_context),
 			telemetry_survey = TelemetrySurveyView:new(ingame_ui_context),
 			options_view = OptionsView:new(ingame_ui_context),
@@ -910,26 +788,10 @@ local view_settings = {
 			character_selection = CharacterSelectionView:new(ingame_ui_context),
 			start_menu_view = StartMenuView:new(ingame_ui_context),
 			start_game_view = StartGameView:new(ingame_ui_context),
-			ingame_menu = IngameView:new(ingame_ui_context)
+			ingame_menu = IngameView:new(ingame_ui_context),
+			chat_view = IS_WINDOWS and not not ChatView:new(ingame_ui_context) or not IS_WINDOWS and not not nil,
+			console_friends_view = ConsoleFriendsView:new(ingame_ui_context)
 		}
-		local var_51_1
-
-		if IS_WINDOWS then
-			var_51_1 = ChatView:new(ingame_ui_context)
-
-			if not var_51_1 then
-				-- Nothing
-			end
-		end
-
-		var_51_1 = nil
-
-		::label_51_0::
-
-		tbl.chat_view = var_51_1
-		tbl.console_friends_view = ConsoleFriendsView:new(ingame_ui_context)
-
-		local views = tbl
 
 		for _, dlc in pairs(DLCSettings) do
 			if dlc.ui_views then
@@ -944,7 +806,7 @@ local view_settings = {
 
 						local filter = view.mechanism_filter
 
-						if (not filter or filter[game_mechanism_name] == true) and (not view.only_in_inn or ingame_ui_context.is_in_inn) and (not view.only_in_game or not ingame_ui_context.is_in_inn) then
+						if not view.only_in_game or not ingame_ui_context.is_in_inn then
 							views[view_name] = _G[view_class_name]:new(ingame_ui_context)
 						end
 					end

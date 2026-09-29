@@ -198,17 +198,7 @@ end
 function debug_bot_transitions(self, t)
 	-- function 7
 	local ai_system = Managers.state.entity:system("ai_system")
-	local ai_debugger = ai_system.ai_debugger
-
-	if ai_debugger then
-		-- Nothing
-	end
-
-	ai_debugger = ai_system.ai_debugger.screen_gui
-
-	local gui = ai_debugger
-
-	::label_7_0::
+	local gui = not not ai_system.ai_debugger
 
 	AiUtils.debug_bot_transitions(gui, t, 0, 0)
 end
@@ -508,18 +498,7 @@ ConflictDirectorTests.lean_slot_test = function ()
 	local dist = 3
 	local slot_angle = 2 * math.pi / max_slots
 	local lean_slots = ConflictDirectorTests.lean_slots
-	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
-
-	if not get_side_from_name then
-		-- Nothing
-	end
-
-	get_side_from_name = Managers.state.side:get_side(1)
-
-	local side = get_side_from_name
-
-	::label_23_0::
-
+	local side = not not Managers.state.side:get_side_from_name("heroes")
 	local pos = side.PLAYER_POSITIONS[1]
 
 	if not pos then
@@ -1000,17 +979,7 @@ end
 
 ConflictDirectorTests.start_test = function (conflict_director, t, dt, test)
 	-- function 40
-	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
-
-	if not get_side_from_name then
-		-- Nothing
-	end
-
-	get_side_from_name = Managers.state.side:get_side(1)
-
-	local side = get_side_from_name
-
-	::label_40_0::
+	local side = not not Managers.state.side:get_side_from_name("heroes")
 
 	test = not not test or not not "spawn_encampment"
 	conflict_director.conflict_director_tests_name = test
@@ -1117,17 +1086,7 @@ end
 ConflictDirectorTests.update = function (conflict_director, t, dt)
 	-- function 41
 	local test = conflict_director.conflict_director_tests_name
-	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
-
-	if not get_side_from_name then
-		-- Nothing
-	end
-
-	get_side_from_name = Managers.state.side:get_side(1)
-
-	local side = get_side_from_name
-
-	::label_41_0::
+	local side = not not Managers.state.side:get_side_from_name("heroes")
 
 	conflict_director.hero_player_and_bot_positions = side.PLAYER_AND_BOT_POSITIONS
 	conflict_director.hero_player_positions = side.PLAYER_POSITIONS

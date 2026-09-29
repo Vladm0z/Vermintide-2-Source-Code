@@ -45,17 +45,7 @@ BTObservePoisonWind.run = function (self, unit, blackboard, t, dt)
 		return "done"
 	end
 
-	local next_throw_at_2 = throw_globe_data.next_throw_at
-
-	if not next_throw_at_2 then
-		-- Nothing
-	end
-
-	next_throw_at_2 = -math.huge
-
-	local next_throw_at = next_throw_at_2
-
-	::label_4_0::
+	local next_throw_at = not not throw_globe_data.next_throw_at
 
 	if next_throw_at < t then
 		return "done"

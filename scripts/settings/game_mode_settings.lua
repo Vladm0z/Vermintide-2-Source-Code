@@ -4,10 +4,7 @@ require("scripts/settings/difficulty_settings")
 require("scripts/settings/objective_unit_templates")
 require("foundation/scripts/util/error")
 
-local GameModeSettings = GameModeSettings
-
-GameModeSettings = not not GameModeSettings or not not {}
-GameModeSettings = GameModeSettings
+GameModeSettings = not not GameModeSettings
 GameModeSettings.base = {
 	class_name = "GameModeBase",
 	use_level_progress = true,

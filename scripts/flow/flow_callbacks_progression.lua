@@ -12,18 +12,7 @@ end
 
 function flow_callback_get_last_level_played(params)
 	-- function 2
-	local last_played_level_2 = SaveData.last_played_level
-
-	if not last_played_level_2 then
-		-- Nothing
-	end
-
-	last_played_level_2 = "N/A"
-
-	local last_played_level = last_played_level_2
-
-	::label_2_0::
-
+	local last_played_level = not not SaveData.last_played_level
 	local last_played_level_won = SaveData.last_played_level_result == "won"
 
 	flow_return_table.level_key = last_played_level
@@ -34,18 +23,7 @@ end
 
 function flow_callback_last_level_played_was_weave(params)
 	-- function 3
-	local last_played_level_2 = SaveData.last_played_level
-
-	if not last_played_level_2 then
-		-- Nothing
-	end
-
-	last_played_level_2 = "N/A"
-
-	local last_played_level = last_played_level_2
-
-	::label_3_0::
-
+	local last_played_level = not not SaveData.last_played_level
 	local last_played_level_won = SaveData.last_played_level_result == "won"
 	local weave_templates = WeaveSettings.templates
 	local was_weave_level = false
@@ -80,17 +58,7 @@ function flow_callback_ui_onboarding_tutorial_completed(params)
 		local local_player = player_manager:local_player()
 
 		if statistics_db and local_player then
-			local tutorial_name = params.tutorial_name
-
-			if tutorial_name then
-				-- Nothing
-			end
-
-			tutorial_name = WeaveUITutorials[params.tutorial_name]
-
-			local tutorial = tutorial_name
-
-			::label_4_0::
+			local tutorial = not not params.tutorial_name
 
 			if tutorial then
 				local ui_onboarding_state = WeaveOnboardingUtils.get_ui_onboarding_state(statistics_db, local_player:stats_id())

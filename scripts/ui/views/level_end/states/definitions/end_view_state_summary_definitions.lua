@@ -711,11 +711,7 @@ local animation_definitions = {
 
 				summary_text_style.text_color[1] = 0
 				summary_text_shadow_style.text_color[1] = 0
-
-				local title_text = params.title_text
-
-				title_text = not not title_text or not not "n/a"
-				content.summary_text = title_text
+				content.summary_text = not not params.title_text
 			end,
 			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
@@ -792,18 +788,7 @@ local animation_definitions = {
 				local experience = params.experience
 
 				if experience then
-					local experience_2 = content.experience
-
-					if not experience_2 then
-						-- Nothing
-					end
-
-					experience_2 = 0
-
-					local current_experience_count = experience_2
-
-					::label_19_0::
-
+					local current_experience_count = not not content.experience
 					local new_experience = current_experience_count + experience
 
 					content.text = tostring(new_experience)

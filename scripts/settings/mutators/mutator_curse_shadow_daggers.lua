@@ -80,13 +80,7 @@ Storm.update = function (self, dt, t)
 			end
 		end
 	else
-		local ferror = ferror
-		local str = "unknown state %d"
-		local _state = self._state
-
-		_state = not not _state or not not "nil"
-
-		ferror(str, _state)
+		ferror("unknown state %d", not not self._state)
 	end
 end
 

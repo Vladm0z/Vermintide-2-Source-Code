@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/equipment/pickup_material_settings_templates.lua
 
-local MaterialSettingsTemplates = MaterialSettingsTemplates
-
-MaterialSettingsTemplates = not not MaterialSettingsTemplates or not not {}
-MaterialSettingsTemplates = MaterialSettingsTemplates
+MaterialSettingsTemplates = not not MaterialSettingsTemplates
 MaterialSettingsTemplates.friendly_murderer_potion = {
 	theme_index_01 = {
 		value = 1,

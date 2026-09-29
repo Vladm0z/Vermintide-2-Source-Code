@@ -56,39 +56,8 @@ local function link_unit(attachment_node_linking, world, target, source)
 	for i, attachment_nodes in ipairs(attachment_node_linking) do
 		local source_node = attachment_nodes.source
 		local target_node = attachment_nodes.target
-		local node
-
-		if type(source_node) == "string" then
-			node = Unit.node(source, source_node)
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = source_node
-
-		local source_node_index = node
-
-		do
-			local node_2
-		end
-
-		::label_4_0::
-
-		if type(target_node) == "string" then
-			node_2 = Unit.node(target, target_node)
-
-			if not node_2 then
-				-- Nothing
-			end
-		end
-
-		node_2 = target_node
-
-		local target_node_index = node_2
-
-		::label_4_1::
+		local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(source, source_node)
+		local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(target, target_node)
 
 		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
@@ -222,28 +191,16 @@ AIInventorySystem.update = function (self, context, t, dt)
 
 			local item_set = item_sets[set_index]
 
-			start_index, end_index = item_set.start_index, (not extension.dropped or not 0) and not not item_set.end_index
+			start_index, end_index = item_set.start_index, extension.dropped and (not not 0 or not not item_set.end_index) or not extension.dropped and not not item_set.end_index
 		else
-			start_index, end_index = 1, (not extension.dropped or not 0) and not not extension.inventory_items_n
+			start_index, end_index = 1, extension.dropped and (not not 0 or not not extension.inventory_items_n) or not extension.dropped and not not extension.inventory_items_n
 		end
 
 		extension.wielded = true
 
 		local inventory_item_definitions = extension.inventory_item_definitions
 		local inventory_item_units = extension.inventory_item_units
-		local num
-
-		if extension.dropped then
-			num = 0
-
-			goto label_11_0
-		end
-
-		num = extension.inventory_items_n
-
-		local inventory_items_n = num
-
-		::label_11_0::
+		local inventory_items_n = extension.dropped and not not 0 or not extension.dropped and not not extension.inventory_items_n
 
 		if script_data.ai_debug_inventory then
 			-- Nothing

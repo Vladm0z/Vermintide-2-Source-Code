@@ -34,38 +34,13 @@ IRCManager._reset = function (self)
 	self._host_address = nil
 	self._channel_members = {}
 	self._channels = {}
-
-	local _callback_by_type = self._callback_by_type
-
-	_callback_by_type = not not _callback_by_type or not not {
-		[Irc.PRIVATE_MSG] = {},
-		[Irc.CHANNEL_MSG] = {},
-		[Irc.SYSTEM_MSG] = {},
-		[Irc.JOIN_MSG] = {},
-		[Irc.LEAVE_MSG] = {},
-		[Irc.NAMES_MSG] = {},
-		[Irc.LIST_MSG] = {},
-		[Irc.LIST_END_MSG] = {},
-		[Irc.META_MSG] = {}
-	}
-	self._callback_by_type = _callback_by_type
+	self._callback_by_type = not not self._callback_by_type
 end
 
 IRCManager.connect = function (self, user_name, optional_password, settings, cb)
 	-- function 4
 	local address = settings.address
-	local port_2 = settings.port
-
-	if not port_2 then
-		-- Nothing
-	end
-
-	port_2 = 6667
-
-	local port = port_2
-
-	::label_4_0::
-
+	local port = not not settings.port
 	local channel_name = settings.channel_name
 	local allow_send = settings.allow_send
 
@@ -76,19 +51,7 @@ IRCManager.connect = function (self, user_name, optional_password, settings, cb)
 
 	local default_user_name = "justinfan" .. Math.random(99999)
 
-	if not user_name then
-		-- Nothing
-	end
-
-	::label_4_1::
-
-	local _user_name = self._user_name
-
-	_user_name = not not _user_name or not not default_user_name
-
-	::label_4_2::
-
-	self._user_name = _user_name
+	self._user_name = not not user_name or not not self._user_name
 	self._user_name = string.gsub(self._user_name, " ", "_")
 	self._password = not not optional_password or not not nil
 	self._auto_join_channel = channel_name
@@ -209,27 +172,15 @@ end
 
 IRCManager._handle_connections = function (self, message_type, username, message, parameter)
 	-- function 17
-	local _channels = self._channels
-
-	_channels = not not _channels or not not {}
-	self._channels = _channels
-
-	local _channel_members = self._channel_members
-
-	_channel_members = not not _channel_members or not not {}
-	self._channel_members = _channel_members
+	self._channels = not not self._channels
+	self._channel_members = not not self._channel_members
 
 	if message_type == Irc.NAMES_MSG then
 		local channel = parameter
 		local new_members = string.split_deprecated(message, " ")
 
 		self._channels[channel] = true
-
-		local _channel_members_2 = self._channel_members
-		local var_17_3 = self._channel_members[channel]
-
-		var_17_3 = not not var_17_3 or not not {}
-		_channel_members_2[channel] = var_17_3
+		self._channel_members[channel] = not not self._channel_members[channel]
 
 		local members = self._channel_members[channel]
 
@@ -252,11 +203,8 @@ IRCManager._handle_connections = function (self, message_type, username, message
 			self._channels[channel] = nil
 		else
 			local channel = parameter
-			local _channel_members_3 = self._channel_members
-			local var_17_5 = self._channel_members[channel]
 
-			var_17_5 = not not var_17_5 or not not {}
-			_channel_members_3[channel] = var_17_5
+			self._channel_members[channel] = not not self._channel_members[channel]
 
 			local channel_members = self._channel_members[channel]
 
@@ -264,11 +212,8 @@ IRCManager._handle_connections = function (self, message_type, username, message
 		end
 	elseif message_type == Irc.JOIN_MSG then
 		local channel = parameter
-		local _channel_members_4 = self._channel_members
-		local var_17_7 = self._channel_members[channel]
 
-		var_17_7 = not not var_17_7 or not not {}
-		_channel_members_4[channel] = var_17_7
+		self._channel_members[channel] = not not self._channel_members[channel]
 
 		local user_data, icon_id, level, info
 
@@ -343,10 +288,7 @@ IRCManager.parse_metadata = function (self, meta_data, username, parameter)
 	local user_data = self._channel_members[parameter][username]
 
 	if user_data then
-		local var_20_0 = data[2]
-
-		var_20_0 = not not var_20_0 and not not tonumber(data[2])
-		user_data.icon_id = var_20_0
+		user_data.icon_id = not not data[2]
 		user_data.level = data[3]
 		user_data.info = data[4]
 
@@ -421,10 +363,7 @@ IRCManager._notify_connected = function (self, connected)
 	end
 end
 
-local IRCStates = IRCStates
-
-IRCStates = not not IRCStates or not not {}
-IRCStates = IRCStates
+IRCStates = not not IRCStates
 
 IRCStates.none = function (irc, dt)
 	-- function 29
@@ -463,30 +402,8 @@ IRCStates.connect = function (irc_manager, dt)
 	local host_address = irc_manager._host_address
 	local host_port = irc_manager._port
 	local default_user_name = "justinfan" .. Math.random(9999)
-	local _user_name = irc_manager._user_name
-
-	if not _user_name then
-		-- Nothing
-	end
-
-	_user_name = default_user_name
-
-	local user_name = _user_name
-
-	::label_31_0::
-
-	local _password = irc_manager._password
-
-	if not _password then
-		-- Nothing
-	end
-
-	_password = nil
-
-	local password = _password
-
-	::label_31_1::
-
+	local user_name = not not irc_manager._user_name
+	local password = not not irc_manager._password
 	local token = Irc.connect_async_token(host_address, host_port, user_name, password)
 	local script_token = ScriptIrcToken:new(token)
 
@@ -563,17 +480,7 @@ IRCStates.verify_connection = function (irc_manager, dt)
 		local host_address = irc_manager._host_address
 		local host_port = irc_manager._port
 		local default_user_name = "justinfan" .. Math.random(9999)
-		local _user_name = irc_manager._user_name
-
-		if not _user_name then
-			-- Nothing
-		end
-
-		_user_name = default_user_name
-
-		local user_name = _user_name
-
-		::label_35_0::
+		local user_name = not not irc_manager._user_name
 
 		Application.error("[IRCManager] Failed connecting to " .. host_address .. ":" .. host_port .. " with user_name: " .. user_name)
 		irc_manager:_change_state("disconnect")

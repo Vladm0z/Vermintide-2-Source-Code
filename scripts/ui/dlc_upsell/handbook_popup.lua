@@ -25,11 +25,8 @@ HandbookPopup.init = function (self, ui_context, hint_name, hint_settings)
 	self._total_pages = #self._active_pages
 
 	local first_page = hint_settings.pages[1]
-	local SaveData = SaveData
-	local seen_handbook_pages = SaveData.seen_handbook_pages
 
-	seen_handbook_pages = not not seen_handbook_pages or not not {}
-	SaveData.seen_handbook_pages = seen_handbook_pages
+	SaveData.seen_handbook_pages = not not SaveData.seen_handbook_pages
 	SaveData.seen_handbook_pages[first_page] = true
 	self._has_widget_been_closed = false
 end
@@ -192,33 +189,12 @@ HandbookPopup._update_page_info = function (self)
 	widgets_by_name.page_text_right.content.visible = has_pages
 	widgets_by_name.page_text_area.content.visible = has_pages
 
-	local _menu_input_description = self._menu_input_description
-	local var_10_1 = _menu_input_description
-	local set_input_description = _menu_input_description.set_input_description
-	local has_pages_2
-
-	if has_pages then
-		has_pages_2 = generic_input_actions.has_pages
-
-		if not has_pages_2 then
-			-- Nothing
-		end
-	end
-
-	has_pages_2 = nil
-
-	::label_10_0::
-
-	set_input_description(var_10_1, has_pages_2)
+	self._menu_input_description:set_input_description(has_pages and not not generic_input_actions.has_pages or not has_pages and not not nil)
 end
 
 HandbookPopup.should_show = function (self)
 	-- function 11
-	local is_in_inn = self._ui_context.is_in_inn
-
-	is_in_inn = not not is_in_inn and not Managers.popup:has_popup() and not self._is_visible and not not not Managers.unlock:is_waiting_for_gift_popup_ui()
-
-	return is_in_inn
+	return not not self._ui_context.is_in_inn
 end
 
 HandbookPopup.update = function (self, dt)

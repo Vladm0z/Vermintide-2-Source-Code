@@ -9,7 +9,7 @@ MissionTemplates = {
 			local collect_amount = mission_data.collect_amount
 			local mission_text = Localize(mission_data.text)
 			local evaluate_at_level_end = mission_data.evaluate_at_level_end
-			local tbl = {
+			local data = {
 				info_slate_type = "mission_objective",
 				manual_update = true,
 				current_amount = 0,
@@ -32,24 +32,19 @@ MissionTemplates = {
 				mission_text = mission_text,
 				unit = unit,
 				mission_data = mission_data,
-				evaluate_at_level_end = evaluate_at_level_end
+				evaluate_at_level_end = evaluate_at_level_end,
+				evaluation_type = not not mission_data.evaluation_type,
+				experience = mission_data.experience,
+				bonus_dice = mission_data.bonus_dice,
+				experience_per_percent = mission_data.experience_per_percent,
+				dice_per_percent = mission_data.dice_per_percent,
+				tokens_per_percent = mission_data.tokens_per_percent,
+				experience_per_amount = mission_data.experience_per_amount,
+				dice_per_amount = mission_data.dice_per_amount,
+				tokens_per_amount = mission_data.tokens_per_amount,
+				dice_type = mission_data.dice_type,
+				token_type = mission_data.token_type
 			}
-			local evaluation_type = mission_data.evaluation_type
-
-			evaluation_type = not not evaluation_type or not not "percent"
-			tbl.evaluation_type = evaluation_type
-			tbl.experience = mission_data.experience
-			tbl.bonus_dice = mission_data.bonus_dice
-			tbl.experience_per_percent = mission_data.experience_per_percent
-			tbl.dice_per_percent = mission_data.dice_per_percent
-			tbl.tokens_per_percent = mission_data.tokens_per_percent
-			tbl.experience_per_amount = mission_data.experience_per_amount
-			tbl.dice_per_amount = mission_data.dice_per_amount
-			tbl.tokens_per_amount = mission_data.tokens_per_amount
-			tbl.dice_type = mission_data.dice_type
-			tbl.token_type = mission_data.token_type
-
-			local data = tbl
 
 			return data
 		end,
@@ -61,13 +56,7 @@ MissionTemplates = {
 			-- function 6
 			local collect_amount = data.collect_amount
 			local evaluate_at_level_end = data.evaluate_at_level_end
-			local var_6_0 = data
-			local increase_current_amount = data.increase_current_amount
-			local flag
-
-			flag = (not positive or not 1) and not not -1
-
-			local current_amount = increase_current_amount(var_6_0, flag)
+			local current_amount = data:increase_current_amount(positive and not not 1 or not positive and not not -1)
 
 			return not evaluate_at_level_end and current_amount == collect_amount
 		end,
@@ -185,12 +174,7 @@ MissionTemplates = {
 		end,
 		evaluate_mission = function (data, dt)
 			-- function 20
-			local done = data.done
-			local flag
-
-			flag = (not data.done or not 1) and not not 0
-
-			return done, flag
+			return data.done, data.done and not not 1 or not data.done and not not 0
 		end,
 		create_sync_data = function (data)
 			-- function 21
@@ -236,40 +220,8 @@ MissionTemplates = {
 			local time = math.ceil(data.time_left)
 			local minutes = math.floor(time / 60)
 			local seconds = time % 60
-			local var_25_0
-
-			if minutes >= 10 then
-				var_25_0 = tostring(minutes)
-
-				if not var_25_0 then
-					-- Nothing
-				end
-			end
-
-			var_25_0 = string.format("0%s", tostring(minutes))
-
-			local sminutes = var_25_0
-
-			do
-				local var_25_1
-			end
-
-			::label_25_0::
-
-			if seconds >= 10 then
-				var_25_1 = tostring(seconds)
-
-				if not var_25_1 then
-					-- Nothing
-				end
-			end
-
-			var_25_1 = string.format("0%s", tostring(seconds))
-
-			local sseconds = var_25_1
-
-			::label_25_1::
-
+			local sminutes = minutes >= 10 and not not tostring(minutes) or not (minutes >= 10) and not not string.format("0%s", tostring(minutes))
+			local sseconds = seconds >= 10 and not not tostring(seconds) or not (seconds >= 10) and not not string.format("0%s", tostring(seconds))
 			local text = string.format("%s", data.mission_text)
 			local duration_text = string.format("%s:%s", sminutes, sseconds)
 
@@ -542,12 +494,7 @@ MissionTemplates = {
 		end,
 		evaluate_mission = function (data, dt)
 			-- function 50
-			local done = data.done
-			local flag
-
-			flag = (not data.done or not 1) and not not 0
-
-			return done, flag
+			return data.done, data.done and not not 1 or not data.done and not not 0
 		end,
 		create_sync_data = function (data)
 			-- function 51

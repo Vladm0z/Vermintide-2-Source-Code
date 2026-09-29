@@ -284,22 +284,7 @@ ProjectileEtherealSkullLocomotionExtension.get_vertical_offset = function (self,
 	local cross_vector = Vector3(target_direction.x, target_direction.y, math.abs(direction.z) + 1)
 	local u_vector = Vector3.cross(target_direction, cross_vector)
 	local v_vector = Vector3.cross(target_direction, u_vector)
-	local sin
-
-	if self._use_sin_for_vertical_trajectory then
-		sin = math.sin
-
-		if not sin then
-			-- Nothing
-		end
-	end
-
-	sin = math.cos
-
-	local curve_func = sin
-
-	::label_10_0::
-
+	local curve_func = self._use_sin_for_vertical_trajectory and not not math.sin or not self._use_sin_for_vertical_trajectory and not not math.cos
 	local v_offset = Vector3.normalize(v_vector) * settings.vertical_offset_multiplier * curve_func(lifetime * settings.vertical_offset_frequency_multiplier)
 
 	return v_offset
@@ -349,11 +334,7 @@ end
 
 ProjectileEtherealSkullLocomotionExtension.has_target = function (self)
 	-- function 14
-	local _target_unit = self._target_unit
-
-	_target_unit = not not _target_unit and not not Unit.alive(self._target_unit)
-
-	return _target_unit
+	return not not self._target_unit
 end
 
 ProjectileEtherealSkullLocomotionExtension.moved_this_frame = function (self)

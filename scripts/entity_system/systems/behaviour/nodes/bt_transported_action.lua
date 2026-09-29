@@ -44,17 +44,7 @@ BTTransportedAction.leave = function (self, unit, blackboard, t, dt)
 	-- function 3
 	local navigation_extension = blackboard.navigation_extension
 	local locomotion_extension = blackboard.locomotion_extension
-	local var_3_0 = POSITION_LOOKUP[unit]
-
-	if not var_3_0 then
-		-- Nothing
-	end
-
-	var_3_0 = Unit.local_position(unit, 0)
-
-	local position = var_3_0
-
-	::label_3_0::
+	local position = not not POSITION_LOOKUP[unit]
 
 	locomotion_extension:teleport_to(position)
 	navigation_extension:set_navbot_position(position)

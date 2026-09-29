@@ -126,17 +126,7 @@ MenuInformationSlateUI._fetch_backend_information = function (self)
 		if information_data and not table.is_empty(information_data) then
 			self._information_data = information_data
 
-			local var_7_0 = information_data[1]
-
-			if not var_7_0 then
-				-- Nothing
-			end
-
-			var_7_0 = information_data
-
-			local slate_data = var_7_0
-
-			::label_7_0::
+			local slate_data = not not information_data[1]
 
 			self:_create_ui_elements()
 			self:_parse_information_data(slate_data)
@@ -171,17 +161,7 @@ MenuInformationSlateUI._fetch_cdn_data = function (self, url, callback)
 		local message = Http.get_uri(CDN_SERVER, 80, url)
 
 		if message then
-			local find = string.find(message, "HTTP/1.1 200 OK")
-
-			if not find then
-				-- Nothing
-			end
-
-			find = string.find(message, "HTTP/1.0 200 OK")
-
-			local is_ok = find
-
-			::label_9_0::
+			local is_ok = not not string.find(message, "HTTP/1.1 200 OK")
 
 			if is_ok then
 				local start_idx, end_idx = string.find(message, "\r\n\r\n")
@@ -241,17 +221,7 @@ MenuInformationSlateUI._parse_cdn_data = function (self, info)
 	if data and not table.is_empty(data) then
 		self._information_data = data
 
-		local var_10_0 = data[1]
-
-		if not var_10_0 then
-			-- Nothing
-		end
-
-		var_10_0 = data
-
-		local slate_data = var_10_0
-
-		::label_10_0::
+		local slate_data = not not data[1]
 
 		self:_create_ui_elements()
 		self:_parse_information_data(slate_data)
@@ -350,20 +320,10 @@ MenuInformationSlateUI._parse_text_data = function (self, data, idx, offset)
 	local text_body_parsing_data = body_parsing_data.text
 	local spacing = text_body_parsing_data.spacing
 	local text_style = table.clone(text_body_parsing_data.default_text_style)
-	local font_size_2 = data.font_size
 
-	font_size_2 = not not font_size_2 or not not text_style.font_size
-	text_style.font_size = font_size_2
-
-	local font_type = data.font_type
-
-	font_type = not not font_type or not not text_style.font_type
-	text_style.font_type = font_type
-
-	local color = data.color
-
-	color = not not color or not not text_style.text_color
-	text_style.text_color = color
+	text_style.font_size = not not data.font_size
+	text_style.font_type = not not data.font_type
+	text_style.text_color = not not data.color
 
 	local text = data.text
 	local hint = data.hint
@@ -490,22 +450,7 @@ MenuInformationSlateUI._parse_text_data = function (self, data, idx, offset)
 				dash_widget.widget_height = widget.widget_height
 			end
 
-			local num = offset - widget.widget_height
-			local num_2
-
-			if #rows > 1 then
-				num_2 = spacing * 0.5
-
-				if not num_2 then
-					-- Nothing
-				end
-			end
-
-			num_2 = 0
-
-			::label_13_0::
-
-			offset = num - num_2
+			offset = offset - widget.widget_height - (#rows > 1 and not not (spacing * 0.5) or not (#rows > 1) and not not 0)
 		end
 
 		offset = offset - spacing
@@ -562,19 +507,7 @@ MenuInformationSlateUI._setup_backend_image_material = function (self, texture_n
 	-- function 16
 	local reference_name = not not reference_name or not not texture_name
 	local material_name = "MenuInformationSlateUI_" .. reference_name
-	local str
-
-	if masked then
-		str = "template_diffuse_masked"
-
-		goto label_16_0
-	end
-
-	str = "template_diffuse"
-
-	local template_material_name = str
-
-	::label_16_0::
+	local template_material_name = masked and not not "template_diffuse_masked" or not masked and not not "template_diffuse"
 
 	self:_create_material_instance(material_name, template_material_name, reference_name)
 
@@ -663,36 +596,12 @@ end
 
 MenuInformationSlateUI._update_input = function (self, dt, t)
 	-- function 21
-	local get
-
-	if IS_CONSOLE then
-		get = self._input_service:get("start_press")
-
-		if not get then
-			-- Nothing
-		end
-	end
-
-	get = self._input_service:get("special_1_press")
-
-	local input_pressed = get
-
-	::label_21_0::
+	local input_pressed = IS_CONSOLE and not not self._input_service:get("start_press") or not IS_CONSOLE and not not self._input_service:get("special_1_press")
 
 	input_pressed = not not input_pressed or not not UIUtils.is_button_pressed(self._widgets_by_name.more_information, "hotspot")
 	input_pressed = not not input_pressed or not not UIUtils.is_button_pressed(self._widgets_by_name.less_information, "hotspot")
 
-	local expand = self._animations.expand
-
-	if not expand then
-		-- Nothing
-	end
-
-	expand = self._animations.collapse
-
-	local is_animating = expand
-
-	::label_21_1::
+	local is_animating = not not self._animations.expand
 
 	if input_pressed and not is_animating then
 		if not self._expanded then
@@ -734,11 +643,11 @@ MenuInformationSlateUI._update_input = function (self, dt, t)
 			end
 		end
 
-		if UIUtils.is_button_pressed(widget, "left_arrow_hotspot") or self._input_service:get("previous") or IS_WINDOWS and self._input_service:get("left") then
+		if IS_WINDOWS and self._input_service:get("left") then
 			self._current_information_data_index = math.max(self._current_information_data_index - 1, 1)
 
 			self:_play_sound("play_gui_info_slate_tab_arrow_clicked")
-		elseif UIUtils.is_button_pressed(widget, "right_arrow_hotspot") or self._input_service:get("next") or IS_WINDOWS and self._input_service:get("right") then
+		elseif IS_WINDOWS and self._input_service:get("right") then
 			self._current_information_data_index = math.min(self._current_information_data_index + 1, #self._information_data)
 
 			self:_play_sound("play_gui_info_slate_tab_arrow_clicked")

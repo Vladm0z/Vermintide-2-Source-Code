@@ -8040,39 +8040,13 @@ for roaming_set_name, breed_packs in pairs(BreedPacks) do
 	BreedPacksBySize[roaming_set_name] = generate_breed_pack_by_size(breed_packs, roaming_set_name)
 end
 
-local InterestPointUnitsLookup = InterestPointUnitsLookup
-
-InterestPointUnitsLookup = not not InterestPointUnitsLookup or not not false
-InterestPointUnitsLookup = InterestPointUnitsLookup
-
-local SizeOfInterestPoint = SizeOfInterestPoint
-
-SizeOfInterestPoint = not not SizeOfInterestPoint or not not {}
-SizeOfInterestPoint = SizeOfInterestPoint
-
-local InterestPointPickListIndexLookup = InterestPointPickListIndexLookup
-
-InterestPointPickListIndexLookup = not not InterestPointPickListIndexLookup or not not {}
-InterestPointPickListIndexLookup = InterestPointPickListIndexLookup
-
-local InterestPointPickList = InterestPointPickList
-
-InterestPointPickList = not not InterestPointPickList or not not false
-InterestPointPickList = InterestPointPickList
+InterestPointUnitsLookup = not not InterestPointUnitsLookup
+SizeOfInterestPoint = not not SizeOfInterestPoint
+InterestPointPickListIndexLookup = not not InterestPointPickListIndexLookup
+InterestPointPickList = not not InterestPointPickList
 
 if #InterestPointPickListIndexLookup == 0 then
-	local InterestPointPickList_2 = InterestPointPickList
-
-	if not InterestPointPickList_2 then
-		-- Nothing
-	end
-
-	InterestPointPickList_2 = {}
-
-	local weight_lookup = InterestPointPickList_2
-
-	::label_0_0::
-
+	local weight_lookup = not not InterestPointPickList
 	local items = 0
 
 	for i, data in ipairs(InterestPointUnits) do

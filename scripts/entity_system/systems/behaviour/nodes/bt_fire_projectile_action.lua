@@ -50,10 +50,7 @@ BTFireProjectileAction.enter = function (self, unit, blackboard, t)
 	ai_slot_system:do_slot_search(unit, false)
 	self:_check_for_volley_attack(blackboard, unit, t)
 
-	local volley_target_unit = blackboard.volley_target_unit
-
-	volley_target_unit = not not volley_target_unit or not not blackboard.target_unit
-	blackboard.attacking_target = volley_target_unit
+	blackboard.attacking_target = not not blackboard.volley_target_unit
 
 	local target_unit_status_extension = ScriptUnit.has_extension(blackboard.attacking_target, "status_system")
 
@@ -76,18 +73,7 @@ BTFireProjectileAction._check_for_volley_attack = function (self, blackboard, un
 		local radius = 15
 		local self_pos = POSITION_LOOKUP[unit]
 		local num_results = Broadphase.query(broadphase, self_pos, radius, broadphase_query_result)
-		local fire_volley_at_t_2 = blackboard.fire_volley_at_t
-
-		if not fire_volley_at_t_2 then
-			-- Nothing
-		end
-
-		fire_volley_at_t_2 = t + 1 + math.random()
-
-		local fire_volley_at_t = fire_volley_at_t_2
-
-		::label_4_0::
-
+		local fire_volley_at_t = not not blackboard.fire_volley_at_t
 		local group_position = Vector3(0, 0, 0)
 
 		if num_results >= 3 then
@@ -187,17 +173,7 @@ BTFireProjectileAction.run = function (self, unit, blackboard, t, dt)
 	end
 
 	if blackboard.start_check_for_dodge_t and t > blackboard.start_check_for_dodge_t then
-		local target_unit_status_extension = blackboard.target_unit_status_extension
-
-		if target_unit_status_extension then
-			-- Nothing
-		end
-
-		target_unit_status_extension = blackboard.target_unit_status_extension:get_is_dodging()
-
-		local target_is_dodging = target_unit_status_extension
-
-		::label_6_0::
+		local target_is_dodging = not not blackboard.target_unit_status_extension
 
 		blackboard.target_is_dodging = target_is_dodging
 
@@ -274,22 +250,7 @@ BTFireProjectileAction._fire_from_position_direction = function (self, blackboar
 	local fire_node = Unit.node(unit, "j_lefthand")
 	local fire_position = Unit.world_position(unit, fire_node)
 	local target_locomotion = ScriptUnit.has_extension(attacking_target, "locomotion_system")
-	local small_sample_size_average_velocity
-
-	if target_locomotion.small_sample_size_average_velocity then
-		small_sample_size_average_velocity = target_locomotion:small_sample_size_average_velocity()
-
-		if not small_sample_size_average_velocity then
-			-- Nothing
-		end
-	end
-
-	small_sample_size_average_velocity = Vector3.zero()
-
-	local target_current_velocity = small_sample_size_average_velocity
-
-	::label_7_0::
-
+	local target_current_velocity = target_locomotion.small_sample_size_average_velocity and not not target_locomotion:small_sample_size_average_velocity() or not target_locomotion.small_sample_size_average_velocity and not not Vector3.zero()
 	local target_current_speed = Vector3.length(target_current_velocity)
 
 	if target_current_speed > 4 then
@@ -330,34 +291,13 @@ BTFireProjectileAction._fire_projectile = function (self, unit, blackboard, dt)
 	local collision_filter = "filter_enemy_player_afro_ray_projectile"
 	local difficulty_hit_chance = action.difficulty_hit_chance
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_8_0 = light_weight_projectile_template.attack_power_level[difficulty_rank]
-
-	if not var_8_0 then
-		-- Nothing
-	end
-
-	var_8_0 = light_weight_projectile_template.attack_power_level[2]
-
-	local power_level = var_8_0
-
-	::label_8_0::
-
+	local power_level = not not light_weight_projectile_template.attack_power_level[difficulty_rank]
 	local target_is_dodging = blackboard.target_is_dodging
 	local first_shot_spread = not blackboard.fired_first_shot and not not light_weight_projectile_template.first_shot_spread
 	local hit = true
 
 	if difficulty_rank and difficulty_hit_chance then
-		local var_8_1 = difficulty_hit_chance[difficulty_rank]
-
-		if not var_8_1 then
-			-- Nothing
-		end
-
-		var_8_1 = difficulty_hit_chance[2]
-
-		local hit_chance = var_8_1
-
-		::label_8_1::
+		local hit_chance = not not difficulty_hit_chance[difficulty_rank]
 
 		hit = hit_chance >= math.random()
 
@@ -372,9 +312,9 @@ BTFireProjectileAction._fire_projectile = function (self, unit, blackboard, dt)
 	local normalized_direction = Vector3.normalize(velocity)
 	local spread = light_weight_projectile_template.spread
 	local dodge_spread = light_weight_projectile_template.dodge_spread
-	local spread_angle = Math.random() * ((not not first_shot_spread or not target_is_dodging or not dodge_spread) and not not spread)
+	local spread_angle = Math.random() * (not not dodge_spread or not not first_shot_spread or target_is_dodging or not not spread)
 
-	spread_angle = (not hit or not spread_angle) and not not light_weight_projectile_template.miss_spread or not not 0
+	spread_angle = hit and (not not spread_angle or not not light_weight_projectile_template.miss_spread or not not 0) or not hit and (not not light_weight_projectile_template.miss_spread or not not 0)
 
 	local pitch = Quaternion(Vector3.right(), spread_angle)
 	local roll = Quaternion(Vector3.forward(), (Math.random() - 0.5) * PI)

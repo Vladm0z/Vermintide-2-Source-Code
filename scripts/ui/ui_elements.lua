@@ -31,31 +31,8 @@ UIElements.ButtonMenuSteps = {
 			content_check_function = function (content)
 				-- function 3
 				local button_hotspot = content.button_hotspot
-				local is_hover
 
-				if not button_hotspot.disabled and not button_hotspot.is_selected then
-					is_hover = button_hotspot.is_hover
-
-					if is_hover then
-						-- Nothing
-					end
-
-					if not (button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_hover = false
-
-				goto label_3_1
-
-				::label_3_0::
-
-				is_hover = true
-
-				::label_3_1::
-
-				return is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -76,31 +53,8 @@ UIElements.ButtonMenuSteps = {
 			content_check_function = function (content)
 				-- function 5
 				local button_hotspot = content.button_hotspot
-				local is_selected
 
-				if not button_hotspot.disabled then
-					is_selected = button_hotspot.is_selected
-
-					if is_selected then
-						-- Nothing
-					end
-
-					if not (button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_selected = false
-
-				goto label_5_1
-
-				::label_5_0::
-
-				is_selected = true
-
-				::label_5_1::
-
-				return is_selected
+				return not button_hotspot.disabled and not not button_hotspot.is_selected
 			end
 		},
 		{
@@ -132,31 +86,8 @@ UIElements.ButtonMenuSteps = {
 			content_check_function = function (content)
 				-- function 8
 				local button_hotspot = content.button_hotspot
-				local is_hover
 
-				if not button_hotspot.disabled and not button_hotspot.is_selected then
-					is_hover = button_hotspot.is_hover
-
-					if is_hover then
-						-- Nothing
-					end
-
-					if not (button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_hover = false
-
-				goto label_8_1
-
-				::label_8_0::
-
-				is_hover = true
-
-				::label_8_1::
-
-				return is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -166,31 +97,8 @@ UIElements.ButtonMenuSteps = {
 			content_check_function = function (content)
 				-- function 9
 				local button_hotspot = content.button_hotspot
-				local is_selected
 
-				if not button_hotspot.disabled then
-					is_selected = button_hotspot.is_selected
-
-					if not is_selected then
-						-- Nothing
-					end
-
-					if button_hotspot.is_clicked ~= 0 then
-						-- Nothing
-					end
-				end
-
-				is_selected = false
-
-				goto label_9_1
-
-				::label_9_0::
-
-				is_selected = true
-
-				::label_9_1::
-
-				return is_selected
+				return button_hotspot.is_clicked == 0
 			end
 		},
 		{
@@ -232,31 +140,8 @@ UIElements.ButtonMenuStepsWithTimer = {
 			content_check_function = function (content)
 				-- function 13
 				local button_hotspot = content.button_hotspot
-				local is_hover
 
-				if not button_hotspot.disabled and not button_hotspot.is_selected then
-					is_hover = button_hotspot.is_hover
-
-					if is_hover then
-						-- Nothing
-					end
-
-					if not (button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_hover = false
-
-				goto label_13_1
-
-				::label_13_0::
-
-				is_hover = true
-
-				::label_13_1::
-
-				return is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -275,31 +160,8 @@ UIElements.ButtonMenuStepsWithTimer = {
 			content_check_function = function (content)
 				-- function 15
 				local button_hotspot = content.button_hotspot
-				local is_selected
 
-				if not button_hotspot.disabled then
-					is_selected = button_hotspot.is_selected
-
-					if is_selected then
-						-- Nothing
-					end
-
-					if not (button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_selected = false
-
-				goto label_15_1
-
-				::label_15_0::
-
-				is_selected = true
-
-				::label_15_1::
-
-				return is_selected
+				return not button_hotspot.disabled and not not button_hotspot.is_selected
 			end
 		},
 		{
@@ -330,31 +192,8 @@ UIElements.ButtonMenuStepsWithTimer = {
 			content_check_function = function (content)
 				-- function 18
 				local button_hotspot = content.button_hotspot
-				local is_hover
 
-				if not button_hotspot.disabled and not button_hotspot.is_selected then
-					is_hover = button_hotspot.is_hover
-
-					if is_hover then
-						-- Nothing
-					end
-
-					if not (button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_hover = false
-
-				goto label_18_1
-
-				::label_18_0::
-
-				is_hover = true
-
-				::label_18_1::
-
-				return is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -364,31 +203,8 @@ UIElements.ButtonMenuStepsWithTimer = {
 			content_check_function = function (content)
 				-- function 19
 				local button_hotspot = content.button_hotspot
-				local is_selected
 
-				if not button_hotspot.disabled then
-					is_selected = button_hotspot.is_selected
-
-					if not is_selected then
-						-- Nothing
-					end
-
-					if button_hotspot.is_clicked ~= 0 then
-						-- Nothing
-					end
-				end
-
-				is_selected = false
-
-				goto label_19_1
-
-				::label_19_0::
-
-				is_selected = true
-
-				::label_19_1::
-
-				return is_selected
+				return button_hotspot.is_clicked == 0
 			end
 		},
 		{
@@ -420,31 +236,8 @@ UIElements.ButtonMenuStepsWithTimer = {
 			content_check_function = function (content)
 				-- function 22
 				local button_hotspot = content.button_hotspot
-				local is_hover
 
-				if not button_hotspot.disabled and not button_hotspot.is_selected then
-					is_hover = button_hotspot.is_hover
-
-					if is_hover then
-						-- Nothing
-					end
-
-					if not (button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_hover = false
-
-				goto label_22_1
-
-				::label_22_0::
-
-				is_hover = true
-
-				::label_22_1::
-
-				return is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -454,31 +247,8 @@ UIElements.ButtonMenuStepsWithTimer = {
 			content_check_function = function (content)
 				-- function 23
 				local button_hotspot = content.button_hotspot
-				local is_selected
 
-				if not button_hotspot.disabled then
-					is_selected = button_hotspot.is_selected
-
-					if not is_selected then
-						-- Nothing
-					end
-
-					if button_hotspot.is_clicked ~= 0 then
-						-- Nothing
-					end
-				end
-
-				is_selected = false
-
-				goto label_23_1
-
-				::label_23_0::
-
-				is_selected = true
-
-				::label_23_1::
-
-				return is_selected
+				return button_hotspot.is_clicked == 0
 			end
 		},
 		{
@@ -518,11 +288,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 26
 				local button_hotspot = content.button_hotspot
-				local is_hover = button_hotspot.is_hover
 
-				is_hover = not not is_hover and button_hotspot.is_clicked ~= 0
-
-				return is_hover
+				return not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -532,11 +299,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 27
 				local button_hotspot = content.button_hotspot
-				local is_hover = button_hotspot.is_hover
 
-				is_hover = not not is_hover and button_hotspot.is_clicked == 0
-
-				return is_hover
+				return not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -546,11 +310,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 28
 				local button_hotspot = content.button_hotspot
-				local toggled = content.toggled
 
-				toggled = not not toggled and not not not button_hotspot.is_hover
-
-				return toggled
+				return not not content.toggled
 			end
 		},
 		{
@@ -560,14 +321,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 29
 				local button_hotspot = content.button_hotspot
-				local toggled = content.toggled
 
-				if toggled then
-					toggled = button_hotspot.is_hover
-					toggled = not not toggled and button_hotspot.is_clicked ~= 0
-				end
-
-				return toggled
+				return not not content.toggled
 			end
 		},
 		{
@@ -588,21 +343,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 31
 				local button_hotspot = content.button_hotspot
-				local toggled
 
-				if not button_hotspot.is_hover then
-					toggled = content.toggled
-
-					if toggled then
-						-- Nothing
-					end
-				end
-
-				toggled = button_hotspot.is_clicked ~= 0
-
-				::label_31_0::
-
-				return toggled
+				return button_hotspot.is_hover and button_hotspot.is_clicked ~= 0 or not button_hotspot.is_hover and not not content.toggled
 			end
 		},
 		{
@@ -612,11 +354,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 32
 				local button_hotspot = content.button_hotspot
-				local is_hover = button_hotspot.is_hover
 
-				is_hover = not not is_hover and button_hotspot.is_clicked == 0
-
-				return is_hover
+				return not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -626,31 +365,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 33
 				local button_hotspot = content.button_hotspot
-				local is_hover
 
-				if not content.toggled then
-					is_hover = button_hotspot.is_hover
-
-					if is_hover then
-						-- Nothing
-					end
-
-					if button_hotspot.is_clicked == 0 then
-						-- Nothing
-					end
-				end
-
-				is_hover = false
-
-				goto label_33_1
-
-				::label_33_0::
-
-				is_hover = true
-
-				::label_33_1::
-
-				return is_hover
+				return not content.toggled and not not button_hotspot.is_hover
 			end
 		},
 		{
@@ -660,14 +376,8 @@ UIElements.ToggleIconButton = {
 			content_check_function = function (content)
 				-- function 34
 				local button_hotspot = content.button_hotspot
-				local toggled = content.toggled
 
-				if toggled then
-					toggled = button_hotspot.is_hover
-					toggled = not not toggled and button_hotspot.is_clicked == 0
-				end
-
-				return toggled
+				return not not content.toggled
 			end
 		}
 	}
@@ -1002,11 +712,7 @@ UIElements.Button3States = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 46
-				local is_hover = content.button_hotspot.is_hover
-
-				is_hover = not not is_hover and content.button_hotspot.is_clicked > 0
-
-				return is_hover
+				return not not content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -1048,31 +754,7 @@ UIElements.Button4States = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 50
-				local is_hover
-
-				if not content.disabled then
-					is_hover = content.button_hotspot.is_hover
-
-					if is_hover then
-						-- Nothing
-					end
-
-					if not (content.button_hotspot.is_clicked > 0) then
-						-- Nothing
-					end
-				end
-
-				is_hover = false
-
-				goto label_50_1
-
-				::label_50_0::
-
-				is_hover = true
-
-				::label_50_1::
-
-				return is_hover
+				return not content.disabled and not not content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -1080,7 +762,7 @@ UIElements.Button4States = {
 			texture_id = "texture_click_id",
 			content_check_function = function (content)
 				-- function 51
-				return (content.disabled or content.button_hotspot.is_clicked ~= 0) and not not content.button_hotspot.is_selected
+				return not not content.button_hotspot.is_selected
 			end
 		},
 		{
@@ -1129,11 +811,7 @@ UIElements.Button3StatesNoText = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 55
-				local is_hover = content.button_hotspot.is_hover
-
-				is_hover = not not is_hover and content.button_hotspot.is_clicked > 0
-
-				return is_hover
+				return not not content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -1180,11 +858,7 @@ UIElements.GamepadButton = function (button_type)
 				texture_id = "texture_hover_id",
 				content_check_function = function (content)
 					-- function 60
-					local is_hover = content.button_hotspot.is_hover
-
-					is_hover = not not is_hover and content.button_hotspot.is_clicked > 0
-
-					return is_hover
+					return not not content.button_hotspot.is_hover
 				end
 			},
 			{

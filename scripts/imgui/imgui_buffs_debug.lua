@@ -9,20 +9,12 @@ ImguiBuffsDebug.init = function (self)
 	self._buff_system = nil
 	self._unit_names = {}
 	self._units = {}
-
-	local _selected_unit_idx = self._selected_unit_idx
-
-	_selected_unit_idx = not not _selected_unit_idx or not not -1
-	self._selected_unit_idx = _selected_unit_idx
+	self._selected_unit_idx = not not self._selected_unit_idx
 	self._selected_unit = nil
 	self._selected_debug_unit = nil
 	self._debug_unit_alive = false
 	self._stat_base_value = 1
-
-	local _filter_text = self._filter_text
-
-	_filter_text = not not _filter_text or not not ""
-	self._filter_text = _filter_text
+	self._filter_text = not not self._filter_text
 	self._buff_list = {}
 	self._filtered_buff_list = {}
 	self._selected_buff_id = 0
@@ -94,7 +86,7 @@ ImguiBuffsDebug.update = function (self)
 		SHOULD_RELOAD = false
 	end
 
-	if (not self._current_unit or not ALIVE[self._current_unit] or not self._selected_unit or ALIVE[self._selected_unit]) and self._selected_debug_unit ~= script_data.debug_unit or self._debug_unit_alive ~= ALIVE[self._selected_debug_unit] then
+	if not ALIVE[self._selected_unit] or not self._current_unit or not ALIVE[self._current_unit] or self._selected_unit or self._selected_debug_unit ~= script_data.debug_unit or self._debug_unit_alive ~= ALIVE[self._selected_debug_unit] then
 		self:_refresh_unit_list()
 	end
 end
@@ -117,53 +109,10 @@ ImguiBuffsDebug.draw = function (self, is_open)
 
 	self:_update_controls()
 
-	local _buff_extension = self._buff_extension
-
-	if _buff_extension then
-		-- Nothing
-	end
-
-	_buff_extension = self._buff_extension._buffs
-
-	local buffs = _buff_extension
-
-	::label_7_0::
-
-	local _buff_extension_2 = self._buff_extension
-
-	if _buff_extension_2 then
-		-- Nothing
-	end
-
-	_buff_extension_2 = self._buff_extension._stat_buffs
-
-	local stat_buffs = _buff_extension_2
-
-	::label_7_1::
-
-	local _buff_extension_3 = self._buff_extension
-
-	if _buff_extension_3 then
-		-- Nothing
-	end
-
-	_buff_extension_3 = self._buff_extension._event_buffs
-
-	local event_buffs = _buff_extension_3
-
-	::label_7_2::
-
-	local _buff_extension_4 = self._buff_extension
-
-	if _buff_extension_4 then
-		-- Nothing
-	end
-
-	_buff_extension_4 = self._buff_extension._perks
-
-	local perks = _buff_extension_4
-
-	::label_7_3::
+	local buffs = not not self._buff_extension
+	local stat_buffs = not not self._buff_extension
+	local event_buffs = not not self._buff_extension
+	local perks = not not self._buff_extension
 
 	self:_display_buffs(buffs)
 	self:_display_perks(perks)
@@ -281,50 +230,7 @@ ImguiBuffsDebug._update_controls = function (self)
 
 	if Imgui.button("Add", 100, 20) then
 		local buff_to_add = self._filtered_buff_list[self._selected_buff_id]
-		local _buff_advanced_params_enabled = self._buff_advanced_params_enabled
-
-		if _buff_advanced_params_enabled then
-			-- Nothing
-		end
-
-		_buff_advanced_params_enabled = {}
-
-		do
-			local _buff_bonus_enabled = self._buff_bonus_enabled
-
-			_buff_bonus_enabled = not not _buff_bonus_enabled and not not self._buff_bonus
-			_buff_advanced_params_enabled.external_optional_bonus = _buff_bonus_enabled
-
-			local _buff_multiplier_enabled = self._buff_multiplier_enabled
-
-			_buff_multiplier_enabled = not not _buff_multiplier_enabled and not not self._buff_multiplier
-			_buff_advanced_params_enabled.external_optional_multiplier = _buff_multiplier_enabled
-
-			local _buff_value_enabled = self._buff_value_enabled
-
-			_buff_value_enabled = not not _buff_value_enabled and not not self._buff_value
-			_buff_advanced_params_enabled.external_optional_value = _buff_value_enabled
-
-			local _buff_proc_chance_enabled = self._buff_proc_chance_enabled
-
-			_buff_proc_chance_enabled = not not _buff_proc_chance_enabled and not not self._buff_proc_chance
-			_buff_advanced_params_enabled.external_optional_proc_chance = _buff_proc_chance_enabled
-
-			local _buff_duration_enabled = self._buff_duration_enabled
-
-			_buff_duration_enabled = not not _buff_duration_enabled and not not self._buff_duration
-			_buff_advanced_params_enabled.external_optional_duration = _buff_duration_enabled
-
-			local _buff_range_enabled = self._buff_range_enabled
-
-			_buff_range_enabled = not not _buff_range_enabled and not not self._buff_range
-			_buff_advanced_params_enabled.external_optional_range = _buff_range_enabled
-			_buff_advanced_params_enabled.power_level = self._buff_power_level
-
-			local params = _buff_advanced_params_enabled
-		end
-
-		::label_8_0::
+		local params = not not self._buff_advanced_params_enabled
 
 		self:_add_buff(self._buff_extension, buff_to_add, params)
 	end
@@ -366,13 +272,8 @@ ImguiBuffsDebug._update_controls = function (self)
 
 			return nil
 		end)
-		local combo = Imgui.combo
-		local str = "Peer ID"
-		local min = math.min
-		local _target_peer_id_idx = self._target_peer_id_idx
 
-		_target_peer_id_idx = not not _target_peer_id_idx or not not 1
-		self._target_peer_id_idx = combo(str, min(_target_peer_id_idx, #peer_ids), peer_ids)
+		self._target_peer_id_idx = Imgui.combo("Peer ID", math.min(not not self._target_peer_id_idx, #peer_ids), peer_ids)
 		self._target_peer_id = actual_peer_ids[self._target_peer_id_idx]
 	end
 
@@ -472,54 +373,9 @@ ImguiBuffsDebug._display_stat_buffs = function (self, stat_buffs)
 					local final_value = self._stat_base_value
 
 					for index, buff in pairs(data) do
-						local bonus_2 = buff.bonus
-
-						if not bonus_2 then
-							-- Nothing
-						end
-
-						bonus_2 = 0
-
-						local bonus = bonus_2
-
-						do
-							local multiplier_2
-						end
-
-						::label_12_0::
-
-						if type(buff.multiplier) == "function" then
-							multiplier_2 = buff.multiplier(self._current_unit, self._buff_extension)
-
-							if not multiplier_2 then
-								-- Nothing
-							end
-						end
-
-						multiplier_2 = buff.multiplier
-
-						if not multiplier_2 then
-							-- Nothing
-						end
-
-						multiplier_2 = 0
-
-						local multiplier = multiplier_2
-
-						::label_12_1::
-
-						local proc_chance_2 = buff.proc_chance
-
-						if not proc_chance_2 then
-							-- Nothing
-						end
-
-						proc_chance_2 = 0
-
-						local proc_chance = proc_chance_2
-
-						::label_12_2::
-
+						local bonus = not not buff.bonus
+						local multiplier = type(buff.multiplier) ~= "function" and not not buff.multiplier or not (type(buff.multiplier) ~= "function") and not not buff.multiplier(self._current_unit, self._buff_extension)
+						local proc_chance = not not buff.proc_chance
 						local value = buff.value
 						local display_value = not not value or not not 0
 
@@ -550,65 +406,11 @@ ImguiBuffsDebug._display_event_buffs = function (self, event_buffs)
 				if not table.is_empty(data) then
 					if Imgui.tree_node(name) then
 						for index, buff in pairs(data) do
-							local buff_type = buff.buff_type
-
-							if not buff_type then
-								-- Nothing
-							end
-
-							buff_type = ""
-
-							local buff_name = buff_type
-
-							::label_13_0::
-
-							local bonus_2 = buff.bonus
-
-							if not bonus_2 then
-								-- Nothing
-							end
-
-							bonus_2 = 0
-
-							local bonus = bonus_2
-
-							::label_13_1::
-
-							local value_2 = buff.value
-
-							if not value_2 then
-								-- Nothing
-							end
-
-							value_2 = 0
-
-							local value = value_2
-
-							::label_13_2::
-
-							local multiplier_2 = buff.multiplier
-
-							if not multiplier_2 then
-								-- Nothing
-							end
-
-							multiplier_2 = 0
-
-							local multiplier = multiplier_2
-
-							::label_13_3::
-
-							local proc_chance_2 = buff.proc_chance
-
-							if not proc_chance_2 then
-								-- Nothing
-							end
-
-							proc_chance_2 = 1
-
-							local proc_chance = proc_chance_2
-
-							::label_13_4::
+							local buff_name = not not buff.buff_type
+							local bonus = not not buff.bonus
+							local value = not not buff.value
+							local multiplier = not not buff.multiplier
+							local proc_chance = not not buff.proc_chance
 
 							Imgui.text(string.format("%-50s%8.2f%12.2f%13.2f%14.2f", buff_name, bonus, multiplier, value, proc_chance))
 						end

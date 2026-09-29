@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_pack_master.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 12,
 	proximity_system_check = true,
 	walk_speed = 2.4,
@@ -80,161 +80,155 @@ local tbl = {
 		200,
 		200,
 		0
-	}
-}
-local setting = Development.setting("disable_pack_master")
+	},
+	disabled = not not Development.setting("disable_pack_master"),
+	status_effect_settings = {
+		category = "small",
+		ignored_statuses = table.set({
+			StatusEffectNames.burning_warpfire
+		})
+	},
+	hitzone_multiplier_types = {
+		head = "headshot"
+	},
+	hit_zones = {
+		head = {
+			prio = 1,
+			actors = {
+				"c_head"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		neck = {
+			prio = 1,
+			actors = {
+				"c_neck"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		torso = {
+			prio = 2,
+			actors = {
+				"c_spine2",
+				"c_spine",
+				"c_hips",
+				"c_leftshoulder",
+				"c_rightshoulder"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_arm = {
+			prio = 3,
+			actors = {
+				"c_leftarm",
+				"c_leftforearm",
+				"c_lefthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		right_arm = {
+			prio = 3,
+			actors = {
+				"c_rightarm",
+				"c_rightforearm",
+				"c_righthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_leg = {
+			prio = 3,
+			actors = {
+				"c_leftupleg",
+				"c_leftleg",
+				"c_leftfoot",
+				"c_lefttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		right_leg = {
+			prio = 3,
+			actors = {
+				"c_rightupleg",
+				"c_rightleg",
+				"c_rightfoot",
+				"c_righttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		tail = {
+			prio = 3,
+			actors = {
+				"c_tail1",
+				"c_tail2",
+				"c_tail3",
+				"c_tail4",
+				"c_tail5",
+				"c_tail6"
+			},
+			push_actors = {
+				"j_hips"
+			}
+		},
+		aux = {
+			prio = 4,
+			actors = {
+				"c_backpack"
+			},
+			push_actors = {
+				"j_backpack"
+			}
+		},
+		full = {
+			prio = 5,
+			actors = {}
+		},
+		afro = {
+			prio = 6,
+			actors = {
+				"c_afro"
+			}
+		}
+	},
+	allowed_layers = {
+		planks = 1.5,
+		ledges = 1.5,
+		bot_ratling_gun_fire = 15,
+		jumps = 1.5,
+		destructible_wall = 0,
+		temporary_wall = 0,
+		ledges_with_fence = 1.5,
+		doors = 1.5,
+		teleporters = 5,
+		bot_poison_wind = 15,
+		fire_grenade = 15
+	},
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
+		-- function 1
+		local blackboard = BLACKBOARDS[unit]
 
-setting = not not setting or not not false
-tbl.disabled = setting
-tbl.status_effect_settings = {
-	category = "small",
-	ignored_statuses = table.set({
-		StatusEffectNames.burning_warpfire
-	})
+		QuestSettings.check_pack_master_kill_abducting_ally(blackboard, killer_unit)
+	end
 }
-tbl.hitzone_multiplier_types = {
-	head = "headshot"
-}
-tbl.hit_zones = {
-	head = {
-		prio = 1,
-		actors = {
-			"c_head"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	neck = {
-		prio = 1,
-		actors = {
-			"c_neck"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	torso = {
-		prio = 2,
-		actors = {
-			"c_spine2",
-			"c_spine",
-			"c_hips",
-			"c_leftshoulder",
-			"c_rightshoulder"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_arm = {
-		prio = 3,
-		actors = {
-			"c_leftarm",
-			"c_leftforearm",
-			"c_lefthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	right_arm = {
-		prio = 3,
-		actors = {
-			"c_rightarm",
-			"c_rightforearm",
-			"c_righthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_leg = {
-		prio = 3,
-		actors = {
-			"c_leftupleg",
-			"c_leftleg",
-			"c_leftfoot",
-			"c_lefttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	right_leg = {
-		prio = 3,
-		actors = {
-			"c_rightupleg",
-			"c_rightleg",
-			"c_rightfoot",
-			"c_righttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	tail = {
-		prio = 3,
-		actors = {
-			"c_tail1",
-			"c_tail2",
-			"c_tail3",
-			"c_tail4",
-			"c_tail5",
-			"c_tail6"
-		},
-		push_actors = {
-			"j_hips"
-		}
-	},
-	aux = {
-		prio = 4,
-		actors = {
-			"c_backpack"
-		},
-		push_actors = {
-			"j_backpack"
-		}
-	},
-	full = {
-		prio = 5,
-		actors = {}
-	},
-	afro = {
-		prio = 6,
-		actors = {
-			"c_afro"
-		}
-	}
-}
-tbl.allowed_layers = {
-	planks = 1.5,
-	ledges = 1.5,
-	bot_ratling_gun_fire = 15,
-	jumps = 1.5,
-	destructible_wall = 0,
-	temporary_wall = 0,
-	ledges_with_fence = 1.5,
-	doors = 1.5,
-	teleporters = 5,
-	bot_poison_wind = 15,
-	fire_grenade = 15
-}
-
-tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
-	-- function 1
-	local blackboard = BLACKBOARDS[unit]
-
-	QuestSettings.check_pack_master_kill_abducting_ally(blackboard, killer_unit)
-end
-
-local breed_data = tbl
 
 Breeds.skaven_pack_master = table.create_copy(Breeds.skaven_pack_master, breed_data)
 

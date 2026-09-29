@@ -1,9 +1,6 @@
 -- chunkname: @scripts/utils/keystroke_helper.lua
 
-local KeystrokeHelper = KeystrokeHelper
-
-KeystrokeHelper = not not KeystrokeHelper or not not {}
-KeystrokeHelper = KeystrokeHelper
+KeystrokeHelper = not not KeystrokeHelper
 
 KeystrokeHelper.num_utf8chars = function (text)
 	-- function 1
@@ -88,12 +85,7 @@ KeystrokeHelper[Keyboard.UP] = nil
 KeystrokeHelper[Keyboard.DOWN] = nil
 KeystrokeHelper[Keyboard.INSERT] = function (text_table, index, mode)
 	-- function 7
-	local var_7_0 = index
-	local flag
-
-	flag = (mode ~= "insert" or not "overwrite") and not not "insert"
-
-	return var_7_0, flag
+	return index, mode ~= "insert" and not not "insert" or not (mode ~= "insert") and not not "overwrite"
 end
 KeystrokeHelper[Keyboard.HOME] = function (text_table, index, mode)
 	-- function 8
@@ -132,17 +124,7 @@ local clipboard_table = {}
 
 KeystrokeHelper[Keyboard.F9] = function (text_table, index, mode, max_length)
 	-- function 12
-	local get = Clipboard.get()
-
-	if not get then
-		-- Nothing
-	end
-
-	get = ""
-
-	local clipboard = get
-
-	::label_12_0::
+	local clipboard = not not Clipboard.get()
 
 	if not Utf8.valid(clipboard) then
 		clipboard = string.gsub(clipboard, "[^ -~]+", "")

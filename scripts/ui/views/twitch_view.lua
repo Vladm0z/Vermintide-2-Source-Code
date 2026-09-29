@@ -318,19 +318,7 @@ end
 
 TwitchView._exit = function (self, return_to_game)
 	-- function 17
-	local str
-
-	if return_to_game then
-		str = "exit_menu"
-
-		goto label_17_0
-	end
-
-	str = "ingame_menu"
-
-	local exit_transition = str
-
-	::label_17_0::
+	local exit_transition = return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu"
 
 	self._ingame_ui:handle_transition(exit_transition)
 end

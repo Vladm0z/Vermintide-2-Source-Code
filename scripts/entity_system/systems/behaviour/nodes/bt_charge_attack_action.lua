@@ -40,17 +40,7 @@ BTChargeAttackAction.enter = function (self, unit, blackboard, t)
 	local target_unit_status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
 	if target_unit_status_extension then
-		local num_charges_targeting_player_2 = target_unit_status_extension.num_charges_targeting_player
-
-		if not num_charges_targeting_player_2 then
-			-- Nothing
-		end
-
-		num_charges_targeting_player_2 = 0
-
-		local num_charges_targeting_player = num_charges_targeting_player_2
-
-		::label_3_0::
+		local num_charges_targeting_player = not not target_unit_status_extension.num_charges_targeting_player
 
 		num_charges_targeting_player = num_charges_targeting_player + 1
 		target_unit_status_extension.num_charges_targeting_player = num_charges_targeting_player
@@ -150,17 +140,7 @@ BTChargeAttackAction.leave = function (self, unit, blackboard, t, reason, destro
 	local target_unit_status_extension = ScriptUnit.has_extension(blackboard.attacking_target, "status_system")
 
 	if target_unit_status_extension then
-		local num_charges_targeting_player_2 = target_unit_status_extension.num_charges_targeting_player
-
-		if not num_charges_targeting_player_2 then
-			-- Nothing
-		end
-
-		num_charges_targeting_player_2 = 0
-
-		local num_charges_targeting_player = num_charges_targeting_player_2
-
-		::label_4_0::
+		local num_charges_targeting_player = not not target_unit_status_extension.num_charges_targeting_player
 
 		num_charges_targeting_player = num_charges_targeting_player - 1
 		target_unit_status_extension.num_charges_targeting_player = num_charges_targeting_player
@@ -168,7 +148,7 @@ BTChargeAttackAction.leave = function (self, unit, blackboard, t, reason, destro
 		StatusUtils.set_charged_network(blackboard.attacking_target, false)
 	end
 
-	if (not blackboard.stagger or blackboard.charge_state ~= "charging") and blackboard.charge_state == "approaching" or blackboard.charge_state == "lunge" and not blackboard.anim_cb_disable_charge_collision then
+	if blackboard.stagger and (blackboard.charge_state == "charging" or blackboard.charge_state == "approaching" or blackboard.charge_state == "lunge" and not blackboard.anim_cb_disable_charge_collision) or not blackboard.stagger and (blackboard.charge_state == "approaching" or blackboard.charge_state == "lunge" and not blackboard.anim_cb_disable_charge_collision) then
 		blackboard.charge_stagger = true
 	end
 
@@ -286,17 +266,7 @@ BTChargeAttackAction._start_approaching = function (self, unit, blackboard)
 	self:_set_leaning_enabled(unit, blackboard, true)
 
 	local navigation_extension = blackboard.navigation_extension
-	local current_charge_speed = blackboard.current_charge_speed
-
-	if not current_charge_speed then
-		-- Nothing
-	end
-
-	current_charge_speed = action.charge_speed_min
-
-	local speed = current_charge_speed
-
-	::label_7_0::
+	local speed = not not blackboard.current_charge_speed
 
 	navigation_extension:set_enabled(true)
 	navigation_extension:set_max_speed(speed)
@@ -377,22 +347,7 @@ BTChargeAttackAction._start_impact = function (self, unit, blackboard, hit_targe
 		locomotion_extension:set_wanted_velocity(Vector3.zero())
 		locomotion_extension:set_rotation_speed(nil)
 	elseif hit_target or target_avoided_attack then
-		local charge_blocked_animation
-
-		if hit_target_blocked then
-			charge_blocked_animation = action.charge_blocked_animation
-
-			if not charge_blocked_animation then
-				-- Nothing
-			end
-		end
-
-		charge_blocked_animation = action.impact_animation
-
-		local wanted_animation = charge_blocked_animation
-
-		::label_9_0::
-
+		local wanted_animation = hit_target_blocked and not not action.charge_blocked_animation or not hit_target_blocked and not not action.impact_animation
 		local impact_animation = randomize(wanted_animation)
 
 		Managers.state.network:anim_event(unit, impact_animation)
@@ -579,13 +534,8 @@ BTChargeAttackAction._charged_at_player = function (self, unit, hit_unit, blackb
 		local current_velocity = blackboard.locomotion_extension:current_velocity()
 		local magnitude = Vector3.length(current_velocity)
 		local velocity = magnitude * Vector3.normalize(to_hit_unit)
-		local set_z = Vector3.set_z
-		local var_14_1 = velocity
-		local catapult_force_z = action.catapult_force_z
 
-		catapult_force_z = not not catapult_force_z or not not 3
-
-		set_z(var_14_1, catapult_force_z)
+		Vector3.set_z(velocity, not not action.catapult_force_z)
 		StatusUtils.set_catapulted_network(hit_unit, true, velocity)
 	else
 		StatusUtils.set_charged_network(hit_unit, true)
@@ -620,14 +570,7 @@ BTChargeAttackAction._hit_player = function (self, unit, blackboard, hit_unit, a
 	local hit_attacking_target = hit_unit == blackboard.attacking_target
 	local hit_unit_status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 	local blocked = not action.unblockable_by_normal_blocks and not not DamageUtils.check_block(unit, hit_unit, action.fatigue_type)
-	local check_ranged_block = DamageUtils.check_ranged_block
-	local var_16_1 = unit
-	local var_16_2 = hit_unit
-	local shield_blocked_fatigue_type = action.shield_blocked_fatigue_type
-
-	shield_blocked_fatigue_type = not not shield_blocked_fatigue_type or not not "ogre_shove"
-
-	local blocked_with_shield = check_ranged_block(var_16_1, var_16_2, shield_blocked_fatigue_type)
+	local blocked_with_shield = DamageUtils.check_ranged_block(unit, hit_unit, not not action.shield_blocked_fatigue_type)
 
 	if hit_attacking_target and not blocked_with_shield and not blocked then
 		AiUtils.damage_target(hit_unit, unit, action, action.damage)
@@ -653,17 +596,7 @@ BTChargeAttackAction._hit_ai = function (self, unit, hit_unit, action, blackboar
 	local push_data = action.push_ai
 	local immune_breeds = action.immune_breeds
 	local hit_unit_blackboard = BLACKBOARDS[hit_unit]
-	local breed = hit_unit_blackboard.breed
-
-	if breed then
-		-- Nothing
-	end
-
-	breed = hit_unit_blackboard.breed.name
-
-	local breed_name = breed
-
-	::label_17_0::
+	local breed_name = not not hit_unit_blackboard.breed
 
 	if immune_breeds and immune_breeds[breed_name] then
 		return
@@ -687,17 +620,7 @@ BTChargeAttackAction._hit_ai = function (self, unit, hit_unit, action, blackboar
 			AiUtils.stagger(hit_unit, hit_unit_blackboard, unit, push_direction, push_data.stagger_distance, stagger_type, stagger_duration, nil, t, nil, nil, nil, true)
 
 			if not DEDICATED_SERVER and breed_name == "chaos_warrior" then
-				local breed_2 = blackboard.breed
-
-				if breed_2 then
-					-- Nothing
-				end
-
-				breed_2 = blackboard.breed.name
-
-				local attacker_name = breed_2
-
-				::label_17_1::
+				local attacker_name = not not blackboard.breed
 
 				if attacker_name == "beastmen_bestigor" then
 					local stat_name = "scorpion_bestigor_charge_chaos_warrior"
@@ -853,10 +776,7 @@ BTChargeAttackAction._run_approaching = function (self, unit, blackboard, t, dt)
 			local success, z = GwNavQueries.triangle_from_position(nav_world, wanted_position, above, below)
 
 			if success then
-				local stored_position = blackboard.stored_position
-
-				stored_position = not not stored_position or not not Vector3Box()
-				blackboard.stored_position = stored_position
+				blackboard.stored_position = not not blackboard.stored_position
 
 				local pos_on_nav_mesh = Vector3(wanted_position.x, wanted_position.y, z)
 
@@ -899,18 +819,7 @@ BTChargeAttackAction._run_approaching = function (self, unit, blackboard, t, dt)
 	local wanted_slowdown_percentage = self:_get_turn_slowdown_percentage(unit, blackboard, dt, nav_path_direction)
 
 	if wanted_slowdown_percentage then
-		local current_charge_speed = blackboard.current_charge_speed
-
-		if not current_charge_speed then
-			-- Nothing
-		end
-
-		current_charge_speed = blackboard.action.charge_speed_min
-
-		local max_speed = current_charge_speed
-
-		::label_22_0::
-
+		local max_speed = not not blackboard.current_charge_speed
 		local new_max_speed = max_speed * wanted_slowdown_percentage
 
 		navigation_extension:set_max_speed(new_max_speed)
@@ -1090,17 +999,7 @@ BTChargeAttackAction._run_lunge = function (self, unit, blackboard, lunge_data, 
 			local target_dodged = not not target_status_ext and not not target_status_ext:get_is_dodging()
 
 			if target_dodged then
-				local dodge_past_sound_event = action.dodge_past_sound_event
-
-				if not dodge_past_sound_event then
-					-- Nothing
-				end
-
-				dodge_past_sound_event = "Play_generic_pushed_impact_small"
-
-				local push_sound_event = dodge_past_sound_event
-
-				::label_24_0::
+				local push_sound_event = not not action.dodge_past_sound_event
 
 				Managers.state.entity:system("audio_system"):play_audio_unit_event(push_sound_event, unit)
 
@@ -1131,21 +1030,7 @@ BTChargeAttackAction._run_impact = function (self, unit, blackboard, t, dt)
 		end
 	end
 
-	local hit_target_slow_down_speed
-
-	if blackboard.hit_target then
-		hit_target_slow_down_speed = blackboard.action.hit_target_slow_down_speed
-
-		if not hit_target_slow_down_speed then
-			-- Nothing
-		end
-	end
-
-	hit_target_slow_down_speed = blackboard.action.slow_down_speed
-
-	local slow_down_speed = hit_target_slow_down_speed
-
-	::label_25_0::
+	local slow_down_speed = blackboard.hit_target and not not blackboard.action.hit_target_slow_down_speed or not blackboard.hit_target and not not blackboard.action.slow_down_speed
 
 	self:_slow_down(unit, blackboard, slow_down_speed, t, dt)
 end
@@ -1181,18 +1066,7 @@ BTChargeAttackAction._select_charging_animation_and_duration = function (self, a
 	local distance_thresholds = action.charging_distance_thresholds
 	local tracking_durations = action.tracking_durations
 	local self_pos = POSITION_LOOKUP[unit]
-	local var_28_0 = POSITION_LOOKUP[target_unit]
-
-	if not var_28_0 then
-		-- Nothing
-	end
-
-	var_28_0 = Unit.world_position(unit, 0)
-
-	local target_pos = var_28_0
-
-	::label_28_0::
-
+	local target_pos = not not POSITION_LOOKUP[target_unit]
 	local flat_distance = Vector3.distance(Vector3.flat(self_pos), Vector3.flat(target_pos))
 	local distance_identifier = self:_pick_distance_identifier(distance_thresholds, flat_distance)
 

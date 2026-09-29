@@ -86,11 +86,7 @@ MoodHandler.parse_environment_settings = function (self, environment)
 							name = var_name,
 							value = var_value
 						}
-
-						local var_3_0 = type_map[var_name]
-
-						var_3_0 = not not var_3_0 or not not var_type
-						type_map[var_name] = var_3_0
+						type_map[var_name] = not not type_map[var_name]
 						var_n = var_n + 1
 					end
 				end
@@ -107,7 +103,7 @@ MoodHandler._set_active_mood = function (self, next_mood)
 		return
 	end
 
-	fassert(not not next_mood and next_mood == "default" or not not MoodSettings[next_mood], "Mood %q not defined in MoodSettings.lua", next_mood)
+	fassert(not not next_mood and (next_mood == "default" or not not MoodSettings[next_mood]), "Mood %q not defined in MoodSettings.lua", next_mood)
 
 	local current_mood = self.current_mood
 

@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dialogue_settings.lua
 
-local DialogueSettings = DialogueSettings
-
-DialogueSettings = not not DialogueSettings or not not {}
-DialogueSettings = DialogueSettings
+DialogueSettings = not not DialogueSettings
 DialogueSettings.auto_load_files = {
 	"dialogues/generated/witch_hunter_honduras",
 	"dialogues/generated/bright_wizard_honduras",

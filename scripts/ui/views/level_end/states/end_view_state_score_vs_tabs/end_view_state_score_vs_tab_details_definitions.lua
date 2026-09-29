@@ -1013,44 +1013,15 @@ local function create_stats(scenegraph_id, fields, optional_font_size, offset, i
 	local internal_score_style = table.clone(score_style)
 
 	internal_score_style.font_size = not not optional_font_size or not not internal_score_style.font_size
-
-	local tbl
-
-	if is_me then
-		tbl = {
-			255,
-			177,
-			144,
-			31
-		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = internal_score_style.text_color
-
-	::label_3_0::
-
-	internal_score_style.text_color = tbl
+	internal_score_style.text_color = is_me and not not {
+		255,
+		177,
+		144,
+		31
+	} or not is_me and not not internal_score_style.text_color
 
 	if optional_team then
-		local get_color_table_with_alpha
-
-		if optional_team == "local_team" then
-			get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-			if not get_color_table_with_alpha then
-				-- Nothing
-			end
-		end
-
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-		::label_3_1::
-
-		internal_score_style.text_color = get_color_table_with_alpha
+		internal_score_style.text_color = optional_team ~= "local_team" and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (optional_team ~= "local_team") and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 	end
 
 	local widget = {
@@ -1116,7 +1087,7 @@ local function create_stats(scenegraph_id, fields, optional_font_size, offset, i
 		content[id] = tostring(value)
 		content.highscore_marker = "scoreboard_marker"
 		content.offset = offset
-		content[id .. "_is_highscore"] = (skip_highscores or not highscores or highscores[i] ~= value or not (value > 0)) and not not false
+		content[id .. "_is_highscore"] = not not false
 		style[id] = table.clone(internal_score_style)
 		style[id].offset[1] = (i - 1) * cell_size[1] + padding
 		style[id].size = {
@@ -1195,27 +1166,12 @@ local function create_title(scenegraph_id, title, optional_font_size, offset, is
 	local internal_title_style = table.clone(title_style)
 
 	internal_title_style.font_size = not not optional_font_size or not not internal_title_style.font_size
-
-	local tbl
-
-	if is_me then
-		tbl = {
-			255,
-			177,
-			144,
-			31
-		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = team_color
-
-	::label_6_0::
-
-	internal_title_style.text_color = tbl
+	internal_title_style.text_color = is_me and not not {
+		255,
+		177,
+		144,
+		31
+	} or not is_me and not not team_color
 	internal_title_style.size = size
 
 	local widget = {
@@ -1267,94 +1223,15 @@ end
 local function create_team_title(team, local_team_name, opponent_team_name)
 	-- function 7
 	local is_local_team = team == "local_team"
-	local str
-
-	if is_local_team then
-		str = "local_title"
-
-		goto label_7_0
-	end
-
-	str = "opponent_title"
-
-	local scenegraph_id = str
-
-	::label_7_0::
-
+	local scenegraph_id = is_local_team and not not "local_title" or not is_local_team and not not "opponent_title"
 	local scenegraph_data = scenegraph_definition[scenegraph_id]
 	local size = table.clone(scenegraph_data.size)
-	local team_name = (not is_local_team or not local_team_name) and not not opponent_team_name
+	local team_name = is_local_team and (not not local_team_name or not not opponent_team_name) or not is_local_team and not not opponent_team_name
 	local team_settings = UISettings.teams_ui_assets[team_name]
-	local var_7_1
-
-	if is_local_team then
-		var_7_1 = local_team_color
-
-		if not var_7_1 then
-			-- Nothing
-		end
-	end
-
-	var_7_1 = opponent_team_color
-
-	local team_color = var_7_1
-
-	do
-		local var_7_2
-	end
-
-	::label_7_1::
-
-	if is_local_team then
-		var_7_2 = local_team_color_light
-
-		if not var_7_2 then
-			-- Nothing
-		end
-	end
-
-	var_7_2 = opponent_team_color_light
-
-	local team_color_light = var_7_2
-
-	do
-		local var_7_3
-	end
-
-	::label_7_2::
-
-	if is_local_team then
-		var_7_3 = local_team_color_dark
-
-		if not var_7_3 then
-			-- Nothing
-		end
-	end
-
-	var_7_3 = opponent_team_color_dark
-
-	local team_color_dark = var_7_3
-
-	do
-		local get_color_table_with_alpha
-	end
-
-	::label_7_3::
-
-	if is_local_team then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	local title_color = get_color_table_with_alpha
-
-	::label_7_4::
-
+	local team_color = is_local_team and not not local_team_color or not is_local_team and not not opponent_team_color
+	local team_color_light = is_local_team and not not local_team_color_light or not is_local_team and not not opponent_team_color_light
+	local team_color_dark = is_local_team and not not local_team_color_dark or not is_local_team and not not opponent_team_color_dark
+	local title_color = is_local_team and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_local_team and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local internal_title_style = table.clone(team_title_style)
 
 	internal_title_style.size = size
@@ -1410,11 +1287,7 @@ local function create_team_title(team, local_team_name, opponent_team_name)
 		pass_type = "text",
 		text_id = "team_type"
 	}
-
-	local flag
-
-	flag = (not is_local_team or not "vs_lobby_your_team") and not not "vs_lobby_enemy_team"
-	content.team_type = flag
+	content.team_type = is_local_team and not not "vs_lobby_your_team" or not is_local_team and not not "vs_lobby_enemy_team"
 
 	local internal_type_style = table.clone(team_type_style)
 
@@ -1477,19 +1350,7 @@ local widget_definitions = {
 
 local function create_winner_icon(winning_team)
 	-- function 8
-	local str
-
-	if winning_team == "local_team" then
-		str = "local_winner_icon"
-
-		goto label_8_0
-	end
-
-	str = "opponent_winner_icon"
-
-	local scenegraph_id = str
-
-	::label_8_0::
+	local scenegraph_id = winning_team ~= "local_team" and not not "opponent_winner_icon" or not (winning_team ~= "local_team") and not not "local_winner_icon"
 
 	return {
 		element = {
@@ -1649,12 +1510,7 @@ local function create_fields(anchor, num_fields, base_name, widgets, even_field_
 			0,
 			(i - 1) * -field_size[2]
 		}
-		local color = (i % 2 ~= 0 or not even_field_color) and not not uneven_field_color or not not {
-			128,
-			0,
-			0,
-			0
-		}
+		local color = i % 2 ~= 0 or not even_field_color
 
 		widgets[base_name .. "_" .. i] = UIWidgets.create_simple_rect(anchor, color, nil, offset)
 	end

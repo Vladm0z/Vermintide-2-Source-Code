@@ -940,11 +940,7 @@ end
 
 local function connecting_content_check_function(content)
 	-- function 12
-	local is_connecting = Managers.twitch:is_connecting()
-
-	is_connecting = not not is_connecting or not not not Managers.twitch:is_connected()
-
-	return is_connecting
+	return not not Managers.twitch:is_connecting()
 end
 
 local streaming_desc_str = "start_game_window_twitch_connect_description"

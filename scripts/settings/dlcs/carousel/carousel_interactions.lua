@@ -329,12 +329,7 @@ InteractionDefinitions.carousel_start_versus = {
 		end
 	}
 }
-
-local InteractionDefinitions = InteractionDefinitions
-local carousel_door_transition = InteractionDefinitions.carousel_door_transition
-
-carousel_door_transition = not not carousel_door_transition or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions.carousel_door_transition = carousel_door_transition
+InteractionDefinitions.carousel_door_transition = not not InteractionDefinitions.carousel_door_transition
 InteractionDefinitions.carousel_door_transition.config.swap_to_3p = false
 
 InteractionDefinitions.carousel_door_transition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -368,11 +363,7 @@ InteractionDefinitions.carousel_door_transition.client.can_interact = function (
 	return not is_game_matchmaking and not not not is_vote_in_progress
 end
 
-local InteractionDefinitions_2 = InteractionDefinitions
-local versus_map_access = InteractionDefinitions.versus_map_access
-
-versus_map_access = not not versus_map_access or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions_2.versus_map_access = versus_map_access
+InteractionDefinitions.versus_map_access = not not InteractionDefinitions.versus_map_access
 InteractionDefinitions.versus_map_access.config.swap_to_3p = false
 
 InteractionDefinitions.versus_map_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)

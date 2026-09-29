@@ -64,17 +64,7 @@ local death_reactions = {
 						local item_name = health_extension.item_name
 						local last_damage_data = health_extension.last_damage_data
 						local network_manager = Managers.state.network
-						local game_object_or_level_unit = network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
-
-						if not game_object_or_level_unit then
-							-- Nothing
-						end
-
-						game_object_or_level_unit = unit
-
-						local last_attacker_unit = game_object_or_level_unit
-
-						::label_3_0::
+						local last_attacker_unit = not not network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
 
 						Managers.state.entity:system("area_damage_system"):create_explosion(last_attacker_unit, position, rotation, explosion_template, 1, item_name, nil, false)
 

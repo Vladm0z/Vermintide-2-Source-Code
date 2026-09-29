@@ -10,38 +10,11 @@ WarpfireThrowerStateWalking.on_enter = function (self, unit, input, dt, context,
 
 	self.blackboard = BLACKBOARDS[self._unit]
 
-	local warpfire_data = self.blackboard.warpfire_data
-
-	if not warpfire_data then
-		-- Nothing
-	end
-
-	warpfire_data = {
-		aim_rotation_override_speed_multiplier = 1.5,
-		aim_rotation_override_distance = 3,
-		warpfire_follow_target_speed = 0.75,
-		muzzle_node = "p_fx",
-		buff_name_close = "vs_warpfire_thrower_short_distance_damage",
-		buff_name_far = "vs_warpfire_thrower_long_distance_damage",
-		aim_rotation_dodge_multipler = 0.15,
-		attack_range = breed.shoot_warpfire_attack_range,
-		close_attack_range = breed.shoot_warpfire_close_attack_range,
-		close_attack_cooldown = breed.shoot_warpfire_close_attack_cooldown,
-		hit_radius = breed.shoot_warpfire_close_attack_hit_radius,
-		target_position = Vector3Box(0, 0, 0)
-	}
-
-	local data = warpfire_data
-
-	::label_1_0::
+	local data = not not self.blackboard.warpfire_data
 
 	data.is_firing = false
 	self._is_firing = false
-
-	local peer_id = data.peer_id
-
-	peer_id = not not peer_id or not not Network.peer_id()
-	data.peer_id = peer_id
+	data.peer_id = not not data.peer_id
 	self.blackboard.warpfire_data = data
 	self._fire_ability_id = self._career_extension:ability_id("fire")
 	self._left_wpn_particle_node_name = "p_fx"

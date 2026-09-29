@@ -419,20 +419,10 @@ local subtitles_background_color_preview = Colors.get_color_table_with_alpha("bl
 local function _update_slider_image_size(content, style, options_view)
 	-- function 1
 	local text_padding = 5
-	local slider_image_base_size_x = content.slider_image_base_size_x
 
-	slider_image_base_size_x = not not slider_image_base_size_x or not not style.slider_image.size[1]
-	content.slider_image_base_size_x = slider_image_base_size_x
-
-	local slider_image_base_offset_x = content.slider_image_base_offset_x
-
-	slider_image_base_offset_x = not not slider_image_base_offset_x or not not style.slider_image.offset[1]
-	content.slider_image_base_offset_x = slider_image_base_offset_x
-
-	local slider_image_text_base_offset_x = content.slider_image_text_base_offset_x
-
-	slider_image_text_base_offset_x = not not slider_image_text_base_offset_x or not not style.slider_image_text.offset[1]
-	content.slider_image_text_base_offset_x = slider_image_text_base_offset_x
+	content.slider_image_base_size_x = not not content.slider_image_base_size_x
+	content.slider_image_base_offset_x = not not content.slider_image_base_offset_x
+	content.slider_image_text_base_offset_x = not not content.slider_image_text_base_offset_x
 
 	local text = content.slider_image_text
 	local text_width = UIUtils.get_text_width(options_view.ui_renderer, style.slider_image_text, text)
@@ -1237,17 +1227,7 @@ local function set_function(self, user_setting_name, widget_type, content, style
 		new_value = options_values[current_selection]
 	end
 
-	local setting_type_2 = content.definition.setting_type
-
-	if not setting_type_2 then
-		-- Nothing
-	end
-
-	setting_type_2 = "user_settings"
-
-	local setting_type = setting_type_2
-
-	::label_8_0::
+	local setting_type = not not content.definition.setting_type
 
 	self:_set_setting(setting_type, user_setting_name, new_value)
 	value_set_function(content, style, new_value, self)
@@ -1255,18 +1235,7 @@ end
 
 local function setup_function(self, user_setting_name, widget_type, options, definition)
 	-- function 9
-	local setting_type_2 = definition.setting_type
-
-	if not setting_type_2 then
-		-- Nothing
-	end
-
-	setting_type_2 = "user_settings"
-
-	local setting_type = setting_type_2
-
-	::label_9_0::
-
+	local setting_type = not not definition.setting_type
 	local default_value = DefaultUserSettings.get(setting_type, user_setting_name)
 	local current_value
 
@@ -1312,18 +1281,7 @@ end
 
 local function saved_value_function(self, user_setting_name, widget_type, widget, saved_function)
 	-- function 10
-	local setting_type_2 = widget.content.definition.setting_type
-
-	if not setting_type_2 then
-		-- Nothing
-	end
-
-	setting_type_2 = "user_settings"
-
-	local setting_type = setting_type_2
-
-	::label_10_0::
-
+	local setting_type = not not widget.content.definition.setting_type
 	local saved_value = self:_get_setting(setting_type, user_setting_name)
 	local default_value = DefaultUserSettings.get(setting_type, user_setting_name)
 
@@ -1341,10 +1299,7 @@ local function saved_value_function(self, user_setting_name, widget_type, widget
 		content.internal_value = get_slider_value(min, max, saved_value)
 		content.value = saved_value
 	else
-		local find = table.find(content.options_values, saved_value)
-
-		find = not not find or not not table.find(content.options_values, default_value)
-		content.current_selection = find
+		content.current_selection = not not table.find(content.options_values, saved_value)
 	end
 
 	saved_function(content, style, saved_value, self)
@@ -1365,17 +1320,7 @@ local function generate_settings(settings_definition)
 
 			OptionsView[callback_name] = function (self, content, style)
 				-- function 12
-				local var_12_0 = set_function
-				local var_12_1 = self
-				local var_12_2 = setting_name
-				local var_12_3 = widget_type
-				local var_12_4 = content
-				local var_12_5 = style
-				local value_set_function = definition.value_set_function
-
-				value_set_function = not not value_set_function or not not NOP
-
-				return var_12_0(var_12_1, var_12_2, var_12_3, var_12_4, var_12_5, value_set_function)
+				return set_function(self, setting_name, widget_type, content, style, not not definition.value_set_function)
 			end
 
 			local setup_function_name = prefix .. "_setup"
@@ -1391,16 +1336,7 @@ local function generate_settings(settings_definition)
 			definition.saved_value = saved_value_function_name
 			OptionsView[saved_value_function_name] = function (self, widget)
 				-- function 14
-				local var_14_0 = saved_value_function
-				local var_14_1 = self
-				local var_14_2 = setting_name
-				local var_14_3 = widget_type
-				local var_14_4 = widget
-				local value_saved_function = definition.value_saved_function
-
-				value_saved_function = not not value_saved_function or not not NOP
-
-				return var_14_0(var_14_1, var_14_2, var_14_3, var_14_4, value_saved_function)
+				return saved_value_function(self, setting_name, widget_type, widget, not not definition.value_saved_function)
 			end
 
 			if not definition.tooltip_text then

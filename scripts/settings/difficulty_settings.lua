@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/difficulty_settings.lua
 
-local DifficultySettings = DifficultySettings
-
-DifficultySettings = not not DifficultySettings or not not {}
-DifficultySettings = DifficultySettings
+DifficultySettings = not not DifficultySettings
 DifficultySettings.normal = {
 	completed_frame_texture = "map_frame_01",
 	display_name = "difficulty_normal",
@@ -380,26 +377,10 @@ ExtraDifficultyRequirements = {
 			end
 
 			local backend_stats = Managers.backend:get_stats()
-			local var_1_0 = tonumber(backend_stats.kill_chaos_exalted_champion_scorpion_hardest)
-
-			var_1_0 = not not var_1_0 or not not 0
-
-			local champion_completed = var_1_0 >= 5
-			local var_1_1 = tonumber(backend_stats.kill_chaos_exalted_sorcerer_scorpion_hardest)
-
-			var_1_1 = not not var_1_1 or not not 0
-
-			local sorcerer_completed = var_1_1 >= 5
-			local var_1_2 = tonumber(backend_stats.kill_skaven_grey_seer_scorpion_hardest)
-
-			var_1_2 = not not var_1_2 or not not 0
-
-			local gray_seer_completed = var_1_2 >= 5
-			local var_1_3 = tonumber(backend_stats.kill_skaven_storm_vermin_warlord_scorpion_hardest)
-
-			var_1_3 = not not var_1_3 or not not 0
-
-			local storm_vermin_completed = var_1_3 >= 5
+			local champion_completed = not not tonumber(backend_stats.kill_chaos_exalted_champion_scorpion_hardest) >= 5
+			local sorcerer_completed = not not tonumber(backend_stats.kill_chaos_exalted_sorcerer_scorpion_hardest) >= 5
+			local gray_seer_completed = not not tonumber(backend_stats.kill_skaven_grey_seer_scorpion_hardest) >= 5
+			local storm_vermin_completed = not not tonumber(backend_stats.kill_skaven_storm_vermin_warlord_scorpion_hardest) >= 5
 			local difficulty_approved = not not champion_completed and not not sorcerer_completed and not not gray_seer_completed and not not storm_vermin_completed
 
 			return difficulty_approved

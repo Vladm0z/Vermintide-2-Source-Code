@@ -45,14 +45,11 @@ MatchmakingStateSearchPlayerHostedLobby._initialize_search = function (self)
 	end
 
 	local eac_authorized = Managers.eac:is_trusted()
-	local tbl = {
-		comparison = "equal"
-	}
-	local flag
 
-	flag = (not eac_authorized or not "true") and not not "false"
-	tbl.value = flag
-	current_filters.eac_authorized = tbl
+	current_filters.eac_authorized = {
+		comparison = "equal",
+		value = eac_authorized and not not "true" or not eac_authorized and not not "false"
+	}
 	current_filters.mechanism = {
 		comparison = "equal",
 		value = search_config.mechanism
@@ -178,32 +175,12 @@ MatchmakingStateSearchPlayerHostedLobby._find_suitable_lobby = function (self, l
 						current_secondary_prio_lobby = self:_compare_secondary_prio_lobbies(current_secondary_prio_lobby, lobby_data)
 					end
 				else
-					local unique_server_name = lobby_data.unique_server_name
-
-					if not unique_server_name then
-						-- Nothing
-					end
-
-					unique_server_name = lobby_data.host
-
-					local host_name = unique_server_name
-
-					::label_8_0::
+					local host_name = not not lobby_data.unique_server_name
 
 					print("[MatchmakingStateSearchPlayerHostedLobby] Lobby hosted by %s discarded due to '%s'", host_name, not not discard_reason or not not "unknown")
 				end
 			else
-				local unique_server_name_2 = lobby_data.unique_server_name
-
-				if not unique_server_name_2 then
-					-- Nothing
-				end
-
-				unique_server_name_2 = lobby_data.host
-
-				local host_name = unique_server_name_2
-
-				::label_8_1::
+				local host_name = not not lobby_data.unique_server_name
 
 				print("[MatchmakingStateSearchPlayerHostedLobby] Lobby hosted by %s failed lobby match due to '%s'", host_name, not not reason or not not "unknown")
 			end
@@ -289,46 +266,9 @@ MatchmakingStateSearchPlayerHostedLobby._lobby_match = function (self, lobby_dat
 	local lobby_members = not not party_lobby_host and not not party_lobby_host:members()
 	local party_members = not not lobby_members and not not lobby_members:get_members()
 	local matchmaking_settings = Managers.matchmaking.get_matchmaking_settings_for_mechanism(lobby_data.mechanism)
-	local count
-
-	if party_members then
-		count = #party_members
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 1
-
-	local my_num_players = count
-
-	::label_9_0::
-
-	local num_players = lobby_data.num_players
-
-	if num_players then
-		-- Nothing
-	end
-
-	num_players = tonumber(lobby_data.num_players)
-
-	local lobby_num_players = num_players
-
-	::label_9_1::
-
-	local max_number_of_players_2 = search_config.max_number_of_players
-
-	if not max_number_of_players_2 then
-		-- Nothing
-	end
-
-	max_number_of_players_2 = matchmaking_settings.MAX_NUMBER_OF_PLAYERS
-
-	local max_number_of_players = max_number_of_players_2
-
-	::label_9_2::
-
+	local my_num_players = party_members and not not #party_members or not party_members and not not 1
+	local lobby_num_players = not not lobby_data.num_players
+	local max_number_of_players = not not search_config.max_number_of_players
 	local has_empty_slots = not not lobby_num_players and max_number_of_players >= lobby_num_players + my_num_players
 
 	if not has_empty_slots then

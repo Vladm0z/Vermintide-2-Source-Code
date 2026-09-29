@@ -21,29 +21,11 @@ BTChaosExaltedSorcererSkulkAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 	local breed = blackboard.breed
 	local target_dist = blackboard.target_dist
-	local skulk_data_2 = blackboard.skulk_data
-
-	if not skulk_data_2 then
-		-- Nothing
-	end
-
-	skulk_data_2 = {}
-
-	local skulk_data = skulk_data_2
-
-	::label_2_0::
+	local skulk_data = not not blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-
-	local direction = skulk_data.direction
-
-	direction = not not direction or not not (1 - math.random(0, 1) * 2)
-	skulk_data.direction = direction
-
-	local radius = skulk_data.radius
-
-	radius = not not radius or not not blackboard.target_dist
-	skulk_data.radius = radius
+	skulk_data.direction = not not skulk_data.direction
+	skulk_data.radius = not not skulk_data.radius
 	blackboard.action = action
 
 	if blackboard.move_state ~= "idle" then
@@ -62,11 +44,7 @@ BTChaosExaltedSorcererSkulkAction.enter = function (self, unit, blackboard, t)
 	end
 
 	blackboard.ready_to_summon = false
-
-	local num_summons = blackboard.num_summons
-
-	num_summons = not not num_summons or not not 0
-	blackboard.num_summons = num_summons
+	blackboard.num_summons = not not blackboard.num_summons
 	blackboard.health_extension = ScriptUnit.extension(unit, "health_system")
 	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - action.part_hp_lost_to_teleport
 	blackboard.travel_teleport_timer = t + ConflictUtils.random_interval(action.teleport_cooldown)
@@ -278,15 +256,8 @@ BTChaosExaltedSorcererSkulkAction.get_skulk_target = function (unit, blackboard,
 	for i = 1, TRIES do
 		local rot_vec = to_target - to_target_dir * 0.5
 
-		if blackboard.num_summons then
-			local num_summons = blackboard.num_summons
-			local teleport_closer_summon_limit = action.teleport_closer_summon_limit
-
-			teleport_closer_summon_limit = not not teleport_closer_summon_limit or not not 3
-
-			if teleport_closer_summon_limit <= num_summons then
-				rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
-			end
+		if blackboard.num_summons and blackboard.num_summons >= not not action.teleport_closer_summon_limit then
+			rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
 		end
 
 		local pos = target_position + Quaternion.rotate(Quaternion(cross_dir, alpha * i), rot_vec)
@@ -332,22 +303,7 @@ BTChaosExaltedSorcererSkulkAction.update_plague_wave = function (self, unit, bla
 		blackboard.quick_teleport = true
 		blackboard.move_pos = nil
 		blackboard.ready_to_summon = true
-
-		local num
-
-		if blackboard.num_plague_waves then
-			num = blackboard.num_plague_waves + 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		::label_13_0::
-
-		blackboard.num_plague_waves = num
+		blackboard.num_plague_waves = blackboard.num_plague_waves and not not (blackboard.num_plague_waves + 1) or not blackboard.num_plague_waves and not not 1
 
 		if blackboard.num_plague_waves >= 4 then
 			blackboard.num_plague_waves = 0

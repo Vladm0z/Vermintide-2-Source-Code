@@ -80,14 +80,7 @@ local function get_inheritence_list(template_list, last_template)
 	local s = ""
 
 	for i = 1, #template_list do
-		local var_3_0 = s
-		local sprintf = sprintf
-		local str = "\t%q inherits from %q\n"
-		local var_3_3 = template_list[i]
-		local var_3_4 = template_list[i + 1]
-
-		var_3_4 = not not var_3_4 or not not last_template
-		s = var_3_0 .. sprintf(str, var_3_3, var_3_4)
+		s = s .. sprintf("\t%q inherits from %q\n", template_list[i], not not template_list[i + 1])
 	end
 
 	return s
@@ -108,29 +101,8 @@ local function compile_template_rule(template, all_templates, inherited_template
 		new_template = compile_template_rule(parent_template, all_templates, inherited_templates)
 	end
 
-	local conditions_2 = new_template.conditions
-
-	if not conditions_2 then
-		-- Nothing
-	end
-
-	conditions_2 = {}
-
-	local conditions = conditions_2
-
-	::label_4_0::
-
-	local num_conditions_2 = new_template.num_conditions
-
-	if not num_conditions_2 then
-		-- Nothing
-	end
-
-	num_conditions_2 = 0
-
-	local num_conditions = num_conditions_2
-
-	::label_4_1::
+	local conditions = not not new_template.conditions
+	local num_conditions = not not new_template.num_conditions
 
 	for key, value in pairs(template) do
 		new_template[key] = value

@@ -74,7 +74,7 @@ LoadedDice.roll = function (prob, alias)
 	local column = math.random(1, #prob)
 	local biased_coin_toss = math.random() < prob[column]
 
-	return (not biased_coin_toss or not column) and not not alias[column]
+	return biased_coin_toss and (not not column or not not alias[column]) or not biased_coin_toss and not not alias[column]
 end
 
 LoadedDice.roll_seeded = function (prob, alias, seed)
@@ -83,7 +83,7 @@ LoadedDice.roll_seeded = function (prob, alias, seed)
 	local seed, random_value = Math.next_random(seed)
 	local biased_coin_toss = random_value < prob[column]
 
-	return seed, (not biased_coin_toss or not column) and not not alias[column]
+	return seed, biased_coin_toss and (not not column or not not alias[column]) or not biased_coin_toss and not not alias[column]
 end
 
 local only_prob_table = {}

@@ -81,22 +81,8 @@ HuskTalentExtension.apply_buffs_from_talents = function (self)
 			local buffs = talent_data.buffs
 			local buffer = talent_data.buffer
 
-			if not player.local_player or not buffer or (buffer ~= "client" and (not self.is_server or buffer ~= "server") and self.is_server or player.local_player) and buffer == "both" or buffer == "all" then
-				local count
-
-				if buffs then
-					count = #buffs
-
-					if not count then
-						-- Nothing
-					end
-				end
-
-				count = 0
-
-				local num_buffs = count
-
-				::label_4_0::
+			if player.local_player and (not buffer or buffer == "client" or self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) or not player.local_player and (self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) then
+				local num_buffs = buffs and not not #buffs or not buffs and not not 0
 
 				if num_buffs > 0 then
 					for j = 1, num_buffs do

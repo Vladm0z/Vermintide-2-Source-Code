@@ -7,20 +7,7 @@ local grid_size = {
 	520,
 	600
 }
-local num
-
-if IS_CONSOLE then
-	num = 5
-
-	goto label_0_0
-end
-
-num = 5
-
-local num_loot_options = num
-
-::label_0_0::
-
+local num_loot_options = IS_CONSOLE and not not 5 or not IS_CONSOLE and not not 5
 local USE_DELAYED_SPAWN = true
 local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
@@ -1458,17 +1445,7 @@ local function create_loot_widget(index, size)
 			pass_type = "item_tooltip",
 			content_check_function = function (content)
 				-- function 7
-				local is_hover_2 = content.item_hotspot.is_hover
-
-				if not is_hover_2 then
-					-- Nothing
-				end
-
-				is_hover_2 = content.item_hotspot_2.is_hover
-
-				local is_hover = is_hover_2
-
-				::label_7_0::
+				local is_hover = not not content.item_hotspot.is_hover
 
 				return not not is_hover and not not content.item
 			end
@@ -1599,17 +1576,7 @@ local function create_loot_widget(index, size)
 			end,
 			content_change_function = function (content, style, _, dt)
 				-- function 13
-				local progress_2 = style.progress
-
-				if not progress_2 then
-					-- Nothing
-				end
-
-				progress_2 = 0
-
-				local progress = progress_2
-
-				::label_13_0::
+				local progress = not not style.progress
 
 				progress = (progress + dt) % 1
 

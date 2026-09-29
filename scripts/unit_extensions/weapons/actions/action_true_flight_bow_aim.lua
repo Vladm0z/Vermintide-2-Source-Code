@@ -43,54 +43,9 @@ ActionTrueFlightBowAim.client_owner_start_action = function (self, new_action, t
 	self.aim_sticky_timer = 0
 	self._is_sticky_target = false
 	self._current_target_priority = -1
-
-	local target
-
-	if chain_action_data then
-		target = chain_action_data.target
-
-		if not target then
-			-- Nothing
-		end
-	end
-
-	target = nil
-
-	::label_2_0::
-
-	self.target = target
-
-	local targets
-
-	if chain_action_data then
-		targets = chain_action_data.targets
-
-		if not targets then
-			-- Nothing
-		end
-	end
-
-	targets = {}
-
-	::label_2_1::
-
-	self.targets = targets
-
-	local target_2
-
-	if chain_action_data then
-		target_2 = chain_action_data.target
-
-		if not target_2 then
-			-- Nothing
-		end
-	end
-
-	target_2 = nil
-
-	::label_2_2::
-
-	self.aimed_target = target_2
+	self.target = chain_action_data and not not chain_action_data.target or not chain_action_data and not not nil
+	self.targets = chain_action_data and not not chain_action_data.targets or not chain_action_data and not not {}
+	self.aimed_target = chain_action_data and not not chain_action_data.target or not chain_action_data and not not nil
 
 	self:_mark_target(self.target)
 
@@ -99,38 +54,18 @@ ActionTrueFlightBowAim.client_owner_start_action = function (self, new_action, t
 	local owner_unit = self.owner_unit
 
 	self.side = Managers.state.side.side_by_unit[owner_unit]
-
-	local side = self.side
-
-	side = not not side and not not self.side.enemy_broadphase_categories
-	self.target_broadphase_categories = side
+	self.target_broadphase_categories = not not self.side
 
 	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local ignored_breeds = new_action.ignored_breeds
 
-	ignored_breeds = not not ignored_breeds or not not {}
-	self._ignored_breeds = ignored_breeds
-
-	local var_2_5 = buff_extension
-	local apply_buffs_to_value = buff_extension.apply_buffs_to_value
-	local charge_time = new_action.charge_time
-
-	charge_time = not not charge_time or not not 0
-	self.charge_time = apply_buffs_to_value(var_2_5, charge_time, "reduced_ranged_charge_time")
+	self._ignored_breeds = not not new_action.ignored_breeds
+	self.charge_time = buff_extension:apply_buffs_to_value(not not new_action.charge_time, "reduced_ranged_charge_time")
 	self.overcharge_timer = 0
 	self.zoom_condition_function = new_action.zoom_condition_function
 	self.prioritized_breeds = new_action.prioritized_breeds
 	self.played_aim_sound = false
-
-	local aim_sound_delay = new_action.aim_sound_delay
-
-	aim_sound_delay = not not aim_sound_delay or not not 0
-	self.aim_sound_time = t + aim_sound_delay
-
-	local aim_zoom_delay = new_action.aim_zoom_delay
-
-	aim_zoom_delay = not not aim_zoom_delay or not not 0
-	self.aim_zoom_time = t + aim_zoom_delay
+	self.aim_sound_time = t + not not new_action.aim_sound_delay
+	self.aim_zoom_time = t + not not new_action.aim_zoom_delay
 
 	local loaded_projectile_settings = new_action.loaded_projectile_settings
 
@@ -259,29 +194,8 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 		current_target = nil
 	end
 
-	local aim_time = current_action.aim_time
-
-	if not aim_time then
-		-- Nothing
-	end
-
-	aim_time = 0.1
-
-	local required_aim_time = aim_time
-
-	::label_6_0::
-
-	local aim_sticky_time_2 = current_action.aim_sticky_time
-
-	if not aim_sticky_time_2 then
-		-- Nothing
-	end
-
-	aim_sticky_time_2 = 0
-
-	local aim_sticky_time = aim_sticky_time_2
-
-	::label_6_1::
+	local required_aim_time = not not current_action.aim_time
+	local aim_sticky_time = not not current_action.aim_sticky_time
 
 	if required_aim_time <= self.aim_timer and (not current_target or aim_sticky_time <= self.aim_sticky_timer) then
 		local physics_world = World.get_data(world, "physics_world")
@@ -310,18 +224,7 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 		local side = self.side
 
 		if num_results > 0 then
-			local prioritized_breeds = self.prioritized_breeds
-
-			if not prioritized_breeds then
-				-- Nothing
-			end
-
-			prioritized_breeds = EMPTY_TABLE
-
-			local prio_breeds = prioritized_breeds
-
-			::label_6_2::
-
+			local prio_breeds = not not self.prioritized_breeds
 			local ignore_bosses = current_action.ignore_bosses
 
 			for i = 1, num_results do
@@ -370,17 +273,7 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 						break
 					end
 
-					local var_6_3 = prio_breeds[breed.name]
-
-					if not var_6_3 then
-						-- Nothing
-					end
-
-					var_6_3 = -1
-
-					local priority = var_6_3
-
-					::label_6_3::
+					local priority = not not prio_breeds[breed.name]
 
 					if priority > 0 and higest_priority < priority then
 						hit_unit = unit
@@ -396,58 +289,14 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 
 		if current_action.aim_sticky_target_size and POSITION_LOOKUP[current_target] and self._is_sticky_target and higest_priority <= self._current_target_priority then
 			local old_target_distance_sq = vector3_distance_squared(POSITION_LOOKUP[current_target], player_position)
-			local var_6_4
-
-			if hit_unit then
-				var_6_4 = vector3_distance_squared(POSITION_LOOKUP[hit_unit], player_position)
-
-				if not var_6_4 then
-					-- Nothing
-				end
-			end
-
-			var_6_4 = math.huge
-
-			local new_target_distance_sq = var_6_4
-
-			::label_6_4::
+			local new_target_distance_sq = hit_unit and not not vector3_distance_squared(POSITION_LOOKUP[hit_unit], player_position) or not hit_unit and not not math.huge
 
 			if old_target_distance_sq < new_target_distance_sq then
-				local var_6_5
-
-				if unit_has_node(current_target, "j_spine1") then
-					var_6_5 = unit_node(current_target, "j_spine1")
-
-					if not var_6_5 then
-						-- Nothing
-					end
-				end
-
-				var_6_5 = 0
-
-				local target_node = var_6_5
-
-				::label_6_5::
-
+				local target_node = unit_has_node(current_target, "j_spine1") and not not unit_node(current_target, "j_spine1") or not unit_has_node(current_target, "j_spine1") and not not 0
 				local position = unit_world_position(current_target, target_node)
 				local to_old_target = position - player_position
 				local dist_to_old_target = vector3_length(to_old_target)
-				local num
-
-				if dist_to_old_target > 0 then
-					num = to_old_target / dist_to_old_target
-
-					if not num then
-						-- Nothing
-					end
-				end
-
-				num = 0
-
-				local dir_to_old_target = num
-
-				::label_6_6::
-
+				local dir_to_old_target = dist_to_old_target > 0 and not not (to_old_target / dist_to_old_target) or not (dist_to_old_target > 0) and not not 0
 				local radius = current_action.aim_sticky_target_size
 				local sticky_target_threshold = math.cos(math.atan2(radius, dist_to_old_target))
 				local aim_dir = vector3_dot(direction, dir_to_old_target)
@@ -476,22 +325,7 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 				end
 			end
 		elseif current_action.target_break_size and current_target then
-			local var_6_7
-
-			if unit_has_node(current_target, "j_spine1") then
-				var_6_7 = unit_node(current_target, "j_spine1")
-
-				if not var_6_7 then
-					-- Nothing
-				end
-			end
-
-			var_6_7 = 0
-
-			local target_node = var_6_7
-
-			::label_6_7::
-
+			local target_node = unit_has_node(current_target, "j_spine1") and not not unit_node(current_target, "j_spine1") or not unit_has_node(current_target, "j_spine1") and not not 0
 			local position = unit_world_position(current_target, target_node)
 			local dir_to_target, dist_to_target = Vector3.direction_length(position - player_position)
 			local radius = current_action.target_break_size

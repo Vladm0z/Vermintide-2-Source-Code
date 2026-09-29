@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/buffs/rune_buff_templates.lua
 
-local RuneBuffTemplates = RuneBuffTemplates
-
-RuneBuffTemplates = not not RuneBuffTemplates or not not {}
-RuneBuffTemplates = RuneBuffTemplates
+RuneBuffTemplates = not not RuneBuffTemplates
 RuneBuffTemplates.rune_square_damage = {
 	buffs = {
 		{

@@ -58,21 +58,7 @@ end
 
 Request.OnResponse = function (self, data)
 	-- function 5
-	local str
-
-	if self.data then
-		str = self.data .. data
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = data
-
-	::label_5_0::
-
-	self.data = str
+	self.data = self.data and not not (self.data .. data) or not self.data and not not data
 end
 
 Request.OnHeader = function (self, data)

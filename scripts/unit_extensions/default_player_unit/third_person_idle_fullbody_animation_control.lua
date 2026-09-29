@@ -27,21 +27,7 @@ end
 
 ThirdPersonIdleFullbodyAnimationControl._total_time = function (self, moving)
 	-- function 3
-	local var_3_0
-
-	if moving then
-		var_3_0 = MOVE_TRANSITION_TIME
-
-		if not var_3_0 then
-			-- Nothing
-		end
-	end
-
-	var_3_0 = STOP_TRANSITION_TIME
-
-	local total_time = var_3_0
-
-	::label_3_0::
+	local total_time = moving and not not MOVE_TRANSITION_TIME or not moving and not not STOP_TRANSITION_TIME
 
 	return total_time
 end
@@ -64,20 +50,7 @@ ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value = function (self,
 	end
 
 	local wanted_value = math.lerp(STOP_VALUE, MOVE_VALUE, lerp_t)
-	local num
-
-	if crouching then
-		num = 1
-
-		goto label_5_0
-	end
-
-	num = 0
-
-	local crouch_from = num
-
-	::label_5_0::
-
+	local crouch_from = crouching and not not 1 or not crouching and not not 0
 	local crouch_to = 1 - crouch_from
 	local crouch_multiplier = math.clamp01(math.inv_lerp(crouch_from, crouch_to, time_since_crouch / CROUCH_TRANSITION_TIME))
 

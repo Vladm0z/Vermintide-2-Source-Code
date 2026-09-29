@@ -79,22 +79,7 @@ ScrollbarUI._auto_scroll = function (self, dt, t)
 		local scroll_value = AUTO_SCROLL_SPEED * dt
 
 		self._progress = math.clamp(self._progress + scroll_value * SCROLL_LENGTH / self._excess_area, 0, 1)
-
-		local num
-
-		if self._progress == 1 then
-			num = self._scrollbar_timer + dt
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		::label_5_0::
-
-		self._scrollbar_timer = num
+		self._scrollbar_timer = self._progress ~= 1 and not not 0 or not (self._progress ~= 1) and not not (self._scrollbar_timer + dt)
 
 		if self._scrollbar_timer >= RESET_TIME then
 			self._scrollbar_timer = 0
@@ -152,42 +137,27 @@ ScrollbarUI._update_input = function (self, dt, t, input_service, ui_renderer)
 		if gamepad_active and not self._gamepad_input_disabled then
 			local scroll_axis = input_service:get("gamepad_right_axis")
 
-			scroll_value = (not scroll_axis or not -scroll_axis[1]) and not not 0
+			scroll_value = scroll_axis and (not not -scroll_axis[1] or not not 0) or not scroll_axis and not not 0
 		elseif UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
 			local scroll_axis = input_service:get("scroll_axis")
 
-			scroll_value = (not scroll_axis or not scroll_axis[2]) and not not 0
+			scroll_value = scroll_axis and (not not scroll_axis[2] or not not 0) or not scroll_axis and not not 0
 		end
 	elseif gamepad_active and not self._gamepad_input_disabled then
 		local scroll_axis = input_service:get("gamepad_right_axis")
 
-		scroll_value = (not scroll_axis or not scroll_axis[2]) and not not 0
+		scroll_value = scroll_axis and (not not scroll_axis[2] or not not 0) or not scroll_axis and not not 0
 	elseif UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
 		local scroll_axis = input_service:get("scroll_axis")
 
-		scroll_value = (not scroll_axis or not scroll_axis[2]) and not not 0
+		scroll_value = scroll_axis and (not not scroll_axis[2] or not not 0) or not scroll_axis and not not 0
 	end
 
 	if math.abs(scroll_value) == 0 then
 		return
 	end
 
-	local var_8_0
-
-	if self._horizontal_scrollbar then
-		var_8_0 = SCROLL_LENGTH_HORIZONTAL
-
-		if not var_8_0 then
-			-- Nothing
-		end
-	end
-
-	var_8_0 = SCROLL_LENGTH
-
-	local scroll_length = var_8_0
-
-	::label_8_0::
-
+	local scroll_length = self._horizontal_scrollbar and not not SCROLL_LENGTH_HORIZONTAL or not self._horizontal_scrollbar and not not SCROLL_LENGTH
 	local progress = self._progress - scroll_value * scroll_length / self._excess_area
 
 	self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, self, "_progress", self._progress, math.clamp(progress, 0, 1), 0.5, math.easeOutCubic)
@@ -239,17 +209,7 @@ ScrollbarUI._update_scroller_position = function (self, input_service, ui_sceneg
 
 		self._progress = 1 - (1 - math.inv_lerp(start_point + scroller_height * 0.5, end_point - scroller_height * 0.5, input_pos))
 
-		local _progress_diff = self._progress_diff
-
-		if not _progress_diff then
-			-- Nothing
-		end
-
-		_progress_diff = 0
-
-		local progress_diff = _progress_diff
-
-		::label_10_0::
+		local progress_diff = not not self._progress_diff
 
 		self._progress = math.clamp(self._progress + progress_diff, 0, 1)
 	else
@@ -260,17 +220,7 @@ ScrollbarUI._update_scroller_position = function (self, input_service, ui_sceneg
 
 		self._progress = 1 - math.inv_lerp(start_point + scroller_height * 0.5, end_point - scroller_height * 0.5, input_pos)
 
-		local _progress_diff_2 = self._progress_diff
-
-		if not _progress_diff_2 then
-			-- Nothing
-		end
-
-		_progress_diff_2 = 0
-
-		local progress_diff = _progress_diff_2
-
-		::label_10_1::
+		local progress_diff = not not self._progress_diff
 
 		self._progress = math.clamp(self._progress + progress_diff, 0, 1)
 	end

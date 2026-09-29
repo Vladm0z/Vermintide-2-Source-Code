@@ -222,17 +222,7 @@ end
 StartMenuView._has_active_level_vote = function (self)
 	-- function 17
 	local voting_manager = self.voting_manager
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local is_mission_vote = vote_in_progress
-
-	::label_17_0::
+	local is_mission_vote = not not voting_manager:vote_in_progress()
 
 	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
@@ -262,21 +252,7 @@ StartMenuView.update = function (self, dt, t)
 	local input_manager = self.input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local input_blocked = self:input_blocked()
-	local FAKE_INPUT_SERVICE
-
-	if input_blocked and not gamepad_active then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = input_manager:get_service("start_menu_view")
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_18_0::
+	local input_service = not not FAKE_INPUT_SERVICE
 
 	self._state_machine_params.input_service = input_service
 
@@ -358,11 +334,7 @@ StartMenuView._get_sorted_players = function (self)
 
 	table.sort(player_order, function (a, b)
 		-- function 22
-		local local_player = a.local_player
-
-		local_player = not not local_player and not not not b.local_player
-
-		return local_player
+		return not not a.local_player
 	end)
 
 	return player_order
@@ -405,17 +377,7 @@ StartMenuView.hotkey_allowed = function (self, input, mapping_data)
 		local name = current_screen_settings.name
 
 		if name == transition_state then
-			local get_selected_layout_name = current_state.get_selected_layout_name
-
-			if get_selected_layout_name then
-				-- Nothing
-			end
-
-			get_selected_layout_name = current_state:get_selected_layout_name()
-
-			local active_sub_settings_name = get_selected_layout_name
-
-			::label_25_0::
+			local active_sub_settings_name = not not current_state.get_selected_layout_name
 
 			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
@@ -581,25 +543,7 @@ end
 StartMenuView.exit = function (self, return_to_game)
 	-- function 33
 	local initial_profile_view = self:initial_profile_view()
-	local str
-
-	if initial_profile_view then
-		str = "exit_initial_start_menu_view"
-
-		goto label_33_0
-	end
-
-	if return_to_game then
-		str = "exit_menu"
-
-		goto label_33_0
-	end
-
-	str = "ingame_menu"
-
-	local exit_transition = str
-
-	::label_33_0::
+	local exit_transition = initial_profile_view and not not "exit_initial_start_menu_view" or not initial_profile_view and (return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu")
 
 	self.ingame_ui:transition_with_fade(exit_transition)
 	self:play_sound("Play_hud_button_close")
@@ -672,7 +616,7 @@ StartMenuView._handle_exit = function (self, input_service)
 			self:play_sound("Play_hud_hover")
 		end
 
-		if (exit_button_widget.content.button_hotspot.on_release or input_service:get("toggle_menu")) and not self:_game_popup_active() then
+		if exit_button_widget.content.button_hotspot.on_release and not self:_game_popup_active() or not exit_button_widget.content.button_hotspot.on_release and input_service:get("toggle_menu") and not self:_game_popup_active() then
 			self:play_sound("Play_hud_hover")
 			self:close_menu(not self.exit_to_game)
 		end
@@ -701,7 +645,7 @@ StartMenuView.close_menu = function (self, return_to_main_screen)
 		local current_state = state_machine:state()
 		local current_state_name = current_state.NAME
 
-		if (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) and current_state_name ~= "StartMenuStateOverview" then
+		if GameSettingsDevelopment.skip_start_screen and current_state_name ~= "StartMenuStateOverview" or not GameSettingsDevelopment.skip_start_screen and Development.parameter("skip_start_screen") and current_state_name ~= "StartMenuStateOverview" then
 			self:_change_screen_by_name("overview")
 
 			return

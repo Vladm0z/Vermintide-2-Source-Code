@@ -21,30 +21,8 @@ local function item_sort_func(item_1, item_2)
 	-- function 1
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local rarity = item_1.rarity
-
-	if not rarity then
-		-- Nothing
-	end
-
-	rarity = item_data_1.rarity
-
-	local item_1_rarity = rarity
-
-	::label_1_0::
-
-	local rarity_2 = item_2.rarity
-
-	if not rarity_2 then
-		-- Nothing
-	end
-
-	rarity_2 = item_data_2.rarity
-
-	local item_2_rarity = rarity_2
-
-	::label_1_1::
-
+	local item_1_rarity = not not item_1.rarity
+	local item_2_rarity = not not item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]

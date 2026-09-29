@@ -10,28 +10,14 @@ PlayerHuskEnergyExtension.init = function (self, extension_init_context, unit, e
 	self.unit = unit
 
 	local energy_data = extension_init_data.energy_data
-	local max_value = energy_data.max_value
 
-	max_value = not not max_value or not not 40
-	self._max_energy = max_value
+	self._max_energy = not not energy_data.max_value
 	self._energy = self._max_energy
 	self._recharge_delay_timer = 0
-
-	local recharge_delay = energy_data.recharge_delay
-
-	recharge_delay = not not recharge_delay or not not 0
-	self._recharge_delay = recharge_delay
-
-	local recharge_rate = energy_data.recharge_rate
-
-	recharge_rate = not not recharge_rate or not not 0
-	self._recharge_rate = recharge_rate
+	self._recharge_delay = not not energy_data.recharge_delay
+	self._recharge_rate = not not energy_data.recharge_rate
 	self._depletion_cooldown_timer = 0
-
-	local depletion_cooldown = energy_data.depletion_cooldown
-
-	depletion_cooldown = not not depletion_cooldown or not not 0
-	self._depletion_cooldown = depletion_cooldown
+	self._depletion_cooldown = not not energy_data.depletion_cooldown
 	self._previous_can_drain = self:is_drainable()
 end
 

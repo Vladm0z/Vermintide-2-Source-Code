@@ -1062,13 +1062,7 @@ TitleLoadingUI._create_elements = function (self)
 		self._ui_scenegraph.console_input_icon_2.size[2] = texture_data.size[2]
 
 		local platform = PLATFORM
-		local ButtonTextureByName = ButtonTextureByName
-		local str = "d_horizontal"
-		local flag
-
-		flag = (not IS_WINDOWS or not "xb1") and not not platform
-
-		local texture_data, input_text = ButtonTextureByName(str, flag)
+		local texture_data, input_text = ButtonTextureByName("d_horizontal", IS_WINDOWS and not not "xb1" or not IS_WINDOWS and not not platform)
 
 		gamma_adjuster.content.gamepad_navigation_icon = texture_data.texture
 		self._ui_scenegraph.console_input_icon_1.size[1] = texture_data.size[1]
@@ -1093,17 +1087,7 @@ TitleLoadingUI.setup_gamma_menu = function (self)
 	local gamma_stepper = self._gamma_widgets_by_name.gamma_stepper
 	local gamma_adjuster = self._gamma_widgets_by_name.gamma_adjuster
 	local min, max, start_value = gamma_value_settings.min, gamma_value_settings.max, gamma_value_settings.start_value
-	local user_setting = Application.user_setting("render_settings", "gamma")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = start_value
-
-	local value = user_setting
-
-	::label_17_0::
+	local value = not not Application.user_setting("render_settings", "gamma")
 
 	gamma_stepper.content.setting_text = ""
 	gamma_stepper.content.value = value
@@ -1124,17 +1108,7 @@ TitleLoadingUI.setup_sound_panning_menu = function (self)
 	local options = panning_value_settings.options
 	local option_index_by_key = panning_value_settings.option_index_by_key
 	local default_value = DefaultUserSettings.get("user_settings", "sound_panning_rule")
-	local user_setting = Application.user_setting("sound_panning_rule")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = default_value
-
-	local sound_panning_rule = user_setting
-
-	::label_18_0::
+	local sound_panning_rule = not not Application.user_setting("sound_panning_rule")
 
 	stepper.content.setting_text = ""
 	stepper.content.value = sound_panning_rule
@@ -1150,17 +1124,7 @@ TitleLoadingUI.setup_sound_dynamic_range_menu = function (self)
 	local options = dynamic_range_value_settings.options
 	local option_index_by_key = dynamic_range_value_settings.option_index_by_key
 	local default_value = DefaultUserSettings.get("user_settings", "dynamic_range_sound")
-	local user_setting = Application.user_setting("dynamic_range_sound")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = default_value
-
-	local dynamic_range_sound = user_setting
-
-	::label_19_0::
+	local dynamic_range_sound = not not Application.user_setting("dynamic_range_sound")
 
 	stepper.content.setting_text = ""
 	stepper.content.value = dynamic_range_sound
@@ -1322,7 +1286,7 @@ TitleLoadingUI._update_continue_button = function (self, gamepad_active, dt)
 
 	local input_service = Managers.input:get_service("title_loading_ui")
 
-	if (not gamepad_active or not input_service:get("confirm")) and self._done_button.content.button_hotspot.on_release then
+	if gamepad_active and (input_service:get("confirm") or self._done_button.content.button_hotspot.on_release) or not gamepad_active and self._done_button.content.button_hotspot.on_release then
 		self._done_button.content.button_hotspot.on_release = nil
 
 		local settings_index = self._settings_index
@@ -1377,60 +1341,10 @@ TitleLoadingUI._animate_button = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked = hotspot.is_clicked
-
-	if is_clicked then
-		-- Nothing
-	end
-
-	if hotspot.is_clicked ~= 0 then
-		is_clicked = false
-
-		goto label_24_0
-	end
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_24_0::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_24_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_24_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_24_3::
-
+	local input_pressed = not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -1519,7 +1433,7 @@ TitleLoadingUI._handle_stepper_input = function (self, widget, stepper_settings,
 
 		local new_cooldown = math.max(input_cooldown - dt, 0)
 
-		input_cooldown = (not (new_cooldown > 0) or not new_cooldown) and not not nil
+		input_cooldown = new_cooldown > 0 and (not not new_cooldown or not not nil) or not (new_cooldown > 0) and not not nil
 		content.input_cooldown = input_cooldown
 	end
 
@@ -1659,19 +1573,15 @@ TitleLoadingUI._get_input_texture_data = function (self, input_action)
 	-- function 31
 	local input_service = Managers.input:get_service("title_loading_ui")
 
-	if (Managers.input:is_device_active("keyboard") or Managers.input:is_device_active("mouse")) and IS_WINDOWS then
+	if Managers.input:is_device_active("keyboard") and IS_WINDOWS or not Managers.input:is_device_active("keyboard") and Managers.input:is_device_active("mouse") and IS_WINDOWS then
 		local platform = PLATFORM
 		local keymap_binding = input_service:get_keymapping(input_action, platform)
 		local device_type = keymap_binding[1]
 		local key_index = keymap_binding[2]
 		local key_action_type = keymap_binding[3]
 		local is_button_unassigned = key_index == UNASSIGNED_KEY
-		local var_31_0
-		local flag
 
-		flag = (not is_button_unassigned or not "") and not not Keyboard.button_locale_name(key_index)
-
-		return var_31_0, flag
+		return nil, is_button_unassigned and not not "" or not is_button_unassigned and not not Keyboard.button_locale_name(key_index)
 	elseif Managers.input:is_device_active("gamepad") or not IS_WINDOWS then
 		return UISettings.get_gamepad_input_texture_data(input_service, input_action, true)
 	end
@@ -1705,24 +1615,9 @@ TitleLoadingUI._update_input_text = function (self, dt)
 	end
 
 	local icon_spacing = 10
-	local flag
+	local using_keyboard = texture_data and not not false or not texture_data and not not true
 
-	if not texture_data then
-		flag = true
-
-		goto label_33_0
-	end
-
-	flag = false
-
-	local using_keyboard = flag
-
-	::label_33_0::
-
-	local IS_WINDOWS = IS_WINDOWS
-
-	IS_WINDOWS = not not IS_WINDOWS and not not using_keyboard
-	widget_content.using_keyboard = IS_WINDOWS
+	widget_content.using_keyboard = not not IS_WINDOWS
 
 	local font, scaled_font_size = UIFontByResolution(widget_style.input_text_1)
 	local text_width, text_height, min = UIRenderer.text_size(self._ui_renderer, widget_content.input_text_1, font[1], scaled_font_size)
@@ -1805,27 +1700,17 @@ TitleLoadingUI._update_input = function (self, dt)
 
 	local total_hold_time = 1
 	local total_fade_time = 1
-	local clamp = math.clamp
-	local _fade_timer = self._fade_timer
 
-	_fade_timer = not not _fade_timer or not not 0
-	self._fade_timer = clamp(_fade_timer - dt, 0, total_fade_time)
+	self._fade_timer = math.clamp(not not self._fade_timer - dt, 0, total_fade_time)
 
 	local input_service = Managers.input:get_service("title_loading_ui")
 	local cancel_video = input_service:get("cancel_video")
 
 	if self:_update_any_held() then
 		self._fade_timer = total_fade_time
-
-		local _cancel_timer = self._cancel_timer
-
-		_cancel_timer = not not _cancel_timer or not not 0
-		self._cancel_timer = _cancel_timer + dt
+		self._cancel_timer = not not self._cancel_timer + dt
 	else
-		local _cancel_timer_2 = self._cancel_timer
-
-		_cancel_timer_2 = not not _cancel_timer_2 or not not 0
-		self._cancel_timer = _cancel_timer_2 - dt * 3
+		self._cancel_timer = not not self._cancel_timer - dt * 3
 	end
 
 	self:_handle_skip_fade(self._fade_timer / total_fade_time * 255)
@@ -1873,10 +1758,7 @@ TitleLoadingUI._update_input = function (self, dt)
 		end
 	end
 
-	local _cancel_video = self._cancel_video
-
-	_cancel_video = not not _cancel_video or not not cancel_video
-	self._cancel_video = _cancel_video
+	self._cancel_video = not not self._cancel_video
 end
 
 TitleLoadingUI._handle_skip_fade = function (self, alpha)
@@ -2024,14 +1906,7 @@ end
 
 TitleLoadingUI.is_done = function (self)
 	-- function 40
-	local _startup_settings_done = self._startup_settings_done
-
-	if _startup_settings_done then
-		_startup_settings_done = self._force_done
-		_startup_settings_done = not not _startup_settings_done or not not self._done
-	end
-
-	return _startup_settings_done
+	return not not self._startup_settings_done
 end
 
 TitleLoadingUI.force_done = function (self)

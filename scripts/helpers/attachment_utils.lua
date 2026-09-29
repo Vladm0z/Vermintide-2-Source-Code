@@ -71,39 +71,8 @@ AttachmentUtils.link = function (world, source, target, node_linking)
 	for _, link_data in ipairs(node_linking) do
 		local source_node = link_data.source
 		local target_node = link_data.target
-		local node
-
-		if type(source_node) == "string" then
-			node = Unit.node(source, source_node)
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = source_node
-
-		local source_node_index = node
-
-		do
-			local node_2
-		end
-
-		::label_4_0::
-
-		if type(target_node) == "string" then
-			node_2 = Unit.node(target, target_node)
-
-			if not node_2 then
-				-- Nothing
-			end
-		end
-
-		node_2 = target_node
-
-		local target_node_index = node_2
-
-		::label_4_1::
+		local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(source, source_node)
+		local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(target, target_node)
 
 		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
@@ -176,146 +145,15 @@ AttachmentUtils.get_syncable_buff_params = function (synced_buffs)
 	end
 
 	local default_buff_id = NetworkLookup.buff_templates["n/a"]
-	local var_7_0
-
-	if buff_name_1 then
-		var_7_0 = NetworkLookup.buff_templates[buff_name_1]
-
-		if not var_7_0 then
-			-- Nothing
-		end
-	end
-
-	var_7_0 = default_buff_id
-
-	local buff_1_id = var_7_0
-
-	do
-		local var_7_1
-	end
-
-	::label_7_0::
-
-	if buff_name_2 then
-		var_7_1 = NetworkLookup.buff_templates[buff_name_2]
-
-		if not var_7_1 then
-			-- Nothing
-		end
-	end
-
-	var_7_1 = default_buff_id
-
-	local buff_2_id = var_7_1
-
-	do
-		local var_7_2
-	end
-
-	::label_7_1::
-
-	if buff_name_3 then
-		var_7_2 = NetworkLookup.buff_templates[buff_name_3]
-
-		if not var_7_2 then
-			-- Nothing
-		end
-	end
-
-	var_7_2 = default_buff_id
-
-	local buff_3_id = var_7_2
-
-	do
-		local var_7_3
-	end
-
-	::label_7_2::
-
-	if buff_name_4 then
-		var_7_3 = NetworkLookup.buff_templates[buff_name_4]
-
-		if not var_7_3 then
-			-- Nothing
-		end
-	end
-
-	var_7_3 = default_buff_id
-
-	local buff_4_id = var_7_3
-
-	::label_7_3::
-
+	local buff_1_id = buff_name_1 and not not NetworkLookup.buff_templates[buff_name_1] or not buff_name_1 and not not default_buff_id
+	local buff_2_id = buff_name_2 and not not NetworkLookup.buff_templates[buff_name_2] or not buff_name_2 and not not default_buff_id
+	local buff_3_id = buff_name_3 and not not NetworkLookup.buff_templates[buff_name_3] or not buff_name_3 and not not default_buff_id
+	local buff_4_id = buff_name_4 and not not NetworkLookup.buff_templates[buff_name_4] or not buff_name_4 and not not default_buff_id
 	local default_buff_data_type_id = NetworkLookup.buff_data_types["n/a"]
-	local var_7_4
-
-	if buff_name_1 then
-		var_7_4 = NetworkLookup.buff_data_types[buff_data_type_1]
-
-		if not var_7_4 then
-			-- Nothing
-		end
-	end
-
-	var_7_4 = default_buff_data_type_id
-
-	local buff_data_type_1_id = var_7_4
-
-	do
-		local var_7_5
-	end
-
-	::label_7_4::
-
-	if buff_name_2 then
-		var_7_5 = NetworkLookup.buff_data_types[buff_data_type_2]
-
-		if not var_7_5 then
-			-- Nothing
-		end
-	end
-
-	var_7_5 = default_buff_data_type_id
-
-	local buff_data_type_2_id = var_7_5
-
-	do
-		local var_7_6
-	end
-
-	::label_7_5::
-
-	if buff_name_3 then
-		var_7_6 = NetworkLookup.buff_data_types[buff_data_type_3]
-
-		if not var_7_6 then
-			-- Nothing
-		end
-	end
-
-	var_7_6 = default_buff_data_type_id
-
-	local buff_data_type_3_id = var_7_6
-
-	do
-		local var_7_7
-	end
-
-	::label_7_6::
-
-	if buff_name_4 then
-		var_7_7 = NetworkLookup.buff_data_types[buff_data_type_4]
-
-		if not var_7_7 then
-			-- Nothing
-		end
-	end
-
-	var_7_7 = default_buff_data_type_id
-
-	local buff_data_type_4_id = var_7_7
-
-	::label_7_7::
+	local buff_data_type_1_id = buff_name_1 and not not NetworkLookup.buff_data_types[buff_data_type_1] or not buff_name_1 and not not default_buff_data_type_id
+	local buff_data_type_2_id = buff_name_2 and not not NetworkLookup.buff_data_types[buff_data_type_2] or not buff_name_2 and not not default_buff_data_type_id
+	local buff_data_type_3_id = buff_name_3 and not not NetworkLookup.buff_data_types[buff_data_type_3] or not buff_name_3 and not not default_buff_data_type_id
+	local buff_data_type_4_id = buff_name_4 and not not NetworkLookup.buff_data_types[buff_data_type_4] or not buff_name_4 and not not default_buff_data_type_id
 
 	buff_value_1 = not not buff_value_1 or not not 1
 	buff_value_2 = not not buff_value_2 or not not 1

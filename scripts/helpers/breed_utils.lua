@@ -28,7 +28,7 @@ BreedUtils.inject_breed_category_mask = function (breed_data)
 
 	local armor_bit = armor_category_mapping[breed_data.armor_category]
 
-	if armor_bit and (breed_data.special or breed_data.boss) and breed_data.armor_category == 2 then
+	if armor_bit and (breed_data.special or breed_data.boss) then
 		category_mask = bit.bor(category_mask, armor_bit)
 	end
 

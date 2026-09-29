@@ -11,41 +11,13 @@ require("scripts/settings/dialogue_settings")
 local DialogueQueries = require("scripts/entity_system/systems/dialogues/dialogue_queries")
 local LIVE_EVENT_PACKAGES = require("scripts/settings/live_events_packages")
 local GLOBAL_SOUND_EVENT_FILTERS = require("scripts/entity_system/systems/dialogues/global_sound_event_filters")
-local script_data = script_data
-local dialogue_debug_all_contexts = script_data.dialogue_debug_all_contexts
 
-dialogue_debug_all_contexts = not not dialogue_debug_all_contexts or not not Development.parameter("dialogue_debug_all_contexts")
-script_data.dialogue_debug_all_contexts = dialogue_debug_all_contexts
-
-local script_data_2 = script_data
-local dialogue_debug_last_query = script_data.dialogue_debug_last_query
-
-dialogue_debug_last_query = not not dialogue_debug_last_query or not not Development.parameter("dialogue_debug_last_query")
-script_data_2.dialogue_debug_last_query = dialogue_debug_last_query
-
-local script_data_3 = script_data
-local dialogue_debug_last_played_query = script_data.dialogue_debug_last_played_query
-
-dialogue_debug_last_played_query = not not dialogue_debug_last_played_query or not not Development.parameter("dialogue_debug_last_played_query")
-script_data_3.dialogue_debug_last_played_query = dialogue_debug_last_played_query
-
-local script_data_4 = script_data
-local dialogue_debug_queries = script_data.dialogue_debug_queries
-
-dialogue_debug_queries = not not dialogue_debug_queries or not not Development.parameter("dialogue_debug_queries")
-script_data_4.dialogue_debug_queries = dialogue_debug_queries
-
-local script_data_5 = script_data
-local dialogue_debug_rules = script_data.dialogue_debug_rules
-
-dialogue_debug_rules = not not dialogue_debug_rules or not not Development.parameter("dialogue_debug_rules")
-script_data_5.dialogue_debug_rules = dialogue_debug_rules
-
-local script_data_6 = script_data
-local dialogue_debug_missing_vo_trigger_error_sound = script_data.dialogue_debug_missing_vo_trigger_error_sound
-
-dialogue_debug_missing_vo_trigger_error_sound = not not dialogue_debug_missing_vo_trigger_error_sound or not not Development.parameter("dialogue_debug_missing_vo_trigger_error_sound")
-script_data_6.dialogue_debug_missing_vo_trigger_error_sound = dialogue_debug_missing_vo_trigger_error_sound
+script_data.dialogue_debug_all_contexts = not not script_data.dialogue_debug_all_contexts
+script_data.dialogue_debug_last_query = not not script_data.dialogue_debug_last_query
+script_data.dialogue_debug_last_played_query = not not script_data.dialogue_debug_last_played_query
+script_data.dialogue_debug_queries = not not script_data.dialogue_debug_queries
+script_data.dialogue_debug_rules = not not script_data.dialogue_debug_rules
+script_data.dialogue_debug_missing_vo_trigger_error_sound = not not script_data.dialogue_debug_missing_vo_trigger_error_sound
 
 local extensions = {
 	"DialogueActorExtension"
@@ -147,17 +119,7 @@ DialogueSystem.init = function (self, entity_system_creation_context, system_nam
 	local dialogue_filename = "dialogues/generated/" .. level_name
 	local blocked_auto_load = DialogueSettings.blocked_auto_load_files[level_name]
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local var_3_0 = DialogueSettings.auto_load_files_mechanism[mechanism_name]
-
-	if not var_3_0 then
-		-- Nothing
-	end
-
-	var_3_0 = {}
-
-	local auto_load_files_mechanism = var_3_0
-
-	::label_3_0::
+	local auto_load_files_mechanism = not not DialogueSettings.auto_load_files_mechanism[mechanism_name]
 
 	self._original_dialogue_settings = {}
 
@@ -503,25 +465,7 @@ DialogueSystem.on_add_extension = function (self, world, unit, extension_name, e
 
 			update_switch_group(wwise_world, wwise_source_id, extension)
 
-			local var_11_0 = dialogue_system
-			local var_11_1 = var_11_0
-			local _check_play_debug_sound = var_11_0._check_play_debug_sound
-			local var_11_3 = sound_event
-			local currently_playing_subtitle
-
-			if extension.currently_playing_dialogue then
-				currently_playing_subtitle = extension.currently_playing_dialogue.currently_playing_subtitle
-
-				if not currently_playing_subtitle then
-					-- Nothing
-				end
-			end
-
-			currently_playing_subtitle = ""
-
-			::label_11_0::
-
-			local playing_id, _ = _check_play_debug_sound(var_11_1, var_11_3, currently_playing_subtitle)
+			local playing_id, _ = dialogue_system:_check_play_debug_sound(sound_event, extension.currently_playing_dialogue and not not extension.currently_playing_dialogue.currently_playing_subtitle or not extension.currently_playing_dialogue and not not "")
 
 			if not playing_id then
 				return WwiseWorld.trigger_event(wwise_world, sound_event, use_occlusion, wwise_source_id)
@@ -539,25 +483,7 @@ DialogueSystem.on_add_extension = function (self, world, unit, extension_name, e
 
 			update_switch_group(wwise_world, wwise_source_id, extension)
 
-			local var_12_0 = dialogue_system
-			local var_12_1 = var_12_0
-			local _check_play_debug_sound = var_12_0._check_play_debug_sound
-			local var_12_3 = sound_event
-			local currently_playing_subtitle
-
-			if extension.currently_playing_dialogue then
-				currently_playing_subtitle = extension.currently_playing_dialogue.currently_playing_subtitle
-
-				if not currently_playing_subtitle then
-					-- Nothing
-				end
-			end
-
-			currently_playing_subtitle = ""
-
-			::label_12_0::
-
-			local playing_id, _ = _check_play_debug_sound(var_12_1, var_12_3, currently_playing_subtitle)
+			local playing_id, _ = dialogue_system:_check_play_debug_sound(sound_event, extension.currently_playing_dialogue and not not extension.currently_playing_dialogue.currently_playing_subtitle or not extension.currently_playing_dialogue and not not "")
 
 			if not playing_id then
 				return WwiseWorld.trigger_event(wwise_world, sound_event, wwise_source_id)
@@ -578,17 +504,7 @@ DialogueSystem.on_add_extension = function (self, world, unit, extension_name, e
 	self._tagquery_database:add_object_context(unit, "user_memory", extension.user_memory)
 	self._tagquery_database:add_object_context(unit, "user_context", extension.context)
 
-	local faction_2 = extension_init_data.faction
-
-	if not faction_2 then
-		-- Nothing
-	end
-
-	faction_2 = Unit.get_data(unit, "faction")
-
-	local faction = faction_2
-
-	::label_8_0::
+	local faction = not not extension_init_data.faction
 
 	if faction then
 		extension.faction = faction
@@ -656,10 +572,7 @@ DialogueSystem.extensions_ready = function (self, world, unit)
 		self._global_context[career_name] = true
 		context.player_career = career_name
 	elseif player_profile == nil then
-		local dialogue_profile = extension.dialogue_profile
-
-		dialogue_profile = not not dialogue_profile or not not Unit.get_data(unit, "dialogue_profile")
-		context.player_profile = dialogue_profile
+		context.player_profile = not not extension.dialogue_profile
 	end
 
 	local play_unit = unit
@@ -819,28 +732,8 @@ DialogueSystem._cleanup_extension = function (self, unit, extension_name)
 end
 
 local LOCAL_GAMETIME = 0
-local DialogueSystem = DialogueSystem
-local function_by_op = DialogueSystem.function_by_op
 
-function_by_op = not not function_by_op or not not {
-	[TagQuery.OP.ADD] = function (lhs, rhs)
-		-- function 26
-		return (not not lhs or not not 0) + rhs
-	end,
-	[TagQuery.OP.SUB] = function (lhs, rhs)
-		-- function 27
-		return (not not lhs or not not 0) - rhs
-	end,
-	[TagQuery.OP.NUMSET] = function (lhs, rhs)
-		-- function 28
-		return not not rhs or not not 0
-	end,
-	[TagQuery.OP.TIMESET] = function ()
-		-- function 29
-		return Managers.time:time("game") + 900
-	end
-}
-DialogueSystem.function_by_op = function_by_op
+DialogueSystem.function_by_op = not not DialogueSystem.function_by_op
 
 DialogueSystem._update_currently_playing_dialogues = function (self, dt)
 	-- function 30
@@ -958,22 +851,7 @@ DialogueSystem._update_currently_playing_dialogues = function (self, dt)
 								extension.input:trigger_dialogue_event(currently_playing_dialogue.override_awareness, event_data)
 							end
 						else
-							local system = self._entity_manager:system("surrounding_aware_system")
-							local var_30_1 = system
-							local add_system_event = system.add_system_event
-							local var_30_3 = source
-							local str = "heard_speak"
-							local var_30_5 = sound_distance
-							local str_2 = "speaker"
-							local var_30_7 = source
-							local str_3 = "speaker_name"
-							local var_30_9 = speaker_name
-							local str_4 = "sound_event"
-							local last_query_sound_event = extension.last_query_sound_event
-
-							last_query_sound_event = not not last_query_sound_event or not not "unknown"
-
-							add_system_event(var_30_1, var_30_3, str, var_30_5, str_2, var_30_7, str_3, var_30_9, str_4, last_query_sound_event, "dialogue_name", result, "dialogue_name_nopre", string.sub(result, 5))
+							self._entity_manager:system("surrounding_aware_system"):add_system_event(source, "heard_speak", sound_distance, "speaker", source, "speaker_name", speaker_name, "sound_event", not not extension.last_query_sound_event, "dialogue_name", result, "dialogue_name_nopre", string.sub(result, 5))
 						end
 
 						extension.last_query_sound_event = nil
@@ -1041,17 +919,7 @@ DialogueSystem._trigger_marker = function (self, marker_data)
 		local dialogue_extension = self._unit_extension_data[unit]
 
 		if dialogue_extension then
-			local context = dialogue_extension.context
-
-			if context then
-				-- Nothing
-			end
-
-			context = dialogue_extension.context.player_profile
-
-			local player_profile = context
-
-			::label_33_0::
+			local player_profile = not not dialogue_extension.context
 
 			if player_profile == source_name then
 				source_player = player.player_unit
@@ -1075,24 +943,7 @@ DialogueSystem._trigger_marker = function (self, marker_data)
 
 			update_switch_group(wwise_world, wwise_source_id, extension)
 
-			local var_33_1 = self
-			local _check_play_debug_sound = self._check_play_debug_sound
-			local var_33_3 = sound_event
-			local currently_playing_subtitle
-
-			if extension.currently_playing_dialogue then
-				currently_playing_subtitle = extension.currently_playing_dialogue.currently_playing_subtitle
-
-				if not currently_playing_subtitle then
-					-- Nothing
-				end
-			end
-
-			currently_playing_subtitle = ""
-
-			::label_33_1::
-
-			local source_id, _ = _check_play_debug_sound(var_33_1, var_33_3, currently_playing_subtitle)
+			local source_id, _ = self:_check_play_debug_sound(sound_event, extension.currently_playing_dialogue and not not extension.currently_playing_dialogue.currently_playing_subtitle or not extension.currently_playing_dialogue and not not "")
 
 			source_id = not not source_id or not not WwiseWorld.trigger_event(wwise_world, sound_event, wwise_source_id)
 
@@ -1166,23 +1017,7 @@ DialogueSystem.physics_async_update = function (self, context, t)
 				local interrupted_by = playing_dialogue_category_data.interrupted_by
 				local only_play_for_allies = playing_dialogue.only_allies
 				local not_heard_since_enemy = not not only_play_for_allies and not not not side_manager:is_ally(dialogue_actor_unit, playing_dialogue.currently_playing_unit)
-				local only_local = playing_dialogue.only_local
-
-				if only_local then
-					-- Nothing
-				end
-
-				if owner_player and owner_player == player_manager:owner(playing_dialogue.currently_playing_unit) then
-					only_local = false
-
-					goto label_34_0
-				end
-
-				only_local = true
-
-				local not_heard_since_local = only_local
-
-				::label_34_0::
+				local not_heard_since_local = not not playing_dialogue.only_local
 
 				if not_heard_since_enemy or not_heard_since_local then
 					-- Nothing
@@ -1231,45 +1066,14 @@ DialogueSystem.physics_async_update = function (self, context, t)
 				filter_context.query_context = query.query_context
 				filter_context.global_context = self._global_context
 
-				local get_object_context = self._tagquery_database:get_object_context(dialogue_actor_unit)
+				local user_context_list = not not self._tagquery_database:get_object_context(dialogue_actor_unit)
 
-				if not get_object_context then
-					-- Nothing
-				end
-
-				get_object_context = EMPTY_TABLE
-
-				local user_context_list = get_object_context
-
-				::label_34_1::
-
-				local user_context = user_context_list.user_context
-
-				user_context = not not user_context or not not EMPTY_TABLE
-				filter_context.user_context = user_context
-
-				local user_memory = user_context_list.user_memory
-
-				user_memory = not not user_memory or not not EMPTY_TABLE
-				filter_context.user_memory = user_memory
-
-				local faction_memory = user_context_list.faction_memory
-
-				faction_memory = not not faction_memory or not not EMPTY_TABLE
-				filter_context.faction_memory = faction_memory
+				filter_context.user_context = not not user_context_list.user_context
+				filter_context.user_memory = not not user_context_list.user_memory
+				filter_context.faction_memory = not not user_context_list.faction_memory
 
 				local dialogue_index = DialogueQueries.get_filtered_dialogue_event_index(dialogue, filter_context, GLOBAL_SOUND_EVENT_FILTERS)
-				local additional_trigger_2 = dialogue.additional_trigger
-
-				if not additional_trigger_2 then
-					-- Nothing
-				end
-
-				additional_trigger_2 = dialogue.additional_trigger_heard
-
-				local additional_trigger = additional_trigger_2
-
-				::label_34_2::
+				local additional_trigger = not not dialogue.additional_trigger
 
 				if additional_trigger then
 					local event_data = FrameTable.alloc_table()
@@ -1471,11 +1275,8 @@ DialogueSystem.has_local_player_moved_from_start_position = function (self)
 	end
 
 	local round_started_system = Managers.state.entity:system("round_started_system")
-	local round_has_started = round_started_system:round_has_started()
 
-	round_has_started = not not round_has_started or not not round_started_system:player_has_moved()
-
-	return round_has_started
+	return not not round_started_system:round_has_started()
 end
 
 DialogueSystem.player_shield_check = function (self, unit, optional_slot)
@@ -1711,11 +1512,7 @@ end
 
 DialogueSystem._is_story_trigger_frozen = function (self)
 	-- function 51
-	local _story_trigger_freezes = self._story_trigger_freezes
-
-	_story_trigger_freezes = not not _story_trigger_freezes and self._story_trigger_freezes > 0
-
-	return _story_trigger_freezes
+	return not not self._story_trigger_freezes
 end
 
 local current_cutscene_subs = {}
@@ -1834,7 +1631,7 @@ DialogueSystem._update_player_jumping = function (self, t)
 	if Unit.alive(local_player_unit) then
 		local locomotion_extension = ScriptUnit.extension(local_player_unit, "locomotion_system")
 
-		if (player_input:get("jump") or player_input:get("jump_only")) and locomotion_extension:jump_allowed() then
+		if player_input:get("jump") and locomotion_extension:jump_allowed() or not player_input:get("jump") and player_input:get("jump_only") and locomotion_extension:jump_allowed() then
 			num_of_jumps = num_of_jumps + 1
 
 			if num_of_jumps == 1 then
@@ -1970,24 +1767,7 @@ DialogueSystem.rpc_play_marker_event = function (self, channel_id, go_id, marker
 
 	update_switch_group(wwise_world, wwise_source_id, extension)
 
-	local var_67_0 = self
-	local _check_play_debug_sound = self._check_play_debug_sound
-	local var_67_2 = marker_sound_event
-	local currently_playing_subtitle
-
-	if extension.currently_playing_dialogue then
-		currently_playing_subtitle = extension.currently_playing_dialogue.currently_playing_subtitle
-
-		if not currently_playing_subtitle then
-			-- Nothing
-		end
-	end
-
-	currently_playing_subtitle = ""
-
-	::label_67_0::
-
-	local playing_id, _ = _check_play_debug_sound(var_67_0, var_67_2, currently_playing_subtitle)
+	local playing_id, _ = self:_check_play_debug_sound(marker_sound_event, extension.currently_playing_dialogue and not not extension.currently_playing_dialogue.currently_playing_subtitle or not extension.currently_playing_dialogue and not not "")
 
 	if not playing_id then
 		WwiseWorld.trigger_event(wwise_world, marker_sound_event, wwise_source_id)
@@ -2061,36 +1841,7 @@ DialogueSystem.rpc_play_dialogue_event = function (self, channel_id, go_id, is_l
 	end
 
 	local not_indended_profile = dialogue.intended_player_profile ~= nil and dialogue.intended_player_profile ~= get_local_sound_character()
-
-	if not not_indended_profile then
-		-- Nothing
-	end
-
-	do
-		local only_local
-	end
-
-	::label_70_0::
-
-	if not dialogue.only_allies or is_ally then
-		only_local = dialogue.only_local
-
-		if only_local then
-			-- Nothing
-		end
-
-		if local_player and local_player == Managers.player:owner(dialogue_actor_unit) then
-			only_local = false
-
-			goto label_70_1
-		end
-	end
-
-	only_local = true
-
-	local ignore_dialogue = only_local
-
-	::label_70_1::
+	local ignore_dialogue = not not not_indended_profile or dialogue.only_allies and not is_ally or not not dialogue.only_local
 
 	if ignore_dialogue then
 		dialogue.currently_playing_subtitle = ""

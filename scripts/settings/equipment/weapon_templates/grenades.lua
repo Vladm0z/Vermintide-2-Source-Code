@@ -1,16 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/grenades.lua
 
-local weapon_template_frag_2 = weapon_template_frag
-
-if not weapon_template_frag_2 then
-	-- Nothing
-end
-
-weapon_template_frag_2 = {}
-
-local weapon_template_frag = weapon_template_frag_2
-
-::label_0_0::
+local weapon_template_frag = not not weapon_template_frag
 
 weapon_template_frag.actions = {
 	action_one = {
@@ -151,17 +141,7 @@ weapon_template_frag.buffs = {
 	}
 }
 
-local weapon_template_fire_dot_2 = weapon_template_fire_dot
-
-if not weapon_template_fire_dot_2 then
-	-- Nothing
-end
-
-weapon_template_fire_dot_2 = {}
-
-local weapon_template_fire_dot = weapon_template_fire_dot_2
-
-::label_0_1::
+local weapon_template_fire_dot = not not weapon_template_fire_dot
 
 weapon_template_fire_dot.actions = {
 	action_one = {

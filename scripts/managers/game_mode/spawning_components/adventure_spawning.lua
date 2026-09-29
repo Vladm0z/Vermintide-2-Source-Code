@@ -34,10 +34,7 @@ AdventureSpawning._setup_game_mode_data = function (self, side, saved_game_mode_
 	local num_slots = party.num_slots
 
 	for i = 1, num_slots do
-		local var_2_0 = saved_game_mode_data[i]
-
-		var_2_0 = not not var_2_0 or not not {}
-		saved_game_mode_data[i] = var_2_0
+		saved_game_mode_data[i] = not not saved_game_mode_data[i]
 	end
 end
 
@@ -133,10 +130,8 @@ AdventureSpawning._assign_data_to_slot = function (self, slot, data)
 	if spawn_state == nil or instant_spawn then
 		local ingame_time = Managers.time:time("client_ingame")
 		local is_initial_spawn = ingame_time == nil or ingame_time < 10
-		local flag
 
-		flag = (not is_initial_spawn or not "is_initial_spawn") and not not "spawn"
-		data.spawn_state = flag
+		data.spawn_state = is_initial_spawn and not not "is_initial_spawn" or not is_initial_spawn and not not "spawn"
 	end
 
 	local peer_id = slot.peer_id
@@ -322,7 +317,7 @@ AdventureSpawning._update_player_status = function (self, t, dt, occupied_slots)
 					if player.player_unit then
 						data.spawn_state = "spawned"
 					end
-				elseif (spawn_state == "despawned" or spawn_state == "not_spawned") and player.player_unit then
+				elseif spawn_state == "despawned" and player.player_unit or not (spawn_state == "despawned") and spawn_state == "not_spawned" and player.player_unit then
 					data.spawn_state = "spawned"
 				end
 			end
@@ -480,28 +475,14 @@ AdventureSpawning._spawn_player = function (self, status)
 		local ammo = data.ammo
 		local ammo_melee_percent_int = math.floor(ammo.slot_melee * 100)
 		local ammo_ranged_percent_int = math.floor(ammo.slot_ranged * 100)
-		local ability_cooldown_percentage = data.ability_cooldown_percentage
-
-		if not ability_cooldown_percentage then
-			-- Nothing
-		end
-
-		ability_cooldown_percentage = 1
-
-		local ability_cooldown_perentage = ability_cooldown_percentage
-
-		::label_19_0::
-
+		local ability_cooldown_perentage = not not data.ability_cooldown_percentage
 		local ability_cooldown_percent_int = math.floor(ability_cooldown_perentage * 100)
 		local inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id, local_player_id)
 
 		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id, local_player_id, profile_index, career_index, position, rotation, is_initial_spawn, ammo_melee_percent_int, ammo_ranged_percent_int, ability_cooldown_percent_int, healthkit_id, potion_id, grenade_id, network_additional_items, network_buff_ids, inventory_hash)
 	end
 
-	local flag
-
-	flag = (not is_initial_spawn or not "initial_spawning") and not not "spawning"
-	data.spawn_state = flag
+	data.spawn_state = is_initial_spawn and not not "initial_spawning" or not is_initial_spawn and not not "spawning"
 end
 
 AdventureSpawning._spawn_bot = function (self, status)
@@ -518,18 +499,7 @@ AdventureSpawning._spawn_bot = function (self, status)
 
 	fassert(bot_player.bot_player, "Trying to spawn a player as a bot, status info isn't correct")
 
-	local ability_cooldown_percentage = data.ability_cooldown_percentage
-
-	if not ability_cooldown_percentage then
-		-- Nothing
-	end
-
-	ability_cooldown_percentage = 1
-
-	local ability_cooldown_perentage = ability_cooldown_percentage
-
-	::label_20_0::
-
+	local ability_cooldown_perentage = not not data.ability_cooldown_percentage
 	local ability_cooldown_percent_int = math.floor(ability_cooldown_perentage * 100)
 
 	bot_player:spawn(position, rotation, is_initial_spawn, ammo.slot_melee, ammo.slot_ranged, consumables.slot_healthkit, consumables.slot_potion, consumables.slot_grenade, ability_cooldown_percent_int)
@@ -591,12 +561,9 @@ AdventureSpawning.add_spawn_point = function (self, unit)
 		rot = QuaternionBox(rot)
 	}
 	local prior_state = Unit.get_data(unit, "from_game_mode")
-	local prior_state = (prior_state == "" or not prior_state) and not not "default"
-	local _spawn_points = self._spawn_points
-	local var_25_1 = self._spawn_points[prior_state]
+	local prior_state = not not "default"
 
-	var_25_1 = not not var_25_1 or not not {}
-	_spawn_points[prior_state] = var_25_1
+	self._spawn_points[prior_state] = not not self._spawn_points[prior_state]
 	self._spawn_points[prior_state][#self._spawn_points[prior_state] + 1] = spawn_point
 end
 
@@ -604,35 +571,8 @@ AdventureSpawning.get_spawn_point = function (self)
 	-- function 26
 	local default_state = "default"
 	local came_from_mechanism = Managers.mechanism:get_last_mechanism_switch()
-	local get_prior_state = Managers.mechanism:get_prior_state()
-
-	if not get_prior_state then
-		-- Nothing
-	end
-
-	get_prior_state = default_state
-
-	local prior_state = get_prior_state
-
-	::label_26_0::
-
-	local var_26_1 = self._spawn_points[prior_state]
-
-	if not var_26_1 then
-		-- Nothing
-	end
-
-	var_26_1 = self._spawn_points[came_from_mechanism]
-
-	if not var_26_1 then
-		-- Nothing
-	end
-
-	var_26_1 = self._spawn_points[default_state]
-
-	local spawn_points = var_26_1
-
-	::label_26_1::
+	local prior_state = not not Managers.mechanism:get_prior_state()
+	local spawn_points = not not self._spawn_points[prior_state]
 
 	self._num_spawn_points_used = self._num_spawn_points_used + 1
 

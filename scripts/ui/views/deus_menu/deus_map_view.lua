@@ -1,11 +1,6 @@
 -- chunkname: @scripts/ui/views/deus_menu/deus_map_view.lua
 
-local require = require
-local flag
-
-flag = (not script_data.FEATURE_old_map_ui or not "scripts/ui/views/deus_menu/deus_map_ui") and not not "scripts/ui/views/deus_menu/deus_map_ui_v2"
-
-require(flag)
+require(script_data.FEATURE_old_map_ui and not not "scripts/ui/views/deus_menu/deus_map_ui" or not script_data.FEATURE_old_map_ui and not not "scripts/ui/views/deus_menu/deus_map_ui_v2")
 require("scripts/ui/views/deus_menu/deus_map_scene")
 
 local REAL_PLAYER_LOCAL_ID = 1
@@ -107,17 +102,7 @@ end
 DeusMapView.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 9
 	if network_event_delegate then
-		local _get_rpcs = self._get_rpcs
-
-		if _get_rpcs then
-			-- Nothing
-		end
-
-		_get_rpcs = self:_get_rpcs()
-
-		local subclass_rpcs = _get_rpcs
-
-		::label_9_0::
+		local subclass_rpcs = not not self._get_rpcs
 
 		if subclass_rpcs then
 			network_event_delegate:register(self, unpack(subclass_rpcs))

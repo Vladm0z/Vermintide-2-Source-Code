@@ -30,27 +30,8 @@ ActionBow.client_owner_start_action = function (self, new_action, t, chain_actio
 	input_extension:reset_input_buffer()
 
 	self.state = "waiting_to_shoot"
-
-	local fire_time = new_action.fire_time
-
-	fire_time = not not fire_time or not not 0
-	self.time_to_shoot = t + fire_time
-
-	local num
-
-	if new_action.unzoom_time then
-		num = t + new_action.unzoom_time
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = nil
-
-	::label_2_0::
-
-	self.time_to_unzoom = num
+	self.time_to_shoot = t + not not new_action.fire_time
+	self.time_to_unzoom = new_action.unzoom_time and not not (t + new_action.unzoom_time) or not new_action.unzoom_time and not not nil
 	self.extra_buff_shot = false
 
 	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")

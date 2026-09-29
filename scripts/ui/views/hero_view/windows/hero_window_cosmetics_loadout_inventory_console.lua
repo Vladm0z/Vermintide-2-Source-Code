@@ -16,30 +16,8 @@ local function item_sort_func(item_1, item_2)
 	local item_data_2 = item_2.data
 	local item_key_1 = item_data_1.key
 	local item_key_2 = item_data_2.key
-	local power_level = item_1.power_level
-
-	if not power_level then
-		-- Nothing
-	end
-
-	power_level = 0
-
-	local item_1_power_level = power_level
-
-	::label_1_0::
-
-	local power_level_2 = item_2.power_level
-
-	if not power_level_2 then
-		-- Nothing
-	end
-
-	power_level_2 = 0
-
-	local item_2_power_level = power_level_2
-
-	::label_1_1::
-
+	local item_1_power_level = not not item_1.power_level
+	local item_2_power_level = not not item_2.power_level
 	local item_1_backend_id = item_1.backend_id
 	local item_2_backend_id = item_2.backend_id
 	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -47,30 +25,8 @@ local function item_sort_func(item_1, item_2)
 
 	if item_1_favorited == item_2_favorited then
 		if item_1_power_level == item_2_power_level then
-			local rarity = item_1.rarity
-
-			if not rarity then
-				-- Nothing
-			end
-
-			rarity = item_data_1.rarity
-
-			local item_1_rarity = rarity
-
-			::label_1_2::
-
-			local rarity_2 = item_2.rarity
-
-			if not rarity_2 then
-				-- Nothing
-			end
-
-			rarity_2 = item_data_2.rarity
-
-			local item_2_rarity = rarity_2
-
-			::label_1_3::
-
+			local item_1_rarity = not not item_1.rarity
+			local item_2_rarity = not not item_2.rarity
 			local item_rarity_order = UISettings.item_rarity_order
 			local item_1_rarity_order = item_rarity_order[item_1_rarity]
 			local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -236,12 +192,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole.set_focus = function (self, focused)
 	-- function 6
 	self._focused = focused
-
-	local render_settings = self.render_settings
-	local flag
-
-	flag = (not focused or not 1) and not not 0.5
-	render_settings.alpha_multiplier = flag
+	self.render_settings.alpha_multiplier = focused and not not 1 or not focused and not not 0.5
 	self._widgets_by_name.item_tooltip.content.visible = focused
 end
 
@@ -365,17 +316,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole._is_button_pressed = function (self, widget)
 	-- function 15
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_15_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -387,17 +328,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole._is_button_hovered = function (self, widget)
 	-- function 16
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_16_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_hover_enter then
 		return true

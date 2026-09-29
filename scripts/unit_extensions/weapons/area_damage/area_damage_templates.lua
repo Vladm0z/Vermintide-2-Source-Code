@@ -291,7 +291,7 @@ AreaDamageTemplates.templates = {
 				local gravity_well = aoe_data.gravity_well
 				local num_ai_units
 
-				if (attack_template_name or gravity_well) and (damage_timer <= 0 or damage_interval <= damage_timer) then
+				if damage_timer <= 0 or damage_interval <= damage_timer then
 					local broadphase_query_categories = side.enemy_broadphase_categories
 
 					num_ai_units = AiUtils.broadphase_query(area_damage_position, radius, ai_units, broadphase_query_categories)
@@ -602,43 +602,8 @@ AreaDamageTemplates.templates = {
 AreaDamageTemplates.get_template = function (area_damage_template, is_husk)
 	-- function 22
 	local templates = AreaDamageTemplates.templates
-	local str
-
-	if is_husk == true then
-		str = "husk"
-
-		goto label_22_0
-	end
-
-	if is_husk == false then
-		str = "unit"
-
-		goto label_22_0
-	end
-
-	str = nil
-
-	local husk_key = str
-
-	do
-		local var_22_1
-	end
-
-	::label_22_0::
-
-	if husk_key then
-		var_22_1 = templates[area_damage_template][husk_key]
-
-		if not var_22_1 then
-			-- Nothing
-		end
-	end
-
-	var_22_1 = templates[area_damage_template]
-
-	local template = var_22_1
-
-	::label_22_1::
+	local husk_key = is_husk ~= true and (is_husk ~= false and not not nil or not (is_husk ~= false) and not not "unit") or not (is_husk ~= true) and not not "husk"
+	local template = husk_key and not not templates[area_damage_template][husk_key] or not husk_key and not not templates[area_damage_template]
 
 	fassert(template, "no area_damage_template called %s", area_damage_template)
 

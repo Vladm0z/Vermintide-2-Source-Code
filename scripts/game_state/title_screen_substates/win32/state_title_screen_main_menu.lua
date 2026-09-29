@@ -27,23 +27,7 @@ end
 StateTitleScreenMainMenu._check_prologue_status = function (self)
 	-- function 2
 	local success = true
-	local get_user_data = Managers.backend:get_user_data("has_completed_tutorial")
-
-	if not get_user_data then
-		-- Nothing
-	end
-
-	get_user_data = SaveData.has_completed_tutorial
-
-	if not get_user_data then
-		-- Nothing
-	end
-
-	get_user_data = false
-
-	local has_completed_tutorial = get_user_data
-
-	::label_2_0::
+	local has_completed_tutorial = not not Managers.backend:get_user_data("has_completed_tutorial")
 
 	if has_completed_tutorial or script_data.disable_tutorial_at_start then
 		success = false
@@ -117,30 +101,8 @@ end
 
 StateTitleScreenMainMenu._setup_sound = function (self)
 	-- function 8
-	local user_setting = Application.user_setting("master_bus_volume")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = 90
-
-	local master_bus_volume = user_setting
-
-	::label_8_0::
-
-	local user_setting_2 = Application.user_setting("music_bus_volume")
-
-	if not user_setting_2 then
-		-- Nothing
-	end
-
-	user_setting_2 = 90
-
-	local music_bus_volume = user_setting_2
-
-	::label_8_1::
-
+	local master_bus_volume = not not Application.user_setting("master_bus_volume")
+	local music_bus_volume = not not Application.user_setting("music_bus_volume")
 	local wwise_world
 
 	if GLOBAL_MUSIC_WORLD then
@@ -295,22 +257,7 @@ StateTitleScreenMainMenu.cb_fade_in_done = function (self, level_key, profile_na
 
 		self.parent.parent.loading_context.wanted_profile_index = 4
 	elseif script_data.honduras_demo then
-		local loading_context = self.parent.parent.loading_context
-		local var_18_1
-
-		if profile_name then
-			var_18_1 = FindProfileIndex(profile_name)
-
-			if not var_18_1 then
-				-- Nothing
-			end
-		end
-
-		var_18_1 = DemoSettings.wanted_profile_index
-
-		::label_18_0::
-
-		loading_context.wanted_profile_index = var_18_1
+		self.parent.parent.loading_context.wanted_profile_index = profile_name and not not FindProfileIndex(profile_name) or not profile_name and not not DemoSettings.wanted_profile_index
 		GameSettingsDevelopment.disable_free_flight = DemoSettings.disable_free_flight
 		GameSettingsDevelopment.disable_intro_trailer = DemoSettings.disable_intro_trailer
 	end

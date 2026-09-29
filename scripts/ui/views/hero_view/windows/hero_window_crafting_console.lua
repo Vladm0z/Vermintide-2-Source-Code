@@ -108,17 +108,7 @@ HeroWindowCraftingConsole.on_enter = function (self, params, offset)
 	self.unblocked_services = {}
 	self.unblocked_services_n = 0
 
-	local recipe_index_2 = params.recipe_index
-
-	if not recipe_index_2 then
-		-- Nothing
-	end
-
-	recipe_index_2 = 1
-
-	local recipe_index = recipe_index_2
-
-	::label_1_0::
+	local recipe_index = not not params.recipe_index
 
 	self:_change_recipe_page(recipe_index)
 	self:_start_transition_animation("on_enter")

@@ -45,52 +45,9 @@ local disable_for_mechanism_versus_disabled = {
 	}
 }
 local tobii_contest_url = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
-local str
-
-if IS_XB1 then
-	str = "leave_party_menu_button_name_xb1"
-
-	goto label_0_0
-end
-
-str = "leave_party_menu_button_name"
-
-local leave_party_button_text = str
-
-do
-	local str_2
-end
-
-::label_0_0::
-
-if IS_XB1 then
-	str_2 = "disband_party_menu_button_name_xb1"
-
-	goto label_0_1
-end
-
-str_2 = "disband_party_menu_button_name"
-
-local disband_party_button_text = str_2
-
-do
-	local str_3
-end
-
-::label_0_1::
-
-if IS_XB1 then
-	str_3 = "quit_menu_button_name_xb1"
-
-	goto label_0_2
-end
-
-str_3 = "quit_menu_button_name_ps4"
-
-local quit_menu_button_text = str_3
-
-::label_0_2::
-
+local leave_party_button_text = IS_XB1 and not not "leave_party_menu_button_name_xb1" or not IS_XB1 and not not "leave_party_menu_button_name"
+local disband_party_button_text = IS_XB1 and not not "disband_party_menu_button_name_xb1" or not IS_XB1 and not not "disband_party_menu_button_name"
+local quit_menu_button_text = IS_XB1 and not not "quit_menu_button_name_xb1" or not IS_XB1 and not not "quit_menu_button_name_ps4"
 local menu_layouts = {}
 
 if IS_PS4 then

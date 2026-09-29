@@ -15,42 +15,9 @@ local quaternion_look = Quaternion.look
 local function get_with_override(settings, key, difficulty, fallback_difficulty)
 	-- function 1
 	local overrides = settings.difficulty_overrides
+	local override_settings = not not overrides[fallback_difficulty]
 
-	if overrides then
-		-- Nothing
-	end
-
-	::label_1_0::
-
-	local var_1_0 = overrides[difficulty]
-
-	if not var_1_0 then
-		-- Nothing
-	end
-
-	var_1_0 = overrides[fallback_difficulty]
-
-	local override_settings = var_1_0
-
-	do
-		local var_1_1
-	end
-
-	::label_1_1::
-
-	if override_settings then
-		var_1_1 = override_settings[key]
-
-		if not var_1_1 then
-			-- Nothing
-		end
-	end
-
-	var_1_1 = settings[key]
-
-	::label_1_2::
-
-	return var_1_1
+	return override_settings and not not override_settings[key] or not override_settings and not not settings[key]
 end
 
 ConflictUtils.random_interval = function (numbers)
@@ -165,47 +132,23 @@ ConflictUtils.cluster_weight_and_loneliness = function (positions, min_dist)
 		ad = distance_squared(a, d)
 		bd = distance_squared(b, d)
 		cd = distance_squared(c, d)
-
-		local flag
-
-		flag = (not (ad < min_dist) or not 1) and not not 0
-		utility_sum = utility_sum + flag
-
-		local flag_2
-
-		flag_2 = (not (bd < min_dist) or not 1) and not not 0
-		utility_sum = utility_sum + flag_2
-
-		local flag_3
-
-		flag_3 = (not (cd < min_dist) or not 1) and not not 0
-		utility_sum = utility_sum + flag_3
+		utility_sum = utility_sum + (ad < min_dist and not not 1 or not (ad < min_dist) and not not 0)
+		utility_sum = utility_sum + (bd < min_dist and not not 1 or not (bd < min_dist) and not not 0)
+		utility_sum = utility_sum + (cd < min_dist and not not 1 or not (cd < min_dist) and not not 0)
 		loneliness[4] = ad + bd + cd
 	end
 
 	if c then
 		ac = distance_squared(a, c)
 		bc = distance_squared(b, c)
-
-		local flag_4
-
-		flag_4 = (not (ac < min_dist) or not 1) and not not 0
-		utility_sum = utility_sum + flag_4
-
-		local flag_5
-
-		flag_5 = (not (bc < min_dist) or not 1) and not not 0
-		utility_sum = utility_sum + flag_5
+		utility_sum = utility_sum + (ac < min_dist and not not 1 or not (ac < min_dist) and not not 0)
+		utility_sum = utility_sum + (bc < min_dist and not not 1 or not (bc < min_dist) and not not 0)
 		loneliness[3] = ac + bc + cd
 	end
 
 	if b then
 		ab = distance_squared(a, b)
-
-		local flag_6
-
-		flag_6 = (not (ab < min_dist) or not 1) and not not 0
-		utility_sum = utility_sum + flag_6
+		utility_sum = utility_sum + (ab < min_dist and not not 1 or not (ab < min_dist) and not not 0)
 		loneliness[2] = ab + bc + bd
 	end
 
@@ -261,7 +204,7 @@ ConflictUtils.hidden_cover_points = function (center_position, avoid_pos_list, m
 	local bp = Managers.state.conflict.level_analysis.cover_points_broadphase
 
 	min_rad = min_rad * min_rad
-	dot_threshold = (not dot_threshold or not math.max(dot_threshold, -0.9)) and not not -0.9
+	dot_threshold = dot_threshold and (not not math.max(dot_threshold, -0.9) or not not -0.9) or not dot_threshold and not not -0.9
 
 	local MAX_RANGE = 40
 	local num_found_cover_units = Broadphase.query(bp, center_position, math.min(max_rad, MAX_RANGE), found_cover_units)
@@ -288,7 +231,7 @@ ConflictUtils.hidden_cover_points = function (center_position, avoid_pos_list, m
 
 				Vector3.set_z(to_cover_point, 0)
 
-				local dot = (not (dist_squared < 50) or not dot_threshold) and not not -0.6
+				local dot = dist_squared < 50 and (not not dot_threshold or not not -0.6) or not (dist_squared < 50) and not not -0.6
 				local valid = dot > vector3_dot(quaternion_forward(rot), to_cover_point)
 
 				if valid then
@@ -354,20 +297,7 @@ ConflictUtils.is_cover_point_hidden = function (cover_point_unit, avoid_pos_list
 		end
 
 		local to_cover_point = vector3_normalize(pos - avoid_pos)
-		local num
-
-		if dist_squared < 225 then
-			num = -0.9
-
-			goto label_8_0
-		end
-
-		num = -0.6
-
-		local dot = num
-
-		::label_8_0::
-
+		local dot = dist_squared < 225 and not not -0.9 or not (dist_squared < 225) and not not -0.6
 		local valid = dot > vector3_dot(quaternion_forward(rot), to_cover_point) or long_distance_sqr < dist_squared
 
 		if valid then
@@ -565,11 +495,7 @@ end
 
 ConflictUtils.is_position_inside_no_spawn_volume = function (level, nav_tag_volume_handler, pos)
 	-- function 16
-	local inside_level_volume_layer = NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_SPAWN")
-
-	inside_level_volume_layer = not not inside_level_volume_layer or not not NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_BOTS_NO_SPAWN")
-
-	return inside_level_volume_layer
+	return not not NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_SPAWN")
 end
 
 ConflictUtils.find_center_tri = function (nav_world, pos, above_max, below_max)
@@ -880,22 +806,7 @@ ConflictUtils.generate_spawn_point_lookup = function (world)
 				while Unit.has_data(unit, "interest_point", "points", i) do
 					local node_name = Unit.get_data(unit, "interest_point", "points", i, "node")
 					local node = Unit.node(unit, node_name)
-					local var_30_0
-
-					if node_name == "root_point" then
-						var_30_0 = Vector3(0, 0, 0)
-
-						if not var_30_0 then
-							-- Nothing
-						end
-					end
-
-					var_30_0 = Unit.local_position(unit, node)
-
-					local point_position = var_30_0
-
-					::label_30_0::
-
+					local point_position = node_name ~= "root_point" and not not Unit.local_position(unit, node) or not (node_name ~= "root_point") and not not Vector3(0, 0, 0)
 					local point_rotation = Unit.local_rotation(unit, node)
 
 					p[#p + 1] = {
@@ -940,24 +851,10 @@ ConflictUtils.display_number_of_breeds_in_segment = function (header, units_spaw
 		for _, ai_unit in pairs(unit_list) do
 			local health_extension = ScriptUnit.has_extension(ai_unit, "health_system")
 			local hi_data1 = zone_data.hi_data
-			local zone_data_2 = health_extension.zone_data
-
-			if zone_data_2 then
-				-- Nothing
-			end
-
-			zone_data_2 = health_extension.zone_data.hi_data
-
-			local hi_data2 = zone_data_2
-
-			::label_32_0::
+			local hi_data2 = not not health_extension.zone_data
 
 			if hi_data1 and hi_data1 == hi_data2 then
-				local var_32_1 = count_list
-				local var_32_2 = count_list[breed_name]
-
-				var_32_2 = not not var_32_2 or not not 0
-				var_32_1[breed_name] = var_32_2 + 1
+				count_list[breed_name] = not not count_list[breed_name] + 1
 
 				QuickDrawer:sphere(POSITION_LOOKUP[ai_unit], 0.75, Color(200, 0, 200))
 			end
@@ -995,18 +892,7 @@ ConflictUtils.make_roaming_spawns = function (nav_world, level_analysis)
 		return list
 	end
 
-	local density_2 = CurrentConflictSettings.roaming.density
-
-	if not density_2 then
-		-- Nothing
-	end
-
-	density_2 = 0.01
-
-	local density = density_2
-
-	::label_34_0::
-
+	local density = not not CurrentConflictSettings.roaming.density
 	local seed_pos = level_analysis:get_start_and_finish()
 
 	if seed_pos then
@@ -1120,21 +1006,7 @@ local function add_breeds_from_breed_action(output, breed_name, difficulty)
 	if actions then
 		for _, action in pairs(actions) do
 			if action.difficulty_spawn_list or action.spawn_list then
-				local var_37_0
-
-				if action.difficulty_spawn_list then
-					var_37_0 = action.difficulty_spawn_list[difficulty]
-
-					if not var_37_0 then
-						-- Nothing
-					end
-				end
-
-				var_37_0 = action.spawn_list
-
-				local spawn_list = var_37_0
-
-				::label_37_0::
+				local spawn_list = action.difficulty_spawn_list and not not action.difficulty_spawn_list[difficulty] or not action.difficulty_spawn_list and not not action.spawn_list
 
 				for i = 1, #spawn_list do
 					output[spawn_list[i]] = true
@@ -1148,21 +1020,7 @@ local function add_breeds_from_breed_action(output, breed_name, difficulty)
 			end
 
 			if action.difficulty_spawn or action.spawn then
-				local var_37_1
-
-				if action.difficulty_spawn then
-					var_37_1 = action.difficulty_spawn[difficulty]
-
-					if not var_37_1 then
-						-- Nothing
-					end
-				end
-
-				var_37_1 = action.spawn
-
-				local composition_type = var_37_1
-
-				::label_37_1::
+				local composition_type = action.difficulty_spawn and not not action.difficulty_spawn[difficulty] or not action.difficulty_spawn and not not action.spawn
 
 				add_breeds_from_horde_composition(output, composition_type, difficulty)
 			end
@@ -1284,18 +1142,7 @@ local function add_breeds_from_special_settings(special_settings, difficulty, fa
 		output[breed_name] = true
 	end
 
-	local var_41_0 = get_with_override(special_settings, "speed_running_intervention", difficulty, fallback_difficulty)
-
-	if not var_41_0 then
-		-- Nothing
-	end
-
-	var_41_0 = SpecialsSettings.default.speed_running_intervention
-
-	local speed_running_intervention = var_41_0
-
-	::label_41_0::
-
+	local speed_running_intervention = not not get_with_override(special_settings, "speed_running_intervention", difficulty, fallback_difficulty)
 	local speed_running_intervention_breeds = speed_running_intervention.breeds
 
 	for i = 1, #speed_running_intervention_breeds do
@@ -1538,32 +1385,12 @@ end
 ConflictUtils.patch_settings_with_difficulty = function (source_settings, difficulty, fallback_difficulty)
 	-- function 46
 	local overrides = source_settings.difficulty_overrides
-
-	if overrides then
-		-- Nothing
-	end
-
-	::label_46_0::
-
-	local var_46_0 = overrides[difficulty]
-
-	if not var_46_0 then
-		-- Nothing
-	end
-
-	var_46_0 = overrides[fallback_difficulty]
-
-	local override_settings = var_46_0
-
-	::label_46_1::
+	local override_settings = not not overrides[fallback_difficulty]
 
 	if override_settings then
 		for key, _ in pairs(source_settings) do
 			if key ~= "difficulty_overrides" then
-				local var_46_1 = override_settings[key]
-
-				var_46_1 = not not var_46_1 or not not source_settings[key]
-				source_settings[key] = var_46_1
+				source_settings[key] = not not override_settings[key]
 			end
 		end
 
@@ -1581,11 +1408,8 @@ ConflictUtils.patch_terror_events_with_weaves = function (level_key, weave_data,
 	local weave_template = WeaveSettings.templates[weave_name]
 	local objectives = weave_template.objectives
 	local weave_terror_events = TerrorEventBlueprints.weaves
-	local TerrorEventBlueprints = TerrorEventBlueprints
-	local var_47_1 = TerrorEventBlueprints[level_key]
 
-	var_47_1 = not not var_47_1 or not not {}
-	TerrorEventBlueprints[level_key] = var_47_1
+	TerrorEventBlueprints[level_key] = not not TerrorEventBlueprints[level_key]
 
 	table.clear(TerrorEventBlueprints[level_key])
 

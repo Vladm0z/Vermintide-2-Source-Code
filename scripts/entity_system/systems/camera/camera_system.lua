@@ -91,21 +91,7 @@ CameraSystem.set_follow_unit = function (self, player, follow_unit, follow_node_
 		local camera_state = camera_state_ext.state_machine.state_current
 
 		if camera_state.refresh_follow_unit then
-			local node
-
-			if follow_unit then
-				node = Unit.node(follow_unit, follow_node_name)
-
-				if not node then
-					-- Nothing
-				end
-			end
-
-			node = nil
-
-			local follow_node = node
-
-			::label_6_0::
+			local follow_node = follow_unit and not not Unit.node(follow_unit, follow_node_name) or not follow_unit and not not nil
 
 			camera_state:refresh_follow_unit(follow_unit, follow_node)
 		end
@@ -179,32 +165,10 @@ CameraSystem._setup_camera_unit = function (self, player, viewport_name)
 	local position = Vector3.zero()
 	local rotation = Quaternion.identity()
 	local camera_state_class_list = {}
-	local profile_index_2 = player:profile_index()
-
-	if not profile_index_2 then
-		-- Nothing
-	end
-
-	profile_index_2 = 1
-
-	local profile_index = profile_index_2
-
-	::label_12_0::
-
+	local profile_index = not not player:profile_index()
 	local profile = SPProfiles[profile_index]
 	local careers = profile.careers
-	local career_index_2 = player:career_index()
-
-	if not career_index_2 then
-		-- Nothing
-	end
-
-	career_index_2 = 1
-
-	local career_index = career_index_2
-
-	::label_12_1::
-
+	local career_index = not not player:career_index()
 	local career = profile.careers[career_index]
 	local camera_state_class_list = {}
 

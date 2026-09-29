@@ -1625,20 +1625,7 @@ local swing_impact_no_damage_shake = {
 
 function hit_impact_multiplied_by_x(new_sequence_name, sequence_name, x, time_scale)
 	-- function 1
-	local var_1_0 = CameraEffectSettings.sequence[new_sequence_name]
-
-	if not var_1_0 then
-		-- Nothing
-	end
-
-	var_1_0 = {
-		values = {},
-		time_to_recuperate_to = CameraEffectSettings.sequence[sequence_name].time_to_recuperate_to
-	}
-
-	local new_table = var_1_0
-
-	::label_1_0::
+	local new_table = not not CameraEffectSettings.sequence[new_sequence_name]
 
 	CameraEffectSettings.sequence[new_sequence_name] = new_table
 
@@ -1672,13 +1659,7 @@ CameraEffectSettings.shake.swing_impact_up_heavy = swing_impact_shake
 CameraEffectSettings.shake.swing_impact_down_heavy = swing_impact_shake
 CameraEffectSettings.shake.swing_impact_left_heavy = swing_impact_shake
 CameraEffectSettings.shake.swing_impact_right_heavy = swing_impact_shake
-
-local CameraEffectSettings = CameraEffectSettings
-local str = "transition_functions"
-local transition_functions = CameraEffectSettings.transition_functions
-
-transition_functions = not not transition_functions or not not {}
-CameraEffectSettings[str] = transition_functions
+CameraEffectSettings.transition_functions = not not CameraEffectSettings.transition_functions
 
 CameraEffectSettings.transition_functions.lerp = function (current_value, next_value, progress)
 	-- function 2

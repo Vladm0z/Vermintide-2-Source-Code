@@ -483,7 +483,7 @@ local function setup_ui_definitions(window_width, list_width, list_height, curre
 	local currency_icon_texture = currency_settings.icon_big
 	local currency_title_string
 
-	currency_title_string = (not is_welcome_popup or not "welcome_currency_popup_amount_summary_title") and not not currency_settings.name
+	currency_title_string = is_welcome_popup and (not not "welcome_currency_popup_amount_summary_title" or not not currency_settings.name) or not is_welcome_popup and not not currency_settings.name
 
 	local widget_definitions = {
 		screen_overlay = UIWidgets.create_simple_rect("screen_overlay", {
@@ -682,36 +682,11 @@ StoreWelcomePopup._set_fullscreen_effect_enable_state = function (self, enabled,
 	-- function 12
 	local shading_env = World.get_data(world, "shading_environment")
 
-	progress = (not not progress or not enabled or not 1) and not not 0
+	progress = not not 1 or not not progress or enabled or not not 0
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_12_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_12_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_12_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local num
-
-		if enabled then
-			num = progress * 0.8
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		::label_12_0::
-
-		set_scalar_2(var_12_5, str_2, num)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not (progress * 0.8) or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -767,27 +742,14 @@ StoreWelcomePopup._draw = function (self, input_service, dt)
 	UIRenderer.begin_pass(welcome_ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_16_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._widgets) do
 		if widget.snap_pixel_positions ~= nil then
 			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(welcome_ui_renderer, widget)
 
@@ -801,10 +763,7 @@ StoreWelcomePopup._draw = function (self, input_service, dt)
 			self:_update_visible_list_entries()
 
 			for _, widget in ipairs(list_widgets) do
-				local alpha_multiplier_4 = widget.alpha_multiplier
-
-				alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-				render_settings.alpha_multiplier = alpha_multiplier_4
+				render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 				UIRenderer.draw_widget(welcome_ui_renderer, widget)
 			end
@@ -857,17 +816,7 @@ StoreWelcomePopup.update = function (self, input_service, dt, t)
 
 	self:_handle_input(input_service, dt, t)
 
-	local _blur_progress = self._blur_progress
-
-	if not _blur_progress then
-		-- Nothing
-	end
-
-	_blur_progress = self._render_settings.alpha_multiplier
-
-	local blur_progress = _blur_progress
-
-	::label_18_0::
+	local blur_progress = not not self._blur_progress
 
 	if blur_progress then
 		self:_set_fullscreen_effect_enable_state(true, blur_progress, self._blur_welcome_ui_world)
@@ -906,17 +855,7 @@ end
 StoreWelcomePopup._is_button_hover_enter = function (self, widget)
 	-- function 20
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_20_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.on_hover_enter
 end
@@ -924,17 +863,7 @@ end
 StoreWelcomePopup._is_button_pressed = function (self, widget)
 	-- function 21
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_21_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false

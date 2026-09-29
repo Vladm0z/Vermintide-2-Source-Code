@@ -87,11 +87,8 @@ CareerAbilityWHZealot._ability_available = function (self)
 	-- function 6
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
-
-	return can_use_activated_ability
+	return not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityWHZealot._start_priming = function (self)

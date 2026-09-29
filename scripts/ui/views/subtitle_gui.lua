@@ -206,17 +206,7 @@ SubtitleGui.update = function (self, dt)
 
 						local speaker_name = currently_playing_dialogue.speaker_name
 						local localized_speaker_name = Localize("subtitle_name_" .. speaker_name)
-						local var_7_0 = DialogueSettings.speaker_color_lookup[speaker_name]
-
-						if not var_7_0 then
-							-- Nothing
-						end
-
-						var_7_0 = DialogueSettings.speaker_color_lookup.default
-
-						local color = var_7_0
-
-						::label_7_0::
+						local color = not not DialogueSettings.speaker_color_lookup[speaker_name]
 
 						if color then
 							localized_speaker_name = string.format("{#color(%d,%d,%d)}%s{#reset()}", color[2], color[3], color[4], localized_speaker_name)
@@ -307,9 +297,5 @@ end
 
 SubtitleGui.is_displaying_subtitle = function (self)
 	-- function 10
-	local subtitles_to_display = self.subtitles_to_display
-
-	subtitles_to_display = not not subtitles_to_display and self._subtitle_text ~= ""
-
-	return subtitles_to_display
+	return not not self.subtitles_to_display
 end

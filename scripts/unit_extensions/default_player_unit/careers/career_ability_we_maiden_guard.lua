@@ -86,11 +86,8 @@ CareerAbilityWEMaidenGuard._ability_available = function (self)
 	-- function 6
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
-
-	return can_use_activated_ability
+	return not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityWEMaidenGuard._start_priming = function (self)
@@ -151,7 +148,7 @@ CareerAbilityWEMaidenGuard._run_ability = function (self)
 		buff_extension:add_buff("kerillian_maidenguard_activated_ability_invis_duration")
 	end
 
-	if (not is_server or not bot_player) and local_player then
+	if is_server and (bot_player or local_player) or not is_server and local_player then
 		local first_person_extension = self._first_person_extension
 
 		first_person_extension:animation_event("shade_stealth_ability")
@@ -178,7 +175,7 @@ CareerAbilityWEMaidenGuard._run_ability = function (self)
 		damage_profile = "maidenguard_dash_ability_bleed"
 	end
 
-	local tbl = {
+	status_extension.do_lunge = {
 		animation_end_event = "maiden_guard_active_ability_charge_hit",
 		allow_rotation = false,
 		first_person_animation_end_event = "dodge_bwd",
@@ -189,30 +186,25 @@ CareerAbilityWEMaidenGuard._run_ability = function (self)
 		first_person_animation_end_event_hit = "dodge_bwd",
 		duration = 0.65,
 		initial_speed = 25,
-		animation_event = "maiden_guard_active_ability_charge_start"
+		animation_event = "maiden_guard_active_ability_charge_start",
+		damage = {
+			depth_padding = 0.4,
+			height = 1.8,
+			collision_filter = "filter_explosion_overlap_no_player",
+			hit_zone_hit_name = "full",
+			ignore_shield = true,
+			interrupt_on_max_hit_mass = false,
+			interrupt_on_first_hit = false,
+			width = 1.5,
+			allow_backstab = true,
+			damage_profile = damage_profile,
+			power_level_multiplier = bleed and not not 1 or not bleed and not not 0,
+			stagger_angles = {
+				max = 90,
+				min = 90
+			}
+		}
 	}
-	local tbl_2 = {
-		depth_padding = 0.4,
-		height = 1.8,
-		collision_filter = "filter_explosion_overlap_no_player",
-		hit_zone_hit_name = "full",
-		ignore_shield = true,
-		interrupt_on_max_hit_mass = false,
-		interrupt_on_first_hit = false,
-		width = 1.5,
-		allow_backstab = true,
-		damage_profile = damage_profile
-	}
-	local flag
-
-	flag = (not bleed or not 1) and not not 0
-	tbl_2.power_level_multiplier = flag
-	tbl_2.stagger_angles = {
-		max = 90,
-		min = 90
-	}
-	tbl.damage = tbl_2
-	status_extension.do_lunge = tbl
 
 	career_extension:start_activated_ability_cooldown()
 	self:_play_vo()

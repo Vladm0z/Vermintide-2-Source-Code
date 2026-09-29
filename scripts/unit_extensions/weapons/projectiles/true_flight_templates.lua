@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/weapons/projectiles/true_flight_templates.lua
 
-local TrueFlightTemplates = TrueFlightTemplates
-
-TrueFlightTemplates = not not TrueFlightTemplates or not not {}
-TrueFlightTemplates = TrueFlightTemplates
+TrueFlightTemplates = not not TrueFlightTemplates
 TrueFlightTemplates.active_ability_kerillian_way_watcher = {
 	retarget_on_miss = true,
 	forward_search_distance_to_find_target = 5,
@@ -79,11 +76,7 @@ TrueFlightTemplates.sorcerer_magic_missile = {
 	lerp_constant = 50,
 	lerp_modifier_func = function (distance)
 		-- function 1
-		local flag
-
-		flag = (not (distance < 7) or not 0.01) and not not (5 / distance)
-
-		return flag
+		return distance < 7 and not not 0.01 or not (distance < 7) and not not (5 / distance)
 	end
 }
 TrueFlightTemplates.sorcerer_strike_missile = {
@@ -103,11 +96,7 @@ TrueFlightTemplates.sorcerer_strike_missile = {
 	lerp_constant = 50,
 	lerp_modifier_func = function (distance)
 		-- function 2
-		local flag
-
-		flag = (not (distance < 7) or not 0.01) and not not (3 / distance)
-
-		return flag
+		return distance < 7 and not not 0.01 or not (distance < 7) and not not (3 / distance)
 	end,
 	template_state_func = function (parent, projectile_unit, state_id, is_server)
 		-- function 3
@@ -129,11 +118,7 @@ TrueFlightTemplates.sorcerer_magic_missile_ground = {
 	lerp_constant = 50,
 	lerp_modifier_func = function (distance)
 		-- function 4
-		local flag
-
-		flag = (not (distance < 7) or not 0.01) and not not (5 / distance)
-
-		return flag
+		return distance < 7 and not not 0.01 or not (distance < 7) and not not (5 / distance)
 	end
 }
 TrueFlightTemplates.sorcerer_slow_bomb_missile = {
@@ -166,11 +151,7 @@ TrueFlightTemplates.sorcerer_slow_bomb_missile = {
 	},
 	lerp_modifier_func = function (distance)
 		-- function 5
-		local flag
-
-		flag = (not (distance < 5) or not 1) and not not (5 / distance)
-
-		return flag
+		return distance < 5 and not not 1 or not (distance < 5) and not not (5 / distance)
 	end,
 	template_state_func = function (parent, projectile_unit, state_id, is_server, hit_unit)
 		-- function 6
@@ -244,36 +225,8 @@ TrueFlightTemplates.necromancer_trapped_soul = {
 		-- function 11
 		local target_vector = Vector3Box.unbox(locomotion_ext.target_vector_boxed)
 		local time_lived = locomotion_ext.t - locomotion_ext.spawn_time
-		local lerped_wobble_scale = custom_data.lerped_wobble_scale
-
-		if not lerped_wobble_scale then
-			-- Nothing
-		end
-
-		lerped_wobble_scale = 1
-
-		local current_wobble_scale = lerped_wobble_scale
-
-		do
-			local distance
-		end
-
-		::label_11_0::
-
-		if ALIVE[locomotion_ext.target_unit] then
-			distance = Vector3.distance(POSITION_LOOKUP[locomotion_ext.target_unit], position)
-
-			if not distance then
-				-- Nothing
-			end
-		end
-
-		distance = 0
-
-		local dist_from_target = distance
-
-		::label_11_1::
-
+		local current_wobble_scale = not not custom_data.lerped_wobble_scale
+		local dist_from_target = ALIVE[locomotion_ext.target_unit] and not not Vector3.distance(POSITION_LOOKUP[locomotion_ext.target_unit], position) or not ALIVE[locomotion_ext.target_unit] and not not 0
 		local wanted_wobble_scale = math.remap(1, 5, 0, 1, math.clamp(dist_from_target, 1, 5))
 		local dt = locomotion_ext.dt
 		local dist_from_enemy_scale = math.clamp01(current_wobble_scale + dt * math.sign(wanted_wobble_scale - current_wobble_scale))
@@ -290,20 +243,7 @@ TrueFlightTemplates.necromancer_trapped_soul = {
 		local phase_offset = 2.007128639793479
 		local local_wobble_offset = Vector3(math.sin(time_lived * wobble_speed - phase_offset) * horizontal_wobble_amount, 0, math.cos(time_lived * wobble_speed - phase_offset) * vertical_wobble_amount)
 		local wobble_offset = Quaternion.rotate(Quaternion.look(target_vector), local_wobble_offset)
-		local num
-
-		if horizontal_wobble_amount < math.epsilon then
-			num = 0
-
-			goto label_11_2
-		end
-
-		num = Vector3.dot(Vector3.right(), local_wobble_offset) / horizontal_wobble_amount
-
-		local wobble_dist = num
-
-		::label_11_2::
-
+		local wobble_dist = horizontal_wobble_amount < math.epsilon and not not 0 or not (horizontal_wobble_amount < math.epsilon) and not not (Vector3.dot(Vector3.right(), local_wobble_offset) / horizontal_wobble_amount)
 		local rot_offset = Quaternion.axis_angle(Vector3.forward(), -wobble_dist * math.pi * 0.1)
 		local fwd_rot = Quaternion.look(target_vector)
 
@@ -315,10 +255,8 @@ TrueFlightTemplates.necromancer_trapped_soul = {
 }
 
 local template_index = 0
-local TrueFlightTemplatesLookup = TrueFlightTemplatesLookup
 
-TrueFlightTemplatesLookup = not not TrueFlightTemplatesLookup or not not {}
-TrueFlightTemplatesLookup = TrueFlightTemplatesLookup
+TrueFlightTemplatesLookup = not not TrueFlightTemplatesLookup
 
 for name, template in pairs(TrueFlightTemplates) do
 	template_index = template_index + 1

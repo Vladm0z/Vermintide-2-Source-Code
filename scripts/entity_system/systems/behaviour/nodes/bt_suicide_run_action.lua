@@ -19,25 +19,14 @@ local UPDATE_MOVE_INTERVAL = 0.25
 
 BTSuicideRunAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local suicide_run_2 = blackboard.suicide_run
-
-	suicide_run_2 = not not suicide_run_2 or not not {}
-	blackboard.suicide_run = suicide_run_2
+	blackboard.suicide_run = not not blackboard.suicide_run
 
 	local action = self._tree_node.action_data
 	local suicide_run = blackboard.suicide_run
 
 	suicide_run.action = action
 	suicide_run.update_move_timer = 0
-
-	local target = suicide_run.target
-
-	if not target then
-		target = blackboard.previous_attacker
-		target = not not target or not not blackboard.target_unit
-	end
-
-	suicide_run.target = target
+	suicide_run.target = not not suicide_run.target
 	blackboard.target_unit = suicide_run.target
 
 	local params = {
@@ -169,33 +158,13 @@ BTSuicideRunAction.StateInit.update = function (self, dt, t)
 		no_target = true
 	end
 
-	local anim_cb_move = blackboard.anim_cb_move
-
-	if not anim_cb_move then
-		-- Nothing
-	end
-
-	anim_cb_move = blackboard.explode_timer_started
-
-	local init_done = anim_cb_move
-
-	::label_8_0::
+	local init_done = not not blackboard.anim_cb_move
 
 	if init_done then
 		return BTSuicideRunAction.StateMove
 	end
 
-	local instant_explode_2 = suicide_run.instant_explode
-
-	if not instant_explode_2 then
-		-- Nothing
-	end
-
-	instant_explode_2 = no_target
-
-	local instant_explode = instant_explode_2
-
-	::label_8_1::
+	local instant_explode = not not suicide_run.instant_explode
 
 	if instant_explode then
 		return BTSuicideRunAction.StateExplode
@@ -242,24 +211,7 @@ BTSuicideRunAction.StateMove.update = function (self, dt, t)
 
 	self.explode_timer = self.explode_timer - dt
 
-	local has_reached_destination = ai_navigation:has_reached_destination(suicide_run.action.distance_to_explode)
-
-	if not has_reached_destination then
-		-- Nothing
-	end
-
-	if not (self.explode_timer < 0) then
-		has_reached_destination = false
-
-		goto label_10_0
-	end
-
-	has_reached_destination = true
-
-	local move_done = has_reached_destination
-
-	::label_10_0::
-
+	local move_done = not not ai_navigation:has_reached_destination(suicide_run.action.distance_to_explode)
 	local proximity_target, proximity = PerceptionUtils.pick_closest_target(unit, blackboard, blackboard.breed)
 
 	if move_done or proximity < 2 or blackboard.no_path_found then

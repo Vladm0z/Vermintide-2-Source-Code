@@ -177,17 +177,7 @@ TextPopupUI._update_mouse_scroll_input = function (self)
 	end
 
 	local scroll_bar_value = widget.content.scroll_bar_info.value
-	local _scroll_value = self._scroll_value
-
-	if not _scroll_value then
-		-- Nothing
-	end
-
-	_scroll_value = 0
-
-	local current_scroll_value = _scroll_value
-
-	::label_11_0::
+	local current_scroll_value = not not self._scroll_value
 
 	if current_scroll_value ~= mouse_scroll_value then
 		self:_set_scrollbar_value(mouse_scroll_value)
@@ -288,60 +278,10 @@ TextPopupUI._animate_button = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked = hotspot.is_clicked
-
-	if is_clicked then
-		-- Nothing
-	end
-
-	if hotspot.is_clicked ~= 0 then
-		is_clicked = false
-
-		goto label_16_0
-	end
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_16_0::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_16_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_16_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_16_3::
-
+	local input_pressed = not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

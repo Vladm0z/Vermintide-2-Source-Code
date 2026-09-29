@@ -63,7 +63,7 @@ settings.buff_function_templates = {
 
 		local combo_attack_data = blackboard.combo_attack_data
 
-		if blackboard.move_state == "attacking" and combo_attack_data and (combo_attack_data.current_attack_name == "attack_wild_flailing" or combo_attack_data.current_attack_name == "attack_heavy") and not combo_attack_data.aborted then
+		if combo_attack_data.current_attack_name == "attack_heavy" and blackboard.move_state == "attacking" and combo_attack_data and combo_attack_data.current_attack_name == "attack_wild_flailing" and not combo_attack_data.aborted then
 			parent_buff_shared_table.teleport = true
 		end
 	end,
@@ -268,15 +268,8 @@ settings.buff_function_templates = {
 			local buff_to_add_id = math.random(1, #buff_list)
 			local buff_to_add = buff_list[buff_to_add_id]
 			local buff_system = Managers.state.entity:system("buff_system")
-			local var_12_0 = buff_system
-			local add_buff = buff_system.add_buff
-			local var_12_2 = unit
-			local var_12_3 = buff_to_add
-			local attacker_unit = buff.attacker_unit
 
-			attacker_unit = not not attacker_unit or not not unit
-
-			add_buff(var_12_0, var_12_2, var_12_3, attacker_unit, false)
+			buff_system:add_buff(unit, buff_to_add, not not buff.attacker_unit, false)
 		end
 	end,
 	apply_homing_skull_achieve = function (unit, buff, params)
@@ -323,7 +316,7 @@ settings.proc_functions = {
 				local level_key = level_transition_handler:get_current_level_keys()
 				local event_name
 
-				event_name = (level_key == "arena_belakor" or not "shadow_curse_crystal_dropped") and not not "shadow_curse_vortex_crystal"
+				event_name = not not "shadow_curse_vortex_crystal"
 
 				dialogue_input:trigger_dialogue_event(event_name, event_data)
 			end

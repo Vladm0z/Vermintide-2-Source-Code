@@ -24,11 +24,7 @@ BTCorruptorGrabAction.enter = function (self, unit, blackboard, t)
 	blackboard.has_dealed_damage = false
 	blackboard.projectile_position = Vector3Box()
 	blackboard.corruptor_target = blackboard.target_unit
-
-	local has_extension = ScriptUnit.has_extension(blackboard.corruptor_target, "status_system")
-
-	has_extension = not not has_extension or not not nil
-	blackboard.target_unit_status_extension = has_extension
+	blackboard.target_unit_status_extension = not not ScriptUnit.has_extension(blackboard.corruptor_target, "status_system")
 
 	blackboard.navigation_extension:set_enabled(false)
 	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
@@ -144,7 +140,7 @@ BTCorruptorGrabAction.run = function (self, unit, blackboard, t, dt)
 		end
 	end
 
-	if (not success or not blackboard.attack_finished or blackboard.play_grabbed_loop) and blackboard.disable_player_timer and t > blackboard.disable_player_timer then
+	if blackboard.disable_player_timer and t > blackboard.disable_player_timer then
 		return "done"
 	end
 
@@ -256,7 +252,7 @@ BTCorruptorGrabAction.grab_player = function (self, t, unit, blackboard)
 	local physics_world = World.physics_world(world)
 	local target_distance_squared = Vector3.distance_squared(projectile_target_position, target_unit_pos)
 
-	if (action.ignore_dodge or not blackboard.target_dodged) and target_status_ext:is_invisible() then
+	if target_status_ext:is_invisible() then
 		local dodge_pos = target_unit_pos
 		local dir = Vector3.normalize(Vector3.flat(dodge_pos - self_pos))
 		local forward = Quaternion.forward(Unit.local_rotation(unit, 0))
@@ -264,14 +260,14 @@ BTCorruptorGrabAction.grab_player = function (self, t, unit, blackboard)
 		local angle = math.acos(dot_value)
 		local distance_squared = Vector3.distance_squared(self_pos, dodge_pos)
 
-		if (not (distance_squared < blackboard.action.min_dodge_angle_squared) or not (math.radians_to_degrees(angle) <= blackboard.action.dodge_angle)) and target_distance_squared < blackboard.action.dodge_distance * blackboard.action.dodge_distance then
+		if distance_squared < blackboard.action.min_dodge_angle_squared and (math.radians_to_degrees(angle) <= blackboard.action.dodge_angle or target_distance_squared < blackboard.action.dodge_distance * blackboard.action.dodge_distance) or not (distance_squared < blackboard.action.min_dodge_angle_squared) and target_distance_squared < blackboard.action.dodge_distance * blackboard.action.dodge_distance then
 			blackboard.attack_success = PerceptionUtils.is_position_in_line_of_sight(unit, self_pos, target_unit_pos, physics_world)
 		else
 			QuestSettings.check_corruptor_dodge(target_unit)
 
 			blackboard.attack_success = false
 		end
-	elseif (not action.ignore_dodge or not (Vector3.distance_squared(self_pos, target_unit_pos) > blackboard.action.max_distance_squared)) and target_distance_squared > 25 then
+	elseif target_distance_squared > 25 then
 		blackboard.attack_success = false
 	else
 		blackboard.attack_success = PerceptionUtils.is_position_in_line_of_sight(unit, self_pos + Vector3.up(), target_unit_pos + Vector3.up(), physics_world)
@@ -296,13 +292,7 @@ BTCorruptorGrabAction.set_beam_state = function (self, unit, blackboard, state)
 	-- function 10
 	local network_manager = Managers.state.network
 	local unit_id = network_manager:unit_game_object_id(unit)
-	local var_10_0 = network_manager
-	local unit_game_object_id = network_manager.unit_game_object_id
-	local corruptor_target = blackboard.corruptor_target
-
-	corruptor_target = not not corruptor_target or not not blackboard.grabbed_unit
-
-	local target_unit_id = unit_game_object_id(var_10_0, corruptor_target)
+	local target_unit_id = network_manager:unit_game_object_id(not not blackboard.corruptor_target)
 
 	if unit_id then
 		Managers.state.network.network_transmit:send_rpc_all("rpc_set_corruptor_beam_state", unit_id, state, not not target_unit_id or not not unit_id)

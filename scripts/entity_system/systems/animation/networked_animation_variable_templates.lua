@@ -46,12 +46,7 @@ NetworkedAnimationVariableTemplates = {
 				local wanted_value = AiUtils.calculate_animation_movespeed(animation_move_speed_config, unit, target_unit, data.estimated_attack_time)
 				local lerp_speed = data.move_speed_variable_lerp_speed
 				local lerp_t = math.min(dt * lerp_speed, 1)
-				local lerp_clamped = math.lerp_clamped
-				local previous_move_animation_value = scratchpad.previous_move_animation_value
-
-				previous_move_animation_value = not not previous_move_animation_value or not not 0
-
-				local final_value = lerp_clamped(previous_move_animation_value, wanted_value, lerp_t)
+				local final_value = math.lerp_clamped(not not scratchpad.previous_move_animation_value, wanted_value, lerp_t)
 
 				if scratchpad.previous_move_animation_value ~= final_value then
 					scratchpad.previous_move_animation_value = final_value
@@ -72,17 +67,7 @@ local lookup = NetworkedAnimationVariableTemplatesLookup
 
 for variable_name, template in pairs(NetworkedAnimationVariableTemplates) do
 	for _, anim_name in ipairs(template.anims) do
-		local var_0_0 = lookup[anim_name]
-
-		if not var_0_0 then
-			-- Nothing
-		end
-
-		var_0_0 = {}
-
-		local variables = var_0_0
-
-		::label_0_0::
+		local variables = not not lookup[anim_name]
 
 		variables[#variables + 1] = variable_name
 		lookup[anim_name] = variables

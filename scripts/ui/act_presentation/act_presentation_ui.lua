@@ -85,19 +85,7 @@ ActPresentationUI.start = function (self, level_key, previous_completed_difficul
 
 	self.animation_params = animation_params
 
-	local str
-
-	if first_time_completed then
-		str = "enter_first_time"
-
-		goto label_3_0
-	end
-
-	str = "enter"
-
-	local animation_name = str
-
-	::label_3_0::
+	local animation_name = first_time_completed and not not "enter_first_time" or not first_time_completed and not not "enter"
 
 	self:start_presentation_animation(animation_name, animation_params)
 
@@ -116,23 +104,7 @@ ActPresentationUI._set_presentation_info = function (self, act_key, level_key)
 	local widgets_by_name = self._widgets_by_name
 
 	widgets_by_name.level.content.icon = level_image
-
-	local content = widgets_by_name.act_title.content
-	local var_4_1
-
-	if act_display_name then
-		var_4_1 = Localize(act_display_name)
-
-		if not var_4_1 then
-			-- Nothing
-		end
-	end
-
-	var_4_1 = ""
-
-	::label_4_0::
-
-	content.text = var_4_1
+	widgets_by_name.act_title.content.text = act_display_name and not not Localize(act_display_name) or not act_display_name and not not ""
 	widgets_by_name.level_title.content.text = Localize(level_display_name)
 end
 
@@ -141,35 +113,9 @@ ActPresentationUI._setup_level = function (self, act_key, played_level_key, prev
 	local widgets_by_name = self._widgets_by_name
 	local statistics_db = self.statistics_db
 	local stats_id = self.stats_id
-	local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", played_level_key)
-
-	if not get_persistent_stat then
-		-- Nothing
-	end
-
-	get_persistent_stat = 0
-
-	local level_stat = get_persistent_stat
-
-	::label_5_0::
-
+	local level_stat = not not statistics_db:get_persistent_stat(stats_id, "completed_levels", played_level_key)
 	local level_completed = level_stat ~= 0
-	local completed_level_difficulty_index
-
-	if level_completed then
-		completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, played_level_key)
-
-		if not completed_level_difficulty_index then
-			-- Nothing
-		end
-	end
-
-	completed_level_difficulty_index = 0
-
-	local difficulty_complete_index = completed_level_difficulty_index
-
-	::label_5_1::
-
+	local difficulty_complete_index = level_completed and not not LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, played_level_key) or not level_completed and not not 0
 	local first_time_completed = previous_difficulty_index_completed < difficulty_complete_index
 	local widget_name = "level"
 	local widget = widgets_by_name[widget_name]
@@ -212,21 +158,8 @@ end
 ActPresentationUI.presentation_completed = function (self)
 	-- function 8
 	local animation_params = self.animation_params
-	local presentation_completed
 
-	if animation_params then
-		presentation_completed = animation_params.presentation_completed
-
-		if not presentation_completed then
-			-- Nothing
-		end
-	end
-
-	presentation_completed = self._presentation_aborted
-
-	::label_8_0::
-
-	return presentation_completed
+	return animation_params and not not animation_params.presentation_completed or not animation_params and not not self._presentation_aborted
 end
 
 ActPresentationUI.update = function (self, dt, t)

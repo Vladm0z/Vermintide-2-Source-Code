@@ -56,17 +56,7 @@ StateLoadingRestartNetwork._init_network = function (self)
 	local host_to_join
 	local lobby_is_server = lobby_to_join ~= nil
 	local loading_context = self.parent.parent.loading_context
-	local IS_WINDOWS = IS_WINDOWS
-
-	if IS_WINDOWS then
-		-- Nothing
-	end
-
-	IS_WINDOWS = not Development.parameter("use_lan_backend")
-
-	local increment_lobby_port = IS_WINDOWS
-
-	::label_3_0::
+	local increment_lobby_port = not not IS_WINDOWS
 
 	LobbySetup.setup_network_options(increment_lobby_port)
 

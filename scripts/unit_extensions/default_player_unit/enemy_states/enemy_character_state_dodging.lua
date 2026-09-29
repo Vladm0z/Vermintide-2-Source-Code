@@ -136,7 +136,7 @@ EnemyCharacterStateDodging.update = function (self, unit, input, dt, context, t)
 		return
 	end
 
-	if (input_extension:get("jump") or input_extension:get("jump_only")) and status_extension:can_override_dodge_with_jump(t) and self._locomotion_extension:jump_allowed() then
+	if input_extension:get("jump") and status_extension:can_override_dodge_with_jump(t) and self._locomotion_extension:jump_allowed() or not input_extension:get("jump") and input_extension:get("jump_only") and status_extension:can_override_dodge_with_jump(t) and self._locomotion_extension:jump_allowed() then
 		local params = self._temp_params
 
 		params.post_dodge_jump = true
@@ -236,14 +236,7 @@ end
 
 EnemyCharacterStateDodging.get_is_dodging = function (self)
 	-- function 7
-	local dodge_timer = self.dodge_timer
-
-	if not dodge_timer then
-		dodge_timer = self.dodge_stand_still_timer
-		dodge_timer = not not dodge_timer or not not self.dodge_return_timer
-	end
-
-	return dodge_timer
+	return not not self.dodge_timer
 end
 
 EnemyCharacterStateDodging.start_dodge = function (self, unit, t)

@@ -70,17 +70,7 @@ end
 local function get_not_disabled_units(units, not_disabled_units_out)
 	-- function 5
 	for _, unit in ipairs(units) do
-		local var_5_0 = ALIVE[unit]
-
-		if var_5_0 then
-			-- Nothing
-		end
-
-		var_5_0 = ScriptUnit.has_extension(unit, "status_system")
-
-		local status_extension = var_5_0
-
-		::label_5_0::
+		local status_extension = not not ALIVE[unit]
 
 		if status_extension then
 			local is_dead = status_extension:is_dead()

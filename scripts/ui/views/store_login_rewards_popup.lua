@@ -86,18 +86,7 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 	end
 
 	local rewards = login_rewards.rewards
-	local total_claims = login_rewards.total_claims
-
-	if not total_claims then
-		-- Nothing
-	end
-
-	total_claims = 0
-
-	local reward_index = total_claims
-
-	::label_5_0::
-
+	local reward_index = not not login_rewards.total_claims
 	local day_widgets = self._day_widgets
 	local reward_widgets = self._reward_widgets
 
@@ -108,67 +97,14 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 
 	self._gamepad_active = gamepad_active
 
-	local _cursor_x = self._cursor_x
-
-	if not _cursor_x then
-		-- Nothing
-	end
-
-	_cursor_x = math.clamp(reward_index + 1, 1, #rewards)
-
-	local cursor_x = _cursor_x
-
-	::label_5_1::
-
-	local _cursor_y = self._cursor_y
-
-	if not _cursor_y then
-		-- Nothing
-	end
-
-	_cursor_y = 1
-
-	local cursor_y = _cursor_y
-
-	::label_5_2::
+	local cursor_x = not not self._cursor_x
+	local cursor_y = not not self._cursor_y
 
 	self._cursor_x = cursor_x
 	self._cursor_y = cursor_y
 
-	local event_type
-
-	if login_rewards.event_type then
-		event_type = login_rewards.event_type
-
-		if not event_type then
-			-- Nothing
-		end
-	end
-
-	event_type = "personal_time_strike"
-
-	local calendar_type = event_type
-
-	do
-		local claimed_rewards_2
-	end
-
-	::label_5_3::
-
-	if login_rewards.claimed_rewards then
-		claimed_rewards_2 = login_rewards.claimed_rewards
-
-		if not claimed_rewards_2 then
-			-- Nothing
-		end
-	end
-
-	claimed_rewards_2 = {}
-
-	local claimed_rewards = claimed_rewards_2
-
-	::label_5_4::
-
+	local calendar_type = login_rewards.event_type and not not login_rewards.event_type or not login_rewards.event_type and not not "personal_time_strike"
+	local claimed_rewards = login_rewards.claimed_rewards and not not login_rewards.claimed_rewards or not login_rewards.claimed_rewards and not not {}
 	local now = os.time(os.date("!*t"))
 	local next_claim_timestamp = os.time(os.date("!*t", login_rewards.next_claim_timestamp / 1000))
 	local cooldown = next_claim_timestamp - now
@@ -219,39 +155,12 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 
 			fassert(item.data, "Reward item %s not found in ItemMasterList", reward_item.item_id)
 
-			local rarity_2 = item.rarity
-
-			if not rarity_2 then
-				-- Nothing
-			end
-
-			if item.data then
-				rarity_2 = item.data.rarity
-
-				if not rarity_2 then
-					-- Nothing
-				end
-			end
-
-			rarity_2 = "plentiful"
-
-			local rarity = rarity_2
-
-			::label_5_5::
-
+			local rarity = not not item.rarity
 			local content = widget.content
 
 			content.item = item
-
-			local get_ui_information_from_item = UIUtils.get_ui_information_from_item(item)
-
-			get_ui_information_from_item = not not get_ui_information_from_item or not not "icons_placeholder"
-			content.item_icon = get_ui_information_from_item
-
-			local var_5_7 = UISettings.item_rarity_textures[rarity]
-
-			var_5_7 = not not var_5_7 or not not "icons_placeholder"
-			content.item_rarity = var_5_7
+			content.item_icon = not not UIUtils.get_ui_information_from_item(item)
+			content.item_rarity = not not UISettings.item_rarity_textures[rarity]
 			content.is_illusion = item.item_type == "weapon_skin"
 			content.day_index = day_index
 			content.item_index = item_index
@@ -381,35 +290,8 @@ StoreLoginRewardsPopup.update = function (self, input_service, dt, t)
 			end
 
 			local rewards = login_rewards.rewards
-			local total_claims_2 = login_rewards.total_claims
-
-			if not total_claims_2 then
-				-- Nothing
-			end
-
-			total_claims_2 = 1
-
-			local total_claims = total_claims_2
-
-			do
-				local count
-			end
-
-			::label_8_0::
-
-			if total_claims == 0 then
-				count = #rewards
-
-				if not count then
-					-- Nothing
-				end
-			end
-
-			count = total_claims
-
-			local reward_index = count
-
-			::label_8_1::
+			local total_claims = not not login_rewards.total_claims
+			local reward_index = total_claims ~= 0 and not not total_claims or not (total_claims ~= 0) and not not #rewards
 
 			self:_present_rewards(rewards[reward_index])
 
@@ -480,23 +362,7 @@ StoreLoginRewardsPopup._present_rewards = function (self, rewards)
 		elseif reward_type == "chips" then
 			local item_id = data.item_id
 			local item_template = ItemMasterList[item_id]
-			local amount_2 = data.amount
-
-			if not amount_2 then
-				-- Nothing
-			end
-
-			amount_2 = item_template.bundle.BundledVirtualCurrencies.SM
-
-			if not amount_2 then
-				-- Nothing
-			end
-
-			amount_2 = 0
-
-			local amount = amount_2
-
-			::label_9_0::
+			local amount = not not data.amount
 
 			presentation_data[#presentation_data + 1] = {
 				{

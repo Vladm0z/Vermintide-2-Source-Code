@@ -227,21 +227,7 @@ StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 		self:_play_sound("Play_hud_hover")
 	end
 
-	local get
-
-	if not mouse_active then
-		get = input_service:get("refresh_press")
-
-		if not get then
-			-- Nothing
-		end
-	end
-
-	get = input_service:get("skip_press")
-
-	local play_pressed = get
-
-	::label_10_0::
+	local play_pressed = mouse_active and not not input_service:get("skip_press") or not mouse_active and not not input_service:get("refresh_press")
 
 	if self._is_matchmaking then
 		if play_pressed then
@@ -270,27 +256,15 @@ StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 				parent:set_difficulty_option(difficulty_key)
 
 				local difficulties_select_sounds = UISettings.difficulties_select_sounds
-				local var_10_1 = difficulties_select_sounds[i]
-
-				if not var_10_1 then
-					-- Nothing
-				end
-
-				var_10_1 = difficulties_select_sounds[#difficulties_select_sounds]
-
-				local sound_event = var_10_1
-
-				::label_10_1::
+				local sound_event = not not difficulties_select_sounds[i]
 
 				self:_play_sound(sound_event)
 			end
 		end
 	else
 		local old_current_difficulty_index = self._current_difficulty_index
-		local _current_difficulty_index = self._current_difficulty_index
 
-		_current_difficulty_index = not not _current_difficulty_index or not not 1
-		self._current_difficulty_index = _current_difficulty_index
+		self._current_difficulty_index = not not self._current_difficulty_index
 
 		if input_service:get("move_left") then
 			self._current_difficulty_index = math.clamp(self._current_difficulty_index - 1, 1, #difficulty_widgets)
@@ -305,17 +279,7 @@ StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 				parent:set_difficulty_option(difficulty_key)
 
 				local difficulties_select_sounds = UISettings.difficulties_select_sounds
-				local var_10_3 = difficulties_select_sounds[self._current_difficulty_index]
-
-				if not var_10_3 then
-					-- Nothing
-				end
-
-				var_10_3 = difficulties_select_sounds[#difficulties_select_sounds]
-
-				local sound_event = var_10_3
-
-				::label_10_2::
+				local sound_event = not not difficulties_select_sounds[self._current_difficulty_index]
 
 				self:_play_sound(sound_event)
 
@@ -344,17 +308,7 @@ end
 StartGameWindowWeaveQuickplay._is_button_released = function (self, widget)
 	-- function 11
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_11_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -366,17 +320,7 @@ end
 StartGameWindowWeaveQuickplay._is_button_hover_enter = function (self, widget)
 	-- function 12
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_12_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.on_hover_enter
 end
@@ -535,82 +479,13 @@ StartGameWindowWeaveQuickplay._animate_difficulty_button = function (self, widge
 	-- function 24
 	local content = widget.content
 	local style = widget.style
-	local hotspot_2 = content.hotspot
-
-	if not hotspot_2 then
-		-- Nothing
-	end
-
-	hotspot_2 = content.button_hotspot
-
-	local hotspot = hotspot_2
-
-	::label_24_0::
-
+	local hotspot = not not content.hotspot
 	local has_focus = content.has_focus
-	local is_hover_2 = hotspot.is_hover
-
-	if not is_hover_2 then
-		-- Nothing
-	end
-
-	is_hover_2 = has_focus
-
-	local is_hover = is_hover_2
-
-	::label_24_1::
-
+	local is_hover = not not hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_24_3
-
-	::label_24_2::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_24_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_24_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_24_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 3
 
 	if is_hover then

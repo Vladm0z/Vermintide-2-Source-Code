@@ -98,21 +98,7 @@ FormationUtils.draw_formation = function (formation, pos, rot, color, drawer)
 	drawer:line(pos, pos + Vector3(0, 0, 3), color)
 
 	local dir = formation.formation_template.dir
-	local look
-
-	if dir then
-		look = Quaternion.look(Vector3(dir[1], dir[2], 0))
-
-		if not look then
-			-- Nothing
-		end
-	end
-
-	look = Quaternion.look(Vector3(0, 1, 0))
-
-	local formation_rot = look
-
-	::label_4_0::
+	local formation_rot = dir and not not Quaternion.look(Vector3(dir[1], dir[2], 0)) or not dir and not not Quaternion.look(Vector3(0, 1, 0))
 
 	formation_rot = Quaternion.multiply(rot, formation_rot)
 
@@ -132,21 +118,7 @@ FormationUtils.spawn_formation = function (formation, pos, rot, breed_name, grou
 	local nav_world = conflict_director.nav_world
 	local arrangement = formation.arrangement
 	local dir = formation.formation_template.dir
-	local look
-
-	if dir then
-		look = Quaternion.look(Vector3(dir[1], dir[2], 0))
-
-		if not look then
-			-- Nothing
-		end
-	end
-
-	look = Quaternion.look(Vector3(0, 1, 0))
-
-	local formation_rot = look
-
-	::label_5_0::
+	local formation_rot = dir and not not Quaternion.look(Vector3(dir[1], dir[2], 0)) or not dir and not not Quaternion.look(Vector3(0, 1, 0))
 
 	formation_rot = Quaternion.multiply(rot, formation_rot)
 

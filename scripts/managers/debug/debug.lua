@@ -2,10 +2,8 @@
 
 local font, font_size = "arial", 26
 local font_mtrl = "materials/fonts/" .. font
-local Debug = Debug
 
-Debug = not not Debug or not not {}
-Debug = Debug
+Debug = not not Debug
 
 Debug.setup = function (world, world_name)
 	-- function 1
@@ -83,28 +81,8 @@ Debug.update = function (t, dt)
 		local text = data.text
 		local instance_text_color = data.color
 		local text_pos = Vector3(130, pos, 700)
-		local text_2 = Gui.text
-		local var_4_1 = gui
-		local var_4_2 = text
-		local var_4_3 = font_mtrl
-		local var_4_4 = font_size
-		local var_4_5 = font
-		local var_4_6 = text_pos
-		local unbox
 
-		if instance_text_color then
-			unbox = instance_text_color:unbox()
-
-			if not unbox then
-				-- Nothing
-			end
-		end
-
-		unbox = text_color
-
-		::label_4_0::
-
-		text_2(var_4_1, var_4_2, var_4_3, var_4_4, var_4_5, var_4_6, unbox, bitmaskflags)
+		Gui.text(gui, text, font_mtrl, font_size, font, text_pos, instance_text_color and not not instance_text_color:unbox() or not instance_text_color and not not text_color, bitmaskflags)
 
 		if show_debug_text_background then
 			local text_min, text_max = Gui.text_extents(gui, text, font_mtrl, font_size)
@@ -154,31 +132,10 @@ Debug.update = function (t, dt)
 		local inventory_view = not not ingame_ui and ingame_ui.current_view == "inventory_view"
 
 		if inventory_view then
-			local next_select_at_2 = Debug.next_select_at
-
-			if not next_select_at_2 then
-				-- Nothing
-			end
-
-			next_select_at_2 = 0
-
-			local next_select_at = next_select_at_2
-
-			::label_4_1::
+			local next_select_at = not not Debug.next_select_at
 
 			if next_select_at < t then
-				local previous_selected_item = Debug.previous_selected_item
-
-				if not previous_selected_item then
-					-- Nothing
-				end
-
-				previous_selected_item = 1
-
-				local selected_item = previous_selected_item
-
-				::label_4_2::
-
+				local selected_item = not not Debug.previous_selected_item
 				local next_select_item = selected_item + 1
 
 				if next_select_item > 7 then
@@ -349,18 +306,7 @@ Debug.world_text = function (pos, text, color_name)
 	end
 
 	local wt = Debug.world_texts
-	local var_10_0 = debug_colors[color_name]
-
-	if not var_10_0 then
-		-- Nothing
-	end
-
-	var_10_0 = debug_colors.white
-
-	local color = var_10_0
-
-	::label_10_0::
-
+	local color = not not debug_colors[color_name]
 	local index = #wt + 1
 
 	if wt[index] then
@@ -401,17 +347,7 @@ Debug.world_sticky_text = function (pos, text, color_name)
 
 	Debug.num_world_sticky_texts = math.clamp(Debug.num_world_sticky_texts + 1, 0, max_world_sticky)
 
-	local var_11_0 = debug_colors[color_name]
-
-	if not var_11_0 then
-		-- Nothing
-	end
-
-	var_11_0 = debug_colors.white
-
-	local color = var_11_0
-
-	::label_11_0::
+	local color = not not debug_colors[color_name]
 
 	if wt[index] then
 		wt[index][1] = text
@@ -453,9 +389,7 @@ Debug.sticky_text = function (...)
 	}
 	local delay = 3
 
-	if t[#t - 1] == "delay" and not t[#t] then
-		-- Nothing
-	end
+	delay = t[#t - 1] ~= "delay" or not not t[#t] or not not delay
 
 	table.insert(Debug.sticky_texts, {
 		string.format(...),
@@ -649,22 +583,7 @@ Debug.test_spawn_unit = function (profile_name, career_index)
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
 	local item_data = not not skin_item and not not skin_item.data
-	local name
-
-	if item_data then
-		name = item_data.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = career.base_skin
-
-	local skin_name = name
-
-	::label_24_0::
-
+	local skin_name = item_data and not not item_data.name or not item_data and not not career.base_skin
 	local package_names = {}
 	local skin_data = Cosmetics[skin_name]
 	local unit_name = skin_data.third_person
@@ -721,22 +640,7 @@ Debug.test_despawn_unit = function (profile_name, career_index)
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
 	local item_data = not not skin_item and not not skin_item.data
-	local name
-
-	if item_data then
-		name = item_data.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = career.base_skin
-
-	local skin_name = name
-
-	::label_25_0::
-
+	local skin_name = item_data and not not item_data.name or not item_data and not not career.base_skin
 	local package_names = {}
 	local skin_data = Cosmetics[skin_name]
 	local unit_name = skin_data.third_person
@@ -764,11 +668,7 @@ Debug.create_jira_issue = function ()
 	end
 end
 
-local Debug_2 = Debug
-local _hook_data = Debug._hook_data
-
-_hook_data = not not _hook_data or not not {}
-Debug_2._hook_data = _hook_data
+Debug._hook_data = not not Debug._hook_data
 
 Debug.hook = function (obj, method, handler)
 	-- function 27

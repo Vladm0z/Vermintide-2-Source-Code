@@ -113,21 +113,7 @@ ExplosiveBarrelHealthExtension.add_damage = function (self, attacker_unit, damag
 	DamageUtils.handle_hit_indication(attacker_unit, unit, damage_amount, hit_zone_name, added_dot)
 
 	if not self:get_is_invincible() and not self.dead then
-		local health
-
-		if did_damage and self.insta_explode then
-			health = self.health
-
-			if not health then
-				-- Nothing
-			end
-		end
-
-		health = 0
-
-		local internal_damage_amount = health
-
-		::label_4_0::
+		local internal_damage_amount = not not self.health
 
 		self.damage = self.damage + internal_damage_amount
 
@@ -142,22 +128,7 @@ ExplosiveBarrelHealthExtension.add_damage = function (self, attacker_unit, damag
 
 	if did_damage and not self.ignited then
 		local network_time = Managers.state.network:network_time()
-		local get_data
-
-		if Unit.has_data(unit, "fuse_time") then
-			get_data = Unit.get_data(unit, "fuse_time")
-
-			if not get_data then
-				-- Nothing
-			end
-		end
-
-		get_data = 4
-
-		local fuse_time = get_data
-
-		::label_4_1::
-
+		local fuse_time = Unit.has_data(unit, "fuse_time") and not not Unit.get_data(unit, "fuse_time") or not Unit.has_data(unit, "fuse_time") and not not 4
 		local insta_explode_time = network_time + 0.2
 		local explode_time = network_time + fuse_time
 

@@ -206,42 +206,9 @@ ItemGridUI.update_items_status = function (self)
 	local career = careers[career_index]
 	local career_name = career.name
 	local locked_item_icon = self._locked_item_icon
-	local _mark_locked_items = self._mark_locked_items
-
-	if _mark_locked_items then
-		-- Nothing
-	end
-
-	_mark_locked_items = self._locked_items
-
-	local locked_items = _mark_locked_items
-
-	::label_22_0::
-
-	local _mark_equipped_items = self._mark_equipped_items
-
-	if _mark_equipped_items then
-		-- Nothing
-	end
-
-	_mark_equipped_items = self:get_equipped_items(hero_name, career_index)
-
-	local equipped_items = _mark_equipped_items
-
-	::label_22_1::
-
-	local _mark_equipped_weapon_pose_parent = self._mark_equipped_weapon_pose_parent
-
-	if _mark_equipped_weapon_pose_parent then
-		-- Nothing
-	end
-
-	_mark_equipped_weapon_pose_parent = self:get_equipped_weapon_pose_parent(hero_name, career_index)
-
-	local equipped_weapon_pose_parent = _mark_equipped_weapon_pose_parent
-
-	::label_22_2::
-
+	local locked_items = not not self._mark_locked_items
+	local equipped_items = not not self._mark_equipped_items
+	local equipped_weapon_pose_parent = not not self._mark_equipped_weapon_pose_parent
 	local item_drag_disabled = self._item_drag_disabled
 	local hide_slots = self._hide_slots
 	local disable_locked_items = self._disable_locked_items
@@ -267,13 +234,7 @@ ItemGridUI.update_items_status = function (self)
 			local backend_id = not not item and not not item.backend_id
 			local is_equipped = not not backend_id and not not equipped_items and equipped_items[backend_id] ~= nil
 
-			if not item_key or not equipped_weapon_pose_parent or equipped_weapon_pose_parent.data.key ~= item_key then
-				if false then
-					is_equipped = false
-				end
-			else
-				is_equipped = true
-			end
+			is_equipped = not item_key or not equipped_weapon_pose_parent or equipped_weapon_pose_parent.data.key == item_key or not not is_equipped
 
 			local is_locked = not not backend_id and not not locked_items and locked_items[backend_id] ~= nil
 			local can_wield_table = not not item_data and not not item_data.can_wield
@@ -605,7 +566,7 @@ ItemGridUI.add_item_to_slot_index = function (self, slot_index, item, optional_a
 
 		content[item_tooltip_name] = display_name
 		item_content[item_icon_name] = inventory_icon
-		item_content[item_amount_name] = (not item_data.can_stack or not amount) and not not ""
+		item_content[item_amount_name] = item_data.can_stack and (not not amount or not not "") or not item_data.can_stack and not not ""
 		item_content[locked_icon_name] = self._locked_item_icon
 
 		if not backend_id then
@@ -728,7 +689,7 @@ ItemGridUI._populate_inventory_page = function (self, items, start_read_index)
 
 				content[item_tooltip_name] = display_name
 				item_content[item_icon_name] = inventory_icon
-				item_content[item_amount_name] = (not item_data.can_stack or not amount) and not not ""
+				item_content[item_amount_name] = item_data.can_stack and (not not amount or not not "") or not item_data.can_stack and not not ""
 				item_content[locked_icon_name] = self._locked_item_icon
 
 				if not backend_id then
@@ -804,21 +765,7 @@ ItemGridUI._on_category_index_change = function (self, index, keep_page_index)
 	local career_specific_filter = settings.career_specific_filter
 
 	if hero_specific_filter then
-		local str
-
-		if item_filter then
-			str = "and " .. item_filter
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = ""
-
-		local temp_item_filter = str
-
-		::label_36_0::
+		local temp_item_filter = item_filter and not not ("and " .. item_filter) or not item_filter and not not ""
 
 		item_filter = "can_wield_by_current_hero " .. temp_item_filter
 	end
@@ -827,17 +774,7 @@ ItemGridUI._on_category_index_change = function (self, index, keep_page_index)
 		self:disable_unwieldable_items(true)
 	end
 
-	local _selected_page_index = self._selected_page_index
-
-	if not _selected_page_index then
-		-- Nothing
-	end
-
-	_selected_page_index = 1
-
-	local current_page_index = _selected_page_index
-
-	::label_36_1::
+	local current_page_index = not not self._selected_page_index
 
 	self:change_item_filter(item_filter, not keep_page_index)
 
@@ -949,18 +886,7 @@ end
 
 ItemGridUI._handle_page_arrow_pressed = function (self)
 	-- function 42
-	local _selected_page_index = self._selected_page_index
-
-	if not _selected_page_index then
-		-- Nothing
-	end
-
-	_selected_page_index = 0
-
-	local selected_page_index = _selected_page_index
-
-	::label_42_0::
-
+	local selected_page_index = not not self._selected_page_index
 	local total_item_pages = self._total_item_pages
 	local disable_page_selection = total_item_pages == 0
 	local widget = self._widget
@@ -1133,12 +1059,7 @@ ItemGridUI.highlight_slots = function (self, enabled, optional_alpha)
 			local slot_hotspot = content[hotspot_name]
 
 			slot_hotspot.highlight = enabled
-
-			local color = style[slot_hover_name].color
-			local flag
-
-			flag = (not enabled or not not optional_alpha or not 255) and not not 255
-			color[1] = flag
+			style[slot_hover_name].color[1] = enabled and (not not optional_alpha or not not 255) or not enabled and not not 255
 		end
 	end
 end
@@ -1161,21 +1082,9 @@ ItemGridUI.highlight_drop_slots = function (self, enabled)
 
 			slot_hotspot.highlight = enabled
 
-			local num
+			local alpha = slot_hotspot.internal_is_hover and not not 255 or not slot_hotspot.internal_is_hover and not not 100
 
-			if slot_hotspot.internal_is_hover then
-				num = 255
-
-				goto label_50_0
-			end
-
-			num = 100
-
-			local alpha = num
-
-			::label_50_0::
-
-			style[slot_hover_name].color[1] = (not enabled or not alpha) and not not 255
+			style[slot_hover_name].color[1] = enabled and (not not alpha or not not 255) or not enabled and not not 255
 		end
 	end
 end

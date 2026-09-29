@@ -42,17 +42,7 @@ curse_skulking_sorcerer.server_start_function = function (context, data)
 	base_skulking_sorcerer.server_start_function(context, data)
 
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_2_0 = RESPAWN_TIME[difficulty_rank]
-
-	if not var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = RESPAWN_TIME[NORMAL]
-
-	local respawn_time = var_2_0
-
-	::label_2_0::
+	local respawn_time = not not RESPAWN_TIME[difficulty_rank]
 
 	data.respawn_times = {
 		respawn_time,

@@ -107,16 +107,11 @@ PassiveAbilityNecromancerCharges._on_talents_changed = function (self, unit, tal
 		self._army_definition = table.fill({}, 6, "pet_skeleton")
 	end
 
-	local _has_army = self._has_army
-
-	_has_army = not not _has_army and not not table.fill({}, 6, "pet_skeleton")
-	self._extra_army_skeletons = _has_army
+	self._extra_army_skeletons = not not self._has_army
 
 	local is_in_inn_level = Managers.level_transition_handler:in_hub_level()
-	local pets_forbidden_in_hub = script_data.pets_forbidden_in_hub
 
-	pets_forbidden_in_hub = not not pets_forbidden_in_hub and not not is_in_inn_level
-	self._pets_forbidden_in_level = pets_forbidden_in_hub
+	self._pets_forbidden_in_level = not not script_data.pets_forbidden_in_hub
 
 	if self._is_server then
 		self:warm_up_skeletons(self._army_definition)
@@ -354,7 +349,7 @@ PassiveAbilityNecromancerCharges._update_pets_server = function (self)
 
 	local status_extension = self._status_extension
 
-	if (status_extension:is_dead() or status_extension:is_ready_for_assisted_respawn()) and not self._was_dead then
+	if status_extension:is_dead() and not self._was_dead or not status_extension:is_dead() and status_extension:is_ready_for_assisted_respawn() and not self._was_dead then
 		self._was_dead = true
 
 		self:_kill_all_pets_server()
@@ -499,35 +494,10 @@ end
 PassiveAbilityNecromancerCharges.resummon_pet = function (self, controlled_unit)
 	-- function 25
 	local commander_extension = ScriptUnit.extension(self._owner_unit, "ai_commander_system")
-	local get_controlled_units = commander_extension:get_controlled_units()
-
-	if not get_controlled_units then
-		-- Nothing
-	end
-
-	get_controlled_units = EMPTY_TABLE
-
-	local controlled_units = get_controlled_units
-
-	::label_25_0::
-
+	local controlled_units = not not commander_extension:get_controlled_units()
 	local controlled_unit_data = controlled_units[controlled_unit]
 	local template = controlled_unit_data.template
-	local name
-
-	if template then
-		name = template.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = self._spawned_pets[controlled_unit]
-
-	local template_name = name
-
-	::label_25_1::
+	local template_name = template and not not template.name or not template and not not self._spawned_pets[controlled_unit]
 
 	self:_gather_resummon_data(controlled_unit, template_name)
 
@@ -552,27 +522,13 @@ PassiveAbilityNecromancerCharges._gather_resummon_data = function (self, control
 	end
 
 	local commander_extension = ScriptUnit.extension(self._owner_unit, "ai_commander_system")
-	local get_controlled_units = commander_extension:get_controlled_units()
-
-	if not get_controlled_units then
-		-- Nothing
-	end
-
-	get_controlled_units = EMPTY_TABLE
-
-	local controlled_units = get_controlled_units
-
-	::label_26_0::
-
+	local controlled_units = not not commander_extension:get_controlled_units()
 	local controlled_unit_data = controlled_units[controlled_unit]
 	local start_t = controlled_unit_data.start_t
 	local health_extension = ScriptUnit.extension(controlled_unit, "health_system")
 	local damage_taken = health_extension:get_damage_taken()
-	local _resummon_spawn_data = self._resummon_spawn_data
-	local var_26_2 = self._resummon_spawn_data[template_name]
 
-	var_26_2 = not not var_26_2 or not not {}
-	_resummon_spawn_data[template_name] = var_26_2
+	self._resummon_spawn_data[template_name] = not not self._resummon_spawn_data[template_name]
 	self._resummon_spawn_data[template_name][#self._resummon_spawn_data[template_name] + 1] = {
 		damage_taken = damage_taken,
 		start_t = start_t

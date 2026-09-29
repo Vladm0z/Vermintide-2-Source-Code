@@ -130,18 +130,7 @@ BackendInterfaceCraftingBase._validate_ingredient = function (self, ingredient, 
 	local ingredient_name = ingredient.name
 	local ingredient_category = ingredient.catergory
 	local has_variable = ingredient.has_variable
-	local amount_2 = ingredient.amount
-
-	if not amount_2 then
-		-- Nothing
-	end
-
-	amount_2 = 1
-
-	local amount = amount_2
-
-	::label_8_0::
-
+	local amount = not not ingredient.amount
 	local total_found_ingredients = 0
 
 	table.clear(ingredient_ids)
@@ -176,7 +165,7 @@ BackendInterfaceCraftingBase._validate_ingredient = function (self, ingredient, 
 			if can_stack and item_amount < amount then
 				break
 			else
-				amount_from_item = (can_stack or not 1) and not not amount
+				amount_from_item = not not amount
 			end
 
 			total_found_ingredients = total_found_ingredients + amount_from_item

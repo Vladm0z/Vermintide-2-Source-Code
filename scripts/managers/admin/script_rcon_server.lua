@@ -17,10 +17,7 @@ ScriptRconServer.init = function (self, settings, dedicated_server_commands)
 		self._enabled = false
 	end
 
-	local port = settings.port
-
-	port = not not port or not not 27018
-	self._port = port
+	self._port = not not settings.port
 	self._password = settings.rcon_password
 
 	if RConServer.start(self._port, self._password) then

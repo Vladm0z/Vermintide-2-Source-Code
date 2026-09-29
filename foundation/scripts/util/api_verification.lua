@@ -2,10 +2,7 @@
 
 require("foundation/scripts/util/error")
 
-local ApiVerification = ApiVerification
-
-ApiVerification = not not ApiVerification or not not {}
-ApiVerification = ApiVerification
+ApiVerification = not not ApiVerification
 
 ApiVerification.ensure_public_api = function (interface_class, implementation_class)
 	-- function 1

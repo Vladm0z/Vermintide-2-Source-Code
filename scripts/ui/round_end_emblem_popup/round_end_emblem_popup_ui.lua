@@ -99,17 +99,7 @@ RoundEndEmblemPopupUI._update_animations = function (self, dt)
 
 	if self._animation_key and animations[self._animation_key] and self._viewport_world then
 		local render_settings = self._render_settings
-		local blur_progress_2 = render_settings.blur_progress
-
-		if not blur_progress_2 then
-			-- Nothing
-		end
-
-		blur_progress_2 = 0
-
-		local blur_progress = blur_progress_2
-
-		::label_8_0::
+		local blur_progress = not not render_settings.blur_progress
 
 		self:set_fullscreen_effect_enable_state(true, blur_progress, self._viewport_world)
 	end
@@ -144,24 +134,15 @@ RoundEndEmblemPopupUI._draw = function (self, dt)
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	local alpha_multiplier_2 = self._emblem_widget.alpha_multiplier
-
-	alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
-	render_settings.alpha_multiplier = alpha_multiplier_2
+	render_settings.alpha_multiplier = not not self._emblem_widget.alpha_multiplier
 
 	UIRenderer.draw_widget(ui_top_renderer, self._emblem_widget)
 
-	local alpha_multiplier_3 = self._title_title_widget.alpha_multiplier
-
-	alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-	render_settings.alpha_multiplier = alpha_multiplier_3
+	render_settings.alpha_multiplier = not not self._title_title_widget.alpha_multiplier
 
 	UIRenderer.draw_widget(ui_top_renderer, self._title_title_widget)
 
-	local alpha_multiplier_4 = self._sub_title_text_widget.alpha_multiplier
-
-	alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-	render_settings.alpha_multiplier = alpha_multiplier_4
+	render_settings.alpha_multiplier = not not self._sub_title_text_widget.alpha_multiplier
 
 	UIRenderer.draw_widget(ui_top_renderer, self._sub_title_text_widget)
 	UIRenderer.end_pass(ui_top_renderer)
@@ -199,36 +180,11 @@ RoundEndEmblemPopupUI.set_fullscreen_effect_enable_state = function (self, enabl
 	-- function 12
 	local shading_env = World.get_data(world, "shading_environment")
 
-	progress = (not not progress or not enabled or not 1) and not not 0
+	progress = not not 1 or not not progress or enabled or not not 0
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_12_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_12_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_12_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local num
-
-		if enabled then
-			num = progress * 0.75
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		::label_12_0::
-
-		set_scalar_2(var_12_5, str_2, num)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not (progress * 0.75) or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 

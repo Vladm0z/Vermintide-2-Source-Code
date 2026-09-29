@@ -66,18 +66,7 @@ StartGameWindowGameMode.create_ui_elements = function (self, params, offset)
 		if settings.panel_sorting and self.parent:can_add_layout(settings) then
 			local scenegraph_id = "game_mode_option"
 			local size = scenegraph_definition[scenegraph_id].size
-			local display_name_2 = settings.display_name
-
-			if not display_name_2 then
-				-- Nothing
-			end
-
-			display_name_2 = "n/a"
-
-			local display_name = display_name_2
-
-			::label_2_0::
-
+			local display_name = not not settings.display_name
 			local localize = settings.localize == nil or not not settings.localize
 
 			if localize then

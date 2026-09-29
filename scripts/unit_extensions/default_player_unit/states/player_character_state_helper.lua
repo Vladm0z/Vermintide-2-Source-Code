@@ -1,38 +1,13 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/states/player_character_state_helper.lua
 
-local CharacterStateHelper_2 = CharacterStateHelper
-
-CharacterStateHelper_2 = not not CharacterStateHelper_2 or not not {}
-CharacterStateHelper = CharacterStateHelper_2
+CharacterStateHelper = not not CharacterStateHelper
 
 local CharacterStateHelper = CharacterStateHelper
 
 CharacterStateHelper.get_movement_input = function (input_extension)
 	-- function 1
-	local get = input_extension:get("move")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = Vector3(0, 0, 0)
-
-	local move_input = get
-
-	::label_1_0::
-
-	local get_2 = input_extension:get("move_controller")
-
-	if not get_2 then
-		-- Nothing
-	end
-
-	get_2 = Vector3(0, 0, 0)
-
-	local move_input_controller = get_2
-
-	::label_1_1::
-
+	local move_input = not not input_extension:get("move")
+	local move_input_controller = not not input_extension:get("move_controller")
 	local movement
 
 	if Vector3.length(move_input) > Vector3.length(move_input_controller) then
@@ -46,30 +21,8 @@ end
 
 CharacterStateHelper.get_square_movement_input = function (input_extension)
 	-- function 2
-	local get = input_extension:get("move")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = Vector3(0, 0, 0)
-
-	local move_input = get
-
-	::label_2_0::
-
-	local get_2 = input_extension:get("move_controller")
-
-	if not get_2 then
-		-- Nothing
-	end
-
-	get_2 = Vector3(0, 0, 0)
-
-	local move_input_controller = get_2
-
-	::label_2_1::
-
+	local move_input = not not input_extension:get("move")
+	local move_input_controller = not not input_extension:get("move_controller")
 	local movement
 
 	if Vector3.length(move_input) > Vector3.length(move_input_controller) then
@@ -147,60 +100,11 @@ CharacterStateHelper.apply_motion_controls = function (look_delta, input_extensi
 		local pitch_steps = MotionControlSettings.sensitivity_pitch_max - MotionControlSettings.sensitivity_pitch_min
 		local pitch_step = (base_multiplier - min) / (pitch_steps * 0.5)
 		local motion_sensitivity_pitch = base_multiplier + MotionControlSettings.motion_sensitivity_pitch * pitch_step
-		local flag
-
-		flag = (not MotionControlSettings.motion_invert_yaw or not -1) and not not 1
-
-		local num = motion_sensitivity_yaw * flag
-		local flag_2
-
-		flag_2 = (not MotionControlSettings.motion_enable_yaw_motion or not 1) and not not 0
-
-		local scale_yaw = num * flag_2
-		local flag_3
-
-		flag_3 = (not MotionControlSettings.motion_invert_pitch or not -1) and not not 1
-
-		local num_2 = motion_sensitivity_pitch * flag_3
-		local flag_4
-
-		flag_4 = (not MotionControlSettings.motion_enable_pitch_motion or not 1) and not not 0
-
-		local scale_pitch = num_2 * flag_4
+		local scale_yaw = motion_sensitivity_yaw * (MotionControlSettings.motion_invert_yaw and not not -1 or not MotionControlSettings.motion_invert_yaw and not not 1) * (MotionControlSettings.motion_enable_yaw_motion and not not 1 or not MotionControlSettings.motion_enable_yaw_motion and not not 0)
+		local scale_pitch = motion_sensitivity_pitch * (MotionControlSettings.motion_invert_pitch and not not -1 or not MotionControlSettings.motion_invert_pitch and not not 1) * (MotionControlSettings.motion_enable_pitch_motion and not not 1 or not MotionControlSettings.motion_enable_pitch_motion and not not 0)
 		local angular_velocity = input_extension:get("angular_velocity")
-		local x
-
-		if angular_velocity then
-			x = angular_velocity.x
-
-			if not x then
-				-- Nothing
-			end
-		end
-
-		x = 0
-
-		local magnitude_x = x
-
-		do
-			local num_3
-		end
-
-		::label_4_0::
-
-		if angular_velocity then
-			num_3 = -angular_velocity.y
-
-			if not num_3 then
-				-- Nothing
-			end
-		end
-
-		num_3 = 0
-
-		local magnitude_y = num_3
-
-		::label_4_1::
+		local magnitude_x = angular_velocity and not not angular_velocity.x or not angular_velocity and not not 0
+		local magnitude_y = angular_velocity and not not -angular_velocity.y or not angular_velocity and not not 0
 
 		look_delta = look_delta + Vector3(scale_yaw * magnitude_y, scale_pitch * magnitude_x, 0)
 	end
@@ -234,25 +138,7 @@ CharacterStateHelper.check_to_start_dodge = function (unit, input_extension, sta
 	local dodge_direction = Vector3(0, 0, 0)
 	local dodge_hold = input_extension:get("dodge_hold")
 	local manual_dodge = input_extension:get("dodge")
-
-	if not manual_dodge then
-		-- Nothing
-	end
-
-	::label_6_0::
-
-	local get = input_extension:get("jump")
-
-	if get then
-		-- Nothing
-	end
-
-	get = dodge_hold
-
-	local dodge_input = get
-
-	::label_6_1::
-
+	local dodge_input = not not dodge_hold
 	local input_length = Vector3.length(input)
 	local using_keyboard = not Managers.input:is_device_active("gamepad")
 	local stationary_dodge = Application.user_setting("toggle_stationary_dodge")
@@ -285,7 +171,7 @@ CharacterStateHelper.check_to_start_dodge = function (unit, input_extension, sta
 		local x = normalized_input.x
 		local y = normalized_input.y
 		local abs_x = math.abs(x)
-		local forward_ok = (y <= 0 or using_keyboard or not (abs_x > 0.9239)) and not not manual_dodge and abs_x > 0.707
+		local forward_ok = abs_x > 0.707
 
 		if forward_ok then
 			start_dodge = true
@@ -326,21 +212,7 @@ CharacterStateHelper.move_on_ground = function (first_person_extension, input_ex
 	end
 
 	local dot = Vector3.dot(Quaternion.forward(flat_unit_rotation), move_direction)
-	local num
-
-	if strafe_speed_mult then
-		num = 1 - strafe_speed_mult
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	local strafe_speed_penalty = num
-
-	::label_7_0::
+	local strafe_speed_penalty = strafe_speed_mult and not not (1 - strafe_speed_mult) or not strafe_speed_mult and not not 0
 
 	speed = speed - speed * strafe_speed_penalty * (1 - math.abs(dot))
 
@@ -369,20 +241,7 @@ CharacterStateHelper.packmaster_move_on_ground = function (t, first_person_exten
 	local penalty = math.clamp(1 - dot, movement_settings_table.packmaster_forward_move_scale, 1)
 
 	if is_pushing then
-		local num
-
-		if idle_anim_played then
-			num = 1.5
-
-			goto label_8_0
-		end
-
-		num = 1.1
-
-		local ray_dist = num
-
-		::label_8_0::
-
+		local ray_dist = idle_anim_played and not not 1.5 or not idle_anim_played and not not 1.1
 		local dragged_unit_pos = POSITION_LOOKUP[dragged_unit]
 		local hit, hit_position, dist, hit_normal, actor = PhysicsWorld.immediate_raycast(physics_world, dragged_unit_pos + Vector3(0, 0, 0.5), pole_dir, ray_dist, "closest", "types", "both", "collision_filter", "filter_ground_material_check")
 
@@ -585,39 +444,9 @@ end
 CharacterStateHelper.is_colliding_with_gameplay_collision_box = function (world, unit, collision_filter, params)
 	-- function 11
 	local physics_world = World.get_data(world, "physics_world")
-	local position_2
-
-	if params then
-		position_2 = params.position
-
-		if not position_2 then
-			-- Nothing
-		end
-	end
-
-	position_2 = POSITION_LOOKUP[unit]
-
-	local position = position_2
-
-	::label_11_0::
-
+	local position = params and not not params.position or not params and not not POSITION_LOOKUP[unit]
 	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local movement_settings_table_name_2
-
-	if params then
-		movement_settings_table_name_2 = params.movement_settings_table_name
-
-		if not movement_settings_table_name_2 then
-			-- Nothing
-		end
-	end
-
-	movement_settings_table_name_2 = "gameplay_collision_box"
-
-	local movement_settings_table_name = movement_settings_table_name_2
-
-	::label_11_1::
-
+	local movement_settings_table_name = params and not not params.movement_settings_table_name or not params and not not "gameplay_collision_box"
 	local player_half_height = movement_settings_table[movement_settings_table_name].collision_check_player_half_height
 	local player_height_offset = movement_settings_table[movement_settings_table_name].collision_check_player_height_offset
 	local offset = Vector3(0, 0, player_height_offset)
@@ -625,36 +454,9 @@ CharacterStateHelper.is_colliding_with_gameplay_collision_box = function (world,
 	position = position + offset
 
 	local rotation = Unit.local_rotation(unit, 0)
-	local movement_settings_table_name_3
-
-	if params then
-		movement_settings_table_name_3 = params.movement_settings_table_name
-
-		if not movement_settings_table_name_3 then
-			-- Nothing
-		end
-	end
-
-	movement_settings_table_name_3 = "gameplay_collision_box"
-
-	::label_11_2::
-
-	local radius = movement_settings_table[movement_settings_table_name_3].collision_check_player_radius
+	local radius = movement_settings_table[params and not not params.movement_settings_table_name or not params and not not "gameplay_collision_box"].collision_check_player_radius
 	local size = Vector3(radius, player_half_height, radius)
-	local str
-
-	if player_half_height - radius > 0 then
-		str = "capsule"
-
-		goto label_11_3
-	end
-
-	str = "sphere"
-
-	local shape = str
-
-	::label_11_3::
-
+	local shape = player_half_height - radius > 0 and not not "capsule" or not (player_half_height - radius > 0) and not not "sphere"
 	local actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", position, "rotation", rotation, "size", size, "collision_filter", collision_filter)
 	local collided_actor = not not actors and not not actors[1]
 	local colliding, collided_unit
@@ -762,11 +564,8 @@ CharacterStateHelper.looking_up = function (first_person_extension, threshold)
 	local direction = Quaternion.forward(rotation)
 	local normalised_direction = Vector3.normalize(direction)
 	local dot = Vector3.dot(normalised_direction, Vector3.up())
-	local flag
 
-	flag = (not (threshold < dot) or not true) and not not false
-
-	return flag
+	return threshold < dot and not not true or not (threshold < dot) and not not false
 end
 
 CharacterStateHelper.looking_down = function (first_person_extension, threshold)
@@ -776,41 +575,14 @@ CharacterStateHelper.looking_down = function (first_person_extension, threshold)
 	local direction = Quaternion.forward(rotation)
 	local normalised_direction = Vector3.normalize(direction)
 	local dot = Vector3.dot(normalised_direction, Vector3.up())
-	local flag
 
-	flag = (not (dot < threshold) or not true) and not not false
-
-	return flag
+	return dot < threshold and not not true or not (dot < threshold) and not not false
 end
 
 CharacterStateHelper.look = function (input_extension, viewport_name, first_person_extension, status_extension, inventory_extension, override_sens, override_delta)
 	-- function 16
 	local camera_manager = Managers.state.camera
-
-	if not override_sens then
-		-- Nothing
-	end
-
-	do
-		local num
-	end
-
-	::label_16_0::
-
-	if camera_manager:has_viewport(viewport_name) then
-		num = camera_manager:fov(viewport_name) / 0.785
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 1
-
-	local look_sensitivity = num
-
-	::label_16_1::
-
+	local look_sensitivity = not not (camera_manager:fov(viewport_name) / 0.785)
 	local unit = input_extension.unit
 	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 	local look_input_sensitivity = movement_settings_table.look_input_sensitivity
@@ -832,31 +604,7 @@ end
 CharacterStateHelper.look_limited_rotation_freedom = function (input_extension, viewport_name, first_person_extension, unit, rotation, max_radians_yaw, max_radians_pitch, status_extension, inventory_extension, override_sens)
 	-- function 17
 	local camera_manager = Managers.state.camera
-
-	if not override_sens then
-		-- Nothing
-	end
-
-	do
-		local num
-	end
-
-	::label_17_0::
-
-	if camera_manager:has_viewport(viewport_name) then
-		num = Managers.state.camera:fov(viewport_name) / 0.785
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 1
-
-	local look_sensitivity = num
-
-	::label_17_1::
-
+	local look_sensitivity = not not (Managers.state.camera:fov(viewport_name) / 0.785)
 	local is_3p = false
 	local look_delta = CharacterStateHelper.get_look_input(input_extension, status_extension, inventory_extension, is_3p)
 
@@ -906,7 +654,7 @@ CharacterStateHelper.lerp_player_rotation_radian = function (player_radian, targ
 	-- function 18
 	local final_radian_value
 
-	if (not (target_radian >= 0) or not (player_radian >= 0)) and target_radian <= 0 and player_radian <= 0 then
+	if target_radian <= 0 and player_radian <= 0 then
 		final_radian_value = player_radian + (target_radian - player_radian) * percentage_in_lerp
 	else
 		local current_rotation = original_diference_radian * percentage_in_lerp
@@ -1094,7 +842,7 @@ CharacterStateHelper.wield_input = function (input_extension, inventory_extensio
 	local slot_to_wield, swap_from_storage_type
 
 	if CharacterStateHelper.get_buffered_input("wield_switch", input_extension, nil, nil, nil, wielded_slot_name == "slot_melee") then
-		slot_to_wield = (current_slot.name == "slot_melee" or not "slot_melee") and not not "slot_ranged"
+		slot_to_wield = not not "slot_ranged"
 	end
 
 	if not slot_to_wield then
@@ -1112,7 +860,7 @@ CharacterStateHelper.wield_input = function (input_extension, inventory_extensio
 
 			local wield_input_alt = slot.wield_input_alt
 
-			if wield_input_alt and CharacterStateHelper.get_buffered_input(wield_input_alt, input_extension, nil, nil, nil, wielded_slot_name == "slot_melee") and (slot ~= current_slot or inventory_extension:can_swap_from_storage(slot.name, SwapFromStorageType.LowestUnwieldPrio)) then
+			if slot ~= current_slot or inventory_extension:can_swap_from_storage(slot.name, SwapFromStorageType.LowestUnwieldPrio) then
 				slot_to_wield = slot.name
 				swap_from_storage_type = SwapFromStorageType.LowestUnwieldPrio
 
@@ -1129,43 +877,11 @@ CharacterStateHelper.wield_input = function (input_extension, inventory_extensio
 		scroll_value = 1
 	end
 
-	local key_pressed = DebugKeyHandler.key_pressed("left shift")
-
-	if not key_pressed then
-		-- Nothing
-	end
-
-	key_pressed = DebugKeyHandler.key_pressed("left alt")
-
-	local changing_debug_speed = key_pressed
-
-	::label_27_0::
-
-	local user_setting = Application.user_setting("weapon_scroll_type")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = "scroll_wrap"
-
-	local scroll_type = user_setting
-
-	::label_27_1::
+	local changing_debug_speed = not not DebugKeyHandler.key_pressed("left shift")
+	local scroll_type = not not Application.user_setting("weapon_scroll_type")
 
 	if scroll_type ~= "scroll_disabled" and not slot_to_wield and scroll_value ~= 0 and not changing_debug_speed then
-		local wield_index = current_slot.wield_index
-
-		if not wield_index then
-			-- Nothing
-		end
-
-		wield_index = 1
-
-		local current_index = wield_index
-
-		::label_27_2::
-
+		local current_index = not not current_slot.wield_index
 		local num_slots = #wieldable_slots
 		local scroll_dir = math.sign(scroll_value)
 		local slot_to_wield_index = current_index + scroll_dir
@@ -1290,14 +1006,7 @@ CharacterStateHelper._check_chain_action = function (wield_input, action_data, i
 
 	if softbutton_required then
 		for index, softbutton_data in pairs(softbutton_required) do
-			local var_30_0 = input_extension
-			local released_softbutton_input = input_extension.released_softbutton_input
-			local input_2 = softbutton_data.input
-			local softbutton_threshold_2 = softbutton_data.softbutton_threshold
-
-			softbutton_threshold_2 = not not softbutton_threshold_2 or not not action_data.softbutton_threshold
-
-			if released_softbutton_input(var_30_0, input_2, softbutton_threshold_2) then
+			if input_extension:released_softbutton_input(softbutton_data.input, not not softbutton_data.softbutton_threshold) then
 				input_extra_requirement = false
 
 				break
@@ -1330,17 +1039,7 @@ CharacterStateHelper._check_chain_action = function (wield_input, action_data, i
 
 	if not input then
 		local action, sub_action = action_data.action, action_data.sub_action
-		local var_30_4 = item_template.actions[action]
-
-		if var_30_4 then
-			-- Nothing
-		end
-
-		var_30_4 = item_template.actions[action][sub_action]
-
-		local action_settings = var_30_4
-
-		::label_30_0::
+		local action_settings = not not item_template.actions[action]
 
 		input = not not action_settings and action_settings.kind == "block" and not not input_extension:is_input_blocked()
 	end
@@ -1350,31 +1049,10 @@ CharacterStateHelper._check_chain_action = function (wield_input, action_data, i
 		input = wield_input
 	end
 
-	local auto_chain_2 = action_data.auto_chain
-
-	if auto_chain_2 then
-		-- Nothing
-	end
-
-	auto_chain_2 = input_extra_requirement
-
-	local auto_chain = auto_chain_2
-
-	::label_30_1::
+	local auto_chain = not not action_data.auto_chain
 
 	if input or auto_chain then
-		local select_chance_2 = action_data.select_chance
-
-		if not select_chance_2 then
-			-- Nothing
-		end
-
-		select_chance_2 = 1
-
-		local select_chance = select_chance_2
-
-		::label_30_2::
-
+		local select_chance = not not action_data.select_chance
 		local is_selected = select_chance >= math.random()
 		local chain_action_available = current_action_extension:is_chain_action_available(action_data, t)
 
@@ -1389,18 +1067,7 @@ CharacterStateHelper._check_chain_action = function (wield_input, action_data, i
 				new_action = action_data.action
 				new_sub_action = sub_action
 
-				local var_30_7 = item_template.actions[new_action]
-
-				if var_30_7 then
-					-- Nothing
-				end
-
-				var_30_7 = item_template.actions[new_action][new_sub_action]
-
-				local action_settings = var_30_7
-
-				::label_30_3::
-
+				local action_settings = not not item_template.actions[new_action]
 				local condition_func = not not action_settings and not not action_settings.chain_condition_func
 				local condition_failed = false
 
@@ -1413,12 +1080,7 @@ CharacterStateHelper._check_chain_action = function (wield_input, action_data, i
 				if action_settings and not condition_failed and not cooldown then
 					send_buffer = action_data.send_buffer
 					clear_buffer = action_data.clear_buffer
-
-					if buffered and action_data.input == "action_one_release" then
-						force_release_input = "action_one_hold"
-					elseif auto_chain and action_data.input == "action_wield" then
-						-- Nothing
-					end
+					force_release_input = buffered and (action_data.input == "action_one_release" and (not not "action_one_hold" or not auto_chain or action_data.input ~= "action_wield" or not not force_release_input) or not (action_data.input == "action_one_release") and (not auto_chain or action_data.input ~= "action_wield" or not not force_release_input)) or not buffered and (not auto_chain or action_data.input ~= "action_wield" or not not force_release_input)
 
 					return true, new_action, new_sub_action, wield_input, send_buffer, clear_buffer, force_release_input
 				end
@@ -1492,17 +1154,7 @@ CharacterStateHelper._get_chain_action_data = function (item_template, current_a
 	end
 
 	if not new_action then
-		local allowed_chain_actions = current_action_settings.allowed_chain_actions
-
-		if not allowed_chain_actions then
-			-- Nothing
-		end
-
-		allowed_chain_actions = empty_table
-
-		local chain_actions = allowed_chain_actions
-
-		::label_31_0::
+		local chain_actions = not not current_action_settings.allowed_chain_actions
 
 		for i = 1, #chain_actions do
 			local action_data = chain_actions[i]
@@ -1516,17 +1168,7 @@ CharacterStateHelper._get_chain_action_data = function (item_template, current_a
 	end
 
 	if new_action then
-		local var_31_1 = item_template.actions[new_action]
-
-		if var_31_1 then
-			-- Nothing
-		end
-
-		var_31_1 = item_template.actions[new_action][new_sub_action]
-
-		local action_settings = var_31_1
-
-		::label_31_1::
+		local action_settings = not not item_template.actions[new_action]
 
 		if clear_buffer or new_sub_action == "push" then
 			input_extension:clear_input_buffer()
@@ -1540,71 +1182,10 @@ end
 
 local function validate_action(unit, action_name, sub_action_name, action_settings, input_extension, inventory_extension, only_check_condition, ammo_extension, current_action_extension, t)
 	-- function 32
-	local input_override = action_settings.input_override
-
-	if not input_override then
-		-- Nothing
-	end
-
-	input_override = action_name
-
-	local input_id = input_override
-
-	::label_32_0::
-
+	local input_id = not not action_settings.input_override
 	local hold_input = not action_settings.do_not_validate_with_hold and not not action_settings.hold_input
-	local allow_hold_toggle = action_settings.allow_hold_toggle
-
-	if allow_hold_toggle then
-		-- Nothing
-	end
-
-	allow_hold_toggle = input_extension.toggle_alternate_attack
-
-	local allow_toggle = allow_hold_toggle
-
-	::label_32_1::
-
-	if not only_check_condition then
-		-- Nothing
-	end
-
-	::label_32_2::
-
-	local get = input_extension:get(input_id)
-
-	if not get then
-		get = input_extension:get_buffer(input_id)
-
-		if not get then
-			get = input_extension:get(action_settings.attack_hold_input)
-
-			if not get then
-				if not allow_toggle then
-					get = input_extension:get(hold_input)
-
-					if not get then
-						-- Nothing
-					end
-				end
-
-				if action_settings.kind == "block" then
-					get = input_extension:is_input_blocked()
-				else
-					get = false
-				end
-			end
-		end
-	end
-
-	goto label_32_3
-
-	get = true
-
-	local has_input = get
-
-	::label_32_3::
-
+	local allow_toggle = not not action_settings.allow_hold_toggle
+	local has_input = not not only_check_condition or not not input_extension:get(input_id)
 	local wield_input, wield_input_init
 
 	if not has_input then
@@ -1615,7 +1196,7 @@ local function validate_action(unit, action_name, sub_action_name, action_settin
 	if has_input or wield_input then
 		local condition_func = action_settings.condition_func
 
-		if (not condition_func or condition_func(unit, input_extension, ammo_extension, current_action_extension)) and not CharacterStateHelper._check_cooldown(current_action_extension, action_name, t) then
+		if not condition_func and not CharacterStateHelper._check_cooldown(current_action_extension, action_name, t) or not not condition_func and condition_func(unit, input_extension, ammo_extension, current_action_extension) and not CharacterStateHelper._check_cooldown(current_action_extension, action_name, t) then
 			if not wield_input_init then
 				wield_input = CharacterStateHelper.wield_input(input_extension, inventory_extension, input_id)
 			end
@@ -1669,28 +1250,7 @@ CharacterStateHelper.update_weapon_actions = function (t, unit, input_extension,
 	local can_interrupt, reloading
 	local player = Managers.player:owner(unit)
 	local is_bot_player = not not player and not not player.bot_player
-	local ammo_extension_2
-
-	if left_hand_weapon_extension then
-		ammo_extension_2 = left_hand_weapon_extension.ammo_extension
-
-		if not ammo_extension_2 then
-			-- Nothing
-		end
-	end
-
-	if right_hand_weapon_extension then
-		-- Nothing
-	end
-
-	::label_34_0::
-
-	ammo_extension_2 = right_hand_weapon_extension.ammo_extension
-
-	local ammo_extension = ammo_extension_2
-
-	::label_34_1::
-
+	local ammo_extension = left_hand_weapon_extension and not not left_hand_weapon_extension.ammo_extension or not left_hand_weapon_extension and not not right_hand_weapon_extension and not not right_hand_weapon_extension.ammo_extension
 	local breed = Unit.get_data(unit, "breed")
 
 	if recent_damage_type and weapon_action_interrupt_damage_types[recent_damage_type] and not breed.boss then
@@ -1704,13 +1264,7 @@ CharacterStateHelper.update_weapon_actions = function (t, unit, input_extension,
 			end
 		end
 
-		if (not current_action_settings or not current_action_settings.uninterruptible) and script_data.uninterruptible or reloading or is_bot_player or buff_extension:has_buff_perk("uninterruptible") or uninterruptible_heavy then
-			can_interrupt = false
-		elseif recent_damage_type == "cutting_berserker" then
-			can_interrupt = true
-		else
-			can_interrupt = status_extension:hitreact_interrupt()
-		end
+		can_interrupt = not not false
 
 		if can_interrupt and not status_extension:is_disabled() then
 			local has_reduced_hit_react_buff = buff_extension:has_buff_perk("reduced_hit_react")
@@ -1799,32 +1353,11 @@ CharacterStateHelper.update_weapon_actions = function (t, unit, input_extension,
 		for action_name, sub_actions in pairs(item_template.actions) do
 			for sub_action_name, action_settings in pairs(sub_actions) do
 				if sub_action_name ~= "default" and action_settings.condition_func then
-					local weapon_action_hand_2 = action_settings.weapon_action_hand
-
-					if not weapon_action_hand_2 then
-						-- Nothing
-					end
-
-					weapon_action_hand_2 = "right"
-
-					local weapon_action_hand = weapon_action_hand_2
-
-					::label_34_2::
-
-					local action_priority_2 = action_settings.action_priority
-
-					if not action_priority_2 then
-						-- Nothing
-					end
-
-					action_priority_2 = 1
-
-					local action_priority = action_priority_2
-
-					::label_34_3::
+					local weapon_action_hand = not not action_settings.weapon_action_hand
+					local action_priority = not not action_settings.action_priority
 
 					if highest_priority_action < action_priority then
-						local weapon_extension = (weapon_action_hand ~= "right" or not right_hand_weapon_extension) and not not left_hand_weapon_extension
+						local weapon_extension = not not left_hand_weapon_extension
 						local potential_new_action, potential_new_sub_action = validate_action(unit, action_name, sub_action_name, action_settings, input_extension, inventory_extension, false, ammo_extension, weapon_extension, t)
 
 						if potential_new_action and potential_new_sub_action then
@@ -1839,32 +1372,11 @@ CharacterStateHelper.update_weapon_actions = function (t, unit, input_extension,
 			local action_settings = item_template.actions[action_name].default
 
 			if action_settings then
-				local weapon_action_hand_3 = action_settings.weapon_action_hand
-
-				if not weapon_action_hand_3 then
-					-- Nothing
-				end
-
-				weapon_action_hand_3 = "right"
-
-				local weapon_action_hand = weapon_action_hand_3
-
-				::label_34_4::
-
-				local action_priority_3 = action_settings.action_priority
-
-				if not action_priority_3 then
-					-- Nothing
-				end
-
-				action_priority_3 = 1
-
-				local action_priority = action_priority_3
-
-				::label_34_5::
+				local weapon_action_hand = not not action_settings.weapon_action_hand
+				local action_priority = not not action_settings.action_priority
 
 				if highest_priority_action < action_priority then
-					local weapon_extension = (weapon_action_hand ~= "right" or not right_hand_weapon_extension) and not not left_hand_weapon_extension
+					local weapon_extension = not not left_hand_weapon_extension
 					local potential_new_action, potential_new_sub_action = validate_action(unit, action_name, "default", action_settings, input_extension, inventory_extension, false, ammo_extension, weapon_extension, t)
 
 					if potential_new_action and potential_new_sub_action then
@@ -1882,17 +1394,7 @@ CharacterStateHelper.update_weapon_actions = function (t, unit, input_extension,
 		local power_level = career_ext:get_career_power_level()
 		local actions = item_template.actions
 		local new_action_settings = actions[new_action][new_sub_action]
-		local weapon_action_hand_4 = new_action_settings.weapon_action_hand
-
-		if not weapon_action_hand_4 then
-			-- Nothing
-		end
-
-		weapon_action_hand_4 = "right"
-
-		local weapon_action_hand = weapon_action_hand_4
-
-		::label_34_6::
+		local weapon_action_hand = not not new_action_settings.weapon_action_hand
 
 		interupting_action_data.new_action = new_action
 		interupting_action_data.new_sub_action = new_sub_action
@@ -1910,47 +1412,16 @@ CharacterStateHelper.update_weapon_actions = function (t, unit, input_extension,
 				right_hand_weapon_extension:stop_action("new_interupting_action", interupting_action_data)
 			end
 
-			local merge
-
-			if next_action_init_data then
-				merge = table.merge(next_action_init_data, {
-					action_hand = "left"
-				})
-
-				if not merge then
-					-- Nothing
-				end
-			end
-
-			merge = {
+			local left_action_init_data = next_action_init_data and not not table.merge(next_action_init_data, {
+				action_hand = "left"
+			}) or not next_action_init_data and not not {
 				action_hand = "left"
 			}
-
-			local left_action_init_data = merge
-
-			do
-				local merge_2
-			end
-
-			::label_34_7::
-
-			if next_action_init_data then
-				merge_2 = table.merge(next_action_init_data, {
-					action_hand = "right"
-				})
-
-				if not merge_2 then
-					-- Nothing
-				end
-			end
-
-			merge_2 = {
+			local right_action_init_data = next_action_init_data and not not table.merge(next_action_init_data, {
+				action_hand = "right"
+			}) or not next_action_init_data and not not {
 				action_hand = "right"
 			}
-
-			local right_action_init_data = merge_2
-
-			::label_34_8::
 
 			left_hand_weapon_extension:start_action(new_action, new_sub_action, item_template.actions, t, power_level, left_action_init_data)
 			right_hand_weapon_extension:start_action(new_action, new_sub_action, item_template.actions, t, power_level, right_action_init_data)
@@ -1959,7 +1430,7 @@ CharacterStateHelper.update_weapon_actions = function (t, unit, input_extension,
 		end
 
 		if weapon_action_hand == "either" then
-			weapon_action_hand = (not right_hand_weapon_extension or not "right") and not not "left"
+			weapon_action_hand = right_hand_weapon_extension and (not not "right" or not not "left") or not right_hand_weapon_extension and not not "left"
 		end
 
 		if weapon_action_hand == "left" then
@@ -1999,29 +1470,8 @@ CharacterStateHelper.stop_weapon_actions = function (inventory_extension, reason
 	local equipment = inventory_extension:equipment()
 	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
 	local left_hand_wielded_unit = equipment.left_hand_wielded_unit
-	local alive = Unit.alive(right_hand_wielded_unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = ScriptUnit.extension(right_hand_wielded_unit, "weapon_system")
-
-	local right_weapon_extension = alive
-
-	::label_35_0::
-
-	local alive_2 = Unit.alive(left_hand_wielded_unit)
-
-	if alive_2 then
-		-- Nothing
-	end
-
-	alive_2 = ScriptUnit.extension(left_hand_wielded_unit, "weapon_system")
-
-	local left_weapon_extension = alive_2
-
-	::label_35_1::
+	local right_weapon_extension = not not Unit.alive(right_hand_wielded_unit)
+	local left_weapon_extension = not not Unit.alive(left_hand_wielded_unit)
 
 	if right_weapon_extension and right_weapon_extension.current_action_settings then
 		right_weapon_extension:stop_action(reason)
@@ -2117,18 +1567,7 @@ CharacterStateHelper.get_move_animation = function (locomotion_extension, input_
 			local run_threshold = breed.run_threshold
 
 			if run_threshold then
-				local walk_threshold = breed.walk_threshold
-
-				if not walk_threshold then
-					-- Nothing
-				end
-
-				walk_threshold = run_threshold * 0.9
-
-				local return_to_walk_threshold = walk_threshold
-
-				::label_41_0::
-
+				local return_to_walk_threshold = not not breed.walk_threshold
 				local threshold = run_threshold
 
 				if last_anim_3p == move_fwd or last_anim_3p == move_bwd then
@@ -2147,10 +1586,10 @@ CharacterStateHelper.get_move_animation = function (locomotion_extension, input_
 	end
 
 	if move_direction.y < 0 then
-		return move_bwd, (not running or not move_bwd) and not not "walk_bwd"
+		return move_bwd, running and (not not move_bwd or not not "walk_bwd") or not running and not not "walk_bwd"
 	end
 
-	return move_fwd, (not running or not move_fwd) and not not "walk_fwd"
+	return move_fwd, running and (not not move_fwd or not not "walk_fwd") or not running and not not "walk_fwd"
 end
 
 CharacterStateHelper.is_colliding_down = function (unit)
@@ -2343,52 +1782,11 @@ end
 CharacterStateHelper.will_be_ledge_hanging = function (world, unit, params)
 	-- function 72
 	if not script_data.ledge_hanging_turned_off then
-		local collision_filter_2 = params.collision_filter
-
-		if not collision_filter_2 then
-			-- Nothing
-		end
-
-		collision_filter_2 = "filter_ledge_collision"
-
-		local collision_filter = collision_filter_2
-
-		::label_72_0::
-
+		local collision_filter = not not params.collision_filter
 		local colliding, ledge_unit = CharacterStateHelper.is_raycasting_to_gameplay_collision_box(world, unit, collision_filter, params)
 
 		if colliding then
-			local z = Vector3.z
-			local ray_position
-
-			if params then
-				ray_position = params.ray_position
-
-				if not ray_position then
-					-- Nothing
-				end
-			end
-
-			ray_position = Unit.world_position(unit, 0)
-
-			::label_72_1::
-
-			local var_72_3 = z(ray_position)
-			local z_offset
-
-			if params then
-				z_offset = params.z_offset
-
-				if not z_offset then
-					-- Nothing
-				end
-			end
-
-			z_offset = 0
-
-			::label_72_2::
-
-			local own_z = var_72_3 + z_offset
+			local own_z = Vector3.z(params and not not params.ray_position or not params and not not Unit.world_position(unit, 0)) + (params and not not params.z_offset or not params and not not 0)
 			local trigger_box_node = Unit.node(ledge_unit, "g_gameplay_ledge_trigger_box")
 			local ledge_z = Vector3.z(Unit.world_position(ledge_unit, trigger_box_node))
 			local below_z = own_z <= ledge_z
@@ -2409,39 +1807,9 @@ local INDEX_ACTOR = 4
 CharacterStateHelper.is_raycasting_to_gameplay_collision_box = function (world, unit, collision_filter, params)
 	-- function 73
 	local physics_world = World.get_data(world, "physics_world")
-	local ray_position
-
-	if params then
-		ray_position = params.ray_position
-
-		if not ray_position then
-			-- Nothing
-		end
-	end
-
-	ray_position = POSITION_LOOKUP[unit]
-
-	local position = ray_position
-
-	::label_73_0::
-
+	local position = params and not not params.ray_position or not params and not not POSITION_LOOKUP[unit]
 	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local movement_settings_table_name_2
-
-	if params then
-		movement_settings_table_name_2 = params.movement_settings_table_name
-
-		if not movement_settings_table_name_2 then
-			-- Nothing
-		end
-	end
-
-	movement_settings_table_name_2 = "gameplay_collision_box"
-
-	local movement_settings_table_name = movement_settings_table_name_2
-
-	::label_73_1::
-
+	local movement_settings_table_name = params and not not params.movement_settings_table_name or not params and not not "gameplay_collision_box"
 	local player_half_height = movement_settings_table[movement_settings_table_name].collision_check_player_half_height
 	local player_height_offset = movement_settings_table[movement_settings_table_name].collision_check_player_height_offset
 	local offset = Vector3(0, 0, player_height_offset * 2)
@@ -2468,22 +1836,7 @@ CharacterStateHelper.is_raycasting_to_gameplay_collision_box = function (world, 
 	end
 
 	if colliding and collided_unit then
-		local radius_2
-
-		if params then
-			radius_2 = params.radius
-
-			if not radius_2 then
-				-- Nothing
-			end
-		end
-
-		radius_2 = 0.15
-
-		local radius = radius_2
-
-		::label_73_2::
-
+		local radius = params and not not params.radius or not params and not not 0.15
 		local max_hits = 4
 		local result = PhysicsWorld.linear_sphere_sweep(physics_world, position, position + Vector3.down() * player_half_height * 4, radius, max_hits, "collision_filter", collision_filter, "report_initial_overlap")
 
@@ -2515,37 +1868,7 @@ CharacterStateHelper.is_ledge_hanging = function (world, unit, params)
 		local colliding, ledge_unit = CharacterStateHelper.is_colliding_with_gameplay_collision_box(world, unit, "filter_ledge_collision", params)
 
 		if colliding then
-			local z = Vector3.z
-			local position
-
-			if params then
-				position = params.position
-
-				if not position then
-					-- Nothing
-				end
-			end
-
-			position = Unit.world_position(unit, 0)
-
-			::label_74_0::
-
-			local var_74_2 = z(position)
-			local z_offset
-
-			if params then
-				z_offset = params.z_offset
-
-				if not z_offset then
-					-- Nothing
-				end
-			end
-
-			z_offset = 0
-
-			::label_74_1::
-
-			local own_z = var_74_2 + z_offset
+			local own_z = Vector3.z(params and not not params.position or not params and not not Unit.world_position(unit, 0)) + (params and not not params.z_offset or not params and not not 0)
 			local trigger_box_node = Unit.node(ledge_unit, "g_gameplay_ledge_trigger_box")
 			local ledge_z = Vector3.z(Unit.world_position(ledge_unit, trigger_box_node))
 			local below_z = own_z <= ledge_z

@@ -469,11 +469,7 @@ local function create_career_icon(scenegraph_id)
 					},
 					content_check_function = function (content)
 						-- function 2
-						local tooltip = content.tooltip
-
-						tooltip = not not tooltip and not not content.button_hotspot.is_hover
-
-						return tooltip
+						return not not content.tooltip
 					end
 				},
 				{

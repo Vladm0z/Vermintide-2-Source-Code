@@ -43,17 +43,7 @@ end
 
 StartGameWindowWeaveList._setup_definitions = function (self, params)
 	-- function 2
-	local use_gamepad_layout = params.use_gamepad_layout
-
-	if not use_gamepad_layout then
-		-- Nothing
-	end
-
-	use_gamepad_layout = not IS_WINDOWS
-
-	local gamepad_active = use_gamepad_layout
-
-	::label_2_0::
+	local gamepad_active = not not params.use_gamepad_layout
 
 	if gamepad_active then
 		definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_list_console_definitions")
@@ -473,25 +463,12 @@ StartGameWindowWeaveList._draw = function (self, dt)
 	local ui_scenegraph = self.ui_scenegraph
 	local input_service = self._parent:window_input_service()
 	local render_settings = self._render_settings
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 0
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_18_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for widget_name, widget in pairs(self._widgets_by_name) do
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
@@ -502,10 +479,7 @@ StartGameWindowWeaveList._draw = function (self, dt)
 		local widget = self._weave_entry_widgets[i]
 
 		if widget then
-			local alpha_multiplier_4 = widget.alpha_multiplier
-
-			alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_4
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
@@ -553,7 +527,7 @@ StartGameWindowWeaveList._populate_list = function (self)
 		if weave_completed or highest_consecutive_unlocked_weave == i then
 			unlocked_weave_templates[i] = true
 
-			if (not weave_completed or highest_consecutive_unlocked_weave_found) and LevelUnlockUtils.weave_disabled(template.name) then
+			if weave_completed and (not highest_consecutive_unlocked_weave_found or LevelUnlockUtils.weave_disabled(template.name)) or not weave_completed and LevelUnlockUtils.weave_disabled(template.name) then
 				if weave_templates[i + 1] then
 					highest_consecutive_unlocked_weave = i + 1
 				end
@@ -751,19 +725,8 @@ end
 StartGameWindowWeaveList._animate_list_entry = function (self, content, style, dt, optional_hover)
 	-- function 30
 	local mouse_active = Managers.input:is_device_active("mouse")
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_30_0::
-
-	local is_hover = (hotspot.is_hover or not mouse_active) and not not hotspot.has_focus
+	local hotspot = not not content.button_hotspot
+	local is_hover = hotspot.is_hover and not not hotspot.has_focus or not hotspot.is_hover and not mouse_active and not not hotspot.has_focus
 	local is_selected = hotspot.is_selected
 	local on_hover_enter = hotspot.on_hover_enter
 
@@ -772,68 +735,10 @@ StartGameWindowWeaveList._animate_list_entry = function (self, content, style, d
 		on_hover_enter = false
 	end
 
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_30_2
-
-	::label_30_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_30_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_30_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_30_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_30_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 14
 	local input_speed = 20
 

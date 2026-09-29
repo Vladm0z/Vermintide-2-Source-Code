@@ -52,22 +52,7 @@ settings.buff_function_templates = {
 			local standard_is_destroyed = buff.standard_is_destroyed
 
 			if stored_damage and standard_is_destroyed and HEALTH_ALIVE[unit] then
-				local attacker_unit_2
-
-				if ALIVE[params.attacker_unit] then
-					attacker_unit_2 = params.attacker_unit
-
-					if not attacker_unit_2 then
-						-- Nothing
-					end
-				end
-
-				attacker_unit_2 = unit
-
-				local attacker_unit = attacker_unit_2
-
-				::label_3_0::
-
+				local attacker_unit = ALIVE[params.attacker_unit] and not not params.attacker_unit or not ALIVE[params.attacker_unit] and not not unit
 				local armor_type = buff.armor_type
 				local damage_type = "buff"
 				local damage = stored_damage
@@ -135,22 +120,7 @@ settings.buff_function_templates = {
 			new_max_health = health_extension:set_max_health(new_max_health)
 			health_extension._damage_cap_per_hit = new_max_health
 
-			local attacker_unit_2
-
-			if ALIVE[params.attacker_unit] then
-				attacker_unit_2 = params.attacker_unit
-
-				if not attacker_unit_2 then
-					-- Nothing
-				end
-			end
-
-			attacker_unit_2 = unit
-
-			local attacker_unit = attacker_unit_2
-
-			::label_6_0::
-
+			local attacker_unit = ALIVE[params.attacker_unit] and not not params.attacker_unit or not ALIVE[params.attacker_unit] and not not unit
 			local damage_type = "buff"
 			local damage = 1
 			local damage_source = buff.damage_source

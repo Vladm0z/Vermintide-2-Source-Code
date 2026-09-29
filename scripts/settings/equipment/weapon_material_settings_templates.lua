@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_material_settings_templates.lua
 
-local MaterialSettingsTemplates = MaterialSettingsTemplates
-
-MaterialSettingsTemplates = not not MaterialSettingsTemplates or not not {}
-MaterialSettingsTemplates = MaterialSettingsTemplates
+MaterialSettingsTemplates = not not MaterialSettingsTemplates
 MaterialSettingsTemplates.blue_glow = {
 	rune_emissive_color = {
 		y = 9,

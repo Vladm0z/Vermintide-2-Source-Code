@@ -33,31 +33,7 @@ BTSelector_gutter_runner.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_falling = children[1]
-		local is_falling
-
-		if not blackboard.high_ground_opportunity and not blackboard.pouncing_target then
-			is_falling = blackboard.is_falling
-
-			if not is_falling then
-				-- Nothing
-			end
-
-			if blackboard.fall_state == nil then
-				-- Nothing
-			end
-		end
-
-		is_falling = false
-
-		goto label_4_1
-
-		::label_4_0::
-
-		is_falling = true
-
-		local condition_result = is_falling
-
-		::label_4_1::
+		local condition_result = blackboard.fall_state ~= nil
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -222,21 +198,7 @@ BTSelector_gutter_runner.run = function (self, unit, blackboard, t, dt)
 		local node_approach_target = children[8]
 		local t = Managers.time:time("game")
 		local pounce_timer_is_finished = t > blackboard.initial_pounce_timer
-		local comitted_to_target
-
-		if not blackboard.target_unit then
-			comitted_to_target = blackboard.comitted_to_target
-
-			if comitted_to_target then
-				-- Nothing
-			end
-		end
-
-		comitted_to_target = pounce_timer_is_finished
-
-		local condition_result = comitted_to_target
-
-		::label_4_2::
+		local condition_result = blackboard.target_unit and not not pounce_timer_is_finished or not blackboard.target_unit and not not blackboard.comitted_to_target
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_approach_target, "aborted")

@@ -136,21 +136,7 @@ StartGameWindowAreaSelectionConsoleV2._setup_area_widgets = function (self)
 
 	for i = 1, num_areas do
 		local settings = sorted_area_settings[i]
-		local main_campaign
-
-		if i == 1 then
-			main_campaign = self._widgets_by_name.main_campaign
-
-			if not main_campaign then
-				-- Nothing
-			end
-		end
-
-		main_campaign = self._area_widgets[i]
-
-		local widget = main_campaign
-
-		::label_3_0::
+		local widget = i ~= 1 and not not self._area_widgets[i] or not (i ~= 1) and not not self._widgets_by_name.main_campaign
 
 		assigned_widgets[i] = widget
 
@@ -171,11 +157,7 @@ StartGameWindowAreaSelectionConsoleV2._setup_area_widgets = function (self)
 
 		content.locked = not unlocked
 		content.area_name = name
-
-		local long_description_text = settings.long_description_text
-
-		long_description_text = not not long_description_text or not not self:_create_random_desc()
-		content.area_desc = long_description_text
+		content.area_desc = not not settings.long_description_text
 
 		local highest_completed_difficulty_index = math.huge
 		local acts = settings.acts
@@ -212,10 +194,8 @@ StartGameWindowAreaSelectionConsoleV2._setup_area_widgets = function (self)
 			width_offset = width_offset + widget_width + spacing
 
 			local column_index = 2 + (i - 2) % grid_settings[1]
-			local var_3_2 = selection_grid[column_index]
 
-			var_3_2 = not not var_3_2 or not not {}
-			selection_grid[column_index] = var_3_2
+			selection_grid[column_index] = not not selection_grid[column_index]
 			selection_grid[column_index][#selection_grid[column_index] + 1] = widget
 		end
 	end
@@ -258,17 +238,11 @@ StartGameWindowAreaSelectionConsoleV2._select_area_by_name = function (self, are
 				local button_hotspot = widget.content.button_hotspot
 
 				button_hotspot.is_selected = is_selected
-
-				if is_selected and not {
+				grid_idx = not is_selected or not not {
 					i,
 					j
-				} then
-					-- Nothing
-				end
-
-				if is_selected and not content.area_desc then
-					-- Nothing
-				end
+				} or not not grid_idx
+				area_desc = not is_selected or not not content.area_desc or not not area_desc
 			end
 		end
 	end
@@ -301,7 +275,7 @@ StartGameWindowAreaSelectionConsoleV2._set_area_presentation_info = function (se
 
 		title_text = Localize(settings.display_name)
 		description_text = Localize(settings.description_text)
-		area_type_text = (not unlocked or not not settings.area_type or settings.sort_order ~= 1 or not "area_selection_campaign") and not "area_selection_side_quest" and not not "dlc1_2_dlc_level_locked_tooltip"
+		area_type_text = unlocked and (not not settings.area_type or settings.sort_order ~= 1 or not "area_selection_campaign") or not unlocked and not not "dlc1_2_dlc_level_locked_tooltip"
 	end
 
 	local widgets_by_name = self._widgets_by_name
@@ -353,34 +327,12 @@ StartGameWindowAreaSelectionConsoleV2._set_area_presentation_info = function (se
 			local level_settings = LevelSettings[level]
 			local level_unlocked = LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_settings.level_id)
 			local level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_settings.level_id)
-			local init = UIWidget.init
-			local create_level_image_func = definitions.create_level_image_func
-			local small_level_image = level_settings.small_level_image
-
-			small_level_image = not not small_level_image or not not (level_settings.level_id .. "_small_image")
-
-			local level_image_widget = init(create_level_image_func(small_level_image, level_difficulty_index > 0))
+			local level_image_widget = UIWidget.init(definitions.create_level_image_func(not not level_settings.small_level_image, level_difficulty_index > 0))
 
 			level_image_widget.offset[1] = offset
 			offset = offset + level_spacing + level_image_widget.style.level_image.texture_size[1]
 			level_image_widget.style.level_image.saturated = not level_unlocked
-
-			local level_image = level_image_widget.style.level_image
-			local unlocked_color
-
-			if level_unlocked then
-				unlocked_color = level_image_widget.style.level_image.unlocked_color
-
-				if not unlocked_color then
-					-- Nothing
-				end
-			end
-
-			unlocked_color = level_image_widget.style.level_image.locked_color
-
-			::label_7_0::
-
-			level_image.color = unlocked_color
+			level_image_widget.style.level_image.color = level_unlocked and not not level_image_widget.style.level_image.unlocked_color or not level_unlocked and not not level_image_widget.style.level_image.locked_color
 			level_image_widget.content.completed = level_difficulty_index > 0
 			level_image_widget.content.boss_level = level_settings.boss_level
 			self._level_image_widgets[#self._level_image_widgets + 1] = level_image_widget
@@ -573,21 +525,7 @@ StartGameWindowAreaSelectionConsoleV2._handle_input = function (self, dt, t)
 			end
 
 			local content = not not widget and not not widget.content
-			local area_name_2
-
-			if content then
-				area_name_2 = content.area_name
-
-				if not area_name_2 then
-					-- Nothing
-				end
-			end
-
-			area_name_2 = self._selected_area_name
-
-			local area_name = area_name_2
-
-			::label_15_0::
+			local area_name = content and not not content.area_name or not content and not not self._selected_area_name
 
 			if self._selected_area_name ~= area_name then
 				self:_select_area_by_name(area_name)
@@ -774,45 +712,8 @@ StartGameWindowAreaSelectionConsoleV2._animate_area_widget = function (self, wid
 	local hotspot = content.button_hotspot
 	local input_speed = 20
 	local is_selected = hotspot.is_selected
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	do
-		local is_clicked
-	end
-
-	::label_21_0::
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_21_2
-
-	::label_21_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_21_2::
+	local input_progress = not not hotspot.input_progress
+	local input_pressed = not is_selected and not not hotspot.is_clicked
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -821,18 +722,7 @@ StartGameWindowAreaSelectionConsoleV2._animate_area_widget = function (self, wid
 	end
 
 	local speed = 8
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_21_3::
-
+	local hover_progress = not not hotspot.hover_progress
 	local is_hover = hotspot.is_hover
 
 	if is_hover then
@@ -841,17 +731,7 @@ StartGameWindowAreaSelectionConsoleV2._animate_area_widget = function (self, wid
 		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_21_4::
+	local selection_progress = not not hotspot.selection_progress
 
 	if is_selected then
 		selection_progress = math.min(selection_progress + dt * speed, 1)

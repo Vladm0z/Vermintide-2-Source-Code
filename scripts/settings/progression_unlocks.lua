@@ -198,7 +198,7 @@ ProgressionUnlocks.get_level_unlocks = function (level, profile)
 	local progression_unlocks_for_mechanism = MechanismOverrides.get(progression_unlocks)
 
 	for unlock_name, template in pairs(progression_unlocks_for_mechanism) do
-		if (not template.profile or template.profile == profile) and template.level_requirement == level then
+		if not template.profile and template.level_requirement == level or not not template.profile and template.profile == profile and template.level_requirement == level then
 			templates[#templates + 1] = template
 		end
 	end
@@ -366,11 +366,8 @@ end
 ProgressionUnlocks.get_prestige_level = function (hero_name)
 	-- function 11
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local get = hero_attributes:get(hero_name, "prestige")
 
-	get = not not get or not not 0
-
-	return get
+	return not not hero_attributes:get(hero_name, "prestige")
 end
 
 ProgressionUnlocks.get_num_talent_points = function (hero_name)

@@ -185,17 +185,7 @@ BTPrepareForCrazyJumpAction.start_crawling = function (unit, blackboard, t, data
 
 	network_manager:anim_event(unit, "to_crouch")
 
-	local var_6_0 = action.difficulty_prepare_jump_time[Managers.state.difficulty:get_difficulty_rank()]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = action.difficulty_prepare_jump_time[2]
-
-	local prepare_jump_time = var_6_0
-
-	::label_6_0::
+	local prepare_jump_time = not not action.difficulty_prepare_jump_time[Managers.state.difficulty:get_difficulty_rank()]
 
 	data.crouching = true
 	data.ready_crouch_time = t + (not not prepare_jump_time or not not 0.5)

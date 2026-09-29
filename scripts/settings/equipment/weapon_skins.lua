@@ -3,10 +3,7 @@
 require("scripts/settings/equipment/projectile_units")
 require("scripts/settings/equipment/pickups")
 
-local WeaponSkins = WeaponSkins
-
-WeaponSkins = not not WeaponSkins or not not {}
-WeaponSkins = WeaponSkins
+WeaponSkins = not not WeaponSkins
 WeaponSkins.skins = {
 	{
 		name = "wh_1h_axe_skin_01",
@@ -7840,21 +7837,7 @@ WeaponSkins.matching_weapon_skin_item_key = function (skin_name)
 				for drop_rarity, weapon_skins_list in pairs(skin_tables) do
 					for _, weapon_skin in ipairs(weapon_skins_list) do
 						local item_masterlist_data = rawget(ItemMasterList, weapon_skin)
-						local rarity_2
-
-						if item_masterlist_data then
-							rarity_2 = item_masterlist_data.rarity
-
-							if not rarity_2 then
-								-- Nothing
-							end
-						end
-
-						rarity_2 = drop_rarity
-
-						local rarity = rarity_2
-
-						::label_4_0::
+						local rarity = item_masterlist_data and not not item_masterlist_data.rarity or not item_masterlist_data and not not drop_rarity
 
 						WeaponSkins._matching_weapon_skin_item_keys[weapon_skin] = {
 							rarity = rarity,

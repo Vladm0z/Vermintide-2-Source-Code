@@ -18,18 +18,7 @@ return {
 	},
 	server_start_function = function (context, data)
 		-- function 1
-		local get_wind_strength = Managers.weave:get_wind_strength()
-
-		if not get_wind_strength then
-			-- Nothing
-		end
-
-		get_wind_strength = 1
-
-		local wind_strength = get_wind_strength
-
-		::label_1_0::
-
+		local wind_strength = not not Managers.weave:get_wind_strength()
 		local wind_settings = Managers.weave:get_active_wind_settings()
 		local difficulty_name = Managers.state.difficulty:get_difficulty()
 
@@ -146,18 +135,7 @@ return {
 	end,
 	client_update_function = function (context, data)
 		-- function 5
-		local get_wind_strength = Managers.weave:get_wind_strength()
-
-		if not get_wind_strength then
-			-- Nothing
-		end
-
-		get_wind_strength = 1
-
-		local wind_strength = get_wind_strength
-
-		::label_5_0::
-
+		local wind_strength = not not Managers.weave:get_wind_strength()
 		local wind_settings = Managers.weave:get_active_wind_settings()
 		local difficulty_name = Managers.state.difficulty:get_difficulty()
 		local hero_side = data.hero_side
@@ -169,21 +147,8 @@ return {
 		local linked_units_visibility = template.linked_units_visibility
 		local player_manager = Managers.player
 		local player_unit = player_manager:local_player().player_unit
-		local var_5_1
 
-		if wind_settings then
-			var_5_1 = wind_settings.light_radius[difficulty_name][wind_strength]
-
-			if not var_5_1 then
-				-- Nothing
-			end
-		end
-
-		var_5_1 = 6
-
-		::label_5_1::
-
-		data.light_radius = var_5_1
+		data.light_radius = wind_settings and not not wind_settings.light_radius[difficulty_name][wind_strength] or not wind_settings and not not 6
 
 		if player_unit and not data.light_spawned then
 			local position = Unit.local_position(player_unit, 0)
@@ -244,22 +209,7 @@ return {
 
 				local radius = data.light_radius
 				local pos = POSITION_LOOKUP[observed_unit]
-				local distance_squared
-
-				if pos then
-					distance_squared = Vector3.distance_squared(pos, unit_pos)
-
-					if not distance_squared then
-						-- Nothing
-					end
-				end
-
-				distance_squared = radius * radius
-
-				local dist_sq = distance_squared
-
-				::label_5_2::
-
+				local dist_sq = pos and not not Vector3.distance_squared(pos, unit_pos) or not pos and not not (radius * radius)
 				local effect_unit = linked_units[unit]
 				local effect_unit_visible = linked_units_visibility[unit]
 

@@ -206,42 +206,14 @@ ImguiUITool.texture = function (self, texture_type, texture, pos, size, color)
 
 		buffer[#buffer + 1] = texture_type
 		buffer[#buffer + 1] = tostring(texture)
-
-		local num = #buffer + 1
-		local material_name
-
-		if settings then
-			material_name = settings.material_name
-
-			if not material_name then
-				-- Nothing
-			end
-		end
-
-		material_name = "n/a"
-
-		::label_11_0::
-
-		buffer[num] = material_name
+		buffer[#buffer + 1] = settings and not not settings.material_name or not settings and not not "n/a"
 		buffer[#buffer + 1] = format("Vector3(%d, %d, %d)", pos[1], pos[2], pos[3])
 		buffer[#buffer + 1] = format("Vector2(%d, %d)", size[1], size[2])
 		buffer[#buffer + 1] = format("Color(%d, %d, %d, %d)", color[1], color[2], color[3], color[4])
 	end
 
 	local color
-	local num_2
-
-	if is_hovered then
-		num_2 = 200
-
-		goto label_11_1
-	end
-
-	num_2 = 30
-
-	local alpha = num_2
-
-	::label_11_1::
+	local alpha = is_hovered and not not 200 or not is_hovered and not not 30
 
 	if texture_type == "rect" or texture_type == "rounded_rect" then
 		color = Color(alpha, 0, 255, 0)
@@ -280,27 +252,12 @@ ImguiUITool.text = function (self, ui_renderer, text, font_material, font_size, 
 		buffer[#buffer + 1] = format("Color(%d, %d, %d, %d)", color[1], color[2], color[3], color[4])
 	end
 
-	local var_12_0 = self
-	local draw_border = self.draw_border
-	local var_12_2 = Vector3(pos[1], pos[2], 999)
-	local var_12_3 = Vector2(size[1], size[2])
-	local Color = Color
-	local flag
-
-	flag = (not is_hovered or not 200) and not not 30
-
-	draw_border(var_12_0, var_12_2, var_12_3, Color(flag, 0, 100, 255))
+	self:draw_border(Vector3(pos[1], pos[2], 999), Vector2(size[1], size[2]), Color(is_hovered and not not 200 or not is_hovered and not not 30, 0, 100, 255))
 end
 
 ImguiUITool.node = function (self, node, file)
 	-- function 13
-	local var_13_0 = do_search
-	local _search = self._search
-	local name = node.name
-
-	name = not not name or not not "n/a"
-
-	if not var_13_0(_search, name, file) then
+	if not do_search(self._search, not not node.name, file) then
 		return
 	end
 
@@ -319,18 +276,7 @@ ImguiUITool.node = function (self, node, file)
 
 		if node.parent then
 			buffer[#buffer + 1] = node.parent
-
-			local num = #buffer + 1
-			local var_13_4 = format
-			local str = "%s / %s"
-			local horizontal_alignment = node.horizontal_alignment
-
-			horizontal_alignment = not not horizontal_alignment or not not "left"
-
-			local vertical_alignment = node.vertical_alignment
-
-			vertical_alignment = not not vertical_alignment or not not "bottom"
-			buffer[num] = var_13_4(str, horizontal_alignment, vertical_alignment)
+			buffer[#buffer + 1] = format("%s / %s", not not node.horizontal_alignment, not not node.vertical_alignment)
 		else
 			buffer[#buffer + 1] = "n/a"
 			buffer[#buffer + 1] = "n/a"
@@ -339,28 +285,10 @@ ImguiUITool.node = function (self, node, file)
 		buffer[#buffer + 1] = format("Vector3(%d, %d, %d)", pos[1], pos[2], pos[3])
 		buffer[#buffer + 1] = format("Vector2(%d, %d)", size[1], size[2])
 
-		local var_13_8 = self
-		local draw_label = self.draw_label
-		local name_2 = node.name
-		local var_13_11 = Vector3(screen_pos[1], screen_pos[2], 999)
-		local Color = Color
-		local flag
-
-		flag = (not is_hovered or not 200) and not not 55
-
-		draw_label(var_13_8, name_2, var_13_11, Color(flag, 100, 100, 255))
+		self:draw_label(node.name, Vector3(screen_pos[1], screen_pos[2], 999), Color(is_hovered and not not 200 or not is_hovered and not not 55, 100, 100, 255))
 	end
 
-	local var_13_14 = self
-	local draw_border = self.draw_border
-	local var_13_16 = Vector3(screen_pos[1], screen_pos[2], 999)
-	local var_13_17 = screen_size
-	local Color_2 = Color
-	local flag_2
-
-	flag_2 = (not is_hovered or not 200) and not not 55
-
-	draw_border(var_13_14, var_13_16, var_13_17, Color_2(flag_2, 100, 100, 255))
+	self:draw_border(Vector3(screen_pos[1], screen_pos[2], 999), screen_size, Color(is_hovered and not not 200 or not is_hovered and not not 55, 100, 100, 255))
 
 	return is_hovered
 end
@@ -372,25 +300,7 @@ ImguiUITool.scenegraph = function (self, scenegraph, parent_scenegraph, scenegra
 	end
 
 	local info = debug.getinfo(4, "S")
-
-	if info then
-		-- Nothing
-	end
-
-	::label_14_0::
-
-	local short_src = info.short_src
-
-	if short_src then
-		-- Nothing
-	end
-
-	short_src = string.match(info.short_src, "/([^/]+)%.lua$")
-
-	local file = short_src
-
-	::label_14_1::
-
+	local file = not not info and not not info.short_src
 	local any_hovered = false
 
 	for idx, node in pairs(scenegraph) do
@@ -685,10 +595,7 @@ ImguiUITool.do_asset_browser = function (self)
 	elseif Vector3.y(Mouse.axis(wheel_axis)) < 0 then
 		self._asset_browser_offset = self._asset_browser_offset - scroll_sense
 	elseif Mouse.button(Mouse.button_index("middle")) > 0.5 then
-		local _scroll_hold_pos = self._scroll_hold_pos
-
-		_scroll_hold_pos = not not _scroll_hold_pos or not not Vector3Box(Vector3Aux.unbox(cursor))
-		self._scroll_hold_pos = _scroll_hold_pos
+		self._scroll_hold_pos = not not self._scroll_hold_pos
 		self._asset_browser_offset = self._asset_browser_offset + (Vector3Aux.unbox(cursor)[2] - self._scroll_hold_pos:unbox()[2])
 		self._asset_browser_offset = math.clamp(self._asset_browser_offset, cell_size[2] * (-math.ceil(#table.select_array(texture_registry, function (_, data)
 			-- function 34
@@ -764,11 +671,8 @@ ImguiUITool.do_asset_browser = function (self)
 
 				local display_text = texture_name
 				local t = Managers.time:time("main")
-				local _copied_t = self._copied_t
 
-				_copied_t = not not _copied_t or not not 0
-
-				if t < _copied_t and self._copied_text == texture_name then
+				if t < not not self._copied_t and self._copied_text == texture_name then
 					display_text = display_text .. " (Copied!)           "
 				else
 					display_text = display_text .. " (Left click to copy)"
@@ -804,34 +708,14 @@ end
 ImguiUITool._setting_checkbox = function (self, key, label)
 	-- function 35
 	if do_search(self._search, label) then
-		local checkbox = Imgui.checkbox
-		local var_35_1 = label
-		local var_35_2 = self[key]
-
-		var_35_2 = not not var_35_2 or not not false
-		self[key] = checkbox(var_35_1, var_35_2)
+		self[key] = Imgui.checkbox(label, not not self[key])
 	end
 end
 
 ImguiUITool._setting_color = function (self, key, label)
 	-- function 36
 	if do_search(self._search, label) then
-		local var_36_0 = self[key]
-
-		if not var_36_0 then
-			-- Nothing
-		end
-
-		var_36_0 = {
-			255,
-			255,
-			255,
-			255
-		}
-
-		local col = var_36_0
-
-		::label_36_0::
+		local col = not not self[key]
 
 		Colors.set(col, ImguiX.color_edit_4(label, unpack(col)))
 
@@ -894,21 +778,7 @@ ImguiUITool.draw = function (self)
 
 	if Imgui.begin_menu_bar() then
 		for i, tab in ipairs(self._tabs) do
-			local str
-
-			if self._selected_tab ~= tab then
-				str = " " .. tab .. " "
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = "[" .. tab .. "]"
-
-			local label = str
-
-			::label_39_0::
+			local label = self._selected_tab == tab and not not ("[" .. tab .. "]") or not (self._selected_tab == tab) and not not (" " .. tab .. " ")
 
 			if Imgui.menu_item(label) then
 				self._selected_tab = tab

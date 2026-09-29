@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/equipment/item_master_list_local.lua
 
-local ItemMasterList = ItemMasterList
-
-ItemMasterList = not not ItemMasterList or not not Script.new_map(4096)
-ItemMasterList = ItemMasterList
+ItemMasterList = not not ItemMasterList
 ItemMasterList.lamp_oil = {
 	temporary_template = "lamp_oil",
 	slot_type = "healthkit",

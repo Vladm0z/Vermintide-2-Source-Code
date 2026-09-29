@@ -6,45 +6,15 @@ VersusTargetObjectiveExtension.NAME = "VersusTargetObjectiveExtension"
 VersusTargetObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 1
 	local target_default_settings = GameModeSettings.versus.objectives.target
-	local num_sections = objective_data.num_sections
 
-	num_sections = not not num_sections or not not target_default_settings.num_sections
-	self._num_sections = num_sections
-
-	local score_per_section = objective_data.score_per_section
-
-	score_per_section = not not score_per_section or not not target_default_settings.score_per_section
-	self._score_per_section = score_per_section
-
-	local time_per_section = objective_data.time_per_section
-
-	time_per_section = not not time_per_section or not not target_default_settings.time_per_section
-	self._time_per_section = time_per_section
-
-	local score_for_completion = objective_data.score_for_completion
-
-	score_for_completion = not not score_for_completion or not not target_default_settings.score_for_completion
-	self._score_for_completion = score_for_completion
-
-	local time_for_completion = objective_data.time_for_completion
-
-	time_for_completion = not not time_for_completion or not not target_default_settings.time_for_completion
-	self._time_for_completion = time_for_completion
-
-	local on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
-
-	on_last_leaf_complete_sound_event = not not on_last_leaf_complete_sound_event or not not target_default_settings.on_last_leaf_complete_sound_event
-	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
-
-	local on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
-
-	on_leaf_complete_sound_event = not not on_leaf_complete_sound_event or not not target_default_settings.on_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
-
-	local on_section_progress_sound_event = objective_data.on_section_progress_sound_event
-
-	on_section_progress_sound_event = not not on_section_progress_sound_event or not not target_default_settings.on_section_progress_sound_event
-	self._on_section_progress_sound_event = on_section_progress_sound_event
+	self._num_sections = not not objective_data.num_sections
+	self._score_per_section = not not objective_data.score_per_section
+	self._time_per_section = not not objective_data.time_per_section
+	self._score_for_completion = not not objective_data.score_for_completion
+	self._time_for_completion = not not objective_data.time_for_completion
+	self._on_last_leaf_complete_sound_event = not not objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = not not objective_data.on_leaf_complete_sound_event
+	self._on_section_progress_sound_event = not not objective_data.on_section_progress_sound_event
 end
 
 VersusTargetObjectiveExtension._activate = function (self)

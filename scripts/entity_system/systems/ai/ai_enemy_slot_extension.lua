@@ -92,10 +92,7 @@ AIEnemySlotExtension._improve_slot_position = function (self, self_unit, t, nav_
 	local ai_unit_position = Unit.local_position(self_unit, 0)
 
 	if in_queue then
-		local var_4_0 = Vector3_distance(new_position, ai_unit_position)
-
-		var_4_0 = not not var_4_0 or not not math.huge
-		self.wait_slot_distance = var_4_0
+		self.wait_slot_distance = not not Vector3_distance(new_position, ai_unit_position)
 	end
 
 	local navigation_extension = self._navigation_ext
@@ -287,18 +284,7 @@ end
 
 AIEnemySlotExtension._detach_from_slot = function (self)
 	-- function 12
-	local slot_2 = self.slot
-
-	if not slot_2 then
-		-- Nothing
-	end
-
-	slot_2 = self.waiting_on_slot
-
-	local slot = slot_2
-
-	::label_12_0::
-
+	local slot = not not self.slot
 	local waiting_on_slot = self.waiting_on_slot
 	local slot_owner_extension = not not slot and not not slot.owner_extension
 
@@ -428,20 +414,12 @@ end
 
 AIEnemySlotExtension.get_current_slot = function (self)
 	-- function 20
-	local slot = self.slot
-
-	slot = not not slot or not not self.waiting_on_slot
-
-	return slot, self.waiting_on_slot ~= nil
+	return not not self.slot, self.waiting_on_slot ~= nil
 end
 
 AIEnemySlotExtension.get_preferred_slot_type = function (self)
 	-- function 21
-	local use_slot_type = self.use_slot_type
-
-	use_slot_type = not not use_slot_type or not not DEFAULT_SLOT_TYPE
-
-	return use_slot_type
+	return not not self.use_slot_type
 end
 
 AIEnemySlotExtension.on_ai_slot_gained = function (self, defender_unit, system)
@@ -455,53 +433,13 @@ AIEnemySlotExtension.on_ai_slot_gained = function (self, defender_unit, system)
 	local defender_pos = Unit.local_position(defender_unit, 0)
 	local attacker_pos = Unit.local_position(unit, 0)
 	local infighting = target_blackboard.breed.infighting
-	local num
-
-	if USE_ENGINE_SLOID_SYSTEM then
-		num = 3
-
-		goto label_22_0
-	end
-
-	num = infighting.distance
-
-	if not num then
-		-- Nothing
-	end
-
-	num = 2
-
-	local distance = num
-
-	::label_22_0::
-
+	local distance = USE_ENGINE_SLOID_SYSTEM and not not 3 or not USE_ENGINE_SLOID_SYSTEM and not not infighting.distance
 	local attacker_infighting = blackboard.breed.infighting
-	local boid_radius_2 = attacker_infighting.boid_radius
-
-	if not boid_radius_2 then
-		-- Nothing
-	end
-
-	boid_radius_2 = 0.3
-
-	local boid_radius = boid_radius_2
-
-	::label_22_1::
-
+	local boid_radius = not not attacker_infighting.boid_radius
 	local to_attacker = Vector3.normalize(attacker_pos - defender_pos) * (distance + boid_radius)
 
 	if USE_ENGINE_SLOID_SYSTEM then
-		local add_sloid = EngineOptimized.add_sloid
-		local num_2 = defender_pos + to_attacker
-		local var_22_4 = boid_radius
-		local side_id = blackboard.side.side_id
-		local var_22_6 = unit
-		local var_22_7 = defender_unit
-		local tonumber = tonumber
-		local get_data = Unit.get_data(unit, "unique_id")
-
-		get_data = not not get_data or not not "?"
-		self.sloid_id = add_sloid(num_2, var_22_4, side_id, var_22_6, var_22_7, tonumber(get_data))
+		self.sloid_id = EngineOptimized.add_sloid(defender_pos + to_attacker, boid_radius, blackboard.side.side_id, unit, defender_unit, tonumber(not not Unit.get_data(unit, "unique_id")))
 
 		local dogpiled_attackers = Managers.state.conflict.dogpiled_attackers_on_unit[defender_unit]
 

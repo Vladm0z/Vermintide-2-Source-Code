@@ -14,11 +14,7 @@ BTMoveToGoalAction.name = "BTMoveToGoalAction"
 BTMoveToGoalAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	blackboard.action = self._tree_node.action_data
-
-	local eval_time = blackboard.action.eval_time
-
-	eval_time = not not eval_time or not not 0.5
-	blackboard.time_to_next_evaluate = t + eval_time
+	blackboard.time_to_next_evaluate = t + not not blackboard.action.eval_time
 	blackboard.time_to_next_friend_alert = t + 0.3
 
 	local goal_destination = blackboard.goal_destination:unbox()
@@ -29,27 +25,7 @@ BTMoveToGoalAction.enter = function (self, unit, blackboard, t)
 
 	local network_manager = Managers.state.network
 	local breed = blackboard.breed
-	local passive_in_patrol_2
-
-	if breed.passive_in_patrol ~= nil then
-		passive_in_patrol_2 = breed.passive_in_patrol
-
-		if passive_in_patrol_2 then
-			passive_in_patrol_2 = not blackboard.ignore_passive_on_patrol
-		end
-
-		if false then
-			passive_in_patrol_2 = false
-		end
-
-		goto label_2_0
-	end
-
-	passive_in_patrol_2 = true
-
-	local passive_in_patrol = passive_in_patrol_2
-
-	::label_2_0::
+	local passive_in_patrol = not not not blackboard.ignore_passive_on_patrol
 
 	if passive_in_patrol then
 		AiUtils.enter_passive(unit, blackboard)
@@ -127,17 +103,7 @@ BTMoveToGoalAction.run = function (self, unit, blackboard, t, dt)
 			local unit_position = POSITION_LOOKUP[unit]
 			local goal_destination = blackboard.goal_destination:unbox()
 			local distance_to_goal_sq = Vector3.distance_squared(unit_position, goal_destination)
-			local goal_margin_2 = action.goal_margin
-
-			if not goal_margin_2 then
-				-- Nothing
-			end
-
-			goal_margin_2 = 0.75
-
-			local goal_margin = goal_margin_2
-
-			::label_4_0::
+			local goal_margin = not not action.goal_margin
 
 			if distance_to_goal_sq < goal_margin * goal_margin then
 				blackboard.goal_destination = nil
@@ -154,11 +120,7 @@ BTMoveToGoalAction.run = function (self, unit, blackboard, t, dt)
 
 	if t > blackboard.time_to_next_evaluate or navigation_extension:has_reached_destination() then
 		should_evaluate = "evaluate"
-
-		local eval_time = blackboard.action.eval_time
-
-		eval_time = not not eval_time or not not 0.5
-		blackboard.time_to_next_evaluate = t + eval_time
+		blackboard.time_to_next_evaluate = t + not not blackboard.action.eval_time
 	end
 
 	if blackboard.new_move_to_goal then
@@ -189,7 +151,7 @@ BTMoveToGoalAction.start_move_animation = function (self, unit, blackboard)
 
 	if passive_in_patrol and passive_in_patrol_start_anim then
 		blackboard.anim_cb_move = true
-		animation_name = (type(passive_in_patrol_start_anim) ~= "table" or not passive_in_patrol_start_anim[math.random(1, #passive_in_patrol_start_anim)]) and not not passive_in_patrol_start_anim
+		animation_name = not not passive_in_patrol_start_anim
 		blackboard.skip_move_rotation = true
 	end
 

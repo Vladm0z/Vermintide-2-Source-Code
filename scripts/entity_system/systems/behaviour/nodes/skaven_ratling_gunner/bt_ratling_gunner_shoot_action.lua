@@ -20,18 +20,7 @@ BTRatlingGunnerShootAction.name = "BTRatlingGunnerShootAction"
 BTRatlingGunnerShootAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
-	local attack_pattern_data = blackboard.attack_pattern_data
-
-	if not attack_pattern_data then
-		-- Nothing
-	end
-
-	attack_pattern_data = {}
-
-	local data = attack_pattern_data
-
-	::label_2_0::
-
+	local data = not not blackboard.attack_pattern_data
 	local new_target, node_name, old_target_visible = PerceptionUtils.pick_ratling_gun_target(unit, blackboard)
 	local target_unit = not not new_target or not not data.target_unit
 
@@ -51,11 +40,7 @@ BTRatlingGunnerShootAction.enter = function (self, unit, blackboard, t)
 	data.target_switch_distance_squared = AiUtils.random(action.target_switch_distance[1], action.target_switch_distance[2])^2
 	data.target_obscured = false
 	data.target_check = t + 0.2 + Math.random() * 0.1
-
-	local peer_id = data.peer_id
-
-	peer_id = not not peer_id or not not Network.peer_id()
-	data.peer_id = peer_id
+	data.peer_id = not not data.peer_id
 	data.update_bot_threat_t = t
 	self._use_obstacle = false
 
@@ -282,10 +267,8 @@ BTRatlingGunnerShootAction._update_shooting = function (self, unit, blackboard, 
 		local rotation = Quaternion.look(direction, Vector3.up())
 		local fire_pose = Matrix4x4.from_quaternion_position(rotation, lof_position)
 		local sight_pose = Matrix4x4.from_quaternion_position(rotation, aos_position)
-		local last_t = self.last_t
 
-		last_t = not not last_t or not not t
-		self.last_t = last_t
+		self.last_t = not not self.last_t
 
 		local fire_obstacle = data.line_of_fire_nav_obstacle
 		local sight_obstacle = data.arc_of_sight_nav_obstacle
@@ -596,19 +579,7 @@ BTRatlingGunnerShootAction._rotate_from_to = function (self, from, to, max_angle
 	local inner_product = Quaternion.dot(to, from)
 	local angle_difference = 2 * math.acos(math.clamp(inner_product, -1, 1))
 	local normalized_angle_diff = math.abs((angle_difference % TWO_PI + PI) % TWO_PI - PI)
-	local num
-
-	if angle_difference == 0 then
-		num = 1
-
-		goto label_19_0
-	end
-
-	num = math.min(max_delta / angle_difference, 1)
-
-	local lerp_t = num
-
-	::label_19_0::
+	local lerp_t = angle_difference ~= 0 and not not math.min(max_delta / angle_difference, 1) or not (angle_difference ~= 0) and not not 1
 
 	return Quaternion.lerp(from, to, lerp_t), math.max(normalized_angle_diff - max_delta, 0)
 end
@@ -647,18 +618,7 @@ BTRatlingGunnerShootAction._shoot = function (self, unit, blackboard)
 	local spread_direction = Quaternion.forward(spread_rot)
 	local collision_filter = "filter_enemy_player_afro_ray_projectile"
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_21_0 = light_weight_projectile_template.attack_power_level[difficulty_rank]
-
-	if not var_21_0 then
-		-- Nothing
-	end
-
-	var_21_0 = light_weight_projectile_template.attack_power_level[2]
-
-	local power_level = var_21_0
-
-	::label_21_0::
-
+	local power_level = not not light_weight_projectile_template.attack_power_level[difficulty_rank]
 	local action_data = {
 		power_level = power_level,
 		damage_profile = light_weight_projectile_template.damage_profile,

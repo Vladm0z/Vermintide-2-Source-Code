@@ -13,43 +13,15 @@ local MANAGER_GROUP_ORDER = {
 	"venture",
 	"state"
 }
-local Managers = Managers
 
-Managers = not not Managers or not not {
-	state = {},
-	venture = {}
-}
-Managers = Managers
-
-local ManagersCreationOrder = ManagersCreationOrder
-
-ManagersCreationOrder = not not ManagersCreationOrder or not not {
-	global = {},
-	state = {},
-	venture = {}
-}
-ManagersCreationOrder = ManagersCreationOrder
+Managers = not not Managers
+ManagersCreationOrder = not not ManagersCreationOrder
 
 local function destroy_manager_group(manager_group_name)
 	-- function 2
 	debug_print("Destroying manager group: %s", manager_group_name)
 
-	local Managers
-
-	if manager_group_name == "global" then
-		Managers = Managers
-
-		if not Managers then
-			-- Nothing
-		end
-	end
-
-	Managers = Managers[manager_group_name]
-
-	local manager_group = Managers
-
-	::label_2_0::
-
+	local manager_group = manager_group_name ~= "global" and not not Managers[manager_group_name] or not (manager_group_name ~= "global") and not not Managers
 	local manager_group_order = ManagersCreationOrder[manager_group_name]
 
 	table.reverse(manager_group_order)
@@ -80,42 +52,12 @@ local function call_on_managers(func_name, inverse_order, ...)
 	-- function 5
 	debug_print("Calling function on all managers:", func_name, "inverse_order:", inverse_order)
 
-	local var_5_0
-
-	if inverse_order then
-		var_5_0 = get_iterator_backwards
-
-		if not var_5_0 then
-			-- Nothing
-		end
-	end
-
-	var_5_0 = get_iterator_forwards
-
-	local iterator_type = var_5_0
-
-	::label_5_0::
-
+	local iterator_type = inverse_order and not not get_iterator_backwards or not inverse_order and not not get_iterator_forwards
 	local group_id_start, group_id_end, group_id_direction = iterator_type(MANAGER_GROUP_ORDER)
 
 	for group_id = group_id_start, group_id_end, group_id_direction do
 		local manager_group_name = MANAGER_GROUP_ORDER[group_id]
-		local Managers
-
-		if manager_group_name == "global" then
-			Managers = Managers
-
-			if not Managers then
-				-- Nothing
-			end
-		end
-
-		Managers = Managers[manager_group_name]
-
-		local manager_group = Managers
-
-		::label_5_1::
-
+		local manager_group = manager_group_name ~= "global" and not not Managers[manager_group_name] or not (manager_group_name ~= "global") and not not Managers
 		local manager_names = ManagersCreationOrder[manager_group_name]
 		local manager_id_start, manager_id_end, manager_id_direction = iterator_type(manager_names)
 

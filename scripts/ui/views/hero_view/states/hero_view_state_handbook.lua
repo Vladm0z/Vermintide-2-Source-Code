@@ -32,12 +32,7 @@ HeroViewStateHandbook.on_enter = function (self, params)
 		snap_pixel_positions = false
 	}
 	self._voting_manager = ingame_ui_context.voting_manager
-
-	local SaveData = SaveData
-	local seen_handbook_pages = SaveData.seen_handbook_pages
-
-	seen_handbook_pages = not not seen_handbook_pages or not not {}
-	SaveData.seen_handbook_pages = seen_handbook_pages
+	SaveData.seen_handbook_pages = not not SaveData.seen_handbook_pages
 
 	local input_service = self:input_service()
 
@@ -225,22 +220,7 @@ end
 HeroViewStateHandbook._get_active_tabs_height = function (self)
 	-- function 10
 	local active_tab = self._active_tab
-	local num_draws
-
-	if active_tab then
-		num_draws = active_tab.style.list_style.num_draws
-
-		if not num_draws then
-			-- Nothing
-		end
-	end
-
-	num_draws = 0
-
-	local num_sub_tabs = num_draws
-
-	::label_10_0::
-
+	local num_sub_tabs = active_tab and not not active_tab.style.list_style.num_draws or not active_tab and not not 0
 	local tab_list_entry_size = category_tab_info.tab_list_entry_size
 	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
 	local tab_list_height = math.max(tab_list_entry_size[2] * num_sub_tabs + tab_list_entry_spacing * (num_sub_tabs - 1), 0)
@@ -250,18 +230,7 @@ end
 
 HeroViewStateHandbook._get_active_category_height = function (self)
 	-- function 11
-	local _active_tab_index = self._active_tab_index
-
-	if not _active_tab_index then
-		-- Nothing
-	end
-
-	_active_tab_index = 1
-
-	local active_tab = _active_tab_index
-
-	::label_11_0::
-
+	local active_tab = not not self._active_tab_index
 	local num_tabs = active_tab - 1
 	local tab_size = category_tab_info.tab_size
 	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
@@ -392,22 +361,7 @@ end
 
 HeroViewStateHandbook.update = function (self, dt, t)
 	-- function 21
-	local FAKE_INPUT_SERVICE
-
-	if self._input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_21_0::
-
+	local input_service = self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
 	local is_gamepad_active = Managers.input:is_device_active("gamepad")
 
 	self._ui_animator:update(dt)
@@ -451,17 +405,7 @@ end
 HeroViewStateHandbook._has_active_level_vote = function (self)
 	-- function 22
 	local voting_manager = self._voting_manager
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local is_mission_vote = vote_in_progress
-
-	::label_22_0::
+	local is_mission_vote = not not voting_manager:vote_in_progress()
 
 	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
@@ -515,17 +459,7 @@ HeroViewStateHandbook._handle_input = function (self, input_service, is_gamepad_
 
 		for i = 1, num_draws do
 			local content = item_contents[i]
-			local button_hotspot = content.button_hotspot
-
-			if not button_hotspot then
-				-- Nothing
-			end
-
-			button_hotspot = content.hotspot
-
-			local hotspot = button_hotspot
-
-			::label_23_0::
+			local hotspot = not not content.button_hotspot
 
 			if hotspot.on_hover_enter then
 				self:play_sound("Play_gui_achivements_menu_hover_category")
@@ -755,24 +689,7 @@ HeroViewStateHandbook._update_page_info = function (self)
 	widgets_by_name.page_text_right.content.visible = has_pages
 	widgets_by_name.page_text_area.content.visible = has_pages
 
-	local _menu_input_description = self._menu_input_description
-	local var_30_1 = _menu_input_description
-	local set_input_description = _menu_input_description.set_input_description
-	local has_pages_2
-
-	if has_pages then
-		has_pages_2 = generic_input_actions.has_pages
-
-		if not has_pages_2 then
-			-- Nothing
-		end
-	end
-
-	has_pages_2 = nil
-
-	::label_30_0::
-
-	set_input_description(var_30_1, has_pages_2)
+	self._menu_input_description:set_input_description(has_pages and not not generic_input_actions.has_pages or not has_pages and not not nil)
 end
 
 HeroViewStateHandbook._set_gamepad_input_buttons_visibility = function (self, visible)
@@ -803,27 +720,14 @@ HeroViewStateHandbook.draw = function (self, input_service, is_gamepad_active, d
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local base_alpha_multiplier = alpha_multiplier_2
-
-	::label_32_0::
+	local base_alpha_multiplier = not not render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._widgets) do
 		if widget.snap_pixel_positions ~= nil then
 			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not base_alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -854,17 +758,7 @@ HeroViewStateHandbook.draw = function (self, input_service, is_gamepad_active, d
 
 				render_settings.alpha_multiplier = 0
 			elseif alpha_multiplier then
-				local alpha_fade_multipler_2 = widget.alpha_fade_multipler
-
-				if not alpha_fade_multipler_2 then
-					-- Nothing
-				end
-
-				alpha_fade_multipler_2 = 1
-
-				local alpha_fade_multipler = alpha_fade_multipler_2
-
-				::label_32_1::
+				local alpha_fade_multipler = not not widget.alpha_fade_multipler
 
 				alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
 				render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)
@@ -897,17 +791,7 @@ HeroViewStateHandbook.draw = function (self, input_service, is_gamepad_active, d
 
 			render_settings.alpha_multiplier = 0
 		elseif alpha_multiplier then
-			local alpha_fade_multipler_3 = widget.alpha_fade_multipler
-
-			if not alpha_fade_multipler_3 then
-				-- Nothing
-			end
-
-			alpha_fade_multipler_3 = 1
-
-			local alpha_fade_multipler = alpha_fade_multipler_3
-
-			::label_32_2::
+			local alpha_fade_multipler = not not widget.alpha_fade_multipler
 
 			alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
 			render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)

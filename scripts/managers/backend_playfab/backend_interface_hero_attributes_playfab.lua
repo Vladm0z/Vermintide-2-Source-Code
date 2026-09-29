@@ -69,10 +69,8 @@ BackendInterfaceHeroAttributesPlayFab._refresh = function (self)
 	for character, data in pairs(characters_data) do
 		for attribute_name, default_value in pairs(DEFAULT_CHARACTER_ATTRIBUTES) do
 			local key = string.format("%s_%s", character, attribute_name)
-			local var_3_0 = data[attribute_name]
 
-			var_3_0 = not not var_3_0 or not not default_value
-			attributes[key] = var_3_0
+			attributes[key] = not not data[attribute_name]
 		end
 	end
 

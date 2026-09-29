@@ -16,11 +16,7 @@ BTTargetUnreachableAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 
 	blackboard.action = action
-
-	local chasing_timer = blackboard.chasing_timer
-
-	chasing_timer = not not chasing_timer or not not 0
-	blackboard.unreachable_timer = chasing_timer
+	blackboard.unreachable_timer = not not blackboard.chasing_timer
 end
 
 BTTargetUnreachableAction.leave = function (self, unit, blackboard, t, reason, destroy)

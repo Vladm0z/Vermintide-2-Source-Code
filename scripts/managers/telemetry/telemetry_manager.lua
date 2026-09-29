@@ -23,7 +23,7 @@ TelemetryManager.NAME = "TelemetryManager"
 
 TelemetryManager.create = function ()
 	-- function 2
-	if (IS_WINDOWS or IS_LINUX) and rawget(_G, "lcurl") == nil then
+	if IS_WINDOWS and rawget(_G, "lcurl") == nil or not IS_WINDOWS and IS_LINUX and rawget(_G, "lcurl") == nil then
 		print("[TelemetryManager] No lcurl interface found! Fallback to dummy...")
 
 		return TelemetryManagerDummy:new()
@@ -57,11 +57,7 @@ TelemetryManager.reload_settings = function (self)
 	-- function 4
 	dprintf("[TelemetryManager] Refreshing settings")
 
-	local set = table.set
-	local blacklist = TelemetrySettings.blacklist
-
-	blacklist = not not blacklist or not not {}
-	self._blacklisted_events = set(blacklist)
+	self._blacklisted_events = table.set(not not TelemetrySettings.blacklist)
 end
 
 TelemetryManager.update = function (self, dt, t)
@@ -172,11 +168,7 @@ end
 
 TelemetryManager.has_events_to_post = function (self)
 	-- function 10
-	local var_10_0 = ENABLED
-
-	var_10_0 = not not var_10_0 and not not not table.is_empty(self._events)
-
-	return var_10_0
+	return not not ENABLED
 end
 
 TelemetryManager.batch_in_flight = function (self)

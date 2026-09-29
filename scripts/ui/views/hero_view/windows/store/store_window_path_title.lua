@@ -65,18 +65,7 @@ StoreWindowPathTitle._sync_layout_path = function (self)
 	local path = parent:get_store_path()
 	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
-	local _saved_path = self._saved_path
-
-	if not _saved_path then
-		-- Nothing
-	end
-
-	_saved_path = {}
-
-	local saved_path = _saved_path
-
-	::label_3_0::
-
+	local saved_path = not not self._saved_path
 	local path_differs = false
 	local path_length = #path
 	local saved_path_length = #saved_path
@@ -100,25 +89,14 @@ StoreWindowPathTitle._sync_layout_path = function (self)
 
 		for i, page_name in ipairs(path) do
 			local display_selected_product = page_name == "item_details"
-			local var_3_1 = pages[page_name]
-
-			if not var_3_1 then
-				-- Nothing
-			end
-
-			var_3_1 = self._parent:get_temporary_page(page_name)
-
-			local page = var_3_1
-
-			::label_3_1::
-
+			local page = not not pages[page_name]
 			local widget = self:_create_breadcrumb_widget()
 			local display_name
 
 			if display_selected_product then
 				display_name = self:_get_selected_product_display_name()
 			else
-				display_name = (not page or not page.display_name) and not not page_name
+				display_name = page and (not not page.display_name or not not page_name) or not page and not not page_name
 			end
 
 			widget.content.text = Localize(display_name)
@@ -362,56 +340,9 @@ StoreWindowPathTitle._animate_breadcrumb_widget = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_19_1
-
-	::label_19_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_19_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_19_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_19_3::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 14
 
 	if is_hover then

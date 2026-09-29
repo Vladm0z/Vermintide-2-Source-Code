@@ -21,29 +21,11 @@ BTChaosSorcererPlagueSkulkAction.enter = function (self, unit, blackboard, t)
 
 	Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "heard_enemy", DialogueSettings.hear_chaos_corruptor_sorcerer, "enemy_tag", breed.name)
 
-	local skulk_data_2 = blackboard.skulk_data
-
-	if not skulk_data_2 then
-		-- Nothing
-	end
-
-	skulk_data_2 = {}
-
-	local skulk_data = skulk_data_2
-
-	::label_2_0::
+	local skulk_data = not not blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-
-	local direction = skulk_data.direction
-
-	direction = not not direction or not not (1 - math.random(0, 1) * 2)
-	skulk_data.direction = direction
-
-	local radius = skulk_data.radius
-
-	radius = not not radius or not not blackboard.target_dist
-	skulk_data.radius = radius
+	skulk_data.direction = not not skulk_data.direction
+	skulk_data.radius = not not skulk_data.radius
 	blackboard.action = action
 
 	if blackboard.move_state ~= "idle" then
@@ -83,11 +65,7 @@ BTChaosSorcererPlagueSkulkAction.enter = function (self, unit, blackboard, t)
 	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - action.part_hp_lost_to_teleport
 	blackboard.travel_teleport_timer = t + ConflictUtils.random_interval(action.teleport_cooldown)
 	blackboard.face_target_while_summoning = true
-
-	local summon_vo_timer = blackboard.summon_vo_timer
-
-	summon_vo_timer = not not summon_vo_timer or not not t
-	blackboard.summon_vo_timer = summon_vo_timer
+	blackboard.summon_vo_timer = not not blackboard.summon_vo_timer
 	blackboard.initial_skulk_finished = true
 
 	if not blackboard.played_foreshadow then
@@ -209,22 +187,7 @@ BTChaosSorcererPlagueSkulkAction.run = function (self, unit, blackboard, t, dt)
 			blackboard.vanish_countdown = t + action.vanish_countdown
 			plague_wave_data.plague_wave_timer = t + skulk_time
 			blackboard.ready_to_summon = true
-
-			local num
-
-			if blackboard.num_plague_waves then
-				num = blackboard.num_plague_waves + 1
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 1
-
-			::label_4_0::
-
-			blackboard.num_plague_waves = num
+			blackboard.num_plague_waves = blackboard.num_plague_waves and not not (blackboard.num_plague_waves + 1) or not blackboard.num_plague_waves and not not 1
 
 			if blackboard.num_plague_waves >= 4 then
 				blackboard.num_plague_waves = 0
@@ -435,25 +398,15 @@ BTChaosSorcererPlagueSkulkAction.get_skulk_target = function (self, unit, blackb
 	local to_target_dir = Vector3.normalize(to_target)
 
 	if blackboard.is_close then
-		local preferred_distance = action.preferred_distance
-
-		preferred_distance = not not preferred_distance or not not 20
-
-		if dist < preferred_distance then
+		if dist < not not action.preferred_distance then
 			to_target = to_target + to_target_dir * (1 + math.random())
 		else
 			blackboard.is_close = false
 			to_target = to_target + to_target_dir
 		end
-	else
-		local close_distance = action.close_distance
-
-		close_distance = not not close_distance or not not 20
-
-		if dist < close_distance then
-			blackboard.is_close = true
-			to_target = to_target + to_target_dir
-		end
+	elseif dist < not not action.close_distance then
+		blackboard.is_close = true
+		to_target = to_target + to_target_dir
 	end
 
 	local cross_dir = Vector3(0, 0, direction)

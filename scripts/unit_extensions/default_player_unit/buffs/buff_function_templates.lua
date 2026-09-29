@@ -1,10 +1,8 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/buffs/buff_function_templates.lua
 
 local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local BuffFunctionTemplates = BuffFunctionTemplates
 
-BuffFunctionTemplates = not not BuffFunctionTemplates or not not {}
-BuffFunctionTemplates = BuffFunctionTemplates
+BuffFunctionTemplates = not not BuffFunctionTemplates
 
 local unit_is_frozen = Unit.is_frozen
 local dot_tick_sound_events = {}
@@ -77,27 +75,7 @@ end
 local function is_husk(unit)
 	-- function 6
 	local player = Managers.player:owner(unit)
-	local remote
-
-	if player then
-		remote = player.remote
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = player.bot_player
-
-		if not remote then
-			-- Nothing
-		end
-	end
-
-	remote = false
-
-	local is_husk = remote
-
-	::label_6_0::
+	local is_husk = player and not not player.remote or not player and not not false
 
 	return is_husk
 end
@@ -482,18 +460,7 @@ BuffFunctionTemplates.functions = {
 			buff.next_heal_time = buff.next_heal_time + buff_template.time_between_heal
 
 			local heal_amount = buff_template.heal
-			local heal_type_2 = buff_template.heal_type
-
-			if not heal_type_2 then
-				-- Nothing
-			end
-
-			heal_type_2 = "health_regen"
-
-			local heal_type = heal_type_2
-
-			::label_30_0::
-
+			local heal_type = not not buff_template.heal_type
 			local side = Managers.state.side.side_by_unit[unit]
 
 			if not side then
@@ -536,29 +503,8 @@ BuffFunctionTemplates.functions = {
 			buff.next_heal_time = buff.next_heal_time + time_between_heal
 
 			local health_extension = ScriptUnit.has_extension(unit, "health_system")
-			local heal = buff_template.heal
-
-			if not heal then
-				-- Nothing
-			end
-
-			heal = buff_template.heal_percent * health_extension:get_max_health()
-
-			local heal_amount = heal
-
-			::label_32_0::
-
-			local heal_type_2 = buff_template.heal_type
-
-			if not heal_type_2 then
-				-- Nothing
-			end
-
-			heal_type_2 = "health_regen"
-
-			local heal_type = heal_type_2
-
-			::label_32_1::
+			local heal_amount = not not buff_template.heal
+			local heal_type = not not buff_template.heal_type
 
 			DamageUtils.heal_network(unit, unit, heal_amount, heal_type)
 		end
@@ -766,18 +712,7 @@ BuffFunctionTemplates.functions = {
 			local perks = buff.template.perks
 
 			if perks and table.find(perks, buff_perk_names.burning_balefire) then
-				local source_attacker_unit_2 = buff.source_attacker_unit
-
-				if not source_attacker_unit_2 then
-					-- Nothing
-				end
-
-				source_attacker_unit_2 = buff.attacker_unit
-
-				local source = source_attacker_unit_2
-
-				::label_47_0::
-
+				local source = not not buff.source_attacker_unit
 				local source_buff_extension = ScriptUnit.has_extension(source, "buff_system")
 
 				if source_buff_extension and not Managers.state.side:is_ally(unit, source) then
@@ -794,69 +729,19 @@ BuffFunctionTemplates.functions = {
 			if Managers.state.network.is_server then
 				local attacker_unit = params.attacker_unit
 				local source_attacker_unit = params.source_attacker_unit
-
-				if not ALIVE[attacker_unit] or not attacker_unit then
-					-- Nothing
-				end
-
-				::label_47_1::
-
-				local var_47_1 = ALIVE[source_attacker_unit]
-
-				if var_47_1 then
-					-- Nothing
-				end
-
-				var_47_1 = source_attacker_unit
-
-				local used_attacker_unit = var_47_1
-
-				::label_47_2::
+				local used_attacker_unit = not not ALIVE[source_attacker_unit]
 
 				if used_attacker_unit then
 					if buff.template.custom_dot_tick_func then
 						BuffFunctionTemplates.functions[buff.template.custom_dot_tick_func](unit, buff, params)
 					else
 						local target_unit = unit
-						local hit_zone = buff.template.hit_zone
-
-						if not hit_zone then
-							-- Nothing
-						end
-
-						hit_zone = "full"
-
-						local hit_zone_name = hit_zone
-
-						::label_47_3::
-
+						local hit_zone_name = not not buff.template.hit_zone
 						local attack_direction = Vector3.down()
 						local hit_ragdoll_actor
 						local damage_source = "dot_debuff"
-						local power_level_2 = buff.power_level
-
-						if not power_level_2 then
-							-- Nothing
-						end
-
-						power_level_2 = DefaultPowerLevel
-
-						local power_level = power_level_2
-
-						::label_47_4::
-
-						local damage_profile_2 = buff_template.damage_profile
-
-						if not damage_profile_2 then
-							-- Nothing
-						end
-
-						damage_profile_2 = "default"
-
-						local damage_profile_name = damage_profile_2
-
-						::label_47_5::
-
+						local power_level = not not buff.power_level
+						local damage_profile_name = not not buff_template.damage_profile
 						local damage_profile = DamageProfileTemplates[damage_profile_name]
 						local target_index
 						local boost_curve_multiplier = 0
@@ -889,17 +774,7 @@ BuffFunctionTemplates.functions = {
 				local dot_tick_sound_event = not not perk and not not dot_tick_sound_events[perk]
 
 				if dot_tick_sound_event then
-					local source_attacker_unit_3 = params.source_attacker_unit
-
-					if not source_attacker_unit_3 then
-						-- Nothing
-					end
-
-					source_attacker_unit_3 = AiUtils.get_actual_attacker_unit(params.attacker_unit)
-
-					local attacker_unit = source_attacker_unit_3
-
-					::label_47_6::
+					local attacker_unit = not not params.source_attacker_unit
 
 					if is_local(attacker_unit) then
 						local first_person_extension = ScriptUnit.has_extension(attacker_unit, "first_person_system")
@@ -923,10 +798,8 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
@@ -941,35 +814,9 @@ BuffFunctionTemplates.functions = {
 
 			if liquid_extension then
 				local source_unit = liquid_extension:get_source_attacker_unit()
-				local var_48_1 = ALIVE[source_unit]
+				local source_breed = not not ALIVE[source_unit]
 
-				if var_48_1 then
-					-- Nothing
-				end
-
-				var_48_1 = Unit.get_data(source_unit, "breed")
-
-				local source_breed = var_48_1
-
-				do
-					local name
-				end
-
-				::label_48_0::
-
-				if source_breed then
-					name = source_breed.name
-
-					if not name then
-						-- Nothing
-					end
-				end
-
-				name = "dot_debuff"
-
-				::label_48_1::
-
-				buff.damage_source = name
+				buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 			end
 		end
 	end,
@@ -979,22 +826,7 @@ BuffFunctionTemplates.functions = {
 		local buff_template = buff.template
 
 		if Managers.state.network.is_server and HEALTH_ALIVE[unit] then
-			local attacker_unit_2
-
-			if ALIVE[params.attacker_unit] then
-				attacker_unit_2 = params.attacker_unit
-
-				if not attacker_unit_2 then
-					-- Nothing
-				end
-			end
-
-			attacker_unit_2 = unit
-
-			local attacker_unit = attacker_unit_2
-
-			::label_49_0::
-
+			local attacker_unit = ALIVE[params.attacker_unit] and not not params.attacker_unit or not ALIVE[params.attacker_unit] and not not unit
 			local armor_type = buff.armor_type
 			local damage_type = buff_template.damage_type
 			local damage = buff.damage[armor_type]
@@ -1002,10 +834,7 @@ BuffFunctionTemplates.functions = {
 			local liquid_extension = not not attacker_unit and not not ScriptUnit.has_extension(attacker_unit, "area_damage_system")
 
 			if liquid_extension then
-				local buff_damage_multiplier = liquid_extension.buff_damage_multiplier
-
-				buff_damage_multiplier = not not buff_damage_multiplier or not not 1
-				damage = damage * buff_damage_multiplier
+				damage = damage * not not liquid_extension.buff_damage_multiplier
 			end
 
 			DamageUtils.add_damage_network(unit, attacker_unit, damage, "torso", damage_type, nil, Vector3(1, 0, 0), damage_source, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
@@ -1094,10 +923,8 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
@@ -1112,35 +939,9 @@ BuffFunctionTemplates.functions = {
 
 			if liquid_extension then
 				local source_unit = liquid_extension:get_source_attacker_unit()
-				local var_54_1 = ALIVE[source_unit]
+				local source_breed = not not ALIVE[source_unit]
 
-				if var_54_1 then
-					-- Nothing
-				end
-
-				var_54_1 = Unit.get_data(source_unit, "breed")
-
-				local source_breed = var_54_1
-
-				do
-					local name
-				end
-
-				::label_54_0::
-
-				if source_breed then
-					name = source_breed.name
-
-					if not name then
-						-- Nothing
-					end
-				end
-
-				name = "dot_debuff"
-
-				::label_54_1::
-
-				buff.damage_source = name
+				buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 			end
 		end
 	end,
@@ -1150,22 +951,7 @@ BuffFunctionTemplates.functions = {
 		local buff_template = buff.template
 
 		if Managers.state.network.is_server and HEALTH_ALIVE[unit] then
-			local attacker_unit_2
-
-			if ALIVE[params.attacker_unit] then
-				attacker_unit_2 = params.attacker_unit
-
-				if not attacker_unit_2 then
-					-- Nothing
-				end
-			end
-
-			attacker_unit_2 = unit
-
-			local attacker_unit = attacker_unit_2
-
-			::label_55_0::
-
+			local attacker_unit = ALIVE[params.attacker_unit] and not not params.attacker_unit or not ALIVE[params.attacker_unit] and not not unit
 			local armor_type = buff.armor_type
 			local damage_type = buff_template.damage_type
 			local damage = buff.damage[armor_type]
@@ -1223,35 +1009,9 @@ BuffFunctionTemplates.functions = {
 
 			if liquid_extension then
 				local source_unit = liquid_extension._source_unit
-				local var_57_0 = ALIVE[source_unit]
+				local source_breed = not not ALIVE[source_unit]
 
-				if var_57_0 then
-					-- Nothing
-				end
-
-				var_57_0 = Unit.get_data(source_unit, "breed")
-
-				local source_breed = var_57_0
-
-				do
-					local name
-				end
-
-				::label_57_0::
-
-				if source_breed then
-					name = source_breed.name
-
-					if not name then
-						-- Nothing
-					end
-				end
-
-				name = "dot_debuff"
-
-				::label_57_1::
-
-				buff.damage_source = name
+				buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 			end
 		end
 	end,
@@ -1261,22 +1021,7 @@ BuffFunctionTemplates.functions = {
 		local buff_template = buff.template
 
 		if Managers.state.network.is_server and HEALTH_ALIVE[unit] then
-			local attacker_unit_2
-
-			if ALIVE[params.attacker_unit] then
-				attacker_unit_2 = params.attacker_unit
-
-				if not attacker_unit_2 then
-					-- Nothing
-				end
-			end
-
-			attacker_unit_2 = unit
-
-			local attacker_unit = attacker_unit_2
-
-			::label_58_0::
-
+			local attacker_unit = ALIVE[params.attacker_unit] and not not params.attacker_unit or not ALIVE[params.attacker_unit] and not not unit
 			local damage_type = buff_template.damage_type
 			local damage = buff.damage
 			local damage_source = buff.damage_source
@@ -1348,29 +1093,11 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local owner = Managers.player:owner(unit)
-		local remote = owner.remote
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = owner.bot_player
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = false
-
-		local is_husk = remote
-
-		::label_65_0::
+		local is_husk = not not owner.remote
 
 		if is_husk then
 			CosmeticsUtils.flow_event_mesh_3p(unit, "impact_vomit")
@@ -1390,21 +1117,8 @@ BuffFunctionTemplates.functions = {
 
 		if Unit.alive(attacker_unit) then
 			local source_breed = Unit.get_data(attacker_unit, "breed")
-			local name
 
-			if source_breed then
-				name = source_breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "dot_debuff"
-
-			::label_65_1::
-
-			buff.damage_source = name
+			buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 
 			local victim_position = POSITION_LOOKUP[unit]
 			local attacker_position = POSITION_LOOKUP[attacker_unit]
@@ -1441,31 +1155,16 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local pushed_direction
 		local attacker_unit = params.attacker_unit
 
 		if Unit.alive(attacker_unit) then
 			local source_breed = Unit.get_data(attacker_unit, "breed")
-			local name
 
-			if source_breed then
-				name = source_breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "dot_debuff"
-
-			::label_67_0::
-
-			buff.damage_source = name
+			buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 
 			local victim_position = POSITION_LOOKUP[unit]
 			local attacker_position = POSITION_LOOKUP[attacker_unit]
@@ -1490,7 +1189,7 @@ BuffFunctionTemplates.functions = {
 		if Managers.state.network.is_server and HEALTH_ALIVE[unit] then
 			local attacker_unit = params.attacker_unit
 
-			attacker_unit = (not Unit.alive(attacker_unit) or not attacker_unit) and not not unit
+			attacker_unit = Unit.alive(attacker_unit) and (not not attacker_unit or not not unit) or not Unit.alive(attacker_unit) and not not unit
 
 			local armor_type = buff.armor_type
 			local damage_type = buff_template.damage_type
@@ -1533,29 +1232,11 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local owner = Managers.player:owner(unit)
-		local remote = owner.remote
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = owner.bot_player
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = false
-
-		local is_husk = remote
-
-		::label_70_0::
+		local is_husk = not not owner.remote
 
 		if is_husk then
 			CosmeticsUtils.flow_event_mesh_3p(unit, "impact_vomit")
@@ -1587,21 +1268,8 @@ BuffFunctionTemplates.functions = {
 
 		if Unit.alive(attacker_unit) then
 			local source_breed = Unit.get_data(attacker_unit, "breed")
-			local name
 
-			if source_breed then
-				name = source_breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "dot_debuff"
-
-			::label_70_1::
-
-			buff.damage_source = name
+			buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 
 			local victim_position = POSITION_LOOKUP[unit]
 			local attacker_position = POSITION_LOOKUP[attacker_unit]
@@ -1631,7 +1299,7 @@ BuffFunctionTemplates.functions = {
 
 		if Managers.state.network.is_server and HEALTH_ALIVE[unit] then
 			local attacker_unit = params.attacker_unit
-			local attacker_unit = (not Unit.alive(attacker_unit) or not attacker_unit) and not not unit
+			local attacker_unit = Unit.alive(attacker_unit) and (not not attacker_unit or not not unit) or not Unit.alive(attacker_unit) and not not unit
 			local armor_type = buff.armor_type
 			local damage_type = buff_template.damage_type
 			local damage = buff.damage[armor_type]
@@ -1688,10 +1356,8 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
@@ -1703,20 +1369,9 @@ BuffFunctionTemplates.functions = {
 
 		if Unit.alive(attacker_unit) then
 			local is_enemy = DamageUtils.is_enemy(attacker_unit, unit)
-			local var_73_1 = ALIVE[attacker_unit]
-
-			if var_73_1 then
-				-- Nothing
-			end
-
-			var_73_1 = Unit.get_data(attacker_unit, "breed")
-
-			local attacker_breed = var_73_1
-
-			::label_73_0::
-
+			local attacker_breed = not not ALIVE[attacker_unit]
 			local attacker_breed_name = not not attacker_breed and not not attacker_breed.name
-			local damage_source = (not is_enemy or not attacker_breed_name) and not not "dot_debuff"
+			local damage_source = is_enemy and (not not attacker_breed_name or not not "dot_debuff") or not is_enemy and not not "dot_debuff"
 
 			buff.damage_source = damage_source
 		end
@@ -1728,7 +1383,7 @@ BuffFunctionTemplates.functions = {
 
 		if Managers.state.network.is_server and HEALTH_ALIVE[unit] then
 			local attacker_unit = params.attacker_unit
-			local attacker_unit = (not Unit.alive(attacker_unit) or not attacker_unit) and not not unit
+			local attacker_unit = Unit.alive(attacker_unit) and (not not attacker_unit or not not unit) or not Unit.alive(attacker_unit) and not not unit
 			local armor_type = buff.armor_type
 			local damage_type = buff_template.damage_type
 			local damage = buff.damage[armor_type]
@@ -1780,10 +1435,8 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
@@ -1796,35 +1449,9 @@ BuffFunctionTemplates.functions = {
 		if Unit.alive(attacker_unit) then
 			local liquid_extension = ScriptUnit.extension(attacker_unit, "area_damage_system")
 			local source_unit = liquid_extension:get_source_attacker_unit()
-			local var_76_1 = ALIVE[source_unit]
+			local source_breed = not not ALIVE[source_unit]
 
-			if var_76_1 then
-				-- Nothing
-			end
-
-			var_76_1 = Unit.get_data(source_unit, "breed")
-
-			local source_breed = var_76_1
-
-			do
-				local name
-			end
-
-			::label_76_0::
-
-			if source_breed then
-				name = source_breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "dot_debuff"
-
-			::label_76_1::
-
-			buff.damage_source = name
+			buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 
 			if ALIVE[source_unit] then
 				local source_buff_extension = ScriptUnit.has_extension(source_unit, "buff_system")
@@ -1854,7 +1481,7 @@ BuffFunctionTemplates.functions = {
 
 		if Managers.state.network.is_server and HEALTH_ALIVE[unit] then
 			local attacker_unit = params.attacker_unit
-			local attacker_unit = (not Unit.alive(attacker_unit) or not attacker_unit) and not not unit
+			local attacker_unit = Unit.alive(attacker_unit) and (not not attacker_unit or not not unit) or not Unit.alive(attacker_unit) and not not unit
 			local armor_type = buff.armor_type
 			local damage_type = buff_template.damage_type
 			local damage = buff.damage[armor_type]
@@ -1884,18 +1511,7 @@ BuffFunctionTemplates.functions = {
 		-- function 78
 		local t = params.t
 		local buff_template = buff.template
-		local next_heal_tick_2 = buff.next_heal_tick
-
-		if not next_heal_tick_2 then
-			-- Nothing
-		end
-
-		next_heal_tick_2 = 0
-
-		local next_heal_tick = next_heal_tick_2
-
-		::label_78_0::
-
+		local next_heal_tick = not not buff.next_heal_tick
 		local health_extension = ScriptUnit.extension(unit, "health_system")
 
 		if health_extension:current_permanent_health_percent() >= 1 then
@@ -1918,18 +1534,7 @@ BuffFunctionTemplates.functions = {
 		-- function 79
 		local t = params.t
 		local buff_template = buff.template
-		local next_heal_tick_2 = buff.next_heal_tick
-
-		if not next_heal_tick_2 then
-			-- Nothing
-		end
-
-		next_heal_tick_2 = 0
-
-		local next_heal_tick = next_heal_tick_2
-
-		::label_79_0::
-
+		local next_heal_tick = not not buff.next_heal_tick
 		local health_extension = ScriptUnit.extension(unit, "health_system")
 
 		if health_extension:current_health_percent() == 1 then
@@ -2150,18 +1755,7 @@ BuffFunctionTemplates.functions = {
 		-- function 85
 		local t = params.t
 		local buff_template = buff.template
-		local next_heal_tick_2 = buff.next_heal_tick
-
-		if not next_heal_tick_2 then
-			-- Nothing
-		end
-
-		next_heal_tick_2 = 0
-
-		local next_heal_tick = next_heal_tick_2
-
-		::label_85_0::
-
+		local next_heal_tick = not not buff.next_heal_tick
 		local regen_cap = 0.5
 
 		if next_heal_tick < t and Unit.alive(unit) then
@@ -2232,10 +1826,8 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
@@ -2252,21 +1844,8 @@ BuffFunctionTemplates.functions = {
 
 		if ALIVE[attacker_unit] then
 			local source_breed = Unit.get_data(attacker_unit, "breed")
-			local name
 
-			if source_breed then
-				name = source_breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "dot_debuff"
-
-			::label_87_0::
-
-			buff.damage_source = name
+			buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 
 			local victim_position = POSITION_LOOKUP[unit]
 			local attacker_position = POSITION_LOOKUP[attacker_unit]
@@ -2300,22 +1879,7 @@ BuffFunctionTemplates.functions = {
 
 		if Managers.state.network.is_server then
 			local attacker_unit_is_alive = ALIVE[params.attacker_unit]
-			local attacker_unit_2
-
-			if attacker_unit_is_alive then
-				attacker_unit_2 = params.attacker_unit
-
-				if not attacker_unit_2 then
-					-- Nothing
-				end
-			end
-
-			attacker_unit_2 = unit
-
-			local attacker_unit = attacker_unit_2
-
-			::label_88_0::
-
+			local attacker_unit = attacker_unit_is_alive and not not params.attacker_unit or not attacker_unit_is_alive and not not unit
 			local attacker_unit = params.attacker_unit
 			local target_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 			local target_power_block_perk = target_buff_extension:has_buff_perk("power_block")
@@ -2325,7 +1889,7 @@ BuffFunctionTemplates.functions = {
 				is_power_blocking = is_grail_knight_blocking(unit, attacker_unit, buff, params, world)
 			end
 
-			if (not is_power_blocking or not DamageUtils.check_ranged_block(attacker_unit, unit, "blocked_berzerker")) and HEALTH_ALIVE[unit] then
+			if not is_power_blocking and HEALTH_ALIVE[unit] or not not is_power_blocking and not DamageUtils.check_ranged_block(attacker_unit, unit, "blocked_berzerker") and HEALTH_ALIVE[unit] then
 				local armor_type = buff.armor_type
 				local damage_type = buff_template.damage_type
 				local damage = buff.damage[armor_type]
@@ -2365,29 +1929,11 @@ BuffFunctionTemplates.functions = {
 		buff.damage = damage
 
 		local breed = Unit.get_data(unit, "breed")
-		local armor_category = breed.armor_category
 
-		armor_category = not not armor_category or not not 1
-		buff.armor_type = armor_category
+		buff.armor_type = not not breed.armor_category
 
 		local owner = Managers.player:owner(unit)
-		local remote = owner.remote
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = owner.bot_player
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = false
-
-		local is_husk = remote
-
-		::label_90_0::
+		local is_husk = not not owner.remote
 
 		if is_husk then
 			CosmeticsUtils.flow_event_mesh_3p(unit, "impact_warpfire")
@@ -2406,21 +1952,8 @@ BuffFunctionTemplates.functions = {
 
 		if ALIVE[attacker_unit] then
 			local source_breed = Unit.get_data(attacker_unit, "breed")
-			local name
 
-			if source_breed then
-				name = source_breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "dot_debuff"
-
-			::label_90_1::
-
-			buff.damage_source = name
+			buff.damage_source = source_breed and not not source_breed.name or not source_breed and not not "dot_debuff"
 
 			local victim_position = POSITION_LOOKUP[unit]
 			local attacker_position = POSITION_LOOKUP[attacker_unit]
@@ -2451,21 +1984,7 @@ BuffFunctionTemplates.functions = {
 
 		if Managers.state.network.is_server then
 			local attacker_unit_is_alive = ALIVE[params.attacker_unit]
-			local attacker_unit_2
-
-			if attacker_unit_is_alive then
-				attacker_unit_2 = params.attacker_unit
-
-				if not attacker_unit_2 then
-					-- Nothing
-				end
-			end
-
-			attacker_unit_2 = unit
-
-			local attacker_unit = attacker_unit_2
-
-			::label_91_0::
+			local attacker_unit = attacker_unit_is_alive and not not params.attacker_unit or not attacker_unit_is_alive and not not unit
 
 			if HEALTH_ALIVE[unit] then
 				local armor_type = buff.armor_type
@@ -2616,7 +2135,7 @@ BuffFunctionTemplates.functions = {
 				print(string.format("Tried adding peer_id requiring buff on a unit which no peer owns. Defaulting to own peer_id. (%s)", template.name))
 			end
 
-			peer_id = (not player or not player.peer_id) and not not Network.peer_id()
+			peer_id = player and (not not player.peer_id or not not Network.peer_id()) or not player and not not Network.peer_id()
 		end
 
 		local buff_system = Managers.state.entity:system("buff_system")
@@ -2719,21 +2238,7 @@ BuffFunctionTemplates.functions = {
 				if buffs_to_add then
 					local buff_system = Managers.state.entity:system("buff_system")
 					local sync_buffs = add_buffs_data.sync_buffs
-					local LocalAndServer
-
-					if sync_buffs then
-						LocalAndServer = BuffSyncType.LocalAndServer
-
-						if not LocalAndServer then
-							-- Nothing
-						end
-					end
-
-					LocalAndServer = BuffSyncType.Local
-
-					local sync_type = LocalAndServer
-
-					::label_102_0::
+					local sync_type = sync_buffs and not not BuffSyncType.LocalAndServer or not sync_buffs and not not BuffSyncType.Local
 
 					for i = 1, #buffs_to_add do
 						buff_system:add_buff_synced(unit, buffs_to_add[i], sync_type)
@@ -2779,17 +2284,7 @@ BuffFunctionTemplates.functions = {
 				for i = 1, #remove_buff_stack_data_array do
 					local remove_buff_stack_data = remove_buff_stack_data_array[i]
 					local buff_to_remove = remove_buff_stack_data.buff_to_remove
-					local num_stacks_2 = remove_buff_stack_data.num_stacks
-
-					if not num_stacks_2 then
-						-- Nothing
-					end
-
-					num_stacks_2 = 1
-
-					local num_stacks = num_stacks_2
-
-					::label_104_0::
+					local num_stacks = not not remove_buff_stack_data.num_stacks
 
 					if remove_buff_stack_data.server_controlled then
 						fassert(buff_to_remove == template.buff_to_add, "Trying to remove different type of server controlled buff, only same types are allowed right now.")
@@ -2797,7 +2292,7 @@ BuffFunctionTemplates.functions = {
 						local buff_system = Managers.state.entity:system("buff_system")
 						local server_buff_ids = buff.server_buff_ids
 
-						num_stacks = (not server_buff_ids or not math.min(#server_buff_ids, num_stacks)) and not not 0
+						num_stacks = server_buff_ids and (not not math.min(#server_buff_ids, num_stacks) or not not 0) or not server_buff_ids and not not 0
 
 						for i = 1, num_stacks do
 							local buff_to_remove = table.remove(server_buff_ids)
@@ -2818,10 +2313,8 @@ BuffFunctionTemplates.functions = {
 
 					if remove_buff_stack_data.reset_update_timer then
 						local t = Managers.time:time("game")
-						local update_frequency = template.update_frequency
 
-						update_frequency = not not update_frequency or not not 0
-						buff._next_update_t = t + update_frequency
+						buff._next_update_t = t + not not template.update_frequency
 					end
 				end
 			end
@@ -2866,18 +2359,7 @@ BuffFunctionTemplates.functions = {
 		local max_multiplier = template.max_multiplier
 		local chunk_size = template.chunk_size
 		local stat_buff_index = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_107_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local own_position = POSITION_LOOKUP[unit]
 
 		table.clear(broadphase_results)
@@ -2921,18 +2403,7 @@ BuffFunctionTemplates.functions = {
 		local max_bonus = template.max_bonus
 		local chunk_size = template.chunk_size
 		local stat_buff_index = template.stat_buff
-		local previous_bonus_2 = buff.previous_bonus
-
-		if not previous_bonus_2 then
-			-- Nothing
-		end
-
-		previous_bonus_2 = 0
-
-		local previous_bonus = previous_bonus_2
-
-		::label_108_0::
-
+		local previous_bonus = not not buff.previous_bonus
 		local own_position = POSITION_LOOKUP[unit]
 
 		table.clear(broadphase_results)
@@ -3053,21 +2524,7 @@ BuffFunctionTemplates.functions = {
 		local player_and_bot_units = not not side and not not side.PLAYER_AND_BOT_UNITS
 		local own_position = POSITION_LOOKUP[unit]
 		local num_nearby_allies = 0
-		local count
-
-		if player_and_bot_units then
-			count = #player_and_bot_units
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local allies = count
-
-		::label_110_0::
+		local allies = player_and_bot_units and not not #player_and_bot_units or not player_and_bot_units and not not 0
 
 		for i = 1, allies do
 			local ally_unit = player_and_bot_units[i]
@@ -3123,18 +2580,7 @@ BuffFunctionTemplates.functions = {
 		local max_multiplier = template.max_multiplier
 		local chunk_size = template.chunk_size
 		local stat_buff_index = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_111_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local own_position = POSITION_LOOKUP[unit]
 
 		table.clear(broadphase_results)
@@ -3219,17 +2665,7 @@ BuffFunctionTemplates.functions = {
 		local template = buff.template
 		local chunk_size = template.chunk_size
 		local buff_to_add = template.buff_to_add
-		local max_sub_buff_stacks = template.max_sub_buff_stacks
-
-		if not max_sub_buff_stacks then
-			-- Nothing
-		end
-
-		max_sub_buff_stacks = 5
-
-		local max_stacks = max_sub_buff_stacks
-
-		::label_113_0::
+		local max_stacks = not not template.max_sub_buff_stacks
 
 		if not buff.stack_server_ids then
 			buff.stack_server_ids = {}
@@ -3508,17 +2944,7 @@ BuffFunctionTemplates.functions = {
 			return
 		end
 
-		local buffed_units_2 = buff.buffed_units
-
-		if not buffed_units_2 then
-			-- Nothing
-		end
-
-		buffed_units_2 = {}
-
-		local buffed_units = buffed_units_2
-
-		::label_121_0::
+		local buffed_units = not not buff.buffed_units
 
 		buff.buffed_units = buffed_units
 
@@ -3532,18 +2958,7 @@ BuffFunctionTemplates.functions = {
 		local range_squared = range * range
 		local owner_position = POSITION_LOOKUP[owner_unit]
 		local buff_system = Managers.state.entity:system("buff_system")
-		local buff_sync_type_2 = template.buff_sync_type
-
-		if not buff_sync_type_2 then
-			-- Nothing
-		end
-
-		buff_sync_type_2 = BuffSyncType.All
-
-		local buff_sync_type = buff_sync_type_2
-
-		::label_121_1::
-
+		local buff_sync_type = not not template.buff_sync_type
 		local inside_this_frame = FrameTable.alloc_table()
 
 		if template.player_buff_name then
@@ -4124,22 +3539,7 @@ BuffFunctionTemplates.functions = {
 
 		local side = Managers.state.side.side_by_unit[owner_unit]
 		local player_and_bot_units = not not side and not not side.PLAYER_AND_BOT_UNITS
-		local count
-
-		if player_and_bot_units then
-			count = #player_and_bot_units
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local num_units = count
-
-		::label_134_0::
-
+		local num_units = player_and_bot_units and not not #player_and_bot_units or not player_and_bot_units and not not 0
 		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 		local buff_system = Managers.state.entity:system("buff_system")
 		local template = buff.template
@@ -4359,7 +3759,7 @@ BuffFunctionTemplates.functions = {
 		local activate_on_missing = template.activate_on_missing
 		local only_local = template.only_local
 		local has_buff = buff_extension:get_non_stacking_buff(activation_buff)
-		local apply_buff = ((not has_buff or activate_on_missing) and not has_buff and not activate_on_missing or not only_local or not not only_local) and not not is_local(unit)
+		local apply_buff = has_buff and (activate_on_missing and not has_buff and not not activate_on_missing and (not only_local or not not only_local and not not is_local(unit)) or not activate_on_missing and (not only_local or not not only_local and not not is_local(unit))) or not has_buff and not has_buff and not not activate_on_missing and (not only_local or not not only_local and not not is_local(unit))
 		local applied_buff = buff_extension:get_non_stacking_buff(buff_to_add)
 
 		if apply_buff then
@@ -4406,18 +3806,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 
-		local previous_bonus_2 = buff.previous_bonus
-
-		if not previous_bonus_2 then
-			-- Nothing
-		end
-
-		previous_bonus_2 = 0
-
-		local previous_bonus = previous_bonus_2
-
-		::label_140_0::
-
+		local previous_bonus = not not buff.previous_bonus
 		local bonus = 0
 
 		if #disabled_allies == num_units - 1 then
@@ -4474,18 +3863,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_141_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local multiplier = 0
 
 		if #disabled_allies == num_units - 1 then
@@ -4590,7 +3968,7 @@ BuffFunctionTemplates.functions = {
 		local health_percent = health_extension:current_health_percent()
 		local adding_buff
 
-		if (not (health_percent < activation_health) or not activate_below) and activation_health < health_percent and not activate_below then
+		if activation_health < health_percent and not activate_below then
 			adding_buff = true
 		end
 
@@ -4626,18 +4004,7 @@ BuffFunctionTemplates.functions = {
 		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 		local local_player = is_local(owner_unit)
 		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local is_disabled_2 = status_extension:is_disabled()
-
-		if not is_disabled_2 then
-			-- Nothing
-		end
-
-		is_disabled_2 = status_extension:is_in_vortex()
-
-		local is_disabled = is_disabled_2
-
-		::label_144_0::
-
+		local is_disabled = not not status_extension:is_disabled()
 		local adding_buff
 
 		if is_disabled then
@@ -4727,18 +4094,7 @@ BuffFunctionTemplates.functions = {
 		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 		local local_player = is_local(owner_unit)
 		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local is_disabled_2 = status_extension:is_disabled()
-
-		if not is_disabled_2 then
-			-- Nothing
-		end
-
-		is_disabled_2 = status_extension:is_in_vortex()
-
-		local is_disabled = is_disabled_2
-
-		::label_146_0::
-
+		local is_disabled = not not status_extension:is_disabled()
 		local adding_buff
 
 		if buff_extension:has_buff_perk("skaven_grimoire") then
@@ -4775,30 +4131,8 @@ BuffFunctionTemplates.functions = {
 		local activation_multiplier = template.activation_multiplier
 		local stat_buff_index = template.stat_buff
 		local status_extension = ScriptUnit.extension(unit, "status_system")
-		local is_disabled_2 = status_extension:is_disabled()
-
-		if not is_disabled_2 then
-			-- Nothing
-		end
-
-		is_disabled_2 = status_extension:is_in_vortex()
-
-		local is_disabled = is_disabled_2
-
-		::label_147_0::
-
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_147_1::
-
+		local is_disabled = not not status_extension:is_disabled()
+		local previous_multiplier = not not buff.previous_multiplier
 		local multiplier = 0
 
 		if is_disabled then
@@ -4823,18 +4157,7 @@ BuffFunctionTemplates.functions = {
 		local stat_buff_index = template.stat_buff
 		local status_extension = ScriptUnit.extension(unit, "status_system")
 		local is_wounded = status_extension:is_wounded()
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_148_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local multiplier = 0
 
 		if is_wounded then
@@ -4855,33 +4178,11 @@ BuffFunctionTemplates.functions = {
 	activate_bonus_on_wounded = function (unit, buff, params)
 		-- function 149
 		local template = buff.template
-		local activation_bonus_2 = template.activation_bonus
-
-		if not activation_bonus_2 then
-			-- Nothing
-		end
-
-		activation_bonus_2 = 0
-
-		local activation_bonus = activation_bonus_2
-
-		::label_149_0::
-
+		local activation_bonus = not not template.activation_bonus
 		local stat_buff_index = template.stat_buff
 		local status_extension = ScriptUnit.extension(unit, "status_system")
 		local is_wounded = status_extension:is_wounded()
-		local previous_bonus_2 = buff.previous_bonus
-
-		if not previous_bonus_2 then
-			-- Nothing
-		end
-
-		previous_bonus_2 = 0
-
-		local previous_bonus = previous_bonus_2
-
-		::label_149_1::
-
+		local previous_bonus = not not buff.previous_bonus
 		local bonus = 0
 
 		if is_wounded then
@@ -4907,18 +4208,7 @@ BuffFunctionTemplates.functions = {
 		local range = buff.range
 		local base_multiplier = template.base_multiplier
 		local stat_buff_index = template.stat_buff
-		local previous_bonus_2 = buff.previous_bonus
-
-		if not previous_bonus_2 then
-			-- Nothing
-		end
-
-		previous_bonus_2 = 0
-
-		local previous_bonus = previous_bonus_2
-
-		::label_150_0::
-
+		local previous_bonus = not not buff.previous_bonus
 		local own_position = POSITION_LOOKUP[unit]
 		local talent_extension = ScriptUnit.extension(unit, "talent_system")
 
@@ -4983,9 +4273,7 @@ BuffFunctionTemplates.functions = {
 				local buff_to_add = template.buff_to_add
 				local has_buff = buff_extension:has_buff_type(buff_to_add)
 
-				if ranged_slot_buff_type == "RANGED" then
-					ranged_slot_buff_type = "MELEE_1H"
-				end
+				ranged_slot_buff_type = ranged_slot_buff_type ~= "RANGED" or not not "MELEE_1H" or not not ranged_slot_buff_type
 
 				local add_buff = melee_slot_buff_type == buff_type and ranged_slot_buff_type == buff_type
 
@@ -5083,18 +4371,7 @@ BuffFunctionTemplates.functions = {
 		local range = buff.range
 		local base_multiplier = template.multiplier
 		local stat_buff_index = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_154_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local own_position = POSITION_LOOKUP[unit]
 
 		table.clear(broadphase_results)
@@ -5136,21 +4413,10 @@ BuffFunctionTemplates.functions = {
 		local stat_buff_index = template.stat_buff
 		local health_extension = ScriptUnit.extension(unit, "health_system")
 		local health_percent = health_extension:current_health_percent()
-		local previous_bonus_2 = buff.previous_bonus
-
-		if not previous_bonus_2 then
-			-- Nothing
-		end
-
-		previous_bonus_2 = 0
-
-		local previous_bonus = previous_bonus_2
-
-		::label_155_0::
-
+		local previous_bonus = not not buff.previous_bonus
 		local bonus = 0
 
-		if (not (health_percent < activation_health) or not activate_below) and activation_health < health_percent and not activate_below then
+		if activation_health < health_percent and not activate_below then
 			bonus = activation_bonus
 		end
 
@@ -5174,21 +4440,10 @@ BuffFunctionTemplates.functions = {
 		local stat_buff_index = template.stat_buff
 		local health_extension = ScriptUnit.extension(unit, "health_system")
 		local health_percent = health_extension:current_health_percent()
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_156_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local multiplier = 0
 
-		if (not (health_percent < activation_health) or not activate_below) and activation_health < health_percent and not activate_below then
+		if activation_health < health_percent and not activate_below then
 			multiplier = activation_multiplier
 		end
 
@@ -5217,42 +4472,11 @@ BuffFunctionTemplates.functions = {
 		if slot_data then
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_unit_1p = slot_data.right_unit_1p
-			local extension
-
-			if ScriptUnit.has_extension(left_unit_1p, "ammo_system") then
-				extension = ScriptUnit.extension(left_unit_1p, "ammo_system")
-
-				if not extension then
-					-- Nothing
-				end
-			end
-
-			extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
-
-			if extension then
-				-- Nothing
-			end
-
-			extension = ScriptUnit.extension(right_unit_1p, "ammo_system")
-
-			local ammo_extension = extension
-
-			::label_157_0::
-
+			local ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system") and not not ScriptUnit.extension(left_unit_1p, "ammo_system") or not ScriptUnit.has_extension(left_unit_1p, "ammo_system") and not not ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local ammo_percent = ammo_extension:total_ammo_fraction()
-			local previous_bonus_2 = buff.previous_bonus
+			local previous_bonus = not not buff.previous_bonus
 
-			if not previous_bonus_2 then
-				-- Nothing
-			end
-
-			previous_bonus_2 = 0
-
-			local previous_bonus = previous_bonus_2
-
-			::label_157_1::
-
-			if (not (ammo_percent < activation_ammo) or not activate_below) and activation_ammo < ammo_percent and not activate_below then
+			if activation_ammo < ammo_percent and not activate_below then
 				bonus = activation_bonus
 			end
 		end
@@ -5282,42 +4506,11 @@ BuffFunctionTemplates.functions = {
 		if slot_data then
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_unit_1p = slot_data.right_unit_1p
-			local extension
-
-			if ScriptUnit.has_extension(left_unit_1p, "ammo_system") then
-				extension = ScriptUnit.extension(left_unit_1p, "ammo_system")
-
-				if not extension then
-					-- Nothing
-				end
-			end
-
-			extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
-
-			if extension then
-				-- Nothing
-			end
-
-			extension = ScriptUnit.extension(right_unit_1p, "ammo_system")
-
-			local ammo_extension = extension
-
-			::label_158_0::
-
+			local ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system") and not not ScriptUnit.extension(left_unit_1p, "ammo_system") or not ScriptUnit.has_extension(left_unit_1p, "ammo_system") and not not ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local ammo_percent = ammo_extension:total_ammo_fraction()
-			local previous_multiplier_2 = buff.previous_multiplier
+			local previous_multiplier = not not buff.previous_multiplier
 
-			if not previous_multiplier_2 then
-				-- Nothing
-			end
-
-			previous_multiplier_2 = 0
-
-			local previous_multiplier = previous_multiplier_2
-
-			::label_158_1::
-
-			if (not (ammo_percent < activation_ammo) or not activate_below) and activation_ammo < ammo_percent and not activate_below then
+			if activation_ammo < ammo_percent and not activate_below then
 				multiplier = activation_multiplier
 			end
 		end
@@ -5339,18 +4532,7 @@ BuffFunctionTemplates.functions = {
 		local template = buff.template
 		local activation_multiplier = template.activation_multiplier
 		local stat_buff_index = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_159_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local multiplier = 0
 
 		if buff_extension:has_buff_perk("skaven_grimoire") then
@@ -5373,18 +4555,7 @@ BuffFunctionTemplates.functions = {
 		local template = buff.template
 		local activation_bonus = template.activation_bonus
 		local stat_buff_index = template.stat_buff
-		local previous_bonus_2 = buff.previous_bonus
-
-		if not previous_bonus_2 then
-			-- Nothing
-		end
-
-		previous_bonus_2 = 0
-
-		local previous_bonus = previous_bonus_2
-
-		::label_160_0::
-
+		local previous_bonus = not not buff.previous_bonus
 		local bonus = 0
 
 		if buff_extension:has_buff_perk("skaven_grimoire") then
@@ -5408,18 +4579,7 @@ BuffFunctionTemplates.functions = {
 		local template = buff.template
 		local base_multiplier = template.base_multiplier
 		local stat_buff_index = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_161_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local multiplier = damage_taken * base_multiplier
 
 		buff.multiplier = multiplier
@@ -5872,10 +5032,7 @@ BuffFunctionTemplates.functions = {
 		local has_buff = buff_extension:get_non_stacking_buff(activation_buff)
 
 		if has_buff then
-			local buff_ids = buff.buff_ids
-
-			buff_ids = not not buff_ids or not not {}
-			buff.buff_ids = buff_ids
+			buff.buff_ids = not not buff.buff_ids
 
 			local num_stacks = #buff.buff_ids
 
@@ -5993,17 +5150,7 @@ BuffFunctionTemplates.functions = {
 
 		local t = params.t
 		local buff_template = buff.template
-		local next_heal_tick_2 = buff.next_heal_tick
-
-		if not next_heal_tick_2 then
-			-- Nothing
-		end
-
-		next_heal_tick_2 = 0
-
-		local next_heal_tick = next_heal_tick_2
-
-		::label_192_0::
+		local next_heal_tick = not not buff.next_heal_tick
 
 		if next_heal_tick < t and HEALTH_ALIVE[unit] then
 			local talent_extension = ScriptUnit.has_extension(unit, "talent_system")
@@ -6156,18 +5303,7 @@ BuffFunctionTemplates.functions = {
 		local max_bonus = template.max_bonus
 		local chunk_size = template.chunk_size
 		local stat_buff_index = template.stat_buff
-		local previous_bonus_2 = buff.previous_bonus
-
-		if not previous_bonus_2 then
-			-- Nothing
-		end
-
-		previous_bonus_2 = 0
-
-		local previous_bonus = previous_bonus_2
-
-		::label_201_0::
-
+		local previous_bonus = not not buff.previous_bonus
 		local num_chunks = math.floor(damage_taken / chunk_size)
 		local bonus = num_chunks * min_bonus
 
@@ -6195,18 +5331,7 @@ BuffFunctionTemplates.functions = {
 		local max_multiplier = template.max_multiplier
 		local chunk_size = template.chunk_size
 		local stat_buff_index = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_202_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local num_chunks = math.floor(damage_taken / chunk_size)
 		local multiplier = num_chunks * min_multiplier
 
@@ -6235,18 +5360,7 @@ BuffFunctionTemplates.functions = {
 			local max_bonus = template.max_bonus
 			local chunk_size = template.chunk_size
 			local stat_buff_index = template.stat_buff
-			local previous_bonus_2 = buff.previous_bonus
-
-			if not previous_bonus_2 then
-				-- Nothing
-			end
-
-			previous_bonus_2 = 0
-
-			local previous_bonus = previous_bonus_2
-
-			::label_203_0::
-
+			local previous_bonus = not not buff.previous_bonus
 			local num_chunks = math.floor(overcharge / chunk_size)
 			local bonus = num_chunks * min_bonus
 
@@ -6297,17 +5411,7 @@ BuffFunctionTemplates.functions = {
 		end
 
 		local stat_buff_index = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_206_0::
+		local previous_multiplier = not not buff.previous_multiplier
 
 		if stat_buff_index and previous_multiplier ~= multiplier then
 			local buff_extension = ScriptUnit.extension(unit, "buff_system")
@@ -6567,22 +5671,7 @@ BuffFunctionTemplates.functions = {
 		local buff_to_add = template.buff_to_add
 		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 		local buff_stacks = buff_extension:get_stacking_buff(buff_to_add)
-		local count
-
-		if buff_stacks then
-			count = #buff_stacks
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local num_buffs = count
-
-		::label_228_0::
-
+		local num_buffs = buff_stacks and not not #buff_stacks or not buff_stacks and not not 0
 		local sienna_side = Managers.state.side.side_by_unit[owner_unit]
 		local ally_categories = sienna_side.enemy_broadphase_categories
 		local position = POSITION_LOOKUP[owner_unit]
@@ -6634,35 +5723,10 @@ BuffFunctionTemplates.functions = {
 	end,
 	sorcerer_tether_buff_apply_visuals = function (owner_unit, buff, params, world)
 		-- function 231
-		local get_data = Unit.get_data(owner_unit, "sorcerer_tether_buff_invulnerability_count")
-
-		if not get_data then
-			-- Nothing
-		end
-
-		get_data = 0
-
-		local ref_count = get_data
-
-		::label_231_0::
+		local ref_count = not not Unit.get_data(owner_unit, "sorcerer_tether_buff_invulnerability_count")
 
 		if ref_count == 0 then
-			local node_2
-
-			if Unit.has_node(owner_unit, "j_hips") then
-				node_2 = Unit.node(owner_unit, "j_hips")
-
-				if not node_2 then
-					-- Nothing
-				end
-			end
-
-			node_2 = 0
-
-			local node = node_2
-
-			::label_231_1::
-
+			local node = Unit.has_node(owner_unit, "j_hips") and not not Unit.node(owner_unit, "j_hips") or not Unit.has_node(owner_unit, "j_hips") and not not 0
 			local particle_unit = World.spawn_unit(world, "fx/units/sphere_troll_chief")
 
 			World.link_unit(world, particle_unit, 0, owner_unit, node)

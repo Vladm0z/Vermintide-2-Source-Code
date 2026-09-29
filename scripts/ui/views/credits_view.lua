@@ -63,31 +63,12 @@ CreditsView.on_exit = function (self)
 	self.active = nil
 	self.exiting = nil
 
-	local music = Managers.music
-	local var_5_1 = music
-	local trigger_event = music.trigger_event
-	local flag
-
-	flag = (not IS_WINDOWS or not "Play_console_menu_back") and not not "Play_console_menu_select"
-
-	trigger_event(var_5_1, flag)
+	Managers.music:trigger_event(IS_WINDOWS and not not "Play_console_menu_back" or not IS_WINDOWS and not not "Play_console_menu_select")
 end
 
 CreditsView.exit = function (self, return_to_game)
 	-- function 6
-	local str
-
-	if return_to_game then
-		str = "exit_menu"
-
-		goto label_6_0
-	end
-
-	str = "ingame_menu"
-
-	local exit_transition = str
-
-	::label_6_0::
+	local exit_transition = return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu"
 
 	self.ingame_ui:handle_transition(exit_transition)
 
@@ -106,22 +87,7 @@ CreditsView.update = function (self, dt)
 		return
 	end
 
-	local get
-
-	if gamepad_active then
-		get = input_service:get("gamepad_left_axis")
-
-		if not get then
-			-- Nothing
-		end
-	end
-
-	get = input_service:get("scroll_axis")
-
-	local input_axis = get
-
-	::label_7_0::
-
+	local input_axis = gamepad_active and not not input_service:get("gamepad_left_axis") or not gamepad_active and not not input_service:get("scroll_axis")
 	local scroll_value = input_axis.y
 
 	if not gamepad_active and IS_XB1 then
@@ -148,23 +114,8 @@ CreditsView.update = function (self, dt)
 
 	for i = 1, self._num_credits do
 		local entry = credit_entries[i]
-		local localized_str = entry.localized_str
 
-		if not localized_str then
-			if entry.localized then
-				localized_str = Localize(entry.text)
-
-				if not localized_str then
-					-- Nothing
-				end
-			end
-
-			localized_str = entry.text
-		end
-
-		::label_7_1::
-
-		content.text_field = localized_str
+		content.text_field = not not entry.localized_str
 		entry.localized_str = content.text_field
 
 		if entry.type == "header" then

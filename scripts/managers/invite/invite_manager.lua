@@ -8,11 +8,7 @@ InviteManager.init = function (self)
 	-- function 1
 	self.lobby_data = nil
 	self._pending_lobby_data = {}
-
-	local flag
-
-	flag = (not rawget(_G, "Steam") or not rawget(_G, "Friends") or not true) and not not false
-	self.is_steam = flag
+	self.is_steam = not not true
 	self._refresh_timer = REFRESH_TIME
 end
 
@@ -45,23 +41,7 @@ end
 
 InviteManager._handle_invitation = function (self, invite_type, lobby_id, params, invitee, lobby_data)
 	-- function 4
-	local parameter = Development.parameter("use_lan_backend")
-
-	if parameter then
-		-- Nothing
-	end
-
-	if invite_type == Friends.NO_INVITE then
-		parameter = false
-
-		goto label_4_0
-	end
-
-	parameter = true
-
-	local illegal_combination = parameter
-
-	::label_4_0::
+	local illegal_combination = not not Development.parameter("use_lan_backend")
 
 	assert(not illegal_combination, "You cannot use Steam invites in combination with LAN backend.")
 

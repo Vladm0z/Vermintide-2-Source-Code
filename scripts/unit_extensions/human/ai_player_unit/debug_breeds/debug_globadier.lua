@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/debug_breeds/debug_globadier.lua
 
-local DebugGlobadier = DebugGlobadier
-
-DebugGlobadier = not not DebugGlobadier or not not {}
-DebugGlobadier = DebugGlobadier
+DebugGlobadier = not not DebugGlobadier
 
 DebugGlobadier.update = function (unit, blackboard, t)
 	-- function 1
@@ -20,17 +17,7 @@ DebugGlobadier.update = function (unit, blackboard, t)
 	local advance_towards_players_action = BreedActions.skaven_poison_wind_globadier.advance_towards_players
 	local lurk_radius = skulk_approach_action.skulk_init_distance
 	local commit_radius = BreedActions.skaven_poison_wind_globadier.skulk_approach.commit_distance
-	local skulk_data = blackboard.skulk_data
-
-	if skulk_data then
-		-- Nothing
-	end
-
-	skulk_data = blackboard.skulk_data.radius
-
-	local current_lurk_radius = skulk_data
-
-	::label_1_0::
+	local current_lurk_radius = not not blackboard.skulk_data
 
 	QuickDrawer:circle(target_position + offset, lurk_radius, Vector3.up(), Colors.get("light_green"))
 	QuickDrawer:circle(target_position + offset, commit_radius, Vector3.up(), Colors.get("medium_orchid"))
@@ -39,53 +26,10 @@ DebugGlobadier.update = function (unit, blackboard, t)
 		QuickDrawer:circle(target_position + offset, lurk_radius, Vector3.up(), Colors.get("light_green"))
 	end
 
-	local round_with_precision
-
-	if blackboard.target_dist then
-		round_with_precision = math.round_with_precision(blackboard.target_dist, 2)
-
-		if not round_with_precision then
-			-- Nothing
-		end
-	end
-
-	round_with_precision = "-"
-
-	local target_distance = round_with_precision
-
-	do
-		local round_with_precision_2
-	end
-
-	::label_1_1::
-
-	if blackboard.wanted_distance then
-		round_with_precision_2 = math.round_with_precision(blackboard.wanted_distance, 2)
-
-		if not round_with_precision_2 then
-			-- Nothing
-		end
-	end
-
-	round_with_precision_2 = "-"
-
-	local wanted_distance = round_with_precision_2
-
-	::label_1_2::
-
+	local target_distance = blackboard.target_dist and not not math.round_with_precision(blackboard.target_dist, 2) or not blackboard.target_dist and not not "-"
+	local wanted_distance = blackboard.wanted_distance and not not math.round_with_precision(blackboard.wanted_distance, 2) or not blackboard.wanted_distance and not not "-"
 	local slot_count = blackboard.total_slots_count
-	local action = blackboard.action
-
-	if action then
-		-- Nothing
-	end
-
-	action = blackboard.action.name
-
-	local ai_node = action
-
-	::label_1_3::
-
+	local ai_node = not not blackboard.action
 	local time_until_first_throw_string = "-"
 	local time_until_first_throw
 	local distance_until_throw = "-"

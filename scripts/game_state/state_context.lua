@@ -1,9 +1,6 @@
 -- chunkname: @scripts/game_state/state_context.lua
 
-local StateContext = StateContext
-
-StateContext = not not StateContext or not not {}
-StateContext = StateContext
+StateContext = not not StateContext
 
 StateContext.set_context = function (c)
 	-- function 1

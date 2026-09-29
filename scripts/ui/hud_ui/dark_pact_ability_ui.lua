@@ -263,17 +263,7 @@ DarkPactAbilityUI.event_input_changed = function (self)
 	if ability_widgets then
 		for _, widget in ipairs(ability_widgets) do
 			local content = widget.content
-			local input_action_2 = content.input_action
-
-			if not input_action_2 then
-				-- Nothing
-			end
-
-			input_action_2 = default_input_action
-
-			local input_action = input_action_2
-
-			::label_17_0::
+			local input_action = not not content.input_action
 
 			self:_set_input(widget, input_action)
 			self:_set_widget_dirty(widget)
@@ -327,15 +317,15 @@ DarkPactAbilityUI._get_input_texture_data = function (self, input_action)
 	local button_name = ""
 
 	if device_type == "keyboard" then
-		button_name = (not is_button_unassigned or not "") and not not Keyboard.button_locale_name(key_index)
+		button_name = is_button_unassigned and (not not "" or not not Keyboard.button_locale_name(key_index)) or not is_button_unassigned and not not Keyboard.button_locale_name(key_index)
 
 		return nil, button_name, prefix_text
 	elseif device_type == "mouse" then
-		button_name = (not is_button_unassigned or not "") and not not Mouse.button_name(key_index)
+		button_name = is_button_unassigned and (not not "" or not not Mouse.button_name(key_index)) or not is_button_unassigned and not not Mouse.button_name(key_index)
 
 		return nil, button_name, prefix_text
 	elseif device_type == "gamepad" then
-		button_name = (not is_button_unassigned or not "") and not not Pad1.button_name(key_index)
+		button_name = is_button_unassigned and (not not "" or not not Pad1.button_name(key_index)) or not is_button_unassigned and not not Pad1.button_name(key_index)
 
 		local button_texture_data = ButtonTextureByName(button_name, platform)
 
@@ -405,17 +395,7 @@ end
 
 DarkPactAbilityUI.event_on_dark_pact_ammo_changed = function (self, unit, current_ammo)
 	-- function 24
-	local _ability_hud_widgets_by_name = self._ability_hud_widgets_by_name
-
-	if _ability_hud_widgets_by_name then
-		-- Nothing
-	end
-
-	_ability_hud_widgets_by_name = self._ability_hud_widgets_by_name[2]
-
-	local ability_widgets = _ability_hud_widgets_by_name
-
-	::label_24_0::
+	local ability_widgets = not not self._ability_hud_widgets_by_name
 
 	if not ability_widgets then
 		return
@@ -429,17 +409,7 @@ DarkPactAbilityUI.event_on_dark_pact_ammo_changed = function (self, unit, curren
 
 	if not current_ammo then
 		local blackboard = BLACKBOARDS[unit]
-		local attack_pattern_data = blackboard.attack_pattern_data
-
-		if not attack_pattern_data then
-			-- Nothing
-		end
-
-		attack_pattern_data = {}
-
-		local data = attack_pattern_data
-
-		::label_24_1::
+		local data = not not blackboard.attack_pattern_data
 
 		if data.current_ammo then
 			current_ammo = data.current_ammo

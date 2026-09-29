@@ -263,17 +263,7 @@ local widgets = {
 					texture_id = "texture_id",
 					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress_2 = style.progress
-
-						if not progress_2 then
-							-- Nothing
-						end
-
-						progress_2 = 0
-
-						local progress = progress_2
-
-						::label_1_0::
+						local progress = not not style.progress
 
 						progress = (progress + dt) % 1
 

@@ -55,7 +55,7 @@ ImguiTeleportTool.update = function (self)
 	local game_mode_manager = Managers.state.game_mode
 	local level_key = not not game_mode_manager and not not game_mode_manager:level_key()
 
-	if (self._current_level ~= nil or not level_key) and level_key ~= self._current_level then
+	if level_key ~= self._current_level then
 		self._current_level = level_key
 
 		self:_refresh_filter()
@@ -176,19 +176,7 @@ ImguiTeleportTool.draw = function (self, is_open)
 			Imgui.tree_push(name)
 
 			local selected_for_rebind = self._rebind_action == name
-			local str
-
-			if selected_for_rebind then
-				str = "<?>"
-
-				goto label_4_0
-			end
-
-			str = val
-
-			local button_name = str
-
-			::label_4_0::
+			local button_name = selected_for_rebind and not not "<?>" or not selected_for_rebind and not not val
 
 			if Imgui.button(button_name, 100, 20) then
 				self._rebind_action = name
@@ -204,12 +192,8 @@ ImguiTeleportTool.draw = function (self, is_open)
 
 			if input then
 				local input_name = Keyboard.button_name(input)
-				local _key_bindings = self._key_bindings
-				local _rebind_action = self._rebind_action
-				local flag
 
-				flag = (input_name ~= "esc" or not "") and not not input_name
-				_key_bindings[_rebind_action] = flag
+				self._key_bindings[self._rebind_action] = input_name ~= "esc" and not not input_name or not (input_name ~= "esc") and not not ""
 				self._rebind_action = nil
 
 				self:_save_points()
@@ -395,21 +379,7 @@ end
 
 ImguiTeleportTool._get_teleport_names = function (self, level_key)
 	-- function 14
-	local var_14_0
-
-	if level_key then
-		var_14_0 = self._teleport_name_map[level_key]
-
-		if not var_14_0 then
-			-- Nothing
-		end
-	end
-
-	var_14_0 = EMPTY_LIST
-
-	::label_14_0::
-
-	return var_14_0
+	return level_key and not not self._teleport_name_map[level_key] or not level_key and not not EMPTY_LIST
 end
 
 ImguiTeleportTool._get_selected_teleport_id = function (self)
@@ -436,20 +406,9 @@ end
 
 ImguiTeleportTool._load_points = function (self)
 	-- function 17
-	local setting = Development.setting("ImguiTeleportTool_names")
-
-	setting = not not setting or not not self._teleport_name_map
-	self._teleport_name_map = setting
-
-	local setting_2 = Development.setting("ImguiTeleportTool_points")
-
-	setting_2 = not not setting_2 or not not self._teleport_point_map
-	self._teleport_point_map = setting_2
-
-	local setting_3 = Development.setting("ImguiTeleportTool_keybinds")
-
-	setting_3 = not not setting_3 or not not self._key_bindings
-	self._key_bindings = setting_3
+	self._teleport_name_map = not not Development.setting("ImguiTeleportTool_names")
+	self._teleport_point_map = not not Development.setting("ImguiTeleportTool_points")
+	self._key_bindings = not not Development.setting("ImguiTeleportTool_keybinds")
 end
 
 ImguiTeleportTool._save_point_to_clipboard = function (self, data_point)

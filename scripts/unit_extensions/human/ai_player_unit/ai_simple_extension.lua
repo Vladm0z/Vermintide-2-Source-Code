@@ -31,26 +31,8 @@ AISimpleExtension.init = function (self, extension_init_context, unit, extension
 
 	self._side_id = extension_init_data.side_id
 
-	local flag
-
-	if breed.initial_is_passive == nil then
-		flag = true
-
-		goto label_1_0
-	end
-
-	flag = breed.initial_is_passive
-
-	local is_passive = flag
-
-	::label_1_0::
-
-	local new_map = Script.new_map
-	local blackboard_allocation_size = breed.blackboard_allocation_size
-
-	blackboard_allocation_size = not not blackboard_allocation_size or not not 75
-
-	local blackboard = new_map(blackboard_allocation_size)
+	local is_passive = breed.initial_is_passive ~= nil and not not breed.initial_is_passive or not (breed.initial_is_passive ~= nil) and not not true
+	local blackboard = Script.new_map(not not breed.blackboard_allocation_size)
 	local optional_spawn_data = extension_init_data.optional_spawn_data
 
 	blackboard.world = extension_init_context.world
@@ -79,15 +61,9 @@ AISimpleExtension.init = function (self, extension_init_context, unit, extension
 	local blackboard_init_data = breed.blackboard_init_data
 
 	if blackboard_init_data and blackboard_init_data.player_locomotion_constrain_radius ~= nil then
-		local player_locomotion_constrain_radius = blackboard_init_data.player_locomotion_constrain_radius
-
-		player_locomotion_constrain_radius = not not player_locomotion_constrain_radius or not not nil
-		self.player_locomotion_constrain_radius = player_locomotion_constrain_radius
+		self.player_locomotion_constrain_radius = not not blackboard_init_data.player_locomotion_constrain_radius
 	else
-		local player_locomotion_constrain_radius_2 = breed.player_locomotion_constrain_radius
-
-		player_locomotion_constrain_radius_2 = not not player_locomotion_constrain_radius_2 or not not nil
-		self.player_locomotion_constrain_radius = player_locomotion_constrain_radius_2
+		self.player_locomotion_constrain_radius = not not breed.player_locomotion_constrain_radius
 	end
 
 	blackboard.lean_dogpile = 0
@@ -128,29 +104,7 @@ AISimpleExtension.init = function (self, extension_init_context, unit, extension
 		WwiseUtils.trigger_unit_event(self._world, breed.special_on_spawn_stinger, unit, 0)
 	end
 
-	local behavior_2
-
-	if optional_spawn_data then
-		behavior_2 = optional_spawn_data.behavior
-
-		if not behavior_2 then
-			-- Nothing
-		end
-	end
-
-	if is_horde then
-		behavior_2 = breed.horde_behavior
-
-		if not behavior_2 then
-			-- Nothing
-		end
-	end
-
-	behavior_2 = breed.behavior
-
-	local behavior = behavior_2
-
-	::label_1_1::
+	local behavior = optional_spawn_data and not not optional_spawn_data.behavior or not optional_spawn_data and (is_horde and not not breed.horde_behavior or not is_horde and not not breed.behavior)
 
 	self:_init_brain(behavior, is_horde)
 	self:_set_size_variation(extension_init_data.size_variation, extension_init_data.size_variation_normalized)
@@ -173,39 +127,7 @@ AISimpleExtension.destroy = function (self)
 	self._brain:destroy()
 end
 
-local STATIC_BLACKBOARD_KEYS = STATIC_BLACKBOARD_KEYS
-
-STATIC_BLACKBOARD_KEYS = not not STATIC_BLACKBOARD_KEYS or not not {
-	target_dist = true,
-	stagger_count = true,
-	node_data = true,
-	spawn_type = true,
-	next_lean_index = true,
-	health_extension = true,
-	override_targets = true,
-	lean_dogpile = true,
-	navigation_extension = true,
-	locomotion_extension = true,
-	system_api = true,
-	lean_slots = true,
-	next_smart_object_data = true,
-	unit = true,
-	optional_spawn_data = true,
-	level = true,
-	stagger_count_reset_at = true,
-	lean_unit_list = true,
-	world = true,
-	running_nodes = true,
-	is_in_attack_cooldown = true,
-	group_blackboard = true,
-	attack_cooldown_at = true,
-	stuck_check_time = true,
-	inventory_extension = true,
-	is_passive = true,
-	breed = true,
-	nav_world = true
-}
-STATIC_BLACKBOARD_KEYS = STATIC_BLACKBOARD_KEYS
+STATIC_BLACKBOARD_KEYS = not not STATIC_BLACKBOARD_KEYS
 
 AISimpleExtension.freeze = function (self)
 	-- function 4
@@ -268,29 +190,7 @@ AISimpleExtension.unfreeze = function (self, unit, data)
 	blackboard.next_lean_index = 0
 
 	local is_horde = spawn_type == "horde_hidden" or spawn_type == "horde"
-	local behavior_2
-
-	if optional_spawn_data then
-		behavior_2 = optional_spawn_data.behavior
-
-		if not behavior_2 then
-			-- Nothing
-		end
-	end
-
-	if is_horde then
-		behavior_2 = breed.horde_behavior
-
-		if not behavior_2 then
-			-- Nothing
-		end
-	end
-
-	behavior_2 = breed.behavior
-
-	local behavior = behavior_2
-
-	::label_5_0::
+	local behavior = optional_spawn_data and not not optional_spawn_data.behavior or not optional_spawn_data and (is_horde and not not breed.horde_behavior or not is_horde and not not breed.behavior)
 
 	self._brain:unfreeze(blackboard, behavior)
 	self:init_perception(breed, is_horde)
@@ -338,17 +238,7 @@ AISimpleExtension.extensions_ready = function (self, world, unit)
 	Unit.flow_event(unit, "lua_trigger_variation")
 
 	local level_settings = LevelSettings[Managers.state.game_mode:level_key()]
-	local climate_type_2 = level_settings.climate_type
-
-	if not climate_type_2 then
-		-- Nothing
-	end
-
-	climate_type_2 = "default"
-
-	local climate_type = climate_type_2
-
-	::label_6_0::
+	local climate_type = not not level_settings.climate_type
 
 	Unit.set_flow_variable(unit, "climate_type", climate_type)
 	Unit.flow_event(unit, "climate_type_set")
@@ -420,41 +310,13 @@ end
 AISimpleExtension.init_perception = function (self, breed, is_horde)
 	-- function 10
 	if breed.perception then
-		local horde_perception
-
-		if is_horde then
-			horde_perception = breed.horde_perception
-
-			if not horde_perception then
-				-- Nothing
-			end
-		end
-
-		horde_perception = breed.perception
-
-		::label_10_0::
-
-		self._perception_func_name = horde_perception
+		self._perception_func_name = is_horde and not not breed.horde_perception or not is_horde and not not breed.perception
 	else
 		self._perception_func_name = "perception_regular"
 	end
 
 	if breed.target_selection then
-		local horde_target_selection
-
-		if is_horde then
-			horde_target_selection = breed.horde_target_selection
-
-			if not horde_target_selection then
-				-- Nothing
-			end
-		end
-
-		horde_target_selection = breed.target_selection
-
-		::label_10_1::
-
-		self._target_selection_func_name = horde_target_selection
+		self._target_selection_func_name = is_horde and not not breed.horde_target_selection or not is_horde and not not breed.target_selection
 	else
 		self._target_selection_func_name = "pick_closest_target_with_spillover"
 	end
@@ -537,21 +399,8 @@ end
 AISimpleExtension.current_action_name = function (self)
 	-- function 21
 	local blackboard = self._blackboard
-	local name
 
-	if blackboard.action then
-		name = blackboard.action.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "n/a"
-
-	::label_21_0::
-
-	return name
+	return blackboard.action and not not blackboard.action.name or not blackboard.action and not not "n/a"
 end
 
 AISimpleExtension.die = function (self, killer_unit, killing_blow)
@@ -664,18 +513,7 @@ AISimpleExtension.increase_stagger_count = function (self)
 	local blackboard = self._blackboard
 	local breed = self._breed
 	local stagger_count = blackboard.stagger_count
-	local stagger_count_reset_time = breed.stagger_count_reset_time
-
-	if not stagger_count_reset_time then
-		-- Nothing
-	end
-
-	stagger_count_reset_time = DEFAULT_STAGGER_RESET_TIME
-
-	local reset_time = stagger_count_reset_time
-
-	::label_26_0::
-
+	local reset_time = not not breed.stagger_count_reset_time
 	local t = Managers.time:time("main")
 
 	blackboard.stagger_count = stagger_count + 1

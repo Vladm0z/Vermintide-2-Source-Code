@@ -1,14 +1,7 @@
 -- chunkname: @scripts/settings/material_effect_mappings_utility.lua
 
-local MaterialEffectMappings = MaterialEffectMappings
-
-MaterialEffectMappings = not not MaterialEffectMappings or not not {}
-MaterialEffectMappings = MaterialEffectMappings
-
-local MaterialEffectMappingsHotReloadVersion = MaterialEffectMappingsHotReloadVersion
-
-MaterialEffectMappingsHotReloadVersion = not not MaterialEffectMappingsHotReloadVersion or not not 0
-MaterialEffectMappingsHotReloadVersion = MaterialEffectMappingsHotReloadVersion + 1
+MaterialEffectMappings = not not MaterialEffectMappings
+MaterialEffectMappingsHotReloadVersion = not not MaterialEffectMappingsHotReloadVersion + 1
 
 local _added_keys, _removed_keys, _diffing_keys = {}, {}, {}
 

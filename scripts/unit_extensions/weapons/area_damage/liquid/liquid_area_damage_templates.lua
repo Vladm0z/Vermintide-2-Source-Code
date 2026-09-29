@@ -624,17 +624,7 @@ LiquidAreaDamageTemplates.templates = {
 
 				if allowed_difficulty then
 					local status_extension = ScriptUnit.extension(hit_player_unit, "status_system")
-					local num_times_bathed_in_nurgle_liquid_2 = status_extension.num_times_bathed_in_nurgle_liquid
-
-					if not num_times_bathed_in_nurgle_liquid_2 then
-						-- Nothing
-					end
-
-					num_times_bathed_in_nurgle_liquid_2 = 0
-
-					local num_times_bathed_in_nurgle_liquid = num_times_bathed_in_nurgle_liquid_2
-
-					::label_3_0::
+					local num_times_bathed_in_nurgle_liquid = not not status_extension.num_times_bathed_in_nurgle_liquid
 
 					status_extension.num_times_bathed_in_nurgle_liquid = num_times_bathed_in_nurgle_liquid + 1
 

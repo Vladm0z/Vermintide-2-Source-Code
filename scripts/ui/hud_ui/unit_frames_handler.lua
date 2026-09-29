@@ -183,22 +183,7 @@ end
 
 UnitFramesHandler._create_player_unit_frame = function (self)
 	-- function 9
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = self.my_player
-
-	local player = _spectated_player
-
-	::label_9_0::
-
+	local player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not self.my_player
 	local player_ui_id = player:ui_id()
 	local player_data = {}
 
@@ -268,19 +253,8 @@ UnitFramesHandler._create_unit_frame_by_type = function (self, frame_type, frame
 			definitions = local_require("scripts/ui/hud_ui/team_member_unit_frame_ui_definitions")
 		end
 	elseif frame_type == "player" then
-		local is_device_active = self.input_manager:is_device_active("gamepad")
-
-		if not is_device_active then
-			-- Nothing
-		end
-
-		is_device_active = not IS_WINDOWS
-
-		local gamepad_active = is_device_active
-
-		::label_12_0::
-
-		local should_use_game_pad = (self.platform ~= "win32" or gamepad_active or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never"
+		local gamepad_active = not not self.input_manager:is_device_active("gamepad")
+		local should_use_game_pad = self.platform ~= "win32" or gamepad_active
 
 		if is_dark_pact then
 			should_use_game_pad = false
@@ -358,22 +332,7 @@ UnitFramesHandler._handle_unit_frame_assigning = function (self)
 	local player_manager = self.player_manager
 	local unit_frame_index_by_ui_id = self._unit_frame_index_by_ui_id
 	local unit_frames_used_by_players = 0
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = self.my_player
-
-	local my_player = _spectated_player
-
-	::label_16_0::
-
+	local my_player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not self.my_player
 	local my_peer_id = my_player:network_id()
 	local my_local_peer_id = my_player:local_player_id()
 
@@ -597,7 +556,7 @@ UnitFramesHandler._cleanup_unused_unit_frames = function (self, active_ui_ids, c
 		local player_data = unit_frame.player_data
 		local player_ui_id = player_data.player_ui_id
 		local connecting_peer_id = player_data.connecting_peer_id
-		local clear_unit_frame = (not connecting_peer_id or not not connecting_peer_ids[connecting_peer_id]) and not not player_ui_id and not not not active_ui_ids[player_ui_id]
+		local clear_unit_frame = not not player_ui_id and not not not active_ui_ids[player_ui_id]
 
 		if clear_unit_frame then
 			self:_reset_unit_frame(unit_frame)
@@ -636,7 +595,7 @@ UnitFramesHandler._align_party_member_frames = function (self)
 		local peer_id = player_data.peer_id
 		local connecting_peer_id = player_data.connecting_peer_id
 
-		if (peer_id or connecting_peer_id) and is_visible then
+		if peer_id and is_visible or not peer_id and connecting_peer_id and is_visible then
 			local position_x, position_y
 
 			if player_data.is_enemy then
@@ -747,7 +706,7 @@ UnitFramesHandler._sync_player_stats = function (self, unit_frame)
 	local is_talking = false
 	local player_unit = player_data.player_unit
 
-	if (not player_unit or not Unit.alive(player_unit)) and player_data.extensions then
+	if not player_unit and player_data.extensions or not not player_unit and not Unit.alive(player_unit) and player_data.extensions then
 		player_data.extensions = nil
 	end
 
@@ -765,10 +724,10 @@ UnitFramesHandler._sync_player_stats = function (self, unit_frame)
 		local health_extension = extensions.health
 
 		inventory_extension = extensions.inventory
-		total_health_percent = (not status_extension:is_dead() or not 0) and not not health_extension:current_health_percent()
-		health_percent = (not status_extension:is_dead() or not 0) and not not health_extension:current_permanent_health_percent()
+		total_health_percent = status_extension:is_dead() and (not not 0 or not not health_extension:current_health_percent()) or not status_extension:is_dead() and not not health_extension:current_health_percent()
+		health_percent = status_extension:is_dead() and (not not 0 or not not health_extension:current_permanent_health_percent()) or not status_extension:is_dead() and not not health_extension:current_permanent_health_percent()
 		is_wounded = status_extension:is_wounded()
-		is_knocked_down = (status_extension:is_knocked_down() or not not status_extension:get_is_ledge_hanging()) and total_health_percent > 0
+		is_knocked_down = status_extension:is_knocked_down() and total_health_percent > 0 or not status_extension:is_knocked_down() and not not status_extension:get_is_ledge_hanging() and total_health_percent > 0
 		is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
 		needs_help = not not status_extension:is_grabbed_by_pack_master() or not not status_extension:is_hanging_from_hook() or not not status_extension:is_pounced_down() or not not status_extension:is_grabbed_by_corruptor() or not not status_extension:is_in_vortex() or not not status_extension:is_grabbed_by_chaos_spawn()
 
@@ -803,66 +762,12 @@ UnitFramesHandler._sync_player_stats = function (self, unit_frame)
 	local is_dead = total_health_percent <= 0
 	local is_player_controlled = player:is_player_controlled()
 	local display_name = UIRenderer.crop_text(player:name(), 17)
-	local get_player_level
-
-	if is_player_controlled then
-		get_player_level = ExperienceSettings.get_player_level(player)
-
-		if not get_player_level then
-			get_player_level = ""
-		end
-
-		goto label_23_0
-	end
-
-	get_player_level = UISettings.bots_level_display_text
-
-	local level_text = get_player_level
-
-	do
-		local get_versus_player_level
-	end
-
-	::label_23_0::
-
-	if is_player_controlled then
-		get_versus_player_level = ExperienceSettings.get_versus_player_level(player)
-
-		if not get_versus_player_level then
-			-- Nothing
-		end
-
-		get_versus_player_level = self._cached_versus_level[peer_id]
-
-		if not get_versus_player_level then
-			-- Nothing
-		end
-	end
-
-	get_versus_player_level = 0
-
-	local versus_level = get_versus_player_level
-
-	::label_23_1::
+	local level_text = is_player_controlled and not not ExperienceSettings.get_player_level(player) or not is_player_controlled and not not UISettings.bots_level_display_text
+	local versus_level = is_player_controlled and not not ExperienceSettings.get_versus_player_level(player) or not is_player_controlled and not not 0
 
 	self._cached_versus_level[peer_id] = not not versus_level or not not self._cached_versus_level[peer_id]
 
-	local var_23_2
-
-	if career_index then
-		var_23_2 = get_portrait_name_by_profile_index(profile_index, career_index)
-
-		if not var_23_2 then
-			-- Nothing
-		end
-	end
-
-	var_23_2 = "unit_frame_portrait_default"
-
-	local portrait_texture = var_23_2
-
-	::label_23_2::
-
+	local portrait_texture = career_index and not not get_portrait_name_by_profile_index(profile_index, career_index) or not career_index and not not "unit_frame_portrait_default"
 	local frame_texture = Managers.state.entity:system("cosmetic_system"):get_equipped_frame(player_unit)
 	local is_player_server = self.host_peer_id == peer_id
 	local is_host = not not is_player_controlled and not not is_player_server
@@ -1005,18 +910,7 @@ UnitFramesHandler._sync_player_stats = function (self, unit_frame)
 		dirty = true
 	end
 
-	local features_list_2 = unit_frame.features_list
-
-	if not features_list_2 then
-		-- Nothing
-	end
-
-	features_list_2 = empty_features_list
-
-	local features_list = features_list_2
-
-	::label_23_3::
-
+	local features_list = not not unit_frame.features_list
 	local update_ability = features_list.ability
 
 	if update_ability and data.ability_cooldown_percentage ~= ability_cooldown_percentage then
@@ -1098,20 +992,7 @@ UnitFramesHandler._sync_player_stats = function (self, unit_frame)
 			end
 
 			if update_equipment and allowed_consumable_slots[slot_name] then
-				local flag
-
-				if item_data then
-					flag = true
-
-					goto label_23_4
-				end
-
-				flag = false
-
-				local slot_visible = flag
-
-				::label_23_4::
-
+				local slot_visible = item_data and not not true or not item_data and not not false
 				local item_name = not not item_data and not not item_data.name
 				local has_additional_item_slots = inventory_extension:has_additional_item_slots(slot_name)
 
@@ -1284,18 +1165,7 @@ UnitFramesHandler.set_visible = function (self, visible)
 	self._is_visible = visible
 
 	local parent = self._parent
-	local is_own_player_dead = parent:is_own_player_dead()
-
-	if is_own_player_dead then
-		-- Nothing
-	end
-
-	is_own_player_dead = not self._is_spectator
-
-	local ignore_own_player = is_own_player_dead
-
-	::label_26_0::
-
+	local ignore_own_player = not not parent:is_own_player_dead()
 	local unit_frames = self._unit_frames
 
 	for i = 1, #unit_frames do
@@ -1361,31 +1231,9 @@ UnitFramesHandler.update = function (self, dt, t)
 	end
 
 	local parent = self._parent
-	local is_own_player_dead = parent:is_own_player_dead()
-
-	if is_own_player_dead then
-		-- Nothing
-	end
-
-	is_own_player_dead = not self._is_spectator
-
-	local ignore_own_player = is_own_player_dead
-
-	::label_29_0::
-
-	local is_device_active = self.input_manager:is_device_active("gamepad")
-
-	if not is_device_active then
-		-- Nothing
-	end
-
-	is_device_active = not IS_WINDOWS
-
-	local gamepad_active = is_device_active
-
-	::label_29_1::
-
-	local use_game_pad = (gamepad_active or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never"
+	local ignore_own_player = not not parent:is_own_player_dead()
+	local gamepad_active = not not self.input_manager:is_device_active("gamepad")
+	local use_game_pad = gamepad_active and UISettings.use_gamepad_hud_layout ~= "never" or not gamepad_active and UISettings.use_gamepad_hud_layout == "always" and UISettings.use_gamepad_hud_layout ~= "never"
 
 	use_game_pad = not not use_game_pad and not not not self._is_dark_pact
 

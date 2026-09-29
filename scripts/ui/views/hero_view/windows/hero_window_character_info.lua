@@ -193,22 +193,7 @@ HeroWindowCharacterInfo._update_hero_portrait_frame = function (self)
 	widgets_by_name.hero_name.content.text = hero_display_name
 	widgets_by_name.career_name.content.text = career_display_name
 
-	local var_11_0
-
-	if self._hero_level then
-		var_11_0 = tostring(self._hero_level)
-
-		if not var_11_0 then
-			-- Nothing
-		end
-	end
-
-	var_11_0 = "-"
-
-	local level_text = var_11_0
-
-	::label_11_0::
-
+	local level_text = self._hero_level and not not tostring(self._hero_level) or not self._hero_level and not not "-"
 	local portrait_frame_name = self:_get_portrait_frame()
 	local portrait_widget = self:_create_portrait_frame_widget(portrait_frame_name, portrait_image, level_text)
 

@@ -626,11 +626,6 @@ for career, ability_list in pairs(ActivatedAbilitySettings) do
 			fassert(not data.action_name, "Activated ability for \"%s\" cannot have a weapon action if it uses an ability class", career)
 		end
 
-		local fassert = fassert
-		local action_name = data.action_name
-
-		action_name = not not action_name or not not data.ability_class
-
-		fassert(action_name, "Activated ability for \"%s\" must have either a weapon action or an ability class", career)
+		fassert(not not data.action_name, "Activated ability for \"%s\" must have either a weapon action or an ability class", career)
 	end
 end

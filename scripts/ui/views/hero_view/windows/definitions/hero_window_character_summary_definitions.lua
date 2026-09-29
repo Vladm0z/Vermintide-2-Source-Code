@@ -529,11 +529,7 @@ local function create_talent_widget(scenegraph_id)
 			pass_type = "talent_tooltip",
 			content_check_function = function (content)
 				-- function 8
-				local talent = content.talent
-
-				talent = not not talent and not not content.button_hotspot.is_hover
-
-				return talent
+				return not not content.talent
 			end
 		}
 	}
@@ -764,7 +760,7 @@ local function create_stat_widget(scenegraph_id, masked)
 		button_hotspot = {},
 		size = size
 	}
-	local tbl = {
+	local style = {
 		button_hotspot = {
 			offset = {
 				0,
@@ -785,119 +781,88 @@ local function create_stat_widget(scenegraph_id, masked)
 				0,
 				0
 			}
+		},
+		name = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			localize = false,
+			font_size = 20,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				0,
+				0,
+				2
+			}
+		},
+		name_shadow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			localize = false,
+			font_size = 20,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				1,
+				-1,
+				1
+			}
+		},
+		title = {
+			vertical_alignment = "center",
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "left",
+			font_size = 24,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("font_title", 255),
+			offset = {
+				0,
+				0,
+				2
+			}
+		},
+		title_shadow = {
+			vertical_alignment = "center",
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "left",
+			font_size = 24,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				2,
+				-2,
+				1
+			}
+		},
+		value = {
+			vertical_alignment = "center",
+			horizontal_alignment = "right",
+			localize = false,
+			font_size = 20,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			offset = {
+				0,
+				0,
+				2
+			}
+		},
+		value_shadow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "right",
+			localize = false,
+			font_size = 20,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				1,
+				-1,
+				1
+			}
 		}
 	}
-	local tbl_2 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		localize = false,
-		font_size = 20
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.offset = {
-		0,
-		0,
-		2
-	}
-	tbl.name = tbl_2
-
-	local tbl_3 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		localize = false,
-		font_size = 20
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		1,
-		-1,
-		1
-	}
-	tbl.name_shadow = tbl_3
-
-	local tbl_4 = {
-		vertical_alignment = "center",
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "left",
-		font_size = 24
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_4.offset = {
-		0,
-		0,
-		2
-	}
-	tbl.title = tbl_4
-
-	local tbl_5 = {
-		vertical_alignment = "center",
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "left",
-		font_size = 24
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_5.font_type = flag_4
-	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.offset = {
-		2,
-		-2,
-		1
-	}
-	tbl.title_shadow = tbl_5
-
-	local tbl_6 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "right",
-		localize = false,
-		font_size = 20
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_5
-	tbl_6.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_6.offset = {
-		0,
-		0,
-		2
-	}
-	tbl.value = tbl_6
-
-	local tbl_7 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "right",
-		localize = false,
-		font_size = 20
-	}
-	local flag_6
-
-	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_7.font_type = flag_6
-	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_7.offset = {
-		1,
-		-1,
-		1
-	}
-	tbl.value_shadow = tbl_7
-
-	local style = tbl
 	local widget = {}
 	local element = {}
 
@@ -1741,11 +1706,7 @@ local function create_hero_widget(scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 17
-						local taken = content.taken
-
-						taken = not not taken and not not not content.locked
-
-						return taken
+						return not not content.taken
 					end
 				},
 				{

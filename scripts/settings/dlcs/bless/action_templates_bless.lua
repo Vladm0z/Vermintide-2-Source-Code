@@ -18,11 +18,8 @@ ActionTemplates.action_career_wh_priest = {
 
 			local career_extension = ScriptUnit.extension(action_user, "career_system")
 			local activated_ability_data = career_extension:get_activated_ability_data()
-			local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-			can_use_activated_ability = not not can_use_activated_ability and activated_ability_data.action_name == "action_career_wh_priest"
-
-			return can_use_activated_ability
+			return not not career_extension:can_use_activated_ability()
 		end,
 		enter_function = function (attacker_unit, input_extension)
 			-- function 2

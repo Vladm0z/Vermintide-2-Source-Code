@@ -173,22 +173,7 @@ end
 
 LevelTransitionHandler.promote_next_level_data = function (self)
 	-- function 12
-	local fassert = fassert
-	local is_server
-
-	if self._network_state then
-		is_server = self._network_state:is_server()
-
-		if not is_server then
-			-- Nothing
-		end
-	end
-
-	is_server = not self._network_state
-
-	::label_12_0::
-
-	fassert(is_server, "only server can promote")
+	fassert(self._network_state and not not self._network_state:is_server() or not self._network_state and not not not self._network_state, "only server can promote")
 	fassert(self._next_level_data, "can't promote without previously calling set_next_level")
 	print("promote_next_level_data")
 
@@ -230,7 +215,7 @@ LevelTransitionHandler.load_current_level = function (self)
 
 	self:_load_extra_packages(new_level_key, extra_packages)
 
-	if currently_loaded_level_key ~= new_level_key or currently_loaded_environment_variation_id ~= new_environment_variation_id or is_not_loading and is_not_loaded then
+	if is_not_loading and is_not_loaded then
 		self:_load_level_packages(new_level_key)
 
 		local level_settings = LevelSettings[new_level_key]
@@ -368,336 +353,121 @@ LevelTransitionHandler.get_next_level_key = function (self)
 	-- function 22
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.level_key
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_next_level_seed = function (self)
 	-- function 23
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.level_seed
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_next_game_mode = function (self)
 	-- function 24
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.game_mode
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_next_conflict_director = function (self)
 	-- function 25
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.conflict_director
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_next_environment_variation_id = function (self)
 	-- function 26
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.environment_variation_id
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_next_locked_director_functions = function (self)
 	-- function 27
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.locked_director_functions
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_next_difficulty = function (self)
 	-- function 28
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.difficulty
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_next_difficulty_tweak = function (self)
 	-- function 29
 	fassert(not self._network_state or not not self._network_state:is_server(), "only the server handles next level logic")
 
-	local _next_level_data = self._next_level_data
-
-	_next_level_data = not not _next_level_data and not not self._next_level_data.difficulty_tweak
-
-	return _next_level_data
+	return not not self._next_level_data
 end
 
 LevelTransitionHandler.get_current_level_key = function (self)
 	-- function 30
-	local get_level_key
-
-	if self._network_state then
-		get_level_key = self._network_state:get_level_key()
-
-		if not get_level_key then
-			-- Nothing
-		end
-	end
-
-	get_level_key = self._offline_level_data
-	get_level_key = not not get_level_key and not not self._offline_level_data.level_key
-
-	::label_30_0::
-
-	return get_level_key
+	return self._network_state and not not self._network_state:get_level_key() or not self._network_state and not not self._offline_level_data
 end
 
 LevelTransitionHandler.get_current_level_seed = function (self)
 	-- function 31
-	local get_level_seed
-
-	if self._network_state then
-		get_level_seed = self._network_state:get_level_seed()
-
-		if not get_level_seed then
-			-- Nothing
-		end
-	end
-
-	get_level_seed = self._offline_level_data.level_seed
-
-	::label_31_0::
-
-	return get_level_seed
+	return self._network_state and not not self._network_state:get_level_seed() or not self._network_state and not not self._offline_level_data.level_seed
 end
 
 LevelTransitionHandler.get_current_game_mode = function (self)
 	-- function 32
-	local get_game_mode
-
-	if self._network_state then
-		get_game_mode = self._network_state:get_game_mode()
-
-		if not get_game_mode then
-			-- Nothing
-		end
-	end
-
-	get_game_mode = self._offline_level_data.game_mode
-
-	::label_32_0::
-
-	return get_game_mode
+	return self._network_state and not not self._network_state:get_game_mode() or not self._network_state and not not self._offline_level_data.game_mode
 end
 
 LevelTransitionHandler.get_current_conflict_director = function (self)
 	-- function 33
-	local get_conflict_director
-
-	if self._network_state then
-		get_conflict_director = self._network_state:get_conflict_director()
-
-		if not get_conflict_director then
-			-- Nothing
-		end
-	end
-
-	get_conflict_director = self._offline_level_data.conflict_director
-
-	::label_33_0::
-
-	return get_conflict_director
+	return self._network_state and not not self._network_state:get_conflict_director() or not self._network_state and not not self._offline_level_data.conflict_director
 end
 
 LevelTransitionHandler.get_current_environment_variation_id = function (self)
 	-- function 34
-	local get_environment_variation_id
-
-	if self._network_state then
-		get_environment_variation_id = self._network_state:get_environment_variation_id()
-
-		if not get_environment_variation_id then
-			-- Nothing
-		end
-	end
-
-	get_environment_variation_id = self._offline_level_data.environment_variation_id
-
-	::label_34_0::
-
-	return get_environment_variation_id
+	return self._network_state and not not self._network_state:get_environment_variation_id() or not self._network_state and not not self._offline_level_data.environment_variation_id
 end
 
 LevelTransitionHandler.get_current_locked_director_functions = function (self)
 	-- function 35
-	local get_locked_director_functions
-
-	if self._network_state then
-		get_locked_director_functions = self._network_state:get_locked_director_functions()
-
-		if not get_locked_director_functions then
-			-- Nothing
-		end
-	end
-
-	get_locked_director_functions = self._offline_level_data.locked_director_functions
-
-	::label_35_0::
-
-	return get_locked_director_functions
+	return self._network_state and not not self._network_state:get_locked_director_functions() or not self._network_state and not not self._offline_level_data.locked_director_functions
 end
 
 LevelTransitionHandler.get_current_difficulty = function (self)
 	-- function 36
-	local get_difficulty
-
-	if self._network_state then
-		get_difficulty = self._network_state:get_difficulty()
-
-		if not get_difficulty then
-			-- Nothing
-		end
-	end
-
-	get_difficulty = self._offline_level_data.difficulty
-
-	::label_36_0::
-
-	return get_difficulty
+	return self._network_state and not not self._network_state:get_difficulty() or not self._network_state and not not self._offline_level_data.difficulty
 end
 
 LevelTransitionHandler.get_current_difficulty_tweak = function (self)
 	-- function 37
-	local get_difficulty_tweak
-
-	if self._network_state then
-		get_difficulty_tweak = self._network_state:get_difficulty_tweak()
-
-		if not get_difficulty_tweak then
-			-- Nothing
-		end
-	end
-
-	get_difficulty_tweak = self._offline_level_data.difficulty_tweak
-
-	::label_37_0::
-
-	return get_difficulty_tweak
+	return self._network_state and not not self._network_state:get_difficulty_tweak() or not self._network_state and not not self._offline_level_data.difficulty_tweak
 end
 
 LevelTransitionHandler.get_current_extra_packages = function (self)
 	-- function 38
-	local get_extra_packages
-
-	if self._network_state then
-		get_extra_packages = self._network_state:get_extra_packages()
-
-		if not get_extra_packages then
-			-- Nothing
-		end
-	end
-
-	get_extra_packages = self._offline_level_data.extra_packages
-
-	::label_38_0::
-
-	return get_extra_packages
+	return self._network_state and not not self._network_state:get_extra_packages() or not self._network_state and not not self._offline_level_data.extra_packages
 end
 
 LevelTransitionHandler.get_current_mechanism = function (self)
 	-- function 39
-	local get_mechanism
-
-	if self._network_state then
-		get_mechanism = self._network_state:get_mechanism()
-
-		if not get_mechanism then
-			-- Nothing
-		end
-	end
-
-	get_mechanism = self._offline_level_data.mechanism
-
-	::label_39_0::
-
-	return get_mechanism
+	return self._network_state and not not self._network_state:get_mechanism() or not self._network_state and not not self._offline_level_data.mechanism
 end
 
 LevelTransitionHandler.get_current_level_session_id = function (self)
 	-- function 40
-	local get_level_session_id
-
-	if self._network_state then
-		get_level_session_id = self._network_state:get_level_session_id()
-
-		if not get_level_session_id then
-			-- Nothing
-		end
-	end
-
-	get_level_session_id = self._offline_level_data.level_session_id
-
-	::label_40_0::
-
-	return get_level_session_id
+	return self._network_state and not not self._network_state:get_level_session_id() or not self._network_state and not not self._offline_level_data.level_session_id
 end
 
 LevelTransitionHandler.get_current_level_transition_type = function (self)
 	-- function 41
-	local get_level_transition_type
-
-	if self._network_state then
-		get_level_transition_type = self._network_state:get_level_transition_type()
-
-		if not get_level_transition_type then
-			-- Nothing
-		end
-	end
-
-	get_level_transition_type = self._offline_level_data.level_transition_type
-
-	::label_41_0::
-
-	return get_level_transition_type
+	return self._network_state and not not self._network_state:get_level_transition_type() or not self._network_state and not not self._offline_level_data.level_transition_type
 end
 
 LevelTransitionHandler.get_current_checkpoint = function (self)
 	-- function 42
-	local get_check_point
-
-	if self._network_state then
-		get_check_point = self._network_state:get_check_point()
-
-		if not get_check_point then
-			-- Nothing
-		end
-	end
-
-	get_check_point = self._offline_level_data.check_point
-
-	::label_42_0::
-
-	return get_check_point
+	return self._network_state and not not self._network_state:get_check_point() or not self._network_state and not not self._offline_level_data.check_point
 end
 
 LevelTransitionHandler.get_current_level_keys = function (self)
@@ -966,21 +736,7 @@ LevelTransitionHandler.apply_defaults_to_level_data = function (self, level_key,
 	if is_server and script_data.random_level_seed_from_toolcenter and not level_seed then
 		level_seed = not not Development.parameter("level_seed") or not not LevelTransitionHandler.create_level_seed()
 	else
-		local tonumber = tonumber
-
-		if not level_seed then
-			-- Nothing
-		end
-
-		::label_51_0::
-
-		local parameter = Development.parameter("level_seed")
-
-		parameter = not not parameter or not not GameMechanismManager.create_level_seed()
-
-		::label_51_1::
-
-		level_seed = tonumber(parameter)
+		level_seed = tonumber(not not level_seed or not not Development.parameter("level_seed"))
 	end
 
 	optional_extra_packages = not not optional_extra_packages or not not {}
@@ -1015,17 +771,7 @@ end
 LevelTransitionHandler.queue_create_networked_flow_state = function (self, unit, ...)
 	-- function 54
 	local level = Unit.level(unit)
-	local var_54_0 = self._queued_network_flow_states[level]
-
-	if not var_54_0 then
-		-- Nothing
-	end
-
-	var_54_0 = {}
-
-	local flow_state_units = var_54_0
-
-	::label_54_0::
+	local flow_state_units = not not self._queued_network_flow_states[level]
 
 	self._queued_network_flow_states[level] = flow_state_units
 	flow_state_units[#flow_state_units + 1] = unit

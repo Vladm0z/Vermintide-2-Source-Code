@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_mutator_sorcerer.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 9999999,
 	walk_speed = 2.3,
 	has_inventory = true,
@@ -102,122 +102,117 @@ local tbl = {
 		200,
 		200,
 		0
+	},
+	disabled = not not Development.setting("disable_plague_sorcerer"),
+	hit_zones = {
+		head = {
+			prio = 1,
+			actors = {
+				"c_head"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		neck = {
+			prio = 1,
+			actors = {
+				"c_neck"
+			},
+			push_actors = {
+				"j_head",
+				"j_spine1"
+			}
+		},
+		torso = {
+			prio = 2,
+			actors = {
+				"c_hips",
+				"c_spine",
+				"c_spine1",
+				"c_leftshoulder",
+				"c_rightshoulder"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_arm = {
+			prio = 3,
+			actors = {
+				"c_leftarm",
+				"c_leftforearm",
+				"c_lefthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		right_arm = {
+			prio = 3,
+			actors = {
+				"c_rightarm",
+				"c_rightforearm",
+				"c_righthand"
+			},
+			push_actors = {
+				"j_spine1"
+			}
+		},
+		left_leg = {
+			prio = 3,
+			actors = {
+				"c_leftupleg",
+				"c_leftleg",
+				"c_leftfoot",
+				"c_lefttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		right_leg = {
+			prio = 3,
+			actors = {
+				"c_rightupleg",
+				"c_rightleg",
+				"c_rightfoot",
+				"c_righttoebase"
+			},
+			push_actors = {
+				"j_leftfoot",
+				"j_rightfoot",
+				"j_hips"
+			}
+		},
+		full = {
+			prio = 4,
+			actors = {}
+		},
+		afro = {
+			prio = 5,
+			actors = {
+				"h_afro"
+			}
+		}
+	},
+	allowed_layers = {
+		planks = 1.5,
+		ledges = 5,
+		bot_ratling_gun_fire = 10,
+		jumps = 5,
+		destructible_wall = 5,
+		temporary_wall = 0,
+		ledges_with_fence = 5,
+		doors = 1.5,
+		teleporters = 5,
+		bot_poison_wind = 2,
+		fire_grenade = 10
 	}
 }
-local setting = Development.setting("disable_plague_sorcerer")
-
-setting = not not setting or not not false
-tbl.disabled = setting
-tbl.hit_zones = {
-	head = {
-		prio = 1,
-		actors = {
-			"c_head"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	neck = {
-		prio = 1,
-		actors = {
-			"c_neck"
-		},
-		push_actors = {
-			"j_head",
-			"j_spine1"
-		}
-	},
-	torso = {
-		prio = 2,
-		actors = {
-			"c_hips",
-			"c_spine",
-			"c_spine1",
-			"c_leftshoulder",
-			"c_rightshoulder"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_arm = {
-		prio = 3,
-		actors = {
-			"c_leftarm",
-			"c_leftforearm",
-			"c_lefthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	right_arm = {
-		prio = 3,
-		actors = {
-			"c_rightarm",
-			"c_rightforearm",
-			"c_righthand"
-		},
-		push_actors = {
-			"j_spine1"
-		}
-	},
-	left_leg = {
-		prio = 3,
-		actors = {
-			"c_leftupleg",
-			"c_leftleg",
-			"c_leftfoot",
-			"c_lefttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	right_leg = {
-		prio = 3,
-		actors = {
-			"c_rightupleg",
-			"c_rightleg",
-			"c_rightfoot",
-			"c_righttoebase"
-		},
-		push_actors = {
-			"j_leftfoot",
-			"j_rightfoot",
-			"j_hips"
-		}
-	},
-	full = {
-		prio = 4,
-		actors = {}
-	},
-	afro = {
-		prio = 5,
-		actors = {
-			"h_afro"
-		}
-	}
-}
-tbl.allowed_layers = {
-	planks = 1.5,
-	ledges = 5,
-	bot_ratling_gun_fire = 10,
-	jumps = 5,
-	destructible_wall = 5,
-	temporary_wall = 0,
-	ledges_with_fence = 5,
-	doors = 1.5,
-	teleporters = 5,
-	bot_poison_wind = 2,
-	fire_grenade = 10
-}
-
-local breed_data = tbl
 
 Breeds.chaos_mutator_sorcerer = table.create_copy(Breeds.chaos_mutator_sorcerer, breed_data)
 

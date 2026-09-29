@@ -113,21 +113,7 @@ end
 
 HeroView.input_service = function (self)
 	-- function 8
-	local FAKE_INPUT_SERVICE
-
-	if self._draw_loading then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self.input_manager:get_service("hero_view")
-
-	::label_8_0::
-
-	return FAKE_INPUT_SERVICE
+	return self._draw_loading and not not FAKE_INPUT_SERVICE or not self._draw_loading and not not self.input_manager:get_service("hero_view")
 end
 
 HeroView.set_input_blocked = function (self, blocked)
@@ -281,21 +267,7 @@ HeroView.update = function (self, dt, t)
 	local input_manager = self.input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local input_blocked = self:input_blocked()
-	local FAKE_INPUT_SERVICE
-
-	if input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_19_0::
+	local input_service = input_blocked and not not FAKE_INPUT_SERVICE or not input_blocked and not not self:input_service()
 
 	self._state_machine_params.input_service = input_service
 
@@ -341,17 +313,7 @@ HeroView.on_enter = function (self, params)
 
 	self:create_ui_elements()
 
-	local profile_by_peer = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
-
-	if not profile_by_peer then
-		-- Nothing
-	end
-
-	profile_by_peer = 1
-
-	local profile_index = profile_by_peer
-
-	::label_20_0::
+	local profile_index = not not self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
 
 	self:set_current_hero(profile_index)
 
@@ -386,17 +348,7 @@ HeroView._fetch_initial_loadout_index = function (self, params)
 	self._peer_id = ingame_ui_context.peer_id
 	self._local_player_id = ingame_ui_context.local_player_id
 
-	local network_server = ingame_ui_context.network_server
-
-	if not network_server then
-		-- Nothing
-	end
-
-	network_server = ingame_ui_context.network_client
-
-	local network_handler = network_server
-
-	::label_21_0::
+	local network_handler = not not ingame_ui_context.network_server
 
 	self._profile_requester = network_handler:profile_requester()
 	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
@@ -443,40 +395,12 @@ HeroView._handle_new_ui_disclaimer = function (self)
 			keep_decorations = false
 		}
 	}
-	local var_22_0 = global_disclaimer_states[mechanism_name]
-
-	if not var_22_0 then
-		-- Nothing
-	end
-
-	var_22_0 = global_disclaimer_states.default
-
-	local disclaimer_states = var_22_0
-
-	::label_22_0::
-
+	local disclaimer_states = not not global_disclaimer_states[mechanism_name]
 	local on_enter_transition_params = self._on_enter_transition_params
-	local menu_state_name_2
-
-	if on_enter_transition_params then
-		menu_state_name_2 = on_enter_transition_params.menu_state_name
-
-		if not menu_state_name_2 then
-			-- Nothing
-		end
-	end
-
-	menu_state_name_2 = "default"
-
-	local menu_state_name = menu_state_name_2
-
-	::label_22_1::
-
+	local menu_state_name = on_enter_transition_params and not not on_enter_transition_params.menu_state_name or not on_enter_transition_params and not not "default"
 	local menu_sub_state_name = not not on_enter_transition_params and not not on_enter_transition_params.menu_sub_state_name
 
-	if disclaimer_states[menu_sub_state_name] ~= nil and not menu_sub_state_name then
-		-- Nothing
-	end
+	menu_state_name = disclaimer_states[menu_sub_state_name] == nil or not not menu_sub_state_name or not not menu_state_name
 
 	Managers.ui:handle_new_ui_disclaimer(disclaimer_states, menu_state_name)
 end
@@ -505,11 +429,7 @@ HeroView._get_sorted_players = function (self)
 
 	table.sort(player_order, function (a, b)
 		-- function 25
-		local local_player = a.local_player
-
-		local_player = not not local_player and not not not b.local_player
-
-		return local_player
+		return not not a.local_player
 	end)
 
 	return player_order
@@ -556,17 +476,7 @@ HeroView.hotkey_allowed = function (self, input, mapping_data)
 		end
 
 		if name == transition_state then
-			local get_selected_layout_name = current_state.get_selected_layout_name
-
-			if get_selected_layout_name then
-				-- Nothing
-			end
-
-			get_selected_layout_name = current_state:get_selected_layout_name()
-
-			local active_sub_settings_name = get_selected_layout_name
-
-			::label_28_0::
+			local active_sub_settings_name = not not current_state.get_selected_layout_name
 
 			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
@@ -806,19 +716,7 @@ HeroView._set_loading_overlay_enabled = function (self, enabled, message)
 	local loading_widgets = self._loading_widgets
 	local loading_text_widget = loading_widgets.text
 	local loading_bg_widget = loading_widgets.background
-	local num
-
-	if enabled then
-		num = 255
-
-		goto label_48_0
-	end
-
-	num = 0
-
-	local alpha = num
-
-	::label_48_0::
+	local alpha = enabled and not not 255 or not enabled and not not 0
 
 	loading_bg_widget.style.color[1] = alpha
 	loading_text_widget.style.text.text_color[1] = alpha

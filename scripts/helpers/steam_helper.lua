@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/steam_helper.lua
 
-local SteamHelper = SteamHelper
-
-SteamHelper = not not SteamHelper or not not {}
-SteamHelper = SteamHelper
+SteamHelper = not not SteamHelper
 
 local FRIEND_STATUS = {
 	[0] = "offline",

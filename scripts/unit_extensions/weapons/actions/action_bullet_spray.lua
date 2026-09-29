@@ -150,21 +150,7 @@ ActionBulletSpray.client_owner_post_update = function (self, dt, t, world, can_d
 			end
 
 			local weapon_unit = self.weapon_unit
-			local var_3_0
-
-			if result then
-				var_3_0 = result[#result][1]
-
-				if not var_3_0 then
-					-- Nothing
-				end
-			end
-
-			var_3_0 = player_position + direction * 100
-
-			local hit_position = var_3_0
-
-			::label_3_0::
+			local hit_position = result and not not result[#result][1] or not result and not not (player_position + direction * 100)
 
 			Unit.set_flow_variable(weapon_unit, "hit_position", hit_position)
 			Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - player_position) * 0.1)
@@ -190,19 +176,7 @@ ActionBulletSpray.finish = function (self, reason)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-	local flag
-
-	if not reload_when_out_of_ammo_condition_func then
-		flag = true
-
-		goto label_4_0
-	end
-
-	flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-	local do_out_of_ammo_reload = flag
-
-	::label_4_0::
+	local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 	if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 		local play_reload_animation = true

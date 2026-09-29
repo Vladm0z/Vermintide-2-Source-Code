@@ -190,22 +190,16 @@ HeroWindowOptions._is_button_hover_enter = function (self, widget)
 	-- function 9
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 HeroWindowOptions._is_button_hover_exit = function (self, widget)
 	-- function 10
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_exit = hotspot.on_hover_exit
 
-	on_hover_exit = not not on_hover_exit and not not not hotspot.is_selected
-
-	return on_hover_exit
+	return not not hotspot.on_hover_exit
 end
 
 HeroWindowOptions._is_button_selected = function (self, widget)
@@ -356,23 +350,7 @@ HeroWindowOptions._calculate_power_level = function (self)
 	local presentable_hero_power_level = UIUtils.presentable_hero_power_level(total_power_level)
 	local widgets_by_name = self._widgets_by_name
 	local content = widgets_by_name.power_text.content
-	local power = content.power
-
-	if power then
-		-- Nothing
-	end
-
-	if not (presentable_hero_power_level > content.power) then
-		power = false
-
-		goto label_19_0
-	end
-
-	power = true
-
-	local play_effect = power
-
-	::label_19_0::
+	local play_effect = not not content.power
 
 	if play_effect then
 		self._hero_power_effect_time = HERO_POWER_EFFECT_DURATION
@@ -430,22 +408,7 @@ HeroWindowOptions._update_hero_portrait_frame = function (self)
 	widgets_by_name.hero_name.content.text = hero_display_name
 	widgets_by_name.career_name.content.text = career_display_name
 
-	local var_21_0
-
-	if self._hero_level then
-		var_21_0 = tostring(self._hero_level)
-
-		if not var_21_0 then
-			-- Nothing
-		end
-	end
-
-	var_21_0 = "-"
-
-	local level_text = var_21_0
-
-	::label_21_0::
-
+	local level_text = self._hero_level and not not tostring(self._hero_level) or not self._hero_level and not not "-"
 	local portrait_frame_name = self:_get_portrait_frame()
 	local portrait_widget = self:_create_portrait_frame_widget(portrait_frame_name, portrait_image, level_text)
 

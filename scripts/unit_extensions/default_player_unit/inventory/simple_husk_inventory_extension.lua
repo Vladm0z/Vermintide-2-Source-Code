@@ -95,17 +95,7 @@ end
 SimpleHuskInventoryExtension.get_weapon_unit = function (self)
 	-- function 5
 	local equipment = self._equipment
-	local left_hand_wielded_unit_3p = equipment.left_hand_wielded_unit_3p
-
-	if not left_hand_wielded_unit_3p then
-		-- Nothing
-	end
-
-	left_hand_wielded_unit_3p = equipment.right_hand_wielded_unit_3p
-
-	local weapon_unit = left_hand_wielded_unit_3p
-
-	::label_5_0::
+	local weapon_unit = not not equipment.left_hand_wielded_unit_3p
 
 	return weapon_unit
 end
@@ -130,18 +120,7 @@ SimpleHuskInventoryExtension.drop_level_event_item = function (self, slot_data)
 
 	if projectile_info.drop_on_player_destroyed then
 		local unit = self._unit
-		local right_hand_wielded_unit_3p = self._equipment.right_hand_wielded_unit_3p
-
-		if not right_hand_wielded_unit_3p then
-			-- Nothing
-		end
-
-		right_hand_wielded_unit_3p = self._equipment.left_hand_wielded_unit_3p
-
-		local weapon_unit = right_hand_wielded_unit_3p
-
-		::label_7_0::
-
+		local weapon_unit = not not self._equipment.right_hand_wielded_unit_3p
 		local position = Unit.world_position(unit, 0) + Vector3(0, 0, 2)
 		local proj_rotation = Quaternion.identity()
 		local velocity = Vector3(math.random(), math.random(), math.random())
@@ -160,38 +139,13 @@ SimpleHuskInventoryExtension._unlink_unit = function (self, unit, reason, attach
 	-- function 8
 	World.unlink_unit(self._world, unit)
 
-	local wielded = attachment_node_linking.wielded
-
-	if not wielded then
-		-- Nothing
-	end
-
-	wielded = attachment_node_linking
-
-	local node_linking_data = wielded
-
-	::label_8_0::
+	local node_linking_data = not not attachment_node_linking.wielded
 
 	for i, attachment_nodes in ipairs(node_linking_data) do
 		local target_node = attachment_nodes.target
 
 		if target_node ~= 0 then
-			local node
-
-			if type(target_node) == "string" then
-				node = Unit.node(unit, target_node)
-
-				if not node then
-					-- Nothing
-				end
-			end
-
-			node = target_node
-
-			local target_node_index = node
-
-			::label_8_1::
-
+			local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(unit, target_node)
 			local parent = Unit.scene_graph_parent(unit, target_node_index)
 
 			Unit.scene_graph_link(unit, target_node_index, 0)
@@ -219,44 +173,14 @@ SimpleHuskInventoryExtension.drop_equipped_weapons = function (self, reason)
 	local right_hand_unit_name = wielded.right_hand_unit
 
 	if left_hand_unit_name then
-		local third_person
-
-		if linking_template.left then
-			third_person = linking_template.left.third_person
-
-			if not third_person then
-				-- Nothing
-			end
-		end
-
-		third_person = linking_template.third_person
-
-		local attachment_node_linking = third_person
-
-		::label_9_0::
-
+		local attachment_node_linking = linking_template.left and not not linking_template.left.third_person or not linking_template.left and not not linking_template.third_person
 		local left_hand_unit = equipment.left_hand_wielded_unit_3p
 
 		self:_unlink_unit(left_hand_unit, reason, attachment_node_linking)
 	end
 
 	if right_hand_unit_name then
-		local third_person_2
-
-		if linking_template.right then
-			third_person_2 = linking_template.right.third_person
-
-			if not third_person_2 then
-				-- Nothing
-			end
-		end
-
-		third_person_2 = linking_template.third_person
-
-		local attachment_node_linking = third_person_2
-
-		::label_9_1::
-
+		local attachment_node_linking = linking_template.right and not not linking_template.right.third_person or not linking_template.right and not not linking_template.third_person
 		local right_hand_unit = equipment.right_hand_wielded_unit_3p
 
 		self:_unlink_unit(right_hand_unit, reason, attachment_node_linking)
@@ -747,21 +671,7 @@ end
 
 local function get_wield_anim(default, optional_switch, career_name)
 	-- function 36
-	local var_36_0
-
-	if optional_switch then
-		var_36_0 = optional_switch[career_name]
-
-		if not var_36_0 then
-			-- Nothing
-		end
-	end
-
-	var_36_0 = default
-
-	::label_36_0::
-
-	return var_36_0
+	return optional_switch and not not optional_switch[career_name] or not optional_switch and not not default
 end
 
 SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slot_name, unit_1p, unit_3p)
@@ -800,17 +710,7 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 	local is_ammo_weapon = item_units.is_ammo_weapon
 
 	if is_ammo_weapon then
-		local material_settings_name_2 = item_units.material_settings_name
-
-		if not material_settings_name_2 then
-			-- Nothing
-		end
-
-		material_settings_name_2 = item_template.material_settings_name
-
-		local material_settings_name = material_settings_name_2
-
-		::label_37_0::
+		local material_settings_name = not not item_units.material_settings_name
 
 		if material_settings_name then
 			if right_hand_ammo_unit_3p then
@@ -844,17 +744,7 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 
 	local item_template = BackendUtils.get_item_template(item_data)
 	local wield_anim = get_wield_anim(item_template.wield_anim, item_template.wield_anim_career, self._career_name)
-	local var_37_1 = get_wield_anim(item_template.wield_anim_3p, item_template.wield_anim_career_3p, self._career_name)
-
-	if not var_37_1 then
-		-- Nothing
-	end
-
-	var_37_1 = wield_anim
-
-	local wield_anim_3p = var_37_1
-
-	::label_37_1::
+	local wield_anim_3p = not not get_wield_anim(item_template.wield_anim_3p, item_template.wield_anim_career_3p, self._career_name)
 
 	if right_hand_weapon_unit_3p or left_hand_weapon_unit_3p then
 		if self:ammo_percentage() == 0 and item_template.wield_anim_no_ammo_on_husk then
@@ -862,17 +752,7 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 
 			wield_anim = not not wield_anim_no_ammo or not not wield_anim
 
-			local var_37_2 = get_wield_anim(item_template.wield_anim_no_ammo_3p, item_template.wield_anim_no_ammo_career_3p, self._career_name)
-
-			if not var_37_2 then
-				-- Nothing
-			end
-
-			var_37_2 = wield_anim_no_ammo
-
-			local wield_anim_no_ammo_3p = var_37_2
-
-			::label_37_2::
+			local wield_anim_no_ammo_3p = not not get_wield_anim(item_template.wield_anim_no_ammo_3p, item_template.wield_anim_no_ammo_career_3p, self._career_name)
 
 			wield_anim_3p = not not wield_anim_no_ammo_3p or not not wield_anim_3p
 		end
@@ -895,22 +775,7 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 		if Unit.animation_has_variable(unit_1p, "animation_variation_id") then
 			local weapon_skin_data = WeaponSkins.skins[slot.skin]
 			local weapon_skin_anim_overrides = not not weapon_skin_data and not not weapon_skin_data.action_anim_overrides
-			local animation_variation_id_2
-
-			if weapon_skin_anim_overrides then
-				animation_variation_id_2 = weapon_skin_anim_overrides.animation_variation_id
-
-				if not animation_variation_id_2 then
-					-- Nothing
-				end
-			end
-
-			animation_variation_id_2 = 0
-
-			local animation_variation_id = animation_variation_id_2
-
-			::label_37_3::
-
+			local animation_variation_id = weapon_skin_anim_overrides and not not weapon_skin_anim_overrides.animation_variation_id or not weapon_skin_anim_overrides and not not 0
 			local animation_variation_param = Unit.animation_find_variable(unit_1p, "animation_variation_id")
 
 			Unit.animation_set_variable(unit_1p, animation_variation_param, animation_variation_id)

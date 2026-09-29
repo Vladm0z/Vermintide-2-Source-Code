@@ -727,18 +727,7 @@ local widget_definitions_by_state = {
 						texture_id = "background",
 						content_change_function = function (content, style, _, dt)
 							-- function 22
-							local progress_2 = style.progress
-
-							if not progress_2 then
-								-- Nothing
-							end
-
-							progress_2 = 0
-
-							local progress = progress_2
-
-							::label_22_0::
-
+							local progress = not not style.progress
 							local speed = 0.5
 
 							progress = (progress + dt * speed) % 1
@@ -749,22 +738,8 @@ local widget_definitions_by_state = {
 
 							local fade_out = content.fade_out
 							local alpha = 255 * math.ease_pulse(anim_progress)
-							local color = style.color
-							local min
 
-							if fade_out then
-								min = math.min(style.color[1], alpha)
-
-								if not min then
-									-- Nothing
-								end
-							end
-
-							min = alpha
-
-							::label_22_1::
-
-							color[1] = min
+							style.color[1] = fade_out and not not math.min(style.color[1], alpha) or not fade_out and not not alpha
 						end
 					},
 					{
@@ -773,18 +748,7 @@ local widget_definitions_by_state = {
 						texture_id = "glow",
 						content_change_function = function (content, style, _, dt)
 							-- function 23
-							local progress_2 = style.progress
-
-							if not progress_2 then
-								-- Nothing
-							end
-
-							progress_2 = 0
-
-							local progress = progress_2
-
-							::label_23_0::
-
+							local progress = not not style.progress
 							local speed = 0.5
 
 							progress = (progress + dt * speed) % 1
@@ -795,22 +759,8 @@ local widget_definitions_by_state = {
 
 							local fade_out = content.fade_out
 							local alpha = 255 * math.ease_pulse(anim_progress)
-							local color = style.color
-							local min
 
-							if fade_out then
-								min = math.min(style.color[1], alpha)
-
-								if not min then
-									-- Nothing
-								end
-							end
-
-							min = alpha
-
-							::label_23_1::
-
-							color[1] = min
+							style.color[1] = fade_out and not not math.min(style.color[1], alpha) or not fade_out and not not alpha
 						end
 					}
 				}
@@ -1166,36 +1116,11 @@ StoreItemPurchasePopup._set_fullscreen_effect_enable_state = function (self, ena
 	-- function 29
 	local shading_env = World.get_data(world, "shading_environment")
 
-	progress = (not not progress or not enabled or not 1) and not not 0
+	progress = not not 1 or not not progress or enabled or not not 0
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_29_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_29_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_29_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local num
-
-		if enabled then
-			num = progress * 0.8
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		::label_29_0::
-
-		set_scalar_2(var_29_5, str_2, num)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not (progress * 0.8) or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -1272,27 +1197,14 @@ StoreItemPurchasePopup._draw = function (self, input_service, dt)
 	UIRenderer.begin_pass(blur_purchase_ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_34_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._static_widgets) do
 		if widget.snap_pixel_positions ~= nil then
 			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(blur_purchase_ui_renderer, widget)
 
@@ -1305,25 +1217,11 @@ StoreItemPurchasePopup._draw = function (self, input_service, dt)
 	UIRenderer.begin_pass(purchase_ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier_4 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_4 then
-		-- Nothing
-	end
-
-	alpha_multiplier_4 = 1
-
-	local alpha_multiplier = alpha_multiplier_4
-
-	::label_34_1::
-
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 	local product_widget = self._product_widget
 
 	if product_widget then
-		local alpha_multiplier_5 = product_widget.alpha_multiplier
-
-		alpha_multiplier_5 = not not alpha_multiplier_5 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_5
+		render_settings.alpha_multiplier = not not product_widget.alpha_multiplier
 
 		UIRenderer.draw_widget(purchase_ui_renderer, product_widget)
 	end
@@ -1340,10 +1238,7 @@ StoreItemPurchasePopup._draw = function (self, input_service, dt)
 					render_settings.snap_pixel_positions = widget.snap_pixel_positions
 				end
 
-				local alpha_multiplier_6 = widget.alpha_multiplier
-
-				alpha_multiplier_6 = not not alpha_multiplier_6 or not not alpha_multiplier
-				render_settings.alpha_multiplier = alpha_multiplier_6
+				render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 				UIRenderer.draw_widget(purchase_ui_renderer, widget)
 
@@ -1377,17 +1272,7 @@ StoreItemPurchasePopup.update = function (self, input_service, dt, t)
 		end
 	end
 
-	local _blur_progress = self._blur_progress
-
-	if not _blur_progress then
-		-- Nothing
-	end
-
-	_blur_progress = self._render_settings.alpha_multiplier
-
-	local blur_progress = _blur_progress
-
-	::label_35_0::
+	local blur_progress = not not self._blur_progress
 
 	if blur_progress then
 		self:_set_fullscreen_effect_enable_state(true, blur_progress, self._blur_purchase_ui_world)
@@ -1426,17 +1311,7 @@ end
 StoreItemPurchasePopup._is_button_hover_enter = function (self, widget)
 	-- function 37
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_37_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.on_hover_enter
 end
@@ -1444,17 +1319,7 @@ end
 StoreItemPurchasePopup._is_button_pressed = function (self, widget)
 	-- function 38
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_38_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -1632,18 +1497,7 @@ end
 StoreItemPurchasePopup._popup_on_enter = function (self)
 	-- function 50
 	local product = self._product
-	local product_item = product.product_item
-
-	if not product_item then
-		-- Nothing
-	end
-
-	product_item = product.item
-
-	local item = product_item
-
-	::label_50_0::
-
+	local item = not not product.product_item
 	local item_data = item.data
 	local item_rarity = item_data.rarity
 	local item_type = item_data.item_type
@@ -1704,18 +1558,7 @@ StoreItemPurchasePopup._create_popup_widget = function (self, product, scenegrap
 	-- function 51
 	local product = self._product
 	local product_id = product.product_id
-	local product_item = product.product_item
-
-	if not product_item then
-		-- Nothing
-	end
-
-	product_item = product.item
-
-	local item = product_item
-
-	::label_51_0::
-
+	local item = not not product.product_item
 	local masked = false
 	local item_size = {
 		260,
@@ -1768,18 +1611,7 @@ StoreItemPurchasePopup._poll_result_on_enter = function (self)
 	-- function 54
 	local item_currency_settings = DLCSettings.store.currency_ui_settings
 	local product = self._product
-	local product_item = product.product_item
-
-	if not product_item then
-		-- Nothing
-	end
-
-	product_item = product.item
-
-	local item = product_item
-
-	::label_54_0::
-
+	local item = not not product.product_item
 	local item_key = item.key
 	local regular_prices = item.regular_prices
 	local current_prices = item.current_prices
@@ -1798,18 +1630,7 @@ StoreItemPurchasePopup._poll_result_on_enter = function (self)
 		end
 	end
 
-	local var_54_1 = current_prices[currency_type]
-
-	if not var_54_1 then
-		-- Nothing
-	end
-
-	var_54_1 = regular_prices[currency_type]
-
-	local price = var_54_1
-
-	::label_54_1::
-
+	local price = not not current_prices[currency_type]
 	local expected_amount = price
 	local callback = callback(self, "_backend_result_callback")
 	local store_interface = Managers.backend:get_interface("peddler")
@@ -1940,13 +1761,11 @@ StoreItemPurchasePopup._populate_item_widget = function (self, widget, item, pro
 	local purchase_ui_renderer = self._purchase_ui_renderer
 	local gui = purchase_ui_renderer.gui
 	local store_icon_override_key = item_data.store_icon_override_key
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	local reference_name = "StoreItemPurchasePopup_" .. product_id .. "_" .. self._reference_id
-	local package_product_id = (not has_parent or not parent_id or not parent_id) and not not store_icon_override_key or not not product_id
+	local package_product_id = has_parent and (parent_id and (not not parent_id or not not store_icon_override_key or not not product_id) or not parent_id and (not not store_icon_override_key or not not product_id)) or not has_parent and (not not store_icon_override_key or not not product_id)
 	local texture_name = "store_item_icon_" .. package_product_id
 	local package_name = "resource_packages/store/item_icons/" .. texture_name
 	local package_available = Application.can_get("package", package_name)
@@ -1954,37 +1773,8 @@ StoreItemPurchasePopup._populate_item_widget = function (self, widget, item, pro
 	if package_available then
 		content.reference_name = reference_name
 
-		local str
-
-		if masked then
-			str = texture_name .. "_masked"
-
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = texture_name
-
-		local new_material_name = str
-
-		do
-			local str_2
-		end
-
-		::label_56_0::
-
-		if masked then
-			str_2 = "template_store_diffuse_masked"
-
-			goto label_56_1
-		end
-
-		str_2 = "template_store_diffuse"
-
-		local template_material_name = str_2
-
-		::label_56_1::
+		local new_material_name = masked and not not (texture_name .. "_masked") or not masked and not not texture_name
+		local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 		self:_create_material_instance(gui, new_material_name, template_material_name, reference_name)
 

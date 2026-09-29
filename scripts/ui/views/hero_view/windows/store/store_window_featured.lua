@@ -113,29 +113,8 @@ StoreWindowFeatured.on_enter = function (self, params, offset)
 	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
 	local current_page = pages[page_name]
-	local slideshow = current_page.slideshow
-
-	if slideshow then
-		-- Nothing
-	end
-
-	slideshow = table.clone(current_page.slideshow)
-
-	local slideshow_content = slideshow
-
-	::label_1_0::
-
-	local grid = current_page.grid
-
-	if grid then
-		-- Nothing
-	end
-
-	grid = table.clone(current_page.grid)
-
-	local grid_content = grid
-
-	::label_1_1::
+	local slideshow_content = not not current_page.slideshow
+	local grid_content = not not current_page.grid
 
 	self._page_name = page_name
 
@@ -266,22 +245,14 @@ StoreWindowFeatured._sync_login_rewards = function (self)
 	if can_claim then
 		active_content.is_claimable = true
 		active_content.subtitle = Localize("available_now")
-
-		local title = login_rewards.title
-
-		title = not not title or not not "store_login_claim_reward_title"
-		active_content.title = title
+		active_content.title = not not login_rewards.title
 	else
 		active_content.is_claimable = false
 
 		local timer = UIUtils.format_duration(cooldown)
 
 		active_content.subtitle = Localize("store_login_rewards_next_available_in") .. timer
-
-		local title_2 = login_rewards.title
-
-		title_2 = not not title_2 or not not "store_login_rewards_title"
-		active_content.title = title_2
+		active_content.title = not not login_rewards.title
 	end
 end
 
@@ -417,29 +388,8 @@ StoreWindowFeatured._draw = function (self, dt)
 	local ui_scenegraph = self.ui_scenegraph
 	local input_service = parent:window_input_service()
 	local render_settings = self._render_settings
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 0
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_13_0::
-
-	local content_alpha_multiplier_2 = render_settings.content_alpha_multiplier
-
-	if not content_alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	content_alpha_multiplier_2 = 0
-
-	local content_alpha_multiplier = content_alpha_multiplier_2
-
-	::label_13_1::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local content_alpha_multiplier = not not render_settings.content_alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
@@ -499,17 +449,7 @@ StoreWindowFeatured._list_index_pressed = function (self)
 	if grid_widgets then
 		for index, widget in ipairs(grid_widgets) do
 			local content = widget.content
-			local hotspot_2 = content.hotspot
-
-			if not hotspot_2 then
-				-- Nothing
-			end
-
-			hotspot_2 = content.button_hotspot
-
-			local hotspot = hotspot_2
-
-			::label_16_0::
+			local hotspot = not not content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -528,17 +468,7 @@ StoreWindowFeatured._animate_grid_entries = function (self, dt)
 	for _, widget in ipairs(grid_widgets) do
 		local content = widget.content
 		local style = widget.style
-		local button_hotspot = content.button_hotspot
-
-		if not button_hotspot then
-			-- Nothing
-		end
-
-		button_hotspot = content.hotspot
-
-		local hotspot = button_hotspot
-
-		::label_17_0::
+		local hotspot = not not content.button_hotspot
 
 		if hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
@@ -664,23 +594,14 @@ StoreWindowFeatured._append_filtered_slideshow_content = function (self, slidesh
 	-- function 24
 	for index, settings in ipairs(settings_table) do
 		if settings.show_in_slideshow and check_function(settings) then
-			local num = #slideshow_content + 1
-			local tbl = {
+			slideshow_content[#slideshow_content + 1] = {
 				texture = settings.slideshow_texture,
 				description = settings.slideshow_text,
-				header = settings.name
+				header = settings.name,
+				product_id = not not settings.dlc_name,
+				product_type = product_type,
+				prio = not not settings.prio
 			}
-			local dlc_name = settings.dlc_name
-
-			dlc_name = not not dlc_name or not not settings.item_key
-			tbl.product_id = dlc_name
-			tbl.product_type = product_type
-
-			local prio = settings.prio
-
-			prio = not not prio or not not 0
-			tbl.prio = prio
-			slideshow_content[num] = tbl
 		end
 	end
 end
@@ -748,30 +669,8 @@ StoreWindowFeatured._get_default_featured_grid_content = function (self, optiona
 			return sale_percentage_a < sale_percentage_b
 		end
 
-		local end_time = a.end_time
-
-		if not end_time then
-			-- Nothing
-		end
-
-		end_time = math.huge
-
-		local a_end_time = end_time
-
-		::label_29_0::
-
-		local end_time_2 = b.end_time
-
-		if not end_time_2 then
-			-- Nothing
-		end
-
-		end_time_2 = math.huge
-
-		local b_end_time = end_time_2
-
-		::label_29_1::
-
+		local a_end_time = not not a.end_time
+		local b_end_time = not not b.end_time
 		local a_time_left = a_end_time - os_time
 		local b_time_left = b_end_time - os_time
 
@@ -786,18 +685,7 @@ StoreWindowFeatured._get_default_featured_grid_content = function (self, optiona
 	while i <= #hero_items and cnt < num_items do
 		local item = hero_items[i]
 		local item_key = item.key
-		local has_item = backend_items:has_item(item_key)
-
-		if not has_item then
-			-- Nothing
-		end
-
-		has_item = backend_items:has_weapon_illusion(item_key)
-
-		local item_owned = has_item
-
-		::label_28_0::
-
+		local item_owned = not not backend_items:has_item(item_key)
 		local item_data = item.data
 		local item_type = item_data.item_type
 
@@ -888,10 +776,8 @@ StoreWindowFeatured._setup_slideshow = function (self, widget, data)
 	local slideshow_content = {}
 	local unlock_manager = Managers.unlock
 	local backend_store = Managers.backend:get_interface("peddler")
-	local _reference_id = self._reference_id
 
-	_reference_id = not not _reference_id or not not 0
-	self._reference_id = _reference_id + 1
+	self._reference_id = not not self._reference_id + 1
 
 	for index, slideshow in ipairs(data) do
 		local valid = true
@@ -906,7 +792,7 @@ StoreWindowFeatured._setup_slideshow = function (self, widget, data)
 					valid = true
 
 					local dlc_id = unlock_manager:dlc_id(product_id)
-					local price_data = backend_store:get_app_price((not IS_WINDOWS or not dlc_id) and not not product_id)
+					local price_data = backend_store:get_app_price(IS_WINDOWS and (not not dlc_id or not not product_id) or not IS_WINDOWS and not not product_id)
 
 					is_discounted = not not price_data and price_data.current_price ~= price_data.regular_price
 				end
@@ -973,19 +859,7 @@ StoreWindowFeatured._setup_backend_image_material = function (self, reference_na
 	-- function 33
 	local material_name = "StoreWindowFeatured_" .. reference_name
 	local gui = self._ui_top_renderer.gui
-	local str
-
-	if masked then
-		str = "template_store_diffuse_masked"
-
-		goto label_33_0
-	end
-
-	str = "template_store_diffuse"
-
-	local template_material_name = str
-
-	::label_33_0::
+	local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
 
 	self:_create_material_instance(gui, material_name, template_material_name, reference_name)
 
@@ -1129,17 +1003,7 @@ StoreWindowFeatured._handle_slideshow_logic = function (self, widget, dt, input_
 			self:_set_slideshow_animation_progress(widget, 1)
 			self:_play_sound("Play_hud_store_button_select")
 		else
-			local button_hotspot = widget.content.button_hotspot
-
-			if not button_hotspot then
-				-- Nothing
-			end
-
-			button_hotspot = widget.content.hotspot
-
-			local hotspot = button_hotspot
-
-			::label_39_0::
+			local hotspot = not not widget.content.button_hotspot
 
 			if hotspot and hotspot.on_pressed then
 				hotspot.on_pressed = false
@@ -1170,32 +1034,11 @@ StoreWindowFeatured._handle_slideshow_logic = function (self, widget, dt, input_
 		return
 	end
 
-	local progress_2 = content.progress
-
-	if not progress_2 then
-		-- Nothing
-	end
-
-	progress_2 = 1
-
-	local progress = progress_2
-
-	::label_39_1::
+	local progress = not not content.progress
 
 	progress = progress - dt * 0.3
 
-	local read_index_2 = content.read_index
-
-	if not read_index_2 then
-		-- Nothing
-	end
-
-	read_index_2 = 1
-
-	local current_read_index = read_index_2
-
-	::label_39_2::
-
+	local current_read_index = not not content.read_index
 	local read_index = current_read_index
 
 	if progress >= 1 then
@@ -1227,54 +1070,18 @@ StoreWindowFeatured._set_slideshow_selected_read_index = function (self, widget,
 	content.delay_timer = wait_time
 	content.show_hourglass = slide_content.is_discounted
 
-	local header_2 = slide_content.header
-
-	if not header_2 then
-		-- Nothing
-	end
-
-	header_2 = slide_content.backend_header
-
-	if not header_2 then
-		-- Nothing
-	end
-
-	header_2 = "tutorial_no_text"
-
-	local header = header_2
-
-	::label_40_0::
+	local header = not not slide_content.header
 
 	content.title_text = Localize(header)
 
-	local description_2 = slide_content.description
-
-	if not description_2 then
-		-- Nothing
-	end
-
-	description_2 = slide_content.backend_description
-
-	if not description_2 then
-		-- Nothing
-	end
-
-	description_2 = "tutorial_no_text"
-
-	local description = description_2
-
-	::label_40_1::
-
+	local description = not not slide_content.description
 	local description_func_name = slide_content.description_func
 
 	if description_func_name then
 		local func = self[description_func_name]
 
 		if func then
-			local var_40_2 = func(self, slide_content.description_params)
-
-			var_40_2 = not not var_40_2 or not not ""
-			content.description_text = var_40_2
+			content.description_text = not not func(self, slide_content.description_params)
 		else
 			Application.warning(string.format("[StoreWindowFeatured] There is no description function called %q in StoreWindowFeatured", description_func_name))
 		end
@@ -1293,18 +1100,7 @@ StoreWindowFeatured.gotwf_description = function (self, params)
 		return
 	end
 
-	local num_rewards_2 = params.num_rewards
-
-	if not num_rewards_2 then
-		-- Nothing
-	end
-
-	num_rewards_2 = 1
-
-	local num_rewards = num_rewards_2
-
-	::label_41_0::
-
+	local num_rewards = not not params.num_rewards
 	local start_date = os.date("%x", start_time * 0.001)
 	local end_date = os.date("%x", start_time * 0.001 + 86400 * (num_rewards - 1))
 
@@ -1394,18 +1190,7 @@ StoreWindowFeatured._set_slideshow_animation_progress = function (self, widget, 
 	local style = widget.style
 	local slideshow_content = content.slideshow_content
 	local num_slideshows = #slideshow_content
-	local read_index_2 = content.read_index
-
-	if not read_index_2 then
-		-- Nothing
-	end
-
-	read_index_2 = 1
-
-	local read_index = read_index_2
-
-	::label_45_0::
-
+	local read_index = not not content.read_index
 	local default_size = content.size
 	local default_width = default_size[1]
 
@@ -1439,56 +1224,9 @@ StoreWindowFeatured._update_hotspot_progress = function (self, hotspot, dt)
 	-- function 46
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_46_1
-
-	::label_46_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_46_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_46_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_46_3::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then

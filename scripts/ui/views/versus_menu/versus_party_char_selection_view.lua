@@ -35,17 +35,7 @@ VersusPartyCharSelectionView.init = function (self, ingame_ui_context)
 	self._ingame_ui = ingame_ui_context.ingame_ui
 	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
 
-	local network_server = ingame_ui_context.network_server
-
-	if not network_server then
-		-- Nothing
-	end
-
-	network_server = ingame_ui_context.network_client
-
-	local network_handler = network_server
-
-	::label_1_0::
+	local network_handler = not not ingame_ui_context.network_server
 
 	self._profile_requester = network_handler:profile_requester()
 	self._ingame_ui_context = ingame_ui_context
@@ -331,11 +321,7 @@ VersusPartyCharSelectionView._update_party_state_player_picking_character = func
 		return
 	end
 
-	local index_wrapper = math.index_wrapper
-	local _next_character_update_idx = self._next_character_update_idx
-
-	_next_character_update_idx = not not _next_character_update_idx or not not 0
-	self._next_character_update_idx = index_wrapper(_next_character_update_idx + 1, current_picker_index)
+	self._next_character_update_idx = math.index_wrapper(not not self._next_character_update_idx + 1, current_picker_index)
 
 	local pick_id = self._next_character_update_idx
 	local player_data = picker_list[pick_id]
@@ -498,57 +484,14 @@ VersusPartyCharSelectionView._update_roster_widgets_animations = function (self,
 					local locked = content.locked
 					local other_picking = content.other_picking
 					local gamepad_selected = content.gamepad_selected
-					local is_hover = (hotspot.is_hover or not not gamepad_selected) and not other_picking and not not not locked
+					local is_hover = hotspot.is_hover and not other_picking and not not not locked or not hotspot.is_hover and not not gamepad_selected and not other_picking and not not not locked
 					local profile_index = content.profile_index
 					local career_index = content.career_index
 					local is_selected = self:_is_item_selected(profile_index, career_index)
-					local hover_progress_2 = hotspot.hover_progress
-
-					if not hover_progress_2 then
-						-- Nothing
-					end
-
-					hover_progress_2 = 0
-
-					local hover_progress = hover_progress_2
-
-					::label_16_0::
-
-					local selection_progress_2 = hotspot.selection_progress
-
-					if not selection_progress_2 then
-						-- Nothing
-					end
-
-					selection_progress_2 = 0
-
-					local selection_progress = selection_progress_2
-
-					::label_16_1::
-
-					local inactive_progress_2 = hotspot.inactive_progress
-
-					if not inactive_progress_2 then
-						-- Nothing
-					end
-
-					inactive_progress_2 = 0
-
-					local inactive_progress = inactive_progress_2
-
-					::label_16_2::
-
-					local taken_progress_2 = hotspot.taken_progress
-
-					if not taken_progress_2 then
-						-- Nothing
-					end
-
-					taken_progress_2 = 0
-
-					local taken_progress = taken_progress_2
-
-					::label_16_3::
+					local hover_progress = not not hotspot.hover_progress
+					local selection_progress = not not hotspot.selection_progress
+					local inactive_progress = not not hotspot.inactive_progress
+					local taken_progress = not not hotspot.taken_progress
 
 					content.party_state = party_state
 
@@ -557,7 +500,7 @@ VersusPartyCharSelectionView._update_roster_widgets_animations = function (self,
 						style.other_player_selected_texture.color[1] = 0
 						is_inactive = true
 					elseif party_state ~= "startup" and party_state ~= "parading" then
-						is_inactive = (picker_data.state == "player_has_picked_character" or not not locked) and not not not is_selected
+						is_inactive = picker_data.state == "player_has_picked_character" and not not not is_selected or not (picker_data.state == "player_has_picked_character") and not not locked and not not not is_selected
 
 						local speed = 15
 						local selected_speed = 5
@@ -587,10 +530,8 @@ VersusPartyCharSelectionView._update_roster_widgets_animations = function (self,
 						end
 
 						local select_easing_progress = math.easeCubic(selection_progress)
-						local flag
 
-						flag = (not (hover_progress > 0) or not 10) and not not 0
-						offset[3] = flag
+						offset[3] = hover_progress > 0 and not not 10 or not (hover_progress > 0) and not not 0
 
 						local taken_color = 55 + 200 * (1 - taken_progress)
 
@@ -600,63 +541,14 @@ VersusPartyCharSelectionView._update_roster_widgets_animations = function (self,
 							taken_color,
 							taken_color
 						}
-
-						local color = style.local_player_selected_texture.color
-						local num
-
-						if not other_picking then
-							num = 255 * select_easing_progress
-
-							if not num then
-								-- Nothing
-							end
-						end
-
-						num = 0
-
-						::label_16_4::
-
-						color[1] = num
-
-						local color_2 = style.other_player_selected_texture.color
-						local num_2
-
-						if other_picking then
-							num_2 = 255 * select_easing_progress
-
-							if not num_2 then
-								-- Nothing
-							end
-						end
-
-						num_2 = 0
-
-						::label_16_5::
-
-						color_2[1] = num_2
+						style.local_player_selected_texture.color[1] = other_picking and not not 0 or not other_picking and not not (255 * select_easing_progress)
+						style.other_player_selected_texture.color[1] = other_picking and not not (255 * select_easing_progress) or not other_picking and not not 0
 
 						for style_name, pass_style in pairs(style) do
 							local default_size = pass_style.default_size
 
 							if default_size then
-								local size_2 = pass_style.size
-
-								if not size_2 then
-									-- Nothing
-								end
-
-								size_2 = pass_style.texture_size
-
-								if not size_2 then
-									-- Nothing
-								end
-
-								size_2 = pass_style.area_size
-
-								local size = size_2
-
-								::label_16_6::
-
+								local size = not not pass_style.size
 								local additional_size_multiplier = 0
 
 								if style_name == "local_player_selected_texture" or style_name == "other_player_selected_texture" then
@@ -768,17 +660,7 @@ VersusPartyCharSelectionView.draw = function (self, dt)
 	local render_settings = self.render_settings
 	local party_data = self._party_selection_logic:get_party_data(self._party_id)
 	local party_state = party_data.state
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_20_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 	self:_draw_widgets(self._other_widgets, render_settings, ui_top_renderer, alpha_multiplier)
@@ -808,10 +690,7 @@ VersusPartyCharSelectionView._draw_widgets = function (self, widgets, render_set
 	end
 
 	for _, widget in ipairs(widgets) do
-		local alpha_multiplier_2 = widget.alpha_multiplier
-
-		alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_2
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -920,22 +799,7 @@ VersusPartyCharSelectionView._update_player_name_box_widget = function (self, pa
 		local player = status.player
 		local widget = self._player_name_box_widgets[pick_id]
 		local content = widget.content
-		local _set_player_name
-
-		if player then
-			_set_player_name = self:_set_player_name(player)
-
-			if not _set_player_name then
-				-- Nothing
-			end
-		end
-
-		_set_player_name = "BOT"
-
-		local player_name = _set_player_name
-
-		::label_27_0::
-
+		local player_name = player and not not self:_set_player_name(player) or not player and not not "BOT"
 		local picking_progress_text
 
 		if picker.state == "player_picking_character" then
@@ -950,21 +814,7 @@ VersusPartyCharSelectionView._update_player_name_box_widget = function (self, pa
 
 		local template_string = "{#color(%d,%d,%d,%d)}%s {#reset()} %s"
 		local is_local_player = self._picker_list_id == pick_id
-		local get_color_table_with_alpha
-
-		if is_local_player then
-			get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_picking", 255)
-
-			if not get_color_table_with_alpha then
-				-- Nothing
-			end
-		end
-
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("other_player_picking", 255)
-
-		local name_color = get_color_table_with_alpha
-
-		::label_27_1::
+		local name_color = is_local_player and not not Colors.get_color_table_with_alpha("local_player_picking", 255) or not is_local_player and not not Colors.get_color_table_with_alpha("other_player_picking", 255)
 
 		content.player_name = string.format(template_string, name_color[2], name_color[3], name_color[4], name_color[1], player_name, picking_progress_text)
 		content.is_player = player ~= nil
@@ -992,18 +842,7 @@ VersusPartyCharSelectionView._setup_hero_party_selection_widgets = function (sel
 	for i, profile_index in pairs(profile_indices) do
 		local profile_settings = profiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local get = hero_attributes:get(hero_name, "experience")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = 0
-
-		local hero_experience = get
-
-		::label_28_0::
-
+		local hero_experience = not not hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local careers = profile_settings.careers
 		local columns = 0
@@ -1138,18 +977,7 @@ end
 VersusPartyCharSelectionView._handle_gamepad_selection = function (self)
 	-- function 35
 	local is_picking = self:local_player_is_picking()
-	local _gamepad_selected_index = self._gamepad_selected_index
-
-	if not _gamepad_selected_index then
-		-- Nothing
-	end
-
-	_gamepad_selected_index = 1
-
-	local gamepad_selected_index = _gamepad_selected_index
-
-	::label_35_0::
-
+	local gamepad_selected_index = not not self._gamepad_selected_index
 	local input_service = self:input_service()
 
 	if input_service:get("move_right") then
@@ -1176,12 +1004,7 @@ VersusPartyCharSelectionView._handle_gamepad_selection = function (self)
 
 	if gamepad_selected_index ~= self._gamepad_selected_index then
 		local current_selcted_widget = self._hero_group_widgets[gamepad_selected_index]
-		local _hero_group_widgets = self._hero_group_widgets
-		local _gamepad_selected_index_2 = self._gamepad_selected_index
-
-		_gamepad_selected_index_2 = not not _gamepad_selected_index_2 or not not 1
-
-		local previous_selected_widget = _hero_group_widgets[_gamepad_selected_index_2]
+		local previous_selected_widget = self._hero_group_widgets[not not self._gamepad_selected_index]
 		local current_content = current_selcted_widget.content
 
 		current_content.gamepad_selected = true
@@ -1261,7 +1084,7 @@ VersusPartyCharSelectionView._handle_mouse_selection = function (self)
 					end
 				end
 
-				if (profile_index ~= picked_profile_index or career_index ~= picked_career_index) and not content.taken and not content.other_picking and not content.locked then
+				if profile_index ~= picked_profile_index and not content.taken and not content.other_picking and not content.locked or not (profile_index ~= picked_profile_index) and career_index ~= picked_career_index and not content.taken and not content.other_picking and not content.locked then
 					if button_hotspot.on_hover_enter then
 						self:play_sound("Play_hud_hover")
 					end
@@ -1352,19 +1175,7 @@ end
 
 VersusPartyCharSelectionView._set_top_detail_widgets_visible = function (self, visible)
 	-- function 41
-	local num
-
-	if visible then
-		num = 1
-
-		goto label_41_0
-	end
-
-	num = 0
-
-	local alpha_multiplier = num
-
-	::label_41_0::
+	local alpha_multiplier = visible and not not 1 or not visible and not not 0
 
 	for _, widget in ipairs(self._top_detail_widgets) do
 		widget.alpha_multiplier = alpha_multiplier
@@ -1381,29 +1192,8 @@ VersusPartyCharSelectionView._is_item_hovered_by_other = function (self, profile
 	for i = 1, num_slots do
 		local player_data = picker_list[i]
 		local status = player_data.status
-		local hovered_profile_index_2 = status.hovered_profile_index
-
-		if not hovered_profile_index_2 then
-			-- Nothing
-		end
-
-		hovered_profile_index_2 = 0
-
-		local hovered_profile_index = hovered_profile_index_2
-
-		::label_42_0::
-
-		local hovered_career_index_2 = status.hovered_career_index
-
-		if not hovered_career_index_2 then
-			-- Nothing
-		end
-
-		hovered_career_index_2 = 0
-
-		local hovered_career_index = hovered_career_index_2
-
-		::label_42_1::
+		local hovered_profile_index = not not status.hovered_profile_index
+		local hovered_career_index = not not status.hovered_career_index
 
 		if hovered_profile_index == profile_index and hovered_career_index == career_index then
 			if status.slot_id == self._slot_id or self:_has_slot_picked(i) then
@@ -1464,22 +1254,7 @@ VersusPartyCharSelectionView._set_current_picker_text = function (self, current_
 		local player_data = picker_list[current_picker_index]
 		local status = player_data.status
 		local player = status.player
-		local name
-
-		if player then
-			name = player:name()
-
-			if not name then
-				-- Nothing
-			end
-		end
-
-		name = "BOT"
-
-		local player_name = name
-
-		::label_46_0::
-
+		local player_name = player and not not player:name() or not player and not not "BOT"
 		local color = Colors.get_color_table_with_alpha("other_player_picking", 255)
 
 		widget.content.text = string.format(Localize("versus_hero_selection_view_other_player_picking"), color[2], color[3], color[4], color[1], player_name)
@@ -1518,40 +1293,8 @@ VersusPartyCharSelectionView._update_selcted_career_passive_and_career_skill = f
 	local skill_title_text_width = UIUtils.get_text_width(self._ui_renderer, career_skill_title_style, career_skill_title)
 	local career_skill_name_style = career_skill_widget.style.skill_name
 	local skill_text_width = UIUtils.get_text_width(self._ui_renderer, career_skill_name_style, career_skill_name)
-	local num
-
-	if 85 + skill_title_text_width > 150 then
-		num = 85 + skill_title_text_width
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 200
-
-	local careers_skill_title_text_width = num
-
-	do
-		local num_2
-	end
-
-	::label_47_0::
-
-	if 85 + skill_text_width > 150 then
-		num_2 = 85 + skill_text_width
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = 200
-
-	local careers_skill_name_text_width = num_2
-
-	::label_47_1::
-
+	local careers_skill_title_text_width = 85 + skill_title_text_width > 150 and not not (85 + skill_title_text_width) or not (85 + skill_title_text_width > 150) and not not 200
+	local careers_skill_name_text_width = 85 + skill_text_width > 150 and not not (85 + skill_text_width) or not (85 + skill_text_width > 150) and not not 200
 	local careers_skill_text_width
 
 	if careers_skill_name_text_width < careers_skill_title_text_width then
@@ -1636,20 +1379,7 @@ end
 
 VersusPartyCharSelectionView._get_heroes_spawn_locations = function (self, party_id)
 	-- function 52
-	local str
-
-	if party_id == self._party_id then
-		str = "character_slot_0"
-
-		goto label_52_0
-	end
-
-	str = "character_slot_enemy_0"
-
-	local spawn_point_unit_prefix = str
-
-	::label_52_0::
-
+	local spawn_point_unit_prefix = party_id ~= self._party_id and not not "character_slot_enemy_0" or not (party_id ~= self._party_id) and not not "character_slot_0"
 	local unit = "units/hub_elements/versus_podium_character_spawn"
 	local unit_indices = LevelResource.unit_indices(level_name, unit)
 	local hero_locations = {}
@@ -1804,42 +1534,17 @@ VersusPartyCharSelectionView._get_hero_previewer_data = function (self, picker, 
 	if profile_data then
 		local careers = profile_data.careers
 		local career_settings = careers[career_index]
-		local versus_preview_animation = career_settings.versus_preview_animation
-
-		if not versus_preview_animation then
-			-- Nothing
-		end
-
-		versus_preview_animation = career_settings.preview_animation
-
-		local preview_animation = versus_preview_animation
-
-		::label_61_0::
-
+		local preview_animation = not not career_settings.versus_preview_animation
 		local preview_wield_slot = career_settings.preview_wield_slot
 		local hero_name = career_settings.profile_name
 		local hat = slot_data.slot_hat
 		local preview_items = {
 			career_settings.preview_items[1],
 			{
-				item_name = (hat == "n/a" or not hat) and not not career_settings.preview_items[2].item_name
+				item_name = not not career_settings.preview_items[2].item_name
 			}
 		}
-		local slot_skin
-
-		if slot_data.slot_skin ~= "n/a" then
-			slot_skin = slot_data.slot_skin
-
-			if not slot_skin then
-				-- Nothing
-			end
-		end
-
-		slot_skin = career_settings.base_skin
-
-		local skin_name = slot_skin
-
-		::label_61_1::
+		local skin_name = slot_data.slot_skin == "n/a" and not not career_settings.base_skin or not (slot_data.slot_skin == "n/a") and not not slot_data.slot_skin
 
 		return {
 			profile_index = profile_index,

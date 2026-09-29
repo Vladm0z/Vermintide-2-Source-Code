@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/equipment/attack_templates_dlc_vs.lua
 
-local AttackTemplates = AttackTemplates
-
-AttackTemplates = not not AttackTemplates or not not {}
-AttackTemplates = AttackTemplates
+AttackTemplates = not not AttackTemplates
 AttackTemplates.shot_shotgun_vs = {
 	stagger_angle = "stab",
 	sound_type = "heavy",

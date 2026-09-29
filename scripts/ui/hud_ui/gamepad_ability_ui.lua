@@ -184,7 +184,7 @@ GamePadAbilityUI._handle_gamepad_activity = function (self)
 	-- function 11
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local most_recent_device = Managers.input:get_most_recent_device()
-	local force_update = (self.gamepad_active_last_frame == nil or not not gamepad_active) and most_recent_device ~= self._most_recent_device
+	local force_update = self.gamepad_active_last_frame == nil or not not gamepad_active and most_recent_device ~= self._most_recent_device
 
 	if gamepad_active then
 		if not self.gamepad_active_last_frame or force_update then
@@ -204,19 +204,9 @@ end
 GamePadAbilityUI._handle_gamepad = function (self)
 	-- function 12
 	local active_career_skill = self:_handle_active_ability()
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local gamepad_active = not not Managers.input:is_device_active("gamepad")
 
-	if not is_device_active then
-		-- Nothing
-	end
-
-	is_device_active = IS_XB1
-
-	local gamepad_active = is_device_active
-
-	::label_12_0::
-
-	if (not gamepad_active or UISettings.use_gamepad_hud_layout == "never") and UISettings.use_gamepad_hud_layout ~= "always" or active_career_skill then
+	if gamepad_active and (UISettings.use_gamepad_hud_layout ~= "never" and active_career_skill or not (UISettings.use_gamepad_hud_layout ~= "never") and (not (UISettings.use_gamepad_hud_layout == "always") or active_career_skill)) or not gamepad_active and (not (UISettings.use_gamepad_hud_layout == "always") or active_career_skill) then
 		if self._retained_elements_visible then
 			self:_set_elements_visible(false)
 		end
@@ -347,20 +337,7 @@ GamePadAbilityUI.event_input_changed = function (self)
 	local num_inventory_slots = #inventory_slots
 	local input_manager = self._input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
-	local str
-
-	if gamepad_active then
-		str = "ability"
-
-		goto label_19_0
-	end
-
-	str = "action_career"
-
-	local input_action = str
-
-	::label_19_0::
-
+	local input_action = gamepad_active and not not "ability" or not gamepad_active and not not "action_career"
 	local widget = self._widgets_by_name.ability
 
 	self:_set_input(widget, input_action)
@@ -371,22 +348,7 @@ end
 GamePadAbilityUI._set_input = function (self, widget, input_action)
 	-- function 20
 	local texture_data, input_text, prefix_text = self:_get_input_texture_data(input_action)
-	local length
-
-	if input_text then
-		length = Utf8.length(input_text)
-
-		if not length then
-			-- Nothing
-		end
-	end
-
-	length = 0
-
-	local text_length = length
-
-	::label_20_0::
-
+	local text_length = input_text and not not Utf8.length(input_text) or not input_text and not not 0
 	local max_length = 40
 	local style = widget.style
 	local content = widget.content
@@ -441,12 +403,7 @@ GamePadAbilityUI._get_input_texture_data = function (self, input_action)
 	if key_index ~= UNASSIGNED_KEY then
 		if device_type == "keyboard" then
 			if type(key_index) == "number" then
-				local var_21_0
-				local button_locale_name = Keyboard.button_locale_name(key_index)
-
-				button_locale_name = not not button_locale_name or not not Keyboard.button_name(key_index)
-
-				return var_21_0, button_locale_name, prefix_text
+				return nil, not not Keyboard.button_locale_name(key_index), prefix_text
 			else
 				return nil, Localize(key_index), prefix_text
 			end

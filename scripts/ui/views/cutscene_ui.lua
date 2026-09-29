@@ -98,11 +98,7 @@ end
 
 CutsceneUI.do_draw = function (self)
 	-- function 5
-	local letterbox_enabled = self.letterbox_enabled
-
-	letterbox_enabled = not not letterbox_enabled or #self.fx_fade_widgets > 0 or #self.fx_text_popup_widgets > 0
-
-	return letterbox_enabled
+	return not not self.letterbox_enabled
 end
 
 CutsceneUI.prepare_draw = function (self)
@@ -233,18 +229,7 @@ CutsceneUI.fx_fade = function (self, fade_in_time, hold_time, fade_out_time, col
 	fade_out_time = not not fade_out_time or not not settings.fade_out_time
 	color = not not color or not not settings.color
 
-	local remove = table.remove(self.fx_fade_widgets_pool)
-
-	if not remove then
-		-- Nothing
-	end
-
-	remove = UIWidget.init(definitions.widgets.fx_fade)
-
-	local widget = remove
-
-	::label_12_0::
-
+	local widget = not not table.remove(self.fx_fade_widgets_pool)
 	local target = widget.content
 	local target_index = "fx_fade_alpha"
 	local start_alpha = 0
@@ -282,18 +267,7 @@ CutsceneUI.fx_text_popup = function (self, fade_in_time, hold_time, fade_out_tim
 	fade_out_time = not not fade_out_time or not not settings.fade_out_time
 	text = not not text or not not "no text set"
 
-	local remove = table.remove(self.fx_text_popup_widgets_pool)
-
-	if not remove then
-		-- Nothing
-	end
-
-	remove = UIWidget.init(definitions.widgets.fx_text_popup)
-
-	local widget = remove
-
-	::label_14_0::
-
+	local widget = not not table.remove(self.fx_text_popup_widgets_pool)
 	local target = widget.content
 	local target_index = "fx_text_popup_alpha"
 	local start_alpha = 0

@@ -250,7 +250,7 @@ StateSplashScreen.update = function (self, dt, t)
 		self:update_esrb_logo(dt, t)
 	end
 
-	if not self.wanted_state and (not self.splash_view or not self.splash_view:is_completed()) and not self._skip_splash or self:packages_loaded() then
+	if not self.wanted_state and (self.splash_view and (self.splash_view:is_completed() and self:packages_loaded() or not self.splash_view:is_completed() and self._skip_splash and self:packages_loaded()) or not self.splash_view and self._skip_splash and self:packages_loaded()) then
 		require("scripts/game_state/state_title_screen")
 		Managers.transition:fade_in(0.5, callback(self, "cb_fade_in_done"))
 	end

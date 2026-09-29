@@ -1,9 +1,6 @@
 -- chunkname: @scripts/ui/ui_passes_tooltips.lua
 
-local UITooltipPasses = UITooltipPasses
-
-UITooltipPasses = not not UITooltipPasses or not not {}
-UITooltipPasses = UITooltipPasses
+UITooltipPasses = not not UITooltipPasses
 
 local UIRenderer = UIRenderer
 local UIRenderer_draw_texture = UIRenderer.draw_texture
@@ -48,18 +45,7 @@ UITooltipPasses = {
 			-- function 3
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_3_0::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
@@ -134,36 +120,14 @@ UITooltipPasses = {
 			-- function 5
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_5_0::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
 
 			if draw then
 				local item_data = item.data
-				local rarity_2 = item.rarity
-
-				if not rarity_2 then
-					-- Nothing
-				end
-
-				rarity_2 = item_data.rarity
-
-				local rarity = rarity_2
-
-				::label_5_1::
-
+				local rarity = not not item.rarity
 				local rarity_color = Colors.get_table(rarity)
 
 				position[2] = position[2] - size[2] - edge_height * 2
@@ -215,18 +179,7 @@ UITooltipPasses = {
 			-- function 7
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 210 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_7_0::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
@@ -298,18 +251,7 @@ UITooltipPasses = {
 			-- function 9
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_9_0::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
@@ -317,18 +259,7 @@ UITooltipPasses = {
 
 			if draw then
 				local item_data = item.data
-				local rarity_2 = item.rarity
-
-				if not rarity_2 then
-					-- Nothing
-				end
-
-				rarity_2 = item_data.rarity
-
-				local rarity = rarity_2
-
-				::label_9_1::
-
+				local rarity = not not item.rarity
 				local rarity_color = Colors.get_table(rarity)
 
 				position[2] = position[2] + edge_height
@@ -385,36 +316,14 @@ UITooltipPasses = {
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 			local alpha = (55 + 200 * progress) * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_11_0::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
 
 			if draw then
 				local item_data = item.data
-				local rarity_2 = item.rarity
-
-				if not rarity_2 then
-					-- Nothing
-				end
-
-				rarity_2 = item_data.rarity
-
-				local rarity = rarity_2
-
-				::label_11_1::
-
+				local rarity = not not item.rarity
 				local rarity_color = Colors.get_table(rarity)
 
 				position[1] = position[1] - edge_height
@@ -503,43 +412,10 @@ UITooltipPasses = {
 			-- function 13
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_13_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_13_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
-			local rarity_2 = item.rarity
-
-			if not rarity_2 then
-				-- Nothing
-			end
-
-			rarity_2 = item_data.rarity
-
-			local rarity = rarity_2
-
-			::label_13_2::
-
+			local rarity = not not item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local style = data.style
 			local content = data.content
@@ -704,30 +580,8 @@ UITooltipPasses = {
 			-- function 15
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_15_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_15_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local slot_type = item_data.slot_type
 			local is_weapon = slot_type == "melee" or slot_type == "ranged"
@@ -815,30 +669,8 @@ UITooltipPasses = {
 
 			for index, attacks_data in ipairs(weapon_stats_data) do
 				for attack_index, attack_data in ipairs(attacks_data) do
-					local title_2 = attack_data.title
-
-					if not title_2 then
-						-- Nothing
-					end
-
-					title_2 = "n/a"
-
-					local title = title_2
-
-					::label_15_2::
-
-					local value_2 = attack_data.value
-
-					if not value_2 then
-						-- Nothing
-					end
-
-					value_2 = 0
-
-					local value = value_2
-
-					::label_15_3::
-
+					local title = not not attack_data.title
+					local value = not not attack_data.value
 					local key = attack_data.key
 
 					if attack_index == 1 then
@@ -999,31 +831,9 @@ UITooltipPasses = {
 			-- function 17
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_17_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_17_1::
-
+			local frame_margin = not not data.frame_margin
 			local backend_id = item.backend_id
 			local item_data = item.data
 			local slot_type = item_data.slot_type
@@ -1206,31 +1016,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_19_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_19_1::
-
+			local frame_margin = not not data.frame_margin
 			local properties = item.properties
 			local style = data.style
 			local content = data.content
@@ -1243,17 +1031,7 @@ UITooltipPasses = {
 			position[2] = position[2]
 
 			local loop_func = pairs
-			local get = input_service:get("item_compare")
-
-			if not get then
-				-- Nothing
-			end
-
-			get = input_service:get("item_detail")
-
-			local show_advanced_description = get
-
-			::label_19_2::
+			local show_advanced_description = not not input_service:get("item_compare")
 
 			if properties then
 				position[1] = position[1] + frame_margin
@@ -1302,39 +1080,8 @@ UITooltipPasses = {
 							text = HIDDEN_DESCRIPTION_TEXT
 						else
 							local description, advanced_description = UIUtils.get_property_description(property_key, property_value)
-							local length
-
-							if advanced_description then
-								length = Utf8.length(advanced_description)
-
-								if not length then
-									-- Nothing
-								end
-							end
-
-							length = 0
-
-							local additional_text_length = length
-
-							do
-								local length_2
-							end
-
-							::label_19_3::
-
-							if text then
-								length_2 = Utf8.length(text)
-
-								if not length_2 then
-									-- Nothing
-								end
-							end
-
-							length_2 = 0
-
-							local default_text_length = length_2
-
-							::label_19_4::
+							local additional_text_length = advanced_description and not not Utf8.length(advanced_description) or not advanced_description and not not 0
+							local default_text_length = text and not not Utf8.length(text) or not text and not not 0
 
 							text = description .. advanced_description
 
@@ -1520,32 +1267,10 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_21_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
 			local top_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_21_1::
-
+			local frame_margin = not not data.frame_margin
 			local traits = item.traits
 			local total_height = 0
 
@@ -1561,21 +1286,7 @@ UITooltipPasses = {
 				position[3] = start_layer + 2
 
 				local trait_spacing = 10
-				local ipairs
-
-				if draw_downwards then
-					ipairs = ipairs
-
-					if not ipairs then
-						-- Nothing
-					end
-				end
-
-				ipairs = ripairs
-
-				local loop_func = ipairs
-
-				::label_21_2::
+				local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
 
 				for index, trait_key in loop_func(traits) do
 					local trait_data = WeaponTraits.traits[trait_key]
@@ -1791,30 +1502,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_23_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_23_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local properties = item.properties
 			local style = data.style
 			local content = data.content
@@ -2003,24 +1692,7 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 25
 			local backend_id = item.backend_id
-
-			if item then
-				-- Nothing
-			end
-
-			::label_25_0::
-
-			local data_2 = item.data
-
-			if data_2 then
-				-- Nothing
-			end
-
-			data_2 = item.data.slot_type
-
-			local slot_type = data_2
-
-			::label_25_1::
+			local slot_type = not not item and not not item.data
 
 			if not pass_data.force_equipped then
 				if slot_type then
@@ -2063,30 +1735,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_25_2::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_25_3::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -2290,30 +1940,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_27_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_27_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local slot_type = item_data.slot_type
 
@@ -2518,30 +2146,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_29_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_29_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local slot_type = item_data.slot_type
 
@@ -2687,30 +2293,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_31_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_31_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local text_styles = data.text_styles
 			local text_content = data.text_content
 
@@ -2767,14 +2351,8 @@ UITooltipPasses = {
 							local highest_compared_power_level = 0
 
 							for _, item_to_check in ipairs(pass_data.items) do
-								if item_to_check.backend_id ~= item.backend_id then
-									local power_level_2 = item_to_check.power_level
-
-									power_level_2 = not not power_level_2 or not not -1
-
-									if highest_compared_power_level < power_level_2 then
-										highest_compared_power_level = item_to_check.power_level
-									end
+								if item_to_check.backend_id ~= item.backend_id and highest_compared_power_level < not not item_to_check.power_level then
+									highest_compared_power_level = item_to_check.power_level
 								end
 							end
 
@@ -3009,43 +2587,10 @@ UITooltipPasses = {
 			-- function 33
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_33_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_33_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
-			local rarity_2 = item.rarity
-
-			if not rarity_2 then
-				-- Nothing
-			end
-
-			rarity_2 = item_data.rarity
-
-			local rarity = rarity_2
-
-			::label_33_2::
-
+			local rarity = not not item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local style = data.style
 			local content = data.content
@@ -3055,40 +2600,8 @@ UITooltipPasses = {
 			local total_height = 0
 			local item_type = item_data.item_type
 			local _, display_name, _ = UIUtils.get_ui_information_from_item(item)
-			local var_33_3
-
-			if item.hidden_description then
-				var_33_3 = HIDDEN_DESCRIPTION_TEXT
-
-				if not var_33_3 then
-					-- Nothing
-				end
-			end
-
-			var_33_3 = Localize(display_name)
-
-			local title_text = var_33_3
-
-			do
-				local var_33_4
-			end
-
-			::label_33_3::
-
-			if item.hidden_description then
-				var_33_4 = HIDDEN_DESCRIPTION_TEXT
-
-				if not var_33_4 then
-					-- Nothing
-				end
-			end
-
-			var_33_4 = Localize(item_type)
-
-			local type_text = var_33_4
-
-			::label_33_4::
-
+			local title_text = item.hidden_description and not not HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and not not Localize(display_name)
+			local type_text = item.hidden_description and not not HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and not not Localize(item_type)
 			local text_style = style.text
 			local text_shadow_style = style.text_shadow
 			local player = pass_data.player
@@ -3105,21 +2618,7 @@ UITooltipPasses = {
 				end
 
 				local can_wield_table = not not item_data and not not item_data.can_wield
-				local contains
-
-				if can_wield_table then
-					contains = table.contains(can_wield_table, career_name)
-
-					if not contains then
-						-- Nothing
-					end
-				end
-
-				contains = pass_definition.disable_unsupported
-
-				local can_wield = contains
-
-				::label_33_5::
+				local can_wield = can_wield_table and not not table.contains(can_wield_table, career_name) or not can_wield_table and not not pass_definition.disable_unsupported
 
 				if not can_wield then
 					text_style.text_color = text_style.disabled_text_color
@@ -3347,43 +2846,10 @@ UITooltipPasses = {
 			-- function 35
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_35_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_35_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
-			local rarity_2 = item.rarity
-
-			if not rarity_2 then
-				-- Nothing
-			end
-
-			rarity_2 = item_data.rarity
-
-			local rarity = rarity_2
-
-			::label_35_2::
-
+			local rarity = not not item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local style = data.style
 			local content = data.content
@@ -3417,21 +2883,7 @@ UITooltipPasses = {
 				end
 
 				local can_wield_table = not not item_data and not not item_data.can_wield
-				local contains
-
-				if can_wield_table then
-					contains = table.contains(can_wield_table, career_name)
-
-					if not contains then
-						-- Nothing
-					end
-				end
-
-				contains = pass_definition.disable_unsupported
-
-				local can_wield = contains
-
-				::label_35_3::
+				local can_wield = can_wield_table and not not table.contains(can_wield_table, career_name) or not can_wield_table and not not pass_definition.disable_unsupported
 
 				if not can_wield then
 					text_style.text_color = text_style.disabled_text_color
@@ -3632,30 +3084,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_37_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_37_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local text_styles = data.text_styles
 			local text_content = data.text_content
 
@@ -3663,28 +3093,14 @@ UITooltipPasses = {
 
 			local backend_id = item.backend_id
 			local item_data = item.data
-			local rarity_2 = item.rarity
-
-			if not rarity_2 then
-				-- Nothing
-			end
-
-			rarity_2 = item_data.rarity
-
-			local rarity = rarity_2
-
-			::label_37_2::
-
+			local rarity = not not item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local slot_type = item_data.slot_type
 			local item_template = slot_type ~= ItemType.LOOT_CHEST and not not BackendUtils.get_item_template(item_data, backend_id)
 			local max_fatigue_points = slot_type == ItemType.MELEE and not not item_template.max_fatigue_points
 
 			if max_fatigue_points then
-				local str = "+" .. max_fatigue_points .. Localize("tooltip_stamina")
-
-				str = not not str or not not "n/a"
-				text_content.stat = str
+				text_content.stat = not not ("+" .. max_fatigue_points .. Localize("tooltip_stamina"))
 			end
 
 			if item_template and item_template.buffs and item_template.buffs[1] then
@@ -3705,43 +3121,13 @@ UITooltipPasses = {
 				end
 			end
 
-			local ipairs
-
-			if draw_downwards then
-				ipairs = ipairs
-
-				if not ipairs then
-					-- Nothing
-				end
-			end
-
-			ipairs = ripairs
-
-			local loop_func = ipairs
-
-			::label_37_3::
-
+			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
 			local position_x = position[1]
 			local position_y = position[2]
 			local position_z = position[3]
 
 			position[1] = position[1] + frame_margin
-
-			local num
-
-			if draw_downwards then
-				num = position[2] - size[2] - frame_margin
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = position[2] + frame_margin
-
-			::label_37_4::
-
-			position[2] = num
+			position[2] = draw_downwards and not not (position[2] - size[2] - frame_margin) or not draw_downwards and not not (position[2] + frame_margin)
 			position[3] = start_layer + 5
 
 			local text_pass_data = data.text_pass_data
@@ -3754,10 +3140,8 @@ UITooltipPasses = {
 
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
-				local flag
 
-				flag = (not draw_downwards or not "top") and not not "bottom"
-				text_style.vertical_alignment = flag
+				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "bottom"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -3836,30 +3220,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_39_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_39_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local item_data = item.data
@@ -3877,21 +3239,7 @@ UITooltipPasses = {
 				end
 
 				local can_wield_table = not not item_data and not not item_data.can_wield
-				local contains
-
-				if can_wield_table then
-					contains = table.contains(can_wield_table, career_name)
-
-					if not contains then
-						-- Nothing
-					end
-				end
-
-				contains = pass_definition.disable_unsupported
-
-				local can_wield = contains
-
-				::label_39_2::
+				local can_wield = can_wield_table and not not table.contains(can_wield_table, career_name) or not can_wield_table and not not pass_definition.disable_unsupported
 
 				if not can_wield then
 					local text = ""
@@ -3992,65 +3340,18 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_41_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_41_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local item_data = item.data
 			local item_skin = item.skin
 			local item_type = item_data.item_type
-			local ItemId = item.ItemId
-
-			if not ItemId then
-				-- Nothing
-			end
-
-			ItemId = item.item_id
-
-			local item_id = ItemId
-
-			::label_41_2::
-
+			local item_id = not not item.ItemId
 			local trimmed_item_id = not not item_id and not not string.gsub(item_id, "^vs_", "")
 
 			if item_skin and item_type ~= "weapon_skin" and WeaponSkins.default_skins[trimmed_item_id] ~= item_skin then
-				local var_41_3
-
-				if item.hidden_description then
-					var_41_3 = HIDDEN_DESCRIPTION_TEXT
-
-					if not var_41_3 then
-						-- Nothing
-					end
-				end
-
-				var_41_3 = content.prefix_text
-
-				::label_41_3::
-
-				content.text = var_41_3
+				content.text = item.hidden_description and not not HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and not not content.prefix_text
 
 				local position_x = position[1]
 				local position_y = position[2]
@@ -4126,30 +3427,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_43_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_43_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local text
@@ -4309,30 +3588,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_45_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_45_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local text
@@ -4533,30 +3790,8 @@ UITooltipPasses = {
 			-- function 47
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_47_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_47_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local text_styles = data.text_styles
 			local text_content = data.text_content
 
@@ -4564,64 +3799,28 @@ UITooltipPasses = {
 
 			local disabled = ui_content.disabled
 			local is_selected = ui_content.is_selected
-			local display_name = talent.display_name
 
-			if not display_name then
-				display_name = talent.name
-				display_name = not not display_name or not not "n/a"
-			end
-
-			text_content.title = display_name
+			text_content.title = not not talent.display_name
 
 			local requirement_text, information_text
 
 			if disabled then
 				requirement_text = Localize("talent_locked_desc")
 			elseif not is_selected then
-				information_text = (not ui_content.gamepad_active or not Localize("menu_select")) and not not Localize("talent_can_select_desc")
+				information_text = ui_content.gamepad_active and (not not Localize("menu_select") or not not Localize("talent_can_select_desc")) or not ui_content.gamepad_active and not not Localize("talent_can_select_desc")
 			end
 
 			text_content.requirement = requirement_text
 			text_content.information = information_text
 			text_content.description = UIUtils.get_talent_description(talent)
 
-			local ipairs
-
-			if draw_downwards then
-				ipairs = ipairs
-
-				if not ipairs then
-					-- Nothing
-				end
-			end
-
-			ipairs = ripairs
-
-			local loop_func = ipairs
-
-			::label_47_2::
-
+			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
 			local position_x = position[1]
 			local position_y = position[2]
 			local position_z = position[3]
 
 			position[1] = position[1] + frame_margin
-
-			local num
-
-			if draw_downwards then
-				num = position[2] - size[2] - frame_margin
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = position[2] + frame_margin
-
-			::label_47_3::
-
-			position[2] = num
+			position[2] = draw_downwards and not not (position[2] - size[2] - frame_margin) or not draw_downwards and not not (position[2] + frame_margin)
 			position[3] = start_layer + 5
 
 			local text_pass_data = data.text_pass_data
@@ -4634,10 +3833,8 @@ UITooltipPasses = {
 
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
-				local flag
 
-				flag = (not draw_downwards or not "top") and not not "bottom"
-				text_style.vertical_alignment = flag
+				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "bottom"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -4757,30 +3954,8 @@ UITooltipPasses = {
 			local style_id = pass_definition.style_id
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_49_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_49_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -4901,30 +4076,8 @@ UITooltipPasses = {
 			-- function 51
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_51_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_51_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local text_styles = style.text_styles
@@ -4940,22 +4093,7 @@ UITooltipPasses = {
 
 			text_content.title = Localize(display_name)
 			position[1] = position[1] + frame_margin
-
-			local num
-
-			if draw_downwards then
-				num = position[2] - total_height
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = position[2] + frame_edge_height
-
-			::label_51_2::
-
-			position[2] = num
+			position[2] = draw_downwards and not not (position[2] - total_height) or not draw_downwards and not not (position[2] + frame_edge_height)
 			position[3] = start_layer + 5
 
 			local text_size = data.text_size
@@ -4965,28 +4103,12 @@ UITooltipPasses = {
 
 			local text_total_height = -frame_edge_height
 			local text_pass_data = data.text_pass_data
-			local ipairs
-
-			if draw_downwards then
-				ipairs = ipairs
-
-				if not ipairs then
-					-- Nothing
-				end
-			end
-
-			ipairs = ripairs
-
-			local loop_func = ipairs
-
-			::label_51_3::
+			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
 
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
-				local flag
 
-				flag = (not draw_downwards or not "top") and not not "top"
-				text_style.vertical_alignment = flag
+				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "top"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -5087,46 +4209,13 @@ UITooltipPasses = {
 			-- function 53
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_53_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_53_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local text_styles = style.text_styles
 			local text_content = content.text_content
-			local title_2 = additional_option_data.title
-
-			if not title_2 then
-				-- Nothing
-			end
-
-			title_2 = additional_option_data.display_name
-
-			local title = title_2
-
-			::label_53_2::
-
+			local title = not not additional_option_data.title
 			local description = additional_option_data.description
 
 			if ui_style and ui_style.localize then
@@ -5148,22 +4237,7 @@ UITooltipPasses = {
 			text_content.title = title
 			text_content.description = description
 			position[1] = position[1] + frame_margin
-
-			local num
-
-			if draw_downwards then
-				num = position[2] - total_height
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = position[2] + frame_edge_height
-
-			::label_53_3::
-
-			position[2] = num
+			position[2] = draw_downwards and not not (position[2] - total_height) or not draw_downwards and not not (position[2] + frame_edge_height)
 			position[3] = start_layer + 5
 
 			local text_size = data.text_size
@@ -5173,28 +4247,12 @@ UITooltipPasses = {
 
 			local text_total_height = -frame_edge_height
 			local text_pass_data = data.text_pass_data
-			local ipairs
-
-			if draw_downwards then
-				ipairs = ipairs
-
-				if not ipairs then
-					-- Nothing
-				end
-			end
-
-			ipairs = ripairs
-
-			local loop_func = ipairs
-
-			::label_53_4::
+			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
 
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
-				local flag
 
-				flag = (not draw_downwards or not "top") and not not "top"
-				text_style.vertical_alignment = flag
+				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "top"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -5316,30 +4374,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_55_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_55_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -5481,30 +4517,8 @@ UITooltipPasses = {
 			-- function 57
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_57_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_57_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -5518,18 +4532,7 @@ UITooltipPasses = {
 			local position_y = position[2]
 			local position_z = position[3]
 			local title_text = Localize("start_game_window_difficulty")
-			local difficulty = item.difficulty
-
-			if not difficulty then
-				-- Nothing
-			end
-
-			difficulty = "normal"
-
-			local difficulty_key = difficulty
-
-			::label_57_2::
-
+			local difficulty_key = not not item.difficulty
 			local difficulty_settings = DifficultySettings[difficulty_key]
 			local difficulty_display_name = difficulty_settings.display_name
 			local type_text = Localize(difficulty_display_name)
@@ -5595,7 +4598,7 @@ UITooltipPasses = {
 	mutators = {
 		setup_data = function (pass_style)
 			-- function 58
-			local tbl = {
+			local data = {
 				default_icon = "icons_placeholder",
 				text_pass_data = {},
 				text_size = {
@@ -5613,113 +4616,55 @@ UITooltipPasses = {
 				},
 				content = {
 					icon = "icons_placeholder"
-				}
-			}
-			local tbl_2 = {}
-			local text
-
-			if pass_style then
-				text = pass_style.text
-
-				if not text then
-					-- Nothing
-				end
-			end
-
-			text = {
-				vertical_alignment = "center",
-				horizontal_alignment = "left",
-				word_wrap = true,
-				font_type = "hell_shark",
-				font_size = setup_font_size(16),
-				text_color = Colors.get_color_table_with_alpha("font_default", 255),
-				line_colors = {
-					Colors.get_color_table_with_alpha("font_title", 255),
-					Colors.get_color_table_with_alpha("font_default", 255)
-				}
-			}
-
-			::label_58_0::
-
-			tbl_2.text = text
-
-			local text_shadow
-
-			if pass_style then
-				text_shadow = pass_style.text_shadow
-
-				if not text_shadow then
-					-- Nothing
-				end
-			end
-
-			text_shadow = {
-				vertical_alignment = "center",
-				horizontal_alignment = "left",
-				word_wrap = true,
-				font_type = "hell_shark",
-				font_size = setup_font_size(16),
-				text_color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {
-					1,
-					-1,
-					-1
-				}
-			}
-
-			::label_58_1::
-
-			tbl_2.text_shadow = text_shadow
-
-			local icon
-
-			if pass_style then
-				icon = pass_style.icon
-
-				if not icon then
-					-- Nothing
-				end
-			end
-
-			icon = {
-				color = {
-					255,
-					255,
-					255,
-					255
 				},
-				offset = {
-					0,
-					0,
-					2
+				style = {
+					text = pass_style and not not pass_style.text or not pass_style and not not {
+						vertical_alignment = "center",
+						horizontal_alignment = "left",
+						word_wrap = true,
+						font_type = "hell_shark",
+						font_size = setup_font_size(16),
+						text_color = Colors.get_color_table_with_alpha("font_default", 255),
+						line_colors = {
+							Colors.get_color_table_with_alpha("font_title", 255),
+							Colors.get_color_table_with_alpha("font_default", 255)
+						}
+					},
+					text_shadow = pass_style and not not pass_style.text_shadow or not pass_style and not not {
+						vertical_alignment = "center",
+						horizontal_alignment = "left",
+						word_wrap = true,
+						font_type = "hell_shark",
+						font_size = setup_font_size(16),
+						text_color = Colors.get_color_table_with_alpha("black", 255),
+						offset = {
+							1,
+							-1,
+							-1
+						}
+					},
+					icon = pass_style and not not pass_style.icon or not pass_style and not not {
+						color = {
+							255,
+							255,
+							255,
+							255
+						},
+						offset = {
+							0,
+							0,
+							2
+						}
+					}
 				}
 			}
-
-			::label_58_2::
-
-			tbl_2.icon = icon
-			tbl.style = tbl_2
-
-			local data = tbl
 
 			return data
 		end,
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 59
 			local item_data = item.data
-			local mutators_2 = item.mutators
-
-			if not mutators_2 and item_data then
-				-- Nothing
-			end
-
-			::label_59_0::
-
-			mutators_2 = item_data.mutators
-
-			local mutators = mutators_2
-
-			::label_59_1::
+			local mutators = not not item.mutators
 
 			if mutators == nil then
 				return 0
@@ -5730,30 +4675,8 @@ UITooltipPasses = {
 			local top_spacing = 20
 			local bottom_spacing = 20
 			local total_height = top_spacing
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_59_2::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_59_3::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -5765,21 +4688,7 @@ UITooltipPasses = {
 			position[3] = start_layer + 2
 
 			local trait_spacing = 10
-			local ipairs
-
-			if draw_downwards then
-				ipairs = ipairs
-
-				if not ipairs then
-					-- Nothing
-				end
-			end
-
-			ipairs = ripairs
-
-			local loop_func = ipairs
-
-			::label_59_4::
+			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
 
 			for index, name in loop_func(mutators) do
 				local mutator_template = MutatorTemplates[name]
@@ -5967,30 +4876,8 @@ UITooltipPasses = {
 			-- function 61
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_61_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_61_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -6197,30 +5084,8 @@ UITooltipPasses = {
 			-- function 63
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_63_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_63_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -6345,30 +5210,8 @@ UITooltipPasses = {
 			-- function 65
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_65_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_65_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -6473,30 +5316,8 @@ UITooltipPasses = {
 			-- function 67
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_67_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_67_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -6528,11 +5349,7 @@ UITooltipPasses = {
 
 			local difficulty_names = table.select_array(difficulty_keys, function (_, difficulty_key)
 				-- function 68
-				local var_68_0 = DifficultySettings[difficulty_key]
-
-				var_68_0 = not not var_68_0 and not not Localize(DifficultySettings[difficulty_key].display_name)
-
-				return var_68_0
+				return not not DifficultySettings[difficulty_key]
 			end)
 
 			if table.is_empty(difficulty_names) then
@@ -6631,30 +5448,8 @@ UITooltipPasses = {
 			-- function 70
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_70_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_70_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -6720,18 +5515,7 @@ UITooltipPasses = {
 
 			max = math.min(max, absolute_max)
 
-			local chest_tier_2 = item_data.chest_tier
-
-			if not chest_tier_2 then
-				-- Nothing
-			end
-
-			chest_tier_2 = 1
-
-			local chest_tier = chest_tier_2
-
-			::label_70_2::
-
+			local chest_tier = not not item_data.chest_tier
 			local bonus_pl_per_tier = power_level_settings.bonus_min_power_level_per_tier
 
 			min = math.min(min + (chest_tier - 1) * bonus_pl_per_tier, max)
@@ -6811,7 +5595,7 @@ UITooltipPasses = {
 					local rate = rarity_table[rarity]
 					local val
 
-					val = (rate ~= 0 or not "0") and (not (rate < 1) or not "<1") and not not math.round(rate)
+					val = rate < 1 and (not not "<1" or not not math.round(rate)) or not (rate < 1) and not not math.round(rate)
 
 					local color = Colors.color_definitions[rarity]
 
@@ -6838,30 +5622,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_73_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_73_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -6965,30 +5727,8 @@ UITooltipPasses = {
 			-- function 75
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_75_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_75_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -7000,22 +5740,7 @@ UITooltipPasses = {
 				local position_z = position[3]
 				local total_height = frame_margin
 				local information_text = item_data.information_text
-				local var_75_2
-
-				if information_text then
-					var_75_2 = Localize(information_text)
-
-					if not var_75_2 then
-						-- Nothing
-					end
-				end
-
-				var_75_2 = "n/a"
-
-				local title_text = var_75_2
-
-				::label_75_2::
-
+				local title_text = information_text and not not Localize(information_text) or not information_text and not not "n/a"
 				local title_text_style = style.title_text
 				local title_text_shadow_style = style.title_text_shadow
 				local text_pass_data = data.text_pass_data
@@ -7102,30 +5827,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_77_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_77_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local item_data = item.data
@@ -7140,21 +5843,7 @@ UITooltipPasses = {
 				local skin_item_name = WeaponSkins.matching_weapon_skin_item_key(item_skin)
 				local base_item_name = not not skin_item_name and not not string.match(skin_item_name, "^([%w_]+)_skin$")
 				local base_item = rawget(ItemMasterList, base_item_name)
-				local item_type_2
-
-				if base_item then
-					item_type_2 = base_item.item_type
-
-					if not item_type_2 then
-						-- Nothing
-					end
-				end
-
-				item_type_2 = "lb_unknown"
-
-				local base_item_type = item_type_2
-
-				::label_77_2::
+				local base_item_type = base_item and not not base_item.item_type or not base_item and not not "lb_unknown"
 
 				content.text = Localize(base_item_type) .. content.sufix_text
 
@@ -7232,30 +5921,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_79_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_79_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local backend_id = item.backend_id
@@ -7428,30 +6095,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_81_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_81_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local backend_id = item.backend_id
@@ -7689,31 +6334,9 @@ UITooltipPasses = {
 				career_name = profile.careers[career_index].name
 			end
 
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_83_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 0
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_83_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local total_power_level = BackendUtils.get_total_power_level(hero_name, career_name)
@@ -7769,30 +6392,8 @@ UITooltipPasses = {
 				local entry_text = entry.text .. " "
 				local power_level_text = tostring(power_level)
 				local text = entry_text .. power_level_text
-				local length = Utf8.length(power_level_text)
-
-				if not length then
-					-- Nothing
-				end
-
-				length = 0
-
-				local power_text_length = length
-
-				::label_83_2::
-
-				local length_2 = Utf8.length(entry_text)
-
-				if not length_2 then
-					-- Nothing
-				end
-
-				length_2 = 0
-
-				local entry_text_length = length_2
-
-				::label_83_3::
-
+				local power_text_length = not not Utf8.length(power_level_text)
+				local entry_text_length = not not Utf8.length(entry_text)
 				local entry_text_style = style.entry_text
 				local color_override_table = entry_text_style.color_override_table
 
@@ -7941,31 +6542,9 @@ UITooltipPasses = {
 		end,
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 			-- function 85
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_85_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 0
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_85_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local alpha_multiplier = pass_data.alpha_multiplier
@@ -8137,30 +6716,8 @@ UITooltipPasses = {
 			-- function 87
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_87_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_87_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 			local position_x = position[1]
@@ -8266,30 +6823,8 @@ UITooltipPasses = {
 			-- function 89
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_89_0::
-
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_89_1::
-
+			local start_layer = not not pass_data.start_layer
+			local frame_margin = not not data.frame_margin
 			local content = data.content
 			local style = data.style
 
@@ -8413,31 +6948,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_91_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_91_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -8541,40 +7054,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local description
-
-					if not stat_descriptor.empty then
-						description = stat_descriptor.description
-
-						if not description then
-							-- Nothing
-						end
-					end
-
-					description = ""
-
-					local text = description
-
-					::label_91_2::
-
+					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local get_item_tooltip_value
-
-					if not stat_descriptor.empty then
-						get_item_tooltip_value = UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
-
-						if not get_item_tooltip_value then
-							-- Nothing
-						end
-					end
-
-					get_item_tooltip_value = ""
-
-					local value = get_item_tooltip_value
-
-					::label_91_3::
-
+					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -8775,31 +7258,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_93_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_93_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -8904,40 +7365,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local description
-
-					if not stat_descriptor.empty then
-						description = stat_descriptor.description
-
-						if not description then
-							-- Nothing
-						end
-					end
-
-					description = ""
-
-					local text = description
-
-					::label_93_2::
-
+					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local get_item_tooltip_value
-
-					if not stat_descriptor.empty then
-						get_item_tooltip_value = UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
-
-						if not get_item_tooltip_value then
-							-- Nothing
-						end
-					end
-
-					get_item_tooltip_value = ""
-
-					local value = get_item_tooltip_value
-
-					::label_93_3::
-
+					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -9133,31 +7564,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_95_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_95_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -9275,40 +7684,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local description
-
-					if not stat_descriptor.empty then
-						description = stat_descriptor.description
-
-						if not description then
-							-- Nothing
-						end
-					end
-
-					description = ""
-
-					local text = description
-
-					::label_95_2::
-
+					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local get_item_tooltip_value
-
-					if not stat_descriptor.empty then
-						get_item_tooltip_value = UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
-
-						if not get_item_tooltip_value then
-							-- Nothing
-						end
-					end
-
-					get_item_tooltip_value = ""
-
-					local value = get_item_tooltip_value
-
-					::label_95_3::
-
+					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -9467,31 +7846,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_97_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_97_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -9609,40 +7966,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local description
-
-					if not stat_descriptor.empty then
-						description = stat_descriptor.description
-
-						if not description then
-							-- Nothing
-						end
-					end
-
-					description = ""
-
-					local text = description
-
-					::label_97_2::
-
+					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local get_item_tooltip_value
-
-					if not stat_descriptor.empty then
-						get_item_tooltip_value = UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
-
-						if not get_item_tooltip_value then
-							-- Nothing
-						end
-					end
-
-					get_item_tooltip_value = ""
-
-					local value = get_item_tooltip_value
-
-					::label_97_3::
-
+					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -9801,31 +8128,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_99_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_99_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -9889,40 +8194,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local description
-
-					if not stat_descriptor.empty then
-						description = stat_descriptor.description
-
-						if not description then
-							-- Nothing
-						end
-					end
-
-					description = ""
-
-					local text = description
-
-					::label_99_2::
-
+					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local get_item_tooltip_value
-
-					if not stat_descriptor.empty then
-						get_item_tooltip_value = UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
-
-						if not get_item_tooltip_value then
-							-- Nothing
-						end
-					end
-
-					get_item_tooltip_value = ""
-
-					local value = get_item_tooltip_value
-
-					::label_99_3::
-
+					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -10081,31 +8356,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_101_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_101_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -10223,40 +8476,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local description
-
-					if not stat_descriptor.empty then
-						description = stat_descriptor.description
-
-						if not description then
-							-- Nothing
-						end
-					end
-
-					description = ""
-
-					local text = description
-
-					::label_101_2::
-
+					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local get_item_tooltip_value
-
-					if not stat_descriptor.empty then
-						get_item_tooltip_value = UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
-
-						if not get_item_tooltip_value then
-							-- Nothing
-						end
-					end
-
-					get_item_tooltip_value = ""
-
-					local value = get_item_tooltip_value
-
-					::label_101_3::
-
+					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -10415,31 +8638,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_103_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_103_1::
-
+			local frame_margin = not not data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -10557,40 +8758,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local description
-
-					if not stat_descriptor.empty then
-						description = stat_descriptor.description
-
-						if not description then
-							-- Nothing
-						end
-					end
-
-					description = ""
-
-					local text = description
-
-					::label_103_2::
-
+					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local get_item_tooltip_value
-
-					if not stat_descriptor.empty then
-						get_item_tooltip_value = UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
-
-						if not get_item_tooltip_value then
-							-- Nothing
-						end
-					end
-
-					get_item_tooltip_value = ""
-
-					local value = get_item_tooltip_value
-
-					::label_103_3::
-
+					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -11183,31 +9354,9 @@ UITooltipPasses = {
 			-- function 105
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_105_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_105_1::
-
+			local frame_margin = not not data.frame_margin
 			local styles = data.styles
 			local pass_content = data.pass_content
 
@@ -11239,26 +9388,12 @@ UITooltipPasses = {
 				local pass_type = style.pass_type
 				local style_name = style.name
 				local ignore_line_change = style.ignore_line_change
-				local minimum_height_2 = style.minimum_height
-
-				if not minimum_height_2 then
-					-- Nothing
-				end
-
-				minimum_height_2 = 0
-
-				local minimum_height = minimum_height_2
-
-				::label_105_2::
-
+				local minimum_height = not not style.minimum_height
 				local height_spacing = style.height_spacing
 				local offset = style.offset
 
 				if pass_type == "text" then
-					local var_105_3 = additional_option_data[style_name]
-
-					var_105_3 = not not var_105_3 or not not style.text
-					pass_content[style_name] = var_105_3
+					pass_content[style_name] = not not additional_option_data[style_name]
 				elseif pass_type == "texture" then
 					pass_content[style_name] = style.texture
 				end
@@ -11315,29 +9450,8 @@ UITooltipPasses = {
 						local texture_size = style.texture_size
 						local texture_width = texture_size[1]
 						local texture_height = texture_size[2]
-						local height_margin_2 = style.height_margin
-
-						if not height_margin_2 then
-							-- Nothing
-						end
-
-						height_margin_2 = 0
-
-						local height_margin = height_margin_2
-
-						::label_105_3::
-
-						local width_margin_2 = style.width_margin
-
-						if not width_margin_2 then
-							-- Nothing
-						end
-
-						width_margin_2 = 0
-
-						local width_margin = width_margin_2
-
-						::label_105_4::
+						local height_margin = not not style.height_margin
+						local width_margin = not not style.width_margin
 
 						if texture_height < minimum_height then
 							texture_height = minimum_height
@@ -11469,31 +9583,9 @@ UITooltipPasses = {
 			-- function 107
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_107_0::
-
+			local start_layer = not not pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin_2 = data.frame_margin
-
-			if not frame_margin_2 then
-				-- Nothing
-			end
-
-			frame_margin_2 = 0
-
-			local frame_margin = frame_margin_2
-
-			::label_107_1::
-
+			local frame_margin = not not data.frame_margin
 			local styles = data.styles
 			local pass_content = data.pass_content
 
@@ -11560,18 +9652,7 @@ UITooltipPasses = {
 
 				local pass_type = style.pass_type
 				local ignore_line_change = style.ignore_line_change
-				local minimum_height_2 = style.minimum_height
-
-				if not minimum_height_2 then
-					-- Nothing
-				end
-
-				minimum_height_2 = 0
-
-				local minimum_height = minimum_height_2
-
-				::label_107_2::
-
+				local minimum_height = not not style.minimum_height
 				local height_spacing = style.height_spacing
 				local offset = style.offset
 				local offset_x = offset[1]
@@ -11626,29 +9707,8 @@ UITooltipPasses = {
 					local texture_size = style.texture_size
 					local texture_width = texture_size[1]
 					local texture_height = texture_size[2]
-					local height_margin_2 = style.height_margin
-
-					if not height_margin_2 then
-						-- Nothing
-					end
-
-					height_margin_2 = 0
-
-					local height_margin = height_margin_2
-
-					::label_107_3::
-
-					local width_margin_2 = style.width_margin
-
-					if not width_margin_2 then
-						-- Nothing
-					end
-
-					width_margin_2 = 0
-
-					local width_margin = width_margin_2
-
-					::label_107_4::
+					local height_margin = not not style.height_margin
+					local width_margin = not not style.width_margin
 
 					if texture_height < minimum_height then
 						texture_height = minimum_height
@@ -11734,18 +9794,7 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 109
 			local item_data = item.data
-			local temporary_template = item_data.temporary_template
-
-			if not temporary_template then
-				-- Nothing
-			end
-
-			temporary_template = item_data.template
-
-			local template_name = temporary_template
-
-			::label_109_0::
-
+			local template_name = not not item_data.temporary_template
 			local item_template = WeaponUtils.get_weapon_template(template_name)
 			local tooltip_special_action_description = not not item_template and not not item_template.tooltip_special_action_description
 
@@ -11754,18 +9803,7 @@ UITooltipPasses = {
 			end
 
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_109_1::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content
@@ -11851,18 +9889,7 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 111
 			local item_data = item.data
-			local temporary_template = item_data.temporary_template
-
-			if not temporary_template then
-				-- Nothing
-			end
-
-			temporary_template = item_data.template
-
-			local template_name = temporary_template
-
-			::label_111_0::
-
+			local template_name = not not item_data.temporary_template
 			local item_template = WeaponUtils.get_weapon_template(template_name)
 			local tooltip_special_action_description = not not item_template and not not item_template.tooltip_special_action_description
 
@@ -11871,18 +9898,7 @@ UITooltipPasses = {
 			end
 
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_111_1::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content
@@ -12041,22 +10057,7 @@ UITooltipPasses = {
 
 				for i = 1, #loadouts do
 					local loadout_index = loadouts[i]
-					local var_113_0 = localized_career_name
-					local format
-
-					if num_loadouts > 1 then
-						format = string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index)
-
-						if not format then
-							-- Nothing
-						end
-					end
-
-					format = ""
-
-					::label_113_0::
-
-					local final_career_name = var_113_0 .. format
+					local final_career_name = localized_career_name .. (num_loadouts > 1 and not not string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index) or not (num_loadouts > 1) and not not "")
 
 					if not dupes[final_career_name] then
 						dupes[final_career_name] = true
@@ -12067,18 +10068,7 @@ UITooltipPasses = {
 
 			local career_names_string = table.concat(career_names_arr, ", ")
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_113_1::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content
@@ -12233,22 +10223,7 @@ UITooltipPasses = {
 
 				for i = 1, #loadouts do
 					local loadout_index = loadouts[i]
-					local var_115_0 = localized_career_name
-					local format
-
-					if num_loadouts > 1 then
-						format = string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index)
-
-						if not format then
-							-- Nothing
-						end
-					end
-
-					format = ""
-
-					::label_115_0::
-
-					local final_career_name = var_115_0 .. format
+					local final_career_name = localized_career_name .. (num_loadouts > 1 and not not string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index) or not (num_loadouts > 1) and not not "")
 
 					if not dupes[final_career_name] then
 						dupes[final_career_name] = true
@@ -12259,18 +10234,7 @@ UITooltipPasses = {
 
 			local career_names_string = table.concat(career_names_arr, ", ")
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer_2 = pass_data.start_layer
-
-			if not start_layer_2 then
-				-- Nothing
-			end
-
-			start_layer_2 = DEFAULT_START_LAYER
-
-			local start_layer = start_layer_2
-
-			::label_115_1::
-
+			local start_layer = not not pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content

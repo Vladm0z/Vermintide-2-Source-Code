@@ -152,10 +152,7 @@ BTLootRatFleeAction.update_state_moving_to_level_end = function (self, unit, bla
 			if GwNavAStar.path_found(astar) and GwNavAStar.node_count(astar) > 0 then
 				next_node_index = target_node_index + 1
 			else
-				local flag
-
-				flag = (node_data.direction ~= "fwd" or not "bwd") and not not "fwd"
-				node_data.direction = flag
+				node_data.direction = node_data.direction ~= "fwd" and not not "fwd" or not (node_data.direction ~= "fwd") and not not "bwd"
 				next_node_index = #node_data.nodes[node_data.direction] - target_node_index + 2
 			end
 
@@ -192,18 +189,12 @@ BTLootRatFleeAction.update_state_moving_to_level_end = function (self, unit, bla
 
 					return
 				else
-					local flag_2
-
-					flag_2 = (node_data.direction ~= "fwd" or not "bwd") and not not "fwd"
-					node_data.direction = flag_2
+					node_data.direction = node_data.direction ~= "fwd" and not not "fwd" or not (node_data.direction ~= "fwd") and not not "bwd"
 					next_node_index = #node_data.nodes[node_data.direction] - target_node_index + 2
 				end
 			end
 		else
-			local flag_3
-
-			flag_3 = (node_data.direction ~= "fwd" or not "bwd") and not not "fwd"
-			node_data.direction = flag_3
+			node_data.direction = node_data.direction ~= "fwd" and not not "fwd" or not (node_data.direction ~= "fwd") and not not "bwd"
 			next_node_index = 2
 		end
 

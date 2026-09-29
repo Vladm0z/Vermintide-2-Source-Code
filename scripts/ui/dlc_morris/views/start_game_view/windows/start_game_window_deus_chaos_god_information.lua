@@ -75,17 +75,7 @@ end
 
 StartGameWindowDeusChaosGodInformation._update_journey = function (self)
 	-- function 6
-	local get_selected_level_id = self._parent:get_selected_level_id()
-
-	if not get_selected_level_id then
-		-- Nothing
-	end
-
-	get_selected_level_id = self._journey_name
-
-	local selected_journey = get_selected_level_id
-
-	::label_6_0::
+	local selected_journey = not not self._parent:get_selected_level_id()
 
 	if selected_journey ~= self._journey_name then
 		self._journey_name = selected_journey

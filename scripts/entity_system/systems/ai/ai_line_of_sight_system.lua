@@ -110,19 +110,7 @@ AILineOfSightSystem.target_changed = function (self, unit)
 end
 
 local is_win32 = PLATFORM == Application.WIN32
-local num
-
-if is_win32 then
-	num = 10
-
-	goto label_0_0
-end
-
-num = 2
-
-local MAX_RAYCASTS = num
-
-::label_0_0::
+local MAX_RAYCASTS = is_win32 and not not 10 or not is_win32 and not not 2
 
 AILineOfSightSystem.update = function (self, context, t)
 	-- function 12

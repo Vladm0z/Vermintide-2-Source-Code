@@ -57,11 +57,7 @@ end
 
 UnlockDlc.unlocked = function (self)
 	-- function 8
-	local _installed = self._installed
-
-	_installed = not not _installed and not not self._owned
-
-	return _installed
+	return not not self._installed
 end
 
 UnlockDlc.installed = function (self)
@@ -72,10 +68,7 @@ end
 UnlockDlc.set_owned = function (self, value, set_status_change)
 	-- function 10
 	if set_status_change == nil or set_status_change then
-		local _status_changed = self._status_changed
-
-		_status_changed = not not _status_changed or value ~= self._owned
-		self._status_changed = _status_changed
+		self._status_changed = not not self._status_changed
 	end
 
 	self._owned = value
@@ -114,9 +107,5 @@ end
 
 UnlockDlc.requires_restart = function (self)
 	-- function 14
-	local _status_changed = self._status_changed
-
-	_status_changed = not not _status_changed and not not self._requires_restart
-
-	return _status_changed
+	return not not self._status_changed
 end

@@ -37,10 +37,7 @@ StartGameWindowAdventureOverviewConsole.on_enter = function (self, params, offse
 
 	self:_create_ui_elements(params, offset)
 
-	local input_index = params.input_index
-
-	input_index = not not input_index or not not 1
-	self._input_index = input_index
+	self._input_index = not not params.input_index
 
 	self:_handle_new_selection(self._input_index)
 	self:_update_difficulty_option()
@@ -209,18 +206,7 @@ StartGameWindowAdventureOverviewConsole._handle_input = function (self, dt, t)
 		end
 
 		if input_service:get(START_GAME_INPUT) or self:_is_button_pressed(widgets_by_name.play_button) then
-			local get_quickplay_settings = parent:get_quickplay_settings(self._mechanism_name)
-
-			if not get_quickplay_settings then
-				-- Nothing
-			end
-
-			get_quickplay_settings = parent:get_quickplay_settings("adventure")
-
-			local custom_game_settings = get_quickplay_settings
-
-			::label_11_0::
-
+			local custom_game_settings = not not parent:get_quickplay_settings(self._mechanism_name)
 			local game_mode_type = custom_game_settings.game_mode_type
 
 			self._play_button_pressed = true
@@ -279,18 +265,7 @@ StartGameWindowAdventureOverviewConsole._option_selected = function (self, input
 	elseif selected_widget_name == "play_button" then
 		self._play_button_pressed = true
 
-		local get_quickplay_settings = self._parent:get_quickplay_settings(self._mechanism_name)
-
-		if not get_quickplay_settings then
-			-- Nothing
-		end
-
-		get_quickplay_settings = self._parent:get_quickplay_settings("adventure")
-
-		local custom_game_settings = get_quickplay_settings
-
-		::label_15_0::
-
+		local custom_game_settings = not not self._parent:get_quickplay_settings(self._mechanism_name)
 		local game_mode_type = custom_game_settings.game_mode_type
 
 		self._parent:play(t, game_mode_type)

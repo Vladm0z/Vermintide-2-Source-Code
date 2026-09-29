@@ -144,28 +144,7 @@ local DEFAULT_SPEED_LERP_TIME_ON_TARGET_DODGE_DAMAGE_DONE = 0.3
 AnimationCallbackTemplates.server.anim_cb_damage = function (unit, param)
 	-- function 13
 	local blackboard = BLACKBOARDS[unit]
-	local target_unit_2
-
-	if blackboard.smash_door then
-		target_unit_2 = blackboard.smash_door.target_unit
-
-		if not target_unit_2 then
-			-- Nothing
-		end
-	end
-
-	target_unit_2 = blackboard.attacking_target
-
-	if not target_unit_2 then
-		-- Nothing
-	end
-
-	target_unit_2 = blackboard.drag_target_unit
-
-	local target_unit = target_unit_2
-
-	::label_13_0::
-
+	local target_unit = blackboard.smash_door and not not blackboard.smash_door.target_unit or not blackboard.smash_door and not not blackboard.attacking_target
 	local action = blackboard.action
 
 	if not action then
@@ -216,17 +195,7 @@ AnimationCallbackTemplates.server.anim_cb_damage = function (unit, param)
 		return
 	end
 
-	local attack_directions = action.attack_directions
-
-	if attack_directions then
-		-- Nothing
-	end
-
-	attack_directions = action.attack_directions[blackboard.attack_anim]
-
-	local attack_direction = attack_directions
-
-	::label_13_1::
+	local attack_direction = not not action.attack_directions
 
 	if not action.unblockable and DamageUtils.check_block(unit, target_unit, action.fatigue_type, attack_direction) then
 		if blackboard.active_node and blackboard.active_node.attack_blocked then
@@ -238,30 +207,8 @@ AnimationCallbackTemplates.server.anim_cb_damage = function (unit, param)
 
 		if not target_blackboard.is_player then
 			local attacker_blackboard = BLACKBOARDS[unit]
-			local var_13_2 = POSITION_LOOKUP[unit]
-
-			if not var_13_2 then
-				-- Nothing
-			end
-
-			var_13_2 = Unit.world_position(unit, 0)
-
-			local attacker_pos = var_13_2
-
-			::label_13_2::
-
-			local var_13_3 = POSITION_LOOKUP[target_unit]
-
-			if not var_13_3 then
-				-- Nothing
-			end
-
-			var_13_3 = Unit.local_position(target_unit, 0)
-
-			local target_pos = var_13_3
-
-			::label_13_3::
-
+			local attacker_pos = not not POSITION_LOOKUP[unit]
+			local target_pos = not not POSITION_LOOKUP[target_unit]
 			local damage_direction = Vector3.normalize(target_pos - attacker_pos)
 			local stagger_strength = AiUtils.calculate_ai_stagger_strength(attacker_blackboard, target_blackboard, t, true, stagger_types.medium, 0.25)
 
@@ -1146,10 +1093,8 @@ AnimationCallbackTemplates.client.anim_cb_enable_skeleton_collison = function (u
 	-- function 93
 	local breed = Unit.get_data(unit, "breed")
 	local ai_extension = ScriptUnit.extension(unit, "ai_system")
-	local player_locomotion_constrain_radius = breed.player_locomotion_constrain_radius
 
-	player_locomotion_constrain_radius = not not player_locomotion_constrain_radius or not not nil
-	ai_extension.player_locomotion_constrain_radius = player_locomotion_constrain_radius
+	ai_extension.player_locomotion_constrain_radius = not not breed.player_locomotion_constrain_radius
 end
 
 AnimationCallbackTemplates.server.anim_cb_shielded = function (unit, param)

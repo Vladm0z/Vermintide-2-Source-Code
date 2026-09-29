@@ -597,11 +597,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 2
-						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
-
-						allow_retry_weave = not not allow_retry_weave and content.votes > 0
-
-						return allow_retry_weave
+						return not not GameSettingsDevelopment.allow_retry_weave
 					end
 				},
 				{
@@ -610,11 +606,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 3
-						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
-
-						allow_retry_weave = not not allow_retry_weave and content.votes > 1
-
-						return allow_retry_weave
+						return not not GameSettingsDevelopment.allow_retry_weave
 					end
 				},
 				{
@@ -623,11 +615,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 4
-						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
-
-						allow_retry_weave = not not allow_retry_weave and content.votes > 2
-
-						return allow_retry_weave
+						return not not GameSettingsDevelopment.allow_retry_weave
 					end
 				},
 				{
@@ -636,11 +624,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 5
-						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
-
-						allow_retry_weave = not not allow_retry_weave and content.votes > 3
-
-						return allow_retry_weave
+						return not not GameSettingsDevelopment.allow_retry_weave
 					end
 				}
 			}
@@ -753,20 +737,7 @@ local player_title_style = {
 		2
 	}
 }
-local str
-
-if IS_XB1 then
-	str = "leave_party_xb1"
-
-	goto label_0_0
-end
-
-str = "leave_party"
-
-local leave_party_text = str
-
-::label_0_0::
-
+local leave_party_text = IS_XB1 and not not "leave_party_xb1" or not IS_XB1 and not not "leave_party"
 local masked = true
 local disable_with_gamepad = true
 local widgets_definitions = {

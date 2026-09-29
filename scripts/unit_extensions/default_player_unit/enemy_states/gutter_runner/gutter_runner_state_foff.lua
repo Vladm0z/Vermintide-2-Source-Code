@@ -69,18 +69,7 @@ GutterRunnerStateFoff.foff = function (self)
 	local csm = self._csm
 	local player = Managers.player:owner(unit)
 	local local_player = player.local_player
-	local unit_game_object_id = Managers.state.network:unit_game_object_id(unit)
-
-	if not unit_game_object_id then
-		-- Nothing
-	end
-
-	unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-	local go_id = unit_game_object_id
-
-	::label_7_0::
-
+	local go_id = not not Managers.state.network:unit_game_object_id(unit)
 	local effect_name = "fx/chr_gutter_foff"
 
 	Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", NetworkLookup.effects[effect_name], go_id, 0, Vector3.zero(), Quaternion.identity(), false)

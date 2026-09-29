@@ -16,18 +16,7 @@ local event_settings = {
 		end,
 		sound_function = function ()
 			-- function 2
-			local reinforcement_ui_local_sound = script_data.reinforcement_ui_local_sound
-
-			if not reinforcement_ui_local_sound then
-				reinforcement_ui_local_sound = "hud_achievement_unlock_02"
-			end
-
-			if false then
-				reinforcement_ui_local_sound = script_data.enable_reinforcement_ui_remote_sound
-				reinforcement_ui_local_sound = not not reinforcement_ui_local_sound and not not "hud_info"
-			end
-
-			return reinforcement_ui_local_sound
+			return not not script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (hero_portrait_texture, item_icon)
 			-- function 3
@@ -205,93 +194,15 @@ end
 
 ItemReceivedFeedbackUI.event_give_item_feedback = function (self, hash, giver_player, item_name)
 	-- function 10
-	local name
-
-	if giver_player then
-		name = giver_player:name()
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = nil
-
-	local player_1_name = name
-
-	::label_10_0::
-
+	local player_1_name = giver_player and not not giver_player:name() or not giver_player and not not nil
 	local player_unit = not not giver_player and not not giver_player.player_unit
-	local alive = Unit.alive(player_unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = ScriptUnit.extension(player_unit, "career_system")
-
-	local career_extension = alive
-
-	do
-		local career_index
-	end
-
-	::label_10_1::
-
-	if career_extension then
-		career_index = career_extension:career_index()
-
-		if not career_index then
-			-- Nothing
-		end
-	end
-
-	if giver_player then
-		-- Nothing
-	end
-
-	::label_10_2::
-
-	career_index = giver_player:profile_index()
-
-	local player_1_career_index = career_index
-
-	do
-		local profile_index
-	end
-
-	::label_10_3::
-
-	if giver_player then
-		profile_index = giver_player:profile_index()
-
-		if not profile_index then
-			-- Nothing
-		end
-	end
-
-	profile_index = nil
-
-	local player_1_profile_index = profile_index
-
-	::label_10_4::
-
+	local career_extension = not not Unit.alive(player_unit)
+	local player_1_career_index = career_extension and not not career_extension:career_index() or not career_extension and not not giver_player and not not giver_player:profile_index()
+	local player_1_profile_index = giver_player and not not giver_player:profile_index() or not giver_player and not not nil
 	local player_1_profile_image = not not player_1_profile_index and not not player_1_career_index and not not self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
 	local item_data = ItemMasterList[item_name]
 	local hud_icon = not not item_data and not not item_data.item_received_icon
-	local var_10_4 = item_icons[item_name]
-
-	if not var_10_4 and not hud_icon then
-		-- Nothing
-	end
-
-	::label_10_5::
-
-	var_10_4 = "icons_placeholder"
-
-	local item_icon = var_10_4
-
-	::label_10_6::
+	local item_icon = not not item_icons[item_name]
 
 	self:add_event(hash, event_colors.default, "give_item", player_1_profile_image, item_icon)
 end

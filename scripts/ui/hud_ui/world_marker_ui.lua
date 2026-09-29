@@ -14,54 +14,12 @@ local RAYCASTS_FRAME_DELAY = 5
 
 local function raycast_sort_func(a, b)
 	-- function 1
-	local raycast_frame_count = a.raycast_frame_count
-
-	if not raycast_frame_count then
-		-- Nothing
-	end
-
-	raycast_frame_count = 0
-
-	local a_frame_count = raycast_frame_count
-
-	::label_1_0::
-
-	local raycast_frame_count_2 = b.raycast_frame_count
-
-	if not raycast_frame_count_2 then
-		-- Nothing
-	end
-
-	raycast_frame_count_2 = 0
-
-	local b_frame_count = raycast_frame_count_2
-
-	::label_1_1::
+	local a_frame_count = not not a.raycast_frame_count
+	local b_frame_count = not not b.raycast_frame_count
 
 	if a_frame_count == b_frame_count then
-		local distance = a.widget.content.distance
-
-		if not distance then
-			-- Nothing
-		end
-
-		distance = 0
-
-		local a_distance = distance
-
-		::label_1_2::
-
-		local distance_2 = b.widget.content.distance
-
-		if not distance_2 then
-			-- Nothing
-		end
-
-		distance_2 = 0
-
-		local b_distance = distance_2
-
-		::label_1_3::
+		local a_distance = not not a.widget.content.distance
+		local b_distance = not not b.widget.content.distance
 
 		return a_distance < b_distance
 	end
@@ -238,17 +196,7 @@ WorldMarkerUI._register_marker = function (self, marker)
 	markers[#markers + 1] = marker
 
 	local marker_type = marker.type
-	local var_9_0 = markers_by_type[marker_type]
-
-	if not var_9_0 then
-		-- Nothing
-	end
-
-	var_9_0 = {}
-
-	local type_markers = var_9_0
-
-	::label_9_0::
+	local type_markers = not not markers_by_type[marker_type]
 
 	markers_by_type[marker_type] = type_markers
 	type_markers[#type_markers + 1] = marker
@@ -365,21 +313,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 
 						if Unit.alive(unit) then
 							local unit_node = settings.unit_node
-							local node_2
-
-							if unit_node then
-								node_2 = Unit.node(unit, unit_node)
-
-								if not node_2 then
-									-- Nothing
-								end
-							end
-
-							node_2 = 0
-
-							local node = node_2
-
-							::label_13_0::
+							local node = unit_node and not not Unit.node(unit, unit_node) or not unit_node and not not 0
 
 							marker_position = Unit.world_position(unit, node)
 						else
@@ -388,17 +322,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 					end
 
 					if life_time then
-						local duration_2 = marker.duration
-
-						if not duration_2 then
-							-- Nothing
-						end
-
-						duration_2 = 0
-
-						local duration = duration_2
-
-						::label_13_1::
+						local duration = not not marker.duration
 
 						duration = math.min(duration + dt, life_time)
 
@@ -445,20 +369,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 						local camera_left = Vector3.cross(camera_direction, Vector3.up())
 						local left_dot_dir = Vector3.dot(camera_left, marker_direction)
 						local angle = math.atan2(left_dot_dir, forward_dot_dir)
-						local flag
-
-						if forward_dot_dir < 0 then
-							flag = true
-
-							goto label_13_2
-						end
-
-						flag = false
-
-						local is_behind = flag
-
-						::label_13_2::
-
+						local is_behind = forward_dot_dir < 0 and not not true or not (forward_dot_dir < 0) and not not false
 						local is_under = marker_position.z < camera_position.z
 						local x, y, distance_from_camera = self:_convert_world_to_screen_position(camera, marker_position)
 						local is_clamped = false
@@ -540,10 +451,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 						offset[2] = y
 
 						if draw and check_line_of_sight then
-							local raycast_frame_count = marker.raycast_frame_count
-
-							raycast_frame_count = not not raycast_frame_count or not not 0
-							marker.raycast_frame_count = raycast_frame_count + 1
+							marker.raycast_frame_count = not not marker.raycast_frame_count + 1
 
 							if raycasts_allowed then
 								temp_marker_raycast_queue[#temp_marker_raycast_queue + 1] = marker
@@ -611,17 +519,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 				end
 
 				if draw then
-					local alpha_multiplier_2 = widget.alpha_multiplier
-
-					if not alpha_multiplier_2 then
-						-- Nothing
-					end
-
-					alpha_multiplier_2 = 1
-
-					local widget_alpha_multiplier = alpha_multiplier_2
-
-					::label_13_3::
+					local widget_alpha_multiplier = not not widget.alpha_multiplier
 
 					if not settings.ignore_aiming then
 						widget_alpha_multiplier = widget_alpha_multiplier * alpha_multiplier
@@ -714,39 +612,13 @@ WorldMarkerUI._apply_scale = function (self, widget, scale)
 		local default_size = pass_style.default_size
 
 		if default_size then
-			local area_size = pass_style.area_size
-
-			if not area_size then
-				-- Nothing
-			end
-
-			area_size = pass_style.texture_size
-
-			if not area_size then
-				-- Nothing
-			end
-
-			area_size = pass_style.size
-
-			local current_size = area_size
-
-			::label_16_0::
+			local current_size = not not pass_style.area_size
 
 			current_size[1] = math.lerp(current_size[1], default_size[1] * scale, lerp_multiplier)
 			current_size[2] = math.lerp(current_size[2], default_size[2] * scale, lerp_multiplier)
 		end
 
-		local animation_offset = pass_style.animation_offset
-
-		if not animation_offset then
-			-- Nothing
-		end
-
-		animation_offset = pass_style.default_offset
-
-		local source_offset = animation_offset
-
-		::label_16_1::
+		local source_offset = not not pass_style.animation_offset
 
 		if source_offset then
 			local offset = pass_style.offset
@@ -772,76 +644,10 @@ end
 WorldMarkerUI._normal_clamp_to_screen = function (self, x, y, screen_margins, is_behind, is_under, world_position, camera_position_center, camera_position_left, camera_position_right, camera_position_up, camera_position_down)
 	-- function 18
 	local root_size = UISceneGraph.get_size_scaled(self.ui_scenegraph, "root")
-	local up
-
-	if screen_margins then
-		up = screen_margins.up
-
-		if not up then
-			-- Nothing
-		end
-	end
-
-	up = 0
-
-	local margin_up = up
-
-	do
-		local down
-	end
-
-	::label_18_0::
-
-	if screen_margins then
-		down = screen_margins.down
-
-		if not down then
-			-- Nothing
-		end
-	end
-
-	down = 0
-
-	local margin_down = down
-
-	do
-		local left
-	end
-
-	::label_18_1::
-
-	if screen_margins then
-		left = screen_margins.left
-
-		if not left then
-			-- Nothing
-		end
-	end
-
-	left = 0
-
-	local margin_left = left
-
-	do
-		local right
-	end
-
-	::label_18_2::
-
-	if screen_margins then
-		right = screen_margins.right
-
-		if not right then
-			-- Nothing
-		end
-	end
-
-	right = 0
-
-	local margin_right = right
-
-	::label_18_3::
-
+	local margin_up = screen_margins and not not screen_margins.up or not screen_margins and not not 0
+	local margin_down = screen_margins and not not screen_margins.down or not screen_margins and not not 0
+	local margin_left = screen_margins and not not screen_margins.left or not screen_margins and not not 0
+	local margin_right = screen_margins and not not screen_margins.right or not screen_margins and not not 0
 	local clamped_x = math.max(margin_left, math.min(x, root_size[1] - margin_right))
 	local clamped_y = math.max(margin_down, math.min(y, root_size[2] - margin_up))
 	local is_clamped = clamped_x ~= x or clamped_y ~= y or not not is_behind
@@ -908,11 +714,7 @@ WorldMarkerUI._is_clamped = function (self, x, y)
 		is_y_clamped = true
 	end
 
-	local flag
-
-	flag = (is_x_clamped or is_y_clamped) and not not true or not not false
-
-	return flag
+	return not not true
 end
 
 WorldMarkerUI._tutorial_clamp_to_screen = function (self, x, y, forward_dot, right_dot, settings)

@@ -234,18 +234,7 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 	local distance_travelled = dot / total_distance
 	local move_direction = Vector3.normalize(self._leap_data.direction:unbox())
 	local player_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local movement_settings = self._leap_data.movement_settings
-
-	if not movement_settings then
-		-- Nothing
-	end
-
-	movement_settings = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-
-	local movement_settings_table = movement_settings
-
-	::label_7_0::
-
+	local movement_settings_table = not not self._leap_data.movement_settings
 	local starting_speed = self._leap_data.speed
 	local speed = starting_speed
 	local move_speed_multiplier = self._status_extension:current_move_speed_multiplier()
@@ -254,77 +243,12 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 	speed = speed * movement_settings_table.player_speed_scale
 
 	local lerp_data = self._leap_data.lerp_data
-	local num = total_distance * lerp_data.zero_distance
-
-	if not num then
-		-- Nothing
-	end
-
-	num = 0
-
-	local zero_distance = num
-
-	::label_7_1::
-
-	local num_2 = total_distance * lerp_data.start_accel_distance
-
-	if not num_2 then
-		-- Nothing
-	end
-
-	num_2 = 0.1
-
-	local start_accel_distance = num_2
-
-	::label_7_2::
-
-	local num_3 = total_distance * lerp_data.end_accel_distance
-
-	if not num_3 then
-		-- Nothing
-	end
-
-	num_3 = 0.2
-
-	local end_accel_distance = num_3
-
-	::label_7_3::
-
-	local num_4 = total_distance * lerp_data.glide_distance
-
-	if not num_4 then
-		-- Nothing
-	end
-
-	num_4 = 0.7
-
-	local glide_distance = num_4
-
-	::label_7_4::
-
-	local num_5 = total_distance * lerp_data.slow_distance
-
-	if not num_5 then
-		-- Nothing
-	end
-
-	num_5 = 0.95
-
-	local slow_distance = num_5
-
-	::label_7_5::
-
-	local num_6 = total_distance * lerp_data.full_distance
-
-	if not num_6 then
-		-- Nothing
-	end
-
-	num_6 = 1
-
-	local full_distance = num_6
-
-	::label_7_6::
+	local zero_distance = not not (total_distance * lerp_data.zero_distance)
+	local start_accel_distance = not not (total_distance * lerp_data.start_accel_distance)
+	local end_accel_distance = not not (total_distance * lerp_data.end_accel_distance)
+	local glide_distance = not not (total_distance * lerp_data.glide_distance)
+	local slow_distance = not not (total_distance * lerp_data.slow_distance)
+	local full_distance = not not (total_distance * lerp_data.full_distance)
 
 	self._old_position = current_position
 
@@ -374,13 +298,8 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 		local prev_move_velocity = locomotion_extension:current_velocity()
 		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
 		local new_move_speed = Vector3.length(new_move_velocity)
-		local clamp = math.clamp
-		local var_7_8 = new_move_speed
-		local num_7 = 0
-		local player_speed_scale = movement_settings_table.player_speed_scale
 
-		player_speed_scale = not not player_speed_scale or not not 1
-		new_move_speed = clamp(var_7_8, num_7, move_cap * player_speed_scale)
+		new_move_speed = math.clamp(new_move_speed, 0, move_cap * not not movement_settings_table.player_speed_scale)
 
 		local new_move_direction = Vector3.normalize(new_move_velocity)
 
@@ -406,13 +325,8 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 		local prev_move_velocity = locomotion_extension:current_velocity()
 		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
 		local new_move_speed = Vector3.length(new_move_velocity)
-		local clamp_2 = math.clamp
-		local var_7_12 = new_move_speed
-		local num_8 = 0
-		local player_speed_scale_2 = movement_settings_table.player_speed_scale
 
-		player_speed_scale_2 = not not player_speed_scale_2 or not not 1
-		new_move_speed = clamp_2(var_7_12, num_8, move_cap * player_speed_scale_2)
+		new_move_speed = math.clamp(new_move_speed, 0, move_cap * not not movement_settings_table.player_speed_scale)
 
 		local new_move_direction = Vector3.normalize(new_move_velocity)
 
@@ -433,13 +347,8 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 		local prev_move_velocity = locomotion_extension:current_velocity()
 		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
 		local new_move_speed = Vector3.length(new_move_velocity)
-		local clamp_3 = math.clamp
-		local var_7_16 = new_move_speed
-		local num_9 = 0
-		local num_10 = move_cap * movement_settings_table.player_speed_scale
 
-		num_10 = not not num_10 or not not 1
-		new_move_speed = clamp_3(var_7_16, num_9, num_10)
+		new_move_speed = math.clamp(new_move_speed, 0, not not (move_cap * movement_settings_table.player_speed_scale))
 
 		local new_move_direction = Vector3.normalize(new_move_velocity)
 
@@ -570,17 +479,7 @@ EnemyCharacterStateLeaping._start_leap = function (self, unit, t)
 	locomotion_extension:set_forced_velocity(velocity)
 	locomotion_extension:set_wanted_velocity(velocity)
 
-	local movement_settings = self._leap_data.movement_settings
-
-	if not movement_settings then
-		-- Nothing
-	end
-
-	movement_settings = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-
-	local movement_settings_table = movement_settings
-
-	::label_10_0::
+	local movement_settings_table = not not self._leap_data.movement_settings
 
 	movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * 0
 	self._leap_done = false

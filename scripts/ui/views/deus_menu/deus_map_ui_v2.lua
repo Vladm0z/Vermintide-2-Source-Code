@@ -74,18 +74,7 @@ DeusMapUI._create_ui_elements = function (self)
 
 		if peers[i] then
 			local profile_index, career_index = self._deus_run_controller:get_player_profile(peers[i], REAL_PLAYER_LOCAL_ID)
-			local get_player_level = self._deus_run_controller:get_player_level(peers[i], profile_index)
-
-			if not get_player_level then
-				-- Nothing
-			end
-
-			get_player_level = "-"
-
-			local level_text = get_player_level
-
-			::label_3_0::
-
+			local level_text = not not self._deus_run_controller:get_player_level(peers[i], profile_index)
 			local frame_settings_name = self._deus_run_controller:get_player_frame(peers[i], profile_index, career_index)
 
 			widget_definition = UIWidgets.deus_create_player_portraits_frame("player_" .. i .. "_portrait", frame_settings_name, level_text, false)
@@ -243,19 +232,8 @@ DeusMapUI._handle_owned_power_up_input = function (self, dt, t)
 			end
 
 			if content.input_made and (input_service:get("mouse_middle_held") or input_service:get("special_1_hold")) then
-				local end_time_2 = content.end_time
-
-				if not end_time_2 then
-					-- Nothing
-				end
-
-				end_time_2 = t + content.remove_interaction_duration
-
 				do
-					local end_time = end_time_2
-
-					::label_9_0::
-
+					local end_time = not not content.end_time
 					local progress = (end_time - t) / content.remove_interaction_duration
 
 					style.remove_frame.color[1] = 255 * (1 - progress)
@@ -343,18 +321,7 @@ DeusMapUI._populate_power_up = function (self, power_up_name, power_up_rarity, p
 	style.rarity_text.text_color = rarity_color
 	power_up_description_widget.content.visible = true
 
-	local var_10_0 = DeusPowerUpSetLookup[rarity]
-
-	if var_10_0 then
-		-- Nothing
-	end
-
-	var_10_0 = DeusPowerUpSetLookup[rarity][power_up.name]
-
-	local power_up_sets = var_10_0
-
-	::label_10_0::
-
+	local power_up_sets = not not DeusPowerUpSetLookup[rarity]
 	local is_part_of_set = false
 
 	if power_up_sets then
@@ -375,17 +342,7 @@ DeusMapUI._populate_power_up = function (self, power_up_name, power_up_rarity, p
 
 		is_part_of_set = true
 
-		local num_required_pieces_2 = set.num_required_pieces
-
-		if not num_required_pieces_2 then
-			-- Nothing
-		end
-
-		num_required_pieces_2 = #pieces
-
-		local num_required_pieces = num_required_pieces_2
-
-		::label_10_1::
+		local num_required_pieces = not not set.num_required_pieces
 
 		content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -407,17 +364,7 @@ DeusMapUI._update_power_ups = function (self)
 	local party_power_ups = run_controller:get_party_power_ups()
 	local power_ups = empty_power_ups_array
 	local total_num_power_ups = 0
-	local _power_up_widgets = self._power_up_widgets
-
-	if not _power_up_widgets then
-		-- Nothing
-	end
-
-	_power_up_widgets = {}
-
-	local power_up_widgets = _power_up_widgets
-
-	::label_11_0::
+	local power_up_widgets = not not self._power_up_widgets
 
 	if profile_index ~= 0 and career_index ~= 0 then
 		power_ups = run_controller:get_player_power_ups(peer_id, REAL_PLAYER_LOCAL_ID)
@@ -479,22 +426,7 @@ DeusMapUI._update_power_ups = function (self)
 					local text_color = Colors.get_table(power_up.rarity)
 					local power_up_template = power_up_templates[power_up.name]
 					local is_rectangular_icon = power_up_template.rectangular_icon
-					local rectangular_power_up_widget_data
-
-					if is_rectangular_icon then
-						rectangular_power_up_widget_data = definitions.rectangular_power_up_widget_data
-
-						if not rectangular_power_up_widget_data then
-							-- Nothing
-						end
-					end
-
-					rectangular_power_up_widget_data = definitions.round_power_up_widget_data
-
-					local widget_data = rectangular_power_up_widget_data
-
-					::label_11_1::
-
+					local widget_data = is_rectangular_icon and not not definitions.rectangular_power_up_widget_data or not is_rectangular_icon and not not definitions.round_power_up_widget_data
 					local hide_text = true
 					local masked = true
 					local icon_hotspot = {
@@ -514,12 +446,7 @@ DeusMapUI._update_power_ups = function (self)
 					widget.content.power_up_name = power_up.name
 					widget.content.power_up_rarity = power_up.rarity
 					widget.content.locked = not not is_party_power_up or not not talent_power_ups[power_up.name]
-
-					local content = widget.content
-					local flag
-
-					flag = (not is_party_power_up or not "party_locked") and (not talent_power_ups[power_up.name] or not "talent_locked") and not not "search_filter_locked"
-					content.locked_text_id = flag
+					widget.content.locked_text_id = is_party_power_up and not not "party_locked" or not is_party_power_up and (talent_power_ups[power_up.name] and not not "talent_locked" or not talent_power_ups[power_up.name] and not not "search_filter_locked")
 
 					local column = (i - 1) % 2
 
@@ -563,13 +490,7 @@ DeusMapUI._handle_mode_input = function (self, dt, t)
 			self._ui_animator:stop_animation(self._anim_id)
 		end
 
-		local _ui_animator = self._ui_animator
-		local var_13_1 = _ui_animator
-		local start_animation = _ui_animator.start_animation
-		local flag
-
-		flag = (not self._portrait_mode or not "switch_to_boons") and not not "switch_to_portraits"
-		self._anim_id = start_animation(var_13_1, flag, self._widgets_by_name, definitions.scenegraph_definition)
+		self._anim_id = self._ui_animator:start_animation(self._portrait_mode and not not "switch_to_boons" or not self._portrait_mode and not not "switch_to_portraits", self._widgets_by_name, definitions.scenegraph_definition)
 		self._portrait_mode = not self._portrait_mode
 	end
 end
@@ -594,7 +515,7 @@ DeusMapUI._update_animations = function (self, dt, t)
 	local progress
 	local interpolation_time = anim_data.alpha_multiplier_animation_end_time - anim_data.alpha_multiplier_animation_start_time
 
-	progress = (not (interpolation_time <= 0.001) or not 1) and not not math.clamp((t - anim_data.alpha_multiplier_animation_start_time) / interpolation_time, 0, 1)
+	progress = interpolation_time <= 0.001 and (not not 1 or not not math.clamp((t - anim_data.alpha_multiplier_animation_start_time) / interpolation_time, 0, 1)) or not (interpolation_time <= 0.001) and not not math.clamp((t - anim_data.alpha_multiplier_animation_start_time) / interpolation_time, 0, 1)
 
 	local new_value = math.lerp(anim_data.source_alpha_multiplier, anim_data.target_alpha_multiplier, progress)
 
@@ -620,10 +541,7 @@ DeusMapUI._draw = function (self, dt, t)
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
 
-	local alpha_multiplier = anim_data.alpha_multiplier
-
-	alpha_multiplier = not not alpha_multiplier or not not 0
-	render_settings.alpha_multiplier = alpha_multiplier
+	render_settings.alpha_multiplier = not not anim_data.alpha_multiplier
 
 	if self._render_full_screen_rect then
 		UIRenderer.draw_rect(ui_renderer, Vector2(0, 0), UISceneGraph.get_size_scaled(ui_scenegraph, "screen"), Colors.color_definitions.black)
@@ -706,56 +624,9 @@ DeusMapUI.enable_hover_text = function (self, screen_pos, type, level, theme, mi
 	end
 
 	if minor_modifier_group then
-		local minor_modifier_1_section = content_node_info.minor_modifier_1_section
-		local var_17_1
-
-		if minor_modifier_group[1] then
-			var_17_1 = Localize("mutator_" .. minor_modifier_group[1] .. "_name")
-
-			if not var_17_1 then
-				-- Nothing
-			end
-		end
-
-		var_17_1 = ""
-
-		::label_17_0::
-
-		minor_modifier_1_section.text = var_17_1
-
-		local minor_modifier_2_section = content_node_info.minor_modifier_2_section
-		local var_17_3
-
-		if minor_modifier_group[2] then
-			var_17_3 = Localize("mutator_" .. minor_modifier_group[2] .. "_name")
-
-			if not var_17_3 then
-				-- Nothing
-			end
-		end
-
-		var_17_3 = ""
-
-		::label_17_1::
-
-		minor_modifier_2_section.text = var_17_3
-
-		local minor_modifier_3_section = content_node_info.minor_modifier_3_section
-		local var_17_5
-
-		if minor_modifier_group[3] then
-			var_17_5 = Localize("mutator_" .. minor_modifier_group[3] .. "_name")
-
-			if not var_17_5 then
-				-- Nothing
-			end
-		end
-
-		var_17_5 = ""
-
-		::label_17_2::
-
-		minor_modifier_3_section.text = var_17_5
+		content_node_info.minor_modifier_1_section.text = minor_modifier_group[1] and not not Localize("mutator_" .. minor_modifier_group[1] .. "_name") or not minor_modifier_group[1] and not not ""
+		content_node_info.minor_modifier_2_section.text = minor_modifier_group[2] and not not Localize("mutator_" .. minor_modifier_group[2] .. "_name") or not minor_modifier_group[2] and not not ""
+		content_node_info.minor_modifier_3_section.text = minor_modifier_group[3] and not not Localize("mutator_" .. minor_modifier_group[3] .. "_name") or not minor_modifier_group[3] and not not ""
 	else
 		content_node_info.minor_modifier_1_section.text = ""
 		content_node_info.minor_modifier_2_section.text = ""
@@ -796,24 +667,13 @@ DeusMapUI.enable_hover_text = function (self, screen_pos, type, level, theme, mi
 	local conflict_director_description = not not conflict_director and not not conflict_director.description
 
 	if conflict_director_description then
-		local var_17_6 = Localize(conflict_director_description)
-
-		var_17_6 = not not var_17_6 or not not ""
-		content_node_info.breed_text = var_17_6
+		content_node_info.breed_text = not not Localize(conflict_director_description)
 	else
 		content_node_info.breed_text = ""
 	end
 
-	local none_modifier_info = content_node_info.none_modifier_info
-	local flag
-
-	flag = (not selectable or not "deus_map_node_info_click_to_vote") and not not ""
-	none_modifier_info.click_to_vote = flag
-
-	local flag_2
-
-	flag_2 = (not selected or not "menu_frame_12_gold") and not not "menu_frame_12"
-	content_node_info.frame_settings_name = flag_2
+	content_node_info.none_modifier_info.click_to_vote = selectable and not not "deus_map_node_info_click_to_vote" or not selectable and not not ""
+	content_node_info.frame_settings_name = selected and not not "menu_frame_12_gold" or not selected and not not "menu_frame_12"
 end
 
 DeusMapUI._update_portrait_frame = function (self, frame_name, level_text, index)
@@ -853,29 +713,8 @@ DeusMapUI.update_player_data = function (self, player_data)
 		player_portrait_frame.content.visible = should_be_visible
 
 		if should_be_visible then
-			local frame = data.frame
-
-			if not frame then
-				-- Nothing
-			end
-
-			frame = "default"
-
-			local frame_settings_name = frame
-
-			::label_20_0::
-
-			local level_2 = data.level
-
-			if not level_2 then
-				-- Nothing
-			end
-
-			level_2 = "-"
-
-			local level = level_2
-
-			::label_20_1::
+			local frame_settings_name = not not data.frame
+			local level = not not data.level
 
 			if player_portrait_frame.content.frame_settings_name ~= frame_settings_name or player_portrait_frame.content.level ~= level then
 				self:_update_portrait_frame(frame_settings_name, level, i)
@@ -889,11 +728,7 @@ DeusMapUI.update_player_data = function (self, player_data)
 				self:_update_insignia(versus_level, i)
 			end
 
-			local content = player_texts.content
-			local name = data.name
-
-			name = not not name or not not ""
-			content.name_text = name
+			player_texts.content.name_text = not not data.name
 			player_portrait.content.show_token_icon = not data.vote
 
 			if data.profile_index ~= 0 then

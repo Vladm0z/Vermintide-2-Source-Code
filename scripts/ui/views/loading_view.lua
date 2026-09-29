@@ -56,22 +56,7 @@ for i = 1, num_tip_types do
 
 	fassert(tip_type_max_range[tip_type], "Missing max range of tip type %s", tip_type)
 
-	local num = max_tips + tip_type_max_range[tip_type]
-	local count
-
-	if blocked_tip_type_indices[tip_type] then
-		count = #blocked_tip_type_indices[tip_type]
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	::label_0_0::
-
-	max_tips = num - count
+	max_tips = max_tips + tip_type_max_range[tip_type] - (blocked_tip_type_indices[tip_type] and not not #blocked_tip_type_indices[tip_type] or not blocked_tip_type_indices[tip_type] and not not 0)
 end
 
 for name, value in pairs(tip_type_max_range) do
@@ -154,18 +139,7 @@ LoadingView.texture_resource_loaded = function (self, level_key, act_progression
 	local level_settings = LevelSettings[level_key]
 	local has_multiple_loading_images = level_settings.has_multiple_loading_images
 	local loading_ui_package_name = not not optional_loading_ui_package_name or not not level_settings.loading_ui_package_name
-	local game_mode_2 = level_settings.game_mode
-
-	if not game_mode_2 then
-		-- Nothing
-	end
-
-	game_mode_2 = "adventure"
-
-	local game_mode = game_mode_2
-
-	::label_3_0::
-
+	local game_mode = not not level_settings.game_mode
 	local bg_material = "materials/ui/loading_screens/" .. (not not loading_ui_package_name or not not self.default_loading_screen)
 
 	if IS_XB1 then
@@ -299,35 +273,8 @@ LoadingView.create_ui_elements = function (self)
 
 	self.bg_widget.content.bg_texture = self.default_loading_screen
 
-	local level_key = self.level_key
-
-	if level_key then
-		-- Nothing
-	end
-
-	level_key = LevelSettings[self.level_key]
-
-	local level_settings = level_key
-
-	do
-		local game_mode_2
-	end
-
-	::label_8_0::
-
-	if level_settings then
-		game_mode_2 = level_settings.game_mode
-
-		if not game_mode_2 then
-			-- Nothing
-		end
-	end
-
-	game_mode_2 = "adventure"
-
-	local game_mode = game_mode_2
-
-	::label_8_1::
+	local level_settings = not not self.level_key
+	local game_mode = level_settings and not not level_settings.game_mode or not level_settings and not not "adventure"
 
 	self:setup_tip_text(self.act_progression_index, game_mode, self._tip_localization_key)
 
@@ -525,21 +472,7 @@ LoadingView.setup_tip_text = function (self, act_progression_index, game_mode, t
 				end
 			end
 
-			local str
-
-			if tip_random_index < 10 then
-				str = "0" .. tostring(tip_random_index)
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = tostring(tip_random_index)
-
-			local tip_index = str
-
-			::label_15_0::
+			local tip_index = tip_random_index < 10 and not not ("0" .. tostring(tip_random_index)) or not (tip_random_index < 10) and not not tostring(tip_random_index)
 
 			tip_localization_key = tip_prefix .. "_" .. tip_index
 		end
@@ -584,46 +517,9 @@ LoadingView.setup_tip_text = function (self, act_progression_index, game_mode, t
 						second_input_texture_data, suffix_text = self:_find_second_input_texture(suffix_text, macro_replacement, input_actions[2], font, scaled_font_size)
 					end
 
-					local size
-
-					if second_input_texture_data.button_texture_data then
-						size = second_input_texture_data.button_texture_data.size
-
-						if not size then
-							-- Nothing
-						end
-					end
-
-					size = DEFAULT_ICON_SIZE_TABLE
-
-					local second_icon_size = size
-
-					::label_15_1::
-
-					local button_texture_data_2 = second_input_texture_data.button_texture_data
-
-					if button_texture_data_2 then
-						-- Nothing
-					end
-
-					button_texture_data_2 = second_input_texture_data.button_texture_data.texture
-
-					local second_icon_texture = button_texture_data_2
-
-					::label_15_2::
-
-					local icon_offset = second_input_texture_data.icon_offset
-
-					if not icon_offset then
-						-- Nothing
-					end
-
-					icon_offset = 0
-
-					local second_icon_icon_offset = icon_offset
-
-					::label_15_3::
-
+					local second_icon_size = second_input_texture_data.button_texture_data and not not second_input_texture_data.button_texture_data.size or not second_input_texture_data.button_texture_data and not not DEFAULT_ICON_SIZE_TABLE
+					local second_icon_texture = not not second_input_texture_data.button_texture_data
+					local second_icon_icon_offset = not not second_input_texture_data.icon_offset
 					local suffix_text_width = UIRenderer.text_size(self.ui_renderer, suffix_text, font[1], scaled_font_size)
 					local total_width = prefix_text_width + icon_width + suffix_text_width + second_icon_size[1]
 					local prefix_text_offset = -total_width * 0.5 + prefix_text_width * 0.5 - icon_width * 0.05
@@ -800,35 +696,8 @@ LoadingView.update = function (self, dt)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 
 	if gamepad_active ~= self._gamepad_active then
-		local level_key = self.level_key
-
-		if level_key then
-			-- Nothing
-		end
-
-		level_key = LevelSettings[self.level_key]
-
-		local level_settings = level_key
-
-		do
-			local game_mode_2
-		end
-
-		::label_20_0::
-
-		if level_settings then
-			game_mode_2 = level_settings.game_mode
-
-			if not game_mode_2 then
-				-- Nothing
-			end
-		end
-
-		game_mode_2 = "adventure"
-
-		local game_mode = game_mode_2
-
-		::label_20_1::
+		local level_settings = not not self.level_key
+		local game_mode = level_settings and not not level_settings.game_mode or not level_settings and not not "adventure"
 
 		self:setup_tip_text(self.act_progression_index, game_mode, self._tip_localization_key)
 

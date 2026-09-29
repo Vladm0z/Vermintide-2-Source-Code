@@ -64,30 +64,8 @@ BackendInterfaceTalentsPlayfab.refresh_bot_talents = function (self)
 
 	local talents = self._bot_talents
 	local backend_mirror = self._backend_mirror
-	local loadout_selection_2 = PlayerData.loadout_selection
-
-	if not loadout_selection_2 then
-		-- Nothing
-	end
-
-	loadout_selection_2 = EMPTY_TABLE
-
-	local loadout_selection = loadout_selection_2
-
-	::label_4_0::
-
-	local bot_equipment_2 = loadout_selection.bot_equipment
-
-	if not bot_equipment_2 then
-		-- Nothing
-	end
-
-	bot_equipment_2 = EMPTY_TABLE
-
-	local bot_equipment = bot_equipment_2
-
-	::label_4_1::
-
+	local loadout_selection = not not PlayerData.loadout_selection
+	local bot_equipment = not not loadout_selection.bot_equipment
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_mechanisms[mechanism_name]
 
@@ -127,10 +105,8 @@ BackendInterfaceTalentsPlayfab._refresh_default_loadouts_talents = function (sel
 	for career_name, settings in pairs(CareerSettings) do
 		if settings.playfab_name then
 			local career_loadouts = backend_mirror:get_default_loadouts(career_name)
-			local var_5_0 = talents[career_name]
 
-			var_5_0 = not not var_5_0 or not not {}
-			talents[career_name] = var_5_0
+			talents[career_name] = not not talents[career_name]
 
 			if career_loadouts then
 				local career_loadouts_talents = talents[career_name]
@@ -182,10 +158,7 @@ BackendInterfaceTalentsPlayfab._refresh_career_loadouts_talents = function (self
 			self._selected_career_custom_talents[career_name] = selected_career_loadout
 
 			if career_loadouts then
-				local var_6_0 = talents[career_name]
-
-				var_6_0 = not not var_6_0 or not not {}
-				talents[career_name] = var_6_0
+				talents[career_name] = not not talents[career_name]
 
 				local career_loadouts_talents = talents[career_name]
 
@@ -224,21 +197,7 @@ end
 BackendInterfaceTalentsPlayfab._setup_default_overrides = function (self)
 	-- function 7
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local var_7_0
-
-	if PlayerData.loadout_selection then
-		var_7_0 = PlayerData.loadout_selection[mechanism_name]
-
-		if not var_7_0 then
-			-- Nothing
-		end
-	end
-
-	var_7_0 = {}
-
-	local loadout_selection = var_7_0
-
-	::label_7_0::
+	local loadout_selection = PlayerData.loadout_selection and not not PlayerData.loadout_selection[mechanism_name] or not PlayerData.loadout_selection and not not {}
 
 	table.clear(self._default_talents_overrides)
 
@@ -246,34 +205,14 @@ BackendInterfaceTalentsPlayfab._setup_default_overrides = function (self)
 		return
 	end
 
-	local game_mode = Managers.state.game_mode
-
-	if game_mode then
-		-- Nothing
-	end
-
-	game_mode = Managers.state.game_mode:game_mode_key()
-
-	local game_mode_key = game_mode
-
-	::label_7_1::
+	local game_mode_key = not not Managers.state.game_mode
 
 	if not game_mode_key or not InventorySettings.default_loadout_allowed_game_modes[game_mode_key] then
 		return
 	end
 
 	for career_name, settings in pairs(CareerSettings) do
-		local var_7_2 = loadout_selection[career_name]
-
-		if not var_7_2 then
-			-- Nothing
-		end
-
-		var_7_2 = 1
-
-		local loadout_index = var_7_2
-
-		::label_7_2::
+		local loadout_index = not not loadout_selection[career_name]
 
 		if loadout_index then
 			local loadout_settings = InventorySettings.loadouts[loadout_index]
@@ -353,25 +292,14 @@ BackendInterfaceTalentsPlayfab.get_talent_ids = function (self, career_name, opt
 	local talent_tree_index = career_settings.talent_tree_index
 	local talent_tree = not not talent_tree_index and not not TalentTrees[profile_name][talent_tree_index]
 	local talent_ids = {}
-	local game_mode = Managers.state.game_mode
-
-	if game_mode then
-		-- Nothing
-	end
-
-	game_mode = Managers.state.game_mode:game_mode_key()
-
-	local game_mode_key = game_mode
-
-	::label_13_0::
-
+	local game_mode_key = not not Managers.state.game_mode
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
 	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
 	local bot_talents = not not bot_loadout_allowed and not not self:get_bot_talents(career_name)
 	local default_talent_sets = not not default_loadouts_allowed and not not self:get_default_talents(career_name)
 	local default_talents = not not default_loadouts_allowed and not not default_talent_sets and not not default_talent_sets[1]
 	local base_talents = self:get_talents(career_name)
-	local talents = (not bot_loadout_allowed or not is_bot or not bot_talents) and (not is_bot or not default_loadouts_allowed or not default_talents) and not not optional_talents or not not base_talents
+	local talents = bot_loadout_allowed and (is_bot and (not not bot_talents or is_bot and (default_loadouts_allowed and (not not default_talents or not not optional_talents or not not base_talents) or not default_loadouts_allowed and (not not optional_talents or not not base_talents)) or not is_bot and (not not optional_talents or not not base_talents)) or not is_bot and (is_bot and (default_loadouts_allowed and (not not default_talents or not not optional_talents or not not base_talents) or not default_loadouts_allowed and (not not optional_talents or not not base_talents)) or not is_bot and (not not optional_talents or not not base_talents))) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (not not default_talents or not not optional_talents or not not base_talents) or not default_loadouts_allowed and (not not optional_talents or not not base_talents)) or not is_bot and (not not optional_talents or not not base_talents))
 
 	if talents then
 		for i = 1, #talents do

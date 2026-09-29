@@ -70,39 +70,8 @@ local INDEX_DISTANCE = 2
 ActionCareerDREngineer.fire_hitscan = function (self, position, direction, range)
 	-- function 7
 	local result = ActionCareerDREngineer.super.fire_hitscan(self, position, direction, range)
-	local var_7_0
-
-	if result then
-		var_7_0 = result[#result][INDEX_POSITION]
-
-		if not var_7_0 then
-			-- Nothing
-		end
-	end
-
-	var_7_0 = position + direction * range
-
-	local end_position = var_7_0
-
-	do
-		local var_7_1
-	end
-
-	::label_7_0::
-
-	if result then
-		var_7_1 = result[#result][INDEX_DISTANCE]
-
-		if not var_7_1 then
-			-- Nothing
-		end
-	end
-
-	var_7_1 = range
-
-	::label_7_1::
-
-	local life_time = var_7_1 * 0.1
+	local end_position = result and not not result[#result][INDEX_POSITION] or not result and not not (position + direction * range)
+	local life_time = (result and not not result[#result][INDEX_DISTANCE] or not result and not not range) * 0.1
 
 	self:_add_bullet_trail(end_position, life_time)
 	Managers.state.event:trigger("on_engineer_weapon_fire", self._visual_heat_generation)

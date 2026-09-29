@@ -1,27 +1,8 @@
 -- chunkname: @scripts/helpers/loadout_utils.lua
 
-local LoadoutUtils = LoadoutUtils
+LoadoutUtils = not not LoadoutUtils
 
-LoadoutUtils = not not LoadoutUtils or not not {}
-LoadoutUtils = LoadoutUtils
-
-local LOADOUT_SLOTS_2 = LOADOUT_SLOTS
-
-if not LOADOUT_SLOTS_2 then
-	-- Nothing
-end
-
-LOADOUT_SLOTS_2 = {
-	slot_necklace = true,
-	slot_trinket_1 = true,
-	slot_ring = true,
-	slot_melee = true,
-	slot_ranged = true
-}
-
-local LOADOUT_SLOTS = LOADOUT_SLOTS_2
-
-::label_0_0::
+local LOADOUT_SLOTS = not not LOADOUT_SLOTS
 
 LoadoutUtils.sync_loadout_slot = function (player, slot_name, item, sync_to_specific_peer_id)
 	-- function 1
@@ -34,18 +15,7 @@ LoadoutUtils.sync_loadout_slot = function (player, slot_name, item, sync_to_spec
 	local network_transmit = network_manager.network_transmit
 	local item_key = item.key
 	local power_level = item.power_level
-	local rarity_2 = item.rarity
-
-	if not rarity_2 then
-		-- Nothing
-	end
-
-	rarity_2 = "plentiful"
-
-	local rarity = rarity_2
-
-	::label_1_0::
-
+	local rarity = not not item.rarity
 	local slot_id = NetworkLookup.equipment_slots[slot_name]
 	local item_id = NetworkLookup.item_names[item_key]
 	local rarity_id = NetworkLookup.rarities[rarity]
@@ -82,17 +52,7 @@ LoadoutUtils.hot_join_sync = function (peer_id)
 		local player_peer_id = player:network_id()
 
 		if player_peer_id ~= peer_id then
-			local var_2_0 = player_loadouts[unique_id]
-
-			if not var_2_0 then
-				-- Nothing
-			end
-
-			var_2_0 = EMPTY_TABLE
-
-			local loadout = var_2_0
-
-			::label_2_0::
+			local loadout = not not player_loadouts[unique_id]
 
 			for slot_name, item in pairs(loadout) do
 				LoadoutUtils.sync_loadout_slot(player, slot_name, item, peer_id)
@@ -118,8 +78,8 @@ LoadoutUtils.create_loadout_item_from_rpc_data = function (slot_id, item_id, rar
 	item.rarity = rarity
 	item.key = item_key
 	item.ItemId = item_key
-	item.properties = (not (num_properties > 0) or not properties) and not not nil
-	item.traits = (not (#traits > 0) or not traits) and not not nil
+	item.properties = num_properties > 0 and (not not properties or not not nil) or not (num_properties > 0) and not not nil
+	item.traits = #traits > 0 and (not not traits or not not nil) or not (#traits > 0) and not not nil
 
 	return slot_name, item
 end

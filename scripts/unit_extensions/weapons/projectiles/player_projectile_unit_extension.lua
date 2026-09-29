@@ -41,17 +41,7 @@ PlayerProjectileUnitExtension.init = function (self, extension_init_context, uni
 
 				if is_ammo_weapon then
 					local wielded_item_template = BackendUtils.get_item_template(wielded_item_data)
-					local material_settings_name_2 = item_units.material_settings_name
-
-					if not material_settings_name_2 then
-						-- Nothing
-					end
-
-					material_settings_name_2 = wielded_item_template.material_settings_name
-
-					local material_settings_name = material_settings_name_2
-
-					::label_1_0::
+					local material_settings_name = not not item_units.material_settings_name
 
 					if material_settings_name then
 						self._material_settings_name = material_settings_name
@@ -98,17 +88,7 @@ PlayerProjectileUnitExtension.init = function (self, extension_init_context, uni
 	if impact_data then
 		self._impact_data = impact_data
 
-		local damage_profile = impact_data.damage_profile
-
-		if not damage_profile then
-			-- Nothing
-		end
-
-		damage_profile = "default"
-
-		local impact_damage_profile_name = damage_profile
-
-		::label_1_1::
+		local impact_damage_profile_name = not not impact_data.damage_profile
 
 		self._impact_damage_profile_id = NetworkLookup.damage_profiles[impact_damage_profile_name]
 	end
@@ -116,28 +96,14 @@ PlayerProjectileUnitExtension.init = function (self, extension_init_context, uni
 	if timed_data then
 		self._timed_data = timed_data
 
-		local damage_profile_2 = timed_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-
-		damage_profile_2 = "default"
-
-		local timed_damage_profile_name = damage_profile_2
-
-		::label_1_2::
+		local timed_damage_profile_name = not not timed_data.damage_profile
 
 		self._timed_damage_profile_id = NetworkLookup.damage_profiles[timed_damage_profile_name]
 	end
 
 	self._time_initialized = extension_init_data.time_initialized
 	self.scale = extension_init_data.scale
-
-	local charge_level = extension_init_data.charge_level
-
-	charge_level = not not charge_level or not not 0
-	self.charge_level = charge_level / 100
+	self.charge_level = not not extension_init_data.charge_level / 100
 	self._num_targets_hit = 0
 	self._hit_units = {}
 	self._hit_afro_units = {}
@@ -173,25 +139,14 @@ PlayerProjectileUnitExtension.initialize_projectile = function (self, projectile
 		self._stop_impacts = false
 		self._amount_of_mass_hit = 0
 
-		local damage_profile_2 = impact_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-
-		damage_profile_2 = "default"
-
-		local damage_profile_name = damage_profile_2
-
-		::label_3_0::
-
+		local damage_profile_name = not not impact_data.damage_profile
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local owner_unit = self._owner_unit
 		local difficulty_level = Managers.state.difficulty:get_difficulty()
 		local cleave_power_level = ActionUtils.scale_power_levels(self.power_level, "cleave", owner_unit, difficulty_level)
 		local max_mass_attack, max_mass_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
 
-		self._max_mass = (not (max_mass_impact < max_mass_attack) or not max_mass_attack) and not not max_mass_impact
+		self._max_mass = max_mass_impact < max_mass_attack and (not not max_mass_attack or not not max_mass_impact) or not (max_mass_impact < max_mass_attack) and not not max_mass_impact
 	end
 
 	local timed_data = self._timed_data
@@ -231,22 +186,7 @@ PlayerProjectileUnitExtension.initialize_projectile = function (self, projectile
 		local link_node = projectile_info.anim_blend_settings.link_node
 
 		self._owner_unit_1p = owner_unit_1p
-
-		local node
-
-		if Unit.has_node(owner_unit_1p, link_node) then
-			node = Unit.node(owner_unit_1p, link_node)
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = 0
-
-		::label_3_1::
-
-		self._anim_node_id = node
+		self._anim_node_id = Unit.has_node(owner_unit_1p, link_node) and not not Unit.node(owner_unit_1p, link_node) or not Unit.has_node(owner_unit_1p, link_node) and not not 0
 		self._anim_blend_enabled = true
 	end
 
@@ -631,18 +571,7 @@ end
 PlayerProjectileUnitExtension.hit_enemy = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, breed, has_ranged_boost, ranged_boost_curve_multiplier)
 	-- function 15
 	local shield_blocked = false
-	local damage_profile_2 = impact_data.damage_profile
-
-	if not damage_profile_2 then
-		-- Nothing
-	end
-
-	damage_profile_2 = "default"
-
-	local damage_profile_name = damage_profile_2
-
-	::label_15_0::
-
+	local damage_profile_name = not not impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_link = true
 	local forced_penetration = false
@@ -663,18 +592,7 @@ PlayerProjectileUnitExtension.hit_enemy = function (self, impact_data, hit_unit,
 		hit_zone_name = hit_zone.name
 
 		local send_to_server = true
-		local charge_value_2 = damage_profile.charge_value
-
-		if not charge_value_2 then
-			-- Nothing
-		end
-
-		charge_value_2 = "projectile"
-
-		local charge_value = charge_value_2
-
-		::label_15_1::
-
+		local charge_value = not not damage_profile.charge_value
 		local is_critical_strike = self._is_critical_strike
 		local owner_unit = self._owner_unit
 		local num_targets_hit = self._num_targets_hit + 1
@@ -738,21 +656,7 @@ PlayerProjectileUnitExtension.hit_enemy = function (self, impact_data, hit_unit,
 
 		if self.chain_hit_settings then
 			local t = Managers.time:time("game")
-			local world_position
-
-			if Unit.has_node(hit_unit, "j_spine") then
-				world_position = Unit.world_position(hit_unit, Unit.node(hit_unit, "j_spine"))
-
-				if not world_position then
-					-- Nothing
-				end
-			end
-
-			world_position = POSITION_LOOKUP[hit_unit] + Vector3(0, 0, 1.5)
-
-			local source_pos = world_position
-
-			::label_15_2::
+			local source_pos = Unit.has_node(hit_unit, "j_spine") and not not Unit.world_position(hit_unit, Unit.node(hit_unit, "j_spine")) or not Unit.has_node(hit_unit, "j_spine") and not not (POSITION_LOOKUP[hit_unit] + Vector3(0, 0, 1.5))
 
 			self._weapon_system:try_fire_chained_projectile(self.chain_hit_settings, self.item_name, self._is_critical_strike, self.power_level, ranged_boost_curve_multiplier, t, self._owner_unit, source_pos, nil, hit_unit, 1)
 
@@ -799,35 +703,10 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 	local is_server = self._is_server
 	local node = Actor.node(hit_actor)
 	local hit_zone = breed.hit_zones_lookup[node]
-	local forced_hitzone = action.projectile_info.forced_hitzone
-
-	if not forced_hitzone then
-		-- Nothing
-	end
-
-	forced_hitzone = hit_zone.name
-
-	local hit_zone_name = forced_hitzone
-
-	::label_16_0::
-
+	local hit_zone_name = not not action.projectile_info.forced_hitzone
 	local attack_direction = hit_direction
 	local forced_penetration = false
-	local var_16_1
-
-	if is_server then
-		var_16_1 = HEALTH_ALIVE[hit_unit]
-
-		if not var_16_1 then
-			-- Nothing
-		end
-	end
-
-	var_16_1 = AiUtils.client_predicted_unit_alive(hit_unit)
-
-	local was_alive = var_16_1
-
-	::label_16_1::
+	local was_alive = is_server and not not HEALTH_ALIVE[hit_unit] or not is_server and not not AiUtils.client_predicted_unit_alive(hit_unit)
 
 	if was_alive then
 		self._num_targets_hit = self._num_targets_hit + 1
@@ -866,7 +745,7 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 
 	local multiplier_type = DamageUtils.get_breed_damage_multiplier_type(breed, hit_zone_name)
 
-	if (multiplier_type == "headshot" or multiplier_type == "weakspot" and not shield_blocked) and not action.no_headshot_sound and HEALTH_ALIVE[hit_unit] then
+	if multiplier_type == "weakspot" and not shield_blocked and not action.no_headshot_sound and HEALTH_ALIVE[hit_unit] then
 		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 
 		first_person_extension:play_hud_sound_event("Play_hud_headshot", nil, false)
@@ -875,55 +754,7 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 	if was_alive then
 		local action_mass_override = action.hit_mass_count
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local var_16_2
-
-		if shield_blocked then
-			if breed.hit_mass_counts_block then
-				var_16_2 = breed.hit_mass_counts_block[difficulty_rank]
-
-				if not var_16_2 then
-					-- Nothing
-				end
-
-				var_16_2 = breed.hit_mass_counts_block[2]
-
-				if not var_16_2 then
-					-- Nothing
-				end
-			end
-
-			var_16_2 = breed.hit_mass_count_block
-
-			if not var_16_2 then
-				-- Nothing
-			end
-		end
-
-		if breed.hit_mass_counts then
-			var_16_2 = breed.hit_mass_counts[difficulty_rank]
-
-			if not var_16_2 then
-				-- Nothing
-			end
-
-			var_16_2 = breed.hit_mass_counts[2]
-
-			if not var_16_2 then
-				-- Nothing
-			end
-		end
-
-		var_16_2 = breed.hit_mass_count
-
-		if not var_16_2 then
-			-- Nothing
-		end
-
-		var_16_2 = 1
-
-		local hit_mass_total = var_16_2
-
-		::label_16_2::
+		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and not not breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and not not breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and not not breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and not not breed.hit_mass_count)
 
 		if action_mass_override and action_mass_override[breed.name] then
 			local mass_cost_multiplier = action_mass_override[breed.name]
@@ -947,17 +778,7 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 	local predicted_damage, invulnerable = DamageUtils.calculate_damage(DamageOutput, hit_unit, owner_unit, hit_zone_name, power_level, BoostCurves[target_settings.boost_curve_type], ranged_boost_curve_multiplier, is_critical_strike, damage_profile, actual_target_index, nil, damage_source)
 
 	if not is_server then
-		local alive = Unit.alive(hit_unit)
-
-		if alive then
-			-- Nothing
-		end
-
-		alive = ScriptUnit.has_extension(hit_unit, "health_system")
-
-		local target_health_extension = alive
-
-		::label_16_3::
+		local target_health_extension = not not Unit.alive(hit_unit)
 
 		if target_health_extension then
 			local networked_damage = DamageUtils.networkify_damage(predicted_damage)
@@ -980,7 +801,7 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 
 			self:stop(hit_unit, hit_zone_name, hit_normal)
 		end
-	elseif was_alive and not action.ignore_armor and (breed.armor_category == 2 or breed.armor_category == 3 or shield_blocked) then
+	elseif breed.armor_category == 2 or breed.armor_category == 3 or shield_blocked then
 		self._did_damage = predicted_damage
 
 		if self._num_additional_penetrations > 0 then
@@ -1015,19 +836,8 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 		local _, procced = buff_extension:apply_buffs_to_value(0, "coop_stamina")
 
-		if (procced or script_data.debug_legendary_traits) and HEALTH_ALIVE[hit_unit] then
-			local headshot_coop_stamina_fatigue_type_2 = breed.headshot_coop_stamina_fatigue_type
-
-			if not headshot_coop_stamina_fatigue_type_2 then
-				-- Nothing
-			end
-
-			headshot_coop_stamina_fatigue_type_2 = "headshot_clan_rat"
-
-			local headshot_coop_stamina_fatigue_type = headshot_coop_stamina_fatigue_type_2
-
-			::label_16_4::
-
+		if procced and HEALTH_ALIVE[hit_unit] or not procced and script_data.debug_legendary_traits and HEALTH_ALIVE[hit_unit] then
+			local headshot_coop_stamina_fatigue_type = not not breed.headshot_coop_stamina_fatigue_type
 			local fatigue_type_id = NetworkLookup.fatigue_types[headshot_coop_stamina_fatigue_type]
 
 			if is_server then
@@ -1052,18 +862,7 @@ PlayerProjectileUnitExtension.hit_player = function (self, impact_data, hit_unit
 	local shield_blocked = false
 	local forced_penetration = false
 	local owner_player = self._owner_player
-	local damage_profile_2 = impact_data.damage_profile
-
-	if not damage_profile_2 then
-		-- Nothing
-	end
-
-	damage_profile_2 = "default"
-
-	local damage_profile_name = damage_profile_2
-
-	::label_17_0::
-
+	local damage_profile_name = not not impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 
 	if damage_profile and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player) then
@@ -1167,24 +966,7 @@ end
 PlayerProjectileUnitExtension.hit_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, level_index, has_ranged_boost, ranged_boost_curve_multiplier)
 	-- function 19
 	local health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
-	local damage_profile_prop = impact_data.damage_profile_prop
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = impact_data.damage_profile
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = "default"
-
-	local damage_profile_name = damage_profile_prop
-
-	::label_19_0::
-
+	local damage_profile_name = not not impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_ranged_damage = Unit.get_data(hit_unit, "allow_ranged_damage") ~= false
 
@@ -1227,18 +1009,7 @@ PlayerProjectileUnitExtension.hit_level_unit = function (self, impact_data, hit_
 
 	if bounce then
 		local num_bounces = self._num_bounces
-		local max_bounces_2 = impact_data.max_bounces
-
-		if not max_bounces_2 then
-			-- Nothing
-		end
-
-		max_bounces_2 = 0
-
-		local max_bounces = max_bounces_2
-
-		::label_19_1::
-
+		local max_bounces = not not impact_data.max_bounces
 		local locomotion_extension = self.locomotion_extension
 
 		max_bounces = max_bounces + buffed_bounces
@@ -1292,24 +1063,7 @@ end
 
 PlayerProjectileUnitExtension.hit_non_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, has_ranged_boost, ranged_boost_curve_multiplier)
 	-- function 21
-	local damage_profile_prop = impact_data.damage_profile_prop
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = impact_data.damage_profile
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = "default"
-
-	local damage_profile_name = damage_profile_prop
-
-	::label_21_0::
-
+	local damage_profile_name = not not impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local stop_impacts = false
 
@@ -1405,9 +1159,7 @@ PlayerProjectileUnitExtension._get_projectile_units_names = function (self, proj
 			local slot_name = "slot_ranged"
 			local slot_data = inventory_extension:get_slot_data(slot_name)
 
-			if slot_data and not slot_data.projectile_units_template then
-				-- Nothing
-			end
+			projectile_units_template = not slot_data or not not slot_data.projectile_units_template or not not projectile_units_template
 		end
 	end
 
@@ -1439,29 +1191,8 @@ PlayerProjectileUnitExtension._handle_linking = function (self, impact_data, hit
 	local projectile_info = self.projectile_info
 	local projectile_units = self:_get_projectile_units_names(projectile_info)
 	local dummy_linker_unit_name = projectile_units.dummy_linker_unit_name
-	local depth_2 = impact_data.depth
-
-	if not depth_2 then
-		-- Nothing
-	end
-
-	depth_2 = 0.15
-
-	local depth = depth_2
-
-	::label_25_0::
-
-	local depth_offset_2 = impact_data.depth_offset
-
-	if not depth_offset_2 then
-		-- Nothing
-	end
-
-	depth_offset_2 = 0.15
-
-	local depth_offset = depth_offset_2
-
-	::label_25_1::
+	local depth = not not impact_data.depth
+	local depth_offset = not not impact_data.depth_offset
 
 	if projectile_units.dummy_linker_broken_units then
 		local broken_chance = Math.random()
@@ -1486,29 +1217,8 @@ PlayerProjectileUnitExtension._handle_linking = function (self, impact_data, hit
 			end
 		end
 	elseif damage_amount and not shield_blocked then
-		local depth_damage_modifier_min = impact_data.depth_damage_modifier_min
-
-		if not depth_damage_modifier_min then
-			-- Nothing
-		end
-
-		depth_damage_modifier_min = 1
-
-		local min = depth_damage_modifier_min
-
-		::label_25_2::
-
-		local depth_damage_modifier_max = impact_data.depth_damage_modifier_max
-
-		if not depth_damage_modifier_max then
-			-- Nothing
-		end
-
-		depth_damage_modifier_max = 3
-
-		local max = depth_damage_modifier_max
-
-		::label_25_3::
+		local min = not not impact_data.depth_damage_modifier_min
+		local max = not not impact_data.depth_damage_modifier_max
 
 		depth = depth * math.clamp(damage_amount, min, max)
 	end
@@ -1551,31 +1261,11 @@ PlayerProjectileUnitExtension._handle_linking = function (self, impact_data, hit
 		end
 
 		if allow_link then
-			local link_pickup_template_name = slot_data.link_pickup_template_name
-
-			if not link_pickup_template_name then
-				-- Nothing
-			end
-
-			link_pickup_template_name = impact_pickup_settings.link_pickup_name
-
-			local pickup_name = link_pickup_template_name
-
-			::label_25_4::
+			local pickup_name = not not slot_data.link_pickup_template_name
 
 			self:_spawn_linked_pickup_projectile(pickup_name, hit_unit, hit_actor, hit_position, hit_direction, hit_normal, hit_unit_id, is_level_unit, depth, shield_blocked)
 		else
-			local pickup_template_name = slot_data.pickup_template_name
-
-			if not pickup_template_name then
-				-- Nothing
-			end
-
-			pickup_template_name = impact_pickup_settings.pickup_name
-
-			local pickup_name = pickup_template_name
-
-			::label_25_5::
+			local pickup_name = not not slot_data.pickup_template_name
 
 			self:_spawn_pickup_projectile(pickup_name, hit_position, hit_direction, hit_normal, hit_enemy_or_player)
 		end
@@ -1585,27 +1275,7 @@ end
 PlayerProjectileUnitExtension._redirect_shield_linking = function (self, hit_unit, node_index, link_position, depth_position_offset)
 	-- function 26
 	local breed = AiUtils.unit_breed(hit_unit)
-	local var_26_0 = HEALTH_ALIVE[hit_unit]
-
-	if var_26_0 and breed then
-		-- Nothing
-	end
-
-	::label_26_0::
-
-	if not breed.no_effects_on_shield_block then
-		var_26_0 = not breed.is_player
-	else
-		var_26_0 = false
-	end
-
-	goto label_26_1
-
-	var_26_0 = true
-
-	local do_redirect = var_26_0
-
-	::label_26_1::
+	local do_redirect = not not HEALTH_ALIVE[hit_unit]
 
 	if not do_redirect then
 		return hit_unit, node_index, link_position
@@ -1712,12 +1382,7 @@ PlayerProjectileUnitExtension._spawn_linked_pickup_projectile = function (self, 
 	local pickup_name_id = NetworkLookup.pickup_names[pickup_name]
 	local pickup_spawn_type = "dropped"
 	local pickup_spawn_type_id = NetworkLookup.pickup_spawn_types[pickup_spawn_type]
-	local material_settings_templates = NetworkLookup.material_settings_templates
-	local _material_settings_name = self._material_settings_name
-
-	_material_settings_name = not not _material_settings_name or not not "n/a"
-
-	local material_settings_name_id = material_settings_templates[_material_settings_name]
+	local material_settings_name_id = NetworkLookup.material_settings_templates[not not self._material_settings_name]
 
 	Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_linked_pickup", pickup_name_id, link_position, link_rotation, pickup_spawn_type_id, hit_unit_id, node_index, is_level_unit, spawn_limit, material_settings_name_id)
 end
@@ -1734,7 +1399,7 @@ PlayerProjectileUnitExtension._spawn_pickup_projectile = function (self, pickup_
 	end
 
 	local random_angle = math.random(-math.half_pi, math.half_pi)
-	local bounce_dir = (not hit_enemy_or_player or not hit_direction) and not not Vector3.reflect(hit_direction, hit_normal)
+	local bounce_dir = hit_enemy_or_player and (not not hit_direction or not not Vector3.reflect(hit_direction, hit_normal)) or not hit_enemy_or_player and not not Vector3.reflect(hit_direction, hit_normal)
 	local position = hit_position + bounce_dir * 0.2
 	local rotation = Quaternion.axis_angle(bounce_dir, random_angle)
 	local pickup_name_id = NetworkLookup.pickup_names[pickup_name]
@@ -1754,12 +1419,7 @@ PlayerProjectileUnitExtension._spawn_pickup_projectile = function (self, pickup_
 	local network_rotation = AiAnimUtils.rotation_network_scale(rotation, true)
 	local network_velocity = AiAnimUtils.velocity_network_scale(velocity, true)
 	local network_angular_velocity = AiAnimUtils.velocity_network_scale(angular_velocity_transformed, true)
-	local material_settings_templates = NetworkLookup.material_settings_templates
-	local _material_settings_name = self._material_settings_name
-
-	_material_settings_name = not not _material_settings_name or not not "n/a"
-
-	local material_settings_name_id = material_settings_templates[_material_settings_name]
+	local material_settings_name_id = NetworkLookup.material_settings_templates[not not self._material_settings_name]
 
 	Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_projectile", pickup_unit_name_id, pickup_unit_template_name_id, network_position, network_rotation, network_velocity, network_angular_velocity, pickup_name_id, pickup_spawn_type_id, spawn_limit, false, false, material_settings_name_id)
 end

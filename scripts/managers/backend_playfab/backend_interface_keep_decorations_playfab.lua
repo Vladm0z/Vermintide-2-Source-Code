@@ -9,17 +9,7 @@ BackendInterfaceKeepDecorationsPlayFab.init = function (self, backend_mirror)
 	self._backend_mirror = backend_mirror
 	self._keep_decorations = {}
 
-	local get_read_only_data = backend_mirror:get_read_only_data("keep_decorations")
-
-	if not get_read_only_data then
-		-- Nothing
-	end
-
-	get_read_only_data = "{}"
-
-	local keep_decorations = get_read_only_data
-
-	::label_1_0::
+	local keep_decorations = not not backend_mirror:get_read_only_data("keep_decorations")
 
 	self._keep_decorations = cjson.decode(keep_decorations)
 

@@ -129,40 +129,7 @@ BuffPresentationUI._sync_buffs = function (self)
 			if not buff.removed then
 				local buff_template = buff.template
 				local name = buff_template.name
-
-				if not debug_buffs then
-					-- Nothing
-				end
-
-				do
-					local priority_buff
-				end
-
-				::label_9_0::
-
-				if buff_template.icon ~= nil then
-					priority_buff = buff_template.priority_buff
-
-					if priority_buff then
-						-- Nothing
-					end
-
-					if not buffs_to_add[name] then
-						priority_buff = not buffs_presented[name]
-
-						goto label_9_1
-					end
-				end
-
-				priority_buff = false
-
-				goto label_9_1
-
-				priority_buff = true
-
-				local handle_buff = priority_buff
-
-				::label_9_1::
+				local handle_buff = not not debug_buffs or buff_template.icon ~= nil and not not buff_template.priority_buff
 
 				if handle_buff then
 					self:_add_buff(buff)
@@ -276,17 +243,7 @@ end
 BuffPresentationUI._set_buff_to_present = function (self, buff)
 	-- function 13
 	local widget = self.presentation_widget
-	local icon_2 = buff.icon
-
-	if not icon_2 then
-		-- Nothing
-	end
-
-	icon_2 = "icons_placeholder"
-
-	local icon = icon_2
-
-	::label_13_0::
+	local icon = not not buff.icon
 
 	widget.content.texture_icon = icon
 end

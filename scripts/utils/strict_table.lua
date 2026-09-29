@@ -47,39 +47,14 @@ local rawget, rawset = rawget, rawset
 
 local function debug_info_string(info)
 	-- function 5
-	local short_src_2 = info.short_src
-
-	if not short_src_2 then
-		-- Nothing
-	end
-
-	short_src_2 = ""
-
-	local short_src = short_src_2
-
-	::label_5_0::
-
-	local currentline = info.currentline
-
-	if not currentline then
-		-- Nothing
-	end
-
-	currentline = -1
-
-	local line = currentline
-
-	::label_5_1::
-
+	local short_src = not not info.short_src
+	local line = not not info.currentline
 	local s = sprintf("short_src(%s), line(%d)", short_src, line)
 
 	return s
 end
 
-local StrictNil = StrictNil
-
-StrictNil = not not StrictNil or not not {}
-StrictNil = StrictNil
+StrictNil = not not StrictNil
 
 function MakeTableStrict(t)
 	-- function 6
@@ -179,17 +154,7 @@ end
 
 function MakeTableWeakValues(t)
 	-- function 12
-	local var_12_0 = getmetatable(t)
-
-	if not var_12_0 then
-		-- Nothing
-	end
-
-	var_12_0 = {}
-
-	local meta = var_12_0
-
-	::label_12_0::
+	local meta = not not getmetatable(t)
 
 	meta.__mode = "v"
 
@@ -200,17 +165,7 @@ end
 
 function MakeTableWeakKeys(t)
 	-- function 13
-	local var_13_0 = getmetatable(t)
-
-	if not var_13_0 then
-		-- Nothing
-	end
-
-	var_13_0 = {}
-
-	local meta = var_13_0
-
-	::label_13_0::
+	local meta = not not getmetatable(t)
 
 	meta.__mode = "k"
 

@@ -96,17 +96,7 @@ CareerAbilityDarkPactBase._cooldown_ready = function (self)
 	-- function 9
 	local inventory_extension = self._inventory_extension
 	local equipment = inventory_extension:equipment()
-	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-
-	if not right_hand_wielded_unit then
-		-- Nothing
-	end
-
-	right_hand_wielded_unit = equipment.left_hand_wielded_unit
-
-	local weapon_unit = right_hand_wielded_unit
-
-	::label_9_0::
+	local weapon_unit = not not equipment.right_hand_wielded_unit
 
 	if weapon_unit then
 		Unit.flow_event(weapon_unit, "cooldown_ready")

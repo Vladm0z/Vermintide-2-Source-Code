@@ -21,14 +21,7 @@ local hud_customizer_enabled = Application.user_setting("hud_customizer_enabled"
 
 HudCustomizer.is_active = function ()
 	-- function 1
-	local var_1_0 = hud_customizer_enabled
-
-	if var_1_0 then
-		var_1_0 = Managers.chat.chat_gui.chat_focused
-		var_1_0 = not not var_1_0 and Keyboard.button(Keyboard.button_id("left alt")) > 0.5
-	end
-
-	return var_1_0
+	return not not hud_customizer_enabled
 end
 
 HudCustomizer.reset_button = function (ui_renderer)
@@ -47,18 +40,7 @@ HudCustomizer.run = function (ui_renderer, ui_scenegraph, customizer_data)
 	drag_hover = false
 
 	local is_dirty = false
-	local registry_key = customizer_data.registry_key
-
-	if not registry_key then
-		-- Nothing
-	end
-
-	registry_key = customizer_data
-
-	local key = registry_key
-
-	::label_3_0::
-
+	local key = not not customizer_data.registry_key
 	local offset = offset_registry[key]
 
 	if not offset then
@@ -116,18 +98,7 @@ HudCustomizer.run = function (ui_renderer, ui_scenegraph, customizer_data)
 			color[1] = 200 + 55 * math.sin(5 * Managers.time:time("ui"))
 		end
 
-		local border_2 = customizer_data.border
-
-		if not border_2 then
-			-- Nothing
-		end
-
-		border_2 = 3
-
-		local border = border_2
-
-		::label_3_1::
-
+		local border = not not customizer_data.border
 		local h_size = Vector2(drag_size[1], border)
 		local v_size = Vector2(border, drag_size[2] - 2 * border)
 		local a_size = Vector2(drag_size[1], drag_size[2])

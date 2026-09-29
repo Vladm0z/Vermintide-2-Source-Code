@@ -15,18 +15,7 @@ PlayerBotUnitFirstPerson.init = function (self, extension_init_context, unit, ex
 	local career = profile.careers[career_index]
 	local unit_name = profile.base_units.first_person_bot
 	local skin_name = extension_init_data.skin_name
-	local first_person_attachment_2 = Cosmetics[skin_name].first_person_attachment
-
-	if not first_person_attachment_2 then
-		-- Nothing
-	end
-
-	first_person_attachment_2 = profile.first_person_attachment
-
-	local first_person_attachment = first_person_attachment_2
-
-	::label_1_0::
-
+	local first_person_attachment = not not Cosmetics[skin_name].first_person_attachment
 	local attachment_unit_name = first_person_attachment.unit
 	local attachment_node_linking = first_person_attachment.attachment_node_linking
 	local unit_spawner = Managers.state.unit_spawner

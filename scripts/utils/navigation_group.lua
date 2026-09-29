@@ -271,13 +271,7 @@ NavigationGroup.print_group = function (self, world, nav_world, line_object, lin
 	print("Group", self._group_number, "has neighbours:")
 
 	for group_neighbour, _ in pairs(self._group_neighbours) do
-		local print = print
-		local _group_number = group_neighbour._group_number
-		local flag
-
-		flag = (not self._group_ledge_neighbours[group_neighbour] or not "connected_by_ledge") and not not ""
-
-		print(_group_number, flag)
+		print(group_neighbour._group_number, self._group_ledge_neighbours[group_neighbour] and not not "connected_by_ledge" or not self._group_ledge_neighbours[group_neighbour] and not not "")
 	end
 
 	for _, poly in pairs(self._group_polygons) do
@@ -297,15 +291,7 @@ NavigationGroup.print_group = function (self, world, nav_world, line_object, lin
 	Gui.text_3d(debug_world_gui, "id=" .. self._group_number, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 2, 0), 3, Color(255, 255, 255))
 	Gui.text_3d(debug_world_gui, "dist=" .. self._distance_from_finish, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 1.5, 0), 3, Color(255, 255, 255))
 	Gui.text_3d(debug_world_gui, "area=" .. self._area, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 1, 0), 3, Color(255, 255, 255))
-
-	local text_3d = Gui.text_3d
-	local var_24_4 = debug_world_gui
-	local str = "main_path_index="
-	local _main_path_index = self._main_path_index
-
-	_main_path_index = not not _main_path_index or not not "nil"
-
-	text_3d(var_24_4, str .. _main_path_index, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 0.5, 0), 3, Color(255, 255, 255))
+	Gui.text_3d(debug_world_gui, "main_path_index=" .. not not self._main_path_index, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 0.5, 0), 3, Color(255, 255, 255))
 end
 
 NavigationGroup.draw_poly_lines = function (self, poly, color, nav_world, line_object, debug_world_gui)

@@ -205,11 +205,8 @@ HeroWindowTalents._is_button_hover_enter = function (self, widget)
 	-- function 12
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 HeroWindowTalents._handle_input = function (self, dt, t)
@@ -300,22 +297,7 @@ HeroWindowTalents._populate_talents_by_hero = function (self, initialize)
 			local no_talent_selected = not selected_column or selected_column == 0
 			local unlock_name = "talent_point_" .. i
 			local row_unlocked = ProgressionUnlocks.is_unlocked(unlock_name, self.hero_level)
-			local get_color_table_with_alpha
-
-			if row_unlocked then
-				get_color_table_with_alpha = Colors.get_color_table_with_alpha("green", 255)
-
-				if not get_color_table_with_alpha then
-					-- Nothing
-				end
-			end
-
-			get_color_table_with_alpha = Colors.get_color_table_with_alpha("red", 255)
-
-			local level_text_color = get_color_table_with_alpha
-
-			::label_16_0::
-
+			local level_text_color = row_unlocked and not not Colors.get_color_table_with_alpha("green", 255) or not row_unlocked and not not Colors.get_color_table_with_alpha("red", 255)
 			local talent_template = ProgressionUnlocks.get_unlock(unlock_name)
 
 			content.level_text = tostring(talent_template.level_requirement)
@@ -350,7 +332,7 @@ HeroWindowTalents._populate_talents_by_hero = function (self, initialize)
 				local hotspot = content[hotspot_name]
 				local talent_locked = not row_unlocked
 
-				talent_locked = (not not talent_locked or not not override_talents) and override_talents[talent_name] == false
+				talent_locked = not not talent_locked or not not override_talents and override_talents[talent_name] == false
 
 				if is_selected or no_talent_selected and not talent_locked then
 					style[icon_name].saturated = false
@@ -358,41 +340,8 @@ HeroWindowTalents._populate_talents_by_hero = function (self, initialize)
 					style[icon_name].saturated = true
 				end
 
-				local icon
-
-				if talent_data then
-					icon = talent_data.icon
-
-					if not icon then
-						-- Nothing
-					end
-				end
-
-				icon = "icons_placeholder"
-
-				::label_16_1::
-
-				content[icon_name] = icon
-
-				local var_16_4
-
-				if talent_data then
-					local Localize = Localize
-					local display_name = talent_data.display_name
-
-					display_name = not not display_name or not not talent_data.name
-					var_16_4 = Localize(display_name)
-
-					if not var_16_4 then
-						-- Nothing
-					end
-				end
-
-				var_16_4 = "Undefined"
-
-				::label_16_2::
-
-				content[title_text_name] = var_16_4
+				content[icon_name] = talent_data and not not talent_data.icon or not talent_data and not not "icons_placeholder"
+				content[title_text_name] = talent_data and not not Localize(not not talent_data.display_name) or not talent_data and not not "Undefined"
 				hotspot.is_selected = is_selected
 				hotspot.talent = talent_data
 				hotspot.talent_id = id
@@ -517,26 +466,12 @@ HeroWindowTalents._populate_career_info = function (self, initialize)
 	local career_name = career_settings.name
 	local character_selection_image = career_settings.character_selection_image
 	local widgets_by_name = self._widgets_by_name
-	local get_color_table_with_alpha
-
-	if Colors.color_definitions[career_name] then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha(career_name, 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = {
+	local career_color = Colors.color_definitions[career_name] and not not Colors.get_color_table_with_alpha(career_name, 255) or not Colors.color_definitions[career_name] and not not {
 		255,
 		255,
 		255,
 		255
 	}
-
-	local career_color = get_color_table_with_alpha
-
-	::label_21_0::
 
 	widgets_by_name.career_background.style.background.color = career_color
 

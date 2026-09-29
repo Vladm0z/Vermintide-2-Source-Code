@@ -322,7 +322,7 @@ local MINOR_MODIFIER_VALIDATORS = {
 		-- function 18
 		local node = working_graph[node_key]
 
-		return (node.curse ~= "curse_abundance_of_life" or not table.contains(modifier_group, "increased_grenades")) and not not not table.contains(modifier_group, "increased_healing")
+		return node.curse ~= "curse_abundance_of_life" or not table.contains(modifier_group, "increased_grenades") and not not not table.contains(modifier_group, "increased_healing")
 	end
 }
 
@@ -605,40 +605,8 @@ local function apply_progress(working_graph, path, start_index, end_index)
 	-- function 42
 	local node_before = working_graph[path[start_index - 1]]
 	local node_after = working_graph[path[end_index + 1]]
-	local run_progress
-
-	if node_before then
-		run_progress = node_before.run_progress
-
-		if not run_progress then
-			-- Nothing
-		end
-	end
-
-	run_progress = 0
-
-	local start_prog = run_progress
-
-	do
-		local run_progress_2
-	end
-
-	::label_42_0::
-
-	if node_after then
-		run_progress_2 = node_after.run_progress
-
-		if not run_progress_2 then
-			-- Nothing
-		end
-	end
-
-	run_progress_2 = 0.9999
-
-	local end_prog = run_progress_2
-
-	::label_42_1::
-
+	local start_prog = node_before and not not node_before.run_progress or not node_before and not not 0
+	local end_prog = node_after and not not node_after.run_progress or not node_after and not not 0.9999
 	local length_of_lerp = end_index - start_index
 	local index_offset = 0
 
@@ -935,17 +903,7 @@ local function assign_conflict_settings(context, working_graph)
 	-- function 52
 	for _, base_node in pairs(working_graph) do
 		if base_node.type == "SIGNATURE" or base_node.type == "TRAVEL" or base_node.type == "ARENA" then
-			local var_52_0 = context.config.CONFLICT_DIRECTORS[base_node.god]
-
-			if not var_52_0 then
-				-- Nothing
-			end
-
-			var_52_0 = context.config.CONFLICT_DIRECTORS.default
-
-			local possible_conflict_settings = var_52_0
-
-			::label_52_0::
+			local possible_conflict_settings = not not context.config.CONFLICT_DIRECTORS[base_node.god]
 
 			base_node.conflict_settings = possible_conflict_settings[context.random_generator(1, #possible_conflict_settings)]
 		end
@@ -1147,7 +1105,7 @@ function deus_populate_graph(base_graph, seed, config, dominant_god, with_belako
 		local mutator_seed = seeds.mutator_seed
 		local blessings_seed = seeds.blessings_seed
 		local power_ups_seed = seeds.power_ups_seed
-		local tbl = {
+		local node = {
 			layout_x = base_node.layout_x,
 			layout_y = base_node.layout_y,
 			level_seed = level_seed,
@@ -1157,27 +1115,18 @@ function deus_populate_graph(base_graph, seed, config, dominant_god, with_belako
 				mutator = mutator_seed,
 				blessings = blessings_seed,
 				power_ups = power_ups_seed
-			}
+			},
+			theme = not not base_node.god,
+			minor_modifier_group = base_node.minor_modifier_group,
+			run_progress = base_node.run_progress,
+			conflict_settings = not not base_node.conflict_settings,
+			level_type = base_node.type,
+			mutators = config.MUTATORS[base_node.type],
+			terror_event_power_up = base_node.terror_event_power_up,
+			terror_event_power_up_rarity = base_node.terror_event_power_up_rarity,
+			possible_arena_belakor_nodes = base_node.possible_arena_belakor_nodes,
+			next = table.clone(base_node.next)
 		}
-		local god = base_node.god
-
-		god = not not god or not not "wastes"
-		tbl.theme = god
-		tbl.minor_modifier_group = base_node.minor_modifier_group
-		tbl.run_progress = base_node.run_progress
-
-		local conflict_settings = base_node.conflict_settings
-
-		conflict_settings = not not conflict_settings or not not "disabled"
-		tbl.conflict_settings = conflict_settings
-		tbl.level_type = base_node.type
-		tbl.mutators = config.MUTATORS[base_node.type]
-		tbl.terror_event_power_up = base_node.terror_event_power_up
-		tbl.terror_event_power_up_rarity = base_node.terror_event_power_up_rarity
-		tbl.possible_arena_belakor_nodes = base_node.possible_arena_belakor_nodes
-		tbl.next = table.clone(base_node.next)
-
-		local node = tbl
 
 		if script_data.deus_shoppify_run and base_node.type ~= "START" and base_node.type ~= "ARENA" then
 			local shop_types = table.keys(DeusShopSettings.shop_types)
@@ -1193,32 +1142,15 @@ function deus_populate_graph(base_graph, seed, config, dominant_god, with_belako
 			node.path = base_node.path
 
 			local themes = config.LEVEL_AVAILABILITY[base_node.type][base_node.level].themes
-			local contains = table.contains
-			local var_58_4 = themes
-			local god_2 = base_node.god
 
-			god_2 = not not god_2 or not not "wastes"
-
-			if not contains(var_58_4, god_2) then
+			if not table.contains(themes, not not base_node.god) then
 				local any_theme = themes[1]
-				local warning = Application.warning
-				local format = string.format
-				local str = "[deus_populate_graph.lua] theme %s not found for level %s, using %s"
-				local god_3 = base_node.god
 
-				god_3 = not not god_3 or not not "wastes"
-
-				warning(format(str, god_3, base_node.level, any_theme))
+				Application.warning(string.format("[deus_populate_graph.lua] theme %s not found for level %s, using %s", not not base_node.god, base_node.level, any_theme))
 
 				node.level = get_level_name(base_node.level, base_node.path, any_theme)
 			else
-				local var_58_10 = get_level_name
-				local level = base_node.level
-				local path = base_node.path
-				local god_4 = base_node.god
-
-				god_4 = not not god_4 or not not "wastes"
-				node.level = var_58_10(level, path, god_4)
+				node.level = get_level_name(base_node.level, base_node.path, not not base_node.god)
 			end
 
 			local level_alias = config.LEVEL_ALIAS[node.level]

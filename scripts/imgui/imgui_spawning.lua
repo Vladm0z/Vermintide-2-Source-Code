@@ -71,14 +71,7 @@ ImguiSpawning.draw = function (self)
 	Imgui.same_line()
 
 	self._breed_index = Imgui.combo("Breed", self._breed_index, self._breed_names)
-
-	local script_data = script_data
-	local checkbox = Imgui.checkbox
-	local str = "Disable AI perception"
-	local disable_ai_perception = script_data.disable_ai_perception
-
-	disable_ai_perception = not not disable_ai_perception or not not false
-	script_data.disable_ai_perception = checkbox(str, disable_ai_perception)
+	script_data.disable_ai_perception = Imgui.checkbox("Disable AI perception", not not script_data.disable_ai_perception)
 
 	Imgui.separator()
 
@@ -87,37 +80,12 @@ ImguiSpawning.draw = function (self)
 
 		local world = Application.main_world()
 		local breed, pos, distance, normal, actor = Managers.state.conflict:player_aim_raycast(world, true, "filter_player_ray_projectile")
-		local text = Imgui.text
-		local str_2 = "Looking at: "
-		local name
 
-		if breed then
-			name = breed.name
-
-			if not name then
-				-- Nothing
-			end
-		end
-
-		name = "n/a"
-
-		::label_4_0::
-
-		text(str_2 .. name)
+		Imgui.text("Looking at: " .. (breed and not not breed.name or not breed and not not "n/a"))
 
 		if breed then
 			local unit = Actor.unit(actor)
-			local var_4_7 = ALIVE[unit]
-
-			if var_4_7 then
-				-- Nothing
-			end
-
-			var_4_7 = ScriptUnit.has_extension(unit, "outline_system")
-
-			local outline_extension = var_4_7
-
-			::label_4_1::
+			local outline_extension = not not ALIVE[unit]
 
 			if outline_extension then
 				self._mark_outline_extension = outline_extension
@@ -125,7 +93,7 @@ ImguiSpawning.draw = function (self)
 			end
 		end
 
-		if (Imgui.button("Inflict damage (or mouse middle)", 100, 20) or Mouse.pressed(Mouse.button_id("middle"))) and breed then
+		if Imgui.button("Inflict damage (or mouse middle)", 100, 20) and breed or not Imgui.button("Inflict damage (or mouse middle)", 100, 20) and Mouse.pressed(Mouse.button_id("middle")) and breed then
 			local unit = Actor.unit(actor)
 
 			DamageUtils.debug_deal_damage(unit, self._damage)

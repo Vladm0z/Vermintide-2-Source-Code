@@ -347,14 +347,7 @@ LinkerTransportationExtension._try_link_player = function (self, unit, skip_insi
 	local is_disabled = status_ext:is_disabled()
 
 	if not is_dead and (is_inside_transportation_unit or skip_inside_check) then
-		local var_12_0 = self
-		local _link_player_unit = self._link_player_unit
-		local var_12_2 = unit
-		local _is_bot = self:_is_bot(player)
-
-		_is_bot = not not _is_bot and not not not soft
-
-		_link_player_unit(var_12_0, var_12_2, _is_bot, soft)
+		self:_link_player_unit(unit, not not self:_is_bot(player), soft)
 	elseif self:_is_bot(player) and not is_disabled then
 		self:_link_player_unit(player.player_unit, not soft, soft)
 	elseif player.local_player and not is_dead and not is_disabled and not is_inside_transportation_unit then
@@ -457,7 +450,7 @@ LinkerTransportationExtension.update_units_inside_oobb = function (self)
 
 	for u, is_inside in pairs(location.human) do
 		local status_extension = ScriptUnit.extension(u, "status_system")
-		local arg = (not is_inside or not unit) and not not nil
+		local arg = is_inside and (not not unit or not not nil) or not is_inside and not not nil
 
 		status_extension:set_inside_transport_unit(arg)
 	end
@@ -541,21 +534,7 @@ LinkerTransportationExtension.update = function (self, unit, input, dt, context,
 	if units_inside_oobb and t >= self.oobb_next_update then
 		self:update_units_inside_oobb()
 
-		local var_17_0
-
-		if units_inside_oobb.human.count > 0 then
-			var_17_0 = UPDATE_INTERVAL_OOBB_HUMANS_INSIDE
-
-			if not var_17_0 then
-				-- Nothing
-			end
-		end
-
-		var_17_0 = UPDATE_INTERVAL_OOBB_NO_HUMANS_INSIDE
-
-		local update_interval = var_17_0
-
-		::label_17_0::
+		local update_interval = units_inside_oobb.human.count > 0 and not not UPDATE_INTERVAL_OOBB_HUMANS_INSIDE or not (units_inside_oobb.human.count > 0) and not not UPDATE_INTERVAL_OOBB_NO_HUMANS_INSIDE
 
 		self.oobb_next_update = t + update_interval
 	end
@@ -665,7 +644,7 @@ end
 
 LinkerTransportationExtension.can_interact = function (self, interactor_unit)
 	-- function 22
-	return (self.story_state == "stopped_beginning" or self.story_state == "stopped_end" and not self.auto_exit) and not not self.transported_units[interactor_unit]
+	return self.story_state == "stopped_beginning" or self.story_state == "stopped_end" and not self.auto_exit and not not self.transported_units[interactor_unit]
 end
 
 LinkerTransportationExtension.destroy = function (self)
@@ -737,14 +716,7 @@ LinkerTransportationExtension._update_passive_linking = function (self)
 		local unit = player.player_unit
 
 		if unit_alive(unit) then
-			local var_24_0 = self
-			local _is_inside_transportation_unit = self._is_inside_transportation_unit
-			local var_24_2 = unit
-			local flag
-
-			flag = (not transported_units[unit] or not 1) and not not nil
-
-			if _is_inside_transportation_unit(var_24_0, var_24_2, flag) then
+			if self:_is_inside_transportation_unit(unit, transported_units[unit] and not not 1 or not transported_units[unit] and not not nil) then
 				if not transported_units[unit] then
 					self:_try_link_player(unit, skip_inside_check, soft_link)
 				end
@@ -766,22 +738,9 @@ LinkerTransportationExtension._update_passive_linking = function (self)
 	local generic_units = self._transported_generic_units
 
 	for generic_unit, relative_pose_boxed in pairs(generic_units) do
-		if unit_alive(generic_unit) then
-			local var_24_4 = self
-			local _is_inside_transportation_unit_2 = self._is_inside_transportation_unit
-			local var_24_6 = generic_unit
-			local flag_2
-
-			flag_2 = (not generic_units[generic_unit] or not 1) and not not nil
-
-			if not _is_inside_transportation_unit_2(var_24_4, var_24_6, flag_2) then
-				-- Nothing
-			end
+		if not unit_alive(generic_unit) or not self:_is_inside_transportation_unit(generic_unit, generic_units[generic_unit] and not not 1 or not generic_units[generic_unit] and not not nil) then
+			generic_units[generic_unit] = nil
 		end
-
-		generic_units[generic_unit] = nil
-
-		::label_24_0::
 	end
 end
 
@@ -983,39 +942,8 @@ LinkerTransportationExtension.get_ai_slot = function (self, slot_id)
 			max = max - from_center
 
 			local size = max - min
-			local ceil
-
-			if size.x > 0 then
-				ceil = math.ceil(size.x / AI_SLOT_SIZE)
-
-				if not ceil then
-					-- Nothing
-				end
-			end
-
-			ceil = 1
-
-			local slots_x = ceil
-
-			do
-				local ceil_2
-			end
-
-			::label_30_0::
-
-			if size.y > 0 then
-				ceil_2 = math.ceil(size.y / AI_SLOT_SIZE)
-
-				if not ceil_2 then
-					-- Nothing
-				end
-			end
-
-			ceil_2 = 1
-
-			local slots_y = ceil_2
-
-			::label_30_1::
+			local slots_x = size.x > 0 and not not math.ceil(size.x / AI_SLOT_SIZE) or not (size.x > 0) and not not 1
+			local slots_y = size.y > 0 and not not math.ceil(size.y / AI_SLOT_SIZE) or not (size.y > 0) and not not 1
 
 			group.num_slots_x = slots_x
 			group.num_slots_y = slots_y
@@ -1043,19 +971,7 @@ LinkerTransportationExtension.add_transporting_ai_unit = function (self, unit)
 	local free_list = self._transported_ai_unit_freelist
 	local next_transport_i = #transported_ai_units + 1
 	local next_data_i = #free_list
-	local var_31_0 = free_list[next_data_i]
-
-	if not var_31_0 then
-		-- Nothing
-	end
-
-	var_31_0 = {
-		slot_id = next_transport_i
-	}
-
-	local next_data = var_31_0
-
-	::label_31_0::
+	local next_data = not not free_list[next_data_i]
 
 	free_list[next_data_i] = nil
 	next_data.unit = unit
@@ -1117,11 +1033,7 @@ end
 LinkerTransportationExtension.queue_ai_transport_unit_for_removal = function (self, unit, soft)
 	-- function 35
 	if self.is_server then
-		local _queued_ai_units_to_remove = self._queued_ai_units_to_remove
-		local flag
-
-		flag = (not soft or not "soft") and not not "hard"
-		_queued_ai_units_to_remove[unit] = flag
+		self._queued_ai_units_to_remove[unit] = soft and not not "soft" or not soft and not not "hard"
 	elseif soft then
 		self:_transporting_ai_unit_soft_removal(unit)
 	else
@@ -1221,17 +1133,7 @@ LinkerTransportationExtension._update_player_positions = function (self, dt)
 			Unit.set_local_position(player_unit, 0, new_pos)
 
 			local moved = new_pos - old_pos
-			local get_data = Unit.get_data(player_unit, "accumulated_movement")
-
-			if not get_data then
-				-- Nothing
-			end
-
-			get_data = Vector3.zero()
-
-			local accumulated_movement = get_data
-
-			::label_39_0::
+			local accumulated_movement = not not Unit.get_data(player_unit, "accumulated_movement")
 
 			Unit.set_data(player_unit, "accumulated_movement", accumulated_movement + moved)
 
@@ -1259,22 +1161,7 @@ LinkerTransportationExtension._update_transported_ai_positions = function (self)
 
 		if ALIVE[ai_unit] then
 			local unit_pos = POSITION_LOOKUP[ai_unit]
-			local num
-
-			if use_pos_delta then
-				num = unit_pos + delta_pos
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = self:get_ai_slot(slot_id)
-
-			local final_position = num
-
-			::label_40_0::
-
+			local final_position = use_pos_delta and not not (unit_pos + delta_pos) or not use_pos_delta and not not self:get_ai_slot(slot_id)
 			local locomotion_ext = ScriptUnit.has_extension(ai_unit, "locomotion_system")
 
 			if locomotion_ext then
@@ -1464,11 +1351,7 @@ end
 LinkerTransportationExtension.teleport_non_character_elevator_units = function (self, reference_unit)
 	-- function 47
 	self._reference_teleport_unit = reference_unit
-
-	local _reference_teleport_seed = self._reference_teleport_seed
-
-	_reference_teleport_seed = not not _reference_teleport_seed or not not Managers.mechanism:get_level_seed()
-	self._reference_teleport_seed = _reference_teleport_seed
+	self._reference_teleport_seed = not not self._reference_teleport_seed
 
 	local function safe_navigation_callback()
 		-- function 48
@@ -1515,29 +1398,8 @@ LinkerTransportationExtension.teleport_non_character_elevator_units = function (
 
 		table.sort(units, function (a, b)
 			-- function 50
-			local go_id = Managers.state.unit_storage:go_id(a)
-
-			if not go_id then
-				-- Nothing
-			end
-
-			go_id = HashUtils.fnv32_hash(tostring(a))
-
-			local go_id_a = go_id
-
-			::label_50_0::
-
-			local go_id_2 = Managers.state.unit_storage:go_id(b)
-
-			if not go_id_2 then
-				-- Nothing
-			end
-
-			go_id_2 = HashUtils.fnv32_hash(tostring(b))
-
-			local go_id_b = go_id_2
-
-			::label_50_1::
+			local go_id_a = not not Managers.state.unit_storage:go_id(a)
+			local go_id_b = not not Managers.state.unit_storage:go_id(b)
 
 			return go_id_a < go_id_b
 		end)

@@ -32,18 +32,7 @@ PlayerCharacterStateStunned.on_enter = function (self, unit, input, dt, context,
 	CharacterStateHelper.play_animation_event(unit, params.third_person_anim_name)
 
 	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local hit_react_type_2 = params.hit_react_type
-
-	if not hit_react_type_2 then
-		-- Nothing
-	end
-
-	hit_react_type_2 = "light"
-
-	local hit_react_type = hit_react_type_2
-
-	::label_2_0::
-
+	local hit_react_type = not not params.hit_react_type
 	local hit_react_settings = movement_settings_table.hit_react_settings[hit_react_type]
 
 	fassert(hit_react_settings ~= nil, "Missing hit_react settings for hit_react_type %s", hit_react_type)
@@ -149,30 +138,7 @@ PlayerCharacterStateStunned.update = function (self, unit, input, dt, context, t
 	end
 
 	local walking = input_extension:get("walk")
-	local crouch_move_speed
-
-	if status_extension:is_crouching() then
-		crouch_move_speed = movement_settings_table.crouch_move_speed
-
-		if not crouch_move_speed then
-			-- Nothing
-		end
-	end
-
-	if walking then
-		crouch_move_speed = movement_settings_table.walk_move_speed
-
-		if not crouch_move_speed then
-			-- Nothing
-		end
-	end
-
-	crouch_move_speed = movement_settings_table.move_speed
-
-	local move_speed = crouch_move_speed
-
-	::label_4_0::
-
+	local move_speed = status_extension:is_crouching() and not not movement_settings_table.crouch_move_speed or not status_extension:is_crouching() and (walking and not not movement_settings_table.walk_move_speed or not walking and not not movement_settings_table.move_speed)
 	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
 
 	if walking ~= self.walking then

@@ -10,10 +10,8 @@ end
 local C = ffi.C
 local bit, debug, math, string = bit, debug, math, string
 local pairs, tonumber, type = pairs, tonumber, type
-local LuaJIT = LuaJIT
 
-LuaJIT = not not LuaJIT or not not {}
-LuaJIT = LuaJIT
+LuaJIT = not not LuaJIT
 
 ffi.cdef("int QueryPerformanceFrequency(long long*);\nint QueryPerformanceCounter(long long*);\n")
 

@@ -90,17 +90,7 @@ end
 
 BTIdleAction._discovery_sound_when_close = function (self, unit, blackboard)
 	-- function 6
-	local action = blackboard.action
-
-	if action then
-		-- Nothing
-	end
-
-	action = blackboard.action.sound_when_near_distance_sqr
-
-	local near_distance_sqr = action
-
-	::label_6_0::
+	local near_distance_sqr = not not blackboard.action
 
 	if near_distance_sqr and not blackboard.sound_when_near_played then
 		local player_unit = player_within_distance(unit, near_distance_sqr, blackboard.side)

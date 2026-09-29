@@ -62,11 +62,7 @@ end
 
 TelemetrySurveyView.is_survey_answered = function (self)
 	-- function 6
-	local survey_answered = self.survey_answered
-
-	survey_answered = not not survey_answered and not not self.survey_confirmed
-
-	return survey_answered
+	return not not self.survey_answered
 end
 
 TelemetrySurveyView.is_survey_timed_out = function (self)
@@ -194,21 +190,7 @@ TelemetrySurveyView.update_button_disabled = function (self)
 
 	local is_disabled = self.continue_button.content.disabled
 	local text_style = self.continue_button.style.text
-	local disabled_color
-
-	if is_disabled then
-		disabled_color = text_style.disabled_color
-
-		if not disabled_color then
-			-- Nothing
-		end
-	end
-
-	disabled_color = text_style.base_color
-
-	local text_color = disabled_color
-
-	::label_18_0::
+	local text_color = is_disabled and not not text_style.disabled_color or not is_disabled and not not text_style.base_color
 
 	text_style.text_color = text_color
 end

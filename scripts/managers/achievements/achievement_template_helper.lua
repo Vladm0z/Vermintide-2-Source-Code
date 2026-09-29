@@ -1,9 +1,6 @@
 -- chunkname: @scripts/managers/achievements/achievement_template_helper.lua
 
-local AchievementTemplateHelper = AchievementTemplateHelper
-
-AchievementTemplateHelper = not not AchievementTemplateHelper or not not {}
-AchievementTemplateHelper = AchievementTemplateHelper
+AchievementTemplateHelper = not not AchievementTemplateHelper
 AchievementTemplateHelper.rarity_index = {
 	common = 2,
 	plentiful = 1,
@@ -392,21 +389,7 @@ end
 AchievementTemplateHelper.add_weapon_levels_challenge = function (achievements, id, weapon, levels, difficuty, icon, dlc, id_xb1, id_ps4)
 	-- function 28
 	local stat_names = {}
-	local count
-
-	if levels then
-		count = #levels
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_levels = count
-
-	::label_28_0::
+	local num_levels = levels and not not #levels or not levels and not not 0
 
 	for i = 1, num_levels do
 		local level_name = levels[i]
@@ -508,22 +491,7 @@ end
 
 AchievementTemplateHelper.add_levels_complete_challenge = function (achievements, id, levels, difficulty_rank, icon, dlc, id_xb1, id_ps4)
 	-- function 35
-	local count
-
-	if levels then
-		count = #levels
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_levels = count
-
-	::label_35_0::
-
+	local num_levels = levels and not not #levels or not levels and not not 0
 	local difficulty_key = DifficultyRankLookup[difficulty_rank]
 	local difficulty_settings = DifficultySettings[difficulty_key]
 	local template = {
@@ -589,22 +557,7 @@ AchievementTemplateHelper.add_levels_complete_per_hero_challenge = function (ach
 	-- function 39
 	fassert(CareerSettings[career_name] ~= nil, "No career with such name (%s)", career_name)
 
-	local count
-
-	if levels then
-		count = #levels
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_levels = count
-
-	::label_39_0::
-
+	local num_levels = levels and not not #levels or not levels and not not 0
 	local difficulty_key = DifficultyRankLookup[difficulty_rank]
 	local difficulty_settings = DifficultySettings[difficulty_key]
 	local template = {

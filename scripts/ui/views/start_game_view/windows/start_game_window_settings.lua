@@ -259,17 +259,7 @@ StartGameWindowSettings._handle_input = function (self, dt, t)
 		end
 	end
 
-	local get_custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
-
-	if not get_custom_game_settings then
-		-- Nothing
-	end
-
-	get_custom_game_settings = parent:get_custom_game_settings("adventure")
-
-	local custom_game_settings = get_custom_game_settings
-
-	::label_12_0::
+	local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
 
 	if self:_is_button_released(widgets_by_name.game_option_1) then
 		parent:set_layout_by_name(custom_game_settings.layout_name)
@@ -338,18 +328,7 @@ StartGameWindowSettings._update_additional_options = function (self)
 	local private_enabled = parent:is_private_option_enabled()
 	local always_host_enabled = parent:is_always_host_option_enabled()
 	local strict_matchmaking_enabled = parent:is_strict_matchmaking_option_enabled()
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local twitch_active = twitch
-
-	::label_17_0::
-
+	local twitch_active = not not Managers.twitch
 	local lobby = self._network_lobby
 	local num_members = lobby:members():get_member_count()
 	local is_alone = num_members == 1
@@ -423,39 +402,10 @@ StartGameWindowSettings._set_difficulty_option = function (self, difficulty_key)
 	local difficulty_settings = DifficultySettings[difficulty_key]
 	local display_name = not not difficulty_settings and not not difficulty_settings.display_name
 	local display_image = not not difficulty_settings and not not difficulty_settings.display_image
-	local completed_frame_texture_2
-
-	if difficulty_settings then
-		completed_frame_texture_2 = difficulty_settings.completed_frame_texture
-
-		if not completed_frame_texture_2 then
-			-- Nothing
-		end
-	end
-
-	completed_frame_texture_2 = "map_frame_00"
-
-	local completed_frame_texture = completed_frame_texture_2
-
-	::label_19_0::
-
+	local completed_frame_texture = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
 	local widgets_by_name = self._widgets_by_name
-	local content = widgets_by_name.game_option_2.content
-	local var_19_2
 
-	if display_name then
-		var_19_2 = Localize(display_name)
-
-		if not var_19_2 then
-			-- Nothing
-		end
-	end
-
-	var_19_2 = ""
-
-	::label_19_1::
-
-	content.option_text = var_19_2
+	widgets_by_name.game_option_2.content.option_text = display_name and not not Localize(display_name) or not display_name and not not ""
 	widgets_by_name.game_option_2.content.icon = not not display_image or not not nil
 	widgets_by_name.game_option_2.content.icon_frame = completed_frame_texture
 end

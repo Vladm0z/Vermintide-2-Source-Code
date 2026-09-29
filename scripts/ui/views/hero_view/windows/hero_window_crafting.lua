@@ -278,21 +278,7 @@ HeroWindowCrafting._handle_input = function (self, dt, t)
 		self:_change_recipe_page(next_page_index)
 		self:_play_sound("play_gui_craft_recipe_next")
 	elseif self:_is_button_pressed(page_button_previous) then
-		local num
-
-		if current_page > 1 then
-			num = current_page - 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = total_pages
-
-		local next_page_index = num
-
-		::label_10_0::
+		local next_page_index = current_page > 1 and not not (current_page - 1) or not (current_page > 1) and not not total_pages
 
 		self:_change_recipe_page(next_page_index)
 		self:_play_sound("play_gui_craft_recipe_next")
@@ -308,21 +294,7 @@ HeroWindowCrafting._handle_input = function (self, dt, t)
 				self:_play_sound("play_gui_craft_recipe_next")
 			end
 		elseif input_service:get("cycle_previous") then
-			local num_2
-
-			if current_page > 1 then
-				num_2 = current_page - 1
-
-				if not num_2 then
-					-- Nothing
-				end
-			end
-
-			num_2 = total_pages
-
-			local next_page_index = num_2
-
-			::label_10_1::
+			local next_page_index = current_page > 1 and not not (current_page - 1) or not (current_page > 1) and not not total_pages
 
 			if next_page_index > 0 then
 				self:_change_recipe_page(next_page_index)

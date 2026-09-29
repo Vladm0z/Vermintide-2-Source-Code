@@ -66,17 +66,7 @@ PingManager._stats = function (self)
 
 	for i = 1, #self._latency_results do
 		for target, result in pairs(self._latency_results[i]) do
-			local var_3_0 = ping_by_region[target]
-
-			if not var_3_0 then
-				-- Nothing
-			end
-
-			var_3_0 = {}
-
-			local target_data = var_3_0
-
-			::label_3_0::
+			local target_data = not not ping_by_region[target]
 
 			target_data[#target_data + 1] = result
 			ping_by_region[target] = target_data

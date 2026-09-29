@@ -115,17 +115,7 @@ return {
 
 		local breed_name = BLACKBOARDS[killed_unit].breed.name
 		local unit_data = player_units[killer_unit]
-		local var_6_0 = template.amount_of_stacks_per_breed[breed_name]
-
-		if not var_6_0 then
-			-- Nothing
-		end
-
-		var_6_0 = 1
-
-		local amount_of_stacks = var_6_0
-
-		::label_6_0::
+		local amount_of_stacks = not not template.amount_of_stacks_per_breed[breed_name]
 
 		for i = 1, amount_of_stacks do
 			template.add_buff(data.buff_system, killer_unit, data.buff_name)

@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/tutorial/tutorial_condition_evaluator.lua
 
-local TutorialConditions = TutorialConditions
-
-TutorialConditions = not not TutorialConditions or not not {}
-TutorialConditions = TutorialConditions
+TutorialConditions = not not TutorialConditions
 
 TutorialConditions.player = function (ctx)
 	-- function 1
@@ -19,23 +16,7 @@ TutorialConditions.hero_name = function (ctx)
 		return hero_name
 	end
 
-	local selected_profile_index = Managers.matchmaking.selected_profile_index
-
-	if not selected_profile_index then
-		-- Nothing
-	end
-
-	selected_profile_index = SaveData.wanted_profile_index
-
-	if not selected_profile_index then
-		-- Nothing
-	end
-
-	selected_profile_index = 1
-
-	local wanted_profile_index = selected_profile_index
-
-	::label_2_0::
+	local wanted_profile_index = not not Managers.matchmaking.selected_profile_index
 
 	hero_name = SPProfiles[wanted_profile_index].display_name
 

@@ -64,14 +64,7 @@ GameNetworkManager.init = function (self, world, lobby, is_server, event_delegat
 
 	debug_print("My own peer_id = %s", tostring(self.peer_id))
 	debug_print("self.is_server = %s", tostring(self.is_server))
-
-	local var_2_0 = self
-	local set_small_network_packets = self.set_small_network_packets
-	local user_setting = Application.user_setting("small_network_packets")
-
-	user_setting = not not user_setting or not not DefaultUserSettings.get("user_settings", "small_network_packets")
-
-	set_small_network_packets(var_2_0, user_setting)
+	self:set_small_network_packets(not not Application.user_setting("small_network_packets"))
 
 	self._event_delegate = event_delegate
 
@@ -217,23 +210,7 @@ GameNetworkManager.update = function (self, dt)
 	if self._shutdown_server_timer then
 		self._shutdown_server_timer = self._shutdown_server_timer - dt
 
-		local all_client_peers_disconnected = self.network_server:all_client_peers_disconnected()
-
-		if not all_client_peers_disconnected then
-			-- Nothing
-		end
-
-		if not (self._shutdown_server_timer < 0) then
-			all_client_peers_disconnected = false
-
-			goto label_14_0
-		end
-
-		all_client_peers_disconnected = true
-
-		local shutdown = all_client_peers_disconnected
-
-		::label_14_0::
+		local shutdown = not not self.network_server:all_client_peers_disconnected()
 
 		if shutdown then
 			self.network_server:force_disconnect_all_client_peers()
@@ -1220,14 +1197,7 @@ end
 
 GameNetworkManager.game_session_host = function (self)
 	-- function 97
-	local game_session = self.game_session
-
-	if game_session then
-		game_session = self._game_session_host
-		game_session = not not game_session or not not GameSession.game_session_host(self.game_session)
-	end
-
-	return game_session
+	return not not self.game_session
 end
 
 GameNetworkManager.rpc_enemy_is_alerted = function (self, channel_id, unit_id, is_alerted)
@@ -1321,34 +1291,12 @@ GameNetworkManager.rpc_coop_feedback = function (self, channel_id, player1_peer_
 	elseif predicate == "discarded_grimoire" then
 		local player_1_peer_id = player1.peer_id
 		local is_player_controlled = player1:is_player_controlled()
-		local user_name
-
-		if is_player_controlled then
-			if rawget(_G, "Steam") then
-				user_name = Steam.user_name(player_1_peer_id)
-
-				if not user_name then
-					-- Nothing
-				end
-			end
-
-			user_name = tostring(player_1_peer_id)
-
-			if not user_name then
-				-- Nothing
-			end
-		end
-
-		user_name = player1:name()
-
-		local player_1_name = user_name
-
-		::label_101_0::
+		local player_1_name = is_player_controlled and (rawget(_G, "Steam") and not not Steam.user_name(player_1_peer_id) or not rawget(_G, "Steam") and not not tostring(player_1_peer_id)) or not is_player_controlled and not not player1:name()
 
 		if IS_CONSOLE and not Managers.account:offline_mode() then
 			local lobby = Managers.state.network:lobby()
 
-			player_1_name = (not is_player_controlled or not not lobby:user_name(player_1_peer_id) or not tostring(player_1_peer_id)) and not not player1:name()
+			player_1_name = not not lobby:user_name(player_1_peer_id) or not not tostring(player_1_peer_id) or not not player1:name()
 		end
 
 		local pop_chat = true

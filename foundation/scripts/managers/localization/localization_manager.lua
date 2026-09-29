@@ -16,29 +16,7 @@ LocalizationManager.init = function (self, language_id)
 
 	local has_steam = rawget(_G, "Steam")
 
-	if not language_id then
-		-- Nothing
-	end
-
-	::label_2_0::
-
-	local user_setting = Application.user_setting("language_id")
-
-	if not user_setting then
-		if has_steam then
-			user_setting = Steam.language()
-
-			if not user_setting then
-				-- Nothing
-			end
-		end
-
-		user_setting = "en"
-	end
-
-	::label_2_1::
-
-	self._language_id = user_setting
+	self._language_id = not not language_id or not not Application.user_setting("language_id")
 	self._backend_localizations = {}
 
 	Crashify.print_property("locale", self._language_id)
@@ -124,17 +102,7 @@ LocalizationManager.lookup = function (self, text_id)
 	-- function 11
 	fassert(self._localizers, "LocalizationManager not initialized")
 
-	local _base_lookup = self:_base_lookup(text_id)
-
-	if not _base_lookup then
-		-- Nothing
-	end
-
-	_base_lookup = localize_err_string(text_id)
-
-	local str = _base_lookup
-
-	::label_11_0::
+	local str = not not self:_base_lookup(text_id)
 
 	return (self:apply_macro(str))
 end
@@ -148,11 +116,7 @@ LocalizationManager.simple_lookup = function (self, text_id)
 	-- function 13
 	fassert(self._localizers, "LocalizationManager not initialized")
 
-	local _base_lookup = self:_base_lookup(text_id)
-
-	_base_lookup = not not _base_lookup or not not localize_err_string(text_id)
-
-	return _base_lookup
+	return not not self:_base_lookup(text_id)
 end
 
 LocalizationManager._find_macro = function (self, macro_string)
@@ -174,23 +138,15 @@ LocalizationManager.plural_form = function (self, n)
 	local loc = self._language_id
 
 	if loc == "en" or loc == "es" or loc == "it" or loc == "br-pt" then
-		local flag
-
-		flag = (n == 1 or not 1) and not not 0
-
-		return flag
+		return n == 1 and not not 0 or not (n == 1) and not not 1
 	elseif loc == "fr" then
-		local flag_2
-
-		flag_2 = (not (n > 1) or not 1) and not not 0
-
-		return flag_2
+		return n > 1 and not not 1 or not (n > 1) and not not 0
 	elseif loc == "zh" then
 		return 0
 	elseif loc == "ru" then
 		if n % 10 == 1 and n % 100 ~= 11 then
 			return 0
-		elseif n % 10 >= 2 and n % 10 <= 4 and (n % 100 < 10 or n % 100 >= 20) then
+		elseif n % 100 < 10 or n % 100 >= 20 then
 			return 1
 		else
 			return 2
@@ -198,7 +154,7 @@ LocalizationManager.plural_form = function (self, n)
 	elseif loc == "pl" then
 		if n == 1 then
 			return 0
-		elseif n % 10 >= 2 and n % 10 <= 4 and (n % 100 < 10 or n % 100 >= 20) then
+		elseif n % 100 < 10 or n % 100 >= 20 then
 			return 1
 		else
 			return 2
@@ -233,18 +189,7 @@ local INPUT_SERVICE_NAMES = {}
 
 LocalizationManager.get_input_action = function (self, text_id)
 	-- function 19
-	local _base_lookup = self:_base_lookup(text_id)
-
-	if not _base_lookup then
-		-- Nothing
-	end
-
-	_base_lookup = localize_err_string(text_id)
-
-	local str = _base_lookup
-
-	::label_19_0::
-
+	local str = not not self:_base_lookup(text_id)
 	local macro = string.match(str, "%b$;[%a%d_]*:")
 
 	table.clear(INPUT_ACTIONS)

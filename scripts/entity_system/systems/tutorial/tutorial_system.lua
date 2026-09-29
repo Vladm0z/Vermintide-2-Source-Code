@@ -60,11 +60,7 @@ TutorialSystem.init = function (self, entity_system_creation_context, system_nam
 
 	network_event_delegate:register(self, "rpc_tutorial_message", "rpc_pacing_changed", "rpc_objective_unit_set_active", "rpc_prioritize_objective_tooltip", "rpc_objective_unit_set_always_show")
 
-	local SaveData = SaveData
-	local seen_handbook_popups = SaveData.seen_handbook_popups
-
-	seen_handbook_popups = not not seen_handbook_popups or not not {}
-	SaveData.seen_handbook_popups = seen_handbook_popups
+	SaveData.seen_handbook_popups = not not SaveData.seen_handbook_popups
 
 	Managers.state.event:register(self, "tutorial_trigger", "on_tutorial_trigger")
 
@@ -87,11 +83,7 @@ TutorialSystem.on_add_extension = function (self, world, unit, extension_name, e
 
 	if extension_name == "PlayerTutorialExtension" then
 		self.player_units[unit] = extension
-
-		local completed_tutorials = SaveData.completed_tutorials
-
-		completed_tutorials = not not completed_tutorials or not not {}
-		extension.completed_tutorials = completed_tutorials
+		extension.completed_tutorials = not not SaveData.completed_tutorials
 		extension.points = #extension.completed_tutorials
 		extension.tooltip_tutorial = {
 			active = false
@@ -124,27 +116,13 @@ TutorialSystem.on_add_extension = function (self, world, unit, extension_name, e
 	end
 
 	if extension_name == "ObjectivePickupTutorialExtension" then
-		local get_data = Unit.get_data(unit, "approach_text")
-
-		get_data = not not get_data or not not "<approach_text not set>"
-		extension.approach_text = get_data
-
-		local get_data_2 = Unit.get_data(unit, "disable_objective_ui")
-
-		get_data_2 = not not get_data_2 or not not false
-		extension.disregard = get_data_2
+		extension.approach_text = not not Unit.get_data(unit, "approach_text")
+		extension.disregard = not not Unit.get_data(unit, "disable_objective_ui")
 	end
 
 	if extension_name == "ObjectiveSocketTutorialExtension" then
-		local get_data_3 = Unit.get_data(unit, "approach_text")
-
-		get_data_3 = not not get_data_3 or not not "<approach_text not set>"
-		extension.approach_text = get_data_3
-
-		local get_data_4 = Unit.get_data(unit, "pickup_text")
-
-		get_data_4 = not not get_data_4 or not not "<pickup_text not set>"
-		extension.pickup_text = get_data_4
+		extension.approach_text = not not Unit.get_data(unit, "approach_text")
+		extension.pickup_text = not not Unit.get_data(unit, "pickup_text")
 	end
 
 	if extension_name == "ObjectiveUnitExtension" then
@@ -198,11 +176,7 @@ TutorialSystem.on_add_extension = function (self, world, unit, extension_name, e
 		extension.set_active = activate_func
 		extension.server_only = server_only
 		extension.network_synced = network_synced
-
-		local always_show = extension_init_data.always_show
-
-		always_show = not not always_show or not not Unit.get_data(unit, "always_show")
-		extension.always_show = always_show
+		extension.always_show = not not extension_init_data.always_show
 
 		extension.set_always_show = function (extension, show)
 			-- function 10
@@ -332,7 +306,7 @@ TutorialSystem.physics_async_update = function (self, context, t)
 
 		self:iterate_objective_tooltips(t, unit, extension, raycast_unit, world)
 
-		if (self.pacing == "pacing_peak_fade" or self.pacing == "pacing_relax") and not script_data.info_slates_disabled then
+		if self.pacing == "pacing_peak_fade" and not script_data.info_slates_disabled or not (self.pacing == "pacing_peak_fade") and self.pacing == "pacing_relax" and not script_data.info_slates_disabled then
 			self:iterate_info_slates(t, unit, extension, raycast_unit, world)
 		end
 
@@ -498,18 +472,7 @@ end
 
 TutorialSystem.iterate_objective_tooltips = function (self, t, unit, extension, raycast_unit, world)
 	-- function 20
-	local _objective_tooltip_prioritized_list = self._objective_tooltip_prioritized_list
-
-	if not _objective_tooltip_prioritized_list then
-		-- Nothing
-	end
-
-	_objective_tooltip_prioritized_list = TutorialObjectiveTooltipTemplates
-
-	local objective_tooltip_templates = _objective_tooltip_prioritized_list
-
-	::label_20_0::
-
+	local objective_tooltip_templates = not not self._objective_tooltip_prioritized_list
 	local objective_tooltip_templates_n = TutorialObjectiveTooltipTemplates_n
 	local objective_tooltips = extension.objective_tooltips
 
@@ -604,21 +567,7 @@ TutorialSystem.iterate_info_slates = function (self, t, unit, extension, raycast
 			repeat
 				local template = info_slate_templates[i]
 				local name = template.name
-				local cooldown_2
-
-				if template.cooldown then
-					cooldown_2 = template.cooldown
-
-					if not cooldown_2 then
-						-- Nothing
-					end
-				end
-
-				cooldown_2 = INFOSLATE_COOLDOWN
-
-				local cooldown = cooldown_2
-
-				::label_22_0::
+				local cooldown = template.cooldown and not not template.cooldown or not template.cooldown and not not INFOSLATE_COOLDOWN
 
 				if t < extension.shown_times[name] + cooldown then
 					break
@@ -627,21 +576,7 @@ TutorialSystem.iterate_info_slates = function (self, t, unit, extension, raycast
 				if template.can_show(t, unit, extension.data, raycast_unit, world) then
 					extension.shown_times[name] = t
 
-					local get_text
-
-					if template.get_text then
-						get_text = template.get_text(extension.data, template)
-
-						if not get_text then
-							-- Nothing
-						end
-					end
-
-					get_text = template.text
-
-					local text = get_text
-
-					::label_22_1::
+					local text = template.get_text and not not template.get_text(extension.data, template) or not template.get_text and not not template.text
 
 					text = Localize(text)
 

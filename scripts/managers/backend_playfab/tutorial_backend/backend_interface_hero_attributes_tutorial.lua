@@ -42,11 +42,8 @@ end
 BackendInterfaceHeroAttributesTutorial.get = function (self, hero, attribute)
 	-- function 4
 	local key = hero .. "_" .. attribute
-	local var_4_0 = self._attributes[key]
 
-	var_4_0 = not not var_4_0 or not not DEFAULT_ATTRIBUTES[key]
-
-	return var_4_0
+	return not not self._attributes[key]
 end
 
 BackendInterfaceHeroAttributesTutorial.set = function (self, hero, attribute, value)

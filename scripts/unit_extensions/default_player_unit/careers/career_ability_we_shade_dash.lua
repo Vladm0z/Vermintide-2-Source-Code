@@ -164,19 +164,7 @@ CareerAbilityWEShadeDash._ability_available = function (self)
 	local talent_extension = ScriptUnit.extension(self._owner_unit, "talent_system")
 	local available = false
 
-	if available then
-		-- Nothing
-	end
-
-	::label_9_0::
-
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
-
-	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
-
-	::label_9_1::
-
-	return can_use_activated_ability
+	return not not available and not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityWEShadeDash._start_priming = function (self)
@@ -229,7 +217,7 @@ CareerAbilityWEShadeDash._run_ability = function (self)
 	local status_extension = self._status_extension
 	local career_extension = self._career_extension
 
-	if (not is_server or not bot_player) and local_player then
+	if is_server and (bot_player or local_player) or not is_server and local_player then
 		local first_person_extension = self._first_person_extension
 
 		first_person_extension:animation_event("shade_stealth_ability")

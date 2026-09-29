@@ -594,36 +594,8 @@ end
 local function create_level_entry(level_settings, offset, selected_index, my_index, is_disabled, disabled_reason, preferred_levels)
 	-- function 12
 	local fallback_image = "icons_placeholder"
-	local small_level_image = level_settings.small_level_image
-
-	if not small_level_image then
-		-- Nothing
-	end
-
-	small_level_image = LevelHelper:get_small_level_image(level_settings.level_id)
-
-	local texture_name = small_level_image
-
-	do
-		local get_atlas_settings_by_texture_name
-	end
-
-	::label_12_0::
-
-	if UIAtlasHelper.has_texture_by_name(texture_name) then
-		get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name)
-
-		if not get_atlas_settings_by_texture_name then
-			-- Nothing
-		end
-	end
-
-	get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(fallback_image)
-
-	local texture_settings = get_atlas_settings_by_texture_name
-
-	::label_12_1::
-
+	local texture_name = not not level_settings.small_level_image
+	local texture_settings = UIAtlasHelper.has_texture_by_name(texture_name) and not not UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name) or not UIAtlasHelper.has_texture_by_name(texture_name) and not not UIAtlasHelper.get_atlas_settings_by_texture_name(fallback_image)
 	local frame_settings = UIFrameSettings.frame_outer_glow_01
 	local edge_height = frame_settings.texture_sizes.horizontal[2]
 	local box_size = math.min(grid_settings.level_size[1], grid_settings.level_size[2])

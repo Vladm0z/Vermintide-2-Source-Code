@@ -13,29 +13,14 @@ local INPUT_SERVICE_NAME = "rewards_popups"
 
 local function speed_up_popup_pressed(input_service)
 	-- function 1
-	local get = input_service:get("toggle_menu", true)
-
-	if not get then
-		get = input_service:get("back", true)
-
-		if not get then
-			get = input_service:get("skip_pressed", true)
-			get = not not get or not not input_service:get("left_press")
-		end
-	end
-
-	return get
+	return not not input_service:get("toggle_menu", true)
 end
 
 RewardPopupUI.init = function (self, level_end_view_context)
 	-- function 2
 	self._ui_top_renderer = level_end_view_context.ui_top_renderer
 	self._input_manager = level_end_view_context.input_manager
-
-	local world = level_end_view_context.world
-
-	world = not not world or not not level_end_view_context.ui_renderer.world
-	self.world = world
+	self.world = not not level_end_view_context.world
 
 	local wwise_world = level_end_view_context.wwise_world
 
@@ -132,17 +117,7 @@ RewardPopupUI.update = function (self, dt, t)
 	local animation_params = self._animation_params
 
 	if animation_params then
-		local blur_progress_2 = animation_params.blur_progress
-
-		if not blur_progress_2 then
-			-- Nothing
-		end
-
-		blur_progress_2 = 1
-
-		local blur_progress = blur_progress_2
-
-		::label_7_0::
+		local blur_progress = not not animation_params.blur_progress
 
 		self:set_fullscreen_effect_enable_state(true, blur_progress)
 	end
@@ -339,22 +314,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 	-- function 17
 	local widget_definitions = definitions.widget_definitions
 	local value = entry_data.value
-	local widget_type_2
-
-	if entry_data.widget_type and widget_definitions[entry_data.widget_type] then
-		widget_type_2 = entry_data.widget_type
-
-		if not widget_type_2 then
-			-- Nothing
-		end
-	end
-
-	widget_type_2 = "item"
-
-	local widget_type = widget_type_2
-
-	::label_17_0::
-
+	local widget_type = not not entry_data.widget_type
 	local ignore_height = entry_data.ignore_height
 	local widget = UIWidget.init(widget_definitions[widget_type])
 	local scenegraph_id = widget.scenegraph_id
@@ -400,23 +360,9 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		widget_height = widget_size[2] / 2
 	elseif widget_type == "weapon_skin" or widget_type == "skin" or widget_type == "keep_decoration_painting" then
 		local data = value.data
-		local rarity_2 = value.rarity
+		local rarity = not not value.rarity
 
-		if not rarity_2 then
-			-- Nothing
-		end
-
-		rarity_2 = data.rarity
-
-		local rarity = rarity_2
-
-		::label_17_1::
-
-		local content_2 = widget.content
-		local icon = value.icon
-
-		icon = not not icon or not not data.inventory_icon
-		content_2.texture_id = icon
+		widget.content.texture_id = not not value.icon
 		widget.content.rarity_texture = UISettings.item_rarity_textures[rarity]
 		widget_height = 0
 	elseif widget_type == "career" then
@@ -428,26 +374,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		local backend_id = value.backend_id
 		local item_interface = Managers.backend:get_interface("items")
 		local item = item_interface:get_item_from_id(backend_id)
-		local rarity_3 = item.rarity
-
-		if not rarity_3 then
-			-- Nothing
-		end
-
-		if item.data then
-			rarity_3 = item.data.rarity
-
-			if not rarity_3 then
-				-- Nothing
-			end
-		end
-
-		rarity_3 = "plentiful"
-
-		local rarity = rarity_3
-
-		::label_17_2::
-
+		local rarity = not not item.rarity
 		local inventory_icon = UIUtils.get_ui_information_from_item(item)
 
 		widget.content.texture_id = inventory_icon
@@ -493,35 +420,10 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 
 			local item = value[i]
 			local item_data = item.data
-			local rarity_4 = item.rarity
+			local rarity = not not item.rarity
 
-			if not rarity_4 then
-				-- Nothing
-			end
-
-			if item_data then
-				rarity_4 = item_data.rarity
-
-				if not rarity_4 then
-					-- Nothing
-				end
-			end
-
-			rarity_4 = "plentiful"
-
-			local rarity = rarity_4
-
-			::label_17_3::
-
-			local get_ui_information_from_item = UIUtils.get_ui_information_from_item(item)
-
-			get_ui_information_from_item = not not get_ui_information_from_item or not not "icons_placeholder"
-			content[icon_key] = get_ui_information_from_item
-
-			local var_17_7 = UISettings.item_rarity_textures[rarity]
-
-			var_17_7 = not not var_17_7 or not not "icons_placeholder"
-			content[rarity_key] = var_17_7
+			content[icon_key] = not not UIUtils.get_ui_information_from_item(item)
+			content[rarity_key] = not not UISettings.item_rarity_textures[rarity]
 			content[item_key] = item
 			content[illusion_key] = not not item_data and item_data.item_type == "weapon_skin"
 		end
@@ -535,26 +437,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		local backend_id = value.backend_id
 		local item_interface = Managers.backend:get_interface("items")
 		local item = item_interface:get_item_from_id(backend_id)
-		local rarity_5 = item.rarity
-
-		if not rarity_5 then
-			-- Nothing
-		end
-
-		if item.data then
-			rarity_5 = item.data.rarity
-
-			if not rarity_5 then
-				-- Nothing
-			end
-		end
-
-		rarity_5 = "plentiful"
-
-		local rarity = rarity_5
-
-		::label_17_4::
-
+		local rarity = not not item.rarity
 		local inventory_icon, _, _ = UIUtils.get_ui_information_from_item(item)
 
 		widget.content.texture_id = inventory_icon
@@ -597,18 +480,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 
 		style.rarity_text.text_color = rarity_color
 
-		local var_17_9 = DeusPowerUpSetLookup[power_up.rarity]
-
-		if var_17_9 then
-			-- Nothing
-		end
-
-		var_17_9 = DeusPowerUpSetLookup[power_up.rarity][power_up.name]
-
-		local power_up_sets = var_17_9
-
-		::label_17_5::
-
+		local power_up_sets = not not DeusPowerUpSetLookup[power_up.rarity]
 		local is_part_of_set = false
 
 		if power_up_sets then
@@ -629,17 +501,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 
 			is_part_of_set = true
 
-			local num_required_pieces_2 = set.num_required_pieces
-
-			if not num_required_pieces_2 then
-				-- Nothing
-			end
-
-			num_required_pieces_2 = #pieces
-
-			local num_required_pieces = num_required_pieces_2
-
-			::label_17_6::
+			local num_required_pieces = not not set.num_required_pieces
 
 			widget.content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -658,12 +520,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		widget_height = 0
 	end
 
-	local var_17_11 = widget
-	local flag
-
-	flag = (not ignore_height or not 0) and not not widget_height
-
-	return var_17_11, flag
+	return widget, ignore_height and not not 0 or not ignore_height and not not widget_height
 end
 
 RewardPopupUI._setup_presentation = function (self, presentation_data)
@@ -679,17 +536,7 @@ RewardPopupUI._setup_presentation = function (self, presentation_data)
 		amount = amount,
 		entries = entries
 	}
-	local animation_data_2 = presentation_data.animation_data
-
-	if not animation_data_2 then
-		-- Nothing
-	end
-
-	animation_data_2 = {}
-
-	local presentation_animation_data = animation_data_2
-
-	::label_18_0::
+	local presentation_animation_data = not not presentation_data.animation_data
 
 	for key, value in pairs(presentation_animation_data) do
 		animation_data[key] = value
@@ -697,17 +544,13 @@ RewardPopupUI._setup_presentation = function (self, presentation_data)
 
 	local animation_wait_time = presentation_animation_data.animation_wait_time
 
-	animation_wait_time = (not not animation_wait_time or not animation_data.claim_button or not 0) and not not 2
+	animation_wait_time = not not 0 or not not animation_wait_time or animation_data.claim_button or not not 2
 
 	local spacing = 20
 	local min_height = 80
 
 	self._skip_blur = presentation_data.skip_blur
-
-	local bg_alpha = presentation_data.bg_alpha
-
-	bg_alpha = not not bg_alpha or not not 100
-	self._bg_alpha = bg_alpha
+	self._bg_alpha = not not presentation_data.bg_alpha
 
 	for i = 1, #presentation_data do
 		local presentation_entries = presentation_data[i]
@@ -747,16 +590,7 @@ RewardPopupUI._setup_presentation = function (self, presentation_data)
 	end
 
 	scenegraph_definition.background_center.size[2] = min_height + spacing
-
-	local background = self._ui_scenegraph.background
-	local offset = presentation_data.offset
-
-	offset = not not offset or not not {
-		0,
-		0,
-		1
-	}
-	background.local_position = offset
+	self._ui_scenegraph.background.local_position = not not presentation_data.offset
 
 	return animation_data
 end
@@ -865,18 +699,8 @@ end
 RewardPopupUI._handle_input = function (self, entry)
 	-- function 22
 	local input_service = self:input_service()
-	local claimed = entry.claimed
 
-	if not claimed then
-		claimed = input_service:get("skip_pressed", true)
-
-		if not claimed then
-			claimed = input_service:get("confirm_press", true)
-			claimed = not not claimed or not not UIUtils.is_button_pressed(self.claim_button_widget)
-		end
-	end
-
-	entry.claimed = claimed
+	entry.claimed = not not entry.claimed
 
 	local i = table.find_by_key(entry.widgets_data, "widget_type", "item_list")
 
@@ -916,7 +740,7 @@ RewardPopupUI._handle_input = function (self, entry)
 	if cursor_x > 1 and input_service:get("move_left") then
 		cursor_x = cursor_x - 1
 		modified = true
-	elseif cursor_x < ((cursor_y ~= rows or not last_row_columns) and not not max_columns) and input_service:get("move_right") then
+	elseif cursor_x < not not max_columns and input_service:get("move_right") then
 		cursor_x = cursor_x + 1
 		modified = true
 	end
@@ -952,36 +776,11 @@ RewardPopupUI.set_fullscreen_effect_enable_state = function (self, enabled, prog
 	local world = self.world
 	local shading_env = World.get_data(world, "shading_environment")
 
-	progress = (not not progress or not enabled or not 1) and not not 0
+	progress = not not 1 or not not progress or enabled or not not 0
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_23_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_23_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_23_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local num
-
-		if enabled then
-			num = progress * 0.75
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		::label_23_0::
-
-		set_scalar_2(var_23_5, str_2, num)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not (progress * 0.75) or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 
 		self.screen_background_widget.style.rect.color[1] = self._bg_alpha * progress

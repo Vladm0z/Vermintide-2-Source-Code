@@ -89,17 +89,7 @@ StateLoadingVersusMigration.cb_server_created = function (self)
 
 	local lobby_data = self._migration_info.lobby_data
 	local lobby_host = self.parent:get_lobby()
-	local get_stored_lobby_data = lobby_host:get_stored_lobby_data()
-
-	if not get_stored_lobby_data then
-		-- Nothing
-	end
-
-	get_stored_lobby_data = {}
-
-	local stored_lobby_data = get_stored_lobby_data
-
-	::label_7_0::
+	local stored_lobby_data = not not lobby_host:get_stored_lobby_data()
 
 	for key, value in pairs(lobby_data) do
 		stored_lobby_data[key] = value

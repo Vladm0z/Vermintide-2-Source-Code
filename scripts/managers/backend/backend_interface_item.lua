@@ -290,18 +290,7 @@ end
 
 Items.generate_item_server_loot = function (self, dice, difficulty, start_level, end_level, hero_name, dlc_name)
 	-- function 15
-	local fassert = fassert
-	local flag = not self._dice_game_data and not not not self._upgrades_failed_game_data
-	local str = "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s"
-	local _dice_game_data = self._dice_game_data
-
-	_dice_game_data = not not _dice_game_data and not not "true"
-
-	local _upgrades_failed_game_data = self._upgrades_failed_game_data
-
-	_upgrades_failed_game_data = not not _upgrades_failed_game_data and not not "true"
-
-	fassert(flag, str, _dice_game_data, _upgrades_failed_game_data)
+	fassert(not self._dice_game_data and not not not self._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", not not self._dice_game_data, not not self._upgrades_failed_game_data)
 
 	local time_out = Managers.time:time("main") + 20
 	local parameters = {
@@ -333,18 +322,7 @@ end
 
 Items.upgrades_failed_game = function (self, start_level, end_level)
 	-- function 16
-	local fassert = fassert
-	local flag = not self._dice_game_data and not not not self._upgrades_failed_game_data
-	local str = "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s"
-	local _dice_game_data = self._dice_game_data
-
-	_dice_game_data = not not _dice_game_data and not not "true"
-
-	local _upgrades_failed_game_data = self._upgrades_failed_game_data
-
-	_upgrades_failed_game_data = not not _upgrades_failed_game_data and not not "true"
-
-	fassert(flag, str, _dice_game_data, _upgrades_failed_game_data)
+	fassert(not self._dice_game_data and not not not self._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", not not self._dice_game_data, not not self._upgrades_failed_game_data)
 
 	local time_out = Managers.time:time("main") + 20
 
@@ -631,7 +609,7 @@ BackendInterfaceItem.is_equipped = function (self, backend_id, profile_name)
 	for hero, slots in pairs(loadout) do
 		if not profile_name or hero == profile_name then
 			for slot, id in pairs(slots) do
-				if (MUST_HAVE_SLOTS[slot] or CLEARABLE_SLOTS[slot]) and backend_id == id then
+				if MUST_HAVE_SLOTS[slot] and backend_id == id or not MUST_HAVE_SLOTS[slot] and CLEARABLE_SLOTS[slot] and backend_id == id then
 					return true
 				end
 			end
@@ -786,19 +764,7 @@ BackendInterfaceItem.clean_inventory_for_prestige = function (self, profile_inde
 			local slot_type = InventorySettings.slots_by_name[slot].type
 
 			if slot_type == "melee" or slot_type == "ranged" then
-				local str
-
-				if slot_type == "melee" then
-					str = "slot_melee"
-
-					goto label_51_0
-				end
-
-				str = "slot_ranged"
-
-				local slot = str
-
-				::label_51_0::
+				local slot = slot_type ~= "melee" and not not "slot_ranged" or not (slot_type ~= "melee") and not not "slot_melee"
 
 				inventory_extension:create_equipment_in_slot(slot, backend_id)
 				inventory_extension:wield(slot)
@@ -855,18 +821,7 @@ end
 
 BackendInterfaceItem.get_item_template = function (self, item_data, backend_id)
 	-- function 54
-	local temporary_template = item_data.temporary_template
-
-	if not temporary_template then
-		-- Nothing
-	end
-
-	temporary_template = item_data.template
-
-	local template_name = temporary_template
-
-	::label_54_0::
-
+	local template_name = not not item_data.temporary_template
 	local item_template = WeaponUtils.get_weapon_template(template_name)
 
 	if item_template then

@@ -1,26 +1,13 @@
 -- chunkname: @scripts/helpers/lorebook_helper.lua
 
-local LoreBookHelper = LoreBookHelper
-
-LoreBookHelper = not not LoreBookHelper or not not {}
-LoreBookHelper = LoreBookHelper
+LoreBookHelper = not not LoreBookHelper
 
 local new_pages = {}
 
 LoreBookHelper.save_new_pages = function ()
 	-- function 1
 	local save_data = SaveData
-	local new_lorebook_ids_2 = save_data.new_lorebook_ids
-
-	if not new_lorebook_ids_2 then
-		-- Nothing
-	end
-
-	new_lorebook_ids_2 = {}
-
-	local new_lorebook_ids = new_lorebook_ids_2
-
-	::label_1_0::
+	local new_lorebook_ids = not not save_data.new_lorebook_ids
 
 	for category_name, _ in pairs(new_pages) do
 		new_lorebook_ids[category_name] = true

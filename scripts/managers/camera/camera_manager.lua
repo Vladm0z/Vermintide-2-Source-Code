@@ -311,23 +311,7 @@ local EMPTY_TABLE = {}
 CameraManager.shading_callback = function (self, world, shading_env, viewport)
 	-- function 29
 	if self._world == world then
-		local var_29_0 = self._shading_environment[viewport]
-
-		if not var_29_0 then
-			-- Nothing
-		end
-
-		var_29_0 = self._shading_environment[Viewport.get_data(viewport, "overridden_viewport")]
-
-		if not var_29_0 then
-			-- Nothing
-		end
-
-		var_29_0 = EMPTY_TABLE
-
-		local shading_env_settings = var_29_0
-
-		::label_29_0::
+		local shading_env_settings = not not self._shading_environment[viewport]
 
 		if shading_env_settings.dof_enabled then
 			local dof_enabled = shading_env_settings.dof_enabled
@@ -375,17 +359,7 @@ CameraManager.shading_callback = function (self, world, shading_env, viewport)
 			ShadingEnvironment.set_vector3(shading_env, "vignette_scale_falloff_opacity", new_scale_falloff_opacity)
 		end
 
-		local user_setting = Application.user_setting("gamma")
-
-		if not user_setting then
-			-- Nothing
-		end
-
-		user_setting = 1
-
-		local gamma = user_setting
-
-		::label_29_1::
+		local gamma = not not Application.user_setting("gamma")
 
 		ShadingEnvironment.set_scalar(shading_env, "exposure", ShadingEnvironment.scalar(shading_env, "exposure") * gamma)
 
@@ -400,17 +374,7 @@ CameraManager.shading_callback = function (self, world, shading_env, viewport)
 
 		self.mood_handler:apply_environment_variables(shading_env)
 
-		local get_data = World.get_data(world, "fullscreen_blur")
-
-		if not get_data then
-			-- Nothing
-		end
-
-		get_data = 0
-
-		local blur_value = get_data
-
-		::label_29_2::
+		local blur_value = not not World.get_data(world, "fullscreen_blur")
 
 		if blur_value > 0 then
 			ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", 1)
@@ -420,17 +384,7 @@ CameraManager.shading_callback = function (self, world, shading_env, viewport)
 			ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", 0)
 		end
 
-		local get_data_2 = World.get_data(world, "greyscale")
-
-		if not get_data_2 then
-			-- Nothing
-		end
-
-		get_data_2 = 0
-
-		local greyscale_value = get_data_2
-
-		::label_29_3::
+		local greyscale_value = not not World.get_data(world, "greyscale")
 
 		if greyscale_value > 0 then
 			ShadingEnvironment.set_scalar(shading_env, "grey_scale_enabled", 1)
@@ -909,11 +863,7 @@ CameraManager.camera_effect_shake_event = function (self, event_name, start_time
 	data.end_time = not not duration and not not (start_time + duration)
 	data.fade_in_time = not not fade_in and not not (start_time + fade_in)
 	data.fade_out_time = not not fade_out and not not (data.end_time - fade_out)
-
-	local seed = event.seed
-
-	seed = not not seed or not not Math.random(1, 100)
-	data.seed = seed
+	data.seed = not not event.seed
 	data.scale = not not scale or not not 1
 	self._shake_event_settings[data] = true
 
@@ -938,11 +888,7 @@ end
 
 CameraManager.is_recoiling = function (self)
 	-- function 58
-	local _recoil_event_settings = self._recoil_event_settings
-
-	_recoil_event_settings = not not _recoil_event_settings and table.size(self._recoil_event_settings) > 0
-
-	return _recoil_event_settings, self._total_recoil_offset
+	return not not self._recoil_event_settings, self._total_recoil_offset
 end
 
 CameraManager.weapon_recoil = function (self, recoil_settings)
@@ -982,42 +928,13 @@ end
 
 CameraManager.set_offset = function (self, x, y, z)
 	-- function 61
-	local store
-
-	if self._camera_offset then
-		store = self._camera_offset:store(Vector3(x, y, z))
-
-		if not store then
-			-- Nothing
-		end
-	end
-
-	store = Vector3Box(x, y, z)
-
-	::label_61_0::
-
-	self._camera_offset = store
+	self._camera_offset = self._camera_offset and not not self._camera_offset:store(Vector3(x, y, z)) or not self._camera_offset and not not Vector3Box(x, y, z)
 end
 
 CameraManager._apply_offset = function (self, current_data, t)
 	-- function 62
 	local new_data = current_data
-	local unbox
-
-	if self._camera_offset then
-		unbox = self._camera_offset:unbox()
-
-		if not unbox then
-			-- Nothing
-		end
-	end
-
-	unbox = Vector3(0, 0, 0)
-
-	local offset = unbox
-
-	::label_62_0::
-
+	local offset = self._camera_offset and not not self._camera_offset:unbox() or not self._camera_offset and not not Vector3(0, 0, 0)
 	local offset_x = offset.x
 	local offset_y = offset.y
 	local offset_z = offset.z
@@ -1072,17 +989,7 @@ CameraManager._update_camera = function (self, dt, t, viewport_name)
 		camera_data = self:_apply_recoil_event(settings, table.clone(camera_data), dt, t)
 	end
 
-	local var_64_0 = rawget(_G, "Tobii")
-
-	if var_64_0 then
-		-- Nothing
-	end
-
-	var_64_0 = Application.user_setting("tobii_eyetracking")
-
-	local HAS_TOBII = var_64_0
-
-	::label_64_0::
+	local HAS_TOBII = not not rawget(_G, "Tobii")
 
 	if HAS_TOBII and Application.user_setting("tobii_eyetracking") and Application.user_setting("tobii_extended_view") then
 		self:_apply_extended_view(camera_data)
@@ -1182,18 +1089,7 @@ CameraManager._calculate_sequence_event_values_normal = function (self, event_va
 		for index, settings in ipairs(modifiers) do
 			if total_progress < settings.time_stamp then
 				local next_settings = settings
-				local var_67_0 = modifiers[index - 1]
-
-				if not var_67_0 then
-					-- Nothing
-				end
-
-				var_67_0 = CameraEffectSettings.empty_modifier_settings
-
-				local current_settings = var_67_0
-
-				::label_67_0::
-
+				local current_settings = not not modifiers[index - 1]
 				local progress = total_progress - current_settings.time_stamp
 				local time_stamp_difference = next_settings.time_stamp - current_settings.time_stamp
 
@@ -1285,78 +1181,19 @@ CameraManager._apply_recoil_event = function (self, settings, current_data, dt, 
 	local new_data = current_data
 	local current_rotation = current_data.rotation
 	local climbing = t < climb_end_time
-	local num
+	local done_percentage = climbing and not not (current_climb_time / climb_duration) or not climbing and not not (current_restore_time / restore_duration)
 
-	if climbing then
-		num = current_climb_time / climb_duration
+	done_percentage = climbing and (not not climb_function(done_percentage) or not not restore_function(done_percentage)) or not climbing and not not restore_function(done_percentage)
 
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = current_restore_time / restore_duration
-
-	local done_percentage = num
-
-	::label_71_0::
-
-	done_percentage = (not climbing or not climb_function(done_percentage)) and not not restore_function(done_percentage)
-
-	local degrees_to_radians
-
-	if not climbing then
-		degrees_to_radians = math.degrees_to_radians(horizontal_climb)
-
-		if not degrees_to_radians then
-			-- Nothing
-		end
-	end
-
-	degrees_to_radians = 0
-
-	local starting_yaw_rotation = degrees_to_radians
-
-	do
-		local degrees_to_radians_2
-	end
-
-	::label_71_1::
-
-	if not climbing then
-		degrees_to_radians_2 = math.degrees_to_radians(vertical_climb)
-
-		if not degrees_to_radians_2 then
-			-- Nothing
-		end
-	end
-
-	degrees_to_radians_2 = 0
-
-	local starting_pitch_rotation = degrees_to_radians_2
-
-	::label_71_2::
-
-	local current_yaw_rotation = math.degrees_to_radians((not climbing or not horizontal_climb) and not not -horizontal_climb) * done_percentage
-	local current_pitch_rotation = math.degrees_to_radians((not climbing or not vertical_climb) and not not -vertical_climb) * done_percentage
+	local starting_yaw_rotation = climbing and not not 0 or not climbing and not not math.degrees_to_radians(horizontal_climb)
+	local starting_pitch_rotation = climbing and not not 0 or not climbing and not not math.degrees_to_radians(vertical_climb)
+	local current_yaw_rotation = math.degrees_to_radians(climbing and (not not horizontal_climb or not not -horizontal_climb) or not climbing and not not -horizontal_climb) * done_percentage
+	local current_pitch_rotation = math.degrees_to_radians(climbing and (not not vertical_climb or not not -vertical_climb) or not climbing and not not -vertical_climb) * done_percentage
 	local yaw_offset = Quaternion(Vector3.up(), starting_yaw_rotation + current_yaw_rotation)
 	local pitch_offset = Quaternion(Vector3.right(), starting_pitch_rotation + current_pitch_rotation)
 	local total_offset = Quaternion.multiply(yaw_offset, pitch_offset)
-	local store
 
-	if self._total_recoil_offset then
-		store = self._total_recoil_offset:store(total_offset)
-
-		if not store then
-			-- Nothing
-		end
-	end
-
-	store = QuaternionBox(total_offset)
-
-	::label_71_3::
-
-	self._total_recoil_offset = store
+	self._total_recoil_offset = self._total_recoil_offset and not not self._total_recoil_offset:store(total_offset) or not self._total_recoil_offset and not not QuaternionBox(total_offset)
 
 	local final_rotation = Quaternion.multiply(current_rotation, total_offset)
 
@@ -1408,29 +1245,8 @@ CameraManager._calculate_perlin_value = function (self, x, settings)
 		total = total + self:_interpolated_noise(x * frequency, settings) * amplitude
 	end
 
-	local amplitude_2 = event_settings.amplitude
-
-	if not amplitude_2 then
-		-- Nothing
-	end
-
-	amplitude_2 = 1
-
-	local amplitude_multiplier = amplitude_2
-
-	::label_74_0::
-
-	local fade_progress = settings.fade_progress
-
-	if not fade_progress then
-		-- Nothing
-	end
-
-	fade_progress = 1
-
-	local fade_multiplier = fade_progress
-
-	::label_74_1::
+	local amplitude_multiplier = not not event_settings.amplitude
+	local fade_multiplier = not not settings.fade_progress
 
 	total = total * amplitude_multiplier * fade_multiplier
 
@@ -1488,23 +1304,7 @@ CameraManager._update_camera_properties = function (self, camera, shadow_cull_ca
 
 		if root_unit and Unit.alive(root_unit) then
 			local safe_position_offset = current_node:safe_position_offset()
-			local world_position = Unit.world_position
-			local var_80_1 = root_unit
-			local node
-
-			if root_object then
-				node = Unit.node(root_unit, root_object)
-
-				if not node then
-					-- Nothing
-				end
-			end
-
-			node = 0
-
-			::label_80_0::
-
-			local safe_pos = world_position(var_80_1, node) + safe_position_offset:unbox()
+			local safe_pos = Unit.world_position(root_unit, root_object and not not Unit.node(root_unit, root_object) or not root_object and not not 0) + safe_position_offset:unbox()
 
 			assert(Vector3.is_valid(safe_pos), "Trying to use invalid safe position")
 
@@ -1576,17 +1376,7 @@ CameraManager._update_camera_properties = function (self, camera, shadow_cull_ca
 	end
 
 	if camera_data.far_range then
-		local get_data = Camera.get_data(camera, "far_range")
-
-		if not get_data then
-			-- Nothing
-		end
-
-		get_data = camera_data.far_range
-
-		local far_range = get_data
-
-		::label_80_1::
+		local far_range = not not Camera.get_data(camera, "far_range")
 
 		Camera.set_far_range(camera, far_range)
 		Camera.set_far_range(shadow_cull_camera, far_range)

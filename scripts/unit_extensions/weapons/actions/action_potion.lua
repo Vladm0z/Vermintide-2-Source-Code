@@ -34,36 +34,8 @@ ActionPotion.finish = function (self, reason)
 	local buff_template = current_action.buff_template
 	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 	local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
-	local has_buff_perk = buff_extension:has_buff_perk("cooldown_reduction_override")
-
-	if has_buff_perk then
-		-- Nothing
-	end
-
-	if buff_template ~= "cooldown_reduction_potion" then
-		has_buff_perk = false
-
-		goto label_4_0
-	end
-
-	has_buff_perk = true
-
-	local cooldown_reduction_override = has_buff_perk
-
-	::label_4_0::
-
-	local has_buff_type = buff_extension:has_buff_type("trait_ring_potion_spread")
-
-	if not has_buff_type then
-		-- Nothing
-	end
-
-	has_buff_type = buff_extension:has_buff_type("weave_trait_ring_potion_spread")
-
-	local potion_spread = has_buff_type
-
-	::label_4_1::
-
+	local cooldown_reduction_override = not not buff_extension:has_buff_perk("cooldown_reduction_override")
+	local potion_spread = not not buff_extension:has_buff_type("trait_ring_potion_spread")
 	local targets = {
 		owner_unit
 	}

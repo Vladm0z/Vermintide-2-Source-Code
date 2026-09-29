@@ -13,33 +13,14 @@ end
 BTRatlingGunnerWindUpAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
-	local attack_pattern_data = blackboard.attack_pattern_data
-
-	if not attack_pattern_data then
-		-- Nothing
-	end
-
-	attack_pattern_data = {}
-
-	local data = attack_pattern_data
-
-	::label_2_0::
-
+	local data = not not blackboard.attack_pattern_data
 	local target_unit, node_name, old_target_visible = PerceptionUtils.pick_ratling_gun_target(unit, blackboard)
 
 	if target_unit then
 		data.target_unit = target_unit
 		data.target_node_name = node_name
-
-		local last_known_target_position = data.last_known_target_position
-
-		last_known_target_position = not not last_known_target_position or not not Vector3Box()
-		data.last_known_target_position = last_known_target_position
-
-		local last_known_unit_position = data.last_known_unit_position
-
-		last_known_unit_position = not not last_known_unit_position or not not Vector3Box()
-		data.last_known_unit_position = last_known_unit_position
+		data.last_known_target_position = not not data.last_known_target_position
+		data.last_known_unit_position = not not data.last_known_unit_position
 
 		local unit_position = Unit.world_position(unit, Unit.node(unit, "c_spine"))
 		local target_position = Unit.world_position(target_unit, Unit.node(target_unit, node_name))
@@ -59,11 +40,7 @@ BTRatlingGunnerWindUpAction.enter = function (self, unit, blackboard, t)
 
 	data.wind_up_timer = AiUtils.random(action.wind_up_time[1], action.wind_up_time[2])
 	data.wind_up_time = data.wind_up_timer
-
-	local constraint_target = data.constraint_target
-
-	constraint_target = not not constraint_target or not not Unit.animation_find_constraint_target(unit, "aim_target")
-	data.constraint_target = constraint_target
+	data.constraint_target = not not data.constraint_target
 	blackboard.attack_pattern_data = data
 	blackboard.action = action
 
@@ -137,17 +114,7 @@ BTRatlingGunnerWindUpAction.leave = function (self, unit, blackboard, t, reason,
 	navigation_extension:set_enabled(true)
 	navigation_extension:set_max_speed(default_move_speed)
 
-	local attack_pattern_data = blackboard.attack_pattern_data
-
-	if not attack_pattern_data then
-		-- Nothing
-	end
-
-	attack_pattern_data = {}
-
-	local data = attack_pattern_data
-
-	::label_4_0::
+	local data = not not blackboard.attack_pattern_data
 
 	AiUtils.clear_anim_event(data)
 end

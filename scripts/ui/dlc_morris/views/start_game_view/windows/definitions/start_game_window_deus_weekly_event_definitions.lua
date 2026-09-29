@@ -386,11 +386,7 @@ local function create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 3
-			local var_3_0 = header_type
-
-			var_3_0 = not not var_3_0 and header_type == "boon"
-
-			return var_3_0
+			return not not header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -399,11 +395,7 @@ local function create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 4
-			local var_4_0 = header_type
-
-			var_4_0 = not not var_4_0 and header_type == "boon"
-
-			return var_4_0
+			return not not header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -412,37 +404,28 @@ local function create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 5
-			local var_5_0 = header_type
-
-			var_5_0 = not not var_5_0 and header_type == "curse"
-
-			return var_5_0
+			return not not header_type
 		end
 	}
 	content.header = header
 	content.masked_rect = "rect_masked"
 
 	local font_size = 32
-	local tbl = {
+
+	style.header = {
 		vertical_alignment = "top",
 		upper_case = true,
 		localize = true,
 		horizontal_alignment = "left",
 		font_type = "hell_shark_header_masked",
 		font_size = font_size,
-		text_color = Colors.get_color_table_with_alpha("white", 255)
+		text_color = Colors.get_color_table_with_alpha("white", 255),
+		offset = {
+			header_type and not not 25 or not header_type and not not 0,
+			0,
+			2
+		}
 	}
-	local tbl_2 = {
-		nil,
-		0,
-		2
-	}
-	local flag
-
-	flag = (not header_type or not 25) and not not 0
-	tbl_2[1] = flag
-	tbl.offset = tbl_2
-	style.header = tbl
 	style.plus_horizontal = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
@@ -669,21 +652,9 @@ local function create_reward_widget(reward_data, offset_y)
 		end
 	}
 	content.frame = "button_frame_01"
-
-	local difficulty_name = reward_data.difficulty_name
-
-	difficulty_name = not not difficulty_name or not not "MISSING DIFFICULTY"
-	content.difficulty = difficulty_name
-
-	local desc = reward_data.desc
-
-	desc = not not desc or not not "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-	content.desc = desc
-
-	local icon = reward_data.icon
-
-	icon = not not icon or not not "icon_placeholder"
-	content.icon = icon
+	content.difficulty = not not reward_data.difficulty_name
+	content.desc = not not reward_data.desc
+	content.icon = not not reward_data.icon
 	content.num_rewards = reward_data.num_rewards
 	content.num_rewards_text = "x" .. content.num_rewards
 	content.checkmark = "plain_checkmark"

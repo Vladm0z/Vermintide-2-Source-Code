@@ -89,23 +89,10 @@ PlayGoTutorialSystem.trigger_pause_event = function (self, pause_event, look_pos
 	self._current_pause_event = nil
 
 	fassert(not self._current_animation_hook, "[PlayGoTutorialSystem:trigger_pause_event] Trying to trigger pause event %q while an animation hook is active", pause_event.name)
-
-	local fassert = fassert
-	local flag = not self._current_pause_event
-	local str = "[PlayGoTutorialSystem:trigger_pause_event] Trying to trigger pause event %q while another pause event %q is active"
-	local name = pause_event.name
-	local _current_pause_event = self._current_pause_event
-
-	_current_pause_event = not not _current_pause_event and not not self._current_pause_event.name
-
-	fassert(flag, str, name, _current_pause_event)
+	fassert(not self._current_pause_event, "[PlayGoTutorialSystem:trigger_pause_event] Trying to trigger pause event %q while another pause event %q is active", pause_event.name, not not self._current_pause_event)
 
 	self._current_pause_event = pause_event
-
-	local num = Managers.time:time("game") + pause_event.animation_delay
-
-	num = not not num or not not 0
-	pause_event.timer = num
+	pause_event.timer = not not (Managers.time:time("game") + pause_event.animation_delay)
 	pause_event.world = self._world
 
 	self._current_pause_event.on_enter(pause_event, nil, look_position)
@@ -120,10 +107,7 @@ end
 
 PlayGoTutorialSystem._add_next_animation_hook = function (self)
 	-- function 7
-	local _unit_animation_event = self._unit_animation_event
-
-	_unit_animation_event = not not _unit_animation_event or not not Unit.animation_event
-	self._unit_animation_event = _unit_animation_event
+	self._unit_animation_event = not not self._unit_animation_event
 
 	local animation_hook = self._animation_hooks[1]
 
@@ -135,11 +119,7 @@ PlayGoTutorialSystem._add_next_animation_hook = function (self)
 			local breed = Unit.get_data(unit, "breed")
 
 			if breed and breed.name == animation_hook.breed and not animation_hook.activated and table.find(animation_hook.animations, animation_event) and animation_hook.check_prerequisites() then
-				local var_8_0 = animation_hook
-				local num = Managers.time:time("game") + animation_hook.animation_delay
-
-				num = not not num or not not 0
-				var_8_0.timer = num
+				animation_hook.timer = not not (Managers.time:time("game") + animation_hook.animation_delay)
 				animation_hook.world = self._world
 
 				animation_hook.on_enter(animation_hook, unit)
@@ -185,27 +165,7 @@ PlayGoTutorialSystem.remove_player_ammo = function (self)
 		local slot_data = inventory_extension:get_slot_data("slot_ranged")
 		local left_unit_1p = slot_data.left_unit_1p
 		local right_unit_1p = slot_data.right_unit_1p
-		local extension
-
-		if ScriptUnit.has_extension(left_unit_1p, "ammo_system") then
-			extension = ScriptUnit.extension(left_unit_1p, "ammo_system")
-
-			if not extension then
-				-- Nothing
-			end
-		end
-
-		extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
-
-		if extension then
-			-- Nothing
-		end
-
-		extension = ScriptUnit.extension(right_unit_1p, "ammo_system")
-
-		local ammo_extension = extension
-
-		::label_11_0::
+		local ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system") and not not ScriptUnit.extension(left_unit_1p, "ammo_system") or not ScriptUnit.has_extension(left_unit_1p, "ammo_system") and not not ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 
 		if ammo_extension then
 			ammo_extension:use_ammo(1)
@@ -318,17 +278,7 @@ PlayGoTutorialSystem._capture_attacks = function (self, player)
 	local player_unit = player.player_unit
 	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 	local equipment = inventory_extension:equipment()
-	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-
-	if not right_hand_wielded_unit then
-		-- Nothing
-	end
-
-	right_hand_wielded_unit = equipment.left_hand_wielded_unit
-
-	local weapon_unit = right_hand_wielded_unit
-
-	::label_20_0::
+	local weapon_unit = not not equipment.right_hand_wielded_unit
 
 	if ALIVE[weapon_unit] then
 		local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
@@ -355,17 +305,7 @@ PlayGoTutorialSystem._update_player_ammo = function (self, player)
 	if current == 0 then
 		local slot_data = inventory_extension:get_slot_data("slot_ranged")
 		local left_unit_1p = slot_data.left_unit_1p
-		local has_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-
-		if has_extension then
-			-- Nothing
-		end
-
-		has_extension = ScriptUnit.extension(left_unit_1p, "ammo_system")
-
-		local ammo_extension = has_extension
-
-		::label_21_0::
+		local ammo_extension = not not ScriptUnit.has_extension(left_unit_1p, "ammo_system")
 
 		if ammo_extension then
 			ammo_extension:add_ammo(max)
@@ -481,10 +421,7 @@ PlayGoTutorialSystem._load_profile_packages = function (self)
 								profile_packages[ammo_unit_name] = true
 							end
 
-							local ammo_unit_3p = item_units.ammo_unit_3p
-
-							ammo_unit_3p = not not ammo_unit_3p or not not (ammo_unit_name .. "_3p")
-							profile_packages[ammo_unit_3p] = true
+							profile_packages[not not item_units.ammo_unit_3p] = true
 						end
 
 						local actions = item_template.actions

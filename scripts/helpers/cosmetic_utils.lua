@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/cosmetic_utils.lua
 
-local CosmeticUtils = CosmeticUtils
-
-CosmeticUtils = not not CosmeticUtils or not not {}
-CosmeticUtils = CosmeticUtils
+CosmeticUtils = not not CosmeticUtils
 
 CosmeticUtils.color_tint_unit = function (unit, hero_name, gradient_variation, gradient_value)
 	-- function 1
@@ -247,7 +244,7 @@ CosmeticUtils.update_cosmetic_slot = function (player, slot, item_name, skin_nam
 		return
 	end
 
-	if player and (player.local_player or player.bot_player and player.is_server) and player:sync_data_active() then
+	if player and (player.local_player and player:sync_data_active() or not player.local_player and player.bot_player and player.is_server and player:sync_data_active()) then
 		local name_id = CosmeticUtils.get_cosmetic_id(slot, item_name)
 
 		player:set_data(slot, name_id)

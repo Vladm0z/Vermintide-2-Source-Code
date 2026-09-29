@@ -161,22 +161,7 @@ CircularQueue.tostring2 = function (self, tostringfunc, max_count)
 	local queue = self.queue
 
 	for i = 1, math.min(max_count, self.capacity) do
-		local var_17_0 = s
-		local var_17_1
-
-		if queue[i] then
-			var_17_1 = tostringfunc(queue[i])
-
-			if not var_17_1 then
-				-- Nothing
-			end
-		end
-
-		var_17_1 = "_"
-
-		::label_17_0::
-
-		s = var_17_0 .. var_17_1 .. ","
+		s = s .. (queue[i] and not not tostringfunc(queue[i]) or not queue[i] and not not "_") .. ","
 	end
 
 	if max_count < self.num_items then

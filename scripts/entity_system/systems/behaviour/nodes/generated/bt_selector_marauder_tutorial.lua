@@ -54,23 +54,7 @@ BTSelector_marauder_tutorial.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_falling = children[2]
-		local is_falling = blackboard.is_falling
-
-		if not is_falling then
-			-- Nothing
-		end
-
-		if blackboard.fall_state == nil then
-			is_falling = false
-
-			goto label_4_0
-		end
-
-		is_falling = true
-
-		local condition_result = is_falling
-
-		::label_4_0::
+		local condition_result = not not blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -151,18 +135,7 @@ BTSelector_marauder_tutorial.run = function (self, unit, blackboard, t, dt)
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_data = next_smart_object_data.smart_object_data
-
-		if smart_object_data then
-			-- Nothing
-		end
-
-		smart_object_data = next_smart_object_data.smart_object_data.unit
-
-		local smart_object_unit = smart_object_data
-
-		::label_4_1::
-
+		local smart_object_unit = not not next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -173,7 +146,7 @@ BTSelector_marauder_tutorial.run = function (self, unit, blackboard, t, dt)
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = (not is_in_smartobject_range or not moving_state) and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
 		end
 
 		if condition_result then
@@ -195,34 +168,7 @@ BTSelector_marauder_tutorial.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_hesitate = children[6]
-		local var_4_2 = unit_alive(blackboard.target_unit)
-
-		if var_4_2 then
-			-- Nothing
-		end
-
-		var_4_2 = blackboard.is_alerted
-
-		if var_4_2 then
-			-- Nothing
-		end
-
-		if blackboard.confirmed_player_sighting then
-			var_4_2 = blackboard.hesitating
-
-			if false then
-				var_4_2 = false
-			end
-
-			goto label_4_2
-		end
-
-		var_4_2 = true
-
-		local alerted = var_4_2
-
-		::label_4_2::
-
+		local alerted = not not unit_alive(blackboard.target_unit)
 		local is_taunted = unit_alive(blackboard.taunt_unit)
 		local taunt_hesitate = not not is_taunted and not blackboard.taunt_hesitate_finished and not not not blackboard.no_taunt_hesitate
 		local condition_result = not not alerted or not not taunt_hesitate
@@ -246,17 +192,7 @@ BTSelector_marauder_tutorial.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_in_combat = children[7]
-		local var_4_3 = unit_alive(blackboard.target_unit)
-
-		if var_4_3 then
-			-- Nothing
-		end
-
-		var_4_3 = blackboard.confirmed_player_sighting
-
-		local condition_result = var_4_3
-
-		::label_4_3::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_in_combat, "aborted")
@@ -277,17 +213,7 @@ BTSelector_marauder_tutorial.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_alerted = children[8]
-		local var_4_4 = unit_alive(blackboard.target_unit)
-
-		if var_4_4 then
-			-- Nothing
-		end
-
-		var_4_4 = not blackboard.confirmed_player_sighting
-
-		local condition_result = var_4_4
-
-		::label_4_4::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_alerted, "aborted")

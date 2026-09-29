@@ -433,11 +433,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 				text_id = "real_text",
 				content_check_function = function (content)
 					-- function 8
-					local active = content.active
-
-					active = not not active or not not content.button_hotspot.is_hover
-
-					return active
+					return not not content.active
 				end
 			},
 			{
@@ -502,11 +498,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "invite_button",
 						content_check_function = function (content)
 							-- function 14
-							local allow_invite = content.allow_invite
-
-							allow_invite = not not allow_invite and not not not content.is_hover
-
-							return allow_invite
+							return not not content.allow_invite
 						end
 					},
 					{
@@ -516,11 +508,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "invite_button",
 						content_check_function = function (content)
 							-- function 15
-							local allow_invite = content.allow_invite
-
-							allow_invite = not not allow_invite and not not content.is_hover
-
-							return allow_invite
+							return not not content.allow_invite
 						end
 					},
 					{
@@ -539,11 +527,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "profile_button",
 						content_check_function = function (content)
 							-- function 17
-							local allow_profile = content.allow_profile
-
-							allow_profile = not not allow_profile and not not not content.is_hover
-
-							return allow_profile
+							return not not content.allow_profile
 						end
 					},
 					{
@@ -553,11 +537,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "profile_button",
 						content_check_function = function (content)
 							-- function 18
-							local allow_profile = content.allow_profile
-
-							allow_profile = not not allow_profile and not not content.is_hover
-
-							return allow_profile
+							return not not content.allow_profile
 						end
 					},
 					{
@@ -576,11 +556,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "join_button",
 						content_check_function = function (content)
 							-- function 20
-							local allow_join = content.allow_join
-
-							allow_join = not not allow_join and not not not content.is_hover
-
-							return allow_join
+							return not not content.allow_join
 						end
 					},
 					{
@@ -590,11 +566,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "join_button",
 						content_check_function = function (content)
 							-- function 21
-							local allow_join = content.allow_join
-
-							allow_join = not not allow_join and not not content.is_hover
-
-							return allow_join
+							return not not content.allow_join
 						end
 					}
 				}

@@ -149,18 +149,7 @@ base_trail_light_urn_definition.server.can_interact = function (interactor_unit,
 		return false
 	end
 
-	local get_data = Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = "shadow_torch"
-
-	local item_name = get_data
-
-	::label_8_0::
-
+	local item_name = not not Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
 	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
 	if not inventory_extension and not inventory_extension:has_inventory_item("slot_level_event", item_name) then
@@ -188,18 +177,7 @@ base_trail_light_urn_definition.client.can_interact = function (interactor_unit,
 		return false
 	end
 
-	local get_data = Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = "shadow_torch"
-
-	local item_name = get_data
-
-	::label_9_0::
-
+	local item_name = not not Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
 	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
 	if inventory_extension == nil or not inventory_extension:has_inventory_item("slot_level_event", item_name) then

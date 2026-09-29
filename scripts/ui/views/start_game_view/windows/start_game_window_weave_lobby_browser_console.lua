@@ -31,16 +31,7 @@ StartGameWindowWeaveLobbyBrowserConsole.on_enter = function (self, params, offse
 	self._stats_id = local_player:stats_id()
 	self._friend_names = {}
 
-	local LobbyFinder = LobbyFinder
-	local var_1_1 = LobbyFinder
-	local new = LobbyFinder.new
-	local var_1_3 = network_options
-	local MAX_NUM_LOBBIES = MatchmakingSettings.MAX_NUM_LOBBIES
-	local IS_WINDOWS = IS_WINDOWS
-
-	IS_WINDOWS = not not IS_WINDOWS and not not true
-
-	local lobby_finder = new(var_1_1, var_1_3, MAX_NUM_LOBBIES, IS_WINDOWS)
+	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, not not IS_WINDOWS)
 
 	self._lobby_finder = lobby_finder
 

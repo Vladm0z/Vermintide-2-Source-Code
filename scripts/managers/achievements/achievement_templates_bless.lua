@@ -146,17 +146,7 @@ achievements.bless_saved_by_perk = {
 			local result = current_health - damage_amount
 
 			if result < 6 and damage_type == "life_tap" then
-				local timer_handles_2 = template_data.timer_handles
-
-				if not timer_handles_2 then
-					-- Nothing
-				end
-
-				timer_handles_2 = {}
-
-				local timer_handles = timer_handles_2
-
-				::label_6_0::
+				local timer_handles = not not template_data.timer_handles
 
 				template_data.timer_handles = timer_handles
 
@@ -289,23 +279,7 @@ achievements.bless_fast_shield = {
 				return
 			end
 
-			local is_pounced_down = status_extension:is_pounced_down()
-
-			if not is_pounced_down then
-				-- Nothing
-			end
-
-			is_pounced_down = status_extension:is_grabbed_by_pack_master()
-
-			if not is_pounced_down then
-				-- Nothing
-			end
-
-			is_pounced_down = status_extension:is_grabbed_by_corruptor()
-
-			local is_incapacitated = is_pounced_down
-
-			::label_13_0::
+			local is_incapacitated = not not status_extension:is_pounced_down()
 
 			if not is_incapacitated then
 				return
@@ -324,18 +298,7 @@ achievements.bless_fast_shield = {
 				statistics_db:increment_stat(stats_id, "bless_fast_shield")
 			end
 		else
-			local incapacitated_units_2 = template_data.incapacitated_units
-
-			if not incapacitated_units_2 then
-				-- Nothing
-			end
-
-			incapacitated_units_2 = {}
-
-			local incapacitated_units = incapacitated_units_2
-
-			::label_13_1::
-
+			local incapacitated_units = not not template_data.incapacitated_units
 			local current_t = Managers.time:time("game")
 
 			for unit, incapacitated_t in pairs(incapacitated_units) do
@@ -663,7 +626,7 @@ achievements.bless_chaos_warriors = {
 		if event_name == "righteous_fury_start" and event_data[2] then
 			template_data.righteous_fury_active = true
 			template_data.kill_count = 0
-		elseif (event_name ~= "righteous_fury_end" or not event_data[2]) and event_name == "player_dead" and event_data[1] and event_data[1].local_player then
+		elseif event_name ~= "righteous_fury_end" or not event_data[2] then
 			template_data.righteous_fury_active = false
 		elseif template_data.righteous_fury_active then
 			local breed = event_data[register_kill_victim_breed]
@@ -703,7 +666,7 @@ achievements.bless_very_righteous = {
 
 		if event_name == "righteous_fury_start" and event_data[2] then
 			template_data.righteous_fury_active = t
-		elseif (event_name ~= "righteous_fury_end" or not event_data[2]) and event_name == "player_dead" and event_data[1] and event_data[1].local_player then
+		elseif event_name ~= "righteous_fury_end" or not event_data[2] then
 			local last_activated_t = template_data.righteous_fury_active
 
 			if last_activated_t and t - last_activated_t >= bless_very_righteous_length then
@@ -1246,10 +1209,7 @@ achievements.bless_protected_killing = {
 			local buff = buff_extension:get_buff_type("victor_priest_activated_ability_invincibility")
 
 			if buff then
-				local _bless_protected_killing_count = buff._bless_protected_killing_count
-
-				_bless_protected_killing_count = not not _bless_protected_killing_count or not not 0
-				buff._bless_protected_killing_count = _bless_protected_killing_count + 1
+				buff._bless_protected_killing_count = not not buff._bless_protected_killing_count + 1
 
 				if buff._bless_protected_killing_count >= bless_protected_killing_count then
 					statistics_db:increment_stat(stats_id, "bless_protected_killing")

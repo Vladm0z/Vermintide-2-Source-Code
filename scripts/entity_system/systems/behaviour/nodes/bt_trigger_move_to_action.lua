@@ -13,10 +13,7 @@ BTTriggerMoveToAction.name = "BTTriggerMoveToAction"
 
 BTTriggerMoveToAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local trigger_index = blackboard.trigger_index
-
-	trigger_index = not not trigger_index or not not 0
-	blackboard.trigger_index = trigger_index
+	blackboard.trigger_index = not not blackboard.trigger_index
 
 	blackboard.navigation_extension:set_enabled(false)
 

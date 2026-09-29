@@ -1,9 +1,6 @@
 -- chunkname: @scripts/ui/views/versus_menu/ui_widgets_vs.lua
 
-local UIWidgets = UIWidgets
-
-UIWidgets = not not UIWidgets or not not {}
-UIWidgets = UIWidgets
+UIWidgets = not not UIWidgets
 
 UIWidgets.create_new_widget_definition = function (scenegraph_id, offset)
 	-- function 1
@@ -47,52 +44,25 @@ UIWidgets.add_portrait_frame = function (definition, scenegraph_id, frame_settin
 
 	for index, data in ipairs(frame_settings) do
 		local name = "frame_texture_" .. index
-		local texture = data.texture
-
-		if not texture then
-			-- Nothing
-		end
-
-		texture = "icons_placeholder"
-
-		local texture_name = texture
-
-		::label_2_0::
-
+		local texture_name = not not data.texture
 		local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name)
-		local size_2 = data.size
+		local size = not not data.size
 
-		if not size_2 then
-			-- Nothing
-		end
-
-		size_2 = texture_settings.size
-
-		local size = size_2
-
-		::label_2_1::
-
-		size = (not size or not table.clone(size)) and not not {
+		size = size and (not not table.clone(size) or not not {
+			0,
+			0
+		}) or not size and not not {
 			0,
 			0
 		}
 		size[1] = size[1] * scale
 		size[2] = size[2] * scale
 
-		local clone = table.clone
-		local offset_2 = data.offset
-
-		offset_2 = not not offset_2 or not not default_offset
-
-		local offset = clone(offset_2)
+		local offset = table.clone(not not data.offset)
 
 		offset[1] = -(size[1] / 2) + offset[1] * scale
 		offset[2] = offset[2] * scale
-
-		local layer = data.layer
-
-		layer = not not layer or not not 0
-		offset[3] = layer
+		offset[3] = not not data.layer
 		passes[#passes + 1] = {
 			pass_type = "texture",
 			texture_id = name,
@@ -101,16 +71,12 @@ UIWidgets.add_portrait_frame = function (definition, scenegraph_id, frame_settin
 			retained_mode = retained_mode
 		}
 		content[name] = texture_name
-
-		local tbl = {}
-		local color = data.color
-
-		color = not not color or not not default_color
-		tbl.color = color
-		tbl.offset = offset
-		tbl.size = size
-		tbl.scenegraph_id = scenegraph_id
-		style[name] = tbl
+		style[name] = {
+			color = not not data.color,
+			offset = offset,
+			size = size,
+			scenegraph_id = scenegraph_id
+		}
 	end
 
 	local portrait_size = {
@@ -212,11 +178,7 @@ UIWidgets.add_hover_glow = function (definition, glow_texture, glow_texture_id, 
 		style_id = style_id,
 		content_check_function = function (pass_content)
 			-- function 5
-			local is_hover = pass_content[hotspot_content_id].is_hover
-
-			is_hover = not not is_hover or not not pass_content.force_hover
-
-			return is_hover
+			return not not pass_content[hotspot_content_id].is_hover
 		end
 	}
 	content[glow_texture_id] = glow_texture
@@ -250,54 +212,17 @@ UIWidgets.add_simple_text = function (definition, text_id, scenegraph_id, text, 
 	}
 	definition_content[text_id] = text
 
-	local offset
-
-	if text_style then
-		offset = text_style.offset
-
-		if not offset then
-			-- Nothing
-		end
-	end
-
-	offset = {
+	local text_offset = text_style and not not text_style.offset or not text_style and not not {
 		0,
 		0,
 		0
 	}
-
-	local text_offset = offset
-
-	do
-		local text_color_2
-	end
-
-	::label_6_0::
-
-	if text_style then
-		text_color_2 = text_style.text_color
-
-		if not text_color_2 then
-			-- Nothing
-		end
-	end
-
-	if not color then
-		-- Nothing
-	end
-
-	::label_6_1::
-
-	text_color_2 = {
+	local text_color = text_style and not not text_style.text_color or not text_style and (not not color or not not {
 		255,
 		255,
 		255,
 		255
-	}
-
-	local text_color = text_color_2
-
-	::label_6_2::
+	})
 
 	text_style = not not text_style or not not {
 		vertical_alignment = "center",
@@ -312,22 +237,7 @@ UIWidgets.add_simple_text = function (definition, text_id, scenegraph_id, text, 
 	text_style.scenegraph_id = scenegraph_id
 
 	local text_shadow_style = table.clone(text_style)
-	local shadow_color = text_style.shadow_color
-
-	if not shadow_color then
-		-- Nothing
-	end
-
-	shadow_color = {
-		255,
-		0,
-		0,
-		0
-	}
-
-	local text_shadow_style_color = shadow_color
-
-	::label_6_3::
+	local text_shadow_style_color = not not text_style.shadow_color
 
 	text_shadow_style_color[1] = text_color[1]
 	text_shadow_style.text_color = text_shadow_style_color
@@ -363,11 +273,7 @@ UIWidgets.add_ready_icon = function (definition, content_identifier, scenegraph_
 		style_id = not_ready_name,
 		content_check_function = function (content)
 			-- function 10
-			local slot_taken = content.slot_taken
-
-			slot_taken = not not slot_taken and not not not content.ready
-
-			return slot_taken
+			return not not content.slot_taken
 		end
 	}
 	style[not_ready_name] = {
@@ -395,11 +301,7 @@ UIWidgets.add_ready_icon = function (definition, content_identifier, scenegraph_
 		style_id = ready_name,
 		content_check_function = function (content)
 			-- function 11
-			local slot_taken = content.slot_taken
-
-			slot_taken = not not slot_taken and not not content.ready
-
-			return slot_taken
+			return not not content.slot_taken
 		end
 	}
 	style[ready_name] = {
@@ -466,25 +368,10 @@ UIWidgets.add_loadout_grid = function (definition, content_identifier, scenegrap
 	local row_difference_to_background = background_width - row_length
 	local column_height = rows * slot_size[2] + slot_height_spacing * (rows - 1)
 	local column_difference_to_background = background_height - column_height
-	local tbl = {}
-	local num
-
-	if align_horizontal then
-		num = row_difference_to_background / 2
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = row_difference_to_background / 2
-
-	::label_12_0::
-
-	tbl[1] = num
-	tbl[2] = background_height - column_difference_to_background / 2 - slot_size[2]
-
-	local slot_start_offset = tbl
+	local slot_start_offset = {
+		align_horizontal and not not (row_difference_to_background / 2) or not align_horizontal and not not (row_difference_to_background / 2),
+		background_height - column_difference_to_background / 2 - slot_size[2]
+	}
 
 	base_offset = not not base_offset or not not {
 		0,
@@ -662,11 +549,7 @@ UIWidgets.add_loadout_grid = function (definition, content_identifier, scenegrap
 				style_id = slot_hover_name,
 				content_check_function = function (content)
 					-- function 18
-					local highlight = content.highlight
-
-					highlight = not not highlight or not not content.is_hover
-
-					return highlight
+					return not not content.highlight
 				end
 			}
 			style[slot_hover_name] = {
@@ -744,51 +627,16 @@ UIWidgets.create_player_panel_widget = function (scenegraph_id, size, left_align
 		size[2] / 2 - item_slot_height_spacing,
 		size[2] / 2 - item_slot_height_spacing
 	}
-	local tbl = {
-		nil,
-		nil,
+	local item_slot_1_offset = {
+		left_aligned and not not (size[1] + item_slot_width_spacing) or not left_aligned and not not -(item_slot_size[1] + item_slot_width_spacing),
+		size[2] - item_slot_size[2],
 		0
 	}
-	local num
-
-	if left_aligned then
-		num = size[1] + item_slot_width_spacing
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = -(item_slot_size[1] + item_slot_width_spacing)
-
-	::label_20_0::
-
-	tbl[1] = num
-	tbl[2] = size[2] - item_slot_size[2]
-
-	local item_slot_1_offset = tbl
-	local tbl_2 = {
-		nil,
+	local item_slot_2_offset = {
+		left_aligned and not not (size[1] + item_slot_width_spacing) or not left_aligned and not not -(item_slot_size[1] + item_slot_width_spacing),
 		0,
 		0
 	}
-	local num_2
-
-	if left_aligned then
-		num_2 = size[1] + item_slot_width_spacing
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = -(item_slot_size[1] + item_slot_width_spacing)
-
-	::label_20_1::
-
-	tbl_2[1] = num_2
-
-	local item_slot_2_offset = tbl_2
 	local widget = {
 		element = {}
 	}
@@ -839,23 +687,8 @@ UIWidgets.create_player_panel_widget = function (scenegraph_id, size, left_align
 			content_check_function = function (content)
 				-- function 25
 				local button_hotspot = content.button_hotspot
-				local is_local_player
 
-				if not content.empty then
-					is_local_player = content.is_local_player
-
-					if is_local_player then
-						is_local_player = button_hotspot.is_hover
-					end
-				else
-					is_local_player = false
-				end
-
-				if false then
-					is_local_player = true
-				end
-
-				return is_local_player
+				return not content.empty and not not content.is_local_player
 			end
 		},
 		{
@@ -865,11 +698,8 @@ UIWidgets.create_player_panel_widget = function (scenegraph_id, size, left_align
 			content_check_function = function (content)
 				-- function 26
 				local button_hotspot = content.button_hotspot
-				local empty = content.empty
 
-				empty = not not empty and not not button_hotspot.is_hover
-
-				return empty
+				return not not content.empty
 			end
 		},
 		{
@@ -990,11 +820,8 @@ UIWidgets.create_player_panel_widget = function (scenegraph_id, size, left_align
 			content_check_function = function (content)
 				-- function 39
 				local hotspot = content.item_hotspot_1
-				local is_local_player = content.is_local_player
 
-				is_local_player = not not is_local_player and not not hotspot.is_hover
-
-				return is_local_player
+				return not not content.is_local_player
 			end
 		},
 		{
@@ -1004,11 +831,8 @@ UIWidgets.create_player_panel_widget = function (scenegraph_id, size, left_align
 			content_check_function = function (content)
 				-- function 40
 				local hotspot = content.item_hotspot_2
-				local is_local_player = content.is_local_player
 
-				is_local_player = not not is_local_player and not not hotspot.is_hover
-
-				return is_local_player
+				return not not content.is_local_player
 			end
 		},
 		{
@@ -1062,7 +886,7 @@ UIWidgets.create_player_panel_widget = function (scenegraph_id, size, left_align
 		},
 		open_slot_text = Localize("vs_lobby_slot_available")
 	}
-	local tbl_3 = {
+	local style = {
 		empty_background = {
 			color = {
 				80,
@@ -1282,173 +1106,150 @@ UIWidgets.create_player_panel_widget = function (scenegraph_id, size, left_align
 				0,
 				2
 			}
+		},
+		ready_texture = {
+			vertical_alignment = "center",
+			texture_size = {
+				54,
+				50
+			},
+			horizontal_alignment = left_aligned and not not "left" or not left_aligned and not not "right",
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				left_aligned and not not -55 or not left_aligned and not not 55,
+				0,
+				1
+			}
+		},
+		unready_texture = {
+			vertical_alignment = "center",
+			texture_size = {
+				54,
+				50
+			},
+			horizontal_alignment = left_aligned and not not "left" or not left_aligned and not not "right",
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				left_aligned and not not -55 or not left_aligned and not not 55,
+				0,
+				1
+			}
+		},
+		background = {
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				0
+			}
+		},
+		open_slot_text = {
+			word_wrap = true,
+			upper_case = true,
+			font_size = 24,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark_header",
+			size = {
+				size[1],
+				size[2]
+			},
+			text_color = {
+				255,
+				60,
+				60,
+				60
+			},
+			offset = {
+				0,
+				0,
+				2
+			}
+		},
+		open_slot_text_shadow = {
+			word_wrap = true,
+			upper_case = true,
+			font_size = 24,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark_header",
+			size = {
+				size[1],
+				size[2]
+			},
+			text_color = {
+				255,
+				0,
+				0,
+				0
+			},
+			offset = {
+				2,
+				-2,
+				1
+			}
+		},
+		career_name = {
+			word_wrap = true,
+			upper_case = false,
+			localize = false,
+			font_size = 36,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = "hell_shark_header",
+			size = {
+				size[1] - 138,
+				size[2]
+			},
+			text_color = Colors.get_color_table_with_alpha("font_title", 255),
+			offset = {
+				130,
+				15,
+				2
+			}
+		},
+		player_name = {
+			word_wrap = true,
+			upper_case = false,
+			localize = false,
+			font_size = 20,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = "arial",
+			size = {
+				size[1] - 138,
+				size[2]
+			},
+			text_color = {
+				255,
+				160,
+				160,
+				160
+			},
+			offset = {
+				130,
+				-20,
+				2
+			}
 		}
 	}
-	local tbl_4 = {
-		vertical_alignment = "center",
-		texture_size = {
-			54,
-			50
-		}
-	}
-	local flag
-
-	flag = (not left_aligned or not "left") and not not "right"
-	tbl_4.horizontal_alignment = flag
-	tbl_4.color = {
-		255,
-		255,
-		255,
-		255
-	}
-
-	local tbl_5 = {
-		nil,
-		0,
-		1
-	}
-	local flag_2
-
-	flag_2 = (not left_aligned or not -55) and not not 55
-	tbl_5[1] = flag_2
-	tbl_4.offset = tbl_5
-	tbl_3.ready_texture = tbl_4
-
-	local tbl_6 = {
-		vertical_alignment = "center",
-		texture_size = {
-			54,
-			50
-		}
-	}
-	local flag_3
-
-	flag_3 = (not left_aligned or not "left") and not not "right"
-	tbl_6.horizontal_alignment = flag_3
-	tbl_6.color = {
-		255,
-		255,
-		255,
-		255
-	}
-
-	local tbl_7 = {
-		nil,
-		0,
-		1
-	}
-	local flag_4
-
-	flag_4 = (not left_aligned or not -55) and not not 55
-	tbl_7[1] = flag_4
-	tbl_6.offset = tbl_7
-	tbl_3.unready_texture = tbl_6
-	tbl_3.background = {
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			0
-		}
-	}
-	tbl_3.open_slot_text = {
-		word_wrap = true,
-		upper_case = true,
-		font_size = 24,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		font_type = "hell_shark_header",
-		size = {
-			size[1],
-			size[2]
-		},
-		text_color = {
-			255,
-			60,
-			60,
-			60
-		},
-		offset = {
-			0,
-			0,
-			2
-		}
-	}
-	tbl_3.open_slot_text_shadow = {
-		word_wrap = true,
-		upper_case = true,
-		font_size = 24,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		font_type = "hell_shark_header",
-		size = {
-			size[1],
-			size[2]
-		},
-		text_color = {
-			255,
-			0,
-			0,
-			0
-		},
-		offset = {
-			2,
-			-2,
-			1
-		}
-	}
-	tbl_3.career_name = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		font_type = "hell_shark_header",
-		size = {
-			size[1] - 138,
-			size[2]
-		},
-		text_color = Colors.get_color_table_with_alpha("font_title", 255),
-		offset = {
-			130,
-			15,
-			2
-		}
-	}
-	tbl_3.player_name = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		font_type = "arial",
-		size = {
-			size[1] - 138,
-			size[2]
-		},
-		text_color = {
-			255,
-			160,
-			160,
-			160
-		},
-		offset = {
-			130,
-			-20,
-			2
-		}
-	}
-
-	local style = tbl_3
 
 	widget.element.passes = passes
 	widget.content = content
@@ -2056,11 +1857,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "ping_text",
 					content_check_function = function (content, style)
 						-- function 51
-						local show_ping = content.show_ping
-
-						show_ping = not not show_ping and not not Application.user_setting("show_numerical_latency")
-
-						return show_ping
+						return not not content.show_ping
 					end
 				},
 				{
@@ -2088,11 +1885,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 53
-						local color = style.color
-						local flag
-
-						flag = (not content.show_chat_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_chat_button and not not 255 or not content.show_chat_button and not not 60
 					end
 				},
 				{
@@ -2101,11 +1894,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 54
-						local show_chat_button = content.show_chat_button
-
-						show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_selected
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -2123,11 +1912,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "chat_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 56
-						local show_chat_button = content.show_chat_button
-
-						show_chat_button = not not show_chat_button and not content.chat_button_hotspot.is_selected and not not content.chat_button_hotspot.is_hover
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -2136,14 +1921,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "chat_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 57
-						local show_chat_button = content.show_chat_button
-
-						if show_chat_button then
-							show_chat_button = content.chat_button_hotspot.is_selected
-							show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_hover
-						end
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -2162,11 +1940,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 58
-						local color = style.color
-						local flag
-
-						flag = (not content.show_voice_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_voice_button and not not 255 or not content.show_voice_button and not not 60
 					end
 				},
 				{
@@ -2175,11 +1949,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 59
-						local show_voice_button = content.show_voice_button
-
-						show_voice_button = not not show_voice_button and not not content.voice_button_hotspot.is_selected
-
-						return show_voice_button
+						return not not content.show_voice_button
 					end
 				},
 				{
@@ -2197,11 +1967,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "voice_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 61
-						local show_voice_button = content.show_voice_button
-
-						show_voice_button = not not show_voice_button and not content.voice_button_hotspot.is_selected and not not content.voice_button_hotspot.is_hover
-
-						return show_voice_button
+						return not not content.show_voice_button
 					end
 				},
 				{
@@ -2210,14 +1976,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "voice_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 62
-						local show_voice_button = content.show_voice_button
-
-						if show_voice_button then
-							show_voice_button = content.voice_button_hotspot.is_selected
-							show_voice_button = not not show_voice_button and not not content.voice_button_hotspot.is_hover
-						end
-
-						return show_voice_button
+						return not not content.show_voice_button
 					end
 				},
 				{
@@ -2236,11 +1995,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 63
-						local color = style.color
-						local flag
-
-						flag = (not content.show_kick_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_kick_button and not not 255 or not content.show_kick_button and not not 60
 					end
 				},
 				{
@@ -2258,11 +2013,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "kick_tooltip_text",
 					content_check_function = function (content)
 						-- function 65
-						local show_kick_button = content.show_kick_button
-
-						show_kick_button = not not show_kick_button and not not content.kick_button_hotspot.is_hover
-
-						return show_kick_button
+						return not not content.show_kick_button
 					end
 				},
 				{
@@ -2281,11 +2032,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 66
-						local color = style.color
-						local flag
-
-						flag = (not content.show_profile_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_profile_button and not not 255 or not content.show_profile_button and not not 60
 					end
 				},
 				{
@@ -2303,11 +2050,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "profile_tooltip_text",
 					content_check_function = function (content)
 						-- function 68
-						local show_profile_button = content.show_profile_button
-
-						show_profile_button = not not show_profile_button and not not content.profile_button_hotspot.is_hover
-
-						return show_profile_button
+						return not not content.show_profile_button
 					end
 				},
 				{
@@ -2412,11 +2155,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					end,
 					content_check_function = function (content)
 						-- function 77
-						local is_local_player = content.parent.is_local_player
-
-						is_local_player = not not is_local_player and not content.parent.is_dark_pact and not not content.parent.is_in_local_player_party
-
-						return is_local_player
+						return not not content.parent.is_local_player
 					end
 				},
 				{
@@ -2435,11 +2174,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					end,
 					content_check_function = function (content)
 						-- function 79
-						local is_local_player = content.parent.is_local_player
-
-						is_local_player = not not is_local_player and not content.parent.is_dark_pact and not not content.parent.is_in_local_player_party
-
-						return is_local_player
+						return not not content.parent.is_local_player
 					end
 				},
 				{
@@ -2546,11 +2281,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					scenegraph_id = talent_tooltip_scenegraph_id,
 					content_check_function = function (content)
 						-- function 90
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2585,11 +2316,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					scenegraph_id = talent_tooltip_scenegraph_id,
 					content_check_function = function (content)
 						-- function 93
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2624,11 +2351,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					scenegraph_id = talent_tooltip_scenegraph_id,
 					content_check_function = function (content)
 						-- function 96
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2663,11 +2386,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					scenegraph_id = talent_tooltip_scenegraph_id,
 					content_check_function = function (content)
 						-- function 99
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2702,11 +2421,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					scenegraph_id = talent_tooltip_scenegraph_id,
 					content_check_function = function (content)
 						-- function 102
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2741,11 +2456,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					scenegraph_id = talent_tooltip_scenegraph_id,
 					content_check_function = function (content)
 						-- function 105
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2754,11 +2465,7 @@ UIWidgets.create_player_panel = function (scenegraph_id, talent_tooltip_scenegra
 					text_id = "respawn_text",
 					content_check_function = function (content)
 						-- function 106
-						local is_dark_pact = content.is_dark_pact
-
-						is_dark_pact = not not is_dark_pact and not not content.respawning
-
-						return is_dark_pact
+						return not not content.is_dark_pact
 					end
 				},
 				content_id = "slot_ranged_hotspot"
@@ -4563,7 +4270,7 @@ UIWidgets.create_total_score_progress_bar = function (scenegraph_id, size, max_s
 		}
 	}
 
-	local tbl = {
+	local content = {
 		current_score_background = "bar_frame_01_back",
 		bar_fill_threashold = 0,
 		current_score_text = "0",
@@ -4575,47 +4282,42 @@ UIWidgets.create_total_score_progress_bar = function (scenegraph_id, size, max_s
 		current_score_size = current_score_size,
 		local_player_team = local_player,
 		bar_background = bar_bg,
-		bar_frame = progress_bar_frame_settings.texture
-	}
-	local flag
-
-	flag = (not local_player or not "local_player_score_bar") and not not "opponent_score_bar"
-	tbl.bar_fill = flag
-	tbl.max_score_detail_frame = max_score_frame_settings.texture
-	tbl.max_score = max_score
-	tbl.gold_frame = current_score_glod_frame.texture
-	tbl.right_detail_w = {
-		texture_id = "button_detail_01_gold",
-		uvs = {
-			{
-				1,
-				1
-			},
-			{
-				0,
-				0
+		bar_frame = progress_bar_frame_settings.texture,
+		bar_fill = local_player and not not "local_player_score_bar" or not local_player and not not "opponent_score_bar",
+		max_score_detail_frame = max_score_frame_settings.texture,
+		max_score = max_score,
+		gold_frame = current_score_glod_frame.texture,
+		right_detail_w = {
+			texture_id = "button_detail_01_gold",
+			uvs = {
+				{
+					1,
+					1
+				},
+				{
+					0,
+					0
+				}
 			}
-		}
-	}
-	tbl.bronze_frame = current_score_bronze_frame.texture
-	tbl.right_detail_l = {
-		texture_id = "button_detail_01",
-		uvs = {
-			{
-				1,
-				1
-			},
-			{
-				0,
-				0
+		},
+		bronze_frame = current_score_bronze_frame.texture,
+		right_detail_l = {
+			texture_id = "button_detail_01",
+			uvs = {
+				{
+					1,
+					1
+				},
+				{
+					0,
+					0
+				}
 			}
-		}
+		},
+		current_score = current_score,
+		score_separators = icon_textures
 	}
-	tbl.current_score = current_score
-	tbl.score_separators = icon_textures
-
-	local content = tbl
-	local tbl_2 = {
+	local style = {
 		bar_background = {
 			texture_size = size,
 			texture_tiling_size = bar_bg_settings.size,
@@ -4886,76 +4588,59 @@ UIWidgets.create_total_score_progress_bar = function (scenegraph_id, size, max_s
 				255,
 				255
 			}
+		},
+		current_score = {
+			font_size = 50,
+			upper_case = false,
+			localize = false,
+			use_shadow = true,
+			word_wrap = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = "hell_shark_header",
+			size = current_score_size,
+			text_color = local_player and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not local_player and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255),
+			default_offset = {
+				20,
+				-20,
+				13
+			},
+			offset = {
+				20,
+				-20,
+				13
+			}
+		},
+		score_separators = {
+			direction = 1,
+			axis = 1,
+			size = size,
+			spacing = {
+				spacing_x - 1,
+				0
+			},
+			texture_sizes = icon_texture_sizes,
+			texture_colors = icon_texture_colors,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			default_color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				5,
+				3
+			},
+			draw_count = amount - 1
 		}
 	}
-	local tbl_3 = {
-		font_size = 50,
-		upper_case = false,
-		localize = false,
-		use_shadow = true,
-		word_wrap = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		font_type = "hell_shark_header",
-		size = current_score_size
-	}
-	local get_color_table_with_alpha
-
-	if local_player then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	::label_113_0::
-
-	tbl_3.text_color = get_color_table_with_alpha
-	tbl_3.default_offset = {
-		20,
-		-20,
-		13
-	}
-	tbl_3.offset = {
-		20,
-		-20,
-		13
-	}
-	tbl_2.current_score = tbl_3
-	tbl_2.score_separators = {
-		direction = 1,
-		axis = 1,
-		size = size,
-		spacing = {
-			spacing_x - 1,
-			0
-		},
-		texture_sizes = icon_texture_sizes,
-		texture_colors = icon_texture_colors,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		default_color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			5,
-			3
-		},
-		draw_count = amount - 1
-	}
-
-	local style = tbl_2
 
 	widget.element = element
 	widget.content = content
@@ -4972,42 +4657,17 @@ end
 
 UIWidgets.create_team_banner_info = function (scenegraph_id, is_local_player_team)
 	-- function 117
-	local str
-
-	if is_local_player_team then
-		str = "left"
-
-		goto label_117_0
-	end
-
-	str = "right"
-
-	local text_horizontal_alignment = str
-
-	do
-		local tbl
-	end
-
-	::label_117_0::
-
-	if is_local_player_team then
-		tbl = {
-			{
-				0,
-				0
-			},
-			{
-				1,
-				1
-			}
+	local text_horizontal_alignment = is_local_player_team and not not "left" or not is_local_player_team and not not "right"
+	local uvs = is_local_player_team and not not {
+		{
+			0,
+			0
+		},
+		{
+			1,
+			1
 		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = {
+	} or not is_local_player_team and not not {
 		{
 			1,
 			1
@@ -5017,28 +4677,9 @@ UIWidgets.create_team_banner_info = function (scenegraph_id, is_local_player_tea
 			0
 		}
 	}
+	local text_x_offset = is_local_player_team and not not 45 or not is_local_player_team and not not -45
 
-	local uvs = tbl
-
-	do
-		local num
-	end
-
-	::label_117_1::
-
-	if is_local_player_team then
-		num = 45
-
-		goto label_117_2
-	end
-
-	num = -45
-
-	local text_x_offset = num
-
-	::label_117_2::
-
-	local tbl_2 = {
+	return {
 		element = {
 			passes = {
 				{
@@ -5057,108 +4698,69 @@ UIWidgets.create_team_banner_info = function (scenegraph_id, is_local_player_tea
 					text_id = "team_name"
 				}
 			}
-		}
-	}
-	local tbl_3 = {
-		team_name = "**Hammers",
-		background = {
-			texture_id = "headline_bg_40",
-			uvs = uvs
-		}
-	}
-	local flag
-
-	flag = (not is_local_player_team or not "**Your Team") and not not "**Enemy"
-	tbl_3.team_side = flag
-	tbl_2.content = tbl_3
-
-	local tbl_4 = {
-		background = {
-			color = {
-				100,
-				255,
-				255,
-				255
+		},
+		content = {
+			team_name = "**Hammers",
+			background = {
+				texture_id = "headline_bg_40",
+				uvs = uvs
 			},
-			offset = {
-				0,
-				0,
-				1
+			team_side = is_local_player_team and not not "**Your Team" or not is_local_player_team and not not "**Enemy"
+		},
+		style = {
+			background = {
+				color = {
+					100,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					1
+				}
+			},
+			team_side = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				use_shadow = true,
+				font_size = 22,
+				vertical_alignment = "top",
+				font_type = "hell_shark",
+				horizontal_alignment = text_horizontal_alignment,
+				text_color = is_local_player_team and not not Colors.get_color_table_with_alpha("font_button_normal", 255) or not is_local_player_team and not not Colors.get_color_table_with_alpha("opponent_team", 255),
+				offset = {
+					text_x_offset,
+					-5,
+					4
+				}
+			},
+			team_name = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				use_shadow = true,
+				font_size = 60,
+				vertical_alignment = "bottom",
+				font_type = "hell_shark_header",
+				horizontal_alignment = text_horizontal_alignment,
+				text_color = is_local_player_team and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_local_player_team and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255),
+				offset = {
+					text_x_offset,
+					-5,
+					5
+				}
 			}
+		},
+		scenegraph_id = scenegraph_id,
+		offset = {
+			0,
+			0,
+			0
 		}
 	}
-	local tbl_5 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		use_shadow = true,
-		font_size = 22,
-		vertical_alignment = "top",
-		font_type = "hell_shark",
-		horizontal_alignment = text_horizontal_alignment
-	}
-	local get_color_table_with_alpha
-
-	if is_local_player_team then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_button_normal", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team", 255)
-
-	::label_117_3::
-
-	tbl_5.text_color = get_color_table_with_alpha
-	tbl_5.offset = {
-		text_x_offset,
-		-5,
-		4
-	}
-	tbl_4.team_side = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		use_shadow = true,
-		font_size = 60,
-		vertical_alignment = "bottom",
-		font_type = "hell_shark_header",
-		horizontal_alignment = text_horizontal_alignment
-	}
-	local get_color_table_with_alpha_2
-
-	if is_local_player_team then
-		get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha_2 then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	::label_117_4::
-
-	tbl_6.text_color = get_color_table_with_alpha_2
-	tbl_6.offset = {
-		text_x_offset,
-		-5,
-		5
-	}
-	tbl_4.team_name = tbl_6
-	tbl_2.style = tbl_4
-	tbl_2.scenegraph_id = scenegraph_id
-	tbl_2.offset = {
-		0,
-		0,
-		0
-	}
-
-	return tbl_2
 end
 
 UIWidgets.create_round_score_progress_bar = function (scenegraph_id, size, offset, local_player, max_score, current_score)
@@ -5172,7 +4774,8 @@ UIWidgets.create_round_score_progress_bar = function (scenegraph_id, size, offse
 		50,
 		30
 	}
-	local tbl = {
+
+	return {
 		element = {
 			passes = {
 				{
@@ -5226,261 +4829,238 @@ UIWidgets.create_round_score_progress_bar = function (scenegraph_id, size, offse
 					text_id = "max_score"
 				}
 			}
+		},
+		content = {
+			bar_fill_threashold = 0,
+			current_bar_fil_threshold = 0,
+			bar_size = size,
+			score_size = score_size,
+			local_player_team = local_player,
+			bar_background = bar_bg,
+			bar_frame = progress_bar_frame_settings.texture,
+			bar_fill = local_player and not not "local_player_score_bar" or not local_player and not not "opponent_score_bar",
+			max_score_detail_frame = max_score_frame_settings.texture,
+			current_score = current_score,
+			max_score = max_score,
+			current_score_frame = max_score_frame_settings.texture,
+			current_score_bg = bar_bg,
+			max_score_frame = max_score_frame_settings.texture,
+			max_score_bg = bar_bg
+		},
+		style = {
+			bar_background = {
+				texture_size = size,
+				texture_tiling_size = bar_bg_settings.size,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				default_offset = {
+					0,
+					0,
+					1
+				},
+				offset = {
+					0,
+					0,
+					1
+				}
+			},
+			bar_frame = {
+				size = {
+					size[1] + 4,
+					size[2] + 4
+				},
+				texture_size = max_score_frame_settings.texture_size,
+				texture_sizes = max_score_frame_settings.texture_sizes,
+				default_offset = {
+					0,
+					-2,
+					10
+				},
+				offset = {
+					0,
+					-2,
+					10
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
+			},
+			bar_fill = {
+				gradient_threshold = 0.3,
+				size = {
+					size[1] - 50,
+					size[2]
+				},
+				default_offset = {
+					0,
+					0,
+					9
+				},
+				offset = {
+					0,
+					0,
+					9
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
+			},
+			current_score_frame = {
+				size = {
+					score_size[1] + 4,
+					score_size[2] + 4
+				},
+				texture_size = max_score_frame_settings.texture_size,
+				texture_sizes = max_score_frame_settings.texture_sizes,
+				default_offset = {
+					0,
+					-10,
+					13
+				},
+				offset = {
+					0,
+					-10,
+					13
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
+			},
+			current_score_bg = {
+				texture_size = score_size,
+				texture_tiling_size = bar_bg_settings.size,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				default_offset = {
+					0,
+					-10,
+					11
+				},
+				offset = {
+					0,
+					-10,
+					11
+				}
+			},
+			max_score_frame = {
+				size = {
+					score_size[1] + 4,
+					score_size[2] + 4
+				},
+				texture_size = max_score_frame_settings.texture_size,
+				texture_sizes = max_score_frame_settings.texture_sizes,
+				default_offset = {
+					size[1] - 50,
+					-10,
+					13
+				},
+				offset = {
+					size[1] - 50,
+					-10,
+					13
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
+			},
+			max_score_bg = {
+				texture_size = score_size,
+				texture_tiling_size = bar_bg_settings.size,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				default_offset = {
+					size[1] - 50,
+					-10,
+					10
+				},
+				offset = {
+					size[1] - 50,
+					-10,
+					10
+				}
+			},
+			max_score = {
+				font_size = 20,
+				upper_case = false,
+				localize = false,
+				use_shadow = true,
+				word_wrap = false,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				size = {
+					score_size[1],
+					score_size[2]
+				},
+				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+				default_offset = {
+					size[1] - 40,
+					-10,
+					12
+				},
+				offset = {
+					size[1] - 40,
+					-10,
+					12
+				}
+			},
+			current_score = {
+				font_size = 20,
+				upper_case = false,
+				localize = false,
+				use_shadow = true,
+				word_wrap = false,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				size = {
+					score_size[1],
+					score_size[2]
+				},
+				text_color = local_player and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not local_player and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255),
+				default_offset = {
+					0,
+					-10,
+					12
+				},
+				offset = {
+					0,
+					-10,
+					12
+				}
+			}
+		},
+		scenegraph_id = scenegraph_id,
+		offset = {
+			0,
+			0,
+			0
 		}
 	}
-	local tbl_2 = {
-		bar_fill_threashold = 0,
-		current_bar_fil_threshold = 0,
-		bar_size = size,
-		score_size = score_size,
-		local_player_team = local_player,
-		bar_background = bar_bg,
-		bar_frame = progress_bar_frame_settings.texture
-	}
-	local flag
-
-	flag = (not local_player or not "local_player_score_bar") and not not "opponent_score_bar"
-	tbl_2.bar_fill = flag
-	tbl_2.max_score_detail_frame = max_score_frame_settings.texture
-	tbl_2.current_score = current_score
-	tbl_2.max_score = max_score
-	tbl_2.current_score_frame = max_score_frame_settings.texture
-	tbl_2.current_score_bg = bar_bg
-	tbl_2.max_score_frame = max_score_frame_settings.texture
-	tbl_2.max_score_bg = bar_bg
-	tbl.content = tbl_2
-
-	local tbl_3 = {
-		bar_background = {
-			texture_size = size,
-			texture_tiling_size = bar_bg_settings.size,
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			default_offset = {
-				0,
-				0,
-				1
-			},
-			offset = {
-				0,
-				0,
-				1
-			}
-		},
-		bar_frame = {
-			size = {
-				size[1] + 4,
-				size[2] + 4
-			},
-			texture_size = max_score_frame_settings.texture_size,
-			texture_sizes = max_score_frame_settings.texture_sizes,
-			default_offset = {
-				0,
-				-2,
-				10
-			},
-			offset = {
-				0,
-				-2,
-				10
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			}
-		},
-		bar_fill = {
-			gradient_threshold = 0.3,
-			size = {
-				size[1] - 50,
-				size[2]
-			},
-			default_offset = {
-				0,
-				0,
-				9
-			},
-			offset = {
-				0,
-				0,
-				9
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			}
-		},
-		current_score_frame = {
-			size = {
-				score_size[1] + 4,
-				score_size[2] + 4
-			},
-			texture_size = max_score_frame_settings.texture_size,
-			texture_sizes = max_score_frame_settings.texture_sizes,
-			default_offset = {
-				0,
-				-10,
-				13
-			},
-			offset = {
-				0,
-				-10,
-				13
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			}
-		},
-		current_score_bg = {
-			texture_size = score_size,
-			texture_tiling_size = bar_bg_settings.size,
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			default_offset = {
-				0,
-				-10,
-				11
-			},
-			offset = {
-				0,
-				-10,
-				11
-			}
-		},
-		max_score_frame = {
-			size = {
-				score_size[1] + 4,
-				score_size[2] + 4
-			},
-			texture_size = max_score_frame_settings.texture_size,
-			texture_sizes = max_score_frame_settings.texture_sizes,
-			default_offset = {
-				size[1] - 50,
-				-10,
-				13
-			},
-			offset = {
-				size[1] - 50,
-				-10,
-				13
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			}
-		},
-		max_score_bg = {
-			texture_size = score_size,
-			texture_tiling_size = bar_bg_settings.size,
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			default_offset = {
-				size[1] - 50,
-				-10,
-				10
-			},
-			offset = {
-				size[1] - 50,
-				-10,
-				10
-			}
-		},
-		max_score = {
-			font_size = 20,
-			upper_case = false,
-			localize = false,
-			use_shadow = true,
-			word_wrap = false,
-			horizontal_alignment = "left",
-			vertical_alignment = "center",
-			font_type = "hell_shark",
-			size = {
-				score_size[1],
-				score_size[2]
-			},
-			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-			default_offset = {
-				size[1] - 40,
-				-10,
-				12
-			},
-			offset = {
-				size[1] - 40,
-				-10,
-				12
-			}
-		}
-	}
-	local tbl_4 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		use_shadow = true,
-		word_wrap = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		font_type = "hell_shark",
-		size = {
-			score_size[1],
-			score_size[2]
-		}
-	}
-	local get_color_table_with_alpha
-
-	if local_player then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	::label_118_0::
-
-	tbl_4.text_color = get_color_table_with_alpha
-	tbl_4.default_offset = {
-		0,
-		-10,
-		12
-	}
-	tbl_4.offset = {
-		0,
-		-10,
-		12
-	}
-	tbl_3.current_score = tbl_4
-	tbl.style = tbl_3
-	tbl.scenegraph_id = scenegraph_id
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-
-	return tbl
 end
 
 UIWidgets.create_round_end_round_score_bg_widget = function (scenegraph_id, size, offset)
@@ -6668,24 +6248,14 @@ UIWidgets.create_large_insignia = function (scenegraph_id, optional_level, maske
 		color = color,
 		retained_mode = retained_mode
 	}
-
-	local tbl = {
-		uvs = insignia_main_uvs
+	content.insignia_main = {
+		uvs = insignia_main_uvs,
+		texture_id = masked and not not "insignias_main_masked" or not masked and not not "insignias_main"
 	}
-	local flag
-
-	flag = (not masked or not "insignias_main_masked") and not not "insignias_main"
-	tbl.texture_id = flag
-	content.insignia_main = tbl
-
-	local tbl_2 = {
-		uvs = insignia_addon_uvs
+	content.insignia_addon = {
+		uvs = insignia_addon_uvs,
+		texture_id = masked and not not "insignias_addon_masked" or not masked and not not "insignias_addon"
 	}
-	local flag_2
-
-	flag_2 = (not masked or not "insignias_addon_masked") and not not "insignias_addon"
-	tbl_2.texture_id = flag_2
-	content.insignia_addon = tbl_2
 	content.level = level
 	widget_def.element = element
 	widget_def.content = content
@@ -6759,24 +6329,14 @@ UIWidgets.create_small_insignia = function (scenegraph_id, optional_level, maske
 			255
 		}
 	}
-
-	local tbl = {
-		uvs = insignia_main_uvs
+	content.insignia_main = {
+		uvs = insignia_main_uvs,
+		texture_id = masked and not not "insignias_main_small_masked" or not masked and not not "insignias_main_small"
 	}
-	local flag
-
-	flag = (not masked or not "insignias_main_small_masked") and not not "insignias_main_small"
-	tbl.texture_id = flag
-	content.insignia_main = tbl
-
-	local tbl_2 = {
-		uvs = insignia_addon_uvs
+	content.insignia_addon = {
+		uvs = insignia_addon_uvs,
+		texture_id = masked and not not "insignias_addon_small_masked" or not masked and not not "insignias_addon_small"
 	}
-	local flag_2
-
-	flag_2 = (not masked or not "insignias_addon_small_masked") and not not "insignias_addon_small"
-	tbl_2.texture_id = flag_2
-	content.insignia_addon = tbl_2
 	content.level = level
 	content.visible = level > 0
 	widget_def.element = element
@@ -6985,11 +6545,7 @@ UIWidgets.create_ceremony_award = function (scenegraph_id, award_data, offset)
 		content_id = "insignia_addon",
 		content_check_function = function (content, style)
 			-- function 151
-			local uvs = content.uvs
-
-			uvs = not not uvs and content.parent.level > 0
-
-			return uvs
+			return not not content.uvs
 		end
 	}
 	style.mvp = {
@@ -7303,55 +6859,8 @@ UIWidgets.create_ceremony_award = function (scenegraph_id, award_data, offset)
 	content.mvp = Localize("vs_award_mvp_name")
 	content.header = header
 	content.sub_header = sub_header
-
-	local str
-
-	if is_you then
-		str = "{#color(255,255,255)}(" .. Localize("versus_hero_selection_view_you") .. ") {#reset()}"
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = ""
-
-	::label_134_0::
-
-	local format = string.format
-	local str_2 = "{#color(%d,%d,%d)}%s{#reset()}"
-	local var_134_3 = team_color[2]
-	local var_134_4 = team_color[3]
-	local var_134_5 = team_color[4]
-	local crop_text = UIRenderer.crop_text
-	local var_134_7 = player_name
-	local flag
-
-	flag = (not is_you or not 10) and not not 17
-	content.player_name = str .. format(str_2, var_134_3, var_134_4, var_134_5, crop_text(var_134_7, flag))
-
-	local str_3
-
-	if is_you then
-		str_3 = "(" .. Localize("versus_hero_selection_view_you") .. ") "
-
-		if not str_3 then
-			-- Nothing
-		end
-	end
-
-	str_3 = ""
-
-	::label_134_1::
-
-	local format_2 = string.format
-	local str_4 = "%s"
-	local crop_text_2 = UIRenderer.crop_text
-	local var_134_13 = player_name
-	local flag_2
-
-	flag_2 = (not is_you or not 10) and not not 17
-	content.player_name_shadow = str_3 .. format_2(str_4, crop_text_2(var_134_13, flag_2))
+	content.player_name = (is_you and not not ("{#color(255,255,255)}(" .. Localize("versus_hero_selection_view_you") .. ") {#reset()}") or not is_you and not not "") .. string.format("{#color(%d,%d,%d)}%s{#reset()}", team_color[2], team_color[3], team_color[4], UIRenderer.crop_text(player_name, is_you and not not 10 or not is_you and not not 17))
+	content.player_name_shadow = (is_you and not not ("(" .. Localize("versus_hero_selection_view_you") .. ") ") or not is_you and not not "") .. string.format("%s", UIRenderer.crop_text(player_name, is_you and not not 10 or not is_you and not not 17))
 	content.shine = "diagonal_shine"
 	content.sparkle = "sparkle_effect"
 	widget_def.element = element
@@ -7403,48 +6912,9 @@ UIWidgets.create_screen_ceremony_award = function (scenegraph_id, award_data, of
 	local is_mvp = award_data.is_mvp
 	local is_local = award_data.is_local
 	local header = award_data.header
-	local award_material_2 = award_data.award_material
-
-	if not award_material_2 then
-		-- Nothing
-	end
-
-	award_material_2 = "circle"
-
-	local award_material = award_material_2
-
-	::label_152_0::
-
-	local award_mask_material_2 = award_data.award_mask_material
-
-	if not award_mask_material_2 then
-		-- Nothing
-	end
-
-	award_mask_material_2 = nil
-
-	local award_mask_material = award_mask_material_2
-
-	do
-		local var_152_2
-	end
-
-	::label_152_1::
-
-	if is_mvp then
-		var_152_2 = Localize("vs_award_mvp_sub_header")
-
-		if not var_152_2 then
-			-- Nothing
-		end
-	end
-
-	var_152_2 = award_data.sub_header
-
-	local sub_header = var_152_2
-
-	::label_152_2::
-
+	local award_material = not not award_data.award_material
+	local award_mask_material = not not award_data.award_mask_material
+	local sub_header = is_mvp and not not Localize("vs_award_mvp_sub_header") or not is_mvp and not not award_data.sub_header
 	local team_color = award_data.team_color
 	local insignia_main_uvs, insignia_addon_uvs = UIAtlasHelper.get_insignia_texture_settings_from_level(level)
 	local texture_size = {
@@ -7603,11 +7073,7 @@ UIWidgets.create_screen_ceremony_award = function (scenegraph_id, award_data, of
 		content_id = "insignia_addon",
 		content_check_function = function (content, style)
 			-- function 165
-			local uvs = content.uvs
-
-			uvs = not not uvs and content.parent.level > 0
-
-			return uvs
+			return not not content.uvs
 		end
 	}
 	passes[#passes + 1] = {
@@ -7984,19 +7450,7 @@ UIWidgets.create_screen_ceremony_award = function (scenegraph_id, award_data, of
 		}
 	}
 
-	local num
-
-	if Utf8.length(header) > 10 then
-		num = 15
-
-		goto label_152_3
-	end
-
-	num = 0
-
-	local extra_string_offset = num
-
-	::label_152_3::
+	local extra_string_offset = Utf8.length(header) > 10 and not not 15 or not (Utf8.length(header) > 10) and not not 0
 
 	style.header = {
 		upper_case = true,
@@ -8149,55 +7603,8 @@ UIWidgets.create_screen_ceremony_award = function (scenegraph_id, award_data, of
 	content.mvp = Localize("vs_award_mvp_name")
 	content.header = header
 	content.sub_header = sub_header
-
-	local str
-
-	if is_you then
-		str = "{#color(128,128,128)}(" .. Localize("versus_hero_selection_view_you") .. ") {#reset()}"
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = ""
-
-	::label_152_4::
-
-	local format = string.format
-	local str_2 = "{#color(%d,%d,%d)}%s{#reset()}"
-	local var_152_7 = team_color[2]
-	local var_152_8 = team_color[3]
-	local var_152_9 = team_color[4]
-	local crop_text = UIRenderer.crop_text
-	local var_152_11 = player_name
-	local flag
-
-	flag = (not is_you or not 10) and not not 17
-	content.player_name = str .. format(str_2, var_152_7, var_152_8, var_152_9, crop_text(var_152_11, flag))
-
-	local str_3
-
-	if is_you then
-		str_3 = "(" .. Localize("versus_hero_selection_view_you") .. ") "
-
-		if not str_3 then
-			-- Nothing
-		end
-	end
-
-	str_3 = ""
-
-	::label_152_5::
-
-	local format_2 = string.format
-	local str_4 = "%s"
-	local crop_text_2 = UIRenderer.crop_text
-	local var_152_17 = player_name
-	local flag_2
-
-	flag_2 = (not is_you or not 10) and not not 17
-	content.player_name_shadow = str_3 .. format_2(str_4, crop_text_2(var_152_17, flag_2))
+	content.player_name = (is_you and not not ("{#color(128,128,128)}(" .. Localize("versus_hero_selection_view_you") .. ") {#reset()}") or not is_you and not not "") .. string.format("{#color(%d,%d,%d)}%s{#reset()}", team_color[2], team_color[3], team_color[4], UIRenderer.crop_text(player_name, is_you and not not 10 or not is_you and not not 17))
+	content.player_name_shadow = (is_you and not not ("(" .. Localize("versus_hero_selection_view_you") .. ") ") or not is_you and not not "") .. string.format("%s", UIRenderer.crop_text(player_name, is_you and not not 10 or not is_you and not not 17))
 	content.shine = "diagonal_shine"
 	content.award_shine_mask = "diagonal_shine_write_mask"
 	content.award_shine = award_mask_material
@@ -8206,8 +7613,7 @@ UIWidgets.create_screen_ceremony_award = function (scenegraph_id, award_data, of
 	content.shine_timer = 0
 	content.background = "award_bg"
 	content.award_texture = award_material
-
-	local tbl = {
+	content.team_bg = {
 		uvs = {
 			{
 				0,
@@ -8217,13 +7623,9 @@ UIWidgets.create_screen_ceremony_award = function (scenegraph_id, award_data, of
 				0.9,
 				1
 			}
-		}
+		},
+		texture_id = is_local and not not "award_bg_local_team" or not is_local and not not "award_bg_opponent_team"
 	}
-	local flag_3
-
-	flag_3 = (not is_local or not "award_bg_local_team") and not not "award_bg_opponent_team"
-	tbl.texture_id = flag_3
-	content.team_bg = tbl
 	content.frame = "divider_01_bottom"
 	widget_def.element = element
 	widget_def.content = content
@@ -8240,7 +7642,7 @@ end
 
 UIWidgets.create_dark_pact_hud_ability_icon_widget = function (scenegraph_id, settings)
 	-- function 168
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -8291,21 +7693,7 @@ UIWidgets.create_dark_pact_hud_ability_icon_widget = function (scenegraph_id, se
 					content_change_function = function (content, style)
 						-- function 173
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local gamepad_input
-
-						if gamepad_active then
-							gamepad_input = content.settings.gamepad_input
-
-							if not gamepad_input then
-								-- Nothing
-							end
-						end
-
-						gamepad_input = content.settings.input_action
-
-						local input = gamepad_input
-
-						::label_173_0::
+						local input = gamepad_active and not not content.settings.gamepad_input or not gamepad_active and not not content.settings.input_action
 
 						if content.current_input_action ~= input then
 							content.current_input_action = input
@@ -8313,7 +7701,7 @@ UIWidgets.create_dark_pact_hud_ability_icon_widget = function (scenegraph_id, se
 							local input_service = Managers.input:get_service("Player")
 							local _, input_text, keymap_binding = UISettings.get_gamepad_input_texture_data(input_service, input, gamepad_active)
 
-							if (not keymap_binding or keymap_binding[1] ~= "mouse") and gamepad_active then
+							if keymap_binding and (keymap_binding[1] == "mouse" or gamepad_active) or not keymap_binding and gamepad_active then
 								content.input = string.format("$KEY;Player__%s:", input)
 								style.offset[1] = 68
 							else
@@ -8324,156 +7712,139 @@ UIWidgets.create_dark_pact_hud_ability_icon_widget = function (scenegraph_id, se
 					end
 				}
 			}
-		}
+		},
+		content = {
+			set_unsaturated = false,
+			is_cooldown = false,
+			texture_cooldown = "dark_pact_ability_icon_cooldown_gradient",
+			progress = 0,
+			texture_frame = "health_bar_ability_icon_frame",
+			gris = "rect_masked",
+			icon_mask = "dark_pact_ability_icon_gradient_mask",
+			input = "n/a",
+			texture_icon = settings and not not settings.icon or not settings and not not "icons_placeholder",
+			settings = not not settings or not not {}
+		},
+		style = {
+			texture_icon_bg = {
+				saturated = false,
+				size = {
+					56,
+					56
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					12,
+					14,
+					1
+				}
+			},
+			texture_icon = {
+				saturated = false,
+				masked = true,
+				size = {
+					56,
+					56
+				},
+				color = {
+					255,
+					100,
+					100,
+					100
+				},
+				offset = {
+					12,
+					14,
+					2
+				}
+			},
+			icon_mask = {
+				size = {
+					56,
+					56
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					12,
+					14,
+					2
+				}
+			},
+			texture_cooldown = {
+				size = {
+					56,
+					56
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					12,
+					14,
+					3
+				}
+			},
+			texture_frame = {
+				size = {
+					80,
+					80
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					4
+				}
+			},
+			input = {
+				font_type = "hell_shark",
+				upper_case = false,
+				localize = false,
+				use_shadow = true,
+				font_size = 26,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				size = {
+					0,
+					0
+				},
+				area_size = {
+					20,
+					20
+				},
+				text_color = Colors.get_color_table_with_alpha("white", 255),
+				offset = {
+					68,
+					100,
+					6
+				}
+			}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_2 = {
-		set_unsaturated = false,
-		is_cooldown = false,
-		texture_cooldown = "dark_pact_ability_icon_cooldown_gradient",
-		progress = 0,
-		texture_frame = "health_bar_ability_icon_frame",
-		gris = "rect_masked",
-		icon_mask = "dark_pact_ability_icon_gradient_mask",
-		input = "n/a"
-	}
-	local icon
-
-	if settings then
-		icon = settings.icon
-
-		if not icon then
-			-- Nothing
-		end
-	end
-
-	icon = "icons_placeholder"
-
-	::label_168_0::
-
-	tbl_2.texture_icon = icon
-	tbl_2.settings = not not settings or not not {}
-	tbl.content = tbl_2
-	tbl.style = {
-		texture_icon_bg = {
-			saturated = false,
-			size = {
-				56,
-				56
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				12,
-				14,
-				1
-			}
-		},
-		texture_icon = {
-			saturated = false,
-			masked = true,
-			size = {
-				56,
-				56
-			},
-			color = {
-				255,
-				100,
-				100,
-				100
-			},
-			offset = {
-				12,
-				14,
-				2
-			}
-		},
-		icon_mask = {
-			size = {
-				56,
-				56
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				12,
-				14,
-				2
-			}
-		},
-		texture_cooldown = {
-			size = {
-				56,
-				56
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				12,
-				14,
-				3
-			}
-		},
-		texture_frame = {
-			size = {
-				80,
-				80
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				0,
-				4
-			}
-		},
-		input = {
-			font_type = "hell_shark",
-			upper_case = false,
-			localize = false,
-			use_shadow = true,
-			font_size = 26,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			size = {
-				0,
-				0
-			},
-			area_size = {
-				20,
-				20
-			},
-			text_color = Colors.get_color_table_with_alpha("white", 255),
-			offset = {
-				68,
-				100,
-				6
-			}
-		}
-	}
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 UIWidgets.create_dark_pact_selection_widget = function (scenegraph_id)
@@ -8606,30 +7977,8 @@ end
 
 UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_data, start_value, start_idx, setting_id, on_setting_changed_cb)
 	-- function 175
-	local values = data.values
-
-	if not values then
-		-- Nothing
-	end
-
-	values = {}
-
-	local settings = values
-
-	::label_175_0::
-
-	local count = #settings
-
-	if not count then
-		-- Nothing
-	end
-
-	count = 0
-
-	local num_settings = count
-
-	::label_175_1::
-
+	local settings = not not data.values
+	local num_settings = not not #settings
 	local setting_name = "menu_settings_" .. data.setting_name
 	local tooltip_text = "tooltip_" .. data.setting_name
 	local reset_button_size = {
@@ -8644,18 +7993,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 	local function update_hotspot(content, style, dt)
 		-- function 176
 		local parent = content.parent
-		local hover_progress_2 = content.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_176_0::
-
+		local hover_progress = not not content.hover_progress
 		local hover_speed = 15
 
 		if parent.can_hover and content.is_hover then
@@ -8666,18 +8004,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 
 		content.hover_progress = hover_progress
 
-		local press_progress_2 = content.press_progress
-
-		if not press_progress_2 then
-			-- Nothing
-		end
-
-		press_progress_2 = 1
-
-		local press_progress = press_progress_2
-
-		::label_176_1::
-
+		local press_progress = not not content.press_progress
 		local press_speed = 25
 
 		if parent.can_hover and content.is_held then
@@ -8691,29 +8018,8 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 
 	local function animate_button(content, style, hotspot, dt)
 		-- function 177
-		local hover_progress_2 = hotspot.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_177_0::
-
-		local press_progress_2 = hotspot.press_progress
-
-		if not press_progress_2 then
-			-- Nothing
-		end
-
-		press_progress_2 = 1
-
-		local press_progress = press_progress_2
-
-		::label_177_1::
+		local hover_progress = not not hotspot.hover_progress
+		local press_progress = not not hotspot.press_progress
 
 		style.color[1] = 255 * hover_progress
 
@@ -8731,17 +8037,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					text_id = "setting_name",
 					content_change_function = function (content, style, _, dt)
 						-- function 178
-						local fade_progress_2 = content.fade_progress
-
-						if not fade_progress_2 then
-							-- Nothing
-						end
-
-						fade_progress_2 = 0
-
-						local fade_progress = fade_progress_2
-
-						::label_178_0::
+						local fade_progress = not not content.fade_progress
 
 						style.text_color[1] = 100 + 155 * fade_progress
 					end
@@ -8752,17 +8048,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					content_id = "left_arrow",
 					content_change_function = function (content, style, _, dt)
 						-- function 179
-						local fade_progress_2 = content.parent.fade_progress
-
-						if not fade_progress_2 then
-							-- Nothing
-						end
-
-						fade_progress_2 = 0
-
-						local fade_progress = fade_progress_2
-
-						::label_179_0::
+						local fade_progress = not not content.parent.fade_progress
 
 						style.color[1] = 100 + 155 * fade_progress
 					end
@@ -8791,11 +8077,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					content_id = "left_arrow_hotspot",
 					content_check_function = function (content, style)
 						-- function 182
-						local is_server = content.parent.is_server
-
-						is_server = not not is_server and not not content.parent.focused
-
-						return is_server
+						return not not content.parent.is_server
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 183
@@ -8834,18 +8116,8 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 								value_text = string.format("%s", content.value)
 							end
 
-							if (not localization_options or not localization_options[new_value]) and ui_data and ui_data.setting_type then
-								local carousel = DLCSettings.carousel
-
-								if carousel then
-									-- Nothing
-								end
-
-								carousel = DLCSettings.carousel.custom_game_settigns_values_suffix
-
-								local value_suffixes = carousel
-
-								::label_184_0::
+							if not localization_options and ui_data and ui_data.setting_type or not not localization_options and not localization_options[new_value] and ui_data and ui_data.setting_type then
+								local value_suffixes = not not DLCSettings.carousel
 
 								if value_suffixes and value_suffixes[ui_data.setting_type] then
 									value_text = value_text .. value_suffixes[ui_data.setting_type]
@@ -8861,17 +8133,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 							style.text_color = style.default_color
 						end
 
-						local fade_progress_2 = content.fade_progress
-
-						if not fade_progress_2 then
-							-- Nothing
-						end
-
-						fade_progress_2 = 0
-
-						local fade_progress = fade_progress_2
-
-						::label_184_1::
+						local fade_progress = not not content.fade_progress
 
 						style.text_color[1] = 100 + 155 * fade_progress
 					end
@@ -8882,17 +8144,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					pass_type = "texture",
 					content_change_function = function (content, style, _, dt)
 						-- function 185
-						local fade_progress_2 = content.fade_progress
-
-						if not fade_progress_2 then
-							-- Nothing
-						end
-
-						fade_progress_2 = 0
-
-						local fade_progress = fade_progress_2
-
-						::label_185_0::
+						local fade_progress = not not content.fade_progress
 
 						style.color[1] = 100 + 155 * fade_progress
 					end
@@ -8918,11 +8170,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					content_id = "right_arrow_hotspot",
 					content_check_function = function (content, style)
 						-- function 188
-						local is_server = content.parent.is_server
-
-						is_server = not not is_server and not not content.parent.focused
-
-						return is_server
+						return not not content.parent.is_server
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 189
@@ -8942,21 +8190,10 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					content_id = "setting_highlight_hotspot",
 					content_change_function = function (content, style, _, dt)
 						-- function 190
-						local hover_progress_2 = content.hover_progress
-
-						if not hover_progress_2 then
-							-- Nothing
-						end
-
-						hover_progress_2 = 0
-
-						local hover_progress = hover_progress_2
-
-						::label_190_0::
-
+						local hover_progress = not not content.hover_progress
 						local hover_speed = 15
 
-						if (not content.parent.can_hover or not content.is_hover) and content.parent.is_gamepad_active and content.parent.focused and content.parent.is_selected then
+						if content.parent.is_gamepad_active and content.parent.focused and content.parent.is_selected then
 							hover_progress = math.min(hover_progress + dt * hover_speed, 1)
 						else
 							hover_progress = math.max(hover_progress - dt * hover_speed, 0)
@@ -8971,17 +8208,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					pass_type = "texture",
 					content_change_function = function (content, style, _, dt)
 						-- function 191
-						local hover_progress_2 = content.setting_highlight_hotspot.hover_progress
-
-						if not hover_progress_2 then
-							-- Nothing
-						end
-
-						hover_progress_2 = 0
-
-						local hover_progress = hover_progress_2
-
-						::label_191_0::
+						local hover_progress = not not content.setting_highlight_hotspot.hover_progress
 
 						style.color[1] = 255 * hover_progress
 					end
@@ -8996,19 +8223,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 						local ui_data = content.ui_data
 						local setting_has_changed = content.value ~= content.default_value
 
-						if setting_has_changed then
-							-- Nothing
-						end
-
-						::label_192_0::
-
-						local is_server = content.is_server
-
-						is_server = not not is_server and not not not content.is_gamepad_active
-
-						::label_192_1::
-
-						return is_server
+						return not not setting_has_changed and not not content.is_server
 					end
 				},
 				{
@@ -9021,19 +8236,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 						local ui_data = content.ui_data
 						local setting_has_changed = content.value ~= content.default_value
 
-						if setting_has_changed then
-							-- Nothing
-						end
-
-						::label_193_0::
-
-						local is_server = content.is_server
-
-						is_server = not not is_server and not content.is_gamepad_active and not not content.focused
-
-						::label_193_1::
-
-						return is_server
+						return not not setting_has_changed and not not content.is_server
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 194
@@ -9055,19 +8258,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 						local default_idx = parent.default_idx
 						local setting_has_changed = parent.value ~= parent.default_value
 
-						if setting_has_changed then
-							-- Nothing
-						end
-
-						::label_195_0::
-
-						local is_server = parent.is_server
-
-						is_server = not not is_server and not not not parent.is_gamepad_active
-
-						::label_195_1::
-
-						return is_server
+						return not not setting_has_changed and not not parent.is_server
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 196
@@ -9082,11 +8273,7 @@ UIWidgets.create_settings_stepper_widget = function (scenegraph_id, data, ui_dat
 					text_id = "tooltip_text",
 					content_check_function = function (content, style)
 						-- function 197
-						local can_hover = content.can_hover
-
-						can_hover = not not can_hover and not not content.setting_highlight_hotspot.is_hover
-
-						return can_hover
+						return not not content.can_hover
 					end
 				}
 			}
@@ -9374,30 +8561,8 @@ end
 
 UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data, start_value, start_idx, setting_id, on_setting_changed_cb)
 	-- function 198
-	local values = data.values
-
-	if not values then
-		-- Nothing
-	end
-
-	values = {}
-
-	local settings = values
-
-	::label_198_0::
-
-	local count = #settings
-
-	if not count then
-		-- Nothing
-	end
-
-	count = 1
-
-	local num_settings = count
-
-	::label_198_1::
-
+	local settings = not not data.values
+	local num_settings = not not #settings
 	local setting_name = "menu_settings_" .. data.setting_name
 	local tooltip_text = "tooltip_" .. data.setting_name
 	local reset_button_size = {
@@ -9429,18 +8594,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 	local function update_hotspot(content, style, dt)
 		-- function 199
 		local parent = content.parent
-		local hover_progress_2 = content.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_199_0::
-
+		local hover_progress = not not content.hover_progress
 		local hover_speed = 15
 
 		if parent.can_hover and content.is_hover then
@@ -9451,18 +8605,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 
 		content.hover_progress = hover_progress
 
-		local press_progress_2 = content.press_progress
-
-		if not press_progress_2 then
-			-- Nothing
-		end
-
-		press_progress_2 = 1
-
-		local press_progress = press_progress_2
-
-		::label_199_1::
-
+		local press_progress = not not content.press_progress
 		local press_speed = 25
 
 		if parent.can_hover and content.is_held then
@@ -9476,29 +8619,8 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 
 	local function animate_button(content, style, hotspot, dt)
 		-- function 200
-		local hover_progress_2 = hotspot.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_200_0::
-
-		local press_progress_2 = hotspot.press_progress
-
-		if not press_progress_2 then
-			-- Nothing
-		end
-
-		press_progress_2 = 1
-
-		local press_progress = press_progress_2
-
-		::label_200_1::
+		local hover_progress = not not hotspot.hover_progress
+		local press_progress = not not hotspot.press_progress
 
 		style.color[1] = 255 * hover_progress
 
@@ -9516,17 +8638,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 					text_id = "setting_name",
 					content_change_function = function (content, style, _, dt)
 						-- function 201
-						local fade_progress_2 = content.fade_progress
-
-						if not fade_progress_2 then
-							-- Nothing
-						end
-
-						fade_progress_2 = 0
-
-						local fade_progress = fade_progress_2
-
-						::label_201_0::
+						local fade_progress = not not content.fade_progress
 
 						style.text_color[1] = 100 + 155 * fade_progress
 					end
@@ -9563,18 +8675,8 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 								value_text = string.format("%s", content.value)
 							end
 
-							if (not localization_options or not localization_options[new_value]) and ui_data and ui_data.setting_type then
-								local carousel = DLCSettings.carousel
-
-								if carousel then
-									-- Nothing
-								end
-
-								carousel = DLCSettings.carousel.custom_game_settigns_values_suffix
-
-								local value_suffixes = carousel
-
-								::label_202_0::
+							if not localization_options and ui_data and ui_data.setting_type or not not localization_options and not localization_options[new_value] and ui_data and ui_data.setting_type then
+								local value_suffixes = not not DLCSettings.carousel
 
 								if value_suffixes and value_suffixes[ui_data.setting_type] then
 									value_text = value_text .. value_suffixes[ui_data.setting_type]
@@ -9590,17 +8692,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 							style.text_color = style.default_color
 						end
 
-						local fade_progress_2 = content.fade_progress
-
-						if not fade_progress_2 then
-							-- Nothing
-						end
-
-						fade_progress_2 = 0
-
-						local fade_progress = fade_progress_2
-
-						::label_202_1::
+						local fade_progress = not not content.fade_progress
 
 						style.text_color[1] = 100 + 155 * fade_progress
 					end
@@ -9616,21 +8708,10 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 					content_id = "setting_highlight_hotspot",
 					content_change_function = function (content, style, _, dt)
 						-- function 203
-						local hover_progress_2 = content.hover_progress
-
-						if not hover_progress_2 then
-							-- Nothing
-						end
-
-						hover_progress_2 = 0
-
-						local hover_progress = hover_progress_2
-
-						::label_203_0::
-
+						local hover_progress = not not content.hover_progress
 						local hover_speed = 15
 
-						if (not content.parent.can_hover or not content.is_hover) and content.parent.is_gamepad_active and content.parent.focused and content.parent.is_selected then
+						if content.parent.is_gamepad_active and content.parent.focused and content.parent.is_selected then
 							hover_progress = math.min(hover_progress + dt * hover_speed, 1)
 						else
 							hover_progress = math.max(hover_progress - dt * hover_speed, 0)
@@ -9645,17 +8726,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 					pass_type = "texture",
 					content_change_function = function (content, style, _, dt)
 						-- function 204
-						local hover_progress_2 = content.setting_highlight_hotspot.hover_progress
-
-						if not hover_progress_2 then
-							-- Nothing
-						end
-
-						hover_progress_2 = 0
-
-						local hover_progress = hover_progress_2
-
-						::label_204_0::
+						local hover_progress = not not content.setting_highlight_hotspot.hover_progress
 
 						style.color[1] = 255 * hover_progress
 					end
@@ -9670,19 +8741,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 						local ui_data = content.ui_data
 						local setting_has_changed = content.value ~= content.default_value
 
-						if setting_has_changed then
-							-- Nothing
-						end
-
-						::label_205_0::
-
-						local is_server = content.is_server
-
-						is_server = not not is_server and not not not content.is_gamepad_active
-
-						::label_205_1::
-
-						return is_server
+						return not not setting_has_changed and not not content.is_server
 					end
 				},
 				{
@@ -9695,19 +8754,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 						local ui_data = content.ui_data
 						local setting_has_changed = content.value ~= content.default_value
 
-						if setting_has_changed then
-							-- Nothing
-						end
-
-						::label_206_0::
-
-						local is_server = content.is_server
-
-						is_server = not not is_server and not content.is_gamepad_active and not not content.focused
-
-						::label_206_1::
-
-						return is_server
+						return not not setting_has_changed and not not content.is_server
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 207
@@ -9729,19 +8776,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 						local default_idx = parent.default_idx
 						local setting_has_changed = parent.value ~= parent.default_value
 
-						if setting_has_changed then
-							-- Nothing
-						end
-
-						::label_208_0::
-
-						local is_server = parent.is_server
-
-						is_server = not not is_server and not not not parent.is_gamepad_active
-
-						::label_208_1::
-
-						return is_server
+						return not not setting_has_changed and not not parent.is_server
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 209
@@ -9756,11 +8791,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 					text_id = "tooltip_text",
 					content_check_function = function (content, style)
 						-- function 210
-						local can_hover = content.can_hover
-
-						can_hover = not not can_hover and not not content.setting_highlight_hotspot.is_hover
-
-						return can_hover
+						return not not content.can_hover
 					end
 				},
 				{
@@ -9788,11 +8819,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 					texture_id = "slider_button_hovered",
 					content_check_function = function (content, style)
 						-- function 212
-						local can_hover = content.can_hover
-
-						can_hover = not not can_hover and not not content.slider_button_hotspot.is_hover
-
-						return can_hover
+						return not not content.can_hover
 					end
 				},
 				{
@@ -9836,14 +8863,7 @@ UIWidgets.create_settings_slider_widget = function (scenegraph_id, data, ui_data
 					content_id = "slider_button_hotspot",
 					content_check_function = function (content, style)
 						-- function 215
-						local can_hover = content.parent.can_hover
-
-						if can_hover then
-							can_hover = content.parent.is_server
-							can_hover = not not can_hover and not not content.parent.focused
-						end
-
-						return can_hover
+						return not not content.parent.can_hover
 					end
 				},
 				{

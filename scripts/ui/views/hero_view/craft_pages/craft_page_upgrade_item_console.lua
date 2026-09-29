@@ -126,21 +126,7 @@ CraftPageUpgradeItemConsole.setup_recipe_requirements = function (self)
 			end
 
 			local has_required_amount = required_amount <= amount_owned
-			local var_2_0
-
-			if amount_owned < UISettings.max_craft_material_presentation_amount then
-				var_2_0 = tostring(amount_owned)
-
-				if not var_2_0 then
-					-- Nothing
-				end
-			end
-
-			var_2_0 = "*"
-
-			::label_2_0::
-
-			local presentation_amount = var_2_0 .. "/" .. tostring(required_amount)
+			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and not not tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and not not "*") .. "/" .. tostring(required_amount)
 
 			self:_add_crafting_material_requirement(requirement_index, item_key, presentation_amount, has_required_amount)
 
@@ -314,7 +300,7 @@ CraftPageUpgradeItemConsole._handle_input = function (self, dt, t)
 
 	if input_service:get("special_1") then
 		self:reset()
-	elseif (craft_input == 0 or craft_input_gamepad or craft_input_keyboard) and self._has_all_requirements then
+	elseif craft_input == 0 and self._has_all_requirements or not (craft_input == 0) and (craft_input_gamepad and self._has_all_requirements or not craft_input_gamepad and craft_input_keyboard and self._has_all_requirements) then
 		if not self._craft_input_time then
 			self._craft_input_time = 0
 
@@ -423,7 +409,7 @@ CraftPageUpgradeItemConsole.on_craft_completed = function (self)
 	if backend_id then
 		local item = item_interface:get_item_from_id(backend_id)
 		local rarity = not not item and not not item_interface:get_item_rarity(backend_id)
-		local rarity_approved = not not rarity and rarity == "plentiful" or rarity == "common" or rarity == "rare" or rarity == "exotic"
+		local rarity_approved = not not rarity and (rarity == "plentiful" or rarity == "common" or rarity == "rare" or rarity == "exotic")
 
 		if item then
 			parent:set_reward_tooltip_item(item)
@@ -447,24 +433,7 @@ CraftPageUpgradeItemConsole._update_craft_items = function (self)
 	-- function 18
 	local super_parent = self.super_parent
 	local item_grid = self._item_grid
-	local is_dragging_item = item_grid:is_dragging_item()
-
-	if not is_dragging_item then
-		-- Nothing
-	end
-
-	if item_grid:is_item_dragged() == nil then
-		is_dragging_item = false
-
-		goto label_18_0
-	end
-
-	is_dragging_item = true
-
-	local is_dragging_craft_item = is_dragging_item
-
-	::label_18_0::
-
+	local is_dragging_craft_item = not not item_grid:is_dragging_item()
 	local pressed_backend_id, is_drag_item = super_parent:get_pressed_item_backend_id()
 
 	if pressed_backend_id then
@@ -507,12 +476,7 @@ CraftPageUpgradeItemConsole._remove_craft_item = function (self, backend_id, slo
 		self._item_grid:add_item_to_slot_index(slot_index, nil)
 
 		craft_items[slot_index] = nil
-
-		local max = math.max
-		local _num_craft_items = self._num_craft_items
-
-		_num_craft_items = not not _num_craft_items or not not 0
-		self._num_craft_items = max(_num_craft_items - 1, 0)
+		self._num_craft_items = math.max(not not self._num_craft_items - 1, 0)
 
 		if self._num_craft_items == 0 then
 			self:_set_craft_button_disabled(true)
@@ -548,11 +512,7 @@ CraftPageUpgradeItemConsole._add_craft_item = function (self, backend_id, slot_i
 		self._item_grid:add_item_to_slot_index(slot_index, item)
 		self.super_parent:set_disabled_backend_id(backend_id, true)
 
-		local min = math.min
-		local _num_craft_items = self._num_craft_items
-
-		_num_craft_items = not not _num_craft_items or not not 0
-		self._num_craft_items = min(_num_craft_items + 1, NUM_CRAFT_SLOTS)
+		self._num_craft_items = math.min(not not self._num_craft_items + 1, NUM_CRAFT_SLOTS)
 
 		if backend_id and not ignore_sound then
 			self:_play_sound("play_gui_craft_item_drop")
@@ -566,24 +526,7 @@ CraftPageUpgradeItemConsole._set_craft_button_disabled = function (self, disable
 	-- function 21
 	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
 
-	local parent = self.parent
-	local var_21_1 = parent
-	local set_input_description = parent.set_input_description
-	local name
-
-	if not disabled then
-		name = self.settings.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "disabled"
-
-	::label_21_0::
-
-	set_input_description(var_21_1, name)
+	self.parent:set_input_description(disabled and not not "disabled" or not disabled and not not self.settings.name)
 end
 
 CraftPageUpgradeItemConsole._exit = function (self, selected_level)
@@ -617,22 +560,8 @@ CraftPageUpgradeItemConsole._set_craft_button_text = function (self, text, local
 	-- function 25
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
-	local content = widget.content
-	local var_25_1
 
-	if localize then
-		var_25_1 = Localize(text)
-
-		if not var_25_1 then
-			-- Nothing
-		end
-	end
-
-	var_25_1 = text
-
-	::label_25_0::
-
-	content.button_text = var_25_1
+	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
 end
 
 CraftPageUpgradeItemConsole._add_crafting_material_requirement = function (self, index, item_key, amount_text, has_required_amount)

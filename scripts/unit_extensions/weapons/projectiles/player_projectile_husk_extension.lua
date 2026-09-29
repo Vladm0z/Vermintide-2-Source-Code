@@ -44,24 +44,7 @@ PlayerProjectileHuskExtension.init = function (self, extension_init_context, uni
 
 				if is_ammo_weapon then
 					local wielded_item_template = BackendUtils.get_item_template(wielded_item_data)
-
-					if not skin_material_settings_name then
-						-- Nothing
-					end
-
-					::label_1_0::
-
-					local material_settings_name_2 = item_units.material_settings_name
-
-					if not material_settings_name_2 then
-						-- Nothing
-					end
-
-					material_settings_name_2 = wielded_item_template.material_settings_name
-
-					local material_settings_name = material_settings_name_2
-
-					::label_1_1::
+					local material_settings_name = not not skin_material_settings_name or not not item_units.material_settings_name
 
 					if material_settings_name then
 						GearUtils.apply_material_settings(unit, material_settings_name)
@@ -114,11 +97,7 @@ PlayerProjectileHuskExtension.init = function (self, extension_init_context, uni
 	self._timed_data = timed_data
 	self._time_initialized = extension_init_data.time_initialized
 	self.scale = extension_init_data.scale
-
-	local charge_level = extension_init_data.charge_level
-
-	charge_level = not not charge_level or not not 0
-	self.charge_level = charge_level / 100
+	self.charge_level = not not extension_init_data.charge_level / 100
 	self._num_targets_hit = 0
 	self._hit_units = {}
 
@@ -157,25 +136,14 @@ PlayerProjectileHuskExtension.initialize_projectile = function (self, projectile
 		self._stop_impacts = false
 		self._amount_of_mass_hit = 0
 
-		local damage_profile_2 = impact_data.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-
-		damage_profile_2 = "default"
-
-		local damage_profile_name = damage_profile_2
-
-		::label_4_0::
-
+		local damage_profile_name = not not impact_data.damage_profile
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local owner_unit = self._owner_unit
 		local difficulty_level = Managers.state.difficulty:get_difficulty()
 		local cleave_power_level = ActionUtils.scale_power_levels(self.power_level, "cleave", owner_unit, difficulty_level)
 		local max_mass_attack, max_mass_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
 
-		self._max_mass = (not (max_mass_impact < max_mass_attack) or not max_mass_attack) and not not max_mass_impact
+		self._max_mass = max_mass_impact < max_mass_attack and (not not max_mass_attack or not not max_mass_impact) or not (max_mass_impact < max_mass_attack) and not not max_mass_impact
 	end
 
 	local timed_data = self._timed_data
@@ -395,18 +363,7 @@ PlayerProjectileHuskExtension.hit_enemy = function (self, impact_data, hit_unit,
 		return
 	end
 
-	local damage_profile_2 = impact_data.damage_profile
-
-	if not damage_profile_2 then
-		-- Nothing
-	end
-
-	damage_profile_2 = "default"
-
-	local damage_profile_name = damage_profile_2
-
-	::label_15_0::
-
+	local damage_profile_name = not not impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_link = true
 	local aoe_data = impact_data.aoe
@@ -457,18 +414,7 @@ PlayerProjectileHuskExtension.hit_enemy_damage = function (self, damage_profile,
 	local action = self._current_action
 	local node = Actor.node(hit_actor)
 	local hit_zone = breed.hit_zones_lookup[node]
-	local forced_hitzone = action.projectile_info.forced_hitzone
-
-	if not forced_hitzone then
-		-- Nothing
-	end
-
-	forced_hitzone = hit_zone.name
-
-	local hit_zone_name = forced_hitzone
-
-	::label_16_0::
-
+	local hit_zone_name = not not action.projectile_info.forced_hitzone
 	local was_alive = HEALTH_ALIVE[hit_unit]
 
 	if was_alive then
@@ -490,55 +436,7 @@ PlayerProjectileHuskExtension.hit_enemy_damage = function (self, damage_profile,
 	if was_alive then
 		local action_mass_override = action.hit_mass_count
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local var_16_1
-
-		if shield_blocked then
-			if breed.hit_mass_counts_block then
-				var_16_1 = breed.hit_mass_counts_block[difficulty_rank]
-
-				if not var_16_1 then
-					-- Nothing
-				end
-
-				var_16_1 = breed.hit_mass_counts_block[2]
-
-				if not var_16_1 then
-					-- Nothing
-				end
-			end
-
-			var_16_1 = breed.hit_mass_count_block
-
-			if not var_16_1 then
-				-- Nothing
-			end
-		end
-
-		if breed.hit_mass_counts then
-			var_16_1 = breed.hit_mass_counts[difficulty_rank]
-
-			if not var_16_1 then
-				-- Nothing
-			end
-
-			var_16_1 = breed.hit_mass_counts[2]
-
-			if not var_16_1 then
-				-- Nothing
-			end
-		end
-
-		var_16_1 = breed.hit_mass_count
-
-		if not var_16_1 then
-			-- Nothing
-		end
-
-		var_16_1 = 1
-
-		local hit_mass_total = var_16_1
-
-		::label_16_1::
+		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and not not breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and not not breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and not not breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and not not breed.hit_mass_count)
 
 		if self.ignore_mass_and_armour then
 			hit_mass_total = 1
@@ -572,7 +470,7 @@ PlayerProjectileHuskExtension.hit_enemy_damage = function (self, damage_profile,
 
 			self:stop(hit_unit, hit_zone_name)
 		end
-	elseif was_alive and not action.ignore_armor and (breed.armor_category == 2 or breed.armor_category == 3 or shield_blocked) then
+	elseif breed.armor_category == 2 or breed.armor_category == 3 or shield_blocked then
 		self._did_damage = predicted_damage
 
 		if self._num_additional_penetrations > 0 then
@@ -613,18 +511,7 @@ PlayerProjectileHuskExtension.hit_player = function (self, impact_data, hit_unit
 	local hit = false
 	local forced_penetration = false
 	local owner_player = self._owner_player
-	local damage_profile_2 = impact_data.damage_profile
-
-	if not damage_profile_2 then
-		-- Nothing
-	end
-
-	damage_profile_2 = "default"
-
-	local damage_profile_name = damage_profile_2
-
-	::label_17_0::
-
+	local damage_profile_name = not not impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 
 	if damage_profile and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player) and hit_units[hit_unit] == nil then
@@ -713,24 +600,7 @@ end
 PlayerProjectileHuskExtension.hit_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, level_index, ranged_boost_curve_multiplier)
 	-- function 19
 	local has_health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
-	local damage_profile_prop = impact_data.damage_profile_prop
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = impact_data.damage_profile
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = "default"
-
-	local damage_profile_name = damage_profile_prop
-
-	::label_19_0::
-
+	local damage_profile_name = not not impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_ranged_damage = Unit.get_data(hit_unit, "allow_ranged_damage") ~= false
 
@@ -772,17 +642,7 @@ PlayerProjectileHuskExtension.hit_level_unit = function (self, impact_data, hit_
 
 	if bounce then
 		local num_bounces = self._num_bounces
-		local max_bounces_2 = impact_data.max_bounces
-
-		if not max_bounces_2 then
-			-- Nothing
-		end
-
-		max_bounces_2 = 1
-
-		local max_bounces = max_bounces_2
-
-		::label_19_1::
+		local max_bounces = not not impact_data.max_bounces
 
 		max_bounces = max_bounces + buffed_bounces
 
@@ -824,24 +684,7 @@ end
 
 PlayerProjectileHuskExtension.hit_non_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, ranged_boost_curve_multiplier)
 	-- function 21
-	local damage_profile_prop = impact_data.damage_profile_prop
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = impact_data.damage_profile
-
-	if not damage_profile_prop then
-		-- Nothing
-	end
-
-	damage_profile_prop = "default"
-
-	local damage_profile_name = damage_profile_prop
-
-	::label_21_0::
-
+	local damage_profile_name = not not impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local stop_impacts = false
 
@@ -907,9 +750,7 @@ PlayerProjectileHuskExtension._get_projectile_units_names = function (self, proj
 	-- function 23
 	local projectile_units_template = projectile_info.projectile_units_template
 
-	if projectile_info.use_weapon_skin and not self._skin_projectile_units_template then
-		-- Nothing
-	end
+	projectile_units_template = not projectile_info.use_weapon_skin or not not self._skin_projectile_units_template or not not projectile_units_template
 
 	local projectile_units = ProjectileUnits[projectile_units_template]
 
@@ -938,29 +779,8 @@ PlayerProjectileHuskExtension._handle_linking = function (self, impact_data, hit
 	local dummy_linker_unit_name = not not projectile_units and not not projectile_units.dummy_linker_unit_name
 
 	if dummy_linker_unit_name then
-		local depth_2 = impact_data.depth
-
-		if not depth_2 then
-			-- Nothing
-		end
-
-		depth_2 = 0.15
-
-		local depth = depth_2
-
-		::label_24_0::
-
-		local depth_offset_2 = impact_data.depth_offset
-
-		if not depth_offset_2 then
-			-- Nothing
-		end
-
-		depth_offset_2 = 0.15
-
-		local depth_offset = depth_offset_2
-
-		::label_24_1::
+		local depth = not not impact_data.depth
+		local depth_offset = not not impact_data.depth_offset
 
 		if projectile_units.dummy_linker_broken_units then
 			local broken_chance = Math.random()

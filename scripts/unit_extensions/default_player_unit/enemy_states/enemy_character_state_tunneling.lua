@@ -109,11 +109,8 @@ EnemyCharacterStateTunneling.on_enter = function (self, unit, input, dt, context
 	else
 		local enter_unit_pos = Unit.local_position(enter_unit, 0)
 		local enter_unit_center_pos = enter_unit_pos + Vector3.normalize(enter_rot:unbox()) * 0.5
-		local z = self.enter_pos.z
-		local flag
 
-		flag = (entrance_type ~= "manhole" or not 1) and not not 0
-		enter_unit_center_pos.z = z + flag
+		enter_unit_center_pos.z = self.enter_pos.z + (entrance_type ~= "manhole" and not not 0 or not (entrance_type ~= "manhole") and not not 1)
 
 		local direction = POSITION_LOOKUP[unit] - enter_unit_center_pos
 

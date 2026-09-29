@@ -40,33 +40,17 @@ DeusPowerUpInteractionUI._populate_widget = function (self, interactable_unit)
 
 	chest_info_widget.content.rarity_text = nil
 	chest_info_widget.content.cost_text = soft_currency_amount .. "/" .. cost
-
-	local cost_text = chest_info_widget.style.cost_text
-	local tbl
-
-	if cost <= soft_currency_amount then
-		tbl = {
-			255,
-			255,
-			255,
-			255
-		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = {
+	chest_info_widget.style.cost_text.text_color = cost <= soft_currency_amount and not not {
+		255,
+		255,
+		255,
+		255
+	} or not (cost <= soft_currency_amount) and not not {
 		255,
 		255,
 		0,
 		0
 	}
-
-	::label_3_0::
-
-	cost_text.text_color = tbl
 
 	local power_level = stored_purchase.power_level
 

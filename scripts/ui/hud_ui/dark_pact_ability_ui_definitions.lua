@@ -1046,18 +1046,7 @@ local pre_defined_widgets = {
 			local display_on_cooldown = false
 			local content = widget.content
 			local style = widget.style
-			local ability_cooldown_2 = content.ability_cooldown
-
-			if not ability_cooldown_2 then
-				-- Nothing
-			end
-
-			ability_cooldown_2 = 0
-
-			local stored_ability_cooldown = ability_cooldown_2
-
-			::label_21_0::
-
+			local stored_ability_cooldown = not not content.ability_cooldown
 			local cooldown_fraction = 0
 
 			if uses_cooldown then
@@ -1105,31 +1094,10 @@ local pre_defined_widgets = {
 			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
 			local ability_data = career_extension:get_activated_ability_data(ability_id)
 			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local priming_progress_2 = ability_data.priming_progress
-
-			if not priming_progress_2 then
-				-- Nothing
-			end
-
-			priming_progress_2 = 0
-
-			local priming_progress = priming_progress_2
-
-			::label_22_0::
-
+			local priming_progress = not not ability_data.priming_progress
 			local content = widget.content
 			local style = widget.style
-			local ability_cooldown_2 = content.ability_cooldown
-
-			if not ability_cooldown_2 then
-				-- Nothing
-			end
-
-			ability_cooldown_2 = 0
-
-			local stored_ability_cooldown = ability_cooldown_2
-
-			::label_22_1::
+			local stored_ability_cooldown = not not content.ability_cooldown
 
 			content.progress = priming_progress
 
@@ -1160,7 +1128,7 @@ local pre_defined_widgets = {
 			if uses_cooldown then
 				cooldown_fraction = ability_cooldown / full_cooldown
 			else
-				cooldown_fraction = (not ability_available or not 0) and not not 1
+				cooldown_fraction = ability_available and (not not 0 or not not 1) or not ability_available and not not 1
 			end
 
 			local content = widget.content
@@ -1185,61 +1153,15 @@ local pre_defined_widgets = {
 			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
 			local ability_data = career_extension:get_activated_ability_data(ability_id)
 			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local priming_progress_2 = ability_data.priming_progress
-
-			if not priming_progress_2 then
-				-- Nothing
-			end
-
-			priming_progress_2 = 0
-
-			local priming_progress = priming_progress_2
-
-			::label_24_0::
-
+			local priming_progress = not not ability_data.priming_progress
 			local content = widget.content
 			local style = widget.style
-			local progress = content.progress
-
-			if not progress then
-				-- Nothing
-			end
-
-			progress = 0
-
-			local current_priming_progress = progress
-
-			::label_24_1::
-
+			local current_priming_progress = not not content.progress
 			local visible = current_priming_progress < priming_progress
-			local color = style.cooldown_mask.color
-			local num
 
-			if visible then
-				num = 255 * priming_progress
+			style.cooldown_mask.color[1] = visible and not not (255 * priming_progress) or not visible and not not 0
 
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 0
-
-			::label_24_2::
-
-			color[1] = num
-
-			local ability_cooldown_2 = content.ability_cooldown
-
-			if not ability_cooldown_2 then
-				-- Nothing
-			end
-
-			ability_cooldown_2 = 0
-
-			local stored_ability_cooldown = ability_cooldown_2
-
-			::label_24_3::
+			local stored_ability_cooldown = not not content.ability_cooldown
 
 			content.visible = priming_progress > 0 and priming_progress < 1
 			content.progress = priming_progress
@@ -1267,18 +1189,7 @@ local pre_defined_widgets = {
 		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
 			-- function 26
 			local ability_data = career_extension:get_activated_ability_data(ability_id)
-			local duration_progress_2 = ability_data.duration_progress
-
-			if not duration_progress_2 then
-				-- Nothing
-			end
-
-			duration_progress_2 = 0
-
-			local duration_progress = duration_progress_2
-
-			::label_26_0::
-
+			local duration_progress = not not ability_data.duration_progress
 			local buff_name = "vs_gutter_runner_smoke_bomb_invisible"
 			local player = Managers.player:local_player(1)
 			local player_unit = player.player_unit
@@ -1297,22 +1208,7 @@ local pre_defined_widgets = {
 			local duration = buff.duration
 			local start_time = buff.start_time
 			local game_time = Managers.time:time("game")
-			local num
-
-			if duration then
-				num = start_time + duration
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 0
-
-			local end_time = num
-
-			::label_26_1::
-
+			local end_time = duration and not not (start_time + duration) or not duration and not not 0
 			local remaining_duration = not not end_time and not not math.max(end_time - game_time, 0)
 			local style = widget.style
 			local default_size = style.progress.default_size
@@ -1337,19 +1233,7 @@ local pre_defined_widgets = {
 			local ability_charge = horde_ability_extension:get_ability_charge(game_time)
 			local ability_cooldown = math.clamp(cooldown - ability_charge, 0, cooldown)
 			local content = widget.content
-			local num
-
-			if ability_cooldown == 0 then
-				num = 0
-
-				goto label_27_0
-			end
-
-			num = ability_cooldown / cooldown
-
-			local cooldown_fraction = num
-
-			::label_27_0::
+			local cooldown_fraction = ability_cooldown ~= 0 and not not (ability_cooldown / cooldown) or not (ability_cooldown ~= 0) and not not 0
 
 			cooldown_fraction = 1 - cooldown_fraction
 
@@ -1445,29 +1329,14 @@ local function create_dark_pact_hud_ability_icon_widget()
 						end
 
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local gamepad_input
-
-						if gamepad_active then
-							gamepad_input = content.settings.gamepad_input
-
-							if not gamepad_input then
-								-- Nothing
-							end
-						end
-
-						gamepad_input = content.settings.input_action
-
-						local input = gamepad_input
-
-						::label_34_0::
-
+						local input = gamepad_active and not not content.settings.gamepad_input or not gamepad_active and not not content.settings.input_action
 						local input_service = Managers.input:get_service("Player")
 						local _, input_text, keymap_binding = UISettings.get_gamepad_input_texture_data(input_service, input, gamepad_active)
 
 						if content.current_input_text ~= input_text then
 							content.current_input_text = input_text
 
-							if (not keymap_binding or keymap_binding[1] ~= "mouse") and gamepad_active then
+							if keymap_binding and (keymap_binding[1] == "mouse" or gamepad_active) or not keymap_binding and gamepad_active then
 								content.input = string.format("$KEY;Player__%s:", input)
 								style.offset[1] = 68
 							else
@@ -1483,17 +1352,7 @@ local function create_dark_pact_hud_ability_icon_widget()
 
 							content.has_subtitles = has_subtitles
 
-							local fade_progress_2 = content.fade_progress
-
-							if not fade_progress_2 then
-								-- Nothing
-							end
-
-							fade_progress_2 = 0
-
-							local fade_progress = fade_progress_2
-
-							::label_34_1::
+							local fade_progress = not not content.fade_progress
 
 							if has_subtitles then
 								fade_progress = math.max(fade_progress - dt * 5, 0)
@@ -1675,13 +1534,7 @@ local function chaos_troll_cooldown_update(dt, t, ui_renderer, career_extension,
 	content.is_cooldown = on_cooldown
 
 	if on_cooldown then
-		local clamp = math.clamp
-		local num = ability_cooldown / full_cooldown
-		local num_2 = 0
-		local current_progress = content.current_progress
-
-		current_progress = not not current_progress or not not 1
-		content.progress = 1 - clamp(num, num_2, current_progress)
+		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, not not content.current_progress)
 	end
 
 	UIRenderer.draw_widget(ui_renderer, widget)
@@ -1703,13 +1556,7 @@ local function rat_ogre_cooldown_update(dt, t, ui_renderer, career_extension, ab
 	content.is_cooldown = on_cooldown
 
 	if on_cooldown then
-		local clamp = math.clamp
-		local num = ability_cooldown / full_cooldown
-		local num_2 = 0
-		local current_progress = content.current_progress
-
-		current_progress = not not current_progress or not not 1
-		content.progress = 1 - clamp(num, num_2, current_progress)
+		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, not not content.current_progress)
 	end
 
 	UIRenderer.draw_widget(ui_renderer, widget)
@@ -1722,18 +1569,7 @@ local function gutter_runner_foff_duration_update(dt, t, ui_renderer, career_ext
 	end
 
 	local ability_data = career_extension:get_activated_ability_data(ability_id)
-	local duration_progress_2 = ability_data.duration_progress
-
-	if not duration_progress_2 then
-		-- Nothing
-	end
-
-	duration_progress_2 = 0
-
-	local duration_progress = duration_progress_2
-
-	::label_38_0::
-
+	local duration_progress = not not ability_data.duration_progress
 	local can_use_ability = career_extension:can_use_activated_ability(ability_id)
 	local content = widget.content
 	local progress = 0
@@ -1765,22 +1601,7 @@ local function gutter_runner_foff_duration_update(dt, t, ui_renderer, career_ext
 		local duration = buff.duration
 		local start_time = buff.start_time
 		local game_time = Managers.time:time("game")
-		local num
-
-		if duration then
-			num = start_time + duration
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		local end_time = num
-
-		::label_38_1::
-
+		local end_time = duration and not not (start_time + duration) or not duration and not not 0
 		local remaining_duration = not not end_time and not not math.max(end_time - game_time, 0)
 		local progress = remaining_duration / duration
 
@@ -1817,18 +1638,7 @@ local function poison_wind_globadier_reload_update(dt, t, ui_renderer, career_ex
 	local display_on_cooldown = false
 	local content = widget.content
 	local style = widget.style
-	local ability_cooldown_2 = content.ability_cooldown
-
-	if not ability_cooldown_2 then
-		-- Nothing
-	end
-
-	ability_cooldown_2 = 0
-
-	local stored_ability_cooldown = ability_cooldown_2
-
-	::label_39_0::
-
+	local stored_ability_cooldown = not not content.ability_cooldown
 	local cooldown_fraction = 0
 
 	if uses_cooldown then

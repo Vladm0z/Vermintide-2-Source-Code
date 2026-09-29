@@ -1,9 +1,6 @@
 -- chunkname: @scripts/managers/talents/talent_settings_empty.lua
 
-local TalentTrees = TalentTrees
-
-TalentTrees = not not TalentTrees or not not {}
-TalentTrees = TalentTrees
+TalentTrees = not not TalentTrees
 
 local empty = {
 	{

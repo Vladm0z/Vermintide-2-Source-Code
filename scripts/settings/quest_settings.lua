@@ -362,10 +362,7 @@ QuestSettings.check_num_enemies_killed_by_poison = function (unit, extension_uni
 	local blackboard = BLACKBOARDS[globadier_unit]
 
 	if blackboard then
-		local num_killed_by_poison = blackboard.num_killed_by_poison
-
-		num_killed_by_poison = not not num_killed_by_poison or not not 0
-		blackboard.num_killed_by_poison = num_killed_by_poison + 1
+		blackboard.num_killed_by_poison = not not blackboard.num_killed_by_poison + 1
 
 		if blackboard.num_killed_by_poison >= QuestSettings.num_enemies_killed_by_poison then
 			local stat_name = "globadier_enemies_killed_by_poison"
@@ -398,23 +395,11 @@ end
 QuestSettings.check_num_enemies_killed_by_warpfire = function (unit, attacker_unit)
 	-- function 9
 	local blackboard = BLACKBOARDS[attacker_unit]
-	local hit_units_warpfire_challenge = blackboard.hit_units_warpfire_challenge
 
-	hit_units_warpfire_challenge = not not hit_units_warpfire_challenge or not not {}
-	blackboard.hit_units_warpfire_challenge = hit_units_warpfire_challenge
+	blackboard.hit_units_warpfire_challenge = not not blackboard.hit_units_warpfire_challenge
 
 	if not blackboard.hit_units_warpfire_challenge[unit] then
-		local num_ai_killed_by_warpfire_2 = blackboard.num_ai_killed_by_warpfire
-
-		if not num_ai_killed_by_warpfire_2 then
-			-- Nothing
-		end
-
-		num_ai_killed_by_warpfire_2 = 0
-
-		local num_ai_killed_by_warpfire = num_ai_killed_by_warpfire_2
-
-		::label_9_0::
+		local num_ai_killed_by_warpfire = not not blackboard.num_ai_killed_by_warpfire
 
 		blackboard.num_ai_killed_by_warpfire = num_ai_killed_by_warpfire + 1
 		blackboard.hit_units_warpfire_challenge[unit] = true
@@ -589,17 +574,7 @@ QuestSettings.check_ratling_gunner_killed_while_shooting = function (blackboard,
 	local unit = blackboard.unit
 	local ai_extension = ScriptUnit.extension(unit, "ai_system")
 	local bt_node_name = ai_extension:current_action_name()
-	local attack_pattern_data = blackboard.attack_pattern_data
-
-	if attack_pattern_data then
-		-- Nothing
-	end
-
-	attack_pattern_data = blackboard.attack_pattern_data.target_unit
-
-	local target_unit = attack_pattern_data
-
-	::label_23_0::
+	local target_unit = not not blackboard.attack_pattern_data
 
 	if target_unit ~= killer_unit and bt_node_name == "shoot_ratling_gun" then
 		local stat_name = "ratling_gunner_killed_while_shooting"
@@ -744,17 +719,7 @@ QuestSettings.handle_bastard_block = function (target_unit, attacker_unit, block
 	local charge_blocking = status_extension.charge_blocking
 
 	if charge_blocking then
-		local bastard_block = boss_bb.bastard_block
-
-		if not bastard_block then
-			-- Nothing
-		end
-
-		bastard_block = 0
-
-		local bastard_block_count = bastard_block
-
-		::label_33_0::
+		local bastard_block_count = not not boss_bb.bastard_block
 
 		boss_bb.bastard_block = bastard_block_count + 1
 	end

@@ -72,10 +72,8 @@ local BaseStates = {
 
 			for _, unit_and_extension in ipairs(data.active_locus) do
 				local extension = unit_and_extension[2]
-				local flag
 
-				flag = (not extension:is_complete() or not 1) and not not 0
-				done_locus = done_locus + flag
+				done_locus = done_locus + (extension:is_complete() and not not 1 or not extension:is_complete() and not not 0)
 			end
 
 			if data.shared_state:get_server(data.shared_state:get_key("socketed_count")) ~= done_locus then
@@ -146,10 +144,8 @@ ArenaStates = {
 
 			for _, unit_and_extension in ipairs(data.active_locus) do
 				local extension = unit_and_extension[2]
-				local flag
 
-				flag = (not extension:is_complete() or not 1) and not not 0
-				done_locus = done_locus + flag
+				done_locus = done_locus + (extension:is_complete() and not not 1 or not extension:is_complete() and not not 0)
 			end
 
 			if done_locus > 0 and done_locus / #data.active_locus >= 0.5 then
@@ -166,10 +162,8 @@ ArenaStates = {
 
 			for _, unit_and_extension in ipairs(data.active_locus) do
 				local extension = unit_and_extension[2]
-				local flag
 
-				flag = (not extension:is_complete() or not 1) and not not 0
-				done_locus = done_locus + flag
+				done_locus = done_locus + (extension:is_complete() and not not 1 or not extension:is_complete() and not not 0)
 			end
 
 			if done_locus > 0 and done_locus / #data.active_locus >= 1 then
@@ -342,41 +336,8 @@ return {
 		local new_state = id_to_state[new_state_id]
 
 		if current_state ~= new_state then
-			local base_state = current_state.base_state
-
-			if base_state then
-				-- Nothing
-			end
-
-			if current_state.base_state == new_state.base_state then
-				base_state = false
-
-				goto label_21_0
-			end
-
-			base_state = true
-
-			local current_base_state_left = base_state
-
-			::label_21_0::
-
-			local base_state_2 = new_state.base_state
-
-			if base_state_2 then
-				-- Nothing
-			end
-
-			if current_state.base_state == new_state.base_state then
-				base_state_2 = false
-
-				goto label_21_1
-			end
-
-			base_state_2 = true
-
-			local new_base_state_entered = base_state_2
-
-			::label_21_1::
+			local current_base_state_left = not not current_state.base_state
+			local new_base_state_entered = not not new_state.base_state
 
 			if is_server then
 				if current_state.on_server_exit then

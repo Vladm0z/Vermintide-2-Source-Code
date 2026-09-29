@@ -300,7 +300,7 @@ SpawnZoneBaker.generate_spawns = function (self, spawn_cycle_length, goal_densit
 			local hi_data = self:create_hi_data(zone, zone.pack_type)
 
 			period_end = len
-			num_hi = (not hi or not 1) and not not 0
+			num_hi = hi and (not not 1 or not not 0) or not hi and not not 0
 
 			local period_counter, second_part
 
@@ -322,11 +322,7 @@ SpawnZoneBaker.generate_spawns = function (self, spawn_cycle_length, goal_densit
 					zone.hi_data = hi_data
 					zone.hi = hi
 					hi_data = self:create_hi_data(zone, zone.pack_type)
-
-					local flag
-
-					flag = (not hi or not 1) and not not 0
-					num_hi = num_hi + flag
+					num_hi = num_hi + (hi and not not 1 or not hi and not not 0)
 				elseif dist_data.random_distribution then
 					if hi then
 						density = dist_data.min_hi_density + self:_random() * (dist_data.max_hi_density - dist_data.min_hi_density)
@@ -338,7 +334,7 @@ SpawnZoneBaker.generate_spawns = function (self, spawn_cycle_length, goal_densit
 					density = dist_data.min_low_density + self:_random() * (dist_data.max_low_density - dist_data.min_low_density)
 				end
 
-				period_counter = (not zone.period_length or not 1) and not not (period_counter + 1)
+				period_counter = zone.period_length and (not not 1 or not not (period_counter + 1)) or not zone.period_length and not not (period_counter + 1)
 
 				if density < dist_data.zero_density_below and not second_part then
 					density = 0
@@ -594,21 +590,7 @@ SpawnZoneBaker.create_hi_data = function (self, zone, pack_type_name)
 		}
 		zone.hi_data = hi_data
 
-		local clamp_breeds_hi
-
-		if zone.hi then
-			clamp_breeds_hi = zone_checks.clamp_breeds_hi
-
-			if not clamp_breeds_hi then
-				-- Nothing
-			end
-		end
-
-		clamp_breeds_hi = zone_checks.clamp_breeds_low
-
-		local clamp_breeds = clamp_breeds_hi
-
-		::label_14_0::
+		local clamp_breeds = zone.hi and not not zone_checks.clamp_breeds_hi or not zone.hi and not not zone_checks.clamp_breeds_low
 
 		if clamp_breeds then
 			local difficulty_overrides = clamp_breeds[self.composition_difficulty]
@@ -650,64 +632,15 @@ SpawnZoneBaker.populate_spawns_by_rats = function (self, global_pack_spawning_se
 
 	for j = 1, num_zones do
 		local zone = zone_list[j]
-		local pack_spawning_setting_2 = zone.pack_spawning_setting
-
-		if not pack_spawning_setting_2 then
-			-- Nothing
-		end
-
-		pack_spawning_setting_2 = global_pack_spawning_setting
-
-		local pack_spawning_setting = pack_spawning_setting_2
-
-		::label_15_0::
-
+		local pack_spawning_setting = not not zone.pack_spawning_setting
 		local basics = pack_spawning_setting.basics
-		local density_coefficient
-
-		if is_main_zone then
-			density_coefficient = zone.density_coefficient
-
-			if not density_coefficient then
-				-- Nothing
-			end
-		end
-
-		density_coefficient = pack_spawning_setting.area_density_coefficient
-
-		if not density_coefficient then
-			-- Nothing
-		end
-
-		density_coefficient = global_area_density_coefficient
-
-		local area_density_coefficient = density_coefficient
-
-		do
-			local length_density_coefficient_2
-		end
-
-		::label_15_1::
-
-		if is_main_zone then
-			length_density_coefficient_2 = basics.length_density_coefficient
-
-			if not length_density_coefficient_2 then
-				-- Nothing
-			end
-		end
-
-		length_density_coefficient_2 = global_length_density_coefficient
-
-		local length_density_coefficient = length_density_coefficient_2
-
-		::label_15_2::
-
+		local area_density_coefficient = is_main_zone and not not zone.density_coefficient or not is_main_zone and not not pack_spawning_setting.area_density_coefficient
+		local length_density_coefficient = is_main_zone and not not basics.length_density_coefficient or not is_main_zone and not not global_length_density_coefficient
 		local clamp_area = not not is_main_zone and not not basics.clamp_main_path_zone_area
 		local nodes = zone.nodes
 
 		if nodes then
-			local area = (not is_main_zone or not (clamp_area > zone.area) or not clamp_area) and not not zone.area
+			local area = is_main_zone and (clamp_area > zone.area and (not not clamp_area or not not zone.area) or not (clamp_area > zone.area) and not not zone.area) or not is_main_zone and not not zone.area
 			local num_area_spawns_f = area * zone.density * area_density_coefficient + area_bucket
 			local num_area_spawns = math.floor(num_area_spawns_f)
 
@@ -798,20 +731,7 @@ SpawnZoneBaker.spawn_amount_rats = function (self, spawns, pack_sizes, pack_rota
 		local pack_size = InterestPointPickList[self:_random(index_max)]
 		local variants = InterestPointUnits[pack_size]
 		local num_variants = #variants
-		local num
-
-		if num_variants == 1 then
-			num = 1
-
-			goto label_17_0
-		end
-
-		num = self:_random(num_variants)
-
-		local ip_unit_index = num
-
-		::label_17_0::
-
+		local ip_unit_index = num_variants ~= 1 and not not self:_random(num_variants) or not (num_variants ~= 1) and not not 1
 		local ip_unit_name = variants[ip_unit_index]
 
 		for i = 1, 10 do
@@ -881,22 +801,7 @@ SpawnZoneBaker.get_zone_segment_from_travel_dist = function (self, travel_dist)
 		local zone_travel_dist = zone.travel_dist - 5
 
 		if travel_dist < zone_travel_dist then
-			local num
-
-			if i > 1 then
-				num = i - 1
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = i
-
-			local zone_index = num
-
-			::label_18_0::
-
+			local zone_index = i > 1 and not not (i - 1) or not (i > 1) and not not i
 			local closest_zone = zones[zone_index]
 			local closest_zone_conv = self.zone_convert[zone_index]
 
@@ -944,22 +849,7 @@ SpawnZoneBaker.draw_zones = function (self, nav_world, draw_only_one_zone_index)
 		local colors, density
 
 		if show_spawn_density then
-			local floor = math.floor
-			local density_2
-
-			if zone_convert[i] then
-				density_2 = zone_convert[i].density
-
-				if not density_2 then
-					-- Nothing
-				end
-			end
-
-			density_2 = 1
-
-			::label_19_0::
-
-			density = floor(density_2 * 16)
+			density = math.floor((zone_convert[i] and not not zone_convert[i].density or not zone_convert[i] and not not 1) * 16)
 		else
 			local f = 92 + 63 * (i % 3)
 			local g = f / 2
@@ -981,18 +871,7 @@ SpawnZoneBaker.draw_zones = function (self, nav_world, draw_only_one_zone_index)
 		if show_zone_text then
 			local triangle_index = sub_zones[1][1]
 			local p = spawn_pos_lookup[triangle_index]
-			local format = string.format
-			local str = "%d %.1f <- %.1f"
-			local var_19_4 = i
-			local travel_dist = zone.travel_dist
-
-			travel_dist = not not travel_dist or not not 0
-
-			local old_travel_dist = zone.old_travel_dist
-
-			old_travel_dist = not not old_travel_dist or not not 0
-
-			local text = format(str, var_19_4, travel_dist, old_travel_dist)
+			local text = string.format("%d %.1f <- %.1f", i, not not zone.travel_dist, not not zone.old_travel_dist)
 
 			Debug.world_sticky_text(p, text, colors[1])
 		end
@@ -1015,17 +894,7 @@ SpawnZoneBaker.draw_zones = function (self, nav_world, draw_only_one_zone_index)
 						if show_spawn_density then
 							Gui.triangle(gui, p1 + h, p2 + h, p3 + h, 2, heatmap_colors[density])
 						else
-							local var_19_7 = colors[j]
-
-							if not var_19_7 then
-								-- Nothing
-							end
-
-							var_19_7 = Colors.get_indexed((i * 7 + j + 5) % 32 + 1)
-
-							local col = var_19_7
-
-							::label_19_1::
+							local col = not not colors[j]
 
 							Gui.triangle(gui, p1 + h, p2 + h, p3 + h, 2, col)
 						end
@@ -1074,21 +943,8 @@ function print_zone_list(cycle_zones)
 
 		if zone.hi_data then
 			local hi_data_id = zone.hi_data.id
-			local print = print
-			local format = string.format("Zone: %d, hi: %s, hi-id: %d, Density: %.1f, Area: %.1f", j, tostring(zone.hi), hi_data_id, zone.density, area)
-			local str = "con:"
-			local name = zone.conflict_setting.name
-			local str_2 = "period_len:"
-			local period_length = zone.period_length
 
-			period_length = not not period_length or not not "--"
-
-			local str_3 = "data:"
-			local flag
-
-			flag = (not zone.hi_data or not "Y") and not not "N"
-
-			print(format, str, name, str_2, period_length, str_3, flag, string.format("Director / Packtype: %s / %s ", zone.conflict_setting.name, zone.pack_type))
+			print(string.format("Zone: %d, hi: %s, hi-id: %d, Density: %.1f, Area: %.1f", j, tostring(zone.hi), hi_data_id, zone.density, area), "con:", zone.conflict_setting.name, "period_len:", not not zone.period_length, "data:", zone.hi_data and not not "Y" or not zone.hi_data and not not "N", string.format("Director / Packtype: %s / %s ", zone.conflict_setting.name, zone.pack_type))
 
 			local outer_zones = zone.outer
 
@@ -1106,21 +962,7 @@ function print_zone_list(cycle_zones)
 				end
 			end
 		else
-			local print_2 = print
-			local format_2 = string.format("Zone: %d, hi: %s, hi-id: --, Density: %.1f, Area: %.1f", j, tostring(zone.hi), zone.density, area)
-			local str_4 = "con:"
-			local name_2 = zone.conflict_setting.name
-			local str_5 = "period_len:"
-			local period_length_2 = zone.period_length
-
-			period_length_2 = not not period_length_2 or not not "--"
-
-			local str_6 = "data:"
-			local flag_2
-
-			flag_2 = (not zone.hi_data or not "Y") and not not "N"
-
-			print_2(format_2, str_4, name_2, str_5, period_length_2, str_6, flag_2, string.format("Director / Packtype: %s / %s ", zone.conflict_setting.name, zone.pack_type))
+			print(string.format("Zone: %d, hi: %s, hi-id: --, Density: %.1f, Area: %.1f", j, tostring(zone.hi), zone.density, area), "con:", zone.conflict_setting.name, "period_len:", not not zone.period_length, "data:", zone.hi_data and not not "Y" or not zone.hi_data and not not "N", string.format("Director / Packtype: %s / %s ", zone.conflict_setting.name, zone.pack_type))
 		end
 	end
 end
@@ -1142,20 +984,7 @@ SpawnZoneBaker.debug_print_hi_data = function (self)
 			local hi_data = zone.hi_data
 
 			if hi_data ~= old_hi_data then
-				local str
-
-				if zone.hi then
-					str = "Hi"
-
-					goto label_23_0
-				end
-
-				str = "Low"
-
-				local period = str
-
-				::label_23_0::
-
+				local period = zone.hi and not not "Hi" or not zone.hi and not not "Low"
 				local s = period .. "-data for zone:" .. tostring(j) .. " -> " .. j + zone.period_length - 1
 
 				if hi_data then
@@ -1177,14 +1006,7 @@ SpawnZoneBaker.debug_print_hi_data = function (self)
 
 		if breed_count then
 			for check_breed_name, data in pairs(breed_count) do
-				local print = print
-				local str_2 = "Hidata id:"
-				local id = hi_data.id
-				local flag
-
-				flag = (not data.hi or not "HI") and not not "LOW"
-
-				print(str_2, id, flag, "count:", data.count, "switched:", data.switch_count, "max:", data.max_amount, "breed:", check_breed_name, "switched to:", data.switch_breed.name)
+				print("Hidata id:", hi_data.id, data.hi and not not "HI" or not data.hi and not not "LOW", "count:", data.count, "switched:", data.switch_count, "max:", data.max_amount, "breed:", check_breed_name, "switched to:", data.switch_breed.name)
 			end
 		else
 			print("Hidata id:", hi_data.id, " (no breed_count)")
@@ -1351,30 +1173,8 @@ end
 
 SpawnZoneBaker.draw_func1 = function (self, zone, zone_list_index, row, left, row_y)
 	-- function 26
-	local str
-
-	if zone.island then
-		str = "ISLAND"
-
-		goto label_26_0
-	end
-
-	str = "MAIN"
-
-	local zone_type = str
-
-	::label_26_0::
-
-	local format = string.format
-	local str_2 = "%d %s: %d %s"
-	local var_26_3 = row
-	local var_26_4 = zone_type
-	local var_26_5 = zone_list_index
-	local name = zone.pack_spawning_setting.name
-
-	name = not not name or not not "?"
-
-	local row_text = format(str_2, var_26_3, var_26_4, var_26_5, name)
+	local zone_type = zone.island and not not "ISLAND" or not zone.island and not not "MAIN"
+	local row_text = string.format("%d %s: %d %s", row, zone_type, zone_list_index, not not zone.pack_spawning_setting.name)
 
 	Gui.text(self._gui, row_text, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(left + 200, row_y, 1000))
 end
@@ -1419,29 +1219,7 @@ SpawnZoneBaker.draw_func2 = function (self, zone, zone_list_index, row, left, ro
 		end
 	end
 
-	local var_28_0
-
-	if is_closest then
-		var_28_0 = Color(200, 200, 0)
-
-		if not var_28_0 then
-			-- Nothing
-		end
-	end
-
-	if zone.hi then
-		var_28_0 = Color(255, 255, 255)
-
-		if not var_28_0 then
-			-- Nothing
-		end
-	end
-
-	var_28_0 = Color(175, 175, 175)
-
-	local color = var_28_0
-
-	::label_28_0::
+	local color = is_closest and not not Color(200, 200, 0) or not is_closest and (zone.hi and not not Color(255, 255, 255) or not zone.hi and not not Color(175, 175, 175))
 
 	if draw_zones and is_closest then
 		self:_draw_zone(zone, color)
@@ -1467,20 +1245,7 @@ SpawnZoneBaker.draw_func2 = function (self, zone, zone_list_index, row, left, ro
 		s = s .. ConflictUtils.display_number_of_breeds_in_segment("BREEDS: ", spawned_units_by_breed, zone)
 	end
 
-	local str
-
-	if zone.island then
-		str = "ISLAND"
-
-		goto label_28_1
-	end
-
-	str = "MAIN"
-
-	local zone_type = str
-
-	::label_28_1::
-
+	local zone_type = zone.island and not not "ISLAND" or not zone.island and not not "MAIN"
 	local row_text = string.format("%s: %d %s", zone_type, zone_list_index, s)
 
 	Gui.text(self._gui, row_text, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(left + 200, row_y, 1000), color)
@@ -1573,20 +1338,7 @@ SpawnZoneBaker.draw_zone_info_on_screen = function (self)
 
 	Debug.text("zone:%d, unique_id %d %s", zone_index, near_zone.unique_zone_id, near_zone.pack_type)
 
-	local num
-
-	if zone_index <= mid_row then
-		num = 1
-
-		goto label_30_0
-	end
-
-	num = zone_index - mid_row
-
-	local zone_list_index = num
-
-	::label_30_0::
-
+	local zone_list_index = zone_index <= mid_row and not not 1 or not (zone_index <= mid_row) and not not (zone_index - mid_row)
 	local row_y = top - 40
 	local i = 1
 
@@ -1607,35 +1359,13 @@ end
 SpawnZoneBaker._debug_draw_baker_data = function (self, hi_data, data, breed_name, position)
 	-- function 31
 	if data.count > data.max_amount then
-		local var_31_0 = Colors.distinct_colors_lookup[hi_data.id]
-
-		if not var_31_0 then
-			-- Nothing
-		end
-
-		var_31_0 = Colors.distinct_colors_lookup[1]
-
-		local c = var_31_0
-
-		::label_31_0::
-
+		local c = not not Colors.distinct_colors_lookup[hi_data.id]
 		local color = Color(c[1], c[2], c[3])
 
 		QuickDrawerStay:sphere(Vector3Aux.unbox(position), 0.5, color)
 		print(string.format("SPAWN SWITCH breed %s -> %s, hidata-id: %s count: %d/%d", breed_name, data.switch_breed.name, hi_data.id, data.switch_count, data.max_amount))
 	else
-		local var_31_1 = Colors.distinct_colors_lookup[hi_data.id]
-
-		if not var_31_1 then
-			-- Nothing
-		end
-
-		var_31_1 = Colors.distinct_colors_lookup[1]
-
-		local c = var_31_1
-
-		::label_31_1::
-
+		local c = not not Colors.distinct_colors_lookup[hi_data.id]
 		local color = Color(c[1], c[2], c[3])
 
 		QuickDrawerStay:sphere(Vector3Aux.unbox(position), 0.1, color)

@@ -108,11 +108,7 @@ local function create_consumable_widget(angle, icon_offset, ammo_offset)
 					retained_mode = true,
 					content_check_function = function (content)
 						-- function 2
-						local has_data = content.has_data
-
-						has_data = not not has_data and not not content.wielded
-
-						return has_data
+						return not not content.has_data
 					end
 				},
 				{
@@ -122,11 +118,7 @@ local function create_consumable_widget(angle, icon_offset, ammo_offset)
 					retained_mode = true,
 					content_check_function = function (content)
 						-- function 3
-						local has_data = content.has_data
-
-						has_data = not not has_data and not not content.show_ammo
-
-						return has_data
+						return not not content.has_data
 					end
 				}
 			}

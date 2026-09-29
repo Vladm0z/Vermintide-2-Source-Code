@@ -66,36 +66,8 @@ local function chaos_sorc_skulk_action_debug(blackboard, fill_lines)
 	local portal_data = blackboard.portal_data
 
 	if portal_data then
-		local str
-
-		if portal_data.portal_search_active then
-			str = "searching"
-
-			goto label_3_0
-		end
-
-		str = "no search"
-
-		local sa = str
-
-		do
-			local str_2
-		end
-
-		::label_3_0::
-
-		if blackboard.portal_unit then
-			str_2 = "1"
-
-			goto label_3_1
-		end
-
-		str_2 = "0"
-
-		local portal_out = str_2
-
-		::label_3_1::
-
+		local sa = portal_data.portal_search_active and not not "searching" or not portal_data.portal_search_active and not not "no search"
+		local portal_out = blackboard.portal_unit and not not "1" or not blackboard.portal_unit and not not "0"
 		local count = portal_data.search_counter
 		local wall_index = tostring(portal_data.cover_point_index)
 
@@ -124,24 +96,7 @@ end
 local function chaos_sorc_exalt_skulk_action_debug(blackboard, fill_lines)
 	-- function 4
 	fill_lines[1] = "phase=" .. tostring(blackboard.phase)
-
-	local str = "current_spell="
-	local tostring = tostring
-	local name
-
-	if blackboard.current_spell then
-		name = blackboard.current_spell.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "nil"
-
-	::label_4_0::
-
-	fill_lines[2] = str .. tostring(name)
+	fill_lines[2] = "current_spell=" .. tostring(blackboard.current_spell and not not blackboard.current_spell.name or not blackboard.current_spell and not not "nil")
 	fill_lines[3] = "spell count=" .. tostring(blackboard.spell_count)
 	fill_lines[4] = "freeze spell casting=" .. tostring(blackboard.freeze_spell_casting)
 
@@ -314,15 +269,7 @@ local function present_perception(gui, x, y, blackboard)
 			local target_unit = blackboard.target_unit
 
 			if target_unit and BLACKBOARDS[target_unit] then
-				local str = "u"
-				local get_data = Unit.get_data(target_unit, "unique_id")
-				local str_2 = ") "
-				local name = BLACKBOARDS[target_unit].breed.name
-				local str_3 = "  ("
-				local flag
-
-				flag = (not HEALTH_ALIVE[target_unit] or not "alive") and not not "dead"
-				target_unit_text = str .. get_data .. str_2 .. name .. str_3 .. flag .. ")"
+				target_unit_text = "u" .. Unit.get_data(target_unit, "unique_id") .. ") " .. BLACKBOARDS[target_unit].breed.name .. "  (" .. (HEALTH_ALIVE[target_unit] and not not "alive" or not HEALTH_ALIVE[target_unit] and not not "dead") .. ")"
 			end
 
 			y2 = y2 + 10
@@ -673,18 +620,7 @@ end
 
 local function draw_node_children(bt, gui, node, node_children, blackboard, row, x1, y1, node_width, extra_node_height, total_width, extra_utility_height, t, dt)
 	-- function 16
-	local var_16_0 = row_heights[row]
-
-	if not var_16_0 then
-		-- Nothing
-	end
-
-	var_16_0 = 0
-
-	local row_height = var_16_0
-
-	::label_16_0::
-
+	local row_height = not not row_heights[row]
 	local child_y = y1 + row_height + ROW_SPACING
 	local start_x, start_y
 
@@ -714,17 +650,7 @@ local function draw_node_children(bt, gui, node, node_children, blackboard, row,
 	for k, child in pairs(node_children) do
 		local child_identifier = child._identifier
 		local child_default_width = nodes[child_identifier].w
-		local total_w = nodes[child_identifier].total_w
-
-		if not total_w then
-			-- Nothing
-		end
-
-		total_w = 0
-
-		local child_default_total_width = total_w
-
-		::label_16_1::
+		local child_default_total_width = not not nodes[child_identifier].total_w
 
 		if node.name ~= "BTSequence" then
 			cx = cx + child_default_total_width * 0.5

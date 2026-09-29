@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/scoreboard_helper.lua
 
-local ScoreboardHelper = ScoreboardHelper
-
-ScoreboardHelper = not not ScoreboardHelper or not not {}
-ScoreboardHelper = ScoreboardHelper
+ScoreboardHelper = not not ScoreboardHelper
 ScoreboardHelper.scoreboard_topic_stats = {
 	{
 		name = "kills_elites",
@@ -281,33 +278,8 @@ local function get_score_by_name(statistics_db, stats_id, stat_name, saved_score
 		table.clear(TEMP_TABLE)
 
 		local player_data = saved_scoreboard_data[stats_id]
-		local scores
-
-		if player_data then
-			scores = player_data.scores
-
-			if not scores then
-				-- Nothing
-			end
-		end
-
-		scores = TEMP_TABLE
-
-		local player_data_scores = scores
-
-		::label_13_0::
-
-		local var_13_1 = player_data_scores[stat_name]
-
-		if not var_13_1 then
-			-- Nothing
-		end
-
-		var_13_1 = 0
-
-		local saved_score_amount = var_13_1
-
-		::label_13_1::
+		local player_data_scores = player_data and not not player_data.scores or not player_data and not not TEMP_TABLE
+		local saved_score_amount = not not player_data_scores[stat_name]
 
 		if saved_score_amount > 0 then
 			print(string.format("### Adding saved score for %q: %i ID: %s", stat_name, saved_score_amount, stats_id))
@@ -399,40 +371,10 @@ ScoreboardHelper.get_grouped_topic_statistics = function (statistics_db, profile
 		local player_unit = player.player_unit
 		local unit_alive = Unit.alive(player_unit)
 		local career_extension = not not unit_alive and not not ScriptUnit.extension(player_unit, "career_system")
-		local career_index_2
-
-		if career_extension then
-			career_index_2 = career_extension:career_index()
-
-			if not career_index_2 then
-				-- Nothing
-			end
-		end
-
-		career_index_2 = player:career_index()
-
-		local career_index = career_index_2
-
-		::label_15_0::
-
+		local career_index = career_extension and not not career_extension:career_index() or not career_extension and not not player:career_index()
 		local is_player_controlled = player:is_player_controlled()
 		local player_level = ExperienceSettings.get_player_level(player)
-		local get_versus_player_level
-
-		if is_player_controlled then
-			get_versus_player_level = ExperienceSettings.get_versus_player_level(player)
-
-			if not get_versus_player_level then
-				-- Nothing
-			end
-		end
-
-		get_versus_player_level = 0
-
-		local versus_player_level = get_versus_player_level
-
-		::label_15_1::
-
+		local versus_player_level = is_player_controlled and not not ExperienceSettings.get_versus_player_level(player) or not is_player_controlled and not not 0
 		local profile = SPProfiles[profile_index]
 		local careers = profile.careers
 		local career_settings = careers[career_index]
@@ -564,7 +506,7 @@ ScoreboardHelper.debug_get_grouped_topic_statistics = function ()
 	local player_list = {}
 
 	for i = 1, 4 do
-		local tbl = {
+		player_list[i] = {
 			career_index = 1,
 			portrait_frame = "default",
 			player_level = 1,
@@ -572,13 +514,9 @@ ScoreboardHelper.debug_get_grouped_topic_statistics = function ()
 			peer_id = "fake_peer_id_" .. tostring(i),
 			local_player_id = i,
 			stats_id = i,
-			profile_index = i
+			profile_index = i,
+			is_player_controlled = i ~= 1 and not not false or not (i ~= 1) and not not true
 		}
-		local flag
-
-		flag = (i ~= 1 or not true) and not not false
-		tbl.is_player_controlled = flag
-		player_list[i] = tbl
 	end
 
 	for stats_id, player_data in pairs(player_list) do
@@ -1087,22 +1025,7 @@ ScoreboardHelper.get_versus_stats = function (statistics_db, saved_scoreboard_st
 			local local_player_id = player:local_player_id()
 			local player_level = ExperienceSettings.get_player_level(player)
 			local is_player_controlled = player:is_player_controlled()
-			local get_versus_player_level
-
-			if is_player_controlled then
-				get_versus_player_level = ExperienceSettings.get_versus_player_level(player)
-
-				if not get_versus_player_level then
-					-- Nothing
-				end
-			end
-
-			get_versus_player_level = 0
-
-			local versus_player_level = get_versus_player_level
-
-			::label_32_0::
-
+			local versus_player_level = is_player_controlled and not not ExperienceSettings.get_versus_player_level(player) or not is_player_controlled and not not 0
 			local weapon, weapon_pose, weapon_pose_skin, hero_skin, hat, portrait_frame, pactsworn_cosmetics = mechanism:get_hero_cosmetics(player_peer_id, local_player_id)
 
 			player_list[stats_id] = {
@@ -1150,45 +1073,15 @@ ScoreboardHelper.get_versus_stats = function (statistics_db, saved_scoreboard_st
 
 				local data = player_list[stats_id]
 				local saved_data = not not saved_scoreboard_stats and not not saved_scoreboard_stats[stats_id]
-				local scores = data.scores
-				local name = topic.name
-				local var_32_3
 
-				if saved_data and saved_data.scores then
-					var_32_3 = saved_data.scores[topic.name]
-
-					if not var_32_3 then
-						-- Nothing
-					end
-				end
-
-				var_32_3 = 0
-
-				::label_32_1::
-
-				scores[name] = score + var_32_3
+				data.scores[topic.name] = score + not not saved_data.scores[topic.name]
 			else
 				local stat_type = topic.stat_type
 				local score = get_score(statistics_db, player_data.stats_id, stat_type)
 				local data = player_list[stats_id]
 				local saved_data = not not saved_scoreboard_stats and not not saved_scoreboard_stats[stats_id]
-				local scores_2 = data.scores
-				local name_2 = topic.name
-				local var_32_6
 
-				if saved_data and saved_data.scores then
-					var_32_6 = saved_data.scores[topic.name]
-
-					if not var_32_6 then
-						-- Nothing
-					end
-				end
-
-				var_32_6 = 0
-
-				::label_32_2::
-
-				scores_2[name_2] = score + var_32_6
+				data.scores[topic.name] = score + not not saved_data.scores[topic.name]
 			end
 		end
 	end

@@ -32,21 +32,11 @@ ActionMeleeStart.client_owner_start_action = function (self, new_action, t, chai
 
 	local owner_unit = self.owner_unit
 	local buff_extension = self.buff_extension
-	local var_3_0 = scale_delay_value
-	local var_3_1 = new_action
-	local blocking_charge_start_time = new_action.blocking_charge_start_time
 
-	blocking_charge_start_time = not not blocking_charge_start_time or not not 0
-	self._block_delay = var_3_0(var_3_1, blocking_charge_start_time, owner_unit, buff_extension)
+	self._block_delay = scale_delay_value(new_action, not not new_action.blocking_charge_start_time, owner_unit, buff_extension)
 
 	if self.zoom_condition_function then
-		local var_3_3 = scale_delay_value
-		local var_3_4 = new_action
-		local aim_zoom_delay_2 = new_action.aim_zoom_delay
-
-		aim_zoom_delay_2 = not not aim_zoom_delay_2 or not not 0
-
-		local aim_zoom_delay = var_3_3(var_3_4, aim_zoom_delay_2, owner_unit, buff_extension)
+		local aim_zoom_delay = scale_delay_value(new_action, not not new_action.aim_zoom_delay, owner_unit, buff_extension)
 
 		self.aim_zoom_time = t + aim_zoom_delay
 	end

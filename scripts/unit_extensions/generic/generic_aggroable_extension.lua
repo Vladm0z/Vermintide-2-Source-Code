@@ -4,37 +4,8 @@ GenericAggroableExtension = class(GenericAggroableExtension)
 
 GenericAggroableExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local num
-
-	if Unit.has_data(unit, "aggro_modifier_passive") then
-		num = Unit.get_data(unit, "aggro_modifier_passive") * -1
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	::label_1_0::
-
-	self.aggro_modifier_passive = num
-
-	local num_2
-
-	if Unit.has_data(unit, "aggro_modifier_active") then
-		num_2 = Unit.get_data(unit, "aggro_modifier_active") * -1
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = 0
-
-	::label_1_1::
-
-	self.aggro_modifier_active = num_2
+	self.aggro_modifier_passive = Unit.has_data(unit, "aggro_modifier_passive") and not not (Unit.get_data(unit, "aggro_modifier_passive") * -1) or not Unit.has_data(unit, "aggro_modifier_passive") and not not 0
+	self.aggro_modifier_active = Unit.has_data(unit, "aggro_modifier_active") and not not (Unit.get_data(unit, "aggro_modifier_active") * -1) or not Unit.has_data(unit, "aggro_modifier_active") and not not 0
 
 	self:use_passive_aggro()
 end

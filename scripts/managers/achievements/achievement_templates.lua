@@ -3430,17 +3430,7 @@ AchievementTemplates.achievements.skaven_ratling_gunner_3 = {
 		end
 
 		local attacker_unit = event_data[2]
-		local alive = Unit.alive(attacker_unit)
-
-		if alive then
-			-- Nothing
-		end
-
-		alive = Unit.get_data(attacker_unit, "breed")
-
-		local breed = alive
-
-		::label_212_0::
+		local breed = not not Unit.alive(attacker_unit)
 
 		if breed and breed.name == "skaven_ratling_gunner" then
 			statistics_db:increment_stat(stats_id, "ratling_gunner_blocked_shot")

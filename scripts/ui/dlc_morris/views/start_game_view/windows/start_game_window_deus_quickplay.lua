@@ -30,17 +30,11 @@ StartGameWindowDeusQuickplay.on_enter = function (self, params, offset)
 
 	self:_create_ui_elements(params, offset)
 
-	local input_index = params.input_index
-
-	input_index = not not input_index or not not 1
-	self._input_index = input_index
+	self._input_index = not not params.input_index
 
 	self:_handle_new_selection(self._input_index)
 
-	local get_difficulty_option = self._parent:get_difficulty_option(true)
-
-	get_difficulty_option = not not get_difficulty_option or not not Managers.state.difficulty:get_difficulty()
-	self._current_difficulty = get_difficulty_option
+	self._current_difficulty = not not self._parent:get_difficulty_option(true)
 	self._dlc_name = nil
 
 	self:_update_difficulty_option(self._current_difficulty)
@@ -199,18 +193,7 @@ StartGameWindowDeusQuickplay._handle_input = function (self, dt, t)
 		end
 
 		if self:_can_play() and input_service:get(START_GAME_INPUT) then
-			local get_quickplay_settings = self._parent:get_quickplay_settings(self._mechanism_name)
-
-			if not get_quickplay_settings then
-				-- Nothing
-			end
-
-			get_quickplay_settings = self._parent:get_quickplay_settings("adventure")
-
-			local custom_game_settings = get_quickplay_settings
-
-			::label_10_0::
-
+			local custom_game_settings = not not self._parent:get_quickplay_settings(self._mechanism_name)
 			local game_mode_type = custom_game_settings.game_mode_type
 
 			self._parent:set_difficulty_option(self._current_difficulty)
@@ -238,7 +221,7 @@ StartGameWindowDeusQuickplay._handle_input = function (self, dt, t)
 					self:_play_sound("Play_hud_hover")
 				end
 
-				if UIUtils.is_button_hover(widget, "info_hotspot") or UIUtils.is_button_hover(self._widgets_by_name.difficulty_info, "widget_hotspot") or not mouse_active and is_selected then
+				if not mouse_active and is_selected then
 					local widgets = {
 						difficulty_info = self._widgets_by_name.difficulty_info,
 						upsell_button = self._widgets_by_name.upsell_button
@@ -341,18 +324,7 @@ StartGameWindowDeusQuickplay._option_selected = function (self, widget_name, but
 	if widget_name == "difficulty_stepper" then
 		local difficulty_key = self._current_difficulty
 		local difficulty_list = GameModeSettings.deus.difficulties
-		local find = table.find(difficulty_list, difficulty_key)
-
-		if not find then
-			-- Nothing
-		end
-
-		find = 1
-
-		local current_difficulty_index = find
-
-		::label_15_0::
-
+		local current_difficulty_index = not not table.find(difficulty_list, difficulty_key)
 		local new_current_index = 0
 
 		if button_name == "left_arrow" then
@@ -369,18 +341,7 @@ StartGameWindowDeusQuickplay._option_selected = function (self, widget_name, but
 
 		self:_update_difficulty_option(difficulty_list[new_current_index])
 	elseif widget_name == "play_button" then
-		local get_quickplay_settings = self._parent:get_quickplay_settings(self._mechanism_name)
-
-		if not get_quickplay_settings then
-			-- Nothing
-		end
-
-		get_quickplay_settings = self._parent:get_quickplay_settings("adventure")
-
-		local custom_game_settings = get_quickplay_settings
-
-		::label_15_1::
-
+		local custom_game_settings = not not self._parent:get_quickplay_settings(self._mechanism_name)
 		local game_mode_type = custom_game_settings.game_mode_type
 
 		self._parent:set_difficulty_option(self._current_difficulty)
@@ -513,23 +474,7 @@ StartGameWindowDeusQuickplay._update_difficulty_lock = function (self)
 		if not approved then
 			if extra_requirement_failed then
 				difficulty_info_widget.content.should_show_diff_lock_text = true
-
-				local content = difficulty_info_widget.content
-				local var_22_1
-
-				if extra_requirement_failed then
-					var_22_1 = Localize(extra_requirement_failed)
-
-					if not var_22_1 then
-						-- Nothing
-					end
-				end
-
-				var_22_1 = ""
-
-				::label_22_0::
-
-				content.difficulty_lock_text = var_22_1
+				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
 			else
 				difficulty_info_widget.content.should_show_diff_lock_text = false
 			end

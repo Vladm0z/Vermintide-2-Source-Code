@@ -271,22 +271,7 @@ settings.game_object_initializers = {
 		local wall_index = wall_extension.wall_index
 		local group_spawn_index = wall_extension.group_spawn_index
 		local source_unit = wall_extension:owner()
-		local go_id
-
-		if source_unit then
-			go_id = Managers.state.unit_storage:go_id(source_unit)
-
-			if not go_id then
-				-- Nothing
-			end
-		end
-
-		go_id = NetworkConstants.invalid_game_object_id
-
-		local source_unit_id = go_id
-
-		::label_1_0::
-
+		local source_unit_id = source_unit and not not Managers.state.unit_storage:go_id(source_unit) or not source_unit and not not NetworkConstants.invalid_game_object_id
 		local data_table = {
 			go_type = NetworkLookup.go_types.thornsister_thorn_wall_unit,
 			husk_unit = NetworkLookup.husks[unit_name],
@@ -345,38 +330,22 @@ settings.game_object_initializers = {
 		end
 
 		local side_id = Managers.state.side.side_by_unit[owner_unit].side_id
-		local tbl = {
+		local data_table = {
 			height_percentage = 1,
 			inner_radius_percentage = 1,
 			fx_radius_percentage = 1,
 			go_type = NetworkLookup.go_types.vortex_unit,
-			husk_unit = NetworkLookup.husks[unit_name]
+			husk_unit = NetworkLookup.husks[unit_name],
+			position = mover and not not Mover.position(mover) or not mover and not not Unit.local_position(unit, 0),
+			yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0)),
+			velocity = Vector3(0, 0, 0),
+			vortex_template_id = NetworkLookup.vortex_templates[vortex_extension.vortex_template_name],
+			inner_decal_unit_id = inner_decal_unit_id,
+			outer_decal_unit_id = outer_decal_unit_id,
+			owner_unit_id = owner_unit_id,
+			side_id = side_id,
+			target_unit_id = target_unit_id
 		}
-		local position
-
-		if mover then
-			position = Mover.position(mover)
-
-			if not position then
-				-- Nothing
-			end
-		end
-
-		position = Unit.local_position(unit, 0)
-
-		::label_2_0::
-
-		tbl.position = position
-		tbl.yaw_rot = Quaternion.yaw(Unit.local_rotation(unit, 0))
-		tbl.velocity = Vector3(0, 0, 0)
-		tbl.vortex_template_id = NetworkLookup.vortex_templates[vortex_extension.vortex_template_name]
-		tbl.inner_decal_unit_id = inner_decal_unit_id
-		tbl.outer_decal_unit_id = outer_decal_unit_id
-		tbl.owner_unit_id = owner_unit_id
-		tbl.side_id = side_id
-		tbl.target_unit_id = target_unit_id
-
-		local data_table = tbl
 
 		return data_table
 	end

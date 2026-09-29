@@ -28,23 +28,7 @@ BTTargetRageAction.enter = function (self, unit, blackboard, t)
 	blackboard.active_node = self
 
 	local start_anims
-	local close_anims_name = action.close_anims_name
-
-	if close_anims_name then
-		-- Nothing
-	end
-
-	if not (blackboard.target_dist < action.close_anims_dist) then
-		close_anims_name = false
-
-		goto label_3_0
-	end
-
-	close_anims_name = true
-
-	local is_close = close_anims_name
-
-	::label_3_0::
+	local is_close = not not action.close_anims_name
 
 	if is_close then
 		blackboard.anim_locked = t + action.close_rage_time
@@ -55,17 +39,7 @@ BTTargetRageAction.enter = function (self, unit, blackboard, t)
 	end
 
 	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
-	local rage_anim_2 = action.rage_anim
-
-	if not rage_anim_2 then
-		-- Nothing
-	end
-
-	rage_anim_2 = AiAnimUtils.get_start_move_animation(unit, target_pos, start_anims)
-
-	local rage_anim = rage_anim_2
-
-	::label_3_1::
+	local rage_anim = not not action.rage_anim
 
 	if rage_anim == nil then
 		blackboard.anim_locked = 0

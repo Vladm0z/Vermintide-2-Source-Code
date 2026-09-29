@@ -42,39 +42,8 @@ ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions = funct
 		local right_delta = right_bound - target_center
 		local left_actual_wanted = left_wanted * 0.5
 		local right_actual_wanted = right_wanted * 0.5
-		local num
-
-		if Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted) then
-			num = right_delta - right_actual_wanted
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = Vector3.zero()
-
-		local offset_left = num
-
-		do
-			local num_2
-		end
-
-		::label_1_0::
-
-		if Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted) then
-			num_2 = left_delta - left_actual_wanted
-
-			if not num_2 then
-				-- Nothing
-			end
-		end
-
-		num_2 = Vector3.zero()
-
-		local offset_right = num_2
-
-		::label_1_1::
+		local offset_left = Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted) and not not (right_delta - right_actual_wanted) or not (Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted)) and not not Vector3.zero()
+		local offset_right = Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted) and not not (left_delta - left_actual_wanted) or not (Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted)) and not not Vector3.zero()
 
 		right_bound = Geometry.closest_point_on_line(target_center + right_actual_wanted + offset_right, left_bound, right_bound)
 		left_bound = Geometry.closest_point_on_line(target_center + left_actual_wanted + offset_left, left_bound, right_bound)

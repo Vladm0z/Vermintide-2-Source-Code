@@ -34,17 +34,7 @@ IngameHud._setup_components = function (self)
 		self._clean_ui.hud = self
 
 		local is_tobii_connected = Tobii.get_is_connected()
-		local user_setting = Application.user_setting("tobii_eyetracking")
-
-		if user_setting then
-			-- Nothing
-		end
-
-		user_setting = Application.user_setting("tobii_clean_ui")
-
-		local clean_ui_enabled = user_setting
-
-		::label_2_0::
+		local clean_ui_enabled = not not Application.user_setting("tobii_eyetracking")
 
 		self:enable_clean_ui(not not is_tobii_connected and not not clean_ui_enabled)
 	else
@@ -114,11 +104,7 @@ IngameHud._setup_component_definitions = function (self, hud_component_list_path
 
 	local function sort_components_by_hud_scale(a, b)
 		-- function 6
-		local use_hud_scale = b.use_hud_scale
-
-		use_hud_scale = not not use_hud_scale and not not not a.use_hud_scale
-
-		return use_hud_scale
+		return not not b.use_hud_scale
 	end
 
 	table.sort(components, sort_components_by_hud_scale)
@@ -298,21 +284,7 @@ IngameHud._update_components_post_visibility = function (self)
 		for j = 1, #components_array do
 			local component = components_array[j]
 			local component_name = component.name
-			local var_12_0
-
-			if visible_components then
-				var_12_0 = visible_components[component_name]
-
-				if not var_12_0 then
-					-- Nothing
-				end
-			end
-
-			var_12_0 = false
-
-			local status = var_12_0
-
-			::label_12_0::
+			local status = visible_components and not not visible_components[component_name] or not visible_components and not not false
 
 			if component.post_visibility_changed then
 				component:post_visibility_changed(status)
@@ -352,21 +324,7 @@ IngameHud._update_components_visibility = function (self)
 				for j = 1, #components_array do
 					local component = components_array[j]
 					local component_name = component.name
-					local var_13_0
-
-					if visible_components then
-						var_13_0 = visible_components[component_name]
-
-						if not var_13_0 then
-							-- Nothing
-						end
-					end
-
-					var_13_0 = false
-
-					local status = var_13_0
-
-					::label_13_0::
+					local status = visible_components and not not visible_components[component_name] or not visible_components and not not false
 
 					if component.set_visible then
 						component:set_visible(status)
@@ -384,14 +342,7 @@ IngameHud._update_components_visibility = function (self)
 	end
 
 	if handle_debug then
-		local text = Debug.text
-		local str = "HUD visibility group: "
-		local tostring = tostring
-		local _current_group_name = self._current_group_name
-
-		_current_group_name = not not _current_group_name or not not "none"
-
-		text(str .. tostring(_current_group_name))
+		Debug.text("HUD visibility group: " .. tostring(not not self._current_group_name))
 	end
 end
 
@@ -612,29 +563,8 @@ IngameHud._update_clean_ui = function (self, dt, t)
 		return
 	end
 
-	local _had_tobii = self._had_tobii
-
-	if not _had_tobii then
-		-- Nothing
-	end
-
-	_had_tobii = false
-
-	local had_tobii = _had_tobii
-
-	::label_29_0::
-
-	local var_29_1 = rawget(_G, "Tobii")
-
-	if var_29_1 then
-		-- Nothing
-	end
-
-	var_29_1 = Tobii.get_is_connected()
-
-	local has_tobii = var_29_1
-
-	::label_29_1::
+	local had_tobii = not not self._had_tobii
+	local has_tobii = not not rawget(_G, "Tobii")
 
 	if had_tobii ~= has_tobii then
 		UICleanUI.update(self._clean_ui, dt)

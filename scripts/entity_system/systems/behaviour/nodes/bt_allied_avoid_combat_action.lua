@@ -62,15 +62,8 @@ BTAlliedAvoidCombatAction._go_idle = function (self, unit, blackboard, locomotio
 	blackboard.move_state = "idle"
 
 	local action = blackboard.action
-	local network = Managers.state.network
-	local var_5_1 = network
-	local anim_event = network.anim_event
-	local var_5_3 = unit
-	local idle_anim = action.idle_anim
 
-	idle_anim = not not idle_anim or not not "idle"
-
-	anim_event(var_5_1, var_5_3, idle_anim)
+	Managers.state.network:anim_event(unit, not not action.idle_anim)
 	Unit.set_unit_visibility(unit, false)
 end
 
@@ -102,17 +95,7 @@ BTAlliedAvoidCombatAction.flee = function (self, unit, t, dt, blackboard, locomo
 		self:_go_idle(unit, blackboard, locomotion_extension)
 	end
 
-	local target_status_extension = blackboard.target_status_extension
-
-	if target_status_extension then
-		-- Nothing
-	end
-
-	target_status_extension = blackboard.target_status_extension:get_pacing_intensity()
-
-	local target_intensity = target_status_extension
-
-	::label_7_0::
+	local target_intensity = not not blackboard.target_status_extension
 
 	blackboard.target_is_in_combat = not not target_intensity and target_intensity > 0
 end

@@ -236,150 +236,16 @@ PositiveReinforcementUI.event_add_positive_enforcement = function (self, hash, i
 		return
 	end
 
-	local name
-
-	if player1 then
-		name = player1:name()
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = nil
-
-	local player_1_name = name
-
-	do
-		local name_2
-	end
-
-	::label_8_0::
-
-	if player2 then
-		name_2 = player2:name()
-
-		if not name_2 then
-			-- Nothing
-		end
-	end
-
-	name_2 = nil
-
-	local player_2_name = name_2
-
-	::label_8_1::
-
+	local player_1_name = player1 and not not player1:name() or not player1 and not not nil
+	local player_2_name = player2 and not not player2:name() or not player2 and not not nil
 	local player_1_unit = not not player1 and not not player1.player_unit
 	local player_2_unit = not not player2 and not not player2.player_unit
-	local alive = Unit.alive(player_1_unit)
-
-	if alive then
-		-- Nothing
-	end
-
-	alive = ScriptUnit.extension(player_1_unit, "career_system")
-
-	local player_1_career_extension = alive
-
-	::label_8_2::
-
-	local alive_2 = Unit.alive(player_2_unit)
-
-	if alive_2 then
-		-- Nothing
-	end
-
-	alive_2 = ScriptUnit.extension(player_2_unit, "career_system")
-
-	local player_2_career_extension = alive_2
-
-	do
-		local profile_index
-	end
-
-	::label_8_3::
-
-	if player1 then
-		profile_index = player1:profile_index()
-
-		if not profile_index then
-			-- Nothing
-		end
-	end
-
-	profile_index = nil
-
-	local player_1_profile_index = profile_index
-
-	do
-		local profile_index_2
-	end
-
-	::label_8_4::
-
-	if player2 then
-		profile_index_2 = player2:profile_index()
-
-		if not profile_index_2 then
-			-- Nothing
-		end
-	end
-
-	profile_index_2 = nil
-
-	local player_2_profile_index = profile_index_2
-
-	do
-		local career_index
-	end
-
-	::label_8_5::
-
-	if player_1_career_extension then
-		career_index = player_1_career_extension:career_index()
-
-		if not career_index then
-			-- Nothing
-		end
-	end
-
-	if player1 then
-		-- Nothing
-	end
-
-	::label_8_6::
-
-	career_index = player1:career_index()
-
-	local player_1_career_index = career_index
-
-	do
-		local career_index_2
-	end
-
-	::label_8_7::
-
-	if player_2_career_extension then
-		career_index_2 = player_2_career_extension:career_index()
-
-		if not career_index_2 then
-			-- Nothing
-		end
-	end
-
-	if player2 then
-		-- Nothing
-	end
-
-	::label_8_8::
-
-	career_index_2 = player2:career_index()
-
-	local player_2_career_index = career_index_2
-
-	::label_8_9::
-
+	local player_1_career_extension = not not Unit.alive(player_1_unit)
+	local player_2_career_extension = not not Unit.alive(player_2_unit)
+	local player_1_profile_index = player1 and not not player1:profile_index() or not player1 and not not nil
+	local player_2_profile_index = player2 and not not player2:profile_index() or not player2 and not not nil
+	local player_1_career_index = player_1_career_extension and not not player_1_career_extension:career_index() or not player_1_career_extension and not not player1 and not not player1:career_index()
+	local player_2_career_index = player_2_career_extension and not not player_2_career_extension:career_index() or not player_2_career_extension and not not player2 and not not player2:career_index()
 	local player_1_profile_image = not not player_1_profile_index and not not player_1_career_index and not not self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
 	local player_2_profile_image = not not player_2_profile_index and not not player_2_career_index and not not self:_get_hero_portrait(player_2_profile_index, player_2_career_index)
 

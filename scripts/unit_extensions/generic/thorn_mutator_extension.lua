@@ -6,15 +6,8 @@ local DESPAWN_ANIM_TIME = 1
 
 ThornMutatorExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local spawn_animation_time = extension_init_data.spawn_animation_time
-
-	spawn_animation_time = not not spawn_animation_time or not not 0
-	self.spawn_time = spawn_animation_time
-
-	local despawn_animation_time = extension_init_data.despawn_animation_time
-
-	despawn_animation_time = not not despawn_animation_time or not not 0
-	self.despawn_time = despawn_animation_time
+	self.spawn_time = not not extension_init_data.spawn_animation_time
+	self.despawn_time = not not extension_init_data.despawn_animation_time
 	self._spawn_timer = 0
 	self._life_timer = 0
 	self._is_server = Managers.state.network.is_server
@@ -131,23 +124,7 @@ end
 
 ThornMutatorExtension._check_for_deletion = function (self, t)
 	-- function 8
-	local _despawn_done_time = self._despawn_done_time
-
-	if _despawn_done_time then
-		-- Nothing
-	end
-
-	if not (t > self._despawn_done_time) then
-		_despawn_done_time = false
-
-		goto label_8_0
-	end
-
-	_despawn_done_time = true
-
-	local despawn_done = _despawn_done_time
-
-	::label_8_0::
+	local despawn_done = not not self._despawn_done_time
 
 	if despawn_done then
 		Managers.state.unit_spawner:mark_for_deletion(self._unit)

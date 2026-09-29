@@ -1,21 +1,7 @@
 -- chunkname: @scripts/managers/backend_playfab/playfab_request_queue.lua
 
 local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
-local uuid
-
-if IS_PS4 then
-	uuid = math.uuid
-
-	if not uuid then
-		-- Nothing
-	end
-end
-
-uuid = Application.guid
-
-local guid = uuid
-
-::label_0_0::
+local guid = IS_PS4 and not not math.uuid or not IS_PS4 and not not Application.guid
 
 PlayFabRequestQueue = class(PlayFabRequestQueue)
 
@@ -35,11 +21,7 @@ end
 
 PlayFabRequestQueue.is_pending_request = function (self)
 	-- function 2
-	local _active_entry = self._active_entry
-
-	_active_entry = not not _active_entry or #self._queue > 0
-
-	return _active_entry
+	return not not self._active_entry
 end
 
 PlayFabRequestQueue.enqueue = function (self, request, success_callback, send_eac_challenge, error_callback)
@@ -55,22 +37,17 @@ PlayFabRequestQueue.enqueue = function (self, request, success_callback, send_ea
 		parameters.metadata = self._metadata
 	end
 
-	local tbl = {
+	local entry = {
 		resends = 0,
 		eac_challenge_success = false,
 		api_function_name = "ExecuteCloudScript",
 		request = table.clone(request),
 		success_callback = success_callback,
-		error_callback = error_callback
+		error_callback = error_callback,
+		send_eac_challenge = not not IS_WINDOWS,
+		timeout = TIMEOUT_TIME,
+		id = id
 	}
-	local IS_WINDOWS = IS_WINDOWS
-
-	IS_WINDOWS = not not IS_WINDOWS and not not send_eac_challenge
-	tbl.send_eac_challenge = IS_WINDOWS
-	tbl.timeout = TIMEOUT_TIME
-	tbl.id = id
-
-	local entry = tbl
 
 	print("[PlayFabRequestQueue] Enqueuing ExecuteCloudScript request", request.FunctionName, id)
 	table.insert(self._queue, entry)
@@ -104,18 +81,7 @@ end
 
 PlayFabRequestQueue._need_throttle = function (self, func_name, t)
 	-- function 5
-	local var_5_0 = self._throttle_per_func[func_name]
-
-	if not var_5_0 then
-		-- Nothing
-	end
-
-	var_5_0 = {}
-
-	local data = var_5_0
-
-	::label_5_0::
-
+	local data = not not self._throttle_per_func[func_name]
 	local new_num_requests = #data + 1
 
 	if new_num_requests >= MAX_THROTTLE_REQUESTS then
@@ -131,17 +97,7 @@ end
 PlayFabRequestQueue._update_throttling = function (self, t, entry)
 	-- function 6
 	for key, data in pairs(self._throttle_per_func) do
-		local var_6_0 = data[1]
-
-		if not var_6_0 then
-			-- Nothing
-		end
-
-		var_6_0 = t + 1
-
-		local expire_date = var_6_0
-
-		::label_6_0::
+		local expire_date = not not data[1]
 
 		while expire_date < t do
 			table.remove(data, 1)
@@ -154,21 +110,7 @@ PlayFabRequestQueue._update_throttling = function (self, t, entry)
 		return false
 	end
 
-	local FunctionName
-
-	if entry.request then
-		FunctionName = entry.request.FunctionName
-
-		if not FunctionName then
-			-- Nothing
-		end
-	end
-
-	FunctionName = entry.api_function_name
-
-	local name = FunctionName
-
-	::label_6_1::
+	local name = entry.request and not not entry.request.FunctionName or not entry.request and not not entry.api_function_name
 
 	if self:_need_throttle(name, t) then
 		return false
@@ -283,17 +225,7 @@ PlayFabRequestQueue._challenge_response_received = function (self, response)
 	entry.timeout = TIMEOUT_TIME
 
 	local request = entry.request
-	local FunctionParameter = request.FunctionParameter
-
-	if not FunctionParameter then
-		-- Nothing
-	end
-
-	FunctionParameter = {}
-
-	local function_params = FunctionParameter
-
-	::label_9_0::
+	local function_params = not not request.FunctionParameter
 
 	function_params.response = response
 	request.FunctionParameter = function_params

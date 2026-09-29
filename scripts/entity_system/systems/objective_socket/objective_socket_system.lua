@@ -37,19 +37,7 @@ ObjectiveSocketSystem.init = function (self, entity_system_creation_context, sys
 			local network_manager = self.network_manager
 			local unit_id, is_level_unit = network_manager:game_object_or_level_id(extension.unit)
 			local limited_item_track_extension = ScriptUnit.has_extension(unit, "limited_item_track_system")
-			local flag
-
-			if limited_item_track_extension then
-				flag = true
-
-				goto label_2_0
-			end
-
-			flag = false
-
-			local is_limited_objective_unit = flag
-
-			::label_2_0::
+			local is_limited_objective_unit = limited_item_track_extension and not not true or not limited_item_track_extension and not not false
 
 			self.network_manager.network_transmit:send_rpc_clients("rpc_objective_entered_socket_zone", unit_id, socket_id, is_level_unit, is_limited_objective_unit)
 

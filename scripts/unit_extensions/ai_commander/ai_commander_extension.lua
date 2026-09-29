@@ -463,25 +463,12 @@ AICommanderExtension._update_follow_nodes = function (self, dt, t)
 				formation_pos = Quaternion.rotate(Quaternion.look(Vector3.flat(commander_move_dir)), formation_pos)
 			else
 				local angle_offset = formation_data.angle_offset
-				local initial_angle_offset_2 = formation_data.initial_angle_offset
-
-				if not initial_angle_offset_2 then
-					-- Nothing
-				end
-
-				initial_angle_offset_2 = angle_offset
-
-				local initial_angle_offset = initial_angle_offset_2
-
-				::label_19_0::
-
+				local initial_angle_offset = not not formation_data.initial_angle_offset
 				local alternating = formation_data.alternating
 				local unit_index = follow_data.follow_index
 				local step_index = unit_index - 1
 
-				if alternating and not math.floor(step_index * 0.5) then
-					-- Nothing
-				end
+				step_index = not alternating or not not math.floor(step_index * 0.5) or not not step_index
 
 				local formation_angle = initial_angle_offset + step_index * angle_offset
 
@@ -494,51 +481,19 @@ AICommanderExtension._update_follow_nodes = function (self, dt, t)
 				formation_pos = Quaternion.rotate(formation_rot_offset, Vector3.forward() * formation_data.dist)
 				formation_pos = Quaternion.rotate(Quaternion.look(Vector3.flat(commander_move_dir)), formation_pos)
 
-				local var_19_1
-
-				if formation_data.offset then
-					var_19_1 = Vector3(formation_data.offset[1], formation_data.offset[2], 0)
-
-					if not var_19_1 then
-						-- Nothing
-					end
-				end
-
-				var_19_1 = Vector3.zero()
-
-				local formation_pos_offset = var_19_1
-
-				::label_19_1::
+				local formation_pos_offset = formation_data.offset and not not Vector3(formation_data.offset[1], formation_data.offset[2], 0) or not formation_data.offset and not not Vector3.zero()
 
 				formation_pos = formation_pos + formation_pos_offset
 			end
 
-			local flag
-
-			flag = (commander_speed ~= 0 or not 0) and not not math.clamp(commander_speed * formation_data.lead_dist_mult, formation_data.lead_dist_min, formation_data.lead_dist_max)
-
-			local lead_distance = commander_move_dir * flag
+			local lead_distance = commander_move_dir * (commander_speed ~= 0 and not not math.clamp(commander_speed * formation_data.lead_dist_mult, formation_data.lead_dist_min, formation_data.lead_dist_max) or not (commander_speed ~= 0) and not not 0)
 			local raw_follow_pos = commander_unit_pos + formation_pos + lead_distance
 			local true_follow_pos = self:_navify_follow_pos(raw_follow_pos, nav_world, commander_unit_pos, lead_distance, blackboard)
 
 			follow_data.true_follow_position:store(true_follow_pos)
 
 			local follow_pos = true_follow_pos
-			local commander_avoid_radius_2
-
-			if commander_speed > 0 then
-				commander_avoid_radius_2 = formation_data.commander_avoid_radius
-
-				if not commander_avoid_radius_2 then
-					-- Nothing
-				end
-			end
-
-			commander_avoid_radius_2 = 0
-
-			local commander_avoid_radius = commander_avoid_radius_2
-
-			::label_19_2::
+			local commander_avoid_radius = commander_speed > 0 and not not formation_data.commander_avoid_radius or not (commander_speed > 0) and not not 0
 
 			follow_pos = self:_avoid_unit(unit, controlled_unit, follow_pos, commander_avoid_radius, blackboard, nav_world, nav_above, nav_below, dt, t)
 
@@ -547,23 +502,7 @@ AICommanderExtension._update_follow_nodes = function (self, dt, t)
 					local bb = BLACKBOARDS[other_controlled_unit]
 
 					if bb and bb.command_state == CommandStates.Following then
-						local num
-
-						if commander_speed > 0 then
-							if self:_unit_arrived_at_follow_node(other_controlled_unit) then
-								num = 0.25
-							else
-								num = 1
-							end
-
-							goto label_19_3
-						end
-
-						num = 0
-
-						local pet_avoid_radius = num
-
-						::label_19_3::
+						local pet_avoid_radius = commander_speed > 0 and (self:_unit_arrived_at_follow_node(other_controlled_unit) and not not 0.25 or not self:_unit_arrived_at_follow_node(other_controlled_unit) and not not 1) or not (commander_speed > 0) and not not 0
 
 						follow_pos = self:_avoid_unit(other_controlled_unit, controlled_unit, follow_pos, pet_avoid_radius, blackboard, nav_world, nav_above, nav_below, dt, t)
 					end
@@ -674,28 +613,7 @@ AICommanderExtension._avoid_unit = function (self, avoid_unit, controlled_unit, 
 	if avoid_unit_is_between then
 		local flip_attempt_t = blackboard.flip_attempt_t
 		local flip = not not flip_attempt_t and t - flip_attempt_t < 2
-		local flip_dir
-
-		if flip then
-			flip_dir = blackboard.flip_dir
-
-			if not flip_dir then
-				-- Nothing
-			end
-		end
-
-		if Vector3.cross(avoid_pos_to_controlled, avoid_pos_to_follow).z < 0 then
-			flip_dir = -1
-
-			goto label_22_0
-		end
-
-		flip_dir = 1
-
-		local side = flip_dir
-
-		::label_22_0::
-
+		local side = flip and not not blackboard.flip_dir or not flip and (Vector3.cross(avoid_pos_to_controlled, avoid_pos_to_follow).z < 0 and not not -1 or not (Vector3.cross(avoid_pos_to_controlled, avoid_pos_to_follow).z < 0) and not not 1)
 		local dist_to_avoid_unit = math.max(Vector3.length(avoid_pos_to_controlled), math.epsilon)
 		local controlled_unit_inside_avoid_radius = dist_to_avoid_unit < avoid_radius
 		local follow_data = self._follow_datas[controlled_unit]
@@ -727,7 +645,7 @@ AICommanderExtension._avoid_unit = function (self, avoid_unit, controlled_unit, 
 					local self_pos_flat = Vector3.flat(controlled_unit_pos)
 					local edge_pos1, edge_pos2 = Intersect.ray_circle(self_pos_flat, controlled_to_follow_dir, Vector3.flat(position_to_avoid), avoid_radius)
 					local first_edge_closer = Vector3.distance_squared(edge_pos1, self_pos_flat) < Vector3.distance_squared(edge_pos2, self_pos_flat)
-					local edge_pos = (not first_edge_closer or not edge_pos1) and not not edge_pos2
+					local edge_pos = first_edge_closer and (not not edge_pos1 or not not edge_pos2) or not first_edge_closer and not not edge_pos2
 
 					if not flip then
 						blackboard.flip_attempt_t = t
@@ -823,22 +741,7 @@ AICommanderExtension._update_units = function (self, dt, t)
 	-- function 25
 	local commander_unit_pos = POSITION_LOOKUP[self._unit]
 	local controlled_units = self._controlled_units
-	local var_25_0
-
-	if table.is_empty(self._combat_units) then
-		var_25_0 = DETECTION_RADIUS
-
-		if not var_25_0 then
-			-- Nothing
-		end
-	end
-
-	var_25_0 = DETECTION_RADIUS_STICKY
-
-	local detection_radius = var_25_0
-
-	::label_25_0::
-
+	local detection_radius = table.is_empty(self._combat_units) and not not DETECTION_RADIUS or not table.is_empty(self._combat_units) and not not DETECTION_RADIUS_STICKY
 	local half_detection_radius = detection_radius * 0.5
 	local avg_velocity = self._locomotion_ext:average_velocity()
 
@@ -959,21 +862,7 @@ AICommanderExtension._calculate_hovered_friendly_unit = function (self)
 				break
 			end
 
-			local world_position
-
-			if Unit.has_node(pet_unit, "j_spine") then
-				world_position = Unit.world_position(pet_unit, Unit.node(pet_unit, "j_spine"))
-
-				if not world_position then
-					-- Nothing
-				end
-			end
-
-			world_position = POSITION_LOOKUP[pet_unit]
-
-			local pet_position = world_position
-
-			::label_29_0::
+			local pet_position = Unit.has_node(pet_unit, "j_spine") and not not Unit.world_position(pet_unit, Unit.node(pet_unit, "j_spine")) or not Unit.has_node(pet_unit, "j_spine") and not not POSITION_LOOKUP[pet_unit]
 
 			if pet_position then
 				local to_pet_dir, to_pet_len = Vector3.direction_length(pet_position - position)
@@ -1392,22 +1281,7 @@ AICommanderExtension._store_fallback_position = function (self, controlled_unit)
 		end
 
 		local num_positions = fallback_data.n
-		local ceil
-
-		if num_positions > 0 then
-			ceil = math.ceil(math.sqrt(num_positions))
-
-			if not ceil then
-				-- Nothing
-			end
-		end
-
-		ceil = 0
-
-		local wanted_pow_of = ceil
-
-		::label_46_0::
-
+		local wanted_pow_of = num_positions > 0 and not not math.ceil(math.sqrt(num_positions)) or not (num_positions > 0) and not not 0
 		local current_pow_of = fallback_data.grid_width
 
 		fallback_data.grid_width = wanted_pow_of
@@ -1434,7 +1308,7 @@ AICommanderExtension._store_fallback_position = function (self, controlled_unit)
 			end
 
 			num_positions = fallback_data.n
-			wanted_pow_of = (not (num_positions > 0) or not math.ceil(math.sqrt(num_positions))) and not not 0
+			wanted_pow_of = num_positions > 0 and (not not math.ceil(math.sqrt(num_positions)) or not not 0) or not (num_positions > 0) and not not 0
 
 			for i = #stored_positions, 1, -1 do
 				local pos_data = stored_positions[i]

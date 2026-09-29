@@ -168,18 +168,7 @@ ActionSoulDrain.client_owner_post_update = function (self, dt, t, world, can_dam
 		end
 
 		local physics_world = World.get_data(self.world, "physics_world")
-		local range_2 = current_action.range
-
-		if not range_2 then
-			-- Nothing
-		end
-
-		range_2 = 30
-
-		local range = range_2
-
-		::label_5_0::
-
+		local range = not not current_action.range
 		local result = PhysicsWorld.immediate_raycast_actors(physics_world, current_position, direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
 
 		beam_end_position = current_position + direction * range
@@ -208,7 +197,7 @@ ActionSoulDrain.client_owner_post_update = function (self, dt, t, world, can_dam
 						local hit_zone = breed.hit_zones_lookup[node]
 						local hit_zone_name = hit_zone.name
 
-						hit_enemy = (allow_friendly_fire or not not is_enemy) and hit_zone_name ~= "afro"
+						hit_enemy = allow_friendly_fire and hit_zone_name ~= "afro" or not allow_friendly_fire and not not is_enemy and hit_zone_name ~= "afro"
 					else
 						hit_enemy = true
 					end

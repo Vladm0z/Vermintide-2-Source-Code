@@ -510,7 +510,7 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 			}
 		}
 	}
-	local tbl = {
+	local content = {
 		symbol_frame = "weave_item_icon_border",
 		symbol_frame_selected_glow = "weave_item_selected_glow",
 		symbol_frame_selected = "weave_item_icon_border_selected",
@@ -525,18 +525,13 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 		weave_template_name = weave_template.name,
 		button_hotspot = {},
 		title = title,
-		level_name = level_display_name
+		level_name = level_display_name,
+		background_effect = masked and not not "weave_button_passive_glow" or not masked and not not "weave_button_passive_glow_unmasked",
+		hover_frame = entry_hover_frame_settings.texture,
+		new_frame = entry_new_frame_settings.texture,
+		entry_frame = entry_frame_settings.texture,
+		wind_symbol = thumbnail_icon
 	}
-	local flag
-
-	flag = (not masked or not "weave_button_passive_glow") and not not "weave_button_passive_glow_unmasked"
-	tbl.background_effect = flag
-	tbl.hover_frame = entry_hover_frame_settings.texture
-	tbl.new_frame = entry_new_frame_settings.texture
-	tbl.entry_frame = entry_frame_settings.texture
-	tbl.wind_symbol = thumbnail_icon
-
-	local content = tbl
 	local color_multiplier = 0.8
 	local title_select_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
 	local title_normal_color = {
@@ -545,7 +540,7 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 		title_select_color[3] * color_multiplier,
 		title_select_color[4] * color_multiplier
 	}
-	local tbl_2 = {
+	local style = {
 		hotspot = {
 			size = {
 				entry_size[1],
@@ -556,378 +551,357 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 				0,
 				0
 			}
+		},
+		title = {
+			word_wrap = false,
+			upper_case = false,
+			localize = false,
+			font_size = 26,
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = title_normal_color,
+			default_text_color = title_normal_color,
+			select_text_color = title_select_color,
+			offset = {
+				entry_icon_size[1] + 10,
+				entry_size[2] / 2 - 5,
+				4
+			},
+			size = {
+				entry_size[1] - (entry_icon_size[1] + 20),
+				entry_size[2]
+			}
+		},
+		title_shadow = {
+			word_wrap = false,
+			upper_case = false,
+			localize = false,
+			font_size = 26,
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			normal_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				entry_icon_size[1] + 10 + 2,
+				entry_size[2] / 2 - 7,
+				3
+			},
+			size = {
+				entry_size[1] - (entry_icon_size[1] + 20),
+				entry_size[2]
+			}
+		},
+		level_name = {
+			word_wrap = true,
+			font_size = 22,
+			localize = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			select_text_color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				entry_icon_size[1] + 10,
+				-(entry_size[2] / 2 + 0),
+				4
+			},
+			size = {
+				entry_size[1] - (entry_icon_size[1] + 20),
+				entry_size[2]
+			}
+		},
+		level_name_shadow = {
+			word_wrap = true,
+			font_size = 22,
+			localize = true,
+			horizontal_alignment = "left",
+			vertical_alignment = "top",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			normal_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				entry_icon_size[1] + 10 + 2,
+				-(entry_size[2] / 2 + 2),
+				3
+			},
+			size = {
+				entry_size[1] - (entry_icon_size[1] + 20),
+				entry_size[2]
+			}
+		},
+		background = {
+			masked = masked,
+			size = {
+				entry_size[1],
+				entry_size[2]
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			texture_tiling_size = {
+				480,
+				270
+			},
+			offset = {
+				0,
+				0,
+				0
+			}
+		},
+		background_fade = {
+			masked = masked,
+			size = {
+				entry_size[1],
+				entry_size[2]
+			},
+			color = {
+				200,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				2
+			}
+		},
+		background_effect = {
+			masked = masked,
+			size = {
+				entry_size[1],
+				entry_size[2]
+			},
+			color = background_effect_color,
+			offset = {
+				0,
+				0,
+				1
+			}
+		},
+		hover_frame = {
+			masked = masked,
+			texture_size = entry_hover_frame_settings.texture_size,
+			texture_sizes = entry_hover_frame_settings.texture_sizes,
+			color = {
+				0,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				0
+			},
+			size = {
+				entry_size[1],
+				entry_size[2]
+			},
+			frame_margins = {
+				-entry_hover_frame_spacing,
+				-entry_hover_frame_spacing
+			}
+		},
+		new_frame = {
+			masked = masked,
+			texture_size = entry_new_frame_settings.texture_size,
+			texture_sizes = entry_new_frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				2
+			},
+			size = {
+				entry_size[1],
+				entry_size[2]
+			},
+			frame_margins = {
+				-entry_new_frame_spacing,
+				-entry_new_frame_spacing
+			}
+		},
+		entry_frame = {
+			masked = masked,
+			texture_size = entry_frame_settings.texture_size,
+			texture_sizes = entry_frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			size = {
+				entry_size[1],
+				entry_size[2]
+			},
+			offset = {
+				0,
+				0,
+				3
+			}
+		},
+		lock_texture = {
+			masked = masked,
+			size = {
+				56,
+				40
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				entry_size[1] - 56,
+				entry_size[2] / 2 - 20,
+				2
+			}
+		},
+		equipped_texture = {
+			masked = masked,
+			size = {
+				37,
+				31
+			},
+			color = Colors.get_color_table_with_alpha("green", 255),
+			offset = {
+				entry_size[1] - 37,
+				entry_size[2] / 2 - 15.5,
+				2
+			}
+		},
+		new_texture = {
+			masked = masked,
+			size = {
+				126,
+				51
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				entry_size[1] - 120,
+				entry_size[2] / 2 - 25.5,
+				2
+			}
+		},
+		symbol_frame = {
+			masked = masked,
+			size = {
+				64,
+				64
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				0,
+				entry_size[2] / 2 - 32,
+				5
+			}
+		},
+		symbol_frame_selected = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				73,
+				73
+			},
+			default_size = {
+				73,
+				73
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				-4.5,
+				0,
+				6
+			},
+			default_offset = {
+				-4.5,
+				0,
+				6
+			}
+		},
+		symbol_frame_selected_glow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				73,
+				73
+			},
+			default_size = {
+				73,
+				73
+			},
+			color = symbol_frame_selected_glow_color,
+			offset = {
+				-4.5,
+				0,
+				6
+			},
+			default_offset = {
+				-4.5,
+				0,
+				7
+			}
+		},
+		symbol_bg = {
+			masked = masked,
+			size = {
+				64,
+				64
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				0,
+				entry_size[2] / 2 - 32,
+				8
+			}
+		},
+		symbol_bg_glow = {
+			masked = masked,
+			size = {
+				51,
+				53
+			},
+			color = wind_symbol_glow_color,
+			offset = {
+				7,
+				entry_size[2] / 2 - 26.5,
+				9
+			}
+		},
+		wind_symbol = {
+			masked = masked,
+			size = {
+				thumbnail_icon_size[1],
+				thumbnail_icon_size[2]
+			},
+			color = wind_symbol_glow_color,
+			offset = {
+				32 - thumbnail_icon_size[1] / 2,
+				32 - thumbnail_icon_size[2] / 2,
+				10
+			}
 		}
 	}
-	local tbl_3 = {
-		word_wrap = false,
-		upper_case = false,
-		localize = false,
-		font_size = 26,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = title_normal_color
-	tbl_3.default_text_color = title_normal_color
-	tbl_3.select_text_color = title_select_color
-	tbl_3.offset = {
-		entry_icon_size[1] + 10,
-		entry_size[2] / 2 - 5,
-		4
-	}
-	tbl_3.size = {
-		entry_size[1] - (entry_icon_size[1] + 20),
-		entry_size[2]
-	}
-	tbl_2.title = tbl_3
-
-	local tbl_4 = {
-		word_wrap = false,
-		upper_case = false,
-		localize = false,
-		font_size = 26,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.normal_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		entry_icon_size[1] + 10 + 2,
-		entry_size[2] / 2 - 7,
-		3
-	}
-	tbl_4.size = {
-		entry_size[1] - (entry_icon_size[1] + 20),
-		entry_size[2]
-	}
-	tbl_2.title_shadow = tbl_4
-
-	local tbl_5 = {
-		word_wrap = true,
-		font_size = 22,
-		localize = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = true
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_4
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.default_text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.select_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_5.offset = {
-		entry_icon_size[1] + 10,
-		-(entry_size[2] / 2 + 0),
-		4
-	}
-	tbl_5.size = {
-		entry_size[1] - (entry_icon_size[1] + 20),
-		entry_size[2]
-	}
-	tbl_2.level_name = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		font_size = 22,
-		localize = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = true
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_5
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.normal_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		entry_icon_size[1] + 10 + 2,
-		-(entry_size[2] / 2 + 2),
-		3
-	}
-	tbl_6.size = {
-		entry_size[1] - (entry_icon_size[1] + 20),
-		entry_size[2]
-	}
-	tbl_2.level_name_shadow = tbl_6
-	tbl_2.background = {
-		masked = masked,
-		size = {
-			entry_size[1],
-			entry_size[2]
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		texture_tiling_size = {
-			480,
-			270
-		},
-		offset = {
-			0,
-			0,
-			0
-		}
-	}
-	tbl_2.background_fade = {
-		masked = masked,
-		size = {
-			entry_size[1],
-			entry_size[2]
-		},
-		color = {
-			200,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			2
-		}
-	}
-	tbl_2.background_effect = {
-		masked = masked,
-		size = {
-			entry_size[1],
-			entry_size[2]
-		},
-		color = background_effect_color,
-		offset = {
-			0,
-			0,
-			1
-		}
-	}
-	tbl_2.hover_frame = {
-		masked = masked,
-		texture_size = entry_hover_frame_settings.texture_size,
-		texture_sizes = entry_hover_frame_settings.texture_sizes,
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			0
-		},
-		size = {
-			entry_size[1],
-			entry_size[2]
-		},
-		frame_margins = {
-			-entry_hover_frame_spacing,
-			-entry_hover_frame_spacing
-		}
-	}
-	tbl_2.new_frame = {
-		masked = masked,
-		texture_size = entry_new_frame_settings.texture_size,
-		texture_sizes = entry_new_frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			2
-		},
-		size = {
-			entry_size[1],
-			entry_size[2]
-		},
-		frame_margins = {
-			-entry_new_frame_spacing,
-			-entry_new_frame_spacing
-		}
-	}
-	tbl_2.entry_frame = {
-		masked = masked,
-		texture_size = entry_frame_settings.texture_size,
-		texture_sizes = entry_frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		size = {
-			entry_size[1],
-			entry_size[2]
-		},
-		offset = {
-			0,
-			0,
-			3
-		}
-	}
-	tbl_2.lock_texture = {
-		masked = masked,
-		size = {
-			56,
-			40
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			entry_size[1] - 56,
-			entry_size[2] / 2 - 20,
-			2
-		}
-	}
-	tbl_2.equipped_texture = {
-		masked = masked,
-		size = {
-			37,
-			31
-		},
-		color = Colors.get_color_table_with_alpha("green", 255),
-		offset = {
-			entry_size[1] - 37,
-			entry_size[2] / 2 - 15.5,
-			2
-		}
-	}
-	tbl_2.new_texture = {
-		masked = masked,
-		size = {
-			126,
-			51
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			entry_size[1] - 120,
-			entry_size[2] / 2 - 25.5,
-			2
-		}
-	}
-	tbl_2.symbol_frame = {
-		masked = masked,
-		size = {
-			64,
-			64
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			0,
-			entry_size[2] / 2 - 32,
-			5
-		}
-	}
-	tbl_2.symbol_frame_selected = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			73,
-			73
-		},
-		default_size = {
-			73,
-			73
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			-4.5,
-			0,
-			6
-		},
-		default_offset = {
-			-4.5,
-			0,
-			6
-		}
-	}
-	tbl_2.symbol_frame_selected_glow = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			73,
-			73
-		},
-		default_size = {
-			73,
-			73
-		},
-		color = symbol_frame_selected_glow_color,
-		offset = {
-			-4.5,
-			0,
-			6
-		},
-		default_offset = {
-			-4.5,
-			0,
-			7
-		}
-	}
-	tbl_2.symbol_bg = {
-		masked = masked,
-		size = {
-			64,
-			64
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			0,
-			entry_size[2] / 2 - 32,
-			8
-		}
-	}
-	tbl_2.symbol_bg_glow = {
-		masked = masked,
-		size = {
-			51,
-			53
-		},
-		color = wind_symbol_glow_color,
-		offset = {
-			7,
-			entry_size[2] / 2 - 26.5,
-			9
-		}
-	}
-	tbl_2.wind_symbol = {
-		masked = masked,
-		size = {
-			thumbnail_icon_size[1],
-			thumbnail_icon_size[2]
-		},
-		color = wind_symbol_glow_color,
-		offset = {
-			32 - thumbnail_icon_size[1] / 2,
-			32 - thumbnail_icon_size[2] / 2,
-			10
-		}
-	}
-
-	local style = tbl_2
 	local entry_widget = {}
 
 	entry_widget.element = element

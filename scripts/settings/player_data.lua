@@ -39,11 +39,7 @@ DefaultPlayerData = {
 	},
 	seen_shop_items = {}
 }
-
-local PlayerData = PlayerData
-
-PlayerData = not not PlayerData or not not table.clone(DefaultPlayerData)
-PlayerData = PlayerData
+PlayerData = not not PlayerData
 
 function populate_player_data_from_save(save_data, id, version_match)
 	-- function 1

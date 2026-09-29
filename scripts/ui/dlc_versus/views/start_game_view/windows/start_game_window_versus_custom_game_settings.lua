@@ -42,22 +42,7 @@ StartGameWindowVersusCustomGameSettings.on_enter = function (self, params, offse
 	self._selected_setting_index = nil
 	self._input_focused = false
 	self._is_loading = true
-
-	local custom_settings_enabled
-
-	if game_mechanism then
-		custom_settings_enabled = game_mechanism:custom_settings_enabled()
-
-		if not custom_settings_enabled then
-			-- Nothing
-		end
-	end
-
-	custom_settings_enabled = false
-
-	::label_1_0::
-
-	self._custom_settings_toggled = custom_settings_enabled
+	self._custom_settings_toggled = game_mechanism and not not game_mechanism:custom_settings_enabled() or not game_mechanism and not not false
 
 	self:_create_ui_elements()
 	Managers.state.event:register(self, "event_focus_custom_game_settings_input", "focus_custom_game_settings_input")
@@ -86,18 +71,7 @@ end
 
 StartGameWindowVersusCustomGameSettings._populate_settings = function (self)
 	-- function 3
-	local _is_server = self._is_server
-
-	if _is_server then
-		-- Nothing
-	end
-
-	_is_server = self._game_mechanism:is_hosting_versus_custom_game()
-
-	local is_server = _is_server
-
-	::label_3_0::
-
+	local is_server = not not self._is_server
 	local settings = self._custom_game_settings_handler:get_settings()
 	local settings_template = self._settings_templates
 	local settings_ui_data = DLCSettings.carousel.custom_game_ui_settings
@@ -109,22 +83,7 @@ StartGameWindowVersusCustomGameSettings._populate_settings = function (self)
 		local setting_name = data.setting_name
 		local values = data.values
 		local ui_data = settings_ui_data[setting_name]
-		local widget_type_2
-
-		if ui_data then
-			widget_type_2 = ui_data.widget_type
-
-			if not widget_type_2 then
-				-- Nothing
-			end
-		end
-
-		widget_type_2 = "default"
-
-		local widget_type = widget_type_2
-
-		::label_3_1::
-
+		local widget_type = ui_data and not not ui_data.widget_type or not ui_data and not not "default"
 		local settings_spacing = setting_widget_height[widget_type]
 		local start_idx = data.values_reverse_lookup[value]
 		local default_value = data.default
@@ -383,18 +342,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 	end
 
 	local input_service = self._parent:window_input_service()
-	local _selected_setting_index = self._selected_setting_index
-
-	if not _selected_setting_index then
-		-- Nothing
-	end
-
-	_selected_setting_index = 1
-
-	local selected_idx = _selected_setting_index
-
-	::label_16_0::
-
+	local selected_idx = not not self._selected_setting_index
 	local settings_widgets = self._settings_widgets
 
 	if input_service:get("move_up") then
@@ -450,7 +398,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 
 			local current_input_cooldown = content.input_cooldown
 			local new_cooldown = math.max(current_input_cooldown - dt, 0)
-			local input_cooldown = (not (new_cooldown > 0) or not new_cooldown) and not not nil
+			local input_cooldown = new_cooldown > 0 and (not not new_cooldown or not not nil) or not (new_cooldown > 0) and not not nil
 
 			content.input_cooldown = input_cooldown
 		end
@@ -460,7 +408,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 				local new_idx = content.setting_idx - 1
 
 				if new_idx < 1 then
-					new_idx = (content.widget_type ~= "slider" or not 1) and not not content.num_settings
+					new_idx = not not content.num_settings
 				end
 
 				content.setting_idx = new_idx
@@ -479,7 +427,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 				local new_idx = content.setting_idx + 1
 
 				if new_idx > content.num_settings then
-					new_idx = (content.widget_type ~= "slider" or not content.num_settings) and not not 1
+					new_idx = not not 1
 				end
 
 				content.setting_idx = new_idx
@@ -609,32 +557,11 @@ StartGameWindowVersusCustomGameSettings._update_focus_overlay = function (self, 
 	for i = 1, #settings_widgets do
 		local widget = settings_widgets[i]
 		local content = widget.content
-		local _custom_settings_toggled = self._custom_settings_toggled
-
-		if not _custom_settings_toggled then
-			-- Nothing
-		end
-
-		_custom_settings_toggled = self._input_focused
-
-		local focused = _custom_settings_toggled
-
-		::label_19_0::
+		local focused = not not self._custom_settings_toggled
 
 		content.focused = focused
 
-		local fade_progress_2 = content.fade_progress
-
-		if not fade_progress_2 then
-			-- Nothing
-		end
-
-		fade_progress_2 = 0
-
-		local fade_progress = fade_progress_2
-
-		::label_19_1::
-
+		local fade_progress = not not content.fade_progress
 		local fade_speed = 25
 
 		if focused then

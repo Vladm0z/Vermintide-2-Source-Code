@@ -833,7 +833,7 @@ end
 
 local function create_status_widget(texture, offset)
 	-- function 6
-	local tbl = {
+	return {
 		scenegraph_id = "window",
 		element = {
 			passes = {
@@ -843,22 +843,14 @@ local function create_status_widget(texture, offset)
 					texture_id = "texture_id",
 					content_check_function = function (content)
 						-- function 7
-						local is_connecting = content.is_connecting
-
-						is_connecting = not not is_connecting or not not content.is_connected
-
-						return is_connecting
+						return not not content.is_connecting
 					end,
 					content_change_function = function (content, style, animations, dt)
 						-- function 8
 						local color = style.color
 
 						if content.is_connecting then
-							local color_progress_2 = content.color_progress
-
-							color_progress_2 = not not color_progress_2 or not not 1
-
-							local color_progress = (color_progress_2 + dt) % 1
+							local color_progress = (not not content.color_progress + dt) % 1
 
 							content.color_progress = color_progress
 
@@ -876,43 +868,29 @@ local function create_status_widget(texture, offset)
 			is_connected = false,
 			is_connecting = false,
 			texture_id = texture
-		}
-	}
-	local tbl_2 = {}
-	local tbl_3 = {
-		vertical_alignment = "botom",
-		horizontal_alignment = "right",
-		texture_size = {
-			30,
-			30
 		},
-		color = {
-			255,
-			255,
-			255,
-			255
+		style = {
+			texture_id = {
+				vertical_alignment = "botom",
+				horizontal_alignment = "right",
+				texture_size = {
+					30,
+					30
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					not not offset[1],
+					not not offset[2],
+					not not offset[3]
+				}
+			}
 		}
 	}
-	local tbl_4 = {}
-	local var_6_4 = offset[1]
-
-	var_6_4 = not not var_6_4 or not not 0
-	tbl_4[1] = var_6_4
-
-	local var_6_5 = offset[2]
-
-	var_6_5 = not not var_6_5 or not not 0
-	tbl_4[2] = var_6_5
-
-	local var_6_6 = offset[3]
-
-	var_6_6 = not not var_6_6 or not not 0
-	tbl_4[3] = var_6_6
-	tbl_3.offset = tbl_4
-	tbl_2.texture_id = tbl_3
-	tbl.style = tbl_2
-
-	return tbl
 end
 
 local widget_definitions = {

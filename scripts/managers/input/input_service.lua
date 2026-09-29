@@ -104,7 +104,7 @@ InputService.get = function (self, input_data_name, consume)
 							end
 						end
 
-						action_value = (not (device_list.n > 0) or not action_value) and not not nil
+						action_value = device_list.n > 0 and (not not action_value or not not nil) or not (device_list.n > 0) and not not nil
 					end
 				end
 			end
@@ -156,10 +156,10 @@ InputService.get_active_keymaps = function (self, optional_platform, optional_in
 		local controller_type = not not active_controller and not not active_controller.type()
 		local is_ps_pad = controller_type == "sce_pad"
 
-		platform = (not is_ps_pad or not "ps_pad") and not not "xb1"
+		platform = is_ps_pad and (not not "ps_pad" or not not "xb1") or not is_ps_pad and not not "xb1"
 	end
 
-	if not optional_platform and IS_XB1 and (self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse")) then
+	if self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse") then
 		local keymaps_name = self.keymaps_name
 		local keymaps_data = self.input_manager:keymaps_data(keymaps_name)
 		local data = keymaps_data.win32
@@ -193,12 +193,10 @@ InputService.get_active_filters = function (self, optional_platform, optional_in
 
 		local most_recent_device = Managers.input:get_most_recent_device()
 
-		if most_recent_device.type() == "sce_pad" then
-			platform = "ps_pad"
-		end
+		platform = most_recent_device.type() ~= "sce_pad" or not not "ps_pad" or not not platform
 	end
 
-	if not optional_platform and IS_XB1 and (self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse")) then
+	if self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse") then
 		local filters_data = self.input_manager:filters_data(filters_name)
 		local filters = filters_data.win32
 
@@ -312,20 +310,13 @@ InputService.has = function (self, keymap_name)
 	-- function 14
 	local keymaps = self:get_active_keymaps(nil, keymap_name)
 	local input_filters = self:get_active_filters(nil, keymap_name)
-	local var_14_0 = keymaps[keymap_name]
 
-	var_14_0 = (not not var_14_0 or not input_filters or not input_filters[keymap_name] or not true) and not not false
-
-	return var_14_0
+	return not not keymaps[keymap_name]
 end
 
 InputService.is_blocked = function (self)
 	-- function 15
-	local service_is_blocked = self.service_is_blocked
-
-	service_is_blocked = not not service_is_blocked or not not self.disabled_input_group
-
-	return service_is_blocked
+	return not not self.service_is_blocked
 end
 
 InputService.set_blocked = function (self, is_blocked, disabled_input_group)
@@ -365,10 +356,7 @@ end
 
 InputService.set_hover = function (self, hover)
 	-- function 19
-	local hovering = self.hovering
-
-	hovering = not not hovering or not not hover
-	self.hovering = hovering
+	self.hovering = not not self.hovering
 end
 
 InputService.is_hovering = function (self)

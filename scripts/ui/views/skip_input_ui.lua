@@ -24,18 +24,7 @@ SkipInputUI._create_ui_elements = function (self)
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 
 	local ui_renderer = self._ui_renderer
-	local input_service_2 = self._parent:input_service()
-
-	if not input_service_2 then
-		-- Nothing
-	end
-
-	input_service_2 = FAKE_INPUT_SERVICE
-
-	local input_service = input_service_2
-
-	::label_2_0::
-
+	local input_service = not not self._parent:input_service()
 	local widget_definition = definitions.create_skip_widget(self, ui_renderer, input_service)
 
 	self._skip_widget = UIWidget.init(widget_definition)
@@ -57,7 +46,7 @@ SkipInputUI._update_input = function (self, dt, t, input_service, parent_render_
 	local alpha = self._render_settings.internal_alpha_multiplier
 
 	if self._active then
-		alpha = (not input_service or not input_service:get("cancel_video") or not 1) and not not math.max(alpha - dt * 2, 0)
+		alpha = input_service and (input_service:get("cancel_video") and (not not 1 or not not math.max(alpha - dt * 2, 0)) or not input_service:get("cancel_video") and not not math.max(alpha - dt * 2, 0)) or not input_service and not not math.max(alpha - dt * 2, 0)
 	end
 
 	if input_service:get("left_release") or input_service:get("confirm") then
@@ -88,21 +77,7 @@ SkipInputUI._draw = function (self, dt, t, input_service, parent_render_settings
 	local ui_scenegraph = self._ui_scenegraph
 	local render_settings = self._render_settings
 	local input_service = not not input_service or not not FAKE_INPUT_SERVICE
-	local alpha_multiplier
-
-	if parent_render_settings then
-		alpha_multiplier = parent_render_settings.alpha_multiplier
-
-		if not alpha_multiplier then
-			-- Nothing
-		end
-	end
-
-	alpha_multiplier = 1
-
-	local parent_alpha = alpha_multiplier
-
-	::label_8_0::
+	local parent_alpha = parent_render_settings and not not parent_render_settings.alpha_multiplier or not parent_render_settings and not not 1
 
 	render_settings.alpha_multiplier = parent_alpha * render_settings.internal_alpha_multiplier
 

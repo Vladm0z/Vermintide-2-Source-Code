@@ -295,17 +295,7 @@ DeusRunController.setup_run = function (self, run_seed, difficulty, journey_name
 	self._run_state:set_event_mutators(mutators)
 	self._run_state:set_event_boons(boons)
 
-	local var_16_0 = DEUS_MAP_POPULATE_SETTINGS[journey_name]
-
-	if not var_16_0 then
-		-- Nothing
-	end
-
-	var_16_0 = DEUS_MAP_POPULATE_SETTINGS.default
-
-	local populate_config = var_16_0
-
-	::label_16_0::
+	local populate_config = not not DEUS_MAP_POPULATE_SETTINGS[journey_name]
 
 	self._path_graph = deus_generate_graph(run_seed, journey_name, dominant_god, populate_config, with_belakor)
 
@@ -440,18 +430,7 @@ DeusRunController.rpc_deus_grant_end_of_level_power_ups = function (self, sender
 	local granted_random_power_up_count = node.grant_random_power_up_count
 	local power_up_rarity = node.terror_event_power_up_rarity
 	local local_peer_id = self._run_state:get_own_peer_id()
-	local power_ups = node.system_seeds.power_ups
-
-	if not power_ups then
-		-- Nothing
-	end
-
-	power_ups = 0
-
-	local node_power_up_seed = power_ups
-
-	::label_21_0::
-
+	local node_power_up_seed = not not node.system_seeds.power_ups
 	local power_up_seed = HashUtils.fnv32_hash(local_peer_id .. "_" .. node_power_up_seed)
 	local run_progress = node.run_progress
 	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
@@ -486,41 +465,11 @@ DeusRunController.profile_changed = function (self, peer_id, local_player_id, pr
 		return
 	end
 
-	local get_own_initial_bot_talents
-
-	if is_bot then
-		get_own_initial_bot_talents = self._run_state:get_own_initial_bot_talents()
-
-		if not get_own_initial_bot_talents then
-			-- Nothing
-		end
-	end
-
-	get_own_initial_bot_talents = self._run_state:get_own_initial_talents()
-
-	local initial_talents = get_own_initial_bot_talents
-
-	::label_22_0::
-
+	local initial_talents = is_bot and not not self._run_state:get_own_initial_bot_talents() or not is_bot and not not self._run_state:get_own_initial_talents()
 	local profile = SPProfiles[profile_index]
 	local career_name = profile.careers[career_index].name
 	local initial_talents_for_career = initial_talents[career_name]
-	local get_own_initial_bot_loadout
-
-	if is_bot then
-		get_own_initial_bot_loadout = self._run_state:get_own_initial_bot_loadout()
-
-		if not get_own_initial_bot_loadout then
-			-- Nothing
-		end
-	end
-
-	get_own_initial_bot_loadout = self._run_state:get_own_initial_loadout()
-
-	local initial_loadout = get_own_initial_bot_loadout
-
-	::label_22_1::
-
+	local initial_loadout = is_bot and not not self._run_state:get_own_initial_bot_loadout() or not is_bot and not not self._run_state:get_own_initial_loadout()
 	local initial_loadout_for_career = initial_loadout[career_name]
 	local melee_item = initial_loadout_for_career.slot_melee
 	local ranged_item = initial_loadout_for_career.slot_ranged
@@ -691,11 +640,7 @@ end
 
 DeusRunController.get_traversed_nodes = function (self)
 	-- function 37
-	local get_traversed_nodes = self._run_state:get_traversed_nodes()
-
-	get_traversed_nodes = not not get_traversed_nodes or not not {}
-
-	return get_traversed_nodes
+	return not not self._run_state:get_traversed_nodes()
 end
 
 DeusRunController.get_unreachable_nodes = function (self)
@@ -759,18 +704,7 @@ DeusRunController.get_map_visibility = function (self)
 	-- function 42
 	local graph_data = self:_get_graph_data()
 	local current_node_key = self._run_state:get_current_node_key()
-	local get_traversed_nodes = self._run_state:get_traversed_nodes()
-
-	if not get_traversed_nodes then
-		-- Nothing
-	end
-
-	get_traversed_nodes = {}
-
-	local traversed_nodes = get_traversed_nodes
-
-	::label_42_0::
-
+	local traversed_nodes = not not self._run_state:get_traversed_nodes()
 	local level_data = {}
 
 	for node_key, _ in pairs(graph_data) do
@@ -1247,18 +1181,7 @@ DeusRunController.generate_random_power_ups = function (self, count, availabilit
 	local current_node_key = self._run_state:get_current_node_key()
 	local graph_data = self:_get_graph_data()
 	local current_node = graph_data[current_node_key]
-	local power_ups = current_node.system_seeds.power_ups
-
-	if not power_ups then
-		-- Nothing
-	end
-
-	power_ups = 0
-
-	local node_power_up_seed = power_ups
-
-	::label_78_0::
-
+	local node_power_up_seed = not not current_node.system_seeds.power_ups
 	local power_up_seed = HashUtils.fnv32_hash(extra_seed .. "_" .. local_peer_id .. "_" .. node_power_up_seed)
 	local run_progress = current_node.run_progress
 	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
@@ -1414,17 +1337,7 @@ end
 
 DeusRunController._check_set_completed = function (self, added_power_up, present, local_peer_id, local_player_id)
 	-- function 83
-	local var_83_0 = DeusPowerUpSetLookup[added_power_up.rarity]
-
-	if var_83_0 then
-		-- Nothing
-	end
-
-	var_83_0 = DeusPowerUpSetLookup[added_power_up.rarity][added_power_up.name]
-
-	local related_sets = var_83_0
-
-	::label_83_0::
+	local related_sets = not not DeusPowerUpSetLookup[added_power_up.rarity]
 
 	if not related_sets then
 		return
@@ -1448,17 +1361,7 @@ DeusRunController._check_set_completed = function (self, added_power_up, present
 				end
 			end
 
-			local num_required_pieces_2 = set.num_required_pieces
-
-			if not num_required_pieces_2 then
-				-- Nothing
-			end
-
-			num_required_pieces_2 = #set.pieces
-
-			local num_required_pieces = num_required_pieces_2
-
-			::label_83_1::
+			local num_required_pieces = not not set.num_required_pieces
 
 			if num_set_pieces == num_required_pieces then
 				local reward_power_ups = table.select_array(set.rewards, function (_, reward)
@@ -1486,18 +1389,7 @@ DeusRunController.try_grant_end_of_level_deus_power_ups = function (self)
 
 	if granted_random_power_up_count then
 		local local_peer_id = self._run_state:get_own_peer_id()
-		local power_ups = current_node.system_seeds.power_ups
-
-		if not power_ups then
-			-- Nothing
-		end
-
-		power_ups = 0
-
-		local node_power_up_seed = power_ups
-
-		::label_85_0::
-
+		local node_power_up_seed = not not current_node.system_seeds.power_ups
 		local power_up_seed = HashUtils.fnv32_hash(local_peer_id .. "_" .. node_power_up_seed)
 		local run_progress = current_node.run_progress
 		local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
@@ -1674,18 +1566,7 @@ DeusRunController.generate_random_blessing_name = function (self)
 	local current_node_key = self._run_state:get_current_node_key()
 	local path_graph = self:_get_graph_data()
 	local current_node = path_graph[current_node_key]
-	local blessings_2 = current_node.system_seeds.blessings
-
-	if not blessings_2 then
-		-- Nothing
-	end
-
-	blessings_2 = 0
-
-	local seed = blessings_2
-
-	::label_93_0::
-
+	local seed = not not current_node.system_seeds.blessings
 	local blessing_settings = DeusBlessingSettings
 	local blessings = self._run_state:get_blessings()
 
@@ -1834,21 +1715,7 @@ DeusRunController._try_buy_blessing = function (self, buyer, blessing_name)
 				local slot_count = additional_item_slots[slot_name]
 
 				if slot_count then
-					local count
-
-					if additional_items[slot_name] then
-						count = #additional_items[slot_name].items
-
-						if not count then
-							-- Nothing
-						end
-					end
-
-					count = 0
-
-					local current_item_count = count
-
-					::label_100_0::
+					local current_item_count = additional_items[slot_name] and not not #additional_items[slot_name].items or not additional_items[slot_name] and not not 0
 
 					return current_item_count < slot_count
 				else
@@ -1863,19 +1730,7 @@ DeusRunController._try_buy_blessing = function (self, buyer, blessing_name)
 			-- function 101
 			additional_items = table.clone(additional_items)
 
-			local var_101_0 = additional_items[slot_name]
-
-			if not var_101_0 then
-				-- Nothing
-			end
-
-			var_101_0 = {
-				items = {}
-			}
-
-			local slot_additional_items = var_101_0
-
-			::label_101_0::
+			local slot_additional_items = not not additional_items[slot_name]
 
 			slot_additional_items.items[#slot_additional_items.items + 1] = ItemMasterList[item_name]
 			additional_items[slot_name] = slot_additional_items
@@ -1917,18 +1772,7 @@ DeusRunController._try_buy_blessing = function (self, buyer, blessing_name)
 		local difficulty = self._run_state:get_run_difficulty()
 		local difficulty_settings = DifficultySettings[difficulty]
 		local difficulty_rank = difficulty_settings.rank
-		local var_99_0 = power_level_table[difficulty_rank]
-
-		if not var_99_0 then
-			-- Nothing
-		end
-
-		var_99_0 = power_level_table[DifficultySettings.normal.rank]
-
-		local power_level = var_99_0
-
-		::label_99_0::
-
+		local power_level = not not power_level_table[difficulty_rank]
 		local peers = self._network_handler:get_peers()
 
 		for i = 1, #peers do
@@ -2009,21 +1853,7 @@ DeusRunController._try_buy_power_up = function (self, buyer, power_up, discount)
 
 	self._run_state:set_player_soft_currency(buyer, REAL_PLAYER_LOCAL_ID, new_coins)
 
-	local str
-
-	if discount == 0 then
-		str = rarity .. "_power_up"
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = rarity .. "_discounted_power_up"
-
-	local tracking_event = str
-
-	::label_102_0::
+	local tracking_event = discount ~= 0 and not not (rarity .. "_discounted_power_up") or not (discount ~= 0) and not not (rarity .. "_power_up")
 
 	self:_add_coin_tracking_entry(buyer, REAL_PLAYER_LOCAL_ID, -power_up_cost, tracking_event)
 
@@ -2527,22 +2357,7 @@ DeusRunController.purchase_chest = function (self, rarity, chest_type, cost)
 
 	self._run_state:set_player_soft_currency(own_peer_id, REAL_PLAYER_LOCAL_ID, new_coins)
 
-	local str
-
-	if rarity then
-		str = rarity .. "_"
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = ""
-
-	local event_type_rarity_prefix = str
-
-	::label_136_0::
-
+	local event_type_rarity_prefix = rarity and not not (rarity .. "_") or not rarity and not not ""
 	local event_type = event_type_rarity_prefix .. chest_type .. "_chest"
 
 	self:_add_coin_tracking_entry(own_peer_id, REAL_PLAYER_LOCAL_ID, -cost, event_type)
@@ -2574,10 +2389,7 @@ DeusRunController._remove_weapon_from_pool = function (self, weapon_rarity, weap
 	table.insert(rarities, weapon_rarity)
 
 	for _, rarity in ipairs(rarities) do
-		local var_138_0 = pool_excludes[rarity]
-
-		var_138_0 = not not var_138_0 or not not {}
-		pool_excludes[rarity] = var_138_0
+		pool_excludes[rarity] = not not pool_excludes[rarity]
 		pool_excludes[rarity][weapon_group_name] = true
 	end
 
@@ -2630,22 +2442,7 @@ DeusRunController._record_chest_purchased_for_tracking = function (self, rarity,
 		local skip_metatable = true
 
 		chest_table = table.clone(chest_table, skip_metatable)
-
-		local num
-
-		if chest_table[rarity] then
-			num = chest_table[rarity] + 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		::label_140_0::
-
-		chest_table[rarity] = num
+		chest_table[rarity] = chest_table[rarity] and not not (chest_table[rarity] + 1) or not chest_table[rarity] and not not 1
 
 		if chest_type == DEUS_CHEST_TYPES.swap_melee then
 			self._run_state:set_melee_swap_chests_used(chest_table)
@@ -2678,17 +2475,7 @@ DeusRunController.request_standard_twitch_level_vote = function (self, twitch_ma
 		TwitchVoteDeusSelectLevelNames[next_node_a.base_level],
 		TwitchVoteDeusSelectLevelNames[next_node_b.base_level]
 	}
-	local user_setting = Application.user_setting("twitch_vote_time")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = TwitchSettings.default_vote_time
-
-	local vote_time = user_setting
-
-	::label_143_0::
+	local vote_time = not not Application.user_setting("twitch_vote_time")
 
 	twitch_manager:register_vote(vote_time, "standard_vote", nil, vote_templates, true)
 end
@@ -2791,7 +2578,8 @@ DeusRunController.get_level_ended_tracking_data = function (self, statistics_db,
 	local stats_id = PlayerUtils.unique_player_id(own_peer_id, REAL_PLAYER_LOCAL_ID)
 	local times_revived = statistics_db:get_stat(stats_id, "times_revived")
 	local difficulty_tweak = math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, run_progress))
-	local tbl = {
+
+	return {
 		run_id = run_state:get_run_id(),
 		peer_ids = self._network_handler:get_peers(),
 		run_seed = run_state:get_run_seed(),
@@ -2800,19 +2588,14 @@ DeusRunController.get_level_ended_tracking_data = function (self, statistics_db,
 		difficulty = run_state:get_run_difficulty(),
 		difficulty_tweak = difficulty_tweak,
 		level = current_node.base_level,
-		path = current_node.path
+		path = current_node.path,
+		curse = not not current_node.curse,
+		theme = current_node.theme,
+		level_duration_in_seconds = level_duration_in_seconds,
+		game_won = game_won,
+		times_revived = times_revived,
+		num_bots = num_bots
 	}
-	local curse = current_node.curse
-
-	curse = not not curse or not not "None"
-	tbl.curse = curse
-	tbl.theme = current_node.theme
-	tbl.level_duration_in_seconds = level_duration_in_seconds
-	tbl.game_won = game_won
-	tbl.times_revived = times_revived
-	tbl.num_bots = num_bots
-
-	return tbl
 end
 
 DeusRunController.get_level_started_tracking_data = function (self, statistics_db, num_bots)
@@ -2823,7 +2606,8 @@ DeusRunController.get_level_started_tracking_data = function (self, statistics_d
 	local current_node = path_graph[current_node_key]
 	local run_progress = current_node.run_progress
 	local difficulty_tweak = math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, run_progress))
-	local tbl = {
+
+	return {
 		run_id = run_state:get_run_id(),
 		peer_ids = self._network_handler:get_peers(),
 		run_seed = run_state:get_run_seed(),
@@ -2832,16 +2616,11 @@ DeusRunController.get_level_started_tracking_data = function (self, statistics_d
 		difficulty = run_state:get_run_difficulty(),
 		difficulty_tweak = difficulty_tweak,
 		level = current_node.base_level,
-		path = current_node.path
+		path = current_node.path,
+		curse = not not current_node.curse,
+		theme = current_node.theme,
+		num_bots = num_bots
 	}
-	local curse = current_node.curse
-
-	curse = not not curse or not not "None"
-	tbl.curse = curse
-	tbl.theme = current_node.theme
-	tbl.num_bots = num_bots
-
-	return tbl
 end
 
 DeusRunController.get_run_tracking_data = function (self, game_won)

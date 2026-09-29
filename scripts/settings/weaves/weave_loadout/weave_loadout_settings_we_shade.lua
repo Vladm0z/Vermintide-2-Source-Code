@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_we_shade.lua
 
-local WeaveLoadoutSettings = WeaveLoadoutSettings
-
-WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
-WeaveLoadoutSettings = WeaveLoadoutSettings
+WeaveLoadoutSettings = not not WeaveLoadoutSettings
 
 local profile_name = "wood_elf"
 local talent_index = CareerSettings.we_shade.talent_tree_index

@@ -104,17 +104,7 @@ for level_key, level_data in pairs(LevelSettings) do
 	local valid_level = validate_level_data(level_key, level_data)
 
 	if valid_level then
-		local game_mode_2 = level_data.game_mode
-
-		if not game_mode_2 then
-			-- Nothing
-		end
-
-		game_mode_2 = level_data.mechanism
-
-		local game_mode = game_mode_2
-
-		::label_0_0::
+		local game_mode = not not level_data.game_mode
 
 		if game_mode then
 			if not LevelGameModeTypes[game_mode] then
@@ -214,42 +204,14 @@ end
 
 LevelUnlockUtils.is_journey_disabled = function (journey_name)
 	-- function 6
-	local mechanism_setting_for_title
-
-	if Managers.mechanism then
-		mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_journeys")
-
-		if not mechanism_setting_for_title then
-			-- Nothing
-		end
-	end
-
-	mechanism_setting_for_title = EMPTY_TABLE
-
-	local override_journeys = mechanism_setting_for_title
-
-	::label_6_0::
+	local override_journeys = Managers.mechanism and not not Managers.mechanism:mechanism_setting_for_title("override_journeys") or not Managers.mechanism and not not EMPTY_TABLE
 
 	return override_journeys[journey_name] == false
 end
 
 LevelUnlockUtils.is_chaos_waste_god_disabled = function (god_name)
 	-- function 7
-	local mechanism_setting_for_title
-
-	if Managers.mechanism then
-		mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_gods")
-
-		if not mechanism_setting_for_title then
-			-- Nothing
-		end
-	end
-
-	mechanism_setting_for_title = EMPTY_TABLE
-
-	local override_gods = mechanism_setting_for_title
-
-	::label_7_0::
+	local override_gods = Managers.mechanism and not not Managers.mechanism:mechanism_setting_for_title("override_gods") or not Managers.mechanism and not not EMPTY_TABLE
 
 	return override_gods[god_name] == false
 end
@@ -335,24 +297,7 @@ LevelUnlockUtils.highest_completed_difficulty_index_by_act = function (statistic
 		local difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key)
 
 		if not difficulty_index or difficulty_index > 5 or difficulty_index < 0 then
-			local fassert = fassert
-			local flag = false
-			local str = "highest completed difficulty index was incorrect: %s"
-			local var_12_3
-
-			if difficulty_index then
-				var_12_3 = tostring(difficulty_index)
-
-				if not var_12_3 then
-					-- Nothing
-				end
-			end
-
-			var_12_3 = "n/a"
-
-			::label_12_0::
-
-			fassert(flag, str, var_12_3)
+			fassert(false, "highest completed difficulty index was incorrect: %s", difficulty_index and not not tostring(difficulty_index) or not difficulty_index and not not "n/a")
 		end
 
 		if difficulty_index < act_difficulty_completed_index then
@@ -419,46 +364,15 @@ local function sort_levels_by_order(a, b)
 	local level_settings = LevelSettings
 	local a_settings = level_settings[a].map_settings
 	local b_settings = level_settings[b].map_settings
-	local sorting = a_settings.sorting
-
-	if not sorting then
-		-- Nothing
-	end
-
-	sorting = 99
-
-	local a_order = sorting
-
-	::label_16_0::
-
-	local sorting_2 = b_settings.sorting
-
-	if not sorting_2 then
-		-- Nothing
-	end
-
-	sorting_2 = 99
-
-	local b_order = sorting_2
-
-	::label_16_1::
+	local a_order = not not a_settings.sorting
+	local b_order = not not b_settings.sorting
 
 	return a_order < b_order
 end
 
 LevelUnlockUtils.is_level_disabled = function (level_key)
 	-- function 17
-	local mechanism = Managers.mechanism
-
-	if mechanism then
-		-- Nothing
-	end
-
-	mechanism = Managers.mechanism:mechanism_setting_for_title("override_levels")
-
-	local override_levels = mechanism
-
-	::label_17_0::
+	local override_levels = not not Managers.mechanism
 
 	return not not override_levels and override_levels[level_key] == false
 end
@@ -574,21 +488,7 @@ end
 
 LevelUnlockUtils.weave_disabled = function (weave_name)
 	-- function 20
-	local mechanism_setting_for_title
-
-	if Managers.mechanism then
-		mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_weaves")
-
-		if not mechanism_setting_for_title then
-			-- Nothing
-		end
-	end
-
-	mechanism_setting_for_title = EMPTY_TABLE
-
-	local override_weaves = mechanism_setting_for_title
-
-	::label_20_0::
+	local override_weaves = Managers.mechanism and not not Managers.mechanism:mechanism_setting_for_title("override_weaves") or not Managers.mechanism and not not EMPTY_TABLE
 
 	if override_weaves.levels and override_weaves.levels[weave_name] ~= nil then
 		return not override_weaves.levels[weave_name]
@@ -634,39 +534,8 @@ LevelUnlockUtils.weave_unlocked = function (statistics_db, player_stats_id, weav
 	local completed_season = false
 
 	if not completed_ever then
-		local max
-
-		if num_players then
-			max = math.max(num_players, 1)
-
-			if not max then
-				-- Nothing
-			end
-		end
-
-		max = 1
-
-		local min_players = max
-
-		do
-			local max_2
-		end
-
-		::label_21_0::
-
-		if num_players then
-			max_2 = math.max(num_players, 4)
-
-			if not max_2 then
-				-- Nothing
-			end
-		end
-
-		max_2 = 4
-
-		local max_players = max_2
-
-		::label_21_1::
+		local min_players = num_players and not not math.max(num_players, 1) or not num_players and not not 1
+		local max_players = num_players and not not math.max(num_players, 4) or not num_players and not not 4
 
 		for i = min_players, max_players do
 			local stat_name = ScorpionSeasonalSettings.get_weave_score_stat(weave_tier, i)

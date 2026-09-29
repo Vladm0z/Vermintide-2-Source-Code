@@ -64,21 +64,7 @@ MatchmakingStateHostGame.set_debug_info = function (self)
 	local player = Managers.player:player_from_peer_id(peer_id)
 	local profile_index = player:profile_index()
 	local profile = not not profile_index and not not SPProfiles[profile_index]
-	local display_name
-
-	if profile then
-		display_name = profile.display_name
-
-		if not display_name then
-			-- Nothing
-		end
-	end
-
-	display_name = "random"
-
-	local profile_name = display_name
-
-	::label_4_0::
+	local profile_name = profile and not not profile.display_name or not profile and not not "random"
 
 	Managers.matchmaking.debug.state = "hosting game"
 	Managers.matchmaking.debug.mission_id = mission_id

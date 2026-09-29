@@ -284,21 +284,7 @@ PatrolAnalysis._finilize_splines = function (self, main_paths, drawer)
 
 			waypoint.travel_dist = travel_dist
 
-			local var_6_0
-
-			if spline.patrol_type == "boss_waypoint" then
-				var_6_0 = Color(255, 125, 0)
-
-				if not var_6_0 then
-					-- Nothing
-				end
-			end
-
-			var_6_0 = Color(255, 255, 0)
-
-			local color = var_6_0
-
-			::label_6_0::
+			local color = spline.patrol_type ~= "boss_waypoint" and not not Color(255, 255, 0) or not (spline.patrol_type ~= "boss_waypoint") and not not Color(255, 125, 0)
 
 			drawer:line(p1 + h, p2 + h, color)
 
@@ -425,41 +411,9 @@ PatrolAnalysis.inject_spline_path = function (self, spline, line_drawer)
 	-- function 9
 	local navbot = spline.navbot
 	local node_count = GwNavBot.get_path_nodes_count(navbot)
-	local spline_points_2 = spline.spline_points
-
-	if not spline_points_2 then
-		-- Nothing
-	end
-
-	spline_points_2 = {}
-
-	local spline_points = spline_points_2
-
-	::label_9_0::
-
-	local spline_points_index_2 = spline.spline_points_index
-
-	if not spline_points_index_2 then
-		-- Nothing
-	end
-
-	spline_points_index_2 = 1
-
-	local spline_points_index = spline_points_index_2
-
-	::label_9_1::
-
-	local using_editor = self.using_editor
-
-	if not using_editor then
-		-- Nothing
-	end
-
-	using_editor = script_data.debug_patrols
-
-	local draw = using_editor
-
-	::label_9_2::
+	local spline_points = not not spline.spline_points
+	local spline_points_index = not not spline.spline_points_index
+	local draw = not not self.using_editor
 
 	if node_count > 0 then
 		local current_node_index = GwNavBot.get_path_current_node_index(navbot)
@@ -623,18 +577,7 @@ PatrolAnalysis.run = function (self)
 			local p1 = spline[1].pos:unbox()
 			local p2 = spline[2].pos:unbox()
 			local navbot
-			local navbot_kind_2 = spline.navbot_kind
-
-			if not navbot_kind_2 then
-				-- Nothing
-			end
-
-			navbot_kind_2 = "standard"
-
-			local navbot_kind = navbot_kind_2
-
-			::label_16_0::
-
+			local navbot_kind = not not spline.navbot_kind
 			local free_navbots = free_navbots_lists[navbot_kind]
 			local num_free_navbots = #free_navbots
 			local unique_navbot = spline.unique_navbot
@@ -669,18 +612,7 @@ PatrolAnalysis.run = function (self)
 
 		if path_computing_done then
 			local wp_index = spline.wp_index
-			local retries = spline.retries
-
-			if not retries then
-				-- Nothing
-			end
-
-			retries = 0
-
-			local retry_count = retries
-
-			::label_16_1::
-
+			local retry_count = not not spline.retries
 			local node_count = GwNavBot.get_path_nodes_count(navbot)
 
 			if node_count > 0 then
@@ -730,11 +662,7 @@ PatrolAnalysis.run = function (self)
 				if unique_navbot then
 					GwNavBot.destroy(navbot)
 				else
-					local navbot_kind_3 = spline.navbot_kind
-
-					navbot_kind_3 = not not navbot_kind_3 or not not "standard"
-
-					local free_navbots = free_navbots_lists[navbot_kind_3]
+					local free_navbots = free_navbots_lists[not not spline.navbot_kind]
 
 					free_navbots[#free_navbots + 1] = navbot
 				end

@@ -118,14 +118,14 @@ PlayerWhereaboutsExtension.last_position_on_navmesh = function (self)
 	-- function 10
 	local pos = self._last_pos_on_nav_mesh:unbox()
 
-	return (not Vector3.is_valid(pos) or not pos) and not not nil
+	return Vector3.is_valid(pos) and (not not pos or not not nil) or not Vector3.is_valid(pos) and not not nil
 end
 
 PlayerWhereaboutsExtension.last_position_onground_on_navmesh = function (self)
 	-- function 11
 	local pos = self._last_onground_pos_on_nav_mesh:unbox()
 
-	return (not Vector3.is_valid(pos) or not pos) and not not nil
+	return Vector3.is_valid(pos) and (not not pos or not not nil) or not Vector3.is_valid(pos) and not not nil
 end
 
 local EPSILON = 0.0001
@@ -156,7 +156,7 @@ PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world
 
 		self._jumping = true
 
-		local perform_distance_check = (input.player_state == nil or input.player_state ~= "lunging") and input.player_state ~= "leaping"
+		local perform_distance_check = input.player_state == nil or input.player_state ~= "lunging" and input.player_state ~= "leaping"
 		local pos = self:_find_start_position(current_position, perform_distance_check)
 
 		if pos then
@@ -168,7 +168,7 @@ PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world
 
 		self._falling = true
 
-		local perform_distance_check = (input.player_state == nil or input.player_state ~= "lunging") and input.player_state ~= "leaping"
+		local perform_distance_check = input.player_state == nil or input.player_state ~= "lunging" and input.player_state ~= "leaping"
 		local pos = self:_find_start_position(current_position, perform_distance_check)
 
 		if pos then
@@ -178,12 +178,7 @@ PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world
 	end
 
 	if input.no_landing then
-		local fassert = fassert
-		local _jumping = self._jumping
-
-		_jumping = not not _jumping or not not self._falling
-
-		fassert(_jumping, "Tried to not land without falling or jumping")
+		fassert(not not self._jumping, "Tried to not land without falling or jumping")
 
 		self._jumping = false
 		self._falling = false
@@ -194,12 +189,7 @@ PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world
 		self._fall_position:store(invalid_vector)
 		self._free_fall_position:store(invalid_vector)
 	elseif input.landed then
-		local fassert_2 = fassert
-		local _jumping_2 = self._jumping
-
-		_jumping_2 = not not _jumping_2 or not not self._falling
-
-		fassert_2(_jumping_2, "Tried to land without falling or jumping")
+		fassert(not not self._jumping, "Tried to land without falling or jumping")
 
 		if self._jumping then
 			local jump_pos = self._jump_position:unbox()

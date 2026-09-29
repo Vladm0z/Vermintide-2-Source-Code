@@ -1,18 +1,7 @@
 -- chunkname: @scripts/ui/social_wheel/social_wheel_ui.lua
 
 local social_wheel_settings_definitions = local_require("scripts/ui/social_wheel/social_wheel_ui_settings")
-local BASE_SOCIAL_WHEEL_SETTINGS_2 = BASE_SOCIAL_WHEEL_SETTINGS
-
-if not BASE_SOCIAL_WHEEL_SETTINGS_2 then
-	-- Nothing
-end
-
-BASE_SOCIAL_WHEEL_SETTINGS_2 = table.clone(SocialWheelSettings)
-
-local BASE_SOCIAL_WHEEL_SETTINGS = BASE_SOCIAL_WHEEL_SETTINGS_2
-
-::label_0_0::
-
+local BASE_SOCIAL_WHEEL_SETTINGS = not not BASE_SOCIAL_WHEEL_SETTINGS
 local ICON_PLACEHOLDER_TEXTURE_PATH = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
 local SOCIAL_WHEEL_REFERENCE_NAME = "social_wheel_ui"
 local BASE_REFERENCE_NAME = "SocialWheelUI_"
@@ -113,10 +102,7 @@ SocialWheelUI.init = function (self, parent, ingame_ui_context)
 	self._wwise_world = ingame_ui_context.wwise_world
 
 	if IS_CONSOLE then
-		local flag
-
-		flag = (not ingame_ui_context.is_in_inn or not "_inn") and not not ""
-		self._console_extension = flag
+		self._console_extension = ingame_ui_context.is_in_inn and not not "_inn" or not ingame_ui_context.is_in_inn and not not ""
 	else
 		self._console_extension = ""
 	end
@@ -203,11 +189,11 @@ SocialWheelUI._create_social_wheel = function (self, social_wheel_settings)
 					category_widget_pages[page_idx] = category_widgets
 
 					if not category_widget_pages.emotes_page_index then
-						category_widget_pages.emotes_page_index = (not page.emotes or not page_idx) and not not nil
+						category_widget_pages.emotes_page_index = page.emotes and (not not page_idx or not not nil) or not page.emotes and not not nil
 					end
 
 					if not category_widget_pages.weapon_poses_page_index then
-						category_widget_pages.weapon_poses_page_index = (not page.weapon_poses or not page_idx) and not not nil
+						category_widget_pages.weapon_poses_page_index = page.weapon_poses and (not not page_idx or not not nil) or not page.weapon_poses and not not nil
 					end
 
 					for i = 1, num_category_settings do
@@ -351,21 +337,7 @@ SocialWheelUI._add_social_wheel_event_animation = function (self, widget, is_loc
 	self._animations["social_event_" .. event_index] = UIAnimation.init(UIAnimation.function_by_time, widget.offset, 1, 500, -60, 0.25, math.easeOutCubic)
 	self._animation_callbacks["social_event_" .. event_index] = function ()
 		-- function 13
-		local get_color_table_with_alpha
-
-		if is_local_player then
-			get_color_table_with_alpha = Colors.get_color_table_with_alpha("medium_purple", 255)
-
-			if not get_color_table_with_alpha then
-				-- Nothing
-			end
-		end
-
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("light_sky_blue", 255)
-
-		local color = get_color_table_with_alpha
-
-		::label_13_0::
+		local color = is_local_player and not not Colors.get_color_table_with_alpha("medium_purple", 255) or not is_local_player and not not Colors.get_color_table_with_alpha("light_sky_blue", 255)
 
 		self._animations["social_event_color_" .. event_index] = UIAnimation.init(UIAnimation.linear_scale_color, widget.style.text.text_color, 255, 255, 255, color[2], color[3], color[4], 2)
 		self._animations["timer_" .. event_index] = UIAnimation.init(UIAnimation.function_by_time, GARBAGE, 1, 0, 0, 5, math.easeInCubic)
@@ -735,17 +707,7 @@ SocialWheelUI._open_menu = function (self, dt, t, input_service, increment_page)
 
 	local success = true
 	local current_context = self._current_context
-	local unit = current_context.unit
-
-	if not unit then
-		-- Nothing
-	end
-
-	unit = current_context.ping_context_unit
-
-	local social_wheel_unit = unit
-
-	::label_36_0::
+	local social_wheel_unit = not not current_context.unit
 
 	if not Unit.alive(social_wheel_unit) then
 		social_wheel_unit = nil
@@ -766,7 +728,7 @@ SocialWheelUI._open_menu = function (self, dt, t, input_service, increment_page)
 		local gamepad_enabled = Managers.input:is_device_active("gamepad")
 		local layout_settings = Application.user_setting("social_wheel_gamepad_layout")
 		local should_use_gamepad = Managers.state.game_mode:setting("should_use_gamepad_social_wheel")
-		local use_gamepad_layout = (layout_settings ~= "auto" or not gamepad_enabled) and layout_settings == "always"
+		local use_gamepad_layout = layout_settings == "always"
 
 		if use_gamepad_layout or should_use_gamepad then
 			category = category .. "_gamepad"
@@ -833,7 +795,7 @@ SocialWheelUI._open_menu = function (self, dt, t, input_service, increment_page)
 
 	local active_context = self._active_context
 
-	if (not selected_category_widgets.num_pages or not active_context.show_emotes) and active_context.show_poses then
+	if selected_category_widgets.num_pages and (active_context.show_emotes or active_context.show_poses) or not selected_category_widgets.num_pages and active_context.show_poses then
 		self._page_input_widget.content.visible = false
 		self._block_next_input = true
 	end
@@ -872,21 +834,7 @@ SocialWheelUI._open_menu = function (self, dt, t, input_service, increment_page)
 	animations.animation_bg_size = UIAnimation.init(UIAnimation.function_by_time, widget_content, "size_multiplier", widget_content.final_size_multiplier * 0.5, widget_content.final_size_multiplier, animation_times.SIZE, math.ease_out_elastic)
 
 	local gamepad_enabled = not IS_WINDOWS or not not Managers.input:is_device_active("gamepad")
-	local var_36_1
-
-	if gamepad_enabled then
-		var_36_1 = STOP_LERP_TIME_CONTROLLER
-
-		if not var_36_1 then
-			-- Nothing
-		end
-	end
-
-	var_36_1 = STOP_LERP_TIME
-
-	local stop_lerp_time = var_36_1
-
-	::label_36_1::
+	local stop_lerp_time = gamepad_enabled and not not STOP_LERP_TIME_CONTROLLER or not gamepad_enabled and not not STOP_LERP_TIME
 
 	self._valid_selection = true
 	self._selected_widget = nil
@@ -910,17 +858,7 @@ SocialWheelUI._open_menu = function (self, dt, t, input_service, increment_page)
 			widget.style.text.localize = false
 		end
 
-		local position_2 = active_context.position
-
-		if position_2 then
-			-- Nothing
-		end
-
-		position_2 = active_context.position:unbox()
-
-		local position = position_2
-
-		::label_36_2::
+		local position = not not active_context.position
 
 		if position and not self._world_marker_preview_id then
 			Managers.state.event:trigger("add_world_marker_position", "ping", position, cb)
@@ -970,11 +908,7 @@ SocialWheelUI._inject_weapon_poses = function (self)
 	end
 
 	self._wielded_item_type = wielded_item_type
-
-	local _loaded_weapon_pose_packages = self._loaded_weapon_pose_packages
-
-	_loaded_weapon_pose_packages = not not _loaded_weapon_pose_packages or not not {}
-	self._loaded_weapon_pose_packages = _loaded_weapon_pose_packages
+	self._loaded_weapon_pose_packages = not not self._loaded_weapon_pose_packages
 
 	local loaded_package_data = self._loaded_weapon_pose_packages[wielded_slot]
 
@@ -1093,19 +1027,7 @@ SocialWheelUI._create_weapon_pose_wheel = function (self, parent_item, slot_name
 	local weapon_pose_social_wheel_settings = {
 		weapon_poses = true
 	}
-	local str
-
-	if POSE_MASKED then
-		str = "template_diffuse_masked"
-
-		goto label_43_0
-	end
-
-	str = "template_diffuse"
-
-	local template_material_name = str
-
-	::label_43_0::
+	local template_material_name = POSE_MASKED and not not "template_diffuse_masked" or not POSE_MASKED and not not "template_diffuse"
 
 	for i = 1, #weapon_poses do
 		local weapon_pose = weapon_poses[i]
@@ -1183,17 +1105,7 @@ end
 
 SocialWheelUI._create_material_instance = function (self, new_material_name, template_material_name, reference_name)
 	-- function 44
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
-
-	if not _cloned_materials_by_reference then
-		-- Nothing
-	end
-
-	_cloned_materials_by_reference = {}
-
-	local cloned_materials_by_reference = _cloned_materials_by_reference
-
-	::label_44_0::
+	local cloned_materials_by_reference = not not self._cloned_materials_by_reference
 
 	if not cloned_materials_by_reference[reference_name] then
 		cloned_materials_by_reference[reference_name] = new_material_name
@@ -1303,61 +1215,11 @@ end
 SocialWheelUI.update_open = function (self, dt, t, input_service)
 	-- function 51
 	local ping_held = input_service:get("ping_hold")
-	local get = input_service:get("ping_release")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = self.previous_ping_held
-
-	if get then
-		-- Nothing
-	end
-
-	get = not ping_held
-
-	local ping_released = get
-
-	::label_51_0::
-
+	local ping_released = not not input_service:get("ping_release")
 	local social_wheel_only_held = input_service:get("social_wheel_only_hold")
-	local get_2 = input_service:get("social_wheel_only_release")
-
-	if not get_2 then
-		-- Nothing
-	end
-
-	get_2 = self.previous_social_wheel_only_held
-
-	if get_2 then
-		-- Nothing
-	end
-
-	get_2 = not social_wheel_only_held
-
-	local social_wheel_only_released = get_2
-
-	::label_51_1::
-
+	local social_wheel_only_released = not not input_service:get("social_wheel_only_release")
 	local photomode_only_held = input_service:get("photomode_only_hold")
-	local get_3 = input_service:get("photomode_only_release")
-
-	if not get_3 then
-		-- Nothing
-	end
-
-	get_3 = self.previous_photomode_only_held
-
-	if get_3 then
-		-- Nothing
-	end
-
-	get_3 = not photomode_only_held
-
-	local photomode_only_released = get_3
-
-	::label_51_2::
+	local photomode_only_released = not not input_service:get("photomode_only_release")
 
 	if photomode_only_held and self._current_selection_widget_settings.has_pages and input_service:get("social_wheel_page") and not self._block_next_input then
 		self:_close_menu(dt, t, input_service, true)
@@ -1367,23 +1229,7 @@ SocialWheelUI.update_open = function (self, dt, t, input_service)
 	end
 
 	local weapon_poses_only_held = input_service:get("weapon_poses_only_hold")
-	local get_4 = input_service:get("weapon_poses_only_release")
-
-	if not get_4 then
-		-- Nothing
-	end
-
-	get_4 = self.previous_weapon_poses_only_held
-
-	if get_4 then
-		-- Nothing
-	end
-
-	get_4 = not weapon_poses_only_held
-
-	local weapon_poses_only_released = get_4
-
-	::label_51_3::
+	local weapon_poses_only_released = not not input_service:get("weapon_poses_only_release")
 
 	if weapon_poses_only_held and self._current_selection_widget_settings.has_pages and input_service:get("social_wheel_page") and not self._block_next_input then
 		self:_close_menu(dt, t, input_service, true)
@@ -1461,21 +1307,7 @@ SocialWheelUI._update_pointer = function (self, input_service, enabled, t)
 
 		new_position = screen_center + direction * new_length
 
-		local num
-
-		if enabled then
-			num = settings.size[1] / settings.size[2]
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		local aspect_ratio = num
-
-		::label_52_0::
+		local aspect_ratio = enabled and not not (settings.size[1] / settings.size[2]) or not enabled and not not 1
 
 		if new_length < 100 then
 			angle = math.atan2(direction[2] * aspect_ratio, direction[1])
@@ -1593,28 +1425,7 @@ SocialWheelUI._update_selection = function (self, enabled, total_angle, angle)
 				local event_text_func = social_wheel_event_settings.event_text_func
 
 				if not social_wheel_event_settings.disable_input_text then
-					local var_53_0
-
-					if event_text_func then
-						var_53_0 = event_text_func(target_unit, social_wheel_event_settings, true)
-
-						if not var_53_0 then
-							-- Nothing
-						end
-					end
-
-					var_53_0 = social_wheel_event_settings.event_text
-
-					if not var_53_0 then
-						-- Nothing
-					end
-
-					var_53_0 = Localize(social_wheel_event_settings.text)
-
-					local event_text = var_53_0
-
-					::label_53_0::
-
+					local event_text = event_text_func and not not event_text_func(target_unit, social_wheel_event_settings, true) or not event_text_func and not not social_wheel_event_settings.event_text
 					local bg_widget = self._bg_widget
 					local bg_widget_content = bg_widget.content
 
@@ -1650,18 +1461,7 @@ SocialWheelUI._close_menu = function (self, dt, t, input_service, page_only)
 	animations.animation_bg_size = UIAnimation.init(UIAnimation.function_by_time, bg_widget_content, "size_multiplier", bg_widget_content.size_multiplier, 0, animation_times.SIZE, math.easeOutCubic)
 
 	local active_context = self._active_context
-	local unit = active_context.unit
-
-	if not unit then
-		-- Nothing
-	end
-
-	unit = active_context.ping_context_unit
-
-	local target_unit = unit
-
-	::label_55_0::
-
+	local target_unit = not not active_context.unit
 	local selection_widgets = self._current_selection_widgets
 	local num_selection_widgets = #selection_widgets
 
@@ -1738,31 +1538,13 @@ SocialWheelUI._close_menu = function (self, dt, t, input_service, page_only)
 	end
 
 	if IS_CONSOLE then
-		local flag
-
-		flag = (not self._ingame_ui_context.is_in_inn or not "_inn") and not not ""
-		self._console_extension = flag
+		self._console_extension = self._ingame_ui_context.is_in_inn and not not "_inn" or not self._ingame_ui_context.is_in_inn and not not ""
 	else
 		self._console_extension = ""
 	end
 
 	local gamepad_enabled = not IS_WINDOWS or not not Managers.input:is_device_active("gamepad")
-	local var_55_2
-
-	if gamepad_enabled then
-		var_55_2 = START_LERP_TIME_CONTROLLER
-
-		if not var_55_2 then
-			-- Nothing
-		end
-	end
-
-	var_55_2 = START_LERP_TIME
-
-	local start_lerp_time = var_55_2
-
-	::label_55_1::
-
+	local start_lerp_time = gamepad_enabled and not not START_LERP_TIME_CONTROLLER or not gamepad_enabled and not not START_LERP_TIME
 	local social_message_sent
 
 	if self._world_marker_preview_id then
@@ -1783,18 +1565,7 @@ SocialWheelUI._close_menu = function (self, dt, t, input_service, page_only)
 			local widget = self._current_selection_widgets[self._current_index]
 			local widget_content = widget.content
 			local settings = widget_content.settings
-			local ping_type_2 = settings.ping_type
-
-			if not ping_type_2 then
-				-- Nothing
-			end
-
-			ping_type_2 = PingTypes.CHAT_ONLY
-
-			local ping_type = ping_type_2
-
-			::label_55_2::
-
+			local ping_type = not not settings.ping_type
 			local social_wheel_event_id = rawget(NetworkLookup.social_wheel_events, settings.name)
 
 			if social_wheel_event_id then

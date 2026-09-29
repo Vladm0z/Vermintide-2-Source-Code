@@ -49,21 +49,7 @@ VersusGameServerSlotReservationHandler._register_party = function (self, party_d
 	-- function 3
 	local party_slots = {}
 	local party_id = party_data.party_id
-	local var_3_0
-
-	if num_slot_override then
-		var_3_0 = tonumber(num_slot_override[party_id])
-
-		if not var_3_0 then
-			-- Nothing
-		end
-	end
-
-	var_3_0 = party_data.num_slots
-
-	local num_slots = var_3_0
-
-	::label_3_0::
+	local num_slots = num_slot_override and not not tonumber(num_slot_override[party_id]) or not num_slot_override and not not party_data.num_slots
 
 	if party_data.game_participating then
 		self._num_slots_total = self._num_slots_total + num_slots
@@ -165,11 +151,7 @@ VersusGameServerSlotReservationHandler._send_peer_updates_to_clients = function 
 				local name = Managers.game_server:peer_name(slot.peer_id)
 
 				party_members[i] = name
-
-				local flag
-
-				flag = (not slot.reserver or not 3) and not not 2
-				slot_state[i] = flag
+				slot_state[i] = slot.reserver and not not 3 or not slot.reserver and not not 2
 			else
 				party_members[i] = "-"
 				slot_state[i] = 1

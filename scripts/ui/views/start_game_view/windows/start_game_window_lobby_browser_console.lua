@@ -53,16 +53,7 @@ StartGameWindowLobbyBrowserConsole.on_enter = function (self, params, offset)
 	self._stats_id = local_player:stats_id()
 	self._friend_names = {}
 
-	local LobbyFinder = LobbyFinder
-	local var_1_1 = LobbyFinder
-	local new = LobbyFinder.new
-	local var_1_3 = network_options
-	local MAX_NUM_LOBBIES = MatchmakingSettings.MAX_NUM_LOBBIES
-	local IS_WINDOWS = IS_WINDOWS
-
-	IS_WINDOWS = not not IS_WINDOWS and not not true
-
-	local lobby_finder = new(var_1_1, var_1_3, MAX_NUM_LOBBIES, IS_WINDOWS)
+	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, not not IS_WINDOWS)
 
 	self._lobby_finder = lobby_finder
 	self._max_num_members = MatchmakingSettings.MAX_NUMBER_OF_PLAYERS
@@ -84,11 +75,8 @@ end
 StartGameWindowLobbyBrowserConsole.get_selected_game_mode_index = function (self)
 	-- function 2
 	local game_modes = self._game_mode_data.game_modes
-	local _selected_game_mode_index = self._selected_game_mode_index
 
-	_selected_game_mode_index = not not _selected_game_mode_index or not not game_modes.adventure
-
-	return _selected_game_mode_index
+	return not not self._selected_game_mode_index
 end
 
 local EMPTY_DATA = {}
@@ -145,17 +133,7 @@ StartGameWindowLobbyBrowserConsole.update = function (self, dt, t)
 	end
 
 	self:_update_auto_refresh(dt)
-
-	local _lobby_browser_console_ui = self._lobby_browser_console_ui
-	local var_8_1 = _lobby_browser_console_ui
-	local update = _lobby_browser_console_ui.update
-	local var_8_3 = dt
-	local var_8_4 = t
-	local _searching = self._searching
-
-	_searching = not not _searching and not not self._do_populate
-
-	update(var_8_1, var_8_3, var_8_4, _searching)
+	self._lobby_browser_console_ui:update(dt, t, not not self._searching)
 end
 
 StartGameWindowLobbyBrowserConsole.post_update = function (self, dt, t)
@@ -185,18 +163,7 @@ StartGameWindowLobbyBrowserConsole._populate_lobby_list = function (self, auto_u
 	local lobbies = self:get_lobbies()
 	local ignore_scroll_reset = true
 	local show_lobbies_index = self._selected_show_lobbies_index
-	local var_13_0 = definitions.show_lobbies_table[show_lobbies_index]
-
-	if not var_13_0 then
-		-- Nothing
-	end
-
-	var_13_0 = "lb_show_all"
-
-	local show_filter = var_13_0
-
-	::label_13_0::
-
+	local show_filter = not not definitions.show_lobbies_table[show_lobbies_index]
 	local lobbies_to_present = {}
 	local lobby_count = 0
 
@@ -235,17 +202,7 @@ local empty_lobby_list = {}
 StartGameWindowLobbyBrowserConsole.get_lobbies = function (self)
 	-- function 14
 	local lobby_finder = self._lobby_finder
-	local lobbies_2 = lobby_finder:lobbies()
-
-	if not lobbies_2 then
-		-- Nothing
-	end
-
-	lobbies_2 = empty_lobby_list
-
-	local lobbies = lobbies_2
-
-	::label_14_0::
+	local lobbies = not not lobby_finder:lobbies()
 
 	return lobbies
 end
@@ -265,54 +222,11 @@ StartGameWindowLobbyBrowserConsole._valid_lobby = function (self, lobby_data)
 	local is_server = lobby_data.server_info ~= nil
 
 	if not is_server then
-		local matchmaking = lobby_data.matchmaking
-
-		if matchmaking then
-			-- Nothing
-		end
-
-		if lobby_data.matchmaking == "false" then
-			matchmaking = false
-
-			goto label_15_0
-		end
-
-		matchmaking = true
-
-		local is_matchmaking = matchmaking
-
-		::label_15_0::
-
-		local selected_mission_id = lobby_data.selected_mission_id
-
-		if not selected_mission_id then
-			-- Nothing
-		end
-
-		selected_mission_id = lobby_data.mission_id
-
-		local mission_id = selected_mission_id
-
-		::label_15_1::
-
+		local is_matchmaking = not not lobby_data.matchmaking
+		local mission_id = not not lobby_data.selected_mission_id
 		local difficulty = lobby_data.difficulty
 		local matchmaking_types_index = tonumber(lobby_data.matchmaking_type)
-		local matchmaking_type_2
-
-		if IS_PS4 then
-			matchmaking_type_2 = lobby_data.matchmaking_type
-
-			if not matchmaking_type_2 then
-				-- Nothing
-			end
-		end
-
-		matchmaking_type_2 = NetworkLookup.matchmaking_types[matchmaking_types_index]
-
-		local matchmaking_type = matchmaking_type_2
-
-		::label_15_2::
-
+		local matchmaking_type = IS_PS4 and not not lobby_data.matchmaking_type or not IS_PS4 and not not NetworkLookup.matchmaking_types[matchmaking_types_index]
 		local num_players = tonumber(lobby_data.num_players)
 		local quick_play = lobby_data.quick_play
 		local mechanism = lobby_data.mechanism
@@ -357,9 +271,7 @@ StartGameWindowLobbyBrowserConsole._valid_lobby = function (self, lobby_data)
 		if mechanism == "weave" then
 			local weave_template = WeaveSettings.templates[mission_id]
 
-			if weave_template and not weave_template.objectives[1].level_id then
-				-- Nothing
-			end
+			level_key = not weave_template or not not weave_template.objectives[1].level_id or not not level_key
 		end
 
 		local level_unlocked = LevelUnlockUtils.level_unlocked(statistics_db, player_stats_id, level_key)
@@ -420,17 +332,7 @@ end
 StartGameWindowLobbyBrowserConsole._update_auto_refresh = function (self, dt)
 	-- function 19
 	local is_refreshing = self:_is_refreshing()
-	local _lobby_list_update_timer = self._lobby_list_update_timer
-
-	if not _lobby_list_update_timer then
-		-- Nothing
-	end
-
-	_lobby_list_update_timer = MatchmakingSettings.TIME_BETWEEN_EACH_SEARCH
-
-	local lobby_list_update_timer = _lobby_list_update_timer
-
-	::label_19_0::
+	local lobby_list_update_timer = not not self._lobby_list_update_timer
 
 	if lobby_list_update_timer then
 		lobby_list_update_timer = lobby_list_update_timer - dt
@@ -457,14 +359,7 @@ StartGameWindowLobbyBrowserConsole.reset_filters = function (self, selected_game
 	-- function 20
 	self:set_level(not not selected_level or not not "any")
 	self:set_difficulty(not not selected_difficulty or not not "any")
-
-	local var_20_0 = self
-	local set_lobby_filter = self.set_lobby_filter
-	local flag
-
-	flag = not not selected_filter or (BUILD == "dev" or BUILD == "debug") and not not "lb_show_all" or not not "lb_show_joinable"
-
-	set_lobby_filter(var_20_0, flag)
+	self:set_lobby_filter(not not "lb_show_all")
 	self:set_distance_filter(not not selected_distance or not not "map_zone_options_5")
 	self:set_game_mode(not not selected_game_mode or not not "any")
 	self:_search()
@@ -474,18 +369,7 @@ StartGameWindowLobbyBrowserConsole._create_filter_requirements = function (self)
 	-- function 21
 	local lobby_finder = self._lobby_finder
 	local game_mode_index = self._selected_game_mode_index
-	local var_21_0 = self._game_mode_data.game_modes[self._selected_game_mode_index]
-
-	if not var_21_0 then
-		-- Nothing
-	end
-
-	var_21_0 = "any"
-
-	local mechanism = var_21_0
-
-	::label_21_0::
-
+	local mechanism = not not self._game_mode_data.game_modes[self._selected_game_mode_index]
 	local level_index = self._selected_level_index
 	local levels_table = self:_get_levels()
 	local level_key = levels_table[level_index]
@@ -509,46 +393,24 @@ StartGameWindowLobbyBrowserConsole._create_filter_requirements = function (self)
 		local user_region = Managers.account:region()
 
 		if distance_filter == "close" then
-			local filters = requirements.filters
-			local tbl = {
-				comparison = "equal"
+			requirements.filters.primary_region = {
+				comparison = "equal",
+				value = not not MatchmakingRegionLookup.primary[user_region]
 			}
-			local var_21_3 = MatchmakingRegionLookup.primary[user_region]
-
-			if not var_21_3 then
-				var_21_3 = MatchmakingRegionLookup.secondary[user_region]
-				var_21_3 = not not var_21_3 or not not "default"
-			end
-
-			tbl.value = var_21_3
-			filters.primary_region = tbl
 		elseif distance_filter == "medium" then
-			local filters_2 = requirements.filters
-			local tbl_2 = {
-				comparison = "equal"
+			requirements.filters.secondary_region = {
+				comparison = "equal",
+				value = not not MatchmakingRegionLookup.secondary[user_region]
 			}
-			local var_21_6 = MatchmakingRegionLookup.secondary[user_region]
-
-			if not var_21_6 then
-				var_21_6 = MatchmakingRegionLookup.primary[user_region]
-				var_21_6 = not not var_21_6 or not not "default"
-			end
-
-			tbl_2.value = var_21_6
-			filters_2.secondary_region = tbl_2
 		end
 	end
 
 	local eac_authorized = Managers.eac:is_trusted()
-	local filters_3 = requirements.filters
-	local tbl_3 = {
-		comparison = "equal"
-	}
-	local flag
 
-	flag = (not eac_authorized or not "true") and not not "false"
-	tbl_3.value = flag
-	filters_3.eac_authorized = tbl_3
+	requirements.filters.eac_authorized = {
+		comparison = "equal",
+		value = eac_authorized and not not "true" or not eac_authorized and not not "false"
+	}
 
 	if difficulty_key ~= "any" and difficulty_key then
 		requirements.filters.difficulty = {
@@ -628,18 +490,7 @@ StartGameWindowLobbyBrowserConsole._get_levels = function (self)
 	-- function 25
 	local game_mode_data = self._game_mode_data
 	local game_modes = game_mode_data.game_modes
-	local _selected_game_mode_index = self._selected_game_mode_index
-
-	if not _selected_game_mode_index then
-		-- Nothing
-	end
-
-	_selected_game_mode_index = game_modes.adventure
-
-	local game_mode_index = _selected_game_mode_index
-
-	::label_25_0::
-
+	local game_mode_index = not not self._selected_game_mode_index
 	local data = game_mode_data[game_mode_index]
 	local levels = data.levels
 
@@ -650,30 +501,8 @@ StartGameWindowLobbyBrowserConsole._get_difficulties = function (self)
 	-- function 26
 	local game_mode_data = self._game_mode_data
 	local game_modes = game_mode_data.game_modes
-	local _selected_game_mode_index = self._selected_game_mode_index
-
-	if not _selected_game_mode_index then
-		-- Nothing
-	end
-
-	_selected_game_mode_index = game_modes.adventure
-
-	local game_mode_index = _selected_game_mode_index
-
-	::label_26_0::
-
-	local var_26_1 = game_mode_data[game_mode_index]
-
-	if not var_26_1 then
-		-- Nothing
-	end
-
-	var_26_1 = game_mode_data[1]
-
-	local data = var_26_1
-
-	::label_26_1::
-
+	local game_mode_index = not not self._selected_game_mode_index
+	local data = not not game_mode_data[game_mode_index]
 	local difficulties = data.difficulties
 
 	return difficulties
@@ -682,17 +511,7 @@ end
 StartGameWindowLobbyBrowserConsole.completed_level_difficulty_index = function (self, lobby_data)
 	-- function 27
 	local level_key = lobby_data.selected_mission_id
-	local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(self._statistics_db, self._stats_id, level_key)
-
-	if not completed_level_difficulty_index then
-		-- Nothing
-	end
-
-	completed_level_difficulty_index = 0
-
-	local completed_difficulty_index = completed_level_difficulty_index
-
-	::label_27_0::
+	local completed_difficulty_index = not not LevelUnlockUtils.completed_level_difficulty_index(self._statistics_db, self._stats_id, level_key)
 
 	return completed_difficulty_index
 end
@@ -788,18 +607,7 @@ end
 
 StartGameWindowLobbyBrowserConsole.is_lobby_joinable = function (self, lobby_data)
 	-- function 34
-	local selected_mission_id = lobby_data.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_data.mission_id
-
-	local mission_id = selected_mission_id
-
-	::label_34_0::
-
+	local mission_id = not not lobby_data.selected_mission_id
 	local difficulty = lobby_data.difficulty
 	local num_players = tonumber(lobby_data.num_players)
 	local mechanism = lobby_data.mechanism
@@ -855,23 +663,7 @@ StartGameWindowLobbyBrowserConsole.is_lobby_joinable = function (self, lobby_dat
 			end
 
 			local ignore_dlc_check = false
-			local weave_unlocked_2 = LevelUnlockUtils.weave_unlocked(statistics_db, player_stats_id, weave_name, ignore_dlc_check)
-
-			if not weave_unlocked_2 then
-				-- Nothing
-			end
-
-			if weave_name ~= self._current_weave then
-				weave_unlocked_2 = false
-
-				goto label_34_1
-			end
-
-			weave_unlocked_2 = true
-
-			local weave_unlocked = weave_unlocked_2
-
-			::label_34_1::
+			local weave_unlocked = not not LevelUnlockUtils.weave_unlocked(statistics_db, player_stats_id, weave_name, ignore_dlc_check)
 
 			if not weave_unlocked then
 				return false, "weave_not_unlocked"

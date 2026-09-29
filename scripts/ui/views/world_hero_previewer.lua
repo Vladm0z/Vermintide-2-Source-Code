@@ -72,16 +72,10 @@ HeroPreviewer.on_enter = function (self, world)
 
 	Application.set_render_setting("max_shadow_casting_lights", 16)
 
-	local _session_id = self._session_id
-
-	_session_id = not not _session_id or not not 0
-	self._session_id = _session_id
+	self._session_id = not not self._session_id
 
 	if self._delayed_spawn then
-		local _delayed_hero_spawn_data = self._delayed_hero_spawn_data
-
-		_delayed_hero_spawn_data = not not _delayed_hero_spawn_data or not not EMPTY_TABLE
-		self._requested_hero_spawn_data = _delayed_hero_spawn_data
+		self._requested_hero_spawn_data = not not self._delayed_hero_spawn_data
 	end
 end
 
@@ -199,7 +193,7 @@ HeroPreviewer._update_delayed_material_changes = function (self)
 		end
 	end
 
-	if (not hero_material_changed or not self._use_highest_mip_levels) and UISettings.wait_for_mip_streaming_character then
+	if hero_material_changed and (self._use_highest_mip_levels or UISettings.wait_for_mip_streaming_character) or not hero_material_changed and UISettings.wait_for_mip_streaming_character then
 		self:_request_mip_streaming_for_unit(character_unit)
 	end
 
@@ -320,35 +314,11 @@ HeroPreviewer._set_character_visibility = function (self, visible)
 		Unit.set_unit_visibility(mesh_unit, visible)
 
 		local slots_by_slot_index = InventorySettings.slots_by_slot_index
-		local str
-
-		if visible then
-			str = "lua_attachment_unhidden"
-
-			goto label_15_0
-		end
-
-		str = "lua_attachment_hidden"
-
-		local attachment_lua_event = str
-
-		::label_15_0::
+		local attachment_lua_event = visible and not not "lua_attachment_unhidden" or not visible and not not "lua_attachment_hidden"
 
 		Unit.flow_event(mesh_unit, attachment_lua_event)
 
-		local str_2
-
-		if visible then
-			str_2 = "lua_ui_vfx_unhidden"
-
-			goto label_15_1
-		end
-
-		str_2 = "lua_ui_vfx_hidden"
-
-		local vfx_lua_event = str_2
-
-		::label_15_1::
+		local vfx_lua_event = visible and not not "lua_ui_vfx_unhidden" or not visible and not not "lua_ui_vfx_hidden"
 
 		Unit.flow_event(mesh_unit, vfx_lua_event)
 
@@ -367,19 +337,7 @@ HeroPreviewer._set_character_visibility = function (self, visible)
 				show_unit = visible
 			end
 
-			local str_3
-
-			if show_unit then
-				str_3 = "lua_wield"
-
-				goto label_15_2
-			end
-
-			str_3 = "lua_unwield"
-
-			local weapon_lua_event = str_3
-
-			::label_15_2::
+			local weapon_lua_event = show_unit and not not "lua_wield" or not show_unit and not not "lua_unwield"
 
 			if type(data) == "table" then
 				local left_unit = data.left
@@ -400,19 +358,7 @@ HeroPreviewer._set_character_visibility = function (self, visible)
 				end
 			elseif Unit.alive(data) then
 				if not is_weapon then
-					local str_4
-
-					if show_unit then
-						str_4 = "lua_attachment_unhidden"
-
-						goto label_15_3
-					end
-
-					str_4 = "lua_attachment_hidden"
-
-					local non_weapon_attachment_lua_event = str_4
-
-					::label_15_3::
+					local non_weapon_attachment_lua_event = show_unit and not not "lua_attachment_unhidden" or not show_unit and not not "lua_attachment_hidden"
 
 					Unit.flow_event(data, non_weapon_attachment_lua_event)
 				end
@@ -421,17 +367,7 @@ HeroPreviewer._set_character_visibility = function (self, visible)
 				Unit.set_unit_visibility(data, show_unit)
 
 				if slot_type == "hat" then
-					local equip_hat_event_2 = self.character_unit_skin_data.equip_hat_event
-
-					if not equip_hat_event_2 then
-						-- Nothing
-					end
-
-					equip_hat_event_2 = "using_skin_default"
-
-					local equip_hat_event = equip_hat_event_2
-
-					::label_15_4::
+					local equip_hat_event = not not self.character_unit_skin_data.equip_hat_event
 
 					if equip_hat_event then
 						Unit.flow_event(data, equip_hat_event)
@@ -445,17 +381,7 @@ HeroPreviewer._set_character_visibility = function (self, visible)
 		if visible then
 			local skin_data = self.character_unit_skin_data
 			local material_changes = skin_data.material_changes
-			local equip_skin_event_2 = skin_data.equip_skin_event
-
-			if not equip_skin_event_2 then
-				-- Nothing
-			end
-
-			equip_skin_event_2 = "using_skin_default"
-
-			local equip_skin_event = equip_skin_event_2
-
-			::label_15_5::
+			local equip_skin_event = not not skin_data.equip_skin_event
 
 			Unit.flow_event(character_unit, equip_skin_event)
 
@@ -487,11 +413,7 @@ end
 
 HeroPreviewer.character_visible = function (self)
 	-- function 16
-	local character_unit_visible = self.character_unit_visible
-
-	character_unit_visible = not not character_unit_visible and not not Unit.alive(self.character_unit)
-
-	return character_unit_visible
+	return not not self.character_unit_visible
 end
 
 HeroPreviewer.play_character_animation = function (self, animation_event, force_play_animation)
@@ -561,21 +483,7 @@ HeroPreviewer._load_hero_unit = function (self, profile_name, career_index, call
 	-- function 21
 	self:_unload_all_packages()
 
-	local name
-
-	if optional_breed then
-		name = optional_breed.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = profile_name
-
-	::label_21_0::
-
-	self._current_profile_name = name
+	self._current_profile_name = optional_breed and not not optional_breed.name or not optional_breed and not not profile_name
 
 	local profile_index = FindProfileIndex(profile_name)
 	local profile = SPProfiles[profile_index]
@@ -583,30 +491,7 @@ HeroPreviewer._load_hero_unit = function (self, profile_name, career_index, call
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
 	local item_data = not not skin_item and not not skin_item.data
-
-	if not optional_skin then
-		-- Nothing
-	end
-
-	do
-		local name_2
-	end
-
-	::label_21_1::
-
-	if item_data then
-		name_2 = item_data.name
-
-		if not name_2 then
-			-- Nothing
-		end
-	end
-
-	name_2 = career.base_skin
-
-	local skin_name = name_2
-
-	::label_21_2::
+	local skin_name = not not item_data.name
 
 	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", career_name == "bw_necromancer")
 
@@ -738,10 +623,8 @@ HeroPreviewer._spawn_hero_unit = function (self, skin_data, optional_scale, care
 
 	if box_dimension then
 		local default_unit_height_dimension = 1.7
-		local flag
 
-		flag = (not (default_unit_height_dimension < box_dimension.z) or not 1.5) and not not 0.9
-		self.unit_max_look_height = flag
+		self.unit_max_look_height = default_unit_height_dimension < box_dimension.z and not not 1.5 or not (default_unit_height_dimension < box_dimension.z) and not not 0.9
 	else
 		self.unit_max_look_height = 0.9
 	end
@@ -1109,11 +992,7 @@ HeroPreviewer._spawn_item = function (self, item_name, spawn_data)
 
 		if character_material_changes then
 			if self.character_unit_hidden_after_spawn then
-				local _delayed_material_changes = self._delayed_material_changes
-				local var_32_1 = self._delayed_material_changes[character_unit]
-
-				var_32_1 = not not var_32_1 or not not {}
-				_delayed_material_changes[character_unit] = var_32_1
+				self._delayed_material_changes[character_unit] = not not self._delayed_material_changes[character_unit]
 				self._delayed_material_changes[character_unit][#self._delayed_material_changes[character_unit] + 1] = character_material_changes.third_person
 			else
 				local third_person_changes = character_material_changes.third_person
@@ -1136,21 +1015,7 @@ end
 
 local function get_wield_anim(default, optional_switch, career_name)
 	-- function 33
-	local var_33_0
-
-	if optional_switch then
-		var_33_0 = optional_switch[career_name]
-
-		if not var_33_0 then
-			-- Nothing
-		end
-	end
-
-	var_33_0 = default
-
-	::label_33_0::
-
-	return var_33_0
+	return optional_switch and not not optional_switch[career_name] or not optional_switch and not not default
 end
 
 HeroPreviewer.reset_pose_animation = function (self)
@@ -1169,17 +1034,7 @@ HeroPreviewer.reset_pose_animation = function (self)
 	local wield_anim = item_template.wield_anim
 
 	if wield_anim then
-		local var_34_0 = get_wield_anim(nil, item_template.wield_anim_career_3p, self._current_career_name)
-
-		if not var_34_0 then
-			-- Nothing
-		end
-
-		var_34_0 = get_wield_anim(wield_anim, item_template.wield_anim_career, self._current_career_name)
-
-		local wield_anim = var_34_0
-
-		::label_34_0::
+		local wield_anim = not not get_wield_anim(nil, item_template.wield_anim_career_3p, self._current_career_name)
 
 		Unit.animation_event(character_unit, wield_anim)
 	end
@@ -1242,17 +1097,7 @@ HeroPreviewer._spawn_item_unit = function (self, unit, item_slot_type, item_temp
 				local wield_anim = not skip_wield_anim and not not item_template.wield_anim
 
 				if wield_anim then
-					local var_37_0 = get_wield_anim(nil, item_template.wield_anim_career_3p, self._current_career_name)
-
-					if not var_37_0 then
-						-- Nothing
-					end
-
-					var_37_0 = get_wield_anim(wield_anim, item_template.wield_anim_career, self._current_career_name)
-
-					local wield_anim = var_37_0
-
-					::label_37_0::
+					local wield_anim = not not get_wield_anim(nil, item_template.wield_anim_career_3p, self._current_career_name)
 
 					Unit.animation_event(character_unit, wield_anim)
 				end
@@ -1260,19 +1105,7 @@ HeroPreviewer._spawn_item_unit = function (self, unit, item_slot_type, item_temp
 
 			self._hidden_units[unit] = true
 
-			local str
-
-			if character_visible then
-				str = "lua_wield"
-
-				goto label_37_1
-			end
-
-			str = "lua_unwield"
-
-			local flow_event = str
-
-			::label_37_1::
+			local flow_event = character_visible and not not "lua_wield" or not character_visible and not not "lua_unwield"
 
 			Unit.flow_event(unit, flow_event)
 		else
@@ -1281,19 +1114,7 @@ HeroPreviewer._spawn_item_unit = function (self, unit, item_slot_type, item_temp
 			Unit.flow_event(unit, "lua_unwield")
 		end
 	else
-		local str_2
-
-		if character_visible then
-			str_2 = "lua_attachment_unhidden"
-
-			goto label_37_2
-		end
-
-		str_2 = "lua_attachment_hidden"
-
-		local attachment_lua_event = str_2
-
-		::label_37_2::
+		local attachment_lua_event = character_visible and not not "lua_attachment_unhidden" or not character_visible and not not "lua_attachment_hidden"
 
 		Unit.flow_event(unit, attachment_lua_event)
 
@@ -1442,17 +1263,7 @@ HeroPreviewer._trigger_equip_events = function (self)
 	if character_unit_skin_data then
 		local hat_index = InventorySettings.slots_by_name.slot_hat.slot_index
 		local hat_data = equipment_units[hat_index]
-		local equip_hat_event_2 = self.character_unit_skin_data.equip_hat_event
-
-		if not equip_hat_event_2 then
-			-- Nothing
-		end
-
-		equip_hat_event_2 = "using_skin_default"
-
-		local equip_hat_event = equip_hat_event_2
-
-		::label_44_0::
+		local equip_hat_event = not not self.character_unit_skin_data.equip_hat_event
 
 		if hat_data and equip_hat_event then
 			Unit.flow_event(hat_data, equip_hat_event)
@@ -1641,21 +1452,7 @@ end
 
 HeroPreviewer.get_character_unit = function (self)
 	-- function 57
-	local character_unit
-
-	if Unit.alive(self.character_unit) then
-		character_unit = self.character_unit
-
-		if not character_unit then
-			-- Nothing
-		end
-	end
-
-	character_unit = nil
-
-	::label_57_0::
-
-	return character_unit
+	return Unit.alive(self.character_unit) and not not self.character_unit or not Unit.alive(self.character_unit) and not not nil
 end
 
 HeroPreviewer.current_profile_name = function (self)

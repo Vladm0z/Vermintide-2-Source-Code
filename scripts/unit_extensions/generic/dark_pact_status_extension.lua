@@ -29,11 +29,7 @@ DarkPactStatusExtension.init = function (self, extension_init_context, unit, ext
 	self._stagger_immune_time = nil
 	self._heavy_stagger_immune_time = nil
 	self._always_stagger_suffered = false
-
-	local breed = extension_init_data.breed
-
-	breed = not not breed or not not Unit.get_data(unit, "breed")
-	self._breed = breed
+	self._breed = not not extension_init_data.breed
 	self._stagger_reset_time = 0
 	self._breed_action = nil
 	self._is_climbing = false
@@ -222,22 +218,7 @@ DarkPactStatusExtension.set_stagger_values = function (self, stagger_type, stagg
 
 	self._stagger_length = stagger_length
 	self._accumulated_stagger = accumulated_stagger
-
-	local num
-
-	if stagger_time > 0 then
-		num = stagger_time + t
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	::label_33_0::
-
-	self._stagger_time = num
+	self._stagger_time = stagger_time > 0 and not not (stagger_time + t) or not (stagger_time > 0) and not not 0
 	self._stagger_animation_scale = not not stagger_animation_scale or not not 1
 	self._always_stagger_suffered = not not always_stagger_suffered or not not false
 
@@ -268,17 +249,7 @@ DarkPactStatusExtension.increase_stagger_count = function (self)
 	local t = Managers.time:time("main")
 	local breed = Unit.get_data(self.unit, "breed")
 	local stagger_count = self._stagger_count
-	local stagger_count_reset_time = breed.stagger_count_reset_time
-
-	if not stagger_count_reset_time then
-		-- Nothing
-	end
-
-	stagger_count_reset_time = DEFAULT_STAGGER_RESET_TIME
-
-	local reset_time = stagger_count_reset_time
-
-	::label_34_0::
+	local reset_time = not not breed.stagger_count_reset_time
 
 	self._stagger_count = stagger_count + 1
 	self._stagger_reset_time = t + reset_time
@@ -310,11 +281,7 @@ end
 
 DarkPactStatusExtension.is_climbing = function (self)
 	-- function 39
-	local _about_to_climb = self._about_to_climb
-
-	_about_to_climb = not not _about_to_climb or not not self._is_climbing
-
-	return _about_to_climb
+	return not not self._about_to_climb
 end
 
 DarkPactStatusExtension.should_climb = function (self)

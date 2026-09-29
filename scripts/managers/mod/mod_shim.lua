@@ -88,33 +88,11 @@ ModShim.error_handling = {
 	error_state = {},
 	state_bound_log = function (vmf_mod, identifier, message, ...)
 		-- function 7
-		local var_7_0 = ModShim.error_handling.error_state[identifier]
-
-		if not var_7_0 then
-			-- Nothing
-		end
-
-		var_7_0 = {
-			printed = {}
-		}
-
-		local state = var_7_0
-
-		::label_7_0::
+		local state = not not ModShim.error_handling.error_state[identifier]
 
 		ModShim.error_handling.error_state[identifier] = state
 
-		local game_mode_2 = Managers.state.game_mode
-
-		if game_mode_2 then
-			-- Nothing
-		end
-
-		game_mode_2 = Managers.state.game_mode:game_mode()
-
-		local game_mode = game_mode_2
-
-		::label_7_1::
+		local game_mode = not not Managers.state.game_mode
 
 		if not game_mode or state.printed[game_mode] then
 			return
@@ -147,58 +125,12 @@ ModShim.wedges = {
 						local original_result = hooked_function(...)
 
 						if hook_result ~= original_result then
-							local var_9_0 = MechanismSettings[mechanism_name]
-
-							if var_9_0 then
-								-- Nothing
-							end
-
-							var_9_0 = MechanismSettings[mechanism_name].display_name
-
-							local display_name = var_9_0
-
-							::label_9_0::
+							local display_name = not not MechanismSettings[mechanism_name]
 
 							if mechanism_name == "versus" then
-								local state_bound_log = ModShim.error_handling.state_bound_log
-								local var_9_2 = vmf_mod
-								local str = "loadout_item"
-								local str_2 = "Unauthorized override of inventory items. Not allowed in %s."
-								local var_9_5
-
-								if display_name then
-									var_9_5 = Localize(display_name)
-
-									if not var_9_5 then
-										-- Nothing
-									end
-								end
-
-								var_9_5 = mechanism_name
-
-								::label_9_1::
-
-								state_bound_log(var_9_2, str, str_2, var_9_5)
+								ModShim.error_handling.state_bound_log(vmf_mod, "loadout_item", "Unauthorized override of inventory items. Not allowed in %s.", display_name and not not Localize(display_name) or not display_name and not not mechanism_name)
 							else
-								local state_bound_log_2 = ModShim.error_handling.state_bound_log
-								local var_9_7 = vmf_mod
-								local str_3 = "loadout_item"
-								local str_4 = "Unauthorized override of bot's inventory items. Not allowed in %s. Please refer to the official loadout system for bot overrides."
-								local var_9_10
-
-								if display_name then
-									var_9_10 = Localize(display_name)
-
-									if not var_9_10 then
-										-- Nothing
-									end
-								end
-
-								var_9_10 = mechanism_name
-
-								::label_9_2::
-
-								state_bound_log_2(var_9_7, str_3, str_4, var_9_10)
+								ModShim.error_handling.state_bound_log(vmf_mod, "loadout_item", "Unauthorized override of bot's inventory items. Not allowed in %s. Please refer to the official loadout system for bot overrides.", display_name and not not Localize(display_name) or not display_name and not not mechanism_name)
 							end
 						end
 
@@ -219,58 +151,12 @@ ModShim.wedges = {
 						local original_result = hooked_function(...)
 
 						if hook_result ~= original_result then
-							local var_10_0 = MechanismSettings[mechanism_name]
-
-							if var_10_0 then
-								-- Nothing
-							end
-
-							var_10_0 = MechanismSettings[mechanism_name].display_name
-
-							local display_name = var_10_0
-
-							::label_10_0::
+							local display_name = not not MechanismSettings[mechanism_name]
 
 							if mechanism_name == "versus" then
-								local state_bound_log = ModShim.error_handling.state_bound_log
-								local var_10_2 = vmf_mod
-								local str = "loadout_talent"
-								local str_2 = "Unauthorized override of talents. Not allowed in %s."
-								local var_10_5
-
-								if display_name then
-									var_10_5 = Localize(display_name)
-
-									if not var_10_5 then
-										-- Nothing
-									end
-								end
-
-								var_10_5 = mechanism_name
-
-								::label_10_1::
-
-								state_bound_log(var_10_2, str, str_2, var_10_5)
+								ModShim.error_handling.state_bound_log(vmf_mod, "loadout_talent", "Unauthorized override of talents. Not allowed in %s.", display_name and not not Localize(display_name) or not display_name and not not mechanism_name)
 							else
-								local state_bound_log_2 = ModShim.error_handling.state_bound_log
-								local var_10_7 = vmf_mod
-								local str_3 = "loadout_talent"
-								local str_4 = "Unauthorized override of bot's talents. Not allowed in %s. Please refer to the official loadout system for bot overrides."
-								local var_10_10
-
-								if display_name then
-									var_10_10 = Localize(display_name)
-
-									if not var_10_10 then
-										-- Nothing
-									end
-								end
-
-								var_10_10 = mechanism_name
-
-								::label_10_2::
-
-								state_bound_log_2(var_10_7, str_3, str_4, var_10_10)
+								ModShim.error_handling.state_bound_log(vmf_mod, "loadout_talent", "Unauthorized override of bot's talents. Not allowed in %s. Please refer to the official loadout system for bot overrides.", display_name and not not Localize(display_name) or not display_name and not not mechanism_name)
 							end
 						end
 
@@ -295,37 +181,9 @@ ModShim.wedges = {
 					end
 
 					if mechanism_name ~= "adventure" and (not global_is_inside_inn or mechanism_name == "versus") then
-						local var_12_0 = MechanismSettings[mechanism_name]
+						local display_name = not not MechanismSettings[mechanism_name]
 
-						if var_12_0 then
-							-- Nothing
-						end
-
-						var_12_0 = MechanismSettings[mechanism_name].display_name
-
-						local display_name = var_12_0
-
-						::label_12_0::
-
-						local state_bound_log = ModShim.error_handling.state_bound_log
-						local var_12_2 = vmf_mod
-						local str = "loadout_restore"
-						local str_2 = "Unauthorized override of loadout. Not allowed in %s."
-						local var_12_5
-
-						if display_name then
-							var_12_5 = Localize(display_name)
-
-							if not var_12_5 then
-								-- Nothing
-							end
-						end
-
-						var_12_5 = mechanism_name
-
-						::label_12_1::
-
-						state_bound_log(var_12_2, str, str_2, var_12_5)
+						ModShim.error_handling.state_bound_log(vmf_mod, "loadout_restore", "Unauthorized override of loadout. Not allowed in %s.", display_name and not not Localize(display_name) or not display_name and not not mechanism_name)
 
 						return
 					end
@@ -396,7 +254,7 @@ ModShim.wedges = {
 						return
 					end
 
-					if ((mood_name == "skill_huntsman_surge" or mood_name == "skill_huntsman_stealth") and vmf_mod:get(vmf_mod.SETTING_NAMES.HUNTSMAN_VISUAL) or (mood_name == "wounded" or mood_name == "bleeding_out") and vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) and mood_name == "heal_medkit" and vmf_mod:get(vmf_mod.SETTING_NAMES.HEALING) then
+					if mood_name == "skill_huntsman_surge" and (vmf_mod:get(vmf_mod.SETTING_NAMES.HUNTSMAN_VISUAL) or mood_name == "wounded" and (vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) or not (mood_name == "wounded") and (mood_name == "bleeding_out" and (vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) or not (mood_name == "bleeding_out") and (mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)))) or not (mood_name == "skill_huntsman_surge") and (mood_name == "skill_huntsman_stealth" and (vmf_mod:get(vmf_mod.SETTING_NAMES.HUNTSMAN_VISUAL) or mood_name == "wounded" and (vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) or not (mood_name == "wounded") and (mood_name == "bleeding_out" and (vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) or not (mood_name == "bleeding_out") and (mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)))) or not (mood_name == "skill_huntsman_stealth") and (mood_name == "wounded" and (vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) or not (mood_name == "wounded") and (mood_name == "bleeding_out" and (vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) or not (mood_name == "bleeding_out") and (mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN))))) then
 						return
 					end
 
@@ -440,12 +298,7 @@ ModShim.wedges = {
 		}
 	}
 }
-
-local ModShim = ModShim
-local warnings = ModShim.warnings
-
-warnings = not not warnings or not not {}
-ModShim.warnings = warnings
+ModShim.warnings = not not ModShim.warnings
 
 local has_printed_warning = ModShim.warnings
 
@@ -539,17 +392,10 @@ ModShim._wedge_hook = function (self, vmf_mod, mod_name, hook_func_name, mod_wed
 		return
 	end
 
-	local var_22_0 = mod_wedge_lookup[object]
-
-	var_22_0 = not not var_22_0 or not not {}
-	mod_wedge_lookup[object] = var_22_0
+	mod_wedge_lookup[object] = not not mod_wedge_lookup[object]
 	mod_wedge_lookup[object][method] = wedge_func
 	mod_wedge_lookup[object][method_name] = wedge_func
-
-	local var_22_1 = mod_wedge_lookup[object_name]
-
-	var_22_1 = not not var_22_1 or not not {}
-	mod_wedge_lookup[object_name] = var_22_1
+	mod_wedge_lookup[object_name] = not not mod_wedge_lookup[object_name]
 	mod_wedge_lookup[object_name][method] = wedge_func
 	mod_wedge_lookup[object_name][method_name] = wedge_func
 
@@ -560,17 +406,7 @@ ModShim._wedge_hook = function (self, vmf_mod, mod_name, hook_func_name, mod_wed
 	local function hook_override(_self, hook_obj, hook_method, mod_func, ...)
 		-- function 23
 		local func = mod_func
-		local var_23_0 = mod_wedge_lookup[hook_obj]
-
-		if var_23_0 then
-			-- Nothing
-		end
-
-		var_23_0 = mod_wedge_lookup[hook_obj][hook_method]
-
-		local wedge_func = var_23_0
-
-		::label_23_0::
+		local wedge_func = not not mod_wedge_lookup[hook_obj]
 
 		if wedge_func then
 			printf("[ModShim] <%s> hooking into %s.%s with wedged function", mod_name, hook_obj, hook_method)
@@ -629,17 +465,10 @@ ModShim._add_hook = function (self, vmf_mod, mod_name, hook_func_name, mod_new_h
 		return wedge_func(vmf_mod, mod_name, func, ...)
 	end)
 
-	local var_25_0 = mod_new_hook_lookup[object]
-
-	var_25_0 = not not var_25_0 or not not {}
-	mod_new_hook_lookup[object] = var_25_0
+	mod_new_hook_lookup[object] = not not mod_new_hook_lookup[object]
 	mod_new_hook_lookup[object][method] = wedge_func
 	mod_new_hook_lookup[object][method_name] = wedge_func
-
-	local var_25_1 = mod_new_hook_lookup[object_name]
-
-	var_25_1 = not not var_25_1 or not not {}
-	mod_new_hook_lookup[object_name] = var_25_1
+	mod_new_hook_lookup[object_name] = not not mod_new_hook_lookup[object_name]
 	mod_new_hook_lookup[object_name][method] = wedge_func
 	mod_new_hook_lookup[object_name][method_name] = wedge_func
 
@@ -650,17 +479,7 @@ ModShim._add_hook = function (self, vmf_mod, mod_name, hook_func_name, mod_new_h
 	local function hook_override(_self, hook_obj, hook_method, mod_func, ...)
 		-- function 27
 		local func = mod_func
-		local var_27_0 = mod_new_hook_lookup[hook_obj]
-
-		if var_27_0 then
-			-- Nothing
-		end
-
-		var_27_0 = mod_new_hook_lookup[hook_obj][hook_method]
-
-		local wedge_func = var_27_0
-
-		::label_27_0::
+		local wedge_func = not not mod_new_hook_lookup[hook_obj]
 
 		if wedge_func then
 			printf("[ModShim] <%s> overriding wedged function %s.%s with mods own hook", mod_name, hook_obj, hook_method)
@@ -724,24 +543,7 @@ ModShim._handle_wedges = function (self, vmf_mod, mod_name, mod_data)
 	end
 
 	if script_data.debug_mod_shim then
-		local printf = printf
-		local str = "[ModShim] \tHas wedges: %s%s"
-		local flag = #mod_wedges > 0
-		local str_2
-
-		if #mod_wedges > 0 then
-			str_2 = "\n\t" .. table.tostring(mod_wedges)
-
-			if not str_2 then
-				-- Nothing
-			end
-		end
-
-		str_2 = ""
-
-		::label_31_0::
-
-		printf(str, flag, str_2)
+		printf("[ModShim] \tHas wedges: %s%s", #mod_wedges > 0, #mod_wedges > 0 and not not ("\n\t" .. table.tostring(mod_wedges)) or not (#mod_wedges > 0) and not not "")
 	end
 
 	local mod_id = vmf_mod:get_internal_data("workshop_id")

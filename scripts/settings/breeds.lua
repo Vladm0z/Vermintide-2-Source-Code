@@ -19,21 +19,9 @@ require("scripts/helpers/breed_utils")
 
 DEFAULT_BREED_AOE_HEIGHT = 1.5
 DEFAULT_BREED_AOE_RADIUS = 0.3
-
-local Breeds = Breeds
-
-Breeds = not not Breeds or not not {}
-Breeds = Breeds
-
-local BreedActions = BreedActions
-
-BreedActions = not not BreedActions or not not {}
-BreedActions = BreedActions
-
-local BreedHitZonesLookup = BreedHitZonesLookup
-
-BreedHitZonesLookup = not not BreedHitZonesLookup or not not {}
-BreedHitZonesLookup = BreedHitZonesLookup
+Breeds = not not Breeds
+BreedActions = not not BreedActions
+BreedHitZonesLookup = not not BreedHitZonesLookup
 
 dofile("scripts/settings/breeds/breed_tweaks")
 dofile("scripts/settings/breeds/breed_skaven_clan_rat")
@@ -266,55 +254,17 @@ DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS = {
 	NO_BOTS_NO_SPAWN = 0,
 	NO_BOTS = 0
 }
-
-local NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
-
-NAV_TAG_VOLUME_LAYER_COST_AI = not not NAV_TAG_VOLUME_LAYER_COST_AI or not not {}
-NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
-
-local NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
-
-NAV_TAG_VOLUME_LAYER_COST_BOTS = not not NAV_TAG_VOLUME_LAYER_COST_BOTS or not not {}
-NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
+NAV_TAG_VOLUME_LAYER_COST_AI = not not NAV_TAG_VOLUME_LAYER_COST_AI
+NAV_TAG_VOLUME_LAYER_COST_BOTS = not not NAV_TAG_VOLUME_LAYER_COST_BOTS
 
 for _, layer_name in ipairs(NavTagVolumeLayers) do
 	LAYER_ID_MAPPING[#LAYER_ID_MAPPING + 1] = layer_name
 
-	local var_0_5 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
+	local default_cost_ai = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
+	local default_cost_bots = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 
-	if not var_0_5 then
-		-- Nothing
-	end
-
-	var_0_5 = 1
-
-	local default_cost_ai = var_0_5
-
-	::label_0_0::
-
-	local var_0_6 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
-
-	if not var_0_6 then
-		-- Nothing
-	end
-
-	var_0_6 = 1
-
-	local default_cost_bots = var_0_6
-
-	::label_0_1::
-
-	local NAV_TAG_VOLUME_LAYER_COST_AI_2 = NAV_TAG_VOLUME_LAYER_COST_AI
-	local var_0_8 = NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
-
-	var_0_8 = not not var_0_8 or not not default_cost_ai
-	NAV_TAG_VOLUME_LAYER_COST_AI_2[layer_name] = var_0_8
-
-	local NAV_TAG_VOLUME_LAYER_COST_BOTS_2 = NAV_TAG_VOLUME_LAYER_COST_BOTS
-	local var_0_10 = NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
-
-	var_0_10 = not not var_0_10 or not not default_cost_bots
-	NAV_TAG_VOLUME_LAYER_COST_BOTS_2[layer_name] = var_0_10
+	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = not not NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
+	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = not not NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 end
 
 table.mirror_array_inplace(LAYER_ID_MAPPING)
@@ -420,17 +370,7 @@ for name, breed in pairs(Breeds) do
 
 			for anim_i = 1, #anims do
 				local anim_name = anims[anim_i]
-				local var_0_11 = compiled[anim_name]
-
-				if not var_0_11 then
-					-- Nothing
-				end
-
-				var_0_11 = {}
-
-				local compiled_variables = var_0_11
-
-				::label_0_2::
+				local compiled_variables = not not compiled[anim_name]
 
 				compiled[anim_name] = compiled_variables
 

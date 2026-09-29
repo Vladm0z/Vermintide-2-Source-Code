@@ -225,22 +225,7 @@ end
 
 StartGameWindowTwitchLogin._set_disconnect_button_text = function (self)
 	-- function 10
-	local user_name_2
-
-	if Managers.twitch then
-		user_name_2 = Managers.twitch:user_name()
-
-		if not user_name_2 then
-			-- Nothing
-		end
-	end
-
-	user_name_2 = "N/A"
-
-	local user_name = user_name_2
-
-	::label_10_0::
-
+	local user_name = Managers.twitch and not not Managers.twitch:user_name() or not Managers.twitch and not not "N/A"
 	local disconnect_button_widget = self._widgets_by_name.button_2
 
 	disconnect_button_widget.content.button_hotspot.text = string.format(Localize("start_game_window_twitch_disconnect"), user_name)
@@ -315,35 +300,8 @@ StartGameWindowTwitchLogin._animate_button = function (self, widget, dt)
 	local hotspot_name = "button_hotspot"
 	local hotspot = content[hotspot_name]
 	local input_speed = 20
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_17_0::
-
-	local is_clicked = hotspot.is_clicked
-
-	if is_clicked then
-		-- Nothing
-	end
-
-	if hotspot.is_clicked ~= 0 then
-		is_clicked = false
-
-		goto label_17_1
-	end
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_17_1::
+	local input_progress = not not hotspot.input_progress
+	local input_pressed = not not hotspot.is_clicked
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -352,18 +310,7 @@ StartGameWindowTwitchLogin._animate_button = function (self, widget, dt)
 	end
 
 	local speed = 8
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_17_2::
-
+	local hover_progress = not not hotspot.hover_progress
 	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
 
 	if is_hover then
@@ -372,18 +319,7 @@ StartGameWindowTwitchLogin._animate_button = function (self, widget, dt)
 		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_17_3::
-
+	local selection_progress = not not hotspot.selection_progress
 	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
 
 	if is_selected then

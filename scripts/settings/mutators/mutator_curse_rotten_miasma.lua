@@ -132,10 +132,7 @@ return {
 			data.target_to_follow = new_target_to_follow
 			data.target_respawn_at = nil
 		else
-			local target_respawn_at = data.target_respawn_at
-
-			target_respawn_at = not not target_respawn_at or not not (TARGET_RESPAWN_CHECK_DELAY + t)
-			data.target_respawn_at = target_respawn_at
+			data.target_respawn_at = not not data.target_respawn_at
 
 			local position = get_path_position()
 

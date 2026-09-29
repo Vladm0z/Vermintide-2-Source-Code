@@ -174,22 +174,7 @@ SimpleSpawning.flow_callback_add_spawn_point = function (self, unit)
 		pos = Vector3Box(pos),
 		rot = QuaternionBox(rot)
 	}
-	local var_8_0
-
-	if self._use_spawn_point_groups then
-		var_8_0 = tonumber(Unit.get_data(unit, "group"))
-
-		if not var_8_0 then
-			-- Nothing
-		end
-	end
-
-	var_8_0 = 1
-
-	local group_id = var_8_0
-
-	::label_8_0::
-
+	local group_id = self._use_spawn_point_groups and not not tonumber(Unit.get_data(unit, "group")) or not self._use_spawn_point_groups and not not 1
 	local spawn_points = self._spawn_point_groups[group_id]
 
 	if not spawn_points then

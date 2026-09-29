@@ -35,17 +35,7 @@ PackSpawnerUtils.spawn_predefined_pack = function (breed_pack, pos, mesh)
 
 					size = size + 1
 
-					local inventory_template_2 = unit_data.inventory_template
-
-					if not inventory_template_2 then
-						-- Nothing
-					end
-
-					inventory_template_2 = "default"
-
-					local inventory_template = inventory_template_2
-
-					::label_2_0::
+					local inventory_template = not not unit_data.inventory_template
 
 					spawn_pack[size] = {
 						breed,
@@ -115,17 +105,7 @@ PackSpawnerUtils.spawn_in_circle = function (breed_pack, pack_size, pos)
 				rot = Quaternion.look(rot)
 				points_found = points_found + 1
 
-				local inventory_template_2 = unit_data.inventory_template
-
-				if not inventory_template_2 then
-					-- Nothing
-				end
-
-				inventory_template_2 = "default"
-
-				local inventory_template = inventory_template_2
-
-				::label_3_0::
+				local inventory_template = not not unit_data.inventory_template
 
 				spawn_pack[points_found] = {
 					breed,

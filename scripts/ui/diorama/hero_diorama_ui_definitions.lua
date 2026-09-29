@@ -1,179 +1,174 @@
 -- chunkname: @scripts/ui/diorama/hero_diorama_ui_definitions.lua
 
 local SIZE_X, SIZE_Y = 1920, 1080
-local tbl = {}
-local tbl_2 = {
-	position = {
-		0,
-		0,
-		UILayer.hud
+local scenegraph_definition = {
+	screen = {
+		position = {
+			0,
+			0,
+			UILayer.hud
+		},
+		size = {
+			SIZE_X,
+			SIZE_Y
+		},
+		scale = IS_WINDOWS and not not "fit" or not IS_WINDOWS and not not "hud_fit"
 	},
-	size = {
-		SIZE_X,
-		SIZE_Y
+	background = {
+		vertical_alignment = "center",
+		parent = "screen",
+		horizontal_alignment = "center",
+		size = {
+			500,
+			500
+		},
+		position = {
+			0,
+			0,
+			0
+		}
+	},
+	viewport = {
+		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "center",
+		size = {
+			500,
+			500
+		},
+		position = {
+			0,
+			0,
+			0
+		}
+	},
+	portrait_pivot = {
+		vertical_alignment = "bottom",
+		parent = "background",
+		horizontal_alignment = "left",
+		size = {
+			0,
+			0
+		},
+		position = {
+			63,
+			69,
+			10
+		}
+	},
+	corner_top_left = {
+		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "left",
+		size = {
+			110,
+			110
+		},
+		position = {
+			0,
+			0,
+			10
+		}
+	},
+	corner_top_right = {
+		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "right",
+		size = {
+			110,
+			110
+		},
+		position = {
+			0,
+			0,
+			10
+		}
+	},
+	corner_bottom_left = {
+		vertical_alignment = "bottom",
+		parent = "bottom_panel",
+		horizontal_alignment = "left",
+		size = {
+			110,
+			110
+		},
+		position = {
+			0,
+			100,
+			1
+		}
+	},
+	corner_bottom_right = {
+		vertical_alignment = "bottom",
+		parent = "bottom_panel",
+		horizontal_alignment = "right",
+		size = {
+			110,
+			110
+		},
+		position = {
+			0,
+			100,
+			1
+		}
+	},
+	bottom_panel = {
+		vertical_alignment = "bottom",
+		parent = "background",
+		horizontal_alignment = "right",
+		size = {
+			500,
+			100
+		},
+		position = {
+			0,
+			5,
+			1
+		}
+	},
+	bottom_panel_edge = {
+		vertical_alignment = "top",
+		parent = "bottom_panel",
+		horizontal_alignment = "center",
+		size = {
+			500,
+			5
+		},
+		position = {
+			0,
+			0,
+			1
+		}
+	},
+	hero_text_box = {
+		vertical_alignment = "top",
+		parent = "bottom_panel",
+		horizontal_alignment = "center",
+		size = {
+			500,
+			100
+		},
+		position = {
+			20,
+			5,
+			10
+		}
+	},
+	player_text_box = {
+		vertical_alignment = "top",
+		parent = "background",
+		horizontal_alignment = "center",
+		size = {
+			500,
+			100
+		},
+		position = {
+			0,
+			-5,
+			10
+		}
 	}
 }
-local flag
-
-flag = (IS_WINDOWS or not "hud_fit") and not not "fit"
-tbl_2.scale = flag
-tbl.screen = tbl_2
-tbl.background = {
-	vertical_alignment = "center",
-	parent = "screen",
-	horizontal_alignment = "center",
-	size = {
-		500,
-		500
-	},
-	position = {
-		0,
-		0,
-		0
-	}
-}
-tbl.viewport = {
-	vertical_alignment = "top",
-	parent = "background",
-	horizontal_alignment = "center",
-	size = {
-		500,
-		500
-	},
-	position = {
-		0,
-		0,
-		0
-	}
-}
-tbl.portrait_pivot = {
-	vertical_alignment = "bottom",
-	parent = "background",
-	horizontal_alignment = "left",
-	size = {
-		0,
-		0
-	},
-	position = {
-		63,
-		69,
-		10
-	}
-}
-tbl.corner_top_left = {
-	vertical_alignment = "top",
-	parent = "background",
-	horizontal_alignment = "left",
-	size = {
-		110,
-		110
-	},
-	position = {
-		0,
-		0,
-		10
-	}
-}
-tbl.corner_top_right = {
-	vertical_alignment = "top",
-	parent = "background",
-	horizontal_alignment = "right",
-	size = {
-		110,
-		110
-	},
-	position = {
-		0,
-		0,
-		10
-	}
-}
-tbl.corner_bottom_left = {
-	vertical_alignment = "bottom",
-	parent = "bottom_panel",
-	horizontal_alignment = "left",
-	size = {
-		110,
-		110
-	},
-	position = {
-		0,
-		100,
-		1
-	}
-}
-tbl.corner_bottom_right = {
-	vertical_alignment = "bottom",
-	parent = "bottom_panel",
-	horizontal_alignment = "right",
-	size = {
-		110,
-		110
-	},
-	position = {
-		0,
-		100,
-		1
-	}
-}
-tbl.bottom_panel = {
-	vertical_alignment = "bottom",
-	parent = "background",
-	horizontal_alignment = "right",
-	size = {
-		500,
-		100
-	},
-	position = {
-		0,
-		5,
-		1
-	}
-}
-tbl.bottom_panel_edge = {
-	vertical_alignment = "top",
-	parent = "bottom_panel",
-	horizontal_alignment = "center",
-	size = {
-		500,
-		5
-	},
-	position = {
-		0,
-		0,
-		1
-	}
-}
-tbl.hero_text_box = {
-	vertical_alignment = "top",
-	parent = "bottom_panel",
-	horizontal_alignment = "center",
-	size = {
-		500,
-		100
-	},
-	position = {
-		20,
-		5,
-		10
-	}
-}
-tbl.player_text_box = {
-	vertical_alignment = "top",
-	parent = "background",
-	horizontal_alignment = "center",
-	size = {
-		500,
-		100
-	},
-	position = {
-		0,
-		-5,
-		10
-	}
-}
-
-local scenegraph_definition = tbl
 local career_text_style = {
 	word_wrap = true,
 	upper_case = false,

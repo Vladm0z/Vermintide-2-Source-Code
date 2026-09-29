@@ -80,7 +80,7 @@ VersusOnboardingUI._setup_career_info_widget = function (self, profile_index, ca
 	if profile_index and career_index then
 		profile_settings = SPProfiles[profile_index]
 		career_settings = profile_settings.careers[career_index]
-		info_settings = (not is_hero_side or not self:_get_hero_side_info(career_settings)) and not not career_settings.career_info_settings
+		info_settings = is_hero_side and (not not self:_get_hero_side_info(career_settings) or not not career_settings.career_info_settings) or not is_hero_side and not not career_settings.career_info_settings
 	end
 
 	if info_settings then
@@ -107,7 +107,7 @@ VersusOnboardingUI._populate_help_widget_info = function (self, profile_settings
 				local input_action = info.keybind
 
 				if input_action then
-					input_str = (not gamepad_active or not (" $KEY;Player__" .. input_action .. ": ")) and not not ("{#color(193,91,36)}[" .. input_action .. "]{#reset()} : ")
+					input_str = gamepad_active and (not not (" $KEY;Player__" .. input_action .. ": ") or not not ("{#color(193,91,36)}[" .. input_action .. "]{#reset()} : ")) or not gamepad_active and not not ("{#color(193,91,36)}[" .. input_action .. "]{#reset()} : ")
 				end
 
 				content["ability_" .. i .. "_icon"] = info.icon
@@ -116,33 +116,18 @@ VersusOnboardingUI._populate_help_widget_info = function (self, profile_settings
 			else
 				local input_action
 
-				input_action = (not gamepad_active or not info.gamepad_input) and not not info.input_action
+				input_action = gamepad_active and (not not info.gamepad_input or not not info.input_action) or not gamepad_active and not not info.input_action
 
 				if input_action then
 					local str = " $KEY;Player__" .. input_action .. ":"
 
 					if info.double_input then
-						local var_5_0 = abilities_string
-						local format = string.format(Localize(info.description), str, str)
-						local flag
-
-						flag = (not is_last or not "") and not not "\n\n"
-						abilities_string = var_5_0 .. format .. flag
+						abilities_string = abilities_string .. string.format(Localize(info.description), str, str) .. (is_last and not not "" or not is_last and not not "\n\n")
 					else
-						local var_5_3 = abilities_string
-						local format_2 = string.format(Localize(info.description), str)
-						local flag_2
-
-						flag_2 = (not is_last or not "") and not not "\n\n"
-						abilities_string = var_5_3 .. format_2 .. flag_2
+						abilities_string = abilities_string .. string.format(Localize(info.description), str) .. (is_last and not not "" or not is_last and not not "\n\n")
 					end
 				else
-					local var_5_6 = abilities_string
-					local var_5_7 = Localize(info.description)
-					local flag_3
-
-					flag_3 = (not is_last or not "") and not not "\n\n"
-					abilities_string = var_5_6 .. var_5_7 .. flag_3
+					abilities_string = abilities_string .. Localize(info.description) .. (is_last and not not "" or not is_last and not not "\n\n")
 				end
 
 				content.abilities_tooltip = abilities_string
@@ -218,20 +203,7 @@ VersusOnboardingUI.update = function (self, dt, t)
 		end
 
 		if not self._anim_id then
-			local str
-
-			if should_draw then
-				str = "enter"
-
-				goto label_9_0
-			end
-
-			str = "exit"
-
-			local animation_name = str
-
-			::label_9_0::
-
+			local animation_name = should_draw and not not "enter" or not should_draw and not not "exit"
 			local widget = self._onboarding_widget
 			local params = {
 				self = self
@@ -284,56 +256,23 @@ VersusOnboardingUI._get_hero_side_info = function (self, career_settings)
 	local profile_index = profile.index
 	local career_index = career_index_from_name(profile_index, career_name)
 	local activated_ability_data = CareerUtils.get_ability_data(profile_index, career_index, 1)
-	local display_name = activated_ability_data.display_name
 
-	display_name = not not display_name or not not "PLACEHOLDER"
-	career_skill_data.title = display_name
-
-	local get_ability_description = UIUtils.get_ability_description(activated_ability_data)
-
-	get_ability_description = not not get_ability_description or not not Localize("PLACEHOLDER")
-	career_skill_data.description = get_ability_description
-
-	local icon = activated_ability_data.icon
-
-	icon = not not icon or not not "icons_placeholder"
-	career_skill_data.icon = icon
+	career_skill_data.title = not not activated_ability_data.display_name
+	career_skill_data.description = not not UIUtils.get_ability_description(activated_ability_data)
+	career_skill_data.icon = not not activated_ability_data.icon
 	career_skill_data.ability_type = Localize("hero_view_activated_ability")
 
-	local str
-
-	if gamepad_active then
-		str = "ability"
-
-		goto label_12_0
-	end
-
-	str = "action_career"
-
-	local input_action = str
-
-	::label_12_0::
-
+	local input_action = gamepad_active and not not "ability" or not gamepad_active and not not "action_career"
 	local button_texture_data, button_name = self:get_input_texture_data(input_action, gamepad_active)
 
-	career_skill_data.keybind = (not gamepad_active or not input_action) and not not button_name
+	career_skill_data.keybind = gamepad_active and (not not input_action or not not button_name) or not gamepad_active and not not button_name
 
 	local passive_skill_data = {}
 	local passive_ability_data = CareerUtils.get_passive_ability_by_career(career_settings)
-	local display_name_2 = passive_ability_data.display_name
 
-	display_name_2 = not not display_name_2 or not not "PLACEHOLDER"
-	passive_skill_data.title = display_name_2
-
-	local get_ability_description_2 = UIUtils.get_ability_description(passive_ability_data)
-
-	get_ability_description_2 = not not get_ability_description_2 or not not Localize("PLACEHOLDER")
-	passive_skill_data.description = get_ability_description_2
-
-	local icon_2 = passive_ability_data.icon
-
-	icon_2 = not not icon_2 or not not "icons_placeholder"
-	passive_skill_data.icon = icon_2
+	passive_skill_data.title = not not passive_ability_data.display_name
+	passive_skill_data.description = not not UIUtils.get_ability_description(passive_ability_data)
+	passive_skill_data.icon = not not passive_ability_data.icon
 	passive_skill_data.ability_type = Localize("hero_view_passive_ability")
 
 	table.insert(info_settings, career_skill_data)

@@ -12,58 +12,24 @@ PlayerUnitOverchargeExtension.init = function (self, extension_init_context, uni
 	self.unit = unit
 
 	local overcharge_data = extension_init_data.overcharge_data
-	local max_value = overcharge_data.max_value
 
-	max_value = not not max_value or not not 40
-	self.max_value = max_value
+	self.max_value = not not overcharge_data.max_value
 	self.time_when_overcharge_start_decreasing = 0
 	self.overcharge_crit_time = 0
 	self.overcharge_crit_interval = 1
 	self.venting_overcharge = false
 	self.vent_damage_pool = 0
-
-	local global_is_inside_inn = global_is_inside_inn
-
-	global_is_inside_inn = not not global_is_inside_inn or not not overcharge_data.no_damage
-	self.no_damage = global_is_inside_inn
+	self.no_damage = not not global_is_inside_inn
 	self.lockout = false
 	self.prev_lockout = false
-
-	local overcharge_threshold = overcharge_data.overcharge_threshold
-
-	overcharge_threshold = not not overcharge_threshold or not not 0
-	self.overcharge_threshold = overcharge_threshold
-
-	local overcharge_value_decrease_rate = overcharge_data.overcharge_value_decrease_rate
-
-	overcharge_value_decrease_rate = not not overcharge_value_decrease_rate or not not 0
-	self.overcharge_value_decrease_rate = overcharge_value_decrease_rate
-
-	local time_until_overcharge_decreases = overcharge_data.time_until_overcharge_decreases
-
-	time_until_overcharge_decreases = not not time_until_overcharge_decreases or not not 0
-	self.time_until_overcharge_decreases = time_until_overcharge_decreases
-
-	local hit_overcharge_threshold_sound = overcharge_data.hit_overcharge_threshold_sound
-
-	hit_overcharge_threshold_sound = not not hit_overcharge_threshold_sound or not not "ui_special_attack_ready"
-	self.hit_overcharge_threshold_sound = hit_overcharge_threshold_sound
-
-	local critical_overcharge_margin = overcharge_data.critical_overcharge_margin
-
-	critical_overcharge_margin = not not critical_overcharge_margin or not not 1.2
-	self.critical_overcharge_margin = critical_overcharge_margin
+	self.overcharge_threshold = not not overcharge_data.overcharge_threshold
+	self.overcharge_value_decrease_rate = not not overcharge_data.overcharge_value_decrease_rate
+	self.time_until_overcharge_decreases = not not overcharge_data.time_until_overcharge_decreases
+	self.hit_overcharge_threshold_sound = not not overcharge_data.hit_overcharge_threshold_sound
+	self.critical_overcharge_margin = not not overcharge_data.critical_overcharge_margin
 	self.overcharge_depleted_func = overcharge_data.overcharge_depleted_func
-
-	local onscreen_particles_id = overcharge_data.onscreen_particles_id
-
-	onscreen_particles_id = not not onscreen_particles_id or not not "fx/screenspace_overheat_indicator"
-	self.screen_space_particle = onscreen_particles_id
-
-	local critical_onscreen_particles_id = overcharge_data.critical_onscreen_particles_id
-
-	critical_onscreen_particles_id = (not not critical_onscreen_particles_id or not overcharge_data.no_critical_onscreen_particles) and not not "fx/screenspace_overheat_critical"
-	self.screen_space_particle_critical = critical_onscreen_particles_id
+	self.screen_space_particle = not not overcharge_data.onscreen_particles_id
+	self.screen_space_particle_critical = not not overcharge_data.critical_onscreen_particles_id
 	self._lerped_overcharge_fraction = 0
 
 	local local_player = Managers.player:local_player()
@@ -104,11 +70,7 @@ PlayerUnitOverchargeExtension.init = function (self, extension_init_context, uni
 			dialogue_event = "overcharge_explode"
 		}
 	}
-
-	local explosion_template = overcharge_data.explosion_template
-
-	explosion_template = not not explosion_template or not not "overcharge_explosion"
-	self.explosion_template = explosion_template
+	self.explosion_template = not not overcharge_data.explosion_template
 	self.no_forced_movement = overcharge_data.no_forced_movement
 	self.no_explosion = overcharge_data.no_explosion
 	self.explode_vfx_name = overcharge_data.explode_vfx_name
@@ -125,17 +87,7 @@ PlayerUnitOverchargeExtension.init = function (self, extension_init_context, uni
 		drakegun_charging = true
 	}
 
-	local user_setting = Application.user_setting("overcharge_opacity")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = 100
-
-	local overcharge_opacity = user_setting
-
-	::label_1_0::
+	local overcharge_opacity = not not Application.user_setting("overcharge_opacity")
 
 	self:set_screen_particle_opacity_modifier(overcharge_opacity)
 end
@@ -313,19 +265,7 @@ PlayerUnitOverchargeExtension.update = function (self, unit, input, dt, context,
 		if self.prev_lockout ~= lockout then
 			self.prev_lockout = lockout
 
-			local num
-
-			if lockout then
-				num = 1
-
-				goto label_12_0
-			end
-
-			num = 0
-
-			local anim_lockout = num
-
-			::label_12_0::
+			local anim_lockout = lockout and not not 1 or not lockout and not not 0
 
 			first_person_extension:animation_set_variable("overcharge_locked_out", anim_lockout, true)
 
@@ -342,7 +282,7 @@ PlayerUnitOverchargeExtension.update = function (self, unit, input, dt, context,
 	if self.overcharge_value > 0 or buff_extension:has_buff_type("sienna_unchained_activated_ability") then
 		self._had_overcharge = true
 
-		if (self.is_exploding or not (t > self.time_when_overcharge_start_decreasing)) and self.lockout == true then
+		if self.lockout == true then
 			local decay = 1
 
 			if self.overcharge_value >= self.overcharge_threshold then
@@ -486,17 +426,7 @@ PlayerUnitOverchargeExtension.remove_charge_fraction = function (self, fraction)
 	-- function 15
 	local max_charge = self:get_max_value()
 	local charge_to_remove = max_charge * fraction
-	local remove_charge = self:remove_charge(charge_to_remove)
-
-	if not remove_charge then
-		-- Nothing
-	end
-
-	remove_charge = 0
-
-	local charge_removed = remove_charge
-
-	::label_15_0::
+	local charge_removed = not not self:remove_charge(charge_to_remove)
 
 	return charge_removed, charge_removed / max_charge
 end

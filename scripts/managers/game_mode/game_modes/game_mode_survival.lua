@@ -2,11 +2,7 @@
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 
-local script_data = script_data
-local disable_gamemode_end = script_data.disable_gamemode_end
-
-disable_gamemode_end = not not disable_gamemode_end or not not Development.parameter("disable_gamemode_end")
-script_data.disable_gamemode_end = disable_gamemode_end
+script_data.disable_gamemode_end = not not script_data.disable_gamemode_end
 GameModeSurvival = class(GameModeSurvival, GameModeBase)
 
 local COMPLETE_LEVEL_VAR = false
@@ -28,31 +24,7 @@ GameModeSurvival.evaluate_end_conditions = function (self, round_started, dt, t)
 	local ignore_bots = true
 	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
 	local players_disabled = GameModeHelper.side_is_disabled("heroes")
-	local _level_failed
-
-	if not self._lose_condition_disabled then
-		if not humans_dead and not players_disabled then
-			-- Nothing
-		end
-
-		::label_2_1::
-
-		_level_failed = self._level_failed
-
-		if not _level_failed then
-			_level_failed = self:_is_time_up()
-		end
-	else
-		_level_failed = false
-	end
-
-	goto label_2_2
-
-	_level_failed = true
-
-	local lost = _level_failed
-
-	::label_2_2::
+	local lost = not self._lose_condition_disabled and (not not humans_dead or not not players_disabled or not not self._level_failed)
 
 	if self:is_about_to_end_game_early() then
 		if lost then
@@ -66,19 +38,7 @@ GameModeSurvival.evaluate_end_conditions = function (self, round_started, dt, t)
 					if mission_data then
 						local wave_completed = mission_data.wave_completed
 						local starting_wave = mission_data.starting_wave
-						local str
-
-						if wave_completed - starting_wave > 0 then
-							str = "won"
-
-							goto label_2_3
-						end
-
-						str = "lost"
-
-						local end_reason = str
-
-						::label_2_3::
+						local end_reason = wave_completed - starting_wave > 0 and not not "won" or not (wave_completed - starting_wave > 0) and not not "lost"
 
 						return true, end_reason
 					end

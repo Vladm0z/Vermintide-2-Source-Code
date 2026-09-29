@@ -166,11 +166,7 @@ return {
 		local ai_system = Managers.state.entity:system("ai_system")
 
 		data.nav_world = ai_system:nav_world()
-
-		local var_6_0 = EGG_AMOUNT[data.difficulty_rank]
-
-		var_6_0 = not not var_6_0 or not not EGG_AMOUNT[NORMAL]
-		data.num_available_eggs = var_6_0
+		data.num_available_eggs = not not EGG_AMOUNT[data.difficulty_rank]
 		data.num_destroyed_eggs = 0
 		data.monster_spawned = data.template.monster_spawned
 
@@ -278,11 +274,8 @@ return {
 		local available_monsters = filter_by_available_breeds(MONSTERS, contained_breeds)
 		local egg_hatch_time = egg_mission.duration
 		local egg_extension_init_data = table.clone(EGG_EXTENSION_INIT_DATA)
-		local health_system = egg_extension_init_data.health_system
-		local var_10_1 = EGG_HEALTH[data.difficulty_rank]
 
-		var_10_1 = not not var_10_1 or not not EGG_HEALTH[NORMAL]
-		health_system.health = var_10_1
+		egg_extension_init_data.health_system.health = not not EGG_HEALTH[data.difficulty_rank]
 
 		local timed_spawner_system = egg_extension_init_data.timed_spawner_system
 
@@ -334,10 +327,7 @@ return {
 		data.num_destroyed_eggs = data.num_destroyed_eggs + 1
 
 		if data.num_destroyed_eggs < data.num_available_eggs then
-			local var_13_0 = NEXT_EGG_COOLDOWN[data.difficulty_rank]
-
-			var_13_0 = not not var_13_0 or not not NEXT_EGG_COOLDOWN[NORMAL]
-			data.timer = var_13_0
+			data.timer = not not NEXT_EGG_COOLDOWN[data.difficulty_rank]
 		else
 			data.timer = nil
 		end

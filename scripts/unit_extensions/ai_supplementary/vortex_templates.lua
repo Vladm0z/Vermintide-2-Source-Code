@@ -115,17 +115,7 @@ VortexTemplates = {
 						blackboard.num_ai_units_sucked_in = 0
 					end
 
-					local num_ai_units_sucked_in_2 = blackboard.num_ai_units_sucked_in
-
-					if not num_ai_units_sucked_in_2 then
-						-- Nothing
-					end
-
-					num_ai_units_sucked_in_2 = 0
-
-					local num_ai_units_sucked_in = num_ai_units_sucked_in_2
-
-					::label_1_0::
+					local num_ai_units_sucked_in = not not blackboard.num_ai_units_sucked_in
 
 					blackboard.num_ai_units_sucked_in = num_ai_units_sucked_in + 1
 

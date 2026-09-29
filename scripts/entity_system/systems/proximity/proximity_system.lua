@@ -1,10 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/proximity/proximity_system.lua
 
-local script_data = script_data
-local dialogue_debug_proximity_system = script_data.dialogue_debug_proximity_system
-
-dialogue_debug_proximity_system = not not dialogue_debug_proximity_system or not not Development.parameter("dialogue_debug_proximity_system")
-script_data.dialogue_debug_proximity_system = dialogue_debug_proximity_system
+script_data.dialogue_debug_proximity_system = not not script_data.dialogue_debug_proximity_system
 
 local PROXIMITY_DISTANCE_ENEMIES = math.max(DialogueSettings.enemies_close_distance, DialogueSettings.enemies_distant_distance)
 local PROXIMITY_DISTANCE_FRIENDS = math.max(DialogueSettings.friends_close_distance, DialogueSettings.friends_distant_distance)
@@ -173,17 +169,7 @@ ProximitySystem.on_add_extension = function (self, world, unit, extension_name, 
 		extension.hear_timer = 0
 		extension.player_broadphase_id = Broadphase.add(self.player_units_broadphase, unit, Unit.world_position(unit, 0), 0.5, extension_init_data.side.broadphase_category)
 
-		local breed_2 = extension_init_data.breed
-
-		if not breed_2 then
-			-- Nothing
-		end
-
-		breed_2 = extension_init_data.profile.breed
-
-		local breed = breed_2
-
-		::label_4_0::
+		local breed = not not extension_init_data.breed
 
 		if breed and breed.proximity_system_check then
 			extension.special_broadphase_id = Broadphase.add(self.special_units_broadphase, unit, Unit.world_position(unit, 0), 0.5)
@@ -368,21 +354,7 @@ ProximitySystem.update = function (self, context, t)
 	-- function 13
 	if script_data.debug_has_been_seen then
 		for unit, extension in pairs(self.unit_extension_data) do
-			local var_13_0
-
-			if extension.has_been_seen then
-				var_13_0 = Color(0, 255, 0)
-
-				if not var_13_0 then
-					-- Nothing
-				end
-			end
-
-			var_13_0 = Color(255, 0, 0)
-
-			local color = var_13_0
-
-			::label_13_0::
+			local color = extension.has_been_seen and not not Color(0, 255, 0) or not extension.has_been_seen and not not Color(255, 0, 0)
 
 			QuickDrawer:sphere(Unit.local_position(unit, 0) + Vector3.up(), 2, color)
 		end
@@ -654,21 +626,7 @@ ProximitySystem._update_nearby_boss = function (self)
 		return
 	end
 
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = Managers.player:local_player()
-
-	local local_player = _spectated_player
-
-	::label_21_0::
+	local local_player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not Managers.player:local_player()
 
 	if not local_player then
 		return
@@ -695,7 +653,7 @@ ProximitySystem._update_nearby_boss = function (self)
 		local breed = Unit.get_data(unit, "breed")
 		local attributes = ai_system:get_attributes(unit)
 
-		if (not breed or not breed.boss or breed.server_controlled_health_bar) and attributes.grudge_marked and self:_valid_dialogue_unit(unit, nil) then
+		if attributes.grudge_marked and self:_valid_dialogue_unit(unit, nil) then
 			self.closest_boss_unit = unit
 
 			break
@@ -718,24 +676,9 @@ ProximitySystem._update_nearby_enemies = function (self)
 	local list = self._pseudo_sorted_list
 	local old_enabled_fx = self._old_enabled_fx
 	local new_enabled_fx = self._new_enabled_fx
-	local tbl
-
-	if self._is_spectator then
-		tbl = {
-			self._spectated_player
-		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = Managers.player:players_at_peer(Network.peer_id())
-
-	local local_players = tbl
-
-	::label_22_0::
-
+	local local_players = self._is_spectator and not not {
+		self._spectated_player
+	} or not self._is_spectator and not not Managers.player:players_at_peer(Network.peer_id())
 	local player_pos = Vector3(0, 0, 0)
 	local num_players = 0
 	local camera_manager = Managers.state.camera
@@ -769,18 +712,7 @@ ProximitySystem._update_nearby_enemies = function (self)
 			end
 		end
 
-		local max_allowed_proximity_fx = script_data.max_allowed_proximity_fx
-
-		if not max_allowed_proximity_fx then
-			-- Nothing
-		end
-
-		max_allowed_proximity_fx = MAX_ALLOWED_FX
-
-		local max_allowed = max_allowed_proximity_fx
-
-		::label_22_1::
-
+		local max_allowed = not not script_data.max_allowed_proximity_fx
 		local higher_unit = list[1]
 
 		if higher_unit then
@@ -884,14 +816,7 @@ ProximitySystem._nearby_enemies_debug = function (self, list, new_nearby, new_en
 					color = Color(brightness, 255, brightness)
 				end
 
-				local colored_text = Debug.colored_text
-				local var_23_1 = color
-				local var_23_2 = tostring(Unit.get_data(unit, "debug_random"))
-				local flag
-
-				flag = (not enabled or not " enabled ") and not not " disabled "
-
-				colored_text(var_23_1, var_23_2 .. flag .. string.format("%.2f", dist))
+				Debug.colored_text(color, tostring(Unit.get_data(unit, "debug_random")) .. (enabled and not not " enabled " or not enabled and not not " disabled ") .. string.format("%.2f", dist))
 			else
 				print("ERROR", i)
 			end

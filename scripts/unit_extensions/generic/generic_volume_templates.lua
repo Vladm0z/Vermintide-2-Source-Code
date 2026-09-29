@@ -1,14 +1,7 @@
 -- chunkname: @scripts/unit_extensions/generic/generic_volume_templates.lua
 
-local VolumeFilters = VolumeFilters
-
-VolumeFilters = not not VolumeFilters or not not {}
-VolumeFilters = VolumeFilters
-
-local GenericVolumeTemplates = GenericVolumeTemplates
-
-GenericVolumeTemplates = not not GenericVolumeTemplates or not not {}
-GenericVolumeTemplates = GenericVolumeTemplates
+VolumeFilters = not not VolumeFilters
+GenericVolumeTemplates = not not GenericVolumeTemplates
 GenericVolumeTemplates.functions = {
 	damage_volume = {
 		generic_dot = {
@@ -478,7 +471,7 @@ GenericVolumeTemplates.filters = {
 		local all_inside_disabled = volume_system:all_human_players_inside_disabled(data.volume_name)
 		local is_inside_and_disabled = not not is_disabled and not not is_inside
 		local is_outside_and_not_disabled = not is_inside and not not not is_disabled
-		local result = (is_inside_and_disabled or not not is_outside_and_not_disabled) and not not not not all_inside_disabled
+		local result = not not not not all_inside_disabled
 
 		return result
 	end,

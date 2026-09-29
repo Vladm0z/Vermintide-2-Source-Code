@@ -86,22 +86,7 @@ end
 
 IkChain.debug_draw = function (self, joints, num_joints)
 	-- function 8
-	local var_8_0
-
-	if self.constrain_angle then
-		var_8_0 = Color(120, 0, 120)
-
-		if not var_8_0 then
-			-- Nothing
-		end
-	end
-
-	var_8_0 = Color(120, 255, 0)
-
-	local line_color = var_8_0
-
-	::label_8_0::
-
+	local line_color = self.constrain_angle and not not Color(120, 0, 120) or not self.constrain_angle and not not Color(120, 255, 0)
 	local ball_color = Color(0, 155, 255)
 
 	for i = 1, num_joints - 1 do
@@ -181,11 +166,7 @@ IkChain.solve = function (self, t, dt)
 	local target_pos = self.target_pos:unbox()
 	local aim_pos = self.aim_pos:unbox()
 	local to_target = target_pos - aim_pos
-	local acc = self.acc
-
-	acc = not not acc or not not 1
-
-	local target_pos = aim_pos + to_target * acc * dt
+	local target_pos = aim_pos + to_target * not not self.acc * dt
 
 	self.aim_pos:store(target_pos)
 
@@ -239,11 +220,7 @@ IkChain.solve_dragging = function (self, t, dt)
 	local target_pos = self.target_pos:unbox()
 	local aim_pos = self.aim_pos:unbox()
 	local to_target = target_pos - aim_pos
-	local acc = self.acc
-
-	acc = not not acc or not not 1
-
-	local target_pos = aim_pos + to_target * acc * dt
+	local target_pos = aim_pos + to_target * not not self.acc * dt
 
 	self.aim_pos:store(target_pos)
 

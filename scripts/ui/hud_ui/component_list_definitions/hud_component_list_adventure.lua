@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure.lua
 
-local tbl = {
+local components = {
 	{
 		use_hud_scale = true,
 		class_name = "WorldMarkerUI",
@@ -350,187 +350,181 @@ local tbl = {
 		visibility_groups = {
 			"alive"
 		}
-	}
-}
-local tbl_2 = {
-	class_name = "IngamePlayerListUI"
-}
-local flag
-
-flag = (not GameSettingsDevelopment.use_new_tab_menu or not "scripts/ui/views/ingame_player_list_ui_v2") and not not "scripts/ui/views/ingame_player_list_ui"
-tbl_2.filename = flag
-tbl_2.visibility_groups = {
-	"tab_menu",
-	"realism",
-	"game_mode_disable_hud",
-	"dead",
-	"alive"
-}
-tbl[34] = tbl_2
-tbl[35] = {
-	use_hud_scale = true,
-	class_name = "PositiveReinforcementUI",
-	filename = "scripts/ui/views/positive_reinforcement_ui",
-	visibility_groups = {
-		"dead",
-		"alive"
-	}
-}
-tbl[36] = {
-	use_hud_scale = true,
-	class_name = "TutorialInputUI",
-	filename = "scripts/ui/views/tutorial_input_ui",
-	visibility_groups = {
-		"game_mode_disable_hud",
-		"alive"
 	},
-	validation_function = function ()
-		-- function 8
-		local level_settings = LevelHelper.current_level_settings()
-		local is_valid = level_settings.tutorial_level
-
-		is_valid = not not is_valid or level_settings.game_mode == "inn_vs"
-
-		return is_valid
-	end
-}
-tbl[37] = {
-	class_name = "CutsceneOverlayUI",
-	filename = "scripts/ui/views/cutscene_overlay_ui",
-	visibility_groups = {
-		"cutscene",
-		"alive"
-	}
-}
-tbl[38] = {
-	class_name = "CutsceneUI",
-	filename = "scripts/ui/views/cutscene_ui",
-	visibility_groups = {
-		"entering_mission",
-		"mission_vote",
-		"hero_selection_popup",
-		"in_endscreen",
-		"in_menu",
-		"tab_menu",
-		"game_mode_disable_hud",
-		"cutscene",
-		"realism",
-		"dead",
-		"alive"
-	}
-}
-tbl[39] = {
-	use_hud_scale = true,
-	class_name = "PlayerInventoryUI",
-	filename = "scripts/ui/views/player_inventory_ui",
-	visibility_groups = {
-		"alive"
+	{
+		class_name = "IngamePlayerListUI",
+		filename = GameSettingsDevelopment.use_new_tab_menu and not not "scripts/ui/views/ingame_player_list_ui_v2" or not GameSettingsDevelopment.use_new_tab_menu and not not "scripts/ui/views/ingame_player_list_ui",
+		visibility_groups = {
+			"tab_menu",
+			"realism",
+			"game_mode_disable_hud",
+			"dead",
+			"alive"
+		}
 	},
-	validation_function = function (context, is_in_inn)
-		-- function 9
-		local use_player_inventory = false
-
-		return use_player_inventory
-	end
-}
-tbl[40] = {
-	use_hud_scale = true,
-	class_name = "SubtitleGui",
-	filename = "scripts/ui/views/subtitle_gui",
-	visibility_groups = {
-		"cutscene",
-		"realism",
-		"dead",
-		"alive"
-	}
-}
-tbl[41] = {
-	use_hud_scale = true,
-	class_name = "GiftPopupUI",
-	filename = "scripts/ui/gift_popup/gift_popup_ui",
-	visibility_groups = {
-		"alive",
-		"gift_popup"
-	}
-}
-tbl[42] = {
-	use_hud_scale = true,
-	class_name = "IngameVotingUI",
-	filename = "scripts/ui/views/ingame_voting_ui",
-	visibility_groups = {
-		"realism",
-		"game_mode_disable_hud",
-		"dead",
-		"alive"
-	}
-}
-tbl[43] = {
-	use_hud_scale = true,
-	class_name = "MatchmakingUI",
-	filename = "scripts/ui/views/matchmaking_ui",
-	visibility_groups = {
-		"mission_vote",
-		"hero_selection_popup",
-		"in_endscreen",
-		"in_menu",
-		"tab_menu",
-		"game_mode_disable_hud",
-		"cutscene",
-		"realism",
-		"dead",
-		"alive"
-	}
-}
-tbl[44] = {
-	class_name = "FloatingIconUI",
-	filename = "scripts/ui/hud_ui/floating_icon_ui",
-	visibility_groups = {
-		"alive"
-	}
-}
-tbl[45] = {
-	class_name = "SocialWheelUI",
-	filename = "scripts/ui/social_wheel/social_wheel_ui",
-	visibility_groups = {
-		"alive",
-		"realism"
+	{
+		use_hud_scale = true,
+		class_name = "PositiveReinforcementUI",
+		filename = "scripts/ui/views/positive_reinforcement_ui",
+		visibility_groups = {
+			"dead",
+			"alive"
+		}
 	},
-	validation_function = function (context, is_in_inn)
-		-- function 10
-		local game_mode_key = Managers.state.game_mode:game_mode_key()
+	{
+		use_hud_scale = true,
+		class_name = "TutorialInputUI",
+		filename = "scripts/ui/views/tutorial_input_ui",
+		visibility_groups = {
+			"game_mode_disable_hud",
+			"alive"
+		},
+		validation_function = function ()
+			-- function 8
+			local level_settings = LevelHelper.current_level_settings()
+			local is_valid = level_settings.tutorial_level
 
-		return game_mode_key ~= "tutorial"
-	end
-}
-tbl[46] = {
-	use_hud_scale = true,
-	class_name = "ChallengeTrackerUI",
-	filename = "scripts/ui/hud_ui/challenge_tracker_ui",
-	visibility_groups = {
-		"game_mode_disable_hud",
-		"dead",
-		"alive"
-	}
-}
-tbl[47] = {
-	use_hud_scale = true,
-	class_name = "EmotePhotomodeUI",
-	filename = "scripts/ui/hud_ui/emote_photomode_ui",
-	visibility_groups = {
-		"dead",
-		"alive"
-	}
-}
-tbl[48] = {
-	use_hud_scale = true,
-	class_name = "PetUI",
-	filename = "scripts/ui/hud_ui/pet_ui",
-	visibility_groups = {
-		"alive"
-	}
-}
+			is_valid = not not is_valid or level_settings.game_mode == "inn_vs"
 
-local components = tbl
+			return is_valid
+		end
+	},
+	{
+		class_name = "CutsceneOverlayUI",
+		filename = "scripts/ui/views/cutscene_overlay_ui",
+		visibility_groups = {
+			"cutscene",
+			"alive"
+		}
+	},
+	{
+		class_name = "CutsceneUI",
+		filename = "scripts/ui/views/cutscene_ui",
+		visibility_groups = {
+			"entering_mission",
+			"mission_vote",
+			"hero_selection_popup",
+			"in_endscreen",
+			"in_menu",
+			"tab_menu",
+			"game_mode_disable_hud",
+			"cutscene",
+			"realism",
+			"dead",
+			"alive"
+		}
+	},
+	{
+		use_hud_scale = true,
+		class_name = "PlayerInventoryUI",
+		filename = "scripts/ui/views/player_inventory_ui",
+		visibility_groups = {
+			"alive"
+		},
+		validation_function = function (context, is_in_inn)
+			-- function 9
+			local use_player_inventory = false
+
+			return use_player_inventory
+		end
+	},
+	{
+		use_hud_scale = true,
+		class_name = "SubtitleGui",
+		filename = "scripts/ui/views/subtitle_gui",
+		visibility_groups = {
+			"cutscene",
+			"realism",
+			"dead",
+			"alive"
+		}
+	},
+	{
+		use_hud_scale = true,
+		class_name = "GiftPopupUI",
+		filename = "scripts/ui/gift_popup/gift_popup_ui",
+		visibility_groups = {
+			"alive",
+			"gift_popup"
+		}
+	},
+	{
+		use_hud_scale = true,
+		class_name = "IngameVotingUI",
+		filename = "scripts/ui/views/ingame_voting_ui",
+		visibility_groups = {
+			"realism",
+			"game_mode_disable_hud",
+			"dead",
+			"alive"
+		}
+	},
+	{
+		use_hud_scale = true,
+		class_name = "MatchmakingUI",
+		filename = "scripts/ui/views/matchmaking_ui",
+		visibility_groups = {
+			"mission_vote",
+			"hero_selection_popup",
+			"in_endscreen",
+			"in_menu",
+			"tab_menu",
+			"game_mode_disable_hud",
+			"cutscene",
+			"realism",
+			"dead",
+			"alive"
+		}
+	},
+	{
+		class_name = "FloatingIconUI",
+		filename = "scripts/ui/hud_ui/floating_icon_ui",
+		visibility_groups = {
+			"alive"
+		}
+	},
+	{
+		class_name = "SocialWheelUI",
+		filename = "scripts/ui/social_wheel/social_wheel_ui",
+		visibility_groups = {
+			"alive",
+			"realism"
+		},
+		validation_function = function (context, is_in_inn)
+			-- function 10
+			local game_mode_key = Managers.state.game_mode:game_mode_key()
+
+			return game_mode_key ~= "tutorial"
+		end
+	},
+	{
+		use_hud_scale = true,
+		class_name = "ChallengeTrackerUI",
+		filename = "scripts/ui/hud_ui/challenge_tracker_ui",
+		visibility_groups = {
+			"game_mode_disable_hud",
+			"dead",
+			"alive"
+		}
+	},
+	{
+		use_hud_scale = true,
+		class_name = "EmotePhotomodeUI",
+		filename = "scripts/ui/hud_ui/emote_photomode_ui",
+		visibility_groups = {
+			"dead",
+			"alive"
+		}
+	},
+	{
+		use_hud_scale = true,
+		class_name = "PetUI",
+		filename = "scripts/ui/hud_ui/pet_ui",
+		visibility_groups = {
+			"alive"
+		}
+	}
+}
 
 DLCUtils.append("ingame_hud_components", components)
 
@@ -612,17 +606,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 18
 			local cutscene_system = Managers.state.entity:system("cutscene_system")
-			local active_camera = cutscene_system.active_camera
-
-			if active_camera then
-				-- Nothing
-			end
-
-			active_camera = not cutscene_system.ingame_hud_enabled
-
-			local cutscene_active = active_camera
-
-			::label_18_0::
+			local cutscene_active = not not cutscene_system.active_camera
 
 			return cutscene_active
 		end
@@ -635,9 +619,7 @@ local visibility_groups = {
 			local is_active = not not component and not not component:is_active()
 			local component = ingame_hud:component("VersusSlotStatusUI")
 
-			if component and not component:is_active() then
-				-- Nothing
-			end
+			is_active = not component or not not component:is_active() or not not is_active
 
 			return is_active
 		end
@@ -658,24 +640,7 @@ local visibility_groups = {
 			-- function 21
 			local game_mode_manager = Managers.state.game_mode
 			local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-
-			if game_mode then
-				-- Nothing
-			end
-
-			::label_21_0::
-
-			local game_mode_hud_disabled = game_mode.game_mode_hud_disabled
-
-			if game_mode_hud_disabled then
-				-- Nothing
-			end
-
-			game_mode_hud_disabled = game_mode:game_mode_hud_disabled()
-
-			local game_mode_disable_hud = game_mode_hud_disabled
-
-			::label_21_1::
+			local game_mode_disable_hud = not not game_mode and not not game_mode.game_mode_hud_disabled
 
 			return game_mode_disable_hud
 		end

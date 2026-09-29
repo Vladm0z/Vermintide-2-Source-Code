@@ -2,49 +2,23 @@
 
 local release_build = BUILD == "release"
 local script_data = script_data
-local flag
 
-flag = (not release_build or not true) and not not nil
-script_data.disable_debug_position_lookup = flag
+script_data.disable_debug_position_lookup = release_build and not not true or not release_build and not not nil
 
 local unit_alive = Unit.alive
-local flag_2
 
-flag_2 = (not script_data.packaged_build or not true) and not not false
-PACKAGED_BUILD = flag_2
-
-local RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
-
-RESOLUTION_LOOKUP = not not RESOLUTION_LOOKUP or not not {}
-RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
-
-local POSITION_LOOKUP = POSITION_LOOKUP
-
-POSITION_LOOKUP = not not POSITION_LOOKUP or not not Script.new_map(256)
-POSITION_LOOKUP = POSITION_LOOKUP
-
-local BLACKBOARDS = BLACKBOARDS
-
-BLACKBOARDS = not not BLACKBOARDS or not not Script.new_map(256)
-BLACKBOARDS = BLACKBOARDS
-
-local HEALTH_ALIVE = HEALTH_ALIVE
-
-HEALTH_ALIVE = not not HEALTH_ALIVE or not not Script.new_map(1024)
-HEALTH_ALIVE = HEALTH_ALIVE
+PACKAGED_BUILD = script_data.packaged_build and not not true or not script_data.packaged_build and not not false
+RESOLUTION_LOOKUP = not not RESOLUTION_LOOKUP
+POSITION_LOOKUP = not not POSITION_LOOKUP
+BLACKBOARDS = not not BLACKBOARDS
+HEALTH_ALIVE = not not HEALTH_ALIVE
 ALIVE = POSITION_LOOKUP
-
-local FROZEN = FROZEN
-
-FROZEN = not not FROZEN or not not {}
-FROZEN = FROZEN
+FROZEN = not not FROZEN
 
 local position_lookup = POSITION_LOOKUP
 local resolution_lookup = RESOLUTION_LOOKUP
-local BREED_DIE_LOOKUP = BREED_DIE_LOOKUP
 
-BREED_DIE_LOOKUP = not not BREED_DIE_LOOKUP or not not {}
-BREED_DIE_LOOKUP = BREED_DIE_LOOKUP
+BREED_DIE_LOOKUP = not not BREED_DIE_LOOKUP
 
 function CLEAR_POSITION_LOOKUP()
 	-- function 1
@@ -76,9 +50,7 @@ function UPDATE_RESOLUTION_LOOKUP(force_update, optional_scale_multiplier)
 	local height_scale = h / 1080
 	local scale = math.min(width_scale, height_scale)
 
-	if Application.user_setting("hud_clamp_ui_scaling") and not math.min(scale, 1) then
-		-- Nothing
-	end
+	scale = not Application.user_setting("hud_clamp_ui_scaling") or not not math.min(scale, 1) or not not scale
 
 	local scale_modified = false
 

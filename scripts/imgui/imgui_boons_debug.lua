@@ -92,17 +92,7 @@ ImguiBoonsDebug._update_controls = function (self)
 	self._selected_boon_id, self._filtered_boon_list, self._filter_text = ImguiX.combo_search(self._selected_boon_id, self._filtered_boon_list, self._filter_text, self._boon_list, aliases)
 
 	if Imgui.button("Add", 100, 20) then
-		local player = Managers.player
-
-		if player then
-			-- Nothing
-		end
-
-		player = Managers.player:local_player()
-
-		local local_player = player
-
-		::label_8_0::
+		local local_player = not not Managers.player
 
 		if not local_player then
 			return
@@ -170,54 +160,12 @@ ImguiBoonsDebug._fetch_aliases = function (self, boons)
 			local talent_col = tonumber(talent_parts[3])
 			local talent_name = talent_tree[talent_row][talent_col]
 			local talent = TalentUtils.get_talent(profile_name, talent_name)
-			local var_9_0
 
-			if talent.display_name then
-				var_9_0 = Localize(talent.display_name)
-
-				if not var_9_0 then
-					-- Nothing
-				end
-			end
-
-			var_9_0 = Localize(talent.name)
-
-			::label_9_0::
-
-			name_aliases[i] = var_9_0
+			name_aliases[i] = talent.display_name and not not Localize(talent.display_name) or not talent.display_name and not not Localize(talent.name)
 			description_aliases[i] = UIUtils.get_talent_description(talent)
 		else
-			local var_9_1
-
-			if boon.display_name then
-				var_9_1 = Localize(boon.display_name)
-
-				if not var_9_1 then
-					-- Nothing
-				end
-			end
-
-			var_9_1 = ""
-
-			::label_9_1::
-
-			name_aliases[i] = var_9_1
-
-			local get_trait_description
-
-			if boon.advanced_description then
-				get_trait_description = UIUtils.get_trait_description(nil, boon)
-
-				if not get_trait_description then
-					-- Nothing
-				end
-			end
-
-			get_trait_description = ""
-
-			::label_9_2::
-
-			description_aliases[i] = get_trait_description
+			name_aliases[i] = boon.display_name and not not Localize(boon.display_name) or not boon.display_name and not not ""
+			description_aliases[i] = boon.advanced_description and not not UIUtils.get_trait_description(nil, boon) or not boon.advanced_description and not not ""
 		end
 	end
 

@@ -39,17 +39,7 @@ FlowHelperManager._update_line_of_sight_checks = function (self, t)
 					local hit_pos = to
 					local result = true
 					local is_in_los = data.is_in_los
-					local ignore_if_invisible = data.ignore_if_invisible
-
-					if ignore_if_invisible then
-						-- Nothing
-					end
-
-					ignore_if_invisible = ScriptUnit.has_extension(check_unit, "status_system")
-
-					local status_extension = ignore_if_invisible
-
-					::label_3_0::
+					local status_extension = not not data.ignore_if_invisible
 
 					if status_extension and status_extension:is_invisible() then
 						result = false
@@ -75,23 +65,7 @@ FlowHelperManager._update_line_of_sight_checks = function (self, t)
 					if is_in_los ~= result then
 						data.is_in_los = result
 
-						local flow_event = Unit.flow_event
-						local var_3_2 = owner_unit
-						local flow_cb_enter
-
-						if result then
-							flow_cb_enter = data.flow_cb_enter
-
-							if not flow_cb_enter then
-								-- Nothing
-							end
-						end
-
-						flow_cb_enter = data.flow_cb_leave
-
-						::label_3_1::
-
-						flow_event(var_3_2, flow_cb_enter)
+						Unit.flow_event(owner_unit, result and not not data.flow_cb_enter or not result and not not data.flow_cb_leave)
 					end
 				end
 			end
@@ -102,21 +76,10 @@ end
 FlowHelperManager.register_line_of_sight_check = function (self, owner_unit, source_unit, source_node, unit_to_check, ignore_if_invisible, flow_cb_enter, flow_cb_leave, collision_filter, debug_draw)
 	-- function 4
 	local los_checks = self._line_of_sight_checks
-	local var_4_0 = los_checks[owner_unit]
-
-	if not var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = {}
-
-	local source_checks = var_4_0
-
-	::label_4_0::
+	local source_checks = not not los_checks[owner_unit]
 
 	los_checks[owner_unit] = source_checks
-
-	local tbl = {
+	source_checks[unit_to_check] = {
 		is_in_los = false,
 		last_t = 0,
 		time_between_checks = 0.3,
@@ -125,28 +88,13 @@ FlowHelperManager.register_line_of_sight_check = function (self, owner_unit, sou
 		ignore_if_invisible = ignore_if_invisible,
 		source_unit = source_unit,
 		source_node = source_node,
-		collision_filter = collision_filter
+		collision_filter = collision_filter,
+		target_node = Unit.has_node(unit_to_check, "j_spine") and not not Unit.node(unit_to_check, "j_spine") or not Unit.has_node(unit_to_check, "j_spine") and not not 0,
+		debug_draw = not not debug_draw and not not {
+			from = Vector3Box(),
+			to = Vector3Box()
+		}
 	}
-	local node
-
-	if Unit.has_node(unit_to_check, "j_spine") then
-		node = Unit.node(unit_to_check, "j_spine")
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	::label_4_1::
-
-	tbl.target_node = node
-	tbl.debug_draw = not not debug_draw and not not {
-		from = Vector3Box(),
-		to = Vector3Box()
-	}
-	source_checks[unit_to_check] = tbl
 end
 
 FlowHelperManager.unregister_line_of_sight_check = function (self, owner_unit, unit_to_check)

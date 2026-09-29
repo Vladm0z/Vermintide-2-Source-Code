@@ -11,52 +11,9 @@ local function player_stuck_cb()
 end
 
 local tobii_contest_url = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
-local str
-
-if IS_XB1 then
-	str = "leave_party_menu_button_name_xb1"
-
-	goto label_0_0
-end
-
-str = "leave_party_menu_button_name"
-
-local leave_party_button_text = str
-
-do
-	local str_2
-end
-
-::label_0_0::
-
-if IS_XB1 then
-	str_2 = "disband_party_menu_button_name_xb1"
-
-	goto label_0_1
-end
-
-str_2 = "disband_party_menu_button_name"
-
-local disband_party_button_text = str_2
-
-do
-	local str_3
-end
-
-::label_0_1::
-
-if IS_XB1 then
-	str_3 = "quit_menu_button_name_xb1"
-
-	goto label_0_2
-end
-
-str_3 = "quit_menu_button_name_ps4"
-
-local quit_menu_button_text = str_3
-
-::label_0_2::
-
+local leave_party_button_text = IS_XB1 and not not "leave_party_menu_button_name_xb1" or not IS_XB1 and not not "leave_party_menu_button_name"
+local disband_party_button_text = IS_XB1 and not not "disband_party_menu_button_name_xb1" or not IS_XB1 and not not "disband_party_menu_button_name"
+local quit_menu_button_text = IS_XB1 and not not "quit_menu_button_name_xb1" or not IS_XB1 and not not "quit_menu_button_name_ps4"
 local menu_layouts = {}
 
 function demo_inverted_func()
@@ -68,21 +25,15 @@ function demo_inverted_func()
 		local input_filters = input_service:get_active_filters(platform_key)
 		local look_filter = input_filters.look
 		local function_data = look_filter.function_data
-		local flag
 
-		flag = (function_data.filter_type ~= "scale_vector3" or not "menu_invert_controls") and not not "menu_non_invert_controls"
-
-		return flag
+		return function_data.filter_type ~= "scale_vector3" and not not "menu_non_invert_controls" or not (function_data.filter_type ~= "scale_vector3") and not not "menu_invert_controls"
 	else
 		local platform_key = PLATFORM
 		local input_filters = input_service:get_active_filters(platform_key)
 		local look_filter = input_filters.look_controller
 		local function_data = look_filter.function_data
-		local flag_2
 
-		flag_2 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "menu_invert_controls") and not not "menu_non_invert_controls"
-
-		return flag_2
+		return function_data.filter_type ~= "scale_vector3_xy_accelerated_x" and not not "menu_non_invert_controls" or not (function_data.filter_type ~= "scale_vector3_xy_accelerated_x") and not not "menu_invert_controls"
 	end
 end
 

@@ -59,14 +59,7 @@ AudioSystem._update_global_parameters = function (self, dt)
 		if script_data.debug_music then
 			Debug.text("GLOBAL PARAMETERS")
 
-			local format = string.format
-			local str = " %s: %.2f"
-			local var_4_2 = name
-			local interpolation_current_value = data.interpolation_current_value
-
-			interpolation_current_value = not not interpolation_current_value or not not 0
-
-			local debug_string = format(str, var_4_2, interpolation_current_value)
+			local debug_string = string.format(" %s: %.2f", name, not not data.interpolation_current_value)
 
 			Debug.text(debug_string)
 		end
@@ -76,17 +69,7 @@ AudioSystem._update_global_parameters = function (self, dt)
 		if progress < 1 then
 			local start_value = data.interpolation_start_value
 			local end_value = data.interpolation_end_value
-			local var_4_4 = LERP_PROGRESS_PER_SECOND[name]
-
-			if not var_4_4 then
-				-- Nothing
-			end
-
-			var_4_4 = LERP_PROGRESS_PER_SECOND.default
-
-			local increment_value = var_4_4
-
-			::label_4_0::
+			local increment_value = not not LERP_PROGRESS_PER_SECOND[name]
 
 			progress = math.clamp(progress + dt * increment_value, 0, 1)
 
@@ -114,21 +97,7 @@ end
 
 AudioSystem.player_unit_sound_local = function (self, event, unit, object)
 	-- function 6
-	local node
-
-	if object then
-		node = Unit.node(unit, object)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	local object_id = node
-
-	::label_6_0::
+	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
 
 	if not DEDICATED_SERVER then
 		self:_play_event(event, unit, object_id)
@@ -170,21 +139,7 @@ AudioSystem.play_audio_unit_event = function (self, event, unit, object)
 		return
 	end
 
-	local node
-
-	if object then
-		node = Unit.node(unit, object)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	local object_id = node
-
-	::label_9_0::
+	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
 
 	if not DEDICATED_SERVER then
 		self:_play_event(event, unit, object_id)
@@ -250,21 +205,7 @@ end
 
 AudioSystem.play_audio_unit_param_string_event = function (self, event, param, value, unit, object)
 	-- function 14
-	local node
-
-	if object then
-		node = Unit.node(unit, object)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	local object_id = node
-
-	::label_14_0::
+	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
 
 	if not DEDICATED_SERVER then
 		self:_play_param_event(event, param, value, unit, object_id)
@@ -285,21 +226,7 @@ end
 
 AudioSystem.play_audio_unit_param_int_event = function (self, event, param, value, unit, object)
 	-- function 15
-	local node
-
-	if object then
-		node = Unit.node(unit, object)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	local object_id = node
-
-	::label_15_0::
+	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
 
 	if not DEDICATED_SERVER then
 		self:_play_param_event(event, param, value, unit, object_id)
@@ -315,29 +242,8 @@ end
 
 AudioSystem.set_global_parameter_with_lerp = function (self, name, value)
 	-- function 16
-	local var_16_0 = self.global_parameter_data[name]
-
-	if not var_16_0 then
-		-- Nothing
-	end
-
-	var_16_0 = {}
-
-	local global_parameter_data = var_16_0
-
-	::label_16_0::
-
-	local interpolation_current_value = global_parameter_data.interpolation_current_value
-
-	if not interpolation_current_value then
-		-- Nothing
-	end
-
-	interpolation_current_value = 0
-
-	local current_value = interpolation_current_value
-
-	::label_16_1::
+	local global_parameter_data = not not self.global_parameter_data[name]
+	local current_value = not not global_parameter_data.interpolation_current_value
 
 	global_parameter_data.interpolation_start_value = current_value
 	global_parameter_data.interpolation_end_value = value
@@ -354,21 +260,7 @@ end
 
 AudioSystem.play_audio_unit_param_float_event = function (self, event, param, value, unit, object)
 	-- function 18
-	local node
-
-	if object then
-		node = Unit.node(unit, object)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	local object_id = node
-
-	::label_18_0::
+	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
 
 	if not DEDICATED_SERVER then
 		self:_play_param_event(event, param, value, unit, object_id)

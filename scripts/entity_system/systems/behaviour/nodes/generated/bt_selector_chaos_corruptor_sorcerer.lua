@@ -75,23 +75,7 @@ BTSelector_chaos_corruptor_sorcerer.run = function (self, unit, blackboard, t, d
 
 	do
 		local node_falling = children[3]
-		local is_falling = blackboard.is_falling
-
-		if not is_falling then
-			-- Nothing
-		end
-
-		if blackboard.fall_state == nil then
-			is_falling = false
-
-			goto label_4_0
-		end
-
-		is_falling = true
-
-		local condition_result = is_falling
-
-		::label_4_0::
+		local condition_result = not not blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -151,18 +135,7 @@ BTSelector_chaos_corruptor_sorcerer.run = function (self, unit, blackboard, t, d
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_data = next_smart_object_data.smart_object_data
-
-		if smart_object_data then
-			-- Nothing
-		end
-
-		smart_object_data = next_smart_object_data.smart_object_data.unit
-
-		local smart_object_unit = smart_object_data
-
-		::label_4_1::
-
+		local smart_object_unit = not not next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -173,7 +146,7 @@ BTSelector_chaos_corruptor_sorcerer.run = function (self, unit, blackboard, t, d
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = (not is_in_smartobject_range or not moving_state) and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
 		end
 
 		if condition_result then
@@ -216,23 +189,7 @@ BTSelector_chaos_corruptor_sorcerer.run = function (self, unit, blackboard, t, d
 
 	do
 		local node_attack = children[7]
-		local ready_to_summon = blackboard.ready_to_summon
-
-		if ready_to_summon then
-			-- Nothing
-		end
-
-		ready_to_summon = blackboard.summoning
-
-		if not ready_to_summon then
-			-- Nothing
-		end
-
-		ready_to_summon = Unit.alive(blackboard.target_unit)
-
-		local condition_result = ready_to_summon
-
-		::label_4_2::
+		local condition_result = not not blackboard.ready_to_summon
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_attack, "aborted")

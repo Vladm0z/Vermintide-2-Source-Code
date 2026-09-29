@@ -7,29 +7,8 @@ local animation_definitions = definitions.animation_definitions
 
 local function sort_categories_by_order(category_1, category_2)
 	-- function 1
-	local sort_order = category_1.sort_order
-
-	if not sort_order then
-		-- Nothing
-	end
-
-	sort_order = math.huge
-
-	local category_1_order = sort_order
-
-	::label_1_0::
-
-	local sort_order_2 = category_2.sort_order
-
-	if not sort_order_2 then
-		-- Nothing
-	end
-
-	sort_order_2 = math.huge
-
-	local category_2_order = sort_order_2
-
-	::label_1_1::
+	local category_1_order = not not category_1.sort_order
+	local category_2_order = not not category_2.sort_order
 
 	return category_1_order < category_2_order
 end
@@ -164,11 +143,8 @@ end
 StoreWindowCategoryList._is_list_hovered = function (self)
 	-- function 9
 	local list_mask = self._widgets_by_name.list
-	local is_hover = list_mask.content.list_hotspot.is_hover
 
-	is_hover = not not is_hover or not not false
-
-	return is_hover
+	return not not list_mask.content.list_hotspot.is_hover
 end
 
 StoreWindowCategoryList._handle_input = function (self, dt, t)
@@ -462,17 +438,7 @@ StoreWindowCategoryList._list_index_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot_2 = content.hotspot
-
-			if not hotspot_2 then
-				-- Nothing
-			end
-
-			hotspot_2 = content.button_hotspot
-
-			local hotspot = hotspot_2
-
-			::label_21_0::
+			local hotspot = not not content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -496,17 +462,7 @@ StoreWindowCategoryList._animate_list_entries = function (self, dt)
 	for _, widget in ipairs(list_widgets) do
 		local content = widget.content
 		local style = widget.style
-		local button_hotspot = content.button_hotspot
-
-		if not button_hotspot then
-			-- Nothing
-		end
-
-		button_hotspot = content.hotspot
-
-		local hotspot = button_hotspot
-
-		::label_22_0::
+		local hotspot = not not content.button_hotspot
 
 		if hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
@@ -520,111 +476,16 @@ end
 
 StoreWindowCategoryList._animate_list_entry = function (self, content, style, dt, list_hovered)
 	-- function 23
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_23_0::
-
+	local hotspot = not not content.button_hotspot
 	local on_hover_enter = not not list_hovered and not not hotspot.on_hover_enter
 	local is_hover = not not list_hovered and not not hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_23_2
-
-	::label_23_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_23_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_23_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_23_4::
-
-	local pulse_progress_2 = hotspot.pulse_progress
-
-	if not pulse_progress_2 then
-		-- Nothing
-	end
-
-	pulse_progress_2 = 1
-
-	local pulse_progress = pulse_progress_2
-
-	::label_23_5::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	do
-		local num
-	end
-
-	::label_23_6::
-
-	if is_hover or is_selected then
-		num = 14
-
-		goto label_23_7
-	end
-
-	num = 3
-
-	local speed = num
-
-	::label_23_7::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local pulse_progress = not not hotspot.pulse_progress
+	local selection_progress = not not hotspot.selection_progress
+	local speed = not not 14
 	local pulse_speed = 3
 	local input_speed = 20
 
@@ -798,17 +659,7 @@ StoreWindowCategoryList._on_list_index_selected = function (self, index, scrollb
 	if list_widgets then
 		for i, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot_2 = content.hotspot
-
-			if not hotspot_2 then
-				-- Nothing
-			end
-
-			hotspot_2 = content.button_hotspot
-
-			local hotspot = hotspot_2
-
-			::label_27_0::
+			local hotspot = not not content.hotspot
 
 			if hotspot then
 				local is_selected = i == index

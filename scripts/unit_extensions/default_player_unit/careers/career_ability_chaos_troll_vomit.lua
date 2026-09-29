@@ -77,25 +77,8 @@ CareerAbilityChaosTrollVomit._ability_available = function (self)
 	local locomotion_extension = self._locomotion_extension
 	local ghost_mode_extension = self._ghost_mode_extension
 	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
-	local can_use_activated_ability = career_extension:can_use_activated_ability(self._ability_data.ability_id)
 
-	if can_use_activated_ability then
-		if not status_extension:is_disabled() then
-			can_use_activated_ability = locomotion_extension:is_on_ground()
-
-			if can_use_activated_ability then
-				can_use_activated_ability = not in_ghost_mode
-			end
-		else
-			can_use_activated_ability = false
-		end
-	end
-
-	if false then
-		can_use_activated_ability = true
-	end
-
-	return can_use_activated_ability
+	return not not career_extension:can_use_activated_ability(self._ability_data.ability_id)
 end
 
 CareerAbilityChaosTrollVomit.finish = function (self, reason)

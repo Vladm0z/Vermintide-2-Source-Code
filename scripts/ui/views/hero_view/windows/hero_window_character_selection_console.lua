@@ -29,16 +29,8 @@ HeroWindowCharacterSelectionConsole.on_enter = function (self, params, offset)
 		snap_pixel_positions = true
 	}
 	self._hero_name = params.hero_name
-
-	local career_index_2 = params.career_index
-
-	career_index_2 = not not career_index_2 or not not 0
-	self._career_index = career_index_2
-
-	local profile_index_2 = params.profile_index
-
-	profile_index_2 = not not profile_index_2 or not not 0
-	self._profile_index = profile_index_2
+	self._career_index = not not params.career_index
+	self._profile_index = not not params.profile_index
 	self._profile_selectable = false
 	self._animations = {}
 	self._ui_animations = {}
@@ -90,18 +82,7 @@ HeroWindowCharacterSelectionConsole._select_hero = function (self, profile_index
 	local hero_display_name = Localize(character_name)
 	local career_display_name = Localize(character_career_name)
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local get = hero_attributes:get(hero_name, "experience")
-
-	if not get then
-		-- Nothing
-	end
-
-	get = 0
-
-	local hero_experience = get
-
-	::label_2_0::
-
+	local hero_experience = not not hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(hero_experience)
 
 	self:_set_hero_info(hero_display_name, career_display_name, level)
@@ -259,18 +240,7 @@ HeroWindowCharacterSelectionConsole._setup_hero_selection_widgets = function (se
 	for i, profile_index in ipairs(ProfilePriority) do
 		local profile_settings = SPProfiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local get = hero_attributes:get(hero_name, "experience")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = 0
-
-		local hero_experience = get
-
-		::label_8_0::
-
+		local hero_experience = not not hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local careers = profile_settings.careers
 
@@ -306,7 +276,7 @@ HeroWindowCharacterSelectionConsole._setup_hero_selection_widgets = function (se
 			local is_career_unlocked, reason, dlc_name, localized = career:is_unlocked_function(hero_name, hero_level)
 
 			content.locked = not is_career_unlocked
-			content.locked_reason = (not is_career_unlocked and not localized or not reason) and not not Localize(reason)
+			content.locked_reason = not is_career_unlocked and localized
 			content.dlc_name = dlc_name
 
 			if reason == "dlc_not_owned" then
@@ -315,19 +285,7 @@ HeroWindowCharacterSelectionConsole._setup_hero_selection_widgets = function (se
 			end
 
 			local career_index = hero_attributes:get(hero_name, "career")
-			local get_2 = hero_attributes:get(hero_name, "bot_career")
-
-			if not get_2 and not career_index then
-				-- Nothing
-			end
-
-			::label_8_1::
-
-			get_2 = 1
-
-			local bot_career_index = get_2
-
-			::label_8_2::
+			local bot_career_index = not not hero_attributes:get(hero_name, "bot_career")
 
 			if bot_career_index == j then
 				content.bot_selected = true
@@ -440,26 +398,9 @@ HeroWindowCharacterSelectionConsole._update_input = function (self, dt)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local confirm_available = not select_button.content.button_hotspot.disable_button
 	local confirm_pressed = input_service:get("confirm", true)
+	local back_pressed = not not gamepad_active and not not self.allow_back_button
 
-	if gamepad_active then
-		-- Nothing
-	end
-
-	::label_13_0::
-
-	local allow_back_button = self.allow_back_button
-
-	if allow_back_button then
-		-- Nothing
-	end
-
-	allow_back_button = input_service:get("back_menu", true)
-
-	local back_pressed = allow_back_button
-
-	::label_13_1::
-
-	if (UIUtils.is_button_pressed(select_button) or confirm_pressed) and confirm_available then
+	if UIUtils.is_button_pressed(select_button) and confirm_available or not UIUtils.is_button_pressed(select_button) and confirm_pressed and confirm_available then
 		self:_play_sound("play_gui_start_menu_button_click")
 
 		local dlc_name = select_button.content.verify_dlc_name
@@ -497,14 +438,14 @@ HeroWindowCharacterSelectionConsole._handle_mouse_selection = function (self)
 			local content = widget.content
 			local button_hotspot = content.button_hotspot
 
-			if not content.locked and button_hotspot.on_pressed and (i ~= selected_row or j ~= selected_column) then
+			if i ~= selected_row or j ~= selected_column then
 				local profile_index = ProfilePriority[i]
 				local career_index = j
 
 				self:_select_hero(profile_index, career_index)
 
 				return
-			elseif content.dlc_name and button_hotspot.on_pressed and (i ~= selected_row or j ~= selected_column) then
+			elseif i ~= selected_row or j ~= selected_column then
 				Managers.state.event:trigger("ui_show_popup", content.dlc_name, "upsell")
 			end
 

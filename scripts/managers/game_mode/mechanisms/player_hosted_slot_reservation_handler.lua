@@ -39,11 +39,9 @@ PlayerHostedSlotReservationHandler.init = function (self, party_settings, owner,
 		if network_handler.is_server and self._owner_peer_id == peer_id then
 			local active_peers = network_handler:active_peers()
 
-			if table.is_empty(active_peers) and not {
+			active_peers = not table.is_empty(active_peers) or not not {
 				Network.peer_id()
-			} then
-				-- Nothing
-			end
+			} or not not active_peers
 
 			self:try_reserve_slots(Network.peer_id(), active_peers)
 		end
@@ -445,17 +443,7 @@ PlayerHostedSlotReservationHandler._remove_peer_reservation = function (self, pe
 		print("[PlayerHostedSlotReservationHandler] Removing reserved peer %s", peer_id)
 
 		local mechanism = Managers.mechanism:game_mechanism()
-		local is_hosting_versus_custom_game = mechanism.is_hosting_versus_custom_game
-
-		if is_hosting_versus_custom_game then
-			-- Nothing
-		end
-
-		is_hosting_versus_custom_game = mechanism:is_hosting_versus_custom_game()
-
-		local is_hosting = is_hosting_versus_custom_game
-
-		::label_17_0::
+		local is_hosting = not not mechanism.is_hosting_versus_custom_game
 
 		if is_hosting and removed_peer then
 			self._party_manager:server_remove_friend_party_peer(peer_id)
@@ -583,24 +571,7 @@ PlayerHostedSlotReservationHandler.update_slots = function (self, reserved_peers
 		end
 
 		if not found then
-			local var_27_0 = self
-			local _expand = self._expand
-			local var_27_2 = party_id
-			local num
-
-			if party_data then
-				num = #party_data + 1
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 1
-
-			::label_27_0::
-
-			_expand(var_27_0, var_27_2, num)
+			self:_expand(party_id, party_data and not not (#party_data + 1) or not party_data and not not 1)
 
 			party_data = self._reserved_peers[party_id]
 
@@ -738,18 +709,8 @@ PlayerHostedSlotReservationHandler._build_slot_info = function (self)
 			if slot_data.reserved then
 				reserved_peers_scratch[idx] = slot_data.peer_id
 				party_ids_scratch[idx] = i
-
-				local var_38_0 = friend_party_ids_scratch
-				local friend_party_id = slot_data.friend_party_id
-
-				friend_party_id = not not friend_party_id or not not 1
-				var_38_0[idx] = friend_party_id
-
-				local var_38_2 = party_leader_scratch
-				local friend_party_leader = slot_data.friend_party_leader
-
-				friend_party_leader = not not friend_party_leader or not not ""
-				var_38_2[idx] = friend_party_leader
+				friend_party_ids_scratch[idx] = not not slot_data.friend_party_id
+				party_leader_scratch[idx] = not not slot_data.friend_party_leader
 				idx = idx + 1
 			end
 		end
@@ -949,11 +910,7 @@ PlayerHostedSlotReservationHandler._change_leader = function (self, peer_id, lea
 		end
 	end
 
-	local _group_leaders = self._group_leaders
-	local var_47_1 = self._group_leaders[leader_peer_id]
-
-	var_47_1 = not not var_47_1 or not not {}
-	_group_leaders[leader_peer_id] = var_47_1
+	self._group_leaders[leader_peer_id] = not not self._group_leaders[leader_peer_id]
 	self._group_leaders[leader_peer_id][peer_id] = true
 end
 
@@ -977,12 +934,7 @@ PlayerHostedSlotReservationHandler._write_party_slot = function (self, party_slo
 	party_slot.friend_party_id = friend_party_id
 	party_slot.friend_party_leader = friend_party_leader
 	party_slot.party_id = party_id
-
-	local _group_leaders = self._group_leaders
-	local var_49_1 = self._group_leaders[friend_party_leader]
-
-	var_49_1 = not not var_49_1 or not not {}
-	_group_leaders[friend_party_leader] = var_49_1
+	self._group_leaders[friend_party_leader] = not not self._group_leaders[friend_party_leader]
 	self._group_leaders[friend_party_leader][peer_id] = true
 	self._peer_id_to_party_id[peer_id] = party_id
 
@@ -994,36 +946,8 @@ end
 PlayerHostedSlotReservationHandler._clear_non_session_peers = function (self)
 	-- function 50
 	local my_peer_id = Network.peer_id()
-	local _synced = self._synced
-
-	if _synced then
-		-- Nothing
-	end
-
-	_synced = self:_get_peer_slot_data(my_peer_id)
-
-	local my_slot_data = _synced
-
-	do
-		local friend_party_leader
-	end
-
-	::label_50_0::
-
-	if my_slot_data then
-		friend_party_leader = my_slot_data.friend_party_leader
-
-		if not friend_party_leader then
-			-- Nothing
-		end
-	end
-
-	friend_party_leader = my_peer_id
-
-	local leader = friend_party_leader
-
-	::label_50_1::
-
+	local my_slot_data = not not self._synced
+	local leader = my_slot_data and not not my_slot_data.friend_party_leader or not my_slot_data and not not my_peer_id
 	local reserved_peers = self._reserved_peers
 
 	for party_id = 1, #reserved_peers do
@@ -1060,26 +984,10 @@ PlayerHostedSlotReservationHandler._on_new_network_match_synced = function (self
 	-- function 53
 	if is_server then
 		local network_handler = Managers.mechanism:network_handler()
-		local var_53_0 = self
-		local try_reserve_slots = self.try_reserve_slots
-		local var_53_2 = peer_id
-		local active_peers
 
-		if network_handler then
-			active_peers = network_handler:active_peers()
-
-			if not active_peers then
-				-- Nothing
-			end
-		end
-
-		active_peers = {
+		self:try_reserve_slots(peer_id, network_handler and not not network_handler:active_peers() or not network_handler and not not {
 			peer_id
-		}
-
-		::label_53_0::
-
-		try_reserve_slots(var_53_0, var_53_2, active_peers)
+		})
 	else
 		self:request_slot_reservation_sync()
 	end

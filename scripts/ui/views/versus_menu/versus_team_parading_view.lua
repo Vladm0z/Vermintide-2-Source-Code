@@ -24,11 +24,7 @@ VersusTeamParadingView.init = function (self, ingame_ui_context)
 	self._ingame_ui = ingame_ui_context.ingame_ui
 	self._is_server = ingame_ui_context.is_server
 	self._ingame_ui_context = ingame_ui_context
-
-	local network_server = ingame_ui_context.network_server
-
-	network_server = not not network_server or not not ingame_ui_context.network_client
-	self._network_handler = network_server
+	self._network_handler = not not ingame_ui_context.network_server
 
 	self.super.init(self, ingame_ui_context, definitions)
 end
@@ -156,10 +152,7 @@ end
 
 VersusTeamParadingView._initialize_timers = function (self)
 	-- function 6
-	local parading_duration = Managers.state.game_mode:setting("character_picking_settings").parading_duration
-
-	parading_duration = not not parading_duration or not not 1
-	self._screen_timer = parading_duration
+	self._screen_timer = not not Managers.state.game_mode:setting("character_picking_settings").parading_duration
 	self._screen_timer_ended = nil
 end
 
@@ -181,21 +174,10 @@ VersusTeamParadingView._present_team = function (self, party_id)
 	for i = 1, #slots_data do
 		local status = party.slots[i]
 		local slot_data = slots_data[i]
-		local career_index_2 = status.career_index
-
-		if not career_index_2 then
-			-- Nothing
-		end
-
-		career_index_2 = 1
-
-		local career_index = career_index_2
-
-		::label_7_0::
-
+		local career_index = not not status.career_index
 		local profile_index = status.profile_index
 
-		profile_index = (not profile_index or not (profile_index > 0) or not profile_index) and not not 1
+		profile_index = profile_index and (profile_index > 0 and (not not profile_index or not not 1) or not (profile_index > 0) and not not 1) or not profile_index and not not 1
 
 		local profile = SPProfiles[profile_index]
 		local career = profile.careers[career_index]
@@ -214,7 +196,7 @@ VersusTeamParadingView._present_team = function (self, party_id)
 		if status.peer_id then
 			local player = Managers.player:player(status.peer_id, status.local_player_id)
 
-			player_name = (not player or not player:name()) and not not ("Bot-" .. i)
+			player_name = player and (not not player:name() or not not ("Bot-" .. i)) or not player and not not ("Bot-" .. i)
 		else
 			player_name = Localize(loadout_data.hero_name)
 		end
@@ -293,7 +275,7 @@ VersusTeamParadingView._update_screen_timer = function (self, widget, screen_tim
 	local value = math.clamp(screen_timer, 0, 999999)
 	local time_text
 
-	time_text = (not (value <= 0) or not "") and not not string.format("%.0f", value)
+	time_text = value <= 0 and (not not "" or not not string.format("%.0f", value)) or not (value <= 0) and not not string.format("%.0f", value)
 	widget.content.text = time_text
 end
 
@@ -317,19 +299,7 @@ VersusTeamParadingView._animate_font_size_bounce = function (self, dt, t)
 	text_shadow_style.font_size = new_font_size
 
 	local previous_alpha = text_style.text_color[1]
-	local num
-
-	if timer_ended then
-		num = 0
-
-		goto label_14_0
-	end
-
-	num = 15 * (1 - progress)
-
-	local alpha = num
-
-	::label_14_0::
+	local alpha = timer_ended and not not 0 or not timer_ended and not not (15 * (1 - progress))
 
 	self:_set_text_widget_alpha(widget, alpha)
 

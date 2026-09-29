@@ -52,17 +52,7 @@ end
 
 AINavigationSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 5
-	local var_5_0 = self.unit_extension_data[unit]
-
-	if not var_5_0 then
-		-- Nothing
-	end
-
-	var_5_0 = self.delayed_units[unit]
-
-	local extension = var_5_0
-
-	::label_5_0::
+	local extension = not not self.unit_extension_data[unit]
 
 	fassert(extension, "Unit was already frozen.")
 
@@ -95,17 +85,7 @@ AINavigationSystem.freeze = function (self, unit, extension_name, reason)
 		return
 	end
 
-	local var_7_0 = self.unit_extension_data[unit]
-
-	if not var_7_0 then
-		-- Nothing
-	end
-
-	var_7_0 = self.delayed_units[unit]
-
-	local extension = var_7_0
-
-	::label_7_0::
+	local extension = not not self.unit_extension_data[unit]
 
 	fassert(extension, "Unit to freeze didn't have unfrozen extension")
 	self:_cleanup_extension(unit, extension_name)
@@ -193,17 +173,7 @@ end
 
 AINavigationSystem.add_navbot_to_release = function (self, unit)
 	-- function 13
-	local var_13_0 = self.unit_extension_data[unit]
-
-	if not var_13_0 then
-		-- Nothing
-	end
-
-	var_13_0 = self.delayed_units[unit]
-
-	local extension = var_13_0
-
-	::label_13_0::
+	local extension = not not self.unit_extension_data[unit]
 
 	self.navbots_to_release[unit] = extension
 end
@@ -229,13 +199,13 @@ AINavigationSystem.update_enabled = function (self)
 	for unit, extension in pairs(self.unit_extension_data) do
 		local enabled = extension._nav_bot ~= nil and not not extension._enabled
 
-		self.enabled_units[unit] = (not enabled or not extension) and not not nil
+		self.enabled_units[unit] = enabled and (not not extension or not not nil) or not enabled and not not nil
 	end
 
 	for unit, extension in pairs(self.delayed_units) do
 		local enabled = extension._nav_bot ~= nil and not not extension._enabled
 
-		self.enabled_units[unit] = (not enabled or not extension) and not not nil
+		self.enabled_units[unit] = enabled and (not not extension or not not nil) or not enabled and not not nil
 	end
 end
 
@@ -364,25 +334,14 @@ AINavigationSystem.update_destination = function (self, t)
 
 			if repath_allowed then
 				local breed = blackboard.breed
-				local navigation_far_away_distance_sq = breed.navigation_far_away_distance_sq
-
-				if not navigation_far_away_distance_sq then
-					-- Nothing
-				end
-
-				navigation_far_away_distance_sq = 36
-
-				local far_away_distance_sq = navigation_far_away_distance_sq
-
-				::label_16_0::
-
+				local far_away_distance_sq = not not breed.navigation_far_away_distance_sq
 				local destination_change = Vec3_dist_sq(position_current_destination, position_wanted_destination)
 				local dist_to_destination = Vec3_dist_sq(position_unit, position_wanted_destination)
 				local destination_far_away = far_away_distance_sq < dist_to_destination
-				local change_large_enough = (not destination_far_away or not (destination_change > 9)) and not destination_far_away and destination_change > 0.01
+				local change_large_enough = not destination_far_away and destination_change > 0.01
 				local already_at_wanted_destination = dist_to_destination < 0.01
 				local is_path_recomputation_needed = GwNavBot.is_path_recomputation_needed(nav_bot)
-				local should_start_new_pathfind = not not is_path_recomputation_needed or not already_at_wanted_destination and not is_navbot_following_path or not not change_large_enough
+				local should_start_new_pathfind = not not is_path_recomputation_needed or not already_at_wanted_destination and (not is_navbot_following_path or not not change_large_enough)
 
 				if should_start_new_pathfind then
 					GwNavBot.compute_new_path(nav_bot, position_wanted_destination)
@@ -660,7 +619,7 @@ AINavigationSystem.update_debug_draw = function (self, t)
 	for unit, extension in pairs(self.unit_extension_data) do
 		local pos = Unit.local_position(unit, 0)
 		local enabled = self.enabled_units[unit]
-		local color = (not enabled or not enabled_color) and not not disabled_color
+		local color = enabled and (not not enabled_color or not not disabled_color) or not enabled and not not disabled_color
 		local wanted_destination = extension._wanted_destination:unbox()
 		local destination = extension._destination:unbox()
 
@@ -686,80 +645,15 @@ AINavigationSystem.update_debug_draw = function (self, t)
 		if data.next_smart_object_id then
 			local entrance_pos = data.entrance_pos:unbox()
 			local exit_pos = data.exit_pos:unbox()
-			local var_24_0 = drawer
-			local sphere = drawer.sphere
-			local var_24_2 = entrance_pos
-			local num = 0.3
-			local get
 
-			if data.entrance_is_at_bot_progress_on_path then
-				get = Colors.get("pink")
-
-				if not get then
-					-- Nothing
-				end
-			end
-
-			get = Colors.get("red")
-
-			::label_24_0::
-
-			sphere(var_24_0, var_24_2, num, get)
-
-			local var_24_5 = drawer
-			local sphere_2 = drawer.sphere
-			local var_24_7 = exit_pos
-			local num_2 = 0.3
-			local get_2
-
-			if data.exit_is_at_the_end_of_path then
-				get_2 = Colors.get("pink")
-
-				if not get_2 then
-					-- Nothing
-				end
-			end
-
-			get_2 = Colors.get("red")
-
-			::label_24_1::
-
-			sphere_2(var_24_5, var_24_7, num_2, get_2)
-
-			local var_24_10 = drawer
-			local vector = drawer.vector
-			local var_24_12 = entrance_pos
-			local num_3 = exit_pos - entrance_pos
-			local get_3
-
-			if data.next_smart_object_id then
-				get_3 = Colors.get("pink")
-
-				if not get_3 then
-					-- Nothing
-				end
-			end
-
-			get_3 = Colors.get("red")
-
-			::label_24_2::
-
-			vector(var_24_10, var_24_12, num_3, get_3)
+			drawer:sphere(entrance_pos, 0.3, data.entrance_is_at_bot_progress_on_path and not not Colors.get("pink") or not data.entrance_is_at_bot_progress_on_path and not not Colors.get("red"))
+			drawer:sphere(exit_pos, 0.3, data.exit_is_at_the_end_of_path and not not Colors.get("pink") or not data.exit_is_at_the_end_of_path and not not Colors.get("red"))
+			drawer:vector(entrance_pos, exit_pos - entrance_pos, data.next_smart_object_id and not not Colors.get("pink") or not data.next_smart_object_id and not not Colors.get("red"))
 		end
 	end
 
 	local debug_unit = script_data.debug_unit
-	local var_24_15 = self.unit_extension_data[debug_unit]
-
-	if not var_24_15 then
-		-- Nothing
-	end
-
-	var_24_15 = self.delayed_units[debug_unit]
-
-	local navigation_extension = var_24_15
-
-	::label_24_3::
+	local navigation_extension = not not self.unit_extension_data[debug_unit]
 
 	if Unit_alive(debug_unit) and navigation_extension then
 		local blackboard = navigation_extension._blackboard
@@ -777,57 +671,18 @@ AINavigationSystem._debug_draw_text = function (self, debug_unit, blackboard, na
 	-- function 25
 	Debug.text("AI NAVIGATION DEBUG")
 	Debug.text("  enabled = %s", tostring(self.enabled_units[debug_unit] ~= nil))
-
-	local text = Debug.text
-	local str = "  using far-path = %s"
-	local flag
-
-	flag = (not blackboard.far_path or not "YES") and not not "NO"
-
-	text(str, flag)
+	Debug.text("  using far-path = %s", blackboard.far_path and not not "YES" or not blackboard.far_path and not not "NO")
 	Debug.text("  has_reached = %s", tostring(navigation_extension:has_reached_destination()))
-
-	local text_2 = Debug.text
-	local str_2 = "  remaining path distance = %.2f"
-	local get_remaining_distance_from_progress_to_end_of_path = navigation_extension:get_remaining_distance_from_progress_to_end_of_path()
-
-	get_remaining_distance_from_progress_to_end_of_path = not not get_remaining_distance_from_progress_to_end_of_path or not not 0
-
-	text_2(str_2, get_remaining_distance_from_progress_to_end_of_path)
+	Debug.text("  remaining path distance = %.2f", not not navigation_extension:get_remaining_distance_from_progress_to_end_of_path())
 	Debug.text("  dist to dest = %.2f", tostring(navigation_extension:distance_to_destination()))
 	Debug.text("  current_speed = %.2f", navigation_extension._current_speed)
-
-	local text_3 = Debug.text
-	local str_3 = "  desired_velocity = %s"
-	local var_25_8
-
-	if navigation_extension._nav_bot then
-		var_25_8 = tostring(GwNavBot.output_velocity(navigation_extension._nav_bot))
-
-		if not var_25_8 then
-			-- Nothing
-		end
-	end
-
-	var_25_8 = "?"
-
-	::label_25_0::
-
-	text_3(str_3, var_25_8)
+	Debug.text("  desired_velocity = %s", navigation_extension._nav_bot and not not tostring(GwNavBot.output_velocity(navigation_extension._nav_bot)) or not navigation_extension._nav_bot and not not "?")
 	Debug.text("  failed_move_attempts = %d", navigation_extension._failed_move_attempts)
 	Debug.text("  no_path_found = %s", tostring(blackboard.no_path_found))
 	Debug.text("  is_computing_path = %s", tostring(navigation_extension._is_computing_path))
 	Debug.text("  is_following_path = %s", tostring(navigation_extension:is_following_path()))
 	Debug.text("  interpolating = %s", tostring(navigation_extension._interpolating))
-
-	local text_4 = Debug.text
-	local str_4 = "  move_state = %s"
-	local tostring = tostring
-	local move_state = navigation_extension._blackboard.move_state
-
-	move_state = not not move_state or not not "nil"
-
-	text_4(str_4, tostring(move_state))
+	Debug.text("  move_state = %s", tostring(not not navigation_extension._blackboard.move_state))
 	Debug.text("  btnode = %s", tostring(blackboard.btnode_name))
 	Debug.text("  wait_timer = %.1f", math.max(-1, navigation_extension._wait_timer - t))
 end
@@ -855,21 +710,7 @@ AINavigationSystem._debug_draw_nav_path = function (self, drawer, navigation_ext
 
 		for i = 0, node_count - 1 do
 			local position = GwNavBot.get_path_node_pos(nav_bot, i)
-			local get
-
-			if current_node_index == i then
-				get = Colors.get("green")
-
-				if not get then
-					-- Nothing
-				end
-			end
-
-			get = Colors.get("powder_blue")
-
-			local color = get
-
-			::label_26_0::
+			local color = current_node_index ~= i and not not Colors.get("powder_blue") or not (current_node_index ~= i) and not not Colors.get("green")
 
 			drawer:sphere(position + offset, 0.1, color)
 

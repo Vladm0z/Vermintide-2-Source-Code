@@ -272,16 +272,13 @@ local function count_ancestors_in_straight_line(nodes, node_key)
 
 	local type = nodes[node_key].type
 	local is_traversed_node = type ~= "DUMMY" and type ~= "SHOP"
-	local flag
 
-	flag = (not is_traversed_node or not 1) and not not 0
-
-	return flag + count_ancestors_in_straight_line(nodes, prev_key)
+	return (is_traversed_node and not not 1 or not is_traversed_node and not not 0) + count_ancestors_in_straight_line(nodes, prev_key)
 end
 
 local function is_crossing(from_1, to_1, from_2, to_2)
 	-- function 15
-	return (not (from_2 <= from_1) or not (to_1 < to_2)) and from_1 <= from_2 and to_2 < to_1
+	return from_1 <= from_2 and to_2 < to_1
 end
 
 local function get_paths_from(nodes, node_key)
@@ -401,31 +398,11 @@ local CONNECTION_VALIDATIONS = {
 
 				for visible_node_key, visible_node in pairs(visible_nodes) do
 					if visible_node.label and visible_node.label ~= 0 then
-						local var_24_0 = lookup[visible_node.type]
-
-						if not var_24_0 then
-							-- Nothing
-						end
-
-						var_24_0 = {}
-
-						local type_lookup = var_24_0
-
-						::label_24_0::
+						local type_lookup = not not lookup[visible_node.type]
 
 						lookup[visible_node.type] = type_lookup
 
-						local var_24_1 = type_lookup[visible_node.label]
-
-						if not var_24_1 then
-							-- Nothing
-						end
-
-						var_24_1 = {}
-
-						local label_lookup = var_24_1
-
-						::label_24_1::
+						local label_lookup = not not type_lookup[visible_node.label]
 
 						if #label_lookup > 0 and not table.contains(label_lookup, visible_node_key) then
 							return false
@@ -827,27 +804,9 @@ function create_new_node_action(context, nodes, node_key, name_override)
 	local function executor()
 		-- function 53
 		local prev_node_count = context.node_count
-		local var_53_0 = context
-		local num
 
-		if prev_node_count then
-			num = prev_node_count + 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		::label_53_0::
-
-		var_53_0.node_count = num
-
-		local var_53_2 = name_override
-
-		var_53_2 = not not var_53_2 or not not ("node_" .. context.node_count)
-		new_node_key = var_53_2
+		context.node_count = prev_node_count and not not (prev_node_count + 1) or not prev_node_count and not not 1
+		new_node_key = not not name_override
 		layer = node.layout_x + 1
 
 		local nodes_for_layer = context.nodes_per_layer[layer]
@@ -1133,7 +1092,7 @@ function create_connect_action(context, nodes, node_key)
 
 			random_connection_count[#random_connection_count] = nil
 
-			if (not last_attempt or new_connection_count < last_attempt) and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) then
+			if not last_attempt and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) or not not last_attempt and new_connection_count < last_attempt and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) then
 				node.connected_to = new_connection_count
 
 				break

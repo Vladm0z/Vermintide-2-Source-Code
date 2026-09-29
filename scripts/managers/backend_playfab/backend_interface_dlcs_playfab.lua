@@ -55,15 +55,10 @@ BackendInterfaceDLCsPlayfab._update_owned_dlcs_cb = function (self, result)
 	local function_result = result.FunctionResult
 	local new_dlcs = function_result.new_dlcs
 	local revoked_dlcs = function_result.revoked_dlcs
-	local execute_logic = not GameSettingsDevelopment.read_only_backend and not new_dlcs or not revoked_dlcs or #new_dlcs > 0 or #revoked_dlcs > 0
+	local execute_logic = not GameSettingsDevelopment.read_only_backend and (not new_dlcs or not revoked_dlcs or #new_dlcs > 0 or #revoked_dlcs > 0)
 
 	self._owner_dlcs_cb_data = table.shallow_copy(function_result)
-
-	local _owner_dlcs_cb_data = self._owner_dlcs_cb_data
-	local HAS_STEAM = HAS_STEAM
-
-	HAS_STEAM = not not HAS_STEAM and not not execute_logic
-	_owner_dlcs_cb_data.dlcs_dirty = HAS_STEAM
+	self._owner_dlcs_cb_data.dlcs_dirty = not not HAS_STEAM
 
 	if execute_logic then
 		self:_execute_dlc_specific_logic()
@@ -143,7 +138,7 @@ BackendInterfaceDLCsPlayfab._execute_dlc_logic_cb = function (self, result)
 
 	local unseen_rewards = self._backend_mirror:get_user_data("unseen_rewards")
 
-	unseen_rewards = (not unseen_rewards or not cjson.decode(unseen_rewards)) and not not {}
+	unseen_rewards = unseen_rewards and (not not cjson.decode(unseen_rewards) or not not {}) or not unseen_rewards and not not {}
 
 	for i = 1, #new_rewards do
 		local item = new_rewards[i]

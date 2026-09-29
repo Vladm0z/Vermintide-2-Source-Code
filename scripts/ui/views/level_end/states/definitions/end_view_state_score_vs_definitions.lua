@@ -384,20 +384,7 @@ end
 local function create_team_score(team, team_name, score)
 	-- function 3
 	local is_local_team = team == "local_team"
-	local str
-
-	if is_local_team then
-		str = "team_icon_local"
-
-		goto label_3_0
-	end
-
-	str = "team_icon_opponent"
-
-	local scenegraph_id = str
-
-	::label_3_0::
-
+	local scenegraph_id = is_local_team and not not "team_icon_local" or not is_local_team and not not "team_icon_opponent"
 	local scenegraph_data = scenegraph_definition[scenegraph_id]
 	local size = table.clone(scenegraph_data.size)
 
@@ -405,22 +392,7 @@ local function create_team_score(team, team_name, score)
 
 	local settings = UISettings.teams_ui_assets
 	local team_ui_settings = settings[team_name]
-	local get_color_table_with_alpha
-
-	if is_local_team then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	local team_color = get_color_table_with_alpha
-
-	::label_3_1::
-
+	local team_color = is_local_team and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_local_team and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local internal_score_style = table.clone(team_score_style)
 
 	internal_score_style.size = size
@@ -512,82 +484,20 @@ end
 
 local function create_tab_text(text, gamepad_text, scenegraph_id, text_style)
 	-- function 4
-	local offset
-
-	if text_style then
-		offset = text_style.offset
-
-		if not offset then
-			-- Nothing
-		end
-	end
-
-	offset = {
+	local text_offset = text_style and not not text_style.offset or not text_style and not not {
 		0,
 		0,
 		2
 	}
-
-	local text_offset = offset
-
-	do
-		local text_color_2
-	end
-
-	::label_4_0::
-
-	if text_style then
-		text_color_2 = text_style.text_color
-
-		if not text_color_2 then
-			-- Nothing
-		end
-	end
-
-	text_color_2 = {
+	local text_color = text_style and not not text_style.text_color or not text_style and not not {
 		255,
 		255,
 		255,
 		255
 	}
-
-	local text_color = text_color_2
-
-	::label_4_1::
-
 	local text_shadow_style = table.clone(text_style)
-	local shadow_color = text_style.shadow_color
-
-	if not shadow_color then
-		-- Nothing
-	end
-
-	shadow_color = {
-		255,
-		0,
-		0,
-		0
-	}
-
-	local text_shadow_style_color = shadow_color
-
-	::label_4_2::
-
-	local shadow_offset = text_style.shadow_offset
-
-	if not shadow_offset then
-		-- Nothing
-	end
-
-	shadow_offset = {
-		2,
-		2,
-		0
-	}
-
-	local text_shadow_offset = shadow_offset
-
-	::label_4_3::
+	local text_shadow_style_color = not not text_style.shadow_color
+	local text_shadow_offset = not not text_style.shadow_offset
 
 	text_shadow_style_color[1] = text_color[1]
 	text_shadow_style.text_color = text_shadow_style_color
@@ -602,7 +512,7 @@ local function create_tab_text(text, gamepad_text, scenegraph_id, text_style)
 
 	gamepad_text_style.offset[1] = gamepad_text_style.font_size * 0.75
 
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -624,21 +534,7 @@ local function create_tab_text(text, gamepad_text, scenegraph_id, text_style)
 					end,
 					content_change_function = function (content, style)
 						-- function 7
-						local hover_color
-
-						if content.hotspot.is_hover then
-							hover_color = style.hover_color
-
-							if not hover_color then
-								-- Nothing
-							end
-						end
-
-						hover_color = style.base_color
-
-						::label_7_0::
-
-						style.text_color = hover_color
+						style.text_color = content.hotspot.is_hover and not not style.hover_color or not content.hotspot.is_hover and not not style.base_color
 					end
 				},
 				{
@@ -660,52 +556,35 @@ local function create_tab_text(text, gamepad_text, scenegraph_id, text_style)
 					end
 				}
 			}
-		}
-	}
-	local tbl_2 = {
-		text = text,
-		gamepad_text = gamepad_text,
-		original_text = text,
-		color = text_color
-	}
-	local use_shadow
-
-	if text_style then
-		use_shadow = text_style.use_shadow
-
-		if not use_shadow then
-			-- Nothing
-		end
-	end
-
-	use_shadow = false
-
-	::label_4_4::
-
-	tbl_2.use_shadow = use_shadow
-	tbl_2.hotspot = {}
-	tbl.content = tbl_2
-	tbl.style = {
-		hotspot = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "center",
-			area_size = {
-				60,
-				60
-			}
 		},
-		text = text_style,
-		gamepad_text = gamepad_text_style,
-		text_shadow = text_shadow_style
+		content = {
+			text = text,
+			gamepad_text = gamepad_text,
+			original_text = text,
+			color = text_color,
+			use_shadow = text_style and not not text_style.use_shadow or not text_style and not not false,
+			hotspot = {}
+		},
+		style = {
+			hotspot = {
+				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
+				area_size = {
+					60,
+					60
+				}
+			},
+			text = text_style,
+			gamepad_text = gamepad_text_style,
+			text_shadow = text_shadow_style
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local disable_with_gamepad = true
@@ -815,11 +694,7 @@ local function create_tab(scenegraph_id, text)
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 18
-						local is_hover = content.hotspot.is_hover
-
-						is_hover = not not is_hover or not not content.hotspot.is_selected
-
-						return is_hover
+						return not not content.hotspot.is_hover
 					end
 				},
 				{

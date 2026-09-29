@@ -4,12 +4,7 @@ require("scripts/helpers/attachment_utils")
 require("scripts/managers/backend/backend_utils")
 
 PlayerUnitAttachmentExtension = class(PlayerUnitAttachmentExtension)
-
-local script_data = script_data
-local attachment_debug = script_data.attachment_debug
-
-attachment_debug = not not attachment_debug or not not Development.parameter("attachment_debug")
-script_data.attachment_debug = attachment_debug
+script_data.attachment_debug = not not script_data.attachment_debug
 
 PlayerUnitAttachmentExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
@@ -247,19 +242,7 @@ PlayerUnitAttachmentExtension.show_attachments = function (self, show)
 			end
 		end
 
-		local str
-
-		if show then
-			str = "lua_attachment_unhidden"
-
-			goto label_12_0
-		end
-
-		str = "lua_attachment_hidden"
-
-		local attachment_event = str
-
-		::label_12_0::
+		local attachment_event = show and not not "lua_attachment_unhidden" or not show and not not "lua_attachment_hidden"
 
 		Unit.flow_event(self._tp_unit_mesh, attachment_event)
 
@@ -398,18 +381,7 @@ local params = {}
 PlayerUnitAttachmentExtension._apply_buffs = function (self, buffs_by_buffer, item_name, slot_name)
 	-- function 18
 	local buff_extension = self.buff_extension
-	local var_18_0 = self.current_item_buffs[slot_name]
-
-	if not var_18_0 then
-		-- Nothing
-	end
-
-	var_18_0 = {}
-
-	local current_item_buffs = var_18_0
-
-	::label_18_0::
-
+	local current_item_buffs = not not self.current_item_buffs[slot_name]
 	local index = 1
 
 	for buffer, buffs in pairs(buffs_by_buffer) do

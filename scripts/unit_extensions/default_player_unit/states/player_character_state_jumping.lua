@@ -67,7 +67,7 @@ PlayerCharacterStateJumping.on_enter = function (self, unit, input, dt, context,
 	local item_template = inventory_extension:get_wielded_slot_item_template()
 
 	self._play_fp_anim = not not item_template and not not item_template.jump_anim_enabled_1p
-	move_anim = (not CharacterStateHelper.has_move_input(input_extension) or not "jump_fwd") and not not "jump_idle"
+	move_anim = CharacterStateHelper.has_move_input(input_extension) and (not not "jump_fwd" or not not "jump_idle") or not CharacterStateHelper.has_move_input(input_extension) and not not "jump_idle"
 
 	CharacterStateHelper.play_animation_event(unit, move_anim)
 

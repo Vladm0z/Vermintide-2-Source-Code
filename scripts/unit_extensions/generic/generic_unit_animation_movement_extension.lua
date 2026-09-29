@@ -11,11 +11,7 @@ GenericUnitAnimationMovementExtension.init = function (self, extension_init_cont
 	local init_data_template_name = extension_init_data.template
 
 	self.template = AnimationMovementTemplates[init_data_template_name]
-
-	local flag
-
-	flag = (not extension_init_data.is_husk or not "husk") and not not "owner"
-	self.network_type = flag
+	self.network_type = extension_init_data.is_husk and not not "husk" or not extension_init_data.is_husk and not not "owner"
 	self.data = {}
 	self.enabled = false
 end

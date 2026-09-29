@@ -53,7 +53,7 @@ BTClimbAction.enter = function (self, unit, blackboard, t)
 		if smart_object_data.ledge_position1 then
 			local ledge_position1 = Vector3Aux.unbox(smart_object_data.ledge_position1)
 			local ledge_position2 = Vector3Aux.unbox(smart_object_data.ledge_position2)
-			local closest_ledge_position = (not (Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos)) or not ledge_position1) and not not ledge_position2
+			local closest_ledge_position = Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos) and (not not ledge_position1 or not not ledge_position2) or not (Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos)) and not not ledge_position2
 
 			blackboard.climb_jump_height = closest_ledge_position.z - entrance_pos.z
 
@@ -165,10 +165,7 @@ BTClimbAction.run = function (self, unit, blackboard, t, dt)
 		local target_dir = Vector3.normalize(navigation_extension:desired_velocity())
 
 		if Vector3.length(Vector3.flat(target_dir)) < 0.05 and Vector3.dot(target_dir, Vector3.normalize(blackboard.climb_exit_pos:unbox() - unit_position)) > 0.99 then
-			local climb_moving_to_enter_entrance_timeout = blackboard.climb_moving_to_enter_entrance_timeout
-
-			climb_moving_to_enter_entrance_timeout = not not climb_moving_to_enter_entrance_timeout or not not (t + 0.3)
-			blackboard.climb_moving_to_enter_entrance_timeout = climb_moving_to_enter_entrance_timeout
+			blackboard.climb_moving_to_enter_entrance_timeout = not not blackboard.climb_moving_to_enter_entrance_timeout
 		else
 			blackboard.climb_moving_to_enter_entrance_timeout = nil
 		end
@@ -246,38 +243,13 @@ BTClimbAction.run = function (self, unit, blackboard, t, dt)
 					local jump_anim_threshold = jump_anim_thresholds[i]
 
 					if climb_jump_height < jump_anim_threshold.height_threshold then
-						local animation_edge
-
-						if is_on_edge then
-							animation_edge = jump_anim_threshold.animation_edge
-
-							if not animation_edge then
-								-- Nothing
-							end
-						end
-
-						animation_edge = jump_anim_threshold.animation_fence
-
-						local jump_anim_name = animation_edge
-
-						::label_5_0::
+						local jump_anim_name = is_on_edge and not not jump_anim_threshold.animation_edge or not is_on_edge and not not jump_anim_threshold.animation_fence
 
 						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-						local fence_vertical_length_2 = jump_anim_threshold.fence_vertical_length
-
-						if not fence_vertical_length_2 then
-							-- Nothing
-						end
-
-						fence_vertical_length_2 = jump_anim_threshold.vertical_length
-
-						local fence_vertical_length = fence_vertical_length_2
-
-						::label_5_1::
-
+						local fence_vertical_length = not not jump_anim_threshold.fence_vertical_length
 						local edge_vertical_length = jump_anim_threshold.vertical_length
-						local anim_distance = (not is_on_edge or not edge_vertical_length) and not not fence_vertical_length
+						local anim_distance = is_on_edge and (not not edge_vertical_length or not not fence_vertical_length) or not is_on_edge and not not fence_vertical_length
 
 						animation_translation_scale = animation_translation_scale * climb_jump_height / anim_distance
 
@@ -297,35 +269,11 @@ BTClimbAction.run = function (self, unit, blackboard, t, dt)
 					local jump_anim_threshold = jump_anim_thresholds[i]
 
 					if climb_jump_height < jump_anim_threshold.height_threshold then
-						local animation_edge_2
-
-						if is_on_edge then
-							animation_edge_2 = jump_anim_threshold.animation_edge
-
-							if not animation_edge_2 then
-								-- Nothing
-							end
-						end
-
-						animation_edge_2 = jump_anim_threshold.animation_fence
-
-						local jump_anim_name = animation_edge_2
-
-						::label_5_2::
+						local jump_anim_name = is_on_edge and not not jump_anim_threshold.animation_edge or not is_on_edge and not not jump_anim_threshold.animation_fence
 
 						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-						local animation_land = jump_anim_threshold.animation_land
-
-						if not animation_land then
-							-- Nothing
-						end
-
-						animation_land = "jump_down_land"
-
-						local land_animations = animation_land
-
-						::label_5_3::
+						local land_animations = not not jump_anim_threshold.animation_land
 
 						blackboard.jump_down_land_animation = randomize(land_animations)
 
@@ -350,7 +298,7 @@ BTClimbAction.run = function (self, unit, blackboard, t, dt)
 			blackboard.jump_climb_finished = nil
 
 			local exit_pos = blackboard.climb_exit_pos:unbox()
-			local move_target = (not is_on_edge or not exit_pos) and not not blackboard.ledge_position:unbox()
+			local move_target = is_on_edge and (not not exit_pos or not not blackboard.ledge_position:unbox()) or not is_on_edge and not not blackboard.ledge_position:unbox()
 
 			if is_on_edge then
 				Managers.state.network:anim_event(unit, "move_fwd")
@@ -395,17 +343,7 @@ BTClimbAction.run = function (self, unit, blackboard, t, dt)
 
 						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-						local animation_land_2 = jump_anim_threshold.animation_land
-
-						if not animation_land_2 then
-							-- Nothing
-						end
-
-						animation_land_2 = "jump_down_land"
-
-						local land_animations = animation_land_2
-
-						::label_5_4::
+						local land_animations = not not jump_anim_threshold.animation_land
 
 						blackboard.jump_down_land_animation = randomize(land_animations)
 

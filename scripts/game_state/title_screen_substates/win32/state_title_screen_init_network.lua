@@ -91,7 +91,7 @@ StateTitleScreenInitNetwork._connected_to_steam = function (self)
 
 	local connected_to_network = true
 
-	if (IS_WINDOWS or IS_LINUX) and rawget(_G, "Steam") then
+	if IS_WINDOWS and rawget(_G, "Steam") or not IS_WINDOWS and IS_LINUX and rawget(_G, "Steam") then
 		connected_to_network = Steam.connected()
 	end
 
@@ -101,23 +101,7 @@ end
 StateTitleScreenInitNetwork._next_state = function (self)
 	-- function 6
 	local eac_initialized, eac_error = Managers.eac:is_initialized()
-	local profiles_loaded = Managers.backend:profiles_loaded()
-
-	if profiles_loaded then
-		if not Managers.backend:is_waiting_for_user_input() then
-			profiles_loaded = eac_initialized
-		else
-			profiles_loaded = false
-		end
-	end
-
-	goto label_6_0
-
-	profiles_loaded = true
-
-	local ready_to_exit = profiles_loaded
-
-	::label_6_0::
+	local ready_to_exit = not not Managers.backend:profiles_loaded()
 
 	if ready_to_exit then
 		if eac_error then

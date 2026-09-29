@@ -29,29 +29,12 @@ BTChampionAttackAction.enter = function (self, unit, blackboard, t)
 	blackboard.attack_range = action.range
 	blackboard.attack_finished = false
 	blackboard.attack_aborted = false
-
-	local hit_players = blackboard.hit_players
-
-	hit_players = not not hit_players or not not {}
-	blackboard.hit_players = hit_players
+	blackboard.hit_players = not not blackboard.hit_players
 	blackboard.target_dodged = false
 
 	local target_unit = blackboard.target_unit
-	local extension
 
-	if ScriptUnit.has_extension(target_unit, "status_system") then
-		extension = ScriptUnit.extension(target_unit, "status_system")
-
-		if not extension then
-			-- Nothing
-		end
-	end
-
-	extension = nil
-
-	::label_3_0::
-
-	blackboard.target_unit_status_extension = extension
+	blackboard.target_unit_status_extension = ScriptUnit.has_extension(target_unit, "status_system") and not not ScriptUnit.extension(target_unit, "status_system") or not ScriptUnit.has_extension(target_unit, "status_system") and not not nil
 
 	blackboard.navigation_extension:set_enabled(false)
 	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
@@ -116,11 +99,7 @@ BTChampionAttackAction._init_attack = function (self, unit, blackboard, action, 
 		blackboard.last_attack_overlap_position_time = t
 		blackboard.overlap_start_time = t + action.overlap_start_time
 		blackboard.overlap_end_time = t + action.overlap_end_time
-
-		local overlap_check_walls_time = action.overlap_check_walls_time
-
-		overlap_check_walls_time = not not overlap_check_walls_time or not not math.huge
-		blackboard.overlap_walls_check_time = t + overlap_check_walls_time
+		blackboard.overlap_walls_check_time = t + not not action.overlap_check_walls_time
 	elseif action.mode == "radial_cylinder" then
 		blackboard.overlap_start_time = t + action.overlap_start_time
 		blackboard.overlap_end_time = t + action.overlap_end_time
@@ -248,7 +227,7 @@ BTChampionAttackAction._attack_threat_over = function (self, unit, blackboard, a
 	local target_alive = Unit.alive(target_unit)
 	local target_hit = blackboard.hit_players[target_unit]
 
-	if target_alive and not target_hit and (not action.throw_dialogue_system_event_on_dodged_attack or not blackboard.target_dodged) and action.throw_dialogue_system_event_on_missed_attack then
+	if target_alive and not target_hit and action.throw_dialogue_system_event_on_dodged_attack then
 		local target_name = ScriptUnit.extension(target_unit, "dialogue_system").context.player_profile
 
 		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.enemy_attack_distance, "attack_tag", action.name, "target_name", target_name, "attack_hit", false)
@@ -393,24 +372,11 @@ BTChampionAttackAction._next_in_sequence = function (self, blackboard, t, sequen
 
 	if next_sequence_step then
 		local at = next_sequence_step.at
-		local fn
 
-		if at then
-			function fn(unit, blackboard, t)
-				-- function 10
-				return t - start_time >= at
-			end
-
-			if not fn then
-				-- Nothing
-			end
-		end
-
-		fn = next_sequence_step.ready_function
-
-		::label_9_0::
-
-		blackboard.attack_next_sequence_ready = fn
+		blackboard.attack_next_sequence_ready = at and not not function (unit, blackboard, t)
+			-- function 10
+			return t - start_time >= at
+		end or not at and not not next_sequence_step.ready_function
 		blackboard.attack_next_sequence_index = next_index
 	else
 		blackboard.attack_next_sequence_ready = NEVER
@@ -423,25 +389,7 @@ end
 BTChampionAttackAction._update_rotation = function (self, unit, t, dt, blackboard)
 	-- function 11
 	local target_status_ext = blackboard.target_unit_status_extension
-	local target_dodged = blackboard.target_dodged
-
-	if not target_dodged and target_status_ext then
-		-- Nothing
-	end
-
-	::label_11_0::
-
-	target_dodged = target_status_ext:get_is_dodging()
-
-	if not target_dodged then
-		-- Nothing
-	end
-
-	target_dodged = target_status_ext:is_invisible()
-
-	local has_dodged = target_dodged
-
-	::label_11_1::
+	local has_dodged = not not blackboard.target_dodged
 
 	blackboard.target_dodged = has_dodged
 
@@ -522,7 +470,7 @@ BTChampionAttackAction._update_overlap = function (self, unit, blackboard, actio
 			base_range = action_range
 		end
 
-		local range = base_range + ((not movement_controlled_rotation or not length) and not not Vector3.dot(delta, forward))
+		local range = base_range + (movement_controlled_rotation and (not not length or not not Vector3.dot(delta, forward)) or not movement_controlled_rotation and not not Vector3.dot(delta, forward))
 		local height = action.height
 		local width = action.width
 		local half_range = range * 0.5
@@ -628,9 +576,9 @@ BTChampionAttackAction._update_nav_mesh_wave = function (self, unit, blackboard,
 
 		local to = wave_points[i + 1]
 
-		to = (not to or not to:unbox()) and not not pos
+		to = to and (not not to:unbox() or not not pos) or not to and not not pos
 		from = wave_points[i - 1]
-		from = (not from or not from:unbox()) and not not POSITION_LOOKUP[unit]
+		from = from and (not not from:unbox() or not not POSITION_LOOKUP[unit]) or not from and not not POSITION_LOOKUP[unit]
 
 		local rot = Quaternion.look(to - from, Vector3.up())
 		local y = math.max(Vector3.length(to - pos), Vector3.length(from - pos))
@@ -696,40 +644,11 @@ BTChampionAttackAction.anim_cb_damage = function (self, unit, blackboard)
 		self:_deal_damage(unit, blackboard, action, self_pos, hit_actors, actor_count, true)
 	elseif action.collision_type == "cylinder" then
 		local cylinder_center, size, rotation = self:_calculate_cylinder_collision(action, self_pos, self_rot)
-		local str
-
-		if size.y - size.x > 0 then
-			str = "capsule"
-
-			goto label_14_0
-		end
-
-		str = "sphere"
-
-		local shape = str
-
-		::label_14_0::
+		local shape = size.y - size.x > 0 and not not "capsule" or not (size.y - size.x > 0) and not not "sphere"
 
 		PhysicsWorld.prepare_actors_for_overlap(pw, cylinder_center, action.radius)
 
-		local immediate_overlap = PhysicsWorld.immediate_overlap
-		local var_14_2 = pw
-		local str_2 = "position"
-		local var_14_4 = cylinder_center
-		local str_3 = "rotation"
-		local var_14_6 = rotation
-		local str_4 = "size"
-		local var_14_8 = size
-		local str_5 = "shape"
-		local var_14_10 = shape
-		local str_6 = "types"
-		local str_7 = "dynamics"
-		local str_8 = "collision_filter"
-		local collision_filter = action.collision_filter
-
-		collision_filter = not not collision_filter or not not "filter_player_hit_box_check"
-
-		local hit_actors, actor_count = immediate_overlap(var_14_2, str_2, var_14_4, str_3, var_14_6, str_4, var_14_8, str_5, var_14_10, str_6, str_7, str_8, collision_filter)
+		local hit_actors, actor_count = PhysicsWorld.immediate_overlap(pw, "position", cylinder_center, "rotation", rotation, "size", size, "shape", shape, "types", "dynamics", "collision_filter", not not action.collision_filter)
 
 		if Development.parameter("debug_ai_attack") then
 			local drawer = Managers.state.debug:drawer(debug_drawer_info)
@@ -762,20 +681,7 @@ BTChampionAttackAction._update_radial_cylinder = function (self, unit, blackboar
 	local self_rot = Unit.local_rotation(unit, 0)
 	local pw = World.get_data(blackboard.world, "physics_world")
 	local cylinder_center, size, rotation = self:_calculate_cylinder_collision(action, self_pos, self_rot)
-	local str
-
-	if size.y - size.x > 0 then
-		str = "capsule"
-
-		goto label_15_0
-	end
-
-	str = "sphere"
-
-	local shape = str
-
-	::label_15_0::
-
+	local shape = size.y - size.x > 0 and not not "capsule" or not (size.y - size.x > 0) and not not "sphere"
 	local hit_actors, actor_count = PhysicsWorld.immediate_overlap(pw, "position", cylinder_center, "rotation", rotation, "size", size, "shape", shape, "types", "dynamics", "collision_filter", action.collision_filter)
 
 	if Development.parameter("debug_ai_attack") then
@@ -826,7 +732,7 @@ BTChampionAttackAction._update_radial_cylinder = function (self, unit, blackboar
 				min_angle = min_angle - two_pi
 			end
 
-			local hit = (not (min_angle < 0) or not (relative_angle < max_angle)) and (not (min_angle > 0) or not (min_angle < relative_angle)) and max_angle > 0 and max_angle < relative_angle
+			local hit = max_angle > 0 and max_angle < relative_angle
 
 			if hit then
 				hit_list[#hit_list + 1] = actor
@@ -902,18 +808,7 @@ BTChampionAttackAction._deal_damage = function (self, unit, blackboard, action, 
 		if is_a_character and Unit_alive(target_unit) and not hit_players[target_unit] and unit ~= target_unit then
 			hit_players[target_unit] = true
 
-			local attack_directions = action.attack_directions
-
-			if attack_directions then
-				-- Nothing
-			end
-
-			attack_directions = action.attack_directions[blackboard.attack_anim]
-
-			local attack_direction = attack_directions
-
-			::label_18_0::
-
+			local attack_direction = not not action.attack_directions
 			local blocked = DamageUtils.check_block(unit, target_unit, action.fatigue_type, attack_direction)
 			local target_pos = POSITION_LOOKUP[target_unit]
 			local is_player_unit = DamageUtils.is_player_unit(target_unit)

@@ -260,17 +260,7 @@ end
 
 local function enemy_dismember_can_spawn_gib(unit, bodypart)
 	-- function 9
-	local get_data = Unit.get_data(unit, "dismember_filter")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = {}
-
-	local dismember_filter = get_data
-
-	::label_9_0::
+	local dismember_filter = not not Unit.get_data(unit, "dismember_filter")
 
 	if table.contains(dismember_filter, bodypart) then
 		return false
@@ -281,17 +271,7 @@ end
 
 local function enemy_dismember_set_dismember_filter(unit, bodypart, gibsettings)
 	-- function 10
-	local get_data = Unit.get_data(unit, "dismember_filter")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = {}
-
-	local dismember_filter = get_data
-
-	::label_10_0::
+	local dismember_filter = not not Unit.get_data(unit, "dismember_filter")
 
 	if not table.contains(dismember_filter, bodypart) then
 		table.insert(dismember_filter, bodypart)
@@ -349,17 +329,7 @@ local function enemy_dismember_spawn_gib(unit_spawner, unit, world, gibsettings,
 		local unit_scale = Unit.local_scale(unit, 1)
 
 		if unit_ai_system_extension ~= nil then
-			local _size_variation = unit_ai_system_extension._size_variation
-
-			if not _size_variation then
-				-- Nothing
-			end
-
-			_size_variation = 1
-
-			local scale = _size_variation
-
-			::label_13_0::
+			local scale = not not unit_ai_system_extension._size_variation
 
 			unit_scale = Vector3(scale, scale, scale)
 		end
@@ -688,17 +658,7 @@ local function enemy_dismember(params, spawn_gib)
 				Unit.flow_event(unit_inventory_extension.inventory_item_outfit_units[i], gibsettings.send_outfit_event)
 			end
 		else
-			local get_data = Unit.get_data(unit, "outfit_items")
-
-			if not get_data then
-				-- Nothing
-			end
-
-			get_data = {}
-
-			local outfit_items = get_data
-
-			::label_20_0::
+			local outfit_items = not not Unit.get_data(unit, "outfit_items")
 
 			for i = 1, #outfit_items do
 				Unit.flow_event(outfit_items[i], gibsettings.send_outfit_event)
@@ -759,33 +719,13 @@ local function enemy_dismember(params, spawn_gib)
 		unit_inventory_extension.stump_items = stump_items
 	else
 		if gib_unit ~= nil then
-			local get_data_2 = Unit.get_data(unit, "gib_items")
-
-			if not get_data_2 then
-				-- Nothing
-			end
-
-			get_data_2 = {}
-
-			local gib_items = get_data_2
-
-			::label_20_1::
+			local gib_items = not not Unit.get_data(unit, "gib_items")
 
 			table.insert(gib_items, gib_unit)
 			Unit.set_data(unit, "gib_items", gib_items)
 		end
 
-		local get_data_3 = Unit.get_data(unit, "stump_items")
-
-		if not get_data_3 then
-			-- Nothing
-		end
-
-		get_data_3 = {}
-
-		local stump_items = get_data_3
-
-		::label_20_2::
+		local stump_items = not not Unit.get_data(unit, "stump_items")
 
 		table.insert(stump_items, stump_unit)
 		Unit.set_data(unit, "stump_items", stump_items)
@@ -881,7 +821,7 @@ function enemy_explode(params)
 		end
 	end
 
-	if (BloodSettings == nil or BloodSettings.enemy_blood.enabled) and explodesettings.vfx_align_node ~= nil then
+	if BloodSettings == nil and explodesettings.vfx_align_node ~= nil or not (BloodSettings == nil) and BloodSettings.enemy_blood.enabled and explodesettings.vfx_align_node ~= nil then
 		local node_id = Unit.node(unit, explodesettings.vfx_align_node)
 
 		if explodesettings.vfx ~= nil then
@@ -958,30 +898,8 @@ end
 function flow_callback_enemy_gib_prop_cleanup(params)
 	-- function 24
 	local unit = params.unit
-	local get_data = Unit.get_data(unit, "gib_items")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = {}
-
-	local gib_items = get_data
-
-	::label_24_0::
-
-	local get_data_2 = Unit.get_data(unit, "stump_items")
-
-	if not get_data_2 then
-		-- Nothing
-	end
-
-	get_data_2 = {}
-
-	local stump_items = get_data_2
-
-	::label_24_1::
-
+	local gib_items = not not Unit.get_data(unit, "gib_items")
+	local stump_items = not not Unit.get_data(unit, "stump_items")
 	local remove_gibs = params.remove_gibs
 
 	if ScriptUnit ~= nil then

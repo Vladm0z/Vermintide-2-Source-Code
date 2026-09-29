@@ -295,7 +295,7 @@ IngameView.update = function (self, dt)
 		ingame_ui:handle_transition("exit_menu")
 	end
 
-	if (input_service:get("toggle_menu", true) or input_service:get("back", true)) and not ingame_ui:pending_transition() then
+	if input_service:get("toggle_menu", true) and not ingame_ui:pending_transition() or not input_service:get("toggle_menu", true) and input_service:get("back", true) and not ingame_ui:pending_transition() then
 		ingame_ui:handle_transition("exit_menu")
 	end
 end
@@ -370,18 +370,7 @@ IngameView.update_controller_input = function (self, input_service, dt)
 	if self.controller_cooldown > 0 then
 		self.controller_cooldown = self.controller_cooldown - dt
 
-		local speed_multiplier_2 = self.speed_multiplier
-
-		if not speed_multiplier_2 then
-			-- Nothing
-		end
-
-		speed_multiplier_2 = 1
-
-		local speed_multiplier = speed_multiplier_2
-
-		::label_13_0::
-
+		local speed_multiplier = not not self.speed_multiplier
 		local decrease = GamepadSettings.menu_speed_multiplier_frame_decrease
 		local min_multiplier = GamepadSettings.menu_min_speed_multiplier
 
@@ -389,32 +378,12 @@ IngameView.update_controller_input = function (self, input_service, dt)
 
 		return
 	else
-		local speed_multiplier_3 = self.speed_multiplier
-
-		if not speed_multiplier_3 then
-			-- Nothing
-		end
-
-		speed_multiplier_3 = 1
-
-		local speed_multiplier = speed_multiplier_3
-
-		::label_13_1::
+		local speed_multiplier = not not self.speed_multiplier
 
 		repeat
 			local move_up = input_service:get("move_up")
 			local move_up_hold = input_service:get("move_up_hold")
-			local controller_selection_index_2 = self.controller_selection_index
-
-			if not controller_selection_index_2 then
-				-- Nothing
-			end
-
-			controller_selection_index_2 = 0
-
-			local controller_selection_index = controller_selection_index_2
-
-			::label_13_2::
+			local controller_selection_index = not not self.controller_selection_index
 
 			if move_up or move_up_hold then
 				local new_index = math.max(controller_selection_index - 1, 1)

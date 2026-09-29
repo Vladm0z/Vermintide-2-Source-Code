@@ -511,14 +511,7 @@ local function create_progress_marker(scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 2
-						local highlight = content.highlight
-
-						if highlight then
-							highlight = content.is_local_player
-							highlight = not not highlight and not not not content.done
-						end
-
-						return highlight
+						return not not content.highlight
 					end
 				},
 				{
@@ -719,14 +712,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "frame_passive",
 					content_check_function = function (content)
 						-- function 9
-						local locked = content.locked
-
-						if not locked then
-							locked = content.taken
-							locked = not not locked or not not content.other_picking
-						end
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -735,14 +721,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "frame_passive",
 					content_check_function = function (content)
 						-- function 10
-						local locked = content.locked
-
-						if not locked then
-							locked = content.taken
-							locked = not not locked or not not content.other_picking
-						end
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -760,11 +739,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "other_hover",
 					content_check_function = function (content)
 						-- function 12
-						local hovered_by_other = content.hovered_by_other
-
-						hovered_by_other = not not hovered_by_other and not not not content.button_hotspot.is_hover
-
-						return hovered_by_other
+						return not not content.hovered_by_other
 					end
 				},
 				{
@@ -773,11 +748,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "local_player_select_frame",
 					content_check_function = function (content)
 						-- function 13
-						local is_hover = content.button_hotspot.is_hover
-
-						is_hover = not not is_hover or not not content.gamepad_selected
-
-						return is_hover
+						return not not content.button_hotspot.is_hover
 					end
 				}
 			}
@@ -1242,11 +1213,8 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					content_check_function = function (content)
 						-- function 19
 						local is_player = content.is_player
-						local is_player_2 = content.is_player
 
-						is_player_2 = not not is_player_2 and not not not content.is_local_player
-
-						return is_player_2
+						return not not content.is_player
 					end
 				},
 				{
@@ -1256,11 +1224,8 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					content_check_function = function (content)
 						-- function 20
 						local is_player = content.is_player
-						local is_player_2 = content.is_player
 
-						is_player_2 = not not is_player_2 and not not not content.is_local_player
-
-						return is_player_2
+						return not not content.is_player
 					end
 				},
 				{
@@ -1270,11 +1235,8 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					content_check_function = function (content)
 						-- function 21
 						local is_player = content.is_player
-						local is_player_2 = content.is_player
 
-						is_player_2 = not not is_player_2 and not not not content.is_local_player
-
-						return is_player_2
+						return not not content.is_player
 					end
 				},
 				{
@@ -1283,11 +1245,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					texture_id = "mute_icon",
 					content_check_function = function (content)
 						-- function 22
-						local is_player = content.is_player
-
-						is_player = not not is_player and not content.is_local_player and not not content.hotspot.is_hover
-
-						return is_player
+						return not not content.is_player
 					end
 				},
 				{
@@ -1296,11 +1254,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					texture_id = "mute_icon_muted",
 					content_check_function = function (content)
 						-- function 23
-						local is_player = content.is_player
-
-						is_player = not not is_player and not content.is_local_player and not not content.muted
-
-						return is_player
+						return not not content.is_player
 					end
 				},
 				{
@@ -1309,11 +1263,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					content_id = "hotspot",
 					content_check_function = function (content)
 						-- function 24
-						local is_player = content.parent.is_player
-
-						is_player = not not is_player and not not not content.parent.is_local_player
-
-						return is_player
+						return not not content.parent.is_player
 					end
 				}
 			}

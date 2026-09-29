@@ -151,7 +151,7 @@ BTCritterRatScurryUnderDoorAction._move_towards_smartobject_entrance_update = fu
 		local speed = blackboard.breed.run_speed
 
 		if distance_to_target < speed * dt then
-			speed = (dt ~= 0 or not 0) and not not (distance_to_target / dt)
+			speed = not not (distance_to_target / dt)
 		end
 
 		local direction_to_target = Vector3.normalize(vector_to_target)

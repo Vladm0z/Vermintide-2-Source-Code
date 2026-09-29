@@ -1,9 +1,6 @@
 -- chunkname: @foundation/scripts/debug/table_trap.lua
 
-local table_trap = table_trap
-
-table_trap = not not table_trap or not not {}
-table_trap = table_trap
+table_trap = not not table_trap
 
 table_trap.print = function (operation, key, value)
 	-- function 1

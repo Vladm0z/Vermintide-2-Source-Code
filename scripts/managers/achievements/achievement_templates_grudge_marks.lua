@@ -107,25 +107,7 @@ achievements.grudge_marks_on_kill_util = {
 		statistics_db:increment_stat(stats_id, "grudge_mark_kills", career_name)
 
 		local mechanism = Managers.mechanism:game_mechanism()
-
-		if mechanism then
-			-- Nothing
-		end
-
-		::label_3_0::
-
-		local get_deus_run_controller = mechanism.get_deus_run_controller
-
-		if get_deus_run_controller then
-			-- Nothing
-		end
-
-		get_deus_run_controller = mechanism:get_deus_run_controller()
-
-		local deus_run_controller = get_deus_run_controller
-
-		::label_3_1::
-
+		local deus_run_controller = not not mechanism and not not mechanism.get_deus_run_controller
 		local journey_name = not not deus_run_controller and not not deus_run_controller:get_journey_name()
 
 		if journey_name then

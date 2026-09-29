@@ -97,17 +97,7 @@ achievements.trail_sleigher = {
 	desc = "achv_onions_sleigh_kills_desc",
 	progress = function (statistics_db, stats_id, template_data)
 		-- function 4
-		local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "trail_sleigher")
-
-		if not get_persistent_stat then
-			-- Nothing
-		end
-
-		get_persistent_stat = 0
-
-		local kills = get_persistent_stat
-
-		::label_4_0::
+		local kills = not not statistics_db:get_persistent_stat(stats_id, "trail_sleigher")
 
 		return {
 			kills,
@@ -126,41 +116,9 @@ achievements.trail_beacons_are_lit = {
 	desc = "achv_onions_light_beacons_desc",
 	progress = function (statistics_db, stats_id, template_data)
 		-- function 6
-		local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_watch_tower")
-
-		if not get_persistent_stat then
-			-- Nothing
-		end
-
-		get_persistent_stat = 0
-
-		local watch_tower_beacon = get_persistent_stat
-
-		::label_6_0::
-
-		local get_persistent_stat_2 = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_river_path")
-
-		if not get_persistent_stat_2 then
-			-- Nothing
-		end
-
-		get_persistent_stat_2 = 0
-
-		local river_path_beacon = get_persistent_stat_2
-
-		::label_6_1::
-
-		local get_persistent_stat_3 = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_lookout_point")
-
-		if not get_persistent_stat_3 then
-			-- Nothing
-		end
-
-		get_persistent_stat_3 = 0
-
-		local look_out_beacon = get_persistent_stat_3
-
-		::label_6_2::
+		local watch_tower_beacon = not not statistics_db:get_persistent_stat(stats_id, "trail_bonfire_watch_tower")
+		local river_path_beacon = not not statistics_db:get_persistent_stat(stats_id, "trail_bonfire_river_path")
+		local look_out_beacon = not not statistics_db:get_persistent_stat(stats_id, "trail_bonfire_lookout_point")
 
 		if watch_tower_beacon > 1 then
 			watch_tower_beacon = 1

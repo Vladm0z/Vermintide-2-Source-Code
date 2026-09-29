@@ -23,11 +23,7 @@ StartGameWindowDeusWeeklyEvent.on_enter = function (self, params, offset)
 	self._ingame_ui_context = ingame_ui_context
 	self._ui_renderer = ingame_ui_context.ui_renderer
 	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-
-	local input_index = params.input_index
-
-	input_index = not not input_index or not not 1
-	self._input_index = input_index
+	self._input_index = not not params.input_index
 	self._input_manager = ingame_ui_context.input_manager
 	self._render_settings = {
 		snap_pixel_positions = true
@@ -37,10 +33,7 @@ StartGameWindowDeusWeeklyEvent.on_enter = function (self, params, offset)
 	self:_create_ui_elements(params, offset)
 	self:_handle_new_selection(self._input_index)
 
-	local get_difficulty_option = self._parent:get_difficulty_option(true)
-
-	get_difficulty_option = not not get_difficulty_option or not not Managers.state.difficulty:get_difficulty()
-	self._current_difficulty = get_difficulty_option
+	self._current_difficulty = not not self._parent:get_difficulty_option(true)
 
 	self:_update_difficulty_option(self._current_difficulty)
 
@@ -61,17 +54,7 @@ StartGameWindowDeusWeeklyEvent._refresh_event_data = function (self)
 	-- function 2
 	local live_event_interface = Managers.backend:get_interface("live_events")
 	local game_mode_data, information = live_event_interface:get_weekly_chaos_wastes_game_mode_data()
-	local get_weekly_chaos_wastes_rewards_data = live_event_interface:get_weekly_chaos_wastes_rewards_data()
-
-	if not get_weekly_chaos_wastes_rewards_data then
-		-- Nothing
-	end
-
-	get_weekly_chaos_wastes_rewards_data = EMPTY_TABLE
-
-	local rewards = get_weekly_chaos_wastes_rewards_data
-
-	::label_2_0::
+	local rewards = not not live_event_interface:get_weekly_chaos_wastes_rewards_data()
 
 	self._refresh_time = os.time(os.date("!*t", information.end_timestamp / 1000))
 	self._weekly_journey_name = not not game_mode_data and not not game_mode_data.journey_name
@@ -113,18 +96,7 @@ StartGameWindowDeusWeeklyEvent._setup_curses = function (self, game_mode_data, s
 	self._widgets_by_name.curse_header = widget
 	offset_y = offset_y - 40 - spacing
 
-	local mutators_2 = game_mode_data.mutators
-
-	if not mutators_2 then
-		-- Nothing
-	end
-
-	mutators_2 = EMPTY_TABLE
-
-	local mutators = mutators_2
-
-	::label_3_0::
-
+	local mutators = not not game_mode_data.mutators
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
 	for idx, mutator_name in ipairs(mutators) do
@@ -174,18 +146,7 @@ StartGameWindowDeusWeeklyEvent._setup_boons = function (self, game_mode_data, sp
 	local player = Managers.player:local_player()
 	local profile_index = player:profile_index()
 	local career_index = player:career_index()
-	local boons_2 = game_mode_data.boons
-
-	if not boons_2 then
-		-- Nothing
-	end
-
-	boons_2 = EMPTY_TABLE
-
-	local boons = boons_2
-
-	::label_4_0::
-
+	local boons = not not game_mode_data.boons
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
 	for idx, boon_name in ipairs(boons) do
@@ -254,14 +215,7 @@ StartGameWindowDeusWeeklyEvent._setup_rewards = function (self, rewards, spacing
 			local gui = self._ui_top_renderer.gui
 			local _, font_min, font_max = UIGetFontHeight(gui, text_style.font_type, font_size)
 			local full_font_height = (font_max - font_min) * inv_scale
-			local word_wrap = UIRenderer.word_wrap
-			local _ui_top_renderer = self._ui_top_renderer
-			local Localize = Localize
-			local desc = reward_data.desc
-
-			desc = not not desc or not not " "
-
-			local rows, return_indices = word_wrap(_ui_top_renderer, Localize(desc), font_material, font_size, text_style.area_size[1])
+			local rows, return_indices = UIRenderer.word_wrap(self._ui_top_renderer, Localize(not not reward_data.desc), font_material, font_size, text_style.area_size[1])
 
 			offset_y = offset_y - full_font_height * #rows - spacing - 20
 		end
@@ -274,42 +228,16 @@ StartGameWindowDeusWeeklyEvent._evaluate_rewards = function (self, data, difficu
 	-- function 6
 	local rewards = data.rewards
 	local claimed = data.claimed
-	local tbl = {}
-	local Localize = Localize
-	local display_name
-
-	if DifficultySettings[difficulty_name] then
-		display_name = DifficultySettings[difficulty_name].display_name
-
-		if not display_name then
-			-- Nothing
-		end
-	end
-
-	display_name = "lb_unknown"
-
-	::label_6_0::
-
-	tbl.difficulty_name = Localize(display_name)
-	tbl.num_rewards = #rewards
-	tbl.collected = claimed
-
-	local reward_data = tbl
+	local reward_data = {
+		difficulty_name = Localize(DifficultySettings[difficulty_name] and not not DifficultySettings[difficulty_name].display_name or not DifficultySettings[difficulty_name] and not not "lb_unknown"),
+		num_rewards = #rewards,
+		collected = claimed
+	}
 	local first_reward = rewards[1]
 	local reward_type = not not first_reward and not not first_reward.reward_type
 
 	if reward_type == "experience" then
-		local var_6_3 = tonumber(first_reward.amount)
-
-		if not var_6_3 then
-			-- Nothing
-		end
-
-		var_6_3 = 0
-
-		local amount = var_6_3
-
-		::label_6_1::
+		local amount = not not tonumber(first_reward.amount)
 
 		reward_data.icon = "experience"
 
@@ -317,113 +245,22 @@ StartGameWindowDeusWeeklyEvent._evaluate_rewards = function (self, data, difficu
 
 		reward_data.desc = string.format(desc, amount)
 	elseif reward_type == "item" or reward_type == "loot_chest" then
-		local item_name_2 = first_reward.item_name
-
-		if not item_name_2 then
-			-- Nothing
-		end
-
-		item_name_2 = first_reward.weapon_skin_name
-
-		local item_name = item_name_2
-
-		::label_6_2::
-
+		local item_name = not not first_reward.item_name
 		local item = not not item_name and not not ItemMasterList[item_name]
-		local Localize_2 = Localize
-		local display_name_2
 
-		if item then
-			display_name_2 = item.display_name
-
-			if not display_name_2 then
-				-- Nothing
-			end
-		end
-
-		display_name_2 = "lb_unkown"
-
-		::label_6_3::
-
-		reward_data.desc = Localize_2(display_name_2)
-
-		local inventory_icon
-
-		if item then
-			inventory_icon = item.inventory_icon
-
-			if not inventory_icon then
-				-- Nothing
-			end
-		end
-
-		inventory_icon = "icons_placeholder"
-
-		::label_6_4::
-
-		reward_data.icon = inventory_icon
+		reward_data.desc = Localize(item and not not item.display_name or not item and not not "lb_unkown")
+		reward_data.icon = item and not not item.inventory_icon or not item and not not "icons_placeholder"
 	elseif reward_type == "weapon_skin" then
-		local item_name_3 = first_reward.item_name
-
-		if not item_name_3 then
-			-- Nothing
-		end
-
-		item_name_3 = first_reward.weapon_skin_name
-
-		local item_name = item_name_3
-
-		::label_6_5::
-
+		local item_name = not not first_reward.item_name
 		local backend_crafting = Managers.backend:get_interface("crafting")
 		local unlocked_weapon_skins = backend_crafting:get_unlocked_weapon_skins()
 
 		reward_data.collected = not not claimed or unlocked_weapon_skins[item_name] ~= nil
 
-		local var_6_9 = WeaponSkins.skins[item_name]
+		local item = not not WeaponSkins.skins[item_name]
 
-		if not var_6_9 then
-			-- Nothing
-		end
-
-		var_6_9 = ItemMasterList[item_name]
-
-		local item = var_6_9
-
-		::label_6_6::
-
-		local Localize_3 = Localize
-		local display_name_3
-
-		if item then
-			display_name_3 = item.display_name
-
-			if not display_name_3 then
-				-- Nothing
-			end
-		end
-
-		display_name_3 = "lb_unkown"
-
-		::label_6_7::
-
-		reward_data.desc = Localize_3(display_name_3)
-
-		local inventory_icon_2
-
-		if item then
-			inventory_icon_2 = item.inventory_icon
-
-			if not inventory_icon_2 then
-				-- Nothing
-			end
-		end
-
-		inventory_icon_2 = "icons_placeholder"
-
-		::label_6_8::
-
-		reward_data.icon = inventory_icon_2
+		reward_data.desc = Localize(item and not not item.display_name or not item and not not "lb_unkown")
+		reward_data.icon = item and not not item.inventory_icon or not item and not not "icons_placeholder"
 	else
 		reward_data.icon = "icons_placeholder"
 		reward_data.desc = Localize("lb_unkown")
@@ -654,7 +491,7 @@ StartGameWindowDeusWeeklyEvent._handle_input = function (self, dt, t)
 					self:_play_sound("Play_hud_hover")
 				end
 
-				if UIUtils.is_button_hover(widget, "info_hotspot") or UIUtils.is_button_hover(self._widgets_by_name.difficulty_info, "widget_hotspot") or not mouse_active and is_selected then
+				if not mouse_active and is_selected then
 					local widgets = {
 						difficulty_info = self._widgets_by_name.difficulty_info,
 						upsell_button = self._widgets_by_name.upsell_button
@@ -723,11 +560,7 @@ StartGameWindowDeusWeeklyEvent._can_play = function (self)
 		return false
 	end
 
-	local _weekly_journey_name = self._weekly_journey_name
-
-	_weekly_journey_name = not not _weekly_journey_name and not not not LevelUnlockUtils.is_journey_disabled(self._weekly_journey_name)
-
-	return _weekly_journey_name
+	return not not self._weekly_journey_name
 end
 
 StartGameWindowDeusWeeklyEvent._set_info_window = function (self, difficulty_key)
@@ -972,23 +805,7 @@ StartGameWindowDeusWeeklyEvent._update_difficulty_lock = function (self)
 		if not approved then
 			if extra_requirement_failed then
 				difficulty_info_widget.content.should_show_diff_lock_text = true
-
-				local content = difficulty_info_widget.content
-				local var_31_1
-
-				if extra_requirement_failed then
-					var_31_1 = Localize(extra_requirement_failed)
-
-					if not var_31_1 then
-						-- Nothing
-					end
-				end
-
-				var_31_1 = ""
-
-				::label_31_0::
-
-				content.difficulty_lock_text = var_31_1
+				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
 			else
 				difficulty_info_widget.content.should_show_diff_lock_text = false
 			end

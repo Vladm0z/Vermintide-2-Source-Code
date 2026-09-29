@@ -39,18 +39,7 @@ local running_pushed_data = {
 		0
 	}
 }
-local BotConstants = BotConstants
-
-if BotConstants then
-	-- Nothing
-end
-
-BotConstants = BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
-
-local default_bot_threat_difficulty_data = BotConstants
-
-::label_0_0::
-
+local default_bot_threat_difficulty_data = not not BotConstants
 local breed_data = {
 	detection_radius = 9999999,
 	radius = 2,

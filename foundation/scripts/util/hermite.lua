@@ -1,9 +1,6 @@
 -- chunkname: @foundation/scripts/util/hermite.lua
 
-local Hermite = Hermite
-
-Hermite = not not Hermite or not not {}
-Hermite = Hermite
+Hermite = not not Hermite
 
 Hermite.calc_point = function (t, p0, p1, p2, p3)
 	-- function 1
@@ -86,36 +83,15 @@ Hermite.next_index = function (points, index)
 	local next_index = index + 1
 	local next_index_end_point = next_index + 1
 
-	return (not points[next_index_end_point] or not next_index) and not not nil
+	return points[next_index_end_point] and (not not next_index or not not nil) or not points[next_index_end_point] and not not nil
 end
 
 Hermite.spline_points = function (points, index)
 	-- function 6
 	local p1 = points[index]
 	local p2 = points[index + 1]
-	local var_6_0 = points[index - 1]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = 2 * p1 - p2
-
-	local p0 = var_6_0
-
-	::label_6_0::
-
-	local var_6_1 = points[index + 2]
-
-	if not var_6_1 then
-		-- Nothing
-	end
-
-	var_6_1 = 2 * p2 - p1
-
-	local p3 = var_6_1
-
-	::label_6_1::
+	local p0 = not not points[index - 1]
+	local p3 = not not points[index + 2]
 
 	return p0, p1, p2, p3
 end

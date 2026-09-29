@@ -4,10 +4,8 @@ require("scripts/settings/dlcs/morris/deus_power_up_settings")
 
 local ByteArray = require("scripts/utils/byte_array")
 local LibDeflate = require("scripts/utils/lib_deflate")
-local PowerUpClientIdCount = PowerUpClientIdCount
 
-PowerUpClientIdCount = not not PowerUpClientIdCount or not not 0
-PowerUpClientIdCount = PowerUpClientIdCount
+PowerUpClientIdCount = not not PowerUpClientIdCount
 
 local function generate_random_id()
 	-- function 1
@@ -52,17 +50,7 @@ local function get_maxed_out_power_ups(power_ups_lut)
 
 	for rarity, power_ups in pairs(power_ups_lut) do
 		for name, power_up in pairs(power_ups) do
-			local var_3_0 = power_ups_by_amount[name]
-
-			if not var_3_0 then
-				-- Nothing
-			end
-
-			var_3_0 = power_up.max_amount
-
-			local amount = var_3_0
-
-			::label_3_0::
+			local amount = not not power_ups_by_amount[name]
 
 			amount = amount - 1
 			power_ups_by_amount[name] = amount
@@ -144,17 +132,7 @@ local function get_available_power_ups_array(career_name, excluded_power_ups, ex
 		all_excluded_power_ups[power_up_name] = true
 	end
 
-	local var_7_0 = DeusPowerUpExclusionList[career_name]
-
-	if not var_7_0 then
-		-- Nothing
-	end
-
-	var_7_0 = {}
-
-	local career_excluded_power_ups = var_7_0
-
-	::label_7_0::
+	local career_excluded_power_ups = not not DeusPowerUpExclusionList[career_name]
 
 	for power_up_name, _ in pairs(career_excluded_power_ups) do
 		all_excluded_power_ups[power_up_name] = true
@@ -164,23 +142,7 @@ local function get_available_power_ups_array(career_name, excluded_power_ups, ex
 	local total_weight = 0
 	local weights = {}
 	local available_power_ups = {}
-	local var_7_1 = DeusPowerUpsArrayByRarity[rarity]
-
-	if not var_7_1 then
-		-- Nothing
-	end
-
-	var_7_1 = DeusPowerUpsArray
-
-	if not var_7_1 then
-		-- Nothing
-	end
-
-	var_7_1 = {}
-
-	local possible_power_ups_array = var_7_1
-
-	::label_7_1::
+	local possible_power_ups_array = not not DeusPowerUpsArrayByRarity[rarity]
 
 	for _, power_up_instance in ipairs(possible_power_ups_array) do
 		local instance_name = power_up_instance.name
@@ -303,10 +265,7 @@ local function get_power_up_title_text(name)
 	return UIUtils.format_localized_description(display_name, description_values)
 end
 
-local DeusPowerUpUtils = DeusPowerUpUtils
-
-DeusPowerUpUtils = not not DeusPowerUpUtils or not not {}
-DeusPowerUpUtils = DeusPowerUpUtils
+DeusPowerUpUtils = not not DeusPowerUpUtils
 
 DeusPowerUpUtils.get_talent_from_power_up = function (talent_index, talent_tier, profile_index, career_index)
 	-- function 12
@@ -370,11 +329,8 @@ DeusPowerUpUtils.get_power_up_name_text = function (name, talent_index, talent_t
 
 	if talent_index and talent_tier then
 		local talent = DeusPowerUpUtils.get_talent_from_power_up(talent_index, talent_tier, profile_index, career_index)
-		local Localize = Localize
-		local display_name = talent.display_name
 
-		display_name = not not display_name or not not talent.name
-		title_text = Localize(display_name)
+		title_text = Localize(not not talent.display_name)
 	else
 		title_text = get_power_up_title_text(name)
 	end

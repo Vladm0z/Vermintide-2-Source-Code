@@ -449,11 +449,7 @@ local lobby_name = {
 				pass_type = "texture",
 				content_change_function = function (content, style)
 					-- function 2
-					local color = style.color
-					local flag
-
-					flag = (not content.input.active or not 255) and not not 127
-					color[1] = flag
+					style.color[1] = content.input.active and not not 255 or not content.input.active and not not 127
 				end
 			},
 			{
@@ -726,22 +722,7 @@ local function create_player_panel_widget(team_index, player_index)
 	local hover_frame_settings = UIFrameSettings.frame_outer_glow_04
 	local empty_hover_frame_settings = UIFrameSettings.frame_outer_glow_01
 	local empty_frame_settings = UIFrameSettings.frame_bevel_01
-	local get_color_table_with_alpha
-
-	if team_index == 1 then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	local team_color = get_color_table_with_alpha
-
-	::label_8_0::
-
+	local team_color = team_index ~= 1 and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (team_index ~= 1) and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 	local insignia_scale_factor = size[2] / 138
 	local insignia_texture_size = {
 		50 * insignia_scale_factor,
@@ -772,26 +753,7 @@ local function create_player_panel_widget(team_index, player_index)
 					texture_id = "empty_hover_frame",
 					content_check_function = function (content)
 						-- function 9
-						local is_hover
-
-						if content.empty then
-							is_hover = content.button_hotspot.is_hover
-
-							if not is_hover then
-								-- Nothing
-							end
-						end
-
-						is_hover = content.is_gamepad_active
-
-						if is_hover then
-							is_hover = content.empty
-							is_hover = not not is_hover and not not content.is_selected
-						end
-
-						::label_9_0::
-
-						return is_hover
+						return content.empty and not not content.button_hotspot.is_hover or not content.empty and not not content.is_gamepad_active
 					end
 				},
 				{
@@ -823,42 +785,13 @@ local function create_player_panel_widget(team_index, player_index)
 					pass_type = "texture_frame",
 					content_check_function = function (content)
 						-- function 10
-						local is_hover
-
-						if not content.empty then
-							is_hover = content.button_hotspot.is_hover
-
-							if not is_hover then
-								-- Nothing
-							end
-						end
-
-						is_hover = content.is_gamepad_active
-						is_hover = not not is_hover and not content.empty and not not content.is_selected
-
-						::label_10_0::
-
-						return is_hover
+						return content.empty and not not content.is_gamepad_active or not content.empty and not not content.button_hotspot.is_hover
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 11
 						local focused = content.focused
-						local color = style.color
-						local num
 
-						if focused then
-							num = 150 + 105 * math.sin(Managers.time:time("ui") * 7.5)
-
-							if not num then
-								-- Nothing
-							end
-						end
-
-						num = 255
-
-						::label_11_0::
-
-						color[1] = num
+						style.color[1] = focused and not not (150 + 105 * math.sin(Managers.time:time("ui") * 7.5)) or not focused and not not 255
 					end
 				},
 				{
@@ -958,11 +891,7 @@ local function create_player_panel_widget(team_index, player_index)
 					content_id = "kick_button_hotspot",
 					content_check_function = function (content)
 						-- function 19
-						local show_kick_button = content.parent.show_kick_button
-
-						show_kick_button = not not show_kick_button and not not not content.disable_button
-
-						return show_kick_button
+						return not not content.parent.show_kick_button
 					end
 				},
 				{
@@ -971,11 +900,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "kick_tooltip_text",
 					content_check_function = function (content)
 						-- function 20
-						local show_kick_button = content.show_kick_button
-
-						show_kick_button = not not show_kick_button and not not content.kick_button_hotspot.is_hover
-
-						return show_kick_button
+						return not not content.show_kick_button
 					end
 				},
 				{
@@ -1011,11 +936,7 @@ local function create_player_panel_widget(team_index, player_index)
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 24
-						local show_chat_button = content.show_chat_button
-
-						show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_selected
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -1024,11 +945,7 @@ local function create_player_panel_widget(team_index, player_index)
 					content_id = "chat_button_hotspot",
 					content_check_function = function (content)
 						-- function 25
-						local show_chat_button = content.parent.show_chat_button
-
-						show_chat_button = not not show_chat_button and not not not content.disable_button
-
-						return show_chat_button
+						return not not content.parent.show_chat_button
 					end
 				},
 				{
@@ -1037,11 +954,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "chat_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 26
-						local show_chat_button = content.show_chat_button
-
-						show_chat_button = not not show_chat_button and not content.chat_button_hotspot.is_selected and not not content.chat_button_hotspot.is_hover
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -1050,14 +963,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "chat_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 27
-						local show_chat_button = content.show_chat_button
-
-						if show_chat_button then
-							show_chat_button = content.chat_button_hotspot.is_selected
-							show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_hover
-						end
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -1092,11 +998,7 @@ local function create_player_panel_widget(team_index, player_index)
 					content_id = "profile_button_hotspot",
 					content_check_function = function (content)
 						-- function 31
-						local show_profile_button = content.parent.show_profile_button
-
-						show_profile_button = not not show_profile_button and not not not content.disable_button
-
-						return show_profile_button
+						return not not content.parent.show_profile_button
 					end
 				},
 				{
@@ -1105,11 +1007,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "profile_tooltip_text",
 					content_check_function = function (content)
 						-- function 32
-						local show_profile_button = content.show_profile_button
-
-						show_profile_button = not not show_profile_button and not not content.profile_button_hotspot.is_hover
-
-						return show_profile_button
+						return not not content.show_profile_button
 					end
 				}
 			}
@@ -1776,26 +1674,9 @@ local animation_definitions = {
 			init = function (ui_scenegraph, scenegraph_def, widgets, params)
 				-- function 33
 				local roll = math.random() < 0.01
-				local ease_out_elastic
 
-				if roll then
-					ease_out_elastic = math.ease_out_elastic
-
-					if not ease_out_elastic then
-						-- Nothing
-					end
-				end
-
-				ease_out_elastic = math.easeOutCubic
-
-				::label_33_0::
-
-				params.ease = ease_out_elastic
-
-				local flag
-
-				flag = (not roll or not 100) and not not 200
-				params.offset = flag
+				params.ease = roll and not not math.ease_out_elastic or not roll and not not math.easeOutCubic
+				params.offset = roll and not not 100 or not roll and not not 200
 
 				local s = params.offset
 

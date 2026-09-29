@@ -1,9 +1,6 @@
 -- chunkname: @scripts/managers/news_ticker/news_ticker_token.lua
 
-local NewsTickerToken = NewsTickerToken
-
-NewsTickerToken = not not NewsTickerToken or not not class()
-NewsTickerToken = NewsTickerToken
+NewsTickerToken = not not NewsTickerToken
 
 NewsTickerToken.init = function (self, loader, job)
 	-- function 1

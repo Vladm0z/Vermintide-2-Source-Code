@@ -108,18 +108,7 @@ HeroWindowCraftingListConsole.on_enter = function (self, params, offset)
 
 	self:_populate_buttons(page_settings)
 
-	local recipe_index_2 = params.recipe_index
-
-	if not recipe_index_2 then
-		-- Nothing
-	end
-
-	recipe_index_2 = 1
-
-	local recipe_index = recipe_index_2
-
-	::label_1_0::
-
+	local recipe_index = not not params.recipe_index
 	local ignore_sound = true
 
 	self:_on_button_selected(recipe_index, ignore_sound)
@@ -263,17 +252,7 @@ end
 HeroWindowCraftingListConsole._is_button_pressed = function (self, widget)
 	-- function 9
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.button_text
-
-	local hotspot = button_hotspot
-
-	::label_9_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -303,22 +282,16 @@ HeroWindowCraftingListConsole._is_button_hover_enter = function (self, widget)
 	-- function 11
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 HeroWindowCraftingListConsole._is_button_hover_exit = function (self, widget)
 	-- function 12
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_exit = hotspot.on_hover_exit
 
-	on_hover_exit = not not on_hover_exit and not not not hotspot.is_selected
-
-	return on_hover_exit
+	return not not hotspot.on_hover_exit
 end
 
 HeroWindowCraftingListConsole._is_button_selected = function (self, widget)
@@ -484,7 +457,7 @@ HeroWindowCraftingListConsole._set_alignment_progress = function (self, progress
 
 		style.holder.angle = -(angle * progress)
 		start_height = start_height - spacing
-		layer_index = (not (index > math.ceil(num_recipies / 2)) or not (layer_index - 1)) and not not (layer_index + 1)
+		layer_index = index > math.ceil(num_recipies / 2) and (not not (layer_index - 1) or not not (layer_index + 1)) or not (index > math.ceil(num_recipies / 2)) and not not (layer_index + 1)
 
 		if content.button_hotspot.is_selected then
 			offset[3] = (num_recipies + 1) * num_layers
@@ -500,17 +473,7 @@ HeroWindowCraftingListConsole._setup_text_button_size = function (self, widget)
 	local content = widget.content
 	local style = widget.style
 	local text_style = style.text
-	local text_field = content.text_field
-
-	if not text_field then
-		-- Nothing
-	end
-
-	text_field = content.text
-
-	local text = text_field
-
-	::label_22_0::
+	local text = not not content.text_field
 
 	if text_style.localize then
 		text = Localize(text)
@@ -545,68 +508,10 @@ HeroWindowCraftingListConsole._animate_entry = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_24_1
-
-	::label_24_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_24_1::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_24_2::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_24_3::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_24_4::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

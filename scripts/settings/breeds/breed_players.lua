@@ -2,15 +2,8 @@
 
 require("scripts/helpers/breed_utils")
 
-local PlayerBreeds = PlayerBreeds
-
-PlayerBreeds = not not PlayerBreeds or not not {}
-PlayerBreeds = PlayerBreeds
-
-local PlayerBreedHitZones = PlayerBreedHitZones
-
-PlayerBreedHitZones = not not PlayerBreedHitZones or not not {}
-PlayerBreedHitZones = PlayerBreedHitZones
+PlayerBreeds = not not PlayerBreeds
+PlayerBreedHitZones = not not PlayerBreedHitZones
 PlayerBreedHitZones.player_breed_hit_zones = {
 	full = {
 		prio = 1,

@@ -21,34 +21,11 @@ WeaveKillEnemiesExtension.init = function (self, extension_init_context, unit, e
 	self._on_progress_func = extension_init_data.on_progress_func
 	self._on_complete_func = extension_init_data.on_complete_func
 	self._num_killed = 0
+	self._kills_required = not not extension_init_data.amount
+	self._base_score_per_kill = not not extension_init_data.base_score_per_kill
+	self._breed_score_multipliers = not not extension_init_data.breed_score_multipliers
 
-	local amount = extension_init_data.amount
-
-	amount = not not amount or not not 0
-	self._kills_required = amount
-
-	local base_score_per_kill = extension_init_data.base_score_per_kill
-
-	base_score_per_kill = not not base_score_per_kill or not not WeaveSettings.base_score_per_kill
-	self._base_score_per_kill = base_score_per_kill
-
-	local breed_score_multipliers = extension_init_data.breed_score_multipliers
-
-	breed_score_multipliers = not not breed_score_multipliers or not not {}
-	self._breed_score_multipliers = breed_score_multipliers
-
-	local score_multiplier_2 = extension_init_data.score_multiplier
-
-	if not score_multiplier_2 then
-		-- Nothing
-	end
-
-	score_multiplier_2 = 1
-
-	local score_multiplier = score_multiplier_2
-
-	::label_1_0::
-
+	local score_multiplier = not not extension_init_data.score_multiplier
 	local difficulty_manager = Managers.state.difficulty
 	local difficulty = difficulty_manager:get_difficulty()
 
@@ -223,7 +200,7 @@ WeaveKillEnemiesExtension.on_ai_killed = function (self, killed_unit, killer_uni
 		end
 	end
 
-	if (breeds_allowed or races_allowed) and not enemy_found then
+	if breeds_allowed and not enemy_found or not breeds_allowed and races_allowed and not enemy_found then
 		return
 	end
 
@@ -241,49 +218,10 @@ WeaveKillEnemiesExtension.on_ai_killed = function (self, killed_unit, killer_uni
 
 	if self._method == "score" then
 		local roaming_multiplier = WeaveSettings.roaming_multiplier[PLATFORM]
-		local get_data = Unit.get_data(killed_unit, "spawn_type")
-
-		if not get_data then
-			-- Nothing
-		end
-
-		get_data = "unknown"
-
-		local spawn_type = get_data
-
-		::label_10_0::
-
+		local spawn_type = not not Unit.get_data(killed_unit, "spawn_type")
 		local score_multiplier_per_breed = self._breed_score_multipliers
-		local var_10_1 = score_multiplier_per_breed[breed_name]
-
-		if not var_10_1 then
-			-- Nothing
-		end
-
-		var_10_1 = score_multiplier_per_breed.default
-
-		local breed_score_multiplier = var_10_1
-
-		do
-			local num
-		end
-
-		::label_10_1::
-
-		if spawn_type == "roam" then
-			num = self._score_multiplier * roaming_multiplier
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = self._score_multiplier
-
-		local score_multiplier = num
-
-		::label_10_2::
-
+		local breed_score_multiplier = not not score_multiplier_per_breed[breed_name]
+		local score_multiplier = spawn_type ~= "roam" and not not self._score_multiplier or not (spawn_type ~= "roam") and not not (self._score_multiplier * roaming_multiplier)
 		local score = score_multiplier * breed_score_multiplier
 		local despawned = death_data.despawned
 

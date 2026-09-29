@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_anim_utils.lua
 
-local AiAnimUtils = AiAnimUtils
-
-AiAnimUtils = not not AiAnimUtils or not not {}
-AiAnimUtils = AiAnimUtils
+AiAnimUtils = not not AiAnimUtils
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 
@@ -54,7 +51,7 @@ AiAnimUtils.get_start_move_animation = function (unit, target_pos, anims_table)
 	elseif dot_product > -inv_sqrt_2 then
 		local is_to_the_left = Vector3.cross(forward_vector_flat, target_vector_flat).z > 0
 
-		animation_name = (not is_to_the_left or not anims_table.left) and not not anims_table.right
+		animation_name = is_to_the_left and (not not anims_table.left or not not anims_table.right) or not is_to_the_left and not not anims_table.right
 	else
 		animation_name = anims_table.bwd
 	end

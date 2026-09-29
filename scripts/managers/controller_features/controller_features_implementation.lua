@@ -49,7 +49,7 @@ end
 
 ControllerFeaturesImplementation.add_effect = function (self, effect_name, params, user_id)
 	-- function 5
-	if (self._game_mode_ended or not Application.user_setting("gamepad_rumble_enabled") or effect_name ~= "camera_shake" or not self._is_in_inn) and script_data.honduras_demo or not Managers.input:is_device_active("gamepad") then
+	if self._game_mode_ended or not Application.user_setting("gamepad_rumble_enabled") or effect_name ~= "camera_shake" or not self._is_in_inn then
 		return
 	end
 
@@ -75,12 +75,7 @@ ControllerFeaturesImplementation.add_effect = function (self, effect_name, param
 		effect.init(state_data, params)
 
 		state_data.effect_id = self._current_effect_id
-
-		local _effects = self._effects
-		local var_5_1 = self._effects[user_id]
-
-		var_5_1 = not not var_5_1 or not not {}
-		_effects[user_id] = var_5_1
+		self._effects[user_id] = not not self._effects[user_id]
 		self._effects[user_id][self._current_effect_id] = {
 			state_data = state_data,
 			effect = effect

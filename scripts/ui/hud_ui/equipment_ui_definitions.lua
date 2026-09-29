@@ -880,11 +880,7 @@ local career_skill_weapon_widget_definition = {
 				retained_mode = RETAINED_MODE_ENABLED,
 				content_check_function = function (content)
 					-- function 13
-					local can_reload = content.can_reload
-
-					can_reload = not not can_reload or not not content.is_exhausted
-
-					return can_reload
+					return not not content.can_reload
 				end
 			}
 		}

@@ -168,34 +168,9 @@ AreaDamageSystem.create_explosion = function (self, attacker_unit, position, rot
 			if attacker_unit_id then
 				local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
 				local damage_source_id = NetworkLookup.damage_sources[damage_source]
-				local clamp
-
-				if attacker_power_level then
-					clamp = math.clamp(attacker_power_level, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
-
-					if not clamp then
-						-- Nothing
-					end
-				end
-
-				clamp = 0
-
-				local attacker_power_level = clamp
-
-				::label_7_0::
-
+				local attacker_power_level = attacker_power_level and not not math.clamp(attacker_power_level, MIN_POWER_LEVEL, MAX_POWER_LEVEL) or not attacker_power_level and not not 0
 				local is_critical_strike = not not is_critical_strike
-				local unit_game_object_id = network_manager:unit_game_object_id(source_attacker_unit)
-
-				if not unit_game_object_id then
-					-- Nothing
-				end
-
-				unit_game_object_id = attacker_unit_id
-
-				local source_attacker_unit_id = unit_game_object_id
-
-				::label_7_1::
+				local source_attacker_unit_id = not not network_manager:unit_game_object_id(source_attacker_unit)
 
 				if self.is_server then
 					self.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, attacker_is_level_unit, position, rotation, explosion_template_id, scale, damage_source_id, attacker_power_level, is_critical_strike, source_attacker_unit_id)
@@ -385,61 +360,9 @@ AreaDamageSystem._damage_unit = function (self, aoe_damage_data)
 	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
 	local explosion_data = explosion_template.explosion
 	local breed = AiUtils.unit_breed(hit_unit)
-
-	if breed then
-		-- Nothing
-	end
-
-	::label_13_0::
-
-	local immune_breeds = explosion_data.immune_breeds
-
-	if immune_breeds then
-		-- Nothing
-	end
-
-	immune_breeds = explosion_data.immune_breeds[breed.name]
-
-	if not immune_breeds then
-		-- Nothing
-	end
-
-	immune_breeds = explosion_data.immune_breeds.all
-
-	local breed_immunity = immune_breeds
-
-	::label_13_1::
-
-	local owner = Managers.player:owner(hit_unit)
-
-	if owner then
-		-- Nothing
-	end
-
-	owner = not Managers.player:owner(hit_unit):is_player_controlled()
-
-	local bot = owner
-
-	do
-		local bot_damage_immunity_2
-	end
-
-	::label_13_2::
-
-	if bot then
-		bot_damage_immunity_2 = explosion_data.bot_damage_immunity
-
-		if not bot_damage_immunity_2 then
-			-- Nothing
-		end
-	end
-
-	bot_damage_immunity_2 = false
-
-	local bot_damage_immunity = bot_damage_immunity_2
-
-	::label_13_3::
-
+	local breed_immunity = not not breed and not not explosion_data.immune_breeds
+	local bot = not not Managers.player:owner(hit_unit)
+	local bot_damage_immunity = bot and not not explosion_data.bot_damage_immunity or not bot and not not false
 	local is_immune = not not breed_immunity or not not bot_damage_immunity
 
 	if shield_blocked then
@@ -474,7 +397,7 @@ AreaDamageSystem._damage_unit = function (self, aoe_damage_data)
 					local damage_source_id = NetworkLookup.damage_sources[damage_source]
 					local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-					RPC.rpc_buff_on_attack(channel_id, attacker_unit_id, hit_unit_id, attack_type_id, (not is_critical_strike or not allow_critical_proc) and not not false, hit_zone_id, 1, buff_weapon_type_id, damage_source_id)
+					RPC.rpc_buff_on_attack(channel_id, attacker_unit_id, hit_unit_id, attack_type_id, is_critical_strike and (not not allow_critical_proc or not not false) or not is_critical_strike and not not false, hit_zone_id, 1, buff_weapon_type_id, damage_source_id)
 					DamageUtils.buff_on_attack(attacker_unit, hit_unit, attack_type, not not is_critical_strike and not not allow_critical_proc, hit_zone_name, target_number, send_to_server, "n/a", nil, damage_source)
 				elseif attacker_player then
 					DamageUtils.buff_on_attack(attacker_unit, hit_unit, attack_type, not not is_critical_strike and not not allow_critical_proc, hit_zone_name, target_number, send_to_server, "n/a", nil, damage_source)
@@ -506,36 +429,7 @@ AreaDamageSystem._damage_unit = function (self, aoe_damage_data)
 		end
 
 		local bot_damage_profile_name = not not is_bot and not not explosion_data.bot_damage_profile
-
-		if not bot_damage_profile_name then
-			-- Nothing
-		end
-
-		do
-			local damage_profile_glance
-		end
-
-		::label_13_4::
-
-		if glancing_hit then
-			damage_profile_glance = explosion_data.damage_profile_glance
-
-			if not damage_profile_glance then
-				-- Nothing
-			end
-		end
-
-		damage_profile_glance = explosion_data.damage_profile
-
-		if not damage_profile_glance then
-			-- Nothing
-		end
-
-		damage_profile_glance = "default"
-
-		local damage_profile_name = damage_profile_glance
-
-		::label_13_5::
+		local damage_profile_name = not not bot_damage_profile_name or glancing_hit and not not explosion_data.damage_profile_glance or not glancing_hit and not not explosion_data.damage_profile
 
 		if not do_damage or is_immune then
 			damage_profile_name = damage_profile_name .. "_no_damage"
@@ -705,17 +599,7 @@ AreaDamageSystem._create_damage_wave = function (self, source_unit, position, da
 	unit_name = not not unit_name or not not "units/hub_elements/empty"
 
 	local extension_init_data = not not optional_extension_init_data or not not {}
-	local area_damage_system = extension_init_data.area_damage_system
-
-	if not area_damage_system then
-		-- Nothing
-	end
-
-	area_damage_system = {}
-
-	local area_system_data = area_damage_system
-
-	::label_21_0::
+	local area_system_data = not not extension_init_data.area_damage_system
 
 	area_system_data.damage_wave_template_name = damage_wave_template
 	area_system_data.source_unit = source_unit

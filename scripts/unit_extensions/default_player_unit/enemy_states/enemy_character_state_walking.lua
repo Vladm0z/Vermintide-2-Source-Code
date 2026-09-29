@@ -195,7 +195,7 @@ EnemyCharacterStateWalking.common_movement = function (self, in_ghost_mode, dt)
 		return true
 	end
 
-	if (input_extension:get("jump") or input_extension:get("jump_only")) and not status_extension:is_crouching() and (not is_crouching or CharacterStateHelper.can_uncrouch(unit)) and locomotion_extension:jump_allowed() then
+	if input_extension:get("jump") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or not not is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) or not input_extension:get("jump") and input_extension:get("jump_only") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or not not is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) then
 		if is_crouching then
 			CharacterStateHelper.uncrouch(unit, t, first_person_extension, status_extension)
 		end
@@ -214,29 +214,8 @@ EnemyCharacterStateWalking.common_movement = function (self, in_ghost_mode, dt)
 	if not self.is_bot then
 		local breed_move_acceleration_up = not not breed and not not breed.breed_move_acceleration_up
 		local breed_move_acceleration_down = not not breed and not not breed.breed_move_acceleration_down
-		local num = breed_move_acceleration_up * dt
-
-		if not num then
-			-- Nothing
-		end
-
-		num = movement_settings_table.move_acceleration_up * dt
-
-		local move_acceleration_up_dt = num
-
-		::label_4_0::
-
-		local num_2 = breed_move_acceleration_down * dt
-
-		if not num_2 then
-			-- Nothing
-		end
-
-		num_2 = movement_settings_table.move_acceleration_down * dt
-
-		local move_acceleration_down_dt = num_2
-
-		::label_4_1::
+		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
+		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -248,7 +227,7 @@ EnemyCharacterStateWalking.common_movement = function (self, in_ghost_mode, dt)
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = (not is_moving or not 1) and not not 0
+		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
 	end
 
 	local is_walking = input_extension:get("walk")

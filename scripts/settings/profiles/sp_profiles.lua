@@ -378,17 +378,7 @@ local function process_profiles()
 			profile.index = i
 			PROFILES_BY_NAME[profile_name] = profile
 
-			local affiliation_2 = profile.affiliation
-
-			if not affiliation_2 then
-				-- Nothing
-			end
-
-			affiliation_2 = "unfinished"
-
-			local affiliation = affiliation_2
-
-			::label_1_0::
+			local affiliation = not not profile.affiliation
 
 			if not PROFILES_BY_AFFILIATION[affiliation] then
 				PROFILES_BY_AFFILIATION[affiliation] = {}
@@ -463,17 +453,7 @@ for i = 1, #SPProfiles do
 	profile.index = i
 	PROFILES_BY_NAME[profile.display_name] = profile
 
-	local affiliation_2 = profile.affiliation
-
-	if not affiliation_2 then
-		-- Nothing
-	end
-
-	affiliation_2 = "unfinished"
-
-	local affiliation = affiliation_2
-
-	::label_0_0::
+	local affiliation = not not profile.affiliation
 
 	if not PROFILES_BY_AFFILIATION[affiliation] then
 		PROFILES_BY_AFFILIATION[affiliation] = {}

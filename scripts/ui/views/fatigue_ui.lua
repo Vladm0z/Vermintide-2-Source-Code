@@ -177,17 +177,7 @@ end
 
 FatigueUI.check_active = function (self, status_extension)
 	-- function 9
-	local is_blocking = status_extension:is_blocking()
-
-	if not is_blocking then
-		-- Nothing
-	end
-
-	is_blocking = status_extension.show_fatigue_gui
-
-	local active = is_blocking
-
-	::label_9_0::
+	local active = not not status_extension:is_blocking()
 
 	return active
 end

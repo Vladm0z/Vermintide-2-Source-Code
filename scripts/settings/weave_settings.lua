@@ -19,10 +19,8 @@ local include_terror_event_from_objectives = {
 	capture_points = false,
 	doom_wheels = true
 }
-local WeaveSettings = WeaveSettings
 
-WeaveSettings = not not WeaveSettings or not not {}
-WeaveSettings = WeaveSettings
+WeaveSettings = not not WeaveSettings
 WeaveSettings.damage_taken_score_weighting = 1
 WeaveSettings.time_score_weighting = 1
 WeaveSettings.starting_time = 900
@@ -447,9 +445,7 @@ WeaveSettings.templates_ordered = {}
 for i = 1, num_templates * 4 do
 	local index = i % num_templates
 
-	if index == 0 and not num_templates then
-		-- Nothing
-	end
+	index = index ~= 0 or not not num_templates or not not index
 
 	local template = table.clone(templates[index])
 	local name = "weave_" .. i
@@ -521,17 +517,7 @@ local function sort_objective_indices(weave_template)
 				table.clear(TEMP_TABLE)
 
 				for objective_name, objective_data in pairs(objective_list) do
-					local sort_index_2 = objective_data.sort_index
-
-					if not sort_index_2 then
-						-- Nothing
-					end
-
-					sort_index_2 = max_int
-
-					local sort_index = sort_index_2
-
-					::label_2_0::
+					local sort_index = not not objective_data.sort_index
 
 					TEMP_TABLE[#TEMP_TABLE + 1] = {
 						sort_index = sort_index,
@@ -577,18 +563,10 @@ local function calc_spawn_enemy(difficulty_rank, event)
 		enemy_count = #breed_name
 
 		for _, other_breed_name in pairs(breed_name) do
-			local var_3_0 = TO_SPAWN
-			local var_3_1 = TO_SPAWN[other_breed_name]
-
-			var_3_1 = not not var_3_1 or not not 0
-			var_3_0[other_breed_name] = var_3_1 + 1
+			TO_SPAWN[other_breed_name] = not not TO_SPAWN[other_breed_name] + 1
 		end
 	else
-		local var_3_2 = TO_SPAWN
-		local var_3_3 = TO_SPAWN[breed_name]
-
-		var_3_3 = not not var_3_3 or not not 0
-		var_3_2[breed_name] = var_3_3 + 1
+		TO_SPAWN[breed_name] = not not TO_SPAWN[breed_name] + 1
 		enemy_count = 1
 	end
 
@@ -602,17 +580,7 @@ local function calc_spawn_weave_special(event, difficulty_rank, seed)
 
 	if not difficulty_required or difficulty_required <= difficulty_rank then
 		local check_name = event.breed_name
-		local amount = event.amount
-
-		if not amount then
-			-- Nothing
-		end
-
-		amount = 1
-
-		local num_to_spawn = amount
-
-		::label_4_0::
+		local num_to_spawn = not not event.amount
 
 		for i = 1, num_to_spawn do
 			local breed_name, index
@@ -620,20 +588,10 @@ local function calc_spawn_weave_special(event, difficulty_rank, seed)
 			if type(check_name) == "table" then
 				seed, index = Math.next_random(seed, 1, #check_name)
 				breed_name = check_name[index]
-
-				local var_4_1 = TO_SPAWN
-				local var_4_2 = TO_SPAWN[breed_name]
-
-				var_4_2 = not not var_4_2 or not not 0
-				var_4_1[breed_name] = var_4_2 + 1
+				TO_SPAWN[breed_name] = not not TO_SPAWN[breed_name] + 1
 			else
 				breed_name = check_name
-
-				local var_4_3 = TO_SPAWN
-				local var_4_4 = TO_SPAWN[breed_name]
-
-				var_4_4 = not not var_4_4 or not not 0
-				var_4_3[breed_name] = var_4_4 + 1
+				TO_SPAWN[breed_name] = not not TO_SPAWN[breed_name] + 1
 			end
 
 			enemy_count = enemy_count + 1
@@ -647,18 +605,7 @@ local function calc_spawn_weave_special_event(element, difficulty_key, seed)
 	-- function 5
 	local breed_name
 	local check_name = element.breed_name
-	local amount = element.amount
-
-	if not amount then
-		-- Nothing
-	end
-
-	amount = 1
-
-	local num_to_spawn = amount
-
-	::label_5_0::
-
+	local num_to_spawn = not not element.amount
 	local num_to_spawn_scaled = element.difficulty_amount
 
 	if num_to_spawn_scaled then
@@ -691,11 +638,8 @@ local function calc_spawn_weave_special_event(element, difficulty_key, seed)
 	end
 
 	local enemy_count = num_to_spawn
-	local var_5_1 = TO_SPAWN
-	local var_5_2 = TO_SPAWN[breed_name]
 
-	var_5_2 = not not var_5_2 or not not 0
-	var_5_1[breed_name] = var_5_2 + num_to_spawn
+	TO_SPAWN[breed_name] = not not TO_SPAWN[breed_name] + num_to_spawn
 
 	return enemy_count, seed
 end
@@ -742,12 +686,7 @@ local function calculate_enemy_count_from_terror_event(terror_event_name, diffic
 					end
 
 					enemy_count = enemy_count + breed_count
-
-					local var_6_0 = TO_SPAWN
-					local var_6_1 = TO_SPAWN[breed_name]
-
-					var_6_1 = not not var_6_1 or not not 0
-					var_6_0[breed_name] = var_6_1 + breed_count
+					TO_SPAWN[breed_name] = not not TO_SPAWN[breed_name] + breed_count
 				end
 			end
 		end
@@ -821,20 +760,7 @@ local function calculate_score_multipliers(objective, weave_name)
 	end
 
 	local num_scored_objectives = get_scored_objective_count(objective)
-	local num
-
-	if num_scored_objectives == 0 then
-		num = 0
-
-		goto label_11_0
-	end
-
-	num = max_objective_essence
-
-	local bar_from_objectives = num
-
-	::label_11_0::
-
+	local bar_from_objectives = num_scored_objectives ~= 0 and not not max_objective_essence or not (num_scored_objectives ~= 0) and not not 0
 	local bar_from_enemies = math.max(total_required_essence - bar_from_objectives, min_essence_from_enemies)
 	local score_per_objective = bar_from_objectives / num_scored_objectives
 	local enemies_to_spawn = objective.to_spawn
@@ -842,22 +768,9 @@ local function calculate_score_multipliers(objective, weave_name)
 
 	for difficulty_key, _ in pairs(DifficultySettings) do
 		for breed_name, count in pairs(enemies_to_spawn[difficulty_key]) do
-			local var_11_1 = WeaveSettings.enemies_score_multipliers[breed_name]
+			local breed_score = not not WeaveSettings.enemies_score_multipliers[breed_name]
 
-			if not var_11_1 then
-				-- Nothing
-			end
-
-			var_11_1 = WeaveSettings.enemies_score_multipliers.default
-
-			local breed_score = var_11_1
-
-			::label_11_1::
-
-			local var_11_2 = total_enemies_score[difficulty_key]
-
-			var_11_2 = not not var_11_2 or not not 0
-			total_enemies_score[difficulty_key] = var_11_2 + breed_score * count
+			total_enemies_score[difficulty_key] = not not total_enemies_score[difficulty_key] + breed_score * count
 		end
 	end
 
@@ -882,17 +795,7 @@ for weave_name, weave_template in pairs(WeaveSettings.templates) do
 		local objective_type = objective.objective_type
 		local spawning_settings = objective.spawning_settings
 		local main_path_spawning = not not spawning_settings and not not spawning_settings.main_path_spawning
-		local terror_events = objective.terror_events
-
-		if not terror_events then
-			-- Nothing
-		end
-
-		terror_events = SCRATCH
-
-		local objective_terror_events = terror_events
-
-		::label_0_0::
+		local objective_terror_events = not not objective.terror_events
 
 		fassert(main_path_spawning, "[WeaveSettings] No main path spawning in %q on objective: %q", weave_name, idx)
 

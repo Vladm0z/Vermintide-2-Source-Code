@@ -124,17 +124,7 @@ VersusTeamParadingViewV2.draw = function (self, dt)
 	local input_manager = self.input_manager
 	local input_service = self:input_service()
 	local render_settings = self.render_settings
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_5_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	if self._viewport_widget then
 		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
@@ -273,10 +263,7 @@ VersusTeamParadingViewV2._draw_widgets = function (self, widgets, render_setting
 	end
 
 	for _, widget in ipairs(widgets) do
-		local alpha_multiplier_2 = widget.alpha_multiplier
-
-		alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_2
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -316,44 +303,8 @@ VersusTeamParadingViewV2._create_team_portrait_frames = function (self, party_id
 				local careers = profile.careers
 				local career_settings = careers[career_index]
 				local is_bot = picker.is_bot
-				local slot_frame
-
-				if slot_data.slot_frame ~= "n/a" then
-					slot_frame = slot_data.slot_frame
-
-					if not slot_frame then
-						-- Nothing
-					end
-				end
-
-				slot_frame = "frame_0000"
-
-				local portrait_frame_name = slot_frame
-
-				do
-					local str
-				end
-
-				::label_13_0::
-
-				if is_bot then
-					str = "BOT"
-
-					goto label_13_1
-				end
-
-				str = status.level
-
-				if not str then
-					-- Nothing
-				end
-
-				str = "-"
-
-				local level_text = str
-
-				::label_13_1::
-
+				local portrait_frame_name = slot_data.slot_frame == "n/a" and not not "frame_0000" or not (slot_data.slot_frame == "n/a") and not not slot_data.slot_frame
+				local level_text = is_bot and not not "BOT" or not is_bot and not not status.level
 				local portrait_image = career_settings.portrait_image
 				local widget_definition = UIWidgets.create_portrait_frame(scenegraph_node_name, portrait_frame_name, level_text, 1, nil, portrait_image)
 				local widget = UIWidget.init(widget_definition, self._ui_top_renderer)
@@ -367,13 +318,7 @@ VersusTeamParadingViewV2._create_team_portrait_frames = function (self, party_id
 				}
 				self._team_portrait_frame_widgets[#self._team_portrait_frame_widgets + 1] = widget
 
-				local create_small_insignia = UIWidgets.create_small_insignia
-				local var_13_3 = insignia_scenegraph_node_name
-				local versus_level = status.versus_level
-
-				versus_level = not not versus_level or not not 0
-
-				local widget_definition = create_small_insignia(var_13_3, versus_level)
+				local widget_definition = UIWidgets.create_small_insignia(insignia_scenegraph_node_name, not not status.versus_level)
 				local widget = UIWidget.init(widget_definition, self._ui_top_renderer)
 
 				widget.offset = {
@@ -407,7 +352,7 @@ VersusTeamParadingViewV2._create_player_name_widgets = function (self, party_id)
 			career_name = career_settings.display_name
 		end
 
-		player_name = (not status.player or not self:_set_player_name(status.player)) and not not "BOT"
+		player_name = status.player and (not not self:_set_player_name(status.player) or not not "BOT") or not status.player and not not "BOT"
 		career_name = not not career_name or not not "NO_CAREER"
 
 		local widget_definition = create_player_name_career_text(scenegraph_node_name)
@@ -476,20 +421,7 @@ end
 
 VersusTeamParadingViewV2._get_heroes_spawn_locations = function (self, party_id)
 	-- function 16
-	local str
-
-	if party_id == self._party_id then
-		str = "character_slot_0"
-
-		goto label_16_0
-	end
-
-	str = "character_slot_enemy_0"
-
-	local spawn_point_unit_prefix = str
-
-	::label_16_0::
-
+	local spawn_point_unit_prefix = party_id ~= self._party_id and not not "character_slot_enemy_0" or not (party_id ~= self._party_id) and not not "character_slot_0"
 	local unit = "units/hub_elements/versus_podium_character_spawn"
 	local level_name = self:_get_viewport_level_name()
 	local unit_indices = LevelResource.unit_indices(level_name, unit)
@@ -678,18 +610,7 @@ VersusTeamParadingViewV2._get_hero_previewer_data = function (self, picker, part
 	if profile_data then
 		local careers = profile_data.careers
 		local career_settings = careers[career_index]
-		local versus_preview_animation = career_settings.versus_preview_animation
-
-		if not versus_preview_animation then
-			-- Nothing
-		end
-
-		versus_preview_animation = career_settings.preview_animation
-
-		local preview_animation = versus_preview_animation
-
-		::label_24_0::
-
+		local preview_animation = not not career_settings.versus_preview_animation
 		local preview_wield_slot = career_settings.preview_wield_slot
 		local hero_name = career_settings.profile_name
 		local weapon = slot_data["slot_" .. preview_wield_slot]
@@ -697,24 +618,10 @@ VersusTeamParadingViewV2._get_hero_previewer_data = function (self, picker, part
 		local preview_items = {
 			career_settings.preview_items[1],
 			{
-				item_name = (hat == "n/a" or not hat) and not not career_settings.preview_items[2].item_name
+				item_name = not not career_settings.preview_items[2].item_name
 			}
 		}
-		local slot_skin
-
-		if slot_data.slot_skin ~= "n/a" then
-			slot_skin = slot_data.slot_skin
-
-			if not slot_skin then
-				-- Nothing
-			end
-		end
-
-		slot_skin = career_settings.base_skin
-
-		local skin_name = slot_skin
-
-		::label_24_1::
+		local skin_name = slot_data.slot_skin == "n/a" and not not career_settings.base_skin or not (slot_data.slot_skin == "n/a") and not not slot_data.slot_skin
 
 		return {
 			profile_index = profile_index,
@@ -772,11 +679,7 @@ end
 
 VersusTeamParadingViewV2._get_opponent_party_id = function (self)
 	-- function 31
-	local flag
-
-	flag = (self._party_id ~= 1 or not 2) and not not 1
-
-	return flag
+	return self._party_id ~= 1 and not not 1 or not (self._party_id ~= 1) and not not 2
 end
 
 VersusTeamParadingViewV2._set_camera_pose = function (self, world, camera, new_pose)
@@ -858,7 +761,7 @@ VersusTeamParadingViewV2._set_team_names_and_careers = function (self, party_id)
 			career_name = career_settings.display_name
 		end
 
-		player_name = (not status.player or not self:_set_player_name(status.player)) and not not "BOT"
+		player_name = status.player and (not not self:_set_player_name(status.player) or not not "BOT") or not status.player and not not "BOT"
 		career_name = not not career_name or not not "NO_CAREER"
 
 		local widget = self._player_name_widgets[i]
@@ -883,83 +786,23 @@ VersusTeamParadingViewV2._set_team_name_widget_colors_and_text = function (self,
 	local team_name_key = Managers.state.game_mode:setting("party_names_lookup_by_id")[party_id]
 	local is_local_player_team = self._party_id == party_id
 	local ui_settings = dlc_settings.teams_ui_assets[team_name_key]
-	local get_color_table_with_alpha
-
-	if is_local_player_team then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-
-	local team_color = get_color_table_with_alpha
-
-	::label_40_0::
-
+	local team_color = is_local_player_team and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_local_player_team and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local top_detail = self._widgets_by_name.top_background_detail
-	local content = top_detail.content
-	local flag
 
-	flag = (not is_local_player_team or not "divider_horizontal_hero_end_blue") and not not "divider_horizontal_hero_end_red"
-	content.divider_edge_left = flag
-
-	local content_2 = top_detail.content
-	local flag_2
-
-	flag_2 = (not is_local_player_team or not "divider_horizontal_hero_middle_blue") and not not "divider_horizontal_hero_middle_red"
-	content_2.divider_mid = flag_2
-
-	local divider_edge_right = top_detail.content.divider_edge_right
-	local flag_3
-
-	flag_3 = (not is_local_player_team or not "divider_horizontal_hero_end_blue") and not not "divider_horizontal_hero_end_red"
-	divider_edge_right.texture_id = flag_3
+	top_detail.content.divider_edge_left = is_local_player_team and not not "divider_horizontal_hero_end_blue" or not is_local_player_team and not not "divider_horizontal_hero_end_red"
+	top_detail.content.divider_mid = is_local_player_team and not not "divider_horizontal_hero_middle_blue" or not is_local_player_team and not not "divider_horizontal_hero_middle_red"
+	top_detail.content.divider_edge_right.texture_id = is_local_player_team and not not "divider_horizontal_hero_end_blue" or not is_local_player_team and not not "divider_horizontal_hero_end_red"
 
 	local team_banner = self._widgets_by_name.team_flag
-	local content_3 = team_banner.content
-	local local_flag_long_texture
 
-	if is_local_player_team then
-		local_flag_long_texture = ui_settings.local_flag_long_texture
-
-		if not local_flag_long_texture then
-			-- Nothing
-		end
-	end
-
-	local_flag_long_texture = ui_settings.opponent_flag_long_texture
-
-	::label_40_1::
-
-	content_3.texture_id = local_flag_long_texture
-
-	local offset = team_banner.offset
-	local flag_4
-
-	flag_4 = (not is_local_player_team or not 30) and not not 1658
-	offset[1] = flag_4
+	team_banner.content.texture_id = is_local_player_team and not not ui_settings.local_flag_long_texture or not is_local_player_team and not not ui_settings.opponent_flag_long_texture
+	team_banner.offset[1] = is_local_player_team and not not 30 or not is_local_player_team and not not 1658
 
 	local bottom_detail_widget = self._widgets_by_name.bottom_background_detail
-	local content_4 = bottom_detail_widget.content
-	local flag_5
 
-	flag_5 = (not is_local_player_team or not "divider_horizontal_hero_end_blue") and not not "divider_horizontal_hero_end_red"
-	content_4.divider_edge_left = flag_5
-
-	local content_5 = bottom_detail_widget.content
-	local flag_6
-
-	flag_6 = (not is_local_player_team or not "divider_horizontal_hero_middle_blue") and not not "divider_horizontal_hero_middle_red"
-	content_5.divider_mid = flag_6
-
-	local divider_edge_right_2 = bottom_detail_widget.content.divider_edge_right
-	local flag_7
-
-	flag_7 = (not is_local_player_team or not "divider_horizontal_hero_end_blue") and not not "divider_horizontal_hero_end_red"
-	divider_edge_right_2.texture_id = flag_7
+	bottom_detail_widget.content.divider_edge_left = is_local_player_team and not not "divider_horizontal_hero_end_blue" or not is_local_player_team and not not "divider_horizontal_hero_end_red"
+	bottom_detail_widget.content.divider_mid = is_local_player_team and not not "divider_horizontal_hero_middle_blue" or not is_local_player_team and not not "divider_horizontal_hero_middle_red"
+	bottom_detail_widget.content.divider_edge_right.texture_id = is_local_player_team and not not "divider_horizontal_hero_end_blue" or not is_local_player_team and not not "divider_horizontal_hero_end_red"
 end
 
 VersusTeamParadingViewV2._play_sound = function (self, event)
@@ -969,29 +812,9 @@ end
 
 VersusTeamParadingViewV2._play_parading_sfx = function (self, local_player_team)
 	-- function 42
-	local _party_id
-
-	if local_player_team then
-		_party_id = self._party_id
-
-		if not _party_id then
-			-- Nothing
-		end
-	end
-
-	_party_id = self:_get_opponent_party_id()
-
-	local party_id = _party_id
-
-	::label_42_0::
-
+	local party_id = local_player_team and not not self._party_id or not local_player_team and not not self:_get_opponent_party_id()
 	local team_name_key = Managers.state.game_mode:setting("party_names_lookup_by_id")[party_id]
-	local str = "Play_menu_versus_parading_"
-	local flag
-
-	flag = (team_name_key ~= "team_hammers" or not "hammers") and not not "skulls"
-
-	local parading_sfx = str .. flag
+	local parading_sfx = "Play_menu_versus_parading_" .. (team_name_key ~= "team_hammers" and not not "skulls" or not (team_name_key ~= "team_hammers") and not not "hammers")
 
 	self:_play_sound(parading_sfx)
 end

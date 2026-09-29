@@ -99,11 +99,7 @@ end
 
 UnlockDlcBundle.requires_restart = function (self)
 	-- function 13
-	local _status_changed = self._status_changed
-
-	_status_changed = not not _status_changed and not not self._requires_restart
-
-	return _status_changed
+	return not not self._status_changed
 end
 
 UnlockDlcBundle.update_is_installed = function (self)

@@ -2,53 +2,48 @@
 
 local SIZE_X, SIZE_Y = 1920, 1080
 local RETAINED_MODE_ENABLED = true
-local tbl = {}
-local tbl_2 = {
-	position = {
-		0,
-		0,
-		UILayer.hud
+local scenegraph_definition = {
+	root = {
+		position = {
+			0,
+			0,
+			UILayer.hud
+		},
+		size = {
+			SIZE_X,
+			SIZE_Y
+		},
+		scale = IS_WINDOWS and not not "hud_scale_fit" or not IS_WINDOWS and not not "hud_fit"
 	},
-	size = {
-		SIZE_X,
-		SIZE_Y
+	ability_root = {
+		vertical_alignment = "bottom",
+		parent = "root",
+		horizontal_alignment = "right",
+		position = {
+			0,
+			60,
+			0
+		},
+		size = {
+			0,
+			0
+		}
+	},
+	ability_charges = {
+		vertical_alignment = "top",
+		parent = "ability_root",
+		horizontal_alignment = "left",
+		position = {
+			-134,
+			92,
+			11
+		},
+		size = {
+			0,
+			0
+		}
 	}
 }
-local flag
-
-flag = (not IS_WINDOWS or not "hud_scale_fit") and not not "hud_fit"
-tbl_2.scale = flag
-tbl.root = tbl_2
-tbl.ability_root = {
-	vertical_alignment = "bottom",
-	parent = "root",
-	horizontal_alignment = "right",
-	position = {
-		0,
-		60,
-		0
-	},
-	size = {
-		0,
-		0
-	}
-}
-tbl.ability_charges = {
-	vertical_alignment = "top",
-	parent = "ability_root",
-	horizontal_alignment = "left",
-	position = {
-		-134,
-		92,
-		11
-	},
-	size = {
-		0,
-		0
-	}
-}
-
-local scenegraph_definition = tbl
 
 local function create_ability_widget()
 	-- function 1
@@ -65,21 +60,7 @@ local function create_ability_widget()
 						-- function 2
 						content.gamepad_active = Managers.input:is_device_active("gamepad")
 
-						local usable
-
-						if content.on_cooldown then
-							usable = content.usable
-
-							if usable then
-								-- Nothing
-							end
-						end
-
-						usable = not content.hide_effect
-
-						::label_2_0::
-
-						return usable
+						return content.on_cooldown and not not content.usable or not content.on_cooldown and not not not content.hide_effect
 					end,
 					content_change_function = function (content, style)
 						-- function 3
@@ -92,17 +73,7 @@ local function create_ability_widget()
 
 						local career_ext = ScriptUnit.extension(player_unit, "career_system")
 						local career_name = career_ext:career_name()
-						local var_3_0 = UISettings.gamepad_ability_ui_data[career_name]
-
-						if not var_3_0 then
-							-- Nothing
-						end
-
-						var_3_0 = UISettings.gamepad_ability_ui_data.default
-
-						local career_data = var_3_0
-
-						::label_3_0::
+						local career_data = not not UISettings.gamepad_ability_ui_data[career_name]
 
 						for content_id, content_value in pairs(career_data) do
 							content[content_id] = content_value
@@ -116,21 +87,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 4
-						local usable
-
-						if content.on_cooldown then
-							usable = content.usable
-
-							if usable then
-								-- Nothing
-							end
-						end
-
-						usable = not content.hide_effect
-
-						::label_4_0::
-
-						return usable
+						return content.on_cooldown and not not content.usable or not content.on_cooldown and not not not content.hide_effect
 					end
 				},
 				{
@@ -140,21 +97,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 5
-						local usable
-
-						if content.on_cooldown then
-							usable = content.usable
-
-							if usable then
-								-- Nothing
-							end
-						end
-
-						usable = content.lit_frame_id
-
-						::label_5_0::
-
-						return usable
+						return content.on_cooldown and not not content.usable or not content.on_cooldown and not not content.lit_frame_id
 					end
 				},
 				{
@@ -164,22 +107,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 6
-						local usable
-
-						if content.on_cooldown and not content.always_show_activated_ability_input then
-							usable = content.usable
-
-							if usable then
-								-- Nothing
-							end
-						end
-
-						usable = content.activate_ability_id
-						usable = not not usable and not not content.gamepad_active
-
-						::label_6_0::
-
-						return usable
+						return not not content.usable
 					end
 				},
 				{
@@ -189,21 +117,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 7
-						local usable
-
-						if content.on_cooldown and not content.always_show_activated_ability_input and not content.usable then
-							usable = content.usable
-
-							if usable then
-								-- Nothing
-							end
-						end
-
-						usable = not content.gamepad_active
-
-						::label_7_0::
-
-						return usable
+						return not not content.usable
 					end
 				},
 				{
@@ -213,21 +127,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 8
-						local usable
-
-						if content.on_cooldown and not content.always_show_activated_ability_input and not content.usable then
-							usable = content.usable
-
-							if usable then
-								-- Nothing
-							end
-						end
-
-						usable = not content.gamepad_active
-
-						::label_8_0::
-
-						return usable
+						return not not content.usable
 					end
 				},
 				{
@@ -237,11 +137,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 9
-						local user_setting = Application.user_setting("numeric_ui")
-
-						user_setting = not not user_setting and not not not content.can_use_ability
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				},
 				{
@@ -251,11 +147,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 10
-						local user_setting = Application.user_setting("numeric_ui")
-
-						user_setting = not not user_setting and not not not content.can_use_ability
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				}
 			}
@@ -434,11 +326,7 @@ local thornsister_passive_widget_definition = {
 				retained_mode = RETAINED_MODE_ENABLED,
 				content_check_function = function (content)
 					-- function 12
-					local is_active = content.is_active
-
-					is_active = not not is_active and not not not content.hide_top_effect
-
-					return is_active
+					return not not content.is_active
 				end
 			}
 		}

@@ -1,10 +1,8 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_morris.lua
 
 local player = StatisticsDefinitions.player
-local JourneyDifficultyDBNames = JourneyDifficultyDBNames
 
-JourneyDifficultyDBNames = not not JourneyDifficultyDBNames or not not {}
-JourneyDifficultyDBNames = JourneyDifficultyDBNames
+JourneyDifficultyDBNames = not not JourneyDifficultyDBNames
 player.completed_journeys_difficulty = {}
 
 for _, name in ipairs(AvailableJourneyOrder) do
@@ -22,10 +20,7 @@ for _, name in ipairs(AvailableJourneyOrder) do
 	player.completed_journeys_difficulty[journey_difficulty_name] = completed_journeys_difficulty_definition
 end
 
-local JourneyDominantGodDifficultyDBNames = JourneyDominantGodDifficultyDBNames
-
-JourneyDominantGodDifficultyDBNames = not not JourneyDominantGodDifficultyDBNames or not not {}
-JourneyDominantGodDifficultyDBNames = JourneyDominantGodDifficultyDBNames
+JourneyDominantGodDifficultyDBNames = not not JourneyDominantGodDifficultyDBNames
 player.completed_journey_dominant_god_difficulty = {}
 
 for _, name in pairs(DEUS_GOD_TYPES) do

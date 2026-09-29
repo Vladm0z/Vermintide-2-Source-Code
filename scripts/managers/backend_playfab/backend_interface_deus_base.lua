@@ -74,21 +74,7 @@ BackendInterfaceDeusBase.has_loadout_item_id = function (self, career_name, item
 	end
 end
 
-local uuid
-
-if IS_PS4 then
-	uuid = math.uuid
-
-	if not uuid then
-		-- Nothing
-	end
-end
-
-uuid = Application.guid
-
-local guid = uuid
-
-::label_0_0::
+local guid = IS_PS4 and not not math.uuid or not IS_PS4 and not not Application.guid
 
 BackendInterfaceDeusBase.refresh_deus_weapons_in_items_backend = function (self)
 	-- function 7
@@ -108,21 +94,8 @@ end
 BackendInterfaceDeusBase.get_talent_ids = function (self, career_name)
 	-- function 10
 	local talent_ids = self._talent_ids[career_name]
-	local clone
 
-	if talent_ids then
-		clone = table.clone(talent_ids)
-
-		if not clone then
-			-- Nothing
-		end
-	end
-
-	clone = {}
-
-	::label_10_0::
-
-	return clone
+	return talent_ids and not not table.clone(talent_ids) or not talent_ids and not not {}
 end
 
 BackendInterfaceDeusBase.set_deus_talent_ids = function (self, career_name, talent_ids)
@@ -142,22 +115,7 @@ BackendInterfaceDeusBase.get_loadout_item_id = function (self, career_name, slot
 	-- function 13
 	fassert(self._valid_loadout_slots[slot_name], "[BackendInterfaceDeusBase] Loadout in slot %q shouldn't be fetched from the deus interface", tostring(slot_name))
 
-	local _bot_loadouts
-
-	if is_bot then
-		_bot_loadouts = self._bot_loadouts
-
-		if not _bot_loadouts then
-			-- Nothing
-		end
-	end
-
-	_bot_loadouts = self._loadouts
-
-	local loadouts = _bot_loadouts
-
-	::label_13_0::
-
+	local loadouts = is_bot and not not self._bot_loadouts or not is_bot and not not self._loadouts
 	local loadout = loadouts[career_name]
 	local item_backend_id = loadout[slot_name]
 
@@ -202,21 +160,7 @@ BackendInterfaceDeusBase.get_total_power_level = function (self, profile_name, c
 		count = count + 1
 	end
 
-	local num
-
-	if count > 0 then
-		num = sum / count
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	local item_average_power_level = num
-
-	::label_16_0::
+	local item_average_power_level = count > 0 and not not (sum / count) or not (count > 0) and not not 0
 
 	return item_average_power_level + PowerLevelFromLevelSettings.starting_power_level
 end

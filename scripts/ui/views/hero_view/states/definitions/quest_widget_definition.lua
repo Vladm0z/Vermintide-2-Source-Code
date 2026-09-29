@@ -46,93 +46,82 @@ local function create_quest_entry(scenegraph_id, size)
 				allow_multi_hover = true
 			}
 		}
-
-		local tbl = {
+		checklist_item_styles[i] = {
 			list_member_offset = {
 				0,
 				-checklist_entry_size[2],
 				0
 			},
-			size = checklist_entry_size
-		}
-		local tbl_2 = {
-			vertical_alignment = "center",
-			upper_case = false,
-			font_size = 22,
-			horizontal_alignment = "left",
-			word_wrap = true
-		}
-		local flag
-
-		flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-		tbl_2.font_type = flag
-		tbl_2.text_color = Colors.get_color_table_with_alpha("black", 255)
-		tbl_2.offset = {
-			31,
-			0,
-			2
-		}
-		tbl.text = tbl_2
-
-		local tbl_3 = {
-			vertical_alignment = "center",
-			upper_case = false,
-			font_size = 22,
-			horizontal_alignment = "left",
-			word_wrap = true
-		}
-		local flag_2
-
-		flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-		tbl_3.font_type = flag_2
-		tbl_3.text_color = Colors.get_color_table_with_alpha("black", 0)
-		tbl_3.offset = {
-			33,
-			-2,
-			1
-		}
-		tbl.text_shadow = tbl_3
-		tbl.checkbox = {
-			vertical_alignment = "center",
-			masked = true,
-			horizontal_alignment = "left",
-			texture_size = {
-				25,
-				25
+			size = checklist_entry_size,
+			text = {
+				vertical_alignment = "center",
+				upper_case = false,
+				font_size = 22,
+				horizontal_alignment = "left",
+				word_wrap = true,
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					31,
+					0,
+					2
+				}
 			},
-			color = {
-				255,
-				0,
-				0,
-				0
+			text_shadow = {
+				vertical_alignment = "center",
+				upper_case = false,
+				font_size = 22,
+				horizontal_alignment = "left",
+				word_wrap = true,
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 0),
+				offset = {
+					33,
+					-2,
+					1
+				}
 			},
-			offset = {
-				0,
-				-2,
-				1
+			checkbox = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "left",
+				texture_size = {
+					25,
+					25
+				},
+				color = {
+					255,
+					0,
+					0,
+					0
+				},
+				offset = {
+					0,
+					-2,
+					1
+				}
+			},
+			checkbox_marker = {
+				vertical_alignment = "center",
+				masked = true,
+				horizontal_alignment = "left",
+				texture_size = {
+					37,
+					31
+				},
+				color = {
+					255,
+					0,
+					0,
+					0
+				},
+				offset = {
+					0,
+					1,
+					2
+				}
 			}
 		}
-		tbl.checkbox_marker = {
-			vertical_alignment = "center",
-			masked = true,
-			horizontal_alignment = "left",
-			texture_size = {
-				37,
-				31
-			},
-			color = {
-				255,
-				0,
-				0,
-				0
-			},
-			offset = {
-				0,
-				1,
-				2
-			}
-		}
-		checklist_item_styles[i] = tbl
 	end
 
 	local widget = {
@@ -182,11 +171,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "close_icon",
 			content_check_function = function (content)
 				-- function 5
-				local can_close = content.can_close
-
-				can_close = not not can_close and not not not content.close_button_hotspot.is_hover
-
-				return can_close
+				return not not content.can_close
 			end
 		},
 		{
@@ -195,11 +180,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "close_icon_hover",
 			content_check_function = function (content)
 				-- function 6
-				local can_close = content.can_close
-
-				can_close = not not can_close and not not content.close_button_hotspot.is_hover
-
-				return can_close
+				return not not content.can_close
 			end
 		},
 		{
@@ -244,11 +225,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "arrow",
 			content_check_function = function (content)
 				-- function 11
-				local expandable = content.expandable
-
-				expandable = not not expandable and not content.button_hotspot.is_hover and not not not content.expanded
-
-				return expandable
+				return not not content.expandable
 			end
 		},
 		{
@@ -257,14 +234,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "arrow_hover",
 			content_check_function = function (content)
 				-- function 12
-				local expandable = content.expandable
-
-				if expandable then
-					expandable = content.expanded
-					expandable = not not expandable or not not content.button_hotspot.is_hover
-				end
-
-				return expandable
+				return not not content.expandable
 			end
 		},
 		{
@@ -273,14 +243,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "progress_frame",
 			content_check_function = function (content)
 				-- function 13
-				local draw_bar = content.draw_bar
-
-				if not draw_bar then
-					draw_bar = content.completed
-					draw_bar = not not draw_bar and not not not content.claimed
-				end
-
-				return draw_bar
+				return not not content.draw_bar
 			end
 		},
 		{
@@ -325,11 +288,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "progress_button_text",
 			content_check_function = function (content)
 				-- function 18
-				local completed = content.completed
-
-				completed = not not completed and not content.claimed and not content.draw_bar and not not content.progress_button_hotspot.is_hover
-
-				return completed
+				return not not content.completed
 			end
 		},
 		{
@@ -338,11 +297,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "progress_button_text",
 			content_check_function = function (content)
 				-- function 19
-				local completed = content.completed
-
-				completed = not not completed and not content.claimed and not content.draw_bar and not not not content.progress_button_hotspot.is_hover
-
-				return completed
+				return not not content.completed
 			end
 		},
 		{
@@ -351,11 +306,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "progress_button_text",
 			content_check_function = function (content)
 				-- function 20
-				local completed = content.completed
-
-				completed = not not completed and not content.claimed and not not not content.draw_bar
-
-				return completed
+				return not not content.completed
 			end
 		},
 		{
@@ -365,11 +316,8 @@ local function create_quest_entry(scenegraph_id, size)
 			content_check_function = function (content)
 				-- function 21
 				local parent = content.parent
-				local completed = parent.completed
 
-				completed = not not completed and not not not parent.claimed
-
-				return completed
+				return not not parent.completed
 			end
 		},
 		{
@@ -378,11 +326,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "background_fade",
 			content_check_function = function (content)
 				-- function 22
-				local completed = content.completed
-
-				completed = not not completed and not not not content.claimed
-
-				return completed
+				return not not content.completed
 			end
 		},
 		{
@@ -392,11 +336,8 @@ local function create_quest_entry(scenegraph_id, size)
 			content_check_function = function (content)
 				-- function 23
 				local parent = content.parent
-				local completed = parent.completed
 
-				completed = not not completed and not not not parent.claimed
-
-				return completed
+				return not not parent.completed
 			end
 		},
 		{
@@ -405,14 +346,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 24
-				local draw_bar = content.draw_bar
-
-				if not draw_bar then
-					draw_bar = content.completed
-					draw_bar = not not draw_bar and not not not content.claimed
-				end
-
-				return draw_bar
+				return not not content.draw_bar
 			end
 		},
 		{
@@ -421,14 +355,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 25
-				local draw_bar = content.draw_bar
-
-				if not draw_bar then
-					draw_bar = content.completed
-					draw_bar = not not draw_bar and not not not content.claimed
-				end
-
-				return draw_bar
+				return not not content.draw_bar
 			end
 		},
 		{
@@ -437,11 +364,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 26
-				local completed = content.completed
-
-				completed = not not completed and not content.claimed and not not content.progress_button_hotspot.is_hover
-
-				return completed
+				return not not content.completed
 			end
 		},
 		{
@@ -450,11 +373,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture_frame",
 			content_check_function = function (content)
 				-- function 27
-				local completed = content.completed
-
-				completed = not not completed and not content.claimed and not not not content.claiming
-
-				return completed
+				return not not content.completed
 			end,
 			content_change_function = function (content, style)
 				-- function 28
@@ -470,14 +389,8 @@ local function create_quest_entry(scenegraph_id, size)
 			content_check_function = function (content)
 				-- function 29
 				local parent_content = content.parent
-				local draw_bar = parent_content.draw_bar
 
-				if not draw_bar then
-					draw_bar = parent_content.completed
-					draw_bar = not not draw_bar and not not not parent_content.claimed
-				end
-
-				return draw_bar
+				return not not parent_content.draw_bar
 			end
 		},
 		{
@@ -488,14 +401,8 @@ local function create_quest_entry(scenegraph_id, size)
 			content_check_function = function (content)
 				-- function 30
 				local parent_content = content.parent
-				local draw_bar = parent_content.draw_bar
 
-				if not draw_bar then
-					draw_bar = parent_content.completed
-					draw_bar = not not draw_bar and not not not parent_content.claimed
-				end
-
-				return draw_bar
+				return not not parent_content.draw_bar
 			end
 		},
 		{
@@ -540,11 +447,8 @@ local function create_quest_entry(scenegraph_id, size)
 			content_check_function = function (content)
 				-- function 31
 				local reward_button_hotspot = content.reward_button_hotspot
-				local is_hover = reward_button_hotspot.is_hover
 
-				is_hover = not not is_hover and not not reward_button_hotspot.draw
-
-				return is_hover
+				return not not reward_button_hotspot.is_hover
 			end
 		},
 		{
@@ -554,11 +458,8 @@ local function create_quest_entry(scenegraph_id, size)
 			content_check_function = function (content)
 				-- function 32
 				local reward_button_hotspot = content.reward_button_hotspot
-				local is_hover = reward_button_hotspot.is_hover
 
-				is_hover = not not is_hover and not not reward_button_hotspot.draw
-
-				return is_hover
+				return not not reward_button_hotspot.is_hover
 			end,
 			content_change_function = function (content)
 				-- function 33
@@ -585,11 +486,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "claimed_text",
 			content_check_function = function (content)
 				-- function 35
-				local completed = content.completed
-
-				completed = not not completed and not not content.claimed
-
-				return completed
+				return not not content.completed
 			end
 		},
 		{
@@ -598,11 +495,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "claimed_text",
 			content_check_function = function (content)
 				-- function 36
-				local completed = content.completed
-
-				completed = not not completed and not not content.claimed
-
-				return completed
+				return not not content.completed
 			end
 		},
 		{
@@ -789,7 +682,7 @@ local function create_quest_entry(scenegraph_id, size)
 		checklist_1 = table.clone(checklist_content),
 		checklist_2 = table.clone(checklist_content)
 	}
-	local tbl_4 = {
+	local style = {
 		close_icon = {
 			masked = true,
 			size = {
@@ -1434,299 +1327,233 @@ local function create_quest_entry(scenegraph_id, size)
 				-13,
 				8
 			}
+		},
+		progress_text = {
+			vertical_alignment = "center",
+			upper_case = false,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2,
+				progress_bar_height_offset,
+				10
+			}
+		},
+		progress_text_shadow = {
+			vertical_alignment = "center",
+			upper_case = false,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2 + 2,
+				progress_bar_height_offset - 2,
+				9
+			}
+		},
+		claimed_text = {
+			vertical_alignment = "bottom",
+			upper_case = true,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2,
+				4,
+				10
+			}
+		},
+		claimed_text_shadow = {
+			vertical_alignment = "bottom",
+			upper_case = true,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2 + 2,
+				2,
+				9
+			}
+		},
+		locked_text = {
+			vertical_alignment = "bottom",
+			upper_case = true,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("red", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2,
+				10,
+				10
+			}
+		},
+		locked_text_shadow = {
+			vertical_alignment = "bottom",
+			upper_case = true,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2 + 2,
+				8,
+				9
+			}
+		},
+		progress_button_text = {
+			vertical_alignment = "center",
+			upper_case = false,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2,
+				progress_bar_height_offset,
+				10
+			}
+		},
+		progress_button_text_hover = {
+			vertical_alignment = "center",
+			upper_case = false,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("white", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2,
+				progress_bar_height_offset,
+				10
+			}
+		},
+		progress_button_text_shadow = {
+			vertical_alignment = "center",
+			upper_case = false,
+			font_size = 18,
+			horizontal_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = {
+				progress_bar_size[1],
+				progress_bar_size[2]
+			},
+			offset = {
+				size[1] / 2 - progress_bar_size[1] / 2 + 2,
+				progress_bar_height_offset - 2,
+				9
+			}
+		},
+		description = {
+			word_wrap = true,
+			upper_case = false,
+			font_size = 18,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			size = {
+				size[1] - 300,
+				size[2]
+			},
+			offset = {
+				150,
+				5,
+				9
+			}
+		},
+		description_shadow = {
+			word_wrap = true,
+			upper_case = false,
+			font_size = 18,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = {
+				size[1] - 300,
+				size[2]
+			},
+			offset = {
+				152,
+				3,
+				8
+			}
+		},
+		title = {
+			font_size = 28,
+			upper_case = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "top",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("font_title", 255),
+			offset = {
+				size[1] / 2 - 200,
+				-7,
+				9
+			},
+			size = {
+				400,
+				size[2]
+			}
+		},
+		title_shadow = {
+			font_size = 28,
+			upper_case = true,
+			horizontal_alignment = "center",
+			vertical_alignment = "top",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				size[1] / 2 - 200 + 2,
+				-9,
+				8
+			},
+			size = {
+				400,
+				size[2]
+			}
 		}
 	}
-	local tbl_5 = {
-		vertical_alignment = "center",
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_5.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2,
-		progress_bar_height_offset,
-		10
-	}
-	tbl_4.progress_text = tbl_5
-
-	local tbl_6 = {
-		vertical_alignment = "center",
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_6.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2 + 2,
-		progress_bar_height_offset - 2,
-		9
-	}
-	tbl_4.progress_text_shadow = tbl_6
-
-	local tbl_7 = {
-		vertical_alignment = "bottom",
-		upper_case = true,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_7.font_type = flag_5
-	tbl_7.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_7.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_7.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2,
-		4,
-		10
-	}
-	tbl_4.claimed_text = tbl_7
-
-	local tbl_8 = {
-		vertical_alignment = "bottom",
-		upper_case = true,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_6
-
-	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_8.font_type = flag_6
-	tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_8.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_8.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2 + 2,
-		2,
-		9
-	}
-	tbl_4.claimed_text_shadow = tbl_8
-
-	local tbl_9 = {
-		vertical_alignment = "bottom",
-		upper_case = true,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_7
-
-	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_9.font_type = flag_7
-	tbl_9.text_color = Colors.get_color_table_with_alpha("red", 255)
-	tbl_9.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_9.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2,
-		10,
-		10
-	}
-	tbl_4.locked_text = tbl_9
-
-	local tbl_10 = {
-		vertical_alignment = "bottom",
-		upper_case = true,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_8
-
-	flag_8 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_10.font_type = flag_8
-	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_10.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_10.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2 + 2,
-		8,
-		9
-	}
-	tbl_4.locked_text_shadow = tbl_10
-
-	local tbl_11 = {
-		vertical_alignment = "center",
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_9
-
-	flag_9 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_11.font_type = flag_9
-	tbl_11.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_11.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_11.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2,
-		progress_bar_height_offset,
-		10
-	}
-	tbl_4.progress_button_text = tbl_11
-
-	local tbl_12 = {
-		vertical_alignment = "center",
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_10
-
-	flag_10 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_12.font_type = flag_10
-	tbl_12.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_12.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_12.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2,
-		progress_bar_height_offset,
-		10
-	}
-	tbl_4.progress_button_text_hover = tbl_12
-
-	local tbl_13 = {
-		vertical_alignment = "center",
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_11
-
-	flag_11 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_13.font_type = flag_11
-	tbl_13.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_13.size = {
-		progress_bar_size[1],
-		progress_bar_size[2]
-	}
-	tbl_13.offset = {
-		size[1] / 2 - progress_bar_size[1] / 2 + 2,
-		progress_bar_height_offset - 2,
-		9
-	}
-	tbl_4.progress_button_text_shadow = tbl_13
-
-	local tbl_14 = {
-		word_wrap = true,
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center",
-		vertical_alignment = "center"
-	}
-	local flag_12
-
-	flag_12 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_14.font_type = flag_12
-	tbl_14.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_14.size = {
-		size[1] - 300,
-		size[2]
-	}
-	tbl_14.offset = {
-		150,
-		5,
-		9
-	}
-	tbl_4.description = tbl_14
-
-	local tbl_15 = {
-		word_wrap = true,
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center",
-		vertical_alignment = "center"
-	}
-	local flag_13
-
-	flag_13 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_15.font_type = flag_13
-	tbl_15.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_15.size = {
-		size[1] - 300,
-		size[2]
-	}
-	tbl_15.offset = {
-		152,
-		3,
-		8
-	}
-	tbl_4.description_shadow = tbl_15
-
-	local tbl_16 = {
-		font_size = 28,
-		upper_case = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "top",
-		dynamic_font_size = true
-	}
-	local flag_14
-
-	flag_14 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_16.font_type = flag_14
-	tbl_16.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_16.offset = {
-		size[1] / 2 - 200,
-		-7,
-		9
-	}
-	tbl_16.size = {
-		400,
-		size[2]
-	}
-	tbl_4.title = tbl_16
-
-	local tbl_17 = {
-		font_size = 28,
-		upper_case = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "top",
-		dynamic_font_size = true
-	}
-	local flag_15
-
-	flag_15 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_17.font_type = flag_15
-	tbl_17.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_17.offset = {
-		size[1] / 2 - 200 + 2,
-		-9,
-		8
-	}
-	tbl_17.size = {
-		400,
-		size[2]
-	}
-	tbl_4.title_shadow = tbl_17
-
-	local style = tbl_4
 
 	UIWidgets.append_item_frame_pass("reward_frame", passes, content, style, texture_size, {
 		-3,

@@ -18,24 +18,12 @@ FindServerState.init = function (self, state_machine, network_options, network_h
 		"internet",
 		"lan"
 	}
-
-	local _search_index = state_machine._search_index
-
-	_search_index = not not _search_index or not not 1
-	state_machine._search_index = _search_index
-
-	local _servers_by_type = state_machine._servers_by_type
-
-	_servers_by_type = not not _servers_by_type or not not {}
-	state_machine._servers_by_type = _servers_by_type
+	state_machine._search_index = not not state_machine._search_index
+	state_machine._servers_by_type = not not state_machine._servers_by_type
 	self._finder = nil
 	self._delay = 0
 	self._search_time = 0
-
-	local soft_filters = user_data.soft_filters
-
-	soft_filters = not not soft_filters or not not {}
-	self._soft_filters = soft_filters
+	self._soft_filters = not not user_data.soft_filters
 end
 
 FindServerState.enter = function (self)
@@ -62,17 +50,7 @@ FindServerState.update = function (self, dt, t)
 
 	local sm = self._state_machine
 	local search_type = self._search_types[sm._search_index]
-	local var_4_0 = sm._servers_by_type[search_type]
-
-	if not var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = {}
-
-	local server_list = var_4_0
-
-	::label_4_0::
+	local server_list = not not sm._servers_by_type[search_type]
 
 	if table.is_empty(server_list) then
 		if self._finder == nil then
@@ -129,7 +107,7 @@ FindServerState._pick_server = function (self, search_type)
 
 	local server_index
 
-	server_index = (self._optional_order_func == nil or not 1) and not not Math.random(#servers)
+	server_index = not not Math.random(#servers)
 
 	local server = servers[server_index]
 
@@ -150,24 +128,7 @@ FindServerState._trigger_search = function (self, search_type)
 	-- function 6
 	print("Attempting " .. search_type .. " search for game server")
 
-	local parameter = Development.parameter("use_lan_backend")
-
-	if not parameter then
-		-- Nothing
-	end
-
-	if rawget(_G, "Steam") ~= nil then
-		parameter = false
-
-		goto label_6_0
-	end
-
-	parameter = true
-
-	local disable_dedicated_servers = parameter
-
-	::label_6_0::
-
+	local disable_dedicated_servers = not not Development.parameter("use_lan_backend")
 	local supported_on_platform = IS_WINDOWS
 	local game_server_finder
 

@@ -13,30 +13,8 @@ local spawn_functions = {
 		local network_position = AiAnimUtils.position_network_scale(position, true)
 		local network_rotation = AiAnimUtils.rotation_network_scale(rotation, true)
 		local network_velocity = AiAnimUtils.velocity_network_scale(Vector3(0, 0, 0), true)
-		local explode_time_2 = pickup_data.explode_time
-
-		if not explode_time_2 then
-			-- Nothing
-		end
-
-		explode_time_2 = 3
-
-		local explode_time = explode_time_2
-
-		::label_2_0::
-
-		local fuse_time_2 = pickup_data.fuse_time
-
-		if not fuse_time_2 then
-			-- Nothing
-		end
-
-		fuse_time_2 = 3
-
-		local fuse_time = fuse_time_2
-
-		::label_2_1::
-
+		local explode_time = not not pickup_data.explode_time
+		local fuse_time = not not pickup_data.fuse_time
 		local t = Managers.time:time("game")
 		local explosion_data = {
 			explode_time = t + explode_time,
@@ -68,17 +46,7 @@ local spawn_functions = {
 		}
 		local pickup_settings = AllPickups[pickup_name]
 		local unit_name = pickup_settings.unit_name
-		local unit_template_name_2 = pickup_settings.unit_template_name
-
-		if not unit_template_name_2 then
-			-- Nothing
-		end
-
-		unit_template_name_2 = "pickup_unit"
-
-		local unit_template_name = unit_template_name_2
-
-		::label_2_2::
+		local unit_template_name = not not pickup_settings.unit_template_name
 
 		return Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_template_name, extension_init_data, position, rotation)
 	end

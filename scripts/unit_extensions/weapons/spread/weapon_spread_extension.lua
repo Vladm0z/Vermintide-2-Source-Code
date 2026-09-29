@@ -17,50 +17,10 @@ WeaponSpreadExtension.init = function (self, extension_init_context, unit, exten
 	local item_template = BackendUtils.get_item_template(item_data)
 
 	self.default_spread_template_name = item_template.default_spread_template
-
-	local spread_lerp_speed_pitch = item_template.spread_lerp_speed_pitch
-
-	if not spread_lerp_speed_pitch then
-		spread_lerp_speed_pitch = item_template.spread_lerp_speed
-		spread_lerp_speed_pitch = not not spread_lerp_speed_pitch or not not 4
-	end
-
-	self.spread_lerp_speed_pitch = spread_lerp_speed_pitch
-
-	local spread_lerp_speed_yaw = item_template.spread_lerp_speed_yaw
-
-	if not spread_lerp_speed_yaw then
-		spread_lerp_speed_yaw = item_template.spread_lerp_speed
-		spread_lerp_speed_yaw = not not spread_lerp_speed_yaw or not not 4
-	end
-
-	self.spread_lerp_speed_yaw = spread_lerp_speed_yaw
-
-	local spread_lerp_speed_pitch_zoom = item_template.spread_lerp_speed_pitch_zoom
-
-	if not spread_lerp_speed_pitch_zoom then
-		spread_lerp_speed_pitch_zoom = item_template.spread_lerp_speed_zoom
-
-		if not spread_lerp_speed_pitch_zoom then
-			spread_lerp_speed_pitch_zoom = item_template.spread_lerp_speed
-			spread_lerp_speed_pitch_zoom = not not spread_lerp_speed_pitch_zoom or not not 4
-		end
-	end
-
-	self.spread_lerp_speed_pitch_zoom = spread_lerp_speed_pitch_zoom
-
-	local spread_lerp_speed_yaw_zoom = item_template.spread_lerp_speed_yaw_zoom
-
-	if not spread_lerp_speed_yaw_zoom then
-		spread_lerp_speed_yaw_zoom = item_template.spread_lerp_speed_zoom
-
-		if not spread_lerp_speed_yaw_zoom then
-			spread_lerp_speed_yaw_zoom = item_template.spread_lerp_speed
-			spread_lerp_speed_yaw_zoom = not not spread_lerp_speed_yaw_zoom or not not 4
-		end
-	end
-
-	self.spread_lerp_speed_yaw_zoom = spread_lerp_speed_yaw_zoom
+	self.spread_lerp_speed_pitch = not not item_template.spread_lerp_speed_pitch
+	self.spread_lerp_speed_yaw = not not item_template.spread_lerp_speed_yaw
+	self.spread_lerp_speed_pitch_zoom = not not item_template.spread_lerp_speed_pitch_zoom
+	self.spread_lerp_speed_yaw_zoom = not not item_template.spread_lerp_speed_yaw_zoom
 	self.spread_settings = SpreadTemplates[self.default_spread_template_name]
 	self.current_state = "still"
 	self.current_yaw = 0
@@ -115,39 +75,8 @@ WeaponSpreadExtension.update = function (self, unit, input, dt, context, t)
 	local crouching = CharacterStateHelper.is_crouching(status_extension)
 	local zooming = CharacterStateHelper.is_zooming(status_extension)
 	local new_state
-	local spread_lerp_speed_pitch_zoom
-
-	if zooming then
-		spread_lerp_speed_pitch_zoom = self.spread_lerp_speed_pitch_zoom
-
-		if not spread_lerp_speed_pitch_zoom then
-			-- Nothing
-		end
-	end
-
-	spread_lerp_speed_pitch_zoom = self.spread_lerp_speed_pitch
-
-	local lerp_speed_pitch = spread_lerp_speed_pitch_zoom
-
-	do
-		local spread_lerp_speed_yaw_zoom
-	end
-
-	::label_4_0::
-
-	if zooming then
-		spread_lerp_speed_yaw_zoom = self.spread_lerp_speed_yaw_zoom
-
-		if not spread_lerp_speed_yaw_zoom then
-			-- Nothing
-		end
-	end
-
-	spread_lerp_speed_yaw_zoom = self.spread_lerp_speed_yaw
-
-	local lerp_speed_yaw = spread_lerp_speed_yaw_zoom
-
-	::label_4_1::
+	local lerp_speed_pitch = zooming and not not self.spread_lerp_speed_pitch_zoom or not zooming and not not self.spread_lerp_speed_pitch
+	local lerp_speed_yaw = zooming and not not self.spread_lerp_speed_yaw_zoom or not zooming and not not self.spread_lerp_speed_yaw
 
 	if self.hit_aftermath then
 		self.hit_timer = self.hit_timer - dt
@@ -162,7 +91,7 @@ WeaponSpreadExtension.update = function (self, unit, input, dt, context, t)
 		end
 	end
 
-	new_state = (not moving or not crouching or not zooming or not "zoomed_crouch_moving") and not "crouch_moving" and (not zooming or not "zoomed_moving") and not "moving" and (not crouching or (not zooming or not "zoomed_crouch_still") and not "crouch_still") and (not zooming or not "zoomed_still") and not not "still"
+	new_state = zooming and (not not "zoomed_crouch_moving" or not not "crouch_moving" or zooming and (not not "zoomed_moving" or not not "moving" or crouching and zooming) or not zooming and (not not "moving" or crouching and zooming)) or not zooming and (not not "crouch_moving" or zooming and (not not "zoomed_moving" or not not "moving" or crouching and zooming) or not zooming and (not not "moving" or crouching and zooming))
 
 	if moving then
 		new_pitch = owner_buff_extension:apply_buffs_to_value(new_pitch, "reduced_spread_moving")
@@ -276,40 +205,8 @@ WeaponSpreadExtension.get_target_style_spread = function (self, original_current
 		return current_rotation
 	end
 
-	local num
-
-	if bullseye then
-		num = original_current_shot - 1
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = original_current_shot
-
-	local current_shot = num
-
-	do
-		local num_2
-	end
-
-	::label_12_0::
-
-	if bullseye then
-		num_2 = original_max_shots - 1
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = original_max_shots
-
-	local max_shots = num_2
-
-	::label_12_1::
-
+	local current_shot = bullseye and not not (original_current_shot - 1) or not bullseye and not not original_current_shot
+	local max_shots = bullseye and not not (original_max_shots - 1) or not bullseye and not not original_max_shots
 	local layers_of_shots = not not num_layers_spread or not not 1
 	local shot_roll_current_angle = layers_of_shots * (current_shot / max_shots)
 	local shot_roll_spread_modifier = layers_of_shots / max_shots

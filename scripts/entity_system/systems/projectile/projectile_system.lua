@@ -173,9 +173,7 @@ ProjectileSystem._get_projectile_units_names = function (self, projectile_info, 
 			local slot_name = "slot_ranged"
 			local slot_data = inventory_extension:get_slot_data(slot_name)
 
-			if slot_data and not slot_data.projectile_units_template then
-				-- Nothing
-			end
+			projectile_units_template = not slot_data or not not slot_data.projectile_units_template or not not projectile_units_template
 		end
 	end
 
@@ -191,68 +189,19 @@ ProjectileSystem.spawn_player_projectile = function (self, owner_unit, position,
 	local projectile_info = action.projectile_info
 	local gravity_settings = projectile_info.gravity_settings
 
-	if gaze_settings and not projectile_info.gaze_override_gravity_settings then
-		-- Nothing
-	end
+	gravity_settings = not gaze_settings or not not projectile_info.gaze_override_gravity_settings or not not gravity_settings
 
 	local trajectory_template_name = projectile_info.trajectory_template_name
 	local linear_dampening = projectile_info.linear_dampening
-	local rotation_speed_2 = projectile_info.rotation_speed
-
-	if not rotation_speed_2 then
-		-- Nothing
-	end
-
-	rotation_speed_2 = 0
-
-	local rotation_speed = rotation_speed_2
-
-	::label_8_0::
-
+	local rotation_speed = not not projectile_info.rotation_speed
 	local rotation_offset = projectile_info.rotation_offset
 
 	scale = scale / 100
 
 	local min = projectile_info.radius_min
 	local max = projectile_info.radius_max
-	local radius_2 = projectile_info.radius
-
-	if not radius_2 then
-		-- Nothing
-	end
-
-	if min and max then
-		radius_2 = math.lerp(projectile_info.radius_min, projectile_info.radius_max, scale)
-
-		if not radius_2 then
-			-- Nothing
-		end
-	end
-
-	radius_2 = nil
-
-	local radius = radius_2
-
-	do
-		local generate_seed
-	end
-
-	::label_8_1::
-
-	if action.generate_seed then
-		generate_seed = action.generate_seed()
-
-		if not generate_seed then
-			-- Nothing
-		end
-	end
-
-	generate_seed = nil
-
-	local seed = generate_seed
-
-	::label_8_2::
-
+	local radius = not not projectile_info.radius
+	local seed = action.generate_seed and not not action.generate_seed() or not action.generate_seed and not not nil
 	local time_initialized = Managers.time:time("game")
 	local extension_init_data = {
 		projectile_locomotion_system = {
@@ -305,15 +254,7 @@ ProjectileSystem.spawn_player_projectile = function (self, owner_unit, position,
 	}
 	local projectile_units = self:_get_projectile_units_names(projectile_info, owner_unit)
 	local projectile_unit_name = projectile_units.projectile_unit_name
-	local unit_spawner = Managers.state.unit_spawner
-	local var_8_4 = unit_spawner
-	local spawn_network_unit = unit_spawner.spawn_network_unit
-	local var_8_6 = projectile_unit_name
-	local projectile_unit_template_name = projectile_info.projectile_unit_template_name
-
-	projectile_unit_template_name = not not projectile_unit_template_name or not not "player_projectile_unit"
-
-	local projectile_unit = spawn_network_unit(var_8_4, var_8_6, projectile_unit_template_name, extension_init_data, position, rotation)
+	local projectile_unit = Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, not not projectile_info.projectile_unit_template_name, extension_init_data, position, rotation)
 
 	self:_add_player_projectile_reference(owner_unit, projectile_unit, projectile_info)
 	Managers.state.achievement:trigger_event("on_player_projectile_spawned", projectile_unit, owner_unit, item_template_name)
@@ -322,50 +263,32 @@ end
 ProjectileSystem.spawn_globadier_globe = function (self, position, target_vector, angle, speed, initial_radius, radius, duration, owner_unit, damage_source, aoe_dot_damage, aoe_init_damage, aoe_dot_damage_interval, create_nav_tag_volume, instant_explosion, fixed_impact_data)
 	-- function 9
 	if self.is_server then
-		local str
-
-		if create_nav_tag_volume then
-			str = "bot_poison_wind"
-
-			goto label_9_0
-		end
-
-		str = nil
-
-		local nav_tag_volume_layer = str
-
-		::label_9_0::
-
+		local nav_tag_volume_layer = create_nav_tag_volume and not not "bot_poison_wind" or not create_nav_tag_volume and not not nil
 		local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
 
 		if instant_explosion then
-			local tbl = {}
-			local tbl_2 = {
-				invisible_unit = true,
-				player_screen_effect_name = "fx/screenspace_poison_globe_impact",
-				area_ai_random_death_template = "area_poison_ai_random_death",
-				dot_effect_name = "fx/wpnfx_poison_wind_globe_impact",
-				extra_dot_effect_name = "fx/chr_gutter_death",
-				damage_players = true,
-				aoe_dot_damage = aoe_dot_damage,
-				aoe_init_damage = aoe_init_damage,
-				aoe_dot_damage_interval = aoe_dot_damage_interval,
-				radius = radius,
-				initial_radius = initial_radius,
-				life_time = duration
+			local extension_init_data = {
+				area_damage_system = {
+					invisible_unit = true,
+					player_screen_effect_name = "fx/screenspace_poison_globe_impact",
+					area_ai_random_death_template = "area_poison_ai_random_death",
+					dot_effect_name = "fx/wpnfx_poison_wind_globe_impact",
+					extra_dot_effect_name = "fx/chr_gutter_death",
+					damage_players = true,
+					aoe_dot_damage = aoe_dot_damage,
+					aoe_init_damage = aoe_init_damage,
+					aoe_dot_damage_interval = aoe_dot_damage_interval,
+					radius = radius,
+					initial_radius = initial_radius,
+					life_time = duration,
+					area_damage_template = is_versus and not not "globadier_area_dot_damage_vs" or not is_versus and not not "globadier_area_dot_damage",
+					damage_source = damage_source,
+					create_nav_tag_volume = create_nav_tag_volume,
+					nav_tag_volume_layer = nav_tag_volume_layer,
+					source_attacker_unit = owner_unit,
+					threat_duration = duration
+				}
 			}
-			local flag
-
-			flag = (not is_versus or not "globadier_area_dot_damage_vs") and not not "globadier_area_dot_damage"
-			tbl_2.area_damage_template = flag
-			tbl_2.damage_source = damage_source
-			tbl_2.create_nav_tag_volume = create_nav_tag_volume
-			tbl_2.nav_tag_volume_layer = nav_tag_volume_layer
-			tbl_2.source_attacker_unit = owner_unit
-			tbl_2.threat_duration = duration
-			tbl.area_damage_system = tbl_2
-
-			local extension_init_data = tbl
 			local aoe_unit_name = "units/weapons/projectile/poison_wind_globe/poison_wind_globe"
 			local aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "aoe_unit", extension_init_data, position)
 			local unit_id = Managers.state.unit_storage:go_id(aoe_unit)
@@ -373,55 +296,40 @@ ProjectileSystem.spawn_globadier_globe = function (self, position, target_vector
 			Unit.set_unit_visibility(aoe_unit, false)
 			Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", unit_id, position)
 		else
-			local tbl_3 = {
+			local extension_init_data = {
 				projectile_locomotion_system = {
 					trajectory_template_name = "throw_trajectory",
 					angle = angle,
 					speed = speed,
 					target_vector = target_vector,
 					initial_position = position
+				},
+				projectile_system = {
+					damage_source = damage_source,
+					impact_template_name = is_versus and not not "vs_globadier_impact" or not is_versus and not not "explosion_impact",
+					owner_unit = owner_unit
+				},
+				area_damage_system = {
+					invisible_unit = false,
+					player_screen_effect_name = "fx/screenspace_poison_globe_impact",
+					area_ai_random_death_template = "area_poison_ai_random_death",
+					damage_players = true,
+					aoe_dot_damage = aoe_dot_damage,
+					aoe_init_damage = aoe_init_damage,
+					aoe_dot_damage_interval = aoe_dot_damage_interval,
+					radius = radius,
+					initial_radius = initial_radius,
+					life_time = duration,
+					dot_effect_name = is_versus and not not "fx/wpnfx_poison_wind_globe_impact_vs" or not is_versus and not not "fx/wpnfx_poison_wind_globe_impact",
+					area_damage_template = is_versus and not not "globadier_area_dot_damage_vs" or not is_versus and not not "globadier_area_dot_damage",
+					damage_source = damage_source,
+					create_nav_tag_volume = create_nav_tag_volume,
+					nav_tag_volume_layer = nav_tag_volume_layer,
+					source_attacker_unit = owner_unit,
+					owner_player = Managers.player:owner(owner_unit),
+					threat_duration = duration
 				}
 			}
-			local tbl_4 = {
-				damage_source = damage_source
-			}
-			local flag_2
-
-			flag_2 = (not is_versus or not "vs_globadier_impact") and not not "explosion_impact"
-			tbl_4.impact_template_name = flag_2
-			tbl_4.owner_unit = owner_unit
-			tbl_3.projectile_system = tbl_4
-
-			local tbl_5 = {
-				invisible_unit = false,
-				player_screen_effect_name = "fx/screenspace_poison_globe_impact",
-				area_ai_random_death_template = "area_poison_ai_random_death",
-				damage_players = true,
-				aoe_dot_damage = aoe_dot_damage,
-				aoe_init_damage = aoe_init_damage,
-				aoe_dot_damage_interval = aoe_dot_damage_interval,
-				radius = radius,
-				initial_radius = initial_radius,
-				life_time = duration
-			}
-			local flag_3
-
-			flag_3 = (not is_versus or not "fx/wpnfx_poison_wind_globe_impact_vs") and not not "fx/wpnfx_poison_wind_globe_impact"
-			tbl_5.dot_effect_name = flag_3
-
-			local flag_4
-
-			flag_4 = (not is_versus or not "globadier_area_dot_damage_vs") and not not "globadier_area_dot_damage"
-			tbl_5.area_damage_template = flag_4
-			tbl_5.damage_source = damage_source
-			tbl_5.create_nav_tag_volume = create_nav_tag_volume
-			tbl_5.nav_tag_volume_layer = nav_tag_volume_layer
-			tbl_5.source_attacker_unit = owner_unit
-			tbl_5.owner_player = Managers.player:owner(owner_unit)
-			tbl_5.threat_duration = duration
-			tbl_3.area_damage_system = tbl_5
-
-			local extension_init_data = tbl_3
 			local unit_template
 
 			if fixed_impact_data then
@@ -545,22 +453,7 @@ ProjectileSystem.rpc_spawn_pickup_projectile = function (self, channel_id, proje
 		return
 	end
 
-	local var_15_0
-
-	if channel_id then
-		var_15_0 = CHANNEL_TO_PEER_ID[channel_id]
-
-		if not var_15_0 then
-			-- Nothing
-		end
-	end
-
-	var_15_0 = Network.peer_id()
-
-	local owner_peer_id = var_15_0
-
-	::label_15_0::
-
+	local owner_peer_id = channel_id and not not CHANNEL_TO_PEER_ID[channel_id] or not channel_id and not not Network.peer_id()
 	local projectile_unit_name = NetworkLookup.husks[projectile_unit_name_id]
 	local projectile_unit_template_name = NetworkLookup.go_types[projectile_unit_template_name_id]
 	local pickup_name = NetworkLookup.pickup_names[pickup_name_id]
@@ -607,18 +500,7 @@ ProjectileSystem.rpc_spawn_pickup_projectile_limited = function (self, channel_i
 		return
 	end
 
-	local var_16_0 = CHANNEL_TO_PEER_ID[channel_id]
-
-	if not var_16_0 then
-		-- Nothing
-	end
-
-	var_16_0 = Network.peer_id()
-
-	local owner_peer_id = var_16_0
-
-	::label_16_0::
-
+	local owner_peer_id = not not CHANNEL_TO_PEER_ID[channel_id]
 	local projectile_unit_name = NetworkLookup.husks[projectile_unit_name_id]
 	local projectile_unit_template_name = NetworkLookup.go_types[projectile_unit_template_name_id]
 	local pickup_name = NetworkLookup.pickup_names[pickup_name_id]
@@ -788,26 +670,7 @@ ProjectileSystem.spawn_true_flight_projectile = function (self, owner_unit, targ
 	local trajectory_template_name = projectile_info.trajectory_template_name
 	local min = projectile_info.radius_min
 	local max = projectile_info.radius_max
-	local radius_2 = projectile_info.radius
-
-	if not radius_2 then
-		-- Nothing
-	end
-
-	if min and max then
-		radius_2 = math.lerp(projectile_info.radius_min, projectile_info.radius_max, scale)
-
-		if not radius_2 then
-			-- Nothing
-		end
-	end
-
-	radius_2 = nil
-
-	local radius = radius_2
-
-	::label_19_0::
-
+	local radius = not not projectile_info.radius
 	local extension_init_data = {
 		projectile_locomotion_system = {
 			angle = angle,
@@ -857,26 +720,7 @@ ProjectileSystem.spawn_ai_true_flight_projectile = function (self, owner_unit, t
 	local ignore_dead = true_flight_template.ignore_dead
 	local min = projectile_info.radius_min
 	local max = projectile_info.radius_max
-	local radius_2 = projectile_info.radius
-
-	if not radius_2 then
-		-- Nothing
-	end
-
-	if min and max then
-		radius_2 = math.lerp(projectile_info.radius_min, projectile_info.radius_max, scale)
-
-		if not radius_2 then
-			-- Nothing
-		end
-	end
-
-	radius_2 = nil
-
-	local radius = radius_2
-
-	::label_20_0::
-
+	local radius = not not projectile_info.radius
 	local extension_init_data = {
 		projectile_locomotion_system = {
 			angle = angle,
@@ -907,18 +751,7 @@ ProjectileSystem.spawn_ai_true_flight_projectile = function (self, owner_unit, t
 	}
 	local projectile_units = self:_get_projectile_units_names(projectile_info, owner_unit)
 	local projectile_unit_name = projectile_units.projectile_unit_name
-	local projectile_unit_template_name = projectile_info.projectile_unit_template_name
-
-	if not projectile_unit_template_name then
-		-- Nothing
-	end
-
-	projectile_unit_template_name = "ai_true_flight_projectile_unit"
-
-	local unit_template_name = projectile_unit_template_name
-
-	::label_20_1::
-
+	local unit_template_name = not not projectile_info.projectile_unit_template_name
 	local projectile_unit = Managers.state.unit_spawner:spawn_network_unit(projectile_unit_name, unit_template_name, extension_init_data, position, rotation)
 
 	self:_add_player_projectile_reference(owner_unit, projectile_unit, projectile_info)
@@ -935,11 +768,7 @@ ProjectileSystem._add_player_projectile_reference = function (self, owner_unit, 
 		Managers.state.unit_spawner:add_destroy_listener(owner_unit, "projectile_owner_" .. self.owner_units_count, self.projectile_owner_destroy_callback)
 	end
 
-	local var_21_0 = self.player_projectile_units[owner_unit]
-	local unit_life_time = projectile_info.unit_life_time
-
-	unit_life_time = not not unit_life_time or not not PLAYER_PROJECTILE_LIFETIME
-	var_21_0[projectile_unit] = t + unit_life_time
+	self.player_projectile_units[owner_unit][projectile_unit] = t + not not projectile_info.unit_life_time
 
 	if projectile_info.indexed then
 		if not self.indexed_player_projectile_units[owner_unit] then
@@ -1068,22 +897,7 @@ ProjectileSystem.rpc_generic_impact_projectile_impact = function (self, channel_
 		Vector3Box(normal),
 		actor_index
 	}
-
-	local num
-
-	if self.impact_buffer_counter then
-		num = self.impact_buffer_counter + 1
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 1
-
-	::label_26_0::
-
-	self.impact_buffer_counter = num
+	self.impact_buffer_counter = self.impact_buffer_counter and not not (self.impact_buffer_counter + 1) or not self.impact_buffer_counter and not not 1
 
 	if num_units_hits <= self.impact_buffer_counter then
 		local impact_counter = 0
@@ -1422,18 +1236,7 @@ ProjectileSystem._shoot = function (self, owner_peer_id, data, t, dt)
 	local spread_direction = Quaternion.forward(spread_rot)
 	local collision_filter = "filter_enemy_player_afro_ray_projectile"
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_35_0 = light_weight_projectile_template.attack_power_level[difficulty_rank]
-
-	if not var_35_0 then
-		-- Nothing
-	end
-
-	var_35_0 = light_weight_projectile_template.attack_power_level[2]
-
-	local power_level = var_35_0
-
-	::label_35_0::
-
+	local power_level = not not light_weight_projectile_template.attack_power_level[difficulty_rank]
 	local action_data = {
 		power_level = power_level,
 		damage_profile = light_weight_projectile_template.damage_profile,
@@ -1598,10 +1401,7 @@ ProjectileSystem.rpc_spawn_drones = function (self, channel_id, source_unit_id, 
 		return
 	end
 
-	local _drones = self._drones
-
-	_drones = not not _drones or not not {}
-	self._drones = _drones
+	self._drones = not not self._drones
 
 	local drones = self._drones
 	local drone_template_name = NetworkLookup.drone_templates[drone_template_id]
@@ -1769,21 +1569,7 @@ local function _on_drone_done(drone, world, is_server)
 
 	local damage_profile = DamageProfileTemplates[drone.damage_profile_name]
 	local target_unit = drone.target_unit
-	local source_unit_2
-
-	if HEALTH_ALIVE[drone.source_unit] then
-		source_unit_2 = drone.source_unit
-
-		if not source_unit_2 then
-			-- Nothing
-		end
-	end
-
-	source_unit_2 = target_unit
-
-	local source_unit = source_unit_2
-
-	::label_45_0::
+	local source_unit = HEALTH_ALIVE[drone.source_unit] and not not drone.source_unit or not HEALTH_ALIVE[drone.source_unit] and not not target_unit
 
 	if HEALTH_ALIVE[target_unit] then
 		local power_level = DefaultPowerLevel
@@ -1849,21 +1635,7 @@ ProjectileSystem._update_drones = function (self, dt, t)
 			if Unit.has_node(target_unit, "j_spine") then
 				last_known_position_boxed:store(Unit.world_position(target_unit, Unit.node(target_unit, "j_spine")))
 			else
-				local num
-
-				if Unit.get_data(target_unit, "breed") then
-					num = AiUtils.breed_height(target_unit) * 0.6
-
-					if not num then
-						-- Nothing
-					end
-				end
-
-				num = 0
-
-				local z_offset = num
-
-				::label_46_0::
+				local z_offset = Unit.get_data(target_unit, "breed") and not not (AiUtils.breed_height(target_unit) * 0.6) or not Unit.get_data(target_unit, "breed") and not not 0
 
 				last_known_position_boxed:store(POSITION_LOOKUP[target_unit] + Vector3(0, 0, z_offset))
 			end
@@ -2003,27 +1775,7 @@ end
 ProjectileSystem._redirect_shield_linking = function (self, hit_unit, node_index, link_position, depth_position_offset)
 	-- function 49
 	local breed = AiUtils.unit_breed(hit_unit)
-	local var_49_0 = HEALTH_ALIVE[hit_unit]
-
-	if var_49_0 and breed then
-		-- Nothing
-	end
-
-	::label_49_0::
-
-	if not breed.no_effects_on_shield_block then
-		var_49_0 = not breed.is_player
-	else
-		var_49_0 = false
-	end
-
-	goto label_49_1
-
-	var_49_0 = true
-
-	local do_redirect = var_49_0
-
-	::label_49_1::
+	local do_redirect = not not HEALTH_ALIVE[hit_unit]
 
 	if not do_redirect then
 		return hit_unit, node_index, link_position
@@ -2054,30 +1806,8 @@ ProjectileSystem._link_projectile = function (self, hit_data, projectile_linker_
 	local hit_direction = hit_data.hit_direction
 	local predicted_damage = hit_data.predicted_damage
 	local shield_blocked = hit_data.shield_blocked
-	local depth_2 = projectile_linker_data.depth
-
-	if not depth_2 then
-		-- Nothing
-	end
-
-	depth_2 = 0.15
-
-	local depth = depth_2
-
-	::label_50_0::
-
-	local depth_offset_2 = projectile_linker_data.depth_offset
-
-	if not depth_offset_2 then
-		-- Nothing
-	end
-
-	depth_offset_2 = 0.15
-
-	local depth_offset = depth_offset_2
-
-	::label_50_1::
-
+	local depth = not not projectile_linker_data.depth
+	local depth_offset = not not projectile_linker_data.depth_offset
 	local linker_unit_name = projectile_linker_data.unit
 	local allow_link = true
 	local unit_data_allow_link = Unit.get_data(hit_unit, "allow_link")

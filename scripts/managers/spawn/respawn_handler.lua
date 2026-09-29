@@ -400,7 +400,7 @@ RespawnHandler.server_update = function (self, dt, t, slots)
 			local current_respawn_unit = data.respawn_unit
 			local current_respawn_data = self:find_respawn_data_from_unit(current_respawn_unit)
 
-			if (not current_respawn_data or self:_is_respawn_reachable(current_respawn_data)) and self._force_move then
+			if current_respawn_data and (not self:_is_respawn_reachable(current_respawn_data) or self._force_move) or not current_respawn_data and self._force_move then
 				local new_respawn_unit, new_respawn = self:find_best_respawn_point(false, false)
 
 				if new_respawn and (new_respawn.group_id == "" or new_respawn.group_id ~= current_respawn_data.group_id) then
@@ -743,7 +743,7 @@ RespawnHandler.find_best_respawn_point = function (self, reserve_best, evaluate_
 			end
 		end
 
-		if not best_respawn or best_score < score or best_score == score and (not (score < 3) or not (respawn_dist > best_respawn.distance_through_level) or not (respawn_dist < preferred_spawn_travel_dist)) and score >= 3 and respawn_dist < best_respawn.distance_through_level then
+		if not best_respawn or best_score < score or best_score == score and score < 3 and respawn_dist > best_respawn.distance_through_level then
 			best_score = score
 			best_respawn = respawn_data
 

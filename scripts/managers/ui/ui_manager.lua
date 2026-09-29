@@ -116,28 +116,7 @@ UIManager.update = function (self)
 	end
 
 	local t, dt = Managers.time:time_and_delta("ui")
-	local active
-
-	if not script_data.disable_ui then
-		active = DebugScreen.active
-
-		if active then
-			-- Nothing
-		end
-	end
-
-	if Managers.state.network:game_session_host() == nil then
-		active = false
-
-		goto label_9_0
-	end
-
-	active = true
-
-	local disable_ingame_ui = active
-
-	::label_9_0::
-
+	local disable_ingame_ui = script_data.disable_ui and Managers.state.network:game_session_host() ~= nil or not script_data.disable_ui and not not DebugScreen.active
 	local level_end_view_wrapper = self._level_end_view_wrapper
 	local level_end_view = not not level_end_view_wrapper and not not level_end_view_wrapper:level_end_view()
 
@@ -257,7 +236,7 @@ UIManager.handle_new_ui_disclaimer = function (self, disclaimer_states, state)
 	local use_gamepad_layout = Application.user_setting("use_gamepad_menu_layout")
 	local use_pc_menu_layout = Application.user_setting("use_pc_menu_layout")
 
-	if use_gamepad_layout == false and use_pc_menu_layout == false and (disclaimer_states[state] or disclaimer_states[state] == nil) then
+	if disclaimer_states[state] or disclaimer_states[state] == nil then
 		local ingame_ui = self._ingame_ui
 
 		ingame_ui.weave_onboarding:try_show_tutorial(WeaveUITutorials.new_ui_disclaimer)
@@ -297,7 +276,7 @@ UIManager._fetch_disabled_ui_layouts = function (self)
 
 		local title_settings = backend_manager:get_title_settings()
 
-		disabled_ui_layouts = (not title_settings or not title_settings.disabled_ui_layouts) and not not {}
+		disabled_ui_layouts = title_settings and (not not title_settings.disabled_ui_layouts or not not {}) or not title_settings and not not {}
 		self._disabled_ui_layouts = disabled_ui_layouts
 	end
 

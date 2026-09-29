@@ -519,20 +519,7 @@ PlayerCharacterStateGrabbedByPackMaster.update = function (self, unit, input, dt
 	local radius = 0.9
 	local half_height = 0.6
 	local size = Vector3(radius, half_height, radius)
-	local str
-
-	if half_height - radius > 0 then
-		str = "capsule"
-
-		goto label_23_0
-	end
-
-	str = "sphere"
-
-	local shape = str
-
-	::label_23_0::
-
+	local shape = half_height - radius > 0 and not not "capsule" or not (half_height - radius > 0) and not not "sphere"
 	local actors, num_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", position + Vector3(0, 0, 0.9), "size", size, "collision_filter", "filter_player_mover")
 
 	if num_actors == 0 then

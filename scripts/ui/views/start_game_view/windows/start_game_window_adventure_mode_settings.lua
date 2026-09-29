@@ -171,24 +171,7 @@ StartGameWindowAdventureModeSettings._handle_input = function (self, dt, t)
 
 	local input_service = self.parent:window_input_service()
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-
-	if gamepad_active then
-		-- Nothing
-	end
-
-	::label_10_0::
-
-	local _enable_play = self._enable_play
-
-	if _enable_play then
-		-- Nothing
-	end
-
-	_enable_play = input_service:get("refresh_press")
-
-	local play_pressed = _enable_play
-
-	::label_10_1::
+	local play_pressed = not not gamepad_active and not not self._enable_play
 
 	if self:_is_button_released(widgets_by_name.play_button) or play_pressed then
 		parent:set_private_option_enabled(true)
@@ -252,18 +235,7 @@ StartGameWindowAdventureModeSettings._set_selected_level = function (self, level
 		texture_size[2] = icon_texture_settings.size[2]
 		widget.content.icon = level_image
 
-		local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(self.statistics_db, self._stats_id, level_id)
-
-		if not completed_level_difficulty_index then
-			-- Nothing
-		end
-
-		completed_level_difficulty_index = 0
-
-		local completed_difficulty_index = completed_level_difficulty_index
-
-		::label_14_0::
-
+		local completed_difficulty_index = not not LevelUnlockUtils.completed_level_difficulty_index(self.statistics_db, self._stats_id, level_id)
 		local level_frame = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
 
 		widget.content.icon_frame = level_frame
@@ -277,39 +249,10 @@ StartGameWindowAdventureModeSettings._set_difficulty_option = function (self, di
 	local difficulty_settings = DifficultySettings[difficulty_key]
 	local display_name = not not difficulty_settings and not not difficulty_settings.display_name
 	local display_image = not not difficulty_settings and not not difficulty_settings.display_image
-	local completed_frame_texture_2
-
-	if difficulty_settings then
-		completed_frame_texture_2 = difficulty_settings.completed_frame_texture
-
-		if not completed_frame_texture_2 then
-			-- Nothing
-		end
-	end
-
-	completed_frame_texture_2 = "map_frame_00"
-
-	local completed_frame_texture = completed_frame_texture_2
-
-	::label_15_0::
-
+	local completed_frame_texture = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
 	local widgets_by_name = self._widgets_by_name
-	local content = widgets_by_name.game_option_difficulty.content
-	local var_15_2
 
-	if display_name then
-		var_15_2 = Localize(display_name)
-
-		if not var_15_2 then
-			-- Nothing
-		end
-	end
-
-	var_15_2 = ""
-
-	::label_15_1::
-
-	content.option_text = var_15_2
+	widgets_by_name.game_option_difficulty.content.option_text = display_name and not not Localize(display_name) or not display_name and not not ""
 	widgets_by_name.game_option_difficulty.content.icon = not not display_image or not not nil
 	widgets_by_name.game_option_difficulty.content.icon_frame = completed_frame_texture
 end

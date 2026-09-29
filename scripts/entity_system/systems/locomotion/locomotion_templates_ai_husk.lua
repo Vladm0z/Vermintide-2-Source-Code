@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_ai_husk.lua
 
-local LocomotionTemplates_2 = LocomotionTemplates
-
-LocomotionTemplates_2 = not not LocomotionTemplates_2 or not not {}
-LocomotionTemplates = LocomotionTemplates_2
+LocomotionTemplates = not not LocomotionTemplates
 
 local LocomotionTemplates = LocomotionTemplates
 local detailed_profiler_start, detailed_profiler_stop
@@ -195,17 +192,7 @@ LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units_navmesh_
 
 				if mover then
 					local breed = extension.breed
-					local override_mover_move_distance = breed.override_mover_move_distance
-
-					if not override_mover_move_distance then
-						-- Nothing
-					end
-
-					override_mover_move_distance = ALLOWED_MOVER_MOVE_DISTANCE
-
-					local mover_move_distance = override_mover_move_distance
-
-					::label_7_0::
+					local mover_move_distance = not not breed.override_mover_move_distance
 
 					Mover.set_position(mover, current_position)
 

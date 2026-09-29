@@ -23,23 +23,8 @@ BTSpawningAction.enter = function (self, unit, blackboard, t)
 	self:_apply_anim_varations(unit)
 
 	local breed = blackboard.breed
-	local uses_spawn_animation
 
-	if blackboard.spawn_type ~= "horde" then
-		uses_spawn_animation = breed.uses_spawn_animation
-
-		if not uses_spawn_animation then
-			uses_spawn_animation = blackboard.spawn_animation_override
-		end
-
-		if false then
-			uses_spawn_animation = false
-		end
-	else
-		uses_spawn_animation = true
-	end
-
-	blackboard.uses_spawn_animation = uses_spawn_animation
+	blackboard.uses_spawn_animation = blackboard.spawn_type == "horde" or not not breed.uses_spawn_animation
 
 	if blackboard.uses_spawn_animation then
 		local ai_extension = ScriptUnit.extension(unit, "ai_system")
@@ -60,29 +45,13 @@ BTSpawningAction.enter = function (self, unit, blackboard, t)
 	local wield_inventory_on_spawn = breed.wield_inventory_on_spawn
 	local is_horde = blackboard.spawn_type == "horde" or blackboard.spawn_type == "horde_hidden"
 
-	if (is_horde or wield_inventory_on_spawn) and ScriptUnit.has_extension(unit, "ai_inventory_system") then
+	if is_horde and ScriptUnit.has_extension(unit, "ai_inventory_system") or not is_horde and wield_inventory_on_spawn and ScriptUnit.has_extension(unit, "ai_inventory_system") then
 		local unit_id = network_manager:unit_game_object_id(unit)
 
 		network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
 	end
 
-	local spawn_animation_2 = blackboard.spawn_animation
-
-	if not spawn_animation_2 then
-		-- Nothing
-	end
-
-	spawn_animation_2 = breed.default_spawn_animation
-
-	if not spawn_animation_2 then
-		-- Nothing
-	end
-
-	spawn_animation_2 = "idle"
-
-	local spawn_animation = spawn_animation_2
-
-	::label_2_0::
+	local spawn_animation = not not blackboard.spawn_animation
 
 	if type(spawn_animation) == "table" then
 		local random_index = Math.random(1, #spawn_animation)
@@ -117,7 +86,7 @@ BTSpawningAction.leave = function (self, unit, blackboard, t, reason, destroy)
 
 	ai_navigation:init_position()
 
-	if (blackboard.uses_spawn_animation or blackboard.spawn_type == "horde_hidden") and not destroy and not blackboard.about_to_be_destroyed then
+	if blackboard.uses_spawn_animation and not destroy and not blackboard.about_to_be_destroyed or not blackboard.uses_spawn_animation and blackboard.spawn_type == "horde_hidden" and not destroy and not blackboard.about_to_be_destroyed then
 		local ai_extension = ScriptUnit.extension(unit, "ai_system")
 
 		ai_extension:force_enemy_detection(t)
@@ -179,26 +148,7 @@ BTSpawningAction.run = function (self, unit, blackboard, t, dt)
 
 	local locomotion_extension = blackboard.locomotion_extension
 	local spawning_finished = blackboard.spawning_finished
-	local flag
-
-	if not blackboard.spawn_exit_time then
-		flag = true
-
-		goto label_4_0
-	end
-
-	if not (t > blackboard.spawn_exit_time) then
-		flag = false
-
-		goto label_4_0
-	end
-
-	flag = true
-
-	local spawn_exit_time_finished = flag
-
-	::label_4_0::
-
+	local spawn_exit_time_finished = blackboard.spawn_exit_time and t > blackboard.spawn_exit_time or not blackboard.spawn_exit_time and not not true
 	local nav_world = blackboard.nav_world
 	local current_pos = POSITION_LOOKUP[unit]
 
@@ -299,17 +249,7 @@ BTSpawningAction._apply_anim_varations = function (self, unit)
 				if Unit.animation_has_variable(unit, variation_data.name) then
 					local min = variation_data.min
 					local max = variation_data.max
-					local value = variation_data.value
-
-					if not value then
-						-- Nothing
-					end
-
-					value = math.random(min, max)
-
-					local val = value
-
-					::label_5_0::
+					local val = not not variation_data.value
 
 					variation_data.value = math.wrap_index_between(val + 1, min, max)
 

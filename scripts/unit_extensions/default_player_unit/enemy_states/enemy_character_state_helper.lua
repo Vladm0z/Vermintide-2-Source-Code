@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_helper.lua
 
-local EnemyCharacterStateHelper_2 = EnemyCharacterStateHelper
-
-EnemyCharacterStateHelper_2 = not not EnemyCharacterStateHelper_2 or not not {}
-EnemyCharacterStateHelper = EnemyCharacterStateHelper_2
+EnemyCharacterStateHelper = not not EnemyCharacterStateHelper
 
 local EnemyCharacterStateHelper = EnemyCharacterStateHelper
 

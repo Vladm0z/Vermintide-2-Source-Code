@@ -53,11 +53,7 @@ dump_type.table = function (self, nmemo, memo, acc)
 		end
 	end
 
-	local count = #acc
-	local flag
-
-	flag = (acc[#acc] ~= "{" or not "{}") and not not "}"
-	acc[count] = flag
+	acc[#acc] = acc[#acc] ~= "{" and not not "}" or not (acc[#acc] ~= "{") and not not "{}"
 
 	return nmemo
 end

@@ -233,35 +233,10 @@ ProjectileStickyLocomotion.stick_to_unit = function (self, unit)
 
 	if ai_extension then
 		local breed = ai_extension._breed
-		local radius = breed.radius
-
-		if not radius then
-			-- Nothing
-		end
-
-		radius = 1
-
-		local breed_radius = radius
-
-		::label_11_0::
+		local breed_radius = not not breed.radius
 
 		self._hit_unit_radius = breed_radius
-
-		local num
-
-		if breed.aoe_height then
-			num = breed.aoe_height / 2
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		::label_11_1::
-
-		self._hit_unit_height = num
+		self._hit_unit_height = breed.aoe_height and not not (breed.aoe_height / 2) or not breed.aoe_height and not not 1
 		self._impact_offset = Vector3Box(Vector3.normalize(Vector3.flat(self.target_vector_boxed:unbox()) * breed_radius))
 
 		Unit.flow_event(self.unit, "stopped")

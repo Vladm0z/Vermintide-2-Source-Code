@@ -65,14 +65,7 @@ AiHuskLocomotionExtension.init = function (self, extension_init_context, unit, e
 		self._collision_state = MoverHelper.create_collision_state(unit, "c_mover_collision")
 	end
 
-	local set_active_mover = MoverHelper.set_active_mover
-	local var_1_1 = unit
-	local _mover_state = self._mover_state
-	local default_mover = self.breed.default_mover
-
-	default_mover = not not default_mover or not not "mover"
-
-	set_active_mover(var_1_1, _mover_state, default_mover)
+	MoverHelper.set_active_mover(unit, self._mover_state, not not self.breed.default_mover)
 	self:set_mover_disable_reason("not_constrained_by_mover", true)
 
 	self._system_data.all_update_units[unit] = self
@@ -160,14 +153,7 @@ AiHuskLocomotionExtension.unfreeze = function (self)
 		self._collision_state = MoverHelper.create_collision_state(unit, "c_mover_collision")
 	end
 
-	local set_active_mover = MoverHelper.set_active_mover
-	local var_5_1 = unit
-	local _mover_state = self._mover_state
-	local default_mover = self.breed.default_mover
-
-	default_mover = not not default_mover or not not "mover"
-
-	set_active_mover(var_5_1, _mover_state, default_mover)
+	MoverHelper.set_active_mover(unit, self._mover_state, not not self.breed.default_mover)
 	self:set_mover_disable_reason("not_constrained_by_mover", true)
 
 	self._system_data.all_update_units[unit] = self
@@ -224,7 +210,7 @@ AiHuskLocomotionExtension.set_animation_driven = function (self, is_animation_dr
 	self.is_affected_by_gravity = is_affected_by_gravity
 	self.hit_wall = false
 
-	local network_driven = not is_on_transport and not is_animation_driven or not not not is_affected_by_gravity
+	local network_driven = not is_on_transport and (not is_animation_driven or not not not is_affected_by_gravity)
 
 	self.is_network_driven = network_driven
 
@@ -279,17 +265,7 @@ AiHuskLocomotionExtension.teleport_to = function (self, position, rotation, velo
 
 	if mover and not dontseparate then
 		local breed = self.breed
-		local override_mover_move_distance = breed.override_mover_move_distance
-
-		if not override_mover_move_distance then
-			-- Nothing
-		end
-
-		override_mover_move_distance = ALLOWED_MOVER_MOVE_DISTANCE
-
-		local mover_move_distance = override_mover_move_distance
-
-		::label_12_0::
+		local mover_move_distance = not not breed.override_mover_move_distance
 
 		Mover.set_position(mover, position)
 		LocomotionUtils.separate_mover_fallbacks(mover, mover_move_distance)

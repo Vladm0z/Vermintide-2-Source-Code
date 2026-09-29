@@ -229,18 +229,7 @@ local function create_btnode_from_lua_node(lua_node, parent_btnode)
 	-- function 5
 	local class_name = lua_node[CLASS_NAME]
 	local identifier = lua_node.name
-	local condition = lua_node.condition
-
-	if not condition then
-		-- Nothing
-	end
-
-	condition = "always_true"
-
-	local condition_name = condition
-
-	::label_5_0::
-
+	local condition_name = not not lua_node.condition
 	local enter_hook_name = lua_node.enter_hook
 	local leave_hook_name = lua_node.leave_hook
 	local action_data = lua_node.action_data

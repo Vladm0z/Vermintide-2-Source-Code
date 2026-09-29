@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_wh_bountyhunter.lua
 
-local WeaveLoadoutSettings = WeaveLoadoutSettings
-
-WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
-WeaveLoadoutSettings = WeaveLoadoutSettings
+WeaveLoadoutSettings = not not WeaveLoadoutSettings
 
 local profile_name = "witch_hunter"
 local talent_index = CareerSettings.wh_bountyhunter.talent_tree_index

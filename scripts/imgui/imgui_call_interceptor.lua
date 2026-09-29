@@ -19,11 +19,7 @@ local function CAPTURE_RETURN_VALUES(entry, ...)
 	return ...
 end
 
-local setmetatable = setmetatable
-local __INTERCEPT_CALLS__ = __INTERCEPT_CALLS__
-
-__INTERCEPT_CALLS__ = not not __INTERCEPT_CALLS__ or not not {}
-__INTERCEPT_CALLS__ = setmetatable(__INTERCEPT_CALLS__, {
+__INTERCEPT_CALLS__ = setmetatable(not not __INTERCEPT_CALLS__, {
 	__call = function (self, obj, method, enabled)
 		-- function 3
 		if type(obj) == "string" then
@@ -70,13 +66,7 @@ __INTERCEPT_CALLS__ = setmetatable(__INTERCEPT_CALLS__, {
 		end
 
 		obj[method] = decorator
-
-		local format = string.format
-		local str = "%s.%s"
-		local find = table.find(_G, obj)
-
-		find = not not find or not not obj
-		self[format(str, find, method)] = log
+		self[string.format("%s.%s", not not table.find(_G, obj), method)] = log
 	end
 })
 

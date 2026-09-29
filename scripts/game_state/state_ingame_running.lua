@@ -16,18 +16,7 @@ require("scripts/game_state/components/dice_keeper")
 require("scripts/ui/views/loading_view")
 require("scripts/entity_system/systems/mission/rewards")
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/game_state/state_ingame_running_testify")
-
-local state_ingame_running_testify = testify
-
-::label_0_0::
-
+local state_ingame_running_testify = not not script_data.testify
 local RPCS = {
 	"rpc_trigger_local_afk_system_message",
 	"rpc_follow_to_lobby"
@@ -47,11 +36,7 @@ StateInGameRunning.on_enter = function (self, params)
 	self.viewport_name = viewport_name
 	self.world_name = params.world_name
 	self.is_server = params.is_server
-
-	local is_host = params.lobby.is_host
-
-	is_host = not not is_host and not not params.lobby
-	self._lobby_host = is_host
+	self._lobby_host = not not params.lobby.is_host
 	self._lobby_client = not params.lobby.is_host and not not params.lobby
 	self._network_options = params.network_options
 	self.statistics_db = params.statistics_db
@@ -158,7 +143,7 @@ StateInGameRunning.on_enter = function (self, params)
 	local world_manager = Managers.world
 	local world = world_manager:world("level_world")
 	local wwise_world = Managers.world:wwise_world(self.world)
-	local tbl = {
+	local ingame_ui_context = {
 		player = player,
 		peer_id = peer_id,
 		local_player_id = local_player_id,
@@ -176,23 +161,18 @@ StateInGameRunning.on_enter = function (self, params)
 		profile_synchronizer = params.profile_synchronizer,
 		network_event_delegate = self.network_event_delegate,
 		network_server = params.network_server,
-		network_client = params.network_client
+		network_client = params.network_client,
+		network_lobby = not not self._lobby_host,
+		voip = params.voip,
+		statistics_db = self.statistics_db,
+		stats_id = stats_id,
+		world = world,
+		wwise_world = wwise_world,
+		dialogue_system = entity_manager:system("dialogue_system"),
+		is_in_inn = params.is_in_inn,
+		is_in_tutorial = self.is_in_tutorial,
+		dice_keeper = params.dice_keeper
 	}
-	local _lobby_host = self._lobby_host
-
-	_lobby_host = not not _lobby_host or not not self._lobby_client
-	tbl.network_lobby = _lobby_host
-	tbl.voip = params.voip
-	tbl.statistics_db = self.statistics_db
-	tbl.stats_id = stats_id
-	tbl.world = world
-	tbl.wwise_world = wwise_world
-	tbl.dialogue_system = entity_manager:system("dialogue_system")
-	tbl.is_in_inn = params.is_in_inn
-	tbl.is_in_tutorial = self.is_in_tutorial
-	tbl.dice_keeper = params.dice_keeper
-
-	local ingame_ui_context = tbl
 
 	DamageUtils.is_in_inn = params.is_in_inn
 
@@ -212,21 +192,7 @@ StateInGameRunning.on_enter = function (self, params)
 	local quickplay_bonus = Managers.venture.quickplay:is_quick_game()
 
 	if not quickplay_bonus and self.game_mode_key == "weave" then
-		local _lobby_host_2
-
-		if self.is_server then
-			_lobby_host_2 = self._lobby_host
-
-			if not _lobby_host_2 then
-				-- Nothing
-			end
-		end
-
-		_lobby_host_2 = self._lobby_client
-
-		local lobby = _lobby_host_2
-
-		::label_1_0::
+		local lobby = self.is_server and not not self._lobby_host or not self.is_server and not not self._lobby_client
 
 		quickplay_bonus = lobby:lobby_data("weave_quick_game") == "true"
 
@@ -366,38 +332,10 @@ StateInGameRunning._setup_end_of_level_UI = function (self)
 			context_rewards.win_track_start_experience = win_track_start_experience
 
 			local rewards, end_of_level_rewards_arguments = self.rewards:get_rewards()
-			local clone
 
-			if rewards then
-				clone = table.clone(rewards)
-
-				if not clone then
-					-- Nothing
-				end
-			end
-
-			clone = {}
-
-			::label_3_0::
-
-			context_rewards.end_of_level_rewards = clone
+			context_rewards.end_of_level_rewards = rewards and not not table.clone(rewards) or not rewards and not not {}
 			context_rewards.mission_results = table.clone(self.rewards:get_mission_results())
-
-			local clone_2
-
-			if end_of_level_rewards_arguments then
-				clone_2 = table.clone(end_of_level_rewards_arguments)
-
-				if not clone_2 then
-					-- Nothing
-				end
-			end
-
-			clone_2 = {}
-
-			::label_3_1::
-
-			level_end_view_context.end_of_level_rewards_arguments = clone_2
+			level_end_view_context.end_of_level_rewards_arguments = end_of_level_rewards_arguments and not not table.clone(end_of_level_rewards_arguments) or not end_of_level_rewards_arguments and not not {}
 		else
 			context_rewards.end_of_level_rewards = {}
 			context_rewards.mission_results = {}
@@ -464,48 +402,20 @@ StateInGameRunning.check_invites = function (self)
 	local invite_data = Managers.invite:get_invited_lobby_data()
 
 	if invite_data then
-		local id = invite_data.id
-
-		if not id then
-			-- Nothing
-		end
-
-		id = invite_data.name
-
-		local lobby_id = id
-
-		::label_6_0::
-
+		local lobby_id = not not invite_data.id
 		local current_lobby_id
 
 		if IS_XB1 then
-			current_lobby_id = (not self._lobby_host or not self._lobby_host.lobby._data.session_name) and not not self._lobby_client.lobby._data.session_name
+			current_lobby_id = self._lobby_host and (not not self._lobby_host.lobby._data.session_name or not not self._lobby_client.lobby._data.session_name) or not self._lobby_host and not not self._lobby_client.lobby._data.session_name
 		else
-			current_lobby_id = (not self._lobby_host or not self._lobby_host:id()) and not not self._lobby_client:id()
+			current_lobby_id = self._lobby_host and (not not self._lobby_host:id() or not not self._lobby_client:id()) or not self._lobby_host and not not self._lobby_client:id()
 		end
 
-		local voting = Managers.state.voting
-
-		if voting then
-			-- Nothing
-		end
-
-		voting = Managers.state.voting:vote_in_progress()
-
-		if voting then
-			-- Nothing
-		end
-
-		voting = Managers.state.voting:active_vote_template().mission_vote
-
-		local active_mission_vote = voting
-
-		::label_6_1::
-
+		local active_mission_vote = not not Managers.state.voting
 		local current_level = Managers.level_transition_handler:get_current_level_key()
 		local level_settings = LevelSettings[current_level]
 
-		if (Managers.matchmaking:is_game_matchmaking() or active_mission_vote) and self.network_server and level_settings.hub_level then
+		if Managers.matchmaking:is_game_matchmaking() and self.network_server and level_settings.hub_level or not Managers.matchmaking:is_game_matchmaking() and active_mission_vote and self.network_server and level_settings.hub_level then
 			mm_printf("Found an invite, but was matchmaking.")
 
 			self.popup_id = Managers.popup:queue_popup(Localize("popup_join_while_matchmaking"), Localize("popup_error_topic"), "ok", Localize("button_ok"))
@@ -631,17 +541,7 @@ StateInGameRunning.gm_event_end_conditions_met = function (self, reason, checkpo
 	local ingame_ui = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
 	local stats_id = player:stats_id()
 	local statistics_db = self.statistics_db
-	local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
-
-	if not completed_level_difficulty_index then
-		-- Nothing
-	end
-
-	completed_level_difficulty_index = 0
-
-	local previous_completed_difficulty_index = completed_level_difficulty_index
-
-	::label_9_0::
+	local previous_completed_difficulty_index = not not LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
 
 	ingame_ui:handle_transition("close_active")
 
@@ -705,7 +605,7 @@ StateInGameRunning.gm_event_end_conditions_met = function (self, reason, checkpo
 					local has_previous_score = not not previous_score and previous_score > 0
 
 					if weave_tier == i then
-						if (not has_previous_score or not (previous_score < score)) and not has_previous_score then
+						if has_previous_score and (previous_score < score or not has_previous_score) or not has_previous_score and not has_previous_score then
 							personal_best = true
 
 							break
@@ -837,7 +737,7 @@ StateInGameRunning.gm_event_end_conditions_met = function (self, reason, checkpo
 			ingame_ui:activate_end_screen_ui(screen_name, screen_config, screen_params)
 		end
 
-		if (not game_won or not is_final_objective) and not game_lost or is_game_mode_weave then
+		if game_won and (is_final_objective and is_game_mode_weave or not is_final_objective and game_lost and is_game_mode_weave) or not game_won and game_lost and is_game_mode_weave then
 			Managers.weave:clear_weave_name()
 		end
 	end
@@ -980,52 +880,8 @@ StateInGameRunning.update = function (self, dt, t)
 	local ingame_ui = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
 
 	if ingame_ui then
-		local end_screen_active
-
-		if not ingame_ui.survey_active and not self.has_setup_end_of_level then
-			end_screen_active = ingame_ui:end_screen_active()
-
-			if end_screen_active then
-				end_screen_active = ingame_ui:end_screen_fade_in_complete()
-			end
-		else
-			end_screen_active = false
-		end
-
-		goto label_16_0
-
-		end_screen_active = true
-
-		local ui_ready = end_screen_active
-
-		::label_16_0::
-
-		local read_only_backend = GameSettingsDevelopment.read_only_backend
-
-		if not read_only_backend then
-			read_only_backend = self.rewards:rewards_generated()
-
-			if read_only_backend then
-				if not self.rewards:consuming_deed() then
-					read_only_backend = self.chests_package_name
-
-					if read_only_backend then
-						read_only_backend = Managers.package:has_loaded(self.chests_package_name, "global")
-					end
-				else
-					read_only_backend = false
-				end
-			end
-		end
-
-		goto label_16_1
-
-		read_only_backend = true
-
-		local rewards_ready = read_only_backend
-
-		::label_16_1::
-
+		local ui_ready = not ingame_ui.survey_active and not self.has_setup_end_of_level and not not ingame_ui:end_screen_active()
+		local rewards_ready = not not GameSettingsDevelopment.read_only_backend
 		local mechanism_name = Managers.mechanism:current_mechanism_name()
 
 		if mechanism_name == "versus" then
@@ -1075,21 +931,7 @@ end
 
 StateInGameRunning.check_for_new_quests_or_contracts = function (self, dt)
 	-- function 17
-	local num
-
-	if self._quest_expire_check_cooldown then
-		num = self._quest_expire_check_cooldown - dt
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	::label_17_0::
-
-	self._quest_expire_check_cooldown = num
+	self._quest_expire_check_cooldown = self._quest_expire_check_cooldown and not not (self._quest_expire_check_cooldown - dt) or not self._quest_expire_check_cooldown and not not 0
 
 	if self._quest_expire_check_cooldown <= 0 then
 		local quest_manager = Managers.state.quest
@@ -1135,31 +977,7 @@ end
 StateInGameRunning.post_update = function (self, dt, t)
 	-- function 22
 	local level_end_view_wrapper = self._level_end_view_wrapper
-	local disable_ui = script_data.disable_ui
-
-	if not disable_ui then
-		-- Nothing
-	end
-
-	if level_end_view_wrapper == nil then
-		disable_ui = self.waiting_for_transition
-
-		if disable_ui then
-			-- Nothing
-		end
-
-		if Managers.state.network:game_session_host() == nil then
-			disable_ui = false
-
-			goto label_22_0
-		end
-	end
-
-	disable_ui = true
-
-	local disable_ingame_ui = disable_ui
-
-	::label_22_0::
+	local disable_ingame_ui = not not script_data.disable_ui
 
 	Managers.ui:post_update(dt, t, disable_ingame_ui)
 
@@ -1378,18 +1196,7 @@ StateInGameRunning._check_black_screen_transition_requirements = function (self)
 		self._game_mode_ready_to_start = game_mode_ready_to_start
 	end
 
-	local _conflict_directory_is_ready = self._conflict_directory_is_ready
-
-	if not _conflict_directory_is_ready then
-		-- Nothing
-	end
-
-	_conflict_directory_is_ready = not self.is_server
-
-	local conflict_directory_is_ready = _conflict_directory_is_ready
-
-	::label_29_0::
-
+	local conflict_directory_is_ready = not not self._conflict_directory_is_ready
 	local game_mode_ready_to_start = self._game_mode_ready_to_start
 
 	if conflict_directory_is_ready and game_mode_ready_to_start then
@@ -1485,37 +1292,7 @@ StateInGameRunning.update_player_afk_check = function (self, dt, t)
 
 	local cutscene_system = Managers.state.entity:system("cutscene_system")
 	local active_cutscene = cutscene_system.active_camera
-	local afk_kick = self.afk_kick
-
-	if not afk_kick and not active_cutscene then
-		-- Nothing
-	end
-
-	::label_34_0::
-
-	afk_kick = self.is_server
-
-	if not afk_kick then
-		-- Nothing
-	end
-
-	afk_kick = self.is_in_inn
-
-	if not afk_kick then
-		-- Nothing
-	end
-
-	afk_kick = self.end_conditions_met
-
-	if not afk_kick then
-		-- Nothing
-	end
-
-	afk_kick = Development.parameter("debug_disable_afk_kick")
-
-	local afk_kick_disabled = afk_kick
-
-	::label_34_1::
+	local afk_kick_disabled = not not self.afk_kick
 
 	if afk_kick_disabled then
 		if self.afk_popup_id then
@@ -1589,34 +1366,12 @@ StateInGameRunning.rpc_trigger_local_afk_system_message = function (self, channe
 
 	if player then
 		local is_player_controlled = player:is_player_controlled()
-		local user_name
-
-		if is_player_controlled then
-			if rawget(_G, "Steam") then
-				user_name = Steam.user_name(peer_id)
-
-				if not user_name then
-					-- Nothing
-				end
-			end
-
-			user_name = tostring(peer_id)
-
-			if not user_name then
-				-- Nothing
-			end
-		end
-
-		user_name = player:name()
-
-		local player_name = user_name
-
-		::label_36_0::
+		local player_name = is_player_controlled and (rawget(_G, "Steam") and not not Steam.user_name(peer_id) or not rawget(_G, "Steam") and not not tostring(peer_id)) or not is_player_controlled and not not player:name()
 
 		if IS_CONSOLE and not Managers.account:offline_mode() then
 			local lobby = Managers.state.network:lobby()
 
-			player_name = (not is_player_controlled or not not lobby:user_name(peer_id) or not tostring(peer_id)) and not not player:name()
+			player_name = not not lobby:user_name(peer_id) or not not tostring(peer_id) or not not player:name()
 		end
 
 		local pop_chat = true

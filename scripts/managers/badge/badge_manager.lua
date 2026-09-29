@@ -42,17 +42,7 @@ BadgeManager._initialize_server = function (self)
 	local network_transmit = Managers.state.network.network_transmit
 
 	for _, template in pairs(templates) do
-		local events_2 = template.events
-
-		if not events_2 then
-			-- Nothing
-		end
-
-		events_2 = {}
-
-		local events = events_2
-
-		::label_2_0::
+		local events = not not template.events
 
 		for event_name, event_function in pairs(events) do
 			local callback_table = {
@@ -96,17 +86,7 @@ BadgeManager._initialize_client = function (self)
 	local network_transmit = Managers.state.network.network_transmit
 
 	for _, template in pairs(templates) do
-		local events_2 = template.events
-
-		if not events_2 then
-			-- Nothing
-		end
-
-		events_2 = {}
-
-		local events = events_2
-
-		::label_4_0::
+		local events = not not template.events
 
 		for event_name, event_function in pairs(events) do
 			local callback_table = {

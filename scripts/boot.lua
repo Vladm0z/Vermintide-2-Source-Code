@@ -70,10 +70,7 @@ print("")
 require("scripts/settings/dlc_settings")
 require("scripts/helpers/dlc_utils")
 
-local Boot = Boot
-
-Boot = not not Boot or not not {}
-Boot = Boot
+Boot = not not Boot
 Boot.flow_return_table = Script.new_map(32)
 Boot.is_controlled_exit = false
 
@@ -112,11 +109,7 @@ local function profile_end(t)
 	local acc = 0
 
 	for _, scope in ipairs(t) do
-		local end_time = scope.end_time
-
-		end_time = not not end_time or not not math.huge
-
-		local duration = end_time - scope.start_time
+		local duration = not not scope.end_time - scope.start_time
 
 		print("\t" .. scope.alias .. ": ", duration)
 
@@ -242,11 +235,8 @@ local function xb1_format_locale(language_id)
 		["en-ie"] = "en",
 		["en-za"] = "en"
 	}
-	local var_10_0 = supported_languages[string.lower(language_id)]
 
-	var_10_0 = not not var_10_0 or not not "en"
-
-	return var_10_0
+	return not not supported_languages[string.lower(language_id)]
 end
 
 Boot._init_localizer = function (self)
@@ -255,15 +245,11 @@ Boot._init_localizer = function (self)
 	local language
 
 	if IS_WINDOWS then
-		language = (not not Application.user_setting("language_id") or not rawget(_G, "Steam") or not Steam:language()) and not not default_language
+		language = not not Steam:language() or not not Application.user_setting("language_id") or rawget(_G, "Steam") or not not default_language
 	elseif IS_PS4 then
 		language = not not PS4.locale() or not not default_language
 	elseif IS_XB1 then
-		local var_11_0 = xb1_format_locale
-		local locale = XboxLive.locale()
-
-		locale = not not locale or not not default_language
-		language = var_11_0(locale)
+		language = xb1_format_locale(not not XboxLive.locale())
 	elseif IS_LINUX then
 		language = "en"
 	end
@@ -325,23 +311,9 @@ local function init_development_parameters()
 
 	print("*****************************************************************")
 
-	local script_data = script_data
-	local honduras_demo = script_data.settings.honduras_demo
-
-	honduras_demo = not not honduras_demo or not not script_data["honduras-demo"]
-	script_data.honduras_demo = honduras_demo
-
-	local settings = script_data.settings
-	local use_beta_overlay = script_data.settings.use_beta_overlay
-
-	use_beta_overlay = not not use_beta_overlay or not not script_data.use_beta_overlay
-	settings.use_beta_overlay = use_beta_overlay
-
-	local settings_2 = script_data.settings
-	local use_beta_mode = script_data.settings.use_beta_mode
-
-	use_beta_mode = not not use_beta_mode or not not script_data.use_beta_mode
-	settings_2.use_beta_mode = use_beta_mode
+	script_data.honduras_demo = not not script_data.settings.honduras_demo
+	script_data.settings.use_beta_overlay = not not script_data.settings.use_beta_overlay
+	script_data.settings.use_beta_mode = not not script_data.settings.use_beta_mode
 	script_data.use_optimized_breed_units = IS_CONSOLE
 
 	print("[Boot] use baked enemy meshes:", script_data.use_optimized_breed_units)
@@ -463,32 +435,8 @@ Boot.booting_update = function (self, dt)
 		Crashify.print_property("platform", PLATFORM)
 		Crashify.print_property("dedicated_server", DEDICATED_SERVER)
 		Crashify.print_property("title_id", GameSettingsDevelopment.backend_settings.title_id)
-
-		local print_property = Crashify.print_property
-		local str = "content_revision"
-		local parameter
-
-		if script_data.settings.content_revision == "" then
-			parameter = Development.parameter("content_revision")
-
-			if not parameter then
-				-- Nothing
-			end
-		end
-
-		parameter = script_data.settings.content_revision
-
-		::label_14_0::
-
-		print_property(str, parameter)
-
-		local print_property_2 = Crashify.print_property
-		local str_2 = "engine_revision"
-		local build_identifier = script_data.build_identifier
-
-		build_identifier = not not build_identifier or not not Development.parameter("engine_revision")
-
-		print_property_2(str_2, build_identifier)
+		Crashify.print_property("content_revision", script_data.settings.content_revision ~= "" and not not script_data.settings.content_revision or not (script_data.settings.content_revision ~= "") and not not Development.parameter("content_revision"))
+		Crashify.print_property("engine_revision", not not script_data.build_identifier)
 		Crashify.print_property("release_version", VersionSettings.version)
 		Crashify.print_property("rendering_backend", Renderer.render_device_string())
 		Crashify.print_property("teamcity_build_id", script_data.settings.teamcity_build_id)
@@ -548,10 +496,8 @@ Boot.booting_update = function (self, dt)
 		Game:setup()
 
 		local start_state, params = Game:select_starting_state()
-		local IS_WINDOWS = IS_WINDOWS
 
-		IS_WINDOWS = not not IS_WINDOWS and LAUNCH_MODE ~= "attract_benchmark"
-		params.notify_mod_manager = IS_WINDOWS
+		params.notify_mod_manager = not not IS_WINDOWS
 
 		local project_setup_end = os.clock()
 		local state_machine_start = os.clock()
@@ -749,10 +695,7 @@ function destroy_startup_world()
 	Boot.gui = nil
 end
 
-local ReplayBoot = ReplayBoot
-
-ReplayBoot = not not ReplayBoot or not not {}
-ReplayBoot = ReplayBoot
+ReplayBoot = not not ReplayBoot
 
 ReplayBoot.init = function (self)
 	-- function 31
@@ -791,17 +734,7 @@ ReplayBoot.render = function (self)
 	local render_objects = ExtendedReplay.render_objects()
 
 	if render_objects then
-		local overriding_camera = Managers.replay:overriding_camera()
-
-		if not overriding_camera then
-			-- Nothing
-		end
-
-		overriding_camera = render_objects.camera
-
-		local camera = overriding_camera
-
-		::label_33_0::
+		local camera = not not Managers.replay:overriding_camera()
 
 		Application.render_world(self._world, camera, render_objects.viewport, render_objects.shading_environment)
 	end
@@ -869,17 +802,7 @@ Boot.game_update = function (self, real_world_dt)
 	local t = Managers.time:time("main")
 
 	for _, dlc in pairs(DLCSettings) do
-		local manager_settings_2 = dlc.manager_settings
-
-		if not manager_settings_2 then
-			-- Nothing
-		end
-
-		manager_settings_2 = EMPTY_TABLE
-
-		local manager_settings = manager_settings_2
-
-		::label_40_0::
+		local manager_settings = not not dlc.manager_settings
 
 		for name, manager_data in pairs(manager_settings) do
 			if manager_data.pre_update then
@@ -893,17 +816,7 @@ Boot.game_update = function (self, real_world_dt)
 	Managers.token:update(dt, t)
 
 	for _, dlc in pairs(DLCSettings) do
-		local manager_settings_3 = dlc.manager_settings
-
-		if not manager_settings_3 then
-			-- Nothing
-		end
-
-		manager_settings_3 = EMPTY_TABLE
-
-		local manager_settings = manager_settings_3
-
-		::label_40_1::
+		local manager_settings = not not dlc.manager_settings
 
 		for name, manager_data in pairs(manager_settings) do
 			if manager_data.update then
@@ -1015,17 +928,7 @@ Boot.game_update = function (self, real_world_dt)
 	table.clear(Boot.flow_return_table)
 
 	for _, dlc in pairs(DLCSettings) do
-		local manager_settings_4 = dlc.manager_settings
-
-		if not manager_settings_4 then
-			-- Nothing
-		end
-
-		manager_settings_4 = EMPTY_TABLE
-
-		local manager_settings = manager_settings_4
-
-		::label_40_2::
+		local manager_settings = not not dlc.manager_settings
 
 		for name, manager_data in pairs(manager_settings) do
 			if manager_data.post_update then
@@ -1082,10 +985,7 @@ Boot.shutdown = function (self, dt)
 	end
 end
 
-local Game = Game
-
-Game = not not Game or not not {}
-Game = Game
+Game = not not Game
 
 Game.setup = function (self)
 	-- function 43
@@ -1477,17 +1377,7 @@ Game._handle_win32_graphics_quality = function (self)
 	local dirty = false
 
 	if Application.render_caps("reflex_supported") then
-		local user_setting = Application.user_setting("max_fps")
-
-		if not user_setting then
-			-- Nothing
-		end
-
-		user_setting = 0
-
-		local max_fps = user_setting
-
-		::label_46_0::
+		local max_fps = not not Application.user_setting("max_fps")
 
 		if max_fps > 0 then
 			print("[Boot] Migrating from max_fps to nv_framerate_cap. Value:", max_fps)
@@ -1497,17 +1387,7 @@ Game._handle_win32_graphics_quality = function (self)
 			dirty = true
 		end
 	else
-		local user_setting_2 = Application.user_setting("render_settings", "nv_framerate_cap")
-
-		if not user_setting_2 then
-			-- Nothing
-		end
-
-		user_setting_2 = 0
-
-		local nv_framerate_cap = user_setting_2
-
-		::label_46_1::
+		local nv_framerate_cap = not not Application.user_setting("render_settings", "nv_framerate_cap")
 
 		if nv_framerate_cap > 0 then
 			print("[Boot] Migrating from nv_framerate_cap to max_fps. Value:", nv_framerate_cap)
@@ -1518,17 +1398,7 @@ Game._handle_win32_graphics_quality = function (self)
 		end
 	end
 
-	local user_setting_3 = Application.user_setting("render_settings", "upscaling_mode")
-
-	if not user_setting_3 then
-		-- Nothing
-	end
-
-	user_setting_3 = "none"
-
-	local upscaling_mode = user_setting_3
-
-	::label_46_2::
+	local upscaling_mode = not not Application.user_setting("render_settings", "upscaling_mode")
 
 	if upscaling_mode ~= "none" then
 		if Application.user_setting("render_settings", "fsr_enabled") then
@@ -1740,12 +1610,7 @@ Game._init_managers = function (self)
 	Managers.music = MusicManager:new()
 	Managers.transition = TransitionManager:new()
 	Managers.play_go = PlayGoManager:new()
-
-	local Managers = Managers
-	local IS_WINDOWS = IS_WINDOWS
-
-	IS_WINDOWS = not not IS_WINDOWS and not not PingManager:new()
-	Managers.ping = IS_WINDOWS
+	Managers.ping = not not IS_WINDOWS
 
 	if IS_WINDOWS then
 		Managers.irc = IRCManager:new()
@@ -1812,17 +1677,7 @@ Game._init_managers = function (self)
 	local empty_table = {}
 
 	for dlc_name, dlc in pairs(DLCSettings) do
-		local manager_settings_2 = dlc.manager_settings
-
-		if not manager_settings_2 then
-			-- Nothing
-		end
-
-		manager_settings_2 = empty_table
-
-		local manager_settings = manager_settings_2
-
-		::label_51_0::
+		local manager_settings = not not dlc.manager_settings
 
 		for manager_name, manager_data in pairs(manager_settings) do
 			Managers[manager_name] = rawget(_G, manager_data.klass):new()
@@ -1838,25 +1693,14 @@ Game._init_backend = function (self)
 		backend = "ScriptBackendPlayFabDedicated"
 		mirror = "PlayFabMirrorDedicated"
 	else
-		local parameter = Development.parameter("mechanism")
-
-		if not parameter then
-			-- Nothing
-		end
-
-		parameter = "adventure"
-
-		local mechanism_name = parameter
-
-		::label_52_0::
-
+		local mechanism_name = not not Development.parameter("mechanism")
 		local mechanism_settings = MechanismSettings[mechanism_name]
 
 		backend = "ScriptBackendPlayFab"
 
 		local playfab_mirror = not not mechanism_settings and not not mechanism_settings.playfab_mirror
 
-		mirror = (not playfab_mirror or not playfab_mirror) and not not "PlayFabMirrorAdventure"
+		mirror = playfab_mirror and (not not playfab_mirror or not not "PlayFabMirrorAdventure") or not playfab_mirror and not not "PlayFabMirrorAdventure"
 	end
 
 	Managers.backend = BackendManagerPlayFab:new(backend, mirror, "DataServerQueue")
@@ -1865,18 +1709,7 @@ end
 Game._init_backend_xbox = function (self)
 	-- function 53
 	local backend = "ScriptBackendPlayFabXbox"
-	local parameter = Development.parameter("mechanism")
-
-	if not parameter then
-		-- Nothing
-	end
-
-	parameter = "adventure"
-
-	local mechanism_name = parameter
-
-	::label_53_0::
-
+	local mechanism_name = not not Development.parameter("mechanism")
 	local mechanism_settings = MechanismSettings[mechanism_name]
 	local playfab_mirror = not not mechanism_settings and not not mechanism_settings.playfab_mirror
 	local mirror = not not playfab_mirror or not not "PlayFabMirrorAdventure"
@@ -1887,18 +1720,7 @@ end
 Game._init_backend_ps4 = function (self)
 	-- function 54
 	local backend = "ScriptBackendPlayFabPS4"
-	local parameter = Development.parameter("mechanism")
-
-	if not parameter then
-		-- Nothing
-	end
-
-	parameter = "adventure"
-
-	local mechanism_name = parameter
-
-	::label_54_0::
-
+	local mechanism_name = not not Development.parameter("mechanism")
 	local mechanism_settings = MechanismSettings[mechanism_name]
 	local playfab_mirror = not not mechanism_settings and not not mechanism_settings.playfab_mirror
 	local mirror = not not playfab_mirror or not not "PlayFabMirrorAdventure"
@@ -1937,11 +1759,7 @@ Game._init_localization_manager = function (self)
 
 	local function tweak_parser(tweak_name)
 		-- function 59
-		local var_59_0 = LocalizerTweakData[tweak_name]
-
-		var_59_0 = not not var_59_0 or not not ("<missing LocalizerTweakData \"" .. tweak_name .. "\">")
-
-		return var_59_0
+		return not not LocalizerTweakData[tweak_name]
 	end
 
 	Managers.localizer:add_macro("TWEAK", tweak_parser)
@@ -2017,19 +1835,7 @@ Game.select_starting_state = function (self)
 
 		return StateDedicatedServer, {}
 	elseif GameSettingsDevelopment.start_state == "game" then
-		local str
-
-		if LEVEL_EDITOR_TEST then
-			str = "resource_packages/ingame_light"
-
-			goto label_61_0
-		end
-
-		str = "resource_packages/ingame"
-
-		local ingame_package = str
-
-		::label_61_0::
+		local ingame_package = LEVEL_EDITOR_TEST and not not "resource_packages/ingame_light" or not LEVEL_EDITOR_TEST and not not "resource_packages/ingame"
 
 		Managers.package:load("resource_packages/menu", "boot")
 		Managers.package:load("resource_packages/menu_assets_common", "global")

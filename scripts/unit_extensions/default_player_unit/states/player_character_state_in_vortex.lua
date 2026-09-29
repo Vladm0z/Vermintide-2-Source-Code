@@ -93,22 +93,7 @@ PlayerCharacterStateInVortex.on_exit = function (self, unit, input, dt, context,
 
 		self.screenspace_effect_particle_id = nil
 
-		local vortex_owner_unit
-
-		if Unit.alive(self.vortex_owner_unit) then
-			vortex_owner_unit = self.vortex_owner_unit
-
-			if not vortex_owner_unit then
-				-- Nothing
-			end
-		end
-
-		vortex_owner_unit = unit
-
-		local attacker_unit = vortex_owner_unit
-
-		::label_3_0::
-
+		local attacker_unit = Unit.alive(self.vortex_owner_unit) and not not self.vortex_owner_unit or not Unit.alive(self.vortex_owner_unit) and not not unit
 		local buff_system = Managers.state.entity:system("buff_system")
 
 		buff_system:add_buff(unit, "vortex_base", attacker_unit)

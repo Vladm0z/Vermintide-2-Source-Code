@@ -7,12 +7,7 @@ local DO_RELOAD = false
 local OVERLAY_FADE_DURATION = 0.8
 
 HeroDioramaUI = class(HeroDioramaUI)
-
-local HeroDioramaUI = HeroDioramaUI
-local unique_id = HeroDioramaUI.unique_id
-
-unique_id = not not unique_id or not not 0
-HeroDioramaUI.unique_id = unique_id
+HeroDioramaUI.unique_id = not not HeroDioramaUI.unique_id
 
 HeroDioramaUI.init = function (self, ingame_ui_context, settings)
 	-- function 1
@@ -319,141 +314,15 @@ HeroDioramaUI._set_size = function (self, size)
 	local player_text_box_size = player_text_box.size
 	local background_size = background.size
 	local viewport_size = viewport.size
-	local max = math.max
-	local var_17_1
 
-	if size then
-		var_17_1 = size[1]
-
-		if not var_17_1 then
-			-- Nothing
-		end
-	end
-
-	var_17_1 = 500
-
-	::label_17_0::
-
-	background_size[1] = max(var_17_1, 1)
-
-	local max_2 = math.max
-	local var_17_3
-
-	if size then
-		var_17_3 = size[2]
-
-		if not var_17_3 then
-			-- Nothing
-		end
-	end
-
-	var_17_3 = 500
-
-	::label_17_1::
-
-	background_size[2] = max_2(var_17_3, 1)
-
-	local max_3 = math.max
-	local var_17_5
-
-	if size then
-		var_17_5 = size[1]
-
-		if not var_17_5 then
-			-- Nothing
-		end
-	end
-
-	var_17_5 = 500
-
-	::label_17_2::
-
-	viewport_size[1] = max_3(var_17_5, 1)
-
-	local max_4 = math.max
-	local var_17_7
-
-	if size then
-		var_17_7 = size[2]
-
-		if not var_17_7 then
-			-- Nothing
-		end
-	end
-
-	var_17_7 = 500
-
-	::label_17_3::
-
-	viewport_size[2] = max_4(var_17_7 - bottom_panel_size[2], 1)
-
-	local max_5 = math.max
-	local var_17_9
-
-	if size then
-		var_17_9 = size[1]
-
-		if not var_17_9 then
-			-- Nothing
-		end
-	end
-
-	var_17_9 = 500
-
-	::label_17_4::
-
-	bottom_panel_size[1] = max_5(var_17_9, 1)
-
-	local max_6 = math.max
-	local var_17_11
-
-	if size then
-		var_17_11 = size[1]
-
-		if not var_17_11 then
-			-- Nothing
-		end
-	end
-
-	var_17_11 = 500
-
-	::label_17_5::
-
-	bottom_panel_edge_size[1] = max_6(var_17_11, 1)
-
-	local max_7 = math.max
-	local var_17_13
-
-	if size then
-		var_17_13 = size[1]
-
-		if not var_17_13 then
-			-- Nothing
-		end
-	end
-
-	var_17_13 = 500
-
-	::label_17_6::
-
-	hero_text_box_size[1] = max_7(var_17_13 - bottom_panel_size[2] * 2, 1)
-
-	local max_8 = math.max
-	local var_17_15
-
-	if size then
-		var_17_15 = size[1]
-
-		if not var_17_15 then
-			-- Nothing
-		end
-	end
-
-	var_17_15 = 500
-
-	::label_17_7::
-
-	player_text_box_size[1] = max_8(var_17_15 - bottom_panel_size[2], 1)
+	background_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
+	background_size[2] = math.max(size and not not size[2] or not size and not not 500, 1)
+	viewport_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
+	viewport_size[2] = math.max((size and not not size[2] or not size and not not 500) - bottom_panel_size[2], 1)
+	bottom_panel_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
+	bottom_panel_edge_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
+	hero_text_box_size[1] = math.max((size and not not size[1] or not size and not not 500) - bottom_panel_size[2] * 2, 1)
+	player_text_box_size[1] = math.max((size and not not size[1] or not size and not not 500) - bottom_panel_size[2], 1)
 
 	self:_update_panel_background()
 end
@@ -497,53 +366,10 @@ HeroDioramaUI._set_position = function (self, position, horizontal_alignment, ve
 	-- function 20
 	local scenegraph = self._ui_scenegraph.background
 	local current_position = scenegraph.position
-	local var_20_0
 
-	if position then
-		var_20_0 = position[1]
-
-		if not var_20_0 then
-			-- Nothing
-		end
-	end
-
-	var_20_0 = 0
-
-	::label_20_0::
-
-	current_position[1] = var_20_0
-
-	local var_20_1
-
-	if position then
-		var_20_1 = position[2]
-
-		if not var_20_1 then
-			-- Nothing
-		end
-	end
-
-	var_20_1 = 0
-
-	::label_20_1::
-
-	current_position[2] = var_20_1
-
-	local var_20_2
-
-	if position then
-		var_20_2 = position[3]
-
-		if not var_20_2 then
-			-- Nothing
-		end
-	end
-
-	var_20_2 = 0
-
-	::label_20_2::
-
-	current_position[3] = var_20_2
+	current_position[1] = position and not not position[1] or not position and not not 0
+	current_position[2] = position and not not position[2] or not position and not not 0
+	current_position[3] = position and not not position[3] or not position and not not 0
 	scenegraph.vertical_alignment = not not vertical_alignment or not not "center"
 	scenegraph.horizontal_alignment = not not horizontal_alignment or not not "center"
 end
@@ -575,11 +401,7 @@ HeroDioramaUI._can_create_viewport = function (self)
 		return false
 	end
 
-	local _level_package_loaded = self._level_package_loaded
-
-	_level_package_loaded = not not _level_package_loaded and not not self._cb_diorama_package_loaded
-
-	return _level_package_loaded
+	return not not self._level_package_loaded
 end
 
 HeroDioramaUI.set_hero_profile = function (self, profile_index, career_index)
@@ -603,34 +425,9 @@ HeroDioramaUI._set_hero_profile = function (self, profile_index, career_index)
 	local profile = SPProfiles[profile_index]
 	local profile_name = profile.display_name
 	local experience = ExperienceSettings.get_versus_experience()
-	local get_versus_level_from_experience = ExperienceSettings.get_versus_level_from_experience(experience)
-
-	if not get_versus_level_from_experience then
-		-- Nothing
-	end
-
-	get_versus_level_from_experience = ""
-
-	local level_text = get_versus_level_from_experience
-
-	::label_25_0::
-
+	local level_text = not not ExperienceSettings.get_versus_level_from_experience(experience)
 	local player_portrait_frame = self:_get_portrait_frame(profile_index, career_index)
-	local get_portrait_image_by_profile_index
-
-	if career_index then
-		get_portrait_image_by_profile_index = UIUtils.get_portrait_image_by_profile_index(profile_index, career_index)
-
-		if not get_portrait_image_by_profile_index then
-			-- Nothing
-		end
-	end
-
-	get_portrait_image_by_profile_index = "unit_frame_portrait_default"
-
-	local portrait_texture = get_portrait_image_by_profile_index
-
-	::label_25_1::
+	local portrait_texture = career_index and not not UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or not career_index and not not "unit_frame_portrait_default"
 
 	self:_set_portrait_frame(player_portrait_frame, level_text, portrait_texture)
 	self:_set_career_name(profile_index, career_index)
@@ -638,17 +435,7 @@ HeroDioramaUI._set_hero_profile = function (self, profile_index, career_index)
 	local profile = SPProfiles[profile_index]
 	local career_data = profile.careers[career_index]
 	local career_name = career_data.name
-	local get_color_table_with_alpha = Colors.get_color_table_with_alpha(career_name, 255)
-
-	if not get_color_table_with_alpha then
-		-- Nothing
-	end
-
-	get_color_table_with_alpha = Colors.color_definitions.white
-
-	local career_color = get_color_table_with_alpha
-
-	::label_25_2::
+	local career_color = not not Colors.get_color_table_with_alpha(career_name, 255)
 
 	self:_update_panel_background(career_color)
 end
@@ -726,28 +513,14 @@ HeroDioramaUI._draw = function (self, dt)
 	local input_manager = self._input_manager
 	local input_service = input_manager:get_service("ingame_menu")
 	local render_settings = self._render_settings
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_29_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local viewport_widget = self._viewport_widget
 
 	if viewport_widget then
-		local min = math.min
-		local alpha_multiplier_3 = viewport_widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = min(alpha_multiplier_3, alpha_multiplier)
+		render_settings.alpha_multiplier = math.min(not not viewport_widget.alpha_multiplier, alpha_multiplier)
 
 		UIRenderer.draw_widget(ui_renderer, viewport_widget)
 	end
@@ -760,11 +533,8 @@ HeroDioramaUI._draw = function (self, dt)
 	if widgets then
 		for i = 1, #widgets do
 			local widget = widgets[i]
-			local min_2 = math.min
-			local alpha_multiplier_4 = widget.alpha_multiplier
 
-			alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-			render_settings.alpha_multiplier = min_2(alpha_multiplier_4, alpha_multiplier)
+			render_settings.alpha_multiplier = math.min(not not widget.alpha_multiplier, alpha_multiplier)
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
@@ -773,11 +543,7 @@ HeroDioramaUI._draw = function (self, dt)
 	local portrait_widget = self._portrait_widget
 
 	if portrait_widget then
-		local min_3 = math.min
-		local alpha_multiplier_5 = portrait_widget.alpha_multiplier
-
-		alpha_multiplier_5 = not not alpha_multiplier_5 or not not alpha_multiplier
-		render_settings.alpha_multiplier = min_3(alpha_multiplier_5, alpha_multiplier)
+		render_settings.alpha_multiplier = math.min(not not portrait_widget.alpha_multiplier, alpha_multiplier)
 
 		UIRenderer.draw_widget(ui_top_renderer, portrait_widget)
 	end
@@ -785,11 +551,7 @@ HeroDioramaUI._draw = function (self, dt)
 	local bottom_panel_widget = self._bottom_panel_widget
 
 	if bottom_panel_widget then
-		local min_4 = math.min
-		local alpha_multiplier_6 = bottom_panel_widget.alpha_multiplier
-
-		alpha_multiplier_6 = not not alpha_multiplier_6 or not not alpha_multiplier
-		render_settings.alpha_multiplier = min_4(alpha_multiplier_6, alpha_multiplier)
+		render_settings.alpha_multiplier = math.min(not not bottom_panel_widget.alpha_multiplier, alpha_multiplier)
 
 		UIRenderer.draw_widget(ui_top_renderer, bottom_panel_widget)
 	end

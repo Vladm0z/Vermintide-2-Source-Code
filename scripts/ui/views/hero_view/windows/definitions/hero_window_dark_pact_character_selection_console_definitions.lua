@@ -243,11 +243,8 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_check_function = function (content, style)
 			-- function 3
 			local hotspot = content[slot_name]
-			local highlight = hotspot.highlight
 
-			highlight = not not highlight or not not hotspot.is_hover
-
-			return highlight
+			return not not hotspot.highlight
 		end
 	}
 	passes[#passes + 1] = {
@@ -257,11 +254,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_id = slot_name,
 		content_check_function = function (content)
 			-- function 4
-			local item = content.item
-
-			item = not not item and not not content.icon
-
-			return item
+			return not not content.item
 		end
 	}
 	passes[#passes + 1] = {
@@ -283,14 +276,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_id = slot_name,
 		content_check_function = function (content)
 			-- function 5
-			local item = content.item
-
-			if item then
-				item = content.is_hover
-				item = not not item or not not content.is_selected
-			end
-
-			return item
+			return not not content.item
 		end
 	}
 
@@ -311,11 +297,8 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_check_function = function (content)
 			-- function 6
 			local hotspot = content[slot_name]
-			local highlight = hotspot.highlight
 
-			highlight = not not highlight or not not hotspot.is_hover
-
-			return highlight
+			return not not hotspot.highlight
 		end
 	}
 
@@ -328,33 +311,16 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_check_function = function (content)
 			-- function 7
 			local hotspot = content[slot_name]
-			local item = hotspot.item
 
-			item = not not item and not hotspot.highlight and not not not hotspot.is_hover
-
-			return item
+			return not not hotspot.item
 		end,
 		content_change_function = function (content, style)
 			-- function 8
 			local item = content[slot_name].item
 			local item_data = item.data
 			local item_type = item_data.item_type
-			local var_8_0 = title_text_name
-			local str
 
-			if content.is_dark_pact then
-				str = "dark_pact_" .. item_type
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = item_type
-
-			::label_8_0::
-
-			content[var_8_0] = str
+			content[title_text_name] = content.is_dark_pact and not not ("dark_pact_" .. item_type) or not content.is_dark_pact and not not item_type
 		end
 	}
 
@@ -367,36 +333,16 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_check_function = function (content)
 			-- function 9
 			local hotspot = content[slot_name]
-			local item = hotspot.item
 
-			if item then
-				item = hotspot.highlight
-				item = not not item or not not hotspot.is_hover
-			end
-
-			return item
+			return not not hotspot.item
 		end,
 		content_change_function = function (content, style)
 			-- function 10
 			local item = content[slot_name].item
 			local item_data = item.data
 			local item_type = item_data.item_type
-			local var_10_0 = title_text_name
-			local str
 
-			if content.is_dark_pact then
-				str = "dark_pact_" .. item_type
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = item_type
-
-			::label_10_0::
-
-			content[var_10_0] = str
+			content[title_text_name] = content.is_dark_pact and not not ("dark_pact_" .. item_type) or not content.is_dark_pact and not not item_type
 		end
 	}
 

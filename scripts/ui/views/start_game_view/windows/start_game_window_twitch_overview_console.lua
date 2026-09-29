@@ -43,10 +43,7 @@ StartGameWindowTwitchOverviewConsole.on_enter = function (self, params, offset)
 	self:_create_ui_elements(params, offset)
 
 	if self._is_server then
-		local input_index = params.input_index
-
-		input_index = not not input_index or not not 1
-		self._input_index = input_index
+		self._input_index = not not params.input_index
 
 		self:_handle_new_selection(self._input_index)
 	end
@@ -61,17 +58,7 @@ StartGameWindowTwitchOverviewConsole.on_enter = function (self, params, offset)
 	self._show_additional_settings = false
 	self._previous_can_play = nil
 
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local connected = twitch
-
-	::label_1_0::
+	local connected = not not Managers.twitch
 
 	self:_set_input_description(connected)
 	self:_set_disconnect_button_text()
@@ -156,10 +143,8 @@ StartGameWindowTwitchOverviewConsole._create_ui_elements = function (self, param
 	if IS_PS4 then
 		local frame_widget = self._widgets_by_name.frame_widget
 		local frame_widget_content = frame_widget.content
-		local twitch_user_name = PlayerData.twitch_user_name
 
-		twitch_user_name = not not twitch_user_name or not not ""
-		frame_widget_content.twitch_name = twitch_user_name
+		frame_widget_content.twitch_name = not not PlayerData.twitch_user_name
 	end
 end
 
@@ -185,21 +170,7 @@ StartGameWindowTwitchOverviewConsole._set_disconnect_button_text = function (sel
 	local disconnect_button_widget = self._widgets_by_name.button_2
 
 	if disconnect_button_widget then
-		local user_name_2
-
-		if Managers.twitch then
-			user_name_2 = Managers.twitch:user_name()
-
-			if not user_name_2 then
-				-- Nothing
-			end
-		end
-
-		user_name_2 = "N/A"
-
-		local user_name = user_name_2
-
-		::label_5_0::
+		local user_name = Managers.twitch and not not Managers.twitch:user_name() or not Managers.twitch and not not "N/A"
 
 		disconnect_button_widget.content.button_hotspot.text = string.format(Localize("start_game_window_twitch_disconnect"), user_name)
 	end
@@ -243,17 +214,7 @@ end
 StartGameWindowTwitchOverviewConsole._update_input_description = function (self)
 	-- function 10
 	local previous_input_description_connected = self._input_description_connected
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local connected = twitch
-
-	::label_10_0::
+	local connected = not not Managers.twitch
 
 	if connected ~= previous_input_description_connected then
 		self:_set_input_description(connected)
@@ -417,17 +378,7 @@ StartGameWindowTwitchOverviewConsole._handle_input = function (self, dt, t)
 			end
 
 			if input_service:get(START_GAME_INPUT) or self:_is_button_pressed(widgets_by_name.play_button) then
-				local get_twitch_settings = parent:get_twitch_settings(self._mechanism_name)
-
-				if not get_twitch_settings then
-					-- Nothing
-				end
-
-				get_twitch_settings = parent:get_twitch_settings("adventure")
-
-				local twitch_settings = get_twitch_settings
-
-				::label_15_0::
+				local twitch_settings = not not parent:get_twitch_settings(self._mechanism_name)
 
 				parent:play(t, twitch_settings.game_mode_type)
 
@@ -571,21 +522,7 @@ end
 
 StartGameWindowTwitchOverviewConsole._setup_connected_status = function (self)
 	-- function 20
-	local user_name_2
-
-	if Managers.twitch then
-		user_name_2 = Managers.twitch:user_name()
-
-		if not user_name_2 then
-			-- Nothing
-		end
-	end
-
-	user_name_2 = "N/A"
-
-	local user_name = user_name_2
-
-	::label_20_0::
+	local user_name = Managers.twitch and not not Managers.twitch:user_name() or not Managers.twitch and not not "N/A"
 
 	self._widgets_by_name.frame_widget.content.connected = Localize("start_game_window_twitch_connected_to") .. user_name
 end
@@ -599,18 +536,7 @@ StartGameWindowTwitchOverviewConsole._can_play = function (self)
 	local parent = self._parent
 	local selected_level_id = parent:get_selected_level_id()
 	local selected_difficulty_key = parent:get_difficulty_option()
-	local twitch = Managers.twitch
-
-	if twitch then
-		-- Nothing
-	end
-
-	twitch = Managers.twitch:is_connected()
-
-	local connected = twitch
-
-	::label_21_0::
-
+	local connected = not not Managers.twitch
 	local can_play = selected_level_id ~= nil and selected_difficulty_key ~= nil and not not connected
 
 	return can_play
@@ -666,18 +592,7 @@ end
 StartGameWindowTwitchOverviewConsole._option_selected = function (self, input_index, t)
 	-- function 25
 	local parent = self._parent
-	local get_twitch_settings = parent:get_twitch_settings(self._mechanism_name)
-
-	if not get_twitch_settings then
-		-- Nothing
-	end
-
-	get_twitch_settings = parent:get_twitch_settings("adventure")
-
-	local twitch_settings = get_twitch_settings
-
-	::label_25_0::
-
+	local twitch_settings = not not parent:get_twitch_settings(self._mechanism_name)
 	local selected_widget_name = selector_input_definition[input_index]
 
 	if selected_widget_name == "mission_setting" then
@@ -776,35 +691,8 @@ StartGameWindowTwitchOverviewConsole._animate_button = function (self, widget, d
 	local hotspot_name = "button_hotspot"
 	local hotspot = content[hotspot_name]
 	local input_speed = 20
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_29_0::
-
-	local is_clicked = hotspot.is_clicked
-
-	if is_clicked then
-		-- Nothing
-	end
-
-	if hotspot.is_clicked ~= 0 then
-		is_clicked = false
-
-		goto label_29_1
-	end
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_29_1::
+	local input_progress = not not hotspot.input_progress
+	local input_pressed = not not hotspot.is_clicked
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -813,18 +701,7 @@ StartGameWindowTwitchOverviewConsole._animate_button = function (self, widget, d
 	end
 
 	local speed = 8
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_29_2::
-
+	local hover_progress = not not hotspot.hover_progress
 	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
 
 	if is_hover then
@@ -833,18 +710,7 @@ StartGameWindowTwitchOverviewConsole._animate_button = function (self, widget, d
 		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_29_3::
-
+	local selection_progress = not not hotspot.selection_progress
 	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
 
 	if is_selected then

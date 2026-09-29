@@ -232,11 +232,7 @@ local function survey_rating_definitions(index)
 					texture_id = "texture_hover_id",
 					content_check_function = function (content)
 						-- function 3
-						local is_hover = content.button_hotspot.is_hover
-
-						is_hover = not not is_hover and content.button_hotspot.is_clicked > 0
-
-						return is_hover
+						return not not content.button_hotspot.is_hover
 					end
 				},
 				{

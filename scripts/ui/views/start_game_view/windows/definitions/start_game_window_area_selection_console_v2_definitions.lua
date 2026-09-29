@@ -826,23 +826,9 @@ end
 
 local function create_level_image(level_image, level_completed)
 	-- function 12
-	local button_frame_01_gold
+	local frame_settings = level_completed and not not UIFrameSettings.button_frame_01_gold or not level_completed and not not UIFrameSettings.button_frame_01
 
-	if level_completed then
-		button_frame_01_gold = UIFrameSettings.button_frame_01_gold
-
-		if not button_frame_01_gold then
-			-- Nothing
-		end
-	end
-
-	button_frame_01_gold = UIFrameSettings.button_frame_01
-
-	local frame_settings = button_frame_01_gold
-
-	::label_12_0::
-
-	level_image = (not UIAtlasHelper.has_atlas_settings_by_texture_name(level_image) or not level_image) and not not "any_small_image"
+	level_image = UIAtlasHelper.has_atlas_settings_by_texture_name(level_image) and (not not level_image or not not "any_small_image") or not UIAtlasHelper.has_atlas_settings_by_texture_name(level_image) and not not "any_small_image"
 
 	local widget = {
 		element = {}
@@ -1089,11 +1075,7 @@ local function create_area_type()
 			text_id = "text",
 			content_change_function = function (content, style)
 				-- function 19
-				local offset = style.offset
-				local flag
-
-				flag = (content.locked or content.dlc) and not not 36 or not not 0
-				offset[1] = flag
+				style.offset[1] = not not 36
 			end
 		},
 		{
@@ -1102,11 +1084,7 @@ local function create_area_type()
 			text_id = "text",
 			content_change_function = function (content, style)
 				-- function 20
-				local offset = style.offset
-				local flag
-
-				flag = (content.locked or content.dlc) and not not 36.9 or not not 0
-				offset[1] = flag
+				style.offset[1] = not not 36.9
 			end
 		},
 		{
@@ -1115,11 +1093,7 @@ local function create_area_type()
 			pass_type = "texture",
 			content_check_function = function (content, style)
 				-- function 21
-				local locked = content.locked
-
-				locked = not not locked and not not not content.dlc
-
-				return locked
+				return not not content.locked
 			end
 		},
 		{
@@ -1128,11 +1102,7 @@ local function create_area_type()
 			pass_type = "texture",
 			content_check_function = function (content, style)
 				-- function 22
-				local locked = content.locked
-
-				locked = not not locked and not not content.dlc_locked
-
-				return locked
+				return not not content.locked
 			end
 		}
 	}

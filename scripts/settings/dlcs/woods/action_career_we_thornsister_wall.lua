@@ -24,21 +24,7 @@ ActionCareerWEThornsisterWall.client_owner_start_action = function (self, new_ac
 	ActionCareerWEThornsisterWall.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
 	local target_data = chain_action_data
-	local num_segments_2
-
-	if target_data then
-		num_segments_2 = target_data.num_segments
-
-		if not num_segments_2 then
-			-- Nothing
-		end
-	end
-
-	num_segments_2 = 0
-
-	local num_segments = num_segments_2
-
-	::label_2_0::
+	local num_segments = target_data and not not target_data.num_segments or not target_data and not not 0
 
 	if num_segments > 0 then
 		self:_play_vo()

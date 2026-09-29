@@ -92,11 +92,7 @@ end
 
 EndViewStateScoreVS.exit_done = function (self)
 	-- function 6
-	local _exit_started = self._exit_started
-
-	_exit_started = not not _exit_started and not not table.is_empty(self._animations)
-
-	return _exit_started
+	return not not self._exit_started
 end
 
 EndViewStateScoreVS.create_ui_elements = function (self, params)
@@ -113,37 +109,12 @@ EndViewStateScoreVS.create_ui_elements = function (self, params)
 	for i = 1, #tab_layouts do
 		local settings = tab_layouts[i]
 		local scenegraph_id = "tab"
-		local display_name_2 = settings.display_name
-
-		if not display_name_2 then
-			-- Nothing
-		end
-
-		display_name_2 = "n/a"
-
-		local display_name = display_name_2
-
-		::label_7_0::
-
+		local display_name = not not settings.display_name
 		local widget_definition = definitions.create_tab(scenegraph_id, display_name)
 		local widget = UIWidget.init(widget_definition)
 		local text_width = UIUtils.get_text_width(self._ui_renderer, widget.style.text, display_name)
-		local offset_2 = widget.offset
-		local num
 
-		if i > 1 then
-			num = text_width * 0.5
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		::label_7_1::
-
-		offset_2[1] = offset + num
+		widget.offset[1] = offset + (i > 1 and not not (text_width * 0.5) or not (i > 1) and not not 0)
 		offset = offset + text_width * 0.5 + PADDING
 		widget.style.hotspot.area_size[1] = text_width * 0.5
 
@@ -160,20 +131,7 @@ EndViewStateScoreVS.create_ui_elements = function (self, params)
 	local my_peer_id = Network.peer_id()
 	local local_player_id = 1
 	local local_player_party_id = self._context.party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-	local num_2
-
-	if local_player_party_id == 1 then
-		num_2 = 2
-
-		goto label_7_2
-	end
-
-	num_2 = 1
-
-	local opponent_party_id = num_2
-
-	::label_7_2::
-
+	local opponent_party_id = local_player_party_id ~= 1 and not not 1 or not (local_player_party_id ~= 1) and not not 2
 	local local_team = GameModeSettings.versus.party_names_lookup_by_id[local_player_party_id]
 	local opponent_team = GameModeSettings.versus.party_names_lookup_by_id[opponent_party_id]
 	local scores = self._context.rewards.team_scores
@@ -233,41 +191,13 @@ EndViewStateScoreVS._setup_level_widget = function (self)
 	local content = self._widgets_by_name.level.content
 	local level_key = self._context.level_key
 	local level_settings = LevelSettings[level_key]
-	local level_image_2
-
-	if level_settings then
-		level_image_2 = level_settings.level_image
-
-		if not level_image_2 then
-			-- Nothing
-		end
-	end
-
-	level_image_2 = "level_image_any"
-
-	local level_image = level_image_2
-
-	::label_9_0::
+	local level_image = level_settings and not not level_settings.level_image or not level_settings and not not "level_image_any"
 
 	content.icon = level_image
 
 	local difficulty_key = self._context.difficulty
 	local difficulty_settings = DifficultySettings[difficulty_key]
-	local completed_frame_texture
-
-	if difficulty_settings then
-		completed_frame_texture = difficulty_settings.completed_frame_texture
-
-		if not completed_frame_texture then
-			-- Nothing
-		end
-	end
-
-	completed_frame_texture = "map_frame_00"
-
-	local frame_image = completed_frame_texture
-
-	::label_9_1::
+	local frame_image = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
 
 	content.frame = frame_image
 
@@ -433,17 +363,7 @@ EndViewStateScoreVS._handle_input = function (self, dt, t)
 	end
 
 	local back_to_keep_button_widget = self._widgets_by_name.back_to_keep_button
-	local is_button_enabled = UIUtils.is_button_enabled(back_to_keep_button_widget)
-
-	if is_button_enabled then
-		-- Nothing
-	end
-
-	is_button_enabled = input_service:get("refresh")
-
-	local continue_input_pressed = is_button_enabled
-
-	::label_18_0::
+	local continue_input_pressed = not not UIUtils.is_button_enabled(back_to_keep_button_widget)
 
 	if UIUtils.is_button_pressed(back_to_keep_button_widget) or continue_input_pressed then
 		self._done = true

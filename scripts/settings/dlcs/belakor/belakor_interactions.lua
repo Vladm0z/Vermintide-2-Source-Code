@@ -98,27 +98,13 @@ end
 
 base_locus_definition.client.get_progress = function (data, config, t)
 	-- function 4
-	local duration_2 = data.duration
-
-	if not duration_2 then
-		-- Nothing
-	end
-
-	duration_2 = 0
-
-	local duration = duration_2
-
-	::label_4_0::
+	local duration = not not data.duration
 
 	if duration == 0 then
 		return 0
 	end
 
-	local flag
-
-	flag = (data.start_time ~= nil or not 0) and not not math.min(1, (t - data.start_time) / duration)
-
-	return flag
+	return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and not not 0
 end
 
 base_locus_definition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)

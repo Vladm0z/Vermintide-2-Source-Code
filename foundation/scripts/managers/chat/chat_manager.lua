@@ -19,25 +19,7 @@ end
 
 ChatManager = class(ChatManager)
 
-local MESSAGE_TYPES_2 = MESSAGE_TYPES
-
-if not MESSAGE_TYPES_2 then
-	-- Nothing
-end
-
-MESSAGE_TYPES_2 = {
-	[Irc.PRIVATE_MSG] = "Private Message",
-	[Irc.CHANNEL_MSG] = "Channel Message",
-	[Irc.SYSTEM_MSG] = "System Message",
-	[Irc.PARTY_MSG] = "Party Message",
-	[Irc.TEAM_MSG] = "Team Message",
-	[Irc.ALL_MSG] = "All Message"
-}
-
-local MESSAGE_TYPES = MESSAGE_TYPES_2
-
-::label_0_0::
-
+local MESSAGE_TYPES = not not MESSAGE_TYPES
 local CHAT_VIEWS = {
 	"All",
 	"Channels",
@@ -79,11 +61,7 @@ ChatManager.init = function (self)
 	self.user_to_simplified_user_lut = {}
 	self.alias_lut = {}
 	self.recently_sent_messages = {}
-
-	local chat_ignore_list = SaveData.chat_ignore_list
-
-	chat_ignore_list = not not chat_ignore_list or not not {}
-	self.peer_ignore_list = chat_ignore_list
+	self.peer_ignore_list = not not SaveData.chat_ignore_list
 
 	if not DEDICATED_SERVER then
 		self:create_chat_gui()
@@ -98,7 +76,7 @@ ChatManager.init = function (self)
 
 	self:add_message_target("Party", Irc.PARTY_MSG, "vs_chat_msg_target_team")
 
-	if (IS_WINDOWS or IS_LINUX) and GameSettingsDevelopment.use_global_chat and rawget(_G, "Steam") then
+	if IS_WINDOWS and GameSettingsDevelopment.use_global_chat and rawget(_G, "Steam") or not IS_WINDOWS and IS_LINUX and GameSettingsDevelopment.use_global_chat and rawget(_G, "Steam") then
 		Steam.retrieve_encrypted_app_ticket()
 
 		local token = ScriptReceiveAppTicketToken:new()
@@ -113,10 +91,7 @@ end
 
 ChatManager.update_ignore_list = function (self)
 	-- function 3
-	local chat_ignore_list = SaveData.chat_ignore_list
-
-	chat_ignore_list = not not chat_ignore_list or not not self.peer_ignore_list
-	self.peer_ignore_list = chat_ignore_list
+	self.peer_ignore_list = not not SaveData.chat_ignore_list
 end
 
 ChatManager.cb_encrypted_app_ticket_recieved = function (self, info)
@@ -622,23 +597,7 @@ ChatManager.send_chat_message = function (self, channel_id, local_player_id, ori
 	local is_system_message = false
 	local pop_chat = true
 	local peer_id = self.my_peer_id
-	local is_dev_2 = SteamHelper.is_dev()
-
-	if is_dev_2 then
-		-- Nothing
-	end
-
-	if local_player_id ~= 1 then
-		is_dev_2 = false
-
-		goto label_45_0
-	end
-
-	is_dev_2 = true
-
-	local is_dev = is_dev_2
-
-	::label_45_0::
+	local is_dev = not not SteamHelper.is_dev()
 
 	if type(localization_parameters) ~= "table" then
 		local old_parameter = localization_parameters
@@ -858,11 +817,7 @@ end
 
 ChatManager.has_channel = function (self, channel_id)
 	-- function 51
-	local var_51_0 = self.channels[channel_id]
-
-	var_51_0 = not not var_51_0 and not not true
-
-	return var_51_0
+	return not not self.channels[channel_id]
 end
 
 ChatManager.rpc_chat_message = function (self, sender_channel_id, channel_id, message_sender, local_player_id, message, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, message_type)
@@ -956,45 +911,21 @@ ChatManager._add_message_to_list = function (self, channel_id, message_sender, l
 	end
 
 	local global_messages = self.global_messages
-	local num = #global_messages + 1
-	local tbl = {
+
+	global_messages[#global_messages + 1] = {
 		channel_id = channel_id,
 		message_sender = message_sender,
 		local_player_id = local_player_id,
-		message = (not message_edited or not parsed_message) and not not message
+		message = message_edited and (not not parsed_message or not not message) or not message_edited and not not message,
+		type = not not Irc.SYSTEM_MSG,
+		pop_chat = pop_chat,
+		is_dev = is_dev,
+		is_bot = is_bot,
+		is_enemy = is_enemy,
+		link = link,
+		data = data,
+		is_system_message = is_system_message
 	}
-
-	if not message_type then
-		-- Nothing
-	end
-
-	do
-		local SYSTEM_MSG
-	end
-
-	::label_55_0::
-
-	if is_system_message then
-		SYSTEM_MSG = Irc.SYSTEM_MSG
-
-		if not SYSTEM_MSG then
-			-- Nothing
-		end
-	end
-
-	SYSTEM_MSG = Irc.PARTY_MSG
-
-	::label_55_1::
-
-	tbl.type = SYSTEM_MSG
-	tbl.pop_chat = pop_chat
-	tbl.is_dev = is_dev
-	tbl.is_bot = is_bot
-	tbl.is_enemy = is_enemy
-	tbl.link = link
-	tbl.data = data
-	tbl.is_system_message = is_system_message
-	global_messages[num] = tbl
 
 	if not IS_WINDOWS then
 		if not self:is_chat_enabled() then
@@ -1011,30 +942,13 @@ ChatManager._add_message_to_list = function (self, channel_id, message_sender, l
 	if is_system_message then
 		local sender = "System"
 
-		printf("[ChatManager][%s]%s: %s", channel_id, sender, (not message_edited or not parsed_message) and not not message)
+		printf("[ChatManager][%s]%s: %s", channel_id, sender, message_edited and (not not parsed_message or not not message) or not message_edited and not not message)
 	end
 end
 
 ChatManager.get_chat_messages = function (self, destination_table, filter_name)
 	-- function 56
-	if not filter_name then
-		-- Nothing
-	end
-
-	::label_56_0::
-
-	local var_56_0 = CHAT_VIEWS[self.current_view_index]
-
-	if not var_56_0 then
-		-- Nothing
-	end
-
-	var_56_0 = 1
-
-	local filter_name = var_56_0
-
-	::label_56_1::
-
+	local filter_name = not not filter_name or not not CHAT_VIEWS[self.current_view_index]
 	local filter = CHAT_VIEW_LUT[filter_name].filter
 	local chat_messages = self.chat_messages
 
@@ -1056,17 +970,7 @@ ChatManager._switch_view_internally = function (self, view_index)
 	table.clear(chat_messages)
 
 	local message_data
-	local var_57_0 = CHAT_VIEWS[self.current_view_index]
-
-	if not var_57_0 then
-		-- Nothing
-	end
-
-	var_57_0 = 1
-
-	local filter_name = var_57_0
-
-	::label_57_0::
+	local filter_name = not not CHAT_VIEWS[self.current_view_index]
 
 	print("Switching Chat View to: " .. string.upper(filter_name))
 
@@ -1090,17 +994,7 @@ ChatManager.switch_view = function (self, view_index)
 	table.clear(chat_messages)
 
 	local message_data
-	local var_58_0 = CHAT_VIEWS[self.current_view_index]
-
-	if not var_58_0 then
-		-- Nothing
-	end
-
-	var_58_0 = 1
-
-	local filter_name = var_58_0
-
-	::label_58_0::
+	local filter_name = not not CHAT_VIEWS[self.current_view_index]
 
 	print("Switching Chat View to: " .. string.upper(filter_name))
 
@@ -1160,10 +1054,7 @@ ChatManager.join_channel = function (self, parameters)
 
 			self:add_message_target(channel_name, Irc.CHANNEL_MSG)
 
-			local var_60_0 = self.message_targets_lut[channel_name]
-
-			var_60_0 = not not var_60_0 or not not self.current_message_target_index
-			self.current_message_target_index = var_60_0
+			self.current_message_target_index = not not self.message_targets_lut[channel_name]
 		end
 	end
 end
@@ -1232,10 +1123,7 @@ ChatManager.send_message = function (self, parameters, message, recent_message_i
 		if Managers.irc:send_message(message, user_name) then
 			self:add_message_target(user_name, Irc.PRIVATE_MSG)
 
-			local var_62_0 = self.message_targets_lut[user_name]
-
-			var_62_0 = not not var_62_0 or not not self.current_message_target_index
-			self.current_message_target_index = var_62_0
+			self.current_message_target_index = not not self.message_targets_lut[user_name]
 
 			local name = "To [" .. user_name .. "]"
 
@@ -1286,10 +1174,7 @@ ChatManager.reply = function (self, parameters, message)
 
 		Managers.irc:send_message(new_message, user_name)
 
-		local var_65_0 = self.message_targets_lut[user_name]
-
-		var_65_0 = not not var_65_0 or not not self.current_message_target_index
-		self.current_message_target_index = var_65_0
+		self.current_message_target_index = not not self.message_targets_lut[user_name]
 
 		local name = "To [" .. user_name .. "]"
 

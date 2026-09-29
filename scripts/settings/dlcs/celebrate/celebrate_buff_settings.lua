@@ -475,11 +475,7 @@ settings.buff_function_templates = {
 
 			shake_event_settings.event = event
 			shake_event_settings.start_time = t
-
-			local seed = event.seed
-
-			seed = not not seed or not not Math.random(1, 100)
-			shake_event_settings.seed = seed
+			shake_event_settings.seed = not not event.seed
 			buff.shake_event_settings = shake_event_settings
 			buff.shake_functions = {
 				calculate_perlin_value_func = function (buff, x)
@@ -496,29 +492,8 @@ settings.buff_function_templates = {
 						total = total + buff.shake_functions.interpolated_noise_func(buff, x * frequency) * amplitude
 					end
 
-					local amplitude_2 = shake_settings.amplitude
-
-					if not amplitude_2 then
-						-- Nothing
-					end
-
-					amplitude_2 = 1
-
-					local amplitude_multiplier = amplitude_2
-
-					::label_5_0::
-
-					local fade_progress = settings.fade_progress
-
-					if not fade_progress then
-						-- Nothing
-					end
-
-					fade_progress = 1
-
-					local fade_multiplier = fade_progress
-
-					::label_5_1::
+					local amplitude_multiplier = not not shake_settings.amplitude
+					local fade_multiplier = not not settings.fade_progress
 
 					total = total * amplitude_multiplier * fade_multiplier
 

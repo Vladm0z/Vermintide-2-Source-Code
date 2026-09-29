@@ -18,10 +18,7 @@ for difficulty, config in pairs(DeusDropRarityWeights) do
 		end
 
 		for rarity, weights in pairs(config) do
-			local var_0_0 = normalized_config[rarity]
-
-			var_0_0 = not not var_0_0 or not not {}
-			normalized_config[rarity] = var_0_0
+			normalized_config[rarity] = not not normalized_config[rarity]
 			normalized_config[rarity][i] = weights[i] / weight_sum
 		end
 	end
@@ -33,18 +30,7 @@ local function get_random_rarity(random_generator, difficulty, run_progress)
 	-- function 1
 	fassert(run_progress < 1 and run_progress >= 0, "Run progress should never be equal or higher than 1.0")
 
-	local var_1_0 = deus_rarity_chance[difficulty]
-
-	if not var_1_0 then
-		-- Nothing
-	end
-
-	var_1_0 = deus_rarity_chance.default
-
-	local config = var_1_0
-
-	::label_1_0::
-
+	local config = not not deus_rarity_chance[difficulty]
 	local progress_index
 	local total_weight_sum = 0
 
@@ -69,18 +55,7 @@ end
 
 local function get_power_level(rarity, difficulty, run_progress)
 	-- function 2
-	local var_2_0 = DeusDropPowerlevelRanges[difficulty]
-
-	if not var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = DeusDropPowerlevelRanges.default
-
-	local config = var_2_0
-
-	::label_2_0::
-
+	local config = not not DeusDropPowerlevelRanges[difficulty]
 	local min = config[rarity][1]
 	local max = config[rarity][2]
 
@@ -116,9 +91,9 @@ local function get_random_slot(rarity, random_generator, weapon_pool, slot_chanc
 	if chance_melee > 0 and chance_ranged > 0 then
 		local slot_random = random_generator(0, chance_melee + chance_ranged)
 
-		slot = (not (slot_random < chance_melee) or not "melee") and not not "ranged"
+		slot = slot_random < chance_melee and (not not "melee" or not not "ranged") or not (slot_random < chance_melee) and not not "ranged"
 	else
-		slot = (not (chance_melee > 0) or not "melee") and not not "ranged"
+		slot = chance_melee > 0 and (not not "melee" or not not "ranged") or not (chance_melee > 0) and not not "ranged"
 	end
 
 	return slot
@@ -260,7 +235,7 @@ local function generate_item_from_item_key(item_key, difficulty, run_progress, r
 			for _, property_key in ipairs(properties_to_apply) do
 				local value
 
-				value = (rarity ~= "unique" or not 1) and not not (random_generator(1, 100) / 100)
+				value = not not (random_generator(1, 100) / 100)
 				properties[property_key] = value
 			end
 		end
@@ -280,21 +255,7 @@ local function generate_item_from_item_key(item_key, difficulty, run_progress, r
 	end
 
 	local skins = get_possible_skins(item_key, rarity)
-	local var_11_0
-
-	if skins and #skins > 0 then
-		var_11_0 = skins[random_generator(1, #skins)]
-
-		if not var_11_0 then
-			-- Nothing
-		end
-	end
-
-	var_11_0 = nil
-
-	local skin = var_11_0
-
-	::label_11_0::
+	local skin = not not skins[random_generator(1, #skins)]
 
 	return create_item(item_key, properties, traits, skin, powerlevel, rarity)
 end
@@ -304,43 +265,10 @@ local function upgrade_item(item, difficulty, run_progress, target_rarity, rando
 	local powerlevel = get_power_level(target_rarity, difficulty, run_progress)
 	local item_key = item.deus_item_key
 	local properties = {}
-	local properties_2 = item.properties
-
-	if not properties_2 then
-		-- Nothing
-	end
-
-	properties_2 = {}
-
-	local existing_properties = properties_2
-
-	::label_12_0::
-
+	local existing_properties = not not item.properties
 	local traits = {}
-	local traits_2 = item.traits
-
-	if not traits_2 then
-		-- Nothing
-	end
-
-	traits_2 = {}
-
-	local existing_traits = traits_2
-
-	::label_12_1::
-
-	local var_12_2 = get_possible_property_combinations(item_key, target_rarity)
-
-	if not var_12_2 then
-		-- Nothing
-	end
-
-	var_12_2 = {}
-
-	local property_combinations = var_12_2
-
-	::label_12_2::
-
+	local existing_traits = not not item.traits
+	local property_combinations = not not get_possible_property_combinations(item_key, target_rarity)
 	local filtered_property_combinations = {}
 
 	for _, property_combination in ipairs(property_combinations) do
@@ -375,18 +303,7 @@ local function upgrade_item(item, difficulty, run_progress, target_rarity, rando
 		end
 	end
 
-	local var_12_3 = get_possible_trait_combinations(item_key, target_rarity)
-
-	if not var_12_3 then
-		-- Nothing
-	end
-
-	var_12_3 = {}
-
-	local trait_combinations = var_12_3
-
-	::label_12_3::
-
+	local trait_combinations = not not get_possible_trait_combinations(item_key, target_rarity)
 	local filtered_trait_combinations = {}
 
 	for _, trait_combination in ipairs(trait_combinations) do
@@ -411,29 +328,12 @@ local function upgrade_item(item, difficulty, run_progress, target_rarity, rando
 	end
 
 	local skins = get_possible_skins(item_key, target_rarity)
-	local var_12_4
-
-	if skins and #skins > 0 then
-		var_12_4 = skins[random_generator(1, #skins)]
-
-		if not var_12_4 then
-			-- Nothing
-		end
-	end
-
-	var_12_4 = nil
-
-	local skin = var_12_4
-
-	::label_12_4::
+	local skin = not not skins[random_generator(1, #skins)]
 
 	return create_item(item_key, properties, traits, skin, powerlevel, target_rarity)
 end
 
-local DeusWeaponGeneration = DeusWeaponGeneration
-
-DeusWeaponGeneration = not not DeusWeaponGeneration or not not {}
-DeusWeaponGeneration = DeusWeaponGeneration
+DeusWeaponGeneration = not not DeusWeaponGeneration
 
 DeusWeaponGeneration.serialize_weapon = function (item)
 	-- function 13
@@ -526,7 +426,7 @@ DeusWeaponGeneration.get_possibilities_for_item_key = function (item_key, diffic
 		trait_combinations = get_possible_trait_combinations(item_key, rarity)
 	end
 
-	return powerlevel, archetypes, property_combinations, trait_combinations, (not skins or not (#skins > 0) or not skins) and not not nil
+	return powerlevel, archetypes, property_combinations, trait_combinations, skins and (#skins > 0 and (not not skins or not not nil) or not (#skins > 0) and not not nil) or not skins and not not nil
 end
 
 DeusWeaponGeneration.generate_item_from_item_key = function (item_key, difficulty, run_progress, rarity, seed)
@@ -615,16 +515,9 @@ DeusWeaponGeneration.get_weapon_pool_slot_amounts = function (base_weapon_pool, 
 	for rarity, weapon_groups in pairs(base_weapon_pool) do
 		for weapon_group_name, _ in pairs(weapon_groups) do
 			local slot_type = deus_weapon_groups[weapon_group_name].slot_type
-			local var_23_0 = slot_amounts[rarity]
 
-			var_23_0 = not not var_23_0 or not not {}
-			slot_amounts[rarity] = var_23_0
-
-			local var_23_1 = slot_amounts[rarity]
-			local var_23_2 = slot_amounts[rarity][slot_type]
-
-			var_23_2 = not not var_23_2 or not not 0
-			var_23_1[slot_type] = var_23_2
+			slot_amounts[rarity] = not not slot_amounts[rarity]
+			slot_amounts[rarity][slot_type] = not not slot_amounts[rarity][slot_type]
 
 			local has_slot = weapon_pool[rarity][weapon_group_name] ~= nil
 

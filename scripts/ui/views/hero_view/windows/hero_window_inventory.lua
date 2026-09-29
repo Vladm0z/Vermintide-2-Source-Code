@@ -253,22 +253,7 @@ HeroWindowInventory._update_crafting_material_panel = function (self)
 		local items = backend_items:get_filtered_items(item_filter)
 		local item = not not items and not not items[1]
 		local backend_id = not not item and not not item.backend_id
-		local get_item_amount
-
-		if backend_id then
-			get_item_amount = backend_items:get_item_amount(backend_id)
-
-			if not get_item_amount then
-				-- Nothing
-			end
-		end
-
-		get_item_amount = 0
-
-		local amount = get_item_amount
-
-		::label_11_0::
-
+		local amount = backend_id and not not backend_items:get_item_amount(backend_id) or not backend_id and not not 0
 		local widget = widgets_by_name["material_text_" .. index]
 		local content = widget.content
 		local amount_text

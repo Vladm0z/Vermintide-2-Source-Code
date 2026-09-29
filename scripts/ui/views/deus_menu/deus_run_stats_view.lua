@@ -87,23 +87,7 @@ DeusRunStatsView._handle_input = function (self, dt, t)
 		end
 	end
 
-	local locked = self._ui:locked()
-
-	if locked then
-		if not Managers.ui:end_screen_active() then
-			locked = not self:_is_in_deus_map_view()
-		else
-			locked = false
-		end
-	end
-
-	goto label_7_0
-
-	locked = true
-
-	local is_locked = locked
-
-	::label_7_0::
+	local is_locked = not not self._ui:locked()
 
 	self._ui:set_active(not not is_locked or not not new_active)
 end
@@ -144,17 +128,7 @@ DeusRunStatsView._update_inventory = function (self)
 
 	if not potion_item or potion_item.hide_in_frame_ui then
 		local additional_items = run_controller:get_player_additional_items(own_peer_id, REAL_PLAYER_LOCAL_ID)
-		local slot_potion = additional_items.slot_potion
-
-		if slot_potion then
-			-- Nothing
-		end
-
-		slot_potion = additional_items.slot_potion.items
-
-		local additional_potions = slot_potion
-
-		::label_10_0::
+		local additional_potions = not not additional_items.slot_potion
 
 		if additional_potions then
 			for i = 1, #additional_potions do

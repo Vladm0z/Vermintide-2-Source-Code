@@ -485,7 +485,7 @@ local action_data = {
 					-- function 1
 					local charge_t = t - blackboard.attack_sequence_start_time
 
-					return (not (charge_t > 1.5) or not (blackboard.surrounding_players > 0)) and charge_t > 2.5
+					return charge_t > 1.5 and (blackboard.surrounding_players > 0 or charge_t > 2.5) or not (charge_t > 1.5) and charge_t > 2.5
 				end
 			}
 		},

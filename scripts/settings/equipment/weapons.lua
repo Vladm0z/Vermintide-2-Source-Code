@@ -22,11 +22,7 @@ DamageTypes = {
 	CLEAVE = 2,
 	ARMOR_PIERCING = 1
 }
-
-local Weapons = Weapons
-
-Weapons = not not Weapons or not not {}
-Weapons = Weapons
+Weapons = not not Weapons
 
 local weapon_template_files_names = dofile("scripts/settings/equipment/honduras_weapon_templates")
 
@@ -161,17 +157,7 @@ Dots = {
 	burning_dot = function (dot_template_name, damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, source_attacker_unit)
 		-- function 5
 		if damage_profile and not dot_template_name then
-			local var_5_0 = damage_profile.targets[target_index]
-
-			if not var_5_0 then
-				-- Nothing
-			end
-
-			var_5_0 = damage_profile.default_target
-
-			local target_settings = var_5_0
-
-			::label_5_0::
+			local target_settings = not not damage_profile.targets[target_index]
 
 			dot_template_name = not not target_settings.dot_template_name or not not damage_profile.dot_template_name
 		end
@@ -183,21 +169,9 @@ Dots = {
 		local breed = AiUtils.unit_breed(target_unit)
 
 		if breed and not breed.is_hero then
-			local has_extension = ScriptUnit.has_extension(attacker_unit, "talent_system")
+			local talent_extension = not not ScriptUnit.has_extension(attacker_unit, "talent_system")
 
-			if not has_extension then
-				-- Nothing
-			end
-
-			has_extension = ScriptUnit.has_extension(source_attacker_unit, "talent_system")
-
-			local talent_extension = has_extension
-
-			::label_5_1::
-
-			if talent_extension and talent_extension:has_talent("sienna_adept_infinite_burn") and not InfiniteBurnDotLookup[dot_template_name] then
-				-- Nothing
-			end
+			dot_template_name = not talent_extension or not talent_extension:has_talent("sienna_adept_infinite_burn") or not not InfiniteBurnDotLookup[dot_template_name] or not not dot_template_name
 
 			local attacker_unit_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
 
@@ -213,17 +187,7 @@ Dots = {
 	slow_debuff = function (dot_template_name, damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, source_attacker_unit)
 		-- function 6
 		if damage_profile and not dot_template_name then
-			local var_6_0 = damage_profile.targets[target_index]
-
-			if not var_6_0 then
-				-- Nothing
-			end
-
-			var_6_0 = damage_profile.default_target
-
-			local target_settings = var_6_0
-
-			::label_6_0::
+			local target_settings = not not damage_profile.targets[target_index]
 
 			dot_template_name = not not target_settings.dot_template_name or not not damage_profile.dot_template_name
 		end
@@ -237,32 +201,7 @@ Dots = {
 		return true
 	end
 }
-
-local DotTypeLookup = DotTypeLookup
-
-DotTypeLookup = not not DotTypeLookup or not not {
-	weapon_bleed_dot_dagger = "poison_dot",
-	burning_dot_fire_grenade = "burning_dot",
-	burning_dot_3tick = "burning_dot",
-	weapon_bleed_dot_maidenguard = "poison_dot",
-	burning_dot_2tick_slow_unstackable = "burning_dot",
-	burning_dot_2tick = "burning_dot",
-	arrow_poison_dot = "poison_dot",
-	beam_burning_dot = "burning_dot",
-	weapon_bleed_dot_whc = "poison_dot",
-	burning_dot_1tick = "burning_dot",
-	burning_flamethrower_dot = "burning_dot",
-	burning_dot_unchained_push = "burning_dot",
-	aoe_poison_dot = "poison_dot",
-	death_staff_dot = "burning_dot",
-	burning_dot_scythe_special = "burning_dot",
-	vs_ratling_gunner_slow = "burning_dot",
-	burning_dot = "burning_dot",
-	burning_dot_1tick_vs = "burning_dot",
-	sienna_necromancer_4_3_dot = "burning_dot",
-	chaos_zombie_explosion = "poison_dot"
-}
-DotTypeLookup = DotTypeLookup
+DotTypeLookup = not not DotTypeLookup
 
 DLCUtils.merge("dot_type_lookup", DotTypeLookup)
 
@@ -285,17 +224,7 @@ for _, item in pairs(ItemMasterList) do
 	local slot_type = item.slot_type
 
 	if slot_type == "melee" or slot_type == "ranged" or slot_type == "grenade" or slot_type == "healthkit" or slot_type == "potion" then
-		local template_2 = item.template
-
-		if not template_2 then
-			-- Nothing
-		end
-
-		template_2 = item.temporary_template
-
-		local template_name = template_2
-
-		::label_0_0::
+		local template_name = not not item.template
 
 		fassert(rawget(Weapons, template_name), "Weapon template [\"%s\"] does not exist!", template_name)
 
@@ -323,47 +252,15 @@ for _, item in pairs(ItemMasterList) do
 	end
 end
 
-local MeleeBuffTypes_2 = MeleeBuffTypes
-
-if not MeleeBuffTypes_2 then
-	-- Nothing
-end
-
-MeleeBuffTypes_2 = {
-	MELEE_1H = true,
-	MELEE_2H = true
-}
-
-local MeleeBuffTypes = MeleeBuffTypes_2
-
-::label_0_1::
-
-local RangedBuffTypes_2 = RangedBuffTypes
-
-if not RangedBuffTypes_2 then
-	-- Nothing
-end
-
-RangedBuffTypes_2 = {
-	RANGED_ABILITY = true,
-	RANGED = true
-}
-
-local RangedBuffTypes = RangedBuffTypes_2
-
-::label_0_2::
-
+local MeleeBuffTypes = not not MeleeBuffTypes
+local RangedBuffTypes = not not RangedBuffTypes
 local WEAPON_DAMAGE_UNIT_LENGTH_EXTENT = 1.919366
 local TAP_ATTACK_BASE_RANGE_OFFSET = 0.6
 local HOLD_ATTACK_BASE_RANGE_OFFSET = 0.65
 
 for item_template_name, item_template in pairs(Weapons) do
 	item_template.name = item_template_name
-
-	local crosshair_style = item_template.crosshair_style
-
-	crosshair_style = not not crosshair_style or not not "dot"
-	item_template.crosshair_style = crosshair_style
+	item_template.crosshair_style = not not item_template.crosshair_style
 
 	local attack_meta_data = item_template.attack_meta_data
 	local tap_attack_meta_data = not not attack_meta_data and not not attack_meta_data.tap_attack
@@ -372,15 +269,8 @@ for item_template_name, item_template in pairs(Weapons) do
 	local set_default_hold_attack_range = not not hold_attack_meta_data and hold_attack_meta_data.max_range == nil
 
 	if RangedBuffTypes[item_template.buff_type] and attack_meta_data then
-		local effective_against = attack_meta_data.effective_against
-
-		effective_against = not not effective_against or not not 0
-		attack_meta_data.effective_against = effective_against
-
-		local effective_against_charged = attack_meta_data.effective_against_charged
-
-		effective_against_charged = not not effective_against_charged or not not 0
-		attack_meta_data.effective_against_charged = effective_against_charged
+		attack_meta_data.effective_against = not not attack_meta_data.effective_against
+		attack_meta_data.effective_against_charged = not not attack_meta_data.effective_against_charged
 		attack_meta_data.effective_against_combined = bit.bor(attack_meta_data.effective_against, attack_meta_data.effective_against_charged)
 	end
 
@@ -411,47 +301,15 @@ for item_template_name, item_template in pairs(Weapons) do
 			end
 
 			if action_name == "action_one" then
-				local range_mod_2 = sub_action_data.range_mod
-
-				if not range_mod_2 then
-					-- Nothing
-				end
-
-				range_mod_2 = 1
-
-				local range_mod = range_mod_2
-
-				::label_0_3::
+				local range_mod = not not sub_action_data.range_mod
 
 				if set_default_tap_attack_range and string.find(sub_action_name, "light_attack") then
-					local max_range = tap_attack_meta_data.max_range
-
-					if not max_range then
-						-- Nothing
-					end
-
-					max_range = math.huge
-
-					local current_attack_range = max_range
-
-					::label_0_4::
-
+					local current_attack_range = not not tap_attack_meta_data.max_range
 					local tap_attack_range = TAP_ATTACK_BASE_RANGE_OFFSET + WEAPON_DAMAGE_UNIT_LENGTH_EXTENT * range_mod
 
 					tap_attack_meta_data.max_range = math.min(current_attack_range, tap_attack_range)
 				elseif set_default_hold_attack_range and string.find(sub_action_name, "heavy_attack") then
-					local max_range_2 = hold_attack_meta_data.max_range
-
-					if not max_range_2 then
-						-- Nothing
-					end
-
-					max_range_2 = math.huge
-
-					local current_attack_range = max_range_2
-
-					::label_0_5::
-
+					local current_attack_range = not not hold_attack_meta_data.max_range
 					local hold_attack_range = HOLD_ATTACK_BASE_RANGE_OFFSET + WEAPON_DAMAGE_UNIT_LENGTH_EXTENT * range_mod
 
 					hold_attack_meta_data.max_range = math.min(current_attack_range, hold_attack_range)

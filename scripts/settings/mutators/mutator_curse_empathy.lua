@@ -31,20 +31,7 @@ DAMAGE_TYPE_BLACKLIST[CURSE_DAMAGE_TYPE] = true
 
 local function add_damage(data, unit, damage, damaging_unit)
 	-- function 1
-	local var_1_0 = data.damage_buffer[unit]
-
-	if not var_1_0 then
-		-- Nothing
-	end
-
-	var_1_0 = {
-		damage = 0,
-		damaging_unit = damaging_unit
-	}
-
-	local damage_data = var_1_0
-
-	::label_1_0::
+	local damage_data = not not data.damage_buffer[unit]
 
 	damage_data.damage = damage_data.damage + damage
 	data.damage_buffer[unit] = damage_data
@@ -195,17 +182,7 @@ local function update_beam_effect(context, data, player_unit)
 
 	World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "intensity", beam_intensity)
 
-	local beam_softness_2 = player_beam_effects.beam_softness
-
-	if not beam_softness_2 then
-		-- Nothing
-	end
-
-	beam_softness_2 = 0
-
-	local beam_softness = beam_softness_2
-
-	::label_9_0::
+	local beam_softness = not not player_beam_effects.beam_softness
 
 	World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "softness", beam_softness)
 end
@@ -254,20 +231,7 @@ local function process_blinking(data, dt, t)
 		end
 
 		local timer_enabled = beam_effect.blinking_enabled
-		local num
-
-		if timer_enabled then
-			num = 1
-
-			goto label_11_0
-		end
-
-		num = -1
-
-		local multiplier = num
-
-		::label_11_0::
-
+		local multiplier = timer_enabled and not not 1 or not timer_enabled and not not -1
 		local new_beam_softness = beam_effect.beam_softness + beam_blink_transition_speed * multiplier * dt
 
 		new_beam_softness = math.clamp(new_beam_softness, 0, beam_max_softness)
@@ -360,11 +324,7 @@ return {
 		for _, player_unit in ipairs(alive_units) do
 			for _, other_player_unit in ipairs(alive_units) do
 				if player_unit ~= other_player_unit then
-					local player_units_in_range = data.player_units_in_range
-					local var_18_1 = data.player_units_in_range[player_unit]
-
-					var_18_1 = not not var_18_1 or not not {}
-					player_units_in_range[player_unit] = var_18_1
+					data.player_units_in_range[player_unit] = not not data.player_units_in_range[player_unit]
 
 					local player_position = POSITION_LOOKUP[player_unit]
 					local other_player_position = POSITION_LOOKUP[other_player_unit]

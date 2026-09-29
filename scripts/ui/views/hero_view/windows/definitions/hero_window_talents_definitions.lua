@@ -588,7 +588,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 	local background_color = Colors.get_color_table_with_alpha(button_color_name, 255)
 	local button_background_texture = "button_bg_01"
 	local button_background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(button_background_texture)
-	local tbl = {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -623,23 +623,8 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 					content_check_function = function (content)
 						-- function 2
 						local button_hotspot = content.button_hotspot
-						local is_selected
 
-						if not button_hotspot.disable_button then
-							is_selected = button_hotspot.is_selected
-
-							if not is_selected then
-								is_selected = button_hotspot.is_hover
-							end
-						else
-							is_selected = false
-						end
-
-						if false then
-							is_selected = true
-						end
-
-						return is_selected
+						return not not button_hotspot.is_hover
 					end
 				},
 				{
@@ -718,287 +703,255 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 					end
 				}
 			}
+		},
+		content = {
+			edge_holder_left = "menu_frame_09_divider_left",
+			edge_holder_right = "menu_frame_09_divider_right",
+			glass_top = "button_glass_01",
+			bottom_edge = "menu_frame_09_divider",
+			use_bottom_edge = use_bottom_edge,
+			button_hotspot = {},
+			button_text = not not button_text or not not "n/a",
+			hover_glow = optional_color_name and not not ("button_state_hover_" .. optional_color_name) or not optional_color_name and not not "button_state_hover",
+			glow = optional_color_name and not not ("button_state_normal_" .. optional_color_name) or not optional_color_name and not not "button_state_normal",
+			button_background = {
+				uvs = {
+					{
+						0,
+						1 - math.min(size[2] / button_background_texture_settings.size[2], 1)
+					},
+					{
+						math.min(size[1] / button_background_texture_settings.size[1], 1),
+						1
+					}
+				},
+				texture_id = button_background_texture
+			}
+		},
+		style = {
+			button_background = {
+				color = background_color,
+				offset = {
+					0,
+					0,
+					2
+				},
+				size = size
+			},
+			button_edge = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					size[2],
+					3
+				},
+				size = {
+					size[1],
+					5
+				},
+				texture_tiling_size = {
+					1,
+					5
+				}
+			},
+			glass_top = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					size[2] - 4,
+					3
+				},
+				size = {
+					size[1],
+					5
+				}
+			},
+			glow = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					5,
+					3
+				},
+				size = {
+					size[1],
+					size[2] - 5
+				}
+			},
+			hover_glow = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					5,
+					2
+				},
+				size = {
+					size[1],
+					size[2] - 5
+				}
+			},
+			bottom_edge = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					5,
+					0,
+					6
+				},
+				size = {
+					size[1] - 10,
+					5
+				},
+				texture_tiling_size = {
+					1,
+					5
+				}
+			},
+			edge_holder_left = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					3,
+					-6,
+					10
+				},
+				size = {
+					9,
+					17
+				}
+			},
+			edge_holder_right = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					size[1] - 12,
+					-6,
+					10
+				},
+				size = {
+					9,
+					17
+				}
+			},
+			button_text = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+				offset = {
+					0,
+					5,
+					4
+				},
+				size = size
+			},
+			button_text_disabled = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("gray", 255),
+				offset = {
+					0,
+					5,
+					4
+				},
+				size = size
+			},
+			button_text_shadow = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					2,
+					3,
+					3
+				},
+				size = size
+			},
+			button_clicked_rect = {
+				color = {
+					100,
+					0,
+					0,
+					0
+				},
+				offset = {
+					5,
+					0,
+					5
+				},
+				size = {
+					size[1] - 10,
+					size[2]
+				}
+			},
+			button_disabled_rect = {
+				color = {
+					150,
+					5,
+					5,
+					5
+				},
+				offset = {
+					5,
+					0,
+					5
+				},
+				size = {
+					size[1] - 10,
+					size[2]
+				}
+			}
+		},
+		scenegraph_id = scenegraph_id,
+		offset = {
+			0,
+			0,
+			0
 		}
 	}
-	local tbl_2 = {
-		edge_holder_left = "menu_frame_09_divider_left",
-		edge_holder_right = "menu_frame_09_divider_right",
-		glass_top = "button_glass_01",
-		bottom_edge = "menu_frame_09_divider",
-		use_bottom_edge = use_bottom_edge,
-		button_hotspot = {},
-		button_text = not not button_text or not not "n/a"
-	}
-	local str
-
-	if optional_color_name then
-		str = "button_state_hover_" .. optional_color_name
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = "button_state_hover"
-
-	::label_1_0::
-
-	tbl_2.hover_glow = str
-
-	local str_2
-
-	if optional_color_name then
-		str_2 = "button_state_normal_" .. optional_color_name
-
-		if not str_2 then
-			-- Nothing
-		end
-	end
-
-	str_2 = "button_state_normal"
-
-	::label_1_1::
-
-	tbl_2.glow = str_2
-	tbl_2.button_background = {
-		uvs = {
-			{
-				0,
-				1 - math.min(size[2] / button_background_texture_settings.size[2], 1)
-			},
-			{
-				math.min(size[1] / button_background_texture_settings.size[1], 1),
-				1
-			}
-		},
-		texture_id = button_background_texture
-	}
-	tbl.content = tbl_2
-	tbl.style = {
-		button_background = {
-			color = background_color,
-			offset = {
-				0,
-				0,
-				2
-			},
-			size = size
-		},
-		button_edge = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				size[2],
-				3
-			},
-			size = {
-				size[1],
-				5
-			},
-			texture_tiling_size = {
-				1,
-				5
-			}
-		},
-		glass_top = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				size[2] - 4,
-				3
-			},
-			size = {
-				size[1],
-				5
-			}
-		},
-		glow = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				5,
-				3
-			},
-			size = {
-				size[1],
-				size[2] - 5
-			}
-		},
-		hover_glow = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				5,
-				2
-			},
-			size = {
-				size[1],
-				size[2] - 5
-			}
-		},
-		bottom_edge = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				5,
-				0,
-				6
-			},
-			size = {
-				size[1] - 10,
-				5
-			},
-			texture_tiling_size = {
-				1,
-				5
-			}
-		},
-		edge_holder_left = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				3,
-				-6,
-				10
-			},
-			size = {
-				9,
-				17
-			}
-		},
-		edge_holder_right = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				size[1] - 12,
-				-6,
-				10
-			},
-			size = {
-				9,
-				17
-			}
-		},
-		button_text = {
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-			offset = {
-				0,
-				5,
-				4
-			},
-			size = size
-		},
-		button_text_disabled = {
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("gray", 255),
-			offset = {
-				0,
-				5,
-				4
-			},
-			size = size
-		},
-		button_text_shadow = {
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				2,
-				3,
-				3
-			},
-			size = size
-		},
-		button_clicked_rect = {
-			color = {
-				100,
-				0,
-				0,
-				0
-			},
-			offset = {
-				5,
-				0,
-				5
-			},
-			size = {
-				size[1] - 10,
-				size[2]
-			}
-		},
-		button_disabled_rect = {
-			color = {
-				150,
-				5,
-				5,
-				5
-			},
-			offset = {
-				5,
-				0,
-				5
-			},
-			size = {
-				size[1] - 10,
-				size[2]
-			}
-		}
-	}
-	tbl.scenegraph_id = scenegraph_id
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-
-	local widget = tbl
 
 	return widget
 end
@@ -1342,11 +1295,8 @@ local function talent_row(scenegraph_id, size, amount)
 			content_check_function = function (content)
 				-- function 13
 				local hotspot = content[hotspot_name]
-				local is_selected = hotspot.is_selected
 
-				is_selected = not not is_selected and not not not hotspot.disabled
-
-				return is_selected
+				return not not hotspot.is_selected
 			end
 		}
 		style[title_text_selected_name] = {
@@ -1589,11 +1539,7 @@ local function talent_row(scenegraph_id, size, amount)
 			style_id = tooltip_name,
 			content_check_function = function (content)
 				-- function 18
-				local talent = content.talent
-
-				talent = not not talent and not not content.is_hover
-
-				return talent
+				return not not content.talent
 			end
 		}
 		style[tooltip_name] = {

@@ -288,11 +288,8 @@ local definitions = {
 								content_check_function = function (ui_content)
 									-- function 2
 									local button_hotspot = ui_content.button_hotspot
-									local is_hover = button_hotspot.is_hover
 
-									is_hover = not not is_hover and not not not button_hotspot.is_selected
-
-									return is_hover
+									return not not button_hotspot.is_hover
 								end
 							},
 							{
@@ -302,11 +299,8 @@ local definitions = {
 								content_check_function = function (ui_content)
 									-- function 3
 									local button_hotspot = ui_content.button_hotspot
-									local is_selected = button_hotspot.is_selected
 
-									is_selected = not not is_selected and not not not button_hotspot.is_hover
-
-									return is_selected
+									return not not button_hotspot.is_selected
 								end
 							},
 							{
@@ -316,11 +310,8 @@ local definitions = {
 								content_check_function = function (ui_content)
 									-- function 4
 									local button_hotspot = ui_content.button_hotspot
-									local is_selected = button_hotspot.is_selected
 
-									is_selected = not not is_selected and not not button_hotspot.is_hover
-
-									return is_selected
+									return not not button_hotspot.is_selected
 								end
 							},
 							{
@@ -457,18 +448,7 @@ local function setup_mouse_scroll_widget_definition(scroll_field_width, scroll_f
 					pass_type = "scroll",
 					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis)
 						-- function 9
-						local scroll_step_2 = ui_content.scroll_step
-
-						if not scroll_step_2 then
-							-- Nothing
-						end
-
-						scroll_step_2 = 0.1
-
-						local scroll_step = scroll_step_2
-
-						::label_9_0::
-
+						local scroll_step = not not ui_content.scroll_step
 						local current_scroll_value = ui_content.internal_scroll_value
 
 						current_scroll_value = current_scroll_value + scroll_step * -scroll_axis.y
@@ -488,18 +468,7 @@ end
 
 local function lobby_level_display_name(lobby_data)
 	-- function 10
-	local selected_mission_id = lobby_data.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_data.mission_id
-
-	local mission_id = selected_mission_id
-
-	::label_10_0::
-
+	local mission_id = not not lobby_data.selected_mission_id
 	local mechanism = lobby_data.mechanism
 	local matchmaking_type_index = tonumber(lobby_data.matchmaking_type)
 	local matchmaking_type_names = table.clone(NetworkLookup.matchmaking_types, true)
@@ -538,18 +507,7 @@ end
 
 local function lobby_level_sort_order(lobby_data)
 	-- function 11
-	local selected_mission_id = lobby_data.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_data.mission_id
-
-	local mission_id = selected_mission_id
-
-	::label_11_0::
-
+	local mission_id = not not lobby_data.selected_mission_id
 	local mission_hex = Application.make_hash(mission_id)
 	local sort_id = Application.hex64_to_dec(mission_hex)
 
@@ -561,21 +519,7 @@ local function lobby_difficulty_display_name(lobby_data)
 	local difficulty = lobby_data.difficulty
 	local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
 	local difficulty_display_name = not not difficulty and not not difficulty_setting.display_name
-	local var_12_0
-
-	if difficulty then
-		var_12_0 = Localize(difficulty_display_name)
-
-		if not var_12_0 then
-			-- Nothing
-		end
-	end
-
-	var_12_0 = "-"
-
-	local difficulty_text = var_12_0
-
-	::label_12_0::
+	local difficulty_text = difficulty and not not Localize(difficulty_display_name) or not difficulty and not not "-"
 
 	return difficulty_text
 end
@@ -584,21 +528,7 @@ local function lobby_difficulty_rank(lobby_data)
 	-- function 13
 	local difficulty = lobby_data.difficulty
 	local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
-	local rank
-
-	if difficulty then
-		rank = difficulty_setting.rank
-
-		if not rank then
-			-- Nothing
-		end
-	end
-
-	rank = 0
-
-	local difficulty_rank = rank
-
-	::label_13_0::
+	local difficulty_rank = difficulty and not not difficulty_setting.rank or not difficulty and not not 0
 
 	return difficulty_rank
 end
@@ -606,21 +536,7 @@ end
 local function lobby_country_text(lobby_data)
 	-- function 14
 	local country_code = lobby_data.country_code
-	local var_14_0
-
-	if country_code then
-		var_14_0 = iso_countries[country_code]
-
-		if not var_14_0 then
-			-- Nothing
-		end
-	end
-
-	var_14_0 = ""
-
-	local country_text = var_14_0
-
-	::label_14_0::
+	local country_text = country_code and not not iso_countries[country_code] or not country_code and not not ""
 
 	return country_text
 end
@@ -640,17 +556,7 @@ local function level_is_locked(lobby_data)
 		return true
 	end
 
-	local selected_mission_id = lobby_data.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_data.mission_id
-
-	local mission_id = selected_mission_id
-
-	::label_15_0::
+	local mission_id = not not lobby_data.selected_mission_id
 
 	if not mission_id then
 		return false
@@ -720,18 +626,7 @@ local function difficulty_is_locked(lobby_data)
 		return false
 	end
 
-	local selected_mission_id = lobby_data.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_data.mission_id
-
-	local mission_id = selected_mission_id
-
-	::label_16_0::
-
+	local mission_id = not not lobby_data.selected_mission_id
 	local player_manager = Managers.player
 	local player = player_manager:local_player()
 	local statistics_db = player_manager:statistics_db()
@@ -796,66 +691,18 @@ local function create_lobby_list_entry_content(lobby_data)
 	-- function 18
 	local my_peer_id = Network.peer_id()
 	local host = lobby_data.host
-	local server_name = lobby_data.server_name
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = lobby_data.unique_server_name
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = lobby_data.name
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = lobby_data.host
-
-	local title_text = server_name
-
-	::label_18_0::
+	local title_text = not not lobby_data.server_name
 
 	if host == my_peer_id or not title_text then
 		return
 	end
 
 	local level_text = lobby_level_display_name(lobby_data)
-	local num_players = lobby_data.num_players
-
-	if not num_players then
-		-- Nothing
-	end
-
-	num_players = 0
-
-	local num_players_text = num_players
-
-	::label_18_1::
-
+	local num_players_text = not not lobby_data.num_players
 	local difficulty_text = lobby_difficulty_display_name(lobby_data)
 	local status_text = LobbyItemsList.lobby_status_text(lobby_data)
 	local is_invalid = not lobby_data.valid
-	local str
-
-	if is_invalid then
-		str = "[INV]" .. status_text
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = status_text
-
-	local status_text_parsed = str
-
-	::label_18_2::
-
+	local status_text_parsed = is_invalid and not not ("[INV]" .. status_text) or not is_invalid and not not status_text
 	local country_text = lobby_country_text(lobby_data)
 	local content = {
 		locked_difficulty = "locked_icon_01",
@@ -1115,28 +962,7 @@ LobbyItemsList.lobby_status_text = function (lobby_data)
 	local is_dedicated_server = lobby_data.server_info ~= nil
 	local matchmaking_settings = Managers.matchmaking.get_matchmaking_settings_for_mechanism(lobby_data.mechanism)
 	local mission_id = lobby_data.mission_id
-	local password
-
-	if is_dedicated_server then
-		password = lobby_data.server_info.password
-
-		if not password then
-			-- Nothing
-		end
-	end
-
-	if is_dedicated_server or lobby_data.matchmaking ~= "false" then
-		password = false
-
-		goto label_23_0
-	end
-
-	password = true
-
-	local is_private = password
-
-	::label_23_0::
-
+	local is_private = is_dedicated_server and not not lobby_data.server_info.password or not is_dedicated_server and not is_dedicated_server and lobby_data.matchmaking == "false"
 	local is_full = lobby_data.num_players == matchmaking_settings.MAX_NUMBER_OF_PLAYERS
 	local matchmaking_type_index = tonumber(lobby_data.matchmaking_type)
 	local matchmaking_type_names = table.clone(NetworkLookup.matchmaking_types, true)
@@ -1154,55 +980,8 @@ LobbyItemsList.lobby_status_text = function (lobby_data)
 	local level_setting = LevelSettings[mission_id]
 	local is_in_inn = level_setting.hub_level
 	local is_broken = lobby_data.is_broken
-	local str
-
-	if is_broken then
-		str = "lb_broken"
-
-		goto label_23_1
-	end
-
-	if is_private then
-		str = "lb_private"
-
-		goto label_23_1
-	end
-
-	if is_full then
-		str = "lb_full"
-
-		goto label_23_1
-	end
-
-	if is_in_inn then
-		str = "lb_in_inn"
-
-		goto label_23_1
-	end
-
-	str = "lb_started"
-
-	local status = str
-
-	do
-		local var_23_2
-	end
-
-	::label_23_1::
-
-	if status then
-		var_23_2 = Localize(status)
-
-		if not var_23_2 then
-			-- Nothing
-		end
-	end
-
-	var_23_2 = ""
-
-	local status_text = var_23_2
-
-	::label_23_2::
+	local status = is_broken and not not "lb_broken" or not is_broken and (is_private and not not "lb_private" or not is_private and (is_full and not not "lb_full" or not is_full and (is_in_inn and not not "lb_in_inn" or not is_in_inn and not not "lb_started")))
+	local status_text = status and not not Localize(status) or not status and not not ""
 
 	return status_text
 end
@@ -1240,147 +1019,24 @@ end
 
 local function sort_lobbies_on_host_asc(lobby_a, lobby_b)
 	-- function 25
-	local server_name = lobby_a.server_name
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = lobby_a.unique_server_name
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = lobby_a.host
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = ""
-
-	local host_a = server_name
-
-	::label_25_0::
-
-	local server_name_2 = lobby_b.server_name
-
-	if not server_name_2 then
-		-- Nothing
-	end
-
-	server_name_2 = lobby_b.unique_server_name
-
-	if not server_name_2 then
-		-- Nothing
-	end
-
-	server_name_2 = lobby_b.host
-
-	if not server_name_2 then
-		-- Nothing
-	end
-
-	server_name_2 = ""
-
-	local host_b = server_name_2
-
-	::label_25_1::
+	local host_a = not not lobby_a.server_name
+	local host_b = not not lobby_b.server_name
 
 	return host_a < host_b
 end
 
 local function sort_lobbies_on_host_desc(lobby_a, lobby_b)
 	-- function 26
-	local server_name = lobby_a.server_name
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = lobby_a.unique_server_name
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = lobby_a.host
-
-	if not server_name then
-		-- Nothing
-	end
-
-	server_name = ""
-
-	local host_a = server_name
-
-	::label_26_0::
-
-	local server_name_2 = lobby_b.server_name
-
-	if not server_name_2 then
-		-- Nothing
-	end
-
-	server_name_2 = lobby_b.unique_server_name
-
-	if not server_name_2 then
-		-- Nothing
-	end
-
-	server_name_2 = lobby_b.host
-
-	if not server_name_2 then
-		-- Nothing
-	end
-
-	server_name_2 = ""
-
-	local host_b = server_name_2
-
-	::label_26_1::
+	local host_a = not not lobby_a.server_name
+	local host_b = not not lobby_b.server_name
 
 	return host_b < host_a
 end
 
 local function sort_lobbies_on_levels_asc(lobby_a, lobby_b)
 	-- function 27
-	local selected_mission_id = lobby_a.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_a.mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = "lb_unknown"
-
-	local mission_a = selected_mission_id
-
-	::label_27_0::
-
-	local selected_mission_id_2 = lobby_b.selected_mission_id
-
-	if not selected_mission_id_2 then
-		-- Nothing
-	end
-
-	selected_mission_id_2 = lobby_b.mission_id
-
-	if not selected_mission_id_2 then
-		-- Nothing
-	end
-
-	selected_mission_id_2 = "lb_unknown"
-
-	local mission_b = selected_mission_id_2
-
-	::label_27_1::
+	local mission_a = not not lobby_a.selected_mission_id
+	local mission_b = not not lobby_b.selected_mission_id
 
 	return Localize(mission_a) < Localize(mission_b)
 end
@@ -1389,41 +1045,8 @@ local function sort_lobbies_on_levels_desc(lobby_a, lobby_b)
 	-- function 28
 	local level_a = lobby_level_sort_order(lobby_a)
 	local level_b = lobby_level_sort_order(lobby_b)
-	local selected_mission_id = lobby_a.selected_mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = lobby_a.mission_id
-
-	if not selected_mission_id then
-		-- Nothing
-	end
-
-	selected_mission_id = "lb_unknown"
-
-	local mission_a = selected_mission_id
-
-	::label_28_0::
-
-	local selected_mission_id_2 = lobby_b.selected_mission_id
-
-	if not selected_mission_id_2 then
-		-- Nothing
-	end
-
-	selected_mission_id_2 = lobby_b.mission_id
-
-	if not selected_mission_id_2 then
-		-- Nothing
-	end
-
-	selected_mission_id_2 = "lb_unknown"
-
-	local mission_b = selected_mission_id_2
-
-	::label_28_1::
+	local mission_a = not not lobby_a.selected_mission_id
+	local mission_b = not not lobby_b.selected_mission_id
 
 	return Localize(mission_a) > Localize(mission_b)
 end
@@ -1462,58 +1085,16 @@ end
 
 local function sort_lobbies_on_num_players_asc(lobby_a, lobby_b)
 	-- function 33
-	local var_33_0 = tonumber(lobby_a.num_players)
-
-	if not var_33_0 then
-		-- Nothing
-	end
-
-	var_33_0 = 0
-
-	local num_players_a = var_33_0
-
-	::label_33_0::
-
-	local var_33_1 = tonumber(lobby_b.num_players)
-
-	if not var_33_1 then
-		-- Nothing
-	end
-
-	var_33_1 = 0
-
-	local num_players_b = var_33_1
-
-	::label_33_1::
+	local num_players_a = not not tonumber(lobby_a.num_players)
+	local num_players_b = not not tonumber(lobby_b.num_players)
 
 	return num_players_a < num_players_b
 end
 
 local function sort_lobbies_on_num_players_desc(lobby_a, lobby_b)
 	-- function 34
-	local var_34_0 = tonumber(lobby_a.num_players)
-
-	if not var_34_0 then
-		-- Nothing
-	end
-
-	var_34_0 = 0
-
-	local num_players_a = var_34_0
-
-	::label_34_0::
-
-	local var_34_1 = tonumber(lobby_b.num_players)
-
-	if not var_34_1 then
-		-- Nothing
-	end
-
-	var_34_1 = 0
-
-	local num_players_b = var_34_1
-
-	::label_34_1::
+	local num_players_a = not not tonumber(lobby_a.num_players)
+	local num_players_b = not not tonumber(lobby_b.num_players)
 
 	return num_players_b < num_players_a
 end
@@ -1581,7 +1162,7 @@ LobbyItemsList.update = function (self, dt, loading)
 				button_hotspot.on_hover_enter = false
 			end
 
-			if (button_hotspot.is_selected or self.gamepad_changed_selected_list_index == i) and i ~= selected_list_index then
+			if button_hotspot.is_selected and i ~= selected_list_index or not button_hotspot.is_selected and self.gamepad_changed_selected_list_index == i and i ~= selected_list_index then
 				self.lobby_list_index_changed = i
 
 				self:play_sound("Play_hud_select")
@@ -1644,18 +1225,7 @@ LobbyItemsList.handle_gamepad_input = function (self, dt, num_elements)
 	if controller_cooldown and controller_cooldown > 0 then
 		self.controller_cooldown = controller_cooldown - dt
 
-		local speed_multiplier_2 = self.speed_multiplier
-
-		if not speed_multiplier_2 then
-			-- Nothing
-		end
-
-		speed_multiplier_2 = 1
-
-		local speed_multiplier = speed_multiplier_2
-
-		::label_38_0::
-
+		local speed_multiplier = not not self.speed_multiplier
 		local decrease = GamepadSettings.menu_speed_multiplier_frame_decrease
 		local min_multiplier = GamepadSettings.menu_min_speed_multiplier
 
@@ -1663,31 +1233,10 @@ LobbyItemsList.handle_gamepad_input = function (self, dt, num_elements)
 
 		return
 	else
-		local selected_list_index_2 = self.selected_list_index
-
-		if not selected_list_index_2 then
-			-- Nothing
-		end
-
-		selected_list_index_2 = 1
-
-		local selected_list_index = selected_list_index_2
-
-		::label_38_1::
+		local selected_list_index = not not self.selected_list_index
 
 		if selected_list_index then
-			local speed_multiplier_3 = self.speed_multiplier
-
-			if not speed_multiplier_3 then
-				-- Nothing
-			end
-
-			speed_multiplier_3 = 1
-
-			local speed_multiplier = speed_multiplier_3
-
-			::label_38_2::
-
+			local speed_multiplier = not not self.speed_multiplier
 			local new_list_index
 			local move_up = input_service:get("move_up")
 			local move_up_hold = input_service:get("move_up_hold")
@@ -1783,17 +1332,7 @@ end
 LobbyItemsList.rotate_loading_icon = function (self, dt)
 	-- function 42
 	local loading_icon_style = self.loading_icon.style.texture_id
-	local fraction = loading_icon_style.fraction
-
-	if not fraction then
-		-- Nothing
-	end
-
-	fraction = 0
-
-	local angle_fraction = fraction
-
-	::label_42_0::
+	local angle_fraction = not not loading_icon_style.fraction
 
 	angle_fraction = (angle_fraction + dt) % 1
 
@@ -1993,7 +1532,7 @@ LobbyItemsList.set_scrollbar_length = function (self, start_scroll_value, ignore
 	local bar_fraction, step_fraction = 0, 0
 
 	if item_diff_count > 0 then
-		local number_of_elements_per_step = (not columns or not columns) and not not 1
+		local number_of_elements_per_step = columns and (not not columns or not not 1) or not columns and not not 1
 		local number_of_steps_possible = math.ceil(item_diff_count / number_of_elements_per_step)
 		local number_of_steps_total = math.ceil(number_of_items_in_list / number_of_elements_per_step)
 		local list_fraction = 1 / number_of_steps_total

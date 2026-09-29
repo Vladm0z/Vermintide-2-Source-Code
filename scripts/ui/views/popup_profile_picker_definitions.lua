@@ -483,11 +483,8 @@ local function create_hero_icon_widget(scenegraph_id, size)
 					content_change_function = function (content, style)
 						-- function 7
 						local is_hover = content.button_hotspot.is_hover
-						local color = style.color
-						local flag
 
-						flag = (not is_hover or not 255) and not not 230
-						color[1] = flag
+						style.color[1] = is_hover and not not 255 or not is_hover and not not 230
 					end
 				}
 			}
@@ -587,11 +584,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 12
-						local locked = content.locked
-
-						locked = not not locked and not not content.exists
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -600,11 +593,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 13
-						local taken = content.taken
-
-						taken = not not taken and not content.locked and not not content.exists
-
-						return taken
+						return not not content.taken
 					end
 				},
 				{
@@ -631,11 +620,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "rect",
 					content_check_function = function (content)
 						-- function 16
-						local locked = content.locked
-
-						locked = not not locked and not not content.exists
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -644,11 +629,7 @@ local function create_hero_widget(scenegraph_id, size)
 					texture_id = "hover_frame",
 					content_check_function = function (content)
 						-- function 17
-						local is_selected = content.button_hotspot.is_selected
-
-						is_selected = not not is_selected and not not content.exists
-
-						return is_selected
+						return not not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -678,19 +659,7 @@ local function create_hero_widget(scenegraph_id, size)
 					end,
 					content_change_function = function (content, style)
 						-- function 21
-						local num
-
-						if content.is_hover then
-							num = 255
-
-							goto label_21_0
-						end
-
-						num = 184
-
-						local target = num
-
-						::label_21_0::
+						local target = content.is_hover and not not 255 or not content.is_hover and not not 184
 
 						style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 					end

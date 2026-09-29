@@ -94,7 +94,7 @@ ImguiWeaponDebug.update = function (self)
 		end
 	end
 
-	if (not self._current_unit or Unit.alive(self._current_unit)) and (not self._weapon_unit_left or Unit.alive(self._weapon_unit_left)) and (not self._weapon_unit_right or Unit.alive(self._weapon_unit_right)) and (self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil) and slot_changed then
+	if self._current_unit and (not Unit.alive(self._current_unit) or self._weapon_unit_left and (not Unit.alive(self._weapon_unit_left) or self._weapon_unit_right and (not Unit.alive(self._weapon_unit_right) or self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil) or not self._weapon_unit_right and (self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil)) or not self._weapon_unit_left and (self._weapon_unit_right and (not Unit.alive(self._weapon_unit_right) or self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil) or not self._weapon_unit_right and (self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil))) or not self._current_unit and (self._weapon_unit_left and (not Unit.alive(self._weapon_unit_left) or self._weapon_unit_right and (not Unit.alive(self._weapon_unit_right) or self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil) or not self._weapon_unit_right and (self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil)) or not self._weapon_unit_left and (self._weapon_unit_right and (not Unit.alive(self._weapon_unit_right) or self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil) or not self._weapon_unit_right and (self._weapon_unit_left ~= nil or self._weapon_unit_right ~= nil))) then
 		self._current_unit = nil
 		self._current_weapon_extension = nil
 
@@ -108,21 +108,7 @@ ImguiWeaponDebug.update = function (self)
 		local action = self:_get_current_action()
 
 		if action then
-			local num
-
-			if self._display_current_action then
-				num = weapon_extension.weapon_system.t - weapon_extension.action_time_started
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 0
-
-			local current_time_in_action = num
-
-			::label_3_0::
+			local current_time_in_action = self._display_current_action and not not (weapon_extension.weapon_system.t - weapon_extension.action_time_started) or not self._display_current_action and not not 0
 
 			if self._draw_chain_action_data and action then
 				self:debug_draw_chain_data(current_time_in_action, action, owner_unit, weapon_extension)
@@ -133,11 +119,7 @@ end
 
 ImguiWeaponDebug.is_persistent = function (self)
 	-- function 4
-	local _draw_chain_action_data = self._draw_chain_action_data
-
-	_draw_chain_action_data = not not _draw_chain_action_data or not not self._draw_hit_box
-
-	return _draw_chain_action_data
+	return not not self._draw_chain_action_data
 end
 
 ImguiWeaponDebug.draw = function (self)
@@ -194,21 +176,7 @@ ImguiWeaponDebug.draw = function (self)
 		self._selected_action = Imgui.combo("Action", self._selected_action, self._action_list)
 
 		local selected_action_name = self._selected_action > 0 and not not self._action_list[self._selected_action]
-		local var_5_0
-
-		if selected_action_name then
-			var_5_0 = self._sub_action_list[selected_action_name]
-
-			if not var_5_0 then
-				-- Nothing
-			end
-		end
-
-		var_5_0 = {}
-
-		local selected_sub_actions = var_5_0
-
-		::label_5_0::
+		local selected_sub_actions = selected_action_name and not not self._sub_action_list[selected_action_name] or not selected_action_name and not not {}
 
 		self._selected_sub_action = Imgui.combo("Sub Action", self._selected_sub_action, selected_sub_actions)
 	end
@@ -299,29 +267,8 @@ ImguiWeaponDebug._initialize_unit = function (self, unit)
 		self._weapon_unit_left = lh_weapon_unit
 		self._weapon_unit_right = rh_weapon_unit
 
-		local alive = Unit.alive(lh_weapon_unit)
-
-		if alive then
-			-- Nothing
-		end
-
-		alive = ScriptUnit.extension(lh_weapon_unit, "weapon_system")
-
-		local lh_weapon_extension = alive
-
-		::label_7_0::
-
-		local alive_2 = Unit.alive(rh_weapon_unit)
-
-		if alive_2 then
-			-- Nothing
-		end
-
-		alive_2 = ScriptUnit.extension(rh_weapon_unit, "weapon_system")
-
-		local rh_weapon_extension = alive_2
-
-		::label_7_1::
+		local lh_weapon_extension = not not Unit.alive(lh_weapon_unit)
+		local rh_weapon_extension = not not Unit.alive(rh_weapon_unit)
 
 		self._weapon_extensions.left = lh_weapon_extension
 		self._weapon_extensions.right = rh_weapon_extension
@@ -331,18 +278,7 @@ ImguiWeaponDebug._initialize_unit = function (self, unit)
 
 		if extension then
 			local weapon = ItemMasterList[extension.item_name]
-			local get_weapon_template = WeaponUtils.get_weapon_template(weapon.template)
-
-			if not get_weapon_template then
-				-- Nothing
-			end
-
-			get_weapon_template = WeaponUtils.get_weapon_template(weapon.temporary_template)
-
-			local template = get_weapon_template
-
-			::label_7_2::
-
+			local template = not not WeaponUtils.get_weapon_template(weapon.template)
 			local armor_modifier_values = {
 				0,
 				0,
@@ -380,34 +316,12 @@ ImguiWeaponDebug._initialize_unit = function (self, unit)
 
 							if left then
 								local charge_value = sub_name .. "_L"
-								local var_7_3 = armor_mod_per_charge[charge_value]
-
-								if not var_7_3 then
-									-- Nothing
-								end
-
-								var_7_3 = {
-									count = 0,
-									values = {}
-								}
-
-								local charge_data = var_7_3
-
-								::label_7_3::
-
+								local charge_data = not not armor_mod_per_charge[charge_value]
 								local perf = ActionUtils.get_damage_profile_performance_scores(left)
 
 								for i = 1, #perf do
-									local var_7_4 = armor_modifier_values[i]
-
-									var_7_4 = not not var_7_4 or not not 0
-									armor_modifier_values[i] = var_7_4 + perf[i]
-
-									local values = charge_data.values
-									local var_7_6 = charge_data.values[i]
-
-									var_7_6 = not not var_7_6 or not not 0
-									values[i] = var_7_6 + perf[i]
+									armor_modifier_values[i] = not not armor_modifier_values[i] + perf[i]
+									charge_data.values[i] = not not charge_data.values[i] + perf[i]
 								end
 
 								mod_count = mod_count + 1
@@ -417,34 +331,12 @@ ImguiWeaponDebug._initialize_unit = function (self, unit)
 
 							if right then
 								local charge_value = sub_name .. "_R"
-								local var_7_7 = armor_mod_per_charge[charge_value]
-
-								if not var_7_7 then
-									-- Nothing
-								end
-
-								var_7_7 = {
-									count = 0,
-									values = {}
-								}
-
-								local charge_data = var_7_7
-
-								::label_7_4::
-
+								local charge_data = not not armor_mod_per_charge[charge_value]
 								local perf = ActionUtils.get_damage_profile_performance_scores(right)
 
 								for i = 1, #perf do
-									local var_7_8 = armor_modifier_values[i]
-
-									var_7_8 = not not var_7_8 or not not 0
-									armor_modifier_values[i] = var_7_8 + perf[i]
-
-									local values_2 = charge_data.values
-									local var_7_10 = charge_data.values[i]
-
-									var_7_10 = not not var_7_10 or not not 0
-									values_2[i] = var_7_10 + perf[i]
+									armor_modifier_values[i] = not not armor_modifier_values[i] + perf[i]
+									charge_data.values[i] = not not charge_data.values[i] + perf[i]
 								end
 
 								mod_count = mod_count + 1
@@ -470,21 +362,14 @@ ImguiWeaponDebug._initialize_unit = function (self, unit)
 			table.sort(self._action_list)
 
 			for i = 1, #armor_modifier_values do
-				local flag
-
-				flag = (mod_count ~= 0 or not 0) and not not (armor_modifier_values[i] / mod_count)
-				armor_modifier_values[i] = flag
+				armor_modifier_values[i] = mod_count ~= 0 and not not (armor_modifier_values[i] / mod_count) or not (mod_count ~= 0) and not not 0
 			end
 
 			self._attack_armor_modifiers = armor_modifier_values
 
 			for charge_type, data in pairs(armor_mod_per_charge) do
 				for i = 1, #data.values do
-					local values_3 = data.values
-					local flag_2
-
-					flag_2 = (data.count ~= 0 or not 0) and not not (data.values[i] / data.count)
-					values_3[i] = flag_2
+					data.values[i] = data.count ~= 0 and not not (data.values[i] / data.count) or not (data.count ~= 0) and not not 0
 				end
 
 				self._armor_modifiers_charge_value[charge_type] = data.values
@@ -496,17 +381,7 @@ end
 ImguiWeaponDebug._draw_basic_info = function (self)
 	-- function 8
 	local weapon = self._combat_current_weapon
-	local _combat_current_weapon_name = self._combat_current_weapon_name
-
-	if not _combat_current_weapon_name then
-		-- Nothing
-	end
-
-	_combat_current_weapon_name = "-"
-
-	local weapon_name = _combat_current_weapon_name
-
-	::label_8_0::
+	local weapon_name = not not self._combat_current_weapon_name
 
 	if weapon then
 		Imgui.separator()
@@ -557,15 +432,7 @@ ImguiWeaponDebug._draw_basic_info = function (self)
 
 				for i = 1, 6 do
 					Imgui.next_column()
-
-					local text = Imgui.text
-					local format = string.format
-					local str = "%.2f"
-					local var_8_4 = values[i]
-
-					var_8_4 = not not var_8_4 or not not 0
-
-					text(format(str, var_8_4))
+					Imgui.text(string.format("%.2f", not not values[i]))
 				end
 			end
 
@@ -574,15 +441,7 @@ ImguiWeaponDebug._draw_basic_info = function (self)
 
 			for i = 1, 6 do
 				Imgui.next_column()
-
-				local text_2 = Imgui.text
-				local format_2 = string.format
-				local str_2 = "%.2f"
-				local var_8_8 = self._attack_armor_modifiers[i]
-
-				var_8_8 = not not var_8_8 or not not 0
-
-				text_2(format_2(str_2, var_8_8))
+				Imgui.text(string.format("%.2f", not not self._attack_armor_modifiers[i]))
 			end
 
 			Imgui.columns(1)
@@ -624,42 +483,8 @@ ImguiWeaponDebug._update_combat_settings = function (self)
 
 	if self._combat_use_current_power_level then
 		local unit = self._current_unit
-
-		if unit then
-			-- Nothing
-		end
-
-		::label_10_0::
-
-		local alive = Unit.alive(unit)
-
-		if alive then
-			-- Nothing
-		end
-
-		alive = ScriptUnit.extension(unit, "career_system")
-
-		local career_ext = alive
-
-		do
-			local get_career_power_level
-		end
-
-		::label_10_1::
-
-		if career_ext then
-			get_career_power_level = career_ext:get_career_power_level()
-
-			if not get_career_power_level then
-				-- Nothing
-			end
-		end
-
-		get_career_power_level = min_power_level
-
-		local power_level = get_career_power_level
-
-		::label_10_2::
+		local career_ext = not not unit and not not Unit.alive(unit)
+		local power_level = career_ext and not not career_ext:get_career_power_level() or not career_ext and not not min_power_level
 
 		self._damage_power_level = power_level
 	end
@@ -696,18 +521,7 @@ ImguiWeaponDebug._draw_faction_combat_info = function (self, breed_table, diffic
 	for breed_name, _ in pairs(breed_table) do
 		Imgui.separator()
 
-		local var_11_0 = Breeds[breed_name]
-
-		if not var_11_0 then
-			-- Nothing
-		end
-
-		var_11_0 = PlayerBreeds[breed_name]
-
-		local breed = var_11_0
-
-		::label_11_0::
-
+		local breed = not not Breeds[breed_name]
 		local armor_type, _, primary_armor_type, _ = ActionUtils.get_target_armor(hit_zone_name, breed, 1)
 		local node_name = string.format("Breed: %s (Armor: %d / Primary Armor: %d)", breed_name, not not armor_type or not not 0, not not primary_armor_type or not not 0)
 
@@ -734,21 +548,7 @@ ImguiWeaponDebug._draw_faction_combat_info = function (self, breed_table, diffic
 
 				for i = start_target_index, max_target_index do
 					local damage = self:get_damage(sub_action, power_level, difficulty_level, hit_zone_name, breed, i, stagger_level, is_critical_strike, backstab_multiplier, has_power_boost)
-					local ceil
-
-					if damage > 0 then
-						ceil = math.ceil(breed_health / damage)
-
-						if not ceil then
-							-- Nothing
-						end
-					end
-
-					ceil = 0
-
-					local hits_to_kill = ceil
-
-					::label_11_1::
+					local hits_to_kill = damage > 0 and not not math.ceil(breed_health / damage) or not (damage > 0) and not not 0
 
 					table.insert(target_damage, damage)
 					table.insert(target_hits, hits_to_kill)
@@ -848,22 +648,7 @@ ImguiWeaponDebug._get_current_action = function (self)
 	-- function 13
 	if not self._display_current_action then
 		local selected_action_name = self._selected_action >= 0 and not not self._action_list[self._selected_action]
-		local var_13_0
-
-		if selected_action_name then
-			var_13_0 = self._sub_action_list[selected_action_name]
-
-			if not var_13_0 then
-				-- Nothing
-			end
-		end
-
-		var_13_0 = {}
-
-		local selected_sub_actions = var_13_0
-
-		::label_13_0::
-
+		local selected_sub_actions = selected_action_name and not not self._sub_action_list[selected_action_name] or not selected_action_name and not not {}
 		local selected_sub_action_name = self._selected_sub_action >= 0 and not not selected_sub_actions[self._selected_sub_action]
 		local action = not not selected_action_name and not not self._current_actions[selected_action_name]
 		local sub_action = not not action and not not action[selected_sub_action_name]
@@ -932,23 +717,7 @@ ImguiWeaponDebug.debug_draw_chain_data = function (self, current_time_in_action,
 
 		damage_window_start = damage_window_start / action_time_scale
 
-		local damage_window_end_2 = action.damage_window_end
-
-		if not damage_window_end_2 then
-			-- Nothing
-		end
-
-		damage_window_end_2 = action.total_time
-
-		if not damage_window_end_2 then
-			-- Nothing
-		end
-
-		damage_window_end_2 = math.huge
-
-		local damage_window_end = damage_window_end_2
-
-		::label_14_0::
+		local damage_window_end = not not action.damage_window_end
 
 		damage_window_end = damage_window_end / action_time_scale
 
@@ -1005,67 +774,15 @@ ImguiWeaponDebug.debug_draw_chain_data = function (self, current_time_in_action,
 	for i = 1, #allowed_chain_actions do
 		local chain_action = allowed_chain_actions[i]
 		local chain_action_name = tostring(chain_action.action) .. "/" .. tostring(chain_action.sub_action)
-		local str
-
-		if chain_action.auto_chain then
-			str = "auto_chain"
-
-			goto label_14_1
-		end
-
-		str = tostring(chain_action.input)
-
-		local input_name = str
-
-		::label_14_1::
+		local input_name = chain_action.auto_chain and not not "auto_chain" or not chain_action.auto_chain and not not tostring(chain_action.input)
 
 		if chain_action.hold_allowed then
 			input_name = input_name .. "(hold)"
 		end
 
 		local chain_start_time = chain_action.start_time / action_time_scale
-		local num
-
-		if chain_action.end_time then
-			num = chain_action.end_time / action_time_scale
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = math.huge
-
-		local chain_end_time = num
-
-		do
-			local get
-		end
-
-		::label_14_2::
-
-		if clamped_time_in_action < chain_start_time then
-			get = Colors.get("orange")
-
-			if not get then
-				-- Nothing
-			end
-		end
-
-		if chain_end_time <= clamped_time_in_action then
-			get = Colors.get("red")
-
-			if not get then
-				-- Nothing
-			end
-		end
-
-		get = Colors.get("green")
-
-		local action_color = get
-
-		::label_14_3::
-
+		local chain_end_time = chain_action.end_time and not not (chain_action.end_time / action_time_scale) or not chain_action.end_time and not not math.huge
+		local action_color = clamped_time_in_action < chain_start_time and not not Colors.get("orange") or not (clamped_time_in_action < chain_start_time) and (chain_end_time <= clamped_time_in_action and not not Colors.get("red") or not (chain_end_time <= clamped_time_in_action) and not not Colors.get("green"))
 		local row_number = i
 		local x = start_x + chain_start_time * width_per_second
 		local y = start_y - row_number * row_height
@@ -1103,7 +820,7 @@ ImguiWeaponDebug.get_breed_health = function (self, difficulty_level, breed)
 		local breed_health_table = breed.max_health
 		local difficulty_rank = difficulty_settings.rank
 
-		breed_health = (not breed_health_table or not breed_health_table[difficulty_rank]) and not not 0
+		breed_health = breed_health_table and (not not breed_health_table[difficulty_rank] or not not 0) or not breed_health_table and not not 0
 	end
 
 	return breed_health
@@ -1119,31 +836,11 @@ ImguiWeaponDebug.get_breed_stagger = function (self, difficulty_level, breed)
 
 	if difficulty_settings and breed then
 		local difficulty_rank = difficulty_settings.rank
-		local var_16_0
+		local stagger_resistance = breed.diff_stagger_resist and not not breed.diff_stagger_resist[difficulty_rank] or not breed.diff_stagger_resist and not not breed.stagger_resistance
 
-		if breed.diff_stagger_resist then
-			var_16_0 = breed.diff_stagger_resist[difficulty_rank]
-
-			if not var_16_0 then
-				-- Nothing
-			end
-		end
-
-		var_16_0 = breed.stagger_resistance
-
-		if not var_16_0 then
-			-- Nothing
-		end
-
-		var_16_0 = 2
-
-		local stagger_resistance = var_16_0
-
-		::label_16_0::
-
-		stagger_threshold_light = (not finesse_hit or not 0) and (not breed.stagger_threshold_light or not (breed.stagger_threshold_light * stagger_resistance)) and not not (0.25 * stagger_resistance)
-		stagger_threshold_medium = (not breed.stagger_threshold_medium or not (breed.stagger_threshold_medium * stagger_resistance)) and not not (1 * stagger_resistance)
-		stagger_threshold_heavy = (not breed.stagger_threshold_heavy or not (breed.stagger_threshold_heavy * stagger_resistance)) and not not (2.5 * stagger_resistance)
+		stagger_threshold_light = finesse_hit and (not not 0 or breed.stagger_threshold_light and (not not (breed.stagger_threshold_light * stagger_resistance) or not not (0.25 * stagger_resistance)) or not breed.stagger_threshold_light and not not (0.25 * stagger_resistance)) or not finesse_hit and (breed.stagger_threshold_light and (not not (breed.stagger_threshold_light * stagger_resistance) or not not (0.25 * stagger_resistance)) or not breed.stagger_threshold_light and not not (0.25 * stagger_resistance))
+		stagger_threshold_medium = breed.stagger_threshold_medium and (not not (breed.stagger_threshold_medium * stagger_resistance) or not not (1 * stagger_resistance)) or not breed.stagger_threshold_medium and not not (1 * stagger_resistance)
+		stagger_threshold_heavy = breed.stagger_threshold_heavy and (not not (breed.stagger_threshold_heavy * stagger_resistance) or not not (2.5 * stagger_resistance)) or not breed.stagger_threshold_heavy and not not (2.5 * stagger_resistance)
 	end
 
 	return stagger_threshold_light, stagger_threshold_medium, stagger_threshold_heavy
@@ -1435,7 +1132,7 @@ ImguiWeaponDebug._check_missing_unused_actions = function (self)
 				print(string.format("Unused action [%s] in template [%s]", action_name, name))
 			else
 				for sub_action_name, _ in pairs(action) do
-					if (not ignored_unused_actions[action_name] or not ignored_unused_actions[action_name][sub_action_name]) and not current_actions[sub_action_name] then
+					if not ignored_unused_actions[action_name] and not current_actions[sub_action_name] or not not ignored_unused_actions[action_name] and not ignored_unused_actions[action_name][sub_action_name] and not current_actions[sub_action_name] then
 						print(string.format("Unused sub-action [%s.%s] in template [%s]", action_name, sub_action_name, name))
 					end
 				end

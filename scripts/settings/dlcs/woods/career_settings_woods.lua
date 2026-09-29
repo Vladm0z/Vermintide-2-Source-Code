@@ -126,11 +126,7 @@ CareerSettings.we_thornsister = {
 		"weapon_pose"
 	}
 }
-
-local OverchargeData = OverchargeData
-
-OverchargeData = not not OverchargeData or not not {}
-OverchargeData = OverchargeData
+OverchargeData = not not OverchargeData
 OverchargeData.we_thornsister = {
 	overcharge_value_decrease_rate = 1,
 	overcharge_warning_critical_sound_event = "weapon_life_staff_overcharge_warning_critical",
@@ -169,18 +165,8 @@ OverchargeData.we_thornsister = {
 		}
 	}
 }
-
-local PlayerUnitStatusSettings = PlayerUnitStatusSettings
-
-PlayerUnitStatusSettings = not not PlayerUnitStatusSettings or not not {}
-PlayerUnitStatusSettings = PlayerUnitStatusSettings
-
-local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
-local merge = table.merge
-local overcharge_values = PlayerUnitStatusSettings.overcharge_values
-
-overcharge_values = not not overcharge_values or not not {}
-PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
+PlayerUnitStatusSettings = not not PlayerUnitStatusSettings
+PlayerUnitStatusSettings.overcharge_values = table.merge(not not PlayerUnitStatusSettings.overcharge_values, {
 	life_staff_light = 4
 })
 CareerNameAchievementMapping.we_thornsister = "thornsister"

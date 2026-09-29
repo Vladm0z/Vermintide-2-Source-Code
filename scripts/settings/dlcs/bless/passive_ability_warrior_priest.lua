@@ -20,11 +20,7 @@ PassiveAbilityWarriorPriest.init = function (self, extension_init_context, unit,
 	self._activation_time = 0
 	self.uses_resource = true
 	self._is_local_human = self._player.local_player
-
-	local _is_local_human = self._is_local_human
-
-	_is_local_human = not not _is_local_human or not not self._player.bot_player
-	self._is_local_player = _is_local_human
+	self._is_local_player = not not self._is_local_human
 	self._game = Managers.state.network:game()
 end
 
@@ -307,20 +303,7 @@ end
 
 PassiveAbilityWarriorPriest._set_fury_glow_enabled = function (self, enabled)
 	-- function 20
-	local str
-
-	if enabled then
-		str = "lua_enable_eye_glow"
-
-		goto label_20_0
-	end
-
-	str = "lua_disable_eye_glow"
-
-	local flow_event = str
-
-	::label_20_0::
-
+	local flow_event = enabled and not not "lua_enable_eye_glow" or not enabled and not not "lua_disable_eye_glow"
 	local inventory_extension = self._inventory_extension
 
 	if self._is_local_human then

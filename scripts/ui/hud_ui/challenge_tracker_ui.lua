@@ -18,17 +18,7 @@ end
 ChallengeTrackerUI.destroy = function (self)
 	-- function 2
 	if RETAINED_MODE_ENABLED then
-		local _data = self._data
-
-		if _data then
-			-- Nothing
-		end
-
-		_data = self._data.widgets
-
-		local widgets = _data
-
-		::label_2_0::
+		local widgets = not not self._data
 
 		if widgets then
 			UIUtils.destroy_widgets(self._ui_renderer, widgets)
@@ -83,21 +73,7 @@ ChallengeTrackerUI._refresh_challenge_data = function (self, data)
 
 	local active_widgets = data.widgets
 	local num_active_widgets = #active_widgets
-	local gui_retained
-
-	if RETAINED_MODE_ENABLED then
-		gui_retained = self._ui_renderer.gui_retained
-
-		if not gui_retained then
-			-- Nothing
-		end
-	end
-
-	gui_retained = self._ui_renderer.gui
-
-	local gui = gui_retained
-
-	::label_6_0::
+	local gui = RETAINED_MODE_ENABLED and not not self._ui_renderer.gui_retained or not RETAINED_MODE_ENABLED and not not self._ui_renderer.gui
 
 	for i = 1, n do
 		local challenge = challenges[i]
@@ -180,13 +156,8 @@ end
 ChallengeTrackerUI._play_animation = function (self, name, widget, initial_delay)
 	-- function 8
 	local animator = self._ui_animator
-	local var_8_0 = animator
-	local stop_animation = animator.stop_animation
-	local animation_id = widget.content.animation_id
 
-	animation_id = not not animation_id or not not false
-
-	stop_animation(var_8_0, animation_id)
+	animator:stop_animation(not not widget.content.animation_id)
 
 	widget.content.animation_id = animator:start_animation(name, widget, definitions.scenegraph_definition, {
 		view = self,
@@ -202,17 +173,7 @@ ChallengeTrackerUI._play_animation_queued = function (self, name, widget, initia
 	if animator:is_animation_completed(current_animation_id) then
 		self:_play_animation(name, widget, initial_delay)
 	else
-		local var_9_0 = self._animation_queue[widget]
-
-		if not var_9_0 then
-			-- Nothing
-		end
-
-		var_9_0 = {}
-
-		local queue = var_9_0
-
-		::label_9_0::
+		local queue = not not self._animation_queue[widget]
 
 		queue[#queue + 1] = {
 			name = name,
@@ -321,7 +282,7 @@ end
 
 ChallengeTrackerUI._draw = function (self, dt)
 	-- function 16
-	if (self._dirty or not RETAINED_MODE_ENABLED) and not self._is_visible then
+	if not self._is_visible then
 		return
 	end
 
@@ -334,10 +295,7 @@ ChallengeTrackerUI._draw = function (self, dt)
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for _, widget in pairs(self._data.widgets) do
-		local alpha_multiplier = widget.content.alpha_multiplier
-
-		alpha_multiplier = not not alpha_multiplier or not not 1
-		render_settings.alpha_multiplier = alpha_multiplier
+		render_settings.alpha_multiplier = not not widget.content.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end

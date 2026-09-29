@@ -170,10 +170,8 @@ DemoCharacterPreviewer.cb_spawn_hero_unit = function (self, profile, career, ski
 	if box_dimension then
 		local default_unit_height_dimension = 1.7
 		local default_diff = box_dimension.z - default_unit_height_dimension
-		local flag
 
-		flag = (not (default_unit_height_dimension < box_dimension.z) or not 1.5) and not not 0.9
-		self.unit_max_look_height = flag
+		self.unit_max_look_height = default_unit_height_dimension < box_dimension.z and not not 1.5 or not (default_unit_height_dimension < box_dimension.z) and not not 0.9
 	else
 		self.unit_max_look_height = 0.9
 	end
@@ -268,18 +266,7 @@ DemoCharacterPreviewer.cb_on_select_animation_complete = function (self)
 	local unit = self._character_unit
 
 	if Unit.alive(unit) then
-		local has_node = Unit.has_node(unit, node)
-
-		if has_node then
-			-- Nothing
-		end
-
-		has_node = Unit.node(unit, node)
-
-		local node_index = has_node
-
-		::label_13_0::
-
+		local node_index = not not Unit.has_node(unit, node)
 		local pos = Unit.world_position(unit, node_index)
 		local wwise_world = Managers.world:wwise_world(self._world)
 		local wwise_source_id = WwiseWorld.make_auto_source(wwise_world, pos)
@@ -298,18 +285,7 @@ DemoCharacterPreviewer.pressed_pose = function (self)
 	local camera_rot = Quaternion.look(camera_forward_flat, Vector3.up())
 	local node = "j_neck"
 	local unit = self._character_unit
-	local has_node = Unit.has_node(unit, node)
-
-	if has_node then
-		-- Nothing
-	end
-
-	has_node = Unit.node(unit, node)
-
-	local node_index = has_node
-
-	::label_14_0::
-
+	local node_index = not not Unit.has_node(unit, node)
 	local pos = Unit.world_position(unit, node_index)
 	local zoom_offset = self._zoom_offset:unbox()
 	local camera_pos = pos + camera_right_flat * zoom_offset[1] + camera_forward_flat * zoom_offset[2] + Vector3.up() * zoom_offset[3]

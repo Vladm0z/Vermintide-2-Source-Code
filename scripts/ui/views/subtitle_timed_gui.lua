@@ -185,7 +185,7 @@ SubtitleTimedGui.init = function (self, subtitle_timing_name, num_rows)
 			localized_subtitle_timing_name = localized_subtitle_timing_name .. Localize(subtitle_name) .. " "
 		end
 	else
-		localized_subtitle_timing_name = (subtitle_timing_name == "" or not Localize(subtitle_timing_name)) and not not subtitle_timing_name
+		localized_subtitle_timing_name = not not subtitle_timing_name
 	end
 
 	self.texts = extract_lines(localized_subtitle_timing_name)

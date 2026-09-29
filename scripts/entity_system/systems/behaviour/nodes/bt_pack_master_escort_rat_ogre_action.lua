@@ -28,10 +28,7 @@ BTPackMasterEscortRatOgreAction.enter = function (self, unit, blackboard, t)
 
 	locomotion:set_rotation_speed(5)
 
-	local attack_cooldown = blackboard.attack_cooldown
-
-	attack_cooldown = not not attack_cooldown or not not 0
-	blackboard.attack_cooldown = attack_cooldown
+	blackboard.attack_cooldown = not not blackboard.attack_cooldown
 end
 
 BTPackMasterEscortRatOgreAction.leave = function (self, unit, blackboard, t, reason, destroy)

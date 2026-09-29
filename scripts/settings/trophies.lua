@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/trophies.lua
 
-local Trophies = Trophies
-
-Trophies = not not Trophies or not not {}
-Trophies = Trophies
+Trophies = not not Trophies
 Trophies.hub_trophy_empty = {
 	sound_event = "hub_trophy_empty_description",
 	unit_name = "units/props/inn/hub_trophy/hub_trophy_empty",
@@ -82,10 +79,8 @@ local trophy_order = {
 	"hub_trophy_bogenhafen",
 	"hub_trophy_rasknitt"
 }
-local TrophyOrder = TrophyOrder
 
-TrophyOrder = not not TrophyOrder or not not {}
-TrophyOrder = TrophyOrder
+TrophyOrder = not not TrophyOrder
 
 for _, painting in ipairs(trophy_order) do
 	if not table.contains(TrophyOrder, painting) and not table.contains(DefaultTrophies, painting) then

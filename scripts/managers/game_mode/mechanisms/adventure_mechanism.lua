@@ -27,33 +27,7 @@ local function print_vote_request(params)
 
 	print("............................................................................................................")
 	print("............................................................................................................")
-
-	local printf = printf
-	local str = "GAME START SETTINGS -> Level: %s | Difficulty: %s | Private: %s | Always Host: %s | Strict Matchmaking: %s | Quick Game: %s | Matchmaking Type: %s | Twitch: %s"
-	local flag = (not level_key or not level_key) and not not "Not specified"
-	local var_1_3 = difficulty_key
-	local flag_2
-
-	flag_2 = (not private_game or not "yes") and not not "no"
-
-	local flag_3
-
-	flag_3 = (not always_host or not "yes") and not not "no"
-
-	local flag_4
-
-	flag_4 = (not strict_matchmaking or not "yes") and not not "no"
-
-	local flag_5
-
-	flag_5 = (not quick_game or not "yes") and not not "no"
-
-	local flag_6 = not not matchmaking_type or not not "Not specified"
-	local flag_7
-
-	flag_7 = (not twitch_enabled or not "Yes") and not not "No"
-
-	printf(str, flag, var_1_3, flag_2, flag_3, flag_4, flag_5, flag_6, flag_7)
+	printf("GAME START SETTINGS -> Level: %s | Difficulty: %s | Private: %s | Always Host: %s | Strict Matchmaking: %s | Quick Game: %s | Matchmaking Type: %s | Twitch: %s", level_key and (not not level_key or not not "Not specified") or not level_key and not not "Not specified", difficulty_key, private_game and not not "yes" or not private_game and not not "no", always_host and not not "yes" or not always_host and not not "no", strict_matchmaking and not not "yes" or not strict_matchmaking and not not "no", quick_game and not not "yes" or not quick_game and not not "no", not not matchmaking_type or not not "Not specified", twitch_enabled and not not "Yes" or not twitch_enabled and not not "No")
 	print("............................................................................................................")
 	print("............................................................................................................")
 end
@@ -203,7 +177,7 @@ AdventureMechanism.is_venture_over = function (self)
 	if self._state == WEAVE_STATE then
 		local final_round = not Managers.weave:calculate_next_objective_index()
 
-		return not not game_mode_ended and reason == "lost" or not not final_round
+		return not not game_mode_ended and (reason == "lost" or not not final_round)
 	else
 		return game_mode_ended
 	end
@@ -309,11 +283,7 @@ end
 
 AdventureMechanism.get_hub_level_key = function (self)
 	-- function 21
-	local _debug_hub_level_key = self._debug_hub_level_key
-
-	_debug_hub_level_key = not not _debug_hub_level_key or not not AdventureMechanism.get_starting_level()
-
-	return _debug_hub_level_key
+	return not not self._debug_hub_level_key
 end
 
 AdventureMechanism.get_level_seed = function (self, level_seed, optional_system)
@@ -323,7 +293,7 @@ AdventureMechanism.get_level_seed = function (self, level_seed, optional_system)
 	if weave_manager and weave_manager:get_active_weave() then
 		local active_objective = weave_manager:get_active_objective_template()
 
-		level_seed = (not optional_system or not active_objective.system_seeds or not active_objective.system_seeds[optional_system]) and not not active_objective.level_seed or not not level_seed
+		level_seed = optional_system and (active_objective.system_seeds and (not not active_objective.system_seeds[optional_system] or not not active_objective.level_seed or not not level_seed) or not active_objective.system_seeds and (not not active_objective.level_seed or not not level_seed)) or not optional_system and (not not active_objective.level_seed or not not level_seed)
 	end
 
 	return level_seed
@@ -357,74 +327,14 @@ AdventureMechanism.get_end_of_level_rewards_arguments = function (self, game_won
 	local grimoire = mission_system:get_level_end_mission_data("grimoire_hidden_mission")
 	local loot_dice = mission_system:get_level_end_mission_data("bonus_dice_hidden_mission")
 	local painting_scraps = mission_system:get_level_end_mission_data("painting_scrap_hidden_mission")
-	local tbl = {}
-	local current_amount
-
-	if tome then
-		current_amount = tome.current_amount
-
-		if not current_amount then
-			-- Nothing
-		end
-	end
-
-	current_amount = 0
-
-	::label_23_0::
-
-	tbl.tome = current_amount
-
-	local current_amount_2
-
-	if grimoire then
-		current_amount_2 = grimoire.current_amount
-
-		if not current_amount_2 then
-			-- Nothing
-		end
-	end
-
-	current_amount_2 = 0
-
-	::label_23_1::
-
-	tbl.grimoire = current_amount_2
-
-	local current_amount_3
-
-	if loot_dice then
-		current_amount_3 = loot_dice.current_amount
-
-		if not current_amount_3 then
-			-- Nothing
-		end
-	end
-
-	current_amount_3 = 0
-
-	::label_23_2::
-
-	tbl.loot_dice = current_amount_3
-
-	local current_amount_4
-
-	if painting_scraps then
-		current_amount_4 = painting_scraps.current_amount
-
-		if not current_amount_4 then
-			-- Nothing
-		end
-	end
-
-	current_amount_4 = 0
-
-	::label_23_3::
-
-	tbl.painting_scraps = current_amount_4
-	tbl.quickplay = quickplay
-	tbl.game_won = game_won
-
-	local chest_upgrade_data = tbl
+	local chest_upgrade_data = {
+		tome = tome and not not tome.current_amount or not tome and not not 0,
+		grimoire = grimoire and not not grimoire.current_amount or not grimoire and not not 0,
+		loot_dice = loot_dice and not not loot_dice.current_amount or not loot_dice and not not 0,
+		painting_scraps = painting_scraps and not not painting_scraps.current_amount or not painting_scraps and not not 0,
+		quickplay = quickplay,
+		game_won = game_won
+	}
 
 	return {
 		current_weave_index = current_weave_index,
@@ -698,18 +608,7 @@ end
 
 AdventureMechanism.uses_random_directors = function (self)
 	-- function 37
-	local get_next_weave = Managers.weave:get_next_weave()
-
-	if not get_next_weave then
-		-- Nothing
-	end
-
-	get_next_weave = Development.parameter("weave_name")
-
-	local weave_name = get_next_weave
-
-	::label_37_0::
-
+	local weave_name = not not Managers.weave:get_next_weave()
 	local weave_data = WeaveSettings.templates[weave_name]
 
 	return not weave_data
@@ -740,17 +639,7 @@ AdventureMechanism.request_vote = function (self, params)
 		Managers.deed:select_deed(deed_backend_id, Network.peer_id())
 	end
 
-	local var_39_0 = vote_requests[params.request_type]
-
-	if not var_39_0 then
-		-- Nothing
-	end
-
-	var_39_0 = vote_requests.default
-
-	local request_func = var_39_0
-
-	::label_39_0::
+	local request_func = not not vote_requests[params.request_type]
 
 	if request_func then
 		request_func(params)
@@ -775,11 +664,8 @@ AdventureMechanism.get_starting_level = function ()
 	end
 
 	local keep_variation_data = Managers.backend:get_level_variation_data()
-	local hub_level = keep_variation_data.hub_level
 
-	hub_level = not not hub_level or not not HUB_LEVEL_NAME
-
-	return hub_level
+	return not not keep_variation_data.hub_level
 end
 
 AdventureMechanism.reserved_party_id_by_peer = function (self, peer_id)

@@ -5,16 +5,8 @@ ShadowFlareExtension = class(ShadowFlareExtension)
 ShadowFlareExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	self.owner_unit_id = extension_init_data.owner_unit_id
-
-	local glow_time = extension_init_data.glow_time
-
-	glow_time = not not glow_time or not not 10
-	self.glow_time = glow_time
-
-	local delete_time = extension_init_data.delete_time
-
-	delete_time = not not delete_time or not not 3
-	self.delete_time = delete_time
+	self.glow_time = not not extension_init_data.glow_time
+	self.delete_time = not not extension_init_data.delete_time
 	self.initial_position = extension_init_data.initial_position
 	self._timer = 0
 	self._delete_timer = 0

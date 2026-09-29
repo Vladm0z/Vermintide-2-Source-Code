@@ -56,11 +56,7 @@ PlayerCharacterStateGrabbedByTentacle.on_enter = function (self, unit, input, dt
 	end
 
 	self.physics_world = World.physics_world(self.world)
-
-	local nav_world = self.nav_world
-
-	nav_world = not not nav_world or not not Managers.state.entity:system("ai_system"):nav_world()
-	self.nav_world = nav_world
+	self.nav_world = not not self.nav_world
 
 	local locomotion_extension = self.locomotion_extension
 
@@ -295,20 +291,7 @@ PlayerCharacterStateGrabbedByTentacle.get_drag_velocity = function (self, player
 
 	local spline = self.tentacle_spline_extension.spline
 	local tentacle_data = self.tentacle_spline_extension.tentacle_data
-	local num
-
-	if tentacle_data.portal_spawn_type == "floor" then
-		num = 3.3
-
-		goto label_17_0
-	end
-
-	num = 2.5
-
-	local out_dist = num
-
-	::label_17_0::
-
+	local out_dist = tentacle_data.portal_spawn_type ~= "floor" and not not 2.5 or not (tentacle_data.portal_spawn_type ~= "floor") and not not 3.3
 	local spline_pos = spline:get_point_at_distance(self.winding_dist - out_dist)
 	local travel_to_node_index = self.tentacle_spline_extension.tentacle_data.travel_to_node_index
 	local to_portal_along_spline, swing_vec

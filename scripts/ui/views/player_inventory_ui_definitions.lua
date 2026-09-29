@@ -66,20 +66,7 @@ local function create_inventory_entry_widgets(num_of_entries)
 	for i = 1, num_of_entries do
 		local slot = SLOTS_LIST[i]
 		local slot_name = slot.name
-		local flag
-
-		if consumable_slots[slot_name] then
-			flag = true
-
-			goto label_1_0
-		end
-
-		flag = false
-
-		local is_consumable_slot = flag
-
-		::label_1_0::
-
+		local is_consumable_slot = consumable_slots[slot_name] and not not true or not consumable_slots[slot_name] and not not false
 		local scenegraph_id = "inventory_entry_" .. i
 		local scenegraph_root_id = "inventory_entry_root_" .. i
 		local scenegraph_background_id = "inventory_entry_background_" .. i
@@ -323,7 +310,7 @@ local function create_inventory_entry_widgets(num_of_entries)
 			}
 		}
 
-		local tbl = {
+		local inventory_entry_widget = {
 			element = {
 				passes = {
 					{
@@ -458,212 +445,178 @@ local function create_inventory_entry_widgets(num_of_entries)
 						retained_mode = RETAINED_MODE_ENABLED,
 						content_check_function = function (content)
 							-- function 14
-							local has_data
-
-							if not content.stance_bar.active then
-								has_data = content.has_data
-
-								if has_data then
-									-- Nothing
-								end
-
-								if content.ammo_text_1 == "" or content.ammo_text_2 == "" then
-									-- Nothing
-								end
-							end
-
-							has_data = false
-
-							goto label_14_1
-
-							::label_14_0::
-
-							has_data = true
-
-							::label_14_1::
-
-							return has_data
+							return not content.stance_bar.active and not not content.has_data
 						end
 					}
 				}
-			}
-		}
-		local tbl_2 = {
-			ammo_divider = "weapon_generic_icons_ammodivider",
-			stance_bar_fg = "stance_bar_frame",
-			selected = false,
-			ammo_text_1 = "ammo_text",
-			icon_lit = "weapon_icon_empty",
-			stance_bar_glow = "stance_bar_glow_orange",
-			default_icon = "consumables_frame_bg_lit",
-			stance_bar_lit = "stance_bar_frame_lit",
-			icon = "weapon_icon_empty",
-			ammo_text_2 = "ammo_text"
-		}
-		local flag_2
-
-		flag_2 = (not is_consumable_slot or not "consumables_frame_bg_lit") and not not "weapon_generic_icons_bg"
-		tbl_2.background = flag_2
-
-		local flag_3
-
-		flag_3 = (not is_consumable_slot or not "consumables_frame_lit") and not not "weapon_generic_icons_bg_lit"
-		tbl_2.background_lit = flag_3
-		tbl_2.stance_bar = {
-			bar_value = 0,
-			active = false,
-			texture_id = "stance_bar_orange"
-		}
-		tbl.content = tbl_2
-		tbl.style = {
-			ammo_divider = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				scenegraph_id = scenegraph_ammo_text_root_id
 			},
-			background = {
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				scenegraph_id = scenegraph_background_id
+			content = {
+				ammo_divider = "weapon_generic_icons_ammodivider",
+				stance_bar_fg = "stance_bar_frame",
+				selected = false,
+				ammo_text_1 = "ammo_text",
+				icon_lit = "weapon_icon_empty",
+				stance_bar_glow = "stance_bar_glow_orange",
+				default_icon = "consumables_frame_bg_lit",
+				stance_bar_lit = "stance_bar_frame_lit",
+				icon = "weapon_icon_empty",
+				ammo_text_2 = "ammo_text",
+				background = is_consumable_slot and not not "consumables_frame_bg_lit" or not is_consumable_slot and not not "weapon_generic_icons_bg",
+				background_lit = is_consumable_slot and not not "consumables_frame_lit" or not is_consumable_slot and not not "weapon_generic_icons_bg_lit",
+				stance_bar = {
+					bar_value = 0,
+					active = false,
+					texture_id = "stance_bar_orange"
+				}
 			},
-			background_lit = {
-				color = {
-					0,
-					255,
-					255,
-					255
+			style = {
+				ammo_divider = {
+					color = {
+						255,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_ammo_text_root_id
 				},
-				scenegraph_id = scenegraph_background_id
-			},
-			icon = {
-				color = {
-					255,
-					255,
-					255,
-					255
+				background = {
+					color = {
+						255,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_background_id
 				},
-				scenegraph_id = scenegraph_icon_id
-			},
-			icon_lit = {
-				color = {
-					0,
-					255,
-					255,
-					255
+				background_lit = {
+					color = {
+						0,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_background_id
 				},
-				scenegraph_id = scenegraph_icon_id
-			},
-			default_icon = {
-				color = {
-					150,
-					255,
-					255,
-					255
+				icon = {
+					color = {
+						255,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_icon_id
 				},
-				scenegraph_id = scenegraph_default_icon_id
-			},
-			stance_bar_fg = {
-				offset = {
-					0,
-					0,
-					3
+				icon_lit = {
+					color = {
+						0,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_icon_id
 				},
-				color = {
-					255,
-					255,
-					255,
-					255
+				default_icon = {
+					color = {
+						150,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_default_icon_id
 				},
-				scenegraph_id = scenegraph_stance_bar_id
-			},
-			stance_bar_lit = {
-				offset = {
-					0,
-					0,
-					4
+				stance_bar_fg = {
+					offset = {
+						0,
+						0,
+						3
+					},
+					color = {
+						255,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_stance_bar_id
 				},
-				color = {
-					0,
-					255,
-					255,
-					255
+				stance_bar_lit = {
+					offset = {
+						0,
+						0,
+						4
+					},
+					color = {
+						0,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_stance_bar_id
 				},
-				scenegraph_id = scenegraph_stance_bar_id
-			},
-			stance_bar_glow = {
-				offset = {
-					0,
-					0,
-					0
-				},
-				color = {
-					0,
-					255,
-					255,
-					255
-				},
-				scenegraph_id = scenegraph_stance_bar_glow_id
-			},
-			stance_bar = {
-				uv_start_pixels = 0,
-				uv_scale_pixels = 67,
-				offset_scale = 1,
-				scale_axis = 2,
-				scenegraph_id = scenegraph_stance_bar_fill_id,
-				offset = {
-					0,
-					0,
-					1
-				},
-				color = {
-					255,
-					255,
-					255,
-					255
-				},
-				uvs = {
-					{
+				stance_bar_glow = {
+					offset = {
+						0,
 						0,
 						0
 					},
-					{
-						1,
+					color = {
+						0,
+						255,
+						255,
+						255
+					},
+					scenegraph_id = scenegraph_stance_bar_glow_id
+				},
+				stance_bar = {
+					uv_start_pixels = 0,
+					uv_scale_pixels = 67,
+					offset_scale = 1,
+					scale_axis = 2,
+					scenegraph_id = scenegraph_stance_bar_fill_id,
+					offset = {
+						0,
+						0,
 						1
+					},
+					color = {
+						255,
+						255,
+						255,
+						255
+					},
+					uvs = {
+						{
+							0,
+							0
+						},
+						{
+							1,
+							1
+						}
 					}
+				},
+				ammo_text_1 = {
+					vertical_alignment = "center",
+					dynamic_font = true,
+					horizontal_alignment = "right",
+					font_size = 26,
+					pixel_perfect = false,
+					font_type = "hell_shark",
+					text_color = Colors.get_color_table_with_alpha("white", 255),
+					scenegraph_id = scenegraph_ammo_text_1_id
+				},
+				ammo_text_2 = {
+					vertical_alignment = "center",
+					dynamic_font = true,
+					horizontal_alignment = "left",
+					font_size = 26,
+					pixel_perfect = false,
+					font_type = "hell_shark",
+					text_color = Colors.get_color_table_with_alpha("white", 150),
+					scenegraph_id = scenegraph_ammo_text_2_id
 				}
 			},
-			ammo_text_1 = {
-				vertical_alignment = "center",
-				dynamic_font = true,
-				horizontal_alignment = "right",
-				font_size = 26,
-				pixel_perfect = false,
-				font_type = "hell_shark",
-				text_color = Colors.get_color_table_with_alpha("white", 255),
-				scenegraph_id = scenegraph_ammo_text_1_id
-			},
-			ammo_text_2 = {
-				vertical_alignment = "center",
-				dynamic_font = true,
-				horizontal_alignment = "left",
-				font_size = 26,
-				pixel_perfect = false,
-				font_type = "hell_shark",
-				text_color = Colors.get_color_table_with_alpha("white", 150),
-				scenegraph_id = scenegraph_ammo_text_2_id
-			}
+			scenegraph_id = scenegraph_id
 		}
-		tbl.scenegraph_id = scenegraph_id
-
-		local inventory_entry_widget = tbl
 
 		entries[i] = inventory_entry_widget
 	end

@@ -42,24 +42,7 @@ StateTitleScreenLoadSave._handle_tutorial_auto_start = function (self)
 		end
 	end
 
-	local get_user_data = Managers.backend:get_user_data("has_completed_tutorial")
-
-	if not get_user_data then
-		-- Nothing
-	end
-
-	get_user_data = SaveData.has_completed_tutorial
-
-	if not get_user_data then
-		-- Nothing
-	end
-
-	get_user_data = false
-
-	local has_completed_tutorial = get_user_data
-
-	::label_2_0::
-
+	local has_completed_tutorial = not not Managers.backend:get_user_data("has_completed_tutorial")
 	local run_tutorial, tutorial_state = Managers.mechanism:should_run_tutorial()
 
 	if not force_run_tutorial and (has_completed_tutorial or script_data.disable_tutorial_at_start or not run_tutorial) then

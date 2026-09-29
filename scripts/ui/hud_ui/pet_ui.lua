@@ -120,18 +120,8 @@ PetUI._create_pet_widget = function (self, pet_unit)
 
 	SKULL_TEXTURES[skull_index], SKULL_TEXTURES[index] = SKULL_TEXTURES[index], SKULL_TEXTURES[skull_index]
 	SKULL_GLOW_TEXTURES[skull_index], SKULL_GLOW_TEXTURES[index] = SKULL_GLOW_TEXTURES[index], SKULL_GLOW_TEXTURES[skull_index]
-
-	local content_2 = widget.content
-	local var_9_1 = SKULL_TEXTURES[index]
-
-	var_9_1 = not not var_9_1 or not not SKULL_TEXTURES[1]
-	content_2.icon = var_9_1
-
-	local content_3 = widget.content
-	local var_9_3 = SKULL_GLOW_TEXTURES[index]
-
-	var_9_3 = not not var_9_3 or not not SKULL_GLOW_TEXTURES[1]
-	content_3.icon_glow = var_9_3
+	widget.content.icon = not not SKULL_TEXTURES[index]
+	widget.content.icon_glow = not not SKULL_GLOW_TEXTURES[index]
 	self._pet_widget_by_unit[pet_unit] = widget
 	content.unit = pet_unit
 	self._global_pet_counter = self._global_pet_counter + 1
@@ -238,22 +228,7 @@ PetUI._update_pet_container = function (self, dt, t, player)
 	local commander_extension = ScriptUnit.has_extension(player_unit, "ai_commander_system")
 	local controlled_units = commander_extension:get_controlled_units()
 	local first_controlled_unit = next(controlled_units)
-	local command_state_2
-
-	if first_controlled_unit then
-		command_state_2 = commander_extension:command_state(first_controlled_unit)
-
-		if not command_state_2 then
-			-- Nothing
-		end
-	end
-
-	command_state_2 = CommandStates.Following
-
-	local command_state = command_state_2
-
-	::label_14_0::
-
+	local command_state = first_controlled_unit and not not commander_extension:command_state(first_controlled_unit) or not first_controlled_unit and not not CommandStates.Following
 	local container_widget = self._container_widget
 
 	if command_state ~= self._last_command_state and self._ui_animator:is_animation_completed(self._change_command_state_anim) then
@@ -315,11 +290,8 @@ PetUI._update_pet_container = function (self, dt, t, player)
 
 	if Application.user_setting("numeric_ui") then
 		local num_pets = commander_extension:get_controlled_units_count()
-		local _last_amount_pets = self._last_amount_pets
 
-		_last_amount_pets = not not _last_amount_pets or not not 0
-
-		if _last_amount_pets ~= num_pets then
+		if not not self._last_amount_pets ~= num_pets then
 			container_widget.content.pet_amount_text = num_pets
 			container_widget.content.pet_amount_text_shadow = num_pets
 			self._last_amount_pets = num_pets

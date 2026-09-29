@@ -1,10 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_interactions.lua
 
-local InteractionDefinitions = InteractionDefinitions
-local deus_access = InteractionDefinitions.deus_access
-
-deus_access = not not deus_access or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions.deus_access = deus_access
+InteractionDefinitions.deus_access = not not InteractionDefinitions.deus_access
 InteractionDefinitions.deus_access.config.swap_to_3p = false
 
 InteractionDefinitions.deus_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -30,11 +26,7 @@ InteractionDefinitions.deus_access.client.can_interact = function (interactor_un
 	return not not active and not not not is_game_matchmaking
 end
 
-local InteractionDefinitions_2 = InteractionDefinitions
-local deus_weapon_chest = InteractionDefinitions.deus_weapon_chest
-
-deus_weapon_chest = not not deus_weapon_chest or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions_2.deus_weapon_chest = deus_weapon_chest
+InteractionDefinitions.deus_weapon_chest = not not InteractionDefinitions.deus_weapon_chest
 InteractionDefinitions.deus_weapon_chest.config.swap_to_3p = false
 
 InteractionDefinitions.deus_weapon_chest.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -72,11 +64,7 @@ InteractionDefinitions.deus_weapon_chest.client.can_interact = function (interac
 	return not not deus_cursed_chest_extension and not not deus_cursed_chest_extension:can_interact()
 end
 
-local InteractionDefinitions_3 = InteractionDefinitions
-local deus_cursed_chest = InteractionDefinitions.deus_cursed_chest
-
-deus_cursed_chest = not not deus_cursed_chest or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions_3.deus_cursed_chest = deus_cursed_chest
+InteractionDefinitions.deus_cursed_chest = not not InteractionDefinitions.deus_cursed_chest
 InteractionDefinitions.deus_cursed_chest.config = {
 	block_other_interactions = true,
 	hud_verb = "player_interaction",
@@ -161,27 +149,13 @@ end
 
 InteractionDefinitions.deus_cursed_chest.client.get_progress = function (data, config, t)
 	-- function 10
-	local duration_2 = data.duration
-
-	if not duration_2 then
-		-- Nothing
-	end
-
-	duration_2 = 0
-
-	local duration = duration_2
-
-	::label_10_0::
+	local duration = not not data.duration
 
 	if duration == 0 then
 		return 0
 	end
 
-	local flag
-
-	flag = (data.start_time ~= nil or not 0) and not not math.min(1, (t - data.start_time) / duration)
-
-	return flag
+	return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and not not 0
 end
 
 InteractionDefinitions.deus_cursed_chest.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -213,11 +187,7 @@ InteractionDefinitions.deus_cursed_chest.client.can_interact = function (interac
 	return not not deus_cursed_chest_extension and not not deus_cursed_chest_extension:can_interact()
 end
 
-local InteractionDefinitions_4 = InteractionDefinitions
-local deus_arena_interactable = InteractionDefinitions.deus_arena_interactable
-
-deus_arena_interactable = not not deus_arena_interactable or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions_4.deus_arena_interactable = deus_arena_interactable
+InteractionDefinitions.deus_arena_interactable = not not InteractionDefinitions.deus_arena_interactable
 InteractionDefinitions.deus_arena_interactable.config.swap_to_3p = false
 
 InteractionDefinitions.deus_arena_interactable.server.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -245,21 +215,8 @@ end
 InteractionDefinitions.deus_arena_interactable.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
 	-- function 16
 	local deus_arena_interactable_extension = ScriptUnit.has_extension(interactable_unit, "deus_arena_interactable_system")
-	local get_interact_hud_description
 
-	if deus_arena_interactable_extension then
-		get_interact_hud_description = deus_arena_interactable_extension:get_interact_hud_description()
-
-		if not get_interact_hud_description then
-			-- Nothing
-		end
-	end
-
-	get_interact_hud_description = "deus_altar_hud_desc"
-
-	::label_16_0::
-
-	return get_interact_hud_description, "interaction_action_open"
+	return deus_arena_interactable_extension and not not deus_arena_interactable_extension:get_interact_hud_description() or not deus_arena_interactable_extension and not not "deus_altar_hud_desc", "interaction_action_open"
 end
 
 InteractionDefinitions.deus_arena_interactable.client.can_interact = function (interactor_unit, interactable_unit, data, config)
@@ -390,11 +347,7 @@ InteractionDefinitions.deus_setup_rally_flag = {
 				return 0
 			end
 
-			local flag
-
-			flag = (data.start_time ~= nil or not 0) and not not math.min(1, (t - data.start_time) / config.duration)
-
-			return flag
+			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and not not 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 26
@@ -406,12 +359,7 @@ InteractionDefinitions.deus_setup_rally_flag = {
 		end
 	}
 }
-
-local InteractionDefinitions_5 = InteractionDefinitions
-local deus_debug_changelog = InteractionDefinitions.deus_debug_changelog
-
-deus_debug_changelog = not not deus_debug_changelog or not not table.clone(InteractionDefinitions.smartobject)
-InteractionDefinitions_5.deus_debug_changelog = deus_debug_changelog
+InteractionDefinitions.deus_debug_changelog = not not InteractionDefinitions.deus_debug_changelog
 InteractionDefinitions.deus_debug_changelog.config.swap_to_3p = false
 
 InteractionDefinitions.deus_debug_changelog.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)

@@ -53,13 +53,8 @@ local function make_bitop(t)
 			return op1(a, b)
 		end)
 	end)
-	local var_5_0 = make_bitop_uncached
-	local var_5_1 = op2
-	local n = t.n
 
-	n = not not n or not not 1
-
-	return var_5_0(var_5_1, 2^n)
+	return make_bitop_uncached(op2, 2^not not t.n)
 end
 
 local bxor1 = make_bitop({

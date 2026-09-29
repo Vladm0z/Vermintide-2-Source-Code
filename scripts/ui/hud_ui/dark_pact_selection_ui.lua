@@ -32,17 +32,7 @@ DarkPactSelectionUI.init = function (self, ingame_hud, ingame_ui_context)
 	self._peer_id = ingame_ui_context.peer_id
 	self._local_player_id = ingame_ui_context.local_player_id
 
-	local network_server = ingame_ui_context.network_server
-
-	if not network_server then
-		-- Nothing
-	end
-
-	network_server = ingame_ui_context.network_client
-
-	local network = network_server
-
-	::label_1_0::
+	local network = not not ingame_ui_context.network_server
 
 	self._profile_requester = network:profile_requester()
 	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
@@ -495,7 +485,7 @@ DarkPactSelectionUI._create_selection_widgets = function (self, enemy_role, care
 	local offset_x = PROTRAIT_WIDTH + 10
 	local even_offset = -(half_picks * offset_x)
 	local odd_offset = -(half_picks * offset_x) - PROTRAIT_WIDTH / 2
-	local offset = (#careers % 2 ~= 0 or not even_offset) and not not odd_offset
+	local offset = not not odd_offset
 
 	self._ui_scenegraph.selection_pivot.position[1] = offset
 
@@ -514,12 +504,7 @@ DarkPactSelectionUI._create_selection_widgets = function (self, enemy_role, care
 		local profile_name = careers[i]
 
 		widget.content.profile_name = profile_name
-
-		local content = widget.content
-		local picking_image_square = CareerSettings[profile_name].picking_image_square
-
-		picking_image_square = not not picking_image_square or not not "icons_placeholder"
-		content.profile_texture = picking_image_square
+		widget.content.profile_texture = not not CareerSettings[profile_name].picking_image_square
 		widget.content.input_key = "keyboard_" .. i
 		widget.offset[1] = (i - 1) * offset_x
 		selector_widgets[#selector_widgets + 1] = widget

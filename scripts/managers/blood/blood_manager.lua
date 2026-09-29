@@ -89,17 +89,7 @@ BloodManager._init_settings = function (self)
 
 	self:update_blood_enabled(blood_enabled)
 
-	local user_setting = Application.user_setting("num_blood_decals")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = BloodSettings.blood_decals.num_decals
-
-	local num_blood_decals = user_setting
-
-	::label_10_0::
+	local num_blood_decals = not not Application.user_setting("num_blood_decals")
 
 	self:update_num_blood_decals(num_blood_decals)
 
@@ -385,58 +375,24 @@ BloodManager.add_weapon_blood = function (self, attacker, damage_type)
 			local weapon_right_3p = equipment.right_hand_wielded_unit_3p
 			local weapon_left = equipment.left_hand_wielded_unit
 			local weapon_left_3p = equipment.left_hand_wielded_unit_3p
-			local var_26_0 = BloodSettings.weapon_blood[damage_type]
+			local amount = not not BloodSettings.weapon_blood[damage_type]
 
-			if not var_26_0 then
-				-- Nothing
-			end
-
-			var_26_0 = BloodSettings.weapon_blood.default
-
-			local amount = var_26_0
-
-			::label_26_0::
-
-			local _weapon_blood = self._weapon_blood
-			local var_26_2 = self._weapon_blood[attacker]
-
-			var_26_2 = not not var_26_2 or not not {}
-			_weapon_blood[attacker] = var_26_2
+			self._weapon_blood[attacker] = not not self._weapon_blood[attacker]
 
 			if weapon_right then
-				local var_26_3 = self._weapon_blood[attacker]
-				local max = math.max
-				local var_26_5 = self._weapon_blood[attacker][weapon_right]
-
-				var_26_5 = not not var_26_5 or not not 0
-				var_26_3[weapon_right] = max(var_26_5 + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_right] = math.max(not not self._weapon_blood[attacker][weapon_right] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 
 			if weapon_right_3p then
-				local var_26_6 = self._weapon_blood[attacker]
-				local max_2 = math.max
-				local var_26_8 = self._weapon_blood[attacker][weapon_right_3p]
-
-				var_26_8 = not not var_26_8 or not not 0
-				var_26_6[weapon_right_3p] = max_2(var_26_8 + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_right_3p] = math.max(not not self._weapon_blood[attacker][weapon_right_3p] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 
 			if weapon_left then
-				local var_26_9 = self._weapon_blood[attacker]
-				local max_3 = math.max
-				local var_26_11 = self._weapon_blood[attacker][weapon_left]
-
-				var_26_11 = not not var_26_11 or not not 0
-				var_26_9[weapon_left] = max_3(var_26_11 + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_left] = math.max(not not self._weapon_blood[attacker][weapon_left] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 
 			if weapon_left_3p then
-				local var_26_12 = self._weapon_blood[attacker]
-				local max_4 = math.max
-				local var_26_14 = self._weapon_blood[attacker][weapon_right_3p]
-
-				var_26_14 = not not var_26_14 or not not 0
-				var_26_12[weapon_left_3p] = max_4(var_26_14 + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_left_3p] = math.max(not not self._weapon_blood[attacker][weapon_right_3p] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 		end
 	end

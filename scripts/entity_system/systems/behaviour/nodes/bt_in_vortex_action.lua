@@ -51,14 +51,7 @@ BTInVortexAction.leave = function (self, unit, blackboard, t, reason, destroy)
 		local navigation_extension = blackboard.navigation_extension
 
 		navigation_extension:set_enabled(true)
-
-		local var_3_0 = navigation_extension
-		local reset_destination = navigation_extension.reset_destination
-		local var_3_2 = POSITION_LOOKUP[unit]
-
-		var_3_2 = not not var_3_2 or not not Unit.local_position(unit, 0)
-
-		reset_destination(var_3_0, var_3_2)
+		navigation_extension:reset_destination(not not POSITION_LOOKUP[unit])
 
 		local shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
 
@@ -162,19 +155,7 @@ BTInVortexAction.run = function (self, unit, blackboard, t, dt)
 			Unit.set_local_position(unit, 0, nav_position)
 
 			if not blackboard.breed.die_on_vortex_land then
-				local str
-
-				if blackboard.sot_landing then
-					str = "sot_landing"
-
-					goto label_4_0
-				end
-
-				str = "vortex_landing"
-
-				local anim_event = str
-
-				::label_4_0::
+				local anim_event = blackboard.sot_landing and not not "sot_landing" or not blackboard.sot_landing and not not "vortex_landing"
 
 				Managers.state.network:anim_event(unit, anim_event)
 			end

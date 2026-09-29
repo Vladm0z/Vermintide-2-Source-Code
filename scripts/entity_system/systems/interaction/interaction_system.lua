@@ -96,13 +96,7 @@ end
 InteractionSystem.rpc_interaction_abort = function (self, channel_id, interactor_go_id)
 	-- function 6
 	InteractionHelper.printf("rpc_interaction_abort(%s, %s)", channel_id, tostring(interactor_go_id))
-
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Error, this should only be run on server!")
+	fassert(not not self.is_server, "Error, this should only be run on server!")
 
 	local interactor_unit = self.unit_storage:unit(interactor_go_id)
 

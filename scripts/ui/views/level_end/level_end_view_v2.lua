@@ -15,18 +15,7 @@ local generic_input_actions = definitions.generic_input_actions
 local weave_widget_definitions = definitions.weave_widget_definitions
 local debug_draw_scenegraph = false
 local debug_menu = false
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/ui/views/level_end/level_end_view_testify")
-
-local level_end_view_testify = testify
-
-::label_0_0::
-
+local level_end_view_testify = not not script_data.testify
 local unit_x = 0.07
 local unit_x_seperation = 1.36
 local unit_y = -1.5
@@ -123,16 +112,8 @@ LevelEndView.start = function (self)
 	self:play_sound("play_gui_chestroom_start")
 
 	self._playing_music = nil
-
-	local flag
-
-	flag = (not self.game_won or not "Play_won_music") and not not "Play_lost_music"
-	self._start_music_event = flag
-
-	local flag_2
-
-	flag_2 = (not self.game_won or not "Stop_won_music") and not not "Stop_lost_music"
-	self._stop_music_event = flag_2
+	self._start_music_event = self.game_won and not not "Play_won_music" or not self.game_won and not not "Play_lost_music"
+	self._stop_music_event = self.game_won and not not "Stop_won_music" or not self.game_won and not not "Stop_lost_music"
 end
 
 LevelEndView.setup_pages = function (self, game_won, rewards)
@@ -199,11 +180,7 @@ end
 
 LevelEndView.loading_complete = function (self)
 	-- function 8
-	local _team_previewer = self._team_previewer
-
-	_team_previewer = not not _team_previewer and not not self._team_previewer:loading_done()
-
-	return _team_previewer
+	return not not self._team_previewer
 end
 
 LevelEndView._setup_pages_defeat = function (self)
@@ -230,17 +207,7 @@ LevelEndView.create_ui_elements = function (self)
 		self._page_selector_widget = UIWidget.init(UIWidgets.create_page_dot_selector("page_selector", #self._state_name_by_index))
 	end
 
-	local create_default_button = UIWidgets.create_default_button
-	local str = "retry_button"
-	local size = scenegraph_definition.retry_button.size
-	local var_10_3
-	local var_10_4
-	local Localize = Localize
-	local flag
-
-	flag = (not self.game_won or not "button_replay") and not not "button_retry"
-
-	local retry_button_def = create_default_button(str, size, var_10_3, var_10_4, Localize(flag), 32, nil, nil, nil, true)
+	local retry_button_def = UIWidgets.create_default_button("retry_button", scenegraph_definition.retry_button.size, nil, nil, Localize(self.game_won and not not "button_replay" or not self.game_won and not not "button_retry"), 32, nil, nil, nil, true)
 
 	self._retry_button_widget = UIWidget.init(retry_button_def)
 	self._ready_button_widget = UIWidget.init(widget_definitions.ready_button)
@@ -306,17 +273,7 @@ LevelEndView._get_hero_from_score = function (self, player_data)
 	local careers = profile_data.careers
 	local career_settings = careers[career_index]
 	local weapon_pose_anim_event, weapon_pose_weapon, weapon_pose_slot
-	local weapon_pose_2 = player_data.weapon_pose
-
-	if weapon_pose_2 then
-		-- Nothing
-	end
-
-	weapon_pose_2 = player_data.weapon_pose.item_name
-
-	local weapon_pose = weapon_pose_2
-
-	::label_12_0::
+	local weapon_pose = not not player_data.weapon_pose
 
 	if weapon_pose then
 		local item = ItemMasterList[weapon_pose]
@@ -337,33 +294,7 @@ LevelEndView._get_hero_from_score = function (self, player_data)
 		end
 	end
 
-	local var_12_1 = self
-	local _verify_weapon_data = self._verify_weapon_data
-	local var_12_3 = player_data
-
-	if not weapon_pose_slot then
-		-- Nothing
-	end
-
-	do
-		local preview_wield_slot
-	end
-
-	::label_12_1::
-
-	if player_data.weapon then
-		preview_wield_slot = career_settings.preview_wield_slot
-
-		if not preview_wield_slot then
-			-- Nothing
-		end
-	end
-
-	preview_wield_slot = nil
-
-	::label_12_2::
-
-	local verfied_weapon_slot, verified_weapon, verified_weapon_pose = _verify_weapon_data(var_12_1, var_12_3, preview_wield_slot, not not weapon_pose_weapon or not not player_data.weapon, weapon_pose_anim_event)
+	local verfied_weapon_slot, verified_weapon, verified_weapon_pose = self:_verify_weapon_data(player_data, not not career_settings.preview_wield_slot, not not weapon_pose_weapon or not not player_data.weapon, weapon_pose_anim_event)
 
 	return {
 		profile_index = profile_index,
@@ -422,17 +353,7 @@ LevelEndView._verify_weapon_data = function (self, player_data, weapon_slot, wea
 
 	if skin_name then
 		local skin_combination_table = item_data.skin_combination_table
-		local var_13_0 = WeaponSkins.skin_combinations[skin_combination_table]
-
-		if not var_13_0 then
-			-- Nothing
-		end
-
-		var_13_0 = EMPTY_TABLE
-
-		local weapon_skin_combinations_tables = var_13_0
-
-		::label_13_0::
+		local weapon_skin_combinations_tables = not not WeaponSkins.skin_combinations[skin_combination_table]
 
 		for _, weapon_skins in pairs(weapon_skin_combinations_tables) do
 			for _, skin in ipairs(weapon_skins) do
@@ -723,21 +644,7 @@ end
 
 LevelEndView.active_input_service = function (self)
 	-- function 28
-	local FAKE_INPUT_SERVICE
-
-	if self.input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	::label_28_0::
-
-	return FAKE_INPUT_SERVICE
+	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
 end
 
 LevelEndView._start_animation = function (self, animation_name)
@@ -842,35 +749,9 @@ local level_name = "levels/end_screen_victory/parading_screen"
 
 LevelEndView.setup_camera = function (self)
 	-- function 35
-	local str
-
-	if self.game_won then
-		str = "pose_camera"
-
-		goto label_35_0
-	end
-
-	str = "end_screen_camera"
-
-	local camera_name = str
-
-	::label_35_0::
-
+	local camera_name = self.game_won and not not "pose_camera" or not self.game_won and not not "end_screen_camera"
 	local camera_pose, camera_index
-	local str_2
-
-	if self.game_won then
-		str_2 = "units/hub_elements/cutscene_camera/cutscene_camera_env_controls"
-
-		goto label_35_1
-	end
-
-	str_2 = "units/hub_elements/cutscene_camera/cutscene_camera"
-
-	local camera_unit_resource = str_2
-
-	::label_35_1::
-
+	local camera_unit_resource = self.game_won and not not "units/hub_elements/cutscene_camera/cutscene_camera_env_controls" or not self.game_won and not not "units/hub_elements/cutscene_camera/cutscene_camera"
 	local unit_indices = LevelResource.unit_indices(level_name, camera_unit_resource)
 
 	for _, index in pairs(unit_indices) do
@@ -915,25 +796,7 @@ LevelEndView.start_story_camera = function (self, story_name, optional_loop, opt
 	self._story_id = story_id
 
 	Storyteller.set_speed(self._storyteller, story_id, not not optional_speed or not not 1)
-
-	local set_loop_mode = Storyteller.set_loop_mode
-	local _storyteller = self._storyteller
-	local var_37_2 = story_id
-	local LOOP
-
-	if optional_loop then
-		LOOP = Storyteller.LOOP
-
-		if not LOOP then
-			-- Nothing
-		end
-	end
-
-	LOOP = Storyteller.NONE
-
-	::label_37_0::
-
-	set_loop_mode(_storyteller, var_37_2, LOOP)
+	Storyteller.set_loop_mode(self._storyteller, story_id, optional_loop and not not Storyteller.LOOP or not optional_loop and not not Storyteller.NONE)
 
 	self._story_timer = 0
 	self._manual_control = optional_manual_control
@@ -1019,14 +882,7 @@ LevelEndView._gather_hero_locations = function (self)
 	end
 
 	for i = 1, 4 do
-		local var_42_0 = hero_locations[i]
-
-		var_42_0 = not not var_42_0 or not not {
-			0,
-			0,
-			0
-		}
-		hero_locations[i] = var_42_0
+		hero_locations[i] = not not hero_locations[i]
 	end
 
 	return hero_locations
@@ -1056,19 +912,7 @@ LevelEndView.spawn_level = function (self, context, world)
 	self:_register_object_sets(level, level_name)
 
 	local game_won = context.game_won
-	local str
-
-	if game_won then
-		str = "flow_victory"
-
-		goto label_44_0
-	end
-
-	str = "flow_defeat"
-
-	local object_set = str
-
-	::label_44_0::
+	local object_set = game_won and not not "flow_victory" or not game_won and not not "flow_defeat"
 
 	self:_show_object_set(object_set, level)
 

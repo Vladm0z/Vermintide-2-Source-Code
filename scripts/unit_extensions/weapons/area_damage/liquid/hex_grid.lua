@@ -153,40 +153,8 @@ HexGrid.sample_grid = function (self, samples, z, multiplier)
 		else
 			local i_val = i - min_i
 			local j_val = j - min_j
-			local num
-
-			if i_val % 2 == 0 then
-				num = 125 * i_val / i_span
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 125 + 125 * i_val / i_span
-
-			local r = num
-
-			do
-				local num_2
-			end
-
-			::label_8_0::
-
-			if j_val % 2 == 0 then
-				num_2 = 125 * j_val / j_span
-
-				if not num_2 then
-					-- Nothing
-				end
-			end
-
-			num_2 = 125 + 125 * j_val / j_span
-
-			local g = num_2
-
-			::label_8_1::
-
+			local r = i_val % 2 ~= 0 and not not (125 + 125 * i_val / i_span) or not (i_val % 2 ~= 0) and not not (125 * i_val / i_span)
+			local g = j_val % 2 ~= 0 and not not (125 + 125 * j_val / j_span) or not (j_val % 2 ~= 0) and not not (125 * j_val / j_span)
 			local b = 0
 
 			color = Color(r, g, b)

@@ -1,26 +1,12 @@
 -- chunkname: @core/wwise/lua/wwise_visualization.lua
 
-local WwiseVisualization = WwiseVisualization
-
-WwiseVisualization = not not WwiseVisualization or not not {}
-WwiseVisualization = WwiseVisualization
+WwiseVisualization = not not WwiseVisualization
 
 local Unit = stingray.Unit
 local Vector3 = stingray.Vector3
 local LineObject = stingray.LineObject
 local Color = stingray.Color
-local LevelEditor_2 = stingray.LevelEditor
-
-if not LevelEditor_2 then
-	-- Nothing
-end
-
-LevelEditor_2 = LevelEditor
-
-local LevelEditor = LevelEditor_2
-
-::label_0_0::
-
+local LevelEditor = not not stingray.LevelEditor
 local soundscape_units = {}
 
 local function verify_unit_script_data(unit)
@@ -55,18 +41,7 @@ end
 local function render_soundscape_unit(lines, lines_noz, unit)
 	-- function 3
 	local event_name = Unit.get_data(unit, "Wwise", "event_name")
-	local get_data = Unit.get_data(unit, "Wwise", "unit_node")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = ""
-
-	local unit_object_name = get_data
-
-	::label_3_0::
-
+	local unit_object_name = not not Unit.get_data(unit, "Wwise", "unit_node")
 	local unit_object = 1
 
 	if unit_object_name ~= "" then
@@ -83,21 +58,9 @@ local function render_soundscape_unit(lines, lines_noz, unit)
 		scale = not not Unit.get_data(unit, "Wwise", "sphere_radius") or not not default_scale
 	elseif shape == "box" then
 		scale = Vector3(0, 0, 0)
-
-		local get_data_2 = Unit.get_data(unit, "Wwise", "box_extents", 0)
-
-		get_data_2 = not not get_data_2 or not not default_scale
-		scale.x = get_data_2
-
-		local get_data_3 = Unit.get_data(unit, "Wwise", "box_extents", 1)
-
-		get_data_3 = not not get_data_3 or not not default_scale
-		scale.y = get_data_3
-
-		local get_data_4 = Unit.get_data(unit, "Wwise", "box_extents", 2)
-
-		get_data_4 = not not get_data_4 or not not default_scale
-		scale.z = get_data_4
+		scale.x = not not Unit.get_data(unit, "Wwise", "box_extents", 0)
+		scale.y = not not Unit.get_data(unit, "Wwise", "box_extents", 1)
+		scale.z = not not Unit.get_data(unit, "Wwise", "box_extents", 2)
 	end
 
 	local range

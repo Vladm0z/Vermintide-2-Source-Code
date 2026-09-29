@@ -54,23 +54,7 @@ BTSelector_beastmen_dummy.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_falling = children[2]
-		local is_falling = blackboard.is_falling
-
-		if not is_falling then
-			-- Nothing
-		end
-
-		if blackboard.fall_state == nil then
-			is_falling = false
-
-			goto label_4_0
-		end
-
-		is_falling = true
-
-		local condition_result = is_falling
-
-		::label_4_0::
+		local condition_result = not not blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")

@@ -183,13 +183,7 @@ local platform_functions = {
 		end
 
 		if progress < completed_progress then
-			local printf = printf
-			local str = "[Achievements2017] [%s] - Unlocking Name: %q. Template: %q. ID: %q"
-			local flag
-
-			flag = (not is_online or not "ONLINE") and not not "OFFLINE"
-
-			printf(str, flag, Localize(name), template_id, achievement_id)
+			printf("[Achievements2017] [%s] - Unlocking Name: %q. Template: %q. ID: %q", is_online and not not "ONLINE" or not is_online and not not "OFFLINE", Localize(name), template_id, achievement_id)
 
 			local error_msg
 

@@ -226,22 +226,7 @@ MissionObjectiveUI._set_mission_text = function (self, text, duration_text, calc
 	local style = self._mission_widget.style
 
 	content.area_text_content = text
-
-	local str
-
-	if duration_text then
-		str = duration_text .. " "
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = nil
-
-	::label_13_0::
-
-	content.duration_text_content = str
+	content.duration_text_content = duration_text and not not (duration_text .. " ") or not duration_text and not not nil
 
 	local ui_renderer = self.ui_renderer
 	local max_width, max_height = 287.5, 40

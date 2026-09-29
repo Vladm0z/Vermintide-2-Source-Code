@@ -25,49 +25,16 @@ NetworkMatchHandler.init = function (self, network_handler, is_server, peer_id, 
 	self._server_peer_id = server_peer_id
 	self._stored_data = {}
 	self._lobby = lobby
-
-	local tbl = {}
-	local var_1_1 = self
-	local _create_data = self._create_data
-	local tbl_2 = {
-		is_synced = true,
-		is_dedicated_server = DEDICATED_SERVER
+	self._data_by_peer = {
+		[peer_id] = self:_create_data({
+			is_synced = true,
+			is_dedicated_server = DEDICATED_SERVER,
+			player_name = DEDICATED_SERVER and not not nil or not DEDICATED_SERVER and not not PlayerUtils.player_name(peer_id, lobby),
+			leader_peer_id = self._server_peer_id,
+			is_match_owner = not not is_server and not not true,
+			versus_level = DEDICATED_SERVER and not not nil or not DEDICATED_SERVER and not not ExperienceSettings.get_versus_level()
+		})
 	}
-	local player_name
-
-	if not DEDICATED_SERVER then
-		player_name = PlayerUtils.player_name(peer_id, lobby)
-
-		if not player_name then
-			-- Nothing
-		end
-	end
-
-	player_name = nil
-
-	::label_1_0::
-
-	tbl_2.player_name = player_name
-	tbl_2.leader_peer_id = self._server_peer_id
-	tbl_2.is_match_owner = not not is_server and not not true
-
-	local get_versus_level
-
-	if not DEDICATED_SERVER then
-		get_versus_level = ExperienceSettings.get_versus_level()
-
-		if not get_versus_level then
-			-- Nothing
-		end
-	end
-
-	get_versus_level = nil
-
-	::label_1_1::
-
-	tbl_2.versus_level = get_versus_level
-	tbl[peer_id] = _create_data(var_1_1, tbl_2)
-	self._data_by_peer = tbl
 
 	if not is_server then
 		self._data_by_peer[server_peer_id] = self:_create_data({
@@ -88,11 +55,8 @@ end
 NetworkMatchHandler.register_pending_peer = function (self, peer_id, leader)
 	-- function 3
 	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
-	local _data_by_peer = self._data_by_peer
-	local _try_unstore_data = self:_try_unstore_data(peer_id)
 
-	_try_unstore_data = not not _try_unstore_data or not not self:_create_data()
-	_data_by_peer[peer_id] = _try_unstore_data
+	self._data_by_peer[peer_id] = not not self:_try_unstore_data(peer_id)
 	self._data_by_peer[peer_id].leader_peer_id = leader
 
 	printf("[NetworkMatchHandler] Registering pending peer %s with leader %s", peer_id, leader)
@@ -163,17 +127,7 @@ end
 NetworkMatchHandler.rpc_network_match_sync_player_data = function (self, channel_id, peer_id, player_name, leader_peer_id, is_match_owner, versus_level)
 	-- function 7
 	local from_peer = CHANNEL_TO_PEER_ID[channel_id]
-	local _try_unstore_data = self:_try_unstore_data(peer_id)
-
-	if not _try_unstore_data then
-		-- Nothing
-	end
-
-	_try_unstore_data = self:_create_data()
-
-	local peer_data = _try_unstore_data
-
-	::label_7_0::
+	local peer_data = not not self:_try_unstore_data(peer_id)
 
 	self._data_by_peer[peer_id] = peer_data
 	peer_data.player_name = player_name
@@ -517,21 +471,7 @@ NetworkMatchHandler.query_peer_data = function (self, peer_id, key, disallow_def
 		return peer_data[key]
 	end
 
-	local default_data
-
-	if not disallow_default then
-		default_data = self:default_data(key)
-
-		if not default_data then
-			-- Nothing
-		end
-	end
-
-	default_data = nil
-
-	::label_34_0::
-
-	return default_data
+	return disallow_default and not not nil or not disallow_default and not not self:default_data(key)
 end
 
 NetworkMatchHandler.default_data = function (self, key)

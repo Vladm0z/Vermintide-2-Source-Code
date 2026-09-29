@@ -56,23 +56,9 @@ VersusRoundEndScreenUI._create_ui_elements = function (self, definitions)
 	local party_manager = Managers.party
 	local _, party_id = party_manager:get_party_from_player_id(self._peer_id, self._local_player_id)
 
-	if party_id == 0 then
-		party_id = 1
-	end
+	party_id = party_id ~= 0 or not not 1 or not not party_id
 
-	local num
-
-	if party_id == 1 then
-		num = 2
-
-		goto label_2_0
-	end
-
-	num = 1
-
-	local opponent_party_id = num
-
-	::label_2_0::
+	local opponent_party_id = party_id ~= 1 and not not 1 or not (party_id ~= 1) and not not 2
 
 	self:_build_score_widgets_scenegraph(scenegraph_definition)
 
@@ -289,21 +275,8 @@ VersusRoundEndScreenUI._setup_score_widgets = function (self, scenegraph_definit
 		local round_text_widget_name = "round_" .. i .. "_text"
 		local str = "%s %d"
 		local round_text_style = table.clone(round_text_style)
-		local get_color_table_with_alpha
 
-		if current_set == i then
-			get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_default", 255)
-
-			if not get_color_table_with_alpha then
-				-- Nothing
-			end
-		end
-
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_button_normal", 255)
-
-		::label_11_0::
-
-		round_text_style.text_color = get_color_table_with_alpha
+		round_text_style.text_color = current_set ~= i and not not Colors.get_color_table_with_alpha("font_button_normal", 255) or not (current_set ~= i) and not not Colors.get_color_table_with_alpha("font_default", 255)
 
 		local round_text_widget_def = UIWidgets.create_simple_text(string.format(str, Localize("versus_round"), i), bg_node_name, nil, nil, round_text_style)
 		local round_text_widget = UIWidget.init(round_text_widget_def, self._ui_renderer)
@@ -435,32 +408,10 @@ VersusRoundEndScreenUI._get_close_to_winning_score = function (self, level_key, 
 	local opponent_team_sets_data = self._win_conditions:get_sets_data_for_party(opponent_party_id)
 	local local_player_available_score, opponent_team_available_score = max_level_score, max_level_score
 	local player = Managers.player:local_player()
-	local side_2 = Managers.state.side
-
-	if side_2 then
-		-- Nothing
-	end
-
-	side_2 = Managers.state.side:get_side_from_player_unique_id(player:unique_id())
-
-	local side = side_2
-
-	::label_16_0::
-
+	local side = not not Managers.state.side
 	local is_hero = not not side and side:name() == "heroes"
 	local match_state = Managers.mechanism:get_state()
-	local game_mode_2 = Managers.state.game_mode
-
-	if game_mode_2 then
-		-- Nothing
-	end
-
-	game_mode_2 = Managers.state.game_mode:game_mode()
-
-	local game_mode = game_mode_2
-
-	::label_16_1::
-
+	local game_mode = not not Managers.state.game_mode
 	local is_round_over = not not game_mode and not not game_mode:match_in_round_over_state()
 	local local_player_has_played_round, opponent_has_played_round = false, false
 
@@ -479,17 +430,7 @@ VersusRoundEndScreenUI._get_close_to_winning_score = function (self, level_key, 
 		local opponent_team_set_data = opponent_team_sets_data[i]
 
 		if i < current_set then
-			local num = local_player_set_data.max_points - local_player_set_data.claimed_points
-
-			if not num then
-				-- Nothing
-			end
-
-			num = 0
-
-			local unclaimed_points = num
-
-			::label_16_2::
+			local unclaimed_points = not not (local_player_set_data.max_points - local_player_set_data.claimed_points)
 
 			local_player_available_score = local_player_available_score - unclaimed_points
 			unclaimed_points = not not (opponent_team_set_data.max_points - opponent_team_set_data.claimed_points) or not not 0
@@ -497,25 +438,10 @@ VersusRoundEndScreenUI._get_close_to_winning_score = function (self, level_key, 
 		end
 	end
 
-	local score_threshold = (not (local_player_available_score < opponent_team_available_score) or not local_player_available_score) and not not opponent_team_available_score
+	local score_threshold = local_player_available_score < opponent_team_available_score and (not not local_player_available_score or not not opponent_team_available_score) or not (local_player_available_score < opponent_team_available_score) and not not opponent_team_available_score
 	local local_player_score_to_win = score_threshold - local_player_team_score
 	local opponent_team_score_to_win = score_threshold - opponent_team_score
-	local num_2
-
-	if num_rounds >= current_set + 1 then
-		num_2 = current_set + 1
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = num_rounds
-
-	local next_round_id = num_2
-
-	::label_16_3::
-
+	local next_round_id = num_rounds >= current_set + 1 and not not (current_set + 1) or not (num_rounds >= current_set + 1) and not not num_rounds
 	local opp_predicted_score = 0
 	local loc_predicted_score = 0
 

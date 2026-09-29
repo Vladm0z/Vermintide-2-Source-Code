@@ -23,11 +23,7 @@ end
 
 local function escape_char(c)
 	-- function 1
-	local var_1_0 = escape_char_map[c]
-
-	var_1_0 = not not var_1_0 or not not string.format("\\u%04x", c:byte())
-
-	return var_1_0
+	return not not escape_char_map[c]
 end
 
 local function encode_nil(val)

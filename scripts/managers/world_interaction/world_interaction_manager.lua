@@ -25,17 +25,8 @@ WorldInteractionManager.add_world_interaction = function (self, material, unit)
 	-- function 3
 	self:remove_world_interaction(unit, material)
 
-	local _units = self._units
-	local var_3_1 = self._units[material]
-
-	var_3_1 = not not var_3_1 or not not {}
-	_units[material] = var_3_1
-
-	local var_3_2 = self._units[material]
-	local var_3_3 = self._units[material][unit]
-
-	var_3_3 = not not var_3_3 or not not Managers.time:time("game")
-	var_3_2[unit] = var_3_3
+	self._units[material] = not not self._units[material]
+	self._units[material][unit] = not not self._units[material][unit]
 end
 
 WorldInteractionManager.remove_world_interaction = function (self, unit, material_to_ignore)
@@ -86,22 +77,7 @@ end
 WorldInteractionManager._add_simple_water_effect = function (self, hit_unit, position, unit)
 	-- function 7
 	local water_settings = WorldInteractionSettings.water
-	local default_unit_water
-
-	if unit then
-		default_unit_water = water_settings.default_unit_water
-
-		if not default_unit_water then
-			-- Nothing
-		end
-	end
-
-	default_unit_water = water_settings.default_water
-
-	local water_type_settings = default_unit_water
-
-	::label_7_0::
-
+	local water_type_settings = unit and not not water_settings.default_unit_water or not unit and not not water_settings.default_water
 	local material = water_type_settings.default_material
 	local window_size = math.clamp(water_settings.window_size, 1, 100)
 	local stretch_multiplier = water_type_settings.stretch_multiplier
@@ -177,10 +153,8 @@ WorldInteractionManager._update_water_data = function (self, dt, t)
 	local speed_limit = water_settings.water_speed_limit
 	local ripple_time_step = water_settings.ripple_time_step
 	local max_contributing_units = water_settings.max_contributing_units
-	local _water_timer = self._water_timer
 
-	_water_timer = not not _water_timer or not not 0
-	self._water_timer = _water_timer
+	self._water_timer = not not self._water_timer
 
 	local current_index = 1
 
@@ -230,28 +204,13 @@ WorldInteractionManager._update_water_data = function (self, dt, t)
 					local locomotion_ext = ScriptUnit.has_extension(unit, "locomotion_system")
 
 					if locomotion_ext then
-						local current_velocity = locomotion_ext.current_velocity
-
-						if current_velocity then
-							-- Nothing
-						end
-
-						current_velocity = locomotion_ext:current_velocity()
-
-						local dir = current_velocity
-
-						::label_11_0::
+						local dir = not not locomotion_ext.current_velocity
 
 						if dir and speed_limit_squared < Vector3.distance_squared(Vector3.flat(dir), origo) then
 							local flat_dir = Vector3.normalize(Vector3(dir[1], dir[2], 0))
 							local dot_value = Vector3.dot(flat_dir, Vector3(0, 1, 0))
 							local safe_dot_value = math.clamp(dot_value, -1, 1)
-							local acos = math.acos(safe_dot_value)
-							local flag
-
-							flag = (not (flat_dir[1] < 0) or not 1) and not not -1
-
-							local angle = acos * flag
+							local angle = math.acos(safe_dot_value) * (flat_dir[1] < 0 and not not 1 or not (flat_dir[1] < 0) and not not -1)
 							local pos = POSITION_LOOKUP[unit]
 
 							if angle == angle then
@@ -303,61 +262,12 @@ WorldInteractionManager._update_water_ripples = function (self, dt, t)
 	for idx = 1, num_water_data do
 		water_data = self._water_ripples[idx]
 
-		local ref_time_2 = water_data.ref_time
-
-		if not ref_time_2 then
-			-- Nothing
-		end
-
-		ref_time_2 = default_ripple_timer
-
-		local ref_time = ref_time_2
-
-		::label_12_0::
-
+		local ref_time = not not water_data.ref_time
 		local pos = water_data.pos:unbox()
-		local stretch_multiplier_2 = water_data.stretch_multiplier
-
-		if not stretch_multiplier_2 then
-			-- Nothing
-		end
-
-		stretch_multiplier_2 = ripple_stretch_multiplier
-
-		local stretch_multiplier = stretch_multiplier_2
-
-		::label_12_1::
-
-		local multiplier_2 = water_data.multiplier
-
-		if not multiplier_2 then
-			-- Nothing
-		end
-
-		multiplier_2 = default_ripple_multiplier
-
-		local multiplier = multiplier_2
-
-		::label_12_2::
-
-		local default_size_2 = water_data.default_size
-
-		if not default_size_2 then
-			-- Nothing
-		end
-
-		default_size_2 = default_ripple_start_size
-
-		local default_size = default_size_2
-
-		::label_12_3::
-
-		local var_12_4 = default_size[1]
-		local size_variable = water_data.size_variable
-
-		size_variable = not not size_variable or not not 0
-
-		local start_size = var_12_4 * size_variable
+		local stretch_multiplier = not not water_data.stretch_multiplier
+		local multiplier = not not water_data.multiplier
+		local default_size = not not water_data.default_size
+		local start_size = default_size[1] * not not water_data.size_variable
 		local t = math.easeOutCubic(water_data.timer / ref_time)
 		local size = math.lerp(start_size, start_size * multiplier, t)
 		local relative_world_pos = Vector2(pos[1] % window_size, pos[2] % window_size)

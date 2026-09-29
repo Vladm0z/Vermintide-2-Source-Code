@@ -54,17 +54,7 @@ BTSelector_chaos_tentacle.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_attack = children[2]
-		local var_4_0 = unit_alive(blackboard.target_unit)
-
-		if var_4_0 then
-			-- Nothing
-		end
-
-		var_4_0 = not blackboard.tentacle_satisfied
-
-		local condition_result = var_4_0
-
-		::label_4_0::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_attack, "aborted")

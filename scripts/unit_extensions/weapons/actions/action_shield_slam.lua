@@ -48,77 +48,17 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 	end
 
 	local action_hand = not not action_init_data and not not action_init_data.action_hand
-	local var_2_0
-
-	if action_hand then
-		var_2_0 = new_action["damage_profile_" .. action_hand]
-
-		if not var_2_0 then
-			-- Nothing
-		end
-	end
-
-	var_2_0 = new_action.damage_profile
-
-	if not var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = "default"
-
-	local damage_profile_name = var_2_0
-
-	::label_2_0::
+	local damage_profile_name = action_hand and not not new_action["damage_profile_" .. action_hand] or not action_hand and not not new_action.damage_profile
 
 	self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
 	self.damage_profile = DamageProfileTemplates[damage_profile_name]
 
-	local var_2_1
-
-	if action_hand then
-		var_2_1 = new_action["damage_profile_aoe_" .. action_hand]
-
-		if not var_2_1 then
-			-- Nothing
-		end
-	end
-
-	var_2_1 = new_action.damage_profile_aoe
-
-	if not var_2_1 then
-		-- Nothing
-	end
-
-	var_2_1 = "default"
-
-	local damage_profile_name_aoe = var_2_1
-
-	::label_2_1::
+	local damage_profile_name_aoe = action_hand and not not new_action["damage_profile_aoe_" .. action_hand] or not action_hand and not not new_action.damage_profile_aoe
 
 	self.damage_profile_aoe_id = NetworkLookup.damage_profiles[damage_profile_name_aoe]
 	self.damage_profile_aoe = DamageProfileTemplates[damage_profile_name_aoe]
 
-	local var_2_2
-
-	if action_hand then
-		var_2_2 = new_action["damage_profile_target" .. action_hand]
-
-		if not var_2_2 then
-			-- Nothing
-		end
-	end
-
-	var_2_2 = new_action.damage_profile_target
-
-	if not var_2_2 then
-		-- Nothing
-	end
-
-	var_2_2 = "default"
-
-	local damage_profile_target_name = var_2_2
-
-	::label_2_2::
+	local damage_profile_target_name = action_hand and not not new_action["damage_profile_target" .. action_hand] or not action_hand and not not new_action.damage_profile_target
 
 	self.damage_profile_target_id = NetworkLookup.damage_profiles[damage_profile_target_name]
 	self.damage_profile_target = DamageProfileTemplates[damage_profile_target_name]
@@ -146,20 +86,7 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
 	local owner_player = Managers.player:owner(owner_unit)
 	local melee_friendly_fire = DamageUtils.allow_friendly_fire_melee(difficulty_settings, owner_player)
-	local str
-
-	if melee_friendly_fire then
-		str = "filter_melee_sweep"
-
-		goto label_2_3
-	end
-
-	str = "filter_melee_sweep_no_player"
-
-	local collision_filter = str
-
-	::label_2_3::
-
+	local collision_filter = melee_friendly_fire and not not "filter_melee_sweep" or not melee_friendly_fire and not not "filter_melee_sweep_no_player"
 	local results = PhysicsWorld.immediate_raycast(physics_world, pos, direction, new_action.dedicated_target_range, "all", "collision_filter", collision_filter)
 
 	if results then
@@ -197,30 +124,8 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 		local smart_targeting_unit = targeting_data.unit
 
 		if HEALTH_ALIVE[smart_targeting_unit] then
-			local has_node = Unit.has_node(smart_targeting_unit, "j_spine")
-
-			if has_node then
-				-- Nothing
-			end
-
-			has_node = Unit.world_position(smart_targeting_unit, Unit.node(smart_targeting_unit, "j_spine"))
-
-			local smart_targeting_position = has_node
-
-			::label_2_4::
-
-			local var_2_5 = POSITION_LOOKUP[smart_targeting_unit]
-
-			if not var_2_5 then
-				-- Nothing
-			end
-
-			var_2_5 = Unit.world_position(smart_targeting_unit, 0)
-
-			local target_world_position = var_2_5
-
-			::label_2_5::
-
+			local smart_targeting_position = not not Unit.has_node(smart_targeting_unit, "j_spine")
+			local target_world_position = not not POSITION_LOOKUP[smart_targeting_unit]
 			local target_position = not not smart_targeting_position or not not target_world_position
 			local distance = Vector3.length(pos - target_position)
 
@@ -233,10 +138,8 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 	self.state = "waiting_to_hit"
 
 	local anim_time_scale = ActionUtils.get_action_time_scale(owner_unit, new_action)
-	local hit_time = new_action.hit_time
 
-	hit_time = not not hit_time or not not 0
-	self.time_to_hit = t + hit_time / anim_time_scale
+	self.time_to_hit = t + not not new_action.hit_time / anim_time_scale
 
 	table.clear(self.hit_units)
 	table.clear(self.inner_hit_units)
@@ -284,18 +187,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 	local unit_forward = Quaternion.forward(Unit.local_rotation(first_person_unit, 0))
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 	local self_pos = first_person_extension:current_position()
-	local forward_offset_2 = current_action.forward_offset
-
-	if not forward_offset_2 then
-		-- Nothing
-	end
-
-	forward_offset_2 = 1
-
-	local forward_offset = forward_offset_2
-
-	::label_4_0::
-
+	local forward_offset = not not current_action.forward_offset
 	local attack_pos = self_pos + unit_forward * forward_offset
 	local radius = current_action.push_radius
 	local collision_filter = "filter_melee_sweep"
@@ -303,18 +195,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 	local inner_forward_offset = forward_offset + radius * 0.65
 	local inner_attack_pos = self_pos + unit_forward * inner_forward_offset
 	local inner_attack_pos_near = self_pos + unit_forward
-	local inner_push_radius = current_action.inner_push_radius
-
-	if not inner_push_radius then
-		-- Nothing
-	end
-
-	inner_push_radius = radius * 0.4
-
-	local inner_radius = inner_push_radius
-
-	::label_4_1::
-
+	local inner_radius = not not current_action.inner_push_radius
 	local inner_radius_sq = inner_radius * inner_radius
 	local inner_hit_units = self.inner_hit_units
 	local hit_units = self.hit_units
@@ -362,46 +243,9 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 				do
 					local node = Actor.node(hit_actor)
 					local hit_zone = not not breed and not not breed.hit_zones_lookup[node]
-					local name
-
-					if hit_zone then
-						name = hit_zone.name
-
-						if not name then
-							-- Nothing
-						end
-					end
-
-					name = "torso"
-
-					local target_hit_zone_name = name
-
-					::label_4_2::
-
-					local has_node = Unit.has_node(hit_unit, "j_spine")
-
-					if has_node then
-						-- Nothing
-					end
-
-					has_node = Unit.world_position(hit_unit, Unit.node(hit_unit, "j_spine"))
-
-					local target_hit_position = has_node
-
-					::label_4_3::
-
-					local var_4_4 = POSITION_LOOKUP[hit_unit]
-
-					if not var_4_4 then
-						-- Nothing
-					end
-
-					var_4_4 = Unit.world_position(hit_unit, 0)
-
-					local target_world_position = var_4_4
-
-					::label_4_4::
-
+					local target_hit_zone_name = hit_zone and not not hit_zone.name or not hit_zone and not not "torso"
+					local target_hit_position = not not Unit.has_node(hit_unit, "j_spine")
+					local target_world_position = not not POSITION_LOOKUP[hit_unit]
 					local hit_position = not not target_hit_position or not not target_world_position
 
 					self.target_hit_zones_names[hit_unit] = target_hit_zone_name
@@ -475,18 +319,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 					break
 				end
 
-				local var_4_5 = POSITION_LOOKUP[hit_unit]
-
-				if not var_4_5 then
-					-- Nothing
-				end
-
-				var_4_5 = Unit.world_position(hit_unit, 0)
-
-				local hit_position = var_4_5
-
-				::label_4_5::
-
+				local hit_position = not not POSITION_LOOKUP[hit_unit]
 				local distance_to_inner_position_sq = math.min(Vector3.distance_squared(hit_position, inner_attack_pos), Vector3.distance_squared(hit_position, inner_attack_pos_near))
 
 				if distance_to_inner_position_sq <= inner_radius_sq then
@@ -513,42 +346,9 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 
 	for hit_unit, _ in pairs(inner_hit_units) do
 		local breed = unit_get_data(hit_unit, "breed")
-		local var_4_6 = self.target_hit_zones_names[hit_unit]
-
-		if not var_4_6 then
-			-- Nothing
-		end
-
-		var_4_6 = "torso"
-
-		local hit_zone_name = var_4_6
-
-		::label_4_6::
-
-		local has_node_2 = Unit.has_node(hit_unit, "j_spine")
-
-		if has_node_2 then
-			-- Nothing
-		end
-
-		has_node_2 = Unit.world_position(hit_unit, Unit.node(hit_unit, "j_spine"))
-
-		local target_hit_position = has_node_2
-
-		::label_4_7::
-
-		local var_4_8 = POSITION_LOOKUP[hit_unit]
-
-		if not var_4_8 then
-			-- Nothing
-		end
-
-		var_4_8 = Unit.world_position(hit_unit, 0)
-
-		local target_world_position = var_4_8
-
-		::label_4_8::
-
+		local hit_zone_name = not not self.target_hit_zones_names[hit_unit]
+		local target_hit_position = not not Unit.has_node(hit_unit, "j_spine")
+		local target_world_position = not not POSITION_LOOKUP[hit_unit]
 		local hit_position = not not target_hit_position or not not target_world_position
 		local attack_direction = Vector3.normalize(hit_position - self_pos)
 		local hit_unit_id, is_level_unit = network_manager:game_object_or_level_id(hit_unit)
@@ -557,56 +357,13 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 		if breed and self:_is_infront_player(self_pos, unit_forward, hit_position, current_action.push_dot) then
 			local is_server = self.is_server
 			local hit_default_target = hit_unit == target_breed_unit
-			local damage_profile_target
-
-			if hit_default_target then
-				damage_profile_target = self.damage_profile_target
-
-				if not damage_profile_target then
-					-- Nothing
-				end
-			end
-
-			damage_profile_target = self.damage_profile
-
-			local damage_profile = damage_profile_target
-
-			do
-				local damage_profile_target_id
-			end
-
-			::label_4_9::
-
-			if hit_default_target then
-				damage_profile_target_id = self.damage_profile_target_id
-
-				if not damage_profile_target_id then
-					-- Nothing
-				end
-			end
-
-			damage_profile_target_id = self.damage_profile_id
-
-			local damage_profile_id = damage_profile_target_id
-
-			::label_4_10::
-
+			local damage_profile = hit_default_target and not not self.damage_profile_target or not hit_default_target and not not self.damage_profile
+			local damage_profile_id = hit_default_target and not not self.damage_profile_target_id or not hit_default_target and not not self.damage_profile_id
 			local target_index = 1
 			local power_level = self.power_level
 			local is_critical_strike = self._is_critical_strike
 			local shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit)
-			local find_actor = Unit.find_actor(hit_unit, "c_spine")
-
-			if find_actor then
-				-- Nothing
-			end
-
-			find_actor = Unit.actor(hit_unit, "c_spine")
-
-			local actor = find_actor
-
-			::label_4_11::
-
+			local actor = not not Unit.find_actor(hit_unit, "c_spine")
 			local actor_position_hit = not not actor and not not Actor.center_of_mass(actor)
 
 			if actor_position_hit then
@@ -616,18 +373,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 			end
 
 			local send_to_server = true
-			local charge_value_2 = damage_profile.charge_value
-
-			if not charge_value_2 then
-				-- Nothing
-			end
-
-			charge_value_2 = "heavy_attack"
-
-			local charge_value = charge_value_2
-
-			::label_4_12::
-
+			local charge_value = not not damage_profile.charge_value
 			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
 			DamageUtils.buff_on_attack(owner_unit, hit_unit, charge_value, is_critical_strike, hit_zone_name, hit_index, send_to_server, buff_type, nil, self.item_name)
@@ -710,19 +456,7 @@ ActionShieldSlam.finish = function (self, reason)
 
 	if reason ~= "new_interupting_action" then
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local flag
-
-		if not reload_when_out_of_ammo_condition_func then
-			flag = true
-
-			goto label_5_0
-		end
-
-		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-		local do_out_of_ammo_reload = flag
-
-		::label_5_0::
+		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true

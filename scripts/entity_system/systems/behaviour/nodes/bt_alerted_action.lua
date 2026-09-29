@@ -16,11 +16,7 @@ BTAlertedAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 
 	blackboard.action = action
-
-	local alerted_action = blackboard.alerted_action
-
-	alerted_action = not not alerted_action or not not {}
-	blackboard.alerted_action = alerted_action
+	blackboard.alerted_action = not not blackboard.alerted_action
 	blackboard.move_animation_name = nil
 	blackboard.anim_cb_rotation_start = false
 	blackboard.anim_cb_move = false
@@ -106,20 +102,7 @@ BTAlertedAction.decide_deadline = function (self, unit, blackboard, t)
 	local rotation = Unit.local_rotation(unit, 0)
 	local forward_vector_flat = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
 	local dot_product = Vector3.dot(forward_vector_flat, target_vector_flat)
-	local num
-
-	if dot_product > 0.25 then
-		num = 0.5
-
-		goto label_4_0
-	end
-
-	num = 1
-
-	local min_deadline = num
-
-	::label_4_0::
-
+	local min_deadline = dot_product > 0.25 and not not 0.5 or not (dot_product > 0.25) and not not 1
 	local max_deadline = math.max(min_deadline, 2 - dot_product * 2)
 	local time_alerted = 0
 	local breed = blackboard.breed
@@ -222,10 +205,7 @@ BTAlertedAction.leave = function (self, unit, blackboard, t, reason, destroy)
 		AiUtils.enter_passive(unit, blackboard)
 	end
 
-	local lerp_alerted_into_follow_speed = blackboard.breed.lerp_alerted_into_follow_speed
-
-	lerp_alerted_into_follow_speed = not not lerp_alerted_into_follow_speed or not not nil
-	blackboard.lerp_into_follow = lerp_alerted_into_follow_speed
+	blackboard.lerp_into_follow = not not blackboard.breed.lerp_alerted_into_follow_speed
 end
 
 local function contains(wanted_event, event)
@@ -243,17 +223,7 @@ BTAlertedAction.check_if_should_start_moving = function (self, unit, blackboard)
 	local target_unit = blackboard.target_unit
 	local target_pos = POSITION_LOOKUP[target_unit]
 	local deadline_reached = blackboard.alerted_deadline_reached_and_sighted_enemy
-	local move_animation_name_2 = blackboard.move_animation_name
-
-	if move_animation_name_2 then
-		-- Nothing
-	end
-
-	move_animation_name_2 = true
-
-	local has_started_animation = move_animation_name_2
-
-	::label_8_0::
+	local has_started_animation = not not blackboard.move_animation_name
 
 	if deadline_reached and not has_started_animation then
 		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
@@ -361,7 +331,7 @@ BTAlertedAction.run = function (self, unit, blackboard, t, dt)
 		end
 	end
 
-	if not blackboard.no_alert and blackboard.alerted_deadline_reached_and_sighted_enemy and (blackboard.anim_cb_move or not blackboard.move_animation_name) then
+	if blackboard.anim_cb_move or not blackboard.move_animation_name then
 		blackboard.is_alerted = true
 
 		return "done"

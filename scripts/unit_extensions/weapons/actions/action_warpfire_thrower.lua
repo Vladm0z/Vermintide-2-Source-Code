@@ -53,16 +53,9 @@ ActionWarpfireThrower.client_owner_post_update = function (self, dt, t, world, c
 	local is_max_overcharge = max_overcharge <= current_overcharge_value
 
 	if self.state == "shooting" and not is_max_overcharge then
-		local num = dt + self._current_flame_time
+		self._current_flame_time = not not (dt + self._current_flame_time)
 
-		num = not not num or not not 0
-		self._current_flame_time = num
-
-		local next_fire_tick = self.next_fire_tick
-
-		next_fire_tick = not not next_fire_tick or not not 0
-
-		if next_fire_tick < t then
+		if t > not not self.next_fire_tick then
 			self:fire(owner_unit, current_action, t)
 
 			self.next_fire_tick = t + current_action.shoot_warpfire_close_attack_cooldown
@@ -113,21 +106,7 @@ ActionWarpfireThrower.fire = function (self, unit, current_action, t)
 		local hit_unit = enemy_data.unit
 
 		if DamageUtils.is_enemy(unit, hit_unit) then
-			local buff_name_close
-
-			if enemy_data.distance <= current_action.shoot_warpfire_close_attack_range then
-				buff_name_close = current_action.buff_name_close
-
-				if not buff_name_close then
-					-- Nothing
-				end
-			end
-
-			buff_name_close = current_action.buff_name_far
-
-			local buff_name = buff_name_close
-
-			::label_7_0::
+			local buff_name = enemy_data.distance <= current_action.shoot_warpfire_close_attack_range and not not current_action.buff_name_close or not (enemy_data.distance <= current_action.shoot_warpfire_close_attack_range) and not not current_action.buff_name_far
 
 			buff_system:add_buff(hit_unit, buff_name, unit)
 			buff_system:add_buff(hit_unit, "warpfire_thrower_fire_slowdown", unit)

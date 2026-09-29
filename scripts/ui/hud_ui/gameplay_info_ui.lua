@@ -46,9 +46,9 @@ GameplayInfoUI._update_spawn_info_texts = function (self, state_text, sub_text, 
 	local spawn_text = self._widgets_by_name.spawn_text
 	local spawn_reason = self._widgets_by_name.spawn_reason
 
-	spawn_text.content.text = (not state_text or not state_text) and not not ""
+	spawn_text.content.text = state_text and (not not state_text or not not "") or not state_text and not not ""
 	spawn_text.content.visible = state_text ~= nil
-	spawn_reason.content.text = (not sub_text or not sub_text) and not not ""
+	spawn_reason.content.text = sub_text and (not not sub_text or not not "") or not sub_text and not not ""
 	spawn_reason.content.visible = sub_text ~= nil
 end
 
@@ -89,10 +89,10 @@ GameplayInfoUI._update_button_prompts = function (self)
 
 		if self._gamepad_active then
 			spawn_input_text = string.format(input_text_format, input_service_name, input_action)
-		elseif (not keymap_binding or keymap_binding[1] ~= "mouse") and self._gamepad_active then
+		elseif keymap_binding and (keymap_binding[1] == "mouse" or self._gamepad_active) or not keymap_binding and self._gamepad_active then
 			spawn_input_text = string.format(input_text_format, input_service_name, input_action)
 		else
-			spawn_input_text = (not input_text or not ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}")) and not not ""
+			spawn_input_text = input_text and (not not ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}") or not not "") or not input_text and not not ""
 		end
 
 		spawn_state_text = string.format(Localize("versus_gameplay_info_spawn_here"), spawn_input_text)
@@ -289,7 +289,7 @@ GameplayInfoUI._set_tele_prompt = function (self, input_service_name, input_acti
 	if gamepad_active then
 		input_string = "$KEY;" .. input_service_name .. "__" .. input_action .. ":"
 	else
-		input_string = (not input_text or not ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}")) and not not ""
+		input_string = input_text and (not not ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}") or not not "") or not input_text and not not ""
 	end
 
 	teleport_text_widget.content.text = string.format(str, input_string, suffix_text)

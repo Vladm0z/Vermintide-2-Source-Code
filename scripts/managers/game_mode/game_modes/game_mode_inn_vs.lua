@@ -90,18 +90,11 @@ GameModeInnVs.local_player_game_starts = function (self, player, loading_context
 			local first_hero_selection_made = SaveData.first_hero_selection_made
 			local backend_waiting_for_input = Managers.backend:is_waiting_for_user_input()
 			local show_hero_selection = not backend_waiting_for_input and not not not first_hero_selection_made
-			local ui = Managers.ui
-			local var_6_1 = ui
-			local handle_transition = ui.handle_transition
-			local str = "initial_start_menu_view_force"
-			local tbl = {}
-			local flag
 
-			flag = (not show_hero_selection or not "character") and not not "overview"
-			tbl.menu_state_name = flag
-			tbl.on_exit_callback = callback(self, "_cb_start_menu_closed")
-
-			handle_transition(var_6_1, str, tbl)
+			Managers.ui:handle_transition("initial_start_menu_view_force", {
+				menu_state_name = show_hero_selection and not not "character" or not show_hero_selection and not not "overview",
+				on_exit_callback = callback(self, "_cb_start_menu_closed")
+			})
 		else
 			Managers.ui:handle_transition("initial_character_selection_force", {
 				menu_state_name = "character",
@@ -339,18 +332,7 @@ end
 
 GameModeInnVs._start_hosting_server = function (self)
 	-- function 27
-	local _force_map_pool = self._force_map_pool
-
-	if not _force_map_pool then
-		-- Nothing
-	end
-
-	_force_map_pool = Managers.mechanism:mechanism_setting_for_title("map_pool")
-
-	local map_pool = _force_map_pool
-
-	::label_27_0::
-
+	local map_pool = not not self._force_map_pool
 	local difficulty = self._settings.forced_difficulty
 	local override_level_key = Managers.mechanism:game_mechanism():get_level_override_key()
 	local override_map_pool = not not override_level_key and not not {
@@ -390,11 +372,7 @@ end
 
 GameModeInnVs.is_joinable = function (self)
 	-- function 30
-	local is_reservable = self:is_reservable()
-
-	is_reservable = not not is_reservable and self:game_mode_state() ~= "dedicated_server_waiting_for_fully_reserved"
-
-	return is_reservable
+	return not not self:is_reservable()
 end
 
 GameModeInnVs.update_auto_force_start_conditions = function (self, peers)

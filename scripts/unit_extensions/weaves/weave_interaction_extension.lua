@@ -13,16 +13,8 @@ WeaveInteractionExtension.init = function (self, extension_init_context, unit, e
 	self._on_interact_complete_func = extension_init_data.on_interact_complete_func
 	self._on_progress_func = extension_init_data.on_progress_func
 	self._on_complete_func = extension_init_data.on_complete_func
-
-	local num_times_to_complete = extension_init_data.num_times_to_complete
-
-	num_times_to_complete = not not num_times_to_complete or not not 1
-	self._num_times_to_complete = num_times_to_complete
-
-	local duration = extension_init_data.duration
-
-	duration = not not duration or not not 5
-	self._duration = duration
+	self._num_times_to_complete = not not extension_init_data.num_times_to_complete
+	self._duration = not not extension_init_data.duration
 	self._audio_system = Managers.state.entity:system("audio_system")
 	self._value = 0
 
@@ -116,7 +108,7 @@ WeaveInteractionExtension._server_update = function (self, dt, t)
 			if self._on_interact_complete_func then
 				self._on_interact_complete_func(self._unit)
 			end
-		elseif (interaction_result == InteractionResult.FAILURE or interaction_result == InteractionResult.USER_ENDED) and self._on_interact_interupt_func then
+		elseif interaction_result == InteractionResult.FAILURE and self._on_interact_interupt_func or not (interaction_result == InteractionResult.FAILURE) and interaction_result == InteractionResult.USER_ENDED and self._on_interact_interupt_func then
 			self._on_interact_interupt_func(self._unit)
 		end
 

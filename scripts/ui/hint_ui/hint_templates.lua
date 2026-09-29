@@ -1,10 +1,8 @@
 -- chunkname: @scripts/ui/hint_ui/hint_templates.lua
 
 local ObjectiveTypes = dofile("scripts/settings/objective_templates_vs")
-local HintTemplates = HintTemplates
 
-HintTemplates = not not HintTemplates or not not {}
-HintTemplates = HintTemplates
+HintTemplates = not not HintTemplates
 HintTemplates.first_time_pactsworn = {
 	data = {
 		side = "dark_pact",
@@ -28,17 +26,7 @@ HintTemplates.first_time_pactsworn = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_1_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -84,17 +72,7 @@ HintTemplates.horde_ability = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_2_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -145,17 +123,7 @@ HintTemplates.scoring_points = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_3_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -252,17 +220,7 @@ HintTemplates.healing = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_4_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -280,19 +238,7 @@ HintTemplates.healing = {
 							local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 							local has_healing_item = inventory_extension:get_slot_data("slot_healthkit")
 							local is_dead = not not status_extension and not not status_extension:is_dead()
-							local num
-
-							if is_dead then
-								num = 0
-
-								goto label_4_1
-							end
-
-							num = health_extension:current_health_percent()
-
-							local total_health_percent = num
-
-							::label_4_1::
+							local total_health_percent = is_dead and not not 0 or not is_dead and not not health_extension:current_health_percent()
 
 							if total_health_percent <= 0.2 and has_healing_item then
 								return true
@@ -329,17 +275,7 @@ HintTemplates.bombs = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_5_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -390,17 +326,7 @@ HintTemplates.wounds = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_6_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -504,17 +430,7 @@ HintTemplates.capture_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_8_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -560,17 +476,7 @@ HintTemplates.payload_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_9_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -616,17 +522,7 @@ HintTemplates.safe_zone = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_10_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -672,17 +568,7 @@ HintTemplates.socket_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_11_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -728,17 +614,7 @@ HintTemplates.target_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_12_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -784,17 +660,7 @@ HintTemplates.survive_event = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_13_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -844,17 +710,7 @@ HintTemplates.interact_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_14_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
@@ -900,17 +756,7 @@ HintTemplates.reach_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local player = Managers.player
-
-			if player then
-				-- Nothing
-			end
-
-			player = Managers.player:local_player()
-
-			local local_player = player
-
-			::label_15_0::
+			local local_player = not not Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()

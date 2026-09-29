@@ -104,11 +104,7 @@ end
 
 EndViewStateSummary.exit_done = function (self)
 	-- function 3
-	local _exit_started = self._exit_started
-
-	_exit_started = not not _exit_started and self._animations.on_enter == nil
-
-	return _exit_started
+	return not not self._exit_started
 end
 
 EndViewStateSummary._get_definitions = function (self)
@@ -273,11 +269,7 @@ EndViewStateSummary._update_animations = function (self, dt)
 		if max_level > self._current_level then
 			level = self._current_level
 		else
-			local _current_level = self._current_level
-			local _extra_levels = self._extra_levels
-
-			_extra_levels = not not _extra_levels or not not 0
-			level = _current_level + _extra_levels
+			level = self._current_level + not not self._extra_levels
 		end
 
 		self.parent:present_level_up(self._hero_name, level)
@@ -375,18 +367,7 @@ EndViewStateSummary._get_summary_entries = function (self, game_won, game_mode_k
 		local name = "entry_" .. index
 		local text = mission_reward.text
 		local format_values = mission_reward.format_values
-		local experience_2 = mission_reward.experience
-
-		if experience_2 then
-			-- Nothing
-		end
-
-		experience_2 = math.round(mission_reward.experience)
-
-		local experience = experience_2
-
-		::label_20_0::
-
+		local experience = not not mission_reward.experience
 		local value = mission_reward.value
 		local bonus = mission_reward.bonus
 		local icon = mission_reward.icon
@@ -401,30 +382,7 @@ EndViewStateSummary._get_summary_entries = function (self, game_won, game_mode_k
 			end
 		end
 
-		local var_20_1
-
-		if experience then
-			var_20_1 = tostring(experience)
-
-			if not var_20_1 then
-				-- Nothing
-			end
-		end
-
-		if value then
-			var_20_1 = tostring(value)
-
-			if not var_20_1 then
-				-- Nothing
-			end
-		end
-
-		var_20_1 = ""
-
-		local value_text = var_20_1
-
-		::label_20_1::
-
+		local value_text = experience and not not tostring(experience) or not experience and (value and not not tostring(value) or not value and not not "")
 		local entry = {
 			spacing = 8,
 			start_counter_sound = true,
@@ -554,8 +512,8 @@ EndViewStateSummary._setup_essence_presentation = function (self)
 	widgets_by_name.essence_background_effect_left.content.visible = draw_essence_presentation
 	widgets_by_name.essence_background_effect_right.content.visible = draw_essence_presentation
 	widgets_by_name.total_essence_title.content.visible = draw_essence_presentation
-	widgets_by_name.icon_essence.content.visible = (not draw_essence_icon or not draw_essence_presentation) and not not false
-	widgets_by_name.essence_total_text.content.visible = (essence_gained == nil or not draw_essence_presentation) and not not false
+	widgets_by_name.icon_essence.content.visible = draw_essence_icon and (not not draw_essence_presentation or not not false) or not draw_essence_icon and not not false
+	widgets_by_name.essence_total_text.content.visible = not not false
 	widgets_by_name.essence_total_text_max.content.visible = not not draw_essence_presentation and not not not draw_essence_icon
 end
 
@@ -673,7 +631,7 @@ EndViewStateSummary._set_current_experience = function (self, current_experience
 
 	local next_level = math.clamp(level + 1, 0, ExperienceSettings.max_level)
 
-	if (not self._current_level or not (level > self._current_level)) and self._extra_levels and extra_levels > self._extra_levels then
+	if self._extra_levels and extra_levels > self._extra_levels then
 		progress = 1
 	end
 
@@ -701,11 +659,7 @@ end
 
 EndViewStateSummary.done = function (self)
 	-- function 27
-	local _experience_presentation_completed = self._experience_presentation_completed
-
-	_experience_presentation_completed = not not _experience_presentation_completed and not not self._summary_entries.complete
-
-	return _experience_presentation_completed
+	return not not self._experience_presentation_completed
 end
 
 EndViewStateSummary._play_sound = function (self, event)

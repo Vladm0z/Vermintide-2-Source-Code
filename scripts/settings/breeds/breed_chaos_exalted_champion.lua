@@ -1061,17 +1061,7 @@ local action_data = {
 					blackboard.num_chain_stagger = nil
 				end
 
-				local num_chain_stagger_2 = blackboard.num_chain_stagger
-
-				if not num_chain_stagger_2 then
-					-- Nothing
-				end
-
-				num_chain_stagger_2 = 0
-
-				local num_chain_stagger = num_chain_stagger_2
-
-				::label_4_0::
+				local num_chain_stagger = not not blackboard.num_chain_stagger
 
 				blackboard.num_chain_stagger = num_chain_stagger + 1
 

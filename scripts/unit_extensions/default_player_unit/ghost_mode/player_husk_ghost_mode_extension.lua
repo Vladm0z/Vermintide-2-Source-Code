@@ -83,17 +83,7 @@ PlayerHuskGhostModeExtension.husk_enter_ghost_mode = function (self)
 
 	local inventory_extension = ScriptUnit.extension(self._unit, "inventory_system")
 	local equipment = inventory_extension:equipment()
-	local right_hand_wielded_unit_3p = equipment.right_hand_wielded_unit_3p
-
-	if not right_hand_wielded_unit_3p then
-		-- Nothing
-	end
-
-	right_hand_wielded_unit_3p = equipment.left_hand_wielded_unit_3p
-
-	local weapon_unit = right_hand_wielded_unit_3p
-
-	::label_8_0::
+	local weapon_unit = not not equipment.right_hand_wielded_unit_3p
 
 	if not DEDICATED_SERVER then
 		if weapon_unit then
@@ -153,7 +143,7 @@ PlayerHuskGhostModeExtension.cb_world_marker_spawned = function (self, unit, mar
 	local profile = SPProfiles[profile_index]
 	local player_name = not not owner and not not owner:name()
 
-	player_name = (not player_name or player_name == "" or not player_name) and not not "n/a"
+	player_name = player_name and (player_name ~= "" and (not not player_name or not not "n/a") or not (player_name ~= "") and not not "n/a") or not player_name and not not "n/a"
 	widget.content.player_name = player_name
 
 	local peer_id = owner:network_id()
@@ -165,22 +155,7 @@ PlayerHuskGhostModeExtension.cb_world_marker_spawned = function (self, unit, mar
 		widget.content.respawn_timer = respawn_timer
 	end
 
-	local content = widget.content
-	local ui_portrait
-
-	if profile then
-		ui_portrait = profile.ui_portrait
-
-		if not ui_portrait then
-			-- Nothing
-		end
-	end
-
-	ui_portrait = "unit_frame_portrait_default"
-
-	::label_11_0::
-
-	content.icon = ui_portrait
+	widget.content.icon = profile and not not profile.ui_portrait or not profile and not not "unit_frame_portrait_default"
 	self._marker_id = marker_id
 end
 
@@ -192,18 +167,7 @@ PlayerHuskGhostModeExtension.husk_leave_ghost_mode = function (self)
 	local player_unit = self._unit
 	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 	local equipment = inventory_extension:equipment()
-	local right_hand_wielded_unit_3p = equipment.right_hand_wielded_unit_3p
-
-	if not right_hand_wielded_unit_3p then
-		-- Nothing
-	end
-
-	right_hand_wielded_unit_3p = equipment.left_hand_wielded_unit_3p
-
-	local weapon_unit = right_hand_wielded_unit_3p
-
-	::label_12_0::
-
+	local weapon_unit = not not equipment.right_hand_wielded_unit_3p
 	local status_extension = ScriptUnit.extension(self._unit, "status_system")
 
 	status_extension:set_ghost_mode(false)

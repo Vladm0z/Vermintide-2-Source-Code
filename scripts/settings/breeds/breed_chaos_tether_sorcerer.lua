@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_tether_sorcerer.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 9999999,
 	player_locomotion_constrain_radius = 0.7,
 	walk_speed = 0.65,
@@ -185,44 +185,38 @@ local tbl = {
 		200,
 		200,
 		0
-	}
-}
-local setting = Development.setting("disable_plague_sorcerer")
+	},
+	disabled = not not Development.setting("disable_plague_sorcerer"),
+	allowed_layers = {
+		planks = 1.5,
+		ledges = 5,
+		bot_ratling_gun_fire = 10,
+		jumps = 5,
+		destructible_wall = 5,
+		temporary_wall = 0,
+		ledges_with_fence = 5,
+		doors = 1.5,
+		teleporters = 5,
+		bot_poison_wind = 2,
+		fire_grenade = 10
+	},
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t)
+		-- function 3
+		local blackboard = BLACKBOARDS[unit]
 
-setting = not not setting or not not false
-tbl.disabled = setting
-tbl.allowed_layers = {
-	planks = 1.5,
-	ledges = 5,
-	bot_ratling_gun_fire = 10,
-	jumps = 5,
-	destructible_wall = 5,
-	temporary_wall = 0,
-	ledges_with_fence = 5,
-	doors = 1.5,
-	teleporters = 5,
-	bot_poison_wind = 2,
-	fire_grenade = 10
-}
+		if not Unit.alive(killer_unit) then
+			return
+		end
 
-tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t)
-	-- function 3
-	local blackboard = BLACKBOARDS[unit]
+		local teleport_at_t = blackboard.teleport_at_t
 
-	if not Unit.alive(killer_unit) then
-		return
+		if teleport_at_t then
+			QuestSettings.check_corruptor_killed_at_teleport_time(blackboard, teleport_at_t, t, killer_unit)
+		end
+
+		QuestSettings.check_corruptor_killed_while_grabbing(blackboard, killer_unit)
 	end
-
-	local teleport_at_t = blackboard.teleport_at_t
-
-	if teleport_at_t then
-		QuestSettings.check_corruptor_killed_at_teleport_time(blackboard, teleport_at_t, t, killer_unit)
-	end
-
-	QuestSettings.check_corruptor_killed_while_grabbing(blackboard, killer_unit)
-end
-
-local breed_data = tbl
+}
 
 Breeds.chaos_tether_sorcerer = table.create_copy(Breeds.chaos_tether_sorcerer, breed_data)
 

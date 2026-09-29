@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/wwise_utils.lua
 
-local WwiseUtils = WwiseUtils
-
-WwiseUtils = not not WwiseUtils or not not {}
-WwiseUtils = WwiseUtils
+WwiseUtils = not not WwiseUtils
 WwiseUtils.EVENT_ID_NONE = 0
 
 WwiseUtils.trigger_position_event = function (world, event, position)

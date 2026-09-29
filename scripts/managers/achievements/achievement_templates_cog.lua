@@ -209,10 +209,7 @@ achievements.cog_kill_barrage = {
 			return
 		end
 
-		local kill_count = template_data.kill_count
-
-		kill_count = not not kill_count or not not 0
-		template_data.kill_count = kill_count + 1
+		template_data.kill_count = not not template_data.kill_count + 1
 
 		if template_data.kill_count >= 50 then
 			statistics_db:increment_stat(stats_id, "cog_kill_barrage")
@@ -540,7 +537,7 @@ achievements.cog_bomb_grind = {
 			return false
 		end
 
-		if (damage_type == "burninating" or damage_type == "burn") and not DamageUtils.attacker_is_fire_bomb(attacker_unit) then
+		if damage_type == "burninating" and not DamageUtils.attacker_is_fire_bomb(attacker_unit) or not (damage_type == "burninating") and damage_type == "burn" and not DamageUtils.attacker_is_fire_bomb(attacker_unit) then
 			return
 		end
 
@@ -587,10 +584,7 @@ achievements.cog_chain_headshot = {
 				return false
 			end
 
-			local shots_fired = template_data.shots_fired
-
-			shots_fired = not not shots_fired or not not 0
-			template_data.shots_fired = shots_fired
+			template_data.shots_fired = not not template_data.shots_fired
 			template_data.shots_fired = template_data.shots_fired + 1
 		else
 			local target_number = event_data[on_hit_target_number]

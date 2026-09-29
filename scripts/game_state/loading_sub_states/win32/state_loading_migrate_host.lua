@@ -138,18 +138,7 @@ StateLoadingMigrateHost.cb_server_created = function (self)
 	end
 
 	local lobby_host = self.parent:get_lobby()
-	local get_stored_lobby_data = lobby_host:get_stored_lobby_data()
-
-	if not get_stored_lobby_data then
-		-- Nothing
-	end
-
-	get_stored_lobby_data = {}
-
-	local stored_lobby_data = get_stored_lobby_data
-
-	::label_7_0::
-
+	local stored_lobby_data = not not lobby_host:get_stored_lobby_data()
 	local lobby_data = self.parent.parent.loading_context.host_migration_info.lobby_data
 
 	for key, value in pairs(lobby_data) do

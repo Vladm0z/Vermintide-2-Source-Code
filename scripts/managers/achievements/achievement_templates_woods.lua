@@ -297,7 +297,7 @@ achievements.woods_triple_lift = {
 			if HEALTH_ALIVE[unit] then
 				local bb = BLACKBOARDS[unit]
 
-				if bb and bb.in_vortex_state and (bb.in_vortex_state == "in_vortex_init" or bb.in_vortex_state == "in_vortex") then
+				if bb.in_vortex_state == "in_vortex_init" or bb.in_vortex_state == "in_vortex" then
 					num_vortexed_units = num_vortexed_units + 1
 				else
 					template_data.lifted_units[unit] = nil
@@ -515,7 +515,7 @@ achievements.woods_chaos_pinata = {
 
 			local bb = BLACKBOARDS[victim_unit]
 
-			if bb and bb.in_vortex_state and (bb.in_vortex_state == "in_vortex_init" or bb.in_vortex_state == "in_vortex") then
+			if bb.in_vortex_state == "in_vortex_init" or bb.in_vortex_state == "in_vortex" then
 				local num_hits = 0
 				local sott_unit
 
@@ -832,7 +832,7 @@ achievements.woods_wall_kill_gutter = {
 			local target_unit = event_data[2]
 			local blackboard = BLACKBOARDS[target_unit]
 			local jump_data = blackboard.jump_data
-			local is_jumping = not not jump_data and jump_data.state == "in_air" or jump_data.state == "in_air_no_target" or jump_data.state == "snapping"
+			local is_jumping = not not jump_data and (jump_data.state == "in_air" or jump_data.state == "in_air_no_target" or jump_data.state == "snapping")
 
 			if is_jumping then
 				rpc_increment_stat(attacker_unit, "woods_wall_kill_gutter")

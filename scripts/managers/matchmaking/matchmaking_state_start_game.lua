@@ -105,7 +105,7 @@ MatchmakingStateStartGame._verify_requirements = function (self)
 		if difficulty_settings.dlc_requirement and not ADDED_DLCS[difficulty_settings.dlc_requirement] then
 			DLCS_TO_CHECK[#DLCS_TO_CHECK + 1] = NetworkLookup.dlcs[difficulty_settings.dlc_requirement]
 			ADDED_DLCS[difficulty_settings.dlc_requirement] = true
-			votes_require_type = (votes_require_type ~= "all" or not "all") and not not "any"
+			votes_require_type = not not "any"
 		end
 	end
 
@@ -211,17 +211,7 @@ MatchmakingStateStartGame._setup_lobby_data = function (self)
 
 			Managers.mechanism:set_vote_data(vote_data)
 		elseif mechanism == "versus" then
-			local versus_map_pool = script_data.versus_map_pool
-
-			if not versus_map_pool then
-				-- Nothing
-			end
-
-			versus_map_pool = Managers.mechanism:mechanism_setting_for_title("map_pool")
-
-			local map_pool = versus_map_pool
-
-			::label_6_0::
+			local map_pool = not not script_data.versus_map_pool
 
 			mission_id = map_pool[Math.random(#map_pool)]
 
@@ -260,17 +250,7 @@ MatchmakingStateStartGame._setup_lobby_data = function (self)
 			end
 		end
 	elseif mechanism == "versus" and not search_config.player_hosted then
-		local versus_map_pool_2 = script_data.versus_map_pool
-
-		if not versus_map_pool_2 then
-			-- Nothing
-		end
-
-		versus_map_pool_2 = Managers.mechanism:mechanism_setting_for_title("map_pool")
-
-		local map_pool = versus_map_pool_2
-
-		::label_6_1::
+		local map_pool = not not script_data.versus_map_pool
 
 		mission_id = map_pool[Math.random(#map_pool)]
 

@@ -231,19 +231,7 @@ AnimationSystem._init_networked_variables = function (self, unit, event_name)
 			template.init(unit, scratchpad)
 		end
 
-		local var_10_0 = networked_anim_vars[unit]
-
-		if not var_10_0 then
-			-- Nothing
-		end
-
-		var_10_0 = {
-			updates = {}
-		}
-
-		local unit_vars = var_10_0
-
-		::label_10_0::
+		local unit_vars = not not networked_anim_vars[unit]
 
 		if template.update then
 			unit_vars.updates[#unit_vars.updates + 1] = scratchpad
@@ -528,21 +516,8 @@ end
 AnimationSystem.run_safe_animation_callbacks = function (self)
 	-- function 28
 	local animation_safe_callbacks = self._animation_safe_callbacks
-	local _animation_safe_callbacks_buffer_2
 
-	if self._animation_safe_callbacks == self._animation_safe_callbacks_buffer_1 then
-		_animation_safe_callbacks_buffer_2 = self._animation_safe_callbacks_buffer_2
-
-		if not _animation_safe_callbacks_buffer_2 then
-			-- Nothing
-		end
-	end
-
-	_animation_safe_callbacks_buffer_2 = self._animation_safe_callbacks_buffer_1
-
-	::label_28_0::
-
-	self._animation_safe_callbacks = _animation_safe_callbacks_buffer_2
+	self._animation_safe_callbacks = self._animation_safe_callbacks ~= self._animation_safe_callbacks_buffer_1 and not not self._animation_safe_callbacks_buffer_1 or not (self._animation_safe_callbacks ~= self._animation_safe_callbacks_buffer_1) and not not self._animation_safe_callbacks_buffer_2
 
 	for i = 1, #animation_safe_callbacks do
 		local safe_callback = animation_safe_callbacks[i]

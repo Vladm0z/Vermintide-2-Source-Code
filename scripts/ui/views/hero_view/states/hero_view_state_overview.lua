@@ -43,17 +43,7 @@ local rarity_index = {
 	rare = 3,
 	unique = 5
 }
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/ui/views/hero_view/states/hero_view_state_overview_testify")
-
-local hero_view_state_overview_testify = testify
-
-::label_0_0::
+local hero_view_state_overview_testify = not not script_data.testify
 
 HeroViewStateOverview = class(HeroViewStateOverview)
 HeroViewStateOverview.NAME = "HeroViewStateOverview"
@@ -153,33 +143,7 @@ end
 
 HeroViewStateOverview._setup_menu_layout = function (self, params)
 	-- function 2
-	local IS_CONSOLE = IS_CONSOLE
-
-	if not IS_CONSOLE then
-		-- Nothing
-	end
-
-	IS_CONSOLE = Managers.input:is_device_active("gamepad")
-
-	if not IS_CONSOLE then
-		-- Nothing
-	end
-
-	if UISettings.use_pc_menu_layout then
-		IS_CONSOLE = params.state_params.force_ingame_menu
-
-		if false then
-			IS_CONSOLE = false
-		end
-
-		goto label_2_0
-	end
-
-	IS_CONSOLE = true
-
-	local use_gamepad_layout = IS_CONSOLE
-
-	::label_2_0::
+	local use_gamepad_layout = not not IS_CONSOLE
 
 	if use_gamepad_layout then
 		self._layout_settings = local_require("scripts/ui/views/hero_view/states/hero_window_layout_console")
@@ -305,21 +269,7 @@ end
 
 HeroViewStateOverview.window_input_service = function (self)
 	-- function 10
-	local FAKE_INPUT_SERVICE
-
-	if self._input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	::label_10_0::
-
-	return FAKE_INPUT_SERVICE
+	return self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
 end
 
 HeroViewStateOverview.change_profile = function (self, profile_index, career_index)
@@ -371,32 +321,10 @@ HeroViewStateOverview._change_window = function (self, window_index, window_name
 	local window_offset
 
 	if not ignore_alignment then
-		local alignment_index_2 = new_window_settings.alignment_index
-
-		if not alignment_index_2 then
-			-- Nothing
-		end
-
-		alignment_index_2 = window_index
-
-		local alignment_index = alignment_index_2
-
-		::label_14_0::
-
+		local alignment_index = not not new_window_settings.alignment_index
 		local window_default_settings = UISettings.game_start_windows
 		local window_size = window_default_settings.size
-		local spacing = window_default_settings.spacing
-
-		if not spacing then
-			-- Nothing
-		end
-
-		spacing = 10
-
-		local window_spacing = spacing
-
-		::label_14_1::
-
+		local window_spacing = not not window_default_settings.spacing
 		local window_width = window_size[1]
 		local total_spacing = window_spacing * 2
 		local total_windows_width = 3 * window_width
@@ -802,17 +730,7 @@ end
 HeroViewStateOverview._has_active_level_vote = function (self)
 	-- function 42
 	local voting_manager = self.voting_manager
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local is_mission_vote = vote_in_progress
-
-	::label_42_0::
+	local is_mission_vote = not not voting_manager:vote_in_progress()
 
 	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
@@ -883,17 +801,7 @@ HeroViewStateOverview._handle_input = function (self, dt, t)
 	-- function 46
 	local input_blocked = self._input_blocked
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local _input_paused = self._input_paused
-
-	if _input_paused then
-		-- Nothing
-	end
-
-	_input_paused = gamepad_active
-
-	local input_paused = _input_paused
-
-	::label_46_0::
+	local input_paused = not not self._input_paused
 
 	if input_blocked or input_paused then
 		return
@@ -972,17 +880,7 @@ end
 HeroViewStateOverview._is_button_pressed = function (self, widget)
 	-- function 49
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_49_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -1084,7 +982,7 @@ end
 HeroViewStateOverview.set_pressed_item_backend_id = function (self, backend_id, is_drag_item)
 	-- function 65
 	self._pressed_item_backend_id = backend_id
-	self._pressed_item_by_drag = (not backend_id or not is_drag_item) and not not nil
+	self._pressed_item_by_drag = backend_id and (not not is_drag_item or not not nil) or not backend_id and not not nil
 end
 
 HeroViewStateOverview.get_disabled_backend_ids = function (self)
@@ -1140,23 +1038,8 @@ HeroViewStateOverview.set_fullscreen_effect_enable_state = function (self, enabl
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_74_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_74_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_74_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local flag_2
-
-		flag_2 = (not enabled or not 0.75) and not not 0
-
-		set_scalar_2(var_74_5, str_2, flag_2)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -1205,11 +1088,7 @@ end
 
 HeroViewStateOverview.get_selected_loadout_slot_index = function (self)
 	-- function 83
-	local _selected_loadout_slot_index = self._selected_loadout_slot_index
-
-	_selected_loadout_slot_index = not not _selected_loadout_slot_index or not not 1
-
-	return _selected_loadout_slot_index
+	return not not self._selected_loadout_slot_index
 end
 
 HeroViewStateOverview.set_selected_cosmetic_slot_index = function (self, index)
@@ -1219,11 +1098,7 @@ end
 
 HeroViewStateOverview.get_selected_cosmetic_slot_index = function (self)
 	-- function 85
-	local _selected_cosmetic_slot_index = self._selected_cosmetic_slot_index
-
-	_selected_cosmetic_slot_index = not not _selected_cosmetic_slot_index or not not 1
-
-	return _selected_cosmetic_slot_index
+	return not not self._selected_cosmetic_slot_index
 end
 
 HeroViewStateOverview.set_temporary_loadout_item = function (self, item, skip_wield_anim)
@@ -1271,17 +1146,7 @@ HeroViewStateOverview.clear_character_animation = function (self, blueprint_name
 	local career_name = career_data.name
 	local weapon_pose_backend_id = backend_items:get_loadout_item_id(career_name, "slot_pose")
 	local unlocked_weapon_poses = backend_items:get_unlocked_weapon_poses()
-	local var_90_0 = unlocked_weapon_poses[blueprint_name]
-
-	if not var_90_0 then
-		-- Nothing
-	end
-
-	var_90_0 = EMPTY_TABLE
-
-	local unlocked_weapon_poses_for_blueprint = var_90_0
-
-	::label_90_0::
+	local unlocked_weapon_poses_for_blueprint = not not unlocked_weapon_poses[blueprint_name]
 
 	if table.find(unlocked_weapon_poses_for_blueprint, weapon_pose_backend_id) then
 		local weapon_pose = backend_items:get_item_from_id(weapon_pose_backend_id)

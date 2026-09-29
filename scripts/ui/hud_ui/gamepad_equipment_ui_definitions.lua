@@ -733,11 +733,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 15
-						local texture_arrow_up_enabled = content.texture_arrow_up_enabled
-
-						texture_arrow_up_enabled = not not texture_arrow_up_enabled and not not content.is_filled
-
-						return texture_arrow_up_enabled
+						return not not content.texture_arrow_up_enabled
 					end
 				},
 				{
@@ -747,11 +743,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 16
-						local texture_arrow_left_enabled = content.texture_arrow_left_enabled
-
-						texture_arrow_left_enabled = not not texture_arrow_left_enabled and not not content.is_filled
-
-						return texture_arrow_left_enabled
+						return not not content.texture_arrow_left_enabled
 					end
 				},
 				{
@@ -761,11 +753,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 17
-						local texture_arrow_right_enabled = content.texture_arrow_right_enabled
-
-						texture_arrow_right_enabled = not not texture_arrow_right_enabled and not not content.is_filled
-
-						return texture_arrow_right_enabled
+						return not not content.texture_arrow_right_enabled
 					end
 				},
 				{
@@ -775,11 +763,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 18
-						local texture_arrow_up_enabled = content.texture_arrow_up_enabled
-
-						texture_arrow_up_enabled = not not texture_arrow_up_enabled and not not content.selected
-
-						return texture_arrow_up_enabled
+						return not not content.texture_arrow_up_enabled
 					end
 				},
 				{
@@ -789,11 +773,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 19
-						local texture_arrow_left_enabled = content.texture_arrow_left_enabled
-
-						texture_arrow_left_enabled = not not texture_arrow_left_enabled and not not content.selected
-
-						return texture_arrow_left_enabled
+						return not not content.texture_arrow_left_enabled
 					end
 				},
 				{
@@ -803,11 +783,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 20
-						local texture_arrow_right_enabled = content.texture_arrow_right_enabled
-
-						texture_arrow_right_enabled = not not texture_arrow_right_enabled and not not content.selected
-
-						return texture_arrow_right_enabled
+						return not not content.texture_arrow_right_enabled
 					end
 				},
 				{
@@ -817,11 +793,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 21
-						local is_filled = content.is_filled
-
-						is_filled = not not is_filled and not not content.has_additional_slots
-
-						return is_filled
+						return not not content.is_filled
 					end
 				},
 				{
@@ -831,11 +803,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 22
-						local is_filled = content.is_filled
-
-						is_filled = not not is_filled and not not content.has_additional_slots
-
-						return is_filled
+						return not not content.is_filled
 					end
 				},
 				{
@@ -845,11 +813,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 23
-						local is_filled = content.is_filled
-
-						is_filled = not not is_filled and not not content.can_swap
-
-						return is_filled
+						return not not content.is_filled
 					end
 				},
 				{
@@ -859,11 +823,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 24
-						local is_filled = content.is_filled
-
-						is_filled = not not is_filled and not not content.can_swap
-
-						return is_filled
+						return not not content.is_filled
 					end
 				}
 			}
@@ -1547,7 +1507,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 						local _, dt = Managers.time:time_and_delta("game")
 						local time = content.time + dt
 
-						content.time = (not content.is_reloading or not time) and not not 0
+						content.time = content.is_reloading and (not not time or not not 0) or not content.is_reloading and not not 0
 						content.using_gamepad = Managers.input:is_device_active("gamepad")
 
 						return not content.using_career_skill_weapon and not not content.visible
@@ -1560,18 +1520,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 28
-						local on_cooldown = content.on_cooldown
-
-						if on_cooldown then
-							on_cooldown = content.reload_button_id
-
-							if on_cooldown then
-								on_cooldown = content.using_career_skill_weapon
-								on_cooldown = not not on_cooldown and not not content.using_gamepad
-							end
-						end
-
-						return on_cooldown
+						return not not content.on_cooldown
 					end
 				},
 				{
@@ -1580,23 +1529,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					texture_id = "ability_effect",
 					content_check_function = function (content, style)
 						-- function 29
-						local using_career_skill_weapon
-
-						if not content.on_cooldown then
-							using_career_skill_weapon = content.using_career_skill_weapon
-
-							if using_career_skill_weapon then
-								using_career_skill_weapon = content.visible
-							end
-						else
-							using_career_skill_weapon = false
-						end
-
-						if false then
-							using_career_skill_weapon = true
-						end
-
-						return using_career_skill_weapon
+						return not content.on_cooldown and not not content.using_career_skill_weapon
 					end
 				},
 				{
@@ -1606,23 +1539,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 30
-						local using_career_skill_weapon
-
-						if not content.on_cooldown then
-							using_career_skill_weapon = content.using_career_skill_weapon
-
-							if using_career_skill_weapon then
-								using_career_skill_weapon = content.visible
-							end
-						else
-							using_career_skill_weapon = false
-						end
-
-						if false then
-							using_career_skill_weapon = true
-						end
-
-						return using_career_skill_weapon
+						return not content.on_cooldown and not not content.using_career_skill_weapon
 					end
 				},
 				{
@@ -1632,11 +1549,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 31
-						local using_career_skill_weapon = content.using_career_skill_weapon
-
-						using_career_skill_weapon = not not using_career_skill_weapon and not not content.visible
-
-						return using_career_skill_weapon
+						return not not content.using_career_skill_weapon
 					end
 				},
 				{
@@ -1646,14 +1559,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 32
-						local using_career_skill_weapon = content.using_career_skill_weapon
-
-						if using_career_skill_weapon then
-							using_career_skill_weapon = content.visible
-							using_career_skill_weapon = not not using_career_skill_weapon and not not content.is_reloading
-						end
-
-						return using_career_skill_weapon
+						return not not content.using_career_skill_weapon
 					end,
 					content_change_function = function (content, style)
 						-- function 33
@@ -1667,18 +1573,11 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 34
-						local visible = content.visible
-
-						visible = not not visible and not not content.is_reloading
-
-						return visible
+						return not not content.visible
 					end,
 					content_change_function = function (content, style)
 						-- function 35
-						local flag
-
-						flag = (not content.using_career_skill_weapon or not "reload_icon_mask") and not not "minigun_icon_mask"
-						content.reload_mask_id = flag
+						content.reload_mask_id = content.using_career_skill_weapon and not not "reload_icon_mask" or not content.using_career_skill_weapon and not not "minigun_icon_mask"
 					end
 				},
 				{
@@ -1688,11 +1587,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 36
-						local visible = content.visible
-
-						visible = not not visible and not not content.is_reloading
-
-						return visible
+						return not not content.visible
 					end,
 					content_change_function = function (content, style)
 						-- function 37
@@ -1708,14 +1603,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 38
-						local on_cooldown = content.on_cooldown
-
-						if on_cooldown then
-							on_cooldown = content.visible
-							on_cooldown = not not on_cooldown and not content.using_gamepad and not not content.using_career_skill_weapon
-						end
-
-						return on_cooldown
+						return not not content.on_cooldown
 					end,
 					content_change_function = function (content, style)
 						-- function 39
@@ -1733,21 +1621,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 						local input_text = ""
 
 						if key_index ~= UNASSIGNED_KEY then
-							local Mouse
-
-							if device_type == "mouse" then
-								Mouse = Mouse
-
-								if not Mouse then
-									-- Nothing
-								end
-							end
-
-							Mouse = Keyboard
-
-							local device = Mouse
-
-							::label_39_0::
+							local device = device_type ~= "mouse" and not not Keyboard or not (device_type ~= "mouse") and not not Mouse
 
 							input_text = not not device.button_locale_name(key_index) or not not device.button_name(key_index) or not not Localize("lb_unknown")
 							input_text = Utf8.upper(input_text)
@@ -1763,14 +1637,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 40
-						local on_cooldown = content.on_cooldown
-
-						if on_cooldown then
-							on_cooldown = content.visible
-							on_cooldown = not not on_cooldown and not content.using_gamepad and not not content.using_career_skill_weapon
-						end
-
-						return on_cooldown
+						return not not content.on_cooldown
 					end
 				}
 			}

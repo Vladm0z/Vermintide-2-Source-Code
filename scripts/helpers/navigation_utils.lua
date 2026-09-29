@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/navigation_utils.lua
 
-local NavigationUtils = NavigationUtils
-
-NavigationUtils = not not NavigationUtils or not not {}
-NavigationUtils = NavigationUtils
+NavigationUtils = not not NavigationUtils
 
 NavigationUtils.create_exclusive_box_obstacle_from_unit_data = function (nav_world, unit)
 	-- function 1
@@ -14,57 +11,9 @@ NavigationUtils.create_exclusive_box_obstacle_from_unit_data = function (nav_wor
 	local has_smartobject = false
 	local smartobject_idx = 0
 	local mesh_name = Unit.get_data(unit, "navtag_volume", "mesh_name")
-	local get_data
-
-	if Unit.has_data(unit, "navtag_volume", "padding_x") then
-		get_data = Unit.get_data(unit, "navtag_volume", "padding_x")
-
-		if not get_data then
-			-- Nothing
-		end
-	end
-
-	get_data = 0
-
-	local padding_x = get_data
-
-	do
-		local get_data_2
-	end
-
-	::label_1_0::
-
-	if Unit.has_data(unit, "navtag_volume", "padding_y") then
-		get_data_2 = Unit.get_data(unit, "navtag_volume", "padding_y")
-
-		if not get_data_2 then
-			-- Nothing
-		end
-	end
-
-	get_data_2 = 0
-
-	local padding_y = get_data_2
-
-	do
-		local get_data_3
-	end
-
-	::label_1_1::
-
-	if Unit.has_data(unit, "navtag_volume", "padding_z") then
-		get_data_3 = Unit.get_data(unit, "navtag_volume", "padding_z")
-
-		if not get_data_3 then
-			-- Nothing
-		end
-	end
-
-	get_data_3 = 0
-
-	local padding_z = get_data_3
-
-	::label_1_2::
+	local padding_x = Unit.has_data(unit, "navtag_volume", "padding_x") and not not Unit.get_data(unit, "navtag_volume", "padding_x") or not Unit.has_data(unit, "navtag_volume", "padding_x") and not not 0
+	local padding_y = Unit.has_data(unit, "navtag_volume", "padding_y") and not not Unit.get_data(unit, "navtag_volume", "padding_y") or not Unit.has_data(unit, "navtag_volume", "padding_y") and not not 0
+	local padding_z = Unit.has_data(unit, "navtag_volume", "padding_z") and not not Unit.get_data(unit, "navtag_volume", "padding_z") or not Unit.has_data(unit, "navtag_volume", "padding_z") and not not 0
 
 	return NavigationUtils.create_exclusive_box_obstacle_from_mesh(nav_world, unit, is_exclusive, color, has_layer, layer_idx, has_smartobject, smartobject_idx, mesh_name, padding_x, padding_y, padding_z)
 end

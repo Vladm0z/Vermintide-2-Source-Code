@@ -29,26 +29,13 @@ ActionTrueFlightBow.client_owner_start_action = function (self, new_action, t, c
 	local owner_unit = self.owner_unit
 	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
-	local _update_extra_shots = self:_update_extra_shots(buff_extension)
-
-	if not _update_extra_shots then
-		-- Nothing
-	end
-
-	_update_extra_shots = 0
-
-	local num_extra_shots = _update_extra_shots
-
-	::label_2_0::
+	local num_extra_shots = not not self:_update_extra_shots(buff_extension)
 
 	self.num_extra_shots = num_extra_shots
 
 	self:_update_extra_shots(buff_extension, num_extra_shots)
 
-	local num_projectiles = new_action.num_projectiles
-
-	num_projectiles = not not num_projectiles or not not 1
-	self.num_projectiles = num_projectiles + num_extra_shots
+	self.num_projectiles = not not new_action.num_projectiles + num_extra_shots
 
 	local talent_extension = ScriptUnit.has_extension(owner_unit, "talent_system")
 
@@ -56,10 +43,7 @@ ActionTrueFlightBow.client_owner_start_action = function (self, new_action, t, c
 		self.num_projectiles = self.num_projectiles + 1
 	end
 
-	local multi_projectile_spread = new_action.multi_projectile_spread
-
-	multi_projectile_spread = not not multi_projectile_spread or not not 0.075
-	self.multi_projectile_spread = multi_projectile_spread
+	self.multi_projectile_spread = not not new_action.multi_projectile_spread
 	self.num_projectiles_shot = 1
 
 	if chain_action_data then
@@ -83,11 +67,7 @@ ActionTrueFlightBow.client_owner_start_action = function (self, new_action, t, c
 	end
 
 	self.state = "waiting_to_shoot"
-
-	local fire_time = new_action.fire_time
-
-	fire_time = not not fire_time or not not 0
-	self.time_to_shoot = t + fire_time
+	self.time_to_shoot = t + not not new_action.fire_time
 	self.power_level = power_level
 	self.extra_buff_shot = false
 
@@ -159,20 +139,7 @@ ActionTrueFlightBow.fire = function (self, current_action)
 		if spread_extension then
 			if self.num_projectiles_shot > 1 then
 				local spread_horizontal_angle = math.pi * (self.num_projectiles_shot % 2 + 0.5)
-				local num
-
-				if self.num_projectiles_shot == 1 then
-					num = 0
-
-					goto label_5_0
-				end
-
-				num = math.round((self.num_projectiles_shot - 1) * 0.5, 0)
-
-				local shot_count_offset = num
-
-				::label_5_0::
-
+				local shot_count_offset = self.num_projectiles_shot ~= 1 and not not math.round((self.num_projectiles_shot - 1) * 0.5, 0) or not (self.num_projectiles_shot ~= 1) and not not 0
 				local angle_offset = self.multi_projectile_spread * shot_count_offset
 
 				fire_rotation = spread_extension:combine_spread_rotations(spread_horizontal_angle, angle_offset, fire_rotation)
@@ -190,26 +157,7 @@ ActionTrueFlightBow.fire = function (self, current_action)
 			speed = speed * (1 - i * 0.05)
 		end
 
-		local targets = self.targets
-
-		if targets then
-			-- Nothing
-		end
-
-		if current_action.single_target then
-			targets = self.targets[1]
-
-			if not targets then
-				-- Nothing
-			end
-		end
-
-		targets = self.targets[i]
-
-		local target_unit = targets
-
-		::label_5_1::
-
+		local target_unit = not not self.targets
 		local lookup_data = current_action.lookup_data
 		local scale = 1
 

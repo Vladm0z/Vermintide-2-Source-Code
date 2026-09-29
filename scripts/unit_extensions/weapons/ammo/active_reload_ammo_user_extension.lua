@@ -1,10 +1,6 @@
 -- chunkname: @scripts/unit_extensions/weapons/ammo/active_reload_ammo_user_extension.lua
 
-local script_data = script_data
-local infinite_ammo = script_data.infinite_ammo
-
-infinite_ammo = not not infinite_ammo or not not Development.parameter("infinite_ammo")
-script_data.infinite_ammo = infinite_ammo
+script_data.infinite_ammo = not not script_data.infinite_ammo
 ActiveReloadAmmoUserExtension = class(ActiveReloadAmmoUserExtension)
 
 ActiveReloadAmmoUserExtension.init = function (self, extension_init_context, unit, extension_init_data)
@@ -16,16 +12,8 @@ ActiveReloadAmmoUserExtension.init = function (self, extension_init_context, uni
 
 	self.reload_time = ammo_data.reload_time
 	self.max_ammo = ammo_data.max_ammo
-
-	local start_ammo = ammo_data.start_ammo
-
-	start_ammo = not not start_ammo or not not self.max_ammo
-	self.start_ammo = start_ammo
-
-	local ammo_per_clip = ammo_data.ammo_per_clip
-
-	ammo_per_clip = not not ammo_per_clip or not not self.start_ammo
-	self.ammo_per_clip = ammo_per_clip
+	self.start_ammo = not not ammo_data.start_ammo
+	self.ammo_per_clip = not not ammo_data.ammo_per_clip
 	self.time_penalty = ammo_data.time_penalty
 
 	if ScriptUnit.has_extension(self.owner_unit, "first_person_system") then

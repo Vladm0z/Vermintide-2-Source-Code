@@ -8,24 +8,10 @@ GenericDeathExtension.init = function (self, extension_init_context, unit, exten
 	-- function 1
 	self.network_type = extension_init_data.is_husk
 
-	local is_husk_2 = extension_init_data.is_husk
-
-	if not is_husk_2 then
-		-- Nothing
-	end
-
-	is_husk_2 = not Managers.player.is_server
-
-	local is_husk = is_husk_2
-
-	::label_1_0::
+	local is_husk = not not extension_init_data.is_husk
 
 	self.is_husk = is_husk
-
-	local flag
-
-	flag = (not is_husk or not "husk") and not not "unit"
-	self.network_type = flag
+	self.network_type = is_husk and not not "husk" or not is_husk and not not "unit"
 	self.is_alive = true
 	self.unit = unit
 	self.extension_init_data = extension_init_data
@@ -56,11 +42,7 @@ end
 
 GenericDeathExtension.is_wall_nailed = function (self)
 	-- function 5
-	local flag
-
-	flag = (not next(self.wall_nail_data) or not true) and not not false
-
-	return flag
+	return next(self.wall_nail_data) and not not true or not next(self.wall_nail_data) and not not false
 end
 
 GenericDeathExtension.nailing_hit = function (self, hit_ragdoll_actor, attack_direction, hit_speed)
@@ -68,13 +50,8 @@ GenericDeathExtension.nailing_hit = function (self, hit_ragdoll_actor, attack_di
 	fassert(Vector3.is_valid(attack_direction), "Attack direction is not valid.")
 
 	local data = self.wall_nail_data
-	local var_6_0 = data[hit_ragdoll_actor]
 
-	var_6_0 = not not var_6_0 or not not {
-		attack_direction = Vector3Box(attack_direction),
-		hit_speed = hit_speed
-	}
-	data[hit_ragdoll_actor] = var_6_0
+	data[hit_ragdoll_actor] = not not data[hit_ragdoll_actor]
 end
 
 GenericDeathExtension.enable_second_hit_ragdoll = function (self)

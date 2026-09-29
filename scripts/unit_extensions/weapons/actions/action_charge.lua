@@ -30,11 +30,7 @@ ActionCharge.client_owner_start_action = function (self, new_action, t)
 	local owner_unit = self.owner_unit
 
 	self.current_action = new_action
-
-	local audio_loop_id = new_action.audio_loop_id
-
-	audio_loop_id = not not audio_loop_id or not not "charge"
-	self.audio_loop_id = audio_loop_id
+	self.audio_loop_id = not not new_action.audio_loop_id
 	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
 	self.charge_flow_event_left_weapon = new_action.charge_flow_event_left_weapon
 	self.venting_overcharge = nil
@@ -123,43 +119,14 @@ ActionCharge._start_charge_sound = function (self)
 	weapon_extension:add_looping_audio(self.audio_loop_id, start_charge_id, stop_charge_id, start_charge_husk_id, stop_charge_husk_id)
 
 	local owner_player = self.owner_player
-
-	if owner_player then
-		-- Nothing
-	end
-
-	::label_3_0::
-
-	local bot_player = owner_player.bot_player
-
-	if bot_player then
-		-- Nothing
-	end
-
-	bot_player = not owner_player.remote
-
-	local is_local_player = bot_player
-
-	::label_3_1::
+	local is_local_player = not not owner_player and not not owner_player.bot_player
 
 	if is_local_player then
 		local charge_sound_switch = current_action.charge_sound_switch
 
 		if charge_sound_switch then
 			local overcharge_extension = ScriptUnit.extension(self.owner_unit, "overcharge_system")
-			local str
-
-			if overcharge_extension:above_overcharge_threshold() then
-				str = "above_overcharge_threshold"
-
-				goto label_3_2
-			end
-
-			str = "below_overcharge_threshold"
-
-			local overcharge_state = str
-
-			::label_3_2::
+			local overcharge_state = overcharge_extension:above_overcharge_threshold() and not not "above_overcharge_threshold" or not overcharge_extension:above_overcharge_threshold() and not not "below_overcharge_threshold"
 
 			weapon_extension:set_looping_audio_switch(self.audio_loop_id, charge_sound_switch, overcharge_state)
 		end
@@ -207,7 +174,7 @@ ActionCharge.client_owner_post_update = function (self, dt, t, world, can_damage
 
 	if full_charge_time > 0 and charge_time > 0 then
 		current_charge_time = 1 - full_charge_time / charge_time
-	elseif (not (full_charge_time > 0) or not (charge_time <= 0)) and (not (full_charge_time <= 0) or not (charge_time > 0)) and full_charge_time <= 0 and charge_time <= 0 then
+	elseif full_charge_time <= 0 and charge_time <= 0 then
 		current_charge_time = 1
 	end
 

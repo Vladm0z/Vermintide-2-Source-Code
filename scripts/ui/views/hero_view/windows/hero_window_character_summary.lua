@@ -186,7 +186,7 @@ HeroWindowCharacterSummary._handle_input = function (self, input_service, dt, t)
 		local hero_selection_button = widgets_by_name.hero_selection_button
 		local hero_button_pressed = self:_is_button_pressed(hero_selection_button)
 
-		if hero_button_pressed or input_service:get("special_1_press", swallow_input) or self._draw_hero_selection and input_service:get("back_menu", swallow_input) then
+		if self._draw_hero_selection and input_service:get("back_menu", swallow_input) then
 			input_handled = true
 
 			self:_set_career_selection_state(not self._draw_hero_selection)
@@ -232,7 +232,7 @@ HeroWindowCharacterSummary._handle_input = function (self, input_service, dt, t)
 			local scrollbar_widget = widgets_by_name.list_scrollbar
 			local scrollbar_hovered = scrollbar_widget.content.scroll_bar_info.is_hover
 
-			if (not self:_is_button_pressed(window_button) or scrollbar_hovered) and input_service:get("right_stick_press") then
+			if self:_is_button_pressed(window_button) and (not scrollbar_hovered or input_service:get("right_stick_press")) or not self:_is_button_pressed(window_button) and input_service:get("right_stick_press") then
 				self:_toggle_statistics(not self._draw_statistics)
 			end
 		end
@@ -341,23 +341,7 @@ HeroWindowCharacterSummary._set_career_selection_state = function (self, enabled
 
 	widgets_by_name.summary_title.content.visible = not enabled
 	widgets_by_name.hero_selection_title.content.visible = enabled
-
-	local content_2 = widgets_by_name.list_scrollbar.content
-	local _draw_statistics
-
-	if not enabled then
-		_draw_statistics = self._draw_statistics
-
-		if not _draw_statistics then
-			-- Nothing
-		end
-	end
-
-	_draw_statistics = false
-
-	::label_10_0::
-
-	content_2.visible = _draw_statistics
+	widgets_by_name.list_scrollbar.content.visible = enabled and not not false or not enabled and not not self._draw_statistics
 	self._params.changing_hero = enabled
 end
 
@@ -536,11 +520,8 @@ HeroWindowCharacterSummary._toggle_statistics = function (self, enabled)
 	widgets_by_name.list_scrollbar.content.visible = enabled
 
 	local title_widget = widgets_by_name.summary_title
-	local content = title_widget.content
-	local flag
 
-	flag = (not enabled or not 2) and not not 1
-	content.selected_option = flag
+	title_widget.content.selected_option = enabled and not not 2 or not enabled and not not 1
 end
 
 HeroWindowCharacterSummary._update_hero_sync = function (self)
@@ -652,17 +633,7 @@ end
 HeroWindowCharacterSummary._is_button_pressed = function (self, widget)
 	-- function 23
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_23_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_pressed then
 		hotspot.on_pressed = false
@@ -674,17 +645,7 @@ end
 HeroWindowCharacterSummary._is_button_hovered = function (self, widget)
 	-- function 24
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_24_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_hover_enter then
 		return true
@@ -694,17 +655,7 @@ end
 HeroWindowCharacterSummary._is_button_hover = function (self, widget)
 	-- function 25
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_25_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.is_hover
 end
@@ -858,21 +809,8 @@ HeroWindowCharacterSummary._populate_talents = function (self, hero_name, career
 			local id = TalentIDLookup[talent_name]
 			local talent_data = TalentUtils.get_talent_by_id(hero_name, id)
 			local content = widget.content
-			local icon
 
-			if talent_data then
-				icon = talent_data.icon
-
-				if not icon then
-					-- Nothing
-				end
-			end
-
-			icon = "icons_placeholder"
-
-			::label_30_0::
-
-			content.icon = icon
+			content.icon = talent_data and not not talent_data.icon or not talent_data and not not "icons_placeholder"
 			content.talent = talent_data
 			content.talent_id = id
 
@@ -1117,18 +1055,7 @@ HeroWindowCharacterSummary._animate_title_button = function (self, dt)
 		local text_style = style[style_id]
 		local shadow_text_style = style[shadow_style_id]
 		local is_selected = i == selected_option
-		local selected_progress_2 = text_style.selected_progress
-
-		if not selected_progress_2 then
-			-- Nothing
-		end
-
-		selected_progress_2 = 0
-
-		local selected_progress = selected_progress_2
-
-		::label_38_0::
-
+		local selected_progress = not not text_style.selected_progress
 		local speed = 15
 
 		if is_selected then
@@ -1166,27 +1093,12 @@ HeroWindowCharacterSummary._populate_career_info = function (self, career_name)
 	local character_selection_image = career_settings.character_selection_image
 	local display_name = career_settings.display_name
 	local widgets_by_name = self._carrer_info_widgets_by_name
-	local get_color_table_with_alpha
-
-	if Colors.color_definitions[career_name] then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha(career_name, 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = {
+	local career_color = Colors.color_definitions[career_name] and not not Colors.get_color_table_with_alpha(career_name, 255) or not Colors.color_definitions[career_name] and not not {
 		255,
 		255,
 		255,
 		255
 	}
-
-	local career_color = get_color_table_with_alpha
-
-	::label_39_0::
-
 	local passive_ability_data = CareerUtils.get_passive_ability_by_career(career_settings)
 	local profile = PROFILES_BY_CAREER_NAMES[career_name]
 	local profile_index = profile.index
@@ -1247,44 +1159,11 @@ HeroWindowCharacterSummary._animate_talent_widget = function (self, widget, dt)
 	-- function 40
 	local content = widget.content
 	local style = widget.style
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_40_0::
-
+	local hotspot = not not content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_40_1::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_40_2::
-
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -1396,18 +1275,7 @@ HeroWindowCharacterSummary._setup_hero_selection_widgets = function (self)
 	for i, profile_index in ipairs(ProfilePriority) do
 		local profile_settings = SPProfiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local get = hero_attributes:get(hero_name, "experience")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = 0
-
-		local hero_experience = get
-
-		::label_44_0::
-
+		local hero_experience = not not hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local careers = profile_settings.careers
 
@@ -1461,44 +1329,11 @@ HeroWindowCharacterSummary._animate_hero_widget = function (self, widget, dt)
 	-- function 45
 	local content = widget.content
 	local style = widget.style
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_45_0::
-
+	local hotspot = not not content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_45_1::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_45_2::
-
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -1539,18 +1374,7 @@ HeroWindowCharacterSummary._animate_hero_icon_widget = function (self, widget, h
 	-- function 46
 	local content = widget.content
 	local style = widget.style
-	local animation_progress_2 = content.animation_progress
-
-	if not animation_progress_2 then
-		-- Nothing
-	end
-
-	animation_progress_2 = 0
-
-	local animation_progress = animation_progress_2
-
-	::label_46_0::
-
+	local animation_progress = not not content.animation_progress
 	local speed = 8
 
 	if highlight then

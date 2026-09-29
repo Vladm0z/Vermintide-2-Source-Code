@@ -1,9 +1,6 @@
 -- chunkname: @scripts/utils/script_gui.lua
 
-local ScriptGUI = ScriptGUI
-
-ScriptGUI = not not ScriptGUI or not not {}
-ScriptGUI = ScriptGUI
+ScriptGUI = not not ScriptGUI
 
 ScriptGUI.text = function (gui, text, font, font_size, material, pos, color, drop_shadow_color, drop_shadow_offset)
 	-- function 1

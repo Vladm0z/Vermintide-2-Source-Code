@@ -37,11 +37,7 @@ BTNinjaSkulkAction.enter = function (self, unit, blackboard, t)
 	navigation_extension:set_max_speed(blackboard.breed.run_speed)
 
 	blackboard.target_skulk_time = t + 0.5
-
-	local skulk_jump_tries = blackboard.skulk_jump_tries
-
-	skulk_jump_tries = not not skulk_jump_tries or not not 0
-	blackboard.skulk_jump_tries = skulk_jump_tries
+	blackboard.skulk_jump_tries = not not blackboard.skulk_jump_tries
 
 	local locomotion = blackboard.locomotion_extension
 

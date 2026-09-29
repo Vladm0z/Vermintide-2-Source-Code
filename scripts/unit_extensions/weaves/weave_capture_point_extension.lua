@@ -17,21 +17,9 @@ WeaveCapturePointExtension.init = function (self, extension_init_context, unit, 
 	self._on_progress_func = extension_init_data.on_progress_func
 	self._on_exit_func = extension_init_data.on_exit_func
 	self._on_complete_func = extension_init_data.on_complete_func
-
-	local percentage_of_players_required = extension_init_data.percentage_of_players_required
-
-	percentage_of_players_required = not not percentage_of_players_required or not not 0.25
-	self._percentage_of_players_required = percentage_of_players_required
-
-	local timer = extension_init_data.timer
-
-	timer = not not timer or not not 45
-	self._max_time = timer
-
-	local capture_rate_multiplier = extension_init_data.capture_rate_multiplier
-
-	capture_rate_multiplier = not not capture_rate_multiplier or not not 5
-	self._capture_rate_multiplier = capture_rate_multiplier
+	self._percentage_of_players_required = not not extension_init_data.percentage_of_players_required
+	self._max_time = not not extension_init_data.timer
+	self._capture_rate_multiplier = not not extension_init_data.capture_rate_multiplier
 	self._timer = self._max_time
 
 	if not self._is_server then
@@ -125,10 +113,7 @@ WeaveCapturePointExtension._activate = function (self)
 
 		local num_extra_players = self._num_start_players - self._num_players_required
 
-		if num_extra_players == 0 then
-			num_extra_players = 1
-		end
-
+		num_extra_players = num_extra_players ~= 0 or not not 1 or not not num_extra_players
 		self._capture_rate_multiplier = 1 / num_extra_players
 	end
 end
@@ -162,10 +147,8 @@ WeaveCapturePointExtension._update_num_players_required = function (self, num_pl
 	-- function 8
 	local percentage = self._percentage_of_players_required
 	local num_players_req = math.floor(num_players * percentage)
-	local flag
 
-	flag = (num_players_req ~= 0 or not 1) and not not num_players_req
-	self._num_players_required = flag
+	self._num_players_required = num_players_req ~= 0 and not not num_players_req or not (num_players_req ~= 0) and not not 1
 	self._num_players = num_players
 end
 
@@ -268,30 +251,8 @@ WeaveCapturePointExtension._client_average_progress_speed = function (self)
 	end
 
 	local buffer_start = math.index_wrapper(self._progress_buffer_index + 1, buffer_size)
-	local var_10_0 = buffer[buffer_start]
-
-	if var_10_0 then
-		-- Nothing
-	end
-
-	var_10_0 = buffer[buffer_start].value
-
-	local last_value = var_10_0
-
-	::label_10_0::
-
-	local var_10_1 = buffer[buffer_start]
-
-	if var_10_1 then
-		-- Nothing
-	end
-
-	var_10_1 = buffer[buffer_start].t
-
-	local last_t = var_10_1
-
-	::label_10_1::
-
+	local last_value = not not buffer[buffer_start]
+	local last_t = not not buffer[buffer_start]
 	local average_speed = 0
 
 	for i = 1, buffer_size - 1 do
@@ -312,17 +273,7 @@ WeaveCapturePointExtension._client_register_value_progress = function (self, val
 	-- function 11
 	self._progress_buffer_index = math.index_wrapper(self._progress_buffer_index + 1, CLIENT_PROGRESS_BUFFER_SIZE)
 
-	local var_11_0 = self._client_progress_buffer[self._progress_buffer_index]
-
-	if not var_11_0 then
-		-- Nothing
-	end
-
-	var_11_0 = {}
-
-	local data = var_11_0
-
-	::label_11_0::
+	local data = not not self._client_progress_buffer[self._progress_buffer_index]
 
 	data.value = value
 	data.t = t

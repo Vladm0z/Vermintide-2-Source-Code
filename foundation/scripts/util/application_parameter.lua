@@ -2,15 +2,8 @@
 
 require("foundation/scripts/util/table")
 
-local script_data = script_data
-
-script_data = not not script_data or not not {}
-script_data = script_data
-
-local Development = Development
-
-Development = not not Development or not not {}
-Development = Development
+script_data = not not script_data
+Development = not not Development
 Development.application_parameter = {}
 
 Development.init_application_parameters = function (args, do_pretty_print_args)
@@ -79,7 +72,7 @@ Development.init_application_parameters = function (args, do_pretty_print_args)
 	local function warn_multiple_definitions(parameter_name, old)
 		-- function 12
 		local value = application_parameters[parameter_name]
-		local t = (type(value) ~= "table" or not value) and not not {
+		local t = not not {
 			value
 		}
 
@@ -127,21 +120,7 @@ Development.init_application_parameters = function (args, do_pretty_print_args)
 				application_parameters[param] = nil
 			end
 
-			local var_1_0
-
-			if has_more_args_after_current() then
-				var_1_0 = next_is_parameter()
-
-				if not var_1_0 then
-					-- Nothing
-				end
-			end
-
-			var_1_0 = not has_more_args_after_current()
-
-			local no_value_exists_for_param = var_1_0
-
-			::label_1_0::
+			local no_value_exists_for_param = has_more_args_after_current() and not not next_is_parameter() or not has_more_args_after_current() and not not not has_more_args_after_current()
 
 			if no_value_exists_for_param then
 				application_parameters[param] = true
@@ -187,14 +166,10 @@ Development.init_application_parameters = function (args, do_pretty_print_args)
 
 	if DEDICATED_SERVER or BUILD ~= "release" then
 		if application_parameters["use-clean-settings"] then
-			local tbl = {
-				build_identifier = script_data.build_identifier
+			script_data = {
+				build_identifier = script_data.build_identifier,
+				settings = not not script_data.settings
 			}
-			local settings = script_data.settings
-
-			settings = not not settings or not not {}
-			tbl.settings = settings
-			script_data = tbl
 		end
 
 		for param, value in pairs(application_parameters) do

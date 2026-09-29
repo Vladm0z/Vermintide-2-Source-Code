@@ -37,17 +37,7 @@ SpecialsPacing.remove_unwanted_breeds = function (self)
 			end
 		end
 
-		local rush_intervention = special_setting.rush_intervention
-
-		if rush_intervention then
-			-- Nothing
-		end
-
-		rush_intervention = special_setting.rush_intervention.breeds
-
-		local rush_breeds = rush_intervention
-
-		::label_2_0::
+		local rush_breeds = not not special_setting.rush_intervention
 
 		if rush_breeds then
 			for i = #rush_breeds, 1, -1 do
@@ -119,11 +109,7 @@ SpecialsPacing.setup_functions = {
 
 			if breed.special_spawn_stinger then
 				special_spawn_stinger = breed.special_spawn_stinger
-
-				local special_spawn_stinger_time = breed.special_spawn_stinger_time
-
-				special_spawn_stinger_time = not not special_spawn_stinger_time or not not 6
-				special_spawn_stinger_at_t = time - special_spawn_stinger_time
+				special_spawn_stinger_at_t = time - not not breed.special_spawn_stinger_time
 			end
 
 			slots[i] = {
@@ -148,11 +134,8 @@ SpecialsPacing.select_breed_functions = {
 
 		for i = 1, #slots do
 			local slot = slots[i]
-			local breed_2 = slot.breed
-			local var_5_1 = count[slot.breed]
 
-			var_5_1 = not not var_5_1 or not not 0
-			count[breed_2] = var_5_1 + 1
+			count[slot.breed] = not not count[slot.breed] + 1
 		end
 
 		local least_used = FrameTable.alloc_table()
@@ -191,11 +174,8 @@ SpecialsPacing.select_breed_functions = {
 
 		for i = 1, #slots do
 			local slot = slots[i]
-			local breed_2 = slot.breed
-			local var_6_1 = count[slot.breed]
 
-			var_6_1 = not not var_6_1 or not not 0
-			count[breed_2] = var_6_1 + 1
+			count[slot.breed] = not not count[slot.breed] + 1
 		end
 
 		local max_tries = 20
@@ -218,21 +198,10 @@ SpecialsPacing.select_breed_functions = {
 		end
 
 		local breeds = specials_settings.breeds
-		local batch_amount_2 = state_data.batch_amount
-
-		if not batch_amount_2 then
-			-- Nothing
-		end
-
-		batch_amount_2 = 0
-
-		local batch_amount = batch_amount_2
-
-		::label_7_0::
-
+		local batch_amount = not not state_data.batch_amount
 		local t = Managers.time:time("game")
 
-		if (not state_data.batch_breed or not do_coordinated or not (t > state_data.coord_time_check)) and batch_amount > specials_settings.max_specials then
+		if t > state_data.coord_time_check or not state_data.batch_breed or do_coordinated or batch_amount > specials_settings.max_specials then
 			state_data.batch_amount = 0
 
 			local pick_index = Math.random(1, #breeds)
@@ -266,11 +235,8 @@ SpecialsPacing.select_breed_functions = {
 
 			for i = 1, #slots do
 				local slot = slots[i]
-				local breed_2 = slot.breed
-				local var_8_1 = count[slot.breed]
 
-				var_8_1 = not not var_8_1 or not not 0
-				count[breed_2] = var_8_1 + 1
+				count[slot.breed] = not not count[slot.breed] + 1
 			end
 
 			local max_tries = 20
@@ -309,29 +275,12 @@ SpecialsPacing._set_next_coordinated_attack = function (self, t, specials_settin
 		local breed_name, health_modifier = SpecialsPacing.select_breed_functions[method_data.select_next_breed](slots, specials_settings, method_data, state_data)
 		local breed = Breeds[breed_name]
 		local trickle_time = method_data.coordinated_trickle_time
-		local num
 
-		if trickle_time then
-			num = i * trickle_time
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 2
-
-		::label_9_0::
-
-		time = time + num
+		time = time + (trickle_time and not not (i * trickle_time) or not trickle_time and not not 2)
 
 		if breed.special_spawn_stinger then
 			slot.special_spawn_stinger = breed.special_spawn_stinger
-
-			local special_spawn_stinger_time = breed.special_spawn_stinger_time
-
-			special_spawn_stinger_time = not not special_spawn_stinger_time or not not 6
-			slot.special_spawn_stinger_at_t = time - special_spawn_stinger_time
+			slot.special_spawn_stinger_at_t = time - not not breed.special_spawn_stinger_time
 		else
 			slot.special_spawn_stinger = nil
 			slot.special_spawn_stinger_at_t = nil
@@ -374,11 +323,7 @@ SpecialsPacing.specials_by_slots = function (self, t, specials_settings, method_
 			if t > slot.time then
 				slot.unit = nil
 				spawn_queue[#spawn_queue + 1] = slot
-
-				local flag
-
-				flag = (not method_data.always_coordinated or not "coordinating") and not not "wants_to_spawn"
-				slot.state = flag
+				slot.state = method_data.always_coordinated and not not "coordinating" or not method_data.always_coordinated and not not "wants_to_spawn"
 				slot.time = nil
 				slot.dest = ""
 			else
@@ -400,11 +345,7 @@ SpecialsPacing.specials_by_slots = function (self, t, specials_settings, method_
 
 			if breed.special_spawn_stinger then
 				slot.special_spawn_stinger = breed.special_spawn_stinger
-
-				local special_spawn_stinger_time = breed.special_spawn_stinger_time
-
-				special_spawn_stinger_time = not not special_spawn_stinger_time or not not 6
-				slot.special_spawn_stinger_at_t = time - special_spawn_stinger_time
+				slot.special_spawn_stinger_at_t = time - not not breed.special_spawn_stinger_time
 			else
 				slot.special_spawn_stinger = nil
 				slot.special_spawn_stinger_at_t = nil
@@ -429,17 +370,7 @@ SpecialsPacing.specials_by_slots = function (self, t, specials_settings, method_
 
 			local coordinated_time = t + 40
 			local average_slot_time = 0
-			local coordinated_attack_cooldown_multiplier_2 = method_data.coordinated_attack_cooldown_multiplier
-
-			if not coordinated_attack_cooldown_multiplier_2 then
-				-- Nothing
-			end
-
-			coordinated_attack_cooldown_multiplier_2 = 0.5
-
-			local coordinated_attack_cooldown_multiplier = coordinated_attack_cooldown_multiplier_2
-
-			::label_10_0::
+			local coordinated_attack_cooldown_multiplier = not not method_data.coordinated_attack_cooldown_multiplier
 
 			for i = 1, num_slots do
 				local slot = slots[i]
@@ -459,29 +390,11 @@ SpecialsPacing.specials_by_slots = function (self, t, specials_settings, method_
 				local slot = slots[i]
 				local breed_name, health_modifier = SpecialsPacing.select_breed_functions[method_data.select_next_breed](slots, specials_settings, method_data, state_data, do_coordinated)
 				local breed = Breeds[breed_name]
-				local num
-
-				if method_data.coordinated_trickle_time then
-					num = i * method_data.coordinated_trickle_time
-
-					if not num then
-						-- Nothing
-					end
-				end
-
-				num = i * 2
-
-				::label_10_1::
-
-				local time = coordinated_time + num
+				local time = coordinated_time + (method_data.coordinated_trickle_time and not not (i * method_data.coordinated_trickle_time) or not method_data.coordinated_trickle_time and not not (i * 2))
 
 				if breed.special_spawn_stinger then
 					slot.special_spawn_stinger = breed.special_spawn_stinger
-
-					local special_spawn_stinger_time_2 = breed.special_spawn_stinger_time
-
-					special_spawn_stinger_time_2 = not not special_spawn_stinger_time_2 or not not 6
-					slot.special_spawn_stinger_at_t = time - special_spawn_stinger_time_2
+					slot.special_spawn_stinger_at_t = time - not not breed.special_spawn_stinger_time
 				else
 					slot.special_spawn_stinger = nil
 					slot.special_spawn_stinger_at_t = nil
@@ -715,18 +628,7 @@ SpecialsPacing.delay_spawning = function (self, t, delay, per_unit_delay, ignore
 		local time, desc
 
 		if do_coordinated then
-			local coordinated_attack_cooldown_multiplier = method_data.coordinated_attack_cooldown_multiplier
-
-			if not coordinated_attack_cooldown_multiplier then
-				-- Nothing
-			end
-
-			coordinated_attack_cooldown_multiplier = 0.5
-
-			local coordinated_cooldown_multiplier = coordinated_attack_cooldown_multiplier
-
-			::label_18_0::
-
+			local coordinated_cooldown_multiplier = not not method_data.coordinated_attack_cooldown_multiplier
 			local coordinated_time = delay * coordinated_cooldown_multiplier
 
 			time = t + coordinated_cooldown_multiplier + per_unit_delay * i * coordinated_cooldown_multiplier
@@ -745,12 +647,7 @@ SpecialsPacing.delay_spawning = function (self, t, delay, per_unit_delay, ignore
 
 		if breed.special_spawn_stinger then
 			slot.special_spawn_stinger = breed.special_spawn_stinger
-
-			local time_2 = slot.time
-			local special_spawn_stinger_time = breed.special_spawn_stinger_time
-
-			special_spawn_stinger_time = not not special_spawn_stinger_time or not not 6
-			slot.special_spawn_stinger_at_t = time_2 - special_spawn_stinger_time
+			slot.special_spawn_stinger_at_t = slot.time - not not breed.special_spawn_stinger_time
 		else
 			slot.special_spawn_stinger = nil
 			slot.special_spawn_stinger_at_t = nil
@@ -1029,18 +926,7 @@ SpecialsPacing.request_speed_running_intervention = function (self, t, player_un
 	end
 
 	local specials_settings = CurrentSpecialsSettings
-	local speed_running_intervention = CurrentSpecialsSettings.speed_running_intervention
-
-	if not speed_running_intervention then
-		-- Nothing
-	end
-
-	speed_running_intervention = SpecialsSettings.default.speed_running_intervention
-
-	local speed_running_intervention_settings = speed_running_intervention
-
-	::label_26_0::
-
+	local speed_running_intervention_settings = not not CurrentSpecialsSettings.speed_running_intervention
 	local breeds = speed_running_intervention_settings.breeds
 	local slots = self._specials_slots
 	local best_slot = get_best_specials_slot(slots)

@@ -3,12 +3,7 @@
 GameSettings = {}
 GameSettings.transition_fade_out_speed = 1
 GameSettings.transition_fade_in_speed = 1
-
-local GameSettings = GameSettings
-local player_colors = GameSettings.player_colors
-
-player_colors = not not player_colors or not not {}
-GameSettings.player_colors = player_colors
+GameSettings.player_colors = not not GameSettings.player_colors
 GameSettings.player_colors.white = {
 	255,
 	199,

@@ -36,10 +36,7 @@ StartGameWindowCustomGameOverviewConsole.on_enter = function (self, params, offs
 
 	self:_create_ui_elements(params, offset)
 
-	local input_index = params.input_index
-
-	input_index = not not input_index or not not 1
-	self._input_index = input_index
+	self._input_index = not not params.input_index
 
 	self:_handle_new_selection(self._input_index)
 	self:_update_mission_option()
@@ -225,17 +222,7 @@ StartGameWindowCustomGameOverviewConsole._handle_input = function (self, dt, t)
 		if input_service:get(START_GAME_INPUT) or self:_is_button_pressed(widgets_by_name.play_button) then
 			self._play_button_pressed = true
 
-			local get_custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
-
-			if not get_custom_game_settings then
-				-- Nothing
-			end
-
-			get_custom_game_settings = parent:get_custom_game_settings("adventure")
-
-			local custom_game_settings = get_custom_game_settings
-
-			::label_11_0::
+			local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
 
 			parent:play(t, custom_game_settings.game_mode_type)
 		end
@@ -301,18 +288,7 @@ end
 StartGameWindowCustomGameOverviewConsole._option_selected = function (self, input_index, t)
 	-- function 15
 	local parent = self._parent
-	local get_custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
-
-	if not get_custom_game_settings then
-		-- Nothing
-	end
-
-	get_custom_game_settings = parent:get_custom_game_settings("adventure")
-
-	local custom_game_settings = get_custom_game_settings
-
-	::label_15_0::
-
+	local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
 	local selected_widget_name = selector_input_definition[input_index]
 
 	if selected_widget_name == "mission_setting" then

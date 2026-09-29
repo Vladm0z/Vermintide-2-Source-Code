@@ -245,21 +245,7 @@ PoisonWindGlobadierStateThrowing._calculate_trajectory = function (self)
 	for t = interval, 10, interval do
 		local new_position = WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, t)
 		local result = PhysicsWorld.linear_sphere_sweep(physics_world, current_position, new_position, radius, max_hits, "collision_filter", "filter_player_ray_projectile_static_only")
-		local count
-
-		if result then
-			count = #result
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local num_results = count
-
-		::label_5_0::
+		local num_results = result and not not #result or not result and not not 0
 
 		if num_results > 0 then
 			local done = false
@@ -445,43 +431,9 @@ PoisonWindGlobadierStateThrowing._throw = function (self)
 	local initial_radius = breed.globe_throw_initial_radius
 	local cloud_life_time = breed.globe_throw_aoe_life_time
 	local damage_source = "vs_poison_wind_globadier"
-	local var_11_0 = aoe_dot_difficulty_damage[difficulty_rank]
-
-	if not var_11_0 then
-		-- Nothing
-	end
-
-	var_11_0 = aoe_dot_difficulty_damage[2]
-
-	if not var_11_0 then
-		-- Nothing
-	end
-
-	var_11_0 = 5
-
-	local aoe_dot_damage_table = var_11_0
-
-	::label_11_0::
-
+	local aoe_dot_damage_table = not not aoe_dot_difficulty_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local var_11_1 = aoe_init_difficulty_damage[difficulty_rank]
-
-	if not var_11_1 then
-		-- Nothing
-	end
-
-	var_11_1 = aoe_init_difficulty_damage[2]
-
-	if not var_11_1 then
-		-- Nothing
-	end
-
-	var_11_1 = 7
-
-	local aoe_init_damage_table = var_11_1
-
-	::label_11_1::
-
+	local aoe_init_damage_table = not not aoe_init_difficulty_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local create_nav_tag_volume = true
 	local instant_explosion = false
@@ -547,53 +499,10 @@ PoisonWindGlobadierStateThrowing._update_movement = function (self, unit, t, dt,
 	local current_movement_speed_scale = self.current_movement_speed_scale
 
 	if not self.is_bot then
-		local _breed = self._breed
-
-		if _breed then
-			-- Nothing
-		end
-
-		_breed = self._breed.breed_move_acceleration_up
-
-		local breed_move_acceleration_up = _breed
-
-		::label_15_0::
-
-		local _breed_2 = self._breed
-
-		if _breed_2 then
-			-- Nothing
-		end
-
-		_breed_2 = self._breed.breed_move_acceleration_down
-
-		local breed_move_acceleration_down = _breed_2
-
-		::label_15_1::
-
-		local num = breed_move_acceleration_up * dt
-
-		if not num then
-			-- Nothing
-		end
-
-		num = movement_settings_table.move_acceleration_up * dt
-
-		local move_acceleration_up_dt = num
-
-		::label_15_2::
-
-		local num_2 = breed_move_acceleration_down * dt
-
-		if not num_2 then
-			-- Nothing
-		end
-
-		num_2 = movement_settings_table.move_acceleration_down * dt
-
-		local move_acceleration_down_dt = num_2
-
-		::label_15_3::
+		local breed_move_acceleration_up = not not self._breed
+		local breed_move_acceleration_down = not not self._breed
+		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
+		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -601,7 +510,7 @@ PoisonWindGlobadierStateThrowing._update_movement = function (self, unit, t, dt,
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = (not is_moving or not 1) and not not 0
+		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
 	end
 
 	local movement_speed = math.lerp(self._wind_up_movement_speed, 0.6, (not not progress or not not 1)^2)
@@ -632,7 +541,7 @@ PoisonWindGlobadierStateThrowing._update_movement = function (self, unit, t, dt,
 		self.move_anim_3p = move_anim_3p
 	end
 
-	if (self._previous_state == "jumping" or self._previous_state == "falling") and not self._locomotion_extension:is_on_ground() then
+	if self._previous_state == "jumping" and not self._locomotion_extension:is_on_ground() or not (self._previous_state == "jumping") and self._previous_state == "falling" and not self._locomotion_extension:is_on_ground() then
 		CharacterStateHelper.move_in_air_pactsworn(self._first_person_extension, input_extension, self._locomotion_extension, final_move_speed, unit)
 	else
 		CharacterStateHelper.move_on_ground(first_person_extension, input_extension, self._locomotion_extension, move_input_direction, final_move_speed, unit)

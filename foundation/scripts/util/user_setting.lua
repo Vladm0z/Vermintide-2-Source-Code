@@ -1,20 +1,10 @@
 -- chunkname: @foundation/scripts/util/user_setting.lua
 
-local Development = Development
-
-Development = not not Development or not not {}
-Development = Development
-
-local PATCHED_USER_SETTINGS = PATCHED_USER_SETTINGS
-
-PATCHED_USER_SETTINGS = not not PATCHED_USER_SETTINGS or not not false
-PATCHED_USER_SETTINGS = PATCHED_USER_SETTINGS
+Development = not not Development
+PATCHED_USER_SETTINGS = not not PATCHED_USER_SETTINGS
 
 if IS_CONSOLE and not PATCHED_USER_SETTINGS then
-	local UserSettings = UserSettings
-
-	UserSettings = not not UserSettings or not not {}
-	UserSettings = UserSettings
+	UserSettings = not not UserSettings
 
 	Application.set_user_setting = function (...)
 		-- function 1
@@ -23,21 +13,8 @@ if IS_CONSOLE and not PATCHED_USER_SETTINGS then
 
 		for i = 1, num_args - 2 do
 			local key = select(i, ...)
-			local var_1_0
 
-			if type(t[key]) == "table" then
-				var_1_0 = t[key]
-
-				if not var_1_0 then
-					-- Nothing
-				end
-			end
-
-			var_1_0 = {}
-
-			::label_1_0::
-
-			t[key] = var_1_0
+			t[key] = type(t[key]) ~= "table" and not not {} or not (type(t[key]) ~= "table") and not not t[key]
 			t = t[key]
 		end
 

@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_player.lua
 
-local LocomotionTemplates_2 = LocomotionTemplates
-
-LocomotionTemplates_2 = not not LocomotionTemplates_2 or not not {}
-LocomotionTemplates = LocomotionTemplates_2
+LocomotionTemplates = not not LocomotionTemplates
 
 local LocomotionTemplates = LocomotionTemplates
 local LEVEL_EDITOR_TEST = LEVEL_EDITOR_TEST
@@ -149,7 +146,7 @@ T.update_movement = function (data, t, dt)
 		if on_ground then
 			local hits, num_hits = PhysicsWorld.immediate_overlap(physics_world, "shape", "sphere", "position", POSITION_LOOKUP[unit], "rotation", rotation, "size", size, "collision_filter", extension._default_mover_filter)
 
-			extension.on_ground = (num_hits > 0 or Mover.flying_frames(Unit.mover(unit)) == 0) and extension.velocity_wanted:unbox().z <= 0
+			extension.on_ground = num_hits > 0 or Mover.flying_frames(Unit.mover(unit)) == 0 and extension.velocity_wanted:unbox().z <= 0
 		else
 			extension.on_ground = Mover.flying_frames(Unit.mover(unit)) == 0 and extension.velocity_wanted:unbox().z <= 0
 		end
@@ -239,12 +236,7 @@ T.update_network = function (data, dt)
 		GameSession_set_game_object_field(game, go_id, "position", Vector3.clamp(position, min, max))
 		GameSession_set_game_object_field(game, go_id, "has_moved_from_start_position", extension.has_moved_from_start_position)
 
-		local min_2 = math.min
-		local anim_move_speed = extension.anim_move_speed
-
-		anim_move_speed = not not anim_move_speed or not not Vector3.length(extension.velocity_current:unbox())
-
-		local speed = min_2(anim_move_speed, MAX_MOVE_SPEED)
+		local speed = math.min(not not extension.anim_move_speed, MAX_MOVE_SPEED)
 
 		Unit.animation_set_variable(unit, extension.move_speed_anim_var, speed)
 		GameSession_set_game_object_field(game, go_id, "velocity", Vector3.clamp(velocity, min_vel, max_vel))

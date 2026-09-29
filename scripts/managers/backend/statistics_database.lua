@@ -23,10 +23,8 @@ local function convert_from_backend(raw_value, database_type)
 				hex_value = floor(hex_temp)
 
 				local new_value_n = value_n + i
-				local flag
 
-				flag = (hex_value == hex_temp or not true) and not not false
-				value[new_value_n] = flag
+				value[new_value_n] = hex_value == hex_temp and not not false or not (hex_value == hex_temp) and not not true
 			end
 
 			value_n = value_n + 4
@@ -54,11 +52,7 @@ local function convert_to_backend(value, database_type)
 			local dec_value = 0
 
 			for j = 0, 3 do
-				local num = dec_value * 2
-				local flag
-
-				flag = (value[i + j] ~= true or not 1) and not not 0
-				dec_value = num + flag
+				dec_value = dec_value * 2 + (value[i + j] ~= true and not not 0 or not (value[i + j] ~= true) and not not 1)
 			end
 
 			local hex_value = string.format("%X", dec_value)
@@ -155,19 +149,7 @@ StatisticsDatabase._init_stat = function (self, definition, persistent_value)
 	stat.default_value = stat.value
 
 	if definition.database_name then
-		if not persistent_value then
-			-- Nothing
-		end
-
-		::label_9_0::
-
-		local value = stat.value
-
-		value = not not value or not not 0
-
-		::label_9_1::
-
-		stat.persistent_value = value
+		stat.persistent_value = not not persistent_value or not not stat.value
 		stat.persistent_value_mirror = stat.persistent_value
 	end
 
@@ -265,18 +247,8 @@ local function sync_stat(peer_id, stat_peer_id, stat_local_player_id, path, path
 			if stat.value ~= default_value or stat.persistent_value and stat.persistent_value ~= default_value then
 				local net_path = networkified_path(path)
 				local channel_id = PEER_ID_TO_CHANNEL[peer_id]
-				local rpc_sync_statistics_number = RPC.rpc_sync_statistics_number
-				local var_16_1 = channel_id
-				local var_16_2 = stat_peer_id
-				local var_16_3 = stat_local_player_id
-				local var_16_4 = net_path
-				local var_16_5 = cap_sync_value(stat.value)
-				local var_16_6 = cap_sync_value
-				local persistent_value = stat.persistent_value
 
-				persistent_value = not not persistent_value or not not 0
-
-				rpc_sync_statistics_number(var_16_1, var_16_2, var_16_3, var_16_4, var_16_5, var_16_6(persistent_value))
+				RPC.rpc_sync_statistics_number(channel_id, stat_peer_id, stat_local_player_id, net_path, cap_sync_value(stat.value), cap_sync_value(not not stat.persistent_value))
 			end
 		end
 	else
@@ -335,17 +307,7 @@ StatisticsDatabase._create_stat = function (self, stats, arg_n, ...)
 
 		definition = definition[arg_value]
 
-		local var_19_0 = stat[arg_value]
-
-		if not var_19_0 then
-			-- Nothing
-		end
-
-		var_19_0 = {}
-
-		local next_stat = var_19_0
-
-		::label_19_0::
+		local next_stat = not not stat[arg_value]
 
 		stat[arg_value] = next_stat
 		stat = next_stat
@@ -395,14 +357,7 @@ local function reset_stat(stat)
 				stat.value[i] = false
 			end
 		else
-			local persistent_value = stat.persistent_value
-
-			if not persistent_value then
-				persistent_value = stat.default_value
-				persistent_value = not not persistent_value or not not 0
-			end
-
-			stat.value = persistent_value
+			stat.value = not not stat.persistent_value
 		end
 	else
 		for stat_name, stat_definition in pairs(stat) do
@@ -586,21 +541,8 @@ end
 StatisticsDatabase.get_stat = function (self, id, ...)
 	-- function 34
 	local stat = self:_get_or_create_stat(id, 0, ...)
-	local value
 
-	if stat then
-		value = stat.value
-
-		if not value then
-			-- Nothing
-		end
-	end
-
-	value = 0
-
-	::label_34_0::
-
-	return value
+	return stat and not not stat.value or not stat and not not 0
 end
 
 StatisticsDatabase.has_stat = function (self, ...)
@@ -835,24 +777,11 @@ local function reset_persistant_stat(stat)
 			if stat.database_type == "hexarray" then
 				for i = 1, #stat.persistent_value do
 					stat.persistent_value[i] = stat.persistent_value_mirror[i]
-
-					local value = stat.value
-					local var_52_1 = stat.persistent_value[i]
-
-					var_52_1 = not not var_52_1 or not not false
-					value[i] = var_52_1
+					stat.value[i] = not not stat.persistent_value[i]
 				end
 			else
 				stat.persistent_value = stat.persistent_value_mirror
-
-				local persistent_value = stat.persistent_value
-
-				if not persistent_value then
-					persistent_value = stat.default_value
-					persistent_value = not not persistent_value or not not 0
-				end
-
-				stat.value = persistent_value
+				stat.value = not not stat.persistent_value
 			end
 
 			stat.dirty = false

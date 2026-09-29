@@ -181,7 +181,7 @@ BTDefendStandardAction._calculate_walk_animation = function (self, walk_dir)
 	-- function 8
 	local anim
 
-	anim = (walk_dir ~= "right" or not "move_right_walk") and (walk_dir ~= "left" or not "move_left_walk") and (walk_dir ~= "forward" or not "move_fwd_walk") and not not "move_bwd_walk"
+	anim = not not "move_bwd_walk"
 
 	return anim
 end
@@ -193,7 +193,7 @@ BTDefendStandardAction._calculate_walk_dir = function (self, right_vector, forwa
 	local abs_right = math.abs(right_dot)
 	local abs_fwd = math.abs(fwd_dot)
 
-	dir = (not (abs_fwd < abs_right) or not (right_dot > 0) or not "right") and (not (abs_fwd < abs_right) or not "left") and (not (fwd_dot > 0) or not "forward") and not not "backward"
+	dir = abs_fwd < abs_right and (right_dot > 0 and (not not "right" or abs_fwd < abs_right and (not not "left" or fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward") or not (abs_fwd < abs_right) and (fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward")) or not (right_dot > 0) and (abs_fwd < abs_right and (not not "left" or fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward") or not (abs_fwd < abs_right) and (fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward"))) or not (abs_fwd < abs_right) and (abs_fwd < abs_right and (not not "left" or fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward") or not (abs_fwd < abs_right) and (fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward"))
 
 	return dir
 end

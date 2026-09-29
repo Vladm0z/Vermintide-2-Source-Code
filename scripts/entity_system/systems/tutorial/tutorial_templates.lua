@@ -485,10 +485,8 @@ TutorialTemplates.objective_pickup = {
 
 		if objective_units_n > 0 then
 			local unit = objective_units[1]
-			local get_data = Unit.get_data(unit, "tutorial_text_id")
 
-			get_data = not not get_data or not not "tutorial_no_text"
-			data.objective_text = get_data
+			data.objective_text = not not Unit.get_data(unit, "tutorial_text_id")
 
 			return true, objective_units, objective_units_n
 		end
@@ -535,17 +533,7 @@ TutorialTemplates.objective_socket = {
 
 		if slot_name == "slot_level_event" and slot_data ~= nil then
 			local units = Managers.state.entity:get_entities("ObjectiveSocketUnitExtension")
-			local right_unit_1p = slot_data.right_unit_1p
-
-			if not right_unit_1p then
-				-- Nothing
-			end
-
-			right_unit_1p = slot_data.left_unit_1p
-
-			local weapon_unit_1p = right_unit_1p
-
-			::label_43_0::
+			local weapon_unit_1p = not not slot_data.right_unit_1p
 
 			if not ScriptUnit.has_extension(weapon_unit_1p, "limited_item_track_system") then
 				return false
@@ -578,10 +566,8 @@ TutorialTemplates.objective_socket = {
 			end
 
 			local first_socket_unit = objective_units[1]
-			local get_data = Unit.get_data(first_socket_unit, "tutorial_text_id")
 
-			get_data = not not get_data or not not "tutorial_no_text"
-			data.objective_text = get_data
+			data.objective_text = not not Unit.get_data(first_socket_unit, "tutorial_text_id")
 
 			return true, objective_units, objective_units_n
 		end
@@ -663,25 +649,11 @@ TutorialTemplates.objective_unit = {
 
 		if objective_units_n > 0 then
 			local unit_get_data = Unit.get_data
-			local var_52_0 = unit_get_data(best_unit, "tutorial_text_id")
 
-			var_52_0 = not not var_52_0 or not not "tutorial_no_text"
-			data.objective_text = var_52_0
-
-			local var_52_1 = unit_get_data(best_unit, "alerts_horde")
-
-			var_52_1 = not not var_52_1 or not not false
-			data.alerts_horde = var_52_1
-
-			local var_52_2 = unit_get_data(best_unit, "icon")
-
-			var_52_2 = not not var_52_2 or not not "hud_tutorial_icon_mission"
-			data.objective_icon = var_52_2
-
-			local var_52_3 = unit_get_data(best_unit, "tutorial_wave")
-
-			var_52_3 = not not var_52_3 or not not false
-			data.objective_wave = var_52_3
+			data.objective_text = not not unit_get_data(best_unit, "tutorial_text_id")
+			data.alerts_horde = not not unit_get_data(best_unit, "alerts_horde")
+			data.objective_icon = not not unit_get_data(best_unit, "icon")
+			data.objective_wave = not not unit_get_data(best_unit, "tutorial_wave")
 
 			return true, objective_units, objective_units_n
 		end
@@ -704,10 +676,7 @@ for name, template in pairs(TutorialTemplates) do
 	template.name = name
 
 	if template.display_type == "tooltip" then
-		local priority = template.priority
-
-		priority = not not priority or not not 0
-		template.priority = priority
+		template.priority = not not template.priority
 		TutorialTooltipTemplates_n = TutorialTooltipTemplates_n + 1
 		TutorialTooltipTemplates[TutorialTooltipTemplates_n] = template
 	elseif template.display_type == "info_slate" then

@@ -16,21 +16,8 @@ ActionRailGun.client_owner_start_action = function (self, new_action, t, chain_a
 	if on_shoot_particle_fx and not self.is_bot then
 		local unit = self.first_person_unit
 		local node_name = on_shoot_particle_fx.node_name
-		local node
 
-		if Unit.has_node(unit, node_name) then
-			node = Unit.node(unit, node_name)
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = 0
-
-		::label_2_0::
-
-		self._on_shoot_particle_fx_node = node
+		self._on_shoot_particle_fx_node = Unit.has_node(unit, node_name) and not not Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and not not 0
 		self._on_shoot_particle_fx = on_shoot_particle_fx
 	end
 end

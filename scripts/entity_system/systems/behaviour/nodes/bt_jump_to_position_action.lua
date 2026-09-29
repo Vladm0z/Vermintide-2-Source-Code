@@ -32,13 +32,7 @@ BTJumpToPositionAction.enter = function (self, unit, blackboard, t)
 	})
 
 	drawer:reset()
-
-	local assert = assert
-	local jump_from_pos = blackboard.jump_from_pos
-
-	jump_from_pos = not not jump_from_pos and not not blackboard.exit_pos
-
-	assert(jump_from_pos, "BTJumpToPositionAction needs jump_from_pos and exit_pos defined in blackboard.")
+	assert(not not blackboard.jump_from_pos, "BTJumpToPositionAction needs jump_from_pos and exit_pos defined in blackboard.")
 
 	local entrance_pos = blackboard.jump_from_pos:unbox()
 	local exit_pos = blackboard.exit_pos:unbox()

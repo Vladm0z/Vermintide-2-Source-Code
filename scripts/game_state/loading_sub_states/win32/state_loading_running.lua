@@ -28,15 +28,7 @@ StateLoadingRunning.on_enter = function (self, params)
 
 		loading_context.previous_session_error = nil
 
-		local parent = self.parent
-		local var_1_1 = parent
-		local create_popup = parent.create_popup
-		local var_1_3 = previous_session_error
-		local var_1_4 = self._previous_session_error_headers_lookup[previous_session_error]
-
-		var_1_4 = not not var_1_4 or not not "popup_notice_topic"
-
-		create_popup(var_1_1, var_1_3, var_1_4, "continue")
+		self.parent:create_popup(previous_session_error, not not self._previous_session_error_headers_lookup[previous_session_error], "continue")
 	end
 end
 
@@ -111,7 +103,7 @@ StateLoadingRunning.update = function (self, dt)
 
 	local level_transition_handler = Managers.level_transition_handler
 
-	if not LEVEL_EDITOR_TEST and (not self.parent._network_server or not level_transition_handler:needs_level_load()) and self.parent._network_client and self.parent._network_client:is_fully_synced() and level_transition_handler:needs_level_load() then
+	if not LEVEL_EDITOR_TEST and (self.parent._network_server and (level_transition_handler:needs_level_load() or self.parent._network_client and self.parent._network_client:is_fully_synced() and level_transition_handler:needs_level_load()) or not self.parent._network_server and self.parent._network_client and self.parent._network_client:is_fully_synced() and level_transition_handler:needs_level_load()) then
 		if not self.parent:loading_view_setup_done() then
 			local level_key = level_transition_handler:get_current_level_key()
 

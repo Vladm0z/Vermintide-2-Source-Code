@@ -17,38 +17,12 @@ BTChaosSorcererTetherSkulkAction.name = "BTChaosSorcererTetherSkulkAction"
 BTChaosSorcererTetherSkulkAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
-	local skulk_data_2 = blackboard.skulk_data
-
-	if not skulk_data_2 then
-		-- Nothing
-	end
-
-	skulk_data_2 = {}
-
-	local skulk_data = skulk_data_2
-
-	::label_2_0::
+	local skulk_data = not not blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-
-	local direction = skulk_data.direction
-
-	if not direction then
-		direction = action.direction
-		direction = not not direction or not not (1 - math.random(0, 1) * 2)
-	end
-
-	skulk_data.direction = direction
-
-	local radius = skulk_data.radius
-
-	radius = not not radius or not not blackboard.target_dist
-	skulk_data.radius = radius
-
-	local last_reference_pos = skulk_data.last_reference_pos
-
-	last_reference_pos = not not last_reference_pos or not not Vector3Box()
-	skulk_data.last_reference_pos = last_reference_pos
+	skulk_data.direction = not not skulk_data.direction
+	skulk_data.radius = not not skulk_data.radius
+	skulk_data.last_reference_pos = not not skulk_data.last_reference_pos
 
 	skulk_data.last_reference_pos:store(Vector3.zero())
 
@@ -225,35 +199,9 @@ BTChaosSorcererTetherSkulkAction.get_skulk_target = function (self, unit, blackb
 
 	local to_target = target_position - last_reference_pos
 	local dir = Vector3.normalize(to_target)
-	local preferred_distance_variance_2 = action.preferred_distance_variance
-
-	if not preferred_distance_variance_2 then
-		-- Nothing
-	end
-
-	preferred_distance_variance_2 = 0
-
-	local preferred_distance_variance = preferred_distance_variance_2
-
-	::label_10_0::
-
-	local preferred_distance_2 = action.preferred_distance
-
-	preferred_distance_2 = not not preferred_distance_2 or not not 20
-
-	local preferred_distance = preferred_distance_2 + math.lerp(-preferred_distance_variance, preferred_distance_variance, math.random())
-	local distance_before_turn_2 = action.distance_before_turn
-
-	if not distance_before_turn_2 then
-		-- Nothing
-	end
-
-	distance_before_turn_2 = 5
-
-	local distance_before_turn = distance_before_turn_2
-
-	::label_10_1::
-
+	local preferred_distance_variance = not not action.preferred_distance_variance
+	local preferred_distance = not not action.preferred_distance + math.lerp(-preferred_distance_variance, preferred_distance_variance, math.random())
+	local distance_before_turn = not not action.distance_before_turn
 	local circumference = preferred_distance * 2 * math.pi
 
 	assert(distance_before_turn < circumference * 0.25, "preferred distance is too small to move %s units before turning. Minimum %s (quarter of the circumference)", distance_before_turn, circumference * 0.25)

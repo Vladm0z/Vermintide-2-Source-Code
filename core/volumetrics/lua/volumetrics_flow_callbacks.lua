@@ -1,9 +1,6 @@
 -- chunkname: @core/volumetrics/lua/volumetrics_flow_callbacks.lua
 
-local VolumetricsFlowCallbacks = VolumetricsFlowCallbacks
-
-VolumetricsFlowCallbacks = not not VolumetricsFlowCallbacks or not not {}
-VolumetricsFlowCallbacks = VolumetricsFlowCallbacks
+VolumetricsFlowCallbacks = not not VolumetricsFlowCallbacks
 
 VolumetricsFlowCallbacks.register_fog_volume = function (params)
 	-- function 1

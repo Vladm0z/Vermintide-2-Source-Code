@@ -23,17 +23,7 @@ local SPAWN_PARTICLE_NAME = "fx/cursed_chest_spawn_01_portal"
 
 local function spawn_decal_func(event, element, boxed_spawn_pos, breed_name)
 	-- function 1
-	local decal_map_2 = event.decal_map
-
-	if not decal_map_2 then
-		-- Nothing
-	end
-
-	decal_map_2 = {}
-
-	local decal_map = decal_map_2
-
-	::label_1_0::
+	local decal_map = not not event.decal_map
 
 	event.decal_map = decal_map
 

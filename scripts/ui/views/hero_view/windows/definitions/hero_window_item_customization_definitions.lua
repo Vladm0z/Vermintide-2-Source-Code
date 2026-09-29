@@ -708,21 +708,8 @@ local function create_illusion_button()
 					content_check_function = function (content)
 						-- function 2
 						local hotspot = content.button_hotspot
-						local is_selected
 
-						if not hotspot.is_hover then
-							is_selected = hotspot.is_selected
-
-							if is_selected then
-								-- Nothing
-							end
-						end
-
-						is_selected = not content.equipped
-
-						::label_2_0::
-
-						return is_selected
+						return hotspot.is_hover and not not not content.equipped or not hotspot.is_hover and not not hotspot.is_selected
 					end
 				},
 				{
@@ -859,7 +846,8 @@ end
 local function create_property_option(scenegraph_id, text)
 	-- function 4
 	local masked = true
-	local tbl = {
+
+	return {
 		element = {
 			passes = {
 				{
@@ -882,95 +870,84 @@ local function create_property_option(scenegraph_id, text)
 		content = {
 			texture_id = "icon_list_dot",
 			text = text
-		}
-	}
-	local tbl_2 = {
-		texture_id = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			masked = masked,
-			texture_size = {
-				13,
-				13
+		},
+		style = {
+			texture_id = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				masked = masked,
+				texture_size = {
+					13,
+					13
+				},
+				color = Colors.get_color_table_with_alpha("corn_flower_blue", 255),
+				offset = {
+					0,
+					0,
+					1
+				}
 			},
-			color = Colors.get_color_table_with_alpha("corn_flower_blue", 255),
-			offset = {
-				0,
-				0,
-				1
+			text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 20,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					450,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("corn_flower_blue", 255),
+				color_override = {},
+				color_override_table = {
+					start_index = 0,
+					end_index = 0,
+					color = Colors.get_color_table_with_alpha("font_default", 255)
+				},
+				offset = {
+					15,
+					-23,
+					3
+				}
+			},
+			text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 20,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					450,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					16,
+					-24,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			450,
-			50
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("corn_flower_blue", 255)
-	tbl_3.color_override = {}
-	tbl_3.color_override_table = {
-		start_index = 0,
-		end_index = 0,
-		color = Colors.get_color_table_with_alpha("font_default", 255)
-	}
-	tbl_3.offset = {
-		15,
-		-23,
-		3
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			450,
-			50
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		16,
-		-24,
-		2
-	}
-	tbl_2.text_shadow = tbl_4
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_trait_option(scenegraph_id, title_text, description_text, icon)
 	-- function 5
 	local masked = true
-	local tbl = {
+
+	return {
 		element = {
 			passes = {
 				{
@@ -1004,138 +981,116 @@ local function create_trait_option(scenegraph_id, title_text, description_text, 
 			title_text = title_text,
 			description_text = description_text,
 			texture_id = icon
-		}
-	}
-	local tbl_2 = {
-		texture_id = {
-			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			masked = masked,
-			texture_size = {
-				40,
-				40
+		},
+		style = {
+			texture_id = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				masked = masked,
+				texture_size = {
+					40,
+					40
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					1
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
+			title_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 20,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					400,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					30,
+					-5,
+					3
+				}
 			},
-			offset = {
-				0,
-				0,
-				1
+			title_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 20,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					400,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					31,
+					-6,
+					2
+				}
+			},
+			description_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 20,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					400,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					30,
+					-47,
+					3
+				}
+			},
+			description_text_shadow = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 20,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					400,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					31,
+					-48,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			400,
-			50
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_3.offset = {
-		30,
-		-5,
-		3
-	}
-	tbl_2.title_text = tbl_3
-
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			400,
-			50
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		31,
-		-6,
-		2
-	}
-	tbl_2.title_text_shadow = tbl_4
-
-	local tbl_5 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			400,
-			50
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.offset = {
-		30,
-		-47,
-		3
-	}
-	tbl_2.description_text = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			400,
-			50
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		31,
-		-48,
-		2
-	}
-	tbl_2.description_text_shadow = tbl_6
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_scroll_mask(scenegraph_id, size)
@@ -1441,17 +1396,7 @@ local widgets = {
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 10
-						local progress_2 = style.progress
-
-						if not progress_2 then
-							-- Nothing
-						end
-
-						progress_2 = 0
-
-						local progress = progress_2
-
-						::label_10_0::
+						local progress = not not style.progress
 
 						progress = (progress + dt) % 1
 
@@ -1500,22 +1445,7 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 	background_texture = not not background_texture or not not "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local var_11_0
-
-	if frame_name then
-		var_11_0 = UIFrameSettings[frame_name]
-
-		if not var_11_0 then
-			-- Nothing
-		end
-	end
-
-	var_11_0 = UIFrameSettings.button_frame_01
-
-	local frame_settings = var_11_0
-
-	::label_11_0::
-
+	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
@@ -1531,7 +1461,7 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 		end
 	end
 
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -1667,254 +1597,233 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 				texture_id = background_texture
 			},
 			disable_with_gamepad = disable_with_gamepad
-		}
-	}
-	local tbl_2 = {
-		background = {
-			color = {
-				255,
-				150,
-				150,
-				150
+		},
+		style = {
+			background = {
+				color = {
+					255,
+					150,
+					150,
+					150
+				},
+				offset = {
+					0,
+					0,
+					0
+				}
 			},
-			offset = {
-				0,
-				0,
-				0
+			background_fade = {
+				color = {
+					200,
+					255,
+					255,
+					255
+				},
+				offset = {
+					frame_width,
+					frame_width - 2,
+					2
+				},
+				size = {
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
+				}
+			},
+			hover_glow = {
+				color = {
+					0,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					frame_width - 2,
+					3
+				},
+				size = {
+					size[1],
+					math.min(size[2] - 5, 80)
+				}
+			},
+			clicked_rect = {
+				color = {
+					0,
+					0,
+					0,
+					0
+				},
+				offset = {
+					0,
+					0,
+					7
+				}
+			},
+			disabled_rect = {
+				color = {
+					150,
+					20,
+					20,
+					20
+				},
+				offset = {
+					0,
+					0,
+					1
+				}
+			},
+			title_text = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+				select_text_color = Colors.get_color_table_with_alpha("white", 255),
+				size = {
+					size[1] - 40,
+					size[2]
+				},
+				offset = {
+					20,
+					0,
+					6
+				}
+			},
+			title_text_disabled = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("gray", 255),
+				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
+				size = {
+					size[1] - 40,
+					size[2]
+				},
+				offset = {
+					20,
+					0,
+					6
+				}
+			},
+			title_text_shadow = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_type = "hell_shark",
+				font_size = not not font_size or not not 24,
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				default_text_color = Colors.get_color_table_with_alpha("black", 255),
+				size = {
+					size[1] - 40,
+					size[2]
+				},
+				offset = {
+					22,
+					-2,
+					5
+				}
+			},
+			frame = {
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					8
+				}
+			},
+			glass_top = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					size[2] - (frame_width + 11),
+					4
+				},
+				size = {
+					size[1],
+					11
+				}
+			},
+			glass_bottom = {
+				color = {
+					100,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					frame_width - 9,
+					4
+				},
+				size = {
+					size[1],
+					11
+				}
+			},
+			side_detail_left = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					extra_detail_offset_x and not not -extra_detail_offset_x or not extra_detail_offset_x and not not -9,
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					9
+				},
+				size = {
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
+				}
+			},
+			side_detail_right = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					size[1] - side_detail_texture_size[1] + (not not extra_detail_offset_x or not not 9),
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					9
+				},
+				size = {
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
+				}
 			}
 		},
-		background_fade = {
-			color = {
-				200,
-				255,
-				255,
-				255
-			},
-			offset = {
-				frame_width,
-				frame_width - 2,
-				2
-			},
-			size = {
-				size[1] - frame_width * 2,
-				size[2] - frame_width * 2
-			}
-		},
-		hover_glow = {
-			color = {
-				0,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				frame_width - 2,
-				3
-			},
-			size = {
-				size[1],
-				math.min(size[2] - 5, 80)
-			}
-		},
-		clicked_rect = {
-			color = {
-				0,
-				0,
-				0,
-				0
-			},
-			offset = {
-				0,
-				0,
-				7
-			}
-		},
-		disabled_rect = {
-			color = {
-				150,
-				20,
-				20,
-				20
-			},
-			offset = {
-				0,
-				0,
-				1
-			}
-		},
-		title_text = {
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-			default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-			select_text_color = Colors.get_color_table_with_alpha("white", 255),
-			size = {
-				size[1] - 40,
-				size[2]
-			},
-			offset = {
-				20,
-				0,
-				6
-			}
-		},
-		title_text_disabled = {
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("gray", 255),
-			default_text_color = Colors.get_color_table_with_alpha("gray", 255),
-			size = {
-				size[1] - 40,
-				size[2]
-			},
-			offset = {
-				20,
-				0,
-				6
-			}
-		},
-		title_text_shadow = {
-			upper_case = true,
-			word_wrap = true,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			font_type = "hell_shark",
-			font_size = not not font_size or not not 24,
-			text_color = Colors.get_color_table_with_alpha("black", 255),
-			default_text_color = Colors.get_color_table_with_alpha("black", 255),
-			size = {
-				size[1] - 40,
-				size[2]
-			},
-			offset = {
-				22,
-				-2,
-				5
-			}
-		},
-		frame = {
-			texture_size = frame_settings.texture_size,
-			texture_sizes = frame_settings.texture_sizes,
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				0,
-				8
-			}
-		},
-		glass_top = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				size[2] - (frame_width + 11),
-				4
-			},
-			size = {
-				size[1],
-				11
-			}
-		},
-		glass_bottom = {
-			color = {
-				100,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				frame_width - 9,
-				4
-			},
-			size = {
-				size[1],
-				11
-			}
-		}
-	}
-	local tbl_3 = {
-		color = {
-			255,
-			255,
-			255,
-			255
-		}
-	}
-	local tbl_4 = {
-		nil,
-		nil,
-		9
-	}
-	local num
-
-	if extra_detail_offset_x then
-		num = -extra_detail_offset_x
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = -9
-
-	::label_11_1::
-
-	tbl_4[1] = num
-	tbl_4[2] = size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0)
-	tbl_3.offset = tbl_4
-	tbl_3.size = {
-		side_detail_texture_size[1],
-		side_detail_texture_size[2]
-	}
-	tbl_2.side_detail_left = tbl_3
-	tbl_2.side_detail_right = {
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
+		scenegraph_id = scenegraph_id,
 		offset = {
-			size[1] - side_detail_texture_size[1] + (not not extra_detail_offset_x or not not 9),
-			size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
-			9
-		},
-		size = {
-			side_detail_texture_size[1],
-			side_detail_texture_size[2]
+			0,
+			0,
+			0
 		}
 	}
-	tbl.style = tbl_2
-	tbl.scenegraph_id = scenegraph_id
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-
-	return tbl
 end
 
 local disable_with_gamepad = false
@@ -2084,135 +1993,123 @@ local animation_definitions = {
 		}
 	}
 }
-local tbl = {}
-local tbl_2 = {
-	{
-		input_action = "d_vertical",
-		priority = 1,
-		description_text = "input_description_navigate",
-		ignore_keybinding = true
+local generic_input_actions = {
+	default = {
+		{
+			input_action = "d_vertical",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "d_horizontal",
+			priority = 2,
+			description_text = "input_description_select",
+			ignore_keybinding = true
+		},
+		{
+			priority = 3,
+			description_text = "input_description_information",
+			ignore_keybinding = true,
+			input_action = IS_PS4 and not not "l2" or not IS_PS4 and not not "left_trigger"
+		},
+		{
+			input_action = "back",
+			priority = 4,
+			description_text = "input_description_close"
+		}
 	},
-	{
-		input_action = "d_horizontal",
-		priority = 2,
-		description_text = "input_description_select",
-		ignore_keybinding = true
+	item_setting = {
+		{
+			input_action = "d_vertical",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "d_horizontal",
+			priority = 2,
+			description_text = "input_description_select",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "refresh",
+			priority = 3,
+			description_text = "crafting_recipe_apply_weapon_skin"
+		},
+		{
+			priority = 4,
+			description_text = "input_description_information",
+			ignore_keybinding = true,
+			input_action = IS_PS4 and not not "l2" or not IS_PS4 and not not "left_trigger"
+		},
+		{
+			input_action = "back",
+			priority = 5,
+			description_text = "input_description_close"
+		}
+	},
+	item_properties = {
+		{
+			input_action = "d_vertical",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "refresh",
+			priority = 2,
+			description_text = "crafting_recipe_weapon_reroll_properties"
+		},
+		{
+			input_action = "back",
+			priority = 3,
+			description_text = "input_description_close"
+		}
+	},
+	item_trait = {
+		{
+			input_action = "d_vertical",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "right_stick",
+			priority = 2,
+			description_text = "input_description_scroll_details",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "refresh",
+			priority = 3,
+			description_text = "crafting_recipe_weapon_reroll_traits"
+		},
+		{
+			input_action = "back",
+			priority = 4,
+			description_text = "input_description_close"
+		}
+	},
+	item_upgrade = {
+		{
+			input_action = "d_vertical",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "refresh",
+			priority = 2,
+			description_text = "hero_view_crafting_upgrade"
+		},
+		{
+			input_action = "back",
+			priority = 3,
+			description_text = "input_description_close"
+		}
 	}
 }
-local tbl_3 = {
-	priority = 3,
-	description_text = "input_description_information",
-	ignore_keybinding = true
-}
-local flag
-
-flag = (not IS_PS4 or not "l2") and not not "left_trigger"
-tbl_3.input_action = flag
-tbl_2[3] = tbl_3
-tbl_2[4] = {
-	input_action = "back",
-	priority = 4,
-	description_text = "input_description_close"
-}
-tbl.default = tbl_2
-
-local tbl_4 = {
-	{
-		input_action = "d_vertical",
-		priority = 1,
-		description_text = "input_description_navigate",
-		ignore_keybinding = true
-	},
-	{
-		input_action = "d_horizontal",
-		priority = 2,
-		description_text = "input_description_select",
-		ignore_keybinding = true
-	},
-	{
-		input_action = "refresh",
-		priority = 3,
-		description_text = "crafting_recipe_apply_weapon_skin"
-	}
-}
-local tbl_5 = {
-	priority = 4,
-	description_text = "input_description_information",
-	ignore_keybinding = true
-}
-local flag_2
-
-flag_2 = (not IS_PS4 or not "l2") and not not "left_trigger"
-tbl_5.input_action = flag_2
-tbl_4[4] = tbl_5
-tbl_4[5] = {
-	input_action = "back",
-	priority = 5,
-	description_text = "input_description_close"
-}
-tbl.item_setting = tbl_4
-tbl.item_properties = {
-	{
-		input_action = "d_vertical",
-		priority = 1,
-		description_text = "input_description_navigate",
-		ignore_keybinding = true
-	},
-	{
-		input_action = "refresh",
-		priority = 2,
-		description_text = "crafting_recipe_weapon_reroll_properties"
-	},
-	{
-		input_action = "back",
-		priority = 3,
-		description_text = "input_description_close"
-	}
-}
-tbl.item_trait = {
-	{
-		input_action = "d_vertical",
-		priority = 1,
-		description_text = "input_description_navigate",
-		ignore_keybinding = true
-	},
-	{
-		input_action = "right_stick",
-		priority = 2,
-		description_text = "input_description_scroll_details",
-		ignore_keybinding = true
-	},
-	{
-		input_action = "refresh",
-		priority = 3,
-		description_text = "crafting_recipe_weapon_reroll_traits"
-	},
-	{
-		input_action = "back",
-		priority = 4,
-		description_text = "input_description_close"
-	}
-}
-tbl.item_upgrade = {
-	{
-		input_action = "d_vertical",
-		priority = 1,
-		description_text = "input_description_navigate",
-		ignore_keybinding = true
-	},
-	{
-		input_action = "refresh",
-		priority = 2,
-		description_text = "hero_view_crafting_upgrade"
-	},
-	{
-		input_action = "back",
-		priority = 3,
-		description_text = "input_description_close"
-	}
-}
-
-local generic_input_actions = tbl
 
 return {
 	crafting_widgets = crafting_widgets,

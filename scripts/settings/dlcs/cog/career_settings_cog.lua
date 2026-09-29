@@ -161,11 +161,7 @@ CareerSettings.dr_engineer = {
 		slot_grenade = 2
 	}
 }
-
-local OverchargeData = OverchargeData
-
-OverchargeData = not not OverchargeData or not not {}
-OverchargeData = OverchargeData
+OverchargeData = not not OverchargeData
 OverchargeData.dr_engineer = {
 	overcharge_threshold = 10,
 	overcharge_warning_critical_sound_event = "drakegun_overcharge_warning_critical",
@@ -177,18 +173,8 @@ OverchargeData.dr_engineer = {
 	overcharge_warning_med_sound_event = "drakegun_overcharge_warning_med",
 	hit_overcharge_threshold_sound = "ui_special_attack_ready"
 }
-
-local PlayerUnitStatusSettings = PlayerUnitStatusSettings
-
-PlayerUnitStatusSettings = not not PlayerUnitStatusSettings or not not {}
-PlayerUnitStatusSettings = PlayerUnitStatusSettings
-
-local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
-local merge = table.merge
-local overcharge_values = PlayerUnitStatusSettings.overcharge_values
-
-overcharge_values = not not overcharge_values or not not {}
-PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
+PlayerUnitStatusSettings = not not PlayerUnitStatusSettings
+PlayerUnitStatusSettings.overcharge_values = table.merge(not not PlayerUnitStatusSettings.overcharge_values, {
 	cog_hammer_charge_light = 3,
 	cog_hammer_heavy_1_burn = 10,
 	cog_hammer_heavy_1_explosion = 40

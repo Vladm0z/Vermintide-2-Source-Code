@@ -3,10 +3,8 @@
 require("scripts/settings/difficulty_settings")
 
 local EMPTY = ""
-local PatrolFormationSettings = PatrolFormationSettings
 
-PatrolFormationSettings = not not PatrolFormationSettings or not not {}
-PatrolFormationSettings = PatrolFormationSettings
+PatrolFormationSettings = not not PatrolFormationSettings
 PatrolFormationSettings.default_settings = {
 	sounds = {},
 	offsets = {
@@ -3820,7 +3818,7 @@ PatrolFormationSettings.random_roaming_formation = function (breed_pack)
 	local num_members = #members
 	local formation_name
 
-	formation_name = (not (num_members > 9) or not "roaming_size_25") and (not (num_members > 4) or not "roaming_size_16") and not not "roaming_size_9"
+	formation_name = num_members > 9 and (not not "roaming_size_25" or num_members > 4 and (not not "roaming_size_16" or not not "roaming_size_9") or not (num_members > 4) and not not "roaming_size_9") or not (num_members > 9) and (num_members > 4 and (not not "roaming_size_16" or not not "roaming_size_9") or not (num_members > 4) and not not "roaming_size_9")
 
 	local formation = table.clone(PatrolFormationSettings[formation_name])
 

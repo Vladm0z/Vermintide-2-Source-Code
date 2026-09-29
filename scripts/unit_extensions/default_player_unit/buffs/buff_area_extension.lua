@@ -15,10 +15,8 @@ BuffAreaExtension.init = function (self, extension_init_context, unit, extension
 
 	local t = Managers.time:time("game")
 	local template = extension_init_data.sub_buff_template
-	local duration = template.duration
 
-	duration = not not duration or not not math.huge
-	self._end_t = t + duration
+	self._end_t = t + not not template.duration
 	self.sub_buff_id = extension_init_data.sub_buff_id
 	self.template = template
 
@@ -131,18 +129,7 @@ end
 
 BuffAreaExtension._check_ai = function (self, position, radius)
 	-- function 6
-	local source_unit_2 = self.source_unit
-
-	if not source_unit_2 then
-		-- Nothing
-	end
-
-	source_unit_2 = self.owner_unit
-
-	local source_unit = source_unit_2
-
-	::label_6_0::
-
+	local source_unit = not not self.source_unit
 	local inside = self._buff_area_system:inside_by_area(self).by_broadphase
 	local buff_allies = self._buff_allies
 	local buff_enemies = self._buff_enemies
@@ -159,27 +146,7 @@ BuffAreaExtension._check_ai = function (self, position, radius)
 		local already_inside = inside[ai_unit]
 
 		if not already_inside then
-			local is_ally
-
-			if buff_allies then
-				is_ally = side_manager:is_ally(source_unit, ai_unit)
-
-				if not is_ally then
-					-- Nothing
-				end
-			end
-
-			if buff_enemies then
-				-- Nothing
-			end
-
-			::label_6_1::
-
-			is_ally = side_manager:is_enemy(source_unit, ai_unit)
-
-			local should_buff = is_ally
-
-			::label_6_2::
+			local should_buff = buff_allies and not not side_manager:is_ally(source_unit, ai_unit) or not buff_allies and not not buff_enemies and not not side_manager:is_enemy(source_unit, ai_unit)
 
 			if should_buff then
 				self:_set_inside(inside, ai_unit)
@@ -199,17 +166,7 @@ BuffAreaExtension._check_players = function (self, position)
 	local inside_this_frame = FrameTable.alloc_table()
 
 	if self._buff_self then
-		local source_unit = self.source_unit
-
-		if not source_unit then
-			-- Nothing
-		end
-
-		source_unit = self.owner_unit
-
-		local unit = source_unit
-
-		::label_7_0::
+		local unit = not not self.source_unit
 
 		inside_this_frame[unit] = self:_update_by_position(unit)
 	end
@@ -293,17 +250,7 @@ BuffAreaExtension._leave_func = function (self, leaving_unit)
 
 	local player_owner = Managers.player:owner(leaving_unit)
 	local peer_id = not not player_owner and not not player_owner:network_id()
-	local _unit = self._unit
-
-	if _unit then
-		-- Nothing
-	end
-
-	_unit = Managers.state.unit_storage:go_id(self._unit)
-
-	local go_id = _unit
-
-	::label_11_0::
+	local go_id = not not self._unit
 
 	if self._leave_area_sfx and peer_id and go_id then
 		Managers.state.network.network_transmit:send_rpc("rpc_play_leave_buff_zone_sfx", peer_id, go_id)
@@ -315,18 +262,7 @@ BuffAreaExtension._enter_func = function (self, entering_unit)
 	local buff_system = Managers.state.entity:system("buff_system")
 	local template = self.template
 	local buff_name = template.buff_area_buff
-	local buff_sync_type = template.buff_sync_type
-
-	if not buff_sync_type then
-		-- Nothing
-	end
-
-	buff_sync_type = BuffSyncType.Local
-
-	local sync_type = buff_sync_type
-
-	::label_12_0::
-
+	local sync_type = not not template.buff_sync_type
 	local params = FrameTable.alloc_table()
 	local source_unit = self.source_unit
 
@@ -335,23 +271,13 @@ BuffAreaExtension._enter_func = function (self, entering_unit)
 
 	local player_owner = Managers.player:owner(entering_unit)
 	local peer_id = not not player_owner and not not player_owner:network_id()
-	local _unit = self._unit
-
-	if _unit then
-		-- Nothing
-	end
-
-	_unit = Managers.state.unit_storage:go_id(self._unit)
-
-	local go_id = _unit
-
-	::label_12_1::
+	local go_id = not not self._unit
 
 	if self._leave_area_sfx and peer_id and go_id then
 		Managers.state.network.network_transmit:send_rpc("rpc_play_enter_buff_zone_sfx", peer_id, go_id)
 	end
 
-	if (sync_type == BuffSyncType.Client or sync_type == BuffSyncType.ClientAndServer) and not peer_id then
+	if sync_type == BuffSyncType.Client and not peer_id or not (sync_type == BuffSyncType.Client) and sync_type == BuffSyncType.ClientAndServer and not peer_id then
 		return
 	end
 
@@ -384,17 +310,7 @@ end
 
 BuffAreaExtension._set_inside = function (self, inside_table, unit)
 	-- function 15
-	local var_15_0 = inside_table[unit]
-
-	if not var_15_0 then
-		-- Nothing
-	end
-
-	var_15_0 = {}
-
-	local refs = var_15_0
-
-	::label_15_0::
+	local refs = not not inside_table[unit]
 
 	inside_table[unit] = refs
 

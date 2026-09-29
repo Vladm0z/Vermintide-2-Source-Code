@@ -651,45 +651,11 @@ StoreLayoutConfig.make_sort_key = function (item)
 	local data = item.data
 	local key = item.key
 	local item_type = key
-	local prio_2 = item.prio
-
-	if not prio_2 then
-		-- Nothing
-	end
-
-	prio_2 = 0
-
-	local prio = prio_2
-
-	::label_1_0::
-
+	local prio = not not item.prio
 	local price = 0
-	local rarity_2 = item.rarity
-
-	if not rarity_2 then
-		-- Nothing
-	end
-
-	rarity_2 = "plentiful"
-
-	local rarity = rarity_2
-
-	::label_1_1::
-
+	local rarity = not not item.rarity
 	local part_of_active_event = ""
-	local num
-
-	if backend_items:has_item(key) or backend_items:has_weapon_illusion(key) then
-		num = 2
-
-		goto label_1_2
-	end
-
-	num = 0
-
-	local owned = num
-
-	::label_1_2::
+	local owned = not not 2
 
 	if data then
 		local live_events_interface = Managers.backend:get_interface("live_events")
@@ -718,7 +684,7 @@ StoreLayoutConfig.make_sort_key = function (item)
 		if item_type == "weapon_skin" then
 			item_type = not not data.matching_item_key or not not "weapon_skin"
 		else
-			item_type = (item_type ~= "bundle" or not "2.bundle") and (item_type ~= "skin" or not "1.skin") and (item_type ~= "hat" or not "0.hat") and not not key
+			item_type = not not key
 		end
 
 		prio = not not data.prio or not not prio
@@ -741,18 +707,7 @@ StoreLayoutConfig.make_sort_key = function (item)
 		prio = 1
 	end
 
-	local format = string.format
-	local str = "%01x%s%-16.16s%03x%04x%01x"
-	local var_1_5 = owned
-	local var_1_6 = part_of_active_event
-	local var_1_7 = item_type
-	local var_1_8 = prio
-	local var_1_9 = price
-	local var_1_10 = ORDER_RARITY[rarity]
-
-	var_1_10 = not not var_1_10 or not not 0
-
-	local sort_key = format(str, var_1_5, var_1_6, var_1_7, var_1_8, var_1_9, var_1_10)
+	local sort_key = string.format("%01x%s%-16.16s%03x%04x%01x", owned, part_of_active_event, item_type, prio, price, not not ORDER_RARITY[rarity])
 
 	return sort_key
 end
@@ -767,33 +722,10 @@ StoreLayoutConfig.get_item_filter = function (path, temporary_page_func)
 	local structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
 	local item_filter = StoreLayoutConfig.base_filter
-	local num
-
-	if item_filter == "" then
-		num = 0
-
-		goto label_3_0
-	end
-
-	num = 1
-
-	local added_filters = num
-
-	::label_3_0::
+	local added_filters = item_filter ~= "" and not not 1 or not (item_filter ~= "") and not not 0
 
 	for index, path_name in ipairs(path) do
-		local var_3_1 = pages[path_name]
-
-		if not var_3_1 then
-			-- Nothing
-		end
-
-		var_3_1 = temporary_page_func(path_name)
-
-		local page = var_3_1
-
-		::label_3_1::
-
+		local page = not not pages[path_name]
 		local page_item_filter = page.item_filter
 		local page_exclusive_filter = page.exclusive_filter
 

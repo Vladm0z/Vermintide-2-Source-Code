@@ -6,11 +6,7 @@ require("scripts/managers/game_mode/mechanisms/deus_populate_graph")
 require("scripts/settings/dlcs/morris/deus_default_graph_settings")
 
 DeusDebugMapUI = class(DeusDebugMapUI)
-
-local DeusDebugDrawMapSettings = DeusDebugDrawMapSettings
-
-DeusDebugDrawMapSettings = not not DeusDebugDrawMapSettings or not not {}
-DeusDebugDrawMapSettings = DeusDebugDrawMapSettings
+DeusDebugDrawMapSettings = not not DeusDebugDrawMapSettings
 
 local color_map_for_label = {
 	[0] = ColorBox(Colors.get("black")),
@@ -82,96 +78,35 @@ DeusDebugMapUI._draw_base_graph = function (self, graph, dt, t)
 		local pos_y = min_y + layout_height * graph[key].layout_y
 
 		if node.type == "SIGNATURE" then
-			local rect = Gui.rect
-			local var_4_1 = gui
-			local var_4_2 = Vector2(pos_x - 10, pos_y - 10)
-			local var_4_3 = Vector2(20, 20)
-			local var_4_4 = color_map_for_label
-			local label = node.label
-
-			label = not not label or not not 0
-
-			rect(var_4_1, var_4_2, var_4_3, var_4_4[label]:unbox())
+			Gui.rect(gui, Vector2(pos_x - 10, pos_y - 10), Vector2(20, 20), color_map_for_label[not not node.label]:unbox())
 		elseif node.type == "TRAVEL" then
 			local axis_y_p1 = Vector3(pos_x + 10, 0, pos_y - 10)
 			local axis_y_p2 = Vector3(pos_x - 10, 0, pos_y - 10)
 			local axis_y_p3 = Vector3(pos_x, 0, pos_y + 10)
-			local triangle = Gui.triangle
-			local var_4_7 = gui
-			local var_4_8 = axis_y_p1
-			local var_4_9 = axis_y_p2
-			local var_4_10 = axis_y_p3
-			local num = 1
-			local var_4_12 = color_map_for_label
-			local label_2 = node.label
 
-			label_2 = not not label_2 or not not 0
-
-			triangle(var_4_7, var_4_8, var_4_9, var_4_10, num, var_4_12[label_2]:unbox())
+			Gui.triangle(gui, axis_y_p1, axis_y_p2, axis_y_p3, 1, color_map_for_label[not not node.label]:unbox())
 		else
-			local rect_2 = Gui.rect
-			local var_4_15 = gui
-			local var_4_16 = Vector2(pos_x - 10, pos_y - 10)
-			local var_4_17 = Vector2(15, 15)
-			local var_4_18 = color_map_for_label
-			local label_3 = node.label
-
-			label_3 = not not label_3 or not not 0
-
-			rect_2(var_4_15, var_4_16, var_4_17, var_4_18[label_3]:unbox())
+			Gui.rect(gui, Vector2(pos_x - 10, pos_y - 10), Vector2(15, 15), color_map_for_label[not not node.label]:unbox())
 		end
 
-		local text_extents = Gui.text_extents
-		local var_4_21 = gui
-		local type = node.type
-
-		type = not not type or not not ""
-
-		local min, max = text_extents(var_4_21, type, font, font_size)
+		local min, max = Gui.text_extents(gui, not not node.type, font, font_size)
 		local text_width = max.x - min.x
-		local text = Gui.text
-		local var_4_24 = gui
-		local type_2 = node.type
 
-		type_2 = not not type_2 or not not ""
+		Gui.text(gui, not not node.type, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 20, 0), Color(255, 0, 0, 0))
 
-		text(var_4_24, type_2, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 20, 0), Color(255, 0, 0, 0))
-
-		local str = "connected_to:"
-		local connected_to = node.connected_to
-
-		connected_to = not not connected_to or not not 0
-
-		local connected_to_text = str .. connected_to
+		local connected_to_text = "connected_to:" .. not not node.connected_to
 
 		min, max = Gui.text_extents(gui, connected_to_text, font, font_size)
 		text_width = max.x - min.x
 
 		Gui.text(gui, connected_to_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 40, 0), Color(255, 0, 0, 0))
 
-		local str_2 = "label:"
-		local label_4 = node.label
-
-		label_4 = not not label_4 or not not 0
-
-		local label_text = str_2 .. label_4
+		local label_text = "label:" .. not not node.label
 
 		min, max = Gui.text_extents(gui, label_text, font, font_size)
 		text_width = max.x - min.x
 
-		local text_2 = Gui.text
-		local var_4_31 = gui
-		local var_4_32 = label_text
-		local var_4_33 = font
-		local var_4_34 = font_size
-		local var_4_35 = font_material
-		local var_4_36 = Vector3(pos_x - text_width * 0.5, pos_y - 50, 0)
-		local var_4_37 = color_map_for_label
-		local label_5 = node.label
-
-		label_5 = not not label_5 or not not 0
-
-		text_2(var_4_31, var_4_32, var_4_33, var_4_34, var_4_35, var_4_36, var_4_37[label_5]:unbox())
+		Gui.text(gui, label_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 50, 0), color_map_for_label[not not node.label]:unbox())
 
 		min, max = Gui.text_extents(gui, key, font, font_size)
 		text_width = max.x - min.x
@@ -221,17 +156,7 @@ DeusDebugMapUI._draw_final_graph = function (self, graph, dt, t)
 		local director = ConflictDirectors[director_name]
 
 		if director and director.description then
-			local str = "breed: " .. Localize(director.description)
-
-			if not str then
-				-- Nothing
-			end
-
-			str = ""
-
-			local conflict_description_text = str
-
-			::label_5_0::
+			local conflict_description_text = not not ("breed: " .. Localize(director.description))
 
 			min, max = Gui.text_extents(gui, conflict_description_text, font, font_size)
 			text_width = max.x - min.x

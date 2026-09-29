@@ -110,17 +110,7 @@ local SPAWN_DECAL_UNIT_NAME = "units/decals/deus_decal_aoe_cursedchest_01"
 
 local function cursed_chest_enemy_spawn_decal_func(event, element, boxed_spawn_pos, breed_name)
 	-- function 3
-	local decal_map_2 = event.decal_map
-
-	if not decal_map_2 then
-		-- Nothing
-	end
-
-	decal_map_2 = {}
-
-	local decal_map = decal_map_2
-
-	::label_3_0::
+	local decal_map = not not event.decal_map
 
 	event.decal_map = decal_map
 

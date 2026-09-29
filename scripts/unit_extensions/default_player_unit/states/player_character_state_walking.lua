@@ -226,14 +226,14 @@ PlayerCharacterStateWalking.update = function (self, unit, input, dt, context, t
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local is_crouching = status_extension:is_crouching()
 
-	if not csm.state_next and (input_extension:get("jump") or input_extension:get("jump_only")) and (not is_crouching or CharacterStateHelper.can_uncrouch(unit)) and locomotion_extension:jump_allowed() then
+	if input_extension:get("jump_only") and not csm.state_next and input_extension:get("jump") and not is_crouching and locomotion_extension:jump_allowed() then
 		local movement_input = CharacterStateHelper.get_movement_input(input_extension)
 
 		if is_crouching then
 			CharacterStateHelper.uncrouch(unit, t, first_person_extension, status_extension)
 		end
 
-		if (input_extension:get("jump") or gamepad_active) and status_extension:can_override_dodge_with_jump(t) or Vector3.y(movement_input) >= 0 or Vector3.length(movement_input) <= input_extension.minimum_dodge_input then
+		if input_extension:get("jump") or gamepad_active then
 			if Vector3.y(CharacterStateHelper.get_movement_input(input_extension)) < 0 then
 				self.temp_params.backward_jump = true
 			else
@@ -293,7 +293,7 @@ PlayerCharacterStateWalking.update = function (self, unit, input, dt, context, t
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = (not is_moving or not 1) and not not 0
+		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
 	end
 
 	local is_walking = input_extension:get("walk")
@@ -304,30 +304,7 @@ PlayerCharacterStateWalking.update = function (self, unit, input, dt, context, t
 		status_extension:set_slowed(is_walking)
 	end
 
-	local crouch_move_speed
-
-	if is_crouching then
-		crouch_move_speed = movement_settings_table.crouch_move_speed
-
-		if not crouch_move_speed then
-			-- Nothing
-		end
-	end
-
-	if is_walking then
-		crouch_move_speed = movement_settings_table.walk_move_speed
-
-		if not crouch_move_speed then
-			-- Nothing
-		end
-	end
-
-	crouch_move_speed = movement_settings_table.move_speed
-
-	local current_max_move_speed = crouch_move_speed
-
-	::label_5_0::
-
+	local current_max_move_speed = is_crouching and not not movement_settings_table.crouch_move_speed or not is_crouching and (is_walking and not not movement_settings_table.walk_move_speed or not is_walking and not not movement_settings_table.move_speed)
 	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
 	local final_move_speed = current_max_move_speed * move_speed_multiplier * current_movement_speed_scale * movement_settings_table.player_speed_scale
 	local has_intoxication_stagger = buff_extension:has_buff_perk("intoxication_stagger")

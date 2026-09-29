@@ -2,44 +2,16 @@
 
 local platform = PLATFORM
 local default_keymaps_data = rawget(_G, GamepadLayoutKeymapsTableName)
-local str
-
-if platform ~= "ps4" then
-	str = "xb1"
-
-	goto label_0_0
-end
-
-str = platform
-
-local gamepad_platform_key = str
-
-::label_0_0::
+local gamepad_platform_key = platform == "ps4" and not not platform or not (platform == "ps4") and not not "xb1"
 
 DefaultPlayerControllerKeymaps = PlayerControllerKeymaps[gamepad_platform_key]
 DefaultPlayerControllerKeymapsPSPad = PlayerControllerKeymaps.ps_pad
-
-local tbl = {}
-local tbl_2 = {
-	[gamepad_platform_key] = DefaultPlayerControllerKeymaps
+DefaultGamepadLayoutKeymaps = {
+	PlayerControllerKeymaps = {
+		[gamepad_platform_key] = DefaultPlayerControllerKeymaps,
+		ps_pad = IS_WINDOWS and not not PlayerControllerKeymaps.ps_pad or not IS_WINDOWS and not not nil
+	}
 }
-local ps_pad
-
-if IS_WINDOWS then
-	ps_pad = PlayerControllerKeymaps.ps_pad
-
-	if not ps_pad then
-		-- Nothing
-	end
-end
-
-ps_pad = nil
-
-::label_0_1::
-
-tbl_2.ps_pad = ps_pad
-tbl.PlayerControllerKeymaps = tbl_2
-DefaultGamepadLayoutKeymaps = tbl
 
 if IS_WINDOWS then
 	local keymap_override_1 = table.clone(DefaultPlayerControllerKeymaps)

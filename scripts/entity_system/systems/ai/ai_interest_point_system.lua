@@ -192,15 +192,8 @@ AIInterestPointSystem.on_add_extension = function (self, world, unit, extension_
 				QuickDrawerStay:line(unit_position, unit_position + Vector3(0, 0, 4), Color(255, 255, 0))
 			end
 
-			local get_data = Unit.get_data(unit, "interest_point", "wwise_event")
-
-			get_data = not not get_data or not not "enemy_skaven_idle_chatter"
-			extension.wwise_event = get_data
-
-			local get_data_2 = Unit.get_data(unit, "interest_point", "wwise_minimum_needed")
-
-			get_data_2 = not not get_data_2 or not not 2
-			extension.wwise_minimum_needed = get_data_2
+			extension.wwise_event = not not Unit.get_data(unit, "interest_point", "wwise_event")
+			extension.wwise_minimum_needed = not not Unit.get_data(unit, "interest_point", "wwise_minimum_needed")
 
 			local filter_string = Unit.get_data(unit, "interest_point", "race_filter")
 
@@ -294,11 +287,7 @@ AIInterestPointSystem.on_add_extension = function (self, world, unit, extension_
 			end
 
 			self.interest_points[unit] = extension
-
-			local get_data_3 = Unit.get_data(unit, "interest_point", "sound_event")
-
-			get_data_3 = not not get_data_3 or not not "enemy_skaven_idle_chatter"
-			extension.wwise_event = get_data_3
+			extension.wwise_event = not not Unit.get_data(unit, "interest_point", "sound_event")
 		end
 	end
 
@@ -456,7 +445,7 @@ AIInterestPointSystem.release_obsolete_requests = function (self, t)
 	local claim_unit = request.claim_unit
 	local blackboard = BLACKBOARDS[claim_unit]
 
-	release_claim = (HEALTH_ALIVE[claim_unit] or not true) and not not blackboard.confirmed_player_sighting
+	release_claim = not not blackboard.confirmed_player_sighting
 
 	if release_claim then
 		self.current_obsolete_request = nil
@@ -529,35 +518,8 @@ local function _get_best_interest_point(broadphase, request, claim_unit_position
 	for bp_i = 1, interest_points_result_n do
 		local point_unit = interest_points_result[bp_i]
 		local point_extension = ScriptUnit_Extension(point_unit, "ai_interest_point_system")
-		local current_request = request.current_request
-
-		if current_request then
-			-- Nothing
-		end
-
-		current_request = request.current_request.point_extension
-
-		local current_request_extension = current_request
-
-		::label_18_0::
-
-		if current_request_point_unit then
-			-- Nothing
-		end
-
-		::label_18_1::
-
-		local var_18_1 = reachable_interest_points[current_request_point_unit]
-
-		if var_18_1 then
-			-- Nothing
-		end
-
-		var_18_1 = reachable_interest_points[current_request_point_unit][point_unit]
-
-		local stored_reachable_result = var_18_1
-
-		::label_18_2::
+		local current_request_extension = not not request.current_request
+		local stored_reachable_result = not not current_request_point_unit and not not reachable_interest_points[current_request_point_unit]
 
 		if current_request_point_unit and stored_reachable_result == nil then
 			stored_reachable_result = not not reachable_interest_points[point_unit] and not not reachable_interest_points[point_unit][current_request_point_unit]
@@ -657,17 +619,7 @@ AIInterestPointSystem.resolve_requests = function (self)
 		local processing_astar = self.processing_astar
 		local path_check_done, path_found = false, false
 		local best_unit, best_point, best_point_extension
-		local current_request = request.current_request
-
-		if current_request then
-			-- Nothing
-		end
-
-		current_request = request.current_request.interest_point_unit
-
-		local current_request_point_unit = current_request
-
-		::label_21_0::
+		local current_request_point_unit = not not request.current_request
 
 		if not processing_astar then
 			local perform_astar = false
@@ -715,10 +667,8 @@ AIInterestPointSystem.debug_draw = function (self, t, dt)
 	end
 
 	local QuickDrawer = QuickDrawer
-	local debug_anim_t = self.debug_anim_t
 
-	debug_anim_t = not not debug_anim_t or not not 0
-	self.debug_anim_t = debug_anim_t + dt
+	self.debug_anim_t = not not self.debug_anim_t + dt
 
 	if self.debug_anim_t > 1 then
 		self.debug_anim_t = 0
@@ -860,17 +810,7 @@ AIInterestPointSystem.rpc_interest_point_chatter_update = function (self, channe
 	end
 
 	local wwise_world = self.wwise_world
-	local percent_claimed_2 = extension.percent_claimed
-
-	if not percent_claimed_2 then
-		-- Nothing
-	end
-
-	percent_claimed_2 = 0
-
-	local percent_claimed_old = percent_claimed_2
-
-	::label_26_0::
+	local percent_claimed_old = not not extension.percent_claimed
 
 	if percent_claimed == percent_claimed_old then
 		return

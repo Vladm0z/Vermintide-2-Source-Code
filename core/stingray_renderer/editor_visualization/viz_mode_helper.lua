@@ -1,15 +1,7 @@
 -- chunkname: @core/stingray_renderer/editor_visualization/viz_mode_helper.lua
 
-local core = core
-
-core = not not core or not not {}
-core = core
-
-local core_2 = core
-local vis_modes = core.vis_modes
-
-vis_modes = not not vis_modes or not not {}
-core_2.vis_modes = vis_modes
+core = not not core
+core.vis_modes = not not core.vis_modes
 
 core.render_vis_on = function (settings)
 	-- function 1

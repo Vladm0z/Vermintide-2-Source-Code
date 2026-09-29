@@ -196,20 +196,7 @@ StartGameWindowWeaveBackgroundConsole._update_background_animations = function (
 
 	local matchmaking_manager = Managers.matchmaking
 	local is_game_matchmaking = matchmaking_manager:is_game_matchmaking()
-	local num
-
-	if is_game_matchmaking then
-		num = 4
-
-		goto label_8_0
-	end
-
-	num = 2.5
-
-	local speed = num
-
-	::label_8_0::
-
+	local speed = is_game_matchmaking and not not 4 or not is_game_matchmaking and not not 2.5
 	local progress = 0.5 + math.sin(Managers.time:time("ui") * speed) * 0.5
 
 	self:_set_background_bloom_intensity(progress, is_game_matchmaking)
@@ -218,20 +205,7 @@ end
 StartGameWindowWeaveBackgroundConsole._set_background_bloom_intensity = function (self, fraction, is_game_matchmaking)
 	-- function 9
 	local min = 1.39
-	local num
-
-	if is_game_matchmaking then
-		num = 10
-
-		goto label_9_0
-	end
-
-	num = 2
-
-	local max = num
-
-	::label_9_0::
-
+	local max = is_game_matchmaking and not not 10 or not is_game_matchmaking and not not 2
 	local value = min + math.clamp(fraction, 0, 1) * max
 	local ui_hdr_renderer = self._ui_hdr_renderer
 	local gui = ui_hdr_renderer.gui
@@ -332,39 +306,10 @@ StartGameWindowWeaveBackgroundConsole._animate_wheel_position = function (self, 
 	-- function 17
 	local parent = self._parent
 	local selected_layout_name = parent:get_selected_layout_name()
-	local _current_offset = self._current_offset
 
-	_current_offset = not not _current_offset or not not {
-		0,
-		0
-	}
-	self._current_offset = _current_offset
-
-	local _starting_point = self._starting_point
-
-	_starting_point = not not _starting_point or not not {
-		0,
-		0
-	}
-	self._starting_point = _starting_point
-
-	local _offset_destinations = self._offset_destinations
-
-	_offset_destinations = not not _offset_destinations or not not {
-		weave_ranked = {
-			300,
-			120
-		},
-		weave_quickplay = {
-			0,
-			220
-		},
-		default = {
-			0,
-			0
-		}
-	}
-	self._offset_destinations = _offset_destinations
+	self._current_offset = not not self._current_offset
+	self._starting_point = not not self._starting_point
+	self._offset_destinations = not not self._offset_destinations
 
 	if self._old_selection_layout_name ~= selected_layout_name then
 		self._starting_point[1] = self._current_offset[1]
@@ -374,32 +319,12 @@ StartGameWindowWeaveBackgroundConsole._animate_wheel_position = function (self, 
 	end
 
 	local speed = 2
-	local _wheel_position_progress = self._wheel_position_progress
-
-	if not _wheel_position_progress then
-		-- Nothing
-	end
-
-	_wheel_position_progress = 0
-
-	local wheel_position_progress = _wheel_position_progress
-
-	::label_17_0::
+	local wheel_position_progress = not not self._wheel_position_progress
 
 	wheel_position_progress = math.min(wheel_position_progress + speed * dt, 1)
 
 	local anim_progress = math.easeOutCubic(wheel_position_progress)
-	local var_17_4 = self._offset_destinations[selected_layout_name]
-
-	if not var_17_4 then
-		-- Nothing
-	end
-
-	var_17_4 = self._offset_destinations.default
-
-	local destination = var_17_4
-
-	::label_17_1::
+	local destination = not not self._offset_destinations[selected_layout_name]
 
 	self._current_offset[1] = math.lerp(self._starting_point[1], destination[1], anim_progress)
 	self._current_offset[2] = math.lerp(self._starting_point[2], destination[2], anim_progress)
@@ -421,15 +346,9 @@ StartGameWindowWeaveBackgroundConsole._animate_background_color = function (self
 	-- function 18
 	local parent = self._parent
 	local selected_layout_name = parent:get_selected_layout_name()
-	local _current_alpha = self._current_alpha
 
-	_current_alpha = not not _current_alpha or not not 0
-	self._current_alpha = _current_alpha
-
-	local _starting_alpha = self._starting_alpha
-
-	_starting_alpha = not not _starting_alpha or not not 0
-	self._starting_alpha = _starting_alpha
+	self._current_alpha = not not self._current_alpha
+	self._starting_alpha = not not self._starting_alpha
 	self._alpha_destinations = {
 		lobby_browser_weave = 0.3,
 		default = 0.1
@@ -442,33 +361,13 @@ StartGameWindowWeaveBackgroundConsole._animate_background_color = function (self
 	end
 
 	local speed = 0.5
-	local _alpha_progress = self._alpha_progress
-
-	if not _alpha_progress then
-		-- Nothing
-	end
-
-	_alpha_progress = 0
-
-	local alpha_progress = _alpha_progress
-
-	::label_18_0::
+	local alpha_progress = not not self._alpha_progress
 
 	alpha_progress = math.min(alpha_progress + speed * dt, 1)
 
 	local anim_progress = math.easeOutCubic(alpha_progress)
 	local starting_alpha = self._starting_alpha
-	local var_18_3 = self._alpha_destinations[selected_layout_name]
-
-	if not var_18_3 then
-		-- Nothing
-	end
-
-	var_18_3 = self._alpha_destinations.default
-
-	local destination_alpha = var_18_3
-
-	::label_18_1::
+	local destination_alpha = not not self._alpha_destinations[selected_layout_name]
 
 	self._current_alpha = math.lerp(starting_alpha, destination_alpha, anim_progress)
 

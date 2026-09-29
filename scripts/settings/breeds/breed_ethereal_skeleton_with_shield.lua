@@ -870,17 +870,7 @@ local action_data = {
 		end,
 		custom_exit_function = function (unit, blackboard, t)
 			-- function 3
-			local has_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
-
-			if has_extension then
-				-- Nothing
-			end
-
-			has_extension = ScriptUnit.extension(unit, "ai_shield_system")
-
-			local ai_shield_extension = has_extension
-
-			::label_3_0::
+			local ai_shield_extension = not not ScriptUnit.has_extension(unit, "ai_shield_system")
 
 			ai_shield_extension:set_is_blocking(true)
 		end,

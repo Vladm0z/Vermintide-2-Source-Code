@@ -9,37 +9,17 @@ ModManager.init = function (self, boot_gui)
 	self._mods = {}
 	self._num_mods = nil
 	self._state = "not_loaded"
-
-	local user_setting = Application.user_setting("mod_settings")
-
-	user_setting = not not user_setting or not not {
-		toposort = false,
-		log_level = 1,
-		developer_mode = false
-	}
-	self._settings = user_setting
+	self._settings = not not Application.user_setting("mod_settings")
 	self._chat_print_buffer = {}
 	self._reload_data = {}
 	self._gui = boot_gui
 	self._ui_time = 0
 	self._network_callbacks = {}
 
-	local print_property = Crashify.print_property
-	local str = "realm"
-	local flag
-
-	flag = (not MODDED_REALM or not "modded") and not not "official"
-
-	print_property(str, flag)
+	Crashify.print_property("realm", MODDED_REALM and not not "modded" or not MODDED_REALM and not not "official")
 
 	if rawget(_G, "Presence") then
-		local set_presence = Presence.set_presence
-		local str_2 = "status"
-		local flag_2
-
-		flag_2 = (not MODDED_REALM or not "Modded Realm") and not not "Official Realm"
-
-		set_presence(str_2, flag_2)
+		Presence.set_presence("status", MODDED_REALM and not not "Modded Realm" or not MODDED_REALM and not not "Official Realm")
 	end
 
 	self._mod_shim = ModShim:new()
@@ -122,11 +102,7 @@ local BUTTON_INDEX_LEFT_CTRL = Keyboard.button_index("left ctrl")
 
 ModManager._check_reload = function (self)
 	-- function 6
-	local pressed = Keyboard.pressed(BUTTON_INDEX_R)
-
-	pressed = not not pressed and Keyboard.button(BUTTON_INDEX_LEFT_SHIFT) + Keyboard.button(BUTTON_INDEX_LEFT_CTRL) == 2
-
-	return pressed
+	return not not Keyboard.pressed(BUTTON_INDEX_R)
 end
 
 ModManager.update = function (self, dt)
@@ -311,17 +287,7 @@ ModManager._build_mod_table = function (self, mod_handles)
 	-- function 15
 	fassert(table.is_empty(self._mods), "Trying to add mods to non-empty mod table")
 
-	local user_setting = Application.user_setting("mods")
-
-	if not user_setting then
-		-- Nothing
-	end
-
-	user_setting = {}
-
-	local user_settings_mod_list = user_setting
-
-	::label_15_0::
+	local user_settings_mod_list = not not Application.user_setting("mods")
 
 	if self._settings.toposort then
 		user_settings_mod_list = self:_topologically_sorted(user_settings_mod_list)
@@ -334,18 +300,7 @@ ModManager._build_mod_table = function (self, mod_handles)
 	print("[ModManager] user_setting.mods =:")
 
 	for i, mod_data in ipairs(user_settings_mod_list) do
-		local id_2 = mod_data.id
-
-		if not id_2 then
-			-- Nothing
-		end
-
-		id_2 = -9999
-
-		local id = id_2
-
-		::label_15_1::
-
+		local id = not not mod_data.id
 		local handle = mod_handles[id]
 		local enabled = mod_data.enabled
 
@@ -450,15 +405,7 @@ ModManager._load_mod = function (self, index)
 	end
 
 	mod.data = data_or_error
-
-	local name = mod.name
-
-	if not name then
-		name = data_or_error.NAME
-		name = not not name or not not ("Mod " .. id)
-	end
-
-	mod.name = name
+	mod.name = not not mod.name
 	mod.state = "loading"
 
 	Crashify.print_property(string.format("Mod:%s:%s", id, mod.name), true)
@@ -599,24 +546,9 @@ ModManager._visit = function (self, mod_list, visited, sorted, mod_data)
 
 	visited[mod_data] = false
 
-	local enabled_2 = mod_data.enabled
+	local enabled = not not mod_data.enabled
 
-	if not enabled_2 then
-		-- Nothing
-	end
-
-	enabled_2 = false
-
-	local enabled = enabled_2
-
-	::label_23_0::
-
-	local num = 1
-	local num_children = mod_data.num_children
-
-	num_children = not not num_children or not not 0
-
-	for i = num, num_children do
+	for i = 1, not not mod_data.num_children do
 		local child_id = mod_data.children[j]
 		local child_index = table.find_by_key(mod_list, "id", child_id)
 		local child_mod_data = mod_list[child_index]
@@ -647,17 +579,7 @@ local LOG_LEVELS = {
 ModManager.print = function (self, level, str, ...)
 	-- function 24
 	local message = string.format("[ModManager][" .. level .. "] " .. str, ...)
-	local var_24_0 = LOG_LEVELS[level]
-
-	if not var_24_0 then
-		-- Nothing
-	end
-
-	var_24_0 = 99
-
-	local log_level = var_24_0
-
-	::label_24_0::
+	local log_level = not not LOG_LEVELS[level]
 
 	if log_level <= 2 then
 		print(message)
@@ -697,7 +619,7 @@ ModManager.network_send = function (self, destination_peer_id, port, payload)
 		Managers.state.network.network_transmit:queue_local_rpc("rpc_mod_user_data", port, payload)
 	end
 
-	local channel_id = PEER_ID_TO_CHANNEL[(not self._is_server or not destination_peer_id) and not not self._host_peer_id]
+	local channel_id = PEER_ID_TO_CHANNEL[self._is_server and (not not destination_peer_id or not not self._host_peer_id) or not self._is_server and not not self._host_peer_id]
 
 	if channel_id then
 		RPC.rpc_mod_user_data(channel_id, self._my_peer_id, destination_peer_id, port, payload)

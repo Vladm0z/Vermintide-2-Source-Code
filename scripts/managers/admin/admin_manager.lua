@@ -26,19 +26,10 @@ AdminManager.init = function (self)
 			rcon_port = not not script_data.rcon_port or not not script_data.settings.rcon_port or not not Managers.mechanism:mechanism_setting("rcon_port")
 		end
 
-		local tbl = {
-			port = rcon_port
+		local settings = {
+			port = rcon_port,
+			rcon_password = not not script_data.rcon_password
 		}
-		local rcon_password = script_data.rcon_password
-
-		if not rcon_password then
-			rcon_password = script_data.settings.rcon_password
-			rcon_password = not not rcon_password or not not "rconpassword"
-		end
-
-		tbl.rcon_password = rcon_password
-
-		local settings = tbl
 
 		self._dedicated_server_commands = DedicatedServerCommands:new()
 		self._rcon_server = ScriptRconServer:new(settings, self._dedicated_server_commands)

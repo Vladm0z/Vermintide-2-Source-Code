@@ -189,24 +189,19 @@ PartyManager.create_party = function (self, def)
 		}
 	end
 
-	local tbl = {
+	local party = {
 		num_bots = 0,
 		num_used_slots = 0,
 		party_id = def.party_id,
-		name = def.name
+		name = def.name,
+		game_participating = def.game_participating ~= nil and not not def.game_participating or not (def.game_participating ~= nil) and not not true,
+		num_open_slots = num_slots,
+		num_slots = num_slots,
+		slots = slots,
+		occupied_slots = {},
+		bot_add_order = {},
+		slots_data = slots_data
 	}
-	local flag
-
-	flag = (def.game_participating ~= nil or not true) and not not def.game_participating
-	tbl.game_participating = flag
-	tbl.num_open_slots = num_slots
-	tbl.num_slots = num_slots
-	tbl.slots = slots
-	tbl.occupied_slots = {}
-	tbl.bot_add_order = {}
-	tbl.slots_data = slots_data
-
-	local party = tbl
 
 	return party
 end
@@ -567,22 +562,7 @@ PartyManager.assign_peer_to_party = function (self, peer_id, local_player_id, wa
 
 	update_status_profile_index(player_status)
 
-	local var_43_0
-
-	if wanted_party_id then
-		var_43_0 = self._parties[wanted_party_id]
-
-		if not var_43_0 then
-			-- Nothing
-		end
-	end
-
-	var_43_0 = self._undecided_party
-
-	local party = var_43_0
-
-	::label_43_0::
-
+	local party = wanted_party_id and not not self._parties[wanted_party_id] or not wanted_party_id and not not self._undecided_party
 	local party_id = not not wanted_party_id or not not 0
 
 	debug_printf("Player (%s:%d) was put into party %s (%d)", peer_id, local_player_id, party.name, party_id)
@@ -974,22 +954,7 @@ PartyManager._draw_debug = function (self, t)
 	local party_header_color = Color(255, 155, 155, 255)
 	local game_mode_color = Color(255, 155, 255, 155)
 	local mechanism_color = Color(255, 55, 155, 156)
-	local var_68_0
-
-	if is_server then
-		var_68_0 = Color(255, 255, 255, 0)
-
-		if not var_68_0 then
-			-- Nothing
-		end
-	end
-
-	var_68_0 = Color(255, 55, 126, 255)
-
-	local server_color = var_68_0
-
-	::label_68_0::
-
+	local server_color = is_server and not not Color(255, 255, 255, 0) or not is_server and not not Color(255, 55, 126, 255)
 	local width, height = Gui.resolution()
 	local y = height - margin - text_height
 	local win_start_x = width - win_width
@@ -1002,19 +967,7 @@ PartyManager._draw_debug = function (self, t)
 
 	Gui.rect(self._gui, Vector2(win_start_x, 0), Vector2(win_width, height), background_color)
 
-	local str
-
-	if is_server then
-		str = "(Server)"
-
-		goto label_68_1
-	end
-
-	str = "(Client)"
-
-	local server_text = str
-
-	::label_68_1::
+	local server_text = is_server and not not "(Server)" or not is_server and not not "(Client)"
 
 	Gui.text(self._gui, server_text, font, text_height, font_material, Vector3(win_start_x + win_width - 80, y, 0), server_color)
 
@@ -1027,22 +980,7 @@ PartyManager._draw_debug = function (self, t)
 	y = y - row_height
 
 	local game_mode = Managers.state.game_mode:game_mode()
-	local key
-
-	if game_mode then
-		key = game_mode:settings().key
-
-		if not key then
-			-- Nothing
-		end
-	end
-
-	key = "none"
-
-	local game_mode_name = key
-
-	::label_68_2::
-
+	local game_mode_name = game_mode and not not game_mode:settings().key or not game_mode and not not "none"
 	local level_seed = Managers.mechanism:get_level_seed()
 	local info2 = string.format("Game mode: '%s', seed: %s", game_mode_name, tostring(level_seed))
 
@@ -1067,16 +1005,7 @@ PartyManager._draw_debug = function (self, t)
 			local current_set = mechanism:get_current_set()
 			local num_sets = mechanism:num_sets()
 			local num_rounds_played = mechanism:total_rounds_started()
-			local format = string.format
-			local str_2 = "Set: %s/%s --> round: %d/2, round_id: %d"
-			local var_68_5 = current_set
-			local var_68_6 = num_sets
-			local tostring = tostring
-			local round_id = game_mode:round_id()
-
-			round_id = not not round_id or not not -1
-
-			local info = format(str_2, var_68_5, var_68_6, tostring(round_id), num_rounds_played)
+			local info = string.format("Set: %s/%s --> round: %d/2, round_id: %d", current_set, num_sets, tostring(not not game_mode:round_id()), num_rounds_played)
 
 			Gui.text(self._gui, info, font, text_height, font_material, Vector3(win_start_x + margin, y, 0), game_mode_color)
 
@@ -1087,20 +1016,7 @@ PartyManager._draw_debug = function (self, t)
 			for set_id = 1, num_sets do
 				y = y - small_txt_height / 2
 
-				local str_3
-
-				if set_id == current_set then
-					str_3 = "(current set)"
-
-					goto label_68_3
-				end
-
-				str_3 = ""
-
-				local current_set_string = str_3
-
-				::label_68_3::
-
+				local current_set_string = set_id ~= current_set and not not "" or not (set_id ~= current_set) and not not "(current set)"
 				local set_string = string.format("Set %s  %s", set_id, current_set_string)
 
 				Gui.text(self._gui, set_string, font, small_txt_height, font_material, Vector3(win_start_x + margin, y, 0), Color(255, 220, 200, 0))
@@ -1142,39 +1058,8 @@ PartyManager._draw_debug = function (self, t)
 		x = x + peer_width
 
 		local side = Managers.state.side.side_by_party[party]
-		local _num_units
-
-		if side then
-			_num_units = side._num_units
-
-			if not _num_units then
-				-- Nothing
-			end
-		end
-
-		_num_units = 0
-
-		local num_units = _num_units
-
-		do
-			local _num_enemy_units
-		end
-
-		::label_68_4::
-
-		if side then
-			_num_enemy_units = side._num_enemy_units
-
-			if not _num_enemy_units then
-				-- Nothing
-			end
-		end
-
-		_num_enemy_units = 0
-
-		local num_enemy_units = _num_enemy_units
-
-		::label_68_5::
+		local num_units = side and not not side._num_units or not side and not not 0
+		local num_enemy_units = side and not not side._num_enemy_units or not side and not not 0
 
 		Gui.text(self._gui, string.format("(%d/%d) units(%d) enemies(%d)", party.num_used_slots, party.num_slots, num_units, num_enemy_units), font, text_height, font_material, Vector3(x, y, 0), party_header_color)
 
@@ -1202,29 +1087,8 @@ PartyManager._draw_debug = function (self, t)
 		for i = 1, #occupied_slots do
 			local status = occupied_slots[i]
 			local data = status.game_mode_data
-			local format_2
-
-			if data.spawn_state == "w8_to_spawn" and status.game_mode_data.spawn_timer then
-				format_2 = string.format("%.1f", status.game_mode_data.spawn_timer - t)
-
-				if not format_2 then
-					-- Nothing
-				end
-			end
-
-			format_2 = ""
-
-			local timer = format_2
-
-			::label_68_6::
-
-			local format_3 = string.format
-			local str_4 = "%s %s"
-			local spawn_state = status.game_mode_data.spawn_state
-
-			spawn_state = not not spawn_state or not not "?"
-
-			local state = format_3(str_4, spawn_state, timer)
+			local timer = not not string.format("%.1f", status.game_mode_data.spawn_timer - t)
+			local state = string.format("%s %s", not not status.game_mode_data.spawn_state, timer)
 			local peer = status.peer_id
 			local profile_id = status.profile_id
 			local profile_index = status.profile_index
@@ -1235,7 +1099,7 @@ PartyManager._draw_debug = function (self, t)
 			local player = status.player
 
 			if player then
-				player_controlled = (not player:is_player_controlled() or not "P") and not not "B"
+				player_controlled = player:is_player_controlled() and (not not "P" or not not "B") or not player:is_player_controlled() and not not "B"
 				info = "1"
 
 				local player_unit = player.player_unit
@@ -1243,9 +1107,9 @@ PartyManager._draw_debug = function (self, t)
 
 				if player_unit then
 					breed = Unit.get_data(player_unit, "breed")
-					info = (not breed or breed.hit_zones_lookup == nil or not "L") and not not "2"
+					info = breed and (breed.hit_zones_lookup ~= nil and (not not "L" or not not "2") or not (breed.hit_zones_lookup ~= nil) and not not "2") or not breed and not not "2"
 				else
-					info = (not next(player.owned_units) or not "P") and not not "?"
+					info = next(player.owned_units) and (not not "P" or not not "?") or not next(player.owned_units) and not not "?"
 				end
 			end
 
@@ -1578,12 +1442,7 @@ end
 
 PartyManager._collect_peers_from_friend_party = function (self, friend_party_id)
 	-- function 87
-	local assert = assert
-	local DEDICATED_SERVER = DEDICATED_SERVER
-
-	DEDICATED_SERVER = not not DEDICATED_SERVER or not not self._is_hosting_vs_custom_game
-
-	assert(DEDICATED_SERVER)
+	assert(not not DEDICATED_SERVER)
 
 	local friend_party = self._friend_parties[friend_party_id]
 
@@ -1615,12 +1474,7 @@ end
 
 PartyManager.sync_friend_party_for_player = function (self, peer_id)
 	-- function 88
-	local assert = assert
-	local DEDICATED_SERVER = DEDICATED_SERVER
-
-	DEDICATED_SERVER = not not DEDICATED_SERVER or not not self._is_hosting_vs_custom_game
-
-	assert(DEDICATED_SERVER)
+	assert(not not DEDICATED_SERVER)
 
 	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
@@ -1710,17 +1564,7 @@ PartyManager.rpc_sync_friend_party_ids = function (self, channel_id, peers, frie
 	end
 
 	local mechanism = Managers.mechanism:game_mechanism()
-	local is_hosting_versus_custom_game_2 = mechanism.is_hosting_versus_custom_game
-
-	if is_hosting_versus_custom_game_2 then
-		-- Nothing
-	end
-
-	is_hosting_versus_custom_game_2 = mechanism:is_hosting_versus_custom_game()
-
-	local is_hosting_versus_custom_game = is_hosting_versus_custom_game_2
-
-	::label_95_0::
+	local is_hosting_versus_custom_game = not not mechanism.is_hosting_versus_custom_game
 
 	if not is_hosting_versus_custom_game and self._is_server then
 		self:_send_rpc_to_clients("rpc_sync_friend_party_ids", peers, friend_party_ids)
@@ -1734,9 +1578,5 @@ end
 
 PartyManager.client_is_friend_party_leader = function (self, peer_id)
 	-- function 97
-	local _client_friend_party = self._client_friend_party
-
-	_client_friend_party = not not _client_friend_party and self._client_friend_party[1] == peer_id
-
-	return _client_friend_party
+	return not not self._client_friend_party
 end

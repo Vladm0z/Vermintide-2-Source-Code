@@ -36,18 +36,7 @@ end
 
 DeusChestPreloadExtension.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	local _go_id = self._go_id
-
-	if not _go_id then
-		-- Nothing
-	end
-
-	_go_id = Managers.state.unit_storage:go_id(unit)
-
-	local go_id = _go_id
-
-	::label_4_0::
-
+	local go_id = not not self._go_id
 	local deus_run_controller = self._deus_run_controller
 	local own_peer_id = deus_run_controller:get_own_peer_id()
 	local profile_index, career_index = deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
@@ -149,19 +138,6 @@ DeusChestPreloadExtension._get_server_chest_type = function (self, unit)
 	end
 
 	local chest_lookup = GameSession.game_object_field(game_session, go_id, "server_chest_type")
-	local var_10_0
 
-	if chest_lookup ~= 0 then
-		var_10_0 = NetworkLookup.deus_chest_types[chest_lookup]
-
-		if not var_10_0 then
-			-- Nothing
-		end
-	end
-
-	var_10_0 = nil
-
-	::label_10_0::
-
-	return var_10_0
+	return chest_lookup == 0 and not not nil or not (chest_lookup == 0) and not not NetworkLookup.deus_chest_types[chest_lookup]
 end

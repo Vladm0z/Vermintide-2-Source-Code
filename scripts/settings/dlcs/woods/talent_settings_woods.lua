@@ -719,10 +719,7 @@ table.merge(TalentBuffTemplates[hero_name], talent_buff_templates)
 table.append(TalentTrees[hero_name], talent_trees)
 table.append(Talents[hero_name], talents)
 
-local WeaveLoadoutSettings = WeaveLoadoutSettings
-
-WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
-WeaveLoadoutSettings = WeaveLoadoutSettings
+WeaveLoadoutSettings = not not WeaveLoadoutSettings
 WeaveLoadoutSettings.we_thornsister = {
 	talent_tree = talent_trees[1],
 	properties = {},

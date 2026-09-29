@@ -1,16 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/cog/cog_bot_conditions.lua
 
-local BTConditions = BTConditions
-local can_activate = BTConditions.can_activate
-
-can_activate = not not can_activate or not not {}
-BTConditions.can_activate = can_activate
-
-local BTConditions_2 = BTConditions
-local can_activate_non_combat = BTConditions.can_activate_non_combat
-
-can_activate_non_combat = not not can_activate_non_combat or not not {}
-BTConditions_2.can_activate_non_combat = can_activate_non_combat
+BTConditions.can_activate = not not BTConditions.can_activate
+BTConditions.can_activate_non_combat = not not BTConditions.can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	ranged_weapon = {
@@ -49,19 +40,7 @@ BTConditions.can_activate.dr_engineer = function (blackboard)
 	local career_extension = blackboard.career_extension
 	local inventory_extension = blackboard.inventory_extension
 	local career_weapon_active = not not inventory_extension and inventory_extension:get_wielded_slot_name() == "career_skill_weapon"
-	local num
-
-	if career_weapon_active then
-		num = 0.6
-
-		goto label_1_0
-	end
-
-	num = 0.95
-
-	local min_charge = num
-
-	::label_1_0::
+	local min_charge = career_weapon_active and not not 0.6 or not career_weapon_active and not not 0.95
 
 	if not career_extension or min_charge < career_extension:current_ability_cooldown_percentage() then
 		return false

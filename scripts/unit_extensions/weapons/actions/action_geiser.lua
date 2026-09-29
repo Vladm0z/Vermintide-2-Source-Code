@@ -34,11 +34,7 @@ ActionGeiser.client_owner_start_action = function (self, new_action, t, chain_ac
 
 	self.owner_buff_extension = buff_extension
 	self.state = "waiting_to_shoot"
-
-	local fire_time = new_action.fire_time
-
-	fire_time = not not fire_time or not not 0
-	self.time_to_shoot = t + fire_time
+	self.time_to_shoot = t + not not new_action.fire_time
 	self.radius = chain_action_data.radius
 	self.height = chain_action_data.height
 	self.position = chain_action_data.position
@@ -107,62 +103,16 @@ ActionGeiser.fire = function (self, reason)
 	local start_pos = position + Vector3(0, 0, half_height)
 	local source_pos = position
 	local capsule_half_height = half_height + radius
-	local str
-
-	if capsule_half_height - radius > 0 then
-		str = "capsule"
-
-		goto label_5_0
-	end
-
-	str = "sphere"
-
-	local shape = str
-
-	::label_5_0::
-
+	local shape = capsule_half_height - radius > 0 and not not "capsule" or not (capsule_half_height - radius > 0) and not not "sphere"
 	local hit_actors, num_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", start_pos, "size", Vector3(radius, capsule_half_height, radius), "rotation", Quaternion.look(Vector3.up(), Vector3.up()), "collision_filter", "filter_character_trigger")
 	local charge_value = self.charge_value
 	local effect_name = current_action.particle_effect
 	local overcharge = current_action.overcharge_type
 	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
 	local ignore_hitting_allies = not DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player)
-	local small_charge_value_2 = current_action.small_charge_value
-
-	if not small_charge_value_2 then
-		-- Nothing
-	end
-
-	small_charge_value_2 = 0.33
-
-	local small_charge_value = small_charge_value_2
-
-	::label_5_1::
-
-	local medium_charge_value_2 = current_action.medium_charge_value
-
-	if not medium_charge_value_2 then
-		-- Nothing
-	end
-
-	medium_charge_value_2 = 0.66
-
-	local medium_charge_value = medium_charge_value_2
-
-	::label_5_2::
-
-	local large_charge_value_2 = current_action.large_charge_value
-
-	if not large_charge_value_2 then
-		-- Nothing
-	end
-
-	large_charge_value_2 = 1
-
-	local large_charge_value = large_charge_value_2
-
-	::label_5_3::
-
+	local small_charge_value = not not current_action.small_charge_value
+	local medium_charge_value = not not current_action.medium_charge_value
+	local large_charge_value = not not current_action.large_charge_value
 	local can_create_aoe = not global_is_inside_inn or not not current_action.can_proc_in_inn
 	local size = "_large"
 
@@ -216,18 +166,7 @@ ActionGeiser.fire = function (self, reason)
 
 	local damage_buffer = self._damage_buffer
 	local hit_units = {}
-	local damage_profile_2 = current_action.damage_profile
-
-	if not damage_profile_2 then
-		-- Nothing
-	end
-
-	damage_profile_2 = "default"
-
-	local damage_profile_name = damage_profile_2
-
-	::label_5_4::
-
+	local damage_profile_name = not not current_action.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local side_manager = Managers.state.side
 	local side = side_manager.side_by_unit[owner_unit]
@@ -239,18 +178,7 @@ ActionGeiser.fire = function (self, reason)
 		for i = 1, num_actors do
 			local hit_actor = hit_actors[i]
 			local hit_unit = Actor.unit(hit_actor)
-			local var_5_5 = POSITION_LOOKUP[hit_unit]
-
-			if not var_5_5 then
-				-- Nothing
-			end
-
-			var_5_5 = Unit.local_position(hit_unit, 0)
-
-			local hit_position = var_5_5
-
-			::label_5_5::
-
+			local hit_position = not not POSITION_LOOKUP[hit_unit]
 			local breed = Unit.get_data(hit_unit, "breed")
 
 			if not hit_units[hit_unit] then
@@ -356,18 +284,7 @@ ActionGeiser._update_damage = function (self, current_action)
 			end
 
 			local has_ranged_boost, ranged_boost_curve_multiplier = ActionUtils.get_ranged_boost(owner_unit)
-			local _is_critical_strike = self._is_critical_strike
-
-			if not _is_critical_strike then
-				-- Nothing
-			end
-
-			_is_critical_strike = has_ranged_boost
-
-			local is_critical_strike = _is_critical_strike
-
-			::label_6_0::
-
+			local is_critical_strike = not not self._is_critical_strike
 			local send_to_server = true
 			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
@@ -381,18 +298,7 @@ ActionGeiser._update_damage = function (self, current_action)
 
 			local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
 			local damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
-			local var_6_1 = POSITION_LOOKUP[hit_unit]
-
-			if not var_6_1 then
-				-- Nothing
-			end
-
-			var_6_1 = Unit.local_position(hit_unit, 0)
-
-			local hit_position = var_6_1
-
-			::label_6_1::
-
+			local hit_position = not not POSITION_LOOKUP[hit_unit]
 			local attack_direction = Vector3.normalize(hit_position - attacker_position)
 			local power_level = self.power_level
 			local shield_blocked = false

@@ -89,17 +89,7 @@ TrainingDummyHealthExtension.add_damage = function (self, attacker_unit, damage_
 		local attack_type_id = NetworkLookup.buff_attack_types[not not attack_type or not not "n/a"]
 		local source_attacker_unit_id = NetworkConstants.invalid_game_object_id
 		local network_transmit = self.network_transmit
-		local dead = self.dead
-
-		if not dead then
-			-- Nothing
-		end
-
-		dead = false
-
-		local is_dead = dead
-
-		::label_9_0::
+		local is_dead = not not self.dead
 
 		is_critical_strike = not not is_critical_strike or not not false
 		added_dot = not not added_dot or not not false

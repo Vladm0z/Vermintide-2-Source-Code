@@ -52,18 +52,7 @@ end
 SpawnManager._default_player_statuses = function (self)
 	-- function 3
 	local game_mode_settings = Managers.state.game_mode:settings()
-	local team_a_num_slots = game_mode_settings.team_a_num_slots
-
-	if not team_a_num_slots then
-		-- Nothing
-	end
-
-	team_a_num_slots = NUM_PLAYERS
-
-	local num_slots = team_a_num_slots
-
-	::label_3_0::
-
+	local num_slots = not not game_mode_settings.team_a_num_slots
 	local statuses = {}
 
 	for i = 1, num_slots do

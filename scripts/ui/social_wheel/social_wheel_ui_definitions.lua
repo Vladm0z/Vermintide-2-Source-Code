@@ -119,22 +119,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 	-- function 1
 	local size = category_settings.size
 	local dir = Vector3(math.cos(widget_angle), math.sin(widget_angle), 0)
-	local count
-
-	if page_idx then
-		count = #category_settings[page_idx]
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = #category_settings
-
-	local num_wedges = count
-
-	::label_1_0::
-
+	local num_wedges = page_idx and not not #category_settings[page_idx] or not page_idx and not not #category_settings
 	local divider_angle = widget_angle + 2 * math.pi * (1 / num_wedges) * 0.5
 	local divider_dir = Vector3(math.cos(divider_angle), math.sin(divider_angle), 0)
 	local wedge_size = 1 / num_wedges * 360 / 90 * category_settings.wedge_adjustment
@@ -146,7 +131,8 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 	end
 
 	local aspect_ratio = size[1] / size[2]
-	local tbl = {
+
+	return {
 		element = {
 			passes = {
 				{
@@ -182,14 +168,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 					texture_id = "fade_texture_id",
 					content_check_function = function (content, style)
 						-- function 4
-						local selected = content.selected
-
-						if selected then
-							selected = content.is_valid
-							selected = not not selected and not not not category_settings.individual_bg
-						end
-
-						return selected
+						return not not content.selected
 					end
 				},
 				{
@@ -198,11 +177,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 					texture_id = "icon_bg_id",
 					content_check_function = function (content, style)
 						-- function 5
-						local individual_bg = category_settings.individual_bg
-
-						individual_bg = not not individual_bg and not not content.is_valid
-
-						return individual_bg
+						return not not category_settings.individual_bg
 					end
 				},
 				{
@@ -258,11 +233,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 					texture_id = "icon_glow_id",
 					content_check_function = function (content, style)
 						-- function 9
-						local selected = content.selected
-
-						selected = not not selected and not not not content.activated
-
-						return selected
+						return not not content.selected
 					end
 				},
 				{
@@ -286,11 +257,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 							style.text_color = style.base_color
 						end
 
-						local IS_WINDOWS = IS_WINDOWS
-
-						IS_WINDOWS = not not IS_WINDOWS or not not settings.disable_input_text
-
-						return IS_WINDOWS
+						return not not IS_WINDOWS
 					end
 				},
 				{
@@ -305,304 +272,194 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 							style.text_color = style.base_color
 						end
 
-						local IS_WINDOWS = IS_WINDOWS
-
-						IS_WINDOWS = not not IS_WINDOWS or not not settings.disable_input_text
-
-						return IS_WINDOWS
+						return not not IS_WINDOWS
 					end
 				}
 			}
-		}
-	}
-	local tbl_2 = {
-		fade_texture_id = "radial_chat_wedge",
-		divider_id = "radial_chat_bg_line",
-		selected = false,
-		is_valid = true,
-		fade_bg = "radial_chat_bg",
-		icon_unavailable_id = "radial_chat_icon_unavailable",
-		size_multiplier = 0,
-		final_size_multiplier = 1,
-		icon_bg_id = "radial_chat_icon_bg"
-	}
-	local icon = settings.icon
-
-	icon = not not icon or not not "radial_chat_icon_boss"
-	tbl_2.icon_id = icon
-
-	local icon_glow
-
-	if settings.icon then
-		icon_glow = settings.icon_glow
-
-		if not icon_glow then
-			-- Nothing
-		end
-
-		icon_glow = settings.icon .. "_glow"
-
-		if not icon_glow then
-			-- Nothing
-		end
-	end
-
-	icon_glow = "radial_chat_icon_boss_glow"
-
-	::label_1_1::
-
-	tbl_2.icon_glow_id = icon_glow
-	tbl_2.settings = settings
-	tbl_2.category_settings = category_settings
-	tbl_2.text_id = settings.text
-	tbl_2.dir = Vector3Box(dir)
-	tbl_2.final_offset = size
-	tbl.content = tbl_2
-
-	local tbl_3 = {}
-	local tbl_4 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center"
-	}
-	local icon_size = category_settings.icon_size
-
-	icon_size = not not icon_size or not not {
-		128,
-		128
-	}
-	tbl_4.base_texture_size = icon_size
-
-	local icon_size_2 = category_settings.icon_size
-
-	icon_size_2 = not not icon_size_2 or not not {
-		128,
-		128
-	}
-	tbl_4.texture_size = icon_size_2
-	tbl_4.activated_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_4.color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_4.offset = {
-		0,
-		0,
-		10
-	}
-	tbl_3.icon = tbl_4
-
-	local tbl_5 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center"
-	}
-	local icon_size_3 = category_settings.icon_size
-
-	icon_size_3 = not not icon_size_3 or not not {
-		128,
-		128
-	}
-	tbl_5.base_texture_size = icon_size_3
-
-	local icon_size_4 = category_settings.icon_size
-
-	icon_size_4 = not not icon_size_4 or not not {
-		128,
-		128
-	}
-	tbl_5.texture_size = icon_size_4
-	tbl_5.activated_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.offset = {
-		2,
-		-2,
-		9
-	}
-	tbl_3.icon_shadow = tbl_5
-
-	local tbl_6 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center"
-	}
-	local icon_size_5 = category_settings.icon_size
-
-	icon_size_5 = not not icon_size_5 or not not {
-		128,
-		128
-	}
-	tbl_6.base_texture_size = icon_size_5
-
-	local icon_size_6 = category_settings.icon_size
-
-	icon_size_6 = not not icon_size_6 or not not {
-		128,
-		128
-	}
-	tbl_6.texture_size = icon_size_6
-	tbl_6.color = Colors.get_color_table_with_alpha("black", 125)
-	tbl_6.offset = {
-		0,
-		0,
-		8
-	}
-	tbl_3.icon_bg = tbl_6
-
-	local tbl_7 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center"
-	}
-	local icon_size_7 = category_settings.icon_size
-
-	icon_size_7 = not not icon_size_7 or not not {
-		128,
-		128
-	}
-	tbl_7.base_texture_size = icon_size_7
-
-	local icon_size_8 = category_settings.icon_size
-
-	icon_size_8 = not not icon_size_8 or not not {
-		128,
-		128
-	}
-	tbl_7.texture_size = icon_size_8
-	tbl_7.color = {
-		255,
-		232,
-		86,
-		14
-	}
-	tbl_7.offset = {
-		0,
-		0,
-		11
-	}
-	tbl_3.icon_glow = tbl_7
-
-	local tbl_8 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center"
-	}
-	local icon_size_9 = category_settings.icon_size
-
-	icon_size_9 = not not icon_size_9 or not not {
-		128,
-		128
-	}
-	tbl_8.base_texture_size = icon_size_9
-
-	local icon_size_10 = category_settings.icon_size
-
-	icon_size_10 = not not icon_size_10 or not not {
-		128,
-		128
-	}
-	tbl_8.texture_size = icon_size_10
-	tbl_8.color = {
-		255,
-		128,
-		60,
-		60
-	}
-	tbl_8.offset = {
-		0,
-		0,
-		12
-	}
-	tbl_3.icon_unavailable = tbl_8
-	tbl_3.divider = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center",
-		base_texture_size = {
-			4,
-			250
 		},
-		texture_size = {
-			4,
-			250
+		content = {
+			fade_texture_id = "radial_chat_wedge",
+			divider_id = "radial_chat_bg_line",
+			selected = false,
+			is_valid = true,
+			fade_bg = "radial_chat_bg",
+			icon_unavailable_id = "radial_chat_icon_unavailable",
+			size_multiplier = 0,
+			final_size_multiplier = 1,
+			icon_bg_id = "radial_chat_icon_bg",
+			icon_id = not not settings.icon,
+			icon_glow_id = settings.icon and not not settings.icon_glow or not settings.icon and not not "radial_chat_icon_boss_glow",
+			settings = settings,
+			category_settings = category_settings,
+			text_id = settings.text,
+			dir = Vector3Box(dir),
+			final_offset = size
 		},
-		pivot = {
-			2,
-			125
+		style = {
+			icon = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				base_texture_size = not not category_settings.icon_size,
+				texture_size = not not category_settings.icon_size,
+				activated_color = Colors.get_color_table_with_alpha("font_title", 255),
+				color = Colors.get_color_table_with_alpha("white", 255),
+				offset = {
+					0,
+					0,
+					10
+				}
+			},
+			icon_shadow = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				base_texture_size = not not category_settings.icon_size,
+				texture_size = not not category_settings.icon_size,
+				activated_color = Colors.get_color_table_with_alpha("black", 255),
+				color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					2,
+					-2,
+					9
+				}
+			},
+			icon_bg = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				base_texture_size = not not category_settings.icon_size,
+				texture_size = not not category_settings.icon_size,
+				color = Colors.get_color_table_with_alpha("black", 125),
+				offset = {
+					0,
+					0,
+					8
+				}
+			},
+			icon_glow = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				base_texture_size = not not category_settings.icon_size,
+				texture_size = not not category_settings.icon_size,
+				color = {
+					255,
+					232,
+					86,
+					14
+				},
+				offset = {
+					0,
+					0,
+					11
+				}
+			},
+			icon_unavailable = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				base_texture_size = not not category_settings.icon_size,
+				texture_size = not not category_settings.icon_size,
+				color = {
+					255,
+					128,
+					60,
+					60
+				},
+				offset = {
+					0,
+					0,
+					12
+				}
+			},
+			divider = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				base_texture_size = {
+					4,
+					250
+				},
+				texture_size = {
+					4,
+					250
+				},
+				pivot = {
+					2,
+					125
+				},
+				angle = 2 * math.pi - divider_angle + math.pi * 0.5,
+				color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					-dir[1] * size[1] + divider_dir[1] * 227,
+					-dir[2] * size[2] + divider_dir[2] * 227,
+					1
+				}
+			},
+			fade = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				texture_size = {
+					389 * wedge_size * scale,
+					195 * scale
+				},
+				pivot = {
+					389 * wedge_size * 0.5 * scale,
+					97.5 * scale
+				},
+				angle = 2 * math.pi - widget_angle + math.pi * 0.5,
+				color = Colors.get_color_table_with_alpha("white", 30),
+				offset = {
+					-dir[1] * size[1] + dir[1] * 195 * 0.5 * scale,
+					-dir[2] * size[2] + dir[2] * 195 * 0.5 * scale,
+					10
+				}
+			},
+			text = {
+				word_wrap = false,
+				font_size = 32,
+				pixel_perfect = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_header",
+				localize = localize,
+				selected_color = Colors.get_color_table_with_alpha("font_title", 255),
+				base_color = Colors.get_color_table_with_alpha("white", 128),
+				text_color = Colors.get_color_table_with_alpha("white", 255),
+				offset = {
+					0,
+					-80,
+					2
+				}
+			},
+			text_shadow = {
+				word_wrap = false,
+				font_size = 32,
+				pixel_perfect = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_header",
+				localize = localize,
+				selected_color = Colors.get_color_table_with_alpha("black", 255),
+				base_color = Colors.get_color_table_with_alpha("black", 128),
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					2,
+					-82,
+					1
+				}
+			},
+			bg_top_right = {}
 		},
-		angle = 2 * math.pi - divider_angle + math.pi * 0.5,
-		color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			-dir[1] * size[1] + divider_dir[1] * 227,
-			-dir[2] * size[2] + divider_dir[2] * 227,
+			dir[1] * size[1],
+			dir[2] * size[2],
 			1
-		}
-	}
-	tbl_3.fade = {
-		vertical_alignment = "center",
-		horizontal_alignment = "center",
-		texture_size = {
-			389 * wedge_size * scale,
-			195 * scale
 		},
-		pivot = {
-			389 * wedge_size * 0.5 * scale,
-			97.5 * scale
-		},
-		angle = 2 * math.pi - widget_angle + math.pi * 0.5,
-		color = Colors.get_color_table_with_alpha("white", 30),
-		offset = {
-			-dir[1] * size[1] + dir[1] * 195 * 0.5 * scale,
-			-dir[2] * size[2] + dir[2] * 195 * 0.5 * scale,
-			10
-		}
+		scenegraph_id = IS_WINDOWS and not not "pivot" or not IS_WINDOWS and not not "pivot_console"
 	}
-	tbl_3.text = {
-		word_wrap = false,
-		font_size = 32,
-		pixel_perfect = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font = true,
-		font_type = "hell_shark_header",
-		localize = localize,
-		selected_color = Colors.get_color_table_with_alpha("font_title", 255),
-		base_color = Colors.get_color_table_with_alpha("white", 128),
-		text_color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			0,
-			-80,
-			2
-		}
-	}
-	tbl_3.text_shadow = {
-		word_wrap = false,
-		font_size = 32,
-		pixel_perfect = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font = true,
-		font_type = "hell_shark_header",
-		localize = localize,
-		selected_color = Colors.get_color_table_with_alpha("black", 255),
-		base_color = Colors.get_color_table_with_alpha("black", 128),
-		text_color = Colors.get_color_table_with_alpha("black", 255),
-		offset = {
-			2,
-			-82,
-			1
-		}
-	}
-	tbl_3.bg_top_right = {}
-	tbl.style = tbl_3
-	tbl.offset = {
-		dir[1] * size[1],
-		dir[2] * size[2],
-		1
-	}
-
-	local flag
-
-	flag = (not IS_WINDOWS or not "pivot") and not not "pivot_console"
-	tbl.scenegraph_id = flag
-
-	return tbl
 end
 
 local function create_bg_widget()
 	-- function 13
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -928,19 +785,14 @@ local function create_bg_widget()
 			0,
 			0,
 			0
-		}
+		},
+		scenegraph_id = IS_WINDOWS and not not "pivot" or not IS_WINDOWS and not not "pivot_console"
 	}
-	local flag
-
-	flag = (not IS_WINDOWS or not "pivot") and not not "pivot_console"
-	tbl.scenegraph_id = flag
-
-	return tbl
 end
 
 local function create_arrow_widget()
 	-- function 23
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -1013,14 +865,9 @@ local function create_arrow_widget()
 			0,
 			0,
 			10
-		}
+		},
+		scenegraph_id = IS_WINDOWS and not not "pivot" or not IS_WINDOWS and not not "pivot_console"
 	}
-	local flag
-
-	flag = (not IS_WINDOWS or not "pivot") and not not "pivot_console"
-	tbl.scenegraph_id = flag
-
-	return tbl
 end
 
 local function create_page_input_widget()
@@ -1191,7 +1038,7 @@ end
 
 local function create_social_icon(social_event_setting, peer_id, camera, world, end_time, fade_time)
 	-- function 26
-	local tbl = {
+	return {
 		scenegraph_id = "icon",
 		element = {
 			passes = {
@@ -1307,106 +1154,85 @@ local function create_social_icon(social_event_setting, peer_id, camera, world, 
 					end
 				}
 			}
-		}
-	}
-	local tbl_2 = {
-		alpha = 255,
-		icon_bg_id = "radial_chat_icon_bg"
-	}
-	local icon = social_event_setting.icon
-
-	icon = not not icon or not not "radial_chat_icon_boss"
-	tbl_2.icon_id = icon
-
-	local str
-
-	if social_event_setting.icon then
-		str = social_event_setting.icon .. "_glow"
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = "radial_chat_icon_boss_glow"
-
-	::label_26_0::
-
-	tbl_2.icon_glow_id = str
-	tbl_2.peer_id = peer_id
-	tbl_2.camera = camera
-	tbl_2.world = world
-	tbl_2.end_time = not not end_time or not not (Managers.time:time("game") + 5)
-	tbl_2.fade_time = not not fade_time or not not 0.5
-	tbl.content = tbl_2
-	tbl.style = {
-		texture = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "left",
-			base_texture_size = {
-				128,
-				128
+		},
+		content = {
+			alpha = 255,
+			icon_bg_id = "radial_chat_icon_bg",
+			icon_id = not not social_event_setting.icon,
+			icon_glow_id = social_event_setting.icon and not not (social_event_setting.icon .. "_glow") or not social_event_setting.icon and not not "radial_chat_icon_boss_glow",
+			peer_id = peer_id,
+			camera = camera,
+			world = world,
+			end_time = not not end_time or not not (Managers.time:time("game") + 5),
+			fade_time = not not fade_time or not not 0.5
+		},
+		style = {
+			texture = {
+				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
+				base_texture_size = {
+					128,
+					128
+				},
+				texture_size = {
+					128,
+					128
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					10
+				}
 			},
-			texture_size = {
-				128,
-				128
+			texture_glow = {
+				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
+				texture_size = {
+					128,
+					128
+				},
+				base_texture_size = {
+					128,
+					128
+				},
+				color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					0,
+					0,
+					10
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				0,
-				10
+			texture_shadow = {
+				vertical_alignment = "bottom",
+				horizontal_alignment = "left",
+				base_texture_size = {
+					128,
+					128
+				},
+				texture_size = {
+					128,
+					128
+				},
+				color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					2,
+					-2,
+					0
+				}
 			}
 		},
-		texture_glow = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "left",
-			texture_size = {
-				128,
-				128
-			},
-			base_texture_size = {
-				128,
-				128
-			},
-			color = Colors.get_color_table_with_alpha("font_title", 255),
-			offset = {
-				0,
-				0,
-				10
-			}
-		},
-		texture_shadow = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "left",
-			base_texture_size = {
-				128,
-				128
-			},
-			texture_size = {
-				128,
-				128
-			},
-			color = Colors.get_color_table_with_alpha("black", 255),
-			offset = {
-				2,
-				-2,
-				0
-			}
+		offset = {
+			0,
+			0,
+			0
 		}
 	}
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-
-	return tbl
 end
 
 return {

@@ -169,23 +169,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 2
-						local is_hover
-
-						if not content.button_hotspot.disable_button then
-							is_hover = content.button_hotspot.is_hover
-
-							if not is_hover then
-								is_hover = content.button_hotspot.is_selected
-							end
-						else
-							is_hover = false
-						end
-
-						if false then
-							is_hover = true
-						end
-
-						return is_hover
+						return not not content.button_hotspot.is_selected
 					end
 				},
 				{

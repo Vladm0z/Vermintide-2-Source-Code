@@ -1,85 +1,7 @@
 -- chunkname: @scripts/settings/twitch_settings.lua
 
-local TwitchSettings = TwitchSettings
-
-TwitchSettings = not not TwitchSettings or not not {
-	initial_downtime = 60,
-	cutoff_for_guaranteed_negative_vote = -300,
-	starting_funds = 0,
-	max_diff = 200,
-	max_a_b_vote_cost_diff = 100,
-	default_draw_vote = "twitch_vote_draw",
-	cutoff_for_guaranteed_positive_vote = 300,
-	standard_vote = {
-		default_vote_a_str = "#a",
-		default_vote_b_str = "#b"
-	},
-	multiple_choice = {
-		default_vote_b_str = "#b",
-		default_vote_c_str = "#c",
-		default_vote_d_str = "#d",
-		default_vote_a_str = "#a",
-		default_vote_e_str = "#e"
-	},
-	supported_game_modes = {
-		ps4 = {
-			weave_quick_play = false,
-			deed = false,
-			deus_twitch = true,
-			adventure_mode = false,
-			event = false,
-			deus_custom = false,
-			deus_quickplay = false,
-			custom = false,
-			weave = false,
-			versus_custom = false,
-			adventure = true,
-			versus_quickplay = false,
-			twitch = true,
-			versus = false
-		},
-		xb1 = {
-			weave_quick_play = false,
-			deed = false,
-			deus_twitch = true,
-			adventure_mode = false,
-			event = false,
-			deus_custom = false,
-			deus_quickplay = false,
-			custom = false,
-			weave = false,
-			versus_custom = false,
-			adventure = true,
-			versus_quickplay = false,
-			twitch = true,
-			versus = false
-		},
-		win32 = {
-			weave_quick_play = true,
-			deed = true,
-			deus_twitch = true,
-			adventure_mode = true,
-			event = true,
-			deus_custom = true,
-			deus_quickplay = true,
-			custom = true,
-			weave = true,
-			versus_custom = false,
-			adventure = true,
-			versus_quickplay = false,
-			twitch = true,
-			versus = true,
-			deus_weekly = true
-		}
-	},
-	positive_vote_options = table.enum("enable_positive_votes", "disable_giving_items", "disable_positive_votes")
-}
-TwitchSettings = TwitchSettings
-
-local TwitchVoteTemplates = TwitchVoteTemplates
-
-TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
-TwitchVoteTemplates = TwitchVoteTemplates
+TwitchSettings = not not TwitchSettings
+TwitchVoteTemplates = not not TwitchVoteTemplates
 
 require("scripts/settings/twitch_vote_templates_buffs")
 require("scripts/settings/twitch_vote_templates_items")
@@ -154,10 +76,7 @@ for name, template in pairs(TwitchVoteTemplates) do
 	end
 end
 
-local TwitchVoteWhitelists = TwitchVoteWhitelists
-
-TwitchVoteWhitelists = not not TwitchVoteWhitelists or not not {}
-TwitchVoteWhitelists = TwitchVoteWhitelists
+TwitchVoteWhitelists = not not TwitchVoteWhitelists
 
 for _, dlc in pairs(DLCSettings) do
 	local dlc_twitch_settings = dlc.twitch_settings

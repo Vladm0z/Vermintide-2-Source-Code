@@ -4,12 +4,7 @@ StatusUtils = {}
 
 StatusUtils.set_wounded_network = function (wounded_unit, wounded, reason, t)
 	-- function 1
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(wounded_unit, "status_system")
 
@@ -26,12 +21,7 @@ end
 
 StatusUtils.set_knocked_down_network = function (knocked_down_unit, knocked_down)
 	-- function 2
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "can only knock down on server")
+	fassert(not not Managers.player.is_server, "can only knock down on server")
 
 	local status_extension = ScriptUnit.extension(knocked_down_unit, "status_system")
 
@@ -47,12 +37,7 @@ end
 
 StatusUtils.set_revived_network = function (revived_unit, revived, reviver_unit)
 	-- function 3
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Only the server is allowed to decide who is revived and who isn't since it owns damage and interactions.")
+	fassert(not not Managers.player.is_server, "Only the server is allowed to decide who is revived and who isn't since it owns damage and interactions.")
 
 	if not revived_unit then
 		return
@@ -66,21 +51,7 @@ StatusUtils.set_revived_network = function (revived_unit, revived, reviver_unit)
 		if not LEVEL_EDITOR_TEST then
 			local network_manager = Managers.state.network
 			local go_id = network_manager:unit_game_object_id(revived_unit)
-			local unit_game_object_id
-
-			if reviver_unit then
-				unit_game_object_id = network_manager:unit_game_object_id(reviver_unit)
-
-				if not unit_game_object_id then
-					-- Nothing
-				end
-			end
-
-			unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-			local reviver_go_id = unit_game_object_id
-
-			::label_3_0::
+			local reviver_go_id = reviver_unit and not not network_manager:unit_game_object_id(reviver_unit) or not reviver_unit and not not NetworkConstants.invalid_game_object_id
 
 			network_manager.network_transmit:send_rpc_clients("rpc_status_change_bool", NetworkLookup.statuses.revived, revived, go_id, reviver_go_id)
 		end
@@ -89,12 +60,7 @@ end
 
 StatusUtils.set_respawned_network = function (respawned_unit, respawned, helper_unit)
 	-- function 4
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(respawned_unit, "status_system")
 
@@ -104,56 +70,14 @@ StatusUtils.set_respawned_network = function (respawned_unit, respawned, helper_
 		if not LEVEL_EDITOR_TEST then
 			local network_manager = Managers.state.network
 			local go_id = network_manager:unit_game_object_id(respawned_unit)
-			local unit_game_object_id
-
-			if helper_unit then
-				unit_game_object_id = network_manager:unit_game_object_id(helper_unit)
-
-				if not unit_game_object_id then
-					-- Nothing
-				end
-			end
-
-			unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-			local helper_go_id = unit_game_object_id
-
-			::label_4_0::
+			local helper_go_id = helper_unit and not not network_manager:unit_game_object_id(helper_unit) or not helper_unit and not not NetworkConstants.invalid_game_object_id
 
 			network_manager.network_transmit:send_rpc_clients("rpc_status_change_bool", NetworkLookup.statuses.respawned, respawned, go_id, helper_go_id)
 		end
 	elseif not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
-		local unit_game_object_id_2 = network_manager:unit_game_object_id(respawned_unit)
-
-		if not unit_game_object_id_2 then
-			-- Nothing
-		end
-
-		unit_game_object_id_2 = 0
-
-		local go_id = unit_game_object_id_2
-
-		do
-			local unit_game_object_id_3
-		end
-
-		::label_4_1::
-
-		if helper_unit then
-			unit_game_object_id_3 = network_manager:unit_game_object_id(helper_unit)
-
-			if not unit_game_object_id_3 then
-				-- Nothing
-			end
-		end
-
-		unit_game_object_id_3 = 0
-
-		local helper_go_id = unit_game_object_id_3
-
-		::label_4_2::
-
+		local go_id = not not network_manager:unit_game_object_id(respawned_unit)
+		local helper_go_id = helper_unit and not not network_manager:unit_game_object_id(helper_unit) or not helper_unit and not not 0
 		local owner = Managers.player:owner(respawned_unit)
 		local network_id = owner:network_id()
 
@@ -170,21 +94,7 @@ StatusUtils.set_pulled_up_network = function (pulled_up_unit, pulled_up, helper_
 	if not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local go_id = network_manager:unit_game_object_id(pulled_up_unit)
-		local unit_game_object_id
-
-		if helper_unit then
-			unit_game_object_id = network_manager:unit_game_object_id(helper_unit)
-
-			if not unit_game_object_id then
-				-- Nothing
-			end
-		end
-
-		unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-		local helper_go_id = unit_game_object_id
-
-		::label_5_0::
+		local helper_go_id = helper_unit and not not network_manager:unit_game_object_id(helper_unit) or not helper_unit and not not NetworkConstants.invalid_game_object_id
 
 		if Managers.player.is_server then
 			network_manager.network_transmit:send_rpc_clients("rpc_status_change_bool", NetworkLookup.statuses.pulled_up, pulled_up, go_id, helper_go_id)
@@ -211,18 +121,7 @@ StatusUtils.set_grabbed_by_pack_master_network = function (status_name, grabbed_
 	if not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local grabbed_go_id = network_manager:unit_game_object_id(grabbed_unit)
-		local unit_game_object_id = network_manager:unit_game_object_id(grabber_unit)
-
-		if not unit_game_object_id then
-			-- Nothing
-		end
-
-		unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-		local grabber_go_id = unit_game_object_id
-
-		::label_6_0::
-
+		local grabber_go_id = not not network_manager:unit_game_object_id(grabber_unit)
 		local status_id = NetworkLookup.statuses[status_name]
 
 		if Managers.player.is_server then
@@ -246,18 +145,7 @@ StatusUtils.set_grabbed_by_corruptor_network = function (status_name, grabbed_un
 	if not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local grabbed_go_id = network_manager:unit_game_object_id(grabbed_unit)
-		local unit_game_object_id = network_manager:unit_game_object_id(grabber_unit)
-
-		if not unit_game_object_id then
-			-- Nothing
-		end
-
-		unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-		local grabber_go_id = unit_game_object_id
-
-		::label_7_0::
-
+		local grabber_go_id = not not network_manager:unit_game_object_id(grabber_unit)
 		local status_id = NetworkLookup.statuses[status_name]
 
 		if Managers.player.is_server then
@@ -270,12 +158,7 @@ end
 
 StatusUtils.set_pushed_network = function (pushed_unit, pushed)
 	-- function 8
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local t = Managers.time:time("game")
 	local status_extension = ScriptUnit.extension(pushed_unit, "status_system")
@@ -292,12 +175,7 @@ end
 
 StatusUtils.set_charged_network = function (charged_unit, charged)
 	-- function 9
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local t = Managers.time:time("game")
 	local status_extension = ScriptUnit.extension(charged_unit, "status_system")
@@ -345,12 +223,7 @@ end
 
 StatusUtils.set_grabbed_by_tentacle_network = function (grabbed_unit, is_grabbed, tentacle_unit)
 	-- function 11
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(grabbed_unit, "status_system")
 
@@ -367,12 +240,7 @@ end
 
 StatusUtils.set_grabbed_by_tentacle_status_network = function (grabbed_unit, substatus)
 	-- function 12
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(grabbed_unit, "status_system")
 
@@ -389,12 +257,7 @@ end
 
 StatusUtils.set_grabbed_by_chaos_spawn_network = function (grabbed_unit, is_grabbed, chaos_spawn_unit)
 	-- function 13
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(grabbed_unit, "status_system")
 
@@ -411,12 +274,7 @@ end
 
 StatusUtils.set_grabbed_by_chaos_spawn_status_network = function (grabbed_unit, substatus)
 	-- function 14
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(grabbed_unit, "status_system")
 
@@ -433,12 +291,7 @@ end
 
 StatusUtils.set_in_vortex_network = function (affected_unit, in_vortex, vortex_unit)
 	-- function 15
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	if not ALIVE[affected_unit] then
 		return false
@@ -451,17 +304,7 @@ StatusUtils.set_in_vortex_network = function (affected_unit, in_vortex, vortex_u
 	if not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local go_id = network_manager:unit_game_object_id(affected_unit)
-		local unit_game_object_id = network_manager:unit_game_object_id(vortex_unit)
-
-		if not unit_game_object_id then
-			-- Nothing
-		end
-
-		unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-		local vortex_go_id = unit_game_object_id
-
-		::label_15_0::
+		local vortex_go_id = not not network_manager:unit_game_object_id(vortex_unit)
 
 		network_manager.network_transmit:send_rpc_clients("rpc_status_change_bool", NetworkLookup.statuses.in_vortex, in_vortex, go_id, vortex_go_id)
 	end
@@ -471,12 +314,7 @@ end
 
 StatusUtils.set_near_vortex_network = function (affected_unit, near_vortex, vortex_unit)
 	-- function 16
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(affected_unit, "status_system")
 
@@ -485,17 +323,7 @@ StatusUtils.set_near_vortex_network = function (affected_unit, near_vortex, vort
 	if not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local go_id = network_manager:unit_game_object_id(affected_unit)
-		local unit_game_object_id = network_manager:unit_game_object_id(vortex_unit)
-
-		if not unit_game_object_id then
-			-- Nothing
-		end
-
-		unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-		local vortex_go_id = unit_game_object_id
-
-		::label_16_0::
+		local vortex_go_id = not not network_manager:unit_game_object_id(vortex_unit)
 
 		network_manager.network_transmit:send_rpc_clients("rpc_status_change_bool", NetworkLookup.statuses.near_vortex, near_vortex, go_id, vortex_go_id)
 	end
@@ -503,12 +331,7 @@ end
 
 StatusUtils.set_in_liquid_network = function (affected_unit, in_liquid, in_liquid_unit)
 	-- function 17
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(affected_unit, "status_system")
 
@@ -517,17 +340,7 @@ StatusUtils.set_in_liquid_network = function (affected_unit, in_liquid, in_liqui
 	if not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local go_id = network_manager:unit_game_object_id(affected_unit)
-		local unit_game_object_id = network_manager:unit_game_object_id(in_liquid_unit)
-
-		if not unit_game_object_id then
-			-- Nothing
-		end
-
-		unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-		local liquid_go_id = unit_game_object_id
-
-		::label_17_0::
+		local liquid_go_id = not not network_manager:unit_game_object_id(in_liquid_unit)
 
 		network_manager.network_transmit:send_rpc_clients("rpc_status_change_bool", NetworkLookup.statuses.in_liquid, in_liquid, go_id, liquid_go_id)
 	end
@@ -535,12 +348,7 @@ end
 
 StatusUtils.set_overpowered_network = function (affected_unit, overpowered, overpowered_template_name, attacking_unit)
 	-- function 18
-	local fassert = fassert
-	local is_server = Managers.player.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server)
+	fassert(not not Managers.player.is_server)
 
 	local status_extension = ScriptUnit.extension(affected_unit, "status_system")
 
@@ -551,35 +359,8 @@ StatusUtils.set_overpowered_network = function (affected_unit, overpowered, over
 		local go_id = network_manager:unit_game_object_id(affected_unit)
 
 		if go_id and go_id ~= NetworkConstants.invalid_game_object_id then
-			local unit_game_object_id = network_manager:unit_game_object_id(attacking_unit)
-
-			if not unit_game_object_id then
-				-- Nothing
-			end
-
-			unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-			local other_go_id = unit_game_object_id
-
-			do
-				local var_18_3
-			end
-
-			::label_18_0::
-
-			if overpowered then
-				var_18_3 = NetworkLookup.overpowered_templates[overpowered_template_name]
-
-				if not var_18_3 then
-					-- Nothing
-				end
-			end
-
-			var_18_3 = 0
-
-			local status_int = var_18_3
-
-			::label_18_1::
+			local other_go_id = not not network_manager:unit_game_object_id(attacking_unit)
+			local status_int = overpowered and not not NetworkLookup.overpowered_templates[overpowered_template_name] or not overpowered and not not 0
 
 			network_manager.network_transmit:send_rpc_clients("rpc_status_change_int_and_unit", NetworkLookup.statuses.overpowered, status_int, go_id, other_go_id)
 		end
@@ -607,35 +388,7 @@ end
 StatusUtils.use_soft_collision = function (unit)
 	-- function 20
 	local status_extension = ScriptUnit.extension(unit, "status_system")
-	local is_using_transport = status_extension:is_using_transport()
-
-	if not is_using_transport then
-		-- Nothing
-	end
-
-	is_using_transport = status_extension:get_inside_transport_unit()
-
-	if not is_using_transport then
-		-- Nothing
-	end
-
-	is_using_transport = status_extension:is_disabled()
-
-	if not is_using_transport then
-		-- Nothing
-	end
-
-	is_using_transport = status_extension:is_knocked_down()
-
-	if not is_using_transport then
-		-- Nothing
-	end
-
-	is_using_transport = status_extension:is_pounced_down()
-
-	local is_disabled = is_using_transport
-
-	::label_20_0::
+	local is_disabled = not not status_extension:is_using_transport()
 
 	return not is_disabled
 end
@@ -667,18 +420,7 @@ StatusUtils.set_pounced_down_network = function (status_name, pounced_unit, is_p
 	if not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local pounced_go_id = network_manager:unit_game_object_id(pounced_unit)
-		local unit_game_object_id = network_manager:unit_game_object_id(pouncer_unit)
-
-		if not unit_game_object_id then
-			-- Nothing
-		end
-
-		unit_game_object_id = NetworkConstants.invalid_game_object_id
-
-		local pouncer_go_id = unit_game_object_id
-
-		::label_22_0::
-
+		local pouncer_go_id = not not network_manager:unit_game_object_id(pouncer_unit)
 		local status_id = NetworkLookup.statuses[status_name]
 
 		if DEDICATED_SERVER then

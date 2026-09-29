@@ -4,49 +4,49 @@ local plentiful_color = Colors.get_table("plentiful")
 local red = 255 / plentiful_color[2]
 local green = 255 / plentiful_color[3]
 local blue = 255 / plentiful_color[4]
-local plentiful_multiplier = (not (red < green) or not red) and not not green
+local plentiful_multiplier = red < green and (not not red or not not green) or not (red < green) and not not green
 
-plentiful_multiplier = (not (plentiful_multiplier < blue) or not plentiful_multiplier) and not not blue
+plentiful_multiplier = plentiful_multiplier < blue and (not not plentiful_multiplier or not not blue) or not (plentiful_multiplier < blue) and not not blue
 
 local common_color = Colors.get_table("common")
 local red = 255 / common_color[2]
 local green = 255 / common_color[3]
 local blue = 255 / common_color[4]
-local common_multiplier = (not (red < green) or not red) and not not green
+local common_multiplier = red < green and (not not red or not not green) or not (red < green) and not not green
 
-common_multiplier = (not (common_multiplier < blue) or not common_multiplier) and not not blue
+common_multiplier = common_multiplier < blue and (not not common_multiplier or not not blue) or not (common_multiplier < blue) and not not blue
 
 local rare_color = Colors.get_table("rare")
 local red = 255 / rare_color[2]
 local green = 255 / rare_color[3]
 local blue = 255 / rare_color[4]
-local rare_multiplier = (not (red < green) or not red) and not not green
+local rare_multiplier = red < green and (not not red or not not green) or not (red < green) and not not green
 
-rare_multiplier = (not (rare_multiplier < blue) or not rare_multiplier) and not not blue
+rare_multiplier = rare_multiplier < blue and (not not rare_multiplier or not not blue) or not (rare_multiplier < blue) and not not blue
 
 local exotic_color = Colors.get_table("exotic")
 local red = 255 / exotic_color[2]
 local green = 255 / exotic_color[3]
 local blue = 255 / exotic_color[4]
-local exotic_multiplier = (not (red < green) or not red) and not not green
+local exotic_multiplier = red < green and (not not red or not not green) or not (red < green) and not not green
 
-exotic_multiplier = (not (exotic_multiplier < blue) or not exotic_multiplier) and not not blue
+exotic_multiplier = exotic_multiplier < blue and (not not exotic_multiplier or not not blue) or not (exotic_multiplier < blue) and not not blue
 
 local unique_color = Colors.get_table("unique")
 local red = 255 / unique_color[2]
 local green = 255 / unique_color[3]
 local blue = 255 / unique_color[4]
-local unique_multiplier = (not (red < green) or not red) and not not green
+local unique_multiplier = red < green and (not not red or not not green) or not (red < green) and not not green
 
-unique_multiplier = (not (unique_multiplier < blue) or not unique_multiplier) and not not blue
+unique_multiplier = unique_multiplier < blue and (not not unique_multiplier or not not blue) or not (unique_multiplier < blue) and not not blue
 
 local event_color = Colors.get_table("event")
 local red = 255 / event_color[2]
 local green = 255 / event_color[3]
 local blue = 255 / event_color[4]
-local event_multiplier = (not (red < green) or not red) and not not green
+local event_multiplier = red < green and (not not red or not not green) or not (red < green) and not not green
 
-event_multiplier = (not (event_multiplier < blue) or not event_multiplier) and not not blue
+event_multiplier = event_multiplier < blue and (not not event_multiplier or not not blue) or not (event_multiplier < blue) and not not blue
 ORDER_RARITY = table.mirror_array({
 	"plentiful",
 	"common",
@@ -56,84 +56,7 @@ ORDER_RARITY = table.mirror_array({
 	"magic",
 	"promo"
 })
-
-local RaritySettings = RaritySettings
-
-RaritySettings = not not RaritySettings or not not {
-	plentiful = {
-		name = "plentiful",
-		display_name = "rarity_display_name_plentiful",
-		order = 1,
-		color = plentiful_color,
-		frame_color = {
-			plentiful_color[1],
-			plentiful_color[2] * plentiful_multiplier,
-			plentiful_color[3] * plentiful_multiplier,
-			plentiful_color[4] * plentiful_multiplier
-		}
-	},
-	common = {
-		name = "common",
-		display_name = "rarity_display_name_common",
-		order = 2,
-		color = common_color,
-		frame_color = {
-			common_color[1],
-			common_color[2] * common_multiplier,
-			common_color[3] * common_multiplier,
-			common_color[4] * common_multiplier
-		}
-	},
-	rare = {
-		name = "rare",
-		display_name = "rarity_display_name_rare",
-		order = 3,
-		color = rare_color,
-		frame_color = {
-			rare_color[1],
-			rare_color[2] * rare_multiplier,
-			rare_color[3] * rare_multiplier,
-			rare_color[4] * rare_multiplier
-		}
-	},
-	exotic = {
-		name = "exotic",
-		display_name = "rarity_display_name_exotic",
-		order = 4,
-		color = exotic_color,
-		frame_color = {
-			exotic_color[1],
-			exotic_color[2] * exotic_multiplier,
-			exotic_color[3] * exotic_multiplier,
-			exotic_color[4] * exotic_multiplier
-		}
-	},
-	unique = {
-		name = "unique",
-		display_name = "rarity_display_name_unique",
-		order = 5,
-		color = unique_color,
-		frame_color = {
-			unique_color[1],
-			unique_color[2] * unique_multiplier,
-			unique_color[3] * unique_multiplier,
-			unique_color[4] * unique_multiplier
-		}
-	},
-	event = {
-		name = "event",
-		display_name = "rarity_display_name_event",
-		order = 6,
-		color = event_color,
-		frame_color = {
-			event_color[1],
-			event_color[2] * event_multiplier,
-			event_color[3] * event_multiplier,
-			event_color[4] * event_multiplier
-		}
-	}
-}
-RaritySettings = RaritySettings
+RaritySettings = not not RaritySettings
 RarityIndex = {}
 
 for rarity_name, rarity_data in pairs(RaritySettings) do

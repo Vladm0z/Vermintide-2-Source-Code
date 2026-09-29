@@ -2,10 +2,7 @@
 
 require("scripts/helpers/item_tooltip_helper")
 
-local UIUtils = UIUtils
-
-UIUtils = not not UIUtils or not not {}
-UIUtils = UIUtils
+UIUtils = not not UIUtils
 FAKE_INPUT_SERVICE = {
 	get = NOP,
 	has = NOP
@@ -164,21 +161,7 @@ UIUtils.get_property_description = function (property_name, lerp_value, optional
 
 		if type(value) == "table" then
 			if #value > 2 then
-				local count
-
-				if lerp_value == 1 then
-					count = #value
-
-					if not count then
-						-- Nothing
-					end
-				end
-
-				count = 1 + math.floor(lerp_value / (1 / #value))
-
-				local index = count
-
-				::label_8_0::
+				local index = lerp_value ~= 1 and not not (1 + math.floor(lerp_value / (1 / #value))) or not (lerp_value ~= 1) and not not #value
 
 				display_value = value[index]
 				min_value = value[1]
@@ -250,24 +233,7 @@ UIUtils.get_ui_information_from_item = function (item)
 	local inventory_icon, display_name, description, store_icon
 
 	if item_type == "weapon_skin" then
-		local skin_2 = item.skin
-
-		if not skin_2 then
-			-- Nothing
-		end
-
-		skin_2 = item.key
-
-		if not skin_2 then
-			-- Nothing
-		end
-
-		skin_2 = item_data.key
-
-		local skin = skin_2
-
-		::label_10_0::
-
+		local skin = not not item.skin
 		local skin_template = WeaponSkins.skins[skin]
 
 		inventory_icon = skin_template.inventory_icon
@@ -417,23 +383,7 @@ end
 UIUtils.enable_button = function (widget, enable, hotspot_name)
 	-- function 17
 	local content = widget.content
-	local var_17_0 = content[hotspot_name]
-
-	if not var_17_0 then
-		-- Nothing
-	end
-
-	var_17_0 = content.button_hotspot
-
-	if not var_17_0 then
-		-- Nothing
-	end
-
-	var_17_0 = content.hotspot
-
-	local hotspot = var_17_0
-
-	::label_17_0::
+	local hotspot = not not content[hotspot_name]
 
 	hotspot.disable_button = not enable
 end
@@ -441,23 +391,7 @@ end
 UIUtils.is_button_enabled = function (widget, enable, hotspot_name)
 	-- function 18
 	local content = widget.content
-	local var_18_0 = content[hotspot_name]
-
-	if not var_18_0 then
-		-- Nothing
-	end
-
-	var_18_0 = content.button_hotspot
-
-	if not var_18_0 then
-		-- Nothing
-	end
-
-	var_18_0 = content.hotspot
-
-	local hotspot = var_18_0
-
-	::label_18_0::
+	local hotspot = not not content[hotspot_name]
 
 	return not hotspot.disable_button
 end
@@ -466,23 +400,7 @@ UIUtils.is_button_pressed = function (widget, hotspot_name, keyboard_input)
 	-- function 19
 	if widget then
 		local content = widget.content
-		local var_19_0 = content[hotspot_name]
-
-		if not var_19_0 then
-			-- Nothing
-		end
-
-		var_19_0 = content.button_hotspot
-
-		if not var_19_0 then
-			-- Nothing
-		end
-
-		var_19_0 = content.hotspot
-
-		local hotspot = var_19_0
-
-		::label_19_0::
+		local hotspot = not not content[hotspot_name]
 
 		if hotspot.on_release then
 			hotspot.on_release = false
@@ -502,23 +420,7 @@ UIUtils.is_right_button_pressed = function (widget, hotspot_name, keyboard_input
 	-- function 20
 	if widget then
 		local content = widget.content
-		local var_20_0 = content[hotspot_name]
-
-		if not var_20_0 then
-			-- Nothing
-		end
-
-		var_20_0 = content.button_hotspot
-
-		if not var_20_0 then
-			-- Nothing
-		end
-
-		var_20_0 = content.hotspot
-
-		local hotspot = var_20_0
-
-		::label_20_0::
+		local hotspot = not not content[hotspot_name]
 
 		if hotspot.on_right_click then
 			hotspot.on_right_click = false
@@ -538,23 +440,7 @@ UIUtils.is_button_held = function (widget, hotspot_name)
 	-- function 21
 	if widget then
 		local content = widget.content
-		local var_21_0 = content[hotspot_name]
-
-		if not var_21_0 then
-			-- Nothing
-		end
-
-		var_21_0 = content.button_hotspot
-
-		if not var_21_0 then
-			-- Nothing
-		end
-
-		var_21_0 = content.hotspot
-
-		local hotspot = var_21_0
-
-		::label_21_0::
+		local hotspot = not not content[hotspot_name]
 
 		if hotspot.is_held then
 			return true
@@ -568,23 +454,7 @@ UIUtils.is_button_hover_enter = function (widget, hotspot_name)
 	-- function 22
 	if widget then
 		local content = widget.content
-		local var_22_0 = content[hotspot_name]
-
-		if not var_22_0 then
-			-- Nothing
-		end
-
-		var_22_0 = content.button_hotspot
-
-		if not var_22_0 then
-			-- Nothing
-		end
-
-		var_22_0 = content.hotspot
-
-		local hotspot = var_22_0
-
-		::label_22_0::
+		local hotspot = not not content[hotspot_name]
 
 		return hotspot.on_hover_enter
 	end
@@ -596,23 +466,7 @@ UIUtils.is_button_hover = function (widget, hotspot_name)
 	-- function 23
 	if widget then
 		local content = widget.content
-		local var_23_0 = content[hotspot_name]
-
-		if not var_23_0 then
-			-- Nothing
-		end
-
-		var_23_0 = content.button_hotspot
-
-		if not var_23_0 then
-			-- Nothing
-		end
-
-		var_23_0 = content.hotspot
-
-		local hotspot = var_23_0
-
-		::label_23_0::
+		local hotspot = not not content[hotspot_name]
 
 		return hotspot.is_hover
 	end
@@ -624,23 +478,7 @@ UIUtils.is_button_selected = function (widget, hotspot_name)
 	-- function 24
 	if widget then
 		local content = widget.content
-		local var_24_0 = content[hotspot_name]
-
-		if not var_24_0 then
-			-- Nothing
-		end
-
-		var_24_0 = content.button_hotspot
-
-		if not var_24_0 then
-			-- Nothing
-		end
-
-		var_24_0 = content.hotspot
-
-		local hotspot = var_24_0
-
-		::label_24_0::
+		local hotspot = not not content[hotspot_name]
 
 		return hotspot.is_selected
 	end
@@ -652,23 +490,7 @@ UIUtils.is_left_button_released = function (widget, hotspot_name)
 	-- function 25
 	if widget then
 		local content = widget.content
-		local var_25_0 = content[hotspot_name]
-
-		if not var_25_0 then
-			-- Nothing
-		end
-
-		var_25_0 = content.button_hotspot
-
-		if not var_25_0 then
-			-- Nothing
-		end
-
-		var_25_0 = content.hotspot
-
-		local hotspot = var_25_0
-
-		::label_25_0::
+		local hotspot = not not content[hotspot_name]
 
 		return hotspot.on_left_release
 	end
@@ -804,48 +626,14 @@ end
 UIUtils.get_color_for_consumable_item = function (item_key)
 	-- function 36
 	local default_color = UISettings.inventory_consumable_slot_colors.default
-	local var_36_0
 
-	if item_key then
-		var_36_0 = UISettings.inventory_consumable_slot_colors[item_key]
-
-		if not var_36_0 then
-			-- Nothing
-		end
-	end
-
-	var_36_0 = default_color
-
-	::label_36_0::
-
-	return var_36_0
+	return item_key and not not UISettings.inventory_consumable_slot_colors[item_key] or not item_key and not not default_color
 end
 
 UIUtils.sort_items_power_level_ascending = function (item_1, item_2)
 	-- function 37
-	local power_level = item_1.power_level
-
-	if not power_level then
-		-- Nothing
-	end
-
-	power_level = math.huge
-
-	local item_1_power_level = power_level
-
-	::label_37_0::
-
-	local power_level_2 = item_2.power_level
-
-	if not power_level_2 then
-		-- Nothing
-	end
-
-	power_level_2 = math.huge
-
-	local item_2_power_level = power_level_2
-
-	::label_37_1::
+	local item_1_power_level = not not item_1.power_level
+	local item_2_power_level = not not item_2.power_level
 
 	if item_1_power_level == item_2_power_level then
 		return UIUtils.sort_items_rarity_ascending(item_1, item_2)
@@ -856,29 +644,8 @@ end
 
 UIUtils.sort_items_power_level_descending = function (item_1, item_2)
 	-- function 38
-	local power_level = item_1.power_level
-
-	if not power_level then
-		-- Nothing
-	end
-
-	power_level = math.huge
-
-	local item_1_power_level = power_level
-
-	::label_38_0::
-
-	local power_level_2 = item_2.power_level
-
-	if not power_level_2 then
-		-- Nothing
-	end
-
-	power_level_2 = math.huge
-
-	local item_2_power_level = power_level_2
-
-	::label_38_1::
+	local item_1_power_level = not not item_1.power_level
+	local item_2_power_level = not not item_2.power_level
 
 	if item_1_power_level == item_2_power_level then
 		return UIUtils.sort_items_rarity_descending(item_1, item_2)
@@ -891,30 +658,8 @@ UIUtils.sort_items_rarity_ascending = function (item_1, item_2)
 	-- function 39
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local rarity = item_1.rarity
-
-	if not rarity then
-		-- Nothing
-	end
-
-	rarity = item_data_1.rarity
-
-	local item_1_rarity = rarity
-
-	::label_39_0::
-
-	local rarity_2 = item_2.rarity
-
-	if not rarity_2 then
-		-- Nothing
-	end
-
-	rarity_2 = item_data_2.rarity
-
-	local item_2_rarity = rarity_2
-
-	::label_39_1::
-
+	local item_1_rarity = not not item_1.rarity
+	local item_2_rarity = not not item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -926,30 +671,8 @@ UIUtils.sort_items_rarity_descending = function (item_1, item_2)
 	-- function 40
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local rarity = item_1.rarity
-
-	if not rarity then
-		-- Nothing
-	end
-
-	rarity = item_data_1.rarity
-
-	local item_1_rarity = rarity
-
-	::label_40_0::
-
-	local rarity_2 = item_2.rarity
-
-	if not rarity_2 then
-		-- Nothing
-	end
-
-	rarity_2 = item_data_2.rarity
-
-	local item_2_rarity = rarity_2
-
-	::label_40_1::
-
+	local item_1_rarity = not not item_1.rarity
+	local item_2_rarity = not not item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]

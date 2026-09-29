@@ -1,16 +1,6 @@
 -- chunkname: @scripts/unit_extensions/objectives/versus_interact_objective_extension.lua
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/unit_extensions/objectives/testify/versus_interact_objective_extension_testify")
-
-local versus_interact_objective_extension_testify = testify
-
-::label_0_0::
+local versus_interact_objective_extension_testify = not not script_data.testify
 
 VersusInteractObjectiveExtension = class(VersusInteractObjectiveExtension, BaseObjectiveExtension)
 VersusInteractObjectiveExtension.NAME = "VersusInteractObjectiveExtension"
@@ -31,15 +21,9 @@ end
 VersusInteractObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 3
 	local interact_default_settings = GameModeSettings.versus.objectives.interact
-	local score_for_completion = objective_data.score_for_completion
 
-	score_for_completion = not not score_for_completion or not not interact_default_settings.score_for_completion
-	self._score_for_completion = score_for_completion
-
-	local time_for_completion = objective_data.time_for_completion
-
-	time_for_completion = not not time_for_completion or not not interact_default_settings.time_for_completion
-	self._time_for_completion = time_for_completion
+	self._score_for_completion = not not objective_data.score_for_completion
+	self._time_for_completion = not not objective_data.time_for_completion
 end
 
 VersusInteractObjectiveExtension._activate = function (self)

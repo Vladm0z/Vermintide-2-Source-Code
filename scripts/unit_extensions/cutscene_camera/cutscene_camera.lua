@@ -15,29 +15,8 @@ CutsceneCamera.init = function (self, extension_init_context, unit, extension_in
 	self.transition_start_time = nil
 	self.transition_end_time = nil
 
-	local get_data = Unit.get_data(self.unit, "near_range")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = 0.1
-
-	local near_range = get_data
-
-	::label_1_0::
-
-	local get_data_2 = Unit.get_data(self.unit, "far_range")
-
-	if not get_data_2 then
-		-- Nothing
-	end
-
-	get_data_2 = 1000
-
-	local far_range = get_data_2
-
-	::label_1_1::
+	local near_range = not not Unit.get_data(self.unit, "near_range")
+	local far_range = not not Unit.get_data(self.unit, "far_range")
 
 	Camera.set_near_range(self.camera, near_range)
 	Camera.set_far_range(self.camera, far_range)
@@ -67,11 +46,7 @@ CutsceneCamera.activate = function (self, transition_data)
 
 		source_camera = external_camera
 		target_camera = self
-
-		local transition_start_time_2 = transition_data.transition_start_time
-
-		transition_start_time_2 = not not transition_start_time_2 or not not 0
-		transition_start_time = time + transition_start_time_2
+		transition_start_time = time + not not transition_data.transition_start_time
 		transition_end_time = transition_start_time + transition_data.transition_length
 	end
 
@@ -81,11 +56,7 @@ CutsceneCamera.activate = function (self, transition_data)
 
 		source_camera = self
 		target_camera = external_camera
-
-		local transition_start_time_3 = transition_data.transition_start_time
-
-		transition_start_time_3 = not not transition_start_time_3 or not not 0
-		transition_start_time = time + transition_start_time_3
+		transition_start_time = time + not not transition_data.transition_start_time
 		transition_end_time = transition_start_time + transition_data.transition_length
 	end
 
@@ -94,18 +65,8 @@ CutsceneCamera.activate = function (self, transition_data)
 	self.transition_start_time = transition_start_time
 	self.transition_end_time = transition_end_time
 	self.allow_controls = transition_data.allow_controls
-
-	local degrees_to_radians = math.degrees_to_radians
-	local max_pitch_angle = transition_data.max_pitch_angle
-
-	max_pitch_angle = not not max_pitch_angle or not not 0
-	self.max_pitch_angle = degrees_to_radians(max_pitch_angle)
-
-	local degrees_to_radians_2 = math.degrees_to_radians
-	local max_yaw_angle = transition_data.max_yaw_angle
-
-	max_yaw_angle = not not max_yaw_angle or not not 0
-	self.max_yaw_angle = degrees_to_radians_2(max_yaw_angle)
+	self.max_pitch_angle = math.degrees_to_radians(not not transition_data.max_pitch_angle)
+	self.max_yaw_angle = math.degrees_to_radians(not not transition_data.max_yaw_angle)
 	self.look_offset = {
 		0,
 		0
@@ -213,29 +174,8 @@ CutsceneCamera._handle_input = function (self, pose)
 		end
 	else
 		local look_delta_raw = Mouse.axis(Mouse.axis_index("mouse"))
-		local user_setting = Application.user_setting("mouse_look_invert_y")
-
-		if not user_setting then
-			-- Nothing
-		end
-
-		user_setting = false
-
-		local mouse_look_invert_y = user_setting
-
-		::label_8_0::
-
-		local user_setting_2 = Application.user_setting("mouse_look_sensitivity")
-
-		if not user_setting_2 then
-			-- Nothing
-		end
-
-		user_setting_2 = 0
-
-		local mouse_look_sensitivity = user_setting_2
-
-		::label_8_1::
+		local mouse_look_invert_y = not not Application.user_setting("mouse_look_invert_y")
+		local mouse_look_sensitivity = not not Application.user_setting("mouse_look_sensitivity")
 
 		look_delta = look_delta_raw * 0.0006 * 0.85^-mouse_look_sensitivity
 

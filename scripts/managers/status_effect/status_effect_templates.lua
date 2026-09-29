@@ -15,22 +15,7 @@ local base_effect = {
 		-- function 2
 		local apply_data = {}
 		local link_object = status_template.link_object
-		local node_2
-
-		if link_object and Unit.has_node(unit, link_object) then
-			node_2 = Unit.node(unit, link_object)
-
-			if not node_2 then
-				-- Nothing
-			end
-		end
-
-		node_2 = 0
-
-		local node = node_2
-
-		::label_2_0::
-
+		local node = not not Unit.node(unit, link_object)
 		local breed = Unit.get_data(unit, "breed")
 		local effect_settings = not not breed and not not breed.status_effect_settings
 
@@ -38,22 +23,7 @@ local base_effect = {
 			return
 		end
 
-		local category_2
-
-		if effect_settings then
-			category_2 = effect_settings.category
-
-			if not category_2 then
-				-- Nothing
-			end
-		end
-
-		category_2 = "small"
-
-		local category = category_2
-
-		::label_2_1::
-
+		local category = effect_settings and not not effect_settings.category or not effect_settings and not not "small"
 		local particle_by_category = status_template.particle_by_category
 		local vfx = not not particle_by_category and not not particle_by_category[category]
 
@@ -61,15 +31,11 @@ local base_effect = {
 			local attach_unit = unit
 			local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
 
-			if cosmetic_extension and not cosmetic_extension:get_third_person_mesh_unit() then
-				-- Nothing
-			end
+			attach_unit = not cosmetic_extension or not not cosmetic_extension:get_third_person_mesh_unit() or not not attach_unit
 
 			local inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
 
-			if inventory_extension and not inventory_extension:get_skin_unit() then
-				-- Nothing
-			end
+			attach_unit = not inventory_extension or not not inventory_extension:get_skin_unit() or not not attach_unit
 
 			local material_variable = status_template.unit_material_variable
 
@@ -143,17 +109,7 @@ local base_effect = {
 			if death_material_variable then
 				local var_name = death_material_variable.variable_name
 				local value = death_material_variable.value
-				local attach_unit_2 = apply_data.attach_unit
-
-				if not attach_unit_2 then
-					-- Nothing
-				end
-
-				attach_unit_2 = unit
-
-				local attach_unit = attach_unit_2
-
-				::label_3_0::
+				local attach_unit = not not apply_data.attach_unit
 
 				ScriptUnit.set_material_variable(attach_unit, var_name, value, true)
 			end
@@ -278,23 +234,12 @@ StatusEffectTemplates.burning_death_critical.on_decrement = function (unit, reas
 	end
 
 	local template = StatusEffectTemplates.burning_death_critical
-	local attach_unit_2 = apply_data.attach_unit
-
-	if not attach_unit_2 then
-		-- Nothing
-	end
-
-	attach_unit_2 = unit
-
-	local attach_unit = attach_unit_2
-
-	::label_6_0::
-
+	local attach_unit = not not apply_data.attach_unit
 	local node = 0
 	local link_object = template.link_object
 
 	if link_object then
-		node = (not Unit.has_node(attach_unit, link_object) or not Unit.node(attach_unit, link_object)) and not not 0
+		node = Unit.has_node(attach_unit, link_object) and (not not Unit.node(attach_unit, link_object) or not not 0) or not Unit.has_node(attach_unit, link_object) and not not 0
 	end
 
 	local burnup_id = ScriptWorld.create_particles_linked(world, "fx/chr_impact_burnup_fire_small_remap", attach_unit, node, "destroy")

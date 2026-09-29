@@ -216,17 +216,7 @@ StartGameStateWeaveLeaderboard._add_poll_queue = function (self, filter_value, l
 
 	if queue_index then
 		local poll_queues = self._poll_queues
-		local var_4_0 = poll_queues[queue_index]
-
-		if not var_4_0 then
-			-- Nothing
-		end
-
-		var_4_0 = {}
-
-		local poll_queue = var_4_0
-
-		::label_4_0::
+		local poll_queue = not not poll_queues[queue_index]
 
 		poll_queues[queue_index] = poll_queue
 		poll_queue[#poll_queue + 1] = {
@@ -247,18 +237,7 @@ StartGameStateWeaveLeaderboard._handle_next_poll_request = function (self, t)
 	end
 
 	local poll_queues = self._poll_queues
-	local _selected_option_tab_index = self._selected_option_tab_index
-
-	if not _selected_option_tab_index then
-		-- Nothing
-	end
-
-	_selected_option_tab_index = 1
-
-	local priority_index = _selected_option_tab_index
-
-	::label_5_0::
-
+	local priority_index = not not self._selected_option_tab_index
 	local next_poll_request
 
 	if priority_index and #poll_queues[priority_index] > 0 then
@@ -539,10 +518,7 @@ end
 
 StartGameStateWeaveLeaderboard._initialize_stepper = function (self, stepper_index, title_text, content, start_index)
 	-- function 13
-	local _stepper_settings = self._stepper_settings
-
-	_stepper_settings = not not _stepper_settings or not not {}
-	self._stepper_settings = _stepper_settings
+	self._stepper_settings = not not self._stepper_settings
 
 	local stepper_settings = self._stepper_settings
 	local stepper_name = "setting_stepper_" .. stepper_index
@@ -1005,10 +981,7 @@ StartGameStateWeaveLeaderboard.draw = function (self, input_service, dt)
 				render_settings.snap_pixel_positions = widget.snap_pixel_positions
 			end
 
-			local alpha_multiplier_2 = widget.alpha_multiplier
-
-			alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_2
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -1130,17 +1103,7 @@ end
 StartGameStateWeaveLeaderboard._is_button_pressed = function (self, widget)
 	-- function 41
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_41_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -1172,23 +1135,8 @@ StartGameStateWeaveLeaderboard.set_fullscreen_effect_enable_state = function (se
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_44_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_44_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_44_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local flag_2
-
-		flag_2 = (not enabled or not 0.75) and not not 0
-
-		set_scalar_2(var_44_5, str_2, flag_2)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -1215,38 +1163,20 @@ StartGameStateWeaveLeaderboard._create_list_entries = function (self, entries)
 		local entry = entries[i]
 		local career_name = entry.career_name
 		local career = CareerSettings[career_name]
-		local portrait_thumbnail_2
+		local portrait_thumbnail = career and not not career.portrait_thumbnail or not career and not not "icons_placeholder"
 
-		if career then
-			portrait_thumbnail_2 = career.portrait_thumbnail
-
-			if not portrait_thumbnail_2 then
-				-- Nothing
-			end
-		end
-
-		portrait_thumbnail_2 = "icons_placeholder"
-
-		local portrait_thumbnail = portrait_thumbnail_2
-
-		::label_46_0::
-
-		local tbl = {
-			alpha_fade_in_delay = 0.4
+		list_entries[i] = {
+			alpha_fade_in_delay = 0.4,
+			name = not not entry.name,
+			weave = tostring(entry.weave),
+			score = UIUtils.comma_value(entry.score),
+			ranking = UIUtils.comma_value(entry.ranking),
+			career_name = career_name,
+			career_icon = portrait_thumbnail,
+			local_player = entry.local_player,
+			real_ranking = entry.real_ranking,
+			platform_user_id = entry.platform_user_id
 		}
-		local name = entry.name
-
-		name = not not name or not not "UNKNOWN"
-		tbl.name = name
-		tbl.weave = tostring(entry.weave)
-		tbl.score = UIUtils.comma_value(entry.score)
-		tbl.ranking = UIUtils.comma_value(entry.ranking)
-		tbl.career_name = career_name
-		tbl.career_icon = portrait_thumbnail
-		tbl.local_player = entry.local_player
-		tbl.real_ranking = entry.real_ranking
-		tbl.platform_user_id = entry.platform_user_id
-		list_entries[i] = tbl
 	end
 
 	return list_entries
@@ -1254,21 +1184,7 @@ end
 
 StartGameStateWeaveLeaderboard._populate_list = function (self, list_entries, show_no_placement)
 	-- function 47
-	local count
-
-	if list_entries then
-		count = #list_entries
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_entries = count
-
-	::label_47_0::
+	local num_entries = list_entries and not not #list_entries or not list_entries and not not 0
 
 	self._list_entries = list_entries
 

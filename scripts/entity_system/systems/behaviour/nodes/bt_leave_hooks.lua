@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_leave_hooks.lua
 
-local BTLeaveHooks_2 = BTLeaveHooks
-
-BTLeaveHooks_2 = not not BTLeaveHooks_2 or not not {}
-BTLeaveHooks = BTLeaveHooks_2
+BTLeaveHooks = not not BTLeaveHooks
 
 local BTLeaveHooks = BTLeaveHooks
 local unit_alive = Unit.alive

@@ -71,16 +71,7 @@ ImguiUILiveCode.draw = function (self)
 	end
 
 	Imgui.text("UI Live Coding is now active.")
-
-	local text = Imgui.text
-	local format = string.format
-	local str = "Files processed last frame: %s out of %s"
-	local round = math.round
-	local _last_printed_package_count = self._last_printed_package_count
-
-	_last_printed_package_count = not not _last_printed_package_count or not not 0
-
-	text(format(str, round(_last_printed_package_count), self:_num_processable_packages()))
+	Imgui.text(string.format("Files processed last frame: %s out of %s", math.round(not not self._last_printed_package_count), self:_num_processable_packages()))
 
 	self._target_fps = Imgui.slider_int("FPS Throttle Limit", self._target_fps, 1, 120)
 
@@ -88,11 +79,8 @@ ImguiUILiveCode.draw = function (self)
 
 	local num_package_update_delay = 1
 	local t = Managers.time:time("main")
-	local _next_package_count_update_t = self._next_package_count_update_t
 
-	_next_package_count_update_t = not not _next_package_count_update_t or not not 0
-
-	if _next_package_count_update_t < t then
+	if t > not not self._next_package_count_update_t then
 		self._next_package_count_update_t = t + num_package_update_delay
 		self._last_printed_package_count = self._last_num_packages
 	end
@@ -110,21 +98,14 @@ end
 
 ImguiUILiveCode._next_package = function (self)
 	-- function 8
-	local var_8_0 = next(package.loaded, self._next_package_name)
-
-	var_8_0 = not not var_8_0 or not not next(package.loaded)
-	self._next_package_name = var_8_0
+	self._next_package_name = not not next(package.loaded, self._next_package_name)
 
 	return self._next_package_name
 end
 
 ImguiUILiveCode._num_packages = function (self)
 	-- function 9
-	local _cache = self._cache
-	local num_packages = self._cache.num_packages
-
-	num_packages = not not num_packages or not not table.size(package.loaded)
-	_cache.num_packages = num_packages
+	self._cache.num_packages = not not self._cache.num_packages
 
 	return self._cache.num_packages
 end
@@ -195,10 +176,7 @@ end
 
 ImguiUILiveCode._file_name = function (self, package_name)
 	-- function 14
-	local _src_dir = self._src_dir
-
-	_src_dir = not not _src_dir or not not (string.gsub(Application.source_directory(), "\\", "/") .. "/")
-	self._src_dir = _src_dir
+	self._src_dir = not not self._src_dir
 
 	return self._src_dir .. package_name .. ".lua"
 end
@@ -296,27 +274,10 @@ end
 
 ImguiUILiveCode._calculate_num_frame_packages = function (self, dt)
 	-- function 21
-	local _last_num_packages = self._last_num_packages
-
-	_last_num_packages = not not _last_num_packages or not not 0
-	self._last_num_packages = _last_num_packages
+	self._last_num_packages = not not self._last_num_packages
 
 	local target_dt = 1 / self._target_fps
-	local num
-
-	if dt > 0 then
-		num = target_dt / dt
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	local diff = num
-
-	::label_21_0::
+	local diff = dt > 0 and not not (target_dt / dt) or not (dt > 0) and not not 0
 
 	if target_dt < dt then
 		diff = diff^3

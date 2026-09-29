@@ -200,11 +200,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 5
-				local is_in_mechanism = overview:is_in_mechanism("deus")
-
-				is_in_mechanism = not not is_in_mechanism and not not overview:can_use_streaming()
-
-				return is_in_mechanism
+				return not not overview:is_in_mechanism("deus")
 			end,
 			should_draw_god_info = function (ingame_ui_context)
 				-- function 6
@@ -237,11 +233,8 @@ settings.start_game_window_layout_console = {
 
 				local live_event_interface = Managers.backend:get_interface("live_events")
 				local game_mode_data = live_event_interface:get_weekly_chaos_wastes_game_mode_data()
-				local is_in_mechanism = overview:is_in_mechanism("deus")
 
-				is_in_mechanism = not not is_in_mechanism and not not not table.is_empty(game_mode_data)
-
-				return is_in_mechanism
+				return not not overview:is_in_mechanism("deus")
 			end,
 			save_data_table = deus_save_data_table_map_console.twitch
 		},
@@ -260,11 +253,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 8
-				local is_in_mechanism = overview:is_in_mechanism("deus")
-
-				is_in_mechanism = not not is_in_mechanism and not not not IS_XB1
-
-				return is_in_mechanism
+				return not not overview:is_in_mechanism("deus")
 			end,
 			save_data_table = deus_save_data_table_map_console.lobby_browser
 		},

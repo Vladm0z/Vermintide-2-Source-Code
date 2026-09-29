@@ -45,19 +45,9 @@ ActionBookCharge.client_owner_start_action = function (self, new_action, t, chai
 
 	local owner_unit = self.owner_unit
 	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local var_3_0 = scale_charge_value
-	local var_3_1 = new_action
-	local charge_speed = new_action.charge_speed
 
-	charge_speed = not not charge_speed or not not 0.3
-	self.charge_speed = var_3_0(var_3_1, charge_speed, owner_unit, buff_extension, true)
-
-	local var_3_3 = scale_charge_value
-	local var_3_4 = new_action
-	local initial_charge_delay = new_action.initial_charge_delay
-
-	initial_charge_delay = not not initial_charge_delay or not not 0
-	self.initial_charge_delay = var_3_3(var_3_4, initial_charge_delay, owner_unit, buff_extension, false)
+	self.charge_speed = scale_charge_value(new_action, not not new_action.charge_speed, owner_unit, buff_extension, true)
+	self.initial_charge_delay = scale_charge_value(new_action, not not new_action.initial_charge_delay, owner_unit, buff_extension, false)
 	self.start_time = t
 
 	self:_update_visual_charge(self.charge)

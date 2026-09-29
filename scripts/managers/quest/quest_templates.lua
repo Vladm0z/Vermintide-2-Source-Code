@@ -1328,74 +1328,48 @@ local function _generate_troll_quests(repeatable, year)
 		return _next_troll_fest_order
 	end
 
-	local quests = quest_templates.quests
-	local str = "quest_event_dwarf_fest_trollkiller"
-	local var_111_2 = year
-	local flag
-
-	flag = (not repeatable or not "_repeatable") and not not ""
-
-	local str_2 = str .. var_111_2 .. flag
-	local tbl = {
+	quest_templates.quests["quest_event_dwarf_fest_trollkiller" .. year .. (repeatable and not not "_repeatable" or not repeatable and not not "")] = {
 		name = "quest_event_dwarf_fest_trollkiller_name",
-		icon = "quest_book_event_dwarf_fest"
-	}
-	local fn
-
-	if repeatable then
-		function fn()
+		icon = "quest_book_event_dwarf_fest",
+		desc = repeatable and not not function ()
 			-- function 113
 			return string.format("%s (%s)", string.format(Localize("quest_event_dwarf_fest_trollkiller_desc"), QuestSettings.quest_event_dwarf_fest_trollkiller), Localize("repeatable"))
-		end
-
-		if not fn then
-			-- Nothing
-		end
-	end
-
-	function fn()
-		-- function 114
-		return string.format(Localize("quest_event_dwarf_fest_trollkiller_desc"), QuestSettings.quest_event_dwarf_fest_trollkiller)
-	end
-
-	::label_111_0::
-
-	tbl.desc = fn
-	tbl.custom_order = get_next_troll_fest_order()
-	tbl.stat_mappings = {
-		{
-			kills_per_breed = {
-				chaos_troll_chief = true,
-				vs_chaos_troll = true,
-				chaos_troll = true
-			},
-			kill_assists_per_breed = {
-				chaos_troll_chief = true,
-				vs_chaos_troll = true,
-				chaos_troll = true
+		end or not repeatable and not not function ()
+			-- function 114
+			return string.format(Localize("quest_event_dwarf_fest_trollkiller_desc"), QuestSettings.quest_event_dwarf_fest_trollkiller)
+		end,
+		custom_order = get_next_troll_fest_order(),
+		stat_mappings = {
+			{
+				kills_per_breed = {
+					chaos_troll_chief = true,
+					vs_chaos_troll = true,
+					chaos_troll = true
+				},
+				kill_assists_per_breed = {
+					chaos_troll_chief = true,
+					vs_chaos_troll = true,
+					chaos_troll = true
+				}
 			}
-		}
+		},
+		completed = function (statistics_db, stats_id, quest_key)
+			-- function 115
+			local stat_name = QuestSettings.stat_mappings[quest_key][1]
+
+			return statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name) >= QuestSettings.quest_event_dwarf_fest_trollkiller
+		end,
+		progress = function (statistics_db, stats_id, quest_key)
+			-- function 116
+			local stat_name = QuestSettings.stat_mappings[quest_key][1]
+			local count = statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name)
+
+			return {
+				count,
+				QuestSettings.quest_event_dwarf_fest_trollkiller
+			}
+		end
 	}
-
-	tbl.completed = function (statistics_db, stats_id, quest_key)
-		-- function 115
-		local stat_name = QuestSettings.stat_mappings[quest_key][1]
-
-		return statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name) >= QuestSettings.quest_event_dwarf_fest_trollkiller
-	end
-
-	tbl.progress = function (statistics_db, stats_id, quest_key)
-		-- function 116
-		local stat_name = QuestSettings.stat_mappings[quest_key][1]
-		local count = statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name)
-
-		return {
-			count,
-			QuestSettings.quest_event_dwarf_fest_trollkiller
-		}
-	end
-
-	quests[str_2] = tbl
 
 	local secret_trolls_stat_mappings = {
 		{
@@ -1495,72 +1469,41 @@ local function _generate_troll_quests(repeatable, year)
 		local rank = DifficultySettings[difficulty_name].rank
 
 		for other_difficulty_name, difficulty_setting in pairs(DifficultySettings) do
-			local rank_2 = difficulty_setting.rank
-
-			rank_2 = not not rank_2 or not not math.huge
-
-			if rank <= rank_2 then
+			if rank <= not not difficulty_setting.rank then
 				stat_mappings[1].kills_per_breed_difficulty.chaos_troll_chief[other_difficulty_name] = true
 				stat_mappings[1].kill_assists_per_breed_difficulty.chaos_troll_chief[other_difficulty_name] = true
 			end
 		end
 
-		local quests = quest_templates.quests
-		local str = "quest_event_"
-		local var_121_3 = id
-		local var_121_4 = year
-		local flag
-
-		flag = (not repeatable or not "_repeatable") and not not ""
-
-		local str_2 = str .. var_121_3 .. var_121_4 .. flag
-		local tbl = {
+		quest_templates.quests["quest_event_" .. id .. year .. (repeatable and not not "_repeatable" or not repeatable and not not "")] = {
 			icon = "quest_book_event_dwarf_fest",
-			name = "quest_event_" .. id .. "_name"
-		}
-		local fn
-
-		if repeatable then
-			function fn()
+			name = "quest_event_" .. id .. "_name",
+			desc = repeatable and not not function ()
 				-- function 122
 				return string.format("%s (%s)", string.format(Localize("quest_event_dwarf_fest_troll_chief_desc"), Localize("chaos_troll_chief"), Localize(DifficultySettings[difficulty_name].display_name)), Localize("repeatable"))
+			end or not repeatable and not not function ()
+				-- function 123
+				return string.format(Localize("quest_event_dwarf_fest_troll_chief_desc"), Localize("chaos_troll_chief"), Localize(DifficultySettings[difficulty_name].display_name))
+			end,
+			custom_order = get_next_troll_fest_order(),
+			stat_mappings = stat_mappings,
+			completed = function (statistics_db, stats_id, quest_key)
+				-- function 124
+				local stat_name = QuestSettings.stat_mappings[quest_key][1]
+
+				return statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name) >= 1
+			end,
+			progress = function (statistics_db, stats_id, quest_key)
+				-- function 125
+				local stat_name = QuestSettings.stat_mappings[quest_key][1]
+				local count = statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name)
+
+				return {
+					count,
+					1
+				}
 			end
-
-			if not fn then
-				-- Nothing
-			end
-		end
-
-		function fn()
-			-- function 123
-			return string.format(Localize("quest_event_dwarf_fest_troll_chief_desc"), Localize("chaos_troll_chief"), Localize(DifficultySettings[difficulty_name].display_name))
-		end
-
-		::label_121_0::
-
-		tbl.desc = fn
-		tbl.custom_order = get_next_troll_fest_order()
-		tbl.stat_mappings = stat_mappings
-
-		tbl.completed = function (statistics_db, stats_id, quest_key)
-			-- function 124
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
-
-			return statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name) >= 1
-		end
-
-		tbl.progress = function (statistics_db, stats_id, quest_key)
-			-- function 125
-			local stat_name = QuestSettings.stat_mappings[quest_key][1]
-			local count = statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name)
-
-			return {
-				count,
-				1
-			}
-		end
-
-		quests[str_2] = tbl
+		}
 	end
 
 	for i = 1, #DefaultDifficulties do

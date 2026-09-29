@@ -786,27 +786,20 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 			pass_type = "rect",
 			style_id = background_name
 		}
-
-		local tbl = {
-			size = button_size
+		style[background_name] = {
+			size = button_size,
+			color = {
+				IS_WINDOWS and not not 165 or not IS_WINDOWS and not not 100,
+				0,
+				0,
+				0
+			},
+			offset = {
+				offset[1],
+				offset[2],
+				0
+			}
 		}
-		local tbl_2 = {
-			nil,
-			0,
-			0,
-			0
-		}
-		local flag
-
-		flag = (not IS_WINDOWS or not 165) and not not 100
-		tbl_2[1] = flag
-		tbl.color = tbl_2
-		tbl.offset = {
-			offset[1],
-			offset[2],
-			0
-		}
-		style[background_name] = tbl
 
 		local frame_name = "frame" .. name_suffix
 
@@ -907,11 +900,8 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 			content_check_function = function (content)
 				-- function 4
 				local hotspot = content[hotspot_name]
-				local is_selected = hotspot.is_selected
 
-				is_selected = not not is_selected and not not not hotspot.disabled
-
-				return is_selected
+				return not not hotspot.is_selected
 			end
 		}
 		style[title_text_selected_name] = {
@@ -1005,11 +995,8 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 			content_check_function = function (content)
 				-- function 6
 				local hotspot = content[hotspot_name]
-				local is_hover = hotspot.is_hover
 
-				is_hover = not not is_hover or not not hotspot.focused
-
-				return is_hover
+				return not not hotspot.is_hover
 			end
 		}
 		style[background_glow_name] = {
@@ -1157,11 +1144,7 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 			style_id = tooltip_name,
 			content_check_function = function (content)
 				-- function 9
-				local talent = content.talent
-
-				talent = not not talent and not not content.is_hover
-
-				return talent
+				return not not content.talent
 			end
 		}
 		style[tooltip_name] = {

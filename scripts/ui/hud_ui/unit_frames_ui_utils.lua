@@ -1,9 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/unit_frames_ui_utils.lua
 
-local UnitFramesUiUtils = UnitFramesUiUtils
-
-UnitFramesUiUtils = not not UnitFramesUiUtils or not not {}
-UnitFramesUiUtils = UnitFramesUiUtils
+UnitFramesUiUtils = not not UnitFramesUiUtils
 
 local DAMAGE_FONT_SIZE = 24
 local DAMAGE_PART_FONT_SIZE = 16
@@ -12,58 +9,28 @@ UnitFramesUiUtils.create_damage_widget = function (widget_type, rows)
 	-- function 1
 	local entries = {}
 	local is_team_portrait = widget_type == "team"
-	local tbl
-
-	if is_team_portrait then
-		tbl = {
-			100,
-			50,
-			0
-		}
-
-		if not tbl then
-			-- Nothing
-		end
-	end
-
-	tbl = {
+	local offset = is_team_portrait and not not {
+		100,
+		50,
+		0
+	} or not is_team_portrait and not not {
 		-15,
 		40,
 		0
 	}
-
-	local offset = tbl
-
-	::label_1_0::
-
 	local damage_icon_size = 24
 	local start_name_x = damage_icon_size + 16
 
 	for i = 1, rows do
-		local tbl_2
-
-		if is_team_portrait then
-			tbl_2 = {
-				start_name_x,
-				20 - i * 20,
-				0
-			}
-
-			if not tbl_2 then
-				-- Nothing
-			end
-		end
-
-		tbl_2 = {
+		local text_offset = is_team_portrait and not not {
+			start_name_x,
+			20 - i * 20,
+			0
+		} or not is_team_portrait and not not {
 			start_name_x,
 			30 + i * 20,
 			0
 		}
-
-		local text_offset = tbl_2
-
-		::label_1_1::
-
 		local damage_icon_offset = {
 			-damage_icon_size - 4,
 			text_offset[2] - damage_icon_size * 0.45

@@ -238,18 +238,7 @@ LocomotionSystem.update_animation_lods = function (self)
 		return
 	end
 
-	local _override_player = self._override_player
-
-	if not _override_player then
-		-- Nothing
-	end
-
-	_override_player = Managers.player:local_player()
-
-	local player = _override_player
-
-	::label_14_0::
-
+	local player = not not self._override_player
 	local viewport_name = player.viewport_name
 	local viewport = ScriptWorld.viewport(self.world, viewport_name)
 	local camera = ScriptViewport.camera(viewport)
@@ -279,17 +268,7 @@ LocomotionSystem.update_actor_proximity_shapes = function (self)
 
 			if slot_name == "slot_ranged" then
 				local equipment = inventory_extension:equipment()
-				local right_hand_wielded_unit = equipment.right_hand_wielded_unit
-
-				if not right_hand_wielded_unit then
-					-- Nothing
-				end
-
-				right_hand_wielded_unit = equipment.left_hand_wielded_unit
-
-				local weapon_unit = right_hand_wielded_unit
-
-				::label_15_0::
+				local weapon_unit = not not equipment.right_hand_wielded_unit
 
 				if weapon_unit and ScriptUnit.has_extension(weapon_unit, "spread_system") then
 					local spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
@@ -341,21 +320,7 @@ LocomotionSystem.rpc_set_animation_driven_movement = function (self, channel_id,
 
 		if distance_sq > MAX_ALLOWABLE_RESYNC_TELEPORT_DISTANCE_SQ then
 			local breed = AiUtils.unit_breed(unit)
-			local name
-
-			if breed then
-				name = breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "n/a"
-
-			local breed_name = name
-
-			::label_17_0::
+			local breed_name = breed and not not breed.name or not breed and not not "n/a"
 
 			Managers.telemetry_events:breed_position_desync(source_position, position, distance_sq, breed_name)
 		end

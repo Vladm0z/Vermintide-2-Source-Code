@@ -3,26 +3,10 @@
 require("scripts/network/script_xbox_user_privilege_token")
 
 XboxUserPrivileges = class(XboxUserPrivileges)
-
-local DEFAULT_PRIVILEGES = DEFAULT_PRIVILEGES
-
-DEFAULT_PRIVILEGES = not not DEFAULT_PRIVILEGES or not not {}
-DEFAULT_PRIVILEGES = DEFAULT_PRIVILEGES
-
-local ATTEMPT_RESOLUTION_PRIVILEGES = ATTEMPT_RESOLUTION_PRIVILEGES
-
-ATTEMPT_RESOLUTION_PRIVILEGES = not not ATTEMPT_RESOLUTION_PRIVILEGES or not not {}
-ATTEMPT_RESOLUTION_PRIVILEGES = ATTEMPT_RESOLUTION_PRIVILEGES
-
-local XBOX_PRIVILEGE_LUT = XBOX_PRIVILEGE_LUT
-
-XBOX_PRIVILEGE_LUT = not not XBOX_PRIVILEGE_LUT or not not {}
-XBOX_PRIVILEGE_LUT = XBOX_PRIVILEGE_LUT
-
-local PRIVILEGES_ERROR_CODES = PRIVILEGES_ERROR_CODES
-
-PRIVILEGES_ERROR_CODES = not not PRIVILEGES_ERROR_CODES or not not {}
-PRIVILEGES_ERROR_CODES = PRIVILEGES_ERROR_CODES
+DEFAULT_PRIVILEGES = not not DEFAULT_PRIVILEGES
+ATTEMPT_RESOLUTION_PRIVILEGES = not not ATTEMPT_RESOLUTION_PRIVILEGES
+XBOX_PRIVILEGE_LUT = not not XBOX_PRIVILEGE_LUT
+PRIVILEGES_ERROR_CODES = not not PRIVILEGES_ERROR_CODES
 
 XboxUserPrivileges.init = function (self)
 	-- function 1
@@ -108,16 +92,8 @@ XboxUserPrivileges.update_privilege = function (self, privilege, cb)
 			Managers.token:register_token(script_token, callback(self, "cb_user_privilege_done", user_id, privilege_id, nil))
 
 			if cb then
-				local _check_privilege_cb = self._check_privilege_cb
-
-				_check_privilege_cb = not not _check_privilege_cb or not not {}
-				self._check_privilege_cb = _check_privilege_cb
-
-				local _check_privilege_cb_2 = self._check_privilege_cb
-				local var_5_2 = self._check_privilege_cb[privilege_id]
-
-				var_5_2 = not not var_5_2 or not not {}
-				_check_privilege_cb_2[privilege_id] = var_5_2
+				self._check_privilege_cb = not not self._check_privilege_cb
+				self._check_privilege_cb[privilege_id] = not not self._check_privilege_cb[privilege_id]
 				self._check_privilege_cb[privilege_id][#self._check_privilege_cb[privilege_id] + 1] = cb
 			end
 		else
@@ -129,52 +105,16 @@ end
 XboxUserPrivileges.cb_user_privilege_done = function (self, user_id, privilege, external_cb, info)
 	-- function 6
 	if info.error then
-		local error = Application.error
-		local format = string.format
-		local str = "[XboxUserPrivileges] Something went wrong when trying to fetch privilege [%s] for User [%s]. Error: %s"
-		local var_6_3 = XBOX_PRIVILEGE_LUT[privilege]
-
-		var_6_3 = not not var_6_3 or not not "unknown"
-
-		local var_6_4 = tostring(user_id)
-		local var_6_5 = PRIVILEGES_ERROR_CODES[info.error]
-
-		var_6_5 = not not var_6_5 or not not "UNKNOWN"
-
-		error(format(str, var_6_3, var_6_4, var_6_5))
+		Application.error(string.format("[XboxUserPrivileges] Something went wrong when trying to fetch privilege [%s] for User [%s]. Error: %s", not not XBOX_PRIVILEGE_LUT[privilege], tostring(user_id), not not PRIVILEGES_ERROR_CODES[info.error]))
 
 		self._has_error = true
 		self._initialized = true
 	elseif info.status_code == UserPrivilege.NoIssue then
-		local warning = Application.warning
-		local format_2 = string.format
-		local str_2 = "[XboxUserPrivileges] User [%s] has the privilege to [%s]"
-		local var_6_9 = tostring(user_id)
-		local var_6_10 = XBOX_PRIVILEGE_LUT[privilege]
-
-		var_6_10 = not not var_6_10 or not not "unknown"
-
-		local var_6_11 = PRIVILEGES_ERROR_CODES[info.status_code]
-
-		var_6_11 = not not var_6_11 or not not "UNKNOWN"
-
-		warning(format_2(str_2, var_6_9, var_6_10, var_6_11))
+		Application.warning(string.format("[XboxUserPrivileges] User [%s] has the privilege to [%s]", tostring(user_id), not not XBOX_PRIVILEGE_LUT[privilege], not not PRIVILEGES_ERROR_CODES[info.status_code]))
 
 		self._current_users[user_id][privilege] = true
 	else
-		local error_2 = Application.error
-		local format_3 = string.format
-		local str_3 = "[XboxUserPrivileges] User [%s] do not have the privilege to [%s]. Error: %s"
-		local var_6_15 = tostring(user_id)
-		local var_6_16 = XBOX_PRIVILEGE_LUT[privilege]
-
-		var_6_16 = not not var_6_16 or not not "unknown"
-
-		local var_6_17 = PRIVILEGES_ERROR_CODES[info.status_code]
-
-		var_6_17 = not not var_6_17 or not not "UNKNOWN"
-
-		error_2(format_3(str_3, var_6_15, var_6_16, var_6_17))
+		Application.error(string.format("[XboxUserPrivileges] User [%s] do not have the privilege to [%s]. Error: %s", tostring(user_id), not not XBOX_PRIVILEGE_LUT[privilege], not not PRIVILEGES_ERROR_CODES[info.status_code]))
 
 		self._current_users[user_id][privilege] = false
 	end

@@ -137,44 +137,9 @@ GameModeDeus.evaluate_end_conditions = function (self, round_started, dt, t, mut
 
 	local ignore_bots = true
 	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
-	local side_is_disabled = GameModeHelper.side_is_disabled("heroes")
-
-	if side_is_disabled then
-		-- Nothing
-	end
-
-	side_is_disabled = not GameModeHelper.side_delaying_loss("heroes")
-
-	local players_disabled = side_is_disabled
-
-	::label_11_0::
-
+	local players_disabled = not not GameModeHelper.side_is_disabled("heroes")
 	local mutator_lost, mutator_lost_delay = mutator_handler:evaluate_lose_conditions()
-	local _level_failed
-
-	if not self._lose_condition_disabled then
-		if not mutator_lost and not humans_dead and not players_disabled then
-			-- Nothing
-		end
-
-		::label_11_3::
-
-		_level_failed = self._level_failed
-
-		if not _level_failed then
-			_level_failed = self:_is_time_up()
-		end
-	else
-		_level_failed = false
-	end
-
-	goto label_11_4
-
-	_level_failed = true
-
-	local lost = _level_failed
-
-	::label_11_4::
+	local lost = not self._lose_condition_disabled and (not not mutator_lost or not not humans_dead or not not players_disabled or not not self._level_failed)
 
 	if self:is_about_to_end_game_early() then
 		if lost then
@@ -297,11 +262,8 @@ GameModeDeus.get_end_screen_config = function (self, game_won, game_lost, player
 		local local_player = Managers.player:local_player()
 		local stats_id = local_player:stats_id()
 		local previous_completed_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
-		local flag
 
-		flag = (not game_won or not "deus_victory") and not not "defeat"
-
-		return flag, {
+		return game_won and not not "deus_victory" or not game_won and not not "defeat", {
 			journey_name = journey_name,
 			profile_index = profile_index,
 			previous_completed_difficulty_index = previous_completed_difficulty_index
@@ -547,15 +509,7 @@ GameModeDeus._get_first_available_bot_profile = function (self)
 
 	table.sort(available_profile_by_priority, function (a, b)
 		-- function 39
-		local var_39_0 = bot_profile_id_to_priority_id[a]
-
-		var_39_0 = not not var_39_0 or not not math.huge
-
-		local var_39_1 = bot_profile_id_to_priority_id[b]
-
-		var_39_1 = not not var_39_1 or not not math.huge
-
-		return var_39_0 < var_39_1
+		return not not bot_profile_id_to_priority_id[a] < not not bot_profile_id_to_priority_id[b]
 	end)
 
 	local profile_index = available_profile_by_priority[1]
@@ -563,33 +517,9 @@ GameModeDeus._get_first_available_bot_profile = function (self)
 	local display_name = profile.display_name
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 	local career_index = hero_attributes:get(display_name, "career")
-	local get = hero_attributes:get(display_name, "bot_career")
-
-	if not get and not career_index then
-		-- Nothing
-	end
-
-	::label_38_0::
-
-	get = 1
-
-	local bot_career_index = get
-
-	::label_38_1::
-
+	local bot_career_index = not not hero_attributes:get(display_name, "bot_career")
 	local career = profile.careers[bot_career_index]
-	local get_2 = hero_attributes:get(display_name, "experience")
-
-	if not get_2 then
-		-- Nothing
-	end
-
-	get_2 = 0
-
-	local hero_experience = get_2
-
-	::label_38_2::
-
+	local hero_experience = not not hero_attributes:get(display_name, "experience")
 	local hero_level = ExperienceSettings.get_level(hero_experience)
 
 	if not career or not career:is_unlocked_function(display_name, hero_level) then
@@ -877,35 +807,13 @@ GameModeDeus._get_coins_amount_and_type = function (self, interactable_unit)
 
 	local deus_run_controller = self._deus_run_controller
 	local current_node = deus_run_controller:get_current_node()
-	local pickups = current_node.system_seeds.pickups
-
-	if not pickups then
-		-- Nothing
-	end
-
-	pickups = 0
-
-	local pickups_seed = pickups
-
-	::label_52_0::
-
+	local pickups_seed = not not current_node.system_seeds.pickups
 	local seed = HashUtils.fnv32_hash(Managers.state.unit_storage:go_id(interactable_unit) .. "_" .. pickups_seed)
 	local _, random = Math.next_random(seed)
 	local ingame_players = #deus_run_controller:get_peers()
 	local dropped_by_breed = pickup_extension:get_dropped_by_breed()
 	local loot_amount_settings = DeusSoftCurrencySettings.loot_amount[dropped_by_breed]
-	local var_52_1 = loot_amount_settings[ingame_players]
-
-	if not var_52_1 then
-		-- Nothing
-	end
-
-	var_52_1 = loot_amount_settings[#loot_amount_settings]
-
-	local loot_amount_by_player = var_52_1
-
-	::label_52_1::
-
+	local loot_amount_by_player = not not loot_amount_settings[ingame_players]
 	local min_amount = loot_amount_by_player.min
 	local max_amount = loot_amount_by_player.max
 	local coins_amount = math.lerp(min_amount, max_amount, random)

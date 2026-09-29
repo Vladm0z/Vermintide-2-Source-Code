@@ -100,69 +100,10 @@ end
 
 Spline.set_points_manual_tangents = function (self, t1, t2, p1, p2)
 	-- function 7
-	local as_table
-
-	if t1 then
-		as_table = Vector3.as_table(t1)
-
-		if not as_table then
-			-- Nothing
-		end
-	end
-
-	as_table = self._T1
-
-	::label_7_0::
-
-	self._T1 = as_table
-
-	local as_table_2
-
-	if t2 then
-		as_table_2 = Vector3.as_table(t2)
-
-		if not as_table_2 then
-			-- Nothing
-		end
-	end
-
-	as_table_2 = self._T2
-
-	::label_7_1::
-
-	self._T2 = as_table_2
-
-	local as_table_3
-
-	if p1 then
-		as_table_3 = Vector3.as_table(p1)
-
-		if not as_table_3 then
-			-- Nothing
-		end
-	end
-
-	as_table_3 = self._P1
-
-	::label_7_2::
-
-	self._P1 = as_table_3
-
-	local as_table_4
-
-	if p2 then
-		as_table_4 = Vector3.as_table(p2)
-
-		if not as_table_4 then
-			-- Nothing
-		end
-	end
-
-	as_table_4 = self._P2
-
-	::label_7_3::
-
-	self._P2 = as_table_4
+	self._T1 = t1 and not not Vector3.as_table(t1) or not t1 and not not self._T1
+	self._T2 = t2 and not not Vector3.as_table(t2) or not t2 and not not self._T2
+	self._P1 = p1 and not not Vector3.as_table(p1) or not p1 and not not self._P1
+	self._P2 = p2 and not not Vector3.as_table(p2) or not p2 and not not self._P2
 end
 
 Spline.set_points_with_rotation_tangents = function (self, points, rotation_t1, rotation_t2)

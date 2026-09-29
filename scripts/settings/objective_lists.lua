@@ -3842,28 +3842,7 @@ for lists_name, lists in pairs(ObjectiveLists) do
 		table.clear(data_by_name)
 
 		for objective_name, objective_data in pairs(list) do
-			local fassert = fassert
-			local is_empty
-
-			if data_by_name[objective_name] then
-				is_empty = table.is_empty(objective_data)
-
-				if not is_empty then
-					-- Nothing
-				end
-
-				if data_by_name[objective_name] ~= objective_data then
-					is_empty = false
-
-					goto label_0_0
-				end
-			end
-
-			is_empty = true
-
-			::label_0_0::
-
-			fassert(is_empty, "[ObjectiveLists] An objective set may not include multiple objectives of the same name, unless they don't contain any data or point to the same objective data reference. %s was found twice in list number %s in %s", objective_name, list_i, lists_name)
+			fassert(not data_by_name[objective_name] or not not table.is_empty(objective_data), "[ObjectiveLists] An objective set may not include multiple objectives of the same name, unless they don't contain any data or point to the same objective data reference. %s was found twice in list number %s in %s", objective_name, list_i, lists_name)
 
 			data_by_name[objective_name] = objective_data
 		end

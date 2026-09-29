@@ -375,7 +375,7 @@ local Sequencer = {
 
 				if zone.travel_dist > sequence_node.travel_dist then
 					if not zone.roaming_set then
-						zone.roaming_set = (sequence_node.breeds ~= "a" or not breed_a) and (sequence_node.breeds ~= "b" or not breed_b) and not not both_breeds
+						zone.roaming_set = not not both_breeds
 					end
 
 					seek_start_index = i
@@ -392,17 +392,7 @@ return {
 	tweak_zones = function (mutator_context, data, conflict_director_name, zones, num_zones)
 		-- function 5
 		local mechanism = Managers.mechanism:game_mechanism()
-		local get_deus_run_controller = mechanism.get_deus_run_controller
-
-		if get_deus_run_controller then
-			-- Nothing
-		end
-
-		get_deus_run_controller = mechanism:get_deus_run_controller()
-
-		local deus_run_controller = get_deus_run_controller
-
-		::label_5_0::
+		local deus_run_controller = not not mechanism.get_deus_run_controller
 
 		if not conflict_settings[conflict_director_name] or not deus_run_controller then
 			return
@@ -465,39 +455,8 @@ return {
 
 		local _, breed_selection = Math.next_random(seed, 1, 2)
 		local sub_breeds = conflict_settings[conflict_director_name]
-		local breed1
-
-		if breed_selection == 1 then
-			breed1 = sub_breeds.breed1
-
-			if not breed1 then
-				-- Nothing
-			end
-		end
-
-		breed1 = sub_breeds.breed2
-
-		local breed_a = breed1
-
-		do
-			local breed2
-		end
-
-		::label_5_1::
-
-		if breed_selection == 1 then
-			breed2 = sub_breeds.breed2
-
-			if not breed2 then
-				-- Nothing
-			end
-		end
-
-		breed2 = sub_breeds.breed1
-
-		local breed_b = breed2
-
-		::label_5_2::
+		local breed_a = breed_selection ~= 1 and not not sub_breeds.breed2 or not (breed_selection ~= 1) and not not sub_breeds.breed1
+		local breed_b = breed_selection ~= 1 and not not sub_breeds.breed1 or not (breed_selection ~= 1) and not not sub_breeds.breed2
 
 		Sequencer.tweak_zones_with_sequence(breed_a, breed_b, conflict_director_name, zones, num_zones, sequence_with_travel_dist)
 
@@ -569,11 +528,6 @@ return {
 		local ahead_player_info = conflict_director.main_path_player_info[main_path_info.ahead_unit]
 
 		ahead_player_travel_dist = ahead_player_info.travel_dist
-
-		local max = math.max
-		local highest_travel_dist = data.highest_travel_dist
-
-		highest_travel_dist = not not highest_travel_dist or not not 0
-		data.highest_travel_dist = max(highest_travel_dist, ahead_player_travel_dist)
+		data.highest_travel_dist = math.max(not not data.highest_travel_dist, ahead_player_travel_dist)
 	end
 }

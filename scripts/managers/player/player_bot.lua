@@ -3,11 +3,7 @@
 require("scripts/managers/player/bulldozer_player")
 
 PlayerBot = class(PlayerBot, BulldozerPlayer)
-
-local EnergyData = EnergyData
-
-EnergyData = not not EnergyData or not not {}
-EnergyData = EnergyData
+EnergyData = not not EnergyData
 
 local BOT_COLORS = {
 	bright_wizard = QuaternionBox(255, 255, 127, 0),
@@ -152,115 +148,20 @@ PlayerBot.spawn = function (self, position, rotation, is_initial_spawn, ammo_mel
 	local base_frame = "default"
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin", is_bot)
-	local name
-
-	if skin_item then
-		name = skin_item.data.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = base_skin
-
-	local skin_name = name
-
-	::label_16_0::
-
+	local skin_name = skin_item and not not skin_item.data.name or not skin_item and not not base_skin
 	local skin_data = Cosmetics[skin_name]
 	local frame_item = BackendUtils.get_loadout_item(career_name, "slot_frame", is_bot)
-	local name_2
-
-	if frame_item then
-		name_2 = frame_item.data.name
-
-		if not name_2 then
-			-- Nothing
-		end
-	end
-
-	name_2 = base_frame
-
-	local frame_name = name_2
-
-	::label_16_1::
-
-	local var_16_2 = OverchargeData[career_name]
-
-	if not var_16_2 then
-		-- Nothing
-	end
-
-	var_16_2 = {}
-
-	local overcharge_data = var_16_2
-
-	::label_16_2::
-
-	local var_16_3 = EnergyData[career_name]
-
-	if not var_16_3 then
-		-- Nothing
-	end
-
-	var_16_3 = {}
-
-	local energy_data = var_16_3
-
-	::label_16_3::
-
+	local frame_name = frame_item and not not frame_item.data.name or not frame_item and not not base_frame
+	local overcharge_data = not not OverchargeData[career_name]
+	local energy_data = not not EnergyData[career_name]
 	local base_pose = "default_weapon_pose_01"
 	local pose_item = BackendUtils.get_loadout_item(career_name, "slot_pose")
-	local data
-
-	if pose_item then
-		data = pose_item.data
-
-		if not data then
-			-- Nothing
-		end
-	end
-
-	data = pose_item
-
-	local pose_item_data = data
-
-	do
-		local name_3
-	end
-
-	::label_16_4::
-
-	if pose_item_data then
-		name_3 = pose_item_data.name
-
-		if not name_3 then
-			-- Nothing
-		end
-	end
-
-	name_3 = base_pose
-
-	local pose_name = name_3
-
-	::label_16_5::
-
+	local pose_item_data = pose_item and not not pose_item.data or not pose_item and not not pose_item
+	local pose_name = pose_item_data and not not pose_item_data.name or not pose_item_data and not not base_pose
 	local status = Managers.party:get_status_from_unique_id(self._unique_id)
 	local party = Managers.party:get_party(status.party_id)
 	local side = Managers.state.side.side_by_party[party]
-	local breed_2 = career.breed
-
-	if not breed_2 then
-		-- Nothing
-	end
-
-	breed_2 = profile.breed
-
-	local breed = breed_2
-
-	::label_16_6::
-
+	local breed = not not career.breed
 	local extension_init_data = {
 		ai_system = {
 			player = self,
@@ -401,17 +302,7 @@ PlayerBot.spawn = function (self, position, rotation, is_initial_spawn, ammo_mel
 	Unit.create_actor(unit, "bot_collision", false)
 
 	local level_settings = LevelHelper:current_level_settings()
-	local climate_type_2 = level_settings.climate_type
-
-	if not climate_type_2 then
-		-- Nothing
-	end
-
-	climate_type_2 = "default"
-
-	local climate_type = climate_type_2
-
-	::label_16_7::
+	local climate_type = not not level_settings.climate_type
 
 	Unit.set_flow_variable(unit, "climate_type", climate_type)
 	Unit.flow_event(unit, "climate_type_set")

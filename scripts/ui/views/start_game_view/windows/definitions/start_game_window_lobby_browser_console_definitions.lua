@@ -5,39 +5,8 @@ local function sort_level_list(a, b)
 	local level_settings = LevelSettings
 	local a_map_settings = level_settings[a].map_settings
 	local b_map_settings = level_settings[b].map_settings
-	local sorting
-
-	if a_map_settings then
-		sorting = a_map_settings.sorting
-
-		if not sorting then
-			-- Nothing
-		end
-	end
-
-	sorting = 0
-
-	local a_sorting_index = sorting
-
-	do
-		local sorting_2
-	end
-
-	::label_1_0::
-
-	if b_map_settings then
-		sorting_2 = b_map_settings.sorting
-
-		if not sorting_2 then
-			-- Nothing
-		end
-	end
-
-	sorting_2 = 0
-
-	local b_sorting_index = sorting_2
-
-	::label_1_1::
+	local a_sorting_index = a_map_settings and not not a_map_settings.sorting or not a_map_settings and not not 0
+	local b_sorting_index = b_map_settings and not not b_map_settings.sorting or not b_map_settings and not not 0
 
 	return a_sorting_index < b_sorting_index
 end
@@ -50,30 +19,10 @@ local function setup_game_mode_data(statistics_db, player_stats_id)
 
 	for name, level_data in pairs(LevelSettings) do
 		if type(level_data) == "table" and (not only_release or not DebugLevels[name]) then
-			local game_mode_2 = level_data.game_mode
-
-			if not game_mode_2 then
-				-- Nothing
-			end
-
-			game_mode_2 = level_data.mechanism
-
-			local game_mode = game_mode_2
-
-			::label_2_0::
+			local game_mode = not not level_data.game_mode
 
 			if game_mode and game_mode ~= "tutorial" and game_mode ~= "demo" then
-				local unlockable_2 = level_data.unlockable
-
-				if unlockable_2 then
-					-- Nothing
-				end
-
-				unlockable_2 = not level_data.default
-
-				local unlockable = unlockable_2
-
-				::label_2_1::
+				local unlockable = not not level_data.unlockable
 
 				if unlockable and LevelUnlockUtils.level_unlocked(statistics_db, player_stats_id, name) then
 					if not game_mode_index[game_mode] then
@@ -92,7 +41,7 @@ local function setup_game_mode_data(statistics_db, player_stats_id)
 						game_mode_index[game_mode] = #game_mode_data
 					end
 
-					if (not level_data.supported_game_modes or level_data.supported_game_modes[game_mode]) and not level_data.ommit_from_lobby_browser then
+					if not level_data.supported_game_modes and not level_data.ommit_from_lobby_browser or not not level_data.supported_game_modes and level_data.supported_game_modes[game_mode] and not level_data.ommit_from_lobby_browser then
 						local data = game_mode_data[game_mode_index[game_mode]]
 						local levels = data.levels
 
@@ -163,29 +112,15 @@ if IS_PS4 then
 	table.insert(show_lobbies_array, 2, "lb_search_type_friends")
 end
 
-local tbl
-
-if IS_PS4 then
-	tbl = {
-		"map_zone_options_2",
-		"map_zone_options_3",
-		"map_zone_options_5"
-	}
-
-	if not tbl then
-		-- Nothing
-	end
-end
-
-tbl = {
+local distance_array = IS_PS4 and not not {
+	"map_zone_options_2",
+	"map_zone_options_3",
+	"map_zone_options_5"
+} or not IS_PS4 and not not {
 	"map_zone_options_2",
 	"map_zone_options_4",
 	"map_zone_options_5"
 }
-
-local distance_array = tbl
-
-::label_0_0::
 
 return {
 	show_lobbies_table = show_lobbies_array,

@@ -196,17 +196,7 @@ StartGameWindowWeaveSelectWeave._update_animations = function (self, dt)
 	-- function 15
 	self:_update_game_options_hover_effect()
 
-	local _ui_animations = self._ui_animations
-
-	if not _ui_animations then
-		-- Nothing
-	end
-
-	_ui_animations = {}
-
-	local ui_animations = _ui_animations
-
-	::label_15_0::
+	local ui_animations = not not self._ui_animations
 
 	for name, animation in pairs(ui_animations) do
 		UIAnimation.update(animation, dt)

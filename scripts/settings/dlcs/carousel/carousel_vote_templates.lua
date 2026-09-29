@@ -37,113 +37,54 @@ VoteTemplates.carousel_settings_vote = {
 		if vote_result == 1 then
 			local vote_type = data.vote_type
 
-			if Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
+			if Managers.twitch:is_connected() and Managers.twitch and Managers.twitch:is_connecting() and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
 				Managers.twitch:disconnect()
 			end
 
 			local lobby = Managers.state.network:lobby()
-			local use_dedicated_win_servers = data.use_dedicated_win_servers
-
-			if not use_dedicated_win_servers then
-				-- Nothing
-			end
-
-			use_dedicated_win_servers = data.use_dedicated_aws_servers
-
-			local use_dedicated_servers = use_dedicated_win_servers
-
-			::label_2_0::
-
-			local tbl = {
+			local use_dedicated_servers = not not data.use_dedicated_win_servers
+			local search_config = {
 				wait_for_join_message = true,
 				mission_id = data.mission_id,
 				preferred_level_keys = data.preferred_level_keys,
-				difficulty = data.difficulty
+				difficulty = data.difficulty,
+				quick_game = not not data.quick_game,
+				join_method = data.join_method,
+				private_game = not not data.private_game,
+				party_lobby_host = not not use_dedicated_servers and not not lobby,
+				max_num_players = GameModeSettings.versus.max_num_players,
+				player_hosted = data.player_hosted,
+				dedicated_server = use_dedicated_servers,
+				aws = data.use_dedicated_aws_servers,
+				linux = data.use_dedicated_aws_servers,
+				mechanism = data.mechanism,
+				matchmaking_type = data.matchmaking_type
 			}
-			local quick_game = data.quick_game
-
-			quick_game = not not quick_game or not not false
-			tbl.quick_game = quick_game
-			tbl.join_method = data.join_method
-
-			local private_game = data.private_game
-
-			private_game = not not private_game or not not false
-			tbl.private_game = private_game
-			tbl.party_lobby_host = not not use_dedicated_servers and not not lobby
-			tbl.max_num_players = GameModeSettings.versus.max_num_players
-			tbl.player_hosted = data.player_hosted
-			tbl.dedicated_server = use_dedicated_servers
-			tbl.aws = data.use_dedicated_aws_servers
-			tbl.linux = data.use_dedicated_aws_servers
-			tbl.mechanism = data.mechanism
-			tbl.matchmaking_type = data.matchmaking_type
-
-			local search_config = tbl
 
 			Managers.matchmaking:find_game(search_config)
 		end
 	end,
 	pack_sync_data = function (data)
 		-- function 3
-		local mission_id_2 = data.mission_id
-
-		if not mission_id_2 then
-			-- Nothing
-		end
-
-		mission_id_2 = "n/a"
-
-		local mission_id = mission_id_2
-
-		::label_3_0::
-
-		local difficulty_2 = data.difficulty
-
-		if not difficulty_2 then
-			-- Nothing
-		end
-
-		difficulty_2 = "n/a"
-
-		local difficulty = difficulty_2
-
-		::label_3_1::
-
+		local mission_id = not not data.mission_id
+		local difficulty = not not data.difficulty
 		local player_hosted = data.player_hosted
 		local use_dedicated_win_servers = data.use_dedicated_win_servers
 		local use_dedicated_aws_servers = data.use_dedicated_aws_servers
 		local matchmaking_type = data.matchmaking_type
 		local mechanism = data.mechanism
 		local quick_game = data.quick_game
-		local tbl = {
+		local sync_data = {
 			NetworkLookup.mission_ids[mission_id],
 			NetworkLookup.difficulties[difficulty],
-			NetworkLookup.join_methods[data.join_method]
+			NetworkLookup.join_methods[data.join_method],
+			player_hosted and not not 1 or not player_hosted and not not 2,
+			use_dedicated_win_servers and not not 1 or not use_dedicated_win_servers and not not 2,
+			use_dedicated_aws_servers and not not 1 or not use_dedicated_aws_servers and not not 2,
+			NetworkLookup.matchmaking_types[matchmaking_type],
+			NetworkLookup.mechanisms[mechanism],
+			quick_game and not not 1 or not quick_game and not not 2
 		}
-		local flag
-
-		flag = (not player_hosted or not 1) and not not 2
-		tbl[4] = flag
-
-		local flag_2
-
-		flag_2 = (not use_dedicated_win_servers or not 1) and not not 2
-		tbl[5] = flag_2
-
-		local flag_3
-
-		flag_3 = (not use_dedicated_aws_servers or not 1) and not not 2
-		tbl[6] = flag_3
-		tbl[7] = NetworkLookup.matchmaking_types[matchmaking_type]
-		tbl[8] = NetworkLookup.mechanisms[mechanism]
-
-		local flag_4
-
-		flag_4 = (not quick_game or not 1) and not not 2
-		tbl[9] = flag_4
-
-		local sync_data = tbl
 
 		return sync_data
 	end,
@@ -229,87 +170,44 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 		if vote_result == 1 then
 			local vote_type = data.vote_type
 
-			if Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
+			if Managers.twitch:is_connected() and Managers.twitch and Managers.twitch:is_connecting() and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
 				Managers.twitch:disconnect()
 			end
 
 			local lobby = Managers.state.network:lobby()
-			local use_dedicated_win_servers = data.use_dedicated_win_servers
-
-			if not use_dedicated_win_servers then
-				-- Nothing
-			end
-
-			use_dedicated_win_servers = data.use_dedicated_aws_servers
-
-			local use_dedicated_servers = use_dedicated_win_servers
-
-			::label_7_0::
-
-			local tbl = {
+			local use_dedicated_servers = not not data.use_dedicated_win_servers
+			local search_config = {
 				player_hosted = true,
 				matchmaking_start_state = "MatchmakingStatePlayerHostedGame",
 				dedicated_server = false,
 				quick_game = false,
 				mission_id = data.mission_id,
 				any_level = data.any_level,
-				difficulty = data.difficulty
+				difficulty = data.difficulty,
+				private_game = not not data.private_game,
+				party_lobby_host = lobby,
+				max_num_players = GameModeSettings.versus.max_num_players,
+				mechanism = data.mechanism,
+				matchmaking_type = data.matchmaking_type
 			}
-			local private_game = data.private_game
-
-			private_game = not not private_game or not not false
-			tbl.private_game = private_game
-			tbl.party_lobby_host = lobby
-			tbl.max_num_players = GameModeSettings.versus.max_num_players
-			tbl.mechanism = data.mechanism
-			tbl.matchmaking_type = data.matchmaking_type
-
-			local search_config = tbl
 
 			Managers.matchmaking:find_game(search_config)
 		end
 	end,
 	pack_sync_data = function (data)
 		-- function 8
-		local mission_id_2 = data.mission_id
-
-		if not mission_id_2 then
-			-- Nothing
-		end
-
-		mission_id_2 = "n/a"
-
-		local mission_id = mission_id_2
-
-		::label_8_0::
-
-		local difficulty_2 = data.difficulty
-
-		if not difficulty_2 then
-			-- Nothing
-		end
-
-		difficulty_2 = "n/a"
-
-		local difficulty = difficulty_2
-
-		::label_8_1::
-
+		local mission_id = not not data.mission_id
+		local difficulty = not not data.difficulty
 		local player_hosted = data.player_hosted
 		local matchmaking_type = data.matchmaking_type
 		local mechanism = data.mechanism
-		local tbl = {
+		local sync_data = {
 			NetworkLookup.mission_ids[mission_id],
-			NetworkLookup.difficulties[difficulty]
+			NetworkLookup.difficulties[difficulty],
+			player_hosted and not not 1 or not player_hosted and not not 2,
+			NetworkLookup.matchmaking_types[matchmaking_type],
+			NetworkLookup.mechanisms[mechanism]
 		}
-		local flag
-
-		flag = (not player_hosted or not 1) and not not 2
-		tbl[3] = flag
-		tbl[4] = NetworkLookup.matchmaking_types[matchmaking_type]
-		tbl[5] = NetworkLookup.mechanisms[mechanism]
-
-		local sync_data = tbl
 
 		return sync_data
 	end,

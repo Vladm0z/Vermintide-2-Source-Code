@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/sound/sound_sector_event_templates.lua
 
-local SoundSectorEventTemplates = SoundSectorEventTemplates
-
-SoundSectorEventTemplates = not not SoundSectorEventTemplates or not not {}
-SoundSectorEventTemplates = SoundSectorEventTemplates
+SoundSectorEventTemplates = not not SoundSectorEventTemplates
 
 local last_horde_unit
 local horde_units = {}

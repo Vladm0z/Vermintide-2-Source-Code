@@ -23,23 +23,7 @@ BTStaggerAction.enter = function (self, unit, blackboard, t)
 	navigation_extension:set_enabled(false)
 
 	local breed = blackboard.breed
-	local staggering_id = blackboard.staggering_id
-
-	if staggering_id then
-		-- Nothing
-	end
-
-	if blackboard.stagger == blackboard.staggering_id then
-		staggering_id = false
-
-		goto label_2_0
-	end
-
-	staggering_id = true
-
-	local was_already_in_stagger = staggering_id
-
-	::label_2_0::
+	local was_already_in_stagger = not not blackboard.staggering_id
 
 	if not was_already_in_stagger then
 		local override_mover_move_distance = breed.override_mover_move_distance
@@ -89,23 +73,7 @@ BTStaggerAction.enter = function (self, unit, blackboard, t)
 	local network_manager = Managers.state.network
 
 	if action_data.scale_animation_speeds then
-		local stagger_animation_scale = action_data.stagger_animation_scale
-
-		if not stagger_animation_scale then
-			-- Nothing
-		end
-
-		stagger_animation_scale = blackboard.stagger_animation_scale
-
-		if not stagger_animation_scale then
-			-- Nothing
-		end
-
-		stagger_animation_scale = 1
-
-		local anim_scale = stagger_animation_scale
-
-		::label_2_1::
+		local anim_scale = not not action_data.stagger_animation_scale
 
 		network_manager:anim_event_with_variable_float(unit, push_anim, "stagger_scale", anim_scale)
 	else
@@ -175,26 +143,26 @@ BTStaggerAction._select_animation = function (self, unit, blackboard, impact_vec
 	if impact_vec.z == -1 and stagger_anims.dwn then
 		impact_dir.z = 0
 		impact_rot = Quaternion.look(-impact_dir)
-		anim_table = (not moving_stagger or not stagger_anims.moving_dwn) and not not stagger_anims.dwn
+		anim_table = moving_stagger and (not not stagger_anims.moving_dwn or not not stagger_anims.dwn) or not moving_stagger and not not stagger_anims.dwn
 	else
 		impact_dir.z = 0
 
 		if angle > math.pi * 0.75 then
 			impact_rot = Quaternion.look(-impact_dir)
-			anim_table = (not moving_stagger or not stagger_anims.moving_bwd) and not not stagger_anims.bwd
+			anim_table = moving_stagger and (not not stagger_anims.moving_bwd or not not stagger_anims.bwd) or not moving_stagger and not not stagger_anims.bwd
 		elseif angle < math.pi * 0.25 then
 			impact_rot = Quaternion.look(impact_dir)
-			anim_table = (not moving_stagger or not stagger_anims.moving_fwd) and not not stagger_anims.fwd
+			anim_table = moving_stagger and (not not stagger_anims.moving_fwd or not not stagger_anims.fwd) or not moving_stagger and not not stagger_anims.fwd
 		elseif Vector3.cross(my_fwd, impact_dir).z > 0 then
 			local dir = Vector3.cross(Vector3(0, 0, -1), impact_dir)
 
 			impact_rot = Quaternion.look(dir)
-			anim_table = (not moving_stagger or not stagger_anims.moving_left) and not not stagger_anims.left
+			anim_table = moving_stagger and (not not stagger_anims.moving_left or not not stagger_anims.left) or not moving_stagger and not not stagger_anims.left
 		else
 			local dir = Vector3.cross(Vector3(0, 0, 1), impact_dir)
 
 			impact_rot = Quaternion.look(dir)
-			anim_table = (not moving_stagger or not stagger_anims.moving_right) and not not stagger_anims.right
+			anim_table = moving_stagger and (not not stagger_anims.moving_right or not not stagger_anims.right) or not moving_stagger and not not stagger_anims.right
 		end
 	end
 

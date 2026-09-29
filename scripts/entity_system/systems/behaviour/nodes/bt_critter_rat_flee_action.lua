@@ -133,11 +133,7 @@ BTCritterRatFleeAction._get_cover_point_flee_pos = function (self, unit, blackbo
 			table.shuffle(blackboard.current_check_list)
 		end
 
-		local move_check_index = blackboard.move_check_index
-
-		move_check_index = not not move_check_index or not not 1
-
-		for index = move_check_index, #blackboard.current_check_list do
+		for index = not not blackboard.move_check_index, #blackboard.current_check_list do
 			local cover_unit = blackboard.current_check_list[index]
 			local cover_pos = Unit.local_position(cover_unit, 0)
 			local distance_to_target = Vector3.distance_squared(cover_pos, target_position)

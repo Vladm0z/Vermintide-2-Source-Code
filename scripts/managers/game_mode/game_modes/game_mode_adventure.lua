@@ -4,11 +4,7 @@ require("scripts/managers/game_mode/game_modes/game_mode_base")
 require("scripts/managers/game_mode/spawning_components/adventure_spawning")
 require("scripts/managers/game_mode/adventure_profile_rules")
 
-local script_data = script_data
-local disable_gamemode_end = script_data.disable_gamemode_end
-
-disable_gamemode_end = not not disable_gamemode_end or not not Development.parameter("disable_gamemode_end")
-script_data.disable_gamemode_end = disable_gamemode_end
+script_data.disable_gamemode_end = not not script_data.disable_gamemode_end
 GameModeAdventure = class(GameModeAdventure, GameModeBase)
 
 GameModeAdventure.init = function (self, settings, world, ...)
@@ -104,46 +100,9 @@ GameModeAdventure.evaluate_end_conditions = function (self, round_started, dt, t
 
 	local ignore_bots = true
 	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
-	local side_is_disabled = GameModeHelper.side_is_disabled("heroes")
-
-	if side_is_disabled then
-		-- Nothing
-	end
-
-	side_is_disabled = not GameModeHelper.side_delaying_loss("heroes")
-
-	local players_disabled = side_is_disabled
-
-	::label_9_0::
-
+	local players_disabled = not not GameModeHelper.side_is_disabled("heroes")
 	local mutator_lost, mutator_lost_delay = mutator_handler:evaluate_lose_conditions()
-	local _local_player_spawned
-
-	if not self._lose_condition_disabled then
-		_local_player_spawned = self._local_player_spawned
-
-		if _local_player_spawned and not mutator_lost and not humans_dead and not players_disabled then
-			-- Nothing
-		end
-
-		::label_9_3::
-
-		_local_player_spawned = self._level_failed
-
-		if not _local_player_spawned then
-			_local_player_spawned = self:_is_time_up()
-		end
-	else
-		_local_player_spawned = false
-	end
-
-	goto label_9_4
-
-	_local_player_spawned = true
-
-	local lost = _local_player_spawned
-
-	::label_9_4::
+	local lost = not self._lose_condition_disabled and not not self._local_player_spawned
 
 	if self:is_about_to_end_game_early() then
 		if lost then
@@ -239,17 +198,7 @@ GameModeAdventure.get_end_screen_config = function (self, game_won, game_lost, p
 		local stats_id = player:stats_id()
 		local statistics_db = self._statistics_db
 		local level_key = self._level_key
-		local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
-
-		if not completed_level_difficulty_index then
-			-- Nothing
-		end
-
-		completed_level_difficulty_index = 0
-
-		local previous_completed_difficulty_index = completed_level_difficulty_index
-
-		::label_13_0::
+		local previous_completed_difficulty_index = not not LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
 
 		screen_config = {
 			show_act_presentation = true,
@@ -397,15 +346,7 @@ GameModeAdventure._get_first_available_bot_profile = function (self)
 
 	table.sort(available_profile_by_priority, function (a, b)
 		-- function 33
-		local var_33_0 = bot_profile_id_to_priority_id[a]
-
-		var_33_0 = not not var_33_0 or not not math.huge
-
-		local var_33_1 = bot_profile_id_to_priority_id[b]
-
-		var_33_1 = not not var_33_1 or not not math.huge
-
-		return var_33_0 < var_33_1
+		return not not bot_profile_id_to_priority_id[a] < not not bot_profile_id_to_priority_id[b]
 	end)
 
 	local profile_index = available_profile_by_priority[1]
@@ -413,33 +354,9 @@ GameModeAdventure._get_first_available_bot_profile = function (self)
 	local display_name = profile.display_name
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 	local career_index = hero_attributes:get(display_name, "career")
-	local get = hero_attributes:get(display_name, "bot_career")
-
-	if not get and not career_index then
-		-- Nothing
-	end
-
-	::label_32_0::
-
-	get = 1
-
-	local bot_career_index = get
-
-	::label_32_1::
-
+	local bot_career_index = not not hero_attributes:get(display_name, "bot_career")
 	local career = profile.careers[bot_career_index]
-	local get_2 = hero_attributes:get(display_name, "experience")
-
-	if not get_2 then
-		-- Nothing
-	end
-
-	get_2 = 0
-
-	local hero_experience = get_2
-
-	::label_32_2::
-
+	local hero_experience = not not hero_attributes:get(display_name, "experience")
 	local hero_level = ExperienceSettings.get_level(hero_experience)
 
 	if not career and not career:is_unlocked_function(display_name, hero_level) then

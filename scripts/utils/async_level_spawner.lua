@@ -60,14 +60,7 @@ AsyncLevelSpawner._setup_world = function (self, world_name)
 		table.insert(flags, Application.DISABLE_APEX_CLOTH)
 	else
 		table.insert(flags, Application.APEX_LOD_RESOURCE_BUDGET)
-
-		local insert = table.insert
-		local var_4_1 = flags
-		local user_setting = Application.user_setting("apex_lod_resource_budget")
-
-		user_setting = not not user_setting or not not ApexClothQuality.high.apex_lod_resource_budget
-
-		insert(var_4_1, user_setting)
+		table.insert(flags, not not Application.user_setting("apex_lod_resource_budget"))
 	end
 
 	local shading_environment, shading_callback

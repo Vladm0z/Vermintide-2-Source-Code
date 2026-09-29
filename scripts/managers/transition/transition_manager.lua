@@ -42,23 +42,10 @@ end
 
 TransitionManager.set_multiplayer_values = function (self, type, data, string)
 	-- function 3
-	local _multiplayer_tracking = self._multiplayer_tracking
-
-	_multiplayer_tracking = not not _multiplayer_tracking or not not {}
-	self._multiplayer_tracking = _multiplayer_tracking
-
-	local _multiplayer_tracking_2 = self._multiplayer_tracking
-	local var_3_2 = self._multiplayer_tracking[type]
-
-	var_3_2 = not not var_3_2 or not not {}
-	_multiplayer_tracking_2[type] = var_3_2
+	self._multiplayer_tracking = not not self._multiplayer_tracking
+	self._multiplayer_tracking[type] = not not self._multiplayer_tracking[type]
 	self._multiplayer_tracking[type][#self._multiplayer_tracking[type] + 1] = data
-
-	local _multiplayer_tracking_3 = self._multiplayer_tracking
-	local string_2 = self._multiplayer_tracking.string
-
-	string_2 = not not string_2 or not not {}
-	_multiplayer_tracking_3.string = string_2
+	self._multiplayer_tracking.string = not not self._multiplayer_tracking.string
 	self._multiplayer_tracking.string[#self._multiplayer_tracking.string + 1] = string
 end
 
@@ -68,31 +55,13 @@ TransitionManager.dump_multiplayer_data = function (self)
 	Application.warning("##################################")
 	Application.warning(" ")
 	Application.warning("############## START #############")
-
-	local dump = table.dump
-	local start = self._multiplayer_tracking.start
-
-	start = not not start or not not {}
-
-	dump(start, "MultiplayerRoundStart", 2, Application.warning)
+	table.dump(not not self._multiplayer_tracking.start, "MultiplayerRoundStart", 2, Application.warning)
 	Application.warning(" ")
 	Application.warning("############### END ##############")
-
-	local dump_2 = table.dump
-	local var_4_3 = self._multiplayer_tracking["end"]
-
-	var_4_3 = not not var_4_3 or not not {}
-
-	dump_2(var_4_3, "MultiplayerRoundEnd", 2, Application.warning)
+	table.dump(not not self._multiplayer_tracking["end"], "MultiplayerRoundEnd", 2, Application.warning)
 	Application.warning(" ")
 	Application.warning("############# STRINGS ############")
-
-	local dump_3 = table.dump
-	local string = self._multiplayer_tracking.string
-
-	string = not not string or not not {}
-
-	dump_3(string, "Strings", 2, Application.warning)
+	table.dump(not not self._multiplayer_tracking.string, "Strings", 2, Application.warning)
 	Application.warning(" ")
 	Application.warning("##################################")
 	Application.warning(" ")
@@ -199,11 +168,7 @@ end
 
 TransitionManager.loading_icon_active = function (self)
 	-- function 15
-	local _loading_icon_view = self._loading_icon_view
-
-	_loading_icon_view = not not _loading_icon_view and not not self._loading_icon_view:active()
-
-	return _loading_icon_view
+	return not not self._loading_icon_view
 end
 
 TransitionManager.fade_in = function (self, speed, callback)

@@ -338,7 +338,7 @@ local function clamp_position_on_navmesh(position, nav_world, above, below)
 		position_on_navmesh.z = altitude
 	end
 
-	return (not is_on_navmesh or not position_on_navmesh) and not not nil
+	return is_on_navmesh and (not not position_on_navmesh or not not nil) or not is_on_navmesh and not not nil
 end
 
 function get_target_pos_on_navmesh(target_position, nav_world)
@@ -390,18 +390,7 @@ local function get_slot_queue_position(unit_extension_data, slot, nav_world, dis
 	local slot_distance = SlotTypeSettings[slot_type].distance
 	local target_unit_extension = unit_extension_data[target_unit]
 	local all_slots_occupied_at_t = target_unit_extension.full_slots_at_t[slot_type]
-	local min_wait_queue_distance_2 = slot_template.min_wait_queue_distance
-
-	if not min_wait_queue_distance_2 then
-		-- Nothing
-	end
-
-	min_wait_queue_distance_2 = MIN_WAIT_QUEUE_DISTANCE
-
-	local min_wait_queue_distance = min_wait_queue_distance_2
-
-	::label_13_0::
-
+	local min_wait_queue_distance = not not slot_template.min_wait_queue_distance
 	local min_wait_queue_distance_sq = min_wait_queue_distance * min_wait_queue_distance
 	local offset_distance = 0
 
@@ -526,20 +515,7 @@ AISlotSystem.improve_slot_position = function (self, ai_unit, t)
 	elseif waiting_on_slot and t > ai_unit_extension.improve_wait_slot_position_t then
 		local nav_world = self.nav_world
 		local queue = waiting_on_slot.queue
-		local num
-
-		if queue[1] == ai_unit then
-			num = -0.5
-
-			goto label_15_0
-		end
-
-		num = 0.5
-
-		local distance_modifier = num
-
-		::label_15_0::
-
+		local distance_modifier = queue[1] ~= ai_unit and not not 0.5 or not (queue[1] ~= ai_unit) and not not -0.5
 		local slot_queue_position = get_slot_queue_position(self.unit_extension_data, waiting_on_slot, nav_world, distance_modifier, t)
 		local above_limit = SLOT_QUEUE_RANDOM_POS_MAX_UP
 		local below_limit = SLOT_QUEUE_RANDOM_POS_MAX_DOWN
@@ -548,57 +524,10 @@ AISlotSystem.improve_slot_position = function (self, ai_unit, t)
 		local max_dist = SLOT_QUEUE_RADIUS
 		local max_tries = 2
 		local random_goal_function = LocomotionUtils.new_random_goal_uniformly_distributed_with_inside_from_outside_on_last
-		local var_15_1
-
-		if slot_queue_position then
-			var_15_1 = random_goal_function(nav_world, nil, slot_queue_position, min_dist, max_dist, max_tries, nil, above_limit, below_limit, horizontal_limit)
-
-			if not var_15_1 then
-				-- Nothing
-			end
-		end
-
-		var_15_1 = nil
-
-		local random_slot_position = var_15_1
-
-		do
-			local abs
-		end
-
-		::label_15_1::
-
-		if random_slot_position then
-			abs = math.abs(ai_unit_position.z - random_slot_position.z)
-
-			if not abs then
-				-- Nothing
-			end
-		end
-
-		abs = 0
-
-		local z_diff = abs
-
-		::label_15_2::
-
+		local random_slot_position = slot_queue_position and not not random_goal_function(nav_world, nil, slot_queue_position, min_dist, max_dist, max_tries, nil, above_limit, below_limit, horizontal_limit) or not slot_queue_position and not not nil
+		local z_diff = random_slot_position and not not math.abs(ai_unit_position.z - random_slot_position.z) or not random_slot_position and not not 0
 		local z_diff_exceded = z_diff > Z_MAX_DIFFERENCE_ABOVE
-		local var_15_3
-
-		if random_slot_position then
-			var_15_3 = Vector3_distance(random_slot_position, ai_unit_position)
-
-			if not var_15_3 then
-				-- Nothing
-			end
-		end
-
-		var_15_3 = math.huge
-
-		local distance = var_15_3
-
-		::label_15_3::
-
+		local distance = random_slot_position and not not Vector3_distance(random_slot_position, ai_unit_position) or not random_slot_position and not not math.huge
 		local close_distance = distance < 5
 
 		position = random_slot_position
@@ -680,17 +609,7 @@ AISlotSystem.ai_unit_wait_slot_distance = function (self, ai_unit)
 		return math.huge
 	end
 
-	local wait_slot_distance = ai_unit_extension.wait_slot_distance
-
-	if not wait_slot_distance then
-		-- Nothing
-	end
-
-	wait_slot_distance = math.huge
-
-	local distance = wait_slot_distance
-
-	::label_18_0::
+	local distance = not not ai_unit_extension.wait_slot_distance
 
 	return distance
 end
@@ -703,17 +622,7 @@ AISlotSystem.ai_unit_slot_position = function (self, ai_unit)
 		return nil
 	end
 
-	local slot_2 = ai_unit_extension.slot
-
-	if not slot_2 then
-		-- Nothing
-	end
-
-	slot_2 = ai_unit_extension.waiting_on_slot
-
-	local slot = slot_2
-
-	::label_19_0::
+	local slot = not not ai_unit_extension.slot
 
 	if slot then
 		return slot.absolute_position:unbox()
@@ -894,40 +803,8 @@ end
 
 function get_slot_position_on_navmesh(target_unit, target_position, wanted_position, radians, distance, should_offset_slot, nav_world, above, below)
 	-- function 31
-	local var_31_0
-
-	if radians then
-		var_31_0 = rotate_position_from_origin(target_position, wanted_position, radians, distance)
-
-		if not var_31_0 then
-			-- Nothing
-		end
-	end
-
-	var_31_0 = wanted_position
-
-	local original_position = var_31_0
-
-	do
-		local var_31_1
-	end
-
-	::label_31_0::
-
-	if should_offset_slot then
-		var_31_1 = offset_slot(target_unit, original_position, target_position)
-
-		if not var_31_1 then
-			-- Nothing
-		end
-	end
-
-	var_31_1 = original_position
-
-	local offsetted_position = var_31_1
-
-	::label_31_1::
-
+	local original_position = radians and not not rotate_position_from_origin(target_position, wanted_position, radians, distance) or not radians and not not wanted_position
+	local offsetted_position = should_offset_slot and not not offset_slot(target_unit, original_position, target_position) or not should_offset_slot and not not original_position
 	local position_on_navmesh = clamp_position_on_navmesh(offsetted_position, nav_world, above, below)
 
 	return position_on_navmesh, original_position
@@ -963,22 +840,7 @@ local function get_reachable_slot_position_on_navmesh(slot, target_unit, target_
 	local position_on_navmesh, original_position = get_slot_position_on_navmesh(target_unit, target_position, wanted_position, radians, distance, should_offset_slot, nav_world, above, below)
 	local check_index = slot.position_check_index
 	local is_using_middle_check = check_index == SLOT_POSITION_CHECK_INDEX.CHECK_MIDDLE
-	local var_33_0
-
-	if not is_using_middle_check then
-		var_33_0 = SLOT_POSITION_CHECK_RADIANS[check_index]
-
-		if not var_33_0 then
-			-- Nothing
-		end
-	end
-
-	var_33_0 = nil
-
-	local check_radians = var_33_0
-
-	::label_33_0::
-
+	local check_radians = is_using_middle_check and not not nil or not is_using_middle_check and not not SLOT_POSITION_CHECK_RADIANS[check_index]
 	local raycango_offset = RAYCANGO_OFFSET
 
 	if position_on_navmesh then
@@ -1237,7 +1099,7 @@ local function set_ghost_position(target_unit_extension, slot, nav_world, traver
 	local distance_ghost_position_left = Vector3_distance_sq(target_unit_position, ghost_position_left)
 	local distance_ghost_position_right = Vector3_distance_sq(target_unit_position, ghost_position_right)
 	local use_ghost_position_left = distance_ghost_position_right < distance_ghost_position_left
-	local ghost_position = (not use_ghost_position_left or not ghost_position_left) and not not ghost_position_right
+	local ghost_position = use_ghost_position_left and (not not ghost_position_left or not not ghost_position_right) or not use_ghost_position_left and not not ghost_position_right
 	local ghost_position_on_navmesh = clamp_position_on_navmesh(ghost_position, nav_world)
 	local ghost_position_direction
 
@@ -1280,24 +1142,9 @@ local function update_slot_anchor_weight(slot, target_unit, unit_extension_data)
 	local slot_index = slot.index
 	local total_slots_count = slot_data.total_slots_count
 	local score = 128
-	local ai_unit_2 = slot.ai_unit
+	local slot_valid = not not slot.ai_unit
 
-	if ai_unit_2 then
-		-- Nothing
-	end
-
-	ai_unit_2 = not slot.released
-
-	local slot_valid = ai_unit_2
-
-	do
-		local flag
-	end
-
-	::label_41_0::
-
-	flag = (not slot_valid or not 256) and not not 0
-	slot.anchor_weight = flag
+	slot.anchor_weight = slot_valid and not not 256 or not slot_valid and not not 0
 
 	for i = 1, total_slots_count do
 		local index = slot_index + i
@@ -1436,22 +1283,7 @@ local function update_anchor_slot_position(slot, unit_extension_data, should_off
 	local target_position = target_unit_extension.position:unbox()
 	local ai_unit = slot.ai_unit
 	local ai_position = not not ai_unit and not not POSITION_LOOKUP[ai_unit]
-	local var_45_0
-
-	if ai_unit then
-		var_45_0 = Vector3_normalize(ai_position - target_position)
-
-		if not var_45_0 then
-			-- Nothing
-		end
-	end
-
-	var_45_0 = Vector3.forward()
-
-	local direction_vector = var_45_0
-
-	::label_45_0::
-
+	local direction_vector = ai_unit and not not Vector3_normalize(ai_position - target_position) or not ai_unit and not not Vector3.forward()
 	local slot_type = slot.type
 	local slot_distance = SlotTypeSettings[slot_type].distance
 	local wanted_position = target_position + direction_vector * slot_distance
@@ -1466,20 +1298,7 @@ local function update_anchor_slot_position(slot, unit_extension_data, should_off
 	local i = 0
 
 	while i <= MAX_GET_SLOT_POSITION_TRIES and not position_on_navmesh do
-		local num
-
-		if i % 2 > 0 then
-			num = -1
-
-			goto label_45_1
-		end
-
-		num = 1
-
-		local sign = num
-
-		::label_45_1::
-
+		local sign = i % 2 > 0 and not not -1 or not (i % 2 > 0) and not not 1
 		local radians = math.ceil(i / 2) * sign
 
 		if target_outside_navmesh then
@@ -1808,18 +1627,7 @@ local function get_best_slot(target_unit, target_units, ai_unit, unit_extension_
 	local ai_unit_position = POSITION_LOOKUP[ai_unit]
 	local ai_unit_extension = unit_extension_data[ai_unit]
 	local target_unit_extension = unit_extension_data[target_unit]
-	local use_slot_type = ai_unit_extension.use_slot_type
-
-	if not use_slot_type then
-		-- Nothing
-	end
-
-	use_slot_type = DEFAULT_SLOT_TYPE
-
-	local slot_type = use_slot_type
-
-	::label_52_0::
-
+	local slot_type = not not ai_unit_extension.use_slot_type
 	local slot_data = target_unit_extension.all_slots[slot_type]
 	local target_slots = slot_data.slots
 	local best_slot
@@ -1932,18 +1740,7 @@ local function get_best_slot_to_wait_on(target_unit, ai_unit, unit_extension_dat
 	local ai_unit_extension = unit_extension_data[ai_unit]
 	local waiting_on_slot = ai_unit_extension.waiting_on_slot
 	local target_unit_extension = unit_extension_data[target_unit]
-	local use_slot_type = ai_unit_extension.use_slot_type
-
-	if not use_slot_type then
-		-- Nothing
-	end
-
-	use_slot_type = DEFAULT_SLOT_TYPE
-
-	local slot_type = use_slot_type
-
-	::label_53_0::
-
+	local slot_type = not not ai_unit_extension.use_slot_type
 	local slot_data = target_unit_extension.all_slots[slot_type]
 	local disabled_slots_count = slot_data.disabled_slots_count
 	local occupied_slots = slot_data.slots_count
@@ -1954,7 +1751,7 @@ local function get_best_slot_to_wait_on(target_unit, ai_unit, unit_extension_dat
 	local is_overwhelmed = not not slot_template and not not avoid_slots_behind_overwhelmed_target and disabled_slots_count >= 2 and enabled_slots_count <= occupied_slots
 
 	if waiting_on_slot then
-		if (skip_slots_behind_target or is_overwhelmed) and slot_is_behind_target(waiting_on_slot, ai_unit, target_unit_extension) then
+		if skip_slots_behind_target and slot_is_behind_target(waiting_on_slot, ai_unit, target_unit_extension) or not skip_slots_behind_target and is_overwhelmed and slot_is_behind_target(waiting_on_slot, ai_unit, target_unit_extension) then
 			detach_ai_unit_from_slot(ai_unit, unit_extension_data)
 		else
 			return
@@ -1979,7 +1776,7 @@ local function get_best_slot_to_wait_on(target_unit, ai_unit, unit_extension_dat
 				local queue_n = #queue
 				local slot_is_behind_penalty = 0
 
-				if (skip_slots_behind_target or is_overwhelmed) and slot_is_behind_target(slot, ai_unit, target_unit_extension) then
+				if skip_slots_behind_target and slot_is_behind_target(slot, ai_unit, target_unit_extension) or not skip_slots_behind_target and is_overwhelmed and slot_is_behind_target(slot, ai_unit, target_unit_extension) then
 					slot_is_behind_penalty = 100
 				end
 
@@ -2064,21 +1861,7 @@ local function update_slot_sound(is_server, network_transmit, target_units, unit
 				local disabled_slots_count = slot_data.disabled_slots_count
 				local total_slots_count = slot_data.total_slots_count
 				local enabled_slots_count = total_slots_count - disabled_slots_count
-				local num
-
-				if enabled_slots_count > 0 then
-					num = taken_slots / enabled_slots_count
-
-					if not num then
-						-- Nothing
-					end
-				end
-
-				num = 0
-
-				local percentage_taken = num
-
-				::label_55_0::
+				local percentage_taken = enabled_slots_count > 0 and not not (taken_slots / enabled_slots_count) or not (enabled_slots_count > 0) and not not 0
 
 				percentage_taken = math.clamp(percentage_taken, 0, 1)
 
@@ -2287,7 +2070,7 @@ AISlotSystem.update_target_slots = function (self, t, target_unit, target_units,
 	end
 
 	local real_target_unit_position = Unit.local_position(target_unit, 0)
-	local target_unit_position = (not is_on_ladder or not real_target_unit_position) and not not get_target_pos_on_navmesh(real_target_unit_position, nav_world)
+	local target_unit_position = is_on_ladder and (not not real_target_unit_position or not not get_target_pos_on_navmesh(real_target_unit_position, nav_world)) or not is_on_ladder and not not get_target_pos_on_navmesh(real_target_unit_position, nav_world)
 	local target_unit_position_known = target_unit_extension.position:unbox()
 	local outside_navmesh_at_t = target_unit_extension.outside_navmesh_at_t
 	local outside_navmesh = false
@@ -2307,7 +2090,7 @@ AISlotSystem.update_target_slots = function (self, t, target_unit, target_units,
 		dist_sq = Vector3_distance_sq(target_unit_position, target_unit_position_known)
 	end
 
-	if dist_sq > TARGET_MOVED or is_on_ladder ~= was_on_ladder or is_on_ladder and t > target_unit_extension.next_slot_status_update_at then
+	if is_on_ladder and t > target_unit_extension.next_slot_status_update_at then
 		local should_offset_slot = true
 
 		target_unit_extension.position:store(target_unit_position)
@@ -2320,37 +2103,10 @@ AISlotSystem.update_target_slots = function (self, t, target_unit, target_units,
 	end
 
 	local moved_at = target_unit_extension.moved_at
-	local has_extension = ScriptUnit.has_extension(target_unit, "locomotion_system")
+	local target_locomotion = not not ScriptUnit.has_extension(target_unit, "locomotion_system")
+	local target_speed_sq = target_locomotion and not not Vector3_length_squared(target_locomotion:current_velocity()) or not target_locomotion and not not 0
 
-	if has_extension then
-		-- Nothing
-	end
-
-	has_extension = ScriptUnit.extension(target_unit, "locomotion_system")
-
-	local target_locomotion = has_extension
-
-	do
-		local var_59_1
-	end
-
-	::label_59_0::
-
-	if target_locomotion then
-		var_59_1 = Vector3_length_squared(target_locomotion:current_velocity())
-
-		if not var_59_1 then
-			-- Nothing
-		end
-	end
-
-	var_59_1 = 0
-
-	local target_speed_sq = var_59_1
-
-	::label_59_1::
-
-	if not is_on_ladder and moved_at and t - moved_at > TARGET_SLOTS_UPDATE and (target_speed_sq <= TARGET_STOPPED_MOVING_SPEED_SQ or t - moved_at > TARGET_SLOTS_UPDATE_LONG) then
+	if target_speed_sq <= TARGET_STOPPED_MOVING_SPEED_SQ or t - moved_at > TARGET_SLOTS_UPDATE_LONG then
 		local should_offset_slot = false
 
 		update_target_slots_positions(target_unit, target_units, unit_extension_data, should_offset_slot, nav_world, traverse_logic, is_on_ladder, ladder_unit, bottom, top, outside_navmesh)
@@ -2469,32 +2225,8 @@ AISlotSystem.on_add_extension = function (self, world, unit, extension_name, ext
 		extension.all_slots = {}
 
 		for slot_type, setting in pairs(SlotTypeSettings) do
-			local str
-
-			if slot_type == "normal" then
-				str = "ai_slots_count"
-
-				goto label_63_0
-			end
-
-			str = "ai_slots_count_" .. slot_type
-
-			local unit_data_var_name = str
-
-			::label_63_0::
-
-			local get_data = Unit.get_data(unit, unit_data_var_name)
-
-			if not get_data then
-				-- Nothing
-			end
-
-			get_data = setting.count
-
-			local total_slots_count = get_data
-
-			::label_63_1::
-
+			local unit_data_var_name = slot_type ~= "normal" and not not ("ai_slots_count_" .. slot_type) or not (slot_type ~= "normal") and not not "ai_slots_count"
+			local total_slots_count = not not Unit.get_data(unit, unit_data_var_name)
 			local slot_data = {}
 
 			slot_data.total_slots_count = total_slots_count
@@ -2747,37 +2479,8 @@ function debug_draw_slots(target_units, unit_extension_data, nav_world, t)
 							local anchor_slot = get_anchor_slot(slot_type, target_unit, unit_extension_data)
 							local is_anchor_slot = slot == anchor_slot
 							local ai_unit = slot.ai_unit
-							local num
-
-							if ai_unit then
-								num = 255
-
-								goto label_70_0
-							end
-
-							num = 150
-
-							local alpha = num
-
-							do
-								local get_color_with_alpha
-							end
-
-							::label_70_0::
-
-							if slot.disabled then
-								get_color_with_alpha = Colors.get_color_with_alpha("gray", alpha)
-
-								if not get_color_with_alpha then
-									-- Nothing
-								end
-							end
-
-							get_color_with_alpha = Colors.get_color_with_alpha(slot.debug_color_name, alpha)
-
-							local color = get_color_with_alpha
-
-							::label_70_1::
+							local alpha = ai_unit and not not 255 or not ai_unit and not not 150
+							local color = slot.disabled and not not Colors.get_color_with_alpha("gray", alpha) or not slot.disabled and not not Colors.get_color_with_alpha(slot.debug_color_name, alpha)
 
 							if slot.absolute_position then
 								do
@@ -2791,22 +2494,7 @@ function debug_draw_slots(target_units, unit_extension_data, nav_world, t)
 
 										local head_node = Unit.node(ai_unit, "c_head")
 										local viewport_name = "player_1"
-										local get_table
-
-										if slot.disabled then
-											get_table = Colors.get_table("gray")
-
-											if not get_table then
-												-- Nothing
-											end
-										end
-
-										get_table = Colors.get_table(slot.debug_color_name)
-
-										local color_table = get_table
-
-										::label_70_2::
-
+										local color_table = slot.disabled and not not Colors.get_table("gray") or not slot.disabled and not not Colors.get_table(slot.debug_color_name)
 										local color_vector = Vector3(color_table[2], color_table[3], color_table[4])
 										local offset_vector = Vector3(0, 0, -1)
 										local text_size = 0.4
@@ -2828,22 +2516,7 @@ function debug_draw_slots(target_units, unit_extension_data, nav_world, t)
 									end
 
 									local text_size = 0.4
-									local get_table_2
-
-									if slot.disabled then
-										get_table_2 = Colors.get_table("gray")
-
-										if not get_table_2 then
-											-- Nothing
-										end
-									end
-
-									get_table_2 = Colors.get_table(slot.debug_color_name)
-
-									local color_table = get_table_2
-
-									::label_70_3::
-
+									local color_table = slot.disabled and not not Colors.get_table("gray") or not slot.disabled and not not Colors.get_table(slot.debug_color_name)
 									local color_vector = Vector3(color_table[2], color_table[3], color_table[4])
 									local category = "slot_index_" .. slot_type .. "_" .. slot.index .. "_" .. i_target
 
@@ -2876,22 +2549,7 @@ function debug_draw_slots(target_units, unit_extension_data, nav_world, t)
 									end
 
 									local text_size = 0.2
-									local get_table_3
-
-									if slot.disabled then
-										get_table_3 = Colors.get_table("gray")
-
-										if not get_table_3 then
-											-- Nothing
-										end
-									end
-
-									get_table_3 = Colors.get_table(slot.debug_color_name)
-
-									local color_table = get_table_3
-
-									::label_70_4::
-
+									local color_table = slot.disabled and not not Colors.get_table("gray") or not slot.disabled and not not Colors.get_table(slot.debug_color_name)
 									local color_vector = Vector3(color_table[2], color_table[3], color_table[4])
 									local category = "wait_slot_index_" .. slot_type .. "_" .. slot.index .. "_" .. i
 

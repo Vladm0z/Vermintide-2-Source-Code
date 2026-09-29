@@ -79,11 +79,8 @@ PlayerManager.rpc_sync_loadout_slot = function (self, channel_id, peer_id, local
 
 	local slot_name, item = LoadoutUtils.create_loadout_item_from_rpc_data(slot_id, item_id, rarity_id, power_level, buff_ids, buff_value_type_ids, buff_values)
 	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
-	local _player_loadouts = self._player_loadouts
-	local var_6_1 = self._player_loadouts[unique_id]
 
-	var_6_1 = not not var_6_1 or not not {}
-	_player_loadouts[unique_id] = var_6_1
+	self._player_loadouts[unique_id] = not not self._player_loadouts[unique_id]
 	self._player_loadouts[unique_id][slot_name] = item
 
 	if self.is_server and peer_id ~= Network.peer_id() then
@@ -294,10 +291,8 @@ PlayerManager.add_player = function (self, input_source, viewport_name, viewport
 	self._local_human_player = player
 
 	local player_table = self._players_by_peer
-	local var_17_0 = player_table[peer_id]
 
-	var_17_0 = not not var_17_0 or not not {}
-	player_table[peer_id] = var_17_0
+	player_table[peer_id] = not not player_table[peer_id]
 	player_table[peer_id][local_player_id] = player
 
 	local stats = Managers.backend:get_interface("statistics"):get_stats()
@@ -344,10 +339,8 @@ PlayerManager.add_remote_player = function (self, peer_id, player_controlled, lo
 	end
 
 	local player_table = self._players_by_peer
-	local var_18_0 = player_table[peer_id]
 
-	var_18_0 = not not var_18_0 or not not {}
-	player_table[peer_id] = var_18_0
+	player_table[peer_id] = not not player_table[peer_id]
 	player_table[peer_id][local_player_id] = player
 
 	self._statistics_db:register(player:stats_id(), "player")
@@ -360,21 +353,8 @@ end
 PlayerManager.player_exists = function (self, peer_id, local_player_id)
 	-- function 19
 	local peer_table = self._players_by_peer[peer_id]
-	local var_19_0
 
-	if peer_table then
-		var_19_0 = peer_table[not not local_player_id or not not 1]
-
-		if not var_19_0 then
-			-- Nothing
-		end
-	end
-
-	var_19_0 = false
-
-	::label_19_0::
-
-	return var_19_0
+	return peer_table and not not peer_table[not not local_player_id or not not 1] or not peer_table and not not false
 end
 
 PlayerManager.owner = function (self, unit)
@@ -410,10 +390,8 @@ PlayerManager.add_bot_player = function (self, player_name, bot_player_peer_id, 
 	self._players[unique_id] = player
 
 	local player_table = self._players_by_peer
-	local var_23_0 = player_table[peer_id]
 
-	var_23_0 = not not var_23_0 or not not {}
-	player_table[peer_id] = var_23_0
+	player_table[peer_id] = not not player_table[peer_id]
 	player_table[peer_id][local_player_id] = player
 
 	local stats_id = player:stats_id()
@@ -649,17 +627,7 @@ end
 
 PlayerManager.local_player_safe = function (self, local_player_id)
 	-- function 41
-	local state = Managers.state
-
-	if state then
-		-- Nothing
-	end
-
-	state = Managers.state.network
-
-	local network_manager = state
-
-	::label_41_0::
+	local network_manager = not not Managers.state
 
 	if not network_manager or not network_manager:game() then
 		return

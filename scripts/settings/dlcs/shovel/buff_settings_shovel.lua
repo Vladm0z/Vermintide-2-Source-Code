@@ -66,14 +66,7 @@ local function _spawn_skeleton_ability_fx(source_unit, target_position, buff, wo
 	-- function 3
 	World.create_particles(world, "fx/necromancer_summon_decal", target_position)
 
-	local fx_spline_ids = buff.fx_spline_ids
-
-	fx_spline_ids = not not fx_spline_ids or not not {
-		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_1"),
-		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_2"),
-		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_3")
-	}
-	buff.fx_spline_ids = fx_spline_ids
+	buff.fx_spline_ids = not not buff.fx_spline_ids
 
 	local fx_name_id = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_first"]
 	local start_pos = POSITION_LOOKUP[source_unit] + Vector3.up() * 0.5
@@ -157,7 +150,7 @@ local function _on_death_damage_nearby(owner_unit, buff, params, world)
 				strengh = 3
 			end
 
-			if (not breed.primary_armor_category or breed.primary_armor_category ~= 6) and breed.armor_category == 6 then
+			if breed.primary_armor_category and (breed.primary_armor_category == 6 or breed.armor_category == 6) or not breed.primary_armor_category and breed.armor_category == 6 then
 				strengh = 4
 			end
 
@@ -202,25 +195,13 @@ local function _on_death_damage_nearby(owner_unit, buff, params, world)
 					500
 				}
 			}
-			local var_4_0 = damage_lookup[difficulty_name][strengh]
 
-			var_4_0 = not not var_4_0 or not not 1
-			spread_params.external_optional_value = var_4_0
+			spread_params.external_optional_value = not not damage_lookup[difficulty_name][strengh]
 
 			enemy_buff_ext:add_buff("necromancer_on_death_delayed_health_damage", spread_params)
 
 			local target_position
-			local has_node = Unit.has_node(closest_enemy, "j_spine")
-
-			if has_node then
-				-- Nothing
-			end
-
-			has_node = Unit.node(closest_enemy, "j_spine")
-
-			local spine_node = has_node
-
-			::label_4_0::
+			local spine_node = not not Unit.has_node(closest_enemy, "j_spine")
 
 			if spine_node then
 				target_position = Unit.world_position(closest_enemy, spine_node)
@@ -283,18 +264,7 @@ local function _spawn_skeleton_ability(necromancer_unit, spawn_data, spawn_index
 
 	local radius = ability_radius * 0.8
 	local target_center = spawn_data.target_center:unbox()
-	local seed_2 = spawn_data.seed
-
-	if not seed_2 then
-		-- Nothing
-	end
-
-	seed_2 = math.random_seed()
-
-	local seed = seed_2
-
-	::label_6_0::
-
+	local seed = not not spawn_data.seed
 	local x, y
 
 	spawn_data.seed, x, y = math.get_uniformly_random_point_inside_sector_seeded(seed, 0, radius, 0, 2 * math.pi)
@@ -947,20 +917,7 @@ settings.proc_functions = {
 
 		local sounds_to_play = buff.template.sounds_to_play
 		local sound_to_play = sounds_to_play[math.random(1, #sounds_to_play)]
-		local str
-
-		if Unit.has_node(hit_unit, "j_spine") then
-			str = "j_spine"
-
-			goto label_19_0
-		end
-
-		str = nil
-
-		local node = str
-
-		::label_19_0::
-
+		local node = Unit.has_node(hit_unit, "j_spine") and not not "j_spine" or not Unit.has_node(hit_unit, "j_spine") and not not nil
 		local audio_system = Managers.state.entity:system("audio_system")
 
 		audio_system:play_audio_unit_event(sound_to_play, hit_unit, node)
@@ -1242,17 +1199,7 @@ settings.proc_functions = {
 	execute_man_sized_enemy = function (unit, buff, params)
 		-- function 35
 		local hit_unit = params[1]
-		local var_35_0 = ALIVE[hit_unit]
-
-		if var_35_0 then
-			-- Nothing
-		end
-
-		var_35_0 = Unit.get_data(hit_unit, "breed")
-
-		local breed = var_35_0
-
-		::label_35_0::
+		local breed = not not ALIVE[hit_unit]
 
 		if not breed or breed.boss then
 			return false
@@ -1320,17 +1267,7 @@ settings.buff_function_templates = {
 			return
 		end
 
-		local knocked_down_players = buff.knocked_down_players
-
-		if not knocked_down_players then
-			-- Nothing
-		end
-
-		knocked_down_players = {}
-
-		local tracked_players = knocked_down_players
-
-		::label_39_0::
+		local tracked_players = not not buff.knocked_down_players
 
 		buff.knocked_down_players = tracked_players
 
@@ -1463,20 +1400,7 @@ settings.buff_function_templates = {
 
 			if node then
 				local node_rotation = Unit.local_rotation(unit, Unit.node(unit, "j_spine"))
-				local from_euler_angles_xyz = Quaternion.from_euler_angles_xyz
-				local offset_rotation_x = template.offset_rotation_x
-
-				offset_rotation_x = not not offset_rotation_x or not not 0
-
-				local offset_rotation_y = template.offset_rotation_y
-
-				offset_rotation_y = not not offset_rotation_y or not not 0
-
-				local offset_rotation_z = template.offset_rotation_z
-
-				offset_rotation_z = not not offset_rotation_z or not not 0
-
-				local offset_rotation = from_euler_angles_xyz(offset_rotation_x, offset_rotation_y, offset_rotation_z)
+				local offset_rotation = Quaternion.from_euler_angles_xyz(not not template.offset_rotation_x, not not template.offset_rotation_y, not not template.offset_rotation_z)
 				local pose = Matrix4x4.from_quaternion(Quaternion.multiply(node_rotation, offset_rotation))
 
 				World.link_particles(world, fx, unit, Unit.node(unit, "j_spine"), pose, "stop")
@@ -1602,22 +1526,7 @@ settings.buff_function_templates = {
 			local pet_position = POSITION_LOOKUP[unit]
 			local player_unit = buff.source_attacker_unit
 			local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
-			local get_career_power_level
-
-			if career_extension then
-				get_career_power_level = career_extension:get_career_power_level()
-
-				if not get_career_power_level then
-					-- Nothing
-				end
-			end
-
-			get_career_power_level = DefaultPowerLevel
-
-			local career_power_level = get_career_power_level
-
-			::label_49_0::
-
+			local career_power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not DefaultPowerLevel
 			local area_damage_system = Managers.state.entity:system("area_damage_system")
 
 			area_damage_system:create_explosion(player_unit, pet_position, Quaternion.identity(), "sienna_necromancer_passive_explosion", 1, "buff", career_power_level, false)
@@ -1695,10 +1604,8 @@ settings.buff_function_templates = {
 	update_anim_movespeed = function (owner_unit, buff, params)
 		-- function 57
 		local pos = POSITION_LOOKUP[owner_unit]
-		local last_pos_2 = buff.last_pos
 
-		last_pos_2 = not not last_pos_2 or not not Vector3Box(pos)
-		buff.last_pos = last_pos_2
+		buff.last_pos = not not buff.last_pos
 
 		local last_pos = buff.last_pos:unbox()
 
@@ -1708,17 +1615,7 @@ settings.buff_function_templates = {
 		local predicted_ms = Vector3.length(pos - last_pos) / dt
 
 		if predicted_ms > 0 then
-			local var_id_2 = buff.var_id
-
-			if not var_id_2 then
-				-- Nothing
-			end
-
-			var_id_2 = Unit.animation_find_variable(owner_unit, "move_speed")
-
-			local var_id = var_id_2
-
-			::label_57_0::
+			local var_id = not not buff.var_id
 
 			buff.var_id = var_id
 
@@ -1740,10 +1637,7 @@ settings.buff_function_templates = {
 	raise_dead_update = function (owner_unit, buff, params, world)
 		-- function 59
 		if buff._spawning_done then
-			local _grace_timer = buff._grace_timer
-
-			_grace_timer = not not _grace_timer or not not (params.time_into_buff + 0.5)
-			buff._grace_timer = _grace_timer
+			buff._grace_timer = not not buff._grace_timer
 
 			if params.time_into_buff > buff._grace_timer then
 				local buff_ext = ScriptUnit.extension(owner_unit, "buff_system")
@@ -1756,11 +1650,7 @@ settings.buff_function_templates = {
 
 		local spawn_data = buff.spawn_data
 		local necromancer_unit = buff.source_attacker_unit
-		local spawn_index_2 = buff.spawn_index
-
-		spawn_index_2 = not not spawn_index_2 or not not 0
-
-		local spawn_index = spawn_index_2 + 1
+		local spawn_index = not not buff.spawn_index + 1
 
 		buff.spawn_index = spawn_index
 
@@ -1805,22 +1695,7 @@ settings.buff_function_templates = {
 		buff.units = {}
 
 		local primary_buff = ScriptUnit.extension(owner_unit, "buff_system"):get_buff_type("raise_dead_ability")
-		local duration_2
-
-		if primary_buff then
-			duration_2 = primary_buff.duration
-
-			if not duration_2 then
-				-- Nothing
-			end
-		end
-
-		duration_2 = math.huge
-
-		local duration = duration_2
-
-		::label_61_0::
-
+		local duration = primary_buff and not not primary_buff.duration or not primary_buff and not not math.huge
 		local unit_name_index, pos_x, pos_y, rot_angle
 		local decals_to_spawn = template.num_small_decals
 
@@ -2003,35 +1878,8 @@ settings.buff_function_templates = {
 		Unit.set_local_scale(new_unit, 0, Vector3(random_scale, random_scale, random_scale))
 
 		local t = Managers.time:time("game")
-		local num
-
-		if dist_from_center < 1.5 then
-			num = 1.5
-
-			goto label_65_0
-		end
-
-		num = 0.6
-
-		local min_delay = num
-
-		do
-			local num_2
-		end
-
-		::label_65_0::
-
-		if dist_from_center < 1.5 then
-			num_2 = 3
-
-			goto label_65_1
-		end
-
-		num_2 = 0.8
-
-		local max_delay = num_2
-
-		::label_65_1::
+		local min_delay = dist_from_center < 1.5 and not not 1.5 or not (dist_from_center < 1.5) and not not 0.6
+		local max_delay = dist_from_center < 1.5 and not not 3 or not (dist_from_center < 1.5) and not not 0.8
 
 		return t + math.random(min_delay, max_delay)
 	end

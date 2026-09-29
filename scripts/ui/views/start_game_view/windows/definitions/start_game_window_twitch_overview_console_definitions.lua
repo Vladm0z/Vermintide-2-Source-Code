@@ -1009,22 +1009,7 @@ function create_twitch_rect_with_outer_frame(scenegraph_id, size, frame_style, l
 		255
 	}
 
-	local var_14_0
-
-	if frame_style then
-		var_14_0 = UIFrameSettings[frame_style]
-
-		if not var_14_0 then
-			-- Nothing
-		end
-	end
-
-	var_14_0 = UIFrameSettings.frame_outer_fade_02
-
-	local frame_settings = var_14_0
-
-	::label_14_0::
-
+	local frame_settings = frame_style and not not UIFrameSettings[frame_style] or not frame_style and not not UIFrameSettings.frame_outer_fade_02
 	local edge_height = frame_settings.texture_sizes.horizontal[2]
 	local frame_size = {
 		size[1] + edge_height * 2,
@@ -1130,23 +1115,7 @@ end
 
 local function disconnected_content_check_function(content)
 	-- function 18
-	local is_connected
-
-	if not Managers.twitch:is_connecting() then
-		is_connected = Managers.twitch:is_connected()
-
-		if is_connected then
-			is_connected = not Managers.input:is_device_active("gamepad")
-		end
-	else
-		is_connected = false
-	end
-
-	if false then
-		is_connected = true
-	end
-
-	return is_connected
+	return not Managers.twitch:is_connecting() and not not Managers.twitch:is_connected()
 end
 
 local streaming_desc_str = "start_game_window_twitch_connect_description"

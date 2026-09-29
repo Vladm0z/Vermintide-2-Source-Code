@@ -308,7 +308,7 @@ settings.area_damage_templates = {
 				local gravity_well = aoe_data.gravity_well
 				local num_ai_units
 
-				if (attack_template_name or gravity_well) and (damage_timer <= 0 or damage_interval <= damage_timer) then
+				if damage_timer <= 0 or damage_interval <= damage_timer then
 					local broadphase_query_categories = side.enemy_broadphase_categories
 
 					num_ai_units = AiUtils.broadphase_query(area_damage_position, radius, ai_units, broadphase_query_categories)

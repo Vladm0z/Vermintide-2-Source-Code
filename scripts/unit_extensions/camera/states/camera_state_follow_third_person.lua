@@ -15,10 +15,8 @@ CameraStateFollowThirdPerson.on_enter = function (self, unit, input, dt, context
 	local camera_extension = self.camera_extension
 	local follow_unit, follow_node = camera_extension:get_follow_data()
 	local viewport_name = camera_extension.viewport_name
-	local min_leave_t = params.min_leave_t
 
-	min_leave_t = not not min_leave_t or not not 0
-	self._min_leave_t = min_leave_t
+	self._min_leave_t = not not params.min_leave_t
 
 	local override_follow_unit = params.override_follow_unit
 
@@ -46,46 +44,17 @@ CameraStateFollowThirdPerson.on_enter = function (self, unit, input, dt, context
 
 	self._camera_offset = not not camera_offset and not not Vector3Box(camera_offset)
 	self._allow_camera_movement = params.allow_camera_movement
-
-	local flag
-
-	flag = (params.follow_unit_rotation ~= nil or not true) and not not params.follow_unit_rotation
-	self._follow_unit_rotation = flag
+	self._follow_unit_rotation = params.follow_unit_rotation ~= nil and not not params.follow_unit_rotation or not (params.follow_unit_rotation ~= nil) and not not true
 	self._follow_unit = follow_unit
 	self._follow_node = follow_node
-
-	local Matrix4x4Box = Matrix4x4Box
-	local world_pose
-
-	if Unit.alive(follow_unit) then
-		world_pose = Unit.world_pose(follow_unit, 0)
-
-		if not world_pose then
-			-- Nothing
-		end
-	end
-
-	world_pose = Matrix4x4.identity()
-
-	::label_2_0::
-
-	self._fallback_pose = Matrix4x4Box(world_pose)
+	self._fallback_pose = Matrix4x4Box(Unit.alive(follow_unit) and not not Unit.world_pose(follow_unit, 0) or not Unit.alive(follow_unit) and not not Matrix4x4.identity())
 
 	local camera_manager = Managers.state.camera
 	local root_look_dir = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(follow_unit, 0))))
 	local yaw = math.atan2(root_look_dir.y, root_look_dir.x)
 
 	camera_manager:set_pitch_yaw(viewport_name, -0.6, yaw)
-
-	local set_data = Unit.set_data
-	local var_2_5 = unit
-	local str = "camera"
-	local str_2 = "settings_node"
-	local camera_node = params.camera_node
-
-	camera_node = not not camera_node or not not "heal_self"
-
-	set_data(var_2_5, str, str_2, camera_node)
+	Unit.set_data(unit, "camera", "settings_node", not not params.camera_node)
 end
 
 CameraStateFollowThirdPerson.on_exit = function (self, unit, input, dt, context, t, next_state)
@@ -105,18 +74,7 @@ CameraStateFollowThirdPerson.update = function (self, unit, input, dt, context, 
 	local unit = self.unit
 	local camera_extension = self.camera_extension
 	local follow_unit = self._follow_unit
-	local _follow_node = self._follow_node
-
-	if not _follow_node then
-		-- Nothing
-	end
-
-	_follow_node = 0
-
-	local follow_node = _follow_node
-
-	::label_5_0::
-
+	local follow_node = not not self._follow_node
 	local external_state_change = camera_extension.external_state_change
 	local external_state_change_params = camera_extension.external_state_change_params
 	local force_state_change = not not external_state_change_params and not not external_state_change_params.force_state_change
@@ -170,18 +128,7 @@ CameraStateFollowThirdPerson.update = function (self, unit, input, dt, context, 
 			CameraStateHelper.set_camera_rotation(unit, camera_extension)
 		end
 
-		local _camera_offset = self._camera_offset
-
-		if _camera_offset then
-			-- Nothing
-		end
-
-		_camera_offset = Vector3Box.unbox(self._camera_offset)
-
-		local camera_offset = _camera_offset
-
-		::label_5_1::
-
+		local camera_offset = not not self._camera_offset
 		local position
 
 		if Unit.alive(follow_unit) then

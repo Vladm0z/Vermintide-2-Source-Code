@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_bw_adept.lua
 
-local WeaveLoadoutSettings = WeaveLoadoutSettings
-
-WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
-WeaveLoadoutSettings = WeaveLoadoutSettings
+WeaveLoadoutSettings = not not WeaveLoadoutSettings
 
 local profile_name = "bright_wizard"
 local talent_index = CareerSettings.bw_adept.talent_tree_index

@@ -91,42 +91,9 @@ ActionMultiShoot._shoot = function (self, num_shots_total, num_shots_this_frame)
 	local world = self.world
 	local physics_world = self.physics_world
 	local check_buffs = self._check_buffs
-	local num_layers_spread_2 = current_action.num_layers_spread
-
-	if not num_layers_spread_2 then
-		-- Nothing
-	end
-
-	num_layers_spread_2 = 1
-
-	local num_layers_spread = num_layers_spread_2
-
-	::label_6_0::
-
-	local bullseye_2 = current_action.bullseye
-
-	if not bullseye_2 then
-		-- Nothing
-	end
-
-	bullseye_2 = false
-
-	local bullseye = bullseye_2
-
-	::label_6_1::
-
-	local spread_pitch_2 = current_action.spread_pitch
-
-	if not spread_pitch_2 then
-		-- Nothing
-	end
-
-	spread_pitch_2 = 0.8
-
-	local spread_pitch = spread_pitch_2
-
-	::label_6_2::
-
+	local num_layers_spread = not not current_action.num_layers_spread
+	local bullseye = not not current_action.bullseye
+	local spread_pitch = not not current_action.spread_pitch
 	local weapon_unit = self.weapon_unit
 	local item_name = self.item_name
 	local owner_unit = self.owner_unit
@@ -150,17 +117,7 @@ ActionMultiShoot._shoot = function (self, num_shots_total, num_shots_this_frame)
 				self.shield_users_blocking[data.blocked_by_unit] = true
 			end
 
-			local var_6_3 = result[#result][1]
-
-			if not var_6_3 then
-				-- Nothing
-			end
-
-			var_6_3 = current_position + direction * current_action.range
-
-			local hit_position = var_6_3
-
-			::label_6_3::
+			local hit_position = not not result[#result][1]
 
 			unit_set_flow_variable(weapon_unit, "hit_position", hit_position)
 			unit_set_flow_variable(weapon_unit, "fire_position", current_position)
@@ -187,19 +144,7 @@ ActionMultiShoot.finish = function (self, reason)
 		status_extension:set_zooming(false)
 
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local flag
-
-		if not reload_when_out_of_ammo_condition_func then
-			flag = true
-
-			goto label_7_0
-		end
-
-		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-		local do_out_of_ammo_reload = flag
-
-		::label_7_0::
+		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			ammo_extension:start_reload(true)

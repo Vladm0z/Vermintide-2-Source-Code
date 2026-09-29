@@ -42,22 +42,7 @@ StatusEffectManager.set_status = function (self, unit, status_name, reason, valu
 
 		if breed then
 			local status_settings = breed.status_effect_settings
-			local ignored_statuses_2
-
-			if status_settings then
-				ignored_statuses_2 = status_settings.ignored_statuses
-
-				if not ignored_statuses_2 then
-					-- Nothing
-				end
-			end
-
-			ignored_statuses_2 = EMPTY_TABLE
-
-			local ignored_statuses = ignored_statuses_2
-
-			::label_5_0::
-
+			local ignored_statuses = status_settings and not not status_settings.ignored_statuses or not status_settings and not not EMPTY_TABLE
 			local is_critter = CRITTER[breed.name]
 
 			if ignored_statuses[status_name] or is_critter then
@@ -80,13 +65,7 @@ StatusEffectManager.set_status = function (self, unit, status_name, reason, valu
 			status_by_unit[unit] = statuses
 		end
 
-		local var_5_1 = statuses[status_name]
-
-		var_5_1 = not not var_5_1 or not not {
-			reasons = {},
-			frame_index = GLOBAL_FRAME_INDEX
-		}
-		statuses[status_name] = var_5_1
+		statuses[status_name] = not not statuses[status_name]
 
 		local status_data = statuses[status_name]
 
@@ -100,29 +79,8 @@ StatusEffectManager.set_status = function (self, unit, status_name, reason, valu
 			status_template.on_increment(unit, reason, status_template, self._world, status_data.apply_data)
 		end
 	elseif statuses then
-		local var_5_2 = statuses[status_name]
-
-		if not var_5_2 then
-			-- Nothing
-		end
-
-		var_5_2 = EMPTY_TABLE
-
-		local status_data = var_5_2
-
-		::label_5_1::
-
-		local reasons_2 = status_data.reasons
-
-		if not reasons_2 then
-			-- Nothing
-		end
-
-		reasons_2 = EMPTY_TABLE
-
-		local reasons = reasons_2
-
-		::label_5_2::
+		local status_data = not not statuses[status_name]
+		local reasons = not not status_data.reasons
 
 		if reasons[reason] then
 			reasons[reason] = nil
@@ -203,17 +161,7 @@ StatusEffectManager.remove_all_statuses = function (self, unit, disable_further_
 		self._blacklisted_units[unit] = true
 	end
 
-	local var_9_0 = self._statuses_by_unit[unit]
-
-	if not var_9_0 then
-		-- Nothing
-	end
-
-	var_9_0 = EMPTY_TABLE
-
-	local statuses = var_9_0
-
-	::label_9_0::
+	local statuses = not not self._statuses_by_unit[unit]
 
 	for status_name, apply_data in pairs(statuses) do
 		for handle in pairs(apply_data.reasons) do
@@ -251,7 +199,7 @@ StatusEffectManager.unit_is_burning = function (self, unit)
 	local burning_elven, applied_this_frame_elven = self:has_status(unit, StatusEffectNames.burning_elven_magic)
 	local burning_warpfire, applied_this_frame_warpfire = self:has_status(unit, StatusEffectNames.burning_warpfire)
 	local burning = not not burning_normal or not not burning_balefire or not not burning_elven or not not burning_warpfire
-	local applied_this_frame = not not burning and (not burning_normal or not not applied_this_frame_normal) and (not burning_balefire or not not applied_this_frame_balefire) and (not burning_elven or not not applied_this_frame_elven) and not burning_warpfire or not not applied_this_frame_warpfire
+	local applied_this_frame = not burning_warpfire or not not applied_this_frame_warpfire
 
 	return burning, applied_this_frame
 end

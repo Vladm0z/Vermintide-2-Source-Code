@@ -31,11 +31,7 @@ MatchmakingStateJoinGame.on_enter = function (self, state_context)
 	self.lobby_client = state_context.lobby_client
 	self._makeshift_lobby_data = state_context.profiles_data
 	self._join_lobby_data = state_context.join_lobby_data
-
-	local reserved_party_id = state_context.reserved_party_id
-
-	reserved_party_id = not not reserved_party_id or not not 1
-	self._reserved_party_id = reserved_party_id
+	self._reserved_party_id = not not state_context.reserved_party_id
 	self._makeshift_lobby_data.selected_mission_id = self._join_lobby_data.selected_mission_id
 	self._makeshift_lobby_data.difficulty = self._join_lobby_data.difficulty
 	self._makeshift_lobby_data.reserved_profiles = self.lobby_client:lobby_data("reserved_profiles")
@@ -242,36 +238,8 @@ MatchmakingStateJoinGame._handle_popup_result = function (self, result, t)
 		mm_printf_force("Popup cancelled")
 
 		local player = Managers.player:local_player(1)
-		local reason_2 = result.reason
-
-		if not reason_2 then
-			-- Nothing
-		end
-
-		reason_2 = "timed_out"
-
-		local reason = reason_2
-
-		do
-			local num
-		end
-
-		::label_7_0::
-
-		if self._selected_hero_at_t then
-			num = self._selected_hero_at_t - self._hero_popup_at_t
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		local time_taken = num
-
-		::label_7_1::
-
+		local reason = not not result.reason
+		local time_taken = self._selected_hero_at_t and not not (self._selected_hero_at_t - self._hero_popup_at_t) or not self._selected_hero_at_t and not not 0
 		local is_bad_connection = false
 
 		self._matchmaking_manager:add_broken_lobby_client(self.lobby_client, t, is_bad_connection)
@@ -295,24 +263,7 @@ end
 MatchmakingStateJoinGame.get_transition = function (self)
 	-- function 8
 	if self._join_lobby_data and self._next_transition_state then
-		local join_method_2 = self._join_lobby_data.join_method
-
-		if not join_method_2 then
-			-- Nothing
-		end
-
-		join_method_2 = self.search_config
-
-		if join_method_2 then
-			-- Nothing
-		end
-
-		join_method_2 = self.search_config.join_method
-
-		local join_method = join_method_2
-
-		::label_8_0::
-
+		local join_method = not not self._join_lobby_data.join_method
 		local start_lobby_data = {
 			lobby_client = self.lobby_client,
 			join_method = join_method
@@ -357,10 +308,7 @@ end
 
 MatchmakingStateJoinGame._update_popup_timeout = function (self, dt, t)
 	-- function 10
-	local _popup_auto_cancel_time = self._popup_auto_cancel_time
-
-	_popup_auto_cancel_time = not not _popup_auto_cancel_time or not not (t + MatchmakingSettings.JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL)
-	self._popup_auto_cancel_time = _popup_auto_cancel_time
+	self._popup_auto_cancel_time = not not self._popup_auto_cancel_time
 
 	if t > self._popup_auto_cancel_time then
 		local status_message = "matchmaking_status_character_select_timed_out"

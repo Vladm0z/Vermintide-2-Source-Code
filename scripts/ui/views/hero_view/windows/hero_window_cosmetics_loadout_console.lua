@@ -103,11 +103,8 @@ HeroWindowCosmeticsLoadoutConsole.create_ui_elements = function (self, params, o
 
 	for _, slot in pairs(slots) do
 		local index = slot.cosmetic_index
-		local str = "layout_" .. tostring(index) .. "_1"
-		local layout_name = slot.layout_name
 
-		layout_name = not not layout_name or not not DEFAULT_COSMETICS_LAYOUT
-		loadout_grid_widget_content[str] = layout_name
+		loadout_grid_widget_content["layout_" .. tostring(index) .. "_1"] = not not slot.layout_name
 	end
 end
 
@@ -354,17 +351,7 @@ HeroWindowCosmeticsLoadoutConsole._setup_slot_icons = function (self)
 			local item_tooltip_name = "item_tooltip" .. name_sufix
 			local slot_icon_name = "slot_icon" .. name_sufix
 			local slot_type = slot.type
-			local var_18_0 = slot_icon_by_type[slot_type]
-
-			if not var_18_0 then
-				-- Nothing
-			end
-
-			var_18_0 = "tabs_icon_all_selected"
-
-			local icon_texture = var_18_0
-
-			::label_18_0::
+			local icon_texture = not not slot_icon_by_type[slot_type]
 
 			content[slot_icon_name] = icon_texture
 		end
@@ -624,21 +611,9 @@ HeroWindowCosmeticsLoadoutConsole._highlight_equipment_slot_by_type = function (
 
 			slot_hotspot.highlight = enabled
 
-			local num
+			local alpha = slot_hotspot.internal_is_hover and not not 255 or not slot_hotspot.internal_is_hover and not not 100
 
-			if slot_hotspot.internal_is_hover then
-				num = 255
-
-				goto label_29_0
-			end
-
-			num = 100
-
-			local alpha = num
-
-			::label_29_0::
-
-			style[slot_hover_name].color[1] = (not enabled or not alpha) and not not 255
+			style[slot_hover_name].color[1] = enabled and (not not alpha or not not 255) or not enabled and not not 255
 		end
 	end
 end

@@ -1,10 +1,6 @@
 -- chunkname: @scripts/unit_extensions/generic/generic_state_machine.lua
 
-local script_data = script_data
-local debug_state_machines = script_data.debug_state_machines
-
-debug_state_machines = not not debug_state_machines or not not Development.parameter("debug_state_machines")
-script_data.debug_state_machines = debug_state_machines
+script_data.debug_state_machines = not not script_data.debug_state_machines
 
 local no_write_meta = {
 	__index = function (t, k)
@@ -66,19 +62,8 @@ GenericStateMachine.update = function (self, unit, input, dt, context, t)
 		self.state_current:on_exit(unit, input, dt, context, t, self.state_next, is_destroy)
 
 		local state = self.states[self.state_next]
-		local var_7_0 = state
-		local on_enter = state.on_enter
-		local var_7_2 = unit
-		local var_7_3 = input
-		local var_7_4 = dt
-		local var_7_5 = context
-		local var_7_6 = t
-		local name = self.state_current.name
-		local state_next_params = self.state_next_params
 
-		state_next_params = not not state_next_params or not not self.dummy_params
-
-		on_enter(var_7_0, var_7_2, var_7_3, var_7_4, var_7_5, var_7_6, name, state_next_params)
+		state:on_enter(unit, input, dt, context, t, self.state_current.name, not not self.state_next_params)
 
 		self.state_current = state
 		self.state_next = nil
@@ -112,19 +97,5 @@ end
 
 GenericStateMachine.current_state = function (self)
 	-- function 10
-	local name
-
-	if self.state_current then
-		name = self.state_current.name
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "none"
-
-	::label_10_0::
-
-	return name
+	return self.state_current and not not self.state_current.name or not self.state_current and not not "none"
 end

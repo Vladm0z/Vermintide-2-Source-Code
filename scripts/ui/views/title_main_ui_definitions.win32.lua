@@ -837,7 +837,8 @@ local function create_engage_prompt(ui_renderer)
 	local press_offset_x = -total_size * 0.5 + press_text_width * 0.5
 	local button_offset = -total_size * 0.5 + button_size[1] * 0.5 + press_text_width + spacing + button_alignment
 	local to_start_offset = button_offset + button_size[1] * 0.5 + spacing + to_start_width * 0.5
-	local tbl = {
+
+	return {
 		scenegraph_id = "engage_prompt",
 		element = {
 			passes = {
@@ -914,176 +915,170 @@ local function create_engage_prompt(ui_renderer)
 					end
 				}
 			}
+		},
+		content = {
+			press_to_start = "press_any_button_to_continue",
+			press_str = press_str,
+			button_id = IS_PS4 and not not "ps4_button_icon_cross_large" or not IS_PS4 and not not "xbone_button_icon_a_large",
+			to_start_str = to_start_str
+		},
+		style = {
+			press_to_start = {
+				vertical_alignment = "center",
+				localize = true,
+				horizontal_alignment = "center",
+				word_wrap = false,
+				font_size = font_size,
+				font_type = font_type,
+				text_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					0
+				}
+			},
+			press = {
+				vertical_alignment = "center",
+				localize = false,
+				horizontal_alignment = "center",
+				word_wrap = false,
+				font_size = font_size,
+				font_type = font_type,
+				text_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					press_offset_x,
+					0,
+					0
+				}
+			},
+			to_start = {
+				vertical_alignment = "center",
+				localize = false,
+				horizontal_alignment = "center",
+				word_wrap = false,
+				font_size = font_size,
+				font_type = font_type,
+				text_color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					to_start_offset,
+					0,
+					0
+				}
+			},
+			button = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				texture_size = button_size,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					button_offset,
+					0,
+					0
+				}
+			},
+			rect_press = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				texture_size = {
+					press_text_width,
+					30
+				},
+				color = {
+					255,
+					255,
+					0,
+					0
+				},
+				offset = {
+					press_offset_x,
+					50,
+					0
+				}
+			},
+			rect_button = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				texture_size = {
+					button_size[1],
+					30
+				},
+				color = {
+					255,
+					0,
+					255,
+					0
+				},
+				offset = {
+					button_offset,
+					50,
+					0
+				}
+			},
+			rect_to_start = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				texture_size = {
+					to_start_width,
+					30
+				},
+				color = {
+					255,
+					0,
+					0,
+					255
+				},
+				offset = {
+					to_start_offset,
+					50,
+					0
+				}
+			},
+			rect_total = {
+				vertical_alignment = "center",
+				horizontal_alignment = "center",
+				texture_size = {
+					total_size,
+					30
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					100,
+					0
+				}
+			}
+		},
+		offset = {
+			0,
+			-375,
+			0
 		}
 	}
-	local tbl_2 = {
-		press_to_start = "press_any_button_to_continue",
-		press_str = press_str
-	}
-	local flag
-
-	flag = (not IS_PS4 or not "ps4_button_icon_cross_large") and not not "xbone_button_icon_a_large"
-	tbl_2.button_id = flag
-	tbl_2.to_start_str = to_start_str
-	tbl.content = tbl_2
-	tbl.style = {
-		press_to_start = {
-			vertical_alignment = "center",
-			localize = true,
-			horizontal_alignment = "center",
-			word_wrap = false,
-			font_size = font_size,
-			font_type = font_type,
-			text_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				0,
-				0
-			}
-		},
-		press = {
-			vertical_alignment = "center",
-			localize = false,
-			horizontal_alignment = "center",
-			word_wrap = false,
-			font_size = font_size,
-			font_type = font_type,
-			text_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				press_offset_x,
-				0,
-				0
-			}
-		},
-		to_start = {
-			vertical_alignment = "center",
-			localize = false,
-			horizontal_alignment = "center",
-			word_wrap = false,
-			font_size = font_size,
-			font_type = font_type,
-			text_color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				to_start_offset,
-				0,
-				0
-			}
-		},
-		button = {
-			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			texture_size = button_size,
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				button_offset,
-				0,
-				0
-			}
-		},
-		rect_press = {
-			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			texture_size = {
-				press_text_width,
-				30
-			},
-			color = {
-				255,
-				255,
-				0,
-				0
-			},
-			offset = {
-				press_offset_x,
-				50,
-				0
-			}
-		},
-		rect_button = {
-			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			texture_size = {
-				button_size[1],
-				30
-			},
-			color = {
-				255,
-				0,
-				255,
-				0
-			},
-			offset = {
-				button_offset,
-				50,
-				0
-			}
-		},
-		rect_to_start = {
-			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			texture_size = {
-				to_start_width,
-				30
-			},
-			color = {
-				255,
-				0,
-				0,
-				255
-			},
-			offset = {
-				to_start_offset,
-				50,
-				0
-			}
-		},
-		rect_total = {
-			vertical_alignment = "center",
-			horizontal_alignment = "center",
-			texture_size = {
-				total_size,
-				30
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				100,
-				0
-			}
-		}
-	}
-	tbl.offset = {
-		0,
-		-375,
-		0
-	}
-
-	return tbl
 end
 
 UIWidgets.create_game_type_text = function (text, scenegraph_id, size, color)

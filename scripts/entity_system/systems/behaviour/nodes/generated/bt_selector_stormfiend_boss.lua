@@ -55,17 +55,7 @@ BTSelector_stormfiend_boss.run = function (self, unit, blackboard, t, dt)
 	do
 		local node_smartobject = children[2]
 		local is_in_intro = blackboard.jump_down_intro
-		local at_smartobject = BTConditions.at_smartobject(blackboard)
-
-		if at_smartobject then
-			-- Nothing
-		end
-
-		at_smartobject = is_in_intro
-
-		local condition_result = at_smartobject
-
-		::label_4_0::
+		local condition_result = not not BTConditions.at_smartobject(blackboard)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_smartobject, "aborted")

@@ -143,20 +143,7 @@ LootItemUnitPreviewer.update = function (self, dt, t, input_service)
 		self._camera_xy_angle_current = character_xy_angle_new
 
 		local auto_tilt_angle, auto_turn_angle = self:_auto_spin_values(dt, t)
-		local num
-
-		if self._invert_start_rotation then
-			num = 0
-
-			goto label_7_0
-		end
-
-		num = math.pi
-
-		local start_angle = num
-
-		::label_7_0::
-
+		local start_angle = self._invert_start_rotation and not not 0 or not self._invert_start_rotation and not not math.pi
 		local rotation = Quaternion.axis_angle(Vector3(0, auto_tilt_angle, 1), -(character_xy_angle_new + auto_turn_angle + start_angle))
 		local link_unit = self._link_unit
 
@@ -165,18 +152,7 @@ LootItemUnitPreviewer.update = function (self, dt, t, input_service)
 		end
 
 		if self._zoom_dirty then
-			local _zoom_fraction = self._zoom_fraction
-
-			if not _zoom_fraction then
-				-- Nothing
-			end
-
-			_zoom_fraction = 0
-
-			local zoom_fraction = _zoom_fraction
-
-			::label_7_1::
-
+			local zoom_fraction = not not self._zoom_fraction
 			local unit_start_position = self._unit_start_position_boxed:unbox()
 
 			unit_start_position[1] = unit_start_position[1] * (1 - zoom_fraction)
@@ -197,11 +173,7 @@ end
 
 LootItemUnitPreviewer.zoom_fraction = function (self)
 	-- function 9
-	local _zoom_fraction = self._zoom_fraction
-
-	_zoom_fraction = not not _zoom_fraction or not not 0
-
-	return _zoom_fraction
+	return not not self._zoom_fraction
 end
 
 LootItemUnitPreviewer._auto_spin_values = function (self, dt, t)
@@ -293,18 +265,7 @@ LootItemUnitPreviewer._load_item_units = function (self, item)
 	local item_data = item.data
 	local backend_id = item.backend_id
 	local item_skin = item.skin
-	local key = item_data.key
-
-	if not key then
-		-- Nothing
-	end
-
-	key = item.key
-
-	local item_key = key
-
-	::label_14_0::
-
+	local item_key = not not item_data.key
 	local item_data = ItemMasterList[item_key]
 	local item_template
 	local item_type = item_data.item_type
@@ -395,26 +356,10 @@ LootItemUnitPreviewer._load_item_units = function (self, item)
 		if unit then
 			self:load_package(unit)
 
-			local num = #units_to_spawn_data + 1
-			local tbl = {
-				unit_name = unit
+			units_to_spawn_data[#units_to_spawn_data + 1] = {
+				unit_name = unit,
+				unit_attachment_node_linking = slot_type ~= "trinket" and not not item_template.attachment_node_linking.slot_hat or not (slot_type ~= "trinket") and not not item_template.attachment_node_linking.slot_trinket_1
 			}
-			local slot_trinket_1
-
-			if slot_type == "trinket" then
-				slot_trinket_1 = item_template.attachment_node_linking.slot_trinket_1
-
-				if not slot_trinket_1 then
-					-- Nothing
-				end
-			end
-
-			slot_trinket_1 = item_template.attachment_node_linking.slot_hat
-
-			::label_14_1::
-
-			tbl.unit_attachment_node_linking = slot_trinket_1
-			units_to_spawn_data[num] = tbl
 		end
 	end
 
@@ -530,30 +475,8 @@ end
 LootItemUnitPreviewer._spawn_link_unit = function (self, item)
 	-- function 23
 	local item_data = item.data
-	local key = item.key
-
-	if not key then
-		-- Nothing
-	end
-
-	key = item_data.key
-
-	local item_key = key
-
-	::label_23_0::
-
-	local skin = item.skin
-
-	if not skin then
-		-- Nothing
-	end
-
-	skin = item_key
-
-	local item_skin = skin
-
-	::label_23_1::
-
+	local item_key = not not item.key
+	local item_skin = not not item.skin
 	local spawn_position = self._spawn_position
 	local item_data = ItemMasterList[item_key]
 	local item_type = item_data.item_type
@@ -564,17 +487,7 @@ LootItemUnitPreviewer._spawn_link_unit = function (self, item)
 
 	local display_unit_key = self._display_unit_key
 	local default_display_unit_key = "display_unit"
-	local var_23_2 = item_data[display_unit_key]
-
-	if not var_23_2 then
-		-- Nothing
-	end
-
-	var_23_2 = item_data[default_display_unit_key]
-
-	local unit_name = var_23_2
-
-	::label_23_2::
+	local unit_name = not not item_data[display_unit_key]
 
 	if item_type == "weapon_skin" then
 		local skin_template = WeaponSkins.skins[item_skin]

@@ -155,11 +155,7 @@ local window_layouts = {
 		},
 		can_add_function = function (overview)
 			-- function 4
-			local is_in_mechanism = overview:is_in_mechanism("adventure")
-
-			is_in_mechanism = not not is_in_mechanism and not not overview:can_use_streaming()
-
-			return is_in_mechanism
+			return not not overview:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -179,11 +175,7 @@ local window_layouts = {
 		},
 		can_add_function = function (overview)
 			-- function 5
-			local is_in_mechanism = overview:is_in_mechanism("adventure")
-
-			is_in_mechanism = not not is_in_mechanism and not not not IS_XB1
-
-			return is_in_mechanism
+			return not not overview:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -249,7 +241,7 @@ local window_layouts = {
 		}
 	}
 }
-local tbl = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -568,379 +560,371 @@ local tbl = {
 				description_text = "input_description_back"
 			}
 		}
-	}
-}
-local tbl_2 = {
-	ignore_generic_actions = true
-}
-local tbl_3 = {
-	{
-		input_action = "d_horizontal",
-		priority = 1,
-		description_text = "input_description_navigate",
-		ignore_keybinding = true
-	}
-}
-local tbl_4 = {
-	input_action = "confirm",
-	priority = 2
-}
-local flag
-
-flag = (not IS_XB1 or not "dlc1_4_input_description_storepage") and not not "buy_now"
-tbl_4.description_text = flag
-tbl_3[2] = tbl_4
-tbl_3[3] = {
-	input_action = "back",
-	priority = 3,
-	description_text = "input_description_back"
-}
-tbl_2.actions = tbl_3
-tbl.select_area_buy = tbl_2
-tbl.select_area_base = {
-	ignore_generic_actions = true,
-	actions = {
-		{
-			input_action = "d_horizontal",
-			priority = 1,
-			description_text = "input_description_navigate",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "back",
-			priority = 3,
-			description_text = "input_description_back"
-		}
-	}
-}
-tbl.select_area_confirm = {
-	ignore_generic_actions = true,
-	actions = {
-		{
-			input_action = "d_horizontal",
-			priority = 1,
-			description_text = "input_description_navigate",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = "input_description_select"
-		},
-		{
-			input_action = "back",
-			priority = 3,
-			description_text = "input_description_back"
-		}
-	}
-}
-tbl.select_mission = {
-	ignore_generic_actions = true,
-	actions = {
-		{
-			input_action = "d_pad",
-			priority = 1,
-			description_text = "input_description_navigate",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "back",
-			priority = 3,
-			description_text = "input_description_back"
-		}
-	}
-}
-tbl.select_mission_confirm = {
-	ignore_generic_actions = true,
-	actions = {
-		{
-			input_action = "d_pad",
-			priority = 1,
-			description_text = "input_description_navigate",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = "input_description_select"
-		},
-		{
-			input_action = "back",
-			priority = 3,
-			description_text = "input_description_back"
-		}
-	}
-}
-tbl.select_heroic_deed = {
-	ignore_generic_actions = true,
-	actions = {
-		{
-			input_action = "d_pad",
-			priority = 1,
-			description_text = "input_description_navigate",
-			ignore_keybinding = true
-		},
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = "input_description_select"
-		},
-		{
-			input_action = "back",
-			priority = 3,
-			description_text = "input_description_back"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 4,
-			description_text = "input_description_mark_delete"
-		},
-		{
-			input_action = "special_1",
-			priority = 5,
-			description_text = "input_description_delete_selection"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "input_description_clear_all"
-		}
-	}
-}
-tbl.play_available = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "input_description_play"
-		}
-	}
-}
-tbl.play_available_lock = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "input_description_play"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl.search_available = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "lb_search"
-		}
-	}
-}
-tbl.cancel_matchmaking = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "cancel_matchmaking"
-		}
-	}
-}
-tbl.cancel_matchmaking_lock = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "cancel_matchmaking"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl.set_next_weave_available = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 1,
-			description_text = "input_description_play"
-		}
-	}
-}
-tbl.play_available_set_next_weave_available = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "input_description_play"
-		}
-	}
-}
-tbl.cancel_available_set_next_weave_available = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "cancel_matchmaking"
-		}
-	}
-}
-tbl.set_next_weave_available = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		}
-	}
-}
-tbl.set_next_weave_available_lock = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 1,
-			description_text = "input_description_play"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl.play_available_set_next_weave_available_lock = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "input_description_play"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl.cancel_available_set_next_weave_available_lock = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "cancel_matchmaking"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl.set_next_weave_available_lock = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl.default_lobby_browser = {
-	{
-		input_action = "left_stick",
-		priority = 1,
-		description_text = "input_description_navigate",
-		ignore_keybinding = true
 	},
-	{
-		input_action = "back",
-		priority = 10,
-		description_text = "input_description_close"
-	}
-}
-tbl.filter = {
-	actions = {
+	select_area_buy = {
+		ignore_generic_actions = true,
+		actions = {
+			{
+				input_action = "d_horizontal",
+				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
+			},
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = IS_XB1 and not not "dlc1_4_input_description_storepage" or not IS_XB1 and not not "buy_now"
+			},
+			{
+				input_action = "back",
+				priority = 3,
+				description_text = "input_description_back"
+			}
+		}
+	},
+	select_area_base = {
+		ignore_generic_actions = true,
+		actions = {
+			{
+				input_action = "d_horizontal",
+				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
+			},
+			{
+				input_action = "back",
+				priority = 3,
+				description_text = "input_description_back"
+			}
+		}
+	},
+	select_area_confirm = {
+		ignore_generic_actions = true,
+		actions = {
+			{
+				input_action = "d_horizontal",
+				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
+			},
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_select"
+			},
+			{
+				input_action = "back",
+				priority = 3,
+				description_text = "input_description_back"
+			}
+		}
+	},
+	select_mission = {
+		ignore_generic_actions = true,
+		actions = {
+			{
+				input_action = "d_pad",
+				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
+			},
+			{
+				input_action = "back",
+				priority = 3,
+				description_text = "input_description_back"
+			}
+		}
+	},
+	select_mission_confirm = {
+		ignore_generic_actions = true,
+		actions = {
+			{
+				input_action = "d_pad",
+				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
+			},
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_select"
+			},
+			{
+				input_action = "back",
+				priority = 3,
+				description_text = "input_description_back"
+			}
+		}
+	},
+	select_heroic_deed = {
+		ignore_generic_actions = true,
+		actions = {
+			{
+				input_action = "d_pad",
+				priority = 1,
+				description_text = "input_description_navigate",
+				ignore_keybinding = true
+			},
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_select"
+			},
+			{
+				input_action = "back",
+				priority = 3,
+				description_text = "input_description_back"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 4,
+				description_text = "input_description_mark_delete"
+			},
+			{
+				input_action = "special_1",
+				priority = 5,
+				description_text = "input_description_delete_selection"
+			},
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "input_description_clear_all"
+			}
+		}
+	},
+	play_available = {
+		actions = {
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "input_description_play"
+			}
+		}
+	},
+	play_available_lock = {
+		actions = {
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "input_description_play"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 7,
+				description_text = "start_game_window_disallow_join"
+			}
+		}
+	},
+	search_available = {
+		actions = {
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "lb_search"
+			}
+		}
+	},
+	cancel_matchmaking = {
+		actions = {
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "cancel_matchmaking"
+			}
+		}
+	},
+	cancel_matchmaking_lock = {
+		actions = {
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "cancel_matchmaking"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 7,
+				description_text = "start_game_window_disallow_join"
+			}
+		}
+	},
+	set_next_weave_available = {
+		actions = {
+			{
+				input_action = "refresh",
+				priority = 1,
+				description_text = "input_description_play"
+			}
+		}
+	},
+	play_available_set_next_weave_available = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = "input_description_set_next_weave"
+			},
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "input_description_play"
+			}
+		}
+	},
+	cancel_available_set_next_weave_available = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = "input_description_set_next_weave"
+			},
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "cancel_matchmaking"
+			}
+		}
+	},
+	set_next_weave_available = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = "input_description_set_next_weave"
+			}
+		}
+	},
+	set_next_weave_available_lock = {
+		actions = {
+			{
+				input_action = "refresh",
+				priority = 1,
+				description_text = "input_description_play"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 7,
+				description_text = "start_game_window_disallow_join"
+			}
+		}
+	},
+	play_available_set_next_weave_available_lock = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = "input_description_set_next_weave"
+			},
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "input_description_play"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 7,
+				description_text = "start_game_window_disallow_join"
+			}
+		}
+	},
+	cancel_available_set_next_weave_available_lock = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = "input_description_set_next_weave"
+			},
+			{
+				input_action = "refresh",
+				priority = 6,
+				description_text = "cancel_matchmaking"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 7,
+				description_text = "start_game_window_disallow_join"
+			}
+		}
+	},
+	set_next_weave_available_lock = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 1,
+				description_text = "input_description_set_next_weave"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 7,
+				description_text = "start_game_window_disallow_join"
+			}
+		}
+	},
+	default_lobby_browser = {
 		{
-			input_action = "special_1",
-			priority = 2,
-			description_text = "menu_description_refresh"
+			input_action = "left_stick",
+			priority = 1,
+			description_text = "input_description_navigate",
+			ignore_keybinding = true
 		},
 		{
-			input_action = "left_stick_press",
-			priority = 3,
-			description_text = "lb_reset_filters"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 4,
-			description_text = "input_description_filter"
+			input_action = "back",
+			priority = 10,
+			description_text = "input_description_close"
+		}
+	},
+	filter = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 2,
+				description_text = "menu_description_refresh"
+			},
+			{
+				input_action = "left_stick_press",
+				priority = 3,
+				description_text = "lb_reset_filters"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 4,
+				description_text = "input_description_filter"
+			}
+		}
+	},
+	join_filter = {
+		actions = {
+			{
+				input_action = "special_1",
+				priority = 2,
+				description_text = "menu_description_refresh"
+			},
+			{
+				input_action = "left_stick_press",
+				priority = 3,
+				description_text = "lb_reset_filters"
+			},
+			{
+				input_action = "right_stick_press",
+				priority = 4,
+				description_text = "input_description_filter"
+			},
+			{
+				input_action = "refresh",
+				priority = 5,
+				description_text = "join_menu_button_name"
+			}
+		}
+	},
+	set_filter = {
+		actions = {
+			{
+				input_action = "confirm",
+				priority = 2,
+				description_text = "input_description_select"
+			}
 		}
 	}
 }
-tbl.join_filter = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 2,
-			description_text = "menu_description_refresh"
-		},
-		{
-			input_action = "left_stick_press",
-			priority = 3,
-			description_text = "lb_reset_filters"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 4,
-			description_text = "input_description_filter"
-		},
-		{
-			input_action = "refresh",
-			priority = 5,
-			description_text = "join_menu_button_name"
-		}
-	}
-}
-tbl.set_filter = {
-	actions = {
-		{
-			input_action = "confirm",
-			priority = 2,
-			description_text = "input_description_select"
-		}
-	}
-}
-
-local generic_input_actions = tbl
 
 DLCUtils.merge("start_game_layout_console_generic_inputs", generic_input_actions)
 
@@ -1020,15 +1004,7 @@ local HUGE = math.huge
 
 table.sort(window_layouts, function (a, b)
 	-- function 17
-	local panel_sorting = a.panel_sorting
-
-	panel_sorting = not not panel_sorting or not not HUGE
-
-	local panel_sorting_2 = b.panel_sorting
-
-	panel_sorting_2 = not not panel_sorting_2 or not not HUGE
-
-	return panel_sorting < panel_sorting_2
+	return not not a.panel_sorting < not not b.panel_sorting
 end)
 
 local video_resources = {}

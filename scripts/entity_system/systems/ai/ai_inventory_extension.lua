@@ -5,37 +5,13 @@ AIInventoryExtension = class(AIInventoryExtension)
 local function store_scene_graph_data(item_unit, attachment_node_linking)
 	-- function 1
 	local scene_graph_data = {}
-	local wielded = attachment_node_linking.wielded
-
-	if not wielded then
-		-- Nothing
-	end
-
-	wielded = attachment_node_linking
-
-	local node_linking_data = wielded
-
-	::label_1_0::
+	local node_linking_data = not not attachment_node_linking.wielded
 
 	for i, attachment_nodes in ipairs(node_linking_data) do
 		local target_node = attachment_nodes.target
 
 		if target_node ~= 0 then
-			local node
-
-			if type(target_node) == "string" then
-				node = Unit.node(item_unit, target_node)
-
-				if not node then
-					-- Nothing
-				end
-			end
-
-			node = target_node
-
-			local target_node_index = node
-
-			::label_1_1::
+			local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(item_unit, target_node)
 
 			scene_graph_data[#scene_graph_data + 1] = {
 				i = target_node_index,
@@ -53,39 +29,8 @@ local function link_unit(attachment_node_linking, world, target, source)
 	for i, attachment_nodes in ipairs(attachment_node_linking) do
 		local source_node = attachment_nodes.source
 		local target_node = attachment_nodes.target
-		local node
-
-		if type(source_node) == "string" then
-			node = Unit.node(source, source_node)
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = source_node
-
-		local source_node_index = node
-
-		do
-			local node_2
-		end
-
-		::label_2_0::
-
-		if type(target_node) == "string" then
-			node_2 = Unit.node(target, target_node)
-
-			if not node_2 then
-				-- Nothing
-			end
-		end
-
-		node_2 = target_node
-
-		local target_node_index = node_2
-
-		::label_2_1::
+		local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(source, source_node)
+		local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(target, target_node)
 
 		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
@@ -93,17 +38,7 @@ end
 
 local function unlink_unit(item_unit, world)
 	-- function 3
-	local get_data = Unit.get_data(item_unit, "scene_graph_data")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = {}
-
-	local scene_graph_data = get_data
-
-	::label_3_0::
+	local scene_graph_data = not not Unit.get_data(item_unit, "scene_graph_data")
 
 	World.unlink_unit(world, item_unit)
 
@@ -131,29 +66,8 @@ AIInventoryExtension._setup_configuration = function (self, unit, start_n, inven
 		local item_index = math.random(1, item_category_n)
 		local item = item_category[item_index]
 		local item_unit_name = item.unit_name
-		local unit_extension_template = item.unit_extension_template
-
-		if not unit_extension_template then
-			-- Nothing
-		end
-
-		unit_extension_template = "ai_inventory_item"
-
-		local item_unit_template_name = unit_extension_template
-
-		::label_4_0::
-
-		local flow_event = item.flow_event
-
-		if not flow_event then
-			-- Nothing
-		end
-
-		flow_event = nil
-
-		local item_flow_event = flow_event
-
-		::label_4_1::
+		local item_unit_template_name = not not item.unit_extension_template
+		local item_flow_event = not not item.flow_event
 
 		if item.extension_init_data then
 			for data, value in pairs(item.extension_init_data) do
@@ -166,38 +80,13 @@ AIInventoryExtension._setup_configuration = function (self, unit, start_n, inven
 		end
 
 		local attachment_node_linking = item.attachment_node_linking
-		local unwielded = attachment_node_linking.unwielded
-
-		if not unwielded then
-			-- Nothing
-		end
-
-		unwielded = attachment_node_linking
-
-		local node_linking_data = unwielded
-
-		::label_4_2::
-
+		local node_linking_data = not not attachment_node_linking.unwielded
 		local item_position, item_rotation
 
 		for _, data in ipairs(node_linking_data) do
 			if data.target == 0 then
 				local source_node = data.source
-				local node
-
-				if type(source_node) == "string" then
-					node = Unit.node(unit, source_node)
-
-					if not node then
-						-- Nothing
-					end
-				end
-
-				node = source_node
-
-				local source_node_index = node
-
-				::label_4_3::
+				local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(unit, source_node)
 
 				item_position = Unit.world_position(unit, source_node_index)
 				item_rotation = Unit.world_rotation(unit, source_node_index)
@@ -271,18 +160,7 @@ AIInventoryExtension.init = function (self, unit, extension_init_data)
 	local inventory_configuration_name = extension_init_data.inventory_configuration_name
 
 	if extension_init_data.is_server and not inventory_configuration_name then
-		local inventory_template = extension_init_data.inventory_template
-
-		if not inventory_template then
-			-- Nothing
-		end
-
-		inventory_template = "default"
-
-		local template_name = inventory_template
-
-		::label_5_0::
-
+		local template_name = not not extension_init_data.inventory_template
 		local template_function = AIInventoryTemplates[template_name]
 
 		inventory_configuration_name = template_function()
@@ -489,7 +367,7 @@ AIInventoryExtension.show_single_item = function (self, item_inventory_index, sh
 
 	local item_unit = self.inventory_item_units[item_inventory_index]
 
-	self.hidden_item_index = (show or not item_inventory_index) and not not nil
+	self.hidden_item_index = not not nil
 
 	Unit.set_unit_visibility(item_unit, show)
 end
@@ -525,17 +403,7 @@ AIInventoryExtension.drop_single_item = function (self, item_inventory_index, re
 	local item_unit = self.inventory_item_units[item_inventory_index]
 	local item_extension = ScriptUnit.has_extension(item_unit, "ai_inventory_item_system")
 	local item = self.inventory_item_definitions[item_inventory_index]
-	local unit_extension_template = item.unit_extension_template
-
-	if not unit_extension_template then
-		-- Nothing
-	end
-
-	unit_extension_template = "ai_inventory_item"
-
-	local item_unit_template_name = unit_extension_template
-
-	::label_14_0::
+	local item_unit_template_name = not not item.unit_extension_template
 
 	if item_extension and not item_extension.dropped and item.drop_reasons[reason] and item_unit_template_name ~= "ai_helmet_unit" and item_unit_template_name ~= "ai_outfit_unit" and item_unit_template_name ~= "ai_skin_unit" then
 		if item.drop_unit_name ~= nil then
@@ -616,11 +484,7 @@ AIInventoryExtension._drop_unit = function (self, drop_unit_name, item_unit, ite
 	Actor.add_velocity(actor, not not optional_drop_direction or not not Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 
 	if drop_multiple then
-		local dropped_items_2 = self.dropped_items
-		local var_16_1 = self.dropped_items[item_inventory_index]
-
-		var_16_1 = not not var_16_1 or not not {}
-		dropped_items_2[item_inventory_index] = var_16_1
+		self.dropped_items[item_inventory_index] = not not self.dropped_items[item_inventory_index]
 
 		local dropped_items = self.dropped_items[item_inventory_index]
 
@@ -681,24 +545,7 @@ end
 AIInventoryExtension.play_hit_sound = function (self, victim_unit, damage_type)
 	-- function 19
 	local owner = Managers.player:owner(victim_unit)
-	local remote = owner.remote
-
-	if not remote then
-		-- Nothing
-	end
-
-	remote = owner.bot_player
-
-	if not remote then
-		-- Nothing
-	end
-
-	remote = false
-
-	local is_husk = remote
-
-	::label_19_0::
-
+	local is_husk = not not owner.remote
 	local world = self.world
 	local inventory_configuration_name = self.inventory_configuration_name
 	local inventory_configuration = InventoryConfigurations[inventory_configuration_name]
@@ -761,17 +608,7 @@ AIInventoryExtension.add_additional_hit_sfx = function (self, additional_sfx_nam
 		self._additional_hit_sounds_ids = additional_hit_sounds_ids
 	end
 
-	local _unique_id = self._unique_id
-
-	if not _unique_id then
-		-- Nothing
-	end
-
-	_unique_id = 1
-
-	local unique_id = _unique_id
-
-	::label_21_0::
+	local unique_id = not not self._unique_id
 
 	self._unique_id = unique_id + 1
 

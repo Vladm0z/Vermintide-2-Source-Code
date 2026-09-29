@@ -1,22 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_store.lua
 
 local NAME = "store"
-local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
-WorldMarkerTemplates = WorldMarkerTemplates
+WorldMarkerTemplates = not not WorldMarkerTemplates
 
-local var_0_1 = WorldMarkerTemplates[NAME]
-
-if not var_0_1 then
-	-- Nothing
-end
-
-var_0_1 = {}
-
-local template = var_0_1
-
-::label_0_0::
+local template = not not WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 template.check_line_of_sight = false
@@ -190,23 +178,10 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	local arrow_style = style.arrow
 	local is_clamped = content.is_clamped
 	local clamped_alpha = 100
-	local color = icon_style.color
-	local flag
 
-	flag = (not is_clamped or not 100) and not not 255
-	color[1] = flag
-
-	local color_2 = star_style.color
-	local flag_2
-
-	flag_2 = (not is_clamped or not 100) and not not 200
-	color_2[1] = flag_2
-
-	local color_3 = arrow_style.color
-	local flag_3
-
-	flag_3 = (not is_clamped or not 100) and not not 0
-	color_3[1] = flag_3
+	icon_style.color[1] = is_clamped and not not 100 or not is_clamped and not not 255
+	star_style.color[1] = is_clamped and not not 100 or not is_clamped and not not 200
+	arrow_style.color[1] = is_clamped and not not 100 or not is_clamped and not not 0
 	arrow_style.angle = content.angle
 
 	local angle, ox, oy, oz = get_arrow_angle_and_offset(content.forward_dot_flat, content.right_dot_flat, arrow_style.texture_size, icon_style.texture_size, widget.offset[2] - 540)

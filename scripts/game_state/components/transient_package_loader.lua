@@ -14,12 +14,7 @@ end
 local function add_ref(unit, value, t)
 	-- function 2
 	t.units[unit] = value
-
-	local refs = t.refs
-	local var_2_1 = t.refs[value]
-
-	var_2_1 = not not var_2_1 or not not 0
-	refs[value] = var_2_1 + 1
+	t.refs[value] = not not t.refs[value] + 1
 end
 
 local function remove_ref(unit, t)

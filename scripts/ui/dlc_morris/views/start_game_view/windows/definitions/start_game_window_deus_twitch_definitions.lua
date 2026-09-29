@@ -985,22 +985,7 @@ function create_twitch_rect_with_outer_frame(scenegraph_id, size, frame_style, l
 		255
 	}
 
-	local var_8_0
-
-	if frame_style then
-		var_8_0 = UIFrameSettings[frame_style]
-
-		if not var_8_0 then
-			-- Nothing
-		end
-	end
-
-	var_8_0 = UIFrameSettings.frame_outer_fade_02
-
-	local frame_settings = var_8_0
-
-	::label_8_0::
-
+	local frame_settings = frame_style and not not UIFrameSettings[frame_style] or not frame_style and not not UIFrameSettings.frame_outer_fade_02
 	local edge_height = frame_settings.texture_sizes.horizontal[2]
 	local frame_size = {
 		size[1] + edge_height * 2,
@@ -1090,23 +1075,7 @@ end
 
 local function disconnected_content_check_function(content)
 	-- function 12
-	local is_connected
-
-	if not Managers.twitch:is_connecting() then
-		is_connected = Managers.twitch:is_connected()
-
-		if is_connected then
-			is_connected = not Managers.input:is_device_active("gamepad")
-		end
-	else
-		is_connected = false
-	end
-
-	if false then
-		is_connected = true
-	end
-
-	return is_connected
+	return not Managers.twitch:is_connecting() and not not Managers.twitch:is_connected()
 end
 
 local streaming_desc_str = string.gsub(Localize("start_game_window_deus_twitch_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
@@ -1215,18 +1184,7 @@ local selector_input_definition = {
 		end,
 		on_exit = function (self, dt, t)
 			-- function 16
-			local _expedition_level_index = self._expedition_level_index
-
-			if not _expedition_level_index then
-				-- Nothing
-			end
-
-			_expedition_level_index = 1
-
-			local expedition_level_index = _expedition_level_index
-
-			::label_16_0::
-
+			local expedition_level_index = not not self._expedition_level_index
 			local expedition_widgets = self._expedition_widgets
 			local widget = expedition_widgets[expedition_level_index]
 
@@ -1330,23 +1288,8 @@ local selector_input_definition = {
 		enter_requirements = function (self)
 			-- function 21
 			local gamepad_active = Managers.input:is_device_active("gamepad")
-			local _is_server
 
-			if not gamepad_active then
-				_is_server = self._is_server
-
-				if _is_server then
-					_is_server = Managers.twitch:is_connected()
-				end
-			else
-				_is_server = false
-			end
-
-			if false then
-				_is_server = true
-			end
-
-			return _is_server
+			return not gamepad_active and not not self._is_server
 		end,
 		on_enter = function (self, dt, t)
 			-- function 22

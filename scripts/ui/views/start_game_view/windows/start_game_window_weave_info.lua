@@ -343,23 +343,7 @@ StartGameWindowWeaveInfo._handle_input = function (self, dt, t)
 		self:_play_sound("play_gui_lobby_button_play")
 	end
 
-	if gamepad_active then
-		-- Nothing
-	end
-
-	::label_17_0::
-
-	local _enable_play = self._enable_play
-
-	if _enable_play then
-		-- Nothing
-	end
-
-	_enable_play = input_service:get("refresh_press")
-
-	local play_pressed = _enable_play
-
-	::label_17_1::
+	local play_pressed = not not gamepad_active and not not self._enable_play
 
 	if self:_is_button_released(play_button) or play_pressed then
 		parent:play(t, "weave")
@@ -465,35 +449,9 @@ StartGameWindowWeaveInfo._update_selected_weave = function (self)
 				local objective = objectives[i]
 				local conflict_settings = objective.conflict_settings
 				local is_end_objective = conflict_settings == "weave_disabled"
-				local str
-
-				if is_end_objective then
-					str = "menu_weave_play_next_end_event_title"
-
-					goto label_20_0
-				end
-
-				str = "menu_weave_play_main_objective_title"
-
-				local title_text = str
-
-				::label_20_0::
-
+				local title_text = is_end_objective and not not "menu_weave_play_next_end_event_title" or not is_end_objective and not not "menu_weave_play_main_objective_title"
 				local objective_display_name = objective.display_name
-				local str_2
-
-				if is_end_objective then
-					str_2 = "objective_icon_boss"
-
-					goto label_20_1
-				end
-
-				str_2 = "objective_icon_general"
-
-				local objective_icon = str_2
-
-				::label_20_1::
-
+				local objective_icon = is_end_objective and not not "objective_icon_boss" or not is_end_objective and not not "objective_icon_general"
 				local objective_height = self:_assign_objective(widget, title_text, objective_display_name, objective_icon, objective_spacing)
 				local offset = widget.offset
 
@@ -599,11 +557,7 @@ StartGameWindowWeaveInfo._align_private_checkbox = function (self)
 	local total_width = text_width_offset + text_width
 
 	offset[1] = -total_width / 2
-
-	local flag
-
-	flag = (not gamepad_active or not 40) and not not 0
-	offset[2] = flag
+	offset[2] = gamepad_active and not not 40 or not gamepad_active and not not 0
 
 	local tooltip_style = style.additional_option_info
 	local tooltip_width = tooltip_style.max_width

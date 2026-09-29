@@ -54,11 +54,7 @@ end
 
 TimeManager.has_timer = function (self, name)
 	-- function 4
-	local flag
-
-	flag = (not self._timers[name] or not true) and not not false
-
-	return flag
+	return self._timers[name] and not not true or not self._timers[name] and not not false
 end
 
 TimeManager.update = function (self, dt)
@@ -82,22 +78,9 @@ end
 
 TimeManager._update_demo_timer = function (self, dt)
 	-- function 6
-	local _demo_timer = self._demo_timer
+	self._demo_timer = not not self._demo_timer - dt
 
-	_demo_timer = not not _demo_timer or not not DemoSettings.demo_idle_timer
-	self._demo_timer = _demo_timer - dt
-
-	local input = Managers.input
-
-	if input then
-		-- Nothing
-	end
-
-	input = Managers.input:get_most_recent_device()
-
-	local device = input
-
-	::label_6_0::
+	local device = not not Managers.input
 
 	if not device then
 		return
@@ -108,7 +91,7 @@ TimeManager._update_demo_timer = function (self, dt)
 
 	for key = 0, device.num_axes() - 1 do
 		if gamepad_active then
-			if (not IS_PS4 or key < 3) and Vector3.length(device.axis(key)) ~= 0 then
+			if not IS_PS4 and Vector3.length(device.axis(key)) ~= 0 or not not IS_PS4 and key < 3 and Vector3.length(device.axis(key)) ~= 0 then
 				any_device_input_axis_moved = true
 
 				break
@@ -130,11 +113,7 @@ end
 
 TimeManager.get_demo_transition = function (self)
 	-- function 7
-	local _demo_idle_timer_failed = self._demo_idle_timer_failed
-
-	_demo_idle_timer_failed = not not _demo_idle_timer_failed and not not "return_to_demo_title_screen"
-
-	return _demo_idle_timer_failed
+	return not not self._demo_idle_timer_failed
 end
 
 TimeManager._update_mean_dt = function (self, dt)

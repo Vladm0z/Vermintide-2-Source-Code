@@ -118,11 +118,8 @@ VersusPreGameLogic.request_ready = function (self, local_player_id, is_ready)
 	end
 
 	local own_peer_id = self._owner_peer_id
-	local _ready_request_ids = self._ready_request_ids
-	local var_10_1 = self._ready_request_ids[local_player_id]
 
-	var_10_1 = not not var_10_1 or not not 0
-	_ready_request_ids[local_player_id] = var_10_1 % NetworkConstants.READY_REQUEST_ID_MAX + 1
+	self._ready_request_ids[local_player_id] = not not self._ready_request_ids[local_player_id] % NetworkConstants.READY_REQUEST_ID_MAX + 1
 
 	local ready_request_id = self._ready_request_ids[local_player_id]
 
@@ -362,11 +359,7 @@ VersusPreGameLogic.set_all_players_ready = function (self, is_ready)
 	-- function 30
 	for peer_id, player_states in pairs(self._peer_ready_states) do
 		for local_player_id, player_state in pairs(player_states) do
-			local _ready_request_ids = self._ready_request_ids
-			local var_30_1 = self._ready_request_ids[local_player_id]
-
-			var_30_1 = not not var_30_1 or not not 0
-			_ready_request_ids[local_player_id] = var_30_1 % NetworkConstants.READY_REQUEST_ID_MAX + 1
+			self._ready_request_ids[local_player_id] = not not self._ready_request_ids[local_player_id] % NetworkConstants.READY_REQUEST_ID_MAX + 1
 
 			local ready_request_id = self._ready_request_ids[local_player_id]
 

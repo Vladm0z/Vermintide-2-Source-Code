@@ -63,17 +63,7 @@ SoundEnvironmentSystem.register_sound_environment = function (self, volume_name,
 	-- function 3
 	fassert(self._environments[volume_name] == nil, "Already registered sound environment with name %q", volume_name)
 
-	local var_3_0 = self._environments[volume_name]
-
-	if not var_3_0 then
-		-- Nothing
-	end
-
-	var_3_0 = table.clone(environment_base)
-
-	local environment = var_3_0
-
-	::label_3_0::
+	local environment = not not self._environments[volume_name]
 
 	environment.prio = prio
 
@@ -176,28 +166,11 @@ end
 
 SoundEnvironmentSystem.register_source_environment_update = function (self, source, unit, object)
 	-- function 7
-	local _updated_sources = self._updated_sources
-	local num = #self._updated_sources + 1
-	local tbl = {
+	self._updated_sources[#self._updated_sources + 1] = {
 		unit = unit,
-		source = source
+		source = source,
+		node = object and not not Unit.node(unit, object) or not object and not not 0
 	}
-	local node
-
-	if object then
-		node = Unit.node(unit, object)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	::label_7_0::
-
-	tbl.node = node
-	_updated_sources[num] = tbl
 	self._num_sources = self._num_sources + 1
 end
 

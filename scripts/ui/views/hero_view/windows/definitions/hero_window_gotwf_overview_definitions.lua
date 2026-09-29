@@ -920,50 +920,10 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 	local painting_frame_name = "menu_frame_08"
 	local painting_frame_settings = UIFrameSettings[painting_frame_name]
 	local painting_frame_spacing = painting_frame_settings.texture_sizes.horizontal[2]
-	local num
-
-	if (current_reward or not hidden or expired) and owned then
-		num = 255
-
-		goto label_5_0
-	end
-
-	num = 60
-
-	local icon_intensity = num
-
-	::label_5_0::
-
+	local icon_intensity = expired and (owned and not not 255 or not owned and not not 60) or not expired and not not 255
 	local current_reward_offset = 75
 	local is_bundle = not not rewards and not not rewards.bundle
-	local num_2
-
-	if is_bundle then
-		num_2 = 1
-
-		goto label_5_1
-	end
-
-	if hidden then
-		num_2 = 1
-
-		goto label_5_1
-	end
-
-	if rewards then
-		num_2 = #rewards
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = 1
-
-	local num_rewards = num_2
-
-	::label_5_1::
-
+	local num_rewards = is_bundle and not not 1 or not is_bundle and (hidden and not not 1 or not hidden and (rewards and not not #rewards or not rewards and not not 1))
 	local size_multiplier = 1 - (num_rewards - 1) * 0.25
 	local offset = 0
 	local widget = {
@@ -1021,17 +981,7 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 			end,
 			content_change_function = function (content, style, _, dt)
 				-- function 9
-				local progress_2 = style.progress
-
-				if not progress_2 then
-					-- Nothing
-				end
-
-				progress_2 = 0
-
-				local progress = progress_2
-
-				::label_9_0::
+				local progress = not not style.progress
 
 				progress = (progress + dt) % 1
 
@@ -1077,163 +1027,138 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 		rewards = rewards,
 		reward_order = reward_order
 	}
-	local tbl = {}
-	local tbl_2 = {
-		font_size = 32,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "bottom",
-		dynamic_font_size = false
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_2.font_type = flag
-
-	local get_color_table_with_alpha
-
-	if current_reward then
-		get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_title", 255)
-
-		if not get_color_table_with_alpha then
-			-- Nothing
-		end
-	end
-
-	get_color_table_with_alpha = Colors.get_color_table_with_alpha("gray", 255)
-
-	::label_5_2::
-
-	tbl_2.text_color = get_color_table_with_alpha
-	tbl_2.offset = {
-		0,
-		-20 - ((current_reward or claimable) and not owned and not not current_reward_offset or not not 0),
-		10
-	}
-	tbl.date_text = tbl_2
-
-	local tbl_3 = {
-		font_size = 32,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "bottom",
-		dynamic_font_size = false
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		2,
-		-22 - ((current_reward or claimable) and not owned and not not current_reward_offset or not not 0),
-		9
-	}
-	tbl.date_text_shadow = tbl_3
-	tbl.loading_icon = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = true,
-		angle = 0,
-		pivot = {
-			50,
-			50
+	local base_style = {
+		date_text = {
+			font_size = 32,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "bottom",
+			dynamic_font_size = false,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = current_reward and not not Colors.get_color_table_with_alpha("font_title", 255) or not current_reward and not not Colors.get_color_table_with_alpha("gray", 255),
+			offset = {
+				0,
+				-20 - (current_reward and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not current_reward and (claimable and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not claimable and not not 0)),
+				10
+			}
 		},
-		color = {
-			255,
-			255,
-			255,
-			255
+		date_text_shadow = {
+			font_size = 32,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "bottom",
+			dynamic_font_size = false,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				2,
+				-22 - (current_reward and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not current_reward and (claimable and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not claimable and not not 0)),
+				9
+			}
 		},
-		offset = {
-			size[1] * 0.5 - 50,
-			-50,
-			8
+		loading_icon = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = true,
+			angle = 0,
+			pivot = {
+				50,
+				50
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				size[1] * 0.5 - 50,
+				-50,
+				8
+			},
+			texture_size = {
+				100,
+				100
+			}
 		},
-		texture_size = {
-			100,
-			100
+		owned_icon = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "right",
+			masked = masked,
+			texture_size = {
+				53,
+				53
+			},
+			default_texture_size = {
+				53,
+				53
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				2,
+				20,
+				12 + 16 * (num_rewards - 1)
+			},
+			default_offset = {
+				5,
+				20,
+				12 + 16 * (num_rewards - 1)
+			}
+		},
+		owned_icon_bg = {
+			vertical_alignment = "bottom",
+			horizontal_alignment = "right",
+			masked = masked,
+			texture_size = {
+				34,
+				50
+			},
+			default_texture_size = {
+				34,
+				50
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				-10,
+				-0,
+				11 + 16 * (num_rewards - 1)
+			},
+			default_offset = {
+				2,
+				-45,
+				11 + 16 * (num_rewards - 1)
+			}
+		},
+		package_icon = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = size,
+			color = {
+				255,
+				icon_intensity,
+				icon_intensity,
+				icon_intensity
+			},
+			offset = {
+				0,
+				0,
+				7
+			}
 		}
 	}
-	tbl.owned_icon = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "right",
-		masked = masked,
-		texture_size = {
-			53,
-			53
-		},
-		default_texture_size = {
-			53,
-			53
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			2,
-			20,
-			12 + 16 * (num_rewards - 1)
-		},
-		default_offset = {
-			5,
-			20,
-			12 + 16 * (num_rewards - 1)
-		}
-	}
-	tbl.owned_icon_bg = {
-		vertical_alignment = "bottom",
-		horizontal_alignment = "right",
-		masked = masked,
-		texture_size = {
-			34,
-			50
-		},
-		default_texture_size = {
-			34,
-			50
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			-10,
-			-0,
-			11 + 16 * (num_rewards - 1)
-		},
-		default_offset = {
-			2,
-			-45,
-			11 + 16 * (num_rewards - 1)
-		}
-	}
-	tbl.package_icon = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = size,
-		color = {
-			255,
-			icon_intensity,
-			icon_intensity,
-			icon_intensity
-		},
-		offset = {
-			0,
-			0,
-			7
-		}
-	}
-
-	local base_style = tbl
 
 	table.append(passes, base_passes)
 	table.merge(content, base_content)
@@ -1315,11 +1240,7 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 				style_id = "icon_" .. i,
 				content_check_function = function (content)
 					-- function 14
-					local var_14_0 = content["icon_" .. i]
-
-					var_14_0 = not not var_14_0 and not not not content.rendering_loading_icon
-
-					return var_14_0
+					return not not content["icon_" .. i]
 				end
 			},
 			{
@@ -1615,7 +1536,7 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 	widget.style = style
 	widget.offset = {
 		10 + (index - 1) * (size[1] + gotwf_item_spacing),
-		(current_reward or claimable) and not owned and not not current_reward_offset or not not 0,
+		current_reward and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not current_reward and (claimable and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not claimable and not not 0),
 		5
 	}
 	widget.scenegraph_id = scenegraph_id
@@ -1718,22 +1639,7 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 	background_texture = not not background_texture or not not "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local var_18_0
-
-	if frame_name then
-		var_18_0 = UIFrameSettings[frame_name]
-
-		if not var_18_0 then
-			-- Nothing
-		end
-	end
-
-	var_18_0 = UIFrameSettings.button_frame_01
-
-	local frame_settings = var_18_0
-
-	::label_18_0::
-
+	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
@@ -1752,7 +1658,7 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 		end
 	end
 
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -1924,300 +1830,264 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 			},
 			disable_with_gamepad = disable_with_gamepad,
 			hover_frame = hover_frame_settings.texture
-		}
-	}
-	local tbl_2 = {
-		background = {
-			color = {
-				255,
-				150,
-				150,
-				150
-			},
-			offset = {
-				0,
-				0,
-				0
-			},
-			masked = masked
 		},
-		background_fade = {
-			color = {
-				200,
-				255,
-				255,
-				255
+		style = {
+			background = {
+				color = {
+					255,
+					150,
+					150,
+					150
+				},
+				offset = {
+					0,
+					0,
+					0
+				},
+				masked = masked
 			},
-			offset = {
-				frame_width,
-				frame_width - 2,
-				2
+			background_fade = {
+				color = {
+					200,
+					255,
+					255,
+					255
+				},
+				offset = {
+					frame_width,
+					frame_width - 2,
+					2
+				},
+				size = {
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
+				},
+				masked = masked
 			},
-			size = {
-				size[1] - frame_width * 2,
-				size[2] - frame_width * 2
+			hover_glow = {
+				color = {
+					0,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					frame_width - 2,
+					3
+				},
+				size = {
+					size[1],
+					math.min(size[2] - 5, 80)
+				},
+				masked = masked
 			},
-			masked = masked
-		},
-		hover_glow = {
-			color = {
-				0,
-				255,
-				255,
-				255
+			clicked_rect = {
+				color = {
+					0,
+					0,
+					0,
+					0
+				},
+				offset = {
+					0,
+					0,
+					7
+				}
 			},
-			offset = {
-				0,
-				frame_width - 2,
-				3
+			disabled_rect = {
+				color = {
+					150,
+					20,
+					20,
+					20
+				},
+				offset = {
+					0,
+					0,
+					1
+				}
 			},
-			size = {
-				size[1],
-				math.min(size[2] - 5, 80)
+			title_text = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_size = not not font_size or not not 24,
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
+				select_text_color = Colors.get_color_table_with_alpha("white", 255),
+				size = {
+					size[1] - 40,
+					size[2]
+				},
+				offset = {
+					20,
+					0,
+					6
+				}
 			},
-			masked = masked
-		},
-		clicked_rect = {
-			color = {
-				0,
-				0,
-				0,
-				0
+			title_text_disabled = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_size = not not font_size or not not 24,
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("gray", 255),
+				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
+				size = {
+					size[1] - 40,
+					size[2]
+				},
+				offset = {
+					20,
+					0,
+					6
+				}
 			},
-			offset = {
-				0,
-				0,
-				7
+			title_text_shadow = {
+				upper_case = true,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_size = not not font_size or not not 24,
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				default_text_color = Colors.get_color_table_with_alpha("black", 255),
+				size = {
+					size[1] - 40,
+					size[2]
+				},
+				offset = {
+					22,
+					-2,
+					5
+				}
+			},
+			frame = {
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					8
+				},
+				masked = masked
+			},
+			glass_top = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					size[2] - (frame_width + 11),
+					4
+				},
+				size = {
+					size[1],
+					11
+				},
+				masked = masked
+			},
+			glass_bottom = {
+				color = {
+					100,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					frame_width - 9,
+					4
+				},
+				size = {
+					size[1],
+					11
+				},
+				masked = masked
+			},
+			side_detail_left = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					extra_detail_offset_x and not not -extra_detail_offset_x or not extra_detail_offset_x and not not -9,
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					9
+				},
+				size = {
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
+				},
+				masked = masked
+			},
+			side_detail_right = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					size[1] - side_detail_texture_size[1] + (not not extra_detail_offset_x or not not 9),
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					9
+				},
+				size = {
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
+				},
+				masked = masked
+			},
+			hover_frame = {
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				masked = masked,
+				area_size = size,
+				texture_size = hover_frame_settings.texture_size,
+				texture_sizes = hover_frame_settings.texture_sizes,
+				frame_margins = {
+					-hover_frame_spacing,
+					-hover_frame_spacing
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					6
+				}
 			}
 		},
-		disabled_rect = {
-			color = {
-				150,
-				20,
-				20,
-				20
-			},
-			offset = {
-				0,
-				0,
-				1
-			}
+		scenegraph_id = scenegraph_id,
+		offset = {
+			0,
+			0,
+			0
 		}
 	}
-	local tbl_3 = {
-		upper_case = true,
-		word_wrap = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		font_size = not not font_size or not not 24
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_3.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_3.select_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_3.size = {
-		size[1] - 40,
-		size[2]
-	}
-	tbl_3.offset = {
-		20,
-		0,
-		6
-	}
-	tbl_2.title_text = tbl_3
-
-	local tbl_4 = {
-		upper_case = true,
-		word_wrap = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		font_size = not not font_size or not not 24
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("gray", 255)
-	tbl_4.default_text_color = Colors.get_color_table_with_alpha("gray", 255)
-	tbl_4.size = {
-		size[1] - 40,
-		size[2]
-	}
-	tbl_4.offset = {
-		20,
-		0,
-		6
-	}
-	tbl_2.title_text_disabled = tbl_4
-
-	local tbl_5 = {
-		upper_case = true,
-		word_wrap = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		font_size = not not font_size or not not 24
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.default_text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.size = {
-		size[1] - 40,
-		size[2]
-	}
-	tbl_5.offset = {
-		22,
-		-2,
-		5
-	}
-	tbl_2.title_text_shadow = tbl_5
-	tbl_2.frame = {
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			8
-		},
-		masked = masked
-	}
-	tbl_2.glass_top = {
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			size[2] - (frame_width + 11),
-			4
-		},
-		size = {
-			size[1],
-			11
-		},
-		masked = masked
-	}
-	tbl_2.glass_bottom = {
-		color = {
-			100,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			frame_width - 9,
-			4
-		},
-		size = {
-			size[1],
-			11
-		},
-		masked = masked
-	}
-
-	local tbl_6 = {
-		color = {
-			255,
-			255,
-			255,
-			255
-		}
-	}
-	local tbl_7 = {
-		nil,
-		nil,
-		9
-	}
-	local num
-
-	if extra_detail_offset_x then
-		num = -extra_detail_offset_x
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = -9
-
-	::label_18_1::
-
-	tbl_7[1] = num
-	tbl_7[2] = size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0)
-	tbl_6.offset = tbl_7
-	tbl_6.size = {
-		side_detail_texture_size[1],
-		side_detail_texture_size[2]
-	}
-	tbl_6.masked = masked
-	tbl_2.side_detail_left = tbl_6
-	tbl_2.side_detail_right = {
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			size[1] - side_detail_texture_size[1] + (not not extra_detail_offset_x or not not 9),
-			size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
-			9
-		},
-		size = {
-			side_detail_texture_size[1],
-			side_detail_texture_size[2]
-		},
-		masked = masked
-	}
-	tbl_2.hover_frame = {
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		masked = masked,
-		area_size = size,
-		texture_size = hover_frame_settings.texture_size,
-		texture_sizes = hover_frame_settings.texture_sizes,
-		frame_margins = {
-			-hover_frame_spacing,
-			-hover_frame_spacing
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			6
-		}
-	}
-	tbl.style = tbl_2
-	tbl.scenegraph_id = scenegraph_id
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-
-	return tbl
 end
 
 local disable_with_gamepad = false

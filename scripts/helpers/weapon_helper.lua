@@ -2,10 +2,7 @@
 
 require("scripts/helpers/effect_helper")
 
-local WeaponHelper = WeaponHelper
-
-WeaponHelper = not not WeaponHelper or not not {}
-WeaponHelper = WeaponHelper
+WeaponHelper = not not WeaponHelper
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 
@@ -105,7 +102,7 @@ WeaponHelper.angle_to_hit_moving_target = function (p1, p2, projectile_speed, ta
 		local angle1 = math.atan((speed_squared + second_degree_component) / (gravity * flat_distance))
 		local angle2 = math.atan((speed_squared - second_degree_component) / (gravity * flat_distance))
 
-		angle = (not use_greatest_angle or not math.max(angle1, angle2)) and not not math.min(angle1, angle2)
+		angle = use_greatest_angle and (not not math.max(angle1, angle2) or not not math.min(angle1, angle2)) or not use_greatest_angle and not not math.min(angle1, angle2)
 		t = flat_distance / (projectile_speed * math.cos(angle))
 		estimated_target_position = p2 + t * target_velocity
 		flat_distance = Vector3.length(Vector3.flat(estimated_target_position - p1))
@@ -347,7 +344,7 @@ WeaponHelper._trajectory_hits_target = function (self, world, radians, speed, gr
 			if result then
 				local unit_hit_is_player = DamageUtils.is_player_unit(Actor.unit(actor))
 				local hit_to_target_distance_squared = Vector3.distance_squared(target_position, hit_position)
-				local hit_target = (hit_to_target_distance_squared < 0.04 or hit_to_target_distance_squared < 1) and not not unit_hit_is_player
+				local hit_target = hit_to_target_distance_squared < 0.04 or hit_to_target_distance_squared < 1 and not not unit_hit_is_player
 
 				if Development.parameter("ai_debug_trajectory_raycast") then
 					WeaponHelper:debug_draw_trajectory_hit(hit_position, hit_target, drawer)
@@ -374,21 +371,7 @@ end
 
 WeaponHelper.debug_draw_trajectory_hit = function (self, position, hit_target, drawer)
 	-- function 12
-	local var_12_0
-
-	if hit_target then
-		var_12_0 = Color(255, 74, 247, 115)
-
-		if not var_12_0 then
-			-- Nothing
-		end
-	end
-
-	var_12_0 = Color(255, 245, 108, 49)
-
-	local color = var_12_0
-
-	::label_12_0::
+	local color = hit_target and not not Color(255, 74, 247, 115) or not hit_target and not not Color(255, 245, 108, 49)
 
 	drawer:sphere(position, 0.1, color)
 end
@@ -428,36 +411,8 @@ WeaponHelper.ground_target = function (self, physics_world, fitting_unit, origin
 				local flat_velocity = Vector3.length(Vector3.flat(velocity))
 
 				for j = 1, GROUND_TARGET_MAX_STEPS do
-					local num
-
-					if j == 1 then
-						num = 0.5
-
-						goto label_13_0
-					end
-
-					num = 1
-
-					local step_back_distance = num
-
-					do
-						local num_2
-					end
-
-					::label_13_0::
-
-					if flat_velocity <= EPSILON then
-						num_2 = 0
-
-						goto label_13_1
-					end
-
-					num_2 = step_back_distance / flat_velocity
-
-					local step_back_t = num_2
-
-					::label_13_1::
-
+					local step_back_distance = j ~= 1 and not not 1 or not (j ~= 1) and not not 0.5
+					local step_back_t = flat_velocity <= EPSILON and not not 0 or not (flat_velocity <= EPSILON) and not not (step_back_distance / flat_velocity)
 					local step_back_position
 
 					if step_back_t > 0 then
@@ -526,22 +481,7 @@ WeaponHelper.look_at_enemy_or_static_position = function (self, physics_world, p
 	local results = PhysicsWorld.linear_sphere_sweep(physics_world, position + direction * (hit_radius / 2), position + direction * max_length, hit_radius, 100, "types", "both", "collision_filter", "filter_player_ray_projectile", "report_initial_overlap")
 	local side_manager = Managers.state.side
 	local side_by_unit = side_manager.side_by_unit
-	local count
-
-	if results then
-		count = #results
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_results = count
-
-	::label_15_0::
-
+	local num_results = results and not not #results or not results and not not 0
 	local best_position
 
 	for i = 1, num_results do

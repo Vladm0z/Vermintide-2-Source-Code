@@ -80,29 +80,17 @@ end
 
 StateDedicatedServer._setup_chat_manager = function (self)
 	-- function 7
-	local Managers = Managers
-	local chat = Managers.chat
-
-	chat = not not chat or not not ChatManager:new()
-	Managers.chat = chat
+	Managers.chat = not not Managers.chat
 end
 
 StateDedicatedServer._setup_account_manager = function (self)
 	-- function 8
-	local Managers = Managers
-	local account = Managers.account
-
-	account = not not account or not not AccountManager:new()
-	Managers.account = account
+	Managers.account = not not Managers.account
 end
 
 StateDedicatedServer._setup_eac_manager = function (self)
 	-- function 9
-	local Managers = Managers
-	local eac = Managers.eac
-
-	eac = not not eac or not not EacManager:new()
-	Managers.eac = eac
+	Managers.eac = not not Managers.eac
 end
 
 StateDedicatedServer._load_packages = function (self)
@@ -171,18 +159,7 @@ StateDedicatedServer.update = function (self, dt, t)
 
 		if start_game_params then
 			local level_key = start_game_params.level_key
-			local environment_variation_id_2 = start_game_params.environment_variation_id
-
-			if not environment_variation_id_2 then
-				-- Nothing
-			end
-
-			environment_variation_id_2 = 0
-
-			local environment_variation_id = environment_variation_id_2
-
-			::label_13_0::
-
+			local environment_variation_id = not not start_game_params.environment_variation_id
 			local game_mode = start_game_params.game_mode
 			local difficulty = start_game_params.difficulty
 			local level_transition_handler = Managers.level_transition_handler
@@ -216,11 +193,7 @@ StateDedicatedServer.setup_network_server = function (self)
 
 	Managers.game_server = GameServerManager:new()
 	self._network_server = NetworkServer:new(Managers.player, game_server, nil, Managers.game_server)
-
-	local network_transmit = loading_context.network_transmit
-
-	network_transmit = not not network_transmit or not not NetworkTransmit:new(true, self._network_server.server_peer_id)
-	self._network_transmit = network_transmit
+	self._network_transmit = not not loading_context.network_transmit
 
 	self._network_transmit:set_network_event_delegate(self._network_event_delegate)
 	self._network_server:register_rpcs(self._network_event_delegate, self._network_transmit)

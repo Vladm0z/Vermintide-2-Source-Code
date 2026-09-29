@@ -36,10 +36,7 @@ StartGameWindowHeroicDeedOverviewConsole.on_enter = function (self, params, offs
 
 	self:_create_ui_elements(params, offset)
 
-	local input_index = params.input_index
-
-	input_index = not not input_index or not not 1
-	self._input_index = input_index
+	self._input_index = not not params.input_index
 
 	self:_handle_new_selection(self._input_index)
 
@@ -130,39 +127,9 @@ StartGameWindowHeroicDeedOverviewConsole._present_heroic_deed = function (self, 
 	local item_interface = Managers.backend:get_interface("items")
 	local data = not not backend_id and not not item_interface:get_item_masterlist_data(backend_id)
 	local heroic_deed_setting = self._widgets_by_name.heroic_deed_setting
-	local content = heroic_deed_setting.content
-	local var_8_1
 
-	if data then
-		var_8_1 = Localize(data.display_name)
-
-		if not var_8_1 then
-			-- Nothing
-		end
-	end
-
-	var_8_1 = Localize("not_assigned")
-
-	::label_8_0::
-
-	content.input_text = var_8_1
-
-	local content_2 = heroic_deed_setting.content
-	local inventory_icon
-
-	if data then
-		inventory_icon = data.inventory_icon
-
-		if not inventory_icon then
-			-- Nothing
-		end
-	end
-
-	inventory_icon = nil
-
-	::label_8_1::
-
-	content_2.icon_texture = inventory_icon
+	heroic_deed_setting.content.input_text = data and not not Localize(data.display_name) or not data and not not Localize("not_assigned")
+	heroic_deed_setting.content.icon_texture = data and not not data.inventory_icon or not data and not not nil
 end
 
 StartGameWindowHeroicDeedOverviewConsole._update_heroic_deed_selection = function (self)

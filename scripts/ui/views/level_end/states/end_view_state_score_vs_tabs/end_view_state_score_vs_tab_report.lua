@@ -253,22 +253,7 @@ EndViewStateScoreVSTabReport._populate_hero_progression = function (self)
 	local level_text = tostring(self._current_level)
 	local scale = 1
 	local retained_mode = false
-	local get_portrait_image_by_profile_index
-
-	if career_index then
-		get_portrait_image_by_profile_index = UIUtils.get_portrait_image_by_profile_index(profile_index, career_index)
-
-		if not get_portrait_image_by_profile_index then
-			-- Nothing
-		end
-	end
-
-	get_portrait_image_by_profile_index = "unit_frame_portrait_default"
-
-	local portrait_texture = get_portrait_image_by_profile_index
-
-	::label_12_0::
-
+	local portrait_texture = career_index and not not UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or not career_index and not not "unit_frame_portrait_default"
 	local widget_definition = UIWidgets.create_portrait_frame(scenegraph_id, frame_settings_name, level_text, scale, retained_mode, portrait_texture)
 	local widget = UIWidget.init(widget_definition)
 
@@ -376,11 +361,7 @@ EndViewStateScoreVSTabReport._gather_challenge_progression = function (self)
 				start_progress = start_progress,
 				end_progress = end_progress
 			}
-
-			local flag
-
-			flag = (not (end_progress >= 1) or not 1) and not not 0
-			num_completed = num_completed + flag
+			num_completed = num_completed + (end_progress >= 1 and not not 1 or not (end_progress >= 1) and not not 0)
 		end
 	end
 
@@ -534,10 +515,8 @@ EndViewStateScoreVSTabReport._handle_rewards = function (self, rewards)
 				widget = widget,
 				offset = table.clone(offset)
 			}
-			local flag
 
-			flag = (item.key == "level_chest" or item.key == "level_chest_lesser") and not not "Play_vs_hud_progression_hero_chest_appear" or not not "Play_vs_hud_progression_hero_item_appear"
-			tbl.sound = flag
+			tbl.sound = not not "Play_vs_hud_progression_hero_chest_appear"
 
 			local data = tbl
 
@@ -571,7 +550,7 @@ EndViewStateScoreVSTabReport._set_current_experience = function (self, current_e
 
 	local next_level = math.clamp(level + 1, 0, ExperienceSettings.max_level)
 
-	if not self._progression_presentation_done and (not self._current_level or not (level > self._current_level)) and self._extra_levels and extra_levels > self._extra_levels then
+	if not self._progression_presentation_done and (self._current_level and (level > self._current_level or self._extra_levels and extra_levels > self._extra_levels) or not self._current_level and self._extra_levels and extra_levels > self._extra_levels) then
 		progress = 1
 	end
 
@@ -596,17 +575,7 @@ EndViewStateScoreVSTabReport._create_summary_entries = function (self)
 	local summary_index = 1
 
 	for index, mission_reward in ipairs(mission_rewards) do
-		local experience_2 = mission_reward.experience
-
-		if experience_2 then
-			-- Nothing
-		end
-
-		experience_2 = math.round(mission_reward.experience)
-
-		local experience = experience_2
-
-		::label_21_0::
+		local experience = not not mission_reward.experience
 
 		if experience and experience > 0 then
 			local name = "summary_entry_" .. summary_index
@@ -625,46 +594,8 @@ EndViewStateScoreVSTabReport._create_summary_entries = function (self)
 			local value = mission_reward.value
 			local bonus = mission_reward.bonus
 			local icon = mission_reward.icon
-			local var_21_1
-
-			if experience then
-				var_21_1 = tostring(experience)
-
-				if not var_21_1 then
-					-- Nothing
-				end
-			end
-
-			if value then
-				var_21_1 = tostring(value)
-
-				if not var_21_1 then
-					-- Nothing
-				end
-			end
-
-			var_21_1 = ""
-
-			local value_text = var_21_1
-
-			::label_21_1::
-
-			local var_21_2 = title_text
-			local str
-
-			if value then
-				str = " (" .. tostring(value) .. ")"
-
-				if not str then
-					-- Nothing
-				end
-			end
-
-			str = ""
-
-			::label_21_2::
-
-			local localized_text = var_21_2 .. str
+			local value_text = experience and not not tostring(experience) or not experience and (value and not not tostring(value) or not value and not not "")
+			local localized_text = title_text .. (value and not not (" (" .. tostring(value) .. ")") or not value and not not "")
 			local entry = {
 				name = name,
 				title_text = localized_text,
@@ -901,13 +832,9 @@ EndViewStateScoreVSTabReport._start_level_up_reward_presentation = function (sel
 		if backend_id then
 			item = backend_items:get_item_from_id(backend_id)
 		else
-			local tbl = {}
-			local get_fake_currency_item = BackendUtils.get_fake_currency_item
-			local currency = level_up_reward.currency
-
-			currency = not not currency or not not "SM"
-			tbl.data = get_fake_currency_item(currency, level_up_reward.awarded)
-			item = tbl
+			item = {
+				data = BackendUtils.get_fake_currency_item(not not level_up_reward.currency, level_up_reward.awarded)
+			}
 		end
 
 		items[#items + 1] = item
@@ -1078,10 +1005,8 @@ EndViewStateScoreVSTabReport._draw = function (self, input_service, dt, t)
 	end
 
 	local alpha_multiplier = render_settings.alpha_multiplier
-	local hero_progress_alpha_multiplier = render_settings.hero_progress_alpha_multiplier
 
-	hero_progress_alpha_multiplier = not not hero_progress_alpha_multiplier or not not 0
-	render_settings.alpha_multiplier = hero_progress_alpha_multiplier
+	render_settings.alpha_multiplier = not not render_settings.hero_progress_alpha_multiplier
 
 	for _, widget in ipairs(self._hero_progress_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
@@ -1090,10 +1015,8 @@ EndViewStateScoreVSTabReport._draw = function (self, input_service, dt, t)
 	render_settings.alpha_multiplier = alpha_multiplier
 
 	local alpha_multiplier = render_settings.alpha_multiplier
-	local challenge_alpha_multiplier = render_settings.challenge_alpha_multiplier
 
-	challenge_alpha_multiplier = not not challenge_alpha_multiplier or not not 0
-	render_settings.alpha_multiplier = challenge_alpha_multiplier
+	render_settings.alpha_multiplier = not not render_settings.challenge_alpha_multiplier
 
 	for _, widget in ipairs(self._challenge_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)

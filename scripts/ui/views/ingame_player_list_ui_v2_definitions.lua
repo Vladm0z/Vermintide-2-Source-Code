@@ -741,36 +741,8 @@ local scenegraph_definition = {
 local function create_vertical_edge_divider(scenegraph_id, size)
 	-- function 1
 	local scenegraph_definition = scenegraph_definition[scenegraph_id]
-	local str
-
-	if scenegraph_definition.horizontal_alignment == "right" then
-		str = "left"
-
-		goto label_1_0
-	end
-
-	str = "right"
-
-	local horizontal_alignment = str
-
-	do
-		local num
-	end
-
-	::label_1_0::
-
-	if horizontal_alignment == "left" then
-		num = -1
-
-		goto label_1_1
-	end
-
-	num = 1
-
-	local offset_multiplier = num
-
-	::label_1_1::
-
+	local horizontal_alignment = scenegraph_definition.horizontal_alignment ~= "right" and not not "right" or not (scenegraph_definition.horizontal_alignment ~= "right") and not not "left"
+	local offset_multiplier = horizontal_alignment ~= "left" and not not 1 or not (horizontal_alignment ~= "left") and not not -1
 	local widget = {
 		element = {
 			passes = {
@@ -1779,11 +1751,7 @@ local function create_reward_item(offset_x, item)
 					pass_type = "item_tooltip",
 					content_check_function = function (content)
 						-- function 17
-						local is_hover = content.hotspot.is_hover
-
-						is_hover = not not is_hover and not not content.item
-
-						return is_hover
+						return not not content.hotspot.is_hover
 					end
 				}
 			}
@@ -1873,11 +1841,7 @@ local function player_widget_definition(index)
 					text_id = "ping_text",
 					content_check_function = function (content, style)
 						-- function 21
-						local show_ping = content.show_ping
-
-						show_ping = not not show_ping and not not Application.user_setting("show_numerical_latency")
-
-						return show_ping
+						return not not content.show_ping
 					end
 				},
 				{
@@ -1905,11 +1869,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 23
-						local color = style.color
-						local flag
-
-						flag = (not content.show_chat_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_chat_button and not not 255 or not content.show_chat_button and not not 60
 					end
 				},
 				{
@@ -1918,11 +1878,7 @@ local function player_widget_definition(index)
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 24
-						local show_chat_button = content.show_chat_button
-
-						show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_selected
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -1940,11 +1896,7 @@ local function player_widget_definition(index)
 					text_id = "chat_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 26
-						local show_chat_button = content.show_chat_button
-
-						show_chat_button = not not show_chat_button and not content.chat_button_hotspot.is_selected and not not content.chat_button_hotspot.is_hover
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -1953,14 +1905,7 @@ local function player_widget_definition(index)
 					text_id = "chat_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 27
-						local show_chat_button = content.show_chat_button
-
-						if show_chat_button then
-							show_chat_button = content.chat_button_hotspot.is_selected
-							show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_hover
-						end
-
-						return show_chat_button
+						return not not content.show_chat_button
 					end
 				},
 				{
@@ -1979,11 +1924,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 28
-						local color = style.color
-						local flag
-
-						flag = (not content.show_voice_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_voice_button and not not 255 or not content.show_voice_button and not not 60
 					end
 				},
 				{
@@ -1992,11 +1933,7 @@ local function player_widget_definition(index)
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 29
-						local show_voice_button = content.show_voice_button
-
-						show_voice_button = not not show_voice_button and not not content.voice_button_hotspot.is_selected
-
-						return show_voice_button
+						return not not content.show_voice_button
 					end
 				},
 				{
@@ -2014,11 +1951,7 @@ local function player_widget_definition(index)
 					text_id = "voice_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 31
-						local show_voice_button = content.show_voice_button
-
-						show_voice_button = not not show_voice_button and not content.voice_button_hotspot.is_selected and not not content.voice_button_hotspot.is_hover
-
-						return show_voice_button
+						return not not content.show_voice_button
 					end
 				},
 				{
@@ -2027,14 +1960,7 @@ local function player_widget_definition(index)
 					text_id = "voice_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 32
-						local show_voice_button = content.show_voice_button
-
-						if show_voice_button then
-							show_voice_button = content.voice_button_hotspot.is_selected
-							show_voice_button = not not show_voice_button and not not content.voice_button_hotspot.is_hover
-						end
-
-						return show_voice_button
+						return not not content.show_voice_button
 					end
 				},
 				{
@@ -2053,11 +1979,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 33
-						local color = style.color
-						local flag
-
-						flag = (not content.show_kick_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_kick_button and not not 255 or not content.show_kick_button and not not 60
 					end
 				},
 				{
@@ -2075,11 +1997,7 @@ local function player_widget_definition(index)
 					text_id = "kick_tooltip_text",
 					content_check_function = function (content)
 						-- function 35
-						local show_kick_button = content.show_kick_button
-
-						show_kick_button = not not show_kick_button and not not content.kick_button_hotspot.is_hover
-
-						return show_kick_button
+						return not not content.show_kick_button
 					end
 				},
 				{
@@ -2098,11 +2016,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 36
-						local color = style.color
-						local flag
-
-						flag = (not content.show_profile_button or not 255) and not not 60
-						color[1] = flag
+						style.color[1] = content.show_profile_button and not not 255 or not content.show_profile_button and not not 60
 					end
 				},
 				{
@@ -2120,11 +2034,7 @@ local function player_widget_definition(index)
 					text_id = "profile_tooltip_text",
 					content_check_function = function (content)
 						-- function 38
-						local show_profile_button = content.show_profile_button
-
-						show_profile_button = not not show_profile_button and not not content.profile_button_hotspot.is_hover
-
-						return show_profile_button
+						return not not content.show_profile_button
 					end
 				},
 				{
@@ -2447,11 +2357,7 @@ local function player_widget_definition(index)
 					content_id = "talent_1",
 					content_check_function = function (content)
 						-- function 66
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2486,11 +2392,7 @@ local function player_widget_definition(index)
 					content_id = "talent_2",
 					content_check_function = function (content)
 						-- function 69
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2525,11 +2427,7 @@ local function player_widget_definition(index)
 					content_id = "talent_3",
 					content_check_function = function (content)
 						-- function 72
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2564,11 +2462,7 @@ local function player_widget_definition(index)
 					content_id = "talent_4",
 					content_check_function = function (content)
 						-- function 75
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2603,11 +2497,7 @@ local function player_widget_definition(index)
 					content_id = "talent_5",
 					content_check_function = function (content)
 						-- function 78
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				},
 				{
@@ -2642,11 +2532,7 @@ local function player_widget_definition(index)
 					content_id = "talent_6",
 					content_check_function = function (content)
 						-- function 81
-						local talent = content.talent
-
-						talent = not not talent and not not content.is_hover
-
-						return talent
+						return not not content.talent
 					end
 				}
 			}

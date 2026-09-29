@@ -1,19 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_unit_extension_templates.lua
 
-local str
-
-if _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
-	str = "AILocomotionExtensionC"
-
-	goto label_0_0
-end
-
-str = "AILocomotionExtension"
-
-local ai_locomotion_name = str
-
-::label_0_0::
-
+local ai_locomotion_name = not not "AILocomotionExtensionC"
 local unit_extension_templates = {
 	deus_weapon_chest = {
 		go_type = "deus_weapon_chest",

@@ -40,7 +40,7 @@ StateTitleScreen.on_enter = function (self, params)
 
 		Managers.mechanism = GameMechanismManager:new(current_mechanism_name)
 
-		if rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized() and (IS_PS4 or Managers.account:offline_mode()) then
+		if IS_PS4 or Managers.account:offline_mode() then
 			if Managers.party:has_party_lobby() then
 				local lobby = Managers.party:steal_lobby()
 
@@ -96,11 +96,7 @@ StateTitleScreen.on_enter = function (self, params)
 		self:_load_global_resources()
 	end
 
-	local Managers = Managers
-	local eac = Managers.eac
-
-	eac = not not eac or not not EacManager:new()
-	Managers.eac = eac
+	Managers.eac = not not Managers.eac
 
 	if Managers.beta_overlay then
 		Managers.beta_overlay:destroy()
@@ -290,28 +286,16 @@ end
 
 StateTitleScreen._init_popup_manager = function (self)
 	-- function 14
-	local Managers = Managers
-	local popup = Managers.popup
-
-	popup = not not popup or not not PopupManager:new()
-	Managers.popup = popup
+	Managers.popup = not not Managers.popup
 
 	Managers.popup:set_input_manager(self._input_manager)
 
-	local Managers_2 = Managers
-	local simple_popup = Managers.simple_popup
-
-	simple_popup = not not simple_popup or not not SimplePopup:new()
-	Managers_2.simple_popup = simple_popup
+	Managers.simple_popup = not not Managers.simple_popup
 end
 
 StateTitleScreen._init_chat_manager = function (self)
 	-- function 15
-	local Managers = Managers
-	local chat = Managers.chat
-
-	chat = not not chat or not not ChatManager:new()
-	Managers.chat = chat
+	Managers.chat = not not Managers.chat
 end
 
 StateTitleScreen._init_beta_overlay = function (self)

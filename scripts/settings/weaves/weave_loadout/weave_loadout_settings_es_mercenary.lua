@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_es_mercenary.lua
 
-local WeaveLoadoutSettings = WeaveLoadoutSettings
-
-WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
-WeaveLoadoutSettings = WeaveLoadoutSettings
+WeaveLoadoutSettings = not not WeaveLoadoutSettings
 
 local profile_name = "empire_soldier"
 local talent_index = CareerSettings.es_mercenary.talent_tree_index

@@ -2782,19 +2782,7 @@ local function get_variable(template, ...)
 		end
 	end
 
-	if not val then
-		-- Nothing
-	end
-
-	::label_1_0::
-
-	local inherits = template.inherits
-
-	inherits = not not inherits and not not get_variable(HitEffectsBeastmenUngor[template.inherits], ...)
-
-	::label_1_1::
-
-	return inherits
+	return not not get_variable(HitEffectsBeastmenUngor[template.inherits], ...)
 end
 
 for hit_effect_name, hit_effect_data in pairs(HitEffectsBeastmenUngor) do

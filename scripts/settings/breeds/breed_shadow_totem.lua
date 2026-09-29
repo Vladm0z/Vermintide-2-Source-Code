@@ -42,49 +42,19 @@ local breed_data = {
 	},
 	modify_extension_init_data = function (breed, is_husk, extension_init_data)
 		-- function 1
-		local death_system = extension_init_data.death_system
-
-		if not death_system then
-			-- Nothing
-		end
-
-		death_system = {}
-
-		local death_system_data = death_system
-
-		::label_1_0::
+		local death_system_data = not not extension_init_data.death_system
 
 		death_system_data.death_reaction_template = "ai_default"
 		death_system_data.is_husk = is_husk
 		extension_init_data.death_system = death_system_data
 
-		local hit_reaction_system = extension_init_data.hit_reaction_system
-
-		if not hit_reaction_system then
-			-- Nothing
-		end
-
-		hit_reaction_system = {}
-
-		local hit_reaction_system_data = hit_reaction_system
-
-		::label_1_1::
+		local hit_reaction_system_data = not not extension_init_data.hit_reaction_system
 
 		hit_reaction_system_data.hit_reaction_template = "level_object"
 		hit_reaction_system_data.is_husk = is_husk
 		extension_init_data.hit_reaction_system = hit_reaction_system_data
 
-		local ping_system = extension_init_data.ping_system
-
-		if not ping_system then
-			-- Nothing
-		end
-
-		ping_system = {}
-
-		local ping_system_data = ping_system
-
-		::label_1_2::
+		local ping_system_data = not not extension_init_data.ping_system
 
 		ping_system_data.always_pingable = true
 		extension_init_data.ping_system = ping_system_data

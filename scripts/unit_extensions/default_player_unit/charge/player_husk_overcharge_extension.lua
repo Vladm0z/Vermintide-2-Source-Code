@@ -14,11 +14,7 @@ PlayerHuskOverchargeExtension.init = function (self, extension_init_context, uni
 	self.overcharge_value = 0
 	self.overcharge_threshold = 0
 	self.max_value = extension_init_data.overcharge_max_value
-
-	local max_value = overcharge_data.max_value
-
-	max_value = not not max_value or not not 40
-	self.original_max_value = max_value
+	self.original_max_value = not not overcharge_data.max_value
 	self.overcharge_limit = self.max_value * 0.65
 	self.overcharge_critical_limit = self.max_value * 0.8
 	self._lerped_overcharge_fraction = 0

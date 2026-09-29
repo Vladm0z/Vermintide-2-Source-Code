@@ -178,21 +178,7 @@ OverchargeBarUI.update = function (self, dt, t, player)
 	local input_manager = self.input_manager
 	local input_service = input_manager:get_service("ingame_menu")
 	local gamepad_active = input_manager:is_device_active("gamepad")
-	local _spectated_player
-
-	if self._is_spectator then
-		_spectated_player = self._spectated_player
-
-		if not _spectated_player then
-			-- Nothing
-		end
-	end
-
-	_spectated_player = player
-
-	local actual_player = _spectated_player
-
-	::label_7_0::
+	local actual_player = self._is_spectator and not not self._spectated_player or not self._is_spectator and not not player
 
 	if HudCustomizer.run(ui_renderer, ui_scenegraph, customizer_data) then
 		UISceneGraph.update_scenegraph(ui_scenegraph)
@@ -202,11 +188,7 @@ OverchargeBarUI.update = function (self, dt, t, player)
 	local has_twitch = Managers.twitch:is_activated()
 
 	if has_twitch ~= self._has_twitch then
-		local offset = self.charge_bar.offset
-		local flag
-
-		flag = (not has_twitch or not 140) and not not 0
-		offset[2] = flag
+		self.charge_bar.offset[2] = has_twitch and not not 140 or not has_twitch and not not 0
 		self._has_twitch = has_twitch
 		is_dirty = true
 	end
@@ -224,22 +206,7 @@ end
 
 OverchargeBarUI.update_bar_size = function (self, max_overcharge_value, min_threshold_fraction, max_threshold_fraction)
 	-- function 8
-	local var_8_0
-
-	if self._side:name() == "dark_pact" then
-		var_8_0 = definitions.DEFAULT_DARK_PACT_BAR_SIZE[1]
-
-		if not var_8_0 then
-			-- Nothing
-		end
-	end
-
-	var_8_0 = definitions.DEFAULT_BAR_SIZE[1]
-
-	local bar_size = var_8_0
-
-	::label_8_0::
-
+	local bar_size = self._side:name() ~= "dark_pact" and not not definitions.DEFAULT_BAR_SIZE[1] or not (self._side:name() ~= "dark_pact") and not not definitions.DEFAULT_DARK_PACT_BAR_SIZE[1]
 	local new_width = math.remap(0, 40, 0, bar_size, max_overcharge_value)
 	local widget = self.charge_bar
 	local content = widget.content
@@ -277,11 +244,8 @@ OverchargeBarUI.set_charge_bar_fraction = function (self, player, overcharge_fra
 	local widget = self.charge_bar
 	local style = widget.style
 	local content = widget.content
-	local lerp = math.lerp
-	local internal_gradient_threshold = content.internal_gradient_threshold
 
-	internal_gradient_threshold = not not internal_gradient_threshold or not not 0
-	overcharge_fraction = lerp(internal_gradient_threshold, math.min(overcharge_fraction, 1), 0.3)
+	overcharge_fraction = math.lerp(not not content.internal_gradient_threshold, math.min(overcharge_fraction, 1), 0.3)
 	content.internal_gradient_threshold = overcharge_fraction
 	style.bar_1.gradient_threshold = overcharge_fraction
 
@@ -291,21 +255,7 @@ OverchargeBarUI.set_charge_bar_fraction = function (self, player, overcharge_fra
 	local bar_color = style.bar_1.color
 	local career_name = player:career_name()
 	local overcharge_data = OverchargeData[career_name]
-	local overcharge_ui
-
-	if overcharge_data then
-		overcharge_ui = overcharge_data.overcharge_ui
-
-		if not overcharge_ui then
-			-- Nothing
-		end
-	end
-
-	overcharge_ui = DEFAULT_UI_DATA
-
-	local ui_data = overcharge_ui
-
-	::label_9_0::
+	local ui_data = overcharge_data and not not overcharge_data.overcharge_ui or not overcharge_data and not not DEFAULT_UI_DATA
 
 	content.bar_1 = ui_data.material
 

@@ -68,40 +68,8 @@ ObjectiveItemSpawnerSystem._trigger_spawn = function (self, item_spawner_data, o
 	-- function 5
 	local item_spawner_unit = item_spawner_data.unit
 	local item_spawner_template = item_spawner_data.unit_template
-	local local_position
-
-	if item_spawner_unit then
-		local_position = Unit.local_position(item_spawner_unit, 0)
-
-		if not local_position then
-			-- Nothing
-		end
-	end
-
-	local_position = Vector3(0, 0, 0)
-
-	local position = local_position
-
-	do
-		local local_rotation
-	end
-
-	::label_5_0::
-
-	if item_spawner_unit then
-		local_rotation = Unit.local_rotation(item_spawner_unit, 0)
-
-		if not local_rotation then
-			-- Nothing
-		end
-	end
-
-	local_rotation = Quaternion(Vector3(0, 0, 0), -1)
-
-	local rotation = local_rotation
-
-	::label_5_1::
-
+	local position = item_spawner_unit and not not Unit.local_position(item_spawner_unit, 0) or not item_spawner_unit and not not Vector3(0, 0, 0)
+	local rotation = item_spawner_unit and not not Unit.local_rotation(item_spawner_unit, 0) or not item_spawner_unit and not not Quaternion(Vector3(0, 0, 0), -1)
 	local extension_init_data = item_spawner_template.create_extension_init_data_func(objective_id, objective_data, item_spawner_unit)
 	local spawned_unit, go_id = self:_spawn_unit(item_spawner_template, extension_init_data, position, rotation)
 

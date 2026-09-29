@@ -2,17 +2,7 @@
 
 require("scripts/managers/side/side")
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/managers/side/side_manager_testify")
-
-local side_manager_testify = testify
-
-::label_0_0::
+local side_manager_testify = not not script_data.testify
 
 SideManager = class(SideManager)
 ALL_PLAYER_AND_BOT_UNITS = {}
@@ -371,11 +361,7 @@ local unit_alive = Unit.alive
 
 local function is_valid(unit)
 	-- function 25
-	local var_25_0 = unit_alive(unit)
-
-	var_25_0 = not not var_25_0 and not not not ScriptUnit.extension(unit, "status_system"):is_ready_for_assisted_respawn()
-
-	return var_25_0
+	return not not unit_alive(unit)
 end
 
 local function is_valid_target(unit)

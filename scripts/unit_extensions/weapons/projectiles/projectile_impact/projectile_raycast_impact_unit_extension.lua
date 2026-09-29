@@ -11,38 +11,14 @@ ProjectileRaycastImpactUnitExtension.init = function (self, extension_init_conte
 	-- function 1
 	ProjectileRaycastImpactUnitExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
-	local collision_filter = extension_init_data.collision_filter
-
-	collision_filter = not not collision_filter or not not "filter_player_ray_projectile"
-	self.collision_filter = collision_filter
+	self.collision_filter = not not extension_init_data.collision_filter
 	self.network_manager = Managers.state.network
 	self.is_server = Managers.player.is_server
 	self.owner_unit = extension_init_data.owner_unit
 
 	local owner_player = Managers.player:owner(self.owner_unit)
-	local local_player
 
-	if owner_player then
-		local_player = owner_player.local_player
-
-		if not local_player then
-			-- Nothing
-		end
-	end
-
-	if owner_player then
-		local_player = owner_player.bot_player
-
-		if not local_player then
-			-- Nothing
-		end
-	end
-
-	local_player = false
-
-	::label_1_0::
-
-	self.owner_is_local = local_player
+	self.owner_is_local = owner_player and not not owner_player.local_player or not owner_player and (owner_player and not not owner_player.bot_player or not owner_player and not not false)
 	self.server_side_raycast = extension_init_data.server_side_raycast
 	self.is_server = Managers.player.is_server
 	self._dont_target_friendly = extension_init_data.dont_target_friendly

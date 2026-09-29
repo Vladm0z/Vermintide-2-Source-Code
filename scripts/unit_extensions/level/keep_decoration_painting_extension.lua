@@ -13,11 +13,7 @@ KeepDecorationPaintingExtension.init = function (self, extension_init_context, u
 	self._world = world
 	self._level_unit_index = Level.unit_index(level, unit)
 	self._is_leader = Managers.party:is_leader(Network.peer_id())
-
-	local keep_decoration_paintings = NetworkLookup.keep_decoration_paintings
-
-	keep_decoration_paintings = not not keep_decoration_paintings or not not {}
-	self._paintings_lookup = keep_decoration_paintings
+	self._paintings_lookup = not not NetworkLookup.keep_decoration_paintings
 	self._is_client_painting = Unit.get_data(unit, "painting_data", "is_client_painting")
 	self._currently_set_painting = nil
 	self._temporarily_set_frame = nil
@@ -79,19 +75,7 @@ KeepDecorationPaintingExtension.extensions_ready = function (self)
 		return
 	end
 
-	local str
-
-	if self._is_client_painting then
-		str = "hidden"
-
-		goto label_4_0
-	end
-
-	str = self:get_selected_decoration()
-
-	local selected_painting = str
-
-	::label_4_0::
+	local selected_painting = self._is_client_painting and not not "hidden" or not self._is_client_painting and not not self:get_selected_decoration()
 
 	self._current_preview_painting = selected_painting
 

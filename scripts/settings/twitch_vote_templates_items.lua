@@ -41,26 +41,7 @@ local function default_condition_func(vote_data)
 
 		for id, player_validation_data in pairs(validation_data) do
 			if not players[id] or players[id] and players[id]:name() ~= player_validation_data.name then
-				local var_2_0 = debug_print
-				local format = string.format
-				local str = "[TWITCH VOTE DATA VALIDATION] Resetting %q since a bot/player has been removed or replaced (%q ~= %q or id: %q is missing)"
-				local var_2_3 = tostring(player_validation_data.variable)
-				local tostring = tostring
-				local name
-
-				if players[id] then
-					name = players[id]:name()
-
-					if not name then
-						-- Nothing
-					end
-				end
-
-				name = nil
-
-				::label_2_0::
-
-				var_2_0(format(str, var_2_3, tostring(name), tostring(player_validation_data.name), id))
+				debug_print(string.format("[TWITCH VOTE DATA VALIDATION] Resetting %q since a bot/player has been removed or replaced (%q ~= %q or id: %q is missing)", tostring(player_validation_data.variable), tostring(players[id] and not not players[id]:name() or not players[id] and not not nil), tostring(player_validation_data.name), id))
 
 				vote_data.options[player_validation_data.option] = 0
 				reset_validation_data = true
@@ -162,10 +143,7 @@ local function add_item(is_server, player_unit, pickup_type)
 	end
 end
 
-local TwitchVoteTemplates = TwitchVoteTemplates
-
-TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
-TwitchVoteTemplates = TwitchVoteTemplates
+TwitchVoteTemplates = not not TwitchVoteTemplates
 TwitchVoteTemplates.twitch_give_first_aid_kit = {
 	cost = -100,
 	use_frame_texture = true,

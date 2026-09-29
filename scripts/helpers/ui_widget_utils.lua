@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/ui_widget_utils.lua
 
-local UIWidgetUtils = UIWidgetUtils
-
-UIWidgetUtils = not not UIWidgetUtils or not not {}
-UIWidgetUtils = UIWidgetUtils
+UIWidgetUtils = not not UIWidgetUtils
 
 UIWidgetUtils.animate_default_button = function (widget, dt)
 	-- function 1
@@ -12,68 +9,10 @@ UIWidgetUtils.animate_default_button = function (widget, dt)
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
 	local is_hover = not not is_selected or not not hotspot.is_hover
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_1_1
-
-	::label_1_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_1_1::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_1_2::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_1_3::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_1_4::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -171,67 +110,10 @@ UIWidgetUtils.animate_default_icon_tabs = function (widget, dt)
 		local hotspot = content[hotspot_name]
 		local is_hover = hotspot.is_hover
 		local is_selected = hotspot.is_selected
-		local is_clicked
-
-		if not is_selected then
-			is_clicked = hotspot.is_clicked
-
-			if is_clicked then
-				-- Nothing
-			end
-
-			if hotspot.is_clicked ~= 0 then
-				-- Nothing
-			end
-		end
-
-		is_clicked = false
-
-		goto label_2_1
-
-		::label_2_0::
-
-		is_clicked = true
-
-		local input_pressed = is_clicked
-
-		::label_2_1::
-
-		local input_progress_2 = hotspot.input_progress
-
-		if not input_progress_2 then
-			-- Nothing
-		end
-
-		input_progress_2 = 0
-
-		local input_progress = input_progress_2
-
-		::label_2_2::
-
-		local hover_progress_2 = hotspot.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_2_3::
-
-		local selection_progress_2 = hotspot.selection_progress
-
-		if not selection_progress_2 then
-			-- Nothing
-		end
-
-		selection_progress_2 = 0
-
-		local selection_progress = selection_progress_2
-
-		::label_2_4::
+		local input_pressed = not is_selected and not not hotspot.is_clicked
+		local input_progress = not not hotspot.input_progress
+		local hover_progress = not not hotspot.hover_progress
+		local selection_progress = not not hotspot.selection_progress
 
 		if input_pressed then
 			input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -296,59 +178,10 @@ UIWidgetUtils.animate_default_checkbox_button = function (widget, dt)
 	local hotspot = content[hotspot_name]
 	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
 	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
-	local is_clicked = hotspot.is_clicked
-
-	if is_clicked then
-		-- Nothing
-	end
-
-	if hotspot.is_clicked ~= 0 then
-		is_clicked = false
-
-		goto label_3_0
-	end
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_3_0::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_3_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_3_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_3_3::
+	local input_pressed = not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -427,59 +260,10 @@ UIWidgetUtils.animate_default_checkbox_button_console = function (widget, dt)
 	local hotspot = content[hotspot_name]
 	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
 	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
-	local is_clicked = hotspot.is_clicked
-
-	if is_clicked then
-		-- Nothing
-	end
-
-	if hotspot.is_clicked ~= 0 then
-		is_clicked = false
-
-		goto label_4_0
-	end
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_4_0::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_4_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_4_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_4_3::
+	local input_pressed = not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -556,67 +340,10 @@ UIWidgetUtils.animate_default_text_tabs = function (widget, dt)
 		local hotspot = content[hotspot_name]
 		local is_hover = hotspot.is_hover
 		local is_selected = hotspot.is_selected
-		local is_clicked
-
-		if not is_selected then
-			is_clicked = hotspot.is_clicked
-
-			if is_clicked then
-				-- Nothing
-			end
-
-			if hotspot.is_clicked ~= 0 then
-				-- Nothing
-			end
-		end
-
-		is_clicked = false
-
-		goto label_5_1
-
-		::label_5_0::
-
-		is_clicked = true
-
-		local input_pressed = is_clicked
-
-		::label_5_1::
-
-		local input_progress_2 = hotspot.input_progress
-
-		if not input_progress_2 then
-			-- Nothing
-		end
-
-		input_progress_2 = 0
-
-		local input_progress = input_progress_2
-
-		::label_5_2::
-
-		local hover_progress_2 = hotspot.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_5_3::
-
-		local selection_progress_2 = hotspot.selection_progress
-
-		if not selection_progress_2 then
-			-- Nothing
-		end
-
-		selection_progress_2 = 0
-
-		local selection_progress = selection_progress_2
-
-		::label_5_4::
+		local input_pressed = not is_selected and not not hotspot.is_clicked
+		local input_progress = not not hotspot.input_progress
+		local hover_progress = not not hotspot.hover_progress
+		local selection_progress = not not hotspot.selection_progress
 
 		if input_pressed then
 			input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -686,81 +413,12 @@ UIWidgetUtils.animate_option_button = function (widget, dt)
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local has_focus = content.has_focus
-	local is_hover_2 = hotspot.is_hover
-
-	if not is_hover_2 then
-		-- Nothing
-	end
-
-	is_hover_2 = has_focus
-
-	local is_hover = is_hover_2
-
-	::label_6_0::
-
+	local is_hover = not not hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_6_2
-
-	::label_6_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_6_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_6_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_6_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_6_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -843,18 +501,7 @@ UIWidgetUtils.animate_start_game_console_setting_button = function (widget, dt)
 	local content = widget.content
 	local style = widget.style
 	local is_selected = content.is_selected
-	local selected_progress_2 = content.selected_progress
-
-	if not selected_progress_2 then
-		-- Nothing
-	end
-
-	selected_progress_2 = 0
-
-	local selected_progress = selected_progress_2
-
-	::label_7_0::
-
+	local selected_progress = not not content.selected_progress
 	local speed = 15
 
 	if is_selected then
@@ -874,82 +521,13 @@ UIWidgetUtils.animate_arrow_button = function (widget, dt)
 	-- function 8
 	local content = widget.content
 	local style = widget.style
-	local hotspot_2 = content.hotspot
-
-	if not hotspot_2 then
-		-- Nothing
-	end
-
-	hotspot_2 = content.button_hotspot
-
-	local hotspot = hotspot_2
-
-	::label_8_0::
-
+	local hotspot = not not content.hotspot
 	local has_focus = content.has_focus
-	local is_hover_2 = hotspot.is_hover
-
-	if not is_hover_2 then
-		-- Nothing
-	end
-
-	is_hover_2 = has_focus
-
-	local is_hover = is_hover_2
-
-	::label_8_1::
-
+	local is_hover = not not hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_8_3
-
-	::label_8_2::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_8_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_8_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_8_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -975,82 +553,13 @@ UIWidgetUtils.animate_icon_button = function (widget, dt)
 	-- function 9
 	local content = widget.content
 	local style = widget.style
-	local hotspot_2 = content.hotspot
-
-	if not hotspot_2 then
-		-- Nothing
-	end
-
-	hotspot_2 = content.button_hotspot
-
-	local hotspot = hotspot_2
-
-	::label_9_0::
-
+	local hotspot = not not content.hotspot
 	local has_focus = content.has_focus
-	local is_hover_2 = hotspot.is_hover
-
-	if not is_hover_2 then
-		-- Nothing
-	end
-
-	is_hover_2 = has_focus
-
-	local is_hover = is_hover_2
-
-	::label_9_1::
-
+	local is_hover = not not hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_9_3
-
-	::label_9_2::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_9_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_9_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_9_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -1084,81 +593,12 @@ UIWidgetUtils.animate_play_button = function (widget, dt)
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local is_disabled = hotspot.disable_button
-	local is_selected_2 = hotspot.is_selected
-
-	if not is_selected_2 then
-		-- Nothing
-	end
-
-	is_selected_2 = content.is_selected
-
-	local is_selected = is_selected_2
-
-	::label_10_0::
-
+	local is_selected = not not hotspot.is_selected
 	local is_hover = not not is_selected or not not hotspot.is_hover
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_10_2
-
-	::label_10_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_10_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_10_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_10_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_10_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -1199,20 +639,7 @@ UIWidgetUtils.animate_play_button = function (widget, dt)
 	style.texture_icon_hover_id.color[1] = hover_alpha
 	style.texture_text_bg_effect_id.color[1] = hover_alpha
 
-	local num
-
-	if is_disabled then
-		num = 0
-
-		goto label_10_6
-	end
-
-	num = 1
-
-	local active_progress = num
-
-	::label_10_6::
-
+	local active_progress = is_disabled and not not 0 or not is_disabled and not not 1
 	local active_alpha_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 	local active_alpha = math.max(hover_alpha, active_progress * (active_alpha_progress * 200 + 55))
 
@@ -1244,56 +671,11 @@ UIWidgetUtils.animate_game_option_button = function (widget, dt)
 		local on_hover_enter = hotspot.on_hover_enter
 		local is_hover = hotspot.is_hover
 		local gamepad_active = Managers.input:is_device_active("gamepad")
-		local num
-
-		if is_hover or is_selected then
-			num = 14
-
-			goto label_13_0
-		end
-
-		num = 200
-
-		local speed = num
-
-		::label_13_0::
-
+		local speed = not not 14
 		local pulse_speed = 3
-		local hover_progress_2 = hotspot.hover_progress
-
-		if not hover_progress_2 then
-			-- Nothing
-		end
-
-		hover_progress_2 = 0
-
-		local hover_progress = hover_progress_2
-
-		::label_13_1::
-
-		local pulse_progress_2 = hotspot.pulse_progress
-
-		if not pulse_progress_2 then
-			-- Nothing
-		end
-
-		pulse_progress_2 = 1
-
-		local pulse_progress = pulse_progress_2
-
-		::label_13_2::
-
-		local selection_progress_2 = hotspot.selection_progress
-
-		if not selection_progress_2 then
-			-- Nothing
-		end
-
-		selection_progress_2 = 0
-
-		local selection_progress = selection_progress_2
-
-		::label_13_3::
+		local hover_progress = not not hotspot.hover_progress
+		local pulse_progress = not not hotspot.pulse_progress
+		local selection_progress = not not hotspot.selection_progress
 
 		if is_hover then
 			hover_progress = math.min(hover_progress + dt * speed, 1)
@@ -1468,68 +850,10 @@ UIWidgetUtils.animate_layout_button = function (widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_14_1
-
-	::label_14_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_14_1::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_14_2::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_14_3::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_14_4::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

@@ -55,23 +55,7 @@ BTSelector_chaos_exalted_sorcerer_drachenfels.run = function (self, unit, blackb
 	do
 		local node_intro_sequence = children[2]
 		local t = Managers.time:time("game")
-		local intro_timer = blackboard.intro_timer
-
-		if intro_timer then
-			-- Nothing
-		end
-
-		if not (t < blackboard.intro_timer) then
-			intro_timer = false
-
-			goto label_4_0
-		end
-
-		intro_timer = true
-
-		local condition_result = intro_timer
-
-		::label_4_0::
+		local condition_result = not not blackboard.intro_timer
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_intro_sequence, "aborted")
@@ -102,18 +86,7 @@ BTSelector_chaos_exalted_sorcerer_drachenfels.run = function (self, unit, blackb
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_data = next_smart_object_data.smart_object_data
-
-		if smart_object_data then
-			-- Nothing
-		end
-
-		smart_object_data = next_smart_object_data.smart_object_data.unit
-
-		local smart_object_unit = smart_object_data
-
-		::label_4_1::
-
+		local smart_object_unit = not not next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -124,7 +97,7 @@ BTSelector_chaos_exalted_sorcerer_drachenfels.run = function (self, unit, blackb
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = (not is_in_smartobject_range or not moving_state) and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
 		end
 
 		if condition_result then

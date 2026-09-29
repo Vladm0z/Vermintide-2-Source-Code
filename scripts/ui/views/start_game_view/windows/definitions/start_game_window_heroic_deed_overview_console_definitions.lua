@@ -248,25 +248,10 @@ local function create_setting_button(scenegraph_id, title_text, input_text, icon
 	icon_texture = not not icon_texture or not not "level_icon_01"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local size
-
-	if icon_texture_settings then
-		size = icon_texture_settings.size
-
-		if not size then
-			-- Nothing
-		end
-	end
-
-	size = {
+	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
 		150,
 		150
 	}
-
-	local icon_texture_size = size
-
-	::label_7_0::
-
 	local button_size = scenegraph_definition[scenegraph_id].size
 	local passes = {}
 	local content = {}

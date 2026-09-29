@@ -3,11 +3,7 @@
 require("scripts/utils/script_gui")
 require("scripts/utils/draw_ai_behavior")
 
-local script_data = script_data
-local ai_debugger_freeflight_only = script_data.ai_debugger_freeflight_only
-
-ai_debugger_freeflight_only = not not ai_debugger_freeflight_only or not not Development.parameter("ai_debugger_freeflight_only")
-script_data.ai_debugger_freeflight_only = ai_debugger_freeflight_only
+script_data.ai_debugger_freeflight_only = not not script_data.ai_debugger_freeflight_only
 
 local font_size = 26
 local font_size_medium = 22
@@ -143,9 +139,7 @@ AIDebugger.update = function (self, t, dt)
 	if DebugKeyHandler.key_pressed("j", "kill all but selected AI", "ai", "left shift") then
 		local pos = Vector3.zero()
 
-		if Managers.player:local_player() and not POSITION_LOOKUP[Managers.player:local_player().player_unit] then
-			-- Nothing
-		end
+		pos = not Managers.player:local_player() or not not POSITION_LOOKUP[Managers.player:local_player().player_unit] or not not pos
 
 		Managers.state.debug:send_conflict_director_command("destroy_close_units", nil, pos, {
 			"512"
@@ -261,17 +255,7 @@ AIDebugger.update = function (self, t, dt)
 	end
 
 	if self.show_edit_ai_utility then
-		local alive = Unit.alive(self.active_unit)
-
-		if alive then
-			-- Nothing
-		end
-
-		alive = BLACKBOARDS[self.active_unit]
-
-		local blackboard = alive
-
-		::label_5_0::
+		local blackboard = not not Unit.alive(self.active_unit)
 
 		self._edit_ai_utility:update(self.active_unit, t, dt, Managers.input:get_service("Debug"), blackboard)
 	end
@@ -369,7 +353,7 @@ AIDebugger.update_ingame_selection = function (self, in_free_flight)
 
 	local select_target = DebugKeyHandler.key_pressed("right_thumb_pressed", "select target", "ai")
 
-	if (select_target or DebugKeyHandler.key_pressed("v", "select bot", "ai debugger")) and self:closest_unit_in_aim_dir(in_free_flight) then
+	if select_target and self:closest_unit_in_aim_dir(in_free_flight) or not select_target and DebugKeyHandler.key_pressed("v", "select bot", "ai debugger") and self:closest_unit_in_aim_dir(in_free_flight) then
 		if Unit.alive(self.active_unit) and script_data.anim_debug_ai_debug_target then
 			Unit.set_animation_logging(self.active_unit, false)
 		end
@@ -446,18 +430,7 @@ AIDebugger.mouse_raycast = function (self, input)
 	local world = Managers.world:world(data.viewport_world_name)
 	local physics_world = World.get_data(world, "physics_world")
 	local viewport = ScriptWorld.global_free_flight_viewport(world)
-	local frustum_freeze_camera = data.frustum_freeze_camera
-
-	if not frustum_freeze_camera then
-		-- Nothing
-	end
-
-	frustum_freeze_camera = ScriptViewport.camera(viewport)
-
-	local camera = frustum_freeze_camera
-
-	::label_10_0::
-
+	local camera = not not data.frustum_freeze_camera
 	local mouse = input:get("cursor")
 	local position = Camera.screen_to_world(camera, Vector3(mouse.x, mouse.y, 0), 0)
 	local direction = Camera.screen_to_world(camera, Vector3(mouse.x, mouse.y, 0), 1) - position
@@ -471,17 +444,7 @@ AIDebugger.mouse_raycast = function (self, input)
 		local unit = Actor.unit(actor)
 		local breed = Unit.get_data(unit, "breed")
 		local player_manager = Managers.player
-		local is_player_unit = player_manager:is_player_unit(unit)
-
-		if is_player_unit then
-			-- Nothing
-		end
-
-		is_player_unit = player_manager:owner(unit).bot_player
-
-		local is_bot = is_player_unit
-
-		::label_10_1::
+		local is_bot = not not player_manager:is_player_unit(unit)
 
 		if breed or is_bot then
 			self.hot_unit = unit
@@ -537,10 +500,8 @@ AIDebugger.draw_nearby_navmesh = function (self, ai_unit)
 	local drawer = self.drawer
 	local position = POSITION_LOOKUP[ai_unit]
 	local offset = Vector3(0, 0, 0.2)
-	local _line_object = self._line_object
 
-	_line_object = not not _line_object or not not World.create_line_object(self.world, false)
-	self._line_object = _line_object
+	self._line_object = not not self._line_object
 
 	LineObject.reset(self._line_object)
 
@@ -701,15 +662,8 @@ AIDebugger.draw_behavior_tree = function (self, ai_unit, t, dt)
 		return
 	end
 
-	local tree_x = self.tree_x
-
-	tree_x = not not tree_x or not not 0.45
-	self.tree_x = tree_x
-
-	local tree_y = self.tree_y
-
-	tree_y = not not tree_y or not not 0
-	self.tree_y = tree_y
+	self.tree_x = not not self.tree_x
+	self.tree_y = not not self.tree_y
 
 	local ai_extension = ScriptUnit.has_extension(ai_unit, "ai_system")
 
@@ -769,22 +723,7 @@ AIDebugger.draw_reticule = function (self)
 
 	if rawget(_G, atlas_name)[crosshair] then
 		local resolution_width, resolution_height = Gui.resolution()
-		local var_17_0
-
-		if self.hot_unit then
-			var_17_0 = Color(255, 255, 0, 0)
-
-			if not var_17_0 then
-				-- Nothing
-			end
-		end
-
-		var_17_0 = Color(255, 255, 255, 255)
-
-		local color = var_17_0
-
-		::label_17_0::
-
+		local color = self.hot_unit and not not Color(255, 255, 0, 0) or not self.hot_unit and not not Color(255, 255, 255, 255)
 		local material, uv00, uv11, size = HUDHelper.atlas_material(atlas_name, crosshair)
 		local scale = 1
 
@@ -868,18 +807,7 @@ AIDebugger.debug_pacing = function (self, t, dt)
 	local win_x = 0.45
 	local win_y = 0.01
 	local row = win_y
-	local name = CurrentPacing.name
-
-	if not name then
-		-- Nothing
-	end
-
-	name = "default"
-
-	local info = name
-
-	::label_19_0::
-
+	local info = not not CurrentPacing.name
 	local nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, "Pacing: ", font_mtrl, font_size, font, win_x + wedge, row + text_height, 3, Color(255, 237, 237, 152))
 
 	nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, info, font_mtrl, font_size, font, nx, row + text_height, 3, Color(255, 137, 237, 137))
@@ -889,51 +817,9 @@ AIDebugger.debug_pacing = function (self, t, dt)
 
 	local text, spawning_text
 	local state_name, state_start_time, threat_population, specials_population, horde_population, end_time = cm.pacing:get_pacing_data()
-	local str
-
-	if threat_population > 0 then
-		str = "[Roamers]"
-
-		goto label_19_1
-	end
-
-	str = "[NO Roamers]"
-
-	local roamers = str
-
-	do
-		local str_2
-	end
-
-	::label_19_1::
-
-	if horde_population > 0 then
-		str_2 = "[Specials]"
-
-		goto label_19_2
-	end
-
-	str_2 = "[NO Specials]"
-
-	local specials = str_2
-
-	do
-		local str_3
-	end
-
-	::label_19_2::
-
-	if horde_population > 0 then
-		str_3 = "[Hordes]"
-
-		goto label_19_3
-	end
-
-	str_3 = "[NO Hordes]"
-
-	local horde = str_3
-
-	::label_19_3::
+	local roamers = threat_population > 0 and not not "[Roamers]" or not (threat_population > 0) and not not "[NO Roamers]"
+	local specials = horde_population > 0 and not not "[Specials]" or not (horde_population > 0) and not not "[NO Specials]"
+	local horde = horde_population > 0 and not not "[Hordes]" or not (horde_population > 0) and not not "[NO Hordes]"
 
 	if end_time then
 		local count_down = math.clamp(end_time - t, 0, 999999)

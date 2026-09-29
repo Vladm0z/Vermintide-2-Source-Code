@@ -26,30 +26,8 @@ local function item_sort_func(item_1, item_2)
 	-- function 1
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local rarity = item_1.rarity
-
-	if not rarity then
-		-- Nothing
-	end
-
-	rarity = item_data_1.rarity
-
-	local item_1_rarity = rarity
-
-	::label_1_0::
-
-	local rarity_2 = item_2.rarity
-
-	if not rarity_2 then
-		-- Nothing
-	end
-
-	rarity_2 = item_data_2.rarity
-
-	local item_2_rarity = rarity_2
-
-	::label_1_1::
-
+	local item_1_rarity = not not item_1.rarity
+	local item_2_rarity = not not item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -135,17 +113,7 @@ StartGameWindowMutatorGridConsole.on_enter = function (self, params, offset)
 	item_grid:disable_item_drag()
 	item_grid:apply_item_sorting_function(item_sort_func)
 
-	local mechanism = Managers.mechanism
-
-	if mechanism then
-		-- Nothing
-	end
-
-	mechanism = Managers.mechanism:mechanism_setting_for_title("override_levels")
-
-	local override_levels = mechanism
-
-	::label_2_0::
+	local override_levels = not not Managers.mechanism
 
 	if override_levels then
 		local items = item_grid:items()
@@ -229,7 +197,7 @@ StartGameWindowMutatorGridConsole.on_exit = function (self, params)
 
 	self.parent:set_input_description(nil)
 
-	if (not self._previously_selected_backend_id or self._selected_backend_id) and not self._confirm_selection then
+	if self._previously_selected_backend_id and (not self._selected_backend_id or not self._confirm_selection) or not self._previously_selected_backend_id and not self._confirm_selection then
 		self.parent:set_selected_heroic_deed_backend_id(self._previously_selected_backend_id)
 	end
 
@@ -319,13 +287,13 @@ StartGameWindowMutatorGridConsole._handle_input = function (self, dt, t)
 		item_content = item_grid:get_item_content(r, c)
 	end
 
-	if item and not item.marked_for_deletion and (not input_service or not input_service:get("right_stick_press")) and input_service:get("mouse_middle_press") then
+	if item and not item.marked_for_deletion and input_service then
 		item.marked_for_deletion = true
 		item_content.reserved = true
 
 		table.insert(self._deeds_marked_for_deletion, item)
 		self:_play_sound("hud_deed_delete_select")
-	elseif item and item.marked_for_deletion and (not input_service or not input_service:get("right_stick_press")) and input_service:get("mouse_middle_press") then
+	elseif item and item.marked_for_deletion and input_service then
 		item.marked_for_deletion = false
 		item_content.reserved = false
 
@@ -403,7 +371,7 @@ StartGameWindowMutatorGridConsole._handle_input = function (self, dt, t)
 		self:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if (UIUtils.is_button_pressed(delete_selection_button) or input_service:get("special_1")) and not table.is_empty(self._deeds_marked_for_deletion) then
+	if UIUtils.is_button_pressed(delete_selection_button) and not table.is_empty(self._deeds_marked_for_deletion) or not UIUtils.is_button_pressed(delete_selection_button) and input_service:get("special_1") and not table.is_empty(self._deeds_marked_for_deletion) then
 		self._popup_id = Managers.popup:queue_popup(Localize("delete_deeds_popup_warning_message"), Localize("popup_discard_changes_topic"), "yes", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 		self._delete_type = delete_type.delete_selected
 
@@ -469,17 +437,7 @@ StartGameWindowMutatorGridConsole.draw = function (self, dt)
 	local input_service = self.parent:window_input_service()
 	local render_settings = self.render_settings
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_12_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
@@ -497,10 +455,7 @@ StartGameWindowMutatorGridConsole.draw = function (self, dt)
 				render_settings.snap_pixel_positions = widget.snap_pixel_positions
 			end
 
-			local alpha_multiplier_3 = widget.alpha_multiplier
-
-			alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_3
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 

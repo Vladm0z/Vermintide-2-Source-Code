@@ -4,22 +4,10 @@ local font_size = 16
 local font = "arial"
 local font_mtrl = "materials/fonts/" .. font
 local serialize = require("scripts/utils/serialize")
-local script_data = script_data
-local input_debug_device_state = script_data.input_debug_device_state
 
-input_debug_device_state = not not input_debug_device_state or not not Development.parameter("input_debug_device_state")
-script_data.input_debug_device_state = input_debug_device_state
-
-local script_data_2 = script_data
-local input_debug_filters = script_data.input_debug_filters
-
-input_debug_filters = not not input_debug_filters or not not Development.parameter("input_debug_filters")
-script_data_2.input_debug_filters = input_debug_filters
-
-local InputDebugger = InputDebugger
-
-InputDebugger = not not InputDebugger or not not {}
-InputDebugger = InputDebugger
+script_data.input_debug_device_state = not not script_data.input_debug_device_state
+script_data.input_debug_filters = not not script_data.input_debug_filters
+InputDebugger = not not InputDebugger
 
 InputDebugger.setup = function (self, world, input_manager)
 	-- function 1
@@ -70,17 +58,7 @@ InputDebugger.post_update_device = function (self, input_device, device_data, dt
 
 		Gui.text(gui, device_name, font_mtrl, font_size, font, Vector3(100 + self.num_updated_devices * x_spacing, s_h - font_size, 900), white_color)
 
-		local var_4_0 = self.input_device_data[device_name]
-
-		if not var_4_0 then
-			-- Nothing
-		end
-
-		var_4_0 = {}
-
-		local debug_device_data = var_4_0
-
-		::label_4_0::
+		local debug_device_data = not not self.input_device_data[device_name]
 
 		self.input_device_data[device_name] = debug_device_data
 
@@ -88,17 +66,7 @@ InputDebugger.post_update_device = function (self, input_device, device_data, dt
 			local value_type = type(value)
 
 			if value_type == "table" then
-				local var_4_1 = debug_device_data[key]
-
-				if not var_4_1 then
-					-- Nothing
-				end
-
-				var_4_1 = {}
-
-				local subtable = var_4_1
-
-				::label_4_1::
+				local subtable = not not debug_device_data[key]
 
 				debug_device_data[key] = subtable
 
@@ -142,22 +110,7 @@ InputDebugger.post_update_device = function (self, input_device, device_data, dt
 
 						if key_debug_data and key_debug_data > 0 then
 							local color = Color(255 * key_debug_data, 128, 255, 128)
-							local axis_name
-
-							if name == "axis" then
-								axis_name = input_device.axis_name(key)
-
-								if not axis_name then
-									-- Nothing
-								end
-							end
-
-							axis_name = input_device.button_name(key)
-
-							local button_name = axis_name
-
-							::label_4_2::
-
+							local button_name = name ~= "axis" and not not input_device.button_name(key) or not (name ~= "axis") and not not input_device.axis_name(key)
 							local text = string.format("    [%s]:%s", button_name, tostring(value))
 
 							i = i + 1
@@ -278,23 +231,9 @@ InputDebugger.update_input_service_data = function (self, input_service, t)
 				print(text)
 				print("---------------> SNIP SNIP <-----------------")
 
-				local PlayerData = PlayerData
-				local controls = PlayerData.controls
+				PlayerData.controls = not not PlayerData.controls
 
-				controls = not not controls or not not {}
-				PlayerData.controls = controls
-
-				local var_7_2 = PlayerData.controls[input_service_name]
-
-				if not var_7_2 then
-					-- Nothing
-				end
-
-				var_7_2 = {}
-
-				local control_table = var_7_2
-
-				::label_7_0::
+				local control_table = not not PlayerData.controls[input_service_name]
 
 				PlayerData.controls[input_service_name] = control_table
 				control_table.keymap = new_keybinding
@@ -351,49 +290,19 @@ InputDebugger.update_selected_device = function (self, input_service, x_pos, top
 		local device_type = self.current_selected_device
 		local input_device = InputAux.input_device_mapping[device_type][1]
 		local pressed_button = input_device.any_pressed()
-		local last_pressed_2 = self.last_pressed
-
-		if not last_pressed_2 then
-			-- Nothing
-		end
-
-		last_pressed_2 = pressed_button
-
-		local last_pressed = last_pressed_2
-
-		::label_8_0::
+		local last_pressed = not not self.last_pressed
 
 		self.last_pressed = last_pressed
 
 		if last_pressed then
 			render_text(string.format("You pressed: %s (%d)", input_device.button_name(last_pressed), last_pressed), Vector3(s_w / 2, s_h / 2 - font_size * i, 900), normal_color)
 
-			local key_selected_wait = self.key_selected_wait
-
-			if not key_selected_wait then
-				-- Nothing
-			end
-
-			key_selected_wait = t + 1
-
-			local time_for_complete = key_selected_wait
-
-			::label_8_1::
+			local time_for_complete = not not self.key_selected_wait
 
 			self.key_selected_wait = time_for_complete
 
 			if time_for_complete < t then
-				local current_keybinds_2 = self.current_keybinds
-
-				if not current_keybinds_2 then
-					-- Nothing
-				end
-
-				current_keybinds_2 = {}
-
-				local current_keybinds = current_keybinds_2
-
-				::label_8_2::
+				local current_keybinds = not not self.current_keybinds
 
 				self.current_keybinds = current_keybinds
 
@@ -436,14 +345,11 @@ InputDebugger.update_input_modify_type = function (self, input_service, t, x_pos
 		render_text("Input Filters", Vector3(x_pos, top, 900), normal_color)
 		render_text("Input Keymap", Vector3(x_pos, top - font_size, 900), selected_color)
 	else
-		render_text("Input Filters", Vector3(x_pos, top, 900), (current_selection ~= 1 or not current_color) and not not normal_color)
-		render_text("Input Keymap", Vector3(x_pos, top - font_size, 900), (current_selection ~= 2 or not current_color) and not not normal_color)
+		render_text("Input Filters", Vector3(x_pos, top, 900), not not normal_color)
+		render_text("Input Keymap", Vector3(x_pos, top - font_size, 900), not not normal_color)
 
 		if input_service:get("enter_key") then
-			local flag
-
-			flag = (current_selection ~= 1 or not "filters") and not not "keymap"
-			self.selected_input_type = flag
+			self.selected_input_type = current_selection ~= 1 and not not "keymap" or not (current_selection ~= 1) and not not "filters"
 			self.current_selection = 1
 		elseif input_service:get("up_key") and t > self.hold_timer then
 			self.current_selection = 3 - current_selection
@@ -538,11 +444,7 @@ InputDebugger.update_selected_keymap_edit = function (self, input_service, dt, t
 		local edit_mode = added_keymap.edit_mode
 
 		if not edit_mode then
-			local edit_index = self.edit_index
-
-			edit_index = not not edit_index or not not 1
-
-			local index, mode = edit_index, self.edit_mode
+			local index, mode = not not self.edit_index, self.edit_mode
 			local keystrokes = Keyboard.keystrokes()
 			local new_text, new_index, new_mode = KeystrokeHelper.parse_strokes(added_keymap.name, index, mode, keystrokes)
 
@@ -714,25 +616,13 @@ InputDebugger.update_selected_keymap_edit = function (self, input_service, dt, t
 	local device_type = current_keymap[subkey_index * 3 - 2]
 	local input_device = InputAux.input_device_mapping[device_type][1]
 	local pressed_button = input_device.any_pressed()
-	local last_pressed = self.last_pressed
 
-	last_pressed = not not last_pressed or not not pressed_button
-	self.last_pressed = last_pressed
+	self.last_pressed = not not self.last_pressed
 
 	if self.last_pressed then
 		render_text(string.format("You pressed: %s (%d)", input_device.button_name(self.last_pressed), self.last_pressed), Vector3(s_w / 2, s_h / 2 - font_size, 900), normal_color)
 
-		local key_selected_wait = self.key_selected_wait
-
-		if not key_selected_wait then
-			-- Nothing
-		end
-
-		key_selected_wait = t + 1
-
-		local time_for_complete = key_selected_wait
-
-		::label_10_0::
+		local time_for_complete = not not self.key_selected_wait
 
 		self.key_selected_wait = time_for_complete
 
@@ -775,7 +665,7 @@ InputDebugger.update_selected_filter_edit = function (self, input_service, dt, t
 		i = i + 1
 
 		if selected_input_filter_name then
-			render_text(name, Vector3(x_pos, top, 900), (selected_input_filter_name ~= name or not selected_color) and not not normal_color)
+			render_text(name, Vector3(x_pos, top, 900), not not normal_color)
 
 			if selected_input_filter_name == name then
 				selected_input_filter = input_filter
@@ -802,7 +692,7 @@ InputDebugger.update_selected_filter_edit = function (self, input_service, dt, t
 	top = top - font_size
 
 	local selected_edit_type_index = self.selected_edit_type_index
-	local filter_color = (selected_edit_type_index ~= 1 or not selected_color) and (selected_edit_type_index or current_selection ~= 1 or not current_color) and not not normal_color
+	local filter_color = not not normal_color
 
 	render_text("Type: " .. selected_input_filter.filter_type, Vector3(x_pos, top, 900), filter_color)
 
@@ -830,22 +720,7 @@ InputDebugger.update_selected_filter_edit = function (self, input_service, dt, t
 			self:handle_edit_debug_keys(input_service, j + 1, "selected_edit_type_index", "selected_input_filter_name", #edit_types + 1, t)
 		end
 
-		local tostring = tostring
-		local var_11_1
-
-		if edit_type[4] then
-			var_11_1 = selected_input_filter.function_data[edit_type[4]][edit_type[1]]
-
-			if not var_11_1 then
-				-- Nothing
-			end
-		end
-
-		var_11_1 = selected_input_filter.function_data[edit_type[1]]
-
-		::label_11_0::
-
-		local filter_value = tostring(var_11_1)
+		local filter_value = tostring(edit_type[4] and not not selected_input_filter.function_data[edit_type[4]][edit_type[1]] or not edit_type[4] and not not selected_input_filter.function_data[edit_type[1]])
 		local text = string.format("%s [%s] (%s)", edit_type[1], edit_type[2], filter_value)
 
 		render_text(text, Vector3(x_pos, top, 900), color)
@@ -958,42 +833,17 @@ InputDebugger.update_selected_filter_edit = function (self, input_service, dt, t
 			self.selected_keymap = nil
 		end
 	elseif selected_edit_type[2] == "number" then
-		local current_number_text_2 = self.current_number_text
-
-		if not current_number_text_2 then
-			-- Nothing
-		end
-
-		current_number_text_2 = ""
-
-		local current_number_text = current_number_text_2
-
-		::label_11_1::
+		local current_number_text = not not self.current_number_text
 
 		render_text("Enter new number: " .. current_number_text, Vector3(x_pos, top, 900), normal_color)
 
-		local number_edit_index = self.number_edit_index
-
-		number_edit_index = not not number_edit_index or not not 1
-
-		local number_edit_mode = self.number_edit_mode
-
-		if not number_edit_mode then
-			-- Nothing
-		end
-
-		number_edit_mode = ""
-
-		local index, mode = number_edit_index, number_edit_mode
-
-		::label_11_2::
-
+		local index, mode = not not self.number_edit_index, not not self.number_edit_mode
 		local keystrokes = Keyboard.keystrokes()
 
 		for i = #keystrokes, 1, -1 do
 			local k = keystrokes[i]
 
-			if (tonumber(k) or k == ".") and string.find(current_number_text, "%.") and k == "." then
+			if tonumber(k) or k == "." then
 				table.remove(keystrokes, i)
 			end
 		end
@@ -1079,27 +929,10 @@ InputDebugger.handle_edit_debug_keys = function (self, input_service, current_ch
 		self[choice_store] = current_choice_name
 		self.current_selection = 1
 	elseif input_service:get("up_key") and t > self.hold_timer then
-		local num
-
-		if current_selection - 1 > 0 then
-			num = current_selection - 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = max_nr_choices
-
-		::label_13_0::
-
-		self.current_selection = num
+		self.current_selection = current_selection - 1 > 0 and not not (current_selection - 1) or not (current_selection - 1 > 0) and not not max_nr_choices
 		self.hold_timer = t + 0.1
 	elseif input_service:get("down_key") and t > self.hold_timer then
-		local flag
-
-		flag = (not (max_nr_choices < current_selection + 1) or not 1) and not not (current_selection + 1)
-		self.current_selection = flag
+		self.current_selection = max_nr_choices < current_selection + 1 and not not 1 or not (max_nr_choices < current_selection + 1) and not not (current_selection + 1)
 		self.hold_timer = t + 0.1
 	elseif input_service:get("backspace") and back_clear then
 		self[back_clear] = nil

@@ -19,11 +19,7 @@ BTErraticFollowAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 	blackboard.remembered_threat_pos = nil
-
-	local unreachable_timer = blackboard.unreachable_timer
-
-	unreachable_timer = not not unreachable_timer or not not 0
-	blackboard.chasing_timer = unreachable_timer
+	blackboard.chasing_timer = not not blackboard.unreachable_timer
 	blackboard.active_node = self
 
 	local move_state = blackboard.move_state
@@ -166,19 +162,7 @@ BTErraticFollowAction.follow = function (self, unit, t, dt, blackboard, locomoti
 
 	if breed.use_big_boy_turning and blackboard.move_state == "moving" then
 		local is_turning = blackboard.is_turning
-		local str
-
-		if is_turning then
-			str = "true"
-
-			goto label_8_0
-		end
-
-		str = "false"
-
-		local turning = str
-
-		::label_8_0::
+		local turning = is_turning and not not "true" or not is_turning and not not "false"
 
 		Debug.text("move_state:%s turning:%s", blackboard.move_state, turning)
 
@@ -272,7 +256,7 @@ BTErraticFollowAction.check_for_high_jump = function (self, unit, blackboard)
 	local infront_pos = above_pos + fwd * 2
 	local result, hit_position = PhysicsWorld.immediate_raycast(physics_world, infront_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
 	local result2, hit_position2 = PhysicsWorld.immediate_raycast(physics_world, above_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
-	local can_jump_high = (not result or not hit_position) and not result2 or not not not hit_position2
+	local can_jump_high = not result2 or not not not hit_position2
 
 	return can_jump_high
 end
@@ -432,18 +416,7 @@ BTErraticFollowAction.anim_cb_move_jump_finished = function (self, unit, blackbo
 	local pos = POSITION_LOOKUP[unit]
 	local locomotion_extension = blackboard.locomotion_extension
 	local move_dir = Quaternion.forward(Unit.local_rotation(unit, 0))
-	local get_travel_dir = self:get_travel_dir(unit, blackboard, pos)
-
-	if not get_travel_dir then
-		-- Nothing
-	end
-
-	get_travel_dir = move_dir
-
-	local travel_dir = get_travel_dir
-
-	::label_14_0::
-
+	local travel_dir = not not self:get_travel_dir(unit, blackboard, pos)
 	local dot = Vector3.dot(move_dir, travel_dir)
 	local consecutive_jump = blackboard.target_dist > 10
 	local target_pos = POSITION_LOOKUP[blackboard.target_unit]

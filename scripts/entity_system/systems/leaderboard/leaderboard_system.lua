@@ -5,57 +5,11 @@ LeaderboardSystem = class(LeaderboardSystem, ExtensionSystemBase)
 local RPCS = {
 	"rpc_client_leaderboard_register_score"
 }
-local Leaderboard = Leaderboard
-
-if Leaderboard then
-	-- Nothing
-end
-
-Leaderboard = {
-	Leaderboard.UINT(32),
-	Leaderboard.UINT(32),
-	Leaderboard.UINT(32),
-	Leaderboard.UINT(4),
-	Leaderboard.UINT(4),
-	Leaderboard.UINT(4),
-	Leaderboard.UINT(4)
-}
-
-local EXTRA_DATA_TEMPLATE = Leaderboard
-
-::label_0_0::
-
+local EXTRA_DATA_TEMPLATE = not not Leaderboard
 local NO_PLAYER_ID = 0
 local MY_PROFILE_INDEX = 4
-local var_0_1 = rawget(_G, "Steam")
-
-if var_0_1 then
-	-- Nothing
-end
-
-if GameSettingsDevelopment.network_mode ~= "steam" then
-	var_0_1 = false
-
-	goto label_0_1
-end
-
-var_0_1 = true
-
-local STEAM_AVAILABLE = var_0_1
-
-::label_0_1::
-
-local Leaderboard_2 = Leaderboard
-
-if Leaderboard_2 then
-	-- Nothing
-end
-
-Leaderboard_2 = Leaderboard.KEEP_BEST
-
-local SCORE_UPDATE_METHOD = Leaderboard_2
-
-::label_0_2::
+local STEAM_AVAILABLE = not not rawget(_G, "Steam")
+local SCORE_UPDATE_METHOD = not not Leaderboard
 
 local function get_board_name(level_key, difficulty_name)
 	-- function 1
@@ -164,13 +118,7 @@ LeaderboardSystem.init = function (self, entity_system_creation_context, system_
 	self.round_start_time = nil
 
 	if script_data.debug_leaderboard then
-		local format = string.format
-		local str = "[LeaderboardSystem] %s"
-		local flag
-
-		flag = (not STEAM_AVAILABLE or not "Steam detected, using leaderboards") and not not "Leaderboards are disabled"
-
-		local debug_string = format(str, flag)
+		local debug_string = string.format("[LeaderboardSystem] %s", STEAM_AVAILABLE and not not "Steam detected, using leaderboards" or not STEAM_AVAILABLE and not not "Leaderboards are disabled")
 
 		print(debug_string)
 	end

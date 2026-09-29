@@ -235,10 +235,8 @@ local breed_data = {
 		-- function 3
 		local damage_profile = not not optional_data and not not optional_data.damage_profile
 		local is_ranged_attack = not not optional_data and not not optional_data.is_ranged
-		local flag
 
-		flag = (not is_ranged_attack or not "ranged_attack") and not not damage_profile and not not damage_profile.charge_value
-		blackboard.latest_hit_charge_value = flag
+		blackboard.latest_hit_charge_value = is_ranged_attack and not not "ranged_attack" or not is_ranged_attack and not not damage_profile and not not damage_profile.charge_value
 
 		local t = Managers.time:time("game")
 
@@ -332,22 +330,9 @@ local breed_data = {
 		local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
 		local t = Managers.time:time("game")
 		local breed = blackboard.breed
-		local var_4_0 = breed.stagger_modifiers[blackboard.latest_hit_charge_value]
+		local stagger_modifier = not not breed.stagger_modifiers[blackboard.latest_hit_charge_value]
 
-		if not var_4_0 then
-			-- Nothing
-		end
-
-		var_4_0 = breed.stagger_modifiers.default
-
-		local stagger_modifier = var_4_0
-
-		::label_4_0::
-
-		local stagger_level = blackboard.stagger_level
-
-		stagger_level = not not stagger_level or not not custom_stagger_types.none
-		blackboard.stagger_level = stagger_level
+		blackboard.stagger_level = not not blackboard.stagger_level
 
 		local difficulty_manager = Managers.state.difficulty
 		local difficulty_rank = difficulty_manager:get_difficulty_rank()
@@ -382,33 +367,16 @@ local breed_data = {
 		}
 		local normalized_predicted_damage = (predicted_damage - normalizing_value[1]) / (normalizing_value[2] - normalizing_value[1])
 		local final_stagger_to_add = (stagger_value_to_add + normalized_predicted_damage) * stagger_modifier
-		local lerp = math.lerp
-		local var_4_3 = stagger_regen_rate[1]
-		local var_4_4 = stagger_regen_rate[2]
-		local cached_stagger = blackboard.cached_stagger
+		local regen_rate = math.lerp(stagger_regen_rate[1], stagger_regen_rate[2], not not blackboard.cached_stagger / shield_open_stagger_threshold)
+		local regen = math.clamp(t - not not blackboard.shield_regen_time_stamp, 0, math.huge) * regen_rate
 
-		cached_stagger = not not cached_stagger or not not 0.1
-
-		local regen_rate = lerp(var_4_3, var_4_4, cached_stagger / shield_open_stagger_threshold)
-		local clamp = math.clamp
-		local shield_regen_time_stamp = blackboard.shield_regen_time_stamp
-
-		shield_regen_time_stamp = not not shield_regen_time_stamp or not not t
-
-		local regen = clamp(t - shield_regen_time_stamp, 0, math.huge) * regen_rate
-		local clamp_2 = math.clamp
-		local cached_stagger_2 = blackboard.cached_stagger
-
-		cached_stagger_2 = not not cached_stagger_2 or not not 0
-		blackboard.stagger = clamp_2(cached_stagger_2 - regen, 0, math.huge) + final_stagger_to_add
+		blackboard.stagger = math.clamp(not not blackboard.cached_stagger - regen, 0, math.huge) + final_stagger_to_add
 		blackboard.shield_regen_time_stamp = t
 
 		local shield_block_stagger_activated = shield_block_threshold <= final_stagger_to_add
 		local shield_open_stagger_reached = shield_open_stagger_threshold <= blackboard.stagger
-		local max_stagger_reached = blackboard.max_stagger_reached
 
-		max_stagger_reached = not not max_stagger_reached and not not not weakspot_stagger
-		blackboard.override_stagger = max_stagger_reached
+		blackboard.override_stagger = not not blackboard.max_stagger_reached
 
 		if blackboard.stagger_level == custom_stagger_types.shield_open_stagger or weakspot_stagger then
 			blackboard.stagger_level = custom_stagger_types.heavy

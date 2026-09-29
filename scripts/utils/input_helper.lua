@@ -1,32 +1,17 @@
 -- chunkname: @scripts/utils/input_helper.lua
 
-local InputUtils = InputUtils
-
-InputUtils = not not InputUtils or not not {}
-InputUtils = InputUtils
+InputUtils = not not InputUtils
 
 InputUtils.keymaps_key_approved = function (platform_key)
 	-- function 1
 	local platform = PLATFORM
 
 	if IS_WINDOWS then
-		local flag
-
-		flag = (platform_key == platform or platform_key == "xb1" or platform_key == "ps_pad") and not not true or not not nil
-
-		return flag
+		return not not true
 	elseif IS_XB1 then
-		local flag_2
-
-		flag_2 = (platform_key == platform or platform_key == "win32") and not not true or not not nil
-
-		return flag_2
+		return not not true
 	else
-		local flag_3
-
-		flag_3 = (platform_key ~= platform or not true) and not not nil
-
-		return flag_3
+		return platform_key ~= platform and not not nil or not (platform_key ~= platform) and not not true
 	end
 end
 

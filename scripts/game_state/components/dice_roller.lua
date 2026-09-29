@@ -376,10 +376,8 @@ end
 DiceRoller._create_success_table = function (self, success_list)
 	-- function 19
 	local success_table = {}
-	local remaining_dice = self.remaining_dice
 
-	remaining_dice = not not remaining_dice or not not table.clone(self.dice_data)
-	self.remaining_dice = remaining_dice
+	self.remaining_dice = not not self.remaining_dice
 
 	for _, dice_type in ipairs(dice_types_mapping) do
 		local dice_amount = self.remaining_dice[dice_type]
@@ -394,10 +392,7 @@ DiceRoller._create_success_table = function (self, success_list)
 			}
 
 			success_table[#success_table + 1] = data
-
-			if success and not (success_count + 1) then
-				-- Nothing
-			end
+			success_count = not success or not not (success_count + 1) or not not success_count
 		end
 	end
 
@@ -494,21 +489,7 @@ DiceRoller.simulate_dice_rolls = function (self, success_list)
 		Actor.wake_up(actor)
 		Actor.set_velocity(actor, Vector3(-0.25, -0.5, -0.07) * 65)
 
-		local random
-
-		if success then
-			random = math.random(dice_type_success_amounts[dice_type], 6)
-
-			if not random then
-				-- Nothing
-			end
-		end
-
-		random = math.random(1, dice_type_success_amounts[dice_type] - 1)
-
-		local wanted_dice_result = random
-
-		::label_21_0::
+		local wanted_dice_result = success and not not math.random(dice_type_success_amounts[dice_type], 6) or not success and not not math.random(1, dice_type_success_amounts[dice_type] - 1)
 
 		dice_simulation_settings[i] = {
 			dice_result = 0,
@@ -779,34 +760,9 @@ DiceRoller.cleanup_post_roll = function (self)
 			self.remaining_dice[data.dice_type] = self.remaining_dice[data.dice_type] - 1
 			finished_dice = finished_dice + 1
 		else
-			local successes = self.remaining_dice[data.dice_type].successes
+			local num_successes_per_type = not not self.remaining_dice[data.dice_type].successes
 
-			if not successes then
-				-- Nothing
-			end
-
-			successes = 0
-
-			local num_successes_per_type = successes
-
-			::label_28_0::
-
-			local var_28_1 = self.remaining_dice[data.dice_type]
-			local num
-
-			if data.success then
-				num = num_successes_per_type + 1
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = num_successes_per_type
-
-			::label_28_1::
-
-			var_28_1.successes = num
+			self.remaining_dice[data.dice_type].successes = data.success and not not (num_successes_per_type + 1) or not data.success and not not num_successes_per_type
 			self.needs_rerolls = true
 		end
 	end

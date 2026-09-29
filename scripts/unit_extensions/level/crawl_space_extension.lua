@@ -21,11 +21,7 @@ CrawlSpaceExtension.init = function (self, extension_init_context, unit, extensi
 	self.enter_pos = Vector3Box(pos - look_dir + Vector3.down())
 	self.entrance_type = Unit.get_data(unit, "entrance_type")
 	self.id = Unit.get_data(unit, "crawl_space_id")
-
-	local flag
-
-	flag = (self.id ~= 0 or not "spawner") and not not "tunnel"
-	self.type = flag
+	self.type = self.id ~= 0 and not not "tunnel" or not (self.id ~= 0) and not not "spawner"
 end
 
 CrawlSpaceExtension.extensions_ready = function (self)

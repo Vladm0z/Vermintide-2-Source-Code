@@ -184,18 +184,7 @@ HeroViewStateAchievements._update_summary_quest_timers = function (self, dt)
 		local name = category.name
 		local entries = category.entries
 		local quest_type = category.quest_type
-		local max_entry_amount_2 = category.max_entry_amount
-
-		if not max_entry_amount_2 then
-			-- Nothing
-		end
-
-		max_entry_amount_2 = 1
-
-		local max_entry_amount = max_entry_amount_2
-
-		::label_5_0::
-
+		local max_entry_amount = not not category.max_entry_amount
 		local has_entries = entries ~= nil
 		local time_left_in_seconds
 
@@ -222,17 +211,7 @@ HeroViewStateAchievements._update_summary_quest_timers = function (self, dt)
 
 		timer_widget_content.text = time_text
 
-		local previous_time_in_seconds_2 = timer_widget_content.previous_time_in_seconds
-
-		if not previous_time_in_seconds_2 then
-			-- Nothing
-		end
-
-		previous_time_in_seconds_2 = math.huge
-
-		local previous_time_in_seconds = previous_time_in_seconds_2
-
-		::label_5_1::
+		local previous_time_in_seconds = not not timer_widget_content.previous_time_in_seconds
 
 		timer_widget_content.previous_time_in_seconds = time_left_in_seconds
 
@@ -583,31 +562,7 @@ local function has_unclaimed_challenge(challenge_manager, base_category)
 			if data.completed and not data.claimed then
 				local required_dlc = data.required_dlc
 				local required_dlc_extra = data.required_dlc_extra
-				local is_dlc_unlocked
-
-				if required_dlc then
-					is_dlc_unlocked = unlock_manager:is_dlc_unlocked(required_dlc)
-
-					if is_dlc_unlocked then
-						-- Nothing
-					end
-				end
-
-				if required_dlc_extra then
-					is_dlc_unlocked = unlock_manager:is_dlc_unlocked(required_dlc_extra)
-
-					if false then
-						is_dlc_unlocked = false
-					end
-
-					goto label_16_0
-				end
-
-				is_dlc_unlocked = true
-
-				local is_unlocked = is_dlc_unlocked
-
-				::label_16_0::
+				local is_unlocked = required_dlc and not not unlock_manager:is_dlc_unlocked(required_dlc) or not required_dlc and (not required_dlc_extra or not not unlock_manager:is_dlc_unlocked(required_dlc_extra))
 
 				if is_unlocked then
 					return true
@@ -707,21 +662,7 @@ HeroViewStateAchievements._create_entries = function (self, entries, entry_type,
 			if needle ~= nil and not SearchUtils.simple_search(needle, entry_data.name) and not SearchUtils.simple_search(needle, entry_data.desc) then
 				-- Nothing
 			else
-				local set_all_challenges_claimable
-
-				if not entry_data.completed then
-					set_all_challenges_claimable = script_data.set_all_challenges_claimable
-
-					if set_all_challenges_claimable then
-						-- Nothing
-					end
-				end
-
-				set_all_challenges_claimable = not GameSettingsDevelopment.read_only_backend
-
-				local completed = set_all_challenges_claimable
-
-				::label_19_0::
+				local completed = entry_data.completed and not not not GameSettingsDevelopment.read_only_backend or not entry_data.completed and not not script_data.set_all_challenges_claimable
 
 				if query.completed ~= nil and query.completed == not completed then
 					-- Nothing
@@ -801,33 +742,11 @@ HeroViewStateAchievements._create_entries = function (self, entries, entry_type,
 
 										temp_content.reward_item = fake_item
 										temp_content.reward_icon = item_template.inventory_icon
-
-										local item_rarity_textures = UISettings.item_rarity_textures
-										local rarity_2 = fake_item.rarity
-
-										rarity_2 = not not rarity_2 or not not item_template.rarity
-										temp_content.reward_icon_background = item_rarity_textures[rarity_2]
+										temp_content.reward_icon_background = UISettings.item_rarity_textures[not not fake_item.rarity]
 									elseif reward_type == "keep_decoration_painting" then
 										local decoration_name = reward.decoration_name
 										local painting_data = Paintings[decoration_name]
-										local rarity_3 = reward.rarity
-
-										if not rarity_3 then
-											-- Nothing
-										end
-
-										rarity_3 = painting_data.rarity
-
-										if not rarity_3 then
-											-- Nothing
-										end
-
-										rarity_3 = "plentiful"
-
-										local rarity = rarity_3
-
-										::label_19_1::
-
+										local rarity = not not reward.rarity
 										local fake_item = {
 											data = {
 												item_type = "keep_decoration_painting",
@@ -848,18 +767,7 @@ HeroViewStateAchievements._create_entries = function (self, entries, entry_type,
 									elseif reward_type == "weapon_skin" then
 										local weapon_skin_name = reward.weapon_skin_name
 										local weapon_skin_data = WeaponSkins.skins[weapon_skin_name]
-										local rarity_4 = weapon_skin_data.rarity
-
-										if not rarity_4 then
-											-- Nothing
-										end
-
-										rarity_4 = "plentiful"
-
-										local rarity = rarity_4
-
-										::label_19_2::
-
+										local rarity = not not weapon_skin_data.rarity
 										local fake_item = {
 											data = {
 												item_type = "weapon_skin",
@@ -892,25 +800,15 @@ HeroViewStateAchievements._create_entries = function (self, entries, entry_type,
 
 								if query.reward ~= nil then
 									local data = temp_content.reward_item.data
-									local slot_type = data.slot_type
-
-									if not slot_type then
-										-- Nothing
-									end
-
-									slot_type = data.item_type
-
-									local reward_type = slot_type
-
-									::label_19_3::
+									local reward_type = not not data.slot_type
 
 									if query.reward ~= reward_type then
-										goto label_19_5
+										goto label_19_0
 									end
 								end
 
 								if query.rarity ~= nil and query.rarity ~= temp_content.reward_icon_background:gsub("^icon_bg_", "") then
-									goto label_19_5
+									goto label_19_0
 								end
 							end
 
@@ -951,17 +849,7 @@ HeroViewStateAchievements._create_entries = function (self, entries, entry_type,
 
 							content.description = description_text
 
-							local icon_2 = entry_data.icon
-
-							if not icon_2 then
-								-- Nothing
-							end
-
-							icon_2 = "icons_placeholder"
-
-							local icon = icon_2
-
-							::label_19_4::
+							local icon = not not entry_data.icon
 
 							content.icon = icon
 
@@ -1016,7 +904,7 @@ HeroViewStateAchievements._create_entries = function (self, entries, entry_type,
 			end
 		end
 
-		::label_19_5::
+		::label_19_0::
 	end
 
 	if #unclaimable_achievement_widgets > 1 then
@@ -1082,18 +970,7 @@ HeroViewStateAchievements._set_widget_bar_progress = function (self, widget, cur
 
 	texture_size[1] = default_size[1] * (current / required)
 
-	local content_2 = widget.content
-
-	if content_2 then
-		-- Nothing
-	end
-
-	content_2 = widget.content.achievement_id
-
-	local achievement_id = content_2
-
-	::label_23_0::
-
+	local achievement_id = not not widget.content
 	local achievement_template = AchievementTemplates.achievements[achievement_id]
 
 	if achievement_template and achievement_template.progress_text_format_func then
@@ -1141,13 +1018,7 @@ HeroViewStateAchievements._set_requirements = function (self, widget, requiremen
 
 		entry_content.text = display_name
 
-		local set = Colors.set
-		local color = entry_style.checkbox_marker.color
-		local flag
-
-		flag = (not completed or not 255) and not not 0
-
-		set(color, flag, 0, 0, 0)
+		Colors.set(entry_style.checkbox_marker.color, completed and not not 255 or not completed and not not 0, 0, 0, 0)
 	end
 
 	return height + larges_list_amount * CHECKLIST_ENTRY_HEIGHT
@@ -1240,22 +1111,7 @@ end
 HeroViewStateAchievements._get_active_tabs_height = function (self)
 	-- function 30
 	local active_tab = self._active_tab
-	local num_draws
-
-	if active_tab then
-		num_draws = active_tab.style.list_style.num_draws
-
-		if not num_draws then
-			-- Nothing
-		end
-	end
-
-	num_draws = 0
-
-	local num_sub_tabs = num_draws
-
-	::label_30_0::
-
+	local num_sub_tabs = active_tab and not not active_tab.style.list_style.num_draws or not active_tab and not not 0
 	local tab_list_entry_size = category_tab_info.tab_list_entry_size
 	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
 	local tab_list_height = math.max(tab_list_entry_size[2] * num_sub_tabs + tab_list_entry_spacing * (num_sub_tabs - 1), 0)
@@ -1265,18 +1121,7 @@ end
 
 HeroViewStateAchievements._get_active_category_height = function (self)
 	-- function 31
-	local _active_tab_index = self._active_tab_index
-
-	if not _active_tab_index then
-		-- Nothing
-	end
-
-	_active_tab_index = 1
-
-	local active_tab = _active_tab_index
-
-	::label_31_0::
-
+	local active_tab = not not self._active_tab_index
 	local num_tabs = active_tab - 1
 	local tab_size = category_tab_info.tab_size
 	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
@@ -1589,14 +1434,7 @@ end
 
 HeroViewStateAchievements._is_polling = function (self)
 	-- function 44
-	local _reward_poll_id = self._reward_poll_id
-
-	if not _reward_poll_id then
-		_reward_poll_id = self._quest_refresh_poll_id
-		_reward_poll_id = not not _reward_poll_id or not not self._reward_poll_claim_all_id
-	end
-
-	return _reward_poll_id
+	return not not self._reward_poll_id
 end
 
 HeroViewStateAchievements._poll_quest_refresh = function (self, dt)
@@ -1809,21 +1647,7 @@ HeroViewStateAchievements._setup_reward_presentation = function (self, reward_po
 		ferror("Unknown reward_polling_type (%s)", polling_type)
 	end
 
-	local count
-
-	if rewards then
-		count = #rewards
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	local num_rewards = count
-
-	::label_52_0::
+	local num_rewards = rewards and not not #rewards or not rewards and not not 0
 
 	if num_rewards > 0 then
 		local presentation_data = {}
@@ -1875,18 +1699,7 @@ HeroViewStateAchievements._setup_reward_presentation = function (self, reward_po
 			elseif reward_type == "weapon_skin" then
 				local weapon_skin_name = data.weapon_skin_name
 				local weapon_skin_data = WeaponSkins.skins[weapon_skin_name]
-				local rarity_2 = weapon_skin_data.rarity
-
-				if not rarity_2 then
-					-- Nothing
-				end
-
-				rarity_2 = "plentiful"
-
-				local rarity = rarity_2
-
-				::label_52_1::
-
+				local rarity = not not weapon_skin_data.rarity
 				local display_name = weapon_skin_data.display_name
 				local description = weapon_skin_data.description
 				local icon = weapon_skin_data.inventory_icon
@@ -2059,21 +1872,7 @@ end
 
 HeroViewStateAchievements.update = function (self, dt, t)
 	-- function 62
-	local FAKE_INPUT_SERVICE
-
-	if self._input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_62_0::
+	local input_service = self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
 
 	if self.reward_popup then
 		self.reward_popup:update(dt)
@@ -2122,17 +1921,7 @@ end
 HeroViewStateAchievements._has_active_level_vote = function (self)
 	-- function 63
 	local voting_manager = self.voting_manager
-	local vote_in_progress = voting_manager:vote_in_progress()
-
-	if vote_in_progress then
-		-- Nothing
-	end
-
-	vote_in_progress = voting_manager:is_mission_vote()
-
-	local is_mission_vote = vote_in_progress
-
-	::label_63_0::
+	local is_mission_vote = not not voting_manager:vote_in_progress()
 
 	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
@@ -2196,17 +1985,7 @@ end
 HeroViewStateAchievements._set_button_force_hover = function (self, widget, forced)
 	-- function 66
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_66_0::
+	local hotspot = not not content.button_hotspot
 
 	hotspot.force_hover = forced
 end
@@ -2292,21 +2071,7 @@ HeroViewStateAchievements._handle_input = function (self, dt, t)
 		return
 	end
 
-	local FAKE_INPUT_SERVICE
-
-	if self._input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	local input_service = FAKE_INPUT_SERVICE
-
-	::label_69_0::
+	local input_service = self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
 
 	if self:_handle_search_input(dt, t, input_service) then
 		return
@@ -2325,21 +2090,7 @@ HeroViewStateAchievements._handle_input = function (self, dt, t)
 	local achievements_button = widgets_by_name.achievements_button
 	local achievement_window_button = summary_widgets_by_name.summary_right_window_button
 	local quest_window_button = summary_widgets_by_name.summary_left_window_button
-	local claim_all_achievements
-
-	if self._achievement_layout_type == "achievements" then
-		claim_all_achievements = achievement_widgets.claim_all_achievements
-
-		if not claim_all_achievements then
-			-- Nothing
-		end
-	end
-
-	claim_all_achievements = quest_widgets.claim_all_quests
-
-	local claim_all_button = claim_all_achievements
-
-	::label_69_1::
+	local claim_all_button = self._achievement_layout_type ~= "achievements" and not not quest_widgets.claim_all_quests or not (self._achievement_layout_type ~= "achievements") and not not achievement_widgets.claim_all_achievements
 
 	self:_handle_layout_buttons_hovered()
 
@@ -2436,17 +2187,7 @@ HeroViewStateAchievements._handle_input = function (self, dt, t)
 
 		for i = 1, num_draws do
 			local content = item_contents[i]
-			local button_hotspot = content.button_hotspot
-
-			if not button_hotspot then
-				-- Nothing
-			end
-
-			button_hotspot = content.hotspot
-
-			local hotspot = button_hotspot
-
-			::label_69_2::
+			local hotspot = not not content.button_hotspot
 
 			if hotspot.on_hover_enter then
 				self:play_sound("Play_gui_achivements_menu_hover_category")
@@ -2673,17 +2414,7 @@ HeroViewStateAchievements.draw = function (self, input_service, dt)
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier_2 = render_settings.alpha_multiplier
-
-	if not alpha_multiplier_2 then
-		-- Nothing
-	end
-
-	alpha_multiplier_2 = 1
-
-	local alpha_multiplier = alpha_multiplier_2
-
-	::label_75_0::
+	local alpha_multiplier = not not render_settings.alpha_multiplier
 
 	UIRenderer.draw_all_widgets(ui_renderer, self._search_widgets)
 
@@ -2692,10 +2423,7 @@ HeroViewStateAchievements.draw = function (self, input_service, dt)
 			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -2708,10 +2436,7 @@ HeroViewStateAchievements.draw = function (self, input_service, dt)
 				render_settings.snap_pixel_positions = widget.snap_pixel_positions
 			end
 
-			local alpha_multiplier_4 = widget.alpha_multiplier
-
-			alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_4
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -2725,10 +2450,7 @@ HeroViewStateAchievements.draw = function (self, input_service, dt)
 				render_settings.snap_pixel_positions = widget.snap_pixel_positions
 			end
 
-			local alpha_multiplier_5 = widget.alpha_multiplier
-
-			alpha_multiplier_5 = not not alpha_multiplier_5 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_5
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -2740,10 +2462,7 @@ HeroViewStateAchievements.draw = function (self, input_service, dt)
 				render_settings.snap_pixel_positions = widget.snap_pixel_positions
 			end
 
-			local alpha_multiplier_6 = widget.alpha_multiplier
-
-			alpha_multiplier_6 = not not alpha_multiplier_6 or not not alpha_multiplier
-			render_settings.alpha_multiplier = alpha_multiplier_6
+			render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -2779,17 +2498,7 @@ HeroViewStateAchievements.draw = function (self, input_service, dt)
 
 				render_settings.alpha_multiplier = 0
 			elseif alpha_multiplier then
-				local alpha_fade_multipler_2 = widget.alpha_fade_multipler
-
-				if not alpha_fade_multipler_2 then
-					-- Nothing
-				end
-
-				alpha_fade_multipler_2 = 1
-
-				local alpha_fade_multipler = alpha_fade_multipler_2
-
-				::label_75_1::
+				local alpha_fade_multipler = not not widget.alpha_fade_multipler
 
 				alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
 				render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)
@@ -2822,17 +2531,7 @@ HeroViewStateAchievements.draw = function (self, input_service, dt)
 
 			render_settings.alpha_multiplier = 0
 		elseif alpha_multiplier then
-			local alpha_fade_multipler_3 = widget.alpha_fade_multipler
-
-			if not alpha_fade_multipler_3 then
-				-- Nothing
-			end
-
-			alpha_fade_multipler_3 = 1
-
-			local alpha_fade_multipler = alpha_fade_multipler_3
-
-			::label_75_2::
+			local alpha_fade_multipler = not not widget.alpha_fade_multipler
 
 			alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
 			render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)
@@ -2879,23 +2578,8 @@ HeroViewStateAchievements.set_fullscreen_effect_enable_state = function (self, e
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		local set_scalar = ShadingEnvironment.set_scalar
-		local var_78_1 = shading_env
-		local str = "fullscreen_blur_enabled"
-		local flag
-
-		flag = (not enabled or not 1) and not not 0
-
-		set_scalar(var_78_1, str, flag)
-
-		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_78_5 = shading_env
-		local str_2 = "fullscreen_blur_amount"
-		local flag_2
-
-		flag_2 = (not enabled or not 0.75) and not not 0
-
-		set_scalar_2(var_78_5, str_2, flag_2)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -3022,17 +2706,7 @@ HeroViewStateAchievements._setup_quest_summary_progress = function (self)
 		local name = category.name
 		local entries = category.entries
 		local quest_type = category.quest_type
-		local max_entry_amount_2 = category.max_entry_amount
-
-		if not max_entry_amount_2 then
-			-- Nothing
-		end
-
-		max_entry_amount_2 = 1
-
-		local max_entry_amount = max_entry_amount_2
-
-		::label_88_0::
+		local max_entry_amount = not not category.max_entry_amount
 
 		if category.max_dlc_entries then
 			for dlc, extra in pairs(category.max_dlc_entries) do
@@ -3046,7 +2720,7 @@ HeroViewStateAchievements._setup_quest_summary_progress = function (self)
 		local timer_active = true
 
 		if quest_type == "event" then
-			max_entry_amount = (not has_entries or not #entries) and not not 0
+			max_entry_amount = has_entries and (not not #entries or not not 0) or not has_entries and not not 0
 			timer_active = has_entries
 		end
 
@@ -3054,7 +2728,7 @@ HeroViewStateAchievements._setup_quest_summary_progress = function (self)
 		local timer_widget = summary_widgets_by_name[timer_widget_name]
 		local timer_text_color = timer_widget.style.text.text_color
 
-		Colors.copy_to(timer_text_color, (not timer_active or not default_title_color) and not not disabled_title_color)
+		Colors.copy_to(timer_text_color, timer_active and (not not default_title_color or not not disabled_title_color) or not timer_active and not not disabled_title_color)
 
 		local title_widget_name = widget_prefix_title .. tostring(category_index)
 		local title_widget = summary_widgets_by_name[title_widget_name]
@@ -3063,21 +2737,19 @@ HeroViewStateAchievements._setup_quest_summary_progress = function (self)
 
 		local title_text_color = title_widget.style.text.text_color
 
-		Colors.copy_to(title_text_color, (not has_entries or not default_title_color) and not not disabled_title_color)
+		Colors.copy_to(title_text_color, has_entries and (not not default_title_color or not not disabled_title_color) or not has_entries and not not disabled_title_color)
 
 		local bar_widget_name = widget_prefix_bar .. tostring(category_index)
 		local bar_widget = summary_widgets_by_name[bar_widget_name]
 		local bar_style = bar_widget.style
 		local bar_content = bar_widget.content
 		local refresh_icon_color = bar_style.refresh_icon.color
-		local flag
 
-		flag = (quest_type ~= "event" or not "achievement_symbol_book_event_skull") and not not "achievement_symbol_book"
-		bar_content.slot = flag
+		bar_content.slot = quest_type ~= "event" and not not "achievement_symbol_book" or not (quest_type ~= "event") and not not "achievement_symbol_book_event_skull"
 
 		local draw_refresh_icon = quest_type == "daily" and not not can_refresh_quest and not not has_entries
 
-		refresh_icon_color[1] = (not draw_refresh_icon or not alpha) and not not 0
+		refresh_icon_color[1] = draw_refresh_icon and (not not alpha or not not 0) or not draw_refresh_icon and not not 0
 
 		local locked_count = 0
 		local available_count = 0
@@ -3126,81 +2798,12 @@ HeroViewStateAchievements._animate_window_button = function (self, widget, dt)
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local has_focus = content.has_focus
-	local is_hover_2 = hotspot.is_hover
-
-	if not is_hover_2 then
-		-- Nothing
-	end
-
-	is_hover_2 = has_focus
-
-	local is_hover = is_hover_2
-
-	::label_89_0::
-
+	local is_hover = not not hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_89_2
-
-	::label_89_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_89_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_89_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_89_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_89_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -3268,7 +2871,7 @@ HeroViewStateAchievements._handle_input_desc = function (self)
 	if self._achievement_layout_type == "summary" or self._gamepad_filter_active then
 		-- Nothing
 	else
-		input_desc = (table.is_empty(query) or not "filter_available") and not not "filter_unavailable"
+		input_desc = not not "filter_unavailable"
 	end
 
 	if input_desc ~= self._current_input_desc then
@@ -3450,22 +3053,7 @@ HeroViewStateAchievements._handle_claim_all_challenges = function (self)
 	local layout = self:_get_layout(achievement_layout_type)
 	local achievement_widgets = self._additional_achievement_widgets_by_name
 	local quest_widgets = self._additional_quest_widgets_by_name
-	local claim_all_achievements
-
-	if achievement_layout_type == "achievements" then
-		claim_all_achievements = achievement_widgets.claim_all_achievements
-
-		if not claim_all_achievements then
-			-- Nothing
-		end
-	end
-
-	claim_all_achievements = quest_widgets.claim_all_quests
-
-	local claim_all_button = claim_all_achievements
-
-	::label_95_0::
-
+	local claim_all_button = achievement_layout_type ~= "achievements" and not not quest_widgets.claim_all_quests or not (achievement_layout_type ~= "achievements") and not not achievement_widgets.claim_all_achievements
 	local active_tab = self._active_tab
 
 	if not active_tab then
@@ -3494,21 +3082,9 @@ HeroViewStateAchievements._handle_claim_all_challenges = function (self)
 		has_unclaimed_challenges = self:_has_any_unclaimed_completed_challenge_in_category(category)
 	end
 
-	local flag
+	local has_claimable_widgets = not not true
 
-	if self._claimable_challenge_widgets and #self._claimable_challenge_widgets > 0 then
-		flag = true
-
-		goto label_95_1
-	end
-
-	flag = false
-
-	local has_claimable_widgets = flag
-
-	::label_95_1::
-
-	if has_claimable_widgets and (has_unclaimed_challenges or self._has_claimable_filtered_challenges) and not GameSettingsDevelopment.read_only_backend and not self:_is_polling() then
+	if self._has_claimable_filtered_challenges and has_claimable_widgets and has_unclaimed_challenges and not GameSettingsDevelopment.read_only_backend and not self:_is_polling() then
 		claim_all_button.content.visible = true
 	else
 		claim_all_button.content.visible = false
@@ -3526,19 +3102,7 @@ HeroViewStateAchievements._animate_claim_button = function (self, widget, within
 	local offset = widget.offset
 	local style = widget.style
 	local cooldown_duration = 2
-	local flag
-
-	if offset[2] < 0 and not within_display_range then
-		flag = true
-
-		goto label_96_0
-	end
-
-	flag = false
-
-	local should_glow = flag
-
-	::label_96_0::
+	local should_glow = not not true
 
 	if offset[2] < 10 and within_display_range then
 		self._button_hide_cooldown = nil
@@ -3580,10 +3144,8 @@ HeroViewStateAchievements._handle_gamepad_activity = function (self)
 
 		local filter_widget = self._search_widgets_by_name.filters
 		local filter_content = filter_widget.content
-		local flag
 
-		flag = (not gamepad_active or not "gamepad_search_filters") and not not "search_filters"
-		filter_widget.scenegraph_id = flag
+		filter_widget.scenegraph_id = gamepad_active and not not "gamepad_search_filters" or not gamepad_active and not not "search_filters"
 	end
 
 	self._gamepad_active_last_frame = gamepad_active

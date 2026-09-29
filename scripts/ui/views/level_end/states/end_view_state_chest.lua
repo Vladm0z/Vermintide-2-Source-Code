@@ -118,11 +118,7 @@ end
 
 EndViewStateChest.exit_done = function (self)
 	-- function 3
-	local _exit_started = self._exit_started
-
-	_exit_started = not not _exit_started and self._animations.on_enter == nil
-
-	return _exit_started
+	return not not self._exit_started
 end
 
 EndViewStateChest.create_ui_elements = function (self, params)
@@ -175,18 +171,7 @@ end
 EndViewStateChest._initialize_score_topics = function (self)
 	-- function 5
 	local score_widgets = self._score_widgets
-	local var_5_0 = UISettings.chest_upgrade_score_topics[self.game_mode_key]
-
-	if not var_5_0 then
-		-- Nothing
-	end
-
-	var_5_0 = UISettings.chest_upgrade_score_topics.default
-
-	local chest_upgrade_score_topics = var_5_0
-
-	::label_5_0::
-
+	local chest_upgrade_score_topics = not not UISettings.chest_upgrade_score_topics[self.game_mode_key]
 	local num_score_topics = #chest_upgrade_score_topics
 
 	self._num_score_topics = num_score_topics
@@ -663,10 +648,8 @@ EndViewStateChest._add_score = function (self, data)
 	end
 
 	local score_widgets = self._score_widgets
-	local _score_entries = self._score_entries
 
-	_score_entries = not not _score_entries or not not {}
-	self._score_entries = _score_entries
+	self._score_entries = not not self._score_entries
 
 	local widget
 
@@ -734,10 +717,8 @@ end
 EndViewStateChest._display_next_score_entry = function (self)
 	-- function 28
 	local score_entries = self._score_entries
-	local _current_entry_display_index = self._current_entry_display_index
 
-	_current_entry_display_index = not not _current_entry_display_index or not not 0
-	self._current_entry_display_index = _current_entry_display_index + 1
+	self._current_entry_display_index = not not self._current_entry_display_index + 1
 
 	local entry = score_entries[self._current_entry_display_index]
 
@@ -773,63 +754,13 @@ EndViewStateChest._animate_score_progress = function (self, dt, t)
 	local entry = score_entries[current_entry_display_index]
 	local entry_data = entry.data
 	local max_score = LootChestData.max_score
-	local _total_score = self._total_score
-
-	if not _total_score then
-		-- Nothing
-	end
-
-	_total_score = 0
-
-	local total_score = _total_score
-
-	::label_30_0::
-
+	local total_score = not not self._total_score
 	local score_left = max_score - total_score
 	local entry_score = entry_data.score
 	local actual_entry_score = math.clamp(entry_data.score, 0, max_score - total_score)
-	local chest_upgrade_score_topics_min_duration = UISettings.chest_upgrade_score_topics_min_duration
-
-	if not chest_upgrade_score_topics_min_duration then
-		-- Nothing
-	end
-
-	chest_upgrade_score_topics_min_duration = 0.5
-
-	local min_time = chest_upgrade_score_topics_min_duration
-
-	::label_30_1::
-
-	local chest_upgrade_score_topics_max_duration = UISettings.chest_upgrade_score_topics_max_duration
-
-	if not chest_upgrade_score_topics_max_duration then
-		-- Nothing
-	end
-
-	chest_upgrade_score_topics_max_duration = 7
-
-	local max_time = chest_upgrade_score_topics_max_duration
-
-	do
-		local min
-	end
-
-	::label_30_2::
-
-	if score_left > 0 then
-		min = math.min(actual_entry_score / score_left, 1)
-
-		if not min then
-			-- Nothing
-		end
-	end
-
-	min = 0
-
-	local duration_fraction = min
-
-	::label_30_3::
-
+	local min_time = not not UISettings.chest_upgrade_score_topics_min_duration
+	local max_time = not not UISettings.chest_upgrade_score_topics_max_duration
+	local duration_fraction = score_left > 0 and not not math.min(actual_entry_score / score_left, 1) or not (score_left > 0) and not not 0
 	local duration = math.clamp(duration_fraction * max_time, min_time, max_time)
 
 	entry_duration = math.min(entry_duration + dt, duration)
@@ -850,12 +781,12 @@ EndViewStateChest._animate_score_progress = function (self, dt, t)
 
 	local current_chest_settings, current_chest_settings_index = self:_get_chest_settings_by_total_score(entry_presentation_total_score)
 	local animation_progress = 0
-	local spawn_next_chest = (not max_upgraded or not (num_chest_upgrades > self._spawned_chest_index)) and not not current_chest_settings_index and current_chest_settings_index - 1 ~= self._spawned_chest_index
+	local spawn_next_chest = not not current_chest_settings_index and current_chest_settings_index - 1 ~= self._spawned_chest_index
 
 	if spawn_next_chest then
 		animation_progress = 1
 
-		local spawn_index = (not max_upgraded or not num_chest_upgrades) and not not (current_chest_settings_index - 1)
+		local spawn_index = max_upgraded and (not not num_chest_upgrades or not not (current_chest_settings_index - 1)) or not max_upgraded and not not (current_chest_settings_index - 1)
 
 		self._spawned_chest_index = spawn_index
 
@@ -878,7 +809,7 @@ EndViewStateChest._animate_score_progress = function (self, dt, t)
 		self._upgrade_sound_started = true
 	end
 
-	if (animation_progress == 1 or entry_animation_progress == 1) and self._upgrade_sound_started then
+	if animation_progress == 1 and self._upgrade_sound_started or not (animation_progress == 1) and entry_animation_progress == 1 and self._upgrade_sound_started then
 		WwiseWorld.trigger_event(self.wwise_world, "play_gui_mission_summary_chest_upgrade_meter_end")
 
 		self._upgrade_sound_started = false
@@ -886,21 +817,14 @@ EndViewStateChest._animate_score_progress = function (self, dt, t)
 
 	if entry_animation_progress == 1 then
 		self._entry_duration = nil
-
-		local min_2 = math.min
-		local _total_score_2 = self._total_score
-
-		_total_score_2 = not not _total_score_2 or not not 0
-		self._total_score = min_2(_total_score_2 + actual_entry_score, max_score)
+		self._total_score = math.min(not not self._total_score + actual_entry_score, max_score)
 
 		local num_score_entries = #score_entries
 
 		if current_entry_display_index == num_score_entries then
 			local wait_with_zoom = animation_progress == 1
-			local flag
 
-			flag = (not wait_with_zoom or not 0) and not not CHEST_PRESENTATION_ZOOM_WAIT_TIME
-			self._chest_zoom_wait_duration = flag
+			self._chest_zoom_wait_duration = wait_with_zoom and not not 0 or not wait_with_zoom and not not CHEST_PRESENTATION_ZOOM_WAIT_TIME
 		else
 			self:_display_next_score_entry()
 		end

@@ -146,51 +146,25 @@ TeamPreviewer.cb_hero_unit_spawned_skin_preview = function (self, hero_previewer
 	local preview_idle_animation = "idle"
 	local weapon_pose_anim_event = hero_data.weapon_pose_anim_event
 
-	if weapon_pose_anim_event then
-		local is_empty = table.is_empty
-		local breed = hero_data.breed
+	if weapon_pose_anim_event and table.is_empty(not not hero_data.breed) then
+		hero_previewer:play_character_animation(weapon_pose_anim_event)
+	elseif hero_data.breed and not table.is_empty(not not hero_data.breed) then
+		local random_value = Math.random(6)
 
-		breed = not not breed or not not EMPTY_TABLE
+		if hero_data.random_seed then
+			local random_seed
 
-		if is_empty(breed) then
-			hero_previewer:play_character_animation(weapon_pose_anim_event)
-
-			goto label_11_0
+			random_seed, random_value = Math.next_random(hero_data.random_seed, 1, 6)
 		end
-	end
 
-	if hero_data.breed then
-		local is_empty_2 = table.is_empty
-		local breed_2 = hero_data.breed
+		local anim_event = string.format("parading_pose_%02d", random_value)
 
-		breed_2 = not not breed_2 or not not EMPTY_TABLE
-
-		if not is_empty_2(breed_2) then
-			do
-				local random_value = Math.random(6)
-
-				if hero_data.random_seed then
-					local random_seed
-
-					random_seed, random_value = Math.next_random(hero_data.random_seed, 1, 6)
-				end
-
-				local anim_event = string.format("parading_pose_%02d", random_value)
-
-				hero_previewer:play_character_animation(anim_event)
-			end
-
-			goto label_11_0
-		end
-	end
-
-	if hero_data.preview_animation then
+		hero_previewer:play_character_animation(anim_event)
+	elseif hero_data.preview_animation then
 		hero_previewer:play_character_animation(hero_data.preview_animation)
 	else
 		hero_previewer:play_character_animation(preview_idle_animation)
 	end
-
-	::label_11_0::
 end
 
 TeamPreviewer.update_hero_arrangement = function (self, hero_arrangement, lookat_target, orientate_towards_camera)
@@ -237,9 +211,5 @@ TeamPreviewer.get_hero_previewer = function (self, index)
 	-- function 15
 	fassert(self.hero_previewers[index], "[TeamPreviewer] The hero previewer at the index %d you are trying to access does not exist!", index)
 
-	local var_15_0 = self.hero_previewers[index]
-
-	var_15_0 = not not var_15_0 or not not nil
-
-	return var_15_0
+	return not not self.hero_previewers[index]
 end

@@ -31,11 +31,7 @@ end
 WeaveTimerUI._create_ui_elements = function (self)
 	-- function 3
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-
-	local _render_settings = self._render_settings
-
-	_render_settings = not not _render_settings or not not {}
-	self._render_settings = _render_settings
+	self._render_settings = not not self._render_settings
 	self._widgets = {}
 
 	for name, widget in pairs(widget_definitions) do

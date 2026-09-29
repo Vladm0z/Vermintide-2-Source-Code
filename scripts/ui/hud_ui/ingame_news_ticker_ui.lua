@@ -190,21 +190,7 @@ IngameNewsTickerUI.update = function (self, dt, t)
 		end
 
 		if not self.message_refresh_delay then
-			local var_5_0
-
-			if news_ticker_text then
-				var_5_0 = REFRESH_TIMER_MESSAGE
-
-				if not var_5_0 then
-					-- Nothing
-				end
-			end
-
-			var_5_0 = REFRESH_TIMER_NO_MESSAGE
-
-			::label_5_0::
-
-			self.message_refresh_delay = var_5_0
+			self.message_refresh_delay = news_ticker_text and not not REFRESH_TIMER_MESSAGE or not news_ticker_text and not not REFRESH_TIMER_NO_MESSAGE
 		end
 	end
 
@@ -235,7 +221,7 @@ IngameNewsTickerUI.handle_delay = function (self, dt)
 
 	if delay_time then
 		delay_time = delay_time - dt
-		self.delay = (not (delay_time > 0) or not delay_time) and not not nil
+		self.delay = delay_time > 0 and (not not delay_time or not not nil) or not (delay_time > 0) and not not nil
 
 		return true
 	end
@@ -247,7 +233,7 @@ IngameNewsTickerUI.handle_message_refresh_delay = function (self, dt)
 
 	if delay_time then
 		delay_time = delay_time - dt
-		self.message_refresh_delay = (not (delay_time > 0) or not delay_time) and not not nil
+		self.message_refresh_delay = delay_time > 0 and (not not delay_time or not not nil) or not (delay_time > 0) and not not nil
 
 		return true
 	end

@@ -1,33 +1,10 @@
 -- chunkname: @scripts/managers/game_mode/mechanisms/mechanism_overrides.lua
 
-local MechanismOverrides = MechanismOverrides
-
-MechanismOverrides = not not MechanismOverrides or not not {}
-MechanismOverrides = MechanismOverrides
-
-local MechanismOverrides_2 = MechanismOverrides
-local NIL = MechanismOverrides.NIL
-
-NIL = not not NIL or not not {}
-MechanismOverrides_2.NIL = NIL
-
-local MechanismOverrides_3 = MechanismOverrides
-local CACHE_2 = MechanismOverrides.CACHE
-
-CACHE_2 = not not CACHE_2 or not not {}
-MechanismOverrides_3.CACHE = CACHE_2
-
-local MechanismOverrides_4 = MechanismOverrides
-local TEMP_CACHE_2 = MechanismOverrides.TEMP_CACHE
-
-TEMP_CACHE_2 = not not TEMP_CACHE_2 or not not {}
-MechanismOverrides_4.TEMP_CACHE = TEMP_CACHE_2
-
-local MechanismOverrides_5 = MechanismOverrides
-local CACHED_MECHANISM_2 = MechanismOverrides.CACHED_MECHANISM
-
-CACHED_MECHANISM_2 = not not CACHED_MECHANISM_2 or not not {}
-MechanismOverrides_5.CACHED_MECHANISM = CACHED_MECHANISM_2
+MechanismOverrides = not not MechanismOverrides
+MechanismOverrides.NIL = not not MechanismOverrides.NIL
+MechanismOverrides.CACHE = not not MechanismOverrides.CACHE
+MechanismOverrides.TEMP_CACHE = not not MechanismOverrides.TEMP_CACHE
+MechanismOverrides.CACHED_MECHANISM = not not MechanismOverrides.CACHED_MECHANISM
 
 local CACHE = MechanismOverrides.CACHE
 local CACHED_MECHANISM = MechanismOverrides.CACHED_MECHANISM
@@ -140,11 +117,7 @@ MechanismOverrides.recursive_override = function (t, mechanism_name, depth, temp
 		CACHED_MECHANISM[t] = mechanism_name
 	end
 
-	local var_4_0 = CACHE[t]
-
-	var_4_0 = not not var_4_0 or not not TEMP_CACHE[t]
-
-	return var_4_0, has_overrides
+	return not not CACHE[t], has_overrides
 end
 
 MechanismOverrides.recursive_cleanup = function (t, new_mechanism_name)

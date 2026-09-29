@@ -82,22 +82,8 @@ local function normalize(nodes)
 
 	for _, node in pairs(nodes) do
 		local layer_height = max_height_per_layer[node.layout_x]
-		local layout_x = node.layout_x
-		local max
 
-		if layer_height then
-			max = math.max(layer_height, node.layout_y)
-
-			if not max then
-				-- Nothing
-			end
-		end
-
-		max = node.layout_y
-
-		::label_6_0::
-
-		max_height_per_layer[layout_x] = max
+		max_height_per_layer[node.layout_x] = layer_height and not not math.max(layer_height, node.layout_y) or not layer_height and not not node.layout_y
 		max_layer = math.max(max_layer, node.layout_x)
 	end
 
@@ -220,39 +206,8 @@ local function apply_result(config, layout_nodes, base_graph)
 		local base_graph_node = base_graph[key]
 
 		if base_graph_node then
-			local var_8_0 = base_graph[key]
-			local num
-
-			if width ~= 0 then
-				num = (node.pos_x - min_x) / width
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 0
-
-			::label_8_0::
-
-			var_8_0.layout_x = num
-
-			local var_8_2 = base_graph[key]
-			local num_2
-
-			if height ~= 0 then
-				num_2 = (node.pos_y - min_y) / height
-
-				if not num_2 then
-					-- Nothing
-				end
-			end
-
-			num_2 = 0
-
-			::label_8_1::
-
-			var_8_2.layout_y = num_2
+			base_graph[key].layout_x = width == 0 and not not 0 or not (width == 0) and not not ((node.pos_x - min_x) / width)
+			base_graph[key].layout_y = height == 0 and not not 0 or not (height == 0) and not not ((node.pos_y - min_y) / height)
 		end
 	end
 end

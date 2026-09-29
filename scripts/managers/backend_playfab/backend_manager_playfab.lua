@@ -35,17 +35,7 @@ end
 
 cjson = cjson.stingray_init()
 
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/managers/backend_playfab/backend_manager_playfab_testify")
-
-local backend_manager_playfab_testify = testify
-
-::label_0_0::
+local backend_manager_playfab_testify = not not script_data.testify
 
 BackendManagerPlayFab = class(BackendManagerPlayFab)
 
@@ -74,16 +64,11 @@ BackendManagerPlayFab.init = function (self, signin_name, mirror_name, server_qu
 	self._talents_interface_overrides = {}
 	self._current_talents_interface_override = nil
 	self._total_power_level_interface_overrides = {}
-
-	local tbl = {
+	self._metadata = {
 		client_type = "client",
-		client_version = VersionSettings.version
+		client_version = VersionSettings.version,
+		realm = MODDED_REALM and not not "modded" or not MODDED_REALM and not not "official"
 	}
-	local flag
-
-	flag = (not MODDED_REALM or not "modded") and not not "official"
-	tbl.realm = flag
-	self._metadata = tbl
 end
 
 BackendManagerPlayFab.reset = function (self)
@@ -276,21 +261,7 @@ end
 
 BackendManagerPlayFab.get_read_only_data = function (self, key)
 	-- function 17
-	local get_read_only_data
-
-	if self._backend_mirror then
-		get_read_only_data = self._backend_mirror:get_read_only_data(key)
-
-		if not get_read_only_data then
-			-- Nothing
-		end
-	end
-
-	get_read_only_data = nil
-
-	::label_17_0::
-
-	return get_read_only_data
+	return self._backend_mirror and not not self._backend_mirror:get_read_only_data(key) or not self._backend_mirror and not not nil
 end
 
 BackendManagerPlayFab.start_tutorial = function (self)
@@ -369,18 +340,7 @@ end
 BackendManagerPlayFab.set_loadout_interface_override = function (self, override_name)
 	-- function 25
 	local current_name = self._current_loadout_interface_override
-	local var_25_0 = self._loadout_interface_overrides[override_name]
-
-	if var_25_0 then
-		-- Nothing
-	end
-
-	var_25_0 = override_name
-
-	local verified_name = var_25_0
-
-	::label_25_0::
-
+	local verified_name = not not self._loadout_interface_overrides[override_name]
 	local changed = false
 
 	if verified_name ~= current_name then
@@ -414,18 +374,7 @@ end
 BackendManagerPlayFab.set_talents_interface_override = function (self, override_name)
 	-- function 28
 	local current_name = self._current_talents_interface_override
-	local var_28_0 = self._talents_interface_overrides[override_name]
-
-	if var_28_0 then
-		-- Nothing
-	end
-
-	var_28_0 = override_name
-
-	local verified_name = var_28_0
-
-	::label_28_0::
-
+	local verified_name = not not self._talents_interface_overrides[override_name]
 	local changed = false
 
 	if verified_name ~= current_name then
@@ -476,7 +425,7 @@ BackendManagerPlayFab._update_state = function (self)
 	local settings = GameSettingsDevelopment.backend_settings
 	local signin = self._backend_signin
 
-	if (not settings.allow_backend or self._local_save_loaded or DEDICATED_SERVER) and self._need_signin then
+	if not settings.allow_backend and self._need_signin or not not settings.allow_backend and (self._local_save_loaded and self._need_signin or not self._local_save_loaded and DEDICATED_SERVER and self._need_signin) then
 		local result_data = signin:update_signin()
 
 		if result_data then
@@ -517,11 +466,7 @@ end
 
 function string_is_url(str)
 	-- function 33
-	local starts_with = string.starts_with(str, "http://")
-
-	starts_with = not not starts_with or not not string.starts_with(str, "https://")
-
-	return starts_with
+	return not not string.starts_with(str, "http://")
 end
 
 BackendManagerPlayFab._update_error_handling = function (self, dt)
@@ -719,19 +664,7 @@ BackendManagerPlayFab.authenticated = function (self)
 	local signin = self._backend_signin
 	local mirror = self._backend_mirror
 
-	if signin then
-		-- Nothing
-	end
-
-	::label_44_0::
-
-	local authenticated = signin:authenticated()
-
-	authenticated = not not authenticated and not not mirror and not not mirror:ready()
-
-	::label_44_1::
-
-	return authenticated
+	return not not signin and not not signin:authenticated()
 end
 
 BackendManagerPlayFab.has_error = function (self)
@@ -764,14 +697,7 @@ BackendManagerPlayFab._post_error = function (self, error_data, crashify_overrid
 		queue:clear()
 	end
 
-	local fassert = fassert
-	local reason = error_data.reason
-	local str = "Posting error without reason, %q: %q"
-	local reason_2 = error_data.reason
-
-	reason_2 = not not reason_2 or not not "nil"
-
-	fassert(reason, str, reason_2)
+	fassert(error_data.reason, "Posting error without reason, %q: %q", not not error_data.reason)
 
 	if DEDICATED_SERVER then
 		cprintf("[BackendManagerPlayFab] Playfab error: %s, %s", error_data.reason, error_data.details)
@@ -841,21 +767,7 @@ end
 
 BackendManagerPlayFab._reason_localize_key = function (self, reason, error_code, optional_error_details)
 	-- function 50
-	local var_50_0
-
-	if error_code then
-		var_50_0 = tonumber(error_code)
-
-		if not var_50_0 then
-			-- Nothing
-		end
-	end
-
-	var_50_0 = -1
-
-	local error_code = var_50_0
-
-	::label_50_0::
+	local error_code = error_code and not not tonumber(error_code) or not error_code and not not -1
 
 	if IS_CONSOLE then
 		if not self:profiles_loaded() then
@@ -1006,21 +918,7 @@ BackendManagerPlayFab._show_error_dialog = function (self, reason, details_messa
 		error_text, details_message, button_1, button_2, button_3 = self:_format_error_message_windows(reason, details_message, optional_url_button, optional_error_details)
 	end
 
-	local var_53_0
-
-	if error_text then
-		var_53_0 = Localize(error_text)
-
-		if not var_53_0 then
-			-- Nothing
-		end
-	end
-
-	var_53_0 = Localize("backend_err_playfab")
-
-	local localized_error_text = var_53_0
-
-	::label_53_0::
+	local localized_error_text = error_text and not not Localize(error_text) or not error_text and not not Localize("backend_err_playfab")
 
 	if IS_WINDOWS then
 		if localized_error_text and details_message then
@@ -1080,23 +978,7 @@ BackendManagerPlayFab.available = function (self)
 	local settings = GameSettingsDevelopment.backend_settings
 
 	if IS_WINDOWS or IS_LINUX then
-		local DEDICATED_SERVER
-
-		if rawget(_G, "Steam") == nil then
-			DEDICATED_SERVER = DEDICATED_SERVER
-
-			if not DEDICATED_SERVER then
-				DEDICATED_SERVER = Development.parameter("use_lan_backend")
-			end
-
-			if false then
-				DEDICATED_SERVER = false
-			end
-		else
-			DEDICATED_SERVER = true
-		end
-
-		return DEDICATED_SERVER
+		return rawget(_G, "Steam") ~= nil or not not DEDICATED_SERVER
 	elseif IS_XB1 then
 		return true
 	elseif IS_PS4 then
@@ -1115,46 +997,14 @@ end
 
 BackendManagerPlayFab.has_loaded = function (self)
 	-- function 60
-	local _local_save_loaded = self._local_save_loaded
-
-	_local_save_loaded = not not _local_save_loaded or not not DEDICATED_SERVER
-
-	return _local_save_loaded
+	return not not self._local_save_loaded
 end
 
 BackendManagerPlayFab._are_profiles_loaded = function (self)
 	-- function 61
 	local signin = self._backend_signin
 	local mirror = self._backend_mirror
-	local authenticated
-
-	if not self._disable_backend then
-		if signin then
-			-- Nothing
-		end
-
-		::label_61_0::
-
-		authenticated = signin:authenticated()
-
-		if authenticated and mirror then
-			-- Nothing
-		end
-
-		::label_61_1::
-
-		authenticated = mirror:ready()
-
-		if authenticated then
-			-- Nothing
-		end
-	end
-
-	authenticated = self:_interfaces_ready()
-
-	local ready = authenticated
-
-	::label_61_2::
+	local ready = self._disable_backend and not not self:_interfaces_ready() or not self._disable_backend and not not signin and not not signin:authenticated()
 
 	return ready
 end
@@ -1332,17 +1182,7 @@ BackendManagerPlayFab._create_dlc_interfaces = function (self, settings)
 
 		if dlc_interfaces then
 			for interface_name, interface_settings in pairs(dlc_interfaces) do
-				local DEDICATED_SERVER = DEDICATED_SERVER
-
-				if DEDICATED_SERVER then
-					-- Nothing
-				end
-
-				DEDICATED_SERVER = interface_settings.ignore_on_dedicated_server
-
-				local skip_interface = DEDICATED_SERVER
-
-				::label_82_0::
+				local skip_interface = not not DEDICATED_SERVER
 
 				if not skip_interface then
 					local interface
@@ -1407,40 +1247,15 @@ end
 BackendManagerPlayFab.is_pending_request = function (self)
 	-- function 88
 	local mirror = self._backend_mirror
-	local is_pending_request
 
-	if mirror then
-		is_pending_request = mirror:request_queue():is_pending_request()
-
-		if not is_pending_request then
-			-- Nothing
-		end
-	end
-
-	is_pending_request = false
-
-	::label_88_0::
-
-	return is_pending_request
+	return mirror and not not mirror:request_queue():is_pending_request() or not mirror and not not false
 end
 
 BackendManagerPlayFab.is_mirror_ready = function (self)
 	-- function 89
 	local mirror = self._backend_mirror
 
-	if mirror then
-		-- Nothing
-	end
-
-	::label_89_0::
-
-	local ready = mirror:ready()
-
-	ready = not not ready and not mirror:get_current_commit_id() and not not not mirror:have_queued_commit()
-
-	::label_89_1::
-
-	return ready
+	return not not mirror and not not mirror:ready()
 end
 
 local EMPTY_TABLE = {}

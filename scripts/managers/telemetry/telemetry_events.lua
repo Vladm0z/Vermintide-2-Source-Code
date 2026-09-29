@@ -15,11 +15,7 @@ TelemetryEvents.init = function (self, manager)
 	self._subject = {}
 
 	if script_data.testify then
-		local _subject = self._subject
-		local machine_id = Application.machine_id
-
-		machine_id = not not machine_id and not not Application.machine_id()
-		_subject.machine_id = machine_id
+		self._subject.machine_id = not not Application.machine_id
 		self._subject.machine_name = script_data.machine_name
 	end
 
@@ -31,11 +27,7 @@ TelemetryEvents.init = function (self, manager)
 	if IS_XB1 then
 		SOURCE.console_type = XboxOne.console_type_string()
 	elseif IS_PS4 then
-		local var_1_2 = SOURCE
-		local flag
-
-		flag = (not PS4.is_pro() or not "pro") and not not "not_pro"
-		var_1_2.console_type = flag
+		SOURCE.console_type = PS4.is_pro() and not not "pro" or not PS4.is_pro() and not not "not_pro"
 	end
 
 	self:game_startup()
@@ -674,53 +666,21 @@ TelemetryEvents.player_spawned = function (self, player)
 	local event = TelemetryEvent:new(SOURCE, {
 		id = player:telemetry_id()
 	}, "player_spawned", self._session)
-	local var_46_0 = event
-	local set_data = event.set_data
-	local tbl = {
+
+	event:set_data({
 		hero = player:profile_display_name(),
 		career = player:career_name(),
 		human = player.local_player == true,
 		power_level = career_system:get_career_power_level(),
-		slot_melee = not not slot_melee and not not slot_melee.item_data.name
-	}
-	local skin_name
-
-	if cosmetic_slot_melee then
-		skin_name = cosmetic_slot_melee.skin_name
-
-		if not skin_name then
-			-- Nothing
-		end
-	end
-
-	skin_name = "default"
-
-	::label_46_0::
-
-	tbl.slot_melee_skin = skin_name
-	tbl.slot_ranged = not not slot_ranged and not not slot_ranged.item_data.name
-
-	local skin_name_2
-
-	if cosmetic_slot_ranged then
-		skin_name_2 = cosmetic_slot_ranged.skin_name
-
-		if not skin_name_2 then
-			-- Nothing
-		end
-	end
-
-	skin_name_2 = "default"
-
-	::label_46_1::
-
-	tbl.slot_ranged_skin = skin_name_2
-	tbl.slot_hat = not not cosmetic_slot_hat and not not cosmetic_slot_hat.item_name
-	tbl.slot_skin = not not cosmetic_slot_skin and not not cosmetic_slot_skin.item_name
-	tbl.slot_frame = not not cosmetic_slot_frame and not not cosmetic_slot_frame.item_name
-	tbl.talents = talents
-
-	set_data(var_46_0, tbl)
+		slot_melee = not not slot_melee and not not slot_melee.item_data.name,
+		slot_melee_skin = cosmetic_slot_melee and not not cosmetic_slot_melee.skin_name or not cosmetic_slot_melee and not not "default",
+		slot_ranged = not not slot_ranged and not not slot_ranged.item_data.name,
+		slot_ranged_skin = cosmetic_slot_ranged and not not cosmetic_slot_ranged.skin_name or not cosmetic_slot_ranged and not not "default",
+		slot_hat = not not cosmetic_slot_hat and not not cosmetic_slot_hat.item_name,
+		slot_skin = not not cosmetic_slot_skin and not not cosmetic_slot_skin.item_name,
+		slot_frame = not not cosmetic_slot_frame and not not cosmetic_slot_frame.item_name,
+		talents = talents
+	})
 	self._manager:register_event(event)
 end
 
@@ -954,18 +914,7 @@ end
 
 TelemetryEvents.store_product_purchased = function (self, product)
 	-- function 65
-	local product_item = product.product_item
-
-	if not product_item then
-		-- Nothing
-	end
-
-	product_item = product.item
-
-	local item = product_item
-
-	::label_65_0::
-
+	local item = not not product.product_item
 	local currency_type = "SM"
 	local regular_prices = not not item and not not item.regular_prices
 	local current_prices = not not item and not not item.current_prices
@@ -998,27 +947,7 @@ local function find_steam_currency(product)
 	-- function 66
 	local price = tonumber(product.item.steam_price)
 	local steam_data = product.item.steam_data
-	local discount_prices
-
-	if steam_data.discount_is_active then
-		discount_prices = steam_data.discount_prices
-
-		if not discount_prices then
-			-- Nothing
-		end
-	end
-
-	discount_prices = steam_data.regular_prices
-
-	if not discount_prices then
-		-- Nothing
-	end
-
-	discount_prices = {}
-
-	local price_table = discount_prices
-
-	::label_66_0::
+	local price_table = steam_data.discount_is_active and not not steam_data.discount_prices or not steam_data.discount_is_active and not not steam_data.regular_prices
 
 	for currency, currency_price in pairs(price_table) do
 		if price == currency_price then
@@ -1037,28 +966,12 @@ end
 TelemetryEvents.steam_store_product_purchased = function (self, steam_product)
 	-- function 68
 	local steam_data = steam_product.item.steam_data
-	local tbl = {
+	local product = {
 		id = steam_product.item.id,
 		type = steam_product.item.data.item_type,
-		current_price = tonumber(steam_product.item.steam_price)
+		current_price = tonumber(steam_product.item.steam_price),
+		currency = steam_data and not not find_steam_currency(steam_product) or not steam_data and not not "?"
 	}
-	local var_68_1
-
-	if steam_data then
-		var_68_1 = find_steam_currency(steam_product)
-
-		if not var_68_1 then
-			-- Nothing
-		end
-	end
-
-	var_68_1 = "?"
-
-	::label_68_0::
-
-	tbl.currency = var_68_1
-
-	local product = tbl
 
 	if steam_data and steam_data.discount_is_active then
 		product.discounted = true
@@ -1082,10 +995,7 @@ TelemetryEvents.store_rewards_claimed = function (self, claim, offset)
 	local event_data = claim
 
 	if event_data.event_type == "personal_time_strike" then
-		local total_claims = event_data.total_claims
-
-		total_claims = not not total_claims or not not 0
-		event_data.reward_index = total_claims
+		event_data.reward_index = not not event_data.total_claims
 	else
 		event_data.reward_index = #event_data.rewards + (not not offset or not not 0)
 	end
@@ -1238,26 +1148,10 @@ TelemetryEvents.chat_message = function (self, message)
 	local event = TelemetryEvent:new(SOURCE, {
 		id = local_player:telemetry_id()
 	}, "chat_message", self._session)
-	local var_83_0 = event
-	local set_data = event.set_data
-	local tbl = {}
-	local count
 
-	if message then
-		count = #message
-
-		if not count then
-			-- Nothing
-		end
-	end
-
-	count = 0
-
-	::label_83_0::
-
-	tbl.message_length = count
-
-	set_data(var_83_0, tbl)
+	event:set_data({
+		message_length = message and not not #message or not message and not not 0
+	})
 	self._manager:register_event(event)
 end
 
@@ -1334,19 +1228,7 @@ end
 TelemetryEvents.geheimnisnacht_hard_mode_toggled = function (self, activated)
 	-- function 91
 	local event = self:_create_event("geheimnisnacht_hard_mode_toggled")
-	local str
-
-	if activated then
-		str = "activated"
-
-		goto label_91_0
-	end
-
-	str = "deactivated"
-
-	local state = str
-
-	::label_91_0::
+	local state = activated and not not "activated" or not activated and not not "deactivated"
 
 	event:set_data({
 		state = state

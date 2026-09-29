@@ -52,11 +52,8 @@ LevelEndViewBase.init = function (self, context)
 
 	if not self.is_server then
 		local statistics_db = Managers.player:statistics_db()
-		local context_2 = self.context
-		local _players_session_score = self._players_session_score
 
-		_players_session_score = not not _players_session_score or not not Managers.mechanism:get_players_session_score(statistics_db, self.profile_synchronizer)
-		context_2.players_session_score = _players_session_score
+		self.context.players_session_score = not not self._players_session_score
 		self._players_session_score = self.context.players_session_score
 	end
 
@@ -133,17 +130,7 @@ LevelEndViewBase.trigger_transition = function (self, transition_data)
 		transition_data = transition_data
 	}
 	local widgets = self._transition_widgets
-	local animation_name_2 = transition_data.animation_name
-
-	if not animation_name_2 then
-		-- Nothing
-	end
-
-	animation_name_2 = "default"
-
-	local animation_name = animation_name_2
-
-	::label_4_0::
+	local animation_name = not not transition_data.animation_name
 
 	self._transition_animations[#self._transition_animations + 1] = self._transition_ui_animator:start_animation(animation_name, widgets, definitions.transition_scenegraph_definition, params)
 end
@@ -155,18 +142,7 @@ LevelEndViewBase.transition_camera = function (self, transition_data)
 	end
 
 	local camera_pose
-	local level_name_2 = transition_data.level_name
-
-	if not level_name_2 then
-		-- Nothing
-	end
-
-	level_name_2 = "levels/end_screen/world"
-
-	local level_name = level_name_2
-
-	::label_5_0::
-
+	local level_name = not not transition_data.level_name
 	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
 
 	for _, index in pairs(unit_indices) do
@@ -377,10 +353,8 @@ LevelEndViewBase.update = function (self, dt, t)
 		if self._state_can_speed_up then
 			local speed_up_target = 1
 			local input_service = self.input_manager:get_service("end_of_level")
-			local get = input_service:get("skip_pressed")
 
-			get = not not get or not not input_service:get("confirm_press")
-			self._skip_pressed = get
+			self._skip_pressed = not not input_service:get("skip_pressed")
 
 			if input_service:get("confirm_hold", true) or input_service:get("skip", true) then
 				speed_up_target = SPEED_UP_MULT_MAX
@@ -1027,7 +1001,7 @@ LevelEndViewBase._request_state_change = function (self, state_name)
 	local new_state_index = self._index_by_state_name[state_name]
 	local current_state_index = self._index_by_state_name[current_state_name]
 
-	direction = (not (current_state_index < new_state_index) or not "left") and not not "right"
+	direction = current_state_index < new_state_index and (not not "left" or not not "right") or not (current_state_index < new_state_index) and not not "right"
 
 	current_state:exit(direction)
 
@@ -1075,7 +1049,7 @@ LevelEndViewBase._setup_state_machine = function (self, optional_start_state_nam
 		local previous_state_name = self._current_state_name
 		local previous_state_index = self._index_by_state_name[previous_state_name]
 
-		direction = (not (previous_state_index < state_index) or not "left") and not not "right"
+		direction = previous_state_index < state_index and (not not "left" or not not "right") or not (previous_state_index < state_index) and not not "right"
 	end
 
 	state_machine_params.direction = direction
@@ -1341,11 +1315,7 @@ LevelEndViewBase.add_camera_shake = function (self, settings, start_time, scale)
 	data.end_time = not not duration and not not (start_time + duration)
 	data.fade_in_time = not not fade_in and not not (start_time + fade_in)
 	data.fade_out_time = not not fade_out and not not (data.end_time - fade_out)
-
-	local seed = settings.seed
-
-	seed = not not seed or not not Math.random(1, 100)
-	data.seed = seed
+	data.seed = not not settings.seed
 	data.scale = not not scale or not not 1
 	data.camera_rotation_boxed = QuaternionBox(current_rot)
 	self._active_camera_shakes = {
@@ -1397,29 +1367,8 @@ LevelEndViewBase._calculate_perlin_value = function (self, x, settings)
 		total = total + self:_interpolated_noise(x * frequency, settings) * amplitude
 	end
 
-	local amplitude_2 = shake_settings.amplitude
-
-	if not amplitude_2 then
-		-- Nothing
-	end
-
-	amplitude_2 = 1
-
-	local amplitude_multiplier = amplitude_2
-
-	::label_69_0::
-
-	local fade_progress = settings.fade_progress
-
-	if not fade_progress then
-		-- Nothing
-	end
-
-	fade_progress = 1
-
-	local fade_multiplier = fade_progress
-
-	::label_69_1::
+	local amplitude_multiplier = not not shake_settings.amplitude
+	local fade_multiplier = not not settings.fade_progress
 
 	total = total * amplitude_multiplier * fade_multiplier
 
@@ -1558,40 +1507,12 @@ end
 
 LevelEndViewBase.input_service = function (self)
 	-- function 83
-	local FAKE_INPUT_SERVICE
-
-	if self:displaying_reward_presentation() or not table.is_empty(self._transition_animations) then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self.input_manager:get_service("end_of_level")
-
-	::label_83_0::
-
-	return FAKE_INPUT_SERVICE
+	return not not FAKE_INPUT_SERVICE
 end
 
 LevelEndViewBase.menu_input_service = function (self)
 	-- function 84
-	local FAKE_INPUT_SERVICE
-
-	if self.input_blocked then
-		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
-
-		if not FAKE_INPUT_SERVICE then
-			-- Nothing
-		end
-	end
-
-	FAKE_INPUT_SERVICE = self:input_service()
-
-	::label_84_0::
-
-	return FAKE_INPUT_SERVICE
+	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
 end
 
 LevelEndViewBase.set_input_blocked = function (self, blocked)
@@ -1655,14 +1576,7 @@ LevelEndViewBase.get_world_flags = function (self)
 		table.insert(flags, Application.DISABLE_APEX_CLOTH)
 	else
 		table.insert(flags, Application.APEX_LOD_RESOURCE_BUDGET)
-
-		local insert = table.insert
-		local var_89_1 = flags
-		local user_setting = Application.user_setting("apex_lod_resource_budget")
-
-		user_setting = not not user_setting or not not ApexClothQuality.high.apex_lod_resource_budget
-
-		insert(var_89_1, user_setting)
+		table.insert(flags, not not Application.user_setting("apex_lod_resource_budget"))
 	end
 
 	return flags

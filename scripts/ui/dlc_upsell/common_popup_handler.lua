@@ -15,23 +15,7 @@ CommonPopupHandler.init = function (self, context)
 	self._n_popups = 0
 	self._popup_ids = 0
 
-	local menu_active_2 = context.ingame_ui.menu_active
-
-	if not menu_active_2 then
-		-- Nothing
-	end
-
-	menu_active_2 = context.ingame_ui.current_view
-
-	if not menu_active_2 then
-		-- Nothing
-	end
-
-	menu_active_2 = context.ingame_ui._transition_fade_data
-
-	local menu_active = menu_active_2
-
-	::label_1_0::
+	local menu_active = not not context.ingame_ui.menu_active
 
 	self._menu_active = menu_active
 
@@ -136,12 +120,5 @@ end
 
 CommonPopupHandler._is_menu_active = function (self)
 	-- function 7
-	local menu_active = self._context.ingame_ui.menu_active
-
-	if not menu_active then
-		menu_active = self._context.ingame_ui.current_view
-		menu_active = not not menu_active or not not self._context.ingame_ui._transition_fade_data
-	end
-
-	return menu_active
+	return not not self._context.ingame_ui.menu_active
 end

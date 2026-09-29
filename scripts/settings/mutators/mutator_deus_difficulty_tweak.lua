@@ -58,7 +58,7 @@ local function get_lerped_value_for_difficulty(steps, current_difficulty_tweak)
 			local step_after = density_multiplier_steps_per_difficulty_tweak[i + 1]
 
 			selected_pre_step = not not step_before or not not step
-			selected_post_step = (not step_before or not step) and not not step_after
+			selected_post_step = step_before and (not not step or not not step_after) or not step_before and not not step_after
 
 			break
 		end

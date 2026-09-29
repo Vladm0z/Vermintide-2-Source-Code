@@ -171,11 +171,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 5
-				local is_in_mechanism = overview:is_in_mechanism("weave")
-
-				is_in_mechanism = not not is_in_mechanism and not not not IS_XB1
-
-				return is_in_mechanism
+				return not not overview:is_in_mechanism("weave")
 			end
 		},
 		{

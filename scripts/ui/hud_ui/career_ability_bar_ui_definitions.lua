@@ -125,21 +125,7 @@ local widget_definitions = {
 						local input_text = ""
 
 						if key_index ~= UNASSIGNED_KEY then
-							local Mouse
-
-							if device_type == "mouse" then
-								Mouse = Mouse
-
-								if not Mouse then
-									-- Nothing
-								end
-							end
-
-							Mouse = Keyboard
-
-							local device = Mouse
-
-							::label_3_0::
+							local device = device_type ~= "mouse" and not not Keyboard or not (device_type ~= "mouse") and not not Mouse
 
 							input_text = not not device.button_locale_name(key_index) or not not device.button_name(key_index) or not not Localize("lb_unknown")
 							input_text = Utf8.upper(input_text)

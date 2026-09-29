@@ -196,18 +196,7 @@ end
 
 StartGameWindowDeusJourneySelection._select_journey = function (self, selected_journey_name)
 	-- function 9
-	local required_journeys = DeusJourneySettings[selected_journey_name].required_journeys
-
-	if not required_journeys then
-		-- Nothing
-	end
-
-	required_journeys = {}
-
-	local required_completed_journeys = required_journeys
-
-	::label_9_0::
-
+	local required_completed_journeys = not not DeusJourneySettings[selected_journey_name].required_journeys
 	local active_node_widgets = self._active_node_widgets
 	local unlocked_journeys = self._unlocked_journeys
 	local is_selected_journey_unlocked = unlocked_journeys[selected_journey_name]
@@ -222,24 +211,7 @@ StartGameWindowDeusJourneySelection._select_journey = function (self, selected_j
 			button_hotspot.is_selected = is_selected
 
 			local is_a_required_journey = table.contains(required_completed_journeys, content.journey_name)
-
-			if is_a_required_journey then
-				-- Nothing
-			end
-
-			::label_9_1::
-
-			local locked = content.locked
-
-			if not locked then
-				-- Nothing
-			end
-
-			locked = not is_selected_journey_unlocked
-
-			local show_unlock_guidance = locked
-
-			::label_9_2::
+			local show_unlock_guidance = not not not is_selected_journey_unlocked
 
 			content.unlock_guidance = show_unlock_guidance
 		end
@@ -663,18 +635,7 @@ StartGameWindowDeusJourneySelection._animate_node_widget = function (self, widge
 	local content = widget.content
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
-	local selected_progress_2 = hotspot.selected_progress
-
-	if not selected_progress_2 then
-		-- Nothing
-	end
-
-	selected_progress_2 = 0
-
-	local selected_progress = selected_progress_2
-
-	::label_33_0::
-
+	local selected_progress = not not hotspot.selected_progress
 	local selected_speed = 9
 
 	if is_selected then
@@ -684,18 +645,7 @@ StartGameWindowDeusJourneySelection._animate_node_widget = function (self, widge
 	end
 
 	local is_unlock_guidance = content.unlock_guidance
-	local unlock_guidance_progress_2 = content.unlock_guidance_progress
-
-	if not unlock_guidance_progress_2 then
-		-- Nothing
-	end
-
-	unlock_guidance_progress_2 = 0
-
-	local unlock_guidance_progress = unlock_guidance_progress_2
-
-	::label_33_1::
-
+	local unlock_guidance_progress = not not content.unlock_guidance_progress
 	local unlock_guidance_speed = 2
 
 	if is_unlock_guidance then

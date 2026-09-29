@@ -2,16 +2,8 @@
 
 require("scripts/entity_system/systems/buff/buff_sync_type")
 
-local Pickups = Pickups
-
-Pickups = not not Pickups or not not {}
-Pickups = Pickups
-
-local Pickups_2 = Pickups
-local healing = Pickups.healing
-
-healing = not not healing or not not {}
-Pickups_2.healing = healing
+Pickups = not not Pickups
+Pickups.healing = not not Pickups.healing
 Pickups.healing.first_aid_kit = {
 	only_once = true,
 	individual_pickup = false,
@@ -44,12 +36,7 @@ Pickups.healing.healing_draught = {
 	local_pickup_sound = true,
 	hud_description = "potion_healing_draught_01"
 }
-
-local Pickups_3 = Pickups
-local potions = Pickups.potions
-
-potions = not not potions or not not {}
-Pickups_3.potions = potions
+Pickups.potions = not not Pickups.potions
 Pickups.potions.damage_boost_potion = {
 	only_once = true,
 	individual_pickup = false,
@@ -101,12 +88,7 @@ Pickups.potions.cooldown_reduction_potion = {
 	local_pickup_sound = true,
 	hud_description = "potion_cooldown_reduction_01"
 }
-
-local Pickups_4 = Pickups
-local level_events = Pickups.level_events
-
-level_events = not not level_events or not not {}
-Pickups_4.level_events = level_events
+Pickups.level_events = not not Pickups.level_events
 Pickups.level_events.grain_sack = {
 	only_once = true,
 	individual_pickup = false,
@@ -535,12 +517,7 @@ Pickups.level_events.shadow_gargoyle_head = {
 	wield_on_pickup = true,
 	hud_description = "gargoyle_head"
 }
-
-local Pickups_5 = Pickups
-local ammo = Pickups.ammo
-
-ammo = not not ammo or not not {}
-Pickups_5.ammo = ammo
+Pickups.ammo = not not Pickups.ammo
 Pickups.ammo.all_ammo = {
 	only_once = false,
 	individual_pickup = false,
@@ -556,11 +533,8 @@ Pickups.ammo.all_ammo = {
 		-- function 11
 		local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
 		local full_ammo = inventory_extension:has_full_ammo()
-		local flag
 
-		flag = (not full_ammo or not "pickup_ammo_full") and not not "pickup_ammo"
-
-		return flag
+		return full_ammo and not not "pickup_ammo_full" or not full_ammo and not not "pickup_ammo"
 	end,
 	can_interact_func = function (interactor_unit, interactable_unit, data)
 		-- function 12
@@ -666,12 +640,7 @@ Pickups.ammo.ammo_ranger_improved = {
 		return not not has_ammo_consuming_weapon and not is_throwing_axe and not not not infinite_ammo
 	end
 }
-
-local Pickups_6 = Pickups
-local grenades = Pickups.grenades
-
-grenades = not not grenades or not not {}
-Pickups_6.grenades = grenades
+Pickups.grenades = not not Pickups.grenades
 Pickups.grenades.frag_grenade_t1 = {
 	only_once = true,
 	individual_pickup = false,
@@ -706,12 +675,7 @@ Pickups.grenades.fire_grenade_t1 = {
 	local_pickup_sound = true,
 	hud_description = "grenade_fire"
 }
-
-local Pickups_7 = Pickups
-local improved_grenades = Pickups.improved_grenades
-
-improved_grenades = not not improved_grenades or not not {}
-Pickups_7.improved_grenades = improved_grenades
+Pickups.improved_grenades = not not Pickups.improved_grenades
 Pickups.improved_grenades.frag_grenade_t2 = {
 	only_once = true,
 	individual_pickup = false,
@@ -861,11 +825,7 @@ Pickups.special.necromancer_ripped_soul = {
 }
 
 if script_data then
-	local script_data = script_data
-	local lorebook_enabled = script_data.lorebook_enabled
-
-	lorebook_enabled = not not lorebook_enabled or not not Development.parameter("lorebook_enabled")
-	script_data.lorebook_enabled = lorebook_enabled
+	script_data.lorebook_enabled = not not script_data.lorebook_enabled
 end
 
 Pickups.lorebook_pages = {}
@@ -993,14 +953,7 @@ for _, pickup_settings in pairs(LootRatPickups) do
 	end
 end
 
-local NearPickupSpawnChance = NearPickupSpawnChance
-
-NearPickupSpawnChance = not not NearPickupSpawnChance or not not {
-	grenades = 0.5,
-	healing = 0.7,
-	potions = 0.3
-}
-NearPickupSpawnChance = NearPickupSpawnChance
+NearPickupSpawnChance = not not NearPickupSpawnChance
 AllPickups = {}
 
 for group, pickups in pairs(Pickups) do
@@ -1016,9 +969,5 @@ for group, pickups in pairs(Pickups) do
 		AllPickups[pickup_name] = settings
 	end
 
-	local NearPickupSpawnChance_2 = NearPickupSpawnChance
-	local var_0_17 = NearPickupSpawnChance[group]
-
-	var_0_17 = not not var_0_17 or not not 0
-	NearPickupSpawnChance_2[group] = var_0_17
+	NearPickupSpawnChance[group] = not not NearPickupSpawnChance[group]
 end

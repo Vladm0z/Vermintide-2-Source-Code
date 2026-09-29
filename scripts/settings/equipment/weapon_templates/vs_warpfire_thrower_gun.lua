@@ -271,21 +271,7 @@ local function update_warpfire_vfx(owner_unit, weapon_unit, state_data, world)
 
 	local lifetime = length / 4
 	local particle_life_time = state_data.particle_life_time
-	local unbox
-
-	if particle_life_time then
-		unbox = particle_life_time:unbox()
-
-		if not unbox then
-			-- Nothing
-		end
-	end
-
-	unbox = Vector3(1, 0, 0)
-
-	local particle_life_time_vector = unbox
-
-	::label_14_0::
+	local particle_life_time_vector = particle_life_time and not not particle_life_time:unbox() or not particle_life_time and not not Vector3(1, 0, 0)
 
 	particle_life_time_vector.x = lifetime
 

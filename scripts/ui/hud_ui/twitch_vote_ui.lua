@@ -362,16 +362,8 @@ TwitchVoteUI._update_active_vote = function (self, dt, t)
 	end
 
 	local options = vote_data.options
-	local _vote_count = self._vote_count
 
-	_vote_count = not not _vote_count or not not {
-		0,
-		0,
-		0,
-		0,
-		0
-	}
-	self._vote_count = _vote_count
+	self._vote_count = not not self._vote_count
 
 	local a_diff = options[1] - self._vote_count[1]
 	local b_diff = options[2] - self._vote_count[2]
@@ -419,42 +411,13 @@ TwitchVoteUI._update_active_vote = function (self, dt, t)
 	local percentages = {}
 
 	for i = 1, 5 do
-		local num
-
-		if total_amount > 0 then
-			num = options[i] / total_amount
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 0
-
-		::label_16_0::
-
-		percentages[i] = num
+		percentages[i] = total_amount > 0 and not not (options[i] / total_amount) or not (total_amount > 0) and not not 0
 	end
 
-	local _active_vote = self._active_vote
-	local vote_percentages = self._active_vote.vote_percentages
-
-	vote_percentages = not not vote_percentages or not not {
-		0,
-		0,
-		0,
-		0,
-		0
-	}
-	_active_vote.vote_percentages = vote_percentages
+	self._active_vote.vote_percentages = not not self._active_vote.vote_percentages
 
 	for i = 1, 5 do
-		local vote_percentages_2 = self._active_vote.vote_percentages
-		local lerp = math.lerp
-		local var_16_6 = self._active_vote.vote_percentages[i]
-
-		var_16_6 = not not var_16_6 or not not 0
-		vote_percentages_2[i] = lerp(var_16_6, percentages[i], dt * 2)
+		self._active_vote.vote_percentages[i] = math.lerp(not not self._active_vote.vote_percentages[i], percentages[i], dt * 2)
 	end
 
 	if DEBUG_VOTE_UI then
@@ -575,18 +538,7 @@ TwitchVoteUI._update_multiple_votes_ui = function (self, dt)
 		local widget = self._widgets[widget_name]
 		local content = widget.content
 		local profile_index = content.profile_index
-		local var_20_0 = active_vote.vote_percentages[profile_index]
-
-		if not var_20_0 then
-			-- Nothing
-		end
-
-		var_20_0 = 0
-
-		local percentage = var_20_0
-
-		::label_20_0::
-
+		local percentage = not not active_vote.vote_percentages[profile_index]
 		local style = widget.style
 		local height = style.mask.base_size[2] * percentage
 

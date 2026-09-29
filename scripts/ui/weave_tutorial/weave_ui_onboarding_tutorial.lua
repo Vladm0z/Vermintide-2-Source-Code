@@ -12,17 +12,7 @@ WeaveUIOnboardingTutorial.init = function (self, context)
 	self.ui_onboarding_state = 0
 	self.statistics_db = context.statistics_db
 
-	local player_2 = Managers.player
-
-	if player_2 then
-		-- Nothing
-	end
-
-	player_2 = Managers.player:local_player()
-
-	local player = player_2
-
-	::label_1_0::
+	local player = not not Managers.player
 
 	self.player_stats_id = not not player and not not player:stats_id()
 	self.delayed_tutorial = nil
@@ -121,28 +111,12 @@ end
 
 WeaveUIOnboardingTutorial.has_popup = function (self, tutorial)
 	-- function 7
-	if tutorial then
-		-- Nothing
-	end
-
-	::label_7_0::
-
-	local popup_body = tutorial.popup_body
-
-	popup_body = not not popup_body or not not tutorial.custom_popup
-
-	::label_7_1::
-
-	return popup_body
+	return not not tutorial.custom_popup
 end
 
 WeaveUIOnboardingTutorial.needs_to_show = function (self, tutorial_data)
 	-- function 8
-	local reached_requirements = WeaveOnboardingUtils.reached_requirements(self.onboarding_step, tutorial_data)
-
-	reached_requirements = not not reached_requirements and not not not WeaveOnboardingUtils.tutorial_completed(self.ui_onboarding_state, tutorial_data)
-
-	return reached_requirements
+	return not not WeaveOnboardingUtils.reached_requirements(self.onboarding_step, tutorial_data)
 end
 
 WeaveUIOnboardingTutorial.show_tutorial = function (self, tutorial_data)
@@ -180,21 +154,7 @@ end
 
 WeaveUIOnboardingTutorial.is_showing_tutorial = function (self)
 	-- function 12
-	local is_visible
-
-	if self.tutorial_popup then
-		is_visible = self.tutorial_popup.is_visible
-
-		if not is_visible then
-			-- Nothing
-		end
-	end
-
-	is_visible = self.delayed_tutorial
-
-	::label_12_0::
-
-	return is_visible
+	return self.tutorial_popup and not not self.tutorial_popup.is_visible or not self.tutorial_popup and not not self.delayed_tutorial
 end
 
 WeaveUIOnboardingTutorial.try_show_tutorial = function (self, tutorial_data)

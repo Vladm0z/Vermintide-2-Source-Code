@@ -77,21 +77,8 @@ PlayerBotInput.pre_update = function (self, unit, input, dt, context, t)
 	-- function 5
 	local position = POSITION_LOOKUP[unit]
 	local success, altitude = GwNavQueries.triangle_from_position(self._nav_world, position, 1.1, 0.5)
-	local var_5_0
 
-	if success then
-		var_5_0 = Vector3(position.x, position.y, altitude)
-
-		if not var_5_0 then
-			-- Nothing
-		end
-	end
-
-	var_5_0 = position
-
-	::label_5_0::
-
-	self._position_on_navmesh = var_5_0
+	self._position_on_navmesh = success and not not Vector3(position.x, position.y, altitude) or not success and not not position
 end
 
 PlayerBotInput.update = function (self, unit, input, dt, context, t)
@@ -269,7 +256,7 @@ end
 PlayerBotInput.set_aiming = function (self, aiming, soft, use_rotation)
 	-- function 11
 	self._aiming = aiming
-	self._aim_with_rotation = (not use_rotation or not aiming) and not not false
+	self._aim_with_rotation = use_rotation and (not not aiming or not not false) or not use_rotation and not not false
 
 	if aiming and soft then
 		self._soft_aiming = true
@@ -480,22 +467,7 @@ PlayerBotInput._update_movement = function (self, dt, t)
 	local status_extension = self._status_extension
 	local on_ladder, ladder_unit = status_extension:get_is_on_ladder()
 	local transition_jump
-	local _look_at_player
-
-	if ALIVE[self._look_at_player] then
-		_look_at_player = self._look_at_player
-
-		if not _look_at_player then
-			-- Nothing
-		end
-	end
-
-	_look_at_player = nil
-
-	local look_at_player_unit = _look_at_player
-
-	::label_30_0::
-
+	local look_at_player_unit = ALIVE[self._look_at_player] and not not self._look_at_player or not ALIVE[self._look_at_player] and not not nil
 	local look_at_player_has_moved = not not look_at_player_unit and not not ScriptUnit.extension(look_at_player_unit, "locomotion_system").has_moved_from_start_position
 	local cutscene_system = Managers.state.entity:system("cutscene_system")
 	local has_intro_cutscene_finished = cutscene_system:has_intro_cutscene_finished_playing()
@@ -523,7 +495,7 @@ PlayerBotInput._update_movement = function (self, dt, t)
 		wanted_rotation = Quaternion.lerp(rotation, Quaternion_look(direction, up), math.min(dt * 5, 1))
 	elseif self._aiming then
 		wanted_rotation = Quaternion_look(self._aim_target:unbox() - camera_position, up)
-	elseif look_at_player_unit and self._game and (has_intro_cutscene_finished or look_at_player_has_moved) and (not current_goal or not player_bot_navigation:is_in_transition()) then
+	elseif not current_goal or not player_bot_navigation:is_in_transition() then
 		local unit_id = Managers.state.network:unit_game_object_id(look_at_player_unit)
 		local player_camera_position = GameSession.game_object_field(self._game, unit_id, "aim_position")
 		local direction = player_camera_position - camera_position
@@ -589,9 +561,9 @@ PlayerBotInput._update_movement = function (self, dt, t)
 			local is_crouching = status_extension:is_crouching()
 			local lower_hit, upper_hit = self:_obstacle_check(position, current_speed_sq, goal_vector, goal_direction, up)
 
-			if (not lower_hit or upper_hit) and transition_jump then
+			if lower_hit and (not upper_hit or transition_jump) or not lower_hit and transition_jump then
 				self._input.jump_only = true
-			elseif not lower_hit and upper_hit and (is_crouching or current_speed_sq <= STUCK_CROUCH_SPEED_THRESHOLD_SQ) then
+			elseif is_crouching or current_speed_sq <= STUCK_CROUCH_SPEED_THRESHOLD_SQ then
 				self._input.crouching = true
 			end
 		end
@@ -739,21 +711,7 @@ end
 
 PlayerBotInput.move_towards = function (self, target_position)
 	-- function 48
-	local var_48_0
-
-	if target_position then
-		var_48_0 = Vector3Box(target_position)
-
-		if not var_48_0 then
-			-- Nothing
-		end
-	end
-
-	var_48_0 = nil
-
-	::label_48_0::
-
-	self.target_position = var_48_0
+	self.target_position = target_position and not not Vector3Box(target_position) or not target_position and not not nil
 end
 
 PlayerBotInput.get_wield_cooldown = function (self)

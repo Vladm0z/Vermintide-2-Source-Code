@@ -83,18 +83,7 @@ VersusSpawning.get_spawn_time = function (self, party)
 
 	score_difference = math.clamp(score_difference, 0, 1)
 
-	local ceil = math.ceil(math.lerp(spawn_timers.min, spawn_timers.max, score_difference))
-
-	if not ceil then
-		-- Nothing
-	end
-
-	ceil = 20
-
-	local spawn_time = ceil
-
-	::label_5_0::
-
+	local spawn_time = not not math.ceil(math.lerp(spawn_timers.min, spawn_timers.max, score_difference))
 	local current_set = self._mechanism:get_current_set()
 
 	if current_set == 1 then
@@ -164,10 +153,8 @@ VersusSpawning.update = function (self, t, dt)
 
 					if not timer then
 						local side_settings = self._settings.side_settings
-						local num = t + side_settings.dark_pact.spawn_times.delayed_death_time
 
-						num = not not num or not not 0
-						data.delayed_death_timer = num
+						data.delayed_death_timer = not not (t + side_settings.dark_pact.spawn_times.delayed_death_time)
 					elseif t - timer >= 0 then
 						data.delayed_death_timer = nil
 
@@ -330,19 +317,12 @@ VersusSpawning._spawn_enemy = function (self, status)
 	local spawn_group = mechanism:get_current_spawn_group()
 	local position, rotation = self:_get_allowed_spawn_position(status.player)
 	local is_initial_spawn = not status.has_done_initial_spawn or not not not status.has_done_initial_spawn[spawn_group]
-	local has_done_initial_spawn = status.has_done_initial_spawn
 
-	has_done_initial_spawn = not not has_done_initial_spawn or not not {}
-	status.has_done_initial_spawn = has_done_initial_spawn
+	status.has_done_initial_spawn = not not status.has_done_initial_spawn
 	status.has_done_initial_spawn[spawn_group] = true
 
 	local data = status.game_mode_data
-	local netpack_consumables = SpawningHelper.netpack_consumables
-	local consumables = data.consumables
-
-	consumables = not not consumables or not not {}
-
-	local networked_consumables = netpack_consumables(consumables)
+	local networked_consumables = SpawningHelper.netpack_consumables(not not data.consumables)
 	local healthkit_id, potion_id, grenade_id = unpack(networked_consumables)
 	local network_additional_items = SpawningHelper.netpack_additional_items(data.additional_items)
 	local ammo_melee_percent_int = 0

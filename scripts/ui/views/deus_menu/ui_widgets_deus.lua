@@ -1,9 +1,6 @@
 -- chunkname: @scripts/ui/views/deus_menu/ui_widgets_deus.lua
 
-local UIWidgets = UIWidgets
-
-UIWidgets = not not UIWidgets or not not {}
-UIWidgets = UIWidgets
+UIWidgets = not not UIWidgets
 
 local health_bar_size = {
 	92,
@@ -217,11 +214,7 @@ UIWidgets.create_deus_player_status_portrait = function (scenegraph_id, frame_se
 					retained_mode = retained_mode,
 					content_check_function = function (content)
 						-- function 12
-						local token_icon = content.token_icon
-
-						token_icon = not not token_icon and not not content.show_token_icon
-
-						return token_icon
+						return not not content.token_icon
 					end
 				}
 			}
@@ -678,18 +671,7 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 
 	for index, data in ipairs(frame_settings) do
 		local name = "texture_" .. index
-		local texture = data.texture
-
-		if not texture then
-			-- Nothing
-		end
-
-		texture = "icons_placeholder"
-
-		local texture_name = texture
-
-		::label_13_0::
-
+		local texture_name = not not data.texture
 		local size
 
 		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
@@ -700,7 +682,10 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 			size = data.size
 		end
 
-		size = (not size or not table.clone(size)) and not not {
+		size = size and (not not table.clone(size) or not not {
+			0,
+			0
+		}) or not size and not not {
 			0,
 			0
 		}
@@ -711,20 +696,12 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 			offset = table.clone(data.offset)
 			offset[1] = default_offset[1] + (-(size[1] / 2) + offset[1])
 			offset[2] = default_offset[2] + 60 + offset[2]
-
-			local layer = data.layer
-
-			layer = not not layer or not not 0
-			offset[3] = layer
+			offset[3] = not not data.layer
 		else
 			offset = table.clone(default_offset)
 			offset[1] = -(size[1] / 2) + offset[1]
 			offset[2] = offset[2]
-
-			local layer_2 = data.layer
-
-			layer_2 = not not layer_2 or not not 0
-			offset[3] = layer_2
+			offset[3] = not not data.layer
 		end
 
 		widget.element.passes[#widget.element.passes + 1] = {
@@ -734,16 +711,11 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 			retained_mode = retained_mode
 		}
 		widget.content[name] = texture_name
-
-		local style = widget.style
-		local tbl = {}
-		local color = data.color
-
-		color = not not color or not not default_color
-		tbl.color = color
-		tbl.offset = offset
-		tbl.size = size
-		style[name] = tbl
+		widget.style[name] = {
+			color = not not data.color,
+			offset = offset,
+			size = size
+		}
 	end
 
 	local portrait_size = {
@@ -1043,22 +1015,7 @@ UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, in
 		-2
 	}
 	local top_frame_settings = UIFrameSettings[top_frame_name]
-	local var_23_0
-
-	if top_frame_settings then
-		var_23_0 = top_frame_settings.texture_sizes.horizontal[2]
-
-		if not var_23_0 then
-			-- Nothing
-		end
-	end
-
-	var_23_0 = 0
-
-	local top_edge_height = var_23_0
-
-	::label_23_0::
-
+	local top_edge_height = top_frame_settings and not not top_frame_settings.texture_sizes.horizontal[2] or not top_frame_settings and not not 0
 	local top_frame_size = {
 		top_panel_size[1] + top_edge_height * 2,
 		top_panel_size[2] + top_edge_height * 2
@@ -1441,27 +1398,22 @@ UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_
 		max_widget_height / 2 - text_height / 2,
 		0
 	}
-	local tbl = {
+	local sub_text_style = {
 		vertical_alignment = "center",
 		dynamic_font_size = true,
-		font_size = font_size
+		font_size = font_size,
+		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		text_color = Colors.get_color_table_with_alpha("font_default", 255),
+		offset = {
+			text_offset[1],
+			text_offset[2],
+			0
+		},
+		size = {
+			size[1] - text_offset[1],
+			font_size
+		}
 	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl.font_type = flag
-	tbl.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl.offset = {
-		text_offset[1],
-		text_offset[2],
-		0
-	}
-	tbl.size = {
-		size[1] - text_offset[1],
-		font_size
-	}
-
-	local sub_text_style = tbl
 	local sub_text_shadow = table.clone(sub_text_style)
 
 	sub_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
@@ -1471,27 +1423,22 @@ UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_
 		sub_text_style.offset[3] - 1
 	}
 
-	local tbl_2 = {
+	local title_text_style = {
 		vertical_alignment = "center",
 		dynamic_font_size = true,
-		font_size = font_size
+		font_size = font_size,
+		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		text_color = not not title_text_color or not not Colors.get_color_table_with_alpha("font_default", 255),
+		offset = {
+			text_offset[1],
+			text_offset[2] + sub_text_style.size[2] + font_spacing,
+			0
+		},
+		size = {
+			size[1] - text_offset[1],
+			font_size
+		}
 	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_2.font_type = flag_2
-	tbl_2.text_color = not not title_text_color or not not Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.offset = {
-		text_offset[1],
-		text_offset[2] + sub_text_style.size[2] + font_spacing,
-		0
-	}
-	tbl_2.size = {
-		size[1] - text_offset[1],
-		font_size
-	}
-
-	local title_text_style = tbl_2
 	local title_text_shadow = table.clone(title_text_style)
 
 	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
@@ -1748,14 +1695,7 @@ UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, diffic
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 53
-						local is_hover = content.right_arrow_hotspot.is_hover
-
-						if not is_hover then
-							is_hover = content.left_arrow_hotspot.is_hover
-							is_hover = (not not is_hover or not Managers.input:is_device_active("mouse")) and not not content.is_selected
-						end
-
-						return is_hover
+						return not not content.right_arrow_hotspot.is_hover
 					end,
 					content_change_function = function (content, style)
 						-- function 54
@@ -2429,23 +2369,8 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 					content_check_function = function (content)
 						-- function 69
 						local button_hotspot = content.button_hotspot
-						local is_hover
 
-						if not button_hotspot.disable_button then
-							is_hover = button_hotspot.is_hover
-
-							if not is_hover then
-								is_hover = content.is_selected
-							end
-						else
-							is_hover = false
-						end
-
-						if false then
-							is_hover = true
-						end
-
-						return is_hover
+						return not not content.is_selected
 					end
 				},
 				{
@@ -2466,23 +2391,8 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 					content_check_function = function (content)
 						-- function 71
 						local button_hotspot = content.button_hotspot
-						local is_hover
 
-						if not button_hotspot.disable_button then
-							is_hover = button_hotspot.is_hover
-
-							if not is_hover then
-								is_hover = content.is_selected
-							end
-						else
-							is_hover = false
-						end
-
-						if false then
-							is_hover = true
-						end
-
-						return is_hover
+						return not not content.is_selected
 					end
 				},
 				{
@@ -3417,57 +3327,11 @@ end
 
 UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, background_size, gamemode_header_text, game_mode_text, is_twitch, disable_note)
 	-- function 82
-	local num
+	local header_text_color_alpha = is_twitch and not not 0 or not is_twitch and not not 255
+	local info_hotspot_height = is_twitch and not not (background_size[2] / 2) or not is_twitch and not not background_size[2]
+	local info_hotspot_offset_y = is_twitch and not not (background_size[2] / 2) or not is_twitch and not not 0
 
-	if is_twitch then
-		num = 0
-
-		goto label_82_0
-	end
-
-	num = 255
-
-	local header_text_color_alpha = num
-
-	do
-		local num_2
-	end
-
-	::label_82_0::
-
-	if is_twitch then
-		num_2 = background_size[2] / 2
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = background_size[2]
-
-	local info_hotspot_height = num_2
-
-	do
-		local num_3
-	end
-
-	::label_82_1::
-
-	if is_twitch then
-		num_3 = background_size[2] / 2
-
-		if not num_3 then
-			-- Nothing
-		end
-	end
-
-	num_3 = 0
-
-	local info_hotspot_offset_y = num_3
-
-	::label_82_2::
-
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -3511,11 +3375,7 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 					text_id = "note_text",
 					content_check_function = function (content)
 						-- function 83
-						local show_note = content.show_note
-
-						show_note = not not show_note and not not not disable_note
-
-						return show_note
+						return not not content.show_note
 					end
 				},
 				{
@@ -3528,252 +3388,207 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 					end
 				}
 			}
-		}
-	}
-	local tbl_2 = {
-		box_left_detail = "morris_header_end",
-		header_box_title_frame = "morris_header_frame",
-		is_showing_info = false,
-		fade_out_done = false,
-		background = "morris_header_background",
-		show_note = false,
-		box_right_detail = "morris_header_end",
-		info_hotspot = {},
-		header_text = not not gamemode_header_text or not not Localize("not_assigned"),
-		game_mode_text = not not game_mode_text or not not Localize("not_assigned")
-	}
-	local var_82_5 = Localize("expedition_info_note")
-
-	var_82_5 = not not var_82_5 or not not Localize("not_assigned")
-	tbl_2.note_text = var_82_5
-
-	local format = string.format(Localize("for_more_info"), "$KEY;start_game_view__show_information:")
-
-	format = not not format or not not Localize("not_assigned")
-	tbl_2.press_key_text = format
-	tbl_2.disable_note = disable_note
-	tbl.content = tbl_2
-
-	local tbl_3 = {
-		background = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				0,
-				0
-			},
-			size = background_size
 		},
-		info_hotspot = {
-			color = {
-				255,
-				255,
-				255,
-				255
+		content = {
+			box_left_detail = "morris_header_end",
+			header_box_title_frame = "morris_header_frame",
+			is_showing_info = false,
+			fade_out_done = false,
+			background = "morris_header_background",
+			show_note = false,
+			box_right_detail = "morris_header_end",
+			info_hotspot = {},
+			header_text = not not gamemode_header_text or not not Localize("not_assigned"),
+			game_mode_text = not not game_mode_text or not not Localize("not_assigned"),
+			note_text = not not Localize("expedition_info_note"),
+			press_key_text = not not string.format(Localize("for_more_info"), "$KEY;start_game_view__show_information:"),
+			disable_note = disable_note
+		},
+		style = {
+			background = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					0,
+					0
+				},
+				size = background_size
 			},
-			offset = {
-				0,
-				info_hotspot_offset_y,
-				0
+			info_hotspot = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					info_hotspot_offset_y,
+					0
+				},
+				size = {
+					background_size[1],
+					info_hotspot_height
+				}
 			},
-			size = {
-				background_size[1],
-				info_hotspot_height
+			header_box_title_frame = {
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				size = {
+					846,
+					162
+				},
+				offset = {
+					-125,
+					background_size[2] - 30,
+					1
+				}
+			},
+			header_text = {
+				word_wrap = false,
+				upper_case = true,
+				localize = false,
+				font_size = 50,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				font_type = "hell_shark_header",
+				text_color = {
+					header_text_color_alpha,
+					193,
+					91,
+					36
+				},
+				size = {
+					background_size[1],
+					40
+				},
+				area_size = {
+					background_size[1] - 200,
+					40
+				},
+				offset = {
+					0,
+					background_size[2],
+					2
+				}
+			},
+			box_left_detail = {
+				color = {
+					255,
+					200,
+					200,
+					200
+				},
+				offset = {
+					-19,
+					background_size[2] - 182,
+					0
+				},
+				size = {
+					43,
+					background_size[2] - background_size[2] / 5
+				}
+			},
+			box_right_detail = {
+				color = {
+					255,
+					200,
+					200,
+					200
+				},
+				offset = {
+					background_size[1] - 19,
+					background_size[2] - 182,
+					0
+				},
+				size = {
+					43,
+					background_size[2] - background_size[2] / 5
+				}
+			},
+			game_mode_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				dynamic_font_size_word_wrap = true,
+				font_size = 28,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				font_type = "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					25,
+					is_twitch and not not (background_size[2] / 2 - 20) or not is_twitch and not not (background_size[2] / 2 - 40),
+					2
+				},
+				size = {
+					background_size[1] - 50,
+					is_twitch and not not (background_size[2] / 2) or not is_twitch and not not (background_size[2] / 2 + 10)
+				}
+			},
+			note_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				dynamic_font_size_word_wrap = true,
+				font_size = 28,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				font_type = "hell_shark_header",
+				text_color = {
+					255,
+					209,
+					0,
+					28
+				},
+				offset = {
+					25,
+					25,
+					2
+				},
+				size = {
+					background_size[1] - 50,
+					40
+				}
+			},
+			press_key_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				dynamic_font_size_word_wrap = true,
+				font_size = 28,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				font_type = "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					25,
+					25,
+					2
+				},
+				size = {
+					background_size[1] - 50,
+					background_size[2] - 50
+				}
 			}
 		},
-		header_box_title_frame = {
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			size = {
-				846,
-				162
-			},
-			offset = {
-				-125,
-				background_size[2] - 30,
-				1
-			}
-		},
-		header_text = {
-			word_wrap = false,
-			upper_case = true,
-			localize = false,
-			font_size = 50,
-			horizontal_alignment = "center",
-			vertical_alignment = "center",
-			dynamic_font_size = true,
-			font_type = "hell_shark_header",
-			text_color = {
-				header_text_color_alpha,
-				193,
-				91,
-				36
-			},
-			size = {
-				background_size[1],
-				40
-			},
-			area_size = {
-				background_size[1] - 200,
-				40
-			},
-			offset = {
-				0,
-				background_size[2],
-				2
-			}
-		},
-		box_left_detail = {
-			color = {
-				255,
-				200,
-				200,
-				200
-			},
-			offset = {
-				-19,
-				background_size[2] - 182,
-				0
-			},
-			size = {
-				43,
-				background_size[2] - background_size[2] / 5
-			}
-		},
-		box_right_detail = {
-			color = {
-				255,
-				200,
-				200,
-				200
-			},
-			offset = {
-				background_size[1] - 19,
-				background_size[2] - 182,
-				0
-			},
-			size = {
-				43,
-				background_size[2] - background_size[2] / 5
-			}
-		}
-	}
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = true,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		font_type = "hell_shark_header",
-		text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	}
-	local tbl_5 = {
-		25,
-		nil,
-		2
-	}
-	local num_4
-
-	if is_twitch then
-		num_4 = background_size[2] / 2 - 20
-
-		if not num_4 then
-			-- Nothing
-		end
-	end
-
-	num_4 = background_size[2] / 2 - 40
-
-	::label_82_3::
-
-	tbl_5[2] = num_4
-	tbl_4.offset = tbl_5
-
-	local tbl_6 = {
-		background_size[1] - 50
-	}
-	local num_5
-
-	if is_twitch then
-		num_5 = background_size[2] / 2
-
-		if not num_5 then
-			-- Nothing
-		end
-	end
-
-	num_5 = background_size[2] / 2 + 10
-
-	::label_82_4::
-
-	tbl_6[2] = num_5
-	tbl_4.size = tbl_6
-	tbl_3.game_mode_text = tbl_4
-	tbl_3.note_text = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = true,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		font_type = "hell_shark_header",
-		text_color = {
-			255,
-			209,
+		offset = {
 			0,
-			28
+			0,
+			0
 		},
-		offset = {
-			25,
-			25,
-			2
-		},
-		size = {
-			background_size[1] - 50,
-			40
-		}
+		scenegraph_id = scenegraph_id
 	}
-	tbl_3.press_key_text = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = true,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		font_type = "hell_shark_header",
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		offset = {
-			25,
-			25,
-			2
-		},
-		size = {
-			background_size[1] - 50,
-			background_size[2] - 50
-		}
-	}
-	tbl.style = tbl_3
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_data, journey_name, journey_widget_settings, multiplier)
@@ -3806,11 +3621,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 			level_id = "level_data",
 			content_check_function = function (content)
 				-- function 87
-				local is_hover = content.button_hotspot.is_hover
-
-				is_hover = not not is_hover or not not content.gamepad_selected
-
-				return is_hover
+				return not not content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -3820,35 +3631,8 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 			content_check_function = function (content)
 				-- function 88
 				local mouse_active = Managers.input:is_device_active("mouse")
-				local gamepad_selected
 
-				if not content.button_hotspot.is_hover then
-					gamepad_selected = content.gamepad_selected
-
-					if gamepad_selected then
-						-- Nothing
-					end
-
-					if not mouse_active then
-						-- Nothing
-					end
-				end
-
-				gamepad_selected = not content.button_hotspot.is_selected
-
-				if false then
-					::label_88_0::
-
-					gamepad_selected = false
-				end
-
-				if false then
-					gamepad_selected = true
-				end
-
-				::label_88_1::
-
-				return gamepad_selected
+				return content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected or not content.button_hotspot.is_hover and not not content.gamepad_selected
 			end,
 			content_change_function = function (content, style)
 				-- function 89
@@ -3897,11 +3681,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 			texture_id = "path",
 			content_check_function = function (content)
 				-- function 94
-				local draw_path = content.draw_path
-
-				draw_path = not not draw_path and not not not content.draw_path_fill
-
-				return draw_path
+				return not not content.draw_path
 			end
 		},
 		{
@@ -3910,14 +3690,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 			texture_id = "path_glow",
 			content_check_function = function (content)
 				-- function 95
-				local draw_path = content.draw_path
-
-				if draw_path then
-					draw_path = content.draw_path_fill
-					draw_path = not not draw_path and not not not content.locked
-				end
-
-				return draw_path
+				return not not content.draw_path
 			end
 		},
 		{
@@ -4785,11 +4558,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 118
-						local icon = content.icon
-
-						icon = not not icon and not not not content.is_rectangular_icon
-
-						return icon
+						return not not content.icon
 					end
 				},
 				{
@@ -4798,11 +4567,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 119
-						local icon = content.icon
-
-						icon = not not icon and not content.is_rectangular_icon and not not false
-
-						return icon
+						return not not content.icon
 					end
 				},
 				{
@@ -4811,11 +4576,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 120
-						local icon = content.icon
-
-						icon = not not icon and not not content.is_rectangular_icon
-
-						return icon
+						return not not content.icon
 					end
 				},
 				{
@@ -4823,11 +4584,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "rect",
 					content_check_function = function (content)
 						-- function 121
-						local icon = content.icon
-
-						icon = not not icon and not not not content.is_rectangular_icon
-
-						return icon
+						return not not content.icon
 					end
 				},
 				{
@@ -4953,11 +4710,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "set_progression",
 					content_check_function = function (content)
 						-- function 135
-						local is_part_of_set = content.is_part_of_set
-
-						is_part_of_set = not not is_part_of_set and not not not content.extend_left
-
-						return is_part_of_set
+						return not not content.is_part_of_set
 					end
 				},
 				{
@@ -4966,11 +4719,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "set_progression",
 					content_check_function = function (content)
 						-- function 136
-						local is_part_of_set = content.is_part_of_set
-
-						is_part_of_set = not not is_part_of_set and not not content.extend_left
-
-						return is_part_of_set
+						return not not content.is_part_of_set
 					end
 				},
 				{
@@ -4979,23 +4728,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "remove_tooltip",
 					content_check_function = function (content)
 						-- function 137
-						local extend_left
-
-						if not content.locked then
-							extend_left = content.extend_left
-
-							if extend_left then
-								extend_left = allow_boon_removal
-							end
-						else
-							extend_left = false
-						end
-
-						if false then
-							extend_left = true
-						end
-
-						return extend_left
+						return not content.locked and not not content.extend_left
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 138
@@ -5004,7 +4737,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 						local macro = "$KEY;%s__%s:"
 						local mouse_action = content.mouse_action
 						local gamepad_action = content.gamepad_action
-						local input = (not Managers.input:is_device_active("gamepad") or not gamepad_action) and not not mouse_action
+						local input = Managers.input:is_device_active("gamepad") and (not not gamepad_action or not not mouse_action) or not Managers.input:is_device_active("gamepad") and not not mouse_action
 						local input_macro = string.format(macro, input_service_name, input)
 
 						content.remove_tooltip = string.format(loc_string, input_macro)
@@ -5025,7 +4758,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 						local macro = "$KEY;%s__%s:"
 						local mouse_action = content.mouse_action
 						local gamepad_action = content.gamepad_action
-						local input = (not Managers.input:is_device_active("gamepad") or not gamepad_action) and not not mouse_action
+						local input = Managers.input:is_device_active("gamepad") and (not not gamepad_action or not not mouse_action) or not Managers.input:is_device_active("gamepad") and not not mouse_action
 						local input_macro = string.format(macro, input_service_name, input)
 
 						content.remove_tooltip = string.format(loc_string, input_macro)
@@ -5037,14 +4770,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 141
-						local locked = content.locked
-
-						if locked then
-							locked = content.extend_left
-							locked = not not locked and not not allow_boon_removal
-						end
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -5053,14 +4779,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 142
-						local locked = content.locked
-
-						if locked then
-							locked = content.extend_left
-							locked = not not locked and not not allow_boon_removal
-						end
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -5069,11 +4788,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 143
-						local locked = content.locked
-
-						locked = not not locked and not content.extend_left and not not allow_boon_removal
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -5082,11 +4797,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 144
-						local locked = content.locked
-
-						locked = not not locked and not content.extend_left and not not allow_boon_removal
-
-						return locked
+						return not not content.locked
 					end
 				},
 				{
@@ -5095,11 +4806,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					texture_id = "remove_frame",
 					content_check_function = function (content, style)
 						-- function 145
-						local input_made = content.input_made
-
-						input_made = not not input_made and not content.locked and not not allow_boon_removal
-
-						return input_made
+						return not not content.input_made
 					end
 				}
 			}

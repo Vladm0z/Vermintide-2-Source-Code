@@ -1,11 +1,8 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_navigation_extension.lua
 
 local NAVIGATION_NAVMESH_RADIUS = 0.38
-local script_data = script_data
-local debug_ai_movement = script_data.debug_ai_movement
 
-debug_ai_movement = not not debug_ai_movement or not not Development.parameter("debug_ai_movement")
-script_data.debug_ai_movement = debug_ai_movement
+script_data.debug_ai_movement = not not script_data.debug_ai_movement
 AINavigationExtension = class(AINavigationExtension)
 
 AINavigationExtension.init = function (self, extension_init_context, unit, extension_init_data)
@@ -147,17 +144,7 @@ AINavigationExtension.init_position = function (self)
 	GwNavBot.set_use_avoidance(nav_bot, self._is_avoiding)
 
 	if self._is_avoiding then
-		local avoidance_config = breed.avoidance_config
-
-		if not avoidance_config then
-			-- Nothing
-		end
-
-		avoidance_config = DEFAULT_AVOIDANCE_CONFIG
-
-		local config = avoidance_config
-
-		::label_8_0::
+		local config = not not breed.avoidance_config
 
 		GwNavBot.set_avoidance_behavior(nav_bot, config.enable_slowing, config.enable_forcing, config.enable_stop, config.stop_wait_time_s, config.forcing_time_s, config.forcing_wait_time_s)
 		GwNavBot.set_avoidance_collider_collector_configuration(nav_bot, config.half_height, config.radius, config.forcing_wait_time_s)
@@ -196,167 +183,19 @@ AINavigationExtension.init_position = function (self)
 
 	if breed.use_navigation_path_splines then
 		local config = breed.navigation_path_spline_config
-		local navigation_channel_radius
-
-		if config then
-			navigation_channel_radius = config.navigation_channel_radius
-
-			if not navigation_channel_radius then
-				-- Nothing
-			end
-		end
-
-		navigation_channel_radius = 4
-
-		local CHANNEL_RADIUS = navigation_channel_radius
-
-		do
-			local turn_sampling_angle
-		end
-
-		::label_8_1::
-
-		if config then
-			turn_sampling_angle = config.turn_sampling_angle
-
-			if not turn_sampling_angle then
-				-- Nothing
-			end
-		end
-
-		turn_sampling_angle = 30
-
-		local TURN_SAMPLING_ANGLE = turn_sampling_angle
-
-		do
-			local channel_smoothing_anle
-		end
-
-		::label_8_2::
-
-		if config then
-			channel_smoothing_anle = config.channel_smoothing_anle
-
-			if not channel_smoothing_anle then
-				-- Nothing
-			end
-		end
-
-		channel_smoothing_anle = 30
-
-		local CHANNEL_SMOOTHING_ANGLE = channel_smoothing_anle
-
-		do
-			local min_distance_between_gates
-		end
-
-		::label_8_3::
-
-		if config then
-			min_distance_between_gates = config.min_distance_between_gates
-
-			if not min_distance_between_gates then
-				-- Nothing
-			end
-		end
-
-		min_distance_between_gates = 0.5
-
-		local MIN_DISTANCE_BETWEEN_GATES = min_distance_between_gates
-
-		do
-			local max_distance_between_gates
-		end
-
-		::label_8_4::
-
-		if config then
-			max_distance_between_gates = config.max_distance_between_gates
-
-			if not max_distance_between_gates then
-				-- Nothing
-			end
-		end
-
-		max_distance_between_gates = 10
-
-		local MAX_DISTANCE_BETWEEN_GATES = max_distance_between_gates
-
-		::label_8_5::
+		local CHANNEL_RADIUS = config and not not config.navigation_channel_radius or not config and not not 4
+		local TURN_SAMPLING_ANGLE = config and not not config.turn_sampling_angle or not config and not not 30
+		local CHANNEL_SMOOTHING_ANGLE = config and not not config.channel_smoothing_anle or not config and not not 30
+		local MIN_DISTANCE_BETWEEN_GATES = config and not not config.min_distance_between_gates or not config and not not 0.5
+		local MAX_DISTANCE_BETWEEN_GATES = config and not not config.max_distance_between_gates or not config and not not 10
 
 		GwNavBot.set_channel_computer_configuration(nav_bot, CHANNEL_RADIUS, TURN_SAMPLING_ANGLE, CHANNEL_SMOOTHING_ANGLE, MIN_DISTANCE_BETWEEN_GATES, MAX_DISTANCE_BETWEEN_GATES)
 
 		local SCRIPT_DRIVEN = false
-		local max_distance_to_spline_position
-
-		if config then
-			max_distance_to_spline_position = config.max_distance_to_spline_position
-
-			if not max_distance_to_spline_position then
-				-- Nothing
-			end
-		end
-
-		max_distance_to_spline_position = 5
-
-		local MAX_DISTANCE_TO_SPLINE_POSITION = max_distance_to_spline_position
-
-		do
-			local spline_length
-		end
-
-		::label_8_6::
-
-		if config then
-			spline_length = config.spline_length
-
-			if not spline_length then
-				-- Nothing
-			end
-		end
-
-		spline_length = 100
-
-		local SPLINE_LENGTH = spline_length
-
-		do
-			local spline_distance_to_borders
-		end
-
-		::label_8_7::
-
-		if config then
-			spline_distance_to_borders = config.spline_distance_to_borders
-
-			if not spline_distance_to_borders then
-				-- Nothing
-			end
-		end
-
-		spline_distance_to_borders = 1
-
-		local SPLINE_DISTANCE_TO_BORDERS = spline_distance_to_borders
-
-		do
-			local spline_recomputation_ratio
-		end
-
-		::label_8_8::
-
-		if config then
-			spline_recomputation_ratio = config.spline_recomputation_ratio
-
-			if not spline_recomputation_ratio then
-				-- Nothing
-			end
-		end
-
-		spline_recomputation_ratio = 1
-
-		local SPLINE_RECOMPUTION_RATIO = spline_recomputation_ratio
-
-		::label_8_9::
-
+		local MAX_DISTANCE_TO_SPLINE_POSITION = config and not not config.max_distance_to_spline_position or not config and not not 5
+		local SPLINE_LENGTH = config and not not config.spline_length or not config and not not 100
+		local SPLINE_DISTANCE_TO_BORDERS = config and not not config.spline_distance_to_borders or not config and not not 1
+		local SPLINE_RECOMPUTION_RATIO = config and not not config.spline_recomputation_ratio or not config and not not 1
 		local TARGET_ON_SPLINE_DISTANCE = 0
 
 		GwNavBot.set_spline_trajectory_configuration(nav_bot, SCRIPT_DRIVEN, MAX_DISTANCE_TO_SPLINE_POSITION, SPLINE_LENGTH, SPLINE_DISTANCE_TO_BORDERS, SPLINE_RECOMPUTION_RATIO, TARGET_ON_SPLINE_DISTANCE)
@@ -704,16 +543,9 @@ end
 AINavigationExtension.nav_cost_map_cost_table = function (self, optional_identifier)
 	-- function 36
 	local identifier = not not optional_identifier or not not "_default"
-	local _nav_cost_map_cost_tables = self._nav_cost_map_cost_tables
 
-	_nav_cost_map_cost_tables = not not _nav_cost_map_cost_tables or not not {}
-	self._nav_cost_map_cost_tables = _nav_cost_map_cost_tables
-
-	local _nav_cost_map_cost_tables_2 = self._nav_cost_map_cost_tables
-	local var_36_2 = self._nav_cost_map_cost_tables[identifier]
-
-	var_36_2 = not not var_36_2 or not not GwNavCostMap.create_tag_cost_table()
-	_nav_cost_map_cost_tables_2[identifier] = var_36_2
+	self._nav_cost_map_cost_tables = not not self._nav_cost_map_cost_tables
+	self._nav_cost_map_cost_tables[identifier] = not not self._nav_cost_map_cost_tables[identifier]
 
 	return self._nav_cost_map_cost_tables[identifier]
 end
@@ -721,16 +553,9 @@ end
 AINavigationExtension.get_navtag_layer_cost_table = function (self, optional_identifier)
 	-- function 37
 	local identifier = not not optional_identifier or not not "_default"
-	local _navtag_layer_cost_tables = self._navtag_layer_cost_tables
 
-	_navtag_layer_cost_tables = not not _navtag_layer_cost_tables or not not {}
-	self._navtag_layer_cost_tables = _navtag_layer_cost_tables
-
-	local _navtag_layer_cost_tables_2 = self._navtag_layer_cost_tables
-	local var_37_2 = self._navtag_layer_cost_tables[identifier]
-
-	var_37_2 = not not var_37_2 or not not GwNavTagLayerCostTable.create()
-	_navtag_layer_cost_tables_2[identifier] = var_37_2
+	self._navtag_layer_cost_tables = not not self._navtag_layer_cost_tables
+	self._navtag_layer_cost_tables[identifier] = not not self._navtag_layer_cost_tables[identifier]
 
 	return self._navtag_layer_cost_tables[identifier]
 end
@@ -911,16 +736,8 @@ end
 
 AINavigationExtension.get_reusable_traverse_logic = function (self, identifier, nav_cost_map)
 	-- function 47
-	local _reusable_traverse_logics = self._reusable_traverse_logics
-
-	_reusable_traverse_logics = not not _reusable_traverse_logics or not not {}
-	self._reusable_traverse_logics = _reusable_traverse_logics
-
-	local _reusable_traverse_logics_2 = self._reusable_traverse_logics
-	local var_47_2 = self._reusable_traverse_logics[identifier]
-
-	var_47_2 = not not var_47_2 or not not GwNavTraverseLogic.create(self._nav_world, nav_cost_map)
-	_reusable_traverse_logics_2[identifier] = var_47_2
+	self._reusable_traverse_logics = not not self._reusable_traverse_logics
+	self._reusable_traverse_logics[identifier] = not not self._reusable_traverse_logics[identifier]
 
 	return self._reusable_traverse_logics[identifier]
 end

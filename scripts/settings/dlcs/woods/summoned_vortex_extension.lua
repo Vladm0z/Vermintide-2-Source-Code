@@ -49,17 +49,7 @@ SummonedVortexExtension.init = function (self, extension_init_context, unit, ext
 	local rotation = Unit.local_rotation(unit, 0)
 	local inner_pose = Matrix4x4.from_quaternion(rotation)
 	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
-	local inner_fx_z_scale_multiplier_2 = vortex_template.inner_fx_z_scale_multiplier
-
-	if not inner_fx_z_scale_multiplier_2 then
-		-- Nothing
-	end
-
-	inner_fx_z_scale_multiplier_2 = 1
-
-	local inner_fx_z_scale_multiplier = inner_fx_z_scale_multiplier_2
-
-	::label_1_0::
+	local inner_fx_z_scale_multiplier = not not vortex_template.inner_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
 	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
@@ -70,17 +60,7 @@ SummonedVortexExtension.init = function (self, extension_init_context, unit, ext
 	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
 	local outer_pose = Matrix4x4.from_quaternion(rotation)
 	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
-	local outer_fx_z_scale_multiplier_2 = vortex_template.outer_fx_z_scale_multiplier
-
-	if not outer_fx_z_scale_multiplier_2 then
-		-- Nothing
-	end
-
-	outer_fx_z_scale_multiplier_2 = 1
-
-	local outer_fx_z_scale_multiplier = outer_fx_z_scale_multiplier_2
-
-	::label_1_1::
+	local outer_fx_z_scale_multiplier = not not vortex_template.outer_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
 	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
@@ -125,10 +105,7 @@ SummonedVortexExtension.init = function (self, extension_init_context, unit, ext
 		self:_create_nav_cost_maps(ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
 	end
 
-	local owner_unit = extension_init_data.owner_unit
-
-	owner_unit = not not owner_unit or not not unit
-	self._owner_unit = owner_unit
+	self._owner_unit = not not extension_init_data.owner_unit
 end
 
 SummonedVortexExtension._create_nav_cost_maps = function (self, ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
@@ -200,17 +177,7 @@ SummonedVortexExtension.extensions_ready = function (self, world, unit)
 		vortex_template = vortex_template
 	}
 
-	local start_sound_event_name_2 = vortex_template.start_sound_event_name
-
-	if not start_sound_event_name_2 then
-		-- Nothing
-	end
-
-	start_sound_event_name_2 = "Play_enemy_sorcerer_vortex_loop"
-
-	local start_sound_event_name = start_sound_event_name_2
-
-	::label_4_0::
+	local start_sound_event_name = not not vortex_template.start_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
@@ -236,22 +203,7 @@ SummonedVortexExtension.refresh_duration = function (self)
 
 	local breed_name = BLACKBOARDS[target_unit].breed.name
 	local reduce_duration_per_breed = vortex_template.reduce_duration_per_breed
-	local var_5_0
-
-	if reduce_duration_per_breed then
-		var_5_0 = reduce_duration_per_breed[breed_name]
-
-		if not var_5_0 then
-			-- Nothing
-		end
-	end
-
-	var_5_0 = 1
-
-	local multiplier = var_5_0
-
-	::label_5_0::
-
+	local multiplier = reduce_duration_per_breed and not not reduce_duration_per_breed[breed_name] or not reduce_duration_per_breed and not not 1
 	local time_to_add = math.clamp(life_time * multiplier, 0, math.huge)
 
 	self.vortex_data.time_of_death = t + time_to_add
@@ -281,17 +233,7 @@ SummonedVortexExtension.destroy = function (self)
 					locomotion_extension:set_movement_type("constrained_by_mover")
 				end
 
-				local ejected_from_vortex_2 = blackboard.ejected_from_vortex
-
-				if not ejected_from_vortex_2 then
-					-- Nothing
-				end
-
-				ejected_from_vortex_2 = Vector3Box()
-
-				local ejected_from_vortex = ejected_from_vortex_2
-
-				::label_6_0::
+				local ejected_from_vortex = not not blackboard.ejected_from_vortex
 
 				ejected_from_vortex:store(velocity)
 
@@ -318,17 +260,7 @@ SummonedVortexExtension.destroy = function (self)
 	self.vortex_data = nil
 
 	local world = self.world
-	local stop_sound_event_name_2 = self.vortex_template.stop_sound_event_name
-
-	if not stop_sound_event_name_2 then
-		-- Nothing
-	end
-
-	stop_sound_event_name_2 = "Stop_enemy_sorcerer_vortex_loop"
-
-	local stop_sound_event_name = stop_sound_event_name_2
-
-	::label_6_1::
+	local stop_sound_event_name = not not self.vortex_template.stop_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 
@@ -447,7 +379,7 @@ SummonedVortexExtension._update_height = function (self, unit, t, dt, vortex_tem
 	local current_height = vortex_data.height
 	local max_height = vortex_template.max_height - check_z_offset
 	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, ray_source, Vector3.up(), max_height, "closest", "collision_filter", "filter_ai_mover")
-	local new_height = (not hit or not hit_distance) and not not max_height
+	local new_height = hit and (not not hit_distance or not not max_height) or not hit and not not max_height
 
 	new_height = math.max(new_height, 4)
 
@@ -491,17 +423,7 @@ SummonedVortexExtension._update_attract_outside_target = function (self, vortex_
 	-- function 11
 	local target_unit = self._target_unit
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local locomotion_extension_2 = target_blackboard.locomotion_extension
-
-	if not locomotion_extension_2 then
-		-- Nothing
-	end
-
-	locomotion_extension_2 = ScriptUnit.has_extension(target_unit, "locomotion_system")
-
-	local locomotion_extension = locomotion_extension_2
-
-	::label_11_0::
+	local locomotion_extension = not not target_blackboard.locomotion_extension
 
 	if not locomotion_extension then
 		return
@@ -565,22 +487,7 @@ SummonedVortexExtension._update_attract_outside_target = function (self, vortex_
 			local t = Managers.time:time("game")
 			local life_time = ConflictUtils.random_interval(vortex_template.time_of_life)
 			local reduce_duration_per_breed = vortex_template.reduce_duration_per_breed
-			local var_11_1
-
-			if reduce_duration_per_breed then
-				var_11_1 = reduce_duration_per_breed[breed_name]
-
-				if not var_11_1 then
-					-- Nothing
-				end
-			end
-
-			var_11_1 = 1
-
-			local multiplier = var_11_1
-
-			::label_11_1::
-
+			local multiplier = reduce_duration_per_breed and not not reduce_duration_per_breed[breed_name] or not reduce_duration_per_breed and not not 1
 			local time_to_add = math.clamp(life_time * multiplier, 0, math.huge)
 
 			self.vortex_data.time_of_death = t + time_to_add

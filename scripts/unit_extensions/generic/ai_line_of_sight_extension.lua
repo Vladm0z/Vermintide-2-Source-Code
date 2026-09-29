@@ -55,42 +55,8 @@ AILineOfSightExtension.has_line_of_sight = function (self, unit, blackboard, ove
 	local Vector3_distance_squared = Vector3.distance_squared
 	local num_raycasts = 0
 	local success = false
-
-	if not override_distance then
-		-- Nothing
-	end
-
-	::label_5_0::
-
-	local line_of_sight_distance_sq = blackboard.breed.line_of_sight_distance_sq
-
-	if not line_of_sight_distance_sq then
-		-- Nothing
-	end
-
-	line_of_sight_distance_sq = MAX_DIST_SQUARED
-
-	local max_distance = line_of_sight_distance_sq
-
-	::label_5_1::
-
-	if not override_target then
-		-- Nothing
-	end
-
-	::label_5_2::
-
-	local attacking_target = blackboard.attacking_target
-
-	if not attacking_target then
-		-- Nothing
-	end
-
-	attacking_target = blackboard.target_unit
-
-	local target = attacking_target
-
-	::label_5_3::
+	local max_distance = not not override_distance or not not blackboard.breed.line_of_sight_distance_sq
+	local target = not not override_target or not not blackboard.attacking_target
 
 	if unit_alive(target) and is_character(target) then
 		local self_pos = POSITION_LOOKUP[unit]

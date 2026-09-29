@@ -17,10 +17,7 @@ BTUtilityNode.name = "BTUtilityNode"
 BTUtilityNode.ready = function (self, lua_node)
 	-- function 2
 	for name, child in pairs(self._children) do
-		local _action_list = self._action_list
-
-		_action_list = not not _action_list or not not {}
-		self._action_list = _action_list
+		self._action_list = not not self._action_list
 		self._action_list[#self._action_list + 1] = child._tree_node.action_data
 	end
 end
@@ -179,21 +176,7 @@ BTUtilityNode.run = function (self, unit, blackboard, t, dt)
 	fail_cooldown_t = not not fail_cooldown_blackboard_identifier and not not blackboard[fail_cooldown_blackboard_identifier]
 
 	if fail_cooldown_t == nil then
-		local fail_cooldown
-
-		if action_data then
-			fail_cooldown = action_data.fail_cooldown
-
-			if not fail_cooldown then
-				-- Nothing
-			end
-		end
-
-		fail_cooldown = 0.5
-
-		::label_7_0::
-
-		fail_cooldown_t = t + fail_cooldown
+		fail_cooldown_t = t + (action_data and not not action_data.fail_cooldown or not action_data and not not 0.5)
 	end
 
 	blackboard[self.fail_cooldown_name] = fail_cooldown_t

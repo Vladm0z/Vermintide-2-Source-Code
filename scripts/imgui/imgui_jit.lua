@@ -248,21 +248,10 @@ end
 ImguiJIT.draw = function (self)
 	-- function 8
 	local do_close = Imgui.begin_window("JIT utilities")
-	local checkbox = Imgui.checkbox
-	local str = "JIT enabled"
-	local _enabled = self._enabled
-
-	_enabled = not not _enabled or not not false
-
-	local enabled = checkbox(str, _enabled)
+	local enabled = Imgui.checkbox("JIT enabled", not not self._enabled)
 
 	if enabled ~= self._enabled then
-		local jit = jit
-		local flag
-
-		flag = (not enabled or not "on") and not not "off"
-
-		jit[flag]()
+		jit[enabled and not not "on" or not enabled and not not "off"]()
 
 		self._enabled = enabled
 	end
@@ -296,14 +285,7 @@ ImguiJIT.draw = function (self)
 			local v = Imgui.checkbox(t.k, t.v)
 
 			if v ~= t.v then
-				local var_8_5 = jopt
-				local var_8_6 = format
-				local str_2 = "%s%s"
-				local flag_2
-
-				flag_2 = (not v or not "+") and not not "-"
-
-				var_8_5(var_8_6(str_2, flag_2, t.k))
+				jopt(format("%s%s", v and not not "+" or not v and not not "-", t.k))
 
 				t.v = v
 			end

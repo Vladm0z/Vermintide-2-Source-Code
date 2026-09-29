@@ -60,17 +60,7 @@ LootCratesPreviewer._animate_entry_positions = function (self, dt, t)
 	local spawn_positions = self.spawn_positions
 	local end_positions = self.end_positions
 	local progress_multiplier = 1
-	local _entry_progress = self._entry_progress
-
-	if not _entry_progress then
-		-- Nothing
-	end
-
-	_entry_progress = 0
-
-	local entry_progress = _entry_progress
-
-	::label_6_0::
+	local entry_progress = not not self._entry_progress
 
 	entry_progress = math.min(entry_progress + dt * progress_multiplier, 1)
 
@@ -134,23 +124,7 @@ end
 
 LootCratesPreviewer.has_units = function (self)
 	-- function 12
-	local _spawned_units = self._spawned_units
-
-	if _spawned_units then
-		-- Nothing
-	end
-
-	if not (#self._spawned_units > 0) then
-		_spawned_units = false
-
-		goto label_12_0
-	end
-
-	_spawned_units = true
-
-	local units_left = _spawned_units
-
-	::label_12_0::
+	local units_left = not not self._spawned_units
 
 	return units_left
 end

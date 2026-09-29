@@ -106,17 +106,7 @@ end
 
 BTHesitateAction.set_unit_wall_hesitation = function (self, unit, blackboard, current_pos)
 	-- function 5
-	local hesitate_wall_position = blackboard.hesitate_wall_position
-
-	if hesitate_wall_position then
-		-- Nothing
-	end
-
-	hesitate_wall_position = blackboard.hesitate_wall_position:unbox()
-
-	local pos = hesitate_wall_position
-
-	::label_5_0::
+	local pos = not not blackboard.hesitate_wall_position
 
 	if pos and hesitate_wall_rotation then
 		local diff = Vector3.flat(pos - current_pos)
@@ -279,100 +269,13 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 
 	blackboard.target_unit = nil
 
-	local target_unit = blackboard.target_unit
-
-	if target_unit then
-		-- Nothing
-	end
-
-	target_unit = Unit.alive(blackboard.target_unit)
-
-	local target_alive = target_unit
-
-	::label_9_0::
-
-	local is_within_proximity = blackboard.is_within_proximity
-
-	if not is_within_proximity then
-		-- Nothing
-	end
-
-	is_within_proximity = blackboard.hesitate_finished
-
-	if not is_within_proximity then
-		-- Nothing
-	end
-
-	if not blackboard.previous_attacker or blackboard.taunt_unit then
-		is_within_proximity = not target_alive
-
-		if false then
-			is_within_proximity = false
-		end
-
-		goto label_9_1
-	end
-
-	is_within_proximity = true
-
-	local exit_override = is_within_proximity
-
-	::label_9_1::
-
-	local confirmed_player_sighting = blackboard.confirmed_player_sighting
-
-	if not confirmed_player_sighting then
-		-- Nothing
-	end
-
-	confirmed_player_sighting = blackboard.no_hesitation
-
-	if not confirmed_player_sighting then
-		-- Nothing
-	end
-
-	confirmed_player_sighting = exit_override
-
-	local finished_hesitating = confirmed_player_sighting
-
-	::label_9_2::
+	local target_alive = not not blackboard.target_unit
+	local exit_override = not not blackboard.is_within_proximity
+	local finished_hesitating = not not blackboard.confirmed_player_sighting
 
 	if finished_hesitating then
-		local hesitate_timer = blackboard.hesitate_timer
-
-		if hesitate_timer then
-			-- Nothing
-		end
-
-		if not (t > blackboard.hesitate_timer) then
-			hesitate_timer = false
-
-			goto label_9_3
-		end
-
-		hesitate_timer = true
-
-		local deadline_reached = hesitate_timer
-
-		do
-			local anim_cb_move
-		end
-
-		::label_9_3::
-
-		if deadline_reached then
-			anim_cb_move = blackboard.anim_cb_move
-
-			if not anim_cb_move then
-				-- Nothing
-			end
-		end
-
-		anim_cb_move = exit_override
-
-		local exit_hesitate = anim_cb_move
-
-		::label_9_4::
+		local deadline_reached = not not blackboard.hesitate_timer
+		local exit_hesitate = deadline_reached and not not blackboard.anim_cb_move or not deadline_reached and not not exit_override
 
 		if exit_hesitate then
 			blackboard.spawn_to_running = blackboard.anim_cb_move
@@ -389,17 +292,7 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 	local breed = blackboard.breed
 	local locomotion_extension = blackboard.locomotion_extension
 	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
-	local hesitate_wall_rotation_2 = blackboard.hesitate_wall_rotation
-
-	if hesitate_wall_rotation_2 then
-		-- Nothing
-	end
-
-	hesitate_wall_rotation_2 = blackboard.hesitate_wall_rotation:unbox()
-
-	local hesitate_wall_rotation = hesitate_wall_rotation_2
-
-	::label_9_5::
+	local hesitate_wall_rotation = not not blackboard.hesitate_wall_rotation
 
 	if hesitate_wall_rotation then
 		rot = Quaternion.lerp(rot, hesitate_wall_rotation, WALL_ROTATION_FACTOR)
@@ -414,36 +307,11 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
 	local outnumber_multiplier, hesitation_delta = self:calculate_outnumber_multiplier(unit, blackboard, t, dt, current_pos, target_pos)
 	local hesitation = blackboard.hesitation + hesitation_delta * blackboard.outnumber_multiplier
-	local oh_shit_proximity_panic_override = blackboard.oh_shit_proximity_panic_override
-
-	if not oh_shit_proximity_panic_override then
-		-- Nothing
-	end
-
-	oh_shit_proximity_panic_override = blackboard.taunt_unit
-
-	local panic_override = oh_shit_proximity_panic_override
-
-	::label_9_6::
-
-	local hesitation_timer = breed.hesitation_timer
-
-	hesitation_timer = not not hesitation_timer or not not HESITATION_TIMER
-
-	local should_start_move_animation = hesitation_timer < hesitation or not not panic_override
+	local panic_override = not not blackboard.oh_shit_proximity_panic_override
+	local should_start_move_animation = hesitation > not not breed.hesitation_timer or not not panic_override
 
 	if should_start_move_animation then
-		local move_animation_name = blackboard.move_animation_name
-
-		if move_animation_name then
-			-- Nothing
-		end
-
-		move_animation_name = true
-
-		local have_started_animation = move_animation_name
-
-		::label_9_7::
+		local have_started_animation = not not blackboard.move_animation_name
 
 		if not have_started_animation then
 			local broadphase = blackboard.group_blackboard.broadphase
@@ -479,23 +347,7 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 			end
 		end
 
-		local anim_cb_move_2 = blackboard.anim_cb_move
-
-		if not anim_cb_move_2 then
-			-- Nothing
-		end
-
-		anim_cb_move_2 = blackboard.hesitate_finished
-
-		if anim_cb_move_2 then
-			-- Nothing
-		end
-
-		anim_cb_move_2 = not panic_override
-
-		local can_exit = anim_cb_move_2
-
-		::label_9_8::
+		local can_exit = not not blackboard.anim_cb_move
 
 		if can_exit then
 			if blackboard.anim_cb_move then
@@ -541,24 +393,13 @@ BTHesitateAction._select_new_hesitate_anim = function (self, unit, blackboard)
 	if not blackboard.do_wall_check then
 		anim = "hesitate"
 	elseif blackboard.last_hesitate_anim == "hesitate_bwd" then
-		anim = (not (Math.random() > 0.3333333333333333) or not "hesitate") and not not "hesitate_bwd"
+		anim = Math.random() > 0.3333333333333333 and (not not "hesitate" or not not "hesitate_bwd") or not (Math.random() > 0.3333333333333333) and not not "hesitate_bwd"
 	else
-		anim = (not (Math.random() > 0.3333333333333333) or not "hesitate_bwd") and not not "hesitate"
+		anim = Math.random() > 0.3333333333333333 and (not not "hesitate_bwd" or not not "hesitate") or not (Math.random() > 0.3333333333333333) and not not "hesitate"
 	end
 
 	local breed = blackboard.breed
-	local BTHesitationVariations = breed.BTHesitationVariations
-
-	if not BTHesitationVariations then
-		-- Nothing
-	end
-
-	BTHesitationVariations = BTHesitationVariations
-
-	local root_variation_table = BTHesitationVariations
-
-	::label_10_0::
-
+	local root_variation_table = not not breed.BTHesitationVariations
 	local variation_table = root_variation_table[anim]
 	local hestitate_anim = variation_table[Math.random(1, #variation_table)]
 

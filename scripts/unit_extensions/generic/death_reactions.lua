@@ -34,17 +34,7 @@ local function play_screen_space_blood(world, unit, attacker_unit, killing_blow,
 			local cam_pos = camera_manager:camera_position(vp_name)
 
 			if Vector3.distance_squared(cam_pos, pos) < 9 and (not script_data.disable_behind_blood_splatter or camera_manager:is_in_view(vp_name, pos)) then
-				local var_2_0 = SCREENSPACE_DEATH_EFFECTS[damage_type]
-
-				if not var_2_0 then
-					-- Nothing
-				end
-
-				var_2_0 = "fx/screenspace_blood_drops"
-
-				local particle_name = var_2_0
-
-				::label_2_0::
+				local particle_name = not not SCREENSPACE_DEATH_EFFECTS[damage_type]
 
 				Managers.state.blood:play_screen_space_blood(particle_name, Vector3.zero())
 			end
@@ -171,18 +161,7 @@ end
 
 local function ai_default_unit_start(unit, context, t, killing_blow, is_server)
 	-- function 7
-	local var_7_0 = killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT]
-
-	if not var_7_0 then
-		-- Nothing
-	end
-
-	var_7_0 = killing_blow[DamageDataIndex.ATTACKER]
-
-	local killer_unit = var_7_0
-
-	::label_7_0::
-
+	local killer_unit = not not killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT]
 	local death_hit_zone = killing_blow[DamageDataIndex.HIT_ZONE]
 	local damage_type = killing_blow[DamageDataIndex.DAMAGE_TYPE]
 	local damaged_by_other = unit ~= killer_unit
@@ -205,21 +184,7 @@ local function ai_default_unit_start(unit, context, t, killing_blow, is_server)
 	local locomotion = ScriptUnit.has_extension(unit, "locomotion_system")
 
 	if locomotion then
-		local unbox
-
-		if locomotion.death_velocity_boxed then
-			unbox = locomotion.death_velocity_boxed:unbox()
-
-			if not unbox then
-				-- Nothing
-			end
-		end
-
-		unbox = Vector3.zero()
-
-		local death_velocity = unbox
-
-		::label_7_1::
+		local death_velocity = locomotion.death_velocity_boxed and not not locomotion.death_velocity_boxed:unbox() or not locomotion.death_velocity_boxed and not not Vector3.zero()
 
 		locomotion:set_affected_by_gravity(false)
 		locomotion:set_movement_type("script_driven")
@@ -261,16 +226,11 @@ local function ai_default_unit_start(unit, context, t, killing_blow, is_server)
 	end
 
 	local death_extension = ScriptUnit.extension(unit, "death_system")
-	local tbl = {
-		breed = breed
+	local data = {
+		breed = breed,
+		finish_time = t + not not breed.time_to_unspawn_after_death,
+		wall_nail_data = death_extension.wall_nail_data
 	}
-	local time_to_unspawn_after_death = breed.time_to_unspawn_after_death
-
-	time_to_unspawn_after_death = not not time_to_unspawn_after_death or not not 3
-	tbl.finish_time = t + time_to_unspawn_after_death
-	tbl.wall_nail_data = death_extension.wall_nail_data
-
-	local data = tbl
 	local force_despawn = breed.force_despawn
 
 	if Managers.state.game_mode:has_activated_mutator("metal") and damage_type == "metal_mutator" then
@@ -400,25 +360,7 @@ local function update_wall_nail(unit, dt, t, data)
 			fassert(ray_dist > 0, "Ray distance is not greater than 0")
 
 			local collision_filter = "filter_weapon_nailing"
-			local immediate_raycast = PhysicsWorld.immediate_raycast
-			local get_data = World.get_data(world, "physics_world")
-			local var_10_2 = position
-			local var_10_3 = dir
-			local min
-
-			if data.nailed then
-				min = math.min(ray_dist, 0.4)
-
-				if not min then
-					-- Nothing
-				end
-			end
-
-			min = ray_dist
-
-			::label_10_0::
-
-			local hit, hit_position, hit_distance, _, _ = immediate_raycast(get_data, var_10_2, var_10_3, min, "closest", "collision_filter", collision_filter)
+			local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(World.get_data(world, "physics_world"), position, dir, data.nailed and not not math.min(ray_dist, 0.4) or not data.nailed and not not ray_dist, "closest", "collision_filter", collision_filter)
 
 			if hit then
 				Unit.disable_animation_state_machine(unit)
@@ -636,10 +578,8 @@ local function trigger_unit_dialogue_death_event(killed_unit, killer_unit, hit_z
 
 		if killed_unit_name == "skaven_rat_ogre" then
 			local user_memory = killer_dialogue_extension.user_memory
-			local times_killed_rat_ogre = user_memory.times_killed_rat_ogre
 
-			times_killed_rat_ogre = not not times_killed_rat_ogre or not not 0
-			user_memory.times_killed_rat_ogre = times_killed_rat_ogre + 1
+			user_memory.times_killed_rat_ogre = not not user_memory.times_killed_rat_ogre + 1
 		end
 
 		local inventory_extension = ScriptUnit.extension(killer_unit, "inventory_system")
@@ -677,42 +617,9 @@ end
 
 local function vs_trigger_player_killing_blow_player(killed_unit, killing_blow, world)
 	-- function 19
-	local var_19_0 = killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT]
-
-	if not var_19_0 then
-		-- Nothing
-	end
-
-	var_19_0 = killing_blow[DamageDataIndex.ATTACKER]
-
-	local source_attacker = var_19_0
-
-	::label_19_0::
-
-	local var_19_1 = ALIVE[source_attacker]
-
-	if var_19_1 then
-		-- Nothing
-	end
-
-	var_19_1 = Unit.get_data(source_attacker, "breed")
-
-	local breed_attacker = var_19_1
-
-	::label_19_1::
-
-	local var_19_2 = ALIVE[killed_unit]
-
-	if var_19_2 then
-		-- Nothing
-	end
-
-	var_19_2 = Unit.get_data(killed_unit, "breed")
-
-	local breed_killed = var_19_2
-
-	::label_19_2::
-
+	local source_attacker = not not killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT]
+	local breed_attacker = not not ALIVE[source_attacker]
+	local breed_killed = not not ALIVE[killed_unit]
 	local player = Managers.player:unit_owner(source_attacker)
 	local attacker_is_player = not not breed_attacker and not not breed_attacker.is_player
 	local killed_unit_is_player = not not breed_killed and not not breed_killed.is_player
@@ -767,17 +674,7 @@ end
 
 local function trigger_player_killing_blow_ai_buffs(ai_unit, killing_blow)
 	-- function 21
-	local var_21_0 = killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT]
-
-	if not var_21_0 then
-		-- Nothing
-	end
-
-	var_21_0 = killing_blow[DamageDataIndex.ATTACKER]
-
-	local attacker_unit = var_21_0
-
-	::label_21_0::
+	local attacker_unit = not not killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT]
 
 	if not Unit.alive(attacker_unit) or not Unit.alive(ai_unit) then
 		return
@@ -806,7 +703,7 @@ local function trigger_player_killing_blow_ai_buffs(ai_unit, killing_blow)
 		buff_extension:trigger_procs("on_kill", killing_blow, breed_killed, ai_unit)
 	end
 
-	if (breed_killed.special or breed_killed.elite) and buff_extension then
+	if breed_killed.special and buff_extension or not breed_killed.special and breed_killed.elite and buff_extension then
 		buff_extension:trigger_procs("on_kill_elite_special", killing_blow, breed_killed, ai_unit)
 	end
 
@@ -900,17 +797,7 @@ local function ungor_archer_kill_minotaur_challenge(attacker)
 	local hit_unit_blackboard = BLACKBOARDS[attacker]
 
 	if hit_unit_blackboard then
-		local breed = hit_unit_blackboard.breed
-
-		if breed then
-			-- Nothing
-		end
-
-		breed = hit_unit_blackboard.breed.name
-
-		local breed_name = breed
-
-		::label_23_0::
+		local breed_name = not not hit_unit_blackboard.breed
 
 		if breed_name ~= "beastmen_ungor_archer" then
 			return
@@ -1510,18 +1397,7 @@ DeathReactions.templates = {
 					local spawn_value = math.random()
 					local game_mode_manager = Managers.state.game_mode
 					local game_mode = game_mode_manager:game_mode_key()
-					local var_74_0 = LootRatPickups[game_mode]
-
-					if not var_74_0 then
-						-- Nothing
-					end
-
-					var_74_0 = LootRatPickups.default
-
-					local pickups = var_74_0
-
-					::label_74_0::
-
+					local pickups = not not LootRatPickups[game_mode]
 					local spawn_weighting_total = 0
 
 					for pickup_name, spawn_weighting in pairs(pickups) do
@@ -1556,18 +1432,7 @@ DeathReactions.templates = {
 								}
 							}
 							local unit_name = pickup_settings.unit_name
-							local unit_template_name_2 = pickup_settings.unit_template_name
-
-							if not unit_template_name_2 then
-								-- Nothing
-							end
-
-							unit_template_name_2 = "pickup_unit"
-
-							local unit_template_name = unit_template_name_2
-
-							::label_74_1::
-
+							local unit_template_name = not not pickup_settings.unit_template_name
 							local position = POSITION_LOOKUP[unit] + Vector3(math.random() - 0.5, math.random() - 0.5, 1)
 							local rotation = Quaternion(Vector3.right(), math.random() * 2 * math.pi)
 
@@ -1652,18 +1517,7 @@ DeathReactions.templates = {
 						}
 					}
 					local unit_name = pickup_settings.unit_name
-					local unit_template_name_2 = pickup_settings.unit_template_name
-
-					if not unit_template_name_2 then
-						-- Nothing
-					end
-
-					unit_template_name_2 = "pickup_unit"
-
-					local unit_template_name = unit_template_name_2
-
-					::label_80_0::
-
+					local unit_template_name = not not pickup_settings.unit_template_name
 					local position = POSITION_LOOKUP[unit]
 					local rotation = Quaternion.identity()
 
@@ -1935,14 +1789,10 @@ DeathReactions.templates = {
 			end,
 			start = function (unit, context, t, killing_blow, is_server, death_extension)
 				-- function 114
-				local tbl = {}
-				local despawn_after_time = death_extension.despawn_after_time
-
-				despawn_after_time = not not despawn_after_time or not not 0
-				tbl.despawn_after_time = despawn_after_time
-				tbl.play_effect = death_extension.play_effect
-
-				local data = tbl
+				local data = {
+					despawn_after_time = not not death_extension.despawn_after_time,
+					play_effect = death_extension.play_effect
+				}
 				local projectile_linker_system = Managers.state.entity:system("projectile_linker_system")
 
 				projectile_linker_system:clear_linked_projectiles(unit)
@@ -2091,17 +1941,7 @@ DeathReactions.templates = {
 						local item_name = health_extension.item_name
 						local last_damage_data = health_extension.last_damage_data
 						local network_manager = Managers.state.network
-						local game_object_or_level_unit = network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
-
-						if not game_object_or_level_unit then
-							-- Nothing
-						end
-
-						game_object_or_level_unit = unit
-
-						local last_attacker_unit = game_object_or_level_unit
-
-						::label_127_0::
+						local last_attacker_unit = not not network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
 
 						Managers.state.entity:system("area_damage_system"):create_explosion(last_attacker_unit, position, rotation, explosion_template, 1, item_name, nil, false)
 
@@ -2229,18 +2069,7 @@ DeathReactions.templates = {
 			update = function (unit, dt, context, t, data)
 				-- function 133
 				local network_time = Managers.state.network:network_time()
-				local get_data = Unit.get_data(unit, "death_reaction_delay")
-
-				if not get_data then
-					-- Nothing
-				end
-
-				get_data = 0
-
-				local delaytime = get_data
-
-				::label_133_0::
-
+				local delaytime = not not Unit.get_data(unit, "death_reaction_delay")
 				local start_time = data.start_time
 				local result = DeathReactions.IS_NOT_DONE
 
@@ -2439,17 +2268,7 @@ DeathReactions.templates = {
 					local health_extension = ScriptUnit.extension(unit, "health_system")
 					local last_damage_data = health_extension.last_damage_data
 					local network_manager = Managers.state.network
-					local game_object_or_level_unit = network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
-
-					if not game_object_or_level_unit then
-						-- Nothing
-					end
-
-					game_object_or_level_unit = unit
-
-					local last_attacker_unit = game_object_or_level_unit
-
-					::label_139_0::
+					local last_attacker_unit = not not network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
 
 					if not position_on_navmesh then
 						Managers.state.unit_spawner:mark_for_deletion(unit)
@@ -2541,17 +2360,7 @@ DeathReactions.templates = {
 							local liquid_template_id = NetworkLookup.liquid_area_damage_templates.lamp_oil_fire
 							local network_manager = Managers.state.network
 							local last_damage_data = health_extension.last_damage_data
-							local attacker_unit_id = last_damage_data.attacker_unit_id
-
-							if not attacker_unit_id then
-								-- Nothing
-							end
-
-							attacker_unit_id = NetworkConstants.invalid_game_object_id
-
-							local last_attacker_unit_id = attacker_unit_id
-
-							::label_142_0::
+							local last_attacker_unit_id = not not last_damage_data.attacker_unit_id
 
 							network_manager.network_transmit:send_rpc_server("rpc_create_liquid_damage_area", last_attacker_unit_id, position_on_navmesh, direction, liquid_template_id)
 						end
@@ -2812,20 +2621,7 @@ end)
 DeathReactions.get_reaction = function (death_reaction_template, is_husk)
 	-- function 171
 	local templates = DeathReactions.templates
-	local str
-
-	if is_husk then
-		str = "husk"
-
-		goto label_171_0
-	end
-
-	str = "unit"
-
-	local husk_key = str
-
-	::label_171_0::
-
+	local husk_key = is_husk and not not "husk" or not is_husk and not not "unit"
 	local reaction = templates[death_reaction_template][husk_key]
 
 	fassert(reaction, "Death reaction for template %q and husk key %q does not exist", death_reaction_template, husk_key)

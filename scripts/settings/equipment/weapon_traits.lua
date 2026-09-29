@@ -1,10 +1,8 @@
 -- chunkname: @scripts/settings/equipment/weapon_traits.lua
 
 local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local WeaponTraits = WeaponTraits
 
-WeaponTraits = not not WeaponTraits or not not {}
-WeaponTraits = WeaponTraits
+WeaponTraits = not not WeaponTraits
 
 local buff_tweak_data = {
 	traits_melee_attack_speed_on_crit_proc = {

@@ -861,431 +861,391 @@ local function create_weapon_entry_widget(scenegraph_id, size)
 		pulse_frame = pulse_frame_settings.texture,
 		size = size
 	}
-	local tbl = {}
-	local tbl_2 = {
-		localize = false,
-		font_size = 28,
-		horizontal_alignment = "left",
-		vertical_alignment = "center"
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.hover_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_2.default_text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.offset = {
-		90,
-		16,
-		2
-	}
-	tbl_2.size = {
-		size[1] - 100,
-		size[2]
-	}
-	tbl.title = tbl_2
-
-	local tbl_3 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		localize = false,
-		font_size = 28
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_3.offset = {
-		92,
-		14,
-		1
-	}
-	tbl_3.size = {
-		size[1] - 100,
-		size[2]
-	}
-	tbl.title_shadow = tbl_3
-
-	local tbl_4 = {
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "center"
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = {
-		255,
-		120,
-		120,
-		120
-	}
-	tbl_4.hover_text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_4.default_text_color = {
-		255,
-		120,
-		120,
-		120
-	}
-	tbl_4.offset = {
-		90,
-		-16,
-		2
-	}
-	tbl_4.size = {
-		(size[1] - 100) / 2,
-		size[2]
-	}
-	tbl.level_title = tbl_4
-
-	local tbl_5 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		localize = false,
-		font_size = 20
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_4
-	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.offset = {
-		92,
-		-18,
-		1
-	}
-	tbl_5.size = {
-		(size[1] - 100) / 2,
-		size[2]
-	}
-	tbl.level_title_shadow = tbl_5
-
-	local tbl_6 = {
-		localize = false,
-		font_size = 20,
-		horizontal_alignment = "left",
-		vertical_alignment = "center"
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_5
-	tbl_6.text_color = {
-		255,
-		120,
-		120,
-		120
-	}
-	tbl_6.hover_text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_6.default_text_color = {
-		255,
-		120,
-		120,
-		120
-	}
-	tbl_6.offset = {
-		(size[1] - 100) / 2,
-		-16,
-		2
-	}
-	tbl_6.size = {
-		(size[1] - 100) / 2,
-		size[2]
-	}
-	tbl.power_title = tbl_6
-
-	local tbl_7 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		localize = false,
-		font_size = 20
-	}
-	local flag_6
-
-	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_7.font_type = flag_6
-	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_7.offset = {
-		(size[1] - 100) / 2 + 2,
-		-18,
-		1
-	}
-	tbl_7.size = {
-		(size[1] - 100) / 2,
-		size[2]
-	}
-	tbl.power_title_shadow = tbl_7
-
-	local tbl_8 = {
-		localize = false,
-		font_size = 32,
-		horizontal_alignment = "right",
-		vertical_alignment = "center"
-	}
-	local flag_7
-
-	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_8.font_type = flag_7
-	tbl_8.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_8.hover_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_8.default_text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_8.offset = {
-		-15,
-		-2,
-		2
-	}
-	tbl_8.size = size
-	tbl.power_text = tbl_8
-
-	local tbl_9 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "right",
-		localize = false,
-		font_size = 32
-	}
-	local flag_8
-
-	flag_8 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_9.font_type = flag_8
-	tbl_9.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_9.offset = {
-		-13,
-		-4,
-		1
-	}
-	tbl_9.size = size
-	tbl.power_text_shadow = tbl_9
-	tbl.background = {
-		masked = masked,
-		size = {
-			size[1],
-			size[2]
+	local style = {
+		title = {
+			localize = false,
+			font_size = 28,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			hover_text_color = Colors.get_color_table_with_alpha("white", 255),
+			default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				90,
+				16,
+				2
+			},
+			size = {
+				size[1] - 100,
+				size[2]
+			}
 		},
-		color = {
-			100,
-			0,
-			0,
-			0
+		title_shadow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			localize = false,
+			font_size = 28,
+			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				92,
+				14,
+				1
+			},
+			size = {
+				size[1] - 100,
+				size[2]
+			}
 		},
-		offset = {
-			0,
-			0,
-			0
+		level_title = {
+			localize = false,
+			font_size = 20,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = {
+				255,
+				120,
+				120,
+				120
+			},
+			hover_text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			default_text_color = {
+				255,
+				120,
+				120,
+				120
+			},
+			offset = {
+				90,
+				-16,
+				2
+			},
+			size = {
+				(size[1] - 100) / 2,
+				size[2]
+			}
+		},
+		level_title_shadow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			localize = false,
+			font_size = 20,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				92,
+				-18,
+				1
+			},
+			size = {
+				(size[1] - 100) / 2,
+				size[2]
+			}
+		},
+		power_title = {
+			localize = false,
+			font_size = 20,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = {
+				255,
+				120,
+				120,
+				120
+			},
+			hover_text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			default_text_color = {
+				255,
+				120,
+				120,
+				120
+			},
+			offset = {
+				(size[1] - 100) / 2,
+				-16,
+				2
+			},
+			size = {
+				(size[1] - 100) / 2,
+				size[2]
+			}
+		},
+		power_title_shadow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			localize = false,
+			font_size = 20,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				(size[1] - 100) / 2 + 2,
+				-18,
+				1
+			},
+			size = {
+				(size[1] - 100) / 2,
+				size[2]
+			}
+		},
+		power_text = {
+			localize = false,
+			font_size = 32,
+			horizontal_alignment = "right",
+			vertical_alignment = "center",
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			hover_text_color = Colors.get_color_table_with_alpha("white", 255),
+			default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				-15,
+				-2,
+				2
+			},
+			size = size
+		},
+		power_text_shadow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "right",
+			localize = false,
+			font_size = 32,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				-13,
+				-4,
+				1
+			},
+			size = size
+		},
+		background = {
+			masked = masked,
+			size = {
+				size[1],
+				size[2]
+			},
+			color = {
+				100,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				0,
+				0
+			}
+		},
+		equipped_frame_texture = {
+			vertical_alignment = "top",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = size,
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				0,
+				0,
+				5
+			}
+		},
+		icon = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				80,
+				80
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				2
+			}
+		},
+		icon_background = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				80,
+				80
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				1
+			}
+		},
+		lock_texture = {
+			vertical_alignment = "center",
+			horizontal_alignment = "right",
+			masked = masked,
+			texture_size = {
+				45.6,
+				52.199999999999996
+			},
+			color = {
+				180,
+				255,
+				255,
+				255
+			},
+			offset = {
+				-8,
+				0,
+				4
+			}
+		},
+		item_frame = {
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				3
+			},
+			size = {
+				80,
+				80
+			}
+		},
+		hover_frame = {
+			masked = masked,
+			texture_size = hover_frame_settings.texture_size,
+			texture_sizes = hover_frame_settings.texture_sizes,
+			color = {
+				0,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				7
+			},
+			size = {
+				size[1],
+				size[2]
+			},
+			frame_margins = {
+				-hover_frame_spacing,
+				-hover_frame_spacing
+			}
+		},
+		pulse_frame = {
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			masked = masked,
+			area_size = size,
+			texture_size = pulse_frame_settings.texture_size,
+			texture_sizes = pulse_frame_settings.texture_sizes,
+			frame_margins = {
+				-pulse_frame_spacing,
+				-pulse_frame_spacing
+			},
+			color = {
+				0,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				12
+			}
+		},
+		new_frame = {
+			masked = masked,
+			texture_size = new_frame_settings.texture_size,
+			texture_sizes = new_frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				6
+			},
+			size = {
+				size[1],
+				size[2]
+			},
+			frame_margins = {
+				-new_frame_spacing,
+				-new_frame_spacing
+			}
+		},
+		shadow_frame = {
+			masked = masked,
+			texture_size = shadow_frame_settings.texture_size,
+			texture_sizes = shadow_frame_settings.texture_sizes,
+			color = {
+				255,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				0,
+				1
+			},
+			size = {
+				size[1],
+				size[2]
+			},
+			frame_margins = {
+				-shadow_frame_spacing,
+				-shadow_frame_spacing
+			}
+		},
+		frame = {
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				4
+			},
+			size = {
+				size[1],
+				size[2]
+			}
 		}
 	}
-	tbl.equipped_frame_texture = {
-		vertical_alignment = "top",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = size,
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			0,
-			0,
-			5
-		}
-	}
-	tbl.icon = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			80,
-			80
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			2
-		}
-	}
-	tbl.icon_background = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			80,
-			80
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			1
-		}
-	}
-	tbl.lock_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "right",
-		masked = masked,
-		texture_size = {
-			45.6,
-			52.199999999999996
-		},
-		color = {
-			180,
-			255,
-			255,
-			255
-		},
-		offset = {
-			-8,
-			0,
-			4
-		}
-	}
-	tbl.item_frame = {
-		masked = masked,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			3
-		},
-		size = {
-			80,
-			80
-		}
-	}
-	tbl.hover_frame = {
-		masked = masked,
-		texture_size = hover_frame_settings.texture_size,
-		texture_sizes = hover_frame_settings.texture_sizes,
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			7
-		},
-		size = {
-			size[1],
-			size[2]
-		},
-		frame_margins = {
-			-hover_frame_spacing,
-			-hover_frame_spacing
-		}
-	}
-	tbl.pulse_frame = {
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		masked = masked,
-		area_size = size,
-		texture_size = pulse_frame_settings.texture_size,
-		texture_sizes = pulse_frame_settings.texture_sizes,
-		frame_margins = {
-			-pulse_frame_spacing,
-			-pulse_frame_spacing
-		},
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			12
-		}
-	}
-	tbl.new_frame = {
-		masked = masked,
-		texture_size = new_frame_settings.texture_size,
-		texture_sizes = new_frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			6
-		},
-		size = {
-			size[1],
-			size[2]
-		},
-		frame_margins = {
-			-new_frame_spacing,
-			-new_frame_spacing
-		}
-	}
-	tbl.shadow_frame = {
-		masked = masked,
-		texture_size = shadow_frame_settings.texture_size,
-		texture_sizes = shadow_frame_settings.texture_sizes,
-		color = {
-			255,
-			0,
-			0,
-			0
-		},
-		offset = {
-			0,
-			0,
-			1
-		},
-		size = {
-			size[1],
-			size[2]
-		},
-		frame_margins = {
-			-shadow_frame_spacing,
-			-shadow_frame_spacing
-		}
-	}
-	tbl.frame = {
-		masked = masked,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			4
-		},
-		size = {
-			size[1],
-			size[2]
-		}
-	}
-
-	local style = tbl
 	local widget = {}
 	local element = {}
 
@@ -1418,7 +1378,7 @@ end
 
 local function create_divider_option(size, scenegraph_id, masked, text)
 	-- function 9
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -1442,97 +1402,85 @@ local function create_divider_option(size, scenegraph_id, masked, text)
 			texture_id = "divider_01_top",
 			text = text,
 			size = size
-		}
-	}
-	local tbl_2 = {
-		texture_id = {
-			vertical_alignment = "bottom",
-			horizontal_alignment = "center",
-			masked = masked,
-			size = {
-				300,
-				50
+		},
+		style = {
+			texture_id = {
+				vertical_alignment = "bottom",
+				horizontal_alignment = "center",
+				masked = masked,
+				size = {
+					300,
+					50
+				},
+				texture_size = {
+					264,
+					32
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					-34,
+					2
+				}
 			},
-			texture_size = {
-				264,
-				32
+			text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					0,
+					-14,
+					3
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				0,
-				-34,
-				2
+			text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 24,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					2,
+					-16,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			35,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 24,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_3.offset = {
-		0,
-		-14,
-		3
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 24,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		2,
-		-16,
-		2
-	}
-	tbl_2.text_shadow = tbl_4
-	tbl.style = tbl_2
-	tbl.offset = {
-		35,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_property_option(size, scenegraph_id, masked, text, icon)
 	-- function 10
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -1556,97 +1504,85 @@ local function create_property_option(size, scenegraph_id, masked, text, icon)
 			text = text,
 			texture_id = icon,
 			size = size
-		}
-	}
-	local tbl_2 = {
-		texture_id = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			masked = masked,
-			texture_size = {
-				50,
-				50
+		},
+		style = {
+			texture_id = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				masked = masked,
+				texture_size = {
+					50,
+					50
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					5,
+					0,
+					2
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
+			text = {
+				font_size = 18,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				color_override = {},
+				color_override_table = {
+					start_index = 0,
+					end_index = 0,
+					color = Colors.get_color_table_with_alpha("corn_flower_blue", 255)
+				},
+				offset = {
+					50,
+					-23,
+					3
+				}
 			},
-			offset = {
-				5,
-				0,
-				2
+			text_shadow = {
+				font_size = 18,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					51,
+					-24,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		font_size = 18,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_3.color_override = {}
-	tbl_3.color_override_table = {
-		start_index = 0,
-		end_index = 0,
-		color = Colors.get_color_table_with_alpha("corn_flower_blue", 255)
-	}
-	tbl_3.offset = {
-		50,
-		-23,
-		3
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {
-		font_size = 18,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		51,
-		-24,
-		2
-	}
-	tbl_2.text_shadow = tbl_4
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_trait_option(size, scenegraph_id, masked, title_text, description_text, icon)
 	-- function 11
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -1681,144 +1617,123 @@ local function create_trait_option(size, scenegraph_id, masked, title_text, desc
 			description_text = description_text,
 			texture_id = icon,
 			size = size
-		}
-	}
-	local tbl_2 = {
-		texture_id = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			masked = masked,
-			texture_size = {
-				40,
-				40
+		},
+		style = {
+			texture_id = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				masked = masked,
+				texture_size = {
+					40,
+					40
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					5,
+					0,
+					2
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
+			title_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					60,
+					-5,
+					3
+				}
 			},
-			offset = {
-				5,
-				0,
-				2
+			title_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-6,
+					2
+				}
+			},
+			description_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					60,
+					-54,
+					3
+				}
+			},
+			description_text_shadow = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-55,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_3.offset = {
-		60,
-		-5,
-		3
-	}
-	tbl_2.title_text = tbl_3
-
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		61,
-		-6,
-		2
-	}
-	tbl_2.title_text_shadow = tbl_4
-
-	local tbl_5 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.offset = {
-		60,
-		-54,
-		3
-	}
-	tbl_2.description_text = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		61,
-		-55,
-		2
-	}
-	tbl_2.description_text_shadow = tbl_6
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_item_block_option(size, scenegraph_id, masked, angle)
 	-- function 12
 	local angle_fraction = angle / (math.pi * 2)
-	local tbl = {
+
+	return {
 		element = {
 			passes = {
 				{
@@ -1857,213 +1772,186 @@ local function create_item_block_option(size, scenegraph_id, masked, angle)
 					text_id = "description_text"
 				}
 			}
-		}
-	}
-	local tbl_2 = {
-		slot_texture = "icon_block",
-		title_text = Localize("menu_weave_forge_weapon_block_title"),
-		description_text = Localize("menu_weave_forge_weapon_block_description")
-	}
-	local flag
-
-	flag = (not masked or not "icon_block_arch_masked") and not not "icon_block_arch"
-	tbl_2.arch_texture = flag
-	tbl_2.size = size
-	tbl.content = tbl_2
-
-	local tbl_3 = {
-		arch_texture_1 = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			angle = -angle / 2,
-			pivot = {
-				32,
-				32
-			},
-			texture_size = {
-				64,
-				64
-			},
-			color = {
-				255 * angle_fraction,
-				255,
-				255,
-				255
-			},
-			offset = {
-				-5,
-				0,
-				1
-			}
 		},
-		arch_texture_2 = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			uvs = {
-				{
-					1,
-					0
+		content = {
+			slot_texture = "icon_block",
+			title_text = Localize("menu_weave_forge_weapon_block_title"),
+			description_text = Localize("menu_weave_forge_weapon_block_description"),
+			arch_texture = masked and not not "icon_block_arch_masked" or not masked and not not "icon_block_arch",
+			size = size
+		},
+		style = {
+			arch_texture_1 = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				angle = -angle / 2,
+				pivot = {
+					32,
+					32
 				},
-				{
+				texture_size = {
+					64,
+					64
+				},
+				color = {
+					255 * angle_fraction,
+					255,
+					255,
+					255
+				},
+				offset = {
+					-5,
 					0,
 					1
 				}
 			},
-			angle = angle / 2,
-			pivot = {
-				32,
-				32
+			arch_texture_2 = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				uvs = {
+					{
+						1,
+						0
+					},
+					{
+						0,
+						1
+					}
+				},
+				angle = angle / 2,
+				pivot = {
+					32,
+					32
+				},
+				texture_size = {
+					64,
+					64
+				},
+				color = {
+					255 * angle_fraction,
+					255,
+					255,
+					255
+				},
+				offset = {
+					-5,
+					0,
+					1
+				}
 			},
-			texture_size = {
-				64,
-				64
+			slot_texture = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				masked = masked,
+				texture_size = {
+					64,
+					64
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					-5,
+					0,
+					2
+				}
 			},
-			color = {
-				255 * angle_fraction,
-				255,
-				255,
-				255
+			title_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					60,
+					-5,
+					3
+				}
 			},
-			offset = {
-				-5,
-				0,
-				1
+			title_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-6,
+					2
+				}
+			},
+			description_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					60,
+					-54,
+					3
+				}
+			},
+			description_text_shadow = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-55,
+					2
+				}
 			}
 		},
-		slot_texture = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			masked = masked,
-			texture_size = {
-				64,
-				64
-			},
-			color = {
-				255,
-				255,
-				255,
-				255
-			},
-			offset = {
-				-5,
-				0,
-				2
-			}
-		}
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_4.offset = {
-		60,
-		-5,
-		3
-	}
-	tbl_3.title_text = tbl_4
-
-	local tbl_5 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.offset = {
-		61,
-		-6,
-		2
-	}
-	tbl_3.title_text_shadow = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_6.offset = {
-		60,
-		-54,
-		3
-	}
-	tbl_3.description_text = tbl_6
-
-	local tbl_7 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_7.font_type = flag_5
-	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_7.offset = {
-		61,
-		-55,
-		2
-	}
-	tbl_3.description_text_shadow = tbl_7
-	tbl.style = tbl_3
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_item_stamina_option(size, scenegraph_id, masked, amount)
 	-- function 13
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -2119,243 +2007,201 @@ local function create_item_stamina_option(size, scenegraph_id, masked, amount)
 			title_text = Localize("menu_weave_forge_weapon_stamina_title"),
 			description_text = Localize("menu_weave_forge_weapon_stamina_description"),
 			size = size
-		}
-	}
-	local tbl_2 = {
-		shield_texture = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			masked = masked,
-			texture_size = {
-				56,
-				60
+		},
+		style = {
+			shield_texture = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				masked = masked,
+				texture_size = {
+					56,
+					60
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					-2,
+					0,
+					2
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
+			amount_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					50,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("white", 255),
+				offset = {
+					-20,
+					-size[2] / 2,
+					3
+				}
 			},
-			offset = {
-				-2,
-				0,
-				2
+			amount_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					50,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					-18,
+					-(size[2] / 2),
+					2
+				}
+			},
+			amount_text_shadow_2 = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					50,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					-20,
+					-(size[2] / 2) + 2,
+					2
+				}
+			},
+			amount_text_shadow_3 = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					50,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					-20,
+					-(size[2] / 2 + 2),
+					2
+				}
+			},
+			title_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					60,
+					-5,
+					3
+				}
+			},
+			title_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-6,
+					2
+				}
+			},
+			description_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					60,
+					-54,
+					3
+				}
+			},
+			description_text_shadow = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-55,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			50,
-			size[2]
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_3.offset = {
-		-20,
-		-size[2] / 2,
-		3
-	}
-	tbl_2.amount_text = tbl_3
-
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			50,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		-18,
-		-(size[2] / 2),
-		2
-	}
-	tbl_2.amount_text_shadow = tbl_4
-
-	local tbl_5 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			50,
-			size[2]
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.offset = {
-		-20,
-		-(size[2] / 2) + 2,
-		2
-	}
-	tbl_2.amount_text_shadow_2 = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			50,
-			size[2]
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		-20,
-		-(size[2] / 2 + 2),
-		2
-	}
-	tbl_2.amount_text_shadow_3 = tbl_6
-
-	local tbl_7 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_7.font_type = flag_5
-	tbl_7.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_7.offset = {
-		60,
-		-5,
-		3
-	}
-	tbl_2.title_text = tbl_7
-
-	local tbl_8 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_6
-
-	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_8.font_type = flag_6
-	tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_8.offset = {
-		61,
-		-6,
-		2
-	}
-	tbl_2.title_text_shadow = tbl_8
-
-	local tbl_9 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_7
-
-	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_9.font_type = flag_7
-	tbl_9.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_9.offset = {
-		60,
-		-54,
-		3
-	}
-	tbl_2.description_text = tbl_9
-
-	local tbl_10 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_8
-
-	flag_8 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_10.font_type = flag_8
-	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_10.offset = {
-		61,
-		-55,
-		2
-	}
-	tbl_2.description_text_shadow = tbl_10
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_item_keywords_option(size, scenegraph_id, masked, text)
 	-- function 14
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -2373,70 +2219,59 @@ local function create_item_keywords_option(size, scenegraph_id, masked, text)
 		content = {
 			text = not not text or not not "",
 			size = size
-		}
+		},
+		style = {
+			text = {
+				font_size = 18,
+				upper_case = true,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				size = {
+					370,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("forest_green", 255),
+				offset = {
+					0,
+					-size[2] / 2,
+					3
+				}
+			},
+			text_shadow = {
+				font_size = 18,
+				upper_case = true,
+				localize = false,
+				word_wrap = true,
+				horizontal_alignment = "center",
+				vertical_alignment = "center",
+				size = {
+					370,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					1,
+					-(size[2] / 2 + 1),
+					2
+				}
+			}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_2 = {}
-	local tbl_3 = {
-		font_size = 18,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		size = {
-			370,
-			size[2]
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("forest_green", 255)
-	tbl_3.offset = {
-		0,
-		-size[2] / 2,
-		3
-	}
-	tbl_2.text = tbl_3
-
-	local tbl_4 = {
-		font_size = 18,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		size = {
-			370,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		1,
-		-(size[2] / 2 + 1),
-		2
-	}
-	tbl_2.text_shadow = tbl_4
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_item_overheat_option(size, scenegraph_id, masked)
 	-- function 15
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -2471,143 +2306,121 @@ local function create_item_overheat_option(size, scenegraph_id, masked)
 			title_text = Localize("menu_weave_forge_weapon_ammo_burn_title"),
 			description_text = Localize("menu_weave_forge_weapon_ammo_burn_description"),
 			size = size
-		}
-	}
-	local tbl_2 = {
-		flame_texture = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			masked = masked,
-			texture_size = {
-				46,
-				61
+		},
+		style = {
+			flame_texture = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				masked = masked,
+				texture_size = {
+					46,
+					61
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					0,
+					-5,
+					2
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
+			title_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					60,
+					-5,
+					3
+				}
 			},
-			offset = {
-				0,
-				-5,
-				2
+			title_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-6,
+					2
+				}
+			},
+			description_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					60,
+					-54,
+					3
+				}
+			},
+			description_text_shadow = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-55,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_3.offset = {
-		60,
-		-5,
-		3
-	}
-	tbl_2.title_text = tbl_3
-
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		61,
-		-6,
-		2
-	}
-	tbl_2.title_text_shadow = tbl_4
-
-	local tbl_5 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.offset = {
-		60,
-		-54,
-		3
-	}
-	tbl_2.description_text = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		61,
-		-55,
-		2
-	}
-	tbl_2.description_text_shadow = tbl_6
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local function create_item_ammunition_option(size, scenegraph_id, masked, amount_text)
 	-- function 16
-	local tbl = {
+	return {
 		element = {
 			passes = {
 				{
@@ -2663,238 +2476,196 @@ local function create_item_ammunition_option(size, scenegraph_id, masked, amount
 			title_text = Localize("menu_weave_forge_weapon_ammo_regular_title"),
 			description_text = Localize("menu_weave_forge_weapon_ammo_regular_description"),
 			size = size
-		}
-	}
-	local tbl_2 = {
-		ammunition_texture = {
-			vertical_alignment = "center",
-			horizontal_alignment = "left",
-			masked = masked,
-			texture_size = {
-				68,
-				36
+		},
+		style = {
+			ammunition_texture = {
+				vertical_alignment = "center",
+				horizontal_alignment = "left",
+				masked = masked,
+				texture_size = {
+					68,
+					36
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				},
+				offset = {
+					-12,
+					-25,
+					2
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
+			amount_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					60,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("white", 255),
+				offset = {
+					-8,
+					-size[2] / 2,
+					3
+				}
 			},
-			offset = {
-				-12,
-				-25,
-				2
+			amount_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					60,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					-6,
+					-(size[2] / 2),
+					2
+				}
+			},
+			amount_text_shadow_2 = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					60,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					-8,
+					-(size[2] / 2) + 2,
+					2
+				}
+			},
+			amount_text_shadow_3 = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 36,
+				horizontal_alignment = "right",
+				vertical_alignment = "center",
+				dynamic_font_size = true,
+				size = {
+					60,
+					size[2]
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					-8,
+					-(size[2] / 2 + 2),
+					2
+				}
+			},
+			title_text = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_title", 255),
+				offset = {
+					60,
+					-5,
+					3
+				}
+			},
+			title_text_shadow = {
+				word_wrap = true,
+				upper_case = true,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "bottom",
+				dynamic_font_size = true,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-6,
+					2
+				}
+			},
+			description_text = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					60,
+					-54,
+					3
+				}
+			},
+			description_text_shadow = {
+				word_wrap = true,
+				upper_case = false,
+				localize = false,
+				font_size = 18,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				dynamic_font_size = false,
+				size = {
+					300,
+					50
+				},
+				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("black", 255),
+				offset = {
+					61,
+					-55,
+					2
+				}
 			}
-		}
+		},
+		offset = {
+			0,
+			0,
+			0
+		},
+		scenegraph_id = scenegraph_id
 	}
-	local tbl_3 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			60,
-			size[2]
-		}
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_3.offset = {
-		-8,
-		-size[2] / 2,
-		3
-	}
-	tbl_2.amount_text = tbl_3
-
-	local tbl_4 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			60,
-			size[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		-6,
-		-(size[2] / 2),
-		2
-	}
-	tbl_2.amount_text_shadow = tbl_4
-
-	local tbl_5 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			60,
-			size[2]
-		}
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_5.offset = {
-		-8,
-		-(size[2] / 2) + 2,
-		2
-	}
-	tbl_2.amount_text_shadow_2 = tbl_5
-
-	local tbl_6 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 36,
-		horizontal_alignment = "right",
-		vertical_alignment = "center",
-		dynamic_font_size = true,
-		size = {
-			60,
-			size[2]
-		}
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		-8,
-		-(size[2] / 2 + 2),
-		2
-	}
-	tbl_2.amount_text_shadow_3 = tbl_6
-
-	local tbl_7 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_7.font_type = flag_5
-	tbl_7.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_7.offset = {
-		60,
-		-5,
-		3
-	}
-	tbl_2.title_text = tbl_7
-
-	local tbl_8 = {
-		word_wrap = true,
-		upper_case = true,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		dynamic_font_size = true,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_6
-
-	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_8.font_type = flag_6
-	tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_8.offset = {
-		61,
-		-6,
-		2
-	}
-	tbl_2.title_text_shadow = tbl_8
-
-	local tbl_9 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_7
-
-	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_9.font_type = flag_7
-	tbl_9.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_9.offset = {
-		60,
-		-54,
-		3
-	}
-	tbl_2.description_text = tbl_9
-
-	local tbl_10 = {
-		word_wrap = true,
-		upper_case = false,
-		localize = false,
-		font_size = 18,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			300,
-			50
-		}
-	}
-	local flag_8
-
-	flag_8 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_10.font_type = flag_8
-	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_10.offset = {
-		61,
-		-55,
-		2
-	}
-	tbl_2.description_text_shadow = tbl_10
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		0,
-		0
-	}
-	tbl.scenegraph_id = scenegraph_id
-
-	return tbl
 end
 
 local masked = true

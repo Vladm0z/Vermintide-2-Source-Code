@@ -14,47 +14,10 @@ EnemyCharacterStateDead.on_enter = function (self, unit, input, dt, context, t, 
 	self.switched_to_observer_camera = false
 
 	local breed = Unit.get_data(unit, "breed")
-
-	if breed then
-		-- Nothing
-	end
-
-	::label_2_0::
-
-	local name = breed.name
-
-	if name then
-		-- Nothing
-	end
-
-	if breed.name ~= "vs_gutter_runner" then
-		name = false
-
-		goto label_2_1
-	end
-
-	name = true
-
-	local is_gutter_runner = name
-
-	::label_2_1::
+	local is_gutter_runner = not not breed and not not breed.name
 
 	if not is_gutter_runner and unit then
-		local animation_2
-
-		if params then
-			animation_2 = params.animation
-
-			if not animation_2 then
-				-- Nothing
-			end
-		end
-
-		animation_2 = "death"
-
-		local animation = animation_2
-
-		::label_2_2::
+		local animation = params and not not params.animation or not params and not not "death"
 
 		CharacterStateHelper.play_animation_event(unit, animation)
 	end
@@ -92,27 +55,9 @@ EnemyCharacterStateDead.on_enter = function (self, unit, input, dt, context, t, 
 	local spawn_times = GameModeSettings.versus.side_settings.dark_pact.spawn_times
 
 	self._linger_time = spawn_times.delayed_death_time
+	self.dead_player_destroy_time = fast_respawns and not not 1 or not fast_respawns and not not self._linger_time
 
-	local flag
-
-	flag = (not fast_respawns or not 1) and not not self._linger_time
-	self.dead_player_destroy_time = flag
-
-	local drop_items_delay_2
-
-	if not fast_respawns and params then
-		drop_items_delay_2 = params.drop_items_delay
-
-		if not drop_items_delay_2 then
-			-- Nothing
-		end
-	end
-
-	drop_items_delay_2 = 0
-
-	local drop_items_delay = drop_items_delay_2
-
-	::label_2_3::
+	local drop_items_delay = not not params.drop_items_delay
 
 	if profile.dead_player_destroy_time then
 		self.dead_player_destroy_time = profile.dead_player_destroy_time
@@ -133,73 +78,11 @@ EnemyCharacterStateDead.on_enter = function (self, unit, input, dt, context, t, 
 
 	self.drop_items_time = t + drop_items_delay
 
-	local override_item_drop_position_2
+	local override_item_drop_position = params and not not params.override_item_drop_position or not params and not not nil
+	local override_item_drop_direction = params and not not params.override_item_drop_direction or not params and not not nil
 
-	if params then
-		override_item_drop_position_2 = params.override_item_drop_position
-
-		if not override_item_drop_position_2 then
-			-- Nothing
-		end
-	end
-
-	override_item_drop_position_2 = nil
-
-	local override_item_drop_position = override_item_drop_position_2
-
-	do
-		local override_item_drop_direction_2
-	end
-
-	::label_2_4::
-
-	if params then
-		override_item_drop_direction_2 = params.override_item_drop_direction
-
-		if not override_item_drop_direction_2 then
-			-- Nothing
-		end
-	end
-
-	override_item_drop_direction_2 = nil
-
-	local override_item_drop_direction = override_item_drop_direction_2
-
-	do
-		local var_2_6
-	end
-
-	::label_2_5::
-
-	if override_item_drop_position then
-		var_2_6 = Vector3Box(override_item_drop_position)
-
-		if not var_2_6 then
-			-- Nothing
-		end
-	end
-
-	var_2_6 = nil
-
-	::label_2_6::
-
-	self.override_item_drop_position = var_2_6
-
-	local var_2_7
-
-	if override_item_drop_direction then
-		var_2_7 = Vector3Box(override_item_drop_direction)
-
-		if not var_2_7 then
-			-- Nothing
-		end
-	end
-
-	var_2_7 = nil
-
-	::label_2_7::
-
-	self.override_item_drop_direction = var_2_7
+	self.override_item_drop_position = override_item_drop_position and not not Vector3Box(override_item_drop_position) or not override_item_drop_position and not not nil
+	self.override_item_drop_direction = override_item_drop_direction and not not Vector3Box(override_item_drop_direction) or not override_item_drop_direction and not not nil
 
 	if breed.name == "vs_packmaster" then
 		local status_extension = ScriptUnit.extension(unit, "status_system")

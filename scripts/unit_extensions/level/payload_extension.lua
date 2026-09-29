@@ -71,7 +71,7 @@ PayloadExtension.init = function (self, extension_init_context, unit, extension_
 		local statistics_db = Managers.player:statistics_db()
 		local stats_id = player:stats_id()
 
-		if unit_hazard_type == "sled" and (statistics_db:get_persistent_stat(stats_id, "trail_sleigher") <= 50 or false) then
+		if false then
 			Managers.state.event:register(self, "on_killed", "increment_kill_stat")
 		end
 	end
@@ -185,23 +185,9 @@ PayloadExtension._hit_enemies = function (self, abs_speed, t)
 	local payload_position_flat = Vector3.flat(payload_position)
 	local payload_pose, half_extents = Unit.box(payload_unit, true)
 	local payload_forward = Vector3.normalize(Matrix4x4.forward(payload_pose))
-	local x
+	local largest_extent = half_extents.x > half_extents.y and not not half_extents.x or not (half_extents.x > half_extents.y) and not not half_extents.y
 
-	if half_extents.x > half_extents.y then
-		x = half_extents.x
-
-		if not x then
-			-- Nothing
-		end
-	end
-
-	x = half_extents.y
-
-	local largest_extent = x
-
-	::label_10_0::
-
-	largest_extent = (not (largest_extent > half_extents.z) or not largest_extent) and not not half_extents.z
+	largest_extent = largest_extent > half_extents.z and (not not largest_extent or not not half_extents.z) or not (largest_extent > half_extents.z) and not not half_extents.z
 
 	local radius = largest_extent * 2
 	local small_box_extents = half_extents * 1.2
@@ -213,64 +199,14 @@ PayloadExtension._hit_enemies = function (self, abs_speed, t)
 	local hit_ragdoll_actor
 	local damage_source = hazard_type
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_10_1 = hazard_settings.enemy.difficulty_power_level[difficulty_rank]
-
-	if not var_10_1 then
-		-- Nothing
-	end
-
-	var_10_1 = hazard_settings.enemy.difficulty_power_level[2]
-
-	if not var_10_1 then
-		-- Nothing
-	end
-
-	var_10_1 = DefaultPowerLevel
-
-	local power_level = var_10_1
-
-	::label_10_1::
-
-	local damage_profile_2 = hazard_settings.enemy.damage_profile
-
-	if not damage_profile_2 then
-		-- Nothing
-	end
-
-	damage_profile_2 = "default"
-
-	local damage_profile_name = damage_profile_2
-
-	::label_10_2::
-
+	local power_level = not not hazard_settings.enemy.difficulty_power_level[difficulty_rank]
+	local damage_profile_name = not not hazard_settings.enemy.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local target_index
 	local boost_curve_multiplier = 0
 	local is_critical_strike = false
-	local can_damage_2 = hazard_settings.enemy.can_damage
-
-	if not can_damage_2 then
-		-- Nothing
-	end
-
-	can_damage_2 = false
-
-	local can_damage = can_damage_2
-
-	::label_10_3::
-
-	local can_stagger_2 = hazard_settings.enemy.can_stagger
-
-	if not can_stagger_2 then
-		-- Nothing
-	end
-
-	can_stagger_2 = true
-
-	local can_stagger = can_stagger_2
-
-	::label_10_4::
-
+	local can_damage = not not hazard_settings.enemy.can_damage
+	local can_stagger = not not hazard_settings.enemy.can_stagger
 	local blocking = false
 	local shield_breaking_hit = false
 	local num_hits = AiUtils.broadphase_query(payload_position, radius, RESULT_TABLE, self._enemy_broadphase_categories)
@@ -320,31 +256,12 @@ PayloadExtension.update = function (self, unit, input, dt, context, t)
 	if id and game then
 		if self._is_server then
 			local speed_settings = metadata.speed_settings
-			local pushed
-
-			if has_players_in_proximity then
-				pushed = speed_settings.pushed
-
-				if not pushed then
-					-- Nothing
-				end
-			end
-
-			pushed = speed_settings.not_pushed
-
-			local used_speed_settings = pushed
-
-			::label_11_0::
-
-			local bonus_speed_per_player = used_speed_settings.bonus_speed_per_player
-
-			bonus_speed_per_player = not not bonus_speed_per_player or not not 0
-
-			local bonus_speed = bonus_speed_per_player * num_players_in_proximity
+			local used_speed_settings = has_players_in_proximity and not not speed_settings.pushed or not has_players_in_proximity and not not speed_settings.not_pushed
+			local bonus_speed = not not used_speed_settings.bonus_speed_per_player * num_players_in_proximity
 			local target_speed = used_speed_settings.speed + bonus_speed
 			local acceleration = used_speed_settings.acceleration
 
-			if (not (target_speed > 0) or self._previous_status ~= "end") and (not (target_speed < 0) or self._previous_status ~= "start") and not self._activated then
+			if target_speed > 0 and (self._previous_status == "end" or target_speed < 0 and (self._previous_status == "start" or not self._activated) or not (target_speed < 0) and not self._activated) or not (target_speed > 0) and (target_speed < 0 and (self._previous_status == "start" or not self._activated) or not (target_speed < 0) and not self._activated) then
 				target_speed = 0
 			end
 
@@ -601,10 +518,7 @@ PayloadExtension._init_movement_spline = function (self, world, unit, payload_gi
 			local unit_speed_setting = Unit.get_data(gizmo_unit, "speed_setting")
 			local unit_flow_event = Unit.get_data(gizmo_unit, "flow_event")
 
-			if unit_speed_setting ~= "" and not unit_speed_setting then
-				-- Nothing
-			end
-
+			speed_setting = unit_speed_setting == "" or not not unit_speed_setting or not not speed_setting
 			flow_event = unit_flow_event ~= "" and not not unit_flow_event
 		end
 

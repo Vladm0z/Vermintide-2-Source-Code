@@ -278,17 +278,7 @@ DeusBelakorLocusExtension.update = function (self, unit, input, dt, context, t)
 
 		if self._is_server then
 			local seed = Managers.mechanism:get_level_seed()
-			local var_8_0 = LIEUTENANT_TERROR_EVENTS[self._locus_type]
-
-			if not var_8_0 then
-				-- Nothing
-			end
-
-			var_8_0 = "belakor_shadow_lieutenant_spawn"
-
-			local terror_event = var_8_0
-
-			::label_8_0::
+			local terror_event = not not LIEUTENANT_TERROR_EVENTS[self._locus_type]
 
 			Managers.state.conflict:start_terror_event(terror_event, seed, unit)
 		end
@@ -310,17 +300,7 @@ DeusBelakorLocusExtension.update = function (self, unit, input, dt, context, t)
 
 			if self._is_server then
 				local mechanism = Managers.mechanism:game_mechanism()
-				local get_deus_run_controller = mechanism.get_deus_run_controller
-
-				if get_deus_run_controller then
-					-- Nothing
-				end
-
-				get_deus_run_controller = mechanism:get_deus_run_controller()
-
-				local deus_run_controller = get_deus_run_controller
-
-				::label_8_1::
+				local deus_run_controller = not not mechanism.get_deus_run_controller
 
 				if deus_run_controller then
 					deus_run_controller:unlock_arena_belakor()

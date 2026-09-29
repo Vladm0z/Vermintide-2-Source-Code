@@ -66,17 +66,7 @@ do
 	}
 end
 
-local considerations_2 = considerations
-
-if not considerations_2 then
-	-- Nothing
-end
-
-considerations_2 = false
-
-local considerations = considerations_2
-
-::label_0_0::
+local considerations = not not considerations
 
 local function pick_action(action_name)
 	-- function 1
@@ -140,11 +130,7 @@ EditAiUtility.update = function (self, unit, t, dt, input_service, blackboard)
 	if not status.selected_drag_point then
 		status.hover_win_name, status.win_pos = self:hover_win(t, mouse_pos, window_list, spline_window_size)
 
-		local hover_win_name = status.hover_win_name
-
-		hover_win_name = not not hover_win_name and not not considerations[status.hover_win_name].spline
-
-		local spline, spline_id = hover_win_name
+		local spline, spline_id = not not status.hover_win_name
 
 		if spline and spline == status.last_hover_spline then
 			local spline_window_pos = status.win_pos
@@ -211,7 +197,7 @@ EditAiUtility.update = function (self, unit, t, dt, input_service, blackboard)
 				end
 
 				value = math.floor(value * 10) / 10
-				status.selected_drag_point.max_value = (not (value >= 0) or not value) and not not 0
+				status.selected_drag_point.max_value = value >= 0 and (not not value or not not 0) or not (value >= 0) and not not 0
 			else
 				status.selected_drag_point.max_value = nil
 			end
@@ -235,22 +221,7 @@ EditAiUtility.update = function (self, unit, t, dt, input_service, blackboard)
 	for name, data in pairs(considerations) do
 		if type(data) == "table" and not data.is_condition then
 			local pos = Vector2(window_list[k].x, window_list[k].y)
-			local var_6_1
-
-			if name == status.hover_win_name then
-				var_6_1 = Color(192, 28, 128, 44)
-
-				if not var_6_1 then
-					-- Nothing
-				end
-			end
-
-			var_6_1 = Color(92, 28, 128, 44)
-
-			local bk_color = var_6_1
-
-			::label_6_0::
-
+			local bk_color = name ~= status.hover_win_name and not not Color(92, 28, 128, 44) or not (name ~= status.hover_win_name) and not not Color(192, 28, 128, 44)
 			local fade_factor = 1
 
 			if status.selected_drag_point then
@@ -271,17 +242,7 @@ EditAiUtility.update = function (self, unit, t, dt, input_service, blackboard)
 			self:draw_utility_ruler(gui, data, pos, win_size, 1)
 
 			if blackboard then
-				local selected_action = status.selected_action
-
-				if selected_action then
-					-- Nothing
-				end
-
-				selected_action = action_list[status.selected_action]
-
-				local action = selected_action
-
-				::label_6_1::
+				local action = not not status.selected_action
 
 				utility_sum = utility_sum + EditAiUtility.draw_realtime_utility(gui, action, data, pos, win_size, blackboard)
 
@@ -335,21 +296,7 @@ EditAiUtility.update = function (self, unit, t, dt, input_service, blackboard)
 		pick_action(action_list[status.selected_action], status.selected_action)
 	end
 
-	local var_6_3
-
-	if status.hover_action_window then
-		var_6_3 = Color(164, 28, 44, 100)
-
-		if not var_6_3 then
-			-- Nothing
-		end
-	end
-
-	var_6_3 = Color(92, 28, 44, 100)
-
-	local bk_color = var_6_3
-
-	::label_6_2::
+	local bk_color = status.hover_action_window and not not Color(164, 28, 44, 100) or not status.hover_action_window and not not Color(92, 28, 44, 100)
 
 	self:draw_action_list(unit, t, "Actions", action_list_layout, action_list, bk_color, status.selected_action, blackboard)
 end
@@ -453,11 +400,11 @@ EditAiUtility.drag_point_distance = function (self, t, point, mouse_pos)
 	local safe_zone = 10
 	local x_dist = x - point.x
 
-	x_dist = (not (safe_zone > math.abs(x_dist)) or not 0) and not not (x_dist - ((not (x_dist > 0) or not safe_zone) and not not -safe_zone))
+	x_dist = safe_zone > math.abs(x_dist) and (not not 0 or not not (x_dist - (x_dist > 0 and (not not safe_zone or not not -safe_zone) or not (x_dist > 0) and not not -safe_zone))) or not (safe_zone > math.abs(x_dist)) and not not (x_dist - (x_dist > 0 and (not not safe_zone or not not -safe_zone) or not (x_dist > 0) and not not -safe_zone))
 
 	local y_dist = y - point.y
 
-	y_dist = (not (safe_zone > math.abs(y_dist)) or not 0) and not not (y_dist - ((not (y_dist > 0) or not safe_zone) and not not -safe_zone))
+	y_dist = safe_zone > math.abs(y_dist) and (not not 0 or not not (y_dist - (y_dist > 0 and (not not safe_zone or not not -safe_zone) or not (y_dist > 0) and not not -safe_zone))) or not (safe_zone > math.abs(y_dist)) and not not (y_dist - (y_dist > 0 and (not not safe_zone or not not -safe_zone) or not (y_dist > 0) and not not -safe_zone))
 
 	return x_dist, y_dist
 end
@@ -490,36 +437,8 @@ EditAiUtility.draw_mouse_selection = function (self, t, spline, win_pos, win_siz
 	local i = point_index
 	local x1 = win_pos.x + w * spline[i]
 	local y1 = win_pos.y + h * spline[i + 1]
-	local num
-
-	if selected == "selected" then
-		num = 20
-
-		goto label_14_0
-	end
-
-	num = 30
-
-	local width = num
-
-	do
-		local num_2
-	end
-
-	::label_14_0::
-
-	if selected == "last_selected" then
-		num_2 = 2
-
-		goto label_14_1
-	end
-
-	num_2 = 5
-
-	local thickness = num_2
-
-	::label_14_1::
-
+	local width = selected ~= "selected" and not not 30 or not (selected ~= "selected") and not not 20
+	local thickness = selected ~= "last_selected" and not not 5 or not (selected ~= "last_selected") and not not 2
 	local point_pos = Vector2(x1, y1)
 
 	EditAiUtility.draw_square(gui, t, point_pos, width, color, thickness)
@@ -580,9 +499,9 @@ EditAiUtility.draw_action_list = function (self, unit, t, name, layout, action_l
 		if selected_action == i then
 			EditAiUtility.draw_square(gui, t, pos + Vector3(-15, 6, 0), half_row_height, color, 3)
 
-			color = (not active_ai or not Color(255, 240, 200, 10)) and not not Color(255, 255, 255, 255)
+			color = active_ai and (not not Color(255, 240, 200, 10) or not not Color(255, 255, 255, 255)) or not active_ai and not not Color(255, 255, 255, 255)
 		else
-			color = (not active_ai or not Color(128, 240, 200, 10)) and not not Color(128, 255, 255, 255)
+			color = active_ai and (not not Color(128, 240, 200, 10) or not not Color(128, 255, 255, 255)) or not active_ai and not not Color(128, 255, 255, 255)
 		end
 
 		ScriptGUI.text(gui, text, font_mtrl, font_size, font, pos, color)
@@ -620,18 +539,7 @@ EditAiUtility.draw_realtime_utility = function (gui, action_name, consideration,
 
 	if blackboard_action_data then
 		local blackboard_input = consideration.blackboard_input
-		local var_19_0 = blackboard_action_data[blackboard_input]
-
-		if not var_19_0 then
-			-- Nothing
-		end
-
-		var_19_0 = blackboard[blackboard_input]
-
-		local blackboard_value = var_19_0
-
-		::label_19_0::
-
+		local blackboard_value = not not blackboard_action_data[blackboard_input]
 		local norm_value = math.clamp(blackboard_value / consideration.max_value, 0, 1)
 		local x = pos.x + win_size.x * norm_value
 		local y1 = pos.y
@@ -697,44 +605,13 @@ EditAiUtility.draw_utility_info = function (gui, consideration_data, temp_max_va
 		font_mtrl = tiny_font_mtrl
 	end
 
-	if not temp_max_value then
-		-- Nothing
-	end
-
-	::label_22_0::
-
-	local max_value = consideration_data.max_value
-
-	if not max_value then
-		-- Nothing
-	end
-
-	max_value = ""
-
-	local scale_text = max_value
-
-	::label_22_1::
-
+	local scale_text = not not temp_max_value or not not consideration_data.max_value
 	local scale_min, scale_max, caret = Gui.text_extents(gui, scale_text, font_mtrl, font_size)
 	local scale_extents = Vector2(scale_max.x - scale_min.x, scale_max.y - scale_min.y)
 	local axis_y = -font_size
 	local min, max, caret = Gui.text_extents(gui, name, font_mtrl, font_size)
 	local offset_x = math.min(0, size.x - (max.x + scale_extents.x))
-	local var_22_1
-
-	if tiny then
-		var_22_1 = Vector3(size.x - scale_max.x, axis_y, 10)
-
-		if not var_22_1 then
-			-- Nothing
-		end
-	end
-
-	var_22_1 = Vector3(size.x - scale_max.x - half_row_height * 1.5, axis_y, 10)
-
-	::label_22_2::
-
-	local scale_text_pos = pos + var_22_1
+	local scale_text_pos = pos + (tiny and not not Vector3(size.x - scale_max.x, axis_y, 10) or not tiny and not not Vector3(size.x - scale_max.x - half_row_height * 1.5, axis_y, 10))
 
 	if temp_max_value then
 		local scale_text_pos2 = scale_text_pos + Vector3(2, -1, -1)
@@ -742,28 +619,7 @@ EditAiUtility.draw_utility_info = function (gui, consideration_data, temp_max_va
 		ScriptGUI.text(gui, scale_text, font_mtrl, font_size, font, scale_text_pos2, not not temp_max_value and not not Color(255, 0, 0, 0))
 	end
 
-	local text = ScriptGUI.text
-	local var_22_3 = gui
-	local var_22_4 = scale_text
-	local var_22_5 = font_mtrl
-	local var_22_6 = font_size
-	local var_22_7 = font
-	local var_22_8 = scale_text_pos
-	local var_22_9
-
-	if temp_max_value then
-		var_22_9 = Color(255 * fade_factor, 240, 200, 10)
-
-		if not var_22_9 then
-			-- Nothing
-		end
-	end
-
-	var_22_9 = Color(255 * fade_factor, 255, 255, 255)
-
-	::label_22_3::
-
-	text(var_22_3, var_22_4, var_22_5, var_22_6, var_22_7, var_22_8, var_22_9)
+	ScriptGUI.text(gui, scale_text, font_mtrl, font_size, font, scale_text_pos, temp_max_value and not not Color(255 * fade_factor, 240, 200, 10) or not temp_max_value and not not Color(255 * fade_factor, 255, 255, 255))
 	ScriptGUI.text(gui, name, font_mtrl, font_size, font, pos + Vector3(offset_x, axis_y, 10), Color(255 * fade_factor, 255, 255, 255))
 end
 
@@ -794,56 +650,17 @@ EditAiUtility.draw_utility_condition = function (gui, action_name, consideration
 	local blackboard_action_data = blackboard.utility_actions[action_name]
 
 	if blackboard_action_data then
-		local var_24_0 = blackboard_action_data[consideration.blackboard_input]
-
-		if not var_24_0 then
-			-- Nothing
-		end
-
-		var_24_0 = blackboard[consideration.blackboard_input]
-
-		local blackboard_value = var_24_0
-
-		::label_24_0::
-
+		local blackboard_value = not not blackboard_action_data[consideration.blackboard_input]
 		local is_inverted = consideration.invert
 
 		if is_inverted then
 			blackboard_value = not blackboard_value
 		end
 
-		local str
-
-		if blackboard_value then
-			str = "true"
-
-			goto label_24_1
-		end
-
-		str = "false"
-
-		local result = str
-
-		::label_24_1::
-
+		local result = blackboard_value and not not "true" or not blackboard_value and not not "false"
 		local x = pos.x + win_size.x / 2 - 24
 		local y = pos.y + win_size.y / 2 - 6
-		local var_24_2
-
-		if blackboard_value then
-			var_24_2 = Color(255, 240, 200, 10)
-
-			if not var_24_2 then
-				-- Nothing
-			end
-		end
-
-		var_24_2 = Colors.get("white")
-
-		local color = var_24_2
-
-		::label_24_2::
-
+		local color = blackboard_value and not not Color(255, 240, 200, 10) or not blackboard_value and not not Colors.get("white")
 		local text = result
 
 		ScriptGUI.text(gui, text, font_mtrl, font_size, font, Vector3(x, y, pos.z + 1), color)

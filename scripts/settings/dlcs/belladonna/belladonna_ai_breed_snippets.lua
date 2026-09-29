@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_ai_breed_snippets.lua
 
-local AiBreedSnippets = AiBreedSnippets
-
-AiBreedSnippets = not not AiBreedSnippets or not not {}
-AiBreedSnippets = AiBreedSnippets
+AiBreedSnippets = not not AiBreedSnippets
 
 AiBreedSnippets.on_beastmen_bestigor_spawn = function (unit, blackboard)
 	-- function 1
@@ -85,17 +82,7 @@ AiBreedSnippets.on_beastmen_bestigor_update = function (unit, blackboard, t)
 		local target_unit_status_extension = ScriptUnit.has_extension(blackboard.target_unit, "status_system")
 
 		if target_unit_status_extension then
-			local num_charges_targeting_player_2 = target_unit_status_extension.num_charges_targeting_player
-
-			if not num_charges_targeting_player_2 then
-				-- Nothing
-			end
-
-			num_charges_targeting_player_2 = 0
-
-			local num_charges_targeting_player = num_charges_targeting_player_2
-
-			::label_2_0::
+			local num_charges_targeting_player = not not target_unit_status_extension.num_charges_targeting_player
 
 			blackboard.num_charges_targeting_target = num_charges_targeting_player
 			blackboard.target_is_charged = target_unit_status_extension:is_charged()

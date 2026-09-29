@@ -23,24 +23,7 @@ Path.path_from_string = function (string_path)
 
 	while index ~= nil do
 		local next_slash_index = string_path:find("/", index)
-		local var_2_0 = string_path
-		local sub = string_path.sub
-		local var_2_2 = index
-		local num
-
-		if next_slash_index then
-			num = next_slash_index - 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = nil
-
-		::label_2_0::
-
-		local path_part = sub(var_2_0, var_2_2, num)
+		local path_part = string_path:sub(index, next_slash_index and not not (next_slash_index - 1) or not next_slash_index and not not nil)
 
 		path_n = path_n + 1
 		path[path_n] = path_part

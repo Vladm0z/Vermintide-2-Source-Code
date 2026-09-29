@@ -13,36 +13,8 @@ local info_window_size = {
 	list_window_size[2] + 20
 }
 local IS_PC = IS_WINDOWS
-local num
-
-if IS_PC then
-	num = 35
-
-	goto label_0_0
-end
-
-num = 50
-
-local entry_height = num
-
-do
-	local num_2
-end
-
-::label_0_0::
-
-if IS_PC then
-	num_2 = 22
-
-	goto label_0_1
-end
-
-num_2 = 28
-
-local entry_font_size = num_2
-
-::label_0_1::
-
+local entry_height = IS_PC and not not 35 or not IS_PC and not not 50
+local entry_font_size = IS_PC and not not 22 or not IS_PC and not not 28
 local list_entry_size = {
 	400,
 	entry_height
@@ -408,11 +380,7 @@ local function create_entry_widget()
 			pass_type = "texture_frame",
 			content_check_function = function (content)
 				-- function 4
-				local new = content.new
-
-				new = not not new and not not not content.button_hotspot.is_hover
-
-				return new
+				return not not content.new
 			end,
 			content_change_function = function (content, style)
 				-- function 5
@@ -468,11 +436,7 @@ local function create_entry_widget()
 			texture_id = "equipped_texture",
 			content_check_function = function (content)
 				-- function 10
-				local in_use = content.in_use
-
-				in_use = not not in_use and not not not content.equipped
-
-				return in_use
+				return not not content.in_use
 			end
 		},
 		{
@@ -513,302 +477,287 @@ local function create_entry_widget()
 		pulse_frame = pulse_frame_settings.texture,
 		size = size
 	}
-	local tbl = {}
-	local tbl_2 = {
-		localize = false,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		font_size = entry_font_size
-	}
-	local flag
-
-	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_2.font_type = flag
-	tbl_2.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.hover_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_2.default_text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_2.offset = {
-		40,
-		0,
-		2
-	}
-	tbl_2.size = {
-		size[1] - 55,
-		size[2]
-	}
-	tbl.title = tbl_2
-
-	local tbl_3 = {
-		localize = false,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		font_size = entry_font_size
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = {
-		255,
-		80,
-		80,
-		80
-	}
-	tbl_3.hover_text_color = {
-		255,
-		80,
-		80,
-		80
-	}
-	tbl_3.default_text_color = {
-		255,
-		80,
-		80,
-		80
-	}
-	tbl_3.offset = {
-		40,
-		0,
-		2
-	}
-	tbl_3.size = {
-		size[1] - 55,
-		size[2]
-	}
-	tbl.locked_title = tbl_3
-
-	local tbl_4 = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		localize = false,
-		font_size = entry_font_size
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.offset = {
-		41,
-		-1,
-		1
-	}
-	tbl_4.size = {
-		size[1] - 55,
-		size[2]
-	}
-	tbl.title_shadow = tbl_4
-	tbl.background = {
-		masked = masked,
-		size = {
-			size[1] - 20,
-			size[2]
+	local style = {
+		title = {
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			font_size = entry_font_size,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			hover_text_color = Colors.get_color_table_with_alpha("white", 255),
+			default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			offset = {
+				40,
+				0,
+				2
+			},
+			size = {
+				size[1] - 55,
+				size[2]
+			}
 		},
-		color = {
-			180,
-			0,
-			0,
-			0
+		locked_title = {
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			font_size = entry_font_size,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = {
+				255,
+				80,
+				80,
+				80
+			},
+			hover_text_color = {
+				255,
+				80,
+				80,
+				80
+			},
+			default_text_color = {
+				255,
+				80,
+				80,
+				80
+			},
+			offset = {
+				40,
+				0,
+				2
+			},
+			size = {
+				size[1] - 55,
+				size[2]
+			}
 		},
-		offset = {
-			0,
-			0,
-			0
+		title_shadow = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			localize = false,
+			font_size = entry_font_size,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				41,
+				-1,
+				1
+			},
+			size = {
+				size[1] - 55,
+				size[2]
+			}
+		},
+		background = {
+			masked = masked,
+			size = {
+				size[1] - 20,
+				size[2]
+			},
+			color = {
+				180,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				0,
+				0
+			}
+		},
+		edge_fade = {
+			vertical_alignment = "center",
+			horizontal_alignment = "right",
+			masked = masked,
+			texture_size = {
+				20,
+				size[2]
+			},
+			color = {
+				180,
+				0,
+				0,
+				0
+			},
+			offset = {
+				0,
+				0,
+				0
+			}
+		},
+		hover_frame = {
+			masked = masked,
+			texture_size = hover_frame_settings.texture_size,
+			texture_sizes = hover_frame_settings.texture_sizes,
+			color = {
+				0,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				6
+			},
+			size = {
+				size[1],
+				size[2]
+			},
+			frame_margins = {
+				-hover_frame_spacing,
+				-hover_frame_spacing
+			}
+		},
+		pulse_frame = {
+			horizontal_alignment = "left",
+			vertical_alignment = "bottom",
+			masked = masked,
+			area_size = size,
+			texture_size = pulse_frame_settings.texture_size,
+			texture_sizes = pulse_frame_settings.texture_sizes,
+			frame_margins = {
+				-pulse_frame_spacing,
+				-pulse_frame_spacing
+			},
+			color = {
+				0,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				12
+			}
+		},
+		new_frame = {
+			masked = masked,
+			texture_size = new_frame_settings.texture_size,
+			texture_sizes = new_frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				0,
+				0,
+				6
+			},
+			size = {
+				size[1],
+				size[2]
+			},
+			frame_margins = {
+				-new_frame_spacing,
+				-new_frame_spacing
+			}
+		},
+		dot_texture = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				13,
+				13
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				11,
+				-1,
+				5
+			}
+		},
+		lock_texture = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				56,
+				40
+			},
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				-10,
+				0,
+				2
+			}
+		},
+		equipped_texture = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				37,
+				31
+			},
+			color = Colors.get_color_table_with_alpha("green", 255),
+			offset = {
+				4,
+				0,
+				3
+			}
+		},
+		equipped_shadow_texture = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				37,
+				31
+			},
+			color = Colors.get_color_table_with_alpha("black", 255),
+			offset = {
+				5,
+				-1,
+				2
+			}
+		},
+		new_texture = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				113.4,
+				45.9
+			},
+			color = Colors.get_color_table_with_alpha("white", 255),
+			offset = {
+				-64,
+				0,
+				2
+			}
+		},
+		in_use_texture = {
+			vertical_alignment = "center",
+			horizontal_alignment = "left",
+			masked = masked,
+			texture_size = {
+				37,
+				31
+			},
+			color = Colors.get_color_table_with_alpha("gray", 255),
+			offset = {
+				4,
+				0,
+				3
+			}
 		}
 	}
-	tbl.edge_fade = {
-		vertical_alignment = "center",
-		horizontal_alignment = "right",
-		masked = masked,
-		texture_size = {
-			20,
-			size[2]
-		},
-		color = {
-			180,
-			0,
-			0,
-			0
-		},
-		offset = {
-			0,
-			0,
-			0
-		}
-	}
-	tbl.hover_frame = {
-		masked = masked,
-		texture_size = hover_frame_settings.texture_size,
-		texture_sizes = hover_frame_settings.texture_sizes,
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			6
-		},
-		size = {
-			size[1],
-			size[2]
-		},
-		frame_margins = {
-			-hover_frame_spacing,
-			-hover_frame_spacing
-		}
-	}
-	tbl.pulse_frame = {
-		horizontal_alignment = "left",
-		vertical_alignment = "bottom",
-		masked = masked,
-		area_size = size,
-		texture_size = pulse_frame_settings.texture_size,
-		texture_sizes = pulse_frame_settings.texture_sizes,
-		frame_margins = {
-			-pulse_frame_spacing,
-			-pulse_frame_spacing
-		},
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			12
-		}
-	}
-	tbl.new_frame = {
-		masked = masked,
-		texture_size = new_frame_settings.texture_size,
-		texture_sizes = new_frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			0,
-			0,
-			6
-		},
-		size = {
-			size[1],
-			size[2]
-		},
-		frame_margins = {
-			-new_frame_spacing,
-			-new_frame_spacing
-		}
-	}
-	tbl.dot_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			13,
-			13
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			11,
-			-1,
-			5
-		}
-	}
-	tbl.lock_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			56,
-			40
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			-10,
-			0,
-			2
-		}
-	}
-	tbl.equipped_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			37,
-			31
-		},
-		color = Colors.get_color_table_with_alpha("green", 255),
-		offset = {
-			4,
-			0,
-			3
-		}
-	}
-	tbl.equipped_shadow_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			37,
-			31
-		},
-		color = Colors.get_color_table_with_alpha("black", 255),
-		offset = {
-			5,
-			-1,
-			2
-		}
-	}
-	tbl.new_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			113.4,
-			45.9
-		},
-		color = Colors.get_color_table_with_alpha("white", 255),
-		offset = {
-			-64,
-			0,
-			2
-		}
-	}
-	tbl.in_use_texture = {
-		vertical_alignment = "center",
-		horizontal_alignment = "left",
-		masked = masked,
-		texture_size = {
-			37,
-			31
-		},
-		color = Colors.get_color_table_with_alpha("gray", 255),
-		offset = {
-			4,
-			0,
-			3
-		}
-	}
-
-	local style = tbl
 	local widget = {}
 	local element = {}
 

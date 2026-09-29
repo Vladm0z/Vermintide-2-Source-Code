@@ -42,30 +42,8 @@ RatlingGunnerStateStanding.debug_display_ammo = function (self)
 	-- function 4
 	local unit = self._unit
 	local blackboard = BLACKBOARDS[unit]
-	local attack_pattern_data = blackboard.attack_pattern_data
-
-	if not attack_pattern_data then
-		-- Nothing
-	end
-
-	attack_pattern_data = {}
-
-	local data = attack_pattern_data
-
-	::label_4_0::
-
-	local current_ammo_2 = data.current_ammo
-
-	if not current_ammo_2 then
-		-- Nothing
-	end
-
-	current_ammo_2 = self._breed.max_ammo
-
-	local current_ammo = current_ammo_2
-
-	::label_4_1::
-
+	local data = not not blackboard.attack_pattern_data
+	local current_ammo = not not data.current_ammo
 	local screen_width = RESOLUTION_LOOKUP.res_w
 	local screen_height = RESOLUTION_LOOKUP.res_h
 	local pos_y = screen_height * 0.85

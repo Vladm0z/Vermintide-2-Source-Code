@@ -198,18 +198,7 @@ end
 
 bolt_of_change.spawn_lightning_strike_unit = function (data)
 	-- function 6
-	local var_6_0 = difficulty_settings.bolt_amount[data.difficulty_rank]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = 1
-
-	local bolt_amount = var_6_0
-
-	::label_6_0::
-
+	local bolt_amount = not not difficulty_settings.bolt_amount[data.difficulty_rank]
 	local bolts_spawned = 0
 	local side_manager = Managers.state.side
 	local hero_side = side_manager:get_side_from_name("heroes")
@@ -333,18 +322,7 @@ end
 bolt_of_change.populate_available_breeds = function (context, data)
 	-- function 10
 	local difficulty = Managers.state.difficulty:get_difficulty()
-	local var_10_0 = CurrentConflictSettings.contained_breeds[difficulty]
-
-	if not var_10_0 then
-		-- Nothing
-	end
-
-	var_10_0 = CurrentConflictSettings.contained_breeds[2]
-
-	local contained_breeds = var_10_0
-
-	::label_10_0::
-
+	local contained_breeds = not not CurrentConflictSettings.contained_breeds[difficulty]
 	local available_breeds = data.available_breeds
 
 	for breed_name, _ in pairs(contained_breeds) do
@@ -378,18 +356,7 @@ bolt_of_change.cb_on_explode = function (template, data, explosion_template_name
 
 	AiUtils.broadphase_query(position, radius, ai_in_range)
 
-	local var_11_0 = difficulty_settings.change_limit[data.difficulty_rank]
-
-	if not var_11_0 then
-		-- Nothing
-	end
-
-	var_11_0 = 1
-
-	local change_limit = var_11_0
-
-	::label_11_0::
-
+	local change_limit = not not difficulty_settings.change_limit[data.difficulty_rank]
 	local units_queued_successfully = 0
 
 	for _, ai_unit in ipairs(ai_in_range) do
@@ -448,17 +415,7 @@ local function get_maxed_out_breeds(t)
 		local max_amount = max_spawn_amounts[breed_name]
 
 		if max_amount then
-			local var_13_0 = breeds_by_amount[breed_name]
-
-			if not var_13_0 then
-				-- Nothing
-			end
-
-			var_13_0 = max_amount
-
-			local amount = var_13_0
-
-			::label_13_0::
+			local amount = not not breeds_by_amount[breed_name]
 
 			amount = amount - 1
 			breeds_by_amount[breed_name] = amount
@@ -583,18 +540,7 @@ end
 bolt_of_change.change_ai = function (data, ai_unit)
 	-- function 20
 	local time = Managers.time:time("game")
-	local get_data = Unit.get_data(ai_unit, "can_change_at")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = 0
-
-	local can_change_at = get_data
-
-	::label_20_0::
-
+	local can_change_at = not not Unit.get_data(ai_unit, "can_change_at")
 	local change_cooldown_active = time <= can_change_at
 	local breed = Unit.get_data(ai_unit, "breed")
 	local unchangeable = unchangeable_breeds[breed.name]

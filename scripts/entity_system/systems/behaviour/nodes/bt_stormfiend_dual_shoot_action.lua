@@ -23,16 +23,8 @@ BTStormfiendDualShootAction.enter = function (self, unit, blackboard, t)
 	blackboard.action = action
 	blackboard.active_node = BTStormfiendDualShootAction
 	blackboard.attack_finished = false
-
-	local shoot_data = blackboard.shoot_data
-
-	shoot_data = not not shoot_data or not not {}
-	blackboard.shoot_data = shoot_data
-
-	local physics_world = blackboard.physics_world
-
-	physics_world = not not physics_world or not not World.get_data(world, "physics_world")
-	blackboard.physics_world = physics_world
+	blackboard.shoot_data = not not blackboard.shoot_data
+	blackboard.physics_world = not not blackboard.physics_world
 	blackboard.anim_locked = t + action.attack_duration
 	blackboard.move_state = "attacking"
 	blackboard.attack_aborted = false
@@ -205,18 +197,7 @@ BTStormfiendDualShootAction.shoot_hit_check = function (self, unit, blackboard)
 					end
 				elseif breed and not immune_breeds[breed.name] and not hit_enemies[hit_unit] then
 					local attacker_unit = unit
-					local armor_category = breed.armor_category
-
-					if not armor_category then
-						-- Nothing
-					end
-
-					armor_category = 1
-
-					local armor_type = armor_category
-
-					::label_6_0::
-
+					local armor_type = not not breed.armor_category
 					local damage_type = action.damage_type
 					local damage = action.damage[armor_type]
 					local damage_direction = data.direction:unbox()
@@ -305,18 +286,7 @@ BTStormfiendDualShootAction._shoot_ratling_gun = function (self, unit, blackboar
 	local spread_direction = Quaternion.forward(spread_rot)
 	local collision_filter = "filter_enemy_player_ray_projectile"
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_10_0 = light_weight_projectile_template.attack_power_level[difficulty_rank]
-
-	if not var_10_0 then
-		-- Nothing
-	end
-
-	var_10_0 = light_weight_projectile_template.attack_power_level[2]
-
-	local power_level = var_10_0
-
-	::label_10_0::
-
+	local power_level = not not light_weight_projectile_template.attack_power_level[difficulty_rank]
 	local action_data = {
 		power_level = power_level,
 		damage_profile = light_weight_projectile_template.damage_profile,

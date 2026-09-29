@@ -115,17 +115,7 @@ UnlockKeyView.update = function (self, dt, t)
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
 	local input_service = self.input_manager:get_service("unlock_key_menu")
-	local entry_animation = self.ui_animations.entry_animation
-
-	if not entry_animation then
-		-- Nothing
-	end
-
-	entry_animation = self.ui_animations.exit_animation
-
-	local menu_animation_active = entry_animation
-
-	::label_10_0::
+	local menu_animation_active = not not self.ui_animations.entry_animation
 
 	for name, ui_animation in pairs(self.ui_animations) do
 		UIAnimation.update(ui_animation, dt)

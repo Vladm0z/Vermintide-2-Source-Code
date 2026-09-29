@@ -302,15 +302,7 @@ MatchmakingStateFlexmatchHost._start_matchmaking_cb = function (self, result, co
 		self._connection_info = data.connectionInfo
 		self._state = MatchmakingState.Succeeded
 
-		local var_19_0 = flexmatch_printf
-		local str = "Matchmaking successful. ipAddress: %s | port: %s | name: %s"
-		local ipAddress = self._connection_info.ipAddress
-		local port = self._connection_info.port
-		local name = self._connection_info.name
-
-		name = not not name or not not "???"
-
-		var_19_0(str, ipAddress, port, name)
+		flexmatch_printf("Matchmaking successful. ipAddress: %s | port: %s | name: %s", self._connection_info.ipAddress, self._connection_info.port, not not self._connection_info.name)
 	else
 		return self:_cancel_matchmaking("Got unexpected queue status: %s", self._queue_status)
 	end
@@ -337,15 +329,7 @@ MatchmakingStateFlexmatchHost._fetch_matchmaking_cb = function (self, result, co
 		self._connection_info = data.connectionInfo
 		self._state = MatchmakingState.Succeeded
 
-		local var_20_0 = flexmatch_printf
-		local str = "Matchmaking successful. ipAddress: %s | port: %s | name: %s"
-		local ipAddress = self._connection_info.ipAddress
-		local port = self._connection_info.port
-		local name = self._connection_info.name
-
-		name = not not name or not not "???"
-
-		var_20_0(str, ipAddress, port, name)
+		flexmatch_printf("Matchmaking successful. ipAddress: %s | port: %s | name: %s", self._connection_info.ipAddress, self._connection_info.port, not not self._connection_info.name)
 	elseif self._queue_status == FlexmatchQueueStatus.Queued then
 		local t = Managers.time:time("main")
 

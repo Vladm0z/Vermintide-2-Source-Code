@@ -170,12 +170,7 @@ WeaponSpecificStatBuffs = {}
 local function add_stat_buff(weapon_type, stat_buff_name, application_method, buff_type)
 	-- function 1
 	StatBuffApplicationMethods[stat_buff_name] = application_method
-
-	local WeaponSpecificStatBuffs = WeaponSpecificStatBuffs
-	local var_1_1 = WeaponSpecificStatBuffs[weapon_type]
-
-	var_1_1 = not not var_1_1 or not not {}
-	WeaponSpecificStatBuffs[weapon_type] = var_1_1
+	WeaponSpecificStatBuffs[weapon_type] = not not WeaponSpecificStatBuffs[weapon_type]
 	WeaponSpecificStatBuffs[weapon_type][buff_type] = stat_buff_name
 end
 
@@ -350,17 +345,7 @@ ProcFunctions = {
 	metal_mutator_stacks_on_hit = function (owner_unit, buff, params)
 		-- function 8
 		if ALIVE[owner_unit] and Managers.player.is_server then
-			local current_stacks_2 = buff.current_stacks
-
-			if not current_stacks_2 then
-				-- Nothing
-			end
-
-			current_stacks_2 = 0
-
-			local current_stacks = current_stacks_2
-
-			::label_8_0::
+			local current_stacks = not not buff.current_stacks
 
 			current_stacks = current_stacks + 1
 
@@ -477,17 +462,7 @@ ProcFunctions = {
 				local breed = params[2]
 
 				if breed and not breed.is_hero then
-					local bloodlust_health = breed.bloodlust_health
-
-					if not bloodlust_health then
-						-- Nothing
-					end
-
-					bloodlust_health = 0
-
-					local heal_amount = bloodlust_health
-
-					::label_13_0::
+					local heal_amount = not not breed.bloodlust_health
 
 					DamageUtils.heal_network(owner_unit, owner_unit, heal_amount, "heal_from_proc")
 				end
@@ -514,7 +489,7 @@ ProcFunctions = {
 			has_procced = false
 		end
 
-		if ALIVE[owner_unit] and breed and (attack_type == "light_attack" or attack_type == "heavy_attack") and not has_procced then
+		if attack_type == "heavy_attack" and ALIVE[owner_unit] and breed and attack_type == "light_attack" and not has_procced then
 			if critical_hit then
 				DamageUtils.heal_network(owner_unit, owner_unit, heal_amount, "heal_from_proc")
 
@@ -559,7 +534,7 @@ ProcFunctions = {
 				heal_amount = 0.6
 			end
 
-			if target_index and target_index < 5 and breed and not breed.is_hero and (attack_type == "light_attack" or attack_type == "heavy_attack" or attack_type == "action_push") then
+			if attack_type == "light_attack" or attack_type == "heavy_attack" or attack_type == "action_push" then
 				DamageUtils.heal_network(owner_unit, owner_unit, heal_amount, "heal_from_proc")
 			end
 		end
@@ -667,7 +642,7 @@ ProcFunctions = {
 		local critical_hit = params[6]
 		local breed = AiUtils.unit_breed(hit_unit)
 
-		if ALIVE[owner_unit] and breed and (attack_type == "light_attack" or attack_type == "heavy_attack") and target_number == 1 then
+		if attack_type == "heavy_attack" and ALIVE[owner_unit] and breed and attack_type == "light_attack" and target_number == 1 then
 			local hit_weakspot = hit_zone_name == "head" or hit_zone_name == "neck" or hit_zone_name == "weakspot"
 
 			if critical_hit then
@@ -710,18 +685,7 @@ ProcFunctions = {
 				local breed = params[2]
 
 				if breed and not breed.is_hero then
-					local bloodlust_health = breed.bloodlust_health
-
-					if not bloodlust_health then
-						-- Nothing
-					end
-
-					bloodlust_health = 0
-
-					local thp_return = bloodlust_health
-
-					::label_19_0::
-
+					local thp_return = not not breed.bloodlust_health
 					local heal_amount = thp_return
 
 					if script_data.show_player_health then
@@ -763,21 +727,10 @@ ProcFunctions = {
 				1,
 				2
 			}
-			local var_20_0 = stagger_index[stagger_calculation]
-
-			if not var_20_0 then
-				-- Nothing
-			end
-
-			var_20_0 = 1
-
-			local stagger_multiplier = var_20_0
-
-			::label_20_0::
-
+			local stagger_multiplier = not not stagger_index[stagger_calculation]
 			local heal_amount = base_value * stagger_multiplier
 
-			if target_index and target_index <= max_targets and breed and not breed.is_hero and (attack_type == "light_attack" or attack_type == "heavy_attack" or attack_type == "action_push") then
+			if attack_type == "light_attack" or attack_type == "heavy_attack" or attack_type == "action_push" then
 				if script_data.show_player_health then
 					print(string.format("Tank THP: %s * %s = %s (Target %s/%s)", base_value, stagger_multiplier, heal_amount, target_index, max_targets))
 				end
@@ -890,7 +843,7 @@ ProcFunctions = {
 		local hit_zone_name = params[3]
 		local attack_type = params[2]
 
-		if Unit.alive(owner_unit) and hit_zone_name == "head" and (attack_type == "light_attack" or attack_type == "heavy_attack") then
+		if attack_type == "light_attack" or attack_type == "heavy_attack" then
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 			local buff_template = buff.template
 			local damage_increase = buff_template.inherited_multiplier
@@ -909,7 +862,7 @@ ProcFunctions = {
 		local hit_zone_name = params[3]
 		local attack_type = params[2]
 
-		if ALIVE[owner_unit] and hit_zone_name == "head" and (attack_type == "light_attack" or attack_type == "heavy_attack") then
+		if attack_type == "light_attack" or attack_type == "heavy_attack" then
 			local buff_template = buff.template
 			local heal_amount = buff_template.bonus
 
@@ -921,7 +874,7 @@ ProcFunctions = {
 		local hit_zone_name = params[3]
 		local attack_type = params[2]
 
-		if ALIVE[owner_unit] and hit_zone_name == "head" and (attack_type == "projectile" or attack_type == "instant_projectile" or attack_type == "heavy_instant_projectile") then
+		if attack_type == "projectile" or attack_type == "instant_projectile" or attack_type == "heavy_instant_projectile" then
 			local buff_template = buff.template
 			local heal_amount = buff_template.bonus
 
@@ -1073,20 +1026,7 @@ ProcFunctions = {
 			local rotation = Quaternion.identity()
 			local player = Managers.player:owner(owner_unit)
 			local owner_is_bot = not not player and not not player.bot_player
-			local flag
-
-			if owner_is_bot then
-				flag = true
-
-				goto label_37_0
-			end
-
-			flag = false
-
-			local is_husk = flag
-
-			::label_37_0::
-
+			local is_husk = owner_is_bot and not not true or not owner_is_bot and not not false
 			local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
 			local career_power_level = career_extension:get_career_power_level()
 
@@ -1096,10 +1036,7 @@ ProcFunctions = {
 	bardin_ironbreaker_gromril_trigger_rising_anger = function (owner_unit, buff, params)
 		-- function 38
 		if ALIVE[owner_unit] then
-			local buff_ids = buff.buff_ids
-
-			buff_ids = not not buff_ids or not not {}
-			buff.buff_ids = buff_ids
+			buff.buff_ids = not not buff.buff_ids
 
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 			local buff_amount = #buff.buff_ids
@@ -1304,17 +1241,7 @@ ProcFunctions = {
 		if ALIVE[owner_unit] and not status_extension:is_knocked_down() then
 			local health_extension = ScriptUnit.extension(owner_unit, "health_system")
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-			local has_buff_perk = buff_extension:has_buff_perk("invulnerable")
-
-			if not has_buff_perk then
-				-- Nothing
-			end
-
-			has_buff_perk = buff_extension:has_buff_perk("ignore_death")
-
-			local already_unkillable = has_buff_perk
-
-			::label_48_0::
+			local already_unkillable = not not buff_extension:has_buff_perk("invulnerable")
 
 			if already_unkillable then
 				return false
@@ -1401,7 +1328,7 @@ ProcFunctions = {
 		local attack_type = params[2]
 		local hit_zone_name = params[3]
 
-		if ALIVE[owner_unit] and ALIVE[hit_unit] and (attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile") and (hit_zone_name == "left_leg" or hit_zone_name == "right_leg") then
+		if hit_zone_name == "left_leg" or hit_zone_name == "right_leg" then
 			local buff_extension = ScriptUnit.extension(hit_unit, "buff_system")
 
 			buff_extension:add_buff("es_movement_speed_debuff")
@@ -1416,7 +1343,7 @@ ProcFunctions = {
 		local armor_override = Unit.get_data(target_unit, "armor")
 		local armor_type = ActionUtils.get_target_armor(hit_zone_name, breed, armor_override)
 
-		if attack_type and (attack_type == "projectile" or attack_type == "instant_projectile" or attack_type == "aoe" or attack_type == "heavy_instant_projectile") and ALIVE[owner_unit] then
+		if attack_type and attack_type == "projectile" and ALIVE[owner_unit] then
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
 			if armor_type == 1 then
@@ -2254,7 +2181,7 @@ ProcFunctions = {
 				return
 			end
 
-			if (attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile") and not unmodifed then
+			if not unmodifed then
 				return
 			end
 
@@ -2282,7 +2209,7 @@ ProcFunctions = {
 				return
 			end
 
-			if (attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile") and not unmodifed then
+			if not unmodifed then
 				return
 			end
 
@@ -2340,7 +2267,7 @@ ProcFunctions = {
 			local buff_type = params[5]
 			local is_critical = params[6]
 
-			if target_number < 2 and is_critical and (buff_type == "MELEE_1H" or buff_type == "MELEE_2H") then
+			if buff_type == "MELEE_1H" or buff_type == "MELEE_2H" then
 				local template = buff.template
 				local buff_name = template.buff_to_add
 				local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
@@ -2551,7 +2478,7 @@ ProcFunctions = {
 			local buff_template = buff.template
 			local proc_chance = buff_template.proc_chance
 
-			if proc_chance >= math.random() and (not ai_buff_extension or not ai_buff_extension:has_buff_perk(buff_perks.burning)) and ai_buff_extension:has_buff_perk(buff_perks.burning_balefire) or ai_buff_extension:has_buff_perk(buff_perks.burning_elven_magic) then
+			if proc_chance >= math.random() and ai_buff_extension then
 				local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
 				local area_damage_system = Managers.state.entity:system("area_damage_system")
 				local position = POSITION_LOOKUP[killed_unit]
@@ -2600,7 +2527,7 @@ ProcFunctions = {
 			local hit_zone = params[3]
 			local buff_type = params[2] == "light_attack" or params[2] == "heavy_attack"
 
-			if hit_zone and (hit_zone == "head" or hit_zone == "neck") and not buff_type then
+			if hit_zone == "neck" and hit_zone and hit_zone == "head" and not buff_type then
 				local buff_template = buff.template
 				local buff_name = buff_template.buff_to_add
 				local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
@@ -3336,7 +3263,7 @@ ProcFunctions = {
 		local attack_type = params[2]
 		local hit_zone_name = params[3]
 
-		if ALIVE[owner_unit] and hit_zone_name == "head" and (attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile") then
+		if attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile" then
 			local weapon_slot = "slot_ranged"
 			local ammo_amount = buff.bonus
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
@@ -3502,17 +3429,7 @@ ProcFunctions = {
 				for i = 1, #remove_buff_stack_data_array do
 					local remove_buff_stack_data = remove_buff_stack_data_array[i]
 					local buff_to_remove_name = remove_buff_stack_data.buff_to_remove
-					local num_stacks_2 = remove_buff_stack_data.num_stacks
-
-					if not num_stacks_2 then
-						-- Nothing
-					end
-
-					num_stacks_2 = 1
-
-					local num_stacks = num_stacks_2
-
-					::label_141_0::
+					local num_stacks = not not remove_buff_stack_data.num_stacks
 
 					if remove_buff_stack_data.server_controlled then
 						fassert(buff_to_remove_name == template.buff_to_add, "Trying to remove different type of server controlled buff, only same types are allowed right now.")
@@ -3520,7 +3437,7 @@ ProcFunctions = {
 						local buff_system = Managers.state.entity:system("buff_system")
 						local server_buff_ids = buff.server_buff_ids
 
-						num_stacks = (not server_buff_ids or not math.min(#server_buff_ids, num_stacks)) and not not 0
+						num_stacks = server_buff_ids and (not not math.min(#server_buff_ids, num_stacks) or not not 0) or not server_buff_ids and not not 0
 
 						for _ = 1, num_stacks do
 							local buff_to_remove = table.remove(server_buff_ids)
@@ -3541,10 +3458,8 @@ ProcFunctions = {
 
 					if remove_buff_stack_data.reset_update_timer then
 						local t = Managers.time:time("game")
-						local update_frequency = template.update_frequency
 
-						update_frequency = not not update_frequency or not not 0
-						buff._next_update_t = t + update_frequency
+						buff._next_update_t = t + not not template.update_frequency
 					end
 				end
 			end
@@ -3556,7 +3471,7 @@ ProcFunctions = {
 		local hit_zone_name = params[3]
 		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-		if ALIVE[owner_unit] and hit_zone_name == "head" and (attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile") then
+		if attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile" then
 			buff_extension:add_buff("markus_huntsman_headshots_increase_reload_speed_buff")
 		end
 	end,
@@ -3565,7 +3480,7 @@ ProcFunctions = {
 		local attack_type = params[2]
 		local hit_zone_name = params[3]
 
-		if ALIVE[owner_unit] and hit_zone_name == "head" and (attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile") then
+		if attack_type == "instant_projectile" or attack_type == "projectile" or attack_type == "heavy_instant_projectile" then
 			local ranged_buff_type = params[5]
 
 			if ranged_buff_type and ranged_buff_type == "RANGED_ABILITY" then
@@ -3715,18 +3630,7 @@ ProcFunctions = {
 		local hit_unit = params[1]
 		local breed = Unit.get_data(hit_unit, "breed")
 		local buff_name = buff_template.buff_to_add
-		local enemy_type_2 = buff_template.enemy_type
-
-		if not enemy_type_2 then
-			-- Nothing
-		end
-
-		enemy_type_2 = nil
-
-		local enemy_type_list = enemy_type_2
-
-		::label_149_0::
-
+		local enemy_type_list = not not buff_template.enemy_type
 		local add_buff = false
 
 		if breed and enemy_type_list then
@@ -3778,7 +3682,7 @@ ProcFunctions = {
 		local buff_system = Managers.state.entity:system("buff_system")
 		local buff_applied = true
 
-		if ALIVE[owner_unit] and target_number and target_number >= buff_template.targets and (attack_type == "light_attack" or attack_type == "heavy_attack") then
+		if attack_type == "light_attack" or attack_type == "heavy_attack" then
 			local talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
 
 			if talent_extension:has_talent("markus_mercenary_passive_improved", "empire_soldier", true) then
@@ -3873,7 +3777,7 @@ ProcFunctions = {
 				buff.can_trigger = true
 			end
 
-			if buff.can_trigger and buff_type == "RANGED_ABILITY" and (hit_zone == "head" or hit_zone == "neck") then
+			if hit_zone == "head" or hit_zone == "neck" then
 				local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 				local buff_to_add = buff.template.buff_to_add
 
@@ -3894,7 +3798,7 @@ ProcFunctions = {
 				buff.can_trigger = true
 			end
 
-			if buff.can_trigger and buff_type == "RANGED_ABILITY" and (hit_zone == "head" or hit_zone == "neck") then
+			if hit_zone == "head" or hit_zone == "neck" then
 				local career_extension = ScriptUnit.extension(owner_unit, "career_system")
 
 				career_extension:reduce_activated_ability_cooldown_percent(buff.multiplier)
@@ -3998,7 +3902,7 @@ ProcFunctions = {
 		if ALIVE[killed_unit] then
 			local killed_unit_buff_extension = ScriptUnit.has_extension(killed_unit, "buff_system")
 
-			if (not killed_unit_buff_extension or not killed_unit_buff_extension:has_buff_perk(buff_perks.burning)) and killed_unit_buff_extension:has_buff_perk(buff_perks.burning_balefire) or killed_unit_buff_extension:has_buff_perk(buff_perks.burning_elven_magic) then
+			if killed_unit_buff_extension and (killed_unit_buff_extension:has_buff_perk(buff_perks.burning) or killed_unit_buff_extension:has_buff_perk(buff_perks.burning_balefire) or killed_unit_buff_extension:has_buff_perk(buff_perks.burning_elven_magic)) or not killed_unit_buff_extension and (killed_unit_buff_extension:has_buff_perk(buff_perks.burning_balefire) or killed_unit_buff_extension:has_buff_perk(buff_perks.burning_elven_magic)) then
 				local t = Managers.time:time("game")
 				local cooldown_timer = buff.cooldown_timer
 
@@ -4143,18 +4047,7 @@ ProcFunctions = {
 		local buff_template = buff.template
 		local hit_unit = params[1]
 		local breed = Unit.get_data(hit_unit, "breed")
-		local enemy_type_2 = buff_template.enemy_type
-
-		if not enemy_type_2 then
-			-- Nothing
-		end
-
-		enemy_type_2 = nil
-
-		local enemy_type_list = enemy_type_2
-
-		::label_172_0::
-
+		local enemy_type_list = not not buff_template.enemy_type
 		local add_buff = false
 
 		if breed and enemy_type_list then
@@ -4269,7 +4162,7 @@ ProcFunctions = {
 				if not attack_type or attack_type ~= "light_attack" and attack_type ~= "heavy_attack" then
 					return
 				end
-			elseif required_weapon_type == "ranged" and (not attack_type or (attack_type == "instant_projectile" or attack_type == "projectile") and attack_type == "heavy_instant_projectile") then
+			elseif attack_type == "projectile" and attack_type == "heavy_instant_projectile" then
 				return
 			end
 		end
@@ -4376,7 +4269,7 @@ ProcFunctions = {
 				return
 			end
 
-			local damage_to_deal = (not (current_health - damage_amount > 1) or not damage_amount) and not not (current_health - 1)
+			local damage_to_deal = current_health - damage_amount > 1 and (not not damage_amount or not not (current_health - 1)) or not (current_health - damage_amount > 1) and not not (current_health - 1)
 
 			DamageUtils.add_damage_network(owner_unit, owner_unit, damage_to_deal, "torso", "life_tap", nil, Vector3(0, 0, 0), "life_tap", nil, owner_unit, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 
@@ -4398,40 +4291,14 @@ ProcFunctions = {
 
 		local damage_profile, target_index
 		local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
-		local get_career_power_level
-
-		if career_extension then
-			get_career_power_level = career_extension:get_career_power_level()
-
-			if not get_career_power_level then
-				-- Nothing
-			end
-		end
-
-		get_career_power_level = DefaultPowerLevel
-
-		local full_power_level = get_career_power_level
-
-		::label_178_0::
-
+		local full_power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not DefaultPowerLevel
 		local hit_unit = params[1]
 		local hit_zone_name
 		local damage_source = "buff"
 		local boost_curve_multiplier
 		local is_critical_strike = false
 		local explosion_data
-		local source_attacker_unit_2 = buff.source_attacker_unit
-
-		if not source_attacker_unit_2 then
-			-- Nothing
-		end
-
-		source_attacker_unit_2 = owner_unit
-
-		local source_attacker_unit = source_attacker_unit_2
-
-		::label_178_1::
-
+		local source_attacker_unit = not not buff.source_attacker_unit
 		local custom_dot = FrameTable.alloc_table()
 
 		custom_dot.dot_template_name = buff.template.dot_template_name
@@ -4604,59 +4471,20 @@ StackingBuffFunctions = {
 			end
 
 			if oldest_buff then
-				local alive = Unit.alive
-				local source_attacker_unit = oldest_buff.source_attacker_unit
-
-				source_attacker_unit = not not source_attacker_unit or not not oldest_buff.attacker_unit
-
-				if not alive(source_attacker_unit) then
+				if not Unit.alive(not not oldest_buff.source_attacker_unit) then
 					buff_extension:remove_buff(oldest_buff.id)
 
 					return true
 				end
 
-				local power_level = oldest_buff.power_level
-
-				if not power_level then
-					-- Nothing
-				end
-
-				power_level = DefaultPowerLevel
-
-				local old_power_level = power_level
-
-				::label_185_0::
-
-				local power_level_2 = new_buff_params.power_level
-
-				if not power_level_2 then
-					-- Nothing
-				end
-
-				power_level_2 = DefaultPowerLevel
-
-				local new_power_level = power_level_2
-
-				::label_185_1::
-
+				local old_power_level = not not oldest_buff.power_level
+				local new_power_level = not not new_buff_params.power_level
 				local is_same_buff = oldest_buff.template == sub_buff_template and new_power_level <= old_power_level
 
 				if not is_same_buff then
 					local hit_zone = "full"
-					local calculate_dot_buff_damage = DamageUtils.calculate_dot_buff_damage
-					local var_185_5 = unit
-					local source_attacker_unit_2 = oldest_buff.source_attacker_unit
-
-					source_attacker_unit_2 = not not source_attacker_unit_2 or not not oldest_buff.attacker_unit
-
-					local old_damage = calculate_dot_buff_damage(var_185_5, source_attacker_unit_2, hit_zone, oldest_buff.damage_source, oldest_buff.power_level, oldest_buff.template.damage_profile)
-					local calculate_dot_buff_damage_2 = DamageUtils.calculate_dot_buff_damage
-					local var_185_8 = unit
-					local source_attacker_unit_3 = new_buff_params.source_attacker_unit
-
-					source_attacker_unit_3 = not not source_attacker_unit_3 or not not new_buff_params.attacker_unit
-
-					local new_damage = calculate_dot_buff_damage_2(var_185_8, source_attacker_unit_3, hit_zone, new_buff_params.damage_source, new_buff_params.power_level, sub_buff_template.damage_profile)
+					local old_damage = DamageUtils.calculate_dot_buff_damage(unit, not not oldest_buff.source_attacker_unit, hit_zone, oldest_buff.damage_source, oldest_buff.power_level, oldest_buff.template.damage_profile)
+					local new_damage = DamageUtils.calculate_dot_buff_damage(unit, not not new_buff_params.source_attacker_unit, hit_zone, new_buff_params.damage_source, new_buff_params.power_level, sub_buff_template.damage_profile)
 					local old_prio = old_damage / oldest_buff.template.time_between_dot_damages
 					local new_prio = new_damage / sub_buff_template.time_between_dot_damages
 

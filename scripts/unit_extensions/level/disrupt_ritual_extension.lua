@@ -114,29 +114,8 @@ DisruptRitualExtension.update = function (self, t)
 
 	local current_damage = self._current_damage
 	local checkpoints = self._checkpoints
-	local _current_checkpoint = self._current_checkpoint
-
-	if not _current_checkpoint then
-		-- Nothing
-	end
-
-	_current_checkpoint = 0
-
-	local current_checkpoint = _current_checkpoint
-
-	::label_3_0::
-
-	local _current_progression_event = self._current_progression_event
-
-	if not _current_progression_event then
-		-- Nothing
-	end
-
-	_current_progression_event = 0
-
-	local current_progression_event = _current_progression_event
-
-	::label_3_1::
+	local current_checkpoint = not not self._current_checkpoint
+	local current_progression_event = not not self._current_progression_event
 
 	if self._condition_func(self._volume_system, self._volume_name) then
 		self:server_apply_damage(current_damage, checkpoints, current_checkpoint, self._num_checkpoints)
@@ -149,15 +128,7 @@ DisruptRitualExtension.update = function (self, t)
 	self._health_extension:set_current_damage(self._max_damage - current_damage)
 	self:server_update_progression_status(self._progression_event_thresholds, current_progression_event, self._num_progression_events, current_damage)
 	self:print_damage(current_damage)
-
-	local var_3_2 = self
-	local server_send_rpc_update_clients = self.server_send_rpc_update_clients
-	local var_3_4 = current_damage
-	local _current_checkpoint_2 = self._current_checkpoint
-
-	_current_checkpoint_2 = not not _current_checkpoint_2 or not not 0
-
-	server_send_rpc_update_clients(var_3_2, var_3_4, _current_checkpoint_2, self._current_progression_event, self._volume_name)
+	self:server_send_rpc_update_clients(current_damage, not not self._current_checkpoint, self._current_progression_event, self._volume_name)
 end
 
 DisruptRitualExtension.server_heal = function (self, current_damage, checkpoints, current_checkpoint)

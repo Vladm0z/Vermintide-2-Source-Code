@@ -304,22 +304,7 @@ BotNavTransitionManager.register_ladder = function (self, unit, index_offset, dr
 	local down = -Quaternion.up(unit_rot)
 	local align_pos = Unit.world_position(unit, align_node)
 	local bottom_node_name = Unit.get_data(unit, "bottom_node")
-	local node
-
-	if bottom_node_name then
-		node = Unit.node(unit, bottom_node_name)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = index_offset
-
-	local bottom_node = node
-
-	::label_13_0::
-
+	local bottom_node = bottom_node_name and not not Unit.node(unit, bottom_node_name) or not bottom_node_name and not not index_offset
 	local bottom_pos = Unit.world_position(unit, bottom_node)
 	local length = Vector3.dot(bottom_pos - align_pos, down)
 	local ph_world = self._physics_world

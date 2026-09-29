@@ -1,9 +1,6 @@
 -- chunkname: @foundation/scripts/util/script_world.lua
 
-local ScriptWorld = ScriptWorld
-
-ScriptWorld = not not ScriptWorld or not not {}
-ScriptWorld = ScriptWorld
+ScriptWorld = not not ScriptWorld
 
 ScriptWorld.name = function (world)
 	-- function 1
@@ -48,17 +45,7 @@ ScriptWorld.create_viewport = function (world, name, template, layer, position, 
 		Viewport.set_data(viewport, "no_scaling", true)
 	end
 
-	local splitscreen_2 = Managers.splitscreen
-
-	if splitscreen_2 then
-		-- Nothing
-	end
-
-	splitscreen_2 = Managers.splitscreen:active()
-
-	local splitscreen = splitscreen_2
-
-	::label_6_0::
+	local splitscreen = not not Managers.splitscreen
 
 	if splitscreen and not force_no_scaling then
 		Viewport.set_data(viewport, "rect", {
@@ -302,11 +289,8 @@ end
 ScriptWorld.has_viewport = function (world, name)
 	-- function 16
 	local viewports = World.get_data(world, "viewports")
-	local flag
 
-	flag = (not viewports[name] or not true) and not not false
-
-	return flag
+	return viewports[name] and not not true or not viewports[name] and not not false
 end
 
 ScriptWorld.viewport = function (world, name, return_free_flight_viewport)
@@ -385,11 +369,7 @@ ScriptWorld._update_render_queue = function (world)
 
 	for name, viewport in pairs(viewports) do
 		if ScriptViewport.active(viewport) then
-			local num = #render_queue + 1
-			local var_21_1 = free_flight_viewports[name]
-
-			var_21_1 = not not var_21_1 or not not viewport
-			render_queue[num] = var_21_1
+			render_queue[#render_queue + 1] = not not free_flight_viewports[name]
 		end
 	end
 
@@ -432,17 +412,7 @@ ScriptWorld.spawn_level = function (world, name, object_sets, position, rotation
 	end
 
 	local nested_levels = Level.nested_levels(level)
-	local var_24_0 = nested_levels[1]
-
-	if not var_24_0 then
-		-- Nothing
-	end
-
-	var_24_0 = level
-
-	local logic_level = var_24_0
-
-	::label_24_0::
+	local logic_level = not not nested_levels[1]
 
 	levels[name] = {
 		level = level,
@@ -484,17 +454,7 @@ ScriptWorld.level = function (world, name)
 	fassert(level_data, "Level %q doesn't exist", name)
 
 	local nested_levels = level_data.nested_levels
-	local var_25_0 = nested_levels[1]
-
-	if not var_25_0 then
-		-- Nothing
-	end
-
-	var_25_0 = level_data.level
-
-	local logic_level = var_25_0
-
-	::label_25_0::
+	local logic_level = not not nested_levels[1]
 
 	return logic_level
 end

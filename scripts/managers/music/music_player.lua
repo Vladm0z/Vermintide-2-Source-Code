@@ -69,11 +69,7 @@ end
 
 MusicPlayer.is_playing = function (self)
 	-- function 7
-	local _playing = self._playing
-
-	_playing = not not _playing and not not not table.is_empty(self._old_music)
-
-	return _playing
+	return not not self._playing
 end
 
 MusicPlayer.set_group_state = function (self, group, state)

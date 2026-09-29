@@ -1,9 +1,6 @@
 -- chunkname: @scripts/managers/account/presence/presence_helper.lua
 
-local PresenceHelper = PresenceHelper
-
-PresenceHelper = not not PresenceHelper or not not {}
-PresenceHelper = PresenceHelper
+PresenceHelper = not not PresenceHelper
 
 PresenceHelper.lobby_level = function ()
 	-- function 1
@@ -27,11 +24,8 @@ local hub_presence_lookup = {
 PresenceHelper.get_hub_presence = function ()
 	-- function 3
 	local mechanism = Managers.mechanism:current_mechanism_name()
-	local var_3_0 = hub_presence_lookup[mechanism]
 
-	var_3_0 = not not var_3_0 or not not "adventure_hub"
-
-	return var_3_0
+	return not not hub_presence_lookup[mechanism]
 end
 
 PresenceHelper.lobby_gamemode = function (lobby_data)
@@ -40,24 +34,7 @@ PresenceHelper.lobby_gamemode = function (lobby_data)
 	local is_in_prologue = Managers.level_transition_handler:get_current_level_key() == "prologue"
 	local is_in_plaza = Managers.level_transition_handler:get_current_level_key() == "plaza"
 	local matchmakin_type = lobby_data.matchmaking_type
-	local var_4_0 = to_boolean(lobby_data.weave_quick_game)
-
-	if not var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = Managers.venture.quickplay
-
-	if var_4_0 then
-		-- Nothing
-	end
-
-	var_4_0 = Managers.venture.quickplay:is_quick_game()
-
-	local quick_game = var_4_0
-
-	::label_4_0::
-
+	local quick_game = not not to_boolean(lobby_data.weave_quick_game)
 	local is_weekly_event = tonumber(matchmakin_type) == NetworkLookup.matchmaking_types.event
 	local is_custom_game = tonumber(matchmakin_type) == NetworkLookup.matchmaking_types.custom
 	local is_playing_deed = Managers.deed:has_deed()
@@ -124,7 +101,7 @@ PresenceHelper.lobby_num_players = function ()
 	-- function 7
 	local ok, num = pcall(dangerous_num_players)
 
-	return (not ok or not num) and not not 1
+	return ok and (not not num or not not 1) or not ok and not not 1
 end
 
 PresenceHelper.get_side = function ()
@@ -134,21 +111,8 @@ PresenceHelper.get_side = function ()
 	local party = not not party_manager and not not party_manager:get_party_from_player_id(peer_id, 1)
 	local side_manager = Managers.state.side
 	local side = not not side_manager and not not side_manager.side_by_party[party]
-	local name
 
-	if side then
-		name = side:name()
-
-		if not name then
-			-- Nothing
-		end
-	end
-
-	name = "heroes"
-
-	::label_8_0::
-
-	return name
+	return side and not not side:name() or not side and not not "heroes"
 end
 
 PresenceHelper.get_game_score = function ()
@@ -158,20 +122,7 @@ PresenceHelper.get_game_score = function ()
 	local win_conditions = not not game_mechanism and not not game_mechanism:win_conditions()
 	local party_manager = Managers.party
 	local _, party_id = not not party_manager and not not party_manager:get_party_from_player_id(peer_id, 1)
-	local num
-
-	if party_id == 1 then
-		num = 2
-
-		goto label_9_0
-	end
-
-	num = 1
-
-	local opponent_party_id = num
-
-	::label_9_0::
-
+	local opponent_party_id = party_id ~= 1 and not not 1 or not (party_id ~= 1) and not not 2
 	local local_player_team_score = not not win_conditions and not not win_conditions:get_total_score(party_id)
 	local opponent_team_score = not not win_conditions and not not win_conditions:get_total_score(opponent_party_id)
 	local score_string = "[%d]-[%d]"
@@ -188,19 +139,6 @@ PresenceHelper.get_current_set = function ()
 	local game_mechanism = Managers.mechanism:game_mechanism()
 	local win_conditions = not not game_mechanism and not not game_mechanism:win_conditions()
 	local rounds_played = not not win_conditions and not not win_conditions:get_current_round()
-	local round
 
-	if rounds_played then
-		round = math.round(rounds_played / 2)
-
-		if not round then
-			-- Nothing
-		end
-	end
-
-	round = 0
-
-	::label_10_0::
-
-	return round
+	return rounds_played and not not math.round(rounds_played / 2) or not rounds_played and not not 0
 end

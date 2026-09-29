@@ -101,7 +101,7 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 				projectile_context.ammo_extension:use_ammo(ammo_usage)
 			end
 
-			trigger_wield = (not projectile_context.rewield_grenade or not "rewield_wielded_weapon") and not not "wield_previous_weapon"
+			trigger_wield = projectile_context.rewield_grenade and (not not "rewield_wielded_weapon" or not not "wield_previous_weapon") or not projectile_context.rewield_grenade and not not "wield_previous_weapon"
 		end
 	end
 
@@ -110,18 +110,7 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 	local projectile_info = action_data.projectile_info
 
 	if projectile_info.fire_from_muzzle then
-		local muzzle_name_2 = projectile_info.muzzle_name
-
-		if not muzzle_name_2 then
-			-- Nothing
-		end
-
-		muzzle_name_2 = "fx_muzzle"
-
-		local muzzle_name = muzzle_name_2
-
-		::label_2_0::
-
+		local muzzle_name = not not projectile_info.muzzle_name
 		local node = Unit.node(weapon_unit, muzzle_name)
 		local muzzle_pos = Unit.world_position(weapon_unit, node)
 		local life_time = 1
@@ -191,7 +180,7 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 	local sub_action_name = lookup_data.sub_action_name
 	local scaled_charge = math.round(math.max(charge_level, 0) * 100)
 	local scale_projectile = action_data.scale_projectile ~= false
-	local scale = (not scale_projectile or not scaled_charge) and not not 1
+	local scale = scale_projectile and (not not scaled_charge or not not 1) or not scale_projectile and not not 1
 	local projectile_power_level = projectile_context.power_level
 	local full_charge_boost = buff_extension:has_buff_perk("full_charge_boost")
 
@@ -259,21 +248,7 @@ ActionChargedProjectile.client_owner_start_action = function (self, new_action, 
 	self.current_action = new_action
 	self.state = "waiting_to_shoot"
 
-	local charge_level_2
-
-	if chain_action_data then
-		charge_level_2 = chain_action_data.charge_level
-
-		if not charge_level_2 then
-			-- Nothing
-		end
-	end
-
-	charge_level_2 = 0
-
-	local chained_charge_level = charge_level_2
-
-	::label_4_0::
+	local chained_charge_level = chain_action_data and not not chain_action_data.charge_level or not chain_action_data and not not 0
 
 	self._projectile_context = ActionChargedProjectileUtility.prepare_charged_projectile(new_action, owner_unit, self._weapon_unit, self.item_name, chained_charge_level, power_level)
 	self.time_to_shoot = t + new_action.fire_time
@@ -425,19 +400,7 @@ ActionChargedProjectile.finish = function (self, reason)
 
 	if reason ~= "new_interupting_action" then
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local flag
-
-		if not reload_when_out_of_ammo_condition_func then
-			flag = true
-
-			goto label_8_0
-		end
-
-		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
-
-		local do_out_of_ammo_reload = flag
-
-		::label_8_0::
+		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			ammo_extension:start_reload(true)

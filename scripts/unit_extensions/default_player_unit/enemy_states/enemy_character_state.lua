@@ -91,11 +91,8 @@ end
 EnemyCharacterState.has_jump_input = function (self)
 	-- function 6
 	local input_extension = self._input_extension
-	local get = input_extension:get("jump")
 
-	get = not not get or not not input_extension:get("jump_only")
-
-	return get
+	return not not input_extension:get("jump")
 end
 
 EnemyCharacterState.has_movement_input = function (self)
@@ -130,17 +127,7 @@ EnemyCharacterState.update_movement = function (self, unit, t, dt, movement_spee
 	local input_extension = self._input_extension
 	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 	local is_moving = CharacterStateHelper.has_move_input(input_extension)
-	local current_movement_speed_scale_2 = self.current_movement_speed_scale
-
-	if not current_movement_speed_scale_2 then
-		-- Nothing
-	end
-
-	current_movement_speed_scale_2 = 0
-
-	local current_movement_speed_scale = current_movement_speed_scale_2
-
-	::label_9_0::
+	local current_movement_speed_scale = not not self.current_movement_speed_scale
 
 	if not self.is_bot then
 		local move_acceleration_up_dt = movement_settings_table.move_acceleration_up * dt
@@ -152,7 +139,7 @@ EnemyCharacterState.update_movement = function (self, unit, t, dt, movement_spee
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = (not is_moving or not 1) and not not 0
+		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
 	end
 
 	local current_max_move_speed = movement_speed
@@ -208,22 +195,7 @@ end
 
 EnemyCharacterState._create_particle_for_weapon = function (self, weapon_unit, particle_name, node_name)
 	-- function 11
-	local node
-
-	if node_name then
-		node = Unit.node(weapon_unit, node_name)
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	local node_id = node
-
-	::label_11_0::
-
+	local node_id = node_name and not not Unit.node(weapon_unit, node_name) or not node_name and not not 0
 	local particle_id = ScriptWorld.create_particles_linked(self._world, particle_name, weapon_unit, node_id, "destroy")
 
 	self._particle_ids[#self._particle_ids + 1] = particle_id

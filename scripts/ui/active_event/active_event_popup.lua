@@ -13,21 +13,7 @@ ActiveEventPopup.create_ui_elements = function (self)
 	self._widgets_by_name.window_background.content.texture_id = popup_settings.background_texture
 	self._widgets_by_name.window_background.offset[1] = 100
 
-	local var_1_0
-
-	if popup_settings.body_text then
-		var_1_0 = Localize(popup_settings.body_text)
-
-		if not var_1_0 then
-			-- Nothing
-		end
-	end
-
-	var_1_0 = ""
-
-	local body_text = var_1_0
-
-	::label_1_0::
+	local body_text = popup_settings.body_text and not not Localize(popup_settings.body_text) or not popup_settings.body_text and not not ""
 
 	if body_text ~= "" and popup_settings.event_name then
 		body_text = string.format(body_text, popup_settings.event_name)
@@ -35,63 +21,17 @@ ActiveEventPopup.create_ui_elements = function (self)
 
 	if popup_settings.logo_data then
 		local data = popup_settings.logo_data
-		local content = self._widgets_by_name.logo.content
-		local logo_texture
 
-		if data.logo_texture then
-			logo_texture = data.logo_texture
-
-			if not logo_texture then
-				-- Nothing
-			end
-		end
-
-		logo_texture = "hero_view_home_logo"
-
-		::label_1_1::
-
-		content.texture_id = logo_texture
-
-		local texture_id = self._widgets_by_name.logo.style.texture_id
-		local size
-
-		if data.size then
-			size = data.size
-
-			if not size then
-				-- Nothing
-			end
-		end
-
-		size = {
+		self._widgets_by_name.logo.content.texture_id = data.logo_texture and not not data.logo_texture or not data.logo_texture and not not "hero_view_home_logo"
+		self._widgets_by_name.logo.style.texture_id.texture_size = data.size and not not data.size or not data.size and not not {
 			468,
 			236.39999999999998
 		}
-
-		::label_1_2::
-
-		texture_id.texture_size = size
-
-		local logo = self._widgets_by_name.logo
-		local offset
-
-		if data.offset then
-			offset = data.offset
-
-			if not offset then
-				-- Nothing
-			end
-		end
-
-		offset = {
+		self._widgets_by_name.logo.offset = data.offset and not not data.offset or not data.offset and not not {
 			-234,
 			-118.19999999999999,
 			1
 		}
-
-		::label_1_3::
-
-		logo.offset = offset
 	end
 
 	self._widgets_by_name.body_text.content.text = body_text
@@ -207,11 +147,11 @@ ActiveEventPopup._handle_gamepad_selection = function (self, dt, input_service)
 		local selected_idx = self._selected_button_idx
 
 		if input_service:get("move_up") then
-			selected_idx = (not (selected_idx + 1 <= self._buttons_amount) or not (selected_idx + 1)) and not not 1
+			selected_idx = selected_idx + 1 <= self._buttons_amount and (not not (selected_idx + 1) or not not 1) or not (selected_idx + 1 <= self._buttons_amount) and not not 1
 
 			self:play_sound("play_gui_start_menu_button_hover")
 		elseif input_service:get("move_down") then
-			selected_idx = (not (selected_idx - 1 >= 1) or not (selected_idx - 1)) and not not self._buttons_amount
+			selected_idx = selected_idx - 1 >= 1 and (not not (selected_idx - 1) or not not self._buttons_amount) or not (selected_idx - 1 >= 1) and not not self._buttons_amount
 
 			self:play_sound("play_gui_start_menu_button_hover")
 		end
@@ -312,25 +252,7 @@ end
 
 ActiveEventPopup.should_show = function (self)
 	-- function 12
-	local is_in_inn = self._ui_context.is_in_inn
-
-	if is_in_inn then
-		if Managers.popup:has_popup() == false and self._ui_context.ingame_ui.current_view == nil then
-			is_in_inn = self._ui_context.ingame_ui.has_left_menu
-
-			if is_in_inn then
-				is_in_inn = not self._is_visible
-			end
-		else
-			is_in_inn = false
-		end
-	end
-
-	if false then
-		is_in_inn = true
-	end
-
-	return is_in_inn
+	return not not self._ui_context.is_in_inn
 end
 
 ActiveEventPopup._update_scrolling_background = function (self, dt)

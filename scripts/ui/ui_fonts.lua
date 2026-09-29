@@ -105,10 +105,7 @@ function UIFontByResolution(font_style, optional_scale)
 	return Fonts[font_type], math_max(font_size, 1)
 end
 
-local FontHeights = FontHeights
-
-FontHeights = not not FontHeights or not not {}
-FontHeights = FontHeights
+FontHeights = not not FontHeights
 
 function UISetupFontHeights(gui)
 	-- function 2
@@ -124,10 +121,8 @@ end
 function UIGetFontHeight(gui, font_name, font_size)
 	-- function 3
 	local FontHeights = FontHeights
-	local var_3_0 = FontHeights[font_name]
 
-	var_3_0 = not not var_3_0 or not not {}
-	FontHeights[font_name] = var_3_0
+	FontHeights[font_name] = not not FontHeights[font_name]
 
 	local height_data = FontHeights[font_name][font_size]
 

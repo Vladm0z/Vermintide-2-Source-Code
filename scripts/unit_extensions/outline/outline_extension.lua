@@ -32,11 +32,7 @@ OutlineExtension.add_outline = function (self, settings)
 	end
 
 	settings._unique_id = unique_id
-
-	local priority_2 = settings.priority
-
-	priority_2 = not not priority_2 or not not 0
-	settings.priority = priority_2
+	settings.priority = not not settings.priority
 
 	local settings_bucket = self.outline_settings
 	local num_settings_buckets = #settings_bucket
@@ -138,84 +134,13 @@ OutlineExtension._refresh_current_outline = function (self, reapply)
 	local default = self._default_settings
 	local current_settings = self.outline_settings[1][1]
 	local new_color = not current_settings.outline_color or self.outline_color ~= current_settings.outline_color
-	local outline_color
 
-	if current_settings.outline_color then
-		outline_color = current_settings.outline_color
-
-		if not outline_color then
-			-- Nothing
-		end
-	end
-
-	outline_color = default.outline_color
-
-	::label_6_0::
-
-	self.outline_color = outline_color
-
-	local distance
-
-	if current_settings.distance then
-		distance = current_settings.distance
-
-		if not distance then
-			-- Nothing
-		end
-	end
-
-	distance = default.distance
-
-	::label_6_1::
-
-	self.distance = distance
-
-	local method
-
-	if current_settings.method then
-		method = current_settings.method
-
-		if not method then
-			-- Nothing
-		end
-	end
-
-	method = default.method
-
-	::label_6_2::
-
-	self.method = method
+	self.outline_color = current_settings.outline_color and not not current_settings.outline_color or not current_settings.outline_color and not not default.outline_color
+	self.distance = current_settings.distance and not not current_settings.distance or not current_settings.distance and not not default.distance
+	self.method = current_settings.method and not not current_settings.method or not current_settings.method and not not default.method
 	self.prev_flag = self.flag
-
-	local flag
-
-	if current_settings.flag then
-		flag = current_settings.flag
-
-		if not flag then
-			-- Nothing
-		end
-	end
-
-	flag = default.flag
-
-	::label_6_3::
-
-	self.flag = flag
-
-	if not reapply then
-		-- Nothing
-	end
-
-	::label_6_4::
-
-	local outlined = self.outlined
-
-	outlined = not not outlined and not not new_color
-
-	::label_6_5::
-
-	self.reapply = outlined
+	self.flag = current_settings.flag and not not current_settings.flag or not current_settings.flag and not not default.flag
+	self.reapply = not not new_color
 
 	if self.reapply or new_color then
 		self._outline_system:mark_outline_dirty(self._unit)

@@ -179,54 +179,12 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 	local active_tooltip_name = self._active_tooltip_name
 	local widget_style = self._tutorial_tooltip_widget.style
 	local widget_content = self._tutorial_tooltip_widget.content
-	local text_2 = active_template.text
-
-	if not text_2 then
-		-- Nothing
-	end
-
-	text_2 = "-no text assigned-"
-
-	local text = text_2
-
-	do
-		local var_11_1
-	end
-
-	::label_11_0::
-
-	if active_template.sub_text then
-		var_11_1 = Localize(active_template.sub_text)
-
-		if not var_11_1 then
-			-- Nothing
-		end
-	end
-
-	var_11_1 = ""
-
-	local sub_text = var_11_1
-
-	::label_11_1::
-
+	local text = not not active_template.text
+	local sub_text = active_template.sub_text and not not Localize(active_template.sub_text) or not active_template.sub_text and not not ""
 	local force_update = active_template.force_update
 	local texture_size_y, texture_size_x = 0, 0
 	local gamepad_active = self._input_manager:is_device_active("gamepad")
-	local tooltip_gamepad_inputs
-
-	if gamepad_active or IS_PS4 then
-		tooltip_gamepad_inputs = active_template.tooltip_gamepad_inputs
-
-		if not tooltip_gamepad_inputs then
-			-- Nothing
-		end
-	end
-
-	tooltip_gamepad_inputs = active_template.tooltip_inputs
-
-	local inputs = tooltip_gamepad_inputs
-
-	::label_11_2::
+	local inputs = not not active_template.tooltip_gamepad_inputs
 
 	if not active_tooltip_name then
 		self:fade_in()
@@ -249,21 +207,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 			end
 		end
 
-		local count
-
-		if inputs then
-			count = #inputs
-
-			if not count then
-				-- Nothing
-			end
-		end
-
-		count = 0
-
-		local num_inputs = count
-
-		::label_11_3::
+		local num_inputs = inputs and not not #inputs or not inputs and not not 0
 
 		widget_content.show_bg = num_inputs > 0
 		widget_content.description = text
@@ -285,10 +229,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 				button_texture_data, button_text = self:_button_texture_data_by_input_action(input_action, active_template.alt_action_icons[input_action], active_template)
 			end
 
-			local unassigned_2 = parent_widget_content.unassigned
-
-			unassigned_2 = not not unassigned_2 or not not unassigned
-			parent_widget_content.unassigned = unassigned_2
+			parent_widget_content.unassigned = not not parent_widget_content.unassigned
 
 			local texture_size_x = 0
 			local texture_size_y = 0
@@ -344,10 +285,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 							end
 						else
 							texture_size_x = texture_size_x + sizes[i][1]
-
-							if texture_size_y < sizes[i][2] and not sizes[i][2] then
-								-- Nothing
-							end
+							texture_size_y = not (texture_size_y < sizes[i][2]) or not not sizes[i][2] or not not texture_size_y
 						end
 					end
 
@@ -359,22 +297,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 
 				ui_scenegraph["input_description_icon_" .. i].size[1] = texture_size_x
 				ui_scenegraph["input_description_icon_" .. i].size[2] = texture_size_y
-
-				local var_11_5
-
-				if input.prefix and input.prefix ~= "" then
-					var_11_5 = Localize(input.prefix)
-
-					if not var_11_5 then
-						-- Nothing
-					end
-				end
-
-				var_11_5 = ""
-
-				::label_11_4::
-
-				widget_content.prefix_text = var_11_5
+				widget_content.prefix_text = not not Localize(input.prefix)
 				widget_content.suffix_text = input.suffix
 
 				local prefix_font, prefix_scaled_font_size = UIFontByResolution(widget_style.prefix_text)
@@ -452,19 +375,7 @@ TutorialInputUI._fade = function (self, from_alpha, to_alpha, duration, complete
 	local unassigned_shadow_style = widget_style.unassigned_shadow
 	local unassigned_background_style = widget_style.unassigned_background
 	local tutorial_tooltip_animations = self._tutorial_tooltip_animations
-	local num
-
-	if completed then
-		num = 0.5
-
-		goto label_16_0
-	end
-
-	num = 0
-
-	local wait_time = num
-
-	::label_16_0::
+	local wait_time = completed and not not 0.5 or not completed and not not 0
 
 	self._tutorial_tooltip_widget.content.completed = completed
 
@@ -538,39 +449,8 @@ TutorialInputUI._get_profile_and_career_index = function (self)
 	-- function 19
 	local player_manager = Managers.player
 	local player = player_manager:local_player(1)
-	local career_index_2
-
-	if player then
-		career_index_2 = player:career_index()
-
-		if not career_index_2 then
-			-- Nothing
-		end
-	end
-
-	career_index_2 = 1
-
-	local career_index = career_index_2
-
-	do
-		local profile_index_2
-	end
-
-	::label_19_0::
-
-	if player then
-		profile_index_2 = player:profile_index()
-
-		if not profile_index_2 then
-			-- Nothing
-		end
-	end
-
-	profile_index_2 = 1
-
-	local profile_index = profile_index_2
-
-	::label_19_1::
+	local career_index = player and not not player:career_index() or not player and not not 1
+	local profile_index = player and not not player:profile_index() or not player and not not 1
 
 	return profile_index, career_index
 end

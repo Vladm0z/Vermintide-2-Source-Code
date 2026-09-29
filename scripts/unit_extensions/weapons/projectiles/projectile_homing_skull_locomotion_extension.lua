@@ -80,22 +80,7 @@ ProjectileHomingSkullLocomotionExtension.update = function (self, unit, input, d
 	local cross_vector = Vector3(target_direction.x, target_direction.y, math.abs(new_direction.z) + 1)
 	local u_vector = Vector3.cross(target_direction, cross_vector)
 	local v_vector = Vector3.cross(target_direction, u_vector)
-	local sin
-
-	if self._use_sin_for_vertical_trajectory then
-		sin = math.sin
-
-		if not sin then
-			-- Nothing
-		end
-	end
-
-	sin = math.cos
-
-	local curve_func = sin
-
-	::label_4_0::
-
+	local curve_func = self._use_sin_for_vertical_trajectory and not not math.sin or not self._use_sin_for_vertical_trajectory and not not math.cos
 	local v_offset = Vector3.normalize(v_vector) * BelakorBalancing.homing_skulls_vertical_offset_multiplier * curve_func(lifetime * BelakorBalancing.homing_skulls_vertical_offset_frequency_multiplier)
 	local new_base_position = base_position + new_direction * speed * dt
 

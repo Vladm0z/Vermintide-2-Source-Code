@@ -31,11 +31,7 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, unit, input, 
 	local breed = Unit.get_data(chaos_spawn_unit, "breed")
 
 	self.breed = breed
-
-	local player = self.player
-
-	player = not not player and not not self.player.bot_player
-	self.is_bot = player
+	self.is_bot = not not self.player
 
 	CharacterStateHelper.change_camera_state(self.player, "chaos_spawn_grabbed")
 	self.inventory_extension:show_third_person_inventory(false)

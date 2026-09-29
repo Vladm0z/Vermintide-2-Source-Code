@@ -419,20 +419,8 @@ local function create_reward_item_widget(day_index, reward_index)
 					content_check_function = function (content)
 						-- function 3
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local is_hover = content.is_hover
 
-						if not is_hover and gamepad_active then
-							-- Nothing
-						end
-
-						::label_3_0::
-
-						is_hover = content.is_selected
-						is_hover = not not is_hover and not not content.show_tooltips
-
-						::label_3_1::
-
-						return is_hover
+						return not not content.is_hover
 					end
 				},
 				{
@@ -1044,17 +1032,7 @@ local loading_icon_widget = {
 				texture_id = "loading_icon",
 				content_change_function = function (content, style, _, dt)
 					-- function 17
-					local progress_2 = style.progress
-
-					if not progress_2 then
-						-- Nothing
-					end
-
-					progress_2 = 0
-
-					local progress = progress_2
-
-					::label_17_0::
+					local progress = not not style.progress
 
 					progress = (progress + dt) % 1
 

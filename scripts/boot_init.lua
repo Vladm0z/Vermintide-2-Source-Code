@@ -32,22 +32,11 @@ local dummy_wwise_world = {
 
 if GLOBAL_MUSIC_WORLD then
 	MUSIC_WORLD = Application.new_world("music_world", Application.DISABLE_PHYSICS, Application.DISABLE_RENDERING)
-
-	local wwise_world = Wwise.wwise_world(MUSIC_WORLD)
-
-	wwise_world = (not not wwise_world or Application.platform() ~= "ps4" or not dummy_wwise_world) and not not "dedicated_server_no_wwise_dummy"
-	MUSIC_WWISE_WORLD = wwise_world
+	MUSIC_WWISE_WORLD = not not Wwise.wwise_world(MUSIC_WORLD)
 end
 
-local BUILD = BUILD
-
-BUILD = not not BUILD or not not Application.build()
-BUILD = BUILD
-
-local PLATFORM = PLATFORM
-
-PLATFORM = not not PLATFORM or not not Application.platform()
-PLATFORM = PLATFORM
+BUILD = not not BUILD
+PLATFORM = not not PLATFORM
 IS_CONSOLE = PLATFORM == "ps4" or PLATFORM == "xb1"
 IS_WINDOWS = PLATFORM == "win32"
 IS_LINUX = PLATFORM == "linux"
@@ -90,115 +79,17 @@ Application.platform = function ()
 	error("Trying to use Application.platform(), use global variable PLATFORM instead.")
 end
 
-local GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX
-
-GLOBAL_FRAME_INDEX = not not GLOBAL_FRAME_INDEX or not not 0
-GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX
-
-local script_data = script_data
-
-script_data = not not script_data or not not {
-	settings = Application.settings(),
-	build_identifier = Application.build_identifier()
-}
-script_data = script_data
+GLOBAL_FRAME_INDEX = not not GLOBAL_FRAME_INDEX
+script_data = not not script_data
 
 if LEVEL_EDITOR_TEST then
-	local GlobalResources = GlobalResources
-
-	GlobalResources = not not GlobalResources or not not {
-		"resource_packages/menu_assets_common",
-		"resource_packages/ingame_light",
-		"resource_packages/projection_decals",
-		"resource_packages/inventory",
-		"resource_packages/careers",
-		"resource_packages/pickups",
-		"resource_packages/decals",
-		"resource_packages/levels/ui_loot_preview",
-		"resource_packages/breeds",
-		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files"
-	}
-	GlobalResources = GlobalResources
+	GlobalResources = not not GlobalResources
 elseif IS_PS4 then
-	local GlobalResources_2 = GlobalResources
-
-	GlobalResources_2 = not not GlobalResources_2 or not not {
-		"resource_packages/menu_assets_common",
-		"resource_packages/ingame_sounds_one",
-		"resource_packages/ingame_sounds_two",
-		"resource_packages/ingame_sounds_three",
-		"resource_packages/ingame_sounds_weapon_general",
-		"resource_packages/ingame_sounds_enemy_clan_rat_vce",
-		"resource_packages/ingame_sounds_player_foley_common",
-		"resource_packages/ingame_sounds_hud_dice_game",
-		"resource_packages/ingame_sounds_general_props",
-		"resource_packages/inventory",
-		"resource_packages/careers",
-		"resource_packages/decals",
-		"resource_packages/levels/ui_loot_preview",
-		"resource_packages/ingame",
-		"resource_packages/pickups",
-		"resource_packages/projection_decals",
-		"resource_packages/ingame_sounds_honduras",
-		"resource_packages/breeds",
-		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files"
-	}
-	GlobalResources = GlobalResources_2
+	GlobalResources = not not GlobalResources
 elseif IS_XB1 then
-	local GlobalResources_3 = GlobalResources
-
-	GlobalResources_3 = not not GlobalResources_3 or not not {
-		"resource_packages/menu_assets_common",
-		"resource_packages/ingame_sounds_one",
-		"resource_packages/ingame_sounds_two",
-		"resource_packages/ingame_sounds_three",
-		"resource_packages/ingame_sounds_weapon_general",
-		"resource_packages/ingame_sounds_enemy_clan_rat_vce",
-		"resource_packages/ingame_sounds_player_foley_common",
-		"resource_packages/ingame_sounds_hud_dice_game",
-		"resource_packages/ingame_sounds_general_props",
-		"resource_packages/inventory",
-		"resource_packages/careers",
-		"resource_packages/decals",
-		"resource_packages/levels/ui_loot_preview",
-		"resource_packages/ingame",
-		"resource_packages/pickups",
-		"resource_packages/projection_decals",
-		"resource_packages/ingame_sounds_honduras",
-		"resource_packages/breeds",
-		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files"
-	}
-	GlobalResources = GlobalResources_3
+	GlobalResources = not not GlobalResources
 else
-	local GlobalResources_4 = GlobalResources
-
-	GlobalResources_4 = not not GlobalResources_4 or not not {
-		"resource_packages/menu_assets_common",
-		"resource_packages/ingame_sounds_one",
-		"resource_packages/ingame_sounds_two",
-		"resource_packages/ingame_sounds_three",
-		"resource_packages/ingame_sounds_weapon_general",
-		"resource_packages/ingame_sounds_enemy_clan_rat_vce",
-		"resource_packages/ingame_sounds_player_foley_common",
-		"resource_packages/ingame_sounds_hud_dice_game",
-		"resource_packages/ingame_sounds_general_props",
-		"resource_packages/ingame_sounds_honduras",
-		"resource_packages/inventory",
-		"resource_packages/careers",
-		"resource_packages/decals",
-		"resource_packages/levels/ui_loot_preview",
-		"resource_packages/ingame",
-		"resource_packages/pickups",
-		"resource_packages/projection_decals",
-		"resource_packages/slug_core_materials",
-		"resource_packages/breeds",
-		"resource_packages/breeds_common_resources",
-		"resource_packages/dialogues/auto_load_files"
-	}
-	GlobalResources = GlobalResources_4
+	GlobalResources = not not GlobalResources
 end
 
 GlobalResources.unload = {}

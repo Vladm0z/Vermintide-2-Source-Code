@@ -98,17 +98,7 @@ ActionCareerBWNecromancerCommandAttack.client_owner_start_action = function (sel
 	CALCULATED_TARGET_BY_OWNER[self._owner_unit] = nil
 
 	if ALIVE[target_unit] then
-		local _is_charge_off_cooldown = self:_is_charge_off_cooldown()
-
-		if _is_charge_off_cooldown then
-			-- Nothing
-		end
-
-		_is_charge_off_cooldown = self:_has_armored_pet()
-
-		local should_charge = _is_charge_off_cooldown
-
-		::label_3_0::
+		local should_charge = not not self:_is_charge_off_cooldown()
 
 		self._command_ability:command_attack_enemy(target_unit, should_charge, t)
 	end

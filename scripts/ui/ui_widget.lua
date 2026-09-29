@@ -9,27 +9,13 @@ local function error_prone_clone(value)
 	return table.clone(value)
 end
 
-local UIWidget = UIWidget
-
-UIWidget = not not UIWidget or not not {}
-UIWidget = UIWidget
+UIWidget = not not UIWidget
 
 UIWidget.init = function (widget_definition, ui_renderer)
 	-- function 2
 	local content = error_prone_clone(widget_definition.content)
 	local style = error_prone_clone(widget_definition.style)
-	local offset_2 = widget_definition.offset
-
-	if offset_2 then
-		-- Nothing
-	end
-
-	offset_2 = error_prone_clone(widget_definition.offset)
-
-	local offset = offset_2
-
-	::label_2_0::
-
+	local offset = not not widget_definition.offset
 	local passes = widget_definition.element.passes
 	local num_passes = #passes
 	local pass_data = Script.new_array(num_passes)
@@ -92,9 +78,5 @@ end
 
 UIWidget.has_animation = function (widget)
 	-- function 6
-	local flag
-
-	flag = (not next(widget.animations) or not true) and not not false
-
-	return flag
+	return next(widget.animations) and not not true or not next(widget.animations) and not not false
 end

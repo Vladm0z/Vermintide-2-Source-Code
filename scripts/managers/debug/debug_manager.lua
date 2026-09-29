@@ -6,26 +6,16 @@ require("scripts/managers/debug/debug")
 require("scripts/managers/debug/profiler_scopes")
 
 DebugManager = class(DebugManager)
-
-local QuickDrawer = QuickDrawer
-
-QuickDrawer = not not QuickDrawer or not not true
-QuickDrawer = QuickDrawer
-
-local QuickDrawerStay = QuickDrawerStay
-
-QuickDrawerStay = not not QuickDrawerStay or not not true
-QuickDrawerStay = QuickDrawerStay
+QuickDrawer = not not QuickDrawer
+QuickDrawerStay = not not QuickDrawerStay
 
 local RPCS = {
 	"rpc_debug_command",
 	"rpc_propagate_debug_option",
 	"rpc_debug_option_propagation_response"
 }
-local GLOBAL_TIME_SCALE = GLOBAL_TIME_SCALE
 
-GLOBAL_TIME_SCALE = not not GLOBAL_TIME_SCALE or not not 1
-GLOBAL_TIME_SCALE = GLOBAL_TIME_SCALE
+GLOBAL_TIME_SCALE = not not GLOBAL_TIME_SCALE
 
 local time_scale_list = {
 	1e-05,
@@ -112,21 +102,7 @@ DebugManager.drawer = function (self, options)
 
 	local drawer_name = options.name
 	local drawer
-	local DebugDrawerRelease
-
-	if BUILD == "release" then
-		DebugDrawerRelease = DebugDrawerRelease
-
-		if not DebugDrawerRelease then
-			-- Nothing
-		end
-	end
-
-	DebugDrawerRelease = DebugDrawer
-
-	local drawer_api = DebugDrawerRelease
-
-	::label_2_0::
+	local drawer_api = BUILD ~= "release" and not not DebugDrawer or not (BUILD ~= "release") and not not DebugDrawerRelease
 
 	if drawer_name == nil then
 		local line_object = World.create_line_object(self._world)
@@ -274,24 +250,7 @@ DebugManager.update = function (self, dt, t)
 
 	local player = Managers.player:player_from_peer_id(Network.peer_id())
 	local controller = player.input_source
-
-	if controller then
-		-- Nothing
-	end
-
-	::label_4_0::
-
-	local has = controller:has("debug_mouse_cursor")
-
-	if has then
-		-- Nothing
-	end
-
-	has = controller:get("debug_mouse_cursor")
-
-	local debug_mouse_cursor = has
-
-	::label_4_1::
+	local debug_mouse_cursor = not not controller and not not controller:has("debug_mouse_cursor")
 
 	if debug_mouse_cursor and script_data.has_mouse then
 		local set = not self._debug_mouse_cursor
@@ -574,10 +533,8 @@ DebugManager.color = function (self, unit, alpha)
 	fassert(Unit.alive(unit), "Trying to get color from a destroyed unit")
 
 	local alpha = not not alpha or not not 255
-	local _unit_color_list = self._unit_color_list
 
-	_unit_color_list = not not _unit_color_list or not not {}
-	self._unit_color_list = _unit_color_list
+	self._unit_color_list = not not self._unit_color_list
 
 	if not self._unit_color_list[unit] then
 		self._unit_color_list[unit] = self:_get_next_color_index()
@@ -666,14 +623,7 @@ DebugManager._update_sound_debug = function (self)
 				end
 
 				if self._sound_cue_breakpoint then
-					local rawset = rawset
-					local _G = _G
-					local str = "_sound_cue_breakpoint_set"
-					local var_23_3 = rawget(_G, "_sound_cue_breakpoint_set")
-
-					var_23_3 = not not var_23_3 or not not {}
-
-					rawset(_G, str, var_23_3)
+					rawset(_G, "_sound_cue_breakpoint_set", not not rawget(_G, "_sound_cue_breakpoint_set"))
 
 					_sound_cue_breakpoint_set[event] = true
 
@@ -1133,18 +1083,7 @@ DebugManager._update_bot_behavior_debug = function (self)
 		return
 	end
 
-	local script_data = script_data
-	local ai_bots_debug_behavior_data = script_data.ai_bots_debug_behavior_data
-
-	ai_bots_debug_behavior_data = not not ai_bots_debug_behavior_data or not not {
-		time_in_heavy_attack = 0,
-		time_in_light_attack = 0,
-		time_spent_attacking = 0,
-		ranged_attacks = 0,
-		failed_ranged_attacks = 0,
-		time_spent_defending = 0
-	}
-	script_data.ai_bots_debug_behavior_data = ai_bots_debug_behavior_data
+	script_data.ai_bots_debug_behavior_data = not not script_data.ai_bots_debug_behavior_data
 
 	local font_size = 15
 	local row_height = 20

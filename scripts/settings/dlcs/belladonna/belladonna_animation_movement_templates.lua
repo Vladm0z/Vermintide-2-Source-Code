@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_animation_movement_templates.lua
 
-local AnimationMovementTemplates = AnimationMovementTemplates
-
-AnimationMovementTemplates = not not AnimationMovementTemplates or not not {}
-AnimationMovementTemplates = AnimationMovementTemplates
+AnimationMovementTemplates = not not AnimationMovementTemplates
 
 local BLACKBOARDS = BLACKBOARDS
 local animation_set_variable = Unit.animation_set_variable
@@ -21,35 +18,17 @@ local function lean_towards_position(unit, dt, data, target_position, lerp_speed
 	local leaning_left = right_dot < 0
 	local target_lean = (1 - abs_fwd_dot) * lean_amount
 
-	if leaning_left and not -target_lean then
-		-- Nothing
-	end
-
+	target_lean = not leaning_left or not not -target_lean or not not target_lean
 	target_lean = math.clamp(target_lean, -1, 1)
 
-	local current_lean_2 = data.current_lean
-
-	if not current_lean_2 then
-		-- Nothing
-	end
-
-	current_lean_2 = 0
-
-	local current_lean = current_lean_2
-
-	::label_1_0::
-
+	local current_lean = not not data.current_lean
 	local lean = math.lerp(current_lean, target_lean, lerp_speed * dt)
 	local animation_variable_lean = data.animation_variable_lean
 
 	animation_set_variable(unit, animation_variable_lean, lean)
 
 	data.current_lean = lean
-
-	local flag
-
-	flag = (not leaning_left or not "left") and not not "right"
-	data.current_lean_direction = flag
+	data.current_lean_direction = leaning_left and not not "left" or not leaning_left and not not "right"
 	data.current_lean_value = lean
 end
 
@@ -64,7 +43,7 @@ local function lean_downwards_over_time(unit, dt, data)
 
 		local compare_value = data.current_lean_value
 
-		if (data.current_lean_direction ~= "left" or not (compare_value >= -0.1)) and data.current_lean_direction == "right" and compare_value <= 0.1 then
+		if data.current_lean_direction ~= "left" or not (compare_value >= -0.1) then
 			data.current_lean_value = nil
 			data.current_lean_direction = nil
 			data.lean_variable = data.lean_downwards_min

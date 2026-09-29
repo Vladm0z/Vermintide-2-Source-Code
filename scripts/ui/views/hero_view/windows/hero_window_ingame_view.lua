@@ -289,17 +289,7 @@ end
 HeroWindowIngameView._is_button_pressed = function (self, widget)
 	-- function 15
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.button_text
-
-	local hotspot = button_hotspot
-
-	::label_15_0::
+	local hotspot = not not content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -329,22 +319,16 @@ HeroWindowIngameView._is_button_hover_enter = function (self, widget)
 	-- function 17
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 HeroWindowIngameView._is_button_hover_exit = function (self, widget)
 	-- function 18
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_exit = hotspot.on_hover_exit
 
-	on_hover_exit = not not on_hover_exit and not not not hotspot.is_selected
-
-	return on_hover_exit
+	return not not hotspot.on_hover_exit
 end
 
 HeroWindowIngameView._is_button_selected = function (self, widget)
@@ -365,18 +349,7 @@ HeroWindowIngameView._handle_input = function (self, dt, t)
 	if layout_logic then
 		local layout_data = layout_logic:layout_data()
 		local num_entries = #layout_data
-		local _selected_button_index = self._selected_button_index
-
-		if not _selected_button_index then
-			-- Nothing
-		end
-
-		_selected_button_index = 1
-
-		local current_index = _selected_button_index
-
-		::label_20_0::
-
+		local current_index = not not self._selected_button_index
 		local input_made = false
 		local title_button_widgets = self._title_button_widgets
 
@@ -453,21 +426,7 @@ HeroWindowIngameView._get_previous_available_index = function (self, index)
 	if layout_logic then
 		local layout_data = layout_logic:layout_data()
 		local num_entries = #layout_data
-		local num
-
-		if index > 1 then
-			num = index - 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = num_entries
-
-		local i = num
-
-		::label_22_0::
+		local i = index > 1 and not not (index - 1) or not (index > 1) and not not num_entries
 
 		while i ~= index do
 			local data = layout_data[i]
@@ -476,7 +435,7 @@ HeroWindowIngameView._get_previous_available_index = function (self, index)
 				return i
 			end
 
-			i = (not (i > 1) or not (i - 1)) and not not num_entries
+			i = i > 1 and (not not (i - 1) or not not num_entries) or not (i > 1) and not not num_entries
 		end
 	end
 
@@ -536,22 +495,7 @@ HeroWindowIngameView.draw = function (self, dt)
 			local button_hotspot = content.button_hotspot
 
 			button_hotspot.disable_button = data.disabled
-
-			local display_name_func
-
-			if data.display_name_func then
-				display_name_func = data.display_name_func()
-
-				if not display_name_func then
-					-- Nothing
-				end
-			end
-
-			display_name_func = data.display_name
-
-			::label_25_0::
-
-			content.text_field = display_name_func
+			content.text_field = data.display_name_func and not not data.display_name_func() or not data.display_name_func and not not data.display_name
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end

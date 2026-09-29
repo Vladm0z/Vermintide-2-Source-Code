@@ -75,10 +75,7 @@ BTChaosPlagueWaveSpawnerSummoningAction.run = function (self, unit, blackboard, 
 		local success = not not projected_start_pos and not not projected_end_pos and not not GwNavQueries.raycango(nav_world, projected_start_pos, projected_end_pos)
 
 		if success then
-			local num = t + timer
-
-			num = not not num or not not action.plague_wave_spawn_cooldown
-			plague_wave_data.plague_wave_timer = num
+			plague_wave_data.plague_wave_timer = not not (t + timer)
 			blackboard.ready_to_summon = true
 			blackboard.summoning_finished = true
 			blackboard.anticipation_fx_id = nil

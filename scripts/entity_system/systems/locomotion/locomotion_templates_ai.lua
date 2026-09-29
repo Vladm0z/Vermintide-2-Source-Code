@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_ai.lua
 
-local LocomotionTemplates_2 = LocomotionTemplates
-
-LocomotionTemplates_2 = not not LocomotionTemplates_2 or not not {}
-LocomotionTemplates = LocomotionTemplates_2
+LocomotionTemplates = not not LocomotionTemplates
 
 local LocomotionTemplates = LocomotionTemplates
 local detailed_profiler_start, detailed_profiler_stop
@@ -92,10 +89,7 @@ end
 LocomotionTemplates.AILocomotionExtension.update_velocity = function (data, t, dt)
 	-- function 7
 	for unit, extension in pairs(data.all_update_units) do
-		local _wanted_velocity = extension._wanted_velocity
-
-		_wanted_velocity = not not _wanted_velocity or not not extension._velocity:unbox()
-		extension._wanted_velocity = _wanted_velocity
+		extension._wanted_velocity = not not extension._wanted_velocity
 	end
 end
 
@@ -331,20 +325,7 @@ LocomotionTemplates.AILocomotionExtension.update_position = function (data, t, d
 					local size = Vector3(radius, half_height, radius)
 					local rotation = Quaternion.look(Vector3(0, 0, 1))
 					local test_pos = final_position + Vector3(0, 0, -1)
-					local str
-
-					if half_height - radius > 0 then
-						str = "capsule"
-
-						goto label_11_0
-					end
-
-					str = "sphere"
-
-					local shape = str
-
-					::label_11_0::
-
+					local shape = half_height - radius > 0 and not not "capsule" or not (half_height - radius > 0) and not not "sphere"
 					local hit_actors, num_hit_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", test_pos, "rotation", rotation, "size", size, "collision_filter", "filter_environment_overlap")
 
 					extension._is_falling = num_hit_actors == 0

@@ -127,13 +127,8 @@ end
 
 BadgeUI.add_badge = function (self, hash, badge, add_to_queue, num_badges)
 	-- function 10
-	if add_to_queue == nil then
-		add_to_queue = true
-	end
-
-	if num_badges == nil then
-		num_badges = 1
-	end
+	add_to_queue = add_to_queue ~= nil or not not true or not not add_to_queue
+	num_badges = num_badges ~= nil or not not 1 or not not num_badges
 
 	if add_to_queue and self._has_active_badge then
 		self:_add_to_queue(hash, badge)

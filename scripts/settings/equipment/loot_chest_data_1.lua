@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/equipment/loot_chest_data_1.lua
 
-local LootChestData = LootChestData
-
-LootChestData = not not LootChestData or not not {}
-LootChestData = LootChestData
+LootChestData = not not LootChestData
 LootChestData.scores = {
 	default = {
 		loot_dice = 5,

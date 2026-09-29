@@ -44,21 +44,8 @@ PlayerInZoneExtension._get_script_data = function (self)
 	self._progress_zone_size = Unit.get_data(self._unit, "player_in_zone", "zone_radius")
 
 	local time_modifier_has_data = Unit.has_data(self._unit, "player_in_zone", "time_modifier_per_player")
-	local get_data
 
-	if time_modifier_has_data then
-		get_data = Unit.get_data(self._unit, "player_in_zone", "time_modifier_per_player")
-
-		if not get_data then
-			-- Nothing
-		end
-	end
-
-	get_data = 0
-
-	::label_2_0::
-
-	self._time_modifier_per_player = get_data
+	self._time_modifier_per_player = time_modifier_has_data and not not Unit.get_data(self._unit, "player_in_zone", "time_modifier_per_player") or not time_modifier_has_data and not not 0
 
 	local player_side = Unit.get_data(self._unit, "player_in_zone", "player_side")
 	local side_name = not not player_side or not not "heroes"
@@ -560,12 +547,7 @@ end
 PlayerInZoneExtension._debug_drawer = function (self, current_debug_state)
 	-- function 39
 	if current_debug_state == "counting" then
-		local _drawer = self._drawer
-
-		_drawer = not not _drawer or not not Managers.state.debug:drawer({
-			mode = "immediate"
-		})
-		self._drawer = _drawer
+		self._drawer = not not self._drawer
 
 		self._drawer:reset()
 
@@ -575,22 +557,12 @@ PlayerInZoneExtension._debug_drawer = function (self, current_debug_state)
 
 		self._drawer:sphere(Unit.local_position(self._unit, 0), self._progress_zone_size, Color(red, green, 0), 30, 30)
 	elseif current_debug_state == "stop" then
-		local _drawer_2 = self._drawer
-
-		_drawer_2 = not not _drawer_2 or not not Managers.state.debug:drawer({
-			mode = "immediate"
-		})
-		self._drawer = _drawer_2
+		self._drawer = not not self._drawer
 
 		self._drawer:reset()
 		self._drawer:sphere(Unit.local_position(self._unit, 0), self._progress_zone_size, Color(255, 255, 0), 10, 10)
 	elseif current_debug_state == "idle" then
-		local _drawer_3 = self._drawer
-
-		_drawer_3 = not not _drawer_3 or not not Managers.state.debug:drawer({
-			mode = "immediate"
-		})
-		self._drawer = _drawer_3
+		self._drawer = not not self._drawer
 
 		self._drawer:reset()
 		self._drawer:sphere(Unit.local_position(self._unit, 0), self._progress_zone_size, Color(255, 255, 0), 30, 30)

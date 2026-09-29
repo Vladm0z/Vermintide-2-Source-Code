@@ -96,7 +96,7 @@ CareerAbilityBWNecromancerCommand._update_outlines = function (self, t)
 	if data then
 		local status_extension = ScriptUnit.has_extension(data.unit, "status_system")
 
-		if (not HEALTH_ALIVE[data.unit] or not status_extension or not status_extension:is_invisible()) and data.command_type == CommandSyncTypes.player and not status_extension:is_knocked_down() then
+		if data.command_type == CommandSyncTypes.player and not status_extension:is_knocked_down() then
 			if ALIVE[data.unit] then
 				data.extension:remove_outline(data.id)
 			end
@@ -108,22 +108,7 @@ end
 
 CareerAbilityBWNecromancerCommand._server_command_sacrifice_pet = function (self, pet_unit)
 	-- function 7
-	local node
-
-	if Unit.has_node(pet_unit, "j_spine") then
-		node = Unit.node(pet_unit, "j_spine")
-
-		if not node then
-			-- Nothing
-		end
-	end
-
-	node = 0
-
-	local target_node_id = node
-
-	::label_7_0::
-
+	local target_node_id = Unit.has_node(pet_unit, "j_spine") and not not Unit.node(pet_unit, "j_spine") or not Unit.has_node(pet_unit, "j_spine") and not not 0
 	local network_manager = Managers.state.network
 	local effect_name_id = NetworkLookup.effects["fx/necromancer_skeleton_sacrifice"]
 	local pet_unit_id = network_manager:unit_game_object_id(pet_unit)
@@ -141,22 +126,7 @@ CareerAbilityBWNecromancerCommand._server_command_sacrifice_pet = function (self
 		local pet_position = POSITION_LOOKUP[pet_unit]
 		local player_unit = self._owner_unit
 		local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
-		local get_career_power_level
-
-		if career_extension then
-			get_career_power_level = career_extension:get_career_power_level()
-
-			if not get_career_power_level then
-				-- Nothing
-			end
-		end
-
-		get_career_power_level = DefaultPowerLevel
-
-		local career_power_level = get_career_power_level
-
-		::label_7_1::
-
+		local career_power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not DefaultPowerLevel
 		local area_damage_system = Managers.state.entity:system("area_damage_system")
 
 		area_damage_system:create_explosion(player_unit, pet_position, Quaternion.identity(), "sienna_necromancer_passive_explosion", 1, "buff", career_power_level, false)
@@ -366,11 +336,7 @@ CareerAbilityBWNecromancerCommand._update_vent_command_target = function (self, 
 				local duration = controlled_unit_data.template.duration
 
 				if duration then
-					local start_t = controlled_unit_data.start_t
-
-					start_t = not not start_t or not not math.huge
-
-					local time_left = start_t + duration - t
+					local time_left = not not controlled_unit_data.start_t + duration - t
 
 					if time_left < least_t_left then
 						least_t_left = time_left
@@ -383,7 +349,7 @@ CareerAbilityBWNecromancerCommand._update_vent_command_target = function (self, 
 		new_target = not not hovered_unit or not not fallback_unit
 	end
 
-	if (not self._vent_outline_id or not using_fallback) and new_target ~= last_target then
+	if self._vent_outline_id and (using_fallback or new_target ~= last_target) or not self._vent_outline_id and new_target ~= last_target then
 		if ALIVE[last_target] then
 			local outline_extension = ScriptUnit.has_extension(last_target, "outline_system")
 

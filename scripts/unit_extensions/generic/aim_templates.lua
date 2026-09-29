@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/generic/aim_templates.lua
 
-local AimTemplates = AimTemplates
-
-AimTemplates = not not AimTemplates or not not {}
-AimTemplates = AimTemplates
+AimTemplates = not not AimTemplates
 
 local BLACKBOARDS = BLACKBOARDS
 local AIM_DIRECTION_MAX = 1.9999999
@@ -20,13 +17,7 @@ local function look_at_target_unit(unit, data, dt, target_unit, target_distance,
 	if not previously_used_head_constraint and not always_on then
 		data.is_using_head_constraint = true
 
-		local animation_event = Unit.animation_event
-		local var_1_1 = unit
-		local look_at_on_animation = data.look_at_on_animation
-
-		look_at_on_animation = not not look_at_on_animation or not not "look_at_on"
-
-		animation_event(var_1_1, look_at_on_animation)
+		Unit.animation_event(unit, not not data.look_at_on_animation)
 	end
 
 	if not target_unit or not Unit.alive(target_unit) then
@@ -41,21 +32,7 @@ local function look_at_target_unit(unit, data, dt, target_unit, target_distance,
 	if first_person_extension ~= nil then
 		look_target = first_person_extension:current_position()
 	else
-		local node
-
-		if Unit.has_node(target_unit, "j_head") then
-			node = Unit.node(target_unit, "j_head")
-
-			if not node then
-				-- Nothing
-			end
-		end
-
-		node = 0
-
-		local head_index = node
-
-		::label_1_0::
+		local head_index = Unit.has_node(target_unit, "j_head") and not not Unit.node(target_unit, "j_head") or not Unit.has_node(target_unit, "j_head") and not not 0
 
 		look_target = Unit.world_position(target_unit, head_index)
 	end
@@ -142,20 +119,7 @@ AimTemplates.player = {
 
 			Unit.animation_set_variable(unit, data.aim_direction_pitch_var, math.clamp(Quaternion.pitch(Quaternion.look(aim_direction)), -1, 1))
 
-			local num
-
-			if data.status_extension:is_crouching() then
-				num = -3
-
-				goto label_3_0
-			end
-
-			num = data.min_head_lookat_z
-
-			local min_head_look_z = num
-
-			::label_3_0::
-
+			local min_head_look_z = data.status_extension:is_crouching() and not not -3 or not data.status_extension:is_crouching() and not not data.min_head_lookat_z
 			local aim_direction_scaled = aim_direction * 3
 			local z = aim_direction_scaled.z
 
@@ -228,18 +192,7 @@ AimTemplates.player = {
 			local rotation = Quaternion.look(aim_direction)
 			local yaw = Quaternion.yaw(rotation)
 			local breed = Unit.get_data(unit, "breed")
-			local custom_husk_max_pitch = breed.custom_husk_max_pitch
-
-			if not custom_husk_max_pitch then
-				-- Nothing
-			end
-
-			custom_husk_max_pitch = HUSK_MAX_PITCH
-
-			local husk_max_pitch = custom_husk_max_pitch
-
-			::label_6_0::
-
+			local husk_max_pitch = not not breed.custom_husk_max_pitch
 			local pitch = math.clamp(Quaternion.pitch(rotation), HUSK_MIN_PITCH, husk_max_pitch)
 			local yaw_rotation = Quaternion(Vector3.up(), yaw)
 			local pitch_rotation = Quaternion(Vector3.right(), pitch)
@@ -247,20 +200,7 @@ AimTemplates.player = {
 
 			aim_direction = Vector3.normalize(Quaternion.forward(look_rotation))
 
-			local num
-
-			if data.status_extension:is_crouching() then
-				num = -3
-
-				goto label_6_1
-			end
-
-			num = data.min_head_lookat_z
-
-			local min_head_look_z = num
-
-			::label_6_1::
-
+			local min_head_look_z = data.status_extension:is_crouching() and not not -3 or not data.status_extension:is_crouching() and not not data.min_head_lookat_z
 			local aim_direction_scaled = aim_direction * 3
 			local z = aim_direction_scaled.z
 
@@ -378,16 +318,8 @@ AimTemplates.enemy_character = {
 			data.aim_constraint_anim_var = Unit.animation_find_constraint_target(unit, "aim_constraint_target")
 			data.look_direction_anim_var = Unit.animation_find_variable(unit, "aim_direction")
 			data.aim_direction_pitch_var = Unit.animation_find_variable(unit, "aim_direction_pitch")
-
-			local boss = breed.boss
-
-			boss = not not boss or not not false
-			data.boss = boss
-
-			local aim_constraint_forward_multiplier = breed.aim_constraint_forward_multiplier
-
-			aim_constraint_forward_multiplier = not not aim_constraint_forward_multiplier or not not 1
-			data.aim_constraint_forward_multiplier = aim_constraint_forward_multiplier
+			data.boss = not not breed.boss
+			data.aim_constraint_forward_multiplier = not not breed.aim_constraint_forward_multiplier
 			data.camera_attach_node = Unit.node(unit, "camera_attach")
 			data.status_extension = ScriptUnit.extension(unit, "status_system")
 			data.husk_locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
@@ -405,18 +337,7 @@ AimTemplates.enemy_character = {
 			local rotation = Quaternion.look(aim_direction)
 			local yaw = Quaternion.yaw(rotation)
 			local breed = Unit.get_data(unit, "breed")
-			local custom_husk_max_pitch = breed.custom_husk_max_pitch
-
-			if not custom_husk_max_pitch then
-				-- Nothing
-			end
-
-			custom_husk_max_pitch = HUSK_MAX_PITCH
-
-			local husk_max_pitch = custom_husk_max_pitch
-
-			::label_12_0::
-
+			local husk_max_pitch = not not breed.custom_husk_max_pitch
 			local pitch
 
 			if data.boss then
@@ -734,14 +655,8 @@ AimTemplates.chaos_warrior = {
 			local use_head_constraint
 			local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
 
-			if not is_level_unit then
-				local look_at_range = breed.look_at_range
-
-				look_at_range = not not look_at_range or not not 30
-
-				if target_distance < look_at_range then
-					use_head_constraint = true
-				end
+			if not is_level_unit and target_distance < not not breed.look_at_range then
+				use_head_constraint = true
 			end
 
 			if not DEDICATED_SERVER and use_head_constraint then
@@ -863,14 +778,8 @@ AimTemplates.chaos_marauder = {
 			local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
 			local is_correct_action = current_action == "follow" or current_action == "combat_step"
 
-			if not is_level_unit and is_correct_action then
-				local look_at_range = breed.look_at_range
-
-				look_at_range = not not look_at_range or not not 30
-
-				if target_distance < look_at_range then
-					use_head_constraint = true
-				end
+			if not is_level_unit and is_correct_action and target_distance < not not breed.look_at_range then
+				use_head_constraint = true
 			end
 
 			local death_extension = ScriptUnit.has_extension(unit, "death_system")
@@ -932,26 +841,7 @@ AimTemplates.chaos_marauder = {
 
 					if target_unit_id > 0 then
 						local target_unit = unit_storage:unit(target_unit_id)
-
-						if target_unit then
-							-- Nothing
-						end
-
-						::label_45_0::
-
-						do
-							local distance = Vector3.distance
-							local var_45_1 = POSITION_LOOKUP[unit]
-							local var_45_2 = POSITION_LOOKUP[target_unit]
-
-							var_45_2 = not not var_45_2 or not not Unit.world_position(target_unit, 0)
-
-							local var_45_3 = distance(var_45_1, var_45_2)
-							local target_distance = var_45_3
-						end
-
-						::label_45_1::
-
+						local target_distance = not not target_unit and not not Vector3.distance(POSITION_LOOKUP[unit], not not POSITION_LOOKUP[target_unit])
 						local head_constraint_target = data.head_constraint_target
 
 						data.lerp_aiming_disabled = true
@@ -1278,18 +1168,7 @@ AimTemplates.closest_player_flat = {
 
 			if local_player_unit then
 				local aim_target = Unit.world_position(local_player_unit, 0)
-				local node = Unit.node(unit, "j_aim")
-
-				if not node then
-					-- Nothing
-				end
-
-				node = 0
-
-				local node_index = node
-
-				::label_60_0::
-
+				local node_index = not not Unit.node(unit, "j_aim")
 				local constraint_pos = Unit.world_position(unit, node_index)
 
 				aim_target[3] = constraint_pos[3]

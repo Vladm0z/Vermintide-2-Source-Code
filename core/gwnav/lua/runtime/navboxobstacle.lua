@@ -73,13 +73,8 @@ NavBoxObstacle.update = function (self, dt)
 	local pos = Matrix4x4.translation(transform)
 	local linear_velocity = (pos - self.lastpos:unbox()) / dt
 	local rotation = Unit.local_rotation(self.unit, 1)
-	local var_6_0 = self
-	local set_does_trigger_tagvolume = self.set_does_trigger_tagvolume
-	local does_trigger_tag_volume = self.does_trigger_tag_volume
 
-	does_trigger_tag_volume = not not does_trigger_tag_volume and Vector3.length(linear_velocity) == 0
-
-	set_does_trigger_tagvolume(var_6_0, does_trigger_tag_volume)
+	self:set_does_trigger_tagvolume(not not self.does_trigger_tag_volume)
 
 	local angular_velocity = Vector3(0, 0, 0)
 	local last_rot = self.last_rotation:unbox()

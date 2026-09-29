@@ -114,21 +114,7 @@ CraftPageApplySkin.setup_recipe_requirements = function (self)
 			end
 
 			local has_required_amount = required_amount <= amount_owned
-			local var_2_0
-
-			if amount_owned < UISettings.max_craft_material_presentation_amount then
-				var_2_0 = tostring(amount_owned)
-
-				if not var_2_0 then
-					-- Nothing
-				end
-			end
-
-			var_2_0 = "*"
-
-			::label_2_0::
-
-			local presentation_amount = var_2_0 .. "/" .. tostring(required_amount)
+			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and not not tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and not not "*") .. "/" .. tostring(required_amount)
 			local fake_item = {
 				data = table.clone(ItemMasterList[item_key]),
 				amount = presentation_amount,
@@ -293,7 +279,7 @@ CraftPageApplySkin._handle_input = function (self, dt, t)
 	local craft_input_gamepad = not not is_button_enabled and not not gamepad_active and not not input_service:get("refresh_hold")
 	local craft_input_accepted = false
 
-	if (craft_input == 0 or craft_input_gamepad) and self._craft_item and self._skin_item and self._has_all_requirements then
+	if craft_input == 0 and self._craft_item and self._skin_item and self._has_all_requirements or not (craft_input == 0) and craft_input_gamepad and self._craft_item and self._skin_item and self._has_all_requirements then
 		if not self._craft_input_time then
 			self._craft_input_time = 0
 
@@ -560,20 +546,6 @@ CraftPageApplySkin._set_craft_button_text = function (self, text, localize)
 	-- function 24
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
-	local content = widget.content
-	local var_24_1
 
-	if localize then
-		var_24_1 = Localize(text)
-
-		if not var_24_1 then
-			-- Nothing
-		end
-	end
-
-	var_24_1 = text
-
-	::label_24_0::
-
-	content.button_text = var_24_1
+	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
 end

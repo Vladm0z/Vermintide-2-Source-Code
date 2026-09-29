@@ -36,25 +36,12 @@ BeastmenStandardExtension.init = function (self, extension_init_context, unit, e
 	self.standard_data.standard_bearer_unit = self.standard_bearer_unit
 
 	local side_manager = Managers.state.side
-	local var_1_0 = side_manager.side_by_unit[self.standard_bearer_unit]
-
-	if not var_1_0 then
-		-- Nothing
-	end
-
-	var_1_0 = side_manager:get_side_from_name("dark_pact")
-
-	local side = var_1_0
-
-	::label_1_0::
+	local side = not not side_manager.side_by_unit[self.standard_bearer_unit]
 
 	side_manager:add_unit_to_side(self.unit, side.side_id)
 
 	if self.is_server then
-		local astar_check_frequency = standard_template.astar_check_frequency
-
-		astar_check_frequency = not not astar_check_frequency or not not 15
-		self.astar_check_frequency = astar_check_frequency
+		self.astar_check_frequency = not not standard_template.astar_check_frequency
 		self.nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
 		local astar_to_players_allowed_layers = {

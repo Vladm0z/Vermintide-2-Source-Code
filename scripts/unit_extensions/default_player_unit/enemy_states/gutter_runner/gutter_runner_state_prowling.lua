@@ -188,53 +188,10 @@ GutterRunnerStateProwling.update = function (self, unit, input, dt, context, t)
 	local is_moving = CharacterStateHelper.has_move_input(input_extension)
 
 	if not self.is_bot then
-		local _breed = self._breed
-
-		if _breed then
-			-- Nothing
-		end
-
-		_breed = self._breed.breed_move_acceleration_up
-
-		local breed_move_acceleration_up = _breed
-
-		::label_4_0::
-
-		local _breed_2 = self._breed
-
-		if _breed_2 then
-			-- Nothing
-		end
-
-		_breed_2 = self._breed.breed_move_acceleration_down
-
-		local breed_move_acceleration_down = _breed_2
-
-		::label_4_1::
-
-		local num = breed_move_acceleration_up * dt
-
-		if not num then
-			-- Nothing
-		end
-
-		num = movement_settings_table.move_acceleration_up * dt
-
-		local move_acceleration_up_dt = num
-
-		::label_4_2::
-
-		local num_2 = breed_move_acceleration_down * dt
-
-		if not num_2 then
-			-- Nothing
-		end
-
-		num_2 = movement_settings_table.move_acceleration_down * dt
-
-		local move_acceleration_down_dt = num_2
-
-		::label_4_3::
+		local breed_move_acceleration_up = not not self._breed
+		local breed_move_acceleration_down = not not self._breed
+		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
+		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -246,7 +203,7 @@ GutterRunnerStateProwling.update = function (self, unit, input, dt, context, t)
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = (not is_moving or not 1) and not not 0
+		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
 	end
 
 	local current_max_move_speed = movement_settings_table.crouch_move_speed

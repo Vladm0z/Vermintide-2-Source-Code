@@ -667,66 +667,11 @@ local OUTSIDE_GOAL_TRIES = 3
 
 LocomotionUtils.pick_visible_outside_goal = function (params)
 	-- function 27
-	local max_tries_2 = params.max_tries
-
-	if not max_tries_2 then
-		-- Nothing
-	end
-
-	max_tries_2 = MAX_TRIES
-
-	local max_tries = max_tries_2
-
-	::label_27_0::
-
-	local min_angle_2 = params.min_angle
-
-	if not min_angle_2 then
-		-- Nothing
-	end
-
-	min_angle_2 = MIN_ANGLE
-
-	local min_angle = min_angle_2
-
-	::label_27_1::
-
-	local min_angle_step_2 = params.min_angle_step
-
-	if not min_angle_step_2 then
-		-- Nothing
-	end
-
-	min_angle_step_2 = MIN_ANGLE_STEP
-
-	local min_angle_step = min_angle_step_2
-
-	::label_27_2::
-
-	local max_angle_step_2 = params.max_angle_step
-
-	if not max_angle_step_2 then
-		-- Nothing
-	end
-
-	max_angle_step_2 = MAX_ANGLE_STEP
-
-	local max_angle_step = max_angle_step_2
-
-	::label_27_3::
-
-	local outside_goal_tries_2 = params.outside_goal_tries
-
-	if not outside_goal_tries_2 then
-		-- Nothing
-	end
-
-	outside_goal_tries_2 = OUTSIDE_GOAL_TRIES
-
-	local outside_goal_tries = outside_goal_tries_2
-
-	::label_27_4::
-
+	local max_tries = not not params.max_tries
+	local min_angle = not not params.min_angle
+	local min_angle_step = not not params.min_angle_step
+	local max_angle_step = not not params.max_angle_step
+	local outside_goal_tries = not not params.outside_goal_tries
 	local nav_world, physics_world = params.nav_world, params.physics_world
 	local from_unit, to_unit = params.from_unit, params.to_unit
 	local from_node_name, to_node_name = params.from_node_name, params.to_node_name
@@ -744,18 +689,7 @@ LocomotionUtils.pick_visible_outside_goal = function (params)
 	local traverse_logic = params.traverse_logic
 	local from_position = POSITION_LOOKUP[from_unit]
 	local to_position = POSITION_LOOKUP[to_unit]
-	local direction_2 = params.direction
-
-	if not direction_2 then
-		-- Nothing
-	end
-
-	direction_2 = 1 - math.random(0, 1) * 2
-
-	local direction = direction_2
-
-	::label_27_5::
-
+	local direction = not not params.direction
 	local delta_up = Vector3.up() * 0.05
 	local result
 
@@ -1003,7 +937,7 @@ end
 LocomotionUtils.raycast_on_navmesh = function (nav_world, position_start, position_end, traverse_logic, above, below, end_pos_nav_projection)
 	-- function 35
 	local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, position_start, above, below)
-	local projected_end_pos = (not not projected_start_pos and end_pos_nav_projection or not position_end) and not not LocomotionUtils.pos_on_mesh(nav_world, position_end, above, below)
+	local projected_end_pos = not not projected_start_pos and (end_pos_nav_projection or not position_end)
 	local success, hit_position
 
 	if projected_end_pos then
@@ -1044,22 +978,7 @@ local WALL_CHECK_RAYCAST_LOW_HEIGHT = 0.4
 LocomotionUtils.navmesh_movement_check = function (unit_position, unit_velocity, nav_world, physics_world, traverse_logic)
 	-- function 37
 	local is_moving = Vector3.length_squared(unit_velocity) > EPSILON_SQ
-	local normalize
-
-	if is_moving then
-		normalize = Vector3.normalize(unit_velocity)
-
-		if not normalize then
-			-- Nothing
-		end
-	end
-
-	normalize = Vector3.zero()
-
-	local direction = normalize
-
-	::label_37_0::
-
+	local direction = is_moving and not not Vector3.normalize(unit_velocity) or not is_moving and not not Vector3.zero()
 	local target_position = unit_position + direction * NAV_CHECK_DISTANCE
 	local raycango, projected_unit_pos, projected_target_pos = LocomotionUtils.ray_can_go_on_mesh(nav_world, unit_position, target_position, traverse_logic, NAV_CHECK_ABOVE, NAV_CHECK_BELOW)
 	local result = "navmesh_ok"
@@ -1073,7 +992,7 @@ LocomotionUtils.navmesh_movement_check = function (unit_position, unit_velocity,
 			hit_wall, hit_position = PhysicsWorld.immediate_raycast(physics_world, ray_source, direction, WALL_CHECK_RAYCAST_LENGTH, "closest", "collision_filter", "filter_ai_mover")
 		end
 
-		result = (not hit_wall or not "navmesh_hit_wall") and not not "navmesh_use_mover"
+		result = hit_wall and (not not "navmesh_hit_wall" or not not "navmesh_use_mover") or not hit_wall and not not "navmesh_use_mover"
 	end
 
 	return result
@@ -1198,10 +1117,8 @@ LocomotionUtils.in_crosshairs_dodge = function (unit, blackboard, t, radius, in_
 
 	local side = Managers.state.side.side_by_unit[unit]
 	local units = side.ENEMY_PLAYER_AND_BOT_UNITS
-	local aim_times_2 = blackboard.aim_times
 
-	aim_times_2 = not not aim_times_2 or not not {}
-	blackboard.aim_times = aim_times_2
+	blackboard.aim_times = not not blackboard.aim_times
 
 	local aim_times = blackboard.aim_times
 	local debug_ai_movement = script_data.debug_ai_movement
@@ -1274,7 +1191,7 @@ LocomotionUtils.separate_mover_fallbacks = function (mover, seprarate_dist)
 		Mover.set_position(mover, new_position)
 	end
 
-	local success = (not is_colliding or not new_position) and not not not is_colliding
+	local success = is_colliding and (not not new_position or not not not is_colliding) or not is_colliding and not not not is_colliding
 
 	return success
 end
@@ -1287,17 +1204,7 @@ LocomotionUtils.on_alerted_dodge = function (unit, blackboard, alerting_unit, en
 
 	if DamageUtils.is_player_unit(real_attacker_unit) then
 		local locomotion_extension = ScriptUnit.has_extension(real_attacker_unit, "locomotion_system")
-		local has_node = Unit.has_node(real_attacker_unit, "camera_attach")
-
-		if has_node then
-			-- Nothing
-		end
-
-		has_node = Unit.node(real_attacker_unit, "camera_attach")
-
-		local node = has_node
-
-		::label_45_0::
+		local node = not not Unit.has_node(real_attacker_unit, "camera_attach")
 
 		rotation = locomotion_extension:current_rotation()
 		enemy_pos = Unit.world_position(real_attacker_unit, node)
@@ -1360,17 +1267,7 @@ LocomotionUtils.check_start_turning = function (unit, t, dt, blackboard)
 	local locomotion_extension = blackboard.locomotion_extension
 	local navigation_extension = blackboard.navigation_extension
 	local position = POSITION_LOOKUP[unit]
-	local wanted_destination_2 = blackboard.wanted_destination
-
-	if wanted_destination_2 then
-		-- Nothing
-	end
-
-	wanted_destination_2 = blackboard.wanted_destination:unbox()
-
-	local wanted_destination = wanted_destination_2
-
-	::label_48_0::
+	local wanted_destination = not not blackboard.wanted_destination
 
 	if not wanted_destination then
 		return
@@ -1389,7 +1286,7 @@ LocomotionUtils.check_start_turning = function (unit, t, dt, blackboard)
 		return
 	end
 
-	local nav_path_node_position = (not next_node_2_position or not next_node_2_position) and not not next_node_1_position
+	local nav_path_node_position = next_node_2_position and (not not next_node_2_position or not not next_node_1_position) or not next_node_2_position and not not next_node_1_position
 	local nav_path_direction = Vector3.normalize(nav_path_node_position - current_node_position)
 	local rotation = Unit.world_rotation(unit, 0)
 	local forward = Quaternion.forward(rotation)
@@ -1442,10 +1339,7 @@ LocomotionUtils.update_leaning = function (unit, blackboard, target_lean_positio
 		blackboard.enabled_animation_movement_system = true
 	end
 
-	local lean_target_position_boxed = blackboard.lean_target_position_boxed
-
-	lean_target_position_boxed = not not lean_target_position_boxed or not not Vector3Box()
-	blackboard.lean_target_position_boxed = lean_target_position_boxed
+	blackboard.lean_target_position_boxed = not not blackboard.lean_target_position_boxed
 
 	blackboard.lean_target_position_boxed:store(target_lean_position)
 end

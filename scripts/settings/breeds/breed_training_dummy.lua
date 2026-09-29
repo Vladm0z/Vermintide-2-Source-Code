@@ -142,50 +142,15 @@ local breed_data = {
 	},
 	modify_extension_init_data = function (breed, extension_init_data, optional_data, position, rotation)
 		-- function 1
-		local projectile_locomotion_system = extension_init_data.projectile_locomotion_system
+		local data1 = not not extension_init_data.projectile_locomotion_system
 
-		if not projectile_locomotion_system then
-			-- Nothing
-		end
-
-		projectile_locomotion_system = {}
-
-		local data1 = projectile_locomotion_system
-
-		::label_1_0::
-
-		local network_position = extension_init_data.network_position
-
-		network_position = not not network_position or not not AiAnimUtils.position_network_scale(position, true)
-		data1.network_position = network_position
-
-		local network_rotation = extension_init_data.network_rotation
-
-		network_rotation = not not network_rotation or not not AiAnimUtils.rotation_network_scale(rotation, true)
-		data1.network_rotation = network_rotation
-
-		local network_velocity = extension_init_data.network_velocity
-
-		network_velocity = not not network_velocity or not not AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
-		data1.network_velocity = network_velocity
-
-		local network_angular_velocity = extension_init_data.network_angular_velocity
-
-		network_angular_velocity = not not network_angular_velocity or not not AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
-		data1.network_angular_velocity = network_angular_velocity
+		data1.network_position = not not extension_init_data.network_position
+		data1.network_rotation = not not extension_init_data.network_rotation
+		data1.network_velocity = not not extension_init_data.network_velocity
+		data1.network_angular_velocity = not not extension_init_data.network_angular_velocity
 		extension_init_data.projectile_locomotion_system = data1
 
-		local pickup_system = extension_init_data.pickup_system
-
-		if not pickup_system then
-			-- Nothing
-		end
-
-		pickup_system = {}
-
-		local data2 = pickup_system
-
-		::label_1_1::
+		local data2 = not not extension_init_data.pickup_system
 
 		data2.has_physics = false
 		data2.spawn_type = "debug"

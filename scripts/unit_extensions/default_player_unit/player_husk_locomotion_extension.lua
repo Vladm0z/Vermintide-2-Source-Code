@@ -91,19 +91,7 @@ PlayerHuskLocomotionExtension.add_external_velocity = function (self, velocity, 
 		return
 	end
 
-	local str
-
-	if upper_limit then
-		str = "rpc_add_external_velocity_with_upper_limit"
-
-		goto label_8_0
-	end
-
-	str = "rpc_add_external_velocity"
-
-	local rpc_name = str
-
-	::label_8_0::
+	local rpc_name = upper_limit and not not "rpc_add_external_velocity_with_upper_limit" or not upper_limit and not not "rpc_add_external_velocity"
 
 	if self.is_server then
 		Managers.state.network.network_transmit:send_rpc(rpc_name, self.player:network_id(), self.id, velocity, upper_limit)
@@ -131,17 +119,7 @@ PlayerHuskLocomotionExtension.set_disabled = function (self, disabled, run_func,
 
 	if not disabled then
 		local unit = self.unit
-		local var_10_0 = POSITION_LOOKUP[unit]
-
-		if not var_10_0 then
-			-- Nothing
-		end
-
-		var_10_0 = Unit.local_position(unit, 0)
-
-		local pos = var_10_0
-
-		::label_10_0::
+		local pos = not not POSITION_LOOKUP[unit]
 
 		self._pos_lerp_time = 0
 
@@ -266,38 +244,9 @@ PlayerHuskLocomotionExtension.get_moving_platform = function (self)
 
 	if GameSession.game_object_exists(self.game, self.id) then
 		local moving_platform = GameSession.game_object_field(self.game, self.id, "moving_platform")
-		local game_object_or_level_unit
-
-		if moving_platform ~= 0 then
-			game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(moving_platform, true)
-
-			if not game_object_or_level_unit then
-				-- Nothing
-			end
-		end
-
-		game_object_or_level_unit = nil
-
-		local platform_unit = game_object_or_level_unit
-
-		::label_16_0::
-
+		local platform_unit = moving_platform == 0 and not not nil or not (moving_platform == 0) and not not Managers.state.network:game_object_or_level_unit(moving_platform, true)
 		local platform_extension = ScriptUnit.has_extension(platform_unit, "transportation_system")
-		local game_object_field
-
-		if platform_unit then
-			game_object_field = GameSession.game_object_field(self.game, self.id, "moving_platform_soft_linked")
-
-			if not game_object_field then
-				-- Nothing
-			end
-		end
-
-		game_object_field = nil
-
-		local soft_platform = game_object_field
-
-		::label_16_1::
+		local soft_platform = platform_unit and not not GameSession.game_object_field(self.game, self.id, "moving_platform_soft_linked") or not platform_unit and not not nil
 
 		return platform_unit, platform_extension, soft_platform
 	end
@@ -317,48 +266,12 @@ end
 
 PlayerHuskLocomotionExtension._extrapolation_movement = function (self, unit, dt, old_pos, new_pos, new_rot, movement_state, velocity, linked_movement, moving_platform)
 	-- function 18
-	local get_data = Unit.get_data(unit, "last_lerp_position")
-
-	if not get_data then
-		-- Nothing
-	end
-
-	get_data = old_pos
-
-	local last_pos = get_data
-
-	::label_18_0::
-
-	local get_data_2 = Unit.get_data(unit, "last_lerp_position_offset")
-
-	if not get_data_2 then
-		-- Nothing
-	end
-
-	get_data_2 = Vector3(0, 0, 0)
-
-	local last_pos_offset = get_data_2
-
-	::label_18_1::
-
-	local get_data_3 = Unit.get_data(unit, "accumulated_movement")
-
-	if not get_data_3 then
-		-- Nothing
-	end
-
-	get_data_3 = Vector3(0, 0, 0)
-
-	local accumulated_movement = get_data_3
-
-	::label_18_2::
+	local last_pos = not not Unit.get_data(unit, "last_lerp_position")
+	local last_pos_offset = not not Unit.get_data(unit, "last_lerp_position_offset")
+	local accumulated_movement = not not Unit.get_data(unit, "accumulated_movement")
 
 	if self._moving_platform ~= moving_platform then
-		local _moving_platform = self._moving_platform
-
-		_moving_platform = not not _moving_platform or not not 0
-
-		local last_platform_unit = _moving_platform ~= 0 and not not Managers.state.network:game_object_or_level_unit(self._moving_platform, true)
+		local last_platform_unit = not not self._moving_platform ~= 0 and not not Managers.state.network:game_object_or_level_unit(self._moving_platform, true)
 		local new_platform_unit = moving_platform ~= 0 and not not Managers.state.network:game_object_or_level_unit(moving_platform, true)
 
 		if last_platform_unit and new_platform_unit then
@@ -384,32 +297,10 @@ PlayerHuskLocomotionExtension._extrapolation_movement = function (self, unit, dt
 		new_pos = new_pos + moving_platform_pos + platform_extension:visual_delta()
 	end
 
-	local _pos_lerp_time = self._pos_lerp_time
+	self._pos_lerp_time = not not self._pos_lerp_time + dt
+	self._velocity_lerp_time = not not self._velocity_lerp_time + dt
 
-	_pos_lerp_time = not not _pos_lerp_time or not not 0
-	self._pos_lerp_time = _pos_lerp_time + dt
-
-	local _velocity_lerp_time = self._velocity_lerp_time
-
-	_velocity_lerp_time = not not _velocity_lerp_time or not not 0
-	self._velocity_lerp_time = _velocity_lerp_time + dt
-
-	local var_18_6
-
-	if linked_movement then
-		var_18_6 = POS_LERP_TIME_LINKED
-
-		if not var_18_6 then
-			-- Nothing
-		end
-	end
-
-	var_18_6 = POS_LERP_TIME
-
-	local pos_lerp_time = var_18_6
-
-	::label_18_3::
-
+	local pos_lerp_time = linked_movement and not not POS_LERP_TIME_LINKED or not linked_movement and not not POS_LERP_TIME
 	local lerp_t = self._pos_lerp_time / pos_lerp_time
 	local move_delta = velocity * dt
 
@@ -475,18 +366,7 @@ PlayerHuskLocomotionExtension._update_speed_variable = function (self, dt)
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val + delta, 0, speed)
 		self._move_speed_top = move_speed_lerp_val
 	else
-		local _move_speed_top = self._move_speed_top
-
-		if not _move_speed_top then
-			-- Nothing
-		end
-
-		_move_speed_top = speed
-
-		local ms = _move_speed_top
-
-		::label_19_0::
-
+		local ms = not not self._move_speed_top
 		local delta = math.min(ms / MOVE_SPEED_ANIM_LERP_TIME * dt, speed_difference)
 
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val - delta, 0, move_speed_lerp_val)

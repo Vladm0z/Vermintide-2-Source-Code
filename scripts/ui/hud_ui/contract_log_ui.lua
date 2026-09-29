@@ -261,17 +261,7 @@ end
 
 ContractLogUI._add_contract = function (self, contract_id)
 	-- function 9
-	local num_added_contracts_2 = self.num_added_contracts
-
-	if not num_added_contracts_2 then
-		-- Nothing
-	end
-
-	num_added_contracts_2 = 0
-
-	local num_added_contracts = num_added_contracts_2
-
-	::label_9_0::
+	local num_added_contracts = not not self.num_added_contracts
 
 	if num_added_contracts >= MAX_NUM_CONTRACT_ENTRIES then
 		return
@@ -293,22 +283,7 @@ ContractLogUI._add_contract = function (self, contract_id)
 	local contract_name = self.quest_manager:get_title_for_contract_id(contract_id)
 	local rewards = contract_template.rewards
 	local quest_reward = rewards.quest
-	local var_9_1
-
-	if quest_reward then
-		var_9_1 = QuestSettings.contract_ui_dlc_colors[quest_reward.quest_type]
-
-		if not var_9_1 then
-			-- Nothing
-		end
-	end
-
-	var_9_1 = Colors.get_table("white")
-
-	local contract_color = var_9_1
-
-	::label_9_1::
-
+	local contract_color = quest_reward and not not QuestSettings.contract_ui_dlc_colors[quest_reward.quest_type] or not quest_reward and not not Colors.get_table("white")
 	local icon_color = widget_style.texture_icon_bg.color
 
 	icon_color[2] = contract_color[2]
@@ -367,17 +342,7 @@ end
 
 ContractLogUI._remove_contract = function (self, contract_id)
 	-- function 10
-	local num_added_contracts_2 = self.num_added_contracts
-
-	if not num_added_contracts_2 then
-		-- Nothing
-	end
-
-	num_added_contracts_2 = 0
-
-	local num_added_contracts = num_added_contracts_2
-
-	::label_10_0::
+	local num_added_contracts = not not self.num_added_contracts
 
 	if num_added_contracts <= 0 then
 		return
@@ -452,7 +417,7 @@ ContractLogUI.update = function (self, dt, t)
 		dirty = true
 	end
 
-	if self._is_visible and (not self.num_added_contracts or not (self.num_added_contracts <= 0)) and not self.num_added_contracts then
+	if self._is_visible and self.num_added_contracts then
 		self:set_visible(false)
 	elseif not self._is_visible and self.num_added_contracts and self.num_added_contracts > 0 then
 		self:set_visible(true)

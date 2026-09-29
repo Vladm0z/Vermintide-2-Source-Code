@@ -33,10 +33,7 @@ ObjectLinkCamera.update = function (self, dt, position, rotation, data)
 	table.clear(self._curve_params)
 
 	if curve_data then
-		local _environment_params = self._environment_params
-
-		_environment_params = not not _environment_params or not not {}
-		self._environment_params = _environment_params
+		self._environment_params = not not self._environment_params
 
 		table.clear(self._environment_params)
 
@@ -72,29 +69,12 @@ end
 
 ObjectLinkCamera.fade_to_black = function (self)
 	-- function 6
-	local fade_to_black = self._curve_params.fade_to_black
-
-	fade_to_black = not not fade_to_black or not not ObjectLinkCamera.super.fade_to_black(self)
-
-	return fade_to_black
+	return not not self._curve_params.fade_to_black
 end
 
 ObjectLinkCamera.vertical_fov = function (self)
 	-- function 7
 	local yfov = self._curve_params.yfov
-	local num
 
-	if yfov then
-		num = yfov * (math.pi / 180)
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = ObjectLinkCamera.super.vertical_fov(self)
-
-	::label_7_0::
-
-	return num
+	return yfov and not not (yfov * (math.pi / 180)) or not yfov and not not ObjectLinkCamera.super.vertical_fov(self)
 end

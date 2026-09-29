@@ -8,10 +8,7 @@ ProjectileLinearSphereSweepImpactUnitExtension.init = function (self, extension_
 	-- function 1
 	ProjectileLinearSphereSweepImpactUnitExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
-	local collision_filter = extension_init_data.collision_filter
-
-	collision_filter = not not collision_filter or not not "filter_player_ray_projectile"
-	self.collision_filter = collision_filter
+	self.collision_filter = not not extension_init_data.collision_filter
 	self.sphere_radius = extension_init_data.sphere_radius
 	self.only_one_impact = extension_init_data.only_one_impact
 	self.owner_unit = extension_init_data.owner_unit

@@ -1,74 +1,17 @@
 -- chunkname: @scripts/settings/demo_settings.lua
 
-local Demosettings = Demosettings
-
-Demosettings = not not Demosettings or not not {
-	disable_free_flight = true,
-	career_index = "we_shade",
-	disable_intro_trailer = true,
-	level_resource_package = "resource_packages/levels/debug/ussingen_demo",
-	camera_end_position = "character_position_camera",
-	starting_camera_name = "logo_position_camera",
-	wanted_profile_index = 4,
-	level_name = "levels/debug/ussingen_demo/world",
-	attract_timer = 90,
-	inventory_resource_package = "resource_packages/inventory",
-	demo_idle_timer = 90,
-	demo_level = "ussingen_demo",
-	difficulty = "normal",
-	characters = {
-		{
-			profile_name = "wood_elf",
-			career_index = 3,
-			zoom_offset = Vector3Box(0, -1, -0.1),
-			position_offset = Vector3Box(0.9, 2.3, 0),
-			rotation = QuaternionBox(Quaternion.axis_angle(Vector3(0, 0, 1), math.degrees_to_radians(-15)))
-		},
-		{
-			profile_name = "empire_soldier",
-			career_index = 3,
-			zoom_offset = Vector3Box(-0, -1, -0.1),
-			position_offset = Vector3Box(-0.9, 2.3, 0),
-			rotation = QuaternionBox(Quaternion.axis_angle(Vector3(0, 0, 1), math.degrees_to_radians(65)))
-		}
-	},
-	play_on_select = {
-		wood_elf = "Play_wood_elf_career_presentation_shade_vo",
-		empire_soldier = "Play_soldier_career_presentation_huntsman_vo"
-	}
-}
-DemoSettings = Demosettings
+DemoSettings = not not Demosettings
 
 if DemoSettings.key_combinations_allowed == nil then
 	if Window == nil then
 		key_combinations_allowed = {}
 	else
-		local DemoSettings = DemoSettings
-		local tbl = {}
-		local KEYSTROKE_ALT_ENTER = Window.KEYSTROKE_ALT_ENTER
-		local flag
-
-		flag = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
-		tbl[KEYSTROKE_ALT_ENTER] = flag
-
-		local KEYSTROKE_ALT_F4 = Window.KEYSTROKE_ALT_F4
-		local flag_2
-
-		flag_2 = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
-		tbl[KEYSTROKE_ALT_F4] = flag_2
-
-		local KEYSTROKE_ALT_TAB = Window.KEYSTROKE_ALT_TAB
-		local flag_3
-
-		flag_3 = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
-		tbl[KEYSTROKE_ALT_TAB] = flag_3
-
-		local KEYSTROKE_WINDOWS = Window.KEYSTROKE_WINDOWS
-		local flag_4
-
-		flag_4 = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
-		tbl[KEYSTROKE_WINDOWS] = flag_4
-		DemoSettings.key_combinations_allowed = tbl
+		DemoSettings.key_combinations_allowed = {
+			[Window.KEYSTROKE_ALT_ENTER] = not not true,
+			[Window.KEYSTROKE_ALT_F4] = not not true,
+			[Window.KEYSTROKE_ALT_TAB] = not not true,
+			[Window.KEYSTROKE_WINDOWS] = not not true
+		}
 	end
 end
 

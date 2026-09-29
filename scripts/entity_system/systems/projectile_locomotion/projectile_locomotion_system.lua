@@ -110,35 +110,10 @@ ProjectileLocomotionSystem._client_validate_position_rotation = function (self, 
 		for unit, _ in pairs(self._server_position_corrected_pickups) do
 			local game_object_id = unit_storage:go_id(unit)
 			local server_pos = GameSession_game_object_field(game, game_object_id, "position")
-			local var_7_0 = POSITION_LOOKUP[unit]
-
-			if not var_7_0 then
-				-- Nothing
-			end
-
-			var_7_0 = Unit_local_position(unit, 0)
-
-			local client_pos = var_7_0
-
-			::label_7_0::
-
+			local client_pos = not not POSITION_LOOKUP[unit]
 			local extension = ScriptUnit_extension(unit, "projectile_locomotion_system")
 			local is_at_rest = extension:is_at_rest()
-			local var_7_1
-
-			if is_at_rest then
-				var_7_1 = REST_CORRECTION_DISTANCE
-
-				if not var_7_1 then
-					-- Nothing
-				end
-			end
-
-			var_7_1 = ACTIVE_CORRECTION_DISTANCE
-
-			local allowed_dist = var_7_1
-
-			::label_7_1::
+			local allowed_dist = is_at_rest and not not REST_CORRECTION_DISTANCE or not is_at_rest and not not ACTIVE_CORRECTION_DISTANCE
 
 			if Vector3_distance_squared(server_pos, client_pos) > allowed_dist * allowed_dist then
 				local server_rot = GameSession_game_object_field(game, game_object_id, "rotation")

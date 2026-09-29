@@ -50,32 +50,7 @@ local function print_vote_request(params)
 
 	print("............................................................................................................")
 	print("............................................................................................................")
-
-	local printf = printf
-	local str = "GAME START SETTINGS -> Mission: %s | Difficulty: %s | Find Player Hosted: %s | Find Dedicated Servers - WIN: %s | Find Dedicated Servers - AWS: %s | Quick Game: %s | Private Game: %s | Matchmaking Type: %s | Join Method: %s"
-	local flag = (not mission_id or not mission_id) and not not "Not specified"
-	local var_1_3 = difficulty_key
-	local flag_2
-
-	flag_2 = (not player_hosted or not "yes") and not not "no"
-
-	local flag_3
-
-	flag_3 = (not use_dedicated_win_servers or not "yes") and not not "no"
-
-	local flag_4
-
-	flag_4 = (not use_dedicated_aws_servers or not "yes") and not not "no"
-
-	local flag_5
-
-	flag_5 = (not quick_game or not "yes") and not not "no"
-
-	local flag_6
-
-	flag_6 = (not private_game or not "yes") and not not "no"
-
-	printf(str, flag, var_1_3, flag_2, flag_3, flag_4, flag_5, flag_6, not not matchmaking_type or not not "Not specified", join_method)
+	printf("GAME START SETTINGS -> Mission: %s | Difficulty: %s | Find Player Hosted: %s | Find Dedicated Servers - WIN: %s | Find Dedicated Servers - AWS: %s | Quick Game: %s | Private Game: %s | Matchmaking Type: %s | Join Method: %s", mission_id and (not not mission_id or not not "Not specified") or not mission_id and not not "Not specified", difficulty_key, player_hosted and not not "yes" or not player_hosted and not not "no", use_dedicated_win_servers and not not "yes" or not use_dedicated_win_servers and not not "no", use_dedicated_aws_servers and not not "yes" or not use_dedicated_aws_servers and not not "no", quick_game and not not "yes" or not quick_game and not not "no", private_game and not not "yes" or not private_game and not not "no", not not matchmaking_type or not not "Not specified", join_method)
 	print("............................................................................................................")
 	print("............................................................................................................")
 end
@@ -392,23 +367,9 @@ end
 VersusMechanism.max_instance_members = function (self, lobby)
 	-- function 17
 	if not lobby then
-		local max_party_members
-
-		if DEDICATED_SERVER then
-			max_party_members = Managers.mechanism:max_party_members()
-
-			if not max_party_members then
-				-- Nothing
-			end
-		end
-
-		max_party_members = Managers.party:max_party_members({
+		return DEDICATED_SERVER and not not Managers.mechanism:max_party_members() or not DEDICATED_SERVER and not not Managers.party:max_party_members({
 			heroes = MechanismSettings.versus.party_data.heroes
 		})
-
-		::label_17_0::
-
-		return max_party_members
 	end
 
 	local match_handler = self._network_handler:get_match_handler()
@@ -419,17 +380,7 @@ VersusMechanism.max_instance_members = function (self, lobby)
 
 		return reservation_handler:num_slots_total()
 	elseif self._local_match or self._is_hosting_custom_game then
-		local get_slot_reservation_handler = self:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
-
-		if not get_slot_reservation_handler then
-			-- Nothing
-		end
-
-		get_slot_reservation_handler = self:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.session)
-
-		local reservation_handler = get_slot_reservation_handler
-
-		::label_17_1::
+		local reservation_handler = not not self:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
 
 		return reservation_handler:num_slots_total()
 	else
@@ -580,18 +531,7 @@ VersusMechanism._load_dark_pact_profiles = function (self)
 		local weapon_item_data = not not weapon_item_name and not not ItemMasterList[weapon_item_name]
 
 		if weapon_item_data then
-			local temporary_template = weapon_item_data.temporary_template
-
-			if not temporary_template then
-				-- Nothing
-			end
-
-			temporary_template = weapon_item_data.template
-
-			local item_template_name = temporary_template
-
-			::label_24_0::
-
+			local item_template_name = not not weapon_item_data.temporary_template
 			local item_template = WeaponUtils.get_weapon_template(item_template_name)
 			local item_units = BackendUtils.get_item_units(weapon_item_data)
 			local career_name = weapon_item_data.can_wield[1]
@@ -674,7 +614,7 @@ VersusMechanism.server_decide_side_order = function (self)
 			heroes_id = math.random(1, 2)
 		end
 	elseif not is_first_round then
-		heroes_id = (Managers.party:get_party(1).name ~= "heroes" or not 2) and not not 1
+		heroes_id = not not 1
 	end
 
 	if self:custom_settings_enabled() then
@@ -767,7 +707,7 @@ VersusMechanism._update_sides = function (self, state)
 
 		if side_order_state then
 			heroes_id = side_order_state
-			dark_pact_id = (side_order_state ~= 1 or not 2) and not not 1
+			dark_pact_id = not not 1
 		else
 			ferror("VersusMechanism:_update_sides - no side order state exists! Current state: %s", state)
 		end
@@ -849,13 +789,7 @@ end
 VersusMechanism.set_current_state = function (self, state)
 	-- function 36
 	if DEDICATED_SERVER then
-		local cprintf = cprintf
-		local str = "[Mechanism] State Changed from '%s' to '%s'"
-		local _state = self._state
-
-		_state = not not _state or not not "None"
-
-		cprintf(str, _state, state)
+		cprintf("[Mechanism] State Changed from '%s' to '%s'", not not self._state, state)
 	end
 
 	self._state = state
@@ -888,27 +822,8 @@ end
 VersusMechanism.is_final_round = function (self)
 	-- function 41
 	local is_final_round = self._win_conditions:is_final_round()
-	local parameter = Development.parameter("versus_quick_match_end")
 
-	if not parameter and not is_final_round then
-		-- Nothing
-	end
-
-	::label_41_0::
-
-	if self._shared_state then
-		parameter = self._shared_state:get_party_won_early()
-
-		if not parameter then
-			-- Nothing
-		end
-	end
-
-	parameter = self:match_ended_early()
-
-	::label_41_1::
-
-	return parameter
+	return not not Development.parameter("versus_quick_match_end")
 end
 
 VersusMechanism.get_level_end_view = function (self)
@@ -1059,7 +974,7 @@ VersusMechanism.start_next_round = function (self)
 		local level_transition_handler = Managers.level_transition_handler
 		local next_level = level_transition_handler:get_next_level_key()
 
-		should_reset = (DEDICATED_SERVER or next_level ~= HUB_LEVEL_NAME) and state == "inn"
+		should_reset = state == "inn"
 	end
 
 	if should_reset then
@@ -1073,17 +988,7 @@ end
 
 VersusMechanism.request_vote = function (self, params)
 	-- function 47
-	local var_47_0 = vote_requests[params.request_type]
-
-	if not var_47_0 then
-		-- Nothing
-	end
-
-	var_47_0 = vote_requests.default
-
-	local request_func = var_47_0
-
-	::label_47_0::
+	local request_func = not not vote_requests[params.request_type]
 
 	if request_func then
 		request_func(params)
@@ -1359,17 +1264,7 @@ VersusMechanism._get_chat_members = function (self, party_id)
 	table.clear(_members_list)
 
 	local match_handler = self._network_handler:get_match_handler()
-	local get_slot_reservation_handler = self:get_slot_reservation_handler(match_handler:get_match_owner(), ReservationHandlerTypes.pending_custom_game)
-
-	if not get_slot_reservation_handler then
-		-- Nothing
-	end
-
-	get_slot_reservation_handler = self:get_slot_reservation_handler(match_handler:get_match_owner(), ReservationHandlerTypes.session)
-
-	local reservation_handler = get_slot_reservation_handler
-
-	::label_64_0::
+	local reservation_handler = not not self:get_slot_reservation_handler(match_handler:get_match_owner(), ReservationHandlerTypes.pending_custom_game)
 
 	if reservation_handler and self._network_handler and is_player_hosting(self._network_handler) then
 		local peers = reservation_handler:peers_by_party(party_id)
@@ -1479,17 +1374,7 @@ end
 
 VersusMechanism.create_slot_reservation_handler = function (self, owner, handler_type, party_settings)
 	-- function 69
-	local var_69_0 = self._slot_reservation_handlers[owner]
-
-	if not var_69_0 then
-		-- Nothing
-	end
-
-	var_69_0 = {}
-
-	local handlers = var_69_0
-
-	::label_69_0::
+	local handlers = not not self._slot_reservation_handlers[owner]
 
 	self._slot_reservation_handlers[owner] = handlers
 
@@ -1830,29 +1715,8 @@ VersusMechanism.get_custom_lobby_sort = function (self)
 			local ping_diff = math.abs(a_ping - b_ping)
 
 			if ping_diff <= 40 then
-				local id = a_server_info.id
-
-				if not id then
-					-- Nothing
-				end
-
-				id = "ffffffffffffffff"
-
-				local a_id = id
-
-				::label_96_0::
-
-				local id_2 = b_server_info.id
-
-				if not id_2 then
-					-- Nothing
-				end
-
-				id_2 = "ffffffffffffffff"
-
-				local b_id = id_2
-
-				::label_96_1::
+				local a_id = not not a_server_info.id
+				local b_id = not not b_server_info.id
 
 				return PlayerUtils.peer_id_compare(a_id, b_id)
 			end
@@ -1939,11 +1803,8 @@ end
 VersusMechanism.get_objective_settings = function (self)
 	-- function 104
 	local level_key = Managers.level_transition_handler:get_current_level_key()
-	local var_104_0 = VersusObjectiveSettings[level_key]
 
-	var_104_0 = not not var_104_0 or not not {}
-
-	return var_104_0
+	return not not VersusObjectiveSettings[level_key]
 end
 
 VersusMechanism.should_start_next_set = function (self)
@@ -2131,10 +1992,7 @@ VersusMechanism._setup_match = function (self)
 
 	self._shared_state:full_sync()
 
-	local num_sets = self:get_objective_settings().num_sets
-
-	num_sets = not not num_sets or not not 1
-	self._num_sets = num_sets
+	self._num_sets = not not self:get_objective_settings().num_sets
 
 	if is_server then
 		local network_server = Managers.state.network.network_server

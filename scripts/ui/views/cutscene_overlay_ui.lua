@@ -106,62 +106,16 @@ CutsceneOverlayUI._present_template_entry = function (self, template_list_name, 
 
 		local content = widget.content
 		local localize = entry.localize
-		local var_7_0
 
-		if localize then
-			var_7_0 = Localize(text)
-
-			if not var_7_0 then
-				-- Nothing
-			end
-		end
-
-		var_7_0 = text
-
-		::label_7_0::
-
-		content.text = var_7_0
+		content.text = localize and not not Localize(text) or not localize and not not text
 
 		local font_size = entry.font_size
 		local font_type = entry.font_type
 		local word_wrap = entry.word_wrap
 		local font_upper_case = entry.font_upper_case
-		local vertical_alignment_2 = entry.vertical_alignment
-
-		if not vertical_alignment_2 then
-			-- Nothing
-		end
-
-		vertical_alignment_2 = "center"
-
-		local vertical_alignment = vertical_alignment_2
-
-		::label_7_1::
-
-		local horizontal_alignment_2 = entry.horizontal_alignment
-
-		if not horizontal_alignment_2 then
-			-- Nothing
-		end
-
-		horizontal_alignment_2 = "center"
-
-		local horizontal_alignment = horizontal_alignment_2
-
-		::label_7_2::
-
-		local color_2 = entry.color
-
-		if not color_2 then
-			-- Nothing
-		end
-
-		color_2 = Colors.get_color_table_with_alpha("white", 255)
-
-		local color = color_2
-
-		::label_7_3::
-
+		local vertical_alignment = not not entry.vertical_alignment
+		local horizontal_alignment = not not entry.horizontal_alignment
+		local color = not not entry.color
 		local offset = entry.offset
 		local use_shadow = entry.use_shadow
 		local inject_alpha = entry.inject_alpha

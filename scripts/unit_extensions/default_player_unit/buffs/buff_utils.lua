@@ -3,17 +3,11 @@
 require("scripts/managers/game_mode/mechanisms/mechanism_overrides")
 
 local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local BuffUtils = BuffUtils
 
-BuffUtils = not not BuffUtils or not not {}
-BuffUtils = BuffUtils
+BuffUtils = not not BuffUtils
 
 if script_data then
-	local script_data = script_data
-	local debug_legendary_traits = script_data.debug_legendary_traits
-
-	debug_legendary_traits = not not debug_legendary_traits or not not Development.parameter("debug_legendary_traits")
-	script_data.debug_legendary_traits = debug_legendary_traits
+	script_data.debug_legendary_traits = not not script_data.debug_legendary_traits
 end
 
 BuffUtils.apply_buff_tweak_data = function (buffs, tweak_data)
@@ -117,21 +111,7 @@ local unit_node = Unit.node
 
 local function _get_particle_link_node(fx, link_target)
 	-- function 7
-	local var_7_0
-
-	if fx.link_node then
-		var_7_0 = unit_node(link_target, fx.link_node)
-
-		if not var_7_0 then
-			-- Nothing
-		end
-	end
-
-	var_7_0 = 0
-
-	::label_7_0::
-
-	return var_7_0
+	return fx.link_node and not not unit_node(link_target, fx.link_node) or not fx.link_node and not not 0
 end
 
 BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_first_person, buff_id, end_t)
@@ -147,14 +127,14 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 	for i = 1, #particle_fx do
 		local fx = particle_fx[i]
 
-		if (not is_first_person or not fx.first_person) and not is_first_person and fx.third_person then
+		if not is_first_person and fx.third_person then
 			local link_target = unit
 
 			if link_target then
 				local node_id = _get_particle_link_node(fx, link_target)
 				local pose = fx.pose
 
-				pose = (not pose or not Matrix4x4.from_quaternion_position_scale(Quaternion.from_euler_angles_xyz(pose.rotation[1], pose.rotation[2], pose.rotation[3]), Vector3Aux.unbox(pose.position), Vector3Aux.unbox(pose.scale))) and not not nil
+				pose = pose and (not not Matrix4x4.from_quaternion_position_scale(Quaternion.from_euler_angles_xyz(pose.rotation[1], pose.rotation[2], pose.rotation[3]), Vector3Aux.unbox(pose.position), Vector3Aux.unbox(pose.scale)) or not not nil) or not pose and not not nil
 
 				local fx_id = ScriptWorld.create_particles_linked(world, fx.effect, link_target, node_id, fx.orphaned_policy, pose)
 
@@ -162,23 +142,10 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 					for variable_i = 1, #fx.custom_variables do
 						local data = fx.custom_variables[variable_i]
 						local name = data.name
-						local cached_id = data.cached_id
 
-						cached_id = not not cached_id or not not World.find_particles_variable(world, fx.effect, name)
-						data.cached_id = cached_id
+						data.cached_id = not not data.cached_id
 
-						local value_2 = data.value
-
-						if not value_2 then
-							-- Nothing
-						end
-
-						value_2 = data.dynamic_value()
-
-						local value = value_2
-
-						::label_8_0::
-
+						local value = not not data.value
 						local unit_scale = Unit.local_scale(unit, 0)
 						local effect_variable = Vector3.divide_elements(Vector3Aux.unbox(value), unit_scale)
 
@@ -191,17 +158,7 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 						local data = fx.material_variables[variable_i]
 						local cloud_name = data.cloud_name
 						local material_variable = data.material_variable
-						local value_3 = data.value
-
-						if not value_3 then
-							-- Nothing
-						end
-
-						value_3 = data.dynamic_value()
-
-						local value = value_3
-
-						::label_8_1::
+						local value = not not data.value
 
 						ScriptWorld.set_material_variable_for_particles(world, fx_id, cloud_name, material_variable, value)
 					end
@@ -209,32 +166,12 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 
 				if fx.continuous then
 					if fx.destroy_policy == "stop" then
-						local stop_fx_2 = fx_state.stop_fx
-
-						if not stop_fx_2 then
-							-- Nothing
-						end
-
-						stop_fx_2 = {}
-
-						local stop_fx = stop_fx_2
-
-						::label_8_2::
+						local stop_fx = not not fx_state.stop_fx
 
 						fx_state.stop_fx = stop_fx
 						stop_fx[#stop_fx + 1] = fx_id
 					else
-						local destroy_fx_2 = fx_state.destroy_fx
-
-						if not destroy_fx_2 then
-							-- Nothing
-						end
-
-						destroy_fx_2 = {}
-
-						local destroy_fx = destroy_fx_2
-
-						::label_8_3::
+						local destroy_fx = not not fx_state.destroy_fx
 
 						fx_state.destroy_fx = destroy_fx
 						destroy_fx[#destroy_fx + 1] = fx_id
@@ -242,17 +179,7 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 				end
 
 				if fx.update then
-					local update_fx_2 = fx_state.update_fx
-
-					if not update_fx_2 then
-						-- Nothing
-					end
-
-					update_fx_2 = {}
-
-					local update_fx = update_fx_2
-
-					::label_8_4::
+					local update_fx = not not fx_state.update_fx
 
 					fx_state.update_fx = update_fx
 					update_fx[fx_id] = fx.update
@@ -347,15 +274,8 @@ BuffUtils.get_buff_template = function (name, optional_mechanism_name)
 	return MechanismOverrides.get(BuffTemplates[name], optional_mechanism_name)
 end
 
-local BalefireDots = BalefireDots
-
-BalefireDots = not not BalefireDots or not not {}
-BalefireDots = BalefireDots
-
-local BalefireBurnDotLookup = BalefireBurnDotLookup
-
-BalefireBurnDotLookup = not not BalefireBurnDotLookup or not not {}
-BalefireBurnDotLookup = BalefireBurnDotLookup
+BalefireDots = not not BalefireDots
+BalefireBurnDotLookup = not not BalefireBurnDotLookup
 
 BuffUtils.generate_balefire_burn_variants = function (buff_templates)
 	-- function 14
@@ -393,10 +313,7 @@ BuffUtils.generate_balefire_burn_variants = function (buff_templates)
 	end
 end
 
-local InfiniteBurnDotLookup = InfiniteBurnDotLookup
-
-InfiniteBurnDotLookup = not not InfiniteBurnDotLookup or not not {}
-InfiniteBurnDotLookup = InfiniteBurnDotLookup
+InfiniteBurnDotLookup = not not InfiniteBurnDotLookup
 
 BuffUtils.generate_infinite_burn_variants = function (buff_templates)
 	-- function 15

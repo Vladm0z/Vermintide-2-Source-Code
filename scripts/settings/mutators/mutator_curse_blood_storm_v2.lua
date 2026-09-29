@@ -91,13 +91,7 @@ Storm.update = function (self, dt, t)
 			end
 		end
 	else
-		local ferror = ferror
-		local str = "unknown state %d"
-		local _state = self._state
-
-		_state = not not _state or not not "nil"
-
-		ferror(str, _state)
+		ferror("unknown state %d", not not self._state)
 	end
 end
 
@@ -339,21 +333,7 @@ return {
 								local buff_system = Managers.state.entity:system("buff_system")
 								local difficulty = Managers.state.difficulty:get_difficulty()
 								local power_level = DIFFICULTY_POWER_LEVEL[difficulty]
-								local var_15_0
-
-								if player.bot_player then
-									var_15_0 = BLEED_BUFF_BOTS
-
-									if not var_15_0 then
-										-- Nothing
-									end
-								end
-
-								var_15_0 = BLEED_BUFF
-
-								local buff = var_15_0
-
-								::label_15_0::
+								local buff = player.bot_player and not not BLEED_BUFF_BOTS or not player.bot_player and not not BLEED_BUFF
 
 								buff_system:add_buff(player_unit, buff, vortex_unit, false, power_level)
 							end

@@ -10,27 +10,12 @@ ScalableTransformCamera.parse_parameters = function (self, camera_settings, pare
 
 	self._scale_function = camera_settings.scale_function
 	self._scale_variable = camera_settings.scale_variable
-
-	local vertical_fov = camera_settings.vertical_fov
-
-	vertical_fov = not not vertical_fov and not not (camera_settings.vertical_fov * math.pi / 180)
-	self._max_fov = vertical_fov
+	self._max_fov = not not camera_settings.vertical_fov
 end
 
 ScalableTransformCamera.update = function (self, dt, position, rotation, data)
 	-- function 2
-	local var_2_0 = data[self._scale_variable]
-
-	if not var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = 1
-
-	local scale = var_2_0
-
-	::label_2_0::
-
+	local scale = not not data[self._scale_variable]
 	local scale_value = self._scale_function(scale)
 	local offset_position = self._offset_position
 	local offset_x = offset_position.x * scale_value * Quaternion.right(rotation)

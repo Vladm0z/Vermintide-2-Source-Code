@@ -20,11 +20,7 @@ ActionSpiritStorm.client_owner_start_action = function (self, new_action, t, cha
 
 	self.owner_buff_extension = buff_extension
 	self.state = "waiting_to_shoot"
-
-	local fire_time = new_action.fire_time
-
-	fire_time = not not fire_time or not not 0
-	self.time_to_shoot = t + fire_time
+	self.time_to_shoot = t + not not new_action.fire_time
 	self.target = chain_action_data.target
 	self.is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action)
 end

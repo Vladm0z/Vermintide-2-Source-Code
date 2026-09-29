@@ -456,18 +456,7 @@ DamageBlobExtension.update_blobs_fx_and_sfx = function (self, t, dt)
 	local fx_list = self.fx_list
 
 	if #fx_list >= 1 then
-		local var_10_0 = next(self.fx_list, self.current_fx_index)
-
-		if not var_10_0 then
-			-- Nothing
-		end
-
-		var_10_0 = 1
-
-		local index = var_10_0
-
-		::label_10_0::
-
+		local index = not not next(self.fx_list, self.current_fx_index)
 		local fx_entry = fx_list[index]
 
 		if fx_entry then

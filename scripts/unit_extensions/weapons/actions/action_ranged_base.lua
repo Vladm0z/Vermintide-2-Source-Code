@@ -2,18 +2,7 @@
 
 ActionRangedBase = class(ActionRangedBase, ActionBase)
 
-local var_0_0 = rawget(_G, "Tobii")
-
-if var_0_0 then
-	-- Nothing
-end
-
-var_0_0 = Application.user_setting("tobii_eyetracking")
-
-local HAS_TOBII = var_0_0
-
-::label_0_0::
-
+local HAS_TOBII = not not rawget(_G, "Tobii")
 local MAX_SHOTS_PER_FRAME = 3
 local unit_has_extension = ScriptUnit.has_extension
 local unit_set_flow_variable = Unit.set_flow_variable
@@ -27,11 +16,7 @@ ActionRangedBase.init = function (self, world, item_name, is_server, owner_unit,
 	self.overcharge_extension = unit_has_extension(owner_unit, "overcharge_system")
 	self.hud_extension = unit_has_extension(owner_unit, "hud_system")
 	self.first_person_extension = unit_has_extension(owner_unit, "first_person_system")
-
-	local var_1_0 = HAS_TOBII
-
-	var_1_0 = not not var_1_0 and not not unit_has_extension(owner_unit, "eyetracking_system")
-	self.eyetracking_extension = var_1_0
+	self.eyetracking_extension = not not HAS_TOBII
 	self.targeting_extension = unit_has_extension(owner_unit, "smart_targeting_system")
 	self.input_extension = unit_has_extension(owner_unit, "input_system")
 	self.status_extension = unit_has_extension(owner_unit, "status_system")
@@ -52,16 +37,8 @@ ActionRangedBase.client_owner_start_action = function (self, new_action, t, chai
 	local hud_extension = self.hud_extension
 
 	self._state = "waiting_to_shoot"
-
-	local fire_time = new_action.fire_time
-
-	fire_time = not not fire_time or not not 0
-	self._time_to_shoot = t + fire_time
-
-	local active_reload_time = new_action.active_reload_time
-
-	active_reload_time = not not active_reload_time and not not (t + new_action.active_reload_time)
-	self._active_reload_time = active_reload_time
+	self._time_to_shoot = t + not not new_action.fire_time
+	self._active_reload_time = not not new_action.active_reload_time
 	self._power_level = power_level
 
 	if new_action.power_level then
@@ -69,52 +46,22 @@ ActionRangedBase.client_owner_start_action = function (self, new_action, t, chai
 	end
 
 	self._num_shots_total, self._num_projectiles_per_shot = self:gen_num_shots()
-
-	local extra_shot_delay = new_action.extra_shot_delay
-
-	extra_shot_delay = not not extra_shot_delay or not not 0.2
-	self._extra_shot_delay = extra_shot_delay
-
-	local burst_shot_delay = new_action.burst_shot_delay
-
-	burst_shot_delay = not not burst_shot_delay or not not 0.1
-	self._burst_shot_delay = burst_shot_delay
+	self._extra_shot_delay = not not new_action.extra_shot_delay
+	self._burst_shot_delay = not not new_action.burst_shot_delay
 	self._num_shots_fired = 0
 	self._num_projectiles_spawned = 0
 	self._check_buffs = true
 	self._spread_done = false
 	self._extra_buff_shot = false
 	self._infinite_ammo = buff_extension:has_buff_perk("infinite_ammo")
-
-	local continuous_buff_check = new_action.continuous_buff_check
-
-	continuous_buff_check = not not continuous_buff_check or not not false
-	self._continuous_buff_check = continuous_buff_check
-
-	local apply_shot_cost_once = new_action.apply_shot_cost_once
-
-	apply_shot_cost_once = not not apply_shot_cost_once or not not false
-	self._apply_shot_cost_once = apply_shot_cost_once
+	self._continuous_buff_check = not not new_action.continuous_buff_check
+	self._apply_shot_cost_once = not not new_action.apply_shot_cost_once
 	self._shot_cost_applied = false
-
-	local roll_crit_once = new_action.roll_crit_once
-
-	roll_crit_once = not not roll_crit_once or not not false
-	self._roll_crit_once = roll_crit_once
+	self._roll_crit_once = not not new_action.roll_crit_once
 	self._crit_applied = false
 
 	if not self.is_bot then
-		local controller_effects = new_action.controller_effects
-
-		if controller_effects then
-			-- Nothing
-		end
-
-		controller_effects = new_action.controller_effects.start
-
-		local controller_effect = controller_effects
-
-		::label_2_0::
+		local controller_effect = not not new_action.controller_effects
 
 		if controller_effect then
 			Managers.state.controller_features:add_effect(controller_effect.effect_type, controller_effect.params)
@@ -127,10 +74,7 @@ ActionRangedBase.client_owner_start_action = function (self, new_action, t, chai
 		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	local unhide_ammo_on_infinite_ammo = new_action.unhide_ammo_on_infinite_ammo
-
-	unhide_ammo_on_infinite_ammo = not not unhide_ammo_on_infinite_ammo and not not self._infinite_ammo
-	self._unhide_ammo_at_action_end = unhide_ammo_on_infinite_ammo
+	self._unhide_ammo_at_action_end = not not new_action.unhide_ammo_on_infinite_ammo
 end
 
 ActionRangedBase.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
@@ -226,17 +170,7 @@ ActionRangedBase._start_shooting = function (self, t)
 	self._fire_rotation:store(current_rotation)
 
 	if not self.is_bot then
-		local controller_effects = current_action.controller_effects
-
-		if controller_effects then
-			-- Nothing
-		end
-
-		controller_effects = current_action.controller_effects.fire
-
-		local controller_effect = controller_effects
-
-		::label_6_0::
+		local controller_effect = not not current_action.controller_effects
 
 		if controller_effect then
 			Managers.state.controller_features:add_effect(controller_effect.effect_type, controller_effect.params)
@@ -314,7 +248,7 @@ ActionRangedBase._finished_shooting = function (self, t)
 		if t > self._active_reload_time then
 			local ammo_extension = self.ammo_extension
 
-			if (input_extension:get("weapon_reload") or input_extension:get_buffer("weapon_reload")) and ammo_extension:can_reload() then
+			if input_extension:get("weapon_reload") and ammo_extension:can_reload() or not input_extension:get("weapon_reload") and input_extension:get_buffer("weapon_reload") and ammo_extension:can_reload() then
 				self.status_extension:set_zooming(false)
 
 				local weapon_extension = ScriptUnit.extension(self.weapon_unit, "weapon_system")
@@ -335,41 +269,9 @@ ActionRangedBase.shoot = function (self, num_shots_this_frame, shots_fired, num_
 	local current_action = self.current_action
 	local current_position = self._fire_position:unbox()
 	local current_rotation = self._fire_rotation:unbox()
-	local num_layers_spread_2 = current_action.num_layers_spread
-
-	if not num_layers_spread_2 then
-		-- Nothing
-	end
-
-	num_layers_spread_2 = 1
-
-	local num_layers_spread = num_layers_spread_2
-
-	::label_9_0::
-
-	local bullseye_2 = current_action.bullseye
-
-	if not bullseye_2 then
-		-- Nothing
-	end
-
-	bullseye_2 = false
-
-	local bullseye = bullseye_2
-
-	::label_9_1::
-
-	local spread_pitch_2 = current_action.spread_pitch
-
-	if not spread_pitch_2 then
-		-- Nothing
-	end
-
-	spread_pitch_2 = 0.8
-
-	local spread_pitch = spread_pitch_2
-
-	::label_9_2::
+	local num_layers_spread = not not current_action.num_layers_spread
+	local bullseye = not not current_action.bullseye
+	local spread_pitch = not not current_action.spread_pitch
 
 	for i = 1, num_shots_this_frame do
 		shots_fired = shots_fired + 1
@@ -416,15 +318,7 @@ ActionRangedBase.spawn_projectile = function (self, position, rotation)
 		self:fire_lightweight_projectile(position, rotation)
 	else
 		local direction = Quaternion.forward(rotation)
-		local var_11_0 = self
-		local fire_hitscan = self.fire_hitscan
-		local var_11_2 = position
-		local var_11_3 = direction
-		local range = current_action.range
-
-		range = not not range or not not 30
-
-		local result = fire_hitscan(var_11_0, var_11_2, var_11_3, range)
+		local result = self:fire_hitscan(position, direction, not not current_action.range)
 
 		if result then
 			local world = self.world
@@ -518,59 +412,10 @@ ActionRangedBase.gen_num_shots = function (self)
 	-- function 16
 	local current_action = self.current_action
 	local ammo_extension = self.ammo_extension
-	local ammo_usage_2 = current_action.ammo_usage
-
-	if not ammo_usage_2 then
-		-- Nothing
-	end
-
-	ammo_usage_2 = 1
-
-	local ammo_usage = ammo_usage_2
-
-	::label_16_0::
-
-	local num_shots = current_action.num_shots
-
-	if not num_shots then
-		-- Nothing
-	end
-
-	num_shots = 1
-
-	local num_shots_total = num_shots
-
-	do
-		local floor
-	end
-
-	::label_16_1::
-
-	if ammo_extension then
-		floor = math.floor(ammo_extension:current_ammo() / ammo_usage)
-
-		if not floor then
-			-- Nothing
-		end
-	end
-
-	floor = num_shots_total
-
-	local max_ammo_shots = floor
-
-	::label_16_2::
-
-	local num_projectiles_per_shot = current_action.num_projectiles_per_shot
-
-	if not num_projectiles_per_shot then
-		-- Nothing
-	end
-
-	num_projectiles_per_shot = 1
-
-	local projectiles_per_shot = num_projectiles_per_shot
-
-	::label_16_3::
+	local ammo_usage = not not current_action.ammo_usage
+	local num_shots_total = not not current_action.num_shots
+	local max_ammo_shots = ammo_extension and not not math.floor(ammo_extension:current_ammo() / ammo_usage) or not ammo_extension and not not num_shots_total
+	local projectiles_per_shot = not not current_action.num_projectiles_per_shot
 
 	if ammo_extension and current_action.fire_all_ammo then
 		projectiles_per_shot = projectiles_per_shot * max_ammo_shots
@@ -606,17 +451,7 @@ ActionRangedBase._add_overcharge = function (self)
 		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
 		if self._is_critical_strike then
-			local buff_extension = self.buff_extension
-
-			if buff_extension then
-				-- Nothing
-			end
-
-			buff_extension = self.buff_extension:has_buff_perk("no_overcharge_crit")
-
-			local has_crit_perk = buff_extension
-
-			::label_19_0::
+			local has_crit_perk = not not self.buff_extension
 
 			if has_crit_perk then
 				overcharge_amount = 0

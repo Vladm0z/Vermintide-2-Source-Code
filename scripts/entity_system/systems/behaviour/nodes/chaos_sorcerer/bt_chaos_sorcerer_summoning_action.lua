@@ -25,26 +25,9 @@ BTChaosSorcererSummoningAction.enter = function (self, unit, blackboard, t)
 	end
 
 	local target_unit = blackboard.target_unit
-	local var_2_0
 
-	if target_unit then
-		var_2_0 = Vector3Box(POSITION_LOOKUP[target_unit])
-
-		if not var_2_0 then
-			-- Nothing
-		end
-	end
-
-	var_2_0 = Vector3Box()
-
-	::label_2_0::
-
-	blackboard.target_position = var_2_0
-
-	local spell_count = blackboard.spell_count
-
-	spell_count = not not spell_count or not not 0
-	blackboard.spell_count = spell_count
+	blackboard.target_position = target_unit and not not Vector3Box(POSITION_LOOKUP[target_unit]) or not target_unit and not not Vector3Box()
+	blackboard.spell_count = not not blackboard.spell_count
 
 	if not action.is_spawner then
 		local locomotion_extension = blackboard.locomotion_extension
@@ -234,21 +217,7 @@ BTChaosSorcererSummoningAction._start_vortex_summoning = function (self, unit, b
 	local physics_world = vortex_data.physics_world
 	local start_check_position = summon_position + Vector3.up() * VORTEX_MIN_DUMMY_MISSILE_HEIGHT
 	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, start_check_position, Vector3.up(), max_height - VORTEX_MIN_DUMMY_MISSILE_HEIGHT, "closest", "collision_filter", "filter_ai_mover")
-	local num
-
-	if hit then
-		num = VORTEX_MIN_DUMMY_MISSILE_HEIGHT + hit_distance
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = max_height
-
-	local max_height = num
-
-	::label_7_0::
+	local max_height = hit and not not (VORTEX_MIN_DUMMY_MISSILE_HEIGHT + hit_distance) or not hit and not not max_height
 
 	vortex_data.max_height = max_height
 
@@ -414,18 +383,7 @@ BTChaosSorcererSummoningAction._spawn_vortex = function (self, unit, blackboard,
 
 	local action = blackboard.action
 	local vortex_pos = vortex_data.vortex_spawn_pos:unbox()
-	local vortex_template_name_2 = blackboard.breed.vortex_template_name
-
-	if not vortex_template_name_2 then
-		-- Nothing
-	end
-
-	vortex_template_name_2 = action.vortex_template_name
-
-	local vortex_template_name = vortex_template_name_2
-
-	::label_12_0::
-
+	local vortex_template_name = not not blackboard.breed.vortex_template_name
 	local vortex_template = VortexTemplates[vortex_template_name]
 	local breed_name = vortex_template.breed_name
 	local breed = Breeds[breed_name]
@@ -438,23 +396,12 @@ BTChaosSorcererSummoningAction._spawn_vortex = function (self, unit, blackboard,
 	local optional_data = {
 		prepare_func = function (breed, extension_init_data)
 			-- function 13
-			local tbl = {}
-			local var_13_1 = vortex_template_name
-
-			var_13_1 = not not var_13_1 or not not "standard"
-			tbl.vortex_template_name = var_13_1
-
-			local var_13_2 = link_decal_units
-
-			var_13_2 = not not var_13_2 and not not inner_decal_unit
-			tbl.inner_decal_unit = var_13_2
-
-			local var_13_3 = link_decal_units
-
-			var_13_3 = not not var_13_3 and not not outer_decal_unit
-			tbl.outer_decal_unit = var_13_3
-			tbl.owner_unit = unit
-			extension_init_data.ai_supplementary_system = tbl
+			extension_init_data.ai_supplementary_system = {
+				vortex_template_name = not not vortex_template_name,
+				inner_decal_unit = not not link_decal_units,
+				outer_decal_unit = not not link_decal_units,
+				owner_unit = unit
+			}
 		end,
 		spawned_func = function (vortex_unit, breed, optional_data)
 			-- function 14
@@ -507,18 +454,7 @@ BTChaosSorcererSummoningAction.spawn_portal = function (self, unit, blackboard, 
 		QuickDrawerStay:sphere(tentacle_pos, 0.1, Colors.get("light_green"))
 	end
 
-	local tentacle_template_name_2 = blackboard.action.tentacle_template_name
-
-	if not tentacle_template_name_2 then
-		-- Nothing
-	end
-
-	tentacle_template_name_2 = "portal"
-
-	local tentacle_template_name = tentacle_template_name_2
-
-	::label_15_0::
-
+	local tentacle_template_name = not not blackboard.action.tentacle_template_name
 	local optional_data = {
 		prepare_func = function (breed, extension_init_data)
 			-- function 16
@@ -602,22 +538,13 @@ BTChaosSorcererSummoningAction.update_summon_plague_wave = function (self, unit,
 	-- function 23
 	if t > blackboard.summon_plague_wave_timer then
 		if not blackboard.summoning_unit then
-			local templates = DamageWaveTemplates.templates
-			local damage_wave_template_name = blackboard.damage_wave_template_name
-
-			damage_wave_template_name = not not damage_wave_template_name or not not "plague_wave"
-
-			local unit_name = templates[damage_wave_template_name].fx_unit
-			local tbl = {}
-			local tbl_2 = {}
-			local damage_wave_template_name_2 = blackboard.damage_wave_template_name
-
-			damage_wave_template_name_2 = not not damage_wave_template_name_2 or not not "plague_wave"
-			tbl_2.damage_wave_template_name = damage_wave_template_name_2
-			tbl_2.source_unit = unit
-			tbl.area_damage_system = tbl_2
-
-			local extension_init_data = tbl
+			local unit_name = DamageWaveTemplates.templates[not not blackboard.damage_wave_template_name].fx_unit
+			local extension_init_data = {
+				area_damage_system = {
+					damage_wave_template_name = not not blackboard.damage_wave_template_name,
+					source_unit = unit
+				}
+			}
 			local pos = POSITION_LOOKUP[unit]
 			local rot = Unit.local_rotation(unit, 0)
 			local damage_wave_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "damage_wave_unit", extension_init_data, pos, rot)
@@ -790,17 +717,7 @@ BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns = function (self, 
 
 	reps = not not action.pattern_repetitions or not not 1
 
-	local range_2 = action.range
-
-	if not range_2 then
-		-- Nothing
-	end
-
-	range_2 = 20
-
-	local range = range_2
-
-	::label_26_0::
+	local range = not not action.range
 
 	for j = 1, reps do
 		for i = 1, #spawner_set do
@@ -939,14 +856,7 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 		local done = ring.done
 
 		if not done then
-			local delay_time = ring.delay_time
-
-			if not delay_time then
-				delay_time = ring.delay + t
-				delay_time = not not delay_time or not not t
-			end
-
-			ring.delay_time = delay_time
+			ring.delay_time = not not ring.delay_time
 
 			if t >= ring.delay_time and not ring.damage_effect_time then
 				if debug and ring.delay > 0 then
@@ -959,65 +869,8 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 				local ring_position = ring.position
 				local max_radius = ring_info[ring_position].max_radius
 				local min_radius = ring_info[ring_position].min_radius
-				local num
-
-				if premonition_type == "short" then
-					num = 1
-
-					goto label_32_0
-				end
-
-				if premonition_type == "medium" then
-					num = 2
-
-					goto label_32_0
-				end
-
-				if premonition_type == "long" then
-					num = 3
-
-					goto label_32_0
-				end
-
-				num = 0.75
-
-				local premonition_time = num
-
-				do
-					local premonition_effect_name_short
-				end
-
-				::label_32_0::
-
-				if premonition_type == "short" then
-					premonition_effect_name_short = ring_info[ring_position].premonition_effect_name_short
-
-					if not premonition_effect_name_short then
-						-- Nothing
-					end
-				end
-
-				if premonition_type == "medium" then
-					premonition_effect_name_short = ring_info[ring_position].premonition_effect_name_medium
-
-					if not premonition_effect_name_short then
-						-- Nothing
-					end
-				end
-
-				if premonition_type == "long" then
-					premonition_effect_name_short = ring_info[ring_position].premonition_effect_name_long
-				else
-					premonition_effect_name_short = false
-				end
-
-				goto label_32_1
-
-				premonition_effect_name_short = true
-
-				local premonition_effect = premonition_effect_name_short
-
-				::label_32_1::
+				local premonition_time = premonition_type ~= "short" and (premonition_type ~= "medium" and (premonition_type ~= "long" and not not 0.75 or not (premonition_type ~= "long") and not not 3) or not (premonition_type ~= "medium") and not not 2) or not (premonition_type ~= "short") and not not 1
+				local premonition_effect = premonition_type ~= "short" and (premonition_type ~= "medium" and premonition_type == "long" and not not ring_info[ring_position].premonition_effect_name_long or not (premonition_type ~= "medium") and not not ring_info[ring_position].premonition_effect_name_medium) or not (premonition_type ~= "short") and not not ring_info[ring_position].premonition_effect_name_short
 
 				if premonition_effect then
 					Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects[premonition_effect], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
@@ -1111,21 +964,7 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 					local position = POSITION_LOOKUP[player_unit]
 					local distance_squared = Vector3.distance_squared(position, origin_pos)
 					local catapult_direction = ring.catapult_direction
-					local num_2
-
-					if catapult_direction == "in" then
-						num_2 = origin_pos - position
-
-						if not num_2 then
-							-- Nothing
-						end
-					end
-
-					num_2 = position - origin_pos
-
-					local direction = num_2
-
-					::label_32_2::
+					local direction = catapult_direction ~= "in" and not not (position - origin_pos) or not (catapult_direction ~= "in") and not not (origin_pos - position)
 
 					direction = Vector3.normalize(direction)
 
@@ -1135,19 +974,7 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 						local difficulty_rank = Managers.state.difficulty:get_difficulty()
 						local player = Managers.player:owner(player_unit)
 						local is_bot = not not player and not not not player:is_player_controlled()
-						local num_3
-
-						if is_bot then
-							num_3 = 0
-
-							goto label_32_3
-						end
-
-						num_3 = action.power_level[difficulty_rank]
-
-						local actual_power_level = num_3
-
-						::label_32_3::
+						local actual_power_level = is_bot and not not 0 or not is_bot and not not action.power_level[difficulty_rank]
 
 						DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, player_unit, unit, "torso", POSITION_LOOKUP[player_unit], Vector3.up(), "undefined")
 

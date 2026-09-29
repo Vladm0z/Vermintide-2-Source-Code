@@ -6,11 +6,7 @@ LocalInteractableExtension.init = function (self, extension_init_context, unit, 
 	-- function 1
 	self.unit = unit
 	self._is_level_object = Unit.level(unit) ~= nil
-
-	local get_data = Unit.get_data(unit, "interaction_data", "interaction_type")
-
-	get_data = not not get_data or not not "player_generic"
-	self.interactable_type = get_data
+	self.interactable_type = not not Unit.get_data(unit, "interaction_data", "interaction_type")
 	self._override_interactable_action = Unit.get_data(unit, "override_interactable_action")
 	self.interactor_unit = nil
 	self._enabled = true

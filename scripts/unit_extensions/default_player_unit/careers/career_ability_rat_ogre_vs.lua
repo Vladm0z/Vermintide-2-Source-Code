@@ -211,45 +211,7 @@ CareerAbilityRatOgreJump.update = function (self, unit, input, dt, context, t)
 	end
 
 	if self._is_priming then
-		local get = input_extension:get("dark_pact_action_one")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = input_extension:get("jump")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = input_extension:get("jump_only")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = input_extension:get("dark_pact_reload")
-
-		if not get then
-			-- Nothing
-		end
-
-		if (not input_extension:get("dark_pact_action_two_release") or self._done_priming) and (input_extension:get("dark_pact_action_two_hold") or self._done_priming) then
-			get = self._status_extension:is_climbing()
-
-			if false then
-				get = false
-			end
-
-			goto label_11_0
-		end
-
-		get = true
-
-		local cancel_input = get
-
-		::label_11_0::
+		local cancel_input = not not input_extension:get("dark_pact_action_one")
 
 		if cancel_input then
 			self._career_extension:stop_ability("aborted")
@@ -273,35 +235,8 @@ CareerAbilityRatOgreJump.update = function (self, unit, input, dt, context, t)
 				self.stored_valid_pos = true
 			end
 
-			local _last_valid_landing_position = self._last_valid_landing_position
-
-			if _last_valid_landing_position then
-				-- Nothing
-			end
-
-			_last_valid_landing_position = not self.stored_valid_pos
-
-			local initial_min_dist_not_fulfilled = _last_valid_landing_position
-
-			::label_11_1::
-
-			local _last_valid_landing_position_2 = self._last_valid_landing_position
-
-			if _last_valid_landing_position_2 then
-				-- Nothing
-			end
-
-			if not (min_jump_dist <= leap_distance) then
-				_last_valid_landing_position_2 = false
-
-				goto label_11_2
-			end
-
-			_last_valid_landing_position_2 = true
-
-			local requirement_fullfilled = _last_valid_landing_position_2
-
-			::label_11_2::
+			local initial_min_dist_not_fulfilled = not not self._last_valid_landing_position
+			local requirement_fullfilled = not not self._last_valid_landing_position
 
 			if initial_priming then
 				self._last_valid_landing_position = Vector3Box(new_landing_position)
@@ -451,7 +386,7 @@ CareerAbilityRatOgreJump._do_common_stuff = function (self)
 	local bot_player = self._bot_player
 	local career_extension = self._career_extension
 
-	if (not is_server or not bot_player) and local_player then
+	if is_server and (bot_player or local_player) or not is_server and local_player then
 		local first_person_extension = self._first_person_extension
 
 		first_person_extension:play_hud_sound_event("Play_vs_rat_ogre_jump_1p")
@@ -628,36 +563,8 @@ CareerAbilityRatOgreJump.get_landing_position = function (self, physics_world, f
 				local flat_velocity = Vector3.length(Vector3.flat(velocity))
 
 				for j = 1, GROUND_TARGET_MAX_STEPS do
-					local num
-
-					if j == 1 then
-						num = 0.5
-
-						goto label_24_0
-					end
-
-					num = 1
-
-					local step_back_distance = num
-
-					do
-						local num_2
-					end
-
-					::label_24_0::
-
-					if flat_velocity <= EPSILON then
-						num_2 = 0
-
-						goto label_24_1
-					end
-
-					num_2 = step_back_distance / flat_velocity
-
-					local step_back_t = num_2
-
-					::label_24_1::
-
+					local step_back_distance = j ~= 1 and not not 1 or not (j ~= 1) and not not 0.5
+					local step_back_t = flat_velocity <= EPSILON and not not 0 or not (flat_velocity <= EPSILON) and not not (step_back_distance / flat_velocity)
 					local step_back_position
 
 					if step_back_t > 0 then

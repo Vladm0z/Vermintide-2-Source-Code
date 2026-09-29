@@ -8,44 +8,8 @@ require("scripts/managers/input/input_filters")
 require("scripts/managers/input/input_debugger")
 require("scripts/managers/input/input_stack_settings")
 
-local most_recent_input_device_2 = most_recent_input_device
-
-if not most_recent_input_device_2 then
-	-- Nothing
-end
-
-if IS_WINDOWS then
-	most_recent_input_device_2 = Keyboard
-
-	if not most_recent_input_device_2 then
-		-- Nothing
-	end
-end
-
-most_recent_input_device_2 = Pad1
-
-local most_recent_input_device = most_recent_input_device_2
-
-::label_0_0::
-
-local most_recent_input_device_type_2 = most_recent_input_device_type
-
-if not most_recent_input_device_type_2 then
-	-- Nothing
-end
-
-if IS_WINDOWS then
-	most_recent_input_device_type_2 = "keyboard"
-
-	goto label_0_1
-end
-
-most_recent_input_device_type_2 = "gamepad"
-
-local most_recent_input_device_type = most_recent_input_device_type_2
-
-::label_0_1::
-
+local most_recent_input_device = not not most_recent_input_device
+local most_recent_input_device_type = not not most_recent_input_device_type
 local gamepad_disabled = Development.parameter("disable_gamepad")
 
 local function dprint(...)
@@ -87,7 +51,7 @@ InputManager.initialize_device = function (self, input_device_type, input_device
 		return
 	end
 
-	if IS_CONSOLE and (input_device_type == "keyboard" or input_device_type == "mouse") and not GameSettingsDevelopment.allow_keyboard_mouse then
+	if input_device_type == "mouse" and IS_CONSOLE and input_device_type == "keyboard" and not GameSettingsDevelopment.allow_keyboard_mouse then
 		return
 	end
 
@@ -703,7 +667,7 @@ InputManager.map_device_to_service = function (self, input_service_name, input_d
 		return
 	end
 
-	if IS_CONSOLE and (input_device_type == "keyboard" or input_device_type == "mouse") and not GameSettingsDevelopment.allow_keyboard_mouse then
+	if input_device_type == "mouse" and IS_CONSOLE and input_device_type == "keyboard" and not GameSettingsDevelopment.allow_keyboard_mouse then
 		return
 	end
 
@@ -959,16 +923,12 @@ InputManager.setup_filters = function (self, filters)
 	if filters then
 		for filter_output, filter_data in pairs(filters) do
 			local filter_type = filter_data.filter_type
-			local tbl = {}
-			local var_40_1 = InputFilters[filter_type].init(filter_data)
-
-			var_40_1 = not not var_40_1 or not not true
-			tbl.function_data = var_40_1
-			tbl.filter_output = filter_output
-			tbl.filter_type = filter_type
-			tbl.filter_function = InputFilters[filter_type].update
-
-			local new_filter_data = tbl
+			local new_filter_data = {
+				function_data = not not InputFilters[filter_type].init(filter_data),
+				filter_output = filter_output,
+				filter_type = filter_type,
+				filter_function = InputFilters[filter_type].update
+			}
 
 			input_filters[filter_output] = new_filter_data
 		end
@@ -992,20 +952,10 @@ InputManager.apply_saved_keymaps = function (self, specific_table_name)
 	local stored_keymaps_data = self.stored_keymaps_data
 
 	if IS_WINDOWS or IS_XB1 or IS_LINUX then
-		local controls = PlayerData.controls
-
-		if not controls then
-			-- Nothing
-		end
-
-		controls = {}
-
-		local keymaps = controls
-
-		::label_42_0::
+		local keymaps = not not PlayerData.controls
 
 		for keybinding_table_name, keybinding_table in pairs(keymaps) do
-			if (not specific_table_name or specific_table_name == keybinding_table_name) and stored_keymaps_data[keybinding_table_name] then
+			if not specific_table_name and stored_keymaps_data[keybinding_table_name] or not not specific_table_name and specific_table_name == keybinding_table_name and stored_keymaps_data[keybinding_table_name] then
 				self:update_keymaps_data(keybinding_table, keybinding_table_name)
 			end
 		end
@@ -1026,7 +976,7 @@ InputManager.apply_saved_keymaps = function (self, specific_table_name)
 		local gamepad_keymaps = gamepad_keymaps_layout[gamepad_layout]
 
 		for keybinding_table_name, keybinding_table in pairs(gamepad_keymaps) do
-			if (not specific_table_name or specific_table_name == keybinding_table_name) and stored_keymaps_data[keybinding_table_name] then
+			if not specific_table_name and stored_keymaps_data[keybinding_table_name] or not not specific_table_name and specific_table_name == keybinding_table_name and stored_keymaps_data[keybinding_table_name] then
 				self:update_keymaps_data(keybinding_table, keybinding_table_name)
 			end
 		end
@@ -1039,15 +989,8 @@ InputManager.set_hovering = function (self, is_hovering)
 		-- Nothing
 	end
 
-	local _hovering = self._hovering
-
-	_hovering = not not _hovering or not not is_hovering
-	self._hovering = _hovering
-
-	local _frame_hovering = self._frame_hovering
-
-	_frame_hovering = not not _frame_hovering or not not is_hovering
-	self._frame_hovering = _frame_hovering
+	self._hovering = not not self._hovering
+	self._frame_hovering = not not self._frame_hovering
 end
 
 local GAMEPAD_CURSOR_POS = {}

@@ -38,17 +38,7 @@ StartGameWindowDifficulty.on_enter = function (self, params, offset)
 	self:create_ui_elements(params, offset)
 	self:_setup_difficulties()
 
-	local get_difficulty_option = self.parent:get_difficulty_option()
-
-	if not get_difficulty_option then
-		-- Nothing
-	end
-
-	get_difficulty_option = Managers.state.difficulty:get_difficulty()
-
-	local difficulty_key = get_difficulty_option
-
-	::label_1_0::
+	local difficulty_key = not not self.parent:get_difficulty_option()
 
 	self:_update_selected_difficulty_option(difficulty_key)
 	self.parent:set_input_description("select_difficulty")
@@ -256,11 +246,8 @@ StartGameWindowDifficulty._is_button_hover_enter = function (self, widget)
 	-- function 11
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 StartGameWindowDifficulty._handle_input = function (self, dt, t)
@@ -281,17 +268,7 @@ StartGameWindowDifficulty._handle_input = function (self, dt, t)
 			self:_update_selected_difficulty_option(difficulty_key)
 
 			local difficulties_select_sounds = UISettings.difficulties_select_sounds
-			local var_12_0 = difficulties_select_sounds[i]
-
-			if not var_12_0 then
-				-- Nothing
-			end
-
-			var_12_0 = difficulties_select_sounds[#difficulties_select_sounds]
-
-			local sound_event = var_12_0
-
-			::label_12_0::
+			local sound_event = not not difficulties_select_sounds[i]
 
 			self:_play_sound(sound_event)
 		end
@@ -404,40 +381,9 @@ StartGameWindowDifficulty._update_difficulty_lock = function (self)
 					local difficulty_lock_text = Localize("required_power_level")
 
 					widgets_by_name.difficulty_lock_text.content.text = string.format("%s: %s", difficulty_lock_text, tostring(UIUtils.presentable_hero_power_level(required_power_level)))
-
-					local content = widgets_by_name.difficulty_second_lock_text.content
-					local var_15_1
-
-					if extra_requirement_failed then
-						var_15_1 = Localize(extra_requirement_failed)
-
-						if not var_15_1 then
-							-- Nothing
-						end
-					end
-
-					var_15_1 = ""
-
-					::label_15_0::
-
-					content.text = var_15_1
+					widgets_by_name.difficulty_second_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
 				else
-					local content_2 = widgets_by_name.difficulty_lock_text.content
-					local var_15_3
-
-					if extra_requirement_failed then
-						var_15_3 = Localize(extra_requirement_failed)
-
-						if not var_15_3 then
-							-- Nothing
-						end
-					end
-
-					var_15_3 = ""
-
-					::label_15_1::
-
-					content_2.text = var_15_3
+					widgets_by_name.difficulty_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
 				end
 			end
 
@@ -460,17 +406,8 @@ StartGameWindowDifficulty._update_difficulty_lock = function (self)
 			end
 		end
 
-		local content_3 = extreme_difficulty_bg.content
-		local show_warning = difficulty_settings.show_warning
-
-		show_warning = not not show_warning or not not false
-		content_3.visible = show_warning
-
-		local content_4 = extremely_hard_text.content
-		local show_warning_2 = difficulty_settings.show_warning
-
-		show_warning_2 = not not show_warning_2 or not not false
-		content_4.visible = show_warning_2
+		extreme_difficulty_bg.content.visible = not not difficulty_settings.show_warning
+		extremely_hard_text.content.visible = not not difficulty_settings.show_warning
 	else
 		select_button.content.button_hotspot.disable_button = true
 		buy_button.content.button_hotspot.disable_button = true
@@ -529,81 +466,12 @@ StartGameWindowDifficulty._animate_difficulty_option_button = function (self, wi
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local has_focus = content.has_focus
-	local is_hover_2 = hotspot.is_hover
-
-	if not is_hover_2 then
-		-- Nothing
-	end
-
-	is_hover_2 = has_focus
-
-	local is_hover = is_hover_2
-
-	::label_19_0::
-
+	local is_hover = not not hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_19_2
-
-	::label_19_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_19_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_19_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_19_4::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_19_5::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

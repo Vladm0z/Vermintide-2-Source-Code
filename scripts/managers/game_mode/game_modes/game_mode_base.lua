@@ -4,18 +4,14 @@ GameModeBase = class(GameModeBase)
 
 GameModeBase.init = function (self, settings, world, network_handler, is_server, profile_synchronizer, level_key, statistics_db, game_mode_settings)
 	-- function 1
-	self._network_server = (not is_server or not network_handler) and not not nil
+	self._network_server = is_server and (not not network_handler or not not nil) or not is_server and not not nil
 	self._settings = settings
 	self._world = world
 	self._is_server = is_server
 	self._profile_synchronizer = profile_synchronizer
 	self._level_completed = false
 	self._level_failed = false
-
-	local lose_condition_disabled = script_data.lose_condition_disabled
-
-	lose_condition_disabled = not not lose_condition_disabled or not not false
-	self._lose_condition_disabled = lose_condition_disabled
+	self._lose_condition_disabled = not not script_data.lose_condition_disabled
 	self._end_level_areas = {}
 	self._debug_end_level_areas = {}
 	self._is_about_to_end_game_early = false
@@ -29,13 +25,7 @@ GameModeBase.init = function (self, settings, world, network_handler, is_server,
 	local new_state = "initial_state"
 
 	if DEDICATED_SERVER then
-		local cprintf = cprintf
-		local str = "[GameMode] State Changed from '%s' to '%s'"
-		local _game_mode_state = self._game_mode_state
-
-		_game_mode_state = not not _game_mode_state or not not "None"
-
-		cprintf(str, _game_mode_state, new_state)
+		cprintf("[GameMode] State Changed from '%s' to '%s'", not not self._game_mode_state, new_state)
 	end
 
 	self._game_mode_state = new_state
@@ -131,61 +121,11 @@ GameModeBase._verify_career = function (self, profile_index, career_index)
 	if not career_unlocked then
 		Application.warning("############################################################################################")
 		Application.warning("[GameModeBase] Selected career for bot is not unlocked -> Defaulting to default career")
-
-		local warning = Application.warning
-		local format = string.format
-		local str = "Profile: %q - Career: %q - Reason: %q - DLC: %q"
-		local display_name
-
-		if profile then
-			display_name = profile.display_name
-
-			if not display_name then
-				-- Nothing
-			end
-		end
-
-		display_name = profile_index
-
-		do
-			local var_12_4
-		end
-
-		::label_12_0::
-
-		if career then
-			var_12_4 = Localize(career.display_name)
-
-			if not var_12_4 then
-				-- Nothing
-			end
-		end
-
-		var_12_4 = career_index
-
-		do
-			local var_12_5
-		end
-
-		::label_12_1::
-
-		if reason then
-			var_12_5 = Localize(reason)
-
-			if not var_12_5 then
-				-- Nothing
-			end
-		end
-
-		var_12_5 = "-"
-
-		::label_12_2::
-
-		warning(format(str, display_name, var_12_4, var_12_5, tostring(dlc_name)))
+		Application.warning(string.format("Profile: %q - Career: %q - Reason: %q - DLC: %q", profile and not not profile.display_name or not profile and not not profile_index, career and not not Localize(career.display_name) or not career and not not career_index, reason and not not Localize(reason) or not reason and not not "-", tostring(dlc_name)))
 		Application.warning("############################################################################################")
 	end
 
-	return (not career_unlocked or not career_index) and not not 1
+	return career_unlocked and (not not career_index or not not 1) or not career_unlocked and not not 1
 end
 
 GameModeBase._remove_bot_instant = function (self, bot_player)
@@ -332,17 +272,7 @@ GameModeBase.mutators = function (self)
 	end
 
 	local mutators_list = {}
-	local matchmaking = Managers.matchmaking
-
-	if matchmaking then
-		-- Nothing
-	end
-
-	matchmaking = Managers.matchmaking:game_mode_event_data()
-
-	local weekly_events_game_mode_data = matchmaking
-
-	::label_29_0::
+	local weekly_events_game_mode_data = not not Managers.matchmaking
 
 	if weekly_events_game_mode_data and weekly_events_game_mode_data.mutators then
 		table.append(mutators_list, weekly_events_game_mode_data.mutators)
@@ -602,26 +532,8 @@ GameModeBase.update_end_level_areas = function (self)
 		QuickDrawer:quaternion(object_pos, rot)
 
 		local enabled = self._end_level_areas[unit]
-		local QuickDrawer = QuickDrawer
-		local var_59_1 = QuickDrawer
-		local box = QuickDrawer.box
-		local var_59_3 = pose
-		local var_59_4 = extents
-		local var_59_5
 
-		if enabled then
-			var_59_5 = Color(0, 255, 0)
-
-			if not var_59_5 then
-				-- Nothing
-			end
-		end
-
-		var_59_5 = Color(255, 0, 0)
-
-		::label_59_0::
-
-		box(var_59_1, var_59_3, var_59_4, var_59_5)
+		QuickDrawer:box(pose, extents, enabled and not not Color(0, 255, 0) or not enabled and not not Color(255, 0, 0))
 	end
 
 	if table.is_empty(self._end_level_areas) then
@@ -633,17 +545,7 @@ GameModeBase.update_end_level_areas = function (self)
 
 		for _, player in pairs(Managers.player:human_players()) do
 			local player_unit = player.player_unit
-			local alive = Unit.alive(player_unit)
-
-			if alive then
-				-- Nothing
-			end
-
-			alive = not ScriptUnit.extension(player_unit, "status_system"):is_disabled()
-
-			local non_disabled = alive
-
-			::label_59_1::
+			local non_disabled = not not Unit.alive(player_unit)
 
 			if non_disabled then
 				num_non_disabled_players = num_non_disabled_players + 1
@@ -700,15 +602,7 @@ end
 
 GameModeBase.set_about_to_end_game_early = function (self, about_to_end_game_early)
 	-- function 64
-	local system = Managers.state.entity:system("dialogue_system")
-	local var_64_1 = system
-	local set_global_context = system.set_global_context
-	local str = "game_about_to_end"
-	local flag
-
-	flag = (not about_to_end_game_early or not 1) and not not 0
-
-	set_global_context(var_64_1, str, flag)
+	Managers.state.entity:system("dialogue_system"):set_global_context("game_about_to_end", about_to_end_game_early and not not 1 or not about_to_end_game_early and not not 0)
 
 	self._about_to_end_game_early = about_to_end_game_early
 end

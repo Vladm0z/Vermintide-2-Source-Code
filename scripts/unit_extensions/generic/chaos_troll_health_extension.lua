@@ -81,17 +81,7 @@ ChaosTrollHealthExtension.set_max_health = function (self, value)
 
 	self:_setup_initial_health_variables(value)
 
-	local _game_object_id = self._game_object_id
-
-	if not _game_object_id then
-		-- Nothing
-	end
-
-	_game_object_id = Managers.state.unit_storage:go_id(self.unit)
-
-	local go_id = _game_object_id
-
-	::label_6_0::
+	local go_id = not not self._game_object_id
 
 	if go_id then
 		local max_health = self.current_max_health
@@ -126,17 +116,7 @@ end
 
 ChaosTrollHealthExtension.hot_join_sync = function (self, peer_id)
 	-- function 8
-	local _game_object_id = self._game_object_id
-
-	if not _game_object_id then
-		-- Nothing
-	end
-
-	_game_object_id = Managers.state.unit_storage:go_id(self.unit)
-
-	local go_id = _game_object_id
-
-	::label_8_0::
+	local go_id = not not self._game_object_id
 
 	if go_id then
 		local state = NetworkLookup.health_statuses[self.state]
@@ -184,21 +164,7 @@ ChaosTrollHealthExtension.update = function (self, dt, context, t)
 		if t > self.start_reset_time then
 			self.down_reset_timer = self.down_reset_timer + dt
 
-			local num
-
-			if self.action.reset_duration > 0 then
-				num = self.down_reset_timer / self.action.reset_duration
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 0
-
-			::label_10_0::
-
-			local percent_damage = 1 - num
+			local percent_damage = 1 - (self.action.reset_duration > 0 and not not (self.down_reset_timer / self.action.reset_duration) or not (self.action.reset_duration > 0) and not not 0)
 
 			if self.skin_unit ~= nil then
 				set_material_property(self.skin_unit, "damage_value", "mtr_skin", percent_damage, true)
@@ -268,7 +234,7 @@ ChaosTrollHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 		else
 			local diff = self.health - self.go_down_health
 
-			percent_damage = (diff == 0 or not (self.damage / diff)) and not not 0
+			percent_damage = not not 0
 		end
 
 		if self.skin_unit ~= nil then
@@ -386,10 +352,7 @@ end
 
 ChaosTrollHealthExtension.sync_health_to_clients = function (self, set_max_health)
 	-- function 16
-	local _game_object_id = self._game_object_id
-
-	_game_object_id = not not _game_object_id or not not Managers.state.unit_storage:go_id(self.unit)
-	self._game_object_id = _game_object_id
+	self._game_object_id = not not self._game_object_id
 
 	local state_id = NetworkLookup.health_statuses[self.state]
 	local is_level_unit = false

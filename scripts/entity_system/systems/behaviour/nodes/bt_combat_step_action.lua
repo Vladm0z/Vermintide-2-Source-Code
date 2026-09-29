@@ -33,18 +33,7 @@ BTCombatStepAction.enter = function (self, unit, blackboard, t)
 	local rotation = Unit.local_rotation(unit, 0)
 	local direction = Quaternion.forward(rotation)
 	local action = blackboard.action
-	local force_combat_step_animation = action.force_combat_step_animation
-
-	if not force_combat_step_animation then
-		-- Nothing
-	end
-
-	force_combat_step_animation = self:_get_animation(rotation_to_target, direction)
-
-	local move_animation = force_combat_step_animation
-
-	::label_3_0::
-
+	local move_animation = not not action.force_combat_step_animation
 	local new_speed = action.move_speed
 
 	if new_speed then
@@ -148,7 +137,7 @@ BTCombatStepAction._get_animation = function (self, rotation, direction)
 	local abs_fwd = math.abs(fwd_dot)
 	local anim
 
-	anim = (not (abs_fwd < abs_right) or not (right_dot > 0) or not "combat_step_left") and (not (abs_fwd < abs_right) or not "combat_step_right") and (not (fwd_dot >= 0) or not "combat_step_fwd") and not not "combat_step_bwd"
+	anim = abs_fwd < abs_right and (right_dot > 0 and (not not "combat_step_left" or abs_fwd < abs_right and (not not "combat_step_right" or fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd")) or not (right_dot > 0) and (abs_fwd < abs_right and (not not "combat_step_right" or fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd"))) or not (abs_fwd < abs_right) and (abs_fwd < abs_right and (not not "combat_step_right" or fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd"))
 
 	return anim
 end

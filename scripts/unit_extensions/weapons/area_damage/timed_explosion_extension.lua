@@ -19,79 +19,16 @@ TimedExplosionExtension.init = function (self, extension_init_context, unit, ext
 		local explosion_settings = wind_settings.timed_explosion_extension_settings
 
 		self._time_to_explode = explosion_settings.time_to_explode[difficulty_name][wind_strength]
-
-		local follow_time = explosion_settings.follow_time
-
-		follow_time = not not follow_time and not not explosion_settings.follow_time[difficulty_name][wind_strength]
-		self._follow_time = follow_time
-
-		local var_1_1
-
-		if wind_settings.radius then
-			var_1_1 = wind_settings.radius[difficulty_name][wind_strength]
-
-			if not var_1_1 then
-				-- Nothing
-			end
-		end
-
-		var_1_1 = 1
-
-		::label_1_0::
-
-		self._scale = var_1_1
-
-		local var_1_2
-
-		if wind_settings.power_level then
-			var_1_2 = wind_settings.power_level[difficulty_name][wind_strength]
-
-			if not var_1_2 then
-				-- Nothing
-			end
-		end
-
-		var_1_2 = 0
-
-		::label_1_1::
-
-		self._power = var_1_2
-
-		local num = self._time_to_explode + self._follow_time
-		local buildup_effect_time = explosion_template.explosion.buildup_effect_time
-
-		buildup_effect_time = not not buildup_effect_time or not not 0
-		self._buildup_effect_delay = num - buildup_effect_time
+		self._follow_time = not not explosion_settings.follow_time
+		self._scale = wind_settings.radius and not not wind_settings.radius[difficulty_name][wind_strength] or not wind_settings.radius and not not 1
+		self._power = wind_settings.power_level and not not wind_settings.power_level[difficulty_name][wind_strength] or not wind_settings.power_level and not not 0
+		self._buildup_effect_delay = self._time_to_explode + self._follow_time - not not explosion_template.explosion.buildup_effect_time
 	else
-		local time_to_explode = explosion_template.time_to_explode
-
-		time_to_explode = not not time_to_explode or not not 0
-		self._time_to_explode = time_to_explode
-
-		local unit_scale = explosion_template.explosion.unit_scale
-
-		if not unit_scale then
-			unit_scale = explosion_template.explosion.radius
-			unit_scale = not not unit_scale or not not 1
-		end
-
-		self._scale = unit_scale
-
-		local follow_time_2 = explosion_template.follow_time
-
-		follow_time_2 = not not follow_time_2 or not not 0
-		self._follow_time = follow_time_2
-
-		local power_level = explosion_template.explosion.power_level
-
-		power_level = not not power_level or not not 0
-		self._power = power_level
-
-		local num_2 = self._time_to_explode + self._follow_time
-		local buildup_effect_time_2 = explosion_template.explosion.buildup_effect_time
-
-		buildup_effect_time_2 = not not buildup_effect_time_2 or not not 0
-		self._buildup_effect_delay = num_2 - buildup_effect_time_2
+		self._time_to_explode = not not explosion_template.time_to_explode
+		self._scale = not not explosion_template.explosion.unit_scale
+		self._follow_time = not not explosion_template.follow_time
+		self._power = not not explosion_template.explosion.power_level
+		self._buildup_effect_delay = self._time_to_explode + self._follow_time - not not explosion_template.explosion.buildup_effect_time
 	end
 
 	self._buildup_effect_offset = explosion_template.explosion.buildup_effect_offset
@@ -111,10 +48,7 @@ TimedExplosionExtension.init = function (self, extension_init_context, unit, ext
 		self._state = "waiting_to_explode"
 	end
 
-	local deletion_timer = explosion_template.explosion.deletion_timer
-
-	deletion_timer = not not deletion_timer or not not 1
-	self._deletion_timer = deletion_timer
+	self._deletion_timer = not not explosion_template.explosion.deletion_timer
 end
 
 TimedExplosionExtension.update = function (self, unit, input, dt, context, t)
@@ -191,18 +125,7 @@ TimedExplosionExtension._explode = function (self)
 	local rotation = Unit.world_rotation(attacker_unit, 0)
 	local explosion_template_name = self.explosion_template_name
 	local scale = 1
-	local damage_source_2 = explosion_template.damage_source
-
-	if not damage_source_2 then
-		-- Nothing
-	end
-
-	damage_source_2 = "undefined"
-
-	local damage_source = damage_source_2
-
-	::label_3_0::
-
+	local damage_source = not not explosion_template.damage_source
 	local attacker_power_level = self._power
 
 	self._state = "exploded"

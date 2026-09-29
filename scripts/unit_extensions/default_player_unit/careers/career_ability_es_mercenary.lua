@@ -86,11 +86,8 @@ CareerAbilityESMercenary._ability_available = function (self)
 	-- function 6
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
-	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
-
-	return can_use_activated_ability
+	return not not career_extension:can_use_activated_ability()
 end
 
 CareerAbilityESMercenary._start_priming = function (self)
@@ -200,7 +197,7 @@ CareerAbilityESMercenary._run_ability = function (self, new_initial_speed)
 		end
 	end
 
-	if (not is_server or not bot_player) and local_player then
+	if is_server and (bot_player or local_player) or not is_server and local_player then
 		local first_person_extension = self._first_person_extension
 
 		first_person_extension:animation_event("ability_shout")

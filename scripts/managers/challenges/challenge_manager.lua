@@ -168,7 +168,7 @@ ChallengeManager.remove_filtered_challenges = function (self, category, owner_un
 		local challenge = all_challenges[i]
 		local valid = not category or challenge:get_category() == category
 
-		valid = not not valid and not owner_unique_id or not not challenge:belongs_to(owner_unique_id)
+		valid = not not valid and (not owner_unique_id or not not challenge:belongs_to(owner_unique_id))
 
 		if valid then
 			challenges_to_remove[#challenges_to_remove + 1] = challenge
@@ -179,7 +179,7 @@ ChallengeManager.remove_filtered_challenges = function (self, category, owner_un
 		local challenge = completed_challenges[i]
 		local valid = not category or challenge:get_category() == category
 
-		valid = not not valid and not owner_unique_id or not not challenge:belongs_to(owner_unique_id)
+		valid = not not valid and (not owner_unique_id or not not challenge:belongs_to(owner_unique_id))
 
 		if valid then
 			challenges_to_remove[#challenges_to_remove + 1] = challenge
@@ -215,7 +215,7 @@ ChallengeManager.get_challenges_filtered = function (self, results, category, ow
 		local challenge = challenges[i]
 		local valid = not category or challenge:get_category() == category
 
-		valid = not not valid and not owner_unique_id or not not challenge:belongs_to(owner_unique_id)
+		valid = not not valid and (not owner_unique_id or not not challenge:belongs_to(owner_unique_id))
 
 		if valid then
 			results_size = results_size + 1
@@ -242,7 +242,7 @@ ChallengeManager.get_completed_challenges_filtered = function (self, results, ca
 		local challenge = challenges[i]
 		local valid = not category or challenge:get_category() == category
 
-		valid = not not valid and not owner_unique_id or not not challenge:belongs_to(owner_unique_id)
+		valid = not not valid and (not owner_unique_id or not not challenge:belongs_to(owner_unique_id))
 
 		if valid then
 			results_size = results_size + 1

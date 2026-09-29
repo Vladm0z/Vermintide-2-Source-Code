@@ -9,10 +9,8 @@ OverpoweredBlobHealthExtension.init = function (self, extension_init_context, un
 	self.target_unit = extension_init_data.target_unit
 
 	local t = Managers.time:time("game")
-	local life_time = extension_init_data.life_time
 
-	life_time = not not life_time or not not math.huge
-	self.death_time = t + life_time
+	self.death_time = t + not not extension_init_data.life_time
 	self.bots_can_do_damage = true
 end
 

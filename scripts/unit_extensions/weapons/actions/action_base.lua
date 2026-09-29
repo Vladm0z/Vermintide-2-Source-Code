@@ -22,11 +22,7 @@ ActionBase.init = function (self, world, item_name, is_server, owner_unit, damag
 	self.network_manager = network_manager
 	self.network_transmit = network_manager.network_transmit
 	self.is_server = is_server
-
-	local owner_player = self.owner_player
-
-	owner_player = not not owner_player and not not self.owner_player.bot_player
-	self.is_bot = owner_player
+	self.is_bot = not not self.owner_player
 	self._is_critical_strike = false
 	self._fatigue_reset = true
 	self._extra_shots = 0

@@ -254,11 +254,7 @@ end
 
 AccountManager.is_guest = function (self)
 	-- function 29
-	local _user_info = self._user_info
-
-	_user_info = not not _user_info and not not self._user_info.guest
-
-	return _user_info
+	return not not self._user_info
 end
 
 AccountManager.is_online = function (self)
@@ -309,22 +305,7 @@ end
 
 AccountManager.has_popup = function (self)
 	-- function 34
-	local _popup_id = self._popup_id
-
-	if not _popup_id then
-		_popup_id = self._signout_popup_id
-
-		if not _popup_id then
-			_popup_id = self._privilege_popup_id
-
-			if not _popup_id then
-				_popup_id = self._xbox_live_connection_lost_popup_id
-				_popup_id = not not _popup_id or not not self._not_connected_to_xbox_live_popup_id
-			end
-		end
-	end
-
-	return _popup_id
+	return not not self._popup_id
 end
 
 AccountManager.cancel_all_popups = function (self)
@@ -347,22 +328,7 @@ AccountManager._check_trigger_popups = function (self)
 
 		local wanted_profile_id = self._user_info.xbox_user_id
 		local wanted_profile = self._gamertags[wanted_profile_id]
-		local fit_text_width_to_popup
-
-		if wanted_profile then
-			fit_text_width_to_popup = Managers.popup:fit_text_width_to_popup(wanted_profile)
-
-			if not fit_text_width_to_popup then
-				-- Nothing
-			end
-		end
-
-		fit_text_width_to_popup = "?"
-
-		local cropped_profile = fit_text_width_to_popup
-
-		::label_36_0::
-
+		local cropped_profile = wanted_profile and not not Managers.popup:fit_text_width_to_popup(wanted_profile) or not wanted_profile and not not "?"
 		local wrong_profile_str = string.format(Localize("controller_pairing"), cropped_profile)
 
 		self:_create_popup(wrong_profile_str, "controller_pairing_header", "verify_profile", "menu_retry", "restart_network", "menu_return_to_title_screen", "show_profile_picker", "menu_select_profile", true)
@@ -414,7 +380,7 @@ AccountManager.setup_friendslist = function (self)
 
 		table.dump(events, nil, 2)
 
-		if (table.contains(events, SocialEventType.RTA_DISCONNECT_ERR) or not self._added_local_user_to_graph) and not self._user_detached then
+		if table.contains(events, SocialEventType.RTA_DISCONNECT_ERR) and not self._user_detached or not table.contains(events, SocialEventType.RTA_DISCONNECT_ERR) and not self._added_local_user_to_graph and not self._user_detached then
 			local user_id = self._user_id
 
 			if Social.add_local_user_to_graph(user_id) then
@@ -512,18 +478,7 @@ AccountManager._verify_user_profile = function (self)
 
 	local most_recent_device = Managers.input:get_most_recent_device()
 	local current_device_type = most_recent_device.type()
-	local var_45_0 = KEYBOARD_DEVICES[current_device_type]
-
-	if not var_45_0 then
-		-- Nothing
-	end
-
-	var_45_0 = false
-
-	local using_keyboard = var_45_0
-
-	::label_45_0::
-
+	local using_keyboard = not not KEYBOARD_DEVICES[current_device_type]
 	local active_controller = self._active_controller
 	local controller_changed = false
 
@@ -533,103 +488,15 @@ AccountManager._verify_user_profile = function (self)
 		controller_changed = controller_id ~= self._controller_id
 	end
 
-	if active_controller then
-		-- Nothing
-	end
-
-	do
-		local user_id_2
-	end
-
-	::label_45_1::
-
-	if not using_keyboard then
-		user_id_2 = active_controller.user_id()
-
-		if not user_id_2 then
-			-- Nothing
-		end
-	end
-
-	user_id_2 = self._user_id
-
-	local user_id = user_id_2
-
-	::label_45_2::
-
-	if user_id then
-		-- Nothing
-	end
-
-	::label_45_3::
-
-	local _user_id_in_cache = self:_user_id_in_cache(user_id)
-
-	if _user_id_in_cache then
-		-- Nothing
-	end
-
-	_user_id_in_cache = XboxLive.user_info(user_id)
-
-	local user_info = _user_id_in_cache
-
-	do
-		local disconnected
-	end
-
-	::label_45_4::
-
-	if not using_keyboard then
-		disconnected = active_controller.disconnected()
-
-		if not disconnected then
-			-- Nothing
-		end
-	end
-
-	disconnected = false
-
-	local controller_disconnected = disconnected
-
-	do
-		local user_id_3
-	end
-
-	::label_45_5::
-
-	if not using_keyboard then
-		user_id_3 = active_controller.user_id()
-
-		if not user_id_3 then
-			-- Nothing
-		end
-	end
-
-	user_id_3 = self._user_id
-
-	local controller_user_id = user_id_3
-
-	::label_45_6::
+	local user_id = not not active_controller.user_id()
+	local user_info = not not user_id and not not self:_user_id_in_cache(user_id)
+	local controller_disconnected = using_keyboard and not not false or not using_keyboard and not not active_controller.disconnected()
+	local controller_user_id = using_keyboard and not not self._user_id or not using_keyboard and not not active_controller.user_id()
 
 	if not active_controller or not controller_user_id or controller_disconnected or not user_info or self._user_info.xbox_user_id ~= user_info.xbox_user_id or not user_info.signed_in or controller_changed then
 		local wanted_profile_id = self._user_info.xbox_user_id
 		local wanted_profile = self._gamertags[wanted_profile_id]
-		local fit_text_width_to_popup
-
-		if wanted_profile then
-			fit_text_width_to_popup = Managers.popup:fit_text_width_to_popup(wanted_profile)
-
-			if not fit_text_width_to_popup then
-				-- Nothing
-			end
-		end
-
-		fit_text_width_to_popup = "?"
-
-		local cropped_profile = fit_text_width_to_popup
-
-		::label_45_7::
-
+		local cropped_profile = wanted_profile and not not Managers.popup:fit_text_width_to_popup(wanted_profile) or not wanted_profile and not not "?"
 		local wrong_profile_str = string.format(Localize("controller_pairing"), cropped_profile)
 
 		if Managers.matchmaking then
@@ -719,7 +586,7 @@ end
 
 AccountManager._check_session = function (self)
 	-- function 52
-	if Network.fatal_error() and not self._fatal_error and (not Managers.invite or not Managers.invite:has_invitation()) and (not Managers.matchmaking or not Managers.matchmaking:is_joining_friend()) and not self:leaving_game() then
+	if not Managers.invite:has_invitation() and Network.fatal_error() and not self._fatal_error and not Managers.invite and not Managers.matchmaking and not self:leaving_game() then
 		self._xbox_live_connection_lost_popup_id = Managers.popup:queue_popup(Localize("xboxlive_connection_lost"), Localize("xboxlive_connection_lost_header"), "restart_network", Localize("menu_restart"))
 		self._fatal_error = true
 	end
@@ -727,11 +594,7 @@ end
 
 AccountManager.has_fatal_error = function (self)
 	-- function 53
-	local _fatal_error = self._fatal_error
-
-	_fatal_error = not not _fatal_error or not not Network.fatal_error()
-
-	return _fatal_error
+	return not not self._fatal_error
 end
 
 AccountManager._create_popup = function (self, error, header, right_action, right_button, left_action, left_button, extra_action, extra_button, disable_localize_error)
@@ -746,7 +609,7 @@ AccountManager._create_popup = function (self, error, header, right_action, righ
 	local right_button = not not right_button and not not Localize(right_button)
 	local left_button = not not left_button and not not Localize(left_button)
 	local extra_button = not not extra_button and not not Localize(extra_button)
-	local localized_error = (not disable_localize_error or not error) and not not Localize(error)
+	local localized_error = disable_localize_error and (not not error or not not Localize(error)) or not disable_localize_error and not not Localize(error)
 
 	assert(self._popup_id == nil, "Tried to show popup even though we already had one.")
 	print(error, header, right_action, right_button, left_action, left_button, extra_action, extra_button, disable_localize_error)
@@ -855,17 +718,7 @@ AccountManager.verify_profile = function (self)
 	end
 
 	local most_recent_device = Managers.input:get_most_recent_device()
-	local user_id_2 = most_recent_device.user_id
-
-	if user_id_2 then
-		-- Nothing
-	end
-
-	user_id_2 = most_recent_device.user_id()
-
-	local user_id = user_id_2
-
-	::label_63_0::
+	local user_id = not not most_recent_device.user_id
 
 	if not user_id then
 		show_wrong_profile_popup(self)
@@ -1236,7 +1089,7 @@ end
 
 AccountManager.query_bandwidth = function (self, down_kbps, up_kbps, timeout_in_ms)
 	-- function 90
-	if (self._querying_bandwidth or not Network.xboxlive_client_exists() or not Managers.voice_chat or not Managers.voice_chat:bandwidth_disabled()) and not GameSettingsDevelopment.bandwidth_queries_enabled then
+	if Managers.voice_chat:bandwidth_disabled() or self._querying_bandwidth or not Network.xboxlive_client_exists() or Managers.voice_chat or not GameSettingsDevelopment.bandwidth_queries_enabled then
 		return
 	end
 
@@ -1306,17 +1159,7 @@ end
 AccountManager.console_type = function (self)
 	-- function 94
 	local console_type = XboxOne.console_type()
-	local var_94_0 = CONSOLE_TYPE_SETTINGS[console_type]
-
-	if not var_94_0 then
-		-- Nothing
-	end
-
-	var_94_0 = CONSOLE_TYPE_SETTINGS[XboxOne.CONSOLE_TYPE_UNKNOWN]
-
-	local console_settings = var_94_0
-
-	::label_94_0::
+	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings.console_type_name
 end
@@ -1324,17 +1167,7 @@ end
 AccountManager.should_throttle = function (self)
 	-- function 95
 	local console_type = XboxOne.console_type()
-	local var_95_0 = CONSOLE_TYPE_SETTINGS[console_type]
-
-	if not var_95_0 then
-		-- Nothing
-	end
-
-	var_95_0 = CONSOLE_TYPE_SETTINGS[XboxOne.CONSOLE_TYPE_UNKNOWN]
-
-	local console_settings = var_95_0
-
-	::label_95_0::
+	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings.should_throttle
 end
@@ -1342,17 +1175,7 @@ end
 AccountManager.console_type_setting = function (self, setting)
 	-- function 96
 	local console_type = XboxOne.console_type()
-	local var_96_0 = CONSOLE_TYPE_SETTINGS[console_type]
-
-	if not var_96_0 then
-		-- Nothing
-	end
-
-	var_96_0 = CONSOLE_TYPE_SETTINGS[XboxOne.CONSOLE_TYPE_UNKNOWN]
-
-	local console_settings = var_96_0
-
-	::label_96_0::
+	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings[setting]
 end

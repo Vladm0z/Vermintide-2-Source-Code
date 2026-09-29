@@ -1,9 +1,6 @@
 -- chunkname: @scripts/managers/challenges/boon_reactivation_rules.lua
 
-local BoonReactivationRules = BoonReactivationRules
-
-BoonReactivationRules = not not BoonReactivationRules or not not {}
-BoonReactivationRules = BoonReactivationRules
+BoonReactivationRules = not not BoonReactivationRules
 
 BoonReactivationRules.questing_knight = function (player_unique_id)
 	-- function 1

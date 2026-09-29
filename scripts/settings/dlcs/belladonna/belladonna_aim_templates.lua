@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_aim_templates.lua
 
-local AimTemplates = AimTemplates
-
-AimTemplates = not not AimTemplates or not not {}
-AimTemplates = AimTemplates
+AimTemplates = not not AimTemplates
 
 local function look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target, always_on)
 	-- function 1
@@ -12,13 +9,7 @@ local function look_at_target_unit(unit, data, dt, target_unit, target_distance,
 	if not previously_used_head_constraint and not always_on then
 		data.is_using_head_constraint = true
 
-		local animation_event = Unit.animation_event
-		local var_1_1 = unit
-		local look_at_on_animation = data.look_at_on_animation
-
-		look_at_on_animation = not not look_at_on_animation or not not "look_at_on"
-
-		animation_event(var_1_1, look_at_on_animation)
+		Unit.animation_event(unit, not not data.look_at_on_animation)
 	end
 
 	if not target_unit or not Unit.alive(target_unit) then
@@ -104,14 +95,8 @@ AimTemplates.ungor_archer = {
 			local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
 			local is_correct_action = current_action == "fire_projectile"
 
-			if not is_level_unit and is_correct_action then
-				local look_at_range = breed.look_at_range
-
-				look_at_range = not not look_at_range or not not 30
-
-				if target_distance < look_at_range then
-					use_head_constraint = true
-				end
+			if not is_level_unit and is_correct_action and target_distance < not not breed.look_at_range then
+				use_head_constraint = true
 			end
 
 			local death_extension = ScriptUnit.has_extension(unit, "death_system")

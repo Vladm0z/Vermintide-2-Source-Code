@@ -81,10 +81,7 @@ Vector3.rotate = function (vector, angle, optional_axis)
 	return Quaternion.rotate(Quaternion.axis_angle(optional_axis, angle), vector)
 end
 
-local Vector3Aux = Vector3Aux
-
-Vector3Aux = not not Vector3Aux or not not {}
-Vector3Aux = Vector3Aux
+Vector3Aux = not not Vector3Aux
 
 Vector3Aux.box = function (destination, vector_3)
 	-- function 13

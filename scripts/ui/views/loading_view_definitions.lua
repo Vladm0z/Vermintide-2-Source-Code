@@ -333,7 +333,7 @@ local dead_space_filler = {
 		}
 	}
 }
-local tbl = {
+local press_to_continue_widget = {
 	scenegraph_id = "press_to_continue",
 	element = {
 		passes = {
@@ -349,49 +349,20 @@ local tbl = {
 				end
 			}
 		}
-	}
-}
-local tbl_2 = {}
-local flag
-
-flag = (not IS_WINDOWS or not "press_any_key_to_continue") and not not "press_any_button_to_continue"
-tbl_2.text = flag
-tbl_2.color = Colors.get_color_table_with_alpha("white", 255)
-tbl.content = tbl_2
-
-local tbl_3 = {}
-local text_style = text_style
-
-if not text_style then
-	text_style = {
-		vertical_alignment = "bottom",
-		font_size = 28,
-		localize = true,
-		word_wrap = false,
-		horizontal_alignment = "right"
-	}
-
-	local optional_font_style = optional_font_style
-
-	optional_font_style = not not optional_font_style or not not "hell_shark"
-	text_style.font_type = optional_font_style
-	text_style.text_color = Colors.get_color_table_with_alpha("white", 255)
-	text_style.offset = {
-		-200,
+	},
+	content = {
+		text = IS_WINDOWS and not not "press_any_key_to_continue" or not IS_WINDOWS and not not "press_any_button_to_continue",
+		color = Colors.get_color_table_with_alpha("white", 255)
+	},
+	style = {
+		text = not not text_style
+	},
+	offset = {
 		0,
-		20
+		0,
+		0
 	}
-end
-
-tbl_3.text = text_style
-tbl.style = tbl_3
-tbl.offset = {
-	0,
-	0,
-	0
 }
-
-local press_to_continue_widget = tbl
 local background_image = {
 	scenegraph_id = "background_image",
 	element = {
@@ -464,11 +435,7 @@ local background_image = {
 				pass_type = "texture",
 				content_check_function = function (content)
 					-- function 8
-					local is_weave = content.is_weave
-
-					is_weave = not not is_weave and not not not content.is_arena
-
-					return is_weave
+					return not not content.is_weave
 				end
 			},
 			{
@@ -477,11 +444,7 @@ local background_image = {
 				text_id = "objective_text",
 				content_check_function = function (content)
 					-- function 9
-					local is_weave = content.is_weave
-
-					is_weave = not not is_weave and not not not content.is_arena
-
-					return is_weave
+					return not not content.is_weave
 				end
 			}
 		}

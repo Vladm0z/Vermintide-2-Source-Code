@@ -1,9 +1,6 @@
 -- chunkname: @scripts/ui/ui_widgets_weaves.lua
 
-local UIWidgets = UIWidgets
-
-UIWidgets = not not UIWidgets or not not {}
-UIWidgets = UIWidgets
+UIWidgets = not not UIWidgets
 
 UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, masked)
 	-- function 1
@@ -88,21 +85,7 @@ UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, m
 					return
 				end
 
-				local selected_color
-
-				if content.button_hotspot.is_hover then
-					selected_color = style.selected_color
-
-					if not selected_color then
-						-- Nothing
-					end
-				end
-
-				selected_color = style.base_color
-
-				::label_4_0::
-
-				style.color = selected_color
+				style.color = content.button_hotspot.is_hover and not not style.selected_color or not content.button_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -143,21 +126,7 @@ UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, m
 					return
 				end
 
-				local selected_color
-
-				if content.button_hotspot.is_hover then
-					selected_color = style.selected_color
-
-					if not selected_color then
-						-- Nothing
-					end
-				end
-
-				selected_color = style.base_color
-
-				::label_7_0::
-
-				style.color = selected_color
+				style.color = content.button_hotspot.is_hover and not not style.selected_color or not content.button_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -207,21 +176,7 @@ UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, m
 					return
 				end
 
-				local selected_color
-
-				if content.button_hotspot.is_hover then
-					selected_color = style.selected_color
-
-					if not selected_color then
-						-- Nothing
-					end
-				end
-
-				selected_color = style.base_color
-
-				::label_11_0::
-
-				style.color = selected_color
+				style.color = content.button_hotspot.is_hover and not not style.selected_color or not content.button_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -262,21 +217,7 @@ UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, m
 					return
 				end
 
-				local selected_color
-
-				if content.button_hotspot.is_hover then
-					selected_color = style.selected_color
-
-					if not selected_color then
-						-- Nothing
-					end
-				end
-
-				selected_color = style.base_color
-
-				::label_14_0::
-
-				style.color = selected_color
+				style.color = content.button_hotspot.is_hover and not not style.selected_color or not content.button_hotspot.is_hover and not not style.base_color
 			end
 		},
 		{
@@ -295,7 +236,7 @@ UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, m
 			text_id = "score"
 		}
 	}
-	local tbl = {
+	local content = {
 		score = "000",
 		name = "Unassigned",
 		weave = "000",
@@ -304,431 +245,386 @@ UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, m
 		local_player = false,
 		button_hotspot = {
 			allow_multi_hover = false
+		},
+		background = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		frame = frame_settings.texture,
+		size = size
+	}
+	local style = {
+		ranking = {
+			font_size = 22,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			size = ranking_size,
+			offset = {
+				ranking_offset[1],
+				ranking_offset[2],
+				ranking_offset[3] + 2
+			}
+		},
+		ranking_shadow = {
+			font_size = 22,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = ranking_size,
+			offset = {
+				ranking_offset[1] + 2,
+				ranking_offset[2] - 2,
+				ranking_offset[3] + 1
+			}
+		},
+		ranking_frame = {
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = ranking_offset,
+			size = ranking_size
+		},
+		ranking_background = {
+			masked = masked,
+			size = {
+				ranking_size[1] - background_spacing,
+				ranking_size[2] - background_spacing
+			},
+			base_color = {
+				120,
+				0,
+				0,
+				0
+			},
+			selected_color = {
+				120,
+				128,
+				128,
+				128
+			},
+			color = {
+				120,
+				0,
+				0,
+				0
+			},
+			offset = {
+				ranking_offset[1] + background_spacing / 2,
+				ranking_offset[2] + background_spacing / 2,
+				ranking_offset[3]
+			}
+		},
+		ranking_background_local_player = {
+			masked = masked,
+			size = {
+				ranking_size[1] - background_spacing,
+				ranking_size[2] - background_spacing
+			},
+			color = local_player_color,
+			offset = {
+				ranking_offset[1] + background_spacing / 2,
+				ranking_offset[2] + background_spacing / 2,
+				ranking_offset[3]
+			}
+		},
+		name = {
+			font_size = 22,
+			upper_case = false,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "arial_masked" or not masked and not not "arial",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			size = {
+				name_size[1] - (career_icon_size[1] + 30),
+				name_size[2]
+			},
+			offset = {
+				name_offset[1] + career_icon_size[1] + 15,
+				name_offset[2],
+				name_offset[3] + 2
+			}
+		},
+		name_shadow = {
+			font_size = 22,
+			upper_case = false,
+			localize = false,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "arial_masked" or not masked and not not "arial",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = {
+				name_size[1] - (career_icon_size[2] + 30),
+				name_size[2]
+			},
+			offset = {
+				name_offset[1] + career_icon_size[1] + 17,
+				name_offset[2] - 2,
+				name_offset[3] + 1
+			}
+		},
+		name_frame = {
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = name_offset,
+			size = name_size
+		},
+		name_background = {
+			masked = masked,
+			size = {
+				name_size[1] - background_spacing,
+				name_size[2] - background_spacing
+			},
+			base_color = {
+				120,
+				0,
+				0,
+				0
+			},
+			selected_color = {
+				120,
+				128,
+				128,
+				128
+			},
+			color = {
+				120,
+				0,
+				0,
+				0
+			},
+			offset = {
+				name_offset[1] + background_spacing / 2,
+				name_offset[2] + background_spacing / 2,
+				name_offset[3]
+			}
+		},
+		name_background_local_player = {
+			masked = masked,
+			size = {
+				name_size[1] - background_spacing,
+				name_size[2] - background_spacing
+			},
+			color = local_player_color,
+			offset = {
+				name_offset[1] + background_spacing / 2,
+				name_offset[2] + background_spacing / 2,
+				name_offset[3]
+			}
+		},
+		career_icon = {
+			masked = masked,
+			size = career_icon_size,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = {
+				name_offset[1] + background_spacing / 2,
+				name_offset[2] + background_spacing / 2,
+				name_offset[3]
+			}
+		},
+		weave = {
+			font_size = 22,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			size = weave_size,
+			offset = {
+				weave_offset[1],
+				weave_offset[2],
+				weave_offset[3] + 2
+			}
+		},
+		weave_shadow = {
+			font_size = 22,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = weave_size,
+			offset = {
+				weave_offset[1] + 2,
+				weave_offset[2] - 2,
+				weave_offset[3] + 1
+			}
+		},
+		weave_frame = {
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = weave_offset,
+			size = weave_size
+		},
+		weave_background = {
+			masked = masked,
+			size = {
+				weave_size[1] - background_spacing,
+				weave_size[2] - background_spacing
+			},
+			base_color = {
+				120,
+				0,
+				0,
+				0
+			},
+			selected_color = {
+				120,
+				128,
+				128,
+				128
+			},
+			color = {
+				120,
+				0,
+				0,
+				0
+			},
+			offset = {
+				weave_offset[1] + background_spacing / 2,
+				weave_offset[2] + background_spacing / 2,
+				weave_offset[3]
+			}
+		},
+		weave_background_local_player = {
+			masked = masked,
+			size = {
+				weave_size[1] - background_spacing,
+				weave_size[2] - background_spacing
+			},
+			color = local_player_color,
+			offset = {
+				weave_offset[1] + background_spacing / 2,
+				weave_offset[2] + background_spacing / 2,
+				weave_offset[3]
+			}
+		},
+		score = {
+			font_size = 22,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("font_default", 255),
+			size = score_size,
+			offset = {
+				score_offset[1],
+				score_offset[2],
+				score_offset[3] + 2
+			}
+		},
+		score_shadow = {
+			font_size = 22,
+			upper_case = true,
+			localize = false,
+			horizontal_alignment = "center",
+			vertical_alignment = "center",
+			dynamic_font_size = true,
+			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			text_color = Colors.get_color_table_with_alpha("black", 255),
+			size = score_size,
+			offset = {
+				score_offset[1] + 2,
+				score_offset[2] - 2,
+				score_offset[3] + 1
+			}
+		},
+		score_frame = {
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
+			color = {
+				255,
+				255,
+				255,
+				255
+			},
+			offset = score_offset,
+			size = score_size
+		},
+		score_background = {
+			masked = masked,
+			size = {
+				score_size[1] - background_spacing,
+				score_size[2] - background_spacing
+			},
+			base_color = {
+				120,
+				0,
+				0,
+				0
+			},
+			selected_color = {
+				120,
+				128,
+				128,
+				128
+			},
+			color = {
+				120,
+				0,
+				0,
+				0
+			},
+			offset = {
+				score_offset[1] + background_spacing / 2,
+				score_offset[2] + background_spacing / 2,
+				score_offset[3]
+			}
+		},
+		score_background_local_player = {
+			masked = masked,
+			size = {
+				score_size[1] - background_spacing,
+				score_size[2] - background_spacing
+			},
+			color = local_player_color,
+			offset = {
+				score_offset[1] + background_spacing / 2,
+				score_offset[2] + background_spacing / 2,
+				score_offset[3]
+			}
 		}
 	}
-	local flag
-
-	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
-	tbl.background = flag
-	tbl.frame = frame_settings.texture
-	tbl.size = size
-
-	local content = tbl
-	local tbl_2 = {}
-	local tbl_3 = {
-		font_size = 22,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_2
-
-	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_3.font_type = flag_2
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_3.size = ranking_size
-	tbl_3.offset = {
-		ranking_offset[1],
-		ranking_offset[2],
-		ranking_offset[3] + 2
-	}
-	tbl_2.ranking = tbl_3
-
-	local tbl_4 = {
-		font_size = 22,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_3
-
-	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_4.font_type = flag_3
-	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_4.size = ranking_size
-	tbl_4.offset = {
-		ranking_offset[1] + 2,
-		ranking_offset[2] - 2,
-		ranking_offset[3] + 1
-	}
-	tbl_2.ranking_shadow = tbl_4
-	tbl_2.ranking_frame = {
-		masked = masked,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = ranking_offset,
-		size = ranking_size
-	}
-	tbl_2.ranking_background = {
-		masked = masked,
-		size = {
-			ranking_size[1] - background_spacing,
-			ranking_size[2] - background_spacing
-		},
-		base_color = {
-			120,
-			0,
-			0,
-			0
-		},
-		selected_color = {
-			120,
-			128,
-			128,
-			128
-		},
-		color = {
-			120,
-			0,
-			0,
-			0
-		},
-		offset = {
-			ranking_offset[1] + background_spacing / 2,
-			ranking_offset[2] + background_spacing / 2,
-			ranking_offset[3]
-		}
-	}
-	tbl_2.ranking_background_local_player = {
-		masked = masked,
-		size = {
-			ranking_size[1] - background_spacing,
-			ranking_size[2] - background_spacing
-		},
-		color = local_player_color,
-		offset = {
-			ranking_offset[1] + background_spacing / 2,
-			ranking_offset[2] + background_spacing / 2,
-			ranking_offset[3]
-		}
-	}
-
-	local tbl_5 = {
-		font_size = 22,
-		upper_case = false,
-		localize = false,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_4
-
-	flag_4 = (not masked or not "arial_masked") and not not "arial"
-	tbl_5.font_type = flag_4
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.size = {
-		name_size[1] - (career_icon_size[1] + 30),
-		name_size[2]
-	}
-	tbl_5.offset = {
-		name_offset[1] + career_icon_size[1] + 15,
-		name_offset[2],
-		name_offset[3] + 2
-	}
-	tbl_2.name = tbl_5
-
-	local tbl_6 = {
-		font_size = 22,
-		upper_case = false,
-		localize = false,
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_5
-
-	flag_5 = (not masked or not "arial_masked") and not not "arial"
-	tbl_6.font_type = flag_5
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.size = {
-		name_size[1] - (career_icon_size[2] + 30),
-		name_size[2]
-	}
-	tbl_6.offset = {
-		name_offset[1] + career_icon_size[1] + 17,
-		name_offset[2] - 2,
-		name_offset[3] + 1
-	}
-	tbl_2.name_shadow = tbl_6
-	tbl_2.name_frame = {
-		masked = masked,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = name_offset,
-		size = name_size
-	}
-	tbl_2.name_background = {
-		masked = masked,
-		size = {
-			name_size[1] - background_spacing,
-			name_size[2] - background_spacing
-		},
-		base_color = {
-			120,
-			0,
-			0,
-			0
-		},
-		selected_color = {
-			120,
-			128,
-			128,
-			128
-		},
-		color = {
-			120,
-			0,
-			0,
-			0
-		},
-		offset = {
-			name_offset[1] + background_spacing / 2,
-			name_offset[2] + background_spacing / 2,
-			name_offset[3]
-		}
-	}
-	tbl_2.name_background_local_player = {
-		masked = masked,
-		size = {
-			name_size[1] - background_spacing,
-			name_size[2] - background_spacing
-		},
-		color = local_player_color,
-		offset = {
-			name_offset[1] + background_spacing / 2,
-			name_offset[2] + background_spacing / 2,
-			name_offset[3]
-		}
-	}
-	tbl_2.career_icon = {
-		masked = masked,
-		size = career_icon_size,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = {
-			name_offset[1] + background_spacing / 2,
-			name_offset[2] + background_spacing / 2,
-			name_offset[3]
-		}
-	}
-
-	local tbl_7 = {
-		font_size = 22,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_6
-
-	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_7.font_type = flag_6
-	tbl_7.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_7.size = weave_size
-	tbl_7.offset = {
-		weave_offset[1],
-		weave_offset[2],
-		weave_offset[3] + 2
-	}
-	tbl_2.weave = tbl_7
-
-	local tbl_8 = {
-		font_size = 22,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_7
-
-	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_8.font_type = flag_7
-	tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_8.size = weave_size
-	tbl_8.offset = {
-		weave_offset[1] + 2,
-		weave_offset[2] - 2,
-		weave_offset[3] + 1
-	}
-	tbl_2.weave_shadow = tbl_8
-	tbl_2.weave_frame = {
-		masked = masked,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = weave_offset,
-		size = weave_size
-	}
-	tbl_2.weave_background = {
-		masked = masked,
-		size = {
-			weave_size[1] - background_spacing,
-			weave_size[2] - background_spacing
-		},
-		base_color = {
-			120,
-			0,
-			0,
-			0
-		},
-		selected_color = {
-			120,
-			128,
-			128,
-			128
-		},
-		color = {
-			120,
-			0,
-			0,
-			0
-		},
-		offset = {
-			weave_offset[1] + background_spacing / 2,
-			weave_offset[2] + background_spacing / 2,
-			weave_offset[3]
-		}
-	}
-	tbl_2.weave_background_local_player = {
-		masked = masked,
-		size = {
-			weave_size[1] - background_spacing,
-			weave_size[2] - background_spacing
-		},
-		color = local_player_color,
-		offset = {
-			weave_offset[1] + background_spacing / 2,
-			weave_offset[2] + background_spacing / 2,
-			weave_offset[3]
-		}
-	}
-
-	local tbl_9 = {
-		font_size = 22,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_8
-
-	flag_8 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_9.font_type = flag_8
-	tbl_9.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_9.size = score_size
-	tbl_9.offset = {
-		score_offset[1],
-		score_offset[2],
-		score_offset[3] + 2
-	}
-	tbl_2.score = tbl_9
-
-	local tbl_10 = {
-		font_size = 22,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		vertical_alignment = "center",
-		dynamic_font_size = true
-	}
-	local flag_9
-
-	flag_9 = (not masked or not "hell_shark_masked") and not not "hell_shark"
-	tbl_10.font_type = flag_9
-	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_10.size = score_size
-	tbl_10.offset = {
-		score_offset[1] + 2,
-		score_offset[2] - 2,
-		score_offset[3] + 1
-	}
-	tbl_2.score_shadow = tbl_10
-	tbl_2.score_frame = {
-		masked = masked,
-		texture_size = frame_settings.texture_size,
-		texture_sizes = frame_settings.texture_sizes,
-		color = {
-			255,
-			255,
-			255,
-			255
-		},
-		offset = score_offset,
-		size = score_size
-	}
-	tbl_2.score_background = {
-		masked = masked,
-		size = {
-			score_size[1] - background_spacing,
-			score_size[2] - background_spacing
-		},
-		base_color = {
-			120,
-			0,
-			0,
-			0
-		},
-		selected_color = {
-			120,
-			128,
-			128,
-			128
-		},
-		color = {
-			120,
-			0,
-			0,
-			0
-		},
-		offset = {
-			score_offset[1] + background_spacing / 2,
-			score_offset[2] + background_spacing / 2,
-			score_offset[3]
-		}
-	}
-	tbl_2.score_background_local_player = {
-		masked = masked,
-		size = {
-			score_size[1] - background_spacing,
-			score_size[2] - background_spacing
-		},
-		color = local_player_color,
-		offset = {
-			score_offset[1] + background_spacing / 2,
-			score_offset[2] + background_spacing / 2,
-			score_offset[3]
-		}
-	}
-
-	local style = tbl_2
 	local widget = {}
 	local element = {}
 
@@ -758,17 +654,7 @@ UIWidgets.create_leaderboard_loading_icon = function (scenegraph_id, overlay_sce
 			texture_id = "texture_id",
 			content_change_function = function (content, style, _, dt)
 				-- function 16
-				local progress_2 = style.progress
-
-				if not progress_2 then
-					-- Nothing
-				end
-
-				progress_2 = 0
-
-				local progress = progress_2
-
-				::label_16_0::
+				local progress = not not style.progress
 
 				progress = (progress + dt) % 1
 

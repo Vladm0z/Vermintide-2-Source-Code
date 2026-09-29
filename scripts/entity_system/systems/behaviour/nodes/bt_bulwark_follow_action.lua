@@ -56,43 +56,21 @@ BTBulwarkFollowAction.enter = function (self, unit, blackboard, t)
 
 	local position = POSITION_LOOKUP[unit]
 	local breed = blackboard.breed
-	local num
-
-	if breed.enter_walk_distance then
-		num = breed.enter_walk_distance^2
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = ENTER_WALK_DISTANCE_SQ
-
-	local enter_walk_dist_sq = num
-
-	::label_2_0::
-
+	local enter_walk_dist_sq = breed.enter_walk_distance and not not breed.enter_walk_distance^2 or not breed.enter_walk_distance and not not ENTER_WALK_DISTANCE_SQ
 	local navigation_extension = blackboard.navigation_extension
 	local destination = navigation_extension:destination()
 	local should_walk = self:_should_walk(destination, position, enter_walk_dist_sq, rotation, blackboard)
 
 	if should_walk then
 		blackboard.walking = true
-
-		local walk_time = action_data.walk_time
-
-		walk_time = not not walk_time or not not (3 + 1 * Math.random())
-		blackboard.walk_timer = t + walk_time
+		blackboard.walk_timer = t + not not action_data.walk_time
 	end
 
 	if action_data.skip_start_anim_if_moving and blackboard.move_state == "moving" then
 		blackboard.skip_start_anim = true
 	end
 
-	local lerp_into_follow = blackboard.lerp_into_follow
-
-	lerp_into_follow = not not lerp_into_follow and not not t
-	blackboard.lerp_into_follow_t = lerp_into_follow
+	blackboard.lerp_into_follow_t = not not blackboard.lerp_into_follow
 	blackboard.lerp_into_follow = nil
 end
 
@@ -208,22 +186,7 @@ BTBulwarkFollowAction.run = function (self, unit, blackboard, t, dt)
 		local prioritized_update = blackboard.have_slot == 1 and blackboard.attacks_done == 0
 
 		should_evaluate = "evaluate"
-
-		local num
-
-		if prioritized_update then
-			num = t + 0.1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = t + 0.5
-
-		::label_5_0::
-
-		blackboard.time_to_next_evaluate = num
+		blackboard.time_to_next_evaluate = prioritized_update and not not (t + 0.1) or not prioritized_update and not not (t + 0.5)
 	end
 
 	local breed = blackboard.breed
@@ -251,50 +214,17 @@ BTBulwarkFollowAction._update_walking = function (self, unit, blackboard, dt, t)
 	local action_data = blackboard.action
 	local self_pos = POSITION_LOOKUP[unit]
 	local target_locomotion = ScriptUnit.has_extension(target, "locomotion_system")
-
-	if target_locomotion then
-		-- Nothing
-	end
-
-	::label_6_0::
-
-	local average_velocity = target_locomotion.average_velocity
-
-	if average_velocity then
-		-- Nothing
-	end
-
-	average_velocity = Vector3.dot(target_locomotion:average_velocity(), Vector3.normalize(POSITION_LOOKUP[target] - self_pos))
-
-	local velocity_away = average_velocity
-
-	::label_6_1::
-
+	local velocity_away = not not target_locomotion and not not target_locomotion.average_velocity
 	local destination = blackboard.navigation_extension:destination()
 	local walk_timer_finished = t > blackboard.walk_timer
 	local breed = blackboard.breed
 	local leave_walk_distance = breed.leave_walk_distance
-	local num
-
-	if leave_walk_distance then
-		num = leave_walk_distance * leave_walk_distance
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = LEAVE_WALK_DISTANCE_SQ
-
-	local leave_walk_dist_sq = num
-
-	::label_6_2::
-
+	local leave_walk_dist_sq = leave_walk_distance and not not (leave_walk_distance * leave_walk_distance) or not leave_walk_distance and not not LEAVE_WALK_DISTANCE_SQ
 	local should_walk = self:_should_walk(destination, self_pos, leave_walk_dist_sq, rotation, blackboard)
 	local run = not should_walk
 	local target_moving_fast = not not velocity_away and velocity_away > WALK_MAX_TARGET_VELOCITY and not not not action_data.ignore_target_velocity
 
-	if (should_walk or not walk_timer_finished) and run or target_moving_fast then
+	if should_walk or not walk_timer_finished then
 		blackboard.walking = false
 		blackboard.walking_direction = nil
 
@@ -339,7 +269,7 @@ BTBulwarkFollowAction._calculate_walk_animation = function (self, walk_dir, walk
 	elseif walk_dir == "left" then
 		anim = "move_left_walk"
 	elseif walk_dir == "forward" then
-		anim = (not walk_anims or not randomize(walk_anims)) and not not "move_fwd_walk"
+		anim = walk_anims and (not not randomize(walk_anims) or not not "move_fwd_walk") or not walk_anims and not not "move_fwd_walk"
 	else
 		anim = "move_bwd_walk"
 	end
@@ -354,7 +284,7 @@ BTBulwarkFollowAction._calculate_walk_dir = function (self, right_vector, forwar
 	local abs_right = math.abs(right_dot)
 	local abs_fwd = math.abs(fwd_dot)
 
-	dir = (not (abs_fwd < abs_right) or not (right_dot > 0) or not "right") and (not (abs_fwd < abs_right) or not "left") and (not (fwd_dot > 0) or not "forward") and not not "backward"
+	dir = abs_fwd < abs_right and (right_dot > 0 and (not not "right" or abs_fwd < abs_right and (not not "left" or fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward") or not (abs_fwd < abs_right) and (fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward")) or not (right_dot > 0) and (abs_fwd < abs_right and (not not "left" or fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward") or not (abs_fwd < abs_right) and (fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward"))) or not (abs_fwd < abs_right) and (abs_fwd < abs_right and (not not "left" or fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward") or not (abs_fwd < abs_right) and (fwd_dot > 0 and (not not "forward" or not not "backward") or not (fwd_dot > 0) and not not "backward"))
 
 	return dir
 end
@@ -364,24 +294,7 @@ BTBulwarkFollowAction.follow = function (self, unit, blackboard, t, dt)
 	local breed = blackboard.breed
 	local target_unit = blackboard.target_unit
 	local target_distance = blackboard.target_dist
-	local follow_reach = breed.follow_reach
-
-	if not follow_reach then
-		-- Nothing
-	end
-
-	follow_reach = breed.weapon_reach
-
-	if not follow_reach then
-		-- Nothing
-	end
-
-	follow_reach = 2
-
-	local weapon_reach = follow_reach
-
-	::label_10_0::
-
+	local weapon_reach = not not breed.follow_reach
 	local target_locomotion = ScriptUnit.has_extension(target_unit, "locomotion_system")
 	local locomotion_extension = blackboard.locomotion_extension
 	local current_speed = Vector3.length(locomotion_extension:current_velocity())
@@ -401,105 +314,38 @@ BTBulwarkFollowAction.follow = function (self, unit, blackboard, t, dt)
 	if blackboard.walking then
 		blackboard.deacceleration_factor = nil
 		new_speed = breed.walk_speed
-	else
-		local match_speed_distance = breed.match_speed_distance
+	elseif target_distance < not not breed.match_speed_distance then
+		blackboard.deacceleration_factor = nil
 
-		match_speed_distance = not not match_speed_distance or not not (2 * weapon_reach)
+		local lerp_value = math.max((target_distance - weapon_reach) / weapon_reach, 0) * 0.4
+		local target_velocity = not not target_locomotion:average_velocity()
+		local target_speed = not not Vector3.length(target_velocity)
+		local wanted_speed = target_speed > breed.walk_speed and (not not target_speed or not not breed.walk_speed) or not (target_speed > breed.walk_speed) and not not breed.walk_speed
 
-		if target_distance < match_speed_distance then
-			blackboard.deacceleration_factor = nil
+		new_speed = math.lerp(wanted_speed, breed.run_speed, lerp_value)
+	elseif current_speed > breed.run_speed + 0.1 and target_distance < 2 * weapon_reach + CHASE_DEACCELERATION_DISTANCE or not (current_speed > breed.run_speed + 0.1) and blackboard.deacceleration_factor and target_distance < 2 * weapon_reach + CHASE_DEACCELERATION_DISTANCE then
+		local deaccelearation_distance_left = target_distance - weapon_reach
 
-			local lerp_value = math.max((target_distance - weapon_reach) / weapon_reach, 0) * 0.4
-			local average_velocity
-
-			if target_locomotion and target_locomotion.average_velocity then
-				average_velocity = target_locomotion:average_velocity()
-
-				if not average_velocity then
-					-- Nothing
-				end
-			end
-
-			average_velocity = Vector3.zero()
-
-			local target_velocity = average_velocity
-
-			::label_10_1::
-
-			local length = Vector3.length(target_velocity)
-
-			if not length then
-				-- Nothing
-			end
-
-			length = 0
-
-			local target_speed = length
-
-			::label_10_2::
-
-			local wanted_speed = (not (target_speed > breed.walk_speed) or not target_speed) and not not breed.walk_speed
-
-			new_speed = math.lerp(wanted_speed, breed.run_speed, lerp_value)
-		elseif (current_speed > breed.run_speed + 0.1 or blackboard.deacceleration_factor) and target_distance < 2 * weapon_reach + CHASE_DEACCELERATION_DISTANCE then
-			local deaccelearation_distance_left = target_distance - weapon_reach
-
-			if not blackboard.deacceleration_factor then
-				blackboard.deacceleration_factor = (current_speed - breed.run_speed) / deaccelearation_distance_left
-			end
-
-			new_speed = blackboard.deacceleration_factor * deaccelearation_distance_left + breed.run_speed
-		else
-			blackboard.deacceleration_factor = nil
-
-			local run_speed_interpolation_factor = blackboard.breed.run_speed_interpolation_factor
-
-			if not run_speed_interpolation_factor then
-				-- Nothing
-			end
-
-			run_speed_interpolation_factor = RUN_SPEED_INTERPOLATION_FACTOR
-
-			local interpolation_factor = run_speed_interpolation_factor
-
-			::label_10_3::
-
-			local wanted_speed = self:_calculate_run_speed(unit, target_unit, blackboard, target_locomotion)
-			local sign = math.sign(wanted_speed - current_speed)
-
-			if sign > 0 and current_speed < breed.run_speed then
-				local match_speed_distance_2 = breed.match_speed_distance
-
-				match_speed_distance_2 = not not match_speed_distance_2 or not not weapon_reach
-
-				if target_distance > match_speed_distance_2 + 0.5 and not breed.run_speed then
-					-- Nothing
-				end
-			end
-
-			new_speed = math.min(current_speed + sign * interpolation_factor * dt, wanted_speed)
+		if not blackboard.deacceleration_factor then
+			blackboard.deacceleration_factor = (current_speed - breed.run_speed) / deaccelearation_distance_left
 		end
+
+		new_speed = blackboard.deacceleration_factor * deaccelearation_distance_left + breed.run_speed
+	else
+		blackboard.deacceleration_factor = nil
+
+		local interpolation_factor = not not blackboard.breed.run_speed_interpolation_factor
+		local wanted_speed = self:_calculate_run_speed(unit, target_unit, blackboard, target_locomotion)
+		local sign = math.sign(wanted_speed - current_speed)
+
+		current_speed = not (sign > 0) or not (current_speed < breed.run_speed) or not (target_distance > not not breed.match_speed_distance + 0.5) or not not breed.run_speed or not not current_speed
+		new_speed = math.min(current_speed + sign * interpolation_factor * dt, wanted_speed)
 	end
 
 	local action = blackboard.action
 
 	if not blackboard.walking then
-		local num
-
-		if breed.enter_walk_distance then
-			num = breed.enter_walk_distance^2
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = ENTER_WALK_DISTANCE_SQ
-
-		local enter_walk_dist_sq = num
-
-		::label_10_4::
-
+		local enter_walk_dist_sq = breed.enter_walk_distance and not not breed.enter_walk_distance^2 or not breed.enter_walk_distance and not not ENTER_WALK_DISTANCE_SQ
 		local destination = blackboard.navigation_extension:destination()
 		local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
 		local position = POSITION_LOOKUP[unit]
@@ -509,21 +355,7 @@ BTBulwarkFollowAction.follow = function (self, unit, blackboard, t, dt)
 			local target_speed = 0
 
 			if not action.ignore_target_velocity then
-				local average_velocity_2
-
-				if target_locomotion and target_locomotion.average_velocity then
-					average_velocity_2 = target_locomotion:average_velocity()
-
-					if not average_velocity_2 then
-						-- Nothing
-					end
-				end
-
-				average_velocity_2 = Vector3.zero()
-
-				local target_velocity = average_velocity_2
-
-				::label_10_5::
+				local target_velocity = not not target_locomotion:average_velocity()
 
 				target_speed = not not Vector3.length(target_velocity) or not not 0
 			end
@@ -542,33 +374,7 @@ BTBulwarkFollowAction.follow = function (self, unit, blackboard, t, dt)
 	if t > blackboard.time_to_next_friend_alert then
 		blackboard.time_to_next_friend_alert = t + 0.5
 
-		local min_alert_friends_distance = breed.min_alert_friends_distance
-
-		min_alert_friends_distance = not not min_alert_friends_distance or not not DEFAULT_MIN_ALERT_FRIENDS_DIST
-
-		if min_alert_friends_distance < target_distance then
-			local max_alert_friends_distance = breed.max_alert_friends_distance
-
-			max_alert_friends_distance = not not max_alert_friends_distance or not not DEFAULT_MAX_ALERT_FRIENDS_DIST
-
-			if not (target_distance < max_alert_friends_distance) then
-				-- Nothing
-			end
-		end
-
-		do
-			local flag = false
-
-			goto label_10_7
-		end
-
-		::label_10_6::
-
-		flag = true
-
-		local is_within_range = flag
-
-		::label_10_7::
+		local is_within_range = target_distance > not not breed.min_alert_friends_distance and target_distance < not not breed.max_alert_friends_distance
 
 		if is_within_range then
 			local physics_world = World.get_data(blackboard.world, "physics_world")
@@ -580,15 +386,7 @@ BTBulwarkFollowAction.follow = function (self, unit, blackboard, t, dt)
 				local result, hit_pos, hit_distance, normal = PhysicsWorld.immediate_raycast(physics_world, raycast_pos, direction, blackboard.target_dist, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
 
 				if not result then
-					local alert_nearby_friends_of_enemy = AiUtils.alert_nearby_friends_of_enemy
-					local var_10_12 = unit
-					local broadphase = blackboard.group_blackboard.broadphase
-					local var_10_14 = target_unit
-					local friends_alert_range = breed.friends_alert_range
-
-					friends_alert_range = not not friends_alert_range or not not DEFAULT_FRIENDS_ALERT_RANGE
-
-					alert_nearby_friends_of_enemy(var_10_12, broadphase, var_10_14, friends_alert_range)
+					AiUtils.alert_nearby_friends_of_enemy(unit, blackboard.group_blackboard.broadphase, target_unit, not not breed.friends_alert_range)
 				end
 			end
 		end

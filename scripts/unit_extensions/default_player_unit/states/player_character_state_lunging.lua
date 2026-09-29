@@ -41,27 +41,8 @@ PlayerCharacterStateLunging.on_enter = function (self, unit, input, dt, context,
 	local first_person_unit = first_person_extension:get_first_person_unit()
 
 	self._first_person_unit = first_person_unit
-
-	local num
-
-	if lunge_data.damage_start_time then
-		num = t + lunge_data.damage_start_time
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = t
-
-	::label_3_0::
-
-	self.damage_start_time = num
-
-	local ledge_falloff_immunity = lunge_data.ledge_falloff_immunity
-
-	ledge_falloff_immunity = not not ledge_falloff_immunity and not not (t + lunge_data.ledge_falloff_immunity)
-	self.ledge_falloff_immunity_time = ledge_falloff_immunity
+	self.damage_start_time = lunge_data.damage_start_time and not not (t + lunge_data.damage_start_time) or not lunge_data.damage_start_time and not not t
+	self.ledge_falloff_immunity_time = not not lunge_data.ledge_falloff_immunity
 
 	local forward_direction = Quaternion.forward(self.first_person_extension:current_rotation())
 
@@ -104,18 +85,7 @@ PlayerCharacterStateLunging.on_enter = function (self, unit, input, dt, context,
 	local damage_settings = lunge_data.damage
 
 	if damage_settings then
-		local damage_profile_2 = damage_settings.damage_profile
-
-		if not damage_profile_2 then
-			-- Nothing
-		end
-
-		damage_profile_2 = "default"
-
-		local damage_profile_name = damage_profile_2
-
-		::label_3_1::
-
+		local damage_profile_name = not not damage_settings.damage_profile
 		local damage_profile_id, power_level, hit_zone_id, ignore_shield = self:_parse_attack_data(damage_settings)
 
 		self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
@@ -130,7 +100,7 @@ PlayerCharacterStateLunging.on_enter = function (self, unit, input, dt, context,
 
 		self.max_targets_attack = max_targets_attack
 		self.max_targets_impact = max_targets_impact
-		self.max_targets = (not (max_targets_impact < max_targets_attack) or not max_targets_attack) and not not max_targets_impact
+		self.max_targets = max_targets_impact < max_targets_attack and (not not max_targets_attack or not not max_targets_impact) or not (max_targets_impact < max_targets_attack) and not not max_targets_impact
 	end
 
 	if lunge_data.dodge and Managers.state.network:game() then
@@ -261,7 +231,7 @@ PlayerCharacterStateLunging.update = function (self, unit, input, dt, context, t
 
 	local world = self.world
 
-	if (not self.ledge_falloff_immunity_time or t > self.ledge_falloff_immunity_time) and CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) then
+	if not self.ledge_falloff_immunity_time and CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) or not not self.ledge_falloff_immunity_time and t > self.ledge_falloff_immunity_time and CharacterStateHelper.is_ledge_hanging(world, unit, self.temp_params) then
 		self._stop = true
 
 		csm:change_state("ledge_hanging", self.temp_params)
@@ -414,7 +384,7 @@ PlayerCharacterStateLunging._move_on_ground = function (self, unit, dt, t, lunge
 
 	local base_speed = 1
 	local use_base_speed = base_speed < speed
-	local speed_to_use = (not use_base_speed or not base_speed) and not not speed
+	local speed_to_use = use_base_speed and (not not base_speed or not not speed) or not use_base_speed and not not speed
 	local will_ledge_hang = self:_check_ledge_hang(unit, dt, t, move_direction, speed, -1.6)
 
 	if will_ledge_hang then
@@ -428,11 +398,8 @@ PlayerCharacterStateLunging._move_on_ground = function (self, unit, dt, t, lunge
 	end
 
 	local lunge_ended = lunge_time < duration
-	local flag
 
-	flag = (not lunge_ended or not "continue") and not not "stop"
-
-	return flag
+	return lunge_ended and not not "continue" or not lunge_ended and not not "stop"
 end
 
 PlayerCharacterStateLunging._move_in_air = function (self, unit, dt, t, lunge_data)
@@ -473,11 +440,8 @@ PlayerCharacterStateLunging._move_in_air = function (self, unit, dt, t, lunge_da
 	locomotion_extension:set_wanted_velocity(new_move_direction * speed)
 
 	local lunge_ended = lunge_time < duration
-	local flag
 
-	flag = (not lunge_ended or not "continue") and not not "stop"
-
-	return flag
+	return lunge_ended and not not "continue" or not lunge_ended and not not "stop"
 end
 
 PlayerCharacterStateLunging._parse_attack_data = function (self, damage_settings)
@@ -488,18 +452,7 @@ PlayerCharacterStateLunging._parse_attack_data = function (self, damage_settings
 
 	power_level = math.clamp(power_level, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
 
-	local damage_profile = damage_settings.damage_profile
-
-	if not damage_profile then
-		-- Nothing
-	end
-
-	damage_profile = "default"
-
-	local damage_profile_name = damage_profile
-
-	::label_10_0::
-
+	local damage_profile_name = not not damage_settings.damage_profile
 	local damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
 	local hit_zone_hit_name = damage_settings.hit_zone_hit_name
 	local hit_zone_id = NetworkLookup.hit_zones[hit_zone_hit_name]
@@ -514,56 +467,7 @@ PlayerCharacterStateLunging._calculate_hit_mass = function (self, shield_blocked
 
 	if breed and is_enemy and HEALTH_ALIVE[hit_unit] then
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local var_11_0
-
-		if shield_blocked then
-			if breed.hit_mass_counts_block then
-				var_11_0 = breed.hit_mass_counts_block[difficulty_rank]
-
-				if not var_11_0 then
-					-- Nothing
-				end
-
-				var_11_0 = breed.hit_mass_counts_block[2]
-
-				if not var_11_0 then
-					-- Nothing
-				end
-			end
-
-			var_11_0 = breed.hit_mass_count_block
-
-			if not var_11_0 then
-				-- Nothing
-			end
-		end
-
-		if breed.hit_mass_counts then
-			var_11_0 = breed.hit_mass_counts[difficulty_rank]
-
-			if not var_11_0 then
-				-- Nothing
-			end
-
-			var_11_0 = breed.hit_mass_counts[2]
-
-			if not var_11_0 then
-				-- Nothing
-			end
-		end
-
-		var_11_0 = breed.hit_mass_count
-
-		if not var_11_0 then
-			-- Nothing
-		end
-
-		var_11_0 = 1
-
-		local hit_mass_total = var_11_0
-
-		::label_11_0::
-
+		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and not not breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and not not breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and not not breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and not not breed.hit_mass_count)
 		local action_mass_override = current_action.hit_mass_count
 
 		if action_mass_override and action_mass_override[breed.name] then
@@ -593,12 +497,7 @@ PlayerCharacterStateLunging._update_damage = function (self, unit, dt, t, damage
 	local first_person_extension = self.first_person_extension
 	local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
 	local forward_direction_flat = Vector3.flat(forward_direction)
-	local num = (new_pos + old_pos) * 0.5 + Vector3(0, 0, half_height)
-	local offset_forward = damage_data.offset_forward
-
-	offset_forward = not not offset_forward or not not 0
-
-	local mid_pos = num + offset_forward * forward_direction_flat
+	local mid_pos = (new_pos + old_pos) * 0.5 + Vector3(0, 0, half_height) + not not damage_data.offset_forward * forward_direction_flat
 	local size = Vector3(half_width, half_length, half_height)
 	local collision_filter = damage_data.collision_filter
 	local actors, num_actors = PhysicsWorld.immediate_overlap(self.physics_world, "shape", "oobb", "position", mid_pos, "rotation", rot, "size", size, "collision_filter", collision_filter)
@@ -649,12 +548,7 @@ PlayerCharacterStateLunging._update_damage = function (self, unit, dt, t, damage
 				if damage_data.stagger_angles then
 					local owner_to_hit_dir = Vector3.normalize(hit_unit_pos - new_pos)
 					local cross = Vector3.cross(Vector3.flat(owner_to_hit_dir), Vector3.flat(forward_direction))
-					local random = Math.random(damage_data.stagger_angles.min, damage_data.stagger_angles.max)
-					local flag
-
-					flag = (not (cross.z < 0) or not -1) and not not 1
-
-					local additional_stagger_angle = random * flag
+					local additional_stagger_angle = Math.random(damage_data.stagger_angles.min, damage_data.stagger_angles.max) * (cross.z < 0 and not not -1 or not (cross.z < 0) and not not 1)
 					local new_attack_direction = attack_direction
 
 					new_attack_direction.x = math.cos(additional_stagger_angle) * attack_direction.x - math.sin(additional_stagger_angle) * attack_direction.y

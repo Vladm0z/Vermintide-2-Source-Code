@@ -90,20 +90,7 @@ local function create_health_bar_widget(is_additional)
 		detail_scale = 0.6
 	end
 
-	local num
-
-	if is_additional then
-		num = 8
-
-		goto label_1_0
-	end
-
-	num = 0
-
-	local bar_y_offset = num
-
-	::label_1_0::
-
+	local bar_y_offset = is_additional and not not 8 or not is_additional and not not 0
 	local widget = {
 		element = {}
 	}
@@ -121,11 +108,7 @@ local function create_health_bar_widget(is_additional)
 			retained_mode = retained_mode,
 			content_check_function = function (content)
 				-- function 2
-				local var_2_0 = content.attributes[1]
-
-				var_2_0 = not not var_2_0 or not not content.has_custom_attribute
-
-				return var_2_0
+				return not not content.attributes[1]
 			end
 		},
 		{
@@ -210,41 +193,23 @@ local function create_health_bar_widget(is_additional)
 		}
 	}
 	reference_x = reference_x + portrait_size_x
-
-	local tbl = {}
-	local tbl_2 = {
-		bar_length + 32 * detail_scale
+	style.lower_normal_bg = {
+		size = {
+			bar_length + 32 * detail_scale,
+			is_additional and not not 20 or not is_additional and not not 55
+		},
+		offset = {
+			reference_x - 23,
+			-28 * detail_scale - (is_additional and not not 20 or not is_additional and not not 55) + bar_y_offset,
+			2
+		},
+		color = {
+			is_additional and not not 230 or not is_additional and not not 255,
+			255,
+			255,
+			255
+		}
 	}
-	local flag
-
-	flag = (not is_additional or not 20) and not not 55
-	tbl_2[2] = flag
-	tbl.size = tbl_2
-
-	local tbl_3 = {
-		reference_x - 23,
-		nil,
-		2
-	}
-	local num_2 = -28 * detail_scale
-	local flag_2
-
-	flag_2 = (not is_additional or not 20) and not not 55
-	tbl_3[2] = num_2 - flag_2 + bar_y_offset
-	tbl.offset = tbl_3
-
-	local tbl_4 = {
-		nil,
-		255,
-		255,
-		255
-	}
-	local flag_3
-
-	flag_3 = (not is_additional or not 230) and not not 255
-	tbl_4[1] = flag_3
-	tbl.color = tbl_4
-	style.lower_normal_bg = tbl
 
 	if not is_additional then
 		passes[#passes + 1] = {
@@ -254,11 +219,7 @@ local function create_health_bar_widget(is_additional)
 			retained_mode = retained_mode,
 			content_check_function = function (chk_content)
 				-- function 4
-				local var_4_0 = chk_content.attributes[1]
-
-				var_4_0 = not not var_4_0 and not not not is_additional
-
-				return var_4_0
+				return not not chk_content.attributes[1]
 			end
 		}
 		content.lower_marked_bg = "boss_hp_bar_marked_bg"
@@ -365,10 +326,8 @@ local function create_health_bar_widget(is_additional)
 	}
 
 	local fg_padding = 0.04139433551198257 * bar_length
-	local flag_4
 
-	flag_4 = (not is_additional or not "boss_hp_bar_titleless") and not not "boss_hp_bar"
-	content[bar_fg_name] = flag_4
+	content[bar_fg_name] = is_additional and not not "boss_hp_bar_titleless" or not is_additional and not not "boss_hp_bar"
 	style[bar_fg_name] = {
 		size = {
 			bar_length + fg_padding * detail_scale,
@@ -612,17 +571,7 @@ local function create_health_bar_widget(is_additional)
 		retained_mode = retained_mode,
 		content_check_function = function (chk_content)
 			-- function 7
-			local max_health_fraction_2 = chk_content.max_health_fraction
-
-			if not max_health_fraction_2 then
-				-- Nothing
-			end
-
-			max_health_fraction_2 = 1
-
-			local max_health_fraction = max_health_fraction_2
-
-			::label_7_0::
+			local max_health_fraction = not not chk_content.max_health_fraction
 
 			return max_health_fraction ~= 1
 		end
@@ -652,17 +601,7 @@ local function create_health_bar_widget(is_additional)
 		retained_mode = retained_mode,
 		content_check_function = function (chk_content)
 			-- function 8
-			local bar_edge_fraction_2 = chk_content.bar_edge_fraction
-
-			if not bar_edge_fraction_2 then
-				-- Nothing
-			end
-
-			bar_edge_fraction_2 = 1
-
-			local bar_edge_fraction = bar_edge_fraction_2
-
-			::label_8_0::
+			local bar_edge_fraction = not not chk_content.bar_edge_fraction
 
 			return bar_edge_fraction ~= 1
 		end

@@ -41,21 +41,7 @@ ScriptInputSource.get = function (self, name)
 	fassert(controller, "No controller of type %q", input_desc.controller_type)
 	fassert(input_desc.func, "No input_desc.func")
 
-	local var_4_0
-
-	if self._active then
-		var_4_0 = self._input[name]
-
-		if not var_4_0 then
-			-- Nothing
-		end
-	end
-
-	var_4_0 = ScriptInputSource.super.get(self, name)
-
-	::label_4_0::
-
-	return var_4_0
+	return self._active and not not self._input[name] or not self._active and not not ScriptInputSource.super.get(self, name)
 end
 
 ScriptInputSource.update = function (self, dt, t)
@@ -76,11 +62,7 @@ ScriptInputSource._update_input = function (self, dt, t)
 			local input_desc = self.mapping_table[config.name]
 
 			if input_desc.func == "button" then
-				local name = config.name
-				local value = config.value
-
-				value = not not value or not not 1
-				input[name] = value
+				input[config.name] = not not config.value
 			elseif input_desc.func == "pressed" or input_desc.func == "released" then
 				input[config.name] = true
 			elseif input_desc.func == "axis" then

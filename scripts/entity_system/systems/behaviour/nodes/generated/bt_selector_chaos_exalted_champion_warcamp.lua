@@ -55,23 +55,7 @@ BTSelector_chaos_exalted_champion_warcamp.run = function (self, unit, blackboard
 	do
 		local node_intro_sequence = children[2]
 		local t = Managers.time:time("game")
-		local intro_timer = blackboard.intro_timer
-
-		if intro_timer then
-			-- Nothing
-		end
-
-		if not (t < blackboard.intro_timer) then
-			intro_timer = false
-
-			goto label_4_0
-		end
-
-		intro_timer = true
-
-		local condition_result = intro_timer
-
-		::label_4_0::
+		local condition_result = not not blackboard.intro_timer
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_intro_sequence, "aborted")
@@ -92,23 +76,7 @@ BTSelector_chaos_exalted_champion_warcamp.run = function (self, unit, blackboard
 
 	do
 		local node_falling = children[3]
-		local is_falling = blackboard.is_falling
-
-		if not is_falling then
-			-- Nothing
-		end
-
-		if blackboard.fall_state == nil then
-			is_falling = false
-
-			goto label_4_1
-		end
-
-		is_falling = true
-
-		local condition_result = is_falling
-
-		::label_4_1::
+		local condition_result = not not blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -139,18 +107,7 @@ BTSelector_chaos_exalted_champion_warcamp.run = function (self, unit, blackboard
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_data = next_smart_object_data.smart_object_data
-
-		if smart_object_data then
-			-- Nothing
-		end
-
-		smart_object_data = next_smart_object_data.smart_object_data.unit
-
-		local smart_object_unit = smart_object_data
-
-		::label_4_2::
-
+		local smart_object_unit = not not next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -161,7 +118,7 @@ BTSelector_chaos_exalted_champion_warcamp.run = function (self, unit, blackboard
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = (not is_in_smartobject_range or not moving_state) and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
 		end
 
 		if condition_result then
@@ -183,29 +140,7 @@ BTSelector_chaos_exalted_champion_warcamp.run = function (self, unit, blackboard
 
 	do
 		local node_retaliation_aoe = children[5]
-		local alive = Unit.alive(blackboard.target_unit)
-
-		if alive then
-			-- Nothing
-		end
-
-		alive = blackboard.num_chain_stagger
-
-		if alive then
-			-- Nothing
-		end
-
-		if not (blackboard.num_chain_stagger > 2) then
-			alive = false
-
-			goto label_4_3
-		end
-
-		alive = true
-
-		local condition_result = alive
-
-		::label_4_3::
+		local condition_result = not not Unit.alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_retaliation_aoe, "aborted")
@@ -255,17 +190,7 @@ BTSelector_chaos_exalted_champion_warcamp.run = function (self, unit, blackboard
 
 	do
 		local node_in_defensive = children[7]
-		local defensive_mode_duration = blackboard.defensive_mode_duration
-
-		if defensive_mode_duration then
-			-- Nothing
-		end
-
-		defensive_mode_duration = unit_alive(blackboard.target_unit)
-
-		local condition_result = defensive_mode_duration
-
-		::label_4_4::
+		local condition_result = not not blackboard.defensive_mode_duration
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_in_defensive, "aborted")

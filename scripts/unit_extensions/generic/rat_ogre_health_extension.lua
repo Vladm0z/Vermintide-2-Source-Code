@@ -12,19 +12,7 @@ end
 RatOgreHealthExtension.update = function (self, dt, ...)
 	-- function 2
 	local unit = self.unit
-	local num
-
-	if self.damage / self.health > 0.5 then
-		num = 1
-
-		goto label_2_0
-	end
-
-	num = 0
-
-	local wounded_value = num
-
-	::label_2_0::
+	local wounded_value = self.damage / self.health > 0.5 and not not 1 or not (self.damage / self.health > 0.5) and not not 0
 
 	Unit.animation_set_variable(unit, self._wounded_anim_variable, wounded_value)
 end

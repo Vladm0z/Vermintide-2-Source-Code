@@ -165,18 +165,7 @@ end
 BossHealthUI._set_portrait_and_title = function (self, boss_data, marked, title)
 	-- function 6
 	local breed_name = boss_data.breed_name
-	local var_6_0 = breed_textures[breed_name]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = "icons_placeholder"
-
-	local portrait_texture = var_6_0
-
-	::label_6_0::
-
+	local portrait_texture = not not breed_textures[breed_name]
 	local widget = self._widgets_by_name[boss_data.widget_name]
 
 	if widget then
@@ -208,11 +197,7 @@ BossHealthUI._generate_attributes = function (self, localized_attributes, widget
 	local current_style = large_style
 	local font_size = current_style.font_size
 	local content = widget.content
-	local attribute_offset_reference = content.attribute_offset_reference
-
-	attribute_offset_reference = not not attribute_offset_reference or not not 0
-
-	local text_x_start = attribute_offset_reference + 4
+	local text_x_start = not not content.attribute_offset_reference + 4
 	local x = text_x_start
 	local y = -40
 	local divider_spacing_in_pixels = 24
@@ -271,18 +256,7 @@ BossHealthUI._update_enemy_portrait_name_and_attributes = function (self, boss_d
 	local attributes = ai_system:get_attributes(unit)
 	local grudge_marked = attributes.grudge_marked
 	local breed_name = boss_data.breed_name
-	local var_8_0 = Breeds[breed_name]
-
-	if not var_8_0 then
-		-- Nothing
-	end
-
-	var_8_0 = PlayerBreeds[breed_name]
-
-	local breed = var_8_0
-
-	::label_8_0::
-
+	local breed = not not Breeds[breed_name]
 	local custom_attribute
 	local boss_phase_func = breed.boss_health_ui_boss_phase_func
 
@@ -312,24 +286,7 @@ BossHealthUI._update_enemy_portrait_name_and_attributes = function (self, boss_d
 	end
 
 	local level_key = Managers.level_transition_handler:get_current_level_key()
-
-	if breed then
-		-- Nothing
-	end
-
-	::label_8_1::
-
-	local name_pool_by_level = breed.name_pool_by_level
-
-	if name_pool_by_level then
-		-- Nothing
-	end
-
-	name_pool_by_level = breed.name_pool_by_level[level_key]
-
-	local level_name_pool = name_pool_by_level
-
-	::label_8_2::
+	local level_name_pool = not not breed and not not breed.name_pool_by_level
 
 	if grudge_marked then
 		local magic_number = grudge_marked.name_index
@@ -340,17 +297,7 @@ BossHealthUI._update_enemy_portrait_name_and_attributes = function (self, boss_d
 			enemy_name = self._cached_pool_name_by_unit[unit]
 		else
 			local pool_key = string.format("%s_%s", level_key, breed_name)
-			local var_8_2 = self._name_pools[pool_key]
-
-			if not var_8_2 then
-				-- Nothing
-			end
-
-			var_8_2 = {}
-
-			local pool = var_8_2
-
-			::label_8_3::
+			local pool = not not self._name_pools[pool_key]
 
 			self._name_pools[pool_key] = pool
 
@@ -358,18 +305,7 @@ BossHealthUI._update_enemy_portrait_name_and_attributes = function (self, boss_d
 				table.append(pool, level_name_pool)
 			end
 
-			local go_id = Managers.state.unit_storage:go_id(boss_data.unit)
-
-			if not go_id then
-				-- Nothing
-			end
-
-			go_id = 0
-
-			local unit_go_id = go_id
-
-			::label_8_4::
-
+			local unit_go_id = not not Managers.state.unit_storage:go_id(boss_data.unit)
 			local _, idx = Math.next_random(unit_go_id, 1, #pool)
 
 			enemy_name = table.remove(pool, idx)
@@ -385,17 +321,7 @@ BossHealthUI._update_enemy_portrait_name_and_attributes = function (self, boss_d
 		if grudge_marked and attributes.breed_enhancements then
 			for enhancement_name in pairs(attributes.breed_enhancements) do
 				local enhancement_data = BreedEnhancements[enhancement_name]
-				local display_name_2 = enhancement_data.display_name
-
-				if not display_name_2 then
-					-- Nothing
-				end
-
-				display_name_2 = "missing_grudge_mark_name"
-
-				local display_name = display_name_2
-
-				::label_8_5::
+				local display_name = not not enhancement_data.display_name
 
 				localized_attributes[#localized_attributes + 1] = Utf8.upper(Localize(display_name))
 			end
@@ -545,7 +471,7 @@ BossHealthUI._show_boss_health_bar = function (self, boss_data)
 		local ai_system = Managers.state.entity:system("ai_system")
 		local attributes = ai_system:get_attributes(unit)
 
-		should_show_health_bar = (not breed or not breed.show_health_bar) and attributes.grudge_marked ~= nil
+		should_show_health_bar = breed and (not not breed.show_health_bar or attributes.grudge_marked ~= nil) or not breed and attributes.grudge_marked ~= nil
 	end
 
 	if boss_data.show_health_bar ~= should_show_health_bar then
@@ -553,17 +479,8 @@ BossHealthUI._show_boss_health_bar = function (self, boss_data)
 
 		boss_data.show_health_bar = should_show_health_bar
 		boss_data.dirty = true
-
-		local render_settings = self.render_settings
-		local flag
-
-		flag = (current_num_health_bars ~= 0 or not 0) and not not self.render_settings.alpha_multiplier
-		render_settings.alpha_multiplier = flag
-
-		local flag_2
-
-		flag_2 = (current_num_health_bars ~= 0 or not 0) and not not self.render_settings.alpha_multiplier
-		boss_data.alpha_multiplier = flag_2
+		self.render_settings.alpha_multiplier = current_num_health_bars ~= 0 and not not self.render_settings.alpha_multiplier or not (current_num_health_bars ~= 0) and not not 0
+		boss_data.alpha_multiplier = current_num_health_bars ~= 0 and not not self.render_settings.alpha_multiplier or not (current_num_health_bars ~= 0) and not not 0
 
 		self:_set_healing_amount(boss_data, 0, 0)
 
@@ -665,20 +582,7 @@ BossHealthUI._realign_forced_boss_widgets = function (self, forced)
 	-- function 24
 	table.clear(self._forced_animations)
 
-	local num
-
-	if forced then
-		num = 0
-
-		goto label_24_0
-	end
-
-	num = 0.3
-
-	local animation_time = num
-
-	::label_24_0::
-
+	local animation_time = forced and not not 0 or not forced and not not 0.3
 	local forced_bosses, num_forced_boss_data = table.filter_array(self._detected_boss_units, function (boss_data)
 		-- function 25
 		return boss_data.forced
@@ -744,14 +648,8 @@ BossHealthUI._sync_boss_unit_health = function (self, dt, t)
 				local y_offset = -80
 				local prioritized_widget = self._widgets_by_name[prioritized_boss_data.widget_name]
 
-				if prioritized_widget then
-					local num_attributes = prioritized_widget.content.num_attributes
-
-					num_attributes = not not num_attributes or not not 0
-
-					if num_attributes > 3 then
-						y_offset = -100
-					end
+				if prioritized_widget and not not prioritized_widget.content.num_attributes > 3 then
+					y_offset = -100
 				end
 
 				local row = math.ceil(num_unprioritized / 4)
@@ -774,51 +672,13 @@ BossHealthUI._sync_boss_unit_health = function (self, dt, t)
 
 		local actions = BreedActions[boss_data.breed_name]
 
-		if actions then
-			-- Nothing
-		end
-
-		::label_26_0::
-
-		local downed = actions.downed
-
-		if downed then
-			downed = actions.downed.freeze_healing
-			downed = not not downed and health_extension.state == "down"
-		end
-
-		::label_26_1::
-
-		boss_data.freeze_healing = downed
+		boss_data.freeze_healing = not not actions and not not actions.downed
 
 		local current_raw_progress = boss_data.current_raw_progress
 		local instant = false
 
-		if progress and (not current_raw_progress or not (current_raw_progress < progress)) and dirty then
-			if self._last_rendered_prioritized_unit == unit or not progress then
-				-- Nothing
-			end
-
-			::label_26_2::
-
-			local healing_start_progress_2 = boss_data.healing_start_progress
-
-			if not healing_start_progress_2 then
-				-- Nothing
-			end
-
-			healing_start_progress_2 = boss_data.current_progress
-
-			if not healing_start_progress_2 then
-				-- Nothing
-			end
-
-			healing_start_progress_2 = progress
-
-			local healing_start_progress = healing_start_progress_2
-
-			::label_26_3::
-
+		if progress and current_raw_progress then
+			local healing_start_progress = not not boss_data.healing_start_progress
 			local show_healing_effect_time = not not current_raw_progress and current_raw_progress < progress and not not t
 
 			self:_set_healing_amount(boss_data, healing_start_progress, progress, show_healing_effect_time, dt)
@@ -844,11 +704,7 @@ BossHealthUI._sync_boss_unit_health = function (self, dt, t)
 			if not boss_data.prioritized and num_unprioritized > BossHealthUI.MAX_NUM_ADDITIONAL_WIDGETS then
 				widget.content.visible = false
 			else
-				local content = widget.content
-				local forced = boss_data.forced
-
-				forced = (not not forced or not has_forced) and not not self:_show_boss_health_bar(boss_data)
-				content.visible = forced
+				widget.content.visible = not not boss_data.forced
 			end
 		end
 	end
@@ -890,35 +746,8 @@ BossHealthUI._update_prioritized_unit = function (self, t)
 		local prio = boss_data.priority
 		local prio_t = boss_data.priority_t
 		local breed_name = boss_data.breed_name
-		local var_28_0 = Breeds[breed_name]
-
-		if not var_28_0 then
-			-- Nothing
-		end
-
-		var_28_0 = PlayerBreeds[breed_name]
-
-		local breed = var_28_0
-
-		do
-			local healthbar_timeout
-		end
-
-		::label_28_0::
-
-		if breed then
-			healthbar_timeout = breed.healthbar_timeout
-
-			if not healthbar_timeout then
-				-- Nothing
-			end
-		end
-
-		healthbar_timeout = math.huge
-
-		local timeout_t = healthbar_timeout
-
-		::label_28_1::
+		local breed = not not Breeds[breed_name]
+		local timeout_t = breed and not not breed.healthbar_timeout or not breed and not not math.huge
 
 		if timeout_t < t - prio_t then
 			table.swap_delete(datas, i)
@@ -953,49 +782,14 @@ BossHealthUI._update_prioritized_unit = function (self, t)
 	for i = 1, n do
 		local boss_data = non_prioritized[i]
 		local breed_name = boss_data.breed_name
-		local var_28_2 = Breeds[breed_name]
-
-		if not var_28_2 then
-			-- Nothing
-		end
-
-		var_28_2 = PlayerBreeds[breed_name]
-
-		local breed = var_28_2
-
-		::label_28_2::
-
-		local show_health_bar = boss_data.show_health_bar
-
-		if show_health_bar then
-			-- Nothing
-		end
-
-		show_health_bar = not breed.disallow_additional_healthbar
-
-		local allow_as_additional = show_health_bar
-
-		::label_28_3::
+		local breed = not not Breeds[breed_name]
+		local allow_as_additional = not not boss_data.show_health_bar
 
 		if allow_as_additional then
 			num_additional = num_additional + 1
 		end
 
-		local _get_or_create_additional_widget_name
-
-		if allow_as_additional then
-			_get_or_create_additional_widget_name = self:_get_or_create_additional_widget_name(num_additional)
-
-			if not _get_or_create_additional_widget_name then
-				-- Nothing
-			end
-		end
-
-		_get_or_create_additional_widget_name = nil
-
-		local wanted_widget_name = _get_or_create_additional_widget_name
-
-		::label_28_4::
+		local wanted_widget_name = allow_as_additional and not not self:_get_or_create_additional_widget_name(num_additional) or not allow_as_additional and not not nil
 
 		if wanted_widget_name ~= boss_data.widget_name then
 			boss_data.dirty = true
@@ -1054,29 +848,8 @@ BossHealthUI._set_bar_progress = function (self, boss_data, progress, max_health
 	-- function 32
 	progress = not not progress or not not 0
 
-	local current_progress = boss_data.current_progress
-
-	if not current_progress then
-		-- Nothing
-	end
-
-	current_progress = 1
-
-	local current_health_percent = current_progress
-
-	::label_32_0::
-
-	local healing_start_progress = boss_data.healing_start_progress
-
-	if not healing_start_progress then
-		-- Nothing
-	end
-
-	healing_start_progress = current_health_percent + math.sign(progress - current_health_percent) * (dt * 0.3)
-
-	local health_anim_progress = healing_start_progress
-
-	::label_32_1::
+	local current_health_percent = not not boss_data.current_progress
+	local health_anim_progress = not not boss_data.healing_start_progress
 
 	instant = not not boss_data.next_update_is_instant or not not instant
 
@@ -1090,18 +863,7 @@ BossHealthUI._set_bar_progress = function (self, boss_data, progress, max_health
 
 	max_health_fraction = not not max_health_fraction or not not 1
 
-	local current_max_health_fraction_2 = boss_data.current_max_health_fraction
-
-	if not current_max_health_fraction_2 then
-		-- Nothing
-	end
-
-	current_max_health_fraction_2 = 1
-
-	local current_max_health_fraction = current_max_health_fraction_2
-
-	::label_32_2::
-
+	local current_max_health_fraction = not not boss_data.current_max_health_fraction
 	local max_health_anim_fraction = current_max_health_fraction + math.sign(max_health_fraction - current_max_health_fraction) * (dt * 0.3)
 
 	if instant then
@@ -1160,10 +922,8 @@ BossHealthUI._set_healing_amount = function (self, boss_data, start_progress, en
 		local content = widget.content
 		local style = widget.style
 		local bar_style = style.healing_bar
-		local original_color = bar_style.original_color
 
-		original_color = not not original_color or not not table.shallow_copy(bar_style.color)
-		bar_style.original_color = original_color
+		bar_style.original_color = not not bar_style.original_color
 
 		local bar_content = content.healing_bar
 		local bar_size = bar_style.size
@@ -1179,17 +939,7 @@ BossHealthUI._set_healing_amount = function (self, boss_data, start_progress, en
 		local bar_flash_style = style.healing_bar_flash
 		local lerped_color = false
 		local breed_name = boss_data.breed_name
-		local var_33_1 = Breeds[breed_name]
-
-		if not var_33_1 then
-			-- Nothing
-		end
-
-		var_33_1 = PlayerBreeds[breed_name]
-
-		local breed = var_33_1
-
-		::label_33_0::
+		local breed = not not Breeds[breed_name]
 
 		if breed then
 			local lerp_color = breed.reflect_regen_reduction_in_hp_bar
@@ -1198,10 +948,7 @@ BossHealthUI._set_healing_amount = function (self, boss_data, start_progress, en
 				local buff_extension = ScriptUnit.has_extension(boss_data.unit, "buff_system")
 
 				if buff_extension then
-					local flash_time = bar_style.flash_time
-
-					flash_time = not not flash_time or not not 0
-					bar_style.flash_time = flash_time
+					bar_style.flash_time = not not bar_style.flash_time
 
 					local flash_duration = 0.75
 					local lerp_value = 1 - math.clamp01(buff_extension:apply_buffs_to_value(1, "healing_received"))
@@ -1292,24 +1039,7 @@ end
 
 BossHealthUI._set_health_edge_texture_position_progress = function (self, boss_data)
 	-- function 35
-	local healing_start_progress = boss_data.healing_start_progress
-
-	if not healing_start_progress then
-		-- Nothing
-	end
-
-	healing_start_progress = boss_data.current_progress
-
-	if not healing_start_progress then
-		-- Nothing
-	end
-
-	healing_start_progress = 0
-
-	local progress = healing_start_progress
-
-	::label_35_0::
-
+	local progress = not not boss_data.healing_start_progress
 	local widget = self._widgets_by_name[boss_data.widget_name]
 
 	if widget then

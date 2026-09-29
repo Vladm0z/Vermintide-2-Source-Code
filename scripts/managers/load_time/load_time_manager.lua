@@ -117,35 +117,9 @@ LoadTimeManager.end_timer = function (self)
 	end
 
 	local local_player = Managers.player:local_player()
-	local is_server_2
-
-	if local_player then
-		is_server_2 = local_player.is_server
-
-		if not is_server_2 then
-			-- Nothing
-		end
-	end
-
-	is_server_2 = "unknown"
-
-	local is_server = is_server_2
-
-	::label_6_0::
-
+	local is_server = local_player and not not local_player.is_server or not local_player and not not "unknown"
 	local previous_level_key = self._previous_level_key
-	local time_2 = Managers.time:time("loading_timer")
-
-	if not time_2 then
-		-- Nothing
-	end
-
-	time_2 = 0
-
-	local time = time_2
-
-	::label_6_1::
-
+	local time = not not Managers.time:time("loading_timer")
 	local seconds = math.floor(time % 60 + 0.5)
 	local minutes = math.floor(time / 60)
 	local hours = math.floor(minutes / 60)

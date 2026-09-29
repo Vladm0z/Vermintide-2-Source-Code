@@ -749,10 +749,8 @@ settings.buff_function_templates = {
 			local buff_to_add = template.buff_to_add
 			local chunk_size = health_extension:get_max_health() / template.chunk_amount
 			local total_damage_taken = health_extension:get_damage_taken()
-			local next_chunk = buff.next_chunk
 
-			next_chunk = not not next_chunk or not not chunk_size
-			buff.next_chunk = next_chunk
+			buff.next_chunk = not not buff.next_chunk
 
 			if total_damage_taken >= buff.next_chunk then
 				buff_system:add_buff_synced(unit, buff_to_add, BuffSyncType.All)
@@ -844,17 +842,7 @@ settings.buff_function_templates = {
 				end
 
 				local name_index = parent_attributes.grudge_marked.name_index
-				local _mirror_units = buff._mirror_units
-
-				if not _mirror_units then
-					-- Nothing
-				end
-
-				_mirror_units = {}
-
-				local old_mirrors = _mirror_units
-
-				::label_10_0::
+				local old_mirrors = not not buff._mirror_units
 
 				buff._mirror_units = old_mirrors
 
@@ -980,18 +968,7 @@ settings.buff_function_templates = {
 
 				local blob_unit = AiUtils.spawn_nurgle_liquid_blob_dynamic(Managers.state.network, mesh_pos, unit)
 				local side_manager = Managers.state.side
-				local var_14_0 = side_manager.side_by_unit[unit]
-
-				if not var_14_0 then
-					-- Nothing
-				end
-
-				var_14_0 = side_manager:get_side_from_name("dark_pact")
-
-				local side = var_14_0
-
-				::label_14_0::
-
+				local side = not not side_manager.side_by_unit[unit]
 				local side_id = side.side_id
 
 				side_manager:add_unit_to_side(blob_unit, side_id)
@@ -1030,15 +1007,9 @@ settings.buff_function_templates = {
 		local template = buff.template
 		local max_distance = template.max_distance
 		local position = POSITION_LOOKUP[unit]
-		local cursed_players_2 = buff.cursed_players
 
-		cursed_players_2 = not not cursed_players_2 or not not {}
-		buff.cursed_players = cursed_players_2
-
-		local inside_last_frame_2 = buff.inside_last_frame
-
-		inside_last_frame_2 = not not inside_last_frame_2 or not not {}
-		buff.inside_last_frame = inside_last_frame_2
+		buff.cursed_players = not not buff.cursed_players
+		buff.inside_last_frame = not not buff.inside_last_frame
 
 		local inside_last_frame = buff.inside_last_frame
 		local cursed_players = buff.cursed_players
@@ -1074,10 +1045,8 @@ settings.buff_function_templates = {
 
 		if is_server() then
 			local t = Managers.time:time("game")
-			local last_curse_t = buff.last_curse_t
 
-			last_curse_t = not not last_curse_t or not not t
-			buff.last_curse_t = last_curse_t
+			buff.last_curse_t = not not buff.last_curse_t
 
 			local time_between_curses = template.time_between_curses
 			local next_curse_t = buff.last_curse_t + time_between_curses
@@ -1095,18 +1064,12 @@ settings.buff_function_templates = {
 					end
 				end
 
-				local flag
-
-				flag = (not inside_this_frame[cursed_player] or not true) and not not nil
-				inside_last_frame[cursed_player] = flag
+				inside_last_frame[cursed_player] = inside_this_frame[cursed_player] and not not true or not inside_this_frame[cursed_player] and not not nil
 			end
 
-			buff.last_curse_t = (not should_apply_buff or not next_curse_t) and not not buff.last_curse_t
+			buff.last_curse_t = should_apply_buff and (not not next_curse_t or not not buff.last_curse_t) or not should_apply_buff and not not buff.last_curse_t
 		elseif ALIVE[local_player] then
-			local flag_2
-
-			flag_2 = (not inside_this_frame[local_player] or not true) and not not nil
-			inside_last_frame[local_player] = flag_2
+			inside_last_frame[local_player] = inside_this_frame[local_player] and not not true or not inside_this_frame[local_player] and not not nil
 		end
 	end,
 	ai_create_explosion = function (owner_unit, buff, params, world)
@@ -1117,30 +1080,8 @@ settings.buff_function_templates = {
 
 		local buff_template = buff.template
 		local explosion_template_name = buff_template.explosion_template_name
-		local damage_source_name_2 = buff_template.damage_source_name
-
-		if not damage_source_name_2 then
-			-- Nothing
-		end
-
-		damage_source_name_2 = "buff"
-
-		local damage_source_name = damage_source_name_2
-
-		::label_17_0::
-
-		local var_17_1 = POSITION_LOOKUP[owner_unit]
-
-		if not var_17_1 then
-			-- Nothing
-		end
-
-		var_17_1 = Unit.world_position(owner_unit, 0)
-
-		local explosion_position = var_17_1
-
-		::label_17_1::
-
+		local damage_source_name = not not buff_template.damage_source_name
+		local explosion_position = not not POSITION_LOOKUP[owner_unit]
 		local explosion_template = ExplosionUtils.get_template(explosion_template_name)
 
 		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source_name, true, false, owner_unit, 0, false)
@@ -1211,29 +1152,8 @@ settings.buff_function_templates = {
 		local blackboard = BLACKBOARDS[owner_unit]
 		local breed = not not blackboard and not not blackboard.breed
 		local faction = not not breed and not not breed.race
-		local var_22_0 = faction_terror_events[faction]
-
-		if not var_22_0 then
-			-- Nothing
-		end
-
-		var_22_0 = faction_terror_events.default
-
-		local terror_event = var_22_0
-
-		::label_22_0::
-
-		local seed_2 = buff.seed
-
-		if not seed_2 then
-			-- Nothing
-		end
-
-		seed_2 = Managers.mechanism:get_level_seed()
-
-		local seed = seed_2
-
-		::label_22_1::
+		local terror_event = not not faction_terror_events[faction]
+		local seed = not not buff.seed
 
 		Managers.state.conflict:start_terror_event(terror_event, seed, owner_unit)
 
@@ -1322,17 +1242,7 @@ settings.buff_function_templates = {
 		local num_allies = AiUtils.broadphase_query(position, radius, nearby_allies, broadphase_categories)
 		local buff_name = buff.template.buff_to_add
 		local inside_this_frame = FrameTable.alloc_table()
-		local inside_allies_2 = buff.inside_allies
-
-		if not inside_allies_2 then
-			-- Nothing
-		end
-
-		inside_allies_2 = {}
-
-		local inside_allies = inside_allies_2
-
-		::label_28_0::
+		local inside_allies = not not buff.inside_allies
 
 		buff.inside_allies = inside_allies
 
@@ -1479,30 +1389,8 @@ settings.proc_functions = {
 			if health_extension and health_extension:is_alive() then
 				local damage_amount = params[param_order.damage_amount]
 				local buff_template = buff.template
-				local multiplier_2 = buff_template.multiplier
-
-				if not multiplier_2 then
-					-- Nothing
-				end
-
-				multiplier_2 = 1
-
-				local multiplier = multiplier_2
-
-				::label_35_0::
-
-				local bonus_2 = buff_template.bonus
-
-				if not bonus_2 then
-					-- Nothing
-				end
-
-				bonus_2 = 0
-
-				local bonus = bonus_2
-
-				::label_35_1::
-
+				local multiplier = not not buff_template.multiplier
+				local bonus = not not buff_template.bonus
 				local amount_to_heal = math.clamp(damage_amount * multiplier + bonus, 0, 255)
 
 				health_extension:add_heal(owner_unit, amount_to_heal, nil, "leech")

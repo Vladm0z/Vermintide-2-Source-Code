@@ -64,21 +64,7 @@ ImguiCraftItem.draw = function (self, is_open)
 	self._current_type = Imgui.combo("Item Type", self._current_type, self._types, max_combo_size)
 
 	local current_type_name = self._current_type >= 0 and not not self._types[self._current_type]
-	local var_4_0
-
-	if current_type_name then
-		var_4_0 = self._items_per_type[current_type_name]
-
-		if not var_4_0 then
-			-- Nothing
-		end
-	end
-
-	var_4_0 = {}
-
-	local current_item_list = var_4_0
-
-	::label_4_0::
+	local current_item_list = current_type_name and not not self._items_per_type[current_type_name] or not current_type_name and not not {}
 
 	self._current_item = Imgui.combo("Item Name", self._current_item, current_item_list, max_combo_size)
 	self._current_rarity = Imgui.combo("Item Rarity", self._current_rarity, self._rarities, max_combo_size)

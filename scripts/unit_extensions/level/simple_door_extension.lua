@@ -16,10 +16,8 @@ SimpleDoorExtension.init = function (self, extension_init_context, unit, extensi
 	self.is_umbra_gate = Unit.get_data(unit, "umbra_gate")
 
 	local door_state = Unit.get_data(unit, "door_state")
-	local flag
 
-	flag = (door_state ~= 0 or not "open_forward") and door_state == 1 and not not "closed"
-	self.current_state = flag
+	self.current_state = door_state ~= 0 and door_state == 1 and not not "closed" or not (door_state ~= 0) and not not "open_forward"
 	self.animation_stop_time = 0
 end
 

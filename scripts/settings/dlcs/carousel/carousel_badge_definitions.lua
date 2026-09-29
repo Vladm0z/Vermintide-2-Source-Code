@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_badge_definitions.lua
 
-local BadgeDefinitions = BadgeDefinitions
-
-BadgeDefinitions = not not BadgeDefinitions or not not {}
-BadgeDefinitions = BadgeDefinitions
+BadgeDefinitions = not not BadgeDefinitions
 
 local function random_badge()
 	-- function 1

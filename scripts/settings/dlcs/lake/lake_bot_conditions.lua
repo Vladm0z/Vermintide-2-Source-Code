@@ -1,10 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/lake/lake_bot_conditions.lua
 
-local BTConditions = BTConditions
-local can_activate = BTConditions.can_activate
-
-can_activate = not not can_activate or not not {}
-BTConditions.can_activate = can_activate
+BTConditions.can_activate = not not BTConditions.can_activate
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -31,26 +27,12 @@ BTConditions.can_activate.es_questingknight = function (blackboard)
 		return false
 	end
 
-	if (target ~= blackboard.priority_target_enemy or not (blackboard.priority_target_distance <= QK_MAX_DISTANCE)) and (target ~= blackboard.urgent_target_enemy or not (blackboard.urgent_target_distance <= QK_MAX_DISTANCE)) and target == blackboard.opportunity_target_enemy and blackboard.opportunity_target_distance <= QK_MAX_DISTANCE then
+	if target ~= blackboard.urgent_target_enemy or not (blackboard.urgent_target_distance <= QK_MAX_DISTANCE) then
 		return true
 	end
 
 	local target_breed = target_blackboard.breed
-	local threat_value
-
-	if target_breed then
-		threat_value = target_breed.threat_value
-
-		if not threat_value then
-			-- Nothing
-		end
-	end
-
-	threat_value = 0
-
-	local target_threat = threat_value
-
-	::label_1_0::
+	local target_threat = target_breed and not not target_breed.threat_value or not target_breed and not not 0
 
 	if target_threat >= QK_MIN_THREAT then
 		local self_unit = blackboard.unit

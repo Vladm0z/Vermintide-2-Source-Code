@@ -4,10 +4,7 @@ require("scripts/settings/equipment/item_master_list")
 local_require("scripts/settings/equipment/attachments")
 local_require("scripts/settings/equipment/cosmetics")
 
-local ItemHelper = ItemHelper
-
-ItemHelper = not not ItemHelper or not not {}
-ItemHelper = ItemHelper
+ItemHelper = not not ItemHelper
 
 local item_type_templates = {
 	melee = Weapons,
@@ -86,18 +83,7 @@ end
 
 ItemHelper.mark_sign_in_reward_as_new = function (reward_id, item_backend_id)
 	-- function 3
-	local new_sign_in_rewards_2 = PlayerData.new_sign_in_rewards
-
-	if not new_sign_in_rewards_2 then
-		-- Nothing
-	end
-
-	new_sign_in_rewards_2 = {}
-
-	local new_sign_in_rewards = new_sign_in_rewards_2
-
-	::label_3_0::
-
+	local new_sign_in_rewards = not not PlayerData.new_sign_in_rewards
 	local reward_items = new_sign_in_rewards[reward_id]
 
 	if not reward_items then
@@ -135,11 +121,8 @@ ItemHelper.has_new_sign_in_reward = function (reward_id)
 	if reward_id then
 		local new_sign_in_rewards = PlayerData.new_sign_in_rewards
 		local reward_items = new_sign_in_rewards[reward_id]
-		local flag
 
-		flag = (not reward_items or not true) and not not false
-
-		return flag
+		return reward_items and not not true or not reward_items and not not false
 	else
 		local has_rewards = next(PlayerData.new_sign_in_rewards) ~= nil
 
@@ -154,57 +137,16 @@ ItemHelper.mark_backend_id_as_new = function (backend_id, item, skip_autosave)
 	local item_data = item.data
 	local slot_type = item_data.slot_type
 	local can_wield = item_data.can_wield
-	local new_item_ids_2 = PlayerData.new_item_ids
-
-	if not new_item_ids_2 then
-		-- Nothing
-	end
-
-	new_item_ids_2 = {}
-
-	local new_item_ids = new_item_ids_2
-
-	::label_6_0::
+	local new_item_ids = not not PlayerData.new_item_ids
 
 	new_item_ids[backend_id] = true
 
 	local career_settings = CareerSettings
-	local new_item_ids_by_career_2 = PlayerData.new_item_ids_by_career
-
-	if not new_item_ids_by_career_2 then
-		-- Nothing
-	end
-
-	new_item_ids_by_career_2 = {}
-
-	local new_item_ids_by_career = new_item_ids_by_career_2
-
-	::label_6_1::
+	local new_item_ids_by_career = not not PlayerData.new_item_ids_by_career
 
 	for _, career_name in ipairs(can_wield) do
-		local var_6_2 = new_item_ids_by_career[career_name]
-
-		if not var_6_2 then
-			-- Nothing
-		end
-
-		var_6_2 = {}
-
-		local item_ids_by_career = var_6_2
-
-		::label_6_2::
-
-		local var_6_3 = item_ids_by_career[slot_type]
-
-		if not var_6_3 then
-			-- Nothing
-		end
-
-		var_6_3 = {}
-
-		local item_ids_by_slot_type = var_6_3
-
-		::label_6_3::
+		local item_ids_by_career = not not new_item_ids_by_career[career_name]
+		local item_ids_by_slot_type = not not item_ids_by_career[slot_type]
 
 		item_ids_by_slot_type[backend_id] = true
 		item_ids_by_career[slot_type] = item_ids_by_slot_type
@@ -384,17 +326,7 @@ ItemHelper._retrieve_weapon_attack_data = function (stats_data, data_store_table
 	-- function 14
 	for key, value in pairs(stats_data) do
 		local localization_key = stats_localization_keys[key]
-		local var_14_0 = data_store_table[key]
-
-		if not var_14_0 then
-			-- Nothing
-		end
-
-		var_14_0 = {}
-
-		local weapon_data = var_14_0
-
-		::label_14_0::
+		local weapon_data = not not data_store_table[key]
 
 		weapon_data[#weapon_data + 1] = {
 			key = key,
@@ -442,57 +374,16 @@ ItemHelper.mark_backend_id_as_favorite = function (backend_id, item, save)
 		item_id = backend_id
 	end
 
-	local favorite_item_ids_2 = PlayerData.favorite_item_ids
-
-	if not favorite_item_ids_2 then
-		-- Nothing
-	end
-
-	favorite_item_ids_2 = {}
-
-	local favorite_item_ids = favorite_item_ids_2
-
-	::label_17_0::
+	local favorite_item_ids = not not PlayerData.favorite_item_ids
 
 	favorite_item_ids[item_id] = true
 
 	local career_settings = CareerSettings
-	local favorite_item_ids_by_career_2 = PlayerData.favorite_item_ids_by_career
-
-	if not favorite_item_ids_by_career_2 then
-		-- Nothing
-	end
-
-	favorite_item_ids_by_career_2 = {}
-
-	local favorite_item_ids_by_career = favorite_item_ids_by_career_2
-
-	::label_17_1::
+	local favorite_item_ids_by_career = not not PlayerData.favorite_item_ids_by_career
 
 	for _, career_name in ipairs(can_wield) do
-		local var_17_2 = favorite_item_ids_by_career[career_name]
-
-		if not var_17_2 then
-			-- Nothing
-		end
-
-		var_17_2 = {}
-
-		local item_ids_by_career = var_17_2
-
-		::label_17_2::
-
-		local var_17_3 = item_ids_by_career[slot_type]
-
-		if not var_17_3 then
-			-- Nothing
-		end
-
-		var_17_3 = {}
-
-		local item_ids_by_slot_type = var_17_3
-
-		::label_17_3::
+		local item_ids_by_career = not not favorite_item_ids_by_career[career_name]
+		local item_ids_by_slot_type = not not item_ids_by_career[slot_type]
 
 		item_ids_by_slot_type[item_id] = true
 		item_ids_by_career[slot_type] = item_ids_by_slot_type
@@ -588,7 +479,7 @@ ItemHelper.is_equiped_backend_id = function (backend_id, career)
 	local career_names = item_interface:equipped_by(backend_id)
 	local num_equipped_careers = #career_names
 
-	return num_equipped_careers > 0 and not career or not not table.contains(career_names, career), career_names, num_equipped_careers
+	return num_equipped_careers > 0 and (not career or not not table.contains(career_names, career)), career_names, num_equipped_careers
 end
 
 ItemHelper.get_equipped_slots = function (backend_id, career_name)
@@ -613,17 +504,7 @@ end
 
 ItemHelper.mark_keep_decoration_as_new = function (keep_decoration_id)
 	-- function 23
-	local new_keep_decoration_ids_2 = PlayerData.new_keep_decoration_ids
-
-	if not new_keep_decoration_ids_2 then
-		-- Nothing
-	end
-
-	new_keep_decoration_ids_2 = {}
-
-	local new_keep_decoration_ids = new_keep_decoration_ids_2
-
-	::label_23_0::
+	local new_keep_decoration_ids = not not PlayerData.new_keep_decoration_ids
 
 	new_keep_decoration_ids[keep_decoration_id] = true
 	PlayerData.new_keep_decoration_ids = new_keep_decoration_ids

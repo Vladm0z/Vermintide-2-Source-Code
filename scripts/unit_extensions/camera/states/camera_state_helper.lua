@@ -1,9 +1,6 @@
 -- chunkname: @scripts/unit_extensions/camera/states/camera_state_helper.lua
 
-local CameraStateHelper = CameraStateHelper
-
-CameraStateHelper = not not CameraStateHelper or not not {}
-CameraStateHelper = CameraStateHelper
+CameraStateHelper = not not CameraStateHelper
 
 CameraStateHelper.set_local_pose = function (camera_unit, unit, node)
 	-- function 1
@@ -33,41 +30,12 @@ CameraStateHelper.set_camera_rotation = function (camera_unit, camera_extension)
 	local camera_manager = Managers.state.camera
 	local input_source = input_manager:get_service("Player")
 	local gamepad_active = input_manager:is_device_active("gamepad")
-	local get
-
-	if gamepad_active then
-		get = input_source:get("look_controller_3p")
-
-		if not get then
-			-- Nothing
-		end
-	end
-
-	get = input_source:get("look")
-
-	local look_input = get
-
-	::label_2_0::
-
+	local look_input = gamepad_active and not not input_source:get("look_controller_3p") or not gamepad_active and not not input_source:get("look")
 	local look_delta = Vector3.zero()
 
 	if look_input then
 		local viewport_name = camera_extension.viewport_name
-		local num
-
-		if camera_manager:has_viewport(viewport_name) then
-			num = camera_manager:fov(viewport_name) / 0.785
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		local look_sensitivity = num
-
-		::label_2_1::
+		local look_sensitivity = camera_manager:has_viewport(viewport_name) and not not (camera_manager:fov(viewport_name) / 0.785) or not camera_manager:has_viewport(viewport_name) and not not 1
 
 		look_delta = look_delta + look_input * look_sensitivity
 	end
@@ -165,17 +133,7 @@ CameraStateHelper.get_valid_unit_to_observe = function (reverse, optional_side, 
 
 	if side_name then
 		local game_settings = Managers.state.game_mode:settings()
-		local side_settings_2 = game_settings.side_settings
-
-		if side_settings_2 then
-			-- Nothing
-		end
-
-		side_settings_2 = game_settings.side_settings[side_name]
-
-		local side_settings = side_settings_2
-
-		::label_5_0::
+		local side_settings = not not game_settings.side_settings
 
 		observe_sides = not not side_settings and not not side_settings.observe_sides
 	end
@@ -196,19 +154,7 @@ CameraStateHelper.get_valid_unit_to_observe = function (reverse, optional_side, 
 
 	local first_index = index
 	local last_valid_unit = units_to_spectate[index]
-	local num
-
-	if reverse then
-		num = -1
-
-		goto label_5_1
-	end
-
-	num = 1
-
-	local diff = num
-
-	::label_5_1::
+	local diff = reverse and not not -1 or not reverse and not not 1
 
 	repeat
 		index = math.index_wrapper(index + diff, num_units)

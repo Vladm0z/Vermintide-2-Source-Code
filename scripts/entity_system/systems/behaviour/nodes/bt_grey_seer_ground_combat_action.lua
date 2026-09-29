@@ -21,69 +21,25 @@ BTGreySeerGroundCombatAction.enter = function (self, unit, blackboard, t)
 
 	local current_phase = blackboard.current_phase
 	local breed = blackboard.breed
-	local spell_data_2 = blackboard.spell_data
-
-	if not spell_data_2 then
-		-- Nothing
-	end
-
-	spell_data_2 = {}
-
-	local spell_data = spell_data_2
-
-	::label_2_0::
+	local spell_data = not not blackboard.spell_data
 
 	spell_data.warp_lightning_spell_cooldown = action.warp_lightning_spell_cooldown[current_phase]
 	spell_data.vermintide_spell_cooldown = action.vermintide_spell_cooldown[current_phase]
 	spell_data.teleport_spell_cooldown = action.teleport_spell_cooldown[current_phase]
-
-	local warp_lightning_spell_timer = spell_data.warp_lightning_spell_timer
-
-	warp_lightning_spell_timer = not not warp_lightning_spell_timer or not not (t + 2)
-	spell_data.warp_lightning_spell_timer = warp_lightning_spell_timer
-
-	local vermintide_spell_timer = spell_data.vermintide_spell_timer
-
-	vermintide_spell_timer = not not vermintide_spell_timer or not not (t + 5)
-	spell_data.vermintide_spell_timer = vermintide_spell_timer
-
-	local teleport_spell_timer = spell_data.teleport_spell_timer
-
-	teleport_spell_timer = not not teleport_spell_timer or not not (t + 6)
-	spell_data.teleport_spell_timer = teleport_spell_timer
+	spell_data.warp_lightning_spell_timer = not not spell_data.warp_lightning_spell_timer
+	spell_data.vermintide_spell_timer = not not spell_data.vermintide_spell_timer
+	spell_data.teleport_spell_timer = not not spell_data.teleport_spell_timer
 	blackboard.spell_data = spell_data
 
 	blackboard.navigation_extension:set_enabled(false)
 	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local final_phase_data_2 = blackboard.final_phase_data
-
-	if not final_phase_data_2 then
-		-- Nothing
-	end
-
-	final_phase_data_2 = {}
-
-	local final_phase_data = final_phase_data_2
-
-	::label_2_1::
+	local final_phase_data = not not blackboard.final_phase_data
 
 	blackboard.final_phase_data = final_phase_data
-
-	local num_teleports = final_phase_data.num_teleports
-
-	num_teleports = not not num_teleports or not not 1
-	final_phase_data.num_teleports = num_teleports
-
-	local spawn_allies_timer = final_phase_data.spawn_allies_timer
-
-	spawn_allies_timer = not not spawn_allies_timer or not not (t + 3)
-	final_phase_data.spawn_allies_timer = spawn_allies_timer
-
-	local teleport_timer = final_phase_data.teleport_timer
-
-	teleport_timer = not not teleport_timer or not not t
-	final_phase_data.teleport_timer = teleport_timer
+	final_phase_data.num_teleports = not not final_phase_data.num_teleports
+	final_phase_data.spawn_allies_timer = not not final_phase_data.spawn_allies_timer
+	final_phase_data.teleport_timer = not not final_phase_data.teleport_timer
 
 	local health_extension = ScriptUnit.extension(unit, "health_system")
 
@@ -117,17 +73,7 @@ BTGreySeerGroundCombatAction.update_spells = function (self, unit, blackboard, t
 	local current_phase = blackboard.current_phase
 	local ready_to_summon = false
 	local position = POSITION_LOOKUP[unit]
-	local target_unit = blackboard.target_unit
-
-	if target_unit then
-		-- Nothing
-	end
-
-	target_unit = position - POSITION_LOOKUP[blackboard.target_unit]
-
-	local target_unit_direction = target_unit
-
-	::label_5_0::
+	local target_unit_direction = not not blackboard.target_unit
 
 	self:update_warp_lightning_spell(unit, blackboard, t, position, target_unit_direction)
 	self:update_vermintide_spell(unit, blackboard, t, position, target_unit_direction)
@@ -148,23 +94,12 @@ BTGreySeerGroundCombatAction.update_final_phase = function (self, unit, blackboa
 	local final_phase_data = blackboard.final_phase_data
 	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
 	local current_phase = blackboard.current_phase
-	local num_teleports = final_phase_data.num_teleports
-
-	if not num_teleports then
-		-- Nothing
-	end
-
-	num_teleports = 1
-
-	local teleport_position_index = num_teleports
-
-	::label_6_0::
-
+	local teleport_position_index = not not final_phase_data.num_teleports
 	local call_position = blackboard.defensive_teleport_positions[teleport_position_index]:unbox()
 	local teleport_timer = final_phase_data.teleport_timer
 	local special_spawn_timer = final_phase_data.special_spawn_timer
 
-	if current_phase == 4 and (not teleport_timer or not (teleport_timer < t)) and blackboard.stagger_count >= action.staggers_until_teleport then
+	if current_phase == 4 and teleport_timer then
 		local projected_wanted_pos = LocomotionUtils.pos_on_mesh(blackboard.nav_world, call_position, 1, 1)
 
 		blackboard.quick_teleport_exit_pos = Vector3Box(projected_wanted_pos)
@@ -172,22 +107,7 @@ BTGreySeerGroundCombatAction.update_final_phase = function (self, unit, blackboa
 		final_phase_data.teleport_timer = t + action.final_phase_teleport_cooldown
 		blackboard.current_spell_name = "teleport"
 		blackboard.stagger_count = 0
-
-		local num
-
-		if final_phase_data.num_teleports then
-			num = final_phase_data.num_teleports + 1
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = 1
-
-		::label_6_1::
-
-		final_phase_data.num_teleports = num
+		final_phase_data.num_teleports = final_phase_data.num_teleports and not not (final_phase_data.num_teleports + 1) or not final_phase_data.num_teleports and not not 1
 
 		if final_phase_data.num_teleports > 4 then
 			final_phase_data.num_teleports = 1
@@ -274,44 +194,16 @@ end
 
 BTGreySeerGroundCombatAction.update_teleport_spell = function (self, unit, blackboard, t, position)
 	-- function 10
-	local quick_teleport_timer_2 = blackboard.quick_teleport_timer
-
-	if not quick_teleport_timer_2 then
-		-- Nothing
-	end
-
-	quick_teleport_timer_2 = t
-
-	local quick_teleport_timer = quick_teleport_timer_2
-
-	::label_10_0::
+	local quick_teleport_timer = not not blackboard.quick_teleport_timer
 
 	blackboard.quick_teleport_timer = quick_teleport_timer
 
 	if quick_teleport_timer and quick_teleport_timer < t then
-		local skulk_data_2 = blackboard.skulk_data
-
-		if not skulk_data_2 then
-			-- Nothing
-		end
-
-		skulk_data_2 = {}
-
-		local skulk_data = skulk_data_2
-
-		::label_10_1::
+		local skulk_data = not not blackboard.skulk_data
 
 		blackboard.skulk_data = skulk_data
-
-		local direction = skulk_data.direction
-
-		direction = not not direction or not not (1 - math.random(0, 1) * 2)
-		skulk_data.direction = direction
-
-		local radius = skulk_data.radius
-
-		radius = not not radius or not not blackboard.target_dist
-		skulk_data.radius = radius
+		skulk_data.direction = not not skulk_data.direction
+		skulk_data.radius = not not skulk_data.radius
 
 		local teleport_pos = BTChaosSorcererPlagueSkulkAction:get_skulk_target(unit, blackboard, true)
 
@@ -330,22 +222,7 @@ BTGreySeerGroundCombatAction.spawn_allies = function (self, unit, blackboard, t)
 	local action = blackboard.action
 	local strictly_not_close_to_players = true
 	local silent = true
-	local var_11_0
-
-	if action.difficulty_spawn then
-		var_11_0 = action.difficulty_spawn[difficulty]
-
-		if not var_11_0 then
-			-- Nothing
-		end
-	end
-
-	var_11_0 = action.spawn
-
-	local composition_type = var_11_0
-
-	::label_11_0::
-
+	local composition_type = action.difficulty_spawn and not not action.difficulty_spawn[difficulty] or not action.difficulty_spawn and not not action.spawn
 	local limit_spawners
 	local terror_event_id = action.terror_event_id
 	local conflict_director = Managers.state.conflict

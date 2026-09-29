@@ -74,29 +74,7 @@ BTMeleeSlamAction.init_attack = function (self, unit, blackboard, action, t)
 
 	blackboard.attack_rotation = QuaternionBox(to_target_rotation)
 
-	local bot_threats_2 = action.bot_threats
-
-	if bot_threats_2 then
-		-- Nothing
-	end
-
-	bot_threats_2 = action.bot_threats[attack_animation]
-
-	if not bot_threats_2 then
-		-- Nothing
-	end
-
-	bot_threats_2 = action.bot_threats[1]
-
-	if bot_threats_2 then
-		-- Nothing
-	end
-
-	bot_threats_2 = action.bot_threats
-
-	local bot_threats = bot_threats_2
-
-	::label_4_0::
+	local bot_threats = not not action.bot_threats
 
 	if bot_threats then
 		local current_threat_index = 1
@@ -144,42 +122,9 @@ end
 
 BTMeleeSlamAction._calculate_cylinder_collision = function (self, action, bot_threat, self_pos, self_rot)
 	-- function 7
-	local radius_2 = bot_threat.radius
-
-	if not radius_2 then
-		-- Nothing
-	end
-
-	radius_2 = action.radius
-
-	local radius = radius_2
-
-	::label_7_0::
-
-	local height_2 = bot_threat.height
-
-	if not height_2 then
-		-- Nothing
-	end
-
-	height_2 = action.height
-
-	local height = height_2
-
-	::label_7_1::
-
-	local offset_forward_2 = bot_threat.offset_forward
-
-	if not offset_forward_2 then
-		-- Nothing
-	end
-
-	offset_forward_2 = action.forward_offset
-
-	local offset_forward = offset_forward_2
-
-	::label_7_2::
-
+	local radius = not not bot_threat.radius
+	local height = not not bot_threat.height
+	local offset_forward = not not bot_threat.offset_forward
 	local half_height = height * 0.5
 	local size = Vector3(0, radius, half_height)
 	local forward = Quaternion.forward(self_rot)
@@ -214,19 +159,7 @@ BTMeleeSlamAction.anim_cb_damage = function (self, unit, blackboard)
 	local unit_forward = Quaternion.forward(Unit.local_rotation(unit, 0))
 	local self_pos = POSITION_LOOKUP[unit]
 	local pos, rotation, size = self:_calculate_collision(action, self_pos, unit_forward)
-	local str
-
-	if size.y - size.x > 0 then
-		str = "capsule"
-
-		goto label_9_0
-	end
-
-	str = "sphere"
-
-	local shape = str
-
-	::label_9_0::
+	local shape = size.y - size.x > 0 and not not "capsule" or not (size.y - size.x > 0) and not not "sphere"
 
 	PhysicsWorld.prepare_actors_for_overlap(physics_world, pos, math.max(action.radius, action.height))
 
@@ -251,43 +184,24 @@ BTMeleeSlamAction.anim_cb_damage = function (self, unit, blackboard)
 				end
 
 				if not dodge then
-					local attack_directions = action.attack_directions
-
-					if attack_directions then
-						-- Nothing
-					end
-
-					attack_directions = action.attack_directions[blackboard.attack_anim]
-
-					local attack_direction_name = attack_directions
-
-					::label_9_1::
+					local attack_direction_name = not not action.attack_directions
 
 					if target_status_extension:is_disabled() then
 						damage = action.damage
+					elseif DamageUtils.check_ranged_block(unit, hit_unit, not not action.shield_blocked_fatigue_type) then
+						local blocked_velocity = action.player_push_speed_blocked * Vector3.normalize(POSITION_LOOKUP[hit_unit] - self_pos)
+						local locomotion_extension = ScriptUnit.extension(hit_unit, "locomotion_system")
+
+						locomotion_extension:add_external_velocity(blocked_velocity)
+					elseif DamageUtils.check_block(unit, hit_unit, action.fatigue_type, attack_direction_name) then
+						local blocked_velocity = action.player_push_speed_blocked * Vector3.normalize(POSITION_LOOKUP[hit_unit] - self_pos)
+						local locomotion_extension = ScriptUnit.extension(hit_unit, "locomotion_system")
+
+						locomotion_extension:add_external_velocity(blocked_velocity)
+
+						damage = action.blocked_damage
 					else
-						local check_ranged_block = DamageUtils.check_ranged_block
-						local var_9_3 = unit
-						local var_9_4 = hit_unit
-						local shield_blocked_fatigue_type = action.shield_blocked_fatigue_type
-
-						shield_blocked_fatigue_type = not not shield_blocked_fatigue_type or not not "shield_blocked_slam"
-
-						if check_ranged_block(var_9_3, var_9_4, shield_blocked_fatigue_type) then
-							local blocked_velocity = action.player_push_speed_blocked * Vector3.normalize(POSITION_LOOKUP[hit_unit] - self_pos)
-							local locomotion_extension = ScriptUnit.extension(hit_unit, "locomotion_system")
-
-							locomotion_extension:add_external_velocity(blocked_velocity)
-						elseif DamageUtils.check_block(unit, hit_unit, action.fatigue_type, attack_direction_name) then
-							local blocked_velocity = action.player_push_speed_blocked * Vector3.normalize(POSITION_LOOKUP[hit_unit] - self_pos)
-							local locomotion_extension = ScriptUnit.extension(hit_unit, "locomotion_system")
-
-							locomotion_extension:add_external_velocity(blocked_velocity)
-
-							damage = action.blocked_damage
-						else
-							damage = action.damage
-						end
+						damage = action.damage
 					end
 				end
 

@@ -286,11 +286,8 @@ local function create_overlay_button(scenegraph_id, size)
 					content_check_function = function (content)
 						-- function 14
 						local button_hotspot = content.button_hotspot
-						local disable_button = button_hotspot.disable_button
 
-						disable_button = not not disable_button and not not not content.has_item
-
-						return disable_button
+						return not not button_hotspot.disable_button
 					end
 				},
 				{
@@ -300,11 +297,8 @@ local function create_overlay_button(scenegraph_id, size)
 					content_check_function = function (content)
 						-- function 15
 						local button_hotspot = content.button_hotspot
-						local disable_button = button_hotspot.disable_button
 
-						disable_button = not not disable_button and not not not content.has_item
-
-						return disable_button
+						return not not button_hotspot.disable_button
 					end
 				}
 			}

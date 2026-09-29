@@ -121,17 +121,7 @@ BTChaosSorcererChargeAction.leave = function (self, unit, blackboard, t, reason,
 	local target_unit_status_extension = ScriptUnit.has_extension(blackboard.charge_target_unit, "status_system")
 
 	if target_unit_status_extension then
-		local num_charges_targeting_player_2 = target_unit_status_extension.num_charges_targeting_player
-
-		if not num_charges_targeting_player_2 then
-			-- Nothing
-		end
-
-		num_charges_targeting_player_2 = 0
-
-		local num_charges_targeting_player = num_charges_targeting_player_2
-
-		::label_4_0::
+		local num_charges_targeting_player = not not target_unit_status_extension.num_charges_targeting_player
 
 		num_charges_targeting_player = num_charges_targeting_player - 1
 		target_unit_status_extension.num_charges_targeting_player = num_charges_targeting_player
@@ -139,7 +129,7 @@ BTChaosSorcererChargeAction.leave = function (self, unit, blackboard, t, reason,
 		StatusUtils.set_charged_network(blackboard.charge_target_unit, false)
 	end
 
-	if (not blackboard.stagger or blackboard.charge_state ~= "charging") and blackboard.charge_state == "lunge" and not blackboard.anim_cb_disable_charge_collision then
+	if blackboard.charge_state == "lunge" and not blackboard.anim_cb_disable_charge_collision then
 		blackboard.charge_stagger = true
 	end
 
@@ -189,10 +179,7 @@ BTChaosSorcererChargeAction.run = function (self, unit, blackboard, t, dt)
 			blackboard.test_start_time = nil
 		end
 	elseif charge_state == "impact" then
-		local test_start_time = blackboard.test_start_time
-
-		test_start_time = not not test_start_time or not not (t + 1)
-		blackboard.test_start_time = test_start_time
+		blackboard.test_start_time = not not blackboard.test_start_time
 
 		if t > blackboard.test_start_time then
 			self:anim_cb_charge_impact_finished(unit, blackboard)
@@ -408,13 +395,8 @@ BTChaosSorcererChargeAction._charged_at_player = function (self, unit, hit_unit,
 		local current_velocity = blackboard.locomotion_extension:current_velocity()
 		local magnitude = Vector3.length(current_velocity)
 		local velocity = magnitude * Vector3.normalize(to_hit_unit)
-		local set_z = Vector3.set_z
-		local var_13_1 = velocity
-		local catapult_force_z = action.catapult_force_z
 
-		catapult_force_z = not not catapult_force_z or not not 3
-
-		set_z(var_13_1, catapult_force_z)
+		Vector3.set_z(velocity, not not action.catapult_force_z)
 		StatusUtils.set_catapulted_network(hit_unit, true, velocity)
 	else
 		StatusUtils.set_charged_network(hit_unit, true)
@@ -575,21 +557,7 @@ BTChaosSorcererChargeAction._run_impact = function (self, unit, blackboard, t, d
 		end
 	end
 
-	local hit_target_slow_down_speed
-
-	if blackboard.hit_target then
-		hit_target_slow_down_speed = blackboard.action.hit_target_slow_down_speed
-
-		if not hit_target_slow_down_speed then
-			-- Nothing
-		end
-	end
-
-	hit_target_slow_down_speed = blackboard.action.slow_down_speed
-
-	local slow_down_speed = hit_target_slow_down_speed
-
-	::label_20_0::
+	local slow_down_speed = blackboard.hit_target and not not blackboard.action.hit_target_slow_down_speed or not blackboard.hit_target and not not blackboard.action.slow_down_speed
 
 	self:_slow_down(unit, blackboard, slow_down_speed, t, dt)
 end

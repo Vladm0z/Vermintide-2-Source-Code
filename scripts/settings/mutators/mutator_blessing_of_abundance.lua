@@ -158,17 +158,7 @@ local spawn_functions = {
 		}
 		local pickup_settings = AllPickups[pickup_name]
 		local unit_name = pickup_settings.unit_name
-		local unit_template_name_2 = pickup_settings.unit_template_name
-
-		if not unit_template_name_2 then
-			-- Nothing
-		end
-
-		unit_template_name_2 = "pickup_unit"
-
-		local unit_template_name = unit_template_name_2
-
-		::label_4_0::
+		local unit_template_name = not not pickup_settings.unit_template_name
 
 		Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_template_name, extension_init_data, position, rotation)
 	end

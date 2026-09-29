@@ -49,21 +49,8 @@ return {
 				data.wanted_position = Vector3Box(wanted_position)
 
 				local respawn_time = math.random(data.respawn_times[1], data.respawn_times[2])
-				local num
 
-				if data.is_initial_spawn then
-					num = t + data.initial_spawn_time
-
-					if not num then
-						-- Nothing
-					end
-				end
-
-				num = t + respawn_time
-
-				::label_4_0::
-
-				data.spawn_at_time = num
+				data.spawn_at_time = data.is_initial_spawn and not not (t + data.initial_spawn_time) or not data.is_initial_spawn and not not (t + respawn_time)
 				data.has_wanted_position = true
 				data.is_initial_spawn = nil
 			elseif t > data.spawn_at_time then

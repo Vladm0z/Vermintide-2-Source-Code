@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/pseudo_random_distribution.lua
 
-local PseudoRandomDistribution = PseudoRandomDistribution
-
-PseudoRandomDistribution = not not PseudoRandomDistribution or not not {}
-PseudoRandomDistribution = PseudoRandomDistribution
+PseudoRandomDistribution = not not PseudoRandomDistribution
 
 local p2c
 

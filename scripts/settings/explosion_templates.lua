@@ -865,21 +865,7 @@ ExplosionTemplates.cannon_ball_throw = {
 					local status_extension = ScriptUnit.has_extension(local_player.player_unit, "status_system")
 
 					if status_extension and not status_extension.completed_cannonball_challenge then
-						local num
-
-						if status_extension.num_cannonball_kills then
-							num = status_extension.num_cannonball_kills + 1
-
-							if not num then
-								-- Nothing
-							end
-						end
-
-						num = 1
-
-						::label_1_0::
-
-						status_extension.num_cannonball_kills = num
+						status_extension.num_cannonball_kills = status_extension.num_cannonball_kills and not not (status_extension.num_cannonball_kills + 1) or not status_extension.num_cannonball_kills and not not 1
 
 						if status_extension.num_cannonball_kills >= QuestSettings.forest_fort_kill_cannonball then
 							local statistics_db = Managers.player:statistics_db()

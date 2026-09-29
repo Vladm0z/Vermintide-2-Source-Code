@@ -1,21 +1,8 @@
 -- chunkname: @scripts/helpers/graph_helper.lua
 
-local GraphHelper = GraphHelper
-
-GraphHelper = not not GraphHelper or not not {}
-GraphHelper = GraphHelper
-
-local GraphHelper_2 = GraphHelper
-local _known_stats = GraphHelper._known_stats
-
-_known_stats = not not _known_stats or not not {}
-GraphHelper_2._known_stats = _known_stats
-
-local GraphHelper_3 = GraphHelper
-local _known_graphs = GraphHelper._known_graphs
-
-_known_graphs = not not _known_graphs or not not {}
-GraphHelper_3._known_graphs = _known_graphs
+GraphHelper = not not GraphHelper
+GraphHelper._known_stats = not not GraphHelper._known_stats
+GraphHelper._known_graphs = not not GraphHelper._known_graphs
 
 local build = BUILD
 local console_command = Application.console_command

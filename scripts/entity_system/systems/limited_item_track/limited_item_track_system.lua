@@ -37,22 +37,8 @@ LimitedItemTrackSystem.init = function (self, entity_system_creation_context, sy
 	self.mark_item_for_transformation = function (extension)
 		-- function 2
 		local unit = extension.unit
-		local marked_items = self.marked_items
-		local id
 
-		if extension.id > 0 then
-			id = extension.id
-
-			if not id then
-				-- Nothing
-			end
-		end
-
-		id = nil
-
-		::label_2_0::
-
-		marked_items[unit] = id
+		self.marked_items[unit] = extension.id > 0 and not not extension.id or not (extension.id > 0) and not not nil
 	end
 
 	self.enable_spawner = function (extension)
@@ -86,18 +72,7 @@ LimitedItemTrackSystem.register_group = function (self, group_name, pool_size)
 	-- function 5
 	fassert(self.groups[group_name] == nil, "Limited Item Group with name %q, is already registered", group_name)
 
-	local var_5_0 = self.queued_group_spawners[group_name]
-
-	if not var_5_0 then
-		-- Nothing
-	end
-
-	var_5_0 = {}
-
-	local spawners = var_5_0
-
-	::label_5_0::
-
+	local spawners = not not self.queued_group_spawners[group_name]
 	local spawners_n = #spawners
 
 	self.queued_group_spawners[group_name] = nil
@@ -112,18 +87,7 @@ LimitedItemTrackSystem.register_weave_group = function (self, group_name, pool_s
 	-- function 6
 	fassert(self.groups[group_name] == nil, "Limited Item Group with name %q, is already registered", group_name)
 
-	local var_6_0 = self.queued_weave_group_spawners[group_name]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = {}
-
-	local spawners = var_6_0
-
-	::label_6_0::
-
+	local spawners = not not self.queued_weave_group_spawners[group_name]
 	local spawners_n = #spawners
 
 	self.queued_weave_group_spawners[group_name] = nil
@@ -238,10 +202,7 @@ local temp_extension_init_data = {}
 
 LimitedItemTrackSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 13
-	if next(extension_init_data) == nil and not temp_extension_init_data then
-		-- Nothing
-	end
-
+	extension_init_data = next(extension_init_data) ~= nil or not not temp_extension_init_data or not not extension_init_data
 	extension_init_data.network_manager = self.network_manager
 
 	if extension_name == "LimitedItemTrackSpawner" then
@@ -263,17 +224,7 @@ LimitedItemTrackSystem.on_add_extension = function (self, world, unit, extension
 			local group = self.groups[group_name]
 
 			if group == nil then
-				local var_13_0 = self.queued_group_spawners[group_name]
-
-				if not var_13_0 then
-					-- Nothing
-				end
-
-				var_13_0 = {}
-
-				local queued_group_spawners = var_13_0
-
-				::label_13_0::
+				local queued_group_spawners = not not self.queued_group_spawners[group_name]
 
 				queued_group_spawners[#queued_group_spawners + 1] = extension
 				self.queued_group_spawners[group_name] = queued_group_spawners
@@ -306,17 +257,7 @@ LimitedItemTrackSystem.on_add_extension = function (self, world, unit, extension
 		self.spawners[unit] = extension
 
 		local group_name = Unit.get_data(unit, "weave_objective_id")
-		local var_13_1 = self.queued_weave_group_spawners[group_name]
-
-		if not var_13_1 then
-			-- Nothing
-		end
-
-		var_13_1 = {}
-
-		local queued_weave_group_spawners = var_13_1
-
-		::label_13_1::
+		local queued_weave_group_spawners = not not self.queued_weave_group_spawners[group_name]
 
 		queued_weave_group_spawners[#queued_weave_group_spawners + 1] = extension
 		self.queued_weave_group_spawners[group_name] = queued_weave_group_spawners
@@ -333,11 +274,7 @@ LimitedItemTrackSystem.on_add_extension = function (self, world, unit, extension
 
 		if extension_name == "LimitedItemExtension" then
 			extension.unit = unit
-
-			local id = extension_init_data.id
-
-			id = not not id or not not 0
-			extension.id = id
+			extension.id = not not extension_init_data.id
 			extension.spawner_unit = extension_init_data.spawner_unit
 			extension.mark_for_transformation = self.mark_item_for_transformation
 
@@ -358,11 +295,7 @@ LimitedItemTrackSystem.on_add_extension = function (self, world, unit, extension
 			end
 		elseif extension_name == "HeldLimitedItemExtension" then
 			extension.unit = unit
-
-			local id_2 = extension_init_data.id
-
-			id_2 = not not id_2 or not not 0
-			extension.id = id_2
+			extension.id = not not extension_init_data.id
 			extension.spawner_unit = extension_init_data.spawner_unit
 		else
 			fassert(false, "Unknown extension name %q", extension_name)

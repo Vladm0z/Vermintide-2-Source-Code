@@ -110,17 +110,7 @@ TalentExtension.apply_buffs_from_talents = function (self, talent_ids)
 		return
 	end
 
-	local is_server = self.is_server
-
-	if is_server then
-		-- Nothing
-	end
-
-	is_server = player.bot_player
-
-	local is_server_bot = is_server
-
-	::label_6_0::
+	local is_server_bot = not not self.is_server
 
 	for i = 1, #talent_ids do
 		local talent_id = talent_ids[i]
@@ -130,22 +120,8 @@ TalentExtension.apply_buffs_from_talents = function (self, talent_ids)
 			local buffs = talent_data.buffs
 			local buffer = talent_data.buffer
 
-			if (((player.local_player or is_server_bot) and (not buffer or buffer == "client") or not self.is_server or buffer ~= "server") and self.is_server or player.local_player) and buffer == "both" or buffer == "all" then
-				local count
-
-				if buffs then
-					count = #buffs
-
-					if not count then
-						-- Nothing
-					end
-				end
-
-				count = 0
-
-				local num_buffs = count
-
-				::label_6_1::
+			if player.local_player and (not buffer or buffer == "client" or self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) or not player.local_player and (is_server_bot and (not buffer or buffer == "client" or self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) or not is_server_bot and (self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")))) then
+				local num_buffs = buffs and not not #buffs or not buffs and not not 0
 
 				if num_buffs > 0 then
 					for j = 1, num_buffs do

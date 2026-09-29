@@ -16,24 +16,9 @@ local ReservationHandlerTypes = require("scripts/managers/game_mode/mechanisms/r
 DLCUtils.require_list("matchmaking_state_files")
 
 MatchmakingManager = class(MatchmakingManager)
+script_data.matchmaking_debug = not not script_data.matchmaking_debug
 
-local script_data = script_data
-local matchmaking_debug = script_data.matchmaking_debug
-
-matchmaking_debug = not not matchmaking_debug or not not Development.parameter("matchmaking_debug")
-script_data.matchmaking_debug = matchmaking_debug
-
-local testify = script_data.testify
-
-if testify then
-	-- Nothing
-end
-
-testify = require("scripts/managers/matchmaking/matchmaking_manager_testify")
-
-local matchmaking_manager_testify = testify
-
-::label_0_0::
+local matchmaking_manager_testify = not not script_data.testify
 
 function mm_printf(format_text, ...)
 	-- function 1
@@ -51,37 +36,10 @@ function mm_printf_force(format_text, ...)
 	printf(format_text, ...)
 end
 
-local num
+local extra_timeout = Development.parameter("network_timeout_really_long") and not not 10000 or not Development.parameter("network_timeout_really_long") and not not 0
+local ALWAYS_HOST_GAME = DEDICATED_SERVER and not not true or not DEDICATED_SERVER and not not false
 
-if Development.parameter("network_timeout_really_long") then
-	num = 10000
-
-	goto label_0_1
-end
-
-num = 0
-
-local extra_timeout = num
-
-do
-	local flag
-end
-
-::label_0_1::
-
-if DEDICATED_SERVER then
-	flag = true
-
-	goto label_0_2
-end
-
-flag = false
-
-local ALWAYS_HOST_GAME = flag
-
-::label_0_2::
-
-local tbl = {
+MatchmakingSettings = {
 	TIME_BETWEEN_EACH_SEARCH = 3.4,
 	MAX_NUM_LOBBIES = 100,
 	START_GAME_TIME = 5,
@@ -96,110 +54,71 @@ local tbl = {
 	LOBBY_FINDER_UPDATE_INTERVAL = 1,
 	JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL = 20 + extra_timeout,
 	REQUEST_JOIN_LOBBY_REPLY_TIME = 30 + extra_timeout,
-	REQUEST_PROFILES_REPLY_TIME = 10 + extra_timeout
+	REQUEST_PROFILES_REPLY_TIME = 10 + extra_timeout,
+	max_distance_filter = GameSettingsDevelopment.network_mode ~= "lan" and (Application.user_setting("max_quick_play_search_range") == "medium" and not not "close" or not (Application.user_setting("max_quick_play_search_range") == "medium") and not not Application.user_setting("max_quick_play_search_range")) or not (GameSettingsDevelopment.network_mode ~= "lan") and not not "close",
+	allowed_profiles = {
+		true,
+		true,
+		true,
+		true,
+		true
+	},
+	hero_search_filter = {
+		true,
+		true,
+		true,
+		true,
+		true
+	},
+	quickplay_level_select_settings = {
+		loss_multiplier = 1,
+		win_multiplier = 1,
+		base_level_weight = 1,
+		amount_of_relevant_games = 20,
+		progression_multiplier = 10
+	}
 }
-local str
-
-if GameSettingsDevelopment.network_mode == "lan" then
-	str = "close"
-else
-	if Application.user_setting("max_quick_play_search_range") ~= "medium" then
-		str = Application.user_setting("max_quick_play_search_range")
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = not not "close" or not not DefaultUserSettings.get("user_settings", "max_quick_play_search_range")
-end
-
-::label_0_3::
-
-tbl.max_distance_filter = str
-tbl.allowed_profiles = {
-	true,
-	true,
-	true,
-	true,
-	true
+MatchmakingSettingsOverrides = {
+	versus = {
+		TIME_BETWEEN_EACH_SEARCH = 3.4,
+		MAX_NUM_LOBBIES = 100,
+		START_GAME_TIME = 5,
+		REQUEST_JOIN_LOBBY_REPLY_TIME = 300,
+		MIN_STATUS_MESSAGE_TIME = 2,
+		TOTAL_GAME_SEARCH_TIME = 5,
+		afk_force_stop_mm_timer = 180,
+		afk_warn_timer = 150,
+		MAX_NUMBER_OF_PLAYERS = 8,
+		host_games = "auto",
+		restart_search_after_host_cancel = true,
+		auto_ready = false,
+		REQUEST_PROFILES_REPLY_TIME = 300,
+		JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL = 300,
+		LOBBY_FINDER_UPDATE_INTERVAL = 1,
+		max_distance_filter = GameSettingsDevelopment.network_mode ~= "lan" and (Application.user_setting("max_quick_play_search_range") == "medium" and not not "close" or not (Application.user_setting("max_quick_play_search_range") == "medium") and not not Application.user_setting("max_quick_play_search_range")) or not (GameSettingsDevelopment.network_mode ~= "lan") and not not "close",
+		allowed_profiles = {
+			true,
+			true,
+			true,
+			true,
+			true
+		},
+		hero_search_filter = {
+			true,
+			true,
+			true,
+			true,
+			true
+		},
+		quickplay_level_select_settings = {
+			loss_multiplier = 1,
+			win_multiplier = 1,
+			base_level_weight = 1,
+			amount_of_relevant_games = 20,
+			progression_multiplier = 10
+		}
+	}
 }
-tbl.hero_search_filter = {
-	true,
-	true,
-	true,
-	true,
-	true
-}
-tbl.quickplay_level_select_settings = {
-	loss_multiplier = 1,
-	win_multiplier = 1,
-	base_level_weight = 1,
-	amount_of_relevant_games = 20,
-	progression_multiplier = 10
-}
-MatchmakingSettings = tbl
-
-local tbl_2 = {}
-local tbl_3 = {
-	TIME_BETWEEN_EACH_SEARCH = 3.4,
-	MAX_NUM_LOBBIES = 100,
-	START_GAME_TIME = 5,
-	REQUEST_JOIN_LOBBY_REPLY_TIME = 300,
-	MIN_STATUS_MESSAGE_TIME = 2,
-	TOTAL_GAME_SEARCH_TIME = 5,
-	afk_force_stop_mm_timer = 180,
-	afk_warn_timer = 150,
-	MAX_NUMBER_OF_PLAYERS = 8,
-	host_games = "auto",
-	restart_search_after_host_cancel = true,
-	auto_ready = false,
-	REQUEST_PROFILES_REPLY_TIME = 300,
-	JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL = 300,
-	LOBBY_FINDER_UPDATE_INTERVAL = 1
-}
-local str_2
-
-if GameSettingsDevelopment.network_mode == "lan" then
-	str_2 = "close"
-else
-	if Application.user_setting("max_quick_play_search_range") ~= "medium" then
-		str_2 = Application.user_setting("max_quick_play_search_range")
-
-		if not str_2 then
-			-- Nothing
-		end
-	end
-
-	str_2 = not not "close" or not not DefaultUserSettings.get("user_settings", "max_quick_play_search_range")
-end
-
-::label_0_4::
-
-tbl_3.max_distance_filter = str_2
-tbl_3.allowed_profiles = {
-	true,
-	true,
-	true,
-	true,
-	true
-}
-tbl_3.hero_search_filter = {
-	true,
-	true,
-	true,
-	true,
-	true
-}
-tbl_3.quickplay_level_select_settings = {
-	loss_multiplier = 1,
-	win_multiplier = 1,
-	base_level_weight = 1,
-	amount_of_relevant_games = 20,
-	progression_multiplier = 10
-}
-tbl_2.versus = tbl_3
-MatchmakingSettingsOverrides = tbl_2
 
 local RPCS = {
 	"rpc_matchmaking_request_profiles_data",
@@ -250,17 +169,9 @@ local SEARCH_TYPE = {
 	MatchmakingStateHostFindWeaveGroup = "adventure",
 	MatchmakingStateFlexmatchHost = "versus"
 }
-local MatchmakingManager = MatchmakingManager
-local _broken_lobbies = MatchmakingManager._broken_lobbies
 
-_broken_lobbies = not not _broken_lobbies or not not {}
-MatchmakingManager._broken_lobbies = _broken_lobbies
-
-local MatchmakingManager_2 = MatchmakingManager
-local _broken_servers = MatchmakingManager._broken_servers
-
-_broken_servers = not not _broken_servers or not not {}
-MatchmakingManager_2._broken_servers = _broken_servers
+MatchmakingManager._broken_lobbies = not not MatchmakingManager._broken_lobbies
+MatchmakingManager._broken_servers = not not MatchmakingManager._broken_servers
 
 MatchmakingManager.init = function (self, params)
 	-- function 3
@@ -324,15 +235,7 @@ MatchmakingManager.init = function (self, params)
 
 	self:reset_lobby_filters()
 	mm_printf("initializing")
-
-	local mm_printf = mm_printf
-	local str = "my_peer_id: %s, I am %s"
-	local peer_id = Network.peer_id()
-	local flag
-
-	flag = (not self.is_server or not "server") and not not "client"
-
-	mm_printf(str, peer_id, flag)
+	mm_printf("my_peer_id: %s, I am %s", Network.peer_id(), self.is_server and not not "server" or not self.is_server and not not "client")
 
 	self.lobby_finder_timer = 0
 	self.profile_update_time = 0
@@ -366,11 +269,7 @@ end
 
 MatchmakingManager.have_game_mode_event_data = function (self)
 	-- function 6
-	local _game_mode_event_data = self._game_mode_event_data
-
-	_game_mode_event_data = not not _game_mode_event_data and not not not table.is_empty(self._game_mode_event_data)
-
-	return _game_mode_event_data
+	return not not self._game_mode_event_data
 end
 
 MatchmakingManager.set_game_mode_event_data = function (self, event_data)
@@ -453,15 +352,7 @@ end
 
 MatchmakingManager.waystone_is_active = function (self)
 	-- function 13
-	local _waystone_is_active = self._waystone_is_active
-
-	_waystone_is_active = not not _waystone_is_active or not not false
-
-	local _waystone_type = self._waystone_type
-
-	_waystone_type = not not _waystone_type or not not 0
-
-	return _waystone_is_active, _waystone_type
+	return not not self._waystone_is_active, not not self._waystone_type
 end
 
 MatchmakingManager.activate_waystone_portal = function (self, waystone_type)
@@ -589,70 +480,11 @@ MatchmakingManager.update = function (self, dt, t)
 		local search_info = self:search_info()
 		local mission_id = search_info.mission_id
 		local difficulty = search_info.difficulty
-		local quick_game_2 = search_info.quick_game
-
-		if not quick_game_2 then
-			-- Nothing
-		end
-
-		quick_game_2 = false
-
-		local quick_game = quick_game_2
-
-		::label_20_0::
-
+		local quick_game = not not search_info.quick_game
 		local mechanism = search_info.mechanism
-		local var_20_1
-
-		if mission_id then
-			var_20_1 = NetworkLookup.mission_ids[mission_id]
-
-			if not var_20_1 then
-				-- Nothing
-			end
-		end
-
-		var_20_1 = NetworkLookup.mission_ids["n/a"]
-
-		local mission_id_lookup = var_20_1
-
-		do
-			local var_20_2
-		end
-
-		::label_20_1::
-
-		if difficulty then
-			var_20_2 = NetworkLookup.difficulties[difficulty]
-
-			if not var_20_2 then
-				-- Nothing
-			end
-		end
-
-		var_20_2 = NetworkLookup.difficulties.normal
-
-		local difficulty_lookup = var_20_2
-
-		do
-			local var_20_3
-		end
-
-		::label_20_2::
-
-		if mechanism then
-			var_20_3 = NetworkLookup.mechanisms[mechanism]
-
-			if not var_20_3 then
-				-- Nothing
-			end
-		end
-
-		var_20_3 = NetworkLookup.mechanisms.adventure
-
-		local mechanism_lookup = var_20_3
-
-		::label_20_3::
+		local mission_id_lookup = mission_id and not not NetworkLookup.mission_ids[mission_id] or not mission_id and not not NetworkLookup.mission_ids["n/a"]
+		local difficulty_lookup = difficulty and not not NetworkLookup.difficulties[difficulty] or not difficulty and not not NetworkLookup.difficulties.normal
+		local mechanism_lookup = mechanism and not not NetworkLookup.mechanisms[mechanism] or not mechanism and not not NetworkLookup.mechanisms.adventure
 
 		for peer_id, _ in pairs(self.peers_to_sync) do
 			self.peers_to_sync[peer_id] = nil
@@ -680,18 +512,7 @@ MatchmakingManager._update_afk_logic = function (self, dt, t)
 	local lobby = self.lobby
 
 	if self.is_server and lobby:is_joined() then
-		local _state = self._state
-
-		if _state then
-			-- Nothing
-		end
-
-		_state = self._state.NAME
-
-		local state_name = _state
-
-		::label_21_0::
-
+		local state_name = not not self._state
 		local is_matchmaking = state_name == "MatchmakingStateHostGame" or state_name == "MatchmakingStateSearchGame"
 
 		if is_matchmaking and self.is_in_inn then
@@ -753,7 +574,7 @@ MatchmakingManager._update_power_level = function (self, t)
 		local hero_name = local_player:profile_display_name()
 		local career_name = local_player:career_name()
 		local matchmaking_type_id = self.lobby:lobby_data("matchmaking_type")
-		local matchmaking_type = (not not matchmaking_type_id and not IS_PS4 or not matchmaking_type_id) and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
+		local matchmaking_type = not not matchmaking_type_id and IS_PS4
 
 		if sync_data_active and hero_name and career_name then
 			local power_level = BackendUtils.get_total_power_level(hero_name, career_name, matchmaking_type)
@@ -896,7 +717,7 @@ MatchmakingManager.party_has_level_unlocked = function (self, level_key, ignore_
 		end
 
 		if not settings.dlc_name then
-			if (LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_key, true) or event_mode) and settings.not_quickplayable then
+			if settings.not_quickplayable then
 				return false
 			end
 		elseif not LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_key, true) or settings.not_quickplayable then
@@ -999,7 +820,7 @@ MatchmakingManager._get_level_key_from_level_weights = function (self, level_key
 
 		local level_key = level_keys[chosen_index]
 
-		if (not level_key or not (level_weights_by_index[chosen_index] >= 0)) and event_mode then
+		if level_key and (level_weights_by_index[chosen_index] >= 0 or event_mode) or not level_key and event_mode then
 			preferred_levels[#preferred_levels + 1] = level_key
 		end
 
@@ -1071,7 +892,7 @@ MatchmakingManager._calculate_level_weights = function (self, level_keys, recent
 			local level_index = lookup_level_keys[level_key]
 
 			if level_index then
-				local multiplier = (not last_played_games[i].game_won or not win_multiplier) and not not loss_multiplier
+				local multiplier = last_played_games[i].game_won and (not not win_multiplier or not not loss_multiplier) or not last_played_games[i].game_won and not not loss_multiplier
 
 				level_weight_by_lookup[level_index] = level_weight_by_lookup[level_index] - multiplier * (#last_played_games - i + 1) / #last_played_games
 
@@ -1129,22 +950,7 @@ end
 MatchmakingManager.get_weighed_random_unlocked_level = function (self, ignore_dlc_check, custom_game, excluded_level_keys)
 	-- function 37
 	local recent_games_played_json = Managers.backend:get_read_only_data("recent_quickplay_games")
-	local decode
-
-	if recent_games_played_json then
-		decode = cjson.decode(recent_games_played_json)
-
-		if not decode then
-			-- Nothing
-		end
-	end
-
-	decode = {}
-
-	local recent_games_played = decode
-
-	::label_37_0::
-
+	local recent_games_played = recent_games_played_json and not not cjson.decode(recent_games_played_json) or not recent_games_played_json and not not {}
 	local search_config = self.state_context.search_config
 	local is_event_mode = search_config.game_mode == "event"
 
@@ -1202,50 +1008,19 @@ MatchmakingManager.set_matchmaking_data = function (self, next_mission_id, diffi
 	local lobby_data = self.lobby:get_stored_lobby_data()
 
 	lobby_data.mission_id = current_level_key
-
-	local var_39_0
-
-	if not IS_PS4 then
-		var_39_0 = NetworkLookup.matchmaking_types[matchmaking_type]
-
-		if not var_39_0 then
-			-- Nothing
-		end
-	end
-
-	var_39_0 = matchmaking_type
-
-	::label_39_0::
-
-	lobby_data.matchmaking_type = var_39_0
+	lobby_data.matchmaking_type = IS_PS4 and not not matchmaking_type or not IS_PS4 and not not NetworkLookup.matchmaking_types[matchmaking_type]
 	lobby_data.act_key = act_key
-
-	local flag
-
-	flag = (not is_matchmaking or not "true") and not not "false"
-	lobby_data.matchmaking = flag
+	lobby_data.matchmaking = is_matchmaking and not not "true" or not is_matchmaking and not not "false"
 	lobby_data.selected_mission_id = not not next_mission_id or not not LevelHelper:current_level_settings().level_id
 	lobby_data.unique_server_name = LobbyAux.get_unique_server_name()
 	lobby_data.custom_server_name = "n/a"
 	lobby_data.host = Network.peer_id()
 	lobby_data.num_players = num_players
 	lobby_data.difficulty = difficulty
-
-	local flag_2
-
-	flag_2 = (mechanism ~= "weave" or not quick_game or not "true") and not not "false"
-	lobby_data.weave_quick_game = flag_2
+	lobby_data.weave_quick_game = not not "true"
 	lobby_data.country_code = Managers.account:region()
-
-	local flag_3
-
-	flag_3 = (not GameSettingsDevelopment.twitch_enabled or not Managers.twitch:is_connected() or not Managers.twitch:game_mode_supported(matchmaking_type, difficulty) or not "true") and not not "false"
-	lobby_data.twitch_enabled = flag_3
-
-	local flag_4
-
-	flag_4 = (not eac_authorized or not "true") and not not "false"
-	lobby_data.eac_authorized = flag_4
+	lobby_data.twitch_enabled = not not "true"
+	lobby_data.eac_authorized = eac_authorized and not not "true" or not eac_authorized and not not "false"
 	lobby_data.mechanism = mechanism
 	lobby_data.match_started = "true"
 
@@ -1343,57 +1118,9 @@ MatchmakingManager.find_game = function (self, search_config)
 		local difficulty = search_info.difficulty
 		local quick_game = search_info.quick_game
 		local mechanism = search_info.mechanism
-		local var_42_0
-
-		if mission_id then
-			var_42_0 = NetworkLookup.mission_ids[mission_id]
-
-			if not var_42_0 then
-				-- Nothing
-			end
-		end
-
-		var_42_0 = NetworkLookup.mission_ids["n/a"]
-
-		local mission_id_lookup = var_42_0
-
-		do
-			local var_42_1
-		end
-
-		::label_42_0::
-
-		if difficulty then
-			var_42_1 = NetworkLookup.difficulties[difficulty]
-
-			if not var_42_1 then
-				-- Nothing
-			end
-		end
-
-		var_42_1 = NetworkLookup.difficulties.normal
-
-		local difficulty_lookup = var_42_1
-
-		do
-			local var_42_2
-		end
-
-		::label_42_1::
-
-		if mechanism then
-			var_42_2 = NetworkLookup.mechanisms[mechanism]
-
-			if not var_42_2 then
-				-- Nothing
-			end
-		end
-
-		var_42_2 = NetworkLookup.mechanisms.adventure
-
-		local mechanism_lookup = var_42_2
-
-		::label_42_2::
+		local mission_id_lookup = mission_id and not not NetworkLookup.mission_ids[mission_id] or not mission_id and not not NetworkLookup.mission_ids["n/a"]
+		local difficulty_lookup = difficulty and not not NetworkLookup.difficulties[difficulty] or not difficulty and not not NetworkLookup.difficulties.normal
+		local mechanism_lookup = mechanism and not not NetworkLookup.mechanisms[mechanism] or not mechanism and not not NetworkLookup.mechanisms.adventure
 
 		self.network_transmit:send_rpc_clients("rpc_set_matchmaking", true, private_game, mission_id_lookup, difficulty_lookup, quick_game, mechanism_lookup)
 		self:_change_state(next_state, self.params, self.state_context)
@@ -1443,18 +1170,7 @@ MatchmakingManager.cancel_matchmaking = function (self)
 		local started_matchmaking_t = self.state_context.started_matchmaking_t
 
 		if started_matchmaking_t ~= nil then
-			local time = Managers.time:time("main")
-
-			if not time then
-				-- Nothing
-			end
-
-			time = started_matchmaking_t
-
-			local t = time
-
-			::label_44_0::
-
+			local t = not not Managers.time:time("main")
 			local time_taken = t - started_matchmaking_t
 			local using_strict_matchmaking = self.state_context.search_config.strict_matchmaking
 
@@ -1506,22 +1222,7 @@ MatchmakingManager.cancel_matchmaking = function (self)
 		stored_lobby_data.selected_mission_id = LevelHelper:current_level_settings().level_id
 		stored_lobby_data.custom_game_settings = "n/a"
 		stored_lobby_data.custom_server_name = "n/a"
-
-		local var_44_1
-
-		if not IS_PS4 then
-			var_44_1 = NetworkLookup.matchmaking_types["n/a"]
-
-			if not var_44_1 then
-				-- Nothing
-			end
-		end
-
-		var_44_1 = "n/a"
-
-		::label_44_1::
-
-		stored_lobby_data.matchmaking_type = var_44_1
+		stored_lobby_data.matchmaking_type = IS_PS4 and not not "n/a" or not IS_PS4 and not not NetworkLookup.matchmaking_types["n/a"]
 
 		self.lobby:set_lobby_data(stored_lobby_data)
 
@@ -1602,107 +1303,31 @@ end
 
 MatchmakingManager.is_matchmaking_versus = function (self)
 	-- function 49
-	local lobby = self.lobby
-
-	if lobby then
-		-- Nothing
-	end
-
-	lobby = self.lobby:lobby_data("mechanism")
-
-	local lobby_mechanism = lobby
-
-	::label_49_0::
-
-	local lobby_client_2 = self._state.lobby_client
-
-	if not lobby_client_2 then
-		-- Nothing
-	end
-
-	lobby_client_2 = Managers.lobby:query_lobby("matchmaking_session_lobby")
-
-	if not lobby_client_2 then
-		-- Nothing
-	end
-
-	lobby_client_2 = Managers.lobby:query_lobby("matchmaking_join_lobby")
-
-	local lobby_client = lobby_client_2
-
-	::label_49_1::
-
+	local lobby_mechanism = not not self.lobby
+	local lobby_client = not not self._state.lobby_client
 	local lobby_client_mechanism = not not lobby_client and not not lobby_client:lobby_data("mechanism")
 	local name = self._state.NAME
 	local is_matchmaking = name ~= "MatchmakingStateIdle"
-	local lobby_2 = self.lobby
-
-	if lobby_2 then
-		-- Nothing
-	end
-
-	if self.lobby:lobby_data("matchmaking") ~= "true" then
-		lobby_2 = false
-
-		goto label_49_2
-	end
-
-	lobby_2 = true
-
-	local is_lobby_matchmaking = lobby_2
-
-	::label_49_2::
-
+	local is_lobby_matchmaking = not not self.lobby
 	local is_lobby_client_matchmaking = not not lobby_client and lobby_client:lobby_data("matchmaking") == "true"
 
-	return (is_matchmaking or is_lobby_matchmaking or not not is_lobby_client_matchmaking) and lobby_mechanism == "versus" or lobby_client_mechanism == "versus"
+	return lobby_mechanism == "versus" or lobby_client_mechanism == "versus"
 end
 
 MatchmakingManager.is_matchmaking_in_inn = function (self)
 	-- function 50
 	local name = self._state.NAME
 	local is_matchmaking = name ~= "MatchmakingStateIdle"
-	local is_in_inn = self.is_in_inn
 
-	is_in_inn = not not is_in_inn and not not is_matchmaking
-
-	return is_in_inn, name
+	return not not self.is_in_inn, name
 end
 
 MatchmakingManager.is_game_matchmaking = function (self)
 	-- function 51
 	local name = self._state.NAME
 	local is_matchmaking = name ~= "MatchmakingStateIdle"
-	local state_context = self.state_context
-
-	if state_context then
-		-- Nothing
-	end
-
-	state_context = self.state_context.search_config
-
-	local search_config = state_context
-
-	do
-		local private_game_2
-	end
-
-	::label_51_0::
-
-	if search_config then
-		private_game_2 = search_config.private_game
-
-		if not private_game_2 then
-			-- Nothing
-		end
-	end
-
-	private_game_2 = false
-
-	local private_game = private_game_2
-
-	::label_51_1::
-
+	local search_config = not not self.state_context
+	local private_game = search_config and not not search_config.private_game or not search_config and not not false
 	local reason = self._state.reason
 
 	return is_matchmaking, private_game, reason
@@ -1729,21 +1354,7 @@ MatchmakingManager._try_call_state_method = function (self, method_name, ...)
 	if method then
 		method(state, ...)
 	else
-		local NAME
-
-		if state then
-			NAME = state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_53_0::
+		local state_name = state and not not state.NAME or not state and not not "none"
 
 		Crashify.print_exception("MatchmakingManager", "Method %q not supported by state %q!", method_name, state_name)
 	end
@@ -1849,7 +1460,7 @@ MatchmakingManager.rpc_matchmaking_request_join_lobby = function (self, channel_
 	if DEDICATED_SERVER then
 		lobby_id_match = id == lobby_id
 	else
-		lobby_id_match = (not LobbyInternal.lobby_id_match or not LobbyInternal.lobby_id_match(id, lobby_id)) and id == lobby_id
+		lobby_id_match = LobbyInternal.lobby_id_match and (not not LobbyInternal.lobby_id_match(id, lobby_id) or id == lobby_id) or not LobbyInternal.lobby_id_match and id == lobby_id
 	end
 
 	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
@@ -1879,7 +1490,7 @@ MatchmakingManager.rpc_matchmaking_request_join_lobby = function (self, channel_
 	local is_friend = false
 
 	if not DEDICATED_SERVER then
-		is_friend = (not IS_CONSOLE or not true) and not not LobbyInternal.is_friend(peer_id)
+		is_friend = IS_CONSOLE and (not not true or not not LobbyInternal.is_friend(peer_id)) or not IS_CONSOLE and not not LobbyInternal.is_friend(peer_id)
 	end
 
 	local user_blocked
@@ -1950,9 +1561,9 @@ MatchmakingManager.rpc_matchmaking_request_profile = function (self, channel_id,
 	local reply, override_profile = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(peer_id, profile_index, career_index, false)
 
 	if override_profile and override_profile ~= profile_index then
-		reply = (not reply or not "previous_profile_accepted") and not not "profile_declined"
+		reply = reply and (not not "previous_profile_accepted" or not not "profile_declined") or not reply and not not "profile_declined"
 	else
-		reply = (not reply or not "profile_accepted") and not not "profile_declined"
+		reply = reply and (not not "profile_accepted" or not not "profile_declined") or not reply and not not "profile_declined"
 	end
 
 	if Managers.state.game_mode and Managers.state.game_mode:hero_is_locked(profile_index) then
@@ -1966,21 +1577,7 @@ end
 
 MatchmakingManager.current_state = function (self)
 	-- function 61
-	local NAME
-
-	if self._state then
-		NAME = self._state.NAME
-
-		if not NAME then
-			-- Nothing
-		end
-	end
-
-	NAME = "none"
-
-	::label_61_0::
-
-	return NAME
+	return self._state and not not self._state.NAME or not self._state and not not "none"
 end
 
 MatchmakingManager.get_transition = function (self)
@@ -2067,18 +1664,7 @@ MatchmakingManager.lobby_match = function (self, lobby_data, act_key, mission_id
 
 			for i = 1, #peer_datas do
 				local peer_id = peer_datas[i].peer_id
-				local var_66_0 = rawget(_G, "Friends")
-
-				if var_66_0 then
-					-- Nothing
-				end
-
-				var_66_0 = Friends.relationship(peer_id)
-
-				local relationship = var_66_0
-
-				::label_66_0::
-
+				local relationship = not not rawget(_G, "Friends")
 				local user_blocked = relationship == 5 or relationship == 6
 
 				if user_blocked then
@@ -2156,17 +1742,7 @@ MatchmakingManager.lobby_match = function (self, lobby_data, act_key, mission_id
 
 	if mechanism == "weave" then
 		if weave_name ~= "false" then
-			local selected_mission_id = lobby_data.selected_mission_id
-
-			if not selected_mission_id then
-				-- Nothing
-			end
-
-			selected_mission_id = lobby_data.mission_id
-
-			local lobby_weave_name = selected_mission_id
-
-			::label_66_1::
+			local lobby_weave_name = not not lobby_data.selected_mission_id
 
 			if weave_name ~= lobby_weave_name then
 				return false, "wrong weave name"
@@ -2189,31 +1765,9 @@ MatchmakingManager.lobby_match = function (self, lobby_data, act_key, mission_id
 	end
 
 	local matchmaking_settings = self.get_matchmaking_settings_for_mechanism(mechanism)
-	local num_players_2 = lobby_data.num_players
-
-	if num_players_2 then
-		-- Nothing
-	end
-
-	num_players_2 = tonumber(lobby_data.num_players)
-
-	local num_players = num_players_2
-
-	::label_66_2::
-
+	local num_players = not not lobby_data.num_players
 	local search_config = self.state_context.search_config
-	local max_number_of_players_2 = search_config.max_number_of_players
-
-	if not max_number_of_players_2 then
-		-- Nothing
-	end
-
-	max_number_of_players_2 = matchmaking_settings.MAX_NUMBER_OF_PLAYERS
-
-	local max_number_of_players = max_number_of_players_2
-
-	::label_66_3::
-
+	local max_number_of_players = not not search_config.max_number_of_players
 	local has_empty_slot = not not num_players and num_players < max_number_of_players
 
 	if not has_empty_slot then
@@ -2235,22 +1789,7 @@ MatchmakingManager.add_broken_lobby_client = function (self, lobby_client, t, is
 		return
 	end
 
-	local huge
-
-	if is_bad_connection_or_otherwise_not_nice then
-		huge = math.huge
-
-		if not huge then
-			-- Nothing
-		end
-	end
-
-	huge = 20
-
-	local time_to_ignore = huge
-
-	::label_67_0::
-
+	local time_to_ignore = is_bad_connection_or_otherwise_not_nice and not not math.huge or not is_bad_connection_or_otherwise_not_nice and not not 20
 	local broken_until = t + time_to_ignore
 
 	if lobby_client:is_dedicated_server() then
@@ -2290,21 +1829,7 @@ MatchmakingManager.rpc_matchmaking_request_join_lobby_reply = function (self, ch
 	if self._state and self._state.NAME == "MatchmakingStateRequestJoinGame" then
 		self._state:rpc_matchmaking_request_join_lobby_reply(channel_id, reply_id, reply_variable)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_71_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_join_lobby_reply, got this in wrong state current_state:%s", state_name)
 	end
@@ -2312,21 +1837,7 @@ end
 
 MatchmakingManager.rpc_notify_connected = function (self, channel_id)
 	-- function 72
-	local NAME
-
-	if self._state then
-		NAME = self._state.NAME
-
-		if not NAME then
-			-- Nothing
-		end
-	end
-
-	NAME = "none"
-
-	local state_name = NAME
-
-	::label_72_0::
+	local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 	if state_name == "MatchmakingStateRequestJoinGame" or state_name == "MatchmakingStateRequestGameServerOwnership" or state_name == "MatchmakingStateReserveSlotsPlayerHosted" then
 		self._state:rpc_notify_connected(channel_id)
@@ -2340,21 +1851,7 @@ MatchmakingManager.rpc_flexmatch_game_session_id_request = function (self, chann
 	if self._state.rpc_flexmatch_game_session_id_request then
 		self._state:rpc_flexmatch_game_session_id_request(channel_id)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_73_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_flexmatch_game_session_id_request, got this in wrong state current_state:%s", state_name)
 	end
@@ -2362,24 +1859,10 @@ end
 
 MatchmakingManager.rpc_matchmaking_join_game = function (self, channel_id)
 	-- function 74
-	if (not self._state or self._state.NAME ~= "MatchmakingStateJoinGame") and self._state.NAME == "MatchmakingStateWaitJoinPlayerHosted" then
+	if self._state and (self._state.NAME == "MatchmakingStateJoinGame" or self._state.NAME == "MatchmakingStateWaitJoinPlayerHosted") or not self._state and self._state.NAME == "MatchmakingStateWaitJoinPlayerHosted" then
 		self._state:rpc_matchmaking_join_game(channel_id)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_74_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_join_game, got this in wrong state current_state:%s", state_name)
 	end
@@ -2390,21 +1873,7 @@ MatchmakingManager.rpc_matchmaking_request_profile_reply = function (self, chann
 	if self._state and self._state.NAME == "MatchmakingStateJoinGame" then
 		self._state:rpc_matchmaking_request_profile_reply(channel_id, profile, reply)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_75_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_profile_reply, got this in wrong state current_state:%s", state_name)
 	end
@@ -2415,21 +1884,7 @@ MatchmakingManager.rpc_matchmaking_request_profiles_data_reply = function (self,
 	if self._state and self._state.NAME == "MatchmakingStateRequestProfiles" then
 		self._state:rpc_matchmaking_request_profiles_data_reply(channel_id, peer_array_by_party, profile_index_array_by_party, party_id)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_76_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_profiles_data_reply, got this in wrong state current_state:%s", state_name)
 	end
@@ -2444,21 +1899,7 @@ MatchmakingManager.rpc_matchmaking_request_selected_level = function (self, chan
 
 		RPC.rpc_matchmaking_request_selected_level_reply(channel_id, selected_mission_id)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_77_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_selected_level, got this in wrong state current_state:%s", state_name)
 	end
@@ -2469,21 +1910,7 @@ MatchmakingManager.rpc_matchmaking_request_selected_level_reply = function (self
 	if self._state and self._state.NAME == "MatchmakingStateFriendClient" then
 		self._state:rpc_matchmaking_request_selected_level_reply(channel_id, selected_level_id)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_78_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_selected_level_reply, got this in wrong state current_state:%s", state_name)
 	end
@@ -2498,21 +1925,7 @@ MatchmakingManager.rpc_matchmaking_request_selected_difficulty = function (self,
 
 		RPC.rpc_matchmaking_request_selected_difficulty_reply(channel_id, difficulty_id)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_79_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_selected_difficulty, got this in wrong state current_state:%s", state_name)
 	end
@@ -2523,21 +1936,7 @@ MatchmakingManager.rpc_matchmaking_request_selected_difficulty_reply = function 
 	if self._state and self._state.NAME == "MatchmakingStateFriendClient" then
 		self._state:rpc_matchmaking_request_selected_difficulty_reply(channel_id, difficulty_id)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_80_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_selected_difficulty_reply, got this in wrong state current_state:%s", state_name)
 	end
@@ -2554,21 +1953,7 @@ MatchmakingManager.rpc_matchmaking_request_status_message = function (self, chan
 
 		RPC.rpc_matchmaking_status_message(channel_id, status_message)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_81_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_request_status_message, got this in wrong state current_state:%s", state_name)
 	end
@@ -2579,21 +1964,7 @@ MatchmakingManager.rpc_matchmaking_status_message = function (self, channel_id, 
 	if self._state and self._state.NAME == "MatchmakingStateFriendClient" then
 		self._state:rpc_matchmaking_status_message(channel_id, status_message)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_82_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_status_message, got this in wrong state current_state:%s", state_name)
 	end
@@ -2613,21 +1984,7 @@ MatchmakingManager.rpc_matchmaking_broadcast_game_server_ip_address = function (
 	if self._state and self._state.NAME == "MatchmakingStateFriendClient" then
 		self._state:rpc_matchmaking_broadcast_game_server_ip_address(channel_id, ip_address)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_84_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_broadcast_game_server_ip_address, got this in wrong state current_state:%s", state_name)
 	end
@@ -2654,22 +2011,7 @@ MatchmakingManager.rpc_matchmaking_request_quickplay_data = function (self, chan
 	-- function 88
 	local unlocked_levels = self:_get_unlocked_levels()
 	local recent_games_played_json = Managers.backend:get_read_only_data("recent_quickplay_games")
-	local decode
-
-	if recent_games_played_json then
-		decode = cjson.decode(recent_games_played_json)
-
-		if not decode then
-			-- Nothing
-		end
-	end
-
-	decode = {}
-
-	local recent_games_played = decode
-
-	::label_88_0::
-
+	local recent_games_played = recent_games_played_json and not not cjson.decode(recent_games_played_json) or not recent_games_played_json and not not {}
 	local ignore_dlc_check = false
 	local weight_array = self:_calculate_level_weights(unlocked_levels, recent_games_played, ignore_dlc_check)
 
@@ -2700,21 +2042,7 @@ MatchmakingManager.rpc_matchmaking_verify_dlc_reply = function (self, channel_id
 	if self._state and self._state.NAME == "MatchmakingStateStartGame" then
 		self._state:rpc_matchmaking_verify_dlc_reply(channel_id, success)
 	else
-		local NAME
-
-		if self._state then
-			NAME = self._state.NAME
-
-			if not NAME then
-				-- Nothing
-			end
-		end
-
-		NAME = "none"
-
-		local state_name = NAME
-
-		::label_90_0::
+		local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 		mm_printf_force("rpc_matchmaking_verify_dlc_reply, got this in wrong state current_state:%s", state_name)
 	end
@@ -2722,21 +2050,7 @@ end
 
 MatchmakingManager.rpc_join_reserved_game_server = function (self, channel_id)
 	-- function 91
-	local NAME
-
-	if self._state then
-		NAME = self._state.NAME
-
-		if not NAME then
-			-- Nothing
-		end
-	end
-
-	NAME = "none"
-
-	local state_name = NAME
-
-	::label_91_0::
+	local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 	if state_name == "MatchmakingStateReserveLobby" then
 		self._state:rpc_join_reserved_game_server(channel_id)
@@ -2747,21 +2061,7 @@ end
 
 MatchmakingManager.rpc_matchmaking_client_joined_player_hosted = function (self, channel_id, success)
 	-- function 92
-	local NAME
-
-	if self._state then
-		NAME = self._state.NAME
-
-		if not NAME then
-			-- Nothing
-		end
-	end
-
-	NAME = "none"
-
-	local state_name = NAME
-
-	::label_92_0::
+	local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 	if state_name == "MatchmakingStateReserveSlotsPlayerHosted" then
 		self._state:rpc_matchmaking_client_joined_player_hosted(channel_id, success)
@@ -2772,21 +2072,7 @@ end
 
 MatchmakingManager.rpc_matchmaking_reservation_success = function (self, channel_id, success)
 	-- function 93
-	local NAME
-
-	if self._state then
-		NAME = self._state.NAME
-
-		if not NAME then
-			-- Nothing
-		end
-	end
-
-	NAME = "none"
-
-	local state_name = NAME
-
-	::label_93_0::
+	local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 	if state_name == "MatchmakingStateReserveSlotsPlayerHosted" then
 		self._state:rpc_matchmaking_reservation_success(channel_id, success)
@@ -2807,18 +2093,7 @@ MatchmakingManager.rpc_matchmaking_request_reserve_slots = function (self, chann
 		reply = "lobby_id_mismatch"
 	else
 		local game_mechanism = Managers.mechanism:game_mechanism()
-		local get_slot_reservation_handler = game_mechanism:get_slot_reservation_handler(Network.peer_id(), ReservationHandlerTypes.pending_custom_game)
-
-		if not get_slot_reservation_handler then
-			-- Nothing
-		end
-
-		get_slot_reservation_handler = game_mechanism:get_slot_reservation_handler(Network.peer_id(), ReservationHandlerTypes.session)
-
-		local slot_reservation_handler = get_slot_reservation_handler
-
-		::label_94_0::
-
+		local slot_reservation_handler = not not game_mechanism:get_slot_reservation_handler(Network.peer_id(), ReservationHandlerTypes.pending_custom_game)
 		local reserved, leader_party_id = slot_reservation_handler:try_reserve_slots(group_leader_peer_id, peers_to_reserve)
 
 		if not reserved then
@@ -2835,21 +2110,7 @@ end
 
 MatchmakingManager.rpc_matchmaking_request_reserve_slots_reply = function (self, channel_id, reply_id, reply_variable)
 	-- function 95
-	local NAME
-
-	if self._state then
-		NAME = self._state.NAME
-
-		if not NAME then
-			-- Nothing
-		end
-	end
-
-	NAME = "none"
-
-	local state_name = NAME
-
-	::label_95_0::
+	local state_name = self._state and not not self._state.NAME or not self._state and not not "none"
 
 	if state_name == "MatchmakingStateReserveSlotsPlayerHosted" then
 		self._state:rpc_matchmaking_request_reserve_slots_reply(channel_id, reply_id, reply_variable)
@@ -2879,25 +2140,7 @@ end
 
 MatchmakingManager.countdown_completed = function (self)
 	-- function 98
-	local is_leader
-
-	if not self.countdown_has_finished and not self.is_server then
-		is_leader = Managers.party:is_leader(self.peer_id)
-
-		if is_leader then
-			is_leader = self:on_dedicated_server()
-		end
-	else
-		is_leader = false
-	end
-
-	goto label_98_0
-
-	is_leader = true
-
-	local tell_server = is_leader
-
-	::label_98_0::
+	local tell_server = not self.countdown_has_finished and not self.is_server and not not Managers.party:is_leader(self.peer_id)
 
 	if tell_server then
 		self.countdown_has_finished = false
@@ -3053,23 +2296,7 @@ end
 MatchmakingManager.allow_cancel_matchmaking = function (self)
 	-- function 105
 	local state = self._state
-	local query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
-
-	if not query_lobby then
-		-- Nothing
-	end
-
-	query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
-
-	if not query_lobby then
-		-- Nothing
-	end
-
-	query_lobby = state.lobby_client
-
-	local lobby_client = query_lobby
-
-	::label_105_0::
+	local lobby_client = not not Managers.lobby:query_lobby("matchmaking_join_lobby")
 
 	if lobby_client then
 		if lobby_client:is_joined() then
@@ -3103,24 +2330,7 @@ function DEBUG_LOBBIES()
 
 	table.dump(lobby_data, "lobby_data")
 
-	local _state = Managers.matchmaking._state
-
-	if _state then
-		-- Nothing
-	end
-
-	_state = Managers.matchmaking._state.active_lobby
-
-	if _state then
-		-- Nothing
-	end
-
-	_state = Managers.matchmaking._state:active_lobby()
-
-	local active_lobby = _state
-
-	::label_107_0::
-
+	local active_lobby = not not Managers.matchmaking._state
 	local active_lobby_data = not not active_lobby and not not active_lobby:get_stored_lobby_data()
 
 	if active_lobby_data then
@@ -3136,10 +2346,8 @@ MatchmakingManager.rpc_set_client_game_privacy = function (self, channel_id, is_
 
 	if not self.is_server then
 		local stored_lobby_data = lobby:get_stored_lobby_data()
-		local flag
 
-		flag = (not is_private or not "true") and not not "false"
-		stored_lobby_data.is_private = flag
+		stored_lobby_data.is_private = is_private and not not "true" or not is_private and not not "false"
 	end
 end
 
@@ -3148,19 +2356,7 @@ MatchmakingManager.set_game_privacy = function (self, is_private)
 	local lobby = self.lobby
 
 	if self.is_server and lobby:is_joined() then
-		local str
-
-		if is_private then
-			str = "true"
-
-			goto label_109_0
-		end
-
-		str = "false"
-
-		local value = str
-
-		::label_109_0::
+		local value = is_private and not not "true" or not is_private and not not "false"
 
 		self:_set_lobby_data(lobby, "is_private", value)
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_set_client_game_privacy", is_private)
@@ -3181,19 +2377,7 @@ MatchmakingManager.set_in_progress_game_privacy = function (self, is_private)
 	if self.is_server and lobby:is_joined() then
 		self:set_game_privacy(is_private)
 
-		local str
-
-		if is_private then
-			str = "false"
-
-			goto label_111_0
-		end
-
-		str = "true"
-
-		local value = str
-
-		::label_111_0::
+		local value = is_private and not not "false" or not is_private and not not "true"
 
 		self:_set_lobby_data(lobby, "matchmaking", value)
 
@@ -3210,19 +2394,7 @@ MatchmakingManager.set_lobby_data_match_started = function (self, match_started)
 	local lobby = self.lobby
 
 	if self.is_server and lobby:is_joined() then
-		local str
-
-		if match_started then
-			str = "true"
-
-			goto label_112_0
-		end
-
-		str = "false"
-
-		local value = str
-
-		::label_112_0::
+		local value = match_started and not not "true" or not match_started and not not "false"
 
 		self:_set_lobby_data(lobby, "match_started", value)
 	end
@@ -3261,17 +2433,7 @@ MatchmakingManager._matchmaking_status = function (self)
 	elseif state_name == "MatchmakingStateRequestJoinGame" or state_name == "MatchmakingStateRequestProfiles" or state_name == "MatchmakingStateJoinGame" then
 		return "joining_game"
 	elseif state_name == "MatchmakingStateFriendClient" then
-		local lobby = self.lobby
-
-		if lobby then
-			-- Nothing
-		end
-
-		lobby = self.lobby:lobby_data("mechanism")
-
-		local lobby_mechanism = lobby
-
-		::label_115_0::
+		local lobby_mechanism = not not self.lobby
 
 		if lobby_mechanism == "versus" then
 			return "searching_for_servers"
@@ -3318,29 +2480,7 @@ MatchmakingManager.get_reserved_slots = function (self)
 		reserved_slots_mask = not not self.lobby:lobby_data("reserved_slots_mask") or not not reserved_slots_mask
 		mechanism_name = self.lobby:lobby_data("mechanism")
 	else
-		local lobby_client = self._state.lobby_client
-
-		if not lobby_client then
-			-- Nothing
-		end
-
-		lobby_client = Managers.lobby:query_lobby("matchmaking_join_lobby")
-
-		if not lobby_client then
-			-- Nothing
-		end
-
-		lobby_client = Managers.lobby:query_lobby("matchmaking_join_lobby")
-
-		if not lobby_client then
-			-- Nothing
-		end
-
-		lobby_client = self.lobby
-
-		local lobby = lobby_client
-
-		::label_117_0::
+		local lobby = not not self._state.lobby_client
 
 		if not lobby then
 			return
@@ -3377,25 +2517,9 @@ MatchmakingManager._decode_reserved_slots_mask = function (self, reserved_slots_
 
 	for party_id, num_slots in ipairs(SLOTS) do
 		for i = 1, num_slots do
-			local num
+			local bit_value = bit.band(reserved_slots_mask, bit.lshift(1, start_bit + (i - 1))) > 0 and not not 1 or not (bit.band(reserved_slots_mask, bit.lshift(1, start_bit + (i - 1))) > 0) and not not 0
 
-			if bit.band(reserved_slots_mask, bit.lshift(1, start_bit + (i - 1))) > 0 then
-				num = 1
-
-				goto label_118_0
-			end
-
-			num = 0
-
-			local bit_value = num
-
-			::label_118_0::
-
-			local var_118_1 = RESERVATIONS
-			local var_118_2 = RESERVATIONS[party_id]
-
-			var_118_2 = not not var_118_2 or not not 0
-			var_118_1[party_id] = var_118_2 + bit_value
+			RESERVATIONS[party_id] = not not RESERVATIONS[party_id] + bit_value
 		end
 
 		start_bit = start_bit + num_slots
@@ -3420,55 +2544,21 @@ MatchmakingManager.search_info = function (self)
 			info.matchmaking_type = search_config.matchmaking_type
 			info.mechanism = search_config.mechanism
 		else
-			local lobby_client = self._state.lobby_client
-
-			if not lobby_client then
-				-- Nothing
-			end
-
-			lobby_client = Managers.lobby:query_lobby("matchmaking_join_lobby")
-
-			if not lobby_client then
-				-- Nothing
-			end
-
-			lobby_client = Managers.lobby:query_lobby("matchmaking_join_lobby")
-
-			local lobby = lobby_client
-
-			::label_119_0::
+			local lobby = not not self._state.lobby_client
 
 			if lobby then
 				local mission_id = lobby:lobby_data("mission_id")
 				local difficulty = lobby:lobby_data("difficulty")
 				local matchmaking_type = lobby:lobby_data("matchmaking_type")
 				local weave_quick_game = lobby:lobby_data("weave_quick_game") == "true"
-
-				if not weave_quick_game then
-					-- Nothing
-				end
-
-				::label_119_1::
-
-				local has_pending_quick_game = Managers.venture.quickplay:has_pending_quick_game()
-
-				if not has_pending_quick_game then
-					-- Nothing
-				end
-
-				has_pending_quick_game = Managers.venture.quickplay:is_quick_game()
-
-				local quick_game = has_pending_quick_game
-
-				::label_119_2::
-
+				local quick_game = not not weave_quick_game or not not Managers.venture.quickplay:has_pending_quick_game()
 				local mechanism = lobby:lobby_data("mechanism")
 
 				info.mission_id = mission_id
 				info.difficulty = difficulty
 				info.quick_game = quick_game
 				info.mechanism = mechanism
-				info.matchmaking_type = (not IS_PS4 or not matchmaking_type) and not not matchmaking_type and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type)]
+				info.matchmaking_type = not not matchmaking_type and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type)]
 			end
 		end
 	else
@@ -3478,30 +2568,13 @@ MatchmakingManager.search_info = function (self)
 		local matchmaking_type = lobby:lobby_data("matchmaking_type")
 		local mechanism = lobby:lobby_data("mechanism")
 		local lobby_weave_quick_game = lobby:lobby_data("weave_quick_game") == "true"
-
-		if not lobby_weave_quick_game then
-			-- Nothing
-		end
-
-		::label_119_3::
-
-		local has_pending_quick_game_2 = Managers.venture.quickplay:has_pending_quick_game()
-
-		if not has_pending_quick_game_2 then
-			-- Nothing
-		end
-
-		has_pending_quick_game_2 = Managers.venture.quickplay:is_quick_game()
-
-		local quick_game = has_pending_quick_game_2
-
-		::label_119_4::
+		local quick_game = not not lobby_weave_quick_game or not not Managers.venture.quickplay:has_pending_quick_game()
 
 		info.mission_id = selected_mission_id
 		info.difficulty = difficulty
 		info.quick_game = quick_game
 		info.mechanism = mechanism
-		info.matchmaking_type = (not IS_PS4 or not matchmaking_type) and not not matchmaking_type and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type)]
+		info.matchmaking_type = not not matchmaking_type and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type)]
 	end
 
 	local status = self:_matchmaking_status()
@@ -3513,31 +2586,14 @@ end
 
 MatchmakingManager.setup_weave_filters = function (self, state_context, filter_table)
 	-- function 120
-	local min = math.min
-	local expansion_rule_index_2 = self.state_context.expansion_rule_index
-
-	expansion_rule_index_2 = not not expansion_rule_index_2 or not not 1
-
-	local expansion_rule_index = min(expansion_rule_index_2, WeaveMatchmakingSettings.num_expansion_rules)
+	local expansion_rule_index = math.min(not not self.state_context.expansion_rule_index, WeaveMatchmakingSettings.num_expansion_rules)
 	local expansion_rules = WeaveMatchmakingSettings.expansion_rules[expansion_rule_index]
 	local current_filter_rules = expansion_rules.filters
 
 	for filter_name, filter_data in pairs(current_filter_rules) do
-		local value_2 = filter_data.value
+		local value = not not filter_data.value
 
-		if not value_2 then
-			-- Nothing
-		end
-
-		value_2 = filter_data.fetch_function(self._state)
-
-		local value = value_2
-
-		::label_120_0::
-
-		if filter_data.transform_data_function and not filter_data.transform_data_function(value) then
-			-- Nothing
-		end
+		value = not filter_data.transform_data_function or not not filter_data.transform_data_function(value) or not not value
 
 		local comparison = filter_data.comparison
 
@@ -3564,31 +2620,14 @@ end
 
 MatchmakingManager.setup_weave_near_filters = function (self, state_context, filter_table)
 	-- function 123
-	local min = math.min
-	local expansion_rule_index_2 = self.state_context.expansion_rule_index
-
-	expansion_rule_index_2 = not not expansion_rule_index_2 or not not 1
-
-	local expansion_rule_index = min(expansion_rule_index_2, WeaveMatchmakingSettings.num_expansion_rules)
+	local expansion_rule_index = math.min(not not self.state_context.expansion_rule_index, WeaveMatchmakingSettings.num_expansion_rules)
 	local expansion_rules = WeaveMatchmakingSettings.expansion_rules[expansion_rule_index]
 	local current_filter_rules = expansion_rules.near_filters
 
 	for filter_name, filter_data in pairs(current_filter_rules) do
-		local value_2 = filter_data.value
+		local value = not not filter_data.value
 
-		if not value_2 then
-			-- Nothing
-		end
-
-		value_2 = filter_data.fetch_function(self._state)
-
-		local value = value_2
-
-		::label_123_0::
-
-		if filter_data.transform_data_function and not filter_data.transform_data_function(value) then
-			-- Nothing
-		end
+		value = not filter_data.transform_data_function or not not filter_data.transform_data_function(value) or not not value
 
 		local comparison = filter_data.comparison
 
@@ -3601,12 +2640,7 @@ end
 
 MatchmakingManager.debug_weave_matchmaking = function (self, state_context, state)
 	-- function 124
-	local min = math.min
-	local expansion_rule_index = state_context.expansion_rule_index
-
-	expansion_rule_index = not not expansion_rule_index or not not 1
-
-	local current_expansion_rule_index = min(expansion_rule_index, WeaveMatchmakingSettings.num_expansion_rules)
+	local current_expansion_rule_index = math.min(not not state_context.expansion_rule_index, WeaveMatchmakingSettings.num_expansion_rules)
 	local expansion_rule_settings = WeaveMatchmakingSettings.expansion_rules[current_expansion_rule_index]
 
 	Debug.text("::::: WeaveMatchmakingDebug :::::")
@@ -3616,9 +2650,7 @@ MatchmakingManager.debug_weave_matchmaking = function (self, state_context, stat
 	for name, filter_data in pairs(expansion_rule_settings.filters) do
 		local value = filter_data.fetch_function(state)
 
-		if filter_data.transform_data_function and not filter_data.transform_data_function(value) then
-			-- Nothing
-		end
+		value = not filter_data.transform_data_function or not not filter_data.transform_data_function(value) or not not value
 
 		if filter_data.debug_format then
 			value = filter_data.debug_format(value)
@@ -3633,25 +2665,13 @@ MatchmakingManager.debug_weave_matchmaking = function (self, state_context, stat
 	for name, filter_data in pairs(expansion_rule_settings.near_filters) do
 		local value = filter_data.fetch_function(state)
 
-		if filter_data.transform_data_function and not filter_data.transform_data_function(value) then
-			-- Nothing
-		end
+		value = not filter_data.transform_data_function or not not filter_data.transform_data_function(value) or not not value
 
 		local requirements = filter_data.requirements
 
 		if requirements then
-			local max = math.max
-			local range_up = requirements.range_up
-
-			range_up = not not range_up or not not 0
-
-			local max_value = max(value + range_up, 0)
-			local max_2 = math.max
-			local range_down = requirements.range_down
-
-			range_down = not not range_down or not not 0
-
-			local min_value = max_2(value - range_down, 0)
+			local max_value = math.max(value + not not requirements.range_up, 0)
+			local min_value = math.max(value - not not requirements.range_down, 0)
 
 			Debug.text(" * " .. name .. ": " .. tostring(value))
 			Debug.text("         Min compatible value: " .. min_value)
@@ -3716,11 +2736,7 @@ end
 
 MatchmakingManager.get_matchmaking_settings_for_mechanism = function (mechanism_name)
 	-- function 129
-	local var_129_0 = MatchmakingSettingsOverrides[mechanism_name]
-
-	var_129_0 = not not var_129_0 or not not MatchmakingSettings
-
-	return var_129_0
+	return not not MatchmakingSettingsOverrides[mechanism_name]
 end
 
 local hierarchical_matchmaking_states = {
@@ -3748,11 +2764,7 @@ end
 
 MatchmakingManager.is_matchmaking_paused = function (self)
 	-- function 131
-	local _pause_matchmaking_until = self._pause_matchmaking_until
-
-	_pause_matchmaking_until = not not _pause_matchmaking_until and self._pause_matchmaking_until > self.t
-
-	return _pause_matchmaking_until
+	return not not self._pause_matchmaking_until
 end
 
 MatchmakingManager.pause_matchmaking_for_seconds = function (self, seconds)

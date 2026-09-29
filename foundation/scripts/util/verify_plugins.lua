@@ -1,6 +1,6 @@
 -- chunkname: @foundation/scripts/util/verify_plugins.lua
 
-if false and IS_WINDOWS and BUILD == "release" then
+if false then
 	local loaded_plugins = Application.all_plugin_names()
 	local plugin_check_list = {
 		"fishtank",
@@ -29,7 +29,7 @@ if false and IS_WINDOWS and BUILD == "release" then
 		if find_in_array(loaded_plugins, plugin_name) then
 			print("-> " .. plugin_name .. " plugin has been loaded.")
 		else
-			missing_plugins = (num_missing ~= 0 or not plugin_name) and not not (missing_plugins .. ", " .. plugin_name)
+			missing_plugins = not not (missing_plugins .. ", " .. plugin_name)
 			num_missing = num_missing + 1
 		end
 	end

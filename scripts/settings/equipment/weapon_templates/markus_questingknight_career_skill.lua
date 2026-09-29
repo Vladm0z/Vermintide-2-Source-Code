@@ -2,23 +2,9 @@
 
 local wield_with_cancel = table.clone(ActionTemplates.wield)
 local wield_default = wield_with_cancel.default
-local clone
-
-if type(wield_default.pre_action_anim_event) == "table" then
-	clone = table.clone(wield_default.pre_action_anim_event)
-
-	if not clone then
-		-- Nothing
-	end
-end
-
-clone = {
+local anims = type(wield_default.pre_action_anim_event) ~= "table" and not not {
 	wield_default.pre_action_anim_event
-}
-
-local anims = clone
-
-::label_0_0::
+} or not (type(wield_default.pre_action_anim_event) ~= "table") and not not table.clone(wield_default.pre_action_anim_event)
 
 table.insert(anims, 1, "questing_knight_ability_cancel_01")
 table.insert(anims, 2, "ability_finished")

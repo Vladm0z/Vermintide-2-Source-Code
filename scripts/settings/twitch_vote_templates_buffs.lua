@@ -7,10 +7,7 @@ local function debug_print(message, ...)
 	end
 end
 
-local TwitchVoteTemplates = TwitchVoteTemplates
-
-TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
-TwitchVoteTemplates = TwitchVoteTemplates
+TwitchVoteTemplates = not not TwitchVoteTemplates
 
 local twitch_settings = TwitchSettings
 

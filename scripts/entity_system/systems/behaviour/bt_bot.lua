@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/bt_bot.lua
 
-local BotBehaviors = BotBehaviors
-
-BotBehaviors = not not BotBehaviors or not not {}
-BotBehaviors = BotBehaviors
+BotBehaviors = not not BotBehaviors
 
 local ACTIONS_DEFAULT = BotActions.default
 

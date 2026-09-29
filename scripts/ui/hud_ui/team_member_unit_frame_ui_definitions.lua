@@ -119,34 +119,24 @@ if platform ~= "win32" then
 	scenegraph_definition.root.is_root = nil
 end
 
-local tbl
-
-if IS_WINDOWS then
-	tbl = {
-		wpn_grimoire_01 = "teammate_consumable_icon_grimoire",
-		potion_cooldown_reduction_01 = "teammate_consumable_icon_speed",
-		potion_healing_draught_01 = "teammate_consumable_icon_potion_01",
-		grenade_frag_02 = "teammate_consumable_icon_frag",
-		[3] = "teammate_consumable_icon_grenade_empty",
-		grenade_frag_01 = "teammate_consumable_icon_frag",
-		grenade_smoke_02 = "teammate_consumable_icon_smoke",
-		grenade_smoke_01 = "teammate_consumable_icon_smoke",
-		grenade_fire_01 = "teammate_consumable_icon_fire",
-		grenade_fire_02 = "teammate_consumable_icon_fire",
-		[1] = "teammate_consumable_icon_medpack_empty",
-		[2] = "teammate_consumable_icon_potion_empty",
-		wpn_side_objective_tome_01 = "teammate_consumable_icon_book",
-		potion_damage_boost_01 = "teammate_consumable_icon_strength",
-		healthkit_first_aid_kit_01 = "teammate_consumable_icon_medpack",
-		potion_speed_boost_01 = "teammate_consumable_icon_speed"
-	}
-
-	if not tbl then
-		-- Nothing
-	end
-end
-
-tbl = {
+local inventory_consumable_icons = IS_WINDOWS and not not {
+	wpn_grimoire_01 = "teammate_consumable_icon_grimoire",
+	potion_cooldown_reduction_01 = "teammate_consumable_icon_speed",
+	potion_healing_draught_01 = "teammate_consumable_icon_potion_01",
+	grenade_frag_02 = "teammate_consumable_icon_frag",
+	[3] = "teammate_consumable_icon_grenade_empty",
+	grenade_frag_01 = "teammate_consumable_icon_frag",
+	grenade_smoke_02 = "teammate_consumable_icon_smoke",
+	grenade_smoke_01 = "teammate_consumable_icon_smoke",
+	grenade_fire_01 = "teammate_consumable_icon_fire",
+	grenade_fire_02 = "teammate_consumable_icon_fire",
+	[1] = "teammate_consumable_icon_medpack_empty",
+	[2] = "teammate_consumable_icon_potion_empty",
+	wpn_side_objective_tome_01 = "teammate_consumable_icon_book",
+	potion_damage_boost_01 = "teammate_consumable_icon_strength",
+	healthkit_first_aid_kit_01 = "teammate_consumable_icon_medpack",
+	potion_speed_boost_01 = "teammate_consumable_icon_speed"
+} or not IS_WINDOWS and not not {
 	wpn_grimoire_01 = "consumables_grimoire",
 	potion_cooldown_reduction_01 = "consumables_speed",
 	potion_healing_draught_01 = "consumables_potion_01",
@@ -164,37 +154,15 @@ tbl = {
 	healthkit_first_aid_kit_01 = "consumables_medpack",
 	potion_speed_boost_01 = "consumables_speed"
 }
-
-local inventory_consumable_icons = tbl
-
-do
-	local tbl_2
-end
-
-::label_0_0::
-
-if IS_WINDOWS then
-	tbl_2 = {
-		slot_healthkit = 1,
-		slot_grenade = 3,
-		slot_potion = 2
-	}
-
-	if not tbl_2 then
-		-- Nothing
-	end
-end
-
-tbl_2 = {
+local inventory_index_by_slot = IS_WINDOWS and not not {
+	slot_healthkit = 1,
+	slot_grenade = 3,
+	slot_potion = 2
+} or not IS_WINDOWS and not not {
 	slot_potion = 3,
 	slot_grenade = 2,
 	slot_healthkit = 1
 }
-
-local inventory_index_by_slot = tbl_2
-
-::label_0_1::
-
 local weapon_slot_widget_settings = {
 	ammo_fields = {
 		slot_ranged = "ammo_text_weapon_slot_2",
@@ -214,7 +182,7 @@ local health_bar_offset = {
 
 local function create_static_widget()
 	-- function 1
-	local tbl = {
+	return {
 		scenegraph_id = "pivot",
 		element = {
 			passes = {
@@ -281,178 +249,136 @@ local function create_static_widget()
 			player_level = "",
 			hp_bar_fg = "hud_teammate_hp_bar_frame",
 			ability_bar_bg = "hud_teammate_ability_bar_bg"
-		}
-	}
-	local tbl_2 = {
-		character_portrait = {
-			size = {
-				86 * portrait_scale,
-				108 * portrait_scale
+		},
+		style = {
+			character_portrait = {
+				size = {
+					86 * portrait_scale,
+					108 * portrait_scale
+				},
+				offset = {
+					-43 * portrait_scale,
+					-54 * portrait_scale + 55 * portrait_scale,
+					0
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
 			},
-			offset = {
-				-43 * portrait_scale,
-				-54 * portrait_scale + 55 * portrait_scale,
-				0
+			host_icon = {
+				size = {
+					40,
+					40
+				},
+				offset = {
+					-65,
+					-2,
+					50
+				},
+				color = {
+					150,
+					255,
+					255,
+					255
+				}
 			},
-			color = {
-				255,
-				255,
-				255,
-				255
+			player_level = {
+				vertical_alignment = "top",
+				font_type = "hell_shark",
+				font_size = 14,
+				horizontal_alignment = "center",
+				text_color = Colors.get_table("cheeseburger"),
+				offset = {
+					health_bar_offset[1],
+					health_bar_offset[2] - 130,
+					health_bar_offset[3] + 15
+				}
+			},
+			player_name = {
+				vertical_alignment = "bottom",
+				font_type = "arial",
+				font_size = 18,
+				text_color = Colors.get_table("white"),
+				horizontal_alignment = IS_PS4 and not not "left" or not IS_PS4 and not not "center",
+				offset = {
+					IS_PS4 and not not (-43 * portrait_scale) or not IS_PS4 and not not 0,
+					110 * portrait_scale,
+					health_bar_offset[3] + 15
+				}
+			},
+			player_name_shadow = {
+				vertical_alignment = "bottom",
+				font_type = "arial",
+				font_size = 18,
+				text_color = Colors.get_table("black"),
+				horizontal_alignment = IS_PS4 and not not "left" or not IS_PS4 and not not "center",
+				offset = {
+					(IS_PS4 and not not (-43 * portrait_scale) or not IS_PS4 and not not 0) + 2,
+					110 * portrait_scale - 2,
+					health_bar_offset[3] + 14
+				}
+			},
+			hp_bar_bg = {
+				size = {
+					100,
+					17
+				},
+				offset = {
+					health_bar_offset[1] + health_bar_size[1] / 2 - 50,
+					health_bar_offset[2] + health_bar_size[2] / 2 - 8.5,
+					health_bar_offset[3] + 15
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
+			},
+			hp_bar_fg = {
+				size = {
+					100,
+					24
+				},
+				offset = {
+					health_bar_offset[1] + health_bar_size[1] / 2 - 50,
+					health_bar_offset[2] + health_bar_size[2] / 2 - 8.5 - 7,
+					health_bar_offset[3] + 20
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
+			},
+			ability_bar_bg = {
+				size = {
+					92,
+					5
+				},
+				offset = {
+					health_bar_offset[1] + health_bar_size[1] / 2 - 46,
+					health_bar_offset[2] - 9,
+					health_bar_offset[3] + 15
+				},
+				color = {
+					255,
+					255,
+					255,
+					255
+				}
 			}
 		},
-		host_icon = {
-			size = {
-				40,
-				40
-			},
-			offset = {
-				-65,
-				-2,
-				50
-			},
-			color = {
-				150,
-				255,
-				255,
-				255
-			}
-		},
-		player_level = {
-			vertical_alignment = "top",
-			font_type = "hell_shark",
-			font_size = 14,
-			horizontal_alignment = "center",
-			text_color = Colors.get_table("cheeseburger"),
-			offset = {
-				health_bar_offset[1],
-				health_bar_offset[2] - 130,
-				health_bar_offset[3] + 15
-			}
-		}
-	}
-	local tbl_3 = {
-		vertical_alignment = "bottom",
-		font_type = "arial",
-		font_size = 18,
-		text_color = Colors.get_table("white")
-	}
-	local flag
-
-	flag = (not IS_PS4 or not "left") and not not "center"
-	tbl_3.horizontal_alignment = flag
-
-	local tbl_4 = {}
-	local num
-
-	if IS_PS4 then
-		num = -43 * portrait_scale
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = 0
-
-	::label_1_0::
-
-	tbl_4[1] = num
-	tbl_4[2] = 110 * portrait_scale
-	tbl_4[3] = health_bar_offset[3] + 15
-	tbl_3.offset = tbl_4
-	tbl_2.player_name = tbl_3
-
-	local tbl_5 = {
-		vertical_alignment = "bottom",
-		font_type = "arial",
-		font_size = 18,
-		text_color = Colors.get_table("black")
-	}
-	local flag_2
-
-	flag_2 = (not IS_PS4 or not "left") and not not "center"
-	tbl_5.horizontal_alignment = flag_2
-
-	local tbl_6 = {}
-	local num_2
-
-	if IS_PS4 then
-		num_2 = -43 * portrait_scale
-
-		if not num_2 then
-			-- Nothing
-		end
-	end
-
-	num_2 = 0
-
-	::label_1_1::
-
-	tbl_6[1] = num_2 + 2
-	tbl_6[2] = 110 * portrait_scale - 2
-	tbl_6[3] = health_bar_offset[3] + 14
-	tbl_5.offset = tbl_6
-	tbl_2.player_name_shadow = tbl_5
-	tbl_2.hp_bar_bg = {
-		size = {
-			100,
-			17
-		},
 		offset = {
-			health_bar_offset[1] + health_bar_size[1] / 2 - 50,
-			health_bar_offset[2] + health_bar_size[2] / 2 - 8.5,
-			health_bar_offset[3] + 15
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
+			0,
+			-55 * portrait_scale,
+			0
 		}
 	}
-	tbl_2.hp_bar_fg = {
-		size = {
-			100,
-			24
-		},
-		offset = {
-			health_bar_offset[1] + health_bar_size[1] / 2 - 50,
-			health_bar_offset[2] + health_bar_size[2] / 2 - 8.5 - 7,
-			health_bar_offset[3] + 20
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		}
-	}
-	tbl_2.ability_bar_bg = {
-		size = {
-			92,
-			5
-		},
-		offset = {
-			health_bar_offset[1] + health_bar_size[1] / 2 - 46,
-			health_bar_offset[2] - 9,
-			health_bar_offset[3] + 15
-		},
-		color = {
-			255,
-			255,
-			255,
-			255
-		}
-	}
-	tbl.style = tbl_2
-	tbl.offset = {
-		0,
-		-55 * portrait_scale,
-		0
-	}
-
-	return tbl
 end
 
 local function create_dynamic_portait_widget()
@@ -547,15 +473,9 @@ local function create_dynamic_portait_widget()
 					content_check_function = function (content)
 						-- function 9
 						local ammo_progress = content.ammo_percent
-						local should_hide = (not not ammo_progress and not (ammo_progress > 0) or not (ammo_progress <= 0.33)) and ammo_progress <= 0
-						local user_setting = Application.user_setting("numeric_ui")
+						local should_hide = not not ammo_progress and ammo_progress > 0
 
-						if user_setting then
-							user_setting = content.has_ranged_weapon
-							user_setting = not not user_setting and not not not should_hide
-						end
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				},
 				{
@@ -565,11 +485,7 @@ local function create_dynamic_portait_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 10
-						local user_setting = Application.user_setting("numeric_ui")
-
-						user_setting = not not user_setting and not not content.on_cooldown
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				},
 				{
@@ -579,11 +495,7 @@ local function create_dynamic_portait_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 11
-						local user_setting = Application.user_setting("numeric_ui")
-
-						user_setting = not not user_setting and not not content.has_ranged_weapon
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				},
 				{
@@ -593,11 +505,7 @@ local function create_dynamic_portait_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 12
-						local user_setting = Application.user_setting("numeric_ui")
-
-						user_setting = not not user_setting and not not content.has_ranged_weapon
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				},
 				{
@@ -607,11 +515,7 @@ local function create_dynamic_portait_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 13
-						local user_setting = Application.user_setting("numeric_ui")
-
-						user_setting = not not user_setting and not not content.on_cooldown
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				},
 				{
@@ -621,11 +525,7 @@ local function create_dynamic_portait_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 14
-						local user_setting = Application.user_setting("numeric_ui")
-
-						user_setting = not not user_setting and not not content.on_cooldown
-
-						return user_setting
+						return not not Application.user_setting("numeric_ui")
 					end
 				},
 				{
@@ -1092,11 +992,7 @@ local function create_dynamic_loadout_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 30
-						local draw_health_bar = content.draw_health_bar
-
-						draw_health_bar = not not draw_health_bar and not not content.item_count_1
-
-						return draw_health_bar
+						return not not content.draw_health_bar
 					end
 				},
 				{
@@ -1106,11 +1002,7 @@ local function create_dynamic_loadout_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 31
-						local draw_health_bar = content.draw_health_bar
-
-						draw_health_bar = not not draw_health_bar and not not content.item_count_1
-
-						return draw_health_bar
+						return not not content.draw_health_bar
 					end
 				},
 				{
@@ -1120,11 +1012,7 @@ local function create_dynamic_loadout_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 32
-						local draw_health_bar = content.draw_health_bar
-
-						draw_health_bar = not not draw_health_bar and not not content.item_count_2
-
-						return draw_health_bar
+						return not not content.draw_health_bar
 					end
 				},
 				{
@@ -1134,11 +1022,7 @@ local function create_dynamic_loadout_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 33
-						local draw_health_bar = content.draw_health_bar
-
-						draw_health_bar = not not draw_health_bar and not not content.item_count_2
-
-						return draw_health_bar
+						return not not content.draw_health_bar
 					end
 				},
 				{
@@ -1148,11 +1032,7 @@ local function create_dynamic_loadout_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 34
-						local draw_health_bar = content.draw_health_bar
-
-						draw_health_bar = not not draw_health_bar and not not content.item_count_3
-
-						return draw_health_bar
+						return not not content.draw_health_bar
 					end
 				},
 				{
@@ -1162,11 +1042,7 @@ local function create_dynamic_loadout_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 35
-						local draw_health_bar = content.draw_health_bar
-
-						draw_health_bar = not not draw_health_bar and not not content.item_count_3
-
-						return draw_health_bar
+						return not not content.draw_health_bar
 					end
 				}
 			}
@@ -1509,18 +1385,7 @@ local function create_dynamic_health_widget()
 						-- function 39
 						local hp_bar_content = content.hp_bar
 						local internal_bar_value = hp_bar_content.internal_bar_value
-						local actual_active_percentage_2 = content.actual_active_percentage
-
-						if not actual_active_percentage_2 then
-							-- Nothing
-						end
-
-						actual_active_percentage_2 = 1
-
-						local actual_active_percentage = actual_active_percentage_2
-
-						::label_39_0::
-
+						local actual_active_percentage = not not content.actual_active_percentage
 						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
 						local offset = style.offset
 
@@ -1559,18 +1424,7 @@ local function create_dynamic_health_widget()
 						local parent_content = content.parent
 						local hp_bar_content = parent_content.hp_bar
 						local internal_bar_value = hp_bar_content.internal_bar_value
-						local actual_active_percentage_2 = parent_content.actual_active_percentage
-
-						if not actual_active_percentage_2 then
-							-- Nothing
-						end
-
-						actual_active_percentage_2 = 1
-
-						local actual_active_percentage = actual_active_percentage_2
-
-						::label_42_0::
-
+						local actual_active_percentage = not not parent_content.actual_active_percentage
 						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
 						local size = style.size
 						local uvs = content.uvs

@@ -430,17 +430,7 @@ local loading_widgets = {
 					texture_id = "texture_id",
 					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress_2 = style.progress
-
-						if not progress_2 then
-							-- Nothing
-						end
-
-						progress_2 = 0
-
-						local progress = progress_2
-
-						::label_1_0::
+						local progress = not not style.progress
 
 						progress = (progress + dt) % 1
 
@@ -847,18 +837,7 @@ local function create_base_portrait_frame(scenegraph_id, frame_settings_name, sc
 
 	for index, data in ipairs(frame_settings) do
 		local name = "texture_" .. index
-		local texture = data.texture
-
-		if not texture then
-			-- Nothing
-		end
-
-		texture = "icons_placeholder"
-
-		local texture_name = texture
-
-		::label_8_0::
-
+		local texture_name = not not data.texture
 		local size = data.size
 
 		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
@@ -869,45 +848,34 @@ local function create_base_portrait_frame(scenegraph_id, frame_settings_name, sc
 			size = data.size
 		end
 
-		size = (not size or not table.clone(size)) and not not {
+		size = size and (not not table.clone(size) or not not {
+			0,
+			0
+		}) or not size and not not {
 			0,
 			0
 		}
 		size[1] = size[1] * scale
 		size[2] = size[2] * scale
 
-		local clone = table.clone
-		local offset_2 = data.offset
-
-		offset_2 = not not offset_2 or not not default_offset
-
-		local offset = clone(offset_2)
+		local offset = table.clone(not not data.offset)
 
 		offset[1] = offset[1] * scale
 		offset[2] = offset[2] * scale
-
-		local layer = data.layer
-
-		layer = not not layer or not not 0
-		offset[3] = layer
+		offset[3] = not not data.layer
 		passes[#passes + 1] = {
 			pass_type = "texture",
 			texture_id = name,
 			style_id = name
 		}
 		content[name] = texture_name
-
-		local tbl = {
+		style[name] = {
 			vertical_alignment = "center",
-			horizontal_alignment = "center"
+			horizontal_alignment = "center",
+			color = not not data.color,
+			offset = offset,
+			texture_size = size
 		}
-		local color = data.color
-
-		color = not not color or not not default_color
-		tbl.color = color
-		tbl.offset = offset
-		tbl.texture_size = size
-		style[name] = tbl
 	end
 
 	widget.element.passes = passes

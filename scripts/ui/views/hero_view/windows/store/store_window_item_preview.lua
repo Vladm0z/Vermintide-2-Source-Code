@@ -299,7 +299,7 @@ StoreWindowItemPreview.update = function (self, dt, t)
 			local viewport_button = self._top_widgets_by_name.viewport_button
 			local is_hover = self:_is_button_hover(viewport_button)
 			local gamepad_active = Managers.input:is_device_active("gamepad")
-			local allow_preview_input = not input_handled and not input_hovered and not not gamepad_active or not not is_hover
+			local allow_preview_input = not not gamepad_active or not not is_hover
 
 			self._item_previewer:update(dt, t, not not allow_preview_input and not not input_service)
 		end
@@ -404,10 +404,8 @@ StoreWindowItemPreview._update_environment = function (self, item_preview_enviro
 	local object_set_data = viewport_widget_content.object_set_data
 	local world = object_set_data.world
 	local shading_settings = World.get_data(world, "shading_settings")
-	local flag
 
-	flag = (not force_default or not "default") and not not item_preview_environment
-	shading_settings[1] = flag
+	shading_settings[1] = force_default and not not "default" or not force_default and not not item_preview_environment
 end
 
 StoreWindowItemPreview.post_update = function (self, dt, t)
@@ -512,17 +510,7 @@ StoreWindowItemPreview._animate_dlc_list_entries = function (self, dt)
 	for _, widget in ipairs(dlc_list_widgets) do
 		local content = widget.content
 		local style = widget.style
-		local button_hotspot = content.button_hotspot
-
-		if not button_hotspot then
-			-- Nothing
-		end
-
-		button_hotspot = content.hotspot
-
-		local hotspot = button_hotspot
-
-		::label_14_0::
+		local hotspot = not not content.button_hotspot
 
 		if hotspot and hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
@@ -537,27 +525,14 @@ end
 StoreWindowItemPreview._is_dlc_list_hovered = function (self)
 	-- function 15
 	local list_mask = self._dlc_top_widgets_by_name.list
-	local is_hover = list_mask.content.list_hotspot.is_hover
 
-	is_hover = not not is_hover or not not false
-
-	return is_hover
+	return not not list_mask.content.list_hotspot.is_hover
 end
 
 StoreWindowItemPreview._is_button_hover = function (self, widget)
 	-- function 16
 	local content = widget.content
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_16_0::
+	local hotspot = not not content.button_hotspot
 
 	return hotspot.is_hover
 end
@@ -589,17 +564,7 @@ StoreWindowItemPreview._dlc_list_index_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot_2 = content.hotspot
-
-			if not hotspot_2 then
-				-- Nothing
-			end
-
-			hotspot_2 = content.button_hotspot
-
-			local hotspot = hotspot_2
-
-			::label_19_0::
+			local hotspot = not not content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -617,17 +582,7 @@ StoreWindowItemPreview._bundle_item_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot_2 = content.hotspot
-
-			if not hotspot_2 then
-				-- Nothing
-			end
-
-			hotspot_2 = content.button_hotspot
-
-			local hotspot = hotspot_2
-
-			::label_20_0::
+			local hotspot = not not content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -705,7 +660,7 @@ StoreWindowItemPreview._handle_input = function (self, input_service, dt, t)
 
 	local confirm_press = input_service:get("confirm_press")
 
-	if (self:_is_button_pressed(unlock_button) or confirm_press) and not self:_owns_product() then
+	if self:_is_button_pressed(unlock_button) and not self:_owns_product() or not self:_is_button_pressed(unlock_button) and confirm_press and not self:_owns_product() then
 		self:_play_sound("Play_hud_store_buy_window")
 
 		if self._show_dupe_warning then
@@ -715,21 +670,7 @@ StoreWindowItemPreview._handle_input = function (self, input_service, dt, t)
 
 			for i = 1, #self._required_dlcs do
 				local settings = StoreDlcSettingsByName[self._required_dlcs[i]]
-				local var_21_0
-
-				if settings then
-					var_21_0 = Localize(settings.name)
-
-					if not var_21_0 then
-						-- Nothing
-					end
-				end
-
-				var_21_0 = Localize("lb_unknown")
-
-				local dlc_name = var_21_0
-
-				::label_21_0::
+				local dlc_name = settings and not not Localize(settings.name) or not settings and not not Localize("lb_unknown")
 
 				missing_dlcs_text = missing_dlcs_text .. dlc_name .. "\n"
 			end
@@ -919,13 +860,7 @@ StoreWindowItemPreview._update_loading_overlay_fadeout_animation = function (sel
 	local start = 255
 	local target = 0
 	local speed = 9
-	local min = math.min
-	local num = 1
-	local _fadeout_progress = self._fadeout_progress
-
-	_fadeout_progress = not not _fadeout_progress or not not 0
-
-	local progress = min(num, _fadeout_progress + speed * dt)
+	local progress = math.min(1, not not self._fadeout_progress + speed * dt)
 	local alpha = math.lerp(start, target, math.easeInCubic(progress))
 	local loading_icon = loading_widgets_by_name.loading_icon
 
@@ -999,7 +934,7 @@ StoreWindowItemPreview._sync_presentation_item = function (self, force_update)
 					local item_data = item.data
 					local item_type = item_data.item_type
 
-					already_owned = (item_type == "chips" or not true) and not not false
+					already_owned = not not false
 				else
 					local all_owned, any_owned, missing_dlcs = backend_items:has_bundle_contents(item.data.bundle_contains)
 
@@ -1030,17 +965,7 @@ StoreWindowItemPreview._sync_presentation_item = function (self, force_update)
 				local product_item = selected_product.product_item
 				local product_item_data = product_item.data
 				local bundle = product_item_data.bundle
-				local BundledItems = bundle.BundledItems
-
-				if not BundledItems then
-					-- Nothing
-				end
-
-				BundledItems = {}
-
-				local bundled_items = BundledItems
-
-				::label_29_0::
+				local bundled_items = not not bundle.BundledItems
 
 				already_owned = true
 
@@ -1377,21 +1302,7 @@ StoreWindowItemPreview._present_dlc = function (self, settings, product_id)
 	end
 
 	local is_console = not IS_WINDOWS
-	local layout_console
-
-	if is_console then
-		layout_console = settings.layout_console
-
-		if not layout_console then
-			-- Nothing
-		end
-	end
-
-	layout_console = settings.layout
-
-	local layout = layout_console
-
-	::label_33_0::
+	local layout = is_console and not not settings.layout_console or not is_console and not not settings.layout
 
 	if not layout and settings.is_bundle then
 		layout = self:_create_dlc_bundle_layout(settings, product_id)
@@ -1424,39 +1335,8 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 	else
 		local currency_type = "SM"
 		local product_item = product.product_item
-		local regular_prices_2
-
-		if product_item then
-			regular_prices_2 = product_item.regular_prices
-
-			if not regular_prices_2 then
-				-- Nothing
-			end
-		end
-
-		regular_prices_2 = item.regular_prices
-
-		local regular_prices = regular_prices_2
-
-		do
-			local current_prices_2
-		end
-
-		::label_34_0::
-
-		if product_item then
-			current_prices_2 = product_item.current_prices
-
-			if not current_prices_2 then
-				-- Nothing
-			end
-		end
-
-		current_prices_2 = item.current_prices
-
-		local current_prices = current_prices_2
-
-		::label_34_1::
+		local regular_prices = product_item and not not product_item.regular_prices or not product_item and not not item.regular_prices
+		local current_prices = product_item and not not product_item.current_prices or not product_item and not not item.current_prices
 
 		for currency, settings in pairs(self._item_currency_settings) do
 			local has_regular_price = regular_prices[currency]
@@ -1469,50 +1349,19 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 			end
 		end
 
-		local var_34_2 = current_prices[currency_type]
-
-		if not var_34_2 then
-			-- Nothing
-		end
-
-		var_34_2 = regular_prices[currency_type]
-
-		local price = var_34_2
-
-		::label_34_2::
+		local price = not not current_prices[currency_type]
 
 		self:_set_price(price, currency_type)
 	end
 
-	local product_layout = item.product_layout
-
-	if not product_layout then
-		-- Nothing
-	end
-
-	product_layout = item_data.product_layout
-
-	local item_preview_layout_name = product_layout
-
-	::label_34_3::
-
+	local item_preview_layout_name = not not item.product_layout
 	local item_preview_layout = not not item_preview_layout_name and not not StoreBundleLayouts[item_preview_layout_name]
 
 	if item_type ~= "cosmetic_bundle" and item_data.bundle_contains and not item_preview_layout_name then
 		item_preview_layout = self:_create_item_bundle_layout(steam_itemdefid, item_data)
 	end
 
-	local required_dlc = item_data.required_dlc
-
-	if required_dlc then
-		-- Nothing
-	end
-
-	required_dlc = not Managers.unlock:is_dlc_unlocked(item_data.required_dlc)
-
-	local missing_required_dlc = required_dlc
-
-	::label_34_4::
+	local missing_required_dlc = not not item_data.required_dlc
 
 	if item_preview_layout then
 		local inventory_icon, display_name, _ = UIUtils.get_ui_information_from_item(item)
@@ -1528,7 +1377,7 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 		if missing_required_dlc then
 			local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-			disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
+			disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
 		end
 
 		self:_set_disclaimer_text(disclaimer_text)
@@ -1555,7 +1404,7 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 			if missing_required_dlc then
 				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
+				disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
 			else
 				disclaimer_text = Localize(item_type)
 			end
@@ -1567,7 +1416,7 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 			if missing_required_dlc then
 				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
+				disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
 			end
 		elseif slot_type == "skin" or slot_type == "cosmetic_bundle" or slot_type == "weapon_pose" then
 			local hero_skin = true
@@ -1578,13 +1427,13 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 				hero_skin = false
 			end
 
-			type_title_text = (not hero_skin or not Localize(item_type)) and not not Localize("dark_pact_skin")
+			type_title_text = hero_skin and (not not Localize(item_type) or not not Localize("dark_pact_skin")) or not hero_skin and not not Localize("dark_pact_skin")
 			item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_character_lights"
 
 			if missing_required_dlc then
 				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
+				disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
 			elseif slot_type == "weapon_pose" then
 				disclaimer_text = ""
 			elseif slot_type == "cosmetic_bundle" then
@@ -1631,21 +1480,7 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 		self._delayed_item_unit_presentation_delay = 0.3
 	end
 
-	local _calculate_expire_timer_text
-
-	if end_time then
-		_calculate_expire_timer_text = self:_calculate_expire_timer_text(end_time)
-
-		if not _calculate_expire_timer_text then
-			-- Nothing
-		end
-	end
-
-	_calculate_expire_timer_text = ""
-
-	local expire_timer_text = _calculate_expire_timer_text
-
-	::label_34_5::
+	local expire_timer_text = end_time and not not self:_calculate_expire_timer_text(end_time) or not end_time and not not ""
 
 	self:_set_expire_timer_text(expire_timer_text)
 
@@ -1665,18 +1500,7 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 	local item_data = item.data
 	local item_key = item_data.key
 	local slot_type = item_data.slot_type
-	local settings = self._selected_product.settings
-
-	if not settings then
-		-- Nothing
-	end
-
-	settings = dummy_table
-
-	local product_settings = settings
-
-	::label_35_0::
-
+	local product_settings = not not self._selected_product.settings
 	local viewport_widget = self._viewport_widget
 	local viewport_pass_data = viewport_widget.element.pass_data[1]
 	local viewport = viewport_pass_data.viewport
@@ -1738,22 +1562,7 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 
 		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
 		local career_settings = CareerSettings[career_name]
-		local store_optional_skin
-
-		if product_settings.part_of_bundle then
-			store_optional_skin = item_data.store_optional_skin
-
-			if not store_optional_skin then
-				-- Nothing
-			end
-		end
-
-		store_optional_skin = career_settings.base_skin
-
-		local skin = store_optional_skin
-
-		::label_35_1::
-
+		local skin = product_settings.part_of_bundle and not not item_data.store_optional_skin or not product_settings.part_of_bundle and not not career_settings.base_skin
 		local hat_name = item_data.key
 
 		self:_spawn_hero_with_hat(world_previewer, profile_name, career_index, skin, hat_name)
@@ -1777,21 +1586,7 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 
 			self:_spawn_hero_with_linked_weapon(world_previewer, profile_name, career_index, optional_skin, optional_weapon_skin)
 		else
-			local store_optional_hat
-
-			if product_settings.part_of_bundle then
-				store_optional_hat = item_data.store_optional_hat
-
-				if not store_optional_hat then
-					-- Nothing
-				end
-			end
-
-			store_optional_hat = nil
-
-			local optional_hat = store_optional_hat
-
-			::label_35_2::
+			local optional_hat = product_settings.part_of_bundle and not not item_data.store_optional_hat or not product_settings.part_of_bundle and not not nil
 
 			self:_spawn_hero_with_hat(world_previewer, profile_name, career_index, optional_skin, optional_hat)
 		end
@@ -2032,22 +1827,7 @@ StoreWindowItemPreview._setup_xb1_price_data = function (self, widget, price_dat
 	local style = widget.style
 	local spacing = 20
 	local size = content.size
-	local var_41_0
-
-	if price_data.availabilities then
-		var_41_0 = price_data.availabilities[1]
-
-		if not var_41_0 then
-			-- Nothing
-		end
-	end
-
-	var_41_0 = {}
-
-	local availability = var_41_0
-
-	::label_41_0::
-
+	local availability = price_data.availabilities and not not price_data.availabilities[1] or not price_data.availabilities and not not {}
 	local display_original_price = availability.DisplayListPrice
 	local display_price = availability.DisplayPrice
 
@@ -2219,42 +1999,8 @@ StoreWindowItemPreview._update_info_text_alignment = function (self)
 	local expire_widget = self._top_widgets_by_name.expire_timer_text
 	local disclaimer_widget = self._top_widgets_by_name.disclaimer_text
 	local divider_widget = self._top_widgets_by_name.disclaimer_divider
-	local _expire_text = self._expire_text
-
-	if _expire_text then
-		-- Nothing
-	end
-
-	if self._expire_text == "" then
-		_expire_text = false
-
-		goto label_52_0
-	end
-
-	_expire_text = true
-
-	local has_expire_text = _expire_text
-
-	::label_52_0::
-
-	local _disclaimer_text = self._disclaimer_text
-
-	if _disclaimer_text then
-		-- Nothing
-	end
-
-	if self._disclaimer_text == "" then
-		_disclaimer_text = false
-
-		goto label_52_1
-	end
-
-	_disclaimer_text = true
-
-	local has_disclaimer_text = _disclaimer_text
-
-	::label_52_1::
-
+	local has_expire_text = not not self._expire_text
+	local has_disclaimer_text = not not self._disclaimer_text
 	local text_widget_1, text_widget_2
 
 	if has_expire_text then
@@ -2270,40 +2016,8 @@ StoreWindowItemPreview._update_info_text_alignment = function (self)
 
 	local has_info_text = not not has_expire_text or not not has_disclaimer_text
 	local ui_renderer = self._ui_renderer
-	local get_text_width
-
-	if text_widget_1 then
-		get_text_width = UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text)
-
-		if not get_text_width then
-			-- Nothing
-		end
-	end
-
-	get_text_width = 0
-
-	local text_1_width = get_text_width
-
-	do
-		local get_text_width_2
-	end
-
-	::label_52_2::
-
-	if text_widget_2 then
-		get_text_width_2 = UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text)
-
-		if not get_text_width_2 then
-			-- Nothing
-		end
-	end
-
-	get_text_width_2 = 0
-
-	local text_2_width = get_text_width_2
-
-	::label_52_3::
-
+	local text_1_width = text_widget_1 and not not UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text) or not text_widget_1 and not not 0
+	local text_2_width = text_widget_2 and not not UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text) or not text_widget_2 and not not 0
 	local spacing = 14
 	local divider_width = scenegraph_definition[divider_widget.scenegraph_id].size[1]
 	local total_length = text_1_width + text_2_width + divider_width
@@ -2360,19 +2074,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	local timer_text = Localize("menu_store_expire_timer_expires_in") .. " "
 
 	if days > 0 then
-		local str
-
-		if days == 1 then
-			str = "datetime_day"
-
-			goto label_53_0
-		end
-
-		str = "datetime_days"
-
-		local day_string = str
-
-		::label_53_0::
+		local day_string = days ~= 1 and not not "datetime_days" or not (days ~= 1) and not not "datetime_day"
 
 		timer_text = timer_text .. string.format(Localize(day_string), days)
 
@@ -2380,19 +2082,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	end
 
 	if hours > 0 then
-		local str_2
-
-		if hours == 1 then
-			str_2 = "datetime_hour"
-
-			goto label_53_1
-		end
-
-		str_2 = "datetime_hours"
-
-		local hour_string = str_2
-
-		::label_53_1::
+		local hour_string = hours ~= 1 and not not "datetime_hours" or not (hours ~= 1) and not not "datetime_hour"
 
 		timer_text = timer_text .. string.format(Localize(hour_string), hours)
 
@@ -2400,19 +2090,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	end
 
 	if minutes > 0 then
-		local str_3
-
-		if minutes == 1 then
-			str_3 = "datetime_minute"
-
-			goto label_53_2
-		end
-
-		str_3 = "datetime_minutes"
-
-		local minute_string = str_3
-
-		::label_53_2::
+		local minute_string = minutes ~= 1 and not not "datetime_minutes" or not (minutes ~= 1) and not not "datetime_minute"
 
 		timer_text = timer_text .. string.format(Localize(minute_string), minutes)
 
@@ -2420,19 +2098,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	end
 
 	local seconds_left = math.max(time_left / 1000, 0)
-	local str_4
-
-	if seconds == 1 then
-		str_4 = "datetime_second"
-
-		goto label_53_3
-	end
-
-	str_4 = "datetime_seconds"
-
-	local second_string = str_4
-
-	::label_53_3::
+	local second_string = seconds ~= 1 and not not "datetime_seconds" or not (seconds ~= 1) and not not "datetime_second"
 
 	timer_text = timer_text .. string.format(Localize(second_string), seconds)
 
@@ -2538,7 +2204,7 @@ StoreWindowItemPreview.cb_hero_unit_spawned_hat_preview = function (self, world_
 			local item_template = ItemMasterList[item_name]
 			local slot_type = item_template.slot_type
 
-			if slot_type ~= "melee" and slot_type ~= "ranged" and (not hat_item_name or slot_type ~= "hat") then
+			if not hat_item_name or slot_type ~= "hat" then
 				local slot_names = InventorySettings.slot_names_by_type[slot_type]
 				local slot_name = slot_names[1]
 				local slot = InventorySettings.slots_by_name[slot_name]
@@ -2588,7 +2254,7 @@ StoreWindowItemPreview.cb_hero_unit_spawned_hat_and_pose_preview = function (sel
 			local item_template = ItemMasterList[item_name]
 			local slot_type = item_template.slot_type
 
-			if slot_type ~= "melee" and slot_type ~= "ranged" and (not hat_item_name or slot_type ~= "hat") then
+			if not hat_item_name or slot_type ~= "hat" then
 				local slot_names = InventorySettings.slot_names_by_type[slot_type]
 				local slot_name = slot_names[1]
 				local slot = InventorySettings.slots_by_name[slot_name]
@@ -2729,18 +2395,7 @@ StoreWindowItemPreview._sync_layout_path = function (self)
 	local path = parent:get_store_path()
 	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
-	local _saved_path = self._saved_path
-
-	if not _saved_path then
-		-- Nothing
-	end
-
-	_saved_path = {}
-
-	local saved_path = _saved_path
-
-	::label_64_0::
-
+	local saved_path = not not self._saved_path
 	local path_differs = false
 	local path_length = #path
 	local saved_path_length = #saved_path
@@ -2809,56 +2464,9 @@ StoreWindowItemPreview._animate_detail_button = function (self, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_66_1
-
-	::label_66_0::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_66_1::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_66_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_66_3::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local hover_progress = not not hotspot.hover_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -2890,17 +2498,7 @@ StoreWindowItemPreview._set_title_edge_length = function (self, length, animatio
 	local target_length = math.max(length - title_edge_detail_size[1], 0)
 	local title_edge = item_widgets_by_name.title_edge
 	local start_length = ui_scenegraph[title_edge.scenegraph_id].size[1]
-	local _title_edge_animation_data = self._title_edge_animation_data
-
-	if not _title_edge_animation_data then
-		-- Nothing
-	end
-
-	_title_edge_animation_data = {}
-
-	local title_edge_animation_data = _title_edge_animation_data
-
-	::label_67_0::
+	local title_edge_animation_data = not not self._title_edge_animation_data
 
 	self._title_edge_animation_data = title_edge_animation_data
 	title_edge_animation_data.duration = animation_duration
@@ -2955,22 +2553,7 @@ StoreWindowItemPreview._update_unlock_button_width = function (self, width_offse
 	local style = widget.style
 	local side_padding = 65
 	local frame_width = content.frame_width
-	local var_69_0
-
-	if already_owned then
-		var_69_0 = Localize(content.owned_text)
-
-		if not var_69_0 then
-			-- Nothing
-		end
-	end
-
-	var_69_0 = content.title_text
-
-	local title_text = var_69_0
-
-	::label_69_0::
-
+	local title_text = already_owned and not not Localize(content.owned_text) or not already_owned and not not content.title_text
 	local title_text_style = style.title_text
 	local title_text_width = self:_get_text_width(title_text_style, title_text)
 
@@ -2985,39 +2568,12 @@ StoreWindowItemPreview._update_unlock_button_width = function (self, width_offse
 
 	local currency_icon_style = style.currency_icon
 	local currency_icon_disabled_style = style.currency_icon_disabled
-	local var_69_1
-
-	if present_currency and not already_owned then
-		var_69_1 = currency_icon_style.texture_size[1]
-
-		if not var_69_1 then
-			-- Nothing
-		end
-	end
-
-	var_69_1 = 0
-
-	local currency_icon_width = var_69_1
-
-	::label_69_1::
+	local currency_icon_width = not not currency_icon_style.texture_size[1]
 
 	currency_icon_style.offset[1] = side_padding + title_text_width
 	currency_icon_disabled_style.offset[1] = currency_icon_style.offset[1]
 
-	local str
-
-	if present_currency and not already_owned then
-		str = "9999"
-
-		goto label_69_2
-	end
-
-	str = ""
-
-	local currency_text = str
-
-	::label_69_2::
-
+	local currency_text = not not "9999"
 	local currency_text_style = style.currency_text
 	local currency_text_disabled_style = style.currency_text_disabled
 	local currency_text_width = self:_get_text_width(currency_text_style, currency_text)

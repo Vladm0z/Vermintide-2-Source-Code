@@ -564,11 +564,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 3
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = border_size[1] + 1920 * safe_rect * 0.5
 						style.offset[2] = border_size[2] + 1080 * safe_rect * 0.5
@@ -579,11 +575,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 4
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = -border_size[1] - 1920 * safe_rect * 0.5
 						style.offset[2] = border_size[2] + 1080 * safe_rect * 0.5
@@ -594,11 +586,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 5
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = -border_size[1] - 1920 * safe_rect * 0.5
 						style.offset[2] = -border_size[2] - 1080 * safe_rect * 0.5
@@ -609,11 +597,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 6
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = border_size[1] + 1920 * safe_rect * 0.5
 						style.offset[2] = -border_size[2] - 1080 * safe_rect * 0.5
@@ -624,11 +608,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 7
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = 1920 * safe_rect * 0.5
 						style.offset[2] = border_size[1] + 1080 * safe_rect * 0.5
@@ -640,11 +620,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 8
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = -1920 * safe_rect * 0.5
 						style.offset[2] = border_size[1] + 1080 * safe_rect * 0.5
@@ -656,11 +632,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 9
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = 1920 * safe_rect * 0.5
 						style.offset[2] = -1080 * safe_rect * 0.5
@@ -672,11 +644,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 10
-						local user_setting = Application.user_setting("safe_rect")
-
-						user_setting = not not user_setting or not not 0
-
-						local safe_rect = user_setting * 0.01
+						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = 1920 * safe_rect * 0.5
 						style.offset[2] = 1080 * safe_rect * 0.5
@@ -1106,18 +1074,7 @@ local background_widget_definitions = {
 					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis)
 						-- function 13
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local scroll_step_2 = ui_content.scroll_step
-
-						if not scroll_step_2 then
-							-- Nothing
-						end
-
-						scroll_step_2 = 0.1
-
-						local scroll_step = scroll_step_2
-
-						::label_13_0::
-
+						local scroll_step = not not ui_content.scroll_step
 						local current_scroll_value = ui_content.internal_scroll_value
 
 						if not gamepad_active and IS_XB1 then
@@ -1241,11 +1198,7 @@ local button_element_template = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 15
-				local is_hover = content.hotspot.is_hover
-
-				is_hover = not not is_hover and content.hotspot.is_clicked > 0
-
-				return is_hover
+				return not not content.hotspot.is_hover
 			end
 		},
 		{
@@ -1645,7 +1598,7 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 	-- function 29
 	base_offset[2] = base_offset[2] - SLIDER_WIDGET_SIZE[2]
 
-	local tbl = {
+	local definition = {
 		element = {
 			passes = {
 				{
@@ -1704,14 +1657,7 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 					text_id = "tooltip_text",
 					content_check_function = function (content)
 						-- function 33
-						local tooltip_text = content.tooltip_text
-
-						if tooltip_text then
-							tooltip_text = content.highlight_hotspot.is_hover
-							tooltip_text = not not tooltip_text and not not not Managers.input:is_device_active("gamepad")
-						end
-
-						return tooltip_text
+						return not not content.tooltip_text
 					end
 				},
 				{
@@ -1767,13 +1713,7 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 						local internal_value = ui_content.internal_value
 						local min = ui_content.min
 						local max = ui_content.max
-						local round_with_precision = math.round_with_precision
-						local num = min + (max - min) * internal_value
-						local num_decimals = ui_content.num_decimals
-
-						num_decimals = not not num_decimals or not not 0
-
-						local real_value = round_with_precision(num, num_decimals)
+						local real_value = math.round_with_precision(min + (max - min) * internal_value, not not ui_content.num_decimals)
 
 						ui_content.value = real_value
 						ui_content.value_text = real_value
@@ -2007,651 +1947,400 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 					end
 				}
 			}
-		}
-	}
-	local tbl_2 = {
-		slider = "slider_thumb",
-		internal_value = 0.5,
-		rect_masked = "rect_masked",
-		slider_hover = "slider_thumb_hover",
-		value = 0.5,
-		highlight_texture = "playerlist_hover",
-		scenegraph_id = scenegraph_id,
-		text = text
-	}
-	local slider_image_2
-
-	if slider_image then
-		slider_image_2 = slider_image.slider_image
-
-		if not slider_image_2 then
-			-- Nothing
-		end
-	end
-
-	slider_image_2 = ""
-
-	::label_29_0::
-
-	tbl_2.slider_image = slider_image_2
-
-	local text_2
-
-	if slider_image_text then
-		text_2 = slider_image_text.text
-
-		if not text_2 then
-			-- Nothing
-		end
-	end
-
-	text_2 = ""
-
-	::label_29_1::
-
-	tbl_2.slider_image_text = text_2
-	tbl_2.tooltip_text = tooltip_text
-	tbl_2.hotspot = {}
-	tbl_2.highlight_hotspot = {
-		allow_multi_hover = true
-	}
-	tbl_2.hotspot_content_ids = {
-		"hotspot"
-	}
-	tbl_2.left_hotspot = {}
-	tbl_2.right_hotspot = {}
-	tbl_2.arrow = {
-		texture_id = "settings_arrow_normal",
-		uvs = {
-			{
-				1,
-				0
+		},
+		content = {
+			slider = "slider_thumb",
+			internal_value = 0.5,
+			rect_masked = "rect_masked",
+			slider_hover = "slider_thumb_hover",
+			value = 0.5,
+			highlight_texture = "playerlist_hover",
+			scenegraph_id = scenegraph_id,
+			text = text,
+			slider_image = slider_image and not not slider_image.slider_image or not slider_image and not not "",
+			slider_image_text = slider_image_text and not not slider_image_text.text or not slider_image_text and not not "",
+			tooltip_text = tooltip_text,
+			hotspot = {},
+			highlight_hotspot = {
+				allow_multi_hover = true
 			},
-			{
-				0,
-				1
-			}
-		}
-	}
-	tbl_2.arrow_hover = {
-		texture_id = "settings_arrow_clicked",
-		uvs = {
-			{
-				1,
-				0
+			hotspot_content_ids = {
+				"hotspot"
 			},
-			{
-				0,
-				1
+			left_hotspot = {},
+			right_hotspot = {},
+			arrow = {
+				texture_id = "settings_arrow_normal",
+				uvs = {
+					{
+						1,
+						0
+					},
+					{
+						0,
+						1
+					}
+				}
+			},
+			arrow_hover = {
+				texture_id = "settings_arrow_clicked",
+				uvs = {
+					{
+						1,
+						0
+					},
+					{
+						0,
+						1
+					}
+				}
 			}
-		}
+		},
+		style = {
+			offset = {
+				base_offset[1],
+				base_offset[2] - (slider_image and not not slider_image.size[2] or not slider_image and not not 0),
+				base_offset[3]
+			},
+			size = {
+				SLIDER_WIDGET_SIZE[1],
+				SLIDER_WIDGET_SIZE[2] + (slider_image and not not slider_image.size[2] or not slider_image and not not 0)
+			},
+			color = {
+				50,
+				255,
+				255,
+				255
+			},
+			highlight_texture = {
+				masked = true,
+				offset = {
+					base_offset[1],
+					base_offset[2],
+					base_offset[3]
+				},
+				color = Colors.get_table("white"),
+				size = {
+					SLIDER_WIDGET_SIZE[1],
+					SLIDER_WIDGET_SIZE[2]
+				}
+			},
+			tooltip_text = {
+				font_size = 24,
+				width = 500,
+				localize = true,
+				horizontal_alignment = "left",
+				vertical_alignment = "top",
+				font_type = "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				line_colors = {
+					(Colors.get_color_table_with_alpha("font_title", 255))
+				},
+				offset = {
+					0,
+					0,
+					0
+				}
+			},
+			text = {
+				upper_case = true,
+				localize = true,
+				dynamic_font = true,
+				font_size = 16,
+				font_type = "hell_shark_masked",
+				offset = {
+					base_offset[1],
+					base_offset[2] + 5,
+					base_offset[3]
+				},
+				text_color = Colors.get_color_table_with_alpha("font_default", 255)
+			},
+			slider_box = {
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 30,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 4,
+					base_offset[3] + 10
+				},
+				size = {
+					INPUT_FIELD_WIDTH - 112,
+					10
+				},
+				color = {
+					255,
+					5,
+					5,
+					5
+				}
+			},
+			disabled_slider_box = {
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 30,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 4,
+					base_offset[3] + 10
+				},
+				size = {
+					INPUT_FIELD_WIDTH - 112,
+					10
+				},
+				color = {
+					255,
+					20,
+					20,
+					20
+				}
+			},
+			slider_box_hotspot = {
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 19,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 13.5,
+					base_offset[3] + 10
+				},
+				size = {
+					INPUT_FIELD_WIDTH - 90,
+					27
+				}
+			},
+			slider = {
+				masked = true,
+				color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 13.5,
+					base_offset[3] + 15
+				},
+				size = {
+					14,
+					27
+				}
+			},
+			slider_hover = {
+				masked = true,
+				color = Colors.get_color_table_with_alpha("font_default", 255),
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 12.5,
+					base_offset[3] + 15
+				},
+				size = {
+					34,
+					25
+				}
+			},
+			input_field_background = {
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 50 - 2,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2,
+					base_offset[3]
+				},
+				color = INPUT_FIELD_COLOR,
+				size = {
+					52,
+					SLIDER_WIDGET_SIZE[2] - 10 + 2
+				}
+			},
+			input_field_background_2 = {
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 50,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2,
+					base_offset[3] + 1
+				},
+				color = {
+					255,
+					10,
+					10,
+					10
+				},
+				size = {
+					50,
+					SLIDER_WIDGET_SIZE[2] - 10
+				}
+			},
+			value_text = {
+				font_size = 16,
+				upper_case = true,
+				localize = false,
+				horizontal_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 25,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2 - 2,
+					base_offset[3] + 2
+				},
+				text_color = Colors.get_color_table_with_alpha("font_default", 255),
+				default_color = Colors.get_color_table_with_alpha("font_default", 255),
+				hover_color = Colors.get_color_table_with_alpha("font_default", 255)
+			},
+			disabled_value_text = {
+				font_size = 16,
+				upper_case = true,
+				localize = false,
+				horizontal_alignment = "center",
+				dynamic_font = true,
+				font_type = "hell_shark_masked",
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 25,
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2 - 2,
+					base_offset[3] + 2
+				},
+				text_color = Colors.get_color_table_with_alpha("font_default", 50),
+				default_color = Colors.get_color_table_with_alpha("font_default", 255),
+				hover_color = Colors.get_color_table_with_alpha("font_default", 255)
+			},
+			debug_middle_line = {
+				offset = {
+					base_offset[1],
+					base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 1,
+					base_offset[3] + 10
+				},
+				size = {
+					SLIDER_WIDGET_SIZE[1],
+					2
+				},
+				color = {
+					200,
+					0,
+					255,
+					0
+				}
+			},
+			slider_image = {
+				masked = true,
+				color = slider_image and not not slider_image.color or not slider_image and not not nil,
+				size = slider_image and not not slider_image.size or not slider_image and not not {
+					0,
+					0
+				},
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and not not slider_image.size[1] or not slider_image and not not 0),
+					base_offset[2] - (slider_image and not not slider_image.size[2] or not slider_image and not not 0),
+					base_offset[3] + 15
+				}
+			},
+			slider_image_text = {
+				horizontal_alignment = "left",
+				vertical_alignment = "center",
+				dynamic_font = true,
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and not not slider_image.size[1] or not slider_image and not not 0) + 5,
+					base_offset[2] - (slider_image and not not (slider_image.size[2] / 2) or not slider_image and not not 0),
+					base_offset[3] + 16
+				},
+				text_color = slider_image_text and not not slider_image_text.color or not slider_image_text and not not Colors.get_color_table_with_alpha("font_default", 255),
+				upper_case = slider_image_text and not not slider_image_text.upper_case or not slider_image_text and not not false,
+				font_type = slider_image_text and not not slider_image_text.font or not slider_image_text and not not "hell_shark_masked",
+				font_size = slider_image_text and not not slider_image_text.font_size or not slider_image_text and not not 16,
+				localize = slider_image_text and not not slider_image_text.localize or not slider_image_text and not not false
+			},
+			bottom_edge = {
+				offset = {
+					base_offset[1],
+					base_offset[2],
+					base_offset[3] + 1
+				},
+				color = BOTTOM_EDGE_COLOR,
+				size = {
+					SLIDER_WIDGET_SIZE[1],
+					BOTTOM_EDGE_THICKNESS
+				}
+			},
+			left_arrow = {
+				masked = true,
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
+					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
+					base_offset[3] + 1
+				},
+				size = {
+					19,
+					27
+				},
+				color = Colors.get_color_table_with_alpha("font_default", 255)
+			},
+			left_arrow_hover = {
+				masked = true,
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 6,
+					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 17.5),
+					base_offset[3]
+				},
+				size = {
+					30,
+					35
+				},
+				color = {
+					0,
+					255,
+					255,
+					255
+				}
+			},
+			left_arrow_hotspot = {
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
+					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
+					base_offset[3]
+				},
+				size = {
+					INPUT_FIELD_WIDTH / 2,
+					27
+				}
+			},
+			right_arrow = {
+				masked = true,
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 19 - 52,
+					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
+					base_offset[3]
+				},
+				size = {
+					19,
+					27
+				},
+				color = Colors.get_color_table_with_alpha("font_default", 255),
+				pivot = {
+					9.5,
+					13.5
+				}
+			},
+			right_arrow_hover = {
+				masked = true,
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - 30 - 52 - 5,
+					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 17.5),
+					base_offset[3]
+				},
+				size = {
+					30,
+					35
+				},
+				color = {
+					0,
+					255,
+					255,
+					255
+				},
+				pivot = {
+					9.5,
+					13.5
+				}
+			},
+			right_arrow_hotspot = {
+				offset = {
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH / 2,
+					base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
+					base_offset[3]
+				},
+				size = {
+					INPUT_FIELD_WIDTH / 2,
+					27
+				}
+			}
+		},
+		scenegraph_id = scenegraph_id
 	}
-	tbl.content = tbl_2
 
-	local tbl_3 = {}
-	local tbl_4 = {
-		base_offset[1]
-	}
-	local var_29_6 = base_offset[2]
-	local var_29_7
-
-	if slider_image then
-		var_29_7 = slider_image.size[2]
-
-		if not var_29_7 then
-			-- Nothing
-		end
-	end
-
-	var_29_7 = 0
-
-	::label_29_2::
-
-	tbl_4[2] = var_29_6 - var_29_7
-	tbl_4[3] = base_offset[3]
-	tbl_3.offset = tbl_4
-
-	local tbl_5 = {
-		SLIDER_WIDGET_SIZE[1]
-	}
-	local var_29_9 = SLIDER_WIDGET_SIZE[2]
-	local var_29_10
-
-	if slider_image then
-		var_29_10 = slider_image.size[2]
-
-		if not var_29_10 then
-			-- Nothing
-		end
-	end
-
-	var_29_10 = 0
-
-	::label_29_3::
-
-	tbl_5[2] = var_29_9 + var_29_10
-	tbl_3.size = tbl_5
-	tbl_3.color = {
-		50,
-		255,
-		255,
-		255
-	}
-	tbl_3.highlight_texture = {
-		masked = true,
-		offset = {
-			base_offset[1],
-			base_offset[2],
-			base_offset[3]
-		},
-		color = Colors.get_table("white"),
-		size = {
-			SLIDER_WIDGET_SIZE[1],
-			SLIDER_WIDGET_SIZE[2]
-		}
-	}
-	tbl_3.tooltip_text = {
-		font_size = 24,
-		width = 500,
-		localize = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		font_type = "hell_shark",
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		line_colors = {
-			(Colors.get_color_table_with_alpha("font_title", 255))
-		},
-		offset = {
-			0,
-			0,
-			0
-		}
-	}
-	tbl_3.text = {
-		upper_case = true,
-		localize = true,
-		dynamic_font = true,
-		font_size = 16,
-		font_type = "hell_shark_masked",
-		offset = {
-			base_offset[1],
-			base_offset[2] + 5,
-			base_offset[3]
-		},
-		text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	}
-	tbl_3.slider_box = {
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 30,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 4,
-			base_offset[3] + 10
-		},
-		size = {
-			INPUT_FIELD_WIDTH - 112,
-			10
-		},
-		color = {
-			255,
-			5,
-			5,
-			5
-		}
-	}
-	tbl_3.disabled_slider_box = {
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 30,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 4,
-			base_offset[3] + 10
-		},
-		size = {
-			INPUT_FIELD_WIDTH - 112,
-			10
-		},
-		color = {
-			255,
-			20,
-			20,
-			20
-		}
-	}
-	tbl_3.slider_box_hotspot = {
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 19,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 13.5,
-			base_offset[3] + 10
-		},
-		size = {
-			INPUT_FIELD_WIDTH - 90,
-			27
-		}
-	}
-	tbl_3.slider = {
-		masked = true,
-		color = Colors.get_color_table_with_alpha("font_default", 255),
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 13.5,
-			base_offset[3] + 15
-		},
-		size = {
-			14,
-			27
-		}
-	}
-	tbl_3.slider_hover = {
-		masked = true,
-		color = Colors.get_color_table_with_alpha("font_default", 255),
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 12.5,
-			base_offset[3] + 15
-		},
-		size = {
-			34,
-			25
-		}
-	}
-	tbl_3.input_field_background = {
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - 50 - 2,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2,
-			base_offset[3]
-		},
-		color = INPUT_FIELD_COLOR,
-		size = {
-			52,
-			SLIDER_WIDGET_SIZE[2] - 10 + 2
-		}
-	}
-	tbl_3.input_field_background_2 = {
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - 50,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2,
-			base_offset[3] + 1
-		},
-		color = {
-			255,
-			10,
-			10,
-			10
-		},
-		size = {
-			50,
-			SLIDER_WIDGET_SIZE[2] - 10
-		}
-	}
-	tbl_3.value_text = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		dynamic_font = true,
-		font_type = "hell_shark_masked",
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - 25,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2 - 2,
-			base_offset[3] + 2
-		},
-		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		default_color = Colors.get_color_table_with_alpha("font_default", 255),
-		hover_color = Colors.get_color_table_with_alpha("font_default", 255)
-	}
-	tbl_3.disabled_value_text = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		horizontal_alignment = "center",
-		dynamic_font = true,
-		font_type = "hell_shark_masked",
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - 25,
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - (SLIDER_WIDGET_SIZE[2] - 10) / 2 - 2,
-			base_offset[3] + 2
-		},
-		text_color = Colors.get_color_table_with_alpha("font_default", 50),
-		default_color = Colors.get_color_table_with_alpha("font_default", 255),
-		hover_color = Colors.get_color_table_with_alpha("font_default", 255)
-	}
-	tbl_3.debug_middle_line = {
-		offset = {
-			base_offset[1],
-			base_offset[2] + SLIDER_WIDGET_SIZE[2] / 2 - 1,
-			base_offset[3] + 10
-		},
-		size = {
-			SLIDER_WIDGET_SIZE[1],
-			2
-		},
-		color = {
-			200,
-			0,
-			255,
-			0
-		}
-	}
-
-	local tbl_6 = {
-		masked = true
-	}
-	local color
-
-	if slider_image then
-		color = slider_image.color
-
-		if not color then
-			-- Nothing
-		end
-	end
-
-	color = nil
-
-	::label_29_4::
-
-	tbl_6.color = color
-
-	local size
-
-	if slider_image then
-		size = slider_image.size
-
-		if not size then
-			-- Nothing
-		end
-	end
-
-	size = {
-		0,
-		0
-	}
-
-	::label_29_5::
-
-	tbl_6.size = size
-
-	local tbl_7 = {}
-	local num = base_offset[1] + SLIDER_WIDGET_SIZE[1]
-	local var_29_16
-
-	if slider_image then
-		var_29_16 = slider_image.size[1]
-
-		if not var_29_16 then
-			-- Nothing
-		end
-	end
-
-	var_29_16 = 0
-
-	::label_29_6::
-
-	tbl_7[1] = num - var_29_16
-
-	local var_29_17 = base_offset[2]
-	local var_29_18
-
-	if slider_image then
-		var_29_18 = slider_image.size[2]
-
-		if not var_29_18 then
-			-- Nothing
-		end
-	end
-
-	var_29_18 = 0
-
-	::label_29_7::
-
-	tbl_7[2] = var_29_17 - var_29_18
-	tbl_7[3] = base_offset[3] + 15
-	tbl_6.offset = tbl_7
-	tbl_3.slider_image = tbl_6
-
-	local tbl_8 = {
-		horizontal_alignment = "left",
-		vertical_alignment = "center",
-		dynamic_font = true
-	}
-	local tbl_9 = {}
-	local num_2 = base_offset[1] + SLIDER_WIDGET_SIZE[1]
-	local var_29_22
-
-	if slider_image then
-		var_29_22 = slider_image.size[1]
-
-		if not var_29_22 then
-			-- Nothing
-		end
-	end
-
-	var_29_22 = 0
-
-	::label_29_8::
-
-	tbl_9[1] = num_2 - var_29_22 + 5
-
-	local var_29_23 = base_offset[2]
-	local num_3
-
-	if slider_image then
-		num_3 = slider_image.size[2] / 2
-
-		if not num_3 then
-			-- Nothing
-		end
-	end
-
-	num_3 = 0
-
-	::label_29_9::
-
-	tbl_9[2] = var_29_23 - num_3
-	tbl_9[3] = base_offset[3] + 16
-	tbl_8.offset = tbl_9
-
-	local color_2
-
-	if slider_image_text then
-		color_2 = slider_image_text.color
-
-		if not color_2 then
-			-- Nothing
-		end
-	end
-
-	color_2 = Colors.get_color_table_with_alpha("font_default", 255)
-
-	::label_29_10::
-
-	tbl_8.text_color = color_2
-
-	local upper_case
-
-	if slider_image_text then
-		upper_case = slider_image_text.upper_case
-
-		if not upper_case then
-			-- Nothing
-		end
-	end
-
-	upper_case = false
-
-	::label_29_11::
-
-	tbl_8.upper_case = upper_case
-
-	local font
-
-	if slider_image_text then
-		font = slider_image_text.font
-
-		if not font then
-			-- Nothing
-		end
-	end
-
-	font = "hell_shark_masked"
-
-	::label_29_12::
-
-	tbl_8.font_type = font
-
-	local font_size
-
-	if slider_image_text then
-		font_size = slider_image_text.font_size
-
-		if not font_size then
-			-- Nothing
-		end
-	end
-
-	font_size = 16
-
-	::label_29_13::
-
-	tbl_8.font_size = font_size
-
-	local localize
-
-	if slider_image_text then
-		localize = slider_image_text.localize
-
-		if not localize then
-			-- Nothing
-		end
-	end
-
-	localize = false
-
-	::label_29_14::
-
-	tbl_8.localize = localize
-	tbl_3.slider_image_text = tbl_8
-	tbl_3.bottom_edge = {
-		offset = {
-			base_offset[1],
-			base_offset[2],
-			base_offset[3] + 1
-		},
-		color = BOTTOM_EDGE_COLOR,
-		size = {
-			SLIDER_WIDGET_SIZE[1],
-			BOTTOM_EDGE_THICKNESS
-		}
-	}
-	tbl_3.left_arrow = {
-		masked = true,
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-			base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-			base_offset[3] + 1
-		},
-		size = {
-			19,
-			27
-		},
-		color = Colors.get_color_table_with_alpha("font_default", 255)
-	}
-	tbl_3.left_arrow_hover = {
-		masked = true,
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH + 6,
-			base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 17.5),
-			base_offset[3]
-		},
-		size = {
-			30,
-			35
-		},
-		color = {
-			0,
-			255,
-			255,
-			255
-		}
-	}
-	tbl_3.left_arrow_hotspot = {
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH,
-			base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-			base_offset[3]
-		},
-		size = {
-			INPUT_FIELD_WIDTH / 2,
-			27
-		}
-	}
-	tbl_3.right_arrow = {
-		masked = true,
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - 19 - 52,
-			base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-			base_offset[3]
-		},
-		size = {
-			19,
-			27
-		},
-		color = Colors.get_color_table_with_alpha("font_default", 255),
-		pivot = {
-			9.5,
-			13.5
-		}
-	}
-	tbl_3.right_arrow_hover = {
-		masked = true,
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - 30 - 52 - 5,
-			base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 17.5),
-			base_offset[3]
-		},
-		size = {
-			30,
-			35
-		},
-		color = {
-			0,
-			255,
-			255,
-			255
-		},
-		pivot = {
-			9.5,
-			13.5
-		}
-	}
-	tbl_3.right_arrow_hotspot = {
-		offset = {
-			base_offset[1] + SLIDER_WIDGET_SIZE[1] - INPUT_FIELD_WIDTH / 2,
-			base_offset[2] + (SLIDER_WIDGET_SIZE[2] / 2 - 13.5),
-			base_offset[3]
-		},
-		size = {
-			INPUT_FIELD_WIDTH / 2,
-			27
-		}
-	}
-	tbl.style = tbl_3
-	tbl.scenegraph_id = scenegraph_id
-
-	local definition = tbl
-	local num_4 = base_offset[2] - SLIDER_WIDGET_SIZE[2]
-	local var_29_31
-
-	if slider_image then
-		var_29_31 = slider_image.size[2]
-
-		if not var_29_31 then
-			-- Nothing
-		end
-	end
-
-	var_29_31 = 0
-
-	::label_29_15::
-
-	base_offset[2] = num_4 - var_29_31
+	base_offset[2] = base_offset[2] - SLIDER_WIDGET_SIZE[2] - (slider_image and not not slider_image.size[2] or not slider_image and not not 0)
 
 	return UIWidget.init(definition)
 end
@@ -2898,31 +2587,11 @@ local function create_drop_down_widget(text, options, selected_option, tooltip_t
 							content._last_selection = content.current_selection
 							content._last_overriden_setting = content.overriden_setting
 
-							local upper = Utf8.upper
-							local var_64_1 = content.options_texts[content.current_selection]
-
-							var_64_1 = not not var_64_1 or not not "n/a"
-
-							local option_text = upper(var_64_1)
+							local option_text = Utf8.upper(not not content.options_texts[content.current_selection])
 							local overriden_setting = content.overriden_setting
 
 							if overriden_setting then
-								local override_color_2
-
-								if content.disabled then
-									override_color_2 = style.override_color
-
-									if not override_color_2 then
-										-- Nothing
-									end
-								end
-
-								override_color_2 = style.default_color
-
-								local override_color = override_color_2
-
-								::label_64_0::
-
+								local override_color = content.disabled and not not style.override_color or not content.disabled and not not style.default_color
 								local disabled_color = style.disabled_color
 
 								content.selected_option = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", override_color[2], override_color[3], override_color[4], override_color[1], option_text, disabled_color[2], disabled_color[3], disabled_color[4], disabled_color[1], Utf8.upper(overriden_setting))
@@ -2990,14 +2659,7 @@ local function create_drop_down_widget(text, options, selected_option, tooltip_t
 									return false
 								end
 
-								local is_hover = hotspot.is_hover
-
-								if not is_hover then
-									is_hover = Managers.input:is_device_active("gamepad")
-									is_hover = not not is_hover and not not hotspot.is_selected
-								end
-
-								return is_hover
+								return not not hotspot.is_hover
 							end
 						}
 					}
@@ -3491,12 +3153,7 @@ local function create_stepper_widget(text, options, selected_option, tooltip_tex
 							ui_content._last_selection = ui_content.current_selection
 							ui_content._last_overriden_setting = ui_content.overriden_setting
 
-							local upper = Utf8.upper
-							local var_80_1 = ui_content.options_texts[ui_content.current_selection]
-
-							var_80_1 = not not var_80_1 or not not "n/a"
-
-							local option_text = upper(var_80_1)
+							local option_text = Utf8.upper(not not ui_content.options_texts[ui_content.current_selection])
 							local overriden_setting = ui_content.overriden_setting
 
 							if overriden_setting then
@@ -4354,23 +4011,7 @@ local function create_option_widget(ui_renderer, text, options, selected_option,
 					local is_selected = i == current_selection
 
 					ui_content[option_background_id].is_selected = is_selected
-
-					local var_107_0 = ui_style[option_text_id]
-					local highlight_color
-
-					if is_selected then
-						highlight_color = ui_style[option_text_id].highlight_color
-
-						if not highlight_color then
-							-- Nothing
-						end
-					end
-
-					highlight_color = ui_style[option_text_id].default_color
-
-					::label_107_0::
-
-					var_107_0.text_color = highlight_color
+					ui_style[option_text_id].text_color = is_selected and not not ui_style[option_text_id].highlight_color or not is_selected and not not ui_style[option_text_id].default_color
 				end
 			end
 		end
@@ -4393,14 +4034,7 @@ local function create_option_widget(ui_renderer, text, options, selected_option,
 		text_id = "tooltip_text",
 		content_check_function = function (ui_content)
 			-- function 109
-			local tooltip_text = ui_content.tooltip_text
-
-			if tooltip_text then
-				tooltip_text = ui_content.highlight_hotspot.is_hover
-				tooltip_text = not not tooltip_text and not not not Managers.input:is_device_active("gamepad")
-			end
-
-			return tooltip_text
+			return not not ui_content.tooltip_text
 		end
 	}
 	passes[#passes + 1] = {
@@ -4704,11 +4338,7 @@ local function create_keybind_widget(selected_key_1, selected_key_2, keybind_des
 					texture_id = "highlight_texture",
 					content_check_function = function (content)
 						-- function 120
-						local is_highlighted = content.is_highlighted
-
-						is_highlighted = not not is_highlighted and not not not Managers.input:is_device_active("gamepad")
-
-						return is_highlighted
+						return not not content.is_highlighted
 					end
 				},
 				{
@@ -5125,14 +4755,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 					texture_id = "highlight_texture",
 					content_check_function = function (content)
 						-- function 133
-						local is_highlighted = content.is_highlighted
-
-						if is_highlighted then
-							is_highlighted = Managers.input:is_device_active("gamepad")
-							is_highlighted = not not is_highlighted and not not not content.active
-						end
-
-						return is_highlighted
+						return not not content.is_highlighted
 					end
 				},
 				{
@@ -5141,14 +4764,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 					text_id = "tooltip_text",
 					content_check_function = function (content)
 						-- function 134
-						local tooltip_text = content.tooltip_text
-
-						if tooltip_text then
-							tooltip_text = content.highlight_hotspot.is_hover
-							tooltip_text = not not tooltip_text and not not not Managers.input:is_device_active("gamepad")
-						end
-
-						return tooltip_text
+						return not not content.tooltip_text
 					end
 				},
 				{
@@ -5180,11 +4796,8 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						end
 
 						local down_hotspot = content.down_hotspot
-						local active = down_hotspot.active
 
-						active = not not active and not not down_hotspot.is_hover
-
-						return active
+						return not not down_hotspot.active
 					end
 				},
 				{
@@ -5201,21 +4814,8 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						local parent_content = content.parent
 						local parent_style = style.parent
 						local down_hotspot = parent_content.down_hotspot
-						local enabled_color
 
-						if down_hotspot.active then
-							enabled_color = parent_style.enabled_color
-
-							if not enabled_color then
-								-- Nothing
-							end
-						end
-
-						enabled_color = parent_style.disabled_color
-
-						::label_138_0::
-
-						style.color = enabled_color
+						style.color = down_hotspot.active and not not parent_style.enabled_color or not down_hotspot.active and not not parent_style.disabled_color
 
 						return true
 					end
@@ -5231,11 +4831,8 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						end
 
 						local up_hotspot = content.up_hotspot
-						local active = up_hotspot.active
 
-						active = not not active and not not up_hotspot.is_hover
-
-						return active
+						return not not up_hotspot.active
 					end
 				},
 				{
@@ -5252,21 +4849,8 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						local parent_content = content.parent
 						local parent_style = style.parent
 						local up_hotspot = parent_content.up_hotspot
-						local enabled_color
 
-						if up_hotspot.active then
-							enabled_color = parent_style.enabled_color
-
-							if not enabled_color then
-								-- Nothing
-							end
-						end
-
-						enabled_color = parent_style.disabled_color
-
-						::label_140_0::
-
-						style.color = enabled_color
+						style.color = up_hotspot.active and not not parent_style.enabled_color or not up_hotspot.active and not not parent_style.disabled_color
 
 						return true
 					end
@@ -5280,11 +4864,8 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						-- function 141
 						local parent_content = content.parent
 						local down_hotspot = parent_content.down_hotspot
-						local active = down_hotspot.active
 
-						active = not not active and not not down_hotspot.is_hover
-
-						return active
+						return not not down_hotspot.active
 					end
 				},
 				{
@@ -5296,11 +4877,8 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						-- function 142
 						local parent_content = content.parent
 						local up_hotspot = parent_content.up_hotspot
-						local active = up_hotspot.active
 
-						active = not not active and not not up_hotspot.is_hover
-
-						return active
+						return not not up_hotspot.active
 					end
 				},
 				{
@@ -5328,11 +4906,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 							pass_type = "texture",
 							content_check_function = function (content, style, index)
 								-- function 144
-								local is_hover = content.hotspot.is_hover
-
-								is_hover = not not is_hover or not not content.hotspot.is_selected
-
-								return is_hover
+								return not not content.hotspot.is_hover
 							end,
 							content_change_function = item_content_change_function
 						},
@@ -5342,11 +4916,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 							pass_type = "texture",
 							content_check_function = function (content, style, index)
 								-- function 145
-								local is_hover = content.hotspot.is_hover
-
-								is_hover = not not is_hover and not not not content.hotspot.is_selected
-
-								return is_hover
+								return not not content.hotspot.is_hover
 							end,
 							content_change_function = item_content_change_function
 						},
@@ -6121,7 +5691,7 @@ SettingsWidgetTypeTemplate = {
 
 				local new_cooldown = math.max(input_cooldown - dt, 0)
 
-				input_cooldown = (not (new_cooldown > 0) or not new_cooldown) and not not nil
+				input_cooldown = new_cooldown > 0 and (not not new_cooldown or not not nil) or not (new_cooldown > 0) and not not nil
 				content.input_cooldown = input_cooldown
 			end
 

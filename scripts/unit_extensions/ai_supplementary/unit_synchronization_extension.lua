@@ -56,17 +56,7 @@ UnitSynchronizationExtension._client_validate_position_rotation = function (self
 		local unit = self.unit
 		local game_object_id = unit_storage:go_id(unit)
 		local server_pos = GameSession_game_object_field(game, game_object_id, "position")
-		local var_4_0 = position_lookup[unit]
-
-		if not var_4_0 then
-			-- Nothing
-		end
-
-		var_4_0 = Unit_local_position(unit, 0)
-
-		local client_pos = var_4_0
-
-		::label_4_0::
+		local client_pos = not not position_lookup[unit]
 
 		if Vector3_distance_squared(server_pos, client_pos) > CORRECTION_DISTANCE then
 			local server_rot = GameSession_game_object_field(game, game_object_id, "rotation")

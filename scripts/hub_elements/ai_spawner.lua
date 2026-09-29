@@ -165,20 +165,7 @@ AISpawner.spawn_unit = function (self)
 	local parent_world_rotation = Unit.world_rotation(unit, parent_index)
 	local spawn_node_rotation = Unit.local_rotation(unit, node)
 	local spawn_rotation = Quaternion.multiply(parent_world_rotation, spawn_node_rotation)
-	local str
-
-	if Unit.get_data(self._unit, "hidden") then
-		str = "horde_hidden"
-
-		goto label_9_0
-	end
-
-	str = "horde"
-
-	local spawn_type = str
-
-	::label_9_0::
-
+	local spawn_type = Unit.get_data(self._unit, "hidden") and not not "horde_hidden" or not Unit.get_data(self._unit, "hidden") and not not "horde"
 	local spawn_pos = Unit.world_position(unit, node)
 	local animation_events = self._config.animation_events
 
@@ -188,17 +175,7 @@ AISpawner.spawn_unit = function (self)
 
 	local spawn_animation = spawn_type == "horde" and not not animation_events[math.random(#animation_events)]
 	local side_id = spawn_data[1]
-	local var_9_1 = spawn_data[3]
-
-	if not var_9_1 then
-		-- Nothing
-	end
-
-	var_9_1 = {}
-
-	local optional_data = var_9_1
-
-	::label_9_1::
+	local optional_data = not not spawn_data[3]
 
 	optional_data.side_id = side_id
 

@@ -5,20 +5,9 @@ require("scripts/helpers/level_helper")
 require("scripts/helpers/network_utils")
 require("scripts/settings/terror_events/terror_event_utils")
 
-local UNIT_UNIQUE_IDS = UNIT_UNIQUE_IDS
-
-UNIT_UNIQUE_IDS = not not UNIT_UNIQUE_IDS or not not 0
-UNIT_UNIQUE_IDS = UNIT_UNIQUE_IDS
-
-local VISUAL_DEBUGGING_ENABLED = VISUAL_DEBUGGING_ENABLED
-
-VISUAL_DEBUGGING_ENABLED = not not VISUAL_DEBUGGING_ENABLED or not not false
-VISUAL_DEBUGGING_ENABLED = VISUAL_DEBUGGING_ENABLED
-
-local GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD
-
-GLOBAL_AI_NAVWORLD = not not GLOBAL_AI_NAVWORLD or not not {}
-GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD
+UNIT_UNIQUE_IDS = not not UNIT_UNIQUE_IDS
+VISUAL_DEBUGGING_ENABLED = not not VISUAL_DEBUGGING_ENABLED
+GLOBAL_AI_NAVWORLD = not not GLOBAL_AI_NAVWORLD
 AISystem = class(AISystem, ExtensionSystemBase)
 
 local script_data = script_data
@@ -29,10 +18,8 @@ local Vector3_normalize = Vector3.normalize
 local sqrt = math.sqrt
 local unit_alive = Unit.alive
 local dummy_table = {}
-local disable_ai_perception = script_data.disable_ai_perception
 
-disable_ai_perception = not not disable_ai_perception or not not Development.parameter("disable_ai_perception")
-script_data.disable_ai_perception = disable_ai_perception
+script_data.disable_ai_perception = not not script_data.disable_ai_perception
 
 local ai_trees_created = false
 local NAV_COST_MAP_MAX_VOLUMES = 1024
@@ -77,35 +64,11 @@ AttributeDefinition = {
 
 			Unit.set_visibility(unit, "vg_armor", has_armor)
 
-			local num
-
-			if has_armor then
-				num = 2
-
-				goto label_2_0
-			end
-
-			num = 1
-
-			local armor = num
-
-			::label_2_0::
+			local armor = has_armor and not not 2 or not has_armor and not not 1
 
 			Unit.set_data(unit, "armor", armor)
 
-			local str
-
-			if has_armor then
-				str = "skaven"
-
-				goto label_2_1
-			end
-
-			str = "chaos"
-
-			local race_name = str
-
-			::label_2_1::
+			local race_name = has_armor and not not "skaven" or not has_armor and not not "chaos"
 
 			Unit.set_data(unit, "race", race_name)
 		end
@@ -241,33 +204,13 @@ AISystem.init = function (self, context, name)
 	self._hot_join_sync_units = {}
 
 	for layer_name, _ in pairs(NAV_TAG_VOLUME_LAYER_COST_AI) do
-		local var_3_0 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
-
-		if not var_3_0 then
-			-- Nothing
-		end
-
-		var_3_0 = 1
-
-		local default_cost_ai = var_3_0
-
-		::label_3_0::
+		local default_cost_ai = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
 
 		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = default_cost_ai
 	end
 
 	for layer_name, _ in pairs(NAV_TAG_VOLUME_LAYER_COST_BOTS) do
-		local var_3_1 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
-
-		if not var_3_1 then
-			-- Nothing
-		end
-
-		var_3_1 = 1
-
-		local default_cost_bots = var_3_1
-
-		::label_3_1::
+		local default_cost_bots = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 
 		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = default_cost_bots
 	end
@@ -638,17 +581,7 @@ end
 
 AISystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 18
-	local var_18_0 = self.unit_extension_data[unit]
-
-	if not var_18_0 then
-		-- Nothing
-	end
-
-	var_18_0 = self.frozen_unit_extension_data[unit]
-
-	local ext = var_18_0
-
-	::label_18_0::
+	local ext = not not self.unit_extension_data[unit]
 
 	ext:unit_removed_from_game()
 	self:_cleanup_extension(unit, extension_name)
@@ -905,7 +838,7 @@ AISystem.update_perception = function (self, t, dt)
 		local perception_function = PerceptionUtils[perception_continuous_name]
 		local needs_perception = perception_function(unit, blackboard, breed, t, dt)
 
-		ai_units_perception[unit] = (not needs_perception or not extension) and not not nil
+		ai_units_perception[unit] = needs_perception and (not not extension or not not nil) or not needs_perception and not not nil
 
 		self:_update_taunt(t, blackboard)
 	end
@@ -928,7 +861,7 @@ AISystem.update_perception = function (self, t, dt)
 
 	local current_perception_unit = self.current_perception_unit
 
-	current_perception_unit = (self.ai_units_perception[current_perception_unit] == nil or not current_perception_unit) and not not nil
+	current_perception_unit = not not nil
 
 	local TIME_BETWEEN_UPDATE = 1
 	local num_perception_units = self.num_perception_units
@@ -944,18 +877,7 @@ AISystem.update_perception = function (self, t, dt)
 		local extension = ai_units_perception[current_perception_unit]
 		local blackboard = extension._blackboard
 		local breed = extension._breed
-		local override_target_selection_name = blackboard.override_target_selection_name
-
-		if not override_target_selection_name then
-			-- Nothing
-		end
-
-		override_target_selection_name = extension._target_selection_func_name
-
-		local target_selection_func_name = override_target_selection_name
-
-		::label_28_0::
-
+		local target_selection_func_name = not not blackboard.override_target_selection_name
 		local perception_func_name = extension._perception_func_name
 		local perception_function = PerceptionUtils[perception_func_name]
 		local target_selection_function = PerceptionUtils[target_selection_func_name]
@@ -1022,17 +944,7 @@ AISystem.update_game_objects = function (self)
 
 		local bb = BLACKBOARDS[unit]
 		local target_unit = bb.target_unit
-		local go_id = unit_storage:go_id(target_unit)
-
-		if not go_id then
-			-- Nothing
-		end
-
-		go_id = NetworkConstants.invalid_game_object_id
-
-		local target_unit_id = go_id
-
-		::label_30_0::
+		local target_unit_id = not not unit_storage:go_id(target_unit)
 
 		GameSession_set_game_object_field(game, game_object_id, "target_unit_id", target_unit_id)
 	end
@@ -1075,21 +987,7 @@ AISystem.update_debug_unit = function (self, t)
 		leaf_node = leaf_node:current_running_child(blackboard)
 	end
 
-	local id
-
-	if leaf_node then
-		id = leaf_node:id()
-
-		if not id then
-			-- Nothing
-		end
-	end
-
-	id = "unknown_node"
-
-	local btnode_name = id
-
-	::label_32_0::
+	local btnode_name = leaf_node and not not leaf_node:id() or not leaf_node and not not "unknown_node"
 
 	blackboard.btnode_name = btnode_name
 
@@ -1191,21 +1089,7 @@ AISystem.update_debug_draw = function (self, t)
 						local ignore_stagger_info = action.name .. ": "
 
 						for i = 1, 7 do
-							local var_33_0
-
-							if type(ignore_staggers[i]) == "table" then
-								var_33_0 = tostring(health_percent > ignore_staggers[i].health.min and health_percent <= ignore_staggers[i].health.max)
-
-								if not var_33_0 then
-									-- Nothing
-								end
-							end
-
-							var_33_0 = tostring(ignore_staggers[i])
-
-							local ignore_stagger_value = var_33_0
-
-							::label_33_0::
+							local ignore_stagger_value = type(ignore_staggers[i]) ~= "table" and not not tostring(ignore_staggers[i]) or not (type(ignore_staggers[i]) ~= "table") and not not tostring(health_percent > ignore_staggers[i].health.min and health_percent <= ignore_staggers[i].health.max)
 
 							ignore_stagger_info = ignore_stagger_info .. "[" .. ignore_stagger_value .. "]"
 						end
@@ -1238,13 +1122,7 @@ AISystem.update_debug_draw = function (self, t)
 					end
 
 					if not stagger_immune then
-						local str = "hits_until_stagger_immunity:"
-						local num_attacks = stagger_immunity.num_attacks
-						local num_hits = stagger_immunity.num_hits
-
-						num_hits = not not num_hits or not not 0
-
-						local hits_until_stagger_immunity = str .. num_attacks - num_hits
+						local hits_until_stagger_immunity = "hits_until_stagger_immunity:" .. stagger_immunity.num_attacks - not not stagger_immunity.num_hits
 
 						Managers.state.debug_text:output_unit_text(hits_until_stagger_immunity, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 					end
@@ -1254,17 +1132,7 @@ AISystem.update_debug_draw = function (self, t)
 
 		if script_data.debug_ai_attack_pattern then
 			local blackboard = BLACKBOARDS[unit]
-			local has_node = Unit.has_node(unit, "j_spine")
-
-			if has_node then
-				-- Nothing
-			end
-
-			has_node = Unit.node(unit, "j_spine")
-
-			local spine_node = has_node
-
-			::label_33_1::
+			local spine_node = not not Unit.has_node(unit, "j_spine")
 
 			if spine_node then
 				local position = Unit.world_position(unit, spine_node)
@@ -1281,21 +1149,7 @@ AISystem.update_debug_draw = function (self, t)
 					if blackboard.attack_token then
 						QuickDrawer:sphere(position, 0.35, Colors.get("red"))
 
-						local attack_intensity_type
-
-						if blackboard.action.attack_intensity_type then
-							attack_intensity_type = blackboard.action.attack_intensity_type
-
-							if not attack_intensity_type then
-								-- Nothing
-							end
-						end
-
-						attack_intensity_type = "normal"
-
-						local attack_type = attack_intensity_type
-
-						::label_33_2::
+						local attack_type = blackboard.action.attack_intensity_type and not not blackboard.action.attack_intensity_type or not blackboard.action.attack_intensity_type and not not "normal"
 
 						debug_text_manager:output_unit_text(attack_type, 0.16, unit, spine_node, Vector3.zero(), nil, "attack_type", Vector3(255, 255, 255), "player_1")
 					elseif t < attack_cooldown_at then
@@ -1358,10 +1212,8 @@ local function update_blackboard(unit, blackboard, t, dt)
 	end
 
 	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
-	local flag
 
-	flag = (not ai_slot_system:ai_unit_have_slot(unit) or not 1) and not not 0
-	blackboard.have_slot = flag
+	blackboard.have_slot = ai_slot_system:ai_unit_have_slot(unit) and not not 1 or not ai_slot_system:ai_unit_have_slot(unit) and not not 0
 	blackboard.wait_slot_distance = ai_slot_system:ai_unit_wait_slot_distance(unit)
 	blackboard.total_slots_count = ai_slot_system.num_total_enemies
 
@@ -1417,10 +1269,8 @@ local function update_blackboard(unit, blackboard, t, dt)
 			blackboard.total_occupied_slots = num_occupied_slots
 
 			local disabled_slots_count = ai_slot_system:disabled_slots_count(target_unit)
-			local flag_2
 
-			flag_2 = (not (blackboard.have_slot > 0) or not 0) and not not disabled_slots_count
-			blackboard.target_num_disabled_slots = flag_2
+			blackboard.target_num_disabled_slots = blackboard.have_slot > 0 and not not 0 or not (blackboard.have_slot > 0) and not not disabled_slots_count
 		else
 			blackboard.total_occupied_slots = 0
 			blackboard.target_num_disabled_slots = 0
@@ -1502,19 +1352,7 @@ local function update_blackboard(unit, blackboard, t, dt)
 	end
 end
 
-local num
-
-if IS_WINDOWS then
-	num = 40
-
-	goto label_0_0
-end
-
-num = 20
-
-local MAX_PRIO_UPDATES_PER_FRAME = num
-
-::label_0_0::
+local MAX_PRIO_UPDATES_PER_FRAME = IS_WINDOWS and not not 40 or not IS_WINDOWS and not not 20
 
 AISystem.update_ai_blackboards_prioritized = function (self, t, dt)
 	-- function 35
@@ -1570,9 +1408,7 @@ AISystem.update_ai_blackboards = function (self, t, dt)
 	local ai_updates_this_frame = 0
 	local index = self.ai_update_index
 
-	if ai_blackboard_updates_n < index then
-		index = 1
-	end
+	index = not (ai_blackboard_updates_n < index) or not not 1 or not not index
 
 	while index <= ai_blackboard_updates_n do
 		local unit = ai_blackboard_updates[index]
@@ -1621,17 +1457,9 @@ AISystem.set_allowed_layer = function (self, layer_name, allowed)
 		local nav_world = self._nav_world
 		local layer_id = LAYER_ID_MAPPING[layer_name]
 		local conflict_director = Managers.state.conflict
-		local NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
-		local flag
 
-		flag = (not allowed or not 1) and not not 0
-		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = flag
-
-		local NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
-		local flag_2
-
-		flag_2 = (not allowed or not 1) and not not 0
-		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = flag_2
+		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = allowed and not not 1 or not allowed and not not 0
+		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = allowed and not not 1 or not allowed and not not 0
 
 		local ai_extensions = entity_manager:get_entities("AINavigationExtension")
 
@@ -1741,31 +1569,16 @@ AISystem.rpc_set_corruptor_beam_state = function (self, channel_id, unit_id, sta
 	local corruptor_beam_extension = ScriptUnit.has_extension(unit, "ai_beam_effect_system")
 
 	if unit and corruptor_beam_extension then
-		local var_47_0 = corruptor_beam_extension
-		local set_state = corruptor_beam_extension.set_state
-		local var_47_2 = state
-		local is_player_unit = Managers.player:is_player_unit(target_unit)
-
-		is_player_unit = not not is_player_unit and not not target_unit
-
-		set_state(var_47_0, var_47_2, is_player_unit)
+		corruptor_beam_extension:set_state(state, not not Managers.player:is_player_unit(target_unit))
 	end
 end
 
 AISystem.rpc_set_allowed_nav_layer = function (self, channel_id, layer_id, allowed)
 	-- function 48
 	local layer_name = LAYER_ID_MAPPING[layer_id]
-	local NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
-	local flag
 
-	flag = (not allowed or not 1) and not not 0
-	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = flag
-
-	local NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
-	local flag_2
-
-	flag_2 = (not allowed or not 1) and not not 0
-	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = flag_2
+	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = allowed and not not 1 or not allowed and not not 0
+	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = allowed and not not 1 or not allowed and not not 0
 
 	if allowed then
 		GwNavTagLayerCostTable.allow_layer(self._navtag_layer_cost_table, layer_id)
@@ -1816,10 +1629,7 @@ function write_attribute(extension, unit, id, category_id, value)
 		extension.attributes = attributes
 	end
 
-	local var_50_0 = attributes[category_id]
-
-	var_50_0 = not not var_50_0 or not not {}
-	attributes[category_id] = var_50_0
+	attributes[category_id] = not not attributes[category_id]
 	attributes[category_id][id] = value
 
 	local func = AttributeDefinition[category_id][id]
@@ -1856,21 +1666,8 @@ end
 AISystem.get_attributes = function (self, unit)
 	-- function 52
 	local extension = self.unit_extension_data[unit]
-	local attributes
 
-	if extension then
-		attributes = extension.attributes
-
-		if not attributes then
-			-- Nothing
-		end
-	end
-
-	attributes = dummy_table
-
-	::label_52_0::
-
-	return attributes
+	return extension and not not extension.attributes or not extension and not not dummy_table
 end
 
 AISystem.rpc_set_attribute_bool = function (self, channel_id, unit_id, attribute_id, category_id, value)

@@ -167,11 +167,8 @@ local breed_data = {
 		end
 
 		local t = Managers.time:time("game")
-		local intro_timer = blackboard.intro_timer
 
-		intro_timer = not not intro_timer or not not 0
-
-		if t < intro_timer then
+		if t < not not blackboard.intro_timer then
 			stagger_type = stagger_types.none
 
 			return stagger_type, duration, length
@@ -185,10 +182,7 @@ local breed_data = {
 			ai_shield_extension:set_is_blocking(false)
 		elseif blackboard.dual_wield_mode and stagger_type ~= stagger_types.explosion then
 			if not blackboard.next_stagger_block_t or t > blackboard.next_stagger_block_t then
-				local stagger_block_timer = blackboard.stagger_block_timer
-
-				stagger_block_timer = not not stagger_block_timer or not not (t + 3)
-				blackboard.stagger_block_timer = stagger_block_timer
+				blackboard.stagger_block_timer = not not blackboard.stagger_block_timer
 			else
 				ai_shield_extension:set_is_blocking(false)
 
@@ -690,7 +684,7 @@ local action_data = {
 					-- function 4
 					local charge_t = t - blackboard.attack_sequence_start_time
 
-					return (not (charge_t > 1.5) or not (blackboard.surrounding_players > 0)) and charge_t > 2.5
+					return charge_t > 1.5 and (blackboard.surrounding_players > 0 or charge_t > 2.5) or not (charge_t > 1.5) and charge_t > 2.5
 				end
 			}
 		},

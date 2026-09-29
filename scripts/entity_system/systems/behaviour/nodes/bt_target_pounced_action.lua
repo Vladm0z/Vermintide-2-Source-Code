@@ -222,30 +222,8 @@ BTTargetPouncedAction.direct_damage = function (unit, blackboard)
 	end
 
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_6_0 = action.time_before_ramping_damage[difficulty_rank]
-
-	if not var_6_0 then
-		-- Nothing
-	end
-
-	var_6_0 = action.time_before_ramping_damage[2]
-
-	local ramp_damage_time = var_6_0
-
-	::label_6_0::
-
-	local var_6_1 = action.time_to_reach_final_damage_multiplier[difficulty_rank]
-
-	if not var_6_1 then
-		-- Nothing
-	end
-
-	var_6_1 = action.time_to_reach_final_damage_multiplier[2]
-
-	local time_to_reach_final_multiplier = var_6_1
-
-	::label_6_1::
-
+	local ramp_damage_time = not not action.time_before_ramping_damage[difficulty_rank]
+	local time_to_reach_final_multiplier = not not action.time_to_reach_final_damage_multiplier[difficulty_rank]
 	local t = Managers.time:time("game")
 	local pounced_time = (t - blackboard.start_pouncing_time - ramp_damage_time) / time_to_reach_final_multiplier
 	local normalized_time = math.clamp(pounced_time, 0, 1)

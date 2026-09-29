@@ -1,22 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_cancel.lua
 
 local NAME = "pet_cancel"
-local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
-WorldMarkerTemplates = WorldMarkerTemplates
+WorldMarkerTemplates = not not WorldMarkerTemplates
 
-local var_0_1 = WorldMarkerTemplates[NAME]
-
-if not var_0_1 then
-	-- Nothing
-end
-
-var_0_1 = {}
-
-local template = var_0_1
-
-::label_0_0::
+local template = not not WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 template.position_offset = {

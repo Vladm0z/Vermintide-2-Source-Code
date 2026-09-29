@@ -27,9 +27,7 @@ PingTargetExtension.set_pinged = function (self, pinged, flash, pinger_unit, sho
 	-- function 3
 	local owner_unit = self._unit
 
-	if show_outline == nil then
-		show_outline = true
-	end
+	show_outline = show_outline ~= nil or not not true or not not show_outline
 
 	if pinged then
 		self._pinged = self._pinged + 1

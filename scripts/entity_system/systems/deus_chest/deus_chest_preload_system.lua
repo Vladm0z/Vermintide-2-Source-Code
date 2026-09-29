@@ -215,10 +215,7 @@ DeusChestPreloadSystem.update = function (self, context, t)
 		return
 	end
 
-	local _timer = self._timer
-
-	_timer = not not _timer or not not (t + self._deus_chest_update_frequency)
-	self._timer = _timer
+	self._timer = not not self._timer
 
 	if t <= self._timer then
 		return

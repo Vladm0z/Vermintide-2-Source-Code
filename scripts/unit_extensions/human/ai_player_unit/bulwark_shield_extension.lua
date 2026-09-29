@@ -57,25 +57,10 @@ BulwarkShieldExtension.play_shield_hit_sfx = function (self, shield_broken, stag
 		return
 	end
 
-	if stagger_amount == 0 then
-		stagger_amount = 0.1
-	end
+	stagger_amount = stagger_amount ~= 0 or not not 0.1 or not not stagger_amount
 
 	local parameter_value = math.clamp(stagger_amount / break_threshold, 0, 1)
-	local str
-
-	if shield_broken then
-		str = "Play_enemy_chaos_bulwark_stagger_break"
-
-		goto label_8_0
-	end
-
-	str = "Play_enemy_chaos_bulwark_stagger"
-
-	local event = str
-
-	::label_8_0::
-
+	local event = shield_broken and not not "Play_enemy_chaos_bulwark_stagger_break" or not shield_broken and not not "Play_enemy_chaos_bulwark_stagger"
 	local parameter_name = "bulwark_stagger_amount"
 
 	self._audio_system:play_audio_unit_param_float_event(event, parameter_name, parameter_value, self._unit)

@@ -1,9 +1,6 @@
 -- chunkname: @scripts/managers/game_mode/mechanisms/game_mode_custom_settings_handler.lua
 
-local GameModeCustomSettingsHandlerUtility = GameModeCustomSettingsHandlerUtility
-
-GameModeCustomSettingsHandlerUtility = not not GameModeCustomSettingsHandlerUtility or not not {}
-GameModeCustomSettingsHandlerUtility = GameModeCustomSettingsHandlerUtility
+GameModeCustomSettingsHandlerUtility = not not GameModeCustomSettingsHandlerUtility
 
 GameModeCustomSettingsHandlerUtility.parse_packed_custom_settings = function (packed_custom_settings, game_mode_name)
 	-- function 1
@@ -95,7 +92,7 @@ GameModeCustomSettingsHandler.get_packed_custom_settings = function (self)
 		end
 	end
 
-	return (not has_custom_settings or not changed_packaged_settings) and not not "n/a"
+	return has_custom_settings and (not not changed_packaged_settings or not not "n/a") or not has_custom_settings and not not "n/a"
 end
 
 GameModeCustomSettingsHandler.unpack_settings = function (self, packed_settings, settings_template)
@@ -265,19 +262,7 @@ GameModeCustomSettingsHandler.get_telemetry_data = function (self)
 		end
 	end
 
-	local flag
-
-	if #modified_settings == 0 then
-		flag = true
-
-		goto label_20_0
-	end
-
-	flag = false
-
-	local is_default_settings = flag
-
-	::label_20_0::
+	local is_default_settings = #modified_settings ~= 0 and not not false or not (#modified_settings ~= 0) and not not true
 
 	return settings_hash_map, is_default_settings, modified_settings
 end

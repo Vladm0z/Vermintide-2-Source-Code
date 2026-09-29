@@ -211,17 +211,7 @@ EnemyPackageLoader.request_breed = function (self, breed_name, ignore_breed_limi
 		if unused_breed_name then
 			self:_unload_package(unused_breed_name)
 		else
-			local replacement_breed_override_funcs = breed_category_data.replacement_breed_override_funcs
-
-			if replacement_breed_override_funcs then
-				-- Nothing
-			end
-
-			replacement_breed_override_funcs = breed_category_data.replacement_breed_override_funcs[spawn_category]
-
-			local replacement_breed_override_func = replacement_breed_override_funcs
-
-			::label_12_0::
+			local replacement_breed_override_func = not not breed_category_data.replacement_breed_override_funcs
 
 			if replacement_breed_override_func then
 				local replacement_breed_name = self[replacement_breed_override_func](self)
@@ -298,20 +288,7 @@ end
 
 EnemyPackageLoader._set_breed_package_lock = function (self, breed_name, locked)
 	-- function 16
-	local num
-
-	if locked then
-		num = 1
-
-		goto label_16_0
-	end
-
-	num = -1
-
-	local modifier = num
-
-	::label_16_0::
-
+	local modifier = locked and not not 1 or not locked and not not -1
 	local locked_breeds = self._locked_breeds
 	local aliases = BREED_TO_ALIASES[breed_name]
 
@@ -320,10 +297,8 @@ EnemyPackageLoader._set_breed_package_lock = function (self, breed_name, locked)
 
 		for i = 1, num_aliases do
 			local alias = aliases[i]
-			local var_16_1 = locked_breeds[alias]
 
-			var_16_1 = not not var_16_1 or not not 0
-			locked_breeds[alias] = var_16_1 + modifier
+			locked_breeds[alias] = not not locked_breeds[alias] + modifier
 
 			if locked_breeds[alias] == 0 then
 				locked_breeds[alias] = nil
@@ -331,10 +306,7 @@ EnemyPackageLoader._set_breed_package_lock = function (self, breed_name, locked)
 		end
 	end
 
-	local var_16_2 = locked_breeds[breed_name]
-
-	var_16_2 = not not var_16_2 or not not 0
-	locked_breeds[breed_name] = var_16_2 + modifier
+	locked_breeds[breed_name] = not not locked_breeds[breed_name] + modifier
 
 	if locked_breeds[breed_name] == 0 then
 		locked_breeds[breed_name] = nil
@@ -400,18 +372,7 @@ EnemyPackageLoader._update_package_diffs = function (self)
 	local prioritize = true
 	local package_manager = Managers.package
 	local loaded_breed_map = self._loaded_breed_map
-	local _session_breed_map = self._session_breed_map
-
-	if not _session_breed_map then
-		-- Nothing
-	end
-
-	_session_breed_map = self._network_handler:get_session_breed_map()
-
-	local session_breed_map = _session_breed_map
-
-	::label_22_0::
-
+	local session_breed_map = not not self._session_breed_map
 	local synced_loaded_breed_map = self._network_handler:get_own_loaded_session_breed_map()
 
 	for breed_name, status in pairs(loaded_breed_map) do
@@ -479,22 +440,7 @@ EnemyPackageLoader._breed_package_name = function (self, breed_name)
 	local cached = cache[breed_name]
 
 	if not cached then
-		local var_24_0 = BREED_PATH
-		local var_24_1
-
-		if self._use_optimized then
-			var_24_1 = OPT_LOOKUP_BREED_NAMES[breed_name]
-
-			if not var_24_1 then
-				-- Nothing
-			end
-		end
-
-		var_24_1 = breed_name
-
-		::label_24_0::
-
-		cached = var_24_0 .. var_24_1
+		cached = BREED_PATH .. (self._use_optimized and not not OPT_LOOKUP_BREED_NAMES[breed_name] or not self._use_optimized and not not breed_name)
 		cache[breed_name] = cached
 	end
 
@@ -517,34 +463,11 @@ EnemyPackageLoader._category = function (self, breed_name)
 		local data = breed_categories[i]
 
 		if BUILD ~= data.forbidden_in_build and table.find(data.breeds, breed_name) then
-			local id = data.id
-			local var_25_1 = category_by_name[data.id]
-
-			var_25_1 = not not var_25_1 or not not {
-				current = 0,
-				name = data.id,
-				dynamic_loading = data.dynamic_loading,
-				limit = data.limit,
-				loaded_breeds = {},
-				breeds = {},
-				replacement_breed_override_funcs = data.replacement_breed_override_funcs
-			}
-			category_by_name[id] = var_25_1
+			category_by_name[data.id] = not not category_by_name[data.id]
 		end
 	end
 
-	local dynamic_breeds = category_by_name.dynamic_breeds
-
-	dynamic_breeds = not not dynamic_breeds or not not {
-		name = "dynamic_breeds",
-		is_generated_category = true,
-		current = 0,
-		dynamic_loading = true,
-		limit = math.huge,
-		loaded_breeds = {},
-		breeds = {}
-	}
-	category_by_name.dynamic_breeds = dynamic_breeds
+	category_by_name.dynamic_breeds = not not category_by_name.dynamic_breeds
 
 	table.insert(category_by_name.dynamic_breeds.breeds, breed_name)
 
@@ -844,30 +767,9 @@ EnemyPackageLoader._get_startup_breeds = function (self, level_key, level_seed, 
 	end
 
 	if use_random_directors then
-		local shallow_copy = table.shallow_copy
-		local conflict_director_set = level_settings.conflict_director_set
-
-		conflict_director_set = not not conflict_director_set or not not DefaultConflictDirectorSet
-
-		local director_list = shallow_copy(conflict_director_set)
-		local shallow_copy_2 = table.shallow_copy
-		local conflict_faction_weights = level_settings.conflict_faction_weights
-
-		conflict_faction_weights = not not conflict_faction_weights or not not DefaultConflictFactionSetWeights
-
-		local faction_weights = shallow_copy_2(conflict_faction_weights)
-		local breed_cap_override = level_settings.breed_cap_override
-
-		if not breed_cap_override then
-			-- Nothing
-		end
-
-		breed_cap_override = EnemyPackageLoaderSettings.max_loaded_breed_cap
-
-		local breed_cap = breed_cap_override
-
-		::label_35_0::
-
+		local director_list = table.shallow_copy(not not level_settings.conflict_director_set)
+		local faction_weights = table.shallow_copy(not not level_settings.conflict_faction_weights)
+		local breed_cap = not not level_settings.breed_cap_override
 		local faction_count_roll
 
 		level_seed, faction_count_roll = Math.next_random(level_seed)
@@ -1110,21 +1012,7 @@ EnemyPackageLoader.debug_loaded_breeds = function (self)
 	local num_spawned_by_breed = Managers.state.conflict.num_spawned_by_breed
 	local breed_category_loaded_packages = self._breed_category_loaded_packages
 	local locked_breeds = self._locked_breeds
-	local hot_join_synced_peers
-
-	if self._network_handler then
-		hot_join_synced_peers = self._network_handler:hot_join_synced_peers()
-
-		if not hot_join_synced_peers then
-			-- Nothing
-		end
-	end
-
-	hot_join_synced_peers = {}
-
-	local peers = hot_join_synced_peers
-
-	::label_45_0::
+	local peers = self._network_handler and not not self._network_handler:hot_join_synced_peers() or not self._network_handler and not not {}
 
 	Debug.text("EnemyPackageLoader Policy=%s", EnemyPackageLoaderSettings.policy)
 
@@ -1160,29 +1048,9 @@ EnemyPackageLoader.debug_loaded_breeds = function (self)
 					end
 				end
 
-				local str
+				local is_locked_string = locked_breeds[breed_name] and not not "[LOCKED]" or not locked_breeds[breed_name] and not not ""
 
-				if locked_breeds[breed_name] then
-					str = "[LOCKED]"
-
-					goto label_45_1
-				end
-
-				str = ""
-
-				local is_locked_string = str
-
-				::label_45_1::
-
-				local text = Debug.text
-				local str_2 = "   %s=%s %s %s %s"
-				local var_45_4 = breed_name
-				local var_45_5 = state
-				local flag
-
-				flag = (not breed_in_death_watch or not "DL") and not not ""
-
-				text(str_2, var_45_4, var_45_5, flag, tostring(num_alive), is_locked_string)
+				Debug.text("   %s=%s %s %s %s", breed_name, state, breed_in_death_watch and not not "DL" or not breed_in_death_watch and not not "", tostring(num_alive), is_locked_string)
 
 				if self._is_server and not self:is_breed_loaded_on_all_peers(breed_name) then
 					Debug.text("         --Waiting on Peer(s) to Load--")
@@ -1206,17 +1074,6 @@ EnemyPackageLoader.debug_loaded_breeds = function (self)
 			end
 		end
 	else
-		local text_2 = Debug.text
-		local str_3 = "Peer=%s | Server=%s | Key=%s"
-		local _peer_id = self._peer_id
-		local _server_peer_id = self._server_peer_id
-
-		_server_peer_id = not not _server_peer_id or not not "nil"
-
-		local _unique_connection_key = self._unique_connection_key
-
-		_unique_connection_key = not not _unique_connection_key or not not "nil"
-
-		text_2(str_3, _peer_id, _server_peer_id, _unique_connection_key)
+		Debug.text("Peer=%s | Server=%s | Key=%s", self._peer_id, not not self._server_peer_id, not not self._unique_connection_key)
 	end
 end

@@ -1115,23 +1115,7 @@ local WARPFIRE_KNOCKBACK_MIN_Z_DIFFERENCE = 4
 local function warpfire_knockback_check_tracked_unit(knockback_data, victim_unit)
 	-- function 70
 	local knockback_position = knockback_data.knockback_position:unbox()
-	local is_valid = Unit.is_valid(victim_unit)
-
-	if is_valid then
-		if not Unit.is_frozen(victim_unit) then
-			is_valid = Unit.local_position(victim_unit, 0)
-		else
-			is_valid = false
-		end
-	end
-
-	goto label_70_0
-
-	is_valid = true
-
-	local position = is_valid
-
-	::label_70_0::
+	local position = not not Unit.is_valid(victim_unit)
 
 	if not position or knockback_position[3] - position[3] < WARPFIRE_KNOCKBACK_MIN_Z_DIFFERENCE then
 		return false
@@ -1161,17 +1145,7 @@ achievements.vs_push_hero_off_map = {
 
 		if event_name == "register_kill" then
 			local victim_unit = event_data[register_kill_victim_unit]
-			local tracked_units = template_data.tracked_units
-
-			if tracked_units then
-				-- Nothing
-			end
-
-			tracked_units = template_data.tracked_units[victim_unit]
-
-			local unit_data = tracked_units
-
-			::label_72_0::
+			local unit_data = not not template_data.tracked_units
 
 			if not unit_data then
 				return
@@ -1210,10 +1184,7 @@ achievements.vs_push_hero_off_map = {
 				return
 			end
 
-			local tracked_units_2 = template_data.tracked_units
-
-			tracked_units_2 = not not tracked_units_2 or not not {}
-			template_data.tracked_units = tracked_units_2
+			template_data.tracked_units = not not template_data.tracked_units
 
 			local existing_data = template_data.tracked_units[victim_unit]
 
@@ -1234,17 +1205,7 @@ achievements.vs_push_hero_off_map = {
 				return
 			end
 
-			local tracked_units_3 = template_data.tracked_units
-
-			if tracked_units_3 then
-				-- Nothing
-			end
-
-			tracked_units_3 = template_data.tracked_units[victim_unit]
-
-			local unit_data = tracked_units_3
-
-			::label_72_1::
+			local unit_data = not not template_data.tracked_units
 
 			if not unit_data then
 				return
@@ -1837,26 +1798,13 @@ achievements.vs_rat_ogre_hit_heroes_heavy = {
 		end
 
 		local hit_unit = event_data[EventParams.on_hit.hit_unit]
-		local var_101_0 = ALIVE[hit_unit]
-
-		if var_101_0 then
-			-- Nothing
-		end
-
-		var_101_0 = Unit.get_data(hit_unit, "breed")
-
-		local breed = var_101_0
-
-		::label_101_0::
+		local breed = not not ALIVE[hit_unit]
 
 		if not breed or not breed.is_player then
 			return
 		end
 
-		local cooldown = template_data.cooldown
-
-		cooldown = not not cooldown or not not {}
-		template_data.cooldown = cooldown
+		template_data.cooldown = not not template_data.cooldown
 
 		local t = Managers.time:time("game")
 		local cd = template_data.cooldown[hit_unit]
@@ -1931,17 +1879,7 @@ achievements.vs_rat_ogre_hit_leap = {
 		end
 
 		local hit_unit = event_data[EventParams.on_hit.hit_unit]
-		local var_105_0 = ALIVE[hit_unit]
-
-		if var_105_0 then
-			-- Nothing
-		end
-
-		var_105_0 = Unit.get_data(hit_unit, "breed")
-
-		local breed = var_105_0
-
-		::label_105_0::
+		local breed = not not ALIVE[hit_unit]
 
 		if not breed or not breed.is_player then
 			return

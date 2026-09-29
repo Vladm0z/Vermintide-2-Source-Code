@@ -275,18 +275,7 @@ end
 HeroWindowWeaveForgeWeapons._create_item_previewer = function (self, viewport_widget, item, activate_spin)
 	-- function 7
 	local item_data = item.data
-	local key = item_data.key
-
-	if not key then
-		-- Nothing
-	end
-
-	key = item.key
-
-	local item_key = key
-
-	::label_7_0::
-
+	local item_key = not not item_data.key
 	local slot_type = item_data.slot_type
 	local viewport_pass_data = viewport_widget.element.pass_data[1]
 	local viewport = viewport_pass_data.viewport
@@ -526,22 +515,16 @@ HeroWindowWeaveForgeWeapons._is_button_hover_enter = function (self, widget)
 	-- function 17
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
-
-	return on_hover_enter
+	return not not hotspot.on_hover_enter
 end
 
 HeroWindowWeaveForgeWeapons._is_button_hover_exit = function (self, widget)
 	-- function 18
 	local content = widget.content
 	local hotspot = content.button_hotspot
-	local on_hover_exit = hotspot.on_hover_exit
 
-	on_hover_exit = not not on_hover_exit and not not not hotspot.is_selected
-
-	return on_hover_exit
+	return not not hotspot.on_hover_exit
 end
 
 HeroWindowWeaveForgeWeapons._is_button_selected = function (self, widget)
@@ -556,17 +539,7 @@ HeroWindowWeaveForgeWeapons._list_index_pressed = function (self, widgets)
 	-- function 20
 	for index, widget in ipairs(widgets) do
 		local content = widget.content
-		local hotspot_2 = content.hotspot
-
-		if not hotspot_2 then
-			-- Nothing
-		end
-
-		hotspot_2 = content.button_hotspot
-
-		local hotspot = hotspot_2
-
-		::label_20_0::
+		local hotspot = not not content.hotspot
 
 		if hotspot and hotspot.on_release then
 			hotspot.on_release = false
@@ -578,11 +551,7 @@ end
 
 HeroWindowWeaveForgeWeapons._is_list_hovered = function (self, widget)
 	-- function 21
-	local is_hover = widget.content.hotspot.is_hover
-
-	is_hover = not not is_hover or not not false
-
-	return is_hover
+	return not not widget.content.hotspot.is_hover
 end
 
 HeroWindowWeaveForgeWeapons._sync_backend_loadout = function (self)
@@ -609,48 +578,16 @@ HeroWindowWeaveForgeWeapons._sync_backend_loadout = function (self)
 		end
 
 		local backend_id = not not item and not not item.backend_id
-		local get_item_power_level
-
-		if backend_id then
-			get_item_power_level = backend_interface_weaves:get_item_power_level(backend_id)
-
-			if not get_item_power_level then
-				-- Nothing
-			end
-		end
-
-		get_item_power_level = 0
-
-		local item_power = get_item_power_level
-
-		::label_22_0::
+		local item_power = backend_id and not not backend_interface_weaves:get_item_power_level(backend_id) or not backend_id and not not 0
 
 		item_power = UIUtils.presentable_hero_power_level_weaves(item_power)
 
-		local get_item_magic_level
-
-		if backend_id then
-			get_item_magic_level = backend_interface_weaves:get_item_magic_level(backend_id)
-
-			if not get_item_magic_level then
-				-- Nothing
-			end
-		end
-
-		get_item_magic_level = 0
-
-		local magic_level = get_item_magic_level
-
-		::label_22_1::
+		local magic_level = backend_id and not not backend_interface_weaves:get_item_magic_level(backend_id) or not backend_id and not not 0
 
 		content.locked = not backend_id
 		content.backend_id = backend_id
 		content.equipped = not not backend_id and not not backend_interface_weaves:has_loadout_item_id(career_name, backend_id)
-
-		local equipped = content.equipped
-
-		equipped = not not equipped and backend_id ~= equipped_backend_id
-		content.equipped_in_another_slot = equipped
+		content.equipped_in_another_slot = not not content.equipped
 		content.power_text = item_power
 		content.item_power = item_power
 		content.magic_level = magic_level
@@ -658,17 +595,7 @@ HeroWindowWeaveForgeWeapons._sync_backend_loadout = function (self)
 	end
 
 	local equipable_item = self._selected_backend_id ~= nil
-	local _selected_backend_id = self._selected_backend_id
-
-	if _selected_backend_id then
-		-- Nothing
-	end
-
-	_selected_backend_id = backend_interface_weaves:has_loadout_item_id(career_name, self._selected_backend_id)
-
-	local is_selected_item_equipped = _selected_backend_id
-
-	::label_22_2::
+	local is_selected_item_equipped = not not self._selected_backend_id
 
 	self:_update_equip_button_status(equipable_item, is_selected_item_equipped)
 end
@@ -787,21 +714,7 @@ HeroWindowWeaveForgeWeapons._update_equip_button_status = function (self, equipa
 	if viewport_data then
 		local equip_button = viewport_data.equip_button
 		local can_equip = not not equipable_item and not not not is_item_equipped
-		local var_26_0
-
-		if can_equip then
-			var_26_0 = Localize("menu_weave_forge_equip_weapon_button")
-
-			if not var_26_0 then
-				-- Nothing
-			end
-		end
-
-		var_26_0 = Localize("menu_weave_forge_equipped_weapon_button")
-
-		local equip_button_text = var_26_0
-
-		::label_26_0::
+		local equip_button_text = can_equip and not not Localize("menu_weave_forge_equip_weapon_button") or not can_equip and not not Localize("menu_weave_forge_equipped_weapon_button")
 
 		equip_button.content.button_hotspot.disable_button = not can_equip
 		equip_button.content.title_text = equip_button_text
@@ -1139,10 +1052,7 @@ HeroWindowWeaveForgeWeapons._draw = function (self, dt)
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
 	for _, widget in ipairs(self._bottom_hdr_widgets) do
-		local alpha_multiplier_2 = widget.alpha_multiplier
-
-		alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_2
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_renderer, widget)
 	end
@@ -1153,10 +1063,7 @@ HeroWindowWeaveForgeWeapons._draw = function (self, dt)
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
 	for _, widget in ipairs(self._top_hdr_widgets) do
-		local alpha_multiplier_3 = widget.alpha_multiplier
-
-		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_3
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_top_renderer, widget)
 	end
@@ -1165,10 +1072,7 @@ HeroWindowWeaveForgeWeapons._draw = function (self, dt)
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for _, widget in ipairs(self._top_widgets) do
-		local alpha_multiplier_4 = widget.alpha_multiplier
-
-		alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_4
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
@@ -1180,10 +1084,7 @@ HeroWindowWeaveForgeWeapons._draw = function (self, dt)
 			local list_widgets = scrollbar_data.list_widgets
 
 			for _, widget in ipairs(list_widgets) do
-				local alpha_multiplier_5 = widget.alpha_multiplier
-
-				alpha_multiplier_5 = not not alpha_multiplier_5 or not not alpha_multiplier
-				render_settings.alpha_multiplier = alpha_multiplier_5
+				render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 				UIRenderer.draw_widget(ui_top_renderer, widget)
 			end
@@ -1197,19 +1098,14 @@ HeroWindowWeaveForgeWeapons._draw = function (self, dt)
 
 	if viewport_data then
 		local widget = viewport_data.widget
-		local alpha_multiplier_6 = widget.alpha_multiplier
 
-		alpha_multiplier_6 = not not alpha_multiplier_6 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_6
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
 	for _, widget in ipairs(self._bottom_widgets) do
-		local alpha_multiplier_7 = widget.alpha_multiplier
-
-		alpha_multiplier_7 = not not alpha_multiplier_7 or not not alpha_multiplier
-		render_settings.alpha_multiplier = alpha_multiplier_7
+		render_settings.alpha_multiplier = not not widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -1243,22 +1139,7 @@ HeroWindowWeaveForgeWeapons._populate_list = function (self, layout)
 		local icon = item_data.inventory_icon
 		local item_type = Localize(item_data.item_type)
 		local backend_id = entry.backend_id
-		local get_item_magic_level
-
-		if backend_id then
-			get_item_magic_level = backend_interface_weaves:get_item_magic_level(backend_id)
-
-			if not get_item_magic_level then
-				-- Nothing
-			end
-		end
-
-		get_item_magic_level = 0
-
-		local magic_level = get_item_magic_level
-
-		::label_38_0::
-
+		local magic_level = backend_id and not not backend_interface_weaves:get_item_magic_level(backend_id) or not backend_id and not not 0
 		local widget = UIWidget.init(widget_definition)
 
 		widgets[i] = widget
@@ -1495,18 +1376,7 @@ HeroWindowWeaveForgeWeapons._animate_list_widget = function (self, widget, dt, o
 	local offset = widget.offset
 	local content = widget.content
 	local style = widget.style
-	local button_hotspot = content.button_hotspot
-
-	if not button_hotspot then
-		-- Nothing
-	end
-
-	button_hotspot = content.hotspot
-
-	local hotspot = button_hotspot
-
-	::label_46_0::
-
+	local hotspot = not not content.button_hotspot
 	local equipped_in_another_slot = content.equipped_in_another_slot
 	local locked = content.locked
 	local on_hover_enter = hotspot.on_hover_enter
@@ -1518,108 +1388,13 @@ HeroWindowWeaveForgeWeapons._animate_list_widget = function (self, widget, dt, o
 	end
 
 	local is_selected = hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = hotspot.is_clicked
-
-		if is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	is_clicked = false
-
-	goto label_46_2
-
-	::label_46_1::
-
-	is_clicked = true
-
-	local input_pressed = is_clicked
-
-	::label_46_2::
-
-	local input_progress_2 = hotspot.input_progress
-
-	if not input_progress_2 then
-		-- Nothing
-	end
-
-	input_progress_2 = 0
-
-	local input_progress = input_progress_2
-
-	::label_46_3::
-
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_46_4::
-
-	local pulse_progress_2 = hotspot.pulse_progress
-
-	if not pulse_progress_2 then
-		-- Nothing
-	end
-
-	pulse_progress_2 = 1
-
-	local pulse_progress = pulse_progress_2
-
-	::label_46_5::
-
-	local offset_progress_2 = hotspot.offset_progress
-
-	if not offset_progress_2 then
-		-- Nothing
-	end
-
-	offset_progress_2 = 1
-
-	local offset_progress = offset_progress_2
-
-	::label_46_6::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	do
-		local num
-	end
-
-	::label_46_7::
-
-	if is_hover or is_selected then
-		num = 14
-
-		goto label_46_8
-	end
-
-	num = 8
-
-	local speed = num
-
-	::label_46_8::
-
+	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = not not hotspot.input_progress
+	local hover_progress = not not hotspot.hover_progress
+	local pulse_progress = not not hotspot.pulse_progress
+	local offset_progress = not not hotspot.offset_progress
+	local selection_progress = not not hotspot.selection_progress
+	local speed = not not 14
 	local pulse_speed = 3
 	local input_speed = 20
 	local offset_speed = 5
@@ -1841,18 +1616,7 @@ HeroWindowWeaveForgeWeapons._setup_weapon_stats = function (self, item)
 
 		for trait_key, _ in pairs(traits) do
 			local trait_data = WeaveTraits.traits[trait_key]
-			local icon_2 = trait_data.icon
-
-			if not icon_2 then
-				-- Nothing
-			end
-
-			icon_2 = "icons_placeholder"
-
-			local icon = icon_2
-
-			::label_47_0::
-
+			local icon = not not trait_data.icon
 			local display_name = trait_data.display_name
 			local trait_icon = trait_data.icon
 			local title_text = Localize(display_name)
@@ -1899,18 +1663,7 @@ HeroWindowWeaveForgeWeapons._setup_weapon_stats = function (self, item)
 			local title_text = UIUtils.get_weave_property_description(property_key, property_data, mastery_costs, used_amount)
 			local end_index = string.find(title_text, " ", 1)
 			local value_string = string.sub(title_text, 1, end_index)
-			local icon_3 = property_data.icon
-
-			if not icon_3 then
-				-- Nothing
-			end
-
-			icon_3 = "icons_placeholder"
-
-			local icon = icon_3
-
-			::label_47_1::
-
+			local icon = not not property_data.icon
 			local widget = self:_create_property_option_entry(property_size, title_text, value_string, icon)
 
 			widgets[#widgets + 1] = widget
@@ -2039,18 +1792,7 @@ HeroWindowWeaveForgeWeapons._create_property_option_entry = function (self, size
 	local style = widget.style
 	local text_style = style.text
 	local color_override_table = text_style.color_override_table
-	local length = Utf8.length(text)
-
-	if not length then
-		-- Nothing
-	end
-
-	length = 0
-
-	local default_text_length = length
-
-	::label_55_0::
-
+	local default_text_length = not not Utf8.length(text)
 	local value_string_length = Utf8.length(value_string)
 	local text_style = style.text
 

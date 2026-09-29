@@ -78,35 +78,4 @@ local function nearest_table_value(difficulty, difficulty_tweak, table)
 	return nil
 end
 
-local DifficultyTweak = DifficultyTweak
-
-DifficultyTweak = not not DifficultyTweak or not not {
-	range = tweak_range,
-	converters = {
-		composition = function (difficulty, tweak)
-			-- function 6
-			return offset_difficulty(difficulty, 2, tweak)
-		end,
-		composition_rank = function (difficulty_rank, tweak)
-			-- function 7
-			return offset_difficulty_rank(difficulty_rank, 2, tweak)
-		end,
-		pacing = function (difficulty, tweak)
-			-- function 8
-			return offset_difficulty(difficulty, 2, tweak)
-		end,
-		intensity = function (difficulty, tweak)
-			-- function 9
-			return offset_difficulty(difficulty, 2, tweak)
-		end,
-		tweaked_delay_threat_value = function (difficulty, tweak, table)
-			-- function 10
-			return nearest_lerp_table(difficulty, tweak, table)
-		end,
-		closest_tweak_match = function (difficulty, tweak, table)
-			-- function 11
-			return nearest_table_value(difficulty, tweak, table)
-		end
-	}
-}
-DifficultyTweak = DifficultyTweak
+DifficultyTweak = not not DifficultyTweak

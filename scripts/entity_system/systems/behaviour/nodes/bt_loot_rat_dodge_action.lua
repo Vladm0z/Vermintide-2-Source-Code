@@ -43,32 +43,8 @@ BTLootRatDodgeAction.enter = function (self, unit, blackboard, t)
 		locomotion:set_movement_type("snap_to_navmesh")
 
 		local network_manager = Managers.state.network
-		local var_2_0 = network_manager
-		local anim_event = network_manager.anim_event
-		local var_2_2 = unit
-		local dodge_right_anim
 
-		if right then
-			dodge_right_anim = action.dodge_right_anim
-
-			if not dodge_right_anim then
-				-- Nothing
-			end
-		end
-
-		if not right then
-			dodge_right_anim = action.dodge_left_anim
-
-			if not dodge_right_anim then
-				-- Nothing
-			end
-		end
-
-		dodge_right_anim = action.dodge_anim
-
-		::label_2_0::
-
-		anim_event(var_2_0, var_2_2, dodge_right_anim)
+		network_manager:anim_event(unit, right and not not action.dodge_right_anim or not right and (right and not not action.dodge_anim or not right and not not action.dodge_left_anim))
 
 		if script_data.debug_ai_movement then
 			local unit_position = position_lookup[unit]

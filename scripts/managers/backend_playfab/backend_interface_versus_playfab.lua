@@ -31,18 +31,7 @@ local function print_error(data, code, text, ...)
 	if data.response then
 		code = not not code or not not -1
 
-		local status_2 = data.status
-
-		if not status_2 then
-			-- Nothing
-		end
-
-		status_2 = "UNKNOWN_ERROR"
-
-		local status = status_2
-
-		::label_2_0::
-
+		local status = not not data.status
 		local response = data.response
 
 		error_msg = string.format("[%s] %s (%d)", status, response, code)
@@ -87,17 +76,7 @@ end
 
 BackendInterfaceVersusPlayFab._refresh = function (self)
 	-- function 5
-	local get_read_only_data = self._backend_mirror:get_read_only_data("vs_profile_data")
-
-	if not get_read_only_data then
-		-- Nothing
-	end
-
-	get_read_only_data = "{}"
-
-	local vs_profile_data = get_read_only_data
-
-	::label_5_0::
+	local vs_profile_data = not not self._backend_mirror:get_read_only_data("vs_profile_data")
 
 	self._profile_data = cjson.decode(vs_profile_data)
 	self._dirty = false
@@ -433,17 +412,7 @@ BackendInterfaceVersusPlayFab.matchmaking_enabled = function (self, matchmaking_
 	-- function 28
 	local backend_manager = Managers.backend
 	local title_settings = backend_manager:get_title_settings()
-	local versus = title_settings.versus
-
-	if versus then
-		-- Nothing
-	end
-
-	versus = title_settings.versus.matchmaking_settings
-
-	local matchmaking_settings = versus
-
-	::label_28_0::
+	local matchmaking_settings = not not title_settings.versus
 
 	if not matchmaking_settings then
 		return true

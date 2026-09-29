@@ -10,21 +10,7 @@ end
 StateTitleScreenMain = class(StateTitleScreenMain)
 StateTitleScreenMain.NAME = "StateTitleScreenMain"
 
-local attract_timer
-
-if script_data.honduras_demo then
-	attract_timer = DemoSettings.attract_timer
-
-	if not attract_timer then
-		-- Nothing
-	end
-end
-
-attract_timer = nil
-
-local ATTRACT_MODE_TIMER = attract_timer
-
-::label_0_0::
+local ATTRACT_MODE_TIMER = script_data.honduras_demo and not not DemoSettings.attract_timer or not script_data.honduras_demo and not not nil
 
 StateTitleScreenMain.on_enter = function (self, params)
 	-- function 1
@@ -118,11 +104,7 @@ end
 
 StateTitleScreenMain._setup_account_manager = function (self)
 	-- function 5
-	local Managers = Managers
-	local account = Managers.account
-
-	account = not not account or not not AccountManager:new()
-	Managers.account = account
+	Managers.account = not not Managers.account
 
 	Crashify.print_property("region", Managers.account:region())
 end
@@ -298,7 +280,7 @@ StateTitleScreenMain._update_input = function (self, dt, t)
 		end
 	end
 
-	if IS_PS4 and (Managers.invite:has_invitation() or Managers.invite:play_together_list()) and not self._state then
+	if Managers.invite:play_together_list() and IS_PS4 and Managers.invite:has_invitation() and not self._state then
 		if Managers.play_go:installed() then
 			Managers.music:trigger_event("Play_console_menu_select")
 
@@ -320,7 +302,7 @@ StateTitleScreenMain._update_input = function (self, dt, t)
 		else
 			self:_queue_popup(Localize("popup_invite_not_installed"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
 		end
-	elseif (self._start_pressed or LEVEL_EDITOR_TEST or self._auto_start or GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") or self._params.switch_user_auto_sign_in or self._has_engaged) and not self._state then
+	elseif self._start_pressed and not self._state or not self._start_pressed and (LEVEL_EDITOR_TEST and not self._state or not LEVEL_EDITOR_TEST and (self._auto_start and not self._state or not self._auto_start and (GameSettingsDevelopment.skip_start_screen and not self._state or not GameSettingsDevelopment.skip_start_screen and (Development.parameter("skip_start_screen") and not self._state or not Development.parameter("skip_start_screen") and (self._params.switch_user_auto_sign_in and not self._state or not self._params.switch_user_auto_sign_in and self._has_engaged and not self._state))))) then
 		if IS_CONSOLE and self._title_start_ui:attract_mode() then
 			self:_exit_attract_mode()
 

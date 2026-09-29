@@ -33,23 +33,7 @@ BTSelector_skaven_poison_wind_globadier.run = function (self, unit, blackboard, 
 
 	do
 		local node_suicide_stagger = children[1]
-		local stagger = blackboard.stagger
-
-		if stagger then
-			if blackboard.suicide_run ~= nil then
-				stagger = blackboard.suicide_run.explosion_started
-			else
-				stagger = false
-			end
-		end
-
-		goto label_4_0
-
-		stagger = true
-
-		local condition_result = stagger
-
-		::label_4_0::
+		local condition_result = not not blackboard.stagger
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_suicide_stagger, "aborted")
@@ -151,18 +135,7 @@ BTSelector_skaven_poison_wind_globadier.run = function (self, unit, blackboard, 
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_data = next_smart_object_data.smart_object_data
-
-		if smart_object_data then
-			-- Nothing
-		end
-
-		smart_object_data = next_smart_object_data.smart_object_data.unit
-
-		local smart_object_unit = smart_object_data
-
-		::label_4_1::
-
+		local smart_object_unit = not not next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -173,7 +146,7 @@ BTSelector_skaven_poison_wind_globadier.run = function (self, unit, blackboard, 
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = (not is_in_smartobject_range or not moving_state) and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
 		end
 
 		if condition_result then

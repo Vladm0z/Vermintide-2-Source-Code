@@ -75,17 +75,7 @@ BTSelector_critter_rat.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_under_door = children[3]
-		local at_smartobject = BTConditions.at_smartobject(blackboard)
-
-		if at_smartobject then
-			-- Nothing
-		end
-
-		at_smartobject = BTConditions.at_door_smartobject(blackboard)
-
-		local condition_result = at_smartobject
-
-		::label_4_0::
+		local condition_result = not not BTConditions.at_smartobject(blackboard)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_under_door, "aborted")
@@ -106,17 +96,7 @@ BTSelector_critter_rat.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_flee_sequence = children[4]
-		local var_4_1 = unit_alive(blackboard.target_unit)
-
-		if not var_4_1 then
-			-- Nothing
-		end
-
-		var_4_1 = blackboard.is_fleeing
-
-		local condition_result = var_4_1
-
-		::label_4_1::
+		local condition_result = not not unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_flee_sequence, "aborted")

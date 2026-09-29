@@ -170,40 +170,8 @@ ImguiAISpawnLog.draw = function (self)
 	local filter_specials = self._specials_only
 	local segment_start = self._timeline_end - self._timeline_slice_size
 	local segment_end = self._timeline_end
-	local _hovered_id
-
-	if self._sticky_hover then
-		_hovered_id = self._hovered_id
-
-		if not _hovered_id then
-			-- Nothing
-		end
-	end
-
-	_hovered_id = -1
-
-	local hovered_id = _hovered_id
-
-	do
-		local _hovered_time
-	end
-
-	::label_7_0::
-
-	if self._sticky_hover then
-		_hovered_time = self._hovered_time
-
-		if not _hovered_time then
-			-- Nothing
-		end
-	end
-
-	_hovered_time = -1
-
-	local hovered_time = _hovered_time
-
-	::label_7_1::
-
+	local hovered_id = self._sticky_hover and not not self._hovered_id or not self._sticky_hover and not not -1
+	local hovered_time = self._sticky_hover and not not self._hovered_time or not self._sticky_hover and not not -1
 	local last_hovered_id = self._hovered_id
 
 	for line_id = 1, #self._log do
@@ -237,7 +205,7 @@ ImguiAISpawnLog.draw = function (self)
 				text = text .. " " .. tostring(queue_id)
 
 				local is_selected = last_hovered_id == queue_id
-				local color = (not is_selected or not selected_color) and not not normal_color
+				local color = is_selected and (not not selected_color or not not normal_color) or not is_selected and not not normal_color
 
 				Imgui.text_colored(text, color[1], color[2], color[3], 255)
 
@@ -246,7 +214,7 @@ ImguiAISpawnLog.draw = function (self)
 					hovered_time = timestamp
 				end
 
-				if vislualize and self._drawer and (last_hovered_id == -1 or hovered_id == queue_id) then
+				if last_hovered_id == -1 or hovered_id == queue_id then
 					local location = Vector3(line[LOCATION_ID], line[LOCATION_ID + 1], line[LOCATION_ID + 2])
 
 					self._drawer:sphere(location, 1, visualize_color)
@@ -286,63 +254,17 @@ ImguiAISpawnLog._log_event = function (self, event_type, boxed_location, breed, 
 	-- function 11
 	local location = not not boxed_location and not not boxed_location:unbox()
 	local game_time = Managers.time:time("game")
-	local tbl = {
+	local entry = {
 		event_type,
-		game_time
+		game_time,
+		location and not not location.x or not location and not not 0,
+		location and not not location.y or not location and not not 0,
+		location and not not location.z or not location and not not 0,
+		breed,
+		spawn_category,
+		spawn_type,
+		spawn_queue_id
 	}
-	local x
-
-	if location then
-		x = location.x
-
-		if not x then
-			-- Nothing
-		end
-	end
-
-	x = 0
-
-	::label_11_0::
-
-	tbl[3] = x
-
-	local y
-
-	if location then
-		y = location.y
-
-		if not y then
-			-- Nothing
-		end
-	end
-
-	y = 0
-
-	::label_11_1::
-
-	tbl[4] = y
-
-	local z
-
-	if location then
-		z = location.z
-
-		if not z then
-			-- Nothing
-		end
-	end
-
-	z = 0
-
-	::label_11_2::
-
-	tbl[5] = z
-	tbl[6] = breed
-	tbl[7] = spawn_category
-	tbl[8] = spawn_type
-	tbl[9] = spawn_queue_id
-
-	local entry = tbl
 
 	if breed then
 		if not self._totals[breed.name] then
@@ -484,21 +406,7 @@ ImguiAISpawnLog._export_recap_data = function (self)
 
 	for name, counts in pairs(self._totals) do
 		local breed = Breeds[name]
-		local race
-
-		if breed then
-			race = breed.race
-
-			if not race then
-				-- Nothing
-			end
-		end
-
-		race = "unknown"
-
-		local faction = race
-
-		::label_17_0::
+		local faction = breed and not not breed.race or not breed and not not "unknown"
 
 		output = output .. "\n"
 		output = output .. name .. ","
@@ -523,39 +431,8 @@ ImguiAISpawnLog._export_log_data = function (self)
 			output = output .. "\n"
 
 			local breed = line[BREED_ID]
-			local name
-
-			if breed then
-				name = breed.name
-
-				if not name then
-					-- Nothing
-				end
-			end
-
-			name = "unknown"
-
-			local breed_name = name
-
-			do
-				local race
-			end
-
-			::label_18_0::
-
-			if breed then
-				race = breed.race
-
-				if not race then
-					-- Nothing
-				end
-			end
-
-			race = "unknown"
-
-			local faction = race
-
-			::label_18_1::
+			local breed_name = breed and not not breed.name or not breed and not not "unknown"
+			local faction = breed and not not breed.race or not breed and not not "unknown"
 
 			output = output .. breed_name .. ","
 			output = output .. faction .. ","

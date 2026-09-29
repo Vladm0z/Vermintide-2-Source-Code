@@ -58,10 +58,7 @@ local function spawn_hidden(breed_name, difficulty_amounts)
 	end
 end
 
-local TwitchVoteTemplates = TwitchVoteTemplates
-
-TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
-TwitchVoteTemplates = TwitchVoteTemplates
+TwitchVoteTemplates = not not TwitchVoteTemplates
 TwitchVoteTemplates.twitch_spawn_rat_ogre = {
 	text = "twitch_vote_spawn_rat_ogre",
 	breed_name = "skaven_rat_ogre",

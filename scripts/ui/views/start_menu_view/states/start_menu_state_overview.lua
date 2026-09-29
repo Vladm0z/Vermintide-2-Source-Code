@@ -90,17 +90,7 @@ StartMenuStateOverview.on_enter = function (self, params)
 
 	if hero_name then
 		local hero_attributes = Managers.backend:get_interface("hero_attributes")
-		local get = hero_attributes:get(hero_name, "career")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = 1
-
-		local career_index = get
-
-		::label_5_0::
+		local career_index = not not hero_attributes:get(hero_name, "career")
 
 		self:_populate_career_page(hero_name, career_index)
 	end
@@ -239,17 +229,7 @@ StartMenuStateOverview.post_update = function (self, dt, t)
 		elseif self._spawn_hero then
 			self._spawn_hero = nil
 
-			local _selected_hero_name = self._selected_hero_name
-
-			if not _selected_hero_name then
-				-- Nothing
-			end
-
-			_selected_hero_name = self._hero_name
-
-			local hero_name = _selected_hero_name
-
-			::label_12_0::
+			local hero_name = not not self._selected_hero_name
 
 			self:_spawn_hero_unit(hero_name)
 		end
@@ -380,17 +360,7 @@ StartMenuStateOverview._populate_career_page = function (self, hero_name, career
 		level = ExperienceSettings.get_versus_profile_level_from_experience(experience)
 	else
 		local hero_attributes = Managers.backend:get_interface("hero_attributes")
-		local get = hero_attributes:get(hero_name, "experience")
-
-		if not get then
-			-- Nothing
-		end
-
-		get = 0
-
-		local exp = get
-
-		::label_17_0::
+		local exp = not not hero_attributes:get(hero_name, "experience")
 
 		level = ExperienceSettings.get_level(exp)
 	end
@@ -430,22 +400,7 @@ end
 
 StartMenuStateOverview._create_player_portrait = function (self, portrait_image, level, player_portrait_frame)
 	-- function 20
-	local var_20_0
-
-	if level then
-		var_20_0 = tostring(level)
-
-		if not var_20_0 then
-			-- Nothing
-		end
-	end
-
-	var_20_0 = "-"
-
-	local level_text = var_20_0
-
-	::label_20_0::
-
+	local level_text = level and not not tostring(level) or not level and not not "-"
 	local scale = 1
 	local retained_mode = false
 	local definition = UIWidgets.create_portrait_frame("portrait_root", player_portrait_frame, level_text, scale, retained_mode, portrait_image)
@@ -528,42 +483,9 @@ StartMenuStateOverview._handle_keyboard_input = function (self)
 			self.parent:requested_screen_change_by_name("character")
 		end
 	}
-	local _keyboard_grid_selection = self._keyboard_grid_selection
-
-	if not _keyboard_grid_selection then
-		-- Nothing
-	end
-
-	_keyboard_grid_selection = {}
-
-	local keyboard_grid_selection = _keyboard_grid_selection
-
-	::label_23_0::
-
-	local var_23_1 = keyboard_grid_selection[1]
-
-	if not var_23_1 then
-		-- Nothing
-	end
-
-	var_23_1 = 1
-
-	local index_x = var_23_1
-
-	::label_23_1::
-
-	local var_23_2 = keyboard_grid_selection[2]
-
-	if not var_23_2 then
-		-- Nothing
-	end
-
-	var_23_2 = 1
-
-	local index_y = var_23_2
-
-	::label_23_2::
-
+	local keyboard_grid_selection = not not self._keyboard_grid_selection
+	local index_x = not not keyboard_grid_selection[1]
+	local index_y = not not keyboard_grid_selection[2]
 	local input_service = self:input_service(true)
 
 	if input_service:get("move_down_hold_continuous") then

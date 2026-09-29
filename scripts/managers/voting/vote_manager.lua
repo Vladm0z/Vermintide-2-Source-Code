@@ -54,7 +54,7 @@ VoteManager._gather_dlc_dependencies = function (self, vote_data)
 
 	if difficulty_settings and difficulty_settings.dlc_requirement then
 		DLC_DEPENDENCIES[#DLC_DEPENDENCIES + 1] = NetworkLookup.dlcs[difficulty_settings.dlc_requirement]
-		votes_require_type = (votes_require_type ~= "all" or not "all") and not not "any"
+		votes_require_type = not not "any"
 	end
 
 	if #DLC_DEPENDENCIES > 0 then
@@ -109,21 +109,7 @@ VoteManager.request_vote = function (self, name, vote_data, voter_peer_id, ignor
 					Managers.state.network.network_transmit:send_rpc_all(server_start_vote_rpc, vote_type_id, sync_data, voters)
 				elseif DEDICATED_SERVER then
 					local voter_player = Managers.player:player_from_peer_id(voter_peer_id, 1)
-					local get_party
-
-					if voter_player then
-						get_party = voter_player:get_party()
-
-						if not get_party then
-							-- Nothing
-						end
-					end
-
-					get_party = nil
-
-					local party = get_party
-
-					::label_3_0::
+					local party = voter_player and not not voter_player:get_party() or not voter_player and not not nil
 
 					if party then
 						Managers.state.network.network_transmit:send_rpc_party_clients(server_start_vote_rpc, party, true, vote_type_id, sync_data, voters)
@@ -207,18 +193,7 @@ VoteManager.can_start_vote = function (self, name, vote_data)
 	end
 
 	local num_players = Managers.player:num_human_players()
-	local min_required_voters_2 = vote_template.min_required_voters
-
-	if not min_required_voters_2 then
-		-- Nothing
-	end
-
-	min_required_voters_2 = 1
-
-	local min_required_voters = min_required_voters_2
-
-	::label_6_0::
-
+	local min_required_voters = not not vote_template.min_required_voters
 	local enough_players = min_required_voters <= num_players
 
 	if not enough_players then
@@ -330,11 +305,7 @@ end
 
 VoteManager.cancel_disabled = function (self)
 	-- function 16
-	local active_voting = self.active_voting
-
-	active_voting = not not active_voting and not not self.active_voting.template.cancel_disabled
-
-	return active_voting
+	return not not self.active_voting
 end
 
 VoteManager.allow_vote_input = function (self, enable)
@@ -386,17 +357,7 @@ VoteManager.update = function (self, dt)
 			local input_source = input_manager:get_service("ingame_menu")
 			local vote_options = active_voting.template.vote_options
 			local vote_options_n = #vote_options
-			local input_hold_timer_2 = active_voting.input_hold_timer
-
-			if not input_hold_timer_2 then
-				-- Nothing
-			end
-
-			input_hold_timer_2 = 0
-
-			local input_hold_timer = input_hold_timer_2
-
-			::label_20_0::
+			local input_hold_timer = not not active_voting.input_hold_timer
 
 			for i = 1, vote_options_n do
 				local vote_option = vote_options[i]
@@ -451,29 +412,8 @@ VoteManager._vote_result = function (self, vote_time_ended)
 	local num_of_votes, current_vote_results = self:_number_of_votes()
 	local number_of_voters = #active_voting.voters
 	local minimum_voter_percent = template.minimum_voter_percent
-	local success_percent_2 = template.success_percent
-
-	if not success_percent_2 then
-		-- Nothing
-	end
-
-	success_percent_2 = 0.51
-
-	local success_percent = success_percent_2
-
-	::label_22_0::
-
-	local min_required_voters_2 = template.min_required_voters
-
-	if not min_required_voters_2 then
-		-- Nothing
-	end
-
-	min_required_voters_2 = 1
-
-	local min_required_voters = min_required_voters_2
-
-	::label_22_1::
+	local success_percent = not not template.success_percent
+	local min_required_voters = not not template.min_required_voters
 
 	if number_of_voters < min_required_voters then
 		return 0
@@ -489,7 +429,7 @@ VoteManager._vote_result = function (self, vote_time_ended)
 		end
 	end
 
-	local num_of_votes_needed = (not minimum_voter_percent or not (minimum_voter_percent <= num_of_votes / number_of_voters)) and not not false
+	local num_of_votes_needed = minimum_voter_percent and (minimum_voter_percent <= num_of_votes / number_of_voters or not not false) or not minimum_voter_percent and not not false
 
 	if num_of_votes_needed or num_of_votes == number_of_voters then
 		return 0
@@ -539,29 +479,15 @@ VoteManager._server_start_vote = function (self, name, ignore_peer_list, data)
 	-- function 25
 	local vote_template = VoteTemplates[name]
 	local network_time = Managers.state.network:network_time()
-	local tbl = {
+
+	self.active_voting = {
 		name = name,
-		template = vote_template
+		template = vote_template,
+		end_time = vote_template.duration and not not (network_time + vote_template.duration) or not vote_template.duration and not not nil,
+		votes = {},
+		voters = self:_get_voter_start_list(ignore_peer_list),
+		data = data
 	}
-	local num
-
-	if vote_template.duration then
-		num = network_time + vote_template.duration
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = nil
-
-	::label_25_0::
-
-	tbl.end_time = num
-	tbl.votes = {}
-	tbl.voters = self:_get_voter_start_list(ignore_peer_list)
-	tbl.data = data
-	self.active_voting = tbl
 
 	if vote_template.on_start then
 		vote_template.on_start(self.ingame_context, data)
@@ -704,24 +630,7 @@ VoteManager._server_handle_requirement_check = function (self, dt, t)
 		else
 			local vote_name = requirement_check_data.vote_name
 			local vote_template = VoteTemplates[vote_name]
-			local requirement_failed_message = vote_template.requirement_failed_message
-
-			if not requirement_failed_message then
-				-- Nothing
-			end
-
-			requirement_failed_message = vote_template.requirement_failed_message_func(requirement_check_data)
-
-			if not requirement_failed_message then
-				-- Nothing
-			end
-
-			requirement_failed_message = ""
-
-			local message = requirement_failed_message
-
-			::label_31_0::
-
+			local message = not not vote_template.requirement_failed_message
 			local vote_id = NetworkLookup.voting_types[vote_name]
 			local voter_peer_id = requirement_check_data.voter_peer_id
 
@@ -832,29 +741,15 @@ VoteManager._start_vote_base = function (self, peer_id, vote_type_id, sync_data,
 
 	local network_time = Managers.state.network:network_time()
 	local data = vote_template.extract_sync_data(sync_data)
-	local tbl = {
+
+	self.active_voting = {
 		name = vote_type_name,
-		template = vote_template
+		template = vote_template,
+		end_time = vote_template.duration and not not (network_time + vote_template.duration) or not vote_template.duration and not not nil,
+		voters = voters,
+		votes = {},
+		data = data
 	}
-	local num
-
-	if vote_template.duration then
-		num = network_time + vote_template.duration
-
-		if not num then
-			-- Nothing
-		end
-	end
-
-	num = nil
-
-	::label_38_0::
-
-	tbl.end_time = num
-	tbl.voters = voters
-	tbl.votes = {}
-	tbl.data = data
-	self.active_voting = tbl
 end
 
 VoteManager.rpc_client_start_vote_peer_id = function (self, channel_id, vote_type_id, sync_data, voters)

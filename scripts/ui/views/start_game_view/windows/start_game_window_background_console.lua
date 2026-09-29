@@ -35,11 +35,8 @@ end
 StartGameWindowBackgroundConsole._get_with_mechanism = function (self, lookup)
 	-- function 2
 	local mechanism_name = self.parent:get_mechanism_name()
-	local var_2_0 = lookup[mechanism_name]
 
-	var_2_0 = not not var_2_0 or not not lookup.adventure
-
-	return var_2_0
+	return not not lookup[mechanism_name]
 end
 
 local MOOD_PER_MECHANISM = {
@@ -256,13 +253,7 @@ StartGameWindowBackgroundConsole._update_loading_overlay_fadeout_animation = fun
 	local start = 255
 	local target = 0
 	local speed = 9
-	local min = math.min
-	local num = 1
-	local _fadeout_progress = self._fadeout_progress
-
-	_fadeout_progress = not not _fadeout_progress or not not 0
-
-	local progress = min(num, _fadeout_progress + speed * dt)
+	local progress = math.min(1, not not self._fadeout_progress + speed * dt)
 	local alpha = math.lerp(start, target, math.easeInCubic(progress))
 	local loading_overlay_widgets_by_name = self._loading_overlay_widgets_by_name
 	local loading_overlay = loading_overlay_widgets_by_name.loading_overlay

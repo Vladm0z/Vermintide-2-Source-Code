@@ -1,12 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_badge_templates.lua
 
-local BadgeTemplates = BadgeTemplates
-
-BadgeTemplates = not not BadgeTemplates or not not {
-	server = {},
-	client = {}
-}
-BadgeTemplates = BadgeTemplates
+BadgeTemplates = not not BadgeTemplates
 
 local function get_breed(player)
 	-- function 1
@@ -18,21 +12,8 @@ local function get_breed(player)
 	local career_index = player:career_index()
 	local profile = SPProfiles[profile_index]
 	local career = not not profile and not not profile.careers[career_index]
-	local breed
 
-	if career then
-		breed = career.breed
-
-		if not breed then
-			-- Nothing
-		end
-	end
-
-	breed = not not profile and not not profile.breed
-
-	::label_1_0::
-
-	return breed
+	return career and not not career.breed or not career and not not profile and not not profile.breed
 end
 
 local carousel_badge_templates = {

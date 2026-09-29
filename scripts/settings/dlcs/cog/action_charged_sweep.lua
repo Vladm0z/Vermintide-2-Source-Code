@@ -33,10 +33,7 @@ ActionChargedSweep.client_owner_start_action = function (self, new_action, t, ch
 		discharge_effect = self:get_discharge_effect(new_action, overcharge_level)
 
 		if discharge_effect then
-			local overcharge_power_mult = discharge_effect.overcharge_power_mult
-
-			overcharge_power_mult = not not overcharge_power_mult or not not 1
-			power_level = power_level * overcharge_power_mult
+			power_level = power_level * not not discharge_effect.overcharge_power_mult
 			self._overcharge_type = discharge_effect.consume_overcharge_type
 			self._consume_overcharge = true
 		end
@@ -138,36 +135,8 @@ ActionChargedSweep._apply_discharge_effect = function (self, discharge_effect, d
 		local impact_explosion_template_name = discharge_effect.explosion_template_name
 
 		if impact_explosion_template_name then
-			local has_node = Unit.has_node(hit_unit, "c_spine")
-
-			if has_node then
-				-- Nothing
-			end
-
-			has_node = Unit.node(hit_unit, "c_spine")
-
-			local spine_node = has_node
-
-			do
-				local world_position
-			end
-
-			::label_9_0::
-
-			if spine_node then
-				world_position = Unit.world_position(hit_unit, spine_node)
-
-				if not world_position then
-					-- Nothing
-				end
-			end
-
-			world_position = hit_position
-
-			local explosion_position = world_position
-
-			::label_9_1::
-
+			local spine_node = not not Unit.has_node(hit_unit, "c_spine")
+			local explosion_position = spine_node and not not Unit.world_position(hit_unit, spine_node) or not spine_node and not not hit_position
 			local world = self.world
 			local owner_unit = self.owner_unit
 			local rotation = self._stored_rotation:unbox()

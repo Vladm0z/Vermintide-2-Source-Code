@@ -1,9 +1,6 @@
 -- chunkname: @scripts/helpers/mutator_utils.lua
 
-local MutatorUtils = MutatorUtils
-
-MutatorUtils = not not MutatorUtils or not not {}
-MutatorUtils = MutatorUtils
+MutatorUtils = not not MutatorUtils
 
 local function tweak_horde_size_value(value, multiplier)
 	-- function 1
@@ -76,22 +73,7 @@ MutatorUtils.apply_buff_to_alive_player_units = function (context, data, buff_na
 	end
 
 	local side = Managers.state.side:get_side_from_name("heroes")
-	local PLAYER_UNITS
-
-	if data.only_affect_players then
-		PLAYER_UNITS = side.PLAYER_UNITS
-
-		if not PLAYER_UNITS then
-			-- Nothing
-		end
-	end
-
-	PLAYER_UNITS = side.PLAYER_AND_BOT_UNITS
-
-	local current_player_units = PLAYER_UNITS
-
-	::label_5_0::
-
+	local current_player_units = data.only_affect_players and not not side.PLAYER_UNITS or not data.only_affect_players and not not side.PLAYER_AND_BOT_UNITS
 	local num_current_player_units = #current_player_units
 	local get_extension = ScriptUnit.extension
 	local new_buff_ids = {}
@@ -174,18 +156,13 @@ end
 MutatorUtils.tweak_pack_spawning_settings_convert_breeds = function (pack_spawning_settings, conversion_table)
 	-- function 10
 	local breed_packs = pack_spawning_settings.roaming_set.breed_packs
-	local roaming_set = pack_spawning_settings.roaming_set
-	local var_10_1 = conversion_table[breed_packs]
 
-	var_10_1 = not not var_10_1 or not not breed_packs
-	roaming_set.breed_packs = var_10_1
+	pack_spawning_settings.roaming_set.breed_packs = not not conversion_table[breed_packs]
 
 	for _, breed_pack_override in ipairs(pack_spawning_settings.roaming_set.breed_packs_override) do
 		local breed = breed_pack_override[1]
-		local var_10_2 = conversion_table[breed]
 
-		var_10_2 = not not var_10_2 or not not breed
-		breed_pack_override[1] = var_10_2
+		breed_pack_override[1] = not not conversion_table[breed]
 	end
 
 	if pack_spawning_settings.difficulty_overrides then
@@ -193,10 +170,8 @@ MutatorUtils.tweak_pack_spawning_settings_convert_breeds = function (pack_spawni
 			for i = 1, #difficulty_override do
 				local breed_pack_override = difficulty_override[i]
 				local breed = breed_pack_override[1]
-				local var_10_3 = conversion_table[breed]
 
-				var_10_3 = not not var_10_3 or not not breed
-				breed_pack_override[1] = var_10_3
+				breed_pack_override[1] = not not conversion_table[breed]
 			end
 		end
 	end

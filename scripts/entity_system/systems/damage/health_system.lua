@@ -251,20 +251,7 @@ HealthSystem.update_debug = function (self)
 			else
 				local health = extension:current_health()
 				local damage = extension:get_damage_taken()
-				local str
-
-				if health == math.huge then
-					str = "inf"
-
-					goto label_14_0
-				end
-
-				str = string.format("%.2f", health)
-
-				local health_string = str
-
-				::label_14_0::
-
+				local health_string = health ~= math.huge and not not string.format("%.2f", health) or not (health ~= math.huge) and not not "inf"
 				local breed = Unit.get_data(unit, "breed")
 
 				if breed ~= nil then
@@ -288,18 +275,7 @@ HealthSystem.update_debug = function (self)
 
 		local player_unit = player.player_unit
 		local free_flight_manager = Managers.free_flight
-		local active = free_flight_manager:active("global")
-
-		if active then
-			-- Nothing
-		end
-
-		active = free_flight_manager:camera_position_rotation()
-
-		local free_flight_position = active
-
-		::label_14_1::
-
+		local free_flight_position = not not free_flight_manager:active("global")
 		local ai_system = Managers.state.entity:system("ai_system")
 		local broadphase = ai_system.broadphase
 		local center_pos = not not free_flight_position or not not POSITION_LOOKUP[player_unit]
@@ -322,17 +298,7 @@ HealthSystem.update_debug = function (self)
 
 			for i = 1, num_units do
 				local unit = debug_units[i]
-				local has_node = Unit.has_node(unit, "c_head")
-
-				if has_node then
-					-- Nothing
-				end
-
-				has_node = Unit.node(unit, "c_head")
-
-				local head_node = has_node
-
-				::label_14_2::
+				local head_node = not not Unit.has_node(unit, "c_head")
 
 				if head_node then
 					local health_extension = self.unit_extensions[unit]
@@ -343,25 +309,9 @@ HealthSystem.update_debug = function (self)
 						local current_health = health_extension.health - health_extension.damage
 						local max_health = health_extension.health
 						local p = current_health / max_health
-						local color = (not (p > 0.99) or not color1) and (not (p > 0.25) or not color2) and not not color3
+						local color = p > 0.99 and (not not color1 or p > 0.25 and (not not color2 or not not color3) or not (p > 0.25) and not not color3) or not (p > 0.99) and (p > 0.25 and (not not color2 or not not color3) or not (p > 0.25) and not not color3)
 						local blackboard = BLACKBOARDS[unit]
-						local lean_dogpile
-
-						if blackboard then
-							lean_dogpile = blackboard.lean_dogpile
-
-							if not lean_dogpile then
-								lean_dogpile = 0
-							end
-
-							goto label_14_3
-						end
-
-						lean_dogpile = "-"
-
-						local dogpile = lean_dogpile
-
-						::label_14_3::
+						local dogpile = blackboard and not not blackboard.lean_dogpile or not blackboard and not not "-"
 
 						if p <= 0 then
 							local text = string.format("dead, dogpile %s", dogpile)
@@ -374,21 +324,7 @@ HealthSystem.update_debug = function (self)
 						end
 
 						local ai_group_extension = ScriptUnit.has_extension(unit, "ai_group_system")
-						local template
-
-						if ai_group_extension then
-							template = ai_group_extension.template
-
-							if not template then
-								-- Nothing
-							end
-						end
-
-						template = ""
-
-						local template_name = template
-
-						::label_14_4::
+						local template_name = ai_group_extension and not not ai_group_extension.template or not ai_group_extension and not not ""
 
 						if template_name then
 							debug_text_manager:output_unit_text(template_name, 0.15, unit, head_node, offset_vector2, nil, "health", head_color, viewport_name)
@@ -407,75 +343,19 @@ HealthSystem.update_debug = function (self)
 
 							if replaced_breed then
 								col = change_color
-
-								local format = string.format
-								local str_2 = "%s R>%s"
-								local debug_info = health_extension.debug_info
-
-								debug_info = not not debug_info or not not "Roaming"
-								text = format(str_2, debug_info, health_extension.replaced_breed)
+								text = string.format("%s R>%s", not not health_extension.debug_info, health_extension.replaced_breed)
 							else
 								col = head_color
-
-								local format_2 = string.format
-								local str_3 = "%s SEG=%d"
-								local debug_info_2 = health_extension.debug_info
-
-								debug_info_2 = not not debug_info_2 or not not "Roaming"
-								text = format_2(str_3, debug_info_2, hi_data.id)
+								text = string.format("%s SEG=%d", not not health_extension.debug_info, hi_data.id)
 							end
 
 							debug_text_manager:output_unit_text(text, 0.15, unit, head_node, offset_vector3, nil, "spawn_info", col, viewport_name)
 
 							local breed_name = BLACKBOARDS[unit].breed.name
+							local breed_count = not not hi_data and not not hi_data.breed_count
+							local count = breed_count and not not breed_count.count or not breed_count and not not " "
 
-							if hi_data then
-								-- Nothing
-							end
-
-							::label_14_5::
-
-							local breed_count_2 = hi_data.breed_count
-
-							if breed_count_2 then
-								-- Nothing
-							end
-
-							breed_count_2 = hi_data.breed_count[breed_name]
-
-							local breed_count = breed_count_2
-
-							do
-								local count_2
-							end
-
-							::label_14_6::
-
-							if breed_count then
-								count_2 = breed_count.count
-
-								if not count_2 then
-									-- Nothing
-								end
-							end
-
-							count_2 = " "
-
-							local count = count_2
-
-							::label_14_7::
-
-							local format_3 = string.format
-							local str_4 = "%s %s %q(%s)"
-							local flag
-
-							flag = (not zone_data.island or not "island_id:") and not not "zone_id:"
-
-							local unique_zone_id = zone_data.unique_zone_id
-							local pack_type = zone_data.pack_type
-
-							pack_type = not not pack_type or not not "?"
-							text = format_3(str_4, flag, unique_zone_id, pack_type, count)
+							text = string.format("%s %s %q(%s)", zone_data.island and not not "island_id:" or not zone_data.island and not not "zone_id:", zone_data.unique_zone_id, not not zone_data.pack_type, count)
 
 							if zone_data.hi then
 								col = desc_color2
@@ -486,21 +366,7 @@ HealthSystem.update_debug = function (self)
 							debug_text_manager:output_unit_text(text, 0.15, unit, head_node, offset_vector2, nil, "spawn_info", col, viewport_name)
 						else
 							local ai_group_extension = ScriptUnit.has_extension(unit, "ai_group_system")
-							local template_2
-
-							if ai_group_extension then
-								template_2 = ai_group_extension.template
-
-								if not template_2 then
-									-- Nothing
-								end
-							end
-
-							template_2 = ""
-
-							local template_name = template_2
-
-							::label_14_8::
+							local template_name = ai_group_extension and not not ai_group_extension.template or not ai_group_extension and not not ""
 
 							if template_name then
 								debug_text_manager:output_unit_text(template_name, 0.15, unit, head_node, offset_vector2, nil, "spawn_info", head_color, viewport_name)
@@ -554,7 +420,7 @@ HealthSystem.rpc_add_damage = function (self, channel_id, victim_unit_go_id, vic
 	end
 
 	if damage_type ~= "sync_health" then
-		victim_health_extension:add_damage((not attacker_unit_alive or not attacker_unit) and not not victim_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
+		victim_health_extension:add_damage(attacker_unit_alive and (not not attacker_unit or not not victim_unit) or not attacker_unit_alive and not not victim_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
 	end
 
 	if victim_health_extension:is_alive() and is_dead then
@@ -564,7 +430,7 @@ HealthSystem.rpc_add_damage = function (self, channel_id, victim_unit_go_id, vic
 
 		killing_blow[DamageDataIndex.DAMAGE_AMOUNT] = damage_amount
 		killing_blow[DamageDataIndex.DAMAGE_TYPE] = damage_type
-		killing_blow[DamageDataIndex.ATTACKER] = (not attacker_unit_alive or not attacker_unit) and not not victim_unit
+		killing_blow[DamageDataIndex.ATTACKER] = attacker_unit_alive and (not not attacker_unit or not not victim_unit) or not attacker_unit_alive and not not victim_unit
 		killing_blow[DamageDataIndex.HIT_ZONE] = hit_zone_name
 		killing_blow[DamageDataIndex.POSITION] = hit_position_table
 		killing_blow[DamageDataIndex.DIRECTION] = damage_direction_table
@@ -699,12 +565,7 @@ end
 
 HealthSystem.rpc_request_heal = function (self, channel_id, unit_go_id, heal_amount, heal_type_id)
 	-- function 20
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Trying to request a heal from a client")
+	fassert(not not self.is_server, "Trying to request a heal from a client")
 
 	local unit = self.unit_storage:unit(unit_go_id)
 
@@ -740,12 +601,7 @@ end
 
 HealthSystem.rpc_request_convert_temp = function (self, channel_id, unit_go_id, amount)
 	-- function 21
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Trying to request a health convert from a client")
+	fassert(not not self.is_server, "Trying to request a health convert from a client")
 
 	local unit = self.unit_storage:unit(unit_go_id)
 
@@ -835,12 +691,7 @@ end
 
 HealthSystem.rpc_request_knock_down = function (self, channel_id, unit_go_id)
 	-- function 25
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Trying to request a knock down from a client")
+	fassert(not not self.is_server, "Trying to request a knock down from a client")
 
 	local unit = self.unit_storage:unit(unit_go_id)
 	local health_extension = ScriptUnit.extension(unit, "health_system")
@@ -850,12 +701,7 @@ end
 
 HealthSystem.rpc_request_heal_wounds = function (self, channel_id, unit_go_id)
 	-- function 26
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Trying to request a wound heal from a client")
+	fassert(not not self.is_server, "Trying to request a wound heal from a client")
 
 	local unit = self.unit_storage:unit(unit_go_id)
 
@@ -864,12 +710,7 @@ end
 
 HealthSystem.rpc_request_revive = function (self, channel_id, revived_unit_go_id, reviver_unit_go_id)
 	-- function 27
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Trying to request a revive from a client")
+	fassert(not not self.is_server, "Trying to request a revive from a client")
 
 	local revived_unit = self.unit_storage:unit(revived_unit_go_id)
 	local reviver_unit = self.unit_storage:unit(reviver_unit_go_id)
@@ -891,12 +732,7 @@ end
 
 HealthSystem.rpc_request_insta_kill = function (self, sender, unit_id, damage_type_id)
 	-- function 28
-	local fassert = fassert
-	local is_server = self.is_server
-
-	is_server = not not is_server or not not LEVEL_EDITOR_TEST
-
-	fassert(is_server, "Trying to request a insta kill from a client")
+	fassert(not not self.is_server, "Trying to request a insta kill from a client")
 
 	local unit = self.unit_storage:unit(unit_id)
 

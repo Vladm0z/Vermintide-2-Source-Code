@@ -1,9 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/shovel/shovel_utility_considerations.lua
 
-local UtilityConsiderations = UtilityConsiderations
-
-UtilityConsiderations = not not UtilityConsiderations or not not {}
-UtilityConsiderations = UtilityConsiderations
+UtilityConsiderations = not not UtilityConsiderations
 UtilityConsiderations.pet_skeleton_taunt = {
 	distance_to_target = {
 		max_value = 5,

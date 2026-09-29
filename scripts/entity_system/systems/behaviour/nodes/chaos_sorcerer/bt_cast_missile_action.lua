@@ -16,16 +16,8 @@ BTCastMissileAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 	blackboard.active_node = BTCastMissileAction
-
-	local spell_count = blackboard.spell_count
-
-	spell_count = not not spell_count or not not 0
-	blackboard.spell_count = spell_count
-
-	local cast_time = action.cast_time
-
-	cast_time = not not cast_time or not not 1
-	blackboard.cast_time_done = t + cast_time
+	blackboard.spell_count = not not blackboard.spell_count
+	blackboard.cast_time_done = t + not not action.cast_time
 	blackboard.summoning = true
 	blackboard.volleys = 0
 
@@ -79,21 +71,10 @@ BTCastMissileAction.run = function (self, unit, blackboard, t, dt)
 	local target_position = blackboard.target_position:unbox()
 	local action = blackboard.action
 
-	if (action.only_cb or not (t > blackboard.cast_time_done)) and blackboard.anim_cb_throw then
+	if blackboard.anim_cb_throw then
 		blackboard.anim_cb_throw = false
 
-		local current_spell = blackboard.current_spell
-
-		if not current_spell then
-			-- Nothing
-		end
-
-		current_spell = action.spell_data
-
-		local missile_data = current_spell
-
-		::label_4_0::
-
+		local missile_data = not not blackboard.current_spell
 		local throw_pos, target_dir
 
 		if action.get_throw_position_func then
@@ -117,18 +98,7 @@ BTCastMissileAction.run = function (self, unit, blackboard, t, dt)
 		end
 
 		if missile_data.magic_missile then
-			local launch_angle = action.launch_angle
-
-			if not launch_angle then
-				-- Nothing
-			end
-
-			launch_angle = 0.7
-
-			local angle = launch_angle
-
-			::label_4_1::
-
+			local angle = not not action.launch_angle
 			local speed = missile_data.magic_missile_speed
 
 			target_dir = Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(target_dir, Vector3.up()), angle), target_dir)
@@ -138,17 +108,7 @@ BTCastMissileAction.run = function (self, unit, blackboard, t, dt)
 
 			target_dir = Vector3.normalize(target_dir + up + right)
 
-			local target_ground = missile_data.target_ground
-
-			if target_ground then
-				-- Nothing
-			end
-
-			target_ground = POSITION_LOOKUP[blackboard.target_unit]
-
-			local position_target = target_ground
-
-			::label_4_2::
+			local position_target = not not missile_data.target_ground
 
 			self:launch_magic_missile(blackboard, action, throw_pos, target_dir, angle, speed, unit, blackboard.target_unit, position_target, missile_data)
 		else
@@ -186,31 +146,9 @@ end
 BTCastMissileAction.launch_projectile = function (self, blackboard, action, initial_position, target_dir, angle, speed, owner_unit, target_unit)
 	-- function 5
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_5_0 = action.aoe_dot_damage[difficulty_rank]
-
-	if not var_5_0 then
-		-- Nothing
-	end
-
-	var_5_0 = action.aoe_dot_damage[2]
-
-	local aoe_dot_damage_table = var_5_0
-
-	::label_5_0::
-
+	local aoe_dot_damage_table = not not action.aoe_dot_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local var_5_1 = action.aoe_init_damage[difficulty_rank]
-
-	if not var_5_1 then
-		-- Nothing
-	end
-
-	var_5_1 = action.aoe_init_damage[2]
-
-	local aoe_init_damage_table = var_5_1
-
-	::label_5_1::
-
+	local aoe_init_damage_table = not not action.aoe_init_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
 	local radius = action.radius
@@ -262,16 +200,7 @@ BTCastMissileAction.launch_magic_missile = function (self, blackboard, action, p
 	local scale = 1
 	local radius_min = 0.2
 	local radius_max = 0.5
-	local num = 0.5
-
-	goto label_6_0
-
-	num = math.lerp(radius_min, radius_max, scale)
-
-	local radius = num
-
-	::label_6_0::
-
+	local radius = not not 0.5
 	local damage_source = blackboard.breed.name
 	local true_flight_template_name = missile_data.true_flight_template_name
 	local true_flight_template = TrueFlightTemplates[true_flight_template_name]
@@ -296,7 +225,7 @@ BTCastMissileAction.launch_magic_missile = function (self, blackboard, action, p
 		}
 	end
 
-	local tbl = {
+	local extension_init_data = {
 		projectile_locomotion_system = {
 			trajectory_template_name = "throw_trajectory",
 			gravity_settings = "arrows",
@@ -309,28 +238,22 @@ BTCastMissileAction.launch_magic_missile = function (self, blackboard, action, p
 			owner_unit = owner_unit,
 			position_target = position_target,
 			life_time = missile_data.life_time
-		}
+		},
+		projectile_system = {
+			impact_template_name = "direct_impact",
+			owner_unit = owner_unit,
+			damage_source = damage_source,
+			explosion_template_name = not not missile_data.explosion_template_name
+		},
+		projectile_impact_system = {
+			collision_filter = "filter_enemy_ray_projectile",
+			server_side_raycast = true,
+			owner_unit = owner_unit,
+			radius = radius
+		},
+		health_system = health_system,
+		death_system = death_system
 	}
-	local tbl_2 = {
-		impact_template_name = "direct_impact",
-		owner_unit = owner_unit,
-		damage_source = damage_source
-	}
-	local explosion_template_name = missile_data.explosion_template_name
-
-	explosion_template_name = not not explosion_template_name or not not "chaos_magic_missile"
-	tbl_2.explosion_template_name = explosion_template_name
-	tbl.projectile_system = tbl_2
-	tbl.projectile_impact_system = {
-		collision_filter = "filter_enemy_ray_projectile",
-		server_side_raycast = true,
-		owner_unit = owner_unit,
-		radius = radius
-	}
-	tbl.health_system = health_system
-	tbl.death_system = death_system
-
-	local extension_init_data = tbl
 	local rotation = Quaternion.look(target_dir)
 	local projectile_unit_name = missile_data.projectile_unit_name
 	local projectile_unit

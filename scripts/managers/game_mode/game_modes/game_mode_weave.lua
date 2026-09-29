@@ -3,11 +3,7 @@
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 require("scripts/managers/game_mode/spawning_components/weave_spawning")
 
-local script_data = script_data
-local disable_gamemode_end = script_data.disable_gamemode_end
-
-disable_gamemode_end = not not disable_gamemode_end or not not Development.parameter("disable_gamemode_end")
-script_data.disable_gamemode_end = disable_gamemode_end
+script_data.disable_gamemode_end = not not script_data.disable_gamemode_end
 GameModeWeave = class(GameModeWeave, GameModeBase)
 
 local COMPLETE_LEVEL_VAR = false
@@ -80,21 +76,10 @@ GameModeWeave.evaluate_end_conditions = function (self, round_started, dt, t, mu
 
 	local ignore_bots = true
 	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
-	local side_is_disabled = GameModeHelper.side_is_disabled("heroes")
-
-	if side_is_disabled then
-		-- Nothing
-	end
-
-	side_is_disabled = not GameModeHelper.side_delaying_loss("heroes")
-
-	local players_disabled = side_is_disabled
-
-	::label_7_0::
-
+	local players_disabled = not not GameModeHelper.side_is_disabled("heroes")
 	local mutator_lost = mutator_handler:evaluate_lose_conditions()
 	local time_up = self:_is_time_up(t)
-	local lost = not self._lose_condition_disabled and not not mutator_lost or not not humans_dead or not not players_disabled or not not self._level_failed
+	local lost = not self._lose_condition_disabled and (not not mutator_lost or not not humans_dead or not not players_disabled or not not self._level_failed)
 
 	if self._about_to_win then
 		if t > self.win_condition_timer then
@@ -172,18 +157,7 @@ end
 GameModeWeave.on_ai_unit_destroyed = function (self, unit, blackboard, reason)
 	-- function 11
 	if reason == "far_away" and blackboard then
-		local get_data = Unit.get_data(unit, "spawn_type")
-
-		if not get_data then
-			-- Nothing
-		end
-
-		get_data = "unknown"
-
-		local spawn_type = get_data
-
-		::label_11_0::
-
+		local spawn_type = not not Unit.get_data(unit, "spawn_type")
 		local enemy_recycler = Managers.state.conflict.enemy_recycler
 		local breed = blackboard.breed
 		local death_data = {
@@ -466,15 +440,7 @@ GameModeWeave._get_first_available_bot_profile = function (self)
 
 	table.sort(available_profile_by_priority, function (a, b)
 		-- function 39
-		local var_39_0 = bot_profile_id_to_priority_id[a]
-
-		var_39_0 = not not var_39_0 or not not math.huge
-
-		local var_39_1 = bot_profile_id_to_priority_id[b]
-
-		var_39_1 = not not var_39_1 or not not math.huge
-
-		return var_39_0 < var_39_1
+		return not not bot_profile_id_to_priority_id[a] < not not bot_profile_id_to_priority_id[b]
 	end)
 
 	local profile_index = available_profile_by_priority[1]
@@ -491,19 +457,7 @@ GameModeWeave._get_first_available_bot_profile = function (self)
 	local display_name = profile.display_name
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 	local career_index = hero_attributes:get(display_name, "career")
-	local get = hero_attributes:get(display_name, "bot_career")
-
-	if not get and not career_index then
-		-- Nothing
-	end
-
-	::label_38_0::
-
-	get = 1
-
-	local bot_career_index = get
-
-	::label_38_1::
+	local bot_career_index = not not hero_attributes:get(display_name, "bot_career")
 
 	if script_data.wanted_bot_career_index then
 		bot_career_index = script_data.wanted_bot_career_index
@@ -544,17 +498,7 @@ GameModeWeave._handle_bots = function (self, t, dt)
 		return
 	end
 
-	local parameter = Development.parameter("enable_bots_in_weaves")
-
-	if not parameter then
-		-- Nothing
-	end
-
-	parameter = not self._has_locked_party_size
-
-	local can_spawn_bots = parameter
-
-	::label_41_0::
+	local can_spawn_bots = not not Development.parameter("enable_bots_in_weaves")
 
 	if script_data.ai_bots_disabled or not can_spawn_bots then
 		if #self._bot_players > 0 then

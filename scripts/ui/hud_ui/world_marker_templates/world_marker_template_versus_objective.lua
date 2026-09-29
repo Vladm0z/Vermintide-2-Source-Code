@@ -1,9 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_objective.lua
 
-local WorldMarkerTemplates = WorldMarkerTemplates
-
-WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
-WorldMarkerTemplates = WorldMarkerTemplates
+WorldMarkerTemplates = not not WorldMarkerTemplates
 
 local template = WorldMarkerTemplates.versus_objective
 
@@ -64,11 +61,7 @@ template.create_widget_definition = function (scenegraph_id)
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 3
-						local is_clamped = content.is_clamped
-
-						is_clamped = not not is_clamped or content.distance > 5
-
-						return is_clamped
+						return not not content.is_clamped
 					end
 				},
 				{
@@ -77,11 +70,7 @@ template.create_widget_definition = function (scenegraph_id)
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 4
-						local is_clamped = content.is_clamped
-
-						is_clamped = not not is_clamped or content.distance > 5
-
-						return is_clamped
+						return not not content.is_clamped
 					end
 				}
 			}
@@ -303,21 +292,8 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	style.arrow.angle = content.angle
 
 	local distance = content.distance
-	local str
 
-	if distance > 1 then
-		str = UIUtils.comma_value(math.floor(distance)) .. "m"
-
-		if not str then
-			-- Nothing
-		end
-	end
-
-	str = ""
-
-	::label_6_0::
-
-	content.text = str
+	content.text = distance > 1 and not not (UIUtils.comma_value(math.floor(distance)) .. "m") or not (distance > 1) and not not ""
 
 	local df = math.min(1, 15 / distance)
 	local ct = content.t + dt * df

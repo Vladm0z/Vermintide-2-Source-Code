@@ -300,7 +300,7 @@ NetworkState.get_profile_index_reservation = function (self, party_id, profile_i
 	local key = self._shared_state:get_key("profile_index_reservation", nil, nil, profile_index, nil, party_id)
 	local value = self._shared_state:get_server(key)
 
-	return (value == "" or not value) and not not nil
+	return not not nil
 end
 
 NetworkState.set_profile_index_reservation = function (self, party_id, profile_index, career_index, peer_id)

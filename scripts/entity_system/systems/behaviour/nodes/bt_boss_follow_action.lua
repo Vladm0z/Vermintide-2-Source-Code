@@ -17,16 +17,8 @@ BTBossFollowAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 	blackboard.remembered_threat_pos = nil
-
-	local unreachable_timer = blackboard.unreachable_timer
-
-	unreachable_timer = not not unreachable_timer or not not 0
-	blackboard.chasing_timer = unreachable_timer
-
-	local follow_data = blackboard.follow_data
-
-	follow_data = not not follow_data or not not {}
-	blackboard.follow_data = follow_data
+	blackboard.chasing_timer = not not blackboard.unreachable_timer
+	blackboard.follow_data = not not blackboard.follow_data
 
 	if blackboard.fling_skaven_timer and t > blackboard.fling_skaven_timer then
 		blackboard.fling_skaven_timer = t + 0.5
@@ -90,15 +82,8 @@ BTBossFollowAction._go_idle = function (self, unit, blackboard, navigation_exten
 	end
 
 	local action = blackboard.action
-	local network = Managers.state.network
-	local var_5_1 = network
-	local anim_event = network.anim_event
-	local var_5_3 = unit
-	local idle_anim = action.idle_anim
 
-	idle_anim = not not idle_anim or not not "idle"
-
-	anim_event(var_5_1, var_5_3, idle_anim)
+	Managers.state.network:anim_event(unit, not not action.idle_anim)
 
 	local target_unit = blackboard.target_unit
 
@@ -269,44 +254,12 @@ BTBossFollowAction._follow_target_stormfiend = function (self, unit, blackboard,
 		target_has_moved = false
 	end
 
-	if (not at_goal or check_distance < target_distance or not blackboard.find_new_shoot_position) and not at_goal and target_has_moved then
-		local min_angle_2 = follow_data.min_angle
-
-		if not min_angle_2 then
-			-- Nothing
-		end
-
-		min_angle_2 = 0
-
-		local min_angle = min_angle_2
-
-		::label_10_0::
-
+	if at_goal and (check_distance < target_distance or blackboard.find_new_shoot_position) or not at_goal and not at_goal and target_has_moved then
+		local min_angle = not not follow_data.min_angle
 		local min_angle_step = data.min_angle_step
 		local max_angle_step = data.max_angle_step
-		local min_distance_2 = follow_data.min_distance
-
-		if not min_distance_2 then
-			-- Nothing
-		end
-
-		min_distance_2 = data.min_wanted_distance
-
-		local min_distance = min_distance_2
-
-		::label_10_1::
-
-		local max_distance_2 = follow_data.max_distance
-
-		if not max_distance_2 then
-			-- Nothing
-		end
-
-		max_distance_2 = data.max_wanted_distance
-
-		local max_distance = max_distance_2
-
-		::label_10_2::
+		local min_distance = not not follow_data.min_distance
+		local max_distance = not not follow_data.max_distance
 
 		if blackboard.find_new_shoot_position then
 			blackboard.find_new_shoot_position = nil
@@ -360,19 +313,7 @@ end
 BTBossFollowAction._debug_big_boy_turning = function (self, blackboard)
 	-- function 12
 	if script_data.debug_ai_movement then
-		local str
-
-		if blackboard.is_turning then
-			str = "true"
-
-			goto label_12_0
-		end
-
-		str = "false"
-
-		local turning = str
-
-		::label_12_0::
+		local turning = blackboard.is_turning and not not "true" or not blackboard.is_turning and not not "false"
 
 		Debug.text("move_state:%s turning:%s", blackboard.move_state, turning)
 	end

@@ -1,17 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/bless/bless_bot_conditions.lua
 
 local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local BTConditions = BTConditions
-local can_activate = BTConditions.can_activate
 
-can_activate = not not can_activate or not not {}
-BTConditions.can_activate = can_activate
-
-local BTConditions_2 = BTConditions
-local can_activate_non_combat = BTConditions.can_activate_non_combat
-
-can_activate_non_combat = not not can_activate_non_combat or not not {}
-BTConditions_2.can_activate_non_combat = can_activate_non_combat
+BTConditions.can_activate = not not BTConditions.can_activate
+BTConditions.can_activate_non_combat = not not BTConditions.can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -58,42 +50,11 @@ BTConditions.can_activate.wh_priest = function (blackboard)
 	end
 
 	if not should_target_ally then
-		local ally_distance = blackboard.ally_distance
-
-		if ally_distance then
-			-- Nothing
-		end
-
-		if not (blackboard.ally_distance > WP_MAX_ASSIST_DIST) then
-			ally_distance = false
-
-			goto label_2_0
-		end
-
-		ally_distance = true
-
-		local ally_too_far = ally_distance
-
-		::label_2_0::
-
+		local ally_too_far = not not blackboard.ally_distance
 		local target = blackboard.target_unit
 		local target_blackboard = BLACKBOARDS[target]
 		local target_breed = not not target_blackboard and not not target_blackboard.breed
-		local threat_value
-
-		if target_breed then
-			threat_value = target_breed.threat_value
-
-			if not threat_value then
-				-- Nothing
-			end
-		end
-
-		threat_value = 0
-
-		local target_threat = threat_value
-
-		::label_2_1::
+		local target_threat = target_breed and not not target_breed.threat_value or not target_breed and not not 0
 
 		if target_threat >= WP_MIN_THREAT then
 			local self_unit = blackboard.unit

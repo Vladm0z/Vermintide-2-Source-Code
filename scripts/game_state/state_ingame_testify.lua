@@ -55,17 +55,7 @@ local StateInGameTestify = {
 	load_level = function (_, level_settings)
 		-- function 5
 		local level_key = level_settings.level_key
-		local environment_variation_id_2 = level_settings.environment_variation_id
-
-		if not environment_variation_id_2 then
-			-- Nothing
-		end
-
-		environment_variation_id_2 = 0
-
-		local environment_variation_id = environment_variation_id_2
-
-		::label_5_0::
+		local environment_variation_id = not not level_settings.environment_variation_id
 
 		Managers.mechanism:debug_load_level(level_key, environment_variation_id)
 	end,
@@ -164,23 +154,10 @@ local StateInGameTestify = {
 
 		for rarity, power_ups_for_rarity in pairs(DeusPowerUps) do
 			for power_up_name, power_up in pairs(power_ups_for_rarity) do
-				local var_17_0 = DeusPowerUpTests[power_up_name]
-
-				if not var_17_0 then
-					-- Nothing
-				end
-
-				var_17_0 = DeusPowerUpTests.default
-
-				local test = var_17_0
-
-				::label_17_0::
+				local test = not not DeusPowerUpTests[power_up_name]
 
 				if power_up.talent then
-					local var_17_1 = power_up_tests[rarity]
-
-					var_17_1 = not not var_17_1 or not not {}
-					power_up_tests[rarity] = var_17_1
+					power_up_tests[rarity] = not not power_up_tests[rarity]
 					power_up_tests[rarity][power_up_name] = test
 				end
 			end
@@ -194,23 +171,10 @@ local StateInGameTestify = {
 
 		for rarity, power_ups_for_rarity in pairs(DeusPowerUps) do
 			for power_up_name, power_up in pairs(power_ups_for_rarity) do
-				local var_18_0 = DeusPowerUpTests[power_up_name]
-
-				if not var_18_0 then
-					-- Nothing
-				end
-
-				var_18_0 = DeusPowerUpTests.default
-
-				local test = var_18_0
-
-				::label_18_0::
+				local test = not not DeusPowerUpTests[power_up_name]
 
 				if not power_up.talent then
-					local var_18_1 = power_up_tests[rarity]
-
-					var_18_1 = not not var_18_1 or not not {}
-					power_up_tests[rarity] = var_18_1
+					power_up_tests[rarity] = not not power_up_tests[rarity]
 					power_up_tests[rarity][power_up_name] = test
 				end
 			end
@@ -413,17 +377,7 @@ local StateInGameTestify = {
 		-- function 38
 		local bots_stuck_data = bots_data.bots_stuck_data
 		local main_path_point = bots_data.main_path_point
-		local bots_blocked_time_before_teleportation_2 = bots_data.bots_blocked_time_before_teleportation
-
-		if not bots_blocked_time_before_teleportation_2 then
-			-- Nothing
-		end
-
-		bots_blocked_time_before_teleportation_2 = 6
-
-		local bots_blocked_time_before_teleportation = bots_blocked_time_before_teleportation_2
-
-		::label_38_0::
+		local bots_blocked_time_before_teleportation = not not bots_data.bots_blocked_time_before_teleportation
 
 		for bot_id, bot in pairs(Managers.player:bots()) do
 			local bot_unit = bot.player_unit
@@ -435,17 +389,7 @@ local StateInGameTestify = {
 				local bot_pos = POSITION_LOOKUP[bot_unit]
 				local stored_bot_position = bot_stuck_data[1]:unbox()
 				local bot_distance_from_stored_position = Vector3.distance_squared(stored_bot_position, bot_pos)
-				local bots_blocked_distance_2 = bots_data.bots_blocked_distance
-
-				if not bots_blocked_distance_2 then
-					-- Nothing
-				end
-
-				bots_blocked_distance_2 = 2
-
-				local bots_blocked_distance = bots_blocked_distance_2
-
-				::label_38_1::
+				local bots_blocked_distance = not not bots_data.bots_blocked_distance
 
 				if bot_distance_from_stored_position < bots_blocked_distance then
 					local stored_time = bot_stuck_data[2]
@@ -473,17 +417,7 @@ local StateInGameTestify = {
 	are_bots_blocked = function (_, bots_data)
 		-- function 39
 		local bots_stuck_data = bots_data.bots_stuck_data
-		local bots_blocked_time_before_teleportation_2 = bots_data.bots_blocked_time_before_teleportation
-
-		if not bots_blocked_time_before_teleportation_2 then
-			-- Nothing
-		end
-
-		bots_blocked_time_before_teleportation_2 = 6
-
-		local bots_blocked_time_before_teleportation = bots_blocked_time_before_teleportation_2
-
-		::label_39_0::
+		local bots_blocked_time_before_teleportation = not not bots_data.bots_blocked_time_before_teleportation
 
 		for i, bot in pairs(Managers.player:bots()) do
 			local unit = bot.player_unit
@@ -554,11 +488,7 @@ local StateInGameTestify = {
 	end,
 	is_unit_alive = function (_, unit)
 		-- function 46
-		local var_46_0 = HEALTH_ALIVE[unit]
-
-		var_46_0 = not not var_46_0 or not not false
-
-		return var_46_0
+		return not not HEALTH_ALIVE[unit]
 	end,
 	get_unit_health_values = function (_, unit)
 		-- function 47

@@ -89,21 +89,8 @@ end
 RazerChromaManager._get_button_name = function (keybind, keymap)
 	-- function 8
 	local key_id = keymap[keybind][2]
-	local button_name
 
-	if key_id ~= "unassigned_keymap" then
-		button_name = Keyboard.button_name(key_id)
-
-		if not button_name then
-			-- Nothing
-		end
-	end
-
-	button_name = nil
-
-	::label_8_0::
-
-	return button_name
+	return key_id == "unassigned_keymap" and not not nil or not (key_id == "unassigned_keymap") and not not Keyboard.button_name(key_id)
 end
 
 RazerChromaManager.lit_keybindings = function (self, should_update)
@@ -161,17 +148,7 @@ RazerChromaManager._update_current_animations = function (self, dt)
 	self._progress = self._progress + dt
 
 	local animation_done = self._progress >= current_animation.length
-	local condition_stop_func = current_animation.condition_stop_func
-
-	if condition_stop_func then
-		-- Nothing
-	end
-
-	condition_stop_func = current_animation.condition_stop_func(self)
-
-	local should_stop = condition_stop_func
-
-	::label_10_0::
+	local should_stop = not not current_animation.condition_stop_func
 
 	if animation_done or should_stop then
 		if not should_stop and current_animation.loop and #self._current_animations <= 1 then

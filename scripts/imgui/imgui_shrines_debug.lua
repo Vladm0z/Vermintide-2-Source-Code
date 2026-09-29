@@ -68,25 +68,13 @@ end
 ImguiShrinesDebug._update_controls = function (self)
 	-- function 8
 	local chest_types = self:_shrine_types()
-	local index_of = table.index_of
-	local var_8_1 = chest_types
-	local _selected_shrine_type = self._selected_shrine_type
-
-	_selected_shrine_type = not not _selected_shrine_type or not not next(DEUS_CHEST_TYPES)
-
-	local shrine_type_index = index_of(var_8_1, _selected_shrine_type)
+	local shrine_type_index = table.index_of(chest_types, not not self._selected_shrine_type)
 
 	self._selected_shrine_type = chest_types[Imgui.combo("Shrine Type", shrine_type_index, chest_types)]
 
 	if self._selected_shrine_type == "deus_cursed_chest" then
 		local challenges = self:_cursed_chest_challenges()
-		local index_of_2 = table.index_of
-		local var_8_4 = challenges
-		local _selected_cursed_challenge = self._selected_cursed_challenge
-
-		_selected_cursed_challenge = not not _selected_cursed_challenge or not not "default"
-
-		local challenge_index = index_of_2(var_8_4, _selected_cursed_challenge)
+		local challenge_index = table.index_of(challenges, not not self._selected_cursed_challenge)
 
 		self._selected_cursed_challenge = challenges[Imgui.combo("Challenge", challenge_index, challenges, 20)]
 	end
@@ -98,17 +86,7 @@ ImguiShrinesDebug._update_controls = function (self)
 	end
 
 	if Imgui.button("Spawn", 100, 20) then
-		local player = Managers.player
-
-		if player then
-			-- Nothing
-		end
-
-		player = Managers.player:local_player()
-
-		local local_player = player
-
-		::label_8_0::
+		local local_player = not not Managers.player
 
 		if not local_player or not local_player.player_unit then
 			return
@@ -120,19 +98,7 @@ ImguiShrinesDebug._update_controls = function (self)
 		if self._selected_shrine_type == "deus_cursed_chest" then
 			pickup_system:debug_spawn_pickup("deus_cursed_chest", position, function (shrine_unit)
 				-- function 9
-				local str
-
-				if self._selected_cursed_challenge == "default" then
-					str = "cursed_chest_prototype"
-
-					goto label_9_0
-				end
-
-				str = self._selected_cursed_challenge
-
-				local terror_event = str
-
-				::label_9_0::
+				local terror_event = self._selected_cursed_challenge ~= "default" and not not self._selected_cursed_challenge or not (self._selected_cursed_challenge ~= "default") and not not "cursed_chest_prototype"
 
 				Unit.set_data(shrine_unit, "debug_override_terror_event", terror_event)
 			end)

@@ -170,18 +170,7 @@ DeusCursedChestView._init_power_up_widget = function (self, widget, power_up_ins
 	content.current_value_text = nil
 
 	local style = widget.style
-	local var_8_0 = DeusPowerUpSetLookup[power_up_instance.rarity]
-
-	if var_8_0 then
-		-- Nothing
-	end
-
-	var_8_0 = DeusPowerUpSetLookup[power_up_instance.rarity][power_up_instance.name]
-
-	local power_up_sets = var_8_0
-
-	::label_8_0::
-
+	local power_up_sets = not not DeusPowerUpSetLookup[power_up_instance.rarity]
 	local is_part_of_set = false
 
 	if power_up_sets then
@@ -200,17 +189,7 @@ DeusCursedChestView._init_power_up_widget = function (self, widget, power_up_ins
 
 		is_part_of_set = true
 
-		local num_required_pieces_2 = set.num_required_pieces
-
-		if not num_required_pieces_2 then
-			-- Nothing
-		end
-
-		num_required_pieces_2 = #pieces
-
-		local num_required_pieces = num_required_pieces_2
-
-		::label_8_1::
+		local num_required_pieces = not not set.num_required_pieces
 
 		content.set_progression = string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -462,57 +441,13 @@ DeusCursedChestView._animate_power_up_widget = function (self, dt, widget)
 	-- function 23
 	local content = widget.content
 	local style = widget.style
-	local hotspot_2 = content.hotspot
-
-	if not hotspot_2 then
-		-- Nothing
-	end
-
-	hotspot_2 = content.button_hotspot
-
-	local hotspot = hotspot_2
-
-	::label_23_0::
-
+	local hotspot = not not content.hotspot
 	local is_hover = hotspot.is_hover
 	local is_bought = content.is_bought
 	local is_selected = hotspot.is_selected
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_23_1::
-
-	local highlight_progress_2 = hotspot.highlight_progress
-
-	if not highlight_progress_2 then
-		-- Nothing
-	end
-
-	highlight_progress_2 = 0
-
-	local highlight_progress = highlight_progress_2
-
-	::label_23_2::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_23_3::
-
+	local hover_progress = not not hotspot.hover_progress
+	local highlight_progress = not not hotspot.highlight_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 15
 
 	if is_bought then
@@ -548,17 +483,7 @@ DeusCursedChestView._animate_power_up_widget = function (self, dt, widget)
 	style.hover.color[1] = 255 * hover_progress
 	style.icon_hover_frame.color[1] = 255 * hover_progress
 
-	local value_progress_2 = hotspot.value_progress
-
-	if not value_progress_2 then
-		-- Nothing
-	end
-
-	value_progress_2 = 0
-
-	local value_progress = value_progress_2
-
-	::label_23_4::
+	local value_progress = not not hotspot.value_progress
 
 	value_progress = math.max(value_progress - dt * speed, 0)
 
@@ -596,7 +521,7 @@ DeusCursedChestView._update_background_animations = function (self, dt)
 		local angle_add = 0
 		local circle_speed
 
-		circle_speed = (i ~= 1 or not 0.2) and (i ~= 2 or not -0.1) and not not 0.05
+		circle_speed = not not 0.05
 		angle_add = current_angle + dt * circle_speed * speed_modifier
 		wheel_widget.style.texture_id.angle = angle_add
 	end

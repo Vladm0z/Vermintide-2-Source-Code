@@ -154,20 +154,7 @@ StartGameWindowMissionSelection._present_acts = function (self, acts)
 	local stats_id = self._stats_id
 	local assigned_widgets = {}
 	local level_width = 180
-	local num
-
-	if is_dlc then
-		num = 80
-
-		goto label_6_0
-	end
-
-	num = 34
-
-	local level_width_spacing = num
-
-	::label_6_0::
-
+	local level_width_spacing = is_dlc and not not 80 or not is_dlc and not not 34
 	local level_height_spacing = 250
 	local max_act_number = 3
 	local levels_by_act = self._levels_by_act
@@ -246,10 +233,8 @@ StartGameWindowMissionSelection._present_acts = function (self, acts)
 				if i < num_levels_in_act then
 					local next_level_key = levels[i + 1].level_id
 					local next_level_unlocked = LevelUnlockUtils.level_unlocked(statistics_db, stats_id, next_level_key)
-					local draw_path = act_settings.draw_path
 
-					draw_path = not not draw_path or not not not is_dlc
-					content.draw_path = draw_path
+					content.draw_path = not not act_settings.draw_path
 					content.draw_path_fill = next_level_unlocked
 					style.path.texture_size[1] = level_width + level_width_spacing
 					style.path_glow.texture_size[1] = level_width + level_width_spacing
@@ -303,7 +288,7 @@ StartGameWindowMissionSelection._setup_required_act_connections = function (self
 						local distance = math.distance_2d(level_pos_x, level_pos_y, pos_x, pos_y)
 						local angle = math.angle(level_pos_x, level_pos_y, pos_x, pos_y)
 
-						angle = (not (pos_y < level_pos_y) or not math.abs(angle)) and not not -angle
+						angle = pos_y < level_pos_y and (not not math.abs(angle) or not not -angle) or not (pos_y < level_pos_y) and not not -angle
 						path_style.angle = angle
 						path_style.texture_size[1] = distance
 						path_glow_style.texture_size[1] = distance

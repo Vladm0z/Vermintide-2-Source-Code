@@ -82,21 +82,8 @@ SharedState.validate_spec(shared_state_spec)
 local function get_color_for_consumable_item(item_key)
 	-- function 1
 	local default_color = UISettings.inventory_consumable_slot_colors.default
-	local var_1_0
 
-	if item_key then
-		var_1_0 = UISettings.inventory_consumable_slot_colors[item_key]
-
-		if not var_1_0 then
-			-- Nothing
-		end
-	end
-
-	var_1_0 = default_color
-
-	::label_1_0::
-
-	return var_1_0
+	return item_key and not not UISettings.inventory_consumable_slot_colors[item_key] or not item_key and not not default_color
 end
 
 DeusShopView.init = function (self, context)
@@ -381,18 +368,7 @@ DeusShopView._create_ui_elements = function (self, shop_settings, power_ups, ble
 
 		if peers[i] then
 			local profile_index, career_index = self._deus_run_controller:get_player_profile(peers[i], REAL_PLAYER_LOCAL_ID)
-			local get_player_level = self._deus_run_controller:get_player_level(peers[i], profile_index)
-
-			if not get_player_level then
-				-- Nothing
-			end
-
-			get_player_level = "n/a"
-
-			local level_text = get_player_level
-
-			::label_7_0::
-
+			local level_text = not not self._deus_run_controller:get_player_level(peers[i], profile_index)
 			local frame_settings_name = self._deus_run_controller:get_player_frame(peers[i], profile_index, career_index)
 
 			widget_definition = UIWidgets.deus_create_player_portraits_frame("player_portrait_" .. i, frame_settings_name, level_text, false)
@@ -428,10 +404,7 @@ DeusShopView._create_ui_elements = function (self, shop_settings, power_ups, ble
 		self._unit_previewer:set_zoom_fraction_unclamped(-0.2)
 	end
 
-	local _purchased_boons = self._purchased_boons
-
-	_purchased_boons = not not _purchased_boons or not not {}
-	self._purchased_boons = _purchased_boons
+	self._purchased_boons = not not self._purchased_boons
 	self._total_num_power_ups = nil
 
 	self:_update_power_ups()
@@ -490,13 +463,7 @@ DeusShopView._handle_mode_input = function (self, dt, t)
 			self._ui_animator:stop_animation(self._anim_id)
 		end
 
-		local _ui_animator = self._ui_animator
-		local var_9_1 = _ui_animator
-		local start_animation = _ui_animator.start_animation
-		local flag
-
-		flag = (not self._portrait_mode or not "switch_to_boons") and not not "switch_to_portraits"
-		self._anim_id = start_animation(var_9_1, flag, self._widgets_by_name, definitions.scenegraph_definition)
+		self._anim_id = self._ui_animator:start_animation(self._portrait_mode and not not "switch_to_boons" or not self._portrait_mode and not not "switch_to_portraits", self._widgets_by_name, definitions.scenegraph_definition)
 		self._portrait_mode = not self._portrait_mode
 	end
 end
@@ -567,22 +534,7 @@ DeusShopView._update_power_ups = function (self)
 				local text_color = Colors.get_table(power_up.rarity)
 				local power_up_template = power_up_templates[power_up.name]
 				local is_rectangular_icon = power_up_template.rectangular_icon
-				local rectangular_power_up_widget_data
-
-				if is_rectangular_icon then
-					rectangular_power_up_widget_data = definitions.rectangular_power_up_widget_data
-
-					if not rectangular_power_up_widget_data then
-						-- Nothing
-					end
-				end
-
-				rectangular_power_up_widget_data = definitions.round_power_up_widget_data
-
-				local widget_data = rectangular_power_up_widget_data
-
-				::label_10_0::
-
+				local widget_data = is_rectangular_icon and not not definitions.rectangular_power_up_widget_data or not is_rectangular_icon and not not definitions.round_power_up_widget_data
 				local hide_text = true
 				local masked = true
 				local icon_hotspot = {
@@ -601,28 +553,8 @@ DeusShopView._update_power_ups = function (self)
 
 				widget.content.power_up_name = power_up.name
 				widget.content.power_up_rarity = power_up.rarity
-
-				local content = widget.content
-
-				if not is_party_power_up then
-					-- Nothing
-				end
-
-				::label_10_1::
-
-				local var_10_2 = talent_power_ups[power_up.name]
-
-				var_10_2 = not not var_10_2 or not not self._purchased_boons[power_up.name]
-
-				::label_10_2::
-
-				content.locked = var_10_2
-
-				local content_2 = widget.content
-				local flag
-
-				flag = (not is_party_power_up or not "party_locked") and (not talent_power_ups[power_up.name] or not "talent_locked") and (not self._purchased_boons[power_up.name] or not "deus_shrine_unlocked") and not not "search_filter_locked"
-				content_2.locked_text_id = flag
+				widget.content.locked = not not is_party_power_up or not not talent_power_ups[power_up.name]
+				widget.content.locked_text_id = is_party_power_up and not not "party_locked" or not is_party_power_up and (talent_power_ups[power_up.name] and not not "talent_locked" or not talent_power_ups[power_up.name] and (self._purchased_boons[power_up.name] and not not "deus_shrine_unlocked" or not self._purchased_boons[power_up.name] and not not "search_filter_locked"))
 
 				local column = (i - 1) % 2
 
@@ -737,17 +669,7 @@ DeusShopView._init_power_up_widget = function (self, widget, power_up_instance, 
 	content.has_discount = discount
 	content.icon = DeusPowerUpUtils.get_power_up_icon(power_up, profile_index, career_index)
 
-	local var_18_0 = DeusCostSettings.shop.power_ups[rarity]
-
-	if not var_18_0 then
-		-- Nothing
-	end
-
-	var_18_0 = 9001
-
-	local price = var_18_0
-
-	::label_18_0::
+	local price = not not DeusCostSettings.shop.power_ups[rarity]
 
 	if discount then
 		price = price - price * discount
@@ -773,18 +695,7 @@ DeusShopView._init_power_up_widget = function (self, widget, power_up_instance, 
 		style.price_text_disabled.offset[2] = style.price_text_disabled.offset[2] + offset_y
 	end
 
-	local var_18_1 = DeusPowerUpSetLookup[power_up_instance.rarity]
-
-	if var_18_1 then
-		-- Nothing
-	end
-
-	var_18_1 = DeusPowerUpSetLookup[power_up_instance.rarity][power_up_instance.name]
-
-	local power_up_sets = var_18_1
-
-	::label_18_1::
-
+	local power_up_sets = not not DeusPowerUpSetLookup[power_up_instance.rarity]
 	local is_part_of_set = false
 
 	if power_up_sets then
@@ -803,17 +714,7 @@ DeusShopView._init_power_up_widget = function (self, widget, power_up_instance, 
 
 		is_part_of_set = true
 
-		local num_required_pieces_2 = set.num_required_pieces
-
-		if not num_required_pieces_2 then
-			-- Nothing
-		end
-
-		num_required_pieces_2 = #pieces
-
-		local num_required_pieces = num_required_pieces_2
-
-		::label_18_2::
+		local num_required_pieces = not not set.num_required_pieces
 
 		widget.content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -834,17 +735,7 @@ DeusShopView._init_blessing_widget = function (self, widget, blessing_name)
 	content.sub_text = Localize(blessing_settings.description)
 	content.icon = blessing_settings.shop_icon
 
-	local var_19_0 = DeusCostSettings.shop.blessings[blessing_name]
-
-	if not var_19_0 then
-		-- Nothing
-	end
-
-	var_19_0 = 9001
-
-	local price = var_19_0
-
-	::label_19_0::
+	local price = not not DeusCostSettings.shop.blessings[blessing_name]
 
 	content.price_text = price
 end
@@ -852,21 +743,7 @@ end
 DeusShopView._update_countdowns = function (self, state, dt, t)
 	-- function 20
 	if state == states.FINISHING then
-		local max
-
-		if self._final_countdown then
-			max = math.max(0, self._final_countdown - dt)
-
-			if not max then
-				-- Nothing
-			end
-		end
-
-		max = nil
-
-		::label_20_0::
-
-		self._final_countdown = max
+		self._final_countdown = self._final_countdown and not not math.max(0, self._final_countdown - dt) or not self._final_countdown and not not nil
 	end
 end
 
@@ -1004,18 +881,7 @@ DeusShopView._update_shop_widgets = function (self)
 	for _, blessing_data in ipairs(shop_items.blessings) do
 		local widget = blessing_data.widget
 		local blessing_name = blessing_data.blessing_name
-		local var_27_0 = blessing_costs[blessing_name]
-
-		if not var_27_0 then
-			-- Nothing
-		end
-
-		var_27_0 = 9001
-
-		local costs = var_27_0
-
-		::label_27_0::
-
+		local costs = not not blessing_costs[blessing_name]
 		local content = widget.content
 		local buyer = blessings_with_buyer[blessing_name]
 
@@ -1310,19 +1176,8 @@ DeusShopView._handle_owned_power_up_input = function (self, dt, t)
 			end
 
 			if content.input_made and (input_service:get("mouse_middle_held") or input_service:get("special_1_hold")) then
-				local end_time_2 = content.end_time
-
-				if not end_time_2 then
-					-- Nothing
-				end
-
-				end_time_2 = t + content.remove_interaction_duration
-
 				do
-					local end_time = end_time_2
-
-					::label_35_0::
-
+					local end_time = not not content.end_time
 					local progress = (end_time - t) / content.remove_interaction_duration
 
 					style.remove_frame.color[1] = 255 * (1 - progress)
@@ -1410,18 +1265,7 @@ DeusShopView._populate_power_up = function (self, power_up_name, power_up_rarity
 	style.rarity_text.text_color = rarity_color
 	power_up_description_widget.content.visible = true
 
-	local var_36_0 = DeusPowerUpSetLookup[rarity]
-
-	if var_36_0 then
-		-- Nothing
-	end
-
-	var_36_0 = DeusPowerUpSetLookup[rarity][power_up.name]
-
-	local power_up_sets = var_36_0
-
-	::label_36_0::
-
+	local power_up_sets = not not DeusPowerUpSetLookup[rarity]
 	local is_part_of_set = false
 
 	if power_up_sets then
@@ -1442,17 +1286,7 @@ DeusShopView._populate_power_up = function (self, power_up_name, power_up_rarity
 
 		is_part_of_set = true
 
-		local num_required_pieces_2 = set.num_required_pieces
-
-		if not num_required_pieces_2 then
-			-- Nothing
-		end
-
-		num_required_pieces_2 = #pieces
-
-		local num_required_pieces = num_required_pieces_2
-
-		::label_36_1::
+		local num_required_pieces = not not set.num_required_pieces
 
 		content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -1466,17 +1300,7 @@ end
 
 DeusShopView._get_power_up_costs = function (self, rarity, discount)
 	-- function 37
-	local var_37_0 = DeusCostSettings.shop.power_ups[rarity]
-
-	if not var_37_0 then
-		-- Nothing
-	end
-
-	var_37_0 = 9001
-
-	local cost = var_37_0
-
-	::label_37_0::
+	local cost = not not DeusCostSettings.shop.power_ups[rarity]
 
 	if discount then
 		cost = cost - math.round(cost * discount)
@@ -1517,20 +1341,12 @@ DeusShopView._update_player_data = function (self)
 			data.level = self._deus_run_controller:get_player_level(peer_id, data.profile_index)
 			data.frame = self._deus_run_controller:get_player_frame(peer_id, data.profile_index, data.career_index)
 			data.name = self._deus_run_controller:get_player_name(peer_id)
-
-			local get_player_health_percentage = self._deus_run_controller:get_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID)
-
-			get_player_health_percentage = not not get_player_health_percentage or not not 1
-			data.health_percentage = get_player_health_percentage
+			data.health_percentage = not not self._deus_run_controller:get_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.healthkit_consumable = self._deus_run_controller:get_player_consumable_healthkit_slot(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.potion_consumable = self._deus_run_controller:get_player_consumable_potion_slot(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.grenade_consumable = self._deus_run_controller:get_player_consumable_grenade_slot(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.ammo_percentage = self._deus_run_controller:get_player_ranged_ammo(peer_id, REAL_PLAYER_LOCAL_ID)
-
-			local get_player_soft_currency = self._deus_run_controller:get_player_soft_currency(peer_id)
-
-			get_player_soft_currency = not not get_player_soft_currency or not not 0
-			data.soft_currency = get_player_soft_currency
+			data.soft_currency = not not self._deus_run_controller:get_player_soft_currency(peer_id)
 			data.peer_state = self._shared_state:get_peer(peer_id, self._shared_state:get_key("peer_state"))
 		else
 			data.profile_index = 0
@@ -1585,29 +1401,8 @@ DeusShopView._update_player_portraits = function (self, player_data)
 		ready_button_tokens.content[token_icon_name] = nil
 
 		if should_be_visible then
-			local frame = data.frame
-
-			if not frame then
-				-- Nothing
-			end
-
-			frame = "default"
-
-			local frame_settings_name = frame
-
-			::label_42_0::
-
-			local level_2 = data.level
-
-			if not level_2 then
-				-- Nothing
-			end
-
-			level_2 = "-"
-
-			local level = level_2
-
-			::label_42_1::
+			local frame_settings_name = not not data.frame
+			local level = not not data.level
 
 			if player_portrait_frame.content.frame_settings_name ~= frame_settings_name or player_portrait_frame.content.level ~= level then
 				self:_update_portrait_frame(frame_settings_name, level, i)
@@ -1615,20 +1410,8 @@ DeusShopView._update_player_portraits = function (self, player_data)
 				player_portrait_frame.content.level = level
 			end
 
-			local content = player_texts.content
-			local crop_text = UIRenderer.crop_text
-			local name = data.name
-
-			name = not not name or not not ""
-			content.name_text = crop_text(name, 17)
-
-			local content_2 = player_texts.content
-			local format = string.format
-			local str = "%d"
-			local soft_currency = data.soft_currency
-
-			soft_currency = not not soft_currency or not not 0
-			content_2.coins_text = format(str, soft_currency)
+			player_texts.content.name_text = UIRenderer.crop_text(not not data.name, 17)
+			player_texts.content.coins_text = string.format("%d", not not data.soft_currency)
 			player_texts.style.name_text.size[1] = 100
 			player_texts.style.name_text_shadow.size[1] = 100
 			player_portrait.style.token_icon.saturated = data.peer_state == peer_states.DONE_BUYING
@@ -1652,17 +1435,8 @@ DeusShopView._update_player_portraits = function (self, player_data)
 				player_portrait.content.token_icon = nil
 			end
 
-			local hp_bar = player_portrait.content.hp_bar
-			local health_percentage = data.health_percentage
-
-			health_percentage = not not health_percentage or not not 0
-			hp_bar.bar_value = health_percentage
-
-			local content_3 = player_portrait.content
-			local ammo_percentage = data.ammo_percentage
-
-			ammo_percentage = not not ammo_percentage or not not 0
-			content_3.ammo_percentage = ammo_percentage
+			player_portrait.content.hp_bar.bar_value = not not data.health_percentage
+			player_portrait.content.ammo_percentage = not not data.ammo_percentage
 
 			local healthkit_item = data.healthkit_consumable
 
@@ -1732,71 +1506,16 @@ DeusShopView._animate_shop_item_widget = function (self, dt, widget)
 	-- function 46
 	local content = widget.content
 	local style = widget.style
-	local hotspot_2 = content.hotspot
-
-	if not hotspot_2 then
-		-- Nothing
-	end
-
-	hotspot_2 = content.button_hotspot
-
-	local hotspot = hotspot_2
-
-	::label_46_0::
-
+	local hotspot = not not content.hotspot
 	local is_hover = hotspot.is_hover
 	local is_bought = content.is_bought
 	local is_held = hotspot.is_held
 	local has_buying_animation_played = content.has_buying_animation_played
 	local is_selected = hotspot.is_selected
-	local hover_progress_2 = hotspot.hover_progress
-
-	if not hover_progress_2 then
-		-- Nothing
-	end
-
-	hover_progress_2 = 0
-
-	local hover_progress = hover_progress_2
-
-	::label_46_1::
-
-	local hover_progress_3 = hotspot.hover_progress
-
-	if not hover_progress_3 then
-		-- Nothing
-	end
-
-	hover_progress_3 = 0
-
-	local background_hover_progress = hover_progress_3
-
-	::label_46_2::
-
-	local highlight_progress_2 = hotspot.highlight_progress
-
-	if not highlight_progress_2 then
-		-- Nothing
-	end
-
-	highlight_progress_2 = 0
-
-	local highlight_progress = highlight_progress_2
-
-	::label_46_3::
-
-	local selection_progress_2 = hotspot.selection_progress
-
-	if not selection_progress_2 then
-		-- Nothing
-	end
-
-	selection_progress_2 = 0
-
-	local selection_progress = selection_progress_2
-
-	::label_46_4::
-
+	local hover_progress = not not hotspot.hover_progress
+	local background_hover_progress = not not hotspot.hover_progress
+	local highlight_progress = not not hotspot.highlight_progress
+	local selection_progress = not not hotspot.selection_progress
 	local speed = 15
 
 	if is_bought then
@@ -1849,17 +1568,7 @@ DeusShopView._animate_shop_item_widget = function (self, dt, widget)
 		end
 	end
 
-	local value_progress_2 = hotspot.value_progress
-
-	if not value_progress_2 then
-		-- Nothing
-	end
-
-	value_progress_2 = 0
-
-	local value_progress = value_progress_2
-
-	::label_46_5::
+	local value_progress = not not hotspot.value_progress
 
 	value_progress = math.max(value_progress - dt * speed, 0)
 
@@ -2056,7 +1765,7 @@ DeusShopView._update_background_animations = function (self, dt)
 		local angle_add = 0
 		local circle_speed_modifier
 
-		circle_speed_modifier = (i ~= 1 or not 0.2) and (i ~= 2 or not -0.1) and not not 0.05
+		circle_speed_modifier = not not 0.05
 
 		local speed = dt * circle_speed_modifier
 

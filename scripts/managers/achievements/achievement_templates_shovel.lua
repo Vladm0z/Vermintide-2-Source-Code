@@ -144,10 +144,7 @@ achievements.shovel_sac_low = {
 			return
 		end
 
-		local count = template_data.count
-
-		count = not not count or not not 0
-		template_data.count = count + 1
+		template_data.count = not not template_data.count + 1
 
 		if template_data.count >= SACRIFICE_SKELETON_COUNT then
 			statistics_db:increment_stat(stats_id, "shovel_sac_low")
@@ -202,22 +199,10 @@ achievements.shovel_fast_generate = {
 		end
 
 		local percentage_gained = fraction_gained * 100
-		local total_amount = template_data.total_amount
 
-		total_amount = not not total_amount or not not 0
-		template_data.total_amount = total_amount + percentage_gained
+		template_data.total_amount = not not template_data.total_amount + percentage_gained
 
-		local instances_2 = template_data.instances
-
-		if not instances_2 then
-			-- Nothing
-		end
-
-		instances_2 = {}
-
-		local instances = instances_2
-
-		::label_10_0::
+		local instances = not not template_data.instances
 
 		template_data.instances = instances
 
@@ -358,23 +343,10 @@ achievements.shovel_skeleton_attack_big = {
 
 		local attacked_unit = event_data[1]
 		local t = Managers.time:time("game")
-		local damaged_enemies_2 = template_data.damaged_enemies
-
-		if not damaged_enemies_2 then
-			-- Nothing
-		end
-
-		damaged_enemies_2 = {}
-
-		local damaged_enemies = damaged_enemies_2
-
-		::label_17_0::
+		local damaged_enemies = not not template_data.damaged_enemies
 
 		if not damaged_enemies[attacked_unit] then
-			local count = template_data.count
-
-			count = not not count or not not 0
-			template_data.count = count + 1
+			template_data.count = not not template_data.count + 1
 		end
 
 		damaged_enemies[attacked_unit] = t
@@ -462,22 +434,9 @@ achievements.shovel_skeleton_defend = {
 			return
 		end
 
-		local total_amount = template_data.total_amount
+		template_data.total_amount = not not template_data.total_amount + damage_amount
 
-		total_amount = not not total_amount or not not 0
-		template_data.total_amount = total_amount + damage_amount
-
-		local instances_2 = template_data.instances
-
-		if not instances_2 then
-			-- Nothing
-		end
-
-		instances_2 = {}
-
-		local instances = instances_2
-
-		::label_20_0::
+		local instances = not not template_data.instances
 
 		template_data.instances = instances
 
@@ -660,27 +619,14 @@ achievements.shovel_fast_staff_attack = {
 			return
 		end
 
-		local stagger_instances_2 = template_data.stagger_instances
-
-		if not stagger_instances_2 then
-			-- Nothing
-		end
-
-		stagger_instances_2 = {}
-
-		local stagger_instances = stagger_instances_2
-
-		::label_30_0::
+		local stagger_instances = not not template_data.stagger_instances
 
 		template_data.stagger_instances = stagger_instances
 
 		local t = Managers.time:time("game")
 
 		if not stagger_instances[attacked_unit] then
-			local num_staggers = template_data.num_staggers
-
-			num_staggers = not not num_staggers or not not 0
-			template_data.num_staggers = num_staggers + 1
+			template_data.num_staggers = not not template_data.num_staggers + 1
 		end
 
 		stagger_instances[attacked_unit] = t
@@ -758,24 +704,10 @@ achievements.shovel_staff_balefire = {
 			return
 		end
 
-		local counter_2 = template_data.counter
-
-		if not counter_2 then
-			-- Nothing
-		end
-
-		counter_2 = {}
-
-		local counter = counter_2
-
-		::label_33_0::
+		local counter = not not template_data.counter
 
 		template_data.counter = counter
-
-		local var_33_1 = counter[attacker_unit]
-
-		var_33_1 = not not var_33_1 or not not 0
-		counter[attacker_unit] = var_33_1 + 1
+		counter[attacker_unit] = not not counter[attacker_unit] + 1
 
 		if counter[attacker_unit] <= STAFF_BALEFIRE_TARGET then
 			rpc_increment_stat(attacker_unit, "shovel_staff_balefire")
@@ -960,23 +892,7 @@ local STAFF_GANDALF_MIN_Z_DIFFERENCE = 4
 local function _staff_gandalf_check_tracked_unit(knockback_data, victim_unit)
 	-- function 45
 	local knockback_position = knockback_data.knockback_position:unbox()
-	local is_valid = Unit.is_valid(victim_unit)
-
-	if is_valid then
-		if not Unit.is_frozen(victim_unit) then
-			is_valid = Unit.local_position(victim_unit, 0)
-		else
-			is_valid = false
-		end
-	end
-
-	goto label_45_0
-
-	is_valid = true
-
-	local position = is_valid
-
-	::label_45_0::
+	local position = not not Unit.is_valid(victim_unit)
 
 	if not position or knockback_position[3] - position[3] < STAFF_GANDALF_MIN_Z_DIFFERENCE then
 		return false
@@ -1007,17 +923,7 @@ achievements.shovel_staff_gandalf = {
 
 		if event_name == "register_kill" then
 			local victim_unit = event_data[register_kill_victim_unit]
-			local tracked_units = template_data.tracked_units
-
-			if tracked_units then
-				-- Nothing
-			end
-
-			tracked_units = template_data.tracked_units[victim_unit]
-
-			local unit_data = tracked_units
-
-			::label_47_0::
+			local unit_data = not not template_data.tracked_units
 
 			if not unit_data then
 				return
@@ -1066,10 +972,7 @@ achievements.shovel_staff_gandalf = {
 
 			passive:achievement_staff_gandalf_trigger(victim_unit, t, math.max(STAFF_GANDALF_GRACE_PERIOD, 6))
 
-			local tracked_units_2 = template_data.tracked_units
-
-			tracked_units_2 = not not tracked_units_2 or not not {}
-			template_data.tracked_units = tracked_units_2
+			template_data.tracked_units = not not template_data.tracked_units
 
 			local existing_data = template_data.tracked_units[victim_unit]
 
@@ -1156,16 +1059,8 @@ achievements.shovel_skeleton_balefire = {
 			return
 		end
 
-		local count = template_data.count
-
-		count = not not count or not not {}
-		template_data.count = count
-
-		local count_2 = template_data.count
-		local var_51_2 = template_data.count[controlled_owner]
-
-		var_51_2 = not not var_51_2 or not not 0
-		count_2[controlled_owner] = var_51_2 + 1
+		template_data.count = not not template_data.count
+		template_data.count[controlled_owner] = not not template_data.count[controlled_owner] + 1
 
 		if template_data.count[controlled_owner] <= SKELETON_BALEFIRE_TARGET then
 			rpc_increment_stat(controlled_owner, "shovel_skeleton_balefire")
@@ -1235,10 +1130,7 @@ achievements.shovel_keep_skeletons_alive = {
 		local t = Managers.time:time("game")
 
 		if event_name == "on_round_started" then
-			local level_start_t = template_data.level_start_t
-
-			level_start_t = not not level_start_t or not not t
-			template_data.level_start_t = level_start_t
+			template_data.level_start_t = not not template_data.level_start_t
 			template_data.total_time = 0
 		elseif not template_data.level_start_t then
 			return

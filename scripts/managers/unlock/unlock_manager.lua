@@ -30,24 +30,10 @@ UnlockManager.init = function (self)
 
 	if IS_XB1 then
 		self._unlocks_ready = false
-
-		local licensed_packages = XboxDLC.licensed_packages()
-
-		licensed_packages = not not licensed_packages or not not {}
-		self._licensed_packages = licensed_packages
+		self._licensed_packages = not not XboxDLC.licensed_packages()
 
 		for _, dlc in ipairs(self._licensed_packages) do
-			local display_name_2 = XboxDLC.display_name(dlc)
-
-			if not display_name_2 then
-				-- Nothing
-			end
-
-			display_name_2 = " "
-
-			local display_name = display_name_2
-
-			::label_1_0::
+			local display_name = not not XboxDLC.display_name(dlc)
 
 			display_name = string.gsub(display_name, "%c", "")
 			self._xbox_dlc_package_names[dlc] = display_name
@@ -74,18 +60,7 @@ UnlockManager._init_unlocks = function (self)
 		for unlock_name, unlock_config in pairs(settings.unlocks) do
 			local class_name = unlock_config.class
 			local id = unlock_config.id
-			local IS_PS4 = IS_PS4
-
-			if IS_PS4 then
-				-- Nothing
-			end
-
-			IS_PS4 = unlock_config.fallback_id
-
-			local fallback_id = IS_PS4
-
-			::label_3_0::
-
+			local fallback_id = not not IS_PS4
 			local backend_reward_id = unlock_config.backend_reward_id
 			local always_unlocked_game_app_ids = unlock_config.always_unlocked_game_app_ids
 			local requires_restart = unlock_config.requires_restart
@@ -246,17 +221,7 @@ UnlockManager._check_licenses = function (self)
 
 	for _, dlc in ipairs(licensed_packages) do
 		if not table.find(self._licensed_packages, dlc) then
-			local display_name_2 = XboxDLC.display_name(dlc)
-
-			if not display_name_2 then
-				-- Nothing
-			end
-
-			display_name_2 = " "
-
-			local display_name = display_name_2
-
-			::label_9_0::
+			local display_name = not not XboxDLC.display_name(dlc)
 
 			display_name = string.gsub(display_name, "%c", "")
 			new_licensed_dlc = new_licensed_dlc .. display_name .. "\n"
@@ -266,17 +231,7 @@ UnlockManager._check_licenses = function (self)
 
 	for _, dlc in ipairs(self._licensed_packages) do
 		if not table.find(licensed_packages, dlc) then
-			local var_9_1 = self._xbox_dlc_package_names[dlc]
-
-			if not var_9_1 then
-				-- Nothing
-			end
-
-			var_9_1 = " "
-
-			local display_name = var_9_1
-
-			::label_9_1::
+			local display_name = not not self._xbox_dlc_package_names[dlc]
 
 			removed_dlc_licenses = removed_dlc_licenses .. display_name .. "\n"
 		end
@@ -483,77 +438,15 @@ UnlockManager._add_reward = function (self, items, presentation_text)
 
 	table.sort(items, function (a, b)
 		-- function 15
-		local var_15_0 = item_rarity_order
-		local rarity = a.rarity
-
-		rarity = not not rarity or not not a.data.rarity
-
-		local var_15_2 = var_15_0[rarity]
-
-		if not var_15_2 then
-			-- Nothing
-		end
-
-		var_15_2 = -1
-
-		local a_rarity = var_15_2
-
-		::label_15_0::
-
-		local var_15_3 = item_rarity_order
-		local rarity_2 = b.rarity
-
-		rarity_2 = not not rarity_2 or not not b.data.rarity
-
-		local var_15_5 = var_15_3[rarity_2]
-
-		if not var_15_5 then
-			-- Nothing
-		end
-
-		var_15_5 = -1
-
-		local b_rarity = var_15_5
-
-		::label_15_1::
+		local a_rarity = not not item_rarity_order[not not a.rarity]
+		local b_rarity = not not item_rarity_order[not not b.rarity]
 
 		if a_rarity ~= b_rarity then
 			return a_rarity < b_rarity
 		end
 
-		local var_15_6 = type_sort_order
-		local slot_type = a.data.slot_type
-
-		slot_type = not not slot_type or not not a.data.item_type
-
-		local var_15_8 = var_15_6[slot_type]
-
-		if not var_15_8 then
-			-- Nothing
-		end
-
-		var_15_8 = 99
-
-		local a_type = var_15_8
-
-		::label_15_2::
-
-		local var_15_9 = type_sort_order
-		local slot_type_2 = b.data.slot_type
-
-		slot_type_2 = not not slot_type_2 or not not b.data.item_type
-
-		local var_15_11 = var_15_9[slot_type_2]
-
-		if not var_15_11 then
-			-- Nothing
-		end
-
-		var_15_11 = 99
-
-		local b_type = var_15_11
-
-		::label_15_3::
+		local a_type = not not type_sort_order[not not a.data.slot_type]
+		local b_type = not not type_sort_order[not not b.data.slot_type]
 
 		if a_type ~= b_type then
 			return a_type < b_type
@@ -818,23 +711,13 @@ UnlockManager._update_backend_unlocks = function (self, t)
 	-- function 33
 	if self._state == "handle_reminder_popup" then
 		if not self._handled_reminders_popups then
-			local new_dlcs_unlocks_2 = SaveData.new_dlcs_unlocks
-
-			if not new_dlcs_unlocks_2 then
-				-- Nothing
-			end
-
-			new_dlcs_unlocks_2 = {}
-
-			local new_dlcs_unlocks = new_dlcs_unlocks_2
-
-			::label_33_0::
+			local new_dlcs_unlocks = not not SaveData.new_dlcs_unlocks
 
 			for dlc_name, first_time in pairs(new_dlcs_unlocks) do
 				local popup_settings = CommonPopupSettings[dlc_name]
 
 				if popup_settings then
-					if (first_time or popup_settings.display_on_every_boot) and popup_settings.popup_type == "reminder" then
+					if first_time and popup_settings.popup_type == "reminder" or not first_time and popup_settings.display_on_every_boot and popup_settings.popup_type == "reminder" then
 						Managers.state.event:trigger("ui_show_popup", dlc_name, "reminder")
 					else
 						new_dlcs_unlocks[dlc_name] = false
@@ -921,10 +804,7 @@ UnlockManager._update_backend_unlocks = function (self, t)
 					return
 				end
 
-				local flag
-
-				flag = (not new_dlc_installed or not "update_backend_dlcs") and not not "check_unseen_rewards"
-				self._state = flag
+				self._state = new_dlc_installed and not not "update_backend_dlcs" or not new_dlc_installed and not not "check_unseen_rewards"
 			end
 		end
 	elseif self._state == "update_backend_dlcs" then
@@ -1013,17 +893,7 @@ UnlockManager._handle_unseen_rewards = function (self)
 			local weapon_skin_data = WeaponSkins.skins[item_id]
 
 			if weapon_skin_data then
-				local rarity_2 = weapon_skin_data.rarity
-
-				if not rarity_2 then
-					-- Nothing
-				end
-
-				rarity_2 = "plentiful"
-
-				local rarity = rarity_2
-
-				::label_34_0::
+				local rarity = not not weapon_skin_data.rarity
 
 				item = {
 					skin = item_id,
@@ -1042,23 +912,7 @@ UnlockManager._handle_unseen_rewards = function (self)
 		elseif reward.reward_type == "keep_decoration_painting" then
 			local decoration_name = reward.keep_decoration_name
 			local painting_data = Paintings[decoration_name]
-			local rarity_3 = reward.rarity
-
-			if not rarity_3 then
-				-- Nothing
-			end
-
-			rarity_3 = painting_data.rarity
-
-			if not rarity_3 then
-				-- Nothing
-			end
-
-			rarity_3 = "plentiful"
-
-			local rarity = rarity_3
-
-			::label_34_1::
+			local rarity = not not reward.rarity
 
 			item = {
 				painting = decoration_name,
@@ -1085,22 +939,7 @@ UnlockManager._handle_unseen_rewards = function (self)
 		if item then
 			local rewarded_from = reward.rewarded_from
 			local _, dlc_data = table.find_by_key(UISettings.dlc_order_data, "dlc", rewarded_from)
-			local display_name
-
-			if dlc_data then
-				display_name = dlc_data.display_name
-
-				if not display_name then
-					-- Nothing
-				end
-			end
-
-			display_name = "lb_unknown"
-
-			local dlc_display_name = display_name
-
-			::label_34_2::
-
+			local dlc_display_name = dlc_data and not not dlc_data.display_name or not dlc_data and not not "lb_unknown"
 			local item_list = items_by_source[dlc_display_name]
 
 			if not item_list then

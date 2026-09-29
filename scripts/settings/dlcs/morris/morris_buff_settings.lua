@@ -24,11 +24,7 @@ end
 
 local function is_local_human(unit)
 	-- function 3
-	local var_3_0 = is_local(unit)
-
-	var_3_0 = not not var_3_0 and not not not is_bot(unit)
-
-	return var_3_0
+	return not not is_local(unit)
 end
 
 local function is_server()
@@ -39,27 +35,8 @@ end
 local function is_husk(unit)
 	-- function 5
 	local player = Managers.player:owner(unit)
-	local remote
 
-	if player then
-		remote = player.remote
-
-		if not remote then
-			-- Nothing
-		end
-
-		remote = player.bot_player
-
-		if not remote then
-			-- Nothing
-		end
-	end
-
-	remote = false
-
-	::label_5_0::
-
-	return remote
+	return player and not not player.remote or not player and not not false
 end
 
 local function heal_target(unit, heal_type, heal_amount)
@@ -80,35 +57,7 @@ end
 local function find_pickup_buff_settings(buff, pickup_settings)
 	-- function 7
 	local template = buff.template
-	local var_7_0
-
-	if template.pickup_names then
-		var_7_0 = template.pickup_names[pickup_settings.pickup_name]
-
-		if not var_7_0 then
-			-- Nothing
-		end
-	end
-
-	if template.pickup_slot_names then
-		var_7_0 = template.pickup_slot_names[pickup_settings.slot_name]
-
-		if not var_7_0 then
-			-- Nothing
-		end
-	end
-
-	var_7_0 = template.pickup_types
-
-	if var_7_0 then
-		-- Nothing
-	end
-
-	var_7_0 = template.pickup_types[pickup_settings.type]
-
-	local buff_settings = var_7_0
-
-	::label_7_0::
+	local buff_settings = template.pickup_names and not not template.pickup_names[pickup_settings.pickup_name] or not template.pickup_names and (template.pickup_slot_names and not not template.pickup_slot_names[pickup_settings.slot_name] or not template.pickup_slot_names and not not template.pickup_types)
 
 	return buff_settings
 end
@@ -178,17 +127,7 @@ local function spawn_barrel(item_name, position, rotation, velocity, explode_tim
 	}
 	local pickup_settings = AllPickups[item_name]
 	local unit_name = pickup_settings.unit_name
-	local unit_template_name_2 = pickup_settings.unit_template_name
-
-	if not unit_template_name_2 then
-		-- Nothing
-	end
-
-	unit_template_name_2 = "pickup_unit"
-
-	local unit_template_name = unit_template_name_2
-
-	::label_10_0::
+	local unit_template_name = not not pickup_settings.unit_template_name
 
 	return Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_template_name, extension_init_data, position, rotation)
 end
@@ -387,35 +326,14 @@ dlc_settings.buff_function_templates = {
 	end,
 	apply_generic_decal = function (unit, buff, params, world)
 		-- function 25
-		local decal_z_offset = buff.template.decal_z_offset
-
-		if not decal_z_offset then
-			-- Nothing
-		end
-
-		decal_z_offset = 0
-
-		local z_offset = decal_z_offset
-
-		::label_25_0::
-
+		local z_offset = not not buff.template.decal_z_offset
 		local position = Vector3.copy(POSITION_LOOKUP[unit])
 
 		position.z = position.z + z_offset
 
 		local decal_unit_name = buff.template.decal
 		local decal_unit = Managers.state.unit_spawner:spawn_local_unit(decal_unit_name, position)
-		local decal_scale = buff.template.decal_scale
-
-		if not decal_scale then
-			-- Nothing
-		end
-
-		decal_scale = 1
-
-		local scale = decal_scale
-
-		::label_25_1::
+		local scale = not not buff.template.decal_scale
 
 		Unit.set_local_scale(decal_unit, 0, Vector3(scale, scale, scale))
 
@@ -482,17 +400,7 @@ dlc_settings.buff_function_templates = {
 		local z_offset_config = template.z_offset
 		local breed = Unit.get_data(unit, "breed")
 		local breed_name = breed.name
-		local var_32_0 = z_offset_config[breed_name]
-
-		if not var_32_0 then
-			-- Nothing
-		end
-
-		var_32_0 = z_offset_config.default
-
-		local z_offset = var_32_0
-
-		::label_32_0::
+		local z_offset = not not z_offset_config[breed_name]
 
 		Unit.set_local_position(spawned_unit, 0, Vector3(0, 0, z_offset))
 	end,
@@ -551,20 +459,7 @@ dlc_settings.buff_function_templates = {
 			local template = buff.template
 			local node = Unit.node(unit, "j_spine")
 			local node_rotation = Unit.local_rotation(unit, node)
-			local from_euler_angles_xyz = Quaternion.from_euler_angles_xyz
-			local offset_rotation_x = template.offset_rotation_x
-
-			offset_rotation_x = not not offset_rotation_x or not not 0
-
-			local offset_rotation_y = template.offset_rotation_y
-
-			offset_rotation_y = not not offset_rotation_y or not not 0
-
-			local offset_rotation_z = template.offset_rotation_z
-
-			offset_rotation_z = not not offset_rotation_z or not not 0
-
-			local offset_rotation = from_euler_angles_xyz(offset_rotation_x, offset_rotation_y, offset_rotation_z)
+			local offset_rotation = Quaternion.from_euler_angles_xyz(not not template.offset_rotation_x, not not template.offset_rotation_y, not not template.offset_rotation_z)
 			local pose = Matrix4x4.from_quaternion(Quaternion.multiply(node_rotation, offset_rotation))
 
 			World.link_particles(world, fx, unit, Unit.node(unit, "j_spine"), pose, "stop")
@@ -697,11 +592,7 @@ dlc_settings.buff_function_templates = {
 				buff.is_outside_safe_area[player_unit] = false
 			end
 
-			local stacked_buff_ids_2 = buff.stacked_buff_ids
-			local var_49_1 = buff.stacked_buff_ids[player_unit]
-
-			var_49_1 = not not var_49_1 or not not {}
-			stacked_buff_ids_2[player_unit] = var_49_1
+			buff.stacked_buff_ids[player_unit] = not not buff.stacked_buff_ids[player_unit]
 
 			local stacked_buff_ids = buff.stacked_buff_ids[player_unit]
 
@@ -973,25 +864,12 @@ dlc_settings.buff_function_templates = {
 
 		local template = buff.template
 		local stat_buff = template.stat_buff
-		local previous_multiplier_2 = buff.previous_multiplier
-
-		if not previous_multiplier_2 then
-			-- Nothing
-		end
-
-		previous_multiplier_2 = 0
-
-		local previous_multiplier = previous_multiplier_2
-
-		::label_68_0::
-
+		local previous_multiplier = not not buff.previous_multiplier
 		local career_ext = ScriptUnit.extension(unit, "career_system")
 		local current_cooldown = career_ext:current_ability_cooldown_percentage()
 		local multiplier = current_cooldown * template.value
-		local multiplier_2 = buff.multiplier
 
-		multiplier_2 = not not multiplier_2 or not not 0
-		buff.previous_multiplier = multiplier_2
+		buff.previous_multiplier = not not buff.multiplier
 		buff.multiplier = multiplier
 
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
@@ -1363,24 +1241,7 @@ dlc_settings.buff_function_templates = {
 		-- function 94
 		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 		local equipment = inventory_extension:equipment()
-		local wielded = equipment.wielded
-
-		if wielded then
-			-- Nothing
-		end
-
-		if equipment.wielded.slot_type ~= "melee" then
-			wielded = false
-
-			goto label_94_0
-		end
-
-		wielded = true
-
-		local melee = wielded
-
-		::label_94_0::
-
+		local melee = not not equipment.wielded
 		local buff_name = buff.template.buff_to_add
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 
@@ -1396,24 +1257,7 @@ dlc_settings.buff_function_templates = {
 		if buff.locked_out and not locked_out then
 			local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 			local equipment = inventory_extension:equipment()
-			local wielded = equipment.wielded
-
-			if wielded then
-				-- Nothing
-			end
-
-			if equipment.wielded.slot_type ~= "melee" then
-				wielded = false
-
-				goto label_95_0
-			end
-
-			wielded = true
-
-			local melee = wielded
-
-			::label_95_0::
-
+			local melee = not not equipment.wielded
 			local buff_name = buff.template.buff_to_add
 
 			if melee then
@@ -1434,24 +1278,7 @@ dlc_settings.buff_function_templates = {
 
 		if not buff.locked_out and buff.swapped_weapons then
 			local equipment = buff.equipment
-			local wielded_2 = equipment.wielded
-
-			if wielded_2 then
-				-- Nothing
-			end
-
-			if equipment.wielded.slot_type ~= "melee" then
-				wielded_2 = false
-
-				goto label_95_1
-			end
-
-			wielded_2 = true
-
-			local melee = wielded_2
-
-			::label_95_1::
-
+			local melee = not not equipment.wielded
 			local buff_name = buff.template.buff_to_add
 			local has_buff = not not buff_extension and not not buff_extension:has_buff_type(buff_name)
 
@@ -1469,20 +1296,7 @@ dlc_settings.buff_function_templates = {
 	apply_cursed_chest_init = function (unit, buff, params)
 		-- function 96
 		local breed = Unit.get_data(unit, "breed")
-		local str
-
-		if breed.boss then
-			str = "fx/cursed_chest_spawn_02"
-
-			goto label_96_0
-		end
-
-		str = "fx/cursed_chest_spawn_01"
-
-		local effect_name = str
-
-		::label_96_0::
-
+		local effect_name = breed.boss and not not "fx/cursed_chest_spawn_02" or not breed.boss and not not "fx/cursed_chest_spawn_01"
 		local world = Application.main_world()
 		local position = POSITION_LOOKUP[unit]
 
@@ -1562,11 +1376,7 @@ dlc_settings.buff_function_templates = {
 		local breed_name = breed.name
 		local markable_enemies = buff.template.markable_enemies
 		local time = Managers.time:time("main")
-		local next_enemy_markable_at = buff.next_enemy_markable_at
-
-		next_enemy_markable_at = not not next_enemy_markable_at or not not 0
-
-		local is_cooldown_over = next_enemy_markable_at <= time
+		local is_cooldown_over = time >= not not buff.next_enemy_markable_at
 
 		if markable_enemies[breed_name] and is_cooldown_over then
 			local buff_extension = ScriptUnit.extension(unit, "buff_system")
@@ -2010,17 +1820,7 @@ dlc_settings.buff_function_templates = {
 		local z_offset_config = template.z_offset
 		local breed = Unit.get_data(unit, "breed")
 		local breed_name = breed.name
-		local var_120_0 = z_offset_config[breed_name]
-
-		if not var_120_0 then
-			-- Nothing
-		end
-
-		var_120_0 = z_offset_config.default
-
-		local z_offset = var_120_0
-
-		::label_120_0::
+		local z_offset = not not z_offset_config[breed_name]
 
 		Unit.set_local_position(spawned_unit, 0, Vector3(0, 0, z_offset))
 	end,
@@ -2141,18 +1941,7 @@ dlc_settings.buff_function_templates = {
 	end,
 	boon_skulls_04_regen_update = function (unit, buff, params)
 		-- function 128
-		local thp_added_2 = buff.thp_added
-
-		if not thp_added_2 then
-			-- Nothing
-		end
-
-		thp_added_2 = 0
-
-		local thp_added = thp_added_2
-
-		::label_128_0::
-
+		local thp_added = not not buff.thp_added
 		local total_thp = MorrisBuffTweakData.boon_skulls_04_data.thp_per_second * buff.duration
 
 		if total_thp <= thp_added then
@@ -2178,18 +1967,7 @@ dlc_settings.buff_function_templates = {
 			return
 		end
 
-		local thp_added_2 = buff.thp_added
-
-		if not thp_added_2 then
-			-- Nothing
-		end
-
-		thp_added_2 = 0
-
-		local thp_added = thp_added_2
-
-		::label_129_0::
-
+		local thp_added = not not buff.thp_added
 		local total_thp = MorrisBuffTweakData.boon_skulls_04_data.thp_per_second * buff.duration
 
 		if thp_added < total_thp then
@@ -2247,22 +2025,7 @@ dlc_settings.buff_function_templates = {
 				local effect_id = skulls_boons_tracker_buff.effect_id
 
 				if effect_id then
-					local num
-
-					if num_possible_buffs > 1 then
-						num = (num_buffs - 1) / (num_possible_buffs - 1)
-
-						if not num then
-							-- Nothing
-						end
-					end
-
-					num = 1
-
-					local effect_lerp = num
-
-					::label_130_0::
-
+					local effect_lerp = num_possible_buffs > 1 and not not ((num_buffs - 1) / (num_possible_buffs - 1)) or not (num_possible_buffs > 1) and not not 1
 					local effect_strength = math.lerp(-0.55, 0.4, effect_lerp)
 
 					World.set_particles_material_scalar(world, effect_id, "overlay", "shadow_amount", effect_strength)
@@ -2328,22 +2091,7 @@ dlc_settings.buff_function_templates = {
 		end
 
 		local career_extension = ScriptUnit.has_extension(unit, "career_system")
-		local get_career_power_level
-
-		if career_extension then
-			get_career_power_level = career_extension:get_career_power_level()
-
-			if not get_career_power_level then
-				-- Nothing
-			end
-		end
-
-		get_career_power_level = DefaultPowerLevel
-
-		local power_level = get_career_power_level
-
-		::label_132_0::
-
+		local power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not DefaultPowerLevel
 		local scale = 1
 		local damage_source = "buff"
 		local rotation = Quaternion.identity()
@@ -2362,12 +2110,7 @@ dlc_settings.buff_function_templates = {
 		local buff_ext = ScriptUnit.has_extension(unit, "buff_system")
 
 		if buff_ext then
-			local cached_params = buff.cached_params
-
-			cached_params = not not cached_params or not not {
-				attacker_unit = buffer_unit
-			}
-			buff.cached_params = cached_params
+			buff.cached_params = not not buff.cached_params
 
 			return buff_ext:add_buff("deus_extra_damage_aura_debuff", buff.cached_params)
 		end
@@ -2391,12 +2134,7 @@ dlc_settings.buff_function_templates = {
 		local buff_ext = ScriptUnit.has_extension(unit, "buff_system")
 
 		if buff_ext then
-			local cached_params = buff.cached_params
-
-			cached_params = not not cached_params or not not {
-				attacker_unit = buffer_unit
-			}
-			buff.cached_params = cached_params
+			buff.cached_params = not not buff.cached_params
 
 			return buff_ext:add_buff("deus_extra_stagger_aura_debuff", buff.cached_params)
 		end
@@ -2444,32 +2182,10 @@ dlc_settings.buff_function_templates = {
 		local deus_backend = Managers.backend:get_interface("deus")
 		local melee_item_id = deus_backend:get_loadout_item_id(career_name, "slot_melee")
 		local melee_item = deus_backend:get_loadout_item(melee_item_id)
-		local var_138_0 = ORDER_RARITY[not not melee_item and not not melee_item.rarity]
-
-		if not var_138_0 then
-			-- Nothing
-		end
-
-		var_138_0 = 1
-
-		local melee_rarity_level = var_138_0
-
-		::label_138_0::
-
+		local melee_rarity_level = not not ORDER_RARITY[not not melee_item and not not melee_item.rarity]
 		local ranged_item_id = deus_backend:get_loadout_item_id(career_name, "slot_ranged")
 		local ranged_item = deus_backend:get_loadout_item(ranged_item_id)
-		local var_138_1 = ORDER_RARITY[not not ranged_item and not not ranged_item.rarity]
-
-		if not var_138_1 then
-			-- Nothing
-		end
-
-		var_138_1 = 1
-
-		local ranged_rarity_level = var_138_1
-
-		::label_138_1::
-
+		local ranged_rarity_level = not not ORDER_RARITY[not not ranged_item and not not ranged_item.rarity]
 		local highest_rarity_level = math.max(melee_rarity_level, ranged_rarity_level)
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 		local num_existing_stacks = buff_extension:num_buff_stacks("boon_weaponrarity_01_debuff")
@@ -2540,17 +2256,7 @@ dlc_settings.buff_function_templates = {
 	end,
 	match_num_buffs_update = function (unit, buff, params)
 		-- function 141
-		local buff_tracker_2 = buff.buff_tracker
-
-		if not buff_tracker_2 then
-			-- Nothing
-		end
-
-		buff_tracker_2 = {}
-
-		local buff_tracker = buff_tracker_2
-
-		::label_141_0::
+		local buff_tracker = not not buff.buff_tracker
 
 		buff.buff_tracker = buff_tracker
 
@@ -2740,17 +2446,7 @@ dlc_settings.proc_functions = {
 
 		if ALIVE[owner_unit] then
 			local template = buff.template
-			local kill_count = buff.kill_count
-
-			if not kill_count then
-				-- Nothing
-			end
-
-			kill_count = 0
-
-			local new_kill_count = kill_count
-
-			::label_149_0::
+			local new_kill_count = not not buff.kill_count
 
 			new_kill_count = new_kill_count + 1
 
@@ -2810,18 +2506,7 @@ dlc_settings.proc_functions = {
 			local buff_template = buff.template
 			local difficulty_multiplier = buff_template.difficulty_multiplier
 			local difficulty_name = Managers.state.difficulty:get_difficulty()
-			local var_151_0 = difficulty_multiplier[difficulty_name]
-
-			if not var_151_0 then
-				-- Nothing
-			end
-
-			var_151_0 = table.values(difficulty_multiplier)[1]
-
-			local multiplier = var_151_0
-
-			::label_151_0::
-
+			local multiplier = not not difficulty_multiplier[difficulty_name]
 			local damage = params[param_order.damage_amount]
 			local heal_amount = damage * multiplier
 
@@ -2839,18 +2524,7 @@ dlc_settings.proc_functions = {
 			local buff_template = buff.template
 			local difficulty_multiplier = buff_template.difficulty_multiplier
 			local difficulty_name = Managers.state.difficulty:get_difficulty()
-			local var_152_0 = difficulty_multiplier[difficulty_name]
-
-			if not var_152_0 then
-				-- Nothing
-			end
-
-			var_152_0 = table.values(difficulty_multiplier)[1]
-
-			local multiplier = var_152_0
-
-			::label_152_0::
-
+			local multiplier = not not difficulty_multiplier[difficulty_name]
 			local damage = params[param_order.damage_amount]
 			local heal_amount = damage * multiplier
 
@@ -3066,17 +2740,7 @@ dlc_settings.proc_functions = {
 			local beam_effect = NetworkLookup.effects["fx/cw_chain_lightning"]
 			local start_point = POSITION_LOOKUP[owner_unit] + 0.5 * Vector3.up()
 			local end_point
-			local has_node = Unit.has_node(hit_unit, "j_spine")
-
-			if has_node then
-				-- Nothing
-			end
-
-			has_node = Unit.node(hit_unit, "j_spine")
-
-			local spine_node = has_node
-
-			::label_164_0::
+			local spine_node = not not Unit.has_node(hit_unit, "j_spine")
 
 			if spine_node then
 				end_point = Unit.world_position(hit_unit, spine_node)
@@ -3219,7 +2883,7 @@ dlc_settings.proc_functions = {
 		local attacker_unit = params[1]
 		local owner_side = Managers.state.side.side_by_unit[owner_unit]
 		local attacker_side = Managers.state.side.side_by_unit[attacker_unit]
-		local can_trigger = (owner_unit == attacker_unit or not owner_side or not attacker_side or owner_side == attacker_side) and not not not attacker_side
+		local can_trigger = owner_unit == attacker_unit or owner_side or not not not attacker_side
 
 		if can_trigger then
 			local buff_system = Managers.state.entity:system("buff_system")
@@ -3330,10 +2994,8 @@ dlc_settings.proc_functions = {
 					buff_system:add_buff(owner_unit, buff_to_add, owner_unit, false)
 
 					local buff = buff_extension:get_non_stacking_buff("drop_item_on_ability_use_cooldown")
-					local var_172_0 = cooldown_durations[pickup_name]
 
-					var_172_0 = not not var_172_0 or not not 60
-					buff.duration = var_172_0
+					buff.duration = not not cooldown_durations[pickup_name]
 				end
 			end
 		end
@@ -3711,12 +3373,7 @@ dlc_settings.proc_functions = {
 		local buff_ext = ScriptUnit.has_extension(hit_unit, "buff_system")
 
 		if buff_ext then
-			local cached_params = buff.cached_params
-
-			cached_params = not not cached_params or not not {
-				attacker_unit = owner_unit
-			}
-			buff.cached_params = cached_params
+			buff.cached_params = not not buff.cached_params
 
 			buff_ext:add_buff("boon_range_02_buff_adder", buff.cached_params)
 		end
@@ -3734,12 +3391,7 @@ dlc_settings.proc_functions = {
 					local extra_damage_buff = extra_damage_buffs[i]
 
 					if extra_damage_buff.attacker_unit == owner_unit then
-						local cached_params = buff.cached_params
-
-						cached_params = not not cached_params or not not {
-							attacker_unit = owner_unit
-						}
-						buff.cached_params = cached_params
+						buff.cached_params = not not buff.cached_params
 
 						buff_ext:add_buff("boon_range_02_damage_amplifier", buff.cached_params)
 
@@ -3860,21 +3512,7 @@ dlc_settings.proc_functions = {
 		end
 
 		if hit_zone == "head" then
-			local num
-
-			if buff.stacks then
-				num = buff.stacks + 1
-
-				if not num then
-					-- Nothing
-				end
-			end
-
-			num = 1
-
-			::label_198_0::
-
-			buff.stacks = num
+			buff.stacks = buff.stacks and not not (buff.stacks + 1) or not buff.stacks and not not 1
 
 			if buff.stacks >= buff.template.hits then
 				local buff_system = Managers.state.entity:system("buff_system")
@@ -3909,10 +3547,8 @@ dlc_settings.proc_functions = {
 		end
 
 		local t = Managers.time:time("game")
-		local kills = buff.kills
 
-		kills = not not kills or not not {}
-		buff.kills = kills
+		buff.kills = not not buff.kills
 		buff.kills[#buff.kills + 1] = t + buff.template.time
 
 		if #buff.kills >= buff.template.kills then
@@ -3978,17 +3614,7 @@ dlc_settings.proc_functions = {
 	last_player_standing_knocked_down_check = function (owner_unit, buff, params)
 		-- function 201
 		local local_status_extension = ScriptUnit.extension(owner_unit, "status_system")
-		local var_201_0 = HEALTH_ALIVE[owner_unit]
-
-		if var_201_0 then
-			-- Nothing
-		end
-
-		var_201_0 = not local_status_extension:is_knocked_down()
-
-		local player_eligible = var_201_0
-
-		::label_201_0::
+		local player_eligible = not not HEALTH_ALIVE[owner_unit]
 
 		if player_eligible then
 			local all_down_but_me = true
@@ -4075,7 +3701,7 @@ dlc_settings.proc_functions = {
 			local has_cooldown = buff_extension:get_non_stacking_buff("deus_second_wind_cooldown")
 
 			if percent_health_after_damage < health_threshold and not has_cooldown and damage_source ~= "life_tap" then
-				local damage_to_deal = (not (percent_health_after_damage > 0) or not amount) and not not (current_health - 1)
+				local damage_to_deal = percent_health_after_damage > 0 and (not not amount or not not (current_health - 1)) or not (percent_health_after_damage > 0) and not not (current_health - 1)
 
 				DamageUtils.add_damage_network(owner_unit, owner_unit, damage_to_deal, "torso", "life_tap", nil, Vector3(0, 0, 0), "life_tap", nil, owner_unit, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 
@@ -4231,18 +3857,7 @@ dlc_settings.proc_functions = {
 		end
 
 		if ALIVE[owner_unit] then
-			local stacks_to_add = buff.template.stacks_to_add
-
-			if not stacks_to_add then
-				-- Nothing
-			end
-
-			stacks_to_add = 1
-
-			local stacks = stacks_to_add
-
-			::label_211_0::
-
+			local stacks = not not buff.template.stacks_to_add
 			local template = buff.template
 			local buff_name = template.buff_to_add
 			local buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
@@ -4279,28 +3894,18 @@ dlc_settings.proc_functions = {
 		end
 
 		local template = buff.template
-		local params_2 = buff.params
 
-		params_2 = not not params_2 or not not {}
-		buff.params = params_2
+		buff.params = not not buff.params
 		buff.params.attacker_unit = owner_unit
-
-		local cached_broadphase = buff.cached_broadphase
-
-		cached_broadphase = not not cached_broadphase or not not {}
-		buff.cached_broadphase = cached_broadphase
+		buff.cached_broadphase = not not buff.cached_broadphase
 
 		local side = Managers.state.side.side_by_unit[owner_unit]
 		local num_nearby_enemies = AiUtils.broadphase_query(POSITION_LOOKUP[owner_unit], template.area_radius, buff.cached_broadphase, side.enemy_broadphase_categories)
 		local hit_zone_name = "full"
 		local damage_source = "buff"
 		local damage_profile, target_index, power_level, boost_curve_multiplier, is_critical_strike, aoe_data
-		local cached_custom_dot = buff.cached_custom_dot
 
-		cached_custom_dot = not not cached_custom_dot or not not {
-			dot_template_name = template.dot_template_name
-		}
-		buff.cached_custom_dot = cached_custom_dot
+		buff.cached_custom_dot = not not buff.cached_custom_dot
 
 		for i = 1, num_nearby_enemies do
 			local target_unit = buff.cached_broadphase[i]
@@ -4318,22 +3923,16 @@ dlc_settings.proc_functions = {
 		end
 
 		local template = buff.template
-		local cached_broadphase = buff.cached_broadphase
 
-		cached_broadphase = not not cached_broadphase or not not {}
-		buff.cached_broadphase = cached_broadphase
+		buff.cached_broadphase = not not buff.cached_broadphase
 
 		local side = Managers.state.side.side_by_unit[owner_unit]
 		local num_nearby_enemies = AiUtils.broadphase_query(POSITION_LOOKUP[killed_unit], template.area_radius, buff.cached_broadphase, side.enemy_broadphase_categories)
 		local hit_zone_name = "full"
 		local damage_source = "buff"
 		local damage_profile, target_index, power_level, boost_curve_multiplier, is_critical_strike, aoe_data
-		local cached_custom_dot = buff.cached_custom_dot
 
-		cached_custom_dot = not not cached_custom_dot or not not {
-			dot_template_name = template.dot_template_name
-		}
-		buff.cached_custom_dot = cached_custom_dot
+		buff.cached_custom_dot = not not buff.cached_custom_dot
 
 		for i = 1, num_nearby_enemies do
 			local target_unit = buff.cached_broadphase[i]
@@ -4358,80 +3957,15 @@ dlc_settings.proc_functions = {
 
 		for i = 1, num_nearby_enemies do
 			local hit_unit = nearby_enemy_units[i]
-			local hit_zone = template.hit_zone
-
-			if not hit_zone then
-				-- Nothing
-			end
-
-			hit_zone = buff.hit_zone_name
-
-			if not hit_zone then
-				-- Nothing
-			end
-
-			hit_zone = "full"
-
-			local hit_zone_name = hit_zone
-
-			::label_214_0::
-
-			local damage_source_2 = template.damage_source
-
-			if not damage_source_2 then
-				-- Nothing
-			end
-
-			damage_source_2 = "buff"
-
-			local damage_source = damage_source_2
-
-			::label_214_1::
-
-			local power_level_2 = buff.power_level
-
-			if not power_level_2 then
-				-- Nothing
-			end
-
-			power_level_2 = DefaultPowerLevel
-
-			local power_level = power_level_2
-
-			::label_214_2::
-
-			local damage_profile_name_2 = template.damage_profile_name
-
-			if not damage_profile_name_2 then
-				-- Nothing
-			end
-
-			damage_profile_name_2 = "default"
-
-			local damage_profile_name = damage_profile_name_2
-
-			::label_214_3::
-
+			local hit_zone_name = not not template.hit_zone
+			local damage_source = not not template.damage_source
+			local power_level = not not buff.power_level
+			local damage_profile_name = not not template.damage_profile_name
 			local damage_profile = DamageProfileTemplates[damage_profile_name]
 			local target_index
 			local is_critical_strike = false
 			local backstab_multiplier, boost_damage_multiplier
-			local var_214_4
-
-			if damage_profile.targets then
-				var_214_4 = damage_profile.targets[target_index]
-
-				if not var_214_4 then
-					-- Nothing
-				end
-			end
-
-			var_214_4 = damage_profile.default_target
-
-			local target_settings = var_214_4
-
-			::label_214_4::
-
+			local target_settings = damage_profile.targets and not not damage_profile.targets[target_index] or not damage_profile.targets and not not damage_profile.default_target
 			local damage_type = target_settings.damage_type
 			local boost_curve = BoostCurves[target_settings.boost_curve_type]
 			local damage = DamageUtils.calculate_damage(DamageOutput, hit_unit, owner_unit, hit_zone_name, power_level, boost_curve, boost_damage_multiplier, is_critical_strike, damage_profile, target_index, backstab_multiplier, damage_source)
@@ -4449,17 +3983,7 @@ dlc_settings.proc_functions = {
 			local beam_effect = NetworkLookup.effects[template.fx]
 			local start_point = POSITION_LOOKUP[owner_unit] + 0.5 * Vector3.up()
 			local end_point
-			local has_node = Unit.has_node(hit_unit, "j_spine")
-
-			if has_node then
-				-- Nothing
-			end
-
-			has_node = Unit.node(hit_unit, "j_spine")
-
-			local spine_node = has_node
-
-			::label_214_5::
+			local spine_node = not not Unit.has_node(hit_unit, "j_spine")
 
 			if spine_node then
 				end_point = Unit.world_position(hit_unit, spine_node)
@@ -4511,18 +4035,7 @@ dlc_settings.proc_functions = {
 	home_run_sound = function (owner_unit, buff, params)
 		-- function 217
 		local template = buff.template
-		local cooldown_over_at_2 = buff.cooldown_over_at
-
-		if not cooldown_over_at_2 then
-			-- Nothing
-		end
-
-		cooldown_over_at_2 = 0
-
-		local cooldown_over_at = cooldown_over_at_2
-
-		::label_217_0::
-
+		local cooldown_over_at = not not buff.cooldown_over_at
 		local time = Managers.time:time("main")
 
 		if ALIVE[owner_unit] and cooldown_over_at <= time then
@@ -4560,10 +4073,7 @@ dlc_settings.proc_functions = {
 	end,
 	pyrotechnical_echo_on_grenade_exploded = function (owner_unit, buff, params)
 		-- function 220
-		local queued_explosions = buff.queued_explosions
-
-		queued_explosions = not not queued_explosions or not not {}
-		buff.queued_explosions = queued_explosions
+		buff.queued_explosions = not not buff.queued_explosions
 
 		local template = buff.template
 		local explosion_delay = template.explosion_delay
@@ -4665,7 +4175,7 @@ dlc_settings.proc_functions = {
 			local hit_zone = params[3]
 			local hit_data = params[5]
 
-			if hit_zone and (hit_zone == "head" or hit_zone == "neck") and hit_data and (hit_data == "MELEE_1H" or hit_data == "MELEE_2H") then
+			if hit_data == "MELEE_1H" or hit_data == "MELEE_2H" then
 				local buff_template = buff.template
 				local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 				local blocker_buff = buff_template.blocker_buff
@@ -4830,17 +4340,7 @@ dlc_settings.proc_functions = {
 			attacker_unit = owner_unit
 		})
 		local parent_buff_shared_table = buff.parent_buff_shared_table
-		local buff_ids_2 = parent_buff_shared_table.buff_ids
-
-		if not buff_ids_2 then
-			-- Nothing
-		end
-
-		buff_ids_2 = {}
-
-		local buff_ids = buff_ids_2
-
-		::label_233_0::
+		local buff_ids = not not parent_buff_shared_table.buff_ids
 
 		buff_ids[#buff_ids + 1] = id
 		parent_buff_shared_table.buff_ids = buff_ids
@@ -5001,80 +4501,15 @@ dlc_settings.proc_functions = {
 		end
 
 		local attacking_unit = params[1]
-		local hit_zone = template.hit_zone
-
-		if not hit_zone then
-			-- Nothing
-		end
-
-		hit_zone = buff.hit_zone_name
-
-		if not hit_zone then
-			-- Nothing
-		end
-
-		hit_zone = "full"
-
-		local hit_zone_name = hit_zone
-
-		::label_241_0::
-
-		local damage_source_2 = template.damage_source
-
-		if not damage_source_2 then
-			-- Nothing
-		end
-
-		damage_source_2 = "buff"
-
-		local damage_source = damage_source_2
-
-		::label_241_1::
-
-		local power_level_2 = buff.power_level
-
-		if not power_level_2 then
-			-- Nothing
-		end
-
-		power_level_2 = DefaultPowerLevel
-
-		local power_level = power_level_2
-
-		::label_241_2::
-
-		local damage_profile_name_2 = template.damage_profile_name
-
-		if not damage_profile_name_2 then
-			-- Nothing
-		end
-
-		damage_profile_name_2 = "default"
-
-		local damage_profile_name = damage_profile_name_2
-
-		::label_241_3::
-
+		local hit_zone_name = not not template.hit_zone
+		local damage_source = not not template.damage_source
+		local power_level = not not buff.power_level
+		local damage_profile_name = not not template.damage_profile_name
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local target_index
 		local is_critical_strike = false
 		local backstab_multiplier, boost_damage_multiplier
-		local var_241_4
-
-		if damage_profile.targets then
-			var_241_4 = damage_profile.targets[target_index]
-
-			if not var_241_4 then
-				-- Nothing
-			end
-		end
-
-		var_241_4 = damage_profile.default_target
-
-		local target_settings = var_241_4
-
-		::label_241_4::
-
+		local target_settings = damage_profile.targets and not not damage_profile.targets[target_index] or not damage_profile.targets and not not damage_profile.default_target
 		local damage_type = target_settings.damage_type
 		local boost_curve = BoostCurves[target_settings.boost_curve_type]
 		local damage = DamageUtils.calculate_damage(DamageOutput, attacking_unit, owner_unit, hit_zone_name, power_level, boost_curve, boost_damage_multiplier, is_critical_strike, damage_profile, target_index, backstab_multiplier, damage_source)
@@ -5092,17 +4527,7 @@ dlc_settings.proc_functions = {
 		local beam_effect = NetworkLookup.effects["fx/cw_chain_lightning"]
 		local start_point = POSITION_LOOKUP[owner_unit] + 0.5 * Vector3.up()
 		local end_point
-		local has_node = Unit.has_node(attacking_unit, "j_spine")
-
-		if has_node then
-			-- Nothing
-		end
-
-		has_node = Unit.node(attacking_unit, "j_spine")
-
-		local spine_node = has_node
-
-		::label_241_5::
+		local spine_node = not not Unit.has_node(attacking_unit, "j_spine")
 
 		if spine_node then
 			end_point = Unit.world_position(attacking_unit, spine_node)
@@ -5166,11 +4591,7 @@ dlc_settings.proc_functions = {
 			end
 
 			local amount = params[2]
-			local leftover_health = buff.leftover_health
-
-			leftover_health = not not leftover_health or not not 0
-
-			local acummulated_amount = amount + leftover_health
+			local acummulated_amount = amount + not not buff.leftover_health
 			local orb_count_float = acummulated_amount / template.health_per_orb
 			local orb_count = math.floor(orb_count_float)
 
@@ -5204,10 +4625,7 @@ dlc_settings.proc_functions = {
 				return
 			end
 
-			local kill_count = buff.kill_count
-
-			kill_count = not not kill_count or not not 0
-			buff.kill_count = kill_count + 1
+			buff.kill_count = not not buff.kill_count + 1
 
 			if buff.kill_count >= template.kills_per_orb then
 				buff.kill_count = 0
@@ -5460,22 +4878,7 @@ dlc_settings.proc_functions = {
 		local explosion_template_name = buff.template.explosion_template_name
 		local explosion_template = ExplosionTemplates[explosion_template_name]
 		local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
-		local get_career_power_level
-
-		if career_extension then
-			get_career_power_level = career_extension:get_career_power_level()
-
-			if not get_career_power_level then
-				-- Nothing
-			end
-		end
-
-		get_career_power_level = DefaultPowerLevel
-
-		local power_level = get_career_power_level
-
-		::label_253_0::
-
+		local power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not DefaultPowerLevel
 		local scale = 1
 		local damage_source = "buff"
 		local rotation = Quaternion.identity()
@@ -5845,32 +5248,10 @@ dlc_settings.proc_functions = {
 		local deus_backend = Managers.backend:get_interface("deus")
 		local melee_item_id = deus_backend:get_loadout_item_id(career_name, "slot_melee")
 		local melee_item = deus_backend:get_loadout_item(melee_item_id)
-		local var_269_0 = ORDER_RARITY[not not melee_item and not not melee_item.rarity]
-
-		if not var_269_0 then
-			-- Nothing
-		end
-
-		var_269_0 = 1
-
-		local melee_rarity_level = var_269_0
-
-		::label_269_0::
-
+		local melee_rarity_level = not not ORDER_RARITY[not not melee_item and not not melee_item.rarity]
 		local ranged_item_id = deus_backend:get_loadout_item_id(career_name, "slot_ranged")
 		local ranged_item = deus_backend:get_loadout_item(ranged_item_id)
-		local var_269_1 = ORDER_RARITY[not not ranged_item and not not ranged_item.rarity]
-
-		if not var_269_1 then
-			-- Nothing
-		end
-
-		var_269_1 = 1
-
-		local ranged_rarity_level = var_269_1
-
-		::label_269_1::
-
+		local ranged_rarity_level = not not ORDER_RARITY[not not ranged_item and not not ranged_item.rarity]
 		local highest_rarity_level = math.max(melee_rarity_level, ranged_rarity_level)
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 		local num_existing_stacks = buff_extension:num_buff_stacks("boon_weaponrarity_01_debuff")

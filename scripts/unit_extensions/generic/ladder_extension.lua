@@ -9,11 +9,7 @@ LadderExtension.init = function (self, extension_init_context, unit, extension_i
 	self._is_server = Managers.state.network.is_server
 	self._seed_x = Math.random()
 	self._seed_y = Math.random()
-
-	local get_data = Unit.get_data(unit, "ladder_shake_node")
-
-	get_data = not not get_data or not not 0
-	self._node = get_data
+	self._node = not not Unit.get_data(unit, "ladder_shake_node")
 	self._enable_shake = not Unit.get_data(unit, "disable_shake")
 	self._start_position = Vector3Box(Unit.world_position(self._unit, self._node))
 	self._top_position = Vector3Box(Unit.world_position(unit, Unit.node(unit, "node_top")))
@@ -105,11 +101,7 @@ end
 
 LadderExtension.is_shaking = function (self)
 	-- function 8
-	local flag
-
-	flag = (not self._shaking or not true) and not not false
-
-	return flag
+	return self._shaking and not not true or not self._shaking and not not false
 end
 
 LadderExtension.shake = function (self)

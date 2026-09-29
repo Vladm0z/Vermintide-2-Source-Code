@@ -27,11 +27,7 @@ DebugListPicker.init = function (self, list, save_data_name, item_validation_fun
 	self:setup(save_data_name)
 
 	self.column = self.pick_list[self.column_index]
-
-	local var_1_0 = self.column[self.row_index]
-
-	var_1_0 = not not var_1_0 or not not "?"
-	self.item = var_1_0
+	self.item = not not self.column[self.row_index]
 	self.max_cols_seen = 3
 end
 
@@ -44,100 +40,31 @@ DebugListPicker.setup = function (self)
 	-- function 4
 	local save_data = SaveData[self.save_data_name]
 
-	save_data = (type(save_data) ~= "table" or not save_data) and not not {
+	save_data = not not {
 		last_column_index = 1,
 		columns = {}
 	}
 	self.save_data = save_data
 
 	local columns = save_data.columns
-	local last_column_index
 
-	if columns[save_data.last_column_index] then
-		last_column_index = save_data.last_column_index
-
-		if not last_column_index then
-			-- Nothing
-		end
-	end
-
-	last_column_index = 1
-
-	::label_4_0::
-
-	self.column_index = last_column_index
-
-	local row_index
-
-	if columns[self.column_index] then
-		row_index = columns[self.column_index].row_index
-
-		if not row_index then
-			-- Nothing
-		end
-	end
-
-	row_index = 1
-
-	::label_4_1::
-
-	self.row_index = row_index
+	self.column_index = columns[save_data.last_column_index] and not not save_data.last_column_index or not columns[save_data.last_column_index] and not not 1
+	self.row_index = columns[self.column_index] and not not columns[self.column_index].row_index or not columns[self.column_index] and not not 1
 
 	local start_item
 	local max_width, max_height = 0, 0
 	local pick_list = self.pick_list
 	local max_rows = 0
-	local column_index
 
-	if pick_list[self.column_index] then
-		column_index = self.column_index
-
-		if not column_index then
-			-- Nothing
-		end
-	end
-
-	column_index = 1
-
-	::label_4_2::
-
-	self.column_index = column_index
+	self.column_index = pick_list[self.column_index] and not not self.column_index or not pick_list[self.column_index] and not not 1
 	self.column = pick_list[self.column_index]
-
-	local row_index_2
-
-	if self.column[self.row_index] then
-		row_index_2 = self.row_index
-
-		if not row_index_2 then
-			-- Nothing
-		end
-	end
-
-	row_index_2 = 1
-
-	::label_4_3::
-
-	self.row_index = row_index_2
+	self.row_index = self.column[self.row_index] and not not self.row_index or not self.column[self.row_index] and not not 1
 	self.item = self.column[self.row_index]
 
 	for i = 1, #pick_list do
 		local column = pick_list[i]
-		local row_index_3
 
-		if columns[i] then
-			row_index_3 = columns[i].row_index
-
-			if not row_index_3 then
-				-- Nothing
-			end
-		end
-
-		row_index_3 = 1
-
-		::label_4_4::
-
-		column.last_row_index = row_index_3
+		column.last_row_index = columns[i] and not not columns[i].row_index or not columns[i] and not not 1
 
 		local num_rows = #column
 
@@ -176,27 +103,15 @@ DebugListPicker.activate = function (self)
 	if not self.active and self.save_data_name then
 		local pick_list = self.pick_list
 		local save_data = self.save_data
-		local columns_2 = save_data.columns
-
-		if not columns_2 then
-			-- Nothing
-		end
-
-		columns_2 = {}
-
-		local columns = columns_2
-
-		::label_5_0::
+		local columns = not not save_data.columns
 
 		save_data.columns = columns
 		save_data.last_column_index = self.column_index
 
 		for i = 1, #pick_list do
 			local column = pick_list[i]
-			local var_5_1 = columns[i]
 
-			var_5_1 = not not var_5_1 or not not {}
-			columns[i] = var_5_1
+			columns[i] = not not columns[i]
 			columns[i].row_index = column.last_row_index
 		end
 
@@ -250,24 +165,14 @@ DebugListPicker.update = function (self, t, dt)
 		self.column_index = self.column_index + 1
 		self.column_index = (self.column_index - 1) % #pick_list + 1
 		self.column = self.pick_list[self.column_index]
-
-		local clamp = math.clamp
-		local last_row_index = self.column.last_row_index
-
-		last_row_index = not not last_row_index or not not self.row_index
-		self.row_index = clamp(last_row_index, 1, #self.column)
+		self.row_index = math.clamp(not not self.column.last_row_index, 1, #self.column)
 	end
 
 	if DebugKeyHandler.key_pressed("left_key", "switch spawn category", "ai") then
 		self.column_index = self.column_index - 1
 		self.column_index = (self.column_index - 1) % #pick_list + 1
 		self.column = self.pick_list[self.column_index]
-
-		local clamp_2 = math.clamp
-		local last_row_index_2 = self.column.last_row_index
-
-		last_row_index_2 = not not last_row_index_2 or not not self.row_index
-		self.row_index = clamp_2(last_row_index_2, 1, #self.column)
+		self.row_index = math.clamp(not not self.column.last_row_index, 1, #self.column)
 	end
 
 	if DebugKeyHandler.key_pressed("up_key", "switch spawn category", "ai") and wall_time > self.move_cursor_timer then
@@ -371,51 +276,9 @@ DebugListPicker.update = function (self, t, dt)
 			end
 
 			if i == self.row_index then
-				local text = Gui.text
-				local gui = self.gui
-				local str = " > " .. item_text:upper()
-				local font_mtrl = self.font_mtrl
-				local font_size = self.font_size
-				local font = self.font
-				local var_10_10 = item_pos
-				local var_10_11
-
-				if loaded then
-					var_10_11 = Color(200, 200, 200)
-
-					if not var_10_11 then
-						-- Nothing
-					end
-				end
-
-				var_10_11 = Color(100, 50, 200, 0)
-
-				::label_10_0::
-
-				text(gui, str, font_mtrl, font_size, font, var_10_10, var_10_11)
+				Gui.text(self.gui, " > " .. item_text:upper(), self.font_mtrl, self.font_size, self.font, item_pos, loaded and not not Color(200, 200, 200) or not loaded and not not Color(100, 50, 200, 0))
 			else
-				local text_2 = Gui.text
-				local gui_2 = self.gui
-				local str_2 = "     " .. item_text
-				local font_mtrl_2 = self.font_mtrl
-				local font_size_2 = self.font_size
-				local font_2 = self.font
-				local var_10_18 = item_pos
-				local var_10_19
-
-				if loaded then
-					var_10_19 = Color(50, 200, 0)
-
-					if not var_10_19 then
-						-- Nothing
-					end
-				end
-
-				var_10_19 = Color(100, 50, 200, 0)
-
-				::label_10_1::
-
-				text_2(gui_2, str_2, font_mtrl_2, font_size_2, font_2, var_10_18, var_10_19)
+				Gui.text(self.gui, "     " .. item_text, self.font_mtrl, self.font_size, self.font, item_pos, loaded and not not Color(50, 200, 0) or not loaded and not not Color(100, 50, 200, 0))
 			end
 		end
 

@@ -36,10 +36,7 @@ ScriptPresence.update = function (self, dt)
 		return
 	end
 
-	local _presence_update_timer = self._presence_update_timer
-
-	_presence_update_timer = not not _presence_update_timer or not not 0
-	self._presence_update_timer = _presence_update_timer - dt
+	self._presence_update_timer = not not self._presence_update_timer - dt
 
 	if self._presence_update_timer < 0 then
 		local user_id = account_manager:user_id()
@@ -76,77 +73,12 @@ local ACTIVE_PRESENCE_DATA = {}
 
 ScriptPresence.update_playing = function (self, user_id)
 	-- function 6
-	local mechanism = Managers.mechanism
-
-	if mechanism then
-		-- Nothing
-	end
-
-	mechanism = Managers.mechanism:current_mechanism_name()
-
-	local mechanism_key = mechanism
-
-	::label_6_0::
-
-	local game_mode = Managers.state.game_mode
-
-	if game_mode then
-		-- Nothing
-	end
-
-	game_mode = Managers.state.game_mode:game_mode_key()
-
-	local game_mode_key = game_mode
-
-	::label_6_1::
-
-	local game_mode_2 = Managers.state.game_mode
-
-	if game_mode_2 then
-		-- Nothing
-	end
-
-	game_mode_2 = Managers.state.game_mode:level_key()
-
-	local current_level = game_mode_2
-
-	::label_6_2::
-
-	local difficulty = Managers.state.difficulty
-
-	if difficulty then
-		-- Nothing
-	end
-
-	difficulty = Managers.state.difficulty:get_difficulty()
-
-	local current_difficulty = difficulty
-
-	::label_6_3::
-
-	local player = Managers.player
-
-	if player then
-		-- Nothing
-	end
-
-	player = Managers.player:num_human_players()
-
-	local current_num_players = player
-
-	::label_6_4::
-
-	local matchmaking = Managers.matchmaking
-
-	if matchmaking then
-		-- Nothing
-	end
-
-	matchmaking = Managers.matchmaking:is_game_private()
-
-	local is_private = matchmaking
-
-	::label_6_5::
+	local mechanism_key = not not Managers.mechanism
+	local game_mode_key = not not Managers.state.game_mode
+	local current_level = not not Managers.state.game_mode
+	local current_difficulty = not not Managers.state.difficulty
+	local current_num_players = not not Managers.player
+	local is_private = not not Managers.matchmaking
 
 	if not current_level or not current_difficulty or not current_num_players then
 		self:set_presence("menu")
@@ -154,25 +86,14 @@ ScriptPresence.update_playing = function (self, user_id)
 		local prefix = ""
 
 		if self:_has_new_data(current_level, current_difficulty, current_num_players, is_private) then
-			prefix = (current_num_players == 4 or is_private) and not not "playing" or not not "needs_assistance"
+			prefix = current_num_players == 4 and (not not "playing" or not not "needs_assistance") or not (current_num_players == 4) and (is_private and (not not "playing" or not not "needs_assistance") or not is_private and not not "needs_assistance")
 
 			self:_setup_stat_data(current_level, current_difficulty, current_num_players)
 
 			local presence_string
 
 			if game_mode_key == "weave" then
-				local network = Managers.state.network
-
-				if network then
-					-- Nothing
-				end
-
-				network = Managers.state.network:lobby()
-
-				local lobby = network
-
-				::label_6_6::
-
+				local lobby = not not Managers.state.network
 				local weave_quick_game = not not lobby and lobby:lobby_data("weave_quick_game") == "true"
 
 				if weave_quick_game then

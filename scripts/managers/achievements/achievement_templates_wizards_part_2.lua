@@ -197,19 +197,7 @@ achievements.tower_created_all_potions = {
 	end
 }
 
-local num
-
-if IS_WINDOWS then
-	num = 12
-
-	goto label_0_0
-end
-
-num = 13
-
-local TOWER_TIME_CHALLENGE_LIMIT_IN_MINUTES = num
-
-::label_0_0::
+local TOWER_TIME_CHALLENGE_LIMIT_IN_MINUTES = IS_WINDOWS and not not 12 or not IS_WINDOWS and not not 13
 
 achievements.tower_time_challenge = {
 	name = "achv_tower_time_challenge_name",

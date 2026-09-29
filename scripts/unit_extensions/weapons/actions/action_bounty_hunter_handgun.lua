@@ -19,54 +19,8 @@ ActionBountyHunterHandgun.client_owner_start_action = function (self, new_action
 	self.current_action = new_action
 	self.power_level = power_level
 	self.owner_buff_extension = buff_extension
-
-	local _railgun_shoot
-
-	if action_init_data then
-		if action_init_data.upper_barrel == "railgun" then
-			_railgun_shoot = self._railgun_shoot
-
-			if not _railgun_shoot then
-				-- Nothing
-			end
-		end
-
-		_railgun_shoot = self._shotgun_shoot
-
-		if not _railgun_shoot then
-			-- Nothing
-		end
-	end
-
-	_railgun_shoot = self._railgun_shoot
-
-	::label_2_0::
-
-	self.upper_shoot_function = _railgun_shoot
-
-	local _railgun_shoot_2
-
-	if action_init_data then
-		if action_init_data.lower_barrel == "railgun" then
-			_railgun_shoot_2 = self._railgun_shoot
-
-			if not _railgun_shoot_2 then
-				-- Nothing
-			end
-		end
-
-		_railgun_shoot_2 = self._shotgun_shoot
-
-		if not _railgun_shoot_2 then
-			-- Nothing
-		end
-	end
-
-	_railgun_shoot_2 = self._shotgun_shoot
-
-	::label_2_1::
-
-	self.lower_shoot_function = _railgun_shoot_2
+	self.upper_shoot_function = action_init_data and (action_init_data.upper_barrel ~= "railgun" and not not self._shotgun_shoot or not (action_init_data.upper_barrel ~= "railgun") and not not self._railgun_shoot) or not action_init_data and not not self._railgun_shoot
+	self.lower_shoot_function = action_init_data and (action_init_data.lower_barrel ~= "railgun" and not not self._shotgun_shoot or not (action_init_data.lower_barrel ~= "railgun") and not not self._railgun_shoot) or not action_init_data and not not self._shotgun_shoot
 
 	Unit.set_flow_variable(weapon_unit, "upper_is_railgun", action_init_data.upper_barrel == "railgun")
 	Unit.set_flow_variable(weapon_unit, "lower_is_railgun", action_init_data.lower_barrel == "railgun")
@@ -81,32 +35,12 @@ ActionBountyHunterHandgun.client_owner_start_action = function (self, new_action
 		self.spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
 	end
 
-	local damage_profile = new_action.damage_profile
-
-	if not damage_profile then
-		-- Nothing
-	end
-
-	damage_profile = "default"
-
-	local damage_profile_name = damage_profile
-
-	::label_2_2::
+	local damage_profile_name = not not new_action.damage_profile
 
 	self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
 	self.damage_profile = DamageProfileTemplates[damage_profile_name]
 
-	local damage_profile_aoe = new_action.damage_profile_aoe
-
-	if not damage_profile_aoe then
-		-- Nothing
-	end
-
-	damage_profile_aoe = "default"
-
-	local damage_profile_name_aoe = damage_profile_aoe
-
-	::label_2_3::
+	local damage_profile_name_aoe = not not new_action.damage_profile_aoe
 
 	self.damage_profile_aoe_id = NetworkLookup.damage_profiles[damage_profile_name_aoe]
 	self.damage_profile_aoe = DamageProfileTemplates[damage_profile_name_aoe]
@@ -206,18 +140,7 @@ ActionBountyHunterHandgun._shotgun_shoot = function (self)
 
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 	local current_position, current_rotation = first_person_extension:get_projectile_start_position_rotation()
-	local shot_count = current_action.shot_count
-
-	if not shot_count then
-		-- Nothing
-	end
-
-	shot_count = 1
-
-	local num_shots = shot_count
-
-	::label_5_0::
-
+	local num_shots = not not current_action.shot_count
 	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 	local damage_bonus = 0
 
@@ -258,21 +181,7 @@ ActionBountyHunterHandgun._shotgun_shoot = function (self)
 			end
 		end
 
-		local var_5_1
-
-		if result then
-			var_5_1 = result[#result][1]
-
-			if not var_5_1 then
-				-- Nothing
-			end
-		end
-
-		var_5_1 = current_position + direction * current_action.range
-
-		local hit_position = var_5_1
-
-		::label_5_1::
+		local hit_position = result and not not result[#result][1] or not result and not not (current_position + direction * current_action.range)
 
 		Unit.set_flow_variable(weapon_unit, "hit_position", hit_position)
 		Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - current_position) * 0.1)

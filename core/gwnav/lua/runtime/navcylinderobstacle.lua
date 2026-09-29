@@ -57,13 +57,8 @@ NavCylinderObstacle.update = function (self, dt)
 	-- function 5
 	local pos = Unit.world_position(self.unit, 1)
 	local velocity = (pos - self.lastpos:unbox()) / dt
-	local var_5_0 = self
-	local set_does_trigger_tagvolume = self.set_does_trigger_tagvolume
-	local does_trigger_tag_volume = does_trigger_tag_volume
 
-	does_trigger_tag_volume = not not does_trigger_tag_volume and Vector3.length(velocity) == 0
-
-	set_does_trigger_tagvolume(var_5_0, does_trigger_tag_volume)
+	self:set_does_trigger_tagvolume(not not does_trigger_tag_volume)
 	self:set_next_update_config(pos, velocity)
 	self.lastpos:store(pos)
 end

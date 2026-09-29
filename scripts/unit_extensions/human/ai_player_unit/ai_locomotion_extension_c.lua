@@ -17,25 +17,11 @@ AILocomotionExtensionC.init = function (self, extension_init_context, unit, exte
 	local unit_template = Managers.state.unit_spawner.unit_template_lut[breed.unit_template]
 	local go_type = unit_template.go_type
 	local game_object_template = Managers.state.network:game_object_template(go_type)
-	local fassert = fassert
-	local syncs_rotation = game_object_template.syncs_rotation
 
-	syncs_rotation = not not syncs_rotation or not not game_object_template.syncs_yaw
-
-	fassert(syncs_rotation, "AI Locomotion error. AI units must have syncs_rotation or syncs_yaw set in its game_object_template.")
+	fassert(not not game_object_template.syncs_rotation, "AI Locomotion error. AI units must have syncs_rotation or syncs_yaw set in its game_object_template.")
 
 	local breed_run_speed = breed.run_speed
-	local syncs_rotation_2 = game_object_template.syncs_rotation
-
-	if not syncs_rotation_2 then
-		-- Nothing
-	end
-
-	syncs_rotation_2 = false
-
-	local sync_full_rotation = syncs_rotation_2
-
-	::label_1_0::
+	local sync_full_rotation = not not game_object_template.syncs_rotation
 
 	self._engine_extension_id = EngineOptimizedExtensions.ai_locomotion_register_extension(unit, LOCOMOTION_GRAVITY, breed_run_speed, sync_full_rotation)
 	self._animation_rotation_scale = 1
@@ -49,14 +35,7 @@ AILocomotionExtensionC.init = function (self, extension_init_context, unit, exte
 		self._collision_state = MoverHelper.create_collision_state(unit, collision_actor_name)
 	end
 
-	local set_active_mover = MoverHelper.set_active_mover
-	local var_1_4 = unit
-	local _mover_state = self._mover_state
-	local default_mover = breed.default_mover
-
-	default_mover = not not default_mover or not not "mover"
-
-	set_active_mover(var_1_4, _mover_state, default_mover)
+	MoverHelper.set_active_mover(unit, self._mover_state, not not breed.default_mover)
 end
 
 AILocomotionExtensionC.ready = function (self, go_id, blackboard)
@@ -92,31 +71,13 @@ AILocomotionExtensionC.unfreeze = function (self, unit)
 	local unit_template = Managers.state.unit_spawner.unit_template_lut[breed.unit_template]
 	local go_type = unit_template.go_type
 	local game_object_template = Managers.state.network:game_object_template(go_type)
-	local syncs_rotation = game_object_template.syncs_rotation
-
-	if not syncs_rotation then
-		-- Nothing
-	end
-
-	syncs_rotation = false
-
-	local sync_full_rotation = syncs_rotation
-
-	::label_5_0::
+	local sync_full_rotation = not not game_object_template.syncs_rotation
 
 	self._engine_extension_id = EngineOptimizedExtensions.ai_locomotion_register_extension(unit, LOCOMOTION_GRAVITY, breed_run_speed, sync_full_rotation)
 	self._animation_rotation_scale = 1
 
 	self._animation_translation_scale_box:store(1, 1, 1)
-
-	local set_active_mover = MoverHelper.set_active_mover
-	local var_5_2 = unit
-	local _mover_state = self._mover_state
-	local default_mover = breed.default_mover
-
-	default_mover = not not default_mover or not not "mover"
-
-	set_active_mover(var_5_2, _mover_state, default_mover)
+	MoverHelper.set_active_mover(unit, self._mover_state, not not breed.default_mover)
 	self:teleport_to(POSITION_LOOKUP[unit], Unit.local_rotation(unit, 0))
 end
 

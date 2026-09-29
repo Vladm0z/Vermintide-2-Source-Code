@@ -656,42 +656,13 @@ end
 
 VersusPartySelectionLogic.get_random_available_character = function (self, party_data, is_bot)
 	-- function 40
-	local _random_profile_indices = self._random_profile_indices
-
-	if not _random_profile_indices then
-		-- Nothing
-	end
-
-	_random_profile_indices = table.select_map(SPProfiles, function (_, profile)
-		-- function 41
-		if profile.affiliation == "heroes" then
-			return profile.index
-		end
-	end)
-
-	local random_profile_indices = _random_profile_indices
-
-	::label_40_0::
+	local random_profile_indices = not not self._random_profile_indices
 
 	self._random_profile_indices = random_profile_indices
 
 	table.shuffle(random_profile_indices)
 
-	local _random_career_indices = self._random_career_indices
-
-	if not _random_career_indices then
-		-- Nothing
-	end
-
-	_random_career_indices = {
-		1,
-		2,
-		3
-	}
-
-	local random_career_indices = _random_career_indices
-
-	::label_40_1::
+	local random_career_indices = not not self._random_career_indices
 
 	self._random_career_indices = random_career_indices
 
@@ -953,17 +924,7 @@ VersusPartySelectionLogic.sync_player_loadout = function (self, profile_index, c
 		melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level = self:_get_loadout(profile_index, career_index, is_bot)
 
 		local peer_id, local_player_id = self:_peer_from_picker_data(party_data, picker_list_id)
-		local _is_hero_party = self:_is_hero_party(party_id)
-
-		if _is_hero_party then
-			-- Nothing
-		end
-
-		_is_hero_party = local_player_id
-
-		local sync_cosmetics = _is_hero_party
-
-		::label_53_0::
+		local sync_cosmetics = not not self:_is_hero_party(party_id)
 
 		if sync_cosmetics then
 			local player = Managers.player:player(peer_id, local_player_id)
@@ -1016,172 +977,20 @@ VersusPartySelectionLogic._get_loadout = function (self, profile_index, career_i
 	local career_name = career.display_name
 	local item_slot_types_by_slot_name = career.item_slot_types_by_slot_name
 	local get_loadout_item = BackendUtils.get_loadout_item
-	local slot_melee = item_slot_types_by_slot_name.slot_melee
-
-	if slot_melee then
-		-- Nothing
-	end
-
-	slot_melee = get_loadout_item(career_name, "slot_melee")
-
-	local melee = slot_melee
-
-	::label_55_0::
-
-	local slot_ranged = item_slot_types_by_slot_name.slot_ranged
-
-	if slot_ranged then
-		-- Nothing
-	end
-
-	slot_ranged = get_loadout_item(career_name, "slot_ranged")
-
-	local ranged = slot_ranged
-
-	::label_55_1::
-
-	local slot_skin = item_slot_types_by_slot_name.slot_skin
-
-	if slot_skin then
-		-- Nothing
-	end
-
-	slot_skin = get_loadout_item(career_name, "slot_skin")
-
-	local skin = slot_skin
-
-	::label_55_2::
-
-	local slot_hat = item_slot_types_by_slot_name.slot_hat
-
-	if slot_hat then
-		-- Nothing
-	end
-
-	slot_hat = get_loadout_item(career_name, "slot_hat")
-
-	local hat = slot_hat
-
-	::label_55_3::
-
-	local slot_frame = item_slot_types_by_slot_name.slot_frame
-
-	if slot_frame then
-		-- Nothing
-	end
-
-	slot_frame = get_loadout_item(career_name, "slot_frame")
-
-	local portrait_frame = slot_frame
-
-	do
-		local var_55_5
-	end
-
-	::label_55_4::
-
-	if melee then
-		var_55_5 = NetworkLookup.item_names[melee.key]
-
-		if not var_55_5 then
-			-- Nothing
-		end
-	end
-
-	var_55_5 = 1
-
-	local melee_id = var_55_5
-
-	do
-		local var_55_6
-	end
-
-	::label_55_5::
-
-	if ranged then
-		var_55_6 = NetworkLookup.item_names[ranged.key]
-
-		if not var_55_6 then
-			-- Nothing
-		end
-	end
-
-	var_55_6 = 1
-
-	local ranged_id = var_55_6
-
-	do
-		local var_55_7
-	end
-
-	::label_55_6::
-
-	if skin then
-		var_55_7 = NetworkLookup.item_names[skin.key]
-
-		if not var_55_7 then
-			-- Nothing
-		end
-	end
-
-	var_55_7 = 1
-
-	local skin_id = var_55_7
-
-	do
-		local var_55_8
-	end
-
-	::label_55_7::
-
-	if hat then
-		var_55_8 = NetworkLookup.item_names[hat.key]
-
-		if not var_55_8 then
-			-- Nothing
-		end
-	end
-
-	var_55_8 = 1
-
-	local hat_id = var_55_8
-
-	do
-		local var_55_9
-	end
-
-	::label_55_8::
-
-	if hat then
-		var_55_9 = NetworkLookup.item_names[portrait_frame.key]
-
-		if not var_55_9 then
-			-- Nothing
-		end
-	end
-
-	var_55_9 = 1
-
-	local frame_id = var_55_9
-
-	::label_55_9::
-
+	local melee = not not item_slot_types_by_slot_name.slot_melee
+	local ranged = not not item_slot_types_by_slot_name.slot_ranged
+	local skin = not not item_slot_types_by_slot_name.slot_skin
+	local hat = not not item_slot_types_by_slot_name.slot_hat
+	local portrait_frame = not not item_slot_types_by_slot_name.slot_frame
+	local melee_id = melee and not not NetworkLookup.item_names[melee.key] or not melee and not not 1
+	local ranged_id = ranged and not not NetworkLookup.item_names[ranged.key] or not ranged and not not 1
+	local skin_id = skin and not not NetworkLookup.item_names[skin.key] or not skin and not not 1
+	local hat_id = hat and not not NetworkLookup.item_names[hat.key] or not hat and not not 1
+	local frame_id = hat and not not NetworkLookup.item_names[portrait_frame.key] or not hat and not not 1
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 	local experience = hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(experience)
-	local num
-
-	if is_bot then
-		num = 0
-
-		goto label_55_10
-	end
-
-	num = ExperienceSettings.get_versus_level()
-
-	local versus_level = num
-
-	::label_55_10::
+	local versus_level = is_bot and not not 0 or not is_bot and not not ExperienceSettings.get_versus_level()
 
 	return melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level
 end
@@ -1292,17 +1101,7 @@ VersusPartySelectionLogic.player_left_party = function (self, peer_id, local_pla
 
 	if ClientStateLookup[picker_data.state] >= ClientStateLookup.player_picking_character then
 		local new_profile_index, new_career_index = self:_ensure_picker_has_character(party_data, index, true)
-		local status = old_slot_data.status
-
-		if status then
-			-- Nothing
-		end
-
-		status = old_slot_data.status.peer_id
-
-		local old_peer_id = status
-
-		::label_59_0::
+		local old_peer_id = not not old_slot_data.status
 
 		printf("[VersusPartySelectionLogic] %s in party %s and pick id %s left and was replaced by %s", not not old_peer_id or not not "UNKNOWN", party.party_id, index, SPProfiles[new_profile_index].careers[new_career_index].display_name)
 	end
@@ -1336,13 +1135,7 @@ VersusPartySelectionLogic._try_pick_hero = function (self, party_data, picker_in
 		local slot_already_picked = ClientStateLookup[state] > ClientStateLookup.player_picking_character
 
 		if current_profile_idx and slot_already_picked then
-			local printf = printf
-			local str = "[VersusPartySelectionLogic] %s %s in party %s and pick id %s tried to pick a hero %s %s after timer ran out. Staying as %s %s"
-			local flag
-
-			flag = (not is_bot or not "BOT in slot") and not not "Peer"
-
-			printf(str, flag, (not is_bot or not picker_index) and not not peer_id, party_id, picker_index, profile_index, career_index, current_profile_idx, current_career_idx)
+			printf("[VersusPartySelectionLogic] %s %s in party %s and pick id %s tried to pick a hero %s %s after timer ran out. Staying as %s %s", is_bot and not not "BOT in slot" or not is_bot and not not "Peer", is_bot and (not not picker_index or not not peer_id) or not is_bot and not not peer_id, party_id, picker_index, profile_index, career_index, current_profile_idx, current_career_idx)
 
 			profile_index = current_profile_idx
 			career_index = current_career_idx
@@ -1355,25 +1148,13 @@ VersusPartySelectionLogic._try_pick_hero = function (self, party_data, picker_in
 		if not profile_index or not career_index or profile_index == 0 or career_index == 0 then
 			profile_index, career_index = self:get_character_or_random(profile_index, career_index, party_data, is_bot)
 
-			local printf_2 = printf
-			local str_2 = "[VersusPartySelectionLogic] No profile provided for %s %s. Fallbacking to %s %s."
-			local flag_2
-
-			flag_2 = (not is_bot or not "BOT in slot") and not not "Peer"
-
-			printf_2(str_2, flag_2, (not is_bot or not picker_index) and not not peer_id, profile_index, career_index)
+			printf("[VersusPartySelectionLogic] No profile provided for %s %s. Fallbacking to %s %s.", is_bot and not not "BOT in slot" or not is_bot and not not "Peer", is_bot and (not not picker_index or not not peer_id) or not is_bot and not not peer_id, profile_index, career_index)
 		elseif self:_is_hero_locked(profile_index, party_data, peer_id) then
 			local failed_profile_index, failed_career_index = profile_index, career_index
 
 			profile_index, career_index = self:get_character_or_random(profile_index, career_index, party_data, is_bot)
 
-			local printf_3 = printf
-			local str_3 = "[VersusPartySelectionLogic] %s %s tried to pick locked hero %s %s. Fallbacking to %s %s."
-			local flag_3
-
-			flag_3 = (not is_bot or not "BOT in slot") and not not "Peer"
-
-			printf_3(str_3, flag_3, (not is_bot or not picker_index) and not not peer_id, failed_profile_index, failed_career_index, profile_index, career_index)
+			printf("[VersusPartySelectionLogic] %s %s tried to pick locked hero %s %s. Fallbacking to %s %s.", is_bot and not not "BOT in slot" or not is_bot and not not "Peer", is_bot and (not not picker_index or not not peer_id) or not is_bot and not not peer_id, failed_profile_index, failed_career_index, profile_index, career_index)
 		end
 
 		if is_bot then
@@ -1404,19 +1185,7 @@ VersusPartySelectionLogic.rpc_party_select_request_pick_hero = function (self, c
 	local pick_data_per_party = self._pick_data_per_party
 	local party_data = pick_data_per_party[party_id]
 	local got_profile, got_career = self:_try_pick_hero(party_data, picker_index, profile_index, career_index)
-	local str
-
-	if got_profile == profile_index then
-		str = " and succeeded"
-
-		goto label_61_0
-	end
-
-	str = string.format(", but got hero %s %s", got_profile, got_career)
-
-	local fail_context = str
-
-	::label_61_0::
+	local fail_context = got_profile ~= profile_index and not not string.format(", but got hero %s %s", got_profile, got_career) or not (got_profile ~= profile_index) and not not " and succeeded"
 
 	printf("[VersusPartySelectionLogic] Peer %s in party %s tried to pick hero %s %s%s", CHANNEL_TO_PEER_ID[channel_id], party_id, profile_index, career_index, fail_context)
 end

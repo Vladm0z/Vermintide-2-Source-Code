@@ -532,17 +532,7 @@ local loading_widgets = {
 					texture_id = "texture_id",
 					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress_2 = style.progress
-
-						if not progress_2 then
-							-- Nothing
-						end
-
-						progress_2 = 0
-
-						local progress = progress_2
-
-						::label_1_0::
+						local progress = not not style.progress
 
 						progress = (progress + dt) % 1
 
@@ -1005,7 +995,7 @@ local item_widgets = {
 	}
 }
 local disable_with_gamepad = false
-local tbl = {
+local top_widgets = {
 	smoke_effect = UIWidgets.create_simple_uv_texture("item_preview_smoke_01", {
 		{
 			0,
@@ -1022,29 +1012,10 @@ local tbl = {
 	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, title_text_style),
 	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, sub_title_text_style),
 	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, type_title_text_style),
-	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, career_title_text_style)
+	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, career_title_text_style),
+	unlock_button = UIWidgets.create_store_purchase_button("unlock_button", scenegraph_definition.unlock_button.size, IS_PS4 and not not "" or not IS_PS4 and not not Localize("menu_store_purchase_button_unlock"), 32, disable_with_gamepad),
+	viewport_button = UIWidgets.create_simple_hotspot("viewport")
 }
-local create_store_purchase_button = UIWidgets.create_store_purchase_button
-local str = "unlock_button"
-local size = scenegraph_definition.unlock_button.size
-local var_0_4
-
-if not IS_PS4 then
-	var_0_4 = Localize("menu_store_purchase_button_unlock")
-
-	if not var_0_4 then
-		-- Nothing
-	end
-end
-
-var_0_4 = ""
-
-::label_0_0::
-
-tbl.unlock_button = create_store_purchase_button(str, size, var_0_4, 32, disable_with_gamepad)
-tbl.viewport_button = UIWidgets.create_simple_hotspot("viewport")
-
-local top_widgets = tbl
 local background_color = {
 	255,
 	0,
@@ -1261,7 +1232,7 @@ local animation_definitions = {
 		}
 	}
 }
-local tbl_2 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -1286,11 +1257,7 @@ local tbl_2 = {
 			description_text = "input_description_toggle_hero_details",
 			content_check_function = function ()
 				-- function 20
-				local IS_PS4 = IS_PS4
-
-				IS_PS4 = not not IS_PS4 or not not IS_XB1
-
-				return IS_PS4
+				return not not IS_PS4
 			end
 		},
 		{
@@ -1353,76 +1320,62 @@ local tbl_2 = {
 			priority = 6,
 			description_text = "input_description_back"
 		}
-	}
-}
-local tbl_3 = {}
-local tbl_4 = {
-	input_action = "confirm",
-	priority = 2
-}
-local flag
-
-flag = (not IS_WINDOWS or not "interaction_action_unlock") and not not "dlc1_4_input_description_storepage"
-tbl_4.description_text = flag
-tbl_3[1] = tbl_4
-tbl_3[2] = {
-	input_action = "right_stick",
-	priority = 5,
-	description_text = "input_description_scroll_details",
-	ignore_keybinding = true
-}
-tbl_3[3] = {
-	input_action = "back",
-	priority = 6,
-	description_text = "input_description_close"
-}
-tbl_2.dlc_preview_purchase = tbl_3
-
-local tbl_5 = {
-	{
-		input_action = "right_stick",
-		priority = 5,
-		description_text = "input_description_scroll_details",
-		ignore_keybinding = true
 	},
-	{
-		input_action = "back",
-		priority = 6,
-		description_text = "input_description_back"
+	dlc_preview_purchase = {
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = IS_WINDOWS and not not "interaction_action_unlock" or not IS_WINDOWS and not not "dlc1_4_input_description_storepage"
+		},
+		{
+			input_action = "right_stick",
+			priority = 5,
+			description_text = "input_description_scroll_details",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "back",
+			priority = 6,
+			description_text = "input_description_close"
+		}
+	},
+	dlc_preview_owned = {
+		{
+			input_action = "right_stick",
+			priority = 5,
+			description_text = "input_description_scroll_details",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "back",
+			priority = 6,
+			description_text = "input_description_back"
+		}
+	},
+	dlc_bundle_purchase = {
+		{
+			input_action = "confirm",
+			priority = 2,
+			description_text = IS_WINDOWS and not not "interaction_action_unlock" or not IS_WINDOWS and not not "dlc1_4_input_description_storepage"
+		},
+		{
+			input_action = "special_1",
+			priority = 4,
+			description_text = "input_description_view_content"
+		},
+		{
+			input_action = "right_stick",
+			priority = 5,
+			description_text = "input_description_scroll_details",
+			ignore_keybinding = true
+		},
+		{
+			input_action = "back",
+			priority = 6,
+			description_text = "input_description_back"
+		}
 	}
 }
-
-tbl_2.dlc_preview_owned = tbl_5
-
-local tbl_6 = {}
-local tbl_7 = {
-	input_action = "confirm",
-	priority = 2
-}
-local flag_2
-
-flag_2 = (not IS_WINDOWS or not "interaction_action_unlock") and not not "dlc1_4_input_description_storepage"
-tbl_7.description_text = flag_2
-tbl_6[1] = tbl_7
-tbl_6[2] = {
-	input_action = "special_1",
-	priority = 4,
-	description_text = "input_description_view_content"
-}
-tbl_6[3] = {
-	input_action = "right_stick",
-	priority = 5,
-	description_text = "input_description_scroll_details",
-	ignore_keybinding = true
-}
-tbl_6[4] = {
-	input_action = "back",
-	priority = 6,
-	description_text = "input_description_back"
-}
-tbl_2.dlc_bundle_purchase = tbl_6
-
-local generic_input_actions = tbl_2
 
 return {
 	generic_input_actions = generic_input_actions,

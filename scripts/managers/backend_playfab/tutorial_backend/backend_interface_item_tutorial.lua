@@ -256,11 +256,8 @@ end
 BackendInterfaceItemTutorial.get_item_amount = function (self, backend_id)
 	-- function 18
 	local item = self:get_item_from_id(backend_id)
-	local RemainingUses = item.RemainingUses
 
-	RemainingUses = not not RemainingUses or not not 1
-
-	return RemainingUses
+	return not not item.RemainingUses
 end
 
 BackendInterfaceItemTutorial.get_item_power_level = function (self, backend_id)
@@ -444,18 +441,7 @@ end
 
 BackendInterfaceItemTutorial.get_item_template = function (self, item_data, backend_id)
 	-- function 42
-	local temporary_template = item_data.temporary_template
-
-	if not temporary_template then
-		-- Nothing
-	end
-
-	temporary_template = item_data.template
-
-	local template_name = temporary_template
-
-	::label_42_0::
-
+	local template_name = not not item_data.temporary_template
 	local item_template = WeaponUtils.get_weapon_template(template_name)
 
 	if item_template then

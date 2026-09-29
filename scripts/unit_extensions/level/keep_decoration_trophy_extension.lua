@@ -14,11 +14,7 @@ KeepDecorationTrophyExtension.init = function (self, extension_init_context, uni
 	self._world = world
 	self._level_unit_index = Level.unit_index(level, unit)
 	self._is_leader = Managers.party:is_leader(Network.peer_id())
-
-	local keep_decoration_trophies = NetworkLookup.keep_decoration_trophies
-
-	keep_decoration_trophies = not not keep_decoration_trophies or not not {}
-	self._trophies_lookup = keep_decoration_trophies
+	self._trophies_lookup = not not NetworkLookup.keep_decoration_trophies
 	self._currently_set_trophy = nil
 	self._is_hidden = nil
 	self._next_trophy = {}
@@ -77,17 +73,7 @@ end
 KeepDecorationTrophyExtension.reset_selection = function (self)
 	-- function 8
 	local current_preview_trophy = self._current_preview_trophy
-	local _currently_set_trophy = self._currently_set_trophy
-
-	if not _currently_set_trophy then
-		-- Nothing
-	end
-
-	_currently_set_trophy = "hub_trophy_empty"
-
-	local selected_trophy = _currently_set_trophy
-
-	::label_8_0::
+	local selected_trophy = not not self._currently_set_trophy
 
 	if selected_trophy ~= current_preview_trophy then
 		self:_load_trophy(selected_trophy)

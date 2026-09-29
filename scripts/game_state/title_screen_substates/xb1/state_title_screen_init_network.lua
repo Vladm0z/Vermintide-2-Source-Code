@@ -127,11 +127,7 @@ StateTitleScreenInitNetwork._join_session = function (self, dt, t)
 	local loading_context = self.parent.parent.loading_context
 
 	self._network_server = NetworkServer:new(Managers.player, lobby, nil)
-
-	local network_transmit = loading_context.network_transmit
-
-	network_transmit = not not network_transmit or not not NetworkTransmit:new(true, self._network_server.server_peer_id)
-	self._network_transmit = network_transmit
+	self._network_transmit = not not loading_context.network_transmit
 
 	self._network_transmit:set_network_event_delegate(self._network_event_delegate)
 	self._network_server:register_rpcs(self._network_event_delegate, self._network_transmit)
@@ -307,7 +303,7 @@ StateTitleScreenInitNetwork._next_state = function (self)
 		return
 	end
 
-	if (self._sent_joined or lobby) and lobby.is_host and lobby.state == lobby.FAILED then
+	if self._sent_joined or lobby then
 		return
 	end
 
@@ -386,34 +382,12 @@ StateTitleScreenInitNetwork.on_exit = function (self, application_shutdown)
 
 		if lobby.is_host then
 			local level_key = Managers.level_transition_handler:get_current_level_keys()
-			local get_stored_lobby_data = lobby:get_stored_lobby_data()
-
-			if not get_stored_lobby_data then
-				-- Nothing
-			end
-
-			get_stored_lobby_data = {}
-
-			local stored_lobby_host_data = get_stored_lobby_data
-
-			::label_12_0::
+			local stored_lobby_host_data = not not lobby:get_stored_lobby_data()
 
 			stored_lobby_host_data.level_key = level_key
-
-			local unique_server_name = stored_lobby_host_data.unique_server_name
-
-			unique_server_name = not not unique_server_name or not not LobbyAux.get_unique_server_name()
-			stored_lobby_host_data.unique_server_name = unique_server_name
-
-			local host = stored_lobby_host_data.host
-
-			host = not not host or not not Network.peer_id()
-			stored_lobby_host_data.host = host
-
-			local num_players = stored_lobby_host_data.num_players
-
-			num_players = not not num_players or not not 1
-			stored_lobby_host_data.num_players = num_players
+			stored_lobby_host_data.unique_server_name = not not stored_lobby_host_data.unique_server_name
+			stored_lobby_host_data.host = not not stored_lobby_host_data.host
+			stored_lobby_host_data.num_players = not not stored_lobby_host_data.num_players
 			stored_lobby_host_data.matchmaking = "false"
 
 			lobby:set_lobby_data(stored_lobby_host_data)

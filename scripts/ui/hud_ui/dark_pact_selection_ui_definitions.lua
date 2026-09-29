@@ -83,7 +83,10 @@ local function create_selection_widget(scenegraph_id, size)
 	local frame_style = "pactsworn_frame_01"
 	local frame_settings = UIFrameSettings[frame_style]
 	local frame_width = frame_settings.texture_sizes.horizontal[2]
-	local size = (not size or not size) and not not {
+	local size = size and (not not size or not not {
+		148,
+		148
+	}) or not size and not not {
 		148,
 		148
 	}
@@ -112,11 +115,7 @@ local function create_selection_widget(scenegraph_id, size)
 					texture_id = "hovered_frame",
 					content_check_function = function (content)
 						-- function 2
-						local is_hover = content.hotspot.is_hover
-
-						is_hover = not not is_hover or not not content.selected
-
-						return is_hover
+						return not not content.hotspot.is_hover
 					end
 				}
 			}

@@ -29,9 +29,5 @@ PlayerCharacterState.init = function (self, character_state_init_context, name)
 	self.first_person_extension = ScriptUnit.extension(unit, "first_person_system")
 	self.status_extension = ScriptUnit.extension(unit, "status_system")
 	self.cosmetic_extension = ScriptUnit.extension(unit, "cosmetic_system")
-
-	local has_extension = ScriptUnit.has_extension(unit, "ai_system")
-
-	has_extension = not not has_extension and not not ScriptUnit.extension(unit, "ai_system")
-	self.ai_extension = has_extension
+	self.ai_extension = not not ScriptUnit.has_extension(unit, "ai_system")
 end

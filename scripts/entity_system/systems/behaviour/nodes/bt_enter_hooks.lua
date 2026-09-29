@@ -1,9 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_enter_hooks.lua
 
-local BTEnterHooks_2 = BTEnterHooks
-
-BTEnterHooks_2 = not not BTEnterHooks_2 or not not {}
-BTEnterHooks = BTEnterHooks_2
+BTEnterHooks = not not BTEnterHooks
 
 local BTEnterHooks = BTEnterHooks
 local unit_local_position = Unit.local_position
@@ -126,18 +123,7 @@ end
 
 BTEnterHooks.grey_seer_death_sequence_teleport = function (unit, blackboard, t)
 	-- function 11
-	local current_death_sequence_index = blackboard.current_death_sequence_index
-
-	if not current_death_sequence_index then
-		-- Nothing
-	end
-
-	current_death_sequence_index = 1
-
-	local index = current_death_sequence_index
-
-	::label_11_0::
-
+	local index = not not blackboard.current_death_sequence_index
 	local teleport_position = blackboard.death_sequence_positions[index]
 
 	if teleport_position then
@@ -404,18 +390,7 @@ BTEnterHooks.target_furthest_player_in_sight = function (unit, blackboard, t)
 	-- function 25
 	local side = Managers.state.side:get_side_from_name("heroes")
 	local player_units = side.PLAYER_AND_BOT_UNITS
-	local physics_world_2 = blackboard.physics_world
-
-	if not physics_world_2 then
-		-- Nothing
-	end
-
-	physics_world_2 = World.get_data(blackboard.world, "physics_world")
-
-	local physics_world = physics_world_2
-
-	::label_25_0::
-
+	local physics_world = not not blackboard.physics_world
 	local pos = POSITION_LOOKUP[unit]
 	local furthest_unit
 	local furthest_distance = 0

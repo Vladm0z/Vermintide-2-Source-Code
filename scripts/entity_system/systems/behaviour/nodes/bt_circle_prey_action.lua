@@ -64,17 +64,7 @@ BTCirclePreyAction.run = function (self, unit, blackboard, t, dt)
 		local goal_position = self:get_new_goal(unit, blackboard)
 
 		if goal_position then
-			local skulk_pos = blackboard.skulk_pos
-
-			if not skulk_pos then
-				-- Nothing
-			end
-
-			skulk_pos = Vector3Box()
-
-			local skulk_pos_box = skulk_pos
-
-			::label_4_0::
+			local skulk_pos_box = not not blackboard.skulk_pos
 
 			skulk_pos_box:store(goal_position)
 
@@ -91,17 +81,7 @@ end
 
 BTCirclePreyAction.get_new_goal = function (self, unit, blackboard)
 	-- function 5
-	local secondary_target = blackboard.secondary_target
-
-	if not secondary_target then
-		-- Nothing
-	end
-
-	secondary_target = blackboard.target_unit
-
-	local target_unit = secondary_target
-
-	::label_5_0::
+	local target_unit = not not blackboard.secondary_target
 
 	if Unit.alive(target_unit) then
 		local target_position = POSITION_LOOKUP[target_unit]

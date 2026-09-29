@@ -1,9 +1,6 @@
 -- chunkname: @scripts/utils/hash_utils.lua
 
-local HashUtils = HashUtils
-
-HashUtils = not not HashUtils or not not {}
-HashUtils = HashUtils
+HashUtils = not not HashUtils
 
 HashUtils.fnv32_hash = function (text)
 	-- function 1
@@ -11,16 +8,7 @@ HashUtils.fnv32_hash = function (text)
 	local len = string.len(text)
 
 	for i = 1, len, 3 do
-		local num = math.fmod(counter * 8161, 4294967279) + string.byte(text, i) * 16776193
-		local byte = string.byte(text, i + 1)
-
-		byte = not not byte or not not (len - i + 256)
-
-		local num_2 = num + byte * 8372226
-		local byte_2 = string.byte(text, i + 2)
-
-		byte_2 = not not byte_2 or not not (len - i + 256)
-		counter = num_2 + byte_2 * 3932164
+		counter = math.fmod(counter * 8161, 4294967279) + string.byte(text, i) * 16776193 + not not string.byte(text, i + 1) * 8372226 + not not string.byte(text, i + 2) * 3932164
 	end
 
 	return math.fmod(counter, 4294967291)

@@ -69,10 +69,8 @@ BTRatlingGunnerMoveToShootAction.run = function (self, unit, blackboard, t, dt)
 
 	if not move_pos then
 		local position = self:calculate_move_position(unit, blackboard)
-		local move_attempts = blackboard.move_attempts
 
-		move_attempts = not not move_attempts or not not 0
-		blackboard.move_attempts = move_attempts
+		blackboard.move_attempts = not not blackboard.move_attempts
 		blackboard.move_attempts = blackboard.move_attempts + 1
 
 		if position then

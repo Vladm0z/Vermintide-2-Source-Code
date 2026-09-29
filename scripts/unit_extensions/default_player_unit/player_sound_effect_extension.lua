@@ -215,7 +215,7 @@ PlayerSoundEffectExtension._update_specials_proximity = function (self, dt)
 
 				local ai_position = POSITION_LOOKUP[ai_unit]
 
-				state = (not (Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2) or not "close") and not not state or not not "medium"
+				state = Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2 and (not not "close" or not not state or not not "medium") or not (Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2) and (not not state or not not "medium")
 			until true
 		end
 

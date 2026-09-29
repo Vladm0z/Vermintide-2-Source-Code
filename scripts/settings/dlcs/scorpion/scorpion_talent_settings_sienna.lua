@@ -1,16 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_talent_settings_sienna.lua
 
 local buff_tweak_data = {}
-local TalentBuffTemplates = TalentBuffTemplates
 
-TalentBuffTemplates = not not TalentBuffTemplates or not not {}
-TalentBuffTemplates = TalentBuffTemplates
+TalentBuffTemplates = not not TalentBuffTemplates
 TalentBuffTemplates.bright_wizard = {}
-
-local TalentTrees = TalentTrees
-
-TalentTrees = not not TalentTrees or not not {}
-TalentTrees = TalentTrees
+TalentTrees = not not TalentTrees
 TalentTrees.bright_wizard = {
 	{},
 	{},

@@ -30,10 +30,7 @@ end
 
 LevelEndViewWrapper._load_level_packages = function (self)
 	-- function 2
-	local level_end_view_packages = self._level_end_view_context.level_end_view_packages
-
-	level_end_view_packages = not not level_end_view_packages or not not {}
-	self._level_packages = level_end_view_packages
+	self._level_packages = not not self._level_end_view_context.level_end_view_packages
 
 	local asynchronous = true
 	local prioritize = true

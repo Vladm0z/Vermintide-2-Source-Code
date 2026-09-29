@@ -49,10 +49,8 @@ local vote_level_template = {
 		end
 	end
 }
-local TwitchVoteDeusSelectLevelNames = TwitchVoteDeusSelectLevelNames
 
-TwitchVoteDeusSelectLevelNames = not not TwitchVoteDeusSelectLevelNames or not not {}
-TwitchVoteDeusSelectLevelNames = TwitchVoteDeusSelectLevelNames
+TwitchVoteDeusSelectLevelNames = not not TwitchVoteDeusSelectLevelNames
 
 for _, level_settings in pairs(DEUS_LEVEL_SETTINGS) do
 	local base_level_name = level_settings.base_level_name

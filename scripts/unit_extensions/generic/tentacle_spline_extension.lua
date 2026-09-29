@@ -28,17 +28,7 @@ end
 
 TentacleSplineExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	local var_2_0 = BLACKBOARDS[unit]
-
-	if not var_2_0 then
-		-- Nothing
-	end
-
-	var_2_0 = {}
-
-	local blackboard = var_2_0
-
-	::label_2_0::
+	local blackboard = not not BLACKBOARDS[unit]
 
 	self.blackboard = blackboard
 
@@ -63,22 +53,7 @@ TentacleSplineExtension.extensions_ready = function (self, world, unit)
 
 	if tentacle_template.use_ik_chain then
 		local start_pos = tentacle_data.wall_pos:unbox()
-		local var_2_1
-
-		if self.target_unit then
-			var_2_1 = POSITION_LOOKUP[self.target_unit]
-
-			if not var_2_1 then
-				-- Nothing
-			end
-		end
-
-		var_2_1 = tentacle_data.last_target_pos:unbox()
-
-		local target_pos = var_2_1
-
-		::label_2_1::
-
+		local target_pos = self.target_unit and not not POSITION_LOOKUP[self.target_unit] or not self.target_unit and not not tentacle_data.last_target_pos:unbox()
 		local joints = {}
 		local segment_length = 0.5
 		local length = segment_length * 10
@@ -272,30 +247,8 @@ end
 
 TentacleSplineExtension.spawn_chaos_tentacle = function (self, unit, blackboard, nav_world, is_server, t, portal_unit, tentacle_template, side_id)
 	-- function 7
-	local breed_2 = blackboard.breed
-
-	if not breed_2 then
-		-- Nothing
-	end
-
-	breed_2 = Breeds.chaos_tentacle
-
-	local breed = breed_2
-
-	::label_7_0::
-
-	local inside_wall_spawn_distance = breed.inside_wall_spawn_distance
-
-	if not inside_wall_spawn_distance then
-		-- Nothing
-	end
-
-	inside_wall_spawn_distance = 0
-
-	local inside_wall_distance = inside_wall_spawn_distance
-
-	::label_7_1::
-
+	local breed = not not blackboard.breed
+	local inside_wall_distance = not not breed.inside_wall_spawn_distance
 	local position = POSITION_LOOKUP[unit]
 	local rot = Unit.local_rotation(unit, 0)
 	local fwd = Vector3.normalize(Quaternion.forward(rot))
@@ -326,20 +279,7 @@ TentacleSplineExtension.spawn_chaos_tentacle = function (self, unit, blackboard,
 	end
 
 	local dot = Vector3.dot(fwd, Vector3(0, 0, 1))
-	local str
-
-	if dot > 0.707 then
-		str = "floor"
-
-		goto label_7_2
-	end
-
-	str = "wall"
-
-	local spawn_type = str
-
-	::label_7_2::
-
+	local spawn_type = dot > 0.707 and not not "floor" or not (dot > 0.707) and not not "wall"
 	local ground_pos
 
 	if spawn_type == "wall" then
@@ -347,7 +287,7 @@ TentacleSplineExtension.spawn_chaos_tentacle = function (self, unit, blackboard,
 	end
 
 	local spline_points, spline
-	local tbl = {
+	local data = {
 		state = "startup",
 		current_length = 0,
 		unit = unit,
@@ -357,18 +297,13 @@ TentacleSplineExtension.spawn_chaos_tentacle = function (self, unit, blackboard,
 		wall_pos = Vector3Box(wall_pos),
 		spline_points = spline_points,
 		spline = spline,
-		last_target_pos = Vector3Box(position)
+		last_target_pos = Vector3Box(position),
+		path_type = self.is_server and not not "no_path" or not self.is_server and not not "straight",
+		inside_wall_distance = inside_wall_distance,
+		portal_unit = portal_unit,
+		portal_spawn_type = spawn_type,
+		tentacle_template = tentacle_template
 	}
-	local flag
-
-	flag = (not self.is_server or not "no_path") and not not "straight"
-	tbl.path_type = flag
-	tbl.inside_wall_distance = inside_wall_distance
-	tbl.portal_unit = portal_unit
-	tbl.portal_spawn_type = spawn_type
-	tbl.tentacle_template = tentacle_template
-
-	local data = tbl
 
 	return data, breed
 end
@@ -570,30 +505,8 @@ end
 
 TentacleSplineExtension.update_global_movement_sound_intensity = function (self, unit, breed, dt)
 	-- function 17
-	local previous_reach_dist = self.previous_reach_dist
-
-	if not previous_reach_dist then
-		-- Nothing
-	end
-
-	previous_reach_dist = 0
-
-	local previous_length = previous_reach_dist
-
-	::label_17_0::
-
-	local reach_dist = self.reach_dist
-
-	if not reach_dist then
-		-- Nothing
-	end
-
-	reach_dist = previous_length
-
-	local current_length = reach_dist
-
-	::label_17_1::
-
+	local previous_length = not not self.previous_reach_dist
+	local current_length = not not self.reach_dist
 	local scaling = breed.movement_sound_scaling
 	local max_intensity = breed.movement_sound_max_intensity
 	local new_intensity = math.min(math.abs(previous_length - current_length) / dt * scaling, max_intensity)
@@ -625,22 +538,7 @@ TentacleSplineExtension.update = function (self, unit, input, dt, context, t)
 
 	if self.is_server then
 		local target_unit = self.target_unit
-		local var_18_0
-
-		if self.target_unit then
-			var_18_0 = POSITION_LOOKUP[self.target_unit]
-
-			if not var_18_0 then
-				-- Nothing
-			end
-		end
-
-		var_18_0 = data.last_target_pos:unbox()
-
-		local target_pos = var_18_0
-
-		::label_18_0::
-
+		local target_pos = self.target_unit and not not POSITION_LOOKUP[self.target_unit] or not self.target_unit and not not data.last_target_pos:unbox()
 		local root_pos = data.root_pos:unbox()
 		local blackboard = self.blackboard
 
@@ -707,22 +605,7 @@ TentacleSplineExtension.update = function (self, unit, input, dt, context, t)
 		end
 
 		local server_time = t + self._server_time_delta
-		local var_18_1
-
-		if self.target_unit then
-			var_18_1 = POSITION_LOOKUP[self.target_unit]
-
-			if not var_18_1 then
-				-- Nothing
-			end
-		end
-
-		var_18_1 = data.last_target_pos:unbox()
-
-		local target_pos = var_18_1
-
-		::label_18_1::
-
+		local target_pos = self.target_unit and not not POSITION_LOOKUP[self.target_unit] or not self.target_unit and not not data.last_target_pos:unbox()
 		local game_session = Managers.state.network:game()
 		local target_unit_id = Managers.state.unit_storage:go_id(unit)
 		local reach_dist = GameSession.game_object_field(game_session, target_unit_id, "reach_distance")
@@ -1090,21 +973,7 @@ TentacleSplineExtension.align_tentacle = function (self, template_name, tentacle
 
 		tentacle_data.look_dir = Vector3Box(Vector3.normalize(anchor_point_pos - pos))
 
-		local num
-
-		if use_extra_anchor_point then
-			num = anchor_point_pos - tentacle_data.look_dir:unbox() * 0.2
-
-			if not num then
-				-- Nothing
-			end
-		end
-
-		num = nil
-
-		local anchor_point2_pos = num
-
-		::label_26_0::
+		local anchor_point2_pos = use_extra_anchor_point and not not (anchor_point_pos - tentacle_data.look_dir:unbox() * 0.2) or not use_extra_anchor_point and not not nil
 
 		if Vector3.dot(to_travel_node, travel_node_dir) < 0 and n > 1 then
 			tentacle_data.travel_node_dir:store(Vector3.normalize(nodes[n - 1]:unbox() - nodes[n]:unbox()))

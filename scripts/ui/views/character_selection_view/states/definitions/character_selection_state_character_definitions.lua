@@ -713,19 +713,7 @@ local empty_hero_widget = {
 				pass_type = "texture",
 				content_change_function = function (content, style)
 					-- function 1
-					local num
-
-					if content.is_hover then
-						num = 255
-
-						goto label_1_0
-					end
-
-					num = 184
-
-					local target = num
-
-					::label_1_0::
+					local target = content.is_hover and not not 255 or not content.is_hover and not not 184
 
 					style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 				end
@@ -770,21 +758,7 @@ local function create_info_text(text, scenegraph_id)
 					text_id = "text",
 					content_change_function = function (content, style)
 						-- function 3
-						local locked_text_color
-
-						if content.locked then
-							locked_text_color = style.locked_text_color
-
-							if not locked_text_color then
-								-- Nothing
-							end
-						end
-
-						locked_text_color = style.default_text_color
-
-						::label_3_0::
-
-						style.text_color = locked_text_color
+						style.text_color = content.locked and not not style.locked_text_color or not content.locked and not not style.default_text_color
 					end
 				},
 				{

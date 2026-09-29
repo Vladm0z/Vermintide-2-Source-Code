@@ -67,10 +67,7 @@ LobbyClient.update = function (self, dt)
 		self.state = new_state
 
 		if new_state == LobbyState.JOINED then
-			local lobby_members = self.lobby_members
-
-			lobby_members = not not lobby_members or not not LobbyMembers:new(engine_lobby, self.client)
-			self.lobby_members = lobby_members
+			self.lobby_members = not not self.lobby_members
 
 			Managers.party:set_leader(host_peer_id)
 
@@ -137,15 +134,7 @@ LobbyClient.update = function (self, dt)
 	end
 
 	if HAS_STEAM and self._lobby_reconnectable_on_disconnect and self:lost_connection_to_lobby() and not self._reconnecting_to_lobby and self._try_reconnecting then
-		local print = print
-		local str = "[LobbyClient] Attempting to rejoin lobby"
-		local id = self.stored_lobby_data.id
-		local str_2 = "Retries:"
-		local _reconnect_times = self._reconnect_times
-
-		_reconnect_times = not not _reconnect_times or not not 0
-
-		print(str, id, str_2, _reconnect_times)
+		print("[LobbyClient] Attempting to rejoin lobby", self.stored_lobby_data.id, "Retries:", not not self._reconnect_times)
 
 		local host = self._host_peer_id
 		local channel_id = self._host_channel_id
@@ -169,10 +158,7 @@ LobbyClient.update = function (self, dt)
 			self.has_sent_join = false
 		end
 
-		local _reconnect_times_2 = self._reconnect_times
-
-		_reconnect_times_2 = not not _reconnect_times_2 or not not 0
-		self._reconnect_times = _reconnect_times_2 + 1
+		self._reconnect_times = not not self._reconnect_times + 1
 		self._reconnecting_to_lobby = true
 		self._try_reconnecting = false
 	end
@@ -180,12 +166,7 @@ end
 
 LobbyClient.set_steam_lobby_reconnectable = function (self, enabled)
 	-- function 4
-	local print = print
-	local flag
-
-	flag = (not enabled or not "Enabled") and not not "Disabled"
-
-	print(flag, "live steam lobby reconnecting")
+	print(enabled and not not "Enabled" or not enabled and not not "Disabled", "live steam lobby reconnecting")
 
 	self._lobby_reconnectable_on_disconnect = enabled
 end
@@ -255,30 +236,12 @@ end
 
 LobbyClient.id = function (self)
 	-- function 16
-	local lobby_id
-
-	if LobbyInternal.lobby_id then
-		lobby_id = LobbyInternal.lobby_id(self.lobby)
-
-		if not lobby_id then
-			-- Nothing
-		end
-	end
-
-	lobby_id = "no_id"
-
-	::label_16_0::
-
-	return lobby_id
+	return LobbyInternal.lobby_id and not not LobbyInternal.lobby_id(self.lobby) or not LobbyInternal.lobby_id and not not "no_id"
 end
 
 LobbyClient.attempting_reconnect = function (self)
 	-- function 17
-	local _reconnecting_to_lobby = self._reconnecting_to_lobby
-
-	_reconnecting_to_lobby = not not _reconnecting_to_lobby or not not self._try_reconnecting
-
-	return _reconnecting_to_lobby
+	return not not self._reconnecting_to_lobby
 end
 
 LobbyClient._free_lobby = function (self)
@@ -292,11 +255,7 @@ end
 
 LobbyClient.lost_connection_to_lobby = function (self)
 	-- function 19
-	local is_orphaned = LobbyInternal.is_orphaned(self.lobby)
-
-	is_orphaned = not not is_orphaned or not not self._lost_connection_to_lobby
-
-	return is_orphaned
+	return not not LobbyInternal.is_orphaned(self.lobby)
 end
 
 LobbyClient.game_session_host = function (self)
