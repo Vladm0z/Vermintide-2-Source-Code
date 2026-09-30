@@ -1408,7 +1408,7 @@ AISystem.update_ai_blackboards = function (self, t, dt)
 	local ai_updates_this_frame = 0
 	local index = self.ai_update_index
 
-	index = not (ai_blackboard_updates_n < index) or 1 or index
+	index = ai_blackboard_updates_n >= index or 1 or index
 
 	while index <= ai_blackboard_updates_n do
 		local unit = ai_blackboard_updates[index]

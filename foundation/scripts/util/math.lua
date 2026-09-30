@@ -171,7 +171,7 @@ end
 
 math.point_is_inside_aabb = function (pos, aabb_pos, aabb_half_extents)
 	-- function 23
-	return not (pos[1] < aabb_pos[1] - aabb_half_extents[1]) and not (pos[1] > aabb_pos[1] + aabb_half_extents[1]) and not (pos[2] < aabb_pos[2] - aabb_half_extents[2]) and not (pos[2] > aabb_pos[2] + aabb_half_extents[2]) and not (pos[3] < aabb_pos[3] - aabb_half_extents[3]) and not (pos[3] > aabb_pos[3] + aabb_half_extents[3])
+	return pos[1] >= aabb_pos[1] - aabb_half_extents[1] and pos[1] <= aabb_pos[1] + aabb_half_extents[1] and pos[2] >= aabb_pos[2] - aabb_half_extents[2] and pos[2] <= aabb_pos[2] + aabb_half_extents[2] and pos[3] >= aabb_pos[3] - aabb_half_extents[3] and pos[3] <= aabb_pos[3] + aabb_half_extents[3]
 end
 
 math.point_is_inside_box = function (pos, box_pose, box_half_extents)
@@ -447,7 +447,7 @@ Geometry.concave_hull = function (points, hull)
 	for i = 1, num_points do
 		local pt = points[i]
 
-		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) and not (dot2D(hull[num] - hull[num - 1], pt - hull[num]) > 0.1) do
+		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) and dot2D(hull[num] - hull[num - 1], pt - hull[num]) <= 0.1 do
 			num = num - 1
 		end
 
@@ -461,7 +461,7 @@ Geometry.concave_hull = function (points, hull)
 	for i = num_points, 1, -1 do
 		local pt = points[i]
 
-		while t <= num and not ccw(hull[num - 1], hull[num], pt) and not (dot2D(hull[num] - hull[num - 1], pt - hull[num]) > 0.1) do
+		while t <= num and not ccw(hull[num - 1], hull[num], pt) and dot2D(hull[num] - hull[num - 1], pt - hull[num]) <= 0.1 do
 			num = num - 1
 		end
 

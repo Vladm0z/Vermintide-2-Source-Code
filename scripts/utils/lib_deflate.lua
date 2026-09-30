@@ -842,7 +842,7 @@ local function GetHuffmanBitlenAndCode(symbol_counts, max_bitlen, max_symbol)
 
 			if symbol >= 0 then
 				symbol_bitlens[symbol] = bitlen
-				max_non_zero_bitlen_symbol = not (max_non_zero_bitlen_symbol < symbol) or symbol or max_non_zero_bitlen_symbol
+				max_non_zero_bitlen_symbol = max_non_zero_bitlen_symbol >= symbol or symbol or max_non_zero_bitlen_symbol
 				bitlen_counts[bitlen] = bitlen_counts[bitlen] + 1
 			end
 		end
@@ -892,7 +892,7 @@ local function RunLengthEncodeHuffmanBitlen(lcode_bitlens, max_non_zero_bitlen_l
 	local prev
 	local count = 0
 
-	max_non_zero_bitlen_dcode = not (max_non_zero_bitlen_dcode < 0) or 0 or max_non_zero_bitlen_dcode
+	max_non_zero_bitlen_dcode = max_non_zero_bitlen_dcode >= 0 or 0 or max_non_zero_bitlen_dcode
 
 	local max_code = max_non_zero_bitlen_lcode + max_non_zero_bitlen_dcode + 1
 
@@ -1074,7 +1074,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 			local depth = config_use_lazy and (config_good_prev_length <= prev_len and (config_good_hash_chain or config_max_hash_chain) or not (config_good_prev_length <= prev_len) and config_max_hash_chain) or not config_use_lazy and config_max_hash_chain
 			local max_len_minus_one = block_end - index
 
-			max_len_minus_one = not (max_len_minus_one >= 257) or 257 or max_len_minus_one
+			max_len_minus_one = max_len_minus_one < 257 or 257 or max_len_minus_one
 			max_len_minus_one = max_len_minus_one + string_table_index
 
 			local string_table_index_plus_three = string_table_index + 3
@@ -1577,8 +1577,8 @@ local function Deflate(configs, WriteBits, WriteString, FlushWriter, str, dictio
 
 		local min_bitlen = store_block_bitlen
 
-		min_bitlen = not fixed_block_bitlen or not (fixed_block_bitlen < min_bitlen) or fixed_block_bitlen or min_bitlen
-		min_bitlen = not dynamic_block_bitlen or not (dynamic_block_bitlen < min_bitlen) or dynamic_block_bitlen or min_bitlen
+		min_bitlen = not fixed_block_bitlen or fixed_block_bitlen >= min_bitlen or fixed_block_bitlen or min_bitlen
+		min_bitlen = not dynamic_block_bitlen or dynamic_block_bitlen >= min_bitlen or dynamic_block_bitlen or min_bitlen
 
 		if level == 0 or strategy ~= "fixed" and strategy ~= "dynamic" and store_block_bitlen == min_bitlen then
 			CompressStoreBlock(WriteBits, WriteString, is_last_block, str, block_start, block_end, total_bitlen)
@@ -1937,7 +1937,7 @@ local function GetHuffmanForDecode(huffman_bitlens, max_symbol, max_bitlen)
 	for symbol = 0, max_symbol do
 		local bitlen = huffman_bitlens[symbol]
 
-		min_bitlen = not (bitlen > 0) or not (bitlen < min_bitlen) or bitlen or min_bitlen
+		min_bitlen = bitlen <= 0 or bitlen >= min_bitlen or bitlen or min_bitlen
 		huffman_bitlen_counts[bitlen] = huffman_bitlen_counts[bitlen] + 1
 	end
 
@@ -2010,7 +2010,7 @@ local function DecodeUntilEndOfBlock(state, lcodes_huffman_bitlens, lcodes_huffm
 
 			local bitlen = _literal_deflate_code_to_base_len[symbol]
 
-			bitlen = not (symbol >= 8) or bitlen + ReadBits(_literal_deflate_code_to_extra_bitlen[symbol]) or bitlen
+			bitlen = symbol < 8 or bitlen + ReadBits(_literal_deflate_code_to_extra_bitlen[symbol]) or bitlen
 			symbol = Decode(dcodes_huffman_bitlens, dcodes_huffman_symbols, dcodes_huffman_min_bitlen)
 
 			if symbol < 0 or symbol > 29 then
@@ -2019,7 +2019,7 @@ local function DecodeUntilEndOfBlock(state, lcodes_huffman_bitlens, lcodes_huffm
 
 			local dist = _dist_deflate_code_to_base_dist[symbol]
 
-			dist = not (dist > 4) or dist + ReadBits(_dist_deflate_code_to_extra_bitlen[symbol]) or dist
+			dist = dist <= 4 or dist + ReadBits(_dist_deflate_code_to_extra_bitlen[symbol]) or dist
 
 			local char_buffer_index = buffer_size - dist + 1
 

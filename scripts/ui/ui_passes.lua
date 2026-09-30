@@ -2099,7 +2099,7 @@ UIPasses.text = {
 
 				if ui_style.draw_text_rect then
 					width = width or UIRenderer.text_size(ui_renderer, text, font_material, font_size, size[2])
-					max_text_width = not (max_text_width < width) or width or max_text_width
+					max_text_width = max_text_width >= width or width or max_text_width
 				end
 
 				local color = ui_style.text_color

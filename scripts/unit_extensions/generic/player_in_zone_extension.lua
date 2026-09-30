@@ -302,7 +302,7 @@ PlayerInZoneExtension._fulfill_in_zone_check = function (self)
 	local progress_zone_size = self._progress_zone_size * self._progress_zone_size
 	local closest_player = self._closest_player_distance
 
-	if not (closest_player <= progress_zone_size) then
+	if closest_player > progress_zone_size then
 		return false, 0
 	end
 

@@ -64,7 +64,7 @@ ProjectilePhysicsUnitLocomotionExtension.update = function (self, unit, input, d
 	local current_velocity = Actor.velocity(physics_actor)
 	local current_velocity_length = Vector3.length(current_velocity)
 
-	if not (current_velocity_length <= STOP_VELOCITY_THRESHOLD) then
+	if current_velocity_length > STOP_VELOCITY_THRESHOLD then
 		self.stop_time = nil
 
 		return

@@ -599,14 +599,14 @@ MusicManager._update_boss_music_intensity = function (self, conflict_director)
 				local unit_position = Unit.local_position(unit, 0)
 				local distance_sq = Vector3.distance_squared(player_position, unit_position)
 
-				min_distance_sq = not (distance_sq < min_distance_sq) or distance_sq or min_distance_sq
+				min_distance_sq = distance_sq >= min_distance_sq or distance_sq or min_distance_sq
 			end
 
 			for _, unit in pairs(additional_contributing_units) do
 				local unit_position = Unit.local_position(unit, 0)
 				local distance_sq = Vector3.distance_squared(player_position, unit_position)
 
-				min_distance_sq = not (distance_sq < min_distance_sq) or distance_sq or min_distance_sq
+				min_distance_sq = distance_sq >= min_distance_sq or distance_sq or min_distance_sq
 			end
 
 			for _, boss_intensity_data in ipairs(BossFightMusicIntensity) do

@@ -189,7 +189,7 @@ TestCases.run_through_level = function (case_settings, skip_cinematic)
 
 			local player_point = Testify:make_request("closest_travel_distance_to_player")
 
-			main_path_point = not (main_path_point < player_point) or player_point or main_path_point
+			main_path_point = main_path_point >= player_point or player_point or main_path_point
 			main_path_point = main_path_point + player_teleportation_speed_factor * delta_time
 
 			Testify:make_request("teleport_player_to_main_path_point", main_path_point)

@@ -27,7 +27,7 @@ BTConditions.can_activate.es_questingknight = function (blackboard)
 		return false
 	end
 
-	if target ~= blackboard.urgent_target_enemy or not (blackboard.urgent_target_distance <= QK_MAX_DISTANCE) then
+	if target ~= blackboard.urgent_target_enemy or blackboard.urgent_target_distance > QK_MAX_DISTANCE then
 		return true
 	end
 

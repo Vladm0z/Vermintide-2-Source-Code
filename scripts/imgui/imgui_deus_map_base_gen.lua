@@ -226,7 +226,7 @@ ImguiDeusMapBaseGen.update = function (self, t, dt)
 			else
 				local time_start = os.clock()
 
-				while not generator_done and not (os.clock() - time_start > 0.01) do
+				while not generator_done and os.clock() - time_start <= 0.01 do
 					generator_done, error_message, nodes = self._base_graph_generator()
 				end
 

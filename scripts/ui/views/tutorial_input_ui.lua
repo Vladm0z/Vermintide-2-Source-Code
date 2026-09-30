@@ -285,7 +285,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 							end
 						else
 							texture_size_x = texture_size_x + sizes[i][1]
-							texture_size_y = not (texture_size_y < sizes[i][2]) or sizes[i][2] or texture_size_y
+							texture_size_y = texture_size_y >= sizes[i][2] or sizes[i][2] or texture_size_y
 						end
 					end
 

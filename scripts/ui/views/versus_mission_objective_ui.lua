@@ -438,7 +438,7 @@ end
 
 VersusMissionObjectiveUI._format_timer = function (self, time)
 	-- function 29
-	if not time and not (time <= 0) then
+	if not time and time > 0 then
 		return "00:00"
 	end
 

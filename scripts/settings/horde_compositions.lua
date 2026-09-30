@@ -29595,7 +29595,7 @@ for horde_composition_name, horde_composition in pairs(HordeCompositions) do
 		else
 			fassert(max_composition, "%s does not define any composition for any difficulty", horde_composition_name)
 
-			if not already_printed and (not IS_CONSOLE or not (i <= console_max)) then
+			if not already_printed and (not IS_CONSOLE or i > console_max) then
 				already_printed = true
 				missing_composition_difficulty = (missing_composition_difficulty or 0) + 1
 			end

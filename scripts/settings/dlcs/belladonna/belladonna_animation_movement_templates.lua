@@ -43,7 +43,7 @@ local function lean_downwards_over_time(unit, dt, data)
 
 		local compare_value = data.current_lean_value
 
-		if data.current_lean_direction ~= "left" or not (compare_value >= -0.1) then
+		if data.current_lean_direction ~= "left" or compare_value < -0.1 then
 			data.current_lean_value = nil
 			data.current_lean_direction = nil
 			data.lean_variable = data.lean_downwards_min

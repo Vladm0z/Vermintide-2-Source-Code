@@ -237,7 +237,7 @@ GenericHealthExtension.set_max_health = function (self, health)
 	local rounded_decimal = math.round(decimal * 4) * 0.25
 
 	network_health = math.floor(network_health) + rounded_decimal
-	network_health = not (network_health <= 0) or 1 or network_health
+	network_health = network_health > 0 or 1 or network_health
 	self.health = network_health
 	self._damage_cap_per_hit = self._damage_cap
 
@@ -387,7 +387,7 @@ GenericHealthExtension.add_damage = function (self, attacker_unit, damage_amount
 		if min_health > 0 then
 			local current_health = self:current_health()
 
-			damage_mod = not (current_health <= damage_mod) or current_health - min_health or damage_mod
+			damage_mod = current_health > damage_mod or current_health - min_health or damage_mod
 		end
 
 		self.damage = self.damage + damage_mod

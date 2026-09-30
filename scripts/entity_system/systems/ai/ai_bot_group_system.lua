@@ -2286,7 +2286,7 @@ AIBotGroupSystem._update_health_pickups = function (self, dt, t)
 					bb.health_pickup_valid_until = math.huge
 
 					local follow_pos = data.follow_position
-					local in_range = follow_pos or not (health_dist < MAX_PICKUP_RANGE)
+					local in_range = follow_pos or health_dist >= MAX_PICKUP_RANGE
 
 					if in_range then
 						bb.allowed_to_take_health_pickup = true
@@ -2378,7 +2378,7 @@ AIBotGroupSystem._update_health_pickups = function (self, dt, t)
 						bb.health_pickup_valid_until = math.huge
 
 						local follow_pos = data.follow_position
-						local in_range = follow_pos or not (health_dist < MAX_PICKUP_RANGE)
+						local in_range = follow_pos or health_dist >= MAX_PICKUP_RANGE
 
 						if in_range then
 							bb.allowed_to_take_health_pickup = true

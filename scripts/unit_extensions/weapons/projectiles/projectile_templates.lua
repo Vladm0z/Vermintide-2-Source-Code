@@ -557,7 +557,7 @@ ProjectileTemplates.impact_templates = {
 					local owner_player = Managers.player:owner(owner_unit)
 					local owner_is_local = owner_player and owner_player.local_player
 
-					if owner_is_local and not (impact_counter > 1) then
+					if owner_is_local and impact_counter <= 1 then
 						WwiseUtils.trigger_position_event(world, "player_versus_globadier_fps_globe_impact", hit_position)
 					end
 				end

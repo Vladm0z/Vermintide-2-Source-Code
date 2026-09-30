@@ -117,7 +117,7 @@ LevelEndViewVersus._calculate_awards = function (self)
 			local award_data = awards_data[i]
 			local award_value = award_data.value
 
-			max_award_value = not (max_award_value < award_value) or award_value or max_award_value
+			max_award_value = max_award_value >= award_value or award_value or max_award_value
 		end
 
 		sorted_awards[#sorted_awards + 1] = {

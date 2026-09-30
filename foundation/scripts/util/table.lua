@@ -1292,8 +1292,8 @@ table.array_average = function (t, max_num, next_val)
 		local d = t[i]
 
 		sum = sum + d
-		min = not (d < min) or d or min
-		max = not (max < d) or d or max
+		min = d >= min or d or min
+		max = max >= d or d or max
 	end
 
 	return sum / num_elements, min, max

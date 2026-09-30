@@ -499,13 +499,13 @@ StartGameWindowMissionSelectionConsole._sync_hero_completion = function (self, l
 			content[icon_data_name][frame_name] = "map_frame_0" .. profile_difficulty_index_completed
 			content[icon_data_name][icon_name] = career_settings.picking_image
 			content[icon_data_name][icon_name_disabled] = career_settings.picking_image
-			content[icon_data_name].icon_disabled = not (completed_index > 0)
+			content[icon_data_name].icon_disabled = completed_index <= 0
 
 			local icon_disabled_style = style[icon_name_disabled]
 
 			icon_disabled_style.color = completed_index > 0 and icon_disabled_style.default_color or not (completed_index > 0) and icon_disabled_style.disabled_color
 		else
-			content["hotspot_" .. i].disable_button = not (completed_index > 0)
+			content["hotspot_" .. i].disable_button = completed_index <= 0
 
 			local icon_style = style["icon_" .. i .. "_saturated"]
 

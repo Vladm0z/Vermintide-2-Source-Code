@@ -44,7 +44,7 @@ ShockwaveSpellExtension.update = function (self, unit, input, dt, context, t)
 	local radius = math.lerp(self._shockwave_radius_min, self._shockwave_radius_max, lerp_t)
 	local position = self._position:unbox()
 
-	if not (lerp_t >= 1) and do_broadphase then
+	if lerp_t < 1 and do_broadphase then
 		num_hits = AiUtils.broadphase_query(position, radius, RESULT_TABLE)
 		broadphase_timer = 0
 	end

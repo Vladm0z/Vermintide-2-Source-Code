@@ -293,7 +293,7 @@ BTConditions.can_activate.we_waywatcher = function (blackboard)
 	end
 
 	local max_distance = 30
-	local is_range_ok = target ~= blackboard.urgent_target_enemy or not (max_distance >= blackboard.urgent_target_distance)
+	local is_range_ok = target ~= blackboard.urgent_target_enemy or max_distance < blackboard.urgent_target_distance
 
 	if is_range_ok then
 		local obstruction = blackboard.ranged_obstruction_by_static
@@ -454,7 +454,7 @@ BTConditions.can_activate.wh_bountyhunter = function (blackboard)
 	end
 
 	local max_distance = 15
-	local is_range_ok = target ~= blackboard.urgent_target_enemy or not (max_distance >= blackboard.urgent_target_distance)
+	local is_range_ok = target ~= blackboard.urgent_target_enemy or max_distance < blackboard.urgent_target_distance
 
 	if is_range_ok then
 		local obstruction = blackboard.ranged_obstruction_by_static
@@ -568,7 +568,7 @@ BTConditions.can_activate.bw_scholar = function (blackboard)
 	end
 
 	local max_distance = 20
-	local is_range_ok = target ~= blackboard.urgent_target_enemy or not (max_distance >= blackboard.urgent_target_distance)
+	local is_range_ok = target ~= blackboard.urgent_target_enemy or max_distance < blackboard.urgent_target_distance
 
 	if is_range_ok then
 		local obstruction = blackboard.ranged_obstruction_by_static
@@ -1023,7 +1023,7 @@ BTConditions.has_priority_or_opportunity_target = function (blackboard)
 	end
 
 	local dist = 40
-	local result = blackboard.revive_with_urgent_target or target ~= blackboard.urgent_target_enemy or not (dist > blackboard.urgent_target_distance)
+	local result = blackboard.revive_with_urgent_target or target ~= blackboard.urgent_target_enemy or dist <= blackboard.urgent_target_distance
 
 	return result
 end

@@ -73,7 +73,7 @@ EndViewStateScoreVSTabSummary._calculate_awards = function (self)
 
 	local mvp_peer_id
 
-	if not (#potential_mvp_peer_ids > 1) then
+	if #potential_mvp_peer_ids <= 1 then
 		-- Nothing
 	end
 
