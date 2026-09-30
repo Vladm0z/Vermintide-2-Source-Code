@@ -85,29 +85,29 @@ BloodManager._init_settings = function (self)
 	-- function 10
 	local blood_enabled = Application.user_setting("blood_enabled")
 
-	blood_enabled = not not blood_enabled or blood_enabled == nil
+	blood_enabled = blood_enabled or blood_enabled == nil
 
 	self:update_blood_enabled(blood_enabled)
 
-	local num_blood_decals = not not Application.user_setting("num_blood_decals")
+	local num_blood_decals = Application.user_setting("num_blood_decals")
 
 	self:update_num_blood_decals(num_blood_decals)
 
 	local screen_blood_enabled = Application.user_setting("screen_blood_enabled")
 
-	screen_blood_enabled = not not screen_blood_enabled or screen_blood_enabled == nil
+	screen_blood_enabled = screen_blood_enabled or screen_blood_enabled == nil
 
 	self:update_screen_blood_enabled(screen_blood_enabled)
 
 	local dismemberment_enabled = Application.user_setting("dismemberment_enabled")
 
-	dismemberment_enabled = not not dismemberment_enabled or dismemberment_enabled == nil
+	dismemberment_enabled = dismemberment_enabled or dismemberment_enabled == nil
 
 	self:update_dismemberment_enabled(dismemberment_enabled)
 
 	local ragdoll_enabled = Application.user_setting("ragdoll_enabled")
 
-	ragdoll_enabled = not not ragdoll_enabled or ragdoll_enabled == nil
+	ragdoll_enabled = ragdoll_enabled or ragdoll_enabled == nil
 
 	self:update_ragdoll_enabled(ragdoll_enabled)
 end
@@ -274,7 +274,7 @@ BloodManager._add_blood_ball_data_to_buffer = function (self, position, directio
 	blood_ball_data.position:store(position)
 	blood_ball_data.direction:store(direction)
 
-	blood_ball_data.velocity = not not velocity or not not default_velocity
+	blood_ball_data.velocity = velocity or default_velocity
 	blood_ball_ring_buffer.size = size + 1
 	blood_ball_ring_buffer.write_index = write_index % max_size + 1
 end
@@ -375,24 +375,24 @@ BloodManager.add_weapon_blood = function (self, attacker, damage_type)
 			local weapon_right_3p = equipment.right_hand_wielded_unit_3p
 			local weapon_left = equipment.left_hand_wielded_unit
 			local weapon_left_3p = equipment.left_hand_wielded_unit_3p
-			local amount = not not BloodSettings.weapon_blood[damage_type]
+			local amount = BloodSettings.weapon_blood[damage_type]
 
-			self._weapon_blood[attacker] = not not self._weapon_blood[attacker]
+			self._weapon_blood[attacker] = self._weapon_blood[attacker]
 
 			if weapon_right then
-				self._weapon_blood[attacker][weapon_right] = math.max(not not self._weapon_blood[attacker][weapon_right] + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_right] = math.max(self._weapon_blood[attacker][weapon_right] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 
 			if weapon_right_3p then
-				self._weapon_blood[attacker][weapon_right_3p] = math.max(not not self._weapon_blood[attacker][weapon_right_3p] + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_right_3p] = math.max(self._weapon_blood[attacker][weapon_right_3p] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 
 			if weapon_left then
-				self._weapon_blood[attacker][weapon_left] = math.max(not not self._weapon_blood[attacker][weapon_left] + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_left] = math.max(self._weapon_blood[attacker][weapon_left] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 
 			if weapon_left_3p then
-				self._weapon_blood[attacker][weapon_left_3p] = math.max(not not self._weapon_blood[attacker][weapon_right_3p] + amount, BloodSettings.weapon_blood.starting_value)
+				self._weapon_blood[attacker][weapon_left_3p] = math.max(self._weapon_blood[attacker][weapon_right_3p] + amount, BloodSettings.weapon_blood.starting_value)
 			end
 		end
 	end

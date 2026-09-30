@@ -18,7 +18,7 @@ local waystone_points = 10
 
 local function increment_func(existing_value)
 	-- function 1
-	return (not not existing_value or not not 0) + 1
+	return (existing_value or 0) + 1
 end
 
 ObjectiveLists.bell_pvp_set_1 = {
@@ -3842,7 +3842,7 @@ for lists_name, lists in pairs(ObjectiveLists) do
 		table.clear(data_by_name)
 
 		for objective_name, objective_data in pairs(list) do
-			fassert(not data_by_name[objective_name] or not not table.is_empty(objective_data), "[ObjectiveLists] An objective set may not include multiple objectives of the same name, unless they don't contain any data or point to the same objective data reference. %s was found twice in list number %s in %s", objective_name, list_i, lists_name)
+			fassert(not data_by_name[objective_name] or table.is_empty(objective_data), "[ObjectiveLists] An objective set may not include multiple objectives of the same name, unless they don't contain any data or point to the same objective data reference. %s was found twice in list number %s in %s", objective_name, list_i, lists_name)
 
 			data_by_name[objective_name] = objective_data
 		end

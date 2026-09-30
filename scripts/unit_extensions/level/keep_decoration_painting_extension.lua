@@ -13,7 +13,7 @@ KeepDecorationPaintingExtension.init = function (self, extension_init_context, u
 	self._world = world
 	self._level_unit_index = Level.unit_index(level, unit)
 	self._is_leader = Managers.party:is_leader(Network.peer_id())
-	self._paintings_lookup = not not NetworkLookup.keep_decoration_paintings
+	self._paintings_lookup = NetworkLookup.keep_decoration_paintings
 	self._is_client_painting = Unit.get_data(unit, "painting_data", "is_client_painting")
 	self._currently_set_painting = nil
 	self._temporarily_set_frame = nil
@@ -75,7 +75,7 @@ KeepDecorationPaintingExtension.extensions_ready = function (self)
 		return
 	end
 
-	local selected_painting = self._is_client_painting and not not "hidden" or not self._is_client_painting and not not self:get_selected_decoration()
+	local selected_painting = self._is_client_painting and "hidden" or not self._is_client_painting and self:get_selected_decoration()
 
 	self._current_preview_painting = selected_painting
 
@@ -126,7 +126,7 @@ end
 
 KeepDecorationPaintingExtension.unequip_decoration = function (self, new_painting)
 	-- function 10
-	local painting = not not new_painting or not not "hor_none"
+	local painting = new_painting or "hor_none"
 
 	self:_load_painting(painting)
 	self:sync_decoration()
@@ -289,7 +289,7 @@ end
 
 KeepDecorationPaintingExtension._load_painting = function (self, painting, callback)
 	-- function 21
-	painting = not not painting or not not "hor_none"
+	painting = painting or "hor_none"
 
 	local painting_data = Paintings[painting]
 	local painting_orientation = painting_data.orientation

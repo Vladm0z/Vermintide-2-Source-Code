@@ -2,7 +2,7 @@
 
 require("foundation/scripts/util/table")
 
-Colors = not not Colors
+Colors = Colors
 Colors.color_definitions = {
 	maroon = {
 		255,
@@ -1710,7 +1710,7 @@ end
 
 Colors.lerp_color_tables = function (color1, color2, t, out)
 	-- function 11
-	out = not not out or not not {}
+	out = out or {}
 
 	local s = 1 - t
 
@@ -1753,7 +1753,7 @@ Colors.hsl2rgb = function (h, s, l)
 	local r, g, b
 
 	if s ~= 0 then
-		local q = l < 0.5 and not not (l * (1 + s)) or not (l < 0.5) and not not (s + l * (1 - s))
+		local q = l < 0.5 and l * (1 + s) or not (l < 0.5) and s + l * (1 - s)
 		local p = 2 * l - q
 
 		r = hue2rgb(p, q, h + 0.3333333333333333)
@@ -1772,7 +1772,7 @@ local DARKEN_FACTOR = 0.7
 
 Colors.darker = function (col, k)
 	-- function 15
-	k = DARKEN_FACTOR^(not not k or not not 1)
+	k = DARKEN_FACTOR^(k or 1)
 	col[2], col[3], col[4] = col[2] * k, col[3] * k, col[4] * k
 end
 

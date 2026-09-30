@@ -14,13 +14,13 @@ BTSkulkApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
 	local target_dist = blackboard.target_dist
-	local skulk_start_radius = target_dist and not not math.min(action.skulk_init_distance, target_dist) or not target_dist and not not action.skulk_init_distance
-	local skulk_data = not not blackboard.skulk_data
-	local direction = not not skulk_data.direction
+	local skulk_start_radius = target_dist and math.min(action.skulk_init_distance, target_dist) or not target_dist and action.skulk_init_distance
+	local skulk_data = blackboard.skulk_data
+	local direction = skulk_data.direction
 
 	skulk_data.direction = direction
-	skulk_data.radius = not not skulk_data.radius
-	skulk_data.skulk_around_time = not not skulk_data.skulk_around_time
+	skulk_data.radius = skulk_data.radius
+	skulk_data.skulk_around_time = skulk_data.skulk_around_time
 	skulk_data.next_random_goal_at_radius = skulk_data.radius
 	blackboard.skulk_data = skulk_data
 	blackboard.action = action
@@ -158,7 +158,7 @@ BTSkulkApproachAction.commit_to_target = function (self, unit, blackboard, dt)
 	local target_dist = blackboard.target_dist
 	local commit_radius = action.commit_distance
 	local inside_commit_radius = target_dist < commit_radius
-	local commit_to_target = not not inside_commit_radius or not not has_been_attacked or blackboard.skulk_data.radius <= MINIMUM_SKULK_RADIUS
+	local commit_to_target = inside_commit_radius or has_been_attacked or blackboard.skulk_data.radius <= MINIMUM_SKULK_RADIUS
 
 	return commit_to_target
 end

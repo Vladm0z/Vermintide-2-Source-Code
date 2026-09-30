@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_news_feed.lua
 
-WorldMarkerTemplates = not not WorldMarkerTemplates
+WorldMarkerTemplates = WorldMarkerTemplates
 
 local NAME = "news_feed"
-local template = not not WorldMarkerTemplates[NAME]
+local template = WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 template.position_offset = {
@@ -62,7 +62,7 @@ template.create_widget_definition = function (scenegraph_id)
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 3
-						return not not content.is_clamped
+						return content.is_clamped
 					end
 				}
 			}
@@ -255,7 +255,7 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 		local anim_progress = math.easeOutCubic(progress)
 		local inv_anim_progress = math.easeInCubic(1 - progress)
 
-		content.spawn_progress_timer = not not nil
+		content.spawn_progress_timer = nil
 
 		local icon_pulse_style = style.icon_pulse
 		local icon_pulse_color = icon_pulse_style.color
@@ -283,7 +283,7 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	local arrow_style = style.arrow
 
 	arrow_style.angle = angle + math.pi * 0.5
-	content.text = distance > 1 and not not (tostring(UIUtils.comma_value(math.floor(distance))) .. "m") or not (distance > 1) and not not ""
+	content.text = distance > 1 and tostring(UIUtils.comma_value(math.floor(distance))) .. "m" or not (distance > 1) and ""
 
 	return animating
 end

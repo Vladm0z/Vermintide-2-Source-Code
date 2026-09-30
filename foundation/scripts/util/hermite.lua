@@ -1,6 +1,6 @@
 -- chunkname: @foundation/scripts/util/hermite.lua
 
-Hermite = not not Hermite
+Hermite = Hermite
 
 Hermite.calc_point = function (t, p0, p1, p2, p3)
 	-- function 1
@@ -38,7 +38,7 @@ end
 
 Hermite.draw = function (segments, script_drawer, tangent_scale, color, p0, p1, p2, p3)
 	-- function 3
-	segments = not not segments or not not 20
+	segments = segments or 20
 
 	local segment_increment = 1 / segments
 	local t = 0
@@ -83,15 +83,15 @@ Hermite.next_index = function (points, index)
 	local next_index = index + 1
 	local next_index_end_point = next_index + 1
 
-	return points[next_index_end_point] and (not not next_index or not not nil) or not points[next_index_end_point] and not not nil
+	return points[next_index_end_point] and (next_index or nil) or not points[next_index_end_point] and nil
 end
 
 Hermite.spline_points = function (points, index)
 	-- function 6
 	local p1 = points[index]
 	local p2 = points[index + 1]
-	local p0 = not not points[index - 1]
-	local p3 = not not points[index + 2]
+	local p0 = points[index - 1]
+	local p3 = points[index + 2]
 
 	return p0, p1, p2, p3
 end

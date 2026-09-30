@@ -40,11 +40,11 @@ StartGameWindowDeusCustomGame.on_enter = function (self, params, offset)
 	self._is_offline = Managers.account:offline_mode()
 	self._animations = {}
 	self._dlc_name = nil
-	self._current_difficulty = not not self._parent:get_difficulty_option(true)
+	self._current_difficulty = self._parent:get_difficulty_option(true)
 	self._backend_deus = Managers.backend:get_interface("deus")
 
 	self:_create_ui_elements(params, offset)
-	self:_gamepad_selector_input_func(not not params.input_index)
+	self:_gamepad_selector_input_func(params.input_index)
 	self:_update_expedition_option()
 	self:_update_difficulty_option(self._current_difficulty)
 	self:_update_can_play()
@@ -133,7 +133,7 @@ StartGameWindowDeusCustomGame._can_play = function (self)
 	-- function 8
 	local parent = self._parent
 	local selected_level_id = parent:get_selected_level_id()
-	local can_play = selected_level_id ~= nil and not not not self._dlc_locked
+	local can_play = selected_level_id ~= nil and not self._dlc_locked
 
 	if not can_play then
 		return false
@@ -155,12 +155,12 @@ StartGameWindowDeusCustomGame._update_can_play = function (self)
 
 	play_button.content.button_hotspot.disable_button = not can_play
 
-	local input_desc = self._is_offline and not not "default_deus_custom_game_offline" or not self._is_offline and not not "default_deus_custom_game"
+	local input_desc = self._is_offline and "default_deus_custom_game_offline" or not self._is_offline and "default_deus_custom_game"
 
 	if can_play then
-		input_desc = self._is_offline and (not not "default_deus_custom_game_offline_play" or not not "default_deus_custom_game_play") or not self._is_offline and not not "default_deus_custom_game_play"
+		input_desc = self._is_offline and ("default_deus_custom_game_offline_play" or "default_deus_custom_game_play") or not self._is_offline and "default_deus_custom_game_play"
 	elseif self._dlc_locked then
-		input_desc = self._is_offline and (not not "default_deus_custom_game_offline_buy" or not not "default_deus_custom_game_buy") or not self._is_offline and not not "default_deus_custom_game_buy"
+		input_desc = self._is_offline and ("default_deus_custom_game_offline_buy" or "default_deus_custom_game_buy") or not self._is_offline and "default_deus_custom_game_buy"
 	end
 
 	if input_desc ~= self._prev_input_desc then
@@ -230,7 +230,7 @@ StartGameWindowDeusCustomGame._setup_journey_widgets = function (self)
 		content.locked = not is_unlocked
 		content.frame = selection_frame_texture
 		content.journey_name = journey_name
-		content.level_icon_frame = with_belakor and not not "morris_expedition_select_border_belakor" or not with_belakor and not not "morris_expedition_select_border"
+		content.level_icon_frame = with_belakor and "morris_expedition_select_border_belakor" or not with_belakor and "morris_expedition_select_border"
 		content.draw_path = next_journey ~= nil
 		content.draw_path_fill = unlocked_journeys[next_journey]
 		widget.style.path.texture_size[1] = settings.spacing_x
@@ -274,7 +274,7 @@ end
 StartGameWindowDeusCustomGame._option_selected = function (self, widget_name, button_name, t)
 	-- function 14
 	local parent = self._parent
-	local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
+	local custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
 
 	if widget_name == "difficulty_stepper" then
 		local difficulty_key = self._current_difficulty
@@ -353,7 +353,7 @@ StartGameWindowDeusCustomGame._update_additional_curse_frame = function (self, j
 		local content = widget.content
 		local with_belakor = content.journey_name == journey_name
 
-		content.level_icon_frame = with_belakor and not not "morris_expedition_select_border_belakor" or not with_belakor and not not "morris_expedition_select_border"
+		content.level_icon_frame = with_belakor and "morris_expedition_select_border_belakor" or not with_belakor and "morris_expedition_select_border"
 	end
 end
 
@@ -502,7 +502,7 @@ StartGameWindowDeusCustomGame._animate_expedition_widget = function (self, widge
 	local content = widget.content
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
-	local selected_progress = not not hotspot.selected_progress
+	local selected_progress = hotspot.selected_progress
 	local selected_speed = 1.5
 
 	if is_selected then
@@ -585,7 +585,7 @@ StartGameWindowDeusCustomGame._handle_input = function (self, dt, t)
 			end
 
 			if widget_name == "difficulty_stepper" then
-				widget.content.is_selected = not not UIUtils.is_button_hover(widget, "left_arrow_hotspot")
+				widget.content.is_selected = UIUtils.is_button_hover(widget, "left_arrow_hotspot")
 			else
 				widget.content.is_selected = UIUtils.is_button_hover(widget)
 			end
@@ -636,7 +636,7 @@ StartGameWindowDeusCustomGame._handle_input = function (self, dt, t)
 		if input_service:get(START_GAME_INPUT) or UIUtils.is_button_pressed(play_button_widget) then
 			self._play_button_pressed = true
 
-			local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
+			local custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
 
 			self._parent:set_difficulty_option(self._current_difficulty)
 			parent:play(t, custom_game_settings.game_mode_type)
@@ -751,7 +751,7 @@ StartGameWindowDeusCustomGame._update_difficulty_lock = function (self)
 		if not approved then
 			if extra_requirement_failed then
 				difficulty_info_widget.content.should_show_diff_lock_text = true
-				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
+				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and Localize(extra_requirement_failed) or not extra_requirement_failed and ""
 			else
 				difficulty_info_widget.content.should_show_diff_lock_text = false
 			end

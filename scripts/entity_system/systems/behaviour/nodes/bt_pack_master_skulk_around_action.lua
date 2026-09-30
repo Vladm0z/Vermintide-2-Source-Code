@@ -24,8 +24,8 @@ BTPackMasterSkulkAroundAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 
 	blackboard.action = action
-	blackboard.skulk_time = not not blackboard.skulk_time
-	blackboard.skulk_time_force_attack = not not blackboard.skulk_time_force_attack
+	blackboard.skulk_time = blackboard.skulk_time
+	blackboard.skulk_time_force_attack = blackboard.skulk_time_force_attack
 	blackboard.skulk_goal_get_fails = 0
 	blackboard.skulk_debug_state = "enter"
 
@@ -33,7 +33,7 @@ BTPackMasterSkulkAroundAction.enter = function (self, unit, blackboard, t)
 
 	locomotion_extension:set_rotation_speed(5)
 
-	blackboard.attack_cooldown = not not blackboard.attack_cooldown
+	blackboard.attack_cooldown = blackboard.attack_cooldown
 end
 
 BTPackMasterSkulkAroundAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -81,7 +81,7 @@ BTPackMasterSkulkAroundAction.run = function (self, unit, blackboard, t, dt)
 		local waited_too_long = t > blackboard.skulk_time_force_attack
 		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 		local dogpile = ai_slot_system:slots_count(blackboard.target_unit)
-		local enough_aggro_on_player = dogpile >= action.dogpile_aggro_needed or not not script_data.ai_packmaster_ignore_dogpile
+		local enough_aggro_on_player = dogpile >= action.dogpile_aggro_needed or script_data.ai_packmaster_ignore_dogpile
 
 		if enough_aggro_on_player or waited_too_long then
 			blackboard.skulk_pos = nil
@@ -110,7 +110,7 @@ BTPackMasterSkulkAroundAction.run = function (self, unit, blackboard, t, dt)
 
 		blackboard.move_state = "moving"
 
-		network_manager:anim_event(unit, not not blackboard.action.skulk_animation)
+		network_manager:anim_event(unit, blackboard.action.skulk_animation)
 		navigation_extension:set_enabled(true)
 	end
 
@@ -165,7 +165,7 @@ BTPackMasterSkulkAroundAction.get_new_goal = function (self, unit, blackboard)
 		local max_dist = 25
 		local dir = blackboard.skulk_around_dir
 
-		dir = not not dir or not not (1 - math.random(0, 1) * 2)
+		dir = dir or 1 - math.random(0, 1) * 2
 		blackboard.skulk_around_dir = dir
 
 		local angle = math.random(10, 180) * dir

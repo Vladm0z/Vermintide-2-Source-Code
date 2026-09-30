@@ -84,12 +84,12 @@ end
 
 EndViewStateWeave.exit_done = function (self)
 	-- function 4
-	return not not self._exit_started
+	return self._exit_started
 end
 
 EndViewStateWeave.done = function (self)
 	-- function 5
-	return not not self._screen_done
+	return self._screen_done
 end
 
 EndViewStateWeave.create_ui_elements = function (self, params)
@@ -171,7 +171,7 @@ EndViewStateWeave.update = function (self, dt, t)
 	if not self._transition_timer and (wanted_state or self._new_state) then
 		self.parent:clear_wanted_menu_state()
 
-		return not not wanted_state or not not self._new_state
+		return wanted_state or self._new_state
 	end
 
 	self.ui_animator:update(dt)
@@ -325,7 +325,7 @@ EndViewStateWeave._update_animations = function (self, dt)
 		local animation_completed = animations.score_count == nil and animations.total_score_count == nil
 
 		if animation_completed then
-			local next_counters = not not score_count_queue and not not score_count_queue[score_count_index]
+			local next_counters = score_count_queue and score_count_queue[score_count_index]
 
 			if next_counters then
 				self:_start_score_count_animation("score_count", "score_entry", next_counters[1])
@@ -427,8 +427,8 @@ EndViewStateWeave._setup_team_results = function (self, players_session_scores)
 		local portrait_frame = player_data.portrait_frame
 		local player_level = player_data.player_level
 		local is_player_controlled = player_data.is_player_controlled
-		local level_text = is_player_controlled and (player_level and not not tostring(player_level) or not player_level and not not "-") or not is_player_controlled and not not "BOT"
-		local versus_level = not not player_data.versus_player_level
+		local level_text = is_player_controlled and (player_level and tostring(player_level) or not player_level and "-") or not is_player_controlled and "BOT"
+		local versus_level = player_data.versus_player_level
 
 		self:_fill_portrait(i, portrait_frame, level_text, portrait_image, player_data.name, versus_level)
 	end
@@ -477,9 +477,9 @@ EndViewStateWeave._fill_portrait = function (self, slot, portrait_frame, level_t
 	-- function 24
 	local hero_frame_count = self._player_count
 	local x_offset = player_frame_spacing * (slot - hero_frame_count / 2 - 0.5)
-	local portrait_frame = not not portrait_frame or not not "default"
-	local level_text = not not level_text or not not ""
-	local portrait_image = not not portrait_image or not not "eor_empty_player"
+	local portrait_frame = portrait_frame or "default"
+	local level_text = level_text or ""
+	local portrait_image = portrait_image or "eor_empty_player"
 	local widget_definition = UIWidgets.create_portrait_frame("player_frame", portrait_frame, level_text, 1, nil, portrait_image)
 	local hero_widget = self._hero_widgets[slot]
 
@@ -491,7 +491,7 @@ EndViewStateWeave._fill_portrait = function (self, slot, portrait_frame, level_t
 	}
 	self._hero_widgets[slot] = hero_widget
 
-	local widget_definition = UIWidgets.create_small_insignia("player_insignia", not not versus_level or not not 0)
+	local widget_definition = UIWidgets.create_small_insignia("player_insignia", versus_level or 0)
 	local insignia_widget = UIWidget.init(widget_definition, self.ui_top_renderer)
 
 	insignia_widget.offset = {
@@ -519,7 +519,7 @@ EndViewStateWeave._setup_score_panel = function (self)
 	-- function 25
 	local weave_manager = Managers.weave
 	local game_won = self.game_won
-	local weave_template = not not self._completed_weave
+	local weave_template = self._completed_weave
 	local weave_display_name = ""
 	local weave_number_display_name = ""
 
@@ -532,7 +532,7 @@ EndViewStateWeave._setup_score_panel = function (self)
 	local time = math.max(WeaveSettings.max_time - math.floor(time_left), 0)
 	local seconds = time % 60
 	local minutes = math.floor(time / 60)
-	local total_score = game_won and not not weave_manager:get_score() or not game_won and not not 0
+	local total_score = game_won and weave_manager:get_score() or not game_won and 0
 	local time_score = weave_manager:get_time_score()
 	local damage_score = weave_manager:get_damage_score()
 	local widgets_by_name = self._widgets_by_name

@@ -6,7 +6,7 @@ GenericUnitInteractableExtension.init = function (self, extension_init_context, 
 	-- function 1
 	self.unit = unit
 	self._is_level_object = Unit.level(unit) ~= nil
-	self.interactable_type = not not Unit.get_data(unit, "interaction_data", "interaction_type")
+	self.interactable_type = Unit.get_data(unit, "interaction_data", "interaction_type")
 	self._override_interactable_action = Unit.get_data(unit, "override_interactable_action")
 	self.interactor_unit = nil
 	self._enabled = true
@@ -50,7 +50,7 @@ GenericUnitInteractableExtension.set_is_being_interacted_with = function (self, 
 		Unit.flow_event(unit, flow_event)
 
 		local is_interactor_network_unit = NetworkUnit.is_network_unit(current_interactor_unit)
-		local is_interactor_husk = not not is_interactor_network_unit and not not NetworkUnit.is_husk_unit(current_interactor_unit)
+		local is_interactor_husk = is_interactor_network_unit and NetworkUnit.is_husk_unit(current_interactor_unit)
 
 		if not is_interactor_husk then
 			local local_flow_event = "lua_interaction_stopped_local_interactor_" .. interaction_type .. "_" .. InteractionResult[interaction_result]
@@ -83,8 +83,8 @@ GenericUnitInteractableExtension.hot_join_sync = function (self, sender)
 	if only_once then
 		local network_manager = Managers.state.network
 		local interactable_unit_id = network_manager:game_object_or_level_id(self.unit)
-		local used = not not Unit.get_data(interactable_unit, "interaction_data", "used")
-		local individual_pickup = not not Unit.get_data(interactable_unit, "interaction_data", "individual_pickup")
+		local used = Unit.get_data(interactable_unit, "interaction_data", "used")
+		local individual_pickup = Unit.get_data(interactable_unit, "interaction_data", "individual_pickup")
 
 		if not individual_pickup and used then
 			local channel_id = PEER_ID_TO_CHANNEL[sender]

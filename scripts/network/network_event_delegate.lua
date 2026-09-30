@@ -43,7 +43,7 @@ NetworkEventDelegate.register = function (self, object, ...)
 
 		fassert(object[callback_name], "[NetworkEventDelegate]: No callback function with name %q specified in passed object", callback_name)
 
-		self._registered_objects[callback_name] = not not self._registered_objects[callback_name]
+		self._registered_objects[callback_name] = self._registered_objects[callback_name]
 		self._registered_objects[callback_name][#self._registered_objects[callback_name] + 1] = object
 
 		if rawget(self.event_table, callback_name) == nil then

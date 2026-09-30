@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_leave_hooks.lua
 
-BTLeaveHooks = not not BTLeaveHooks
+BTLeaveHooks = BTLeaveHooks
 
 local BTLeaveHooks = BTLeaveHooks
 local unit_alive = Unit.alive
@@ -17,7 +17,7 @@ BTLeaveHooks.check_if_victim_was_grabbed = function (unit, blackboard, t)
 		blackboard.has_grabbed_victim = true
 
 		local status_extension = ScriptUnit.has_extension(blackboard.victim_grabbed, "status_system")
-		local is_grabbed = not not status_extension and not not status_extension:is_grabbed_by_chaos_spawn()
+		local is_grabbed = status_extension and status_extension:is_grabbed_by_chaos_spawn()
 
 		if blackboard.stagger or not HEALTH_ALIVE[unit] then
 			if is_grabbed then

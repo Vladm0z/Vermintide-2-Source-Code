@@ -69,7 +69,7 @@ end
 
 GrowQueue.print_items = function (self, s)
 	-- function 8
-	local s = (not not s or not not "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
+	local s = (s or "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
 
 	for i = self.first, self.last do
 		s = s .. tostring(self.queue[i]) .. ","

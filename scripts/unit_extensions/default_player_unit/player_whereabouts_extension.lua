@@ -34,7 +34,7 @@ PlayerWhereaboutsExtension._setup = function (self, nav_world, unit)
 	if nav_world_available then
 		local success, altitude = GwNavQueries.triangle_from_position(nav_world, position)
 
-		self._last_pos_on_nav_mesh = Vector3Box(position.x, position.y, not not altitude or not not position.z)
+		self._last_pos_on_nav_mesh = Vector3Box(position.x, position.y, altitude or position.z)
 	else
 		self._last_pos_on_nav_mesh = Vector3Box(Vector3.invalid_vector())
 	end
@@ -118,14 +118,14 @@ PlayerWhereaboutsExtension.last_position_on_navmesh = function (self)
 	-- function 10
 	local pos = self._last_pos_on_nav_mesh:unbox()
 
-	return Vector3.is_valid(pos) and (not not pos or not not nil) or not Vector3.is_valid(pos) and not not nil
+	return Vector3.is_valid(pos) and (pos or nil) or not Vector3.is_valid(pos) and nil
 end
 
 PlayerWhereaboutsExtension.last_position_onground_on_navmesh = function (self)
 	-- function 11
 	local pos = self._last_onground_pos_on_nav_mesh:unbox()
 
-	return Vector3.is_valid(pos) and (not not pos or not not nil) or not Vector3.is_valid(pos) and not not nil
+	return Vector3.is_valid(pos) and (pos or nil) or not Vector3.is_valid(pos) and nil
 end
 
 local EPSILON = 0.0001
@@ -152,7 +152,7 @@ end
 PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world, input, current_position)
 	-- function 13
 	if input.jumped then
-		fassert(not self._falling and not not not self._jumping, "Tried to jump or fall while falling without aborting landing")
+		fassert(not self._falling and not self._jumping, "Tried to jump or fall while falling without aborting landing")
 
 		self._jumping = true
 
@@ -164,7 +164,7 @@ PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world
 			self._free_fall_position:store(current_position)
 		end
 	elseif input.fell then
-		fassert(not self._jumping and not not not self._falling, "Tried to fall or jump while jumping without aborting landing")
+		fassert(not self._jumping and not self._falling, "Tried to fall or jump while jumping without aborting landing")
 
 		self._falling = true
 
@@ -178,7 +178,7 @@ PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world
 	end
 
 	if input.no_landing then
-		fassert(not not self._jumping, "Tried to not land without falling or jumping")
+		fassert(self._jumping, "Tried to not land without falling or jumping")
 
 		self._jumping = false
 		self._falling = false
@@ -189,7 +189,7 @@ PlayerWhereaboutsExtension._check_bot_nav_transition = function (self, nav_world
 		self._fall_position:store(invalid_vector)
 		self._free_fall_position:store(invalid_vector)
 	elseif input.landed then
-		fassert(not not self._jumping, "Tried to land without falling or jumping")
+		fassert(self._jumping, "Tried to land without falling or jumping")
 
 		if self._jumping then
 			local jump_pos = self._jump_position:unbox()

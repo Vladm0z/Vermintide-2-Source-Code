@@ -75,14 +75,14 @@ achievements.lake_kill_register = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 2
 		local damage_data = event_data[3]
-		local attacker_unit = not not damage_data and not not damage_data[DamageDataIndex.ATTACKER]
+		local attacker_unit = damage_data and damage_data[DamageDataIndex.ATTACKER]
 
 		if not ALIVE[attacker_unit] then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit or local_player_unit ~= attacker_unit then
 			return

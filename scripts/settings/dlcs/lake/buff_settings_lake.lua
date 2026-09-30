@@ -284,7 +284,7 @@ settings.proc_functions = {
 			local enemy_health_extension = ScriptUnit.extension(hit_unit, "health_system")
 			local buff_template = buff.template
 			local breed = Unit.get_data(hit_unit, "breed")
-			local boss = not not breed and not not breed.boss
+			local boss = breed and breed.boss
 			local damage_multiplier = buff_template.damage_multiplier
 
 			if boss then
@@ -316,7 +316,7 @@ settings.proc_functions = {
 			local increased_duration_talent = talent_extension:has_talent("markus_questing_knight_passive_longer_duration", "empire_soldier", true)
 			local buff_to_add
 
-			buff_to_add = increased_duration_talent and (not not "markus_questing_knight_passive_boss_kill_buff_increased_duration" or not not "markus_questing_knight_passive_boss_kill_buff") or not increased_duration_talent and not not "markus_questing_knight_passive_boss_kill_buff"
+			buff_to_add = increased_duration_talent and ("markus_questing_knight_passive_boss_kill_buff_increased_duration" or "markus_questing_knight_passive_boss_kill_buff") or not increased_duration_talent and "markus_questing_knight_passive_boss_kill_buff"
 
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
@@ -388,13 +388,13 @@ settings.buff_function_templates = {
 				buff_to_add = "markus_questing_knight_super_aura_party",
 				apply_to_party = true,
 				apply_to_self = true,
-				apply = not not super_buff_talent and not not buff_extension:has_buff_perk("boss_aura")
+				apply = super_buff_talent and buff_extension:has_buff_perk("boss_aura")
 			},
 			{
 				buff_to_add = "markus_questing_knight_passive_tank_buff",
 				apply_to_party = false,
 				apply_to_self = true,
-				apply = not not buff_extension:has_buff_perk("specials_aura")
+				apply = buff_extension:has_buff_perk("specials_aura")
 			}
 		}
 		local num_buffs = #buff_list
@@ -405,7 +405,7 @@ settings.buff_function_templates = {
 			if Unit.alive(unit) then
 				for b = 1, num_buffs do
 					local current_buff = buff_list[b]
-					local apply = not not current_buff.apply
+					local apply = current_buff.apply
 					local buff_to_add = current_buff.buff_to_add
 					local unit_position = POSITION_LOOKUP[unit]
 					local distance_squared = Vector3.distance_squared(owner_position, unit_position)
@@ -443,7 +443,7 @@ settings.buff_function_templates = {
 			end
 
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-			local all_buffs_active = not not buff_extension:has_buff_perk("boss_aura")
+			local all_buffs_active = buff_extension:has_buff_perk("boss_aura")
 
 			if all_buffs_active then
 				local boss_buff = buff_extension:get_non_stacking_buff("markus_questing_knight_passive_boss_kill_buff")

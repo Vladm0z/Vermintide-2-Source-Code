@@ -16,7 +16,7 @@ BuffAreaExtension.init = function (self, extension_init_context, unit, extension
 	local t = Managers.time:time("game")
 	local template = extension_init_data.sub_buff_template
 
-	self._end_t = t + not not template.duration
+	self._end_t = t + template.duration
 	self.sub_buff_id = extension_init_data.sub_buff_id
 	self.template = template
 
@@ -129,7 +129,7 @@ end
 
 BuffAreaExtension._check_ai = function (self, position, radius)
 	-- function 6
-	local source_unit = not not self.source_unit
+	local source_unit = self.source_unit
 	local inside = self._buff_area_system:inside_by_area(self).by_broadphase
 	local buff_allies = self._buff_allies
 	local buff_enemies = self._buff_enemies
@@ -146,7 +146,7 @@ BuffAreaExtension._check_ai = function (self, position, radius)
 		local already_inside = inside[ai_unit]
 
 		if not already_inside then
-			local should_buff = buff_allies and not not side_manager:is_ally(source_unit, ai_unit) or not buff_allies and not not buff_enemies and not not side_manager:is_enemy(source_unit, ai_unit)
+			local should_buff = buff_allies and side_manager:is_ally(source_unit, ai_unit) or not buff_allies and buff_enemies and side_manager:is_enemy(source_unit, ai_unit)
 
 			if should_buff then
 				self:_set_inside(inside, ai_unit)
@@ -166,7 +166,7 @@ BuffAreaExtension._check_players = function (self, position)
 	local inside_this_frame = FrameTable.alloc_table()
 
 	if self._buff_self then
-		local unit = not not self.source_unit
+		local unit = self.source_unit
 
 		inside_this_frame[unit] = self:_update_by_position(unit)
 	end
@@ -249,8 +249,8 @@ BuffAreaExtension._leave_func = function (self, leaving_unit)
 	end
 
 	local player_owner = Managers.player:owner(leaving_unit)
-	local peer_id = not not player_owner and not not player_owner:network_id()
-	local go_id = not not self._unit
+	local peer_id = player_owner and player_owner:network_id()
+	local go_id = self._unit
 
 	if self._leave_area_sfx and peer_id and go_id then
 		Managers.state.network.network_transmit:send_rpc("rpc_play_leave_buff_zone_sfx", peer_id, go_id)
@@ -262,7 +262,7 @@ BuffAreaExtension._enter_func = function (self, entering_unit)
 	local buff_system = Managers.state.entity:system("buff_system")
 	local template = self.template
 	local buff_name = template.buff_area_buff
-	local sync_type = not not template.buff_sync_type
+	local sync_type = template.buff_sync_type
 	local params = FrameTable.alloc_table()
 	local source_unit = self.source_unit
 
@@ -270,8 +270,8 @@ BuffAreaExtension._enter_func = function (self, entering_unit)
 	params.source_attacker_unit = source_unit
 
 	local player_owner = Managers.player:owner(entering_unit)
-	local peer_id = not not player_owner and not not player_owner:network_id()
-	local go_id = not not self._unit
+	local peer_id = player_owner and player_owner:network_id()
+	local go_id = self._unit
 
 	if self._leave_area_sfx and peer_id and go_id then
 		Managers.state.network.network_transmit:send_rpc("rpc_play_enter_buff_zone_sfx", peer_id, go_id)
@@ -310,7 +310,7 @@ end
 
 BuffAreaExtension._set_inside = function (self, inside_table, unit)
 	-- function 15
-	local refs = not not inside_table[unit]
+	local refs = inside_table[unit]
 
 	inside_table[unit] = refs
 

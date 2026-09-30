@@ -43,7 +43,7 @@ end
 
 StartGameWindowWeaveList._setup_definitions = function (self, params)
 	-- function 2
-	local gamepad_active = not not params.use_gamepad_layout
+	local gamepad_active = params.use_gamepad_layout
 
 	if gamepad_active then
 		definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_list_console_definitions")
@@ -132,7 +132,7 @@ StartGameWindowWeaveList._can_play = function (self)
 
 	local widget = self._weave_entry_widgets[self._current_index]
 
-	return not widget or not not not widget.content.locked
+	return not widget or not widget.content.locked
 end
 
 StartGameWindowWeaveList._can_set_next_weave = function (self)
@@ -463,12 +463,12 @@ StartGameWindowWeaveList._draw = function (self, dt)
 	local ui_scenegraph = self.ui_scenegraph
 	local input_service = self._parent:window_input_service()
 	local render_settings = self._render_settings
-	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for widget_name, widget in pairs(self._widgets_by_name) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
@@ -479,7 +479,7 @@ StartGameWindowWeaveList._draw = function (self, dt)
 		local widget = self._weave_entry_widgets[i]
 
 		if widget then
-			render_settings.alpha_multiplier = not not widget.alpha_multiplier
+			render_settings.alpha_multiplier = widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
@@ -725,8 +725,8 @@ end
 StartGameWindowWeaveList._animate_list_entry = function (self, content, style, dt, optional_hover)
 	-- function 30
 	local mouse_active = Managers.input:is_device_active("mouse")
-	local hotspot = not not content.button_hotspot
-	local is_hover = hotspot.is_hover and not not hotspot.has_focus or not hotspot.is_hover and not mouse_active and not not hotspot.has_focus
+	local hotspot = content.button_hotspot
+	local is_hover = hotspot.is_hover and hotspot.has_focus or not hotspot.is_hover and not mouse_active and hotspot.has_focus
 	local is_selected = hotspot.is_selected
 	local on_hover_enter = hotspot.on_hover_enter
 
@@ -735,10 +735,10 @@ StartGameWindowWeaveList._animate_list_entry = function (self, content, style, d
 		on_hover_enter = false
 	end
 
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 14
 	local input_speed = 20
 

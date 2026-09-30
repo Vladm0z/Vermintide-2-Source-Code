@@ -110,7 +110,7 @@ local SPAWN_DECAL_UNIT_NAME = "units/decals/deus_decal_aoe_cursedchest_01"
 
 local function cursed_chest_enemy_spawn_decal_func(event, element, boxed_spawn_pos, breed_name)
 	-- function 3
-	local decal_map = not not event.decal_map
+	local decal_map = event.decal_map
 
 	event.decal_map = decal_map
 
@@ -141,7 +141,7 @@ end
 local function cursed_chest_enemy_despawn_decal_func(event, element, boxed_spawn_pos)
 	-- function 4
 	local decal_map = event.decal_map
-	local unit = not not decal_map and not not decal_map[boxed_spawn_pos]
+	local unit = decal_map and decal_map[boxed_spawn_pos]
 
 	if unit then
 		Unit.flow_event(unit, "despawned")
@@ -4248,7 +4248,7 @@ local function belakor_shadow_lieutenant_spawn(locus_type_id, add_base_enhanceme
 			spawn_delay = CURSED_CHEST_DELAY_SPAWN,
 			pre_spawn_func = function (optional_data, difficulty, breed_name, event, difficulty_tweak)
 				-- function 103
-				optional_data = not not optional_data or not not {}
+				optional_data = optional_data or {}
 
 				if add_base_enhancement then
 					optional_data.enhancements = {
@@ -4360,7 +4360,7 @@ GenericTerrorEvents.belakor_altar_cultists_spawn = {
 		below_max = BELAKOR_ALTAR_MAX_BELOW_CULTIST_SPAWN,
 		pre_spawn_func = function (optional_data, difficulty, breed_name, event, difficulty_tweak)
 			-- function 107
-			optional_data = not not optional_data or not not {}
+			optional_data = optional_data or {}
 			optional_data.idle_animation = BELAKOR_CULTIST_IDLE_ANIMATIONS[math.random(#BELAKOR_CULTIST_IDLE_ANIMATIONS)]
 
 			return optional_data

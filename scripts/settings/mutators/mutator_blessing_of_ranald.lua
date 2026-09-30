@@ -13,7 +13,7 @@ return {
 	client_update_function = function (context, data, dt, t)
 		-- function 2
 		local local_player = Managers.player:local_player()
-		local player_unit = not not local_player and not not local_player.player_unit
+		local player_unit = local_player and local_player.player_unit
 
 		if local_player and ALIVE[player_unit] then
 			local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")

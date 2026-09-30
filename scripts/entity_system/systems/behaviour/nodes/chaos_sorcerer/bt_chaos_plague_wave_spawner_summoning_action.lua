@@ -72,10 +72,10 @@ BTChaosPlagueWaveSpawnerSummoningAction.run = function (self, unit, blackboard, 
 		local unit_pos = POSITION_LOOKUP[unit]
 		local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, unit_pos, 1, 1)
 		local projected_end_pos = LocomotionUtils.pos_on_mesh(nav_world, target_position, 1, 1)
-		local success = not not projected_start_pos and not not projected_end_pos and not not GwNavQueries.raycango(nav_world, projected_start_pos, projected_end_pos)
+		local success = projected_start_pos and projected_end_pos and GwNavQueries.raycango(nav_world, projected_start_pos, projected_end_pos)
 
 		if success then
-			plague_wave_data.plague_wave_timer = not not (t + timer)
+			plague_wave_data.plague_wave_timer = t + timer
 			blackboard.ready_to_summon = true
 			blackboard.summoning_finished = true
 			blackboard.anticipation_fx_id = nil

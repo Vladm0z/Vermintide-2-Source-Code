@@ -1,6 +1,6 @@
 -- chunkname: @foundation/scripts/util/script_world.lua
 
-ScriptWorld = not not ScriptWorld
+ScriptWorld = ScriptWorld
 
 ScriptWorld.name = function (world)
 	-- function 1
@@ -35,7 +35,7 @@ ScriptWorld.create_viewport = function (world, name, template, layer, position, 
 
 	local viewport = Application.create_viewport(world, template)
 
-	Viewport.set_data(viewport, "layer", not not layer or not not 1)
+	Viewport.set_data(viewport, "layer", layer or 1)
 	Viewport.set_data(viewport, "active", true)
 	Viewport.set_data(viewport, "name", name)
 
@@ -45,7 +45,7 @@ ScriptWorld.create_viewport = function (world, name, template, layer, position, 
 		Viewport.set_data(viewport, "no_scaling", true)
 	end
 
-	local splitscreen = not not Managers.splitscreen
+	local splitscreen = Managers.splitscreen
 
 	if splitscreen and not force_no_scaling then
 		Viewport.set_data(viewport, "rect", {
@@ -290,7 +290,7 @@ ScriptWorld.has_viewport = function (world, name)
 	-- function 16
 	local viewports = World.get_data(world, "viewports")
 
-	return viewports[name] and not not true or not viewports[name] and not not false
+	return viewports[name]
 end
 
 ScriptWorld.viewport = function (world, name, return_free_flight_viewport)
@@ -298,7 +298,7 @@ ScriptWorld.viewport = function (world, name, return_free_flight_viewport)
 	local viewport
 
 	if return_free_flight_viewport then
-		viewport = not not World.get_data(world, "free_flight_viewports")[name] or not not World.get_data(world, "viewports")[name]
+		viewport = World.get_data(world, "free_flight_viewports")[name] or World.get_data(world, "viewports")[name]
 	else
 		viewport = World.get_data(world, "viewports")[name]
 	end
@@ -369,7 +369,7 @@ ScriptWorld._update_render_queue = function (world)
 
 	for name, viewport in pairs(viewports) do
 		if ScriptViewport.active(viewport) then
-			render_queue[#render_queue + 1] = not not free_flight_viewports[name]
+			render_queue[#render_queue + 1] = free_flight_viewports[name]
 		end
 	end
 
@@ -406,13 +406,13 @@ ScriptWorld.spawn_level = function (world, name, object_sets, position, rotation
 	local level
 
 	if time_sliced_spawn then
-		level = World.spawn_level_time_sliced(world, name, not not position or not not Vector3.zero(), not not rotation or not not Quaternion.identity(), Vector3(1, 1, 1), not not object_sets or not not {})
+		level = World.spawn_level_time_sliced(world, name, position or Vector3.zero(), rotation or Quaternion.identity(), Vector3(1, 1, 1), object_sets or {})
 	else
-		level = World.spawn_level(world, name, not not position or not not Vector3.zero(), not not rotation or not not Quaternion.identity(), Vector3(1, 1, 1), not not object_sets or not not {})
+		level = World.spawn_level(world, name, position or Vector3.zero(), rotation or Quaternion.identity(), Vector3(1, 1, 1), object_sets or {})
 	end
 
 	local nested_levels = Level.nested_levels(level)
-	local logic_level = not not nested_levels[1]
+	local logic_level = nested_levels[1]
 
 	levels[name] = {
 		level = level,
@@ -439,7 +439,7 @@ ScriptWorld.spawn_level = function (world, name, object_sets, position, rotation
 				})
 			end
 		else
-			shading_env = ScriptWorld.create_shading_environment(world, shading_env_name, shading_callback, not not mood_setting or not not "default")
+			shading_env = ScriptWorld.create_shading_environment(world, shading_env_name, shading_callback, mood_setting or "default")
 		end
 	end
 
@@ -454,7 +454,7 @@ ScriptWorld.level = function (world, name)
 	fassert(level_data, "Level %q doesn't exist", name)
 
 	local nested_levels = level_data.nested_levels
-	local logic_level = not not nested_levels[1]
+	local logic_level = nested_levels[1]
 
 	return logic_level
 end
@@ -583,7 +583,7 @@ ScriptWorld.create_particles_linked = function (world, effect_name, unit, node, 
 	-- function 33
 	local id = World.create_particles(world, effect_name, Vector3(0, 0, 0))
 
-	pose = not not pose or not not Matrix4x4.identity()
+	pose = pose or Matrix4x4.identity()
 
 	World.link_particles(world, id, unit, node, pose, policy)
 

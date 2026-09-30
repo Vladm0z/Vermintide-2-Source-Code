@@ -135,7 +135,7 @@ return {
 		end
 
 		if script_data.shadow_homing_skulls_debug then
-			Debug.text("homing skulls state state: %s - %s", data.state, data.next_spawn_t and not not (data.next_spawn_t - t) or not data.next_spawn_t and not not 0)
+			Debug.text("homing skulls state state: %s - %s", data.state, data.next_spawn_t and data.next_spawn_t - t or not data.next_spawn_t and 0)
 		end
 	end,
 	server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)

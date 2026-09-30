@@ -19,7 +19,7 @@ WeaveLimitedItemSpawnerExtension.init = function (self, extension_init_context, 
 	if template then
 		local pickup_system = Managers.state.entity:system("pickup_system")
 
-		pickup_system:disable_spawners(not not template.types)
+		pickup_system:disable_spawners(template.types)
 	end
 end
 
@@ -41,9 +41,9 @@ WeaveLimitedItemSpawnerExtension._set_objective_data = function (self, objective
 	self._on_destroy_func = objective_data.on_destroy_func
 	self._on_spawn_func = objective_data.on_spawn_func
 	self._on_complete_func = objective_data.on_complete_func
-	self._objective_template_name = not not objective_data.template_name
+	self._objective_template_name = objective_data.template_name
 
-	local pickup_name = self._objective_template_name ~= "gargoyle_head_spawner" and not not "magic_barrel" or not (self._objective_template_name ~= "gargoyle_head_spawner") and not not "magic_crystal"
+	local pickup_name = self._objective_template_name ~= "gargoyle_head_spawner" and "magic_barrel" or not (self._objective_template_name ~= "gargoyle_head_spawner") and "magic_crystal"
 
 	Unit.set_data(self._unit, "template_name", self._objective_template_name)
 	Unit.set_data(self._unit, "pickup_name", pickup_name)

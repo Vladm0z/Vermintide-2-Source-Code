@@ -27,7 +27,7 @@ end
 
 local function BUFF_END_TIME(buff)
 	-- function 3
-	return BUFF_IS_INFINITE(buff) and not not math.huge or not BUFF_IS_INFINITE(buff) and not not (buff.start_time + buff.duration)
+	return BUFF_IS_INFINITE(buff) and math.huge or not BUFF_IS_INFINITE(buff) and buff.start_time + buff.duration
 end
 
 BuffUI = class(BuffUI)
@@ -58,10 +58,10 @@ BuffUI.on_game_options_changed = function (self)
 	local old_insignia_visibility = self._insignia_visibility
 	local insignia_visibility = Application.user_setting("toggle_versus_level_in_all_game_modes")
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local show_insignia = mechanism_name == "versus" or not not insignia_visibility
+	local show_insignia = mechanism_name == "versus" or insignia_visibility
 
 	if old_insignia_visibility ~= show_insignia then
-		self._ui_scenegraph.pivot_parent.position[1] = show_insignia and not not UISettings.INSIGNIA_OFFSET or not show_insignia and not not 0
+		self._ui_scenegraph.pivot_parent.position[1] = show_insignia and UISettings.INSIGNIA_OFFSET or not show_insignia and 0
 
 		for i = 1, #self._active_buff_widgets do
 			self:_set_widget_dirty(self._active_buff_widgets[i])
@@ -121,7 +121,7 @@ BuffUI._sync_buffs = function (self)
 		widget_content.stack_count = 0
 	end
 
-	local player_unit = self._is_spectator and not not self._spectated_player_unit or not self._is_spectator and not not self._player.player_unit
+	local player_unit = self._is_spectator and self._spectated_player_unit or not self._is_spectator and self._player.player_unit
 	local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
 
 	if buff_extension then
@@ -174,7 +174,7 @@ BuffUI._sync_buffs = function (self)
 			local buff = widget_content.buff
 
 			if not BUFF_IS_INFINITE(buff) then
-				local duration = not not buff.duration
+				local duration = buff.duration
 
 				if duration == 0 then
 					widget_content.progress = 0
@@ -188,7 +188,7 @@ BuffUI._sync_buffs = function (self)
 				self._dirty = true
 			elseif widget_content.stack_count ~= widget_content.last_stack_count then
 				widget_content.last_stack_count = widget_content.stack_count
-				widget_content.progress = buff.template.is_cooldown and not not 1 or not buff.template.is_cooldown and not not 0
+				widget_content.progress = buff.template.is_cooldown and 1 or not buff.template.is_cooldown and 0
 				widget.element.dirty = true
 				self._dirty = true
 			end
@@ -243,7 +243,7 @@ BuffUI._add_buff = function (self, buff, icon)
 		if end_time < current_end_time then
 			widget_content.buff = buff
 			widget.style.texture_icon.saturated = is_cooldown
-			widget.style.texture_icon_bg.saturated = not not is_cooldown and not not is_infinite
+			widget.style.texture_icon_bg.saturated = is_cooldown and is_infinite
 		end
 
 		return false
@@ -265,17 +265,17 @@ BuffUI._add_buff = function (self, buff, icon)
 	widget_content.name = buff_template.name
 	widget_content.static_start_time = start_time
 	widget_content.stack_count = 1
-	widget_content.progress = is_cooldown and not not 1 or not is_cooldown and not not 0
+	widget_content.progress = is_cooldown and 1 or not is_cooldown and 0
 
 	UIRenderer.set_element_visible(self._ui_renderer, widget.element, true)
 
 	local widget_style = widget.style
-	local duration_color = buff_template.debuff and not not COLOR_DEBUFF or not buff_template.debuff and not not COLOR_BUFF
+	local duration_color = buff_template.debuff and COLOR_DEBUFF or not buff_template.debuff and COLOR_BUFF
 
 	Colors.copy_to(widget_style.texture_duration.color, duration_color)
 
 	widget_style.texture_icon.saturated = is_cooldown
-	widget_style.texture_icon_bg.saturated = not not is_cooldown and not not is_infinite
+	widget_style.texture_icon_bg.saturated = is_cooldown and is_infinite
 	self._buff_name_to_widget[buff_template.name] = widget
 	active_buff_widgets[num_active_buffs + 1] = widget
 

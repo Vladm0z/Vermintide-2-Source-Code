@@ -149,7 +149,7 @@ CareerAbilityVortexSorcerer._ability_available = function (self)
 	local ghost_mode_extension = self.ghost_mode_extension
 	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
 
-	return not not career_extension:can_use_activated_ability()
+	return (career_extension:can_use_activated_ability())
 end
 
 CareerAbilityVortexSorcerer._start_priming = function (self)
@@ -176,7 +176,7 @@ CareerAbilityVortexSorcerer._landing_postion_valid = function (self, start_pos, 
 		if done then
 			local path_found = GwNavAStar.path_found(astar)
 
-			valid_pos = not path_found or not not true or not not valid_pos
+			valid_pos = not path_found or true or valid_pos
 
 			GwNavAStar.destroy(astar)
 
@@ -233,7 +233,7 @@ CareerAbilityVortexSorcerer._update_priming = function (self, dt, t)
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 	local new_hit_position = AISlotUtils.get_target_pos_on_navmesh(hit_position, nav_world)
 
-	hit_position = not not new_hit_position or not not hit_position
+	hit_position = new_hit_position or hit_position
 
 	local data = self._astar_data
 

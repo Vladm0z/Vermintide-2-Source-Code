@@ -175,7 +175,7 @@ settings.buff_function_templates = {
 					local left_unit_1p = slot_data.left_unit_1p
 					local right_weapon_extension = ScriptUnit.has_extension(right_unit_1p, "weapon_system")
 					local left_weapon_extension = ScriptUnit.has_extension(left_unit_1p, "weapon_system")
-					local weapon_extension = not not right_weapon_extension or not not left_weapon_extension
+					local weapon_extension = right_weapon_extension or left_weapon_extension
 
 					weapon_extension:stop_action("action_complete")
 				end
@@ -252,7 +252,7 @@ settings.buff_function_templates = {
 			frag_settings = fire_settings
 		end
 
-		local pickup_settings = pick_frag and (not not frag_settings or not not fire_settings) or not pick_frag and not not fire_settings
+		local pickup_settings = pick_frag and (frag_settings or fire_settings) or not pick_frag and fire_settings
 		local item_name = pickup_settings.item_name
 		local item_data = ItemMasterList[item_name]
 		local player = Managers.player:owner(unit)

@@ -145,8 +145,8 @@ end
 BreedFreezer._setup_freeze_box = function (self, breed_freezer_settings)
 	-- function 3
 	local offset_z = 0
-	local freezer_pos = script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_pos_debug) or not script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_pos)
-	local freezer_offset = script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_offset_debug) or not script_data.debug_breed_freeze and not not Vector3Aux.unbox(breed_freezer_settings.freezer_offset)
+	local freezer_pos = script_data.debug_breed_freeze and Vector3Aux.unbox(breed_freezer_settings.freezer_pos_debug) or not script_data.debug_breed_freeze and Vector3Aux.unbox(breed_freezer_settings.freezer_pos)
+	local freezer_offset = script_data.debug_breed_freeze and Vector3Aux.unbox(breed_freezer_settings.freezer_offset_debug) or not script_data.debug_breed_freeze and Vector3Aux.unbox(breed_freezer_settings.freezer_offset)
 
 	self.freezer_pos = Vector3Box(freezer_pos)
 	self.freezer_offset = Vector3Box(freezer_offset)
@@ -183,7 +183,7 @@ BreedFreezer._setup_freeze_box = function (self, breed_freezer_settings)
 			end
 		end
 
-		local base_unit = script_data.use_optimized_breed_units and not not breed.opt_base_unit or not script_data.use_optimized_breed_units and not not breed.base_unit
+		local base_unit = script_data.use_optimized_breed_units and breed.opt_base_unit or not script_data.use_optimized_breed_units and breed.base_unit
 		local variants = 0
 
 		if base_unit and type(base_unit) == "table" then
@@ -252,7 +252,7 @@ BreedFreezer.try_mark_unit_for_freeze = function (self, breed, unit)
 
 	for i = 1, #units_to_freeze do
 		if units_to_freeze[i] == unit then
-			rawset(_G, "DoubleFreezeContext", not not rawget(_G, "DoubleFreezeContext"))
+			rawset(_G, "DoubleFreezeContext", (rawget(_G, "DoubleFreezeContext")))
 
 			DoubleFreezeContext[unit] = true
 

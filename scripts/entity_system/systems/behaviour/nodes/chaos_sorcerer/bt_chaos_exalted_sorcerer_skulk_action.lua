@@ -21,11 +21,11 @@ BTChaosExaltedSorcererSkulkAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 	local breed = blackboard.breed
 	local target_dist = blackboard.target_dist
-	local skulk_data = not not blackboard.skulk_data
+	local skulk_data = blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-	skulk_data.direction = not not skulk_data.direction
-	skulk_data.radius = not not skulk_data.radius
+	skulk_data.direction = skulk_data.direction
+	skulk_data.radius = skulk_data.radius
 	blackboard.action = action
 
 	if blackboard.move_state ~= "idle" then
@@ -44,7 +44,7 @@ BTChaosExaltedSorcererSkulkAction.enter = function (self, unit, blackboard, t)
 	end
 
 	blackboard.ready_to_summon = false
-	blackboard.num_summons = not not blackboard.num_summons
+	blackboard.num_summons = blackboard.num_summons
 	blackboard.health_extension = ScriptUnit.extension(unit, "health_system")
 	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - action.part_hp_lost_to_teleport
 	blackboard.travel_teleport_timer = t + ConflictUtils.random_interval(action.teleport_cooldown)
@@ -256,7 +256,7 @@ BTChaosExaltedSorcererSkulkAction.get_skulk_target = function (unit, blackboard,
 	for i = 1, TRIES do
 		local rot_vec = to_target - to_target_dir * 0.5
 
-		if blackboard.num_summons and blackboard.num_summons >= not not action.teleport_closer_summon_limit then
+		if blackboard.num_summons and blackboard.num_summons >= action.teleport_closer_summon_limit then
 			rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
 		end
 
@@ -303,7 +303,7 @@ BTChaosExaltedSorcererSkulkAction.update_plague_wave = function (self, unit, bla
 		blackboard.quick_teleport = true
 		blackboard.move_pos = nil
 		blackboard.ready_to_summon = true
-		blackboard.num_plague_waves = blackboard.num_plague_waves and not not (blackboard.num_plague_waves + 1) or not blackboard.num_plague_waves and not not 1
+		blackboard.num_plague_waves = blackboard.num_plague_waves and blackboard.num_plague_waves + 1 or not blackboard.num_plague_waves and 1
 
 		if blackboard.num_plague_waves >= 4 then
 			blackboard.num_plague_waves = 0

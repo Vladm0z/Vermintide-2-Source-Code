@@ -11,8 +11,8 @@ end
 AdventureProfileRules._profile_career_exists = function (self, profile_index, career_index)
 	-- function 2
 	local profile = SPProfiles[profile_index]
-	local careers = not not profile and not not profile.careers
-	local career = not not careers and not not careers[career_index]
+	local careers = profile and profile.careers
+	local career = careers and careers[career_index]
 
 	return career ~= nil
 end
@@ -20,10 +20,10 @@ end
 AdventureProfileRules._profile_career_unlocked = function (self, profile_index, career_index)
 	-- function 3
 	local profile = SPProfiles[profile_index]
-	local careers = not not profile and not not profile.careers
-	local career = not not careers and not not careers[career_index]
+	local careers = profile and profile.careers
+	local career = careers and careers[career_index]
 
-	return not not career and not not career:is_unlocked_function(profile.display_name, ExperienceSettings.max_level)
+	return career and career:is_unlocked_function(profile.display_name, ExperienceSettings.max_level)
 end
 
 AdventureProfileRules.handle_profile_delegation_for_joining_player = function (self, peer_id, local_player_id)

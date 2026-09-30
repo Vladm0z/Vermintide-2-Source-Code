@@ -2,7 +2,7 @@
 
 local ObjectiveTypes = dofile("scripts/settings/objective_templates_vs")
 
-HintTemplates = not not HintTemplates
+HintTemplates = HintTemplates
 HintTemplates.first_time_pactsworn = {
 	data = {
 		side = "dark_pact",
@@ -26,18 +26,18 @@ HintTemplates.first_time_pactsworn = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
 					local local_player_unit = local_player.player_unit
 					local ghost_mode_ext = ScriptUnit.has_extension(local_player_unit, "ghost_mode_system")
-					local is_in_ghost_mode = not not ghost_mode_ext and not not ghost_mode_ext:is_in_ghost_mode()
-					local is_dark_pact = not not side_name and side_name == data.side
+					local is_in_ghost_mode = ghost_mode_ext and ghost_mode_ext:is_in_ghost_mode()
+					local is_dark_pact = side_name and side_name == data.side
 
 					if is_dark_pact and is_in_ghost_mode then
 						return true
@@ -72,11 +72,11 @@ HintTemplates.horde_ability = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -123,11 +123,11 @@ HintTemplates.scoring_points = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -220,11 +220,11 @@ HintTemplates.healing = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -237,8 +237,8 @@ HintTemplates.healing = {
 							local health_extension = ScriptUnit.extension(player_unit, "health_system")
 							local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 							local has_healing_item = inventory_extension:get_slot_data("slot_healthkit")
-							local is_dead = not not status_extension and not not status_extension:is_dead()
-							local total_health_percent = is_dead and not not 0 or not is_dead and not not health_extension:current_health_percent()
+							local is_dead = status_extension and status_extension:is_dead()
+							local total_health_percent = is_dead and 0 or not is_dead and health_extension:current_health_percent()
 
 							if total_health_percent <= 0.2 and has_healing_item then
 								return true
@@ -275,11 +275,11 @@ HintTemplates.bombs = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -326,11 +326,11 @@ HintTemplates.wounds = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -430,11 +430,11 @@ HintTemplates.capture_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -476,11 +476,11 @@ HintTemplates.payload_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -522,11 +522,11 @@ HintTemplates.safe_zone = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -568,11 +568,11 @@ HintTemplates.socket_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -614,11 +614,11 @@ HintTemplates.target_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -660,11 +660,11 @@ HintTemplates.survive_event = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -710,11 +710,11 @@ HintTemplates.interact_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()
@@ -756,11 +756,11 @@ HintTemplates.reach_objective = {
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
 		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
-			local local_player = not not Managers.player
+			local local_player = Managers.player
 
 			if local_player then
 				local local_party = local_player:get_party()
-				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+				local local_side = local_party and Managers.state.side.side_by_party[local_party]
 
 				if local_side then
 					local side_name = local_side:name()

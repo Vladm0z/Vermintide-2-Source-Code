@@ -21,8 +21,8 @@ local function item_sort_func(item_1, item_2)
 	-- function 1
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local item_1_rarity = not not item_1.rarity
-	local item_2_rarity = not not item_2.rarity
+	local item_1_rarity = item_1.rarity
+	local item_2_rarity = item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -255,8 +255,8 @@ StartGameWindowMutatorGrid._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 

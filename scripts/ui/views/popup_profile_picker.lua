@@ -57,7 +57,7 @@ PopupProfilePicker._create_ui_elements = function (self)
 	for i, profile_index in ipairs(ProfilePriority) do
 		local profile_settings = SPProfiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local hero_experience = not not hero_attributes:get(hero_name, "experience")
+		local hero_experience = hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local icon_widget = UIWidget.init(hero_icon_widget_definition)
 
@@ -121,11 +121,11 @@ PopupProfilePicker.show = function (self, current_profile_index, current_career_
 	self._lobby_client = lobby_client
 	self._reserved_party_id = reserved_party_id
 
-	self._ingame_ui:handle_transition(join_by_lobby_browser and not not "exit_menu" or not join_by_lobby_browser and not not "close_active")
+	self._ingame_ui:handle_transition(join_by_lobby_browser and "exit_menu" or not join_by_lobby_browser and "close_active")
 	ShowCursorStack.show("PopupProfilePicker")
 
-	local profile_index = not not current_profile_index or not not 1
-	local career_index = not not current_career_index or not not 1
+	local profile_index = current_profile_index or 1
+	local career_index = current_career_index or 1
 	local ignore_sound = true
 
 	self:_select_hero(profile_index, career_index, ignore_sound)
@@ -187,8 +187,8 @@ end
 
 PopupProfilePicker.set_result = function (self, accepted, reason)
 	-- function 8
-	local selected_hero_name = not not accepted and not not self._selected_hero_name
-	local selected_career_name = not not accepted and not not self._selected_career_name
+	local selected_hero_name = accepted and self._selected_hero_name
+	local selected_career_name = accepted and self._selected_career_name
 
 	if accepted then
 		self:_play_sound("hud_hot_join_hero_popup_accept")
@@ -344,7 +344,7 @@ PopupProfilePicker._select_hero = function (self, profile_index, career_index, i
 	local hero_display_text = Localize(character_name)
 	local career_display_text = Localize(career_display_name)
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(hero_name, "experience")
+	local hero_experience = hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(hero_experience)
 
 	self:_set_hero_info(hero_display_text, career_display_text, level)
@@ -367,13 +367,13 @@ PopupProfilePicker._select_hero = function (self, profile_index, career_index, i
 	for i, widget in ipairs(self._hero_widgets) do
 		local career = profile_settings.careers[i]
 		local content = widget.content
-		local available = not not career and not not not backend_dlcs:is_unreleased_career(career.name)
+		local available = career and not backend_dlcs:is_unreleased_career(career.name)
 
 		content.exists = available
 
 		if available then
 			content.career_settings = career
-			content.portrait = not not career.picking_image
+			content.portrait = career.picking_image
 
 			local is_career_unlocked, _, dlc_name = career:is_unlocked_function(hero_name, level)
 
@@ -428,7 +428,7 @@ local REQUEST_DATA_DELAY = 2
 
 PopupProfilePicker._update_occupied_profiles = function (self, t)
 	-- function 19
-	if self._lobby_client.request_data and t > not not self._request_timer then
+	if self._lobby_client.request_data and t > self._request_timer then
 		self._lobby_client:request_data()
 
 		self._request_timer = t + REQUEST_DATA_DELAY
@@ -447,7 +447,7 @@ PopupProfilePicker._update_occupied_profiles = function (self, t)
 		local profile_index = ProfilePriority[i]
 
 		occupied = not ProfileSynchronizer.is_free_in_lobby(profile_index, lobby_data, self._reserved_party_id)
-		occupied = self._optional_locked_profile_index == profile_index or not not occupied
+		occupied = self._optional_locked_profile_index == profile_index or occupied
 
 		local widget = hero_icon_widgets[i]
 		local content = widget.content
@@ -458,7 +458,7 @@ PopupProfilePicker._update_occupied_profiles = function (self, t)
 
 	local taken = not ProfileSynchronizer.is_free_in_lobby(self._selected_profile_index, lobby_data, self._reserved_party_id)
 
-	taken = self._optional_locked_profile_index == self._selected_profile_index or not not taken
+	taken = self._optional_locked_profile_index == self._selected_profile_index or taken
 
 	for i = 1, #hero_widgets do
 		local widget = hero_widgets[i]
@@ -488,7 +488,7 @@ PopupProfilePicker.set_select_button_enable_state = function (self, enabled)
 	-- function 21
 	local button_content = self._widgets_by_name.select_button.content
 
-	button_content.title_text = enabled and not not Localize("input_description_confirm") or not enabled and not not Localize("dlc1_2_difficulty_unavailable")
+	button_content.title_text = enabled and Localize("input_description_confirm") or not enabled and Localize("dlc1_2_difficulty_unavailable")
 	button_content.button_hotspot.disable_button = not enabled
 	self._selection_approved = enabled
 

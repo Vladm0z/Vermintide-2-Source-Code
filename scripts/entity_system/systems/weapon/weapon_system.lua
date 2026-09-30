@@ -49,7 +49,7 @@ WeaponSystem.init = function (self, entity_system_creation_context, system_name)
 
 	local level_setting = LevelSettings[entity_system_creation_context.startup_data.level_key]
 
-	global_is_inside_inn = not not level_setting.hub_level
+	global_is_inside_inn = level_setting.hub_level
 	self._player_damage_forbidden = Managers.state.game_mode:setting("player_damage_forbidden")
 	self.game = Managers.state.network:game()
 	self.network_manager = Managers.state.network
@@ -219,7 +219,7 @@ WeaponSystem.rpc_attack_hit = function (self, channel_id, damage_source_id, atta
 	local player_manager = Managers.player
 	local attacker_player = player_manager:is_player_unit(attacker_unit)
 	local hit_player = player_manager:is_player_unit(hit_unit)
-	local player_hitting_player = not not hit_player and not not attacker_player
+	local player_hitting_player = hit_player and attacker_player
 
 	if player_hitting_player then
 		if self._player_damage_forbidden then
@@ -240,9 +240,9 @@ WeaponSystem.rpc_attack_hit = function (self, channel_id, damage_source_id, atta
 	local hit_zone_name = NetworkLookup.hit_zones[hit_zone_id]
 	local blackboard = BLACKBOARDS[hit_unit]
 	local uses_slot_system = ScriptUnit.has_extension(hit_unit, "ai_slot_system")
-	local target_override_extension = ScriptUnit.has_extension(attacker_unit, "target_override_system") and not not ScriptUnit.extension(attacker_unit, "target_override_system") or not ScriptUnit.has_extension(attacker_unit, "target_override_system") and not not nil
-	local status_extension = ScriptUnit.has_extension(attacker_unit, "status_system") and not not ScriptUnit.extension(attacker_unit, "status_system") or not ScriptUnit.has_extension(attacker_unit, "status_system") and not not nil
-	local attacker_not_incapacitated = status_extension and (not status_extension:is_disabled() or not not nil) or not status_extension and not not nil
+	local target_override_extension = ScriptUnit.has_extension(attacker_unit, "target_override_system") and ScriptUnit.extension(attacker_unit, "target_override_system") or not ScriptUnit.has_extension(attacker_unit, "target_override_system") and nil
+	local status_extension = ScriptUnit.has_extension(attacker_unit, "status_system") and ScriptUnit.extension(attacker_unit, "status_system") or not ScriptUnit.has_extension(attacker_unit, "status_system") and nil
+	local attacker_not_incapacitated = status_extension and (not status_extension:is_disabled() or nil) or not status_extension and nil
 	local hit_unit_is_enemy = DamageUtils.is_enemy(attacker_unit, hit_unit)
 	local hit_ragdoll_actor = NetworkLookup.hit_ragdoll_actors[hit_ragdoll_actor_id]
 	local damage_profile_name = NetworkLookup.damage_profiles[damage_profile_id]
@@ -275,7 +275,7 @@ WeaponSystem.rpc_attack_hit = function (self, channel_id, damage_source_id, atta
 
 	if blackboard and blackboard.breed and blackboard.breed.is_ai then
 		if blackboard.breed.use_predicted_damage_in_stagger_calculation then
-			local target_settings = damage_profile.targets and not not damage_profile.targets[target_index] or not damage_profile.targets and not not damage_profile.default_target
+			local target_settings = damage_profile.targets and damage_profile.targets[target_index] or not damage_profile.targets and damage_profile.default_target
 
 			if target_settings then
 				local boost_curve = BoostCurves[target_settings.boost_curve_type]
@@ -296,12 +296,12 @@ WeaponSystem.rpc_attack_hit = function (self, channel_id, damage_source_id, atta
 
 		local unbreakable_shield = blackboard.breed.unbreakable_shield
 
-		shield_breaking_hit = not unbreakable_shield and (not not damage_profile.shield_break or not not shield_break_procced)
+		shield_breaking_hit = not unbreakable_shield and (damage_profile.shield_break or shield_break_procced)
 	end
 
 	local t = self.t
 
-	DamageUtils.server_apply_hit(t, attacker_unit, hit_unit, not not hit_zone_name or not not "full", hit_position, attack_direction, hit_ragdoll_actor, damage_source, power_level, damage_profile, target_index, boost_curve_multiplier, is_critical_strike, can_damage, can_stagger, blocking, shield_breaking_hit, backstab_multiplier, first_hit, total_hits, nil, optional_predicted_damage)
+	DamageUtils.server_apply_hit(t, attacker_unit, hit_unit, hit_zone_name or "full", hit_position, attack_direction, hit_ragdoll_actor, damage_source, power_level, damage_profile, target_index, boost_curve_multiplier, is_critical_strike, can_damage, can_stagger, blocking, shield_breaking_hit, backstab_multiplier, first_hit, total_hits, nil, optional_predicted_damage)
 end
 
 WeaponSystem.destroy = function (self)
@@ -360,7 +360,7 @@ WeaponSystem.update_synced_beam_particle_effects = function (self)
 			if result then
 				local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
 				local player = Managers.player:owner(unit)
-				local allow_friendly_fire = not not player and not not DamageUtils.allow_friendly_fire_ranged(difficulty_settings, player)
+				local allow_friendly_fire = player and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, player)
 
 				for _, hit in pairs(result) do
 					local potential_hit_position = hit[INDEX_POSITION]
@@ -377,7 +377,7 @@ WeaponSystem.update_synced_beam_particle_effects = function (self)
 							local hit_zone = breed.hit_zones_lookup[node]
 							local hit_zone_name = hit_zone.name
 
-							valid_hit = allow_friendly_fire and (breed.is_player and hit_zone_name ~= "afro" or not breed.is_player and not not is_enemy and hit_zone_name ~= "afro") or not allow_friendly_fire and not not is_enemy and hit_zone_name ~= "afro"
+							valid_hit = allow_friendly_fire and (breed.is_player and hit_zone_name ~= "afro" or not breed.is_player and is_enemy and hit_zone_name ~= "afro") or not allow_friendly_fire and is_enemy and hit_zone_name ~= "afro"
 						else
 							valid_hit = true
 						end
@@ -641,7 +641,7 @@ WeaponSystem._first_wielded_weapon_unit = function (self, owner_unit)
 	-- function 19
 	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
 	local equipment = inventory_extension:equipment()
-	local weapon_unit = not not equipment.left_hand_wielded_unit
+	local weapon_unit = equipment.left_hand_wielded_unit
 
 	return weapon_unit
 end
@@ -654,7 +654,7 @@ WeaponSystem.rpc_start_beam = function (self, channel_id, unit_id, beam_effect_i
 		local beam_end_effect = NetworkLookup.effects[beam_end_effect_id]
 		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 		local equipment = inventory_extension:equipment()
-		local weapon_unit = not not equipment.right_hand_wielded_unit_3p
+		local weapon_unit = equipment.right_hand_wielded_unit_3p
 		local world = self.world
 
 		self._beam_particle_effects[unit] = {
@@ -771,7 +771,7 @@ WeaponSystem.rpc_start_flamethrower = function (self, channel_id, unit_id, flame
 		local flamethrower_effect = NetworkLookup.effects[flamethrower_effect_id]
 		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 		local equipment = inventory_extension:equipment()
-		local weapon_unit = not not equipment.right_hand_wielded_unit_3p
+		local weapon_unit = equipment.right_hand_wielded_unit_3p
 		local muzzle_position = Unit.world_position(weapon_unit, Unit.node(weapon_unit, "fx_muzzle"))
 		local muzzle_rotation = Unit.world_rotation(weapon_unit, Unit.node(weapon_unit, "fx_muzzle"))
 		local world = self.world
@@ -979,18 +979,18 @@ WeaponSystem.start_soul_rip = function (self, owner_unit, target_unit, target_no
 		source_unit = fp_extension:get_first_person_unit()
 
 		local anticipation_fx_name = "fx/wpnfx_necromancer_skullstaff_anticipation"
-		local node = Unit.has_node(source_unit, "j_leftweaponattach") and not not Unit.node(source_unit, "j_leftweaponattach") or not Unit.has_node(source_unit, "j_leftweaponattach") and not not 0
+		local node = Unit.has_node(source_unit, "j_leftweaponattach") and Unit.node(source_unit, "j_leftweaponattach") or not Unit.has_node(source_unit, "j_leftweaponattach") and 0
 
 		current_data.anticipation_fx = ScriptWorld.create_particles_linked(world, anticipation_fx_name, source_unit, node, "destroy")
 		first_person = fp_extension:first_person_mode_active()
 	end
 
-	local hand_unit_name = first_person and not not "units/test_unit/cup_test" or not first_person and not not "units/test_unit/cup_test_3p"
+	local hand_unit_name = first_person and "units/test_unit/cup_test" or not first_person and "units/test_unit/cup_test_3p"
 
 	current_data.weapon_unit = source_unit
-	current_data.weapon_node_id = Unit.has_node(source_unit, "j_leftweaponattach") and not not Unit.node(source_unit, "j_leftweaponattach") or not Unit.has_node(source_unit, "j_leftweaponattach") and not not 0
+	current_data.weapon_node_id = Unit.has_node(source_unit, "j_leftweaponattach") and Unit.node(source_unit, "j_leftweaponattach") or not Unit.has_node(source_unit, "j_leftweaponattach") and 0
 	current_data.weapon_fx_unit = World.spawn_unit(world, hand_unit_name)
-	current_data.target_node_id = Unit.has_node(target_unit, "j_spine") and not not Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and not not 0
+	current_data.target_node_id = Unit.has_node(target_unit, "j_spine") and Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and 0
 	current_data.target_fx_unit = World.spawn_unit(world, "units/test_unit/cup_test_3p")
 
 	local anticipation_scale = Vector3(2, 2, 2)
@@ -1238,7 +1238,7 @@ WeaponSystem._select_next_chained_projectile_target = function (self, chain_data
 	local side_manager = Managers.state.side
 	local side_by_unit = side_manager.side_by_unit
 	local side = side_by_unit[chain_data.owner_unit]
-	local enemy_categories = not not side and not not side.enemy_broadphase_categories
+	local enemy_categories = side and side.enemy_broadphase_categories
 	local num_enemies = Broadphase.query(ai_broadphase, last_chain_pos, settings.chain_distance, nearby_enemy_units, enemy_categories)
 
 	for target_id = 1, num_enemies do
@@ -1247,7 +1247,7 @@ WeaponSystem._select_next_chained_projectile_target = function (self, chain_data
 		if not hit_units[target_unit] and HEALTH_ALIVE[target_unit] then
 			hit_units[target_unit] = true
 
-			local node = Unit.has_node(target_unit, "j_spine") and not not Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and not not 0
+			local node = Unit.has_node(target_unit, "j_spine") and Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and 0
 			local next_chain_pos = Unit.world_position(target_unit, node)
 			local mid_offset = Vector3(math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()))
 			local mid_point = last_chain_pos + (next_chain_pos - last_chain_pos) / 2 + mid_offset

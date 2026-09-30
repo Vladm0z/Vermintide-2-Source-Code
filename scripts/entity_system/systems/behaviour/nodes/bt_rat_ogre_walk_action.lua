@@ -99,7 +99,7 @@ BTRatOgreWalkAction.follow = function (self, unit, t, dt, blackboard, locomotion
 		local action = self._tree_node.action_data
 		local start_anim
 
-		Managers.state.network:anim_event(unit, not not start_anim or not not action.move_anim)
+		Managers.state.network:anim_event(unit, start_anim or action.move_anim)
 	elseif blackboard.move_state ~= "idle" and distance < 0.2 then
 		blackboard.move_state = "idle"
 

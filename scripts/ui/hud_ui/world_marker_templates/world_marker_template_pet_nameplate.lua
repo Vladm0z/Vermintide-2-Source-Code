@@ -2,9 +2,9 @@
 
 local NAME = "pet_nameplate"
 
-WorldMarkerTemplates = not not WorldMarkerTemplates
+WorldMarkerTemplates = WorldMarkerTemplates
 
-local template = not not WorldMarkerTemplates[NAME]
+local template = WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 template.position_offset = {

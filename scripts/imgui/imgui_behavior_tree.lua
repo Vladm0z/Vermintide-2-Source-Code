@@ -155,8 +155,8 @@ ImguiBehaviorTree._draw_nodes = function (self, node, x, y, link_out)
 		local padding = self._padding
 		local use_width_padding_zoom = self._use_width_padding_zoom
 		local zoom = self._zoom
-		local width_padding_modifier = use_width_padding_zoom and (not not zoom or not not 1) or not use_width_padding_zoom and not not 1
-		local height_padding_modifier = use_width_padding_zoom and (not not zoom or not not 1) or not use_width_padding_zoom and not not 1
+		local width_padding_modifier = use_width_padding_zoom and (zoom or 1) or not use_width_padding_zoom and 1
+		local height_padding_modifier = use_width_padding_zoom and (zoom or 1) or not use_width_padding_zoom and 1
 
 		x = x + node_width + padding * width_padding_modifier
 
@@ -417,7 +417,7 @@ ImguiBehaviorTree.draw = function (self)
 			self._use_history_slider = false
 		end
 
-		local running_node_name = brain._leaf_node and not not brain._leaf_node._identifier or not brain._leaf_node and not not blackboard.btnode_name
+		local running_node_name = brain._leaf_node and brain._leaf_node._identifier or not brain._leaf_node and blackboard.btnode_name
 
 		if running_node_name ~= nil and running_node_name ~= self._last_leaf_node_run then
 			self:_save_history(brain, running_node_name)
@@ -507,7 +507,7 @@ ImguiBehaviorTree._draw_graph = function (self, consideration_key, consideration
 	Imgui.add_text(max_val_text, axis_end_x + axis_thickness, axis_end_y - text_height, axis_color)
 	Imgui.channel_set_current(1)
 
-	local blackboard_value = not not action_data[value_key]
+	local blackboard_value = action_data[value_key]
 	local blackboard_norm_value = math.clamp(blackboard_value / max_value, 0, 1)
 	local blackboard_value_y = 0
 	local line_start_x = axis_start_x + spline[1] * axis_size_x
@@ -565,14 +565,14 @@ ImguiBehaviorTree._draw_action_data = function (self, action_data, blackboard)
 					self:_draw_graph(consideration_key, consideration_val, blackboard, action_data)
 				elseif consideration_val.is_condition then
 					local input_key = consideration_val.blackboard_input
-					local blackboard_value = not not action_data[input_key]
+					local blackboard_value = action_data[input_key]
 					local is_inverted = consideration.invert
 
 					if is_inverted then
 						blackboard_value = not blackboard_value
 					end
 
-					local result = blackboard_value and not not "true" or not blackboard_value and not not "false"
+					local result = blackboard_value and "true" or not blackboard_value and "false"
 
 					Imgui.text(consideration_key)
 

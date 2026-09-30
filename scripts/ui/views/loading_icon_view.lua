@@ -69,7 +69,7 @@ end
 
 LoadingIconView.active = function (self)
 	-- function 7
-	return not not self._show_loading_icon
+	return self._show_loading_icon
 end
 
 local DO_RELOAD = true

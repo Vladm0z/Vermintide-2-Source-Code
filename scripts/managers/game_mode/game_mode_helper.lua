@@ -12,7 +12,7 @@ GameModeHelper.side_is_dead = function (side_name, ignore_bots)
 		local data = status.game_mode_data
 		local health_state = data.health_state
 		local is_alive = health_state ~= "dead" and health_state ~= "respawn" and health_state ~= "respawning"
-		local should_ignore = not not ignore_bots and not not status.is_bot
+		local should_ignore = ignore_bots and status.is_bot
 
 		if is_alive and not should_ignore then
 			return false

@@ -7,7 +7,7 @@ ByteArray = {
 		-- function 1
 		fassert(value <= 2147483647 and value >= -2147483648 and value % 1 == 0, "number %f has to be within the 32bit signed range", value)
 
-		index = not not index or not not (#array + 1)
+		index = index or #array + 1
 		value = bit.tobit(value)
 
 		local first_byte = bit.band(value, 255)
@@ -28,7 +28,7 @@ ByteArray = {
 	end,
 	read_int32 = function (array, index)
 		-- function 2
-		index = not not index or not not 1
+		index = index or 1
 
 		local first_byte = array[index]
 
@@ -53,26 +53,26 @@ ByteArray = {
 		fassert(value % 1 == 0, "number %f must be an integer", value)
 		fassert(value >= 0 and value <= 255, "number %d has to be within the 8bit unsigned range", value)
 
-		index = not not index or not not (#array + 1)
+		index = index or #array + 1
 		array[index] = value
 
 		return array, index + 1
 	end,
 	read_uint8 = function (array, index)
 		-- function 4
-		return array[not not index or not not 1], index + 1
+		return array[index or 1], index + 1
 	end,
 	pack_uint8 = function (number, value, index)
 		-- function 5
-		index = not not index or not not 1
-		number = not not number or not not 0
+		index = index or 1
+		number = number or 0
 		number = bit.bor(number, bit.lshift(value, (index - 1) * 8))
 
 		return number, index + 1
 	end,
 	unpack_uint8 = function (number, index)
 		-- function 6
-		index = not not index or not not 1
+		index = index or 1
 
 		local value = bit.rshift(number, (index - 1) * 8)
 
@@ -82,15 +82,15 @@ ByteArray = {
 	end,
 	pack_uint16 = function (number, value, index)
 		-- function 7
-		index = not not index or not not 1
-		number = not not number or not not 0
+		index = index or 1
+		number = number or 0
 		number = bit.bor(number, bit.lshift(value, (index - 1) * 16))
 
 		return number, index + 1
 	end,
 	unpack_uint16 = function (number, index)
 		-- function 8
-		index = not not index or not not 1
+		index = index or 1
 
 		fassert(index >= 1 and index <= 2, "unpacking uint16 out of bounds")
 
@@ -105,7 +105,7 @@ ByteArray = {
 		fassert(value % 1 == 0, "number %f must be an integer", value)
 		fassert(value >= 0 and value <= 65535, "number %d has to be within the 8bit unsigned range", value)
 
-		index = not not index or not not 1
+		index = index or 1
 		array[index] = ByteArray.unpack_uint8(value, 1)
 		index = index + 1
 		array[index] = ByteArray.unpack_uint8(value, 2)
@@ -115,7 +115,7 @@ ByteArray = {
 	end,
 	read_uint16 = function (array, index)
 		-- function 10
-		index = not not index or not not 1
+		index = index or 1
 
 		local first_byte = ByteArray.pack_uint8(0, array[index], 1)
 
@@ -129,7 +129,7 @@ ByteArray = {
 	end,
 	write_hash = function (array, value, index)
 		-- function 11
-		index = not not index or not not (#array + 1)
+		index = index or #array + 1
 
 		for i = 1, 16, 2 do
 			local byte = tonumber(value:sub(i, i + 1), 16)
@@ -146,9 +146,9 @@ ByteArray = {
 	end,
 	read_string = function (array, start_index, end_index, out_array)
 		-- function 13
-		start_index = not not start_index or not not 1
-		end_index = not not end_index or not not #array
-		out_array = not not out_array or not not {}
+		start_index = start_index or 1
+		end_index = end_index or #array
+		out_array = out_array or {}
 
 		for i = start_index, end_index do
 			out_array[i] = string.char(array[i])
@@ -158,9 +158,9 @@ ByteArray = {
 	end,
 	write_string = function (array, str, start_index, str_start_index, str_end_index)
 		-- function 14
-		start_index = not not start_index or not not 1
-		str_start_index = not not str_start_index or not not 1
-		str_end_index = not not str_end_index or not not #str
+		start_index = start_index or 1
+		str_start_index = str_start_index or 1
+		str_end_index = str_end_index or #str
 
 		for i = str_start_index, str_end_index do
 			array[start_index + i - 1] = string.byte(str, i)

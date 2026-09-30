@@ -42,7 +42,7 @@ StateLoadingRestartNetwork._init_network = function (self)
 	-- function 3
 	local auto_join_setting = Development.parameter("auto_join")
 
-	assert(not auto_join_setting or not not Development.parameter("unique_server_name"), "Can't use auto_join without unique_server_name")
+	assert(not auto_join_setting or Development.parameter("unique_server_name"), "Can't use auto_join without unique_server_name")
 
 	local lobby_to_join = Development.parameter("auto_join_server")
 
@@ -56,7 +56,7 @@ StateLoadingRestartNetwork._init_network = function (self)
 	local host_to_join
 	local lobby_is_server = lobby_to_join ~= nil
 	local loading_context = self.parent.parent.loading_context
-	local increment_lobby_port = not not IS_WINDOWS
+	local increment_lobby_port = IS_WINDOWS
 
 	LobbySetup.setup_network_options(increment_lobby_port)
 

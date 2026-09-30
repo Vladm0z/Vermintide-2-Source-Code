@@ -191,11 +191,11 @@ local function get_full_cached_key(cache_tree, key_type, peer_id, local_player_i
 	if not cache.__val then
 		local key = {
 			key_type = key_type,
-			peer_id = not not peer_id or not not "0",
-			local_player_id = not not local_player_id or not not 0,
-			profile_index = not not profile_index or not not 0,
-			career_index = not not career_index or not not 0,
-			party_id = not not party_id or not not 0
+			peer_id = peer_id or "0",
+			local_player_id = local_player_id or 0,
+			profile_index = profile_index or 0,
+			career_index = career_index or 0,
+			party_id = party_id or 0
 		}
 
 		cache.__val = key
@@ -216,28 +216,28 @@ local function check_if_key_belongs_to_spec(spec, key)
 	local composite_keys = spec[key_type].composite_keys
 	local peer_id = key.peer_id
 
-	fassert(peer_id == "0" or not not composite_keys and not not composite_keys.peer_id, "[SharedState] key type '%s' does not have peer_id as key parameter", tostring(key_type))
-	fassert(peer_id ~= "0" or not composite_keys or not not not composite_keys.peer_id, "[SharedState] key type '%s' needs peer_id as key parameter", tostring(key_type))
+	fassert(peer_id == "0" or composite_keys and composite_keys.peer_id, "[SharedState] key type '%s' does not have peer_id as key parameter", tostring(key_type))
+	fassert(peer_id ~= "0" or not composite_keys or not composite_keys.peer_id, "[SharedState] key type '%s' needs peer_id as key parameter", tostring(key_type))
 
 	local local_player_id = key.local_player_id
 
-	fassert(local_player_id == 0 or not not composite_keys and not not composite_keys.local_player_id, "[SharedState] key type '%s' does not have local_player_id as key parameter", tostring(key_type))
-	fassert(local_player_id ~= 0 or not composite_keys or not not not composite_keys.local_player_id, "[SharedState] key type '%s' needs local_player_id as key parameter", tostring(key_type))
+	fassert(local_player_id == 0 or composite_keys and composite_keys.local_player_id, "[SharedState] key type '%s' does not have local_player_id as key parameter", tostring(key_type))
+	fassert(local_player_id ~= 0 or not composite_keys or not composite_keys.local_player_id, "[SharedState] key type '%s' needs local_player_id as key parameter", tostring(key_type))
 
 	local profile_index = key.profile_index
 
-	fassert(profile_index == 0 or not not composite_keys and not not composite_keys.profile_index, "[SharedState] key type '%s' does not have profile_index as key parameter", tostring(key_type))
-	fassert(profile_index ~= 0 or not composite_keys or not not not composite_keys.profile_index, "[SharedState] key type '%s' needs profile_index as key parameter", tostring(key_type))
+	fassert(profile_index == 0 or composite_keys and composite_keys.profile_index, "[SharedState] key type '%s' does not have profile_index as key parameter", tostring(key_type))
+	fassert(profile_index ~= 0 or not composite_keys or not composite_keys.profile_index, "[SharedState] key type '%s' needs profile_index as key parameter", tostring(key_type))
 
 	local career_index = key.career_index
 
-	fassert(career_index == 0 or not not composite_keys and not not composite_keys.career_index, "[SharedState] key type '%s' does not have career_index as key parameter", tostring(key_type))
-	fassert(career_index ~= 0 or not composite_keys or not not not composite_keys.career_index, "[SharedState] key type '%s' needs career_index as key parameter", tostring(key_type))
+	fassert(career_index == 0 or composite_keys and composite_keys.career_index, "[SharedState] key type '%s' does not have career_index as key parameter", tostring(key_type))
+	fassert(career_index ~= 0 or not composite_keys or not composite_keys.career_index, "[SharedState] key type '%s' needs career_index as key parameter", tostring(key_type))
 
 	local party_id = key.party_id
 
-	fassert(party_id == 0 or not not composite_keys and not not composite_keys.party_id, "[SharedState] key type '%s' does not have party_id as key parameter", tostring(key_type))
-	fassert(party_id ~= 0 or not composite_keys or not not not composite_keys.party_id, "[SharedState] key type '%s' needs party_id as key parameter", tostring(key_type))
+	fassert(party_id == 0 or composite_keys and composite_keys.party_id, "[SharedState] key type '%s' does not have party_id as key parameter", tostring(key_type))
+	fassert(party_id ~= 0 or not composite_keys or not composite_keys.party_id, "[SharedState] key type '%s' needs party_id as key parameter", tostring(key_type))
 end
 
 local function create_key_type_lookup_from_spec(spec)
@@ -568,7 +568,7 @@ SharedState.set_peer = function (self, owner, key, value)
 		end
 
 		local encoder = self._spec.peer[key.key_type].encode
-		local encoded_value = encoder and not not encoder(value) or not encoder and not not value
+		local encoded_value = encoder and encoder(value) or not encoder and value
 
 		if self._is_server then
 			if self._network_server then
@@ -663,7 +663,7 @@ SharedState.set_server = function (self, key, value)
 		end
 
 		local encoder = self._spec.server[key.key_type].encode
-		local encoded_value = encoder and not not encoder(value) or not encoder and not not value
+		local encoded_value = encoder and encoder(value) or not encoder and value
 
 		if self._network_server then
 			local connected_peers = self._network_server:get_peers()
@@ -696,7 +696,7 @@ SharedState.get_peer = function (self, owner, key)
 
 	local value = get(self._peer_state, owner, key.key_type, key.peer_id, key.local_player_id, key.profile_index, key.career_index, key.party_id)
 
-	return not not value or not not self._spec.peer[key.key_type].default_value
+	return value or self._spec.peer[key.key_type].default_value
 end
 
 SharedState.get_own = function (self, key)
@@ -712,7 +712,7 @@ SharedState.get_server = function (self, key)
 
 	local value = get_server(self._server_state, key.key_type, key.peer_id, key.local_player_id, key.profile_index, key.career_index, key.party_id)
 
-	return not not value or not not self._spec.server[key.key_type].default_value
+	return value or self._spec.server[key.key_type].default_value
 end
 
 SharedState.rpc_shared_state_request_sync = function (self, channel_id, context)
@@ -733,7 +733,7 @@ SharedState.rpc_shared_state_request_sync = function (self, channel_id, context)
 						for career_index, career_index_state in pairs(profile_index_state) do
 							for party_id, value in pairs(career_index_state) do
 								local encoder = self._spec.server[key_type].encode
-								local encoded_value = encoder and not not encoder(value) or not encoder and not not value
+								local encoded_value = encoder and encoder(value) or not encoder and value
 
 								send_set_server_rpc(channel_id, self._context, self._key_type_lookup[key_type], peer_id, local_player_id, profile_index, career_index, party_id, encoded_value)
 							end
@@ -920,7 +920,7 @@ SharedState._set_rpc = function (self, sender_channel_id, owner, key_type_lookup
 	local key_type = self._key_type_lookup[key_type_lookup]
 	local spec = self._spec.peer[key_type]
 	local decoder = spec.decode
-	local value = decoder and not not decoder(encoded_value) or not decoder and not not encoded_value
+	local value = decoder and decoder(encoded_value) or not decoder and encoded_value
 
 	if not spec.mute_print then
 		dprintf("%s: <rpc set %s> %s:%s:%d:%d:%d:%d = %s", self._original_context, owner, key_type, peer_id, local_player_id, profile_index, career_index, party_id, printable_value(value))
@@ -977,7 +977,7 @@ SharedState._set_server_rpc = function (self, sender_channel_id, key_type_lookup
 	local key_type = self._key_type_lookup[key_type_lookup]
 	local spec = self._spec.server[key_type]
 	local decoder = spec.decode
-	local value = decoder and not not decoder(encoded_value) or not decoder and not not encoded_value
+	local value = decoder and decoder(encoded_value) or not decoder and encoded_value
 
 	if not spec.mute_print then
 		dprintf("%s: <rpc set server> %s:%s:%d:%d:%d:%d = %s", self._original_context, key_type, peer_id, local_player_id, profile_index, career_index, party_id, printable_value(value))
@@ -1004,7 +1004,7 @@ SharedState._send_all = function (self, channel_id, player_id, player_state)
 					for career_index, career_index_state in pairs(profile_index_state) do
 						for party_id, value in pairs(career_index_state) do
 							local encoder = self._spec.peer[key_type].encode
-							local encoded_value = encoder and not not encoder(value) or not encoder and not not value
+							local encoded_value = encoder and encoder(value) or not encoder and value
 
 							send_set_peer_rpc(channel_id, self._context, player_id, self._key_type_lookup[key_type], peer_id, local_player_id, profile_index, career_index, party_id, encoded_value)
 						end
@@ -1048,7 +1048,7 @@ SharedState.has_peer_state = function (self, peer_id, local_player_id)
 	-- function 49
 	local peer_state = self._peer_state[peer_id]
 
-	return not not peer_state and not not peer_state[local_player_id]
+	return peer_state and peer_state[local_player_id]
 end
 
 SharedState._is_destroyed = function (self)
@@ -1118,7 +1118,7 @@ local function check_spec_part(spec_part)
 		fassert(type(elem_spec.default_value) == elem_spec.type, "spec %s invalid, missing default_value", key_type)
 
 		if elem_spec.type == "table" then
-			fassert(not not elem_spec.decode, "spec %s invalid, must provide decode and encode method with table type", key_type)
+			fassert(elem_spec.decode, "spec %s invalid, must provide decode and encode method with table type", key_type)
 		end
 
 		fassert(elem_spec.composite_keys, "spec %s invalid, missing composite_keys", key_type)
@@ -1127,7 +1127,7 @@ local function check_spec_part(spec_part)
 			fassert(key_param == "peer_id" or key_param == "local_player_id" or key_param == "profile_index" or key_param == "career_index" or key_param == "party_id", "spec %s invalid, invalid key_param %s, must be one of peer_id, local_player_id, profile_index, career_index, party_id", key_type)
 		end
 
-		fassert(not not elem_spec.composite_keys.peer_id, "Faulty use of 'clear_when_peer_id_leaves'. Can not deduce when to clear value if peer_id is not part of composite keys.")
+		fassert(elem_spec.composite_keys.peer_id, "Faulty use of 'clear_when_peer_id_leaves'. Can not deduce when to clear value if peer_id is not part of composite keys.")
 	end
 end
 

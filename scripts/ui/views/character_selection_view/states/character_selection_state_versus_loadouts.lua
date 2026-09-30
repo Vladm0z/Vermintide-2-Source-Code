@@ -50,7 +50,7 @@ CharacterSelectionStateVersusLoadouts.on_enter = function (self, params)
 	self.peer_id = ingame_ui_context.peer_id
 	self._local_player_id = ingame_ui_context.local_player_id
 
-	local network_handler = not not ingame_ui_context.network_server
+	local network_handler = ingame_ui_context.network_server
 
 	self._profile_requester = network_handler:profile_requester()
 	self.world_previewer = params.world_previewer
@@ -141,9 +141,9 @@ end
 CharacterSelectionStateVersusLoadouts._store_selected_loadout_index = function (self, career_name)
 	-- function 4
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local loadout_selection = not not PlayerData.loadout_selection
-	local loadout_index = loadout_selection and not not loadout_selection[career_name] or not loadout_selection and not not 1
-	local loadout_settings = not not loadout_index and not not InventorySettings.loadouts[loadout_index]
+	local loadout_selection = PlayerData.loadout_selection
+	local loadout_index = loadout_selection and loadout_selection[career_name] or not loadout_selection and 1
+	local loadout_settings = loadout_index and InventorySettings.loadouts[loadout_index]
 
 	if loadout_settings and loadout_settings.loadout_type == "default" then
 		self._stored_selected_loadout_index = loadout_settings.loadout_index
@@ -334,7 +334,7 @@ CharacterSelectionStateVersusLoadouts._setup_hero_widgets = function (self)
 	local hero_name = profile_settings.display_name
 	local backend_dlcs = Managers.backend:get_interface("dlcs")
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(hero_name, "experience")
+	local hero_experience = hero_attributes:get(hero_name, "experience")
 	local hero_level = ExperienceSettings.get_level(hero_experience)
 	local careers = profile_settings.careers
 	local icon_widget = UIWidget.init(hero_icon_widget_definition)
@@ -398,7 +398,7 @@ CharacterSelectionStateVersusLoadouts._populate_hero_info = function (self)
 	local hero_display_name = Localize(character_name)
 	local career_display_name = Localize(character_career_name)
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(hero_name, "experience")
+	local hero_experience = hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(hero_experience)
 	local hero_name_widget = self._widgets_by_name.info_hero_name
 
@@ -416,7 +416,7 @@ end
 CharacterSelectionStateVersusLoadouts._start_animation = function (self, animation_name, render_settings)
 	-- function 11
 	local params = {
-		render_settings = not not render_settings or not not self._render_settings,
+		render_settings = render_settings or self._render_settings,
 		ui_scenegraph = self._ui_scenegraph
 	}
 	local widgets = self._widgets_by_name
@@ -471,10 +471,10 @@ CharacterSelectionStateVersusLoadouts._animate_back_button = function (self, wid
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -535,7 +535,7 @@ CharacterSelectionStateVersusLoadouts._handle_spawn = function (self, dt, t)
 		elseif self._spawn_hero then
 			self._spawn_hero = nil
 
-			local hero_name = not not self._selected_hero_name
+			local hero_name = self._selected_hero_name
 
 			self:_spawn_hero_unit(hero_name)
 		end
@@ -564,8 +564,8 @@ CharacterSelectionStateVersusLoadouts._close_menu = function (self)
 	local exit_button_widget = self._parent:get_exit_button_widget()
 	local loadout_changed = false
 
-	loadout_changed = not not loadout_changed or not not self._items_dirty
-	loadout_changed = not not loadout_changed or not not self._talents_dirty
+	loadout_changed = loadout_changed or self._items_dirty
+	loadout_changed = loadout_changed or self._talents_dirty
 
 	if loadout_changed or self._loadout_selection_changed then
 		if self._loadout_selection_active then
@@ -724,7 +724,7 @@ CharacterSelectionStateVersusLoadouts._enable_loadout_selection = function (self
 
 		self:_start_animation("open_equipment_inventory", self._loadout_selection_render_settings)
 	elseif self._loadout_selection_active then
-		self._loadout_selection_changed = not not self._loadout_selection_changed
+		self._loadout_selection_changed = self._loadout_selection_changed
 
 		self:_update_talents()
 		self:_update_items()
@@ -894,7 +894,7 @@ CharacterSelectionStateVersusLoadouts._handle_item_loadout_selection = function 
 		local career_settings = careers[career_index]
 		local preview_wield_slot = career_settings.preview_wield_slot
 
-		preview_wield_slot = not not preview_wield_slot or not not "melee"
+		preview_wield_slot = preview_wield_slot or "melee"
 
 		local slot_names = InventorySettings.slot_names_by_type[preview_wield_slot]
 		local slot_name = slot_names[1]
@@ -934,8 +934,8 @@ CharacterSelectionStateVersusLoadouts._set_loadout_item = function (self, item, 
 
 	local backend_id = item.backend_id
 	local slot_name = slot.name
-	local profile_index = not not self._selected_profile_index
-	local career_index = not not self._selected_career_index
+	local profile_index = self._selected_profile_index
+	local career_index = self._selected_career_index
 	local profile = SPProfiles[profile_index]
 	local career_data = profile.careers[career_index]
 	local career_name = career_data.name
@@ -989,7 +989,7 @@ CharacterSelectionStateVersusLoadouts._handle_talent_loadout_selection = functio
 						self:_play_sound("play_gui_talents_selection_click")
 					end
 
-					self._selected_loadout_talents[i] = self._selected_loadout_talents[i] ~= j and not not self._selected_loadout_talents[i] or not (self._selected_loadout_talents[i] ~= j) and not not 0
+					self._selected_loadout_talents[i] = self._selected_loadout_talents[i] ~= j and self._selected_loadout_talents[i] or not (self._selected_loadout_talents[i] ~= j) and 0
 
 					self:_populate_talent_grid()
 
@@ -1015,7 +1015,7 @@ CharacterSelectionStateVersusLoadouts._confirm_loadout = function (self)
 	local career_settings = CareerSettings[career_name]
 	local loadout_changed = self:_set_loadout(self._selected_loadout, self._selected_loadout_type, self._selected_loadout_index, career_name)
 
-	loadout_changed = not not loadout_changed or not not self._loadout_selection_changed
+	loadout_changed = loadout_changed or self._loadout_selection_changed
 
 	if current_profile_index ~= self._selected_profile_index or current_career_index ~= self._selected_career_index or loadout_changed then
 		local dlc_name = career_settings.required_dlc
@@ -1055,7 +1055,7 @@ CharacterSelectionStateVersusLoadouts._populate_talent_grid = function (self)
 	local start_index = (career_index - 1) * NumTalentRows
 	local tree = TalentTrees[hero_name][career_settings.talent_tree_index]
 	local selected_talents = self._selected_loadout_talents
-	local override_talents = not not PlayerUtils.get_talent_overrides_by_career(career_settings.display_name)
+	local override_talents = PlayerUtils.get_talent_overrides_by_career(career_settings.display_name)
 	local talent_grid_widget = self._widgets_by_name.talent_grid
 	local talent_grid_widget_content = talent_grid_widget.content
 	local talent_grid_widget_style = talent_grid_widget.style
@@ -1080,14 +1080,14 @@ CharacterSelectionStateVersusLoadouts._populate_talent_grid = function (self)
 			content.talent = talent_data
 			content.is_selected = is_selected
 			content.disabled = talent_locked
-			style.saturated = not is_selected or not not talent_locked
-			style.color = talent_locked and not not {
+			style.saturated = not is_selected or talent_locked
+			style.color = talent_locked and {
 				255,
 				60,
 				60,
 				60
-			} or not talent_locked and not not style.color
-			talent_grid_widget_content[talent_row_id .. "_name"] = is_selected and not not Localize(talent_name) or not is_selected and not not talent_grid_widget_content[talent_row_id .. "_name"]
+			} or not talent_locked and style.color
+			talent_grid_widget_content[talent_row_id .. "_name"] = is_selected and Localize(talent_name) or not is_selected and talent_grid_widget_content[talent_row_id .. "_name"]
 		end
 	end
 end
@@ -1099,8 +1099,8 @@ CharacterSelectionStateVersusLoadouts._set_loadout = function (self, loadout, lo
 	end
 
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local loadout_selection = not not PlayerData.loadout_selection
-	local selected_loadout_index = loadout_selection and not not loadout_selection[career_name] or not loadout_selection and not not self._stored_selected_loadout_index
+	local loadout_selection = PlayerData.loadout_selection
+	local selected_loadout_index = loadout_selection and loadout_selection[career_name] or not loadout_selection and self._stored_selected_loadout_index
 
 	if not force_update and loadout_index == selected_loadout_index then
 		return selected_loadout_index ~= self._stored_selected_loadout_index
@@ -1138,10 +1138,10 @@ CharacterSelectionStateVersusLoadouts._set_loadout = function (self, loadout, lo
 				elseif slot_name == "slot_pose" then
 					local item_id = loadout[slot_name]
 
-					backend_id = not not item_id and not not item_interface:get_backend_id_from_unlocked_weapon_poses(item_id)
+					backend_id = item_id and item_interface:get_backend_id_from_unlocked_weapon_poses(item_id)
 				end
 
-				local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+				local item = backend_id and item_interface:get_item_from_id(backend_id)
 
 				if item and not LoadoutUtils.is_item_disabled(item.ItemId) then
 					local slot = InventorySettings.slots_by_name[slot_name]
@@ -1174,8 +1174,8 @@ CharacterSelectionStateVersusLoadouts._save_loadout_index = function (self, care
 
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-	PlayerData.loadout_selection = not not PlayerData.loadout_selection
-	PlayerData.loadout_selection[mechanism_name] = not not PlayerData.loadout_selection[mechanism_name]
+	PlayerData.loadout_selection = PlayerData.loadout_selection
+	PlayerData.loadout_selection[mechanism_name] = PlayerData.loadout_selection[mechanism_name]
 	PlayerData.loadout_selection[mechanism_name][career_name] = loadout_index
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
@@ -1192,8 +1192,8 @@ CharacterSelectionStateVersusLoadouts._change_loadout = function (self, idx, for
 		idx = self._default_loadout_index
 	end
 
-	local profile_index = not not self._selected_profile_index
-	local career_index = not not self._selected_career_index
+	local profile_index = self._selected_profile_index
+	local career_index = self._selected_career_index
 	local profile = SPProfiles[profile_index]
 	local career_settings = profile.careers[career_index]
 	local career_name = career_settings.name
@@ -1211,7 +1211,7 @@ CharacterSelectionStateVersusLoadouts._change_loadout = function (self, idx, for
 	else
 		header = "custom_loadout_" .. loadout_settings.loadout_index .. "_title"
 		desc = "custom_loadout_desc"
-		icon = not not loadout_settings.loadout_icon or not not "icons_placeholder"
+		icon = loadout_settings.loadout_icon or "icons_placeholder"
 	end
 
 	selected_loadout_header_widget.content.text = Localize(header)
@@ -1317,8 +1317,8 @@ end
 
 CharacterSelectionStateVersusLoadouts._populate_loadout_buttons = function (self)
 	-- function 35
-	local profile_index = not not self._selected_profile_index
-	local career_index = not not self._selected_career_index
+	local profile_index = self._selected_profile_index
+	local career_index = self._selected_career_index
 	local profile = SPProfiles[profile_index]
 	local career_settings = profile.careers[career_index]
 	local career_name = career_settings.name
@@ -1351,26 +1351,26 @@ CharacterSelectionStateVersusLoadouts._populate_loadout_buttons = function (self
 			content.visible = loadout ~= nil
 			content.background.texture_id = loadout_ui_setting.icon
 		elseif loadout_type == "custom" then
-			local loadout = not not career_loadouts[loadout_index]
-			local talents = not not career_talents[loadout_index]
+			local loadout = career_loadouts[loadout_index]
+			local talents = career_talents[loadout_index]
 
 			content.loadout_index = i
 			content.loadout = loadout
 			content.talents = talents
 			content.visible = loadout ~= nil
-			content.background.texture_id = not not loadout_setting.loadout_icon
+			content.background.texture_id = loadout_setting.loadout_icon
 		end
 	end
 end
 
 CharacterSelectionStateVersusLoadouts._populate_tags = function (self)
 	-- function 36
-	local profile_index = not not self._selected_profile_index
-	local career_index = not not self._selected_career_index
+	local profile_index = self._selected_profile_index
+	local career_index = self._selected_career_index
 	local profile = SPProfiles[profile_index]
 	local career_settings = profile.careers[career_index]
 	local career_name = career_settings.name
-	local loadout_index = not not self._selected_loadout_index
+	local loadout_index = self._selected_loadout_index
 	local loadout_settings = InventorySettings.loadouts[loadout_index]
 	local tags = {}
 
@@ -1414,15 +1414,15 @@ end
 
 CharacterSelectionStateVersusLoadouts._populate_loadout = function (self, profile_index, career_index, optional_loadout, optional_talents, loadout_settings)
 	-- function 38
-	local profile_index = not not self._selected_profile_index
-	local career_index = not not self._selected_career_index
+	local profile_index = self._selected_profile_index
+	local career_index = self._selected_career_index
 	local profile = SPProfiles[profile_index]
 	local career_settings = profile.careers[career_index]
 	local profile_name = profile.display_name
 	local career_name = career_settings.name
 	local loadout_settings = loadout_settings
 
-	loadout_settings = not not loadout_settings or not not InventorySettings.loadouts[self._stored_selected_loadout_index]
+	loadout_settings = loadout_settings or InventorySettings.loadouts[self._stored_selected_loadout_index]
 
 	local selected_talents = EMPTY_TABLE
 	local talent_ids = EMPTY_TABLE
@@ -1447,7 +1447,7 @@ CharacterSelectionStateVersusLoadouts._populate_loadout = function (self, profil
 		if selected_talents[i] ~= 0 then
 			local id = talent_ids[talent_num]
 			local talent = TalentUtils.get_talent_by_id(profile_name, id)
-			local talent_icon = not not talent and not not talent.icon
+			local talent_icon = talent and talent.icon
 
 			if not talent_icon then
 				talent = nil
@@ -1461,7 +1461,7 @@ CharacterSelectionStateVersusLoadouts._populate_loadout = function (self, profil
 		end
 	end
 
-	content.locked = not not loadout_settings and loadout_settings.loadout_type == "default"
+	content.locked = loadout_settings and loadout_settings.loadout_type == "default"
 
 	local item_interface = Managers.backend:get_interface("items")
 	local widget = self._widgets_by_name.loadout_weapons
@@ -1480,22 +1480,22 @@ CharacterSelectionStateVersusLoadouts._populate_loadout = function (self, profil
 
 		content[weapon_slot].item = item
 		content[weapon_slot].icon = item.data.inventory_icon
-		content[weapon_slot].locked = not not loadout_settings and loadout_settings.loadout_type == "default"
+		content[weapon_slot].locked = loadout_settings and loadout_settings.loadout_type == "default"
 	end
 
 	local equipment_header_widget = self._widgets_by_name.weapons_header
 
-	equipment_header_widget.content.default_loadout = not not loadout_settings and loadout_settings.loadout_type == "default"
+	equipment_header_widget.content.default_loadout = loadout_settings and loadout_settings.loadout_type == "default"
 
 	local talents_header_widget = self._widgets_by_name.talents_header
 
-	talents_header_widget.content.default_loadout = not not loadout_settings and loadout_settings.loadout_type == "default"
+	talents_header_widget.content.default_loadout = loadout_settings and loadout_settings.loadout_type == "default"
 end
 
 CharacterSelectionStateVersusLoadouts._populate_career_info = function (self)
 	-- function 39
-	local profile_index = not not self._selected_profile_index
-	local career_index = not not self._selected_career_index
+	local profile_index = self._selected_profile_index
+	local career_index = self._selected_career_index
 	local ui_scenegraph = self._ui_scenegraph
 	local ui_renderer = self.ui_top_renderer
 	local widgets_by_name = self._widgets_by_name
@@ -1602,13 +1602,13 @@ CharacterSelectionStateVersusLoadouts._select_hero = function (self, profile_ind
 	end
 
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(hero_name, "experience")
+	local hero_experience = hero_attributes:get(hero_name, "experience")
 	local hero_level = ExperienceSettings.get_level(hero_experience)
 	local is_career_unlocked, reason, dlc_name, localized = career_settings:is_unlocked_function(hero_name, hero_level)
 	local widget = self._widgets_by_name.locked_info_text
 	local widget_content = widget.content
 
-	widget_content.text = not not ""
+	widget_content.text = ""
 	widget_content.visible = not is_career_unlocked
 
 	if not ignore_sound then
@@ -1640,8 +1640,8 @@ CharacterSelectionStateVersusLoadouts._select_hero = function (self, profile_ind
 	end
 
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local loadout_selection = not not PlayerData.loadout_selection
-	local selected_loadout_index = loadout_selection and not not loadout_selection[career_name] or not loadout_selection and not not self._stored_selected_loadout_index
+	local loadout_selection = PlayerData.loadout_selection
+	local selected_loadout_index = loadout_selection and loadout_selection[career_name] or not loadout_selection and self._stored_selected_loadout_index
 
 	self:_change_loadout(selected_loadout_index, force_update)
 end

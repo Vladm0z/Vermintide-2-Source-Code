@@ -16,7 +16,7 @@ BTTargetUnreachableAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 
 	blackboard.action = action
-	blackboard.unreachable_timer = not not blackboard.chasing_timer
+	blackboard.unreachable_timer = blackboard.chasing_timer
 end
 
 BTTargetUnreachableAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -114,7 +114,7 @@ BTTargetUnreachableAction.move_closer = function (self, unit, blackboard, locomo
 		local action = blackboard.action
 		local start_anim, anim_driven = LocomotionUtils.get_start_anim(unit, blackboard, action.start_anims)
 
-		Managers.state.network:anim_event(unit, not not start_anim or not not action.move_anim)
+		Managers.state.network:anim_event(unit, start_anim or action.move_anim)
 	elseif blackboard.move_state ~= "idle" and (not is_following_path or distance_sq < 0.04000000000000001) then
 		print("GO TO UNREACHABLE IDLE, DIST_SQ=", distance_sq, unit)
 

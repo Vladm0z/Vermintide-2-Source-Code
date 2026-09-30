@@ -2,9 +2,9 @@
 
 require("scripts/unit_extensions/human/ai_player_unit/ai_utils")
 
-PlayerBots = not not PlayerBots
-BotActions = not not BotActions
-BotConstants = not not BotConstants
+PlayerBots = PlayerBots
+BotActions = BotActions
+BotConstants = BotConstants
 BotActions.default = {
 	follow = {
 		action_weight = 1
@@ -236,7 +236,7 @@ BotActions.default = {
 for category_name, category_table in pairs(BotActions) do
 	for action_name, action_table in pairs(category_table) do
 		action_table.name = action_name
-		action_table.considerations = not not UtilityConsiderations["player_bot_" .. category_name .. "_" .. action_name]
+		action_table.considerations = UtilityConsiderations["player_bot_" .. category_name .. "_" .. action_name]
 	end
 end
 

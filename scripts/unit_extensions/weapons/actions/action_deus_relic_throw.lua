@@ -44,7 +44,7 @@ ActionDeusRelicThrow._throw = function (self)
 		speed = buff_extension:apply_buffs_to_value(speed, "throw_speed_increase")
 	end
 
-	local velocity_multiplier = not not current_action.velocity_multiplier
+	local velocity_multiplier = current_action.velocity_multiplier
 	local rotation = Unit.local_rotation(first_person_unit, 0)
 	local thrower_velocity = Vector3(0, 0, 0)
 
@@ -56,7 +56,7 @@ ActionDeusRelicThrow._throw = function (self)
 	local av = current_action.angular_velocity
 	local angular_velocity = Vector3(av[1], av[2], av[3])
 	local angular_velocity_transformed = Matrix4x4.transform_without_translation(weapon_pose, angular_velocity)
-	local velocity = Vector3.normalize(Quaternion.forward(rotation) + Vector3(0, 0, not not current_action.uppety)) * speed + thrower_velocity * velocity_multiplier
+	local velocity = Vector3.normalize(Quaternion.forward(rotation) + Vector3(0, 0, current_action.uppety)) * speed + thrower_velocity * velocity_multiplier
 
 	ActionUtils.spawn_pickup_projectile(self.world, weapon_unit, projectile_info.projectile_unit_name, projectile_info.projectile_unit_template_name, current_action, owner_unit, position, proj_rotation, velocity, angular_velocity_transformed, self.item_name, spawn_type)
 
@@ -64,7 +64,7 @@ ActionDeusRelicThrow._throw = function (self)
 
 	self.owner_inventory_extension:destroy_slot("slot_level_event", false, true)
 
-	local grabbed_by_packmaster = not not status_extension and not not CharacterStateHelper.pack_master_status(status_extension)
+	local grabbed_by_packmaster = status_extension and CharacterStateHelper.pack_master_status(status_extension)
 
 	if not grabbed_by_packmaster then
 		self.owner_inventory_extension:wield_previous_weapon()

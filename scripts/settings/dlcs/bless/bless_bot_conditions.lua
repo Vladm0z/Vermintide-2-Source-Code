@@ -2,8 +2,8 @@
 
 local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-BTConditions.can_activate = not not BTConditions.can_activate
-BTConditions.can_activate_non_combat = not not BTConditions.can_activate_non_combat
+BTConditions.can_activate = BTConditions.can_activate
+BTConditions.can_activate_non_combat = BTConditions.can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -20,7 +20,7 @@ local function is_target_already_shielded(unit)
 	-- function 1
 	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
-	return not buff_extension or not not buff_extension:has_buff_perk(buff_perks.invulnerable)
+	return not buff_extension or buff_extension:has_buff_perk(buff_perks.invulnerable)
 end
 
 BTConditions.can_activate.wh_priest = function (blackboard)
@@ -40,7 +40,7 @@ BTConditions.can_activate.wh_priest = function (blackboard)
 
 			if not should_target_ally then
 				local talent_extension = ScriptUnit.has_extension(self_unit, "talent_system")
-				local has_revive_talent = not not talent_extension and not not talent_extension:has_talent("victor_priest_6_3")
+				local has_revive_talent = talent_extension and talent_extension:has_talent("victor_priest_6_3")
 
 				if has_revive_talent and ally_status_ext:is_knocked_down() then
 					should_target_ally = true
@@ -50,11 +50,11 @@ BTConditions.can_activate.wh_priest = function (blackboard)
 	end
 
 	if not should_target_ally then
-		local ally_too_far = not not blackboard.ally_distance
+		local ally_too_far = blackboard.ally_distance
 		local target = blackboard.target_unit
 		local target_blackboard = BLACKBOARDS[target]
-		local target_breed = not not target_blackboard and not not target_blackboard.breed
-		local target_threat = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+		local target_breed = target_blackboard and target_blackboard.breed
+		local target_threat = target_breed and target_breed.threat_value or not target_breed and 0
 
 		if target_threat >= WP_MIN_THREAT then
 			local self_unit = blackboard.unit

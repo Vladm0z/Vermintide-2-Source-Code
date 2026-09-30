@@ -7,7 +7,7 @@ local has_started = false
 local last_started
 local started_scopes = {}
 local started_scopes2 = {}
-local overloaded = not not overloaded
+local overloaded = overloaded
 
 local function indent(depth)
 	-- function 1

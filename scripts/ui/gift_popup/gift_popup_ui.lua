@@ -69,7 +69,7 @@ end
 
 GiftPopupUI.has_presentation_data = function (self)
 	-- function 5
-	return #self._presentation_queue > 0 or not not self._reward_popup:is_presentation_active()
+	return #self._presentation_queue > 0 or self._reward_popup:is_presentation_active()
 end
 
 GiftPopupUI._can_present_reward = function (self)

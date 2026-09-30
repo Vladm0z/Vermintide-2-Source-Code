@@ -81,7 +81,7 @@ end
 
 local function play_emote(social_wheel_event_data, pinged_unit, sender_player, social_wheel_category)
 	-- function 5
-	local unit = not not sender_player and not not sender_player.player_unit
+	local unit = sender_player and sender_player.player_unit
 
 	if unit then
 		local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
@@ -179,7 +179,7 @@ local function is_weapon_pose_available(data, active_context, content, style)
 	local backend_crafting = Managers.backend:get_interface("items")
 	local unlocked_weapon_poses = backend_crafting:get_unlocked_weapon_poses()
 
-	return not not unlocked_weapon_poses[item_name]
+	return unlocked_weapon_poses[item_name]
 end
 
 local function get_ping_hero_event_text(target_unit, event_settings)
@@ -232,7 +232,7 @@ SocialWheelPriority = {
 		"friendly_hero_player",
 		function (active_context, player, social_wheel_unit)
 			-- function 12
-			local target_player = not not social_wheel_unit and not not Managers.player:owner(social_wheel_unit)
+			local target_player = social_wheel_unit and Managers.player:owner(social_wheel_unit)
 
 			if not target_player then
 				return false
@@ -257,7 +257,7 @@ SocialWheelPriority = {
 		"enemy_hero_player",
 		function (active_context, player, social_wheel_unit)
 			-- function 13
-			local target_player = not not social_wheel_unit and not not Managers.player:owner(social_wheel_unit)
+			local target_player = social_wheel_unit and Managers.player:owner(social_wheel_unit)
 
 			if not target_player then
 				return false
@@ -947,7 +947,7 @@ if not rawget(_G, "SocialWheelSettingsLookup") then
 		if category_settings.has_pages then
 			for i = 1, #category_settings do
 				for _, setting in ipairs(category_settings[i]) do
-					local name = not not setting.name
+					local name = setting.name
 
 					fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
 
@@ -956,7 +956,7 @@ if not rawget(_G, "SocialWheelSettingsLookup") then
 			end
 		else
 			for _, setting in ipairs(category_settings) do
-				local name = not not setting.name
+				local name = setting.name
 
 				fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
 

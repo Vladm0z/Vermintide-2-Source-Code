@@ -17,7 +17,7 @@ end
 
 ScaleUnitExtension.setup = function (self, start_size, end_size, duration)
 	-- function 2
-	self.start_size = not not start_size or not not self.start_size
+	self.start_size = start_size or self.start_size
 	self.full_scale = end_size - self.start_size
 	self.duration = duration
 	self.timer = 0

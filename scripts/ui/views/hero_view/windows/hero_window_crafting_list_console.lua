@@ -108,7 +108,7 @@ HeroWindowCraftingListConsole.on_enter = function (self, params, offset)
 
 	self:_populate_buttons(page_settings)
 
-	local recipe_index = not not params.recipe_index
+	local recipe_index = params.recipe_index
 	local ignore_sound = true
 
 	self:_on_button_selected(recipe_index, ignore_sound)
@@ -252,7 +252,7 @@ end
 HeroWindowCraftingListConsole._is_button_pressed = function (self, widget)
 	-- function 9
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -283,7 +283,7 @@ HeroWindowCraftingListConsole._is_button_hover_enter = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_enter
+	return hotspot.on_hover_enter
 end
 
 HeroWindowCraftingListConsole._is_button_hover_exit = function (self, widget)
@@ -291,7 +291,7 @@ HeroWindowCraftingListConsole._is_button_hover_exit = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_exit
+	return hotspot.on_hover_exit
 end
 
 HeroWindowCraftingListConsole._is_button_selected = function (self, widget)
@@ -457,7 +457,7 @@ HeroWindowCraftingListConsole._set_alignment_progress = function (self, progress
 
 		style.holder.angle = -(angle * progress)
 		start_height = start_height - spacing
-		layer_index = index > math.ceil(num_recipies / 2) and (not not (layer_index - 1) or not not (layer_index + 1)) or not (index > math.ceil(num_recipies / 2)) and not not (layer_index + 1)
+		layer_index = index > math.ceil(num_recipies / 2) and (layer_index - 1 or layer_index + 1) or not (index > math.ceil(num_recipies / 2)) and layer_index + 1
 
 		if content.button_hotspot.is_selected then
 			offset[3] = (num_recipies + 1) * num_layers
@@ -473,7 +473,7 @@ HeroWindowCraftingListConsole._setup_text_button_size = function (self, widget)
 	local content = widget.content
 	local style = widget.style
 	local text_style = style.text
-	local text = not not content.text_field
+	local text = content.text_field
 
 	if text_style.localize then
 		text = Localize(text)
@@ -508,10 +508,10 @@ HeroWindowCraftingListConsole._animate_entry = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

@@ -443,7 +443,7 @@ local function create_level_widget(scenegraph_id, optional_offset)
 			texture_id = "icon_glow",
 			content_check_function = function (content)
 				-- function 10
-				return not not content.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -507,7 +507,7 @@ local function create_level_widget(scenegraph_id, optional_offset)
 			texture_id = "path_glow",
 			content_check_function = function (content)
 				-- function 16
-				return not not content.draw_path
+				return content.draw_path
 			end
 		},
 		{
@@ -743,7 +743,7 @@ local function create_level_widget(scenegraph_id, optional_offset)
 	widget.element.passes = passes
 	widget.content = content
 	widget.style = style
-	widget.offset = not not optional_offset or not not {
+	widget.offset = optional_offset or {
 		0,
 		0,
 		0

@@ -216,7 +216,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 	local passes = {}
 	local content = {}
 	local style = {}
-	local offset = not not offset or not not {
+	local offset = offset or {
 		0,
 		0,
 		0
@@ -244,7 +244,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 			-- function 3
 			local hotspot = content[slot_name]
 
-			return not not hotspot.highlight
+			return hotspot.highlight
 		end
 	}
 	passes[#passes + 1] = {
@@ -254,7 +254,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_id = slot_name,
 		content_check_function = function (content)
 			-- function 4
-			return not not content.item
+			return content.item
 		end
 	}
 	passes[#passes + 1] = {
@@ -276,7 +276,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 		content_id = slot_name,
 		content_check_function = function (content)
 			-- function 5
-			return not not content.item
+			return content.item
 		end
 	}
 
@@ -298,7 +298,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 			-- function 6
 			local hotspot = content[slot_name]
 
-			return not not hotspot.highlight
+			return hotspot.highlight
 		end
 	}
 
@@ -312,7 +312,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 			-- function 7
 			local hotspot = content[slot_name]
 
-			return not not hotspot.item
+			return hotspot.item
 		end,
 		content_change_function = function (content, style)
 			-- function 8
@@ -320,7 +320,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 			local item_data = item.data
 			local item_type = item_data.item_type
 
-			content[title_text_name] = content.is_dark_pact and not not ("dark_pact_" .. item_type) or not content.is_dark_pact and not not item_type
+			content[title_text_name] = content.is_dark_pact and "dark_pact_" .. item_type or not content.is_dark_pact and item_type
 		end
 	}
 
@@ -334,7 +334,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 			-- function 9
 			local hotspot = content[slot_name]
 
-			return not not hotspot.item
+			return hotspot.item
 		end,
 		content_change_function = function (content, style)
 			-- function 10
@@ -342,7 +342,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 			local item_data = item.data
 			local item_type = item_data.item_type
 
-			content[title_text_name] = content.is_dark_pact and not not ("dark_pact_" .. item_type) or not content.is_dark_pact and not not item_type
+			content[title_text_name] = content.is_dark_pact and "dark_pact_" .. item_type or not content.is_dark_pact and item_type
 		end
 	}
 

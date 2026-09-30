@@ -16,7 +16,7 @@ local RPCS = {
 }
 local extensions = {}
 
-script_data.debug_mission_system = not not script_data.debug_mission_system
+script_data.debug_mission_system = script_data.debug_mission_system
 
 MissionSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
@@ -91,7 +91,7 @@ MissionSystem.load_checkpoint_data = function (self, checkpoint_data)
 
 	for name, data in pairs(checkpoint_data.completed_missions) do
 		local unit_index = data.unit_index
-		local unit = unit_index and not not LevelHelper:unit_by_index(world, unit_index) or not unit_index and not not nil
+		local unit = unit_index and LevelHelper:unit_by_index(world, unit_index) or not unit_index and nil
 
 		self:start_mission(name, unit)
 		self:end_mission(name, true)
@@ -99,7 +99,7 @@ MissionSystem.load_checkpoint_data = function (self, checkpoint_data)
 
 	for name, data in pairs(checkpoint_data.active_missions) do
 		local unit_index = data.unit_index
-		local unit = unit_index and not not LevelHelper:unit_by_index(world, unit_index) or not unit_index and not not nil
+		local unit = unit_index and LevelHelper:unit_by_index(world, unit_index) or not unit_index and nil
 
 		self:start_mission(name, unit)
 	end
@@ -136,7 +136,7 @@ end
 
 MissionSystem.request_mission = function (self, mission_name, unit, only_once)
 	-- function 6
-	only_once = not not only_once or not not false
+	only_once = only_once or false
 
 	local mission_name_id = NetworkLookup.mission_names[mission_name]
 	local level_unit_id
@@ -198,7 +198,7 @@ MissionSystem.start_mission = function (self, mission_name, unit, sync_data, onl
 	template.update_text(data)
 
 	if not mission_data.hidden and not data.mission_data.is_side_mission then
-		Managers.state.event:trigger("ui_event_add_mission_objective", mission_name, not not data.center_text, data.duration_text)
+		Managers.state.event:trigger("ui_event_add_mission_objective", mission_name, data.center_text, data.duration_text)
 	end
 
 	self.active_missions[mission_name] = data
@@ -227,7 +227,7 @@ MissionSystem.trigger_active_mission_ui_events = function (self)
 		local mission_data = Missions[mission_name]
 
 		if not mission_data.hidden and not data.mission_data.is_side_mission then
-			Managers.state.event:trigger("ui_event_add_mission_objective", mission_name, not not data.center_text)
+			Managers.state.event:trigger("ui_event_add_mission_objective", mission_name, data.center_text)
 		end
 	end
 end
@@ -239,7 +239,7 @@ MissionSystem.end_mission = function (self, mission_name, sync)
 	local data = self.active_missions[mission_name]
 	local template = MissionTemplates[data.mission_data.mission_template_name]
 	local completed = template.evaluate_mission(data)
-	local info_slate_type = data.mission_data.is_side_mission and not not "side_mission" or not data.mission_data.is_side_mission and not not data.info_slate_type
+	local info_slate_type = data.mission_data.is_side_mission and "side_mission" or not data.mission_data.is_side_mission and data.info_slate_type
 
 	if not data.mission_data.hidden then
 		Managers.state.event:trigger("ui_event_complete_mission", mission_name, data.mission_data.dont_show_mission_end_tooltip)
@@ -254,7 +254,7 @@ MissionSystem.end_mission = function (self, mission_name, sync)
 	local unit = data.unit
 
 	if unit then
-		local flow_event = completed and not not "lua_mission_complete" or not completed and not not "lua_mission_failed"
+		local flow_event = completed and "lua_mission_complete" or not completed and "lua_mission_failed"
 
 		Unit.flow_event(unit, flow_event)
 	end
@@ -276,7 +276,7 @@ MissionSystem.reset_mission = function (self, mission_name, sync)
 	template.update_text(data)
 
 	if not data.mission_data.hidden then
-		Managers.state.event:trigger("ui_event_update_mission", mission_name, not not data.center_text)
+		Managers.state.event:trigger("ui_event_update_mission", mission_name, data.center_text)
 	end
 
 	if sync and self.is_server then
@@ -300,7 +300,7 @@ MissionSystem.update_mission = function (self, mission_name, positive, dt, sync)
 	template.update_text(data)
 
 	if not data.mission_data.hidden then
-		Managers.state.event:trigger("ui_event_update_mission", mission_name, not not data.center_text, data.duration_text)
+		Managers.state.event:trigger("ui_event_update_mission", mission_name, data.center_text, data.duration_text)
 	end
 
 	if sync and self.is_server then
@@ -475,7 +475,7 @@ MissionSystem.rpc_update_mission = function (self, channel_id, mission_name_id, 
 	template.update_text(data)
 
 	if not data.mission_data.hidden then
-		Managers.state.event:trigger("ui_event_update_mission", mission_name, not not data.center_text)
+		Managers.state.event:trigger("ui_event_update_mission", mission_name, data.center_text)
 	end
 end
 
@@ -513,7 +513,7 @@ MissionSystem._update_level_progress = function (self, dt)
 			local main_path_completion = conflict_director:main_path_completion(player_unit)
 			local player = player_manager:owner(player_unit)
 			local unique_id = player:unique_id()
-			local saved_main_path_completion = not not percentage_completed[unique_id]
+			local saved_main_path_completion = percentage_completed[unique_id]
 
 			if saved_main_path_completion < main_path_completion then
 				percentage_completed[unique_id] = main_path_completion
@@ -532,7 +532,7 @@ end
 MissionSystem.percentages_completed = function (self)
 	-- function 33
 	for unique_id, main_path_completion in pairs(self._percentage_completed) do
-		local percentage_completed = not not self._percentage_completed_override
+		local percentage_completed = self._percentage_completed_override
 
 		self._percentage_completed[unique_id] = math.clamp(percentage_completed, 0, 1)
 	end

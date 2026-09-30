@@ -215,8 +215,8 @@ DamageBlobTemplates.warpfire_thrower_fire_update_vs = function (self, t, dt, tar
 			for i = 1, #hit_results do
 				local actor = hit_results[i][INDEX_ACTOR]
 				local hit_unit = Actor.unit(actor)
-				local breed = not not hit_unit and not not Unit.get_data(hit_unit, "breed")
-				local is_boss_or_los = not breed or not not breed.boss
+				local breed = hit_unit and Unit.get_data(hit_unit, "breed")
+				local is_boss_or_los = not breed or breed.boss
 
 				if is_boss_or_los and length > hit_results[i][INDEX_DISTANCE] then
 					length = hit_results[i][INDEX_DISTANCE]

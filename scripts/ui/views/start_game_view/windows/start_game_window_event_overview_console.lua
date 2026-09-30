@@ -36,7 +36,7 @@ StartGameWindowEventOverviewConsole.on_enter = function (self, params, offset)
 
 	self:_create_ui_elements(params, offset)
 
-	self._input_index = not not params.input_index
+	self._input_index = params.input_index
 
 	self:_handle_new_selection(self._input_index)
 	self:_update_difficulty_option()

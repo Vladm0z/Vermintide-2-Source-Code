@@ -681,7 +681,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 11
-						return not Managers.input:is_device_active("gamepad") and not not content.is_filled
+						return not Managers.input:is_device_active("gamepad") and content.is_filled
 					end
 				},
 				{
@@ -691,7 +691,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 12
-						return not Managers.input:is_device_active("gamepad") and not not content.is_filled
+						return not Managers.input:is_device_active("gamepad") and content.is_filled
 					end
 				},
 				{
@@ -733,7 +733,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 15
-						return not not content.texture_arrow_up_enabled
+						return content.texture_arrow_up_enabled
 					end
 				},
 				{
@@ -743,7 +743,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 16
-						return not not content.texture_arrow_left_enabled
+						return content.texture_arrow_left_enabled
 					end
 				},
 				{
@@ -753,7 +753,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 17
-						return not not content.texture_arrow_right_enabled
+						return content.texture_arrow_right_enabled
 					end
 				},
 				{
@@ -763,7 +763,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 18
-						return not not content.texture_arrow_up_enabled
+						return content.texture_arrow_up_enabled
 					end
 				},
 				{
@@ -773,7 +773,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 19
-						return not not content.texture_arrow_left_enabled
+						return content.texture_arrow_left_enabled
 					end
 				},
 				{
@@ -783,7 +783,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 20
-						return not not content.texture_arrow_right_enabled
+						return content.texture_arrow_right_enabled
 					end
 				},
 				{
@@ -793,7 +793,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 21
-						return not not content.is_filled
+						return content.is_filled
 					end
 				},
 				{
@@ -803,7 +803,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 22
-						return not not content.is_filled
+						return content.is_filled
 					end
 				},
 				{
@@ -813,7 +813,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 23
-						return not not content.is_filled
+						return content.is_filled
 					end
 				},
 				{
@@ -823,7 +823,7 @@ local function create_slot_widget(index, total_amount)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 24
-						return not not content.is_filled
+						return content.is_filled
 					end
 				}
 			}
@@ -1434,7 +1434,7 @@ local function create_equipment_background(texture, scenegraph_id, masked, retai
 		style = {
 			texture_id = {
 				texture_size = texture_settings.size,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -1453,7 +1453,7 @@ local function create_equipment_background(texture, scenegraph_id, masked, retai
 		offset = {
 			0,
 			0,
-			not not layer or not not 0
+			layer or 0
 		},
 		scenegraph_id = scenegraph_id
 	}
@@ -1481,14 +1481,14 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 						content.visible = false
 
 						local player = Managers.player:local_player()
-						local player_unit = not not player and not not player.player_unit
+						local player_unit = player and player.player_unit
 
 						if not ALIVE[player_unit] then
 							return false
 						end
 
 						local career_extension = ScriptUnit.extension(player_unit, "career_system")
-						local career_name = not not career_extension and not not career_extension:career_name()
+						local career_name = career_extension and career_extension:career_name()
 
 						content.visible = career_name == "dr_engineer"
 
@@ -1498,19 +1498,19 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 
 						local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 
-						content.using_career_skill_weapon = not not inventory_extension and inventory_extension:get_wielded_slot_name() == "slot_career_skill_weapon"
+						content.using_career_skill_weapon = inventory_extension and inventory_extension:get_wielded_slot_name() == "slot_career_skill_weapon"
 
 						local buff_ext = ScriptUnit.extension(player_unit, "buff_system")
 
-						content.is_reloading = not not buff_ext and not not buff_ext:has_buff_type("bardin_engineer_pump_buff")
+						content.is_reloading = buff_ext and buff_ext:has_buff_type("bardin_engineer_pump_buff")
 
 						local _, dt = Managers.time:time_and_delta("game")
 						local time = content.time + dt
 
-						content.time = content.is_reloading and (not not time or not not 0) or not content.is_reloading and not not 0
+						content.time = content.is_reloading and (time or 0) or not content.is_reloading and 0
 						content.using_gamepad = Managers.input:is_device_active("gamepad")
 
-						return not content.using_career_skill_weapon and not not content.visible
+						return not content.using_career_skill_weapon and content.visible
 					end
 				},
 				{
@@ -1520,7 +1520,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 28
-						return not not content.on_cooldown
+						return content.on_cooldown
 					end
 				},
 				{
@@ -1529,7 +1529,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					texture_id = "ability_effect",
 					content_check_function = function (content, style)
 						-- function 29
-						return not content.on_cooldown and not not content.using_career_skill_weapon
+						return not content.on_cooldown and content.using_career_skill_weapon
 					end
 				},
 				{
@@ -1539,7 +1539,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 30
-						return not content.on_cooldown and not not content.using_career_skill_weapon
+						return not content.on_cooldown and content.using_career_skill_weapon
 					end
 				},
 				{
@@ -1549,7 +1549,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 31
-						return not not content.using_career_skill_weapon
+						return content.using_career_skill_weapon
 					end
 				},
 				{
@@ -1559,7 +1559,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 32
-						return not not content.using_career_skill_weapon
+						return content.using_career_skill_weapon
 					end,
 					content_change_function = function (content, style)
 						-- function 33
@@ -1573,11 +1573,11 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 34
-						return not not content.visible
+						return content.visible
 					end,
 					content_change_function = function (content, style)
 						-- function 35
-						content.reload_mask_id = content.using_career_skill_weapon and not not "reload_icon_mask" or not content.using_career_skill_weapon and not not "minigun_icon_mask"
+						content.reload_mask_id = content.using_career_skill_weapon and "reload_icon_mask" or not content.using_career_skill_weapon and "minigun_icon_mask"
 					end
 				},
 				{
@@ -1587,7 +1587,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = retained,
 					content_check_function = function (content, style)
 						-- function 36
-						return not not content.visible
+						return content.visible
 					end,
 					content_change_function = function (content, style)
 						-- function 37
@@ -1603,7 +1603,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 38
-						return not not content.on_cooldown
+						return content.on_cooldown
 					end,
 					content_change_function = function (content, style)
 						-- function 39
@@ -1621,9 +1621,9 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 						local input_text = ""
 
 						if key_index ~= UNASSIGNED_KEY then
-							local device = device_type ~= "mouse" and not not Keyboard or not (device_type ~= "mouse") and not not Mouse
+							local device = device_type ~= "mouse" and Keyboard or not (device_type ~= "mouse") and Mouse
 
-							input_text = not not device.button_locale_name(key_index) or not not device.button_name(key_index) or not not Localize("lb_unknown")
+							input_text = device.button_locale_name(key_index) or device.button_name(key_index) or Localize("lb_unknown")
 							input_text = Utf8.upper(input_text)
 						end
 
@@ -1637,7 +1637,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 40
-						return not not content.on_cooldown
+						return content.on_cooldown
 					end
 				}
 			}
@@ -1845,7 +1845,7 @@ local function create_engineer_background(scenegraph_id, layer, retained)
 		offset = {
 			-2,
 			0,
-			not not layer or not not 0
+			layer or 0
 		},
 		scenegraph_id = scenegraph_id
 	}

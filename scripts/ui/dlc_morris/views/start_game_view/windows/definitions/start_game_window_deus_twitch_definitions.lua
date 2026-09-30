@@ -791,7 +791,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "rect",
 			content_check_function = function (content, style)
 				-- function 4
-				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -818,7 +818,7 @@ local function create_window(scenegraph_id, size)
 					}
 				end
 
-				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not not not Managers.twitch:is_connecting()
+				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -833,7 +833,7 @@ local function create_window(scenegraph_id, size)
 					style.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
-				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -978,14 +978,14 @@ end
 
 function create_twitch_rect_with_outer_frame(scenegraph_id, size, frame_style, layer, color, frame_color)
 	-- function 8
-	color = not not color or not not {
+	color = color or {
 		255,
 		255,
 		255,
 		255
 	}
 
-	local frame_settings = frame_style and not not UIFrameSettings[frame_style] or not frame_style and not not UIFrameSettings.frame_outer_fade_02
+	local frame_settings = frame_style and UIFrameSettings[frame_style] or not frame_style and UIFrameSettings.frame_outer_fade_02
 	local edge_height = frame_settings.texture_sizes.horizontal[2]
 	local frame_size = {
 		size[1] + edge_height * 2,
@@ -1018,14 +1018,14 @@ function create_twitch_rect_with_outer_frame(scenegraph_id, size, frame_style, l
 	}
 	local style = {
 		frame = {
-			color = not not frame_color or not not color,
+			color = frame_color or color,
 			size = frame_size,
 			texture_size = frame_settings.texture_size,
 			texture_sizes = frame_settings.texture_sizes,
 			offset = {
 				-edge_height,
 				-edge_height,
-				not not layer or not not 0
+				layer or 0
 			}
 		},
 		rect = {
@@ -1033,7 +1033,7 @@ function create_twitch_rect_with_outer_frame(scenegraph_id, size, frame_style, l
 			offset = {
 				0,
 				0,
-				not not layer or not not 0
+				layer or 0
 			}
 		}
 	}
@@ -1070,12 +1070,12 @@ local client_disclaimer_description_style = {
 
 local function connected_content_check_function(content)
 	-- function 11
-	return not Managers.twitch:is_connecting() and not Managers.twitch:is_connected() and not not not Managers.input:is_device_active("gamepad")
+	return not Managers.twitch:is_connecting() and not Managers.twitch:is_connected() and not Managers.input:is_device_active("gamepad")
 end
 
 local function disconnected_content_check_function(content)
 	-- function 12
-	return not Managers.twitch:is_connecting() and not not Managers.twitch:is_connected()
+	return not Managers.twitch:is_connecting() and Managers.twitch:is_connected()
 end
 
 local streaming_desc_str = string.gsub(Localize("start_game_window_deus_twitch_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
@@ -1184,7 +1184,7 @@ local selector_input_definition = {
 		end,
 		on_exit = function (self, dt, t)
 			-- function 16
-			local expedition_level_index = not not self._expedition_level_index
+			local expedition_level_index = self._expedition_level_index
 			local expedition_widgets = self._expedition_widgets
 			local widget = expedition_widgets[expedition_level_index]
 
@@ -1289,7 +1289,7 @@ local selector_input_definition = {
 			-- function 21
 			local gamepad_active = Managers.input:is_device_active("gamepad")
 
-			return not gamepad_active and not not self._is_server
+			return not gamepad_active and self._is_server
 		end,
 		on_enter = function (self, dt, t)
 			-- function 22

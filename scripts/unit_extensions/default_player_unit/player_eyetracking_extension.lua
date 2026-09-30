@@ -193,14 +193,14 @@ end
 
 PlayerEyeTrackingExtension.get_forward_rayhit = function (self)
 	-- function 12
-	return self.forward_rayhit_position and not not self.forward_rayhit_position:unbox() or not self.forward_rayhit_position and not not nil
+	return self.forward_rayhit_position and self.forward_rayhit_position:unbox() or not self.forward_rayhit_position and nil
 end
 
 PlayerEyeTrackingExtension.get_gaze_rayhit = function (self)
 	-- function 13
 	self:update_gaze_rayhit()
 
-	return self.gaze_rayhit_position and not not self.gaze_rayhit_position:unbox() or not self.gaze_rayhit_position and not not nil
+	return self.gaze_rayhit_position and self.gaze_rayhit_position:unbox() or not self.gaze_rayhit_position and nil
 end
 
 PlayerEyeTrackingExtension.get_is_aiming = function (self)
@@ -225,9 +225,9 @@ end
 
 PlayerEyeTrackingExtension.get_is_feature_enabled = function (self, feature)
 	-- function 18
-	local HAS_TOBII = not not rawget(_G, "Tobii")
+	local HAS_TOBII = rawget(_G, "Tobii")
 
-	return not not HAS_TOBII and not not self.is_connected
+	return HAS_TOBII and self.is_connected
 end
 
 PlayerEyeTrackingExtension.get_is_connected = function (self)

@@ -269,7 +269,7 @@ settings.buff_function_templates = {
 			local buff_to_add = buff_list[buff_to_add_id]
 			local buff_system = Managers.state.entity:system("buff_system")
 
-			buff_system:add_buff(unit, buff_to_add, not not buff.attacker_unit, false)
+			buff_system:add_buff(unit, buff_to_add, buff.attacker_unit, false)
 		end
 	end,
 	apply_homing_skull_achieve = function (unit, buff, params)
@@ -307,7 +307,7 @@ settings.proc_functions = {
 
 			local world = Managers.world:world("level_world")
 			local intro_vo_unit = LevelHelper:find_dialogue_unit(world, "ferry_lady")
-			local dialogue_extension = not not intro_vo_unit and not not ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
+			local dialogue_extension = intro_vo_unit and ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
 
 			if dialogue_extension then
 				local dialogue_input = ScriptUnit.extension_input(intro_vo_unit, "dialogue_system")
@@ -316,7 +316,7 @@ settings.proc_functions = {
 				local level_key = level_transition_handler:get_current_level_keys()
 				local event_name
 
-				event_name = not not "shadow_curse_vortex_crystal"
+				event_name = "shadow_curse_vortex_crystal"
 
 				dialogue_input:trigger_dialogue_event(event_name, event_data)
 			end

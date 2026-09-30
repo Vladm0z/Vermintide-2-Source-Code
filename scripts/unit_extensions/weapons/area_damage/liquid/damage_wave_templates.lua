@@ -302,7 +302,7 @@ DamageWaveTemplates.templates.sienna_adept_ability_trail = {
 		if Unit.alive(unit) then
 			local buff_extension = ScriptUnit.extension(unit, "buff_system")
 			local buff_stacks = buff_extension:get_stacking_buff("sienna_adept_ability_trail")
-			local buff = not not buff_stacks and not not buff_stacks[1]
+			local buff = buff_stacks and buff_stacks[1]
 
 			if buff then
 				local t = Managers.time:time("game")
@@ -811,7 +811,7 @@ wave_linger.add_buff_func = function (damage_wave_ext, target_unit, buff_templat
 
 	local buff_extension = ScriptUnit.extension(target_unit, "buff_system")
 	local buff_stacks = buff_extension:get_stacking_buff(buff_template_name)
-	local buff = not not buff_stacks and not not buff_stacks[1]
+	local buff = buff_stacks and buff_stacks[1]
 
 	if not buff then
 		local buff_system = Managers.state.entity:system("buff_system")
@@ -825,7 +825,7 @@ wave_linger.leave_area_func = function (unit)
 	if ALIVE[unit] then
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 		local buff_stacks = buff_extension:get_stacking_buff("sienna_necromancer_empowered_overcharge")
-		local buff = not not buff_stacks and not not buff_stacks[1]
+		local buff = buff_stacks and buff_stacks[1]
 
 		if buff then
 			buff_extension:remove_buff(buff.id)
@@ -837,7 +837,7 @@ DamageWaveTemplates.templates.necromancer_curse_wave_linger = wave_linger
 
 for wave_name, wave_template in pairs(DamageWaveTemplates.templates) do
 	local ai_push_data = wave_template.ai_push_data
-	local hit_half_extends = not not ai_push_data and not not ai_push_data.hit_half_extends
+	local hit_half_extends = ai_push_data and ai_push_data.hit_half_extends
 
 	if hit_half_extends then
 		fassert(not wave_template.ai_query_distance, "[DamageWaveTemplates] 'ai_query_distance' will be overridden by 'hit_half_extends'. (%s)", wave_name)

@@ -89,7 +89,7 @@ SteamManager.on_price_result = function (self, result, currency)
 			print("[SteamManager] -> on_price_result ERROR:", result)
 		end
 
-		self._refresh_item_prices_callback(not not price_list or not not {}, currency)
+		self._refresh_item_prices_callback(price_list or {}, currency)
 
 		self._refresh_item_prices_callback = nil
 	end
@@ -101,7 +101,7 @@ SteamManager.on_start_purchase = function (self, result, order_id, transaction_i
 
 	if result ~= 1 then
 		local fmt = Localize("start_game_window_twitch_error_connection")
-		local message = string.format(fmt, Localize("backend_err_auth_steam"), ">=k_EResultFail", not not result or not not 0)
+		local message = string.format(fmt, Localize("backend_err_auth_steam"), ">=k_EResultFail", result or 0)
 
 		Managers.simple_popup:queue_popup(message, Localize("popup_error_topic"), "ok", Localize("popup_choice_ok"))
 	end
@@ -126,7 +126,7 @@ SteamManager.request_purchase_item = function (self, steam_itemdefid, amount, ca
 	-- function 11
 	local item_name = SteamitemdefidToMasterList[steam_itemdefid]
 
-	printf("[SteamManager] request_purchase_item(steam_itemdefid=%s %q, amount=%s)", steam_itemdefid, not not item_name or not not "n/a", amount)
+	printf("[SteamManager] request_purchase_item(steam_itemdefid=%s %q, amount=%s)", steam_itemdefid, item_name or "n/a", amount)
 	SteamInventory.start_purchase(steam_itemdefid, amount)
 
 	self._purchase_item_callback = callback

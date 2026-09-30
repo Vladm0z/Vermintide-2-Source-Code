@@ -21,7 +21,7 @@ local hud_customizer_enabled = Application.user_setting("hud_customizer_enabled"
 
 HudCustomizer.is_active = function ()
 	-- function 1
-	return not not hud_customizer_enabled
+	return hud_customizer_enabled
 end
 
 HudCustomizer.reset_button = function (ui_renderer)
@@ -40,7 +40,7 @@ HudCustomizer.run = function (ui_renderer, ui_scenegraph, customizer_data)
 	drag_hover = false
 
 	local is_dirty = false
-	local key = not not customizer_data.registry_key
+	local key = customizer_data.registry_key
 	local offset = offset_registry[key]
 
 	if not offset then
@@ -98,7 +98,7 @@ HudCustomizer.run = function (ui_renderer, ui_scenegraph, customizer_data)
 			color[1] = 200 + 55 * math.sin(5 * Managers.time:time("ui"))
 		end
 
-		local border = not not customizer_data.border
+		local border = customizer_data.border
 		local h_size = Vector2(drag_size[1], border)
 		local v_size = Vector2(border, drag_size[2] - 2 * border)
 		local a_size = Vector2(drag_size[1], drag_size[2])
@@ -117,7 +117,7 @@ HudCustomizer.run = function (ui_renderer, ui_scenegraph, customizer_data)
 
 	local root_node = ui_scenegraph[customizer_data.root_scenegraph_id]
 
-	is_dirty = not not is_dirty or root_node.local_position[1] ~= offset[1] or root_node.local_position[2] ~= offset[2]
+	is_dirty = is_dirty or root_node.local_position[1] ~= offset[1] or root_node.local_position[2] ~= offset[2]
 
 	if is_dirty then
 		root_node.local_position[1] = offset[1]

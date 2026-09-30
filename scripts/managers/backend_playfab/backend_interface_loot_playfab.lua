@@ -36,7 +36,7 @@ BackendInterfaceLootPlayfab.open_loot_chest = function (self, hero_name, backend
 		hero_name = hero_name,
 		playfab_id = backend_id,
 		id = id,
-		amount = not not num_chests or not not 1,
+		amount = num_chests or 1,
 		game_mode_key = game_mode_key
 	}
 	local generate_loot_chest_rewards_request = {
@@ -61,8 +61,8 @@ BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb = function (self, data
 	local new_unlocked_weapon_poses = function_result.new_unlocked_weapon_poses
 	local updated_statistics = function_result.updated_statistics
 	local consume_data = function_result.consumed_chest
-	local chest_backend_id = not not consume_data and not not consume_data.ItemInstanceId
-	local remaining_uses = not not consume_data and not not consume_data.RemainingUses
+	local chest_backend_id = consume_data and consume_data.ItemInstanceId
+	local remaining_uses = consume_data and consume_data.RemainingUses
 	local num_items = #items
 	local loot = {}
 	local backend_mirror = self._backend_mirror
@@ -72,7 +72,7 @@ BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb = function (self, data
 		local backend_id = item.ItemInstanceId
 		local new_backend_id = backend_mirror:add_item(backend_id, item)
 
-		loot[#loot + 1] = not not new_backend_id or not not backend_id
+		loot[#loot + 1] = new_backend_id or backend_id
 	end
 
 	if chest_backend_id then
@@ -127,7 +127,7 @@ BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb = function (self, data
 	end
 
 	if updated_statistics then
-		local player = not not Managers.player
+		local player = Managers.player
 		local statistics_db = Managers.player:statistics_db()
 
 		if not player or not statistics_db then
@@ -208,8 +208,8 @@ BackendInterfaceLootPlayfab.end_of_level_loot_request_cb = function (self, data,
 	local total_essence = function_result.total_essence
 	local vs_profile_data = function_result.vs_profile_data
 	local score_breakdown = function_result.ScoreBreakdown
-	local items = not not function_result.ItemsGranted
-	local item_rewards = not not function_result.ItemRewards
+	local items = function_result.ItemsGranted
+	local item_rewards = function_result.ItemRewards
 	local currency_granted = function_result.CurrencyGranted
 	local currency_rewards = function_result.currencyRewards
 	local essence_rewards = function_result.EssenceRewards
@@ -445,7 +445,7 @@ end
 BackendInterfaceLootPlayfab.get_achievement_rewards = function (self, achievement_id)
 	-- function 10
 	local achievement_rewards = self._backend_mirror:get_achievement_rewards()
-	local rewards = not not achievement_rewards[achievement_id]
+	local rewards = achievement_rewards[achievement_id]
 
 	return rewards
 end
@@ -516,7 +516,7 @@ BackendInterfaceLootPlayfab.achievement_rewards_request_cb = function (self, dat
 		for i = 1, #items do
 			local item = items[i]
 			local backend_id = item.ItemInstanceId
-			local amount = not not item.UsesIncrementedBy
+			local amount = item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -650,8 +650,8 @@ local ACH_CHUNK_LIMIT = 150
 BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards = function (self, achievement_ids, poll_id, start_index, end_index)
 	-- function 16
 	self._reward_poll_id = true
-	start_index = not not start_index or not not 1
-	end_index = not not end_index or not not ACH_CHUNK_LIMIT
+	start_index = start_index or 1
+	end_index = end_index or ACH_CHUNK_LIMIT
 
 	local challenge_data = {}
 	local num_elements = #achievement_ids
@@ -726,7 +726,7 @@ BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards_request_cb = func
 		for i = 1, #items do
 			local item = items[i]
 			local backend_id = item.ItemInstanceId
-			local amount = not not item.UsesIncrementedBy
+			local amount = item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -834,7 +834,7 @@ BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards_request_cb = func
 			table.insert(self._loot_requests[id], loot[i])
 		end
 	else
-		local requested_achievement_ids = not not function_result.requested_achievement_ids
+		local requested_achievement_ids = function_result.requested_achievement_ids
 
 		table.dump(requested_achievement_ids)
 		Crashify.print_exception("Failed to claim multiple challenges")
@@ -911,7 +911,7 @@ BackendInterfaceLootPlayfab.get_highest_chest_level = function (self, chest_name
 			if num_chests > 0 then
 				local level = string.split(lvl_key, "_")[2]
 
-				max = math.max(not not max or not not 0, level)
+				max = math.max(max or 0, level)
 			end
 		end
 	end

@@ -17,7 +17,7 @@ end
 PlayFabMirrorAdventure.set_mechanism = function (self, mechanism_key)
 	-- function 2
 	printf("[PlayFabMirrorAdventure] Setting mechanism %s", mechanism_key)
-	rawset(_G, "debug_characters_data_unsafe_write", self._mechanism_key and (self._mechanism_key ~= mechanism_key or not not nil) or not self._mechanism_key and not not nil)
+	rawset(_G, "debug_characters_data_unsafe_write", self._mechanism_key and (self._mechanism_key ~= mechanism_key or nil) or not self._mechanism_key and nil)
 
 	self._mechanism_key = mechanism_key
 
@@ -39,7 +39,7 @@ end
 
 PlayFabMirrorAdventure.request_characters = function (self, mechanism_key)
 	-- function 3
-	mechanism_key = not not mechanism_key or not not self._mechanism_key
+	mechanism_key = mechanism_key or self._mechanism_key
 
 	if mechanism_key == "versus" then
 		local setup = false
@@ -157,7 +157,7 @@ PlayFabMirrorAdventure._set_inital_career_data_weaves = function (self, career_n
 	for i = 1, #slots_to_verify do
 		local slot_name = slots_to_verify[i]
 		local slot_data = loadout[slot_name]
-		local slot_item_value = type(slot_data) ~= "table" and not not slot_data or not (type(slot_data) ~= "table") and not not slot_data.Value
+		local slot_item_value = type(slot_data) ~= "table" and slot_data or not (type(slot_data) ~= "table") and slot_data.Value
 
 		if not slot_item_value then
 			broken_slots[slot_name] = true

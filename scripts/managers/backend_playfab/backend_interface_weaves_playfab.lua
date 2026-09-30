@@ -127,7 +127,7 @@ BackendInterfaceWeavesPlayFab._parse_loadouts = function (self)
 
 				if dlc_unlocked == nil or dlc_unlocked then
 					local loadout_json = self._backend_mirror:get_read_only_data("weaves_loadout_" .. career_name)
-					local loadout = not not loadout_json and not not cjson.decode(loadout_json)
+					local loadout = loadout_json and cjson.decode(loadout_json)
 
 					loadouts[career_name] = loadout
 
@@ -218,7 +218,7 @@ end
 
 BackendInterfaceWeavesPlayFab._new_id = function (self)
 	-- function 7
-	self._last_id = self._last_id and not not (self._last_id + 1) or not self._last_id and not not 1
+	self._last_id = self._last_id and self._last_id + 1 or not self._last_id and 1
 
 	return self._last_id
 end
@@ -267,7 +267,7 @@ BackendInterfaceWeavesPlayFab._create_leaderboard_entry = function (self, data, 
 	local entry = {
 		name = name,
 		career_name = career_name,
-		ranking = not not position_text or not not position,
+		ranking = position_text or position,
 		real_ranking = position,
 		weave = tier,
 		score = score,
@@ -420,7 +420,7 @@ BackendInterfaceWeavesPlayFab.request_player_rank = function (self, stat_name, l
 	local success_callback = callback(self, "player_rank_request_cb")
 	local fail_callback = callback(self, "player_rank_request_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local request_function = leaderboard_type ~= "friends" and not not "GetLeaderboardAroundPlayer" or not (leaderboard_type ~= "friends") and not not "GetFriendLeaderboardAroundPlayer"
+	local request_function = leaderboard_type ~= "friends" and "GetLeaderboardAroundPlayer" or not (leaderboard_type ~= "friends") and "GetFriendLeaderboardAroundPlayer"
 
 	request_queue:enqueue_api_request(request_function, player_rank_request, success_callback, fail_callback)
 
@@ -430,7 +430,7 @@ end
 BackendInterfaceWeavesPlayFab.player_rank_request_cb = function (self, result)
 	-- function 16
 	local data = result.Leaderboard[1]
-	local stat_value = not not data and not not data.StatValue
+	local stat_value = data and data.StatValue
 
 	if stat_value == 0 then
 		data = nil
@@ -446,7 +446,7 @@ end
 BackendInterfaceWeavesPlayFab.request_leaderboard_around_player = function (self, stat_name, leaderboard_type, max_result_count, external_error_cb)
 	-- function 17
 	local request_leaderboard_around_player = {
-		MaxResultsCount = not not max_result_count or not not 1,
+		MaxResultsCount = max_result_count or 1,
 		StatisticName = stat_name,
 		ProfileConstraints = {
 			ShowLinkedAccounts = true
@@ -460,7 +460,7 @@ BackendInterfaceWeavesPlayFab.request_leaderboard_around_player = function (self
 	local success_callback = callback(self, "request_leaderboard_around_player_cb")
 	local fail_callback = callback(self, "request_leaderboard_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local request_function = leaderboard_type ~= "friends" and not not "GetLeaderboardAroundPlayer" or not (leaderboard_type ~= "friends") and not not "GetFriendLeaderboardAroundPlayer"
+	local request_function = leaderboard_type ~= "friends" and "GetLeaderboardAroundPlayer" or not (leaderboard_type ~= "friends") and "GetFriendLeaderboardAroundPlayer"
 
 	request_queue:enqueue_api_request(request_function, request_leaderboard_around_player, success_callback, fail_callback)
 
@@ -481,8 +481,8 @@ BackendInterfaceWeavesPlayFab.request_leaderboard_around_player_cb = function (s
 		local entry
 
 		if data.StatValue ~= 0 then
-			local previous_score = idx > 1 and not not self._leaderboard_entries[idx - 1].score
-			local previous_tier = idx > 1 and not not self._leaderboard_entries[idx - 1].weave
+			local previous_score = idx > 1 and self._leaderboard_entries[idx - 1].score
+			local previous_tier = idx > 1 and self._leaderboard_entries[idx - 1].weave
 			local entry = self:_create_leaderboard_entry(data, previous_tier, previous_score)
 
 			self._leaderboard_entries[idx] = entry
@@ -520,7 +520,7 @@ BackendInterfaceWeavesPlayFab.request_leaderboard = function (self, stat_name, s
 	local success_callback = callback(self, "leaderboard_request_cb")
 	local fail_callback = callback(self, "request_leaderboard_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local request_function = leaderboard_type ~= "friends" and not not "GetLeaderboard" or not (leaderboard_type ~= "friends") and not not "GetFriendLeaderboard"
+	local request_function = leaderboard_type ~= "friends" and "GetLeaderboard" or not (leaderboard_type ~= "friends") and "GetFriendLeaderboard"
 
 	request_queue:enqueue_api_request(request_function, leaderboard_request, success_callback, fail_callback)
 
@@ -535,8 +535,8 @@ BackendInterfaceWeavesPlayFab.leaderboard_request_cb = function (self, result)
 
 	for i = 1, #leaderboard do
 		local data = leaderboard[i]
-		local previous_score = i > 1 and not not self._leaderboard_entries[i - 1].score
-		local previous_tier = i > 1 and not not self._leaderboard_entries[i - 1].weave
+		local previous_score = i > 1 and self._leaderboard_entries[i - 1].score
+		local previous_tier = i > 1 and self._leaderboard_entries[i - 1].weave
 		local entry = self:_create_leaderboard_entry(data, previous_tier, previous_score)
 
 		self._leaderboard_entries[i] = entry
@@ -558,7 +558,7 @@ end
 
 BackendInterfaceWeavesPlayFab.has_leaderboard_request_failed = function (self)
 	-- function 24
-	return not not self._leaderboard_player_rank_error
+	return self._leaderboard_player_rank_error
 end
 
 BackendInterfaceWeavesPlayFab.player_rank_request_failed_cb = function (self, external_error_cb, result, reenable_queue_function)
@@ -614,7 +614,7 @@ BackendInterfaceWeavesPlayFab.get_mastery = function (self, career_name, optiona
 		end
 	end
 
-	local total_cost = loadout and not not self:_get_loadout_mastery_cost(loadout) or not loadout and not not 0
+	local total_cost = loadout and self:_get_loadout_mastery_cost(loadout) or not loadout and 0
 	local current_mastery = initial_mastery - total_cost
 
 	return initial_mastery, current_mastery
@@ -902,7 +902,7 @@ end
 BackendInterfaceWeavesPlayFab.magic_item_cost = function (self, item_id)
 	-- function 44
 	local item_settings = self._progression_settings.items[item_id]
-	local essence_cost = not not item_settings and not not item_settings.essence_cost
+	local essence_cost = item_settings and item_settings.essence_cost
 
 	return essence_cost
 end
@@ -1164,7 +1164,7 @@ BackendInterfaceWeavesPlayFab.get_loadout_properties = function (self, career_na
 	if optional_item_backend_id then
 		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		properties = item_loadout and (not not item_loadout.properties or not not {}) or not item_loadout and not not {}
+		properties = item_loadout and (item_loadout.properties or {}) or not item_loadout and {}
 	else
 		properties = loadout.properties
 	end
@@ -1256,7 +1256,7 @@ BackendInterfaceWeavesPlayFab.get_loadout_traits = function (self, career_name, 
 	if optional_item_backend_id then
 		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		traits = item_loadout and (not not item_loadout.traits or not not {}) or not item_loadout and not not {}
+		traits = item_loadout and (item_loadout.traits or {}) or not item_loadout and {}
 	else
 		traits = loadout.traits
 	end
@@ -1268,13 +1268,13 @@ BackendInterfaceWeavesPlayFab.apply_career_item_loadouts = function (self, caree
 	-- function 63
 	if career_name then
 		local loadout = self._loadouts[career_name]
-		local item_loadouts = not not loadout and not not loadout.item_loadouts
+		local item_loadouts = loadout and loadout.item_loadouts
 
 		if item_loadouts then
 			local melee_item = loadout.slot_melee
 
 			if melee_item then
-				local melee_loadout = not not item_loadouts[melee_item]
+				local melee_loadout = item_loadouts[melee_item]
 
 				self:_update_item_custom_data(melee_item, melee_loadout)
 			end
@@ -1282,7 +1282,7 @@ BackendInterfaceWeavesPlayFab.apply_career_item_loadouts = function (self, caree
 			local ranged_item = loadout.slot_ranged
 
 			if ranged_item then
-				local ranged_loadout = not not item_loadouts[ranged_item]
+				local ranged_loadout = item_loadouts[ranged_item]
 
 				self:_update_item_custom_data(ranged_item, ranged_loadout)
 			end
@@ -1385,7 +1385,7 @@ end
 BackendInterfaceWeavesPlayFab.get_talent_tree = function (self, career_name)
 	-- function 70
 	local loadout_settings = WeaveLoadoutSettings[career_name]
-	local talent_tree = not not loadout_settings and not not loadout_settings.talent_tree
+	local talent_tree = loadout_settings and loadout_settings.talent_tree
 
 	return talent_tree
 end
@@ -1485,7 +1485,7 @@ BackendInterfaceWeavesPlayFab.get_dirty_user_data = function (self)
 
 	for career_name, _ in pairs(dirty_loadouts) do
 		has_dirty_data = true
-		dirty_data.loadouts = not not dirty_data.loadouts
+		dirty_data.loadouts = dirty_data.loadouts
 		dirty_data.loadouts[career_name] = table.clone(loadouts[career_name])
 	end
 

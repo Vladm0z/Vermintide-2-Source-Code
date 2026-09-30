@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_helper.lua
 
-EnemyCharacterStateHelper = not not EnemyCharacterStateHelper
+EnemyCharacterStateHelper = EnemyCharacterStateHelper
 
 local EnemyCharacterStateHelper = EnemyCharacterStateHelper
 
@@ -126,7 +126,7 @@ EnemyCharacterStateHelper._check_within_line_of_sight_ratling_gunner = function 
 		until true
 	end
 
-	return #in_range_units > 0 and not not in_range_units
+	return #in_range_units > 0 and in_range_units
 end
 
 EnemyCharacterStateHelper._check_within_line_of_sight_warpfire_thrower = function (player_unit, first_player_unit, player_position, player_rotation, player_direction, physics_world)
@@ -150,7 +150,7 @@ EnemyCharacterStateHelper._check_within_line_of_sight_warpfire_thrower = functio
 	for i = 1, num_hit_actors do
 		local hit_actor = hit_actors[i]
 		local hit_unit = Actor.unit(hit_actor)
-		local not_same_unit_and_alive = hit_unit ~= player_unit and not not Unit.alive(hit_unit)
+		local not_same_unit_and_alive = hit_unit ~= player_unit and Unit.alive(hit_unit)
 		local not_hit_yet = not hit_units[hit_unit]
 
 		if not_same_unit_and_alive and not_hit_yet then
@@ -158,7 +158,7 @@ EnemyCharacterStateHelper._check_within_line_of_sight_warpfire_thrower = functio
 
 			local is_enemy_unit = DamageUtils.is_enemy(player_unit, hit_unit)
 			local is_player_unit = DamageUtils.is_player_unit(hit_unit)
-			local unit_is_character = not not is_enemy_unit or not not is_player_unit
+			local unit_is_character = is_enemy_unit or is_player_unit
 			local target_status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 			local is_valid_player_status = target_status_extension
 
@@ -175,13 +175,13 @@ EnemyCharacterStateHelper._check_within_line_of_sight_warpfire_thrower = functio
 
 				if attack_cone < dot then
 					local hit_boss = PerceptionUtils.is_boss_in_los(player_unit, player_position, hit_unit_pos, physics_world)
-					local los = not hit_boss and not not PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos, physics_world, "filter_ai_line_of_sight_check")
+					local los = not hit_boss and PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos, physics_world, "filter_ai_line_of_sight_check")
 
 					if not hit_boss and is_player_unit then
-						los = not not los or not not PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos + horizontal_offset, physics_world, "filter_ai_line_of_sight_check")
-						los = not not los or not not PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos - horizontal_offset, physics_world, "filter_ai_line_of_sight_check")
-						los = not not los or not not PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos + vertical_offset, physics_world, "filter_ai_line_of_sight_check")
-						los = not not los or not not PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos - vertical_offset, physics_world, "filter_ai_line_of_sight_check")
+						los = los or PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos + horizontal_offset, physics_world, "filter_ai_line_of_sight_check")
+						los = los or PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos - horizontal_offset, physics_world, "filter_ai_line_of_sight_check")
+						los = los or PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos + vertical_offset, physics_world, "filter_ai_line_of_sight_check")
+						los = los or PerceptionUtils.is_position_in_line_of_sight(player_unit, player_position, hit_unit_pos - vertical_offset, physics_world, "filter_ai_line_of_sight_check")
 					end
 
 					if los then
@@ -195,7 +195,7 @@ EnemyCharacterStateHelper._check_within_line_of_sight_warpfire_thrower = functio
 		end
 	end
 
-	return #enemies_in_range > 0 and not not enemies_in_range
+	return #enemies_in_range > 0 and enemies_in_range
 end
 
 EnemyCharacterStateHelper._check_within_line_of_sight_gutter_runner = function (player_unit, first_player_unit, player_position, player_rotation, player_direction, physics_world)
@@ -254,7 +254,7 @@ EnemyCharacterStateHelper._check_within_line_of_sight_gutter_runner = function (
 		pounce_hit_radius = math.lerp(time_step, breed.pounce_hit_radius, time_step * 2.5)
 	end
 
-	return not not enemy_hit and not not {
+	return enemy_hit and {
 		{
 			unit = enemy_hit,
 			distance = distance
@@ -283,5 +283,5 @@ EnemyCharacterStateHelper._check_within_impact_globadier = function (player_unit
 		end
 	end
 
-	return #enemies > 0 and not not enemies
+	return #enemies > 0 and enemies
 end

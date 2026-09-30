@@ -14,12 +14,12 @@ local RAYCASTS_FRAME_DELAY = 5
 
 local function raycast_sort_func(a, b)
 	-- function 1
-	local a_frame_count = not not a.raycast_frame_count
-	local b_frame_count = not not b.raycast_frame_count
+	local a_frame_count = a.raycast_frame_count
+	local b_frame_count = b.raycast_frame_count
 
 	if a_frame_count == b_frame_count then
-		local a_distance = not not a.widget.content.distance
-		local b_distance = not not b.widget.content.distance
+		local a_distance = a.widget.content.distance
+		local b_distance = b.widget.content.distance
 
 		return a_distance < b_distance
 	end
@@ -196,7 +196,7 @@ WorldMarkerUI._register_marker = function (self, marker)
 	markers[#markers + 1] = marker
 
 	local marker_type = marker.type
-	local type_markers = not not markers_by_type[marker_type]
+	local type_markers = markers_by_type[marker_type]
 
 	markers_by_type[marker_type] = type_markers
 	type_markers[#type_markers + 1] = marker
@@ -313,7 +313,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 
 						if Unit.alive(unit) then
 							local unit_node = settings.unit_node
-							local node = unit_node and not not Unit.node(unit, unit_node) or not unit_node and not not 0
+							local node = unit_node and Unit.node(unit, unit_node) or not unit_node and 0
 
 							marker_position = Unit.world_position(unit, node)
 						else
@@ -322,7 +322,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 					end
 
 					if life_time then
-						local duration = not not marker.duration
+						local duration = marker.duration
 
 						duration = math.min(duration + dt, life_time)
 
@@ -354,7 +354,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 
 					content.distance = distance
 
-					local out_of_reach = not not max_distance and max_distance < distance
+					local out_of_reach = max_distance and max_distance < distance
 					local animating = false
 					local draw = not out_of_reach
 
@@ -369,7 +369,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 						local camera_left = Vector3.cross(camera_direction, Vector3.up())
 						local left_dot_dir = Vector3.dot(camera_left, marker_direction)
 						local angle = math.atan2(left_dot_dir, forward_dot_dir)
-						local is_behind = forward_dot_dir < 0 and not not true or not (forward_dot_dir < 0) and not not false
+						local is_behind = forward_dot_dir < 0
 						local is_under = marker_position.z < camera_position.z
 						local x, y, distance_from_camera = self:_convert_world_to_screen_position(camera, marker_position)
 						local is_clamped = false
@@ -451,7 +451,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 						offset[2] = y
 
 						if draw and check_line_of_sight then
-							marker.raycast_frame_count = not not marker.raycast_frame_count + 1
+							marker.raycast_frame_count = marker.raycast_frame_count + 1
 
 							if raycasts_allowed then
 								temp_marker_raycast_queue[#temp_marker_raycast_queue + 1] = marker
@@ -519,7 +519,7 @@ WorldMarkerUI.post_update = function (self, dt, t)
 				end
 
 				if draw then
-					local widget_alpha_multiplier = not not widget.alpha_multiplier
+					local widget_alpha_multiplier = widget.alpha_multiplier
 
 					if not settings.ignore_aiming then
 						widget_alpha_multiplier = widget_alpha_multiplier * alpha_multiplier
@@ -612,13 +612,13 @@ WorldMarkerUI._apply_scale = function (self, widget, scale)
 		local default_size = pass_style.default_size
 
 		if default_size then
-			local current_size = not not pass_style.area_size
+			local current_size = pass_style.area_size
 
 			current_size[1] = math.lerp(current_size[1], default_size[1] * scale, lerp_multiplier)
 			current_size[2] = math.lerp(current_size[2], default_size[2] * scale, lerp_multiplier)
 		end
 
-		local source_offset = not not pass_style.animation_offset
+		local source_offset = pass_style.animation_offset
 
 		if source_offset then
 			local offset = pass_style.offset
@@ -644,13 +644,13 @@ end
 WorldMarkerUI._normal_clamp_to_screen = function (self, x, y, screen_margins, is_behind, is_under, world_position, camera_position_center, camera_position_left, camera_position_right, camera_position_up, camera_position_down)
 	-- function 18
 	local root_size = UISceneGraph.get_size_scaled(self.ui_scenegraph, "root")
-	local margin_up = screen_margins and not not screen_margins.up or not screen_margins and not not 0
-	local margin_down = screen_margins and not not screen_margins.down or not screen_margins and not not 0
-	local margin_left = screen_margins and not not screen_margins.left or not screen_margins and not not 0
-	local margin_right = screen_margins and not not screen_margins.right or not screen_margins and not not 0
+	local margin_up = screen_margins and screen_margins.up or not screen_margins and 0
+	local margin_down = screen_margins and screen_margins.down or not screen_margins and 0
+	local margin_left = screen_margins and screen_margins.left or not screen_margins and 0
+	local margin_right = screen_margins and screen_margins.right or not screen_margins and 0
 	local clamped_x = math.max(margin_left, math.min(x, root_size[1] - margin_right))
 	local clamped_y = math.max(margin_down, math.min(y, root_size[2] - margin_up))
-	local is_clamped = clamped_x ~= x or clamped_y ~= y or not not is_behind
+	local is_clamped = clamped_x ~= x or clamped_y ~= y or is_behind
 
 	if is_behind then
 		local camera_distance_left = Vector3.distance(Vector3.flat(world_position), Vector3.flat(camera_position_center + camera_position_left))
@@ -714,7 +714,7 @@ WorldMarkerUI._is_clamped = function (self, x, y)
 		is_y_clamped = true
 	end
 
-	return not not true
+	return true
 end
 
 WorldMarkerUI._tutorial_clamp_to_screen = function (self, x, y, forward_dot, right_dot, settings)
@@ -725,7 +725,7 @@ WorldMarkerUI._tutorial_clamp_to_screen = function (self, x, y, forward_dot, rig
 	local screen_y_half = resolution_lookup.res_h * 0.5
 	local is_x_clamped = math.abs(x * scale - screen_x_half) > screen_x_half * 0.9
 	local is_y_clamped = math.abs(screen_y_half - y * scale) > screen_y_half * 0.9
-	local is_clamped = not not is_x_clamped or not not is_y_clamped or forward_dot < 0
+	local is_clamped = is_x_clamped or is_y_clamped or forward_dot < 0
 
 	if is_clamped then
 		local inverse_scale = resolution_lookup.inv_scale

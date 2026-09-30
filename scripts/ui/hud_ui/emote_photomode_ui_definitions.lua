@@ -148,7 +148,7 @@ local function create_background(scenegraph_id, color)
 			test = {
 				vertical_alignment = "right",
 				horizontal_alignment = "bottom",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,

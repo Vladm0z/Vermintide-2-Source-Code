@@ -413,19 +413,19 @@ local icon_text_style = {
 
 local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, size, color, text_style)
 	-- function 1
-	local text_offset = text_style and not not text_style.offset or not text_style and not not {
+	local text_offset = text_style and text_style.offset or not text_style and {
 		0,
 		0,
 		2
 	}
-	local text_color = text_style and not not text_style.text_color or not text_style and (not not color or not not {
+	local text_color = text_style and text_style.text_color or not text_style and (color or {
 		255,
 		255,
 		255,
 		255
 	})
 
-	text_style = not not text_style or not not {
+	text_style = text_style or {
 		vertical_alignment = "center",
 		localize = true,
 		horizontal_alignment = "center",
@@ -437,8 +437,8 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 	}
 
 	local text_shadow_style = table.clone(text_style)
-	local text_shadow_style_color = not not text_style.shadow_color
-	local text_shadow_offset = not not text_style.shadow_offset
+	local text_shadow_style_color = text_style.shadow_color
+	local text_shadow_offset = text_style.shadow_offset
 
 	text_shadow_style_color[1] = text_color[1]
 	text_shadow_style.text_color = text_shadow_style_color
@@ -471,7 +471,7 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 						-- function 3
 						local gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return not not content.use_shadow
+						return content.use_shadow
 					end
 				},
 				{
@@ -493,7 +493,7 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 						-- function 5
 						local gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return not not content.use_shadow
+						return content.use_shadow
 					end
 				}
 			}
@@ -503,7 +503,7 @@ local function create_gamepad_and_pc_text(text, gamepad_text, scenegraph_id, siz
 			gamepad_text = gamepad_text,
 			original_text = text,
 			color = text_color,
-			use_shadow = text_style and not not text_style.use_shadow or not text_style and not not false
+			use_shadow = text_style and text_style.use_shadow
 		},
 		style = {
 			text = text_style,

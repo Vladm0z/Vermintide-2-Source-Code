@@ -85,7 +85,7 @@ MenuWorldPreviewer.init = function (self, ingame_ui_context, optional_camera_cha
 
 	self.input_manager = ingame_ui_context.input_manager
 	self.ui_renderer = ingame_ui_context.ui_renderer
-	self._character_camera_positions = not not optional_camera_character_positions or not not camera_position_by_character
+	self._character_camera_positions = optional_camera_character_positions or camera_position_by_character
 
 	local player_manager = Managers.player
 
@@ -185,8 +185,8 @@ MenuWorldPreviewer.activate = function (self, activate, viewport_widget, hero_na
 	if activate then
 		self:setup_viewport(viewport_widget, hero_name)
 
-		self._requested_hero_spawn_data = not not self._delayed_hero_spawn_data
-		self._requested_unit_spawn_queue = not not self._delayed_unit_spawn_queue
+		self._requested_hero_spawn_data = self._delayed_hero_spawn_data
+		self._requested_unit_spawn_queue = self._delayed_unit_spawn_queue
 	else
 		local reset_camera = true
 
@@ -235,7 +235,7 @@ end
 
 MenuWorldPreviewer.update = function (self, dt, t, input_disabled)
 	-- function 12
-	self._requested_unit_spawn_queue = not not self._delayed_unit_spawn_queue
+	self._requested_unit_spawn_queue = self._delayed_unit_spawn_queue
 
 	MenuWorldPreviewer.super.update(self, dt, t)
 
@@ -277,7 +277,7 @@ MenuWorldPreviewer.update = function (self, dt, t, input_disabled)
 	camera_position_new.y = camera_default_position.y
 	camera_position_new.z = camera_default_position.z
 
-	local lookat_target = self._lookat_target and not not self._lookat_target:unbox() or not self._lookat_target and not not Vector3(0, 0, 0.9)
+	local lookat_target = self._lookat_target and self._lookat_target:unbox() or not self._lookat_target and Vector3(0, 0, 0.9)
 	local direction = Vector3.normalize(lookat_target - camera_position_new)
 	local camera_rotation_animation_data = self._camera_rotation_animation_data
 
@@ -345,7 +345,7 @@ MenuWorldPreviewer._set_character_visibility = function (self, visible, camera_m
 		return
 	end
 
-	local camera_move_duration = not not camera_move_duration or not not self._camera_move_duration
+	local camera_move_duration = camera_move_duration or self._camera_move_duration
 
 	if camera_move_duration then
 		local x = 0
@@ -357,7 +357,7 @@ MenuWorldPreviewer._set_character_visibility = function (self, visible, camera_m
 
 			if profile_name then
 				local character_camera_positions = self._character_camera_positions
-				local new_character_position = not not character_camera_positions[profile_name]
+				local new_character_position = character_camera_positions[profile_name]
 
 				x = new_character_position.x
 				y = new_character_position.y
@@ -382,7 +382,7 @@ MenuWorldPreviewer._update_camera_animation_data = function (self, animation_dat
 			local progress = math.min(1, data.time / data.total_time)
 			local func = data.func
 
-			data.value = (data.to - data.from) * (func and not not func(progress) or not func and not not progress) + data.from
+			data.value = (data.to - data.from) * (func and func(progress) or not func and progress) + data.from
 
 			if progress == 1 then
 				data.total_time = nil
@@ -396,8 +396,8 @@ MenuWorldPreviewer.set_camera_axis_offset = function (self, axis, value, animati
 	local data = self._camera_position_animation_data[axis]
 	local camera_default_position = self._camera_default_position
 
-	data.from = animation_time and not not data.value or not animation_time and not not value
-	data.to = fixed_position and not not (value + -camera_default_position[axis]) or not fixed_position and not not value
+	data.from = animation_time and data.value or not animation_time and value
+	data.to = fixed_position and value + -camera_default_position[axis] or not fixed_position and value
 	data.total_time = animation_time
 	data.time = 0
 	data.func = func_ptr
@@ -413,7 +413,7 @@ MenuWorldPreviewer.set_camera_rotation_axis_offset = function (self, axis, value
 	-- function 22
 	local data = self._camera_rotation_animation_data[axis]
 
-	data.from = animation_time and not not data.value or not animation_time and not not value
+	data.from = animation_time and data.value or not animation_time and value
 	data.to = value
 	data.total_time = animation_time
 	data.time = 0
@@ -425,7 +425,7 @@ MenuWorldPreviewer.set_character_axis_offset = function (self, axis, value, anim
 	-- function 23
 	local data = self._camera_character_position_animation_data[axis]
 
-	data.from = animation_time and not not data.value or not animation_time and not not value
+	data.from = animation_time and data.value or not animation_time and value
 	data.to = value
 	data.total_time = animation_time
 	data.time = 0
@@ -456,7 +456,7 @@ MenuWorldPreviewer.handle_mouse_input = function (self, input_service, dt)
 	local viewport_widget = self.viewport_widget
 	local content = viewport_widget.content
 	local button_hotspot = content.button_hotspot
-	local is_hover = not not button_hotspot and not not button_hotspot.is_hover
+	local is_hover = button_hotspot and button_hotspot.is_hover
 
 	if is_hover then
 		if input_service:get("left_press") then
@@ -603,10 +603,10 @@ MenuWorldPreviewer._load_hero_unit = function (self, profile_name, career_index,
 		self:_unload_all_packages()
 	end
 
-	camera_move_duration = not not camera_move_duration or not not 0.01
+	camera_move_duration = camera_move_duration or 0.01
 
 	local character_camera_positions = self._character_camera_positions
-	local new_character_position = not not character_camera_positions[profile_name]
+	local new_character_position = character_camera_positions[profile_name]
 
 	self:set_character_axis_offset("x", new_character_position.x, camera_move_duration, math.easeOutCubic)
 	self:set_character_axis_offset("y", new_character_position.y, camera_move_duration, math.easeOutCubic)
@@ -620,8 +620,8 @@ MenuWorldPreviewer._load_hero_unit = function (self, profile_name, career_index,
 	local career = profile.careers[career_index]
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
-	local item_data = not not skin_item and not not skin_item.data
-	local skin_name = not not item_data.name
+	local item_data = skin_item and skin_item.data
+	local skin_name = item_data.name
 
 	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", career_name == "bw_necromancer")
 

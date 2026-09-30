@@ -21,7 +21,7 @@ BTAlliedAvoidCombatAction.enter = function (self, unit, blackboard, t)
 	local self_pos = POSITION_LOOKUP[unit]
 	local wanted_position = POSITION_LOOKUP[blackboard.player_controller_unit]
 	local pos_on_nav_mesh = LocomotionUtils.pos_on_mesh(blackboard.nav_world, wanted_position, 1, 1)
-	local final_pos = not not pos_on_nav_mesh or not not self_pos
+	local final_pos = pos_on_nav_mesh or self_pos
 
 	blackboard.wanted_flee_pos = Vector3Box(final_pos)
 
@@ -63,7 +63,7 @@ BTAlliedAvoidCombatAction._go_idle = function (self, unit, blackboard, locomotio
 
 	local action = blackboard.action
 
-	Managers.state.network:anim_event(unit, not not action.idle_anim)
+	Managers.state.network:anim_event(unit, action.idle_anim)
 	Unit.set_unit_visibility(unit, false)
 end
 
@@ -95,9 +95,9 @@ BTAlliedAvoidCombatAction.flee = function (self, unit, t, dt, blackboard, locomo
 		self:_go_idle(unit, blackboard, locomotion_extension)
 	end
 
-	local target_intensity = not not blackboard.target_status_extension
+	local target_intensity = blackboard.target_status_extension
 
-	blackboard.target_is_in_combat = not not target_intensity and target_intensity > 0
+	blackboard.target_is_in_combat = target_intensity and target_intensity > 0
 end
 
 BTAlliedAvoidCombatAction._move_to_flee_location = function (self, unit, blackboard, t, dt)

@@ -153,7 +153,7 @@ BoonManager._activate_player_boons = function (self, peer_id, local_player_id)
 		local current_boon = boons[boon_id]
 
 		if current_boon.owner == player_unique_id then
-			local activate = not current_boon.reactivation_rule or not not current_boon.reactivation_rule(player_unique_id)
+			local activate = not current_boon.reactivation_rule or current_boon.reactivation_rule(player_unique_id)
 
 			if activate then
 				boons[boon_id].active = true
@@ -168,8 +168,8 @@ BoonManager._deactivate_player_boons = function (self, peer_id, local_player_id)
 	-- function 10
 	local player_unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
 	local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
-	local side = not not party and not not Managers.state.side.side_by_party[party]
-	local player_and_bot_units = not not side and not not side.PLAYER_AND_BOT_UNITS
+	local side = party and Managers.state.side.side_by_party[party]
+	local player_and_bot_units = side and side.PLAYER_AND_BOT_UNITS
 	local boons = self._boons
 
 	for boon_id = 1, #boons do

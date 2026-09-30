@@ -54,7 +54,7 @@ end
 
 Spline.draw = function (self, drawer, segments)
 	-- function 4
-	segments = not not segments or not not 20
+	segments = segments or 20
 
 	local segment_increment = 1 / segments
 	local t = 0
@@ -88,7 +88,7 @@ end
 
 Spline.tangent = function (self, t, segment_size)
 	-- function 6
-	segment_size = not not segment_size or not not 0.01
+	segment_size = segment_size or 0.01
 
 	local min_t = math.max(t - segment_size, 0)
 	local max_t = math.min(t + segment_size, 1)
@@ -100,10 +100,10 @@ end
 
 Spline.set_points_manual_tangents = function (self, t1, t2, p1, p2)
 	-- function 7
-	self._T1 = t1 and not not Vector3.as_table(t1) or not t1 and not not self._T1
-	self._T2 = t2 and not not Vector3.as_table(t2) or not t2 and not not self._T2
-	self._P1 = p1 and not not Vector3.as_table(p1) or not p1 and not not self._P1
-	self._P2 = p2 and not not Vector3.as_table(p2) or not p2 and not not self._P2
+	self._T1 = t1 and Vector3.as_table(t1) or not t1 and self._T1
+	self._T2 = t2 and Vector3.as_table(t2) or not t2 and self._T2
+	self._P1 = p1 and Vector3.as_table(p1) or not p1 and self._P1
+	self._P2 = p2 and Vector3.as_table(p2) or not p2 and self._P2
 end
 
 Spline.set_points_with_rotation_tangents = function (self, points, rotation_t1, rotation_t2)

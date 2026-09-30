@@ -132,7 +132,7 @@ BTMoveToPlayersAction._evalute_targets = function (self, unit, blackboard, data,
 	local action = blackboard.action
 	local target_found = self[action.find_target_function_name](self, unit, blackboard, action, next_target_unit, t)
 
-	return target_found and not not "done" or not target_found and not not "running"
+	return target_found and "done" or not target_found and "running"
 end
 
 BTMoveToPlayersAction._find_target_globadier = function (self, unit, blackboard, action, next_target_unit, t)
@@ -150,7 +150,7 @@ BTMoveToPlayersAction._find_target_globadier = function (self, unit, blackboard,
 			blackboard.has_thrown = true
 			blackboard.move_to_players_position = nil
 
-			local throw_data = not not blackboard.throw_globe_data
+			local throw_data = blackboard.throw_globe_data
 
 			throw_data.angle = angle
 			throw_data.speed = speed
@@ -172,7 +172,7 @@ BTMoveToPlayersAction._find_target_ratling_gunner = function (self, unit, blackb
 	local closest_enemy, visible_node_name, old_target_visible = PerceptionUtils.pick_ratling_gun_target(unit, blackboard, nil)
 
 	if closest_enemy then
-		local data = not not blackboard.attack_pattern_data
+		local data = blackboard.attack_pattern_data
 
 		data.target_unit = closest_enemy
 		data.target_node_name = visible_node_name
@@ -206,7 +206,7 @@ BTMoveToPlayersAction._update_move_to_players_position = function (self, blackbo
 	if goal_pos then
 		navigation_extension:move_to(goal_pos)
 
-		local pos_box = not not blackboard.move_to_players_position
+		local pos_box = blackboard.move_to_players_position
 
 		pos_box:store(goal_pos)
 
@@ -249,7 +249,7 @@ BTMoveToPlayersAction._valid_globadier_target = function (self, target_unit, bla
 	-- function 11
 	local side = blackboard.side
 
-	return not not side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
+	return side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
 end
 
 BTMoveToPlayersAction._has_line_of_sight = function (self, unit, target_unit, world, t)

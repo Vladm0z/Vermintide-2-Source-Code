@@ -36,7 +36,7 @@ NavigationGroupManager.form_groups = function (self, radius, finish_point, optio
 
 	local time1 = os.clock()
 
-	self._groups_max_radius = not not radius or not not self._groups_max_radius
+	self._groups_max_radius = radius or self._groups_max_radius
 	self._finish_point = finish_point
 
 	local nav_world = self.nav_world
@@ -109,7 +109,7 @@ NavigationGroupManager.form_groups_start = function (self, radius, finish_point,
 	print("NavigationGroupManager -> form_groups_start")
 	assert(finish_point ~= nil, "Got nil for finish_point")
 
-	self._groups_max_radius = not not radius or not not self._groups_max_radius
+	self._groups_max_radius = radius or self._groups_max_radius
 	self._finish_point = finish_point
 
 	local nav_world = self.nav_world
@@ -151,7 +151,7 @@ NavigationGroupManager.form_groups_start = function (self, radius, finish_point,
 	self:form_groups_update()
 end
 
-local max_nodes_per_frame = IS_WINDOWS and not not 1000 or not IS_WINDOWS and not not 400
+local max_nodes_per_frame = IS_WINDOWS and 1000 or not IS_WINDOWS and 400
 
 NavigationGroupManager.form_groups_update = function (self)
 	-- function 5
@@ -299,7 +299,7 @@ NavigationGroupManager.assign_group = function (self, group, in_group_queue, rej
 
 	local poly, poly_hash, create_new_group = self:next_poly_in_queue(in_group_queue, rejected_queue)
 
-	create_new_group = not not create_new_group or not not not group
+	create_new_group = create_new_group or not group
 
 	if not poly then
 		return
@@ -699,7 +699,7 @@ end
 
 NavigationGroupManager.draw_tri = function (self, triangle, h, col)
 	-- function 30
-	h = not not h or not not 0.1
+	h = h or 0.1
 
 	local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(self.nav_world, triangle)
 
@@ -839,8 +839,8 @@ NavigationGroupManager.print_groups = function (self, world, nav_world)
 	end
 
 	if do_print_groups then
-		self._line_object = not not self._line_object
-		self._drawer = not not self._drawer
+		self._line_object = self._line_object
+		self._drawer = self._drawer
 		self._debug_world_gui = World.create_world_gui(world, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts")
 
 		local debug_world_gui = self._debug_world_gui
@@ -955,7 +955,7 @@ NavigationGroupManager.knit_groups_with_ledges = function (self)
 	for smart_object_id, smart_object_data in pairs(smart_objects) do
 		for i = 1, #smart_object_data do
 			local smart_object = smart_object_data[i]
-			local smart_object_type = not not smart_object.smart_object_type
+			local smart_object_type = smart_object.smart_object_type
 			local p1 = Vector3Aux.unbox(smart_object.pos1)
 			local group1 = self:get_group_from_position(p1)
 
@@ -988,7 +988,7 @@ NavigationGroupManager.breadth_first_search_all_triangles = function (self, tria
 	-- function 45
 	local time1 = os.clock()
 	local nav_world = self.nav_world
-	local triangle = not not triangle or not not GwNavTraversal.get_seed_triangle(nav_world, self._finish_point:unbox())
+	local triangle = triangle or GwNavTraversal.get_seed_triangle(nav_world, self._finish_point:unbox())
 
 	if triangle == nil then
 		return

@@ -281,9 +281,9 @@ local function create_scrollbar(num_elements)
 						local is_hover = content.is_hover
 						local t, dt = Managers.time:time_and_delta("main")
 						local speed = 4
-						local scrollbar_hover_progress = not not parent_content.scrollbar_hover_progress
+						local scrollbar_hover_progress = parent_content.scrollbar_hover_progress
 
-						scrollbar_hover_progress = math.clamp(scrollbar_hover_progress + dt * speed * (is_hover and not not 1 or not is_hover and not not -1), 0, 1)
+						scrollbar_hover_progress = math.clamp(scrollbar_hover_progress + dt * speed * (is_hover and 1 or not is_hover and -1), 0, 1)
 						parent_content.scrollbar_hover_progress = scrollbar_hover_progress
 					end
 				},
@@ -294,12 +294,12 @@ local function create_scrollbar(num_elements)
 					content_change_function = function (content, style)
 						-- function 4
 						local parent_content = content.parent
-						local is_hover = not not content.is_hover
+						local is_hover = content.is_hover
 						local t, dt = Managers.time:time_and_delta("main")
 						local speed = 4
-						local hover_progress = not not parent_content.hover_progress
+						local hover_progress = parent_content.hover_progress
 
-						hover_progress = math.clamp(hover_progress + dt * speed * (is_hover and not not 1 or not is_hover and not not -1), 0, 1)
+						hover_progress = math.clamp(hover_progress + dt * speed * (is_hover and 1 or not is_hover and -1), 0, 1)
 						parent_content.hover_progress = hover_progress
 					end
 				},
@@ -455,7 +455,7 @@ local function create_video_entry(parent)
 						-- function 9
 						local active = parent:is_video_active(content.video_content.video_player_reference)
 
-						content.fade_progress = active and not not content.fade_progress or not active and not not 0
+						content.fade_progress = active and content.fade_progress or not active and 0
 
 						return active
 					end,
@@ -570,7 +570,7 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 
 	local video_player = video_renderer.video_players[reference_name]
 	local num_frames = VideoPlayer.number_of_frames(video_player)
-	local seconds = num_frames / not not video_data.frames_per_second
+	local seconds = num_frames / video_data.frames_per_second
 	local time = UIUtils.format_time(seconds)
 
 	UIRenderer.destroy_video_player(video_renderer, reference_name, video_renderer.world)
@@ -629,7 +629,7 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 					end,
 					content_change_function = function (content, style)
 						-- function 14
-						local gamepad_active = not not Managers.input:is_device_active("gamepad")
+						local gamepad_active = Managers.input:is_device_active("gamepad")
 
 						if gamepad_active then
 							if index == parent:current_gamepad_selection() then
@@ -686,7 +686,7 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 						local speed = 4
 						local hover_progress = parent_content.hover_progress
 
-						hover_progress = math.clamp(hover_progress + dt * speed * (content.is_hover and not not 1 or not content.is_hover and not not -1), 0, 1)
+						hover_progress = math.clamp(hover_progress + dt * speed * (content.is_hover and 1 or not content.is_hover and -1), 0, 1)
 						parent_content.hover_progress = hover_progress
 					end
 				},
@@ -720,7 +720,7 @@ local function create_cinematic_entry(video_renderer, config, index, seen, paren
 					end,
 					content_change_function = function (content, style)
 						-- function 18
-						local gamepad_active = not not Managers.input:is_device_active("gamepad")
+						local gamepad_active = Managers.input:is_device_active("gamepad")
 
 						if gamepad_active then
 							if index == parent:current_gamepad_selection() then

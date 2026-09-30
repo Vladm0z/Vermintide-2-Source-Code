@@ -110,7 +110,7 @@ TalentExtension.apply_buffs_from_talents = function (self, talent_ids)
 		return
 	end
 
-	local is_server_bot = not not self.is_server
+	local is_server_bot = self.is_server
 
 	for i = 1, #talent_ids do
 		local talent_id = talent_ids[i]
@@ -121,7 +121,7 @@ TalentExtension.apply_buffs_from_talents = function (self, talent_ids)
 			local buffer = talent_data.buffer
 
 			if player.local_player and (not buffer or buffer == "client" or self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) or not player.local_player and (is_server_bot and (not buffer or buffer == "client" or self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) or not is_server_bot and (self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")))) then
-				local num_buffs = buffs and not not #buffs or not buffs and not not 0
+				local num_buffs = buffs and #buffs or not buffs and 0
 
 				if num_buffs > 0 then
 					for j = 1, num_buffs do

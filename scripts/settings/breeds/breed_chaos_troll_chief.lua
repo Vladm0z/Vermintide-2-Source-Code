@@ -40,7 +40,7 @@ local running_pushed_data = {
 		0
 	}
 }
-local default_bot_threat_difficulty_data = not not BotConstants
+local default_bot_threat_difficulty_data = BotConstants
 local breed_data = {
 	detection_radius = 9999999,
 	target_selection = "pick_rat_ogre_target_idle",
@@ -1182,7 +1182,7 @@ local action_data = {
 					blackboard.chunk_event_socket_handles = unit_handles
 					blackboard.chunk_event_socket_units = {}
 					blackboard.chunk_event_fused_units = {}
-					blackboard.phase_one_buffs = not not blackboard.phase_one_buffs
+					blackboard.phase_one_buffs = blackboard.phase_one_buffs
 
 					local difficulty = Managers.state.difficulty:get_difficulty()
 					local num_sockets_per_difficulty = {
@@ -1193,7 +1193,7 @@ local action_data = {
 						cataclysm = 4,
 						normal = 2
 					}
-					local num_sockets = not not num_sockets_per_difficulty[difficulty]
+					local num_sockets = num_sockets_per_difficulty[difficulty]
 					local socket_offset = 1.75
 					local socket_space = 2
 					local socket_unit = "units/gameplay/explosive_oil_jug_socket_01"
@@ -1210,7 +1210,7 @@ local action_data = {
 					local num_on_left = math.ceil(num_sockets * 0.5)
 
 					for i = 1, num_on_left do
-						local fit_space = num_on_left > 1 and not not (socket_space / ((num_on_left - 1) * 0.5)) or not (num_on_left > 1) and not not 0
+						local fit_space = num_on_left > 1 and socket_space / ((num_on_left - 1) * 0.5) or not (num_on_left > 1) and 0
 						local slot = (i - 1 - (num_on_left - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, left_reference + unit_forward * slot, 1, 1)
 
@@ -1224,7 +1224,7 @@ local action_data = {
 					local num_on_right = num_sockets - num_on_left
 
 					for i = 1, num_on_right do
-						local fit_space = num_on_right > 1 and not not (socket_space / ((num_on_right - 1) * 0.5)) or not (num_on_right > 1) and not not 0
+						local fit_space = num_on_right > 1 and socket_space / ((num_on_right - 1) * 0.5) or not (num_on_right > 1) and 0
 						local slot = (i - 1 - (num_on_right - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, right_reference + unit_forward * slot, 1, 1)
 
@@ -1238,7 +1238,7 @@ local action_data = {
 					local num_forward = num_sockets - num_on_left - num_on_right
 
 					for i = 1, num_forward do
-						local fit_space = num_forward > 1 and not not (socket_space / ((num_forward - 1) * 0.5)) or not (num_forward > 1) and not not 0
+						local fit_space = num_forward > 1 and socket_space / ((num_forward - 1) * 0.5) or not (num_forward > 1) and 0
 						local slot = (i - 1 - (num_forward - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, forward_reference + unit_right * slot, 1, 1)
 
@@ -1252,7 +1252,7 @@ local action_data = {
 					local num_back = num_sockets - num_on_left - num_on_right - num_forward
 
 					for i = 1, num_back do
-						local fit_space = num_back > 1 and not not (socket_space / ((num_back - 1) * 0.5)) or not (num_back > 1) and not not 0
+						local fit_space = num_back > 1 and socket_space / ((num_back - 1) * 0.5) or not (num_back > 1) and 0
 						local slot = (i - 1 - (num_back - 1) * 0.5) * fit_space * 0.5
 						local pos = LocomotionUtils.pos_on_mesh(nav_world, back_reference + unit_right * slot, 1, 1)
 
@@ -1279,10 +1279,10 @@ local action_data = {
 							table.shuffle(barrel_spawners)
 						end
 
-						local num_spawners = not not barrel_spawners and not not #barrel_spawners
+						local num_spawners = barrel_spawners and #barrel_spawners
 
 						for i = 1, num_barrels do
-							local barrel_pos = barrel_spawners and not not Unit.local_position(barrel_spawners[math.index_wrapper(i, num_spawners)], 0) or not barrel_spawners and not not Unit.local_position(unit, 0)
+							local barrel_pos = barrel_spawners and Unit.local_position(barrel_spawners[math.index_wrapper(i, num_spawners)], 0) or not barrel_spawners and Unit.local_position(unit, 0)
 
 							if barrel_pos then
 								local rot = Quaternion.axis_angle(Vector3.up(), math.random() * math.tau)
@@ -1473,7 +1473,7 @@ local action_data = {
 						return false
 					end
 
-					blackboard.wizards_delay = not not blackboard.wizards_delay
+					blackboard.wizards_delay = blackboard.wizards_delay
 
 					if t > blackboard.wizards_delay then
 						return true
@@ -1492,7 +1492,7 @@ local action_data = {
 						cataclysm = 4,
 						normal = 1
 					}
-					local num_sorcerers = not not num_sorcerers_per_difficulty[difficulty]
+					local num_sorcerers = num_sorcerers_per_difficulty[difficulty]
 					local spawner_system = Managers.state.entity:system("spawner_system")
 					local spawners = spawner_system:get_raw_spawner_units("boss_sorcerer")
 
@@ -1502,7 +1502,7 @@ local action_data = {
 						table.shuffle(spawners)
 					end
 
-					local num_spawners = not not spawners and not not #spawners
+					local num_spawners = spawners and #spawners
 					local buff_system = Managers.state.entity:system("buff_system")
 					local optional_data = {
 						far_off_despawn_immunity = true,
@@ -1523,7 +1523,7 @@ local action_data = {
 					local breed = Breeds.chaos_tether_sorcerer
 
 					for i = 1, num_sorcerers do
-						local spawn_pos = spawners and not not Unit.local_position(spawners[math.index_wrapper(i, num_spawners)], 0) or not spawners and not not Unit.local_position(unit, 0)
+						local spawn_pos = spawners and Unit.local_position(spawners[math.index_wrapper(i, num_spawners)], 0) or not spawners and Unit.local_position(unit, 0)
 
 						Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(Quaternion.identity()), nil, nil, "terror_event", optional_data)
 					end

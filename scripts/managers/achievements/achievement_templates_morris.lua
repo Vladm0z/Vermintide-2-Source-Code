@@ -83,7 +83,7 @@ local function add_journey_complete_challenge(achievements, id, journey_name, di
 	local template = {
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -101,7 +101,7 @@ local function add_opened_shrine_challenge(achievements, id, shrine_types, num_s
 	local template = {
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -142,7 +142,7 @@ local function add_journey_dominant_god_complete_challenge(achievements, id, dom
 	local template = {
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -162,7 +162,7 @@ local function add_hero_journey_complete_challenge(achievements, id, hero, journ
 	local template = {
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		required_dlc_extra = difficulty_setting.dlc_requirement,
 		ID_XB1 = id_xb1,

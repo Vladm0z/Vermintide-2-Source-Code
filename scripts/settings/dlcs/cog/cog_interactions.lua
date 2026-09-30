@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/cog/cog_interactions.lua
 
-InteractionDefinitions.cog_missing_cog_pickup = not not InteractionDefinitions.cog_missing_cog_pickup
+InteractionDefinitions.cog_missing_cog_pickup = InteractionDefinitions.cog_missing_cog_pickup
 InteractionDefinitions.cog_missing_cog_pickup.config.swap_to_3p = false
 
 InteractionDefinitions.cog_missing_cog_pickup.client.can_interact = function (interactor_unit, interactable_unit, data, config)
@@ -13,7 +13,7 @@ InteractionDefinitions.cog_missing_cog_pickup.client.can_interact = function (in
 	local dlc_manager = Managers.unlock
 	local dlc_name = "cog"
 
-	return has_cog < 1 and not not dlc_manager:is_dlc_unlocked(dlc_name)
+	return has_cog < 1 and dlc_manager:is_dlc_unlocked(dlc_name)
 end
 
 InteractionDefinitions.cog_missing_cog_pickup.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)

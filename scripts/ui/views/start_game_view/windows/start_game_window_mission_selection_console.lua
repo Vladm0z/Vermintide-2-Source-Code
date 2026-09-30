@@ -184,7 +184,7 @@ StartGameWindowMissionSelectionConsole._present_act_levels = function (self, act
 			local act_display_name = act_settings.display_name
 
 			act_widget.content.background = act_settings.banner_texture
-			act_widget.content.text = act_display_name and not not Localize(act_display_name) or not act_display_name and not not ""
+			act_widget.content.text = act_display_name and Localize(act_display_name) or not act_display_name and ""
 
 			local area_name_width = UIUtils.get_text_width(self._ui_renderer, act_widget.style.text, act_widget.content.text)
 			local num_levels_in_act = #levels
@@ -352,7 +352,7 @@ StartGameWindowMissionSelectionConsole._setup_mission_data = function (self, lev
 
 	for _, setting in ipairs(mission_settings) do
 		local key = setting.key
-		local total_amount = setting.total_amount_func and not not self[setting.total_amount_func](self, level_settings) or not setting.total_amount_func and not not loot_objectives[key]
+		local total_amount = setting.total_amount_func and self[setting.total_amount_func](self, level_settings) or not setting.total_amount_func and loot_objectives[key]
 
 		if total_amount then
 			local stat_name = setting.stat_name
@@ -364,7 +364,7 @@ StartGameWindowMissionSelectionConsole._setup_mission_data = function (self, lev
 			local data = {}
 
 			data.name = key
-			data.total_amount = total_amount > 0 and not not total_amount
+			data.total_amount = total_amount > 0 and total_amount
 			data.stat_name = stat_name
 			data.widget = widget
 
@@ -449,7 +449,7 @@ end
 
 StartGameWindowMissionSelectionConsole._calculate_paint_scrap_amount = function (self, level_settings)
 	-- function 13
-	local game_mode_settings = GameModeSettings[not not level_settings.game_mode]
+	local game_mode_settings = GameModeSettings[level_settings.game_mode]
 
 	if not game_mode_settings.has_art_scraps then
 		return 0
@@ -503,13 +503,13 @@ StartGameWindowMissionSelectionConsole._sync_hero_completion = function (self, l
 
 			local icon_disabled_style = style[icon_name_disabled]
 
-			icon_disabled_style.color = completed_index > 0 and not not icon_disabled_style.default_color or not (completed_index > 0) and not not icon_disabled_style.disabled_color
+			icon_disabled_style.color = completed_index > 0 and icon_disabled_style.default_color or not (completed_index > 0) and icon_disabled_style.disabled_color
 		else
 			content["hotspot_" .. i].disable_button = not (completed_index > 0)
 
 			local icon_style = style["icon_" .. i .. "_saturated"]
 
-			icon_style.color = completed_index > 0 and not not icon_style.default_color or not (completed_index > 0) and not not icon_style.disabled_color
+			icon_style.color = completed_index > 0 and icon_style.default_color or not (completed_index > 0) and icon_style.disabled_color
 		end
 	end
 end
@@ -554,18 +554,18 @@ StartGameWindowMissionSelectionConsole._sync_missions = function (self, mission_
 		local widget = data.widget
 
 		if current_amount ~= amount then
-			data.previous_amount = not not current_amount or not not 0
+			data.previous_amount = current_amount or 0
 			data.amount = amount
 
 			local content = widget.content
 			local counter_text_style = widget.style.counter_text
 
 			content.amount = amount
-			content.total_amount = not not total_amount or not not 0
+			content.total_amount = total_amount or 0
 
 			if total_amount then
 				content.counter_text = tostring(amount) .. "/" .. tostring(total_amount)
-				counter_text_style.text_color = total_amount <= amount and not not counter_text_style.completed_color or not (total_amount <= amount) and not not counter_text_style.default_color
+				counter_text_style.text_color = total_amount <= amount and counter_text_style.completed_color or not (total_amount <= amount) and counter_text_style.default_color
 			else
 				content.counter_text = "x" .. tostring(amount)
 				counter_text_style.text_color = counter_text_style.completed_color
@@ -659,7 +659,7 @@ StartGameWindowMissionSelectionConsole._find_level_location_in_grid = function (
 		self._selected_level_id = nil
 	end
 
-	fassert(not not row and not not column, "level_id %s does not exist in navigation grid", level_id)
+	fassert(row and column, "level_id %s does not exist in navigation grid", level_id)
 
 	return row, column
 end
@@ -918,7 +918,7 @@ StartGameWindowMissionSelectionConsole._handle_input = function (self, dt, t)
 		end
 	end
 
-	local gamepad_confirm_pressed = not mouse_active and not not input_service:get(SELECTION_INPUT, true)
+	local gamepad_confirm_pressed = not mouse_active and input_service:get(SELECTION_INPUT, true)
 
 	if gamepad_confirm_pressed and self:_level_is_unlocked(self._selected_level_id) then
 		self:_play_sound("play_gui_lobby_button_02_mission_select")
@@ -965,7 +965,7 @@ StartGameWindowMissionSelectionConsole._animate_node_widget = function (self, wi
 	local content = widget.content
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
-	local selected_progress = not not hotspot.selected_progress
+	local selected_progress = hotspot.selected_progress
 	local selected_speed = 9
 
 	if is_selected then
@@ -975,7 +975,7 @@ StartGameWindowMissionSelectionConsole._animate_node_widget = function (self, wi
 	end
 
 	local is_unlock_guidance = content.unlock_guidance
-	local unlock_guidance_progress = not not content.unlock_guidance_progress
+	local unlock_guidance_progress = content.unlock_guidance_progress
 	local unlock_guidance_speed = 2
 
 	if is_unlock_guidance then

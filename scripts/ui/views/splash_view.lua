@@ -326,7 +326,7 @@ function create_xbox_beta_widget(input)
 					end,
 					content_change_function = function (content, style, ui_animations, dt)
 						-- function 5
-						content.timer = not not content.timer + dt
+						content.timer = content.timer + dt
 
 						local intensity = 192 + 63 * math.sin(content.timer * 4)
 
@@ -356,7 +356,7 @@ function create_xbox_beta_widget(input)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = input.input_texture_size,
-				offset = not not input.input_texture_offset,
+				offset = input.input_texture_offset,
 				color = {
 					255,
 					255,
@@ -366,7 +366,7 @@ function create_xbox_beta_widget(input)
 			},
 			texture_style = {
 				size = input.texture_size,
-				offset = not not input.texture_offset
+				offset = input.texture_offset
 			}
 		},
 		scenegraph_id = input.scenegraph_id
@@ -414,12 +414,12 @@ local function create_disclaimer_widget(input)
 					end,
 					content_change_function = function (content, style)
 						-- function 8
-						local gamepad_active = not not IS_CONSOLE
+						local gamepad_active = IS_CONSOLE
 						local time, dt = Managers.time:time_and_delta("main")
 
 						content.timer = content.timer + dt * 2
 						style.text_color[1] = 128 - math.cos(content.timer) * 127
-						content.continue = gamepad_active and not not "press_any_button_to_continue" or not gamepad_active and not not "press_any_key_to_continue"
+						content.continue = gamepad_active and "press_any_button_to_continue" or not gamepad_active and "press_any_key_to_continue"
 					end
 				}
 			}
@@ -648,17 +648,17 @@ if Development.parameter("use_beta_mode") or script_data.settings.use_beta_mode 
 			forced = true,
 			music_name = "Play_menu_screen_music",
 			material_name = "beta_end_overlay",
-			input_texture_size = is_xbox_one_x and not not {
+			input_texture_size = is_xbox_one_x and {
 				1776,
 				346
-			} or not is_xbox_one_x and not not {
+			} or not is_xbox_one_x and {
 				888,
 				173
 			},
-			input_texture_offset = is_xbox_one_x and not not {
+			input_texture_offset = is_xbox_one_x and {
 				550,
 				-260
-			} or not is_xbox_one_x and not not {
+			} or not is_xbox_one_x and {
 				275,
 				-130
 			},
@@ -692,10 +692,10 @@ if Development.parameter("use_beta_mode") or script_data.settings.use_beta_mode 
 				"a pre-release game, Fatshark does not commit",
 				"to providing customer support for the game."
 			},
-			font_size = is_pro and not not 52 or not is_pro and not not 36,
+			font_size = is_pro and 52 or not is_pro and 36,
 			size = {
 				1920,
-				is_pro and not not 70 or not is_pro and not not 50
+				is_pro and 70 or not is_pro and 50
 			},
 			offset = {
 				0,
@@ -704,7 +704,7 @@ if Development.parameter("use_beta_mode") or script_data.settings.use_beta_mode 
 			}
 		}
 	elseif IS_WINDOWS then
-		local is_beta = not not rawget(_G, "Steam")
+		local is_beta = rawget(_G, "Steam")
 
 		if is_beta then
 			splash_content[#splash_content + 1] = {
@@ -800,7 +800,7 @@ SplashView._next_splash = function (self, override_skip)
 	if self._current_splash_data then
 		local update_func = "_update_" .. self._current_splash_data.type
 
-		self._update_func = self[update_func] and (not not update_func or not not "_update_texture") or not self[update_func] and not not "_update_texture"
+		self._update_func = self[update_func] and (update_func or "_update_texture") or not self[update_func] and "_update_texture"
 		self._current_index = self._current_index + 1
 		self._current_splash_data.timer = self._current_splash_data.time
 	elseif not Managers.transition:loading_icon_active() then
@@ -891,11 +891,11 @@ SplashView._update_disclaimer = function (self, gui, dt)
 		local skip
 
 		if IS_CONSOLE then
-			skip = not not script_data.skip_splash or not not self:_get_console_input()
+			skip = script_data.skip_splash or self:_get_console_input()
 		else
 			local input_service = self.input_manager:get_service("splash_view")
 
-			skip = not not script_data.skip_splash or not not input_service:get("skip_splash")
+			skip = script_data.skip_splash or input_service:get("skip_splash")
 		end
 
 		if skip then
@@ -1013,7 +1013,7 @@ SplashView.update = function (self, dt)
 
 	local w, h = Gui.resolution()
 	local ui_renderer = self.ui_renderer
-	local input_service = IS_WINDOWS and not not self.input_manager:get_service("splash_view") or not IS_WINDOWS and not not FAKE_INPUT_SERVICE
+	local input_service = IS_WINDOWS and self.input_manager:get_service("splash_view") or not IS_WINDOWS and FAKE_INPUT_SERVICE
 
 	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt, nil, self.render_settings)
 	UIRenderer.draw_widget(ui_renderer, self.dead_space_filler)
@@ -1021,9 +1021,9 @@ SplashView.update = function (self, dt)
 	local skip
 
 	if IS_CONSOLE then
-		skip = not not script_data.skip_splash or not not self:_get_console_input()
+		skip = script_data.skip_splash or self:_get_console_input()
 	else
-		skip = not not script_data.skip_splash or not not input_service:get("skip_splash")
+		skip = script_data.skip_splash or input_service:get("skip_splash")
 	end
 
 	if skip and (not self._current_splash_data or not self._current_splash_data.forced) then

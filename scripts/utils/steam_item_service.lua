@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/steam_item_service.lua
 
-SteamItemService = not not SteamItemService
+SteamItemService = SteamItemService
 
 local function make_price_table(str_data, out)
 	-- function 1

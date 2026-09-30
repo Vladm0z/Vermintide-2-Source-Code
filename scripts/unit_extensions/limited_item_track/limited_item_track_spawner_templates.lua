@@ -22,7 +22,7 @@ LimitedItemTrackSpawnerTemplates.explosive_barrel_spawner = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "explosive_barrel_objective"
+		pickup_name = "explosive_barrel_objective"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name
@@ -77,7 +77,7 @@ LimitedItemTrackSpawnerTemplates.sack_spawner = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "grain_sack"
+		pickup_name = "grain_sack"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name
@@ -132,7 +132,7 @@ LimitedItemTrackSpawnerTemplates.cannon_ball_spawner = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "cannon_ball"
+		pickup_name = "cannon_ball"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name
@@ -187,7 +187,7 @@ LimitedItemTrackSpawnerTemplates.trail_cog_spawner = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "trail_cog"
+		pickup_name = "trail_cog"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name
@@ -242,7 +242,7 @@ LimitedItemTrackSpawnerTemplates.gargoyle_head_spawner = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "gargoyle_head_vs"
+		pickup_name = "gargoyle_head_vs"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name
@@ -299,7 +299,7 @@ LimitedItemTrackSpawnerTemplates.magic_barrel_spawner = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "magic_barrel"
+		pickup_name = "magic_barrel"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name
@@ -356,7 +356,7 @@ LimitedItemTrackSpawnerTemplates.wizards_barrel_spawner = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "wizards_barrel"
+		pickup_name = "wizards_barrel"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name
@@ -507,7 +507,7 @@ LimitedItemTrackSpawnerTemplates.gargoyle_head_spawner_vs = {
 		local network_angular_velocity = network_velocity
 		local pickup_name = Unit.get_data(spawner_unit, "pickup_name")
 
-		pickup_name = not not "gargoyle_head"
+		pickup_name = "gargoyle_head"
 
 		local pickup_data = Pickups.level_events[pickup_name]
 		local unit_name = pickup_data.unit_name

@@ -123,9 +123,9 @@ end
 
 VersusHordeAbilitySystem.is_activation_allowed = function (self, is_in_ghost_mode)
 	-- function 10
-	local allowed_by_ghost_mode_settings = not not settings.enable_activation_in_ghost_mode
+	local allowed_by_ghost_mode_settings = settings.enable_activation_in_ghost_mode
 
-	return not not allowed_by_ghost_mode_settings and not not self._round_started
+	return allowed_by_ghost_mode_settings and self._round_started
 end
 
 VersusHordeAbilitySystem.activate_dark_pact_horde_ability = function (self)
@@ -168,9 +168,9 @@ VersusHordeAbilitySystem._server_update_ability_charges = function (self, dt)
 		if data.ability_charge then
 			local recharge_modifier_data = self:_recharge_modifier(peer_id)
 			local cooldown_mod = recharge_modifier_data.cooldown
-			local custom_settings_modifier = not not self._custom_settings_modifier
+			local custom_settings_modifier = self._custom_settings_modifier
 
-			recharge_increment = not not (dt * cooldown_mod * custom_settings_modifier)
+			recharge_increment = dt * cooldown_mod * custom_settings_modifier
 
 			if script_data.short_ability_cooldowns then
 				recharge_increment = recharge_increment * 100
@@ -205,7 +205,7 @@ VersusHordeAbilitySystem.server_spawn_horde = function (self, peer_id)
 	local optional_data = {
 		horde_ability_caller_peer_id = peer_id
 	}
-	local override_epicenter_pos = player_data.extension and not not POSITION_LOOKUP[player_data.extension:unit()] or not player_data.extension and not not nil
+	local override_epicenter_pos = player_data.extension and POSITION_LOOKUP[player_data.extension:unit()] or not player_data.extension and nil
 
 	conflict_director.horde_spawner:execute_ambush_horde(data, side_id, false, override_epicenter_pos, optional_data)
 
@@ -228,11 +228,11 @@ end
 
 VersusHordeAbilitySystem.server_register_peer = function (self, peer_id)
 	-- function 16
-	local cached_ability_charge = not not settings.save_charges_between_rounds
+	local cached_ability_charge = settings.save_charges_between_rounds
 
 	if not self._server_player_data[peer_id] then
 		self._server_player_data[peer_id] = {
-			ability_charge = not not cached_ability_charge or not not 0,
+			ability_charge = cached_ability_charge or 0,
 			ability_horde_units_to_sync = {}
 		}
 	end
@@ -252,7 +252,7 @@ VersusHordeAbilitySystem.server_ability_recharge_boost = function (self, peer_id
 
 	local actions = settings.recharge_boosts.actions
 	local damage_sources = settings.recharge_boosts.damage_sources
-	local recharge_value = not not actions[action]
+	local recharge_value = actions[action]
 
 	if recharge_value then
 		recharge_value = recharge_value * self:_recharge_modifier(peer_id).boost
@@ -272,8 +272,8 @@ VersusHordeAbilitySystem.on_player_unit_spawned = function (self, player, unit, 
 	end
 
 	local peer_id = player.peer_id
-	local player_data = not not self._server_player_data[peer_id]
-	local ability_charge = player_data and not not player_data.ability_charge or not player_data and not not self._mechanism:get_cached_horde_ability_charges(peer_id)
+	local player_data = self._server_player_data[peer_id]
+	local ability_charge = player_data and player_data.ability_charge or not player_data and self._mechanism:get_cached_horde_ability_charges(peer_id)
 
 	player_data.player_unit = unit
 	player_data.extension = self._extensions[unit]
@@ -374,7 +374,7 @@ VersusHordeAbilitySystem._recharge_modifier = function (self)
 	local sign = math.sign(score_difference)
 	local rounded_score_difference = math.floor(math.abs(score_difference / factor)) * factor * sign
 	local max_score_difference = settings.max_score_difference_modifier
-	local score_modifier = not not settings.score_difference_recharge_modifier[rounded_score_difference]
+	local score_modifier = settings.score_difference_recharge_modifier[rounded_score_difference]
 	local max_modifier = settings.team_size_difference_recharge_modifier[3]
 	local recharge_modifier = {
 		cooldown = math.min(score_modifier.cooldown_mod * team_size_modifier, max_modifier),
@@ -389,7 +389,7 @@ VersusHordeAbilitySystem._recharge_modifier = function (self)
 		}
 	end
 
-	return not not recharge_modifier or not not 1
+	return recharge_modifier or 1
 end
 
 VersusHordeAbilitySystem.settings = function (self)
@@ -401,7 +401,7 @@ VersusHordeAbilitySystem.rpc_horde_ability_activated = function (self, channel_i
 	-- function 26
 	if Managers.chat and Managers.chat:has_channel(1) then
 		local player = Managers.player:player(activator_peer_id, 1)
-		local player_name = not not player and not not player:name()
+		local player_name = player and player:name()
 
 		if player_name then
 			Managers.chat:add_local_system_message(1, string.format(Localize("vs_chat_message_horde_ability"), player_name), true)

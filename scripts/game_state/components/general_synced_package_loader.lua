@@ -241,7 +241,7 @@ end
 
 GeneralSyncedPackageLoader.is_mutator_loaded_on_all_peers = function (self, mutator_name, for_debugging)
 	-- function 15
-	local peers = not not self._is_server
+	local peers = self._is_server
 
 	if for_debugging then
 		peers = table.shallow_copy(self._network_handler:get_peers(), true)
@@ -301,7 +301,7 @@ GeneralSyncedPackageLoader.debug_loaded_packages = function (self)
 		Debug.text("Initialized mutators:")
 	end
 
-	local peers = self._is_server and not not self._network_handler:hot_join_synced_peers() or not self._is_server and not not self._network_handler:get_peers()
+	local peers = self._is_server and self._network_handler:hot_join_synced_peers() or not self._is_server and self._network_handler:get_peers()
 
 	if not self._is_server then
 		peers = table.shallow_copy(self._network_handler:get_peers(), true)

@@ -3,7 +3,7 @@
 local SERVER_INTERACT = true
 local CLIENT_INTERACT = false
 
-InteractionDefinitions.geheimnisnacht_2021_altar = not not InteractionDefinitions.geheimnisnacht_2021_altar
+InteractionDefinitions.geheimnisnacht_2021_altar = InteractionDefinitions.geheimnisnacht_2021_altar
 InteractionDefinitions.geheimnisnacht_2021_altar.config = {
 	only_once = true,
 	hud_verb = "player_interaction",
@@ -22,7 +22,7 @@ InteractionDefinitions.geheimnisnacht_2021_altar.server.stop = function (world, 
 		local altar_position = Unit.local_position(interactable_unit, 0)
 		local nav_world = Managers.state.conflict.nav_world
 		local origin_position = ConflictUtils.get_pos_towards_goal(nav_world, altar_position, 15, 1)
-		local boxed_pos = origin_position and not not Vector3Box(origin_position) or not origin_position and not not nil
+		local boxed_pos = origin_position and Vector3Box(origin_position) or not origin_position and nil
 
 		Managers.state.conflict:start_terror_event("geheimnisnacht_2021_event", seed, nil, boxed_pos)
 	end
@@ -83,7 +83,7 @@ InteractionDefinitions.geheimnisnacht_2021_altar.client.can_interact = function 
 	local used = Unit.get_data(interactable_unit, "interaction_data", "used")
 	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 
-	return not used and not not not being_used
+	return not used and not being_used
 end
 
 InteractionDefinitions.geheimnisnacht_2021_altar.client.start = function (world, interactor_unit, interactable_unit, data, config, t)

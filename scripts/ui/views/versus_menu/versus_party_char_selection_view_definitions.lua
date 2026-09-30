@@ -511,7 +511,7 @@ local function create_progress_marker(scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 2
-						return not not content.highlight
+						return content.highlight
 					end
 				},
 				{
@@ -537,7 +537,7 @@ local function create_progress_marker(scenegraph_id)
 						local anim_progress = style.anim_progress
 
 						if done then
-							anim_progress = not not style.anim_progress or not not 0
+							anim_progress = style.anim_progress or 0
 
 							local texture_size = style.texture_size
 							local default_size = style.default_size
@@ -712,7 +712,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "frame_passive",
 					content_check_function = function (content)
 						-- function 9
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -721,7 +721,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "frame_passive",
 					content_check_function = function (content)
 						-- function 10
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -730,7 +730,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "local_player_frame",
 					content_check_function = function (content)
 						-- function 11
-						return not content.locked and not content.taken and not not not content.other_picking
+						return not content.locked and not content.taken and not content.other_picking
 					end
 				},
 				{
@@ -739,7 +739,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "other_hover",
 					content_check_function = function (content)
 						-- function 12
-						return not not content.hovered_by_other
+						return content.hovered_by_other
 					end
 				},
 				{
@@ -748,7 +748,7 @@ local function create_roster_hero_widget(scenegraph_id, size)
 					texture_id = "local_player_select_frame",
 					content_check_function = function (content)
 						-- function 13
-						return not not content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover
 					end
 				}
 			}
@@ -1178,8 +1178,8 @@ end
 
 local function create_player_box_widget(scenegraph_id, offset, size)
 	-- function 18
-	local size = not not size or not not scenegraph_definition[scenegraph_id].size
-	local offset = not not offset or not not {
+	local size = size or scenegraph_definition[scenegraph_id].size
+	local offset = offset or {
 		0,
 		0,
 		11
@@ -1214,7 +1214,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 						-- function 19
 						local is_player = content.is_player
 
-						return not not content.is_player
+						return content.is_player
 					end
 				},
 				{
@@ -1225,7 +1225,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 						-- function 20
 						local is_player = content.is_player
 
-						return not not content.is_player
+						return content.is_player
 					end
 				},
 				{
@@ -1236,7 +1236,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 						-- function 21
 						local is_player = content.is_player
 
-						return not not content.is_player
+						return content.is_player
 					end
 				},
 				{
@@ -1245,7 +1245,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					texture_id = "mute_icon",
 					content_check_function = function (content)
 						-- function 22
-						return not not content.is_player
+						return content.is_player
 					end
 				},
 				{
@@ -1254,7 +1254,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					texture_id = "mute_icon_muted",
 					content_check_function = function (content)
 						-- function 23
-						return not not content.is_player
+						return content.is_player
 					end
 				},
 				{
@@ -1263,7 +1263,7 @@ local function create_player_box_widget(scenegraph_id, offset, size)
 					content_id = "hotspot",
 					content_check_function = function (content)
 						-- function 24
-						return not not content.parent.is_player
+						return content.parent.is_player
 					end
 				}
 			}
@@ -1521,9 +1521,9 @@ end
 
 local function create_skill_info_widget(scenegraph_id, skill_type, skill_icon, skill_name)
 	-- function 28
-	local skill_icon = not not skill_icon or not not "icons_placeholder"
-	local skill_type = not not skill_type or not not "n/a"
-	local skill_name = not not skill_name or not not "n/a"
+	local skill_icon = skill_icon or "icons_placeholder"
+	local skill_type = skill_type or "n/a"
+	local skill_name = skill_name or "n/a"
 	local widget = {
 		element = {
 			passes = {

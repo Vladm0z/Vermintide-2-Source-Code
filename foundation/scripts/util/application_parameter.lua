@@ -2,8 +2,8 @@
 
 require("foundation/scripts/util/table")
 
-script_data = not not script_data
-Development = not not Development
+script_data = script_data
+Development = Development
 Development.application_parameter = {}
 
 Development.init_application_parameters = function (args, do_pretty_print_args)
@@ -72,7 +72,7 @@ Development.init_application_parameters = function (args, do_pretty_print_args)
 	local function warn_multiple_definitions(parameter_name, old)
 		-- function 12
 		local value = application_parameters[parameter_name]
-		local t = not not {
+		local t = {
 			value
 		}
 
@@ -120,7 +120,7 @@ Development.init_application_parameters = function (args, do_pretty_print_args)
 				application_parameters[param] = nil
 			end
 
-			local no_value_exists_for_param = has_more_args_after_current() and not not next_is_parameter() or not has_more_args_after_current() and not not not has_more_args_after_current()
+			local no_value_exists_for_param = has_more_args_after_current() and next_is_parameter() or not has_more_args_after_current() and not has_more_args_after_current()
 
 			if no_value_exists_for_param then
 				application_parameters[param] = true
@@ -168,7 +168,7 @@ Development.init_application_parameters = function (args, do_pretty_print_args)
 		if application_parameters["use-clean-settings"] then
 			script_data = {
 				build_identifier = script_data.build_identifier,
-				settings = not not script_data.settings
+				settings = script_data.settings
 			}
 		end
 

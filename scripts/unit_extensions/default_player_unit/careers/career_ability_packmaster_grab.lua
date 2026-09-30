@@ -7,7 +7,7 @@ CareerAbilityPackmasterGrab._ability_available = function (self)
 	local ability_available = self.super._ability_available(self)
 	local status_extension = self._status_extension
 
-	return not not ability_available and not not not status_extension:get_unarmed()
+	return ability_available and not status_extension:get_unarmed()
 end
 
 CareerAbilityPackmasterGrab._start = function (self)

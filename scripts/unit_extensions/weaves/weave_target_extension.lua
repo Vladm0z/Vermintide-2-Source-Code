@@ -17,7 +17,7 @@ WeaveTargetExtension.init = function (self, extension_init_context, unit, extens
 
 	Unit.set_data(unit, "terror_event_spawner_id", terror_event_spawner_id)
 
-	self._attacks_allowed = not not extension_init_data.attacks_allowed
+	self._attacks_allowed = extension_init_data.attacks_allowed
 
 	Unit.set_data(unit, "allow_melee_damage", self._attacks_allowed.melee)
 	Unit.set_data(unit, "allow_ranged_damage", self._attacks_allowed.ranged)

@@ -594,8 +594,8 @@ end
 local function create_level_entry(level_settings, offset, selected_index, my_index, is_disabled, disabled_reason, preferred_levels)
 	-- function 12
 	local fallback_image = "icons_placeholder"
-	local texture_name = not not level_settings.small_level_image
-	local texture_settings = UIAtlasHelper.has_texture_by_name(texture_name) and not not UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name) or not UIAtlasHelper.has_texture_by_name(texture_name) and not not UIAtlasHelper.get_atlas_settings_by_texture_name(fallback_image)
+	local texture_name = level_settings.small_level_image
+	local texture_settings = UIAtlasHelper.has_texture_by_name(texture_name) and UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name) or not UIAtlasHelper.has_texture_by_name(texture_name) and UIAtlasHelper.get_atlas_settings_by_texture_name(fallback_image)
 	local frame_settings = UIFrameSettings.frame_outer_glow_01
 	local edge_height = frame_settings.texture_sizes.horizontal[2]
 	local box_size = math.min(grid_settings.level_size[1], grid_settings.level_size[2])
@@ -662,8 +662,8 @@ local function create_level_entry(level_settings, offset, selected_index, my_ind
 			selected_index = selected_index,
 			frame = frame_settings.texture,
 			is_disabled = is_disabled,
-			show_gold_lock = not not is_disabled and disabled_reason == "dlc",
-			show_forbidden = not not is_disabled and disabled_reason ~= "dlc"
+			show_gold_lock = is_disabled and disabled_reason == "dlc",
+			show_forbidden = is_disabled and disabled_reason ~= "dlc"
 		},
 		style = {
 			button_hotspot = {

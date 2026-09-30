@@ -20,7 +20,7 @@ MainPathUtils.closest_pos_at_main_path = function (not_used, p, search_main_path
 		local main_path_data = level_analysis.main_path_data
 		local breaks_order = main_path_data.breaks_order
 
-		start_node_index = not not (breaks_order[search_main_path_index - 1] + 1)
+		start_node_index = breaks_order[search_main_path_index - 1] + 1
 		end_node_index = breaks_order[search_main_path_index]
 	end
 
@@ -36,15 +36,15 @@ MainPathUtils.closest_pos_at_main_path_lua = function (main_paths, p, search_mai
 	local best_travel_dist = 0
 	local total_path_dist = 0
 
-	p = not not p or not not main_paths[1].nodes[1]:unbox()
+	p = p or main_paths[1].nodes[1]:unbox()
 
 	local Vector3_set_xyz = Vector3.set_xyz
 	local Vector3_to_elements = Vector3.to_elements
 	local Geometry_closest_point_on_line = Geometry.closest_point_on_line
 	local Script_set_temp_count = Script.set_temp_count
 	local Script_temp_count = Script.temp_count
-	local start_index = not not search_main_path_index or not not 1
-	local end_index = not not search_main_path_index or not not #main_paths
+	local start_index = search_main_path_index or 1
+	local end_index = search_main_path_index or #main_paths
 
 	for i = start_index, end_index do
 		local sub_path = main_paths[i]
@@ -78,7 +78,7 @@ MainPathUtils.closest_pos_at_main_path_lua = function (main_paths, p, search_mai
 		local path = main_paths[best_main_path]
 
 		closest_node = path.nodes[best_sub_index]:unbox()
-		best_travel_dist = path.travel_dist and (not not (path.travel_dist[best_sub_index] + Vector3.distance(best_point, closest_node)) or not not 0) or not path.travel_dist and not not 0
+		best_travel_dist = path.travel_dist and (path.travel_dist[best_sub_index] + Vector3.distance(best_point, closest_node) or 0) or not path.travel_dist and 0
 		move_percent = best_travel_dist / total_path_dist
 	else
 		best_point = nil
@@ -202,7 +202,7 @@ local index_list_size = #index_list
 
 MainPathUtils.closest_pos_at_collapsed_main_path = function (collapsed_path, collapsed_dists, breaks_lookup, p, last_index)
 	-- function 9
-	last_index = not not last_index or not not 1
+	last_index = last_index or 1
 
 	local num_nodes = #collapsed_path
 	local last_node = num_nodes - 1
@@ -212,7 +212,7 @@ MainPathUtils.closest_pos_at_collapsed_main_path = function (collapsed_path, col
 	local best_index = false
 	local total_path_dist = collapsed_dists[num_nodes]
 
-	p = not not p or not not collapsed_path[1]:unbox()
+	p = p or collapsed_path[1]:unbox()
 
 	local Vector3_set_xyz = Vector3.set_xyz
 	local Vector3_to_elements = Vector3.to_elements
@@ -423,7 +423,7 @@ end
 
 MainPathUtils.ray_along_node_list = function (nav_world, node_list, start_node_index, node_list_direction, wanted_distance)
 	-- function 13
-	local end_node_index = node_list_direction ~= -1 and not not #node_list or not (node_list_direction ~= -1) and not not 1
+	local end_node_index = node_list_direction ~= -1 and #node_list or not (node_list_direction ~= -1) and 1
 	local distance = 0
 
 	for i = start_node_index, end_node_index, node_list_direction do
@@ -532,7 +532,7 @@ MainPathUtils.get_main_path_point_between_players = function (main_paths, main_p
 		direction = base_position:unbox() - prev_position:unbox()
 	end
 
-	local rotation = direction and not not Quaternion.look(direction) or not direction and not not Quaternion.identity()
+	local rotation = direction and Quaternion.look(direction) or not direction and Quaternion.identity()
 
 	return Vector3Box(position), QuaternionBox(rotation)
 end

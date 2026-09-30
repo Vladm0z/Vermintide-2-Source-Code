@@ -68,7 +68,7 @@ UICleanUI.update = function (self, dt)
 	local peer_id = self.peer_id
 	local player_manager = Managers.player
 	local player = player_manager:player_from_peer_id(peer_id)
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if Unit.alive(player_unit) and ScriptUnit.has_extension(player_unit, "eyetracking_system") then
 		local eyetracking_extension = ScriptUnit.extension(player_unit, "eyetracking_system")
@@ -480,7 +480,7 @@ UICleanUI.update = function (self, dt)
 	end
 
 	local cutscene_system = Managers.state.entity:system("cutscene_system")
-	local in_cutscene = not not cutscene_system and not not cutscene_system.active_camera
+	local in_cutscene = cutscene_system and cutscene_system.active_camera
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local clusters = self.clusters
 

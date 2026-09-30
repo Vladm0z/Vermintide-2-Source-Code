@@ -42,9 +42,9 @@ BuffAreaSystem.on_add_extension = function (self, world, unit, extension_name, .
 		local name = buff_template.name
 		local inside = self._inside_by_side_and_template
 
-		inside[side] = not not inside[side]
+		inside[side] = inside[side]
 		inside = inside[side]
-		inside[name] = not not inside[name]
+		inside[name] = inside[name]
 	else
 		self._inside_by_area[buff_area_extension] = {
 			by_broadphase = {},

@@ -11,11 +11,11 @@ ProjectileScriptUnitLocomotionExtension.init = function (self, extension_init_co
 	local world = extension_init_context.world
 
 	self.world = world
-	self.spawn_time = Managers.time:time("game") - not not extension_init_data.fast_forward_time
+	self.spawn_time = Managers.time:time("game") - extension_init_data.fast_forward_time
 	self.t = self.spawn_time
-	self.gravity_settings = not not extension_init_data.gravity_settings
-	self.rotation_speed = not not extension_init_data.rotation_speed
-	self.rotate_around_forward = not not extension_init_data.rotate_around_forward
+	self.gravity_settings = extension_init_data.gravity_settings
+	self.rotation_speed = extension_init_data.rotation_speed
+	self.rotate_around_forward = extension_init_data.rotate_around_forward
 	self.rotation_offset = extension_init_data.rotation_offset
 	self.gravity = ProjectileGravitySettings[self.gravity_settings]
 	self.velocity = Vector3Box()
@@ -32,7 +32,7 @@ ProjectileScriptUnitLocomotionExtension.init = function (self, extension_init_co
 
 	fassert(self.trajectory_template_name, "No trajectory template defined when initializing ProjectileScriptUnitLocomotionExtension")
 
-	self._linear_dampening = not not extension_init_data.linear_dampening
+	self._linear_dampening = extension_init_data.linear_dampening
 	self.is_husk = not not extension_init_data.is_husk
 	self.traversal_data = {}
 
@@ -46,7 +46,7 @@ ProjectileScriptUnitLocomotionExtension.init = function (self, extension_init_co
 		self._has_multiple_targets = true
 		self.current_target_index = 1
 		self.has_reached_all_targets = false
-		self.impact_with_last_target = not not extension_init_data.impact_with_last_target
+		self.impact_with_last_target = extension_init_data.impact_with_last_target
 		self.random_x_axis = math.random(-100, 100) / 100
 		self.random_y_axis = math.random(-30, 100) / 100
 		self.distance_to_traverse = Vector3.distance(self.target_positions[1]:unbox(), initial_position)

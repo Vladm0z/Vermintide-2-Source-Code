@@ -618,7 +618,7 @@ end
 
 local function array_insert_sorted(a, value, comp_function)
 	-- function 52
-	comp_function = not not comp_function or not not comp_default
+	comp_function = comp_function or comp_default
 
 	local at, n = a[1], a[2]
 
@@ -641,7 +641,7 @@ local floor = math.floor
 
 local function array_binary_insert(a, value, comp_function)
 	-- function 53
-	comp_function = not not comp_function or not not comp_default
+	comp_function = comp_function or comp_default
 
 	local at, n = a[1], a[2]
 	local iStart, iEnd, iMid, iState = 1, n, 1, 0

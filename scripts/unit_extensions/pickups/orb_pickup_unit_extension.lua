@@ -17,7 +17,7 @@ OrbPickupUnitExtension.init = function (self, extension_init_context, unit, exte
 
 	self._hero_side = side
 	self._pickup_settings = AllPickups[self.pickup_name]
-	self._orb_flight_target_position = extension_init_data.flight_enabled and not not extension_init_data.orb_flight_target_position or not extension_init_data.flight_enabled and not not nil
+	self._orb_flight_target_position = extension_init_data.flight_enabled and extension_init_data.orb_flight_target_position or not extension_init_data.flight_enabled and nil
 
 	if self._orb_flight_target_position then
 		local orb_offset = self._pickup_settings.orb_offset
@@ -38,7 +38,7 @@ OrbPickupUnitExtension.init = function (self, extension_init_context, unit, exte
 	end
 
 	self._hover = self._pickup_settings.hover_settings
-	self._hover_from = not not self._orb_flight_target_position
+	self._hover_from = self._orb_flight_target_position
 	self._magnetic = self._pickup_settings.magnetic_settings
 	self._buff_params = {
 		attacker_unit = unit
@@ -88,17 +88,17 @@ OrbPickupUnitExtension.update = function (self, unit, input, dt, context, t)
 
 				local distance = Vector3.length(delta_pos)
 				local status_extension = ScriptUnit.extension(player_unit, "status_system")
-				local can_pickup = not status_extension:is_disabled() and (not pickup_settings.can_pickup_orb or not not pickup_settings.can_pickup_orb(pickup_settings, player_unit))
+				local can_pickup = not status_extension:is_disabled() and (not pickup_settings.can_pickup_orb or pickup_settings.can_pickup_orb(pickup_settings, player_unit))
 
 				if can_pickup then
-					local pickup_radius = not not pickup_settings.pickup_radius
+					local pickup_radius = pickup_settings.pickup_radius
 
 					if distance < pickup_radius then
 						if pickup_settings.granted_buff then
 							local buff_system = Managers.state.entity:system("buff_system")
 
 							if buff_system then
-								local sync_type = not not pickup_settings.buff_sync_type
+								local sync_type = pickup_settings.buff_sync_type
 
 								buff_system:add_buff_synced(player_unit, pickup_settings.granted_buff, sync_type, self._buff_params)
 							end
@@ -109,7 +109,7 @@ OrbPickupUnitExtension.update = function (self, unit, input, dt, context, t)
 						if audio_system then
 							local player = Managers.player:owner(player_unit)
 							local peer_id = player:network_id()
-							local pickup_sound = not not pickup_settings.pickup_sound
+							local pickup_sound = pickup_settings.pickup_sound
 
 							audio_system:play_2d_audio_unit_event_for_peer(pickup_sound, peer_id)
 						end
@@ -163,7 +163,7 @@ OrbPickupUnitExtension.update = function (self, unit, input, dt, context, t)
 		local max_speed = magnetic_settings.max_speed
 		local time_to_max_speed = magnetic_settings.time_to_max_speed
 
-		self._magnetic_start_t = not not self._magnetic_start_t
+		self._magnetic_start_t = self._magnetic_start_t
 
 		local speed
 
@@ -183,7 +183,7 @@ OrbPickupUnitExtension.update = function (self, unit, input, dt, context, t)
 		local hover_frequency = self._hover.frequency
 		local hover_amplitude = self._hover.amplitude
 
-		self._hover_t_start = not not self._hover_t_start
+		self._hover_t_start = self._hover_t_start
 
 		local hover_t = t - self._hover_t_start
 		local hover_from = self._hover_from:unbox()
@@ -202,7 +202,7 @@ end
 
 OrbPickupUnitExtension._set_custom_orb_color = function (self, boxed_color_core, boxed_color_shell)
 	-- function 7
-	local color_core = Color(boxed_color_core[1], boxed_color_core[2], boxed_color_core[3], not not boxed_color_core[4])
+	local color_core = Color(boxed_color_core[1], boxed_color_core[2], boxed_color_core[3], boxed_color_core[4])
 	local color_shell = Vector3(boxed_color_shell[1], boxed_color_shell[2], boxed_color_shell[3])
 	local unit = self._unit
 

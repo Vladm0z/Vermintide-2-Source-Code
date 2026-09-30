@@ -717,7 +717,7 @@ local function create_password_window(scenegraph_id, size)
 			text_id = "status_message",
 			content_check_function = function (content)
 				-- function 7
-				return not not content.status_message
+				return content.status_message
 			end
 		},
 		{
@@ -726,7 +726,7 @@ local function create_password_window(scenegraph_id, size)
 			text_id = "status_message",
 			content_check_function = function (content)
 				-- function 8
-				return not not content.status_message
+				return content.status_message
 			end
 		},
 		{
@@ -1441,7 +1441,7 @@ PopupHandler.remove_input_manager = function (self, application_shutdown)
 	if not application_shutdown and self:has_popup() then
 		local popup_id, popup = self:active_popup()
 
-		error(string.format("Trying to proceed to next gamestate without handling popup %q: %q", not not popup.topic, not not popup.text))
+		error(string.format("Trying to proceed to next gamestate without handling popup %q: %q", popup.topic, popup.text))
 	end
 
 	self.input_manager = nil
@@ -1530,7 +1530,7 @@ PopupHandler.update = function (self, dt, from_manager)
 			self:_initialize_popup(current_popup)
 		end
 
-		local ui_renderer, input_manager = self.ui_renderer, not not self.input_manager
+		local ui_renderer, input_manager = self.ui_renderer, self.input_manager
 		local input_service = input_manager:get_service("popup")
 		local gamepad_active = input_manager:is_device_active("gamepad")
 		local widget = current_popup.widget
@@ -1614,7 +1614,7 @@ PopupHandler.update = function (self, dt, from_manager)
 					local button_style = gamepad_button.style
 					local text_style = button_style.text
 
-					text_style.text_color = button_enabled and not not self.gamepad_button_colors.enabled or not button_enabled and not not self.gamepad_button_colors.disabled
+					text_style.text_color = button_enabled and self.gamepad_button_colors.enabled or not button_enabled and self.gamepad_button_colors.disabled
 
 					local font, scaled_font_size = UIFontByResolution(text_style)
 					local text_width, text_height, min = UIRenderer.text_size(ui_renderer, button_text, font[1], scaled_font_size)
@@ -1653,7 +1653,7 @@ PopupHandler.update = function (self, dt, from_manager)
 						self:play_sound("Play_hud_select")
 					end
 
-					result = not not result or not not self:_handle_keyboard_input(current_popup)
+					result = result or self:_handle_keyboard_input(current_popup)
 				end
 			end
 		end
@@ -1706,7 +1706,7 @@ PopupHandler._handle_keyboard_input = function (self, current_popup)
 		return
 	end
 
-	local index = not not current_popup.button_index
+	local index = current_popup.button_index
 	local input_service = Managers.input:get_service("popup")
 
 	if input_service:get("move_right_hold_continuous") then
@@ -1783,7 +1783,7 @@ PopupHandler.queue_popup = function (self, popup_type, text, topic, ...)
 	n_popups = n_popups + 1
 	self.n_popups = n_popups
 
-	local new_popup = not not popups[n_popups]
+	local new_popup = popups[n_popups]
 
 	self.popup_ids = self.popup_ids + 1
 
@@ -1796,7 +1796,7 @@ PopupHandler.queue_popup = function (self, popup_type, text, topic, ...)
 	local scaled_text_field_size = UIScaleVectorToResolution(scenegraph_definition.popup_text.size)
 	local number_of_text_rows = self:get_number_of_rows(text, text_style, scaled_text_field_size[1])
 
-	new_popup.text_font_size = number_of_text_rows >= 7 and not not 20 or not (number_of_text_rows >= 7) and not not 28
+	new_popup.text_font_size = number_of_text_rows >= 7 and 20 or not (number_of_text_rows >= 7) and 28
 	new_popup.text = text
 	new_popup.topic = topic
 	new_popup.widget = widget
@@ -1889,7 +1889,7 @@ PopupHandler.set_popup_verifying_password = function (self, popup_id, is_verifyi
 	local widget = popup.widget
 	local content = widget.content
 
-	content.status_message = not not error_message or not not status_message
+	content.status_message = error_message or status_message
 	content.error_message = error_message
 	content.active = not is_verifying
 
@@ -1972,8 +1972,8 @@ PopupHandler.activate_timer = function (self, popup_id, time, default_result, al
 
 	popup.timer = time
 	popup.default_result = default_result
-	popup.timer_alignment = not not alignment or not not "right"
-	popup.timer_blink = blink ~= nil and not not blink or not (blink ~= nil) and not not true
+	popup.timer_alignment = alignment or "right"
+	popup.timer_blink = not (blink ~= nil) or blink
 	popup.timer_format_func = optional_timer_format_func
 	popup.timer_font_size = optional_font_size
 end

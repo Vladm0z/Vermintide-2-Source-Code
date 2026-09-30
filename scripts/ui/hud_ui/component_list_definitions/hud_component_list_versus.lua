@@ -5,7 +5,7 @@ local function is_dark_pact_validate_function()
 	local local_player_party = Managers.party:get_local_player_party()
 	local side = Managers.state.side.side_by_party[local_player_party]
 
-	return not not side and side:name() == "dark_pact"
+	return side and side:name() == "dark_pact"
 end
 
 local function is_hero_validate_function()
@@ -13,7 +13,7 @@ local function is_hero_validate_function()
 	local local_player_party = Managers.party:get_local_player_party()
 	local side = Managers.state.side.side_by_party[local_player_party]
 
-	return not not side and side:name() == "heroes"
+	return side and side:name() == "heroes"
 end
 
 local function is_dark_pact_or_spectator_validate_function()
@@ -443,7 +443,7 @@ local components = {
 			if is_in_inn then
 				return true
 			else
-				local use_twitch_ui = not not Managers.twitch
+				local use_twitch_ui = Managers.twitch
 
 				if not use_twitch_ui then
 					return true
@@ -505,7 +505,7 @@ local components = {
 			-- function 17
 			local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-			return game_mode_key ~= "tutorial" and not not not is_in_inn
+			return game_mode_key ~= "tutorial" and not is_in_inn
 		end
 	},
 	{
@@ -563,7 +563,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 19
 			local component = ingame_hud:component("LevelCountdownUI")
-			local is_enter_game = not not component and not not component:is_enter_game()
+			local is_enter_game = component and component:is_enter_game()
 
 			return is_enter_game
 		end
@@ -582,7 +582,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 21
 			local component = ingame_hud:component("MissionVotingUI")
-			local is_active = not not component and not not component:is_active()
+			local is_active = component and component:is_active()
 
 			return is_active
 		end
@@ -595,7 +595,7 @@ local visibility_groups = {
 			local end_screen_active = ingame_ui:end_screen_active()
 			local in_score_screen = ingame_ui.end_of_level_ui ~= nil
 
-			return not not in_score_screen or not not end_screen_active
+			return in_score_screen or end_screen_active
 		end
 	},
 	{
@@ -605,7 +605,7 @@ local visibility_groups = {
 			local ingame_ui = ingame_hud:parent()
 			local menu_active = ingame_ui.menu_active
 			local current_view = ingame_ui.current_view
-			local is_menu_active = not not menu_active or current_view ~= nil
+			local is_menu_active = menu_active or current_view ~= nil
 
 			return is_menu_active
 		end
@@ -615,7 +615,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 24
 			local component = ingame_hud:component("GiftPopupUI")
-			local is_active = not not component and not not component:active()
+			local is_active = component and component:active()
 
 			return is_active
 		end
@@ -625,7 +625,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 25
 			local cutscene_system = Managers.state.entity:system("cutscene_system")
-			local cutscene_active = not not cutscene_system.active_camera
+			local cutscene_active = cutscene_system.active_camera
 
 			return cutscene_active
 		end
@@ -635,7 +635,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 26
 			local component = ingame_hud:component("VersusTabUI")
-			local is_active = not not component and not not component:is_active()
+			local is_active = component and component:is_active()
 
 			return is_active
 		end
@@ -652,7 +652,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 28
 			local game_mode_manager = Managers.state.game_mode
-			local has_realism = not not game_mode_manager and not not game_mode_manager:has_activated_mutator("realism")
+			local has_realism = game_mode_manager and game_mode_manager:has_activated_mutator("realism")
 
 			return has_realism
 		end
@@ -662,8 +662,8 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 29
 			local game_mode_manager = Managers.state.game_mode
-			local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-			local game_mode_disable_hud = not not game_mode and not not game_mode.game_mode_hud_disabled
+			local game_mode = game_mode_manager and game_mode_manager:game_mode()
+			local game_mode_disable_hud = game_mode and game_mode.game_mode_hud_disabled
 
 			return game_mode_disable_hud
 		end
@@ -684,14 +684,14 @@ local visibility_groups = {
 			-- function 31
 			local player = Managers.player:local_player()
 			local side = Managers.state.side:get_side_from_player_unique_id(player:unique_id())
-			local is_hero = not not side and side:name() == "heroes"
+			local is_hero = side and side:name() == "heroes"
 			local player_ready = true
 
 			if is_hero then
 				player_ready = Managers.state.game_mode:game_mode():player_ready()
 			end
 
-			return not not ingame_hud:is_own_player_dead()
+			return (ingame_hud:is_own_player_dead())
 		end
 	},
 	{
@@ -702,7 +702,7 @@ local visibility_groups = {
 			local player_unit = local_player.player_unit
 			local player_ready = Managers.state.game_mode:game_mode():player_ready()
 
-			return not not player_unit and not not Unit.alive(player_unit)
+			return player_unit and Unit.alive(player_unit)
 		end
 	},
 	{
@@ -711,7 +711,7 @@ local visibility_groups = {
 			-- function 33
 			local local_player = Managers.player:local_player()
 			local ghost_mode_extension = ScriptUnit.has_extension(local_player.unit, "ghost_mode_system")
-			local in_ghost_mode = not not ghost_mode_extension and not not ghost_mode_extension:is_in_ghost_mode()
+			local in_ghost_mode = ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode()
 
 			return in_ghost_mode
 		end

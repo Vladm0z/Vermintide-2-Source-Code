@@ -1,16 +1,16 @@
 -- chunkname: @scripts/settings/demo_settings.lua
 
-DemoSettings = not not Demosettings
+DemoSettings = Demosettings
 
 if DemoSettings.key_combinations_allowed == nil then
 	if Window == nil then
 		key_combinations_allowed = {}
 	else
 		DemoSettings.key_combinations_allowed = {
-			[Window.KEYSTROKE_ALT_ENTER] = not not true,
-			[Window.KEYSTROKE_ALT_F4] = not not true,
-			[Window.KEYSTROKE_ALT_TAB] = not not true,
-			[Window.KEYSTROKE_WINDOWS] = not not true
+			[Window.KEYSTROKE_ALT_ENTER] = true,
+			[Window.KEYSTROKE_ALT_F4] = true,
+			[Window.KEYSTROKE_ALT_TAB] = true,
+			[Window.KEYSTROKE_WINDOWS] = true
 		}
 	end
 end

@@ -29,7 +29,7 @@ BTFollowCommanderAction.enter = function (self, unit, blackboard, t)
 
 	local network_manager = Managers.state.network
 	local breed = blackboard.breed
-	local passive_in_patrol = not not not blackboard.ignore_passive_on_patrol
+	local passive_in_patrol = not blackboard.ignore_passive_on_patrol
 
 	if passive_in_patrol then
 		AiUtils.enter_passive(unit, blackboard)
@@ -45,7 +45,7 @@ BTFollowCommanderAction.enter = function (self, unit, blackboard, t)
 		network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
 	end
 
-	blackboard.speed_animation_variable = not not blackboard.speed_animation_variable
+	blackboard.speed_animation_variable = blackboard.speed_animation_variable
 end
 
 BTFollowCommanderAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -155,13 +155,13 @@ BTFollowCommanderAction.start_move_animation = function (self, unit, blackboard)
 	self:toggle_start_move_animation_lock(unit, true, blackboard)
 
 	local breed = blackboard.breed
-	local passive_in_patrol = breed.passive_in_patrol == nil or not not breed.passive_in_patrol
+	local passive_in_patrol = breed.passive_in_patrol == nil or breed.passive_in_patrol
 	local animation_name = "move_start_fwd"
 	local passive_in_patrol_start_anim = breed.passive_in_patrol_start_anim
 
 	if passive_in_patrol and passive_in_patrol_start_anim then
 		blackboard.anim_cb_move = true
-		animation_name = not not passive_in_patrol_start_anim
+		animation_name = passive_in_patrol_start_anim
 		blackboard.skip_move_rotation = true
 	end
 

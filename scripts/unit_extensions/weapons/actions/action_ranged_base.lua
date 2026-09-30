@@ -2,7 +2,7 @@
 
 ActionRangedBase = class(ActionRangedBase, ActionBase)
 
-local HAS_TOBII = not not rawget(_G, "Tobii")
+local HAS_TOBII = rawget(_G, "Tobii")
 local MAX_SHOTS_PER_FRAME = 3
 local unit_has_extension = ScriptUnit.has_extension
 local unit_set_flow_variable = Unit.set_flow_variable
@@ -16,7 +16,7 @@ ActionRangedBase.init = function (self, world, item_name, is_server, owner_unit,
 	self.overcharge_extension = unit_has_extension(owner_unit, "overcharge_system")
 	self.hud_extension = unit_has_extension(owner_unit, "hud_system")
 	self.first_person_extension = unit_has_extension(owner_unit, "first_person_system")
-	self.eyetracking_extension = not not HAS_TOBII
+	self.eyetracking_extension = HAS_TOBII
 	self.targeting_extension = unit_has_extension(owner_unit, "smart_targeting_system")
 	self.input_extension = unit_has_extension(owner_unit, "input_system")
 	self.status_extension = unit_has_extension(owner_unit, "status_system")
@@ -37,8 +37,8 @@ ActionRangedBase.client_owner_start_action = function (self, new_action, t, chai
 	local hud_extension = self.hud_extension
 
 	self._state = "waiting_to_shoot"
-	self._time_to_shoot = t + not not new_action.fire_time
-	self._active_reload_time = not not new_action.active_reload_time
+	self._time_to_shoot = t + new_action.fire_time
+	self._active_reload_time = new_action.active_reload_time
 	self._power_level = power_level
 
 	if new_action.power_level then
@@ -46,22 +46,22 @@ ActionRangedBase.client_owner_start_action = function (self, new_action, t, chai
 	end
 
 	self._num_shots_total, self._num_projectiles_per_shot = self:gen_num_shots()
-	self._extra_shot_delay = not not new_action.extra_shot_delay
-	self._burst_shot_delay = not not new_action.burst_shot_delay
+	self._extra_shot_delay = new_action.extra_shot_delay
+	self._burst_shot_delay = new_action.burst_shot_delay
 	self._num_shots_fired = 0
 	self._num_projectiles_spawned = 0
 	self._check_buffs = true
 	self._spread_done = false
 	self._extra_buff_shot = false
 	self._infinite_ammo = buff_extension:has_buff_perk("infinite_ammo")
-	self._continuous_buff_check = not not new_action.continuous_buff_check
-	self._apply_shot_cost_once = not not new_action.apply_shot_cost_once
+	self._continuous_buff_check = new_action.continuous_buff_check
+	self._apply_shot_cost_once = new_action.apply_shot_cost_once
 	self._shot_cost_applied = false
-	self._roll_crit_once = not not new_action.roll_crit_once
+	self._roll_crit_once = new_action.roll_crit_once
 	self._crit_applied = false
 
 	if not self.is_bot then
-		local controller_effect = not not new_action.controller_effects
+		local controller_effect = new_action.controller_effects
 
 		if controller_effect then
 			Managers.state.controller_features:add_effect(controller_effect.effect_type, controller_effect.params)
@@ -74,7 +74,7 @@ ActionRangedBase.client_owner_start_action = function (self, new_action, t, chai
 		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	self._unhide_ammo_at_action_end = not not new_action.unhide_ammo_on_infinite_ammo
+	self._unhide_ammo_at_action_end = new_action.unhide_ammo_on_infinite_ammo
 end
 
 ActionRangedBase.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
@@ -170,7 +170,7 @@ ActionRangedBase._start_shooting = function (self, t)
 	self._fire_rotation:store(current_rotation)
 
 	if not self.is_bot then
-		local controller_effect = not not current_action.controller_effects
+		local controller_effect = current_action.controller_effects
 
 		if controller_effect then
 			Managers.state.controller_features:add_effect(controller_effect.effect_type, controller_effect.params)
@@ -269,9 +269,9 @@ ActionRangedBase.shoot = function (self, num_shots_this_frame, shots_fired, num_
 	local current_action = self.current_action
 	local current_position = self._fire_position:unbox()
 	local current_rotation = self._fire_rotation:unbox()
-	local num_layers_spread = not not current_action.num_layers_spread
-	local bullseye = not not current_action.bullseye
-	local spread_pitch = not not current_action.spread_pitch
+	local num_layers_spread = current_action.num_layers_spread
+	local bullseye = current_action.bullseye
+	local spread_pitch = current_action.spread_pitch
 
 	for i = 1, num_shots_this_frame do
 		shots_fired = shots_fired + 1
@@ -318,7 +318,7 @@ ActionRangedBase.spawn_projectile = function (self, position, rotation)
 		self:fire_lightweight_projectile(position, rotation)
 	else
 		local direction = Quaternion.forward(rotation)
-		local result = self:fire_hitscan(position, direction, not not current_action.range)
+		local result = self:fire_hitscan(position, direction, current_action.range)
 
 		if result then
 			local world = self.world
@@ -412,10 +412,10 @@ ActionRangedBase.gen_num_shots = function (self)
 	-- function 16
 	local current_action = self.current_action
 	local ammo_extension = self.ammo_extension
-	local ammo_usage = not not current_action.ammo_usage
-	local num_shots_total = not not current_action.num_shots
-	local max_ammo_shots = ammo_extension and not not math.floor(ammo_extension:current_ammo() / ammo_usage) or not ammo_extension and not not num_shots_total
-	local projectiles_per_shot = not not current_action.num_projectiles_per_shot
+	local ammo_usage = current_action.ammo_usage
+	local num_shots_total = current_action.num_shots
+	local max_ammo_shots = ammo_extension and math.floor(ammo_extension:current_ammo() / ammo_usage) or not ammo_extension and num_shots_total
+	local projectiles_per_shot = current_action.num_projectiles_per_shot
 
 	if ammo_extension and current_action.fire_all_ammo then
 		projectiles_per_shot = projectiles_per_shot * max_ammo_shots
@@ -451,7 +451,7 @@ ActionRangedBase._add_overcharge = function (self)
 		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
 		if self._is_critical_strike then
-			local has_crit_perk = not not self.buff_extension
+			local has_crit_perk = self.buff_extension
 
 			if has_crit_perk then
 				overcharge_amount = 0

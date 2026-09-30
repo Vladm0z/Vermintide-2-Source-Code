@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/grudge_mark_settings.lua
 
-BreedEnhancements = not not BreedEnhancements
+BreedEnhancements = BreedEnhancements
 
 for enhancement_name, buff_list in pairs(BreedEnhancements) do
 	buff_list.name = enhancement_name

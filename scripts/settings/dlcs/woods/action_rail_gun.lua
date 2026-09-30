@@ -17,7 +17,7 @@ ActionRailGun.client_owner_start_action = function (self, new_action, t, chain_a
 		local unit = self.first_person_unit
 		local node_name = on_shoot_particle_fx.node_name
 
-		self._on_shoot_particle_fx_node = Unit.has_node(unit, node_name) and not not Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and not not 0
+		self._on_shoot_particle_fx_node = Unit.has_node(unit, node_name) and Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and 0
 		self._on_shoot_particle_fx = on_shoot_particle_fx
 	end
 end

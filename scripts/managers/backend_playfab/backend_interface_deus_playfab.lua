@@ -56,7 +56,7 @@ BackendInterfaceDeusPlayFab.deus_journey_with_belakor = function (self, journey_
 
 	local deus_belakor_cycle_data = self._belakor_data
 
-	return deus_belakor_cycle_data.journey_name ~= journey_name and not not false or not (deus_belakor_cycle_data.journey_name ~= journey_name) and not not true
+	return not (deus_belakor_cycle_data.journey_name ~= journey_name)
 end
 
 BackendInterfaceDeusPlayFab.get_belakor_cycle = function (self)

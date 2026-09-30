@@ -149,7 +149,7 @@ settings.projectiles = {
 			use_anim_rotation = false,
 			blend_func = function (t)
 				-- function 1
-				return t < 0.5 and not not 0 or not (t < 0.5) and not not math.easeOutCubic((t - 0.5) * 2)
+				return t < 0.5 and 0 or not (t < 0.5) and math.easeOutCubic((t - 0.5) * 2)
 			end
 		},
 		external_events = {
@@ -163,7 +163,7 @@ settings.projectiles = {
 
 				if not projectile_ext.is_husk then
 					local charge_data = projectile_ext.charge_data
-					local aoe_data = projectile_ext.is_charged and not not charge_data.charged_aoe or not projectile_ext.is_charged and not not charge_data.aoe
+					local aoe_data = projectile_ext.is_charged and charge_data.charged_aoe or not projectile_ext.is_charged and charge_data.aoe
 
 					if aoe_data then
 						local position = POSITION_LOOKUP[projectile_ext._projectile_unit]

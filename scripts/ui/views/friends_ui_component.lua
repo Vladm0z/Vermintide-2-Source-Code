@@ -88,7 +88,7 @@ local EMPTY_TABLE = {}
 
 FriendsUIComponent.cb_refresh_friends_done = function (self, friend_list)
 	-- function 8
-	friend_list = not not friend_list or not not EMPTY_TABLE
+	friend_list = friend_list or EMPTY_TABLE
 
 	local playing_friends = {}
 	local online_friends = {}
@@ -182,7 +182,7 @@ FriendsUIComponent._update_refresh_animations = function (self, dt)
 		local start = 0
 		local target = math.pi
 		local speed = 20
-		local rotate_progress = not not content.rotate_progress
+		local rotate_progress = content.rotate_progress
 
 		rotate_progress = math.min(rotate_progress + dt * speed, target)
 
@@ -292,8 +292,8 @@ FriendsUIComponent._update_list = function (self, active_tab)
 	local item_styles = list_style.item_styles
 	local num_draws = list_style.num_draws
 	local is_in_dedicated_server_lobby = false
-	local matchmaking_manager = not not Managers.matchmaking
-	local matchmaking_type = not not matchmaking_manager and not not matchmaking_manager.lobby:lobby_data("matchmaking_type")
+	local matchmaking_manager = Managers.matchmaking
+	local matchmaking_type = matchmaking_manager and matchmaking_manager.lobby:lobby_data("matchmaking_type")
 	local mechanism_name = Managers.level_transition_handler:get_current_mechanism()
 	local is_in_inn = Managers.level_transition_handler:in_hub_level()
 
@@ -303,7 +303,7 @@ FriendsUIComponent._update_list = function (self, active_tab)
 				is_in_dedicated_server_lobby = true
 			end
 		elseif is_in_inn then
-			local matchmaking_search_info = not not matchmaking_manager and not not matchmaking_manager:search_info()
+			local matchmaking_search_info = matchmaking_manager and matchmaking_manager:search_info()
 
 			if matchmaking_manager and matchmaking_manager:is_game_matchmaking() and matchmaking_search_info and matchmaking_search_info.quick_game then
 				is_in_dedicated_server_lobby = true
@@ -329,7 +329,7 @@ FriendsUIComponent._update_list = function (self, active_tab)
 		_update_list_temp_pos_table[2] = _update_list_temp_pos_table[2] + size[2] / 2
 
 		local top_visible = math.point_is_inside_2d_box(_update_list_temp_pos_table, mask_pos, mask_size)
-		local visible = not not lower_visible or not not top_visible
+		local visible = lower_visible or top_visible
 		local playing_game_info = content.playing_game_info
 		local is_friend_in_dedicated_server_lobby = false
 
@@ -339,8 +339,8 @@ FriendsUIComponent._update_list = function (self, active_tab)
 
 		content.visible = visible
 		content.profile_button.visible = visible
-		content.invite_button.visible = not not visible and not not not is_in_dedicated_server_lobby
-		content.join_button.visible = not not visible and not is_in_dedicated_server_lobby and not not not is_friend_in_dedicated_server_lobby
+		content.invite_button.visible = visible and not is_in_dedicated_server_lobby
+		content.join_button.visible = visible and not is_in_dedicated_server_lobby and not is_friend_in_dedicated_server_lobby
 	end
 end
 

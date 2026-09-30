@@ -76,8 +76,8 @@ PlayerCharacterStateWaitingForAssistedRespawn.on_exit = function (self, unit, in
 	if Managers.state.network:game() and not LEVEL_EDITOR_TEST then
 		local network_manager = Managers.state.network
 		local helper_unit = self.status_extension:get_assisted_respawn_helper_unit()
-		local go_id = not not network_manager:unit_game_object_id(unit)
-		local helper_go_id = helper_unit and not not network_manager:unit_game_object_id(helper_unit) or not helper_unit and not not 0
+		local go_id = network_manager:unit_game_object_id(unit)
+		local helper_go_id = helper_unit and network_manager:unit_game_object_id(helper_unit) or not helper_unit and 0
 
 		network_manager.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.respawned, true, go_id, helper_go_id)
 	end

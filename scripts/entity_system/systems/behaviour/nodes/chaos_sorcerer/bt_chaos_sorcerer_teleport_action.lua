@@ -65,7 +65,7 @@ BTChaosSorcererTeleportAction.run = function (self, unit, blackboard, t, dt)
 	local flat_target_dir = Vector3.flat(target_dir)
 
 	if Vector3.length(flat_target_dir) < 0.05 and Vector3.dot(target_dir, Vector3.normalize(target_offset)) > 0.99 then
-		blackboard.teleport_timeout = not not blackboard.teleport_timeout
+		blackboard.teleport_timeout = blackboard.teleport_timeout
 	else
 		blackboard.teleport_timeout = nil
 	end
@@ -87,7 +87,7 @@ end
 BTChaosSorcererTeleportAction.play_teleport_effect = function (self, unit, start_position, end_position)
 	-- function 5
 	local action_data = self._tree_node.action_data
-	local effect_name = action_data and not not action_data.teleport_effect or not action_data and not not "fx/chr_chaos_sorcerer_teleport"
+	local effect_name = action_data and action_data.teleport_effect or not action_data and "fx/chr_chaos_sorcerer_teleport"
 	local effect_name_id = NetworkLookup.effects[effect_name]
 	local network_manager = Managers.state.network
 	local owner_unit_id = network_manager:unit_game_object_id(unit)

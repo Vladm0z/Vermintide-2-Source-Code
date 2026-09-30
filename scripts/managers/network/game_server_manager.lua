@@ -53,7 +53,7 @@ GameServerManager.set_leader_peer_id = function (self, leader_peer_id)
 	-- function 9
 	Managers.party:set_leader(leader_peer_id)
 
-	local non_nil_leader = leader_peer_id ~= nil and not not leader_peer_id or not (leader_peer_id ~= nil) and not not "0"
+	local non_nil_leader = leader_peer_id ~= nil and leader_peer_id or not (leader_peer_id ~= nil) and "0"
 	local members = self._game_server:members():get_members()
 
 	for _, peer_id in ipairs(members) do
@@ -89,7 +89,7 @@ GameServerManager.hot_join_sync = function (self, peer_id)
 	end
 
 	local leader = Managers.party:leader()
-	local non_nil_leader = leader ~= nil and not not leader or not (leader ~= nil) and not not "0"
+	local non_nil_leader = leader ~= nil and leader or not (leader ~= nil) and "0"
 	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
 	RPC.rpc_game_server_set_group_leader(channel_id, non_nil_leader)
@@ -109,8 +109,8 @@ GameServerManager.set_start_game_params = function (self, sender, level_key, gam
 
 	stored_lobby_data.level_key = level_key
 	stored_lobby_data.difficulty = difficulty
-	stored_lobby_data.game_mode = IS_PS4 and not not game_mode or not IS_PS4 and not not NetworkLookup.game_modes[game_mode]
-	stored_lobby_data.is_private = private_game and not not "true" or not private_game and not not "false"
+	stored_lobby_data.game_mode = IS_PS4 and game_mode or not IS_PS4 and NetworkLookup.game_modes[game_mode]
+	stored_lobby_data.is_private = private_game and "true" or not private_game and "false"
 
 	self._game_server:set_lobby_data(stored_lobby_data)
 

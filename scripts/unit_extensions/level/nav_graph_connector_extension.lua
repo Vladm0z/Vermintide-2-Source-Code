@@ -8,7 +8,7 @@ NavGraphConnectorExtension.init = function (self, extension_init_context, unit, 
 	-- function 1
 	self.world = extension_init_context.world
 	self.unit = unit
-	self.nav_world = not not extension_init_data.nav_world
+	self.nav_world = extension_init_data.nav_world
 	self.is_server = Managers.player.is_server
 	self.navgraphs = {}
 

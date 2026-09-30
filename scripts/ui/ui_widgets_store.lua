@@ -3,7 +3,7 @@
 require("scripts/settings/ui_frame_settings")
 require("scripts/settings/ui_player_portrait_frame_settings")
 
-UIWidgets = not not UIWidgets
+UIWidgets = UIWidgets
 
 UIWidgets.create_store_category_entry_definition = function (scenegraph_id, size, masked)
 	-- function 1
@@ -227,7 +227,7 @@ UIWidgets.create_store_category_entry_definition = function (scenegraph_id, size
 			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -249,7 +249,7 @@ UIWidgets.create_store_category_entry_definition = function (scenegraph_id, size
 			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			normal_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
@@ -531,7 +531,7 @@ UIWidgets.create_store_collection_entry_definition = function (scenegraph_id, si
 			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -553,7 +553,7 @@ UIWidgets.create_store_collection_entry_definition = function (scenegraph_id, si
 			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			normal_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
@@ -641,8 +641,8 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 	local pulse_frame_name = "frame_outer_glow_04_big"
 	local pulse_frame_settings = UIFrameSettings[pulse_frame_name]
 	local pulse_frame_spacing = pulse_frame_settings.texture_sizes.horizontal[2]
-	local settings = not not settings or not not product.parent_settings
-	local dlc_settings = not not product.dlc_settings
+	local settings = settings or product.parent_settings
+	local dlc_settings = product.dlc_settings
 	local icon_size = settings.icon_size
 	local widget = {
 		element = {}
@@ -687,7 +687,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "background_price",
 			content_check_function = function (content)
 				-- function 10
-				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not content.old_price
 			end
 		},
 		{
@@ -696,7 +696,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "background_price_center",
 			content_check_function = function (content)
 				-- function 11
-				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not content.old_price
 			end
 		},
 		{
@@ -705,7 +705,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "background_price_right",
 			content_check_function = function (content)
 				-- function 12
-				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not content.old_price
 			end
 		},
 		{
@@ -714,7 +714,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "price_gradient",
 			content_check_function = function (content)
 				-- function 13
-				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and content.old_price
 			end
 		},
 		{
@@ -723,7 +723,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			pass_type = "rotated_texture",
 			content_check_function = function (content)
 				-- function 14
-				return not content.owned and (IS_WINDOWS and not content.hide_price and not not content.old_price or not IS_WINDOWS and not content.real_currency and not content.hide_price and not not content.old_price)
+				return not content.owned and (IS_WINDOWS and not content.hide_price and content.old_price or not IS_WINDOWS and not content.real_currency and not content.hide_price and content.old_price)
 			end
 		},
 		{
@@ -732,7 +732,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "price_icon",
 			content_check_function = function (content)
 				-- function 15
-				return not content.owned and not not content.draw_price_icon
+				return not content.owned and content.draw_price_icon
 			end
 		},
 		{
@@ -759,7 +759,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 18
-				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not content.old_price
 			end
 		},
 		{
@@ -768,7 +768,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "price_text_now",
 			content_check_function = function (content)
 				-- function 19
-				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and not not content.old_price
+				return not content.real_currency and not content.owned and IS_WINDOWS and not content.hide_price and content.old_price
 			end
 		},
 		{
@@ -777,7 +777,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "price_text_before",
 			content_check_function = function (content)
 				-- function 20
-				return not content.owned and (IS_WINDOWS and not content.hide_price and not not content.old_price or not IS_WINDOWS and not content.real_currency and not content.hide_price and not not content.old_price)
+				return not content.owned and (IS_WINDOWS and not content.hide_price and content.old_price or not IS_WINDOWS and not content.real_currency and not content.hide_price and content.old_price)
 			end
 		},
 		{
@@ -804,7 +804,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "discount_bg",
 			content_check_function = function (content)
 				-- function 23
-				return not not content.discount
+				return content.discount
 			end
 		},
 		{
@@ -813,7 +813,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "discont_number_icons",
 			content_check_function = function (content)
 				-- function 24
-				return not not content.discount
+				return content.discount
 			end
 		},
 		{
@@ -841,7 +841,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			end,
 			content_change_function = function (content, style, _, dt)
 				-- function 26
-				local progress = not not style.progress
+				local progress = style.progress
 
 				progress = (progress + dt) % 1
 
@@ -857,7 +857,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 27
-				return not not content.icon
+				return content.icon
 			end
 		},
 		{
@@ -880,7 +880,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "psplus_icon",
 			content_check_function = function (content)
 				-- function 29
-				return not not content.show_ps4_plus
+				return content.show_ps4_plus
 			end
 		},
 		{
@@ -889,7 +889,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "console_background_rect",
 			content_check_function = function (content)
 				-- function 30
-				return not IS_WINDOWS and not not content.real_currency
+				return not IS_WINDOWS and content.real_currency
 			end
 		},
 		{
@@ -898,7 +898,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			texture_id = "console_background_rect",
 			content_check_function = function (content)
 				-- function 31
-				return not IS_WINDOWS and not not content.real_currency
+				return not IS_WINDOWS and content.real_currency
 			end
 		},
 		{
@@ -907,7 +907,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 32
-				return not not content.show_secondary_stroke
+				return content.show_secondary_stroke
 			end
 		},
 		{
@@ -916,7 +916,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 33
-				return not not content.show_third_stroke
+				return content.show_third_stroke
 			end
 		},
 		{
@@ -925,11 +925,11 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "console_first_price_text",
 			content_check_function = function (content)
 				-- function 34
-				return not IS_WINDOWS and not not content.real_currency
+				return not IS_WINDOWS and content.real_currency
 			end,
 			content_change_function = function (content, style)
 				-- function 35
-				style.text_color = content.show_ps4_plus and not not style.ps_plus_color or not content.show_ps4_plus and not not style.base_color
+				style.text_color = content.show_ps4_plus and style.ps_plus_color or not content.show_ps4_plus and style.base_color
 			end
 		},
 		{
@@ -938,7 +938,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "console_secondary_price_text",
 			content_check_function = function (content)
 				-- function 36
-				return content.console_secondary_price_text ~= "" and not IS_WINDOWS and not not content.real_currency
+				return content.console_secondary_price_text ~= "" and not IS_WINDOWS and content.real_currency
 			end
 		},
 		{
@@ -947,7 +947,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "console_third_price_text",
 			content_check_function = function (content)
 				-- function 37
-				return content.console_third_price_text ~= "" and not not IS_PS4
+				return content.console_third_price_text ~= "" and IS_PS4
 			end
 		},
 		{
@@ -960,7 +960,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 					return false
 				end
 
-				return not PlayerData.seen_shop_items[content.item_key] and not not not content.hide_new
+				return not PlayerData.seen_shop_items[content.item_key] and not content.hide_new
 			end,
 			content_change_function = function (content, style)
 				-- function 39
@@ -977,7 +977,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "additional_content_added",
 			content_check_function = function (content)
 				-- function 40
-				return not not IS_CONSOLE
+				return IS_CONSOLE
 			end,
 			content_change_function = function (content, style)
 				-- function 41
@@ -995,7 +995,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			text_id = "additional_content_added",
 			content_check_function = function (content)
 				-- function 42
-				return not not IS_CONSOLE
+				return IS_CONSOLE
 			end
 		},
 		{
@@ -1057,14 +1057,14 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 		masked_price_strike_through = not settings.mask_price_strike_through_hack,
 		draw_price_icon = not settings.hide_price,
 		discont_number_icons = {},
-		rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		rect = masked and "rect_masked" or not masked and "simple_rect_texture",
 		frame = frame_settings.texture,
 		hover_frame = hover_frame_settings.texture,
 		pulse_frame = pulse_frame_settings.texture,
 		size = size,
-		console_background_rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
-		console_secondary_price_stroke = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
-		console_third_price_stroke = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		console_background_rect = masked and "rect_masked" or not masked and "simple_rect_texture",
+		console_secondary_price_stroke = masked and "rect_masked" or not masked and "simple_rect_texture",
+		console_third_price_stroke = masked and "rect_masked" or not masked and "simple_rect_texture",
 		additional_content_added = Localize("title_screen_store_new_additional_content")
 	}
 	local style = {
@@ -1112,7 +1112,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				45,
 				40
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				50,
@@ -1131,7 +1131,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				320,
 				60
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				40,
@@ -1150,7 +1150,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				320,
 				60
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				40,
@@ -1169,7 +1169,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				45,
 				40
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				50,
@@ -1188,7 +1188,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				45,
 				40
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("slate_gray", 255),
 			offset = {
 				50,
@@ -1304,7 +1304,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				30,
 				30
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = {
 				255,
 				255,
@@ -1560,7 +1560,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			masked = masked,
-			texture_size = not not icon_size or not not size,
+			texture_size = icon_size or size,
 			color = {
 				255,
 				255,
@@ -1568,8 +1568,8 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				255
 			},
 			offset = {
-				icon_size and not not ((size[1] - icon_size[1]) * 0.5) or not icon_size and not not 0,
-				icon_size and not not (-(size[2] - icon_size[2]) * 0.5) or not icon_size and not not 0,
+				icon_size and (size[1] - icon_size[1]) * 0.5 or not icon_size and 0,
+				icon_size and -(size[2] - icon_size[2]) * 0.5 or not icon_size and 0,
 				7
 			}
 		},
@@ -1693,7 +1693,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				45,
 				40
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			base_color = Colors.get_color_table_with_alpha("white", 255),
 			ps_plus_color = {
@@ -1719,7 +1719,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				45,
 				40
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				size[1],
@@ -1738,7 +1738,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				45,
 				40
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				size[1],
@@ -1819,7 +1819,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
 			dynamic_font_size = false,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = {
 				255,
 				159,
@@ -1845,7 +1845,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
 			dynamic_font_size = false,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = {
 				255,
 				0,
@@ -1886,7 +1886,7 @@ UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, 
 				size[1] - 80,
 				30
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 180),
 			offset = {
 				62,
@@ -1952,7 +1952,7 @@ UIWidgets.create_store_header_text_definition = function (scenegraph_id, size, m
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			offset = {
 				edge_spacing,
@@ -1972,7 +1972,7 @@ UIWidgets.create_store_header_text_definition = function (scenegraph_id, size, m
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				edge_spacing + 2,
@@ -2031,7 +2031,7 @@ UIWidgets.create_store_body_text_definition = function (scenegraph_id, size, mas
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				edge_spacing,
@@ -2051,7 +2051,7 @@ UIWidgets.create_store_body_text_definition = function (scenegraph_id, size, mas
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				edge_spacing + 2,
@@ -2123,7 +2123,7 @@ UIWidgets.create_store_currency_summary_title_definition = function (scenegraph_
 		text = "n/a",
 		text2 = "n/a",
 		size = size,
-		rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture"
+		rect = masked and "rect_masked" or not masked and "simple_rect_texture"
 	}
 	local style = {
 		text = {
@@ -2138,7 +2138,7 @@ UIWidgets.create_store_currency_summary_title_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = color,
 			offset = {
 				edge_spacing,
@@ -2158,7 +2158,7 @@ UIWidgets.create_store_currency_summary_title_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				edge_spacing + 2,
@@ -2178,7 +2178,7 @@ UIWidgets.create_store_currency_summary_title_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = color,
 			offset = {
 				edge_spacing,
@@ -2198,7 +2198,7 @@ UIWidgets.create_store_currency_summary_title_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				edge_spacing + 2,
@@ -2309,7 +2309,7 @@ UIWidgets.create_store_currency_summary_entry_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = color,
 			offset = {
 				edge_spacing,
@@ -2329,7 +2329,7 @@ UIWidgets.create_store_currency_summary_entry_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				edge_spacing + 2,
@@ -2349,7 +2349,7 @@ UIWidgets.create_store_currency_summary_entry_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = color,
 			offset = {
 				edge_spacing,
@@ -2369,7 +2369,7 @@ UIWidgets.create_store_currency_summary_entry_definition = function (scenegraph_
 				size[1] - edge_spacing * 2,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				edge_spacing + 2,
@@ -2402,7 +2402,7 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (scenegraph_id
 	}
 	local default_height_offset = -size[2]
 	local edge_spacing = 5
-	local settings = not not product.settings
+	local settings = product.settings
 	local add_frame = settings.add_frame
 	local widget = {
 		element = {}
@@ -2445,7 +2445,7 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (scenegraph_id
 	local content = {
 		text = "n/a",
 		background = "store_thumbnail_bg_promo",
-		image = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		image = masked and "rect_masked" or not masked and "simple_rect_texture",
 		size = size,
 		frame = frame_settings.texture,
 		add_frame = add_frame
@@ -2467,7 +2467,7 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (scenegraph_id
 				image_size[1] - edge_spacing,
 				size[2] - image_size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				edge_spacing,
@@ -2491,7 +2491,7 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (scenegraph_id
 				image_size[1] - edge_spacing,
 				size[2] - image_size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				edge_spacing + 2,
@@ -2581,13 +2581,13 @@ UIWidgets.create_store_dlc_feature_horizontal_definition = function (scenegraph_
 		frame_name = settings.frame_name
 	end
 
-	image_size = not not image_size or not not {
+	image_size = image_size or {
 		260,
 		size[2]
 	}
 
-	local frame_name = not not frame_name or not not "menu_frame_16"
-	local frame_settings = not not frame_name and not not UIFrameSettings[frame_name]
+	local frame_name = frame_name or "menu_frame_16"
+	local frame_settings = frame_name and UIFrameSettings[frame_name]
 	local default_height_offset = -size[2]
 	local edge_spacing = 20
 	local widget = {
@@ -2621,7 +2621,7 @@ UIWidgets.create_store_dlc_feature_horizontal_definition = function (scenegraph_
 	}
 	local content = {
 		text = "n/a",
-		image = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		image = masked and "rect_masked" or not masked and "simple_rect_texture",
 		size = size,
 		show_frame = settings.show_frame,
 		frame = frame_settings.texture
@@ -2639,7 +2639,7 @@ UIWidgets.create_store_dlc_feature_horizontal_definition = function (scenegraph_
 				size[1] - image_size[1] - edge_spacing,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				image_size[1] + edge_spacing,
@@ -2659,7 +2659,7 @@ UIWidgets.create_store_dlc_feature_horizontal_definition = function (scenegraph_
 				size[1] - image_size[1] - edge_spacing,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				image_size[1] + edge_spacing + 2,
@@ -2764,7 +2764,7 @@ UIWidgets.create_store_dlc_feature_pullet_point_definition = function (scenegrap
 				size[1] - image_size[1] - edge_spacing,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				image_size[1] + edge_spacing,
@@ -2784,7 +2784,7 @@ UIWidgets.create_store_dlc_feature_pullet_point_definition = function (scenegrap
 				size[1] - image_size[1] - edge_spacing,
 				size[2]
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				image_size[1] + edge_spacing + 2,
@@ -2866,7 +2866,7 @@ UIWidgets.create_store_dlc_logo_definition = function (scenegraph_id, size, mask
 		}
 	}
 	local content = {
-		image = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		image = masked and "rect_masked" or not masked and "simple_rect_texture",
 		size = size
 	}
 	local style = {
@@ -3022,7 +3022,7 @@ UIWidgets.create_store_header_video_definition = function (scenegraph_id, size, 
 		video_content = {
 			video_completed = false
 		},
-		rect = masked and not not "rect_masked" or not masked and not not "simple_rect_texture",
+		rect = masked and "rect_masked" or not masked and "simple_rect_texture",
 		size = size
 	}
 	local style = {
@@ -3180,7 +3180,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 	end
 
 	local frame_name = "button_frame_01_gold"
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 	local side_detail_texture = "button_detail_09_gold"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
@@ -3225,7 +3225,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 61
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -3292,7 +3292,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 67
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not content.owned and not not content.present_currency
+						return not button_hotspot.disable_button and not content.owned and content.present_currency
 					end
 				},
 				{
@@ -3303,7 +3303,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 68
 						local button_hotspot = content.button_hotspot
 
-						return not content.owned and not not content.present_currency
+						return not content.owned and content.present_currency
 					end
 				},
 				{
@@ -3312,7 +3312,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					text_id = "currency_text",
 					content_check_function = function (content)
 						-- function 69
-						return not content.owned and not not content.present_currency
+						return not content.owned and content.present_currency
 					end
 				},
 				{
@@ -3323,7 +3323,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 70
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not content.title_text
+						return not button_hotspot.disable_button and content.title_text
 					end
 				},
 				{
@@ -3334,7 +3334,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 71
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -3343,7 +3343,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					text_id = "title_text",
 					content_check_function = function (content)
 						-- function 72
-						return not content.owned and not not content.title_text
+						return not content.owned and content.title_text
 					end
 				},
 				{
@@ -3354,7 +3354,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 73
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not content.title_text
+						return not button_hotspot.disable_button and content.title_text
 					end
 				},
 				{
@@ -3365,7 +3365,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 74
 						local button_hotspot = content.button_hotspot
 
-						return not not not content.real_currency
+						return not content.real_currency
 					end
 				},
 				{
@@ -3394,7 +3394,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 77
 						local button_hotspot = content.button_hotspot
 
-						return not content.owned and not button_hotspot.disable_button and not not content.present_currency
+						return not content.owned and not button_hotspot.disable_button and content.present_currency
 					end
 				},
 				{
@@ -3405,7 +3405,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 						-- function 78
 						local button_hotspot = content.button_hotspot
 
-						return not content.owned and not not content.present_currency
+						return not content.owned and content.present_currency
 					end
 				},
 				{
@@ -3414,7 +3414,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					texture_id = "psplus_icon",
 					content_check_function = function (content)
 						-- function 79
-						return not not content.show_ps4_plus
+						return content.show_ps4_plus
 					end
 				},
 				{
@@ -3423,7 +3423,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					texture_id = "console_background_rect",
 					content_check_function = function (content)
 						-- function 80
-						return not IS_WINDOWS and not not content.real_currency
+						return not IS_WINDOWS and content.real_currency
 					end
 				},
 				{
@@ -3432,7 +3432,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 81
-						return not not content.show_secondary_stroke
+						return content.show_secondary_stroke
 					end
 				},
 				{
@@ -3441,7 +3441,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 82
-						return not not content.show_third_stroke
+						return content.show_third_stroke
 					end
 				},
 				{
@@ -3450,11 +3450,11 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					text_id = "console_first_price_text",
 					content_check_function = function (content)
 						-- function 83
-						return not IS_WINDOWS and not not content.real_currency
+						return not IS_WINDOWS and content.real_currency
 					end,
 					content_change_function = function (content, style)
 						-- function 84
-						style.text_color = content.show_ps4_plus and not not style.ps_plus_color or not content.show_ps4_plus and not not style.base_color
+						style.text_color = content.show_ps4_plus and style.ps_plus_color or not content.show_ps4_plus and style.base_color
 					end
 				},
 				{
@@ -3463,7 +3463,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					text_id = "console_secondary_price_text",
 					content_check_function = function (content)
 						-- function 85
-						return content.console_secondary_price_text ~= "" and not IS_WINDOWS and not not content.real_currency
+						return content.console_secondary_price_text ~= "" and not IS_WINDOWS and content.real_currency
 					end
 				},
 				{
@@ -3472,7 +3472,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 					text_id = "console_third_price_text",
 					content_check_function = function (content)
 						-- function 86
-						return content.console_third_price_text ~= "" and not not IS_PS4
+						return content.console_third_price_text ~= "" and IS_PS4
 					end
 				},
 				{
@@ -3680,7 +3680,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -3697,7 +3697,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = {
 					255,
 					100,
@@ -3723,7 +3723,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -3739,7 +3739,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -3756,7 +3756,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -3772,7 +3772,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -3788,7 +3788,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header_write_mask",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					20,
@@ -3804,7 +3804,7 @@ UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, fo
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header_write_mask",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
@@ -4175,7 +4175,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 89
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -4184,7 +4184,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 90
-						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -4202,7 +4202,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 92
-						return not not content.new
+						return content.new
 					end
 				},
 				{
@@ -4243,7 +4243,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_offset = {
 					0,
@@ -4265,7 +4265,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_offset = shadow_offset,
 				offset = shadow_offset,
@@ -4279,7 +4279,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_offset = {
 					0,
@@ -4301,7 +4301,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
 				default_offset = {
 					0,
@@ -4346,7 +4346,7 @@ UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_
 				size = size
 			}
 		},
-		offset = not not optional_offset or not not {
+		offset = optional_offset or {
 			0,
 			0,
 			0
@@ -4357,7 +4357,7 @@ end
 
 UIWidgets.create_store_panel_currency_widget = function (scenegraph_id, frame_texture, currency_icon, background_texture, background_tile_size)
 	-- function 95
-	local unit_frame_settings = frame_texture and not not UIFrameSettings[frame_texture] or not frame_texture and not not UIFrameSettings.button_frame_01_gold
+	local unit_frame_settings = frame_texture and UIFrameSettings[frame_texture] or not frame_texture and UIFrameSettings.button_frame_01_gold
 
 	return {
 		element = {
@@ -4387,8 +4387,8 @@ UIWidgets.create_store_panel_currency_widget = function (scenegraph_id, frame_te
 		content = {
 			currency_text = "-",
 			frame = unit_frame_settings.texture,
-			background_texture = not not background_texture or not not "menu_frame_bg_07",
-			currency_icon = not not currency_icon or not not "store_icon_currency_ingame_big"
+			background_texture = background_texture or "menu_frame_bg_07",
+			currency_icon = currency_icon or "store_icon_currency_ingame_big"
 		},
 		style = {
 			frame = {
@@ -4412,7 +4412,7 @@ UIWidgets.create_store_panel_currency_widget = function (scenegraph_id, frame_te
 					0,
 					0
 				},
-				texture_tiling_size = not not background_tile_size or not not {
+				texture_tiling_size = background_tile_size or {
 					512,
 					256
 				},

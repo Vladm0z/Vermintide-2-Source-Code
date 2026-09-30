@@ -33,7 +33,7 @@ return {
 	end,
 	server_start_function = function (context, data)
 		-- function 2
-		local wind_strength = not not Managers.weave:get_wind_strength()
+		local wind_strength = Managers.weave:get_wind_strength()
 		local mutator_settings = Managers.weave:get_active_wind_settings()
 		local difficulty_name = Managers.state.difficulty:get_difficulty()
 
@@ -56,7 +56,7 @@ return {
 		local ai_system = Managers.state.entity:system("ai_system")
 
 		data.ai_system = ai_system
-		data._nav_cost_map_id = not not data._nav_cost_map_id
+		data._nav_cost_map_id = data._nav_cost_map_id
 		data._nav_cost_volume_ids = {}
 		data._nav_cost_radius = mutator_settings.radius[difficulty_name][wind_strength]
 	end,

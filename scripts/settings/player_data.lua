@@ -39,7 +39,7 @@ DefaultPlayerData = {
 	},
 	seen_shop_items = {}
 }
-PlayerData = not not PlayerData
+PlayerData = PlayerData
 
 function populate_player_data_from_save(save_data, id, version_match)
 	-- function 1

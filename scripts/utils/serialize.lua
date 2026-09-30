@@ -5,7 +5,7 @@ local save_item, save_item_simple
 
 local function save(what, v, saved)
 	-- function 1
-	saved = not not saved or not not {}
+	saved = saved or {}
 
 	assert(v)
 	assert(type(what) == "string", "1st argument to serialize.save should be the *name* of a variable")
@@ -25,7 +25,7 @@ local function save_simple(v, indent)
 	-- function 2
 	local out = {}
 
-	save_item_simple(v, out, not not indent or not not 1)
+	save_item_simple(v, out, indent or 1)
 
 	return table.concat(out)
 end

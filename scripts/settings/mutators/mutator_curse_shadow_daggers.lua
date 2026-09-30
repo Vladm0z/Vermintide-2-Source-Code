@@ -80,7 +80,7 @@ Storm.update = function (self, dt, t)
 			end
 		end
 	else
-		ferror("unknown state %d", not not self._state)
+		ferror("unknown state %d", self._state)
 	end
 end
 
@@ -131,7 +131,7 @@ Storm.get_unit = function (self)
 	-- function 9
 	local active_storm_data = self._active_storm_data
 
-	return not not active_storm_data and not not active_storm_data.unit
+	return active_storm_data and active_storm_data.unit
 end
 
 Storm._clear_active_storm = function (self)

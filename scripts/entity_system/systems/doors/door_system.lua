@@ -128,15 +128,15 @@ DoorSystem.update = function (self, context, t)
 						if HEALTH_ALIVE[unit] then
 							local blackboard = BLACKBOARDS[unit]
 							local breed = blackboard.breed
-							local is_boss = not not breed and not not breed.boss
+							local is_boss = breed and breed.boss
 
 							if is_boss then
 								local health_extension = ScriptUnit.has_extension(unit, "health_system")
-								local last_damage_taken_t = not not health_extension:last_damage_t()
+								local last_damage_taken_t = health_extension:last_damage_t()
 								local last_damage_interval = 60
 								local not_damaged = t > last_damage_taken_t + last_damage_interval
 								local navigation_extension = blackboard.navigation_extension
-								local path_found = not not navigation_extension and not not navigation_extension:is_following_path()
+								local path_found = navigation_extension and navigation_extension:is_following_path()
 
 								if not_damaged and not path_found then
 									should_open = true
@@ -233,7 +233,7 @@ DoorSystem.close_boss_doors = function (self, map_section, group_id, breed_name)
 			local level = LevelHelper:current_level(self.world)
 			local level_index = Level.unit_index(level, boss_door_unit)
 			local door_state_id = NetworkLookup.door_states.closed
-			local breed_id = breed_name and not not NetworkLookup.breeds[breed_name] or not breed_name and not not NetworkLookup.breeds["n/a"]
+			local breed_id = breed_name and NetworkLookup.breeds[breed_name] or not breed_name and NetworkLookup.breeds["n/a"]
 
 			network_transmit:send_rpc_clients("rpc_sync_boss_door_state", level_index, door_state_id, breed_id)
 		end

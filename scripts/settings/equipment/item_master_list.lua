@@ -4,7 +4,7 @@ require("foundation/scripts/util/table")
 require("scripts/settings/equipment/projectile_units")
 require("scripts/settings/equipment/pickups")
 
-CanWieldAllItemTemplates = not not CanWieldAllItemTemplates
+CanWieldAllItemTemplates = CanWieldAllItemTemplates
 
 table.append(CanWieldAllItemTemplates, {
 	"bw_scholar",
@@ -101,7 +101,7 @@ for item_name, item_data in pairs(ItemMasterList) do
 	end
 
 	if item_data.slot_type == "frame" then
-		item_data.display_unit = not not item_data.display_unit
+		item_data.display_unit = item_data.display_unit
 	end
 end
 
@@ -130,7 +130,7 @@ if Managers.localizer then
 	parse_item_master_list()
 end
 
-ItemMasterListMeta = not not ItemMasterListMeta
+ItemMasterListMeta = ItemMasterListMeta
 
 ItemMasterListMeta.__index = function (table, key)
 	-- function 3

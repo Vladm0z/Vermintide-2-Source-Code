@@ -210,8 +210,8 @@ function flow_callback_enemy_variation(params)
 			helmet_units = unit_inventory_extension.inventory_item_helmet_units
 		end
 	else
-		outfit_units = not not Unit.get_data(unit, "outfit_items") or not not {}
-		helmet_units = not not Unit.get_data(unit, "helmet_items") or not not {}
+		outfit_units = Unit.get_data(unit, "outfit_items") or {}
+		helmet_units = Unit.get_data(unit, "helmet_items") or {}
 	end
 
 	if outfit_units ~= nil then
@@ -260,7 +260,7 @@ end
 
 local function enemy_dismember_can_spawn_gib(unit, bodypart)
 	-- function 9
-	local dismember_filter = not not Unit.get_data(unit, "dismember_filter")
+	local dismember_filter = Unit.get_data(unit, "dismember_filter")
 
 	if table.contains(dismember_filter, bodypart) then
 		return false
@@ -271,7 +271,7 @@ end
 
 local function enemy_dismember_set_dismember_filter(unit, bodypart, gibsettings)
 	-- function 10
-	local dismember_filter = not not Unit.get_data(unit, "dismember_filter")
+	local dismember_filter = Unit.get_data(unit, "dismember_filter")
 
 	if not table.contains(dismember_filter, bodypart) then
 		table.insert(dismember_filter, bodypart)
@@ -295,7 +295,7 @@ local function enemy_dismember_get_helmet_units(unit, unit_inventory_extension)
 	if unit_inventory_extension ~= nil then
 		helmet_units = unit_inventory_extension.inventory_item_helmet_units
 	else
-		helmet_units = not not Unit.get_data(unit, "helmet_items") or not not {}
+		helmet_units = Unit.get_data(unit, "helmet_items") or {}
 	end
 
 	return helmet_units
@@ -329,7 +329,7 @@ local function enemy_dismember_spawn_gib(unit_spawner, unit, world, gibsettings,
 		local unit_scale = Unit.local_scale(unit, 1)
 
 		if unit_ai_system_extension ~= nil then
-			local scale = not not unit_ai_system_extension._size_variation
+			local scale = unit_ai_system_extension._size_variation
 
 			unit_scale = Vector3(scale, scale, scale)
 		end
@@ -631,7 +631,7 @@ local function enemy_dismember(params, spawn_gib)
 	local gibbed_nodes
 
 	if unit_inventory_extension ~= nil then
-		gibbed_nodes = not not unit_inventory_extension.gibbed_nodes or not not {}
+		gibbed_nodes = unit_inventory_extension.gibbed_nodes or {}
 	end
 
 	for i = 1, #gibsettings.parent_scale_nodes do
@@ -658,7 +658,7 @@ local function enemy_dismember(params, spawn_gib)
 				Unit.flow_event(unit_inventory_extension.inventory_item_outfit_units[i], gibsettings.send_outfit_event)
 			end
 		else
-			local outfit_items = not not Unit.get_data(unit, "outfit_items")
+			local outfit_items = Unit.get_data(unit, "outfit_items")
 
 			for i = 1, #outfit_items do
 				Unit.flow_event(outfit_items[i], gibsettings.send_outfit_event)
@@ -719,13 +719,13 @@ local function enemy_dismember(params, spawn_gib)
 		unit_inventory_extension.stump_items = stump_items
 	else
 		if gib_unit ~= nil then
-			local gib_items = not not Unit.get_data(unit, "gib_items")
+			local gib_items = Unit.get_data(unit, "gib_items")
 
 			table.insert(gib_items, gib_unit)
 			Unit.set_data(unit, "gib_items", gib_items)
 		end
 
-		local stump_items = not not Unit.get_data(unit, "stump_items")
+		local stump_items = Unit.get_data(unit, "stump_items")
 
 		table.insert(stump_items, stump_unit)
 		Unit.set_data(unit, "stump_items", stump_items)
@@ -834,9 +834,9 @@ function enemy_explode(params)
 	local outfit_items = {}
 
 	if unit_inventory_extension ~= nil then
-		outfit_items = not not unit_inventory_extension.inventory_item_outfit_units or not not {}
+		outfit_items = unit_inventory_extension.inventory_item_outfit_units or {}
 	else
-		outfit_items = not not Unit.get_data(unit, "outfit_items") or not not {}
+		outfit_items = Unit.get_data(unit, "outfit_items") or {}
 	end
 
 	for i = 1, #outfit_items do
@@ -898,8 +898,8 @@ end
 function flow_callback_enemy_gib_prop_cleanup(params)
 	-- function 24
 	local unit = params.unit
-	local gib_items = not not Unit.get_data(unit, "gib_items")
-	local stump_items = not not Unit.get_data(unit, "stump_items")
+	local gib_items = Unit.get_data(unit, "gib_items")
+	local stump_items = Unit.get_data(unit, "stump_items")
 	local remove_gibs = params.remove_gibs
 
 	if ScriptUnit ~= nil then

@@ -5,8 +5,8 @@ local function sort_level_list(a, b)
 	local level_settings = LevelSettings
 	local a_map_settings = level_settings[a].map_settings
 	local b_map_settings = level_settings[b].map_settings
-	local a_sorting_index = a_map_settings and not not a_map_settings.sorting or not a_map_settings and not not 0
-	local b_sorting_index = b_map_settings and not not b_map_settings.sorting or not b_map_settings and not not 0
+	local a_sorting_index = a_map_settings and a_map_settings.sorting or not a_map_settings and 0
+	local b_sorting_index = b_map_settings and b_map_settings.sorting or not b_map_settings and 0
 
 	return a_sorting_index < b_sorting_index
 end
@@ -19,10 +19,10 @@ local function setup_game_mode_data(statistics_db, player_stats_id)
 
 	for name, level_data in pairs(LevelSettings) do
 		if type(level_data) == "table" and (not only_release or not DebugLevels[name]) then
-			local game_mode = not not level_data.game_mode
+			local game_mode = level_data.game_mode
 
 			if game_mode and game_mode ~= "tutorial" and game_mode ~= "demo" then
-				local unlockable = not not level_data.unlockable
+				local unlockable = level_data.unlockable
 
 				if unlockable and LevelUnlockUtils.level_unlocked(statistics_db, player_stats_id, name) then
 					if not game_mode_index[game_mode] then
@@ -41,7 +41,7 @@ local function setup_game_mode_data(statistics_db, player_stats_id)
 						game_mode_index[game_mode] = #game_mode_data
 					end
 
-					if not level_data.supported_game_modes and not level_data.ommit_from_lobby_browser or not not level_data.supported_game_modes and level_data.supported_game_modes[game_mode] and not level_data.ommit_from_lobby_browser then
+					if not level_data.supported_game_modes and not level_data.ommit_from_lobby_browser or level_data.supported_game_modes and level_data.supported_game_modes[game_mode] and not level_data.ommit_from_lobby_browser then
 						local data = game_mode_data[game_mode_index[game_mode]]
 						local levels = data.levels
 
@@ -112,11 +112,11 @@ if IS_PS4 then
 	table.insert(show_lobbies_array, 2, "lb_search_type_friends")
 end
 
-local distance_array = IS_PS4 and not not {
+local distance_array = IS_PS4 and {
 	"map_zone_options_2",
 	"map_zone_options_3",
 	"map_zone_options_5"
-} or not IS_PS4 and not not {
+} or not IS_PS4 and {
 	"map_zone_options_2",
 	"map_zone_options_4",
 	"map_zone_options_5"

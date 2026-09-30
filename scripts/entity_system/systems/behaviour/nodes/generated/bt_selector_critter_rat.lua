@@ -75,7 +75,7 @@ BTSelector_critter_rat.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_under_door = children[3]
-		local condition_result = not not BTConditions.at_smartobject(blackboard)
+		local condition_result = BTConditions.at_smartobject(blackboard)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_under_door, "aborted")
@@ -96,7 +96,7 @@ BTSelector_critter_rat.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_flee_sequence = children[4]
-		local condition_result = not not unit_alive(blackboard.target_unit)
+		local condition_result = unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_flee_sequence, "aborted")

@@ -23,12 +23,12 @@ ActionCareerWHPriestTarget.client_owner_start_action = function (self, new_actio
 	ActionCareerWHPriestTarget.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
 	self.aim_timer = new_action.target_sticky_time
-	self.aimed_target = not not chain_action_data and not not chain_action_data.target
+	self.aimed_target = chain_action_data and chain_action_data.target
 
 	self._weapon_extension:set_mode(false)
 
 	self.played_aim_sound = false
-	self.aim_sound_time = t + not not new_action.aim_sound_delay
+	self.aim_sound_time = t + new_action.aim_sound_delay
 	self._max_range = new_action.max_range
 	self._cone_cos_angle = math.cos(math.rad(new_action.target_cone_angle))
 
@@ -44,7 +44,7 @@ ActionCareerWHPriestTarget._start_charge_sound = function (self)
 
 	if not is_bot then
 		local owner_player = self.owner_player
-		local is_local = not not owner_player and not not not owner_player.remote
+		local is_local = owner_player and not owner_player.remote
 
 		if is_local then
 			local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
@@ -66,7 +66,7 @@ ActionCareerWHPriestTarget._stop_charge_sound = function (self)
 
 	if not is_bot then
 		local owner_player = self.owner_player
-		local is_local = not not owner_player and not not not owner_player.remote
+		local is_local = owner_player and not owner_player.remote
 
 		if is_local then
 			ActionUtils.stop_charge_sound(wwise_world, self.charging_sound_id, self.wwise_source_id, current_action)
@@ -94,7 +94,7 @@ ActionCareerWHPriestTarget.client_owner_post_update = function (self, dt, t, wor
 		current_target = nil
 	end
 
-	local required_aim_time = not not current_action.target_sticky_time
+	local required_aim_time = current_action.target_sticky_time
 
 	if required_aim_time <= self.aim_timer then
 		local hit_unit = self:_target_ally_from_crosshair()
@@ -120,7 +120,7 @@ ActionCareerWHPriestTarget.client_owner_post_update = function (self, dt, t, wor
 		end
 	else
 		local blackboard = BLACKBOARDS[owner_unit]
-		local aimed_target = blackboard and not not blackboard.activate_ability_data.target_unit or not blackboard and not not owner_unit
+		local aimed_target = blackboard and blackboard.activate_ability_data.target_unit or not blackboard and owner_unit
 
 		self._weapon_extension:set_mode(aimed_target ~= owner_unit)
 	end
@@ -153,7 +153,7 @@ ActionCareerWHPriestTarget._mark_target = function (self, new_target)
 	end
 
 	local weapon_extension = self._weapon_extension
-	local is_other_target = not not new_target and new_target ~= self.owner_unit
+	local is_other_target = new_target and new_target ~= self.owner_unit
 
 	weapon_extension:set_mode(is_other_target)
 
@@ -169,7 +169,7 @@ ActionCareerWHPriestTarget._mark_target = function (self, new_target)
 	end
 
 	local current_action = self.current_action
-	local anim_event = is_other_target and not not current_action.target_other_anim_event or not is_other_target and not not current_action.target_self_anim_event
+	local anim_event = is_other_target and current_action.target_other_anim_event or not is_other_target and current_action.target_self_anim_event
 	local first_person_unit = self.first_person_extension:get_first_person_unit()
 
 	if anim_event then
@@ -188,8 +188,8 @@ ActionCareerWHPriestTarget._target_ally_from_crosshair = function (self)
 	local player_position, player_rotation = self.first_person_extension:camera_position_rotation()
 	local player_direction = Vector3.normalize(Quaternion.forward(player_rotation))
 	local side = Managers.state.side.side_by_unit[owner_unit]
-	local friendly_units = not not side and not not side.PLAYER_AND_BOT_UNITS
-	local num_friendly_units = friendly_units and not not #friendly_units or not friendly_units and not not 0
+	local friendly_units = side and side.PLAYER_AND_BOT_UNITS
+	local num_friendly_units = friendly_units and #friendly_units or not friendly_units and 0
 	local best_target
 	local best_distance = 0
 	local best_dot_value = 0
@@ -232,12 +232,12 @@ end
 ActionCareerWHPriestTarget.finish = function (self, reason, data)
 	-- function 9
 	local is_bot = self.is_bot
-	local aimed_target = not not self.aimed_target
+	local aimed_target = self.aimed_target
 
 	if is_bot then
 		local blackboard = BLACKBOARDS[self.owner_unit]
 
-		aimed_target = blackboard and (not not blackboard.activate_ability_data.target_unit or not not self.owner_unit) or not blackboard and not not self.owner_unit
+		aimed_target = blackboard and (blackboard.activate_ability_data.target_unit or self.owner_unit) or not blackboard and self.owner_unit
 	end
 
 	local chain_action_data = {

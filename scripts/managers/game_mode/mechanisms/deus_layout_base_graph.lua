@@ -83,7 +83,7 @@ local function normalize(nodes)
 	for _, node in pairs(nodes) do
 		local layer_height = max_height_per_layer[node.layout_x]
 
-		max_height_per_layer[node.layout_x] = layer_height and not not math.max(layer_height, node.layout_y) or not layer_height and not not node.layout_y
+		max_height_per_layer[node.layout_x] = layer_height and math.max(layer_height, node.layout_y) or not layer_height and node.layout_y
 		max_layer = math.max(max_layer, node.layout_x)
 	end
 
@@ -206,8 +206,8 @@ local function apply_result(config, layout_nodes, base_graph)
 		local base_graph_node = base_graph[key]
 
 		if base_graph_node then
-			base_graph[key].layout_x = width == 0 and not not 0 or not (width == 0) and not not ((node.pos_x - min_x) / width)
-			base_graph[key].layout_y = height == 0 and not not 0 or not (height == 0) and not not ((node.pos_y - min_y) / height)
+			base_graph[key].layout_x = width == 0 and 0 or not (width == 0) and (node.pos_x - min_x) / width
+			base_graph[key].layout_y = height == 0 and 0 or not (height == 0) and (node.pos_y - min_y) / height
 		end
 	end
 end

@@ -80,7 +80,7 @@ local function get_position_on_nav_mesh(nav_world, position)
 	-- function 2
 	local nav_position = LocomotionUtils.pos_on_mesh(nav_world, position, 1, 1)
 
-	nav_position = not not nav_position or not not GwNavQueries.inside_position_from_outside_position(nav_world, position, 6, 6, 8, 0.5)
+	nav_position = nav_position or GwNavQueries.inside_position_from_outside_position(nav_world, position, 6, 6, 8, 0.5)
 
 	return nav_position
 end
@@ -91,7 +91,7 @@ local function spawn_egg_on_path(conflict_director, unit_spawner, nav_world, mis
 
 	local main_paths = conflict_director.level_analysis:get_main_paths()
 	local position = MainPathUtils.point_on_mainpath(main_paths, spawn_distance)
-	local nav_position = not not position and not not get_position_on_nav_mesh(nav_world, position)
+	local nav_position = position and get_position_on_nav_mesh(nav_world, position)
 
 	if not nav_position then
 		mutator_dprint("Couldn't find a spawn position on the navmesh")
@@ -166,7 +166,7 @@ return {
 		local ai_system = Managers.state.entity:system("ai_system")
 
 		data.nav_world = ai_system:nav_world()
-		data.num_available_eggs = not not EGG_AMOUNT[data.difficulty_rank]
+		data.num_available_eggs = EGG_AMOUNT[data.difficulty_rank]
 		data.num_destroyed_eggs = 0
 		data.monster_spawned = data.template.monster_spawned
 
@@ -209,7 +209,7 @@ return {
 
 		local egg_mission = Missions.egg_of_tzeentch
 		local alert_timer = data.alert_timer
-		local new_alert_timer = not not alert_timer and not not (alert_timer - dt)
+		local new_alert_timer = alert_timer and alert_timer - dt
 
 		data.alert_timer = new_alert_timer
 
@@ -242,8 +242,8 @@ return {
 		end
 
 		local timer = data.timer
-		local new_timer = not not timer and not not (timer - dt)
-		local timer_unfinished = not not new_timer and new_timer > 0
+		local new_timer = timer and timer - dt
+		local timer_unfinished = new_timer and new_timer > 0
 
 		if not new_timer or timer_unfinished then
 			data.timer = new_timer
@@ -275,7 +275,7 @@ return {
 		local egg_hatch_time = egg_mission.duration
 		local egg_extension_init_data = table.clone(EGG_EXTENSION_INIT_DATA)
 
-		egg_extension_init_data.health_system.health = not not EGG_HEALTH[data.difficulty_rank]
+		egg_extension_init_data.health_system.health = EGG_HEALTH[data.difficulty_rank]
 
 		local timed_spawner_system = egg_extension_init_data.timed_spawner_system
 
@@ -327,7 +327,7 @@ return {
 		data.num_destroyed_eggs = data.num_destroyed_eggs + 1
 
 		if data.num_destroyed_eggs < data.num_available_eggs then
-			data.timer = not not NEXT_EGG_COOLDOWN[data.difficulty_rank]
+			data.timer = NEXT_EGG_COOLDOWN[data.difficulty_rank]
 		else
 			data.timer = nil
 		end

@@ -307,7 +307,7 @@ local function create_panel_button(scenegraph_id, size, text, font_size, optiona
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 8
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -316,7 +316,7 @@ local function create_panel_button(scenegraph_id, size, text, font_size, optiona
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 9
-						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -394,14 +394,14 @@ local function create_panel_button(scenegraph_id, size, text, font_size, optiona
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				default_offset = not not optional_offset or not not {
+				default_offset = optional_offset or {
 					0,
 					10,
 					4
 				},
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					5,
 					4
@@ -416,7 +416,7 @@ local function create_panel_button(scenegraph_id, size, text, font_size, optiona
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_offset = shadow_offset,
 				offset = shadow_offset,
@@ -430,14 +430,14 @@ local function create_panel_button(scenegraph_id, size, text, font_size, optiona
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				default_offset = not not optional_offset or not not {
+				default_offset = optional_offset or {
 					0,
 					10,
 					4
 				},
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					5,
 					4
@@ -452,14 +452,14 @@ local function create_panel_button(scenegraph_id, size, text, font_size, optiona
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				default_offset = not not optional_offset or not not {
+				default_offset = optional_offset or {
 					0,
 					10,
 					4
 				},
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					5,
 					4
@@ -473,7 +473,7 @@ local function create_panel_button(scenegraph_id, size, text, font_size, optiona
 					169,
 					35
 				},
-				color = not not highlight_color or not not Colors.get_color_table_with_alpha("font_title", 255),
+				color = highlight_color or Colors.get_color_table_with_alpha("font_title", 255),
 				offset = selection_offset
 			},
 			marker_left = {

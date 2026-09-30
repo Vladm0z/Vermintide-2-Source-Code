@@ -9,17 +9,17 @@ ModManager.init = function (self, boot_gui)
 	self._mods = {}
 	self._num_mods = nil
 	self._state = "not_loaded"
-	self._settings = not not Application.user_setting("mod_settings")
+	self._settings = Application.user_setting("mod_settings")
 	self._chat_print_buffer = {}
 	self._reload_data = {}
 	self._gui = boot_gui
 	self._ui_time = 0
 	self._network_callbacks = {}
 
-	Crashify.print_property("realm", MODDED_REALM and not not "modded" or not MODDED_REALM and not not "official")
+	Crashify.print_property("realm", MODDED_REALM and "modded" or not MODDED_REALM and "official")
 
 	if rawget(_G, "Presence") then
-		Presence.set_presence("status", MODDED_REALM and not not "Modded Realm" or not MODDED_REALM and not not "Official Realm")
+		Presence.set_presence("status", MODDED_REALM and "Modded Realm" or not MODDED_REALM and "Official Realm")
 	end
 
 	self._mod_shim = ModShim:new()
@@ -102,7 +102,7 @@ local BUTTON_INDEX_LEFT_CTRL = Keyboard.button_index("left ctrl")
 
 ModManager._check_reload = function (self)
 	-- function 6
-	return not not Keyboard.pressed(BUTTON_INDEX_R)
+	return (Keyboard.pressed(BUTTON_INDEX_R))
 end
 
 ModManager.update = function (self, dt)
@@ -168,7 +168,7 @@ ModManager.update = function (self, dt)
 
 				local name = mod.name
 
-				mod.object = not not object or not not {}
+				mod.object = object or {}
 
 				self:_run_callback(mod, "init", self._reload_data[mod.id])
 
@@ -225,7 +225,7 @@ ModManager._run_callback = function (self, mod, callback_name, ...)
 	if success then
 		return val
 	else
-		self:print("error", "%s", not not val or not not "[unknown error]")
+		self:print("error", "%s", val or "[unknown error]")
 		self:print("error", "Failed to run callback %q for mod %q with id %d. Disabling callbacks until reload.", callback_name, mod.name, mod.id)
 
 		mod.callbacks_disabled = true
@@ -287,7 +287,7 @@ ModManager._build_mod_table = function (self, mod_handles)
 	-- function 15
 	fassert(table.is_empty(self._mods), "Trying to add mods to non-empty mod table")
 
-	local user_settings_mod_list = not not Application.user_setting("mods")
+	local user_settings_mod_list = Application.user_setting("mods")
 
 	if self._settings.toposort then
 		user_settings_mod_list = self:_topologically_sorted(user_settings_mod_list)
@@ -300,7 +300,7 @@ ModManager._build_mod_table = function (self, mod_handles)
 	print("[ModManager] user_setting.mods =:")
 
 	for i, mod_data in ipairs(user_settings_mod_list) do
-		local id = not not mod_data.id
+		local id = mod_data.id
 		local handle = mod_handles[id]
 		local enabled = mod_data.enabled
 
@@ -405,7 +405,7 @@ ModManager._load_mod = function (self, index)
 	end
 
 	mod.data = data_or_error
-	mod.name = not not mod.name
+	mod.name = mod.name
 	mod.state = "loading"
 
 	Crashify.print_property(string.format("Mod:%s:%s", id, mod.name), true)
@@ -546,9 +546,9 @@ ModManager._visit = function (self, mod_list, visited, sorted, mod_data)
 
 	visited[mod_data] = false
 
-	local enabled = not not mod_data.enabled
+	local enabled = mod_data.enabled
 
-	for i = 1, not not mod_data.num_children do
+	for i = 1, mod_data.num_children do
 		local child_id = mod_data.children[j]
 		local child_index = table.find_by_key(mod_list, "id", child_id)
 		local child_mod_data = mod_list[child_index]
@@ -579,7 +579,7 @@ local LOG_LEVELS = {
 ModManager.print = function (self, level, str, ...)
 	-- function 24
 	local message = string.format("[ModManager][" .. level .. "] " .. str, ...)
-	local log_level = not not LOG_LEVELS[level]
+	local log_level = LOG_LEVELS[level]
 
 	if log_level <= 2 then
 		print(message)
@@ -619,7 +619,7 @@ ModManager.network_send = function (self, destination_peer_id, port, payload)
 		Managers.state.network.network_transmit:queue_local_rpc("rpc_mod_user_data", port, payload)
 	end
 
-	local channel_id = PEER_ID_TO_CHANNEL[self._is_server and (not not destination_peer_id or not not self._host_peer_id) or not self._is_server and not not self._host_peer_id]
+	local channel_id = PEER_ID_TO_CHANNEL[self._is_server and (destination_peer_id or self._host_peer_id) or not self._is_server and self._host_peer_id]
 
 	if channel_id then
 		RPC.rpc_mod_user_data(channel_id, self._my_peer_id, destination_peer_id, port, payload)

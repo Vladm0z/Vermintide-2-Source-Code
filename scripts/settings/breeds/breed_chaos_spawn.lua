@@ -20,7 +20,7 @@ local pushed_data = {
 		0
 	}
 }
-local default_bot_threat_difficulty_data = not not BotConstants
+local default_bot_threat_difficulty_data = BotConstants
 local breed_data = {
 	detection_radius = 9999999,
 	boss_damage_reduction = true,

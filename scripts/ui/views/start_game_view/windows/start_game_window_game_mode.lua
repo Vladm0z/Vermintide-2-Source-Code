@@ -66,8 +66,8 @@ StartGameWindowGameMode.create_ui_elements = function (self, params, offset)
 		if settings.panel_sorting and self.parent:can_add_layout(settings) then
 			local scenegraph_id = "game_mode_option"
 			local size = scenegraph_definition[scenegraph_id].size
-			local display_name = not not settings.display_name
-			local localize = settings.localize == nil or not not settings.localize
+			local display_name = settings.display_name
+			local localize = settings.localize == nil or settings.localize
 
 			if localize then
 				display_name = Localize(display_name)
@@ -85,7 +85,7 @@ StartGameWindowGameMode.create_ui_elements = function (self, params, offset)
 			widget.offset[2] = -game_mode_option_spacing * current_game_mode_index - size[2] * (current_game_mode_index - 1)
 
 			if layout_name == "twitch" then
-				widget.content.disabled = not GameSettingsDevelopment.twitch_enabled or not not Managers.account:offline_mode()
+				widget.content.disabled = not GameSettingsDevelopment.twitch_enabled or Managers.account:offline_mode()
 			end
 
 			game_mode_widgets[current_game_mode_index] = widget

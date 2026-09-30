@@ -63,8 +63,8 @@ MatchmakingStateHostGame.set_debug_info = function (self)
 	local peer_id = Network.peer_id()
 	local player = Managers.player:player_from_peer_id(peer_id)
 	local profile_index = player:profile_index()
-	local profile = not not profile_index and not not SPProfiles[profile_index]
-	local profile_name = profile and not not profile.display_name or not profile and not not "random"
+	local profile = profile_index and SPProfiles[profile_index]
+	local profile_name = profile and profile.display_name or not profile and "random"
 
 	Managers.matchmaking.debug.state = "hosting game"
 	Managers.matchmaking.debug.mission_id = mission_id
@@ -120,7 +120,7 @@ MatchmakingStateHostGame._start_hosting_game = function (self)
 	end
 
 	local is_leader = Managers.party:is_leader(Network.peer_id())
-	local is_leader_on_dedicated_server = not not is_leader and not not is_dedicated_server
+	local is_leader_on_dedicated_server = is_leader and is_dedicated_server
 
 	if not is_leader_on_dedicated_server then
 		self._matchmaking_manager:set_matchmaking_data(mission_id, difficulty, act_key, matchmaking_type, private_game, quick_game, eac_authorized, 0, mechanism)
@@ -141,7 +141,7 @@ MatchmakingStateHostGame._start_hosting_game = function (self)
 		elseif not quick_game and matchmaking_type ~= "event" then
 			local level_settings = LevelSettings[mission_id]
 
-			waystone_type = not not level_settings.waystone_type or not not waystone_type
+			waystone_type = level_settings.waystone_type or waystone_type
 		elseif quick_game and mechanism == "weave" then
 			waystone_type = 3
 		end

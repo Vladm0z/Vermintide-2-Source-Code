@@ -1029,7 +1029,7 @@ local function create_info_text(text, scenegraph_id)
 					text_id = "text",
 					content_change_function = function (content, style)
 						-- function 2
-						style.text_color = content.locked and not not style.locked_text_color or not content.locked and not not style.default_text_color
+						style.text_color = content.locked and style.locked_text_color or not content.locked and style.default_text_color
 					end
 				},
 				{
@@ -1100,7 +1100,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 	local passes = {}
 	local content = {}
 	local style = {}
-	local offset = not not offset or not not {
+	local offset = offset or {
 		0,
 		0,
 		0
@@ -1136,7 +1136,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			style_id = slot_name .. "_lock",
 			content_check_function = function (content, style)
 				-- function 7
-				return not not content[slot_name].is_hover
+				return content[slot_name].is_hover
 			end
 		}
 		passes[#passes + 1] = {
@@ -1145,7 +1145,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			style_id = slot_name .. "_lock_shadow",
 			content_check_function = function (content, style)
 				-- function 8
-				return not not content[slot_name].is_hover
+				return content[slot_name].is_hover
 			end
 		}
 		passes[#passes + 1] = {
@@ -1155,7 +1155,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			content_id = slot_name,
 			content_check_function = function (content)
 				-- function 9
-				return not not content.item
+				return content.item
 			end
 		}
 		passes[#passes + 1] = {
@@ -1176,7 +1176,7 @@ local function create_loadout_equipment(scenegraph_id, offset)
 			content_id = slot_name,
 			content_check_function = function (content)
 				-- function 10
-				return not not content.item
+				return content.item
 			end
 		}
 		content[slot_name] = {
@@ -1317,7 +1317,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 	local passes = {}
 	local content = {}
 	local style = {}
-	local offset = not not offset or not not {
+	local offset = offset or {
 		0,
 		0,
 		0
@@ -1354,7 +1354,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			content_id = talent_id,
 			content_check_function = function (content)
 				-- function 13
-				return not not content.talent
+				return content.talent
 			end
 		}
 		passes[#passes + 1] = {
@@ -1363,7 +1363,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			style_id = talent_id .. "_lock",
 			content_check_function = function (content)
 				-- function 14
-				return not not content[talent_id].talent
+				return content[talent_id].talent
 			end
 		}
 		passes[#passes + 1] = {
@@ -1372,7 +1372,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			style_id = talent_id .. "_lock_shadow",
 			content_check_function = function (content)
 				-- function 15
-				return not not content[talent_id].talent
+				return content[talent_id].talent
 			end
 		}
 		passes[#passes + 1] = {
@@ -1383,7 +1383,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			content_id = talent_id,
 			content_check_function = function (content)
 				-- function 16
-				return not not content.talent
+				return content.talent
 			end
 		}
 		content[talent_id] = {
@@ -1494,7 +1494,7 @@ local function create_talent_grid(scenegraph_id, offset)
 	local passes = {}
 	local content = {}
 	local style = {}
-	local offset = not not offset or not not {
+	local offset = offset or {
 		0,
 		0,
 		0
@@ -1587,7 +1587,7 @@ local function create_talent_grid(scenegraph_id, offset)
 				content_id = talent_id,
 				content_check_function = function (content)
 					-- function 20
-					return not not content.talent
+					return content.talent
 				end
 			}
 			passes[#passes + 1] = {
@@ -1598,7 +1598,7 @@ local function create_talent_grid(scenegraph_id, offset)
 				content_id = talent_id,
 				content_check_function = function (content)
 					-- function 21
-					return not not content.talent
+					return content.talent
 				end
 			}
 			content[talent_id] = {
@@ -1673,7 +1673,7 @@ local function create_header(text, scenegraph_id, text_style)
 					text_id = "text",
 					content_change_function = function (content, style)
 						-- function 23
-						style.offset[1] = content.default_loadout and not not 25 or not content.default_loadout and not not 0
+						style.offset[1] = content.default_loadout and 25 or not content.default_loadout and 0
 					end
 				},
 				{
@@ -1716,10 +1716,10 @@ end
 local function create_back_button(scenegraph_id, texture, hover_texture, offset, size_multiplier)
 	-- function 25
 	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
-	local texture_size = size_multiplier and not not {
+	local texture_size = size_multiplier and {
 		texture_settings.size[1] * size_multiplier,
 		texture_settings.size[2] * size_multiplier
-	} or not size_multiplier and not not texture_settings.size
+	} or not size_multiplier and texture_settings.size
 
 	return {
 		element = {
@@ -1835,7 +1835,7 @@ local function create_back_button(scenegraph_id, texture, hover_texture, offset,
 				}
 			}
 		},
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			0
@@ -1912,7 +1912,7 @@ local loadout_selection_widgets = {
 local loadout_button_widgets = {}
 
 for idx, loadout_data in ipairs(InventorySettings.loadouts) do
-	local offset = loadout_data.loadout_type ~= "custom" and not not 0 or not (loadout_data.loadout_type ~= "custom") and not not -20
+	local offset = loadout_data.loadout_type ~= "custom" and 0 or not (loadout_data.loadout_type ~= "custom") and -20
 
 	loadout_button_widgets[#loadout_button_widgets + 1] = UIWidgets.create_default_button("button", button_size, button_frame_name, button_background_texture, button_text, button_font_size, button_optional_color_name, button_optional_detail_texture, button_optional_detail_offset, button_disable_with_gamepad, button_skip_side_detail, button_masked, {
 		0,

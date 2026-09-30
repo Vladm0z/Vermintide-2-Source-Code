@@ -529,7 +529,7 @@ local function create_talent_widget(scenegraph_id)
 			pass_type = "talent_tooltip",
 			content_check_function = function (content)
 				-- function 8
-				return not not content.talent
+				return content.talent
 			end
 		}
 	}
@@ -787,7 +787,7 @@ local function create_stat_widget(scenegraph_id, masked)
 			horizontal_alignment = "left",
 			localize = false,
 			font_size = 20,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
@@ -800,7 +800,7 @@ local function create_stat_widget(scenegraph_id, masked)
 			horizontal_alignment = "left",
 			localize = false,
 			font_size = 20,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				1,
@@ -814,7 +814,7 @@ local function create_stat_widget(scenegraph_id, masked)
 			localize = false,
 			horizontal_alignment = "left",
 			font_size = 24,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			offset = {
 				0,
@@ -828,7 +828,7 @@ local function create_stat_widget(scenegraph_id, masked)
 			localize = false,
 			horizontal_alignment = "left",
 			font_size = 24,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
@@ -841,7 +841,7 @@ local function create_stat_widget(scenegraph_id, masked)
 			horizontal_alignment = "right",
 			localize = false,
 			font_size = 20,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			offset = {
 				0,
@@ -854,7 +854,7 @@ local function create_stat_widget(scenegraph_id, masked)
 			horizontal_alignment = "right",
 			localize = false,
 			font_size = 20,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				1,
@@ -1706,7 +1706,7 @@ local function create_hero_widget(scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 17
-						return not not content.taken
+						return content.taken
 					end
 				},
 				{

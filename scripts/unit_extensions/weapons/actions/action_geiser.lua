@@ -34,7 +34,7 @@ ActionGeiser.client_owner_start_action = function (self, new_action, t, chain_ac
 
 	self.owner_buff_extension = buff_extension
 	self.state = "waiting_to_shoot"
-	self.time_to_shoot = t + not not new_action.fire_time
+	self.time_to_shoot = t + new_action.fire_time
 	self.radius = chain_action_data.radius
 	self.height = chain_action_data.height
 	self.position = chain_action_data.position
@@ -103,17 +103,17 @@ ActionGeiser.fire = function (self, reason)
 	local start_pos = position + Vector3(0, 0, half_height)
 	local source_pos = position
 	local capsule_half_height = half_height + radius
-	local shape = capsule_half_height - radius > 0 and not not "capsule" or not (capsule_half_height - radius > 0) and not not "sphere"
+	local shape = capsule_half_height - radius > 0 and "capsule" or not (capsule_half_height - radius > 0) and "sphere"
 	local hit_actors, num_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", start_pos, "size", Vector3(radius, capsule_half_height, radius), "rotation", Quaternion.look(Vector3.up(), Vector3.up()), "collision_filter", "filter_character_trigger")
 	local charge_value = self.charge_value
 	local effect_name = current_action.particle_effect
 	local overcharge = current_action.overcharge_type
 	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
 	local ignore_hitting_allies = not DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player)
-	local small_charge_value = not not current_action.small_charge_value
-	local medium_charge_value = not not current_action.medium_charge_value
-	local large_charge_value = not not current_action.large_charge_value
-	local can_create_aoe = not global_is_inside_inn or not not current_action.can_proc_in_inn
+	local small_charge_value = current_action.small_charge_value
+	local medium_charge_value = current_action.medium_charge_value
+	local large_charge_value = current_action.large_charge_value
+	local can_create_aoe = not global_is_inside_inn or current_action.can_proc_in_inn
 	local size = "_large"
 
 	if charge_value < small_charge_value then
@@ -166,11 +166,11 @@ ActionGeiser.fire = function (self, reason)
 
 	local damage_buffer = self._damage_buffer
 	local hit_units = {}
-	local damage_profile_name = not not current_action.damage_profile
+	local damage_profile_name = current_action.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local side_manager = Managers.state.side
 	local side = side_manager.side_by_unit[owner_unit]
-	local attacker_is_player = not not owner_player and not not owner_player.player_unit
+	local attacker_is_player = owner_player and owner_player.player_unit
 
 	if num_actors > 0 then
 		local hit_index = 0
@@ -178,20 +178,20 @@ ActionGeiser.fire = function (self, reason)
 		for i = 1, num_actors do
 			local hit_actor = hit_actors[i]
 			local hit_unit = Actor.unit(hit_actor)
-			local hit_position = not not POSITION_LOOKUP[hit_unit]
+			local hit_position = POSITION_LOOKUP[hit_unit]
 			local breed = Unit.get_data(hit_unit, "breed")
 
 			if not hit_units[hit_unit] then
 				local is_enemy = side_manager:is_enemy(owner_unit, hit_unit)
 				local hit_unit_side = side_manager.side_by_unit[hit_unit]
 				local is_friend = side == hit_unit_side
-				local friendly_fire = not not is_friend and not not not ignore_hitting_allies
-				local should_hit = not not is_enemy or not not friendly_fire
+				local friendly_fire = is_friend and not ignore_hitting_allies
+				local should_hit = is_enemy or friendly_fire
 
 				if not is_enemy then
-					local is_player = not not breed and not not breed.is_player
-					local is_ai = not not breed and not not not is_player
-					local is_ally = not is_enemy and not not side_manager:is_ally(owner_unit, hit_unit)
+					local is_player = breed and breed.is_player
+					local is_ai = breed and not is_player
+					local is_ally = not is_enemy and side_manager:is_ally(owner_unit, hit_unit)
 
 					if attacker_is_player and is_ai and is_ally then
 						should_hit = false
@@ -284,11 +284,11 @@ ActionGeiser._update_damage = function (self, current_action)
 			end
 
 			local has_ranged_boost, ranged_boost_curve_multiplier = ActionUtils.get_ranged_boost(owner_unit)
-			local is_critical_strike = not not self._is_critical_strike
+			local is_critical_strike = self._is_critical_strike
 			local send_to_server = true
 			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
-			DamageUtils.buff_on_attack(owner_unit, hit_unit, "aoe", not not is_critical_strike and not not allow_critical_proc, hit_zone_name, hit_index, send_to_server, buff_type, nil, self.item_name)
+			DamageUtils.buff_on_attack(owner_unit, hit_unit, "aoe", is_critical_strike and allow_critical_proc, hit_zone_name, hit_index, send_to_server, buff_type, nil, self.item_name)
 
 			local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
 
@@ -298,7 +298,7 @@ ActionGeiser._update_damage = function (self, current_action)
 
 			local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
 			local damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
-			local hit_position = not not POSITION_LOOKUP[hit_unit]
+			local hit_position = POSITION_LOOKUP[hit_unit]
 			local attack_direction = Vector3.normalize(hit_position - attacker_position)
 			local power_level = self.power_level
 			local shield_blocked = false

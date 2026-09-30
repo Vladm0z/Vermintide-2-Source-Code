@@ -158,7 +158,7 @@ local spawn_functions = {
 		}
 		local pickup_settings = AllPickups[pickup_name]
 		local unit_name = pickup_settings.unit_name
-		local unit_template_name = not not pickup_settings.unit_template_name
+		local unit_template_name = pickup_settings.unit_template_name
 
 		Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_template_name, extension_init_data, position, rotation)
 	end

@@ -114,16 +114,16 @@ LootObjectiveUI._sync_missions = function (self, initialize)
 
 	for _, data in pairs(settings_data) do
 		local mission_name = data.mission_name
-		local amount = not not self:_get_item_amount_by_mission_name(mission_name)
+		local amount = self:_get_item_amount_by_mission_name(mission_name)
 
 		if not data.amount then
-			data.amount = not not amount or not not 0
+			data.amount = amount or 0
 		end
 
 		local current_amount = data.amount
 
 		if current_amount ~= amount then
-			data.previous_amount = not not current_amount or not not 0
+			data.previous_amount = current_amount or 0
 			data.amount = amount
 
 			local widget = data.widget
@@ -144,7 +144,7 @@ LootObjectiveUI._get_item_amount_by_mission_name = function (self, mission_name)
 	-- function 7
 	local mission_system = self._mission_system
 	local data = mission_system:get_level_end_mission_data(mission_name)
-	local current_amount = not not data and not not data.current_amount
+	local current_amount = data and data.current_amount
 
 	return current_amount
 end
@@ -269,7 +269,7 @@ LootObjectiveUI._animate_out = function (self, widget)
 
 	for i = 1, amount do
 		if i <= draw_count then
-			local icon_duration = i ~= draw_count and not not duration or not (i ~= draw_count) and not not (duration + 1)
+			local icon_duration = i ~= draw_count and duration or not (i ~= draw_count) and duration + 1
 			local color = texture_colors[i]
 
 			animations["icon_textures_" .. i] = UIAnimation.init(func, color, target, 255, to, duration, easing)

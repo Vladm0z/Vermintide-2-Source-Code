@@ -521,8 +521,8 @@ StartGameWindowAreaSelection._animate_area_widget = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
 	local input_speed = 20
-	local input_progress = not not hotspot.input_progress
-	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -531,7 +531,7 @@ StartGameWindowAreaSelection._animate_area_widget = function (self, widget, dt)
 	end
 
 	local speed = 8
-	local hover_progress = not not hotspot.hover_progress
+	local hover_progress = hotspot.hover_progress
 	local is_hover = hotspot.is_hover
 
 	if is_hover then
@@ -540,7 +540,7 @@ StartGameWindowAreaSelection._animate_area_widget = function (self, widget, dt)
 		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local selection_progress = not not hotspot.selection_progress
+	local selection_progress = hotspot.selection_progress
 
 	if is_selected then
 		selection_progress = math.min(selection_progress + dt * speed, 1)

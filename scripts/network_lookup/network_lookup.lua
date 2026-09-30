@@ -54,7 +54,7 @@ for _, dlc in pairs(DLCSettings) do
 		for name, table_data in pairs(lookups) do
 			if type(table_data) == "table" then
 				local table_name = table_data.table_name
-				local base_table = not not table_data.base_table
+				local base_table = table_data.base_table
 
 				NetworkLookup[name] = create_lookup(base_table, rawget(_G, table_name))
 			else
@@ -1658,7 +1658,7 @@ do
 	end
 
 	for formation_name, formation_settings in pairs(PatrolFormationSettings) do
-		local sounds = type(formation_settings) == "table" and not not formation_settings.settings
+		local sounds = type(formation_settings) == "table" and formation_settings.settings
 
 		if sounds then
 			for action, event_name in pairs(sounds) do
@@ -2252,7 +2252,7 @@ NetworkLookup.request_profile_replies = {
 local function is_sync_statistics(stat)
 	-- function 2
 	if stat.value then
-		return not not stat.sync_on_hot_join
+		return stat.sync_on_hot_join
 	else
 		for _, stat_definition in pairs(stat) do
 			if is_sync_statistics(stat_definition) then
@@ -2344,7 +2344,7 @@ local INIT_ONCE = {
 	social_wheel_events = true
 }
 
-NetworkLookupInitialized = not not NetworkLookupInitialized
+NetworkLookupInitialized = NetworkLookupInitialized
 
 local function init(self, name)
 	-- function 4

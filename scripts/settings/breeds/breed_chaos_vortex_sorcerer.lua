@@ -74,7 +74,7 @@ local breed_data = {
 		200,
 		0
 	},
-	disabled = not not Development.setting("disable_vortex_sorcerer"),
+	disabled = Development.setting("disable_vortex_sorcerer"),
 	hitzone_multiplier_types = {
 		head = "headshot"
 	},

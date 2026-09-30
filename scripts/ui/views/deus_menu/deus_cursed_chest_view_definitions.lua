@@ -471,7 +471,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
 			100,
@@ -513,7 +513,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
 			330,
@@ -546,7 +546,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			255,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			100,
@@ -588,7 +588,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			-60,
@@ -641,7 +641,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = {
 			255,
 			150,
@@ -679,7 +679,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
 			-60,
@@ -772,7 +772,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 3
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -781,7 +781,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 4
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -790,7 +790,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "sub_text",
 			content_check_function = function (content)
 				-- function 5
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -799,7 +799,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "sub_text",
 			content_check_function = function (content)
 				-- function 6
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -813,7 +813,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "title_text",
 			content_check_function = function (content)
 				-- function 7
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -822,7 +822,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "title_text",
 			content_check_function = function (content)
 				-- function 8
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -846,7 +846,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 9
-				return not content.button_hotspot.disable_button and not not not content.is_bought
+				return not content.button_hotspot.disable_button and not content.is_bought
 			end
 		},
 		{
@@ -855,7 +855,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 10
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -882,7 +882,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_title_text",
 			content_check_function = function (content)
 				-- function 13
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -891,7 +891,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_title_text",
 			content_check_function = function (content)
 				-- function 14
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -900,7 +900,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_text",
 			content_check_function = function (content)
 				-- function 15
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -909,7 +909,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_text",
 			content_check_function = function (content)
 				-- function 16
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -918,7 +918,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_title_text",
 			content_check_function = function (content)
 				-- function 17
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -927,7 +927,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_title_text",
 			content_check_function = function (content)
 				-- function 18
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -936,7 +936,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_text",
 			content_check_function = function (content)
 				-- function 19
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -945,7 +945,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_text",
 			content_check_function = function (content)
 				-- function 20
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1247,7 +1247,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 				0,
 				0
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				-130,

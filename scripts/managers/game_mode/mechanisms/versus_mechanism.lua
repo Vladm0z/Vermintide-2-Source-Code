@@ -50,7 +50,7 @@ local function print_vote_request(params)
 
 	print("............................................................................................................")
 	print("............................................................................................................")
-	printf("GAME START SETTINGS -> Mission: %s | Difficulty: %s | Find Player Hosted: %s | Find Dedicated Servers - WIN: %s | Find Dedicated Servers - AWS: %s | Quick Game: %s | Private Game: %s | Matchmaking Type: %s | Join Method: %s", mission_id and (not not mission_id or not not "Not specified") or not mission_id and not not "Not specified", difficulty_key, player_hosted and not not "yes" or not player_hosted and not not "no", use_dedicated_win_servers and not not "yes" or not use_dedicated_win_servers and not not "no", use_dedicated_aws_servers and not not "yes" or not use_dedicated_aws_servers and not not "no", quick_game and not not "yes" or not quick_game and not not "no", private_game and not not "yes" or not private_game and not not "no", not not matchmaking_type or not not "Not specified", join_method)
+	printf("GAME START SETTINGS -> Mission: %s | Difficulty: %s | Find Player Hosted: %s | Find Dedicated Servers - WIN: %s | Find Dedicated Servers - AWS: %s | Quick Game: %s | Private Game: %s | Matchmaking Type: %s | Join Method: %s", mission_id and (mission_id or "Not specified") or not mission_id and "Not specified", difficulty_key, player_hosted and "yes" or not player_hosted and "no", use_dedicated_win_servers and "yes" or not use_dedicated_win_servers and "no", use_dedicated_aws_servers and "yes" or not use_dedicated_aws_servers and "no", quick_game and "yes" or not quick_game and "no", private_game and "yes" or not private_game and "no", matchmaking_type or "Not specified", join_method)
 	print("............................................................................................................")
 	print("............................................................................................................")
 end
@@ -250,7 +250,7 @@ VersusMechanism.network_handler_set = function (self, network_handler)
 	if not self:get_slot_reservation_handler(server_peer_id, ReservationHandlerTypes.session) then
 		local party_settings
 		local level_key = Managers.level_transition_handler:get_current_level_keys()
-		local level_settings = not not level_key and not not LevelSettings[level_key]
+		local level_settings = level_key and LevelSettings[level_key]
 
 		if level_settings and level_settings.hub_level and not DEDICATED_SERVER then
 			party_settings = {
@@ -367,7 +367,7 @@ end
 VersusMechanism.max_instance_members = function (self, lobby)
 	-- function 17
 	if not lobby then
-		return DEDICATED_SERVER and not not Managers.mechanism:max_party_members() or not DEDICATED_SERVER and not not Managers.party:max_party_members({
+		return DEDICATED_SERVER and Managers.mechanism:max_party_members() or not DEDICATED_SERVER and Managers.party:max_party_members({
 			heroes = MechanismSettings.versus.party_data.heroes
 		})
 	end
@@ -380,7 +380,7 @@ VersusMechanism.max_instance_members = function (self, lobby)
 
 		return reservation_handler:num_slots_total()
 	elseif self._local_match or self._is_hosting_custom_game then
-		local reservation_handler = not not self:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
+		local reservation_handler = self:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
 
 		return reservation_handler:num_slots_total()
 	else
@@ -396,7 +396,7 @@ VersusMechanism.set_is_hosting_versus_custom_game = function (self, is_hosting)
 
 	local mechanism_manager = Managers.mechanism
 	local game_mode_manager = Managers.state.game_mode
-	local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
+	local game_mode = game_mode_manager and game_mode_manager:game_mode()
 	local game_mode_state
 	local owner = Network.peer_id()
 
@@ -432,7 +432,7 @@ end
 VersusMechanism.can_join_custom_lobby = function (self)
 	-- function 19
 	local game_mode_manager = Managers.state.game_mode
-	local game_mode_key = not not game_mode_manager and not not game_mode_manager:game_mode_key()
+	local game_mode_key = game_mode_manager and game_mode_manager:game_mode_key()
 
 	return game_mode_key == "inn_vs"
 end
@@ -528,10 +528,10 @@ VersusMechanism._load_dark_pact_profiles = function (self)
 		end
 
 		local weapon_item_name = skin_item.linked_weapon
-		local weapon_item_data = not not weapon_item_name and not not ItemMasterList[weapon_item_name]
+		local weapon_item_data = weapon_item_name and ItemMasterList[weapon_item_name]
 
 		if weapon_item_data then
-			local item_template_name = not not weapon_item_data.temporary_template
+			local item_template_name = weapon_item_data.temporary_template
 			local item_template = WeaponUtils.get_weapon_template(item_template_name)
 			local item_units = BackendUtils.get_item_units(weapon_item_data)
 			local career_name = weapon_item_data.can_wield[1]
@@ -614,7 +614,7 @@ VersusMechanism.server_decide_side_order = function (self)
 			heroes_id = math.random(1, 2)
 		end
 	elseif not is_first_round then
-		heroes_id = not not 1
+		heroes_id = 1
 	end
 
 	if self:custom_settings_enabled() then
@@ -707,7 +707,7 @@ VersusMechanism._update_sides = function (self, state)
 
 		if side_order_state then
 			heroes_id = side_order_state
-			dark_pact_id = not not 1
+			dark_pact_id = 1
 		else
 			ferror("VersusMechanism:_update_sides - no side order state exists! Current state: %s", state)
 		end
@@ -789,7 +789,7 @@ end
 VersusMechanism.set_current_state = function (self, state)
 	-- function 36
 	if DEDICATED_SERVER then
-		cprintf("[Mechanism] State Changed from '%s' to '%s'", not not self._state, state)
+		cprintf("[Mechanism] State Changed from '%s' to '%s'", self._state, state)
 	end
 
 	self._state = state
@@ -823,7 +823,7 @@ VersusMechanism.is_final_round = function (self)
 	-- function 41
 	local is_final_round = self._win_conditions:is_final_round()
 
-	return not not Development.parameter("versus_quick_match_end")
+	return (Development.parameter("versus_quick_match_end"))
 end
 
 VersusMechanism.get_level_end_view = function (self)
@@ -846,7 +846,7 @@ VersusMechanism.is_venture_over = function (self)
 	local game_mode_ended = game_mode_end_reasons[reason]
 	local final_round = self._state == "round_2" or reason == "party_one_won_early" or reason == "party_two_won_early"
 
-	return not not game_mode_ended and not not final_round
+	return game_mode_ended and final_round
 end
 
 local match_over_reasons = {
@@ -902,7 +902,7 @@ VersusMechanism.game_round_ended = function (self, t, dt, reason, reason_data)
 	end
 
 	if reason == "round_end" or reason == "party_one_won" or reason == "party_two_won" or reason == "draw" or reason == "party_one_won_early" or reason == "party_two_won_early" then
-		level_seed = not not level_seed or not not level_transition_handler:get_current_level_seed()
+		level_seed = level_seed or level_transition_handler:get_current_level_seed()
 
 		level_transition_handler:set_next_level(level_key, environment_variation_id, level_seed)
 	elseif reason == "start_game" then
@@ -988,7 +988,7 @@ end
 
 VersusMechanism.request_vote = function (self, params)
 	-- function 47
-	local request_func = not not vote_requests[params.request_type]
+	local request_func = vote_requests[params.request_type]
 
 	if request_func then
 		request_func(params)
@@ -1085,8 +1085,8 @@ VersusMechanism.update_wanted_hero_character = function (self, peer_id, local_pl
 	end
 
 	if not profile_index then
-		profile_index = not not status.profile_index or not not status.preferred_profile_index
-		career_index = not not status.career_index or not not status.preferred_career_index
+		profile_index = status.profile_index or status.preferred_profile_index
+		career_index = status.career_index or status.preferred_career_index
 		profile_index = self:parse_hero_profile_availability(profile_index, party_id, peer_id, local_player_id)
 		reason = "status_fallback"
 	end
@@ -1117,7 +1117,7 @@ VersusMechanism.update_wanted_hero_character = function (self, peer_id, local_pl
 		reason = "available_fallback"
 	end
 
-	assert(not not profile_index and not not career_index, "[VersusMechanism] A profile could not be found in party")
+	assert(profile_index and career_index, "[VersusMechanism] A profile could not be found in party")
 
 	if reason ~= "saved" and self._profiles_reservable then
 		printf("[VersusMechanism] update profile, reason: %s, %d, %d ", reason, profile_index, career_index)
@@ -1264,7 +1264,7 @@ VersusMechanism._get_chat_members = function (self, party_id)
 	table.clear(_members_list)
 
 	local match_handler = self._network_handler:get_match_handler()
-	local reservation_handler = not not self:get_slot_reservation_handler(match_handler:get_match_owner(), ReservationHandlerTypes.pending_custom_game)
+	local reservation_handler = self:get_slot_reservation_handler(match_handler:get_match_owner(), ReservationHandlerTypes.pending_custom_game)
 
 	if reservation_handler and self._network_handler and is_player_hosting(self._network_handler) then
 		local peers = reservation_handler:peers_by_party(party_id)
@@ -1374,7 +1374,7 @@ end
 
 VersusMechanism.create_slot_reservation_handler = function (self, owner, handler_type, party_settings)
 	-- function 69
-	local handlers = not not self._slot_reservation_handlers[owner]
+	local handlers = self._slot_reservation_handlers[owner]
 
 	self._slot_reservation_handlers[owner] = handlers
 
@@ -1412,7 +1412,7 @@ VersusMechanism.get_slot_reservation_handler = function (self, owner, handler_ty
 	-- function 71
 	local handlers = self._slot_reservation_handlers[owner]
 
-	return not not handlers and not not handlers[handler_type]
+	return handlers and handlers[handler_type]
 end
 
 VersusMechanism.get_all_reservation_handlers_by_owner = function (self, owner)
@@ -1474,7 +1474,7 @@ VersusMechanism.rpc_sync_vs_custom_game_slot_data = function (self, channel_id, 
 	local handler_type = NetworkLookup.reservation_handler_types[reservation_handler_type_id]
 	local reservation_handler = self:get_slot_reservation_handler(owner, handler_type)
 
-	reservation_handler = not not reservation_handler or not not self:create_slot_reservation_handler(owner, handler_type)
+	reservation_handler = reservation_handler or self:create_slot_reservation_handler(owner, handler_type)
 
 	printf("[VersusMechanism] 'rpc_sync_vs_custom_game_slot_data' received from peer %s", CHANNEL_TO_PEER_ID[channel_id])
 	reservation_handler:update_slots(reserved_peers, reserved_peers_party_ids, friend_party_ids, party_leaders)
@@ -1639,7 +1639,7 @@ end
 VersusMechanism.handle_party_assignment_for_joining_peer = function (self, peer_id, local_player_id)
 	-- function 89
 	local game_mode_manager = Managers.state.game_mode
-	local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
+	local game_mode = game_mode_manager and game_mode_manager:game_mode()
 
 	fassert(game_mode, "No game mode exists")
 
@@ -1697,7 +1697,7 @@ VersusMechanism.should_play_level_introduction = function (self)
 	local state = self._state
 	local show = show_level_introduction[state]
 
-	return show ~= nil and not not show
+	return show ~= nil and show
 end
 
 VersusMechanism.get_custom_lobby_sort = function (self)
@@ -1715,8 +1715,8 @@ VersusMechanism.get_custom_lobby_sort = function (self)
 			local ping_diff = math.abs(a_ping - b_ping)
 
 			if ping_diff <= 40 then
-				local a_id = not not a_server_info.id
-				local b_id = not not b_server_info.id
+				local a_id = a_server_info.id
+				local b_id = b_server_info.id
 
 				return PlayerUtils.peer_id_compare(a_id, b_id)
 			end
@@ -1804,7 +1804,7 @@ VersusMechanism.get_objective_settings = function (self)
 	-- function 104
 	local level_key = Managers.level_transition_handler:get_current_level_key()
 
-	return not not VersusObjectiveSettings[level_key]
+	return VersusObjectiveSettings[level_key]
 end
 
 VersusMechanism.should_start_next_set = function (self)
@@ -1982,7 +1982,7 @@ VersusMechanism._setup_match = function (self)
 
 	printf("[VersusMechanism] Setting up match. Dedicated server id: %s, server id: %s, own id: %s", dedicated_server_peer_id, server_peer_id, own_peer_id)
 
-	self._shared_state = SharedStateVersus:new(is_server, self._network_handler, not not dedicated_server_peer_id or not not server_peer_id, own_peer_id)
+	self._shared_state = SharedStateVersus:new(is_server, self._network_handler, dedicated_server_peer_id or server_peer_id, own_peer_id)
 
 	self._shared_state:register_rpcs(self._network_event_delegate)
 
@@ -1992,7 +1992,7 @@ VersusMechanism._setup_match = function (self)
 
 	self._shared_state:full_sync()
 
-	self._num_sets = not not self:get_objective_settings().num_sets
+	self._num_sets = self:get_objective_settings().num_sets
 
 	if is_server then
 		local network_server = Managers.state.network.network_server
@@ -2103,9 +2103,9 @@ end
 
 VersusMechanism.store_challenge_progression_status = function (self, force_store, optional_category)
 	-- function 129
-	optional_category = not not optional_category or not not "area_selection_carousel_name"
+	optional_category = optional_category or "area_selection_carousel_name"
 
-	local entry_name = not not optional_category or not not "default"
+	local entry_name = optional_category or "default"
 
 	if force_store or not self._challenge_progression[entry_name] then
 		self._challenge_progression[entry_name] = Managers.state.achievement:get_challenge_progression(optional_category)

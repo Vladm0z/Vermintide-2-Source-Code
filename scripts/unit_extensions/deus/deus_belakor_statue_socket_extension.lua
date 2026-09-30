@@ -8,7 +8,7 @@ local function should_objective_be_active(objective_extension, socket_extension)
 		return false
 	else
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit then
 			return false
@@ -25,7 +25,7 @@ local function should_objective_be_active(objective_extension, socket_extension)
 
 		if weapon_data then
 			local item_data = weapon_data.item_data
-			local item_name = not not item_data and not not item_data.name
+			local item_name = item_data and item_data.name
 
 			return item_name == "belakor_crystal"
 		end

@@ -195,7 +195,7 @@ weapon_template.actions = {
 					sub_action = "heavy_attack_left_charged",
 					condition = function (talent_extension, buff_extension, weapon_extension)
 						-- function 4
-						return not not weapon_extension and weapon_extension:get_custom_data("charge") >= 1
+						return weapon_extension and weapon_extension:get_custom_data("charge") >= 1
 					end
 				}
 			},
@@ -545,7 +545,7 @@ weapon_template.actions = {
 					sub_action = "heavy_attack_stab_charged",
 					condition = function (talent_extension, buff_extension, weapon_extension)
 						-- function 9
-						return not not weapon_extension and weapon_extension:get_custom_data("charge") >= 1
+						return weapon_extension and weapon_extension:get_custom_data("charge") >= 1
 					end
 				}
 			},

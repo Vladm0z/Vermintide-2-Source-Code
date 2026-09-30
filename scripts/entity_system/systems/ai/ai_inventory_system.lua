@@ -56,8 +56,8 @@ local function link_unit(attachment_node_linking, world, target, source)
 	for i, attachment_nodes in ipairs(attachment_node_linking) do
 		local source_node = attachment_nodes.source
 		local target_node = attachment_nodes.target
-		local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(source, source_node)
-		local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(target, target_node)
+		local source_node_index = type(source_node) ~= "string" and source_node or not (type(source_node) ~= "string") and Unit.node(source, source_node)
+		local target_node_index = type(target_node) ~= "string" and target_node or not (type(target_node) ~= "string") and Unit.node(target, target_node)
 
 		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
@@ -191,16 +191,16 @@ AIInventorySystem.update = function (self, context, t, dt)
 
 			local item_set = item_sets[set_index]
 
-			start_index, end_index = item_set.start_index, extension.dropped and (not not 0 or not not item_set.end_index) or not extension.dropped and not not item_set.end_index
+			start_index, end_index = item_set.start_index, extension.dropped and (0 or item_set.end_index) or not extension.dropped and item_set.end_index
 		else
-			start_index, end_index = 1, extension.dropped and (not not 0 or not not extension.inventory_items_n) or not extension.dropped and not not extension.inventory_items_n
+			start_index, end_index = 1, extension.dropped and (0 or extension.inventory_items_n) or not extension.dropped and extension.inventory_items_n
 		end
 
 		extension.wielded = true
 
 		local inventory_item_definitions = extension.inventory_item_definitions
 		local inventory_item_units = extension.inventory_item_units
-		local inventory_items_n = extension.dropped and not not 0 or not extension.dropped and not not extension.inventory_items_n
+		local inventory_items_n = extension.dropped and 0 or not extension.dropped and extension.inventory_items_n
 
 		if script_data.ai_debug_inventory then
 			-- Nothing

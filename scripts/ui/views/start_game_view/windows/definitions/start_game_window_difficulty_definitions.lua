@@ -630,7 +630,7 @@ local function create_difficulty_button(scenegraph_id, size, background_icon, ba
 		math.floor(icon_settings.size[1] * icon_scale),
 		math.floor(icon_settings.size[2] * icon_scale)
 	}
-	local background_texture = not not background_texture or not not "button_bg_01"
+	local background_texture = background_texture or "button_bg_01"
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 	local frame_name = "menu_frame_08"
 	local frame_settings = UIFrameSettings[frame_name]
@@ -664,7 +664,7 @@ local function create_difficulty_button(scenegraph_id, size, background_icon, ba
 						-- function 8
 						local button_hotspot = content.button_hotspot
 
-						return not not content.background_icon
+						return content.background_icon
 					end
 				},
 				{
@@ -675,7 +675,7 @@ local function create_difficulty_button(scenegraph_id, size, background_icon, ba
 						-- function 9
 						local button_hotspot = content.button_hotspot
 
-						return not not content.background_icon_unlit
+						return content.background_icon_unlit
 					end
 				},
 				{
@@ -1250,12 +1250,12 @@ end
 
 function create_buy_button(scenegraph_id, size, frame_name, background_texture, text, font_size, optional_color_name, optional_detail_texture, optional_detail_offset, disable_with_gamepad)
 	-- function 17
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
-	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
+	local side_detail_texture = optional_detail_texture or "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
 	local side_detail_texture_size = side_detail_texture_settings.size
 
@@ -1344,7 +1344,7 @@ function create_buy_button(scenegraph_id, size, frame_name, background_texture, 
 			hover_glow = "button_state_default",
 			draw_frame = true,
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -1425,7 +1425,7 @@ function create_buy_button(scenegraph_id, size, frame_name, background_texture, 
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = {
@@ -1451,7 +1451,7 @@ function create_buy_button(scenegraph_id, size, frame_name, background_texture, 
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -1471,7 +1471,7 @@ function create_buy_button(scenegraph_id, size, frame_name, background_texture, 
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {

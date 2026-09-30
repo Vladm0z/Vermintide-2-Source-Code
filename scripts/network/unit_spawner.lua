@@ -347,7 +347,7 @@ UnitSpawner.spawn_local_unit_with_extensions = function (self, unit_name, unit_t
 	-- function 21
 	local unit = self:spawn_local_unit(unit_name, position, rotation, material)
 
-	unit_template_name = not not unit_template_name or not not Unit.get_data(unit, "unit_template")
+	unit_template_name = unit_template_name or Unit.get_data(unit, "unit_template")
 
 	self:create_unit_extensions(self.world, unit, unit_template_name, extension_init_data)
 
@@ -438,7 +438,7 @@ end
 
 UnitSpawner.request_spawn_template_unit = function (self, template_name, position, rotation, source_unit, state_int, group_spawn_index)
 	-- function 27
-	group_spawn_index = not not group_spawn_index or not not 1
+	group_spawn_index = group_spawn_index or 1
 
 	local template_id = NetworkLookup.spawn_unit_templates[template_name]
 	local source_unit_id = Managers.state.unit_storage:go_id(source_unit)
@@ -538,7 +538,7 @@ end
 
 UnitSpawner.add_destroy_listener = function (self, unit, identifier, callback, post_cleanup_listener)
 	-- function 31
-	local destroy_listeners = post_cleanup_listener and not not self.unit_destroy_listeners_post_cleanup or not post_cleanup_listener and not not self.unit_destroy_listeners
+	local destroy_listeners = post_cleanup_listener and self.unit_destroy_listeners_post_cleanup or not post_cleanup_listener and self.unit_destroy_listeners
 	local listeners = destroy_listeners[unit]
 
 	if not listeners then
@@ -553,7 +553,7 @@ end
 
 UnitSpawner.remove_destroy_listener = function (self, unit, identifier, post_cleanup_listener)
 	-- function 32
-	local destroy_listeners = post_cleanup_listener and not not self.unit_destroy_listeners_post_cleanup or not post_cleanup_listener and not not self.unit_destroy_listeners
+	local destroy_listeners = post_cleanup_listener and self.unit_destroy_listeners_post_cleanup or not post_cleanup_listener and self.unit_destroy_listeners
 	local listeners = destroy_listeners[unit]
 
 	if listeners then

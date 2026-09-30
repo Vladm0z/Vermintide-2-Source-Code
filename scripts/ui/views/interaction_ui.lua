@@ -173,7 +173,7 @@ local widget_definitions = {
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 3
-						return not not content.text
+						return content.text
 					end
 				},
 				{
@@ -182,7 +182,7 @@ local widget_definitions = {
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 4
-						return not not content.text
+						return content.text
 					end
 				},
 				{
@@ -209,7 +209,7 @@ local widget_definitions = {
 					text_id = "hotkey_text",
 					content_check_function = function (content)
 						-- function 7
-						return not not content.has_hotkey
+						return content.has_hotkey
 					end
 				},
 				{
@@ -218,7 +218,7 @@ local widget_definitions = {
 					text_id = "hotkey_text",
 					content_check_function = function (content)
 						-- function 8
-						return not not content.has_hotkey
+						return content.has_hotkey
 					end
 				}
 			}
@@ -683,7 +683,7 @@ InteractionUI.update = function (self, dt, t, my_player)
 	local title_text, action_text, interact_action, failed_reason, is_channeling, override_text_color, interaction_component, hotkey_text
 	local is_interacting = interactor_extension:is_interacting()
 	local is_waiting_for_interaction_approval = interactor_extension:is_waiting_for_interaction_approval()
-	local interaction_in_progress = not not is_interacting and not is_waiting_for_interaction_approval and not not not interactor_extension:is_aborting_interaction()
+	local interaction_in_progress = is_interacting and not is_waiting_for_interaction_approval and not interactor_extension:is_aborting_interaction()
 
 	if interaction_in_progress then
 		local t = Managers.time:time("game")
@@ -699,14 +699,14 @@ InteractionUI.update = function (self, dt, t, my_player)
 	title_text, action_text, interact_action, failed_reason, override_text_color, interaction_component, hotkey_text = self:_get_interaction_text(player_unit, is_channeling)
 
 	if action_text then
-		title_text = title_text and (not not Localize(title_text) or not not "") or not title_text and not not ""
+		title_text = title_text and (Localize(title_text) or "") or not title_text and ""
 
 		if failed_reason == "ammo_blocked" or failed_reason == "throwing_axe" then
-			local hold_to_reload_key = Managers.input:is_device_active("gamepad") and not not "$KEY;Player__weapon_reload_hold_input:" or not Managers.input:is_device_active("gamepad") and not not "$KEY;Player__weapon_reload_hold:"
+			local hold_to_reload_key = Managers.input:is_device_active("gamepad") and "$KEY;Player__weapon_reload_hold_input:" or not Managers.input:is_device_active("gamepad") and "$KEY;Player__weapon_reload_hold:"
 
-			action_text = action_text and (not not (TextToUpper(Localize(action_text)) .. hold_to_reload_key) or not not "") or not action_text and not not ""
+			action_text = action_text and (TextToUpper(Localize(action_text)) .. hold_to_reload_key or "") or not action_text and ""
 		else
-			action_text = action_text and (not not Localize(action_text) or not not "") or not action_text and not not ""
+			action_text = action_text and (Localize(action_text) or "") or not action_text and ""
 		end
 
 		self:_assign_button_info(interact_action, failed_reason, is_channeling, override_text_color)
@@ -769,7 +769,7 @@ InteractionUI.update = function (self, dt, t, my_player)
 	if interaction_component then
 		local optional_offset = interaction_component:update(player_unit, dt, t)
 
-		ui_scenegraph.pivot.local_position = not not optional_offset or not not BASE_OFFSET
+		ui_scenegraph.pivot.local_position = optional_offset or BASE_OFFSET
 	end
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
@@ -812,9 +812,9 @@ InteractionUI._get_interaction_text = function (self, player_unit, is_channeling
 	local can_interact, failed_reason, interaction_type = interactor_extension:can_interact()
 	local is_interacting, current_interaction_type = interactor_extension:is_interacting()
 
-	interaction_type = not not interaction_type or not not current_interaction_type
+	interaction_type = interaction_type or current_interaction_type
 
-	local active_interaction = not not can_interact or not not is_channeling or not not failed_reason
+	local active_interaction = can_interact or is_channeling or failed_reason
 
 	if active_interaction and interaction_type ~= "heal" and interaction_type ~= "give_item" then
 		if not title_text or not action_text or not interact_action then
@@ -865,13 +865,13 @@ InteractionUI._get_wielded_interaction_text = function (self, player_unit)
 
 	for action_name, sub_actions in pairs(item_template.actions) do
 		for sub_action_name, action_settings in pairs(sub_actions) do
-			local interaction_priority = not not action_settings.interaction_priority
+			local interaction_priority = action_settings.interaction_priority
 
 			if action_settings.interaction_type ~= nil and highest_prio < interaction_priority then
-				local show_interaction_ui = not not action_settings.show_interaction_ui
+				local show_interaction_ui = action_settings.show_interaction_ui
 
 				if is_interacting and action_settings.interaction_type == interaction_type then
-					local input_device_supports_action = self:button_texture_data_by_input_action(not not action_settings.hold_input)
+					local input_device_supports_action = self:button_texture_data_by_input_action(action_settings.hold_input)
 
 					if input_device_supports_action then
 						highest_prio = action_settings.interaction_priority
@@ -904,7 +904,7 @@ InteractionUI._get_wielded_interaction_text = function (self, player_unit)
 			title_text, action_text, override_text_color, interaction_component = interaction_template.client.hud_description(nil, interaction_data, interaction_template.config, nil, player_unit)
 		end
 
-		interact_action = not not action_settings.hold_input or not not best_action_name
+		interact_action = action_settings.hold_input or best_action_name
 	end
 
 	return title_text, action_text, interact_action, override_text_color, interaction_component

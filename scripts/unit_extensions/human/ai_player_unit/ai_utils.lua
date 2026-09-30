@@ -18,7 +18,7 @@ function aiprint(...)
 	end
 end
 
-AiUtils = not not AiUtils
+AiUtils = AiUtils
 BreedCategory = {
 	Boss = 8,
 	Special = 64,
@@ -191,7 +191,7 @@ local broadphase_query_result = {}
 
 AiUtils.alert_nearby_friends_of_enemy = function (unit, broadphase, enemy_unit, range)
 	-- function 15
-	range = not not range or not not 5
+	range = range or 5
 	enemy_unit = AiUtils.get_actual_attacker_unit(enemy_unit)
 
 	if not ALIVE[enemy_unit] then
@@ -247,11 +247,11 @@ end
 
 AiUtils.calculate_ai_stagger_strength = function (attacker_blackboard, target_blackboard, t, apply_toughness_break, reset_stagger_level, reset_multiplier)
 	-- function 20
-	local target_break_t = not not target_blackboard.ai_toughness_break_t
+	local target_break_t = target_blackboard.ai_toughness_break_t
 	local toughness_break_decay = t - target_break_t
-	local toughness_break = math.max(not not target_blackboard.ai_toughness_break - toughness_break_decay, 0)
-	local target_toughness = not not target_blackboard.breed.ai_toughness - toughness_break
-	local attacker_strength = not not attacker_blackboard.breed.ai_strength
+	local toughness_break = math.max(target_blackboard.ai_toughness_break - toughness_break_decay, 0)
+	local target_toughness = target_blackboard.breed.ai_toughness - toughness_break
+	local attacker_strength = attacker_blackboard.breed.ai_strength
 	local stagger_strength = math.round(math.clamp(attacker_strength - target_toughness, stagger_types.none, stagger_types.heavy))
 
 	if apply_toughness_break then
@@ -280,17 +280,17 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 	-- function 22
 	damage = DamageUtils.calculate_damage(damage, target_unit, attacker_unit)
 
-	local attacker_pos = not not POSITION_LOOKUP[attacker_unit]
-	local target_pos = not not POSITION_LOOKUP[target_unit]
+	local attacker_pos = POSITION_LOOKUP[attacker_unit]
+	local target_pos = POSITION_LOOKUP[target_unit]
 	local damage_direction = Vector3.normalize(target_pos - attacker_pos)
 	local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
 
-	damage_source = not not damage_source or not not AiUtils.breed_name(attacker_unit)
+	damage_source = damage_source or AiUtils.breed_name(attacker_unit)
 
 	local inflicted_damage, source_attacker_unit
 	local attacker_blackboard = BLACKBOARDS[attacker_unit]
 
-	source_attacker_unit = not not attacker_blackboard and not not attacker_blackboard.commander_unit
+	source_attacker_unit = attacker_blackboard and attacker_blackboard.commander_unit
 
 	if is_level_unit then
 		inflicted_damage = DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, source_attacker_unit, nil, action.hit_react_type, nil, nil, nil, nil, nil, nil, 1)
@@ -329,7 +329,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 				local player_status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
 				if player_status_extension and player_status_extension:is_knocked_down() then
-					local knocked_down_damage_multiplier = not not difficulty_settings.knocked_down_damage_multiplier
+					local knocked_down_damage_multiplier = difficulty_settings.knocked_down_damage_multiplier
 
 					damage = damage * knocked_down_damage_multiplier
 				end
@@ -344,7 +344,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 					damage = math.clamp(damage, 0, damage_cap)
 				end
 
-				local damage_multiplier = not not difficulty_settings.damage_multiplier
+				local damage_multiplier = difficulty_settings.damage_multiplier
 
 				damage = damage * damage_multiplier
 			end
@@ -361,7 +361,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 					stagger_strength = stagger_types[action.hit_react_type]
 				end
 
-				stagger_strength = not not stagger_strength or not not AiUtils.calculate_ai_stagger_strength(attacker_blackboard, target_blackboard, t, true, stagger_types.medium, 0.25)
+				stagger_strength = stagger_strength or AiUtils.calculate_ai_stagger_strength(attacker_blackboard, target_blackboard, t, true, stagger_types.medium, 0.25)
 
 				if stagger_strength <= 0 then
 					if not target_blackboard.stagger or target_blackboard.stagger_anim_done then
@@ -389,7 +389,7 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 						local angle_difference = Vector3.flat_angle(hit_unit_dir, damage_direction)
 						local hit_anim
 
-						hit_anim = angle_difference < -math.pi * 0.75 and (not not "hit_reaction_backward" or angle_difference < -math.pi * 0.25 and (not not "hit_reaction_left" or angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right")) or not (angle_difference < -math.pi * 0.75) and (angle_difference > math.pi * 0.75 and (not not "hit_reaction_backward" or angle_difference < -math.pi * 0.25 and (not not "hit_reaction_left" or angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right")) or not (angle_difference > math.pi * 0.75) and (angle_difference < -math.pi * 0.25 and (not not "hit_reaction_left" or angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and (not not "hit_reaction_forward" or not not "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and not not "hit_reaction_right")))
+						hit_anim = angle_difference < -math.pi * 0.75 and ("hit_reaction_backward" or angle_difference < -math.pi * 0.25 and ("hit_reaction_left" or angle_difference < math.pi * 0.25 and ("hit_reaction_forward" or "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and ("hit_reaction_forward" or "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and "hit_reaction_right")) or not (angle_difference < -math.pi * 0.75) and (angle_difference > math.pi * 0.75 and ("hit_reaction_backward" or angle_difference < -math.pi * 0.25 and ("hit_reaction_left" or angle_difference < math.pi * 0.25 and ("hit_reaction_forward" or "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and ("hit_reaction_forward" or "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and "hit_reaction_right")) or not (angle_difference > math.pi * 0.75) and (angle_difference < -math.pi * 0.25 and ("hit_reaction_left" or angle_difference < math.pi * 0.25 and ("hit_reaction_forward" or "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and "hit_reaction_right") or not (angle_difference < -math.pi * 0.25) and (angle_difference < math.pi * 0.25 and ("hit_reaction_forward" or "hit_reaction_right") or not (angle_difference < math.pi * 0.25) and "hit_reaction_right")))
 
 						if hit_anim then
 							unit_animation_event(target_unit, hit_anim)
@@ -401,23 +401,23 @@ AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, da
 					AiUtils.stagger_target(attacker_unit, target_unit, distance, impact, damage_direction, t)
 				end
 
-				local damage_multiplier_vs_ai = not not attacker_breed.damage_multiplier_vs_ai
+				local damage_multiplier_vs_ai = attacker_breed.damage_multiplier_vs_ai
 
 				damage = damage * damage_multiplier_vs_ai
 
 				local hit_effect
 				local hitzone_armor_categories = target_breed.hitzone_armor_categories
-				local target_unit_armor = hitzone_armor_categories and not not hitzone_armor_categories.torso or not hitzone_armor_categories and not not target_breed.armor_category
+				local target_unit_armor = hitzone_armor_categories and hitzone_armor_categories.torso or not hitzone_armor_categories and target_breed.armor_category
 
 				if damage < 0.25 and target_unit_armor == 2 then
 					hit_effect = "fx/hit_armored"
 				elseif not target_breed.no_blood_splatter_on_damage then
-					hit_effect = not not BloodSettings:get_hit_effect_for_race(target_breed.race) or not not target_breed.hit_effect
+					hit_effect = BloodSettings:get_hit_effect_for_race(target_breed.race) or target_breed.hit_effect
 				end
 
 				if hit_effect then
 					local world = target_blackboard.world
-					local hit_node_id = not not target_breed.hit_zones_lookup.torso
+					local hit_node_id = target_breed.hit_zones_lookup.torso
 					local hit_position = Unit.world_position(target_unit, hit_node_id) + Vector3(0, 0, math.random() * target_breed.aoe_height * 0.1)
 
 					EffectHelper.player_melee_hit_particles(world, hit_effect, hit_position, damage_direction, action.damage_type, target_unit, damage)
@@ -464,7 +464,7 @@ AiUtils.add_attack_intensity = function (target_unit, action, blackboard)
 	end
 
 	local difficulty = Managers.state.difficulty:get_difficulty()
-	local difficulty_attack_intensity_settings = not not action.difficulty_attack_intensity
+	local difficulty_attack_intensity_settings = action.difficulty_attack_intensity
 
 	if not difficulty_attack_intensity_settings then
 		return
@@ -473,7 +473,7 @@ AiUtils.add_attack_intensity = function (target_unit, action, blackboard)
 	local add_random_intensity = action.add_random_intensity
 
 	for intensity_type, intensity in pairs(difficulty_attack_intensity_settings) do
-		local random_intensity = add_random_intensity and not not (0.75 + 0.5 * math.random()) or not add_random_intensity and not not 1
+		local random_intensity = add_random_intensity and 0.75 + 0.5 * math.random() or not add_random_intensity and 1
 		local final_attack_intensity = intensity * random_intensity
 
 		target_unit_attack_intensity_extension:add_attack_intensity(intensity_type, final_attack_intensity)
@@ -484,9 +484,9 @@ AiUtils.poison_explode_unit = function (unit, action, blackboard)
 	-- function 24
 	local position = Unit.local_position(unit, 0)
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local aoe_dot_damage_table = not not action.aoe_dot_damage[difficulty_rank]
+	local aoe_dot_damage_table = action.aoe_dot_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local aoe_init_damage_table = not not action.aoe_init_damage[difficulty_rank]
+	local aoe_init_damage_table = action.aoe_init_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
 	local radius = action.radius
@@ -607,7 +607,7 @@ AiUtils.generic_mutator_explosion = function (unit, blackboard, explosion_templa
 	local explosion_position = position + Vector3.up()
 	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
 
-	DamageUtils.create_explosion(world, not not do_damage and not not unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, unit, 0, false)
+	DamageUtils.create_explosion(world, do_damage and unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, unit, 0, false)
 
 	local attacker_unit_id = Managers.state.unit_storage:go_id(unit)
 	local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
@@ -740,8 +740,8 @@ end
 
 AiUtils.calculate_oobb = function (range, self_pos, self_rot, height, width)
 	-- function 35
-	local height = not not height or not not 2
-	local width = not not width or not not 2
+	local height = height or 2
+	local width = width or 2
 	local half_width = width * 0.5
 	local half_range = range * 0.5
 	local half_height = height * 0.5
@@ -758,7 +758,7 @@ local previous_random_value = 0
 AiUtils.calculate_bot_threat_time = function (bot_threat)
 	-- function 36
 	local duration = bot_threat.duration
-	local max_start_delay = not not bot_threat.max_start_delay
+	local max_start_delay = bot_threat.max_start_delay
 	local current_random_value = math.random()
 	local sum_random = previous_random_value + current_random_value
 
@@ -798,7 +798,7 @@ end
 AiUtils.get_actual_attacker_breed = function (attacker_breed, victim_unit, damage_source_name, attacker_unit, attacker_player)
 	-- function 38
 	local status_extension = ScriptUnit.has_extension(victim_unit, "status_system")
-	local packmaster_player = not not status_extension and not not status_extension:query_pack_master_player()
+	local packmaster_player = status_extension and status_extension:query_pack_master_player()
 
 	if packmaster_player and packmaster_player == attacker_player and damage_source_name == "skaven_pack_master" then
 		return PlayerBreeds.vs_packmaster
@@ -848,7 +848,7 @@ AiUtils.get_actual_attacker_player = function (attacker_unit, victim_unit, damag
 
 	if damage_source_name == "skaven_pack_master" then
 		local status_extension = ScriptUnit.has_extension(victim_unit, "status_system")
-		local actual_player = not not status_extension and not not status_extension:query_pack_master_player()
+		local actual_player = status_extension and status_extension:query_pack_master_player()
 
 		if actual_player then
 			return actual_player
@@ -895,7 +895,7 @@ AiUtils.client_predicted_unit_alive = function (unit)
 	end
 
 	local health_extension = ScriptUnit.has_extension(unit, "health_system")
-	local is_predicted_alive = not not health_extension and not not health_extension:client_predicted_is_alive()
+	local is_predicted_alive = health_extension and health_extension:client_predicted_is_alive()
 
 	return is_predicted_alive
 end
@@ -907,7 +907,7 @@ AiUtils.unit_invincible = function (unit)
 	end
 
 	local health_extension = ScriptUnit.has_extension(unit, "health_system")
-	local is_invincible = not not health_extension and not not health_extension:get_is_invincible()
+	local is_invincible = health_extension and health_extension:get_is_invincible()
 
 	return is_invincible
 end
@@ -1019,7 +1019,7 @@ AiUtils.is_of_interest_to_packmaster = function (packmaster_unit, enemy_unit)
 		local is_pounced_down = status_extension:is_pounced_down()
 		local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
 		local grabbed = status_extension:is_grabbed_by_pack_master()
-		local is_grabbed_by_other_pack_master = not not grabbed and status_extension:get_pack_master_grabber() ~= packmaster_unit
+		local is_grabbed_by_other_pack_master = grabbed and status_extension:get_pack_master_grabber() ~= packmaster_unit
 		local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
 		local is_using_transport = status_extension.using_transport
 		local ledge_hanging = status_extension.is_ledge_hanging
@@ -1044,7 +1044,7 @@ AiUtils.is_of_interest_to_corruptor = function (corruptor_unit, enemy_unit)
 		local is_pounced_down = status_extension:is_pounced_down()
 		local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
 		local grabbed = status_extension:is_grabbed_by_corruptor()
-		local is_grabbed_by_other_corruptor = not not grabbed and status_extension.corruptor_unit ~= corruptor_unit
+		local is_grabbed_by_other_corruptor = grabbed and status_extension.corruptor_unit ~= corruptor_unit
 		local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
 		local is_using_transport = status_extension.using_transport
 		local ledge_hanging = status_extension.is_ledge_hanging
@@ -1167,7 +1167,7 @@ AiUtils.stagger = function (unit, blackboard, attacker_unit, stagger_direction, 
 	fassert(stagger_type > 0, "Tried to use invalid stagger type %q", stagger_type)
 
 	local is_staggered = blackboard.stagger
-	local current_stagger_is_explosion = not not is_staggered and blackboard.stagger_type == stagger_types.explosion
+	local current_stagger_is_explosion = is_staggered and blackboard.stagger_type == stagger_types.explosion
 	local new_stagger_is_explosion = stagger_type == stagger_types.explosion
 
 	if not always_stagger and not is_push and current_stagger_is_explosion and not new_stagger_is_explosion then
@@ -1187,9 +1187,9 @@ AiUtils.stagger = function (unit, blackboard, attacker_unit, stagger_direction, 
 	blackboard.stagger_length = stagger_length
 	blackboard.stagger_time = stagger_duration * difficulty_modifier + t
 
-	local stagger_value_to_add = not not stagger_value or not not 1
+	local stagger_value_to_add = stagger_value or 1
 
-	blackboard.stagger = blackboard.stagger and not not (blackboard.stagger + stagger_value_to_add) or not blackboard.stagger and not not stagger_value_to_add
+	blackboard.stagger = blackboard.stagger and blackboard.stagger + stagger_value_to_add or not blackboard.stagger and stagger_value_to_add
 	blackboard.stagger_type = stagger_type
 	blackboard.stagger_animation_scale = stagger_animation_scale
 	blackboard.always_stagger_suffered = always_stagger
@@ -1218,7 +1218,7 @@ AiUtils.stagger = function (unit, blackboard, attacker_unit, stagger_direction, 
 	end
 
 	if should_play_push_sound then
-		local push_sound_event = not not blackboard.breed.push_sound_event
+		local push_sound_event = blackboard.breed.push_sound_event
 
 		Managers.state.entity:system("audio_system"):play_audio_unit_event(push_sound_event, unit)
 	end
@@ -1268,11 +1268,11 @@ AiUtils.advance_towards_target = function (unit, blackboard, min_distance, max_d
 	end
 
 	local max_tries = MAX_TRIES
-	local min_angle_step = not not min_angle_step or not not MIN_ANGLE_STEP
-	local max_angle_step = not not max_angle_step or not not MAX_ANGLE_STEP
-	local min_angle = not not min_angle or not not MIN_ANGLE
+	local min_angle_step = min_angle_step or MIN_ANGLE_STEP
+	local max_angle_step = max_angle_step or MAX_ANGLE_STEP
+	local min_angle = min_angle or MIN_ANGLE
 
-	direction = not not direction or not not (1 - math.random(0, 1) * 2)
+	direction = direction or 1 - math.random(0, 1) * 2
 
 	local from_position = POSITION_LOOKUP[unit]
 	local target_position = POSITION_LOOKUP[target_unit]
@@ -1335,7 +1335,7 @@ AiUtils.get_default_breed_move_speed = function (unit, blackboard)
 	local breed = blackboard.breed
 
 	if blackboard.is_passive then
-		move_speed = not not breed.passive_walk_speed or not not breed.walk_speed
+		move_speed = breed.passive_walk_speed or breed.walk_speed
 	else
 		move_speed = breed.run_speed
 	end
@@ -1385,7 +1385,7 @@ end
 AiUtils.initialize_nav_cost_map_cost_table = function (cost_table, allowed_layers, default_cost)
 	-- function 68
 	for layer_id, layer_name in ipairs(NAV_COST_MAP_LAYER_ID_MAPPING) do
-		local layer_cost = allowed_layers and not not allowed_layers[layer_name] or not allowed_layers and (not not default_cost or not not 0)
+		local layer_cost = allowed_layers and allowed_layers[layer_name] or not allowed_layers and (default_cost or 0)
 
 		GwNavCostMap.cost_table_set_cost(cost_table, layer_id, layer_cost)
 	end
@@ -1395,13 +1395,13 @@ AiUtils.kill_unit = function (victim_unit, attacker_unit, hit_zone_name, damage_
 	-- function 69
 	local damage_amount = NetworkConstants.damage.max
 
-	attacker_unit = not not attacker_unit or not not victim_unit
+	attacker_unit = attacker_unit or victim_unit
 
 	if HEALTH_ALIVE[victim_unit] then
-		hit_zone_name = not not hit_zone_name or not not "full"
-		damage_type = not not damage_type or not not "kinetic"
-		damage_source = not not damage_source or not not "suicide"
-		damage_direction = not not damage_direction or not not Vector3(0, 0, 1)
+		hit_zone_name = hit_zone_name or "full"
+		damage_type = damage_type or "kinetic"
+		damage_source = damage_source or "suicide"
+		damage_direction = damage_direction or Vector3(0, 0, 1)
 
 		local health = ScriptUnit.extension(victim_unit, "health_system"):current_health()
 		local skip_buffs = true
@@ -1429,7 +1429,7 @@ AiUtils.update_aggro = function (unit, blackboard, breed, t, dt)
 		aggro_list[enemy_unit] = math.clamp(aggro - aggro_decay, 0, 100)
 	end
 
-	local aggro_multipliers = not not breed.perception_weights.aggro_multipliers
+	local aggro_multipliers = breed.perception_weights.aggro_multipliers
 
 	if array_length > 0 then
 		local stride = DamageDataIndex.STRIDE
@@ -1443,7 +1443,7 @@ AiUtils.update_aggro = function (unit, blackboard, breed, t, dt)
 
 			if master_list_item then
 				local slot_type = master_list_item.slot_type
-				local multiplier = not not aggro_multipliers[slot_type]
+				local multiplier = aggro_multipliers[slot_type]
 
 				damage_amount = damage_amount * multiplier
 			end
@@ -1493,7 +1493,7 @@ AiUtils.debug_bot_transitions = function (gui, t, x1, y1)
 			if ALIVE[unit] then
 				local profile_index = player:profile_index()
 				local profile = SPProfiles[profile_index]
-				local unit_name = not not profile and not not profile.unit_name
+				local unit_name = profile and profile.unit_name
 				local navigation_extension = ScriptUnit.extension(unit, "ai_navigation_system")
 				local transitions = navigation_extension._active_nav_transitions
 				local bot_text = "[" .. unit_name .. "]"
@@ -1526,11 +1526,11 @@ AiUtils.push_intersecting_players = function (unit, source_unit, displaced_units
 	local self_pos = Unit.local_position(unit, 0)
 	local push_pos = self_pos + self_forward * data.push_forward_offset
 	local radius = data.push_width * 1.5
-	local dodge_radius = not not data.dodged_width
+	local dodge_radius = data.dodged_width
 	local forward_pos = self_pos + self_forward * 3
-	local side_unit = not not HEALTH_ALIVE[unit]
+	local side_unit = HEALTH_ALIVE[unit]
 	local side = Managers.state.side.side_by_unit[side_unit]
-	local enemy_player_and_bot_units = not not side and not not side.ENEMY_PLAYER_AND_BOT_UNITS
+	local enemy_player_and_bot_units = side and side.ENEMY_PLAYER_AND_BOT_UNITS
 
 	if enemy_player_and_bot_units then
 		for i = 1, #enemy_player_and_bot_units do
@@ -1665,7 +1665,7 @@ AiUtils.unit_is_flanking_player = function (enemy_unit, player_unit, optional_ro
 
 	if game and player_unit_id then
 		local to_target_vec = Vector3.normalize(POSITION_LOOKUP[enemy_unit] - POSITION_LOOKUP[player_unit])
-		local player_rot = not not optional_rotation or not not GameSession.game_object_field(game, player_unit_id, "aim_direction")
+		local player_rot = optional_rotation or GameSession.game_object_field(game, player_unit_id, "aim_direction")
 		local unit_fwd_dir = Quaternion.forward(Quaternion.look(player_rot))
 		local is_behind = Vector3.dot(to_target_vec, unit_fwd_dir) < 0.4
 
@@ -1733,8 +1733,8 @@ AiUtils.get_combat_conditions = function (blackboard)
 		local target_breed = Unit.get_data(target_unit, "breed")
 
 		return {
-			enemy_arc = num_enemies > 3 and not not 2 or not (num_enemies > 3) and (num_enemies > 1 and not not 1 or not (num_enemies > 1) and not not 0),
-			target_armor = target_breed and not not target_breed.primary_armor_category or not target_breed and not not 1
+			enemy_arc = num_enemies > 3 and 2 or not (num_enemies > 3) and (num_enemies > 1 and 1 or not (num_enemies > 1) and 0),
+			target_armor = target_breed and target_breed.primary_armor_category or not target_breed and 1
 		}
 	end
 
@@ -1796,7 +1796,7 @@ local math_abs = math.abs
 
 AiUtils.get_melee_weapon_score = function (conditions, weapon_item_template)
 	-- function 82
-	local weapon_meta_data = weapon_item_template and not not weapon_item_template.attack_meta_data or not weapon_item_template and not not DEFAULT_ATTACK_META_DATA
+	local weapon_meta_data = weapon_item_template and weapon_item_template.attack_meta_data or not weapon_item_template and DEFAULT_ATTACK_META_DATA
 	local best_utility = -1
 	local best_attack_input = "tap_attack"
 	local best_attack_meta_data = weapon_meta_data[best_attack_input]
@@ -1814,10 +1814,10 @@ AiUtils.get_melee_weapon_score = function (conditions, weapon_item_template)
 			local armor_modifiers = attack_meta_data.armor_modifiers
 
 			if armor_modifiers then
-				local armor_mod = not not armor_modifiers[target_armor]
-				local armor_relevence = not not ARMOR_MOD_IMPORTANCE[target_armor]
+				local armor_mod = armor_modifiers[target_armor]
+				local armor_relevence = ARMOR_MOD_IMPORTANCE[target_armor]
 
-				utility = utility + armor_mod * armor_relevence * not not attack_meta_data.speed_mod
+				utility = utility + armor_mod * armor_relevence * attack_meta_data.speed_mod
 			end
 
 			if best_utility < utility then
@@ -1859,12 +1859,12 @@ AiUtils.get_bot_weapon_extension = function (blackboard)
 			return current_action_extension
 		end
 
-		local item_template = not not item_data and not not BackendUtils.get_item_template(item_data)
+		local item_template = item_data and BackendUtils.get_item_template(item_data)
 
 		if item_template and item_template.dominant_left then
-			return not not left_hand_weapon_extension or not not right_hand_weapon_extension
+			return left_hand_weapon_extension or right_hand_weapon_extension
 		else
-			return not not right_hand_weapon_extension or not not left_hand_weapon_extension
+			return right_hand_weapon_extension or left_hand_weapon_extension
 		end
 	end
 
@@ -1877,7 +1877,7 @@ AiUtils.taunt_unit = function (ai_unit, taunt_unit, duration, taunt_bosses)
 
 	if blackboard then
 		local breed = blackboard.breed
-		local taunt_target = not breed.boss or not not taunt_bosses
+		local taunt_target = not breed.boss or taunt_bosses
 
 		if taunt_target then
 			local t = Managers.time:time("game")
@@ -1948,7 +1948,7 @@ AiUtils.calculate_animation_movespeed = function (animation_move_speed_config, u
 			local target_vel = target_locomotion_ext:current_velocity()
 
 			if Vector3.length_squared(target_vel) > 0 then
-				target_vel = target_vel * (1 + (not not optional_estimated_attack_time or not not 1))
+				target_vel = target_vel * (1 + (optional_estimated_attack_time or 1))
 
 				local own_locomotion_ext = ScriptUnit.extension(unit, "locomotion_system")
 				local own_velocity = own_locomotion_ext:current_velocity()
@@ -2057,7 +2057,7 @@ end
 AiUtils.breed_height = function (unit)
 	-- function 91
 	local bb = BLACKBOARDS[unit]
-	local breed = bb and not not bb.breed or not bb and not not Unit.get_data(unit, "breed")
+	local breed = bb and bb.breed or not bb and Unit.get_data(unit, "breed")
 	local height = breed.height
 
 	if not height then
@@ -2107,8 +2107,8 @@ end
 
 AiUtils.line_of_sight_from_random_point = function (from_pos, target_unit, optional_num_attempts, optional_index)
 	-- function 93
-	local num_attempts = math.min(not not optional_num_attempts or not not 1, NUM_RAYCAST_POINTS)
-	local start_index = not not optional_index or not not math.random(1, NUM_RAYCAST_POINTS)
+	local num_attempts = math.min(optional_num_attempts or 1, NUM_RAYCAST_POINTS)
+	local start_index = optional_index or math.random(1, NUM_RAYCAST_POINTS)
 	local index
 
 	for i = 1, num_attempts do
@@ -2125,8 +2125,8 @@ end
 AiUtils.bot_melee_aim_pos = function (targeting_unit, target, optional_aim_position)
 	-- function 94
 	local target_unit_blackboard = BLACKBOARDS[target]
-	local target_breed = not not target_unit_blackboard and not not target_unit_blackboard.breed
-	local aim_node = target_breed and not not target_breed.bot_melee_aim_node or not target_breed and not not "rp_center"
+	local target_breed = target_unit_blackboard and target_unit_blackboard.breed
+	local aim_node = target_breed and target_breed.bot_melee_aim_node or not target_breed and "rp_center"
 	local targeting_unit_pos = Unit.local_position(targeting_unit, 0)
 	local aim_pos
 
@@ -2148,9 +2148,9 @@ AiUtils.bot_melee_aim_pos = function (targeting_unit, target, optional_aim_posit
 			end
 		end
 
-		aim_pos = not not closest_pos or not not Unit.world_position(target, 0)
+		aim_pos = closest_pos or Unit.world_position(target, 0)
 	else
-		aim_pos = Unit.has_node(target, aim_node) and (not not Unit.world_position(target, Unit.node(target, aim_node)) or not not Unit.world_position(target, 0)) or not Unit.has_node(target, aim_node) and not not Unit.world_position(target, 0)
+		aim_pos = Unit.has_node(target, aim_node) and (Unit.world_position(target, Unit.node(target, aim_node)) or Unit.world_position(target, 0)) or not Unit.has_node(target, aim_node) and Unit.world_position(target, 0)
 	end
 
 	if optional_aim_position then

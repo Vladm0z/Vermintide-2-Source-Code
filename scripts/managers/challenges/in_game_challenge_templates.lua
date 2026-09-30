@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/challenges/in_game_challenge_templates.lua
 
-InGameChallengeTemplates = not not InGameChallengeTemplates
+InGameChallengeTemplates = InGameChallengeTemplates
 InGameChallengeTemplates.kill_enemies = {
 	default_target = 3,
 	description = "challenge_description_kill_enemies_01",

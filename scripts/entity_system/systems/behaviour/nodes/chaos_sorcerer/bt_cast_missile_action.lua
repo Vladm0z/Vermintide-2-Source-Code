@@ -16,8 +16,8 @@ BTCastMissileAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 	blackboard.active_node = BTCastMissileAction
-	blackboard.spell_count = not not blackboard.spell_count
-	blackboard.cast_time_done = t + not not action.cast_time
+	blackboard.spell_count = blackboard.spell_count
+	blackboard.cast_time_done = t + action.cast_time
 	blackboard.summoning = true
 	blackboard.volleys = 0
 
@@ -74,7 +74,7 @@ BTCastMissileAction.run = function (self, unit, blackboard, t, dt)
 	if blackboard.anim_cb_throw then
 		blackboard.anim_cb_throw = false
 
-		local missile_data = not not blackboard.current_spell
+		local missile_data = blackboard.current_spell
 		local throw_pos, target_dir
 
 		if action.get_throw_position_func then
@@ -98,7 +98,7 @@ BTCastMissileAction.run = function (self, unit, blackboard, t, dt)
 		end
 
 		if missile_data.magic_missile then
-			local angle = not not action.launch_angle
+			local angle = action.launch_angle
 			local speed = missile_data.magic_missile_speed
 
 			target_dir = Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(target_dir, Vector3.up()), angle), target_dir)
@@ -108,7 +108,7 @@ BTCastMissileAction.run = function (self, unit, blackboard, t, dt)
 
 			target_dir = Vector3.normalize(target_dir + up + right)
 
-			local position_target = not not missile_data.target_ground
+			local position_target = missile_data.target_ground
 
 			self:launch_magic_missile(blackboard, action, throw_pos, target_dir, angle, speed, unit, blackboard.target_unit, position_target, missile_data)
 		else
@@ -146,9 +146,9 @@ end
 BTCastMissileAction.launch_projectile = function (self, blackboard, action, initial_position, target_dir, angle, speed, owner_unit, target_unit)
 	-- function 5
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local aoe_dot_damage_table = not not action.aoe_dot_damage[difficulty_rank]
+	local aoe_dot_damage_table = action.aoe_dot_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local aoe_init_damage_table = not not action.aoe_init_damage[difficulty_rank]
+	local aoe_init_damage_table = action.aoe_init_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
 	local radius = action.radius
@@ -200,7 +200,7 @@ BTCastMissileAction.launch_magic_missile = function (self, blackboard, action, p
 	local scale = 1
 	local radius_min = 0.2
 	local radius_max = 0.5
-	local radius = not not 0.5
+	local radius = 0.5
 	local damage_source = blackboard.breed.name
 	local true_flight_template_name = missile_data.true_flight_template_name
 	local true_flight_template = TrueFlightTemplates[true_flight_template_name]
@@ -212,7 +212,7 @@ BTCastMissileAction.launch_magic_missile = function (self, blackboard, action, p
 		if type(missile_health) == "table" then
 			local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 
-			missile_health = not not missile_health[difficulty_rank] or not not missile_health[2]
+			missile_health = missile_health[difficulty_rank] or missile_health[2]
 		end
 
 		unit_template_name = "ai_true_flight_killable_projectile_unit"
@@ -243,7 +243,7 @@ BTCastMissileAction.launch_magic_missile = function (self, blackboard, action, p
 			impact_template_name = "direct_impact",
 			owner_unit = owner_unit,
 			damage_source = damage_source,
-			explosion_template_name = not not missile_data.explosion_template_name
+			explosion_template_name = missile_data.explosion_template_name
 		},
 		projectile_impact_system = {
 			collision_filter = "filter_enemy_ray_projectile",

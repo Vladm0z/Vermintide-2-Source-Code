@@ -166,7 +166,7 @@ end
 
 PassiveAbilityEngineer.on_engineer_weapon_fire = function (self, heat_to_add)
 	-- function 11
-	local new_heat = self._weapon_visual_heat + (not not heat_to_add or not not 0)
+	local new_heat = self._weapon_visual_heat + (heat_to_add or 0)
 
 	self._weapon_visual_heat = math.clamp(new_heat, 0, max_visual_heat_intensity)
 
@@ -182,10 +182,10 @@ PassiveAbilityEngineer.on_engineer_weapon_spin_up = function (self, custom_progr
 	local t = Managers.time:time("game")
 
 	if not ignore_anim_fixup then
-		custom_progress = (not not custom_progress or not not 0) / 2 + 0.5
+		custom_progress = (custom_progress or 0) / 2 + 0.5
 	end
 
-	self._wind_down_progress = math.max(not not custom_progress or not not 0, self._wind_down_progress)
+	self._wind_down_progress = math.max(custom_progress or 0, self._wind_down_progress)
 	self._wind_down_cooldown_pause_t = t + wind_down_pause_time
 end
 
@@ -232,7 +232,7 @@ PassiveAbilityEngineer._add_5_2_bombs = function (self)
 
 	local unique_id = self._player:unique_id()
 	local status = Managers.party:get_status_from_unique_id(unique_id)
-	local already_given = not global_is_inside_inn and not not status.game_mode_data._engineer_upgraded_grenades_added
+	local already_given = not global_is_inside_inn and status.game_mode_data._engineer_upgraded_grenades_added
 
 	if already_given then
 		return

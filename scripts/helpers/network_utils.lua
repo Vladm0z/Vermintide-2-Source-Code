@@ -29,7 +29,7 @@ NetworkUtils.network_safe_position = function (pos)
 	local in_range_x = pos_min <= pos_x and pos_x <= pos_max
 	local in_range_y = pos_min <= pos_y and pos_y <= pos_max
 	local in_range_z = pos_min <= pos_z and pos_z <= pos_max
-	local in_range = not not in_range_x and not not in_range_y and not not in_range_z
+	local in_range = in_range_x and in_range_y and in_range_z
 
 	return in_range
 end
@@ -70,8 +70,8 @@ local peer_left_ignored_states = table.set({
 NetworkUtils.announce_chat_peer_left = function (peer_id, lobby)
 	-- function 7
 	local matchmaking_manager = Managers.matchmaking
-	local matchmaking_state = not not matchmaking_manager and not not matchmaking_manager:state()
-	local matchmaking_state_name = not not matchmaking_state and not not matchmaking_state.NAME
+	local matchmaking_state = matchmaking_manager and matchmaking_manager:state()
+	local matchmaking_state_name = matchmaking_state and matchmaking_state.NAME
 
 	if peer_left_ignored_states[matchmaking_state_name] then
 		return

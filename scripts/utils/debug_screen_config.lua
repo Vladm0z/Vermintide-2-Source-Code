@@ -149,8 +149,8 @@ local settings = {
 					local _, best_travel_dist_a = MainPathUtils.closest_pos_at_main_path(main_paths, pos_a)
 					local _, best_travel_dist_b = MainPathUtils.closest_pos_at_main_path(main_paths, pos_b)
 
-					best_travel_dist_a = not not best_travel_dist_a or not not math.huge
-					best_travel_dist_b = not not best_travel_dist_b or not not math.huge
+					best_travel_dist_a = best_travel_dist_a or math.huge
+					best_travel_dist_b = best_travel_dist_b or math.huge
 
 					if best_travel_dist_a ~= best_travel_dist_b then
 						return best_travel_dist_a < best_travel_dist_b
@@ -160,7 +160,7 @@ local settings = {
 				end)
 			else
 				local local_player = Managers.player:local_player()
-				local player_unit = not not local_player and not not local_player.player_unit
+				local player_unit = local_player and local_player.player_unit
 
 				if not ALIVE[player_unit] then
 					return
@@ -262,8 +262,8 @@ local settings = {
 					local _, best_travel_dist_a = MainPathUtils.closest_pos_at_main_path(main_paths, pos_a)
 					local _, best_travel_dist_b = MainPathUtils.closest_pos_at_main_path(main_paths, pos_b)
 
-					best_travel_dist_a = not not best_travel_dist_a or not not math.huge
-					best_travel_dist_b = not not best_travel_dist_b or not not math.huge
+					best_travel_dist_a = best_travel_dist_a or math.huge
+					best_travel_dist_b = best_travel_dist_b or math.huge
 
 					if best_travel_dist_a ~= best_travel_dist_b then
 						return best_travel_dist_a < best_travel_dist_b
@@ -273,7 +273,7 @@ local settings = {
 				end)
 			else
 				local local_player = Managers.player:local_player()
-				local player_unit = not not local_player and not not local_player.player_unit
+				local player_unit = local_player and local_player.player_unit
 
 				if not ALIVE[player_unit] then
 					return
@@ -650,7 +650,7 @@ local settings = {
 			table.sort(options, function (a, b)
 				-- function 20
 				if high_prio_levels[a] or high_prio_levels[b] then
-					return not not high_prio_levels[a] < not not high_prio_levels[b]
+					return high_prio_levels[a] < high_prio_levels[b]
 				end
 
 				if level_variations[a] or level_variations[b] then
@@ -665,11 +665,11 @@ local settings = {
 				local settings_b = LevelSettings[b]
 
 				if settings_a.mechanism ~= settings_b.mechanism then
-					return not not mechanism_order[settings_a.mechanism] < not not mechanism_order[settings_b.mechanism]
+					return mechanism_order[settings_a.mechanism] < mechanism_order[settings_b.mechanism]
 				end
 
-				local act_a_index = not not table.find(GameActsOrder, settings_a.act)
-				local act_b_index = not not table.find(GameActsOrder, settings_b.act)
+				local act_a_index = table.find(GameActsOrder, settings_a.act)
+				local act_b_index = table.find(GameActsOrder, settings_b.act)
 
 				if act_a_index < act_b_index then
 					return true
@@ -678,13 +678,13 @@ local settings = {
 					local act_presentation_order_b = settings_b.act_presentation_order
 
 					if act_presentation_order_a or act_presentation_order_b then
-						return (not not act_presentation_order_a or not not math.huge) < (not not act_presentation_order_b or not not math.huge)
+						return (act_presentation_order_a or math.huge) < (act_presentation_order_b or math.huge)
 					else
-						local debug_sorting_a = not not settings_a.map_settings
-						local debug_sorting_b = not not settings_b.map_settings
+						local debug_sorting_a = settings_a.map_settings
+						local debug_sorting_b = settings_b.map_settings
 
 						if debug_sorting_a or debug_sorting_b then
-							return (not not debug_sorting_a or not not math.huge) < (not not debug_sorting_b or not not math.huge)
+							return (debug_sorting_a or math.huge) < (debug_sorting_b or math.huge)
 						else
 							return a < b
 						end
@@ -1001,7 +1001,7 @@ local settings = {
 			local wants_invis = options[option_id]
 			local player_manager = Managers.player
 			local local_player = player_manager:local_player()
-			local player_unit = not not local_player and not not local_player.player_unit
+			local player_unit = local_player and local_player.player_unit
 
 			if Unit.alive(player_unit) then
 				local status_extension = ScriptUnit.extension(player_unit, "status_system")
@@ -1009,7 +1009,7 @@ local settings = {
 				if status_extension:is_invisible() ~= wants_invis then
 					status_extension:set_invisible(wants_invis, nil, "debug_invis")
 
-					local debug_text = wants_invis and not not "Local player is now invisible" or not wants_invis and not not "Local player is now visible"
+					local debug_text = wants_invis and "Local player is now invisible" or not wants_invis and "Local player is now visible"
 
 					Debug.sticky_text(debug_text)
 				end
@@ -1072,7 +1072,7 @@ local settings = {
 			local side = Managers.state.side.side_by_party[party]
 			local available_profiles = side.available_profiles
 
-			available_profiles = not not available_profiles or not not PROFILES_BY_AFFILIATION.heroes
+			available_profiles = available_profiles or PROFILES_BY_AFFILIATION.heroes
 
 			for k = 1, #available_profiles do
 				local profile_name = available_profiles[k]
@@ -1089,7 +1089,7 @@ local settings = {
 			if profile_name then
 				local profile_index = FindProfileIndex(profile_name)
 				local careers = SPProfiles[profile_index].careers
-				local career = not not careers[script_data.wanted_career_index]
+				local career = careers[script_data.wanted_career_index]
 				local force_respawn = true
 
 				if career.display_name == "vs_undecided" then
@@ -1878,7 +1878,7 @@ local settings = {
 		func = function (options, index)
 			-- function 45
 			local backend_manager = Managers.backend
-			local experience = not not options[index]
+			local experience = options[index]
 			local player = Managers.player:local_player(1)
 
 			local function cb(result)
@@ -1920,7 +1920,7 @@ local settings = {
 		func = function (options, index)
 			-- function 48
 			local backend_manager = Managers.backend
-			local amount = not not options[index]
+			local amount = options[index]
 			local peddler_interface = backend_manager:get_interface("peddler")
 			local current_chips = peddler_interface:get_chips("VS")
 			local player = Managers.player:local_player(1)
@@ -6067,7 +6067,7 @@ local settings = {
 	{
 		setting_name = "simulate_color_blindness",
 		category = "Visual/audio",
-		description = BUILD ~= "dev" and not not "This is only available in dev builds for performance reasons. Switch exe to dev to see the effects of the changes." or not (BUILD ~= "dev") and not not "Enables or disables different color blindness simulations.",
+		description = BUILD ~= "dev" and "This is only available in dev builds for performance reasons. Switch exe to dev to see the effects of the changes." or not (BUILD ~= "dev") and "Enables or disables different color blindness simulations.",
 		item_source = {
 			common_deuteranomaly = true,
 			off = true,
@@ -6083,7 +6083,7 @@ local settings = {
 			if option == "off" then
 				on = false
 			else
-				mode = not not 2
+				mode = 2
 			end
 
 			if on then
@@ -6907,7 +6907,7 @@ local settings = {
 				elseif type(option) == "table" then
 					options[i] = {
 						option[1],
-						not not option[2]
+						option[2]
 					}
 				else
 					options[i] = {
@@ -6922,9 +6922,9 @@ local settings = {
 			if type(option) == "string" then
 				return option
 			elseif type(option) == "table" then
-				return string.format("%s - %s seconds", option[1], not not option[2])
+				return string.format("%s - %s seconds", option[1], option[2])
 			else
-				return string.format("%s second%s", option, option ~= 1 and not not "" or not (option ~= 1) and not not "s")
+				return string.format("%s second%s", option, option ~= 1 and "" or not (option ~= 1) and "s")
 			end
 		end,
 		func = function (options, index)
@@ -6934,7 +6934,7 @@ local settings = {
 			if val == "[clear value]" then
 				script_data.package_loading_latency = nil
 			else
-				script_data.package_loading_latency = not not {
+				script_data.package_loading_latency = {
 					val,
 					val
 				}
@@ -7963,7 +7963,7 @@ local settings = {
 		func = function (options, index)
 			-- function 110
 			local backend_manager = Managers.backend
-			local experience = not not options[index]
+			local experience = options[index]
 			local player = Managers.player:local_player(1)
 			local profile_index = player:profile_index()
 			local profile = SPProfiles[profile_index]
@@ -8595,7 +8595,7 @@ local settings = {
 		end,
 		func = function (options, index)
 			-- function 138
-			local activated_mutators = not not script_data.debug_activated_mutators
+			local activated_mutators = script_data.debug_activated_mutators
 			local key = options[index]
 			local mutator_deactivation_index
 
@@ -8674,7 +8674,7 @@ local settings = {
 		end,
 		func = function (options, index)
 			-- function 142
-			local activated_blessings = not not script_data.debug_activated_blessings
+			local activated_blessings = script_data.debug_activated_blessings
 			local key = options[index]
 			local blessing_deactivation_index
 
@@ -8719,7 +8719,7 @@ local settings = {
 		end,
 		func = function (options, index)
 			-- function 144
-			local forced_templates = not not script_data.debug_activated_mutators
+			local forced_templates = script_data.debug_activated_mutators
 			local key = options[index]
 
 			if key == "clear_votes" then
@@ -8909,7 +8909,7 @@ local settings = {
 			NetworkLookup.objective_names[i] = "kill_enemies"
 			NetworkLookup.objective_names.kill_enemies = i
 			objectives.kill_enemies = {}
-			script_data.temp_objective_list_counter = not not script_data.temp_objective_list_counter + 1
+			script_data.temp_objective_list_counter = script_data.temp_objective_list_counter + 1
 
 			local objective_list_name = "temp_objective_list_" .. script_data.temp_objective_list_counter
 
@@ -9465,7 +9465,7 @@ local settings = {
 
 						local idx = math.ceil(num / stride)
 
-						power_ups[idx] = not not power_ups[idx]
+						power_ups[idx] = power_ups[idx]
 						power_ups[idx][#power_ups[idx] + 1] = DeusPowerUpUtils.generate_specific_power_up(power_up_name, rarity)
 					end
 				end

@@ -42,7 +42,7 @@ StatusEffectManager.set_status = function (self, unit, status_name, reason, valu
 
 		if breed then
 			local status_settings = breed.status_effect_settings
-			local ignored_statuses = status_settings and not not status_settings.ignored_statuses or not status_settings and not not EMPTY_TABLE
+			local ignored_statuses = status_settings and status_settings.ignored_statuses or not status_settings and EMPTY_TABLE
 			local is_critter = CRITTER[breed.name]
 
 			if ignored_statuses[status_name] or is_critter then
@@ -65,7 +65,7 @@ StatusEffectManager.set_status = function (self, unit, status_name, reason, valu
 			status_by_unit[unit] = statuses
 		end
 
-		statuses[status_name] = not not statuses[status_name]
+		statuses[status_name] = statuses[status_name]
 
 		local status_data = statuses[status_name]
 
@@ -79,8 +79,8 @@ StatusEffectManager.set_status = function (self, unit, status_name, reason, valu
 			status_template.on_increment(unit, reason, status_template, self._world, status_data.apply_data)
 		end
 	elseif statuses then
-		local status_data = not not statuses[status_name]
-		local reasons = not not status_data.reasons
+		local status_data = statuses[status_name]
+		local reasons = status_data.reasons
 
 		if reasons[reason] then
 			reasons[reason] = nil
@@ -115,7 +115,7 @@ end
 
 StatusEffectManager.add_timed_status = function (self, unit, status_name, optional_duration)
 	-- function 6
-	local duration = not not optional_duration or not not StatusEffectTemplates[status_name].default_timed_duration
+	local duration = optional_duration or StatusEffectTemplates[status_name].default_timed_duration
 	local t = Managers.time:time("game")
 	local timed_data = {
 		_is_timed = true,
@@ -147,7 +147,7 @@ StatusEffectManager.has_status = function (self, unit, status_name)
 
 	if unit_statuses then
 		local status = unit_statuses[status_name]
-		local applied_this_frame = not not status and status.frame_index == GLOBAL_FRAME_INDEX
+		local applied_this_frame = status and status.frame_index == GLOBAL_FRAME_INDEX
 
 		return status, applied_this_frame
 	end
@@ -161,7 +161,7 @@ StatusEffectManager.remove_all_statuses = function (self, unit, disable_further_
 		self._blacklisted_units[unit] = true
 	end
 
-	local statuses = not not self._statuses_by_unit[unit]
+	local statuses = self._statuses_by_unit[unit]
 
 	for status_name, apply_data in pairs(statuses) do
 		for handle in pairs(apply_data.reasons) do
@@ -198,8 +198,8 @@ StatusEffectManager.unit_is_burning = function (self, unit)
 	local burning_balefire, applied_this_frame_balefire = self:has_status(unit, StatusEffectNames.burning_balefire)
 	local burning_elven, applied_this_frame_elven = self:has_status(unit, StatusEffectNames.burning_elven_magic)
 	local burning_warpfire, applied_this_frame_warpfire = self:has_status(unit, StatusEffectNames.burning_warpfire)
-	local burning = not not burning_normal or not not burning_balefire or not not burning_elven or not not burning_warpfire
-	local applied_this_frame = not burning_warpfire or not not applied_this_frame_warpfire
+	local burning = burning_normal or burning_balefire or burning_elven or burning_warpfire
+	local applied_this_frame = not burning_warpfire or applied_this_frame_warpfire
 
 	return burning, applied_this_frame
 end

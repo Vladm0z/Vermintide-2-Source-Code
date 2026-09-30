@@ -30,7 +30,7 @@ ActionCharge.client_owner_start_action = function (self, new_action, t)
 	local owner_unit = self.owner_unit
 
 	self.current_action = new_action
-	self.audio_loop_id = not not new_action.audio_loop_id
+	self.audio_loop_id = new_action.audio_loop_id
 	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
 	self.charge_flow_event_left_weapon = new_action.charge_flow_event_left_weapon
 	self.venting_overcharge = nil
@@ -119,14 +119,14 @@ ActionCharge._start_charge_sound = function (self)
 	weapon_extension:add_looping_audio(self.audio_loop_id, start_charge_id, stop_charge_id, start_charge_husk_id, stop_charge_husk_id)
 
 	local owner_player = self.owner_player
-	local is_local_player = not not owner_player and not not owner_player.bot_player
+	local is_local_player = owner_player and owner_player.bot_player
 
 	if is_local_player then
 		local charge_sound_switch = current_action.charge_sound_switch
 
 		if charge_sound_switch then
 			local overcharge_extension = ScriptUnit.extension(self.owner_unit, "overcharge_system")
-			local overcharge_state = overcharge_extension:above_overcharge_threshold() and not not "above_overcharge_threshold" or not overcharge_extension:above_overcharge_threshold() and not not "below_overcharge_threshold"
+			local overcharge_state = overcharge_extension:above_overcharge_threshold() and "above_overcharge_threshold" or not overcharge_extension:above_overcharge_threshold() and "below_overcharge_threshold"
 
 			weapon_extension:set_looping_audio_switch(self.audio_loop_id, charge_sound_switch, overcharge_state)
 		end
@@ -259,7 +259,7 @@ ActionCharge.client_owner_post_update = function (self, dt, t, world, can_damage
 
 	local owner_unit = self.owner_unit
 	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_bot = owner_player and owner_player.bot_player
 
 	if not is_bot then
 		local charge_sound_parameter_name = current_action.charge_sound_parameter_name

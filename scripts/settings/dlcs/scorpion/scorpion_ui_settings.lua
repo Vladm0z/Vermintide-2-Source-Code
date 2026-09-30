@@ -171,7 +171,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 5
-				return not not overview:is_in_mechanism("weave")
+				return (overview:is_in_mechanism("weave"))
 			end
 		},
 		{

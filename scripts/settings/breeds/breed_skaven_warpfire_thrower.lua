@@ -85,7 +85,7 @@ local breed_data = {
 		200,
 		0
 	},
-	disabled = not not Development.setting("disable_warpfire_thrower"),
+	disabled = Development.setting("disable_warpfire_thrower"),
 	hitzone_multiplier_types = {
 		head = "headshot"
 	},

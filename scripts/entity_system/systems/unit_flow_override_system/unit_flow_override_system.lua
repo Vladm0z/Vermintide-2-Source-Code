@@ -3,7 +3,7 @@
 require("scripts/entity_system/systems/unit_flow_override_system/unit_flow_event_override_settings")
 
 UnitFlowOverrideSystem = class(UnitFlowOverrideSystem, ExtensionSystemBase)
-UNIT_FLOW_EVENT = not not UNIT_FLOW_EVENT
+UNIT_FLOW_EVENT = UNIT_FLOW_EVENT
 
 if not UNIT_FLOW_EVENT_OVERRIDDEN then
 	Unit.flow_event = function (unit, event_name, params)
@@ -60,7 +60,7 @@ UnitFlowOverrideSystem.handle_flow_event = function (self, unit, event_name, par
 	-- function 5
 	local unit_data = self._unit_event_data[unit]
 
-	unit_data[event_name] = not not unit_data[event_name]
+	unit_data[event_name] = unit_data[event_name]
 
 	local unit_event_data = unit_data[event_name]
 	local override = UnitFlowEventOverrideSettings[event_name]
@@ -68,7 +68,7 @@ UnitFlowOverrideSystem.handle_flow_event = function (self, unit, event_name, par
 	override.init(self, unit_event_data, unit, event_name, params)
 
 	if override.run_flow_event then
-		local flow_event = not not override.flow_event_name
+		local flow_event = override.flow_event_name
 
 		UNIT_FLOW_EVENT(unit, flow_event, params)
 	end
@@ -81,7 +81,7 @@ end
 UnitFlowOverrideSystem._add_dynamic_event_data = function (self, unit, event_name, event_data)
 	-- function 6
 	local dynamic_events = self._dynamic_events
-	local unit_dynamic_events = not not dynamic_events[unit]
+	local unit_dynamic_events = dynamic_events[unit]
 
 	unit_dynamic_events[event_name] = event_data
 	dynamic_events[unit] = unit_dynamic_events
@@ -91,9 +91,9 @@ local EMPTY_TABLE = {}
 
 UnitFlowOverrideSystem.destroy_data = function (self, unit, event_name)
 	-- function 7
-	local unit_dynamic_events = not not self._dynamic_events[unit]
+	local unit_dynamic_events = self._dynamic_events[unit]
 	local unit_event_data = self._unit_event_data[unit]
-	local current_event_unit_event_data = not not unit_event_data and not not unit_event_data[event_name]
+	local current_event_unit_event_data = unit_event_data and unit_event_data[event_name]
 
 	if current_event_unit_event_data then
 		local override = UnitFlowEventOverrideSettings[event_name]
@@ -177,7 +177,7 @@ UnitFlowOverrideSystem._cleanup_extension = function (self, unit, extension_name
 		return
 	end
 
-	local unit_event_data = not not self._unit_event_data[unit]
+	local unit_event_data = self._unit_event_data[unit]
 
 	for event_name, event_data in pairs(unit_event_data) do
 		local override = UnitFlowEventOverrideSettings[event_name]

@@ -16,7 +16,7 @@ local event_settings = {
 		end,
 		sound_function = function ()
 			-- function 2
-			return not not script_data.reinforcement_ui_local_sound
+			return script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (hero_portrait_texture, item_icon)
 			-- function 3
@@ -194,15 +194,15 @@ end
 
 ItemReceivedFeedbackUI.event_give_item_feedback = function (self, hash, giver_player, item_name)
 	-- function 10
-	local player_1_name = giver_player and not not giver_player:name() or not giver_player and not not nil
-	local player_unit = not not giver_player and not not giver_player.player_unit
-	local career_extension = not not Unit.alive(player_unit)
-	local player_1_career_index = career_extension and not not career_extension:career_index() or not career_extension and not not giver_player and not not giver_player:profile_index()
-	local player_1_profile_index = giver_player and not not giver_player:profile_index() or not giver_player and not not nil
-	local player_1_profile_image = not not player_1_profile_index and not not player_1_career_index and not not self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
+	local player_1_name = giver_player and giver_player:name() or not giver_player and nil
+	local player_unit = giver_player and giver_player.player_unit
+	local career_extension = Unit.alive(player_unit)
+	local player_1_career_index = career_extension and career_extension:career_index() or not career_extension and giver_player and giver_player:profile_index()
+	local player_1_profile_index = giver_player and giver_player:profile_index() or not giver_player and nil
+	local player_1_profile_image = player_1_profile_index and player_1_career_index and self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
 	local item_data = ItemMasterList[item_name]
-	local hud_icon = not not item_data and not not item_data.item_received_icon
-	local item_icon = not not item_icons[item_name]
+	local hud_icon = item_data and item_data.item_received_icon
+	local item_icon = item_icons[item_name]
 
 	self:add_event(hash, event_colors.default, "give_item", player_1_profile_image, item_icon)
 end

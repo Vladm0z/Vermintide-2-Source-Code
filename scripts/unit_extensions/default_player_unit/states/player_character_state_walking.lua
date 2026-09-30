@@ -21,7 +21,7 @@ PlayerCharacterStateWalking.on_enter = function (self, unit, input, dt, context,
 	local locomotion_extension = self.locomotion_extension
 	local current_velocity = locomotion_extension:current_velocity()
 	local player = Managers.player:owner(unit)
-	local is_bot = not not player and not not player.bot_player
+	local is_bot = player and player.bot_player
 
 	if previous_state == "standing" then
 		self.current_movement_speed_scale = 0
@@ -105,7 +105,7 @@ PlayerCharacterStateWalking._handle_ladder_collision = function (self, t, moveme
 			local epsilon = 0.02
 
 			close_enough = distance < 0.7 + epsilon and distance > 0
-			facing_correctly = not not looking_up and not facing_ladder and movement_in_ladder_direction > 0
+			facing_correctly = looking_up and not facing_ladder and movement_in_ladder_direction > 0
 		end
 
 		if facing_correctly and not recently_left_ladder and close_enough then
@@ -293,7 +293,7 @@ PlayerCharacterStateWalking.update = function (self, unit, input, dt, context, t
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
+		current_movement_speed_scale = is_moving and (1 or 0) or not is_moving and 0
 	end
 
 	local is_walking = input_extension:get("walk")
@@ -304,7 +304,7 @@ PlayerCharacterStateWalking.update = function (self, unit, input, dt, context, t
 		status_extension:set_slowed(is_walking)
 	end
 
-	local current_max_move_speed = is_crouching and not not movement_settings_table.crouch_move_speed or not is_crouching and (is_walking and not not movement_settings_table.walk_move_speed or not is_walking and not not movement_settings_table.move_speed)
+	local current_max_move_speed = is_crouching and movement_settings_table.crouch_move_speed or not is_crouching and (is_walking and movement_settings_table.walk_move_speed or not is_walking and movement_settings_table.move_speed)
 	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
 	local final_move_speed = current_max_move_speed * move_speed_multiplier * current_movement_speed_scale * movement_settings_table.player_speed_scale
 	local has_intoxication_stagger = buff_extension:has_buff_perk("intoxication_stagger")
@@ -313,10 +313,10 @@ PlayerCharacterStateWalking.update = function (self, unit, input, dt, context, t
 
 	if has_intoxication_stagger or has_drunk_stagger or has_hungover_stagger then
 		local intoxication_level = math.abs(status_extension:intoxication_level())
-		local do_intoxication_stagger = not not has_intoxication_stagger and math.random() > 0.6 / intoxication_level
-		local do_drunk_stagger = not not has_drunk_stagger and math.random() > 0.9 / intoxication_level
+		local do_intoxication_stagger = has_intoxication_stagger and math.random() > 0.6 / intoxication_level
+		local do_drunk_stagger = has_drunk_stagger and math.random() > 0.9 / intoxication_level
 		local do_hungover_stagger = has_hungover_stagger
-		local do_stagger = not not do_intoxication_stagger or not not do_drunk_stagger or not not do_hungover_stagger
+		local do_stagger = do_intoxication_stagger or do_drunk_stagger or do_hungover_stagger
 
 		if not self._is_in_intoxication_stagger_cooldown and not self._is_intoxication_stagger and do_stagger then
 			self._is_intoxication_stagger = true

@@ -5,11 +5,11 @@ LeaderboardSystem = class(LeaderboardSystem, ExtensionSystemBase)
 local RPCS = {
 	"rpc_client_leaderboard_register_score"
 }
-local EXTRA_DATA_TEMPLATE = not not Leaderboard
+local EXTRA_DATA_TEMPLATE = Leaderboard
 local NO_PLAYER_ID = 0
 local MY_PROFILE_INDEX = 4
-local STEAM_AVAILABLE = not not rawget(_G, "Steam")
-local SCORE_UPDATE_METHOD = not not Leaderboard
+local STEAM_AVAILABLE = rawget(_G, "Steam")
+local SCORE_UPDATE_METHOD = Leaderboard
 
 local function get_board_name(level_key, difficulty_name)
 	-- function 1
@@ -94,7 +94,7 @@ local function debug_simply_print(status, total_scores, scores)
 		local test1 = extra_data[0]
 		local test2 = extra_data[1]
 		local test3 = extra_data[2]
-		local accompanying_players_string = (not not test1 or not not "Nothing here, Good") .. " " .. test2 .. " " .. (not not test3 or not not "")
+		local accompanying_players_string = (test1 or "Nothing here, Good") .. " " .. test2 .. " " .. (test3 or "")
 		local debug_string = string.format("%d. %s, %d, %d || %s", global_rank, player_name, nr_waves_completed, completion_time, accompanying_players_string)
 
 		print(debug_string)
@@ -118,7 +118,7 @@ LeaderboardSystem.init = function (self, entity_system_creation_context, system_
 	self.round_start_time = nil
 
 	if script_data.debug_leaderboard then
-		local debug_string = string.format("[LeaderboardSystem] %s", STEAM_AVAILABLE and not not "Steam detected, using leaderboards" or not STEAM_AVAILABLE and not not "Leaderboards are disabled")
+		local debug_string = string.format("[LeaderboardSystem] %s", STEAM_AVAILABLE and "Steam detected, using leaderboards" or not STEAM_AVAILABLE and "Leaderboards are disabled")
 
 		print(debug_string)
 	end
@@ -175,7 +175,7 @@ LeaderboardSystem.round_started = function (self, score_type, data)
 	self.round_start_time = data.start_time
 
 	if script_data.debug_leaderboard then
-		local debug_string = string.format("[LeaderboardSystem] round_started at %.2f, level score_type = %s", data.start_time, not not score_type or not not "?")
+		local debug_string = string.format("[LeaderboardSystem] round_started at %.2f, level score_type = %s", data.start_time, score_type or "?")
 
 		print(debug_string)
 	end
@@ -282,7 +282,7 @@ LeaderboardSystem.round_completed = function (self)
 	end
 
 	if script_data.debug_leaderboard then
-		local debug_string = string.format("[LeaderboardSystem] start_time = %.2f, end_time = %.2f, completion_time = %d, level score_type = %s", self.round_start_time, data.completed_time, completion_time, not not score_type or not not "?")
+		local debug_string = string.format("[LeaderboardSystem] start_time = %.2f, end_time = %.2f, completion_time = %d, level score_type = %s", self.round_start_time, data.completed_time, completion_time, score_type or "?")
 
 		print(debug_string)
 	end

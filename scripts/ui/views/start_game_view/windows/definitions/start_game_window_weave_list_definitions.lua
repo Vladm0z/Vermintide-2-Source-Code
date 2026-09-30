@@ -340,7 +340,7 @@ local function apply_color_values(color, color_multiplier, include_alpha)
 		255
 	}
 
-	color_multiplier = not not color_multiplier or not not 1
+	color_multiplier = color_multiplier or 1
 
 	if include_alpha then
 		target[1] = color[1]
@@ -355,7 +355,7 @@ end
 
 local function create_weave_entry(index, weave_template_id, weave_template, masked, scenegraph_id)
 	-- function 2
-	local scenegraph_id = not not scenegraph_id or not not "list_anchor"
+	local scenegraph_id = scenegraph_id or "list_anchor"
 	local entry_spacing = weave_entry_spacing
 	local masked = masked
 	local entry_icon_size = {
@@ -526,7 +526,7 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 		button_hotspot = {},
 		title = title,
 		level_name = level_display_name,
-		background_effect = masked and not not "weave_button_passive_glow" or not masked and not not "weave_button_passive_glow_unmasked",
+		background_effect = masked and "weave_button_passive_glow" or not masked and "weave_button_passive_glow_unmasked",
 		hover_frame = entry_hover_frame_settings.texture,
 		new_frame = entry_new_frame_settings.texture,
 		entry_frame = entry_frame_settings.texture,
@@ -560,7 +560,7 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = title_normal_color,
 			default_text_color = title_normal_color,
 			select_text_color = title_select_color,
@@ -582,7 +582,7 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			normal_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
@@ -602,7 +602,7 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -623,7 +623,7 @@ local function create_weave_entry(index, weave_template_id, weave_template, mask
 			horizontal_alignment = "left",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			normal_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {

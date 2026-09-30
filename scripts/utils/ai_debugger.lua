@@ -3,7 +3,7 @@
 require("scripts/utils/script_gui")
 require("scripts/utils/draw_ai_behavior")
 
-script_data.ai_debugger_freeflight_only = not not script_data.ai_debugger_freeflight_only
+script_data.ai_debugger_freeflight_only = script_data.ai_debugger_freeflight_only
 
 local font_size = 26
 local font_size_medium = 22
@@ -75,7 +75,7 @@ AIDebugger.update = function (self, t, dt)
 	if Unit.alive(script_data.debug_unit) then
 		local unit = script_data.debug_unit
 		local ai_extension = ScriptUnit.has_extension(unit, "ai_system")
-		local breed = not not ai_extension and not not ai_extension._breed
+		local breed = ai_extension and ai_extension._breed
 
 		if breed then
 			local blackboard = BLACKBOARDS[unit]
@@ -139,7 +139,7 @@ AIDebugger.update = function (self, t, dt)
 	if DebugKeyHandler.key_pressed("j", "kill all but selected AI", "ai", "left shift") then
 		local pos = Vector3.zero()
 
-		pos = not Managers.player:local_player() or not not POSITION_LOOKUP[Managers.player:local_player().player_unit] or not not pos
+		pos = not Managers.player:local_player() or POSITION_LOOKUP[Managers.player:local_player().player_unit] or pos
 
 		Managers.state.debug:send_conflict_director_command("destroy_close_units", nil, pos, {
 			"512"
@@ -165,7 +165,7 @@ AIDebugger.update = function (self, t, dt)
 			if health_extension then
 				if health_extension:is_alive() then
 					local status_extension = ScriptUnit.has_extension(kill_unit, "status_system")
-					local should_knock_down = not not status_extension and not not not status_extension:is_knocked_down()
+					local should_knock_down = status_extension and not status_extension:is_knocked_down()
 
 					if should_knock_down then
 						health_extension:knock_down(kill_unit)
@@ -255,7 +255,7 @@ AIDebugger.update = function (self, t, dt)
 	end
 
 	if self.show_edit_ai_utility then
-		local blackboard = not not Unit.alive(self.active_unit)
+		local blackboard = Unit.alive(self.active_unit)
 
 		self._edit_ai_utility:update(self.active_unit, t, dt, Managers.input:get_service("Debug"), blackboard)
 	end
@@ -430,7 +430,7 @@ AIDebugger.mouse_raycast = function (self, input)
 	local world = Managers.world:world(data.viewport_world_name)
 	local physics_world = World.get_data(world, "physics_world")
 	local viewport = ScriptWorld.global_free_flight_viewport(world)
-	local camera = not not data.frustum_freeze_camera
+	local camera = data.frustum_freeze_camera
 	local mouse = input:get("cursor")
 	local position = Camera.screen_to_world(camera, Vector3(mouse.x, mouse.y, 0), 0)
 	local direction = Camera.screen_to_world(camera, Vector3(mouse.x, mouse.y, 0), 1) - position
@@ -444,7 +444,7 @@ AIDebugger.mouse_raycast = function (self, input)
 		local unit = Actor.unit(actor)
 		local breed = Unit.get_data(unit, "breed")
 		local player_manager = Managers.player
-		local is_bot = not not player_manager:is_player_unit(unit)
+		local is_bot = player_manager:is_player_unit(unit)
 
 		if breed or is_bot then
 			self.hot_unit = unit
@@ -501,7 +501,7 @@ AIDebugger.draw_nearby_navmesh = function (self, ai_unit)
 	local position = POSITION_LOOKUP[ai_unit]
 	local offset = Vector3(0, 0, 0.2)
 
-	self._line_object = not not self._line_object
+	self._line_object = self._line_object
 
 	LineObject.reset(self._line_object)
 
@@ -662,8 +662,8 @@ AIDebugger.draw_behavior_tree = function (self, ai_unit, t, dt)
 		return
 	end
 
-	self.tree_x = not not self.tree_x
-	self.tree_y = not not self.tree_y
+	self.tree_x = self.tree_x
+	self.tree_y = self.tree_y
 
 	local ai_extension = ScriptUnit.has_extension(ai_unit, "ai_system")
 
@@ -679,7 +679,7 @@ AIDebugger.draw_behavior_tree = function (self, ai_unit, t, dt)
 		if group_extension and group_extension.template then
 			local group_template = AIGroupTemplates[group_extension.template]
 
-			extra_info = not not group_template.BT_debug and not not group_template.BT_debug(group_extension.group)
+			extra_info = group_template.BT_debug and group_template.BT_debug(group_extension.group)
 		end
 
 		local blackboard = BLACKBOARDS[ai_unit]
@@ -723,7 +723,7 @@ AIDebugger.draw_reticule = function (self)
 
 	if rawget(_G, atlas_name)[crosshair] then
 		local resolution_width, resolution_height = Gui.resolution()
-		local color = self.hot_unit and not not Color(255, 255, 0, 0) or not self.hot_unit and not not Color(255, 255, 255, 255)
+		local color = self.hot_unit and Color(255, 255, 0, 0) or not self.hot_unit and Color(255, 255, 255, 255)
 		local material, uv00, uv11, size = HUDHelper.atlas_material(atlas_name, crosshair)
 		local scale = 1
 
@@ -807,7 +807,7 @@ AIDebugger.debug_pacing = function (self, t, dt)
 	local win_x = 0.45
 	local win_y = 0.01
 	local row = win_y
-	local info = not not CurrentPacing.name
+	local info = CurrentPacing.name
 	local nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, "Pacing: ", font_mtrl, font_size, font, win_x + wedge, row + text_height, 3, Color(255, 237, 237, 152))
 
 	nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, info, font_mtrl, font_size, font, nx, row + text_height, 3, Color(255, 137, 237, 137))
@@ -817,9 +817,9 @@ AIDebugger.debug_pacing = function (self, t, dt)
 
 	local text, spawning_text
 	local state_name, state_start_time, threat_population, specials_population, horde_population, end_time = cm.pacing:get_pacing_data()
-	local roamers = threat_population > 0 and not not "[Roamers]" or not (threat_population > 0) and not not "[NO Roamers]"
-	local specials = horde_population > 0 and not not "[Specials]" or not (horde_population > 0) and not not "[NO Specials]"
-	local horde = horde_population > 0 and not not "[Hordes]" or not (horde_population > 0) and not not "[NO Hordes]"
+	local roamers = threat_population > 0 and "[Roamers]" or not (threat_population > 0) and "[NO Roamers]"
+	local specials = horde_population > 0 and "[Specials]" or not (horde_population > 0) and "[NO Specials]"
+	local horde = horde_population > 0 and "[Hordes]" or not (horde_population > 0) and "[NO Hordes]"
 
 	if end_time then
 		local count_down = math.clamp(end_time - t, 0, 999999)

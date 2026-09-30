@@ -38,7 +38,7 @@ StartGameWindowDifficulty.on_enter = function (self, params, offset)
 	self:create_ui_elements(params, offset)
 	self:_setup_difficulties()
 
-	local difficulty_key = not not self.parent:get_difficulty_option()
+	local difficulty_key = self.parent:get_difficulty_option()
 
 	self:_update_selected_difficulty_option(difficulty_key)
 	self.parent:set_input_description("select_difficulty")
@@ -247,7 +247,7 @@ StartGameWindowDifficulty._is_button_hover_enter = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_enter
+	return hotspot.on_hover_enter
 end
 
 StartGameWindowDifficulty._handle_input = function (self, dt, t)
@@ -268,7 +268,7 @@ StartGameWindowDifficulty._handle_input = function (self, dt, t)
 			self:_update_selected_difficulty_option(difficulty_key)
 
 			local difficulties_select_sounds = UISettings.difficulties_select_sounds
-			local sound_event = not not difficulties_select_sounds[i]
+			local sound_event = difficulties_select_sounds[i]
 
 			self:_play_sound(sound_event)
 		end
@@ -381,9 +381,9 @@ StartGameWindowDifficulty._update_difficulty_lock = function (self)
 					local difficulty_lock_text = Localize("required_power_level")
 
 					widgets_by_name.difficulty_lock_text.content.text = string.format("%s: %s", difficulty_lock_text, tostring(UIUtils.presentable_hero_power_level(required_power_level)))
-					widgets_by_name.difficulty_second_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
+					widgets_by_name.difficulty_second_lock_text.content.text = extra_requirement_failed and Localize(extra_requirement_failed) or not extra_requirement_failed and ""
 				else
-					widgets_by_name.difficulty_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
+					widgets_by_name.difficulty_lock_text.content.text = extra_requirement_failed and Localize(extra_requirement_failed) or not extra_requirement_failed and ""
 				end
 			end
 
@@ -406,8 +406,8 @@ StartGameWindowDifficulty._update_difficulty_lock = function (self)
 			end
 		end
 
-		extreme_difficulty_bg.content.visible = not not difficulty_settings.show_warning
-		extremely_hard_text.content.visible = not not difficulty_settings.show_warning
+		extreme_difficulty_bg.content.visible = difficulty_settings.show_warning
+		extremely_hard_text.content.visible = difficulty_settings.show_warning
 	else
 		select_button.content.button_hotspot.disable_button = true
 		buy_button.content.button_hotspot.disable_button = true
@@ -425,7 +425,7 @@ end
 
 StartGameWindowDifficulty._update_selected_difficulty_option = function (self, difficulty_key)
 	-- function 16
-	difficulty_key = not not difficulty_key or not not Managers.state.difficulty:get_difficulty()
+	difficulty_key = difficulty_key or Managers.state.difficulty:get_difficulty()
 
 	if difficulty_key ~= self._selected_difficulty_key then
 		self:_set_selected_difficulty_option(difficulty_key)
@@ -466,12 +466,12 @@ StartGameWindowDifficulty._animate_difficulty_option_button = function (self, wi
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local has_focus = content.has_focus
-	local is_hover = not not hotspot.is_hover
+	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

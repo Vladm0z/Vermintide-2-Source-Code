@@ -20,9 +20,9 @@ ChaosTrollStateVomiting.init = function (self, character_state_init_context)
 		if ALIVE[self._unit] then
 			local puke_position, puke_distance_sq, puke_direction = self:_get_vomit_position(self._unit)
 
-			self._puke_position_on_nav = puke_position and not not Vector3Box(puke_position) or not puke_position and not not nil
-			self._puke_direction = puke_direction and not not Vector3Box(puke_direction) or not puke_direction and not not nil
-			self._puke_distance_sq = puke_distance_sq and (not not puke_distance_sq or not not nil) or not puke_distance_sq and not not nil
+			self._puke_position_on_nav = puke_position and Vector3Box(puke_position) or not puke_position and nil
+			self._puke_direction = puke_direction and Vector3Box(puke_direction) or not puke_direction and nil
+			self._puke_distance_sq = puke_distance_sq and (puke_distance_sq or nil) or not puke_distance_sq and nil
 		end
 	end
 end
@@ -293,7 +293,7 @@ ChaosTrollStateVomiting._calculate_trajectory = function (self)
 		sweep_positions[#sweep_positions + 1] = Vector3Box(new_position)
 
 		local result = PhysicsWorld.linear_sphere_sweep(physics_world, current_position, new_position, radius, max_hits, "collision_filter", "filter_player_ray_projectile_static_only")
-		local num_results = result and not not #result or not result and not not 0
+		local num_results = result and #result or not result and 0
 
 		if num_results > 0 then
 			local done = false
@@ -353,7 +353,7 @@ ChaosTrollStateVomiting._sweep_trajectory_for_heroes = function (self)
 		local from_pos = sweep_positions[i]:unbox()
 		local to_pos = sweep_positions[i + 1]:unbox()
 		local result = PhysicsWorld.linear_sphere_sweep(physics_world, from_pos, to_pos, radius, max_hits, "collision_filter", "filter_player")
-		local num_results = result and not not #result or not result and not not 0
+		local num_results = result and #result or not result and 0
 
 		if num_results > 0 then
 			local hero_hit_index = 1
@@ -386,7 +386,7 @@ ChaosTrollStateVomiting._init_puke_attack = function (self, unit, t)
 	local near_vomit_distance = 25
 	local near_vomit_max_angle = 0.45
 	local needs_to_crouch = false
-	local use_near_vomit = near_vomit_max_angle <= down_dot and puke_distance_sq < near_vomit_distance and not not not needs_to_crouch
+	local use_near_vomit = near_vomit_max_angle <= down_dot and puke_distance_sq < near_vomit_distance and not needs_to_crouch
 	local vomit_animation
 
 	if use_near_vomit then
@@ -435,7 +435,7 @@ end
 
 ChaosTrollStateVomiting.position_on_navmesh = function (position, nav_world, above, below)
 	-- function 12
-	local success, z = GwNavQueries.triangle_from_position(nav_world, position, not not above or not not 0.5, not not below or not not 1)
+	local success, z = GwNavQueries.triangle_from_position(nav_world, position, above or 0.5, below or 1)
 
 	if success then
 		position = Vector3.copy(position)
@@ -460,7 +460,7 @@ ChaosTrollStateVomiting.spawn_vomit = function (self, unit)
 	if puke_pos then
 		local dir = self._puke_direction:unbox()
 		local puke_rot = Quaternion.look(dir)
-		local state_int = self._near_vomit and not not 1 or not self._near_vomit and not not 2
+		local state_int = self._near_vomit and 1 or not self._near_vomit and 2
 
 		Managers.state.unit_spawner:request_spawn_template_unit("troll_puke", puke_pos, puke_rot, unit, state_int)
 	end
@@ -507,11 +507,11 @@ ChaosTrollStateVomiting._update_movement = function (self, unit, t, dt, progress
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
+		current_movement_speed_scale = is_moving and (1 or 0) or not is_moving and 0
 	end
 
 	local vomit_speed = self._breed.vomit_movement_speed
-	local movement_speed = math.lerp(0.6, vomit_speed, (not not progress or not not 1)^2)
+	local movement_speed = math.lerp(0.6, vomit_speed, (progress or 1)^2)
 	local current_max_move_speed = movement_speed
 	local buffed_move_speed = buff_extension:apply_buffs_to_value(current_max_move_speed, "movement_speed")
 	local final_move_speed = buffed_move_speed * current_movement_speed_scale * movement_settings_table.player_speed_scale

@@ -31,7 +31,7 @@ PlayFabHttps_LuaSec.MakePlayFabApiCall = function (urlPath, request, authKey, au
 	})
 
 	if code == 200 then
-		local _, response = pcall(json.decode, not not playFabResponse[1])
+		local _, response = pcall(json.decode, playFabResponse[1])
 
 		if response and response.code == 200 and response.data and onSuccess then
 			onSuccess(response.data)

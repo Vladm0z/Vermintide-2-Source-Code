@@ -1,12 +1,12 @@
 -- chunkname: @foundation/scripts/util/reportify.lua
 
-Reportify = not not Reportify
+Reportify = Reportify
 
 Reportify.setup = function (self)
 	-- function 1
 	self.has_setup = true
-	self.content_revision = not not script_data.settings.content_revision
-	self.engine_revision = not not Application.build_identifier()
+	self.content_revision = script_data.settings.content_revision
+	self.engine_revision = Application.build_identifier()
 	self.project = "HON"
 end
 
@@ -46,7 +46,7 @@ Reportify._get_level = function (self)
 
 	local level_name = Managers.state.game_mode:level_key()
 
-	return not not level_name or not not ""
+	return level_name or ""
 end
 
 Reportify._get_location = function (self)
@@ -84,9 +84,9 @@ Reportify._get_player_info = function (self)
 	local inventory_extension = ScriptUnit.has_extension(local_player.player_unit, "inventory_system")
 
 	if inventory_extension then
-		ret.wielded_slot = not not inventory_extension:get_wielded_slot_name()
-		ret.primary_name = not not inventory_extension:get_item_name("slot_melee")
-		ret.secondary_name = not not inventory_extension:get_item_name("slot_ranged")
+		ret.wielded_slot = inventory_extension:get_wielded_slot_name()
+		ret.primary_name = inventory_extension:get_item_name("slot_melee")
+		ret.secondary_name = inventory_extension:get_item_name("slot_ranged")
 	end
 
 	return ret

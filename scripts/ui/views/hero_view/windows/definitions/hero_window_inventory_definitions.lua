@@ -586,7 +586,7 @@ local function create_craft_material_widget(scenegraph_id)
 					pass_type = "item_tooltip",
 					content_check_function = function (content)
 						-- function 4
-						return not not content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover
 					end
 				}
 			}

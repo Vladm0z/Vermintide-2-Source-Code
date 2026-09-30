@@ -94,7 +94,7 @@ Totem.update = function (self, dt, t)
 			end
 		end
 	else
-		ferror("unknown state %d", not not self._state)
+		ferror("unknown state %d", self._state)
 	end
 end
 
@@ -157,7 +157,7 @@ Totem.get_unit = function (self)
 	-- function 11
 	local active_totem_data = self._active_totem_data
 
-	return not not active_totem_data and not not active_totem_data.unit
+	return active_totem_data and active_totem_data.unit
 end
 
 Totem._clear_active_totem = function (self)

@@ -156,7 +156,7 @@ StoreWindowItemList._is_list_hovered = function (self)
 	-- function 9
 	local list_mask = self._widgets_by_name.list
 
-	return not not list_mask.content.list_hotspot.is_hover
+	return list_mask.content.list_hotspot.is_hover
 end
 
 StoreWindowItemList._handle_input = function (self, dt, t)
@@ -240,7 +240,7 @@ StoreWindowItemList._list_index_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot = not not content.hotspot
+			local hotspot = content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -265,7 +265,7 @@ StoreWindowItemList._animate_list_entries = function (self, dt)
 	for _, widget in ipairs(list_widgets) do
 		local content = widget.content
 		local style = widget.style
-		local hotspot = not not content.button_hotspot
+		local hotspot = content.button_hotspot
 
 		if hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
@@ -304,7 +304,7 @@ StoreWindowItemList._update_item_list = function (self)
 			local product_item = self._params.selected_product.product_item
 			local product_item_data = product_item.data
 			local bundle = product_item_data.bundle
-			local bundled_items = not not bundle and not not bundle.BundledItems
+			local bundled_items = bundle and bundle.BundledItems
 			local items_owned = true
 
 			for i = 1, #bundled_items do
@@ -327,7 +327,7 @@ StoreWindowItemList._update_item_list = function (self)
 		elseif item then
 			local backend_items = Managers.backend:get_interface("items")
 			local item_key = item.key
-			local item_owned = not not backend_items:has_item(item_key)
+			local item_owned = backend_items:has_item(item_key)
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -344,7 +344,7 @@ StoreWindowItemList._update_item_list = function (self)
 	local path = parent:get_store_path()
 	local pages = StoreLayoutConfig.pages
 	local current_page_name = path[#path]
-	local current_page = not not pages[current_page_name]
+	local current_page = pages[current_page_name]
 	local product_type = current_page.type
 	local page_content = current_page.content
 	local layout = {}
@@ -356,7 +356,7 @@ StoreWindowItemList._update_item_list = function (self)
 
 		for backend_id, item in pairs(items) do
 			local item_data = item.data
-			local bundle = not not item_data and not not item_data.bundle
+			local bundle = item_data and item_data.bundle
 
 			if bundle then
 				for _, item_key in ipairs(bundle.BundledItems) do
@@ -427,7 +427,7 @@ StoreWindowItemList._update_item_list = function (self)
 		local item_filter = ""
 		local added_filters = 0
 		local path_name = path[#path]
-		local page = not not pages[path_name]
+		local page = pages[path_name]
 
 		if page.item_filter then
 			if added_filters > 0 then
@@ -448,7 +448,7 @@ StoreWindowItemList._update_item_list = function (self)
 
 		for backend_id, item_bundle in pairs(items) do
 			local item_bundle_data = item_bundle.data
-			local bundle = not not item_bundle_data and not not item_bundle_data.bundle
+			local bundle = item_bundle_data and item_bundle_data.bundle
 
 			for _, item_key in ipairs(bundle.BundledItems) do
 				local bundled_item = table.clone(ItemMasterList[item_key])
@@ -504,20 +504,20 @@ StoreWindowItemList._sort_peddler_items_by_type = function (self, items)
 	local item_type
 
 	for _, item_data in pairs(items) do
-		item_type = item_data.data and (not not item_data.data.item_type or not not "unknown") or not item_data.data and not not "unknown"
+		item_type = item_data.data and (item_data.data.item_type or "unknown") or not item_data.data and "unknown"
 
 		if item_type == "weapon_skin" then
-			item_type = item_data.data and (not not item_data.data.matching_item_key or not not "unknown") or not item_data.data and not not "unknown"
+			item_type = item_data.data and (item_data.data.matching_item_key or "unknown") or not item_data.data and "unknown"
 		end
 
-		TEMP_DATA[item_type] = not not TEMP_DATA[item_type]
+		TEMP_DATA[item_type] = TEMP_DATA[item_type]
 		TEMP_DATA[item_type][#TEMP_DATA[item_type] + 1] = item_data
 	end
 
 	local function sort_func(a, b)
 		-- function 20
-		local a_rarity = not not RARITY_SORTING[a.data.rarity]
-		local b_rarity = not not RARITY_SORTING[b.data.rarity]
+		local a_rarity = RARITY_SORTING[a.data.rarity]
+		local b_rarity = RARITY_SORTING[b.data.rarity]
 
 		return b_rarity < a_rarity
 	end
@@ -535,8 +535,8 @@ StoreWindowItemList._sort_peddler_items_by_price = function (self, items)
 	-- function 21
 	local function sort_func(a, b)
 		-- function 22
-		local a_price = a.current_prices and not not a.current_prices.SM or not a.current_prices and not not 0
-		local b_price = b.current_prices and not not b.current_prices.SM or not b.current_prices and not not 0
+		local a_price = a.current_prices and a.current_prices.SM or not a.current_prices and 0
+		local b_price = b.current_prices and b.current_prices.SM or not b.current_prices and 0
 
 		return b_price < a_price
 	end
@@ -580,7 +580,7 @@ StoreWindowItemList._on_list_index_selected = function (self, index, scrollbar_a
 	if list_widgets then
 		for i, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot = not not content.hotspot
+			local hotspot = content.hotspot
 
 			if hotspot then
 				local is_selected = i == index
@@ -641,9 +641,9 @@ StoreWindowItemList._create_product_widgets = function (self, layout)
 	self:_initialize_scrollbar()
 
 	if #widgets > 0 then
-		local selected_product = not not self._params.last_selected_product
-		local selected_product_id = not not selected_product and not not selected_product.product_id
-		local start_index = not not self:_get_list_index_by_product_id(selected_product_id)
+		local selected_product = self._params.last_selected_product
+		local selected_product_id = selected_product and selected_product.product_id
+		local start_index = self:_get_list_index_by_product_id(selected_product_id)
 
 		self:_on_list_index_selected(start_index)
 		self:_scroll_to_list_index(start_index)
@@ -802,7 +802,7 @@ StoreWindowItemList._initialize_scrollbar = function (self)
 	local scrollbar_logic = self._scrollbar_logic
 
 	scrollbar_logic:set_scrollbar_values(draw_length, content_length, scrollbar_length, step_size, scroll_step_multiplier)
-	scrollbar_logic:set_scroll_percentage(not not scrollbar_logic._scroll_value)
+	scrollbar_logic:set_scroll_percentage(scrollbar_logic._scroll_value)
 end
 
 StoreWindowItemList._update_scroll_position = function (self)

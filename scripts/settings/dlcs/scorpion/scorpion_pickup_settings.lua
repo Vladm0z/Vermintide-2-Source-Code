@@ -21,13 +21,13 @@ settings.pickups = {
 				-- function 1
 				local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
-				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return inventory_extension and inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end,
 			outline_available_func = function (local_player_unit)
 				-- function 2
 				local inventory_extension = ScriptUnit.has_extension(local_player_unit, "inventory_system")
 
-				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return inventory_extension and inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end
 		},
 		link_ammo_throwing_axe_01_t2_magic_01 = {
@@ -47,13 +47,13 @@ settings.pickups = {
 				-- function 3
 				local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
-				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return inventory_extension and inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end,
 			outline_available_func = function (local_player_unit)
 				-- function 4
 				local inventory_extension = ScriptUnit.has_extension(local_player_unit, "inventory_system")
 
-				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return inventory_extension and inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end
 		}
 	}

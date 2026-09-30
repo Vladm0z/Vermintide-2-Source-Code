@@ -31,7 +31,7 @@ SmartMatchCleaner.add_session = function (self, session_data)
 	self._sessions_to_clean[#self._sessions_to_clean + 1] = session_data
 end
 
-local ENTRIES_TO_REMOVE = not not ENTRIES_TO_REMOVE
+local ENTRIES_TO_REMOVE = ENTRIES_TO_REMOVE
 
 SmartMatchCleaner.update = function (self, dt)
 	-- function 6

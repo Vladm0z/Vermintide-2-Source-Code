@@ -38,7 +38,7 @@ GameNetworkManager.init = function (self, world, lobby, is_server, event_delegat
 			game_session_host = lobby:lobby_host()
 		end
 
-		fassert(not not game_session_host and game_session_host ~= "0", "tried to join GameSession without a valid host.")
+		fassert(game_session_host and game_session_host ~= "0", "tried to join GameSession without a valid host.")
 
 		local channel_id = PEER_ID_TO_CHANNEL[game_session_host]
 
@@ -64,7 +64,7 @@ GameNetworkManager.init = function (self, world, lobby, is_server, event_delegat
 
 	debug_print("My own peer_id = %s", tostring(self.peer_id))
 	debug_print("self.is_server = %s", tostring(self.is_server))
-	self:set_small_network_packets(not not Application.user_setting("small_network_packets"))
+	self:set_small_network_packets((Application.user_setting("small_network_packets")))
 
 	self._event_delegate = event_delegate
 
@@ -210,7 +210,7 @@ GameNetworkManager.update = function (self, dt)
 	if self._shutdown_server_timer then
 		self._shutdown_server_timer = self._shutdown_server_timer - dt
 
-		local shutdown = not not self.network_server:all_client_peers_disconnected()
+		local shutdown = self.network_server:all_client_peers_disconnected()
 
 		if shutdown then
 			self.network_server:force_disconnect_all_client_peers()
@@ -1197,7 +1197,7 @@ end
 
 GameNetworkManager.game_session_host = function (self)
 	-- function 97
-	return not not self.game_session
+	return self.game_session
 end
 
 GameNetworkManager.rpc_enemy_is_alerted = function (self, channel_id, unit_id, is_alerted)
@@ -1235,7 +1235,7 @@ GameNetworkManager.rpc_assist = function (self, channel_id, savior_player_id, sa
 	local saved_player = player_manager:player(saved_player_id, saved_local_player_id)
 	local predicate = NetworkLookup.coop_feedback[predicate_id]
 	local enemy_unit = self.unit_storage:unit(enemy_unit_id)
-	local local_human = not savior_player.remote and not not not saved_player.bot_player
+	local local_human = not savior_player.remote and not saved_player.bot_player
 
 	Managers.state.event:trigger("add_coop_feedback", savior_player:stats_id() .. saved_player:stats_id(), local_human, predicate, savior_player, saved_player)
 
@@ -1281,7 +1281,7 @@ GameNetworkManager.rpc_coop_feedback = function (self, channel_id, player1_peer_
 	local player_manager = Managers.player
 	local player1 = player_manager:player(player1_peer_id, player1_local_player_id)
 	local player2 = player_manager:player(player2_peer_id, player2_local_player_id)
-	local local_human = not player1.remote and not not not player1.bot_player
+	local local_human = not player1.remote and not player1.bot_player
 	local statistics_db = Managers.player:statistics_db()
 
 	if predicate == "aid" then
@@ -1291,12 +1291,12 @@ GameNetworkManager.rpc_coop_feedback = function (self, channel_id, player1_peer_
 	elseif predicate == "discarded_grimoire" then
 		local player_1_peer_id = player1.peer_id
 		local is_player_controlled = player1:is_player_controlled()
-		local player_1_name = is_player_controlled and (rawget(_G, "Steam") and not not Steam.user_name(player_1_peer_id) or not rawget(_G, "Steam") and not not tostring(player_1_peer_id)) or not is_player_controlled and not not player1:name()
+		local player_1_name = is_player_controlled and (rawget(_G, "Steam") and Steam.user_name(player_1_peer_id) or not rawget(_G, "Steam") and tostring(player_1_peer_id)) or not is_player_controlled and player1:name()
 
 		if IS_CONSOLE and not Managers.account:offline_mode() then
 			local lobby = Managers.state.network:lobby()
 
-			player_1_name = not not lobby:user_name(player_1_peer_id) or not not tostring(player_1_peer_id) or not not player1:name()
+			player_1_name = lobby:user_name(player_1_peer_id) or tostring(player_1_peer_id) or player1:name()
 		end
 
 		local pop_chat = true

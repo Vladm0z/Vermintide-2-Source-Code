@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/player/bulldozer_player.lua
 
 BulldozerPlayer = class(BulldozerPlayer, Player)
-EnergyData = not not EnergyData
+EnergyData = EnergyData
 
 BulldozerPlayer.init = function (self, network_manager, input_source, viewport_name, viewport_world_name, is_server, local_player_id, unique_id, ui_id, backend_id)
 	-- function 1
@@ -58,7 +58,7 @@ BulldozerPlayer.profile_display_name = function (self)
 	-- function 6
 	local profile_index = self:profile_index()
 	local profile = SPProfiles[profile_index]
-	local display_name = not not profile and not not profile.display_name
+	local display_name = profile and profile.display_name
 
 	return display_name
 end
@@ -116,7 +116,7 @@ BulldozerPlayer.career_name = function (self)
 	-- function 10
 	local profile_index = self:profile_index()
 	local profile = SPProfiles[profile_index]
-	local display_name = not not profile and not not profile.display_name
+	local display_name = profile and profile.display_name
 
 	if display_name then
 		local career_index = self:career_index()
@@ -187,7 +187,7 @@ BulldozerPlayer.spawn = function (self, optional_position, optional_rotation, is
 		self.spawn_rotation = nil
 	end
 
-	local aim_template = not not profile.aim_template
+	local aim_template = profile.aim_template
 	local initial_inventory = game_mode_manager:get_initial_inventory(healthkit, potion, grenade, additional_items, profile)
 	local hero_name = profile.display_name
 	local career = profile.careers[career_index]
@@ -202,31 +202,31 @@ BulldozerPlayer.spawn = function (self, optional_position, optional_rotation, is
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
 
-	skin_item = not not skin_item or not not BackendUtils.try_set_loadout_item(career_name, "slot_skin", base_skin)
+	skin_item = skin_item or BackendUtils.try_set_loadout_item(career_name, "slot_skin", base_skin)
 
-	local skin_name = skin_item and not not skin_item.data.name or not skin_item and not not base_skin
+	local skin_name = skin_item and skin_item.data.name or not skin_item and base_skin
 	local skin_data = Cosmetics[skin_name]
 	local frame_item = BackendUtils.get_loadout_item(career_name, "slot_frame")
 
-	frame_item = not not frame_item or not not BackendUtils.try_set_loadout_item(career_name, "slot_frame", "frame_0000")
+	frame_item = frame_item or BackendUtils.try_set_loadout_item(career_name, "slot_frame", "frame_0000")
 
 	local pose_item = BackendUtils.get_loadout_item(career_name, "slot_pose")
 
-	pose_item = not not pose_item or not not BackendUtils.try_set_loadout_item(career_name, "slot_pose", "default_weapon_pose_01")
+	pose_item = pose_item or BackendUtils.try_set_loadout_item(career_name, "slot_pose", "default_weapon_pose_01")
 
-	local pose_data = pose_item and not not pose_item.data or not pose_item and not not nil
-	local pose_name = pose_data and not not pose_data.name or not pose_data and not not nil
-	local frame_name = frame_item and not not frame_item.data.name or not frame_item and not not base_frame
-	local overcharge_data = not not OverchargeData[career_name]
-	local energy_data = not not EnergyData[career_name]
-	local faction = not not profile.dialogue_faction
+	local pose_data = pose_item and pose_item.data or not pose_item and nil
+	local pose_name = pose_data and pose_data.name or not pose_data and nil
+	local frame_name = frame_item and frame_item.data.name or not frame_item and base_frame
+	local overcharge_data = OverchargeData[career_name]
+	local energy_data = EnergyData[career_name]
+	local faction = profile.dialogue_faction
 	local status = Managers.party:get_status_from_unique_id(self._unique_id)
 
-	status.game_mode_data.first_spawn = status.game_mode_data.first_spawn ~= nil and not not false or not (status.game_mode_data.first_spawn ~= nil) and not not true
+	status.game_mode_data.first_spawn = not (status.game_mode_data.first_spawn ~= nil)
 
 	local party = Managers.party:get_party(status.party_id)
 	local side = Managers.state.side.side_by_party[party]
-	local breed = not not career.breed
+	local breed = career.breed
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 	local extension_init_data = {
 		input_system = {
@@ -435,8 +435,8 @@ BulldozerPlayer.create_game_object = function (self)
 		go_type = NetworkLookup.go_types.player,
 		network_id = self:network_id(),
 		local_player_id = self:local_player_id(),
-		clan_tag = not not Application.user_setting("clan_tag"),
-		account_id = not not Managers.account:account_id()
+		clan_tag = Application.user_setting("clan_tag"),
+		account_id = Managers.account:account_id()
 	}
 	local callback = callback(self, "cb_game_session_disconnect")
 	local game_object_id = self.network_manager:create_player_game_object("player", game_object_data_table, callback)
@@ -507,7 +507,7 @@ end
 
 BulldozerPlayer.telemetry_id = function (self)
 	-- function 26
-	return not not self._backend_id
+	return self._backend_id
 end
 
 BulldozerPlayer.is_player_controlled = function (self)
@@ -522,7 +522,7 @@ end
 
 BulldozerPlayer.sync_data_active = function (self)
 	-- function 29
-	return not not self._player_sync_data
+	return self._player_sync_data
 end
 
 BulldozerPlayer.set_data = function (self, key, value)
@@ -564,7 +564,7 @@ end
 
 BulldozerPlayer.cached_name = function (self)
 	-- function 34
-	return not not self._cached_name
+	return self._cached_name
 end
 
 BulldozerPlayer.destroy = function (self)

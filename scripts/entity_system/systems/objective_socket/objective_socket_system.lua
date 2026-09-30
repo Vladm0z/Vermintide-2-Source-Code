@@ -37,7 +37,7 @@ ObjectiveSocketSystem.init = function (self, entity_system_creation_context, sys
 			local network_manager = self.network_manager
 			local unit_id, is_level_unit = network_manager:game_object_or_level_id(extension.unit)
 			local limited_item_track_extension = ScriptUnit.has_extension(unit, "limited_item_track_system")
-			local is_limited_objective_unit = limited_item_track_extension and not not true or not limited_item_track_extension and not not false
+			local is_limited_objective_unit = limited_item_track_extension
 
 			self.network_manager.network_transmit:send_rpc_clients("rpc_objective_entered_socket_zone", unit_id, socket_id, is_level_unit, is_limited_objective_unit)
 
@@ -76,7 +76,7 @@ ObjectiveSocketSystem.init = function (self, entity_system_creation_context, sys
 		if projectile_extension then
 			local owner_peer_id = projectile_extension.owner_peer_id
 			local player = Managers.player:player_from_peer_id(owner_peer_id)
-			local player_unit = not not player and not not player.player_unit
+			local player_unit = player and player.player_unit
 
 			if player_unit then
 				extension.owner_of_unit_that_occupied_socket[socket.socket_name] = player_unit

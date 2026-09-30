@@ -17,8 +17,8 @@ BTBossFollowAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 	blackboard.remembered_threat_pos = nil
-	blackboard.chasing_timer = not not blackboard.unreachable_timer
-	blackboard.follow_data = not not blackboard.follow_data
+	blackboard.chasing_timer = blackboard.unreachable_timer
+	blackboard.follow_data = blackboard.follow_data
 
 	if blackboard.fling_skaven_timer and t > blackboard.fling_skaven_timer then
 		blackboard.fling_skaven_timer = t + 0.5
@@ -83,7 +83,7 @@ BTBossFollowAction._go_idle = function (self, unit, blackboard, navigation_exten
 
 	local action = blackboard.action
 
-	Managers.state.network:anim_event(unit, not not action.idle_anim)
+	Managers.state.network:anim_event(unit, action.idle_anim)
 
 	local target_unit = blackboard.target_unit
 
@@ -201,7 +201,7 @@ BTBossFollowAction.check_fling_skaven = function (self, unit, blackboard, t)
 		for i = 1, num_units do
 			local hit_unit = broad_phase_fling_units[i]
 			local hit_unit_bb = BLACKBOARDS[hit_unit]
-			local hit_unit_breed = not not hit_unit_bb and not not hit_unit_bb.breed
+			local hit_unit_breed = hit_unit_bb and hit_unit_bb.breed
 
 			if hit_unit_breed and hit_unit_breed.flingable and HEALTH_ALIVE[hit_unit] then
 				blackboard.fling_skaven = true
@@ -255,11 +255,11 @@ BTBossFollowAction._follow_target_stormfiend = function (self, unit, blackboard,
 	end
 
 	if at_goal and (check_distance < target_distance or blackboard.find_new_shoot_position) or not at_goal and not at_goal and target_has_moved then
-		local min_angle = not not follow_data.min_angle
+		local min_angle = follow_data.min_angle
 		local min_angle_step = data.min_angle_step
 		local max_angle_step = data.max_angle_step
-		local min_distance = not not follow_data.min_distance
-		local max_distance = not not follow_data.max_distance
+		local min_distance = follow_data.min_distance
+		local max_distance = follow_data.max_distance
 
 		if blackboard.find_new_shoot_position then
 			blackboard.find_new_shoot_position = nil
@@ -284,7 +284,7 @@ BTBossFollowAction._follow_target_stormfiend = function (self, unit, blackboard,
 			position = AiUtils.advance_towards_target(unit, blackboard, min_distance, max_distance, min_angle_step, max_angle_step, min_angle)
 		end
 
-		local distance_sq = not not position and not not Vector3.distance_squared(unit_position, position)
+		local distance_sq = position and Vector3.distance_squared(unit_position, position)
 
 		if position and distance_sq > STORMFIEND_MIN_REQUIRED_DISTANCE_CHANGE_SQ then
 			navigation_extension:move_to(position)
@@ -313,7 +313,7 @@ end
 BTBossFollowAction._debug_big_boy_turning = function (self, blackboard)
 	-- function 12
 	if script_data.debug_ai_movement then
-		local turning = blackboard.is_turning and not not "true" or not blackboard.is_turning and not not "false"
+		local turning = blackboard.is_turning and "true" or not blackboard.is_turning and "false"
 
 		Debug.text("move_state:%s turning:%s", blackboard.move_state, turning)
 	end

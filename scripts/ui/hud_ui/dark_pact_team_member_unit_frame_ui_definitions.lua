@@ -95,7 +95,7 @@ if platform ~= "win32" then
 	scenegraph_definition.root.is_root = nil
 end
 
-local inventory_consumable_icons = IS_WINDOWS and not not {
+local inventory_consumable_icons = IS_WINDOWS and {
 	wpn_grimoire_01 = "teammate_consumable_icon_grimoire",
 	potion_cooldown_reduction_01 = "teammate_consumable_icon_speed",
 	potion_healing_draught_01 = "teammate_consumable_icon_potion_01",
@@ -112,7 +112,7 @@ local inventory_consumable_icons = IS_WINDOWS and not not {
 	potion_damage_boost_01 = "teammate_consumable_icon_strength",
 	healthkit_first_aid_kit_01 = "teammate_consumable_icon_medpack",
 	potion_speed_boost_01 = "teammate_consumable_icon_speed"
-} or not IS_WINDOWS and not not {
+} or not IS_WINDOWS and {
 	wpn_grimoire_01 = "consumables_grimoire",
 	potion_cooldown_reduction_01 = "consumables_speed",
 	potion_healing_draught_01 = "consumables_potion_01",
@@ -130,11 +130,11 @@ local inventory_consumable_icons = IS_WINDOWS and not not {
 	healthkit_first_aid_kit_01 = "consumables_medpack",
 	potion_speed_boost_01 = "consumables_speed"
 }
-local inventory_index_by_slot = IS_WINDOWS and not not {
+local inventory_index_by_slot = IS_WINDOWS and {
 	slot_healthkit = 1,
 	slot_grenade = 3,
 	slot_potion = 2
-} or not IS_WINDOWS and not not {
+} or not IS_WINDOWS and {
 	slot_potion = 3,
 	slot_grenade = 2,
 	slot_healthkit = 1
@@ -169,7 +169,7 @@ local function create_static_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_change_function = function (content, style)
 						-- function 2
-						style.color = content.dim_portraits and not not Colors.get_color_table_with_alpha("dim_gray", 255) or not content.dim_portraits and not not Colors.get_color_table_with_alpha("white", 255)
+						style.color = content.dim_portraits and Colors.get_color_table_with_alpha("dim_gray", 255) or not content.dim_portraits and Colors.get_color_table_with_alpha("white", 255)
 					end
 				},
 				{
@@ -275,9 +275,9 @@ local function create_static_widget()
 				font_type = "arial",
 				font_size = 18,
 				text_color = Colors.get_table("white"),
-				horizontal_alignment = IS_PS4 and not not "left" or not IS_PS4 and not not "center",
+				horizontal_alignment = IS_PS4 and "left" or not IS_PS4 and "center",
 				offset = {
-					IS_PS4 and not not (-43 * portrait_scale) or not IS_PS4 and not not 0,
+					IS_PS4 and -43 * portrait_scale or not IS_PS4 and 0,
 					110 * portrait_scale,
 					health_bar_offset[3] + 15
 				}
@@ -287,9 +287,9 @@ local function create_static_widget()
 				font_type = "arial",
 				font_size = 18,
 				text_color = Colors.get_table("black"),
-				horizontal_alignment = IS_PS4 and not not "left" or not IS_PS4 and not not "center",
+				horizontal_alignment = IS_PS4 and "left" or not IS_PS4 and "center",
 				offset = {
-					(IS_PS4 and not not (-43 * portrait_scale) or not IS_PS4 and not not 0) + 2,
+					(IS_PS4 and -43 * portrait_scale or not IS_PS4 and 0) + 2,
 					110 * portrait_scale - 2,
 					health_bar_offset[3] + 14
 				}
@@ -613,7 +613,7 @@ local function create_dynamic_health_widget()
 						-- function 13
 						local hp_bar_content = content.hp_bar
 						local internal_bar_value = hp_bar_content.internal_bar_value
-						local actual_active_percentage = not not content.actual_active_percentage
+						local actual_active_percentage = content.actual_active_percentage
 						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
 						local offset = style.offset
 
@@ -652,7 +652,7 @@ local function create_dynamic_health_widget()
 						local parent_content = content.parent
 						local hp_bar_content = parent_content.hp_bar
 						local internal_bar_value = hp_bar_content.internal_bar_value
-						local actual_active_percentage = not not parent_content.actual_active_percentage
+						local actual_active_percentage = parent_content.actual_active_percentage
 						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
 						local size = style.size
 						local uvs = content.uvs

@@ -86,7 +86,7 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 	end
 
 	local rewards = login_rewards.rewards
-	local reward_index = not not login_rewards.total_claims
+	local reward_index = login_rewards.total_claims
 	local day_widgets = self._day_widgets
 	local reward_widgets = self._reward_widgets
 
@@ -97,14 +97,14 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 
 	self._gamepad_active = gamepad_active
 
-	local cursor_x = not not self._cursor_x
-	local cursor_y = not not self._cursor_y
+	local cursor_x = self._cursor_x
+	local cursor_y = self._cursor_y
 
 	self._cursor_x = cursor_x
 	self._cursor_y = cursor_y
 
-	local calendar_type = login_rewards.event_type and not not login_rewards.event_type or not login_rewards.event_type and not not "personal_time_strike"
-	local claimed_rewards = login_rewards.claimed_rewards and not not login_rewards.claimed_rewards or not login_rewards.claimed_rewards and not not {}
+	local calendar_type = login_rewards.event_type and login_rewards.event_type or not login_rewards.event_type and "personal_time_strike"
+	local claimed_rewards = login_rewards.claimed_rewards and login_rewards.claimed_rewards or not login_rewards.claimed_rewards and {}
 	local now = os.time(os.date("!*t"))
 	local next_claim_timestamp = os.time(os.date("!*t", login_rewards.next_claim_timestamp / 1000))
 	local cooldown = next_claim_timestamp - now
@@ -118,7 +118,7 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 		local is_claimed
 
 		if calendar_type == "calendar" then
-			is_claimed = not not self:_has_claimed_reward(claimed_rewards, day_index) and not not not is_loop
+			is_claimed = self:_has_claimed_reward(claimed_rewards, day_index) and not is_loop
 		else
 			is_claimed = not is_loop and day_index <= reward_index
 		end
@@ -155,12 +155,12 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 
 			fassert(item.data, "Reward item %s not found in ItemMasterList", reward_item.item_id)
 
-			local rarity = not not item.rarity
+			local rarity = item.rarity
 			local content = widget.content
 
 			content.item = item
-			content.item_icon = not not UIUtils.get_ui_information_from_item(item)
-			content.item_rarity = not not UISettings.item_rarity_textures[rarity]
+			content.item_icon = UIUtils.get_ui_information_from_item(item)
+			content.item_rarity = UISettings.item_rarity_textures[rarity]
 			content.is_illusion = item.item_type == "weapon_skin"
 			content.day_index = day_index
 			content.item_index = item_index
@@ -290,8 +290,8 @@ StoreLoginRewardsPopup.update = function (self, input_service, dt, t)
 			end
 
 			local rewards = login_rewards.rewards
-			local total_claims = not not login_rewards.total_claims
-			local reward_index = total_claims ~= 0 and not not total_claims or not (total_claims ~= 0) and not not #rewards
+			local total_claims = login_rewards.total_claims
+			local reward_index = total_claims ~= 0 and total_claims or not (total_claims ~= 0) and #rewards
 
 			self:_present_rewards(rewards[reward_index])
 
@@ -362,7 +362,7 @@ StoreLoginRewardsPopup._present_rewards = function (self, rewards)
 		elseif reward_type == "chips" then
 			local item_id = data.item_id
 			local item_template = ItemMasterList[item_id]
-			local amount = not not data.amount
+			local amount = data.amount
 
 			presentation_data[#presentation_data + 1] = {
 				{
@@ -454,7 +454,7 @@ end
 
 StoreLoginRewardsPopup._play_animation = function (self, name, widgets)
 	-- function 11
-	local anim_id = self._ui_animator:start_animation(name, not not widgets or not not self._widgets_by_name, self._scenegraph_definition, self._render_settings)
+	local anim_id = self._ui_animator:start_animation(name, widgets or self._widgets_by_name, self._scenegraph_definition, self._render_settings)
 
 	self._animations[name] = anim_id
 end

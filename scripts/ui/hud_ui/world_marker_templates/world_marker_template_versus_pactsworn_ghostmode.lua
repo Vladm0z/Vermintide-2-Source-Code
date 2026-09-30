@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_pactsworn_ghostmode.lua
 
-WorldMarkerTemplates = not not WorldMarkerTemplates
+WorldMarkerTemplates = WorldMarkerTemplates
 
 local template = WorldMarkerTemplates.versus_pactsworn_ghostmode
 
@@ -229,7 +229,7 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 
 		local player_name_text_width = UIUtils.get_text_width(ui_renderer, style.ally_name, content.ally_name)
 
-		style.checkmark.offset[1] = allow_name and not not (-(player_name_text_width / 2) - 30 - 10) or not allow_name and not not 0
+		style.checkmark.offset[1] = allow_name and -(player_name_text_width / 2) - 30 - 10 or not allow_name and 0
 	end
 
 	local am = math.clamp(0.5 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
@@ -241,12 +241,12 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	style.arrow.color[1] = fade_in_alpha
 	style.arrow.angle = content.angle
 
-	local ally_name_offset_y = content.is_clamped and not not 60 or not content.is_clamped and not not 0
+	local ally_name_offset_y = content.is_clamped and 60 or not content.is_clamped and 0
 
 	style.ally_name.offset[2] = ally_name_offset_y
 	style.ally_name_shadow.offset[2] = ally_name_offset_y
 
-	local ally_name = allow_name and not not content.player_name or not allow_name and not not ""
+	local ally_name = allow_name and content.player_name or not allow_name and ""
 	local ally_name_length = Utf8.length(ally_name)
 
 	if ally_name_length > 18 then
@@ -257,14 +257,14 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 		local respawn_delta = content.respawn_timer - Managers.time:time("game")
 		local countdown_over = respawn_delta <= 0
 
-		ally_name = countdown_over and (not not ally_name or not not string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(respawn_delta), ally_name)) or not countdown_over and not not string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(respawn_delta), ally_name)
+		ally_name = countdown_over and (ally_name or string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(respawn_delta), ally_name)) or not countdown_over and string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(respawn_delta), ally_name)
 		content.countdown_over = countdown_over
 	end
 
 	if content.allow_name ~= allow_name then
 		local player_name_text_width = UIUtils.get_text_width(ui_renderer, style.ally_name, ally_name)
 
-		style.checkmark.offset[1] = allow_name and not not (-(player_name_text_width / 2) - 30 - 10) or not allow_name and not not 0
+		style.checkmark.offset[1] = allow_name and -(player_name_text_width / 2) - 30 - 10 or not allow_name and 0
 		content.allow_name = allow_name
 	end
 

@@ -24,7 +24,7 @@ local function convert_from_backend(raw_value, database_type)
 
 				local new_value_n = value_n + i
 
-				value[new_value_n] = hex_value == hex_temp and not not false or not (hex_value == hex_temp) and not not true
+				value[new_value_n] = not (hex_value == hex_temp)
 			end
 
 			value_n = value_n + 4
@@ -52,7 +52,7 @@ local function convert_to_backend(value, database_type)
 			local dec_value = 0
 
 			for j = 0, 3 do
-				dec_value = dec_value * 2 + (value[i + j] ~= true and not not 0 or not (value[i + j] ~= true) and not not 1)
+				dec_value = dec_value * 2 + (value[i + j] ~= true and 0 or not (value[i + j] ~= true) and 1)
 			end
 
 			local hex_value = string.format("%X", dec_value)
@@ -133,7 +133,7 @@ StatisticsDatabase._init_backend_stat = function (self, definition, backend_stat
 			local child_stat = self:_init_backend_stat(definition[stat_name], backend_stats)
 
 			if child_stat then
-				initiated_stat = not not initiated_stat or not not {}
+				initiated_stat = initiated_stat or {}
 				initiated_stat[stat_name] = child_stat
 			end
 		end
@@ -149,7 +149,7 @@ StatisticsDatabase._init_stat = function (self, definition, persistent_value)
 	stat.default_value = stat.value
 
 	if definition.database_name then
-		stat.persistent_value = not not persistent_value or not not stat.value
+		stat.persistent_value = persistent_value or stat.value
 		stat.persistent_value_mirror = stat.persistent_value
 	end
 
@@ -168,7 +168,7 @@ StatisticsDatabase.register = function (self, id, category, backend_stats)
 		stats = self:_init_backend_stat(definitions, backend_stats)
 	end
 
-	self.statistics[id] = not not stats or not not {}
+	self.statistics[id] = stats or {}
 end
 
 StatisticsDatabase.unregister = function (self, id)
@@ -248,7 +248,7 @@ local function sync_stat(peer_id, stat_peer_id, stat_local_player_id, path, path
 				local net_path = networkified_path(path)
 				local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-				RPC.rpc_sync_statistics_number(channel_id, stat_peer_id, stat_local_player_id, net_path, cap_sync_value(stat.value), cap_sync_value(not not stat.persistent_value))
+				RPC.rpc_sync_statistics_number(channel_id, stat_peer_id, stat_local_player_id, net_path, cap_sync_value(stat.value), cap_sync_value(stat.persistent_value))
 			end
 		end
 	else
@@ -307,7 +307,7 @@ StatisticsDatabase._create_stat = function (self, stats, arg_n, ...)
 
 		definition = definition[arg_value]
 
-		local next_stat = not not stat[arg_value]
+		local next_stat = stat[arg_value]
 
 		stat[arg_value] = next_stat
 		stat = next_stat
@@ -334,7 +334,7 @@ StatisticsDatabase._get_or_create_stat = function (self, id, offset, ...)
 	-- function 20
 	local stats = self.statistics[id]
 	local stat = stats
-	local arg_n = select("#", ...) - (not not offset or not not 0)
+	local arg_n = select("#", ...) - (offset or 0)
 
 	for i = 1, arg_n do
 		local arg_value = select(i, ...)
@@ -357,7 +357,7 @@ local function reset_stat(stat)
 				stat.value[i] = false
 			end
 		else
-			stat.value = not not stat.persistent_value
+			stat.value = stat.persistent_value
 		end
 	else
 		for stat_name, stat_definition in pairs(stat) do
@@ -542,7 +542,7 @@ StatisticsDatabase.get_stat = function (self, id, ...)
 	-- function 34
 	local stat = self:_get_or_create_stat(id, 0, ...)
 
-	return stat and not not stat.value or not stat and not not 0
+	return stat and stat.value or not stat and 0
 end
 
 StatisticsDatabase.has_stat = function (self, ...)
@@ -777,11 +777,11 @@ local function reset_persistant_stat(stat)
 			if stat.database_type == "hexarray" then
 				for i = 1, #stat.persistent_value do
 					stat.persistent_value[i] = stat.persistent_value_mirror[i]
-					stat.value[i] = not not stat.persistent_value[i]
+					stat.value[i] = stat.persistent_value[i]
 				end
 			else
 				stat.persistent_value = stat.persistent_value_mirror
-				stat.value = not not stat.persistent_value
+				stat.value = stat.persistent_value
 			end
 
 			stat.dirty = false

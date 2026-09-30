@@ -96,15 +96,15 @@ VoteTemplates.deus_settings_vote = {
 	end,
 	pack_sync_data = function (data)
 		-- function 4
-		local mission_id = not not data.mission_id
-		local act_key = not not data.act_key
+		local mission_id = data.mission_id
+		local act_key = data.act_key
 		local difficulty = data.difficulty
 		local quick_game = data.quick_game
 		local private_game = data.private_game
 		local always_host = data.always_host
 		local strict_matchmaking = data.strict_matchmaking
 		local matchmaking_type = data.matchmaking_type
-		local twitch_enabled = not not Managers.twitch
+		local twitch_enabled = Managers.twitch
 		local dominant_god = data.dominant_god
 		local mechanism = data.mechanism
 
@@ -117,19 +117,19 @@ VoteTemplates.deus_settings_vote = {
 			NetworkLookup.mission_ids[mission_id],
 			NetworkLookup.act_keys[act_key],
 			NetworkLookup.difficulties[difficulty],
-			quick_game and not not 1 or not quick_game and not not 2,
-			private_game and not not 1 or not private_game and not not 2,
-			always_host and not not 1 or not always_host and not not 2,
-			strict_matchmaking and not not 1 or not strict_matchmaking and not not 2,
+			quick_game and 1 or not quick_game and 2,
+			private_game and 1 or not private_game and 2,
+			always_host and 1 or not always_host and 2,
+			strict_matchmaking and 1 or not strict_matchmaking and 2,
 			NetworkLookup.matchmaking_types[matchmaking_type],
-			twitch_enabled and not not 1 or not twitch_enabled and not not 2,
+			twitch_enabled and 1 or not twitch_enabled and 2,
 			NetworkLookup.mechanisms[mechanism],
-			not not dominant_god and not not NetworkLookup.deus_themes[dominant_god]
+			dominant_god and NetworkLookup.deus_themes[dominant_god]
 		}
 
 		if matchmaking_type == "event" then
 			local event_data = data.event_data
-			local mutators = not not event_data.mutators
+			local mutators = event_data.mutators
 
 			sync_data[#sync_data + 1] = #mutators
 
@@ -140,7 +140,7 @@ VoteTemplates.deus_settings_vote = {
 				sync_data[#sync_data + 1] = mutator_id
 			end
 
-			local boons = not not event_data.boons
+			local boons = event_data.boons
 
 			sync_data[#sync_data + 1] = #boons
 
@@ -181,7 +181,7 @@ VoteTemplates.deus_settings_vote = {
 
 		local difficulty = NetworkLookup.difficulties[difficulty_id]
 		local matchmaking_type = NetworkLookup.matchmaking_types[matchmaking_type_id]
-		local dominant_god = not not dominant_god_id and not not NetworkLookup.deus_themes[dominant_god_id]
+		local dominant_god = dominant_god_id and NetworkLookup.deus_themes[dominant_god_id]
 		local mechanism = NetworkLookup.mechanisms[mechanism_id]
 		local mutators, boons
 
@@ -216,10 +216,10 @@ VoteTemplates.deus_settings_vote = {
 			mission_id = mission_id,
 			act_key = act_key,
 			difficulty = difficulty,
-			event_data = mutators and not not {
+			event_data = mutators and {
 				mutators = mutators,
 				boons = boons
-			} or not mutators and not not boons and not not {
+			} or not mutators and boons and {
 				mutators = mutators,
 				boons = boons
 			},

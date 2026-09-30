@@ -143,7 +143,7 @@ LootItemUnitPreviewer.update = function (self, dt, t, input_service)
 		self._camera_xy_angle_current = character_xy_angle_new
 
 		local auto_tilt_angle, auto_turn_angle = self:_auto_spin_values(dt, t)
-		local start_angle = self._invert_start_rotation and not not 0 or not self._invert_start_rotation and not not math.pi
+		local start_angle = self._invert_start_rotation and 0 or not self._invert_start_rotation and math.pi
 		local rotation = Quaternion.axis_angle(Vector3(0, auto_tilt_angle, 1), -(character_xy_angle_new + auto_turn_angle + start_angle))
 		local link_unit = self._link_unit
 
@@ -152,7 +152,7 @@ LootItemUnitPreviewer.update = function (self, dt, t, input_service)
 		end
 
 		if self._zoom_dirty then
-			local zoom_fraction = not not self._zoom_fraction
+			local zoom_fraction = self._zoom_fraction
 			local unit_start_position = self._unit_start_position_boxed:unbox()
 
 			unit_start_position[1] = unit_start_position[1] * (1 - zoom_fraction)
@@ -173,7 +173,7 @@ end
 
 LootItemUnitPreviewer.zoom_fraction = function (self)
 	-- function 9
-	return not not self._zoom_fraction
+	return self._zoom_fraction
 end
 
 LootItemUnitPreviewer._auto_spin_values = function (self, dt, t)
@@ -265,7 +265,7 @@ LootItemUnitPreviewer._load_item_units = function (self, item)
 	local item_data = item.data
 	local backend_id = item.backend_id
 	local item_skin = item.skin
-	local item_key = not not item_data.key
+	local item_key = item_data.key
 	local item_data = ItemMasterList[item_key]
 	local item_template
 	local item_type = item_data.item_type
@@ -276,10 +276,10 @@ LootItemUnitPreviewer._load_item_units = function (self, item)
 		local matching_item_key = item_data.matching_item_key
 
 		item_template = ItemHelper.get_template_by_item_name(matching_item_key)
-		item_skin = not not item_skin or not not item_key
+		item_skin = item_skin or item_key
 	end
 
-	item_template = not not item_template or not not ItemHelper.get_template_by_item_name(item_key)
+	item_template = item_template or ItemHelper.get_template_by_item_name(item_key)
 
 	local item_units = BackendUtils.get_item_units(item_data, backend_id, item_skin, self._career_name_override)
 	local units_to_spawn_data = {}
@@ -358,7 +358,7 @@ LootItemUnitPreviewer._load_item_units = function (self, item)
 
 			units_to_spawn_data[#units_to_spawn_data + 1] = {
 				unit_name = unit,
-				unit_attachment_node_linking = slot_type ~= "trinket" and not not item_template.attachment_node_linking.slot_hat or not (slot_type ~= "trinket") and not not item_template.attachment_node_linking.slot_trinket_1
+				unit_attachment_node_linking = slot_type ~= "trinket" and item_template.attachment_node_linking.slot_hat or not (slot_type ~= "trinket") and item_template.attachment_node_linking.slot_trinket_1
 			}
 		end
 	end
@@ -475,8 +475,8 @@ end
 LootItemUnitPreviewer._spawn_link_unit = function (self, item)
 	-- function 23
 	local item_data = item.data
-	local item_key = not not item.key
-	local item_skin = not not item.skin
+	local item_key = item.key
+	local item_skin = item.skin
 	local spawn_position = self._spawn_position
 	local item_data = ItemMasterList[item_key]
 	local item_type = item_data.item_type
@@ -487,16 +487,16 @@ LootItemUnitPreviewer._spawn_link_unit = function (self, item)
 
 	local display_unit_key = self._display_unit_key
 	local default_display_unit_key = "display_unit"
-	local unit_name = not not item_data[display_unit_key]
+	local unit_name = item_data[display_unit_key]
 
 	if item_type == "weapon_skin" then
 		local skin_template = WeaponSkins.skins[item_skin]
 
-		unit_name = not not skin_template[display_unit_key] or not not skin_template[default_display_unit_key] or not not unit_name
+		unit_name = skin_template[display_unit_key] or skin_template[default_display_unit_key] or unit_name
 	elseif not unit_name then
 		local item_template = ItemHelper.get_template_by_item_name(item_key)
 
-		unit_name = not not item_template[display_unit_key] or not not item_template[default_display_unit_key]
+		unit_name = item_template[display_unit_key] or item_template[default_display_unit_key]
 	end
 
 	if not unit_name or unit_name == "" then

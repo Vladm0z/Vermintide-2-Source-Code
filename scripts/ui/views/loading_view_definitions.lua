@@ -351,11 +351,11 @@ local press_to_continue_widget = {
 		}
 	},
 	content = {
-		text = IS_WINDOWS and not not "press_any_key_to_continue" or not IS_WINDOWS and not not "press_any_button_to_continue",
+		text = IS_WINDOWS and "press_any_key_to_continue" or not IS_WINDOWS and "press_any_button_to_continue",
 		color = Colors.get_color_table_with_alpha("white", 255)
 	},
 	style = {
-		text = not not text_style
+		text = text_style
 	},
 	offset = {
 		0,
@@ -435,7 +435,7 @@ local background_image = {
 				pass_type = "texture",
 				content_check_function = function (content)
 					-- function 8
-					return not not content.is_weave
+					return content.is_weave
 				end
 			},
 			{
@@ -444,7 +444,7 @@ local background_image = {
 				text_id = "objective_text",
 				content_check_function = function (content)
 					-- function 9
-					return not not content.is_weave
+					return content.is_weave
 				end
 			}
 		}

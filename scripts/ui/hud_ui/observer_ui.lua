@@ -93,10 +93,10 @@ ObserverUI._set_observed_unit = function (self, unit)
 		local local_player_id = owner_player:local_player_id()
 		local profile_index = profile_synchronizer:profile_by_peer(owner_player.peer_id, local_player_id)
 
-		unit_display_name = not not profiles[profile_index] and not not profiles[profile_index].display_name
+		unit_display_name = profiles[profile_index] and profiles[profile_index].display_name
 	end
 
-	self.player_name_widget.content.text = is_player_controlled and (not not unit_name or not not (unit_name .. " (BOT)")) or not is_player_controlled and not not (unit_name .. " (BOT)")
+	self.player_name_widget.content.text = is_player_controlled and (unit_name or unit_name .. " (BOT)") or not is_player_controlled and unit_name .. " (BOT)"
 	self.hero_name_widget.content.text = unit_display_name
 	self._observed_unit = unit
 	self._skip_bar_animation = true
@@ -251,7 +251,7 @@ ObserverUI._update_follow_unit_health_bar = function (self, unit)
 		end
 
 		is_wounded = status_extension:is_wounded()
-		is_knocked_down = not not status_extension:is_knocked_down() and health_percent > 0
+		is_knocked_down = status_extension:is_knocked_down() and health_percent > 0
 		is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
 
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
@@ -277,11 +277,11 @@ ObserverUI._update_follow_unit_health_bar = function (self, unit)
 	is_dead = health_percent <= 0
 
 	local num_of_health_dividers = MIN_HEALTH_DIVIDERS
-	local low_health = not not nil
+	local low_health
 	local health_changed = self:on_player_health_changed("my_player", hp_bar_widget, health_percent * active_percentage)
 	local grims_changed = self:on_num_grimoires_changed("my_player_grimoires", hp_bar_widget, 1 - active_percentage)
 
-	modified_bar = not not modified_bar or not not health_changed or not not grims_changed
+	modified_bar = modified_bar or health_changed or grims_changed
 
 	local hp_bar_value = hp_bar_widget.content.hp_bar.bar_value
 	local grimoire_value = hp_bar_widget.content.hp_bar_grimoire_debuff.bar_value
@@ -354,7 +354,7 @@ ObserverUI.on_player_health_changed = function (self, name, widget, health_perce
 	end
 
 	local unit_frames_settings = UISettings.unit_frames
-	local widget_animation_data = not not self.bar_animations_data[name]
+	local widget_animation_data = self.bar_animations_data[name]
 
 	self.bar_animations_data[name] = widget_animation_data
 
@@ -374,14 +374,14 @@ ObserverUI.on_player_health_changed = function (self, name, widget, health_perce
 			anim_time = (current_bar_health - health_percent) * lerp_time
 		end
 
-		local animate_highlight = not not false
+		local animate_highlight = false
 
-		widget_animation_data.animate_highlight = animate_highlight and not not 0 or not animate_highlight and not not widget_animation_data.animate_highlight
+		widget_animation_data.animate_highlight = animate_highlight and 0 or not animate_highlight and widget_animation_data.animate_highlight
 		widget_animation_data.animate = true
 		widget_animation_data.new_health = health_percent
 		widget_animation_data.previous_health = current_bar_health
 		widget_animation_data.time = 0
-		widget_animation_data.total_time = self._skip_bar_animation and not not 0 or not self._skip_bar_animation and not not anim_time
+		widget_animation_data.total_time = self._skip_bar_animation and 0 or not self._skip_bar_animation and anim_time
 		widget_animation_data.widget = widget
 		widget_animation_data.bar = widget.content.hp_bar
 
@@ -396,7 +396,7 @@ ObserverUI.on_num_grimoires_changed = function (self, name, widget, health_debuf
 	end
 
 	local unit_frames_settings = UISettings.unit_frames
-	local widget_animation_data = not not self.bar_animations_data[name]
+	local widget_animation_data = self.bar_animations_data[name]
 
 	if health_debuff_percent ~= widget_animation_data.current_health_debuff then
 		local current_bar_health_debuff = widget.content.hp_bar_grimoire_debuff.bar_value
@@ -413,7 +413,7 @@ ObserverUI.on_num_grimoires_changed = function (self, name, widget, health_debuf
 		widget_animation_data.new_health = health_debuff_percent
 		widget_animation_data.previous_health = current_bar_health_debuff
 		widget_animation_data.time = 0
-		widget_animation_data.total_time = self._skip_bar_animation and not not 0 or not self._skip_bar_animation and not not anim_time
+		widget_animation_data.total_time = self._skip_bar_animation and 0 or not self._skip_bar_animation and anim_time
 		widget_animation_data.widget = widget
 		widget_animation_data.bar = widget.content.hp_bar_grimoire_debuff
 	end
@@ -478,7 +478,7 @@ ObserverUI.update_player_bar_animation = function (self, widget, bar, time, tota
 		widget.element.dirty = true
 		self._dirty = true
 
-		return progress < 1 and (not not time or not not nil) or not (progress < 1) and not not nil
+		return progress < 1 and (time or nil) or not (progress < 1) and nil
 	end
 
 	bar.bar_value = anim_end_health
@@ -488,7 +488,7 @@ end
 
 ObserverUI.update_damage_highlight = function (self, widget, time, dt)
 	-- function 17
-	local total_time = self._skip_bar_animation and not not 0 or not self._skip_bar_animation and not not 0.2
+	local total_time = self._skip_bar_animation and 0 or not self._skip_bar_animation and 0.2
 
 	time = time + dt
 
@@ -502,7 +502,7 @@ ObserverUI.update_damage_highlight = function (self, widget, time, dt)
 		widget.element.dirty = true
 		self._dirty = true
 
-		return progress < 1 and (not not time or not not nil) or not (progress < 1) and not not nil
+		return progress < 1 and (time or nil) or not (progress < 1) and nil
 	end
 
 	return nil

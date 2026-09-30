@@ -83,7 +83,7 @@ local twitch_difficulty_override = {
 TwitchManager.game_mode_supported = function (self, game_mode, difficulty)
 	-- function 3
 	local supported_game_modes = TwitchSettings.supported_game_modes[PLATFORM]
-	local supported = not not supported_game_modes[game_mode] or not not not not twitch_difficulty_override[difficulty]
+	local supported = supported_game_modes[game_mode] or twitch_difficulty_override[difficulty]
 
 	return supported
 end
@@ -168,7 +168,7 @@ TwitchManager.cb_on_user_info_received = function (self, success, code, headers,
 	self:_show_result_info(success, code, headers, data, userdata)
 
 	if success then
-		local result_data = not not data and not not cjson.decode(data)
+		local result_data = data and cjson.decode(data)
 
 		if result_data then
 			if result_data.status == 401 and self._num_retries < MAX_NUM_RETRIES then
@@ -310,9 +310,9 @@ TwitchManager.cb_on_notify_connected = function (self, connected)
 		self._twitch_game_mode = nil
 	end
 
-	Application.error(string.format("[TwitchManager] %s %s Twitch!", connected and not not "Connected" or not connected and not not "Disconnected", connected and not not "to" or not connected and not not "from"))
+	Application.error(string.format("[TwitchManager] %s %s Twitch!", connected and "Connected" or not connected and "Disconnected", connected and "to" or not connected and "from"))
 
-	local is_server = not not Managers.state.network
+	local is_server = Managers.state.network
 
 	if not connected and self._activated and is_server then
 		self._popup_id = Managers.popup:queue_popup(Localize("popup_disconnected_from_twitch"), Localize("popup_header_error_twitch"), "return_to_inn", Localize("button_ok"))
@@ -381,7 +381,7 @@ end
 
 TwitchManager.add_game_object_id = function (self, game_object_id)
 	-- function 18
-	local game = not not Managers.state.network
+	local game = Managers.state.network
 
 	if game then
 		local vote_key = GameSession.game_object_field(game, game_object_id, "vote_key")
@@ -395,7 +395,7 @@ end
 
 TwitchManager.remove_game_object_id = function (self, game_object_id)
 	-- function 19
-	local game = not not Managers.state.network
+	local game = Managers.state.network
 
 	if game then
 		local vote_key = self._vote_key_to_go_id[game_object_id]
@@ -409,7 +409,7 @@ end
 
 TwitchManager._update_game_object = function (self, vote_key, vote_data)
 	-- function 20
-	local game = not not Managers.state.network
+	local game = Managers.state.network
 
 	if game then
 		local go_id = self._game_object_ids[vote_key]
@@ -423,7 +423,7 @@ end
 
 TwitchManager._register_networked_vote = function (self, game_object_id)
 	-- function 21
-	local game = not not Managers.state.network
+	local game = Managers.state.network
 
 	fassert(game, "[TwitchManager] You need to have an active game session to be able to register votes")
 
@@ -441,7 +441,7 @@ TwitchManager._register_networked_vote = function (self, game_object_id)
 	local vote_templates = {}
 
 	for idx, template_lookup in ipairs(networked_vote_templates) do
-		vote_templates[idx] = not not rawget(NetworkLookup.twitch_vote_templates, template_lookup)
+		vote_templates[idx] = rawget(NetworkLookup.twitch_vote_templates, template_lookup)
 	end
 
 	local time = GameSession.game_object_field(game, game_object_id, "time")
@@ -471,7 +471,7 @@ TwitchManager.register_vote = function (self, time, vote_type, validation_func, 
 	local network_manager = Managers.state.network
 
 	fassert(self._connected, "[TwitchManager] You need to be connected to be able to trigger twitch votes")
-	fassert(not not network_manager and not not network_manager:game(), "[TwitchManager] You need to have an active game session to be able to register votes")
+	fassert(network_manager and network_manager:game(), "[TwitchManager] You need to have an active game session to be able to register votes")
 
 	local option_strings = {
 		TwitchSettings[vote_type].default_vote_a_str,
@@ -528,7 +528,7 @@ end
 TwitchManager.unregister_vote = function (self, vote_key)
 	-- function 23
 	local network_manager = Managers.state.network
-	local is_server = not not network_manager and not not network_manager.is_server
+	local is_server = network_manager and network_manager.is_server
 
 	Managers.irc:unregister_message_callback(vote_key)
 
@@ -580,7 +580,7 @@ TwitchManager._activate_next_vote = function (self)
 			local networked_vote_templates = {}
 
 			for idx, vote_template in ipairs(self._current_vote.vote_templates) do
-				networked_vote_templates[idx] = not not rawget(NetworkLookup.twitch_vote_templates, vote_template)
+				networked_vote_templates[idx] = rawget(NetworkLookup.twitch_vote_templates, vote_template)
 			end
 
 			local game_object_data_table = {
@@ -679,7 +679,7 @@ end
 
 TwitchManager.rpc_finish_twitch_vote = function (self, channel_id, vote_key, user_name, vote_index, vote_template_id)
 	-- function 29
-	local is_server = not not Managers.state.network
+	local is_server = Managers.state.network
 	local vote_template_name = NetworkLookup.twitch_vote_templates[vote_template_id]
 
 	debug_print("Vote results:", vote_index, vote_template_name)
@@ -844,7 +844,7 @@ end
 TwitchManager._update_vote_data = function (self, dt, t)
 	-- function 37
 	local network_manager = Managers.state.network
-	local is_server = not not network_manager and not not network_manager.is_server
+	local is_server = network_manager and network_manager.is_server
 
 	if is_server then
 		if not self._connected then
@@ -875,7 +875,7 @@ TwitchManager._update_vote_data = function (self, dt, t)
 			local vote_data = self._votes_lookup_table[vote_key]
 
 			if vote_data then
-				local game = not not Managers.state.network
+				local game = Managers.state.network
 
 				if game then
 					local options = GameSession.game_object_field(game, go_id, "options")
@@ -945,7 +945,7 @@ TwitchManager._handle_results = function (self, vote_results)
 	end
 
 	local override_template_name
-	local vote_template_name = not not override_template_name or not not vote_results.vote_templates[best_option_index]
+	local vote_template_name = override_template_name or vote_results.vote_templates[best_option_index]
 
 	vote_results.winning_template_name = vote_template_name
 
@@ -1019,9 +1019,9 @@ TwitchManager.activate_twitch_game_mode = function (self, network_event_delegate
 		self._connected = true
 	end
 
-	TwitchSettings.default_downtime = not not Application.user_setting("twitch_time_between_votes")
-	TwitchSettings.default_vote_time = not not Application.user_setting("twitch_vote_time")
-	TwitchSettings.difficulty = not not Application.user_setting("twitch_difficulty")
+	TwitchSettings.default_downtime = Application.user_setting("twitch_time_between_votes")
+	TwitchSettings.default_vote_time = Application.user_setting("twitch_vote_time")
+	TwitchSettings.difficulty = Application.user_setting("twitch_difficulty")
 
 	local disable_positive_votes_setting = Application.user_setting("twitch_disable_positive_votes")
 
@@ -1031,8 +1031,8 @@ TwitchManager.activate_twitch_game_mode = function (self, network_event_delegate
 	TwitchSettings.spawn_amount_multiplier = math.clamp(Application.user_setting("twitch_spawn_amount"), 1, 3)
 	TwitchSettings.mutator_duration_multiplier = math.clamp(Application.user_setting("twitch_mutator_duration"), 1, 3)
 
-	local network_manager = not not Managers.state.network
-	local is_server = not not network_manager and not not network_manager.is_server
+	local network_manager = Managers.state.network
+	local is_server = network_manager and network_manager.is_server
 
 	if self:game_mode_supported(game_mode_key) then
 		Managers.state.event:trigger("activate_twitch_game_mode")
@@ -1051,7 +1051,7 @@ TwitchManager.activate_twitch_game_mode = function (self, network_event_delegate
 
 		local lobby = network_manager:lobby()
 
-		self._activated = lobby:lobby_data("twitch_enabled") ~= "true" and not not false or not (lobby:lobby_data("twitch_enabled") ~= "true") and not not true
+		self._activated = not (lobby:lobby_data("twitch_enabled") ~= "true")
 
 		if Development.parameter("twitch_debug_voting") then
 			self._activated = true
@@ -1144,7 +1144,7 @@ TwitchManager._update_debug_voting = function (self, dt)
 	local vote_type = current_vote.vote_type
 
 	if vote_type == "standard_vote" then
-		local debug_result = script_data.twitch_mode_force_vote_template and not not 1 or not script_data.twitch_mode_force_vote_template and not not math.random(2)
+		local debug_result = script_data.twitch_mode_force_vote_template and 1 or not script_data.twitch_mode_force_vote_template and math.random(2)
 
 		message_index = debug_messages[debug_result]
 	else
@@ -1198,7 +1198,7 @@ TwitchGameMode.update = function (self, dt, t)
 		return
 	end
 
-	local game = not not Managers.state.network
+	local game = Managers.state.network
 
 	if game then
 		self:_trigger_new_vote()
@@ -1224,7 +1224,7 @@ TwitchGameMode._clear_used_votes = function (self, force_clear)
 	-- function 52
 	local used_vote_templates = self._used_vote_templates
 	local game_mode_whitelist = self:_get_game_mode_whitelist()
-	local num_available_vote_templates = game_mode_whitelist and not not #game_mode_whitelist or not game_mode_whitelist and not not #TwitchVoteTemplatesLookup
+	local num_available_vote_templates = game_mode_whitelist and #game_mode_whitelist or not game_mode_whitelist and #TwitchVoteTemplatesLookup
 
 	if force_clear or num_available_vote_templates - table.size(used_vote_templates) <= MIN_VOTES_LEFT_IN_ROTATION then
 		table.clear(used_vote_templates)
@@ -1268,7 +1268,7 @@ TwitchGameMode._check_breed_package_loading = function (self, wanted_template, p
 
 		table.shuffle(replacement_breeds)
 
-		local templates = is_boss and not not TwitchBossesSpawnBreedNamesLookup or not is_boss and not not is_special and not not TwitchSpecialsSpawnBreedNamesLookup
+		local templates = is_boss and TwitchBossesSpawnBreedNamesLookup or not is_boss and is_special and TwitchSpecialsSpawnBreedNamesLookup
 
 		for i = 1, #replacement_breeds do
 			local breed_name = replacement_breeds[i]
@@ -1281,7 +1281,7 @@ TwitchGameMode._check_breed_package_loading = function (self, wanted_template, p
 		end
 	end
 
-	local use_boss_equivalent = not not is_boss and not not previous_template and previous_template.breed_name == replacement_breed_name
+	local use_boss_equivalent = is_boss and previous_template and previous_template.breed_name == replacement_breed_name
 	local override_template
 	local used_vote_templates = self._used_vote_templates
 
@@ -1370,7 +1370,7 @@ TwitchGameMode._get_next_vote = function (self)
 			if not used_vote_templates[template_name] then
 				local template = TwitchVoteTemplates[template_name]
 				local in_whitelist = self:_in_whitelist(template_name)
-				local is_allowed = not not in_whitelist and (not template.condition_func or not not template.condition_func())
+				local is_allowed = in_whitelist and (not template.condition_func or template.condition_func())
 
 				if is_allowed then
 					local cost = template.cost
@@ -1396,7 +1396,7 @@ TwitchGameMode._get_next_vote = function (self)
 			if not used_vote_templates[template_name] then
 				local template = TwitchVoteTemplates[template_name]
 				local in_whitelist = self:_in_whitelist(template_name)
-				local is_allowed = not not in_whitelist and (not template.condition_func or not not template.condition_func())
+				local is_allowed = in_whitelist and (not template.condition_func or template.condition_func())
 
 				if is_allowed then
 					local cost = template.cost
@@ -1422,7 +1422,7 @@ TwitchGameMode._get_next_vote = function (self)
 			if not used_vote_templates[template_name] then
 				local template = TwitchVoteTemplates[template_name]
 				local in_whitelist = self:_in_whitelist(template_name)
-				local is_allowed = not not in_whitelist and (not template.condition_func or not not template.condition_func())
+				local is_allowed = in_whitelist and (not template.condition_func or template.condition_func())
 
 				if is_allowed then
 					best_template = template
@@ -1474,10 +1474,10 @@ TwitchGameMode._next_standard_vote = function (self, template_a)
 
 		if template_a_name ~= template_b_name and not used_vote_templates[template_b_name] then
 			local template_b = TwitchVoteTemplates[template_b_name]
-			local is_allowed = not template_b.condition_func or not not template_b.condition_func()
+			local is_allowed = not template_b.condition_func or template_b.condition_func()
 
 			if is_allowed then
-				local invalid_matchup = not not template_a.boss
+				local invalid_matchup = template_a.boss
 
 				if not invalid_matchup then
 					local cost_b = template_b.cost
@@ -1512,7 +1512,7 @@ end
 TwitchGameMode._trigger_new_vote = function (self)
 	-- function 59
 	local vote_type, vote_templates, validation_func = self:_get_next_vote()
-	local vote_time = not not Application.user_setting("twitch_vote_time")
+	local vote_time = Application.user_setting("twitch_vote_time")
 
 	if vote_type then
 		local vote_key = self._parent:register_vote(vote_time, vote_type, validation_func, vote_templates, true, callback(self, "cb_on_vote_complete"))
@@ -1520,7 +1520,7 @@ TwitchGameMode._trigger_new_vote = function (self)
 		self._vote_keys[vote_key] = true
 	end
 
-	local downtime = not not Application.user_setting("twitch_time_between_votes")
+	local downtime = Application.user_setting("twitch_time_between_votes")
 
 	self._timer = downtime + vote_time
 end

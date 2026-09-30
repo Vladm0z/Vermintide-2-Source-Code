@@ -131,8 +131,8 @@ end
 
 CircularQueue.tostring = function (self, tostringfunc, max_count)
 	-- function 16
-	tostringfunc = not not tostringfunc or not not tostring
-	max_count = not not max_count or not not self.num_items
+	tostringfunc = tostringfunc or tostring
+	max_count = max_count or self.num_items
 
 	local s = string.format("{[%d->%d][%d/%d] ", self.first, self.last, self.num_items, self.capacity)
 	local curr = self.first
@@ -154,14 +154,14 @@ end
 
 CircularQueue.tostring2 = function (self, tostringfunc, max_count)
 	-- function 17
-	tostringfunc = not not tostringfunc or not not tostring
-	max_count = not not max_count or not not self.num_items
+	tostringfunc = tostringfunc or tostring
+	max_count = max_count or self.num_items
 
 	local s = string.format("{[%d->%d][%d/%d] ", self.first, self.last, self.num_items, self.capacity)
 	local queue = self.queue
 
 	for i = 1, math.min(max_count, self.capacity) do
-		s = s .. (queue[i] and not not tostringfunc(queue[i]) or not queue[i] and not not "_") .. ","
+		s = s .. (queue[i] and tostringfunc(queue[i]) or not queue[i] and "_") .. ","
 	end
 
 	if max_count < self.num_items then
@@ -175,7 +175,7 @@ end
 
 CircularQueue.print_items = function (self, s)
 	-- function 18
-	local s = (not not s or not not "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
+	local s = (s or "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
 	local curr = self.first
 	local queue = self.queue
 

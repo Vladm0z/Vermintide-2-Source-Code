@@ -53,7 +53,7 @@ PackmasterStateDragging.on_enter = function (self, unit, input, dt, context, t, 
 	StatusUtils.set_grabbed_by_pack_master_network("pack_master_dragging", dragged_unit, true, unit)
 
 	local player = Managers.player:owner(unit)
-	local is_bot = not not player and not not player.bot_player
+	local is_bot = player and player.bot_player
 
 	self.blackboard = BLACKBOARDS[unit]
 	self.breed = self.blackboard.breed
@@ -106,7 +106,7 @@ PackmasterStateDragging.update = function (self, unit, input, dt, context, t)
 	local params = self._temp_params
 	local target_unit = self._dragged_unit
 	local status_ext = ScriptUnit.has_extension(target_unit, "status_system")
-	local target_ledge_hanging = not not status_ext and not not status_ext:get_is_ledge_hanging()
+	local target_ledge_hanging = status_ext and status_ext:get_is_ledge_hanging()
 
 	if not HEALTH_ALIVE[target_unit] or target_ledge_hanging then
 		csm:change_state("walking", params)
@@ -193,10 +193,10 @@ PackmasterStateDragging.update = function (self, unit, input, dt, context, t)
 	local is_moving = CharacterStateHelper.has_move_input(input_extension)
 
 	if not self.is_bot then
-		local breed_move_acceleration_up = not not self._breed
-		local breed_move_acceleration_down = not not self._breed
-		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
-		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
+		local breed_move_acceleration_up = self._breed
+		local breed_move_acceleration_down = self._breed
+		local move_acceleration_up_dt = breed_move_acceleration_up * dt
+		local move_acceleration_down_dt = breed_move_acceleration_down * dt
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -208,7 +208,7 @@ PackmasterStateDragging.update = function (self, unit, input, dt, context, t)
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
+		current_movement_speed_scale = is_moving and (1 or 0) or not is_moving and 0
 	end
 
 	local current_max_move_speed = self:_get_current_drag_speed(t)
@@ -248,7 +248,7 @@ PackmasterStateDragging.update = function (self, unit, input, dt, context, t)
 		local slot_name = dragged_unit_inventory_extension:get_wielded_slot_name()
 		local equipment = dragged_unit_inventory_extension:equipment()
 		local weapon_unit = equipment.right_hand_wielded_unit_3p
-		local claw_equipped = not not weapon_unit and slot_name == "slot_packmaster_claw"
+		local claw_equipped = weapon_unit and slot_name == "slot_packmaster_claw"
 
 		if move_anim_1p == "idle" and claw_equipped then
 			local inventory_system = Managers.state.entity:system("inventory_system")
@@ -407,8 +407,8 @@ PackmasterStateDragging._get_packmaster_drag_animation = function (self)
 	end
 
 	if move_direction.y < 0 then
-		return "move_bwd", slowed and not not "walk_bwd" or not slowed and not not "move_bwd"
+		return "move_bwd", slowed and "walk_bwd" or not slowed and "move_bwd"
 	end
 
-	return "move_fwd", slowed and not not "walk_fwd" or not slowed and not not "move_fwd"
+	return "move_fwd", slowed and "walk_fwd" or not slowed and "move_fwd"
 end

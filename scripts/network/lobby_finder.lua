@@ -4,8 +4,8 @@ require("scripts/network/lobby_aux")
 
 LobbyFinder = class(LobbyFinder)
 
-local lf_print = script_data.verbose_lobby_finder and not not print or not script_data.verbose_lobby_finder and not not NOP
-local lf_printf = script_data.verbose_lobby_finder and not not printf or not script_data.verbose_lobby_finder and not not NOP
+local lf_print = script_data.verbose_lobby_finder and print or not script_data.verbose_lobby_finder and NOP
+local lf_printf = script_data.verbose_lobby_finder and printf or not script_data.verbose_lobby_finder and NOP
 
 LobbyFinder.init = function (self, network_options, max_num_lobbies)
 	-- function 1

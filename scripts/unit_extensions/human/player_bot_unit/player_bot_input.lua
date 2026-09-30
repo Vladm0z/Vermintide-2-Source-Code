@@ -78,7 +78,7 @@ PlayerBotInput.pre_update = function (self, unit, input, dt, context, t)
 	local position = POSITION_LOOKUP[unit]
 	local success, altitude = GwNavQueries.triangle_from_position(self._nav_world, position, 1.1, 0.5)
 
-	self._position_on_navmesh = success and not not Vector3(position.x, position.y, altitude) or not success and not not position
+	self._position_on_navmesh = success and Vector3(position.x, position.y, altitude) or not success and position
 end
 
 PlayerBotInput.update = function (self, unit, input, dt, context, t)
@@ -256,7 +256,7 @@ end
 PlayerBotInput.set_aiming = function (self, aiming, soft, use_rotation)
 	-- function 11
 	self._aiming = aiming
-	self._aim_with_rotation = use_rotation and (not not aiming or not not false) or not use_rotation and not not false
+	self._aim_with_rotation = use_rotation and aiming
 
 	if aiming and soft then
 		self._soft_aiming = true
@@ -467,8 +467,8 @@ PlayerBotInput._update_movement = function (self, dt, t)
 	local status_extension = self._status_extension
 	local on_ladder, ladder_unit = status_extension:get_is_on_ladder()
 	local transition_jump
-	local look_at_player_unit = ALIVE[self._look_at_player] and not not self._look_at_player or not ALIVE[self._look_at_player] and not not nil
-	local look_at_player_has_moved = not not look_at_player_unit and not not ScriptUnit.extension(look_at_player_unit, "locomotion_system").has_moved_from_start_position
+	local look_at_player_unit = ALIVE[self._look_at_player] and self._look_at_player or not ALIVE[self._look_at_player] and nil
+	local look_at_player_has_moved = look_at_player_unit and ScriptUnit.extension(look_at_player_unit, "locomotion_system").has_moved_from_start_position
 	local cutscene_system = Managers.state.entity:system("cutscene_system")
 	local has_intro_cutscene_finished = cutscene_system:has_intro_cutscene_finished_playing()
 	local up = Vector3.up()
@@ -584,7 +584,7 @@ PlayerBotInput._update_movement = function (self, dt, t)
 		move.x = 0
 		move.y = 0
 	else
-		local is_last_goal = not self._avoiding_aoe_threat and not not player_bot_navigation:is_following_last_goal()
+		local is_last_goal = not self._avoiding_aoe_threat and player_bot_navigation:is_following_last_goal()
 		local move_scale = 1
 
 		if is_last_goal then
@@ -711,7 +711,7 @@ end
 
 PlayerBotInput.move_towards = function (self, target_position)
 	-- function 48
-	self.target_position = target_position and not not Vector3Box(target_position) or not target_position and not not nil
+	self.target_position = target_position and Vector3Box(target_position) or not target_position and nil
 end
 
 PlayerBotInput.get_wield_cooldown = function (self)

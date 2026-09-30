@@ -27,7 +27,7 @@ Geheimnisnacht2021AltarExtension.init = function (self, extension_init_context, 
 	self._unit = unit
 	self._is_server = Managers.state.network.is_server
 	self.world = extension_init_context.world
-	self._state = not not extension_init_data.state
+	self._state = extension_init_data.state
 	self._audio_system = Managers.state.entity:system("audio_system")
 	self._unit_spawner = Managers.state.unit_spawner
 
@@ -75,7 +75,7 @@ end
 Geheimnisnacht2021AltarExtension.update = function (self, unit, input, dt, context, t)
 	-- function 8
 	local game = Managers.state.network:game()
-	local id = not not self._go_id
+	local id = self._go_id
 
 	if game and id then
 		if self._is_server then
@@ -102,7 +102,7 @@ Geheimnisnacht2021AltarExtension.update = function (self, unit, input, dt, conte
 
 		for _, player_unit in pairs(nearby_player_units) do
 			local player = Managers.player:owner(player_unit)
-			local is_bot = not not player and not not not player:is_player_controlled()
+			local is_bot = player and not player:is_player_controlled()
 
 			if not is_bot then
 				self:play_relevant_faction_sound()

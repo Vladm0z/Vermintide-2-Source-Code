@@ -592,10 +592,10 @@ local action_data = {
 				elseif not blackboard.blocked and blackboard.stagger < 4 and action.shield_stagger_anims then
 					blocked_stagger = true
 					stagger_anims = action.shield_stagger_anims[blackboard.stagger_type]
-					idle_event = not not blackboard.breed.shield_opening_event or not not "idle"
+					idle_event = blackboard.breed.shield_opening_event or "idle"
 				else
 					stagger_anims = action.stagger_anims[blackboard.stagger_type]
-					idle_event = not not blackboard.breed.shield_opening_event or not not "idle"
+					idle_event = blackboard.breed.shield_opening_event or "idle"
 				end
 			else
 				ai_shield_extension:set_is_blocking(false)
@@ -622,7 +622,7 @@ local action_data = {
 		end,
 		custom_exit_function = function (unit, blackboard, t)
 			-- function 3
-			local ai_shield_extension = not not ScriptUnit.has_extension(unit, "ai_shield_system")
+			local ai_shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
 
 			ai_shield_extension:set_is_blocking(true)
 		end,

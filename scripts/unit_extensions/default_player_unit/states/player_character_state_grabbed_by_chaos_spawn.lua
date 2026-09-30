@@ -31,7 +31,7 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, unit, input, 
 	local breed = Unit.get_data(chaos_spawn_unit, "breed")
 
 	self.breed = breed
-	self.is_bot = not not self.player
+	self.is_bot = self.player
 
 	CharacterStateHelper.change_camera_state(self.player, "chaos_spawn_grabbed")
 	self.inventory_extension:show_third_person_inventory(false)
@@ -55,7 +55,7 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, unit, input, 
 
 	LocomotionUtils.enable_linked_movement(self.world, unit, self.chaos_spawn_unit, 0, Vector3.zero())
 
-	local include_local_player = self.camera_state ~= "first_person" or not not false
+	local include_local_player = self.camera_state ~= "first_person" or false
 
 	CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self.is_server, self.inventory_extension)
 
@@ -97,7 +97,7 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_exit = function (self, unit, input, d
 	end
 
 	local camera_state = self.camera_state
-	local include_local_player = camera_state ~= "first_person" or not not false
+	local include_local_player = camera_state ~= "first_person" or false
 
 	CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
 	CharacterStateHelper.change_camera_state(self.player, "follow")

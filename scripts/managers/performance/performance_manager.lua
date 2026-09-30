@@ -78,10 +78,10 @@ PerformanceManager.init = function (self, gui, is_server, level_key)
 	end
 
 	local level_settings = LevelSettings[level_key]
-	local perf = not not level_settings and not not level_settings.performance
+	local perf = level_settings and level_settings.performance
 
-	self._allowed_active = perf and not not perf.allowed_active or not perf and not not 40
-	self._allowed_spawned = perf and not not perf.allowed_spawned or not perf and not not 75
+	self._allowed_active = perf and perf.allowed_active or not perf and 40
+	self._allowed_spawned = perf and perf.allowed_spawned or not perf and 75
 	self._activated_per_breed = {}
 
 	for breed_name, breed in pairs(Breeds) do

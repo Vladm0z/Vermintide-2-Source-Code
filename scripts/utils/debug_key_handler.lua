@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/debug_key_handler.lua
 
-script_data.debug_key_handler_visible = not not script_data.debug_key_handler_visible
+script_data.debug_key_handler_visible = script_data.debug_key_handler_visible
 
 local cache_fail = {}
 
@@ -32,10 +32,10 @@ local function cached_key_mod(key, key_modifier, missing)
 		}
 	end
 
-	return missing and not not cache[key].missing or not missing and not not cache[key].exist
+	return missing and cache[key].missing or not missing and cache[key].exist
 end
 
-DebugKeyHandler = not not DebugKeyHandler
+DebugKeyHandler = DebugKeyHandler
 
 local DebugKeyHandler = DebugKeyHandler
 
@@ -65,7 +65,7 @@ DebugKeyHandler.key_pressed = function (key, description, category, key_modifier
 		return
 	end
 
-	local input_service = DebugKeyHandler.input_manager:get_service(not not input_service_name or not not "Debug")
+	local input_service = DebugKeyHandler.input_manager:get_service(input_service_name or "Debug")
 
 	if not input_service then
 		return
@@ -73,7 +73,7 @@ DebugKeyHandler.key_pressed = function (key, description, category, key_modifier
 
 	if script_data.debug_key_handler_visible then
 		DebugKeyHandler.num_keys = DebugKeyHandler.num_keys + 1
-		category = not not category or not not "misc"
+		category = category or "misc"
 
 		local category_keys = DebugKeyHandler.keys[category]
 
@@ -82,10 +82,10 @@ DebugKeyHandler.key_pressed = function (key, description, category, key_modifier
 			DebugKeyHandler.keys[category] = category_keys
 		end
 
-		local key_string = input_service:has(key) and (not not key or not not cached_fail(key)) or not input_service:has(key) and not not cached_fail(key)
+		local key_string = input_service:has(key) and (key or cached_fail(key)) or not input_service:has(key) and cached_fail(key)
 
 		if key_modifier then
-			key_string = input_service:has(key) and (not not cached_key_mod(key, key_modifier) or not not cached_key_mod(key, key_modifier, true)) or not input_service:has(key) and not not cached_key_mod(key, key_modifier, true)
+			key_string = input_service:has(key) and (cached_key_mod(key, key_modifier) or cached_key_mod(key, key_modifier, true)) or not input_service:has(key) and cached_key_mod(key, key_modifier, true)
 		end
 
 		category_keys[key_string] = description
@@ -107,7 +107,7 @@ DebugKeyHandler.key_pressed = function (key, description, category, key_modifier
 		end
 	end
 
-	local key_pressed = not not modifier_pressed and not not input_service:get(key)
+	local key_pressed = modifier_pressed and input_service:get(key)
 
 	return key_pressed
 end

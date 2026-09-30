@@ -1,8 +1,8 @@
 -- chunkname: @scripts/imgui/imgui_cat_tester_tools.lua
 
 ImguiCatTesterTools = class(ImguiCatTesterTools)
-ImguiCatTesterTools.curated_pickup_list = not not ImguiCatTesterTools.curated_pickup_list
-ImguiCatTesterTools.curated_breed_list = not not ImguiCatTesterTools.curated_breed_list
+ImguiCatTesterTools.curated_pickup_list = ImguiCatTesterTools.curated_pickup_list
+ImguiCatTesterTools.curated_breed_list = ImguiCatTesterTools.curated_breed_list
 
 local localization_placeholders = {
 	beastmen_ungor = "Ungor",
@@ -50,7 +50,7 @@ ImguiCatTesterTools.init = function (self)
 		-- function 4
 		local pickup_settings = AllPickups[pickup_name]
 
-		return custom_localize(pickup_settings and not not pickup_settings.hud_description or not pickup_settings and not not "_UNKNOWN")
+		return custom_localize(pickup_settings and pickup_settings.hud_description or not pickup_settings and "_UNKNOWN")
 	end)
 	self._pickup_results = table.shallow_copy(self._pickup_names)
 
@@ -90,13 +90,13 @@ ImguiCatTesterTools.draw = function (self)
 	Imgui.end_child_window()
 	Imgui.begin_child_window("Settings", 0, 150, true)
 
-	script_data.disable_ai_perception = Imgui.checkbox("Disable AI Perception", not not script_data.disable_ai_perception)
-	script_data.player_invincible = Imgui.checkbox("Player Invincible", not not script_data.player_invincible)
-	script_data.infinite_ammo = Imgui.checkbox("Infinite Ammo", not not script_data.infinite_ammo)
-	script_data.disable_overcharge = Imgui.checkbox("Disable Overcharge", not not script_data.disable_overcharge)
-	script_data.short_ability_cooldowns = Imgui.checkbox("Short Ability Cooldowns", not not script_data.short_ability_cooldowns)
+	script_data.disable_ai_perception = Imgui.checkbox("Disable AI Perception", script_data.disable_ai_perception)
+	script_data.player_invincible = Imgui.checkbox("Player Invincible", script_data.player_invincible)
+	script_data.infinite_ammo = Imgui.checkbox("Infinite Ammo", script_data.infinite_ammo)
+	script_data.disable_overcharge = Imgui.checkbox("Disable Overcharge", script_data.disable_overcharge)
+	script_data.short_ability_cooldowns = Imgui.checkbox("Short Ability Cooldowns", script_data.short_ability_cooldowns)
 
-	if Imgui.radio_button("Normal crit", not script_data.no_critical_strikes and not not not script_data.always_critical_strikes) then
+	if Imgui.radio_button("Normal crit", not script_data.no_critical_strikes and not script_data.always_critical_strikes) then
 		script_data.no_critical_strikes = false
 		script_data.always_critical_strikes = false
 	elseif Imgui.radio_button("Never crit", not not script_data.no_critical_strikes) then

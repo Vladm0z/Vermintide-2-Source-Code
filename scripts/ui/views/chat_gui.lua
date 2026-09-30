@@ -304,7 +304,7 @@ ChatGui.update = function (self, dt, menu_active, menu_input_service, no_unblock
 	self.chat_closed = wants_close
 	self.chat_close_time = close_time
 
-	local input_service = not not menu_input_service or not not chat_input_service
+	local input_service = menu_input_service or chat_input_service
 
 	if self.chat_focused then
 		input_service = chat_input_service
@@ -385,10 +385,10 @@ ChatGui._update_chat_messages = function (self)
 				if player then
 					local profile_index = self.profile_synchronizer:profile_by_peer(player.peer_id, player:local_player_id())
 
-					ingame_display_name = SPProfiles[profile_index] and (not not SPProfiles[profile_index].ingame_short_display_name or not not nil) or not SPProfiles[profile_index] and not not nil
+					ingame_display_name = SPProfiles[profile_index] and (SPProfiles[profile_index].ingame_short_display_name or nil) or not SPProfiles[profile_index] and nil
 					name = player:name()
 				else
-					name = rawget(_G, "Steam") and (not not Steam.user_name(sender) or not not tostring(sender)) or not rawget(_G, "Steam") and not not tostring(sender)
+					name = rawget(_G, "Steam") and (Steam.user_name(sender) or tostring(sender)) or not rawget(_G, "Steam") and tostring(sender)
 				end
 
 				local message = new_message.message
@@ -397,7 +397,7 @@ ChatGui._update_chat_messages = function (self)
 				new_message_table.is_enemy = new_message.is_enemy
 				new_message_table.is_bot = new_message.is_bot
 				new_message_table.is_system = false
-				new_message_table.sender = ingame_display_name and not not string.format("%s (%s): ", name, Localize(ingame_display_name)) or not ingame_display_name and not not string.format("%s: ", name)
+				new_message_table.sender = ingame_display_name and string.format("%s (%s): ", name, Localize(ingame_display_name)) or not ingame_display_name and string.format("%s: ", name)
 				new_message_table.message = message
 				new_message_table.type = new_message.type
 
@@ -584,7 +584,7 @@ ChatGui._update_input = function (self, input_service, menu_input_service, dt, n
 		self.block_chat_activation_hack = self.block_chat_activation_hack + dt
 	end
 
-	local block_chat_activation = self.block_chat_activation_hack < 0.2 or not chat_enabled or not not self._block_keystrokes
+	local block_chat_activation = self.block_chat_activation_hack < 0.2 or not chat_enabled or self._block_keystrokes
 
 	self._block_keystrokes = false
 
@@ -619,7 +619,7 @@ ChatGui._update_input = function (self, input_service, menu_input_service, dt, n
 				channel_id, message_target = mechanism:get_chat_channel(peer_id, alt_chat_input)
 			end
 
-			self.channel_id = not not channel_id or not not 1
+			self.channel_id = channel_id or 1
 			self.alt_chat_input = alt_chat_input
 
 			if message_target then
@@ -665,7 +665,7 @@ ChatGui._update_input = function (self, input_service, menu_input_service, dt, n
 			end
 		end
 
-		local auto_close = chat_close_time and (chat_close_time == 0 or not not not chat_enabled) or not chat_close_time and not not not chat_enabled
+		local auto_close = chat_close_time and (chat_close_time == 0 or not chat_enabled) or not chat_close_time and not chat_enabled
 
 		if not block_chat_activation or tab_hotspot.on_release or input_service:get("deactivate_chat_input") or menu_close_press_outside_area or auto_close then
 			if chat_focused and (not block_chat_activation or tab_hotspot.on_release or input_service:get("deactivate_chat_input") or menu_close_press_outside_area) then
@@ -835,7 +835,7 @@ ChatGui._update_input = function (self, input_service, menu_input_service, dt, n
 				keystrokes = Keyboard.keystrokes(keystrokes)
 
 				local ctrl_button_index = Keyboard.button_index("left ctrl")
-				local ctrl_held = not not Keyboard.pressed(ctrl_button_index)
+				local ctrl_held = Keyboard.pressed(ctrl_button_index)
 				local max_chars = NetworkConstants.max_string_length
 				local new_chat_message, new_chat_index, new_chat_mode = KeystrokeHelper.parse_strokes(self.chat_message, self.chat_index, self.chat_mode, keystrokes, max_chars)
 
@@ -882,7 +882,7 @@ ChatGui._update_input = function (self, input_service, menu_input_service, dt, n
 					channel_id, message_target = mechanism:get_chat_channel(peer_id, alt_chat_input)
 				end
 
-				self.channel_id = not not channel_id or not not 1
+				self.channel_id = channel_id or 1
 				self.alt_chat_input = alt_chat_input
 
 				if message_target then
@@ -1078,7 +1078,7 @@ ChatGui._draw_widgets = function (self, dt, input_service, chat_enabled)
 			UIRenderer.draw_widget(ui_renderer, input_widget)
 		end
 
-		render_settings.alpha_multiplier = not not self._output_text_alpha_multiplier
+		render_settings.alpha_multiplier = self._output_text_alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, output_widget)
 
@@ -1129,7 +1129,7 @@ ChatGui._apply_hud_scale = function (self)
 
 	local scale_modified = self._scale_modified
 	local resolution_modified = self._resolution_modified
-	local force_update = not not scale_modified or not not resolution_modified
+	local force_update = scale_modified or resolution_modified
 	local hud_scale_multiplier = self._hud_scale_multiplier
 
 	UPDATE_RESOLUTION_LOOKUP(force_update, hud_scale_multiplier)
@@ -1139,7 +1139,7 @@ ChatGui._abort_hud_scale = function (self)
 	-- function 32
 	local scale_modified = self._scale_modified
 	local resolution_modified = self._resolution_modified
-	local force_update = not not scale_modified or not not resolution_modified
+	local force_update = scale_modified or resolution_modified
 
 	UPDATE_RESOLUTION_LOOKUP(force_update)
 end

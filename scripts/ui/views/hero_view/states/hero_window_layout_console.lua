@@ -297,8 +297,8 @@ local window_layouts = {
 				career_index = career_index
 			})
 
-			local mood_settings = not not DLCSettings.carousel
-			local mood_setting = not not mood_settings.default
+			local mood_settings = DLCSettings.carousel
+			local mood_setting = mood_settings.default
 
 			parent:set_background_mood(mood_setting)
 		end

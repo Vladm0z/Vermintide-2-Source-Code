@@ -173,7 +173,7 @@ end
 
 SubtitleTimedGui.init = function (self, subtitle_timing_name, num_rows)
 	-- function 3
-	self._num_rows = not not num_rows or not not 5
+	self._num_rows = num_rows or 5
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
@@ -185,7 +185,7 @@ SubtitleTimedGui.init = function (self, subtitle_timing_name, num_rows)
 			localized_subtitle_timing_name = localized_subtitle_timing_name .. Localize(subtitle_name) .. " "
 		end
 	else
-		localized_subtitle_timing_name = not not subtitle_timing_name
+		localized_subtitle_timing_name = subtitle_timing_name
 	end
 
 	self.texts = extract_lines(localized_subtitle_timing_name)
@@ -257,7 +257,7 @@ SubtitleTimedGui.update = function (self, ui_renderer, dt)
 
 			local text = self.texts[next_text_index]
 
-			widget.content.text = not not text or not not ""
+			widget.content.text = text or ""
 			widget.content.text_index = next_text_index
 		elseif offset_y > 200 then
 			offset_y = offset_y - #widgets * 50

@@ -13,9 +13,9 @@ DeusCurseUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
 	local mechanism = Managers.mechanism:game_mechanism()
 
-	self._curse = not not mechanism and not not mechanism:get_current_node_curse()
-	self._theme = not not mechanism and not not mechanism:get_current_node_theme()
-	self._has_curse = not not self._curse
+	self._curse = mechanism and mechanism:get_current_node_curse()
+	self._theme = mechanism and mechanism:get_current_node_theme()
+	self._has_curse = self._curse
 	self._world = ingame_ui_context.world_manager:world("level_world")
 	self._player_unit = ingame_ui_context.player.player_unit
 	self._mission_system = Managers.state.entity:system("mission_system")
@@ -76,7 +76,7 @@ DeusCurseUI.update = function (self, dt, t)
 		end
 	end
 
-	local resolution_modified = not not self._has_curse
+	local resolution_modified = self._has_curse
 
 	if resolution_modified and self._timer ~= nil then
 		self:show_curse_info(self._theme, self._curse)
@@ -109,8 +109,8 @@ DeusCurseUI.show_special_message = function (self, theme, name, description, dur
 
 	local theme_settings = DeusThemeSettings[theme]
 	local theme_color = theme_settings.curse_description_color
-	local icon = not not theme_settings.icon
-	local title_text = theme_settings.curse_title and not not Localize(theme_settings.curse_title) or not theme_settings.curse_title and not not ""
+	local icon = theme_settings.icon
+	local title_text = theme_settings.curse_title and Localize(theme_settings.curse_title) or not theme_settings.curse_title and ""
 
 	name = Localize(name)
 	description = Localize(description)
@@ -136,15 +136,15 @@ DeusCurseUI.show_curse_info = function (self, theme, curse)
 	local round_started = game_mode_manager:is_round_started()
 	local display_time = self:_get_display_time()
 
-	self._timer = round_started and (not not display_time or not not math.huge) or not round_started and not not math.huge
+	self._timer = round_started and (display_time or math.huge) or not round_started and math.huge
 
 	local mutator_data = MutatorTemplates[curse]
 	local curse_name = Localize(mutator_data.display_name)
 	local curse_description = Localize(mutator_data.description)
 	local theme_settings = DeusThemeSettings[theme]
 	local theme_color = theme_settings.curse_description_color
-	local icon = not not theme_settings.icon
-	local title_text = theme_settings.curse_title and not not Localize(theme_settings.curse_title) or not theme_settings.curse_title and not not ""
+	local icon = theme_settings.icon
+	local title_text = theme_settings.curse_title and Localize(theme_settings.curse_title) or not theme_settings.curse_title and ""
 
 	self:_update_description_widget(title_text, curse_name, curse_description, icon, theme_color)
 	self:_start_animation("curse_description_animation", "description_start")

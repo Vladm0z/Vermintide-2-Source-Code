@@ -216,7 +216,7 @@ EnemyCharacterStateStanding.common_movement = function (self, t)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local is_crouching = status_extension:is_crouching()
 
-	if input_extension:get("jump") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or not not is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) or not input_extension:get("jump") and input_extension:get("jump_only") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or not not is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) then
+	if input_extension:get("jump") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) or not input_extension:get("jump") and input_extension:get("jump_only") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) then
 		if is_crouching then
 			CharacterStateHelper.uncrouch(unit, t, first_person_extension, status_extension)
 		end

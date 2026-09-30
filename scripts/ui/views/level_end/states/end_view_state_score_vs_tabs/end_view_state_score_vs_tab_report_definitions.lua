@@ -954,7 +954,7 @@ local function create_summery_entry(index, header, xp, force)
 		},
 		content = {
 			header = header,
-			experience = force and not not tostring(xp) or not force and not not "0",
+			experience = force and tostring(xp) or not force and "0",
 			xp = xp
 		},
 		style = {
@@ -969,7 +969,7 @@ local function create_summery_entry(index, header, xp, force)
 					275,
 					50
 				},
-				text_color = Colors.get_color_table_with_alpha("font_button_normal", force and not not 255 or not force and not not 0),
+				text_color = Colors.get_color_table_with_alpha("font_button_normal", force and 255 or not force and 0),
 				offset = {
 					5,
 					0,
@@ -982,7 +982,7 @@ local function create_summery_entry(index, header, xp, force)
 				localize = false,
 				font_size = 28,
 				font_type = "hell_shark",
-				text_color = Colors.get_color_table_with_alpha("font_default", force and not not 255 or not force and not not 0),
+				text_color = Colors.get_color_table_with_alpha("font_default", force and 255 or not force and 0),
 				offset = {
 					-5,
 					0,
@@ -1003,7 +1003,7 @@ local function create_challenge_entry(id, start_progress, end_progress, offset, 
 	local achievement_template = AchievementTemplates.achievements[id]
 	local icon = achievement_template.icon
 	local name = achievement_template.name
-	local desc = type(achievement_template.desc) ~= "function" and not not Localize(achievement_template.desc) or not (type(achievement_template.desc) ~= "function") and not not achievement_template.desc()
+	local desc = type(achievement_template.desc) ~= "function" and Localize(achievement_template.desc) or not (type(achievement_template.desc) ~= "function") and achievement_template.desc()
 	local widget_def = {}
 	local element = {
 		passes = {}
@@ -1094,7 +1094,7 @@ local function create_challenge_entry(id, start_progress, end_progress, offset, 
 	content.is_completed = end_progress >= 1
 	content.masked_rect = "rect_masked"
 	content.progress = end_progress
-	content.alpha_multiplier = force and not not 1 or not force and not not 0
+	content.alpha_multiplier = force and 1 or not force and 0
 	style.completed = challenge_completed_text_style
 	style.name = challenge_name_text_style
 	style.desc = challenge_desc_text_style
@@ -1210,7 +1210,7 @@ local function create_challenge_entry(id, start_progress, end_progress, offset, 
 	widget_def.content = content
 	widget_def.style = style
 	widget_def.scenegraph_id = "challenge_entry_anchor"
-	widget_def.offset = not not offset or not not {
+	widget_def.offset = offset or {
 		0,
 		0,
 		0
@@ -1221,10 +1221,10 @@ end
 
 local function create_item_widget(item, offset, force)
 	-- function 13
-	local alpha = force and not not 255 or not force and not not 0
+	local alpha = force and 255 or not force and 0
 	local size = table.clone(ITEM_SIZE)
 	local rarity = item.rarity
-	local rarity_texture = UISettings.item_rarity_textures[not not rarity or not not "default"]
+	local rarity_texture = UISettings.item_rarity_textures[rarity or "default"]
 	local inventory_icon, display_name, description, store_icon = UIUtils.get_ui_information_from_item(item)
 
 	return {
@@ -1544,14 +1544,14 @@ local animation_definitions = {
 
 				widget.offset[1] = math.lerp(-100, 0, anim_progress)
 				widget.style.level_text.offset[1] = math.lerp(-100, 0, anim_progress)
-				widget.style.level_text.color[1] = not not widget.style.level_text.alpha_value
-				widget.style.pattern_1.color[1] = not not widget.style.pattern_1.alpha_value
-				widget.style.pattern_2.color[1] = not not widget.style.pattern_2.alpha_value
-				widget.style.mask.color[1] = not not widget.style.mask.alpha_value
-				widget.style.versus_static_circle.color[1] = not not widget.style.versus_static_circle.alpha_value
-				widget.style.static_progress_marker.color[1] = not not widget.style.static_progress_marker.alpha_value
-				widget.style.versus_progress_circle.color[1] = not not widget.style.versus_progress_circle.alpha_value
-				widget.style.progress_marker.color[1] = not not widget.style.progress_marker.alpha_value
+				widget.style.level_text.color[1] = widget.style.level_text.alpha_value
+				widget.style.pattern_1.color[1] = widget.style.pattern_1.alpha_value
+				widget.style.pattern_2.color[1] = widget.style.pattern_2.alpha_value
+				widget.style.mask.color[1] = widget.style.mask.alpha_value
+				widget.style.versus_static_circle.color[1] = widget.style.versus_static_circle.alpha_value
+				widget.style.static_progress_marker.color[1] = widget.style.static_progress_marker.alpha_value
+				widget.style.versus_progress_circle.color[1] = widget.style.versus_progress_circle.alpha_value
+				widget.style.progress_marker.color[1] = widget.style.progress_marker.alpha_value
 
 				local widget = widgets.insignia
 
@@ -1588,14 +1588,14 @@ local animation_definitions = {
 
 				widget.offset[1] = math.lerp(-100, 0, anim_progress)
 				widget.style.level_text.offset[1] = math.lerp(-100, 0, anim_progress)
-				widget.style.level_text.color[1] = not not widget.style.level_text.alpha_value
-				widget.style.pattern_1.color[1] = not not widget.style.pattern_1.alpha_value
-				widget.style.pattern_2.color[1] = not not widget.style.pattern_2.alpha_value
-				widget.style.mask.color[1] = not not widget.style.mask.alpha_value
-				widget.style.versus_static_circle.color[1] = not not widget.style.versus_static_circle.alpha_value
-				widget.style.static_progress_marker.color[1] = not not widget.style.static_progress_marker.alpha_value
-				widget.style.versus_progress_circle.color[1] = not not widget.style.versus_progress_circle.alpha_value
-				widget.style.progress_marker.color[1] = not not widget.style.progress_marker.alpha_value
+				widget.style.level_text.color[1] = widget.style.level_text.alpha_value
+				widget.style.pattern_1.color[1] = widget.style.pattern_1.alpha_value
+				widget.style.pattern_2.color[1] = widget.style.pattern_2.alpha_value
+				widget.style.mask.color[1] = widget.style.mask.alpha_value
+				widget.style.versus_static_circle.color[1] = widget.style.versus_static_circle.alpha_value
+				widget.style.static_progress_marker.color[1] = widget.style.static_progress_marker.alpha_value
+				widget.style.versus_progress_circle.color[1] = widget.style.versus_progress_circle.alpha_value
+				widget.style.progress_marker.color[1] = widget.style.progress_marker.alpha_value
 
 				local widget = widgets.insignia
 
@@ -1678,7 +1678,7 @@ local animation_definitions = {
 				local entry_experience = entry_widget.content.xp
 				local widget = widgets.summary_value_text
 
-				widget.content.value = not not widget.content.value + entry_experience
+				widget.content.value = widget.content.value + entry_experience
 			end,
 			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 28
@@ -1810,8 +1810,8 @@ local animation_definitions = {
 				local widget = widgets.level_up
 
 				widget.content.level_text = params.data.level
-				widget.content.starting_progress = not not params.data.on_complete_optional_starting_progress
-				widget.content.final_progress = not not params.data.on_complete_optional_final_progress
+				widget.content.starting_progress = params.data.on_complete_optional_starting_progress
+				widget.content.final_progress = params.data.on_complete_optional_final_progress
 
 				local insignia_widget = widgets.insignia
 				local insignia_main_uvs, insignia_addon_uvs = UIAtlasHelper.get_insignia_texture_settings_from_level(params.data.level)

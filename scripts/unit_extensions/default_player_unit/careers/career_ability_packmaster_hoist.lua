@@ -8,5 +8,5 @@ CareerAbilityPackmasterHoist._ability_available = function (self)
 	local status_extension = self._status_extension
 	local locomotion_extension = self._locomotion_extension
 
-	return not not ability_available and not not status_extension:get_is_packmaster_dragging()
+	return ability_available and status_extension:get_is_packmaster_dragging()
 end

@@ -741,8 +741,8 @@ local scenegraph_definition = {
 local function create_vertical_edge_divider(scenegraph_id, size)
 	-- function 1
 	local scenegraph_definition = scenegraph_definition[scenegraph_id]
-	local horizontal_alignment = scenegraph_definition.horizontal_alignment ~= "right" and not not "right" or not (scenegraph_definition.horizontal_alignment ~= "right") and not not "left"
-	local offset_multiplier = horizontal_alignment ~= "left" and not not 1 or not (horizontal_alignment ~= "left") and not not -1
+	local horizontal_alignment = scenegraph_definition.horizontal_alignment ~= "right" and "right" or not (scenegraph_definition.horizontal_alignment ~= "right") and "left"
+	local offset_multiplier = horizontal_alignment ~= "left" and 1 or not (horizontal_alignment ~= "left") and -1
 	local widget = {
 		element = {
 			passes = {
@@ -846,7 +846,7 @@ local function create_loot_widget(texture, text, scale)
 	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
 	local texture_size = texture_settings.size
 
-	scale = not not scale or not not 1
+	scale = scale or 1
 
 	return {
 		scenegraph_id = "loot_objective",
@@ -909,7 +909,7 @@ local function create_loot_widget(texture, text, scale)
 		content = {
 			counter_text = "x9",
 			amount = 0,
-			text = not not text or not not "n/a",
+			text = text or "n/a",
 			icon = texture,
 			glow_icon = texture .. "_glow"
 		},
@@ -1751,7 +1751,7 @@ local function create_reward_item(offset_x, item)
 					pass_type = "item_tooltip",
 					content_check_function = function (content)
 						-- function 17
-						return not not content.hotspot.is_hover
+						return content.hotspot.is_hover
 					end
 				}
 			}
@@ -1841,7 +1841,7 @@ local function player_widget_definition(index)
 					text_id = "ping_text",
 					content_check_function = function (content, style)
 						-- function 21
-						return not not content.show_ping
+						return content.show_ping
 					end
 				},
 				{
@@ -1869,7 +1869,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 23
-						style.color[1] = content.show_chat_button and not not 255 or not content.show_chat_button and not not 60
+						style.color[1] = content.show_chat_button and 255 or not content.show_chat_button and 60
 					end
 				},
 				{
@@ -1878,7 +1878,7 @@ local function player_widget_definition(index)
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 24
-						return not not content.show_chat_button
+						return content.show_chat_button
 					end
 				},
 				{
@@ -1896,7 +1896,7 @@ local function player_widget_definition(index)
 					text_id = "chat_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 26
-						return not not content.show_chat_button
+						return content.show_chat_button
 					end
 				},
 				{
@@ -1905,7 +1905,7 @@ local function player_widget_definition(index)
 					text_id = "chat_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 27
-						return not not content.show_chat_button
+						return content.show_chat_button
 					end
 				},
 				{
@@ -1924,7 +1924,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 28
-						style.color[1] = content.show_voice_button and not not 255 or not content.show_voice_button and not not 60
+						style.color[1] = content.show_voice_button and 255 or not content.show_voice_button and 60
 					end
 				},
 				{
@@ -1933,7 +1933,7 @@ local function player_widget_definition(index)
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 29
-						return not not content.show_voice_button
+						return content.show_voice_button
 					end
 				},
 				{
@@ -1951,7 +1951,7 @@ local function player_widget_definition(index)
 					text_id = "voice_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 31
-						return not not content.show_voice_button
+						return content.show_voice_button
 					end
 				},
 				{
@@ -1960,7 +1960,7 @@ local function player_widget_definition(index)
 					text_id = "voice_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 32
-						return not not content.show_voice_button
+						return content.show_voice_button
 					end
 				},
 				{
@@ -1979,7 +1979,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 33
-						style.color[1] = content.show_kick_button and not not 255 or not content.show_kick_button and not not 60
+						style.color[1] = content.show_kick_button and 255 or not content.show_kick_button and 60
 					end
 				},
 				{
@@ -1997,7 +1997,7 @@ local function player_widget_definition(index)
 					text_id = "kick_tooltip_text",
 					content_check_function = function (content)
 						-- function 35
-						return not not content.show_kick_button
+						return content.show_kick_button
 					end
 				},
 				{
@@ -2016,7 +2016,7 @@ local function player_widget_definition(index)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 36
-						style.color[1] = content.show_profile_button and not not 255 or not content.show_profile_button and not not 60
+						style.color[1] = content.show_profile_button and 255 or not content.show_profile_button and 60
 					end
 				},
 				{
@@ -2034,7 +2034,7 @@ local function player_widget_definition(index)
 					text_id = "profile_tooltip_text",
 					content_check_function = function (content)
 						-- function 38
-						return not not content.show_profile_button
+						return content.show_profile_button
 					end
 				},
 				{
@@ -2357,7 +2357,7 @@ local function player_widget_definition(index)
 					content_id = "talent_1",
 					content_check_function = function (content)
 						-- function 66
-						return not not content.talent
+						return content.talent
 					end
 				},
 				{
@@ -2392,7 +2392,7 @@ local function player_widget_definition(index)
 					content_id = "talent_2",
 					content_check_function = function (content)
 						-- function 69
-						return not not content.talent
+						return content.talent
 					end
 				},
 				{
@@ -2427,7 +2427,7 @@ local function player_widget_definition(index)
 					content_id = "talent_3",
 					content_check_function = function (content)
 						-- function 72
-						return not not content.talent
+						return content.talent
 					end
 				},
 				{
@@ -2462,7 +2462,7 @@ local function player_widget_definition(index)
 					content_id = "talent_4",
 					content_check_function = function (content)
 						-- function 75
-						return not not content.talent
+						return content.talent
 					end
 				},
 				{
@@ -2497,7 +2497,7 @@ local function player_widget_definition(index)
 					content_id = "talent_5",
 					content_check_function = function (content)
 						-- function 78
-						return not not content.talent
+						return content.talent
 					end
 				},
 				{
@@ -2532,7 +2532,7 @@ local function player_widget_definition(index)
 					content_id = "talent_6",
 					content_check_function = function (content)
 						-- function 81
-						return not not content.talent
+						return content.talent
 					end
 				}
 			}

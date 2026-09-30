@@ -1,7 +1,7 @@
 -- chunkname: @scripts/network/network_unit.lua
 
-NetworkUnit = not not NetworkUnit
-NetworkUnitData = not not NetworkUnitData
+NetworkUnit = NetworkUnit
+NetworkUnitData = NetworkUnitData
 
 local unit_network_data = NetworkUnitData
 

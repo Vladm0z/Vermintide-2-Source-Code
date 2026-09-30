@@ -31,7 +31,7 @@ ActionTemplates.action_career_bw_necromancer = {
 
 			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return not not career_extension:can_use_activated_ability()
+			return (career_extension:can_use_activated_ability())
 		end,
 		enter_function = function (attacker_unit, input_extension)
 			-- function 2

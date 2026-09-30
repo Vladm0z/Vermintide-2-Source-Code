@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/achievements/achievement_template_helper.lua
 
-AchievementTemplateHelper = not not AchievementTemplateHelper
+AchievementTemplateHelper = AchievementTemplateHelper
 AchievementTemplateHelper.rarity_index = {
 	common = 2,
 	plentiful = 1,
@@ -115,7 +115,7 @@ end
 
 AchievementTemplateHelper.check_level_table_difficulty = function (statistics_db, stats_id, level_to_complete, difficulty_rank, career)
 	-- function 7
-	assert(type(level_to_complete) == "table" and not not level_to_complete.level_id, "level_to_complete needs to be a table with a level_id field")
+	assert(type(level_to_complete) == "table" and level_to_complete.level_id, "level_to_complete needs to be a table with a level_id field")
 
 	local level_id = level_to_complete.level_id
 
@@ -185,7 +185,7 @@ AchievementTemplateHelper.add_stat_count_challenge = function (achievements, id,
 
 			return string.format(Localize(description), count)
 		end,
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -224,7 +224,7 @@ AchievementTemplateHelper.add_health_challenge = function (achievements, id, car
 		display_completion_ui = true,
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -250,7 +250,7 @@ AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge = function (achi
 
 			return string.format(Localize(description), count)
 		end,
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -299,7 +299,7 @@ AchievementTemplateHelper.add_career_mission_count_challenge = function (achieve
 		display_completion_ui = true,
 		name = "achv_" .. id .. "_" .. career_name .. "_name",
 		desc = "achv_" .. id .. "_" .. career_name .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id .. "_" .. career_name),
+		icon = icon or "achievement_trophy_" .. id .. "_" .. career_name,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -343,7 +343,7 @@ AchievementTemplateHelper.add_multi_stat_count_challenge = function (achievement
 		display_completion_ui = true,
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -381,7 +381,7 @@ end
 
 AchievementTemplateHelper.add_weapon_kill_challenge = function (achievements, id, weapon, count, icon, dlc, id_xb1, id_ps4)
 	-- function 27
-	local stat_name = (not not dlc or not not "") .. "_kills_" .. weapon
+	local stat_name = (dlc or "") .. "_kills_" .. weapon
 
 	AchievementTemplateHelper.add_stat_count_challenge(achievements, id, stat_name, count, nil, icon, dlc, id_xb1, id_ps4)
 end
@@ -389,11 +389,11 @@ end
 AchievementTemplateHelper.add_weapon_levels_challenge = function (achievements, id, weapon, levels, difficuty, icon, dlc, id_xb1, id_ps4)
 	-- function 28
 	local stat_names = {}
-	local num_levels = levels and not not #levels or not levels and not not 0
+	local num_levels = levels and #levels or not levels and 0
 
 	for i = 1, num_levels do
 		local level_name = levels[i]
-		local stat_name = (not not dlc or not not "") .. "_" .. level_name .. "_" .. weapon
+		local stat_name = (dlc or "") .. "_" .. level_name .. "_" .. weapon
 
 		stat_names[i] = stat_name
 	end
@@ -403,7 +403,7 @@ AchievementTemplateHelper.add_weapon_levels_challenge = function (achievements, 
 	local template = {
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		required_dlc_extra = difficulty_setting.dlc_requirement,
 		ID_XB1 = id_xb1,
@@ -466,7 +466,7 @@ AchievementTemplateHelper.add_event_challenge = function (achievements, id, icon
 	local template = {
 		display_completion_ui = true,
 		name = "achv_" .. id .. "_name",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4,
@@ -491,13 +491,13 @@ end
 
 AchievementTemplateHelper.add_levels_complete_challenge = function (achievements, id, levels, difficulty_rank, icon, dlc, id_xb1, id_ps4)
 	-- function 35
-	local num_levels = levels and not not #levels or not levels and not not 0
+	local num_levels = levels and #levels or not levels and 0
 	local difficulty_key = DifficultyRankLookup[difficulty_rank]
 	local difficulty_settings = DifficultySettings[difficulty_key]
 	local template = {
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		required_dlc_extra = difficulty_settings.dlc_requirement,
 		ID_XB1 = id_xb1,
@@ -557,13 +557,13 @@ AchievementTemplateHelper.add_levels_complete_per_hero_challenge = function (ach
 	-- function 39
 	fassert(CareerSettings[career_name] ~= nil, "No career with such name (%s)", career_name)
 
-	local num_levels = levels and not not #levels or not levels and not not 0
+	local num_levels = levels and #levels or not levels and 0
 	local difficulty_key = DifficultyRankLookup[difficulty_rank]
 	local difficulty_settings = DifficultySettings[difficulty_key]
 	local template = {
 		name = "achv_" .. id .. "_" .. career_name .. "_name",
 		desc = "achv_" .. id .. "_" .. career_name .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id .. "_" .. career_name),
+		icon = icon or "achievement_trophy_" .. id .. "_" .. career_name,
 		required_dlc = dlc,
 		required_dlc_extra = difficulty_settings.dlc_requirement,
 		ID_XB1 = id_xb1,
@@ -621,7 +621,7 @@ AchievementTemplateHelper.add_meta_challenge = function (achievements, id, achie
 		display_completion_ui = true,
 		name = "achv_" .. id .. "_name",
 		desc = "achv_" .. id .. "_desc",
-		icon = not not icon or not not ("achievement_trophy_" .. id),
+		icon = icon or "achievement_trophy_" .. id,
 		required_dlc = dlc,
 		ID_XB1 = id_xb1,
 		ID_PS4 = id_ps4
@@ -653,7 +653,7 @@ AchievementTemplateHelper.add_meta_challenge = function (achievements, id, achie
 			local achievement_id = achievement_ids[i]
 			local completed = achievements[achievement_id].completed(statistics_db, stats_id)
 
-			completed = not not completed or not not backend_interface_loot:achievement_rewards_claimed(achievement_id)
+			completed = completed or backend_interface_loot:achievement_rewards_claimed(achievement_id)
 
 			if completed then
 				count = count + 1
@@ -676,7 +676,7 @@ AchievementTemplateHelper.add_meta_challenge = function (achievements, id, achie
 			local achv_name = achievements[achievement_id].name
 			local completed = achievements[achievement_id].completed(statistics_db, stats_id)
 
-			completed = not not completed or not not backend_interface_loot:achievement_rewards_claimed(achievement_id)
+			completed = completed or backend_interface_loot:achievement_rewards_claimed(achievement_id)
 
 			table.insert(reqs, {
 				name = achv_name,

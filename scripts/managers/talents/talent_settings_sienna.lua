@@ -218,7 +218,7 @@ local buff_tweak_data = {
 	}
 }
 
-TalentBuffTemplates = not not TalentBuffTemplates
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.bright_wizard = {
 	sienna_scholar_ability_cooldown_on_hit = {
 		buffs = {
@@ -1029,7 +1029,7 @@ TalentBuffTemplates.bright_wizard = {
 		}
 	}
 }
-TalentTrees = not not TalentTrees
+TalentTrees = TalentTrees
 TalentTrees.bright_wizard = {
 	{
 		{

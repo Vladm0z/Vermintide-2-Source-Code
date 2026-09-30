@@ -963,7 +963,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 2
-				style.color = content.left_hotspot.is_hover and not not style.hover_color or not content.left_hotspot.is_hover and not not style.base_color
+				style.color = content.left_hotspot.is_hover and style.hover_color or not content.left_hotspot.is_hover and style.base_color
 			end
 		},
 		{
@@ -971,7 +971,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 3
-				style.color = content.left_hotspot.is_hover and not not style.hover_color or not content.left_hotspot.is_hover and not not style.base_color
+				style.color = content.left_hotspot.is_hover and style.hover_color or not content.left_hotspot.is_hover and style.base_color
 			end
 		},
 		{
@@ -979,7 +979,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 4
-				style.color = content.right_hotspot.is_hover and not not style.hover_color or not content.right_hotspot.is_hover and not not style.base_color
+				style.color = content.right_hotspot.is_hover and style.hover_color or not content.right_hotspot.is_hover and style.base_color
 			end
 		},
 		{
@@ -987,7 +987,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "triangle",
 			content_change_function = function (content, style)
 				-- function 5
-				style.color = content.right_hotspot.is_hover and not not style.hover_color or not content.right_hotspot.is_hover and not not style.base_color
+				style.color = content.right_hotspot.is_hover and style.hover_color or not content.right_hotspot.is_hover and style.base_color
 			end
 		},
 		{
@@ -1095,7 +1095,7 @@ local function create_window(scenegraph_id, size)
 					}
 				end
 
-				return content.chat_text.text == "" and not not not content.text_field_active
+				return content.chat_text.text == "" and not content.text_field_active
 			end
 		},
 		{
@@ -1598,7 +1598,7 @@ local function create_chat_output_widget(in_scenegraph_id, offset)
 					return false
 				end
 
-				content.message_tables = not not content.channel_messages_table[content.channel_name]
+				content.message_tables = content.channel_messages_table[content.channel_name]
 
 				return true
 			end
@@ -1613,7 +1613,7 @@ local function create_chat_output_widget(in_scenegraph_id, offset)
 					return false
 				end
 
-				content.message_tables = not not content.private_messages_table[content.private_user_name]
+				content.message_tables = content.private_messages_table[content.private_user_name]
 
 				return true
 			end
@@ -1734,7 +1734,7 @@ local function create_chat_user_list_widget(in_scenegraph_id, offset)
 			text_id = "text_field",
 			content_check_function = function (content, style)
 				-- function 13
-				content.message_tables = not not content.channel_messages_table[content.channel_name]
+				content.message_tables = content.channel_messages_table[content.channel_name]
 
 				return true
 			end
@@ -1868,7 +1868,7 @@ local function create_user_entry(index)
 						-- function 15
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.is_selected and not not not button_hotspot.is_hover
+						return not button_hotspot.is_selected and not button_hotspot.is_hover
 					end
 				},
 				{
@@ -1879,7 +1879,7 @@ local function create_user_entry(index)
 						-- function 16
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -1890,7 +1890,7 @@ local function create_user_entry(index)
 						-- function 17
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				}
 			}
@@ -3118,7 +3118,7 @@ function create_command_entry(command, description, parameter, description_offse
 			vertical_alignment = "center",
 			dynamic_font = true,
 			font_type = "hell_shark_arial",
-			text_color = not not command_color or not not Colors.get_table("light_blue"),
+			text_color = command_color or Colors.get_table("light_blue"),
 			offset = {
 				30,
 				0,
@@ -3167,10 +3167,10 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 
 	local background_color = Colors.get_color_table_with_alpha(button_color_name, 255)
 
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 
 	return {
 		element = {
@@ -3262,7 +3262,7 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 						-- function 43
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -3303,10 +3303,10 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 			num_private_messages = 0,
 			glass_top = "button_glass_01",
 			has_private_conversations = false,
-			hover_glow = optional_color_name and not not ("button_state_hover_" .. optional_color_name) or not optional_color_name and not not "button_state_hover",
-			glow = optional_color_name and not not ("button_state_normal_" .. optional_color_name) or not optional_color_name and not not "button_state_normal",
+			hover_glow = optional_color_name and "button_state_hover_" .. optional_color_name or not optional_color_name and "button_state_hover",
+			glow = optional_color_name and "button_state_normal_" .. optional_color_name or not optional_color_name and "button_state_normal",
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -3364,7 +3364,7 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 				word_wrap = true,
 				horizontal_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
@@ -3378,7 +3378,7 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 				word_wrap = true,
 				horizontal_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
 					0,
@@ -3392,7 +3392,7 @@ function create_private_button(scenegraph_id, size, frame_name, background_textu
 				word_wrap = true,
 				horizontal_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
@@ -3522,7 +3522,7 @@ local function create_emoji()
 					pass_type = "rounded_background",
 					content_check_function = function (content)
 						-- function 47
-						return not not content.texture_id
+						return content.texture_id
 					end
 				},
 				{
@@ -3756,8 +3756,8 @@ end
 
 local function create_channel_list_entry(scenegraph_id, frame_setting, selected_frame_setting)
 	-- function 53
-	local frame_settings = frame_setting and not not UIFrameSettings[frame_setting] or not frame_setting and not not UIFrameSettings.menu_frame_06
-	local selected_frame_settings = selected_frame_setting and not not UIFrameSettings[selected_frame_setting] or not selected_frame_setting and not not UIFrameSettings.frame_outer_glow_01
+	local frame_settings = frame_setting and UIFrameSettings[frame_setting] or not frame_setting and UIFrameSettings.menu_frame_06
+	local selected_frame_settings = selected_frame_setting and UIFrameSettings[selected_frame_setting] or not selected_frame_setting and UIFrameSettings.frame_outer_glow_01
 	local widget = {
 		element = {}
 	}
@@ -3791,7 +3791,7 @@ local function create_channel_list_entry(scenegraph_id, frame_setting, selected_
 			pass_type = "rect",
 			content_check_function = function (content, style)
 				-- function 54
-				style.color = content.hotspot.is_hover and not not style.hover_color or not content.hotspot.is_hover and not not style.base_color
+				style.color = content.hotspot.is_hover and style.hover_color or not content.hotspot.is_hover and style.base_color
 
 				return true
 			end
@@ -4087,7 +4087,7 @@ local function create_channels_window(scenegraph_id, size)
 
 				local on = math.floor(Managers.time:time("main") * 2) % 2
 
-				style.caret_color[1] = on ~= 0 and not not 0 or not (on ~= 0) and not not 255
+				style.caret_color[1] = on ~= 0 and 0 or not (on ~= 0) and 255
 
 				return true
 			end
@@ -4546,7 +4546,7 @@ local function create_create_channel_window(scenegraph_id, size)
 
 				local on = math.floor(Managers.time:time("main") * 2) % 2
 
-				style.caret_color[1] = on ~= 0 and not not 0 or not (on ~= 0) and not not 255
+				style.caret_color[1] = on ~= 0 and 0 or not (on ~= 0) and 255
 
 				return true
 			end
@@ -4899,7 +4899,7 @@ local function create_send_invite_window(scenegraph_id, size)
 
 				local on = math.floor(Managers.time:time("main") * 2) % 2
 
-				style.caret_color[1] = on ~= 0 and not not 0 or not (on ~= 0) and not not 255
+				style.caret_color[1] = on ~= 0 and 0 or not (on ~= 0) and 255
 
 				return true
 			end
@@ -5483,10 +5483,10 @@ end
 
 function create_default_button(scenegraph_id, size, frame_name, background_texture, text, font_size, disable_dynamic_font_size)
 	-- function 70
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 
 	return {
@@ -5580,7 +5580,7 @@ function create_default_button(scenegraph_id, size, frame_name, background_textu
 			draw_frame = true,
 			background_fade = "button_bg_fade",
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -5676,7 +5676,7 @@ function create_default_button(scenegraph_id, size, frame_name, background_textu
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				dynamic_font_size = not disable_dynamic_font_size,
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -5697,7 +5697,7 @@ function create_default_button(scenegraph_id, size, frame_name, background_textu
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -5717,7 +5717,7 @@ function create_default_button(scenegraph_id, size, frame_name, background_textu
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {

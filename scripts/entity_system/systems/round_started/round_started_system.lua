@@ -112,7 +112,7 @@ end
 RoundStartedSystem._players_left_start_area = function (self)
 	-- function 10
 	local checkpoint_data = Managers.state.spawn:checkpoint_data()
-	local volume_name = checkpoint_data and not not checkpoint_data.safe_zone_volume_name or not checkpoint_data and not not self._start_area
+	local volume_name = checkpoint_data and checkpoint_data.safe_zone_volume_name or not checkpoint_data and self._start_area
 	local level = LevelHelper:current_level(self._world)
 
 	if not Level.has_volume(level, volume_name) then
@@ -164,7 +164,7 @@ RoundStartedSystem._update_player_moved = function (self)
 		local player_pos = POSITION_LOOKUP[player_unit]
 
 		if player_pos then
-			player_start_positions[player_unit] = not not player_start_positions[player_unit]
+			player_start_positions[player_unit] = player_start_positions[player_unit]
 
 			if Vector3.distance_squared(player_pos, player_start_positions[player_unit]:unbox()) > move_dist^2 then
 				self._player_moved = true

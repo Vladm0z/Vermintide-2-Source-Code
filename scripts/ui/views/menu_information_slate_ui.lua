@@ -121,12 +121,12 @@ MenuInformationSlateUI._fetch_backend_information = function (self)
 		self:_fetch_cdn_data(FOLDER .. "/" .. CDN_URL, callback(self, "_parse_cdn_data"))
 	else
 		local information_data_json = Managers.backend:get_title_data("information")
-		local information_data = not not information_data_json and not not cjson.decode(information_data_json)
+		local information_data = information_data_json and cjson.decode(information_data_json)
 
 		if information_data and not table.is_empty(information_data) then
 			self._information_data = information_data
 
-			local slate_data = not not information_data[1]
+			local slate_data = information_data[1]
 
 			self:_create_ui_elements()
 			self:_parse_information_data(slate_data)
@@ -161,7 +161,7 @@ MenuInformationSlateUI._fetch_cdn_data = function (self, url, callback)
 		local message = Http.get_uri(CDN_SERVER, 80, url)
 
 		if message then
-			local is_ok = not not string.find(message, "HTTP/1.1 200 OK")
+			local is_ok = string.find(message, "HTTP/1.1 200 OK")
 
 			if is_ok then
 				local start_idx, end_idx = string.find(message, "\r\n\r\n")
@@ -216,12 +216,12 @@ MenuInformationSlateUI._parse_cdn_data = function (self, info)
 	end
 
 	local json_data = info.message
-	local data = not not json_data and not not cjson.decode(json_data)
+	local data = json_data and cjson.decode(json_data)
 
 	if data and not table.is_empty(data) then
 		self._information_data = data
 
-		local slate_data = not not data[1]
+		local slate_data = data[1]
 
 		self:_create_ui_elements()
 		self:_parse_information_data(slate_data)
@@ -321,9 +321,9 @@ MenuInformationSlateUI._parse_text_data = function (self, data, idx, offset)
 	local spacing = text_body_parsing_data.spacing
 	local text_style = table.clone(text_body_parsing_data.default_text_style)
 
-	text_style.font_size = not not data.font_size
-	text_style.font_type = not not data.font_type
-	text_style.text_color = not not data.color
+	text_style.font_size = data.font_size
+	text_style.font_type = data.font_type
+	text_style.text_color = data.color
 
 	local text = data.text
 	local hint = data.hint
@@ -450,7 +450,7 @@ MenuInformationSlateUI._parse_text_data = function (self, data, idx, offset)
 				dash_widget.widget_height = widget.widget_height
 			end
 
-			offset = offset - widget.widget_height - (#rows > 1 and not not (spacing * 0.5) or not (#rows > 1) and not not 0)
+			offset = offset - widget.widget_height - (#rows > 1 and spacing * 0.5 or not (#rows > 1) and 0)
 		end
 
 		offset = offset - spacing
@@ -505,9 +505,9 @@ end
 
 MenuInformationSlateUI._setup_backend_image_material = function (self, texture_name, masked, reference_name, widget_cb)
 	-- function 16
-	local reference_name = not not reference_name or not not texture_name
+	local reference_name = reference_name or texture_name
 	local material_name = "MenuInformationSlateUI_" .. reference_name
-	local template_material_name = masked and not not "template_diffuse_masked" or not masked and not not "template_diffuse"
+	local template_material_name = masked and "template_diffuse_masked" or not masked and "template_diffuse"
 
 	self:_create_material_instance(material_name, template_material_name, reference_name)
 
@@ -596,12 +596,12 @@ end
 
 MenuInformationSlateUI._update_input = function (self, dt, t)
 	-- function 21
-	local input_pressed = IS_CONSOLE and not not self._input_service:get("start_press") or not IS_CONSOLE and not not self._input_service:get("special_1_press")
+	local input_pressed = IS_CONSOLE and self._input_service:get("start_press") or not IS_CONSOLE and self._input_service:get("special_1_press")
 
-	input_pressed = not not input_pressed or not not UIUtils.is_button_pressed(self._widgets_by_name.more_information, "hotspot")
-	input_pressed = not not input_pressed or not not UIUtils.is_button_pressed(self._widgets_by_name.less_information, "hotspot")
+	input_pressed = input_pressed or UIUtils.is_button_pressed(self._widgets_by_name.more_information, "hotspot")
+	input_pressed = input_pressed or UIUtils.is_button_pressed(self._widgets_by_name.less_information, "hotspot")
 
-	local is_animating = not not self._animations.expand
+	local is_animating = self._animations.expand
 
 	if input_pressed and not is_animating then
 		if not self._expanded then

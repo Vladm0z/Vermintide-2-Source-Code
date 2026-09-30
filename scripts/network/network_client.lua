@@ -36,8 +36,8 @@ NetworkClient.init = function (self, server_peer_id, wanted_profile_index, wante
 
 	self.profile_synchronizer = ProfileSynchronizer:new(false, lobby_client, self._network_state)
 	self._profile_requester = ProfileRequester:new(false, nil, self.profile_synchronizer)
-	self.wanted_profile_index = not not FindProfileIndex(Development.parameter("wanted_profile"))
-	self.wanted_party_index = not not tonumber(Development.parameter("wanted_party_index"))
+	self.wanted_profile_index = FindProfileIndex(Development.parameter("wanted_profile"))
+	self.wanted_party_index = tonumber(Development.parameter("wanted_party_index"))
 
 	if self.wanted_profile_index then
 		local profile = SPProfiles[self.wanted_profile_index]
@@ -55,14 +55,14 @@ NetworkClient.init = function (self, server_peer_id, wanted_profile_index, wante
 		local hero_name = profile.display_name
 		local hero_attributes = Managers.backend:get_interface("hero_attributes")
 
-		self.wanted_career_index = not not Development.parameter("wanted_career_index")
+		self.wanted_career_index = Development.parameter("wanted_career_index")
 	else
 		self.wanted_career_index = 0
 	end
 
 	self.lobby_client = lobby_client
 
-	local display_name = profile and not not profile.display_name or not profile and not not "no profile wanted"
+	local display_name = profile and profile.display_name or not profile and "no profile wanted"
 
 	network_printf("init - wanted_profile_index, %s, %s", self.wanted_profile_index, display_name)
 
@@ -119,7 +119,7 @@ end
 
 NetworkClient.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 4
-	network_event_delegate:register(self, "rpc_loading_synced", "rpc_notify_in_post_game", "rpc_game_started", "rpc_connection_failed", "rpc_notify_connected", IS_XB1 and not not "rpc_set_migration_host_xbox" or not IS_XB1 and not not "rpc_set_migration_host", "rpc_client_update_lobby_data", "rpc_client_connection_state", "rpc_slot_reservation_request_peers")
+	network_event_delegate:register(self, "rpc_loading_synced", "rpc_notify_in_post_game", "rpc_game_started", "rpc_connection_failed", "rpc_notify_connected", IS_XB1 and "rpc_set_migration_host_xbox" or not IS_XB1 and "rpc_set_migration_host", "rpc_client_update_lobby_data", "rpc_client_connection_state", "rpc_slot_reservation_request_peers")
 
 	self._network_event_delegate = network_event_delegate
 
@@ -167,7 +167,7 @@ NetworkClient.rpc_notify_connected = function (self, channel_id)
 		local channel_id = PEER_ID_TO_CHANNEL[self.server_peer_id]
 
 		Managers.eac:set_host(self.server_peer_id)
-		RPC.rpc_notify_lobby_joined(channel_id, self.wanted_profile_index, self.wanted_career_index, not not self.wanted_party_index, not not Application.user_setting("clan_tag"), not not Managers.account:account_id())
+		RPC.rpc_notify_lobby_joined(channel_id, self.wanted_profile_index, self.wanted_career_index, self.wanted_party_index, Application.user_setting("clan_tag"), (Managers.account:account_id()))
 
 		self._notification_sent = true
 
@@ -251,7 +251,7 @@ NetworkClient.rpc_set_migration_host = function (self, channel_id, peer_id, do_m
 	-- function 14
 	if do_migrate then
 		local player = Managers.player:player_from_peer_id(peer_id)
-		local name = player and not not player:name() or not player and not not tostring(peer_id)
+		local name = player and player:name() or not player and tostring(peer_id)
 
 		self.host_to_migrate_to = {
 			peer_id = peer_id,
@@ -266,7 +266,7 @@ NetworkClient.rpc_set_migration_host_xbox = function (self, channel_id, peer_id,
 	-- function 15
 	if do_migrate then
 		local player = Managers.player:player_from_peer_id(peer_id)
-		local name = player and not not player:name() or not player and not not tostring(peer_id)
+		local name = player and player:name() or not player and tostring(peer_id)
 
 		self.host_to_migrate_to = {
 			peer_id = peer_id,
@@ -458,12 +458,12 @@ end
 
 NetworkClient.get_peers = function (self)
 	-- function 31
-	return self._network_state and not not self._network_state:get_peers() or not self._network_state and not not {}
+	return self._network_state and self._network_state:get_peers() or not self._network_state and {}
 end
 
 NetworkClient.get_side_order_state = function (self)
 	-- function 32
-	return not not self._network_state
+	return self._network_state
 end
 
 NetworkClient.get_network_state = function (self)

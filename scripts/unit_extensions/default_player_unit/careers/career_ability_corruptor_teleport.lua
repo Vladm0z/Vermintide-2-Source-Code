@@ -49,7 +49,7 @@ CareerAbilityCorruptorTeleport._ability_available = function (self)
 	local ghost_mode_extension = self._ghost_mode_extension
 	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
 
-	return not not career_extension:can_use_activated_ability()
+	return (career_extension:can_use_activated_ability())
 end
 
 CareerAbilityCorruptorTeleport.update = function (self, unit, input, dt, context, t)

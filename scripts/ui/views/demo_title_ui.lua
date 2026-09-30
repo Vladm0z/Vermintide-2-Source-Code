@@ -72,7 +72,7 @@ DemoTitleUI._setup_world_gui = function (self)
 	self._world_gui = World.create_world_gui(self._world, Matrix4x4.identity(), WORLD_GUI_RESOLUTION, WORLD_GUI_RESOLUTION, "material", "materials/ui/ui_1080p_demo_textures", "immediate")
 
 	local camera_poses = self._camera_poses
-	local pose = not not camera_poses[DemoSettings.starting_camera_name]
+	local pose = camera_poses[DemoSettings.starting_camera_name]
 	local position = Matrix4x4.translation(pose:unbox())
 	local rotation = Matrix4x4.rotation(pose:unbox())
 	local forward = Quaternion.forward(rotation)
@@ -149,7 +149,7 @@ DemoTitleUI._position_camera = function (self)
 	-- function 8
 	local camera = ScriptViewport.camera(self._viewport)
 	local starting_camera_name = DemoSettings.starting_camera_name
-	local camera_pose = not not starting_camera_name and not not self._camera_poses[starting_camera_name]
+	local camera_pose = starting_camera_name and self._camera_poses[starting_camera_name]
 
 	if camera_pose then
 		ScriptCamera.set_local_pose(camera, camera_pose:unbox())
@@ -431,7 +431,7 @@ end
 DemoTitleUI._update_character_previewers = function (self, dt, t)
 	-- function 23
 	for _, character_previewer in pairs(self._character_previewers) do
-		character_previewer:update(not not self._ui_activated, dt, t)
+		character_previewer:update(self._ui_activated, dt, t)
 	end
 
 	if not self._ui_activated then
@@ -539,8 +539,8 @@ DemoTitleUI._update_career_information = function (self, dt, t)
 		self:_populate_career_page(profile_name, career_index)
 	end
 
-	self._ui_animation_cb = not not self._ui_animation_cb
-	self._ui_animations = not not self._ui_animations
+	self._ui_animation_cb = self._ui_animation_cb
+	self._ui_animations = self._ui_animations
 
 	if not self._ui_animations.animate_out and not self._ui_animations.delay and not is_selected and not self._selected_profile then
 		local function animation_cb(self)
@@ -588,7 +588,7 @@ end
 DemoTitleUI._update_camera = function (self, dt, t)
 	-- function 29
 	if self._camera_transition then
-		self._timer = not not self._timer
+		self._timer = self._timer
 
 		local source_camera_pose = self._camera_poses.current_pose
 		local target_camera_pose = self._target_camera_pose
@@ -604,7 +604,7 @@ DemoTitleUI._update_camera = function (self, dt, t)
 			return
 		end
 
-		local time = not not self._ref_time
+		local time = self._ref_time
 
 		self._timer = math.clamp(self._timer + dt, 0, time)
 
@@ -629,7 +629,7 @@ DemoTitleUI._update_camera = function (self, dt, t)
 
 	local w, h = Gui.resolution()
 	local camera_poses = self._camera_poses
-	local pose = not not camera_poses[DemoSettings.starting_camera_name]
+	local pose = camera_poses[DemoSettings.starting_camera_name]
 	local position = Matrix4x4.translation(pose:unbox())
 	local rotation = Matrix4x4.rotation(pose:unbox())
 	local forward = Quaternion.forward(rotation)
@@ -753,9 +753,9 @@ DemoTitleUI._draw_fps = function (self, dt, t)
 		return
 	end
 
-	self._old_fps = not not self._old_fps
-	self._fps = not not self._fps
-	self._fps_cooldown = not not self._fps_cooldown
+	self._old_fps = self._old_fps
+	self._fps = self._fps
+	self._fps_cooldown = self._fps_cooldown
 
 	local ui_top_renderer = self._ui_renderer
 	local fps = self._old_fps

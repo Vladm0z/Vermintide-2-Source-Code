@@ -191,7 +191,7 @@ HeroWindowOptions._is_button_hover_enter = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_enter
+	return hotspot.on_hover_enter
 end
 
 HeroWindowOptions._is_button_hover_exit = function (self, widget)
@@ -199,7 +199,7 @@ HeroWindowOptions._is_button_hover_exit = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_exit
+	return hotspot.on_hover_exit
 end
 
 HeroWindowOptions._is_button_selected = function (self, widget)
@@ -350,7 +350,7 @@ HeroWindowOptions._calculate_power_level = function (self)
 	local presentable_hero_power_level = UIUtils.presentable_hero_power_level(total_power_level)
 	local widgets_by_name = self._widgets_by_name
 	local content = widgets_by_name.power_text.content
-	local play_effect = not not content.power
+	local play_effect = content.power
 
 	if play_effect then
 		self._hero_power_effect_time = HERO_POWER_EFFECT_DURATION
@@ -408,7 +408,7 @@ HeroWindowOptions._update_hero_portrait_frame = function (self)
 	widgets_by_name.hero_name.content.text = hero_display_name
 	widgets_by_name.career_name.content.text = career_display_name
 
-	local level_text = self._hero_level and not not tostring(self._hero_level) or not self._hero_level and not not "-"
+	local level_text = self._hero_level and tostring(self._hero_level) or not self._hero_level and "-"
 	local portrait_frame_name = self:_get_portrait_frame()
 	local portrait_widget = self:_create_portrait_frame_widget(portrait_frame_name, portrait_image, level_text)
 
@@ -473,7 +473,7 @@ HeroWindowOptions._get_portrait_frame = function (self)
 		local item_data = item.data
 		local frame_name = item_data.temporary_template
 
-		player_portrait_frame = not not frame_name or not not player_portrait_frame
+		player_portrait_frame = frame_name or player_portrait_frame
 	end
 
 	return player_portrait_frame

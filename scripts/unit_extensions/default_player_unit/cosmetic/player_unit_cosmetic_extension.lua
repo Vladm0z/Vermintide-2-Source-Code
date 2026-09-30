@@ -49,7 +49,7 @@ PlayerUnitCosmeticExtension.init = function (self, extension_init_context, unit,
 		self:set_equipped_frame(frame_name)
 	end
 
-	local career_index = self._player and not not self._player:career_index() or not self._player and not not 1
+	local career_index = self._player and self._player:career_index() or not self._player and 1
 	local career = profile.careers[career_index]
 
 	self:_init_mesh_attachment(self._world, unit, skin_name, profile, career)
@@ -186,7 +186,7 @@ PlayerUnitCosmeticExtension.trigger_equip_events = function (self, slot_name, un
 	-- function 11
 	if slot_name == "slot_hat" then
 		local skin_data = self._cosmetics.skin
-		local equip_hat_event = not not skin_data.equip_hat_event
+		local equip_hat_event = skin_data.equip_hat_event
 
 		if equip_hat_event then
 			Unit.flow_event(unit, equip_hat_event)
@@ -201,7 +201,7 @@ end
 
 PlayerUnitCosmeticExtension._init_mesh_attachment = function (self, world, unit, skin_name, profile, career)
 	-- function 13
-	local third_person_attachment = not not Cosmetics[skin_name].third_person_attachment
+	local third_person_attachment = Cosmetics[skin_name].third_person_attachment
 	local tp_attachment_unit_name = third_person_attachment.unit
 	local tp_attachment_node_linking = third_person_attachment.attachment_node_linking
 	local tp_unit_mesh = Managers.state.unit_spawner:spawn_local_unit(tp_attachment_unit_name)
@@ -215,12 +215,12 @@ PlayerUnitCosmeticExtension._init_mesh_attachment = function (self, world, unit,
 	Unit.flow_event(unit, "character_vo_set")
 
 	local level_settings = LevelHelper:current_level_settings()
-	local climate_type = not not level_settings.climate_type
+	local climate_type = level_settings.climate_type
 
 	Unit.set_flow_variable(tp_unit_mesh, "climate_type", climate_type)
 	Unit.flow_event(tp_unit_mesh, "climate_type_set")
 
-	local equip_skin_event = not not Cosmetics[skin_name].equip_skin_event
+	local equip_skin_event = Cosmetics[skin_name].equip_skin_event
 
 	Unit.flow_event(unit, equip_skin_event)
 

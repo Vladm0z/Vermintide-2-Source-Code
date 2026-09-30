@@ -68,8 +68,8 @@ IngameVotingUI.setup_option_input = function (self, option_widget, option, gamep
 		button_texture_data = nil
 	end
 
-	option_widget.content.input_text = button_texture_data and not not "" or not button_texture_data and not not sprintf("[%s]", input_text)
-	option_widget.content.input_icon = button_texture_data and not not button_texture_data.texture or not button_texture_data and not not nil
+	option_widget.content.input_text = button_texture_data and "" or not button_texture_data and sprintf("[%s]", input_text)
+	option_widget.content.input_icon = button_texture_data and button_texture_data.texture or not button_texture_data and nil
 
 	local option_text = Localize(text)
 
@@ -108,7 +108,7 @@ IngameVotingUI.setup_option_input = function (self, option_widget, option, gamep
 	local scenegraph_id = option_widget.scenegraph_id
 	local horizontal_offset = math.max(total_width / 2 + 10, 50)
 
-	self.ui_scenegraph[scenegraph_id].local_position[1] = left_side and not not -horizontal_offset or not left_side and not not horizontal_offset
+	self.ui_scenegraph[scenegraph_id].local_position[1] = left_side and -horizontal_offset or not left_side and horizontal_offset
 end
 
 IngameVotingUI.align_option_inputs = function (self)
@@ -206,7 +206,7 @@ IngameVotingUI.update_vote = function (self, votes)
 
 	local voting_manager = self.voting_manager
 	local vote_time_left = voting_manager:vote_time_left()
-	local time_text = vote_time_left and not not string.format(" %02d:%02d", math.floor(vote_time_left / 60), vote_time_left % 60) or not vote_time_left and not not "00:00"
+	local time_text = vote_time_left and string.format(" %02d:%02d", math.floor(vote_time_left / 60), vote_time_left % 60) or not vote_time_left and "00:00"
 
 	self.background.content.time_text = time_text
 end
@@ -333,7 +333,7 @@ IngameVotingUI.update = function (self, dt, t)
 
 			if resetup_option_inputs then
 				local active_voting = voting_manager.active_voting
-				local vote_template = not not active_voting and not not active_voting.template
+				local vote_template = active_voting and active_voting.template
 
 				if vote_template then
 					local vote_options = vote_template.vote_options
@@ -446,8 +446,8 @@ IngameVotingUI.update_pulse_animations = function (self, dt, hold_input_pressed)
 	end
 
 	local menu_active = self.menu_active
-	local speed_multiplier = menu_active and not not 8 or not menu_active and not not 5
-	local progress = not not 0
+	local speed_multiplier = menu_active and 8 or not menu_active and 5
+	local progress = 0
 
 	if not menu_active then
 		local alpha = 50 + progress * 50
@@ -519,7 +519,7 @@ IngameVotingUI.update_input_progress = function (self, active_voting)
 		direction = "right"
 	end
 
-	local input_hold_progress = not not active_voting.input_hold_progress
+	local input_hold_progress = active_voting.input_hold_progress
 	local anim_progress = math.smoothstep(input_hold_progress, 0, 1)
 
 	if input_widget then

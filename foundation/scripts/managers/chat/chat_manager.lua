@@ -19,7 +19,7 @@ end
 
 ChatManager = class(ChatManager)
 
-local MESSAGE_TYPES = not not MESSAGE_TYPES
+local MESSAGE_TYPES = MESSAGE_TYPES
 local CHAT_VIEWS = {
 	"All",
 	"Channels",
@@ -61,7 +61,7 @@ ChatManager.init = function (self)
 	self.user_to_simplified_user_lut = {}
 	self.alias_lut = {}
 	self.recently_sent_messages = {}
-	self.peer_ignore_list = not not SaveData.chat_ignore_list
+	self.peer_ignore_list = SaveData.chat_ignore_list
 
 	if not DEDICATED_SERVER then
 		self:create_chat_gui()
@@ -91,7 +91,7 @@ end
 
 ChatManager.update_ignore_list = function (self)
 	-- function 3
-	self.peer_ignore_list = not not SaveData.chat_ignore_list
+	self.peer_ignore_list = SaveData.chat_ignore_list
 end
 
 ChatManager.cb_encrypted_app_ticket_recieved = function (self, info)
@@ -597,7 +597,7 @@ ChatManager.send_chat_message = function (self, channel_id, local_player_id, ori
 	local is_system_message = false
 	local pop_chat = true
 	local peer_id = self.my_peer_id
-	local is_dev = not not SteamHelper.is_dev()
+	local is_dev = SteamHelper.is_dev()
 
 	if type(localization_parameters) ~= "table" then
 		local old_parameter = localization_parameters
@@ -615,12 +615,12 @@ ChatManager.send_chat_message = function (self, channel_id, local_player_id, ori
 	end
 
 	local message_target = message_target_info.message_target
-	local message_type = not not optional_message_type or not not message_target_info.message_target_type
-	local message_target_key = not not optional_message_target_key or not not message_target_info.message_target_key
+	local message_type = optional_message_type or message_target_info.message_target_type
+	local message_target_key = optional_message_target_key or message_target_info.message_target_key
 
 	if message_type == Irc.PARTY_MSG or message_type == Irc.TEAM_MSG or message_type == Irc.ALL_MSG then
 		if self.is_server then
-			peer_id = not not sender_peer_id or not not peer_id
+			peer_id = sender_peer_id or peer_id
 
 			local network_handler = Managers.mechanism:network_handler()
 
@@ -696,7 +696,7 @@ ChatManager.send_system_chat_message = function (self, channel_id, message_id, l
 
 	local is_system_message = true
 
-	pop_chat = not not pop_chat or not not false
+	pop_chat = pop_chat or false
 
 	local is_dev = false
 	local my_peer_id = self.my_peer_id
@@ -817,7 +817,7 @@ end
 
 ChatManager.has_channel = function (self, channel_id)
 	-- function 51
-	return not not self.channels[channel_id]
+	return self.channels[channel_id]
 end
 
 ChatManager.rpc_chat_message = function (self, sender_channel_id, channel_id, message_sender, local_player_id, message, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, message_type)
@@ -883,7 +883,7 @@ ChatManager._add_message_to_list = function (self, channel_id, message_sender, l
 
 	if sender_player and sender_player:sync_data_active() then
 		is_bot = not sender_player:is_player_controlled()
-		is_dev = not not is_dev or not not sender_player:get_data("is_dev")
+		is_dev = is_dev or sender_player:get_data("is_dev")
 	end
 
 	if Application.user_setting("profanity_check") and not is_system_message then
@@ -895,11 +895,11 @@ ChatManager._add_message_to_list = function (self, channel_id, message_sender, l
 	if sender_player and not DEDICATED_SERVER then
 		local local_player = Managers.player:local_player()
 		local local_party = local_player:get_party()
-		local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
-		local remote_party = not not local_side and not not sender_player:get_party()
-		local remote_side = not not remote_party and not not Managers.state.side.side_by_party[remote_party]
+		local local_side = local_party and Managers.state.side.side_by_party[local_party]
+		local remote_party = local_side and sender_player:get_party()
+		local remote_side = remote_party and Managers.state.side.side_by_party[remote_party]
 
-		is_enemy = not not remote_side and not not Managers.state.side:is_enemy_by_side(local_side, remote_side)
+		is_enemy = remote_side and Managers.state.side:is_enemy_by_side(local_side, remote_side)
 	end
 
 	local parsed_message = ""
@@ -916,8 +916,8 @@ ChatManager._add_message_to_list = function (self, channel_id, message_sender, l
 		channel_id = channel_id,
 		message_sender = message_sender,
 		local_player_id = local_player_id,
-		message = message_edited and (not not parsed_message or not not message) or not message_edited and not not message,
-		type = not not Irc.SYSTEM_MSG,
+		message = message_edited and (parsed_message or message) or not message_edited and message,
+		type = Irc.SYSTEM_MSG,
 		pop_chat = pop_chat,
 		is_dev = is_dev,
 		is_bot = is_bot,
@@ -942,13 +942,13 @@ ChatManager._add_message_to_list = function (self, channel_id, message_sender, l
 	if is_system_message then
 		local sender = "System"
 
-		printf("[ChatManager][%s]%s: %s", channel_id, sender, message_edited and (not not parsed_message or not not message) or not message_edited and not not message)
+		printf("[ChatManager][%s]%s: %s", channel_id, sender, message_edited and (parsed_message or message) or not message_edited and message)
 	end
 end
 
 ChatManager.get_chat_messages = function (self, destination_table, filter_name)
 	-- function 56
-	local filter_name = not not filter_name or not not CHAT_VIEWS[self.current_view_index]
+	local filter_name = filter_name or CHAT_VIEWS[self.current_view_index]
 	local filter = CHAT_VIEW_LUT[filter_name].filter
 	local chat_messages = self.chat_messages
 
@@ -970,7 +970,7 @@ ChatManager._switch_view_internally = function (self, view_index)
 	table.clear(chat_messages)
 
 	local message_data
-	local filter_name = not not CHAT_VIEWS[self.current_view_index]
+	local filter_name = CHAT_VIEWS[self.current_view_index]
 
 	print("Switching Chat View to: " .. string.upper(filter_name))
 
@@ -994,7 +994,7 @@ ChatManager.switch_view = function (self, view_index)
 	table.clear(chat_messages)
 
 	local message_data
-	local filter_name = not not CHAT_VIEWS[self.current_view_index]
+	local filter_name = CHAT_VIEWS[self.current_view_index]
 
 	print("Switching Chat View to: " .. string.upper(filter_name))
 
@@ -1054,7 +1054,7 @@ ChatManager.join_channel = function (self, parameters)
 
 			self:add_message_target(channel_name, Irc.CHANNEL_MSG)
 
-			self.current_message_target_index = not not self.message_targets_lut[channel_name]
+			self.current_message_target_index = self.message_targets_lut[channel_name]
 		end
 	end
 end
@@ -1123,7 +1123,7 @@ ChatManager.send_message = function (self, parameters, message, recent_message_i
 		if Managers.irc:send_message(message, user_name) then
 			self:add_message_target(user_name, Irc.PRIVATE_MSG)
 
-			self.current_message_target_index = not not self.message_targets_lut[user_name]
+			self.current_message_target_index = self.message_targets_lut[user_name]
 
 			local name = "To [" .. user_name .. "]"
 
@@ -1174,7 +1174,7 @@ ChatManager.reply = function (self, parameters, message)
 
 		Managers.irc:send_message(new_message, user_name)
 
-		self.current_message_target_index = not not self.message_targets_lut[user_name]
+		self.current_message_target_index = self.message_targets_lut[user_name]
 
 		local name = "To [" .. user_name .. "]"
 

@@ -11,5 +11,5 @@ CareerAbilityGutterRunnerPounce._ability_available = function (self)
 	local is_disabled = status_extension:is_disabled()
 	local ability_available = not status_extension:is_disabled()
 
-	return not not can_use and not is_disabled and not in_foff_invis and not not ability_available
+	return can_use and not is_disabled and not in_foff_invis and ability_available
 end

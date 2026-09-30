@@ -15,7 +15,7 @@ CommonPopupHandler.init = function (self, context)
 	self._n_popups = 0
 	self._popup_ids = 0
 
-	local menu_active = not not context.ingame_ui.menu_active
+	local menu_active = context.ingame_ui.menu_active
 
 	self._menu_active = menu_active
 
@@ -120,5 +120,5 @@ end
 
 CommonPopupHandler._is_menu_active = function (self)
 	-- function 7
-	return not not self._context.ingame_ui.menu_active
+	return self._context.ingame_ui.menu_active
 end

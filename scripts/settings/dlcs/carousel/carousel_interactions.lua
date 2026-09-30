@@ -155,7 +155,7 @@ InteractionDefinitions.carousel_dark_pact_tunnel = {
 				return
 			end
 
-			return not status_extension:breed_action() and not not not status_extension:should_tunnel()
+			return not status_extension:breed_action() and not status_extension:should_tunnel()
 		end,
 		hud_description = function (interactable_unit, data, config)
 			-- function 17
@@ -238,7 +238,7 @@ InteractionDefinitions.carousel_dark_pact_spawner = {
 				return
 			end
 
-			return not status_extension:breed_action() and not not not status_extension:should_spawn()
+			return not status_extension:breed_action() and not status_extension:should_spawn()
 		end,
 		hud_description = function (interactable_unit, data, config)
 			-- function 28
@@ -287,7 +287,7 @@ InteractionDefinitions.carousel_start_versus = {
 			local used = Unit.get_data(interactable_unit, "interaction_data", "used")
 			local all_players_spawned = Managers.matchmaking:are_all_players_spawned()
 
-			return not used and not not all_players_spawned
+			return not used and all_players_spawned
 		end
 	},
 	client = {
@@ -321,7 +321,7 @@ InteractionDefinitions.carousel_start_versus = {
 			local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 			local all_players_spawned = Managers.matchmaking:are_all_players_spawned()
 
-			return not used and not being_used and not not all_players_spawned
+			return not used and not being_used and all_players_spawned
 		end,
 		hud_description = function (interactable_unit, data, config)
 			-- function 39
@@ -329,7 +329,7 @@ InteractionDefinitions.carousel_start_versus = {
 		end
 	}
 }
-InteractionDefinitions.carousel_door_transition = not not InteractionDefinitions.carousel_door_transition
+InteractionDefinitions.carousel_door_transition = InteractionDefinitions.carousel_door_transition
 InteractionDefinitions.carousel_door_transition.config.swap_to_3p = false
 
 InteractionDefinitions.carousel_door_transition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -360,10 +360,10 @@ InteractionDefinitions.carousel_door_transition.client.can_interact = function (
 	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 	local is_vote_in_progress = Managers.state.voting:vote_in_progress()
 
-	return not is_game_matchmaking and not not not is_vote_in_progress
+	return not is_game_matchmaking and not is_vote_in_progress
 end
 
-InteractionDefinitions.versus_map_access = not not InteractionDefinitions.versus_map_access
+InteractionDefinitions.versus_map_access = InteractionDefinitions.versus_map_access
 InteractionDefinitions.versus_map_access.config.swap_to_3p = false
 
 InteractionDefinitions.versus_map_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)

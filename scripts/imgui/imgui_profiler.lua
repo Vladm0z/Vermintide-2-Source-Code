@@ -66,7 +66,7 @@ ImguiProfiler.post_draw = function (self)
 	if update_filter or self._auto_update_filter then
 		FILTERED_SCOPES_INDEX = 1
 
-		local SCOPES = not not self._paused_scope
+		local SCOPES = self._paused_scope
 
 		if self._filter ~= "" then
 			self:_apply_filter(SCOPES, false)
@@ -76,7 +76,7 @@ ImguiProfiler.post_draw = function (self)
 	self._pause_on_frame_spike = Imgui.checkbox("Pause on frame spike", self._pause_on_frame_spike)
 
 	if self._pause_on_frame_spike then
-		self._pause_on_frame_time_text = Imgui.input_text("Pause At Frametime (ms)", not not self._pause_on_frame_time_text)
+		self._pause_on_frame_time_text = Imgui.input_text("Pause At Frametime (ms)", self._pause_on_frame_time_text)
 
 		local last_time = self._pause_on_frame_time
 
@@ -99,7 +99,7 @@ ImguiProfiler.post_draw = function (self)
 	if self._filter_applied then
 		self:_draw_filtered_scopes()
 	else
-		self:_draw_lookup_table(not not self._paused_scope, false)
+		self:_draw_lookup_table(self._paused_scope, false)
 	end
 
 	Imgui.end_child_window()
@@ -129,14 +129,14 @@ ImguiProfiler._draw_lookup_table = function (self, in_scope, is_top_scope)
 	-- function 9
 	local parent = in_scope.name
 
-	if in_scope.frame_index and in_scope.frame_index < not not self._paused_frame_index then
+	if in_scope.frame_index and in_scope.frame_index < self._paused_frame_index then
 		return
 	end
 
 	local is_root = false
 	local is_leaf = in_scope.is_leaf ~= false
-	local scope_time = self._paused_scope and not not in_scope.profiler_scope or not self._paused_scope and not not in_scope.average_profiler_scope
-	local profiler_suffix = scope_time and not not string.format("%.3f", scope_time) or not scope_time and not not ""
+	local scope_time = self._paused_scope and in_scope.profiler_scope or not self._paused_scope and in_scope.average_profiler_scope
+	local profiler_suffix = scope_time and string.format("%.3f", scope_time) or not scope_time and ""
 	local header
 
 	if is_leaf then
@@ -184,10 +184,10 @@ ImguiProfiler._draw_lookup_table = function (self, in_scope, is_top_scope)
 
 		for _, scope in pairs(in_scope) do
 			if type(scope) == "table" then
-				if scope.parent == parent and scope.frame_index == not not self._paused_frame_index then
+				if scope.parent == parent and scope.frame_index == self._paused_frame_index then
 					SORTED_SCOPES[#SORTED_SCOPES + 1] = scope
 
-					local value = self._paused_scope and not not scope.profiler_scope or not self._paused_scope and not not scope.average_profiler_scope
+					local value = self._paused_scope and scope.profiler_scope or not self._paused_scope and scope.average_profiler_scope
 
 					if top_value < value then
 						top_value = value
@@ -205,7 +205,7 @@ ImguiProfiler._draw_lookup_table = function (self, in_scope, is_top_scope)
 
 						SORTED_SCOPES[#SORTED_SCOPES + 1] = entry
 
-						local value = self._paused_scope and not not entry.profiler_scope or not self._paused_scope and not not entry.average_profiler_scope
+						local value = self._paused_scope and entry.profiler_scope or not self._paused_scope and entry.average_profiler_scope
 
 						if top_value < value then
 							top_value = value
@@ -230,7 +230,7 @@ ImguiProfiler._draw_lookup_table = function (self, in_scope, is_top_scope)
 			self:_draw_lookup_table(scope, scope == top_scope)
 		end
 
-		if is_root and not self._paused_scope and total_frame_time >= not not self._pause_on_frame_time then
+		if is_root and not self._paused_scope and total_frame_time >= self._pause_on_frame_time then
 			self._paused_scope = table.clone(in_scope)
 			self._paused_frame_index = CURRENT_FRAME_INDEX
 		end
@@ -243,7 +243,7 @@ ImguiProfiler._apply_filter = function (self, in_scope)
 	-- function 11
 	local parent = in_scope.name
 
-	if in_scope.frame_index and in_scope.frame_index < not not self._paused_frame_index then
+	if in_scope.frame_index and in_scope.frame_index < self._paused_frame_index then
 		return
 	end
 
@@ -260,7 +260,7 @@ ImguiProfiler._apply_filter = function (self, in_scope)
 
 	for _, scope in pairs(in_scope) do
 		if type(scope) == "table" then
-			if scope.parent == parent and scope.frame_index == not not self._paused_frame_index then
+			if scope.parent == parent and scope.frame_index == self._paused_frame_index then
 				SORTED_SCOPES[#SORTED_SCOPES + 1] = scope
 			end
 

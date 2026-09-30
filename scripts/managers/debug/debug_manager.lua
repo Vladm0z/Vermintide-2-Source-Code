@@ -6,8 +6,8 @@ require("scripts/managers/debug/debug")
 require("scripts/managers/debug/profiler_scopes")
 
 DebugManager = class(DebugManager)
-QuickDrawer = not not QuickDrawer
-QuickDrawerStay = not not QuickDrawerStay
+QuickDrawer = QuickDrawer
+QuickDrawerStay = QuickDrawerStay
 
 local RPCS = {
 	"rpc_debug_command",
@@ -15,7 +15,7 @@ local RPCS = {
 	"rpc_debug_option_propagation_response"
 }
 
-GLOBAL_TIME_SCALE = not not GLOBAL_TIME_SCALE
+GLOBAL_TIME_SCALE = GLOBAL_TIME_SCALE
 
 local time_scale_list = {
 	1e-05,
@@ -98,11 +98,11 @@ end
 
 DebugManager.drawer = function (self, options)
 	-- function 2
-	options = not not options or not not {}
+	options = options or {}
 
 	local drawer_name = options.name
 	local drawer
-	local drawer_api = BUILD ~= "release" and not not DebugDrawer or not (BUILD ~= "release") and not not DebugDrawerRelease
+	local drawer_api = BUILD ~= "release" and DebugDrawer or not (BUILD ~= "release") and DebugDrawerRelease
 
 	if drawer_name == nil then
 		local line_object = World.create_line_object(self._world)
@@ -250,7 +250,7 @@ DebugManager.update = function (self, dt, t)
 
 	local player = Managers.player:player_from_peer_id(Network.peer_id())
 	local controller = player.input_source
-	local debug_mouse_cursor = not not controller and not not controller:has("debug_mouse_cursor")
+	local debug_mouse_cursor = controller and controller:has("debug_mouse_cursor")
 
 	if debug_mouse_cursor and script_data.has_mouse then
 		local set = not self._debug_mouse_cursor
@@ -428,7 +428,7 @@ DebugManager._adjust_gamepad_player_speed = function (self)
 	if not IS_PS4 and not is_ps_pad then
 		local button_index = active_controller.button_index("right_thumb")
 
-		right_held = not not button_index and active_controller.button(button_index) > 0.5
+		right_held = button_index and active_controller.button(button_index) > 0.5
 	else
 		right_held = active_controller.button(active_controller.button_index("r3")) > 0.5
 	end
@@ -439,11 +439,11 @@ DebugManager._adjust_gamepad_player_speed = function (self)
 		if not IS_PS4 and not is_ps_pad then
 			local button_index = active_controller.button_index("d_up")
 
-			up_pressed = not not button_index and not not active_controller.pressed(button_index)
+			up_pressed = button_index and active_controller.pressed(button_index)
 
 			local button_index = active_controller.button_index("d_down")
 
-			down_pressed = not not button_index and not not active_controller.pressed(button_index)
+			down_pressed = button_index and active_controller.pressed(button_index)
 		else
 			up_pressed = active_controller.pressed(active_controller.button_index("up"))
 			down_pressed = active_controller.pressed(active_controller.button_index("down"))
@@ -532,9 +532,9 @@ DebugManager.color = function (self, unit, alpha)
 	-- function 16
 	fassert(Unit.alive(unit), "Trying to get color from a destroyed unit")
 
-	local alpha = not not alpha or not not 255
+	local alpha = alpha or 255
 
-	self._unit_color_list = not not self._unit_color_list
+	self._unit_color_list = self._unit_color_list
 
 	if not self._unit_color_list[unit] then
 		self._unit_color_list[unit] = self:_get_next_color_index()
@@ -613,7 +613,7 @@ DebugManager._update_sound_debug = function (self)
 		self._sound_debug = sound_debug
 		self._sound_cue_breakpoint = sound_cue_breakpoint
 
-		local should_hook = not not sound_debug and not not sound_cue_breakpoint
+		local should_hook = sound_debug and sound_cue_breakpoint
 
 		if sound_debug then
 			Debug.hook(WwiseWorld, "trigger_event", function (original, wwise_world, event, ...)
@@ -623,7 +623,7 @@ DebugManager._update_sound_debug = function (self)
 				end
 
 				if self._sound_cue_breakpoint then
-					rawset(_G, "_sound_cue_breakpoint_set", not not rawget(_G, "_sound_cue_breakpoint_set"))
+					rawset(_G, "_sound_cue_breakpoint_set", (rawget(_G, "_sound_cue_breakpoint_set")))
 
 					_sound_cue_breakpoint_set[event] = true
 
@@ -694,7 +694,7 @@ DebugManager.draw_screen_rect = function (self, x, y, z, w, h, color)
 		self:_create_screen_gui()
 	end
 
-	Gui.rect(self._screen_gui, Vector3(x, y, not not z or not not 1), Vector2(w, h), not not color or not not Color(255, 255, 255, 255))
+	Gui.rect(self._screen_gui, Vector3(x, y, z or 1), Vector2(w, h), color or Color(255, 255, 255, 255))
 end
 
 DebugManager.draw_screen_text = function (self, x, y, z, text, size, color, font)
@@ -703,7 +703,7 @@ DebugManager.draw_screen_text = function (self, x, y, z, text, size, color, font
 		self:_create_screen_gui()
 	end
 
-	local font_type = not not font or not not "hell_shark"
+	local font_type = font or "hell_shark"
 	local font_by_resolution = UIFontByResolution({
 		dynamic_font = true,
 		font_type = font_type,
@@ -711,7 +711,7 @@ DebugManager.draw_screen_text = function (self, x, y, z, text, size, color, font
 	})
 	local font, size, material = unpack(font_by_resolution)
 
-	Gui.text(self._screen_gui, text, font, size, material, Vector3(x, y, z), not not color or not not Color(255, 255, 255, 255))
+	Gui.text(self._screen_gui, text, font, size, material, Vector3(x, y, z), color or Color(255, 255, 255, 255))
 end
 
 DebugManager.screen_text_extents = function (self, text, size)
@@ -990,14 +990,14 @@ end
 
 DebugManager.send_conflict_director_command = function (self, method, breed_name, position, extra_data)
 	-- function 41
-	breed_name = not not breed_name or not not ""
+	breed_name = breed_name or ""
 
 	if not position then
 		local player_unit = Managers.player:local_player().player_unit
 		local player_position = POSITION_LOOKUP[player_unit]
 		local conflict = Managers.state.conflict
 
-		position = not not conflict:player_aim_raycast(self._world, false, "filter_ray_horde_spawn") or not not player_position or not not Vector3.zero()
+		position = conflict:player_aim_raycast(self._world, false, "filter_ray_horde_spawn") or player_position or Vector3.zero()
 	end
 
 	local enhancements_string = ""
@@ -1010,7 +1010,7 @@ DebugManager.send_conflict_director_command = function (self, method, breed_name
 		end), ",")
 	end
 
-	Managers.state.network.network_transmit:send_rpc_server("rpc_debug_conflict_director_command", method, breed_name, position, enhancements_string, not not extra_data or not not {})
+	Managers.state.network.network_transmit:send_rpc_server("rpc_debug_conflict_director_command", method, breed_name, position, enhancements_string, extra_data or {})
 end
 
 DebugManager._update_unit_spawning = function (self, dt, t)
@@ -1083,7 +1083,7 @@ DebugManager._update_bot_behavior_debug = function (self)
 		return
 	end
 
-	script_data.ai_bots_debug_behavior_data = not not script_data.ai_bots_debug_behavior_data
+	script_data.ai_bots_debug_behavior_data = script_data.ai_bots_debug_behavior_data
 
 	local font_size = 15
 	local row_height = 20

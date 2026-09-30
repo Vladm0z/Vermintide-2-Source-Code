@@ -57,12 +57,12 @@ EntityManager2.system_by_extension = function (self, extension_name)
 	-- function 7
 	local system_name = self._extension_to_system_map[extension_name]
 
-	return not not system_name and not not self._systems[system_name]
+	return system_name and self._systems[system_name]
 end
 
 EntityManager2.get_entities = function (self, extension_name)
 	-- function 8
-	return not not self._extensions[extension_name]
+	return self._extensions[extension_name]
 end
 
 EntityManager2.destroy = function (self)
@@ -80,7 +80,7 @@ end
 
 EntityManager2.add_unit_extensions = function (self, world, unit, unit_template_name, all_extension_init_data)
 	-- function 10
-	all_extension_init_data = not not all_extension_init_data or not not EMPTY_TABLE
+	all_extension_init_data = all_extension_init_data or EMPTY_TABLE
 
 	local ignore_extensions_list = self._ignore_extensions_list
 	local extension_to_system_map = self._extension_to_system_map
@@ -135,7 +135,7 @@ EntityManager2.add_unit_extensions = function (self, world, unit, unit_template_
 
 			assert(extension_system_name, string.format("No such registered extension %q", extension_name))
 
-			local extension_init_data = not not all_extension_init_data[extension_system_name]
+			local extension_init_data = all_extension_init_data[extension_system_name]
 
 			assert(extension_to_system_map[extension_name])
 
@@ -147,8 +147,8 @@ EntityManager2.add_unit_extensions = function (self, world, unit, unit_template_
 
 			assert(extension, string.format("System (%s) must return the created extension (%s)", extension_system_name, extension_name))
 
-			self_extensions[extension_name] = not not self_extensions[extension_name]
-			self_units[unit] = not not self_units[unit]
+			self_extensions[extension_name] = self_extensions[extension_name]
+			self_units[unit] = self_units[unit]
 			self_units[unit][extension_name] = extension
 
 			assert(extension ~= EMPTY_TABLE)
@@ -247,7 +247,7 @@ end
 
 EntityManager2.add_and_register_units = function (self, world, unit_list, num_units)
 	-- function 14
-	num_units = not not num_units or not not #unit_list
+	num_units = num_units or #unit_list
 
 	local added_list = self.temp_table
 	local num_added = 0

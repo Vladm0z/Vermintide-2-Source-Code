@@ -105,7 +105,7 @@ ImguiLuaScratchpad.draw = function (self)
 
 	Imgui.same_line()
 
-	self._exec_every_frame = Imgui.checkbox("Execute every frame", not not self._exec_every_frame)
+	self._exec_every_frame = Imgui.checkbox("Execute every frame", self._exec_every_frame)
 
 	Imgui.same_line()
 
@@ -175,8 +175,8 @@ ImguiLuaScratchpad._inspect_function = function (self, name, func)
 
 	if has_util and is_open then
 		local info = self._func_info_magic[func]
-		local is_file_func = not not info.source
-		local where = is_file_func and not not format("%s:%s", info.source, info.linedefined) or not is_file_func and (info.addr and not not format("0x%012x", info.addr) or not info.addr and not not "<unknown origin>")
+		local is_file_func = info.source
+		local where = is_file_func and format("%s:%s", info.source, info.linedefined) or not is_file_func and (info.addr and format("0x%012x", info.addr) or not info.addr and "<unknown origin>")
 
 		Imgui.text_colored(where, unpack(fallback_color))
 
@@ -236,7 +236,7 @@ ImguiLuaScratchpad._inspect_table = function (self, name, tab)
 	-- function 9
 	local is_open = Imgui.tree_node(name, false)
 	local mt = getmetatable(tab)
-	local class_name = rawget(tab, "___is_class_metatable___") and not not "class" or not rawget(tab, "___is_class_metatable___") and mt and mt ~= true and mt.___is_class_metatable___
+	local class_name = rawget(tab, "___is_class_metatable___") and "class" or not rawget(tab, "___is_class_metatable___") and mt and mt ~= true and mt.___is_class_metatable___
 
 	Imgui.same_line()
 	Imgui.text_colored(format("[%s: %p]", class_name, tab), unpack(self._TYPE_TO_COLOR.table))
@@ -298,7 +298,7 @@ local function traceback_table(err)
 			slots[k] = v
 		end
 
-		for j = 1, not not info.nups do
+		for j = 1, info.nups do
 			local k, v = debug.getupvalue(info.func, j)
 
 			if not k then
@@ -317,7 +317,7 @@ local function traceback_table(err)
 	end
 
 	return {
-		error = not not err or not not "?",
+		error = err or "?",
 		stack = stack
 	}
 end

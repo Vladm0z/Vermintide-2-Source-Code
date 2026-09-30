@@ -57,7 +57,7 @@ end
 
 StartGameWindowDeusChaosGodInformation._start_animation = function (self, animation_name, widget, params)
 	-- function 4
-	params = not not params or not not {}
+	params = params or {}
 	params.render_settings = self._render_settings
 	self._animations[animation_name] = self._ui_animator:start_animation(animation_name, widget, self._scenegraph_definition, params)
 end
@@ -75,7 +75,7 @@ end
 
 StartGameWindowDeusChaosGodInformation._update_journey = function (self)
 	-- function 6
-	local selected_journey = not not self._parent:get_selected_level_id()
+	local selected_journey = self._parent:get_selected_level_id()
 
 	if selected_journey ~= self._journey_name then
 		self._journey_name = selected_journey
@@ -167,8 +167,8 @@ StartGameWindowDeusChaosGodInformation._update_theme = function (self, initial_d
 	local journey_cycle = self._journey_cycle
 	local all_journey_data = journey_cycle.journey_data
 	local current_journey_data = all_journey_data[journey_name]
-	local dominant_god = not not current_journey_data and not not current_journey_data.dominant_god
-	local theme_settings = not not dominant_god and not not DeusThemeSettings[dominant_god]
+	local dominant_god = current_journey_data and current_journey_data.dominant_god
+	local theme_settings = dominant_god and DeusThemeSettings[dominant_god]
 
 	if not theme_settings then
 		self._should_draw = false

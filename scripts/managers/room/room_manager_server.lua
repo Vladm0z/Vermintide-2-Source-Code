@@ -39,7 +39,7 @@ end
 
 RoomManagerServer.has_room = function (self, peer_id)
 	-- function 5
-	return self._peer_rooms[peer_id] and not not true or not self._peer_rooms[peer_id] and not not false
+	return self._peer_rooms[peer_id]
 end
 
 RoomManagerServer.destroy_room = function (self, peer_id, move_other_players_from_room)

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_rat_ogre.lua
 
 local stagger_types = require("scripts/utils/stagger_types")
-local default_bot_threat_difficulty_data = not not BotConstants
+local default_bot_threat_difficulty_data = BotConstants
 local breed_data = {
 	detection_radius = 9999999,
 	race = "skaven",

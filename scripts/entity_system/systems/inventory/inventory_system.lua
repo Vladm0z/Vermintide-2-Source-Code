@@ -228,7 +228,7 @@ InventorySystem.rpc_give_equipment = function (self, channel_id, interactor_game
 			local inventory = ScriptUnit.extension(unit, "inventory_system")
 			local slot_name = NetworkLookup.equipment_slots[slot_id]
 			local slot_full = inventory:get_slot_data(slot_name)
-			local can_store = not not slot_full and not not inventory:can_store_additional_item(slot_name)
+			local can_store = slot_full and inventory:can_store_additional_item(slot_name)
 
 			if slot_full and not can_store then
 				failed = true
@@ -257,7 +257,7 @@ InventorySystem.rpc_give_equipment = function (self, channel_id, interactor_game
 				local wwise_world = Managers.world:wwise_world(self.world)
 				local sound_event = pickup_settings.pickup_sound_event
 				local interactor_unit = self.unit_storage:unit(interactor_game_object_id)
-				local interactor_player = not not interactor_unit and not not Managers.player:owner(interactor_unit)
+				local interactor_player = interactor_unit and Managers.player:owner(interactor_unit)
 
 				if not owner.bot_player and interactor_player and not interactor_player.local_player then
 					if sound_event then
@@ -428,8 +428,8 @@ InventorySystem.rpc_start_weapon_fx = function (self, channel_id, go_id, item_na
 	local unit = self.unit_storage:unit(go_id)
 	local inventory = ScriptUnit.extension(unit, "inventory_system")
 	local wielded_slot_data = inventory:get_wielded_slot_data()
-	local wielded_item_data = not not wielded_slot_data and not not wielded_slot_data.item_data
-	local wielded_item_name = not not wielded_item_data and not not wielded_item_data.name
+	local wielded_item_data = wielded_slot_data and wielded_slot_data.item_data
+	local wielded_item_name = wielded_item_data and wielded_item_data.name
 
 	if item_name and item_name == wielded_item_name then
 		local item_data = ItemMasterList[item_name]
@@ -452,8 +452,8 @@ InventorySystem.rpc_stop_weapon_fx = function (self, channel_id, go_id, item_nam
 	local unit = self.unit_storage:unit(go_id)
 	local inventory = ScriptUnit.extension(unit, "inventory_system")
 	local wielded_slot_data = inventory:get_wielded_slot_data()
-	local wielded_item_data = not not wielded_slot_data and not not wielded_slot_data.item_data
-	local wielded_item_name = not not wielded_item_data and not not wielded_item_data.name
+	local wielded_item_data = wielded_slot_data and wielded_slot_data.item_data
+	local wielded_item_name = wielded_item_data and wielded_item_data.name
 
 	if item_name and item_name == wielded_item_name then
 		local item_data = ItemMasterList[item_name]

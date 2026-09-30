@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/dlc_upsell/common_popup_settings.lua
 
-CommonPopupSettings = not not CommonPopupSettings
+CommonPopupSettings = CommonPopupSettings
 CommonPopupSettings.scorpion = {
 	definitions_path = "scripts/ui/dlc_upsell/upsell_popup_definitions",
 	title_text = "menu_weave_area_no_wom_title",
@@ -239,8 +239,8 @@ CommonPopupSettings.geheimnisnacht = {
 				local levels = GeheimnisnachtUtils.maps_by_live_event(true)
 
 				if PlayerData then
-					PlayerData.mission_selection = not not PlayerData.mission_selection
-					PlayerData.mission_selection.custom = not not PlayerData.mission_selection.custom
+					PlayerData.mission_selection = PlayerData.mission_selection
+					PlayerData.mission_selection.custom = PlayerData.mission_selection.custom
 					PlayerData.mission_selection.custom.level_id = table.random(levels)
 				end
 

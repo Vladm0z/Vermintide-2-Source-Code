@@ -311,7 +311,7 @@ GamepadConsumableUI._update_slot_icon = function (self, widget, item_data, wield
 	local dirty = false
 	local widget_style = widget.style
 	local widget_content = widget.content
-	local hud_icon_texture = item_data and not not item_data.hud_icon or not item_data and not not temp_slot_texture_mapping[slot_name]
+	local hud_icon_texture = item_data and item_data.hud_icon or not item_data and temp_slot_texture_mapping[slot_name]
 
 	if not hud_icon_texture_lit_lookup_table[hud_icon_texture] then
 		hud_icon_texture_lit_lookup_table[hud_icon_texture] = hud_icon_texture .. "_lit"
@@ -321,7 +321,7 @@ GamepadConsumableUI._update_slot_icon = function (self, widget, item_data, wield
 		dirty = true
 		widget_content.texture_icon = hud_icon_texture
 
-		local master_item_name = item_data and not not item_data.name or not item_data and not not "no_master_item_found"
+		local master_item_name = item_data and item_data.name or not item_data and "no_master_item_found"
 
 		assert(widget_content.texture_icon, "No hud icon for weapon %s", master_item_name)
 
@@ -345,7 +345,7 @@ GamepadConsumableUI._update_slot_ammo = function (self, widget, slot_data, item_
 	local widget_content = widget.content
 	local item_template = BackendUtils.get_item_template(item_data)
 	local ammo_count, remaining_ammo = get_ammunition_count(slot_data.left_unit_1p, slot_data.right_unit_1p, item_template)
-	local ammo_data = not not item_template and not not item_template.ammo_data
+	local ammo_data = item_template and item_template.ammo_data
 
 	if ammo_data and ammo_count and not ammo_data.hide_ammo_ui then
 		local total_ammo = ammo_count + remaining_ammo

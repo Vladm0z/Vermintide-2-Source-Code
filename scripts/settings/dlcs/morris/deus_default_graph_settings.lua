@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_default_graph_settings.lua
 
-DeusDefaultGraphs = not not DeusDefaultGraphs
-DeusDebugShrineNodeGraph = not not DeusDebugShrineNodeGraph
-DeusDebugSpecificNodeGraph = not not DeusDebugSpecificNodeGraph
+DeusDefaultGraphs = DeusDefaultGraphs
+DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph
+DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph
 
 for seed, graph in pairs(DeusDefaultGraphs) do
 	for id, node_data in pairs(graph) do

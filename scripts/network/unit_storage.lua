@@ -2,8 +2,8 @@
 
 local function bimap_add(bm, a, b)
 	-- function 1
-	fassert(not not a and not not b, "bimap_add, nil arguments")
-	fassert(not bm[a] and not not not bm[b], "bimap_add, already contained a and/or b")
+	fassert(a and b, "bimap_add, nil arguments")
+	fassert(not bm[a] and not bm[b], "bimap_add, already contained a and/or b")
 
 	bm[a], bm[b] = b, a
 end

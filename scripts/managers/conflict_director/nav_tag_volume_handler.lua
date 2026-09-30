@@ -82,7 +82,7 @@ NavTagVolumeHandler.create_tag_volume_from_mappings = function (self, level_volu
 
 	self.created_tag_volumes[level_volume_name] = tag_volume
 
-	local volumes = not not self.level_volumes_by_layer[mapping.layer_name]
+	local volumes = self.level_volumes_by_layer[mapping.layer_name]
 
 	volumes[#volumes + 1] = level_volume_name
 	self.level_volumes_by_layer[mapping.layer_name] = volumes
@@ -170,7 +170,7 @@ NavTagVolumeHandler.get_mapping_from_lookup_id = function (self, lookup_id)
 	-- function 4
 	local volume_name = self.mapping_lookup_table[lookup_id]
 
-	return not not volume_name and not not self.mappings[volume_name]
+	return volume_name and self.mappings[volume_name]
 end
 
 NavTagVolumeHandler.destroy_nav_tag_volume = function (self, volume_name)

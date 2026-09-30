@@ -76,16 +76,16 @@ end
 
 Vector3.rotate = function (vector, angle, optional_axis)
 	-- function 12
-	optional_axis = not not optional_axis or not not Vector3.up()
+	optional_axis = optional_axis or Vector3.up()
 
 	return Quaternion.rotate(Quaternion.axis_angle(optional_axis, angle), vector)
 end
 
-Vector3Aux = not not Vector3Aux
+Vector3Aux = Vector3Aux
 
 Vector3Aux.box = function (destination, vector_3)
 	-- function 13
-	destination = not not destination or not not {}
+	destination = destination or {}
 	destination[1], destination[2], destination[3] = Vector3.to_elements(vector_3)
 
 	return destination

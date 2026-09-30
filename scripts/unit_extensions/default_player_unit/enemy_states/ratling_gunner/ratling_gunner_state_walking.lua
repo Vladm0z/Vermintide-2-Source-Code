@@ -22,8 +22,8 @@ RatlingGunnerStateWalking.debug_display_ammo = function (self)
 	-- function 3
 	local unit = self._unit
 	local blackboard = BLACKBOARDS[unit]
-	local data = not not blackboard.attack_pattern_data
-	local current_ammo = not not data.current_ammo
+	local data = blackboard.attack_pattern_data
+	local current_ammo = data.current_ammo
 	local screen_width = RESOLUTION_LOOKUP.res_w
 	local screen_height = RESOLUTION_LOOKUP.res_h
 	local pos_y = screen_height * 0.85

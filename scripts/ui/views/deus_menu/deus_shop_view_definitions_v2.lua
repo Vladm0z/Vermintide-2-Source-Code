@@ -821,7 +821,7 @@ local input_help_text_style = {
 
 local function create_frame(scenegraph_id, alpha)
 	-- function 1
-	alpha = not not alpha or not not 255
+	alpha = alpha or 255
 
 	local frame_settings = UIFrameSettings.frame_outer_fade_02
 	local edge_height = frame_settings.texture_sizes.horizontal[2]
@@ -1069,7 +1069,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
 			100,
@@ -1111,7 +1111,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
 			325,
@@ -1144,7 +1144,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			255,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			100,
@@ -1186,7 +1186,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			-66,
@@ -1234,7 +1234,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = {
 			255,
 			150,
@@ -1272,7 +1272,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
 			-60,
@@ -1346,7 +1346,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			texture_id = "loading_frame",
 			content_check_function = function (content)
 				-- function 9
-				return not content.is_bought and not not not content.button_hotspot.disable_button
+				return not content.is_bought and not content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -1374,7 +1374,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 11
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -1383,7 +1383,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 12
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -1392,7 +1392,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "sub_text",
 			content_check_function = function (content)
 				-- function 13
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -1401,7 +1401,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "sub_text",
 			content_check_function = function (content)
 				-- function 14
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -1415,7 +1415,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "title_text",
 			content_check_function = function (content)
 				-- function 15
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -1424,7 +1424,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "title_text",
 			content_check_function = function (content)
 				-- function 16
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -1448,7 +1448,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 17
-				return not content.button_hotspot.disable_button and not not not content.is_bought
+				return not content.button_hotspot.disable_button and not content.is_bought
 			end
 		},
 		{
@@ -1457,7 +1457,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 18
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -1484,7 +1484,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_title_text",
 			content_check_function = function (content)
 				-- function 21
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1493,7 +1493,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_title_text",
 			content_check_function = function (content)
 				-- function 22
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1502,7 +1502,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_text",
 			content_check_function = function (content)
 				-- function 23
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1511,7 +1511,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "current_value_text",
 			content_check_function = function (content)
 				-- function 24
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1520,7 +1520,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_title_text",
 			content_check_function = function (content)
 				-- function 25
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1529,7 +1529,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_title_text",
 			content_check_function = function (content)
 				-- function 26
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1538,7 +1538,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_text",
 			content_check_function = function (content)
 				-- function 27
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1547,7 +1547,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 			text_id = "max_value_text",
 			content_check_function = function (content)
 				-- function 28
-				return not content.is_bought and not not content.current_value_text
+				return not content.is_bought and content.current_value_text
 			end
 		},
 		{
@@ -1833,7 +1833,7 @@ local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectang
 				0,
 				0
 			},
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				-130,
@@ -1935,7 +1935,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
 			60,
@@ -1977,7 +1977,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			255,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			55,
@@ -2019,7 +2019,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			size[1] + 12,
@@ -2056,7 +2056,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			price_text.offset[1],
@@ -2089,7 +2089,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			size[1] + 10,
@@ -2122,7 +2122,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			0,
 			0
 		},
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("yellow", 255),
 		offset = {
 			size[1] + 10,
@@ -2179,7 +2179,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			texture_id = "loading_frame",
 			content_check_function = function (content)
 				-- function 32
-				return not content.is_bought and not not not content.button_hotspot.disable_button
+				return not content.is_bought and not content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2198,7 +2198,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 33
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -2207,7 +2207,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			texture_id = "icon",
 			content_check_function = function (content)
 				-- function 34
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2216,7 +2216,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			text_id = "sub_text",
 			content_check_function = function (content)
 				-- function 35
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2225,7 +2225,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			text_id = "sub_text",
 			content_check_function = function (content)
 				-- function 36
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -2257,7 +2257,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			text_id = "title_text",
 			content_check_function = function (content)
 				-- function 39
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -2266,7 +2266,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			text_id = "title_text",
 			content_check_function = function (content)
 				-- function 40
-				return not not content.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -2280,7 +2280,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 41
-				return not content.button_hotspot.disable_button and not not not content.is_bought
+				return not content.button_hotspot.disable_button and not content.is_bought
 			end
 		},
 		{
@@ -2289,7 +2289,7 @@ local function create_blessing_shop_item(scenegraph_id, size, masked)
 			text_id = "price_text",
 			content_check_function = function (content)
 				-- function 42
-				return not not content.button_hotspot.disable_button
+				return content.button_hotspot.disable_button
 			end
 		},
 		{
@@ -3087,7 +3087,7 @@ local function create_blessing_portraits_frame(scenegraph_id, frame_settings_nam
 		255,
 		255
 	}
-	local default_offset = not not offset or not not {
+	local default_offset = offset or {
 		0,
 		0,
 		0
@@ -3098,7 +3098,7 @@ local function create_blessing_portraits_frame(scenegraph_id, frame_settings_nam
 
 	for index, data in ipairs(frame_settings) do
 		local name = "texture_" .. index
-		local texture_name = not not data.texture
+		local texture_name = data.texture
 		local size
 
 		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
@@ -3109,10 +3109,10 @@ local function create_blessing_portraits_frame(scenegraph_id, frame_settings_nam
 			size = data.size
 		end
 
-		size = size and (not not table.clone(size) or not not {
+		size = size and (table.clone(size) or {
 			0,
 			0
-		}) or not size and not not {
+		}) or not size and {
 			0,
 			0
 		}
@@ -3123,12 +3123,12 @@ local function create_blessing_portraits_frame(scenegraph_id, frame_settings_nam
 			offset = table.clone(data.offset)
 			offset[1] = default_offset[1] + (-(size[1] / 2) + offset[1])
 			offset[2] = default_offset[2] + 60 + offset[2]
-			offset[3] = not not data.layer
+			offset[3] = data.layer
 		else
 			offset = table.clone(default_offset)
 			offset[1] = -(size[1] / 2) + offset[1]
 			offset[2] = offset[2]
-			offset[3] = not not data.layer
+			offset[3] = data.layer
 		end
 
 		widget.element.passes[#widget.element.passes + 1] = {
@@ -3143,7 +3143,7 @@ local function create_blessing_portraits_frame(scenegraph_id, frame_settings_nam
 		}
 		widget.content[name] = texture_name
 		widget.style[name] = {
-			color = not not data.color,
+			color = data.color,
 			offset = offset,
 			size = size
 		}
@@ -3234,8 +3234,8 @@ local animations_definitions = {
 				-- function 64
 				local anim_progress = math.easeOutCubic(progress)
 
-				params.options_background_mask_left_start_pos = not not params.options_background_mask_left_start_pos
-				params.options_background_left_start_pos = not not params.options_background_left_start_pos
+				params.options_background_mask_left_start_pos = params.options_background_mask_left_start_pos
+				params.options_background_left_start_pos = params.options_background_left_start_pos
 				ui_scenegraph.options_background_mask_left.local_position[1] = math.lerp(ui_scenegraph.options_background_mask_left.local_position[1], scenegraph_definition.options_background_mask_left.position[1] - 400, anim_progress)
 				ui_scenegraph.options_background_left.local_position[1] = math.lerp(ui_scenegraph.options_background_left.local_position[1], scenegraph_definition.options_background_left.position[1] - 400, anim_progress)
 				ui_scenegraph.own_power_up_anchor.local_position[1] = math.lerp(ui_scenegraph.own_power_up_anchor.local_position[1], scenegraph_definition.own_power_up_anchor.position[1] - 400, anim_progress)

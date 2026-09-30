@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/objectives/versus_capture_point_objective_extension.lua
 
-local versus_capture_point_objective_extension_testify = not not script_data.testify
+local versus_capture_point_objective_extension_testify = script_data.testify
 
 VersusCapturePointObjectiveExtension = class(VersusCapturePointObjectiveExtension, BaseObjectiveExtension)
 VersusCapturePointObjectiveExtension.NAME = "VersusCapturePointObjectiveExtension"
@@ -20,16 +20,16 @@ VersusCapturePointObjectiveExtension._set_objective_data = function (self, objec
 	-- function 2
 	local capture_point_default_settings = GameModeSettings.versus.objectives.capture_point
 
-	self._capture_rate_multiplier = not not objective_data.capture_rate_multiplier
-	self._capture_time = not not objective_data.capture_time
-	self._num_sections = not not objective_data.num_sections
-	self._score_per_section = not not objective_data.score_per_section
-	self._time_per_section = not not objective_data.time_per_section
-	self._score_for_completion = not not objective_data.score_for_completion
-	self._time_for_completion = not not objective_data.time_for_completion
-	self._on_last_leaf_complete_sound_event = not not objective_data.on_last_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = not not objective_data.on_leaf_complete_sound_event
-	self._on_section_progress_sound_event = not not objective_data.on_section_progress_sound_event
+	self._capture_rate_multiplier = objective_data.capture_rate_multiplier
+	self._capture_time = objective_data.capture_time
+	self._num_sections = objective_data.num_sections
+	self._score_per_section = objective_data.score_per_section
+	self._time_per_section = objective_data.time_per_section
+	self._score_for_completion = objective_data.score_for_completion
+	self._time_for_completion = objective_data.time_for_completion
+	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
+	self._on_section_progress_sound_event = objective_data.on_section_progress_sound_event
 	self._capture_time_remaining = self._capture_time
 end
 
@@ -125,7 +125,7 @@ end
 VersusCapturePointObjectiveExtension._is_local_player_inside = function (self)
 	-- function 9
 	local local_player = Managers.player:local_player()
-	local local_player_unit = not not local_player and not not local_player.player_unit
+	local local_player_unit = local_player and local_player.player_unit
 
 	if not local_player_unit then
 		return

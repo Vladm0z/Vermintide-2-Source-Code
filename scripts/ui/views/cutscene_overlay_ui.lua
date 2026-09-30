@@ -10,7 +10,7 @@ CutsceneOverlayUI.init = function (self, parent, context)
 	self._ui_renderer = context.ui_renderer
 
 	local world_manager = Managers.world
-	local has_world = not not world_manager and not not world_manager:has_world("level_world")
+	local has_world = world_manager and world_manager:has_world("level_world")
 
 	if has_world then
 		local world = world_manager:world("level_world")
@@ -107,15 +107,15 @@ CutsceneOverlayUI._present_template_entry = function (self, template_list_name, 
 		local content = widget.content
 		local localize = entry.localize
 
-		content.text = localize and not not Localize(text) or not localize and not not text
+		content.text = localize and Localize(text) or not localize and text
 
 		local font_size = entry.font_size
 		local font_type = entry.font_type
 		local word_wrap = entry.word_wrap
 		local font_upper_case = entry.font_upper_case
-		local vertical_alignment = not not entry.vertical_alignment
-		local horizontal_alignment = not not entry.horizontal_alignment
-		local color = not not entry.color
+		local vertical_alignment = entry.vertical_alignment
+		local horizontal_alignment = entry.horizontal_alignment
+		local color = entry.color
 		local offset = entry.offset
 		local use_shadow = entry.use_shadow
 		local inject_alpha = entry.inject_alpha
@@ -181,8 +181,8 @@ CutsceneOverlayUI._present_template_entry = function (self, template_list_name, 
 		max_alpha = max_alpha,
 		start_time = start_time,
 		end_time = end_time,
-		fade_in_duration = not not fade_in_duration and fade_in_duration > 0 and not not fade_in_duration,
-		fade_out_duration = not not fade_out_duration and fade_out_duration > 0 and not not fade_out_duration
+		fade_in_duration = fade_in_duration and fade_in_duration > 0 and fade_in_duration,
+		fade_out_duration = fade_out_duration and fade_out_duration > 0 and fade_out_duration
 	}
 end
 
@@ -266,7 +266,7 @@ CutsceneOverlayUI.update = function (self, dt)
 			list_completed = true
 		else
 			local current_entry = self:_get_entry_by_time(name, current_time)
-			local entry_data = not not current_entry and not not self:_present_template_entry(name, current_entry)
+			local entry_data = current_entry and self:_present_template_entry(name, current_entry)
 
 			template_list_data.active_entry_data = entry_data
 

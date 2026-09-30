@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/input/input_filters.lua
 
-InputFilters = not not InputFilters
+InputFilters = InputFilters
 
 local function input_threshold(input_axis, threshold)
 	-- function 1
@@ -26,9 +26,9 @@ InputFilters.virtual_axis = {
 		local forward = input_service:get(input_mappings.forward)
 		local back = input_service:get(input_mappings.back)
 		local up_key = input_mappings.up
-		local up = up_key and not not input_service:get(up_key) or not up_key and not not 0
+		local up = up_key and input_service:get(up_key) or not up_key and 0
 		local down_key = input_mappings.down
-		local down = down_key and not not input_service:get(down_key) or not down_key and not not 0
+		local down = down_key and input_service:get(down_key) or not down_key and 0
 		local result = Vector3(right - left, forward - back, up - down)
 
 		return result
@@ -81,7 +81,7 @@ InputFilters.scale_vector3 = {
 		-- function 5
 		local val = input_service:get(filter_data.input_mapping)
 
-		input_threshold(val, not not filter_data.input_threshold)
+		input_threshold(val, filter_data.input_threshold)
 
 		return val * filter_data.multiplier
 	end,
@@ -101,7 +101,7 @@ InputFilters.scale_vector3_xy = {
 		-- function 7
 		local val = input_service:get(filter_data.input_mapping)
 
-		input_threshold(val, not not filter_data.input_threshold)
+		input_threshold(val, filter_data.input_threshold)
 
 		local x = val.x * filter_data.multiplier_x
 		local y = val.y * filter_data.multiplier_y
@@ -128,7 +128,7 @@ InputFilters.scale_vector3_xy_accelerated_x = {
 		internal_filter_data.input_x = 0
 		internal_filter_data.input_x_t = 0
 		internal_filter_data.input_x_turnaround_t = 0
-		internal_filter_data.min_multiplier_x = not not internal_filter_data.min_multiplier_x
+		internal_filter_data.min_multiplier_x = internal_filter_data.min_multiplier_x
 
 		return internal_filter_data
 	end,
@@ -136,7 +136,7 @@ InputFilters.scale_vector3_xy_accelerated_x = {
 		-- function 9
 		local val = input_service:get(filter_data.input_mapping)
 
-		input_threshold(val, not not filter_data.input_threshold)
+		input_threshold(val, filter_data.input_threshold)
 
 		local time = Application.time_since_launch()
 
@@ -196,7 +196,7 @@ InputFilters.scale_vector3_xy_accelerated_x = {
 			local atan2 = math.atan2(camera_forward.z - camera_horizon.z, camera_forward.y - camera_horizon.y)
 			local above_horizont = atan2 > 0
 			local moving_down = val.y < 0
-			local moving_towards_horizont = not above_horizont and not not not moving_down
+			local moving_towards_horizont = not above_horizont and not moving_down
 
 			if moving_towards_horizont then
 				local slow_down_angle = filter_data.angle_to_slow_down_inside
@@ -229,7 +229,7 @@ InputFilters.scale_vector3_xy_accelerated_x_inverted = {
 
 		internal_filter_data.input_x = 0
 		internal_filter_data.input_x_t = 0
-		internal_filter_data.min_multiplier_x = not not internal_filter_data.min_multiplier_x
+		internal_filter_data.min_multiplier_x = internal_filter_data.min_multiplier_x
 		internal_filter_data.input_x_turnaround_t = 0
 
 		return internal_filter_data
@@ -238,7 +238,7 @@ InputFilters.scale_vector3_xy_accelerated_x_inverted = {
 		-- function 11
 		local val = input_service:get(filter_data.input_mapping)
 
-		input_threshold(val, not not filter_data.input_threshold)
+		input_threshold(val, filter_data.input_threshold)
 
 		local time = Application.time_since_launch()
 
@@ -303,7 +303,7 @@ InputFilters.scale_vector3_invert_y = {
 		-- function 13
 		local val = Vector3(Vector3.to_elements(input_service:get(filter_data.input_mapping)))
 
-		input_threshold(val, not not filter_data.input_threshold)
+		input_threshold(val, filter_data.input_threshold)
 
 		val.y = -val.y
 
@@ -331,11 +331,11 @@ InputFilters.gamepad_cursor = {
 		internal_filter_data.input_x = 0
 		internal_filter_data.input_x_t = 0
 		internal_filter_data.input_x_turnaround_t = 0
-		internal_filter_data.min_multiplier_x = not not internal_filter_data.min_multiplier_x
+		internal_filter_data.min_multiplier_x = internal_filter_data.min_multiplier_x
 		internal_filter_data.input_y = 0
 		internal_filter_data.input_y_t = 0
 		internal_filter_data.input_y_turnaround_t = 0
-		internal_filter_data.min_multiplier_y = not not internal_filter_data.min_multiplier_y
+		internal_filter_data.min_multiplier_y = internal_filter_data.min_multiplier_y
 		internal_filter_data.hover_multiplier = internal_filter_data.hover_multiplier
 
 		return internal_filter_data
@@ -351,7 +351,7 @@ InputFilters.gamepad_cursor = {
 
 			local val = Vector3(Vector3.to_elements(input_service:get(filter_data.input_mapping)))
 
-			input_threshold(val, not not filter_data.input_threshold)
+			input_threshold(val, filter_data.input_threshold)
 
 			local mean_dt = Managers.time._mean_dt
 			local time = Application.time_since_launch()
@@ -386,8 +386,8 @@ InputFilters.gamepad_cursor = {
 
 			local x_pos, y_pos = input_manager:get_gamepad_cursor_pos()
 
-			filter_data.pos_x = not not x_pos or not not filter_data.pos_x
-			filter_data.pos_y = not not y_pos or not not filter_data.pos_y
+			filter_data.pos_x = x_pos or filter_data.pos_x
+			filter_data.pos_y = y_pos or filter_data.pos_y
 
 			local res_x, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
 			local inv_scale = RESOLUTION_LOOKUP.inv_scale
@@ -399,8 +399,8 @@ InputFilters.gamepad_cursor = {
 			local new_x = filter_data.pos_x + x * dt * filter_data.multiplier
 			local new_y = filter_data.pos_y + y * dt * filter_data.multiplier
 
-			filter_data.pos_x = res_x < new_x and (not not res_x or new_x < 0 and not not 0 or not (new_x < 0) and not not new_x) or not (res_x < new_x) and (new_x < 0 and not not 0 or not (new_x < 0) and not not new_x)
-			filter_data.pos_y = res_y < new_y and (not not res_y or new_y < 0 and not not 0 or not (new_y < 0) and not not new_y) or not (res_y < new_y) and (new_y < 0 and not not 0 or not (new_y < 0) and not not new_y)
+			filter_data.pos_x = res_x < new_x and (res_x or new_x < 0 and 0 or not (new_x < 0) and new_x) or not (res_x < new_x) and (new_x < 0 and 0 or not (new_x < 0) and new_x)
+			filter_data.pos_y = res_y < new_y and (res_y or new_y < 0 and 0 or not (new_y < 0) and new_y) or not (res_y < new_y) and (new_y < 0 and 0 or not (new_y < 0) and new_y)
 			filter_data.frame_index = GLOBAL_FRAME_INDEX
 		end
 

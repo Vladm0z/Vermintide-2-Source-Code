@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/wwise_utils.lua
 
-WwiseUtils = not not WwiseUtils
+WwiseUtils = WwiseUtils
 WwiseUtils.EVENT_ID_NONE = 0
 
 WwiseUtils.trigger_position_event = function (world, event, position)
@@ -71,7 +71,7 @@ WwiseUtils.make_unit_manual_source = function (wwise_world, unit, node_id)
 	local system = Managers.state.entity:system("sound_environment_system")
 
 	if system ~= nil then
-		local position = Unit.world_position(unit, not not node_id or not not 0)
+		local position = Unit.world_position(unit, node_id or 0)
 
 		system:set_source_environment(source, position)
 	end

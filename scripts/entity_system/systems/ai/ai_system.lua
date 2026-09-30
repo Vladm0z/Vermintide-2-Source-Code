@@ -5,9 +5,9 @@ require("scripts/helpers/level_helper")
 require("scripts/helpers/network_utils")
 require("scripts/settings/terror_events/terror_event_utils")
 
-UNIT_UNIQUE_IDS = not not UNIT_UNIQUE_IDS
-VISUAL_DEBUGGING_ENABLED = not not VISUAL_DEBUGGING_ENABLED
-GLOBAL_AI_NAVWORLD = not not GLOBAL_AI_NAVWORLD
+UNIT_UNIQUE_IDS = UNIT_UNIQUE_IDS
+VISUAL_DEBUGGING_ENABLED = VISUAL_DEBUGGING_ENABLED
+GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD
 AISystem = class(AISystem, ExtensionSystemBase)
 
 local script_data = script_data
@@ -19,7 +19,7 @@ local sqrt = math.sqrt
 local unit_alive = Unit.alive
 local dummy_table = {}
 
-script_data.disable_ai_perception = not not script_data.disable_ai_perception
+script_data.disable_ai_perception = script_data.disable_ai_perception
 
 local ai_trees_created = false
 local NAV_COST_MAP_MAX_VOLUMES = 1024
@@ -64,11 +64,11 @@ AttributeDefinition = {
 
 			Unit.set_visibility(unit, "vg_armor", has_armor)
 
-			local armor = has_armor and not not 2 or not has_armor and not not 1
+			local armor = has_armor and 2 or not has_armor and 1
 
 			Unit.set_data(unit, "armor", armor)
 
-			local race_name = has_armor and not not "skaven" or not has_armor and not not "chaos"
+			local race_name = has_armor and "skaven" or not has_armor and "chaos"
 
 			Unit.set_data(unit, "race", race_name)
 		end
@@ -204,13 +204,13 @@ AISystem.init = function (self, context, name)
 	self._hot_join_sync_units = {}
 
 	for layer_name, _ in pairs(NAV_TAG_VOLUME_LAYER_COST_AI) do
-		local default_cost_ai = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
+		local default_cost_ai = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
 
 		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = default_cost_ai
 	end
 
 	for layer_name, _ in pairs(NAV_TAG_VOLUME_LAYER_COST_BOTS) do
-		local default_cost_bots = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
+		local default_cost_bots = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 
 		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = default_cost_bots
 	end
@@ -581,7 +581,7 @@ end
 
 AISystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 18
-	local ext = not not self.unit_extension_data[unit]
+	local ext = self.unit_extension_data[unit]
 
 	ext:unit_removed_from_game()
 	self:_cleanup_extension(unit, extension_name)
@@ -802,7 +802,7 @@ end
 AISystem.update_alive = function (self)
 	-- function 26
 	for unit, extension in pairs(self.ai_units_alive) do
-		local is_alive = extension._health_extension == nil or not not HEALTH_ALIVE[unit]
+		local is_alive = extension._health_extension == nil or HEALTH_ALIVE[unit]
 
 		if not is_alive then
 			self.ai_units_alive[unit] = nil
@@ -838,7 +838,7 @@ AISystem.update_perception = function (self, t, dt)
 		local perception_function = PerceptionUtils[perception_continuous_name]
 		local needs_perception = perception_function(unit, blackboard, breed, t, dt)
 
-		ai_units_perception[unit] = needs_perception and (not not extension or not not nil) or not needs_perception and not not nil
+		ai_units_perception[unit] = needs_perception and (extension or nil) or not needs_perception and nil
 
 		self:_update_taunt(t, blackboard)
 	end
@@ -861,7 +861,7 @@ AISystem.update_perception = function (self, t, dt)
 
 	local current_perception_unit = self.current_perception_unit
 
-	current_perception_unit = not not nil
+	current_perception_unit = nil
 
 	local TIME_BETWEEN_UPDATE = 1
 	local num_perception_units = self.num_perception_units
@@ -877,7 +877,7 @@ AISystem.update_perception = function (self, t, dt)
 		local extension = ai_units_perception[current_perception_unit]
 		local blackboard = extension._blackboard
 		local breed = extension._breed
-		local target_selection_func_name = not not blackboard.override_target_selection_name
+		local target_selection_func_name = blackboard.override_target_selection_name
 		local perception_func_name = extension._perception_func_name
 		local perception_function = PerceptionUtils[perception_func_name]
 		local target_selection_function = PerceptionUtils[target_selection_func_name]
@@ -944,7 +944,7 @@ AISystem.update_game_objects = function (self)
 
 		local bb = BLACKBOARDS[unit]
 		local target_unit = bb.target_unit
-		local target_unit_id = not not unit_storage:go_id(target_unit)
+		local target_unit_id = unit_storage:go_id(target_unit)
 
 		GameSession_set_game_object_field(game, game_object_id, "target_unit_id", target_unit_id)
 	end
@@ -987,7 +987,7 @@ AISystem.update_debug_unit = function (self, t)
 		leaf_node = leaf_node:current_running_child(blackboard)
 	end
 
-	local btnode_name = leaf_node and not not leaf_node:id() or not leaf_node and not not "unknown_node"
+	local btnode_name = leaf_node and leaf_node:id() or not leaf_node and "unknown_node"
 
 	blackboard.btnode_name = btnode_name
 
@@ -1083,13 +1083,13 @@ AISystem.update_debug_draw = function (self, t)
 					Managers.state.debug_text:output_unit_text("STAGGER_IMMUNE:HIGH_HEALTH", 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 				else
 					local action = blackboard.action
-					local ignore_staggers = not not action and not not action.ignore_staggers
+					local ignore_staggers = action and action.ignore_staggers
 
 					if ignore_staggers then
 						local ignore_stagger_info = action.name .. ": "
 
 						for i = 1, 7 do
-							local ignore_stagger_value = type(ignore_staggers[i]) ~= "table" and not not tostring(ignore_staggers[i]) or not (type(ignore_staggers[i]) ~= "table") and not not tostring(health_percent > ignore_staggers[i].health.min and health_percent <= ignore_staggers[i].health.max)
+							local ignore_stagger_value = type(ignore_staggers[i]) ~= "table" and tostring(ignore_staggers[i]) or not (type(ignore_staggers[i]) ~= "table") and tostring(health_percent > ignore_staggers[i].health.min and health_percent <= ignore_staggers[i].health.max)
 
 							ignore_stagger_info = ignore_stagger_info .. "[" .. ignore_stagger_value .. "]"
 						end
@@ -1122,7 +1122,7 @@ AISystem.update_debug_draw = function (self, t)
 					end
 
 					if not stagger_immune then
-						local hits_until_stagger_immunity = "hits_until_stagger_immunity:" .. stagger_immunity.num_attacks - not not stagger_immunity.num_hits
+						local hits_until_stagger_immunity = "hits_until_stagger_immunity:" .. stagger_immunity.num_attacks - stagger_immunity.num_hits
 
 						Managers.state.debug_text:output_unit_text(hits_until_stagger_immunity, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 					end
@@ -1132,7 +1132,7 @@ AISystem.update_debug_draw = function (self, t)
 
 		if script_data.debug_ai_attack_pattern then
 			local blackboard = BLACKBOARDS[unit]
-			local spine_node = not not Unit.has_node(unit, "j_spine")
+			local spine_node = Unit.has_node(unit, "j_spine")
 
 			if spine_node then
 				local position = Unit.world_position(unit, spine_node)
@@ -1149,7 +1149,7 @@ AISystem.update_debug_draw = function (self, t)
 					if blackboard.attack_token then
 						QuickDrawer:sphere(position, 0.35, Colors.get("red"))
 
-						local attack_type = blackboard.action.attack_intensity_type and not not blackboard.action.attack_intensity_type or not blackboard.action.attack_intensity_type and not not "normal"
+						local attack_type = blackboard.action.attack_intensity_type and blackboard.action.attack_intensity_type or not blackboard.action.attack_intensity_type and "normal"
 
 						debug_text_manager:output_unit_text(attack_type, 0.16, unit, spine_node, Vector3.zero(), nil, "attack_type", Vector3(255, 255, 255), "player_1")
 					elseif t < attack_cooldown_at then
@@ -1213,7 +1213,7 @@ local function update_blackboard(unit, blackboard, t, dt)
 
 	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-	blackboard.have_slot = ai_slot_system:ai_unit_have_slot(unit) and not not 1 or not ai_slot_system:ai_unit_have_slot(unit) and not not 0
+	blackboard.have_slot = ai_slot_system:ai_unit_have_slot(unit) and 1 or not ai_slot_system:ai_unit_have_slot(unit) and 0
 	blackboard.wait_slot_distance = ai_slot_system:ai_unit_wait_slot_distance(unit)
 	blackboard.total_slots_count = ai_slot_system.num_total_enemies
 
@@ -1270,7 +1270,7 @@ local function update_blackboard(unit, blackboard, t, dt)
 
 			local disabled_slots_count = ai_slot_system:disabled_slots_count(target_unit)
 
-			blackboard.target_num_disabled_slots = blackboard.have_slot > 0 and not not 0 or not (blackboard.have_slot > 0) and not not disabled_slots_count
+			blackboard.target_num_disabled_slots = blackboard.have_slot > 0 and 0 or not (blackboard.have_slot > 0) and disabled_slots_count
 		else
 			blackboard.total_occupied_slots = 0
 			blackboard.target_num_disabled_slots = 0
@@ -1281,14 +1281,14 @@ local function update_blackboard(unit, blackboard, t, dt)
 	end
 
 	local active_node = blackboard.active_node
-	local active_node_name = not not active_node and not not active_node.name
+	local active_node_name = active_node and active_node.name
 
-	blackboard.is_following_target = not not active_node_name and active_node_name == "BTClanRatFollowAction"
+	blackboard.is_following_target = active_node_name and active_node_name == "BTClanRatFollowAction"
 
 	local locomotion_extension = blackboard.locomotion_extension
 
-	blackboard.is_falling = not not locomotion_extension and not not locomotion_extension:is_falling()
-	blackboard.move_speed = not not locomotion_extension and not not locomotion_extension.move_speed
+	blackboard.is_falling = locomotion_extension and locomotion_extension:is_falling()
+	blackboard.move_speed = locomotion_extension and locomotion_extension.move_speed
 
 	if breed.run_on_update then
 		breed.run_on_update(unit, blackboard, t, dt)
@@ -1334,7 +1334,7 @@ local function update_blackboard(unit, blackboard, t, dt)
 		if target_slot_extension then
 			local slots_n = target_slot_extension.num_occupied_slots
 
-			blackboard.target_num_occupied_slots = not not slots_n or not not 0
+			blackboard.target_num_occupied_slots = slots_n or 0
 		else
 			blackboard.target_num_occupied_slots = 0
 		end
@@ -1352,7 +1352,7 @@ local function update_blackboard(unit, blackboard, t, dt)
 	end
 end
 
-local MAX_PRIO_UPDATES_PER_FRAME = IS_WINDOWS and not not 40 or not IS_WINDOWS and not not 20
+local MAX_PRIO_UPDATES_PER_FRAME = IS_WINDOWS and 40 or not IS_WINDOWS and 20
 
 AISystem.update_ai_blackboards_prioritized = function (self, t, dt)
 	-- function 35
@@ -1408,7 +1408,7 @@ AISystem.update_ai_blackboards = function (self, t, dt)
 	local ai_updates_this_frame = 0
 	local index = self.ai_update_index
 
-	index = not (ai_blackboard_updates_n < index) or not not 1 or not not index
+	index = not (ai_blackboard_updates_n < index) or 1 or index
 
 	while index <= ai_blackboard_updates_n do
 		local unit = ai_blackboard_updates[index]
@@ -1458,8 +1458,8 @@ AISystem.set_allowed_layer = function (self, layer_name, allowed)
 		local layer_id = LAYER_ID_MAPPING[layer_name]
 		local conflict_director = Managers.state.conflict
 
-		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = allowed and not not 1 or not allowed and not not 0
-		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = allowed and not not 1 or not allowed and not not 0
+		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = allowed and 1 or not allowed and 0
+		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = allowed and 1 or not allowed and 0
 
 		local ai_extensions = entity_manager:get_entities("AINavigationExtension")
 
@@ -1569,7 +1569,7 @@ AISystem.rpc_set_corruptor_beam_state = function (self, channel_id, unit_id, sta
 	local corruptor_beam_extension = ScriptUnit.has_extension(unit, "ai_beam_effect_system")
 
 	if unit and corruptor_beam_extension then
-		corruptor_beam_extension:set_state(state, not not Managers.player:is_player_unit(target_unit))
+		corruptor_beam_extension:set_state(state, (Managers.player:is_player_unit(target_unit)))
 	end
 end
 
@@ -1577,8 +1577,8 @@ AISystem.rpc_set_allowed_nav_layer = function (self, channel_id, layer_id, allow
 	-- function 48
 	local layer_name = LAYER_ID_MAPPING[layer_id]
 
-	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = allowed and not not 1 or not allowed and not not 0
-	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = allowed and not not 1 or not allowed and not not 0
+	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = allowed and 1 or not allowed and 0
+	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = allowed and 1 or not allowed and 0
 
 	if allowed then
 		GwNavTagLayerCostTable.allow_layer(self._navtag_layer_cost_table, layer_id)
@@ -1596,7 +1596,7 @@ AISystem.rpc_check_trigger_backstab_sfx = function (self, channel_id, unit_id)
 	local network_manager = Managers.state.network
 	local unit = network_manager:game_object_or_level_unit(unit_id)
 	local local_player = Managers.player:local_player()
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if not ALIVE[player_unit] then
 		return
@@ -1629,7 +1629,7 @@ function write_attribute(extension, unit, id, category_id, value)
 		extension.attributes = attributes
 	end
 
-	attributes[category_id] = not not attributes[category_id]
+	attributes[category_id] = attributes[category_id]
 	attributes[category_id][id] = value
 
 	local func = AttributeDefinition[category_id][id]
@@ -1667,7 +1667,7 @@ AISystem.get_attributes = function (self, unit)
 	-- function 52
 	local extension = self.unit_extension_data[unit]
 
-	return extension and not not extension.attributes or not extension and not not dummy_table
+	return extension and extension.attributes or not extension and dummy_table
 end
 
 AISystem.rpc_set_attribute_bool = function (self, channel_id, unit_id, attribute_id, category_id, value)

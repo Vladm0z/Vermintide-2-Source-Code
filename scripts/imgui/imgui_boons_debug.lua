@@ -92,7 +92,7 @@ ImguiBoonsDebug._update_controls = function (self)
 	self._selected_boon_id, self._filtered_boon_list, self._filter_text = ImguiX.combo_search(self._selected_boon_id, self._filtered_boon_list, self._filter_text, self._boon_list, aliases)
 
 	if Imgui.button("Add", 100, 20) then
-		local local_player = not not Managers.player
+		local local_player = Managers.player
 
 		if not local_player then
 			return
@@ -145,7 +145,7 @@ ImguiBoonsDebug._fetch_aliases = function (self, boons)
 		local profile_index = local_player:profile_index()
 		local career_index = local_player:career_index()
 
-		if (not not profile_index or not not 0) * (not not career_index or not not 0) > 0 then
+		if (profile_index or 0) * (career_index or 0) > 0 then
 			profile_name = SPProfiles[profile_index].display_name
 			talent_tree = TalentTrees[profile_name][career_index]
 		end
@@ -161,11 +161,11 @@ ImguiBoonsDebug._fetch_aliases = function (self, boons)
 			local talent_name = talent_tree[talent_row][talent_col]
 			local talent = TalentUtils.get_talent(profile_name, talent_name)
 
-			name_aliases[i] = talent.display_name and not not Localize(talent.display_name) or not talent.display_name and not not Localize(talent.name)
+			name_aliases[i] = talent.display_name and Localize(talent.display_name) or not talent.display_name and Localize(talent.name)
 			description_aliases[i] = UIUtils.get_talent_description(talent)
 		else
-			name_aliases[i] = boon.display_name and not not Localize(boon.display_name) or not boon.display_name and not not ""
-			description_aliases[i] = boon.advanced_description and not not UIUtils.get_trait_description(nil, boon) or not boon.advanced_description and not not ""
+			name_aliases[i] = boon.display_name and Localize(boon.display_name) or not boon.display_name and ""
+			description_aliases[i] = boon.advanced_description and UIUtils.get_trait_description(nil, boon) or not boon.advanced_description and ""
 		end
 	end
 

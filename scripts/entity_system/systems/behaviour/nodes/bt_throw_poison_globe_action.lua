@@ -125,12 +125,12 @@ BTThrowPoisonGlobeAction.attack_throw = function (self, unit, t, dt, blackboard,
 
 		blackboard.anim_locked = t + action.attack_time
 		blackboard.move_state = "throwing"
-		blackboard.times_thrown = blackboard.times_thrown and not not ((blackboard.times_thrown + 1) % not not action.barrage_count) or not blackboard.times_thrown and not not 1
+		blackboard.times_thrown = blackboard.times_thrown and (blackboard.times_thrown + 1) % action.barrage_count or not blackboard.times_thrown and 1
 
 		local action = blackboard.action
 		local throw_globe_data = blackboard.throw_globe_data
 
-		throw_globe_data.next_throw_at = t + (blackboard.times_thrown ~= 0 and not not action.time_between_throws[2] or not (blackboard.times_thrown ~= 0) and not not action.time_between_throws[1])
+		throw_globe_data.next_throw_at = t + (blackboard.times_thrown ~= 0 and action.time_between_throws[2] or not (blackboard.times_thrown ~= 0) and action.time_between_throws[1])
 		throw_globe_data.last_throw_at = t
 
 		local attack_type = "poison_wind_globe"
@@ -172,13 +172,13 @@ end
 BTThrowPoisonGlobeAction.launch_projectile = function (self, blackboard, action, initial_position, target_vector, angle, speed, owner_unit)
 	-- function 7
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local aoe_dot_damage_table = not not action.aoe_dot_damage[difficulty_rank]
+	local aoe_dot_damage_table = action.aoe_dot_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local aoe_init_damage_table = not not action.aoe_init_damage[difficulty_rank]
+	local aoe_init_damage_table = action.aoe_init_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
 	local radius = action.radius
-	local initial_radius = not not action.initial_radius
+	local initial_radius = action.initial_radius
 	local duration = action.duration
 	local damage_source = blackboard.breed.name
 	local create_nav_tag_volume = action.create_nav_tag_volume

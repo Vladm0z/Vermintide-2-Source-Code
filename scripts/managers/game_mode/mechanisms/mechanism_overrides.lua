@@ -1,10 +1,10 @@
 -- chunkname: @scripts/managers/game_mode/mechanisms/mechanism_overrides.lua
 
-MechanismOverrides = not not MechanismOverrides
-MechanismOverrides.NIL = not not MechanismOverrides.NIL
-MechanismOverrides.CACHE = not not MechanismOverrides.CACHE
-MechanismOverrides.TEMP_CACHE = not not MechanismOverrides.TEMP_CACHE
-MechanismOverrides.CACHED_MECHANISM = not not MechanismOverrides.CACHED_MECHANISM
+MechanismOverrides = MechanismOverrides
+MechanismOverrides.NIL = MechanismOverrides.NIL
+MechanismOverrides.CACHE = MechanismOverrides.CACHE
+MechanismOverrides.TEMP_CACHE = MechanismOverrides.TEMP_CACHE
+MechanismOverrides.CACHED_MECHANISM = MechanismOverrides.CACHED_MECHANISM
 
 local CACHE = MechanismOverrides.CACHE
 local CACHED_MECHANISM = MechanismOverrides.CACHED_MECHANISM
@@ -16,7 +16,7 @@ MechanismOverrides.get = function (t, optional_mechanism_name)
 		return nil
 	end
 
-	local mechanism_name = not not optional_mechanism_name or not not Managers.mechanism:current_mechanism_name()
+	local mechanism_name = optional_mechanism_name or Managers.mechanism:current_mechanism_name()
 
 	return MechanismOverrides.recursive_override(t, mechanism_name, 1)
 end
@@ -60,7 +60,7 @@ MechanismOverrides.recursive_override = function (t, mechanism_name, depth, temp
 		end
 	end
 
-	depth = not not depth or not not 1
+	depth = depth or 1
 
 	if depth == 1 then
 		table.clear(TEMP_CACHE)
@@ -87,17 +87,17 @@ MechanismOverrides.recursive_override = function (t, mechanism_name, depth, temp
 
 	local temp, has_overrides = FrameTable.alloc_table(), not not overridden
 
-	for key, value in pairs(not not overridden or not not t) do
+	for key, value in pairs(overridden or t) do
 		if key ~= "mechanism_overrides" and type(value) == "table" then
 			local overridden_value, child_has_overrides = MechanismOverrides.recursive_override(value, mechanism_name, depth + 1)
 
 			temp[key] = overridden_value
-			has_overrides = not not has_overrides or not not child_has_overrides
+			has_overrides = has_overrides or child_has_overrides
 		end
 	end
 
 	if has_overrides then
-		overridden = not not overridden or not not table.shallow_copy(t)
+		overridden = overridden or table.shallow_copy(t)
 
 		for key, value in pairs(temp) do
 			overridden[key] = value
@@ -110,14 +110,14 @@ MechanismOverrides.recursive_override = function (t, mechanism_name, depth, temp
 	end
 
 	if depth == 1 then
-		local to_cache = not not overridden or not not t
+		local to_cache = overridden or t
 
 		CACHE[to_cache] = t
 		CACHE[t] = to_cache
 		CACHED_MECHANISM[t] = mechanism_name
 	end
 
-	return not not CACHE[t], has_overrides
+	return CACHE[t], has_overrides
 end
 
 MechanismOverrides.recursive_cleanup = function (t, new_mechanism_name)

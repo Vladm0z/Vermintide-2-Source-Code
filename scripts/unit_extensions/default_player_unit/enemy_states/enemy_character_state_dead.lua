@@ -14,10 +14,10 @@ EnemyCharacterStateDead.on_enter = function (self, unit, input, dt, context, t, 
 	self.switched_to_observer_camera = false
 
 	local breed = Unit.get_data(unit, "breed")
-	local is_gutter_runner = not not breed and not not breed.name
+	local is_gutter_runner = breed and breed.name
 
 	if not is_gutter_runner and unit then
-		local animation = params and not not params.animation or not params and not not "death"
+		local animation = params and params.animation or not params and "death"
 
 		CharacterStateHelper.play_animation_event(unit, animation)
 	end
@@ -55,9 +55,9 @@ EnemyCharacterStateDead.on_enter = function (self, unit, input, dt, context, t, 
 	local spawn_times = GameModeSettings.versus.side_settings.dark_pact.spawn_times
 
 	self._linger_time = spawn_times.delayed_death_time
-	self.dead_player_destroy_time = fast_respawns and not not 1 or not fast_respawns and not not self._linger_time
+	self.dead_player_destroy_time = fast_respawns and 1 or not fast_respawns and self._linger_time
 
-	local drop_items_delay = not not params.drop_items_delay
+	local drop_items_delay = params.drop_items_delay
 
 	if profile.dead_player_destroy_time then
 		self.dead_player_destroy_time = profile.dead_player_destroy_time
@@ -78,11 +78,11 @@ EnemyCharacterStateDead.on_enter = function (self, unit, input, dt, context, t, 
 
 	self.drop_items_time = t + drop_items_delay
 
-	local override_item_drop_position = params and not not params.override_item_drop_position or not params and not not nil
-	local override_item_drop_direction = params and not not params.override_item_drop_direction or not params and not not nil
+	local override_item_drop_position = params and params.override_item_drop_position or not params and nil
+	local override_item_drop_direction = params and params.override_item_drop_direction or not params and nil
 
-	self.override_item_drop_position = override_item_drop_position and not not Vector3Box(override_item_drop_position) or not override_item_drop_position and not not nil
-	self.override_item_drop_direction = override_item_drop_direction and not not Vector3Box(override_item_drop_direction) or not override_item_drop_direction and not not nil
+	self.override_item_drop_position = override_item_drop_position and Vector3Box(override_item_drop_position) or not override_item_drop_position and nil
+	self.override_item_drop_direction = override_item_drop_direction and Vector3Box(override_item_drop_direction) or not override_item_drop_direction and nil
 
 	if breed.name == "vs_packmaster" then
 		local status_extension = ScriptUnit.extension(unit, "status_system")

@@ -41,7 +41,7 @@ settings.start_game_window_layout = {
 			},
 			can_add_function = function (overview)
 				-- function 1
-				return not not overview:is_in_mechanism("adventure")
+				return (overview:is_in_mechanism("adventure"))
 			end
 		},
 		{
@@ -89,7 +89,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 2
-				return not not overview:is_in_mechanism("adventure")
+				return (overview:is_in_mechanism("adventure"))
 			end
 		},
 		{

@@ -15,7 +15,7 @@ local generic_input_actions = definitions.generic_input_actions
 local weave_widget_definitions = definitions.weave_widget_definitions
 local debug_draw_scenegraph = false
 local debug_menu = false
-local level_end_view_testify = not not script_data.testify
+local level_end_view_testify = script_data.testify
 local unit_x = 0.07
 local unit_x_seperation = 1.36
 local unit_y = -1.5
@@ -112,8 +112,8 @@ LevelEndView.start = function (self)
 	self:play_sound("play_gui_chestroom_start")
 
 	self._playing_music = nil
-	self._start_music_event = self.game_won and not not "Play_won_music" or not self.game_won and not not "Play_lost_music"
-	self._stop_music_event = self.game_won and not not "Stop_won_music" or not self.game_won and not not "Stop_lost_music"
+	self._start_music_event = self.game_won and "Play_won_music" or not self.game_won and "Play_lost_music"
+	self._stop_music_event = self.game_won and "Stop_won_music" or not self.game_won and "Stop_lost_music"
 end
 
 LevelEndView.setup_pages = function (self, game_won, rewards)
@@ -180,7 +180,7 @@ end
 
 LevelEndView.loading_complete = function (self)
 	-- function 8
-	return not not self._team_previewer
+	return self._team_previewer
 end
 
 LevelEndView._setup_pages_defeat = function (self)
@@ -207,7 +207,7 @@ LevelEndView.create_ui_elements = function (self)
 		self._page_selector_widget = UIWidget.init(UIWidgets.create_page_dot_selector("page_selector", #self._state_name_by_index))
 	end
 
-	local retry_button_def = UIWidgets.create_default_button("retry_button", scenegraph_definition.retry_button.size, nil, nil, Localize(self.game_won and not not "button_replay" or not self.game_won and not not "button_retry"), 32, nil, nil, nil, true)
+	local retry_button_def = UIWidgets.create_default_button("retry_button", scenegraph_definition.retry_button.size, nil, nil, Localize(self.game_won and "button_replay" or not self.game_won and "button_retry"), 32, nil, nil, nil, true)
 
 	self._retry_button_widget = UIWidget.init(retry_button_def)
 	self._ready_button_widget = UIWidget.init(widget_definitions.ready_button)
@@ -273,7 +273,7 @@ LevelEndView._get_hero_from_score = function (self, player_data)
 	local careers = profile_data.careers
 	local career_settings = careers[career_index]
 	local weapon_pose_anim_event, weapon_pose_weapon, weapon_pose_slot
-	local weapon_pose = not not player_data.weapon_pose
+	local weapon_pose = player_data.weapon_pose
 
 	if weapon_pose then
 		local item = ItemMasterList[weapon_pose]
@@ -294,7 +294,7 @@ LevelEndView._get_hero_from_score = function (self, player_data)
 		end
 	end
 
-	local verfied_weapon_slot, verified_weapon, verified_weapon_pose = self:_verify_weapon_data(player_data, not not career_settings.preview_wield_slot, not not weapon_pose_weapon or not not player_data.weapon, weapon_pose_anim_event)
+	local verfied_weapon_slot, verified_weapon, verified_weapon_pose = self:_verify_weapon_data(player_data, career_settings.preview_wield_slot, weapon_pose_weapon or player_data.weapon, weapon_pose_anim_event)
 
 	return {
 		profile_index = profile_index,
@@ -353,7 +353,7 @@ LevelEndView._verify_weapon_data = function (self, player_data, weapon_slot, wea
 
 	if skin_name then
 		local skin_combination_table = item_data.skin_combination_table
-		local weapon_skin_combinations_tables = not not WeaponSkins.skin_combinations[skin_combination_table]
+		local weapon_skin_combinations_tables = WeaponSkins.skin_combinations[skin_combination_table]
 
 		for _, weapon_skins in pairs(weapon_skin_combinations_tables) do
 			for _, skin in ipairs(weapon_skins) do
@@ -369,7 +369,7 @@ LevelEndView._verify_weapon_data = function (self, player_data, weapon_slot, wea
 			end
 		end
 
-		verified_weapon.skin_name = not not weapon_skin_verfied and not not skin_name
+		verified_weapon.skin_name = weapon_skin_verfied and skin_name
 	end
 
 	local weapon_item_type = string.gsub(item_data.name, "^vs_", "")
@@ -644,7 +644,7 @@ end
 
 LevelEndView.active_input_service = function (self)
 	-- function 28
-	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
+	return self.input_blocked and FAKE_INPUT_SERVICE or not self.input_blocked and self:input_service()
 end
 
 LevelEndView._start_animation = function (self, animation_name)
@@ -749,9 +749,9 @@ local level_name = "levels/end_screen_victory/parading_screen"
 
 LevelEndView.setup_camera = function (self)
 	-- function 35
-	local camera_name = self.game_won and not not "pose_camera" or not self.game_won and not not "end_screen_camera"
+	local camera_name = self.game_won and "pose_camera" or not self.game_won and "end_screen_camera"
 	local camera_pose, camera_index
-	local camera_unit_resource = self.game_won and not not "units/hub_elements/cutscene_camera/cutscene_camera_env_controls" or not self.game_won and not not "units/hub_elements/cutscene_camera/cutscene_camera"
+	local camera_unit_resource = self.game_won and "units/hub_elements/cutscene_camera/cutscene_camera_env_controls" or not self.game_won and "units/hub_elements/cutscene_camera/cutscene_camera"
 	local unit_indices = LevelResource.unit_indices(level_name, camera_unit_resource)
 
 	for _, index in pairs(unit_indices) do
@@ -795,8 +795,8 @@ LevelEndView.start_story_camera = function (self, story_name, optional_loop, opt
 
 	self._story_id = story_id
 
-	Storyteller.set_speed(self._storyteller, story_id, not not optional_speed or not not 1)
-	Storyteller.set_loop_mode(self._storyteller, story_id, optional_loop and not not Storyteller.LOOP or not optional_loop and not not Storyteller.NONE)
+	Storyteller.set_speed(self._storyteller, story_id, optional_speed or 1)
+	Storyteller.set_loop_mode(self._storyteller, story_id, optional_loop and Storyteller.LOOP or not optional_loop and Storyteller.NONE)
 
 	self._story_timer = 0
 	self._manual_control = optional_manual_control
@@ -882,7 +882,7 @@ LevelEndView._gather_hero_locations = function (self)
 	end
 
 	for i = 1, 4 do
-		hero_locations[i] = not not hero_locations[i]
+		hero_locations[i] = hero_locations[i]
 	end
 
 	return hero_locations
@@ -912,7 +912,7 @@ LevelEndView.spawn_level = function (self, context, world)
 	self:_register_object_sets(level, level_name)
 
 	local game_won = context.game_won
-	local object_set = game_won and not not "flow_victory" or not game_won and not not "flow_defeat"
+	local object_set = game_won and "flow_victory" or not game_won and "flow_defeat"
 
 	self:_show_object_set(object_set, level)
 

@@ -29,7 +29,7 @@ DeedManager.network_context_created = function (self, lobby, server_peer_id, own
 	self._lobby = lobby
 	self._server_peer_id = server_peer_id
 	self._peer_id = own_peer_id
-	self._network_server = is_server and (not not network_handler or not not nil) or not is_server and not not nil
+	self._network_server = is_server and (network_handler or nil) or not is_server and nil
 	self._is_server = is_server
 
 	local ignore_send = true
@@ -108,7 +108,7 @@ end
 
 DeedManager.is_deed_owner = function (self, peer_id)
 	-- function 12
-	peer_id = not not peer_id or not not self._peer_id
+	peer_id = peer_id or self._peer_id
 
 	return self._owner_peer_id == peer_id
 end
@@ -170,7 +170,7 @@ end
 
 DeedManager.is_deleting_deeds = function (self)
 	-- function 17
-	return self._is_deleting_deeds and not not true or not self._is_deleting_deeds and not not false
+	return self._is_deleting_deeds
 end
 
 DeedManager._update_deed_deletion = function (self)
@@ -193,8 +193,8 @@ DeedManager.can_delete_deeds = function (self, current_deeds, marked_deeds)
 	local can_delete, remaining_deeds, deletable_deeds = item_interface:can_delete_deeds(current_deeds, marked_deeds)
 	local num_marked_deeds, num_deletable_deeds
 
-	num_marked_deeds = marked_deeds and (not not #marked_deeds or not not 0) or not marked_deeds and not not 0
-	num_deletable_deeds = deletable_deeds and (not not #deletable_deeds or not not 0) or not deletable_deeds and not not 0
+	num_marked_deeds = marked_deeds and (#marked_deeds or 0) or not marked_deeds and 0
+	num_deletable_deeds = deletable_deeds and (#deletable_deeds or 0) or not deletable_deeds and 0
 
 	if can_delete and num_deletable_deeds ~= num_marked_deeds then
 		return remaining_deeds, deletable_deeds, "Not all marked deeds could be deleted."

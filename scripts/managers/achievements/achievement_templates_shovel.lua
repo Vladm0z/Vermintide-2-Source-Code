@@ -76,7 +76,7 @@ achievements.shovel_sac_vent = {
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit then
 			return
@@ -125,7 +125,7 @@ achievements.shovel_sac_low = {
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit then
 			return
@@ -144,7 +144,7 @@ achievements.shovel_sac_low = {
 			return
 		end
 
-		template_data.count = not not template_data.count + 1
+		template_data.count = template_data.count + 1
 
 		if template_data.count >= SACRIFICE_SKELETON_COUNT then
 			statistics_db:increment_stat(stats_id, "shovel_sac_low")
@@ -180,7 +180,7 @@ achievements.shovel_fast_generate = {
 
 		local source_unit = event_data[3]
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit or local_player_unit ~= source_unit then
 			return
@@ -200,9 +200,9 @@ achievements.shovel_fast_generate = {
 
 		local percentage_gained = fraction_gained * 100
 
-		template_data.total_amount = not not template_data.total_amount + percentage_gained
+		template_data.total_amount = template_data.total_amount + percentage_gained
 
-		local instances = not not template_data.instances
+		local instances = template_data.instances
 
 		template_data.instances = instances
 
@@ -266,7 +266,7 @@ achievements.shovel_command_elite = {
 		local commander_system = Managers.state.entity:system("ai_commander_system")
 		local controlled_owner = commander_system:get_commander_unit(controlled_unit)
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit or local_player_unit ~= controlled_owner then
 			return
@@ -343,10 +343,10 @@ achievements.shovel_skeleton_attack_big = {
 
 		local attacked_unit = event_data[1]
 		local t = Managers.time:time("game")
-		local damaged_enemies = not not template_data.damaged_enemies
+		local damaged_enemies = template_data.damaged_enemies
 
 		if not damaged_enemies[attacked_unit] then
-			template_data.count = not not template_data.count + 1
+			template_data.count = template_data.count + 1
 		end
 
 		damaged_enemies[attacked_unit] = t
@@ -434,9 +434,9 @@ achievements.shovel_skeleton_defend = {
 			return
 		end
 
-		template_data.total_amount = not not template_data.total_amount + damage_amount
+		template_data.total_amount = template_data.total_amount + damage_amount
 
-		local instances = not not template_data.instances
+		local instances = template_data.instances
 
 		template_data.instances = instances
 
@@ -491,7 +491,7 @@ achievements.shovel_many_skeletons = {
 		-- function 23
 		local commander_unit = event_data[2]
 		local local_player = Managers.player:local_player()
-		local player_unit = not not local_player and not not local_player.player_unit
+		local player_unit = local_player and local_player.player_unit
 
 		if not player_unit or player_unit ~= commander_unit then
 			return
@@ -536,7 +536,7 @@ achievements.shovel_melee_balefire = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 27
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local damage_data = event_data[register_kill_damage_data]
 		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
@@ -619,14 +619,14 @@ achievements.shovel_fast_staff_attack = {
 			return
 		end
 
-		local stagger_instances = not not template_data.stagger_instances
+		local stagger_instances = template_data.stagger_instances
 
 		template_data.stagger_instances = stagger_instances
 
 		local t = Managers.time:time("game")
 
 		if not stagger_instances[attacked_unit] then
-			template_data.num_staggers = not not template_data.num_staggers + 1
+			template_data.num_staggers = template_data.num_staggers + 1
 		end
 
 		stagger_instances[attacked_unit] = t
@@ -636,7 +636,7 @@ achievements.shovel_fast_staff_attack = {
 		if template_data.num_staggers >= FAST_STAFF_ATTACK_TARGET then
 			for unit, stagger_t in pairs(stagger_instances) do
 				local bb = BLACKBOARDS[unit]
-				local still_in_stagger = not bb or not not bb.stagger_time
+				local still_in_stagger = not bb or bb.stagger_time
 
 				if not still_in_stagger or t > stagger_t + stagger_duration then
 					stagger_instances[unit] = nil
@@ -704,10 +704,10 @@ achievements.shovel_staff_balefire = {
 			return
 		end
 
-		local counter = not not template_data.counter
+		local counter = template_data.counter
 
 		template_data.counter = counter
-		counter[attacker_unit] = not not counter[attacker_unit] + 1
+		counter[attacker_unit] = counter[attacker_unit] + 1
 
 		if counter[attacker_unit] <= STAFF_BALEFIRE_TARGET then
 			rpc_increment_stat(attacker_unit, "shovel_staff_balefire")
@@ -746,7 +746,7 @@ achievements.shovel_big_suck = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 37
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local damage_data = event_data[register_kill_damage_data]
 		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
@@ -762,7 +762,7 @@ achievements.shovel_big_suck = {
 
 		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local item = rawget(ItemMasterList, damage_source)
-		local is_necro_staff = not not item and item.item_type == "bw_necromancy_staff"
+		local is_necro_staff = item and item.item_type == "bw_necromancy_staff"
 
 		if not is_necro_staff then
 			return
@@ -819,7 +819,7 @@ achievements.shovel_big_cleave = {
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local attacker_unit = event_data[8]
 
 		if attacker_unit and local_player_unit ~= attacker_unit then
@@ -871,7 +871,7 @@ achievements.shovel_headshot_scythe = {
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local attacker_unit = event_data[8]
 
 		if attacker_unit and local_player_unit ~= attacker_unit then
@@ -892,7 +892,7 @@ local STAFF_GANDALF_MIN_Z_DIFFERENCE = 4
 local function _staff_gandalf_check_tracked_unit(knockback_data, victim_unit)
 	-- function 45
 	local knockback_position = knockback_data.knockback_position:unbox()
-	local position = not not Unit.is_valid(victim_unit)
+	local position = Unit.is_valid(victim_unit)
 
 	if not position or knockback_position[3] - position[3] < STAFF_GANDALF_MIN_Z_DIFFERENCE then
 		return false
@@ -923,7 +923,7 @@ achievements.shovel_staff_gandalf = {
 
 		if event_name == "register_kill" then
 			local victim_unit = event_data[register_kill_victim_unit]
-			local unit_data = not not template_data.tracked_units
+			local unit_data = template_data.tracked_units
 
 			if not unit_data then
 				return
@@ -961,7 +961,7 @@ achievements.shovel_staff_gandalf = {
 			end
 
 			local player = Managers.player:local_player()
-			local player_unit = not not player and not not player.player_unit
+			local player_unit = player and player.player_unit
 			local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
 
 			if not career_extension or career_extension:career_name() ~= "bw_necromancer" then
@@ -972,7 +972,7 @@ achievements.shovel_staff_gandalf = {
 
 			passive:achievement_staff_gandalf_trigger(victim_unit, t, math.max(STAFF_GANDALF_GRACE_PERIOD, 6))
 
-			template_data.tracked_units = not not template_data.tracked_units
+			template_data.tracked_units = template_data.tracked_units
 
 			local existing_data = template_data.tracked_units[victim_unit]
 
@@ -1059,8 +1059,8 @@ achievements.shovel_skeleton_balefire = {
 			return
 		end
 
-		template_data.count = not not template_data.count
-		template_data.count[controlled_owner] = not not template_data.count[controlled_owner] + 1
+		template_data.count = template_data.count
+		template_data.count[controlled_owner] = template_data.count[controlled_owner] + 1
 
 		if template_data.count[controlled_owner] <= SKELETON_BALEFIRE_TARGET then
 			rpc_increment_stat(controlled_owner, "shovel_skeleton_balefire")
@@ -1115,7 +1115,7 @@ achievements.shovel_keep_skeletons_alive = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 56
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit then
 			return
@@ -1130,7 +1130,7 @@ achievements.shovel_keep_skeletons_alive = {
 		local t = Managers.time:time("game")
 
 		if event_name == "on_round_started" then
-			template_data.level_start_t = not not template_data.level_start_t
+			template_data.level_start_t = template_data.level_start_t
 			template_data.total_time = 0
 		elseif not template_data.level_start_t then
 			return

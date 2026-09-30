@@ -157,7 +157,7 @@ end
 BotNavTransitionManager.create_transition = function (self, from, via, wanted_to, player_jumped, make_permanent, drawer)
 	-- function 10
 	if not self._is_server then
-		Managers.state.network.network_transmit:send_rpc_server("rpc_create_bot_nav_transition", from, via, wanted_to, not not player_jumped or not not false)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_create_bot_nav_transition", from, via, wanted_to, player_jumped or false)
 
 		return
 	end
@@ -165,7 +165,7 @@ BotNavTransitionManager.create_transition = function (self, from, via, wanted_to
 	local world = self._world
 	local ph_world = self._physics_world
 	local hits = PhysicsWorld.immediate_overlap(ph_world, "position", from, "shape", "sphere", "size", 0.1, "collision_filter", "filter_bot_nav_transition_overlap")
-	local hit_existing_transition = not not hits and #hits > 0
+	local hit_existing_transition = hits and #hits > 0
 
 	if hit_existing_transition then
 		return false
@@ -251,7 +251,7 @@ BotNavTransitionManager.create_transition = function (self, from, via, wanted_to
 		to = Vector3Box(to),
 		unit = unit,
 		type = layer_name,
-		permanent = not not make_permanent or not not false
+		permanent = make_permanent or false
 	}
 	self._bot_nav_transition_lookup[unit] = index
 
@@ -292,7 +292,7 @@ BotNavTransitionManager.register_ladder = function (self, unit, index_offset, dr
 	-- function 13
 	local data = {}
 	local error_message
-	local index_offset = not not index_offset or not not 0
+	local index_offset = index_offset or 0
 
 	self._ladder_transitions[unit] = data
 
@@ -304,7 +304,7 @@ BotNavTransitionManager.register_ladder = function (self, unit, index_offset, dr
 	local down = -Quaternion.up(unit_rot)
 	local align_pos = Unit.world_position(unit, align_node)
 	local bottom_node_name = Unit.get_data(unit, "bottom_node")
-	local bottom_node = bottom_node_name and not not Unit.node(unit, bottom_node_name) or not bottom_node_name and not not index_offset
+	local bottom_node = bottom_node_name and Unit.node(unit, bottom_node_name) or not bottom_node_name and index_offset
 	local bottom_pos = Unit.world_position(unit, bottom_node)
 	local length = Vector3.dot(bottom_pos - align_pos, down)
 	local ph_world = self._physics_world

@@ -1062,7 +1062,7 @@ TitleLoadingUI._create_elements = function (self)
 		self._ui_scenegraph.console_input_icon_2.size[2] = texture_data.size[2]
 
 		local platform = PLATFORM
-		local texture_data, input_text = ButtonTextureByName("d_horizontal", IS_WINDOWS and not not "xb1" or not IS_WINDOWS and not not platform)
+		local texture_data, input_text = ButtonTextureByName("d_horizontal", IS_WINDOWS and "xb1" or not IS_WINDOWS and platform)
 
 		gamma_adjuster.content.gamepad_navigation_icon = texture_data.texture
 		self._ui_scenegraph.console_input_icon_1.size[1] = texture_data.size[1]
@@ -1087,7 +1087,7 @@ TitleLoadingUI.setup_gamma_menu = function (self)
 	local gamma_stepper = self._gamma_widgets_by_name.gamma_stepper
 	local gamma_adjuster = self._gamma_widgets_by_name.gamma_adjuster
 	local min, max, start_value = gamma_value_settings.min, gamma_value_settings.max, gamma_value_settings.start_value
-	local value = not not Application.user_setting("render_settings", "gamma")
+	local value = Application.user_setting("render_settings", "gamma")
 
 	gamma_stepper.content.setting_text = ""
 	gamma_stepper.content.value = value
@@ -1108,7 +1108,7 @@ TitleLoadingUI.setup_sound_panning_menu = function (self)
 	local options = panning_value_settings.options
 	local option_index_by_key = panning_value_settings.option_index_by_key
 	local default_value = DefaultUserSettings.get("user_settings", "sound_panning_rule")
-	local sound_panning_rule = not not Application.user_setting("sound_panning_rule")
+	local sound_panning_rule = Application.user_setting("sound_panning_rule")
 
 	stepper.content.setting_text = ""
 	stepper.content.value = sound_panning_rule
@@ -1124,7 +1124,7 @@ TitleLoadingUI.setup_sound_dynamic_range_menu = function (self)
 	local options = dynamic_range_value_settings.options
 	local option_index_by_key = dynamic_range_value_settings.option_index_by_key
 	local default_value = DefaultUserSettings.get("user_settings", "dynamic_range_sound")
-	local dynamic_range_sound = not not Application.user_setting("dynamic_range_sound")
+	local dynamic_range_sound = Application.user_setting("dynamic_range_sound")
 
 	stepper.content.setting_text = ""
 	stepper.content.value = dynamic_range_sound
@@ -1156,7 +1156,7 @@ TitleLoadingUI.update = function (self, dt, t)
 				local max = gamma_value_settings.max
 				local num_decimals = gamma_value_settings.num_decimals
 				local internal_value = stepper.content.internal_value
-				local value = math.round_with_precision(min + (max - min) * internal_value, not not num_decimals or not not 0)
+				local value = math.round_with_precision(min + (max - min) * internal_value, num_decimals or 0)
 
 				stepper.content.value = value
 
@@ -1177,7 +1177,7 @@ TitleLoadingUI.update = function (self, dt, t)
 				local max = panning_value_settings.max
 				local num_decimals = panning_value_settings.num_decimals
 				local internal_value = stepper.content.internal_value
-				local index = math.round_with_precision(min + (max - min) * internal_value, not not num_decimals or not not 0)
+				local index = math.round_with_precision(min + (max - min) * internal_value, num_decimals or 0)
 				local options = panning_value_settings.options
 				local option = options[index]
 
@@ -1208,7 +1208,7 @@ TitleLoadingUI.update = function (self, dt, t)
 				local max = dynamic_range_value_settings.max
 				local num_decimals = dynamic_range_value_settings.num_decimals
 				local internal_value = stepper.content.internal_value
-				local index = math.round_with_precision(min + (max - min) * internal_value, not not num_decimals or not not 0)
+				local index = math.round_with_precision(min + (max - min) * internal_value, num_decimals or 0)
 				local options = dynamic_range_value_settings.options
 				local option = options[index]
 
@@ -1341,10 +1341,10 @@ TitleLoadingUI._animate_button = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -1433,7 +1433,7 @@ TitleLoadingUI._handle_stepper_input = function (self, widget, stepper_settings,
 
 		local new_cooldown = math.max(input_cooldown - dt, 0)
 
-		input_cooldown = new_cooldown > 0 and (not not new_cooldown or not not nil) or not (new_cooldown > 0) and not not nil
+		input_cooldown = new_cooldown > 0 and (new_cooldown or nil) or not (new_cooldown > 0) and nil
 		content.input_cooldown = input_cooldown
 	end
 
@@ -1444,7 +1444,7 @@ TitleLoadingUI._handle_stepper_input = function (self, widget, stepper_settings,
 	local diff = max - min
 	local total_step = diff * 10^num_decimals
 	local step = 1 / total_step
-	local move = not not gamepad_active and not not input_service:get("analog_input")
+	local move = gamepad_active and input_service:get("analog_input")
 	local analog_speed = 0.01
 	local current_time = Managers.time:time("main")
 	local input_been_made = false
@@ -1581,7 +1581,7 @@ TitleLoadingUI._get_input_texture_data = function (self, input_action)
 		local key_action_type = keymap_binding[3]
 		local is_button_unassigned = key_index == UNASSIGNED_KEY
 
-		return nil, is_button_unassigned and not not "" or not is_button_unassigned and not not Keyboard.button_locale_name(key_index)
+		return nil, is_button_unassigned and "" or not is_button_unassigned and Keyboard.button_locale_name(key_index)
 	elseif Managers.input:is_device_active("gamepad") or not IS_WINDOWS then
 		return UISettings.get_gamepad_input_texture_data(input_service, input_action, true)
 	end
@@ -1615,9 +1615,9 @@ TitleLoadingUI._update_input_text = function (self, dt)
 	end
 
 	local icon_spacing = 10
-	local using_keyboard = texture_data and not not false or not texture_data and not not true
+	local using_keyboard = not texture_data
 
-	widget_content.using_keyboard = not not IS_WINDOWS
+	widget_content.using_keyboard = IS_WINDOWS
 
 	local font, scaled_font_size = UIFontByResolution(widget_style.input_text_1)
 	local text_width, text_height, min = UIRenderer.text_size(self._ui_renderer, widget_content.input_text_1, font[1], scaled_font_size)
@@ -1701,16 +1701,16 @@ TitleLoadingUI._update_input = function (self, dt)
 	local total_hold_time = 1
 	local total_fade_time = 1
 
-	self._fade_timer = math.clamp(not not self._fade_timer - dt, 0, total_fade_time)
+	self._fade_timer = math.clamp(self._fade_timer - dt, 0, total_fade_time)
 
 	local input_service = Managers.input:get_service("title_loading_ui")
 	local cancel_video = input_service:get("cancel_video")
 
 	if self:_update_any_held() then
 		self._fade_timer = total_fade_time
-		self._cancel_timer = not not self._cancel_timer + dt
+		self._cancel_timer = self._cancel_timer + dt
 	else
-		self._cancel_timer = not not self._cancel_timer - dt * 3
+		self._cancel_timer = self._cancel_timer - dt * 3
 	end
 
 	self:_handle_skip_fade(self._fade_timer / total_fade_time * 255)
@@ -1758,7 +1758,7 @@ TitleLoadingUI._update_input = function (self, dt)
 		end
 	end
 
-	self._cancel_video = not not self._cancel_video
+	self._cancel_video = self._cancel_video
 end
 
 TitleLoadingUI._handle_skip_fade = function (self, alpha)
@@ -1906,7 +1906,7 @@ end
 
 TitleLoadingUI.is_done = function (self)
 	-- function 40
-	return not not self._startup_settings_done
+	return self._startup_settings_done
 end
 
 TitleLoadingUI.force_done = function (self)

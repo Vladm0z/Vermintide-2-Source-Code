@@ -41,7 +41,7 @@ local components = {
 	},
 	{
 		class_name = "IngamePlayerListUI",
-		filename = GameSettingsDevelopment.use_new_tab_menu and not not "scripts/ui/views/ingame_player_list_ui_v2" or not GameSettingsDevelopment.use_new_tab_menu and not not "scripts/ui/views/ingame_player_list_ui",
+		filename = GameSettingsDevelopment.use_new_tab_menu and "scripts/ui/views/ingame_player_list_ui_v2" or not GameSettingsDevelopment.use_new_tab_menu and "scripts/ui/views/ingame_player_list_ui",
 		visibility_groups = {
 			"tab_menu",
 			"realism",
@@ -65,7 +65,7 @@ local components = {
 			if is_in_inn then
 				return true
 			else
-				local use_twitch_ui = not not Managers.twitch
+				local use_twitch_ui = Managers.twitch
 
 				if not use_twitch_ui then
 					return true

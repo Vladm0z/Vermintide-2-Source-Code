@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_weave_definitions.lua
 
 local window_frame_width = 22
-local platform_offset = IS_WINDOWS and not not 0 or not IS_WINDOWS and not not 50
+local platform_offset = IS_WINDOWS and 0 or not IS_WINDOWS and 50
 local score_container_w = 1600
 local score_container_margin_w = 50
 local score_content_w = score_container_w - score_container_margin_w
@@ -655,16 +655,16 @@ end
 
 function create_leaderboard_button(scenegraph_id, size, frame_name, background_texture, background_icon)
 	-- function 2
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
 
-	background_icon = not not background_icon or not not "loot_chest_icon"
+	background_icon = background_icon or "loot_chest_icon"
 
 	local background_icon_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_icon)
-	local background_icon_size = background_icon_settings and not not background_icon_settings.size or not background_icon_settings and not not {
+	local background_icon_size = background_icon_settings and background_icon_settings.size or not background_icon_settings and {
 		50,
 		50
 	}
@@ -1021,7 +1021,7 @@ function create_simple_gamepad_disabled_texture(scenegraph_id, masked, retained,
 		},
 		style = {
 			texture_id = {
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -1058,7 +1058,7 @@ function create_simple_gamepad_disabled_texture(scenegraph_id, masked, retained,
 		offset = {
 			0,
 			0,
-			not not layer or not not 0
+			layer or 0
 		},
 		scenegraph_id = scenegraph_id
 	}

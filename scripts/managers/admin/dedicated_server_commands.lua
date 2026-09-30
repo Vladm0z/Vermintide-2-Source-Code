@@ -290,7 +290,7 @@ Commands = {
 				for i = 1, #peers do
 					local peer_id = peers[i]
 
-					response = string.format("%s%s - %s\n", response, not not peer_id or not not "-", not not Managers.game_server:peer_name(peer_id))
+					response = string.format("%s%s - %s\n", response, peer_id or "-", (Managers.game_server:peer_name(peer_id)))
 				end
 
 				return true, response
@@ -299,7 +299,7 @@ Commands = {
 			local players = Managers.player:human_and_bot_players()
 
 			for _, player in pairs(players) do
-				response = string.format("%s%s - %s (%s)\n", response, not not player.peer_id, not not player:name(), not not player:career_name())
+				response = string.format("%s%s - %s (%s)\n", response, player.peer_id, player:name(), (player:career_name()))
 			end
 
 			return true, response
@@ -562,7 +562,7 @@ Commands = {
 				return false, "No active mechanism"
 			end
 
-			local game_mode = not not Managers.state.game_mode
+			local game_mode = Managers.state.game_mode
 
 			if not game_mode then
 				return false, "No current game mode is active"
@@ -594,7 +594,7 @@ Commands = {
 				return false, "No active mechanism"
 			end
 
-			local game_mode = not not Managers.state.game_mode
+			local game_mode = Managers.state.game_mode
 
 			if not game_mode then
 				return false, "No current game mode is active"
@@ -720,7 +720,7 @@ Commands = {
 			local result, reason = reservation_handler:move_player(peer_id, party_id, ignore_assert)
 
 			if not result then
-				return false, not not reason or not not "Failed to move player - unknown"
+				return false, reason or "Failed to move player - unknown"
 			end
 
 			return true, "Player moved!"

@@ -5,7 +5,7 @@ local DUMMY_TABLE = {}
 
 DialogueQueries.get_sound_event_duration = function (dialogue, index)
 	-- function 1
-	local sound_events_duration = not not dialogue.sound_events_duration
+	local sound_events_duration = dialogue.sound_events_duration
 	local duration = sound_events_duration[index]
 
 	if duration then
@@ -47,7 +47,7 @@ DialogueQueries.build_randomized_indexes = function (dialogue)
 			end
 
 			if temp_weight_table_n > 1 then
-				local length_selected = temp_weight_table[selected_index] - (selected_index ~= 1 and not not temp_weight_table[selected_index - 1] or not (selected_index ~= 1) and not not 0)
+				local length_selected = temp_weight_table[selected_index] - (selected_index ~= 1 and temp_weight_table[selected_index - 1] or not (selected_index ~= 1) and 0)
 
 				for accum_index = selected_index + 1, temp_weight_table_n do
 					temp_weight_table[accum_index] = temp_weight_table[accum_index] - length_selected
@@ -126,7 +126,7 @@ DialogueQueries.get_filtered_dialogue_event_index = function (dialogue, context,
 		local did_wrap
 
 		dialogue_index, did_wrap = DialogueQueries.get_dialogue_event_index(dialogue, true)
-		wrapped = not not wrapped or not not did_wrap
+		wrapped = wrapped or did_wrap
 	end
 
 	if wrapped then
@@ -150,7 +150,7 @@ DialogueQueries.filter_sound_event = function (dialogue, event_index, context, g
 				local context_key = filter[2]
 				local condition = filter[3]
 				local filter_value = filter[4]
-				local real_value = not not context[sub_context][context_key]
+				local real_value = context[sub_context][context_key]
 				local op = TagQuery.FilterOP[condition]
 
 				if op(real_value, filter_value) then
@@ -162,7 +162,7 @@ DialogueQueries.filter_sound_event = function (dialogue, event_index, context, g
 
 	do
 		local all_filters = dialogue.sound_event_filters
-		local event_filters = not not all_filters and not not all_filters[sound_event]
+		local event_filters = all_filters and all_filters[sound_event]
 
 		if event_filters then
 			for i = 1, #event_filters do
@@ -171,7 +171,7 @@ DialogueQueries.filter_sound_event = function (dialogue, event_index, context, g
 				local context_key = filter[2]
 				local condition = filter[3]
 				local filter_value = filter[4]
-				local real_value = not not context[sub_context][context_key]
+				local real_value = context[sub_context][context_key]
 				local op = TagQuery.FilterOP[condition]
 
 				if op(real_value, filter_value) then

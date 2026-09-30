@@ -2,14 +2,14 @@
 
 local platform = PLATFORM
 local default_keymaps_data = rawget(_G, GamepadLayoutKeymapsTableName)
-local gamepad_platform_key = platform == "ps4" and not not platform or not (platform == "ps4") and not not "xb1"
+local gamepad_platform_key = platform == "ps4" and platform or not (platform == "ps4") and "xb1"
 
 DefaultPlayerControllerKeymaps = PlayerControllerKeymaps[gamepad_platform_key]
 DefaultPlayerControllerKeymapsPSPad = PlayerControllerKeymaps.ps_pad
 DefaultGamepadLayoutKeymaps = {
 	PlayerControllerKeymaps = {
 		[gamepad_platform_key] = DefaultPlayerControllerKeymaps,
-		ps_pad = IS_WINDOWS and not not PlayerControllerKeymaps.ps_pad or not IS_WINDOWS and not not nil
+		ps_pad = IS_WINDOWS and PlayerControllerKeymaps.ps_pad or not IS_WINDOWS and nil
 	}
 }
 

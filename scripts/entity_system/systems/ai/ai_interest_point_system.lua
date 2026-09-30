@@ -118,7 +118,7 @@ end
 
 AIInterestPointSystem.set_seed = function (self, seed)
 	-- function 7
-	fassert(not not seed and type(seed) == "number", "Bad seed input!")
+	fassert(seed and type(seed) == "number", "Bad seed input!")
 
 	self._seed = seed
 end
@@ -192,8 +192,8 @@ AIInterestPointSystem.on_add_extension = function (self, world, unit, extension_
 				QuickDrawerStay:line(unit_position, unit_position + Vector3(0, 0, 4), Color(255, 255, 0))
 			end
 
-			extension.wwise_event = not not Unit.get_data(unit, "interest_point", "wwise_event")
-			extension.wwise_minimum_needed = not not Unit.get_data(unit, "interest_point", "wwise_minimum_needed")
+			extension.wwise_event = Unit.get_data(unit, "interest_point", "wwise_event")
+			extension.wwise_minimum_needed = Unit.get_data(unit, "interest_point", "wwise_minimum_needed")
 
 			local filter_string = Unit.get_data(unit, "interest_point", "race_filter")
 
@@ -287,7 +287,7 @@ AIInterestPointSystem.on_add_extension = function (self, world, unit, extension_
 			end
 
 			self.interest_points[unit] = extension
-			extension.wwise_event = not not Unit.get_data(unit, "interest_point", "sound_event")
+			extension.wwise_event = Unit.get_data(unit, "interest_point", "sound_event")
 		end
 	end
 
@@ -445,7 +445,7 @@ AIInterestPointSystem.release_obsolete_requests = function (self, t)
 	local claim_unit = request.claim_unit
 	local blackboard = BLACKBOARDS[claim_unit]
 
-	release_claim = not not blackboard.confirmed_player_sighting
+	release_claim = blackboard.confirmed_player_sighting
 
 	if release_claim then
 		self.current_obsolete_request = nil
@@ -518,11 +518,11 @@ local function _get_best_interest_point(broadphase, request, claim_unit_position
 	for bp_i = 1, interest_points_result_n do
 		local point_unit = interest_points_result[bp_i]
 		local point_extension = ScriptUnit_Extension(point_unit, "ai_interest_point_system")
-		local current_request_extension = not not request.current_request
-		local stored_reachable_result = not not current_request_point_unit and not not reachable_interest_points[current_request_point_unit]
+		local current_request_extension = request.current_request
+		local stored_reachable_result = current_request_point_unit and reachable_interest_points[current_request_point_unit]
 
 		if current_request_point_unit and stored_reachable_result == nil then
-			stored_reachable_result = not not reachable_interest_points[point_unit] and not not reachable_interest_points[point_unit][current_request_point_unit]
+			stored_reachable_result = reachable_interest_points[point_unit] and reachable_interest_points[point_unit][current_request_point_unit]
 		end
 
 		local point_unit_is_reachable
@@ -530,7 +530,7 @@ local function _get_best_interest_point(broadphase, request, claim_unit_position
 		if stored_reachable_result == nil then
 			local is_failed_interest_point = request.failed_interest_points[point_unit]
 
-			point_unit_is_reachable = not not is_failed_interest_point and not not not is_failed_interest_point
+			point_unit_is_reachable = is_failed_interest_point and not is_failed_interest_point
 		else
 			point_unit_is_reachable = stored_reachable_result
 		end
@@ -619,7 +619,7 @@ AIInterestPointSystem.resolve_requests = function (self)
 		local processing_astar = self.processing_astar
 		local path_check_done, path_found = false, false
 		local best_unit, best_point, best_point_extension
-		local current_request_point_unit = not not request.current_request
+		local current_request_point_unit = request.current_request
 
 		if not processing_astar then
 			local perform_astar = false
@@ -668,7 +668,7 @@ AIInterestPointSystem.debug_draw = function (self, t, dt)
 
 	local QuickDrawer = QuickDrawer
 
-	self.debug_anim_t = not not self.debug_anim_t + dt
+	self.debug_anim_t = self.debug_anim_t + dt
 
 	if self.debug_anim_t > 1 then
 		self.debug_anim_t = 0
@@ -810,7 +810,7 @@ AIInterestPointSystem.rpc_interest_point_chatter_update = function (self, channe
 	end
 
 	local wwise_world = self.wwise_world
-	local percent_claimed_old = not not extension.percent_claimed
+	local percent_claimed_old = extension.percent_claimed
 
 	if percent_claimed == percent_claimed_old then
 		return

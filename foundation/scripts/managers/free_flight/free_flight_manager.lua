@@ -3,7 +3,7 @@
 require("foundation/scripts/managers/free_flight/free_flight_controller_settings")
 require("foundation/scripts/managers/free_flight/control_points")
 
-local free_flight_manager_testify = not not script_data.testify
+local free_flight_manager_testify = script_data.testify
 
 FreeFlightManager = class(FreeFlightManager)
 
@@ -256,7 +256,7 @@ FreeFlightManager.camera_pose = function (self, data)
 	-- function 16
 	local world = Managers.world:world(data.viewport_world_name)
 	local viewport = ScriptWorld.global_free_flight_viewport(world)
-	local cam = not not data.frustum_freeze_camera
+	local cam = data.frustum_freeze_camera
 	local cm = Camera.local_pose(cam)
 
 	return cm
@@ -290,7 +290,7 @@ FreeFlightManager._update_global_free_flight = function (self, dt, data, input_s
 	-- function 20
 	local world = Managers.world:world(data.viewport_world_name)
 	local viewport = ScriptWorld.global_free_flight_viewport(world)
-	local cam = not not data.frustum_freeze_camera
+	local cam = data.frustum_freeze_camera
 	local projection_mode_swap = input_service:get("projection_mode")
 
 	if projection_mode_swap and data.projection_type == Camera.PERSPECTIVE then
@@ -317,7 +317,7 @@ FreeFlightManager._update_global_free_flight = function (self, dt, data, input_s
 	if data.projection_type == Camera.ORTHOGRAPHIC then
 		local ortho_data = data.orthographic_data
 
-		ortho_data.yaw = not not ortho_data.yaw - Vector3.x(mouse) * data.rotation_speed
+		ortho_data.yaw = ortho_data.yaw - Vector3.x(mouse) * data.rotation_speed
 
 		local q1 = Quaternion(Vector3(0, 0, 1), ortho_data.yaw)
 		local q2 = Quaternion(Vector3.right(), -math.half_pi)
@@ -381,7 +381,7 @@ FreeFlightManager._update_global_free_flight = function (self, dt, data, input_s
 	end
 
 	if input_service:get("decrease_frame_step") then
-		self._frames_to_step = self._frames_to_step > 1 and not not (self._frames_to_step - 1) or not (self._frames_to_step > 1) and not not 1
+		self._frames_to_step = self._frames_to_step > 1 and self._frames_to_step - 1 or not (self._frames_to_step > 1) and 1
 
 		print("Frame step:", self._frames_to_step)
 	elseif input_service:get("increase_frame_step") then
@@ -678,7 +678,7 @@ end
 
 FreeFlightManager.active = function (self, player_index)
 	-- function 33
-	return not not self.data[player_index]
+	return self.data[player_index]
 end
 
 FreeFlightManager.mode = function (self, player_index)
@@ -690,10 +690,10 @@ FreeFlightManager._update_free_flight = function (self, dt, player, data)
 	-- function 35
 	local world = Managers.world:world(data.viewport_world_name)
 	local viewport = ScriptWorld.free_flight_viewport(world, data.viewport_name)
-	local cam = not not data.frustum_freeze_camera
+	local cam = data.frustum_freeze_camera
 	local input = self.input_manager:get_service("FreeFlight")
 	local translation_change_speed = data.current_translation_max_speed * 0.5
-	local speed_change = Vector3.y(not not input:get("speed_change"))
+	local speed_change = Vector3.y((input:get("speed_change")))
 
 	data.current_translation_max_speed = math.max(data.current_translation_max_speed + speed_change * translation_change_speed, 0.01)
 
@@ -704,7 +704,7 @@ FreeFlightManager._update_free_flight = function (self, dt, player, data)
 
 	local mouse = input:get("look")
 	local rotation_accumulation = data.rotation_accumulation:unbox() + mouse
-	local rotation = rotation_accumulation * math.min(dt, 1) * not not player.free_flight_movement_filter_speed
+	local rotation = rotation_accumulation * math.min(dt, 1) * player.free_flight_movement_filter_speed
 
 	data.rotation_accumulation:store(rotation_accumulation - rotation)
 
@@ -721,7 +721,7 @@ FreeFlightManager._update_free_flight = function (self, dt, player, data)
 	local speed_difference_direction = Vector3.normalize(speed_difference)
 
 	if speed_change ~= 0 then
-		data.acceleration = not not player.free_flight_acceleration_factor * Vector3.length(speed_difference)
+		data.acceleration = player.free_flight_acceleration_factor * Vector3.length(speed_difference)
 	end
 
 	local acceleration = data.acceleration

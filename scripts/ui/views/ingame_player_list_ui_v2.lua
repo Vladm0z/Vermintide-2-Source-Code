@@ -50,7 +50,7 @@ IngamePlayerListUI.init = function (self, parent, ingame_ui_context)
 	self._network_server = ingame_ui_context.network_server
 	self._network_lobby = ingame_ui_context.network_lobby
 	self._local_player = self._player_manager:local_player()
-	self._map_save_data = not not PlayerData.map_view_data
+	self._map_save_data = PlayerData.map_view_data
 	self._platform = PLATFORM
 	self._render_settings = {
 		alpha_multiplier = 0,
@@ -73,13 +73,13 @@ IngamePlayerListUI.init = function (self, parent, ingame_ui_context)
 	local gamemode_settings = Managers.state.game_mode:settings()
 	local private_only = gamemode_settings.private_only
 
-	self._private_setting_enabled = not private_only and not self._is_in_inn and not not self._local_player.is_server
+	self._private_setting_enabled = not private_only and not self._is_in_inn and self._local_player.is_server
 
 	local network_manager = Managers.state.network
 	local network_transmit = network_manager.network_transmit
 	local server_peer_id = network_transmit.server_peer_id
 
-	self._host_peer_id = not not server_peer_id or not not network_transmit.peer_id
+	self._host_peer_id = server_peer_id or network_transmit.peer_id
 	self._show_difficulty = not gamemode_settings.hide_difficulty
 
 	if not self._show_difficulty then
@@ -182,7 +182,7 @@ IngamePlayerListUI._create_ui_elements = function (self)
 	self._private_checkbox_disabled_reasons = {}
 	self._node_info_widget = nil
 
-	local twitch_connection = not not Managers.twitch
+	local twitch_connection = Managers.twitch
 
 	if Managers.state.game_mode:game_mode_key() == "weave" or twitch_connection then
 		self._private_checkbox_disabled_reasons.weave_or_twitch = true
@@ -221,7 +221,7 @@ IngamePlayerListUI._setup_mutator_data = function (self)
 
 	if current_level_settings.hub_level then
 		mutators = Managers.deed:mutators()
-		mutators = not not mutators and not not table.set(mutators)
+		mutators = mutators and table.set(mutators)
 	else
 		mutators = Managers.state.game_mode:activated_mutators()
 	end
@@ -271,7 +271,7 @@ IngamePlayerListUI._setup_mutator_data = function (self)
 		local current_mutator_index = 1
 
 		for name, mutator_settings in pairs(mutators) do
-			local activated_by_twitch = type(mutator_settings) == "table" and not not mutator_settings.activated_by_twitch
+			local activated_by_twitch = type(mutator_settings) == "table" and mutator_settings.activated_by_twitch
 
 			if not activated_by_twitch and not MutatorTemplates[name].hide_from_player_ui then
 				local row = 1 + math.floor((current_mutator_index - 1) / MUTATORS_PER_COLUMN) % MUTATOR_ROWS
@@ -307,7 +307,7 @@ IngamePlayerListUI._get_deus_current_node = function (self)
 	end
 
 	local mechanism = Managers.mechanism:game_mechanism()
-	local deus_run_controller = not not mechanism and not not mechanism:get_deus_run_controller()
+	local deus_run_controller = mechanism and mechanism:get_deus_run_controller()
 
 	return deus_run_controller:get_current_node()
 end
@@ -343,9 +343,9 @@ IngamePlayerListUI._setup_chaos_wastes_info = function (self)
 	end
 
 	if minor_modifier_group then
-		content_node_info.minor_modifier_1_section.text = minor_modifier_group[1] and not not Localize("mutator_" .. minor_modifier_group[1] .. "_name") or not minor_modifier_group[1] and not not ""
-		content_node_info.minor_modifier_2_section.text = minor_modifier_group[2] and not not Localize("mutator_" .. minor_modifier_group[2] .. "_name") or not minor_modifier_group[2] and not not ""
-		content_node_info.minor_modifier_3_section.text = minor_modifier_group[3] and not not Localize("mutator_" .. minor_modifier_group[3] .. "_name") or not minor_modifier_group[3] and not not ""
+		content_node_info.minor_modifier_1_section.text = minor_modifier_group[1] and Localize("mutator_" .. minor_modifier_group[1] .. "_name") or not minor_modifier_group[1] and ""
+		content_node_info.minor_modifier_2_section.text = minor_modifier_group[2] and Localize("mutator_" .. minor_modifier_group[2] .. "_name") or not minor_modifier_group[2] and ""
+		content_node_info.minor_modifier_3_section.text = minor_modifier_group[3] and Localize("mutator_" .. minor_modifier_group[3] .. "_name") or not minor_modifier_group[3] and ""
 	else
 		content_node_info.minor_modifier_1_section.text = ""
 		content_node_info.minor_modifier_2_section.text = ""
@@ -365,10 +365,10 @@ IngamePlayerListUI._setup_chaos_wastes_info = function (self)
 	end
 
 	local conflict_director = ConflictDirectors[director_name]
-	local conflict_director_description = not not conflict_director and not not conflict_director.description
+	local conflict_director_description = conflict_director and conflict_director.description
 
 	if conflict_director_description then
-		content_node_info.breed_text = not not Localize(conflict_director_description)
+		content_node_info.breed_text = Localize(conflict_director_description)
 	else
 		content_node_info.breed_text = ""
 	end
@@ -476,7 +476,7 @@ IngamePlayerListUI._setup_mission_data = function (self, level_settings)
 			local data = {}
 
 			data.name = key
-			data.total_amount = total_amount > 0 and not not total_amount
+			data.total_amount = total_amount > 0 and total_amount
 			data.mission_name = mission_name
 			data.widget = widget
 			size_w = size_w * size_scale
@@ -530,13 +530,13 @@ IngamePlayerListUI._sync_missions = function (self)
 
 	for _, data in pairs(mission_settings_data) do
 		local mission_name = data.mission_name
-		local amount = not not self:_get_item_amount_by_mission_name(mission_name)
+		local amount = self:_get_item_amount_by_mission_name(mission_name)
 		local current_amount = data.amount
 		local total_amount = data.total_amount
 		local widget = data.widget
 
 		if current_amount ~= amount then
-			data.previous_amount = not not current_amount or not not 0
+			data.previous_amount = current_amount or 0
 			data.amount = amount
 
 			local content = widget.content
@@ -556,7 +556,7 @@ IngamePlayerListUI._get_item_amount_by_mission_name = function (self, mission_na
 	-- function 9
 	local mission_system = self._mission_system
 	local data = mission_system:get_level_end_mission_data(mission_name)
-	local current_amount = not not data and not not data.current_amount
+	local current_amount = data and data.current_amount
 
 	return current_amount
 end
@@ -587,7 +587,7 @@ IngamePlayerListUI._setup_weave_display_info = function (self)
 	-- function 12
 	if Managers.state.game_mode:game_mode_key() == "weave" then
 		local lobby = Managers.state.network:lobby()
-		local weave_quick_game = not not lobby and not not lobby:lobby_data("weave_quick_game")
+		local weave_quick_game = lobby and lobby:lobby_data("weave_quick_game")
 		local weave_manager = Managers.weave
 
 		if weave_manager then
@@ -646,9 +646,9 @@ IngamePlayerListUI._setup_weave_objectives = function (self, weave_template)
 		local objective = objectives[i]
 		local conflict_settings = objective.conflict_settings
 		local is_end_objective = conflict_settings == "weave_disabled"
-		local title_text = is_end_objective and not not "menu_weave_play_next_end_event_title" or not is_end_objective and not not "menu_weave_play_main_objective_title"
+		local title_text = is_end_objective and "menu_weave_play_next_end_event_title" or not is_end_objective and "menu_weave_play_main_objective_title"
 		local objective_display_name = objective.display_name
-		local objective_icon = is_end_objective and not not "objective_icon_boss" or not is_end_objective and not not "objective_icon_general"
+		local objective_icon = is_end_objective and "objective_icon_boss" or not is_end_objective and "objective_icon_general"
 		local objective_height = self:_assign_objective(widget, title_text, objective_display_name, objective_icon, objective_spacing)
 		local offset = widget.offset
 
@@ -665,9 +665,9 @@ IngamePlayerListUI._assign_objective = function (self, widget, title_text, text,
 	local scenegraph_definition = definitions.scenegraph_definition
 	local size = scenegraph_definition[scenegraph_id].size
 
-	content.icon = not not icon or not not "trial_gem"
-	content.title_text = not not title_text or not not "-"
-	content.text = not not text or not not "-"
+	content.icon = icon or "trial_gem"
+	content.title_text = title_text or "-"
+	content.text = text or "-"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(content.icon)
 	local icon_texture_size = icon_texture_settings.size
@@ -686,7 +686,7 @@ IngamePlayerListUI._assign_objective = function (self, widget, title_text, text,
 	local text_width = UIUtils.get_text_width(ui_renderer, text_style, content.text)
 	local text_height = UIUtils.get_text_height(ui_renderer, size, text_style, content.text)
 
-	spacing = not not spacing or not not 0
+	spacing = spacing or 0
 
 	local total_height = math.max(text_height, 50) + spacing
 
@@ -738,7 +738,7 @@ end
 IngamePlayerListUI._add_player = function (self, player)
 	-- function 20
 	local is_local_player = player.local_player
-	local is_bot_player = not not player.bot_player
+	local is_bot_player = player.bot_player
 	local ui_id = player:ui_id()
 	local player_level = ExperienceSettings.get_player_level(player)
 	local peer_id = player:network_id()
@@ -752,7 +752,7 @@ IngamePlayerListUI._add_player = function (self, player)
 		local_player_id = player:local_player_id(),
 		player = player,
 		player_name = player:name(),
-		level = not not player_level or not not "n/a",
+		level = player_level or "n/a",
 		resync_player_level = not player_level,
 		is_server = is_player_server,
 		unit_equipment = {}
@@ -811,10 +811,10 @@ IngamePlayerListUI._update_widgets = function (self)
 		local peer_id = player_data.peer_id
 		local is_local_player = player_data.is_local_player
 		local is_bot_player = player_data.is_bot_player
-		local is_leader = peer_id == leader and not not not is_bot_player
+		local is_leader = peer_id == leader and not is_bot_player
 		local is_server = player_data.is_server
-		local can_vote_kick = not not vote_kick_enabled and not not self:kick_player_available(player_data)
-		local can_kick_player = not not can_vote_kick or not not self:_can_host_solo_kick()
+		local can_vote_kick = vote_kick_enabled and self:kick_player_available(player_data)
+		local can_kick_player = can_vote_kick or self:_can_host_solo_kick()
 		local widget = self._player_list_widgets[i]
 		local widget_content = widget.content
 
@@ -826,8 +826,8 @@ IngamePlayerListUI._update_widgets = function (self)
 			widget_content.show_chat_button = false
 			widget_content.show_kick_button = false
 			widget_content.show_voice_button = false
-			widget_content.show_profile_button = not not is_local_player and not not not is_bot_player
-			widget_content.show_ping = not is_server and not not not is_bot_player
+			widget_content.show_profile_button = is_local_player and not is_bot_player
+			widget_content.show_ping = not is_server and not is_bot_player
 			widget_content.chat_button_hotspot.disable_button = true
 			widget_content.kick_button_hotspot.disable_button = true
 			widget_content.voice_button_hotspot.disable_button = true
@@ -854,7 +854,7 @@ IngamePlayerListUI._update_widgets = function (self)
 
 		local name = player_data.player_name
 
-		player_data.player_name = Utf8.length(name) > PLAYER_NAME_MAX_LENGTH and not not UIRenderer.crop_text_width(self._ui_top_renderer, name, 370, widget.style.name) or not (Utf8.length(name) > PLAYER_NAME_MAX_LENGTH) and not not name
+		player_data.player_name = Utf8.length(name) > PLAYER_NAME_MAX_LENGTH and UIRenderer.crop_text_width(self._ui_top_renderer, name, 370, widget.style.name) or not (Utf8.length(name) > PLAYER_NAME_MAX_LENGTH) and name
 		player_data.widget = widget
 	end
 end
@@ -887,8 +887,8 @@ IngamePlayerListUI._update_player_information = function (self, dt, t)
 		local profile_index = player:profile_index()
 		local career_index = player:career_index()
 		local profile_settings = profiles[profile_index]
-		local display_name = profile_settings and not not profile_settings.display_name or not profile_settings and not not "unspawned"
-		local ingame_display_name = profile_settings and not not profile_settings.ingame_display_name or not profile_settings and not not "unspawned"
+		local display_name = profile_settings and profile_settings.display_name or not profile_settings and "unspawned"
+		local ingame_display_name = profile_settings and profile_settings.ingame_display_name or not profile_settings and "unspawned"
 		local style_name = widget.style.name
 
 		widget.content.name = UIRenderer.crop_text_width(self._ui_renderer, player_data.player_name, style_name.size[1], style_name)
@@ -904,12 +904,12 @@ IngamePlayerListUI._update_player_information = function (self, dt, t)
 			end
 		end
 
-		local career_settings = not not profile_settings and not not profile_settings.careers[career_index]
+		local career_settings = profile_settings and profile_settings.careers[career_index]
 
 		if career_settings then
 			local career_name = career_settings.name
 			local portrait_image = career_settings.portrait_image
-			local player_level_text = player_data.is_bot_player and not not "BOT" or not player_data.is_bot_player and (player_data.level and not not tostring(player_data.level) or not player_data.level and not not "-")
+			local player_level_text = player_data.is_bot_player and "BOT" or not player_data.is_bot_player and (player_data.level and tostring(player_data.level) or not player_data.level and "-")
 			local portrait_frame, portrait_frame_name
 			local player = player_data.player
 			local player_unit = player.player_unit
@@ -920,8 +920,8 @@ IngamePlayerListUI._update_player_information = function (self, dt, t)
 				portrait_frame = CosmeticUtils.get_cosmetic_slot(player, "slot_frame")
 			end
 
-			local portrait_frame_name = not not portrait_frame.item_name
-			local current_portrait_frame_name = not not player_data.portrait_frame
+			local portrait_frame_name = portrait_frame.item_name
+			local current_portrait_frame_name = player_data.portrait_frame
 
 			if player_data.career_index ~= career_index or display_name ~= player_data.hero_name or player_level_text ~= player_data.player_level_text or portrait_frame_name ~= current_portrait_frame_name then
 				player_data.career_index = career_index
@@ -1112,7 +1112,7 @@ IngamePlayerListUI.update = function (self, dt, t)
 	local input_manager = self._input_manager
 	local in_fade_active = Managers.transition:in_fade_active()
 	local input_service = input_manager:get_service("player_list_input")
-	local is_matchmaking = not not self._is_in_inn
+	local is_matchmaking = self._is_in_inn
 
 	if not in_fade_active and input_service:get("ingame_player_list_exit") and self._active and self._cursor_active then
 		self:_set_active(false)
@@ -1201,7 +1201,7 @@ end
 
 IngamePlayerListUI.is_focused = function (self)
 	-- function 40
-	return not not self._active
+	return self._active
 end
 
 IngamePlayerListUI.input_service = function (self)
@@ -1242,13 +1242,13 @@ IngamePlayerListUI._set_active = function (self, active)
 		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local matchmaking_type = Managers.matchmaking:active_game_mode()
 		local lobby = Managers.state.network:lobby()
-		local weave_quick_game = not not lobby and lobby:lobby_data("weave_quick_game") == "true"
-		local is_quick_game = not not weave_quick_game or not not Managers.venture.quickplay:is_quick_game()
+		local weave_quick_game = lobby and lobby:lobby_data("weave_quick_game") == "true"
+		local is_quick_game = weave_quick_game or Managers.venture.quickplay:is_quick_game()
 		local mechanism_type_widget = self._static_widgets_by_name.mechanism_type_name
 		local mission_type_widget = self._static_widgets_by_name.mission_type_name
 
 		if mechanism_name == "weave" then
-			matchmaking_type = is_quick_game and (not not "lb_game_type_weave_quick_play" or not not "lb_game_type_custom") or not is_quick_game and not not "lb_game_type_custom"
+			matchmaking_type = is_quick_game and ("lb_game_type_weave_quick_play" or "lb_game_type_custom") or not is_quick_game and "lb_game_type_custom"
 			mechanism_type_widget.content.text = Utf8.upper(Localize("lb_game_type_weave"))
 			mission_type_widget.content.text = Localize(matchmaking_type)
 		else
@@ -1259,7 +1259,7 @@ IngamePlayerListUI._set_active = function (self, active)
 			if is_quick_game then
 				mission_type_widget.content.text = Localize("lb_game_type_quick_play")
 			else
-				mission_type_widget.content.text = Localize(not not matchmaking_type_lookup[matchmaking_type])
+				mission_type_widget.content.text = Localize(matchmaking_type_lookup[matchmaking_type])
 			end
 		end
 
@@ -1464,7 +1464,7 @@ IngamePlayerListUI._update_player_list = function (self, dt, t)
 
 	for _, player in pairs(human_and_bot_players) do
 		local player_unit = player.player_unit
-		local add_player_allowed = not not game_mode_settings.allow_unspawned_players_in_tab_menu
+		local add_player_allowed = game_mode_settings.allow_unspawned_players_in_tab_menu
 
 		if add_player_allowed and not players_with_ui[player:ui_id()] then
 			self:_add_player(player)
@@ -1506,12 +1506,12 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 			local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
 			local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 			local max_health = health_extension:get_max_health()
-			local total_health = status_extension:is_dead() and not not 0 or not status_extension:is_dead() and not not health_extension:current_health()
-			local total_health_percent = status_extension:is_dead() and not not 0 or not status_extension:is_dead() and not not health_extension:current_health_percent()
-			local health_percent = status_extension:is_dead() and not not 0 or not status_extension:is_dead() and not not health_extension:current_permanent_health_percent()
-			local is_knocked_down = status_extension:is_knocked_down() and total_health_percent > 0 or not status_extension:is_knocked_down() and not not status_extension:get_is_ledge_hanging()
+			local total_health = status_extension:is_dead() and 0 or not status_extension:is_dead() and health_extension:current_health()
+			local total_health_percent = status_extension:is_dead() and 0 or not status_extension:is_dead() and health_extension:current_health_percent()
+			local health_percent = status_extension:is_dead() and 0 or not status_extension:is_dead() and health_extension:current_permanent_health_percent()
+			local is_knocked_down = status_extension:is_knocked_down() and total_health_percent > 0 or not status_extension:is_knocked_down() and status_extension:get_is_ledge_hanging()
 			local is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
-			local needs_help = not not status_extension:is_grabbed_by_pack_master()
+			local needs_help = status_extension:is_grabbed_by_pack_master()
 			local num_grimoires = buff_extension:num_buff_perk("skaven_grimoire")
 			local multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
 			local num_twitch_grimoires = buff_extension:num_buff_perk("twitch_grimoire")
@@ -1537,7 +1537,7 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 			local ability_bar_content = content.ability_bar
 
 			if game and go_id then
-				local ability_cooldown_percentage = not not GameSession.game_object_field(game, go_id, "ability_percentage")
+				local ability_cooldown_percentage = GameSession.game_object_field(game, go_id, "ability_percentage")
 
 				ability_bar_content.bar_value = 1 - ability_cooldown_percentage
 			end
@@ -1550,7 +1550,7 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 			local unique_id = player:unique_id()
 			local profile_index, career_index = profile_synchronizer:profile_by_peer(player_data.peer_id, player_data.local_player_id)
 			local profile_settings = profiles[profile_index]
-			local loadout = not not player_loadouts[unique_id]
+			local loadout = player_loadouts[unique_id]
 			local equipment = inventory_extension:equipment()
 			local is_build_visible = true
 
@@ -1562,7 +1562,7 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 				if privacy_level == PrivacyLevels.friends then
 					local Friends = rawget(_G, "Friends")
 
-					is_build_visible = not not Friends and not not Friends.in_category(player_data.peer_id, Friends.FRIEND_FLAG)
+					is_build_visible = Friends and Friends.in_category(player_data.peer_id, Friends.FRIEND_FLAG)
 				elseif privacy_level == PrivacyLevels.private then
 					is_build_visible = false
 				end
@@ -1571,7 +1571,7 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 			content.is_build_visible = is_build_visible
 
 			for slot_name, item in pairs(loadout) do
-				local rarity = not not item.rarity
+				local rarity = item.rarity
 				local inventory_icon = UIUtils.get_ui_information_from_item(item)
 
 				if not is_build_visible then
@@ -1579,7 +1579,7 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 				end
 
 				content[slot_name] = inventory_icon
-				content[slot_name .. "_rarity_texture"] = not not rarity and not not UISettings.item_rarity_textures[rarity]
+				content[slot_name .. "_rarity_texture"] = rarity and UISettings.item_rarity_textures[rarity]
 
 				if UIUtils.is_button_hover(widget, slot_name .. "_hotspot") then
 					self:_update_item_tooltip_widget(item, widget.offset)
@@ -1595,7 +1595,7 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 				for i = 1, 6 do
 					local id = talent_ids[i]
 					local talent = TalentUtils.get_talent_by_id(profile_name, id)
-					local talent_icon = not not talent and not not talent.icon
+					local talent_icon = talent and talent.icon
 					local talent_content = content["talent_" .. i]
 
 					if not is_build_visible or not talent_icon then
@@ -1603,7 +1603,7 @@ IngamePlayerListUI._update_dynamic_widget_information = function (self, dt, t)
 					end
 
 					talent_content.talent = talent
-					talent_content.icon = not not talent_icon or not not "icons_placeholder"
+					talent_content.icon = talent_icon or "icons_placeholder"
 
 					if talent_content.is_hover then
 						ui_scenegraph.talent_tooltip.local_position[2] = widget.offset[2]
@@ -1656,7 +1656,7 @@ IngamePlayerListUI._update_private_checkbox = function (self)
 	local human_players = Managers.player:human_players()
 	local players_below_difficulty_requirement = DifficultyManager.players_below_required_power_level(difficulty_key, human_players)
 
-	self._private_checkbox_disabled_reasons.power_level = not table.is_empty(players_below_difficulty_requirement) or not not nil
+	self._private_checkbox_disabled_reasons.power_level = not table.is_empty(players_below_difficulty_requirement) or nil
 
 	local private_checkbox_content = self._private_checkbox_widget.content
 
@@ -1807,7 +1807,7 @@ end
 
 IngamePlayerListUI._can_host_solo_kick = function (self)
 	-- function 51
-	return not not self._is_server
+	return self._is_server
 end
 
 IngamePlayerListUI.kick_player = function (self, player, t)

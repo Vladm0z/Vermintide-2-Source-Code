@@ -50,11 +50,11 @@ ActionGeiserTargeting.client_owner_start_action = function (self, new_action, t)
 	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
 	self.speed = new_action.speed
 	self.gravity = new_action.gravity
-	self.height = not not new_action.height
+	self.height = new_action.height
 	self.debug_draw = new_action.debug_draw
 
 	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_bot = owner_player and owner_player.bot_player
 
 	if not is_bot then
 		local current_action = self.current_action
@@ -107,8 +107,8 @@ ActionGeiserTargeting._start_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -126,8 +126,8 @@ ActionGeiserTargeting._stop_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -219,7 +219,7 @@ ActionGeiserTargeting.client_owner_post_update = function (self, dt, t, world, c
 
 	local owner_unit = self.owner_unit
 	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_bot = owner_player and owner_player.bot_player
 
 	if not is_bot then
 		local charge_sound_parameter_name = current_action.charge_sound_parameter_name

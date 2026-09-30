@@ -179,12 +179,12 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 	local active_tooltip_name = self._active_tooltip_name
 	local widget_style = self._tutorial_tooltip_widget.style
 	local widget_content = self._tutorial_tooltip_widget.content
-	local text = not not active_template.text
-	local sub_text = active_template.sub_text and not not Localize(active_template.sub_text) or not active_template.sub_text and not not ""
+	local text = active_template.text
+	local sub_text = active_template.sub_text and Localize(active_template.sub_text) or not active_template.sub_text and ""
 	local force_update = active_template.force_update
 	local texture_size_y, texture_size_x = 0, 0
 	local gamepad_active = self._input_manager:is_device_active("gamepad")
-	local inputs = not not active_template.tooltip_gamepad_inputs
+	local inputs = active_template.tooltip_gamepad_inputs
 
 	if not active_tooltip_name then
 		self:fade_in()
@@ -207,7 +207,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 			end
 		end
 
-		local num_inputs = inputs and not not #inputs or not inputs and not not 0
+		local num_inputs = inputs and #inputs or not inputs and 0
 
 		widget_content.show_bg = num_inputs > 0
 		widget_content.description = text
@@ -229,7 +229,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 				button_texture_data, button_text = self:_button_texture_data_by_input_action(input_action, active_template.alt_action_icons[input_action], active_template)
 			end
 
-			parent_widget_content.unassigned = not not parent_widget_content.unassigned
+			parent_widget_content.unassigned = parent_widget_content.unassigned
 
 			local texture_size_x = 0
 			local texture_size_y = 0
@@ -250,7 +250,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 				else
 					if keymap_binding and button_text ~= "" then
 						local device_name = keymap_binding[1]
-						local prefix = not not device_name and not not self._prefixes[device_name]
+						local prefix = device_name and self._prefixes[device_name]
 
 						if prefix then
 							button_text = prefix .. " " .. button_text
@@ -281,11 +281,11 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 							texture_size_x = texture_size_x + text_width
 
 							if texture_size_y < sizes[i][2] then
-								texture_size_y = not not sizes[i][2] or not not texture_size_y
+								texture_size_y = sizes[i][2] or texture_size_y
 							end
 						else
 							texture_size_x = texture_size_x + sizes[i][1]
-							texture_size_y = not (texture_size_y < sizes[i][2]) or not not sizes[i][2] or not not texture_size_y
+							texture_size_y = not (texture_size_y < sizes[i][2]) or sizes[i][2] or texture_size_y
 						end
 					end
 
@@ -297,7 +297,7 @@ TutorialInputUI._update_tooltip = function (self, dt, t)
 
 				ui_scenegraph["input_description_icon_" .. i].size[1] = texture_size_x
 				ui_scenegraph["input_description_icon_" .. i].size[2] = texture_size_y
-				widget_content.prefix_text = not not Localize(input.prefix)
+				widget_content.prefix_text = Localize(input.prefix)
 				widget_content.suffix_text = input.suffix
 
 				local prefix_font, prefix_scaled_font_size = UIFontByResolution(widget_style.prefix_text)
@@ -375,7 +375,7 @@ TutorialInputUI._fade = function (self, from_alpha, to_alpha, duration, complete
 	local unassigned_shadow_style = widget_style.unassigned_shadow
 	local unassigned_background_style = widget_style.unassigned_background
 	local tutorial_tooltip_animations = self._tutorial_tooltip_animations
-	local wait_time = completed and not not 0.5 or not completed and not not 0
+	local wait_time = completed and 0.5 or not completed and 0
 
 	self._tutorial_tooltip_widget.content.completed = completed
 
@@ -449,8 +449,8 @@ TutorialInputUI._get_profile_and_career_index = function (self)
 	-- function 19
 	local player_manager = Managers.player
 	local player = player_manager:local_player(1)
-	local career_index = player and not not player:career_index() or not player and not not 1
-	local profile_index = player and not not player:profile_index() or not player and not not 1
+	local career_index = player and player:career_index() or not player and 1
+	local profile_index = player and player:profile_index() or not player and 1
 
 	return profile_index, career_index
 end

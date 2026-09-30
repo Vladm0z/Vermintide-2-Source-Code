@@ -15,7 +15,7 @@ local function can_spawn_deus_belakor_skulls_unit(params, is_debug_spawn)
 		end
 
 		local game_mode_manager = Managers.state.game_mode
-		local has_skulls_mutator = not not game_mode_manager and not not game_mode_manager:has_mutator("curse_shadow_homing_skulls")
+		local has_skulls_mutator = game_mode_manager and game_mode_manager:has_mutator("curse_shadow_homing_skulls")
 
 		if has_skulls_mutator then
 			return true
@@ -49,10 +49,10 @@ end
 local function check_if_buff_is_active(pickup_settings, unit)
 	-- function 3
 	local buff_extension = ScriptUnit.extension(unit, "buff_system")
-	local potion_name = not not pickup_settings.buff_name_for_check
+	local potion_name = pickup_settings.buff_name_for_check
 	local has_normal_buff = buff_extension:has_buff_type(potion_name)
 	local has_increased_buff = buff_extension:has_buff_type(potion_name .. "_increased")
-	local has_buff = not not has_normal_buff or not not has_increased_buff
+	local has_buff = has_normal_buff or has_increased_buff
 
 	return not has_buff
 end

@@ -91,7 +91,7 @@ PlayerHuskLocomotionExtension.add_external_velocity = function (self, velocity, 
 		return
 	end
 
-	local rpc_name = upper_limit and not not "rpc_add_external_velocity_with_upper_limit" or not upper_limit and not not "rpc_add_external_velocity"
+	local rpc_name = upper_limit and "rpc_add_external_velocity_with_upper_limit" or not upper_limit and "rpc_add_external_velocity"
 
 	if self.is_server then
 		Managers.state.network.network_transmit:send_rpc(rpc_name, self.player:network_id(), self.id, velocity, upper_limit)
@@ -119,7 +119,7 @@ PlayerHuskLocomotionExtension.set_disabled = function (self, disabled, run_func,
 
 	if not disabled then
 		local unit = self.unit
-		local pos = not not POSITION_LOOKUP[unit]
+		local pos = POSITION_LOOKUP[unit]
 
 		self._pos_lerp_time = 0
 
@@ -244,9 +244,9 @@ PlayerHuskLocomotionExtension.get_moving_platform = function (self)
 
 	if GameSession.game_object_exists(self.game, self.id) then
 		local moving_platform = GameSession.game_object_field(self.game, self.id, "moving_platform")
-		local platform_unit = moving_platform == 0 and not not nil or not (moving_platform == 0) and not not Managers.state.network:game_object_or_level_unit(moving_platform, true)
+		local platform_unit = moving_platform == 0 and nil or not (moving_platform == 0) and Managers.state.network:game_object_or_level_unit(moving_platform, true)
 		local platform_extension = ScriptUnit.has_extension(platform_unit, "transportation_system")
-		local soft_platform = platform_unit and not not GameSession.game_object_field(self.game, self.id, "moving_platform_soft_linked") or not platform_unit and not not nil
+		local soft_platform = platform_unit and GameSession.game_object_field(self.game, self.id, "moving_platform_soft_linked") or not platform_unit and nil
 
 		return platform_unit, platform_extension, soft_platform
 	end
@@ -266,13 +266,13 @@ end
 
 PlayerHuskLocomotionExtension._extrapolation_movement = function (self, unit, dt, old_pos, new_pos, new_rot, movement_state, velocity, linked_movement, moving_platform)
 	-- function 18
-	local last_pos = not not Unit.get_data(unit, "last_lerp_position")
-	local last_pos_offset = not not Unit.get_data(unit, "last_lerp_position_offset")
-	local accumulated_movement = not not Unit.get_data(unit, "accumulated_movement")
+	local last_pos = Unit.get_data(unit, "last_lerp_position")
+	local last_pos_offset = Unit.get_data(unit, "last_lerp_position_offset")
+	local accumulated_movement = Unit.get_data(unit, "accumulated_movement")
 
 	if self._moving_platform ~= moving_platform then
-		local last_platform_unit = not not self._moving_platform ~= 0 and not not Managers.state.network:game_object_or_level_unit(self._moving_platform, true)
-		local new_platform_unit = moving_platform ~= 0 and not not Managers.state.network:game_object_or_level_unit(moving_platform, true)
+		local last_platform_unit = self._moving_platform ~= 0 and Managers.state.network:game_object_or_level_unit(self._moving_platform, true)
+		local new_platform_unit = moving_platform ~= 0 and Managers.state.network:game_object_or_level_unit(moving_platform, true)
 
 		if last_platform_unit and new_platform_unit then
 			local last_platform_extension = ScriptUnit.extension(last_platform_unit, "transportation_system")
@@ -297,10 +297,10 @@ PlayerHuskLocomotionExtension._extrapolation_movement = function (self, unit, dt
 		new_pos = new_pos + moving_platform_pos + platform_extension:visual_delta()
 	end
 
-	self._pos_lerp_time = not not self._pos_lerp_time + dt
-	self._velocity_lerp_time = not not self._velocity_lerp_time + dt
+	self._pos_lerp_time = self._pos_lerp_time + dt
+	self._velocity_lerp_time = self._velocity_lerp_time + dt
 
-	local pos_lerp_time = linked_movement and not not POS_LERP_TIME_LINKED or not linked_movement and not not POS_LERP_TIME
+	local pos_lerp_time = linked_movement and POS_LERP_TIME_LINKED or not linked_movement and POS_LERP_TIME
 	local lerp_t = self._pos_lerp_time / pos_lerp_time
 	local move_delta = velocity * dt
 
@@ -366,7 +366,7 @@ PlayerHuskLocomotionExtension._update_speed_variable = function (self, dt)
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val + delta, 0, speed)
 		self._move_speed_top = move_speed_lerp_val
 	else
-		local ms = not not self._move_speed_top
+		local ms = self._move_speed_top
 		local delta = math.min(ms / MOVE_SPEED_ANIM_LERP_TIME * dt, speed_difference)
 
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val - delta, 0, move_speed_lerp_val)

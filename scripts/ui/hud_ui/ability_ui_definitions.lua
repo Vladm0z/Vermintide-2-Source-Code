@@ -137,7 +137,7 @@ local ability_widget_definition = {
 				retained_mode = RETAINED_MODE_ENABLED,
 				content_check_function = function (content)
 					-- function 9
-					return not not Application.user_setting("numeric_ui")
+					return (Application.user_setting("numeric_ui"))
 				end
 			},
 			{
@@ -147,7 +147,7 @@ local ability_widget_definition = {
 				retained_mode = RETAINED_MODE_ENABLED,
 				content_check_function = function (content)
 					-- function 10
-					return not not Application.user_setting("numeric_ui")
+					return (Application.user_setting("numeric_ui"))
 				end
 			}
 		}

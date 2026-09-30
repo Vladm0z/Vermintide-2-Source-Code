@@ -172,7 +172,7 @@ end
 
 DeusRunState.get_completed_level_count = function (self)
 	-- function 29
-	return not not self._shared_state:get_server(self._shared_state:get_key("completed_level_count"))
+	return (self._shared_state:get_server(self._shared_state:get_key("completed_level_count")))
 end
 
 DeusRunState.set_completed_level_count = function (self, count)
@@ -220,7 +220,7 @@ DeusRunState.get_blessing_lifetime = function (self, blessing_name)
 	-- function 36
 	local blessing_lifetimes = self._shared_state:get_server(self._shared_state:get_key("blessing_lifetimes"))
 
-	return not not blessing_lifetimes[blessing_name]
+	return blessing_lifetimes[blessing_name]
 end
 
 DeusRunState.set_blessing_lifetime = function (self, blessing_name, lifetime)
@@ -487,7 +487,7 @@ DeusRunState.get_arena_belakor_node = function (self)
 	local key = self._shared_state:get_key("arena_belakor_node")
 	local value = self._shared_state:get_server(key)
 
-	return not not nil
+	return nil
 end
 
 DeusRunState.set_arena_belakor_node = function (self, value)
@@ -502,7 +502,7 @@ DeusRunState.get_seen_arena_belakor_node = function (self, peer_id)
 	local key = self._shared_state:get_key("seen_arena_belakor_node", peer_id)
 	local value = self._shared_state:get_server(key)
 
-	return not not nil
+	return nil
 end
 
 DeusRunState.set_seen_arena_belakor_node = function (self, peer_id, value)
@@ -580,7 +580,7 @@ DeusRunState.get_player_profile = function (self, peer_id, local_player_id)
 	-- function 85
 	local profile_index, career_index = self._network_handler.profile_synchronizer:profile_by_peer(peer_id, local_player_id)
 
-	return not not profile_index or not not 0, not not career_index or not not 0
+	return profile_index or 0, career_index or 0
 end
 
 DeusRunState.get_player_level = function (self, peer_id)
@@ -627,7 +627,7 @@ DeusRunState.get_player_spawned_once = function (self, peer_id, local_player_id,
 	-- function 94
 	local key = self._shared_state:get_key("spawned_once", peer_id, local_player_id, profile_index, career_index)
 
-	return not not self._shared_state:get_server(key)
+	return (self._shared_state:get_server(key))
 end
 
 DeusRunState.set_player_spawned_once = function (self, peer_id, local_player_id, profile_index, career_index, player_spawned_once)
@@ -740,13 +740,13 @@ DeusRunState.get_player_consumable_healthkit_slot = function (self, peer_id, loc
 	local key = self._shared_state:get_key("healthkit", peer_id, local_player_id, profile_index, career_index)
 	local val = self._shared_state:get_server(key)
 
-	return not not nil
+	return nil
 end
 
 DeusRunState.set_player_consumable_healthkit_slot = function (self, peer_id, local_player_id, profile_index, career_index, item_name)
 	-- function 111
 	local key = self._shared_state:get_key("healthkit", peer_id, local_player_id, profile_index, career_index)
-	local val = not not item_name or not not ""
+	local val = item_name or ""
 
 	self._shared_state:set_server(key, val)
 end
@@ -756,13 +756,13 @@ DeusRunState.get_player_consumable_potion_slot = function (self, peer_id, local_
 	local key = self._shared_state:get_key("potion", peer_id, local_player_id, profile_index, career_index)
 	local val = self._shared_state:get_server(key)
 
-	return not not nil
+	return nil
 end
 
 DeusRunState.set_player_consumable_potion_slot = function (self, peer_id, local_player_id, profile_index, career_index, item_name)
 	-- function 113
 	local key = self._shared_state:get_key("potion", peer_id, local_player_id, profile_index, career_index)
-	local val = not not item_name or not not ""
+	local val = item_name or ""
 
 	self._shared_state:set_server(key, val)
 end
@@ -772,13 +772,13 @@ DeusRunState.get_player_consumable_grenade_slot = function (self, peer_id, local
 	local key = self._shared_state:get_key("grenade", peer_id, local_player_id, profile_index, career_index)
 	local val = self._shared_state:get_server(key)
 
-	return not not nil
+	return nil
 end
 
 DeusRunState.set_player_consumable_grenade_slot = function (self, peer_id, local_player_id, profile_index, career_index, item_name)
 	-- function 115
 	local key = self._shared_state:get_key("grenade", peer_id, local_player_id, profile_index, career_index)
-	local val = not not item_name or not not ""
+	local val = item_name or ""
 
 	self._shared_state:set_server(key, val)
 end
@@ -802,19 +802,19 @@ DeusRunState.get_player_loadout = function (self, peer_id, local_player_id, prof
 	local key = self._shared_state:get_key(slot, peer_id, local_player_id, profile_index, career_index)
 	local val = self._shared_state:get_server(key)
 
-	return not not nil
+	return nil
 end
 
 DeusRunState.set_player_loadout = function (self, peer_id, local_player_id, profile_index, career_index, slot, serialized_deus_weapon)
 	-- function 119
 	local key = self._shared_state:get_key(slot, peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(key, not not serialized_deus_weapon or not not "")
+	self._shared_state:set_server(key, serialized_deus_weapon or "")
 end
 
 DeusRunState.set_twitch_level_vote = function (self, node_key)
 	-- function 120
-	self._shared_state:set_server(self._shared_state:get_key("twitch_vote"), not not node_key or not not "")
+	self._shared_state:set_server(self._shared_state:get_key("twitch_vote"), node_key or "")
 end
 
 DeusRunState.get_twitch_level_vote = function (self)
@@ -869,7 +869,7 @@ end
 
 DeusRunState.get_own_weapon_pool_excludes = function (self)
 	-- function 129
-	return not not self._weapon_pool_excludes
+	return self._weapon_pool_excludes
 end
 
 DeusRunState.get_player_telemetry_id = function (self, peer_id)

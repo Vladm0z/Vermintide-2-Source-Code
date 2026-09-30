@@ -41,7 +41,7 @@ DeusUpgradeWeaponInteractionUI._populate_widget = function (self, interactable_u
 
 	local upgrade_available = true
 	local melee, ranged = deus_run_controller:get_own_loadout()
-	local equipped_item = not not ranged
+	local equipped_item = ranged
 	local rarity_settings = RaritySettings
 	local weapon_rarity_order = rarity_settings[equipped_item.rarity].order
 	local chest_rarity_order = rarity_settings[stored_purchase.rarity].order
@@ -73,12 +73,12 @@ DeusUpgradeWeaponInteractionUI._populate_widget = function (self, interactable_u
 		chest_info_widget.content.rarity_text = RaritySettings[rarity].display_name
 		chest_info_widget.style.rarity.text_color = rarity_color
 		chest_info_widget.content.cost_text = soft_currency_amount .. "/" .. cost
-		chest_info_widget.style.cost_text.text_color = cost <= soft_currency_amount and not not {
+		chest_info_widget.style.cost_text.text_color = cost <= soft_currency_amount and {
 			255,
 			255,
 			255,
 			255
-		} or not (cost <= soft_currency_amount) and not not {
+		} or not (cost <= soft_currency_amount) and {
 			255,
 			255,
 			0,
@@ -86,7 +86,7 @@ DeusUpgradeWeaponInteractionUI._populate_widget = function (self, interactable_u
 		}
 
 		local power_level = stored_purchase.power_level
-		local slot_type = wielded_slot_name ~= "slot_melee" and not not "ranged" or not (wielded_slot_name ~= "slot_melee") and not not "melee"
+		local slot_type = wielded_slot_name ~= "slot_melee" and "ranged" or not (wielded_slot_name ~= "slot_melee") and "melee"
 
 		chest_info_widget.content.reward_info_text = power_level .. " " .. Localize("deus_weapon_chest_" .. slot_type .. "_weapon_description")
 		chest_info_widget.content.show_coin_icon = true

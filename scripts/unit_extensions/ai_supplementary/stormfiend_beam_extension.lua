@@ -70,7 +70,7 @@ StormfiendBeamExtension._create_beam = function (self, node_name)
 		local world = self.world
 		local particle_id = World.create_particles(world, self.particle_name, Vector3.zero(), Quaternion.identity())
 		local muzzle_rotation = Unit.local_rotation(unit, muzzle_node)
-		local offset_rotation = Quaternion.look(Vector3.right() + Vector3.up() * 0.2 * (node_name ~= "fx_left_muzzle" and not not 0 or not (node_name ~= "fx_left_muzzle") and not not 1))
+		local offset_rotation = Quaternion.look(Vector3.right() + Vector3.up() * 0.2 * (node_name ~= "fx_left_muzzle" and 0 or not (node_name ~= "fx_left_muzzle") and 1))
 		local pose = Matrix4x4.from_quaternion(Quaternion.multiply(muzzle_rotation, offset_rotation))
 
 		World.link_particles(world, particle_id, unit, muzzle_node, pose, "stop")

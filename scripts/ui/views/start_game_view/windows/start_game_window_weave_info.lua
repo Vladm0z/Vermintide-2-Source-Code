@@ -332,7 +332,7 @@ StartGameWindowWeaveInfo._handle_input = function (self, dt, t)
 		self:_play_sound("Play_hud_hover")
 	end
 
-	local lock_party_size_pressed = not not gamepad_active and not not input_service:get("right_stick_press")
+	local lock_party_size_pressed = gamepad_active and input_service:get("right_stick_press")
 
 	if self:_is_button_released(private_checkbox) or lock_party_size_pressed then
 		local content = private_checkbox.content
@@ -343,7 +343,7 @@ StartGameWindowWeaveInfo._handle_input = function (self, dt, t)
 		self:_play_sound("play_gui_lobby_button_play")
 	end
 
-	local play_pressed = not not gamepad_active and not not self._enable_play
+	local play_pressed = gamepad_active and self._enable_play
 
 	if self:_is_button_released(play_button) or play_pressed then
 		parent:play(t, "weave")
@@ -361,8 +361,8 @@ StartGameWindowWeaveInfo._update_party_status = function (self, dt)
 	local matchmaking_manager = Managers.matchmaking
 	local is_game_matchmaking = matchmaking_manager:is_game_matchmaking()
 	local active_game_mode = matchmaking_manager:active_game_mode()
-	local is_searching_for_weave = not not active_game_mode and active_game_mode == "weave"
-	local is_searching = not not is_game_matchmaking and not not is_searching_for_weave
+	local is_searching_for_weave = active_game_mode and active_game_mode == "weave"
+	local is_searching = is_game_matchmaking and is_searching_for_weave
 
 	self._is_matchmaking_for_weave = is_searching
 
@@ -449,9 +449,9 @@ StartGameWindowWeaveInfo._update_selected_weave = function (self)
 				local objective = objectives[i]
 				local conflict_settings = objective.conflict_settings
 				local is_end_objective = conflict_settings == "weave_disabled"
-				local title_text = is_end_objective and not not "menu_weave_play_next_end_event_title" or not is_end_objective and not not "menu_weave_play_main_objective_title"
+				local title_text = is_end_objective and "menu_weave_play_next_end_event_title" or not is_end_objective and "menu_weave_play_main_objective_title"
 				local objective_display_name = objective.display_name
-				local objective_icon = is_end_objective and not not "objective_icon_boss" or not is_end_objective and not not "objective_icon_general"
+				local objective_icon = is_end_objective and "objective_icon_boss" or not is_end_objective and "objective_icon_general"
 				local objective_height = self:_assign_objective(widget, title_text, objective_display_name, objective_icon, objective_spacing)
 				local offset = widget.offset
 
@@ -557,7 +557,7 @@ StartGameWindowWeaveInfo._align_private_checkbox = function (self)
 	local total_width = text_width_offset + text_width
 
 	offset[1] = -total_width / 2
-	offset[2] = gamepad_active and not not 40 or not gamepad_active and not not 0
+	offset[2] = gamepad_active and 40 or not gamepad_active and 0
 
 	local tooltip_style = style.additional_option_info
 	local tooltip_width = tooltip_style.max_width
@@ -569,7 +569,7 @@ end
 
 StartGameWindowWeaveInfo._apply_color_values = function (self, target, source, color_multiplier, include_alpha)
 	-- function 25
-	color_multiplier = not not color_multiplier or not not 1
+	color_multiplier = color_multiplier or 1
 
 	if include_alpha then
 		target[1] = source[1]
@@ -587,9 +587,9 @@ StartGameWindowWeaveInfo._assign_objective = function (self, widget, title_text,
 	local style = widget.style
 	local size = scenegraph_definition[scenegraph_id].size
 
-	content.icon = not not icon or not not "trial_gem"
-	content.title_text = not not title_text or not not "-"
-	content.text = not not text or not not "-"
+	content.icon = icon or "trial_gem"
+	content.title_text = title_text or "-"
+	content.text = text or "-"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(content.icon)
 	local icon_texture_size = icon_texture_settings.size
@@ -608,7 +608,7 @@ StartGameWindowWeaveInfo._assign_objective = function (self, widget, title_text,
 	local text_width = UIUtils.get_text_width(ui_renderer, text_style, content.text)
 	local text_height = UIUtils.get_text_height(ui_renderer, size, text_style, content.text)
 
-	spacing = not not spacing or not not 0
+	spacing = spacing or 0
 
 	local total_height = math.max(text_height, 50) + spacing
 

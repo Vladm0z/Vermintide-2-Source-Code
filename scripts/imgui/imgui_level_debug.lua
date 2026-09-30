@@ -129,9 +129,9 @@ ImguiLevelDebug.draw = function (self)
 	-- function 6
 	local do_close = Imgui.begin_window("Level helper")
 	local state = Managers.state
-	local game_mode_manager = not not state and not not state.game_mode
-	local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-	local respawn_handler = not not game_mode and not not game_mode:get_respawn_handler()
+	local game_mode_manager = state and state.game_mode
+	local game_mode = game_mode_manager and game_mode_manager:game_mode()
+	local respawn_handler = game_mode and game_mode:get_respawn_handler()
 
 	if respawn_handler then
 		if Imgui.tree_node("Debug Respawn Points") then
@@ -306,7 +306,7 @@ ImguiLevelDebug.draw_respawn_debug = function (self, respawn_handler)
 					Imgui.next_column()
 					Imgui.text(tostring(gate_dist))
 					Imgui.next_column()
-					text_colored(tostring(gate.enabled), gate.enabled and not not color_green or not gate.enabled and not not color_red)
+					text_colored(tostring(gate.enabled), gate.enabled and color_green or not gate.enabled and color_red)
 					Imgui.next_column()
 					Imgui.tree_push(i)
 
@@ -351,7 +351,7 @@ ImguiLevelDebug.draw_respawn_debug = function (self, respawn_handler)
 
 				Imgui.tree_pop()
 				Imgui.same_line()
-				Imgui.text(tostring(respawn_unit.id) .. (is_best and not not " BEST" or not is_best and not not "") .. (was_best and not not "*" or not was_best and not not ""))
+				Imgui.text(tostring(respawn_unit.id) .. (is_best and " BEST" or not is_best and "") .. (was_best and "*" or not was_best and ""))
 				Imgui.next_column()
 
 				local is_free = respawn_unit.available
@@ -362,17 +362,17 @@ ImguiLevelDebug.draw_respawn_debug = function (self, respawn_handler)
 
 				text_colored(tostring(respawn_unit.distance_through_level), spawn_preference_color)
 				Imgui.next_column()
-				text_colored(tostring(respawn_unit.group_id), group_active and not not color_green or not group_active and (is_enabled and not not color_white or not is_enabled and not not color_red))
+				text_colored(tostring(respawn_unit.group_id), group_active and color_green or not group_active and (is_enabled and color_white or not is_enabled and color_red))
 				Imgui.next_column()
-				text_colored(tostring(respawn_unit.available), respawn_unit.available and not not color_green or not respawn_unit.available and not not color_red)
+				text_colored(tostring(respawn_unit.available), respawn_unit.available and color_green or not respawn_unit.available and color_red)
 				Imgui.next_column()
-				text_colored(tostring(is_reachable), is_reachable and not not color_green or not is_reachable and not not color_red)
+				text_colored(tostring(is_reachable), is_reachable and color_green or not is_reachable and color_red)
 				Imgui.next_column()
 			end
 
 			if self._draw_respawn_points then
 				local pos = Unit.local_position(respawn_unit.unit, 0) + up
-				local color = is_best and not not Color(0, 255, 0) or not is_best and not not Color(255, 200, 0)
+				local color = is_best and Color(0, 255, 0) or not is_best and Color(255, 200, 0)
 
 				QuickDrawer:sphere(pos, 0.5, color)
 

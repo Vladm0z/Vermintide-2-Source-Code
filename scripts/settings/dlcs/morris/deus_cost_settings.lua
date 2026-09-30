@@ -35,4 +35,4 @@ local function cost_formula_for_upgrade(equipped_rarity, new_rarity)
 	return math.max(value, 0)
 end
 
-DeusCostSettings = not not DeusCostSettings
+DeusCostSettings = DeusCostSettings

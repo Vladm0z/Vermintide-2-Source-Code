@@ -51,7 +51,7 @@ SurroundingAwareSystem.populate_global_observers = function (self)
 		local mission_givers = FrameTable.alloc_table()
 		local current_level_key = Managers.level_transition_handler:get_current_level_keys()
 		local level_settings = LevelSettings[current_level_key]
-		local level_mission_givers = not not level_settings and not not level_settings.mission_givers
+		local level_mission_givers = level_settings and level_settings.mission_givers
 
 		if level_mission_givers then
 			table.append(mission_givers, level_mission_givers)
@@ -87,7 +87,7 @@ SurroundingAwareSystem.request_global_listener = function (self, dialogue_profil
 
 			local surrounding_aware_extension = self.unit_extension_data[unit]
 
-			fassert(not optional_side_name or (not not side and not not side.side_id) == surrounding_aware_extension.side_id, "[SurroundingAwareSystem] Mismatching side name when requesting duplicate global listener '%s'. Wanted '%s' while existing listener has '%s'", dialogue_profile, optional_side_name, side and not not side:name() or not side and not not nil)
+			fassert(not optional_side_name or (side and side.side_id) == surrounding_aware_extension.side_id, "[SurroundingAwareSystem] Mismatching side name when requesting duplicate global listener '%s'. Wanted '%s' while existing listener has '%s'", dialogue_profile, optional_side_name, side and side:name() or not side and nil)
 
 			return unit
 		end
@@ -99,7 +99,7 @@ SurroundingAwareSystem.request_global_listener = function (self, dialogue_profil
 			faction = optional_faction
 		},
 		surrounding_aware_system = {
-			side_id = not not side and not not side.side_id
+			side_id = side and side.side_id
 		}
 	}
 
@@ -129,7 +129,7 @@ end
 
 SurroundingAwareSystem.add_event = function (unit, event_name, distance, ...)
 	-- function 6
-	distance = not not distance or not not DialogueSettings.default_hear_distance
+	distance = distance or DialogueSettings.default_hear_distance
 
 	local input = ScriptUnit.extension_input(unit, "surrounding_aware_system")
 	local event_array = input.event_array
@@ -148,7 +148,7 @@ end
 
 SurroundingAwareSystem.add_system_event = function (self, unit, event_name, distance, ...)
 	-- function 7
-	distance = not not distance or not not DialogueSettings.default_hear_distance
+	distance = distance or DialogueSettings.default_hear_distance
 
 	local event_array = self.event_array
 	local num_args = select("#", ...)
@@ -192,7 +192,7 @@ SurroundingAwareSystem.on_add_extension = function (self, world, unit, extension
 	else
 		extension.has_been_seen = false
 		extension.is_lookat_object = true
-		extension.view_distance = not not Unit.get_data(unit, "view_distance")
+		extension.view_distance = Unit.get_data(unit, "view_distance")
 		extension.view_distance_sq = extension.view_distance^2
 	end
 
@@ -225,7 +225,7 @@ SurroundingAwareSystem.extensions_ready = function (self, world, unit, extension
 		local dialogue_extension = ScriptUnit.has_extension(unit, "dialogue_system")
 
 		if dialogue_extension then
-			extension.dialogue_profile = not not dialogue_extension.dialogue_profile
+			extension.dialogue_profile = dialogue_extension.dialogue_profile
 
 			assert(extension.dialogue_profile, "[SurroundingAwareSystem] Global Observer is missing a dialogue profile", unit)
 
@@ -250,7 +250,7 @@ SurroundingAwareSystem.on_remove_extension = function (self, unit, extension_nam
 
 		local seen_observers = self.seen_observers
 		local previous_seen_observer = seen_observers[unit]
-		local previous_bot_extension = not not previous_seen_observer and not not ScriptUnit.has_extension(previous_seen_observer, "ai_system")
+		local previous_bot_extension = previous_seen_observer and ScriptUnit.has_extension(previous_seen_observer, "ai_system")
 
 		if previous_bot_extension then
 			previous_bot_extension:set_seen_by_player(false, unit)
@@ -284,7 +284,7 @@ local function check_raycast_center(physics_world, unit, target, ray_position, r
 		return true
 	end
 
-	local hits = PhysicsWorld.immediate_raycast(physics_world, ray_position, ray_direction, ray_length, "all", "types", "both", "collision_filter", not not collision_filter or not not "filter_lookat_object_ray")
+	local hits = PhysicsWorld.immediate_raycast(physics_world, ray_position, ray_direction, ray_length, "all", "types", "both", "collision_filter", collision_filter or "filter_lookat_object_ray")
 
 	if hits then
 		local num_hits = #hits
@@ -409,7 +409,7 @@ SurroundingAwareSystem.update_lookat = function (self, context, t)
 				end
 
 				local view_distance_sq = lookat_target_ext.view_distance_sq
-				local view_angle_rad = extension.view_angle_rad * (target ~= previous_seen_observer and not not 1 or not (target ~= previous_seen_observer) and not not VIEW_ANGLE_STICKINESS)
+				local view_angle_rad = extension.view_angle_rad * (target ~= previous_seen_observer and 1 or not (target ~= previous_seen_observer) and VIEW_ANGLE_STICKINESS)
 				local in_range, observer_to_target_vector, observer_target_direction, angle, max_angle = is_in_range(observer_fpp, target_center, observer_forward, view_distance_sq, view_angle_rad)
 
 				if in_range and not darkness_system:is_in_darkness(target_center) then
@@ -423,14 +423,14 @@ SurroundingAwareSystem.update_lookat = function (self, context, t)
 
 						local event_data = FrameTable.alloc_table()
 
-						event_data.item_tag = not not Unit.get_data(target, "lookat_tag")
+						event_data.item_tag = Unit.get_data(target, "lookat_tag")
 						event_data.distance = observer_to_target_length
 
 						dialogue_extension:trigger_dialogue_event("seen_item", event_data)
 
 						seen_recently[target] = t
 					elseif is_in_view then
-						local angle_multiplier = BASE_ANGLE_MULTIPLIER + (target ~= previous_seen_observer and not not 0 or not (target ~= previous_seen_observer) and not not STICKINESS_MODIFIER)
+						local angle_multiplier = BASE_ANGLE_MULTIPLIER + (target ~= previous_seen_observer and 0 or not (target ~= previous_seen_observer) and STICKINESS_MODIFIER)
 						local utility = angle * angle_multiplier + observer_to_target_length
 
 						if utility < closest_observer_utility then
@@ -531,7 +531,7 @@ SurroundingAwareSystem.update_debug = function (self, context, t)
 				end
 
 				local view_distance_sq = lookat_target_ext.view_distance_sq
-				local view_angle_rad = extension.view_angle_rad * (target ~= previous_seen_observer and not not 1 or not (target ~= previous_seen_observer) and not not VIEW_ANGLE_STICKINESS)
+				local view_angle_rad = extension.view_angle_rad * (target ~= previous_seen_observer and 1 or not (target ~= previous_seen_observer) and VIEW_ANGLE_STICKINESS)
 				local in_range, observer_to_target_vector, observer_target_direction, angle, max_angle = is_in_range(observer_fpp, target_center, observer_forward, view_distance_sq, view_angle_rad)
 				local observer_to_target_length = Vector3.length(observer_to_target_vector)
 
@@ -568,7 +568,7 @@ SurroundingAwareSystem.update_debug = function (self, context, t)
 		if unit ~= player_unit then
 			local color = debug_draw_units[unit]
 
-			color = not not color or not not outside_color
+			color = color or outside_color
 
 			drawer:unit(unit, color)
 		end
@@ -582,7 +582,7 @@ SurroundingAwareSystem.update_debug = function (self, context, t)
 			local target_center = Unit.world_position(observer_unit, spine_node)
 			local observer_is_bot = ScriptUnit.has_extension(observer_unit, "ai_system")
 
-			drawer:sphere(target_center, 0.25, observer_is_bot and not not Colors.get("blue") or not observer_is_bot and not not Colors.get("light_blue"))
+			drawer:sphere(target_center, 0.25, observer_is_bot and Colors.get("blue") or not observer_is_bot and Colors.get("light_blue"))
 		end
 	end
 end
@@ -606,7 +606,7 @@ SurroundingAwareSystem.update_events = function (self, context, t)
 		local range = array_data[i + 3]
 
 		if Unit.alive(unit) then
-			local source_wp = not not POSITION_LOOKUP[unit]
+			local source_wp = POSITION_LOOKUP[unit]
 			local n_targets = 0
 
 			if range == math.huge then
@@ -635,7 +635,7 @@ SurroundingAwareSystem.update_events = function (self, context, t)
 					local distance = 0
 
 					if unit then
-						local target_world_pos = not not POSITION_LOOKUP[target]
+						local target_world_pos = POSITION_LOOKUP[target]
 
 						distance = Vector3.distance(source_wp, target_world_pos)
 					end

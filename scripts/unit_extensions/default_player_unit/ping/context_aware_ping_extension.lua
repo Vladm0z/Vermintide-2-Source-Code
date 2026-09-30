@@ -118,13 +118,13 @@ ContextAwarePingExtension.ping_attempt = function (self, unit, unit_to_ping, t, 
 		return false
 	end
 
-	social_wheel_event_id = not not NetworkLookup.social_wheel_events["n/a"]
+	social_wheel_event_id = NetworkLookup.social_wheel_events["n/a"]
 
 	local network_manager = Managers.state.network
 	local pinger_unit_id = network_manager:unit_game_object_id(unit)
 	local pinged_unit_id, is_level_unit = network_manager:game_object_or_level_id(unit_to_ping)
 
-	ping_type = not not PingTypes.CONTEXT or not not ping_type or self._world_markers_enabled or not not PingTypes.PING_ONLY
+	ping_type = PingTypes.CONTEXT or ping_type or self._world_markers_enabled or PingTypes.PING_ONLY
 
 	network_manager.network_transmit:send_rpc_server("rpc_ping_unit", pinger_unit_id, pinged_unit_id, is_level_unit, false, ping_type, social_wheel_event_id)
 
@@ -143,14 +143,14 @@ ContextAwarePingExtension.ping_world_position_attempt = function (self, unit, po
 		return
 	end
 
-	ping_type = not not ping_type or not not PingTypes.CONTEXT
+	ping_type = ping_type or PingTypes.CONTEXT
 	is_double_press = not not is_double_press
 
 	if not self._world_markers_enabled then
 		return
 	end
 
-	local world_marker_cooldown = not not self._world_marker_cooldown
+	local world_marker_cooldown = self._world_marker_cooldown
 
 	if t < world_marker_cooldown then
 		return
@@ -171,7 +171,7 @@ ContextAwarePingExtension.ping_world_position_attempt = function (self, unit, po
 	end
 
 	self._world_marker_cooldown = t + WORLD_MARKER_COOLDOWN
-	social_wheel_event_id = not not social_wheel_event_id or not not NetworkLookup.social_wheel_events["n/a"]
+	social_wheel_event_id = social_wheel_event_id or NetworkLookup.social_wheel_events["n/a"]
 
 	local network_manager = Managers.state.network
 	local pinger_unit_id = network_manager:unit_game_object_id(unit)
@@ -201,11 +201,11 @@ ContextAwarePingExtension.social_message_attempt = function (self, unit, social_
 		return false
 	end
 
-	social_wheel_event_id = not not social_wheel_event_id or not not NetworkLookup.social_wheel_events["n/a"]
+	social_wheel_event_id = social_wheel_event_id or NetworkLookup.social_wheel_events["n/a"]
 
 	local network_manager = Managers.state.network
 	local pinger_unit_id = network_manager:unit_game_object_id(unit)
-	local pinged_unit_id = not not network_manager:unit_game_object_id(target_unit)
+	local pinged_unit_id = network_manager:unit_game_object_id(target_unit)
 
 	network_manager.network_transmit:send_rpc_server("rpc_social_message", pinger_unit_id, social_wheel_event_id, pinged_unit_id)
 	self:_consume_ping_event()
@@ -247,7 +247,7 @@ ContextAwarePingExtension._check_raycast = function (self, unit)
 				if ping_ext then
 					local ghost_mode_ext = ScriptUnit.has_extension(hit_unit, "ghost_mode_system")
 
-					if not ghost_mode_ext and distance > 0.05 or not not ghost_mode_ext and not ghost_mode_ext:is_in_ghost_mode() and distance > 0.05 then
+					if not ghost_mode_ext and distance > 0.05 or ghost_mode_ext and not ghost_mode_ext:is_in_ghost_mode() and distance > 0.05 then
 						local status_ext = ScriptUnit.has_extension(hit_unit, "status_system")
 						local is_pickup = ScriptUnit.has_extension(hit_unit, "pickup_system")
 						local breed = Unit.get_data(hit_unit, "breed")
@@ -261,8 +261,8 @@ ContextAwarePingExtension._check_raycast = function (self, unit)
 							half_width = half_extents.x * 0.75
 							half_height = half_extents.z * 0.75
 						elseif has_breed then
-							half_height = not not breed.aoe_height * 0.5
-							half_width = not not breed.aoe_radius or not not DEFAULT_BREED_AOE_RADIUS
+							half_height = breed.aoe_height * 0.5
+							half_width = breed.aoe_radius or DEFAULT_BREED_AOE_RADIUS
 						elseif status_ext then
 							local _, half_extents = Unit.box(hit_unit, true)
 
@@ -294,8 +294,8 @@ ContextAwarePingExtension._check_raycast = function (self, unit)
 							utility = 1 / (x_offset * y_offset)
 						end
 
-						local is_enemy = not not has_breed and not not Managers.state.side:is_enemy(self._unit, hit_unit)
-						local is_incapacitated_player = not not status_ext and not not status_ext:is_disabled()
+						local is_enemy = has_breed and Managers.state.side:is_enemy(self._unit, hit_unit)
+						local is_incapacitated_player = status_ext and status_ext:is_disabled()
 
 						if ping_ext.always_pingable or is_pickup then
 							ping_unit = hit_unit
@@ -309,7 +309,7 @@ ContextAwarePingExtension._check_raycast = function (self, unit)
 						if is_pickup then
 							local pickup_settings = is_pickup:get_pickup_settings()
 
-							is_valid_social_wheel_pickup = not not pickup_settings.slot_name or pickup_settings.type == "ammo"
+							is_valid_social_wheel_pickup = pickup_settings.slot_name or pickup_settings.type == "ammo"
 						end
 
 						if is_alive and status_ext and best_social_utility < utility then
@@ -412,7 +412,7 @@ ContextAwarePingExtension._handle_ping_input = function (self, t, dt, input, uni
 				elseif ping_context.fallback_to_world_marker then
 					local social_wheel_event_id
 
-					self:ping_world_position_attempt(unit, ping_context.position:unbox(), t, not not ping_type or not not PingTypes.CONTEXT, social_wheel_event_id, ping_context.is_double_press)
+					self:ping_world_position_attempt(unit, ping_context.position:unbox(), t, ping_type or PingTypes.CONTEXT, social_wheel_event_id, ping_context.is_double_press)
 
 					if Managers.state.game_mode:setting("allow_double_ping") then
 						self:_start_listen_for_double_press(t)
@@ -485,11 +485,11 @@ ContextAwarePingExtension._handle_ping_input = function (self, t, dt, input, uni
 			end
 
 			if tag_only and ping_unit then
-				self:ping_attempt(unit, ping_unit, t, not not ping_type or not not PingTypes.CONTEXT)
+				self:ping_attempt(unit, ping_unit, t, ping_type or PingTypes.CONTEXT)
 			end
 
 			if ping then
-				local social_wheel_delay = not not Application.user_setting("social_wheel_delay")
+				local social_wheel_delay = Application.user_setting("social_wheel_delay")
 
 				self._ping_context = {
 					unit = ping_unit,
@@ -498,7 +498,7 @@ ContextAwarePingExtension._handle_ping_input = function (self, t, dt, input, uni
 					position = stored_ping_position,
 					ping_type = ping_type,
 					is_double_press = is_double_press,
-					fallback_to_world_marker = not not world_marker_only and not not stored_ping_position
+					fallback_to_world_marker = world_marker_only and stored_ping_position
 				}
 				self._social_wheel_context = {
 					unit = social_wheel_unit,
@@ -516,7 +516,7 @@ ContextAwarePingExtension._handle_ping_input = function (self, t, dt, input, uni
 			elseif world_marker_only and position then
 				local social_wheel_event_id
 
-				self:ping_world_position_attempt(unit, position, t, not not ping_type or not not PingTypes.CONTEXT, social_wheel_event_id, is_double_press)
+				self:ping_world_position_attempt(unit, position, t, ping_type or PingTypes.CONTEXT, social_wheel_event_id, is_double_press)
 
 				if Managers.state.game_mode:setting("allow_double_ping") then
 					self:_start_listen_for_double_press(t)

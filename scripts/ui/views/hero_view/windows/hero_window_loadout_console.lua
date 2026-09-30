@@ -79,7 +79,7 @@ HeroWindowLoadoutConsole.create_ui_elements = function (self, params, offset)
 	self._widgets_by_name = widgets_by_name
 
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local equipment_slots = not not InventorySettings.equipment_slots_by_mechanism[mechanism_name]
+	local equipment_slots = InventorySettings.equipment_slots_by_mechanism[mechanism_name]
 	local widget_def = definitions.create_loadout_grid_func(#equipment_slots, self.ui_scenegraph)
 	local widget = UIWidget.init(widget_def)
 
@@ -372,7 +372,7 @@ HeroWindowLoadoutConsole._setup_slot_icons = function (self)
 			local item_tooltip_name = "item_tooltip" .. name_sufix
 			local slot_icon_name = "slot_icon" .. name_sufix
 			local slot_type = slot.type
-			local icon_texture = not not slot_icon_by_type[slot_type]
+			local icon_texture = slot_icon_by_type[slot_type]
 
 			content[slot_icon_name] = icon_texture
 		end
@@ -605,7 +605,7 @@ HeroWindowLoadoutConsole._set_equipment_slot_selected = function (self, row_inde
 			local hotspot_name = "hotspot" .. name_sufix
 			local slot_hotspot = content[hotspot_name]
 
-			slot_hotspot.is_selected = not not row_index and row_index == i
+			slot_hotspot.is_selected = row_index and row_index == i
 			slot_hotspot.highlight = slot_hotspot.is_selected
 		end
 	end
@@ -692,9 +692,9 @@ HeroWindowLoadoutConsole._highlight_equipment_slot_by_type = function (self, ite
 
 			slot_hotspot.highlight = enabled
 
-			local alpha = slot_hotspot.internal_is_hover and not not 255 or not slot_hotspot.internal_is_hover and not not 100
+			local alpha = slot_hotspot.internal_is_hover and 255 or not slot_hotspot.internal_is_hover and 100
 
-			style[slot_hover_name].color[1] = enabled and (not not alpha or not not 255) or not enabled and not not 255
+			style[slot_hover_name].color[1] = enabled and (alpha or 255) or not enabled and 255
 		end
 	end
 end

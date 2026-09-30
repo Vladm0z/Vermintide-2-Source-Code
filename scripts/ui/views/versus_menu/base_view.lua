@@ -11,7 +11,7 @@ BaseView.init = function (self, ingame_ui_context, definitions)
 	self._world = ingame_ui_context.world
 	self._ui_renderer = ingame_ui_context.ui_renderer
 	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._render_settings = not not self._render_settings
+	self._render_settings = self._render_settings
 
 	local world = Managers.world:world("level_world")
 
@@ -134,12 +134,12 @@ BaseView._draw = function (self, dt, input_service)
 	local ui_top_renderer = self._ui_top_renderer
 	local ui_scenegraph = self._ui_scenegraph
 	local render_settings = self._render_settings
-	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for i, widget in pairs(self._widgets) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -153,7 +153,7 @@ BaseView._draw = function (self, dt, input_service)
 		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 		for _, widget in pairs(self._top_widgets) do
-			render_settings.alpha_multiplier = not not widget.alpha_multiplier
+			render_settings.alpha_multiplier = widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
@@ -166,7 +166,7 @@ end
 
 BaseView._start_animation = function (self, key, animation_name, widget, optional_params)
 	-- function 13
-	local params = not not optional_params or not not {
+	local params = optional_params or {
 		wwise_world = self._wwise_world,
 		render_settings = self._render_settings
 	}

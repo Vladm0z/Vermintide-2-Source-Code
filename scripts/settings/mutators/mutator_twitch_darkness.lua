@@ -29,7 +29,7 @@ return {
 				end
 			end
 
-			player_unit = not not player_unit or not not PLAYER_UNITS[1]
+			player_unit = player_unit or PLAYER_UNITS[1]
 
 			local position = Unit.world_position(player_unit, 0) + Vector3.up()
 			local rotation = Quaternion.identity()

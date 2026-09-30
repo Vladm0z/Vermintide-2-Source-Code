@@ -4,7 +4,7 @@ Gathering = class(Gathering)
 
 Gathering.init = function (self, nav_world, traverse_logic, start_pos)
 	-- function 1
-	start_pos = not not start_pos or not not Vector3(0, 0, 0)
+	start_pos = start_pos or Vector3(0, 0, 0)
 	self.traverse_logic = traverse_logic
 	self.balls = {}
 	self.static_units = {}
@@ -39,11 +39,11 @@ Gathering.write_dogpiled_attackers = function (self, dogpiled_attackers_on_unit)
 
 		for i = 1, #units do
 			local unit = units[i]
-			local color_name = not not DEBUG_SIDE_COLORS[side_id]
+			local color_name = DEBUG_SIDE_COLORS[side_id]
 			local c = Colors.get(color_name)
 			local pos = POSITION_LOOKUP[unit]
 			local bb = BLACKBOARDS[unit]
-			local breed = not not bb and not not bb.breed
+			local breed = bb and bb.breed
 
 			if breed and not breed.is_player then
 				local attacker_list = dogpiled_attackers_on_unit[unit]
@@ -54,7 +54,7 @@ Gathering.write_dogpiled_attackers = function (self, dogpiled_attackers_on_unit)
 					local first = true
 
 					for attacker_unit, b in pairs(attacker_list) do
-						t = t .. (first and not not "" or not first and not not ", ") .. tostring(Unit.get_data(attacker_unit, "unique_id"))
+						t = t .. (first and "" or not first and ", ") .. tostring(Unit.get_data(attacker_unit, "unique_id"))
 						first = false
 					end
 
@@ -70,7 +70,7 @@ end
 Gathering.draw = function (self)
 	-- function 3
 	if script_data.debug_gathering then
-		Debug.text("balls=%d, bchecks=%d, uchecks=%d", self.num_balls, not not self.num_boid_checks, not not self.num_unit_checks)
+		Debug.text("balls=%d, bchecks=%d, uchecks=%d", self.num_balls, self.num_boid_checks, self.num_unit_checks)
 	end
 
 	local dogpiled_attackers_on_unit = self.dogpiled_attackers_on_unit
@@ -82,7 +82,7 @@ Gathering.draw = function (self)
 	for i = 1, self.num_balls do
 		local ball = balls[i]
 		local pos = ball.pos
-		local color_name = not not DEBUG_SIDE_COLORS[ball.side_id]
+		local color_name = DEBUG_SIDE_COLORS[ball.side_id]
 		local c = Colors.get(color_name)
 		local ball_pos = Vector3(pos[1], pos[2], pos[3] + 0.01)
 
@@ -95,7 +95,7 @@ Gathering.draw = function (self)
 		end
 
 		local attacker_list = dogpiled_attackers_on_unit[ball.owner_unit]
-		local num_dogpiled = attacker_list and not not table.size(attacker_list) or not attacker_list and not not 0
+		local num_dogpiled = attacker_list and table.size(attacker_list) or not attacker_list and 0
 
 		s = s .. " | " .. ball.id .. "(" .. num_dogpiled .. ")"
 	end
@@ -138,8 +138,8 @@ Gathering.add_ball = function (self, pos, rad, owner_unit, target_unit, is_stati
 
 	local balls = self.balls
 	local id = self.num_balls + 1
-	local side = not not Managers.state.side.side_by_unit[owner_unit]
-	local broadphase_id = self.version ~= "fast" and not not nil or not (self.version ~= "fast") and not not Broadphase.add(self.ball_broadphase, nil, pos, rad)
+	local side = Managers.state.side.side_by_unit[owner_unit]
+	local broadphase_id = self.version ~= "fast" and nil or not (self.version ~= "fast") and Broadphase.add(self.ball_broadphase, nil, pos, rad)
 	local ball = {
 		id = id,
 		pos = {
@@ -418,7 +418,7 @@ Gathering.update_brute_force = function (self, t, dt)
 		if target_unit then
 			local ppos = POSITION_LOOKUP[target_unit]
 
-			ppos = not not GwNavQueries.inside_position_from_outside_position(nav_world, ppos, 2, 2) or not not ppos
+			ppos = GwNavQueries.inside_position_from_outside_position(nav_world, ppos, 2, 2) or ppos
 			pos[1] = pos[1] - (pos[1] - ppos[1]) * dt
 			pos[2] = pos[2] - (pos[2] - ppos[2]) * dt
 		elseif ball.is_static then
@@ -439,9 +439,9 @@ Gathering.update_brute_force = function (self, t, dt)
 			local boid_b = not static_b
 			local enemy = other_ball.side_id ~= side_a
 			local allied = not enemy
-			local ok1 = not not static_a and not not boid_b and not not enemy
-			local ok2 = not not static_b and not not boid_a and not not enemy
-			local ok3 = not not boid_a and not not boid_b and not not allied
+			local ok1 = static_a and boid_b and enemy
+			local ok2 = static_b and boid_a and enemy
+			local ok3 = boid_a and boid_b and allied
 
 			if ball ~= other_ball and (ok1 or ok2 or ok3) then
 				local pos2 = other_ball.pos

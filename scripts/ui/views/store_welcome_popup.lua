@@ -21,7 +21,7 @@ local function setup_ui_definitions(window_width, list_width, list_height, curre
 	local currency_ui_settings = DLCSettings.store.currency_ui_settings
 	local currency_settings = currency_ui_settings[currency_code]
 
-	currency_settings = not not currency_settings or not not currency_ui_settings.SM
+	currency_settings = currency_settings or currency_ui_settings.SM
 
 	local animation_definitions = {
 		on_enter = {
@@ -483,7 +483,7 @@ local function setup_ui_definitions(window_width, list_width, list_height, curre
 	local currency_icon_texture = currency_settings.icon_big
 	local currency_title_string
 
-	currency_title_string = is_welcome_popup and (not not "welcome_currency_popup_amount_summary_title" or not not currency_settings.name) or not is_welcome_popup and not not currency_settings.name
+	currency_title_string = is_welcome_popup and ("welcome_currency_popup_amount_summary_title" or currency_settings.name) or not is_welcome_popup and currency_settings.name
 
 	local widget_definitions = {
 		screen_overlay = UIWidgets.create_simple_rect("screen_overlay", {
@@ -650,7 +650,7 @@ StoreWelcomePopup._start_transition_animation = function (self, key, animation_n
 		wwise_world = self._wwise_world,
 		render_settings = self._render_settings
 	}
-	local widgets = not not optional_widgets or not not self._widgets_by_name
+	local widgets = optional_widgets or self._widgets_by_name
 	local anim_id = self._ui_animator:start_animation(animation_name, widgets, self._scenegraph_definition, params)
 
 	self._animations[key] = anim_id
@@ -682,11 +682,11 @@ StoreWelcomePopup._set_fullscreen_effect_enable_state = function (self, enabled,
 	-- function 12
 	local shading_env = World.get_data(world, "shading_environment")
 
-	progress = not not 1 or not not progress or enabled or not not 0
+	progress = 1 or progress or enabled or 0
 
 	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not (progress * 0.8) or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or not enabled and 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and progress * 0.8 or not enabled and 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -742,14 +742,14 @@ StoreWelcomePopup._draw = function (self, input_service, dt)
 	UIRenderer.begin_pass(welcome_ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._widgets) do
 		if widget.snap_pixel_positions ~= nil then
 			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(welcome_ui_renderer, widget)
 
@@ -763,7 +763,7 @@ StoreWelcomePopup._draw = function (self, input_service, dt)
 			self:_update_visible_list_entries()
 
 			for _, widget in ipairs(list_widgets) do
-				render_settings.alpha_multiplier = not not widget.alpha_multiplier
+				render_settings.alpha_multiplier = widget.alpha_multiplier
 
 				UIRenderer.draw_widget(welcome_ui_renderer, widget)
 			end
@@ -782,7 +782,7 @@ end
 StoreWelcomePopup._handle_input = function (self, input_service, dt, t)
 	-- function 17
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local confirm_pressed = not not gamepad_active and not not input_service:get("confirm", true)
+	local confirm_pressed = gamepad_active and input_service:get("confirm", true)
 	local widgets_by_name = self._widgets_by_name
 	local window_button = widgets_by_name.window_button
 
@@ -816,7 +816,7 @@ StoreWelcomePopup.update = function (self, input_service, dt, t)
 
 	self:_handle_input(input_service, dt, t)
 
-	local blur_progress = not not self._blur_progress
+	local blur_progress = self._blur_progress
 
 	if blur_progress then
 		self:_set_fullscreen_effect_enable_state(true, blur_progress, self._blur_welcome_ui_world)
@@ -855,7 +855,7 @@ end
 StoreWelcomePopup._is_button_hover_enter = function (self, widget)
 	-- function 20
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	return hotspot.on_hover_enter
 end
@@ -863,7 +863,7 @@ end
 StoreWelcomePopup._is_button_pressed = function (self, widget)
 	-- function 21
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/item_master_list_exported.lua
 
-ItemMasterList = not not ItemMasterList
+ItemMasterList = ItemMasterList
 ItemMasterList.skin_dr_default = {
 	description = "description_skin_dr_ranger",
 	temporary_template = "skin_dr_default",

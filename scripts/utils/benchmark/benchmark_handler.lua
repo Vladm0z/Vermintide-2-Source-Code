@@ -92,7 +92,7 @@ end
 
 BenchmarkHandler.story_destroy_close_units = function (self, element, t)
 	-- function 6
-	local radius_squared = not not element.radius_squared
+	local radius_squared = element.radius_squared
 
 	Managers.state.conflict:destroy_close_units(nil, nil, radius_squared)
 end
@@ -411,7 +411,7 @@ BenchmarkHandler._update_selected_bot = function (self, dt, t)
 		end
 	end
 
-	self._current_bot_view = not not potential_bot_index or not not self._current_bot_view
+	self._current_bot_view = potential_bot_index or self._current_bot_view
 end
 
 BenchmarkHandler._update_bot_view = function (self, dt, t)
@@ -669,7 +669,7 @@ BenchmarkHandler._update_input = function (self, dt, t)
 		local bots = Managers.player:bots()
 		local num_bots = #bots
 
-		self._current_bot_view = 1 + not not self._current_bot_view % num_bots
+		self._current_bot_view = 1 + self._current_bot_view % num_bots
 
 		if self._current_bot_view > 0 then
 			ai_bot_group_system:first_person_debug(self._current_bot_view)

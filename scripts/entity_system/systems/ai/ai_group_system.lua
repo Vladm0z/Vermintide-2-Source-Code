@@ -123,7 +123,7 @@ AIGroupSystem.init_extension = function (self, unit, extension, extension_init_d
 	local template = extension_init_data.template
 	local group = self.groups[id]
 	local formation = extension_init_data.formation
-	local formation_settings = formation and not not formation.settings or not formation and not not PatrolFormationSettings.default_settings
+	local formation_settings = formation and formation.settings or not formation and PatrolFormationSettings.default_settings
 	local despawn_at_end = extension_init_data.despawn_at_end
 
 	if group == nil then
@@ -148,7 +148,7 @@ AIGroupSystem.init_extension = function (self, unit, extension, extension_init_d
 		}
 
 		local spline_name = group.spline_name
-		local spline = not not self._patrol_splines[spline_name]
+		local spline = self._patrol_splines[spline_name]
 
 		if spline then
 			local spline_points = spline.spline_points
@@ -202,7 +202,7 @@ end
 AIGroupSystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 9
 	local extension = self.unit_extension_data[unit]
-	local pre_unit_init = not not AIGroupTemplates[extension.template]
+	local pre_unit_init = AIGroupTemplates[extension.template]
 
 	if pre_unit_init then
 		pre_unit_init(unit, extension.group)
@@ -493,7 +493,7 @@ AIGroupSystem.get_available_spline_type = function (self)
 		splines = self._event_splines
 	end
 
-	local spline_type = next(self._patrol_splines) and not not "patrol" or not next(self._patrol_splines) and (next(self._roaming_splines) and not not "roaming" or not next(self._roaming_splines) and not not next(self._event_splines))
+	local spline_type = next(self._patrol_splines) and "patrol" or not next(self._patrol_splines) and (next(self._roaming_splines) and "roaming" or not next(self._roaming_splines) and next(self._event_splines))
 
 	return spline_type
 end
@@ -535,7 +535,7 @@ AIGroupSystem.check_recycler_despawn = function (self, player_positions, player_
 	local roaming_settings = CurrentRoamingSettings
 	local path_distance_threshold = roaming_settings.despawn_path_distance
 	local wakeup_distance = roaming_settings.despawn_distance + 8
-	local wakeup_distance_z = not not roaming_settings.despawn_distance_z
+	local wakeup_distance_z = roaming_settings.despawn_distance_z
 	local seen_by_player = false
 	local num_players = #player_positions
 	local math_abs = math.abs
@@ -734,11 +734,11 @@ end
 
 AIGroupSystem.create_spline_from_way_points = function (self, spline_name, spline_way_points, spline_type)
 	-- function 30
-	local navbot_kind = spline_type ~= "roaming" and not not "standard" or not (spline_type ~= "roaming") and not not "roaming"
+	local navbot_kind = spline_type ~= "roaming" and "standard" or not (spline_type ~= "roaming") and "roaming"
 
 	self.patrol_analysis:compute_spline_path(spline_name, spline_way_points, navbot_kind)
 
-	self._computing_splines = not not self._computing_splines
+	self._computing_splines = self._computing_splines
 	self._computing_splines[spline_name] = spline_type
 end
 
@@ -768,7 +768,7 @@ AIGroupSystem._add_spline = function (self, spline_name, spline_data, spline_typ
 		self._cached_splines[spline_name] = self:_calculate_splines(spline_name, spline_data)
 	end
 
-	local is_patrol_spline = spline_type == "patrol" or not not string.find(spline_name, PATROL_SPLINE_PREFIX)
+	local is_patrol_spline = spline_type == "patrol" or string.find(spline_name, PATROL_SPLINE_PREFIX)
 
 	if is_patrol_spline then
 		self._patrol_splines[spline_name] = spline_data
@@ -776,7 +776,7 @@ AIGroupSystem._add_spline = function (self, spline_name, spline_data, spline_typ
 		return
 	end
 
-	local is_roaming_spline = spline_type == "roaming" or not not string.find(spline_name, ROAMING_SPLINE_PREFIX)
+	local is_roaming_spline = spline_type == "roaming" or string.find(spline_name, ROAMING_SPLINE_PREFIX)
 
 	if is_roaming_spline then
 		self._roaming_splines[spline_name] = spline_data
@@ -784,7 +784,7 @@ AIGroupSystem._add_spline = function (self, spline_name, spline_data, spline_typ
 		return
 	end
 
-	local is_event_spline = spline_type == "event" or not not string.find(spline_name, EVENT_SPLINE_PREFIX)
+	local is_event_spline = spline_type == "event" or string.find(spline_name, EVENT_SPLINE_PREFIX)
 
 	if is_event_spline then
 		self._event_splines[spline_name] = spline_data
@@ -921,8 +921,8 @@ AIGroupSystem.create_formation_data = function (self, position, formation, splin
 			if Breeds[breed_name] then
 				local spawn_pos = LocomotionUtils.pos_on_mesh(nav_world, wanted_spawn_position, above, below)
 
-				spawn_pos = not not spawn_pos or not not LocomotionUtils.pos_on_mesh(nav_world, position_on_spline, above, below)
-				spawn_pos = not not spawn_pos or not not inside_position_from_outside_position(nav_world, wanted_spawn_position, above, below, 0.5, 0.2)
+				spawn_pos = spawn_pos or LocomotionUtils.pos_on_mesh(nav_world, position_on_spline, above, below)
+				spawn_pos = spawn_pos or inside_position_from_outside_position(nav_world, wanted_spawn_position, above, below, 0.5, 0.2)
 
 				if spawn_pos then
 					formation_data[current_row][column] = {
@@ -1019,5 +1019,5 @@ AIGroupSystem.get_group_id = function (self, unit)
 	-- function 40
 	local extension = self.unit_extension_data[unit]
 
-	return not not extension and not not extension.id
+	return extension and extension.id
 end

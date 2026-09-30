@@ -344,7 +344,7 @@ AreaDamageTemplates.templates = {
 							local distance = Vector3.distance(unit_position, area_damage_position)
 							local is_inside_radius = distance < radius
 							local ghost_ext = ScriptUnit.has_extension(player_unit, "ghost_mode_system")
-							local is_in_ghost_mode = not not ghost_ext and not not ghost_ext:is_in_ghost_mode()
+							local is_in_ghost_mode = ghost_ext and ghost_ext:is_in_ghost_mode()
 
 							if is_inside_radius and not is_in_ghost_mode then
 								local damage_data = {
@@ -387,7 +387,7 @@ AreaDamageTemplates.templates = {
 			end,
 			spawn_effect = function (world, unit, effect_name, particle_var_table, override_position)
 				-- function 14
-				local position = not not override_position or not not Unit.world_position(unit, 0)
+				local position = override_position or Unit.world_position(unit, 0)
 				local effect_id = World.create_particles(world, effect_name, position)
 
 				if particle_var_table ~= nil then
@@ -602,8 +602,8 @@ AreaDamageTemplates.templates = {
 AreaDamageTemplates.get_template = function (area_damage_template, is_husk)
 	-- function 22
 	local templates = AreaDamageTemplates.templates
-	local husk_key = is_husk ~= true and (is_husk ~= false and not not nil or not (is_husk ~= false) and not not "unit") or not (is_husk ~= true) and not not "husk"
-	local template = husk_key and not not templates[area_damage_template][husk_key] or not husk_key and not not templates[area_damage_template]
+	local husk_key = is_husk ~= true and (is_husk ~= false and nil or not (is_husk ~= false) and "unit") or not (is_husk ~= true) and "husk"
+	local template = husk_key and templates[area_damage_template][husk_key] or not husk_key and templates[area_damage_template]
 
 	fassert(template, "no area_damage_template called %s", area_damage_template)
 

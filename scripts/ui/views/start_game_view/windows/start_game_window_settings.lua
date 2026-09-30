@@ -259,7 +259,7 @@ StartGameWindowSettings._handle_input = function (self, dt, t)
 		end
 	end
 
-	local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
+	local custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
 
 	if self:_is_button_released(widgets_by_name.game_option_1) then
 		parent:set_layout_by_name(custom_game_settings.layout_name)
@@ -328,7 +328,7 @@ StartGameWindowSettings._update_additional_options = function (self)
 	local private_enabled = parent:is_private_option_enabled()
 	local always_host_enabled = parent:is_always_host_option_enabled()
 	local strict_matchmaking_enabled = parent:is_strict_matchmaking_option_enabled()
-	local twitch_active = not not Managers.twitch
+	local twitch_active = Managers.twitch
 	local lobby = self._network_lobby
 	local num_members = lobby:members():get_member_count()
 	local is_alone = num_members == 1
@@ -349,15 +349,15 @@ StartGameWindowSettings._update_additional_options = function (self)
 		private_hotspot.is_selected = private_is_selected
 		private_hotspot.disable_button = private_is_disabled
 
-		local always_host_is_selected = not not private_enabled or not is_alone or not not always_host_enabled
-		local always_host_is_disabled = not not private_enabled or not is_alone or not not twitch_active or not not always_host_disabled
+		local always_host_is_selected = private_enabled or not is_alone or always_host_enabled
+		local always_host_is_disabled = private_enabled or not is_alone or twitch_active or always_host_disabled
 		local host_hotspot = widgets_by_name.host_button.content.button_hotspot
 
 		host_hotspot.is_selected = always_host_is_selected
 		host_hotspot.disable_button = always_host_is_disabled
 
-		local strict_matchmaking_is_selected = not always_host_enabled and not private_enabled and not not is_alone and not not strict_matchmaking_enabled
-		local strict_matchmaking_is_disabled = not not private_enabled or not not always_host_enabled or not is_alone or not not twitch_active
+		local strict_matchmaking_is_selected = not always_host_enabled and not private_enabled and is_alone and strict_matchmaking_enabled
+		local strict_matchmaking_is_disabled = private_enabled or always_host_enabled or not is_alone or twitch_active
 		local strict_matchmaking_hotspot = widgets_by_name.strict_matchmaking_button.content.button_hotspot
 
 		strict_matchmaking_hotspot.is_selected = strict_matchmaking_is_selected
@@ -400,13 +400,13 @@ end
 StartGameWindowSettings._set_difficulty_option = function (self, difficulty_key)
 	-- function 19
 	local difficulty_settings = DifficultySettings[difficulty_key]
-	local display_name = not not difficulty_settings and not not difficulty_settings.display_name
-	local display_image = not not difficulty_settings and not not difficulty_settings.display_image
-	local completed_frame_texture = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
+	local display_name = difficulty_settings and difficulty_settings.display_name
+	local display_image = difficulty_settings and difficulty_settings.display_image
+	local completed_frame_texture = difficulty_settings and difficulty_settings.completed_frame_texture or not difficulty_settings and "map_frame_00"
 	local widgets_by_name = self._widgets_by_name
 
-	widgets_by_name.game_option_2.content.option_text = display_name and not not Localize(display_name) or not display_name and not not ""
-	widgets_by_name.game_option_2.content.icon = not not display_image or not not nil
+	widgets_by_name.game_option_2.content.option_text = display_name and Localize(display_name) or not display_name and ""
+	widgets_by_name.game_option_2.content.icon = display_image or nil
 	widgets_by_name.game_option_2.content.icon_frame = completed_frame_texture
 end
 

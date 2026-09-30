@@ -44,7 +44,7 @@ end
 BonusDiceUI.add_die = function (self, die_type)
 	-- function 3
 	local active_dice_widgets = self.active_dice_widgets + 1
-	local widget = not not self.dice_widgets[active_dice_widgets]
+	local widget = self.dice_widgets[active_dice_widgets]
 	local num_dice_columns = definitions.num_dice_columns
 	local size = definitions.dice_size
 	local gap = definitions.gap

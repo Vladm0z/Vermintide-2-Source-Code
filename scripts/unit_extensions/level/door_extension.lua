@@ -18,12 +18,12 @@ DoorExtension.init = function (self, extension_init_context, unit, extension_ini
 
 	local move_to_exit_when_opened = Unit.get_data(unit, "move_to_exit_when_opened")
 
-	self.move_to_exit_when_opened = move_to_exit_when_opened == nil or not not move_to_exit_when_opened
+	self.move_to_exit_when_opened = move_to_exit_when_opened == nil or move_to_exit_when_opened
 	self.ai_attack_re_eval_time = Unit.get_data(unit, "ai_attack_re_eval_time")
 
 	local door_state = Unit.get_data(unit, "door_state")
 
-	self.current_state = door_state ~= 0 and (door_state ~= 1 and door_state == 2 and not not "open_backward" or not (door_state ~= 1) and not not "closed") or not (door_state ~= 0) and not not "open_forward"
+	self.current_state = door_state ~= 0 and (door_state ~= 1 and door_state == 2 and "open_backward" or not (door_state ~= 1) and "closed") or not (door_state ~= 0) and "open_forward"
 	self.animation_flow_events = {
 		closed = {
 			open_backward = "lua_open_backward",
@@ -128,7 +128,7 @@ DoorExtension.interacted_with = function (self, interacting_unit)
 		local dot = Vector3.dot(direction, door_direction)
 		local infront = dot >= 0
 
-		new_state = infront and (not not "open_backward" or not not "open_forward") or not infront and not not "open_forward"
+		new_state = infront and ("open_backward" or "open_forward") or not infront and "open_forward"
 	end
 
 	self:set_door_state(new_state)
@@ -284,5 +284,5 @@ end
 
 DoorExtension.is_opening = function (self)
 	-- function 17
-	return not not self.frames_since_obstacle_update
+	return self.frames_since_obstacle_update
 end

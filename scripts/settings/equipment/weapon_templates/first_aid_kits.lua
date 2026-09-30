@@ -45,7 +45,7 @@ weapon_template.actions = {
 				-- function 2
 				local interactor_extension = ScriptUnit.extension(attacker_unit, "interactor_system")
 
-				return not not interactor_extension and not not interactor_extension:can_interact(nil, "heal")
+				return interactor_extension and interactor_extension:can_interact(nil, "heal")
 			end
 		}
 	},

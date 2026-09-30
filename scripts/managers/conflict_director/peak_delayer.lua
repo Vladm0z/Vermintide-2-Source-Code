@@ -45,7 +45,7 @@ end
 
 PeakDelayer.update = function (self, current_travel_dist, current_time)
 	-- function 4
-	local next_peak = not not get_next_peak(self._peaks, current_travel_dist)
+	local next_peak = get_next_peak(self._peaks, current_travel_dist)
 
 	if self._state == DELAY_STATES.WAITING_TO_REACH_DELAY then
 		if is_in_peak(self._peaks, current_travel_dist) then
@@ -104,5 +104,5 @@ end
 
 PeakDelayer.get_peaks = function (self)
 	-- function 7
-	return self._peaks and not not table.clone(self._peaks) or not self._peaks and not not {}
+	return self._peaks and table.clone(self._peaks) or not self._peaks and {}
 end

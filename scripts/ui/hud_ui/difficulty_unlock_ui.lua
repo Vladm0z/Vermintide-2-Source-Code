@@ -66,7 +66,7 @@ DifficultyUnlockUI.difficulty_set = function (self)
 	local mirrored_level_difficulties = table.mirror_table(level_difficulties)
 	local current_difficulty = self.difficulty_manager:get_difficulty()
 	local start_index = table.find(mirrored_level_difficulties, current_difficulty)
-	local highest_completed_difficulty_index = not not LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key)
+	local highest_completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key)
 
 	highest_completed_difficulty_index = highest_completed_difficulty_index + 1
 
@@ -139,7 +139,7 @@ end
 
 DifficultyUnlockUI._check_for_presentation_start = function (self, mission_data)
 	-- function 7
-	local previous_wave_completed = not not self.previous_wave_completed
+	local previous_wave_completed = self.previous_wave_completed
 	local wave_completed = mission_data.wave_completed - mission_data.starting_wave
 
 	if wave_completed <= previous_wave_completed then
@@ -371,7 +371,7 @@ DifficultyUnlockUI.start_explode_animation = function (self)
 	widgets.difficulty_text = self.difficulty_text_widget
 	widgets.difficulty_title_text = self.difficulty_title_text_widget
 
-	local animation_name = icon_draw_count ~= 4 and not not "explode_parts_5" or not (icon_draw_count ~= 4) and not not "explode_parts_4"
+	local animation_name = icon_draw_count ~= 4 and "explode_parts_5" or not (icon_draw_count ~= 4) and "explode_parts_4"
 
 	self.explode_anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 end

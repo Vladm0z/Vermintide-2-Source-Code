@@ -34,7 +34,7 @@ return {
 		local hit_distance_sqr = hit_distance * hit_distance
 
 		for id, spirit in pairs(spirits) do
-			local unit = not not spirit and not not spirit.unit
+			local unit = spirit and spirit.unit
 
 			if unit and spirit.delay_time == 0 then
 				local spirit_position = Unit.local_position(unit, 0)

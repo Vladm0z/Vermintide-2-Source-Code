@@ -1,8 +1,8 @@
 -- chunkname: @scripts/helpers/loadout_utils.lua
 
-LoadoutUtils = not not LoadoutUtils
+LoadoutUtils = LoadoutUtils
 
-local LOADOUT_SLOTS = not not LOADOUT_SLOTS
+local LOADOUT_SLOTS = LOADOUT_SLOTS
 
 LoadoutUtils.sync_loadout_slot = function (player, slot_name, item, sync_to_specific_peer_id)
 	-- function 1
@@ -15,7 +15,7 @@ LoadoutUtils.sync_loadout_slot = function (player, slot_name, item, sync_to_spec
 	local network_transmit = network_manager.network_transmit
 	local item_key = item.key
 	local power_level = item.power_level
-	local rarity = not not item.rarity
+	local rarity = item.rarity
 	local slot_id = NetworkLookup.equipment_slots[slot_name]
 	local item_id = NetworkLookup.item_names[item_key]
 	local rarity_id = NetworkLookup.rarities[rarity]
@@ -52,7 +52,7 @@ LoadoutUtils.hot_join_sync = function (peer_id)
 		local player_peer_id = player:network_id()
 
 		if player_peer_id ~= peer_id then
-			local loadout = not not player_loadouts[unique_id]
+			local loadout = player_loadouts[unique_id]
 
 			for slot_name, item in pairs(loadout) do
 				LoadoutUtils.sync_loadout_slot(player, slot_name, item, peer_id)
@@ -78,8 +78,8 @@ LoadoutUtils.create_loadout_item_from_rpc_data = function (slot_id, item_id, rar
 	item.rarity = rarity
 	item.key = item_key
 	item.ItemId = item_key
-	item.properties = num_properties > 0 and (not not properties or not not nil) or not (num_properties > 0) and not not nil
-	item.traits = #traits > 0 and (not not traits or not not nil) or not (#traits > 0) and not not nil
+	item.properties = num_properties > 0 and (properties or nil) or not (num_properties > 0) and nil
+	item.traits = #traits > 0 and (traits or nil) or not (#traits > 0) and nil
 
 	return slot_name, item
 end

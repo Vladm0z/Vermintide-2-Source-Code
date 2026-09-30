@@ -80,8 +80,8 @@ SpawningHelper.fill_consumable_table = function (consumables, inventory_extensio
 	for i = 1, #CONSUMABLE_SLOTS do
 		local slot_name = CONSUMABLE_SLOTS[i]
 		local slot_data = inventory_extension:get_slot_data(slot_name)
-		local item_data = not not slot_data and not not slot_data.item_data
-		local item_key = not not item_data and not not item_data.key
+		local item_data = slot_data and slot_data.item_data
+		local item_key = item_data and item_data.key
 
 		if not item_data or item_data.skip_sync then
 			consumables[slot_name] = nil
@@ -126,7 +126,7 @@ SpawningHelper.fill_ammo_percentage = function (ammo, inventory_extension, playe
 				local ammo_unit_hand = item_template.ammo_data.ammo_hand
 
 				if is_remote then
-					ammo_percentage = not not inventory_extension:ammo_percentage() or not not ammo_percentage
+					ammo_percentage = inventory_extension:ammo_percentage() or ammo_percentage
 				elseif ammo_unit_hand == "right" and Unit.alive(slot_data.right_unit_1p) then
 					local ammo_extension = ScriptUnit.extension(slot_data.right_unit_1p, "ammo_system")
 

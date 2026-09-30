@@ -32,7 +32,7 @@ end
 
 BaseEndScreenUI._setup_rewards = function (self, params)
 	-- function 2
-	local rewards = not not params and not not params.rewards
+	local rewards = params and params.rewards
 
 	if rewards then
 		self._rewards_popup:present_rewards(rewards)
@@ -82,7 +82,7 @@ end
 
 BaseEndScreenUI.completed = function (self)
 	-- function 11
-	return not not self._completed
+	return self._completed
 end
 
 BaseEndScreenUI._play_sound = function (self, event)
@@ -132,7 +132,7 @@ BaseEndScreenUI.draw = function (self, dt)
 	local render_settings = self._render_settings
 	local draw_flags = self._draw_flags
 
-	render_settings.alpha_multiplier = not not draw_flags.alpha_multiplier
+	render_settings.alpha_multiplier = draw_flags.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 	UIRenderer.draw_all_widgets(ui_renderer, self._widgets)

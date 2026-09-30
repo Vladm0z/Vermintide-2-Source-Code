@@ -69,7 +69,7 @@ end
 
 MusicPlayer.is_playing = function (self)
 	-- function 7
-	return not not self._playing
+	return self._playing
 end
 
 MusicPlayer.set_group_state = function (self, group, state)

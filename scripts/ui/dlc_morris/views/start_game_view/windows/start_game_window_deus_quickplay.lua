@@ -30,11 +30,11 @@ StartGameWindowDeusQuickplay.on_enter = function (self, params, offset)
 
 	self:_create_ui_elements(params, offset)
 
-	self._input_index = not not params.input_index
+	self._input_index = params.input_index
 
 	self:_handle_new_selection(self._input_index)
 
-	self._current_difficulty = not not self._parent:get_difficulty_option(true)
+	self._current_difficulty = self._parent:get_difficulty_option(true)
 	self._dlc_name = nil
 
 	self:_update_difficulty_option(self._current_difficulty)
@@ -193,7 +193,7 @@ StartGameWindowDeusQuickplay._handle_input = function (self, dt, t)
 		end
 
 		if self:_can_play() and input_service:get(START_GAME_INPUT) then
-			local custom_game_settings = not not self._parent:get_quickplay_settings(self._mechanism_name)
+			local custom_game_settings = self._parent:get_quickplay_settings(self._mechanism_name)
 			local game_mode_type = custom_game_settings.game_mode_type
 
 			self._parent:set_difficulty_option(self._current_difficulty)
@@ -287,7 +287,7 @@ StartGameWindowDeusQuickplay._can_play = function (self)
 	-- function 12
 	local selected_difficulty_key = self._current_difficulty
 
-	return selected_difficulty_key ~= nil and not not not self._dlc_locked
+	return selected_difficulty_key ~= nil and not self._dlc_locked
 end
 
 StartGameWindowDeusQuickplay._set_info_window = function (self, difficulty_key)
@@ -324,7 +324,7 @@ StartGameWindowDeusQuickplay._option_selected = function (self, widget_name, but
 	if widget_name == "difficulty_stepper" then
 		local difficulty_key = self._current_difficulty
 		local difficulty_list = GameModeSettings.deus.difficulties
-		local current_difficulty_index = not not table.find(difficulty_list, difficulty_key)
+		local current_difficulty_index = table.find(difficulty_list, difficulty_key)
 		local new_current_index = 0
 
 		if button_name == "left_arrow" then
@@ -341,7 +341,7 @@ StartGameWindowDeusQuickplay._option_selected = function (self, widget_name, but
 
 		self:_update_difficulty_option(difficulty_list[new_current_index])
 	elseif widget_name == "play_button" then
-		local custom_game_settings = not not self._parent:get_quickplay_settings(self._mechanism_name)
+		local custom_game_settings = self._parent:get_quickplay_settings(self._mechanism_name)
 		local game_mode_type = custom_game_settings.game_mode_type
 
 		self._parent:set_difficulty_option(self._current_difficulty)
@@ -474,7 +474,7 @@ StartGameWindowDeusQuickplay._update_difficulty_lock = function (self)
 		if not approved then
 			if extra_requirement_failed then
 				difficulty_info_widget.content.should_show_diff_lock_text = true
-				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
+				difficulty_info_widget.content.difficulty_lock_text = extra_requirement_failed and Localize(extra_requirement_failed) or not extra_requirement_failed and ""
 			else
 				difficulty_info_widget.content.should_show_diff_lock_text = false
 			end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/network/game_server/game_server_steam.lua
 
-GameServerInternal = not not GameServerInternal
+GameServerInternal = GameServerInternal
 GameServerInternal.lobby_data_version = 2
 
 GameServerInternal.init_server = function (network_options, server_name)

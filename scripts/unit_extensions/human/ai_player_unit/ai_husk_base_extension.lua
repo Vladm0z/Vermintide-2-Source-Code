@@ -20,9 +20,9 @@ AiHuskBaseExtension.init = function (self, extension_init_context, unit, extensi
 	local blackboard_init_data = breed.blackboard_init_data
 
 	if blackboard_init_data and blackboard_init_data.player_locomotion_constrain_radius ~= nil then
-		self.player_locomotion_constrain_radius = not not blackboard_init_data.player_locomotion_constrain_radius
+		self.player_locomotion_constrain_radius = blackboard_init_data.player_locomotion_constrain_radius
 	else
-		self.player_locomotion_constrain_radius = not not breed.player_locomotion_constrain_radius
+		self.player_locomotion_constrain_radius = breed.player_locomotion_constrain_radius
 	end
 
 	local run_on_husk_spawn = breed.run_on_husk_spawn
@@ -63,7 +63,7 @@ AiHuskBaseExtension.extensions_ready = function (self, world, unit)
 	Unit.flow_event(unit, "lua_trigger_variation")
 
 	local level_settings = LevelSettings[Managers.state.game_mode:level_key()]
-	local climate_type = not not level_settings.climate_type
+	local climate_type = level_settings.climate_type
 
 	Unit.set_flow_variable(unit, "climate_type", climate_type)
 	Unit.flow_event(unit, "climate_type_set")

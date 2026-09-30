@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_ai_husk.lua
 
-LocomotionTemplates = not not LocomotionTemplates
+LocomotionTemplates = LocomotionTemplates
 
 local LocomotionTemplates = LocomotionTemplates
 local detailed_profiler_start, detailed_profiler_stop
@@ -177,8 +177,8 @@ LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units_navmesh_
 		if not extension.is_network_driven and not extension.hit_wall and Unit.mover(unit) == nil then
 			local current_position = Unit.local_position(unit, 0)
 
-			traverse_logic = not not traverse_logic or not not extension:traverse_logic()
-			physics_world = not not physics_world or not not World.physics_world(extension._world)
+			traverse_logic = traverse_logic or extension:traverse_logic()
+			physics_world = physics_world or World.physics_world(extension._world)
 
 			local velocity = extension:current_velocity()
 			local result = LocomotionUtils.navmesh_movement_check(current_position, velocity, nav_world, physics_world, traverse_logic)
@@ -192,7 +192,7 @@ LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units_navmesh_
 
 				if mover then
 					local breed = extension.breed
-					local mover_move_distance = not not breed.override_mover_move_distance
+					local mover_move_distance = breed.override_mover_move_distance
 
 					Mover.set_position(mover, current_position)
 
@@ -233,7 +233,7 @@ LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units = functi
 		local go_id = unit_storage:go_id(unit)
 		local current_position = Unit.local_position(unit, 0)
 
-		traverse_logic = not not traverse_logic or not not extension:traverse_logic()
+		traverse_logic = traverse_logic or extension:traverse_logic()
 
 		local wanted_pose = Unit.animation_wanted_root_pose(unit)
 		local wanted_position = Matrix4x4.translation(wanted_pose)

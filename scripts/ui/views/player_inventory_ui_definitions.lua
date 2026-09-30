@@ -66,7 +66,7 @@ local function create_inventory_entry_widgets(num_of_entries)
 	for i = 1, num_of_entries do
 		local slot = SLOTS_LIST[i]
 		local slot_name = slot.name
-		local is_consumable_slot = consumable_slots[slot_name] and not not true or not consumable_slots[slot_name] and not not false
+		local is_consumable_slot = consumable_slots[slot_name]
 		local scenegraph_id = "inventory_entry_" .. i
 		local scenegraph_root_id = "inventory_entry_root_" .. i
 		local scenegraph_background_id = "inventory_entry_background_" .. i
@@ -425,7 +425,7 @@ local function create_inventory_entry_widgets(num_of_entries)
 						retained_mode = RETAINED_MODE_ENABLED,
 						content_check_function = function (content)
 							-- function 12
-							return not content.stance_bar.active and not not content.has_data
+							return not content.stance_bar.active and content.has_data
 						end
 					},
 					{
@@ -435,7 +435,7 @@ local function create_inventory_entry_widgets(num_of_entries)
 						retained_mode = RETAINED_MODE_ENABLED,
 						content_check_function = function (content)
 							-- function 13
-							return not content.stance_bar.active and not not content.has_data
+							return not content.stance_bar.active and content.has_data
 						end
 					},
 					{
@@ -445,7 +445,7 @@ local function create_inventory_entry_widgets(num_of_entries)
 						retained_mode = RETAINED_MODE_ENABLED,
 						content_check_function = function (content)
 							-- function 14
-							return not content.stance_bar.active and not not content.has_data
+							return not content.stance_bar.active and content.has_data
 						end
 					}
 				}
@@ -461,8 +461,8 @@ local function create_inventory_entry_widgets(num_of_entries)
 				stance_bar_lit = "stance_bar_frame_lit",
 				icon = "weapon_icon_empty",
 				ammo_text_2 = "ammo_text",
-				background = is_consumable_slot and not not "consumables_frame_bg_lit" or not is_consumable_slot and not not "weapon_generic_icons_bg",
-				background_lit = is_consumable_slot and not not "consumables_frame_lit" or not is_consumable_slot and not not "weapon_generic_icons_bg_lit",
+				background = is_consumable_slot and "consumables_frame_bg_lit" or not is_consumable_slot and "weapon_generic_icons_bg",
+				background_lit = is_consumable_slot and "consumables_frame_lit" or not is_consumable_slot and "weapon_generic_icons_bg_lit",
 				stance_bar = {
 					bar_value = 0,
 					active = false,

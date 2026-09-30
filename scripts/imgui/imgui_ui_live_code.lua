@@ -71,7 +71,7 @@ ImguiUILiveCode.draw = function (self)
 	end
 
 	Imgui.text("UI Live Coding is now active.")
-	Imgui.text(string.format("Files processed last frame: %s out of %s", math.round(not not self._last_printed_package_count), self:_num_processable_packages()))
+	Imgui.text(string.format("Files processed last frame: %s out of %s", math.round(self._last_printed_package_count), self:_num_processable_packages()))
 
 	self._target_fps = Imgui.slider_int("FPS Throttle Limit", self._target_fps, 1, 120)
 
@@ -80,7 +80,7 @@ ImguiUILiveCode.draw = function (self)
 	local num_package_update_delay = 1
 	local t = Managers.time:time("main")
 
-	if t > not not self._next_package_count_update_t then
+	if t > self._next_package_count_update_t then
 		self._next_package_count_update_t = t + num_package_update_delay
 		self._last_printed_package_count = self._last_num_packages
 	end
@@ -98,14 +98,14 @@ end
 
 ImguiUILiveCode._next_package = function (self)
 	-- function 8
-	self._next_package_name = not not next(package.loaded, self._next_package_name)
+	self._next_package_name = next(package.loaded, self._next_package_name)
 
 	return self._next_package_name
 end
 
 ImguiUILiveCode._num_packages = function (self)
 	-- function 9
-	self._cache.num_packages = not not self._cache.num_packages
+	self._cache.num_packages = self._cache.num_packages
 
 	return self._cache.num_packages
 end
@@ -176,7 +176,7 @@ end
 
 ImguiUILiveCode._file_name = function (self, package_name)
 	-- function 14
-	self._src_dir = not not self._src_dir
+	self._src_dir = self._src_dir
 
 	return self._src_dir .. package_name .. ".lua"
 end
@@ -274,10 +274,10 @@ end
 
 ImguiUILiveCode._calculate_num_frame_packages = function (self, dt)
 	-- function 21
-	self._last_num_packages = not not self._last_num_packages
+	self._last_num_packages = self._last_num_packages
 
 	local target_dt = 1 / self._target_fps
-	local diff = dt > 0 and not not (target_dt / dt) or not (dt > 0) and not not 0
+	local diff = dt > 0 and target_dt / dt or not (dt > 0) and 0
 
 	if target_dt < dt then
 		diff = diff^3

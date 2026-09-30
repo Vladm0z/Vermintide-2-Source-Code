@@ -4,10 +4,10 @@ ProximityMineExtension = class(ProximityMineExtension)
 
 ProximityMineExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.arm_time = not not extension_init_data.arm_time
-	self.detonation_time = not not extension_init_data.detonation_time
-	self.range = not not extension_init_data.range
-	self.catapult_strength = not not extension_init_data.catapult_strength
+	self.arm_time = extension_init_data.arm_time
+	self.detonation_time = extension_init_data.detonation_time
+	self.range = extension_init_data.range
+	self.catapult_strength = extension_init_data.catapult_strength
 	self.explosion_template = extension_init_data.explosion_template
 	self.owner_unit = extension_init_data.owner_unit
 	self.detonating_sound_event = extension_init_data.detonating_sound_event

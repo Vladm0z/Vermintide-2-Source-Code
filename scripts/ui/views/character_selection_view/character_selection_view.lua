@@ -88,7 +88,7 @@ CharacterSelectionView._setup_state_machine = function (self, state_machine_para
 		self._machine = nil
 	end
 
-	local start_state = not not optional_start_state or not not CharacterSelectionStateCharacter
+	local start_state = optional_start_state or CharacterSelectionStateCharacter
 	local profiling_debugging_enabled = false
 
 	state_machine_params.allow_back_button = not self:initial_profile_view()
@@ -124,7 +124,7 @@ CharacterSelectionView.input_service = function (self, ignore_input_blocked)
 	if ignore_input_blocked then
 		return self.input_manager:get_service("character_selection_view")
 	else
-		return self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self.input_manager:get_service("character_selection_view")
+		return self._input_blocked and FAKE_INPUT_SERVICE or not self._input_blocked and self.input_manager:get_service("character_selection_view")
 	end
 end
 
@@ -264,7 +264,7 @@ CharacterSelectionView.update = function (self, dt, t)
 	local input_manager = self.input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local input_blocked = self:input_blocked()
-	local input_service = not not FAKE_INPUT_SERVICE
+	local input_service = FAKE_INPUT_SERVICE
 
 	self._state_machine_params.input_service = input_service
 
@@ -299,9 +299,9 @@ end
 CharacterSelectionView._has_active_level_vote = function (self)
 	-- function 20
 	local voting_manager = self.voting_manager
-	local is_mission_vote = not not voting_manager:vote_in_progress()
+	local is_mission_vote = voting_manager:vote_in_progress()
 
-	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
+	return is_mission_vote and not voting_manager:has_voted(Network.peer_id())
 end
 
 CharacterSelectionView.on_enter = function (self, params)
@@ -355,7 +355,7 @@ CharacterSelectionView.on_enter = function (self, params)
 
 	local player_manager = Managers.player
 	local local_player = player_manager:local_player()
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if player_unit then
 		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
@@ -404,7 +404,7 @@ CharacterSelectionView._get_sorted_players = function (self)
 
 	table.sort(player_order, function (a, b)
 		-- function 24
-		return not not a.local_player
+		return a.local_player
 	end)
 
 	return player_order
@@ -456,7 +456,7 @@ CharacterSelectionView.hotkey_allowed = function (self, input, mapping_data)
 		local name = current_screen_settings.name
 
 		if name == transition_state then
-			local active_sub_settings_name = not not current_state.get_selected_layout_name
+			local active_sub_settings_name = current_state.get_selected_layout_name
 
 			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
@@ -606,7 +606,7 @@ end
 
 CharacterSelectionView.exit = function (self, return_to_game)
 	-- function 36
-	local exit_transition = not not self._exit_transition
+	local exit_transition = self._exit_transition
 
 	self.ingame_ui:transition_with_fade(exit_transition, self._exit_transition_params)
 

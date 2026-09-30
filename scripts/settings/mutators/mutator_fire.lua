@@ -89,7 +89,7 @@ return {
 	apply_buff = function (data, hit_unit, attacker_unit, is_enemy)
 		-- function 5
 		local is_alive = HEALTH_ALIVE[hit_unit]
-		local buff_template_name = is_enemy and not not data.buff_name_enemy or not is_enemy and not not data.buff_name_player
+		local buff_template_name = is_enemy and data.buff_name_enemy or not is_enemy and data.buff_name_player
 		local buff_extension = ScriptUnit.extension(hit_unit, "buff_system")
 		local unit_has_buff = buff_extension:has_buff_type(buff_template_name)
 
@@ -125,7 +125,7 @@ return {
 	unit_has_buff = function (data, unit, buff_name)
 		-- function 7
 		local unit_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-		local unit_has_buff = not not unit_buff_extension and not not unit_buff_extension:has_buff_type(buff_name)
+		local unit_has_buff = unit_buff_extension and unit_buff_extension:has_buff_type(buff_name)
 
 		return unit_has_buff
 	end,

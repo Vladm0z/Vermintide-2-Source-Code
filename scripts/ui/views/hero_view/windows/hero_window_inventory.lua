@@ -167,7 +167,7 @@ HeroWindowInventory._handle_input = function (self, dt, t)
 	local allow_single_press = false
 	local item_pressed = item_grid:is_item_pressed(allow_single_press)
 	local item_dragged = item_grid:is_item_dragged()
-	local item = not not item_pressed or not not item_dragged
+	local item = item_pressed or item_dragged
 
 	if item_grid:is_item_hovered() then
 		self:_play_sound("play_gui_inventory_item_hover")
@@ -227,8 +227,8 @@ HeroWindowInventory._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -251,9 +251,9 @@ HeroWindowInventory._update_crafting_material_panel = function (self)
 		local texture = material_textures[item_key]
 		local item_filter = "item_key == " .. item_key
 		local items = backend_items:get_filtered_items(item_filter)
-		local item = not not items and not not items[1]
-		local backend_id = not not item and not not item.backend_id
-		local amount = backend_id and not not backend_items:get_item_amount(backend_id) or not backend_id and not not 0
+		local item = items and items[1]
+		local backend_id = item and item.backend_id
+		local amount = backend_id and backend_items:get_item_amount(backend_id) or not backend_id and 0
 		local widget = widgets_by_name["material_text_" .. index]
 		local content = widget.content
 		local amount_text
@@ -270,7 +270,7 @@ HeroWindowInventory._update_crafting_material_panel = function (self)
 		content.icon = texture
 
 		if not content.item then
-			content.item = not not item or not not {
+			content.item = item or {
 				data = table.clone(ItemMasterList[item_key])
 			}
 		end
@@ -364,7 +364,7 @@ end
 HeroWindowInventory._change_category_by_index = function (self, index, force_update)
 	-- function 18
 	if force_update then
-		index = not not self._current_category_index or not not 1
+		index = self._current_category_index or 1
 	end
 
 	if self._current_category_index == index and not force_update then
@@ -388,7 +388,7 @@ end
 
 HeroWindowInventory.change_item_filter = function (self, item_filter, change_page)
 	-- function 19
-	change_page = not not change_page or change_page == nil
+	change_page = change_page or change_page == nil
 
 	self._item_grid:change_item_filter(item_filter, change_page)
 end

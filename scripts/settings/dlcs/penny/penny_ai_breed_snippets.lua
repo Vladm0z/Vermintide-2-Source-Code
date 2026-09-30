@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_ai_breed_snippets.lua
 
-AiBreedSnippets = not not AiBreedSnippets
+AiBreedSnippets = AiBreedSnippets
 
 local function check_for_recent_attackers_drachenfels(unit, blackboard, t, ranged_range)
 	-- function 1
-	local min_retaliation_dist_sqr = not not ranged_range or not not 100
+	local min_retaliation_dist_sqr = ranged_range or 100
 	local health_extension = ScriptUnit.extension(unit, "health_system")
 	local recent_damages, nr_damages = health_extension:recent_damages()
 
@@ -13,7 +13,7 @@ local function check_for_recent_attackers_drachenfels(unit, blackboard, t, range
 		local side = blackboard.side
 		local damage_source = recent_damages[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local master_list_item = rawget(ItemMasterList, damage_source)
-		local is_melee = not not master_list_item and master_list_item.slot_type == "melee"
+		local is_melee = master_list_item and master_list_item.slot_type == "melee"
 
 		if Unit.alive(attacking_unit) and side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[attacking_unit] then
 			local dist_sqr = Vector3.distance_squared(POSITION_LOOKUP[unit], POSITION_LOOKUP[attacking_unit])
@@ -79,7 +79,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (unit, bl
 	local physics_world = World.get_data(blackboard.world, "physics_world")
 	local level_analysis = Managers.state.conflict.level_analysis
 	local node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
-	local center_unit = node_units and not not node_units[1] or not node_units and not not unit
+	local center_unit = node_units and node_units[1] or not node_units and unit
 
 	blackboard.no_kill_achievement = true
 	blackboard.ring_center_position = Vector3Box(Unit.local_position(center_unit, 0))
@@ -215,7 +215,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (unit, bl
 	local level_analysis = Managers.state.conflict.level_analysis
 	local center_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
 	local wall_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_wall
-	local level_has_boss_arena = not not center_node_units and not not wall_node_units and not not id_lookup.sorcerer_boss_drachenfels
+	local level_has_boss_arena = center_node_units and wall_node_units and id_lookup.sorcerer_boss_drachenfels
 
 	if level_has_boss_arena then
 		local center_marker = center_node_units[1]
@@ -398,7 +398,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (unit, b
 				local position = POSITION_LOOKUP[player_unit]
 				local distance_squared = Vector3.distance_squared(position, origin_pos)
 				local catapult_direction = "in"
-				local direction = catapult_direction ~= "in" and not not (position - origin_pos) or not (catapult_direction ~= "in") and not not (origin_pos - position)
+				local direction = catapult_direction ~= "in" and position - origin_pos or not (catapult_direction ~= "in") and origin_pos - position
 
 				direction = Vector3.normalize(direction)
 
@@ -407,8 +407,8 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (unit, b
 					local damage_profile = DamageProfileTemplates[damage_profile_name]
 					local difficulty_rank = Managers.state.difficulty:get_difficulty()
 					local player = Managers.player:owner(player_unit)
-					local is_bot = not not player and not not not player:is_player_controlled()
-					local actual_power_level = is_bot and not not 0 or not is_bot and not not power_level[difficulty_rank]
+					local is_bot = player and not player:is_player_controlled()
+					local actual_power_level = is_bot and 0 or not is_bot and power_level[difficulty_rank]
 
 					DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, player_unit, unit, "torso", POSITION_LOOKUP[player_unit], Vector3.up(), "undefined")
 

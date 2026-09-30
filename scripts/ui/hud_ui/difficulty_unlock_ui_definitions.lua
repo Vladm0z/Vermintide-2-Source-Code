@@ -531,7 +531,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
+				local catmullrom_value = progress ~= 1 and math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -604,7 +604,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
+				local catmullrom_value = progress ~= 1 and math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -677,7 +677,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
+				local catmullrom_value = progress ~= 1 and math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -948,7 +948,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
+				local catmullrom_value = progress ~= 1 and math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5
@@ -1021,7 +1021,7 @@ local animations = {
 					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_stone")
 				end
 
-				local catmullrom_value = progress ~= 1 and not not math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and not not 1
+				local catmullrom_value = progress ~= 1 and math.catmullrom(progress, 8, 0, 1, -1) or not (progress ~= 1) and 1
 				local anim_fraction = math.easeOutCubic(progress)
 				local icon_widgets = widgets.icons
 				local alpha_start_progress = 0.5

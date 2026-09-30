@@ -50,7 +50,7 @@ RazerChromaSettings = {
 				return false
 			end
 
-			local game = not not Managers.state.network
+			local game = Managers.state.network
 
 			if not game then
 				return false
@@ -71,7 +71,7 @@ RazerChromaSettings = {
 			local health_extension = ScriptUnit.extension(unit, "health_system")
 			local damage_type, hit_type = health_extension:recently_damaged()
 			local strided_array, array_length = health_extension:recent_damages()
-			local took_hit = not not damage_type and not not not table.contains(NetworkLookup.damage_sources, damage_type)
+			local took_hit = damage_type and not table.contains(NetworkLookup.damage_sources, damage_type)
 
 			return took_hit, false, RAZER_ADD_ANIMATION_TYPE.REPLACE
 		end
@@ -85,7 +85,7 @@ RazerChromaSettings = {
 				return false
 			end
 
-			local game = not not Managers.state.network
+			local game = Managers.state.network
 
 			if not game then
 				return false
@@ -119,7 +119,7 @@ RazerChromaSettings = {
 		end,
 		condition_stop_func = function (manager)
 			-- function 3
-			local game = not not Managers.state.network
+			local game = Managers.state.network
 
 			if not game then
 				return true

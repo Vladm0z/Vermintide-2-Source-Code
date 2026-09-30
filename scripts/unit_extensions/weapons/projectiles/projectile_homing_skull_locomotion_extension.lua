@@ -20,7 +20,7 @@ end
 local function get_target_head_node_position(unit, node_name)
 	-- function 2
 	local blackboard = BLACKBOARDS[unit]
-	local breed = not not blackboard and not not blackboard.breed
+	local breed = blackboard and blackboard.breed
 
 	if breed and breed.target_head_node then
 		return Unit.world_position(unit, Unit.node(unit, breed.target_head_node))
@@ -80,7 +80,7 @@ ProjectileHomingSkullLocomotionExtension.update = function (self, unit, input, d
 	local cross_vector = Vector3(target_direction.x, target_direction.y, math.abs(new_direction.z) + 1)
 	local u_vector = Vector3.cross(target_direction, cross_vector)
 	local v_vector = Vector3.cross(target_direction, u_vector)
-	local curve_func = self._use_sin_for_vertical_trajectory and not not math.sin or not self._use_sin_for_vertical_trajectory and not not math.cos
+	local curve_func = self._use_sin_for_vertical_trajectory and math.sin or not self._use_sin_for_vertical_trajectory and math.cos
 	local v_offset = Vector3.normalize(v_vector) * BelakorBalancing.homing_skulls_vertical_offset_multiplier * curve_func(lifetime * BelakorBalancing.homing_skulls_vertical_offset_frequency_multiplier)
 	local new_base_position = base_position + new_direction * speed * dt
 
@@ -128,7 +128,7 @@ end
 
 ProjectileHomingSkullLocomotionExtension.moved_this_frame = function (self)
 	-- function 5
-	return not self.stopped and not not self.moved
+	return not self.stopped and self.moved
 end
 
 ProjectileHomingSkullLocomotionExtension.destroy = function (self)

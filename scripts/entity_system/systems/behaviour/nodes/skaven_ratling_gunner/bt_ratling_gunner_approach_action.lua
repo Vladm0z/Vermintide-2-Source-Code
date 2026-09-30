@@ -14,11 +14,11 @@ BTRatlingGunnerApproachAction.name = "BTRatlingGunnerApproachAction"
 BTRatlingGunnerApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
-	local attack_pattern_data = not not blackboard.attack_pattern_data
+	local attack_pattern_data = blackboard.attack_pattern_data
 
 	blackboard.attack_pattern_data = attack_pattern_data
 	blackboard.action = action
-	blackboard.lurk_start = not not blackboard.lurk_start
+	blackboard.lurk_start = blackboard.lurk_start
 
 	local move_speed = action.move_speed
 	local navigation_extension = blackboard.navigation_extension
@@ -64,7 +64,7 @@ BTRatlingGunnerApproachAction.run = function (self, unit, blackboard, t, dt)
 	end
 
 	local move_pos = blackboard.move_pos
-	local at_goal = not not move_pos and blackboard.destination_dist < 0.5
+	local at_goal = move_pos and blackboard.destination_dist < 0.5
 
 	if not move_pos or at_goal then
 		local position = self:calculate_move_position(unit, blackboard)
@@ -106,7 +106,7 @@ BTRatlingGunnerApproachAction.is_within_check_distance = function (self, unit, b
 	local target_dist = blackboard.target_dist
 	local check_distance = action.check_distance
 	local inside_check_distance = target_dist < check_distance
-	local is_within_check_distance = not not inside_check_distance or not not has_been_attacked
+	local is_within_check_distance = inside_check_distance or has_been_attacked
 
 	return is_within_check_distance
 end

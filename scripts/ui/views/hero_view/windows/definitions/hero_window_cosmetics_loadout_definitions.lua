@@ -247,7 +247,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 						-- function 3
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -334,9 +334,9 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 			bottom_edge = "menu_frame_09_divider",
 			use_bottom_edge = use_bottom_edge,
 			button_hotspot = {},
-			button_text = not not button_text or not not "n/a",
-			hover_glow = optional_color_name and not not ("button_state_hover_" .. optional_color_name) or not optional_color_name and not not "button_state_hover",
-			glow = optional_color_name and not not ("button_state_normal_" .. optional_color_name) or not optional_color_name and not not "button_state_normal",
+			button_text = button_text or "n/a",
+			hover_glow = optional_color_name and "button_state_hover_" .. optional_color_name or not optional_color_name and "button_state_hover",
+			glow = optional_color_name and "button_state_normal_" .. optional_color_name or not optional_color_name and "button_state_normal",
 			button_background = {
 				uvs = {
 					{
@@ -494,7 +494,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
@@ -509,7 +509,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
 					0,
@@ -524,7 +524,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,

@@ -55,7 +55,7 @@ return {
 		local ai_system = Managers.state.entity:system("ai_system")
 
 		data.ai_system = ai_system
-		data._nav_cost_map_id = not not data._nav_cost_map_id
+		data._nav_cost_map_id = data._nav_cost_map_id
 		data._nav_cost_volume_ids = {}
 		data._nav_cost_radius = 4
 	end,

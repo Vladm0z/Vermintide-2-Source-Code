@@ -33,10 +33,10 @@ ActionMeleeStart.client_owner_start_action = function (self, new_action, t, chai
 	local owner_unit = self.owner_unit
 	local buff_extension = self.buff_extension
 
-	self._block_delay = scale_delay_value(new_action, not not new_action.blocking_charge_start_time, owner_unit, buff_extension)
+	self._block_delay = scale_delay_value(new_action, new_action.blocking_charge_start_time, owner_unit, buff_extension)
 
 	if self.zoom_condition_function then
-		local aim_zoom_delay = scale_delay_value(new_action, not not new_action.aim_zoom_delay, owner_unit, buff_extension)
+		local aim_zoom_delay = scale_delay_value(new_action, new_action.aim_zoom_delay, owner_unit, buff_extension)
 
 		self.aim_zoom_time = t + aim_zoom_delay
 	end
@@ -89,7 +89,7 @@ ActionMeleeStart.finish = function (self, reason, data)
 	local reset_aim = true
 
 	if reason == "new_interupting_action" then
-		local next_action = not not data and not not data.new_action_settings
+		local next_action = data and data.new_action_settings
 
 		if next_action then
 			reset_block = not next_action.chain_block_charge

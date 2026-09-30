@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_bot_conditions.lua
 
-BTConditions.can_activate = not not BTConditions.can_activate
-BTConditions.can_activate_non_combat = not not BTConditions.can_activate_non_combat
+BTConditions.can_activate = BTConditions.can_activate
+BTConditions.can_activate_non_combat = BTConditions.can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -17,7 +17,7 @@ BTConditions.can_activate.we_thornsister = function (blackboard)
 	-- function 1
 	local self_unit = blackboard.unit
 	local talent_extension = ScriptUnit.has_extension(self_unit, "talent_system")
-	local is_smiter_ability = not not talent_extension and not not talent_extension:has_talent("kerillian_thorn_sister_debuff_wall")
+	local is_smiter_ability = talent_extension and talent_extension:has_talent("kerillian_thorn_sister_debuff_wall")
 
 	if not is_smiter_ability then
 		local threat, num_enemies = Managers.state.conflict:get_threat_value()
@@ -38,8 +38,8 @@ BTConditions.can_activate.we_thornsister = function (blackboard)
 
 		if wall_target_distance_sq <= wall_max_distance_sq and wall_target_distance_sq >= 4 then
 			if is_smiter_ability then
-				local target_breed = not not target_blackboard and not not target_blackboard.breed
-				local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+				local target_breed = target_blackboard and target_blackboard.breed
+				local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 
 				if target_unit == blackboard.priority_target_enemy or target_unit == blackboard.urgent_target_enemy or target_unit == blackboard.opportunity_target_enemy or target_threat_value >= 8 then
 					wall_target = target_unit
@@ -61,9 +61,9 @@ BTConditions.can_activate.we_thornsister = function (blackboard)
 		local wall_target_direction = Vector3.normalize(wall_target_position - self_position)
 		local check_position = wall_target_position + wall_target_direction * math.max(forward_offset, 0)
 		local nav_world = blackboard.nav_world
-		local navigation_extension = not not target_blackboard and not not target_blackboard.navigation_extension
-		local traverse_logic = not not navigation_extension and not not navigation_extension:traverse_logic()
-		local success = not not is_smiter_ability or not not LocomotionUtils.ray_can_go_on_mesh(nav_world, self_position, check_position, traverse_logic, 1, 1)
+		local navigation_extension = target_blackboard and target_blackboard.navigation_extension
+		local traverse_logic = navigation_extension and navigation_extension:traverse_logic()
+		local success = is_smiter_ability or LocomotionUtils.ray_can_go_on_mesh(nav_world, self_position, check_position, traverse_logic, 1, 1)
 
 		if success then
 			local target_pos = wall_target_position + wall_target_direction * forward_offset

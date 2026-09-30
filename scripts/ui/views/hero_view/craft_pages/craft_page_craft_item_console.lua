@@ -73,9 +73,9 @@ CraftPageCraftItemConsole.setup_recipe_requirements = function (self)
 	local recipe_name = settings.name
 	local added_backend_id = self._craft_items[1]
 	local item_interface = Managers.backend:get_interface("items")
-	local item_data = not not added_backend_id and not not item_interface:get_item_masterlist_data(added_backend_id)
-	local added_item_slot_type = not not item_data and not not item_data.slot_type
-	local rarity = not not added_backend_id and not not item_interface:get_item_rarity(added_backend_id)
+	local item_data = added_backend_id and item_interface:get_item_masterlist_data(added_backend_id)
+	local added_item_slot_type = item_data and item_data.slot_type
+	local rarity = added_backend_id and item_interface:get_item_rarity(added_backend_id)
 	local can_use_added_item = not added_backend_id or rarity == "default"
 
 	if added_backend_id then
@@ -129,7 +129,7 @@ CraftPageCraftItemConsole.setup_recipe_requirements = function (self)
 			end
 
 			local has_required_amount = required_amount <= amount_owned
-			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and not not tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and not not "*") .. "/" .. tostring(required_amount)
+			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and "*") .. "/" .. tostring(required_amount)
 
 			self:_add_crafting_material_requirement(requirement_index, item_key, presentation_amount, has_required_amount)
 
@@ -143,7 +143,7 @@ CraftPageCraftItemConsole.setup_recipe_requirements = function (self)
 		end
 	end
 
-	self._has_all_requirements = not not has_all_requirements and not not can_use_added_item
+	self._has_all_requirements = has_all_requirements and can_use_added_item
 
 	self:_set_craft_button_disabled(not self._has_all_requirements)
 end
@@ -293,8 +293,8 @@ CraftPageCraftItemConsole._handle_input = function (self, dt, t)
 	local widget = widgets_by_name.craft_button
 	local is_button_enabled = not widget.content.button_hotspot.disable_button
 	local craft_input = self:_is_button_held(widgets_by_name.craft_button)
-	local craft_input_gamepad = not not is_button_enabled and not not gamepad_active and not not input_service:get("refresh_hold")
-	local craft_input_keyboard = not not is_button_enabled and not gamepad_active and not not input_service:get("skip")
+	local craft_input_gamepad = is_button_enabled and gamepad_active and input_service:get("refresh_hold")
+	local craft_input_keyboard = is_button_enabled and not gamepad_active and input_service:get("skip")
 	local craft_input_accepted = false
 
 	if input_service:get("special_1") then
@@ -410,7 +410,7 @@ CraftPageCraftItemConsole.on_craft_completed = function (self)
 	for index, data in pairs(result) do
 		local backend_id = data[1]
 		local amount = data[3]
-		local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+		local item = backend_id and item_interface:get_item_from_id(backend_id)
 
 		parent:set_reward_tooltip_item(item)
 	end
@@ -424,7 +424,7 @@ CraftPageCraftItemConsole._update_craft_items = function (self)
 	-- function 18
 	local super_parent = self.super_parent
 	local item_grid = self._item_grid
-	local is_dragging_craft_item = not not item_grid:is_dragging_item()
+	local is_dragging_craft_item = item_grid:is_dragging_item()
 	local pressed_backend_id, is_drag_item = super_parent:get_pressed_item_backend_id()
 
 	if pressed_backend_id then
@@ -467,7 +467,7 @@ CraftPageCraftItemConsole._remove_craft_item = function (self, backend_id, slot_
 		self._item_grid:add_item_to_slot_index(slot_index, nil)
 
 		craft_items[slot_index] = nil
-		self._num_craft_items = math.max(not not self._num_craft_items - 1, 0)
+		self._num_craft_items = math.max(self._num_craft_items - 1, 0)
 
 		self:_play_sound("play_gui_craft_item_drag")
 		self:setup_recipe_requirements()
@@ -496,12 +496,12 @@ CraftPageCraftItemConsole._add_craft_item = function (self, backend_id, slot_ind
 		craft_items[slot_index] = backend_id
 
 		local item_interface = Managers.backend:get_interface("items")
-		local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+		local item = backend_id and item_interface:get_item_from_id(backend_id)
 
 		self._item_grid:add_item_to_slot_index(slot_index, item)
 		self.super_parent:set_disabled_backend_id(backend_id, true)
 
-		self._num_craft_items = math.min(not not self._num_craft_items + 1, NUM_CRAFT_SLOTS)
+		self._num_craft_items = math.min(self._num_craft_items + 1, NUM_CRAFT_SLOTS)
 
 		if backend_id and not ignore_sound then
 			self:_play_sound("play_gui_craft_item_drop")
@@ -545,7 +545,7 @@ CraftPageCraftItemConsole._set_craft_button_disabled = function (self, disabled)
 	-- function 23
 	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
 
-	self.parent:set_input_description(disabled and not not "disabled" or not disabled and not not self.settings.name)
+	self.parent:set_input_description(disabled and "disabled" or not disabled and self.settings.name)
 end
 
 CraftPageCraftItemConsole._exit = function (self, selected_level)
@@ -580,7 +580,7 @@ CraftPageCraftItemConsole._set_craft_button_text = function (self, text, localiz
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
 
-	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
+	widget.content.button_text = localize and Localize(text) or not localize and text
 end
 
 CraftPageCraftItemConsole._add_crafting_material_requirement = function (self, index, item_key, amount_text, has_required_amount)

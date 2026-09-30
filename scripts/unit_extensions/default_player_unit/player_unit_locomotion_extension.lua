@@ -19,7 +19,7 @@ PlayerUnitLocomotionExtension.init = function (self, extension_init_context, uni
 	local profile = SPProfiles[profile_index]
 	local mover_profile = profile.mover_profile
 
-	self._default_mover_filter = not not mover_profile or not not "filter_player_mover"
+	self._default_mover_filter = mover_profile or "filter_player_mover"
 	self._pactsworn_no_clip = self._default_mover_filter == "filter_player_mover_pactsworn"
 	self._no_clip_filter = {}
 	self.velocity_network = Vector3Box()
@@ -99,7 +99,7 @@ PlayerUnitLocomotionExtension.set_mover_filter_property = function (self, proper
 
 	local filter
 
-	filter = modes.ladder and (not not "filter_player_ladder_mover" or modes.enemy_noclip and (not not "filter_player_enemy_noclip_mover" or modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter)) or not modes.enemy_noclip and (modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter))) or not modes.ladder and (modes.enemy_noclip and (not not "filter_player_enemy_noclip_mover" or modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter)) or not modes.enemy_noclip and (modes.dark_pact_noclip and (not not "filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and (not not "filter_player_enemy_leap_state_noclip_mover" or not not self._default_mover_filter) or not modes.enemy_leap_state and not not self._default_mover_filter)))
+	filter = modes.ladder and ("filter_player_ladder_mover" or modes.enemy_noclip and ("filter_player_enemy_noclip_mover" or modes.dark_pact_noclip and ("filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter)) or not modes.enemy_noclip and (modes.dark_pact_noclip and ("filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter))) or not modes.ladder and (modes.enemy_noclip and ("filter_player_enemy_noclip_mover" or modes.dark_pact_noclip and ("filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter)) or not modes.enemy_noclip and (modes.dark_pact_noclip and ("filter_player_mover_pactsworn_ghost_mode" or modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter) or not modes.dark_pact_noclip and (modes.enemy_leap_state and ("filter_player_enemy_leap_state_noclip_mover" or self._default_mover_filter) or not modes.enemy_leap_state and self._default_mover_filter)))
 
 	local mover = Unit.mover(self.unit)
 
@@ -156,7 +156,7 @@ PlayerUnitLocomotionExtension.set_on_moving_platform = function (self, platform_
 	local go_id = Managers.state.unit_storage:go_id(self.unit)
 
 	GameSession.set_game_object_field(game, go_id, "moving_platform", level_unit_id)
-	GameSession.set_game_object_field(game, go_id, "moving_platform_soft_linked", not not soft or not not false)
+	GameSession.set_game_object_field(game, go_id, "moving_platform_soft_linked", soft or false)
 	self:sync_network_position(game, go_id)
 end
 
@@ -303,7 +303,7 @@ end
 
 PlayerUnitLocomotionExtension.post_update = function (self, unit, input, dt, context, t)
 	-- function 18
-	local move_speed = self.on_ground and not not Vector3.length(self.velocity_current:unbox()) or not self.on_ground and not not 0
+	local move_speed = self.on_ground and Vector3.length(self.velocity_current:unbox()) or not self.on_ground and 0
 	local move_speed_lerp_val = self.anim_move_speed
 	local speed_difference = math.abs(move_speed_lerp_val - move_speed)
 
@@ -313,7 +313,7 @@ PlayerUnitLocomotionExtension.post_update = function (self, unit, input, dt, con
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val + delta, 0, move_speed)
 		self._move_speed_top = move_speed_lerp_val
 	else
-		local ms = not not self._move_speed_top
+		local ms = self._move_speed_top
 		local delta = math.min(ms / MOVE_SPEED_ANIM_LERP_TIME * dt, speed_difference)
 
 		move_speed_lerp_val = math.clamp(move_speed_lerp_val - delta, 0, move_speed_lerp_val)
@@ -378,11 +378,11 @@ PlayerUnitLocomotionExtension.moving_on_slope = function (self, calculate_fall_v
 		end
 	end
 
-	local on_slope = Mover.standing_frames(mover) == 0 or not not slippery
+	local on_slope = Mover.standing_frames(mover) == 0 or slippery
 
-	self.allow_jump = not calculate_fall_velocity or self.allow_jump and not not self.on_ground or not self.allow_jump and Mover.flying_frames(mover) == 0 and not not not slippery
+	self.allow_jump = not calculate_fall_velocity or self.allow_jump and self.on_ground or not self.allow_jump and Mover.flying_frames(mover) == 0 and not slippery
 
-	return not not on_slope and not not calculate_fall_velocity
+	return on_slope and calculate_fall_velocity
 end
 
 local ai_units = {}
@@ -394,8 +394,8 @@ PlayerUnitLocomotionExtension.update_script_driven_movement = function (self, un
 		self._script_movement_time_scale = nil
 	end
 
-	local external_velocity = not not self.external_velocity
-	local velocity_current = self.velocity_current:unbox() + Vector3(0, 0, external_velocity and not not external_velocity.z or not external_velocity and not not 0)
+	local external_velocity = self.external_velocity
+	local velocity_current = self.velocity_current:unbox() + Vector3(0, 0, external_velocity and external_velocity.z or not external_velocity and 0)
 	local velocity_wanted = self.velocity_wanted:unbox()
 	local mover = Unit.mover(unit)
 
@@ -449,7 +449,7 @@ PlayerUnitLocomotionExtension.update_script_driven_movement = function (self, un
 		end
 	end
 
-	local drag_koeff = self.use_drag and not not 0.00255 or not self.use_drag and not not 1
+	local drag_koeff = self.use_drag and 0.00255 or not self.use_drag and 1
 	local speed = Vector3.length(velocity_wanted)
 	local drag_force = drag_koeff * speed * speed * Vector3.normalize(-velocity_wanted)
 	local dragged_velocity = velocity_wanted + drag_force * dt
@@ -476,7 +476,7 @@ PlayerUnitLocomotionExtension.update_script_driven_movement = function (self, un
 		local query_radius = 1
 		local query_position = current_position + velocity_flat_normalized * 0.5
 		local no_clip = self._mover_modes.enemy_noclip == true
-		local collide_with_enemies = not self._pactsworn_no_clip and not not not no_clip
+		local collide_with_enemies = not self._pactsworn_no_clip and not no_clip
 		local no_clip_filter = self._no_clip_filter
 
 		if collide_with_enemies then
@@ -528,7 +528,7 @@ PlayerUnitLocomotionExtension.update_script_driven_movement = function (self, un
 		local query_radius = 1
 		local query_position = current_position + velocity_flat_normalized * 0.5
 		local no_clip = self._mover_modes.enemy_noclip == true
-		local collide_with_enemies = not self._pactsworn_no_clip and not not not no_clip
+		local collide_with_enemies = not self._pactsworn_no_clip and not no_clip
 
 		if collide_with_enemies then
 			local num_ai_units = AiUtils.broadphase_query(query_position, query_radius, ai_units)
@@ -848,7 +848,7 @@ PlayerUnitLocomotionExtension.add_external_velocity = function (self, velocity_d
 	end
 
 	local old_velocity = self.external_velocity:unbox()
-	local max_velocity_delta = not not upper_limit or not not 5
+	local max_velocity_delta = upper_limit or 5
 	local already_moving_in_dir = Vector3.dot(old_velocity, Vector3.normalize(velocity_delta))
 	local velocity_mod = (max_velocity_delta - math.clamp(already_moving_in_dir, 0, max_velocity_delta)) / max_velocity_delta
 	local modified_delta = velocity_delta * velocity_mod
@@ -910,7 +910,7 @@ end
 
 PlayerUnitLocomotionExtension.current_velocity = function (self)
 	-- function 49
-	return not not self.velocity_current
+	return self.velocity_current
 end
 
 PlayerUnitLocomotionExtension.current_rotation = function (self)

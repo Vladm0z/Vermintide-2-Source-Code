@@ -176,7 +176,7 @@ end
 Testify.respond_to_request = function (self, request_name, responses, num_responses)
 	-- function 12
 	if responses then
-		responses.length = not not num_responses or not not #responses
+		responses.length = num_responses or #responses
 	end
 
 	self:_print("Responding to %s", request_name)

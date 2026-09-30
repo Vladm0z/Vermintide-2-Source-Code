@@ -2,8 +2,8 @@
 
 require("scripts/settings/player_movement_settings")
 
-CameraTransitionTemplates = not not CameraTransitionTemplates
-CameraTransitionSettings = not not CameraTransitionSettings
+CameraTransitionTemplates = CameraTransitionTemplates
+CameraTransitionSettings = CameraTransitionSettings
 CameraTransitionSettings.perspective_transition_time = 0.6
 
 local DURATION = 0.3

@@ -30,7 +30,7 @@ GutterRunnerStateProwling.on_enter = function (self, unit, input, dt, context, t
 	self._breed = breed
 
 	local player = Managers.player:owner(unit)
-	local is_bot = not not player and not not player.bot_player
+	local is_bot = player and player.bot_player
 
 	if previous_state == "standing" then
 		self.current_movement_speed_scale = 0
@@ -188,10 +188,10 @@ GutterRunnerStateProwling.update = function (self, unit, input, dt, context, t)
 	local is_moving = CharacterStateHelper.has_move_input(input_extension)
 
 	if not self.is_bot then
-		local breed_move_acceleration_up = not not self._breed
-		local breed_move_acceleration_down = not not self._breed
-		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
-		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
+		local breed_move_acceleration_up = self._breed
+		local breed_move_acceleration_down = self._breed
+		local move_acceleration_up_dt = breed_move_acceleration_up * dt
+		local move_acceleration_down_dt = breed_move_acceleration_down * dt
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -203,7 +203,7 @@ GutterRunnerStateProwling.update = function (self, unit, input, dt, context, t)
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
+		current_movement_speed_scale = is_moving and (1 or 0) or not is_moving and 0
 	end
 
 	local current_max_move_speed = movement_settings_table.crouch_move_speed

@@ -15,7 +15,7 @@ WeaveSplashUI.init = function (self, world)
 	-- function 1
 	self._world = world
 	self._current_splash_index = 1
-	self._current_timer = #weave_splash_images > 1 and not not TIME_BETWEEN_SPLASHES
+	self._current_timer = #weave_splash_images > 1 and TIME_BETWEEN_SPLASHES
 
 	self:_setup_ui()
 	self:_create_ui_elements()
@@ -40,7 +40,7 @@ WeaveSplashUI._create_ui_elements = function (self)
 		self._widgets[name] = UIWidget.init(widget_definition)
 	end
 
-	local image_name = not not Managers.mechanism:mechanism_setting("loading_screen_override")
+	local image_name = Managers.mechanism:mechanism_setting("loading_screen_override")
 	local widget_definition = create_weave_image_func(image_name, 255)
 
 	self._weave_splash_widgets[#self._weave_splash_widgets + 1] = UIWidget.init(widget_definition)

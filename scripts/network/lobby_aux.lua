@@ -1,13 +1,13 @@
 -- chunkname: @scripts/network/lobby_aux.lua
 
-LobbyAux = not not LobbyAux
+LobbyAux = LobbyAux
 
 local function concatenate_dlcs()
 	-- function 1
 	local concatenate_dlcs_str
 
 	for name, _ in pairs(DLCSettings) do
-		concatenate_dlcs_str = concatenate_dlcs_str and (not not (concatenate_dlcs_str .. "__") or not not "") or not concatenate_dlcs_str and not not ""
+		concatenate_dlcs_str = concatenate_dlcs_str and (concatenate_dlcs_str .. "__" or "") or not concatenate_dlcs_str and ""
 		concatenate_dlcs_str = concatenate_dlcs_str .. name
 	end
 
@@ -18,13 +18,13 @@ LobbyAux.create_network_hash = function (config_file_name, project_hash, disable
 	-- function 2
 	local network_hash = Network.config_hash(config_file_name)
 	local settings = Application.settings()
-	local trunk_revision = not not settings and not not settings.content_revision
-	local ignore_engine_revision = not not Development.parameter("ignore_engine_revision_in_network_hash")
-	local engine_revision = ignore_engine_revision and not not 0 or not ignore_engine_revision and not not Application.build_identifier()
+	local trunk_revision = settings and settings.content_revision
+	local ignore_engine_revision = Development.parameter("ignore_engine_revision_in_network_hash")
+	local engine_revision = ignore_engine_revision and 0 or not ignore_engine_revision and Application.build_identifier()
 	local combined_hash
-	local use_trunk_revision = not not GameSettingsDevelopment.network_revision_check_enabled
-	local concatenated_dlc_string = GameSettingsDevelopment.network_concatenated_dlc_check_enabled and not not concatenate_dlcs() or not GameSettingsDevelopment.network_concatenated_dlc_check_enabled and not not ""
-	local lobby_data_version = DEDICATED_SERVER and not not GameServerInternal.lobby_data_version or not DEDICATED_SERVER and not not LobbyInternal.lobby_data_version
+	local use_trunk_revision = GameSettingsDevelopment.network_revision_check_enabled
+	local concatenated_dlc_string = GameSettingsDevelopment.network_concatenated_dlc_check_enabled and concatenate_dlcs() or not GameSettingsDevelopment.network_concatenated_dlc_check_enabled and ""
+	local lobby_data_version = DEDICATED_SERVER and GameServerInternal.lobby_data_version or not DEDICATED_SERVER and LobbyInternal.lobby_data_version
 	local num_levels = #NetworkLookup.level_keys
 
 	if use_trunk_revision then
@@ -50,10 +50,10 @@ LobbyAux.create_network_hash = function (config_file_name, project_hash, disable
 	return combined_hash
 end
 
-LobbyFinderState = not not LobbyFinderState
+LobbyFinderState = LobbyFinderState
 LobbyFinderState.SEARCHING = "searching"
 LobbyFinderState.IDLE = "idle"
-LobbyState = not not LobbyState
+LobbyState = LobbyState
 
 if IS_XB1 then
 	LobbyState.WORKING = "working"
@@ -92,11 +92,11 @@ for idx, game_mode in pairs(LobbyGameModes) do
 end
 
 LobbyGameModes = lookup
-LobbyAux.map_lobby_distance_filter = IS_PS4 and not not {
+LobbyAux.map_lobby_distance_filter = IS_PS4 and {
 	"close",
 	"medium",
 	"world"
-} or not IS_PS4 and not not {
+} or not IS_PS4 and {
 	"close",
 	"far",
 	"world"
@@ -146,10 +146,10 @@ LobbyAux.MAX_CUSTOM_SERVER_NAME_LENGTH = 32
 
 local function level_exists_locally(lobby)
 	-- function 5
-	local mission_id = not not lobby.selected_mission_id
-	local level_exists_locally = not not mission_id and not not rawget(NetworkLookup.mission_ids, mission_id)
+	local mission_id = lobby.selected_mission_id
+	local level_exists_locally = mission_id and rawget(NetworkLookup.mission_ids, mission_id)
 
-	level_exists_locally = not not level_exists_locally or not not WeaveSettings.templates[mission_id] and not not true
+	level_exists_locally = level_exists_locally or WeaveSettings.templates[mission_id] and true
 
 	return level_exists_locally
 end
@@ -224,7 +224,7 @@ LobbyAux.serialize_lobby_reservation_data = function (peer_data_by_party)
 		for i = 1, #peer_datas do
 			local peer_data = peer_datas[i]
 			local peer_id = peer_data.peer_id
-			local profile_index = not not peer_data.profile_index
+			local profile_index = peer_data.profile_index
 
 			peer_datas[i] = string.format("%s%s%d", peer_id, LOBBY_SLOT_PEER_DATA_SEPARATOR, profile_index)
 		end
@@ -235,7 +235,7 @@ LobbyAux.serialize_lobby_reservation_data = function (peer_data_by_party)
 	local packed_reservation_data = table.concat(parties, LOBBY_SLOT_PARTY_SEPARATOR)
 
 	if packed_reservation_data == "" then
-		packed_reservation_data = rawget(_G, "LobbyInternal") and (LobbyInternal.default_lobby_data and (not not LobbyInternal.default_lobby_data.reserved_profiles or not not "") or not LobbyInternal.default_lobby_data and not not "") or not rawget(_G, "LobbyInternal") and not not ""
+		packed_reservation_data = rawget(_G, "LobbyInternal") and (LobbyInternal.default_lobby_data and (LobbyInternal.default_lobby_data.reserved_profiles or "") or not LobbyInternal.default_lobby_data and "") or not rawget(_G, "LobbyInternal") and ""
 	end
 
 	return packed_reservation_data
@@ -246,7 +246,7 @@ LobbyAux.deserialize_lobby_reservation_data = function (lobby_data, include_unre
 	local reservation_data = {}
 	local reserved_profiles = lobby_data.reserved_profiles
 
-	reserved_profiles = rawget(_G, "LobbyInternal") and (LobbyInternal.default_lobby_data and (not not LobbyInternal.default_lobby_data.reserved_profiles or not not "") or not LobbyInternal.default_lobby_data and not not "") or not rawget(_G, "LobbyInternal") and not not ""
+	reserved_profiles = rawget(_G, "LobbyInternal") and (LobbyInternal.default_lobby_data and (LobbyInternal.default_lobby_data.reserved_profiles or "") or not LobbyInternal.default_lobby_data and "") or not rawget(_G, "LobbyInternal") and ""
 
 	local by_party = string.split(reserved_profiles, LOBBY_SLOT_PARTY_SEPARATOR)
 

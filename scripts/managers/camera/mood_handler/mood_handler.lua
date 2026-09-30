@@ -86,7 +86,7 @@ MoodHandler.parse_environment_settings = function (self, environment)
 							name = var_name,
 							value = var_value
 						}
-						type_map[var_name] = not not type_map[var_name]
+						type_map[var_name] = type_map[var_name]
 						var_n = var_n + 1
 					end
 				end
@@ -103,7 +103,7 @@ MoodHandler._set_active_mood = function (self, next_mood)
 		return
 	end
 
-	fassert(not not next_mood and (next_mood == "default" or not not MoodSettings[next_mood]), "Mood %q not defined in MoodSettings.lua", next_mood)
+	fassert(next_mood and (next_mood == "default" or MoodSettings[next_mood]), "Mood %q not defined in MoodSettings.lua", next_mood)
 
 	local current_mood = self.current_mood
 
@@ -169,7 +169,7 @@ MoodHandler.handle_particles = function (self, current_mood, next_mood)
 	if next_mood ~= "default" then
 		local next_mood_settings = MoodSettings[next_mood]
 		local no_particles_on_enter_from = next_mood_settings.no_particles_on_enter_from
-		local play_particles = not no_particles_on_enter_from or not not not table.find(no_particles_on_enter_from, current_mood)
+		local play_particles = not no_particles_on_enter_from or not table.find(no_particles_on_enter_from, current_mood)
 
 		if play_particles then
 			local on_enter_particles = next_mood_settings.particle_effects_on_enter
@@ -250,15 +250,15 @@ MoodHandler.update_environment_variables = function (self)
 				local value_to_set = variables_to_set[var_name]
 
 				if var_type == "texture" then
-					value_to_set = not not value_to_set or not not var_value
+					value_to_set = value_to_set or var_value
 				elseif var_type == "scalar" then
-					value_to_set = not not value_to_set or not not 0
+					value_to_set = value_to_set or 0
 					value_to_set = value_to_set + var_value * mood_weight
 				elseif var_type == "vector2" or var_type == "vector3" then
-					value_to_set = not not value_to_set or not not Vector3(0, 0, 0)
+					value_to_set = value_to_set or Vector3(0, 0, 0)
 					value_to_set = value_to_set + var_value:unbox() * mood_weight
 				elseif var_type == "vector4" then
-					value_to_set = not not value_to_set or not not {
+					value_to_set = value_to_set or {
 						0,
 						0,
 						0,
@@ -362,7 +362,7 @@ end
 
 MoodHandler._set_mood_internal = function (self, mood_name, reason, value)
 	-- function 13
-	self._local_moods[mood_name][reason] = not not value or not not nil
+	self._local_moods[mood_name][reason] = value or nil
 
 	if mood_name ~= "default" then
 		local mood_template = MoodSettings[mood_name]
@@ -407,7 +407,7 @@ MoodHandler._update_mood_timers = function (self)
 			if end_t < t then
 				self:set_mood(mood_name, reason, false)
 
-				dirty = not not dirty or not not table.is_empty(timers)
+				dirty = dirty or table.is_empty(timers)
 			end
 		end
 	end
@@ -432,7 +432,7 @@ MoodHandler._update_mood_priority = function (self)
 		end
 	end
 
-	wanted_mood = not not wanted_mood or not not "default"
+	wanted_mood = wanted_mood or "default"
 
 	if wanted_mood ~= self.current_mood then
 		self:_set_active_mood(wanted_mood)

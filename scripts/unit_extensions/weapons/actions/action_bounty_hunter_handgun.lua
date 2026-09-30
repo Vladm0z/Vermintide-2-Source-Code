@@ -19,8 +19,8 @@ ActionBountyHunterHandgun.client_owner_start_action = function (self, new_action
 	self.current_action = new_action
 	self.power_level = power_level
 	self.owner_buff_extension = buff_extension
-	self.upper_shoot_function = action_init_data and (action_init_data.upper_barrel ~= "railgun" and not not self._shotgun_shoot or not (action_init_data.upper_barrel ~= "railgun") and not not self._railgun_shoot) or not action_init_data and not not self._railgun_shoot
-	self.lower_shoot_function = action_init_data and (action_init_data.lower_barrel ~= "railgun" and not not self._shotgun_shoot or not (action_init_data.lower_barrel ~= "railgun") and not not self._railgun_shoot) or not action_init_data and not not self._shotgun_shoot
+	self.upper_shoot_function = action_init_data and (action_init_data.upper_barrel ~= "railgun" and self._shotgun_shoot or not (action_init_data.upper_barrel ~= "railgun") and self._railgun_shoot) or not action_init_data and self._railgun_shoot
+	self.lower_shoot_function = action_init_data and (action_init_data.lower_barrel ~= "railgun" and self._shotgun_shoot or not (action_init_data.lower_barrel ~= "railgun") and self._railgun_shoot) or not action_init_data and self._shotgun_shoot
 
 	Unit.set_flow_variable(weapon_unit, "upper_is_railgun", action_init_data.upper_barrel == "railgun")
 	Unit.set_flow_variable(weapon_unit, "lower_is_railgun", action_init_data.lower_barrel == "railgun")
@@ -35,12 +35,12 @@ ActionBountyHunterHandgun.client_owner_start_action = function (self, new_action
 		self.spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
 	end
 
-	local damage_profile_name = not not new_action.damage_profile
+	local damage_profile_name = new_action.damage_profile
 
 	self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
 	self.damage_profile = DamageProfileTemplates[damage_profile_name]
 
-	local damage_profile_name_aoe = not not new_action.damage_profile_aoe
+	local damage_profile_name_aoe = new_action.damage_profile_aoe
 
 	self.damage_profile_aoe_id = NetworkLookup.damage_profiles[damage_profile_name_aoe]
 	self.damage_profile_aoe = DamageProfileTemplates[damage_profile_name_aoe]
@@ -140,7 +140,7 @@ ActionBountyHunterHandgun._shotgun_shoot = function (self)
 
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 	local current_position, current_rotation = first_person_extension:get_projectile_start_position_rotation()
-	local num_shots = not not current_action.shot_count
+	local num_shots = current_action.shot_count
 	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 	local damage_bonus = 0
 
@@ -173,7 +173,7 @@ ActionBountyHunterHandgun._shotgun_shoot = function (self)
 			local data = DamageUtils.process_projectile_hit(world, self.item_name, owner_unit, is_server, result, current_action, direction, check_buffs, nil, self.shield_users_blocking, self.is_critical_strike, self.power_level)
 
 			if data.buffs_checked then
-				check_buffs = not not check_buffs and not not false
+				check_buffs = check_buffs and false
 			end
 
 			if data.blocked_by_unit then
@@ -181,7 +181,7 @@ ActionBountyHunterHandgun._shotgun_shoot = function (self)
 			end
 		end
 
-		local hit_position = result and not not result[#result][1] or not result and not not (current_position + direction * current_action.range)
+		local hit_position = result and result[#result][1] or not result and current_position + direction * current_action.range
 
 		Unit.set_flow_variable(weapon_unit, "hit_position", hit_position)
 		Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - current_position) * 0.1)

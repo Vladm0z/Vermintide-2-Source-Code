@@ -257,7 +257,7 @@ BackendInterfaceItemTutorial.get_item_amount = function (self, backend_id)
 	-- function 18
 	local item = self:get_item_from_id(backend_id)
 
-	return not not item.RemainingUses
+	return item.RemainingUses
 end
 
 BackendInterfaceItemTutorial.get_item_power_level = function (self, backend_id)
@@ -342,7 +342,7 @@ BackendInterfaceItemTutorial.get_filtered_items = function (self, filter, params
 	-- function 28
 	local all_items = self:get_all_backend_items()
 	local backend_common = Managers.backend:get_interface("common")
-	local items = backend_common:filter_items(all_items, filter, not not params or not not empty_params)
+	local items = backend_common:filter_items(all_items, filter, params or empty_params)
 
 	return items
 end
@@ -352,7 +352,7 @@ BackendInterfaceItemTutorial.set_loadout_item = function (self, item_id, career_
 	local all_items = self:get_all_backend_items()
 
 	if item_id then
-		fassert(all_items[item_id], "Trying to equip item that doesn't exist %d", not not item_id or not not "nil")
+		fassert(all_items[item_id], "Trying to equip item that doesn't exist %d", item_id or "nil")
 	end
 
 	self._backend_mirror:set_character_data(career_name, slot_name, item_id)
@@ -441,7 +441,7 @@ end
 
 BackendInterfaceItemTutorial.get_item_template = function (self, item_data, backend_id)
 	-- function 42
-	local template_name = not not item_data.temporary_template
+	local template_name = item_data.temporary_template
 	local item_template = WeaponUtils.get_weapon_template(template_name)
 
 	if item_template then

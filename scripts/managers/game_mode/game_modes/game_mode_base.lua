@@ -4,14 +4,14 @@ GameModeBase = class(GameModeBase)
 
 GameModeBase.init = function (self, settings, world, network_handler, is_server, profile_synchronizer, level_key, statistics_db, game_mode_settings)
 	-- function 1
-	self._network_server = is_server and (not not network_handler or not not nil) or not is_server and not not nil
+	self._network_server = is_server and (network_handler or nil) or not is_server and nil
 	self._settings = settings
 	self._world = world
 	self._is_server = is_server
 	self._profile_synchronizer = profile_synchronizer
 	self._level_completed = false
 	self._level_failed = false
-	self._lose_condition_disabled = not not script_data.lose_condition_disabled
+	self._lose_condition_disabled = script_data.lose_condition_disabled
 	self._end_level_areas = {}
 	self._debug_end_level_areas = {}
 	self._is_about_to_end_game_early = false
@@ -25,7 +25,7 @@ GameModeBase.init = function (self, settings, world, network_handler, is_server,
 	local new_state = "initial_state"
 
 	if DEDICATED_SERVER then
-		cprintf("[GameMode] State Changed from '%s' to '%s'", not not self._game_mode_state, new_state)
+		cprintf("[GameMode] State Changed from '%s' to '%s'", self._game_mode_state, new_state)
 	end
 
 	self._game_mode_state = new_state
@@ -114,18 +114,18 @@ end
 GameModeBase._verify_career = function (self, profile_index, career_index)
 	-- function 12
 	local profile = SPProfiles[profile_index]
-	local careers = not not profile and not not profile.careers
-	local career = not not careers and not not careers[career_index]
+	local careers = profile and profile.careers
+	local career = careers and careers[career_index]
 	local career_unlocked, reason, dlc_name = career:is_unlocked_function(profile.display_name, ExperienceSettings.max_level)
 
 	if not career_unlocked then
 		Application.warning("############################################################################################")
 		Application.warning("[GameModeBase] Selected career for bot is not unlocked -> Defaulting to default career")
-		Application.warning(string.format("Profile: %q - Career: %q - Reason: %q - DLC: %q", profile and not not profile.display_name or not profile and not not profile_index, career and not not Localize(career.display_name) or not career and not not career_index, reason and not not Localize(reason) or not reason and not not "-", tostring(dlc_name)))
+		Application.warning(string.format("Profile: %q - Career: %q - Reason: %q - DLC: %q", profile and profile.display_name or not profile and profile_index, career and Localize(career.display_name) or not career and career_index, reason and Localize(reason) or not reason and "-", tostring(dlc_name)))
 		Application.warning("############################################################################################")
 	end
 
-	return career_unlocked and (not not career_index or not not 1) or not career_unlocked and not not 1
+	return career_unlocked and (career_index or 1) or not career_unlocked and 1
 end
 
 GameModeBase._remove_bot_instant = function (self, bot_player)
@@ -272,7 +272,7 @@ GameModeBase.mutators = function (self)
 	end
 
 	local mutators_list = {}
-	local weekly_events_game_mode_data = not not Managers.matchmaking
+	local weekly_events_game_mode_data = Managers.matchmaking
 
 	if weekly_events_game_mode_data and weekly_events_game_mode_data.mutators then
 		table.append(mutators_list, weekly_events_game_mode_data.mutators)
@@ -533,7 +533,7 @@ GameModeBase.update_end_level_areas = function (self)
 
 		local enabled = self._end_level_areas[unit]
 
-		QuickDrawer:box(pose, extents, enabled and not not Color(0, 255, 0) or not enabled and not not Color(255, 0, 0))
+		QuickDrawer:box(pose, extents, enabled and Color(0, 255, 0) or not enabled and Color(255, 0, 0))
 	end
 
 	if table.is_empty(self._end_level_areas) then
@@ -545,7 +545,7 @@ GameModeBase.update_end_level_areas = function (self)
 
 		for _, player in pairs(Managers.player:human_players()) do
 			local player_unit = player.player_unit
-			local non_disabled = not not Unit.alive(player_unit)
+			local non_disabled = Unit.alive(player_unit)
 
 			if non_disabled then
 				num_non_disabled_players = num_non_disabled_players + 1
@@ -602,7 +602,7 @@ end
 
 GameModeBase.set_about_to_end_game_early = function (self, about_to_end_game_early)
 	-- function 64
-	Managers.state.entity:system("dialogue_system"):set_global_context("game_about_to_end", about_to_end_game_early and not not 1 or not about_to_end_game_early and not not 0)
+	Managers.state.entity:system("dialogue_system"):set_global_context("game_about_to_end", about_to_end_game_early and 1 or not about_to_end_game_early and 0)
 
 	self._about_to_end_game_early = about_to_end_game_early
 end

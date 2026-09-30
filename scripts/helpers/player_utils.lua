@@ -16,7 +16,7 @@ end
 
 PlayerUtils.get_random_alive_hero = function ()
 	-- function 3
-	local side = not not Managers.state.side:get_side_from_name("heroes")
+	local side = Managers.state.side:get_side_from_name("heroes")
 	local players = side.PLAYER_AND_BOT_UNITS
 	local unit_list = {}
 	local unit_list_n = 0
@@ -135,7 +135,7 @@ PlayerUtils.player_name = function (peer_id, lobby)
 		return "Peer #nil"
 	end
 
-	local Steam = not not rawget(_G, "Steam")
+	local Steam = rawget(_G, "Steam")
 	local name
 
 	if IS_CONSOLE then

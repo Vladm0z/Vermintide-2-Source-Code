@@ -1,7 +1,7 @@
 -- chunkname: @scripts/unit_extensions/weapons/area_damage/area_damage_extension.lua
 
 AreaDamageExtension = class(AreaDamageExtension)
-script_data.debug_area_damage = not not script_data.debug_area_damage
+script_data.debug_area_damage = script_data.debug_area_damage
 
 local approx_player_radius = 0.5
 
@@ -9,24 +9,24 @@ AreaDamageExtension.init = function (self, extension_init_context, unit, extensi
 	-- function 1
 	self.world = extension_init_context.world
 	self.unit = unit
-	self.aoe_dot_damage = not not extension_init_data.aoe_dot_damage
-	self.aoe_init_damage = not not extension_init_data.aoe_init_damage
-	self.aoe_dot_damage_interval = not not extension_init_data.aoe_dot_damage_interval
+	self.aoe_dot_damage = extension_init_data.aoe_dot_damage
+	self.aoe_init_damage = extension_init_data.aoe_init_damage
+	self.aoe_dot_damage_interval = extension_init_data.aoe_dot_damage_interval
 	self.damage_ramping_function = extension_init_data.damage_ramping_function
-	self.radius = not not extension_init_data.radius
-	self.initial_radius = not not extension_init_data.initial_radius
-	self.life_time = not not extension_init_data.life_time
-	self.player_screen_effect_name = not not extension_init_data.player_screen_effect_name
-	self.dot_effect_name = not not extension_init_data.dot_effect_name
-	self.extra_dot_effect_name = not not extension_init_data.extra_dot_effect_name
+	self.radius = extension_init_data.radius
+	self.initial_radius = extension_init_data.initial_radius
+	self.life_time = extension_init_data.life_time
+	self.player_screen_effect_name = extension_init_data.player_screen_effect_name
+	self.dot_effect_name = extension_init_data.dot_effect_name
+	self.extra_dot_effect_name = extension_init_data.extra_dot_effect_name
 	self.nav_mesh_effect = extension_init_data.nav_mesh_effect
-	self.area_damage_template = not not extension_init_data.area_damage_template
-	self.area_ai_random_death_template = not not extension_init_data.area_ai_random_death_template
-	self.invisible_unit = not not extension_init_data.invisible_unit
+	self.area_damage_template = extension_init_data.area_damage_template
+	self.area_ai_random_death_template = extension_init_data.area_ai_random_death_template
+	self.invisible_unit = extension_init_data.invisible_unit
 	self.damage_players = T(extension_init_data.damage_players, T(Unit.get_data(unit, "damage_players"), true))
-	self.damage_source = not not extension_init_data.damage_source
-	self.create_nav_tag_volume = not not extension_init_data.create_nav_tag_volume
-	self.nav_tag_volume_layer = not not extension_init_data.nav_tag_volume_layer
+	self.damage_source = extension_init_data.damage_source
+	self.create_nav_tag_volume = extension_init_data.create_nav_tag_volume
+	self.nav_tag_volume_layer = extension_init_data.nav_tag_volume_layer
 	self.explosion_template_name = extension_init_data.explosion_template_name
 	self.owner_player = extension_init_data.owner_player
 	self.slow_modifier = extension_init_data.slow_modifier

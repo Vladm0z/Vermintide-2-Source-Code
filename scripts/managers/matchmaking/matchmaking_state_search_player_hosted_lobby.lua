@@ -48,7 +48,7 @@ MatchmakingStateSearchPlayerHostedLobby._initialize_search = function (self)
 
 	current_filters.eac_authorized = {
 		comparison = "equal",
-		value = eac_authorized and not not "true" or not eac_authorized and not not "false"
+		value = eac_authorized and "true" or not eac_authorized and "false"
 	}
 	current_filters.mechanism = {
 		comparison = "equal",
@@ -175,14 +175,14 @@ MatchmakingStateSearchPlayerHostedLobby._find_suitable_lobby = function (self, l
 						current_secondary_prio_lobby = self:_compare_secondary_prio_lobbies(current_secondary_prio_lobby, lobby_data)
 					end
 				else
-					local host_name = not not lobby_data.unique_server_name
+					local host_name = lobby_data.unique_server_name
 
-					print("[MatchmakingStateSearchPlayerHostedLobby] Lobby hosted by %s discarded due to '%s'", host_name, not not discard_reason or not not "unknown")
+					print("[MatchmakingStateSearchPlayerHostedLobby] Lobby hosted by %s discarded due to '%s'", host_name, discard_reason or "unknown")
 				end
 			else
-				local host_name = not not lobby_data.unique_server_name
+				local host_name = lobby_data.unique_server_name
 
-				print("[MatchmakingStateSearchPlayerHostedLobby] Lobby hosted by %s failed lobby match due to '%s'", host_name, not not reason or not not "unknown")
+				print("[MatchmakingStateSearchPlayerHostedLobby] Lobby hosted by %s failed lobby match due to '%s'", host_name, reason or "unknown")
 			end
 		end
 
@@ -191,7 +191,7 @@ MatchmakingStateSearchPlayerHostedLobby._find_suitable_lobby = function (self, l
 		end
 	end
 
-	return not not current_first_prio_lobby or not not current_secondary_prio_lobby
+	return current_first_prio_lobby or current_secondary_prio_lobby
 end
 
 MatchmakingStateSearchPlayerHostedLobby._lobby_match = function (self, lobby_data, mission_id, difficulty, matchmaking_type, player_peer_id)
@@ -231,7 +231,7 @@ MatchmakingStateSearchPlayerHostedLobby._lobby_match = function (self, lobby_dat
 		return false, "twitch_mode"
 	end
 
-	local valid_lobby = lobby_data.matchmaking ~= "false" and not not lobby_data.valid
+	local valid_lobby = lobby_data.matchmaking ~= "false" and lobby_data.valid
 
 	if not valid_lobby then
 		return false, "lobby is not valid"
@@ -263,13 +263,13 @@ MatchmakingStateSearchPlayerHostedLobby._lobby_match = function (self, lobby_dat
 	end
 
 	local party_lobby_host = search_config.party_lobby_host
-	local lobby_members = not not party_lobby_host and not not party_lobby_host:members()
-	local party_members = not not lobby_members and not not lobby_members:get_members()
+	local lobby_members = party_lobby_host and party_lobby_host:members()
+	local party_members = lobby_members and lobby_members:get_members()
 	local matchmaking_settings = Managers.matchmaking.get_matchmaking_settings_for_mechanism(lobby_data.mechanism)
-	local my_num_players = party_members and not not #party_members or not party_members and not not 1
-	local lobby_num_players = not not lobby_data.num_players
-	local max_number_of_players = not not search_config.max_number_of_players
-	local has_empty_slots = not not lobby_num_players and max_number_of_players >= lobby_num_players + my_num_players
+	local my_num_players = party_members and #party_members or not party_members and 1
+	local lobby_num_players = lobby_data.num_players
+	local max_number_of_players = search_config.max_number_of_players
+	local has_empty_slots = lobby_num_players and max_number_of_players >= lobby_num_players + my_num_players
 
 	if not has_empty_slots then
 		return false, "not enough empty slots"

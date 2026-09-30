@@ -378,7 +378,7 @@ local function process_profiles()
 			profile.index = i
 			PROFILES_BY_NAME[profile_name] = profile
 
-			local affiliation = not not profile.affiliation
+			local affiliation = profile.affiliation
 
 			if not PROFILES_BY_AFFILIATION[affiliation] then
 				PROFILES_BY_AFFILIATION[affiliation] = {}
@@ -396,7 +396,7 @@ function FindProfileIndex(profile_name)
 	-- function 2
 	local profile_settings = PROFILES_BY_NAME[profile_name]
 
-	return not not profile_settings and not not profile_settings.index
+	return profile_settings and profile_settings.index
 end
 
 function GetHeroAffiliationIndex(profile_index)
@@ -453,7 +453,7 @@ for i = 1, #SPProfiles do
 	profile.index = i
 	PROFILES_BY_NAME[profile.display_name] = profile
 
-	local affiliation = not not profile.affiliation
+	local affiliation = profile.affiliation
 
 	if not PROFILES_BY_AFFILIATION[affiliation] then
 		PROFILES_BY_AFFILIATION[affiliation] = {}

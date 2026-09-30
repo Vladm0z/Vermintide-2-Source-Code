@@ -42,16 +42,16 @@ VoteTemplates.carousel_settings_vote = {
 			end
 
 			local lobby = Managers.state.network:lobby()
-			local use_dedicated_servers = not not data.use_dedicated_win_servers
+			local use_dedicated_servers = data.use_dedicated_win_servers
 			local search_config = {
 				wait_for_join_message = true,
 				mission_id = data.mission_id,
 				preferred_level_keys = data.preferred_level_keys,
 				difficulty = data.difficulty,
-				quick_game = not not data.quick_game,
+				quick_game = data.quick_game,
 				join_method = data.join_method,
-				private_game = not not data.private_game,
-				party_lobby_host = not not use_dedicated_servers and not not lobby,
+				private_game = data.private_game,
+				party_lobby_host = use_dedicated_servers and lobby,
 				max_num_players = GameModeSettings.versus.max_num_players,
 				player_hosted = data.player_hosted,
 				dedicated_server = use_dedicated_servers,
@@ -66,8 +66,8 @@ VoteTemplates.carousel_settings_vote = {
 	end,
 	pack_sync_data = function (data)
 		-- function 3
-		local mission_id = not not data.mission_id
-		local difficulty = not not data.difficulty
+		local mission_id = data.mission_id
+		local difficulty = data.difficulty
 		local player_hosted = data.player_hosted
 		local use_dedicated_win_servers = data.use_dedicated_win_servers
 		local use_dedicated_aws_servers = data.use_dedicated_aws_servers
@@ -78,12 +78,12 @@ VoteTemplates.carousel_settings_vote = {
 			NetworkLookup.mission_ids[mission_id],
 			NetworkLookup.difficulties[difficulty],
 			NetworkLookup.join_methods[data.join_method],
-			player_hosted and not not 1 or not player_hosted and not not 2,
-			use_dedicated_win_servers and not not 1 or not use_dedicated_win_servers and not not 2,
-			use_dedicated_aws_servers and not not 1 or not use_dedicated_aws_servers and not not 2,
+			player_hosted and 1 or not player_hosted and 2,
+			use_dedicated_win_servers and 1 or not use_dedicated_win_servers and 2,
+			use_dedicated_aws_servers and 1 or not use_dedicated_aws_servers and 2,
 			NetworkLookup.matchmaking_types[matchmaking_type],
 			NetworkLookup.mechanisms[mechanism],
-			quick_game and not not 1 or not quick_game and not not 2
+			quick_game and 1 or not quick_game and 2
 		}
 
 		return sync_data
@@ -175,7 +175,7 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 			end
 
 			local lobby = Managers.state.network:lobby()
-			local use_dedicated_servers = not not data.use_dedicated_win_servers
+			local use_dedicated_servers = data.use_dedicated_win_servers
 			local search_config = {
 				player_hosted = true,
 				matchmaking_start_state = "MatchmakingStatePlayerHostedGame",
@@ -184,7 +184,7 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 				mission_id = data.mission_id,
 				any_level = data.any_level,
 				difficulty = data.difficulty,
-				private_game = not not data.private_game,
+				private_game = data.private_game,
 				party_lobby_host = lobby,
 				max_num_players = GameModeSettings.versus.max_num_players,
 				mechanism = data.mechanism,
@@ -196,15 +196,15 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 	end,
 	pack_sync_data = function (data)
 		-- function 8
-		local mission_id = not not data.mission_id
-		local difficulty = not not data.difficulty
+		local mission_id = data.mission_id
+		local difficulty = data.difficulty
 		local player_hosted = data.player_hosted
 		local matchmaking_type = data.matchmaking_type
 		local mechanism = data.mechanism
 		local sync_data = {
 			NetworkLookup.mission_ids[mission_id],
 			NetworkLookup.difficulties[difficulty],
-			player_hosted and not not 1 or not player_hosted and not not 2,
+			player_hosted and 1 or not player_hosted and 2,
 			NetworkLookup.matchmaking_types[matchmaking_type],
 			NetworkLookup.mechanisms[mechanism]
 		}

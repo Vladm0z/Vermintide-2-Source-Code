@@ -10,7 +10,7 @@ local extensions = {
 	"DarkPactClimbingExtension"
 }
 
-script_data.nav_mesh_debug = not not script_data.nav_mesh_debug
+script_data.nav_mesh_debug = script_data.nav_mesh_debug
 use_simple_jump_units = true
 
 NavGraphSystem.init = function (self, context, system_name)
@@ -121,7 +121,7 @@ NavGraphSystem.init_nav_graphs = function (self, unit, smart_object_id, extensio
 
 	for i = 1, num_smart_objects_in_unit do
 		local smart_object_data = smart_object_unit_data[i]
-		local smart_object_type = not not smart_object_data.smart_object_type
+		local smart_object_type = smart_object_data.smart_object_type
 		local layer_id = LAYER_ID_MAPPING[smart_object_type]
 
 		control_points[1] = Vector3Aux.unbox(smart_object_data.pos1)
@@ -156,7 +156,7 @@ NavGraphSystem.init_nav_graphs = function (self, unit, smart_object_id, extensio
 
 		self:spawn_versus_jump_unit(unit, first_unit_data)
 
-		local smart_object_type = not not first_unit_data.smart_object_type
+		local smart_object_type = first_unit_data.smart_object_type
 
 		if smart_object_type == "ledges_with_fence" and first_unit_data.data.is_bidirectional and smart_object_type == "jumps" and not first_unit_data.data.is_on_small_fence then
 			self:spawn_versus_jump_unit(unit, first_unit_data, true)
@@ -172,7 +172,7 @@ NavGraphSystem.spawn_versus_jump_unit = function (self, ledge_unit, jump_object_
 	-- function 4
 	local ledge_position = jump_object_data.data.ledge_position
 
-	ledge_position = not not ledge_position and not not Vector3Aux.unbox(ledge_position)
+	ledge_position = ledge_position and Vector3Aux.unbox(ledge_position)
 
 	local position1 = Vector3Aux.unbox(jump_object_data.pos1) + Vector3(0, 0, jump_unit_offset_z)
 	local position2 = Vector3Aux.unbox(jump_object_data.pos2) + Vector3(0, 0, jump_unit_offset_z)
@@ -221,7 +221,7 @@ end
 
 NavGraphSystem.level_jump_units = function (self)
 	-- function 5
-	return not not self._level_jumps_ready
+	return self._level_jumps_ready
 end
 
 NavGraphSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
@@ -236,7 +236,7 @@ NavGraphSystem.on_add_extension = function (self, world, unit, extension_name, e
 	self.unit_extension_data[unit] = extension
 
 	if extension_name == "NavGraphConnectorExtension" then
-		local smart_object_id = not not Unit.get_data(unit, "smart_object_id")
+		local smart_object_id = Unit.get_data(unit, "smart_object_id")
 
 		if not Unit.has_data(unit, "enabled_on_spawn") or Unit.get_data(unit, "enabled_on_spawn") == true then
 			self:init_nav_graphs(unit, smart_object_id, extension)
@@ -334,7 +334,7 @@ NavGraphSystem.queue_add_nav_graph_from_flow = function (self, unit)
 
 	fassert(extension, "Tried to add nav graph from flow for a unit without nav graph extension. %s", unit)
 
-	self.nav_graphs_units_to_add = not not self.nav_graphs_units_to_add
+	self.nav_graphs_units_to_add = self.nav_graphs_units_to_add
 	self.nav_graphs_units_to_add[#self.nav_graphs_units_to_add + 1] = unit
 end
 
@@ -344,7 +344,7 @@ NavGraphSystem.queue_remove_nav_graph_from_flow = function (self, unit)
 
 	fassert(extension, "Tried to remove nav graph from flow for a unit without nav graph extension. %s", unit)
 
-	self.nav_graphs_units_to_remove = not not self.nav_graphs_units_to_remove
+	self.nav_graphs_units_to_remove = self.nav_graphs_units_to_remove
 	self.nav_graphs_units_to_remove[#self.nav_graphs_units_to_remove + 1] = unit
 end
 
@@ -394,12 +394,12 @@ NavGraphSystem.init_nav_graph_from_flow = function (self, unit)
 
 	fassert(extension, "Tried to init nav graph from flow for a unit without nav graph extension. %s", unit)
 
-	local valid_script_data = not not Unit.has_data(unit, "enabled_on_spawn")
+	local valid_script_data = Unit.has_data(unit, "enabled_on_spawn")
 
 	fassert(valid_script_data, "Tried to init nav graph from flow for a unit without script data \"enabled_on_spawn\" set to false. %s", unit)
 	fassert(not self.initialized_unit_nav_graphs[unit], "Tried to init nav graph from flow for a unit but the nav graph has already been initialized. %s", unit)
 
-	local smart_object_id = not not Unit.get_data(unit, "smart_object_id")
+	local smart_object_id = Unit.get_data(unit, "smart_object_id")
 
 	if smart_object_id and self.smart_objects[smart_object_id] and not self.no_nav_mesh then
 		self:init_nav_graphs(unit, smart_object_id, extension)

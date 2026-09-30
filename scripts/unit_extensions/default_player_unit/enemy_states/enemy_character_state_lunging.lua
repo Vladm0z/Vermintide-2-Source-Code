@@ -22,7 +22,7 @@ EnemyCharacterStateLunging._on_enter_animation = function (self, unit, anim_even
 
 	local first_person_extension = self._first_person_extension
 
-	CharacterStateHelper.play_animation_event_first_person(first_person_extension, not not first_person_anim_event or not not anim_event)
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, first_person_anim_event or anim_event)
 end
 
 EnemyCharacterStateLunging.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
@@ -40,7 +40,7 @@ EnemyCharacterStateLunging.on_enter = function (self, unit, input, dt, context, 
 	local first_person_unit = first_person_extension:get_first_person_unit()
 
 	self._first_person_unit = first_person_unit
-	self.damage_start_time = lunge_data.damage_start_time and not not (t + lunge_data.damage_start_time) or not lunge_data.damage_start_time and not not t
+	self.damage_start_time = lunge_data.damage_start_time and t + lunge_data.damage_start_time or not lunge_data.damage_start_time and t
 
 	local forward_direction = Quaternion.forward(self._first_person_extension:current_rotation())
 
@@ -81,7 +81,7 @@ EnemyCharacterStateLunging.on_enter = function (self, unit, input, dt, context, 
 	if damage_settings then
 		local career_power_level = self._career_extension:get_career_power_level()
 		local power_level_multiplier = damage_settings.power_level_multiplier
-		local damage_profile_name = not not damage_settings.damage_profile
+		local damage_profile_name = damage_settings.damage_profile
 		local damage_profile_id, power_level, hit_zone_id, ignore_shield, allow_backstab = self:_parse_attack_data(damage_settings)
 
 		self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
@@ -96,7 +96,7 @@ EnemyCharacterStateLunging.on_enter = function (self, unit, input, dt, context, 
 
 		self.max_targets_attack = max_targets_attack
 		self.max_targets_impact = max_targets_impact
-		self.max_targets = max_targets_impact < max_targets_attack and (not not max_targets_attack or not not max_targets_impact) or not (max_targets_impact < max_targets_attack) and not not max_targets_impact
+		self.max_targets = max_targets_impact < max_targets_attack and (max_targets_attack or max_targets_impact) or not (max_targets_impact < max_targets_attack) and max_targets_impact
 	end
 
 	if lunge_data.dodge and Managers.state.network:game() then
@@ -393,7 +393,7 @@ EnemyCharacterStateLunging._parse_attack_data = function (self, damage_settings)
 	local career_power_level = self._career_extension:get_career_power_level()
 	local power_level_multiplier = damage_settings.power_level_multiplier
 	local power_level = career_power_level * power_level_multiplier
-	local damage_profile_name = not not damage_settings.damage_profile
+	local damage_profile_name = damage_settings.damage_profile
 	local damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
 	local hit_zone_hit_name = damage_settings.hit_zone_hit_name
 	local hit_zone_id = NetworkLookup.hit_zones[hit_zone_hit_name]
@@ -405,13 +405,13 @@ EnemyCharacterStateLunging._calculate_hit_mass = function (self, shield_blocked,
 	-- function 10
 	if breed and HEALTH_ALIVE[hit_unit] then
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and not not breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and not not breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and not not breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and not not breed.hit_mass_count)
+		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and breed.hit_mass_count)
 		local action_mass_override = current_action.hit_mass_count
 
 		if action_mass_override and action_mass_override[breed.name] then
 			local mass_cost_multiplier = current_action.hit_mass_count[breed.name]
 
-			hit_mass_total = hit_mass_total * (not not mass_cost_multiplier or not not 1)
+			hit_mass_total = hit_mass_total * (mass_cost_multiplier or 1)
 		end
 
 		self._amount_of_mass_hit = self._amount_of_mass_hit + hit_mass_total
@@ -434,7 +434,7 @@ EnemyCharacterStateLunging._update_damage = function (self, unit, dt, t, damage_
 	local rot = Quaternion.look(delta_move, Vector3.up())
 	local first_person_extension = self._first_person_extension
 	local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
-	local mid_pos = (new_pos + old_pos) * 0.5 + Vector3(0, 0, half_height) + not not damage_data.offset_forward * forward_direction
+	local mid_pos = (new_pos + old_pos) * 0.5 + Vector3(0, 0, half_height) + damage_data.offset_forward * forward_direction
 	local size = Vector3(half_width, half_length, half_height)
 	local collision_filter = damage_data.collision_filter
 	local actors, num_actors = PhysicsWorld.immediate_overlap(self._physics_world, "shape", "oobb", "position", mid_pos, "rotation", rot, "size", size, "collision_filter", collision_filter)
@@ -460,7 +460,7 @@ EnemyCharacterStateLunging._update_damage = function (self, unit, dt, t, damage_
 			local damage_profile_id, power_level, hit_zone_id, ignore_shield, allow_backstab = self:_parse_attack_data(damage_data)
 
 			if breed and HEALTH_ALIVE[hit_unit] then
-				shield_blocked = not ignore_shield and not not AiUtils.attack_is_shield_blocked(hit_unit, unit)
+				shield_blocked = not ignore_shield and AiUtils.attack_is_shield_blocked(hit_unit, unit)
 
 				if allow_backstab then
 					local owner_to_hit_dir = Vector3.normalize(hit_unit_pos - new_pos)
@@ -486,7 +486,7 @@ EnemyCharacterStateLunging._update_damage = function (self, unit, dt, t, damage_
 				if damage_data.stagger_angles then
 					local owner_to_hit_dir = Vector3.normalize(hit_unit_pos - new_pos)
 					local cross = Vector3.cross(Vector3.flat(owner_to_hit_dir), Vector3.flat(forward_direction))
-					local additional_stagger_angle = Math.random(damage_data.stagger_angles.min, damage_data.stagger_angles.max) * (cross.z < 0 and not not -1 or not (cross.z < 0) and not not 1)
+					local additional_stagger_angle = Math.random(damage_data.stagger_angles.min, damage_data.stagger_angles.max) * (cross.z < 0 and -1 or not (cross.z < 0) and 1)
 					local new_attack_direction = attack_direction
 
 					new_attack_direction.x = math.cos(additional_stagger_angle) * attack_direction.x - math.sin(additional_stagger_angle) * attack_direction.y
@@ -547,7 +547,7 @@ EnemyCharacterStateLunging._do_blast = function (self, new_pos, forward_directio
 
 	local lunge_data = self._lunge_data
 	local damage_data = lunge_data.damage
-	local blast_damage_data = not not damage_data and not not damage_data.on_interrupt_blast
+	local blast_damage_data = damage_data and damage_data.on_interrupt_blast
 
 	if blast_damage_data then
 		local physics_world = self._physics_world
@@ -579,7 +579,7 @@ EnemyCharacterStateLunging._do_blast = function (self, new_pos, forward_directio
 					local attack_direction = Vector3.normalize(blast_pos - POSITION_LOOKUP[hit_unit])
 					local boost_curve_multiplier = 0
 					local actual_hit_target_index
-					local shield_blocked = not ignore_shield and not not AiUtils.attack_is_shield_blocked(hit_unit, unit)
+					local shield_blocked = not ignore_shield and AiUtils.attack_is_shield_blocked(hit_unit, unit)
 					local shield_break_procc = false
 					local is_critical_strike = false
 					local can_damage = true

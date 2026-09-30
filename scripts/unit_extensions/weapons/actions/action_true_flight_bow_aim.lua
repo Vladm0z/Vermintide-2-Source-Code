@@ -43,9 +43,9 @@ ActionTrueFlightBowAim.client_owner_start_action = function (self, new_action, t
 	self.aim_sticky_timer = 0
 	self._is_sticky_target = false
 	self._current_target_priority = -1
-	self.target = chain_action_data and not not chain_action_data.target or not chain_action_data and not not nil
-	self.targets = chain_action_data and not not chain_action_data.targets or not chain_action_data and not not {}
-	self.aimed_target = chain_action_data and not not chain_action_data.target or not chain_action_data and not not nil
+	self.target = chain_action_data and chain_action_data.target or not chain_action_data and nil
+	self.targets = chain_action_data and chain_action_data.targets or not chain_action_data and {}
+	self.aimed_target = chain_action_data and chain_action_data.target or not chain_action_data and nil
 
 	self:_mark_target(self.target)
 
@@ -54,18 +54,18 @@ ActionTrueFlightBowAim.client_owner_start_action = function (self, new_action, t
 	local owner_unit = self.owner_unit
 
 	self.side = Managers.state.side.side_by_unit[owner_unit]
-	self.target_broadphase_categories = not not self.side
+	self.target_broadphase_categories = self.side
 
 	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-	self._ignored_breeds = not not new_action.ignored_breeds
-	self.charge_time = buff_extension:apply_buffs_to_value(not not new_action.charge_time, "reduced_ranged_charge_time")
+	self._ignored_breeds = new_action.ignored_breeds
+	self.charge_time = buff_extension:apply_buffs_to_value(new_action.charge_time, "reduced_ranged_charge_time")
 	self.overcharge_timer = 0
 	self.zoom_condition_function = new_action.zoom_condition_function
 	self.prioritized_breeds = new_action.prioritized_breeds
 	self.played_aim_sound = false
-	self.aim_sound_time = t + not not new_action.aim_sound_delay
-	self.aim_zoom_time = t + not not new_action.aim_zoom_delay
+	self.aim_sound_time = t + new_action.aim_sound_delay
+	self.aim_zoom_time = t + new_action.aim_zoom_delay
 
 	local loaded_projectile_settings = new_action.loaded_projectile_settings
 
@@ -91,8 +91,8 @@ ActionTrueFlightBowAim._start_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -110,8 +110,8 @@ ActionTrueFlightBowAim._stop_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -128,7 +128,7 @@ local function is_target_invisible(unit)
 	-- function 5
 	local status_extension = ScriptUnit.has_extension(unit, "status_system")
 
-	return not not status_extension and not not status_extension:is_invisible()
+	return status_extension and status_extension:is_invisible()
 end
 
 local EMPTY_TABLE = {}
@@ -140,7 +140,7 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 	local time_to_shoot = self.time_to_shoot
 	local current_target = self.target
 	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_bot = owner_player and owner_player.bot_player
 
 	if current_action.overcharge_interval then
 		self.overcharge_timer = self.overcharge_timer + dt
@@ -194,8 +194,8 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 		current_target = nil
 	end
 
-	local required_aim_time = not not current_action.aim_time
-	local aim_sticky_time = not not current_action.aim_sticky_time
+	local required_aim_time = current_action.aim_time
+	local aim_sticky_time = current_action.aim_sticky_time
 
 	if required_aim_time <= self.aim_timer and (not current_target or aim_sticky_time <= self.aim_sticky_timer) then
 		local physics_world = World.get_data(world, "physics_world")
@@ -224,7 +224,7 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 		local side = self.side
 
 		if num_results > 0 then
-			local prio_breeds = not not self.prioritized_breeds
+			local prio_breeds = self.prioritized_breeds
 			local ignore_bosses = current_action.ignore_bosses
 
 			for i = 1, num_results do
@@ -273,7 +273,7 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 						break
 					end
 
-					local priority = not not prio_breeds[breed.name]
+					local priority = prio_breeds[breed.name]
 
 					if priority > 0 and higest_priority < priority then
 						hit_unit = unit
@@ -282,21 +282,21 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 						break
 					end
 
-					hit_unit = not not hit_unit or not not unit
+					hit_unit = hit_unit or unit
 				until true
 			end
 		end
 
 		if current_action.aim_sticky_target_size and POSITION_LOOKUP[current_target] and self._is_sticky_target and higest_priority <= self._current_target_priority then
 			local old_target_distance_sq = vector3_distance_squared(POSITION_LOOKUP[current_target], player_position)
-			local new_target_distance_sq = hit_unit and not not vector3_distance_squared(POSITION_LOOKUP[hit_unit], player_position) or not hit_unit and not not math.huge
+			local new_target_distance_sq = hit_unit and vector3_distance_squared(POSITION_LOOKUP[hit_unit], player_position) or not hit_unit and math.huge
 
 			if old_target_distance_sq < new_target_distance_sq then
-				local target_node = unit_has_node(current_target, "j_spine1") and not not unit_node(current_target, "j_spine1") or not unit_has_node(current_target, "j_spine1") and not not 0
+				local target_node = unit_has_node(current_target, "j_spine1") and unit_node(current_target, "j_spine1") or not unit_has_node(current_target, "j_spine1") and 0
 				local position = unit_world_position(current_target, target_node)
 				local to_old_target = position - player_position
 				local dist_to_old_target = vector3_length(to_old_target)
-				local dir_to_old_target = dist_to_old_target > 0 and not not (to_old_target / dist_to_old_target) or not (dist_to_old_target > 0) and not not 0
+				local dir_to_old_target = dist_to_old_target > 0 and to_old_target / dist_to_old_target or not (dist_to_old_target > 0) and 0
 				local radius = current_action.aim_sticky_target_size
 				local sticky_target_threshold = math.cos(math.atan2(radius, dist_to_old_target))
 				local aim_dir = vector3_dot(direction, dir_to_old_target)
@@ -325,7 +325,7 @@ ActionTrueFlightBowAim.client_owner_post_update = function (self, dt, t, world, 
 				end
 			end
 		elseif current_action.target_break_size and current_target then
-			local target_node = unit_has_node(current_target, "j_spine1") and not not unit_node(current_target, "j_spine1") or not unit_has_node(current_target, "j_spine1") and not not 0
+			local target_node = unit_has_node(current_target, "j_spine1") and unit_node(current_target, "j_spine1") or not unit_has_node(current_target, "j_spine1") and 0
 			local position = unit_world_position(current_target, target_node)
 			local dir_to_target, dist_to_target = Vector3.direction_length(position - player_position)
 			local radius = current_action.target_break_size
@@ -440,7 +440,7 @@ ActionTrueFlightBowAim.finish = function (self, reason, data)
 
 	if current_action.num_projectiles and current_action.num_projectiles > 1 then
 		local owner_player = Managers.player:owner(owner_unit)
-		local is_bot = not not owner_player and not not owner_player.bot_player
+		local is_bot = owner_player and owner_player.bot_player
 
 		chain_action_data.targets = self:_get_visible_targets(self.target, current_action.num_projectiles, is_bot)
 	end

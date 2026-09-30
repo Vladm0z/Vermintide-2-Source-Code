@@ -2,7 +2,7 @@
 
 local script_data = script_data
 
-AiBreedSnippets = not not AiBreedSnippets
+AiBreedSnippets = AiBreedSnippets
 
 local vector3_distance = Vector3.distance
 
@@ -356,8 +356,8 @@ AiBreedSnippets.on_chaos_troll_spawn = function (unit, blackboard)
 	local breed = blackboard.breed
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 
-	blackboard.max_health_regen_per_sec = not not breed.max_health_regen_per_sec[difficulty_rank]
-	blackboard.max_health_regen_time = not not breed.max_health_regen_time[difficulty_rank]
+	blackboard.max_health_regen_per_sec = breed.max_health_regen_per_sec[difficulty_rank]
+	blackboard.max_health_regen_time = breed.max_health_regen_time[difficulty_rank]
 
 	local can_start_angry = true
 
@@ -392,8 +392,8 @@ AiBreedSnippets.on_chaos_troll_chief_spawn = function (unit, blackboard)
 	local breed = blackboard.breed
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 
-	blackboard.max_health_regen_per_sec = not not breed.max_health_regen_per_sec[difficulty_rank]
-	blackboard.max_health_regen_time = not not breed.max_health_regen_time[difficulty_rank]
+	blackboard.max_health_regen_per_sec = breed.max_health_regen_per_sec[difficulty_rank]
+	blackboard.max_health_regen_time = breed.max_health_regen_time[difficulty_rank]
 
 	local can_start_angry = true
 
@@ -570,8 +570,8 @@ AiBreedSnippets.on_chaos_dummy_troll_spawn = function (unit, blackboard)
 	local breed = blackboard.breed
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 
-	blackboard.max_health_regen_per_sec = not not breed.max_health_regen_per_sec[difficulty_rank]
-	blackboard.max_health_regen_time = not not breed.max_health_regen_time[difficulty_rank]
+	blackboard.max_health_regen_per_sec = breed.max_health_regen_per_sec[difficulty_rank]
+	blackboard.max_health_regen_time = breed.max_health_regen_time[difficulty_rank]
 	blackboard.idle_sound_timer = Managers.time:time("game") + 2
 	blackboard.play_alert = true
 end
@@ -919,7 +919,7 @@ function remove_vortex_units(unit, blackboard)
 		return
 	end
 
-	local vortex_units = not not vortex_data and not not vortex_data.vortex_units
+	local vortex_units = vortex_data and vortex_data.vortex_units
 
 	if vortex_units then
 		for _, vortex_unit in ipairs(vortex_units) do
@@ -933,7 +933,7 @@ function remove_vortex_units(unit, blackboard)
 		table.clear(vortex_units)
 	end
 
-	local queued_vortex = not not vortex_data and not not vortex_data.queued_vortex
+	local queued_vortex = vortex_data and vortex_data.queued_vortex
 
 	if queued_vortex then
 		local unit_spawner = Managers.state.unit_spawner
@@ -1173,7 +1173,7 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_spawn = function (unit, blackboard)
 	local level_analysis = Managers.state.conflict.level_analysis
 	local center_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_center
 	local wall_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_wall
-	local level_has_boss_arena = not not center_node_units and not not wall_node_units and not not id_lookup.sorcerer_boss
+	local level_has_boss_arena = center_node_units and wall_node_units and id_lookup.sorcerer_boss
 
 	if level_has_boss_arena then
 		local center_marker = center_node_units[1]
@@ -1243,7 +1243,7 @@ end
 
 function check_for_recent_attackers(unit, blackboard, t, ranged_range)
 	-- function 48
-	local min_retaliation_dist_sqr = not not ranged_range or not not 100
+	local min_retaliation_dist_sqr = ranged_range or 100
 	local health_extension = ScriptUnit.extension(unit, "health_system")
 	local recent_damages, nr_damages = health_extension:recent_damages()
 
@@ -1252,7 +1252,7 @@ function check_for_recent_attackers(unit, blackboard, t, ranged_range)
 		local side = blackboard.side
 		local damage_source = recent_damages[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local master_list_item = rawget(ItemMasterList, damage_source)
-		local is_melee = not not master_list_item and master_list_item.slot_type == "melee"
+		local is_melee = master_list_item and master_list_item.slot_type == "melee"
 
 		if Unit.alive(attacking_unit) and side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[attacking_unit] then
 			local dist_sqr = Vector3.distance_squared(Unit.local_position(unit, 0), Unit.local_position(attacking_unit, 0))
@@ -1382,10 +1382,10 @@ AiBreedSnippets.reward_boss_kill_loot = function (unit, blackboard)
 		wanted_drop_position = GwNavQueries.inside_position_from_outside_position(nav_world, position, above, below, horizontal_limit, distance_from_nav_border)
 	end
 
-	wanted_drop_position = not not wanted_drop_position or not not position
+	wanted_drop_position = wanted_drop_position or position
 
 	local breed = Unit.get_data(unit, "breed")
-	local breed_name = not not breed and not not breed.name
+	local breed_name = breed and breed.name
 	local extension_init_data = {
 		pickup_system = {
 			has_physics = true,
@@ -1396,7 +1396,7 @@ AiBreedSnippets.reward_boss_kill_loot = function (unit, blackboard)
 	}
 	local pickup_settings = AllPickups[pickup_name]
 	local unit_name = pickup_settings.unit_name
-	local unit_template_name = not not pickup_settings.unit_template_name
+	local unit_template_name = pickup_settings.unit_template_name
 	local rotation = Quaternion.identity()
 	local offset = Vector3(0, 0, 0.6)
 
@@ -1413,8 +1413,8 @@ AiBreedSnippets.drop_loot = function (num_die, pos, has_physics, unit)
 		return
 	end
 
-	local breed = not not unit and not not Unit.get_data(unit, "breed")
-	local breed_name = not not breed and not not breed.name
+	local breed = unit and Unit.get_data(unit, "breed")
+	local breed_name = breed and breed.name
 
 	for i = 1, num_die do
 		local extension_init_data = {
@@ -1427,7 +1427,7 @@ AiBreedSnippets.drop_loot = function (num_die, pos, has_physics, unit)
 		}
 		local pickup_settings = AllPickups[pickup_name]
 		local unit_name = pickup_settings.unit_name
-		local unit_template_name = not not pickup_settings.unit_template_name
+		local unit_template_name = pickup_settings.unit_template_name
 		local angle = i / num_die * 2 * math.pi
 		local position = pos + Vector3(math.cos(angle), math.sin(angle), 0)
 		local rotation = Quaternion.identity()
@@ -1995,7 +1995,7 @@ AiBreedSnippets.on_grey_seer_update = function (unit, blackboard, t)
 	if blackboard.unlink_unit then
 		blackboard.unlink_unit = nil
 
-		local mount_blackboard = not not mount_unit and not not BLACKBOARDS[mount_unit]
+		local mount_blackboard = mount_unit and BLACKBOARDS[mount_unit]
 
 		if mount_blackboard then
 			mount_blackboard.linked_unit = nil
@@ -2021,8 +2021,8 @@ AiBreedSnippets.on_grey_seer_update = function (unit, blackboard, t)
 
 	if blackboard.knocked_off_mount and HEALTH_ALIVE[mount_unit] then
 		local mount_blackboard = BLACKBOARDS[mount_unit]
-		local mounted_timer_finished = not not mounted_data.knocked_off_mounted_timer
-		local should_call_stormfiend = not blackboard.call_stormfiend and not mount_blackboard.intro_rage and not not mounted_timer_finished and not mount_blackboard.goal_position and not not not mount_blackboard.anim_cb_move
+		local mounted_timer_finished = mounted_data.knocked_off_mounted_timer
+		local should_call_stormfiend = not blackboard.call_stormfiend and not mount_blackboard.intro_rage and mounted_timer_finished and not mount_blackboard.goal_position and not mount_blackboard.anim_cb_move
 
 		if should_call_stormfiend then
 			blackboard.call_stormfiend = true
@@ -2175,7 +2175,7 @@ AiBreedSnippets.update_enemy_sighting_within_commander_sticky = function (blackb
 		end
 	until true
 
-	blackboard.target_unit = within_commander_range and not not blackboard.target_unit or not within_commander_range and not not nil
+	blackboard.target_unit = within_commander_range and blackboard.target_unit or not within_commander_range and nil
 	blackboard.confirmed_enemy_sighting_within_commander = within_commander_range
 
 	blackboard.commander_extension:set_in_combat(blackboard.unit, within_commander_range)
@@ -2185,7 +2185,7 @@ AiBreedSnippets.update_enemy_sighting_within_commander_sticky = function (blackb
 	if commanded_aggro_sound then
 		local t = Managers.time:time("game")
 
-		blackboard.last_in_combat_t = not not blackboard.last_in_combat_t
+		blackboard.last_in_combat_t = blackboard.last_in_combat_t
 
 		local required_time_out_of_combat = 2
 
@@ -2193,7 +2193,7 @@ AiBreedSnippets.update_enemy_sighting_within_commander_sticky = function (blackb
 			Managers.state.entity:system("dialogue_system"):trigger_general_unit_event(blackboard.unit, commanded_aggro_sound)
 		end
 
-		blackboard.last_in_combat_t = blackboard.target_unit and (not not t or not not blackboard.last_in_combat_t) or not blackboard.target_unit and not not blackboard.last_in_combat_t
+		blackboard.last_in_combat_t = blackboard.target_unit and (t or blackboard.last_in_combat_t) or not blackboard.target_unit and blackboard.last_in_combat_t
 	end
 end
 

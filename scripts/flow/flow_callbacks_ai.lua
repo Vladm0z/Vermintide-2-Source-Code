@@ -198,10 +198,10 @@ function flow_callback_spawn_ai_with_animation_and_move_to_unit(params)
 	local move_to_position = Vector3Box(Unit.world_position(move_to_unit, 0))
 	local breed = Breeds[breed_name]
 	local spawn_anim = params.spawn_anim
-	local look_dir = not not spawn_anim and not not Vector3.flat(Vector3.normalize(move_to_position:unbox() - spawn_position:unbox()))
-	local spawn_rot = not not spawn_anim and not not QuaternionBox(Quaternion.look(look_dir, Vector3.up()))
+	local look_dir = spawn_anim and Vector3.flat(Vector3.normalize(move_to_position:unbox() - spawn_position:unbox()))
+	local spawn_rot = spawn_anim and QuaternionBox(Quaternion.look(look_dir, Vector3.up()))
 	local ignore_passive_on_patrol = params.go_to_combat
-	local spawn_exit_time = not not params.optional_spawn_exit_time
+	local spawn_exit_time = params.optional_spawn_exit_time
 	local optional_data = {
 		move_to_position = move_to_position,
 		ignore_passive_on_patrol = ignore_passive_on_patrol,
@@ -445,7 +445,7 @@ function flow_callback_force_terror_event(params)
 		Managers.state.conflict:start_terror_event(params.event_type, params.seed, params.origin_unit)
 	end
 
-	local new_seed = Math.next_random(not not params.seed)
+	local new_seed = Math.next_random(params.seed)
 
 	flow_return_table.new_seed = new_seed
 
@@ -499,7 +499,7 @@ function flow_callback_bot_nav_transition_entered(params)
 	local bot_unit = params.bot_unit
 	local transition_unit = params.transition_unit
 	local actor = params.bot_actor
-	local nav_ext = not not ScriptUnit.has_extension(bot_unit, "ai_navigation_system")
+	local nav_ext = ScriptUnit.has_extension(bot_unit, "ai_navigation_system")
 
 	if nav_ext then
 		if nav_ext.flow_cb_entered_nav_transition then
@@ -515,7 +515,7 @@ function flow_callback_bot_nav_transition_left(params)
 	local bot_unit = params.bot_unit
 	local transition_unit = params.transition_unit
 	local actor = params.bot_actor
-	local nav_ext = not not ScriptUnit.has_extension(bot_unit, "ai_navigation_system")
+	local nav_ext = ScriptUnit.has_extension(bot_unit, "ai_navigation_system")
 
 	if nav_ext then
 		if nav_ext.flow_cb_left_nav_transition then
@@ -541,12 +541,12 @@ function flow_callback_player_bot_hold_position(params)
 		if should_hold_position then
 			local ai_system = Managers.state.entity:system("ai_system")
 			local nav_world = ai_system:nav_world()
-			local hold_position = not not params.position
+			local hold_position = params.position
 			local above, below = 0.5, 2
 			local success, altitude = GwNavQueries.triangle_from_position(nav_world, hold_position, above, below)
 
 			if success then
-				local max_distance = not not params.max_allowed_distance_from_position
+				local max_distance = params.max_allowed_distance_from_position
 
 				hold_position = Vector3(hold_position.x, hold_position.y, altitude)
 

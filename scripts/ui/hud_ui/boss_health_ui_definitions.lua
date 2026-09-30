@@ -90,7 +90,7 @@ local function create_health_bar_widget(is_additional)
 		detail_scale = 0.6
 	end
 
-	local bar_y_offset = is_additional and not not 8 or not is_additional and not not 0
+	local bar_y_offset = is_additional and 8 or not is_additional and 0
 	local widget = {
 		element = {}
 	}
@@ -108,7 +108,7 @@ local function create_health_bar_widget(is_additional)
 			retained_mode = retained_mode,
 			content_check_function = function (content)
 				-- function 2
-				return not not content.attributes[1]
+				return content.attributes[1]
 			end
 		},
 		{
@@ -124,7 +124,7 @@ local function create_health_bar_widget(is_additional)
 			retained_mode = retained_mode,
 			content_check_function = function (chk_content)
 				-- function 3
-				return not chk_content.attributes[1] or not not is_additional
+				return not chk_content.attributes[1] or is_additional
 			end
 		}
 	}
@@ -196,15 +196,15 @@ local function create_health_bar_widget(is_additional)
 	style.lower_normal_bg = {
 		size = {
 			bar_length + 32 * detail_scale,
-			is_additional and not not 20 or not is_additional and not not 55
+			is_additional and 20 or not is_additional and 55
 		},
 		offset = {
 			reference_x - 23,
-			-28 * detail_scale - (is_additional and not not 20 or not is_additional and not not 55) + bar_y_offset,
+			-28 * detail_scale - (is_additional and 20 or not is_additional and 55) + bar_y_offset,
 			2
 		},
 		color = {
-			is_additional and not not 230 or not is_additional and not not 255,
+			is_additional and 230 or not is_additional and 255,
 			255,
 			255,
 			255
@@ -219,7 +219,7 @@ local function create_health_bar_widget(is_additional)
 			retained_mode = retained_mode,
 			content_check_function = function (chk_content)
 				-- function 4
-				return not not chk_content.attributes[1]
+				return chk_content.attributes[1]
 			end
 		}
 		content.lower_marked_bg = "boss_hp_bar_marked_bg"
@@ -327,7 +327,7 @@ local function create_health_bar_widget(is_additional)
 
 	local fg_padding = 0.04139433551198257 * bar_length
 
-	content[bar_fg_name] = is_additional and not not "boss_hp_bar_titleless" or not is_additional and not not "boss_hp_bar"
+	content[bar_fg_name] = is_additional and "boss_hp_bar_titleless" or not is_additional and "boss_hp_bar"
 	style[bar_fg_name] = {
 		size = {
 			bar_length + fg_padding * detail_scale,
@@ -571,7 +571,7 @@ local function create_health_bar_widget(is_additional)
 		retained_mode = retained_mode,
 		content_check_function = function (chk_content)
 			-- function 7
-			local max_health_fraction = not not chk_content.max_health_fraction
+			local max_health_fraction = chk_content.max_health_fraction
 
 			return max_health_fraction ~= 1
 		end
@@ -601,7 +601,7 @@ local function create_health_bar_widget(is_additional)
 		retained_mode = retained_mode,
 		content_check_function = function (chk_content)
 			-- function 8
-			local bar_edge_fraction = not not chk_content.bar_edge_fraction
+			local bar_edge_fraction = chk_content.bar_edge_fraction
 
 			return bar_edge_fraction ~= 1
 		end

@@ -17,8 +17,8 @@ SingleWeaponUnitExtension.init = function (self, extension_init_context, unit, e
 	self.single_weapon_template_name = item_template.single_weapon_template_name
 	self.weapon_template = SingleWeaponUnitTemplates.get_template(self.single_weapon_template_name)
 	self.is_server = Managers.player.is_server
-	self._weapon_wield = not not item_template and not not item_template.on_wield
-	self._weapon_unwield = not not item_template and not not item_template.on_unwield
+	self._weapon_wield = item_template and item_template.on_wield
+	self._weapon_unwield = item_template and item_template.on_unwield
 	self.data = {}
 end
 

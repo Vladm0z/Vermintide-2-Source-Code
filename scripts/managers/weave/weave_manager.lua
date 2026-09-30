@@ -4,7 +4,7 @@ require("scripts/managers/conflict_director/weave_spawner")
 require("scripts/settings/wind_settings")
 require("scripts/settings/weave_settings")
 
-local weave_manager_testify = not not script_data.testify
+local weave_manager_testify = script_data.testify
 
 WeaveManager = class(WeaveManager)
 
@@ -125,10 +125,10 @@ WeaveManager._setup_weave_data = function (self, is_server)
 		return
 	end
 
-	local weave_name = not not self._next_weave_name
-	local weave_objective_index = not not self._next_objective_index
-	local time_left = not not self._remaining_time
-	local damage_taken = not not self._damage_taken
+	local weave_name = self._next_weave_name
+	local weave_objective_index = self._next_objective_index
+	local time_left = self._remaining_time
+	local damage_taken = self._damage_taken
 	local player_ids = self._player_ids
 
 	self:_set_active_weave(weave_name)
@@ -287,7 +287,7 @@ WeaveManager.event_conflict_director_setup_done = function (self)
 	-- function 17
 	if self:get_active_weave() and self._is_server then
 		local objective_template = self:get_active_objective_template()
-		local spawning_seed = not not objective_template and not not objective_template.spawning_seed
+		local spawning_seed = objective_template and objective_template.spawning_seed
 
 		if spawning_seed then
 			self._weave_spawner:set_seed(spawning_seed)
@@ -351,7 +351,7 @@ WeaveManager.store_saved_game_mode_data = function (self)
 		return
 	end
 
-	local saved_game_mode_data = not not Managers.state.game_mode
+	local saved_game_mode_data = Managers.state.game_mode
 
 	if saved_game_mode_data then
 		for _, slot_data in pairs(saved_game_mode_data) do
@@ -455,7 +455,7 @@ WeaveManager.get_active_wind = function (self)
 
 	local template = WeaveSettings.templates[self._active_weave_name]
 
-	return not not template and not not template.wind
+	return template and template.wind
 end
 
 WeaveManager.get_active_wind_settings = function (self)
@@ -465,7 +465,7 @@ WeaveManager.get_active_wind_settings = function (self)
 	end
 
 	local template = WeaveSettings.templates[self._active_weave_name]
-	local wind = not not template and not not template.wind
+	local wind = template and template.wind
 
 	return WindSettings[wind]
 end
@@ -473,11 +473,11 @@ end
 WeaveManager.get_scaling_value = function (self, scaling_value_key)
 	-- function 40
 	local lobby = Managers.state.network:lobby()
-	local weave_quick_game = not not lobby and lobby:lobby_data("weave_quick_game") == "true"
-	local quick_game = not not weave_quick_game or not not Managers.venture.quickplay:is_quick_game()
+	local weave_quick_game = lobby and lobby:lobby_data("weave_quick_game") == "true"
+	local quick_game = weave_quick_game or Managers.venture.quickplay:is_quick_game()
 	local template = WeaveSettings.templates[self._active_weave_name]
 	local scaling_settings = template.scaling_settings
-	local scaling_setting = not quick_game and not not scaling_settings and not not scaling_settings[scaling_value_key]
+	local scaling_setting = not quick_game and scaling_settings and scaling_settings[scaling_value_key]
 	local tier = template.tier
 	local previous_breakpoint = 0
 
@@ -592,7 +592,7 @@ WeaveManager.start_objective = function (self)
 	local objective_template = self:get_active_objective_template()
 	local start_flow_event = objective_template.objective_start_flow_event
 	local objective_settings = objective_template.objective_settings
-	local objective_lists = ObjectiveLists[not not objective_settings and not not objective_settings.objective_lists]
+	local objective_lists = ObjectiveLists[objective_settings and objective_settings.objective_lists]
 
 	if start_flow_event then
 		LevelHelper:flow_event(self._world, start_flow_event)
@@ -629,7 +629,7 @@ WeaveManager.current_bar_score = function (self)
 	if game and self._go_id then
 		local game_object_score = GameSession.game_object_field(game, self._go_id, "bar_score")
 		local bar_score = self._bar_score
-		local score = game_object_score < bar_score and (not not bar_score or not not game_object_score) or not (game_object_score < bar_score) and not not game_object_score
+		local score = game_object_score < bar_score and (bar_score or game_object_score) or not (game_object_score < bar_score) and game_object_score
 
 		return score
 	else
@@ -735,7 +735,7 @@ WeaveManager.get_wind_strength = function (self)
 	-- function 56
 	local weave_template = WeaveSettings.templates[self._active_weave_name]
 
-	return weave_template and not not weave_template.wind_strength or not weave_template and not not 1
+	return weave_template and weave_template.wind_strength or not weave_template and 1
 end
 
 WeaveManager._create_game_object = function (self)
@@ -906,7 +906,7 @@ end
 WeaveManager._track_ai_killed = function (self, breed_name)
 	-- function 72
 	if self._is_server then
-		self._enemies_killed[breed_name] = not not self._enemies_killed[breed_name]
+		self._enemies_killed[breed_name] = self._enemies_killed[breed_name]
 		self._enemies_killed[breed_name] = self._enemies_killed[breed_name] + 1
 		self._num_enemies_killed = self._num_enemies_killed + 1
 

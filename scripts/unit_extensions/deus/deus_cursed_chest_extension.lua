@@ -103,7 +103,7 @@ DeusCursedChestExtension.update = function (self, unit, input, dt, context, t)
 					return string.sub(mission_name, 1, string.len("cursed_chest_challenge")) == "cursed_chest_challenge"
 				end)
 
-				self._telemetry_data.challenge_name = not not challenge_name or not not "hotjoin"
+				self._telemetry_data.challenge_name = challenge_name or "hotjoin"
 			else
 				Managers.state.event:register(self, "ui_event_add_mission_objective", "_ui_event_add_mission_objective")
 			end
@@ -199,7 +199,7 @@ DeusCursedChestExtension.update = function (self, unit, input, dt, context, t)
 		else
 			local chest_position = POSITION_LOOKUP[unit]
 			local local_player = Managers.player:local_player()
-			local local_player_unit = not not local_player and not not local_player.player_unit
+			local local_player_unit = local_player and local_player.player_unit
 
 			if local_player_unit then
 				local player_position = POSITION_LOOKUP[local_player_unit]
@@ -275,7 +275,7 @@ DeusCursedChestExtension.can_interact = function (self)
 	-- function 13
 	local state = self:_get_state()
 
-	return state == STATES.WAITING and not not not self._reward_collected or not (state == STATES.WAITING) and state == STATES.OPEN and not not not self._reward_collected
+	return state == STATES.WAITING and not self._reward_collected or not (state == STATES.WAITING) and state == STATES.OPEN and not self._reward_collected
 end
 
 DeusCursedChestExtension.get_interaction_length = function (self)
@@ -358,7 +358,7 @@ end
 DeusCursedChestExtension._update_telemetry = function (self, chest_unit)
 	-- function 19
 	local player = Managers.player:local_player()
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 	local local_player_pos = POSITION_LOOKUP[player_unit]
 
 	if not local_player_pos then
@@ -389,7 +389,7 @@ DeusCursedChestExtension._set_state = function (self, state)
 	local game = Managers.state.network:game()
 	local go_id = Managers.state.unit_storage:go_id(self._unit)
 
-	fassert(not not game and not not go_id, "setting state without network setup done")
+	fassert(game and go_id, "setting state without network setup done")
 	GameSession.set_game_object_field(game, go_id, "deus_cursed_chest_state", state)
 end
 
@@ -403,7 +403,7 @@ DeusCursedChestExtension.rpc_deus_chest_looted = function (self, channel_id, go_
 
 	local game = Managers.state.network:game()
 
-	fassert(not not game and not not own_go_id, "setting state without network setup done")
+	fassert(game and own_go_id, "setting state without network setup done")
 
 	local collected_by_peers = GameSession.game_object_field(game, own_go_id, "collected_by_peers")
 	local peer_id = CHANNEL_TO_PEER_ID[channel_id]

@@ -2,7 +2,7 @@
 
 local NAVIGATION_NAVMESH_RADIUS = 0.38
 
-script_data.debug_ai_movement = not not script_data.debug_ai_movement
+script_data.debug_ai_movement = script_data.debug_ai_movement
 AINavigationExtension = class(AINavigationExtension)
 
 AINavigationExtension.init = function (self, extension_init_context, unit, extension_init_data)
@@ -118,7 +118,7 @@ AINavigationExtension.init_position = function (self)
 	local height = 1.6
 	local speed = breed.run_speed
 	local pos = Unit.local_position(unit, 0)
-	local enable_crowd_dispersion = not script_data.disable_crowd_dispersion and not not not breed.disable_crowd_dispersion
+	local enable_crowd_dispersion = not script_data.disable_crowd_dispersion and not breed.disable_crowd_dispersion
 	local nav_cost_map_allowed_layers = {}
 
 	if breed.nav_cost_map_allowed_layers then
@@ -144,7 +144,7 @@ AINavigationExtension.init_position = function (self)
 	GwNavBot.set_use_avoidance(nav_bot, self._is_avoiding)
 
 	if self._is_avoiding then
-		local config = not not breed.avoidance_config
+		local config = breed.avoidance_config
 
 		GwNavBot.set_avoidance_behavior(nav_bot, config.enable_slowing, config.enable_forcing, config.enable_stop, config.stop_wait_time_s, config.forcing_time_s, config.forcing_wait_time_s)
 		GwNavBot.set_avoidance_collider_collector_configuration(nav_bot, config.half_height, config.radius, config.forcing_wait_time_s)
@@ -183,19 +183,19 @@ AINavigationExtension.init_position = function (self)
 
 	if breed.use_navigation_path_splines then
 		local config = breed.navigation_path_spline_config
-		local CHANNEL_RADIUS = config and not not config.navigation_channel_radius or not config and not not 4
-		local TURN_SAMPLING_ANGLE = config and not not config.turn_sampling_angle or not config and not not 30
-		local CHANNEL_SMOOTHING_ANGLE = config and not not config.channel_smoothing_anle or not config and not not 30
-		local MIN_DISTANCE_BETWEEN_GATES = config and not not config.min_distance_between_gates or not config and not not 0.5
-		local MAX_DISTANCE_BETWEEN_GATES = config and not not config.max_distance_between_gates or not config and not not 10
+		local CHANNEL_RADIUS = config and config.navigation_channel_radius or not config and 4
+		local TURN_SAMPLING_ANGLE = config and config.turn_sampling_angle or not config and 30
+		local CHANNEL_SMOOTHING_ANGLE = config and config.channel_smoothing_anle or not config and 30
+		local MIN_DISTANCE_BETWEEN_GATES = config and config.min_distance_between_gates or not config and 0.5
+		local MAX_DISTANCE_BETWEEN_GATES = config and config.max_distance_between_gates or not config and 10
 
 		GwNavBot.set_channel_computer_configuration(nav_bot, CHANNEL_RADIUS, TURN_SAMPLING_ANGLE, CHANNEL_SMOOTHING_ANGLE, MIN_DISTANCE_BETWEEN_GATES, MAX_DISTANCE_BETWEEN_GATES)
 
 		local SCRIPT_DRIVEN = false
-		local MAX_DISTANCE_TO_SPLINE_POSITION = config and not not config.max_distance_to_spline_position or not config and not not 5
-		local SPLINE_LENGTH = config and not not config.spline_length or not config and not not 100
-		local SPLINE_DISTANCE_TO_BORDERS = config and not not config.spline_distance_to_borders or not config and not not 1
-		local SPLINE_RECOMPUTION_RATIO = config and not not config.spline_recomputation_ratio or not config and not not 1
+		local MAX_DISTANCE_TO_SPLINE_POSITION = config and config.max_distance_to_spline_position or not config and 5
+		local SPLINE_LENGTH = config and config.spline_length or not config and 100
+		local SPLINE_DISTANCE_TO_BORDERS = config and config.spline_distance_to_borders or not config and 1
+		local SPLINE_RECOMPUTION_RATIO = config and config.spline_recomputation_ratio or not config and 1
 		local TARGET_ON_SPLINE_DISTANCE = 0
 
 		GwNavBot.set_spline_trajectory_configuration(nav_bot, SCRIPT_DRIVEN, MAX_DISTANCE_TO_SPLINE_POSITION, SPLINE_LENGTH, SPLINE_DISTANCE_TO_BORDERS, SPLINE_RECOMPUTION_RATIO, TARGET_ON_SPLINE_DISTANCE)
@@ -417,7 +417,7 @@ AINavigationExtension.reset_destination = function (self, override_destination)
 	end
 
 	local unit = self._unit
-	local position = not not override_destination or not not POSITION_LOOKUP[unit]
+	local position = override_destination or POSITION_LOOKUP[unit]
 
 	self._wanted_destination:store(position)
 	self._destination:store(position)
@@ -446,7 +446,7 @@ end
 
 AINavigationExtension.distance_to_destination = function (self, position)
 	-- function 28
-	position = not not position or not not Unit.local_position(self._unit, 0)
+	position = position or Unit.local_position(self._unit, 0)
 
 	local destination = self:destination()
 
@@ -455,7 +455,7 @@ end
 
 AINavigationExtension.distance_to_destination_sq = function (self, position)
 	-- function 29
-	position = not not position or not not Unit.local_position(self._unit, 0)
+	position = position or Unit.local_position(self._unit, 0)
 
 	local destination = self:destination()
 
@@ -466,7 +466,7 @@ local navigation_stop_distance_before_destination = 0.3
 
 AINavigationExtension.has_reached_destination = function (self, reach_distance)
 	-- function 30
-	local reach_distance_sq = (not not reach_distance or not not navigation_stop_distance_before_destination)^2
+	local reach_distance_sq = (reach_distance or navigation_stop_distance_before_destination)^2
 	local distance_sq = self:distance_to_destination_sq()
 
 	return distance_sq < reach_distance_sq
@@ -501,7 +501,7 @@ AINavigationExtension.use_smart_object = function (self, do_use)
 		end
 	end
 
-	local using_smart_object = not not do_use and not not success
+	local using_smart_object = do_use and success
 
 	self._using_smartobject = using_smart_object
 
@@ -542,20 +542,20 @@ end
 
 AINavigationExtension.nav_cost_map_cost_table = function (self, optional_identifier)
 	-- function 36
-	local identifier = not not optional_identifier or not not "_default"
+	local identifier = optional_identifier or "_default"
 
-	self._nav_cost_map_cost_tables = not not self._nav_cost_map_cost_tables
-	self._nav_cost_map_cost_tables[identifier] = not not self._nav_cost_map_cost_tables[identifier]
+	self._nav_cost_map_cost_tables = self._nav_cost_map_cost_tables
+	self._nav_cost_map_cost_tables[identifier] = self._nav_cost_map_cost_tables[identifier]
 
 	return self._nav_cost_map_cost_tables[identifier]
 end
 
 AINavigationExtension.get_navtag_layer_cost_table = function (self, optional_identifier)
 	-- function 37
-	local identifier = not not optional_identifier or not not "_default"
+	local identifier = optional_identifier or "_default"
 
-	self._navtag_layer_cost_tables = not not self._navtag_layer_cost_tables
-	self._navtag_layer_cost_tables[identifier] = not not self._navtag_layer_cost_tables[identifier]
+	self._navtag_layer_cost_tables = self._navtag_layer_cost_tables
+	self._navtag_layer_cost_tables[identifier] = self._navtag_layer_cost_tables[identifier]
 
 	return self._navtag_layer_cost_tables[identifier]
 end
@@ -736,8 +736,8 @@ end
 
 AINavigationExtension.get_reusable_traverse_logic = function (self, identifier, nav_cost_map)
 	-- function 47
-	self._reusable_traverse_logics = not not self._reusable_traverse_logics
-	self._reusable_traverse_logics[identifier] = not not self._reusable_traverse_logics[identifier]
+	self._reusable_traverse_logics = self._reusable_traverse_logics
+	self._reusable_traverse_logics[identifier] = self._reusable_traverse_logics[identifier]
 
 	return self._reusable_traverse_logics[identifier]
 end

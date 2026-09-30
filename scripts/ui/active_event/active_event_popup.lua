@@ -13,7 +13,7 @@ ActiveEventPopup.create_ui_elements = function (self)
 	self._widgets_by_name.window_background.content.texture_id = popup_settings.background_texture
 	self._widgets_by_name.window_background.offset[1] = 100
 
-	local body_text = popup_settings.body_text and not not Localize(popup_settings.body_text) or not popup_settings.body_text and not not ""
+	local body_text = popup_settings.body_text and Localize(popup_settings.body_text) or not popup_settings.body_text and ""
 
 	if body_text ~= "" and popup_settings.event_name then
 		body_text = string.format(body_text, popup_settings.event_name)
@@ -22,12 +22,12 @@ ActiveEventPopup.create_ui_elements = function (self)
 	if popup_settings.logo_data then
 		local data = popup_settings.logo_data
 
-		self._widgets_by_name.logo.content.texture_id = data.logo_texture and not not data.logo_texture or not data.logo_texture and not not "hero_view_home_logo"
-		self._widgets_by_name.logo.style.texture_id.texture_size = data.size and not not data.size or not data.size and not not {
+		self._widgets_by_name.logo.content.texture_id = data.logo_texture and data.logo_texture or not data.logo_texture and "hero_view_home_logo"
+		self._widgets_by_name.logo.style.texture_id.texture_size = data.size and data.size or not data.size and {
 			468,
 			236.39999999999998
 		}
-		self._widgets_by_name.logo.offset = data.offset and not not data.offset or not data.offset and not not {
+		self._widgets_by_name.logo.offset = data.offset and data.offset or not data.offset and {
 			-234,
 			-118.19999999999999,
 			1
@@ -115,7 +115,7 @@ ActiveEventPopup._handle_input = function (self, dt)
 	end
 
 	for i, widget in ipairs(self._action_button_widgets) do
-		widget.content.button_hotspot.is_selected = not not gamepad_active and i == self._selected_button_idx
+		widget.content.button_hotspot.is_selected = gamepad_active and i == self._selected_button_idx
 	end
 
 	if gamepad_active and input_service:get("confirm_press", true) then
@@ -147,11 +147,11 @@ ActiveEventPopup._handle_gamepad_selection = function (self, dt, input_service)
 		local selected_idx = self._selected_button_idx
 
 		if input_service:get("move_up") then
-			selected_idx = selected_idx + 1 <= self._buttons_amount and (not not (selected_idx + 1) or not not 1) or not (selected_idx + 1 <= self._buttons_amount) and not not 1
+			selected_idx = selected_idx + 1 <= self._buttons_amount and (selected_idx + 1 or 1) or not (selected_idx + 1 <= self._buttons_amount) and 1
 
 			self:play_sound("play_gui_start_menu_button_hover")
 		elseif input_service:get("move_down") then
-			selected_idx = selected_idx - 1 >= 1 and (not not (selected_idx - 1) or not not self._buttons_amount) or not (selected_idx - 1 >= 1) and not not self._buttons_amount
+			selected_idx = selected_idx - 1 >= 1 and (selected_idx - 1 or self._buttons_amount) or not (selected_idx - 1 >= 1) and self._buttons_amount
 
 			self:play_sound("play_gui_start_menu_button_hover")
 		end
@@ -252,7 +252,7 @@ end
 
 ActiveEventPopup.should_show = function (self)
 	-- function 12
-	return not not self._ui_context.is_in_inn
+	return self._ui_context.is_in_inn
 end
 
 ActiveEventPopup._update_scrolling_background = function (self, dt)

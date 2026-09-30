@@ -377,7 +377,7 @@ DiceRoller._create_success_table = function (self, success_list)
 	-- function 19
 	local success_table = {}
 
-	self.remaining_dice = not not self.remaining_dice
+	self.remaining_dice = self.remaining_dice
 
 	for _, dice_type in ipairs(dice_types_mapping) do
 		local dice_amount = self.remaining_dice[dice_type]
@@ -392,7 +392,7 @@ DiceRoller._create_success_table = function (self, success_list)
 			}
 
 			success_table[#success_table + 1] = data
-			success_count = not success or not not (success_count + 1) or not not success_count
+			success_count = not success or success_count + 1 or success_count
 		end
 	end
 
@@ -489,7 +489,7 @@ DiceRoller.simulate_dice_rolls = function (self, success_list)
 		Actor.wake_up(actor)
 		Actor.set_velocity(actor, Vector3(-0.25, -0.5, -0.07) * 65)
 
-		local wanted_dice_result = success and not not math.random(dice_type_success_amounts[dice_type], 6) or not success and not not math.random(1, dice_type_success_amounts[dice_type] - 1)
+		local wanted_dice_result = success and math.random(dice_type_success_amounts[dice_type], 6) or not success and math.random(1, dice_type_success_amounts[dice_type] - 1)
 
 		dice_simulation_settings[i] = {
 			dice_result = 0,
@@ -760,9 +760,9 @@ DiceRoller.cleanup_post_roll = function (self)
 			self.remaining_dice[data.dice_type] = self.remaining_dice[data.dice_type] - 1
 			finished_dice = finished_dice + 1
 		else
-			local num_successes_per_type = not not self.remaining_dice[data.dice_type].successes
+			local num_successes_per_type = self.remaining_dice[data.dice_type].successes
 
-			self.remaining_dice[data.dice_type].successes = data.success and not not (num_successes_per_type + 1) or not data.success and not not num_successes_per_type
+			self.remaining_dice[data.dice_type].successes = data.success and num_successes_per_type + 1 or not data.success and num_successes_per_type
 			self.needs_rerolls = true
 		end
 	end

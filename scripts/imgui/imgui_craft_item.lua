@@ -63,13 +63,13 @@ ImguiCraftItem.draw = function (self, is_open)
 	self._power_level = math.floor(Imgui.slider_float("Power Level", self._power_level, min_power_level, max_power_level))
 	self._current_type = Imgui.combo("Item Type", self._current_type, self._types, max_combo_size)
 
-	local current_type_name = self._current_type >= 0 and not not self._types[self._current_type]
-	local current_item_list = current_type_name and not not self._items_per_type[current_type_name] or not current_type_name and not not {}
+	local current_type_name = self._current_type >= 0 and self._types[self._current_type]
+	local current_item_list = current_type_name and self._items_per_type[current_type_name] or not current_type_name and {}
 
 	self._current_item = Imgui.combo("Item Name", self._current_item, current_item_list, max_combo_size)
 	self._current_rarity = Imgui.combo("Item Rarity", self._current_rarity, self._rarities, max_combo_size)
 
-	local current_item_name = self._current_item >= 0 and not not current_item_list[self._current_item]
+	local current_item_name = self._current_item >= 0 and current_item_list[self._current_item]
 	local current_item_skins = self:_get_skins_for_item(current_item_name)
 
 	self._current_skin = Imgui.combo("Item Skin", self._current_skin, current_item_skins, max_combo_size)
@@ -87,7 +87,7 @@ ImguiCraftItem.draw = function (self, is_open)
 	self._current_property = Imgui.combo("Item Properties", self._current_property, self._properties, max_combo_size)
 
 	if Imgui.button("Add Property") then
-		local current_property_name = self._current_property > 0 and not not self._properties[self._current_property]
+		local current_property_name = self._current_property > 0 and self._properties[self._current_property]
 
 		if current_property_name then
 			self._active_protperties[current_property_name] = self._property_strength
@@ -99,7 +99,7 @@ ImguiCraftItem.draw = function (self, is_open)
 	self._current_trait = Imgui.combo("Item Traits", self._current_trait, self._traits, max_combo_size)
 
 	if Imgui.button("Add Trait") then
-		local current_trait_name = self._current_trait > 0 and not not self._traits[self._current_trait]
+		local current_trait_name = self._current_trait > 0 and self._traits[self._current_trait]
 
 		if current_trait_name then
 			self._active_traits[current_trait_name] = true
@@ -139,9 +139,9 @@ ImguiCraftItem.draw = function (self, is_open)
 
 	if Imgui.button("Add Item", 100, 20) and self._current_rarity then
 		local power_level = self._power_level
-		local rarity_name = self._current_rarity > 0 and not not self._rarities[self._current_rarity]
-		local skin_name = self._current_skin > 0 and not not current_item_skins[self._current_skin]
-		local magic_level = rarity_name == "magic" and not not self._current_magic_level
+		local rarity_name = self._current_rarity > 0 and self._rarities[self._current_rarity]
+		local skin_name = self._current_skin > 0 and current_item_skins[self._current_skin]
+		local magic_level = rarity_name == "magic" and self._current_magic_level
 
 		self:give_item(current_item_name, power_level, skin_name, rarity_name, magic_level, self._active_protperties, self._active_traits)
 	end
@@ -211,8 +211,8 @@ ImguiCraftItem._get_skins_for_item = function (self, item_name)
 	-- function 7
 	if item_name then
 		local item = ItemMasterList[item_name]
-		local skin_combination_table_name = not not item and not not item.skin_combination_table
-		local skin_combinations = not not skin_combination_table_name and not not WeaponSkins.skin_combinations[skin_combination_table_name]
+		local skin_combination_table_name = item and item.skin_combination_table
+		local skin_combinations = skin_combination_table_name and WeaponSkins.skin_combinations[skin_combination_table_name]
 		local rarity_skins = {}
 
 		if skin_combinations then

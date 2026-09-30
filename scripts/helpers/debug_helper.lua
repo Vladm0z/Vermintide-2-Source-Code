@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/debug_helper.lua
 
-DebugHelper = not not DebugHelper
+DebugHelper = DebugHelper
 
 DebugHelper.remove_debug_stuff = function ()
 	-- function 1

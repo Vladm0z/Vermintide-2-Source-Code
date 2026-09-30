@@ -88,8 +88,8 @@ ActionSoulDrain._start_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -107,8 +107,8 @@ ActionSoulDrain._stop_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -168,7 +168,7 @@ ActionSoulDrain.client_owner_post_update = function (self, dt, t, world, can_dam
 		end
 
 		local physics_world = World.get_data(self.world, "physics_world")
-		local range = not not current_action.range
+		local range = current_action.range
 		local result = PhysicsWorld.immediate_raycast_actors(physics_world, current_position, direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
 
 		beam_end_position = current_position + direction * range
@@ -197,7 +197,7 @@ ActionSoulDrain.client_owner_post_update = function (self, dt, t, world, can_dam
 						local hit_zone = breed.hit_zones_lookup[node]
 						local hit_zone_name = hit_zone.name
 
-						hit_enemy = allow_friendly_fire and hit_zone_name ~= "afro" or not allow_friendly_fire and not not is_enemy and hit_zone_name ~= "afro"
+						hit_enemy = allow_friendly_fire and hit_zone_name ~= "afro" or not allow_friendly_fire and is_enemy and hit_zone_name ~= "afro"
 					else
 						hit_enemy = true
 					end
@@ -249,12 +249,12 @@ ActionSoulDrain.client_owner_post_update = function (self, dt, t, world, can_dam
 						if hit_unit ~= self.current_target then
 							self.consecutive_hits = 0
 							power_level = power_level * 0.5
-							override_damage_profile = not not current_action.damage_profile or not not "default"
+							override_damage_profile = current_action.damage_profile or "default"
 						else
 							self.consecutive_hits = self.consecutive_hits + 1
 
 							if self.consecutive_hits < 3 then
-								override_damage_profile = not not current_action.damage_profile or not not "default"
+								override_damage_profile = current_action.damage_profile or "default"
 							end
 						end
 

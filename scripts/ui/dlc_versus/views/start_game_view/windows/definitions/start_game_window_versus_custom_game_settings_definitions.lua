@@ -45,7 +45,7 @@ local scenegraph_definition = {
 
 local function create_list_mask(scenegraph_id, size)
 	-- function 1
-	size = not not size or not not {
+	size = size or {
 		600,
 		380
 	}

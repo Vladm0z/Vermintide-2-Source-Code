@@ -20,7 +20,7 @@ PerceptionUtils.troll_crouch_check = function (unit, blackboard, t)
 	local infront_pos = above_pos + fwd
 	local result, hit_position = PhysicsWorld.immediate_raycast(physics_world, infront_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
 	local result2, hit_position2 = PhysicsWorld.immediate_raycast(physics_world, above_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
-	local crouching = not not result2 and not not hit_position2
+	local crouching = result2 and hit_position2
 
 	if crouching then
 		blackboard.crouch_sticky_timer = t + 1
@@ -60,7 +60,7 @@ PerceptionUtils.perception_continuous_keep_target = function (unit, blackboard, 
 	local side = blackboard.side
 	local target_alive = HEALTH_ALIVE[target_unit]
 
-	return not not not side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
+	return not side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
 end
 
 PerceptionUtils.perception_no_seeing = function (self, unit, blackboard, breed, pick_target_func, t)
@@ -117,10 +117,10 @@ PerceptionUtils.perception_all_seeing_boss = function (unit, blackboard, breed, 
 			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
 			local event_data = FrameTable.alloc_table()
 
-			event_data.attack_tag = not not breed.dialogue_target_switch_attack_tag
+			event_data.attack_tag = breed.dialogue_target_switch_attack_tag
 			event_data.target_name = ScriptUnit.extension(new_aggro_unit, "dialogue_system").context.player_profile
 
-			dialogue_input:trigger_networked_dialogue_event(not not breed.dialogue_target_switch_event, event_data)
+			dialogue_input:trigger_networked_dialogue_event(breed.dialogue_target_switch_event, event_data)
 		end
 
 		local sound_effect_system = Managers.state.entity:system("sound_effect_system")
@@ -229,7 +229,7 @@ PerceptionUtils.perception_rat_ogre = function (unit, blackboard, breed, pick_ta
 		local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
 		if status_extension then
-			blackboard.target_is_not_downed = not status_extension.is_ledge_hanging and not not not status_extension.knocked_down
+			blackboard.target_is_not_downed = not status_extension.is_ledge_hanging and not status_extension.knocked_down
 
 			local self_pos = POSITION_LOOKUP[unit]
 			local offset = POSITION_LOOKUP[target_unit] - self_pos
@@ -281,10 +281,10 @@ PerceptionUtils.perception_rat_ogre = function (unit, blackboard, breed, pick_ta
 			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
 			local event_data = FrameTable.alloc_table()
 
-			event_data.attack_tag = not not breed.dialogue_target_switch_attack_tag
+			event_data.attack_tag = breed.dialogue_target_switch_attack_tag
 			event_data.target_name = ScriptUnit.extension(new_aggro_unit, "dialogue_system").context.player_profile
 
-			dialogue_input:trigger_networked_dialogue_event(not not breed.dialogue_target_switch_event, event_data)
+			dialogue_input:trigger_networked_dialogue_event(breed.dialogue_target_switch_event, event_data)
 		end
 
 		local sound_effect_system = Managers.state.entity:system("sound_effect_system")
@@ -351,7 +351,7 @@ PerceptionUtils.perception_regular = function (unit, blackboard, breed, pick_tar
 		local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
 		if status_extension then
-			blackboard.target_is_not_downed = not status_extension.is_ledge_hanging and not not not status_extension.knocked_down
+			blackboard.target_is_not_downed = not status_extension.is_ledge_hanging and not status_extension.knocked_down
 		else
 			blackboard.target_is_not_downed = true
 		end

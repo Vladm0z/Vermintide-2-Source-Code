@@ -65,7 +65,7 @@ StoreWindowPathTitle._sync_layout_path = function (self)
 	local path = parent:get_store_path()
 	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
-	local saved_path = not not self._saved_path
+	local saved_path = self._saved_path
 	local path_differs = false
 	local path_length = #path
 	local saved_path_length = #saved_path
@@ -89,14 +89,14 @@ StoreWindowPathTitle._sync_layout_path = function (self)
 
 		for i, page_name in ipairs(path) do
 			local display_selected_product = page_name == "item_details"
-			local page = not not pages[page_name]
+			local page = pages[page_name]
 			local widget = self:_create_breadcrumb_widget()
 			local display_name
 
 			if display_selected_product then
 				display_name = self:_get_selected_product_display_name()
 			else
-				display_name = page and (not not page.display_name or not not page_name) or not page and not not page_name
+				display_name = page and (page.display_name or page_name) or not page and page_name
 			end
 
 			widget.content.text = Localize(display_name)
@@ -114,7 +114,7 @@ end
 StoreWindowPathTitle._get_selected_product_display_name = function (self)
 	-- function 4
 	local selected_product = self._params.selected_product
-	local product_type = not not selected_product and not not selected_product.type
+	local product_type = selected_product and selected_product.type
 
 	if product_type == "item" then
 		local item = selected_product.item
@@ -340,9 +340,9 @@ StoreWindowPathTitle._animate_breadcrumb_widget = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 14
 
 	if is_hover then

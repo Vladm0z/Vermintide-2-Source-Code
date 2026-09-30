@@ -71,7 +71,7 @@ ImguiSpawning.draw = function (self)
 	Imgui.same_line()
 
 	self._breed_index = Imgui.combo("Breed", self._breed_index, self._breed_names)
-	script_data.disable_ai_perception = Imgui.checkbox("Disable AI perception", not not script_data.disable_ai_perception)
+	script_data.disable_ai_perception = Imgui.checkbox("Disable AI perception", script_data.disable_ai_perception)
 
 	Imgui.separator()
 
@@ -81,11 +81,11 @@ ImguiSpawning.draw = function (self)
 		local world = Application.main_world()
 		local breed, pos, distance, normal, actor = Managers.state.conflict:player_aim_raycast(world, true, "filter_player_ray_projectile")
 
-		Imgui.text("Looking at: " .. (breed and not not breed.name or not breed and not not "n/a"))
+		Imgui.text("Looking at: " .. (breed and breed.name or not breed and "n/a"))
 
 		if breed then
 			local unit = Actor.unit(actor)
-			local outline_extension = not not ALIVE[unit]
+			local outline_extension = ALIVE[unit]
 
 			if outline_extension then
 				self._mark_outline_extension = outline_extension

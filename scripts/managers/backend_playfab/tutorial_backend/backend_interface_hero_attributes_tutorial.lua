@@ -43,7 +43,7 @@ BackendInterfaceHeroAttributesTutorial.get = function (self, hero, attribute)
 	-- function 4
 	local key = hero .. "_" .. attribute
 
-	return not not self._attributes[key]
+	return self._attributes[key]
 end
 
 BackendInterfaceHeroAttributesTutorial.set = function (self, hero, attribute, value)

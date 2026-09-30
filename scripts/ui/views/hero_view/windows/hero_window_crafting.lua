@@ -278,7 +278,7 @@ HeroWindowCrafting._handle_input = function (self, dt, t)
 		self:_change_recipe_page(next_page_index)
 		self:_play_sound("play_gui_craft_recipe_next")
 	elseif self:_is_button_pressed(page_button_previous) then
-		local next_page_index = current_page > 1 and not not (current_page - 1) or not (current_page > 1) and not not total_pages
+		local next_page_index = current_page > 1 and current_page - 1 or not (current_page > 1) and total_pages
 
 		self:_change_recipe_page(next_page_index)
 		self:_play_sound("play_gui_craft_recipe_next")
@@ -294,7 +294,7 @@ HeroWindowCrafting._handle_input = function (self, dt, t)
 				self:_play_sound("play_gui_craft_recipe_next")
 			end
 		elseif input_service:get("cycle_previous") then
-			local next_page_index = current_page > 1 and not not (current_page - 1) or not (current_page > 1) and not not total_pages
+			local next_page_index = current_page > 1 and current_page - 1 or not (current_page > 1) and total_pages
 
 			if next_page_index > 0 then
 				self:_change_recipe_page(next_page_index)
@@ -358,8 +358,8 @@ HeroWindowCrafting._change_recipe_page = function (self, current_page)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -601,7 +601,7 @@ end
 
 HeroWindowCrafting.is_crafting_anim_playing = function (self)
 	-- function 27
-	return self._craft_start_duration ~= nil or self._craft_glow_in_duration ~= nil or self._craft_glow_wait_duration ~= nil or self._craft_glow_out_duration ~= nil or self._craft_end_duration ~= nil or not not self:waiting_for_craft()
+	return self._craft_start_duration ~= nil or self._craft_glow_in_duration ~= nil or self._craft_glow_wait_duration ~= nil or self._craft_glow_out_duration ~= nil or self._craft_end_duration ~= nil or self:waiting_for_craft()
 end
 
 HeroWindowCrafting.cancel_crafting_animation = function (self)

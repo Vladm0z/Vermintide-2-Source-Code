@@ -146,7 +146,7 @@ ChatView.cb_private_message = function (self, key, message_type, username, messa
 	local private_message_content = private_messages_widget.content
 	local private_messages_table = chat_output_content.private_messages_table
 
-	private_messages_table[username] = not not private_messages_table[username]
+	private_messages_table[username] = private_messages_table[username]
 
 	local private_message_table = private_messages_table[username]
 	local message, link_data = Managers.chat:check_meta(message, username, parameter)
@@ -178,11 +178,11 @@ end
 
 ChatView._find_end_index = function (self, match_str, start_index)
 	-- function 4
-	local space_end_index = not not string.find(match_str, " ", start_index) - 1
-	local colon_end_index = not not string.find(match_str, ":", start_index)
-	local potential_end_index = space_end_index <= colon_end_index and (not not space_end_index or not not colon_end_index) or not (space_end_index <= colon_end_index) and not not colon_end_index
+	local space_end_index = string.find(match_str, " ", start_index) - 1
+	local colon_end_index = string.find(match_str, ":", start_index)
+	local potential_end_index = space_end_index <= colon_end_index and (space_end_index or colon_end_index) or not (space_end_index <= colon_end_index) and colon_end_index
 
-	return potential_end_index < math.huge - 1 and (not not potential_end_index or not not nil) or not (potential_end_index < math.huge - 1) and not not nil
+	return potential_end_index < math.huge - 1 and (potential_end_index or nil) or not (potential_end_index < math.huge - 1) and nil
 end
 
 ChatView.cb_channel_message = function (self, key, message_type, username, message, parameter)
@@ -191,7 +191,7 @@ ChatView.cb_channel_message = function (self, key, message_type, username, messa
 	local chat_output_content = chat_output_widget.content
 	local channel_messages_table = chat_output_content.channel_messages_table
 
-	channel_messages_table[parameter] = not not channel_messages_table[parameter]
+	channel_messages_table[parameter] = channel_messages_table[parameter]
 
 	local message_tables = channel_messages_table[parameter]
 	local message, link_data = Managers.chat:check_meta(message, username, parameter)
@@ -225,7 +225,7 @@ ChatView.cb_join_updated = function (self, key, message_type, username, message,
 
 	self:_update_members()
 
-	PlayerData.recent_irc_channels = not not PlayerData.recent_irc_channels
+	PlayerData.recent_irc_channels = PlayerData.recent_irc_channels
 
 	local recent_irc_channels = PlayerData.recent_irc_channels
 	local channel = parameter
@@ -253,7 +253,7 @@ ChatView.cb_list_updated = function (self, key, message_type, username, paramete
 	print(key, message_type, username, parameter, user_data)
 
 	self._popular_channel_list[#self._popular_channel_list + 1] = parameter .. "," .. user_data
-	self._popular_channel_list_lookup = not not self._popular_channel_list_lookup
+	self._popular_channel_list_lookup = self._popular_channel_list_lookup
 	self._popular_channel_list_lookup[parameter] = user_data
 end
 
@@ -290,7 +290,7 @@ ChatView._change_channel = function (self, channel_name)
 	local name_list_content = name_list_widget.content
 
 	self._current_channel_name = channel_name
-	self._channels = not not self._channels
+	self._channels = self._channels
 	self._channels[channel_name] = channel_name
 	chat_output_content.channel_name = channel_name
 	name_list_content.channel_name = channel_name
@@ -303,7 +303,7 @@ ChatView._change_channel = function (self, channel_name)
 	frame_widget_content.private_user_name = nil
 	frame_widget_content.trimmed_private_user_name = nil
 
-	local message_tables = not not chat_output_content.channel_messages_table[channel_name]
+	local message_tables = chat_output_content.channel_messages_table[channel_name]
 
 	chat_output_content.text_start_offset = #message_tables
 
@@ -359,7 +359,7 @@ ChatView._change_to_private = function (self, user_name)
 	chat_output_content.private_user_name = user_name
 	chat_output_content.trimmed_private_user_name = self:_strip_identifier_from_user_name(user_name)
 
-	local message_tables = not not chat_output_content.private_messages_table[user_name]
+	local message_tables = chat_output_content.private_messages_table[user_name]
 
 	chat_output_content.text_start_offset = #message_tables
 
@@ -385,12 +385,12 @@ ChatView._list_private_messages = function (self, user_name)
 	local name_list_content = name_list_widget.content
 
 	self._current_channel_name = user_name
-	self._channels = not not self._channels
+	self._channels = self._channels
 	self._channels[channel_name] = channel_name
 	chat_output_content.channel_name = channel_name
 	name_list_content.channel_name = channel_name
 
-	local message_tables = not not chat_output_content.channel_messages_table[channel_name]
+	local message_tables = chat_output_content.channel_messages_table[channel_name]
 
 	chat_output_content.text_start_offset = #message_tables
 end
@@ -404,7 +404,7 @@ ChatView.cb_leave_updated = function (self, key, message_type, username, message
 
 		local channel_name = next(self._channels)
 
-		channel_name = not not channel_name or not not " "
+		channel_name = channel_name or " "
 
 		self:_change_channel(channel_name)
 
@@ -432,7 +432,7 @@ ChatView._create_ui_elements = function (self)
 	local chat_message_tables = {}
 	local members_message_tables = {}
 
-	self._widgets = not not self._widgets
+	self._widgets = self._widgets
 
 	local chat_output_widget = self._widgets.chat_output_widget
 
@@ -442,7 +442,7 @@ ChatView._create_ui_elements = function (self)
 		chat_message_tables = chat_output_content.channel_messages_table
 	end
 
-	self._widgets = not not self._widgets
+	self._widgets = self._widgets
 
 	local name_list_widget = self._widgets.name_list_widget
 
@@ -704,10 +704,10 @@ ChatView.cb_populate_recent_channels = function (self, channel_list, channel_lis
 	local channels_height_spacing = channels_list_settings.channels_height_spacing
 	local offset_y = 0
 	local widget_definitions = definitions.widget_definitions
-	local recent_irc_channels = not not PlayerData.recent_irc_channels
+	local recent_irc_channels = PlayerData.recent_irc_channels
 
 	for index, channel_name in ipairs(recent_irc_channels) do
-		local num_members = not not channel_list_lookup[channel_name]
+		local num_members = channel_list_lookup[channel_name]
 		local channel_entry = UIWidget.init(widget_definitions.create_channel_list_entry_func("recent_channels_window_list_box_entry"))
 		local channel_entry_content = channel_entry.content
 		local channel_entry_style = channel_entry.style
@@ -1085,7 +1085,7 @@ ChatView._handle_and_draw_channels_list = function (self, ui_renderer, ui_sceneg
 	UIRenderer.draw_widget(ui_renderer, create_channel_button_widget)
 	UIRenderer.draw_widget(ui_renderer, recent_channels_button_widget)
 
-	local rows_to_draw = math.min(not not channels_list_settings.current_rows, channels_list_settings.max_rows)
+	local rows_to_draw = math.min(channels_list_settings.current_rows, channels_list_settings.max_rows)
 	local channels_width_spacing = channels_list_settings.channels_width_spacing
 	local channels_height_spacing = channels_list_settings.channels_height_spacing
 	local channels_per_row = channels_list_settings.channels_per_row
@@ -1261,7 +1261,7 @@ ChatView._update_input = function (self, dt, t)
 	local filtered_user_names_list_frame_widget = self._filtered_user_names_list_widgets.filtered_user_names_list_frame
 	local emoji_list_frame_widget = self._emoji_widgets.emoji_list_frame
 
-	frame_widget_content.channel_name = not not self._current_channel_name
+	frame_widget_content.channel_name = self._current_channel_name
 
 	if input_service:get("deactivate_chat_input", true) then
 		if frame_widget_content.text_field_active then
@@ -1466,14 +1466,14 @@ ChatView._update_input = function (self, dt, t)
 		elseif frame_widget_content.caret_index <= ChatView.MAX_CHARS then
 			local keystrokes = Keyboard.keystrokes()
 			local ctrl_button_index = Keyboard.button_index("left ctrl")
-			local ctrl_held = not not Keyboard.pressed(ctrl_button_index)
+			local ctrl_held = Keyboard.pressed(ctrl_button_index)
 
 			frame_widget_content.chat_text.text, frame_widget_content.caret_index = KeystrokeHelper.parse_strokes(frame_widget_content.chat_text.text, frame_widget_content.caret_index, "insert", keystrokes)
 
 			if #keystrokes > 0 then
 				local text = frame_widget_content.chat_text.text
 				local _, end_idx = string.find(text, "/msg ")
-				local start_idx, _ = string.find(text, " ", (not not end_idx or not not 0) + 1)
+				local start_idx, _ = string.find(text, " ", (end_idx or 0) + 1)
 
 				if end_idx and not start_idx then
 					local str = string.lower(string.gsub(text, "/msg ", ""))
@@ -1676,12 +1676,12 @@ ChatView._handle_and_draw_emoji_list_input = function (self, dt)
 	if emoji_scrollbar_widget then
 		local scroll_input = input_service:get("chat_scroll")[2]
 
-		self._emoji_scroll = math.abs(scroll_input) > math.abs(self._emoji_scroll) and (not not scroll_input or not not self._emoji_scroll) or not (math.abs(scroll_input) > math.abs(self._emoji_scroll)) and not not self._emoji_scroll
+		self._emoji_scroll = math.abs(scroll_input) > math.abs(self._emoji_scroll) and (scroll_input or self._emoji_scroll) or not (math.abs(scroll_input) > math.abs(self._emoji_scroll)) and self._emoji_scroll
 	end
 
 	local max_offset = rows * emoji_size[2] + (rows - 1) * emoji_offset[2]
 
-	self._base_offset = math.clamp(not not self._base_offset - self._emoji_scroll, 0, max_offset)
+	self._base_offset = math.clamp(self._base_offset - self._emoji_scroll, 0, max_offset)
 
 	local row_index_offset = math.floor(self._base_offset / (emoji_size[2] + emoji_offset[2]))
 
@@ -1714,7 +1714,7 @@ ChatView._handle_and_draw_emoji_list_input = function (self, dt)
 			local index = (i - 1) * emojis_per_row + k
 			local emoji_data = EMOJI_SETTINGS[index]
 
-			emoji_widget_content.texture_id = emoji_data and not not emoji_data.texture or not emoji_data and not not nil
+			emoji_widget_content.texture_id = emoji_data and emoji_data.texture or not emoji_data and nil
 
 			UIRenderer.draw_widget(ui_renderer, emoji_widget)
 
@@ -1926,7 +1926,7 @@ ChatView._handle_command_list_input = function (self)
 
 		if widget_content.command_hotspot and widget_content.command_hotspot.on_pressed then
 			local command = widget_content.command
-			local parameter = not not widget_content.parameter
+			local parameter = widget_content.parameter
 			local frame_widget = self._widgets.frame_widget
 			local frame_widget_content = frame_widget.content
 
@@ -2034,7 +2034,7 @@ ChatView._show_welcome_message = function (self)
 	local chat_output_content = chat_output_widget.content
 	local channel_messages_table = chat_output_content.channel_messages_table
 
-	channel_messages_table[self._current_channel_name] = not not channel_messages_table[self._current_channel_name]
+	channel_messages_table[self._current_channel_name] = channel_messages_table[self._current_channel_name]
 
 	local message_tables = channel_messages_table[self._current_channel_name]
 
@@ -2063,7 +2063,7 @@ ChatView._send_channel_message = function (self, content, emojis)
 			local chat_output_content = chat_output_widget.content
 			local channel_messages_table = chat_output_content.channel_messages_table
 
-			channel_messages_table[self._current_channel_name] = not not channel_messages_table[self._current_channel_name]
+			channel_messages_table[self._current_channel_name] = channel_messages_table[self._current_channel_name]
 
 			local message_tables = channel_messages_table[self._current_channel_name]
 			local new_message_table = {}
@@ -2094,7 +2094,7 @@ ChatView._send_channel_message = function (self, content, emojis)
 		local chat_output_content = chat_output_widget.content
 		local private_messages_table = chat_output_content.private_messages_table
 
-		private_messages_table[user_name] = not not private_messages_table[user_name]
+		private_messages_table[user_name] = private_messages_table[user_name]
 
 		local message_tables = private_messages_table[user_name]
 		local new_message_table = {}
@@ -2124,7 +2124,7 @@ ChatView._send_channel_message = function (self, content, emojis)
 		local chat_output_content = chat_output_widget.content
 		local channel_messages_table = chat_output_content.channel_messages_table
 
-		channel_messages_table[self._current_channel_name] = not not channel_messages_table[self._current_channel_name]
+		channel_messages_table[self._current_channel_name] = channel_messages_table[self._current_channel_name]
 
 		local message_tables = channel_messages_table[self._current_channel_name]
 		local new_message_table = {}
@@ -2149,7 +2149,7 @@ ChatView._send_channel_message = function (self, content, emojis)
 		local chat_output_content = chat_output_widget.content
 		local channel_messages_table = chat_output_content.channel_messages_table
 
-		channel_messages_table[self._current_channel_name] = not not channel_messages_table[self._current_channel_name]
+		channel_messages_table[self._current_channel_name] = channel_messages_table[self._current_channel_name]
 
 		local message_tables = channel_messages_table[self._current_channel_name]
 
@@ -2175,7 +2175,7 @@ ChatView._send_private_message = function (self, content, emojis)
 			local chat_output_content = chat_output_widget.content
 			local private_messages_table = chat_output_content.private_messages_table
 
-			private_messages_table[user_name] = not not private_messages_table[user_name]
+			private_messages_table[user_name] = private_messages_table[user_name]
 
 			local message_tables = private_messages_table[user_name]
 			local new_message_table = {}
@@ -2205,7 +2205,7 @@ ChatView._send_private_message = function (self, content, emojis)
 		local chat_output_content = chat_output_widget.content
 		local private_messages_table = chat_output_content.private_messages_table
 
-		private_messages_table[user_name] = not not private_messages_table[user_name]
+		private_messages_table[user_name] = private_messages_table[user_name]
 
 		local message_tables = private_messages_table[user_name]
 		local new_message_table = {}
@@ -2230,7 +2230,7 @@ ChatView._send_private_message = function (self, content, emojis)
 		local chat_output_content = chat_output_widget.content
 		local private_messages_table = chat_output_content.private_messages_table
 
-		private_messages_table[user_name] = not not private_messages_table[user_name]
+		private_messages_table[user_name] = private_messages_table[user_name]
 
 		local message_tables = private_messages_table[user_name]
 
@@ -2399,7 +2399,7 @@ end
 
 ChatView._exit = function (self, return_to_game)
 	-- function 67
-	local exit_transition = return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu"
+	local exit_transition = return_to_game and "exit_menu" or not return_to_game and "ingame_menu"
 
 	self._ingame_ui:handle_transition(exit_transition)
 end
@@ -2457,9 +2457,9 @@ ChatView._populate_user_widgets = function (self, users, read_index)
 		if user_data then
 			content.user_name = user_data.name
 			content.title_text = string.sub(user_data.name, 1, -11)
-			content.level_text = not not user_data.level
-			content.description_text = not not user_data.info
-			content.icon = not not tmp_icons[user_data.icon_id]
+			content.level_text = user_data.level
+			content.description_text = user_data.info
+			content.icon = tmp_icons[user_data.icon_id]
 		end
 
 		local visible = user_data ~= nil
@@ -2479,8 +2479,8 @@ end
 
 ChatView._update_members = function (self, read_index)
 	-- function 73
-	read_index = not not read_index or not not self._user_list_read_index or not not 1
-	self._current_channel_name = not not self._current_channel_name
+	read_index = read_index or self._user_list_read_index or 1
+	self._current_channel_name = self._current_channel_name
 
 	local local_user_name = Managers.irc:user_name()
 	local user_list = {}

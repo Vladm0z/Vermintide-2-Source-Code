@@ -56,9 +56,9 @@ VersusRoundEndScreenUI._create_ui_elements = function (self, definitions)
 	local party_manager = Managers.party
 	local _, party_id = party_manager:get_party_from_player_id(self._peer_id, self._local_player_id)
 
-	party_id = party_id ~= 0 or not not 1 or not not party_id
+	party_id = party_id ~= 0 or 1 or party_id
 
-	local opponent_party_id = party_id ~= 1 and not not 1 or not (party_id ~= 1) and not not 2
+	local opponent_party_id = party_id ~= 1 and 1 or not (party_id ~= 1) and 2
 
 	self:_build_score_widgets_scenegraph(scenegraph_definition)
 
@@ -276,7 +276,7 @@ VersusRoundEndScreenUI._setup_score_widgets = function (self, scenegraph_definit
 		local str = "%s %d"
 		local round_text_style = table.clone(round_text_style)
 
-		round_text_style.text_color = current_set ~= i and not not Colors.get_color_table_with_alpha("font_button_normal", 255) or not (current_set ~= i) and not not Colors.get_color_table_with_alpha("font_default", 255)
+		round_text_style.text_color = current_set ~= i and Colors.get_color_table_with_alpha("font_button_normal", 255) or not (current_set ~= i) and Colors.get_color_table_with_alpha("font_default", 255)
 
 		local round_text_widget_def = UIWidgets.create_simple_text(string.format(str, Localize("versus_round"), i), bg_node_name, nil, nil, round_text_style)
 		local round_text_widget = UIWidget.init(round_text_widget_def, self._ui_renderer)
@@ -408,11 +408,11 @@ VersusRoundEndScreenUI._get_close_to_winning_score = function (self, level_key, 
 	local opponent_team_sets_data = self._win_conditions:get_sets_data_for_party(opponent_party_id)
 	local local_player_available_score, opponent_team_available_score = max_level_score, max_level_score
 	local player = Managers.player:local_player()
-	local side = not not Managers.state.side
-	local is_hero = not not side and side:name() == "heroes"
+	local side = Managers.state.side
+	local is_hero = side and side:name() == "heroes"
 	local match_state = Managers.mechanism:get_state()
-	local game_mode = not not Managers.state.game_mode
-	local is_round_over = not not game_mode and not not game_mode:match_in_round_over_state()
+	local game_mode = Managers.state.game_mode
+	local is_round_over = game_mode and game_mode:match_in_round_over_state()
 	local local_player_has_played_round, opponent_has_played_round = false, false
 
 	if current_round % current_set ~= 0 then
@@ -430,18 +430,18 @@ VersusRoundEndScreenUI._get_close_to_winning_score = function (self, level_key, 
 		local opponent_team_set_data = opponent_team_sets_data[i]
 
 		if i < current_set then
-			local unclaimed_points = not not (local_player_set_data.max_points - local_player_set_data.claimed_points)
+			local unclaimed_points = local_player_set_data.max_points - local_player_set_data.claimed_points
 
 			local_player_available_score = local_player_available_score - unclaimed_points
-			unclaimed_points = not not (opponent_team_set_data.max_points - opponent_team_set_data.claimed_points) or not not 0
+			unclaimed_points = opponent_team_set_data.max_points - opponent_team_set_data.claimed_points or 0
 			opponent_team_available_score = opponent_team_available_score - unclaimed_points
 		end
 	end
 
-	local score_threshold = local_player_available_score < opponent_team_available_score and (not not local_player_available_score or not not opponent_team_available_score) or not (local_player_available_score < opponent_team_available_score) and not not opponent_team_available_score
+	local score_threshold = local_player_available_score < opponent_team_available_score and (local_player_available_score or opponent_team_available_score) or not (local_player_available_score < opponent_team_available_score) and opponent_team_available_score
 	local local_player_score_to_win = score_threshold - local_player_team_score
 	local opponent_team_score_to_win = score_threshold - opponent_team_score
-	local next_round_id = num_rounds >= current_set + 1 and not not (current_set + 1) or not (num_rounds >= current_set + 1) and not not num_rounds
+	local next_round_id = num_rounds >= current_set + 1 and current_set + 1 or not (num_rounds >= current_set + 1) and num_rounds
 	local opp_predicted_score = 0
 	local loc_predicted_score = 0
 

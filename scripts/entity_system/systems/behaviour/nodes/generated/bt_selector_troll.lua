@@ -83,7 +83,7 @@ BTSelector_troll.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_downed = children[3]
-		local condition_result = not not blackboard.can_get_downed
+		local condition_result = blackboard.can_get_downed
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_downed, "aborted")

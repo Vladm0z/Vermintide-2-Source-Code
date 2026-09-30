@@ -49,7 +49,7 @@ ScrollBarLogic.set_scrollbar_values = function (self, draw_length, content_lengt
 
 	self:_set_scroll_length(scroll_length)
 
-	scroll_step_multiplier = not not scroll_step_multiplier or not not 2
+	scroll_step_multiplier = scroll_step_multiplier or 2
 
 	local scroll_amount = math.max(step_size / scroll_length, 0) * scroll_step_multiplier
 
@@ -62,7 +62,7 @@ end
 
 ScrollBarLogic.set_scroll_percentage = function (self, percentage)
 	-- function 4
-	self:_set_scrollbar_value(not not percentage or not not 0)
+	self:_set_scrollbar_value(percentage or 0)
 end
 
 ScrollBarLogic.set_scroll_distance = function (self, distance)
@@ -104,7 +104,7 @@ ScrollBarLogic.get_scroll_length = function (self)
 	local scroll_bar_info = self:_get_scrollbar_info()
 	local length = scroll_bar_info.total_scroll_length
 
-	return not not length or not not 0
+	return length or 0
 end
 
 ScrollBarLogic.enabled = function (self)

@@ -24,9 +24,9 @@ BTWarpfireThrowerShootAction.enter = function (self, unit, blackboard, t)
 
 	local world = blackboard.world
 
-	blackboard.physics_world = not not blackboard.physics_world
+	blackboard.physics_world = blackboard.physics_world
 
-	local attack_data = not not blackboard.attack_pattern_data
+	local attack_data = blackboard.attack_pattern_data
 
 	blackboard.attack_pattern_data = attack_data
 
@@ -47,7 +47,7 @@ BTWarpfireThrowerShootAction.enter = function (self, unit, blackboard, t)
 	navigation_extension:stop()
 	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	attack_data.constraint_target = not not attack_data.constraint_target
+	attack_data.constraint_target = attack_data.constraint_target
 
 	local target_unit = blackboard.target_unit
 
@@ -58,7 +58,7 @@ BTWarpfireThrowerShootAction.enter = function (self, unit, blackboard, t)
 	blackboard.line_of_sight_raycast_timer = t + 0.5
 	blackboard.close_attack_cooldown = 0
 
-	local data = not not blackboard.warpfire_data
+	local data = blackboard.warpfire_data
 
 	blackboard.warpfire_data = data
 	data.is_firing = false
@@ -382,7 +382,7 @@ BTWarpfireThrowerShootAction._close_range_attack = function (self, unit, attack_
 			if hit_unit ~= unit then
 				local is_ai_unit = DamageUtils.is_enemy(blackboard.target_unit, hit_unit)
 				local is_player_unit = DamageUtils.is_player_unit(hit_unit)
-				local unit_is_character = not not is_ai_unit or not not is_player_unit
+				local unit_is_character = is_ai_unit or is_player_unit
 
 				if unit_is_character then
 					local buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
@@ -439,7 +439,7 @@ BTWarpfireThrowerShootAction._aim_at_target = function (self, unit, target_unit,
 	-- function 15
 	local aim_pos, wanted_rotation, _, target_position = self:_calculate_wanted_target_position(unit, target_unit)
 	local target_status_extension = ScriptUnit.has_extension(blackboard.target_unit, "status_system")
-	local target_is_dodging = not not target_status_extension and not not target_status_extension:get_is_dodging()
+	local target_is_dodging = target_status_extension and target_status_extension:get_is_dodging()
 	local aim_rotation_override_distance = action.aim_rotation_override_distance
 	local aim_rotation_override_speed_multiplier = action.aim_rotation_override_speed_multiplier
 	local aim_rotation_dodge_multipler = action.aim_rotation_dodge_multipler
@@ -449,7 +449,7 @@ BTWarpfireThrowerShootAction._aim_at_target = function (self, unit, target_unit,
 	local wanted_aim_rotation = Quaternion.look(wanted_aim_position_offset, Vector3.up())
 	local current_aim_rotation = attack_pattern_data.current_aim_rotation:unbox()
 	local distance_to_target = Vector3.distance(self_pos, target_position)
-	local aim_rotation_modifier = distance_to_target < aim_rotation_override_distance and (not not aim_rotation_override_speed_multiplier or target_is_dodging and (not not aim_rotation_dodge_multipler or not not math.max(1 - distance_to_target / action.close_attack_range, 0.1)) or not target_is_dodging and not not math.max(1 - distance_to_target / action.close_attack_range, 0.1)) or not (distance_to_target < aim_rotation_override_distance) and (target_is_dodging and (not not aim_rotation_dodge_multipler or not not math.max(1 - distance_to_target / action.close_attack_range, 0.1)) or not target_is_dodging and not not math.max(1 - distance_to_target / action.close_attack_range, 0.1))
+	local aim_rotation_modifier = distance_to_target < aim_rotation_override_distance and (aim_rotation_override_speed_multiplier or target_is_dodging and (aim_rotation_dodge_multipler or math.max(1 - distance_to_target / action.close_attack_range, 0.1)) or not target_is_dodging and math.max(1 - distance_to_target / action.close_attack_range, 0.1)) or not (distance_to_target < aim_rotation_override_distance) and (target_is_dodging and (aim_rotation_dodge_multipler or math.max(1 - distance_to_target / action.close_attack_range, 0.1)) or not target_is_dodging and math.max(1 - distance_to_target / action.close_attack_range, 0.1))
 	local upper_body_rotation_speed = action.radial_speed_upper_body_shooting * math.min(aim_rotation_modifier, aim_rotation_override_speed_multiplier)
 	local lerped_rotation = self:_rotate_from_to(current_aim_rotation, wanted_aim_rotation, upper_body_rotation_speed, dt)
 	local aim_position = pivot + Quaternion.forward(lerped_rotation) * Vector3.length(wanted_aim_position_offset)
@@ -498,7 +498,7 @@ BTWarpfireThrowerShootAction._rotate_from_to = function (self, from, to, max_ang
 	local inner_product = Quaternion.dot(to, from)
 	local angle_difference = 2 * math.acos(math.clamp(inner_product, -1, 1))
 	local max_delta = max_angle_speed * dt
-	local lerp_t = angle_difference ~= 0 and not not math.min(max_delta / angle_difference, 1) or not (angle_difference ~= 0) and not not 1
+	local lerp_t = angle_difference ~= 0 and math.min(max_delta / angle_difference, 1) or not (angle_difference ~= 0) and 1
 	local normalized_angle_diff = math.abs((angle_difference % TWO_PI + PI) % TWO_PI - PI)
 
 	return Quaternion.lerp(from, to, lerp_t), math.max(normalized_angle_diff - max_delta, 0)

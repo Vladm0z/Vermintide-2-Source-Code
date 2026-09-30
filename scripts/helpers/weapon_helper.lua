@@ -2,7 +2,7 @@
 
 require("scripts/helpers/effect_helper")
 
-WeaponHelper = not not WeaponHelper
+WeaponHelper = WeaponHelper
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 
@@ -102,7 +102,7 @@ WeaponHelper.angle_to_hit_moving_target = function (p1, p2, projectile_speed, ta
 		local angle1 = math.atan((speed_squared + second_degree_component) / (gravity * flat_distance))
 		local angle2 = math.atan((speed_squared - second_degree_component) / (gravity * flat_distance))
 
-		angle = use_greatest_angle and (not not math.max(angle1, angle2) or not not math.min(angle1, angle2)) or not use_greatest_angle and not not math.min(angle1, angle2)
+		angle = use_greatest_angle and (math.max(angle1, angle2) or math.min(angle1, angle2)) or not use_greatest_angle and math.min(angle1, angle2)
 		t = flat_distance / (projectile_speed * math.cos(angle))
 		estimated_target_position = p2 + t * target_velocity
 		flat_distance = Vector3.length(Vector3.flat(estimated_target_position - p1))
@@ -130,7 +130,7 @@ WeaponHelper.test_angled_trajectory = function (physics_world, p1, p2, gravity, 
 		projectile_speed, flat_dist = WeaponHelper:wanted_projectile_speed(distance_vector, -gravity, angle)
 	elseif projectile_speed then
 		a1, a2, flat_dist = WeaponHelper:wanted_projectile_angle(distance_vector, -gravity, projectile_speed)
-		angle = not not a1 or not not a2
+		angle = a1 or a2
 	end
 
 	if angle and projectile_speed then
@@ -141,7 +141,7 @@ WeaponHelper.test_angled_trajectory = function (physics_world, p1, p2, gravity, 
 		local flat_speed = Vector3.length(Vector3(velocity.x, velocity.y, 0))
 		local t_total = flat_dist / flat_speed
 
-		sections = not not sections or not not 4
+		sections = sections or 4
 
 		local t = 0
 		local delta_time = t_total / sections
@@ -161,7 +161,7 @@ WeaponHelper.test_angled_trajectory = function (physics_world, p1, p2, gravity, 
 
 			if not always_complete then
 				local current_velocity = segment_pos2 - segment_pos1
-				local result, hit_position, _, _, actor = PhysicsWorld.immediate_raycast(physics_world, segment_pos1, current_velocity, Vector3.length(current_velocity), "closest", "collision_filter", not not collision_filter or not not "filter_ai_mover")
+				local result, hit_position, _, _, actor = PhysicsWorld.immediate_raycast(physics_world, segment_pos1, current_velocity, Vector3.length(current_velocity), "closest", "collision_filter", collision_filter or "filter_ai_mover")
 
 				if result then
 					if i == sections then
@@ -275,7 +275,7 @@ WeaponHelper.draw_ball_at_time = function (physics_world, p1, vec_flat, gravity,
 
 	position.z = position.z + height
 
-	QuickDrawer:sphere(position, 0.3, not not color or not not Colors.get_indexed(66))
+	QuickDrawer:sphere(position, 0.3, color or Colors.get_indexed(66))
 
 	return position
 end
@@ -344,7 +344,7 @@ WeaponHelper._trajectory_hits_target = function (self, world, radians, speed, gr
 			if result then
 				local unit_hit_is_player = DamageUtils.is_player_unit(Actor.unit(actor))
 				local hit_to_target_distance_squared = Vector3.distance_squared(target_position, hit_position)
-				local hit_target = hit_to_target_distance_squared < 0.04 or hit_to_target_distance_squared < 1 and not not unit_hit_is_player
+				local hit_target = hit_to_target_distance_squared < 0.04 or hit_to_target_distance_squared < 1 and unit_hit_is_player
 
 				if Development.parameter("ai_debug_trajectory_raycast") then
 					WeaponHelper:debug_draw_trajectory_hit(hit_position, hit_target, drawer)
@@ -371,7 +371,7 @@ end
 
 WeaponHelper.debug_draw_trajectory_hit = function (self, position, hit_target, drawer)
 	-- function 12
-	local color = hit_target and not not Color(255, 74, 247, 115) or not hit_target and not not Color(255, 245, 108, 49)
+	local color = hit_target and Color(255, 74, 247, 115) or not hit_target and Color(255, 245, 108, 49)
 
 	drawer:sphere(position, 0.1, color)
 end
@@ -411,8 +411,8 @@ WeaponHelper.ground_target = function (self, physics_world, fitting_unit, origin
 				local flat_velocity = Vector3.length(Vector3.flat(velocity))
 
 				for j = 1, GROUND_TARGET_MAX_STEPS do
-					local step_back_distance = j ~= 1 and not not 1 or not (j ~= 1) and not not 0.5
-					local step_back_t = flat_velocity <= EPSILON and not not 0 or not (flat_velocity <= EPSILON) and not not (step_back_distance / flat_velocity)
+					local step_back_distance = j ~= 1 and 1 or not (j ~= 1) and 0.5
+					local step_back_t = flat_velocity <= EPSILON and 0 or not (flat_velocity <= EPSILON) and step_back_distance / flat_velocity
 					local step_back_position
 
 					if step_back_t > 0 then
@@ -472,7 +472,7 @@ end
 WeaponHelper.look_at_enemy_or_static_position = function (self, physics_world, position, direction, side, hit_radius, length)
 	-- function 15
 	local static_hit, static_hit_pos, ray_length = PhysicsWorld.immediate_raycast(physics_world, position, direction, length, "closest", "collision_filter", "filter_player_ray_projectile_static_only")
-	local max_length = not not ray_length or not not length
+	local max_length = ray_length or length
 	local halfway_position = position + direction * max_length / 2
 	local prepare_radius = max_length / 2
 
@@ -481,7 +481,7 @@ WeaponHelper.look_at_enemy_or_static_position = function (self, physics_world, p
 	local results = PhysicsWorld.linear_sphere_sweep(physics_world, position + direction * (hit_radius / 2), position + direction * max_length, hit_radius, 100, "types", "both", "collision_filter", "filter_player_ray_projectile", "report_initial_overlap")
 	local side_manager = Managers.state.side
 	local side_by_unit = side_manager.side_by_unit
-	local num_results = results and not not #results or not results and not not 0
+	local num_results = results and #results or not results and 0
 	local best_position
 
 	for i = 1, num_results do
@@ -498,7 +498,7 @@ WeaponHelper.look_at_enemy_or_static_position = function (self, physics_world, p
 				if not side or not hit_unit_side or side_manager:is_enemy_by_side(side, hit_unit_side) then
 					local node = Actor.node(hit_actor)
 					local breed = AiUtils.unit_breed(hit_unit)
-					local hit_zone = not not breed and not not breed.hit_zones_lookup[node]
+					local hit_zone = breed and breed.hit_zones_lookup[node]
 
 					if not hit_zone or hit_zone.name ~= "afro" then
 						best_position = result.position
@@ -510,5 +510,5 @@ WeaponHelper.look_at_enemy_or_static_position = function (self, physics_world, p
 		end
 	end
 
-	return not not best_position or not not static_hit_pos or not not (position + direction * length)
+	return best_position or static_hit_pos or position + direction * length
 end

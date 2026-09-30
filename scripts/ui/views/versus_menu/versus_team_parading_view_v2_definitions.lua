@@ -229,7 +229,7 @@ function create_rotated_texture(texture, angle, size, pivot, scenegraph_id, colo
 			texture_id = {
 				angle = angle,
 				pivot = pivot,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -238,12 +238,12 @@ function create_rotated_texture(texture, angle, size, pivot, scenegraph_id, colo
 				offset = {
 					0,
 					0,
-					not not layer or not not 0
+					layer or 0
 				},
 				texture_size = size
 			}
 		},
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			0

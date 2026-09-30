@@ -564,7 +564,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 3
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = border_size[1] + 1920 * safe_rect * 0.5
 						style.offset[2] = border_size[2] + 1080 * safe_rect * 0.5
@@ -575,7 +575,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 4
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = -border_size[1] - 1920 * safe_rect * 0.5
 						style.offset[2] = border_size[2] + 1080 * safe_rect * 0.5
@@ -586,7 +586,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 5
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = -border_size[1] - 1920 * safe_rect * 0.5
 						style.offset[2] = -border_size[2] - 1080 * safe_rect * 0.5
@@ -597,7 +597,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "triangle",
 					content_change_function = function (content, style)
 						-- function 6
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = border_size[1] + 1920 * safe_rect * 0.5
 						style.offset[2] = -border_size[2] - 1080 * safe_rect * 0.5
@@ -608,7 +608,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 7
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = 1920 * safe_rect * 0.5
 						style.offset[2] = border_size[1] + 1080 * safe_rect * 0.5
@@ -620,7 +620,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 8
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = -1920 * safe_rect * 0.5
 						style.offset[2] = border_size[1] + 1080 * safe_rect * 0.5
@@ -632,7 +632,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 9
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = 1920 * safe_rect * 0.5
 						style.offset[2] = -1080 * safe_rect * 0.5
@@ -644,7 +644,7 @@ local function create_safe_rect_widget(scenegraph_id)
 					pass_type = "rect",
 					content_change_function = function (content, style)
 						-- function 10
-						local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+						local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 						style.offset[1] = 1920 * safe_rect * 0.5
 						style.offset[2] = 1080 * safe_rect * 0.5
@@ -1074,7 +1074,7 @@ local background_widget_definitions = {
 					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis)
 						-- function 13
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local scroll_step = not not ui_content.scroll_step
+						local scroll_step = ui_content.scroll_step
 						local current_scroll_value = ui_content.internal_scroll_value
 
 						if not gamepad_active and IS_XB1 then
@@ -1198,7 +1198,7 @@ local button_element_template = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 15
-				return not not content.hotspot.is_hover
+				return content.hotspot.is_hover
 			end
 		},
 		{
@@ -1206,7 +1206,7 @@ local button_element_template = {
 			texture_id = "texture_click_id",
 			content_check_function = function (content)
 				-- function 16
-				return content.hotspot.is_clicked == 0 or not not content.hotspot.is_selected
+				return content.hotspot.is_clicked == 0 or content.hotspot.is_selected
 			end
 		},
 		{
@@ -1657,7 +1657,7 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 					text_id = "tooltip_text",
 					content_check_function = function (content)
 						-- function 33
-						return not not content.tooltip_text
+						return content.tooltip_text
 					end
 				},
 				{
@@ -1713,7 +1713,7 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 						local internal_value = ui_content.internal_value
 						local min = ui_content.min
 						local max = ui_content.max
-						local real_value = math.round_with_precision(min + (max - min) * internal_value, not not ui_content.num_decimals)
+						local real_value = math.round_with_precision(min + (max - min) * internal_value, ui_content.num_decimals)
 
 						ui_content.value = real_value
 						ui_content.value_text = real_value
@@ -1957,8 +1957,8 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 			highlight_texture = "playerlist_hover",
 			scenegraph_id = scenegraph_id,
 			text = text,
-			slider_image = slider_image and not not slider_image.slider_image or not slider_image and not not "",
-			slider_image_text = slider_image_text and not not slider_image_text.text or not slider_image_text and not not "",
+			slider_image = slider_image and slider_image.slider_image or not slider_image and "",
+			slider_image_text = slider_image_text and slider_image_text.text or not slider_image_text and "",
 			tooltip_text = tooltip_text,
 			hotspot = {},
 			highlight_hotspot = {
@@ -1999,12 +1999,12 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 		style = {
 			offset = {
 				base_offset[1],
-				base_offset[2] - (slider_image and not not slider_image.size[2] or not slider_image and not not 0),
+				base_offset[2] - (slider_image and slider_image.size[2] or not slider_image and 0),
 				base_offset[3]
 			},
 			size = {
 				SLIDER_WIDGET_SIZE[1],
-				SLIDER_WIDGET_SIZE[2] + (slider_image and not not slider_image.size[2] or not slider_image and not not 0)
+				SLIDER_WIDGET_SIZE[2] + (slider_image and slider_image.size[2] or not slider_image and 0)
 			},
 			color = {
 				50,
@@ -2206,14 +2206,14 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 			},
 			slider_image = {
 				masked = true,
-				color = slider_image and not not slider_image.color or not slider_image and not not nil,
-				size = slider_image and not not slider_image.size or not slider_image and not not {
+				color = slider_image and slider_image.color or not slider_image and nil,
+				size = slider_image and slider_image.size or not slider_image and {
 					0,
 					0
 				},
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and not not slider_image.size[1] or not slider_image and not not 0),
-					base_offset[2] - (slider_image and not not slider_image.size[2] or not slider_image and not not 0),
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and slider_image.size[1] or not slider_image and 0),
+					base_offset[2] - (slider_image and slider_image.size[2] or not slider_image and 0),
 					base_offset[3] + 15
 				}
 			},
@@ -2222,15 +2222,15 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 				vertical_alignment = "center",
 				dynamic_font = true,
 				offset = {
-					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and not not slider_image.size[1] or not slider_image and not not 0) + 5,
-					base_offset[2] - (slider_image and not not (slider_image.size[2] / 2) or not slider_image and not not 0),
+					base_offset[1] + SLIDER_WIDGET_SIZE[1] - (slider_image and slider_image.size[1] or not slider_image and 0) + 5,
+					base_offset[2] - (slider_image and slider_image.size[2] / 2 or not slider_image and 0),
 					base_offset[3] + 16
 				},
-				text_color = slider_image_text and not not slider_image_text.color or not slider_image_text and not not Colors.get_color_table_with_alpha("font_default", 255),
-				upper_case = slider_image_text and not not slider_image_text.upper_case or not slider_image_text and not not false,
-				font_type = slider_image_text and not not slider_image_text.font or not slider_image_text and not not "hell_shark_masked",
-				font_size = slider_image_text and not not slider_image_text.font_size or not slider_image_text and not not 16,
-				localize = slider_image_text and not not slider_image_text.localize or not slider_image_text and not not false
+				text_color = slider_image_text and slider_image_text.color or not slider_image_text and Colors.get_color_table_with_alpha("font_default", 255),
+				upper_case = slider_image_text and slider_image_text.upper_case,
+				font_type = slider_image_text and slider_image_text.font or not slider_image_text and "hell_shark_masked",
+				font_size = slider_image_text and slider_image_text.font_size or not slider_image_text and 16,
+				localize = slider_image_text and slider_image_text.localize
 			},
 			bottom_edge = {
 				offset = {
@@ -2340,7 +2340,7 @@ local function create_slider_widget(text, tooltip_text, scenegraph_id, base_offs
 		scenegraph_id = scenegraph_id
 	}
 
-	base_offset[2] = base_offset[2] - SLIDER_WIDGET_SIZE[2] - (slider_image and not not slider_image.size[2] or not slider_image and not not 0)
+	base_offset[2] = base_offset[2] - SLIDER_WIDGET_SIZE[2] - (slider_image and slider_image.size[2] or not slider_image and 0)
 
 	return UIWidget.init(definition)
 end
@@ -2587,11 +2587,11 @@ local function create_drop_down_widget(text, options, selected_option, tooltip_t
 							content._last_selection = content.current_selection
 							content._last_overriden_setting = content.overriden_setting
 
-							local option_text = Utf8.upper(not not content.options_texts[content.current_selection])
+							local option_text = Utf8.upper(content.options_texts[content.current_selection])
 							local overriden_setting = content.overriden_setting
 
 							if overriden_setting then
-								local override_color = content.disabled and not not style.override_color or not content.disabled and not not style.default_color
+								local override_color = content.disabled and style.override_color or not content.disabled and style.default_color
 								local disabled_color = style.disabled_color
 
 								content.selected_option = string.format("{#color(%d,%d,%d,%d)}%s {#color(%d,%d,%d,%d);strike(true)}%s{#strike(false)}", override_color[2], override_color[3], override_color[4], override_color[1], option_text, disabled_color[2], disabled_color[3], disabled_color[4], disabled_color[1], Utf8.upper(overriden_setting))
@@ -2659,7 +2659,7 @@ local function create_drop_down_widget(text, options, selected_option, tooltip_t
 									return false
 								end
 
-								return not not hotspot.is_hover
+								return hotspot.is_hover
 							end
 						}
 					}
@@ -2724,7 +2724,7 @@ local function create_drop_down_widget(text, options, selected_option, tooltip_t
 			options_texts = options_texts,
 			options_values = options_values,
 			tooltip_text = tooltip_text,
-			disabled_tooltip_text = not not disabled_tooltip_text and not not Localize(disabled_tooltip_text),
+			disabled_tooltip_text = disabled_tooltip_text and Localize(disabled_tooltip_text),
 			arrow = {
 				texture_id = "drop_down_menu_arrow",
 				uvs = {
@@ -3153,7 +3153,7 @@ local function create_stepper_widget(text, options, selected_option, tooltip_tex
 							ui_content._last_selection = ui_content.current_selection
 							ui_content._last_overriden_setting = ui_content.overriden_setting
 
-							local option_text = Utf8.upper(not not ui_content.options_texts[ui_content.current_selection])
+							local option_text = Utf8.upper(ui_content.options_texts[ui_content.current_selection])
 							local overriden_setting = ui_content.overriden_setting
 
 							if overriden_setting then
@@ -3361,7 +3361,7 @@ local function create_stepper_widget(text, options, selected_option, tooltip_tex
 						-- function 91
 						local selection_text = content.selection_text
 
-						return not not selection_text and selection_text ~= ""
+						return selection_text and selection_text ~= ""
 					end
 				},
 				{
@@ -3434,7 +3434,7 @@ local function create_stepper_widget(text, options, selected_option, tooltip_tex
 				}
 			},
 			tooltip_text = tooltip_text,
-			disabled_tooltip_text = not not disabled_tooltip_text and not not Localize(disabled_tooltip_text),
+			disabled_tooltip_text = disabled_tooltip_text and Localize(disabled_tooltip_text),
 			current_selection = selected_option,
 			options_texts = options_texts,
 			options_values = options_values,
@@ -3738,9 +3738,9 @@ local function create_title_widget(text, optional_font_size, optional_text_color
 					base_offset[2] + 5,
 					base_offset[3]
 				},
-				text_color = not not optional_text_color or not not Colors.get_color_table_with_alpha("font_title", 255),
-				font_size = not not optional_font_size or not not 18,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				text_color = optional_text_color or Colors.get_color_table_with_alpha("font_title", 255),
+				font_size = optional_font_size or 18,
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				size = table.clone(TITLE_WIDGET_SIZE)
 			},
 			debug_middle_line = {
@@ -3901,9 +3901,9 @@ local function create_text_link_widget(text, url, optional_font_size, optional_t
 					base_offset[2] + 5,
 					base_offset[3]
 				},
-				text_color = not not optional_text_color or not not Colors.get_color_table_with_alpha("font_title", 255),
-				font_size = not not optional_font_size or not not 18,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				text_color = optional_text_color or Colors.get_color_table_with_alpha("font_title", 255),
+				font_size = optional_font_size or 18,
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				size = table.clone(TEXT_LINK_WIDGET_SIZE)
 			},
 			text_hover = {
@@ -3916,9 +3916,9 @@ local function create_text_link_widget(text, url, optional_font_size, optional_t
 					base_offset[2] + 5,
 					base_offset[3]
 				},
-				text_color = not not optional_text_color or not not Colors.get_color_table_with_alpha("font_default", 255),
-				font_size = not not optional_font_size or not not 18,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				text_color = optional_text_color or Colors.get_color_table_with_alpha("font_default", 255),
+				font_size = optional_font_size or 18,
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				size = table.clone(TEXT_LINK_WIDGET_SIZE)
 			},
 			debug_middle_line = {
@@ -4011,7 +4011,7 @@ local function create_option_widget(ui_renderer, text, options, selected_option,
 					local is_selected = i == current_selection
 
 					ui_content[option_background_id].is_selected = is_selected
-					ui_style[option_text_id].text_color = is_selected and not not ui_style[option_text_id].highlight_color or not is_selected and not not ui_style[option_text_id].default_color
+					ui_style[option_text_id].text_color = is_selected and ui_style[option_text_id].highlight_color or not is_selected and ui_style[option_text_id].default_color
 				end
 			end
 		end
@@ -4034,7 +4034,7 @@ local function create_option_widget(ui_renderer, text, options, selected_option,
 		text_id = "tooltip_text",
 		content_check_function = function (ui_content)
 			-- function 109
-			return not not ui_content.tooltip_text
+			return ui_content.tooltip_text
 		end
 	}
 	passes[#passes + 1] = {
@@ -4338,7 +4338,7 @@ local function create_keybind_widget(selected_key_1, selected_key_2, keybind_des
 					texture_id = "highlight_texture",
 					content_check_function = function (content)
 						-- function 120
-						return not not content.is_highlighted
+						return content.is_highlighted
 					end
 				},
 				{
@@ -4446,7 +4446,7 @@ local function create_keybind_widget(selected_key_1, selected_key_2, keybind_des
 			highlight_hotspot = {
 				allow_multi_hover = true
 			},
-			text = not not keybind_description or not not actions[1],
+			text = keybind_description or actions[1],
 			actions = actions,
 			actions_info = actions_info,
 			selected_key_1 = selected_key_1,
@@ -4755,7 +4755,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 					texture_id = "highlight_texture",
 					content_check_function = function (content)
 						-- function 133
-						return not not content.is_highlighted
+						return content.is_highlighted
 					end
 				},
 				{
@@ -4764,7 +4764,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 					text_id = "tooltip_text",
 					content_check_function = function (content)
 						-- function 134
-						return not not content.tooltip_text
+						return content.tooltip_text
 					end
 				},
 				{
@@ -4797,7 +4797,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 
 						local down_hotspot = content.down_hotspot
 
-						return not not down_hotspot.active
+						return down_hotspot.active
 					end
 				},
 				{
@@ -4815,7 +4815,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						local parent_style = style.parent
 						local down_hotspot = parent_content.down_hotspot
 
-						style.color = down_hotspot.active and not not parent_style.enabled_color or not down_hotspot.active and not not parent_style.disabled_color
+						style.color = down_hotspot.active and parent_style.enabled_color or not down_hotspot.active and parent_style.disabled_color
 
 						return true
 					end
@@ -4832,7 +4832,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 
 						local up_hotspot = content.up_hotspot
 
-						return not not up_hotspot.active
+						return up_hotspot.active
 					end
 				},
 				{
@@ -4850,7 +4850,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						local parent_style = style.parent
 						local up_hotspot = parent_content.up_hotspot
 
-						style.color = up_hotspot.active and not not parent_style.enabled_color or not up_hotspot.active and not not parent_style.disabled_color
+						style.color = up_hotspot.active and parent_style.enabled_color or not up_hotspot.active and parent_style.disabled_color
 
 						return true
 					end
@@ -4865,7 +4865,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						local parent_content = content.parent
 						local down_hotspot = parent_content.down_hotspot
 
-						return not not down_hotspot.active
+						return down_hotspot.active
 					end
 				},
 				{
@@ -4878,7 +4878,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 						local parent_content = content.parent
 						local up_hotspot = parent_content.up_hotspot
 
-						return not not up_hotspot.active
+						return up_hotspot.active
 					end
 				},
 				{
@@ -4896,7 +4896,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 							pass_type = "texture",
 							content_check_function = function (content)
 								-- function 143
-								return not content.hotspot.is_hover and not not not content.hotspot.is_selected
+								return not content.hotspot.is_hover and not content.hotspot.is_selected
 							end,
 							content_change_function = item_content_change_function
 						},
@@ -4906,7 +4906,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 							pass_type = "texture",
 							content_check_function = function (content, style, index)
 								-- function 144
-								return not not content.hotspot.is_hover
+								return content.hotspot.is_hover
 							end,
 							content_change_function = item_content_change_function
 						},
@@ -4916,7 +4916,7 @@ local function create_sorted_list_widget(text, tooltip_text, item_contents, item
 							pass_type = "texture",
 							content_check_function = function (content, style, index)
 								-- function 145
-								return not not content.hotspot.is_hover
+								return content.hotspot.is_hover
 							end,
 							content_change_function = item_content_change_function
 						},
@@ -5691,7 +5691,7 @@ SettingsWidgetTypeTemplate = {
 
 				local new_cooldown = math.max(input_cooldown - dt, 0)
 
-				input_cooldown = new_cooldown > 0 and (not not new_cooldown or not not nil) or not (new_cooldown > 0) and not not nil
+				input_cooldown = new_cooldown > 0 and (new_cooldown or nil) or not (new_cooldown > 0) and nil
 				content.input_cooldown = input_cooldown
 			end
 

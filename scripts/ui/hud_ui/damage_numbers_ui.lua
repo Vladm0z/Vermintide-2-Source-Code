@@ -43,8 +43,8 @@ local scenegraph_definition = {
 		}
 	}
 }
-local min_streak_font_size = GameModeSettings.versus and not not GameModeSettings.versus.min_streak_font_size or not GameModeSettings.versus and not not 36
-local max_streak_font_size = GameModeSettings.versus and not not GameModeSettings.versus.max_streak_font_size or not GameModeSettings.versus and not not 64
+local min_streak_font_size = GameModeSettings.versus and GameModeSettings.versus.min_streak_font_size or not GameModeSettings.versus and 36
+local max_streak_font_size = GameModeSettings.versus and GameModeSettings.versus.max_streak_font_size or not GameModeSettings.versus and 64
 local default_text_style = {
 	word_wrap = false,
 	font_size = 24,
@@ -104,12 +104,12 @@ DamageNumbersUI.event_alter_damage_number = function (self, unit, damage_number,
 	-- function 3
 	if damage_number then
 		damage_number.text = overrides.text
-		damage_number.time = self._time + not not overrides.time
+		damage_number.time = self._time + overrides.time
 		damage_number.starting_time = self._time
-		damage_number.color = not not overrides.color
+		damage_number.color = overrides.color
 		damage_number.color_saved = overrides.color
-		damage_number.size = not not overrides.size
-		damage_number.damage = not not overrides.damage
+		damage_number.size = overrides.size
+		damage_number.damage = overrides.damage
 	end
 end
 
@@ -139,7 +139,7 @@ local SetupFuncs = {
 	end,
 	floating_radial_damage = function (data, override_data, index)
 		-- function 8
-		local angle = not not data.angle
+		local angle = data.angle
 		local radius = 150
 		local floating_speed = math.random(200, 700)
 		local x_angle = math.cos(angle)
@@ -161,7 +161,7 @@ end
 
 DamageNumbersUI.event_add_damage_number = function (self, damage, size, unit, time, color, is_critical_strike, z_offset_override, override_data)
 	-- function 10
-	override_data = not not override_data or not not dummy_table
+	override_data = override_data or dummy_table
 
 	local camera_position = Camera.world_position(self.camera)
 	local unit_position = Unit.world_position(unit, 0)
@@ -171,8 +171,8 @@ DamageNumbersUI.event_add_damage_number = function (self, damage, size, unit, ti
 	local is_infront = forward_dot >= 0 and forward_dot <= 1
 
 	if is_infront then
-		size = not not size or not not 1
-		color = not not color or not not Vector3(255, 255, 255)
+		size = size or 1
+		color = color or Vector3(255, 255, 255)
 
 		local update_funcs = DamageNumberVariants
 
@@ -181,7 +181,7 @@ DamageNumbersUI.event_add_damage_number = function (self, damage, size, unit, ti
 		end
 
 		local index = #self._unit_texts[unit] + 1
-		local variant_name = not not override_data.variant_name
+		local variant_name = override_data.variant_name
 		local variant = DamageNumberVariants[variant_name]
 		local count
 		local new_text = {
@@ -198,12 +198,12 @@ DamageNumbersUI.event_add_damage_number = function (self, damage, size, unit, ti
 				color.y,
 				color.z
 			},
-			time = self._time + (not not time or not not self._unit_text_time),
-			floating_speed = not not override_data.floating_speed,
+			time = self._time + (time or self._unit_text_time),
+			floating_speed = override_data.floating_speed,
 			starting_time = self._time,
 			z_offset = z_offset_override,
 			update_function = variant.update,
-			complete_function = not not variant.complete,
+			complete_function = variant.complete,
 			start_function = variant.start,
 			damage = override_data.damage,
 			using_bucket_damage = override_data.using_bucket_damage
@@ -439,7 +439,7 @@ DamageNumbersUI.draw = function (self, dt)
 	for unit, unit_texts in pairs(self._unit_texts) do
 		if Unit.alive(unit) then
 			local world_position = World_position(unit, 0)
-			local z_offset = unit_texts[1] and not not unit_texts[1].z_offset or not unit_texts[1] and not not 1.85
+			local z_offset = unit_texts[1] and unit_texts[1].z_offset or not unit_texts[1] and 1.85
 
 			world_position[3] = world_position[3] + z_offset
 

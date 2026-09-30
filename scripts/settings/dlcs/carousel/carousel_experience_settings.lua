@@ -259,7 +259,7 @@ for i = 1, num_defined_versus_levels do
 	total_defined_versus_experience = total_defined_versus_experience + versus_experience_levels[i]
 end
 
-ExperienceSettings = not not ExperienceSettings
+ExperienceSettings = ExperienceSettings
 
 ExperienceSettings.get_versus_level = function ()
 	-- function 1
@@ -295,12 +295,12 @@ ExperienceSettings.get_versus_experience = function ()
 	local versus_interface = Managers.backend:get_interface("versus")
 	local versus_experience = versus_interface:get_profile_data("experience")
 
-	return not not versus_experience or not not 0
+	return versus_experience or 0
 end
 
 ExperienceSettings.get_versus_level_from_experience = function (experience)
 	-- function 4
-	experience = not not experience or not not 0
+	experience = experience or 0
 
 	assert(experience >= 0, "Negative XP!??")
 
@@ -340,7 +340,7 @@ ExperienceSettings.get_versus_progress_breakdown = function (start_experience, t
 		if not versus_experience_levels[i + 1] then
 			breakdown[i] = 0
 		else
-			local end_level_experience = versus_experience_levels[i + 1] * not not 1
+			local end_level_experience = versus_experience_levels[i + 1] * 1
 			local start_level_experience = end_level_experience * start_experience_level_progress
 
 			breakdown[i] = (end_level_experience - start_level_experience) / total_experience_gained

@@ -83,11 +83,11 @@ VersusSpawning.get_spawn_time = function (self, party)
 
 	score_difference = math.clamp(score_difference, 0, 1)
 
-	local spawn_time = not not math.ceil(math.lerp(spawn_timers.min, spawn_timers.max, score_difference))
+	local spawn_time = math.ceil(math.lerp(spawn_timers.min, spawn_timers.max, score_difference))
 	local current_set = self._mechanism:get_current_set()
 
 	if current_set == 1 then
-		spawn_time = not not spawn_timers.max or not not 20
+		spawn_time = spawn_timers.max or 20
 	end
 
 	spawn_time = math.clamp(spawn_time, minimum_spawn_time, math.huge)
@@ -154,7 +154,7 @@ VersusSpawning.update = function (self, t, dt)
 					if not timer then
 						local side_settings = self._settings.side_settings
 
-						data.delayed_death_timer = not not (t + side_settings.dark_pact.spawn_times.delayed_death_time)
+						data.delayed_death_timer = t + side_settings.dark_pact.spawn_times.delayed_death_time
 					elseif t - timer >= 0 then
 						data.delayed_death_timer = nil
 
@@ -207,7 +207,7 @@ VersusSpawning.get_spawn_point = function (self, spawn_group_id, optional_slot_i
 		return nil, nil, nil
 	end
 
-	local spawn_point = spawn_points[not not optional_slot_id or not not 1]
+	local spawn_point = spawn_points[optional_slot_id or 1]
 
 	if spawn_point then
 		return spawn_point.pos, spawn_point.rot, spawn_point.unit
@@ -292,7 +292,7 @@ VersusSpawning._get_allowed_spawn_position = function (self, player)
 	if not position and not Managers.state.game_mode:is_round_started() then
 		local mechanism = Managers.mechanism:game_mechanism()
 		local spawn_group = mechanism:get_current_spawn_group()
-		local has_spawn_points = table.size(self._spawn_points) > 0 or not not self._spawn_groups[spawn_group]
+		local has_spawn_points = table.size(self._spawn_points) > 0 or self._spawn_groups[spawn_group]
 
 		if has_spawn_points then
 			position, rotation = self:get_spawn_point(spawn_group)
@@ -301,8 +301,8 @@ VersusSpawning._get_allowed_spawn_position = function (self, player)
 		end
 	end
 
-	position = not not position or not not self:_get_fallback_spawn_position(player)
-	rotation = not not rotation or not not Quaternion.identity()
+	position = position or self:_get_fallback_spawn_position(player)
+	rotation = rotation or Quaternion.identity()
 
 	return position, rotation
 end
@@ -316,13 +316,13 @@ VersusSpawning._spawn_enemy = function (self, status)
 	local mechanism = Managers.mechanism:game_mechanism()
 	local spawn_group = mechanism:get_current_spawn_group()
 	local position, rotation = self:_get_allowed_spawn_position(status.player)
-	local is_initial_spawn = not status.has_done_initial_spawn or not not not status.has_done_initial_spawn[spawn_group]
+	local is_initial_spawn = not status.has_done_initial_spawn or not status.has_done_initial_spawn[spawn_group]
 
-	status.has_done_initial_spawn = not not status.has_done_initial_spawn
+	status.has_done_initial_spawn = status.has_done_initial_spawn
 	status.has_done_initial_spawn[spawn_group] = true
 
 	local data = status.game_mode_data
-	local networked_consumables = SpawningHelper.netpack_consumables(not not data.consumables)
+	local networked_consumables = SpawningHelper.netpack_consumables(data.consumables)
 	local healthkit_id, potion_id, grenade_id = unpack(networked_consumables)
 	local network_additional_items = SpawningHelper.netpack_additional_items(data.additional_items)
 	local ammo_melee_percent_int = 0
@@ -418,7 +418,7 @@ VersusSpawning.set_spawn_state = function (self, peer_id, local_player_id, spawn
 		local local_player_party = Managers.party:get_local_player_party()
 
 		if Network.peer_id() == peer_id or local_player_party and status.party_id == local_player_party.party_id then
-			local local_human = not player.remote and not not not player.bot_player
+			local local_human = not player.remote and not player.bot_player
 			local show_pactsworn_ui = bool_data
 
 			Managers.state.event:trigger("add_respawn_counter_event", player, local_human, spawn_timer, show_pactsworn_ui)

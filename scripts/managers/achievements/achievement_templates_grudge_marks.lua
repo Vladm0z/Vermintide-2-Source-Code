@@ -60,7 +60,7 @@ achievements.grudge_marks_on_kill_util = {
 			local achievement_id = achievement_to_check[i]
 			local completed = achievements[achievement_id].completed(statistics_db, stats_id)
 
-			completed = not not completed or not not backend_interface_loot:achievement_rewards_claimed(achievement_id)
+			completed = completed or backend_interface_loot:achievement_rewards_claimed(achievement_id)
 
 			if not completed then
 				return false
@@ -98,7 +98,7 @@ achievements.grudge_marks_on_kill_util = {
 
 		local local_player_unit = Managers.player:local_player().player_unit
 		local career_extension = ScriptUnit.has_extension(local_player_unit, "career_system")
-		local career_name = not not career_extension and not not career_extension:career_name()
+		local career_name = career_extension and career_extension:career_name()
 
 		if not career_name then
 			return
@@ -107,8 +107,8 @@ achievements.grudge_marks_on_kill_util = {
 		statistics_db:increment_stat(stats_id, "grudge_mark_kills", career_name)
 
 		local mechanism = Managers.mechanism:game_mechanism()
-		local deus_run_controller = not not mechanism and not not mechanism.get_deus_run_controller
-		local journey_name = not not deus_run_controller and not not deus_run_controller:get_journey_name()
+		local deus_run_controller = mechanism and mechanism.get_deus_run_controller
+		local journey_name = deus_run_controller and deus_run_controller:get_journey_name()
 
 		if journey_name then
 			statistics_db:increment_stat(stats_id, "grudge_marks_kills_per_career_per_expedition", career_name, journey_name)

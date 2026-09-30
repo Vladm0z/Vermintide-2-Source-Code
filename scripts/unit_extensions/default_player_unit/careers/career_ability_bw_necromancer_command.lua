@@ -108,7 +108,7 @@ end
 
 CareerAbilityBWNecromancerCommand._server_command_sacrifice_pet = function (self, pet_unit)
 	-- function 7
-	local target_node_id = Unit.has_node(pet_unit, "j_spine") and not not Unit.node(pet_unit, "j_spine") or not Unit.has_node(pet_unit, "j_spine") and not not 0
+	local target_node_id = Unit.has_node(pet_unit, "j_spine") and Unit.node(pet_unit, "j_spine") or not Unit.has_node(pet_unit, "j_spine") and 0
 	local network_manager = Managers.state.network
 	local effect_name_id = NetworkLookup.effects["fx/necromancer_skeleton_sacrifice"]
 	local pet_unit_id = network_manager:unit_game_object_id(pet_unit)
@@ -126,7 +126,7 @@ CareerAbilityBWNecromancerCommand._server_command_sacrifice_pet = function (self
 		local pet_position = POSITION_LOOKUP[pet_unit]
 		local player_unit = self._owner_unit
 		local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
-		local career_power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not DefaultPowerLevel
+		local career_power_level = career_extension and career_extension:get_career_power_level() or not career_extension and DefaultPowerLevel
 		local area_damage_system = Managers.state.entity:system("area_damage_system")
 
 		area_damage_system:create_explosion(player_unit, pet_position, Quaternion.identity(), "sienna_necromancer_passive_explosion", 1, "buff", career_power_level, false)
@@ -320,13 +320,13 @@ CareerAbilityBWNecromancerCommand._update_vent_command_target = function (self, 
 	-- function 18
 	local last_target = self._vent_command_target
 	local wielded_item_template = self._inventory_extension:get_wielded_slot_item_template()
-	local in_command_mode = not not wielded_item_template and not not wielded_item_template.is_command_utility_weapon
+	local in_command_mode = wielded_item_template and wielded_item_template.is_command_utility_weapon
 	local new_target, using_fallback
 
 	if in_command_mode then
 		local hovered_unit, fallback_unit = self._commander_extension:hovered_friendly_unit()
 
-		using_fallback = not hovered_unit and not not not not fallback_unit
+		using_fallback = not hovered_unit and fallback_unit
 
 		if not hovered_unit then
 			local controlled_units = self._commander_extension:get_controlled_units()
@@ -336,7 +336,7 @@ CareerAbilityBWNecromancerCommand._update_vent_command_target = function (self, 
 				local duration = controlled_unit_data.template.duration
 
 				if duration then
-					local time_left = not not controlled_unit_data.start_t + duration - t
+					local time_left = controlled_unit_data.start_t + duration - t
 
 					if time_left < least_t_left then
 						least_t_left = time_left
@@ -346,7 +346,7 @@ CareerAbilityBWNecromancerCommand._update_vent_command_target = function (self, 
 			end
 		end
 
-		new_target = not not hovered_unit or not not fallback_unit
+		new_target = hovered_unit or fallback_unit
 	end
 
 	if self._vent_outline_id and (using_fallback or new_target ~= last_target) or not self._vent_outline_id and new_target ~= last_target then

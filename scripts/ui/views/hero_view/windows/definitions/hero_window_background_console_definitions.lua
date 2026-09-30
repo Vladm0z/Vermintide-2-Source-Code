@@ -138,7 +138,7 @@ local function create_detailed_stat_widget(scenegraph_id, size, list_scenegraph_
 	-- function 1
 	local background_texture = "menu_frame_bg_02"
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local background_size = background_texture_settings and not not background_texture_settings.size or not background_texture_settings and not not size
+	local background_size = background_texture_settings and background_texture_settings.size or not background_texture_settings and size
 	local masked = true
 	local num_entries = 50
 	local entry_size = {
@@ -583,7 +583,7 @@ local function create_detailed_stat_widget(scenegraph_id, size, list_scenegraph_
 				font_size = 26,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+				font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				normal_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
@@ -599,7 +599,7 @@ local function create_detailed_stat_widget(scenegraph_id, size, list_scenegraph_
 				font_size = 26,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+				font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				normal_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -614,7 +614,7 @@ local function create_detailed_stat_widget(scenegraph_id, size, list_scenegraph_
 				localize = false,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				normal_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
@@ -629,7 +629,7 @@ local function create_detailed_stat_widget(scenegraph_id, size, list_scenegraph_
 				localize = false,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				normal_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -644,7 +644,7 @@ local function create_detailed_stat_widget(scenegraph_id, size, list_scenegraph_
 				localize = false,
 				horizontal_alignment = "right",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				normal_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
@@ -659,7 +659,7 @@ local function create_detailed_stat_widget(scenegraph_id, size, list_scenegraph_
 				localize = false,
 				horizontal_alignment = "right",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				normal_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {

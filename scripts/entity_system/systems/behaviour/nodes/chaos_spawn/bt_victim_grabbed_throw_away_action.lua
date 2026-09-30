@@ -125,8 +125,8 @@ BTVictimGrabbedThrowAwayAction.catapult_player = function (self, unit, blackboar
 		target_pos = victim_pos + Quaternion.forward(Unit.local_rotation(unit, 0)) * 10
 	end
 
-	local saved_throw_dir = not not blackboard.use_stored_throw_direction
-	local throw_dir = not not saved_throw_dir or not not Vector3.normalize(target_pos - victim_pos)
+	local saved_throw_dir = blackboard.use_stored_throw_direction
+	local throw_dir = saved_throw_dir or Vector3.normalize(target_pos - victim_pos)
 	local velocity = throw_speed * throw_dir
 
 	if throw_speed_z then
@@ -143,7 +143,7 @@ local Unit_alive = Unit.alive
 
 BTVictimGrabbedThrowAwayAction.run = function (self, unit, blackboard, t, dt)
 	-- function 6
-	local should_exit = not not blackboard.attack_finished
+	local should_exit = blackboard.attack_finished
 
 	if should_exit then
 		return "done"
@@ -154,8 +154,8 @@ BTVictimGrabbedThrowAwayAction.run = function (self, unit, blackboard, t, dt)
 	local target_unit = blackboard.target_unit
 
 	if Unit.alive(target_unit) then
-		local saved_throw_dir = not not blackboard.use_stored_throw_direction
-		local rot = saved_throw_dir and not not Quaternion.look(saved_throw_dir) or not saved_throw_dir and not not Unit_alive(target_unit)
+		local saved_throw_dir = blackboard.use_stored_throw_direction
+		local rot = saved_throw_dir and Quaternion.look(saved_throw_dir) or not saved_throw_dir and Unit_alive(target_unit)
 
 		blackboard.locomotion_extension:set_wanted_rotation(rot)
 	end

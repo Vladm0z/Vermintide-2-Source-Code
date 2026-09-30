@@ -784,7 +784,7 @@ end
 
 local function create_act_widget(index, optional_texture_version)
 	-- function 18
-	local texture_version = not not optional_texture_version or not not "09"
+	local texture_version = optional_texture_version or "09"
 	local scenegraph_id = "act_text_root_node"
 	local size = scenegraph_definition[scenegraph_id].size
 	local draw_divider = index > 1
@@ -970,7 +970,7 @@ end
 
 local function create_end_act_widget(optional_texture_version)
 	-- function 19
-	local texture_version = not not optional_texture_version or not not "09"
+	local texture_version = optional_texture_version or "09"
 	local scenegraph_id = "end_act_root_node"
 	local size = scenegraph_definition[scenegraph_id].size
 	local widget = {
@@ -1196,7 +1196,7 @@ local function create_loot_widget(texture, text)
 			counter_text = "0/0",
 			checkmark = "matchmaking_checkbox",
 			amount = 0,
-			text = not not text or not not "n/a",
+			text = text or "n/a",
 			icon = texture,
 			glow_icon = texture .. "_glow"
 		},
@@ -1563,7 +1563,7 @@ function create_simple_texture(texture, scenegraph_id, masked, retained, color, 
 		offset = {
 			0,
 			0,
-			not not offset or not not 0
+			offset or 0
 		}
 	end
 
@@ -1596,7 +1596,7 @@ function create_simple_texture(texture, scenegraph_id, masked, retained, color, 
 			texture_id = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -1660,7 +1660,7 @@ function create_hero_widgets(scenegraph_id)
 	local passes = {}
 	local content = {}
 	local style = {}
-	local slot_width_spacing = not not slot_spacing or not not 0
+	local slot_width_spacing = slot_spacing or 0
 	local offset_layer = 0
 	local total_length = -slot_width_spacing
 	local start_width_offset = 0

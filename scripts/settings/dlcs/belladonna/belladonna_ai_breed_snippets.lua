@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_ai_breed_snippets.lua
 
-AiBreedSnippets = not not AiBreedSnippets
+AiBreedSnippets = AiBreedSnippets
 
 AiBreedSnippets.on_beastmen_bestigor_spawn = function (unit, blackboard)
 	-- function 1
@@ -82,7 +82,7 @@ AiBreedSnippets.on_beastmen_bestigor_update = function (unit, blackboard, t)
 		local target_unit_status_extension = ScriptUnit.has_extension(blackboard.target_unit, "status_system")
 
 		if target_unit_status_extension then
-			local num_charges_targeting_player = not not target_unit_status_extension.num_charges_targeting_player
+			local num_charges_targeting_player = target_unit_status_extension.num_charges_targeting_player
 
 			blackboard.num_charges_targeting_target = num_charges_targeting_player
 			blackboard.target_is_charged = target_unit_status_extension:is_charged()
@@ -166,7 +166,7 @@ AiBreedSnippets.on_beastmen_standard_bearer_spawn = function (unit, blackboard)
 				local distance_from_border = 0.1
 				local clamped_position = GwNavQueries.inside_position_from_outside_position(nav_world, spawn_pos, above, below, horizontal, distance_from_border)
 
-				clamped_position = not not clamped_position or not not POSITION_LOOKUP[unit]
+				clamped_position = clamped_position or POSITION_LOOKUP[unit]
 
 				conflict_director:spawn_queued_unit(breed, Vector3Box(clamped_position), QuaternionBox(rot), "hidden_spawn", nil, "horde_hidden", optional_data)
 			end

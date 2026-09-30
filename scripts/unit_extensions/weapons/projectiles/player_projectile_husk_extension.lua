@@ -40,11 +40,11 @@ PlayerProjectileHuskExtension.init = function (self, extension_init_context, uni
 				end
 
 				local item_units = BackendUtils.get_item_units(wielded_item_data)
-				local is_ammo_weapon = not not item_units and not not item_units.is_ammo_weapon
+				local is_ammo_weapon = item_units and item_units.is_ammo_weapon
 
 				if is_ammo_weapon then
 					local wielded_item_template = BackendUtils.get_item_template(wielded_item_data)
-					local material_settings_name = not not skin_material_settings_name or not not item_units.material_settings_name
+					local material_settings_name = skin_material_settings_name or item_units.material_settings_name
 
 					if material_settings_name then
 						GearUtils.apply_material_settings(unit, material_settings_name)
@@ -97,7 +97,7 @@ PlayerProjectileHuskExtension.init = function (self, extension_init_context, uni
 	self._timed_data = timed_data
 	self._time_initialized = extension_init_data.time_initialized
 	self.scale = extension_init_data.scale
-	self.charge_level = not not extension_init_data.charge_level / 100
+	self.charge_level = extension_init_data.charge_level / 100
 	self._num_targets_hit = 0
 	self._hit_units = {}
 
@@ -136,14 +136,14 @@ PlayerProjectileHuskExtension.initialize_projectile = function (self, projectile
 		self._stop_impacts = false
 		self._amount_of_mass_hit = 0
 
-		local damage_profile_name = not not impact_data.damage_profile
+		local damage_profile_name = impact_data.damage_profile
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local owner_unit = self._owner_unit
 		local difficulty_level = Managers.state.difficulty:get_difficulty()
 		local cleave_power_level = ActionUtils.scale_power_levels(self.power_level, "cleave", owner_unit, difficulty_level)
 		local max_mass_attack, max_mass_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
 
-		self._max_mass = max_mass_impact < max_mass_attack and (not not max_mass_attack or not not max_mass_impact) or not (max_mass_impact < max_mass_attack) and not not max_mass_impact
+		self._max_mass = max_mass_impact < max_mass_attack and (max_mass_attack or max_mass_impact) or not (max_mass_impact < max_mass_attack) and max_mass_impact
 	end
 
 	local timed_data = self._timed_data
@@ -211,7 +211,7 @@ PlayerProjectileHuskExtension.stop = function (self, hit_unit, hit_zone_name)
 	end
 
 	local timed_data = self._timed_data
-	local activate_life_time_on_impact = not not timed_data and not not timed_data.activate_life_time_on_impact
+	local activate_life_time_on_impact = timed_data and timed_data.activate_life_time_on_impact
 
 	if not activate_life_time_on_impact then
 		Unit.flow_event(self._projectile_unit, "lua_projectile_end")
@@ -363,7 +363,7 @@ PlayerProjectileHuskExtension.hit_enemy = function (self, impact_data, hit_unit,
 		return
 	end
 
-	local damage_profile_name = not not impact_data.damage_profile
+	local damage_profile_name = impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_link = true
 	local aoe_data = impact_data.aoe
@@ -414,7 +414,7 @@ PlayerProjectileHuskExtension.hit_enemy_damage = function (self, damage_profile,
 	local action = self._current_action
 	local node = Actor.node(hit_actor)
 	local hit_zone = breed.hit_zones_lookup[node]
-	local hit_zone_name = not not action.projectile_info.forced_hitzone
+	local hit_zone_name = action.projectile_info.forced_hitzone
 	local was_alive = HEALTH_ALIVE[hit_unit]
 
 	if was_alive then
@@ -436,14 +436,14 @@ PlayerProjectileHuskExtension.hit_enemy_damage = function (self, damage_profile,
 	if was_alive then
 		local action_mass_override = action.hit_mass_count
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and not not breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and not not breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and not not breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and not not breed.hit_mass_count)
+		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and breed.hit_mass_count)
 
 		if self.ignore_mass_and_armour then
 			hit_mass_total = 1
 		elseif action_mass_override and action_mass_override[breed.name] then
 			local mass_cost_multiplier = action_mass_override[breed.name]
 
-			hit_mass_total = hit_mass_total * (not not mass_cost_multiplier or not not 1)
+			hit_mass_total = hit_mass_total * (mass_cost_multiplier or 1)
 		end
 
 		self._amount_of_mass_hit = self._amount_of_mass_hit + hit_mass_total
@@ -511,7 +511,7 @@ PlayerProjectileHuskExtension.hit_player = function (self, impact_data, hit_unit
 	local hit = false
 	local forced_penetration = false
 	local owner_player = self._owner_player
-	local damage_profile_name = not not impact_data.damage_profile
+	local damage_profile_name = impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 
 	if damage_profile and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player) and hit_units[hit_unit] == nil then
@@ -600,7 +600,7 @@ end
 PlayerProjectileHuskExtension.hit_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, level_index, ranged_boost_curve_multiplier)
 	-- function 19
 	local has_health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
-	local damage_profile_name = not not impact_data.damage_profile_prop
+	local damage_profile_name = impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_ranged_damage = Unit.get_data(hit_unit, "allow_ranged_damage") ~= false
 
@@ -642,7 +642,7 @@ PlayerProjectileHuskExtension.hit_level_unit = function (self, impact_data, hit_
 
 	if bounce then
 		local num_bounces = self._num_bounces
-		local max_bounces = not not impact_data.max_bounces
+		local max_bounces = impact_data.max_bounces
 
 		max_bounces = max_bounces + buffed_bounces
 
@@ -684,7 +684,7 @@ end
 
 PlayerProjectileHuskExtension.hit_non_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units, ranged_boost_curve_multiplier)
 	-- function 21
-	local damage_profile_name = not not impact_data.damage_profile_prop
+	local damage_profile_name = impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local stop_impacts = false
 
@@ -750,7 +750,7 @@ PlayerProjectileHuskExtension._get_projectile_units_names = function (self, proj
 	-- function 23
 	local projectile_units_template = projectile_info.projectile_units_template
 
-	projectile_units_template = not projectile_info.use_weapon_skin or not not self._skin_projectile_units_template or not not projectile_units_template
+	projectile_units_template = not projectile_info.use_weapon_skin or self._skin_projectile_units_template or projectile_units_template
 
 	local projectile_units = ProjectileUnits[projectile_units_template]
 
@@ -776,11 +776,11 @@ PlayerProjectileHuskExtension._handle_linking = function (self, impact_data, hit
 
 	local projectile_info = self.projectile_info
 	local projectile_units = self:_get_projectile_units_names(projectile_info)
-	local dummy_linker_unit_name = not not projectile_units and not not projectile_units.dummy_linker_unit_name
+	local dummy_linker_unit_name = projectile_units and projectile_units.dummy_linker_unit_name
 
 	if dummy_linker_unit_name then
-		local depth = not not impact_data.depth
-		local depth_offset = not not impact_data.depth_offset
+		local depth = impact_data.depth
+		local depth_offset = impact_data.depth_offset
 
 		if projectile_units.dummy_linker_broken_units then
 			local broken_chance = Math.random()
@@ -904,7 +904,7 @@ end
 PlayerProjectileHuskExtension.trigger_external_event = function (self, event_name, network_sync)
 	-- function 27
 	local external_events = self.projectile_info.external_events
-	local event = not not external_events and not not external_events[event_name]
+	local event = external_events and external_events[event_name]
 
 	if event then
 		event(self)

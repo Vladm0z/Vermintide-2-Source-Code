@@ -95,7 +95,7 @@ RemotePlayer.character_name = function (self)
 
 	if profile_index then
 		local profile = SPProfiles[profile_index]
-		local display_name = not not profile and not not profile.character_name
+		local display_name = profile and profile.character_name
 
 		return display_name
 	else
@@ -110,7 +110,7 @@ RemotePlayer.profile_display_name = function (self)
 
 	if profile_index then
 		local profile = SPProfiles[profile_index]
-		local display_name = not not profile and not not profile.display_name
+		local display_name = profile and profile.display_name
 
 		return display_name
 	else
@@ -123,14 +123,14 @@ RemotePlayer.career_index = function (self)
 	local profile_synchronizer = self.network_manager.profile_synchronizer
 	local profile_index, career_index = profile_synchronizer:profile_by_peer(self.peer_id, self._local_player_id)
 
-	return not not career_index or not not 1
+	return career_index or 1
 end
 
 RemotePlayer.career_name = function (self)
 	-- function 15
 	local profile_index = self:profile_index()
 	local profile = SPProfiles[profile_index]
-	local display_name = not not profile and not not profile.display_name
+	local display_name = profile and profile.display_name
 
 	if display_name then
 		local career_index = self:career_index()
@@ -209,7 +209,7 @@ RemotePlayer.name = function (self)
 
 		if lobby and lobby.user_name and network_id then
 			name = lobby:user_name(network_id)
-			self._cached_name = not not name or not not ("Remote #" .. tostring(network_id:sub(-3, -1)))
+			self._cached_name = name or "Remote #" .. tostring(network_id:sub(-3, -1))
 		end
 	elseif Managers.game_server then
 		if self._cached_name then
@@ -227,7 +227,7 @@ end
 
 RemotePlayer.cached_name = function (self)
 	-- function 23
-	return not not self._cached_name
+	return self._cached_name
 end
 
 RemotePlayer.destroy = function (self)
@@ -291,7 +291,7 @@ end
 
 RemotePlayer.sync_data_active = function (self)
 	-- function 30
-	return not not self._player_sync_data
+	return self._player_sync_data
 end
 
 RemotePlayer.get_party = function (self)

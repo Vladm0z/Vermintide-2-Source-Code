@@ -108,7 +108,7 @@ end
 
 VersusPreGameLogic.request_ready = function (self, local_player_id, is_ready)
 	-- function 10
-	local_player_id = not not self._local_player_id or not not local_player_id
+	local_player_id = self._local_player_id or local_player_id
 	self._local_player_id = local_player_id
 
 	if not Managers.state.network or not Managers.state.network:game() then
@@ -119,7 +119,7 @@ VersusPreGameLogic.request_ready = function (self, local_player_id, is_ready)
 
 	local own_peer_id = self._owner_peer_id
 
-	self._ready_request_ids[local_player_id] = not not self._ready_request_ids[local_player_id] % NetworkConstants.READY_REQUEST_ID_MAX + 1
+	self._ready_request_ids[local_player_id] = self._ready_request_ids[local_player_id] % NetworkConstants.READY_REQUEST_ID_MAX + 1
 
 	local ready_request_id = self._ready_request_ids[local_player_id]
 
@@ -180,8 +180,8 @@ VersusPreGameLogic.select_character = function (self, peer_id, local_player_id, 
 
 	self:_select_character(peer_id, local_player_id, profile_index, career_index, melee_name, ranged_name)
 
-	local melee_name_id = NetworkLookup.item_names[not not melee_name or not not "n/a"]
-	local ranged_name_id = NetworkLookup.item_names[not not ranged_name or not not "n/a"]
+	local melee_name_id = NetworkLookup.item_names[melee_name or "n/a"]
+	local ranged_name_id = NetworkLookup.item_names[ranged_name or "n/a"]
 
 	if self._is_server then
 		self._network_transmit:send_rpc_clients("rpc_pre_game_select_character", peer_id, local_player_id, profile_index, career_index, melee_name_id, ranged_name_id)
@@ -289,8 +289,8 @@ VersusPreGameLogic.hot_join_sync = function (self, sender)
 				local career_index = player_state.career_index
 				local melee_name = player_state.melee_name
 				local ranged_name = player_state.ranged_name
-				local melee_name_id = NetworkLookup.item_names[not not melee_name or not not "n/a"]
-				local ranged_name_id = NetworkLookup.item_names[not not ranged_name or not not "n/a"]
+				local melee_name_id = NetworkLookup.item_names[melee_name or "n/a"]
+				local ranged_name_id = NetworkLookup.item_names[ranged_name or "n/a"]
 
 				RPC.rpc_pre_game_select_character(channel_id, peer_id, local_player_id, profile_index, career_index, melee_name_id, ranged_name_id)
 			end
@@ -359,7 +359,7 @@ VersusPreGameLogic.set_all_players_ready = function (self, is_ready)
 	-- function 30
 	for peer_id, player_states in pairs(self._peer_ready_states) do
 		for local_player_id, player_state in pairs(player_states) do
-			self._ready_request_ids[local_player_id] = not not self._ready_request_ids[local_player_id] % NetworkConstants.READY_REQUEST_ID_MAX + 1
+			self._ready_request_ids[local_player_id] = self._ready_request_ids[local_player_id] % NetworkConstants.READY_REQUEST_ID_MAX + 1
 
 			local ready_request_id = self._ready_request_ids[local_player_id]
 

@@ -6,7 +6,7 @@ GameTimerUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
 	self._gui = ingame_ui_context.ui_renderer.gui
 	self._visible = true
-	self._enabled = Application.make_hash(Application.user_setting("enable_ingame_timer")) == "473df4ed7fa71691" and not not not Development.parameter("disable_ingame_timer")
+	self._enabled = Application.make_hash(Application.user_setting("enable_ingame_timer")) == "473df4ed7fa71691" and not Development.parameter("disable_ingame_timer")
 
 	Managers.state.event:register(self, "start_game_time", "event_start_game_time")
 end

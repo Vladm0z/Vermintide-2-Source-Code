@@ -127,7 +127,7 @@ StateTitleScreenInitNetwork._join_session = function (self, dt, t)
 	local loading_context = self.parent.parent.loading_context
 
 	self._network_server = NetworkServer:new(Managers.player, lobby, nil)
-	self._network_transmit = not not loading_context.network_transmit
+	self._network_transmit = loading_context.network_transmit
 
 	self._network_transmit:set_network_event_delegate(self._network_event_delegate)
 	self._network_server:register_rpcs(self._network_event_delegate, self._network_transmit)
@@ -382,12 +382,12 @@ StateTitleScreenInitNetwork.on_exit = function (self, application_shutdown)
 
 		if lobby.is_host then
 			local level_key = Managers.level_transition_handler:get_current_level_keys()
-			local stored_lobby_host_data = not not lobby:get_stored_lobby_data()
+			local stored_lobby_host_data = lobby:get_stored_lobby_data()
 
 			stored_lobby_host_data.level_key = level_key
-			stored_lobby_host_data.unique_server_name = not not stored_lobby_host_data.unique_server_name
-			stored_lobby_host_data.host = not not stored_lobby_host_data.host
-			stored_lobby_host_data.num_players = not not stored_lobby_host_data.num_players
+			stored_lobby_host_data.unique_server_name = stored_lobby_host_data.unique_server_name
+			stored_lobby_host_data.host = stored_lobby_host_data.host
+			stored_lobby_host_data.num_players = stored_lobby_host_data.num_players
 			stored_lobby_host_data.matchmaking = "false"
 
 			lobby:set_lobby_data(stored_lobby_host_data)

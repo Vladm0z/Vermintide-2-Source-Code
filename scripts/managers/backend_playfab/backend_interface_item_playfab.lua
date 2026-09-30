@@ -121,7 +121,7 @@ BackendInterfaceItemPlayfab._refresh_loadouts = function (self)
 				local slot_name = loadout_slots[i]
 				local item_id = backend_mirror:get_character_data(career_name, slot_name)
 
-				loadouts[career_name] = not not loadouts[career_name]
+				loadouts[career_name] = loadouts[career_name]
 				loadouts[career_name][slot_name] = item_id
 			end
 		end
@@ -136,14 +136,14 @@ BackendInterfaceItemPlayfab.refresh_bot_loadouts = function (self)
 
 	local loadouts = self._bot_loadouts
 	local backend_mirror = self._backend_mirror
-	local loadout_selection = not not PlayerData.loadout_selection
-	local bot_equipment = not not loadout_selection.bot_equipment
+	local loadout_selection = PlayerData.loadout_selection
+	local bot_equipment = loadout_selection.bot_equipment
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_mechanisms[mechanism_name]
 
 	for career_name, settings in pairs(CareerSettings) do
 		if settings.playfab_name then
-			local bot_loadout_index = not not bot_loadout_allowed and not not bot_equipment[career_name]
+			local bot_loadout_index = bot_loadout_allowed and bot_equipment[career_name]
 
 			if bot_loadout_index then
 				if not backend_mirror:has_loadout(career_name, bot_loadout_index) then
@@ -155,7 +155,7 @@ BackendInterfaceItemPlayfab.refresh_bot_loadouts = function (self)
 					local slot_name = loadout_slots[i]
 					local item_id = backend_mirror:get_character_data(career_name, slot_name, bot_loadout_index)
 
-					loadouts[career_name] = not not loadouts[career_name]
+					loadouts[career_name] = loadouts[career_name]
 					loadouts[career_name][slot_name] = item_id
 				end
 			end
@@ -174,7 +174,7 @@ BackendInterfaceItemPlayfab._refresh_career_loadouts = function (self)
 
 	for career_name, settings in pairs(CareerSettings) do
 		if settings.playfab_name then
-			all_career_loadouts[career_name] = not not all_career_loadouts[career_name]
+			all_career_loadouts[career_name] = all_career_loadouts[career_name]
 
 			local current_career_loadouts = all_career_loadouts[career_name]
 			local selected_loadout, career_loadouts = backend_mirror:get_career_loadouts(career_name)
@@ -183,7 +183,7 @@ BackendInterfaceItemPlayfab._refresh_career_loadouts = function (self)
 
 			if career_loadouts then
 				for i = 1, #career_loadouts do
-					current_career_loadouts[i] = not not current_career_loadouts[i]
+					current_career_loadouts[i] = current_career_loadouts[i]
 
 					local current_career_loadout = current_career_loadouts[i]
 					local career_loadout = career_loadouts[i]
@@ -209,14 +209,14 @@ BackendInterfaceItemPlayfab._refresh_default_loadouts = function (self)
 
 	for career_name, settings in pairs(CareerSettings) do
 		if settings.playfab_name then
-			all_career_default_loadouts[career_name] = not not all_career_default_loadouts[career_name]
+			all_career_default_loadouts[career_name] = all_career_default_loadouts[career_name]
 
 			local current_career_loadouts = all_career_default_loadouts[career_name]
 			local career_loadouts = backend_mirror:get_default_loadouts(career_name)
 
 			if career_loadouts then
 				for i = 1, #career_loadouts do
-					current_career_loadouts[i] = not not current_career_loadouts[i]
+					current_career_loadouts[i] = current_career_loadouts[i]
 
 					local current_career_loadout = current_career_loadouts[i]
 					local career_loadout = career_loadouts[i]
@@ -236,7 +236,7 @@ end
 BackendInterfaceItemPlayfab._setup_default_overrides = function (self)
 	-- function 9
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local loadout_selection = PlayerData.loadout_selection and not not PlayerData.loadout_selection[mechanism_name] or not PlayerData.loadout_selection and not not {}
+	local loadout_selection = PlayerData.loadout_selection and PlayerData.loadout_selection[mechanism_name] or not PlayerData.loadout_selection and {}
 
 	table.clear(self._default_loadout_overrides)
 
@@ -244,14 +244,14 @@ BackendInterfaceItemPlayfab._setup_default_overrides = function (self)
 		return
 	end
 
-	local game_mode_key = not not Managers.state.game_mode
+	local game_mode_key = Managers.state.game_mode
 
 	if not game_mode_key or not InventorySettings.default_loadout_allowed_game_modes[game_mode_key] then
 		return
 	end
 
 	for career_name, settings in pairs(CareerSettings) do
-		local loadout_index = not not loadout_selection[career_name]
+		local loadout_index = loadout_selection[career_name]
 
 		if loadout_index then
 			local loadout_settings = InventorySettings.loadouts[loadout_index]
@@ -291,7 +291,7 @@ BackendInterfaceItemPlayfab.set_default_override = function (self, career_name, 
 	-- function 13
 	local default_career_default_loadouts = self._default_loadouts[career_name]
 
-	self._default_loadout_overrides[career_name] = not not default_career_default_loadouts and not not default_career_default_loadouts[loadout_index]
+	self._default_loadout_overrides[career_name] = default_career_default_loadouts and default_career_default_loadouts[loadout_index]
 end
 
 BackendInterfaceItemPlayfab.get_default_override = function (self, career_name)
@@ -386,7 +386,7 @@ BackendInterfaceItemPlayfab.get_item_amount = function (self, backend_id)
 	-- function 28
 	local item = self:get_item_from_id(backend_id)
 
-	return not not item.RemainingUses
+	return item.RemainingUses
 end
 
 BackendInterfaceItemPlayfab.get_item_power_level = function (self, backend_id)
@@ -539,33 +539,33 @@ BackendInterfaceItemPlayfab.get_loadout_by_career_name = function (self, career_
 		self:_refresh()
 	end
 
-	local game_mode_key = not not Managers.state.game_mode
+	local game_mode_key = Managers.state.game_mode
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
 	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
-	local bot_loadouts = not not bot_loadout_allowed and not not self:get_bot_loadout()
-	local bot_loadout = not not bot_loadout_allowed and not not bot_loadouts[career_name]
-	local default_loadouts = not not default_loadouts_allowed and not not self:get_default_loadouts(career_name)
-	local default_loadout = not not default_loadouts_allowed and not not default_loadouts and not not default_loadouts[1]
+	local bot_loadouts = bot_loadout_allowed and self:get_bot_loadout()
+	local bot_loadout = bot_loadout_allowed and bot_loadouts[career_name]
+	local default_loadouts = default_loadouts_allowed and self:get_default_loadouts(career_name)
+	local default_loadout = default_loadouts_allowed and default_loadouts and default_loadouts[1]
 	local base_loadouts = self:get_loadout()
 	local base_loadout = base_loadouts[career_name]
-	local loadout = bot_loadout_allowed and (is_bot and (not not bot_loadout or is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout) or not is_bot and (is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout)) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout)
+	local loadout = bot_loadout_allowed and (is_bot and (bot_loadout or is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout) or not is_bot and (is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout)) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout)
 
 	return loadout
 end
 
 BackendInterfaceItemPlayfab.get_loadout_item_id = function (self, career_name, slot_name, is_bot)
 	-- function 45
-	local game_mode_key = not not Managers.state.game_mode
+	local game_mode_key = Managers.state.game_mode
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
 	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
-	local bot_loadouts = not not bot_loadout_allowed and not not self:get_bot_loadout()
-	local bot_loadout = not not bot_loadout_allowed and not not bot_loadouts[career_name]
-	local default_loadouts = not not default_loadouts_allowed and not not self:get_default_loadouts(career_name)
-	local default_loadout = not not default_loadouts_allowed and not not default_loadouts and not not default_loadouts[1]
+	local bot_loadouts = bot_loadout_allowed and self:get_bot_loadout()
+	local bot_loadout = bot_loadout_allowed and bot_loadouts[career_name]
+	local default_loadouts = default_loadouts_allowed and self:get_default_loadouts(career_name)
+	local default_loadout = default_loadouts_allowed and default_loadouts and default_loadouts[1]
 	local base_loadouts = self:get_loadout()
 	local base_loadout = base_loadouts[career_name]
-	local loadout = bot_loadout_allowed and (is_bot and (not table.is_empty(bot_loadout) and (not not bot_loadout or is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout) or not not table.is_empty(bot_loadout) and (is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout)) or not is_bot and (is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout)) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout)
-	local item_id = not not loadout and not not loadout[slot_name]
+	local loadout = bot_loadout_allowed and (is_bot and (not table.is_empty(bot_loadout) and (bot_loadout or is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout) or table.is_empty(bot_loadout) and (is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout)) or not is_bot and (is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout)) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout)
+	local item_id = loadout and loadout[slot_name]
 
 	if CosmeticUtils.is_cosmetic_slot(slot_name) and item_id then
 		local cosmetics = self._backend_mirror:get_unlocked_cosmetics()
@@ -576,10 +576,10 @@ BackendInterfaceItemPlayfab.get_loadout_item_id = function (self, career_name, s
 		local parent = item.parent
 		local unlocked_weapon_poses = self:get_unlocked_weapon_poses()
 
-		return not not unlocked_weapon_poses[parent]
+		return unlocked_weapon_poses[parent]
 	end
 
-	return not not loadout and not not loadout[slot_name]
+	return loadout and loadout[slot_name]
 end
 
 BackendInterfaceItemPlayfab.get_unlocked_weapon_poses = function (self)
@@ -633,7 +633,7 @@ BackendInterfaceItemPlayfab.get_backend_id_from_unlocked_weapon_poses = function
 	local unlocked_weapon_poses = self:get_unlocked_weapon_poses()
 	local parent_unlocked_poses = unlocked_weapon_poses[parent_name]
 
-	return not not parent_unlocked_poses and not not parent_unlocked_poses[item_id]
+	return parent_unlocked_poses and parent_unlocked_poses[item_id]
 end
 
 BackendInterfaceItemPlayfab.set_weapon_pose_skin = function (self, parent_item_name, weapon_skin_backend_id, result_callback)
@@ -656,16 +656,16 @@ end
 
 BackendInterfaceItemPlayfab.get_cosmetic_loadout = function (self, career_name, is_bot)
 	-- function 54
-	local game_mode_key = not not Managers.state.game_mode
+	local game_mode_key = Managers.state.game_mode
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
 	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
-	local bot_loadouts = not not bot_loadout_allowed and not not self:get_bot_loadout()
-	local bot_loadout = not not bot_loadout_allowed and not not bot_loadouts[career_name]
-	local default_loadouts = not not default_loadouts_allowed and not not self:get_default_loadouts(career_name)
-	local default_loadout = not not default_loadouts_allowed and not not default_loadouts and not not default_loadouts[1]
+	local bot_loadouts = bot_loadout_allowed and self:get_bot_loadout()
+	local bot_loadout = bot_loadout_allowed and bot_loadouts[career_name]
+	local default_loadouts = default_loadouts_allowed and self:get_default_loadouts(career_name)
+	local default_loadout = default_loadouts_allowed and default_loadouts and default_loadouts[1]
 	local base_loadouts = self:get_loadout()
 	local base_loadout = base_loadouts[career_name]
-	local career_loadout = bot_loadout_allowed and (is_bot and (not not bot_loadout or is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout) or not is_bot and (is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout)) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (not not default_loadout or not not base_loadout) or not default_loadouts_allowed and not not base_loadout) or not is_bot and not not base_loadout)
+	local career_loadout = bot_loadout_allowed and (is_bot and (bot_loadout or is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout) or not is_bot and (is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout)) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (default_loadout or base_loadout) or not default_loadouts_allowed and base_loadout) or not is_bot and base_loadout)
 
 	return career_loadout.slot_hat, career_loadout.slot_skin, career_loadout.slot_frame
 end
@@ -683,7 +683,7 @@ BackendInterfaceItemPlayfab.get_filtered_items = function (self, filter, params)
 	-- function 56
 	local all_items = self:get_all_backend_items()
 	local backend_common = Managers.backend:get_interface("common")
-	local items = backend_common:filter_items(all_items, filter, not not params or not not empty_params)
+	local items = backend_common:filter_items(all_items, filter, params or empty_params)
 
 	return items
 end
@@ -696,7 +696,7 @@ BackendInterfaceItemPlayfab.set_loadout_item = function (self, item_id, career_n
 	if item_id then
 		item = all_items[item_id]
 
-		fassert(item, "Trying to equip item that doesn't exist %d", not not item_id or not not "nil")
+		fassert(item, "Trying to equip item that doesn't exist %d", item_id or "nil")
 	end
 
 	if not item then
@@ -712,11 +712,11 @@ BackendInterfaceItemPlayfab.set_loadout_item = function (self, item_id, career_n
 	end
 
 	if CosmeticUtils.is_cosmetic_slot(slot_name) then
-		item_id = not not item.override_id or not not item.ItemId
+		item_id = item.override_id or item.ItemId
 	end
 
 	if slot_name == "slot_pose" then
-		item_id = not not item.override_id or not not item.ItemId
+		item_id = item.override_id or item.ItemId
 	end
 
 	self._backend_mirror:set_character_data(career_name, slot_name, item_id, nil, optional_loadout_index)
@@ -757,7 +757,7 @@ BackendInterfaceItemPlayfab.get_unseen_item_rewards = function (self)
 		local reward_type = reward.reward_type
 
 		if unseen_item_reward_types[reward_type] or CosmeticUtils.is_cosmetic_item(reward_type) then
-			unseen_items = not not unseen_items or not not {}
+			unseen_items = unseen_items or {}
 			unseen_items[#unseen_items + 1] = reward
 
 			table.remove(unseen_rewards, index)
@@ -836,7 +836,7 @@ BackendInterfaceItemPlayfab.equipped_by_loadout = function (self, backend_id)
 		for index, loadout in ipairs(loadouts) do
 			for slot_name, item_id in pairs(loadout) do
 				if backend_id == item_id then
-					EQUIPPED_BY_LOADOUT[career_name] = not not EQUIPPED_BY_LOADOUT[career_name]
+					EQUIPPED_BY_LOADOUT[career_name] = EQUIPPED_BY_LOADOUT[career_name]
 					EQUIPPED_BY_LOADOUT[career_name][#EQUIPPED_BY_LOADOUT[career_name] + 1] = index
 				end
 			end
@@ -945,7 +945,7 @@ end
 
 BackendInterfaceItemPlayfab.get_item_template = function (self, item_data, backend_id)
 	-- function 76
-	local template_name = not not item_data.temporary_template
+	local template_name = item_data.temporary_template
 	local item_template = WeaponUtils.get_weapon_template(template_name)
 
 	if item_template then
@@ -1000,8 +1000,8 @@ local DEEDS_CHUNK_LIMIT = 300
 BackendInterfaceItemPlayfab.delete_marked_deeds = function (self, deeds_list, start_index, end_index)
 	-- function 81
 	self._is_deleting_deeds = true
-	start_index = not not start_index or not not 1
-	end_index = not not end_index or not not DEEDS_CHUNK_LIMIT
+	start_index = start_index or 1
+	end_index = end_index or DEEDS_CHUNK_LIMIT
 
 	local id = self:_new_id()
 	local temp_deeds

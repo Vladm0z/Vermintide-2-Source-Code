@@ -4,7 +4,7 @@ Timer = class(Timer)
 
 Timer.init = function (self, name, parent, start_time)
 	-- function 1
-	self._t = not not start_time or not not 0
+	self._t = start_time or 0
 	self._dt = 0
 	self._name = name
 	self._active = true

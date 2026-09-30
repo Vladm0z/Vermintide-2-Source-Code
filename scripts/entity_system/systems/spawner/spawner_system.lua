@@ -310,14 +310,14 @@ SpawnerSystem._try_spawn_breed = function (self, breed_name, spawn_list_per_bree
 						local breed_index = Math.random(1, num_breeds)
 						local exchange_breed_name = exchange_breed[breed_index]
 
-						spawn_list_per_breed[exchange_breed_name] = not not spawn_list_per_breed[exchange_breed_name] + 1
+						spawn_list_per_breed[exchange_breed_name] = spawn_list_per_breed[exchange_breed_name] + 1
 					end
 
 					for i = 1, num_breeds do
 						active_enemies = active_enemies + self:_try_spawn_breed(exchange_breed[i], spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
 					end
 				else
-					spawn_list_per_breed[exchange_breed] = not not spawn_list_per_breed[exchange_breed] + exchanged_amount
+					spawn_list_per_breed[exchange_breed] = spawn_list_per_breed[exchange_breed] + exchanged_amount
 					active_enemies = active_enemies + self:_try_spawn_breed(exchange_breed, spawn_list_per_breed, spawn_list, breed_limits, active_enemies, side_id, group_template)
 				end
 			end
@@ -491,7 +491,7 @@ SpawnerSystem.spawn_horde_from_terror_event_ids = function (self, event_ids, var
 
 	local difficulty = Managers.state.difficulty.difficulty
 	local difficulty_breeds = variant.difficulty_breeds
-	local breed_list = difficulty_breeds and not not difficulty_breeds[difficulty] or not difficulty_breeds and not not variant.breeds
+	local breed_list = difficulty_breeds and difficulty_breeds[difficulty] or not difficulty_breeds and variant.breeds
 	local spawn_list = spawn_list
 
 	table.clear_array(spawn_list, #spawn_list)
@@ -512,7 +512,7 @@ SpawnerSystem.spawn_horde_from_terror_event_ids = function (self, event_ids, var
 		end
 
 		if script_data.big_hordes then
-			num_to_spawn = math.round(num_to_spawn * not not tonumber(script_data.big_hordes))
+			num_to_spawn = math.round(num_to_spawn * tonumber(script_data.big_hordes))
 		end
 
 		temp_spawn_list_per_breed[breed_name] = num_to_spawn
@@ -617,7 +617,7 @@ end
 
 SpawnerSystem.get_raw_spawner_unit = function (self, terror_id)
 	-- function 25
-	local spawners = not not self._raw_id_lookup[terror_id]
+	local spawners = self._raw_id_lookup[terror_id]
 
 	if spawners then
 		local spawner_unit = spawners[math.random(1, #spawners)]
@@ -629,7 +629,7 @@ end
 
 SpawnerSystem.get_raw_spawner_units = function (self, terror_id)
 	-- function 26
-	return not not self._raw_id_lookup[terror_id]
+	return self._raw_id_lookup[terror_id]
 end
 
 SpawnerSystem.deactivate_spawner = function (self, spawner)

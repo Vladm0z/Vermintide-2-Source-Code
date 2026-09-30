@@ -99,7 +99,7 @@ CraftPageRollProperties.setup_recipe_requirements = function (self)
 			end
 
 			local has_required_amount = required_amount <= amount_owned
-			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and not not tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and not not "*") .. "/" .. tostring(required_amount)
+			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and "*") .. "/" .. tostring(required_amount)
 			local fake_item = {
 				data = table.clone(ItemMasterList[item_key]),
 				amount = presentation_amount,
@@ -243,7 +243,7 @@ CraftPageRollProperties._handle_input = function (self, dt, t)
 	local widget = widgets_by_name.craft_button
 	local is_button_enabled = not widget.content.button_hotspot.disable_button
 	local craft_input = self:_is_button_held(widgets_by_name.craft_button)
-	local craft_input_gamepad = not not is_button_enabled and not not gamepad_active and not not input_service:get("refresh_hold")
+	local craft_input_gamepad = is_button_enabled and gamepad_active and input_service:get("refresh_hold")
 	local craft_input_accepted = false
 
 	if craft_input == 0 and self._has_all_requirements or not (craft_input == 0) and craft_input_gamepad and self._has_all_requirements then
@@ -351,7 +351,7 @@ CraftPageRollProperties._update_craft_items = function (self)
 	-- function 16
 	local super_parent = self.super_parent
 	local item_grid = self._item_grid
-	local is_dragging_craft_item = not not item_grid:is_dragging_item()
+	local is_dragging_craft_item = item_grid:is_dragging_item()
 	local pressed_backend_id, is_drag_item = super_parent:get_pressed_item_backend_id()
 
 	if pressed_backend_id then
@@ -400,7 +400,7 @@ CraftPageRollProperties._remove_craft_item = function (self, backend_id, slot_in
 		self._item_grid:add_item_to_slot_index(slot_index, nil)
 
 		craft_items[slot_index] = nil
-		self._num_craft_items = math.max(not not self._num_craft_items - 1, 0)
+		self._num_craft_items = math.max(self._num_craft_items - 1, 0)
 
 		if self._num_craft_items == 0 then
 			self:_set_craft_button_disabled(true)
@@ -437,9 +437,9 @@ CraftPageRollProperties._add_craft_item = function (self, backend_id, slot_index
 		craft_items[slot_index] = backend_id
 
 		local item_interface = Managers.backend:get_interface("items")
-		local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
-		local item_data = not not backend_id and not not item_interface:get_item_masterlist_data(backend_id)
-		local added_item_slot_type = not not item_data and not not item_data.slot_type
+		local item = backend_id and item_interface:get_item_from_id(backend_id)
+		local item_data = backend_id and item_interface:get_item_masterlist_data(backend_id)
+		local added_item_slot_type = item_data and item_data.slot_type
 
 		if added_item_slot_type == "ranged" or added_item_slot_type == "melee" then
 			self._recipe_name = "reroll_weapon_properties"
@@ -450,7 +450,7 @@ CraftPageRollProperties._add_craft_item = function (self, backend_id, slot_index
 		self._item_grid:add_item_to_slot_index(slot_index, item)
 		self.super_parent:set_disabled_backend_id(backend_id, true)
 
-		self._num_craft_items = math.min(not not self._num_craft_items + 1, NUM_CRAFT_SLOTS)
+		self._num_craft_items = math.min(self._num_craft_items + 1, NUM_CRAFT_SLOTS)
 
 		if self._num_craft_items > 0 and self._has_all_requirements then
 			self:_set_craft_button_disabled(false)
@@ -499,5 +499,5 @@ CraftPageRollProperties._set_craft_button_text = function (self, text, localize)
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
 
-	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
+	widget.content.button_text = localize and Localize(text) or not localize and text
 end

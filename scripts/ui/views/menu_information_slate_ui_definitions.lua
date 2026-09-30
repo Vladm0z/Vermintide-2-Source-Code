@@ -414,9 +414,9 @@ function create_gamepad_input(scenegraph_id, color)
 						local device_type = input_device.type()
 						local is_ps_pad = device_type == "sce_pad"
 
-						use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+						use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 
-						return not not gamepad_active and not not not use_ps4_input_icons
+						return gamepad_active and not use_ps4_input_icons
 					end
 				},
 				{
@@ -431,16 +431,16 @@ function create_gamepad_input(scenegraph_id, color)
 						local device_type = input_device.type()
 						local is_ps_pad = device_type == "sce_pad"
 
-						use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+						use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 
-						return not not gamepad_active and not not use_ps4_input_icons
+						return gamepad_active and use_ps4_input_icons
 					end
 				}
 			}
 		},
 		content = {
-			xb_input = IS_CONSOLE and not not "xbone_button_icon_menu_large" or not IS_CONSOLE and not not "xbone_button_icon_x",
-			ps_input = IS_CONSOLE and not not "ps4_button_icon_options" or not IS_CONSOLE and not not "ps4_button_icon_square"
+			xb_input = IS_CONSOLE and "xbone_button_icon_menu_large" or not IS_CONSOLE and "xbone_button_icon_x",
+			ps_input = IS_CONSOLE and "ps4_button_icon_options" or not IS_CONSOLE and "ps4_button_icon_square"
 		},
 		style = {
 			texture_id = {
@@ -448,7 +448,7 @@ function create_gamepad_input(scenegraph_id, color)
 					34,
 					34
 				},
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -496,7 +496,7 @@ local function create_switch_panel(information_data)
 		content_change_function = function (content, style)
 			-- function 8
 			local hotspot = content.parent.right_arrow_hotspot
-			local intensity_multiplier = hotspot.is_hover and not not 1 or not hotspot.is_hover and not not 0.6
+			local intensity_multiplier = hotspot.is_hover and 1 or not hotspot.is_hover and 0.6
 
 			style.color[2] = 255 * intensity_multiplier
 			style.color[3] = 255 * intensity_multiplier
@@ -525,16 +525,16 @@ local function create_switch_panel(information_data)
 			end
 
 			local use_ps4_input_icons = UISettings.use_ps4_input_icons
-			local input_device = not not Managers.input
+			local input_device = Managers.input
 
 			if input_device then
 				local device_type = input_device.type()
 				local is_ps_pad = device_type == "sce_pad"
 
-				use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+				use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 			end
 
-			content.right_shoulder = use_ps4_input_icons and not not "ps4_button_icon_r1" or not use_ps4_input_icons and not not "xbone_button_icon_rb"
+			content.right_shoulder = use_ps4_input_icons and "ps4_button_icon_r1" or not use_ps4_input_icons and "xbone_button_icon_rb"
 		end
 	}
 	style.right_arrow = {
@@ -583,7 +583,7 @@ local function create_switch_panel(information_data)
 			}
 		}
 	}
-	content.right_shoulder = IS_PS4 and not not "ps4_button_icon_r1" or not IS_PS4 and not not "xbone_button_icon_rb"
+	content.right_shoulder = IS_PS4 and "ps4_button_icon_r1" or not IS_PS4 and "xbone_button_icon_rb"
 	content.current_index = nil
 
 	local slate_size = {
@@ -605,13 +605,13 @@ local function create_switch_panel(information_data)
 				-- function 11
 				local alert_color = style.alert_color
 				local hotspot = content.parent[slate_name .. "_hotspot"]
-				local is_selected = not not hotspot.is_hover
-				local intensity_multiplier = hotspot.is_hover and not not 1 or not hotspot.is_hover and not not 0.8
+				local is_selected = hotspot.is_hover
+				local intensity_multiplier = hotspot.is_hover and 1 or not hotspot.is_hover and 0.8
 
 				style.color[1] = 255
-				style.color[2] = (is_selected and not not alert_color[2] or not is_selected and not not 255) * intensity_multiplier
-				style.color[3] = (is_selected and not not alert_color[3] or not is_selected and not not 255) * intensity_multiplier
-				style.color[4] = (is_selected and not not alert_color[4] or not is_selected and not not 255) * intensity_multiplier
+				style.color[2] = (is_selected and alert_color[2] or not is_selected and 255) * intensity_multiplier
+				style.color[3] = (is_selected and alert_color[3] or not is_selected and 255) * intensity_multiplier
+				style.color[4] = (is_selected and alert_color[4] or not is_selected and 255) * intensity_multiplier
 			end
 		}
 		passes[#passes + 1] = {
@@ -661,7 +661,7 @@ local function create_switch_panel(information_data)
 		content_change_function = function (content, style)
 			-- function 13
 			local hotspot = content.left_arrow_hotspot
-			local intensity_multiplier = hotspot.is_hover and not not 1 or not hotspot.is_hover and not not 0.6
+			local intensity_multiplier = hotspot.is_hover and 1 or not hotspot.is_hover and 0.6
 
 			style.color[2] = 255 * intensity_multiplier
 			style.color[3] = 255 * intensity_multiplier
@@ -685,16 +685,16 @@ local function create_switch_panel(information_data)
 			end
 
 			local use_ps4_input_icons = UISettings.use_ps4_input_icons
-			local input_device = not not Managers.input
+			local input_device = Managers.input
 
 			if input_device then
 				local device_type = input_device.type()
 				local is_ps_pad = device_type == "sce_pad"
 
-				use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+				use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 			end
 
-			content.left_shoulder = use_ps4_input_icons and not not "ps4_button_icon_l1" or not use_ps4_input_icons and not not "xbone_button_icon_lb"
+			content.left_shoulder = use_ps4_input_icons and "ps4_button_icon_l1" or not use_ps4_input_icons and "xbone_button_icon_lb"
 		end
 	}
 	passes[#passes + 1] = {
@@ -746,7 +746,7 @@ local function create_switch_panel(information_data)
 	}
 	content.left_arrow_hotspot = {}
 	content.left_arrow = "info_slate_arrow"
-	content.left_shoulder = IS_PS4 and not not "ps4_button_icon_l1" or not IS_PS4 and not not "xbone_button_icon_lb"
+	content.left_shoulder = IS_PS4 and "ps4_button_icon_l1" or not IS_PS4 and "xbone_button_icon_lb"
 	widget_def.element = element
 	widget_def.content = content
 	widget_def.style = style
@@ -818,8 +818,8 @@ local widgets = {
 		255,
 		255
 	}, sub_header_text_style),
-	more_information = create_hotspot_text(Managers.localizer:exists("info_slate_more_information") and not not Localize("info_slate_more_information") or not Managers.localizer:exists("info_slate_more_information") and not not "More Information", "information", info_text_style),
-	less_information = create_hotspot_text(Managers.localizer:exists("info_slate_less_information") and not not Localize("info_slate_less_information") or not Managers.localizer:exists("info_slate_less_information") and not not "Less Information", "information", info_text_style),
+	more_information = create_hotspot_text(Managers.localizer:exists("info_slate_more_information") and Localize("info_slate_more_information") or not Managers.localizer:exists("info_slate_more_information") and "More Information", "information", info_text_style),
+	less_information = create_hotspot_text(Managers.localizer:exists("info_slate_less_information") and Localize("info_slate_less_information") or not Managers.localizer:exists("info_slate_less_information") and "Less Information", "information", info_text_style),
 	triangle_right = UIWidgets.create_simple_triangle("triangle", {
 		255,
 		255,

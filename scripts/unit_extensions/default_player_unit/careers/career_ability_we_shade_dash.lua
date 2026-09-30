@@ -164,7 +164,7 @@ CareerAbilityWEShadeDash._ability_available = function (self)
 	local talent_extension = ScriptUnit.extension(self._owner_unit, "talent_system")
 	local available = false
 
-	return not not available and not not career_extension:can_use_activated_ability()
+	return available and career_extension:can_use_activated_ability()
 end
 
 CareerAbilityWEShadeDash._start_priming = function (self)

@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_text_box.lua
 
-WorldMarkerTemplates = not not WorldMarkerTemplates
+WorldMarkerTemplates = WorldMarkerTemplates
 
 local NAME = "text_box"
-local template = not not WorldMarkerTemplates[NAME]
+local template = WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 template.max_distance = 20
@@ -32,7 +32,7 @@ template.create_widget_definition = function (scenegraph_id)
 						-- function 2
 						local scale_progress = content.scale_progress
 
-						return not not scale_progress and scale_progress < 1
+						return scale_progress and scale_progress < 1
 					end
 				},
 				{
@@ -47,7 +47,7 @@ template.create_widget_definition = function (scenegraph_id)
 						-- function 3
 						local text_progress = content.text_progress
 
-						return not not text_progress and text_progress > 0
+						return text_progress and text_progress > 0
 					end
 				}
 			}
@@ -200,8 +200,8 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	local distance = content.distance
 	local angle = content.angle
 	local scale_speed = 3
-	local scale_progress = not not content.scale_progress
-	local text_progress = not not content.text_progress
+	local scale_progress = content.scale_progress
+	local text_progress = content.text_progress
 
 	if distance <= 5 then
 		scale_progress = math.min(scale_progress + dt * scale_speed, 1)

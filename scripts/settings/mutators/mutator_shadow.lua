@@ -18,14 +18,14 @@ return {
 	},
 	server_start_function = function (context, data)
 		-- function 1
-		local wind_strength = not not Managers.weave:get_wind_strength()
+		local wind_strength = Managers.weave:get_wind_strength()
 		local wind_settings = Managers.weave:get_active_wind_settings()
 		local difficulty_name = Managers.state.difficulty:get_difficulty()
 
 		data.buff_system = Managers.state.entity:system("buff_system")
 		data.hero_side = Managers.state.side:get_side_from_name("heroes")
 		data.lantern_spawned = false
-		data.light_radius = not not wind_settings and not not wind_settings.light_radius[difficulty_name][wind_strength]
+		data.light_radius = wind_settings and wind_settings.light_radius[difficulty_name][wind_strength]
 	end,
 	server_ai_killed_function = function (context, data, killed_unit, killer_unit, killing_blow)
 		-- function 2
@@ -172,7 +172,7 @@ return {
 	end,
 	client_update_function = function (context, data)
 		-- function 7
-		local wind_strength = not not Managers.weave:get_wind_strength()
+		local wind_strength = Managers.weave:get_wind_strength()
 		local wind_settings = Managers.weave:get_active_wind_settings()
 		local difficulty_name = Managers.state.difficulty:get_difficulty()
 		local hero_side = data.hero_side
@@ -185,7 +185,7 @@ return {
 		local player_manager = Managers.player
 		local player_unit = player_manager:local_player().player_unit
 
-		data.light_radius = wind_settings and not not wind_settings.light_radius[difficulty_name][wind_strength] or not wind_settings and not not 6
+		data.light_radius = wind_settings and wind_settings.light_radius[difficulty_name][wind_strength] or not wind_settings and 6
 
 		if player_unit and not data.light_spawned then
 			local position = Unit.local_position(player_unit, 0)
@@ -246,7 +246,7 @@ return {
 
 				local radius = data.light_radius
 				local pos = POSITION_LOOKUP[observed_unit]
-				local dist_sq = pos and not not Vector3.distance_squared(pos, unit_pos) or not pos and not not (radius * radius)
+				local dist_sq = pos and Vector3.distance_squared(pos, unit_pos) or not pos and radius * radius
 				local effect_unit = linked_units[unit]
 				local effect_unit_visible = linked_units_visibility[unit]
 

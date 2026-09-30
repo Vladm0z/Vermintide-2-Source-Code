@@ -5,13 +5,13 @@ AIInventoryExtension = class(AIInventoryExtension)
 local function store_scene_graph_data(item_unit, attachment_node_linking)
 	-- function 1
 	local scene_graph_data = {}
-	local node_linking_data = not not attachment_node_linking.wielded
+	local node_linking_data = attachment_node_linking.wielded
 
 	for i, attachment_nodes in ipairs(node_linking_data) do
 		local target_node = attachment_nodes.target
 
 		if target_node ~= 0 then
-			local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(item_unit, target_node)
+			local target_node_index = type(target_node) ~= "string" and target_node or not (type(target_node) ~= "string") and Unit.node(item_unit, target_node)
 
 			scene_graph_data[#scene_graph_data + 1] = {
 				i = target_node_index,
@@ -29,8 +29,8 @@ local function link_unit(attachment_node_linking, world, target, source)
 	for i, attachment_nodes in ipairs(attachment_node_linking) do
 		local source_node = attachment_nodes.source
 		local target_node = attachment_nodes.target
-		local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(source, source_node)
-		local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(target, target_node)
+		local source_node_index = type(source_node) ~= "string" and source_node or not (type(source_node) ~= "string") and Unit.node(source, source_node)
+		local target_node_index = type(target_node) ~= "string" and target_node or not (type(target_node) ~= "string") and Unit.node(target, target_node)
 
 		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
@@ -38,7 +38,7 @@ end
 
 local function unlink_unit(item_unit, world)
 	-- function 3
-	local scene_graph_data = not not Unit.get_data(item_unit, "scene_graph_data")
+	local scene_graph_data = Unit.get_data(item_unit, "scene_graph_data")
 
 	World.unlink_unit(world, item_unit)
 
@@ -66,8 +66,8 @@ AIInventoryExtension._setup_configuration = function (self, unit, start_n, inven
 		local item_index = math.random(1, item_category_n)
 		local item = item_category[item_index]
 		local item_unit_name = item.unit_name
-		local item_unit_template_name = not not item.unit_extension_template
-		local item_flow_event = not not item.flow_event
+		local item_unit_template_name = item.unit_extension_template
+		local item_flow_event = item.flow_event
 
 		if item.extension_init_data then
 			for data, value in pairs(item.extension_init_data) do
@@ -80,13 +80,13 @@ AIInventoryExtension._setup_configuration = function (self, unit, start_n, inven
 		end
 
 		local attachment_node_linking = item.attachment_node_linking
-		local node_linking_data = not not attachment_node_linking.unwielded
+		local node_linking_data = attachment_node_linking.unwielded
 		local item_position, item_rotation
 
 		for _, data in ipairs(node_linking_data) do
 			if data.target == 0 then
 				local source_node = data.source
-				local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(unit, source_node)
+				local source_node_index = type(source_node) ~= "string" and source_node or not (type(source_node) ~= "string") and Unit.node(unit, source_node)
 
 				item_position = Unit.world_position(unit, source_node_index)
 				item_rotation = Unit.world_rotation(unit, source_node_index)
@@ -160,7 +160,7 @@ AIInventoryExtension.init = function (self, unit, extension_init_data)
 	local inventory_configuration_name = extension_init_data.inventory_configuration_name
 
 	if extension_init_data.is_server and not inventory_configuration_name then
-		local template_name = not not extension_init_data.inventory_template
+		local template_name = extension_init_data.inventory_template
 		local template_function = AIInventoryTemplates[template_name]
 
 		inventory_configuration_name = template_function()
@@ -367,7 +367,7 @@ AIInventoryExtension.show_single_item = function (self, item_inventory_index, sh
 
 	local item_unit = self.inventory_item_units[item_inventory_index]
 
-	self.hidden_item_index = not not nil
+	self.hidden_item_index = nil
 
 	Unit.set_unit_visibility(item_unit, show)
 end
@@ -403,7 +403,7 @@ AIInventoryExtension.drop_single_item = function (self, item_inventory_index, re
 	local item_unit = self.inventory_item_units[item_inventory_index]
 	local item_extension = ScriptUnit.has_extension(item_unit, "ai_inventory_item_system")
 	local item = self.inventory_item_definitions[item_inventory_index]
-	local item_unit_template_name = not not item.unit_extension_template
+	local item_unit_template_name = item.unit_extension_template
 
 	if item_extension and not item_extension.dropped and item.drop_reasons[reason] and item_unit_template_name ~= "ai_helmet_unit" and item_unit_template_name ~= "ai_outfit_unit" and item_unit_template_name ~= "ai_skin_unit" then
 		if item.drop_unit_name ~= nil then
@@ -428,7 +428,7 @@ AIInventoryExtension.drop_single_item = function (self, item_inventory_index, re
 			local actor = Unit.create_actor(item_unit, "rp_dropped")
 
 			Actor.add_angular_velocity(actor, Vector3(math.random(), math.random(), math.random()) * 5)
-			Actor.add_velocity(actor, not not optional_drop_direction or not not Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
+			Actor.add_velocity(actor, optional_drop_direction or Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 
 			item_extension.wielding_unit = nil
 			item_extension.dropped = true
@@ -481,10 +481,10 @@ AIInventoryExtension._drop_unit = function (self, drop_unit_name, item_unit, ite
 	local actor = Unit.create_actor(new_item_unit, "rp_dropped")
 
 	Actor.add_angular_velocity(actor, Vector3(math.random(), math.random(), math.random()) * 5)
-	Actor.add_velocity(actor, not not optional_drop_direction or not not Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
+	Actor.add_velocity(actor, optional_drop_direction or Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 
 	if drop_multiple then
-		self.dropped_items[item_inventory_index] = not not self.dropped_items[item_inventory_index]
+		self.dropped_items[item_inventory_index] = self.dropped_items[item_inventory_index]
 
 		local dropped_items = self.dropped_items[item_inventory_index]
 
@@ -545,7 +545,7 @@ end
 AIInventoryExtension.play_hit_sound = function (self, victim_unit, damage_type)
 	-- function 19
 	local owner = Managers.player:owner(victim_unit)
-	local is_husk = not not owner.remote
+	local is_husk = owner.remote
 	local world = self.world
 	local inventory_configuration_name = self.inventory_configuration_name
 	local inventory_configuration = InventoryConfigurations[inventory_configuration_name]
@@ -608,7 +608,7 @@ AIInventoryExtension.add_additional_hit_sfx = function (self, additional_sfx_nam
 		self._additional_hit_sounds_ids = additional_hit_sounds_ids
 	end
 
-	local unique_id = not not self._unique_id
+	local unique_id = self._unique_id
 
 	self._unique_id = unique_id + 1
 

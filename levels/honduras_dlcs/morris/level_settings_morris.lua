@@ -113,7 +113,7 @@ for level_key, settings in pairs(DEUS_LEVEL_SETTINGS) do
 			settings_clone.description_text = level_key .. "_desc"
 			settings_clone.level_key = permutation_key
 			settings_clone.level_image = "level_icon_weaves"
-			settings_clone.loading_ui_package_name = not not settings_clone.loading_ui_package_name
+			settings_clone.loading_ui_package_name = settings_clone.loading_ui_package_name
 			settings_clone.music_won_state = settings_clone.music_won_state
 			settings_clone.game_mode = "deus"
 			settings_clone.mechanism = "deus"

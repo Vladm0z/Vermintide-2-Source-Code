@@ -3,16 +3,16 @@
 require("scripts/helpers/debug_helper")
 require("scripts/settings/backend_settings")
 
-GameSettingsDevelopment = not not GameSettingsDevelopment
+GameSettingsDevelopment = GameSettingsDevelopment
 
 local argv = {
 	Application.argv()
 }
 
-GameSettingsDevelopment.trunk_path = not not GameSettingsDevelopment.trunk_path
-GameSettingsDevelopment.quicklaunch_params = not not GameSettingsDevelopment.quicklaunch_params
-GameSettingsDevelopment.quicklaunch_params.level_key = LEVEL_EDITOR_TEST and not not "editor_level" or not LEVEL_EDITOR_TEST and not not "castle_01"
-GameSettingsDevelopment.start_state = LEVEL_EDITOR_TEST and not not "game" or not LEVEL_EDITOR_TEST and (DEDICATED_SERVER and not not "dedicated_server" or not DEDICATED_SERVER and not not "menu")
+GameSettingsDevelopment.trunk_path = GameSettingsDevelopment.trunk_path
+GameSettingsDevelopment.quicklaunch_params = GameSettingsDevelopment.quicklaunch_params
+GameSettingsDevelopment.quicklaunch_params.level_key = LEVEL_EDITOR_TEST and "editor_level" or not LEVEL_EDITOR_TEST and "castle_01"
+GameSettingsDevelopment.start_state = LEVEL_EDITOR_TEST and "game" or not LEVEL_EDITOR_TEST and (DEDICATED_SERVER and "dedicated_server" or not DEDICATED_SERVER and "menu")
 GameSettingsDevelopment.skip_start_screen = false
 GameSettingsDevelopment.disable_shadow_lights_system = true
 GameSettingsDevelopment.use_baked_enemy_meshes = false
@@ -22,12 +22,12 @@ GameSettingsDevelopment.lobby_browser_enabled = true
 GameSettingsDevelopment.disabled_interactions = {}
 GameSettingsDevelopment.store_nags = false
 GameSettingsDevelopment.store_nags = true
-GameSettingsDevelopment.use_global_chat = table.find(argv, "-use-global-chat") and not not true or not table.find(argv, "-use-global-chat") and not not false
+GameSettingsDevelopment.use_global_chat = table.find(argv, "-use-global-chat")
 GameSettingsDevelopment.use_new_tab_menu = true
 
-local network_timeout = Development.parameter("network_timeout_really_long") and not not 10000 or not Development.parameter("network_timeout_really_long") and not not 15
+local network_timeout = Development.parameter("network_timeout_really_long") and 10000 or not Development.parameter("network_timeout_really_long") and 15
 
-GameSettingsDevelopment.network_timeout = not not Development.parameter("network_timeout")
+GameSettingsDevelopment.network_timeout = Development.parameter("network_timeout")
 GameSettingsDevelopment.network_silence_warning_delay = 3
 GameSettingsDevelopment.show_version_info = true
 GameSettingsDevelopment.default_environment = "environment/blank"
@@ -37,14 +37,14 @@ GameSettingsDevelopment.allow_ranged_attacks_to_damage_props = false
 GameSettingsDevelopment.release_levels_only = true
 GameSettingsDevelopment.use_engine_optimized_ai_locomotion = true
 GameSettingsDevelopment.allow_retry_weave = false
-GameSettingsDevelopment.disable_carousel = not not Development.parameter("disable_carousel")
+GameSettingsDevelopment.disable_carousel = Development.parameter("disable_carousel")
 GameSettingsDevelopment.use_store_unload_list = true
 
 local script_data = script_data
 
-script_data.debug_behaviour_trees = script_data.debug_behaviour_trees == nil and not not false or not (script_data.debug_behaviour_trees == nil) and not not script_data.debug_behaviour_trees
+script_data.debug_behaviour_trees = not (script_data.debug_behaviour_trees == nil) and script_data.debug_behaviour_trees
 
-fassert(not Development.parameter("use_offline_backend") and not not not Development.parameter("use_local_backend"), "Unable to use local backend with DEBUG stripped. Remove --use-local-backend or --use-offline-backend")
+fassert(not Development.parameter("use_offline_backend") and not Development.parameter("use_local_backend"), "Unable to use local backend with DEBUG stripped. Remove --use-local-backend or --use-offline-backend")
 
 if MODDED_REALM then
 	GameSettingsDevelopment.read_only_backend = true
@@ -76,7 +76,7 @@ if Development.parameter("attract_mode") then
 	end
 end
 
-script_data.disable_tutorial_at_start = not not script_data.disable_tutorial_at_start
+script_data.disable_tutorial_at_start = script_data.disable_tutorial_at_start
 
 if script_data.honduras_demo then
 	GameSettingsDevelopment.use_backend = false
@@ -122,7 +122,7 @@ if settings.steam or Development.parameter("force_steam") then
 		GameSettingsDevelopment.network_mode = "steam"
 		GameSettingsDevelopment.disable_free_flight = true
 		GameSettingsDevelopment.show_version_info = true
-		GameSettingsDevelopment.show_fps = not not Development.parameter("show_fps")
+		GameSettingsDevelopment.show_fps = Development.parameter("show_fps")
 
 		if app_id == 795750 and test_backend == nil then
 			GameSettingsDevelopment.backend_settings = BackendSettings.stage_steam_playfab
@@ -142,9 +142,9 @@ if settings.steam or Development.parameter("force_steam") then
 		Application.quit_with_message("Vermintide 2. You need to have the Steam Client running to play the game.")
 	end
 elseif BUILD == "dev" or BUILD == "debug" then
-	GameSettingsDevelopment.network_mode = LEVEL_EDITOR_TEST and not not "lan" or not LEVEL_EDITOR_TEST and (Development.parameter("force_steam") and not not "steam" or not Development.parameter("force_steam") and not not "lan")
-	GameSettingsDevelopment.show_fps = Development.parameter("show_fps") == nil or not not Development.parameter("show_fps")
-	script_data.unlock_all_levels = not not Development.parameter("unlock-all-levels")
+	GameSettingsDevelopment.network_mode = LEVEL_EDITOR_TEST and "lan" or not LEVEL_EDITOR_TEST and (Development.parameter("force_steam") and "steam" or not Development.parameter("force_steam") and "lan")
+	GameSettingsDevelopment.show_fps = Development.parameter("show_fps") == nil or Development.parameter("show_fps")
+	script_data.unlock_all_levels = Development.parameter("unlock-all-levels")
 elseif not script_data.honduras_demo and not Development.parameter("attract_mode") and not DEDICATED_SERVER then
 	print("Running release game without content revision, quitting.")
 	Application.quit("FAIL")
@@ -159,7 +159,7 @@ GameSettingsDevelopment.disable_crafting = Development.parameter("disable-crafti
 if BUILD == "dev" or BUILD == "debug" then
 	GameSettingsDevelopment.disable_free_flight = Development.parameter("disable-free-flight")
 else
-	GameSettingsDevelopment.disable_free_flight = Development.parameter("disable-free-flight") == nil or not not Development.parameter("disable-free-flight")
+	GameSettingsDevelopment.disable_free_flight = Development.parameter("disable-free-flight") == nil or Development.parameter("disable-free-flight")
 end
 
 local test_backend = Development.parameter("test_backend")
@@ -191,7 +191,7 @@ if GameSettingsDevelopment.use_physic_debris == nil then
 	GameSettingsDevelopment.use_physic_debris = true
 end
 
-GameSettingsDevelopment.bone_lod_husks = not not GameSettingsDevelopment.bone_lod_husks
+GameSettingsDevelopment.bone_lod_husks = GameSettingsDevelopment.bone_lod_husks
 GameSettingsDevelopment.bone_lod_husks.lod_out_range_sq = 64
 GameSettingsDevelopment.bone_lod_husks.lod_in_range_sq = 49
 GameSettingsDevelopment.bone_lod_husks.lod_multiplier = Application.user_setting("animation_lod_distance_multiplier")

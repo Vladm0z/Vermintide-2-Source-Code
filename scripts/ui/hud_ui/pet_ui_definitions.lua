@@ -48,7 +48,7 @@ local scenegraph_definition = {
 			UILayer.hud_inventory
 		},
 		size = ROOT_SIZE,
-		scale = IS_CONSOLE and not not "hud_fit" or not IS_CONSOLE and not not "fit"
+		scale = IS_CONSOLE and "hud_fit" or not IS_CONSOLE and "fit"
 	},
 	container = {
 		vertical_alignment = "bottom",
@@ -347,7 +347,7 @@ end
 
 local function set_progress(immediate_materials, retained_materials, t)
 	-- function 6
-	local materials = RETAINED_MODE_ENABLED and (not not retained_materials or not not immediate_materials) or not RETAINED_MODE_ENABLED and not not immediate_materials
+	local materials = RETAINED_MODE_ENABLED and (retained_materials or immediate_materials) or not RETAINED_MODE_ENABLED and immediate_materials
 
 	for i = 1, #materials do
 		Material.set_scalar(materials[i], "progress", t)
@@ -370,7 +370,7 @@ local animation_definitions = {
 			end,
 			on_complete = function (ui_scenegraph, _, container_widget, command_state)
 				-- function 9
-				container_widget.content.state_icon = not not COMMAND_TO_ICON[command_state]
+				container_widget.content.state_icon = COMMAND_TO_ICON[command_state]
 			end
 		},
 		{

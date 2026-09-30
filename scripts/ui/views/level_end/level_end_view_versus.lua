@@ -90,12 +90,12 @@ LevelEndViewVersus._calculate_awards = function (self)
 		local winner_stats_id, amount = award_settings.evaluate(players_session_scores)
 
 		if winner_stats_id then
-			awards[winner_stats_id] = not not awards[winner_stats_id]
+			awards[winner_stats_id] = awards[winner_stats_id]
 			awards[winner_stats_id][#awards[winner_stats_id] + 1] = {
 				value = 10 - award_settings.prio,
 				header = award_settings.name,
 				sound = award_settings.sound,
-				sub_header = not not award_settings.sub_header,
+				sub_header = award_settings.sub_header,
 				screen_sub_header = award_settings.screen_sub_header,
 				award_material = award_settings.award_material,
 				award_mask_material = award_settings.award_mask_material,
@@ -117,7 +117,7 @@ LevelEndViewVersus._calculate_awards = function (self)
 			local award_data = awards_data[i]
 			local award_value = award_data.value
 
-			max_award_value = not (max_award_value < award_value) or not not award_value or not not max_award_value
+			max_award_value = not (max_award_value < award_value) or award_value or max_award_value
 		end
 
 		sorted_awards[#sorted_awards + 1] = {
@@ -224,9 +224,9 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 	if #potential_mvp_stats_ids > 1 then
 		local my_peer_id = Network.peer_id()
 		local local_player_party_id = party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-		local opponent_party_id = local_player_party_id ~= 1 and not not 1 or not (local_player_party_id ~= 1) and not not 2
+		local opponent_party_id = local_player_party_id ~= 1 and 1 or not (local_player_party_id ~= 1) and 2
 		local game_won = self.context.game_won
-		local winning_party_id = game_won and (not not local_player_party_id or game_won or not opponent_party_id) or not game_won and (game_won or not opponent_party_id)
+		local winning_party_id = game_won and (local_player_party_id or game_won or not opponent_party_id) or not game_won and (game_won or not opponent_party_id)
 		local winning_team_mvp_stats_ids = {}
 
 		for _, stats_id in ipairs(potential_mvp_stats_ids) do
@@ -251,9 +251,9 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 			local function sort_func(a, b)
 				-- function 9
 				local a_scores = players_session_scores[a].scores
-				local a_kills = not not (a_scores.damage_dealt_heroes + a_scores.vs_damage_dealt_to_pactsworn)
+				local a_kills = a_scores.damage_dealt_heroes + a_scores.vs_damage_dealt_to_pactsworn
 				local b_scores = players_session_scores[b].scores
-				local b_kills = not not (b_scores.damage_dealt_heroes + b_scores.vs_damage_dealt_to_pactsworn)
+				local b_kills = b_scores.damage_dealt_heroes + b_scores.vs_damage_dealt_to_pactsworn
 
 				return b_kills < a_kills
 			end
@@ -277,7 +277,7 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 		})
 	else
 		mvp_stats_id = Network.peer_id() .. ":1"
-		awards[mvp_stats_id] = not not awards[mvp_stats_id]
+		awards[mvp_stats_id] = awards[mvp_stats_id]
 
 		table.insert(awards[mvp_stats_id], 1, {
 			award_mask_material = "mvp_award_mask",
@@ -289,8 +289,8 @@ LevelEndViewVersus._calculate_mvp = function (self, awards, player_session_score
 		})
 	end
 
-	local mvp_player_session_score = not not player_session_scores[mvp_stats_id]
-	local mvp_peer_id = not not mvp_player_session_score.peer_id
+	local mvp_player_session_score = player_session_scores[mvp_stats_id]
+	local mvp_peer_id = mvp_player_session_score.peer_id
 	local total_score = 0
 	local mvp_scores = mvp_player_session_score.scores
 
@@ -516,7 +516,7 @@ end
 
 LevelEndViewVersus._start_award_presentation = function (self)
 	-- function 18
-	self._current_hero = not not self._current_hero
+	self._current_hero = self._current_hero
 
 	local hero_previewer = self._hero_previewers[self._current_hero]
 
@@ -542,14 +542,14 @@ LevelEndViewVersus._start_award_presentation = function (self)
 
 	self._character_rotation = hero_previewer.character_rotation
 	self._character_look_target = hero_previewer.character_look_target
-	self._fov = table.is_empty(self._team_heroes[self._current_hero].breed) and not not 55 or not table.is_empty(self._team_heroes[self._current_hero].breed) and not not nil
+	self._fov = table.is_empty(self._team_heroes[self._current_hero].breed) and 55 or not table.is_empty(self._team_heroes[self._current_hero].breed) and nil
 
 	local current_profile_name = hero_previewer:current_profile_name()
 	local profile = PROFILES_BY_NAME[current_profile_name]
 
-	self._fov = not not PROFILE_FOV[profile.display_name]
+	self._fov = PROFILE_FOV[profile.display_name]
 
-	local profile_offset = not not PROFILE_OFFSET[profile.display_name]
+	local profile_offset = PROFILE_OFFSET[profile.display_name]
 
 	hero_previewer:set_hero_rotation(0)
 
@@ -572,14 +572,14 @@ LevelEndViewVersus._start_award_presentation = function (self)
 
 	self.render_settings.alpha_multiplier = 1
 
-	local node_index = not not Unit.has_node(character_unit, "j_neck")
+	local node_index = Unit.has_node(character_unit, "j_neck")
 
 	if not node_index then
 		return
 	end
 
 	local neck_pose = Unit.world_pose(character_unit, node_index)
-	local node_index = not not Unit.has_node(character_unit, "j_hips")
+	local node_index = Unit.has_node(character_unit, "j_hips")
 
 	if not node_index then
 		return
@@ -739,7 +739,7 @@ end
 
 LevelEndViewVersus.active_input_service = function (self)
 	-- function 28
-	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
+	return self.input_blocked and FAKE_INPUT_SERVICE or not self.input_blocked and self:input_service()
 end
 
 LevelEndViewVersus.setup_pages = function (self, game_won, rewards)
@@ -903,7 +903,7 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 	local careers = profile_data.careers
 	local career_settings = careers[career_index]
 	local weapon_pose_weapon, weapon_pose_slot, weapon_pose_anim_event
-	local weapon_pose = not not player_data.weapon_pose
+	local weapon_pose = player_data.weapon_pose
 
 	if weapon_pose then
 		local item = ItemMasterList[weapon_pose]
@@ -911,7 +911,7 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 		if item then
 			local skin_name = player_data.weapon_pose.skin_name
 			local parent_item_name = item.parent
-			local parent_item = not not rawget(ItemMasterList, parent_item_name)
+			local parent_item = rawget(ItemMasterList, parent_item_name)
 
 			if parent_item then
 				weapon_pose_weapon = {
@@ -924,27 +924,27 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 		end
 	end
 
-	local weapon_item_name = not not player_data.weapon
+	local weapon_item_name = player_data.weapon
 	local weapon_item = ItemMasterList[weapon_item_name]
 	local weapon_slot = weapon_item.slot_type
 	local top_award = award_data.awards[1]
-	local award_settings = not not top_award.award_settings
-	local breeds = not not award_settings.breeds
-	local upper_range = #breeds > 0 and not not #breeds or not (#breeds > 0) and not not 1
+	local award_settings = top_award.award_settings
+	local breeds = award_settings.breeds
+	local upper_range = #breeds > 0 and #breeds or not (#breeds > 0) and 1
 	local random_seed, random_number = Math.next_random(self._random_seed, 1, upper_range)
 
 	self._random_seed = random_seed
 
-	local breed = not not breeds[random_number]
-	local breed_name = not not breed and not not breed.name
-	local pactsworn_cosmetics = not not breed and not not player_data.pactsworn_cosmetics
-	local breed_gear = not not pactsworn_cosmetics or not not breed.default_gear
-	local breed_weapon = not not breed_gear.weapon
-	local breed_weapon_item = breed_weapon and not not {
+	local breed = breeds[random_number]
+	local breed_name = breed and breed.name
+	local pactsworn_cosmetics = breed and player_data.pactsworn_cosmetics
+	local breed_gear = pactsworn_cosmetics or breed.default_gear
+	local breed_weapon = breed_gear.weapon
+	local breed_weapon_item = breed_weapon and {
 		item_name = breed_weapon
-	} or not breed_weapon and not not nil
+	} or not breed_weapon and nil
 	local breed_weapon_slot = not table.is_empty(breed_gear) and (not breed_gear.weapon_slot or breed_gear.weapon_slot ~= "slot_melee")
-	local breed_skin = not not breed_gear.skin
+	local breed_skin = breed_gear.skin
 
 	return {
 		stats_id = player_data.stats_id,
@@ -953,18 +953,18 @@ LevelEndViewVersus.get_hero_from_score = function (self, player_data, award_data
 		profile_index = profile_index,
 		career_index = career_index,
 		hero_name = career_settings.profile_name,
-		skin_name = not not breed_skin or not not player_data.hero_skin,
+		skin_name = breed_skin or player_data.hero_skin,
 		frame_name = player_data.portrait_frame,
 		player_level = player_data.player_level,
-		award_material = not not award_settings.award_material,
+		award_material = award_settings.award_material,
 		versus_player_level = player_data.versus_player_level,
-		weapon_slot = not not breed_weapon_slot or not not weapon_pose_slot or not not weapon_slot,
+		weapon_slot = breed_weapon_slot or weapon_pose_slot or weapon_slot,
 		breed = breed,
 		weapon_pose_anim_event = weapon_pose_anim_event,
 		random_seed = self._random_seed,
 		preview_items = {
-			table.is_empty(breed) and not not player_data.hat or not table.is_empty(breed) and not not nil,
-			not not breed_weapon_item or not not weapon_pose_weapon or not not player_data.weapon
+			table.is_empty(breed) and player_data.hat or not table.is_empty(breed) and nil,
+			breed_weapon_item or weapon_pose_weapon or player_data.weapon
 		}
 	}
 end
@@ -993,7 +993,7 @@ LevelEndViewVersus._gather_hero_locations = function (self, num_players)
 	end
 
 	for i = 1, num_players do
-		hero_locations[i] = not not locations[i]
+		hero_locations[i] = locations[i]
 	end
 
 	return hero_locations
@@ -1050,17 +1050,17 @@ LevelEndViewVersus._create_ceremony_award_widgets = function (self, team_data, h
 			camera = camera,
 			world_pos = world_pos,
 			player_name = player_data.player_name,
-			level = not not player_data.versus_player_level,
+			level = player_data.versus_player_level,
 			peer_id = player_data.peer_id,
 			is_mvp = award.header == "mvp",
 			header = award.header,
 			sound_event = award.sound,
-			sub_header = not not award.sub_header,
-			amount = not not award.amount,
-			award_material = not not award.award_material,
-			award_mask_material = not not award.award_mask_material,
-			screen_sub_header = not not award.screen_sub_header,
-			team_color = party_id ~= local_player_party_id and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (party_id ~= local_player_party_id) and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255),
+			sub_header = award.sub_header,
+			amount = award.amount,
+			award_material = award.award_material,
+			award_mask_material = award.award_mask_material,
+			screen_sub_header = award.screen_sub_header,
+			team_color = party_id ~= local_player_party_id and Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (party_id ~= local_player_party_id) and Colors.get_color_table_with_alpha("local_player_team_lighter", 255),
 			is_local = party_id == local_player_party_id
 		}
 		local scenegraph_id = "award_" .. i

@@ -23,7 +23,7 @@ AdventureSpawning.init = function (self, profile_synchronizer, side, is_server, 
 	self._num_spawn_points_used = 0
 	self._delayed_clients = {}
 	self._peers_ongoing_game_object_sync = {}
-	self._saved_game_mode_data = not not saved_game_mode_data or not not {}
+	self._saved_game_mode_data = saved_game_mode_data or {}
 
 	self:_setup_game_mode_data(side, self._saved_game_mode_data)
 end
@@ -34,7 +34,7 @@ AdventureSpawning._setup_game_mode_data = function (self, side, saved_game_mode_
 	local num_slots = party.num_slots
 
 	for i = 1, num_slots do
-		saved_game_mode_data[i] = not not saved_game_mode_data[i]
+		saved_game_mode_data[i] = saved_game_mode_data[i]
 	end
 end
 
@@ -131,7 +131,7 @@ AdventureSpawning._assign_data_to_slot = function (self, slot, data)
 		local ingame_time = Managers.time:time("client_ingame")
 		local is_initial_spawn = ingame_time == nil or ingame_time < 10
 
-		data.spawn_state = is_initial_spawn and not not "is_initial_spawn" or not is_initial_spawn and not not "spawn"
+		data.spawn_state = is_initial_spawn and "is_initial_spawn" or not is_initial_spawn and "spawn"
 	end
 
 	local peer_id = slot.peer_id
@@ -475,14 +475,14 @@ AdventureSpawning._spawn_player = function (self, status)
 		local ammo = data.ammo
 		local ammo_melee_percent_int = math.floor(ammo.slot_melee * 100)
 		local ammo_ranged_percent_int = math.floor(ammo.slot_ranged * 100)
-		local ability_cooldown_perentage = not not data.ability_cooldown_percentage
+		local ability_cooldown_perentage = data.ability_cooldown_percentage
 		local ability_cooldown_percent_int = math.floor(ability_cooldown_perentage * 100)
 		local inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id, local_player_id)
 
 		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id, local_player_id, profile_index, career_index, position, rotation, is_initial_spawn, ammo_melee_percent_int, ammo_ranged_percent_int, ability_cooldown_percent_int, healthkit_id, potion_id, grenade_id, network_additional_items, network_buff_ids, inventory_hash)
 	end
 
-	data.spawn_state = is_initial_spawn and not not "initial_spawning" or not is_initial_spawn and not not "spawning"
+	data.spawn_state = is_initial_spawn and "initial_spawning" or not is_initial_spawn and "spawning"
 end
 
 AdventureSpawning._spawn_bot = function (self, status)
@@ -499,7 +499,7 @@ AdventureSpawning._spawn_bot = function (self, status)
 
 	fassert(bot_player.bot_player, "Trying to spawn a player as a bot, status info isn't correct")
 
-	local ability_cooldown_perentage = not not data.ability_cooldown_percentage
+	local ability_cooldown_perentage = data.ability_cooldown_percentage
 	local ability_cooldown_percent_int = math.floor(ability_cooldown_perentage * 100)
 
 	bot_player:spawn(position, rotation, is_initial_spawn, ammo.slot_melee, ammo.slot_ranged, consumables.slot_healthkit, consumables.slot_potion, consumables.slot_grenade, ability_cooldown_percent_int)
@@ -561,9 +561,9 @@ AdventureSpawning.add_spawn_point = function (self, unit)
 		rot = QuaternionBox(rot)
 	}
 	local prior_state = Unit.get_data(unit, "from_game_mode")
-	local prior_state = not not "default"
+	local prior_state = "default"
 
-	self._spawn_points[prior_state] = not not self._spawn_points[prior_state]
+	self._spawn_points[prior_state] = self._spawn_points[prior_state]
 	self._spawn_points[prior_state][#self._spawn_points[prior_state] + 1] = spawn_point
 end
 
@@ -571,8 +571,8 @@ AdventureSpawning.get_spawn_point = function (self)
 	-- function 26
 	local default_state = "default"
 	local came_from_mechanism = Managers.mechanism:get_last_mechanism_switch()
-	local prior_state = not not Managers.mechanism:get_prior_state()
-	local spawn_points = not not self._spawn_points[prior_state]
+	local prior_state = Managers.mechanism:get_prior_state()
+	local spawn_points = self._spawn_points[prior_state]
 
 	self._num_spawn_points_used = self._num_spawn_points_used + 1
 
@@ -615,7 +615,7 @@ AdventureSpawning.teleport_despawned_players = function (self, position)
 		local status = occupied_slots[i]
 		local peer_id = status.peer_id
 		local local_player_id = status.local_player_id
-		local player = not not peer_id and not not local_player_id and not not player_manager:player(peer_id, local_player_id)
+		local player = peer_id and local_player_id and player_manager:player(peer_id, local_player_id)
 
 		if not player or not player.player_unit then
 			status.game_mode_data.position:store(position)
@@ -705,7 +705,7 @@ AdventureSpawning.get_spawn_point_from_spawn_group = function (self, group_id)
 	end
 
 	local spawn_points = self._spawn_groups[group_id]
-	local num_spawnpoints = not not spawn_points and not not #spawn_points
+	local num_spawnpoints = spawn_points and #spawn_points
 
 	fassert(num_spawnpoints, "no spawn points exists for indicated spawn group: ", group_id)
 

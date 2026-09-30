@@ -67,7 +67,7 @@ BackendInterfaceCraftingBase.salvage_validation_func = function (self, recipe, i
 	for i = 1, #item_backend_ids do
 		local backend_id = item_backend_ids[i]
 		local masterlist_data = backend_items:get_item_masterlist_data(backend_id)
-		local slot_type = not not masterlist_data and not not masterlist_data.slot_type
+		local slot_type = masterlist_data and masterlist_data.slot_type
 
 		if slot_type and not salvagable_slot_types[slot_type] then
 			return false
@@ -130,7 +130,7 @@ BackendInterfaceCraftingBase._validate_ingredient = function (self, ingredient, 
 	local ingredient_name = ingredient.name
 	local ingredient_category = ingredient.catergory
 	local has_variable = ingredient.has_variable
-	local amount = not not ingredient.amount
+	local amount = ingredient.amount
 	local total_found_ingredients = 0
 
 	table.clear(ingredient_ids)
@@ -139,7 +139,7 @@ BackendInterfaceCraftingBase._validate_ingredient = function (self, ingredient, 
 		repeat
 			local item_backend_id = item_backend_ids[i]
 			local masterlist_data = backend_items:get_item_masterlist_data(item_backend_id)
-			local item_name = not not masterlist_data and not not masterlist_data.name
+			local item_name = masterlist_data and masterlist_data.name
 
 			if not item_name or ingredient_name and ingredient_name ~= item_name then
 				break
@@ -165,7 +165,7 @@ BackendInterfaceCraftingBase._validate_ingredient = function (self, ingredient, 
 			if can_stack and item_amount < amount then
 				break
 			else
-				amount_from_item = not not amount
+				amount_from_item = amount
 			end
 
 			total_found_ingredients = total_found_ingredients + amount_from_item
@@ -264,7 +264,7 @@ BackendInterfaceCraftingBase.check_same_item_func = function (self, item_backend
 		local masterlist_data = backend_items:get_item_masterlist_data(item_backend_id)
 		local item_name = masterlist_data.name
 
-		name = not not name or not not item_name
+		name = name or item_name
 
 		if name ~= item_name then
 			return false

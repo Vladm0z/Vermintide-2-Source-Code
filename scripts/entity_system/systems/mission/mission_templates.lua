@@ -33,7 +33,7 @@ MissionTemplates = {
 				unit = unit,
 				mission_data = mission_data,
 				evaluate_at_level_end = evaluate_at_level_end,
-				evaluation_type = not not mission_data.evaluation_type,
+				evaluation_type = mission_data.evaluation_type,
 				experience = mission_data.experience,
 				bonus_dice = mission_data.bonus_dice,
 				experience_per_percent = mission_data.experience_per_percent,
@@ -56,7 +56,7 @@ MissionTemplates = {
 			-- function 6
 			local collect_amount = data.collect_amount
 			local evaluate_at_level_end = data.evaluate_at_level_end
-			local current_amount = data:increase_current_amount(positive and not not 1 or not positive and not not -1)
+			local current_amount = data:increase_current_amount(positive and 1 or not positive and -1)
 
 			return not evaluate_at_level_end and current_amount == collect_amount
 		end,
@@ -174,7 +174,7 @@ MissionTemplates = {
 		end,
 		evaluate_mission = function (data, dt)
 			-- function 20
-			return data.done, data.done and not not 1 or not data.done and not not 0
+			return data.done, data.done and 1 or not data.done and 0
 		end,
 		create_sync_data = function (data)
 			-- function 21
@@ -220,8 +220,8 @@ MissionTemplates = {
 			local time = math.ceil(data.time_left)
 			local minutes = math.floor(time / 60)
 			local seconds = time % 60
-			local sminutes = minutes >= 10 and not not tostring(minutes) or not (minutes >= 10) and not not string.format("0%s", tostring(minutes))
-			local sseconds = seconds >= 10 and not not tostring(seconds) or not (seconds >= 10) and not not string.format("0%s", tostring(seconds))
+			local sminutes = minutes >= 10 and tostring(minutes) or not (minutes >= 10) and string.format("0%s", tostring(minutes))
+			local sseconds = seconds >= 10 and tostring(seconds) or not (seconds >= 10) and string.format("0%s", tostring(seconds))
 			local text = string.format("%s", data.mission_text)
 			local duration_text = string.format("%s:%s", sminutes, sseconds)
 
@@ -494,7 +494,7 @@ MissionTemplates = {
 		end,
 		evaluate_mission = function (data, dt)
 			-- function 50
-			return data.done, data.done and not not 1 or not data.done and not not 0
+			return data.done, data.done and 1 or not data.done and 0
 		end,
 		create_sync_data = function (data)
 			-- function 51

@@ -16,7 +16,7 @@ BTAlertedAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 
 	blackboard.action = action
-	blackboard.alerted_action = not not blackboard.alerted_action
+	blackboard.alerted_action = blackboard.alerted_action
 	blackboard.move_animation_name = nil
 	blackboard.anim_cb_rotation_start = false
 	blackboard.anim_cb_move = false
@@ -102,7 +102,7 @@ BTAlertedAction.decide_deadline = function (self, unit, blackboard, t)
 	local rotation = Unit.local_rotation(unit, 0)
 	local forward_vector_flat = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
 	local dot_product = Vector3.dot(forward_vector_flat, target_vector_flat)
-	local min_deadline = dot_product > 0.25 and not not 0.5 or not (dot_product > 0.25) and not not 1
+	local min_deadline = dot_product > 0.25 and 0.5 or not (dot_product > 0.25) and 1
 	local max_deadline = math.max(min_deadline, 2 - dot_product * 2)
 	local time_alerted = 0
 	local breed = blackboard.breed
@@ -205,7 +205,7 @@ BTAlertedAction.leave = function (self, unit, blackboard, t, reason, destroy)
 		AiUtils.enter_passive(unit, blackboard)
 	end
 
-	blackboard.lerp_into_follow = not not blackboard.breed.lerp_alerted_into_follow_speed
+	blackboard.lerp_into_follow = blackboard.breed.lerp_alerted_into_follow_speed
 end
 
 local function contains(wanted_event, event)
@@ -223,7 +223,7 @@ BTAlertedAction.check_if_should_start_moving = function (self, unit, blackboard)
 	local target_unit = blackboard.target_unit
 	local target_pos = POSITION_LOOKUP[target_unit]
 	local deadline_reached = blackboard.alerted_deadline_reached_and_sighted_enemy
-	local has_started_animation = not not blackboard.move_animation_name
+	local has_started_animation = blackboard.move_animation_name
 
 	if deadline_reached and not has_started_animation then
 		local ai_slot_system = Managers.state.entity:system("ai_slot_system")

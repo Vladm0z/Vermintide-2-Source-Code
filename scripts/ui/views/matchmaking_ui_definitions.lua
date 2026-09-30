@@ -843,14 +843,14 @@ local function create_status_widget(texture, offset)
 					texture_id = "texture_id",
 					content_check_function = function (content)
 						-- function 7
-						return not not content.is_connecting
+						return content.is_connecting
 					end,
 					content_change_function = function (content, style, animations, dt)
 						-- function 8
 						local color = style.color
 
 						if content.is_connecting then
-							local color_progress = (not not content.color_progress + dt) % 1
+							local color_progress = (content.color_progress + dt) % 1
 
 							content.color_progress = color_progress
 
@@ -884,9 +884,9 @@ local function create_status_widget(texture, offset)
 					255
 				},
 				offset = {
-					not not offset[1],
-					not not offset[2],
-					not not offset[3]
+					offset[1],
+					offset[2],
+					offset[3]
 				}
 			}
 		}

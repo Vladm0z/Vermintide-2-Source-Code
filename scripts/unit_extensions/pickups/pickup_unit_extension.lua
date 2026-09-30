@@ -10,7 +10,7 @@ PickupUnitExtension.init = function (self, extension_init_context, unit, extensi
 	local pickup_name = extension_init_data.pickup_name
 	local has_physics = extension_init_data.has_physics
 	local spawn_type = extension_init_data.spawn_type
-	local dropped_by_breed = not not extension_init_data.dropped_by_breed
+	local dropped_by_breed = extension_init_data.dropped_by_breed
 	local network_transmit = extension_init_context.network_transmit
 
 	self.pickup_name = pickup_name
@@ -24,13 +24,13 @@ PickupUnitExtension.init = function (self, extension_init_context, unit, extensi
 
 	local pickup_settings = AllPickups[pickup_name]
 
-	self.material_settings_name = extension_init_data.material_settings_name == "n/a" and not not pickup_settings.material_settings_name or not (extension_init_data.material_settings_name == "n/a") and not not extension_init_data.material_settings_name
+	self.material_settings_name = extension_init_data.material_settings_name == "n/a" and pickup_settings.material_settings_name or not (extension_init_data.material_settings_name == "n/a") and extension_init_data.material_settings_name
 	self.hide_func = pickup_settings.hide_func
 	self.hidden = false
 
 	Unit.set_data(unit, "interaction_data", "item_name", pickup_settings.item_name)
 	Unit.set_data(unit, "interaction_data", "hud_description", pickup_settings.hud_description)
-	Unit.set_data(unit, "interaction_data", "interaction_length", not not Unit.get_data(unit, "interaction_data", "interaction_length"))
+	Unit.set_data(unit, "interaction_data", "interaction_length", (Unit.get_data(unit, "interaction_data", "interaction_length")))
 	Unit.set_data(unit, "interaction_data", "interaction_type", "pickup_object")
 	Unit.set_data(unit, "interaction_data", "only_once", pickup_settings.only_once)
 	Unit.set_data(unit, "interaction_data", "individual_pickup", pickup_settings.individual_pickup)

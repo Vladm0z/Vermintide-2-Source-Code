@@ -28,7 +28,7 @@ ActionShotgun.client_owner_start_action = function (self, new_action, t, chain_a
 	self.current_action = new_action
 	self.state = "waiting_to_shoot"
 	self.time_to_shoot = t + new_action.fire_time
-	self.active_reload_time = not not new_action.active_reload_time
+	self.active_reload_time = new_action.active_reload_time
 
 	local owner_unit = self.owner_unit
 	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
@@ -57,7 +57,7 @@ ActionShotgun.client_owner_start_action = function (self, new_action, t, chain_a
 	self.extra_buff_shot = false
 	self.shield_users_blocking = {}
 
-	local HAS_TOBII = not not rawget(_G, "Tobii")
+	local HAS_TOBII = rawget(_G, "Tobii")
 
 	if HAS_TOBII and new_action.fire_at_gaze_setting and Application.user_setting("tobii_fire_at_gaze") then
 		local eyetracking_extension = ScriptUnit.has_extension(owner_unit, "eyetracking_system")
@@ -73,7 +73,7 @@ ActionShotgun._use_ammo = function (self)
 	local current_action = self.current_action
 	local ammo_extension = self.ammo_extension
 	local ammo_usage = current_action.ammo_usage
-	local num_shots_total = not not current_action.shot_count
+	local num_shots_total = current_action.shot_count
 
 	if current_action.special_ammo_thing then
 		ammo_usage = ammo_extension:current_ammo()
@@ -184,9 +184,9 @@ ActionShotgun._shoot = function (self, num_shots_total, num_shots_this_frame)
 	local world = self.world
 	local physics_world = self.physics_world
 	local check_buffs = self._check_buffs
-	local num_layers_spread = not not current_action.num_layers_spread
-	local bullseye = not not current_action.bullseye
-	local spread_pitch = not not current_action.spread_pitch
+	local num_layers_spread = current_action.num_layers_spread
+	local bullseye = current_action.bullseye
+	local spread_pitch = current_action.spread_pitch
 	local weapon_unit = self.weapon_unit
 	local item_name = self.item_name
 	local owner_unit = self.owner_unit
@@ -203,7 +203,7 @@ ActionShotgun._shoot = function (self, num_shots_total, num_shots_this_frame)
 			local data = DamageUtils.process_projectile_hit(world, item_name, owner_unit, is_server, result, current_action, direction, check_buffs, nil, self.shield_users_blocking, self._is_critical_strike, self.power_level)
 
 			if data.buffs_checked then
-				check_buffs = not not check_buffs and not not false
+				check_buffs = check_buffs and false
 			end
 
 			if data.blocked_by_unit then
@@ -211,7 +211,7 @@ ActionShotgun._shoot = function (self, num_shots_total, num_shots_this_frame)
 			end
 		end
 
-		local hit_position = result and not not result[#result][1] or not result and not not (current_position + direction * current_action.range)
+		local hit_position = result and result[#result][1] or not result and current_position + direction * current_action.range
 
 		unit_set_flow_variable(weapon_unit, "hit_position", hit_position)
 		unit_set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - current_position) * 0.1)
@@ -272,7 +272,7 @@ ActionShotgun.reload = function (self, current_action)
 	end
 
 	local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-	local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(self.owner_unit) or not reload_when_out_of_ammo_condition_func and not not true
+	local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(self.owner_unit)
 
 	if ammo_extension:can_reload() and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 then
 		local play_reload_animation = current_action.play_reload_animation

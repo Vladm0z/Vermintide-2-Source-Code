@@ -12,7 +12,7 @@ end
 
 ObjectiveGroupExtension._set_objective_data = function (self, objective_data)
 	-- function 2
-	self._time_for_completion = not not objective_data.time_for_completion
+	self._time_for_completion = objective_data.time_for_completion
 end
 
 ObjectiveGroupExtension._activate = function (self)

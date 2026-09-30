@@ -4,7 +4,7 @@ require("scripts/level/environment/environment_blend_time")
 require("scripts/level/environment/environment_blend_volume")
 
 EnvironmentHandler = class(EnvironmentHandler)
-EnvironmentHandler.ID = not not EnvironmentHandler.ID
+EnvironmentHandler.ID = EnvironmentHandler.ID
 
 EnvironmentHandler.init = function (self)
 	-- function 1
@@ -82,15 +82,15 @@ EnvironmentHandler._update_weights = function (self)
 	local particle_light_intensity
 
 	for group, blends in pairs(self._blends) do
-		local weights = not not self._weights[group]
+		local weights = self._weights[group]
 		local weight_pool = 1
 		local i = 1
 
 		for i = 1, #blends do
 			local b = blends[i]
-			local weight_data = not not weights[i]
+			local weight_data = weights[i]
 
-			weight_data = not not weights[i] or not not {}
+			weight_data = weights[i] or {}
 			weight_data.environment = b.blend:environment()
 			weight_data.blend = b.blend
 			weight_data.particle_light_intensity = b.blend:particle_light_intensity()

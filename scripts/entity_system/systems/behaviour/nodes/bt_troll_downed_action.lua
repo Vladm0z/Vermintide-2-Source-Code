@@ -39,7 +39,7 @@ BTTrollDownedAction.enter = function (self, unit, blackboard, t)
 	self:trigger_dialogue_event(unit, "chaos_troll_incapacitaded")
 	self:effects_on_downed(unit, blackboard, t)
 
-	blackboard.num_regen = blackboard.num_regen and not not (blackboard.num_regen + 1) or not blackboard.num_regen and not not 1
+	blackboard.num_regen = blackboard.num_regen and blackboard.num_regen + 1 or not blackboard.num_regen and 1
 
 	if action.rage_buff_on_wounded and action.remove_leaving_buff_on_enter then
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
@@ -90,7 +90,7 @@ BTTrollDownedAction.run = function (self, unit, blackboard, t, dt)
 				blackboard.buff_during_stand_up = buff_extension:add_buff(action.buff_during_stand_up)
 			end
 
-			Managers.state.network:anim_event(unit, not not action.rise_anim)
+			Managers.state.network:anim_event(unit, action.rise_anim)
 			self:trigger_dialogue_event(unit, "chaos_troll_rising_regen")
 
 			blackboard.downed_state = "standup"
@@ -101,7 +101,7 @@ BTTrollDownedAction.run = function (self, unit, blackboard, t, dt)
 				blackboard.buff_during_stand_up = buff_extension:add_buff(action.buff_during_stand_up)
 			end
 
-			Managers.state.network:anim_event(unit, not not action.rise_anim_wounded)
+			Managers.state.network:anim_event(unit, action.rise_anim_wounded)
 			self:trigger_dialogue_event(unit, "chaos_troll_rising_interrupted")
 
 			blackboard.downed_state = "standup"

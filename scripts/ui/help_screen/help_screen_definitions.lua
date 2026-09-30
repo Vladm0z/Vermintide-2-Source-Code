@@ -89,7 +89,7 @@ local function help_screen_widget_func(num_pages, current_page)
 	-- function 1
 	local debug = false
 
-	num_pages = not not num_pages or not not 3
+	num_pages = num_pages or 3
 
 	local textures = {}
 

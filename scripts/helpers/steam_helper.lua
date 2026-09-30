@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/steam_helper.lua
 
-SteamHelper = not not SteamHelper
+SteamHelper = SteamHelper
 
 local FRIEND_STATUS = {
 	[0] = "offline",
@@ -56,7 +56,7 @@ SteamHelper.friends = function ()
 			end
 		end
 
-		local playing_this_game = not not playing_game and playing_game.app_id == app_id
+		local playing_this_game = playing_game and playing_game.app_id == app_id
 
 		friends[id] = {
 			name = Friends.name(id),

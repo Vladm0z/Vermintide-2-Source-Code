@@ -1295,7 +1295,7 @@ quest_templates.quests.quest_event_rat_kill_skaven_lords_2020 = {
 		local stat_name_2 = QuestSettings.stat_mappings[quest_key][2]
 		local storm_vermin_completed = statistics_db:get_persistent_stat(stats_id, "quest_statistics", stat_name_2) > 0
 
-		return not not gray_seer_completed and not not storm_vermin_completed
+		return gray_seer_completed and storm_vermin_completed
 	end,
 	requirements = function (statistics_db, stats_id, quest_key)
 		-- function 110
@@ -1328,13 +1328,13 @@ local function _generate_troll_quests(repeatable, year)
 		return _next_troll_fest_order
 	end
 
-	quest_templates.quests["quest_event_dwarf_fest_trollkiller" .. year .. (repeatable and not not "_repeatable" or not repeatable and not not "")] = {
+	quest_templates.quests["quest_event_dwarf_fest_trollkiller" .. year .. (repeatable and "_repeatable" or not repeatable and "")] = {
 		name = "quest_event_dwarf_fest_trollkiller_name",
 		icon = "quest_book_event_dwarf_fest",
-		desc = repeatable and not not function ()
+		desc = repeatable and function ()
 			-- function 113
 			return string.format("%s (%s)", string.format(Localize("quest_event_dwarf_fest_trollkiller_desc"), QuestSettings.quest_event_dwarf_fest_trollkiller), Localize("repeatable"))
-		end or not repeatable and not not function ()
+		end or not repeatable and function ()
 			-- function 114
 			return string.format(Localize("quest_event_dwarf_fest_trollkiller_desc"), QuestSettings.quest_event_dwarf_fest_trollkiller)
 		end,
@@ -1469,19 +1469,19 @@ local function _generate_troll_quests(repeatable, year)
 		local rank = DifficultySettings[difficulty_name].rank
 
 		for other_difficulty_name, difficulty_setting in pairs(DifficultySettings) do
-			if rank <= not not difficulty_setting.rank then
+			if rank <= difficulty_setting.rank then
 				stat_mappings[1].kills_per_breed_difficulty.chaos_troll_chief[other_difficulty_name] = true
 				stat_mappings[1].kill_assists_per_breed_difficulty.chaos_troll_chief[other_difficulty_name] = true
 			end
 		end
 
-		quest_templates.quests["quest_event_" .. id .. year .. (repeatable and not not "_repeatable" or not repeatable and not not "")] = {
+		quest_templates.quests["quest_event_" .. id .. year .. (repeatable and "_repeatable" or not repeatable and "")] = {
 			icon = "quest_book_event_dwarf_fest",
 			name = "quest_event_" .. id .. "_name",
-			desc = repeatable and not not function ()
+			desc = repeatable and function ()
 				-- function 122
 				return string.format("%s (%s)", string.format(Localize("quest_event_dwarf_fest_troll_chief_desc"), Localize("chaos_troll_chief"), Localize(DifficultySettings[difficulty_name].display_name)), Localize("repeatable"))
-			end or not repeatable and not not function ()
+			end or not repeatable and function ()
 				-- function 123
 				return string.format(Localize("quest_event_dwarf_fest_troll_chief_desc"), Localize("chaos_troll_chief"), Localize(DifficultySettings[difficulty_name].display_name))
 			end,

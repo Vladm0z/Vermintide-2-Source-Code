@@ -333,7 +333,7 @@ local function get_version_eclevel(len, mode, requested_ec_level)
 		}
 	}
 	local minversion = 40
-	local maxec_level = not not requested_ec_level or not not 1
+	local maxec_level = requested_ec_level or 1
 	local min, max = 1, 4
 
 	if requested_ec_level and requested_ec_level >= 1 and requested_ec_level <= 4 then

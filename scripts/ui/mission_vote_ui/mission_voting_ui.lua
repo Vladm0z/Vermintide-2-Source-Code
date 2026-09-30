@@ -113,7 +113,7 @@ end
 
 MissionVotingUI.is_active = function (self)
 	-- function 5
-	return not not self.vote_started
+	return self.vote_started
 end
 
 MissionVotingUI.setup_option_input = function (self, option_widget, option)
@@ -145,7 +145,7 @@ MissionVotingUI.start_vote = function (self, active_voting)
 		local can_start_vote = vote_template.can_start_vote(active_voting.data)
 
 		if not can_start_vote then
-			local text = not not vote_template.text
+			local text = vote_template.text
 
 			printf("[MissionVotingUI] - Terminating vote request (%s) due to the requirements to start was not fulfilled.", text)
 
@@ -194,8 +194,8 @@ MissionVotingUI.start_vote = function (self, active_voting)
 			local strict_matchmaking = vote_data.strict_matchmaking
 			local theme = vote_data.dominant_god
 			local event_data = vote_data.event_data
-			local mutators = event_data and not not event_data.mutators or not event_data and not not {}
-			local boons = event_data and not not event_data.boons or not event_data and not not {}
+			local mutators = event_data and event_data.mutators or not event_data and {}
+			local boons = event_data and event_data.boons or not event_data and {}
 
 			self:_set_deus_weekly_expedition_presentation(difficulty, journey_name, private_game, always_host, strict_matchmaking, theme, mutators, boons)
 		else
@@ -216,7 +216,7 @@ MissionVotingUI.start_vote = function (self, active_voting)
 
 			self:_set_versus_quickplay_presentation(difficulty)
 		else
-			local mission_id = not not vote_data.mission_id
+			local mission_id = vote_data.mission_id
 			local difficulty = vote_data.difficulty
 			local player_hosted = vote_data.player_hosted
 			local dedicated_servers_win = vote_data.dedicated_servers_win
@@ -234,8 +234,8 @@ MissionVotingUI.start_vote = function (self, active_voting)
 		local event_data = vote_data.event_data
 		local mission_id = vote_data.mission_id
 		local difficulty = vote_data.difficulty
-		local mutators = event_data and not not event_data.mutators or not event_data and not not {}
-		local boons = event_data and not not event_data.boons or not event_data and not not {}
+		local mutators = event_data and event_data.mutators or not event_data and {}
+		local boons = event_data and event_data.boons or not event_data and {}
 
 		self:_set_event_game_presentation(difficulty, mission_id, mutators)
 	else
@@ -380,7 +380,7 @@ MissionVotingUI._set_weave_quickplay_presentation = function (self, difficulty)
 	local difficulty_settings = DifficultySettings[difficulty]
 	local difficulty_display_name = difficulty_settings.display_name
 	local difficulty_display_image = difficulty_settings.display_image
-	local difficulty_frame_texture = not not difficulty_settings.completed_frame_texture
+	local difficulty_frame_texture = difficulty_settings.completed_frame_texture
 	local weave_quickplay_widgets_by_name = self._weave_quickplay_widgets_by_name
 	local game_option_1 = weave_quickplay_widgets_by_name.game_option_1
 
@@ -395,7 +395,7 @@ MissionVotingUI._set_adventure_presentation = function (self, difficulty)
 	local difficulty_settings = DifficultySettings[difficulty]
 	local difficulty_display_name = difficulty_settings.display_name
 	local difficulty_display_image = difficulty_settings.display_image
-	local difficulty_frame_texture = not not difficulty_settings.completed_frame_texture
+	local difficulty_frame_texture = difficulty_settings.completed_frame_texture
 	local adventure_game_widgets_by_name = self._adventure_game_widgets_by_name
 	local game_option_1 = adventure_game_widgets_by_name.game_option_1
 
@@ -416,12 +416,12 @@ end
 
 MissionVotingUI._set_switch_mechanism_presentation = function (self, vote_data)
 	-- function 15
-	local mechanism_key = not not vote_data.mechanism
-	local level_key = not not vote_data.level_key
+	local mechanism_key = vote_data.mechanism
+	local level_key = vote_data.level_key
 	local level_settings = LevelSettings[level_key]
 	local mechanism_settings = MechanismSettings[mechanism_key]
-	local background_texture = not not mechanism_settings.vote_switch_mechanism_background
-	local info_blurb = not not mechanism_settings.vote_switch_mechanism_text
+	local background_texture = mechanism_settings.vote_switch_mechanism_background
+	local info_blurb = mechanism_settings.vote_switch_mechanism_text
 	local switch_mechanism_widgets_by_name = self._switch_mechanism_widgets_by_name
 
 	switch_mechanism_widgets_by_name.background.content.texture_id = background_texture
@@ -429,7 +429,7 @@ MissionVotingUI._set_switch_mechanism_presentation = function (self, vote_data)
 	switch_mechanism_widgets_by_name.subtitle.content.text = level_settings.display_name
 	switch_mechanism_widgets_by_name.description.content.text = info_blurb
 
-	local text_color_key = self._active_mechanism ~= "deus" and not not "adventure_text_color" or not (self._active_mechanism ~= "deus") and not not "morris_text_color"
+	local text_color_key = self._active_mechanism ~= "deus" and "adventure_text_color" or not (self._active_mechanism ~= "deus") and "morris_text_color"
 	local title_style = switch_mechanism_widgets_by_name.title.style.text
 
 	Colors.copy_to(title_style.text_color, title_style[text_color_key])
@@ -446,11 +446,11 @@ MissionVotingUI._set_custom_game_presentation = function (self, difficulty, leve
 	local difficulty_settings = DifficultySettings[difficulty]
 	local difficulty_display_name = difficulty_settings.display_name
 	local difficulty_display_image = difficulty_settings.display_image
-	local difficulty_frame_texture = not not difficulty_settings.completed_frame_texture
+	local difficulty_frame_texture = difficulty_settings.completed_frame_texture
 	local level_settings = LevelSettings[level_key]
 	local level_display_name = level_settings.display_name
 	local level_image = level_settings.level_image
-	local completed_difficulty_index = not not LevelUnlockUtils.completed_level_difficulty_index(self.statistics_db, self._stats_id, level_key)
+	local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(self.statistics_db, self._stats_id, level_key)
 	local level_frame = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
 	local custom_game_widgets_by_name = self._custom_game_widgets_by_name
 	local game_option_1 = custom_game_widgets_by_name.game_option_1
@@ -517,7 +517,7 @@ MissionVotingUI._set_event_game_presentation = function (self, difficulty, level
 	local difficulty_settings = DifficultySettings[difficulty]
 	local difficulty_display_name = difficulty_settings.display_name
 	local difficulty_display_image = difficulty_settings.display_image
-	local difficulty_frame_texture = not not difficulty_settings.completed_frame_texture
+	local difficulty_frame_texture = difficulty_settings.completed_frame_texture
 	local event_game_widgets_by_name = self._event_game_widgets_by_name
 	local game_option_1 = event_game_widgets_by_name.game_option_1
 
@@ -632,8 +632,8 @@ MissionVotingUI._assign_objective = function (self, index, text, icon, spacing)
 	local content = widget.content
 	local style = widget.style
 
-	content.icon = not not icon or not not "objective_icon_general"
-	content.text = not not text or not not "-"
+	content.icon = icon or "objective_icon_general"
+	content.text = text or "-"
 end
 
 MissionVotingUI._set_deus_quickplay_presentation = function (self, difficulty)
@@ -641,7 +641,7 @@ MissionVotingUI._set_deus_quickplay_presentation = function (self, difficulty)
 	local difficulty_settings = DifficultySettings[difficulty]
 	local difficulty_display_name = difficulty_settings.display_name
 	local difficulty_display_image = difficulty_settings.display_image
-	local difficulty_frame_texture = not not difficulty_settings.completed_frame_texture
+	local difficulty_frame_texture = difficulty_settings.completed_frame_texture
 	local deus_quickplay_widgets_by_name = self._deus_quickplay_widgets_by_name
 	local game_option_1 = deus_quickplay_widgets_by_name.game_option_1
 
@@ -728,7 +728,7 @@ MissionVotingUI._setup_curses = function (self, mutators, spacing, offset_y)
 	self._deus_weekly_event_widgets_by_name.curse_header = widget
 	offset_y = offset_y - 40 - spacing
 
-	local mutators = not not mutators or not not EMPTY_TABLE
+	local mutators = mutators or EMPTY_TABLE
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
 	for idx, mutator_name in ipairs(mutators) do
@@ -778,7 +778,7 @@ MissionVotingUI._setup_boons = function (self, boons, spacing, offset_y)
 	local player = Managers.player:local_player()
 	local profile_index = player:profile_index()
 	local career_index = player:career_index()
-	local boons = not not boons or not not EMPTY_TABLE
+	local boons = boons or EMPTY_TABLE
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
 	for idx, boon_name in ipairs(boons) do
@@ -825,7 +825,7 @@ MissionVotingUI._set_deus_custom_game_presentation = function (self, difficulty,
 	local journey_settings = DeusJourneySettings[journey_name]
 	local journey_display_name = journey_settings.display_name
 	local level_image = journey_settings.level_image
-	local completed_difficulty_index = not not LevelUnlockUtils.completed_journey_difficulty_index(self.statistics_db, self._stats_id, journey_name)
+	local completed_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(self.statistics_db, self._stats_id, journey_name)
 	local level_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(level_image)
 
 	game_option_1_content.icon = level_image
@@ -989,14 +989,14 @@ MissionVotingUI.update = function (self, dt, t)
 	-- function 31
 	local parent = self._parent
 	local ingame_ui = parent:parent()
-	local menu_active = not not ingame_ui.menu_active
+	local menu_active = ingame_ui.menu_active
 
 	self.menu_active = menu_active
 
 	self:_update_animations(dt, t)
 
 	local voting_manager = self.voting_manager
-	local is_mission_vote_in_progress = not not voting_manager:vote_in_progress()
+	local is_mission_vote_in_progress = voting_manager:vote_in_progress()
 
 	if is_mission_vote_in_progress then
 		if not menu_active then
@@ -1013,7 +1013,7 @@ MissionVotingUI.update = function (self, dt, t)
 			if not self.has_voted then
 				local gamepad_active = Managers.input:is_device_active("gamepad")
 				local active_voting = voting_manager.active_voting
-				local vote_template = not not active_voting and not not active_voting.template
+				local vote_template = active_voting and active_voting.template
 
 				if vote_template then
 					local input_service = self.input_manager:get_service("mission_voting")
@@ -1313,8 +1313,8 @@ MissionVotingUI._update_pulse_animations = function (self, dt)
 	local menu_active = self.menu_active
 
 	if not menu_active then
-		local speed_multiplier = menu_active and not not 5 or not menu_active and not not 8
-		local progress = menu_active and not not 0 or not menu_active and not not (0.5 + math.sin(Managers.time:time("ui") * speed_multiplier) * 0.5)
+		local speed_multiplier = menu_active and 5 or not menu_active and 8
+		local progress = menu_active and 0 or not menu_active and 0.5 + math.sin(Managers.time:time("ui") * speed_multiplier) * 0.5
 		local alpha = 100 + progress * 155
 		local widgets_by_name = self._widgets_by_name
 

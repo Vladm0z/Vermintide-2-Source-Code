@@ -2,7 +2,7 @@
 
 local player = StatisticsDefinitions.player
 
-JourneyDifficultyDBNames = not not JourneyDifficultyDBNames
+JourneyDifficultyDBNames = JourneyDifficultyDBNames
 player.completed_journeys_difficulty = {}
 
 for _, name in ipairs(AvailableJourneyOrder) do
@@ -20,7 +20,7 @@ for _, name in ipairs(AvailableJourneyOrder) do
 	player.completed_journeys_difficulty[journey_difficulty_name] = completed_journeys_difficulty_definition
 end
 
-JourneyDominantGodDifficultyDBNames = not not JourneyDominantGodDifficultyDBNames
+JourneyDominantGodDifficultyDBNames = JourneyDominantGodDifficultyDBNames
 player.completed_journey_dominant_god_difficulty = {}
 
 for _, name in pairs(DEUS_GOD_TYPES) do

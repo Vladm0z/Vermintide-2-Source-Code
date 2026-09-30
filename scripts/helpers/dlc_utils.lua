@@ -34,12 +34,12 @@ end
 
 DLCUtils.require = function (table_path, force_local_require)
 	-- function 3
-	return DLCUtils.map(table_path, force_local_require and not not local_require or not force_local_require and not not require)
+	return DLCUtils.map(table_path, force_local_require and local_require or not force_local_require and require)
 end
 
 DLCUtils.require_list = function (table_path, force_local_require)
 	-- function 4
-	return DLCUtils.map_list(table_path, force_local_require and not not local_require or not force_local_require and not not require)
+	return DLCUtils.map_list(table_path, force_local_require and local_require or not force_local_require and require)
 end
 
 DLCUtils.dofile = function (table_path)

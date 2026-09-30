@@ -53,7 +53,7 @@ local function create_menu_layout(self)
 						local title_settings = backend_manager:get_title_settings()
 						local versus_settings = title_settings.versus
 
-						return not not versus_settings and not not versus_settings.active
+						return versus_settings and versus_settings.active
 					end,
 					callback = function ()
 						-- function 5

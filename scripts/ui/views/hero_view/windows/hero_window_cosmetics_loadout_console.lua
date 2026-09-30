@@ -104,7 +104,7 @@ HeroWindowCosmeticsLoadoutConsole.create_ui_elements = function (self, params, o
 	for _, slot in pairs(slots) do
 		local index = slot.cosmetic_index
 
-		loadout_grid_widget_content["layout_" .. tostring(index) .. "_1"] = not not slot.layout_name
+		loadout_grid_widget_content["layout_" .. tostring(index) .. "_1"] = slot.layout_name
 	end
 end
 
@@ -245,7 +245,7 @@ HeroWindowCosmeticsLoadoutConsole._handle_gamepad_input = function (self, dt, t)
 		local content = widget.content
 		local layout_name = content["layout_" .. tostring(selected_row) .. "_1"]
 
-		parent:set_layout_by_name(not not layout_name or not not DEFAULT_COSMETICS_LAYOUT)
+		parent:set_layout_by_name(layout_name or DEFAULT_COSMETICS_LAYOUT)
 	end
 end
 
@@ -268,7 +268,7 @@ HeroWindowCosmeticsLoadoutConsole._handle_input = function (self, dt, t)
 		local layout_name = content["layout_" .. tostring(slot_index_pressed) .. "_1"]
 
 		self:_play_sound("play_gui_cosmetics_selection_click")
-		parent:set_layout_by_name(not not layout_name or not not DEFAULT_COSMETICS_LAYOUT)
+		parent:set_layout_by_name(layout_name or DEFAULT_COSMETICS_LAYOUT)
 	end
 end
 
@@ -351,7 +351,7 @@ HeroWindowCosmeticsLoadoutConsole._setup_slot_icons = function (self)
 			local item_tooltip_name = "item_tooltip" .. name_sufix
 			local slot_icon_name = "slot_icon" .. name_sufix
 			local slot_type = slot.type
-			local icon_texture = not not slot_icon_by_type[slot_type]
+			local icon_texture = slot_icon_by_type[slot_type]
 
 			content[slot_icon_name] = icon_texture
 		end
@@ -524,7 +524,7 @@ HeroWindowCosmeticsLoadoutConsole._set_equipment_slot_selected = function (self,
 			local hotspot_name = "hotspot" .. name_sufix
 			local slot_hotspot = content[hotspot_name]
 
-			slot_hotspot.is_selected = not not row_index and row_index == i
+			slot_hotspot.is_selected = row_index and row_index == i
 			slot_hotspot.highlight = slot_hotspot.is_selected
 		end
 	end
@@ -611,9 +611,9 @@ HeroWindowCosmeticsLoadoutConsole._highlight_equipment_slot_by_type = function (
 
 			slot_hotspot.highlight = enabled
 
-			local alpha = slot_hotspot.internal_is_hover and not not 255 or not slot_hotspot.internal_is_hover and not not 100
+			local alpha = slot_hotspot.internal_is_hover and 255 or not slot_hotspot.internal_is_hover and 100
 
-			style[slot_hover_name].color[1] = enabled and (not not alpha or not not 255) or not enabled and not not 255
+			style[slot_hover_name].color[1] = enabled and (alpha or 255) or not enabled and 255
 		end
 	end
 end

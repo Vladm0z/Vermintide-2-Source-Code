@@ -20,7 +20,7 @@ ImguiDebugMenu.init = function (self)
 	local settings_by_category = {}
 
 	for i, setting in ipairs(settings) do
-		settings_by_category[setting.category] = not not settings_by_category[setting.category]
+		settings_by_category[setting.category] = settings_by_category[setting.category]
 
 		table.insert(settings_by_category[setting.category], setting)
 	end
@@ -55,7 +55,7 @@ end
 
 ImguiDebugMenu._find_needle = function (self, setting, needle)
 	-- function 6
-	return not not ifind(setting.setting_name, needle)
+	return (ifind(setting.setting_name, needle))
 end
 
 ImguiDebugMenu._find_needle_list = function (self, setting_list, needle)
@@ -170,7 +170,7 @@ ImguiDebugMenu._show_debug_setting = function (self, setting)
 			options = setting.item_source
 		end
 
-		local index = not not table.find(options, script_data[setting_name])
+		local index = table.find(options, script_data[setting_name])
 
 		Imgui.push_item_width(200)
 

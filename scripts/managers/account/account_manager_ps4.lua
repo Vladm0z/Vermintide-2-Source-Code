@@ -190,7 +190,7 @@ end
 
 AccountManager.is_online = function (self)
 	-- function 20
-	return not self._offline_mode and not not PS4.signed_in()
+	return not self._offline_mode and PS4.signed_in()
 end
 
 AccountManager.offline_mode = function (self)
@@ -272,7 +272,7 @@ AccountManager._verify_profile = function (self)
 				self._user_detached = true
 			elseif self._active_controller then
 				local controller_changed = false
-				local user_id = not not self._active_controller
+				local user_id = self._active_controller
 
 				if not self._active_controller or not self._active_controller.user_id() or self._active_controller.disconnected() or controller_changed then
 					self:_queue_popup(Localize("controller_disconnected"), Localize("controller_disconnected_header"), "retry_verify_profile", Localize("button_retry"))
@@ -334,7 +334,7 @@ AccountManager._update_psn_client = function (self, dt)
 		if LobbyInternal.client_lost_context() or LobbyInternal.client_failed() then
 			self._psn_client_error = "lost_context"
 		else
-			self._psn_client_timeout_timer = not not self._psn_client_timeout_timer + dt
+			self._psn_client_timeout_timer = self._psn_client_timeout_timer + dt
 
 			if self._psn_client_timeout_timer > PSN_CLIENT_READY_TIMEOUT then
 				self._psn_client_error = "ready_timeout"
@@ -355,7 +355,7 @@ AccountManager._update_psn = function (self)
 	-- function 31
 	local current_room = self._current_room
 	local previous_room = self._previous_room
-	local room_state_current = not not current_room and not not current_room:state()
+	local room_state_current = current_room and current_room:state()
 	local room_state_previous = self._room_state
 	local room_joined, room_left = false, false
 
@@ -433,7 +433,7 @@ AccountManager._notify_plus = function (self)
 	end
 
 	local current_room = self._current_room
-	local current_host = not not current_room and not not current_room:lobby_host()
+	local current_host = current_room and current_room:lobby_host()
 
 	if not current_host then
 		return
@@ -512,7 +512,7 @@ AccountManager.set_realtime_multiplay = function (self, active)
 
 	if active then
 		local room = self._current_room
-		local host = not not room and not not room:lobby_host()
+		local host = room and room:lobby_host()
 
 		self._realtime_multiplay_host = host
 	else
@@ -541,7 +541,7 @@ AccountManager.current_psn_session = function (self)
 	-- function 42
 	local session = self._session
 
-	return not not session and not not session.id
+	return session and session.id
 end
 
 AccountManager.all_sessions_cleaned_up = function (self)
@@ -551,14 +551,14 @@ end
 
 AccountManager.has_access = function (self, restriction, user_id)
 	-- function 44
-	local user_id = not not user_id or not not self:user_id()
+	local user_id = user_id or self:user_id()
 
 	return self._ps_restrictions:has_access(user_id, restriction)
 end
 
 AccountManager.has_error = function (self, restriction, user_id)
 	-- function 45
-	local user_id = not not user_id or not not self:user_id()
+	local user_id = user_id or self:user_id()
 
 	return self._ps_restrictions:has_error(user_id, restriction)
 end
@@ -572,7 +572,7 @@ end
 
 AccountManager.refetch_restriction_access = function (self, user_id, restrictions)
 	-- function 47
-	local user_id = not not user_id or not not self:user_id()
+	local user_id = user_id or self:user_id()
 
 	self._ps_restrictions:refetch_restriction_access(user_id, restrictions)
 end
@@ -585,7 +585,7 @@ AccountManager.show_player_profile = function (self, user_id)
 
 	local own_user_id = self:user_id()
 
-	user_id = not not user_id or not not self:user_id()
+	user_id = user_id or self:user_id()
 
 	NpProfileDialog.initialize()
 	NpProfileDialog.open(own_user_id, user_id)
@@ -606,7 +606,7 @@ AccountManager.show_player_profile_with_account_id = function (self, account_id)
 
 	local own_user_id = self:user_id()
 
-	account_id = not not account_id or not not self:account_id()
+	account_id = account_id or self:account_id()
 
 	NpProfileDialog.initialize()
 	NpProfileDialog.open_with_account_id(own_user_id, account_id)
@@ -669,7 +669,7 @@ AccountManager.cb_fetch_friends = function (self, num_to_fetch, offset, external
 		local presence = entry.presence
 		local primary_info = presence.primaryInfo
 		local online_status = primary_info.onlineStatus
-		local room_id = not not primary_info.gameData
+		local room_id = primary_info.gameData
 		local status, playing_this_game
 
 		if online_status and online_status == "online" then
@@ -957,7 +957,7 @@ AccountManager.get_entitlement = function (self, entitlement_label, optional_ser
 	-- function 68
 	local user_id = self:user_id()
 	local api_group = "sdk:entitlement"
-	local service_label = not not optional_service_label or not not 0
+	local service_label = optional_service_label or 0
 	local path = string.format("/v1/users/me/entitlements/%s?service_label=%s&fields=active_flag", entitlement_label, service_label)
 	local method = WebApi.GET
 	local content
@@ -969,7 +969,7 @@ AccountManager.get_product_details = function (self, product_label, optional_ser
 	-- function 69
 	local user_id = self:user_id()
 	local api_group = "sdk:commerce"
-	local service_label = not not optional_service_label or not not 0
+	local service_label = optional_service_label or 0
 	local path = string.format("/v1/users/me/container/%s?flag=discounts&useCurrencySymbol=true&serviceLabel=%s", product_label, service_label)
 	local method = WebApi.GET
 	local content
@@ -996,7 +996,7 @@ AccountManager._format_session_parameters = function (self, params)
 	end
 
 	str = str .. string.format("  \"availablePlatforms\":%s,\r\n", params.platforms)
-	str = str .. string.format("  \"sessionLockFlag\":%s\r\n", params.lock_flag and not not "true" or not params.lock_flag and not not "false")
+	str = str .. string.format("  \"sessionLockFlag\":%s\r\n", params.lock_flag and "true" or not params.lock_flag and "false")
 	str = str .. "}"
 
 	return str
@@ -1005,7 +1005,7 @@ end
 AccountManager._set_presence_status_content = function (self, presence, append)
 	-- function 71
 	local append = append
-	local presence_data = not not PresenceSet[presence]
+	local presence_data = PresenceSet[presence]
 
 	if not PresenceSet[presence] then
 		Application.error(string.format("[AccountManager:set_presence] \"%s\" could not be found in PresenceSet - defaulting to english", presence))
@@ -1014,15 +1014,15 @@ AccountManager._set_presence_status_content = function (self, presence, append)
 	local str = ""
 
 	str = str .. "{\r\n"
-	str = str .. string.format("  \"gameStatus\":%q,\r\n", Localize(presence .. "_en") .. (append and not not (" " .. Localize(append)) or not append and not not ""))
+	str = str .. string.format("  \"gameStatus\":%q,\r\n", Localize(presence .. "_en") .. (append and " " .. Localize(append) or not append and ""))
 	str = str .. "  \"localizedGameStatus\":[\r\n"
 
 	if presence_data then
 		for idx, language in ipairs(presence_data) do
 			str = str .. "    {\r\n"
 			str = str .. string.format("      \"npLanguage\":%q,\r\n", language)
-			str = str .. string.format("      \"gameStatus\":%q\r\n", Localize(presence .. "_" .. language) .. (append and not not (" " .. Localize(append)) or not append and not not ""))
-			str = str .. (idx < #presence_data and not not "    },\r\n" or not (idx < #presence_data) and not not "    }\r\n")
+			str = str .. string.format("      \"gameStatus\":%q\r\n", Localize(presence .. "_" .. language) .. (append and " " .. Localize(append) or not append and ""))
+			str = str .. (idx < #presence_data and "    },\r\n" or not (idx < #presence_data) and "    }\r\n")
 		end
 	end
 
@@ -1094,7 +1094,7 @@ end
 AccountManager.console_type_setting = function (self, setting)
 	-- function 81
 	local console_type = self:console_type()
-	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
+	local console_settings = CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings[setting]
 end

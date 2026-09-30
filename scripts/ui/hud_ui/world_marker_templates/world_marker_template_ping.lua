@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_ping.lua
 
-WorldMarkerTemplates = not not WorldMarkerTemplates
+WorldMarkerTemplates = WorldMarkerTemplates
 
 local NAME = "ping"
-local template = not not WorldMarkerTemplates[NAME]
+local template = WorldMarkerTemplates[NAME]
 
 WorldMarkerTemplates[NAME] = template
 template.max_distance = 200
@@ -440,7 +440,7 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 	if content.spawn_progress_timer then
 		local progress, in_progress = update_spawn_pulse_animation(content.spawn_progress_timer, dt, style.icon_spawn_pulse)
 
-		content.spawn_progress_timer = in_progress and (not not progress or not not nil) or not in_progress and not not nil
+		content.spawn_progress_timer = in_progress and (progress or nil) or not in_progress and nil
 	end
 
 	for i = 1, 3 do
@@ -451,14 +451,14 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 			local icon_id = WORLD_MARKER_ICON_LOOKUP[i]
 			local progress, in_progress = update_response_animation(response.timer, dt, style[icon_id])
 
-			content[id].timer = in_progress and (not not progress or not not nil) or not in_progress and not not nil
+			content[id].timer = in_progress and (progress or nil) or not in_progress and nil
 		end
 	end
 
 	local arrow_style = style.arrow
 
 	arrow_style.angle = angle + math.pi * 0.5
-	content.distance_text = distance > 1 and not not (tostring(UIUtils.comma_value(math.floor(distance))) .. "m") or not (distance > 1) and not not ""
+	content.distance_text = distance > 1 and tostring(UIUtils.comma_value(math.floor(distance))) .. "m" or not (distance > 1) and ""
 
 	local am = math.clamp(0.3 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
 

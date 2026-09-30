@@ -143,7 +143,7 @@ local function recursive_add_name(data)
 			score = score + recursive_add_name(objective_data.sub_objectives)
 		end
 
-		score = score + not not objective_data.score_for_completion
+		score = score + objective_data.score_for_completion
 
 		local score_per_section = objective_data.score_per_section
 

@@ -41,7 +41,7 @@ settings.pickups = {
 				local is_in_cooldown = buff_extension:has_buff_type("beer_bottle_pickup_cooldown")
 				local is_falling_down = buff_extension:has_buff_perk("falling_down")
 
-				return not is_in_cooldown and not not not is_falling_down
+				return not is_in_cooldown and not is_falling_down
 			end
 		},
 		beer_bottle_unique = {
@@ -75,7 +75,7 @@ settings.pickups = {
 				local is_in_cooldown = buff_extension:has_buff_type("beer_bottle_pickup_cooldown")
 				local is_falling_down = buff_extension:has_buff_perk("falling_down")
 
-				return not is_in_cooldown and not not not is_falling_down
+				return not is_in_cooldown and not is_falling_down
 			end
 		}
 	}

@@ -2,7 +2,7 @@
 
 require("scripts/settings/profiles/career_settings")
 
-ActionTemplates = not not ActionTemplates
+ActionTemplates = ActionTemplates
 ActionTemplates.wield = {
 	default = {
 		wield_cooldown = 0.35,
@@ -87,7 +87,7 @@ ActionTemplates.reload = {
 			local can_reload = ammo_extension:can_reload()
 			local is_reloading = ammo_extension:is_reloading()
 
-			return not not can_reload and not not not is_reloading
+			return can_reload and not is_reloading
 		end,
 		chain_condition_func = function (action_user, input_extension)
 			-- function 6
@@ -115,7 +115,7 @@ ActionTemplates.reload = {
 			local can_reload = ammo_extension:can_reload()
 			local is_reloading = ammo_extension:is_reloading()
 
-			return not not can_reload and not not not is_reloading
+			return can_reload and not is_reloading
 		end,
 		allowed_chain_actions = {}
 	},
@@ -154,7 +154,7 @@ ActionTemplates.reload = {
 			local is_reloading = ammo_extension:is_reloading()
 			local ammo_count = ammo_extension:ammo_count()
 
-			return not not can_reload and ammo_count == 0 and not not not is_reloading
+			return can_reload and ammo_count == 0 and not is_reloading
 		end,
 		allowed_chain_actions = {}
 	}
@@ -279,7 +279,7 @@ ActionTemplates.instant_give_item = {
 			-- function 14
 			local interactor_extension = ScriptUnit.extension(attacker_unit, "interactor_system")
 
-			return not not interactor_extension and not not interactor_extension:can_interact(nil, "give_item")
+			return interactor_extension and interactor_extension:can_interact(nil, "give_item")
 		end
 	}
 }
@@ -310,7 +310,7 @@ ActionTemplates.action_career_bw_1 = {
 			local career_extension = ScriptUnit.extension(action_user, "career_system")
 			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return activated_ability_data.action_name == "action_career_bw_1" and not not career_extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_bw_1" and career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -338,7 +338,7 @@ ActionTemplates.action_career_dr_3 = {
 			local career_extension = ScriptUnit.extension(action_user, "career_system")
 			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return activated_ability_data.action_name == "action_career_dr_3" and not not career_extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_dr_3" and career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -366,7 +366,7 @@ ActionTemplates.action_career_wh_2 = {
 			local career_extension = ScriptUnit.extension(action_user, "career_system")
 			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return activated_ability_data.action_name == "action_career_wh_2" and not not career_extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_wh_2" and career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -409,7 +409,7 @@ ActionTemplates.action_career_we_3 = {
 			local piercing_talent = talent_extension:has_talent("kerillian_waywatcher_activated_ability_piercing_shot")
 			local can_use = career_extension:can_use_activated_ability(1)
 
-			return activated_ability_data.action_name == "action_career_we_3" and not not can_use and not not not piercing_talent
+			return activated_ability_data.action_name == "action_career_we_3" and can_use and not piercing_talent
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -452,7 +452,7 @@ ActionTemplates.action_career_we_3_piercing = {
 			local piercing_talent = talent_extension:has_talent("kerillian_waywatcher_activated_ability_piercing_shot")
 			local can_use = career_extension:can_use_activated_ability(1)
 
-			return activated_ability_data.action_name == "action_career_we_3_piercing" and not not can_use and not not piercing_talent
+			return activated_ability_data.action_name == "action_career_we_3_piercing" and can_use and piercing_talent
 		end,
 		action_on_wield = {
 			action = "action_career_hold",

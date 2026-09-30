@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/camera/states/camera_state_observer.lua
 
-local camera_state_observer_testify = not not script_data.testify
+local camera_state_observer_testify = script_data.testify
 
 CameraStateObserver = class(CameraStateObserver, CameraState)
 
@@ -17,14 +17,14 @@ CameraStateObserver.on_enter = function (self, unit, input, dt, context, t, prev
 	self._network_transmit = context.network_transmit
 	self._is_server = context.network_transmit.is_server
 	self._default_observed_node_name = "camera_attach"
-	self._input_service_name = not not params.input_service_name
+	self._input_service_name = params.input_service_name
 	self._has_read_camera_input = false
 
 	local override_observed_node = params.override_observed_node
 
-	self._observed_node_name = not not override_observed_node or not not self._default_observed_node_name
+	self._observed_node_name = override_observed_node or self._default_observed_node_name
 
-	local observed_unit = not not params.override_follow_unit
+	local observed_unit = params.override_follow_unit
 
 	if Unit.alive(observed_unit) then
 		local observed_node = Unit.node(observed_unit, self._observed_node_name)
@@ -65,7 +65,7 @@ CameraStateObserver.update = function (self, unit, input, dt, context, t)
 	end
 
 	local input_source = Managers.input:get_service(self._input_service_name)
-	local find_next_observer_target = not not input_source:get("next_observer_target")
+	local find_next_observer_target = input_source:get("next_observer_target")
 	local find_previous_observer_target = input_source:get("previous_observer_target")
 
 	if find_next_observer_target or find_previous_observer_target then
@@ -98,8 +98,8 @@ CameraStateObserver.update = function (self, unit, input, dt, context, t)
 	local snap_camera = self._snap_camera
 	local position = Unit.world_position(observed_unit, observed_node)
 	local is_player = Managers.player:is_player_unit(observed_unit)
-	local observed_unit_status = not not is_player and not not ScriptUnit.extension(observed_unit, "status_system")
-	local is_hoisted = not not observed_unit_status:is_grabbed_by_pack_master()
+	local observed_unit_status = is_player and ScriptUnit.extension(observed_unit, "status_system")
+	local is_hoisted = observed_unit_status:is_grabbed_by_pack_master()
 
 	if is_hoisted then
 		position = Unit.world_position(observed_unit, 0)
@@ -126,7 +126,7 @@ CameraStateObserver.follow_next_unit = function (self, reverse)
 	local new_target = next_unit ~= self._observed_unit
 
 	if new_target then
-		local observed_node = not not Unit.node(next_unit, self._observed_node_name)
+		local observed_node = Unit.node(next_unit, self._observed_node_name)
 
 		self:_set_observed_unit(next_unit, observed_node)
 	end
@@ -137,7 +137,7 @@ end
 CameraStateObserver._set_observed_unit = function (self, observed_unit, observed_node)
 	-- function 7
 	self._observed_unit = observed_unit
-	self._observed_node = not not Unit.node(observed_unit, self._default_observed_node_name)
+	self._observed_node = Unit.node(observed_unit, self._default_observed_node_name)
 
 	if not Unit.alive(observed_unit) then
 		return false
@@ -172,7 +172,7 @@ CameraStateObserver._set_observed_unit = function (self, observed_unit, observed
 		local local_player_id = player:local_player_id()
 		local observed_unit_id, is_level_unit = Managers.state.network:game_object_or_level_id(observed_unit)
 
-		observed_unit_id = not not observed_unit_id or not not NetworkConstants.invalid_game_object_id
+		observed_unit_id = observed_unit_id or NetworkConstants.invalid_game_object_id
 		is_level_unit = not not is_level_unit
 
 		self._network_transmit:send_rpc_server("rpc_set_observed_unit", local_player_id, observed_unit_id, is_level_unit)

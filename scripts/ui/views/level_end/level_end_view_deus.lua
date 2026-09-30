@@ -6,8 +6,8 @@ LevelEndViewDeus.start = function (self)
 	-- function 1
 	LevelEndViewDeus.super.start(self)
 
-	self._start_music_event = self.game_won and not not "Play_won_music_morris" or not self.game_won and not not "Play_lost_music_morris"
-	self._stop_music_event = self.game_won and not not "Stop_won_music_morris" or not self.game_won and not not "Stop_lost_music_morris"
+	self._start_music_event = self.game_won and "Play_won_music_morris" or not self.game_won and "Play_lost_music_morris"
+	self._stop_music_event = self.game_won and "Stop_won_music_morris" or not self.game_won and "Stop_lost_music_morris"
 end
 
 LevelEndViewDeus._setup_pages_victory = function (self, rewards)

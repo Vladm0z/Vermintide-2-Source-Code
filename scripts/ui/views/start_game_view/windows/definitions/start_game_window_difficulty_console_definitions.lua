@@ -966,7 +966,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 21
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -975,7 +975,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 22
-						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -1003,9 +1003,9 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -1019,7 +1019,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = shadow_offset
 			},
@@ -1031,9 +1031,9 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -1047,9 +1047,9 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -1099,7 +1099,7 @@ local function create_difficulty_reward_widget(difficulty_key, item_name, reward
 		texture_id = "reward_hover",
 		content_check_function = function (content)
 			-- function 25
-			return not not content.hotspot.is_hover
+			return content.hotspot.is_hover
 		end
 	}
 	passes[#passes + 1] = {
@@ -1109,7 +1109,7 @@ local function create_difficulty_reward_widget(difficulty_key, item_name, reward
 		text_id = "tooltip",
 		content_check_function = function (content)
 			-- function 26
-			return not not content.hotspot.is_hover
+			return content.hotspot.is_hover
 		end
 	}
 
@@ -1127,7 +1127,7 @@ local function create_difficulty_reward_widget(difficulty_key, item_name, reward
 	content.item_tooltip = {}
 	content.hotspot = {}
 	content.frame = "button_frame_01"
-	content.icon = not not reward_item.inventory_icon
+	content.icon = reward_item.inventory_icon
 	content.visible = false
 	content.difficulty_key = difficulty_key
 	content.item = {

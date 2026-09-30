@@ -19,14 +19,14 @@ local UPDATE_MOVE_INTERVAL = 0.25
 
 BTSuicideRunAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	blackboard.suicide_run = not not blackboard.suicide_run
+	blackboard.suicide_run = blackboard.suicide_run
 
 	local action = self._tree_node.action_data
 	local suicide_run = blackboard.suicide_run
 
 	suicide_run.action = action
 	suicide_run.update_move_timer = 0
-	suicide_run.target = not not suicide_run.target
+	suicide_run.target = suicide_run.target
 	blackboard.target_unit = suicide_run.target
 
 	local params = {
@@ -158,13 +158,13 @@ BTSuicideRunAction.StateInit.update = function (self, dt, t)
 		no_target = true
 	end
 
-	local init_done = not not blackboard.anim_cb_move
+	local init_done = blackboard.anim_cb_move
 
 	if init_done then
 		return BTSuicideRunAction.StateMove
 	end
 
-	local instant_explode = not not suicide_run.instant_explode
+	local instant_explode = suicide_run.instant_explode
 
 	if instant_explode then
 		return BTSuicideRunAction.StateExplode
@@ -211,7 +211,7 @@ BTSuicideRunAction.StateMove.update = function (self, dt, t)
 
 	self.explode_timer = self.explode_timer - dt
 
-	local move_done = not not ai_navigation:has_reached_destination(suicide_run.action.distance_to_explode)
+	local move_done = ai_navigation:has_reached_destination(suicide_run.action.distance_to_explode)
 	local proximity_target, proximity = PerceptionUtils.pick_closest_target(unit, blackboard, blackboard.breed)
 
 	if move_done or proximity < 2 or blackboard.no_path_found then

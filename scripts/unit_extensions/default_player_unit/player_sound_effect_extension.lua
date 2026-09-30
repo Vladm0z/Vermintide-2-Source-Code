@@ -215,11 +215,11 @@ PlayerSoundEffectExtension._update_specials_proximity = function (self, dt)
 
 				local ai_position = POSITION_LOOKUP[ai_unit]
 
-				state = Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2 and (not not "close" or not not state or not not "medium") or not (Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2) and (not not state or not not "medium")
+				state = Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2 and ("close" or state or "medium") or not (Vector3.distance_squared(own_position, ai_position) <= BROADPHASE_NEAR_RANGE^2) and (state or "medium")
 			until true
 		end
 
-		state = not not state or not not "far"
+		state = state or "far"
 
 		self._music_manager:set_wwise_state("specials_proximity", state)
 	end

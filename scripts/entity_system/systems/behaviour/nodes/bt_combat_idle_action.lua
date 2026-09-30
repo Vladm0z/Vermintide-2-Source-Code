@@ -76,7 +76,7 @@ BTCombatIdleAction._init_idle_anim = function (self, unit, blackboard)
 	end
 
 	local optional_spawn_data = blackboard.optional_spawn_data
-	local idle_animation = not not optional_spawn_data and not not optional_spawn_data.idle_animation
+	local idle_animation = optional_spawn_data and optional_spawn_data.idle_animation
 
 	if idle_animation and idle_animation ~= "" then
 		animation = idle_animation

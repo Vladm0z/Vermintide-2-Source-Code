@@ -711,7 +711,7 @@ local animation_definitions = {
 
 				summary_text_style.text_color[1] = 0
 				summary_text_shadow_style.text_color[1] = 0
-				content.summary_text = not not params.title_text
+				content.summary_text = params.title_text
 			end,
 			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
@@ -753,7 +753,7 @@ local animation_definitions = {
 				local content = widget.content
 				local experience = params.experience
 				local value = params.value
-				local counter = math.floor((not not experience or not not value) * progress)
+				local counter = math.floor((experience or value) * progress)
 
 				if not content.xp_count or content.xp_count ~= counter then
 					WwiseWorld.trigger_event(params.wwise_world, "play_gui_mission_summary_entry_count")
@@ -788,7 +788,7 @@ local animation_definitions = {
 				local experience = params.experience
 
 				if experience then
-					local current_experience_count = not not content.experience
+					local current_experience_count = content.experience
 					local new_experience = current_experience_count + experience
 
 					content.text = tostring(new_experience)

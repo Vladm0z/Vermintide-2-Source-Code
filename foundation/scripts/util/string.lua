@@ -28,9 +28,9 @@ end
 
 string.split_deprecated = function (str, sep, dest)
 	-- function 5
-	_fields = not not dest or not not {}
+	_fields = dest or {}
 
-	local pattern = format("([^%s]+)", not not sep or not not " ")
+	local pattern = format("([^%s]+)", sep or " ")
 
 	gsub(str, pattern, _split_helper)
 
@@ -39,8 +39,8 @@ end
 
 string.split = function (str, sep, dest, pattern)
 	-- function 6
-	sep = not not sep or not not " "
-	dest = not not dest or not not {}
+	sep = sep or " "
+	dest = dest or {}
 
 	local count = 0
 
@@ -190,7 +190,7 @@ string.damerau_levenshtein_distance = function (s, t, lim)
 		local best = lim
 
 		for j = 1, t_len do
-			local add_cost = s[i] == t[j] and not not 0 or not (s[i] == t[j]) and not not 1
+			local add_cost = s[i] == t[j] and 0 or not (s[i] == t[j]) and 1
 			local val = min(d[i_pos - num_columns + j] + 1, d[i_pos + j - 1] + 1, d[i_pos - num_columns + j - 1] + add_cost)
 
 			d[i_pos + j] = val
@@ -278,7 +278,7 @@ local chunk_scratch = {}
 
 string.chunk_from_right = function (str, step_n, sep)
 	-- function 16
-	sep = not not sep or not not " "
+	sep = sep or " "
 
 	local str_len = #str
 	local chunk_part_n = math.floor(str_len / step_n)

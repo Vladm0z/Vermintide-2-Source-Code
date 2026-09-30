@@ -67,7 +67,7 @@ PickupPackageLoader.request_pickup = function (self, pickup_name, optional_cb)
 		return
 	end
 
-	self._session_pickup_map[pickup_name] = not not optional_cb or not not true
+	self._session_pickup_map[pickup_name] = optional_cb or true
 
 	self._network_handler:set_session_pickup_map(table.shallow_copy(self._session_pickup_map))
 	self:_update_package_diffs()
@@ -267,7 +267,7 @@ PickupPackageLoader._update_package_diffs = function (self, skip_load)
 	local async = true
 	local prioritize = true
 	local loaded_pickup_map = self._loaded_pickup_map
-	local session_pickup_map = not not self._session_pickup_map
+	local session_pickup_map = self._session_pickup_map
 	local synced_loaded_pickup_map = self._network_handler:get_own_loaded_session_pickup_map()
 
 	for pickup_name, status in pairs(loaded_pickup_map) do
@@ -363,7 +363,7 @@ end
 
 PickupPackageLoader.is_pickup_loaded_on_all_peers = function (self, pickup_name, for_debugging)
 	-- function 21
-	local peers = not not self._is_server
+	local peers = self._is_server
 
 	if for_debugging then
 		peers = table.shallow_copy(self._network_handler:get_peers(), true)
@@ -400,7 +400,7 @@ PickupPackageLoader.debug_loaded_pickups = function (self)
 		Debug.text("Dynamic pickups:")
 	end
 
-	local peers = self._is_server and not not self._network_handler:hot_join_synced_peers() or not self._is_server and not not self._network_handler:get_peers()
+	local peers = self._is_server and self._network_handler:hot_join_synced_peers() or not self._is_server and self._network_handler:get_peers()
 
 	if not self._is_server then
 		peers = table.shallow_copy(self._network_handler:get_peers(), true)

@@ -14,7 +14,7 @@ BTMoveToGoalAction.name = "BTMoveToGoalAction"
 BTMoveToGoalAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	blackboard.action = self._tree_node.action_data
-	blackboard.time_to_next_evaluate = t + not not blackboard.action.eval_time
+	blackboard.time_to_next_evaluate = t + blackboard.action.eval_time
 	blackboard.time_to_next_friend_alert = t + 0.3
 
 	local goal_destination = blackboard.goal_destination:unbox()
@@ -25,7 +25,7 @@ BTMoveToGoalAction.enter = function (self, unit, blackboard, t)
 
 	local network_manager = Managers.state.network
 	local breed = blackboard.breed
-	local passive_in_patrol = not not not blackboard.ignore_passive_on_patrol
+	local passive_in_patrol = not blackboard.ignore_passive_on_patrol
 
 	if passive_in_patrol then
 		AiUtils.enter_passive(unit, blackboard)
@@ -103,7 +103,7 @@ BTMoveToGoalAction.run = function (self, unit, blackboard, t, dt)
 			local unit_position = POSITION_LOOKUP[unit]
 			local goal_destination = blackboard.goal_destination:unbox()
 			local distance_to_goal_sq = Vector3.distance_squared(unit_position, goal_destination)
-			local goal_margin = not not action.goal_margin
+			local goal_margin = action.goal_margin
 
 			if distance_to_goal_sq < goal_margin * goal_margin then
 				blackboard.goal_destination = nil
@@ -120,7 +120,7 @@ BTMoveToGoalAction.run = function (self, unit, blackboard, t, dt)
 
 	if t > blackboard.time_to_next_evaluate or navigation_extension:has_reached_destination() then
 		should_evaluate = "evaluate"
-		blackboard.time_to_next_evaluate = t + not not blackboard.action.eval_time
+		blackboard.time_to_next_evaluate = t + blackboard.action.eval_time
 	end
 
 	if blackboard.new_move_to_goal then
@@ -145,13 +145,13 @@ BTMoveToGoalAction.start_move_animation = function (self, unit, blackboard)
 	self:toggle_start_move_animation_lock(unit, true, blackboard)
 
 	local breed = blackboard.breed
-	local passive_in_patrol = breed.passive_in_patrol == nil or not not breed.passive_in_patrol
+	local passive_in_patrol = breed.passive_in_patrol == nil or breed.passive_in_patrol
 	local animation_name = "move_start_fwd"
 	local passive_in_patrol_start_anim = breed.passive_in_patrol_start_anim
 
 	if passive_in_patrol and passive_in_patrol_start_anim then
 		blackboard.anim_cb_move = true
-		animation_name = not not passive_in_patrol_start_anim
+		animation_name = passive_in_patrol_start_anim
 		blackboard.skip_move_rotation = true
 	end
 

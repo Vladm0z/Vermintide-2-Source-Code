@@ -17,12 +17,12 @@ BTChaosSorcererTetherSkulkAction.name = "BTChaosSorcererTetherSkulkAction"
 BTChaosSorcererTetherSkulkAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
-	local skulk_data = not not blackboard.skulk_data
+	local skulk_data = blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-	skulk_data.direction = not not skulk_data.direction
-	skulk_data.radius = not not skulk_data.radius
-	skulk_data.last_reference_pos = not not skulk_data.last_reference_pos
+	skulk_data.direction = skulk_data.direction
+	skulk_data.radius = skulk_data.radius
+	skulk_data.last_reference_pos = skulk_data.last_reference_pos
 
 	skulk_data.last_reference_pos:store(Vector3.zero())
 
@@ -199,9 +199,9 @@ BTChaosSorcererTetherSkulkAction.get_skulk_target = function (self, unit, blackb
 
 	local to_target = target_position - last_reference_pos
 	local dir = Vector3.normalize(to_target)
-	local preferred_distance_variance = not not action.preferred_distance_variance
-	local preferred_distance = not not action.preferred_distance + math.lerp(-preferred_distance_variance, preferred_distance_variance, math.random())
-	local distance_before_turn = not not action.distance_before_turn
+	local preferred_distance_variance = action.preferred_distance_variance
+	local preferred_distance = action.preferred_distance + math.lerp(-preferred_distance_variance, preferred_distance_variance, math.random())
+	local distance_before_turn = action.distance_before_turn
 	local circumference = preferred_distance * 2 * math.pi
 
 	assert(distance_before_turn < circumference * 0.25, "preferred distance is too small to move %s units before turning. Minimum %s (quarter of the circumference)", distance_before_turn, circumference * 0.25)
@@ -221,7 +221,7 @@ BTChaosSorcererTetherSkulkAction.get_skulk_target = function (self, unit, blackb
 	for i = 1, TRIES do
 		local new_pos = unit_position + wanted_dir * distance_before_turn
 
-		new_pos = not not LocomotionUtils.pos_on_mesh(nav_world, new_pos, 5, 5) or not not new_pos
+		new_pos = LocomotionUtils.pos_on_mesh(nav_world, new_pos, 5, 5) or new_pos
 
 		local success, hit = raycango(nav_world, unit_position, new_pos, traverse_logic)
 
@@ -246,7 +246,7 @@ BTChaosSorcererTetherSkulkAction.get_skulk_target = function (self, unit, blackb
 		wanted_dir = Quaternion.rotate(axis_angle, wanted_dir)
 	end
 
-	pos = not not pos or not not fallback_pos
+	pos = pos or fallback_pos
 
 	skulk_data.last_reference_pos:store(wanted_pos_on_circle)
 

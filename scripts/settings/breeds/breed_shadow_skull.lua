@@ -100,14 +100,14 @@ local breed_data = {
 		local impact_collision_filter = breed.impact_collision_filter
 		local impact_template_name = breed.impact_template_name
 		local damage_source = "n/a"
-		local projectile_impact_system_data = not not extension_init_data.projectile_impact_system
+		local projectile_impact_system_data = extension_init_data.projectile_impact_system
 
 		projectile_impact_system_data.sphere_radius = sphere_radius
 		projectile_impact_system_data.only_one_impact = only_one_impact
 		projectile_impact_system_data.collision_filter = impact_collision_filter
 		extension_init_data.projectile_impact_system = projectile_impact_system_data
 
-		local projectile_system_data = not not extension_init_data.projectile_system
+		local projectile_system_data = extension_init_data.projectile_system
 
 		projectile_system_data.damage_source = damage_source
 		projectile_system_data.impact_template_name = impact_template_name

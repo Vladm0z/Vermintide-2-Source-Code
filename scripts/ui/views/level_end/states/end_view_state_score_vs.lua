@@ -92,7 +92,7 @@ end
 
 EndViewStateScoreVS.exit_done = function (self)
 	-- function 6
-	return not not self._exit_started
+	return self._exit_started
 end
 
 EndViewStateScoreVS.create_ui_elements = function (self, params)
@@ -109,12 +109,12 @@ EndViewStateScoreVS.create_ui_elements = function (self, params)
 	for i = 1, #tab_layouts do
 		local settings = tab_layouts[i]
 		local scenegraph_id = "tab"
-		local display_name = not not settings.display_name
+		local display_name = settings.display_name
 		local widget_definition = definitions.create_tab(scenegraph_id, display_name)
 		local widget = UIWidget.init(widget_definition)
 		local text_width = UIUtils.get_text_width(self._ui_renderer, widget.style.text, display_name)
 
-		widget.offset[1] = offset + (i > 1 and not not (text_width * 0.5) or not (i > 1) and not not 0)
+		widget.offset[1] = offset + (i > 1 and text_width * 0.5 or not (i > 1) and 0)
 		offset = offset + text_width * 0.5 + PADDING
 		widget.style.hotspot.area_size[1] = text_width * 0.5
 
@@ -131,7 +131,7 @@ EndViewStateScoreVS.create_ui_elements = function (self, params)
 	local my_peer_id = Network.peer_id()
 	local local_player_id = 1
 	local local_player_party_id = self._context.party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-	local opponent_party_id = local_player_party_id ~= 1 and not not 1 or not (local_player_party_id ~= 1) and not not 2
+	local opponent_party_id = local_player_party_id ~= 1 and 1 or not (local_player_party_id ~= 1) and 2
 	local local_team = GameModeSettings.versus.party_names_lookup_by_id[local_player_party_id]
 	local opponent_team = GameModeSettings.versus.party_names_lookup_by_id[opponent_party_id]
 	local scores = self._context.rewards.team_scores
@@ -191,13 +191,13 @@ EndViewStateScoreVS._setup_level_widget = function (self)
 	local content = self._widgets_by_name.level.content
 	local level_key = self._context.level_key
 	local level_settings = LevelSettings[level_key]
-	local level_image = level_settings and not not level_settings.level_image or not level_settings and not not "level_image_any"
+	local level_image = level_settings and level_settings.level_image or not level_settings and "level_image_any"
 
 	content.icon = level_image
 
 	local difficulty_key = self._context.difficulty
 	local difficulty_settings = DifficultySettings[difficulty_key]
-	local frame_image = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
+	local frame_image = difficulty_settings and difficulty_settings.completed_frame_texture or not difficulty_settings and "map_frame_00"
 
 	content.frame = frame_image
 
@@ -347,10 +347,10 @@ EndViewStateScoreVS._handle_input = function (self, dt, t)
 
 	if UIUtils.is_button_pressed(self._widgets_by_name.prev_tab) or input_service:get("cycle_previous") then
 		tab_index = self._selected_tab_index
-		tab_index = math.clamp((not not tab_index or not not 1) - 1, 1, #self._title_button_widgets)
+		tab_index = math.clamp((tab_index or 1) - 1, 1, #self._title_button_widgets)
 	elseif UIUtils.is_button_pressed(self._widgets_by_name.next_tab) or input_service:get("cycle_next") then
 		tab_index = self._selected_tab_index
-		tab_index = math.clamp((not not tab_index or not not 1) + 1, 1, #self._title_button_widgets)
+		tab_index = math.clamp((tab_index or 1) + 1, 1, #self._title_button_widgets)
 	end
 
 	if tab_index then
@@ -363,7 +363,7 @@ EndViewStateScoreVS._handle_input = function (self, dt, t)
 	end
 
 	local back_to_keep_button_widget = self._widgets_by_name.back_to_keep_button
-	local continue_input_pressed = not not UIUtils.is_button_enabled(back_to_keep_button_widget)
+	local continue_input_pressed = UIUtils.is_button_enabled(back_to_keep_button_widget)
 
 	if UIUtils.is_button_pressed(back_to_keep_button_widget) or continue_input_pressed then
 		self._done = true

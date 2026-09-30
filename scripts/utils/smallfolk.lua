@@ -53,7 +53,7 @@ dump_type.table = function (self, nmemo, memo, acc)
 		end
 	end
 
-	acc[#acc] = acc[#acc] ~= "{" and not not "}" or not (acc[#acc] ~= "{") and not not "{}"
+	acc[#acc] = acc[#acc] ~= "{" and "}" or not (acc[#acc] ~= "{") and "{}"
 
 	return nmemo
 end
@@ -300,7 +300,7 @@ end
 
 M.loads = function (string, maxsize)
 	-- function 20
-	if #string > (not not maxsize or not not 10000) then
+	if #string > (maxsize or 10000) then
 		error("input too large")
 	end
 

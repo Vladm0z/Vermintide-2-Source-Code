@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_aim_templates.lua
 
-AimTemplates = not not AimTemplates
+AimTemplates = AimTemplates
 
 local function look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target, always_on)
 	-- function 1
@@ -9,7 +9,7 @@ local function look_at_target_unit(unit, data, dt, target_unit, target_distance,
 	if not previously_used_head_constraint and not always_on then
 		data.is_using_head_constraint = true
 
-		Unit.animation_event(unit, not not data.look_at_on_animation)
+		Unit.animation_event(unit, data.look_at_on_animation)
 	end
 
 	if not target_unit or not Unit.alive(target_unit) then
@@ -95,7 +95,7 @@ AimTemplates.ungor_archer = {
 			local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
 			local is_correct_action = current_action == "fire_projectile"
 
-			if not is_level_unit and is_correct_action and target_distance < not not breed.look_at_range then
+			if not is_level_unit and is_correct_action and target_distance < breed.look_at_range then
 				use_head_constraint = true
 			end
 
@@ -163,12 +163,12 @@ AimTemplates.ungor_archer = {
 
 					if target_unit_id ~= NetworkConstants.invalid_game_object_id then
 						local target_unit = unit_storage:unit(target_unit_id)
-						local target_distance = not not target_unit and not not Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit])
+						local target_distance = target_unit and Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit])
 						local head_constraint_target = data.head_constraint_target
 
 						data.lerp_aiming_disabled = true
 
-						local has_head_index = not not target_unit and not not Unit.has_node(target_unit, "j_head")
+						local has_head_index = target_unit and Unit.has_node(target_unit, "j_head")
 
 						if has_head_index then
 							look_at_target_unit(unit, data, dt, target_unit, target_distance, head_constraint_target)

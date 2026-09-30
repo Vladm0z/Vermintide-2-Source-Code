@@ -153,7 +153,7 @@ KeepDecorationSystem.on_decoration_set = function (self, decoration, asking_exte
 		local current_decoration = extension:get_selected_decoration()
 
 		if current_decoration == decoration and asking_extension ~= extension then
-			local empty = type ~= "painting" and type == "trophy" and not not "hub_trophy_empty" or not (type ~= "painting") and not not "hor_none"
+			local empty = type ~= "painting" and type == "trophy" and "hub_trophy_empty" or not (type ~= "painting") and "hor_none"
 
 			extension:decoration_selected(empty)
 			extension:sync_decoration()
@@ -221,7 +221,7 @@ KeepDecorationSystem._refresh_client_paintings = function (self)
 	end
 
 	for i = 1, 3 do
-		local painting = not not paintings[i]
+		local painting = paintings[i]
 		local extension = self._client_painting_extensions[i]
 
 		extension:set_client_painting(painting)
@@ -238,7 +238,7 @@ end
 
 KeepDecorationSystem.rpc_request_painting = function (self, channel_id)
 	-- function 12
-	local painting = not not Managers.backend:get_interface("keep_decorations"):get_decoration("keep_hall_painting_wood_base_5")
+	local painting = Managers.backend:get_interface("keep_decorations"):get_decoration("keep_hall_painting_wood_base_5")
 
 	self.network_transmit:send_rpc_server("rpc_send_painting", painting)
 end

@@ -11,7 +11,7 @@ local function get_position_on_nav_mesh(nav_world, position)
 	-- function 1
 	local nav_position = LocomotionUtils.pos_on_mesh(nav_world, position, 1, 1)
 
-	nav_position = not not nav_position or not not GwNavQueries.inside_position_from_outside_position(nav_world, position, 6, 6, 8, 0.5)
+	nav_position = nav_position or GwNavQueries.inside_position_from_outside_position(nav_world, position, 6, 6, 8, 0.5)
 
 	return nav_position
 end
@@ -71,7 +71,7 @@ TimedSpawnerExtension._can_spawn = function (self, network_time)
 	local reached_limit = self._spawn_amount >= self._max_spawn_amount
 	local timer_ended = network_time >= self._timer
 
-	return not reached_limit and not not timer_ended
+	return not reached_limit and timer_ended
 end
 
 TimedSpawnerExtension.update = function (self, unit, input, dt, context, t)
@@ -105,7 +105,7 @@ TimedSpawnerExtension._spawn_breed = function (self)
 	-- function 8
 	local spawner_unit = self._unit
 	local position = POSITION_LOOKUP[spawner_unit]
-	local nav_position = not not position and not not get_position_on_nav_mesh(self._nav_world, position)
+	local nav_position = position and get_position_on_nav_mesh(self._nav_world, position)
 
 	if not position then
 		return

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_unit_extension_templates.lua
 
-local ai_locomotion_name = not not "AILocomotionExtensionC"
+local ai_locomotion_name = "AILocomotionExtensionC"
 local unit_extension_templates = {
 	thornsister_thorn_wall_unit = {
 		go_type = "thornsister_thorn_wall_unit",

@@ -11,7 +11,7 @@ UnlockReminderPopup.create_ui_elements = function (self)
 	local reminder_settings = self._common_settings
 
 	self._widgets_by_name.window_background.content.texture_id = reminder_settings.background_texture
-	self._widgets_by_name.body_text.content.text = reminder_settings.body_text and not not Localize(reminder_settings.body_text) or not reminder_settings.body_text and not not ""
+	self._widgets_by_name.body_text.content.text = reminder_settings.body_text and Localize(reminder_settings.body_text) or not reminder_settings.body_text and ""
 	self._widgets_by_name.ok_button.content.title_text = Localize(reminder_settings.button_text)
 
 	if reminder_settings.top_detail_texture then
@@ -81,5 +81,5 @@ end
 
 UnlockReminderPopup.should_show = function (self)
 	-- function 8
-	return not not self._ui_context.is_in_inn
+	return self._ui_context.is_in_inn
 end

@@ -36,12 +36,12 @@ BeastmenStandardExtension.init = function (self, extension_init_context, unit, e
 	self.standard_data.standard_bearer_unit = self.standard_bearer_unit
 
 	local side_manager = Managers.state.side
-	local side = not not side_manager.side_by_unit[self.standard_bearer_unit]
+	local side = side_manager.side_by_unit[self.standard_bearer_unit]
 
 	side_manager:add_unit_to_side(self.unit, side.side_id)
 
 	if self.is_server then
-		self.astar_check_frequency = not not standard_template.astar_check_frequency
+		self.astar_check_frequency = standard_template.astar_check_frequency
 		self.nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
 		local astar_to_players_allowed_layers = {
@@ -154,7 +154,7 @@ BeastmenStandardExtension.on_death = function (self, killer_unit)
 		local explosion_template = ExplosionUtils.get_template("standard_death_explosion")
 		local damage_source = "beastmen_standard_bearer"
 
-		DamageUtils.create_explosion(self.world, not not killer_unit or not not self.unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, self.is_server, false, self.unit, false)
+		DamageUtils.create_explosion(self.world, killer_unit or self.unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, self.is_server, false, self.unit, false)
 		Unit.flow_event(self.unit, "destroy")
 
 		if self.is_server then
@@ -208,7 +208,7 @@ BeastmenStandardExtension.update = function (self, unit, input, dt, context, t)
 			local ai_unit = ai_units_broadphase_result[i]
 			local buff_extension = ScriptUnit.has_extension(ai_unit, "buff_system")
 			local blackboard = BLACKBOARDS[ai_unit]
-			local is_beastmen = not not blackboard and blackboard.breed.race == "beastmen"
+			local is_beastmen = blackboard and blackboard.breed.race == "beastmen"
 
 			if is_beastmen and buff_extension and not ai_units_inside[ai_unit] and not buff_extension:get_non_stacking_buff(self.standard_template_buff_name) then
 				local buff_id = buff_system:add_buff(ai_unit, buff_template_name, ai_unit, true)

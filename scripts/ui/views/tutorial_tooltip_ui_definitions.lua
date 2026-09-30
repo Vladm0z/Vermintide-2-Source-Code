@@ -251,7 +251,7 @@ local function create_tutorial_tooltip_input_description_definitions(amount)
 							-- function 5
 							local icon = content.icon
 
-							return not not icon and #icon > 0
+							return icon and #icon > 0
 						end
 					}
 				}

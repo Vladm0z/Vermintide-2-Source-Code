@@ -20,7 +20,7 @@ ActionSpiritStorm.client_owner_start_action = function (self, new_action, t, cha
 
 	self.owner_buff_extension = buff_extension
 	self.state = "waiting_to_shoot"
-	self.time_to_shoot = t + not not new_action.fire_time
+	self.time_to_shoot = t + new_action.fire_time
 	self.target = chain_action_data.target
 	self.is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action)
 end
@@ -78,7 +78,7 @@ ActionSpiritStorm.fire = function (self, reason)
 		local target_breed = Unit.get_data(target_unit, "breed")
 
 		if target_breed and target_breed.is_player then
-			overcharge = not not current_action.overcharge_amount_player_target or not not overcharge
+			overcharge = current_action.overcharge_amount_player_target or overcharge
 
 			if current_action.player_target_buff then
 				self.owner_buff_extension:add_buff(current_action.player_target_buff)

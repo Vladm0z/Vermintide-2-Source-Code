@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/perlin_light_configurations.lua
 
-PerlinLightConfigurations = not not PerlinLightConfigurations
+PerlinLightConfigurations = PerlinLightConfigurations
 PerlinLightConfigurations_reload = true
 PerlinLightConfigurations.default = {
 	octaves = 5,

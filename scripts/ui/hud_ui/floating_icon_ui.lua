@@ -105,8 +105,8 @@ FloatingIconUI._draw_progressbar = function (self, dt)
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	local fulfill_show_bar_personal = not not self._progress_extension:progress_bar_personal()
-	local fulfill_show_bar = not not self._progress_extension:progress_bar_global()
+	local fulfill_show_bar_personal = self._progress_extension:progress_bar_personal()
+	local fulfill_show_bar = self._progress_extension:progress_bar_global()
 
 	if fulfill_show_bar_personal or fulfill_show_bar then
 		local progress = self._progress_extension:progress()
@@ -214,8 +214,8 @@ FloatingIconUI.get_floating_icon_position = function (self, screen_pos_x, screen
 
 	local clamped_x_pos = screen_pos_x
 	local clamped_y_pos = screen_pos_y
-	local is_behind = forward_dot < 0 and not not true or not (forward_dot < 0) and not not false
-	local is_clamped = not not true
+	local is_behind = forward_dot < 0
+	local is_clamped = true
 	local screen_pos_diff_x = screen_width - scaled_root_size_x
 	local screen_pos_diff_y = screen_height - scaled_root_size_y
 

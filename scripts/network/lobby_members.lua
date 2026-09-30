@@ -10,7 +10,7 @@ LobbyMembers.init = function (self, lobby)
 
 	local current_members, member_count = lobby:members()
 
-	member_count = not not member_count or not not #current_members
+	member_count = member_count or #current_members
 	self._member_buffer = current_members
 	self.member_count = member_count
 

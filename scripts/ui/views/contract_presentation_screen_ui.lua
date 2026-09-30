@@ -148,7 +148,7 @@ ContractPresentationScreenUI._draw = function (self, dt)
 	if self.waiting_for_input and not self.exit_anim_id then
 		local input_widgets = self._input_widgets
 
-		self.input_description_text.content.text = gamepad_active and not not "press_any_button_to_continue" or not gamepad_active and not not "press_any_key_to_continue"
+		self.input_description_text.content.text = gamepad_active and "press_any_button_to_continue" or not gamepad_active and "press_any_key_to_continue"
 
 		UIRenderer.draw_widget(ui_renderer, self.input_description_text)
 	end
@@ -240,8 +240,8 @@ ContractPresentationScreenUI._set_contract_start_info_by_contract_id = function 
 	local tasks_total_end_values, tasks_total_start_values, tasks_total_session_values = 0, 0, 0
 
 	if task then
-		local task_list_start_progress = not not contract_progress or not not 0
-		local session_task_list_start_progress = not not contract_session_progress or not not 0
+		local task_list_start_progress = contract_progress or 0
+		local session_task_list_start_progress = contract_session_progress or 0
 		local session_task_start_progress = session_task_list_start_progress
 		local task_start_progress = math.max(task_list_start_progress - session_task_start_progress, 0)
 		local task_required = task.amount.required
@@ -262,11 +262,11 @@ ContractPresentationScreenUI._set_contract_start_info_by_contract_id = function 
 		tasks_total_end_values = tasks_total_end_values + task_required
 	end
 
-	local tasks_total_progress = tasks_total_end_values > 0 and not not (tasks_total_start_values / tasks_total_end_values) or not (tasks_total_end_values > 0) and not not 0
+	local tasks_total_progress = tasks_total_end_values > 0 and tasks_total_start_values / tasks_total_end_values or not (tasks_total_end_values > 0) and 0
 
 	tasks_total_progress = math.max(math.min(tasks_total_progress, 1), 0)
 
-	local tasks_total_session_progress = tasks_total_end_values > 0 and not not (tasks_total_session_values / tasks_total_end_values) or not (tasks_total_end_values > 0) and not not 0
+	local tasks_total_session_progress = tasks_total_end_values > 0 and tasks_total_session_values / tasks_total_end_values or not (tasks_total_end_values > 0) and 0
 
 	tasks_total_session_progress = math.max(math.min(tasks_total_session_progress, 1), 0)
 
@@ -497,7 +497,7 @@ ContractPresentationScreenUI._handle_animations = function (self)
 						end
 					elseif not entry.summary_anim_done then
 						if not entry.summary_started then
-							local animation_name = entry.contract_session_progress > 0 and not not "contract_summary" or not (entry.contract_session_progress > 0) and not not "no_progress"
+							local animation_name = entry.contract_session_progress > 0 and "contract_summary" or not (entry.contract_session_progress > 0) and "no_progress"
 							local anim_id = self:_start_contract_animation(contract_id, animation_name)
 
 							entry.summary_anim_id = anim_id
@@ -547,17 +547,17 @@ end
 
 ContractPresentationScreenUI._start_contract_animation = function (self, contract_id, animation_name, task_index)
 	-- function 18
-	local entry = not not contract_id and not not self.contract_entries[contract_id]
-	local widget_index = not not entry and not not entry.widget_index
-	local task_data = not not entry and not not entry.task_data
+	local entry = contract_id and self.contract_entries[contract_id]
+	local widget_index = entry and entry.widget_index
+	local task_data = entry and entry.task_data
 	local params = {
 		wwise_world = self.wwise_world,
 		widget_index = widget_index,
 		task_data = task_data,
 		task_index = task_index,
 		num_widgets = self.num_active_contract_widget,
-		contract_session_progress = not not entry and not not entry.contract_session_progress,
-		contract_start_progress = not not entry and not not entry.contract_start_progress
+		contract_session_progress = entry and entry.contract_session_progress,
+		contract_start_progress = entry and entry.contract_start_progress
 	}
 
 	return self.ui_animator:start_animation(animation_name, self._widgets, scenegraph_definition, params)

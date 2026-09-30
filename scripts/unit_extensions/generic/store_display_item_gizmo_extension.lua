@@ -10,7 +10,7 @@ StoreDisplayItemGizmoExtension.init = function (self, extension_init_context, un
 	local store_display_key = Unit.get_data(unit, "store_display_key")
 	local backend_store = Managers.backend:get_interface("peddler")
 	local store_display_items = backend_store:store_display_items()
-	local item_key = not not store_display_items and not not store_display_items[store_display_key]
+	local item_key = store_display_items and store_display_items[store_display_key]
 
 	if item_key then
 		self:spawn_prop(item_key)
@@ -47,8 +47,8 @@ StoreDisplayItemGizmoExtension.spawn_prop = function (self, item_master_list_id)
 		local unit_name = item_data.unit
 
 		if not unit_name then
-			unit_name = not not item_data.left_hand_unit or not not item_data.right_hand_unit
-			unit_name = not not unit_name and not not (unit_name .. "_3p")
+			unit_name = item_data.left_hand_unit or item_data.right_hand_unit
+			unit_name = unit_name and unit_name .. "_3p"
 		end
 
 		print("[StoreDisplayItemGizmoExtension] spawn prop", item_master_list_id, unit_name)

@@ -7,7 +7,7 @@ ProjectileTrueFlightLocomotionExtension = class(ProjectileTrueFlightLocomotionEx
 ProjectileTrueFlightLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	local world = extension_init_context.world
-	local gravity_settings = not not extension_init_data.gravity_settings
+	local gravity_settings = extension_init_data.gravity_settings
 	local initial_position = extension_init_data.initial_position
 	local true_flight_template_name = extension_init_data.true_flight_template_name
 
@@ -21,9 +21,9 @@ ProjectileTrueFlightLocomotionExtension.init = function (self, extension_init_co
 
 	local t = Managers.time:time("game")
 
-	self.t = t - not not extension_init_data.fast_forward_time
+	self.t = t - extension_init_data.fast_forward_time
 	self.target_unit = extension_init_data.target_unit
-	self.target_node = not not template.initial_target_node
+	self.target_node = template.initial_target_node
 	self.unit = unit
 	self.world = world
 	self.gravity_settings = gravity_settings
@@ -34,8 +34,8 @@ ProjectileTrueFlightLocomotionExtension.init = function (self, extension_init_co
 
 	local side_by_unit = Managers.state.side.side_by_unit
 
-	self.side = not not side_by_unit[unit]
-	self.target_broadphase_categories = not not self.side.enemy_broadphase_categories
+	self.side = side_by_unit[unit]
+	self.target_broadphase_categories = self.side.enemy_broadphase_categories
 	self.trajectory_template_name = extension_init_data.trajectory_template_name
 
 	assert(self.trajectory_template_name)
@@ -56,9 +56,9 @@ ProjectileTrueFlightLocomotionExtension.init = function (self, extension_init_co
 	self.stopped = false
 	self.moved = false
 	self.spawn_time = t
-	self.death_time = not not extension_init_data.life_time
+	self.death_time = extension_init_data.life_time
 	self.on_target_time = 0
-	self.height_offset = not not extension_init_data.height_offset
+	self.height_offset = extension_init_data.height_offset
 
 	if template.target_tracking_check_func then
 		self._update_towards_target_func = self[template.target_tracking_check_func]
@@ -66,12 +66,12 @@ ProjectileTrueFlightLocomotionExtension.init = function (self, extension_init_co
 		self._update_towards_target_func = self.update_towards_target
 	end
 
-	self._legitimate_target_func = template.legitimate_target_func and not not self[template.legitimate_target_func] or not template.legitimate_target_func and not not self.legitimate_target
-	self._keep_target_on_miss_check_func = template.keep_target_on_miss_check_func and not not self[template.keep_target_on_miss_check_func] or not template.keep_target_on_miss_check_func and not not self.legitimate_never
-	self._valid_target_dot = not not template.valid_target_dot
-	self._retarget_broadphase_offset = not not template.retarget_broadphase_offset
+	self._legitimate_target_func = template.legitimate_target_func and self[template.legitimate_target_func] or not template.legitimate_target_func and self.legitimate_target
+	self._keep_target_on_miss_check_func = template.keep_target_on_miss_check_func and self[template.keep_target_on_miss_check_func] or not template.keep_target_on_miss_check_func and self.legitimate_never
+	self._valid_target_dot = template.valid_target_dot
+	self._retarget_broadphase_offset = template.retarget_broadphase_offset
 	self._dont_target_patrols = template.dont_target_patrols
-	self._lerp_modifier_func = not not template.lerp_modifier_func
+	self._lerp_modifier_func = template.lerp_modifier_func
 	self.target_players = template.target_players
 
 	if template.find_target_func then
@@ -102,8 +102,8 @@ end
 local function get_target_head_node_position(unit, node_name)
 	-- function 3
 	local blackboard = BLACKBOARDS[unit]
-	local breed = not not blackboard and not not blackboard.breed
-	local node = Unit.has_node(unit, node_name) and not not Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and not not 0
+	local breed = blackboard and blackboard.breed
+	local node = Unit.has_node(unit, node_name) and Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and 0
 
 	if breed and breed.target_head_node then
 		return Unit.world_position(unit, node)
@@ -196,7 +196,7 @@ ProjectileTrueFlightLocomotionExtension.update = function (self, unit, input, dt
 	local new_position
 
 	if not has_good_target then
-		local max_on_target_time = not not template.max_on_target_time
+		local max_on_target_time = template.max_on_target_time
 		local seek = max_on_target_time > self.on_target_time
 		local position, new_target = self:update_seeking_target(current_position, dt, t, seek)
 
@@ -234,7 +234,7 @@ ProjectileTrueFlightLocomotionExtension.update = function (self, unit, input, dt
 	end
 
 	local direction = Vector3.normalize(velocity)
-	local new_rotation = not not new_rotation or not not Quaternion.look(direction)
+	local new_rotation = new_rotation or Quaternion.look(direction)
 
 	self:_unit_set_position_rotation(unit, new_position, new_rotation)
 
@@ -336,7 +336,7 @@ ProjectileTrueFlightLocomotionExtension.update_towards_slow_bomb_target = functi
 		network_manager.network_transmit:send_rpc_clients("rpc_set_projectile_state", unit_id, 1)
 	end
 
-	local speed_mod = math.clamp(distance < 10 and not not 1 or not (distance < 10) and not not (distance / 10), 0, 3)
+	local speed_mod = math.clamp(distance < 10 and 1 or not (distance < 10) and distance / 10, 0, 3)
 	local speed = self.speed * speed_multiplier * speed_mod
 	local lerp_modifier = self._lerp_modifier_func(distance)
 
@@ -375,7 +375,7 @@ ProjectileTrueFlightLocomotionExtension.update_towards_strike_missile_target = f
 				local create_bot_threat = template.create_bot_threat
 
 				if create_bot_threat then
-					local blackboard = not not HEALTH_ALIVE[self.owner_unit]
+					local blackboard = HEALTH_ALIVE[self.owner_unit]
 
 					if blackboard and not blackboard.created_missile_bot_threat then
 						blackboard.missile_bot_threat_unit = target_unit
@@ -498,7 +498,7 @@ ProjectileTrueFlightLocomotionExtension.update_seeking_target = function (self, 
 	local is_husk = self.is_husk
 	local trajectory = ProjectileTemplates.get_trajectory_template(trajectory_template_name, is_husk)
 	local new_position = trajectory.update(speed, angle, gravity, initial_position, target_vector, self_dt)
-	local target = not not seeking and not not self:find_new_target(position, true_flight_template, t, self_dt)
+	local target = seeking and self:find_new_target(position, true_flight_template, t, self_dt)
 
 	return new_position, target
 end
@@ -641,7 +641,7 @@ end
 
 ProjectileTrueFlightLocomotionExtension.legitimate_only_dot_check = function (self, unit, position)
 	-- function 21
-	local node = Unit.has_node(unit, "c_spine") and not not Unit.node(unit, "c_spine") or not Unit.has_node(unit, "c_spine") and not not 0
+	local node = Unit.has_node(unit, "c_spine") and Unit.node(unit, "c_spine") or not Unit.has_node(unit, "c_spine") and 0
 	local target_position = Unit.world_position(unit, node)
 	local current_direction = self.current_direction:unbox()
 	local direction_to_target = target_position - position
@@ -742,7 +742,7 @@ end
 ProjectileTrueFlightLocomotionExtension.legitimate_player_target = function (self, unit, position)
 	-- function 24
 	local node_name = self.target_node
-	local node = Unit.has_node(unit, node_name) and not not Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and not not 0
+	local node = Unit.has_node(unit, node_name) and Unit.node(unit, node_name) or not Unit.has_node(unit, node_name) and 0
 	local target_position = Unit.world_position(unit, node)
 	local current_direction = self.current_direction:unbox()
 	local direction_to_target = target_position - position
@@ -814,7 +814,7 @@ ProjectileTrueFlightLocomotionExtension.destroy = function (self)
 	local template = self.true_flight_template
 
 	if template.create_bot_threat then
-		local blackboard = not not HEALTH_ALIVE[self.owner_unit]
+		local blackboard = HEALTH_ALIVE[self.owner_unit]
 
 		if blackboard then
 			blackboard.created_missile_bot_threat = nil
@@ -835,7 +835,7 @@ ProjectileTrueFlightLocomotionExtension.update_bot_threat = function (self, targ
 	local template = self.true_flight_template
 
 	if distance < template.bot_threat_at_distance then
-		local blackboard = not not HEALTH_ALIVE[self.owner_unit]
+		local blackboard = HEALTH_ALIVE[self.owner_unit]
 
 		if blackboard and not blackboard.created_missile_bot_threat then
 			blackboard.missile_bot_threat_unit = target_unit

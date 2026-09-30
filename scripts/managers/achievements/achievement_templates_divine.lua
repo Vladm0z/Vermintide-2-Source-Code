@@ -118,7 +118,7 @@ achievements.divine_anchor_challenge = {
 
 			template_data.attached_timestamp = t
 			template_data.num_events_done = template_data.num_events_done + 1
-			template_data.players_at_start = not not template_data.players_at_start
+			template_data.players_at_start = template_data.players_at_start
 		elseif event_name == "divine_anchor_destroyed" and template_data.attached_timestamp then
 			local time_since_attached = t - template_data.attached_timestamp
 
@@ -217,8 +217,8 @@ achievements.divine_chaos_warrior_challenge = {
 		end
 
 		local victim_unit = event_data[1]
-		local breed = not not victim_unit and not not Unit.get_data(victim_unit, "breed")
-		local breed_name = not not breed and not not breed.name
+		local breed = victim_unit and Unit.get_data(victim_unit, "breed")
+		local breed_name = breed and breed.name
 
 		if breed_name == "chaos_warrior" or breed_name == "chaos_bulwark" then
 			statistics_db:increment_stat_and_sync_to_clients("divine_chaos_warrior_challenge")

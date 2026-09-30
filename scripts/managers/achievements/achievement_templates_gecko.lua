@@ -55,7 +55,7 @@ for i = 1, scrap_count_generic_num do
 
 			total_scrap_amount = statistics_db:get_persistent_stat(stats_id, statistics_id)
 
-			return not not total_scrap_amount and total_scrap_amount >= QuestSettings.scrap_count_generic[i]
+			return total_scrap_amount and total_scrap_amount >= QuestSettings.scrap_count_generic[i]
 		end,
 		progress = function (statistics_db, stats_id)
 			-- function 6

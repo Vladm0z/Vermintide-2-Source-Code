@@ -30,8 +30,8 @@ ActionBow.client_owner_start_action = function (self, new_action, t, chain_actio
 	input_extension:reset_input_buffer()
 
 	self.state = "waiting_to_shoot"
-	self.time_to_shoot = t + not not new_action.fire_time
-	self.time_to_unzoom = new_action.unzoom_time and not not (t + new_action.unzoom_time) or not new_action.unzoom_time and not not nil
+	self.time_to_shoot = t + new_action.fire_time
+	self.time_to_unzoom = new_action.unzoom_time and t + new_action.unzoom_time or not new_action.unzoom_time and nil
 	self.extra_buff_shot = false
 
 	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
@@ -76,7 +76,7 @@ ActionBow.client_owner_post_update = function (self, dt, t, world, can_damage)
 			})
 		end
 
-		local has_extra_shot = not current_action.career_skill and not not self:_update_extra_shots(self.owner_buff_extension, 1)
+		local has_extra_shot = not current_action.career_skill and self:_update_extra_shots(self.owner_buff_extension, 1)
 
 		self:fire(current_action, add_spread)
 

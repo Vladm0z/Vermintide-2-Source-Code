@@ -23,7 +23,7 @@ ObjectiveSocketUnitExtension.init = function (self, extension_init_context, unit
 
 	self:setup_sockets(unit)
 
-	self.pick_config = not not Unit.get_data(unit, "pick_config")
+	self.pick_config = Unit.get_data(unit, "pick_config")
 	POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
 
 	self:_handle_optional_slots(unit)

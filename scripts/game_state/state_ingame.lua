@@ -67,7 +67,7 @@ require("scripts/managers/vce/vce_manager")
 require("scripts/managers/flow_helper/flow_helper_manager")
 DLCUtils.require_list("statistics_database")
 
-local state_ingame_testify = not not script_data.testify
+local state_ingame_testify = script_data.testify
 
 StateIngame = class(StateIngame)
 StateIngame.NAME = "StateIngame"
@@ -92,7 +92,7 @@ StateIngame.on_enter = function (self)
 
 	self.is_server = is_server
 
-	print("[Gamestate] Enter StateIngame", is_server and not not "HOST" or not is_server and not not "CLIENT")
+	print("[Gamestate] Enter StateIngame", is_server and "HOST" or not is_server and "CLIENT")
 
 	local assert_on_leak = true
 
@@ -143,7 +143,7 @@ StateIngame.on_enter = function (self)
 	self._gm_event_end_conditions_met = false
 	self._gm_event_end_reason = nil
 
-	Managers.light_fx:set_lightfx_color_scheme(self.is_in_inn and not not "inn_level" or not self.is_in_inn and not not "ingame")
+	Managers.light_fx:set_lightfx_color_scheme(self.is_in_inn and "inn_level" or not self.is_in_inn and "ingame")
 
 	if IS_CONSOLE and self.is_in_tutorial then
 		Managers.backend:set_user_data("prologue_started", true)
@@ -188,7 +188,7 @@ StateIngame.on_enter = function (self)
 	self.network_client = loading_context.network_client
 
 	if self.network_server then
-		self.network_transmit = not not loading_context.network_transmit
+		self.network_transmit = loading_context.network_transmit
 
 		self.network_server:register_rpcs(network_event_delegate, self.network_transmit)
 
@@ -199,7 +199,7 @@ StateIngame.on_enter = function (self)
 	elseif self.network_client then
 		print("[StateIngame] Client ingame")
 
-		self.network_transmit = not not loading_context.network_transmit
+		self.network_transmit = loading_context.network_transmit
 
 		self.network_client:register_rpcs(network_event_delegate, self.network_transmit)
 
@@ -245,7 +245,7 @@ StateIngame.on_enter = function (self)
 
 	Managers.state.difficulty:set_difficulty(difficulty, difficulty_tweak)
 
-	local num_players = DEDICATED_SERVER and not not 0 or not DEDICATED_SERVER and not not 1
+	local num_players = DEDICATED_SERVER and 0 or not DEDICATED_SERVER and 1
 
 	self.num_local_human_players = num_players
 
@@ -326,7 +326,7 @@ StateIngame.on_enter = function (self)
 
 			loading_context.checkpoint_data = nil
 		else
-			local override_seed = Development.parameter("attract_mode") and not not BenchmarkSettings.game_seed or not Development.parameter("attract_mode") and not not level_seed
+			local override_seed = Development.parameter("attract_mode") and BenchmarkSettings.game_seed or not Development.parameter("attract_mode") and level_seed
 
 			Managers.state.conflict.level_analysis:set_random_seed(checkpoint_data, override_seed)
 		end
@@ -373,7 +373,7 @@ StateIngame.on_enter = function (self)
 			network_server = self.network_server,
 			network_client = self.network_client,
 			network_transmit = self.network_transmit,
-			voip = self.network_server and not not self.network_server.voip or not self.network_server and not not self.network_client.voip
+			voip = self.network_server and self.network_server.voip or not self.network_server and self.network_client.voip
 		}
 
 		if level_end_view_wrappers and level_end_view_wrappers[i] then
@@ -457,7 +457,7 @@ StateIngame.on_enter = function (self)
 
 	local network_manager = Managers.state.network
 	local network_game = network_manager:game()
-	local is_spawn_owner = not not lobby.is_host
+	local is_spawn_owner = lobby.is_host
 
 	if is_spawn_owner or LEVEL_EDITOR_TEST then
 		Managers.state.conflict:ai_ready(level_seed)
@@ -587,8 +587,8 @@ StateIngame.on_enter = function (self)
 
 	local fullscreen = Application.user_setting("fullscreen")
 	local borderless_fullscreen = Application.user_setting("borderless_fullscreen")
-	local windowed = not fullscreen and not not not borderless_fullscreen
-	local screen_mode = fullscreen and not not "fullscreen" or not fullscreen and (borderless_fullscreen and not not "borderless_fullscreen" or not borderless_fullscreen and not not windowed and not not "windowed")
+	local windowed = not fullscreen and not borderless_fullscreen
+	local screen_mode = fullscreen and "fullscreen" or not fullscreen and (borderless_fullscreen and "borderless_fullscreen" or not borderless_fullscreen and windowed and "windowed")
 	local res_x, res_y = Application.resolution()
 	local resolution_string = string.format("%dx%d", res_x, res_y)
 	local graphics_quality = Application.user_setting("graphics_quality")
@@ -691,7 +691,7 @@ StateIngame._safe_to_do_entity_update = function (self)
 
 	local t = Managers.time:time("game")
 	local game_mode_ended = Managers.state.game_mode:is_game_mode_ended()
-	local left_game_mode = not not game_mode_ended and not not self.game_mode_end_timer
+	local left_game_mode = game_mode_ended and self.game_mode_end_timer
 
 	return not left_game_mode
 end
@@ -791,7 +791,7 @@ StateIngame._gather_backend_flow_events = function (self)
 	local environment_level_flow_event = "keep_event_default"
 	local level_variation_data = Managers.backend:get_level_variation_data()
 	local level_varation_settings = level_variation_data.level_settings
-	local level_settings = not not level_varation_settings and not not level_varation_settings[self.level_key]
+	local level_settings = level_varation_settings and level_varation_settings[self.level_key]
 
 	if level_settings then
 		local environment_flow_event = level_settings.environment_flow_event
@@ -1096,7 +1096,7 @@ StateIngame._check_exit = function (self, t)
 	local backend_manager = Managers.backend
 	local waiting_user_input = backend_manager:is_waiting_for_user_input()
 	local backend_items = backend_manager:get_interface("items")
-	local waiting_for_item_poll = backend_items:num_current_item_server_requests() ~= 0 and not not not backend_manager:is_disconnected() or not (backend_items:num_current_item_server_requests() ~= 0) and not not UISettings.waiting_for_response
+	local waiting_for_item_poll = backend_items:num_current_item_server_requests() ~= 0 and not backend_manager:is_disconnected() or not (backend_items:num_current_item_server_requests() ~= 0) and UISettings.waiting_for_response
 
 	if not self.exit_type and not waiting_user_input and not waiting_for_item_poll then
 		local transition, join_lobby_data
@@ -1115,7 +1115,7 @@ StateIngame._check_exit = function (self, t)
 			transition = "return_to_title_screen"
 		end
 
-		transition = not not transition or not not Managers.state.game_mode:wanted_transition()
+		transition = transition or Managers.state.game_mode:wanted_transition()
 
 		if not transition and Managers.game_server then
 			transition = Managers.game_server:get_transition()
@@ -1126,7 +1126,7 @@ StateIngame._check_exit = function (self, t)
 		end
 
 		local level_transition_handler = Managers.level_transition_handler
-		local level_transition_type = not not level_transition_handler:needs_level_load()
+		local level_transition_type = level_transition_handler:needs_level_load()
 
 		if transition or join_lobby_data or level_transition_type then
 			print("TRANSITION", transition, join_lobby_data, level_transition_type)
@@ -1566,7 +1566,7 @@ StateIngame._check_exit = function (self, t)
 
 		local exit_type = self.exit_type
 		local has_left = network_manager:has_left_game()
-		local game_session_is_closed = not not has_left or not not not network_manager:in_game_session()
+		local game_session_is_closed = has_left or not network_manager:in_game_session()
 
 		if not game_session_is_closed and t >= self.exit_time + SESSION_LEAVE_TIMEOUT then
 			print("Session leave timeout reached, force disconnecting")
@@ -1616,7 +1616,7 @@ StateIngame._check_exit = function (self, t)
 				else
 					local current_mechanism_name = Managers.mechanism:current_mechanism_name()
 					local lobby_data = lobby:get_stored_lobby_data()
-					local matchmaking_type_id = not not lobby_data.matchmaking_type
+					local matchmaking_type_id = lobby_data.matchmaking_type
 
 					if current_mechanism_name == "versus" and matchmaking_type_id and NetworkLookup.matchmaking_types[matchmaking_type_id] == "versus" then
 						self.parent.loading_context.previous_session_error = "server_disconnected"
@@ -1638,7 +1638,7 @@ StateIngame._check_exit = function (self, t)
 
 			self.parent.loading_context.restart_network = true
 			self.parent.loading_context.level_end_view_context = nil
-			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			self.parent.loading_context.end_reason = exit_type
 
 			return StateLoading
@@ -1648,7 +1648,7 @@ StateIngame._check_exit = function (self, t)
 			self.parent.loading_context.restart_network = true
 			self.parent.loading_context.show_profile_on_startup = true
 			self.parent.loading_context.return_to_pc_menu = true
-			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			self.parent.loading_context.end_reason = "return_to_pc_menu"
 
 			return StateLoading
@@ -1660,7 +1660,7 @@ StateIngame._check_exit = function (self, t)
 			local loading_context = self.parent.loading_context
 
 			loading_context.finished_tutorial = true
-			loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			loading_context.end_reason = "finished_tutorial"
 
 			if Managers.play_go:installed() then
@@ -1689,7 +1689,7 @@ StateIngame._check_exit = function (self, t)
 			self.parent.loading_context.host_migration_info = host_migration_info
 			self.parent.loading_context.wanted_profile_index = self:wanted_profile_index()
 			self.parent.loading_context.wanted_party_index = self:wanted_party_index()
-			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			self.parent.loading_context.end_reason = "host_migration"
 			self.leave_lobby = true
 
@@ -1702,7 +1702,7 @@ StateIngame._check_exit = function (self, t)
 			local loading_context = self.parent.loading_context
 
 			loading_context.versus_migration = true
-			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			self.parent.loading_context.end_reason = "versus_migration"
 			self.leave_lobby = true
 
@@ -1712,7 +1712,7 @@ StateIngame._check_exit = function (self, t)
 
 			loading_context.restart_network = true
 			loading_context.rejoin_lobby = true
-			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			self.parent.loading_context.end_reason = "rejoin_party"
 			self.leave_lobby = true
 
@@ -1750,13 +1750,13 @@ StateIngame._check_exit = function (self, t)
 
 			return StateTitleScreen
 		elseif exit_type == "load_next_level" or exit_type == "reload_level" then
-			self.parent.loading_context.checkpoint_data = self.is_server and not not Managers.level_transition_handler:get_checkpoint_data() or not self.is_server and not not nil
+			self.parent.loading_context.checkpoint_data = self.is_server and Managers.level_transition_handler:get_checkpoint_data() or not self.is_server and nil
 			self.parent.loading_context.matchmaking_loading_context = Managers.matchmaking:loading_context()
 			self.parent.loading_context.wanted_profile_index = self:wanted_profile_index()
 			self.parent.loading_context.wanted_party_index = self:wanted_party_index()
-			self.parent.loading_context.quickplay_bonus = not not Managers.venture.quickplay:has_pending_quick_game()
-			self.parent.loading_context.previous_session_error = not not Managers.twitch
-			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			self.parent.loading_context.quickplay_bonus = Managers.venture.quickplay:has_pending_quick_game()
+			self.parent.loading_context.previous_session_error = Managers.twitch
+			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			self.parent.loading_context.end_reason = Managers.state.game_mode:get_end_reason()
 
 			return StateLoading
@@ -1765,8 +1765,8 @@ StateIngame._check_exit = function (self, t)
 			self.parent.loading_context.matchmaking_loading_context = Managers.matchmaking:loading_context()
 			self.parent.loading_context.wanted_profile_index = self:wanted_profile_index()
 			self.parent.loading_context.wanted_party_index = self:wanted_party_index()
-			self.parent.loading_context.quickplay_bonus = self.is_server and not not Managers.venture.quickplay:has_pending_quick_game() or not self.is_server and not not nil
-			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and not not Managers.time:time("game") or not Managers.time and not not -1)
+			self.parent.loading_context.quickplay_bonus = self.is_server and Managers.venture.quickplay:has_pending_quick_game() or not self.is_server and nil
+			self.parent.loading_context.time_spent_in_level = math.floor(Managers.time and Managers.time:time("game") or not Managers.time and -1)
 			self.parent.loading_context.end_reason = "join_game"
 
 			return StateLoading
@@ -1787,7 +1787,7 @@ StateIngame.wanted_profile_index = function (self)
 	-- function 26
 	local peer_id = Network.peer_id()
 	local player = Managers.player:player_from_peer_id(peer_id)
-	local current_profile_index = not not player and not not player:profile_index()
+	local current_profile_index = player and player:profile_index()
 
 	if self.is_in_tutorial then
 		current_profile_index = nil
@@ -1795,14 +1795,14 @@ StateIngame.wanted_profile_index = function (self)
 
 	local selected_profile_index = Managers.matchmaking.selected_profile_index
 	local saved_profile_index = SaveData.wanted_profile_index
-	local wanted_profile_index = not not selected_profile_index or not not current_profile_index or not not saved_profile_index or not not 0
+	local wanted_profile_index = selected_profile_index or current_profile_index or saved_profile_index or 0
 
 	return wanted_profile_index
 end
 
 StateIngame.wanted_party_index = function (self)
 	-- function 27
-	local selected_party_index = not not Managers.matchmaking.selected_party_index
+	local selected_party_index = Managers.matchmaking.selected_party_index
 
 	return selected_party_index
 end
@@ -2034,8 +2034,8 @@ StateIngame.on_exit = function (self, application_shutdown)
 		Managers.party:network_context_destroyed()
 
 		local loading_context = self.parent.loading_context
-		local host_migration_info = not not loading_context and not not loading_context.host_migration_info
-		local current_level_key = not not host_migration_info and not not host_migration_info.current_level_key
+		local host_migration_info = loading_context and loading_context.host_migration_info
+		local current_level_key = host_migration_info and host_migration_info.current_level_key
 
 		Managers.mechanism:network_context_destroyed(current_level_key)
 
@@ -2049,7 +2049,7 @@ StateIngame.on_exit = function (self, application_shutdown)
 			end
 		end
 
-		local join_data = not not loading_context.start_lobby_data
+		local join_data = loading_context.start_lobby_data
 		local party_join = join_data ~= nil and join_data.join_method == "party"
 
 		if lobby.is_host then
@@ -2197,7 +2197,7 @@ StateIngame._check_and_add_end_game_telemetry = function (self, application_shut
 	if application_shutdown then
 		local controlled_exit = Boot.is_controlled_exit
 
-		reason = controlled_exit and (not not "controlled_exit" or not not "forced_exit") or not controlled_exit and not not "forced_exit"
+		reason = controlled_exit and ("controlled_exit" or "forced_exit") or not controlled_exit and "forced_exit"
 	else
 		local level_related_reason = self.exit_type == "load_next_level" or self.exit_type == "reload_level"
 
@@ -2268,7 +2268,7 @@ StateIngame._setup_state_context = function (self, world, is_server, network_eve
 
 	Managers.weave:initiate(world, network_event_delegate, is_server, game_mode_key)
 
-	Managers.state.game_mode = GameModeManager:new(world, lobby, network_event_delegate, self.statistics_db, game_mode_key, not not self.network_server, self.network_transmit, self.profile_synchronizer, game_mode_settings)
+	Managers.state.game_mode = GameModeManager:new(world, lobby, network_event_delegate, self.statistics_db, game_mode_key, self.network_server, self.network_transmit, self.profile_synchronizer, game_mode_settings)
 
 	local level_key = level_transition_handler:get_current_level_keys()
 	local level_seed = level_transition_handler:get_current_level_seed()
@@ -2304,7 +2304,7 @@ StateIngame._setup_state_context = function (self, world, is_server, network_eve
 		end
 
 		local is_network_unit = NetworkUnit.is_network_unit(unit)
-		local is_husk = not not is_network_unit and not not NetworkUnit.is_husk_unit(unit)
+		local is_husk = is_network_unit and NetworkUnit.is_husk_unit(unit)
 		local extensions, num_extensions = unit_templates.get_extensions(unit_template_name, is_husk, is_server)
 
 		if not extensions then

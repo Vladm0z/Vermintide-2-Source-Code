@@ -31,11 +31,11 @@ BTCrazyJumpAction.enter = function (self, unit, blackboard, t)
 	local data = blackboard.jump_data
 	local network_manager = Managers.state.network
 	local ai_extension = ScriptUnit.extension(unit, "ai_system")
-	local prepare_jump_time = not not action.difficulty_jump_delay_time[Managers.state.difficulty:get_difficulty_rank()]
+	local prepare_jump_time = action.difficulty_jump_delay_time[Managers.state.difficulty:get_difficulty_rank()]
 
 	if data.delay_jump_start then
 		data.state = "align_for_push_off"
-		data.start_jump = t + (not not prepare_jump_time or not not 0.3)
+		data.start_jump = t + (prepare_jump_time or 0.3)
 		data.delay_jump_start = nil
 	elseif data.instant_jump then
 		network_manager:anim_event(unit, "to_crouch")
@@ -50,7 +50,7 @@ BTCrazyJumpAction.enter = function (self, unit, blackboard, t)
 		network_manager:anim_event(unit, "jump_start")
 
 		data.state = "push_off"
-		data.start_jump = t + (not not prepare_jump_time or not not 0.3)
+		data.start_jump = t + (prepare_jump_time or 0.3)
 		data.start_check_obstacles = t + 0.8
 
 		self:create_bot_threat(unit, blackboard, t)

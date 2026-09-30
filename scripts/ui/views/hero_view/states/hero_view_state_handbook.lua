@@ -32,7 +32,7 @@ HeroViewStateHandbook.on_enter = function (self, params)
 		snap_pixel_positions = false
 	}
 	self._voting_manager = ingame_ui_context.voting_manager
-	SaveData.seen_handbook_pages = not not SaveData.seen_handbook_pages
+	SaveData.seen_handbook_pages = SaveData.seen_handbook_pages
 
 	local input_service = self:input_service()
 
@@ -220,7 +220,7 @@ end
 HeroViewStateHandbook._get_active_tabs_height = function (self)
 	-- function 10
 	local active_tab = self._active_tab
-	local num_sub_tabs = active_tab and not not active_tab.style.list_style.num_draws or not active_tab and not not 0
+	local num_sub_tabs = active_tab and active_tab.style.list_style.num_draws or not active_tab and 0
 	local tab_list_entry_size = category_tab_info.tab_list_entry_size
 	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
 	local tab_list_height = math.max(tab_list_entry_size[2] * num_sub_tabs + tab_list_entry_spacing * (num_sub_tabs - 1), 0)
@@ -230,7 +230,7 @@ end
 
 HeroViewStateHandbook._get_active_category_height = function (self)
 	-- function 11
-	local active_tab = not not self._active_tab_index
+	local active_tab = self._active_tab_index
 	local num_tabs = active_tab - 1
 	local tab_size = category_tab_info.tab_size
 	local tab_list_entry_spacing = category_tab_info.tab_list_entry_spacing
@@ -249,7 +249,7 @@ HeroViewStateHandbook._setup_scrollbar = function (self, height, optional_value)
 
 	widget.content.scroll_bar_info.bar_height_percentage = percentage
 
-	self:_set_scrollbar_value(not not optional_value or not not 0)
+	self:_set_scrollbar_value(optional_value or 0)
 
 	local scroll_step_multiplier = 2
 	local scroll_amount = math.max(110 / self._total_scroll_height, 0) * scroll_step_multiplier
@@ -361,7 +361,7 @@ end
 
 HeroViewStateHandbook.update = function (self, dt, t)
 	-- function 21
-	local input_service = self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
+	local input_service = self._input_blocked and FAKE_INPUT_SERVICE or not self._input_blocked and self:input_service()
 	local is_gamepad_active = Managers.input:is_device_active("gamepad")
 
 	self._ui_animator:update(dt)
@@ -386,7 +386,7 @@ HeroViewStateHandbook.update = function (self, dt, t)
 			end
 		end
 
-		local has_state = not not wanted_state or not not self._new_state
+		local has_state = wanted_state or self._new_state
 
 		if has_state then
 			parent:clear_wanted_state()
@@ -405,9 +405,9 @@ end
 HeroViewStateHandbook._has_active_level_vote = function (self)
 	-- function 22
 	local voting_manager = self._voting_manager
-	local is_mission_vote = not not voting_manager:vote_in_progress()
+	local is_mission_vote = voting_manager:vote_in_progress()
 
-	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
+	return is_mission_vote and not voting_manager:has_voted(Network.peer_id())
 end
 
 HeroViewStateHandbook._handle_input = function (self, input_service, is_gamepad_active, dt, t)
@@ -415,7 +415,7 @@ HeroViewStateHandbook._handle_input = function (self, input_service, is_gamepad_
 	local widgets_by_name = self._widgets_by_name
 	local exit_button = widgets_by_name.exit_button
 	local input_pressed = input_service:get("toggle_menu")
-	local input_close_pressed = not not is_gamepad_active and not not input_service:get("back")
+	local input_close_pressed = is_gamepad_active and input_service:get("back")
 
 	if input_pressed or UIUtils.is_button_pressed(exit_button) or input_close_pressed then
 		self:play_sound("Play_hud_hover")
@@ -459,7 +459,7 @@ HeroViewStateHandbook._handle_input = function (self, input_service, is_gamepad_
 
 		for i = 1, num_draws do
 			local content = item_contents[i]
-			local hotspot = not not content.button_hotspot
+			local hotspot = content.button_hotspot
 
 			if hotspot.on_hover_enter then
 				self:play_sound("Play_gui_achivements_menu_hover_category")
@@ -603,7 +603,7 @@ HeroViewStateHandbook._activate_tab = function (self, widget, index, tab_list_in
 	content.active = true
 	content.list_content.active = true
 	self._active_list_index = nil
-	tab_list_index = not not tab_list_index or not not 1
+	tab_list_index = tab_list_index or 1
 
 	if tab_list_index then
 		local pages = content.children[tab_list_index]
@@ -689,7 +689,7 @@ HeroViewStateHandbook._update_page_info = function (self)
 	widgets_by_name.page_text_right.content.visible = has_pages
 	widgets_by_name.page_text_area.content.visible = has_pages
 
-	self._menu_input_description:set_input_description(has_pages and not not generic_input_actions.has_pages or not has_pages and not not nil)
+	self._menu_input_description:set_input_description(has_pages and generic_input_actions.has_pages or not has_pages and nil)
 end
 
 HeroViewStateHandbook._set_gamepad_input_buttons_visibility = function (self, visible)
@@ -697,7 +697,7 @@ HeroViewStateHandbook._set_gamepad_input_buttons_visibility = function (self, vi
 	local widgets_by_name = self._widgets_by_name
 	local has_pages = self._total_pages > 1
 
-	visible = not not visible and not not has_pages
+	visible = visible and has_pages
 
 	local input_1_widget = widgets_by_name.input_icon_next
 	local input_2_widget = widgets_by_name.input_icon_previous
@@ -720,14 +720,14 @@ HeroViewStateHandbook.draw = function (self, input_service, is_gamepad_active, d
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local base_alpha_multiplier = not not render_settings.alpha_multiplier
+	local base_alpha_multiplier = render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._widgets) do
 		if widget.snap_pixel_positions ~= nil then
 			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 
@@ -758,7 +758,7 @@ HeroViewStateHandbook.draw = function (self, input_service, is_gamepad_active, d
 
 				render_settings.alpha_multiplier = 0
 			elseif alpha_multiplier then
-				local alpha_fade_multipler = not not widget.alpha_fade_multipler
+				local alpha_fade_multipler = widget.alpha_fade_multipler
 
 				alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
 				render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)
@@ -791,7 +791,7 @@ HeroViewStateHandbook.draw = function (self, input_service, is_gamepad_active, d
 
 			render_settings.alpha_multiplier = 0
 		elseif alpha_multiplier then
-			local alpha_fade_multipler = not not widget.alpha_fade_multipler
+			local alpha_fade_multipler = widget.alpha_fade_multipler
 
 			alpha_multiplier = math.min(alpha_multiplier + dt * alpha_fade_multipler, 1)
 			render_settings.alpha_multiplier = math.easeInCubic(alpha_multiplier)

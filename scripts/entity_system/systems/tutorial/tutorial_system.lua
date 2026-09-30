@@ -60,7 +60,7 @@ TutorialSystem.init = function (self, entity_system_creation_context, system_nam
 
 	network_event_delegate:register(self, "rpc_tutorial_message", "rpc_pacing_changed", "rpc_objective_unit_set_active", "rpc_prioritize_objective_tooltip", "rpc_objective_unit_set_always_show")
 
-	SaveData.seen_handbook_popups = not not SaveData.seen_handbook_popups
+	SaveData.seen_handbook_popups = SaveData.seen_handbook_popups
 
 	Managers.state.event:register(self, "tutorial_trigger", "on_tutorial_trigger")
 
@@ -83,7 +83,7 @@ TutorialSystem.on_add_extension = function (self, world, unit, extension_name, e
 
 	if extension_name == "PlayerTutorialExtension" then
 		self.player_units[unit] = extension
-		extension.completed_tutorials = not not SaveData.completed_tutorials
+		extension.completed_tutorials = SaveData.completed_tutorials
 		extension.points = #extension.completed_tutorials
 		extension.tooltip_tutorial = {
 			active = false
@@ -116,13 +116,13 @@ TutorialSystem.on_add_extension = function (self, world, unit, extension_name, e
 	end
 
 	if extension_name == "ObjectivePickupTutorialExtension" then
-		extension.approach_text = not not Unit.get_data(unit, "approach_text")
-		extension.disregard = not not Unit.get_data(unit, "disable_objective_ui")
+		extension.approach_text = Unit.get_data(unit, "approach_text")
+		extension.disregard = Unit.get_data(unit, "disable_objective_ui")
 	end
 
 	if extension_name == "ObjectiveSocketTutorialExtension" then
-		extension.approach_text = not not Unit.get_data(unit, "approach_text")
-		extension.pickup_text = not not Unit.get_data(unit, "pickup_text")
+		extension.approach_text = Unit.get_data(unit, "approach_text")
+		extension.pickup_text = Unit.get_data(unit, "pickup_text")
 	end
 
 	if extension_name == "ObjectiveUnitExtension" then
@@ -176,7 +176,7 @@ TutorialSystem.on_add_extension = function (self, world, unit, extension_name, e
 		extension.set_active = activate_func
 		extension.server_only = server_only
 		extension.network_synced = network_synced
-		extension.always_show = not not extension_init_data.always_show
+		extension.always_show = extension_init_data.always_show
 
 		extension.set_always_show = function (extension, show)
 			-- function 10
@@ -472,7 +472,7 @@ end
 
 TutorialSystem.iterate_objective_tooltips = function (self, t, unit, extension, raycast_unit, world)
 	-- function 20
-	local objective_tooltip_templates = not not self._objective_tooltip_prioritized_list
+	local objective_tooltip_templates = self._objective_tooltip_prioritized_list
 	local objective_tooltip_templates_n = TutorialObjectiveTooltipTemplates_n
 	local objective_tooltips = extension.objective_tooltips
 
@@ -567,7 +567,7 @@ TutorialSystem.iterate_info_slates = function (self, t, unit, extension, raycast
 			repeat
 				local template = info_slate_templates[i]
 				local name = template.name
-				local cooldown = template.cooldown and not not template.cooldown or not template.cooldown and not not INFOSLATE_COOLDOWN
+				local cooldown = template.cooldown and template.cooldown or not template.cooldown and INFOSLATE_COOLDOWN
 
 				if t < extension.shown_times[name] + cooldown then
 					break
@@ -576,7 +576,7 @@ TutorialSystem.iterate_info_slates = function (self, t, unit, extension, raycast
 				if template.can_show(t, unit, extension.data, raycast_unit, world) then
 					extension.shown_times[name] = t
 
-					local text = template.get_text and not not template.get_text(extension.data, template) or not template.get_text and not not template.text
+					local text = template.get_text and template.get_text(extension.data, template) or not template.get_text and template.text
 
 					text = Localize(text)
 

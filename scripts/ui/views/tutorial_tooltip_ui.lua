@@ -74,12 +74,12 @@ TutorialTooltipUI.update = function (self, tooltip_tutorial, player_unit, dt)
 	local active_tooltip_name = self.active_tooltip_name
 	local widget_style = self.tutorial_tooltip_widget.style
 	local widget_content = self.tutorial_tooltip_widget.content
-	local text = not not active_template.text
+	local text = active_template.text
 	local tooltip_action = active_template.action
 	local force_update = active_template.force_update
 	local texture_size_y, texture_size_x = 0, 0
 	local gamepad_active = self.input_manager:is_device_active("gamepad")
-	local inputs = gamepad_active and not not active_template.gamepad_inputs or not gamepad_active and not not active_template.inputs
+	local inputs = gamepad_active and active_template.gamepad_inputs or not gamepad_active and active_template.inputs
 
 	if inputs and #inputs > 0 then
 		if not active_tooltip_name then
@@ -144,11 +144,11 @@ TutorialTooltipUI.update = function (self, tooltip_tutorial, player_unit, dt)
 								texture_size_x = texture_size_x + text_width
 
 								if texture_size_y < sizes[i][2] then
-									texture_size_y = not not sizes[i][2] or not not texture_size_y
+									texture_size_y = sizes[i][2] or texture_size_y
 								end
 							else
 								texture_size_x = texture_size_x + sizes[i][1]
-								texture_size_y = not (texture_size_y < sizes[i][2]) or not not sizes[i][2] or not not texture_size_y
+								texture_size_y = not (texture_size_y < sizes[i][2]) or sizes[i][2] or texture_size_y
 							end
 						end
 
@@ -160,7 +160,7 @@ TutorialTooltipUI.update = function (self, tooltip_tutorial, player_unit, dt)
 
 					ui_scenegraph["input_description_icon_" .. i].size[1] = texture_size_x
 					ui_scenegraph["input_description_icon_" .. i].size[2] = texture_size_y
-					widget_content.prefix_text = not not Localize(input.prefix)
+					widget_content.prefix_text = Localize(input.prefix)
 					widget_content.suffix_text = input.suffix
 
 					local prefix_font, prefix_scaled_font_size = UIFontByResolution(widget_style.prefix_text)

@@ -7,14 +7,14 @@ local function is_local(unit)
 	-- function 1
 	local player = Managers.player:owner(unit)
 
-	return not not player and not not not player.remote
+	return player and not player.remote
 end
 
 local function is_bot(unit)
 	-- function 2
 	local player = Managers.player:owner(unit)
 
-	return not not player and not not player.bot_player
+	return player and player.bot_player
 end
 
 settings.buff_templates = {
@@ -554,7 +554,7 @@ settings.buff_function_templates = {
 
 		params.health_to_heal = health_to_heal
 		params.tick_rate = buff_template.tick_rate
-		params.health_to_heal_per_tick = not not buff_template.tick_rate
+		params.health_to_heal_per_tick = buff_template.tick_rate
 		params.missing_health = missing_health
 		params.next_tick = params.t + buff_template.tick_rate
 
@@ -602,13 +602,13 @@ settings.buff_function_templates = {
 			local buff_template = buff.template
 			local player = Managers.player:unit_owner(unit)
 			local camera_system = Managers.state.entity:system("camera_system")
-			local camera_unit = not not camera_system and not not player and not not camera_system.camera_units
+			local camera_unit = camera_system and player and camera_system.camera_units
 			local camera_state
 
 			if camera_unit then
 				local camera_state_ext = ScriptUnit.extension(camera_unit, "camera_state_machine_system")
 
-				camera_state = not not camera_state_ext.state_machine.state_current and not not camera_state_ext.state_machine.state_current.name
+				camera_state = camera_state_ext.state_machine.state_current and camera_state_ext.state_machine.state_current.name
 			end
 
 			if camera_state and camera_state ~= params.previous_camera_state then
@@ -662,7 +662,7 @@ settings.buff_function_templates = {
 		-- function 10
 		local breed = Unit.get_data(unit, "breed")
 
-		buff.armor_type = not not breed.armor_category
+		buff.armor_type = breed.armor_category
 
 		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
@@ -671,14 +671,14 @@ settings.buff_function_templates = {
 		end
 
 		local attacker_unit_is_alive = ALIVE[params.attacker_unit]
-		local attacker_unit = attacker_unit_is_alive and not not params.attacker_unit or not attacker_unit_is_alive and not not unit
+		local attacker_unit = attacker_unit_is_alive and params.attacker_unit or not attacker_unit_is_alive and unit
 
 		if Unit.alive(attacker_unit) then
 			local warpfire_unit_breed = Unit.get_data(attacker_unit, "breed")
 			local damage = warpfire_unit_breed.shoot_warpfire_long_attack_damage
 
 			buff.damage = damage
-			buff.damage_source = warpfire_unit_breed and not not warpfire_unit_breed.name or not warpfire_unit_breed and not not "dot_debuff"
+			buff.damage_source = warpfire_unit_breed and warpfire_unit_breed.name or not warpfire_unit_breed and "dot_debuff"
 		end
 	end,
 	update_vs_warpfirethrower_long_distance_damage = function (unit, buff, params, world)
@@ -696,7 +696,7 @@ settings.buff_function_templates = {
 				is_power_blocking = is_grail_knight_blocking(unit, attacker_unit, buff, params, world)
 			end
 
-			if not is_power_blocking and HEALTH_ALIVE[unit] or not not is_power_blocking and not DamageUtils.check_ranged_block(attacker_unit, unit, "blocked_berzerker") and HEALTH_ALIVE[unit] then
+			if not is_power_blocking and HEALTH_ALIVE[unit] or is_power_blocking and not DamageUtils.check_ranged_block(attacker_unit, unit, "blocked_berzerker") and HEALTH_ALIVE[unit] then
 				local armor_type = buff.armor_type
 				local damage_type = buff_template.damage_type
 				local damage = buff.damage[armor_type]
@@ -743,18 +743,18 @@ settings.buff_function_templates = {
 			local damage = warpfire_unit_breed.shoot_warpfire_long_attack_damage
 
 			buff.damage = damage
-			buff.damage_source = warpfire_unit_breed and not not warpfire_unit_breed.name or not warpfire_unit_breed and not not "dot_debuff"
+			buff.damage_source = warpfire_unit_breed and warpfire_unit_breed.name or not warpfire_unit_breed and "dot_debuff"
 		end
 
 		local breed = Unit.get_data(unit, "breed")
 
-		buff.armor_type = not not breed.armor_category
+		buff.armor_type = breed.armor_category
 
 		if breed.is_hero and first_person_extension then
 			local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 			local status_extension = ScriptUnit.has_extension(unit, "status_system")
-			local no_ranged_knockback = not not buff_extension and not not buff_extension:has_buff_perk("no_ranged_knockback")
-			local is_valid_push_target = not no_ranged_knockback and not status_extension:is_disabled() and not not not status_extension:has_noclip()
+			local no_ranged_knockback = buff_extension and buff_extension:has_buff_perk("no_ranged_knockback")
+			local is_valid_push_target = not no_ranged_knockback and not status_extension:is_disabled() and not status_extension:has_noclip()
 
 			if is_valid_push_target then
 				local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")

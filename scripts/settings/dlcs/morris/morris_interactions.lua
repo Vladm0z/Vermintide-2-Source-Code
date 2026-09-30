@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_interactions.lua
 
-InteractionDefinitions.deus_access = not not InteractionDefinitions.deus_access
+InteractionDefinitions.deus_access = InteractionDefinitions.deus_access
 InteractionDefinitions.deus_access.config.swap_to_3p = false
 
 InteractionDefinitions.deus_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -23,10 +23,10 @@ InteractionDefinitions.deus_access.client.can_interact = function (interactor_un
 	local active = Unit.get_data(interactable_unit, "interaction_data", "active")
 	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 
-	return not not active and not not not is_game_matchmaking
+	return active and not is_game_matchmaking
 end
 
-InteractionDefinitions.deus_weapon_chest = not not InteractionDefinitions.deus_weapon_chest
+InteractionDefinitions.deus_weapon_chest = InteractionDefinitions.deus_weapon_chest
 InteractionDefinitions.deus_weapon_chest.config.swap_to_3p = false
 
 InteractionDefinitions.deus_weapon_chest.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -61,10 +61,10 @@ InteractionDefinitions.deus_weapon_chest.client.can_interact = function (interac
 
 	local deus_cursed_chest_extension = ScriptUnit.has_extension(interactable_unit, "pickup_system")
 
-	return not not deus_cursed_chest_extension and not not deus_cursed_chest_extension:can_interact()
+	return deus_cursed_chest_extension and deus_cursed_chest_extension:can_interact()
 end
 
-InteractionDefinitions.deus_cursed_chest = not not InteractionDefinitions.deus_cursed_chest
+InteractionDefinitions.deus_cursed_chest = InteractionDefinitions.deus_cursed_chest
 InteractionDefinitions.deus_cursed_chest.config = {
 	block_other_interactions = true,
 	hud_verb = "player_interaction",
@@ -149,13 +149,13 @@ end
 
 InteractionDefinitions.deus_cursed_chest.client.get_progress = function (data, config, t)
 	-- function 10
-	local duration = not not data.duration
+	local duration = data.duration
 
 	if duration == 0 then
 		return 0
 	end
 
-	return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and not not 0
+	return data.start_time ~= nil and math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and 0
 end
 
 InteractionDefinitions.deus_cursed_chest.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -184,10 +184,10 @@ InteractionDefinitions.deus_cursed_chest.client.can_interact = function (interac
 
 	local deus_cursed_chest_extension = ScriptUnit.has_extension(interactable_unit, "deus_cursed_chest_system")
 
-	return not not deus_cursed_chest_extension and not not deus_cursed_chest_extension:can_interact()
+	return deus_cursed_chest_extension and deus_cursed_chest_extension:can_interact()
 end
 
-InteractionDefinitions.deus_arena_interactable = not not InteractionDefinitions.deus_arena_interactable
+InteractionDefinitions.deus_arena_interactable = InteractionDefinitions.deus_arena_interactable
 InteractionDefinitions.deus_arena_interactable.config.swap_to_3p = false
 
 InteractionDefinitions.deus_arena_interactable.server.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -216,7 +216,7 @@ InteractionDefinitions.deus_arena_interactable.client.hud_description = function
 	-- function 16
 	local deus_arena_interactable_extension = ScriptUnit.has_extension(interactable_unit, "deus_arena_interactable_system")
 
-	return deus_arena_interactable_extension and not not deus_arena_interactable_extension:get_interact_hud_description() or not deus_arena_interactable_extension and not not "deus_altar_hud_desc", "interaction_action_open"
+	return deus_arena_interactable_extension and deus_arena_interactable_extension:get_interact_hud_description() or not deus_arena_interactable_extension and "deus_altar_hud_desc", "interaction_action_open"
 end
 
 InteractionDefinitions.deus_arena_interactable.client.can_interact = function (interactor_unit, interactable_unit, data, config)
@@ -227,7 +227,7 @@ InteractionDefinitions.deus_arena_interactable.client.can_interact = function (i
 
 	local deus_arena_interactable_extension = ScriptUnit.has_extension(interactable_unit, "deus_arena_interactable_system")
 
-	return not not deus_arena_interactable_extension and not not deus_arena_interactable_extension:can_interact()
+	return deus_arena_interactable_extension and deus_arena_interactable_extension:can_interact()
 end
 
 InteractionDefinitions.deus_setup_rally_flag = {
@@ -272,7 +272,7 @@ InteractionDefinitions.deus_setup_rally_flag = {
 					local horizontal_limit = 1
 					local distance_from_nav_border = 0.05
 
-					position_on_navmesh = not not GwNavQueries.inside_position_from_outside_position(nav_world, position, above, below, horizontal_limit, distance_from_nav_border) or not not Vector3.copy(position)
+					position_on_navmesh = GwNavQueries.inside_position_from_outside_position(nav_world, position, above, below, horizontal_limit, distance_from_nav_border) or Vector3.copy(position)
 				end
 
 				local extension_init_data = {
@@ -347,7 +347,7 @@ InteractionDefinitions.deus_setup_rally_flag = {
 				return 0
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 26
@@ -359,7 +359,7 @@ InteractionDefinitions.deus_setup_rally_flag = {
 		end
 	}
 }
-InteractionDefinitions.deus_debug_changelog = not not InteractionDefinitions.deus_debug_changelog
+InteractionDefinitions.deus_debug_changelog = InteractionDefinitions.deus_debug_changelog
 InteractionDefinitions.deus_debug_changelog.config.swap_to_3p = false
 
 InteractionDefinitions.deus_debug_changelog.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)

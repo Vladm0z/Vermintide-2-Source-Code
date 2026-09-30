@@ -2,9 +2,9 @@
 
 local wield_with_cancel = table.clone(ActionTemplates.wield)
 local wield_default = wield_with_cancel.default
-local anims = type(wield_default.pre_action_anim_event) ~= "table" and not not {
+local anims = type(wield_default.pre_action_anim_event) ~= "table" and {
 	wield_default.pre_action_anim_event
-} or not (type(wield_default.pre_action_anim_event) ~= "table") and not not table.clone(wield_default.pre_action_anim_event)
+} or not (type(wield_default.pre_action_anim_event) ~= "table") and table.clone(wield_default.pre_action_anim_event)
 
 table.insert(anims, 1, "questing_knight_ability_cancel_01")
 table.insert(anims, 2, "ability_finished")
@@ -22,14 +22,14 @@ weapon_template.actions = {
 					sub_action = "default_2",
 					condition = function (talent_extension, buff_extension)
 						-- function 1
-						return not not talent_extension and not not talent_extension:has_talent("markus_questing_knight_ability_tank_attack")
+						return talent_extension and talent_extension:has_talent("markus_questing_knight_ability_tank_attack")
 					end
 				},
 				{
 					sub_action = "default_3",
 					condition = function (talent_extension, buff_extension)
 						-- function 2
-						return not not talent_extension and not not talent_extension:has_talent("markus_questing_knight_ability_double_activation")
+						return talent_extension and talent_extension:has_talent("markus_questing_knight_ability_double_activation")
 					end
 				}
 			},

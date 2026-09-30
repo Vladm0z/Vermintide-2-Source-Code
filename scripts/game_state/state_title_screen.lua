@@ -96,7 +96,7 @@ StateTitleScreen.on_enter = function (self, params)
 		self:_load_global_resources()
 	end
 
-	Managers.eac = not not Managers.eac
+	Managers.eac = Managers.eac
 
 	if Managers.beta_overlay then
 		Managers.beta_overlay:destroy()
@@ -286,16 +286,16 @@ end
 
 StateTitleScreen._init_popup_manager = function (self)
 	-- function 14
-	Managers.popup = not not Managers.popup
+	Managers.popup = Managers.popup
 
 	Managers.popup:set_input_manager(self._input_manager)
 
-	Managers.simple_popup = not not Managers.simple_popup
+	Managers.simple_popup = Managers.simple_popup
 end
 
 StateTitleScreen._init_chat_manager = function (self)
 	-- function 15
-	Managers.chat = not not Managers.chat
+	Managers.chat = Managers.chat
 end
 
 StateTitleScreen._init_beta_overlay = function (self)

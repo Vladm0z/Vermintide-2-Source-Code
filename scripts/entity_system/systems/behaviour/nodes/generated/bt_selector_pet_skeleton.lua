@@ -96,7 +96,7 @@ BTSelector_pet_skeleton.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_falling = children[4]
-		local condition_result = not not blackboard.is_falling
+		local condition_result = blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -177,7 +177,7 @@ BTSelector_pet_skeleton.run = function (self, unit, blackboard, t, dt)
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_unit = not not next_smart_object_data.smart_object_data
+		local smart_object_unit = next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -188,7 +188,7 @@ BTSelector_pet_skeleton.run = function (self, unit, blackboard, t, dt)
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (moving_state or is_smart_objecting) or not is_in_smartobject_range and is_smart_objecting
 		end
 
 		if condition_result then
@@ -251,7 +251,7 @@ BTSelector_pet_skeleton.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_commander_disabled = children[9]
-		local condition_result = ALIVE[blackboard.commander_unit] and not not ScriptUnit.extension(blackboard.commander_unit, "status_system"):is_disabled() or not ALIVE[blackboard.commander_unit] and not not blackboard.disabled_resume_time
+		local condition_result = ALIVE[blackboard.commander_unit] and ScriptUnit.extension(blackboard.commander_unit, "status_system"):is_disabled() or not ALIVE[blackboard.commander_unit] and blackboard.disabled_resume_time
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_commander_disabled, "aborted")
@@ -293,7 +293,7 @@ BTSelector_pet_skeleton.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_command_combat = children[11]
-		local condition_result = blackboard.new_command_attack and (ALIVE[blackboard.target_unit] and not not blackboard.new_command_attack or not ALIVE[blackboard.target_unit] and (ALIVE[blackboard.locked_target_unit] and not not blackboard.undergoing_command_attack or not ALIVE[blackboard.locked_target_unit] and not not blackboard.attack_locked_in_t)) or not blackboard.new_command_attack and not not blackboard.undergoing_command_attack
+		local condition_result = blackboard.new_command_attack and (ALIVE[blackboard.target_unit] and blackboard.new_command_attack or not ALIVE[blackboard.target_unit] and (ALIVE[blackboard.locked_target_unit] and blackboard.undergoing_command_attack or not ALIVE[blackboard.locked_target_unit] and blackboard.attack_locked_in_t)) or not blackboard.new_command_attack and blackboard.undergoing_command_attack
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_command_combat, "aborted")
@@ -314,7 +314,7 @@ BTSelector_pet_skeleton.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_in_combat = children[12]
-		local condition_result = ALIVE[blackboard.target_unit] and not not blackboard.confirmed_enemy_sighting_within_commander or not ALIVE[blackboard.target_unit] and not not blackboard.attack_locked_in_t
+		local condition_result = ALIVE[blackboard.target_unit] and blackboard.confirmed_enemy_sighting_within_commander or not ALIVE[blackboard.target_unit] and blackboard.attack_locked_in_t
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_in_combat, "aborted")

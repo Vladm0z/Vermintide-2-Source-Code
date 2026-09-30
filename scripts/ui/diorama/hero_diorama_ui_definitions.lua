@@ -12,7 +12,7 @@ local scenegraph_definition = {
 			SIZE_X,
 			SIZE_Y
 		},
-		scale = IS_WINDOWS and not not "fit" or not IS_WINDOWS and not not "hud_fit"
+		scale = IS_WINDOWS and "fit" or not IS_WINDOWS and "hud_fit"
 	},
 	background = {
 		vertical_alignment = "center",
@@ -211,7 +211,7 @@ local player_text_style = {
 
 local function create_panel_background(scenegraph_id, size, background_texture, optional_color)
 	-- function 1
-	background_texture = not not background_texture or not not "menu_frame_bg_01"
+	background_texture = background_texture or "menu_frame_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 	local widget = {
@@ -241,7 +241,7 @@ local function create_panel_background(scenegraph_id, size, background_texture, 
 	}
 	local style = {
 		background = {
-			color = not not optional_color or not not {
+			color = optional_color or {
 				255,
 				255,
 				255,

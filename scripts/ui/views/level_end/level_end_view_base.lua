@@ -53,7 +53,7 @@ LevelEndViewBase.init = function (self, context)
 	if not self.is_server then
 		local statistics_db = Managers.player:statistics_db()
 
-		self.context.players_session_score = not not self._players_session_score
+		self.context.players_session_score = self._players_session_score
 		self._players_session_score = self.context.players_session_score
 	end
 
@@ -130,7 +130,7 @@ LevelEndViewBase.trigger_transition = function (self, transition_data)
 		transition_data = transition_data
 	}
 	local widgets = self._transition_widgets
-	local animation_name = not not transition_data.animation_name
+	local animation_name = transition_data.animation_name
 
 	self._transition_animations[#self._transition_animations + 1] = self._transition_ui_animator:start_animation(animation_name, widgets, definitions.transition_scenegraph_definition, params)
 end
@@ -142,7 +142,7 @@ LevelEndViewBase.transition_camera = function (self, transition_data)
 	end
 
 	local camera_pose
-	local level_name = not not transition_data.level_name
+	local level_name = transition_data.level_name
 	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
 
 	for _, index in pairs(unit_indices) do
@@ -354,7 +354,7 @@ LevelEndViewBase.update = function (self, dt, t)
 			local speed_up_target = 1
 			local input_service = self.input_manager:get_service("end_of_level")
 
-			self._skip_pressed = not not input_service:get("skip_pressed")
+			self._skip_pressed = input_service:get("skip_pressed")
 
 			if input_service:get("confirm_hold", true) or input_service:get("skip", true) then
 				speed_up_target = SPEED_UP_MULT_MAX
@@ -673,8 +673,8 @@ LevelEndViewBase.present_level_up = function (self, hero_name, hero_level)
 	-- function 47
 	local level_unlocks = ProgressionUnlocks.get_level_unlocks(hero_level, hero_name)
 	local level_up_rewards = self.level_up_rewards[hero_level]
-	local has_level_up_unlocks = not not level_unlocks and #level_unlocks > 0
-	local has_level_up_rewards = not not level_up_rewards and #level_up_rewards > 0
+	local has_level_up_unlocks = level_unlocks and #level_unlocks > 0
+	local has_level_up_rewards = level_up_rewards and #level_up_rewards > 0
 	local presentation_data
 
 	if has_level_up_rewards or has_level_up_unlocks then
@@ -1001,7 +1001,7 @@ LevelEndViewBase._request_state_change = function (self, state_name)
 	local new_state_index = self._index_by_state_name[state_name]
 	local current_state_index = self._index_by_state_name[current_state_name]
 
-	direction = current_state_index < new_state_index and (not not "left" or not not "right") or not (current_state_index < new_state_index) and not not "right"
+	direction = current_state_index < new_state_index and ("left" or "right") or not (current_state_index < new_state_index) and "right"
 
 	current_state:exit(direction)
 
@@ -1034,7 +1034,7 @@ LevelEndViewBase._setup_state_machine = function (self, optional_start_state_nam
 		self._machine = nil
 	end
 
-	local state_name = not not optional_start_state_name or not not "EndViewStateSummary"
+	local state_name = optional_start_state_name or "EndViewStateSummary"
 	local state_index = self._index_by_state_name[state_name]
 	local start_state = rawget(_G, state_name)
 	local profiling_debugging_enabled = false
@@ -1049,7 +1049,7 @@ LevelEndViewBase._setup_state_machine = function (self, optional_start_state_nam
 		local previous_state_name = self._current_state_name
 		local previous_state_index = self._index_by_state_name[previous_state_name]
 
-		direction = previous_state_index < state_index and (not not "left" or not not "right") or not (previous_state_index < state_index) and not not "right"
+		direction = previous_state_index < state_index and ("left" or "right") or not (previous_state_index < state_index) and "right"
 	end
 
 	state_machine_params.direction = direction
@@ -1304,19 +1304,19 @@ LevelEndViewBase.add_camera_shake = function (self, settings, start_time, scale)
 	-- function 67
 	local data = {}
 	local current_rot = self:get_camera_rotation()
-	local settings = not not settings or not not cam_shake_settings
+	local settings = settings or cam_shake_settings
 	local duration = settings.duration
 	local fade_in = settings.fade_in
 	local fade_out = settings.fade_out
 
-	duration = (not not duration or not not 0) + (not not fade_in or not not 0) + (not not fade_out or not not 0)
+	duration = (duration or 0) + (fade_in or 0) + (fade_out or 0)
 	data.shake_settings = settings
 	data.start_time = start_time
-	data.end_time = not not duration and not not (start_time + duration)
-	data.fade_in_time = not not fade_in and not not (start_time + fade_in)
-	data.fade_out_time = not not fade_out and not not (data.end_time - fade_out)
-	data.seed = not not settings.seed
-	data.scale = not not scale or not not 1
+	data.end_time = duration and start_time + duration
+	data.fade_in_time = fade_in and start_time + fade_in
+	data.fade_out_time = fade_out and data.end_time - fade_out
+	data.seed = settings.seed
+	data.scale = scale or 1
 	data.camera_rotation_boxed = QuaternionBox(current_rot)
 	self._active_camera_shakes = {
 		[data] = true
@@ -1367,8 +1367,8 @@ LevelEndViewBase._calculate_perlin_value = function (self, x, settings)
 		total = total + self:_interpolated_noise(x * frequency, settings) * amplitude
 	end
 
-	local amplitude_multiplier = not not shake_settings.amplitude
-	local fade_multiplier = not not settings.fade_progress
+	local amplitude_multiplier = shake_settings.amplitude
+	local fade_multiplier = settings.fade_progress
 
 	total = total * amplitude_multiplier * fade_multiplier
 
@@ -1434,10 +1434,10 @@ LevelEndViewBase.position_camera = function (self, optional_pose, fov)
 	-- function 77
 	local world, viewport = self:get_viewport_world()
 	local camera = ScriptViewport.camera(viewport)
-	local camera_pose = not not optional_pose or not not self._camera_pose:unbox()
+	local camera_pose = optional_pose or self._camera_pose:unbox()
 
 	if camera_pose then
-		local fov = not not fov or not not 65
+		local fov = fov or 65
 
 		Camera.set_vertical_fov(camera, math.degrees_to_radians(fov))
 		ScriptCamera.set_local_pose(camera, camera_pose)
@@ -1507,12 +1507,12 @@ end
 
 LevelEndViewBase.input_service = function (self)
 	-- function 83
-	return not not FAKE_INPUT_SERVICE
+	return FAKE_INPUT_SERVICE
 end
 
 LevelEndViewBase.menu_input_service = function (self)
 	-- function 84
-	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
+	return self.input_blocked and FAKE_INPUT_SERVICE or not self.input_blocked and self:input_service()
 end
 
 LevelEndViewBase.set_input_blocked = function (self, blocked)
@@ -1576,7 +1576,7 @@ LevelEndViewBase.get_world_flags = function (self)
 		table.insert(flags, Application.DISABLE_APEX_CLOTH)
 	else
 		table.insert(flags, Application.APEX_LOD_RESOURCE_BUDGET)
-		table.insert(flags, not not Application.user_setting("apex_lod_resource_budget"))
+		table.insert(flags, (Application.user_setting("apex_lod_resource_budget")))
 	end
 
 	return flags
@@ -1638,7 +1638,7 @@ end
 
 LevelEndViewBase._show_object_set = function (self, object_set_name, level)
 	-- function 94
-	local level = not not level or not not self._level
+	local level = level or self._level
 	local object_sets = self._object_sets
 	local exists = false
 
@@ -1679,7 +1679,7 @@ LevelEndViewBase._show_object_set = function (self, object_set_name, level)
 			object_set_data.set_enabled = true
 		end
 
-		exists = set_name == object_set_name or not not exists
+		exists = set_name == object_set_name or exists
 	end
 
 	if exists then

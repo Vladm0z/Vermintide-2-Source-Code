@@ -120,8 +120,8 @@ PetUI._create_pet_widget = function (self, pet_unit)
 
 	SKULL_TEXTURES[skull_index], SKULL_TEXTURES[index] = SKULL_TEXTURES[index], SKULL_TEXTURES[skull_index]
 	SKULL_GLOW_TEXTURES[skull_index], SKULL_GLOW_TEXTURES[index] = SKULL_GLOW_TEXTURES[index], SKULL_GLOW_TEXTURES[skull_index]
-	widget.content.icon = not not SKULL_TEXTURES[index]
-	widget.content.icon_glow = not not SKULL_GLOW_TEXTURES[index]
+	widget.content.icon = SKULL_TEXTURES[index]
+	widget.content.icon_glow = SKULL_GLOW_TEXTURES[index]
 	self._pet_widget_by_unit[pet_unit] = widget
 	content.unit = pet_unit
 	self._global_pet_counter = self._global_pet_counter + 1
@@ -138,9 +138,9 @@ end
 local function action_input_name(input_service_name, keymap_name)
 	-- function 10
 	local player_input_service = Managers.input:get_service(input_service_name)
-	local command_keymapping = not not player_input_service and not not player_input_service:get_keymapping(keymap_name)
-	local device = not not command_keymapping and not not command_keymapping[1]
-	local button_id = not not command_keymapping and not not command_keymapping[2]
+	local command_keymapping = player_input_service and player_input_service:get_keymapping(keymap_name)
+	local device = command_keymapping and command_keymapping[1]
+	local button_id = command_keymapping and command_keymapping[2]
 	local button_name
 
 	if button_id ~= UNASSIGNED_KEY then
@@ -153,13 +153,13 @@ local function action_input_name(input_service_name, keymap_name)
 		end
 	end
 
-	return not not button_name or not not "???"
+	return button_name or "???"
 end
 
 PetUI._pet_ui_available = function (self, player)
 	-- function 11
 	local ui_was_available = self._ui_available
-	local career_name = not not player and not not player:career_name()
+	local career_name = player and player:career_name()
 	local career_settings = CareerSettings[career_name]
 
 	if not career_settings.show_pet_ui then
@@ -228,7 +228,7 @@ PetUI._update_pet_container = function (self, dt, t, player)
 	local commander_extension = ScriptUnit.has_extension(player_unit, "ai_commander_system")
 	local controlled_units = commander_extension:get_controlled_units()
 	local first_controlled_unit = next(controlled_units)
-	local command_state = first_controlled_unit and not not commander_extension:command_state(first_controlled_unit) or not first_controlled_unit and not not CommandStates.Following
+	local command_state = first_controlled_unit and commander_extension:command_state(first_controlled_unit) or not first_controlled_unit and CommandStates.Following
 	local container_widget = self._container_widget
 
 	if command_state ~= self._last_command_state and self._ui_animator:is_animation_completed(self._change_command_state_anim) then
@@ -254,8 +254,8 @@ PetUI._update_pet_container = function (self, dt, t, player)
 	local pet_widget_list = self._pet_widget_list
 	local pet_attack_status = self._pet_attack_status
 	local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
-	local wielded_item_template = not not inventory_extension and not not inventory_extension:get_wielded_slot_item_template()
-	local in_command_mode = not not wielded_item_template and not not not not wielded_item_template.is_command_utility_weapon
+	local wielded_item_template = inventory_extension and inventory_extension:get_wielded_slot_item_template()
+	local in_command_mode = wielded_item_template and wielded_item_template.is_command_utility_weapon
 	local reposition_widgets = false
 
 	for unit in pairs(controlled_units) do
@@ -271,7 +271,7 @@ PetUI._update_pet_container = function (self, dt, t, player)
 			end
 
 			local pet_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
-			local buff_active = not not pet_buff_extension and not not pet_buff_extension:has_buff_type("skeleton_command_attack_boost")
+			local buff_active = pet_buff_extension and pet_buff_extension:has_buff_type("skeleton_command_attack_boost")
 			local pet_widget = pet_widget_by_unit[unit]
 
 			if buff_active and not pet_attack_status[unit] then
@@ -291,7 +291,7 @@ PetUI._update_pet_container = function (self, dt, t, player)
 	if Application.user_setting("numeric_ui") then
 		local num_pets = commander_extension:get_controlled_units_count()
 
-		if not not self._last_amount_pets ~= num_pets then
+		if self._last_amount_pets ~= num_pets then
 			container_widget.content.pet_amount_text = num_pets
 			container_widget.content.pet_amount_text_shadow = num_pets
 			self._last_amount_pets = num_pets
@@ -301,13 +301,13 @@ PetUI._update_pet_container = function (self, dt, t, player)
 	end
 
 	local hovered_unit, fallback_unit = commander_extension:hovered_friendly_unit()
-	local closest_hovered_unit = not not hovered_unit or not not fallback_unit
+	local closest_hovered_unit = hovered_unit or fallback_unit
 
 	for index = #pet_widget_list, 1, -1 do
 		local widget = pet_widget_list[index]
 		local content = widget.content
 		local pet_unit = content.unit
-		local keep = not not commander_extension and not not self:_update_pet_widget(widget, commander_extension, in_command_mode, closest_hovered_unit)
+		local keep = commander_extension and self:_update_pet_widget(widget, commander_extension, in_command_mode, closest_hovered_unit)
 
 		if not keep then
 			pet_widget_by_unit[pet_unit] = nil
@@ -454,7 +454,7 @@ PetUI._update_pet_widget = function (self, widget, commander_extension, in_comma
 
 	local was_highlighted = content.is_highlighted
 
-	content.is_highlighted = not not in_command_mode and pet_unit == hovered_unit
+	content.is_highlighted = in_command_mode and pet_unit == hovered_unit
 
 	if was_highlighted ~= content.is_highlighted then
 		self:_set_widget_dirty(widget)

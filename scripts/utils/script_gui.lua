@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/script_gui.lua
 
-ScriptGUI = not not ScriptGUI
+ScriptGUI = ScriptGUI
 
 ScriptGUI.text = function (gui, text, font, font_size, material, pos, color, drop_shadow_color, drop_shadow_offset)
 	-- function 1
@@ -50,8 +50,8 @@ end
 
 ScriptGUI.hud_line = function (gui, p1, p2, layer, line_width, color)
 	-- function 7
-	line_width = not not line_width or not not 3
-	layer = not not layer or not not 1
+	line_width = line_width or 3
+	layer = layer or 1
 
 	local xd = p2.x - p1.x
 	local yd = p2.y - p1.y

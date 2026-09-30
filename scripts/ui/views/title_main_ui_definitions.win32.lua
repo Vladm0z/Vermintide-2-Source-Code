@@ -919,7 +919,7 @@ local function create_engage_prompt(ui_renderer)
 		content = {
 			press_to_start = "press_any_button_to_continue",
 			press_str = press_str,
-			button_id = IS_PS4 and not not "ps4_button_icon_cross_large" or not IS_PS4 and not not "xbone_button_icon_a_large",
+			button_id = IS_PS4 and "ps4_button_icon_cross_large" or not IS_PS4 and "xbone_button_icon_a_large",
 			to_start_str = to_start_str
 		},
 		style = {
@@ -1083,7 +1083,7 @@ end
 
 UIWidgets.create_game_type_text = function (text, scenegraph_id, size, color)
 	-- function 10
-	local text_color = not not color or not not {
+	local text_color = color or {
 		255,
 		255,
 		255,
@@ -1233,7 +1233,7 @@ local function create_menu_button(scenegraph_id, text, callback, menu_option_dat
 							return
 						end
 
-						return not content.button_text.disable_button and not not not content.button_text.is_selected
+						return not content.button_text.disable_button and not content.button_text.is_selected
 					end
 				},
 				{

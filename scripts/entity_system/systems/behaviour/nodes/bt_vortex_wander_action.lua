@@ -43,7 +43,7 @@ BTVortexWanderAction._wander_around = function (self, unit, t, dt, blackboard, v
 	local navigation_extension = blackboard.navigation_extension
 	local is_following_path = navigation_extension:is_following_path()
 
-	blackboard.move_state = is_following_path and not not "moving" or not is_following_path and not not "idle"
+	blackboard.move_state = is_following_path and "moving" or not is_following_path and "idle"
 
 	if vortex_template.stop_and_process_player and num_players_inside > 0 and wander_state ~= "standing_still" and wander_state ~= "forced_standing_still" then
 		vortex_data.wander_state = "standing_still"
@@ -74,8 +74,8 @@ BTVortexWanderAction._wander_around = function (self, unit, t, dt, blackboard, v
 		local nav_world = blackboard.nav_world
 		local target_unit = blackboard.target_unit
 		local position = position_lookup[unit]
-		local random_wander = not not vortex_template.random_wander
-		local directed_wander_position = not not blackboard.directed_wander_position_boxed
+		local random_wander = vortex_template.random_wander
+		local directed_wander_position = blackboard.directed_wander_position_boxed
 
 		if directed_wander_position then
 			navigation_extension:move_to(directed_wander_position)

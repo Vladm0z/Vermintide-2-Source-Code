@@ -44,7 +44,7 @@ StartGameWindowVersusMissionSelection.on_enter = function (self, params, offset)
 	self:_create_ui_elements(params, offset)
 	self:_handle_input_desc()
 
-	self._return_layout_name = not not self._parent:get_selected_layout_name()
+	self._return_layout_name = self._parent:get_selected_layout_name()
 
 	self:_start_transition_animation("on_enter")
 end
@@ -181,7 +181,7 @@ StartGameWindowVersusMissionSelection._create_ui_elements = function (self, para
 						disabled_reason = "dlc"
 					end
 
-					local map_pool = not not script_data.versus_map_pool
+					local map_pool = script_data.versus_map_pool
 
 					if map_pool and not table.find(map_pool, level_settings.level_id) then
 						is_disabled = true
@@ -202,8 +202,8 @@ StartGameWindowVersusMissionSelection._create_ui_elements = function (self, para
 				local row = math.floor(index / grid_settings.columns) + 1
 				local column = index % grid_settings.columns + 1
 
-				area_grid_entries[row] = not not area_grid_entries[row]
-				area_grid_entries[row][column] = not not area_grid_entries[row][column]
+				area_grid_entries[row] = area_grid_entries[row]
+				area_grid_entries[row][column] = area_grid_entries[row][column]
 				area_grid_entries[row][column] = level_entry
 				area_entries[#area_entries + 1] = level_entry
 
@@ -219,8 +219,8 @@ StartGameWindowVersusMissionSelection._create_ui_elements = function (self, para
 					column
 				}, is_disabled, disabled_reason, self._level_preferences))
 
-				global_grid_entries[new_global_row] = not not global_grid_entries[new_global_row]
-				global_grid_entries[new_global_row][column] = not not global_grid_entries[new_global_row][column]
+				global_grid_entries[new_global_row] = global_grid_entries[new_global_row]
+				global_grid_entries[new_global_row][column] = global_grid_entries[new_global_row][column]
 				global_grid_entries[new_global_row][column] = global_level_entry
 				global_entries[#global_entries + 1] = global_level_entry
 				global_level_entry.content.selected_index = self._selected_grid_index
@@ -302,7 +302,7 @@ StartGameWindowVersusMissionSelection._update_gamepad_scroller = function (self,
 	local current_grid_offset = self._ui_scenegraph.grid_anchor.local_position[2]
 	local current_grid = self._current_grid_entries
 	local current_selection = self._selected_grid_index
-	local old_grid_y_selection = not not self._old_grid_y_selection
+	local old_grid_y_selection = self._old_grid_y_selection
 	local row = current_selection[1]
 	local column = current_selection[2]
 
@@ -523,7 +523,7 @@ StartGameWindowVersusMissionSelection._populate_description = function (self)
 
 		local is_disabled = current_level_entry.content.is_disabled
 
-		is_locked = not not is_disabled or level_id ~= "any" and not not not LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_id)
+		is_locked = is_disabled or level_id ~= "any" and not LevelUnlockUtils.level_unlocked(statistics_db, stats_id, level_id)
 
 		if is_locked then
 			local dlc_name = level_settings.dlc_name
@@ -536,7 +536,7 @@ StartGameWindowVersusMissionSelection._populate_description = function (self)
 		content.icon = level_image
 		content.boss_level = boss_level
 		level_text = Localize(display_name)
-		level_description_text = not not level_description_text and not not Localize(level_description_text)
+		level_description_text = level_description_text and Localize(level_description_text)
 		draw_info = true
 	end
 

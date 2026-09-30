@@ -126,7 +126,7 @@ ImguiDeusWeapons.update = function (self)
 	end
 
 	local mechanism = Managers.mechanism:game_mechanism()
-	local deus_run_controller = not not mechanism and not not mechanism.get_deus_run_controller
+	local deus_run_controller = mechanism and mechanism.get_deus_run_controller
 
 	if not deus_run_controller then
 		return
@@ -168,7 +168,7 @@ ImguiDeusWeapons.update = function (self)
 			local inventory_extension = self:_get_inventory_extension()
 
 			if inventory_extension and not inventory_extension:resyncing_loadout() then
-				equip_random_weapon(deus_run_controller, inventory_extension, rarities[not not self._selected_rarity_index], not not self._run_progress, difficulties[not not self._difficulty_index], self._career_name)
+				equip_random_weapon(deus_run_controller, inventory_extension, rarities[self._selected_rarity_index], self._run_progress, difficulties[self._difficulty_index], self._career_name)
 			end
 
 			self._next_weapon_time = t + 2
@@ -213,11 +213,11 @@ ImguiDeusWeapons.draw = function (self, is_open)
 	local difficulty = difficulties[self._difficulty_index]
 	local rarity = rarities[self._selected_rarity_index]
 	local items_for_rarity = group.items_per_rarity[rarity]
-	local available_items = items_for_rarity and (#items_for_rarity > 0 and (not not items_for_rarity or not not {
+	local available_items = items_for_rarity and (#items_for_rarity > 0 and (items_for_rarity or {
 		group.default
-	}) or not (#items_for_rarity > 0) and not not {
+	}) or not (#items_for_rarity > 0) and {
 		group.default
-	}) or not items_for_rarity and not not {
+	}) or not items_for_rarity and {
 		group.default
 	}
 
@@ -237,10 +237,10 @@ ImguiDeusWeapons.draw = function (self, is_open)
 		self._prev_run_progress = self._run_progress
 	end
 
-	local archetypes_available = not not self._available_archetypes
-	local properties_available = not not self._available_property_combinations
-	local traits_available = not not self._available_trait_combinations
-	local skins_available = not not self._available_skins
+	local archetypes_available = self._available_archetypes
+	local properties_available = self._available_property_combinations
+	local traits_available = self._available_trait_combinations
+	local skins_available = self._available_skins
 
 	if archetypes_available or properties_available or traits_available or skins_available then
 		Imgui.spacing()
@@ -284,19 +284,19 @@ ImguiDeusWeapons.draw = function (self, is_open)
 
 	local generate = not self._weapon
 
-	generate = not not generate or self._weapon.deus_item_key ~= item_key
+	generate = generate or self._weapon.deus_item_key ~= item_key
 
 	for prop, val in pairs(self._properties) do
-		generate = not not generate or self._weapon.properties[prop] ~= self._properties[prop]
+		generate = generate or self._weapon.properties[prop] ~= self._properties[prop]
 	end
 
-	generate = not not generate or not not not table.compare(self._weapon.traits, self._traits)
-	generate = not not generate or self._weapon.skin ~= self._skin
-	generate = not not generate or self._weapon.rarity ~= rarity
-	generate = not not generate or self._weapon.power_level ~= self._powerlevel
+	generate = generate or not table.compare(self._weapon.traits, self._traits)
+	generate = generate or self._weapon.skin ~= self._skin
+	generate = generate or self._weapon.rarity ~= rarity
+	generate = generate or self._weapon.power_level ~= self._powerlevel
 
 	if generate then
-		self._weapon = DeusWeaponGeneration.create_weapon(item_key, not not self._properties, not not self._traits, self._skin, self._powerlevel, rarity)
+		self._weapon = DeusWeaponGeneration.create_weapon(item_key, self._properties, self._traits, self._skin, self._powerlevel, rarity)
 	end
 
 	if self._weapon then
@@ -332,7 +332,7 @@ ImguiDeusWeapons.draw = function (self, is_open)
 	Imgui.spacing()
 	Imgui.spacing()
 
-	self._equip_random_weapon = Imgui.checkbox("equip random weapons automatically", not not self._equip_random_weapon)
+	self._equip_random_weapon = Imgui.checkbox("equip random weapons automatically", self._equip_random_weapon)
 
 	Imgui.end_window()
 

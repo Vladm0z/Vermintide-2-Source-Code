@@ -789,7 +789,7 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 		style[background_name] = {
 			size = button_size,
 			color = {
-				IS_WINDOWS and not not 165 or not IS_WINDOWS and not not 100,
+				IS_WINDOWS and 165 or not IS_WINDOWS and 100,
 				0,
 				0,
 				0
@@ -868,7 +868,7 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 				-- function 3
 				local hotspot = content[hotspot_name]
 
-				return not hotspot.is_selected and not not not hotspot.disabled
+				return not hotspot.is_selected and not hotspot.disabled
 			end
 		}
 		style[title_text_name] = {
@@ -901,7 +901,7 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 				-- function 4
 				local hotspot = content[hotspot_name]
 
-				return not not hotspot.is_selected
+				return hotspot.is_selected
 			end
 		}
 		style[title_text_selected_name] = {
@@ -996,7 +996,7 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 				-- function 6
 				local hotspot = content[hotspot_name]
 
-				return not not hotspot.is_hover
+				return hotspot.is_hover
 			end
 		}
 		style[background_glow_name] = {
@@ -1069,7 +1069,7 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 				-- function 7
 				local hotspot = content[hotspot_name]
 
-				return not hotspot.disabled and not not not hotspot.is_selected
+				return not hotspot.disabled and not hotspot.is_selected
 			end
 		}
 		style[icon_rect_name] = {
@@ -1144,7 +1144,7 @@ local function talent_row(scenegraph_id, size, button_size, amount)
 			style_id = tooltip_name,
 			content_check_function = function (content)
 				-- function 9
-				return not not content.talent
+				return content.talent
 			end
 		}
 		style[tooltip_name] = {

@@ -5,11 +5,11 @@ local network_options = {
 	project_hash = "bulldozer",
 	config_file_name = "global",
 	map = "None",
-	lobby_port = LEVEL_EDITOR_TEST and not not GameSettingsDevelopment.editor_lobby_port or not LEVEL_EDITOR_TEST and not not GameSettingsDevelopment.network_port,
+	lobby_port = LEVEL_EDITOR_TEST and GameSettingsDevelopment.editor_lobby_port or not LEVEL_EDITOR_TEST and GameSettingsDevelopment.network_port,
 	ip_address = Network.default_network_address()
 }
 
-LobbySetup = not not LobbySetup
+LobbySetup = LobbySetup
 LobbySetup._lobby_port_increment = 0
 
 LobbySetup.network_hash = function ()
@@ -48,10 +48,10 @@ LobbySetup.setup_network_options = function (increment_lobby_port)
 		printf("steam_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.steam_port, script_data.settings.steam_port, Managers.mechanism:mechanism_setting("steam_port"))
 		printf("rcon_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.rcon_port, script_data.settings.rcon_port, Managers.mechanism:mechanism_setting("rcon_port"))
 
-		local server_port = not not script_data.server_port
-		local query_port = not not script_data.query_port
-		local steam_port = not not script_data.steam_port
-		local rcon_port = not not script_data.rcon_port
+		local server_port = script_data.server_port
+		local query_port = script_data.query_port
+		local steam_port = script_data.steam_port
+		local rcon_port = script_data.rcon_port
 
 		if increment_lobby_port and BUILD ~= "release" then
 			LobbySetup._lobby_port_increment = LobbySetup._lobby_port_increment + 1

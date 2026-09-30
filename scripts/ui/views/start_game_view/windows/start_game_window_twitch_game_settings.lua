@@ -251,7 +251,7 @@ StartGameWindowTwitchGameSettings._handle_input = function (self, dt, t)
 		end
 	end
 
-	local twitch_settings = not not parent:get_twitch_settings(self._mechanism_name)
+	local twitch_settings = parent:get_twitch_settings(self._mechanism_name)
 
 	if self:_is_button_released(widgets_by_name.game_option_1) then
 		parent:set_layout_by_name(twitch_settings.layout_name)
@@ -313,7 +313,7 @@ StartGameWindowTwitchGameSettings._update_additional_options = function (self, f
 	local private_enabled = true
 	local always_host_enabled = true
 	local strict_matchmaking_enabled = false
-	local twitch_active = not not Managers.twitch
+	local twitch_active = Managers.twitch
 	local lobby = self._network_lobby
 	local num_members = lobby:members():get_member_count()
 	local is_alone = num_members == 1
@@ -352,7 +352,7 @@ StartGameWindowTwitchGameSettings._update_difficulty_option = function (self)
 	-- function 18
 	local parent = self.parent
 	local difficulty_key = parent:get_difficulty_option()
-	local twitch_active = not not Managers.twitch
+	local twitch_active = Managers.twitch
 
 	if difficulty_key ~= self._difficulty_key or twitch_active ~= self._twitch_active then
 		self:_set_difficulty_option(difficulty_key)
@@ -362,7 +362,7 @@ StartGameWindowTwitchGameSettings._update_difficulty_option = function (self)
 		local enable_play = DifficultySettings[difficulty_key] ~= nil and rawget(LevelSettings, self._selected_level_id) ~= nil
 		local widgets_by_name = self._widgets_by_name
 
-		self._enable_play = not not enable_play and not not twitch_active
+		self._enable_play = enable_play and twitch_active
 		widgets_by_name.play_button.content.button_hotspot.disable_button = not self._enable_play
 
 		if self._enable_play then
@@ -376,13 +376,13 @@ end
 StartGameWindowTwitchGameSettings._set_difficulty_option = function (self, difficulty_key)
 	-- function 19
 	local difficulty_settings = DifficultySettings[difficulty_key]
-	local display_name = not not difficulty_settings and not not difficulty_settings.display_name
-	local display_image = not not difficulty_settings and not not difficulty_settings.display_image
-	local completed_frame_texture = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
+	local display_name = difficulty_settings and difficulty_settings.display_name
+	local display_image = difficulty_settings and difficulty_settings.display_image
+	local completed_frame_texture = difficulty_settings and difficulty_settings.completed_frame_texture or not difficulty_settings and "map_frame_00"
 	local widgets_by_name = self._widgets_by_name
 
-	widgets_by_name.game_option_2.content.option_text = display_name and not not Localize(display_name) or not display_name and not not ""
-	widgets_by_name.game_option_2.content.icon = not not display_image or not not nil
+	widgets_by_name.game_option_2.content.option_text = display_name and Localize(display_name) or not display_name and ""
+	widgets_by_name.game_option_2.content.icon = display_image or nil
 	widgets_by_name.game_option_2.content.icon_frame = completed_frame_texture
 end
 

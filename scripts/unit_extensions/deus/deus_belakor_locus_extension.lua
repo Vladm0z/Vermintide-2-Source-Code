@@ -76,7 +76,7 @@ local function check_if_should_play_vo(world, locus_unit, locus_position, player
 
 	local raised_locus_position = locus_position + Vector3(0, 0, 1.5)
 	local raised_player_position = closest_position + Vector3(0, 0, 1.5)
-	local should_play = not World.umbra_available(world) or not not World.umbra_has_line_of_sight(world, raised_locus_position, raised_player_position)
+	local should_play = not World.umbra_available(world) or World.umbra_has_line_of_sight(world, raised_locus_position, raised_player_position)
 
 	if not should_play then
 		return should_play
@@ -207,10 +207,10 @@ DeusBelakorLocusExtension.update = function (self, unit, input, dt, context, t)
 
 			if should_play then
 				local intro_vo_unit = LevelHelper:find_dialogue_unit(world, "ferry_lady")
-				local ferry_lady_dialogue_extension = not not intro_vo_unit and not not ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
-				local ferry_lady_dialogue_input = not not ferry_lady_dialogue_extension and not not ScriptUnit.extension_input(intro_vo_unit, "dialogue_system")
+				local ferry_lady_dialogue_extension = intro_vo_unit and ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
+				local ferry_lady_dialogue_input = ferry_lady_dialogue_extension and ScriptUnit.extension_input(intro_vo_unit, "dialogue_system")
 				local closest_player_dialogue_extension = ScriptUnit.has_extension(closest_player, "dialogue_system")
-				local closest_player_dialogue_input = not not closest_player_dialogue_extension and not not ScriptUnit.extension_input(closest_player, "dialogue_system")
+				local closest_player_dialogue_input = closest_player_dialogue_extension and ScriptUnit.extension_input(closest_player, "dialogue_system")
 				local possible_sources = {}
 
 				if ferry_lady_dialogue_input then
@@ -278,7 +278,7 @@ DeusBelakorLocusExtension.update = function (self, unit, input, dt, context, t)
 
 		if self._is_server then
 			local seed = Managers.mechanism:get_level_seed()
-			local terror_event = not not LIEUTENANT_TERROR_EVENTS[self._locus_type]
+			local terror_event = LIEUTENANT_TERROR_EVENTS[self._locus_type]
 
 			Managers.state.conflict:start_terror_event(terror_event, seed, unit)
 		end
@@ -300,7 +300,7 @@ DeusBelakorLocusExtension.update = function (self, unit, input, dt, context, t)
 
 			if self._is_server then
 				local mechanism = Managers.mechanism:game_mechanism()
-				local deus_run_controller = not not mechanism.get_deus_run_controller
+				local deus_run_controller = mechanism.get_deus_run_controller
 
 				if deus_run_controller then
 					deus_run_controller:unlock_arena_belakor()
@@ -346,7 +346,7 @@ DeusBelakorLocusExtension._set_state = function (self, state)
 	local game = Managers.state.network:game()
 	local go_id = Managers.state.unit_storage:go_id(self._unit)
 
-	fassert(not not game and not not go_id, "setting state without network setup done")
+	fassert(game and go_id, "setting state without network setup done")
 	GameSession.set_game_object_field(game, go_id, "deus_belakor_locus_state", state)
 end
 
@@ -389,7 +389,7 @@ DeusBelakorLocusExtension.can_interact = function (self)
 
 		for _, player in pairs(human_players) do
 			player_unit = player.player_unit
-			inventory_extension = not not player_unit and not not ScriptUnit.extension(player_unit, "inventory_system")
+			inventory_extension = player_unit and ScriptUnit.extension(player_unit, "inventory_system")
 
 			if inventory_extension and inventory_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
 				return false, "deus_belakor_locus_throw_crystal_impeded_hud_desc"
@@ -442,7 +442,7 @@ DeusBelakorLocusExtension.get_interaction_action = function (self)
 
 		for _, player in pairs(human_players) do
 			player_unit = player.player_unit
-			inventory_extension = not not player_unit and not not ScriptUnit.extension(player_unit, "inventory_system")
+			inventory_extension = player_unit and ScriptUnit.extension(player_unit, "inventory_system")
 
 			if inventory_extension and inventory_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
 				return "deus_belakor_locus_throw_crystal_impeded_hud_desc"

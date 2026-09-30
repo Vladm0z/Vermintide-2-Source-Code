@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weave_properties.lua
 
-WeaveProperties = not not WeaveProperties
+WeaveProperties = WeaveProperties
 
 local buff_tweak_data = {
 	weave_properties_crit_chance = {

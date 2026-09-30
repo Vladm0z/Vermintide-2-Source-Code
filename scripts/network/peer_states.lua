@@ -55,7 +55,7 @@ PeerStates.Connecting = {
 		match_handler:register_pending_peer(self.peer_id, group_leader)
 
 		local mechanism_manager = Managers.mechanism
-		local slot_reservation_handler = not not mechanism_manager:get_slot_reservation_handler(self.server.my_peer_id, ReservationHandlerTypes.pending_custom_game)
+		local slot_reservation_handler = mechanism_manager:get_slot_reservation_handler(self.server.my_peer_id, ReservationHandlerTypes.pending_custom_game)
 
 		slot_reservation_handler:connecting_slot_reservation_info_received(self.peer_id, peers, group_leader)
 	end,
@@ -96,7 +96,7 @@ PeerStates.Connecting = {
 
 		if self.is_remote then
 			local mechanism_manager = Managers.mechanism
-			local slot_reservation_handler = not not mechanism_manager:get_slot_reservation_handler(self.server.my_peer_id, ReservationHandlerTypes.pending_custom_game)
+			local slot_reservation_handler = mechanism_manager:get_slot_reservation_handler(self.server.my_peer_id, ReservationHandlerTypes.pending_custom_game)
 
 			if slot_reservation_handler then
 				reservation_status = slot_reservation_handler:handle_slot_reservation_for_connecting_peer(self, dt)
@@ -117,7 +117,7 @@ PeerStates.Connecting = {
 
 				if resend_rpc_notify_connected then
 					if PEER_ID_TO_CHANNEL[self.peer_id] then
-						local game_mode = not not Managers.state.game_mode
+						local game_mode = Managers.state.game_mode
 
 						if game_mode and game_mode:is_joinable() then
 							self.server.network_transmit:send_rpc("rpc_notify_connected", self.peer_id)
@@ -148,7 +148,7 @@ PeerStates.Connecting = {
 			local matchmaking_type = "n/a"
 
 			if matchmaking_type_id then
-				matchmaking_type = IS_PS4 and (not not matchmaking_type_id or not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]) or not IS_PS4 and not not NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
+				matchmaking_type = IS_PS4 and (matchmaking_type_id or NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]) or not IS_PS4 and NetworkLookup.matchmaking_types[tonumber(matchmaking_type_id)]
 			end
 
 			if mechanism == "weave" and matchmaking == "false" then
@@ -332,7 +332,7 @@ PeerStates.LoadingProfilePackages = {
 		local wanted_career_index = self.wanted_career_index
 		local loaded_level = self.loaded_level
 		local level_settings = LevelSettings[loaded_level]
-		local is_tutorial = not not level_settings and level_settings.game_mode == "tutorial"
+		local is_tutorial = level_settings and level_settings.game_mode == "tutorial"
 
 		if is_tutorial then
 			wanted_profile_index = TUTORIAL_PROFILE_INDEX
@@ -344,7 +344,7 @@ PeerStates.LoadingProfilePackages = {
 			self.wanted_profile_index = old_profile_index
 			self.wanted_career_index = old_career_index
 		elseif wanted_profile_index == 0 then
-			local any_party = not not self.requested_party_index
+			local any_party = self.requested_party_index
 
 			self.wanted_profile_index, self.wanted_career_index = profile_synchronizer:get_first_free_profile(any_party)
 		elseif is_tutorial then
@@ -377,7 +377,7 @@ PeerStates.LoadingProfilePackages = {
 
 local function _has_ongoing_resync(network_server, peer_id)
 	-- function 20
-	local ongoing_resync = not network_server:are_profile_packages_fully_synced_for_peer(peer_id) or not Managers.level_transition_handler.enemy_package_loader:load_sync_done_for_peer(peer_id) or not Managers.level_transition_handler.pickup_package_loader:load_sync_done_for_peer(peer_id) or not not not Managers.level_transition_handler.general_synced_package_loader:load_sync_done_for_peer(peer_id)
+	local ongoing_resync = not network_server:are_profile_packages_fully_synced_for_peer(peer_id) or not Managers.level_transition_handler.enemy_package_loader:load_sync_done_for_peer(peer_id) or not Managers.level_transition_handler.pickup_package_loader:load_sync_done_for_peer(peer_id) or not Managers.level_transition_handler.general_synced_package_loader:load_sync_done_for_peer(peer_id)
 
 	return ongoing_resync
 end
@@ -406,7 +406,7 @@ PeerStates.WaitingForEnterGame = {
 					server.game_network_manager:set_peer_synchronizing(peer_id)
 
 					local game_session = server.game_session
-					local all_synced = not not server:is_network_state_fully_synced_for_peer(peer_id)
+					local all_synced = server:is_network_state_fully_synced_for_peer(peer_id)
 					local in_session = server.game_network_manager:in_game_session()
 
 					if game_session and in_session and all_synced then
@@ -461,7 +461,7 @@ PeerStates.WaitingForGameObjectSync = {
 
 			if not self.game_started then
 				if IS_XB1 then
-					self.server.network_transmit:send_rpc("rpc_game_started", self.peer_id, not not Managers.account:round_id())
+					self.server.network_transmit:send_rpc("rpc_game_started", self.peer_id, (Managers.account:round_id()))
 				else
 					self.server.network_transmit:send_rpc("rpc_game_started", self.peer_id, "")
 				end

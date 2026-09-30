@@ -871,7 +871,7 @@ for i = 1, #wind_order do
 			for k = 1, num_weaves_per_wind do
 				local weave_id = weave_ids[k]
 
-				completed = not not completed and not not _has_completed_weave_seasonal(statistics_db, stats_id, ScorpionSeasonalSettings.current_season_id, weave_id)
+				completed = completed and _has_completed_weave_seasonal(statistics_db, stats_id, ScorpionSeasonalSettings.current_season_id, weave_id)
 			end
 
 			return completed
@@ -1481,7 +1481,7 @@ AchievementTemplates.achievements.scorpion_cataclysm_unlock_kill_all_lords = {
 		local gray_seer_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_grey_seer_scorpion_hardest") >= 5
 		local storm_vermin_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_storm_vermin_warlord_scorpion_hardest") >= 5
 
-		return not not champion_completed and not not sorcerer_completed and not not gray_seer_completed and not not storm_vermin_completed
+		return champion_completed and sorcerer_completed and gray_seer_completed and storm_vermin_completed
 	end,
 	requirements = function (statistics_db, stats_id)
 		-- function 94

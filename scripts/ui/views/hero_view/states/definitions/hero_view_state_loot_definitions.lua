@@ -7,7 +7,7 @@ local grid_size = {
 	520,
 	600
 }
-local num_loot_options = IS_CONSOLE and not not 5 or not IS_CONSOLE and not not 5
+local num_loot_options = IS_CONSOLE and 5 or not IS_CONSOLE and 5
 local USE_DELAYED_SPAWN = true
 local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
@@ -1445,9 +1445,9 @@ local function create_loot_widget(index, size)
 			pass_type = "item_tooltip",
 			content_check_function = function (content)
 				-- function 7
-				local is_hover = not not content.item_hotspot.is_hover
+				local is_hover = content.item_hotspot.is_hover
 
-				return not not is_hover and not not content.item
+				return is_hover and content.item
 			end
 		},
 		{
@@ -1467,7 +1467,7 @@ local function create_loot_widget(index, size)
 			content_check_function = function (content)
 				-- function 8
 				local item = content.item
-				local item_skin = not not item and not not item.skin
+				local item_skin = item and item.skin
 
 				if item_skin then
 					return item.data.item_type == "weapon_skin"
@@ -1481,7 +1481,7 @@ local function create_loot_widget(index, size)
 			content_check_function = function (content)
 				-- function 9
 				local item = content.item
-				local item_skin = not not item and not not item.skin
+				local item_skin = item and item.skin
 
 				if item_skin then
 					return item.data.item_type ~= "weapon_skin" and WeaponSkins.default_skins[item.key] ~= item_skin
@@ -1576,7 +1576,7 @@ local function create_loot_widget(index, size)
 			end,
 			content_change_function = function (content, style, _, dt)
 				-- function 13
-				local progress = not not style.progress
+				local progress = style.progress
 
 				progress = (progress + dt) % 1
 
@@ -2392,9 +2392,9 @@ local function create_chest_indicator_func(index, current_index, rarity_a, rarit
 	local rarity_settings_a = RaritySettings[rarity_a]
 	local rarity_color_a = rarity_settings_a.color
 	local rarity_settings_b = RaritySettings[rarity_b]
-	local rarity_color_b = not not rarity_settings_b and not not rarity_settings_b.color
+	local rarity_color_b = rarity_settings_b and rarity_settings_b.color
 	local rarity_settings_c = RaritySettings[rarity_c]
-	local rarity_color_c = not not rarity_settings_c and not not rarity_settings_c.color
+	local rarity_color_c = rarity_settings_c and rarity_settings_c.color
 	local selected = index == current_index
 	local widget = {
 		scenegraph_id = "chest_indicator_root",

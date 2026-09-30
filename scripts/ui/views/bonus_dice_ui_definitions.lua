@@ -61,7 +61,7 @@ local die_type_textures = {
 
 local function get_die_texture(die_type)
 	-- function 1
-	return not not die_type_textures[die_type]
+	return die_type_textures[die_type]
 end
 
 return {

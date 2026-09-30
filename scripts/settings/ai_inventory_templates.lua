@@ -1840,7 +1840,7 @@ local drop_reasons_other = {
 }
 
 for category_name, category in pairs(item_categories) do
-	local drop_reasons = (category_name == "shield" or category_name == "marauder_shield") and not not drop_reasons_other
+	local drop_reasons = (category_name == "shield" or category_name == "marauder_shield") and drop_reasons_other
 
 	for i, item in ipairs(category) do
 		if not item.drop_reasons then
@@ -2460,7 +2460,7 @@ for category_name, category in pairs(item_categories) do
 end
 
 for config_name, config in pairs(InventoryConfigurations) do
-	config.items_n = not not config.items
+	config.items_n = config.items
 
 	assert(AIInventoryTemplates[config_name] == nil, "Can't override configuration based templates")
 

@@ -96,7 +96,7 @@ AISlotSystem2.ai_unit_have_slot = function (self, ai_unit)
 		return false
 	end
 
-	local ai_have_slot = not not ai_unit_extension.gathering_ball
+	local ai_have_slot = ai_unit_extension.gathering_ball
 
 	if ai_have_slot then
 		return true
@@ -148,7 +148,7 @@ AISlotSystem2.ai_unit_wait_slot_distance = function (self, ai_unit)
 		return math.huge
 	end
 
-	local distance = not not ai_unit_extension.wait_slot_distance
+	local distance = ai_unit_extension.wait_slot_distance
 
 	return distance
 end
@@ -161,7 +161,7 @@ AISlotSystem2.ai_unit_slot_position = function (self, ai_unit)
 		return nil
 	end
 
-	local slot = not not ai_unit_extension.slot
+	local slot = ai_unit_extension.slot
 
 	if slot then
 		return slot.absolute_position:unbox()
@@ -206,7 +206,7 @@ AISlotSystem2.slots_count = function (self, unit, slot_type)
 	-- function 12
 	local unit_extension = self.unit_extension_data[unit]
 
-	slot_type = not not slot_type or not not DEFAULT_SLOT_TYPE
+	slot_type = slot_type or DEFAULT_SLOT_TYPE
 
 	local slot_data = unit_extension.all_slots[slot_type]
 
@@ -217,7 +217,7 @@ AISlotSystem2.total_slots_count = function (self, unit, slot_type)
 	-- function 13
 	local unit_extension = self.unit_extension_data[unit]
 
-	slot_type = not not slot_type or not not DEFAULT_SLOT_TYPE
+	slot_type = slot_type or DEFAULT_SLOT_TYPE
 
 	local slot_data = unit_extension.all_slots[slot_type]
 
@@ -228,7 +228,7 @@ AISlotSystem2.disabled_slots_count = function (self, unit, slot_type)
 	-- function 14
 	local unit_extension = self.unit_extension_data[unit]
 
-	slot_type = not not slot_type or not not DEFAULT_SLOT_TYPE
+	slot_type = slot_type or DEFAULT_SLOT_TYPE
 
 	local slot_data = unit_extension.all_slots[slot_type]
 

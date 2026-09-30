@@ -134,12 +134,12 @@ local mutator = {
 		local grudge_data = possible_grudge_marks[breed_name]
 
 		if grudge_data then
-			local state_by_breed = not not mutator_data.grudge_mark_state_by_breed
+			local state_by_breed = mutator_data.grudge_mark_state_by_breed
 
 			mutator_data.grudge_mark_state_by_breed = state_by_breed
 
 			local success
-			local chance = not not optional_data.spawn_chance
+			local chance = optional_data.spawn_chance
 			local breed_state = state_by_breed[breed_name]
 
 			success, breed_state = PseudoRandomDistribution.flip_coin(breed_state, chance)
@@ -148,7 +148,7 @@ local mutator = {
 			if success then
 				local names = grudge_data.names
 				local grudge_mark_name = names[math.random(1, #names)]
-				local list = not not optional_data.enhancements
+				local list = optional_data.enhancements
 				local base_grudgemark_name = grudge_data.base_grudgemark_name
 
 				if base_grudgemark_name then

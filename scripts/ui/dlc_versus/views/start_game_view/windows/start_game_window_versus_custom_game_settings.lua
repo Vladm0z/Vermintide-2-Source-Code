@@ -34,15 +34,15 @@ StartGameWindowVersusCustomGameSettings.on_enter = function (self, params, offse
 	self._is_server = ingame_ui_context.is_server
 
 	local game_mechanism = Managers.mechanism:game_mechanism()
-	local custom_game_settings_handler = not not game_mechanism and not not game_mechanism:get_custom_game_settings_handler()
+	local custom_game_settings_handler = game_mechanism and game_mechanism:get_custom_game_settings_handler()
 
-	self._settings_templates = not not custom_game_settings_handler and not not custom_game_settings_handler:get_settings_template()
+	self._settings_templates = custom_game_settings_handler and custom_game_settings_handler:get_settings_template()
 	self._custom_game_settings_handler = custom_game_settings_handler
 	self._game_mechanism = game_mechanism
 	self._selected_setting_index = nil
 	self._input_focused = false
 	self._is_loading = true
-	self._custom_settings_toggled = game_mechanism and not not game_mechanism:custom_settings_enabled() or not game_mechanism and not not false
+	self._custom_settings_toggled = game_mechanism and game_mechanism:custom_settings_enabled()
 
 	self:_create_ui_elements()
 	Managers.state.event:register(self, "event_focus_custom_game_settings_input", "focus_custom_game_settings_input")
@@ -71,7 +71,7 @@ end
 
 StartGameWindowVersusCustomGameSettings._populate_settings = function (self)
 	-- function 3
-	local is_server = not not self._is_server
+	local is_server = self._is_server
 	local settings = self._custom_game_settings_handler:get_settings()
 	local settings_template = self._settings_templates
 	local settings_ui_data = DLCSettings.carousel.custom_game_ui_settings
@@ -83,7 +83,7 @@ StartGameWindowVersusCustomGameSettings._populate_settings = function (self)
 		local setting_name = data.setting_name
 		local values = data.values
 		local ui_data = settings_ui_data[setting_name]
-		local widget_type = ui_data and not not ui_data.widget_type or not ui_data and not not "default"
+		local widget_type = ui_data and ui_data.widget_type or not ui_data and "default"
 		local settings_spacing = setting_widget_height[widget_type]
 		local start_idx = data.values_reverse_lookup[value]
 		local default_value = data.default
@@ -137,7 +137,7 @@ StartGameWindowVersusCustomGameSettings.update = function (self, dt, t)
 	local match_owner = Managers.mechanism:network_handler():get_match_handler():get_match_owner()
 	local has_slot_reservation_handler = Managers.mechanism:mechanism_try_call("get_all_reservation_handlers_by_owner", match_owner)
 
-	self._is_loading = not has_slot_reservation_handler or not not not Managers.matchmaking:is_in_versus_custom_game_lobby()
+	self._is_loading = not has_slot_reservation_handler or not Managers.matchmaking:is_in_versus_custom_game_lobby()
 end
 
 StartGameWindowVersusCustomGameSettings._update_animations = function (self, dt, t)
@@ -342,7 +342,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 	end
 
 	local input_service = self._parent:window_input_service()
-	local selected_idx = not not self._selected_setting_index
+	local selected_idx = self._selected_setting_index
 	local settings_widgets = self._settings_widgets
 
 	if input_service:get("move_up") then
@@ -398,7 +398,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 
 			local current_input_cooldown = content.input_cooldown
 			local new_cooldown = math.max(current_input_cooldown - dt, 0)
-			local input_cooldown = new_cooldown > 0 and (not not new_cooldown or not not nil) or not (new_cooldown > 0) and not not nil
+			local input_cooldown = new_cooldown > 0 and (new_cooldown or nil) or not (new_cooldown > 0) and nil
 
 			content.input_cooldown = input_cooldown
 		end
@@ -408,7 +408,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 				local new_idx = content.setting_idx - 1
 
 				if new_idx < 1 then
-					new_idx = not not content.num_settings
+					new_idx = content.num_settings
 				end
 
 				content.setting_idx = new_idx
@@ -427,7 +427,7 @@ StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (self, 
 				local new_idx = content.setting_idx + 1
 
 				if new_idx > content.num_settings then
-					new_idx = not not 1
+					new_idx = 1
 				end
 
 				content.setting_idx = new_idx
@@ -557,11 +557,11 @@ StartGameWindowVersusCustomGameSettings._update_focus_overlay = function (self, 
 	for i = 1, #settings_widgets do
 		local widget = settings_widgets[i]
 		local content = widget.content
-		local focused = not not self._custom_settings_toggled
+		local focused = self._custom_settings_toggled
 
 		content.focused = focused
 
-		local fade_progress = not not content.fade_progress
+		local fade_progress = content.fade_progress
 		local fade_speed = 25
 
 		if focused then

@@ -16,8 +16,8 @@ local function item_sort_func(item_1, item_2)
 	local item_data_2 = item_2.data
 	local item_key_1 = item_data_1.key
 	local item_key_2 = item_data_2.key
-	local item_1_power_level = not not item_1.power_level
-	local item_2_power_level = not not item_2.power_level
+	local item_1_power_level = item_1.power_level
+	local item_2_power_level = item_2.power_level
 	local item_1_backend_id = item_1.backend_id
 	local item_2_backend_id = item_2.backend_id
 	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -25,8 +25,8 @@ local function item_sort_func(item_1, item_2)
 
 	if item_1_favorited == item_2_favorited then
 		if item_1_power_level == item_2_power_level then
-			local item_1_rarity = not not item_1.rarity
-			local item_2_rarity = not not item_2.rarity
+			local item_1_rarity = item_1.rarity
+			local item_2_rarity = item_2.rarity
 			local item_rarity_order = UISettings.item_rarity_order
 			local item_1_rarity_order = item_rarity_order[item_1_rarity]
 			local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -183,7 +183,7 @@ VersusInventoryGrid.on_enter = function (self, params, offset)
 	item_grid:disable_item_drag()
 	item_grid:apply_item_sorting_function(item_sort_func)
 
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if player_unit then
 		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
@@ -193,7 +193,7 @@ VersusInventoryGrid.on_enter = function (self, params, offset)
 		end
 	end
 
-	self._selected_loadout_slot_index = not not params.loadout_slot_index
+	self._selected_loadout_slot_index = params.loadout_slot_index
 
 	self:_change_category_by_index(self._selected_loadout_slot_index)
 
@@ -397,7 +397,7 @@ VersusInventoryGrid._handle_input = function (self, dt, t)
 
 	if Managers.input:is_device_active("gamepad") then
 		local input_service = Managers.input:get_service("hero_view")
-		local current_index = not not parent._selected_loadout_slot_index
+		local current_index = parent._selected_loadout_slot_index
 		local num_tabs = #self._career_category_settings_index_lookup
 
 		if input_service:get("cycle_previous") and current_index > 1 then
@@ -439,8 +439,8 @@ VersusInventoryGrid._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -521,7 +521,7 @@ VersusInventoryGrid._change_category_by_index = function (self, index, force_upd
 	local internal_slot_index = self._career_category_settings_index_lookup[index]
 
 	if force_update then
-		index = not not self._internal_slot_index or not not 1
+		index = self._internal_slot_index or 1
 	end
 
 	local actual_category_setting = self._category_settings[index]
@@ -561,7 +561,7 @@ VersusInventoryGrid._set_loadout_item = function (self, item, strict_slot_type)
 	local profile = SPProfiles[profile_index]
 	local career = profile.careers[career_index]
 	local item_data = item.data
-	local slot_type = not not strict_slot_type or not not item_data.slot_type
+	local slot_type = strict_slot_type or item_data.slot_type
 	local slot = self:_get_slot_by_type(slot_type)
 	local backend_id = item.backend_id
 	local career_name = career.name

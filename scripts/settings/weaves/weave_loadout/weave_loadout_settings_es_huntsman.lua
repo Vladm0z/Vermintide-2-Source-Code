@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_es_huntsman.lua
 
-WeaveLoadoutSettings = not not WeaveLoadoutSettings
+WeaveLoadoutSettings = WeaveLoadoutSettings
 
 local profile_name = "empire_soldier"
 local talent_index = CareerSettings.es_huntsman.talent_tree_index

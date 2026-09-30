@@ -169,7 +169,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 2
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -178,7 +178,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 3
-						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -206,9 +206,9 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -222,7 +222,7 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = shadow_offset
 			},
@@ -234,9 +234,9 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -250,9 +250,9 @@ local function create_title_button(scenegraph_id, text, font_size, optional_offs
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4

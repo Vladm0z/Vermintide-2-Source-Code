@@ -8,7 +8,7 @@ TerrorEventBlueprints = {}
 
 local function fetch_terror_events(key, override_file_ending)
 	-- function 1
-	local file_ending = not not override_file_ending or not not key
+	local file_ending = override_file_ending or key
 	local file_path = "scripts/settings/terror_events/terror_events_" .. file_ending
 
 	fassert(Application.can_get("lua", file_path), "Failed to load terror events for level %s with path %s NOTE: Make sure the terror events file is in scripts/settings/terror_events/ with the name terror_events_%s.", key, file_path, file_ending)

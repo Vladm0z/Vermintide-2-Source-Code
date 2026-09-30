@@ -15,8 +15,8 @@ CutsceneCamera.init = function (self, extension_init_context, unit, extension_in
 	self.transition_start_time = nil
 	self.transition_end_time = nil
 
-	local near_range = not not Unit.get_data(self.unit, "near_range")
-	local far_range = not not Unit.get_data(self.unit, "far_range")
+	local near_range = Unit.get_data(self.unit, "near_range")
+	local far_range = Unit.get_data(self.unit, "far_range")
 
 	Camera.set_near_range(self.camera, near_range)
 	Camera.set_far_range(self.camera, far_range)
@@ -46,7 +46,7 @@ CutsceneCamera.activate = function (self, transition_data)
 
 		source_camera = external_camera
 		target_camera = self
-		transition_start_time = time + not not transition_data.transition_start_time
+		transition_start_time = time + transition_data.transition_start_time
 		transition_end_time = transition_start_time + transition_data.transition_length
 	end
 
@@ -56,7 +56,7 @@ CutsceneCamera.activate = function (self, transition_data)
 
 		source_camera = self
 		target_camera = external_camera
-		transition_start_time = time + not not transition_data.transition_start_time
+		transition_start_time = time + transition_data.transition_start_time
 		transition_end_time = transition_start_time + transition_data.transition_length
 	end
 
@@ -65,8 +65,8 @@ CutsceneCamera.activate = function (self, transition_data)
 	self.transition_start_time = transition_start_time
 	self.transition_end_time = transition_end_time
 	self.allow_controls = transition_data.allow_controls
-	self.max_pitch_angle = math.degrees_to_radians(not not transition_data.max_pitch_angle)
-	self.max_yaw_angle = math.degrees_to_radians(not not transition_data.max_yaw_angle)
+	self.max_pitch_angle = math.degrees_to_radians(transition_data.max_pitch_angle)
+	self.max_yaw_angle = math.degrees_to_radians(transition_data.max_yaw_angle)
 	self.look_offset = {
 		0,
 		0
@@ -174,8 +174,8 @@ CutsceneCamera._handle_input = function (self, pose)
 		end
 	else
 		local look_delta_raw = Mouse.axis(Mouse.axis_index("mouse"))
-		local mouse_look_invert_y = not not Application.user_setting("mouse_look_invert_y")
-		local mouse_look_sensitivity = not not Application.user_setting("mouse_look_sensitivity")
+		local mouse_look_invert_y = Application.user_setting("mouse_look_invert_y")
+		local mouse_look_sensitivity = Application.user_setting("mouse_look_sensitivity")
 
 		look_delta = look_delta_raw * 0.0006 * 0.85^-mouse_look_sensitivity
 

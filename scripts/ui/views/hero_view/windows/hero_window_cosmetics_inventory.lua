@@ -12,8 +12,8 @@ local function item_sort_func(item_1, item_2)
 	-- function 1
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local item_1_rarity = not not item_1.rarity
-	local item_2_rarity = not not item_2.rarity
+	local item_1_rarity = item_1.rarity
+	local item_2_rarity = item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -47,7 +47,7 @@ local function item_sort_func(item_1, item_2)
 	end
 end
 
-local hero_window_cosmetics_inventory_testify = not not script_data.testify
+local hero_window_cosmetics_inventory_testify = script_data.testify
 
 HeroWindowCosmeticsInventory = class(HeroWindowCosmeticsInventory)
 HeroWindowCosmeticsInventory.NAME = "HeroWindowCosmeticsInventory"
@@ -318,7 +318,7 @@ HeroWindowCosmeticsInventory._handle_input = function (self, dt, t)
 		local widget = self._widgets_by_name.item_tabs
 		local widget_content = widget.content
 		local amount = widget_content.amount
-		local current_index = not not parent._selected_cosmetic_slot_index
+		local current_index = parent._selected_cosmetic_slot_index
 
 		if input_service:get("cycle_previous") and current_index > 1 then
 			parent:set_selected_cosmetic_slot_index(current_index - 1)
@@ -359,8 +359,8 @@ HeroWindowCosmeticsInventory._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -436,7 +436,7 @@ HeroWindowCosmeticsInventory._change_category_by_index = function (self, index, 
 	self:_select_tab_by_category_index(index)
 
 	if force_update then
-		index = not not self._current_category_index or not not 1
+		index = self._current_category_index or 1
 	end
 
 	if self._current_category_index == index then

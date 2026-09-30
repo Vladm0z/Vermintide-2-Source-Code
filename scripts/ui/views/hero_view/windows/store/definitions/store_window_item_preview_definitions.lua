@@ -532,7 +532,7 @@ local loading_widgets = {
 					texture_id = "texture_id",
 					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress = not not style.progress
+						local progress = style.progress
 
 						progress = (progress + dt) % 1
 
@@ -1013,7 +1013,7 @@ local top_widgets = {
 	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, sub_title_text_style),
 	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, type_title_text_style),
 	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, career_title_text_style),
-	unlock_button = UIWidgets.create_store_purchase_button("unlock_button", scenegraph_definition.unlock_button.size, IS_PS4 and not not "" or not IS_PS4 and not not Localize("menu_store_purchase_button_unlock"), 32, disable_with_gamepad),
+	unlock_button = UIWidgets.create_store_purchase_button("unlock_button", scenegraph_definition.unlock_button.size, IS_PS4 and "" or not IS_PS4 and Localize("menu_store_purchase_button_unlock"), 32, disable_with_gamepad),
 	viewport_button = UIWidgets.create_simple_hotspot("viewport")
 }
 local background_color = {
@@ -1257,7 +1257,7 @@ local generic_input_actions = {
 			description_text = "input_description_toggle_hero_details",
 			content_check_function = function ()
 				-- function 20
-				return not not IS_PS4
+				return IS_PS4
 			end
 		},
 		{
@@ -1325,7 +1325,7 @@ local generic_input_actions = {
 		{
 			input_action = "confirm",
 			priority = 2,
-			description_text = IS_WINDOWS and not not "interaction_action_unlock" or not IS_WINDOWS and not not "dlc1_4_input_description_storepage"
+			description_text = IS_WINDOWS and "interaction_action_unlock" or not IS_WINDOWS and "dlc1_4_input_description_storepage"
 		},
 		{
 			input_action = "right_stick",
@@ -1356,7 +1356,7 @@ local generic_input_actions = {
 		{
 			input_action = "confirm",
 			priority = 2,
-			description_text = IS_WINDOWS and not not "interaction_action_unlock" or not IS_WINDOWS and not not "dlc1_4_input_description_storepage"
+			description_text = IS_WINDOWS and "interaction_action_unlock" or not IS_WINDOWS and "dlc1_4_input_description_storepage"
 		},
 		{
 			input_action = "special_1",

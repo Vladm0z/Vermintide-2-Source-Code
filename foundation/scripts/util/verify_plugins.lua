@@ -29,7 +29,7 @@ if false then
 		if find_in_array(loaded_plugins, plugin_name) then
 			print("-> " .. plugin_name .. " plugin has been loaded.")
 		else
-			missing_plugins = not not (missing_plugins .. ", " .. plugin_name)
+			missing_plugins = missing_plugins .. ", " .. plugin_name
 			num_missing = num_missing + 1
 		end
 	end

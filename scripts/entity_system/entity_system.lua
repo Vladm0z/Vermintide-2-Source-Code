@@ -424,12 +424,12 @@ EntitySystem._init_systems = function (self, entity_system_creation_context)
 	self:_add_system("unit_flow_override_system", UnitFlowOverrideSystem, entity_system_creation_context, nil, nil, nil, nil, dont_run_on_dedicated_server)
 
 	for _, dlc in pairs(DLCSettings) do
-		local entity_system_params = not not dlc.entity_system_params
+		local entity_system_params = dlc.entity_system_params
 
 		for _, params in pairs(entity_system_params) do
 			local system_name = params.system_name
 			local system_class = rawget(_G, params.system_class_name)
-			local context = not not params.context
+			local context = params.context
 			local extension_list = params.extension_list
 
 			self:_add_system(system_name, system_class, context, extension_list)
@@ -445,7 +445,7 @@ end
 EntitySystem._add_system = function (self, name, class, context, extension_list, extension_list_ignore_on_dedicated, has_pre_update, has_post_update, dont_run_on_dedicated_server)
 	-- function 4
 	if DEDICATED_SERVER and dont_run_on_dedicated_server then
-		local ignore_extensions = not not class.system_extensions
+		local ignore_extensions = class.system_extensions
 
 		if extension_list then
 			table.append(ignore_extensions, extension_list)

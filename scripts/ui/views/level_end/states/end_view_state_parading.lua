@@ -162,8 +162,8 @@ end
 
 EndViewStateParading._update_math_camera = function (self, dt, t)
 	-- function 11
-	self._timer = not not self._timer
-	self._time = not not self._time
+	self._timer = self._timer
+	self._time = self._time
 
 	local t = self._time
 	local delay = 0

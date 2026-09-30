@@ -17,7 +17,7 @@ local BackendManagerPlayFabTestify = {
 			local is_magic = item.data.rarity == "magic"
 			local can_wield = table.contains(item.data.can_wield, career_name)
 
-			return not not is_weapon and not not can_wield and not not is_magic
+			return is_weapon and can_wield and is_magic
 		end)
 	end,
 	request_non_magic_weapons_for_career = function (backend_manager_playfab, career_name)
@@ -30,7 +30,7 @@ local BackendManagerPlayFabTestify = {
 			local is_magic = item.data.rarity == "magic"
 			local can_wield = table.contains(item.data.can_wield, career_name)
 
-			return not not is_weapon and not not can_wield and not not not is_magic
+			return is_weapon and can_wield and not is_magic
 		end)
 	end,
 	wait_for_playfab_response = function (backend_manager_playfab, cloudscript_function)

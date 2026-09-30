@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_animation_movement_templates.lua
 
-AnimationMovementTemplates = not not AnimationMovementTemplates
+AnimationMovementTemplates = AnimationMovementTemplates
 
 local BLACKBOARDS = BLACKBOARDS
 local animation_set_variable = Unit.animation_set_variable
@@ -18,17 +18,17 @@ local function lean_towards_position(unit, dt, data, target_position, lerp_speed
 	local leaning_left = right_dot < 0
 	local target_lean = (1 - abs_fwd_dot) * lean_amount
 
-	target_lean = not leaning_left or not not -target_lean or not not target_lean
+	target_lean = not leaning_left or -target_lean or target_lean
 	target_lean = math.clamp(target_lean, -1, 1)
 
-	local current_lean = not not data.current_lean
+	local current_lean = data.current_lean
 	local lean = math.lerp(current_lean, target_lean, lerp_speed * dt)
 	local animation_variable_lean = data.animation_variable_lean
 
 	animation_set_variable(unit, animation_variable_lean, lean)
 
 	data.current_lean = lean
-	data.current_lean_direction = leaning_left and not not "left" or not leaning_left and not not "right"
+	data.current_lean_direction = leaning_left and "left" or not leaning_left and "right"
 	data.current_lean_value = lean
 end
 

@@ -26,11 +26,11 @@ ThornSisterWallExtension.init = function (self, extension_init_context, unit, ex
 
 		local career_extension = ScriptUnit.has_extension(self._owner_unit, "career_system")
 
-		self._owner_career_power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not 100
+		self._owner_career_power_level = career_extension and career_extension:get_career_power_level() or not career_extension and 100
 	end
 
 	local side_manager = Managers.state.side
-	local side = not not side_manager.side_by_unit[self._owner_unit]
+	local side = side_manager.side_by_unit[self._owner_unit]
 	local side_id = side.side_id
 
 	side_manager:add_unit_to_side(unit, side_id)
@@ -41,7 +41,7 @@ ThornSisterWallExtension.init = function (self, extension_init_context, unit, ex
 		local extents_padding = 1.25
 		local _, extents = Unit.box(unit, false)
 
-		self._player_boss_trample_radius = (extents[1] > extents[2] and not not extents[1] or not (extents[1] > extents[2]) and not not extents[2]) * extents_padding
+		self._player_boss_trample_radius = (extents[1] > extents[2] and extents[1] or not (extents[1] > extents[2]) and extents[2]) * extents_padding
 	end
 end
 
@@ -117,7 +117,7 @@ ThornSisterWallExtension._despawn_single = function (self, skip_sound, grab_aver
 		self:_trigger_despawn_sound(grab_average_position)
 	end
 
-	self._despawn_t = math.min(not not self._despawn_t, Managers.time:time("game") + DESPAWN_ANIM_TIME)
+	self._despawn_t = math.min(self._despawn_t, Managers.time:time("game") + DESPAWN_ANIM_TIME)
 end
 
 ThornSisterWallExtension._trigger_despawn_sound = function (self, grab_average_position)
@@ -199,7 +199,7 @@ ThornSisterWallExtension._update_local_player_pactsworn_collision = function (se
 	end
 
 	local local_player = Managers.player:local_player()
-	local local_player_unit = not not local_player and not not local_player.player_unit
+	local local_player_unit = local_player and local_player.player_unit
 
 	if not local_player_unit then
 		return

@@ -63,12 +63,12 @@ CreditsView.on_exit = function (self)
 	self.active = nil
 	self.exiting = nil
 
-	Managers.music:trigger_event(IS_WINDOWS and not not "Play_console_menu_back" or not IS_WINDOWS and not not "Play_console_menu_select")
+	Managers.music:trigger_event(IS_WINDOWS and "Play_console_menu_back" or not IS_WINDOWS and "Play_console_menu_select")
 end
 
 CreditsView.exit = function (self, return_to_game)
 	-- function 6
-	local exit_transition = return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu"
+	local exit_transition = return_to_game and "exit_menu" or not return_to_game and "ingame_menu"
 
 	self.ingame_ui:handle_transition(exit_transition)
 
@@ -87,7 +87,7 @@ CreditsView.update = function (self, dt)
 		return
 	end
 
-	local input_axis = gamepad_active and not not input_service:get("gamepad_left_axis") or not gamepad_active and not not input_service:get("scroll_axis")
+	local input_axis = gamepad_active and input_service:get("gamepad_left_axis") or not gamepad_active and input_service:get("scroll_axis")
 	local scroll_value = input_axis.y
 
 	if not gamepad_active and IS_XB1 then
@@ -115,7 +115,7 @@ CreditsView.update = function (self, dt)
 	for i = 1, self._num_credits do
 		local entry = credit_entries[i]
 
-		content.text_field = not not entry.localized_str
+		content.text_field = entry.localized_str
 		entry.localized_str = content.text_field
 
 		if entry.type == "header" then

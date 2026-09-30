@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/power_level_templates_dlc_anvil.lua
 
-PowerLevelTemplates = not not PowerLevelTemplates
+PowerLevelTemplates = PowerLevelTemplates
 PowerLevelTemplates.critical_strike_pull_smiter_L = {
 	attack_armor_power_modifer = {
 		1,

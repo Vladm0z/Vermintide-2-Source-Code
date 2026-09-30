@@ -106,7 +106,7 @@ end
 
 BTHesitateAction.set_unit_wall_hesitation = function (self, unit, blackboard, current_pos)
 	-- function 5
-	local pos = not not blackboard.hesitate_wall_position
+	local pos = blackboard.hesitate_wall_position
 
 	if pos and hesitate_wall_rotation then
 		local diff = Vector3.flat(pos - current_pos)
@@ -269,13 +269,13 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 
 	blackboard.target_unit = nil
 
-	local target_alive = not not blackboard.target_unit
-	local exit_override = not not blackboard.is_within_proximity
-	local finished_hesitating = not not blackboard.confirmed_player_sighting
+	local target_alive = blackboard.target_unit
+	local exit_override = blackboard.is_within_proximity
+	local finished_hesitating = blackboard.confirmed_player_sighting
 
 	if finished_hesitating then
-		local deadline_reached = not not blackboard.hesitate_timer
-		local exit_hesitate = deadline_reached and not not blackboard.anim_cb_move or not deadline_reached and not not exit_override
+		local deadline_reached = blackboard.hesitate_timer
+		local exit_hesitate = deadline_reached and blackboard.anim_cb_move or not deadline_reached and exit_override
 
 		if exit_hesitate then
 			blackboard.spawn_to_running = blackboard.anim_cb_move
@@ -292,7 +292,7 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 	local breed = blackboard.breed
 	local locomotion_extension = blackboard.locomotion_extension
 	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
-	local hesitate_wall_rotation = not not blackboard.hesitate_wall_rotation
+	local hesitate_wall_rotation = blackboard.hesitate_wall_rotation
 
 	if hesitate_wall_rotation then
 		rot = Quaternion.lerp(rot, hesitate_wall_rotation, WALL_ROTATION_FACTOR)
@@ -307,11 +307,11 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
 	local outnumber_multiplier, hesitation_delta = self:calculate_outnumber_multiplier(unit, blackboard, t, dt, current_pos, target_pos)
 	local hesitation = blackboard.hesitation + hesitation_delta * blackboard.outnumber_multiplier
-	local panic_override = not not blackboard.oh_shit_proximity_panic_override
-	local should_start_move_animation = hesitation > not not breed.hesitation_timer or not not panic_override
+	local panic_override = blackboard.oh_shit_proximity_panic_override
+	local should_start_move_animation = hesitation > breed.hesitation_timer or panic_override
 
 	if should_start_move_animation then
-		local have_started_animation = not not blackboard.move_animation_name
+		local have_started_animation = blackboard.move_animation_name
 
 		if not have_started_animation then
 			local broadphase = blackboard.group_blackboard.broadphase
@@ -347,7 +347,7 @@ BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 			end
 		end
 
-		local can_exit = not not blackboard.anim_cb_move
+		local can_exit = blackboard.anim_cb_move
 
 		if can_exit then
 			if blackboard.anim_cb_move then
@@ -393,13 +393,13 @@ BTHesitateAction._select_new_hesitate_anim = function (self, unit, blackboard)
 	if not blackboard.do_wall_check then
 		anim = "hesitate"
 	elseif blackboard.last_hesitate_anim == "hesitate_bwd" then
-		anim = Math.random() > 0.3333333333333333 and (not not "hesitate" or not not "hesitate_bwd") or not (Math.random() > 0.3333333333333333) and not not "hesitate_bwd"
+		anim = Math.random() > 0.3333333333333333 and ("hesitate" or "hesitate_bwd") or not (Math.random() > 0.3333333333333333) and "hesitate_bwd"
 	else
-		anim = Math.random() > 0.3333333333333333 and (not not "hesitate_bwd" or not not "hesitate") or not (Math.random() > 0.3333333333333333) and not not "hesitate"
+		anim = Math.random() > 0.3333333333333333 and ("hesitate_bwd" or "hesitate") or not (Math.random() > 0.3333333333333333) and "hesitate"
 	end
 
 	local breed = blackboard.breed
-	local root_variation_table = not not breed.BTHesitationVariations
+	local root_variation_table = breed.BTHesitationVariations
 	local variation_table = root_variation_table[anim]
 	local hestitate_anim = variation_table[Math.random(1, #variation_table)]
 

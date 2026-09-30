@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/tutorial/tutorial_condition_evaluator.lua
 
-TutorialConditions = not not TutorialConditions
+TutorialConditions = TutorialConditions
 
 TutorialConditions.player = function (ctx)
 	-- function 1
@@ -16,7 +16,7 @@ TutorialConditions.hero_name = function (ctx)
 		return hero_name
 	end
 
-	local wanted_profile_index = not not Managers.matchmaking.selected_profile_index
+	local wanted_profile_index = Managers.matchmaking.selected_profile_index
 
 	hero_name = SPProfiles[wanted_profile_index].display_name
 
@@ -50,7 +50,7 @@ TutorialConditions.has_unlocked_non_dlc_career_for_current_hero = function (ctx)
 	local career_name = ctx:get("career_name")
 	local profile_index = player:profile_index()
 	local profile = SPProfiles[profile_index]
-	local careers = not not profile and not not profile.careers
+	local careers = profile and profile.careers
 
 	for _, career in pairs(careers) do
 		if career.name ~= career_name and not career.required_dlc then
@@ -214,7 +214,7 @@ TutorialConditionEvaluator.get = function (self, key)
 
 	local eval_func = TutorialConditions[key]
 
-	value = not not eval_func(self) or not not false
+	value = eval_func(self) or false
 	self._values[key] = value
 
 	return value

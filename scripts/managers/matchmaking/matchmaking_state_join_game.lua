@@ -31,7 +31,7 @@ MatchmakingStateJoinGame.on_enter = function (self, state_context)
 	self.lobby_client = state_context.lobby_client
 	self._makeshift_lobby_data = state_context.profiles_data
 	self._join_lobby_data = state_context.join_lobby_data
-	self._reserved_party_id = not not state_context.reserved_party_id
+	self._reserved_party_id = state_context.reserved_party_id
 	self._makeshift_lobby_data.selected_mission_id = self._join_lobby_data.selected_mission_id
 	self._makeshift_lobby_data.difficulty = self._join_lobby_data.difficulty
 	self._makeshift_lobby_data.reserved_profiles = self.lobby_client:lobby_data("reserved_profiles")
@@ -238,8 +238,8 @@ MatchmakingStateJoinGame._handle_popup_result = function (self, result, t)
 		mm_printf_force("Popup cancelled")
 
 		local player = Managers.player:local_player(1)
-		local reason = not not result.reason
-		local time_taken = self._selected_hero_at_t and not not (self._selected_hero_at_t - self._hero_popup_at_t) or not self._selected_hero_at_t and not not 0
+		local reason = result.reason
+		local time_taken = self._selected_hero_at_t and self._selected_hero_at_t - self._hero_popup_at_t or not self._selected_hero_at_t and 0
 		local is_bad_connection = false
 
 		self._matchmaking_manager:add_broken_lobby_client(self.lobby_client, t, is_bad_connection)
@@ -263,7 +263,7 @@ end
 MatchmakingStateJoinGame.get_transition = function (self)
 	-- function 8
 	if self._join_lobby_data and self._next_transition_state then
-		local join_method = not not self._join_lobby_data.join_method
+		local join_method = self._join_lobby_data.join_method
 		local start_lobby_data = {
 			lobby_client = self.lobby_client,
 			join_method = join_method
@@ -308,7 +308,7 @@ end
 
 MatchmakingStateJoinGame._update_popup_timeout = function (self, dt, t)
 	-- function 10
-	self._popup_auto_cancel_time = not not self._popup_auto_cancel_time
+	self._popup_auto_cancel_time = self._popup_auto_cancel_time
 
 	if t > self._popup_auto_cancel_time then
 		local status_message = "matchmaking_status_character_select_timed_out"
@@ -334,7 +334,7 @@ MatchmakingStateJoinGame._request_profile_from_host = function (self, hero_index
 	end
 
 	self._matchmaking_manager.debug.text = "requesting_profile"
-	self._matchmaking_manager.debug.state = "hosted by: " .. (not not host_name or not not "unknown")
+	self._matchmaking_manager.debug.state = "hosted by: " .. (host_name or "unknown")
 	self._matchmaking_manager.debug.level = lobby_client:lobby_data("selected_mission_id")
 end
 

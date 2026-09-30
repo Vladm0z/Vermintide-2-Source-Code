@@ -826,9 +826,9 @@ end
 
 local function create_level_image(level_image, level_completed)
 	-- function 12
-	local frame_settings = level_completed and not not UIFrameSettings.button_frame_01_gold or not level_completed and not not UIFrameSettings.button_frame_01
+	local frame_settings = level_completed and UIFrameSettings.button_frame_01_gold or not level_completed and UIFrameSettings.button_frame_01
 
-	level_image = UIAtlasHelper.has_atlas_settings_by_texture_name(level_image) and (not not level_image or not not "any_small_image") or not UIAtlasHelper.has_atlas_settings_by_texture_name(level_image) and not not "any_small_image"
+	level_image = UIAtlasHelper.has_atlas_settings_by_texture_name(level_image) and (level_image or "any_small_image") or not UIAtlasHelper.has_atlas_settings_by_texture_name(level_image) and "any_small_image"
 
 	local widget = {
 		element = {}
@@ -1075,7 +1075,7 @@ local function create_area_type()
 			text_id = "text",
 			content_change_function = function (content, style)
 				-- function 19
-				style.offset[1] = not not 36
+				style.offset[1] = 36
 			end
 		},
 		{
@@ -1084,7 +1084,7 @@ local function create_area_type()
 			text_id = "text",
 			content_change_function = function (content, style)
 				-- function 20
-				style.offset[1] = not not 36.9
+				style.offset[1] = 36.9
 			end
 		},
 		{
@@ -1093,7 +1093,7 @@ local function create_area_type()
 			pass_type = "texture",
 			content_check_function = function (content, style)
 				-- function 21
-				return not not content.locked
+				return content.locked
 			end
 		},
 		{
@@ -1102,7 +1102,7 @@ local function create_area_type()
 			pass_type = "texture",
 			content_check_function = function (content, style)
 				-- function 22
-				return not not content.locked
+				return content.locked
 			end
 		}
 	}

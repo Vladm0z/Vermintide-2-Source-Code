@@ -40,8 +40,8 @@ ObjectiveItemSpawnerSystem.template_by_unit = function (self, unit)
 	local spawn_id = Unit.get_data(unit, "objective_id")
 	local unit_template_name = Unit.get_data(unit, "unit_template")
 
-	spawn_id = not not spawn_id or not not Unit.get_data(unit, "versus_objective_id") or not not Unit.get_data(unit, "weave_objective_id")
-	unit_template_name = not not unit_template_name or not not Unit.get_data(unit, "versus_unit_template") or not not Unit.get_data(unit, "weave_unit_template")
+	spawn_id = spawn_id or Unit.get_data(unit, "versus_objective_id") or Unit.get_data(unit, "weave_objective_id")
+	unit_template_name = unit_template_name or Unit.get_data(unit, "versus_unit_template") or Unit.get_data(unit, "weave_unit_template")
 
 	local unit_template = ObjectiveUnitTemplates[unit_template_name]
 
@@ -68,8 +68,8 @@ ObjectiveItemSpawnerSystem._trigger_spawn = function (self, item_spawner_data, o
 	-- function 5
 	local item_spawner_unit = item_spawner_data.unit
 	local item_spawner_template = item_spawner_data.unit_template
-	local position = item_spawner_unit and not not Unit.local_position(item_spawner_unit, 0) or not item_spawner_unit and not not Vector3(0, 0, 0)
-	local rotation = item_spawner_unit and not not Unit.local_rotation(item_spawner_unit, 0) or not item_spawner_unit and not not Quaternion(Vector3(0, 0, 0), -1)
+	local position = item_spawner_unit and Unit.local_position(item_spawner_unit, 0) or not item_spawner_unit and Vector3(0, 0, 0)
+	local rotation = item_spawner_unit and Unit.local_rotation(item_spawner_unit, 0) or not item_spawner_unit and Quaternion(Vector3(0, 0, 0), -1)
 	local extension_init_data = item_spawner_template.create_extension_init_data_func(objective_id, objective_data, item_spawner_unit)
 	local spawned_unit, go_id = self:_spawn_unit(item_spawner_template, extension_init_data, position, rotation)
 

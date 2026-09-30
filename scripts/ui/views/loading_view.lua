@@ -56,7 +56,7 @@ for i = 1, num_tip_types do
 
 	fassert(tip_type_max_range[tip_type], "Missing max range of tip type %s", tip_type)
 
-	max_tips = max_tips + tip_type_max_range[tip_type] - (blocked_tip_type_indices[tip_type] and not not #blocked_tip_type_indices[tip_type] or not blocked_tip_type_indices[tip_type] and not not 0)
+	max_tips = max_tips + tip_type_max_range[tip_type] - (blocked_tip_type_indices[tip_type] and #blocked_tip_type_indices[tip_type] or not blocked_tip_type_indices[tip_type] and 0)
 end
 
 for name, value in pairs(tip_type_max_range) do
@@ -138,9 +138,9 @@ LoadingView.texture_resource_loaded = function (self, level_key, act_progression
 
 	local level_settings = LevelSettings[level_key]
 	local has_multiple_loading_images = level_settings.has_multiple_loading_images
-	local loading_ui_package_name = not not optional_loading_ui_package_name or not not level_settings.loading_ui_package_name
-	local game_mode = not not level_settings.game_mode
-	local bg_material = "materials/ui/loading_screens/" .. (not not loading_ui_package_name or not not self.default_loading_screen)
+	local loading_ui_package_name = optional_loading_ui_package_name or level_settings.loading_ui_package_name
+	local game_mode = level_settings.game_mode
+	local bg_material = "materials/ui/loading_screens/" .. (loading_ui_package_name or self.default_loading_screen)
 
 	if IS_XB1 then
 		local gui = World.create_screen_gui(self.world, "immediate", "material", "materials/ui/loading_screens/" .. self.default_loading_screen, "material", bg_material, "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/ui/ui_1080p_hud_atlas_textures", "material", "materials/ui/ui_1080p_chat")
@@ -151,7 +151,7 @@ LoadingView.texture_resource_loaded = function (self, level_key, act_progression
 		self.ui_renderer = UIRenderer.create(self.world, "material", "materials/ui/loading_screens/" .. self.default_loading_screen, "material", bg_material, "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/ui/ui_1080p_hud_atlas_textures", "material", "materials/ui/ui_1080p_chat")
 	end
 
-	self.bg_widget.content.bg_texture = not not optional_loading_screen_material_name or not not "loading_screen"
+	self.bg_widget.content.bg_texture = optional_loading_screen_material_name or "loading_screen"
 
 	if weave_data then
 		self:_create_hdr_gui()
@@ -166,7 +166,7 @@ LoadingView.texture_resource_loaded = function (self, level_key, act_progression
 		self.bg_widget.content.wind_name = wind_name
 		self.bg_widget.content.mutator_name = MutatorTemplates[wind_name].display_name
 		self.bg_widget.content.mutator_description = MutatorTemplates[wind_name].description
-		self.bg_widget.content.objective_text = not not objective_text or not not self.bg_widget.content.objective_text
+		self.bg_widget.content.objective_text = objective_text or self.bg_widget.content.objective_text
 		self.bg_widget.content.is_weave = true
 		self.bg_widget.content.is_arena = weave_data.is_arena
 
@@ -273,8 +273,8 @@ LoadingView.create_ui_elements = function (self)
 
 	self.bg_widget.content.bg_texture = self.default_loading_screen
 
-	local level_settings = not not self.level_key
-	local game_mode = level_settings and not not level_settings.game_mode or not level_settings and not not "adventure"
+	local level_settings = self.level_key
+	local game_mode = level_settings and level_settings.game_mode or not level_settings and "adventure"
 
 	self:setup_tip_text(self.act_progression_index, game_mode, self._tip_localization_key)
 
@@ -290,7 +290,7 @@ LoadingView.create_ui_elements = function (self)
 		self.bg_widget.content.wind_name = wind_name
 		self.bg_widget.content.mutator_name = MutatorTemplates[wind_name].display_name
 		self.bg_widget.content.mutator_description = MutatorTemplates[wind_name].description
-		self.bg_widget.content.objective_text = not not objective_text or not not self.bg_widget.content.objective_text
+		self.bg_widget.content.objective_text = objective_text or self.bg_widget.content.objective_text
 		self.bg_widget.content.is_weave = true
 		self.bg_widget.content.is_arena = weave_data.is_arena
 
@@ -428,13 +428,13 @@ LoadingView.setup_tip_text = function (self, act_progression_index, game_mode, t
 	table.clear(DEFAULT_SECOND_ICON_TABLE)
 
 	if game_mode == "survival" then
-		local text = not not tip_localization_key or not not survival_tip_list[math.random(1, #survival_tip_list)]
+		local text = tip_localization_key or survival_tip_list[math.random(1, #survival_tip_list)]
 
 		self.tip_text_prefix_widget.content.text = Localize(text)
 		self.tip_text_prefix_widget.style.text.horizontal_alignment = "center"
 		self.tip_text_prefix_widget.style.text.word_wrap = true
 	else
-		tip_localization_key = not not tip_localization_key or not not Managers.mechanism:get_loading_tip()
+		tip_localization_key = tip_localization_key or Managers.mechanism:get_loading_tip()
 
 		if not tip_localization_key then
 			local tip_type_index = 1
@@ -472,7 +472,7 @@ LoadingView.setup_tip_text = function (self, act_progression_index, game_mode, t
 				end
 			end
 
-			local tip_index = tip_random_index < 10 and not not ("0" .. tostring(tip_random_index)) or not (tip_random_index < 10) and not not tostring(tip_random_index)
+			local tip_index = tip_random_index < 10 and "0" .. tostring(tip_random_index) or not (tip_random_index < 10) and tostring(tip_random_index)
 
 			tip_localization_key = tip_prefix .. "_" .. tip_index
 		end
@@ -517,9 +517,9 @@ LoadingView.setup_tip_text = function (self, act_progression_index, game_mode, t
 						second_input_texture_data, suffix_text = self:_find_second_input_texture(suffix_text, macro_replacement, input_actions[2], font, scaled_font_size)
 					end
 
-					local second_icon_size = second_input_texture_data.button_texture_data and not not second_input_texture_data.button_texture_data.size or not second_input_texture_data.button_texture_data and not not DEFAULT_ICON_SIZE_TABLE
-					local second_icon_texture = not not second_input_texture_data.button_texture_data
-					local second_icon_icon_offset = not not second_input_texture_data.icon_offset
+					local second_icon_size = second_input_texture_data.button_texture_data and second_input_texture_data.button_texture_data.size or not second_input_texture_data.button_texture_data and DEFAULT_ICON_SIZE_TABLE
+					local second_icon_texture = second_input_texture_data.button_texture_data
+					local second_icon_icon_offset = second_input_texture_data.icon_offset
 					local suffix_text_width = UIRenderer.text_size(self.ui_renderer, suffix_text, font[1], scaled_font_size)
 					local total_width = prefix_text_width + icon_width + suffix_text_width + second_icon_size[1]
 					local prefix_text_offset = -total_width * 0.5 + prefix_text_width * 0.5 - icon_width * 0.05
@@ -696,8 +696,8 @@ LoadingView.update = function (self, dt)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 
 	if gamepad_active ~= self._gamepad_active then
-		local level_settings = not not self.level_key
-		local game_mode = level_settings and not not level_settings.game_mode or not level_settings and not not "adventure"
+		local level_settings = self.level_key
+		local game_mode = level_settings and level_settings.game_mode or not level_settings and "adventure"
 
 		self:setup_tip_text(self.act_progression_index, game_mode, self._tip_localization_key)
 

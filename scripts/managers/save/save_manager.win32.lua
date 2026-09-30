@@ -17,7 +17,7 @@ end
 
 SaveManager.auto_save = function (self, file_name, data, callback, force_local_save)
 	-- function 2
-	local system = force_local_save and not not SaveSystem or not force_local_save and not not self._impl
+	local system = force_local_save and SaveSystem or not force_local_save and self._impl
 	local token = system.auto_save(file_name, data)
 	local save_token = ScriptSaveToken:new(system, token)
 
@@ -28,7 +28,7 @@ end
 
 SaveManager.auto_load = function (self, file_name, callback, force_local_save)
 	-- function 3
-	local system = force_local_save and not not SaveSystem or not force_local_save and not not self._impl
+	local system = force_local_save and SaveSystem or not force_local_save and self._impl
 	local token = system.auto_load(file_name)
 	local save_token = ScriptSaveToken:new(system, token)
 

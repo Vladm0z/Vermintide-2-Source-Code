@@ -18,7 +18,7 @@ end
 
 OffsetCamera.update = function (self, dt, position, rotation, data)
 	-- function 3
-	local offset_position = not not data.offset_position
+	local offset_position = data.offset_position
 	local offset_x = offset_position.x * Quaternion.right(rotation)
 	local offset_y = offset_position.y * Quaternion.forward(rotation)
 	local offset_z = offset_position.z * Quaternion.up(rotation)

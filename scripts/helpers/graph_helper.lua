@@ -1,8 +1,8 @@
 -- chunkname: @scripts/helpers/graph_helper.lua
 
-GraphHelper = not not GraphHelper
-GraphHelper._known_stats = not not GraphHelper._known_stats
-GraphHelper._known_graphs = not not GraphHelper._known_graphs
+GraphHelper = GraphHelper
+GraphHelper._known_stats = GraphHelper._known_stats
+GraphHelper._known_graphs = GraphHelper._known_graphs
 
 local build = BUILD
 local console_command = Application.console_command
@@ -30,7 +30,7 @@ GraphHelper.create = function (graph_name, stat_names, stat_names_vector3)
 
 	console_command("graph", "make", graph_name)
 
-	for i = 1, #(not not stat_names or not not {}) do
+	for i = 1, #(stat_names or {}) do
 		local stat = stat_names[i]
 
 		if GraphHelper._known_stats[stat] == nil then
@@ -42,7 +42,7 @@ GraphHelper.create = function (graph_name, stat_names, stat_names_vector3)
 		end
 	end
 
-	for i = 1, #(not not stat_names_vector3 or not not {}) do
+	for i = 1, #(stat_names_vector3 or {}) do
 		local stat = stat_names_vector3[i]
 
 		if GraphHelper._known_stats[stat] == nil then

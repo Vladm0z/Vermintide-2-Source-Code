@@ -26,8 +26,8 @@ local function item_sort_func(item_1, item_2)
 	-- function 1
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local item_1_rarity = not not item_1.rarity
-	local item_2_rarity = not not item_2.rarity
+	local item_1_rarity = item_1.rarity
+	local item_2_rarity = item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -113,7 +113,7 @@ StartGameWindowMutatorGridConsole.on_enter = function (self, params, offset)
 	item_grid:disable_item_drag()
 	item_grid:apply_item_sorting_function(item_sort_func)
 
-	local override_levels = not not Managers.mechanism
+	local override_levels = Managers.mechanism
 
 	if override_levels then
 		local items = item_grid:items()
@@ -415,7 +415,7 @@ StartGameWindowMutatorGridConsole._update_selected_item_backend_id = function (s
 		end
 	else
 		local item = item_grid:get_item_hovered()
-		local backend_id = not not item and not not item.backend_id
+		local backend_id = item and item.backend_id
 
 		if backend_id ~= self._selected_backend_id then
 			self._selected_backend_id = backend_id
@@ -437,7 +437,7 @@ StartGameWindowMutatorGridConsole.draw = function (self, dt)
 	local input_service = self.parent:window_input_service()
 	local render_settings = self.render_settings
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
@@ -455,7 +455,7 @@ StartGameWindowMutatorGridConsole.draw = function (self, dt)
 				render_settings.snap_pixel_positions = widget.snap_pixel_positions
 			end
 
-			render_settings.alpha_multiplier = not not widget.alpha_multiplier
+			render_settings.alpha_multiplier = widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 
@@ -477,8 +477,8 @@ StartGameWindowMutatorGridConsole._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 

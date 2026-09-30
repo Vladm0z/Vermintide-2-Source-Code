@@ -11,7 +11,7 @@ local animation_definitions = definitions.animations
 local generic_input_actions = definitions.generic_input_actions
 local debug_draw_scenegraph = false
 local debug_menu = false
-local level_end_view_weave_testify = not not script_data.testify
+local level_end_view_weave_testify = script_data.testify
 
 LevelEndViewWeave = class(LevelEndViewWeave, LevelEndViewBase)
 
@@ -29,8 +29,8 @@ LevelEndViewWeave.start = function (self)
 	LevelEndViewWeave.super.start(self)
 
 	self._playing_music = nil
-	self._start_music_event = self.game_won and not not "Play_won_music" or not self.game_won and not not "Play_lost_music"
-	self._stop_music_event = self.game_won and not not "Stop_won_music" or not self.game_won and not not "Stop_lost_music"
+	self._start_music_event = self.game_won and "Play_won_music" or not self.game_won and "Play_lost_music"
+	self._stop_music_event = self.game_won and "Stop_won_music" or not self.game_won and "Stop_lost_music"
 end
 
 LevelEndViewWeave.destroy = function (self)
@@ -128,7 +128,7 @@ end
 
 LevelEndViewWeave.active_input_service = function (self)
 	-- function 13
-	return self.input_blocked and not not FAKE_INPUT_SERVICE or not self.input_blocked and not not self:input_service()
+	return self.input_blocked and FAKE_INPUT_SERVICE or not self.input_blocked and self:input_service()
 end
 
 LevelEndViewWeave._retry_level = function (self)
@@ -330,7 +330,7 @@ LevelEndViewWeave.get_hero_from_score = function (self, player_data)
 	local careers = profile_data.careers
 	local career_settings = careers[career_index]
 	local weapon_pose_anim_event, weapon_pose_weapon, weapon_pose_slot
-	local weapon_pose = not not player_data.weapon_pose
+	local weapon_pose = player_data.weapon_pose
 
 	if weapon_pose then
 		local item = ItemMasterList[weapon_pose]
@@ -356,11 +356,11 @@ LevelEndViewWeave.get_hero_from_score = function (self, player_data)
 		career_index = career_index,
 		hero_name = career_settings.profile_name,
 		skin_name = player_data.hero_skin,
-		weapon_slot = not not career_settings.preview_wield_slot,
+		weapon_slot = career_settings.preview_wield_slot,
 		weapon_pose_anim_event = weapon_pose_anim_event,
 		preview_items = {
 			player_data.hat,
-			not not weapon_pose_weapon or not not player_data.weapon
+			weapon_pose_weapon or player_data.weapon
 		}
 	}
 end

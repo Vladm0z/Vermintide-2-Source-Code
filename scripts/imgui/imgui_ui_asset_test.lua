@@ -151,9 +151,9 @@ ImguiUIAssetCheck._do_asset_check = function (self)
 			local inventory_icon = item.inventory_icon
 			local description = item.description
 			local display_name = item.display_name
-			local has_icon = inventory_icon ~= nil and (inventory_icon ~= "icons_placeholder" or not not UIAtlasHelper.has_texture_by_name(inventory_icon))
-			local has_description = not not description and not not Managers.localizer:_base_lookup(description)
-			local has_display_name = not not display_name and not not Managers.localizer:_base_lookup(display_name)
+			local has_icon = inventory_icon ~= nil and (inventory_icon ~= "icons_placeholder" or UIAtlasHelper.has_texture_by_name(inventory_icon))
+			local has_description = description and Managers.localizer:_base_lookup(description)
+			local has_display_name = display_name and Managers.localizer:_base_lookup(display_name)
 
 			if has_icon or not item.slot_type ~= "bundle" then
 				if string.find(key, "test") and self._show_test_items then
@@ -181,7 +181,7 @@ ImguiUIAssetCheck._do_preview = function (self)
 		Imgui.text_colored("Icon", 0, 193, 212, 255)
 		Imgui.same_line()
 
-		local has_icon = item.inventory_icon ~= nil and (item.inventory_icon ~= "icons_placeholder" or not not UIAtlasHelper.has_texture_by_name(item.inventory_icon))
+		local has_icon = item.inventory_icon ~= nil and (item.inventory_icon ~= "icons_placeholder" or UIAtlasHelper.has_texture_by_name(item.inventory_icon))
 
 		if has_icon then
 			Imgui.text_colored(tostring(item.inventory_icon), 245, 245, 207, 255)
@@ -192,7 +192,7 @@ ImguiUIAssetCheck._do_preview = function (self)
 		Imgui.text_colored("Description", 0, 193, 212, 255)
 		Imgui.same_line()
 
-		local has_description = not not item.description
+		local has_description = item.description
 
 		if has_description then
 			Imgui.text_colored(Localize(item.description), 245, 245, 207, 255)
@@ -203,7 +203,7 @@ ImguiUIAssetCheck._do_preview = function (self)
 		Imgui.text_colored("Display Name", 0, 193, 212, 255)
 		Imgui.same_line()
 
-		local has_display_name = not not item.display_name
+		local has_display_name = item.display_name
 
 		if has_display_name then
 			Imgui.text_colored(Localize(item.display_name), 245, 245, 207, 255)

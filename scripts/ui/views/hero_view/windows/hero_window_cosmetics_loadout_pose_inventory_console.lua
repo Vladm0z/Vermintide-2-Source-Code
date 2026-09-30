@@ -18,8 +18,8 @@ local function item_sort_func(item_1, item_2)
 	local item_data_2 = item_2.data
 	local item_key_1 = item_data_1.key
 	local item_key_2 = item_data_2.key
-	local item_1_power_level = not not item_1.power_level
-	local item_2_power_level = not not item_2.power_level
+	local item_1_power_level = item_1.power_level
+	local item_2_power_level = item_2.power_level
 	local item_1_backend_id = item_1.backend_id
 	local item_2_backend_id = item_2.backend_id
 	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -27,8 +27,8 @@ local function item_sort_func(item_1, item_2)
 
 	if item_1_favorited == item_2_favorited then
 		if item_1_power_level == item_2_power_level then
-			local item_1_rarity = not not item_1.rarity
-			local item_2_rarity = not not item_2.rarity
+			local item_1_rarity = item_1.rarity
+			local item_2_rarity = item_2.rarity
 			local item_rarity_order = UISettings.item_rarity_order
 			local item_1_rarity_order = item_rarity_order[item_1_rarity]
 			local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -118,7 +118,7 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole.on_enter = function (self, params
 	self:_set_item_compare_enable_state(false)
 	self:_show_equipped_weapon_pose()
 
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if player_unit then
 		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
@@ -171,7 +171,7 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._start_transition_animation = fun
 		wwise_world = self.wwise_world,
 		render_settings = self._render_settings
 	}
-	local widgets = not not widgets or not not EMPTY_TABLE
+	local widgets = widgets or EMPTY_TABLE
 	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
 	self._animations[animation_name] = anim_id
@@ -234,7 +234,7 @@ end
 HeroWindowCosmeticsLoadoutPoseInventoryConsole.set_focus = function (self, focused)
 	-- function 7
 	self._focused = focused
-	self._render_settings.alpha_multiplier = focused and not not 1 or not focused and not not 0.5
+	self._render_settings.alpha_multiplier = focused and 1 or not focused and 0.5
 	self._widgets_by_name.item_tooltip.content.visible = focused
 end
 
@@ -341,8 +341,8 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_remove_button_state = fun
 	-- function 12
 	local backend_items = Managers.backend:get_interface("items")
 	local backend_id = BackendUtils.get_loadout_item_id(self._career_name, "slot_pose")
-	local item = not not backend_id and not not backend_items:get_item_from_id(backend_id)
-	local item_key = not not item and not not item.key
+	local item = backend_id and backend_items:get_item_from_id(backend_id)
+	local item_key = item and item.key
 	local widget = self._widgets_by_name.button_remove
 
 	UIUtils.enable_button(widget, not item_key or item_key ~= "default_weapon_pose_01")
@@ -375,8 +375,8 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._apply_illusion = function (self)
 
 			local current_weapon_pose_id = backend_items:get_loadout_item_id(self._career_name, "slot_pose")
 			local current_weapon_pose_item = backend_items:get_item_from_id(current_weapon_pose_id)
-			local current_weapon_pose_data = not not current_weapon_pose_item and not not current_weapon_pose_item.data
-			local current_weapon_pose_parent = not not current_weapon_pose_data and not not current_weapon_pose_data.parent
+			local current_weapon_pose_data = current_weapon_pose_item and current_weapon_pose_item.data
+			local current_weapon_pose_parent = current_weapon_pose_data and current_weapon_pose_data.parent
 
 			if blueprint_item_key == current_weapon_pose_parent then
 				local local_player = Managers.player:local_player()
@@ -426,7 +426,7 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_equipped_item_tooltip = f
 	local slot_name = slot.name
 	local item_interface = Managers.backend:get_interface("items")
 	local backend_id = BackendUtils.get_loadout_item_id(self._career_name, slot_name)
-	local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+	local item = backend_id and item_interface:get_item_from_id(backend_id)
 	local widget = self._widgets_by_name.item_tooltip_compare
 
 	widget.content.item = item
@@ -435,7 +435,7 @@ end
 HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_selected_item_tooltip = function (self)
 	-- function 17
 	local selected_item = self._item_grid:selected_item()
-	local backend_id = not not selected_item and not not selected_item.backend_id
+	local backend_id = selected_item and selected_item.backend_id
 
 	if backend_id ~= self._selected_backend_id then
 		local widget = self._widgets_by_name.item_tooltip
@@ -773,7 +773,7 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._on_illusion_index_pressed = func
 		local blueprint = self._selected_blueprint_name
 		local item = ItemMasterList[blueprint]
 		local current_item_key = string.gsub(item.name, "^vs_", "")
-		local unlocked_weapon_poses_for_blueprint = not not unlocked_weapon_poses[current_item_key]
+		local unlocked_weapon_poses_for_blueprint = unlocked_weapon_poses[current_item_key]
 		local default_skin_key = WeaponSkins.default_skins[current_item_key]
 		local default_skin_backend_id, _ = backend_items:get_weapon_skin_from_skin_key(default_skin_key)
 		local current_weapon_pose_skin = backend_items:get_equipped_weapon_pose_skin(current_item_key)
@@ -841,8 +841,8 @@ local function sort_illusion_widgets(a, b)
 	local b_content = b.content
 	local a_rarity = a_content.rarity
 	local b_rarity = b_content.rarity
-	local a_order = not not item_rarity_order[a_rarity]
-	local b_order = not not item_rarity_order[b_rarity]
+	local a_order = item_rarity_order[a_rarity]
+	local b_order = item_rarity_order[b_rarity]
 
 	return b_order < a_order
 end
@@ -870,10 +870,10 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_illusions = function (self
 	local item_key = string.gsub(item.key, "^vs_", "")
 	local item_data = item.data
 	local item = ItemMasterList[item_key]
-	local item_data = not not item or not not item_data
+	local item_data = item or item_data
 	local num_unlocked_skins = 0
 	local skin_combination_table = item_data.skin_combination_table
-	local weapon_skin_combinations_tables = not not WeaponSkins.skin_combinations[skin_combination_table]
+	local weapon_skin_combinations_tables = WeaponSkins.skin_combinations[skin_combination_table]
 	local quest_interface = Managers.backend:get_interface("quests")
 	local backend_crafting = Managers.backend:get_interface("crafting")
 	local unlocked_weapon_skins = backend_crafting:get_unlocked_weapon_skins()
@@ -893,12 +893,12 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_illusions = function (self
 				if not rarity_settings[weapon_skins_rarity] then
 					local weapon_skin_data = WeaponSkins.skins[skin]
 
-					weapon_skins_rarity = not weapon_skin_data or not not weapon_skin_data.rarity or not not weapon_skins_rarity
+					weapon_skins_rarity = not weapon_skin_data or weapon_skin_data.rarity or weapon_skins_rarity
 				end
 
-				local unlocked = not not unlocked_weapon_skins[skin]
+				local unlocked = unlocked_weapon_skins[skin]
 				local event_skin_available = true
-				local skin_item = not not ItemMasterList[skin]
+				local skin_item = ItemMasterList[skin]
 				local event_quest_requirement = skin_item.event_quest_requirement
 
 				if not unlocked and event_quest_requirement then
@@ -974,9 +974,9 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_illusions = function (self
 	local backend_items = Managers.backend:get_interface("items")
 	local equipped_weapon_pose_skins = backend_items:get_equipped_weapon_pose_skins()
 	local current_weapon_skin_name = equipped_weapon_pose_skins[item_key]
-	local current_weapon_skin_backend_id = not not current_weapon_skin_name and not not backend_items:get_weapon_skin_from_skin_key(current_weapon_skin_name)
-	local current_weapon_skin = not not current_weapon_skin_backend_id and not not backend_items:get_item_from_id(current_weapon_skin_backend_id)
-	local item_skin = current_weapon_skin and not not current_weapon_skin.skin or not current_weapon_skin and not not item.skin
+	local current_weapon_skin_backend_id = current_weapon_skin_name and backend_items:get_weapon_skin_from_skin_key(current_weapon_skin_name)
+	local current_weapon_skin = current_weapon_skin_backend_id and backend_items:get_item_from_id(current_weapon_skin_backend_id)
+	local item_skin = current_weapon_skin and current_weapon_skin.skin or not current_weapon_skin and item.skin
 	local mark_as_equipped = true
 
 	self:_select_illusion_by_key(item_skin, mark_as_equipped)
@@ -1041,8 +1041,8 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_page_info = function (sel
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -1097,20 +1097,20 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole.draw = function (self, dt)
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for _, widget in ipairs(self._widgets) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
 	if not gamepad_active or self._gamepad_illusion_buttons_active then
 		for _, widget in ipairs(self._illusion_widgets) do
-			render_settings.alpha_multiplier = not not widget.alpha_multiplier
+			render_settings.alpha_multiplier = widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 
 		for _, widget in ipairs(self._illusion_base_widgets) do
-			render_settings.alpha_multiplier = not not widget.alpha_multiplier
+			render_settings.alpha_multiplier = widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
@@ -1139,7 +1139,7 @@ end
 HeroWindowCosmeticsLoadoutPoseInventoryConsole._change_category_by_index = function (self, index, force_update)
 	-- function 39
 	if force_update then
-		index = not not self._current_category_index or not not 1
+		index = self._current_category_index or 1
 	end
 
 	if self._current_category_index == index then
@@ -1213,7 +1213,7 @@ HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_gamepad_activity = functi
 			local item_grid = self._item_grid
 			local first_item = item_grid:get_item_in_slot(1, 1)
 
-			item_grid:set_item_selected(not not self._current_hovered_item)
+			item_grid:set_item_selected(self._current_hovered_item)
 			self:_set_gamepad_input_buttons_visibility(true)
 		end
 	elseif self.gamepad_active_last_frame or force_update then

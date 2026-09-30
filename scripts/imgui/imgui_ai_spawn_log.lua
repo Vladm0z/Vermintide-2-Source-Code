@@ -170,8 +170,8 @@ ImguiAISpawnLog.draw = function (self)
 	local filter_specials = self._specials_only
 	local segment_start = self._timeline_end - self._timeline_slice_size
 	local segment_end = self._timeline_end
-	local hovered_id = self._sticky_hover and not not self._hovered_id or not self._sticky_hover and not not -1
-	local hovered_time = self._sticky_hover and not not self._hovered_time or not self._sticky_hover and not not -1
+	local hovered_id = self._sticky_hover and self._hovered_id or not self._sticky_hover and -1
+	local hovered_time = self._sticky_hover and self._hovered_time or not self._sticky_hover and -1
 	local last_hovered_id = self._hovered_id
 
 	for line_id = 1, #self._log do
@@ -188,7 +188,7 @@ ImguiAISpawnLog.draw = function (self)
 
 				text = text .. " " .. type
 
-				local breed_name = not not breed and not not breed.name
+				local breed_name = breed and breed.name
 
 				text = text .. " " .. tostring(breed_name)
 
@@ -205,7 +205,7 @@ ImguiAISpawnLog.draw = function (self)
 				text = text .. " " .. tostring(queue_id)
 
 				local is_selected = last_hovered_id == queue_id
-				local color = is_selected and (not not selected_color or not not normal_color) or not is_selected and not not normal_color
+				local color = is_selected and (selected_color or normal_color) or not is_selected and normal_color
 
 				Imgui.text_colored(text, color[1], color[2], color[3], 255)
 
@@ -252,14 +252,14 @@ end
 
 ImguiAISpawnLog._log_event = function (self, event_type, boxed_location, breed, spawn_category, spawn_type, spawn_queue_id)
 	-- function 11
-	local location = not not boxed_location and not not boxed_location:unbox()
+	local location = boxed_location and boxed_location:unbox()
 	local game_time = Managers.time:time("game")
 	local entry = {
 		event_type,
 		game_time,
-		location and not not location.x or not location and not not 0,
-		location and not not location.y or not location and not not 0,
-		location and not not location.z or not location and not not 0,
+		location and location.x or not location and 0,
+		location and location.y or not location and 0,
+		location and location.z or not location and 0,
 		breed,
 		spawn_category,
 		spawn_type,
@@ -406,7 +406,7 @@ ImguiAISpawnLog._export_recap_data = function (self)
 
 	for name, counts in pairs(self._totals) do
 		local breed = Breeds[name]
-		local faction = breed and not not breed.race or not breed and not not "unknown"
+		local faction = breed and breed.race or not breed and "unknown"
 
 		output = output .. "\n"
 		output = output .. name .. ","
@@ -431,8 +431,8 @@ ImguiAISpawnLog._export_log_data = function (self)
 			output = output .. "\n"
 
 			local breed = line[BREED_ID]
-			local breed_name = breed and not not breed.name or not breed and not not "unknown"
-			local faction = breed and not not breed.race or not breed and not not "unknown"
+			local breed_name = breed and breed.name or not breed and "unknown"
+			local faction = breed and breed.race or not breed and "unknown"
 
 			output = output .. breed_name .. ","
 			output = output .. faction .. ","

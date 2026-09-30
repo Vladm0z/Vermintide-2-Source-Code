@@ -378,10 +378,10 @@ GameModeInn.local_player_game_starts = function (self, player, loading_context)
 			transition_name = "initial_character_selection_force"
 			menu_state_name = "character"
 		elseif GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") then
-			local show_hero_selection = not SaveData.first_hero_selection_made and not not not Managers.backend:is_waiting_for_user_input()
+			local show_hero_selection = not SaveData.first_hero_selection_made and not Managers.backend:is_waiting_for_user_input()
 
 			transition_name = "initial_start_menu_view_force"
-			menu_state_name = show_hero_selection and (not not "character" or not not "overview") or not show_hero_selection and not not "overview"
+			menu_state_name = show_hero_selection and ("character" or "overview") or not show_hero_selection and "overview"
 		else
 			transition_name = "initial_character_selection_force"
 			menu_state_name = "character"

@@ -97,7 +97,7 @@ local function profile_packages(profile_index, career_index, is_first_person, is
 
 	local base_skin_name = career.base_skin
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin", is_bot)
-	local skin_name = skin_item and not not skin_item.data.name or not skin_item and not not base_skin_name
+	local skin_name = skin_item and skin_item.data.name or not skin_item and base_skin_name
 	local skin_packages = CosmeticsUtils.retrieve_skin_packages(skin_name, is_first_person)
 
 	for i = 1, #skin_packages do
@@ -111,7 +111,7 @@ local function profile_packages(profile_index, career_index, is_first_person, is
 	end
 
 	local game_mode_manager = Managers.state.game_mode
-	local is_whiterun = not not game_mode_manager and not not game_mode_manager:has_activated_mutator("whiterun")
+	local is_whiterun = game_mode_manager and game_mode_manager:has_activated_mutator("whiterun")
 	local talent_ids
 
 	if is_whiterun then
@@ -201,7 +201,7 @@ local function update_inventory_data(state, peer_id, local_player_id, profile_in
 	local inventory_list, inventory_list_first_person = build_inventory_lists(profile_index, career_index, is_bot)
 	local existing_inventory_data = state:get_inventory_data(peer_id, local_player_id)
 	local inventory_id = math.wrap_index_between(existing_inventory_data.inventory_id + 1, 1, 2147483647)
-	local inventory_hash = not not optional_hash or not not hash_inventory(inventory_list, inventory_list_first_person)
+	local inventory_hash = optional_hash or hash_inventory(inventory_list, inventory_list_first_person)
 
 	if not force_resync and existing_inventory_data.inventory_id ~= 0 and inventory_hash == existing_inventory_data.inventory_hash then
 		return
@@ -314,7 +314,7 @@ local function update_local_packages(state)
 
 		if inventory_data then
 			local is_owner = peer_id == own_peer_id
-			local needed_packages = is_owner and not not inventory_data.first_person or not is_owner and not not inventory_data.third_person
+			local needed_packages = is_owner and inventory_data.first_person or not is_owner and inventory_data.third_person
 
 			for needed_package, _ in pairs(needed_packages) do
 				all_needed_packages[needed_package] = true
@@ -660,9 +660,9 @@ end
 ProfileSynchronizer._all_synced_for_peer = function (self, peer_id, local_player_id, ignore_loading_peers)
 	-- function 36
 	local current_revision = self._state:get_revision()
-	local cache_type = ignore_loading_peers and not not "ingame" or not ignore_loading_peers and not not "any"
+	local cache_type = ignore_loading_peers and "ingame" or not ignore_loading_peers and "any"
 	local cache_for_peer = self._cached_all_synced_for_peer[cache_type][peer_id]
-	local cached_data = not not cache_for_peer and not not cache_for_peer[local_player_id]
+	local cached_data = cache_for_peer and cache_for_peer[local_player_id]
 	local cached_data_revision_key = 1
 	local cached_data_result_key = 2
 
@@ -673,7 +673,7 @@ ProfileSynchronizer._all_synced_for_peer = function (self, peer_id, local_player
 			current_revision,
 			result
 		}
-		cache_for_peer = not not cache_for_peer or not not {}
+		cache_for_peer = cache_for_peer or {}
 		cache_for_peer[local_player_id] = cached_data
 		self._cached_all_synced_for_peer[cache_type][peer_id] = cache_for_peer
 	end
@@ -710,7 +710,7 @@ end
 
 ProfileSynchronizer.rpc_assign_peer_to_profile = function (self, channel_id, peer_id, local_player_id, profile_index, career_index, is_bot)
 	-- function 39
-	printf("rpc_assign_peer_to_profile peer_id:%s local_player_id:%d profile_index:%d career_index:%d is_bot:%s", peer_id, local_player_id, profile_index, career_index, is_bot and not not "true" or not is_bot and not not "false")
+	printf("rpc_assign_peer_to_profile peer_id:%s local_player_id:%d profile_index:%d career_index:%d is_bot:%s", peer_id, local_player_id, profile_index, career_index, is_bot and "true" or not is_bot and "false")
 
 	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
@@ -751,7 +751,7 @@ ProfileSynchronizer._unassign_profiles_of_peer = function (self, peer_id, option
 		local other_local_player_id = other_peer.local_player_id
 
 		if other_peer_id == peer_id and (not optional_local_player_id or optional_local_player_id == other_local_player_id) then
-			self._state:delete_profile_data(peer_id, not not optional_local_player_id or not not 1)
+			self._state:delete_profile_data(peer_id, optional_local_player_id or 1)
 		end
 	end
 end
@@ -779,7 +779,7 @@ ProfileSynchronizer._assign_peer_to_profile = function (self, peer_id, local_pla
 	if peer_id == self._state:get_own_peer_id() then
 		local valid_backend_profile = profile_index ~= FindProfileIndex("spectator")
 
-		valid_backend_profile = not not valid_backend_profile and profile_index ~= FindProfileIndex("vs_undecided")
+		valid_backend_profile = valid_backend_profile and profile_index ~= FindProfileIndex("vs_undecided")
 
 		if valid_backend_profile then
 			local profile_settings = SPProfiles[profile_index]
@@ -892,7 +892,7 @@ end
 ProfileSynchronizer.owner_in_lobby = function (profile_index, lobby_data, optional_party_id)
 	-- function 52
 	local lobby_reservation_data = LobbyAux.deserialize_lobby_reservation_data(lobby_data)
-	local party_id = not not optional_party_id or not not 1
+	local party_id = optional_party_id or 1
 	local party_peers = lobby_reservation_data[party_id]
 
 	if party_peers then
@@ -912,7 +912,7 @@ end
 ProfileSynchronizer.is_free_in_lobby = function (profile_index, lobby_data, optional_party_id)
 	-- function 53
 	local lobby_reservation_data = LobbyAux.deserialize_lobby_reservation_data(lobby_data)
-	local party_id = not not optional_party_id or not not 1
+	local party_id = optional_party_id or 1
 	local party_peers = lobby_reservation_data[party_id]
 
 	if party_peers then

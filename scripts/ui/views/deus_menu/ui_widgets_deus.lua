@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/deus_menu/ui_widgets_deus.lua
 
-UIWidgets = not not UIWidgets
+UIWidgets = UIWidgets
 
 local health_bar_size = {
 	92,
@@ -126,7 +126,7 @@ UIWidgets.create_deus_player_status_portrait = function (scenegraph_id, frame_se
 						-- function 7
 						local ammo_progress = content.ammo_percentage
 
-						return not not ammo_progress and ammo_progress > 0 and ammo_progress <= 0.33
+						return ammo_progress and ammo_progress > 0 and ammo_progress <= 0.33
 					end
 				},
 				{
@@ -138,7 +138,7 @@ UIWidgets.create_deus_player_status_portrait = function (scenegraph_id, frame_se
 						-- function 8
 						local ammo_progress = content.ammo_percentage
 
-						return not not ammo_progress and ammo_progress <= 0
+						return ammo_progress and ammo_progress <= 0
 					end
 				},
 				{
@@ -214,7 +214,7 @@ UIWidgets.create_deus_player_status_portrait = function (scenegraph_id, frame_se
 					retained_mode = retained_mode,
 					content_check_function = function (content)
 						-- function 12
-						return not not content.token_icon
+						return content.token_icon
 					end
 				}
 			}
@@ -661,7 +661,7 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 		255,
 		255
 	}
-	local default_offset = not not offset or not not {
+	local default_offset = offset or {
 		0,
 		0,
 		0
@@ -671,7 +671,7 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 
 	for index, data in ipairs(frame_settings) do
 		local name = "texture_" .. index
-		local texture_name = not not data.texture
+		local texture_name = data.texture
 		local size
 
 		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
@@ -682,10 +682,10 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 			size = data.size
 		end
 
-		size = size and (not not table.clone(size) or not not {
+		size = size and (table.clone(size) or {
 			0,
 			0
-		}) or not size and not not {
+		}) or not size and {
 			0,
 			0
 		}
@@ -696,12 +696,12 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 			offset = table.clone(data.offset)
 			offset[1] = default_offset[1] + (-(size[1] / 2) + offset[1])
 			offset[2] = default_offset[2] + 60 + offset[2]
-			offset[3] = not not data.layer
+			offset[3] = data.layer
 		else
 			offset = table.clone(default_offset)
 			offset[1] = -(size[1] / 2) + offset[1]
 			offset[2] = offset[2]
-			offset[3] = not not data.layer
+			offset[3] = data.layer
 		end
 
 		widget.element.passes[#widget.element.passes + 1] = {
@@ -712,7 +712,7 @@ UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_se
 		}
 		widget.content[name] = texture_name
 		widget.style[name] = {
-			color = not not data.color,
+			color = data.color,
 			offset = offset,
 			size = size
 		}
@@ -941,7 +941,7 @@ UIWidgets.create_info_box = function (scenegraph_id, icon, icon_size, icon_frame
 		style = {
 			icon = {
 				offset = icon_offset,
-				texture_size = not not icon_size or not not {
+				texture_size = icon_size or {
 					20,
 					20
 				}
@@ -967,7 +967,7 @@ end
 
 UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, info_frame_name, top_frame_name, top, icon, icon_size, icon_frame_name, title, info, bottom_panel_size)
 	-- function 23
-	bottom_panel_size = not not bottom_panel_size or not not {
+	bottom_panel_size = bottom_panel_size or {
 		340,
 		100
 	}
@@ -1015,7 +1015,7 @@ UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, in
 		-2
 	}
 	local top_frame_settings = UIFrameSettings[top_frame_name]
-	local top_edge_height = top_frame_settings and not not top_frame_settings.texture_sizes.horizontal[2] or not top_frame_settings and not not 0
+	local top_edge_height = top_frame_settings and top_frame_settings.texture_sizes.horizontal[2] or not top_frame_settings and 0
 	local top_frame_size = {
 		top_panel_size[1] + top_edge_height * 2,
 		top_panel_size[2] + top_edge_height * 2
@@ -1269,7 +1269,7 @@ UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, in
 		content = {
 			bottom_background = "item_tooltip_background",
 			title_glow = "tooltip_power_level_header_glow",
-			top_frame = not not top_frame_settings and not not top_frame_settings.texture,
+			top_frame = top_frame_settings and top_frame_settings.texture,
 			title_frame = title_frame_settings.texture,
 			bottom_frame = bottom_frame_settings.texture,
 			icon = icon,
@@ -1282,8 +1282,8 @@ UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, in
 		style = {
 			top_frame = {
 				size = top_frame_size,
-				texture_size = not not top_frame_settings and not not top_frame_settings.texture_size,
-				texture_sizes = not not top_frame_settings and not not top_frame_settings.texture_sizes,
+				texture_size = top_frame_settings and top_frame_settings.texture_size,
+				texture_sizes = top_frame_settings and top_frame_settings.texture_sizes,
 				offset = top_frame_offset
 			},
 			top_frame_rect = {
@@ -1311,7 +1311,7 @@ UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, in
 			},
 			icon = {
 				offset = icon_offset,
-				texture_size = not not icon_size or not not {
+				texture_size = icon_size or {
 					20,
 					20
 				}
@@ -1402,7 +1402,7 @@ UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_
 		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_size = font_size,
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			text_offset[1],
@@ -1427,8 +1427,8 @@ UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_
 		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_size = font_size,
-		font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
-		text_color = not not title_text_color or not not Colors.get_color_table_with_alpha("font_default", 255),
+		font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
+		text_color = title_text_color or Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
 			text_offset[1],
 			text_offset[2] + sub_text_style.size[2] + font_spacing,
@@ -1468,7 +1468,7 @@ UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_
 			pass_type = "rect",
 			content_check_function = function (content)
 				-- function 40
-				return not content.is_rectangular_icon and not not not masked
+				return not content.is_rectangular_icon and not masked
 			end
 		},
 		{
@@ -1477,7 +1477,7 @@ UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_
 			texture_id = "rect_masked",
 			content_check_function = function (content)
 				-- function 41
-				return not content.is_rectangular_icon and not not masked
+				return not content.is_rectangular_icon and masked
 			end
 		},
 		{
@@ -1535,7 +1535,7 @@ UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_
 	}
 	local style = {
 		icon = icon_style,
-		icon_hotspot = not not icon_hotspot or not not icon_style,
+		icon_hotspot = icon_hotspot or icon_style,
 		icon_bg = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
@@ -1695,7 +1695,7 @@ UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, diffic
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 53
-						return not not content.right_arrow_hotspot.is_hover
+						return content.right_arrow_hotspot.is_hover
 					end,
 					content_change_function = function (content, style)
 						-- function 54
@@ -1775,8 +1775,8 @@ UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, diffic
 			right_arrow_hotspot = {},
 			right_arrow_gamepad_highlight = arrow_highlight_texture,
 			right_arrow_clicked = arrow_highlight_texture,
-			difficulty_icon = not not difficulty_icon or not not "difficulty_option_1",
-			difficulty_text = not not difficulty_text or not not Localize("not_assigned"),
+			difficulty_icon = difficulty_icon or "difficulty_option_1",
+			difficulty_text = difficulty_text or Localize("not_assigned"),
 			selected_difficulty_text = Localize("not_assigned")
 		},
 		style = {
@@ -2370,7 +2370,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 						-- function 69
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_selected
+						return content.is_selected
 					end
 				},
 				{
@@ -2381,7 +2381,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 						-- function 70
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not button_hotspot.is_hover
+						return not button_hotspot.disable_button and not button_hotspot.is_hover
 					end
 				},
 				{
@@ -2392,7 +2392,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 						-- function 71
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_selected
+						return content.is_selected
 					end
 				},
 				{
@@ -2403,7 +2403,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 						-- function 72
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not button_hotspot.is_hover
+						return not button_hotspot.disable_button and not button_hotspot.is_hover
 					end
 				},
 				{
@@ -2414,7 +2414,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 						-- function 73
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not button_hotspot.is_hover
+						return not button_hotspot.disable_button and button_hotspot.is_hover
 					end
 				},
 				{
@@ -2475,7 +2475,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 			},
 			glass = glass,
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			disable_with_gamepad = disable_with_gamepad,
 			background = {
@@ -2555,7 +2555,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -2575,7 +2575,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -2594,7 +2594,7 @@ UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, te
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
@@ -2964,7 +2964,7 @@ UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font
 						-- function 77
 						local button_hotspot = content.parent.button_hotspot
 
-						return not button_hotspot.disable_button and not not button_hotspot.is_hover
+						return not button_hotspot.disable_button and button_hotspot.is_hover
 					end
 				},
 				{
@@ -2975,7 +2975,7 @@ UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font
 						-- function 78
 						local button_hotspot = content.parent.button_hotspot
 
-						return not button_hotspot.disable_button and not not button_hotspot.is_hover
+						return not button_hotspot.disable_button and button_hotspot.is_hover
 					end
 				},
 				{
@@ -3049,7 +3049,7 @@ UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font
 				texture_id = side_detail_glow_texture
 			},
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -3147,7 +3147,7 @@ UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -3168,7 +3168,7 @@ UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -3188,7 +3188,7 @@ UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
@@ -3327,9 +3327,9 @@ end
 
 UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, background_size, gamemode_header_text, game_mode_text, is_twitch, disable_note)
 	-- function 82
-	local header_text_color_alpha = is_twitch and not not 0 or not is_twitch and not not 255
-	local info_hotspot_height = is_twitch and not not (background_size[2] / 2) or not is_twitch and not not background_size[2]
-	local info_hotspot_offset_y = is_twitch and not not (background_size[2] / 2) or not is_twitch and not not 0
+	local header_text_color_alpha = is_twitch and 0 or not is_twitch and 255
+	local info_hotspot_height = is_twitch and background_size[2] / 2 or not is_twitch and background_size[2]
+	local info_hotspot_offset_y = is_twitch and background_size[2] / 2 or not is_twitch and 0
 
 	return {
 		element = {
@@ -3375,7 +3375,7 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 					text_id = "note_text",
 					content_check_function = function (content)
 						-- function 83
-						return not not content.show_note
+						return content.show_note
 					end
 				},
 				{
@@ -3384,7 +3384,7 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 					text_id = "press_key_text",
 					content_check_function = function (content)
 						-- function 84
-						return not content.show_note and not not not disable_note
+						return not content.show_note and not disable_note
 					end
 				}
 			}
@@ -3398,10 +3398,10 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 			show_note = false,
 			box_right_detail = "morris_header_end",
 			info_hotspot = {},
-			header_text = not not gamemode_header_text or not not Localize("not_assigned"),
-			game_mode_text = not not game_mode_text or not not Localize("not_assigned"),
-			note_text = not not Localize("expedition_info_note"),
-			press_key_text = not not string.format(Localize("for_more_info"), "$KEY;start_game_view__show_information:"),
+			header_text = gamemode_header_text or Localize("not_assigned"),
+			game_mode_text = game_mode_text or Localize("not_assigned"),
+			note_text = Localize("expedition_info_note"),
+			press_key_text = string.format(Localize("for_more_info"), "$KEY;start_game_view__show_information:"),
 			disable_note = disable_note
 		},
 		style = {
@@ -3528,12 +3528,12 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, ba
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					25,
-					is_twitch and not not (background_size[2] / 2 - 20) or not is_twitch and not not (background_size[2] / 2 - 40),
+					is_twitch and background_size[2] / 2 - 20 or not is_twitch and background_size[2] / 2 - 40,
 					2
 				},
 				size = {
 					background_size[1] - 50,
-					is_twitch and not not (background_size[2] / 2) or not is_twitch and not not (background_size[2] / 2 + 10)
+					is_twitch and background_size[2] / 2 or not is_twitch and background_size[2] / 2 + 10
 				}
 			},
 			note_text = {
@@ -3593,7 +3593,7 @@ end
 
 UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_data, journey_name, journey_widget_settings, multiplier)
 	-- function 85
-	local journey_widget_settings = not not journey_widget_settings or not not {
+	local journey_widget_settings = journey_widget_settings or {
 		width = 72,
 		spacing_x = 40
 	}
@@ -3601,7 +3601,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 		180,
 		180
 	}
-	local multiplier = not not multiplier or not not 1
+	local multiplier = multiplier or 1
 	local widget = {
 		element = {}
 	}
@@ -3621,7 +3621,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 			level_id = "level_data",
 			content_check_function = function (content)
 				-- function 87
-				return not not content.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -3632,7 +3632,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 				-- function 88
 				local mouse_active = Managers.input:is_device_active("mouse")
 
-				return content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected or not content.button_hotspot.is_hover and not not content.gamepad_selected
+				return content.button_hotspot.is_hover and not content.button_hotspot.is_selected or not content.button_hotspot.is_hover and content.gamepad_selected
 			end,
 			content_change_function = function (content, style)
 				-- function 89
@@ -3681,7 +3681,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 			texture_id = "path",
 			content_check_function = function (content)
 				-- function 94
-				return not not content.draw_path
+				return content.draw_path
 			end
 		},
 		{
@@ -3690,7 +3690,7 @@ UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_da
 			texture_id = "path_glow",
 			content_check_function = function (content)
 				-- function 95
-				return not not content.draw_path
+				return content.draw_path
 			end
 		},
 		{
@@ -4444,7 +4444,7 @@ end
 
 UIWidgets.create_ability_charges_widget = function (scenegraph_id, size, offset)
 	-- function 111
-	local size = not not size or not not {
+	local size = size or {
 		20,
 		20
 	}
@@ -4497,7 +4497,7 @@ UIWidgets.create_ability_charges_widget = function (scenegraph_id, size, offset)
 			}
 		},
 		scenegraph_id = scenegraph_id,
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			1
@@ -4558,7 +4558,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 118
-						return not not content.icon
+						return content.icon
 					end
 				},
 				{
@@ -4567,7 +4567,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 119
-						return not not content.icon
+						return content.icon
 					end
 				},
 				{
@@ -4576,7 +4576,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 120
-						return not not content.icon
+						return content.icon
 					end
 				},
 				{
@@ -4584,7 +4584,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					pass_type = "rect",
 					content_check_function = function (content)
 						-- function 121
-						return not not content.icon
+						return content.icon
 					end
 				},
 				{
@@ -4710,7 +4710,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "set_progression",
 					content_check_function = function (content)
 						-- function 135
-						return not not content.is_part_of_set
+						return content.is_part_of_set
 					end
 				},
 				{
@@ -4719,7 +4719,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "set_progression",
 					content_check_function = function (content)
 						-- function 136
-						return not not content.is_part_of_set
+						return content.is_part_of_set
 					end
 				},
 				{
@@ -4728,7 +4728,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "remove_tooltip",
 					content_check_function = function (content)
 						-- function 137
-						return not content.locked and not not content.extend_left
+						return not content.locked and content.extend_left
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 138
@@ -4737,7 +4737,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 						local macro = "$KEY;%s__%s:"
 						local mouse_action = content.mouse_action
 						local gamepad_action = content.gamepad_action
-						local input = Managers.input:is_device_active("gamepad") and (not not gamepad_action or not not mouse_action) or not Managers.input:is_device_active("gamepad") and not not mouse_action
+						local input = Managers.input:is_device_active("gamepad") and (gamepad_action or mouse_action) or not Managers.input:is_device_active("gamepad") and mouse_action
 						local input_macro = string.format(macro, input_service_name, input)
 
 						content.remove_tooltip = string.format(loc_string, input_macro)
@@ -4749,7 +4749,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "remove_tooltip",
 					content_check_function = function (content)
 						-- function 139
-						return not content.locked and not content.extend_left and not not allow_boon_removal
+						return not content.locked and not content.extend_left and allow_boon_removal
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 140
@@ -4758,7 +4758,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 						local macro = "$KEY;%s__%s:"
 						local mouse_action = content.mouse_action
 						local gamepad_action = content.gamepad_action
-						local input = Managers.input:is_device_active("gamepad") and (not not gamepad_action or not not mouse_action) or not Managers.input:is_device_active("gamepad") and not not mouse_action
+						local input = Managers.input:is_device_active("gamepad") and (gamepad_action or mouse_action) or not Managers.input:is_device_active("gamepad") and mouse_action
 						local input_macro = string.format(macro, input_service_name, input)
 
 						content.remove_tooltip = string.format(loc_string, input_macro)
@@ -4770,7 +4770,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 141
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -4779,7 +4779,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 142
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -4788,7 +4788,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 143
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -4797,7 +4797,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					text_id = "locked_text_id",
 					content_check_function = function (content)
 						-- function 144
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -4806,7 +4806,7 @@ UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons,
 					texture_id = "remove_frame",
 					content_check_function = function (content, style)
 						-- function 145
-						return not not content.input_made
+						return content.input_made
 					end
 				}
 			}

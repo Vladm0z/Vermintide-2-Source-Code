@@ -91,7 +91,7 @@ return {
 		end
 
 		local player = Managers.player:owner(killer_unit)
-		local is_bot = not not player and not not not player:is_player_controlled()
+		local is_bot = player and not player:is_player_controlled()
 
 		if is_bot then
 			return
@@ -115,7 +115,7 @@ return {
 
 		local breed_name = BLACKBOARDS[killed_unit].breed.name
 		local unit_data = player_units[killer_unit]
-		local amount_of_stacks = not not template.amount_of_stacks_per_breed[breed_name]
+		local amount_of_stacks = template.amount_of_stacks_per_breed[breed_name]
 
 		for i = 1, amount_of_stacks do
 			template.add_buff(data.buff_system, killer_unit, data.buff_name)

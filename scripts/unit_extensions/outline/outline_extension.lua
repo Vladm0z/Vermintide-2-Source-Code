@@ -32,7 +32,7 @@ OutlineExtension.add_outline = function (self, settings)
 	end
 
 	settings._unique_id = unique_id
-	settings.priority = not not settings.priority
+	settings.priority = settings.priority
 
 	local settings_bucket = self.outline_settings
 	local num_settings_buckets = #settings_bucket
@@ -135,12 +135,12 @@ OutlineExtension._refresh_current_outline = function (self, reapply)
 	local current_settings = self.outline_settings[1][1]
 	local new_color = not current_settings.outline_color or self.outline_color ~= current_settings.outline_color
 
-	self.outline_color = current_settings.outline_color and not not current_settings.outline_color or not current_settings.outline_color and not not default.outline_color
-	self.distance = current_settings.distance and not not current_settings.distance or not current_settings.distance and not not default.distance
-	self.method = current_settings.method and not not current_settings.method or not current_settings.method and not not default.method
+	self.outline_color = current_settings.outline_color and current_settings.outline_color or not current_settings.outline_color and default.outline_color
+	self.distance = current_settings.distance and current_settings.distance or not current_settings.distance and default.distance
+	self.method = current_settings.method and current_settings.method or not current_settings.method and default.method
 	self.prev_flag = self.flag
-	self.flag = current_settings.flag and not not current_settings.flag or not current_settings.flag and not not default.flag
-	self.reapply = not not new_color
+	self.flag = current_settings.flag and current_settings.flag or not current_settings.flag and default.flag
+	self.reapply = new_color
 
 	if self.reapply or new_color then
 		self._outline_system:mark_outline_dirty(self._unit)

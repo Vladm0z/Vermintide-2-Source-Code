@@ -2,7 +2,7 @@
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 
-script_data.disable_gamemode_end = not not script_data.disable_gamemode_end
+script_data.disable_gamemode_end = script_data.disable_gamemode_end
 GameModeDemo = class(GameModeDemo, GameModeBase)
 
 local COMPLETE_LEVEL_VAR = false
@@ -18,7 +18,7 @@ GameModeDemo.evaluate_end_conditions = function (self, round_started, dt, t)
 	local ignore_bots = true
 	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
 	local players_disabled = GameModeHelper.side_is_disabled("heroes")
-	local lost = not not humans_dead or not not players_disabled or not not self._level_failed
+	local lost = humans_dead or players_disabled or self._level_failed
 
 	if self._level_completed or lost or self:update_end_level_areas() then
 		self:complete_level()

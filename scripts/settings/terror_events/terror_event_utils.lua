@@ -57,7 +57,7 @@ end
 
 TerrorEventUtils.random = function (...)
 	-- function 8
-	local seed, value = Math.next_random(not not terror_seed, ...)
+	local seed, value = Math.next_random(terror_seed, ...)
 
 	terror_seed = seed
 
@@ -68,7 +68,7 @@ TerrorEventUtils.get_grudge_marked_name = function (breed_name, magic_number, br
 	-- function 9
 	local breed = Breeds[breed_name]
 	local faction = breed.race
-	local name_list = not not GrudgeMarkedNames[BreedEnhancements]
+	local name_list = GrudgeMarkedNames[BreedEnhancements]
 
 	if breed_enhancement_attributes then
 		for k, v in pairs(breed_enhancement_attributes) do
@@ -89,7 +89,7 @@ end
 TerrorEventUtils.apply_breed_enhancements = function (unit, breed, optional_data)
 	-- function 10
 	local ai_system = Managers.state.entity:system("ai_system")
-	local name_index = not not optional_data.name_index
+	local name_index = optional_data.name_index
 
 	ai_system:set_attribute(unit, "name_index", "grudge_marked", name_index)
 
@@ -116,7 +116,7 @@ end
 
 TerrorEventUtils.generate_enhanced_breed = function (num_enhancements, breed_name, enhancement_set)
 	-- function 11
-	enhancement_set = not not enhancement_set or not not BossGrudgeMarks
+	enhancement_set = enhancement_set or BossGrudgeMarks
 
 	local t = {}
 	local result_list = {
@@ -194,8 +194,8 @@ end
 TerrorEventUtils.add_enhancements_to_spawn_data = function (optional_data, num_enhancements, breed_name, enhancement_set)
 	-- function 13
 	if num_enhancements > 0 then
-		optional_data = not not optional_data or not not {}
-		optional_data.enhancements = TerrorEventUtils.generate_enhanced_breed(num_enhancements, breed_name, not not enhancement_set or not not BossGrudgeMarks)
+		optional_data = optional_data or {}
+		optional_data.enhancements = TerrorEventUtils.generate_enhanced_breed(num_enhancements, breed_name, enhancement_set or BossGrudgeMarks)
 	end
 
 	return optional_data
@@ -203,12 +203,12 @@ end
 
 TerrorEventUtils.add_enhancements_for_difficulty = function (optional_data, difficulty, breed_name, event, difficulty_tweak, enhancement_set)
 	-- function 14
-	optional_data = not not optional_data or not not {}
+	optional_data = optional_data or {}
 
-	local num_enhancements = not not DifficultyTweak.converters.closest_tweak_match(difficulty, difficulty_tweak, BREED_ENHANCEMENTS_PER_DIFFICULTY)
+	local num_enhancements = DifficultyTweak.converters.closest_tweak_match(difficulty, difficulty_tweak, BREED_ENHANCEMENTS_PER_DIFFICULTY)
 
 	if num_enhancements > 0 then
-		enhancement_set = not not enhancement_set or not not BossGrudgeMarks
+		enhancement_set = enhancement_set or BossGrudgeMarks
 
 		return TerrorEventUtils.add_enhancements_to_spawn_data(optional_data, num_enhancements, breed_name, enhancement_set)
 	end

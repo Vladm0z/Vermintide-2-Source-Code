@@ -2,7 +2,7 @@
 
 local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-WeaponTraits = not not WeaponTraits
+WeaponTraits = WeaponTraits
 
 local buff_tweak_data = {
 	traits_melee_attack_speed_on_crit_proc = {

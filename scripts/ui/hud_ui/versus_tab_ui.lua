@@ -65,7 +65,7 @@ VersusTabUI.init = function (self, parent, ingame_ui_context)
 	self:_register_events()
 
 	local game_mode_state = Managers.state.game_mode:game_mode():game_mode_state()
-	local round_has_started = game_mode_state ~= "match_running_state" and not not nil or not (game_mode_state ~= "match_running_state") and not not true
+	local round_has_started = not (game_mode_state ~= "match_running_state") or nil
 
 	if round_has_started then
 		self:_on_round_started()
@@ -195,7 +195,7 @@ VersusTabUI._draw = function (self, dt, t)
 	local input_service = input_manager:get_service("player_list_input")
 	local render_settings = self._render_settings
 	local gamepad_active = input_manager:is_device_active("gamepad")
-	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
@@ -205,7 +205,7 @@ VersusTabUI._draw = function (self, dt, t)
 		for i = 1, #widgets do
 			local widget = widgets[i]
 
-			render_settings.alpha_multiplier = not not widget.alpha_multiplier
+			render_settings.alpha_multiplier = widget.alpha_multiplier
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 		end
@@ -253,7 +253,7 @@ VersusTabUI._draw = function (self, dt, t)
 		end
 	end
 
-	self._widgets_by_name.objective_text.content.visible = self._round_has_started and not not true or not self._round_has_started and not not false
+	self._widgets_by_name.objective_text.content.visible = self._round_has_started
 
 	UIRenderer.draw_widget(ui_renderer, self._item_tooltip)
 
@@ -375,7 +375,7 @@ end
 
 VersusTabUI.is_focused = function (self)
 	-- function 15
-	return not not self._active
+	return self._active
 end
 
 VersusTabUI.is_active = function (self)
@@ -496,7 +496,7 @@ VersusTabUI._create_player_slots = function (self)
 				local size = ui_scenegraph[player_panel_scenegraph_id].size
 				local widget_definition = UIWidgets.create_player_panel(player_panel_scenegraph_id, talent_tooltip_scenegraph_id, index, size)
 				local widget = UIWidget.init(widget_definition)
-				local team_color = i ~= 1 and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (i ~= 1) and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+				local team_color = i ~= 1 and Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (i ~= 1) and Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 
 				self:_apply_color_values(widget.style.background.color, team_color)
 
@@ -516,7 +516,7 @@ end
 VersusTabUI._setup_custom_settings = function (self)
 	-- function 22
 	local custom_game_settings_handler = Managers.mechanism:game_mechanism():get_custom_game_settings_handler()
-	local settings_templates = not not custom_game_settings_handler and not not custom_game_settings_handler:get_settings_template()
+	local settings_templates = custom_game_settings_handler and custom_game_settings_handler:get_settings_template()
 	local settings = custom_game_settings_handler:get_settings()
 	local settings_template = settings_templates
 	local settings_ui_data = DLCSettings.carousel.custom_game_ui_settings
@@ -591,7 +591,7 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 
 	if party then
 		local side = Managers.state.side.side_by_party[party]
-		local is_dark_pact = not not side and side:name() == "dark_pact"
+		local is_dark_pact = side and side:name() == "dark_pact"
 		local slots = party.slots
 
 		for j = 1, #team_slots do
@@ -641,15 +641,15 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 			local is_wounded, is_knocked_down, needs_help, is_dead
 			local is_local_player = false
 			local is_bot = true
-			local unique_id = not not player and not not player:unique_id()
-			local player_exists = not not player and not not players[unique_id]
+			local unique_id = player and player:unique_id()
+			local player_exists = player and players[unique_id]
 
 			if player_exists then
 				if profile_updated then
 					local is_player_controlled = player:is_player_controlled()
 					local player_portrait_frame = CosmeticUtils.get_cosmetic_slot(player, "slot_frame")
-					local player_portrait_frame_name = player_portrait_frame and not not player_portrait_frame.item_name or not player_portrait_frame and not not "default"
-					local level_text = not not match_handler:query_peer_data(peer_id, "versus_level", true)
+					local player_portrait_frame_name = player_portrait_frame and player_portrait_frame.item_name or not player_portrait_frame and "default"
+					local level_text = match_handler:query_peer_data(peer_id, "versus_level", true)
 					local portrait_texture = self:_get_hero_portrait(profile_index, career_index)
 					local player_frame_scenegraph_id = "team_" .. team .. "_player_frame_" .. j
 					local portrait_widget = self:_create_portrait_frame(player_frame_scenegraph_id, player_portrait_frame_name, level_text, portrait_texture)
@@ -658,7 +658,7 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 
 					if is_player_controlled then
 						local player_insignia_scenegraph_id = "team_" .. team .. "_player_insignia_" .. j
-						local versus_level = not not ExperienceSettings.get_versus_player_level(player)
+						local versus_level = ExperienceSettings.get_versus_player_level(player)
 						local insignia_widget_def = UIWidgets.create_small_insignia(player_insignia_scenegraph_id, versus_level)
 						local insignia_widget = UIWidget.init(insignia_widget_def)
 
@@ -670,10 +670,10 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 				is_bot = not player:is_player_controlled()
 
 				local player_name = player:name()
-				local career_name = not not player:career_name()
+				local career_name = player:career_name()
 				local network_handler = Managers.mechanism:network_handler()
 
-				panel_content.show_host = peer_id == network_handler.server_peer_id and not not not is_bot
+				panel_content.show_host = peer_id == network_handler.server_peer_id and not is_bot
 
 				if player_slot.player_name ~= player_name then
 					player_slot.player_name = player_name
@@ -713,7 +713,7 @@ VersusTabUI._update_party_slots_data = function (self, party_id, team_slots, tea
 				self:_update_player_talents_tooltip(panel_widget)
 
 				local game_object_id = player.game_object_id
-				local ping = game_object_id and not not GameSession.game_object_field(game_session, game_object_id, "ping") or not game_object_id and not not math.huge
+				local ping = game_object_id and GameSession.game_object_field(game_session, game_object_id, "ping") or not game_object_id and math.huge
 				local ping_texture, ping_color = self:_get_ping_texture_by_ping_value(ping)
 
 				panel_content.ping_texture = ping_texture
@@ -786,12 +786,12 @@ VersusTabUI._get_hero_portrait = function (self, profile_index, career_index)
 	local career = profile.careers[career_index]
 	local portrait_texture = career.portrait_image
 
-	return not not portrait_texture or not not default_portrait
+	return portrait_texture or default_portrait
 end
 
 VersusTabUI._create_portrait_frame = function (self, scenegraph_id, frame_settings_name, level_text, portrait_texture, optional_scale)
 	-- function 28
-	local scale = not not optional_scale or not not 1
+	local scale = optional_scale or 1
 	local retained_mode = false
 	local widget_definition = UIWidgets.create_portrait_frame(scenegraph_id, frame_settings_name, level_text, scale, retained_mode, portrait_texture)
 	local widget = UIWidget.init(widget_definition, self._ui_top_renderer)
@@ -891,7 +891,7 @@ end
 
 VersusTabUI._can_host_solo_kick = function (self)
 	-- function 36
-	return not not self._is_server
+	return self._is_server
 end
 
 VersusTabUI._can_kick_player = function (self, peer_id)
@@ -944,15 +944,15 @@ VersusTabUI._update_players_panel_button_widgets = function (self)
 				local peer_id = player_slot.peer_id
 				local is_local_player = player_slot.is_local_player
 				local is_bot = player_slot.is_bot
-				local can_kick_player = not not vote_kick_enabled and not not self:_can_kick_player(peer_id)
+				local can_kick_player = vote_kick_enabled and self:_can_kick_player(peer_id)
 
 				if not empty and is_player then
 					if is_local_player or is_bot then
 						widget_content.show_chat_button = false
 						widget_content.show_kick_button = false
 						widget_content.show_voice_button = false
-						widget_content.show_profile_button = not not is_local_player and not not not is_bot
-						widget_content.show_ping = not is_local_player and not not not is_bot
+						widget_content.show_profile_button = is_local_player and not is_bot
+						widget_content.show_ping = not is_local_player and not is_bot
 						widget_content.chat_button_hotspot.disable_button = true
 						widget_content.kick_button_hotspot.disable_button = true
 						widget_content.voice_button_hotspot.disable_button = true
@@ -1136,7 +1136,7 @@ VersusTabUI._update_player_talents = function (self, player_unit, player, widget
 		for i = 1, 6 do
 			local id = talent_ids[i]
 			local talent = TalentUtils.get_talent_by_id(profile_name, id)
-			local talent_icon = not not talent and not not talent.icon
+			local talent_icon = talent and talent.icon
 			local talent_content = panel_content["talent_" .. i]
 
 			if not talent_icon then
@@ -1144,7 +1144,7 @@ VersusTabUI._update_player_talents = function (self, player_unit, player, widget
 			end
 
 			talent_content.talent = talent
-			talent_content.icon = not not talent_icon or not not "icons_placeholder"
+			talent_content.icon = talent_icon or "icons_placeholder"
 		end
 	end
 end
@@ -1187,13 +1187,13 @@ VersusTabUI._update_player_health = function (self, player_unit, widget)
 	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 	local max_health = health_extension:get_max_health()
 	local is_dead = status_extension:is_dead()
-	local total_health = is_dead and not not 0 or not is_dead and not not health_extension:current_health()
-	local total_health_percent = is_dead and not not 0 or not is_dead and not not health_extension:current_health_percent()
-	local health_percent = is_dead and not not 0 or not is_dead and not not health_extension:current_permanent_health_percent()
+	local total_health = is_dead and 0 or not is_dead and health_extension:current_health()
+	local total_health_percent = is_dead and 0 or not is_dead and health_extension:current_health_percent()
+	local health_percent = is_dead and 0 or not is_dead and health_extension:current_permanent_health_percent()
 	local is_wounded = status_extension:is_wounded()
-	local is_knocked_down = status_extension:is_knocked_down() and total_health_percent > 0 or not status_extension:is_knocked_down() and not not status_extension:get_is_ledge_hanging()
+	local is_knocked_down = status_extension:is_knocked_down() and total_health_percent > 0 or not status_extension:is_knocked_down() and status_extension:get_is_ledge_hanging()
 	local is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
-	local needs_help = not not status_extension:is_grabbed_by_pack_master()
+	local needs_help = status_extension:is_grabbed_by_pack_master()
 	local num_grimoires = buff_extension:num_buff_perk("skaven_grimoire")
 	local multiplier = buff_extension:apply_buffs_to_value(PlayerUnitDamageSettings.GRIMOIRE_HEALTH_DEBUFF, "curse_protection")
 	local num_twitch_grimoires = buff_extension:num_buff_perk("twitch_grimoire")
@@ -1216,7 +1216,7 @@ VersusTabUI._update_player_health = function (self, player_unit, widget)
 	local ability_bar_content = content.ability_bar
 
 	if game and go_id then
-		local ability_cooldown_percentage = not not GameSession.game_object_field(game, go_id, "ability_percentage")
+		local ability_cooldown_percentage = GameSession.game_object_field(game, go_id, "ability_percentage")
 
 		ability_bar_content.bar_value = 1 - ability_cooldown_percentage
 	end
@@ -1249,7 +1249,7 @@ end
 
 VersusTabUI._get_opponent_party_id = function (self)
 	-- function 47
-	return self._party_id ~= 1 and not not 1 or not (self._party_id ~= 1) and not not 2
+	return self._party_id ~= 1 and 1 or not (self._party_id ~= 1) and 2
 end
 
 VersusTabUI._remove_ignore_chat_message_from_peer_id = function (self, peer_id)
@@ -1412,7 +1412,7 @@ end
 
 VersusTabUI._update_objective_progress = function (self)
 	-- function 56
-	local progress = not not self._objective_system:current_objective_progress()
+	local progress = self._objective_system:current_objective_progress()
 	local starting_degrees = 0
 	local degrees = 360 - starting_degrees * 2
 	local alpha = 255 * math.min(progress * 2, 1)
@@ -1511,7 +1511,7 @@ end
 
 VersusTabUI._set_active_scoring_side_color = function (self, is_hero)
 	-- function 66
-	local active_side_color = is_hero and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_hero and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+	local active_side_color = is_hero and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_hero and Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local objective_widget = self._widgets_by_name.score
 
 	objective_widget.content.is_hero = is_hero
@@ -1525,7 +1525,7 @@ VersusTabUI._is_dark_pact = function (self)
 	local party_manager = Managers.party
 	local party = party_manager:get_party(party_id)
 	local side = Managers.state.side.side_by_party[party]
-	local is_dark_pact = not not side and side:name() == "dark_pact"
+	local is_dark_pact = side and side:name() == "dark_pact"
 
 	return is_dark_pact
 end

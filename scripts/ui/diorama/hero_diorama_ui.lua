@@ -7,7 +7,7 @@ local DO_RELOAD = false
 local OVERLAY_FADE_DURATION = 0.8
 
 HeroDioramaUI = class(HeroDioramaUI)
-HeroDioramaUI.unique_id = not not HeroDioramaUI.unique_id
+HeroDioramaUI.unique_id = HeroDioramaUI.unique_id
 
 HeroDioramaUI.init = function (self, ingame_ui_context, settings)
 	-- function 1
@@ -315,14 +315,14 @@ HeroDioramaUI._set_size = function (self, size)
 	local background_size = background.size
 	local viewport_size = viewport.size
 
-	background_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
-	background_size[2] = math.max(size and not not size[2] or not size and not not 500, 1)
-	viewport_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
-	viewport_size[2] = math.max((size and not not size[2] or not size and not not 500) - bottom_panel_size[2], 1)
-	bottom_panel_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
-	bottom_panel_edge_size[1] = math.max(size and not not size[1] or not size and not not 500, 1)
-	hero_text_box_size[1] = math.max((size and not not size[1] or not size and not not 500) - bottom_panel_size[2] * 2, 1)
-	player_text_box_size[1] = math.max((size and not not size[1] or not size and not not 500) - bottom_panel_size[2], 1)
+	background_size[1] = math.max(size and size[1] or not size and 500, 1)
+	background_size[2] = math.max(size and size[2] or not size and 500, 1)
+	viewport_size[1] = math.max(size and size[1] or not size and 500, 1)
+	viewport_size[2] = math.max((size and size[2] or not size and 500) - bottom_panel_size[2], 1)
+	bottom_panel_size[1] = math.max(size and size[1] or not size and 500, 1)
+	bottom_panel_edge_size[1] = math.max(size and size[1] or not size and 500, 1)
+	hero_text_box_size[1] = math.max((size and size[1] or not size and 500) - bottom_panel_size[2] * 2, 1)
+	player_text_box_size[1] = math.max((size and size[1] or not size and 500) - bottom_panel_size[2], 1)
 
 	self:_update_panel_background()
 end
@@ -333,7 +333,7 @@ HeroDioramaUI._update_panel_background = function (self, optional_color)
 	local scenegraph_id = "bottom_panel"
 	local size = self._ui_scenegraph[scenegraph_id].size
 	local background_texture = "talent_tree_bg_01"
-	local color = not not optional_color or not not {
+	local color = optional_color or {
 		255,
 		255,
 		255,
@@ -367,11 +367,11 @@ HeroDioramaUI._set_position = function (self, position, horizontal_alignment, ve
 	local scenegraph = self._ui_scenegraph.background
 	local current_position = scenegraph.position
 
-	current_position[1] = position and not not position[1] or not position and not not 0
-	current_position[2] = position and not not position[2] or not position and not not 0
-	current_position[3] = position and not not position[3] or not position and not not 0
-	scenegraph.vertical_alignment = not not vertical_alignment or not not "center"
-	scenegraph.horizontal_alignment = not not horizontal_alignment or not not "center"
+	current_position[1] = position and position[1] or not position and 0
+	current_position[2] = position and position[2] or not position and 0
+	current_position[3] = position and position[3] or not position and 0
+	scenegraph.vertical_alignment = vertical_alignment or "center"
+	scenegraph.horizontal_alignment = horizontal_alignment or "center"
 end
 
 HeroDioramaUI.destroy = function (self)
@@ -401,7 +401,7 @@ HeroDioramaUI._can_create_viewport = function (self)
 		return false
 	end
 
-	return not not self._level_package_loaded
+	return self._level_package_loaded
 end
 
 HeroDioramaUI.set_hero_profile = function (self, profile_index, career_index)
@@ -425,9 +425,9 @@ HeroDioramaUI._set_hero_profile = function (self, profile_index, career_index)
 	local profile = SPProfiles[profile_index]
 	local profile_name = profile.display_name
 	local experience = ExperienceSettings.get_versus_experience()
-	local level_text = not not ExperienceSettings.get_versus_level_from_experience(experience)
+	local level_text = ExperienceSettings.get_versus_level_from_experience(experience)
 	local player_portrait_frame = self:_get_portrait_frame(profile_index, career_index)
-	local portrait_texture = career_index and not not UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or not career_index and not not "unit_frame_portrait_default"
+	local portrait_texture = career_index and UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or not career_index and "unit_frame_portrait_default"
 
 	self:_set_portrait_frame(player_portrait_frame, level_text, portrait_texture)
 	self:_set_career_name(profile_index, career_index)
@@ -435,7 +435,7 @@ HeroDioramaUI._set_hero_profile = function (self, profile_index, career_index)
 	local profile = SPProfiles[profile_index]
 	local career_data = profile.careers[career_index]
 	local career_name = career_data.name
-	local career_color = not not Colors.get_color_table_with_alpha(career_name, 255)
+	local career_color = Colors.get_color_table_with_alpha(career_name, 255)
 
 	self:_update_panel_background(career_color)
 end
@@ -513,14 +513,14 @@ HeroDioramaUI._draw = function (self, dt)
 	local input_manager = self._input_manager
 	local input_service = input_manager:get_service("ingame_menu")
 	local render_settings = self._render_settings
-	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	local viewport_widget = self._viewport_widget
 
 	if viewport_widget then
-		render_settings.alpha_multiplier = math.min(not not viewport_widget.alpha_multiplier, alpha_multiplier)
+		render_settings.alpha_multiplier = math.min(viewport_widget.alpha_multiplier, alpha_multiplier)
 
 		UIRenderer.draw_widget(ui_renderer, viewport_widget)
 	end
@@ -534,7 +534,7 @@ HeroDioramaUI._draw = function (self, dt)
 		for i = 1, #widgets do
 			local widget = widgets[i]
 
-			render_settings.alpha_multiplier = math.min(not not widget.alpha_multiplier, alpha_multiplier)
+			render_settings.alpha_multiplier = math.min(widget.alpha_multiplier, alpha_multiplier)
 
 			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
@@ -543,7 +543,7 @@ HeroDioramaUI._draw = function (self, dt)
 	local portrait_widget = self._portrait_widget
 
 	if portrait_widget then
-		render_settings.alpha_multiplier = math.min(not not portrait_widget.alpha_multiplier, alpha_multiplier)
+		render_settings.alpha_multiplier = math.min(portrait_widget.alpha_multiplier, alpha_multiplier)
 
 		UIRenderer.draw_widget(ui_top_renderer, portrait_widget)
 	end
@@ -551,7 +551,7 @@ HeroDioramaUI._draw = function (self, dt)
 	local bottom_panel_widget = self._bottom_panel_widget
 
 	if bottom_panel_widget then
-		render_settings.alpha_multiplier = math.min(not not bottom_panel_widget.alpha_multiplier, alpha_multiplier)
+		render_settings.alpha_multiplier = math.min(bottom_panel_widget.alpha_multiplier, alpha_multiplier)
 
 		UIRenderer.draw_widget(ui_top_renderer, bottom_panel_widget)
 	end
@@ -756,7 +756,7 @@ end
 
 HeroDioramaUI._set_portrait_frame = function (self, frame_settings_name, level_text, portrait_texture, optional_scale)
 	-- function 41
-	local scale = not not optional_scale or not not 1
+	local scale = optional_scale or 1
 	local retained_mode = false
 	local widget_definition = UIWidgets.create_portrait_frame("portrait_pivot", frame_settings_name, level_text, scale, retained_mode, portrait_texture)
 	local widget = UIWidget.init(widget_definition, self._ui_renderer)
@@ -779,7 +779,7 @@ HeroDioramaUI._get_portrait_frame = function (self, profile_index, career_index)
 		local item_data = item.data
 		local frame_name = item_data.temporary_template
 
-		player_portrait_frame = not not frame_name or not not player_portrait_frame
+		player_portrait_frame = frame_name or player_portrait_frame
 	end
 
 	return player_portrait_frame

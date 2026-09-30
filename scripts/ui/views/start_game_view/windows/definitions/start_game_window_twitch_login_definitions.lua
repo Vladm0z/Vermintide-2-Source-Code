@@ -303,7 +303,7 @@ local function create_window(scenegraph_id, size)
 			pass_type = "rect",
 			content_check_function = function (content, style)
 				-- function 2
-				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -330,7 +330,7 @@ local function create_window(scenegraph_id, size)
 					}
 				end
 
-				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not not not Managers.twitch:is_connecting()
+				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -345,7 +345,7 @@ local function create_window(scenegraph_id, size)
 					style.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
-				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -930,17 +930,17 @@ local description_text_style = {
 
 local function connected_content_check_function(content)
 	-- function 10
-	return not Managers.twitch:is_connecting() and not not not Managers.twitch:is_connected()
+	return not Managers.twitch:is_connecting() and not Managers.twitch:is_connected()
 end
 
 local function disconnected_content_check_function(content)
 	-- function 11
-	return not Managers.twitch:is_connecting() and not not Managers.twitch:is_connected()
+	return not Managers.twitch:is_connecting() and Managers.twitch:is_connected()
 end
 
 local function connecting_content_check_function(content)
 	-- function 12
-	return not not Managers.twitch:is_connecting()
+	return (Managers.twitch:is_connecting())
 end
 
 local streaming_desc_str = "start_game_window_twitch_connect_description"

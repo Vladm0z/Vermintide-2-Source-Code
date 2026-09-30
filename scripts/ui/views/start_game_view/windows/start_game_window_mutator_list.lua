@@ -85,7 +85,7 @@ StartGameWindowMutatorList._has_deed_items = function (self)
 	local item_filter = "item_type == deed"
 	local items = item_interface:get_filtered_items(item_filter)
 
-	return not not items and #items > 0
+	return items and #items > 0
 end
 
 StartGameWindowMutatorList.on_exit = function (self, params)

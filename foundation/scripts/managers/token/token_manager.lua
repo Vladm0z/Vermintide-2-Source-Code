@@ -12,7 +12,7 @@ TokenManager.register_token = function (self, token, callback, timeout)
 	self._tokens[#self._tokens + 1] = {
 		token = token,
 		callback = callback,
-		timeout = not not timeout or not not math.huge
+		timeout = timeout or math.huge
 	}
 end
 

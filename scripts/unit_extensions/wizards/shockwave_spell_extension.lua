@@ -6,9 +6,9 @@ ShockwaveSpellExtension.init = function (self, extension_init_context, unit, ext
 	-- function 1
 	self._unit = unit
 	self._position = Vector3Box(Unit.local_position(unit, 0))
-	self._shockwave_radius_min = not not Unit.get_data(unit, "wave_distance")
-	self._shockwave_radius_max = not not Unit.get_data(unit, "wave_distance")
-	self._vfx = not not Unit.get_data(unit, "spell_vfx")
+	self._shockwave_radius_min = Unit.get_data(unit, "wave_distance")
+	self._shockwave_radius_max = Unit.get_data(unit, "wave_distance")
+	self._vfx = Unit.get_data(unit, "spell_vfx")
 	self._spell_triggerd = false
 	self._world = extension_init_context.world
 	self._start_time = 0

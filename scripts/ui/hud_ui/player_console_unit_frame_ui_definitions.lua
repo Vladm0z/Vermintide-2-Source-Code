@@ -466,7 +466,7 @@ local function create_dynamic_health_widget()
 						-- function 8
 						local hp_bar_content = content.hp_bar
 						local internal_bar_value = hp_bar_content.internal_bar_value
-						local actual_active_percentage = not not content.actual_active_percentage
+						local actual_active_percentage = content.actual_active_percentage
 						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
 
 						return grim_progress < 1
@@ -475,7 +475,7 @@ local function create_dynamic_health_widget()
 						-- function 9
 						local hp_bar_content = content.hp_bar
 						local internal_bar_value = hp_bar_content.internal_bar_value
-						local actual_active_percentage = not not content.actual_active_percentage
+						local actual_active_percentage = content.actual_active_percentage
 						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
 						local offset = style.offset
 
@@ -490,7 +490,7 @@ local function create_dynamic_health_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 10
-						return not not content.draw_health_bar
+						return content.draw_health_bar
 					end
 				},
 				{
@@ -514,7 +514,7 @@ local function create_dynamic_health_widget()
 						local parent_content = content.parent
 						local hp_bar_content = parent_content.hp_bar
 						local internal_bar_value = hp_bar_content.internal_bar_value
-						local actual_active_percentage = not not parent_content.actual_active_percentage
+						local actual_active_percentage = parent_content.actual_active_percentage
 						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
 						local size = style.size
 						local uvs = content.uvs
@@ -533,7 +533,7 @@ local function create_dynamic_health_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function ()
 						-- function 13
-						return not not Application.user_setting("numeric_ui")
+						return (Application.user_setting("numeric_ui"))
 					end
 				},
 				{
@@ -543,7 +543,7 @@ local function create_dynamic_health_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function ()
 						-- function 14
-						return not not Application.user_setting("numeric_ui")
+						return (Application.user_setting("numeric_ui"))
 					end
 				}
 			}

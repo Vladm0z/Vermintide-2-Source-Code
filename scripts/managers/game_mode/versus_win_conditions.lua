@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/game_mode/versus_win_conditions.lua
 
-local versus_win_conditions_testify = not not script_data.testify
+local versus_win_conditions_testify = script_data.testify
 local ObjectiveTypes = require("scripts/entity_system/systems/objective/objective_types")
 local settings = DLCSettings.carousel
 
@@ -95,7 +95,7 @@ VersusWinConditions.setup_round = function (self, is_server)
 	-- function 6
 	local objective_settings = self.mechanism:get_objective_settings()
 
-	self._round_timer = not not objective_settings.round_timer
+	self._round_timer = objective_settings.round_timer
 	self._early_win_enabled = true
 
 	if self.mechanism:custom_settings_enabled() then
@@ -116,7 +116,7 @@ VersusWinConditions.setup_round = function (self, is_server)
 		self._current_set = self._current_set + 1
 	end
 
-	self._final_round = not not self.mechanism:is_last_set()
+	self._final_round = self.mechanism:is_last_set()
 	self._round_over = false
 	self._level_id = objective_settings.level_id
 	self._level_id = Managers.level_transition_handler:get_current_level_key()
@@ -262,7 +262,7 @@ VersusWinConditions.on_end_conditions_met = function (self, reason, checkpoint_a
 
 		if player then
 			local party = player:get_party()
-			local data = not not avg[party.party_id]
+			local data = avg[party.party_id]
 
 			data.num_players = data.num_players + 1
 			data.distance = data.distance + completed_distance
@@ -334,7 +334,7 @@ VersusWinConditions.on_objective_completed = function (self, objective_extension
 	end
 
 	local has_nested_parent_objectives = self:_has_nested_parent_objectives(objective_data)
-	local has_sections = objective_extension:get_total_sections() > 1 or not not has_nested_parent_objectives
+	local has_sections = objective_extension:get_total_sections() > 1 or has_nested_parent_objectives
 
 	if not has_sections then
 		self._objective_system:objective_section_completed_telemetry()
@@ -407,17 +407,17 @@ VersusWinConditions._check_heroes_close_to_win_conditions_met = function (self, 
 		total_sections = num_nested_objectives
 	end
 
-	total_sections = not not total_sections or not not objective_data.num_sockets or not not objective_data.num_sections or not not nil
-	score_per_section = not not score_per_section or not not objective_data.score_per_section or not not objective_data.score_per_socket or not not nil
+	total_sections = total_sections or objective_data.num_sockets or objective_data.num_sections or nil
+	score_per_section = score_per_section or objective_data.score_per_section or objective_data.score_per_socket or nil
 
-	local is_granular_objective = not not total_sections and not not score_per_section and total_sections >= 10
+	local is_granular_objective = total_sections and score_per_section and total_sections >= 10
 	local score_after_current_objective = 0
 	local score_needed_for_early_win = early_win_data.other_party_score_potential
 
 	if objective_data.score_for_completion then
 		score_after_current_objective = early_win_data.score + objective_data.score_for_completion
 	elseif is_granular_objective then
-		score_after_current_objective = early_win_data.score + score_per_section * total_sections - not not self._num_sections_completed
+		score_after_current_objective = early_win_data.score + score_per_section * total_sections - self._num_sections_completed
 	elseif total_sections and score_per_section and total_sections then
 		score_after_current_objective = early_win_data.score + score_per_section
 	end
@@ -430,13 +430,13 @@ VersusWinConditions._check_heroes_close_to_win_conditions_met = function (self, 
 	end
 
 	local current_objective = self:_get_current_objective_data()
-	local close_to_win_on_sub_objective = not not current_objective and not not current_objective.close_to_win_on_sub_objective
+	local close_to_win_on_sub_objective = current_objective and current_objective.close_to_win_on_sub_objective
 
 	if not close_to_win and not self._heroes_close_to_safe_zone then
 		if objective_data.close_to_win_on_completion then
 			self._heroes_close_to_safe_zone = true
 		elseif close_to_win_on_sub_objective then
-			self._heroes_close_to_safe_zone = not not self._num_sections_completed >= current_objective.close_to_win_on_sub_objective
+			self._heroes_close_to_safe_zone = self._num_sections_completed >= current_objective.close_to_win_on_sub_objective
 		elseif objective_data.close_to_win_on_section then
 			self._heroes_close_to_safe_zone = self._num_sections_completed >= objective_data.close_to_win_on_section
 		elseif objective_data.objective_type and objective_data.objective_type == ObjectiveTypes.objective_safehouse then
@@ -490,7 +490,7 @@ VersusWinConditions._has_nested_parent_objectives = function (self, objective_da
 	local num_nested_objectives = table.size(objective_data.sub_objectives)
 	local _, nested_parent_objective = next(objective_data.sub_objectives)
 
-	return nested_parent_objective.sub_objectives, nested_parent_objective.sub_objectives and (not not num_nested_objectives or not not nil) or not nested_parent_objective.sub_objectives and not not nil
+	return nested_parent_objective.sub_objectives, nested_parent_objective.sub_objectives and (num_nested_objectives or nil) or not nested_parent_objective.sub_objectives and nil
 end
 
 VersusWinConditions.rpc_versus_set_score = function (self, sender, party_id, points, set_number, current_set, current_round)
@@ -617,7 +617,7 @@ end
 
 VersusWinConditions.set_data = function (self, party_id)
 	-- function 39
-	return not not self._win_data[party_id]
+	return self._win_data[party_id]
 end
 
 VersusWinConditions.play_score_sfx = function (self, current_objective_extension)
@@ -650,8 +650,8 @@ VersusWinConditions.play_score_sfx = function (self, current_objective_extension
 		if score_to_win > 0 then
 			for i, objective in ipairs(remaining_objectives) do
 				local _, objective_data = next(objective)
-				local score_per_section = not not objective_data.score_per_section
-				local num_sections = not not objective_data.num_sockets
+				local score_per_section = objective_data.score_per_section
+				local num_sections = objective_data.num_sockets
 
 				for section = 1, num_sections do
 					score_to_win = score_to_win - score_per_section
@@ -742,7 +742,7 @@ VersusWinConditions.update_early_win_conditions = function (self)
 		if hero_wins then
 			self.party_won_early = hero_early_win_data
 		elseif pactsworn_wins then
-			local pactsworn_party_id = self._hero_party_id ~= 1 and not not 1 or not (self._hero_party_id ~= 1) and not not 2
+			local pactsworn_party_id = self._hero_party_id ~= 1 and 1 or not (self._hero_party_id ~= 1) and 2
 			local pactsworn_early_win_data = {}
 
 			pactsworn_early_win_data.party_id = pactsworn_party_id
@@ -756,12 +756,12 @@ VersusWinConditions.update_early_win_conditions = function (self)
 		end
 
 		if self.party_won_early then
-			printf("[VersusWinConditions] Party %s (%s) won early due to score %s being higher than opponent potential score %s", self.party_won_early.party_id, self.party_won_early.party_id ~= self._hero_party_id and not not "pact_sworn" or not (self.party_won_early.party_id ~= self._hero_party_id) and not not "heroes", self.party_won_early.score, self.party_won_early.other_party_score_potential)
+			printf("[VersusWinConditions] Party %s (%s) won early due to score %s being higher than opponent potential score %s", self.party_won_early.party_id, self.party_won_early.party_id ~= self._hero_party_id and "pact_sworn" or not (self.party_won_early.party_id ~= self._hero_party_id) and "heroes", self.party_won_early.score, self.party_won_early.other_party_score_potential)
 			self:_get_hero_early_win_data(true)
 		end
 	end
 
-	return not not hero_wins or not not pactsworn_wins, self.party_won_early
+	return hero_wins or pactsworn_wins, self.party_won_early
 end
 
 local safe_room_points_per_player = 10
@@ -770,7 +770,7 @@ VersusWinConditions._get_hero_early_win_data = function (self, print_context)
 	-- function 44
 	local party_id = self._hero_party_id
 	local set_number = self.mechanism:get_current_set()
-	local other_party_id = party_id ~= 1 and not not 1 or not (party_id ~= 1) and not not 2
+	local other_party_id = party_id ~= 1 and 1 or not (party_id ~= 1) and 2
 	local score = self:get_total_score(party_id)
 	local other_score = self:get_total_score(other_party_id)
 	local party = Managers.party:get_party(party_id)
@@ -867,7 +867,7 @@ VersusWinConditions.get_current_score = function (self, party_id)
 	-- function 46
 	local set_data = self:current_set_data(party_id)
 
-	return set_data and not not set_data.claimed_points or not set_data and not not 0
+	return set_data and set_data.claimed_points or not set_data and 0
 end
 
 VersusWinConditions.get_total_score = function (self, party_id)
@@ -916,7 +916,7 @@ VersusWinConditions.get_match_results = function (self)
 
 	local results
 
-	results = not not "draw"
+	results = "draw"
 
 	return results
 end
@@ -932,7 +932,7 @@ VersusWinConditions.get_side_close_to_winning = function (self)
 	end
 
 	if self._round_timer <= self._round_almost_over_time_breakpoint then
-		return self._final_round and not not "dark_pact" or not self._final_round and not not "NONE"
+		return self._final_round and "dark_pact" or not self._final_round and "NONE"
 	end
 
 	return nil

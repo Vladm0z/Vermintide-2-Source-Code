@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/lake/lake_bot_conditions.lua
 
-BTConditions.can_activate = not not BTConditions.can_activate
+BTConditions.can_activate = BTConditions.can_activate
 
 table.merge_recursive(BTConditions.ability_check_categories, {
 	activate_ability = {
@@ -32,7 +32,7 @@ BTConditions.can_activate.es_questingknight = function (blackboard)
 	end
 
 	local target_breed = target_blackboard.breed
-	local target_threat = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_threat = target_breed and target_breed.threat_value or not target_breed and 0
 
 	if target_threat >= QK_MIN_THREAT then
 		local self_unit = blackboard.unit

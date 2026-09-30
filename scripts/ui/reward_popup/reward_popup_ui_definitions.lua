@@ -636,7 +636,7 @@ local function create_item_list_widget(scenegraph_id)
 			style_id = illusion_key,
 			content_check_function = function (arg_content)
 				-- function 5
-				return not not arg_content[item_key]
+				return arg_content[item_key]
 			end
 		}
 		passes[#passes + 1] = {

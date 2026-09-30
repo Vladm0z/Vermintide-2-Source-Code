@@ -32,11 +32,11 @@ local dummy_wwise_world = {
 
 if GLOBAL_MUSIC_WORLD then
 	MUSIC_WORLD = Application.new_world("music_world", Application.DISABLE_PHYSICS, Application.DISABLE_RENDERING)
-	MUSIC_WWISE_WORLD = not not Wwise.wwise_world(MUSIC_WORLD)
+	MUSIC_WWISE_WORLD = Wwise.wwise_world(MUSIC_WORLD)
 end
 
-BUILD = not not BUILD
-PLATFORM = not not PLATFORM
+BUILD = BUILD
+PLATFORM = PLATFORM
 IS_CONSOLE = PLATFORM == "ps4" or PLATFORM == "xb1"
 IS_WINDOWS = PLATFORM == "win32"
 IS_LINUX = PLATFORM == "linux"
@@ -48,7 +48,7 @@ IS_NOT_LINUX = not IS_LINUX
 IS_NOT_XB1 = not IS_XB1
 IS_NOT_PS4 = not IS_PS4
 LAUNCH_MODE = "game"
-HAS_STEAM = HAS_STEAM ~= false and not not not not rawget(_G, "Steam")
+HAS_STEAM = HAS_STEAM ~= false and rawget(_G, "Steam")
 DEDICATED_SERVER = Application.is_dedicated_server()
 
 local args = {
@@ -79,17 +79,17 @@ Application.platform = function ()
 	error("Trying to use Application.platform(), use global variable PLATFORM instead.")
 end
 
-GLOBAL_FRAME_INDEX = not not GLOBAL_FRAME_INDEX
-script_data = not not script_data
+GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX
+script_data = script_data
 
 if LEVEL_EDITOR_TEST then
-	GlobalResources = not not GlobalResources
+	GlobalResources = GlobalResources
 elseif IS_PS4 then
-	GlobalResources = not not GlobalResources
+	GlobalResources = GlobalResources
 elseif IS_XB1 then
-	GlobalResources = not not GlobalResources
+	GlobalResources = GlobalResources
 else
-	GlobalResources = not not GlobalResources
+	GlobalResources = GlobalResources
 end
 
 GlobalResources.unload = {}

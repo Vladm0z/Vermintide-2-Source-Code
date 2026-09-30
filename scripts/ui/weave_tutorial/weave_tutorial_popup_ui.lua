@@ -220,12 +220,12 @@ WeaveTutorialPopupUI.populate_message = function (self, title_text, sub_title_te
 	-- function 12
 	local title = self.title_text.content
 
-	title.text = not not title_text or not not ""
+	title.text = title_text or ""
 	title.visible = title_text ~= nil
 
 	local sub_title = self.sub_title_text.content
 
-	sub_title.text = not not sub_title_text or not not ""
+	sub_title.text = sub_title_text or ""
 	sub_title.visible = sub_title_text ~= nil
 
 	local button_2 = self.button_2
@@ -237,7 +237,7 @@ WeaveTutorialPopupUI.populate_message = function (self, title_text, sub_title_te
 		button_2.content.visible = false
 	end
 
-	local localized_body_text = disable_body_localization and (not not body_text or not not Localize(body_text)) or not disable_body_localization and not not Localize(body_text)
+	local localized_body_text = disable_body_localization and (body_text or Localize(body_text)) or not disable_body_localization and Localize(body_text)
 
 	self.body_paragraphs = UIRenderer.break_paragraphs(localized_body_text, {})
 
@@ -283,12 +283,12 @@ WeaveTutorialPopupUI.resize_to_fit = function (self)
 	local title_visible = self.title_text.content.visible
 	local original_subtitle_pos = scenegraph_definition.sub_title.position
 
-	sub_title_text_def.position[2] = title_visible and not not original_subtitle_pos[2] or not title_visible and not not 0
+	sub_title_text_def.position[2] = title_visible and original_subtitle_pos[2] or not title_visible and 0
 
 	local sub_title_visible = self.sub_title_text.content.visible
 	local original_body_pos = scenegraph_definition.body.position
 
-	body_text_def.position[2] = sub_title_visible and not not original_body_pos[2] or not sub_title_visible and not not original_subtitle_pos[2]
+	body_text_def.position[2] = sub_title_visible and original_body_pos[2] or not sub_title_visible and original_subtitle_pos[2]
 
 	local base_window_height = self:calculate_base_window_height()
 
@@ -311,9 +311,9 @@ end
 WeaveTutorialPopupUI.calculate_base_window_height = function (self)
 	-- function 14
 	local title_size = self.title_start_y - self.sub_title_start_y
-	local title_offset = self.title_text.content.visible and not not 0 or not self.title_text.content.visible and not not title_size
+	local title_offset = self.title_text.content.visible and 0 or not self.title_text.content.visible and title_size
 	local sub_title_size = self.sub_title_start_y - self.body_start_y
-	local sub_title_offset = self.sub_title_text.content.visible and not not 0 or not self.sub_title_text.content.visible and not not sub_title_size
+	local sub_title_offset = self.sub_title_text.content.visible and 0 or not self.sub_title_text.content.visible and sub_title_size
 	local window_height = self.button_height - self.body_start_y - title_offset + 50
 
 	return window_height

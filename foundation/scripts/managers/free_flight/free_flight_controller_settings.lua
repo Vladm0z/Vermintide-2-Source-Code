@@ -1,6 +1,6 @@
 -- chunkname: @foundation/scripts/managers/free_flight/free_flight_controller_settings.lua
 
-FreeFlightControllerSettings = not not FreeFlightControllerSettings
+FreeFlightControllerSettings = FreeFlightControllerSettings
 FreeFlightControllerSettings.keyboard_mouse = {
 	quit_game = {
 		controller_type = "keyboard",

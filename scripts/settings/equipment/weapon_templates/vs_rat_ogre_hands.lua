@@ -108,7 +108,7 @@ weapon_template.actions = {
 					input_extension:reset_release_input()
 				end
 
-				return not is_in_ghost_mode and not not not ability_data.is_priming
+				return not is_in_ghost_mode and not ability_data.is_priming
 			end,
 			total_time = math.huge,
 			anim_time_scale = time_mod * 1.15,

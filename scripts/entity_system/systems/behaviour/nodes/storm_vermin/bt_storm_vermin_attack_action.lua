@@ -31,14 +31,14 @@ BTStormVerminAttackAction.enter = function (self, unit, blackboard, t)
 	blackboard.attack_aborted = false
 	blackboard.target_speed = 0
 	blackboard.attack_token = true
-	blackboard.play_sound_delay = t + not not action.sound_delay
+	blackboard.play_sound_delay = t + action.sound_delay
 
 	if action.blocked_anim then
 		blackboard.blocked_anim = action.blocked_anim
 	end
 
 	local target_unit = blackboard.target_unit
-	local target_unit_status_extension = not not ScriptUnit.has_extension(target_unit, "status_system")
+	local target_unit_status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
 	blackboard.target_unit_status_extension = target_unit_status_extension
 	blackboard.attacking_target = blackboard.target_unit
@@ -111,11 +111,11 @@ BTStormVerminAttackAction._init_attack = function (self, unit, blackboard, t)
 	blackboard.move_state = "attacking"
 
 	local attack_anim
-	local target_is_knocked_down = not not blackboard.target_unit_status_extension
+	local target_is_knocked_down = blackboard.target_unit_status_extension
 
 	if target_is_knocked_down and action.knocked_down_attack_anim then
 		local self_pos = POSITION_LOOKUP[unit]
-		local target_pos = not not POSITION_LOOKUP[blackboard.target_unit]
+		local target_pos = POSITION_LOOKUP[blackboard.target_unit]
 		local z_offset = target_pos.z - self_pos.z
 
 		if z_offset < action.knocked_down_attack_threshold then
@@ -125,12 +125,12 @@ BTStormVerminAttackAction._init_attack = function (self, unit, blackboard, t)
 		end
 	elseif action.step_attack_anim then
 		local self_pos = POSITION_LOOKUP[unit]
-		local target_pos = not not POSITION_LOOKUP[blackboard.target_unit]
+		local target_pos = POSITION_LOOKUP[blackboard.target_unit]
 		local flat_distance = Vector3.distance(Vector3.flat(self_pos), Vector3.flat(target_pos))
-		local step_attack_target_speed_away = not not action.step_attack_target_speed_away
-		local step_attack_distance = not not action.step_attack_distance
-		local step_attack_target_speed_away_override = not not action.step_attack_target_speed_away_override
-		local step_attack_distance_override = not not action.step_attack_distance_override
+		local step_attack_target_speed_away = action.step_attack_target_speed_away
+		local step_attack_distance = action.step_attack_distance
+		local step_attack_target_speed_away_override = action.step_attack_target_speed_away_override
+		local step_attack_distance_override = action.step_attack_distance_override
 		local target_speed_away = blackboard.target_speed_away_small_sample
 		local should_use_step_attack = step_attack_target_speed_away < target_speed_away and (step_attack_distance < flat_distance or step_attack_target_speed_away_override < target_speed_away or step_attack_distance_override < flat_distance) or not (step_attack_target_speed_away < target_speed_away) and (step_attack_target_speed_away_override < target_speed_away or step_attack_distance_override < flat_distance)
 
@@ -263,7 +263,7 @@ BTStormVerminAttackAction.run = function (self, unit, blackboard, t, dt)
 				target_speed = breed.run_speed
 			end
 		elseif distance > 1.5 then
-			target_speed = blackboard.set_dodge_rotation_timer and (not not 0 or not not (target_speed * 1.15)) or not blackboard.set_dodge_rotation_timer and not not (target_speed * 1.15)
+			target_speed = blackboard.set_dodge_rotation_timer and (0 or target_speed * 1.15) or not blackboard.set_dodge_rotation_timer and target_speed * 1.15
 		end
 
 		if math.abs(target_speed - blackboard.target_speed) > 0.25 then
@@ -360,7 +360,7 @@ BTStormVerminAttackAction.attack = function (self, unit, t, dt, blackboard)
 	-- function 11
 	local locomotion = ScriptUnit.extension(unit, "locomotion_system")
 	local target_status_ext = blackboard.target_unit_status_extension
-	local zoink = not not target_status_ext:is_invisible()
+	local zoink = target_status_ext:is_invisible()
 
 	if zoink then
 		blackboard.attack_rotation_update_timer = t
@@ -435,7 +435,7 @@ BTStormVerminAttackAction.anim_cb_damage = function (self, unit, blackboard)
 			return
 		end
 
-		local attack_direction = not not action.attack_directions
+		local attack_direction = action.attack_directions
 		local blocked = DamageUtils.check_block(unit, target_unit, action.fatigue_type, attack_direction)
 
 		if action.damage then
@@ -520,7 +520,7 @@ end
 
 BTStormVerminAttackAction.tag_catapult_enemy = function (unit, blackboard, action, target_unit, blocked)
 	-- function 16
-	blackboard.catapult_list = not not blackboard.catapult_list
+	blackboard.catapult_list = blackboard.catapult_list
 	blackboard.catapult_list[target_unit] = blocked
 	blackboard.catapult_hit = true
 end

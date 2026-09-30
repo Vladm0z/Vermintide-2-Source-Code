@@ -140,7 +140,7 @@ base_trail_light_urn_definition.server.can_interact = function (interactor_unit,
 	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 
 	if used or being_used then
-		return not used and not not not being_used
+		return not used and not being_used
 	end
 
 	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
@@ -149,7 +149,7 @@ base_trail_light_urn_definition.server.can_interact = function (interactor_unit,
 		return false
 	end
 
-	local item_name = not not Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
+	local item_name = Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
 	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
 	if not inventory_extension and not inventory_extension:has_inventory_item("slot_level_event", item_name) then
@@ -166,7 +166,7 @@ base_trail_light_urn_definition.server.can_interact = function (interactor_unit,
 		end
 	end
 
-	return not used and not not not being_used
+	return not used and not being_used
 end
 
 base_trail_light_urn_definition.client.can_interact = function (interactor_unit, interactable_unit, data, config)
@@ -177,7 +177,7 @@ base_trail_light_urn_definition.client.can_interact = function (interactor_unit,
 		return false
 	end
 
-	local item_name = not not Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
+	local item_name = Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
 	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
 	if inventory_extension == nil or not inventory_extension:has_inventory_item("slot_level_event", item_name) then
@@ -188,7 +188,7 @@ base_trail_light_urn_definition.client.can_interact = function (interactor_unit,
 	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 
 	if used or being_used then
-		return not used and not not not being_used
+		return not used and not being_used
 	end
 
 	local custom_interaction_check_name = Unit.get_data(interactable_unit, "interaction_data", "custom_interaction_check_name")
@@ -201,5 +201,5 @@ base_trail_light_urn_definition.client.can_interact = function (interactor_unit,
 		end
 	end
 
-	return not used and not not not being_used
+	return not used and not being_used
 end

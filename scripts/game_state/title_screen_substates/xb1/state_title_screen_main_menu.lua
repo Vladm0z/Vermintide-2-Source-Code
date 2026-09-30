@@ -25,7 +25,7 @@ elseif script_data.settings.use_beta_mode then
 		menu_functions = {
 			function (this)
 				-- function 2
-				local game_type = not not this._title_start_ui:game_type()
+				local game_type = this._title_start_ui:game_type()
 
 				this:_start_game(game_type)
 				this._title_start_ui:menu_option_activated(true)
@@ -51,7 +51,7 @@ elseif script_data.settings.use_beta_mode then
 		menu_functions = {
 			function (this)
 				-- function 5
-				local game_type = not not this._title_start_ui:game_type()
+				local game_type = this._title_start_ui:game_type()
 
 				this:_start_game(game_type)
 				this._title_start_ui:menu_option_activated(true)
@@ -59,7 +59,7 @@ elseif script_data.settings.use_beta_mode then
 			end,
 			function (this)
 				-- function 6
-				local game_type = not not this._title_start_ui:game_type()
+				local game_type = this._title_start_ui:game_type()
 
 				this:_start_game(game_type, "prologue")
 				this._title_start_ui:menu_option_activated(true)
@@ -86,7 +86,7 @@ elseif GameSettingsDevelopment.additional_content_view_enabled then
 	menu_functions = {
 		function (this)
 			-- function 9
-			local game_type = not not this._title_start_ui:game_type()
+			local game_type = this._title_start_ui:game_type()
 
 			this:_start_game(game_type)
 			this._title_start_ui:menu_option_activated(true)
@@ -94,7 +94,7 @@ elseif GameSettingsDevelopment.additional_content_view_enabled then
 		end,
 		function (this)
 			-- function 10
-			local game_type = not not this._title_start_ui:game_type()
+			local game_type = this._title_start_ui:game_type()
 
 			this:_start_game(game_type, "prologue")
 			this._title_start_ui:menu_option_activated(true)
@@ -137,7 +137,7 @@ else
 	menu_functions = {
 		function (this)
 			-- function 15
-			local game_type = not not this._title_start_ui:game_type()
+			local game_type = this._title_start_ui:game_type()
 
 			this:_start_game(game_type)
 			this._title_start_ui:menu_option_activated(true)
@@ -145,7 +145,7 @@ else
 		end,
 		function (this)
 			-- function 16
-			local game_type = not not this._title_start_ui:game_type()
+			local game_type = this._title_start_ui:game_type()
 
 			this:_start_game(game_type, "prologue")
 			this._title_start_ui:menu_option_activated(true)
@@ -234,7 +234,7 @@ StateTitleScreenMainMenu.on_enter = function (self, params)
 
 	if GameSettingsDevelopment.additional_content_view_enabled then
 		local additional_content_view = self._views.additional_content_view
-		local has_splashes = not not additional_content_view and not not additional_content_view:has_active_splashes()
+		local has_splashes = additional_content_view and additional_content_view:has_active_splashes()
 
 		if not has_splashes then
 			self._title_start_ui:set_menu_item_enable_state_by_index("store", false, true, "start_game_disabled_playgo")
@@ -246,8 +246,8 @@ end
 
 StateTitleScreenMainMenu._setup_sound = function (self)
 	-- function 22
-	local master_bus_volume = not not Application.user_setting("master_bus_volume")
-	local music_bus_volume = not not Application.user_setting("music_bus_volume")
+	local master_bus_volume = Application.user_setting("master_bus_volume")
+	local music_bus_volume = Application.user_setting("music_bus_volume")
 	local wwise_world
 
 	if GLOBAL_MUSIC_WORLD then
@@ -301,7 +301,7 @@ StateTitleScreenMainMenu._init_menu_views = function (self)
 			credits_view = CreditsView:new(view_context),
 			options_view = OptionsView:new(view_context),
 			cinematics_view = CinematicsView:new(view_context),
-			additional_content_view = GameSettingsDevelopment.additional_content_view_enabled and not not AdditionalContentView:new(view_context) or not GameSettingsDevelopment.additional_content_view_enabled and not not nil
+			additional_content_view = GameSettingsDevelopment.additional_content_view_enabled and AdditionalContentView:new(view_context) or not GameSettingsDevelopment.additional_content_view_enabled and nil
 		}
 	end
 
@@ -341,7 +341,7 @@ StateTitleScreenMainMenu._try_activate_splash = function (self)
 	end
 end
 
-local BACKGROUND_ONLY = not not BACKGROUND_ONLY
+local BACKGROUND_ONLY = BACKGROUND_ONLY
 
 StateTitleScreenMainMenu._update_network = function (self, dt, t)
 	-- function 31
@@ -354,7 +354,7 @@ StateTitleScreenMainMenu._start_game = function (self, game_type, level_key, dis
 	-- function 32
 	self._game_type = game_type
 	self._level_key = level_key
-	self._disable_trailer = not not disable_trailer or not not not Application.user_setting("play_intro_cinematic")
+	self._disable_trailer = disable_trailer or not Application.user_setting("play_intro_cinematic")
 	self._profile_name = profile_name
 	self._input_disabled = true
 
@@ -677,7 +677,7 @@ StateTitleScreenMainMenu.cb_fade_in_done = function (self)
 	-- function 42
 	local game_type = self._game_type
 	local level_key = self._level_key
-	local disable_trailer = not not self._disable_trailer
+	local disable_trailer = self._disable_trailer
 	local profile_name = self._profile_name
 	local switch_to_tutorial_backend, tutorial_state = Managers.mechanism:should_run_tutorial()
 
@@ -698,7 +698,7 @@ StateTitleScreenMainMenu.cb_fade_in_done = function (self)
 	end
 
 	if level_key then
-		local environment_variation_id = LevelHelper.get_environment_variation_id and not not LevelHelper:get_environment_variation_id(level_key) or not LevelHelper.get_environment_variation_id and not not nil
+		local environment_variation_id = LevelHelper.get_environment_variation_id and LevelHelper:get_environment_variation_id(level_key) or not LevelHelper.get_environment_variation_id and nil
 
 		Managers.level_transition_handler:set_next_level(level_key, environment_variation_id)
 	end
@@ -709,7 +709,7 @@ StateTitleScreenMainMenu.cb_fade_in_done = function (self)
 		loading_context.switch_to_tutorial_backend = switch_to_tutorial_backend
 		loading_context.wanted_tutorial_state = tutorial_state
 	elseif script_data.honduras_demo then
-		self.parent.parent.loading_context.wanted_profile_index = profile_name and not not FindProfileIndex(profile_name) or not profile_name and not not DemoSettings.wanted_profile_index
+		self.parent.parent.loading_context.wanted_profile_index = profile_name and FindProfileIndex(profile_name) or not profile_name and DemoSettings.wanted_profile_index
 		GameSettingsDevelopment.disable_free_flight = DemoSettings.disable_free_flight
 		GameSettingsDevelopment.disable_intro_trailer = DemoSettings.disable_intro_trailer
 	elseif not level_key then
@@ -820,10 +820,10 @@ end
 
 StateTitleScreenMainMenu._signin_to_backend = function (self)
 	-- function 50
-	local mechanism_name = not not Development.parameter("mechanism")
+	local mechanism_name = Development.parameter("mechanism")
 	local mechanism_settings = MechanismSettings[mechanism_name]
-	local playfab_mirror = not not mechanism_settings and not not mechanism_settings.playfab_mirror
-	local mirror = not not playfab_mirror or not not "PlayFabMirrorAdventure"
+	local playfab_mirror = mechanism_settings and mechanism_settings.playfab_mirror
+	local mirror = playfab_mirror or "PlayFabMirrorAdventure"
 
 	Managers.unlock = UnlockManager:new()
 

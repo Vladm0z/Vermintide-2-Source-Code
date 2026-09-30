@@ -38,8 +38,8 @@ SimpleHuskInventoryExtension.init = function (self, extension_init_context, unit
 
 	if player then
 		local career_name = player:career_name()
-		local career_data = not not career_name and not not CareerSettings[career_name]
-		local additional_item_slots = not not career_data and not not career_data.additional_item_slots
+		local career_data = career_name and CareerSettings[career_name]
+		local additional_item_slots = career_data and career_data.additional_item_slots
 
 		if additional_item_slots then
 			for slot_name, slot_count in pairs(additional_item_slots) do
@@ -95,7 +95,7 @@ end
 SimpleHuskInventoryExtension.get_weapon_unit = function (self)
 	-- function 5
 	local equipment = self._equipment
-	local weapon_unit = not not equipment.left_hand_wielded_unit_3p
+	local weapon_unit = equipment.left_hand_wielded_unit_3p
 
 	return weapon_unit
 end
@@ -120,7 +120,7 @@ SimpleHuskInventoryExtension.drop_level_event_item = function (self, slot_data)
 
 	if projectile_info.drop_on_player_destroyed then
 		local unit = self._unit
-		local weapon_unit = not not self._equipment.right_hand_wielded_unit_3p
+		local weapon_unit = self._equipment.right_hand_wielded_unit_3p
 		local position = Unit.world_position(unit, 0) + Vector3(0, 0, 2)
 		local proj_rotation = Quaternion.identity()
 		local velocity = Vector3(math.random(), math.random(), math.random())
@@ -139,13 +139,13 @@ SimpleHuskInventoryExtension._unlink_unit = function (self, unit, reason, attach
 	-- function 8
 	World.unlink_unit(self._world, unit)
 
-	local node_linking_data = not not attachment_node_linking.wielded
+	local node_linking_data = attachment_node_linking.wielded
 
 	for i, attachment_nodes in ipairs(node_linking_data) do
 		local target_node = attachment_nodes.target
 
 		if target_node ~= 0 then
-			local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(unit, target_node)
+			local target_node_index = type(target_node) ~= "string" and target_node or not (type(target_node) ~= "string") and Unit.node(unit, target_node)
 			local parent = Unit.scene_graph_parent(unit, target_node_index)
 
 			Unit.scene_graph_link(unit, target_node_index, 0)
@@ -173,14 +173,14 @@ SimpleHuskInventoryExtension.drop_equipped_weapons = function (self, reason)
 	local right_hand_unit_name = wielded.right_hand_unit
 
 	if left_hand_unit_name then
-		local attachment_node_linking = linking_template.left and not not linking_template.left.third_person or not linking_template.left and not not linking_template.third_person
+		local attachment_node_linking = linking_template.left and linking_template.left.third_person or not linking_template.left and linking_template.third_person
 		local left_hand_unit = equipment.left_hand_wielded_unit_3p
 
 		self:_unlink_unit(left_hand_unit, reason, attachment_node_linking)
 	end
 
 	if right_hand_unit_name then
-		local attachment_node_linking = linking_template.right and not not linking_template.right.third_person or not linking_template.right and not not linking_template.third_person
+		local attachment_node_linking = linking_template.right and linking_template.right.third_person or not linking_template.right and linking_template.third_person
 		local right_hand_unit = equipment.right_hand_wielded_unit_3p
 
 		self:_unlink_unit(right_hand_unit, reason, attachment_node_linking)
@@ -671,7 +671,7 @@ end
 
 local function get_wield_anim(default, optional_switch, career_name)
 	-- function 36
-	return optional_switch and not not optional_switch[career_name] or not optional_switch and not not default
+	return optional_switch and optional_switch[career_name] or not optional_switch and default
 end
 
 SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slot_name, unit_1p, unit_3p)
@@ -695,7 +695,7 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 	GearUtils.destroy_equipment(world, equipment)
 
 	local override_item_template = self:_override_career_skill_item_template(item_data)
-	local item_template = not not override_item_template or not not BackendUtils.get_item_template(item_data)
+	local item_template = override_item_template or BackendUtils.get_item_template(item_data)
 	local item_units = BackendUtils.get_item_units(item_data, nil, slot.skin, self._career_name)
 	local right_hand_weapon_unit_3p, right_hand_weapon_unit_1p, left_hand_weapon_unit_3p, left_hand_weapon_unit_1p, right_hand_ammo_unit_3p, right_hand_ammo_unit_1p, left_hand_ammo_unit_3p, left_hand_ammo_unit_1p
 
@@ -710,7 +710,7 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 	local is_ammo_weapon = item_units.is_ammo_weapon
 
 	if is_ammo_weapon then
-		local material_settings_name = not not item_units.material_settings_name
+		local material_settings_name = item_units.material_settings_name
 
 		if material_settings_name then
 			if right_hand_ammo_unit_3p then
@@ -744,17 +744,17 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 
 	local item_template = BackendUtils.get_item_template(item_data)
 	local wield_anim = get_wield_anim(item_template.wield_anim, item_template.wield_anim_career, self._career_name)
-	local wield_anim_3p = not not get_wield_anim(item_template.wield_anim_3p, item_template.wield_anim_career_3p, self._career_name)
+	local wield_anim_3p = get_wield_anim(item_template.wield_anim_3p, item_template.wield_anim_career_3p, self._career_name)
 
 	if right_hand_weapon_unit_3p or left_hand_weapon_unit_3p then
 		if self:ammo_percentage() == 0 and item_template.wield_anim_no_ammo_on_husk then
 			local wield_anim_no_ammo = get_wield_anim(item_template.wield_anim_no_ammo, item_template.wield_anim_no_ammo_career, self._career_name)
 
-			wield_anim = not not wield_anim_no_ammo or not not wield_anim
+			wield_anim = wield_anim_no_ammo or wield_anim
 
-			local wield_anim_no_ammo_3p = not not get_wield_anim(item_template.wield_anim_no_ammo_3p, item_template.wield_anim_no_ammo_career_3p, self._career_name)
+			local wield_anim_no_ammo_3p = get_wield_anim(item_template.wield_anim_no_ammo_3p, item_template.wield_anim_no_ammo_career_3p, self._career_name)
 
-			wield_anim_3p = not not wield_anim_no_ammo_3p or not not wield_anim_3p
+			wield_anim_3p = wield_anim_no_ammo_3p or wield_anim_3p
 		end
 
 		Unit.flow_event(unit_3p, "lua_wield")
@@ -774,8 +774,8 @@ SimpleHuskInventoryExtension._wield_slot = function (self, world, equipment, slo
 	if right_hand_weapon_unit_1p or left_hand_weapon_unit_1p then
 		if Unit.animation_has_variable(unit_1p, "animation_variation_id") then
 			local weapon_skin_data = WeaponSkins.skins[slot.skin]
-			local weapon_skin_anim_overrides = not not weapon_skin_data and not not weapon_skin_data.action_anim_overrides
-			local animation_variation_id = weapon_skin_anim_overrides and not not weapon_skin_anim_overrides.animation_variation_id or not weapon_skin_anim_overrides and not not 0
+			local weapon_skin_anim_overrides = weapon_skin_data and weapon_skin_data.action_anim_overrides
+			local animation_variation_id = weapon_skin_anim_overrides and weapon_skin_anim_overrides.animation_variation_id or not weapon_skin_anim_overrides and 0
 			local animation_variation_param = Unit.animation_find_variable(unit_1p, "animation_variation_id")
 
 			Unit.animation_set_variable(unit_1p, animation_variation_param, animation_variation_id)
@@ -832,7 +832,7 @@ SimpleHuskInventoryExtension.start_weapon_fx = function (self, fx_name)
 	local slot_data = equipment.slots[slot_name]
 	local item_template = self:get_item_template(slot_data)
 	local item_particle_fx = item_template.particle_fx
-	local particle_fx = not not item_particle_fx and not not item_particle_fx[fx_name]
+	local particle_fx = item_particle_fx and item_particle_fx[fx_name]
 
 	if particle_fx then
 		self._weapon_fx[fx_name] = GearUtils.create_attached_particles(self._world, particle_fx, equipment, self._unit, nil, false)
@@ -867,21 +867,21 @@ SimpleHuskInventoryExtension.can_store_additional_item = function (self, slot_na
 	-- function 43
 	local additional_items_slot = self._additional_items[slot_name]
 
-	return not not additional_items_slot and #additional_items_slot.items < additional_items_slot.max_slots
+	return additional_items_slot and #additional_items_slot.items < additional_items_slot.max_slots
 end
 
 SimpleHuskInventoryExtension.has_additional_items = function (self, slot_name)
 	-- function 44
 	local additional_items_slot = self._additional_items[slot_name]
 
-	return not not additional_items_slot and #additional_items_slot.items > 0
+	return additional_items_slot and #additional_items_slot.items > 0
 end
 
 SimpleHuskInventoryExtension.get_additional_items = function (self, slot_name)
 	-- function 45
 	local additional_items_slot = self._additional_items[slot_name]
 
-	return not not additional_items_slot and not not additional_items_slot.items
+	return additional_items_slot and additional_items_slot.items
 end
 
 SimpleHuskInventoryExtension.get_additional_items_table = function (self)

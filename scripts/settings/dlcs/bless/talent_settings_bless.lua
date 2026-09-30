@@ -702,7 +702,7 @@ table.merge(TalentBuffTemplates[hero_name], talent_buff_templates)
 table.append(TalentTrees[hero_name], talent_trees)
 table.append(Talents[hero_name], talents)
 
-WeaveLoadoutSettings = not not WeaveLoadoutSettings
+WeaveLoadoutSettings = WeaveLoadoutSettings
 WeaveLoadoutSettings.wh_priest = {
 	talent_tree = talent_trees[1],
 	properties = {},

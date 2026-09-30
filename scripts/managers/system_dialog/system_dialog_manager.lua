@@ -137,7 +137,7 @@ SystemDialogManager._handle_virtual_keyboards = function (self)
 					local data = self._virtual_keyboard_results[index]
 
 					if data then
-						data.text = not not current_virtual_keyboard.text
+						data.text = current_virtual_keyboard.text
 						data.done = true
 						data.success = result == PS4ImeDialog.END_STATUS_OK
 					end
@@ -215,9 +215,9 @@ SystemDialogManager.open_commerce_dialog = function (self, mode, user_id, target
 		local dialog_instance = data.dialog_instance
 		local targets = data.targets
 
-		dprint("open_commerce_dialog", mode, user_id, not not targets and not not unpack(targets))
+		dprint("open_commerce_dialog", mode, user_id, targets and unpack(targets))
 
-		return dialog_instance.open2(data.mode, data.user_id, not not targets and not not unpack(targets))
+		return dialog_instance.open2(data.mode, data.user_id, targets and unpack(targets))
 	end
 
 	self._dialogs[#self._dialogs + 1] = {
@@ -258,15 +258,15 @@ SystemDialogManager.open_virtual_keyboard = function (self, user_id, optional_ti
 		user_id = user_id,
 		title = optional_title,
 		text = optional_prefilled_text,
-		x = not not optional_position and not not optional_position[1],
-		y = not not optional_position and not not optional_position[2],
+		x = optional_position and optional_position[1],
+		y = optional_position and optional_position[2],
 		max_length = optional_max_length,
 		index = self._virtual_keyboard_index
 	}
 	self._virtual_keyboard_results[self._virtual_keyboard_index] = {
 		success = false,
 		done = false,
-		text = not not optional_prefilled_text or not not ""
+		text = optional_prefilled_text or ""
 	}
 
 	return self._virtual_keyboard_index

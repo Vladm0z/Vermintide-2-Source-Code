@@ -18,7 +18,7 @@ XboxEventManager.write = function (self, event, event_data, debug_string, debug_
 
 	do return end
 
-	Application.error(string.format("Adding%sEvent: %s", prioritize and not not " prioritized " or not prioritize and not not " ", event))
+	Application.error(string.format("Adding%sEvent: %s", prioritize and " prioritized " or not prioritize and " ", event))
 
 	if skip_wait_time then
 		self._immediate_queue[#self._immediate_queue + 1] = {
@@ -69,7 +69,7 @@ XboxEventManager._handle_priority_event = function (self, priority_event)
 	Events.write(priority_event.event, priority_event.event_data)
 
 	if priority_event.debug_string then
-		local print_func = not not priority_event.debug_print_func
+		local print_func = priority_event.debug_print_func
 
 		print_func(priority_event.debug_string)
 	end
@@ -86,7 +86,7 @@ XboxEventManager._handle_event = function (self)
 		Events.write(current_event.event, current_event.event_data)
 
 		if current_event.debug_string then
-			local print_func = not not current_event.debug_print_func
+			local print_func = current_event.debug_print_func
 
 			print_func(current_event.debug_string)
 		end
@@ -104,7 +104,7 @@ XboxEventManager._handle_immediate_event = function (self)
 		Events.write(immediate_event.event, immediate_event.event_data)
 
 		if immediate_event.debug_string then
-			local print_func = not not immediate_event.debug_print_func
+			local print_func = immediate_event.debug_print_func
 
 			print_func(immediate_event.debug_string)
 		end
@@ -124,7 +124,7 @@ XboxEventManager.flush = function (self)
 		Events.write(current_priority_event.event, current_priority_event.event_data)
 
 		if current_priority_event.debug_string then
-			local print_func = not not current_priority_event.debug_print_func
+			local print_func = current_priority_event.debug_print_func
 
 			print_func(current_priority_event.debug_string)
 		end
@@ -135,7 +135,7 @@ XboxEventManager.flush = function (self)
 		Events.write(current_event.event, current_event.event_data)
 
 		if current_event.debug_string then
-			local print_func = not not current_event.debug_print_func
+			local print_func = current_event.debug_print_func
 
 			print_func(current_event.debug_string)
 		end
@@ -146,7 +146,7 @@ XboxEventManager.flush = function (self)
 		Events.write(immediate_event.event, immediate_event.event_data)
 
 		if immediate_event.debug_string then
-			local print_func = not not immediate_event.debug_print_func
+			local print_func = immediate_event.debug_print_func
 
 			print_func(immediate_event.debug_string)
 		end

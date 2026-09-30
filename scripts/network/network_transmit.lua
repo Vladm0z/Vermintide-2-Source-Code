@@ -75,7 +75,7 @@ NetworkTransmit.pack_temp_types = function (self, optional_num_args, ...)
 	}
 	local contains_boxed = false
 
-	for i = 1, not not optional_num_args or not not #arguments do
+	for i = 1, optional_num_args or #arguments do
 		local arg = arguments[i]
 		local type_name = Script.type_name(arg)
 
@@ -93,9 +93,9 @@ end
 
 NetworkTransmit.unpack_temp_types = function (self, arguments, optional_offset, optional_num_args)
 	-- function 10
-	local offset = not not optional_offset or not not 0
+	local offset = optional_offset or 0
 
-	for j = 1, not not optional_num_args or not not #arguments do
+	for j = 1, optional_num_args or #arguments do
 		local argument_index = offset + j
 		local arg = arguments[argument_index]
 		local type_name = Script.type_name(arg)

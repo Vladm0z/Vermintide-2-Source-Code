@@ -18,7 +18,7 @@ local RPCS = {
 	"rpc_change_game_mode_state",
 	"rpc_trigger_level_event"
 }
-local game_mode_manager_testify = not not script_data.testify
+local game_mode_manager_testify = script_data.testify
 local GAME_MODE_STATE_NETWORK_IDS = {}
 
 for game_mode_key, settings in pairs(GameModeSettings) do
@@ -39,8 +39,8 @@ GameModeManager.init = function (self, world, lobby, network_event_delegate, sta
 	local level_key = Managers.level_transition_handler:get_current_level_keys()
 	local is_host = lobby.is_host
 
-	self._lobby_host = not not is_host and not not lobby
-	self._lobby_client = not not is_host and not not lobby
+	self._lobby_host = is_host and lobby
+	self._lobby_client = is_host and lobby
 	self.is_server = is_host
 	self._world = world
 	self._game_mode_key = game_mode_key
@@ -88,7 +88,7 @@ GameModeManager.init = function (self, world, lobby, network_event_delegate, sta
 	local level_mutators = level_settings.mutators
 
 	if level_mutators then
-		mutators = not not mutators or not not {}
+		mutators = mutators or {}
 
 		for i = 1, #level_mutators do
 			mutators[#mutators + 1] = level_mutators[i]
@@ -394,7 +394,7 @@ GameModeManager._set_flow_object_set_enabled = function (self, set, enable, set_
 		local unit = Level.unit_by_index(level, unit_index)
 
 		if unit then
-			local refs = not not Unit.get_data(unit, "flow_object_set_references")
+			local refs = Unit.get_data(unit, "flow_object_set_references")
 
 			if enable then
 				refs = refs + 1
@@ -437,7 +437,7 @@ GameModeManager.update_flow_object_set_enable = function (self, dt)
 	local flush = self._flush_object_set_enable
 
 	if size > 0 then
-		local units_per_frame = flush and not not math.huge or not flush and not not data.units_per_frame
+		local units_per_frame = flush and math.huge or not flush and data.units_per_frame
 		local num_units = math.min(units_per_frame, size)
 		local read_index = data.read_index
 		local max_size = data.max_size
@@ -478,7 +478,7 @@ GameModeManager._set_flow_object_set_unit_enabled = function (self, level, index
 	end
 
 	local enable = not enabled and refs > 0
-	local disable = not not enabled and refs == 0
+	local disable = enabled and refs == 0
 	local new_state
 
 	if enable then
@@ -681,7 +681,7 @@ end
 
 GameModeManager.is_round_started = function (self)
 	-- function 57
-	local time_since_round_started = self._round_start_time and not not (Managers.time:time("game") - self._round_start_time) or not self._round_start_time and not not nil
+	local time_since_round_started = self._round_start_time and Managers.time:time("game") - self._round_start_time or not self._round_start_time and nil
 
 	return self._round_started, time_since_round_started
 end
@@ -845,8 +845,8 @@ GameModeManager.evaluate_end_condition_outcome = function (self, reason, player)
 		return self._game_mode:evaluate_end_condition_outcome(reason, player)
 	end
 
-	local game_won = not not reason and reason == "won"
-	local game_lost = not not reason and reason == "lost"
+	local game_won = reason and reason == "won"
+	local game_lost = reason and reason == "lost"
 
 	return game_won, game_lost
 end
@@ -886,7 +886,7 @@ GameModeManager.server_update = function (self, dt, t)
 				self._end_conditions_met = true
 				self._end_reason = reason
 
-				local checkpoint_available = not not true
+				local checkpoint_available = true
 				local mission_system = Managers.state.entity:system("mission_system")
 				local percentages_completed = mission_system:percentages_completed()
 
@@ -1172,7 +1172,7 @@ GameModeManager._update_end_level_areas = function (self)
 
 		local enabled = self._end_level_areas[unit]
 
-		QuickDrawer:box(pose, extents, enabled and not not Color(0, 255, 0) or not enabled and not not Color(255, 0, 0))
+		QuickDrawer:box(pose, extents, enabled and Color(0, 255, 0) or not enabled and Color(255, 0, 0))
 	end
 
 	if table.is_empty(self._end_level_areas) then
@@ -1184,7 +1184,7 @@ GameModeManager._update_end_level_areas = function (self)
 
 		for _, player in pairs(Managers.player:human_players()) do
 			local player_unit = player.player_unit
-			local non_disabled = not not Unit.alive(player_unit)
+			local non_disabled = Unit.alive(player_unit)
 
 			if non_disabled then
 				num_non_disabled_players = num_non_disabled_players + 1

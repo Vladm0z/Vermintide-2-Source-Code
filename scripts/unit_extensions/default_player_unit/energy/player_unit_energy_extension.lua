@@ -12,13 +12,13 @@ PlayerUnitEnergyExtension.init = function (self, extension_init_context, unit, e
 
 	local energy_data = extension_init_data.energy_data
 
-	self._max_energy = not not energy_data.max_value
+	self._max_energy = energy_data.max_value
 	self._energy = self._max_energy
 	self._recharge_delay_timer = 0
-	self._recharge_delay = not not energy_data.recharge_delay
-	self._recharge_rate = not not energy_data.recharge_rate
+	self._recharge_delay = energy_data.recharge_delay
+	self._recharge_rate = energy_data.recharge_rate
 	self._depletion_cooldown_timer = 0
-	self._depletion_cooldown = not not energy_data.depletion_cooldown
+	self._depletion_cooldown = energy_data.depletion_cooldown
 	self._previous_can_drain = self:is_drainable()
 end
 
@@ -69,7 +69,7 @@ end
 
 PlayerUnitEnergyExtension.update = function (self, unit, input, dt, context, t)
 	-- function 6
-	local buff_extension = not not ALIVE[unit]
+	local buff_extension = ALIVE[unit]
 
 	if buff_extension and buff_extension:has_buff_type("twitch_no_overcharge_no_ammo_reloads") then
 		self._energy = self._max_energy
@@ -172,7 +172,7 @@ end
 PlayerUnitEnergyExtension._broadcast_equipment_flow_event = function (self, event_name)
 	-- function 17
 	local inventory_extension = ScriptUnit.has_extension(self.unit, "inventory_system")
-	local equipment = not not inventory_extension and not not inventory_extension:equipment()
+	local equipment = inventory_extension and inventory_extension:equipment()
 
 	if equipment then
 		local right_hand_wielded_unit_3p = equipment.right_hand_wielded_unit_3p

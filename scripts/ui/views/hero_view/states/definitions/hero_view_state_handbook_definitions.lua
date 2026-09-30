@@ -648,7 +648,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					list_item_offset_x + list_item_padding_text_padding,
@@ -667,7 +667,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					list_item_offset_x + list_item_padding_text_padding,
@@ -686,7 +686,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					list_item_offset_x + list_item_padding_text_padding,
@@ -705,7 +705,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					list_item_offset_x + list_item_padding_text_padding + 2,
@@ -1067,7 +1067,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 								-- function 8
 								local button_hotspot = content.button_hotspot
 
-								return not button_hotspot.is_hover and not not not button_hotspot.is_selected
+								return not button_hotspot.is_hover and not button_hotspot.is_selected
 							end
 						},
 						{
@@ -1078,7 +1078,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 								-- function 9
 								local button_hotspot = content.button_hotspot
 
-								return not not button_hotspot.is_hover
+								return button_hotspot.is_hover
 							end
 						},
 						{
@@ -1138,7 +1138,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 								-- function 11
 								local button_hotspot = content.button_hotspot
 
-								return not not button_hotspot.is_hover
+								return button_hotspot.is_hover
 							end
 						},
 						{
@@ -1208,7 +1208,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				texture_id = side_detail_texture
 			},
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -1339,7 +1339,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				font_size = 24,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -1355,7 +1355,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				word_wrap = true,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -1370,7 +1370,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 				word_wrap = true,
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -1648,12 +1648,12 @@ local function create_category_tab_widgets(num_categories)
 
 		scenegraph_definition[scenegraph_id] = {
 			horizontal_alignment = "center",
-			parent = first_entry and not not "category_root" or not first_entry and not not previous_scenegraph_list_id,
-			vertical_alignment = first_entry and not not "top" or not first_entry and not not "bottom",
+			parent = first_entry and "category_root" or not first_entry and previous_scenegraph_list_id,
+			vertical_alignment = first_entry and "top" or not first_entry and "bottom",
 			size = tab_size,
 			position = {
-				first_entry and not not -15 or not first_entry and not not 0,
-				first_entry and not not -20 or not first_entry and not not -(tab_size[2] + tab_list_entry_spacing),
+				first_entry and -15 or not first_entry and 0,
+				first_entry and -20 or not first_entry and -(tab_size[2] + tab_list_entry_spacing),
 				0
 			}
 		}
@@ -1750,7 +1750,7 @@ local function simple_tag_colorizer(inner)
 		return inner
 	end
 
-	return is_end and not not "{#reset()}" or not is_end and not not "{#color(255,193,91)}"
+	return is_end and "{#reset()}" or not is_end and "{#color(255,193,91)}"
 end
 
 local function create_content_widget_spacing(context, entry)
@@ -1773,7 +1773,7 @@ local function create_content_widget_text(context, entry)
 		achievement_entry_width,
 		0
 	}
-	local text_content = Localize(not not entry.text)
+	local text_content = Localize(entry.text)
 
 	if entry.inputs then
 		local input_strings = {}
@@ -1851,7 +1851,7 @@ local function create_content_widget_text(context, entry)
 			text = text_content,
 			text_shadow = text_shadow_content,
 			size = size,
-			padding = not not entry.padding
+			padding = entry.padding
 		},
 		style = {
 			text = text_style,

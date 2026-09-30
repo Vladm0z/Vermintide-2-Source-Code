@@ -101,7 +101,7 @@ NavigationGroup.calculate_group_center = function (self, poly_center, poly_hash,
 	local curr_center = self._group_center:unbox()
 	local new_center = ((group_size - 1) * curr_center + poly_center) / group_size
 	local new_center_poly = GwNavTraversal.get_seed_triangle(nav_world, new_center)
-	local new_center_hash = not not new_center_poly and not not self:get_poly_hash(new_center_poly, nav_world)
+	local new_center_hash = new_center_poly and self:get_poly_hash(new_center_poly, nav_world)
 
 	if new_center_hash then
 		local a, b, c = Script.temp_count()
@@ -271,7 +271,7 @@ NavigationGroup.print_group = function (self, world, nav_world, line_object, lin
 	print("Group", self._group_number, "has neighbours:")
 
 	for group_neighbour, _ in pairs(self._group_neighbours) do
-		print(group_neighbour._group_number, self._group_ledge_neighbours[group_neighbour] and not not "connected_by_ledge" or not self._group_ledge_neighbours[group_neighbour] and not not "")
+		print(group_neighbour._group_number, self._group_ledge_neighbours[group_neighbour] and "connected_by_ledge" or not self._group_ledge_neighbours[group_neighbour] and "")
 	end
 
 	for _, poly in pairs(self._group_polygons) do
@@ -291,7 +291,7 @@ NavigationGroup.print_group = function (self, world, nav_world, line_object, lin
 	Gui.text_3d(debug_world_gui, "id=" .. self._group_number, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 2, 0), 3, Color(255, 255, 255))
 	Gui.text_3d(debug_world_gui, "dist=" .. self._distance_from_finish, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 1.5, 0), 3, Color(255, 255, 255))
 	Gui.text_3d(debug_world_gui, "area=" .. self._area, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 1, 0), 3, Color(255, 255, 255))
-	Gui.text_3d(debug_world_gui, "main_path_index=" .. not not self._main_path_index, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 0.5, 0), 3, Color(255, 255, 255))
+	Gui.text_3d(debug_world_gui, "main_path_index=" .. self._main_path_index, font_material, font_size - 0.8, font, m, text_pos + Vector3(0, 0.5, 0), 3, Color(255, 255, 255))
 end
 
 NavigationGroup.draw_poly_lines = function (self, poly, color, nav_world, line_object, debug_world_gui)

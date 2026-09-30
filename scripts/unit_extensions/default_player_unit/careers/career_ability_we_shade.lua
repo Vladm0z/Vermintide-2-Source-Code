@@ -59,7 +59,7 @@ CareerAbilityWEShade._ability_available = function (self)
 	local status_extension = self._status_extension
 	local available = true
 
-	return not not available and not not career_extension:can_use_activated_ability()
+	return available and career_extension:can_use_activated_ability()
 end
 
 CareerAbilityWEShade._run_ability = function (self)

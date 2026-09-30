@@ -345,7 +345,7 @@ BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (self, data, r
 		for i = 1, #items do
 			local item = items[i]
 			local backend_id = item.ItemInstanceId
-			local amount = not not item.UsesIncrementedBy
+			local amount = item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -418,7 +418,7 @@ BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (self, data, r
 			local amount = data.amount
 			local current_amount = rewarded_currency[code]
 
-			rewarded_currency[code] = current_amount and (not not current_amount or not not (0 + amount)) or not current_amount and not not (0 + amount)
+			rewarded_currency[code] = current_amount and (current_amount or 0 + amount) or not current_amount and 0 + amount
 			loot[#loot + 1] = {
 				type = "currency",
 				currency_code = code,
@@ -479,15 +479,15 @@ BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (self, data, r
 		backend_mirror:add_claimed_event_quest(claimed_quest_name)
 	end
 
-	local current_daily_quests = not not function_result.current_daily_quests
-	local current_weekly_quests = not not function_result.current_weekly_quests
-	local current_event_quests = not not function_result.current_event_quests
+	local current_daily_quests = function_result.current_daily_quests
+	local current_weekly_quests = function_result.current_weekly_quests
+	local current_event_quests = function_result.current_event_quests
 
 	backend_mirror:set_quest_data("current_daily_quests", current_daily_quests)
 	backend_mirror:set_quest_data("current_weekly_quests", current_weekly_quests)
 	backend_mirror:set_quest_data("current_event_quests", current_event_quests)
 
-	local player = not not Managers.player
+	local player = Managers.player
 	local statistics_db = Managers.player:statistics_db()
 
 	if not player or not statistics_db then
@@ -580,7 +580,7 @@ BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function
 		for i = 1, #items do
 			local item = items[i]
 			local backend_id = item.ItemInstanceId
-			local amount = not not item.UsesIncrementedBy
+			local amount = item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -653,7 +653,7 @@ BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function
 			local amount = data.amount
 			local current_amount = rewarded_currency[code]
 
-			rewarded_currency[code] = current_amount and (not not current_amount or not not (0 + amount)) or not current_amount and not not (0 + amount)
+			rewarded_currency[code] = current_amount and (current_amount or 0 + amount) or not current_amount and 0 + amount
 			loot[#loot + 1] = {
 				type = "currency",
 				currency_code = code,
@@ -708,7 +708,7 @@ BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function
 
 				if claimed_quest_data then
 					claimed_quest_names[#claimed_quest_names + 1] = claimed_quest_data.name
-					claimed_quest_type = not not claimed_quest_type or not not quest_types_map[key]
+					claimed_quest_type = claimed_quest_type or quest_types_map[key]
 				end
 			end
 		end
@@ -726,7 +726,7 @@ BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function
 	backend_mirror:set_quest_data("current_weekly_quests", current_weekly_quests)
 	backend_mirror:set_quest_data("current_event_quests", current_event_quests)
 
-	local player = not not Managers.player
+	local player = Managers.player
 	local statistics_db = Managers.player:statistics_db()
 
 	if not player or not statistics_db then

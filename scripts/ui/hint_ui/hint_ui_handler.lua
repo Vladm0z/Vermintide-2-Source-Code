@@ -13,7 +13,7 @@ end
 local function save(hint_key)
 	-- function 2
 	local save_data = SaveData
-	local viewed_hints = not not save_data.viewed_hints
+	local viewed_hints = save_data.viewed_hints
 
 	viewed_hints[hint_key] = true
 	save_data.viewed_hints = viewed_hints
@@ -156,7 +156,7 @@ end
 HintUIHandler.is_hint_active = function (self)
 	-- function 10
 	local hint = self._hints[self._n_hints]
-	local hint_active = hint and not not true or not hint and not not false
+	local hint_active = hint
 
 	return hint_active
 end
@@ -166,7 +166,7 @@ HintUIHandler.parse_unseen_hints = function (self)
 	table.clear(self._unseen_hints)
 
 	for hint_name, hint_template in pairs(HintTemplates) do
-		if not SaveData.viewed_hints and hint_template.condition_function or not not SaveData.viewed_hints and not SaveData.viewed_hints[hint_name] and hint_template.condition_function then
+		if not SaveData.viewed_hints and hint_template.condition_function or SaveData.viewed_hints and not SaveData.viewed_hints[hint_name] and hint_template.condition_function then
 			self._unseen_hints[#self._unseen_hints + 1] = hint_name
 		end
 	end

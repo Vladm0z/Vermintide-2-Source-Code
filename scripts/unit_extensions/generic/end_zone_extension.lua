@@ -2,7 +2,7 @@
 
 require("scripts/settings/end_zone_settings")
 
-local end_zone_extension_testify = not not script_data.testify
+local end_zone_extension_testify = script_data.testify
 
 EndZoneExtension = class(EndZoneExtension)
 
@@ -25,11 +25,11 @@ EndZoneExtension.init = function (self, extension_init_context, unit)
 	self._current_end_zone_visible_long_timer = self:end_zone_visible_long_timer()
 	self._end_zone_timer_started = false
 	self._end_zone_time_since_notify = self:end_zone_long_timer_settings().notify_long_interval
-	self._visible_from_start = not not Unit.get_data(unit, "visible_from_start")
+	self._visible_from_start = Unit.get_data(unit, "visible_from_start")
 	self._waystone_type = Unit.get_data(unit, "waystone_type")
-	self.waystone_size = self._waystone_type ~= 3 and not not EndZoneSettings.size or not (self._waystone_type ~= 3) and not not 3.8
+	self.waystone_size = self._waystone_type ~= 3 and EndZoneSettings.size or not (self._waystone_type ~= 3) and 3.8
 	self._always_activated = Unit.get_data(unit, "always_activated")
-	self._activation_name = not not Unit.get_data(unit, "activation_name")
+	self._activation_name = Unit.get_data(unit, "activation_name")
 	self._side = Managers.state.side:get_side_from_name("heroes")
 
 	if Unit.get_data(self._unit, "game_start_waystone") then
@@ -82,7 +82,7 @@ EndZoneExtension.activate_waystone_portal = function (self, wanted_waystone_type
 		return
 	end
 
-	local event = waystone_type ~= wanted_waystone_type and not not "deactivate" or not (waystone_type ~= wanted_waystone_type) and not not "activate"
+	local event = waystone_type ~= wanted_waystone_type and "deactivate" or not (waystone_type ~= wanted_waystone_type) and "activate"
 
 	Unit.flow_event(unit, event)
 end
@@ -160,12 +160,12 @@ end
 
 EndZoneExtension.end_time = function (self)
 	-- function 9
-	return not not self._game_start_time
+	return self._game_start_time
 end
 
 EndZoneExtension.end_time_left = function (self)
 	-- function 10
-	return not not self._state_data.end_zone_timer
+	return self._state_data.end_zone_timer
 end
 
 EndZoneExtension.end_zone_long_timer_settings = function (self)
@@ -185,7 +185,7 @@ end
 
 EndZoneExtension.end_long_time_left = function (self)
 	-- function 14
-	return not not self._state_data.end_zone_long_timer
+	return self._state_data.end_zone_long_timer
 end
 
 EndZoneExtension.update = function (self, unit, input, dt, context, t)
@@ -217,7 +217,7 @@ EndZoneExtension._activate = function (self, activate)
 			Unit.set_unit_visibility(self._unit, true)
 		end
 
-		local wind = not not self:_get_wind_name()
+		local wind = self:_get_wind_name()
 		local wind_name_id = NetworkLookup.weave_winds[wind]
 
 		if wind ~= "none" then
@@ -329,7 +329,7 @@ EndZoneExtension._check_proximity = function (self)
 		if player_pos then
 			local distance_squared = Vector3.distance_squared(end_zone_pos, player_pos)
 
-			self._closest_player = distance_squared < self._closest_player and (not not distance_squared or not not self._closest_player) or not (distance_squared < self._closest_player) and not not self._closest_player
+			self._closest_player = distance_squared < self._closest_player and (distance_squared or self._closest_player) or not (distance_squared < self._closest_player) and self._closest_player
 
 			if table.contains(player_units, player_unit) then
 				self._player_distances[player_unit] = distance_squared
@@ -363,7 +363,7 @@ end
 EndZoneExtension.hot_join_sync = function (self, sender)
 	-- function 24
 	if self._activated then
-		local wind = not not self:_get_wind_name()
+		local wind = self:_get_wind_name()
 		local wind_name_id = NetworkLookup.weave_winds[wind]
 		local channel_id = PEER_ID_TO_CHANNEL[sender]
 
@@ -407,7 +407,7 @@ end
 EndZoneExtension._open = function (self, dt, t)
 	-- function 27
 	if self._activated and (self._always_activated or self._closest_player <= EndZoneSettings.activate_size^2) then
-		local animation_time = not not EndZoneSettings.animation_time
+		local animation_time = EndZoneSettings.animation_time
 
 		self._state_data.timer = math.clamp(self._state_data.timer + dt, 0, animation_time)
 
@@ -437,7 +437,7 @@ EndZoneExtension._close = function (self, dt, t)
 
 		Unit.flow_event(self._unit, "opening_end_zone")
 	else
-		local animation_time = not not EndZoneSettings.animation_time
+		local animation_time = EndZoneSettings.animation_time
 
 		self._state_data.timer = math.clamp(self._state_data.timer - dt, 0, animation_time)
 
@@ -576,7 +576,7 @@ EndZoneExtension._end_mission_check = function (self, dt, t)
 
 						local buff_name = "end_zone_invincibility"
 						local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
-						local has_buff = not not buff_extension and not not buff_extension:has_buff_type(buff_name)
+						local has_buff = buff_extension and buff_extension:has_buff_type(buff_name)
 
 						if buff_extension and not has_buff then
 							buff_system:add_buff(player_unit, buff_name, player_unit, false)

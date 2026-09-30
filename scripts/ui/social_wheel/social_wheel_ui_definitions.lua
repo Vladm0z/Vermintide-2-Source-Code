@@ -119,7 +119,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 	-- function 1
 	local size = category_settings.size
 	local dir = Vector3(math.cos(widget_angle), math.sin(widget_angle), 0)
-	local num_wedges = page_idx and not not #category_settings[page_idx] or not page_idx and not not #category_settings
+	local num_wedges = page_idx and #category_settings[page_idx] or not page_idx and #category_settings
 	local divider_angle = widget_angle + 2 * math.pi * (1 / num_wedges) * 0.5
 	local divider_dir = Vector3(math.cos(divider_angle), math.sin(divider_angle), 0)
 	local wedge_size = 1 / num_wedges * 360 / 90 * category_settings.wedge_adjustment
@@ -168,7 +168,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 					texture_id = "fade_texture_id",
 					content_check_function = function (content, style)
 						-- function 4
-						return not not content.selected
+						return content.selected
 					end
 				},
 				{
@@ -177,7 +177,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 					texture_id = "icon_bg_id",
 					content_check_function = function (content, style)
 						-- function 5
-						return not not category_settings.individual_bg
+						return category_settings.individual_bg
 					end
 				},
 				{
@@ -233,7 +233,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 					texture_id = "icon_glow_id",
 					content_check_function = function (content, style)
 						-- function 9
-						return not not content.selected
+						return content.selected
 					end
 				},
 				{
@@ -257,7 +257,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 							style.text_color = style.base_color
 						end
 
-						return not not IS_WINDOWS
+						return IS_WINDOWS
 					end
 				},
 				{
@@ -272,7 +272,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 							style.text_color = style.base_color
 						end
 
-						return not not IS_WINDOWS
+						return IS_WINDOWS
 					end
 				}
 			}
@@ -287,8 +287,8 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 			size_multiplier = 0,
 			final_size_multiplier = 1,
 			icon_bg_id = "radial_chat_icon_bg",
-			icon_id = not not settings.icon,
-			icon_glow_id = settings.icon and not not settings.icon_glow or not settings.icon and not not "radial_chat_icon_boss_glow",
+			icon_id = settings.icon,
+			icon_glow_id = settings.icon and settings.icon_glow or not settings.icon and "radial_chat_icon_boss_glow",
 			settings = settings,
 			category_settings = category_settings,
 			text_id = settings.text,
@@ -299,8 +299,8 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 			icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				base_texture_size = not not category_settings.icon_size,
-				texture_size = not not category_settings.icon_size,
+				base_texture_size = category_settings.icon_size,
+				texture_size = category_settings.icon_size,
 				activated_color = Colors.get_color_table_with_alpha("font_title", 255),
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
@@ -312,8 +312,8 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 			icon_shadow = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				base_texture_size = not not category_settings.icon_size,
-				texture_size = not not category_settings.icon_size,
+				base_texture_size = category_settings.icon_size,
+				texture_size = category_settings.icon_size,
 				activated_color = Colors.get_color_table_with_alpha("black", 255),
 				color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -325,8 +325,8 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 			icon_bg = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				base_texture_size = not not category_settings.icon_size,
-				texture_size = not not category_settings.icon_size,
+				base_texture_size = category_settings.icon_size,
+				texture_size = category_settings.icon_size,
 				color = Colors.get_color_table_with_alpha("black", 125),
 				offset = {
 					0,
@@ -337,8 +337,8 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 			icon_glow = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				base_texture_size = not not category_settings.icon_size,
-				texture_size = not not category_settings.icon_size,
+				base_texture_size = category_settings.icon_size,
+				texture_size = category_settings.icon_size,
 				color = {
 					255,
 					232,
@@ -354,8 +354,8 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 			icon_unavailable = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				base_texture_size = not not category_settings.icon_size,
-				texture_size = not not category_settings.icon_size,
+				base_texture_size = category_settings.icon_size,
+				texture_size = category_settings.icon_size,
 				color = {
 					255,
 					128,
@@ -453,7 +453,7 @@ local function create_social_widget(settings, widget_angle, category_settings, g
 			dir[2] * size[2],
 			1
 		},
-		scenegraph_id = IS_WINDOWS and not not "pivot" or not IS_WINDOWS and not not "pivot_console"
+		scenegraph_id = IS_WINDOWS and "pivot" or not IS_WINDOWS and "pivot_console"
 	}
 end
 
@@ -786,7 +786,7 @@ local function create_bg_widget()
 			0,
 			0
 		},
-		scenegraph_id = IS_WINDOWS and not not "pivot" or not IS_WINDOWS and not not "pivot_console"
+		scenegraph_id = IS_WINDOWS and "pivot" or not IS_WINDOWS and "pivot_console"
 	}
 end
 
@@ -866,7 +866,7 @@ local function create_arrow_widget()
 			0,
 			10
 		},
-		scenegraph_id = IS_WINDOWS and not not "pivot" or not IS_WINDOWS and not not "pivot_console"
+		scenegraph_id = IS_WINDOWS and "pivot" or not IS_WINDOWS and "pivot_console"
 	}
 end
 
@@ -1049,7 +1049,7 @@ local function create_social_icon(social_event_setting, peer_id, camera, world, 
 					content_check_function = function (content, style)
 						-- function 27
 						local player = Managers.player:player_from_peer_id(content.peer_id)
-						local player_unit = not not player and not not player.player_unit
+						local player_unit = player and player.player_unit
 
 						if not Unit.alive(player_unit) then
 							content.is_visible = false
@@ -1078,7 +1078,7 @@ local function create_social_icon(social_event_setting, peer_id, camera, world, 
 					content_change_function = function (content, style)
 						-- function 28
 						local player = Managers.player:player_from_peer_id(content.peer_id)
-						local player_unit = not not player and not not player.player_unit
+						local player_unit = player and player.player_unit
 
 						if Unit.alive(player_unit) and Unit.has_node(player_unit, "j_head") then
 							local camera_pos = Camera.world_position(content.camera)
@@ -1158,13 +1158,13 @@ local function create_social_icon(social_event_setting, peer_id, camera, world, 
 		content = {
 			alpha = 255,
 			icon_bg_id = "radial_chat_icon_bg",
-			icon_id = not not social_event_setting.icon,
-			icon_glow_id = social_event_setting.icon and not not (social_event_setting.icon .. "_glow") or not social_event_setting.icon and not not "radial_chat_icon_boss_glow",
+			icon_id = social_event_setting.icon,
+			icon_glow_id = social_event_setting.icon and social_event_setting.icon .. "_glow" or not social_event_setting.icon and "radial_chat_icon_boss_glow",
 			peer_id = peer_id,
 			camera = camera,
 			world = world,
-			end_time = not not end_time or not not (Managers.time:time("game") + 5),
-			fade_time = not not fade_time or not not 0.5
+			end_time = end_time or Managers.time:time("game") + 5,
+			fade_time = fade_time or 0.5
 		},
 		style = {
 			texture = {

@@ -22,7 +22,7 @@ local fix = {
 	"Icosa"
 }
 
-script_data.ledge_hanging_turned_off = not not script_data.ledge_hanging_turned_off
+script_data.ledge_hanging_turned_off = script_data.ledge_hanging_turned_off
 TimesJumpedInAir = 0
 PlayerCharacterStateFalling = class(PlayerCharacterStateFalling, PlayerCharacterState)
 
@@ -51,13 +51,13 @@ PlayerCharacterStateFalling.on_enter = function (self, unit, input, dt, context,
 
 	local item_template = inventory_extension:get_wielded_slot_item_template()
 
-	self._play_fp_anim = not not item_template and not not item_template.jump_anim_enabled_1p
+	self._play_fp_anim = item_template and item_template.jump_anim_enabled_1p
 
 	if previous_state ~= "jumping" then
 		local move_anim_3p, move_anim_1p
 
-		move_anim_3p = CharacterStateHelper.is_moving(locomotion_extension) and (not not "jump_fwd" or not not "jump_idle") or not CharacterStateHelper.is_moving(locomotion_extension) and not not "jump_idle"
-		move_anim_1p = self._play_fp_anim and (not not "to_falling" or not not "idle") or not self._play_fp_anim and not not "idle"
+		move_anim_3p = CharacterStateHelper.is_moving(locomotion_extension) and ("jump_fwd" or "jump_idle") or not CharacterStateHelper.is_moving(locomotion_extension) and "jump_idle"
+		move_anim_1p = self._play_fp_anim and ("to_falling" or "idle") or not self._play_fp_anim and "idle"
 
 		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, move_anim_1p)
@@ -70,7 +70,7 @@ PlayerCharacterStateFalling.on_enter = function (self, unit, input, dt, context,
 
 	self.is_active = true
 	self.times_jumped_in_air = 0
-	self.shaking_ladder_unit = not not params.shaking_ladder_unit
+	self.shaking_ladder_unit = params.shaking_ladder_unit
 
 	if previous_state ~= "jumping" and previous_state ~= "leaping" and previous_state ~= "overcharge_exploding" and previous_state ~= "lunging" then
 		ScriptUnit.extension(unit, "whereabouts_system"):set_fell()
@@ -78,7 +78,7 @@ PlayerCharacterStateFalling.on_enter = function (self, unit, input, dt, context,
 
 	local player = Managers.player:owner(unit)
 
-	self.is_bot = not not player and not not player.bot_player
+	self.is_bot = player and player.bot_player
 end
 
 PlayerCharacterStateFalling.on_exit = function (self, unit, input, dt, context, t, next_state)
@@ -214,7 +214,7 @@ PlayerCharacterStateFalling.update = function (self, unit, input, dt, context, t
 
 		below_ladder = self_pos.z < Vector3.z(Unit.world_position(ladder_unit, top_node))
 		near_ladder = distance > 0 and distance < 0.7 + epsilon
-		can_climb_ladder = not not below_ladder and not not near_ladder
+		can_climb_ladder = below_ladder and near_ladder
 
 		if can_climb_ladder then
 			local params = self.temp_params
@@ -270,7 +270,7 @@ PlayerCharacterStateFalling.update = function (self, unit, input, dt, context, t
 
 		local jump_speed = movement_settings_table.jump.initial_vertical_speed
 		local velocity_current = self.locomotion_extension:current_velocity()
-		local velocity_jump = Vector3(velocity_current.x, velocity_current.y, velocity_current.z < -3 and not not (jump_speed * 0.5) or not (velocity_current.z < -3) and not not (jump_speed * 1.5))
+		local velocity_jump = Vector3(velocity_current.x, velocity_current.y, velocity_current.z < -3 and jump_speed * 0.5 or not (velocity_current.z < -3) and jump_speed * 1.5)
 
 		self.locomotion_extension:set_forced_velocity(velocity_jump)
 		self.locomotion_extension:set_wanted_velocity(velocity_jump)

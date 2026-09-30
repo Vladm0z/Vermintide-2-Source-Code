@@ -525,7 +525,7 @@ local selector_input_definitions = {
 		end,
 		on_exit = function (self, dt, t)
 			-- function 25
-			local expedition_level_index = not not self._expedition_level_index
+			local expedition_level_index = self._expedition_level_index
 			local expedition_widgets = self._expedition_widgets
 			local widget = expedition_widgets[expedition_level_index]
 

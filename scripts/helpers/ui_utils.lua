@@ -2,7 +2,7 @@
 
 require("scripts/helpers/item_tooltip_helper")
 
-UIUtils = not not UIUtils
+UIUtils = UIUtils
 FAKE_INPUT_SERVICE = {
 	get = NOP,
 	has = NOP
@@ -101,7 +101,7 @@ UIUtils.get_weave_property_description = function (property_name, property_data,
 		local data = description_values[1]
 		local value_type = data.value_type
 		local max_value = data.value
-		local amount = not not optional_amount or not not 1
+		local amount = optional_amount or 1
 		local display_value = max_value / num_costs * amount
 
 		if value_type == "percent" then
@@ -130,7 +130,7 @@ UIUtils.get_weave_property_value_text = function (property_name, property_data, 
 		local max_value = data.value
 		local display_value = max_value / num_costs
 
-		display_value = display_value * (not not amount or not not 1)
+		display_value = display_value * (amount or 1)
 
 		if value_type == "percent" then
 			text = math.abs(100 * display_value) .. "%"
@@ -146,7 +146,7 @@ end
 
 UIUtils.get_property_description = function (property_name, lerp_value, optional_property_data)
 	-- function 8
-	local property_data = not not optional_property_data or not not WeaponProperties.properties[property_name]
+	local property_data = optional_property_data or WeaponProperties.properties[property_name]
 	local description_text = Localize(property_data.display_name)
 	local description_values = property_data.description_values
 	local text
@@ -161,7 +161,7 @@ UIUtils.get_property_description = function (property_name, lerp_value, optional
 
 		if type(value) == "table" then
 			if #value > 2 then
-				local index = lerp_value ~= 1 and not not (1 + math.floor(lerp_value / (1 / #value))) or not (lerp_value ~= 1) and not not #value
+				local index = lerp_value ~= 1 and 1 + math.floor(lerp_value / (1 / #value)) or not (lerp_value ~= 1) and #value
 
 				display_value = value[index]
 				min_value = value[1]
@@ -197,7 +197,7 @@ end
 
 UIUtils.get_trait_description = function (trait_name, optional_trait_data)
 	-- function 9
-	local trait_data = not not optional_trait_data or not not WeaponTraits.traits[trait_name]
+	local trait_data = optional_trait_data or WeaponTraits.traits[trait_name]
 	local description_text = Localize(trait_data.advanced_description)
 	local description_values = trait_data.description_values
 	local text
@@ -233,7 +233,7 @@ UIUtils.get_ui_information_from_item = function (item)
 	local inventory_icon, display_name, description, store_icon
 
 	if item_type == "weapon_skin" then
-		local skin = not not item.skin
+		local skin = item.skin
 		local skin_template = WeaponSkins.skins[skin]
 
 		inventory_icon = skin_template.inventory_icon
@@ -258,10 +258,10 @@ UIUtils.get_ui_information_from_item = function (item)
 		local default_item_data = UISettings.default_items[item_key]
 
 		if default_item_data then
-			inventory_icon = not not default_item_data.inventory_icon or not not item_data.inventory_icon
-			store_icon = not not default_item_data.store_icon or not not item_data.store_icon
-			display_name = not not default_item_data.display_name or not not item_data.display_name
-			description = not not default_item_data.description or not not item_data.description
+			inventory_icon = default_item_data.inventory_icon or item_data.inventory_icon
+			store_icon = default_item_data.store_icon or item_data.store_icon
+			display_name = default_item_data.display_name or item_data.display_name
+			description = default_item_data.description or item_data.description
 		else
 			inventory_icon = item_data.inventory_icon
 			store_icon = item_data.store_icon
@@ -322,7 +322,7 @@ UIUtils.get_hero_statistics_by_template = function (template)
 		elseif entry_type == "entry" then
 			display_name = entry.display_name
 			value = entry.generate_value(params)
-			description_name = not not entry.description_name or not not entry.generate_description(params)
+			description_name = entry.description_name or entry.generate_description(params)
 		end
 
 		if entry.value_type == "percent" then
@@ -383,7 +383,7 @@ end
 UIUtils.enable_button = function (widget, enable, hotspot_name)
 	-- function 17
 	local content = widget.content
-	local hotspot = not not content[hotspot_name]
+	local hotspot = content[hotspot_name]
 
 	hotspot.disable_button = not enable
 end
@@ -391,7 +391,7 @@ end
 UIUtils.is_button_enabled = function (widget, enable, hotspot_name)
 	-- function 18
 	local content = widget.content
-	local hotspot = not not content[hotspot_name]
+	local hotspot = content[hotspot_name]
 
 	return not hotspot.disable_button
 end
@@ -400,7 +400,7 @@ UIUtils.is_button_pressed = function (widget, hotspot_name, keyboard_input)
 	-- function 19
 	if widget then
 		local content = widget.content
-		local hotspot = not not content[hotspot_name]
+		local hotspot = content[hotspot_name]
 
 		if hotspot.on_release then
 			hotspot.on_release = false
@@ -420,7 +420,7 @@ UIUtils.is_right_button_pressed = function (widget, hotspot_name, keyboard_input
 	-- function 20
 	if widget then
 		local content = widget.content
-		local hotspot = not not content[hotspot_name]
+		local hotspot = content[hotspot_name]
 
 		if hotspot.on_right_click then
 			hotspot.on_right_click = false
@@ -440,7 +440,7 @@ UIUtils.is_button_held = function (widget, hotspot_name)
 	-- function 21
 	if widget then
 		local content = widget.content
-		local hotspot = not not content[hotspot_name]
+		local hotspot = content[hotspot_name]
 
 		if hotspot.is_held then
 			return true
@@ -454,7 +454,7 @@ UIUtils.is_button_hover_enter = function (widget, hotspot_name)
 	-- function 22
 	if widget then
 		local content = widget.content
-		local hotspot = not not content[hotspot_name]
+		local hotspot = content[hotspot_name]
 
 		return hotspot.on_hover_enter
 	end
@@ -466,7 +466,7 @@ UIUtils.is_button_hover = function (widget, hotspot_name)
 	-- function 23
 	if widget then
 		local content = widget.content
-		local hotspot = not not content[hotspot_name]
+		local hotspot = content[hotspot_name]
 
 		return hotspot.is_hover
 	end
@@ -478,7 +478,7 @@ UIUtils.is_button_selected = function (widget, hotspot_name)
 	-- function 24
 	if widget then
 		local content = widget.content
-		local hotspot = not not content[hotspot_name]
+		local hotspot = content[hotspot_name]
 
 		return hotspot.is_selected
 	end
@@ -490,7 +490,7 @@ UIUtils.is_left_button_released = function (widget, hotspot_name)
 	-- function 25
 	if widget then
 		local content = widget.content
-		local hotspot = not not content[hotspot_name]
+		local hotspot = content[hotspot_name]
 
 		return hotspot.on_left_release
 	end
@@ -510,7 +510,7 @@ end
 UIUtils.comma_value = function (amount, comma)
 	-- function 27
 	local formatted, k = amount
-	local replacement = "%1" .. (not not comma or not not " ") .. "%2"
+	local replacement = "%1" .. (comma or " ") .. "%2"
 
 	repeat
 		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", replacement)
@@ -619,7 +619,7 @@ UIUtils.format_duration = function (t, done_string)
 	elseif t > 0 then
 		return string.format(Localize("datetime_seconds_short"), t)
 	else
-		return not not done_string or not not string.format(Localize("datetime_seconds_short"), 0)
+		return done_string or string.format(Localize("datetime_seconds_short"), 0)
 	end
 end
 
@@ -627,13 +627,13 @@ UIUtils.get_color_for_consumable_item = function (item_key)
 	-- function 36
 	local default_color = UISettings.inventory_consumable_slot_colors.default
 
-	return item_key and not not UISettings.inventory_consumable_slot_colors[item_key] or not item_key and not not default_color
+	return item_key and UISettings.inventory_consumable_slot_colors[item_key] or not item_key and default_color
 end
 
 UIUtils.sort_items_power_level_ascending = function (item_1, item_2)
 	-- function 37
-	local item_1_power_level = not not item_1.power_level
-	local item_2_power_level = not not item_2.power_level
+	local item_1_power_level = item_1.power_level
+	local item_2_power_level = item_2.power_level
 
 	if item_1_power_level == item_2_power_level then
 		return UIUtils.sort_items_rarity_ascending(item_1, item_2)
@@ -644,8 +644,8 @@ end
 
 UIUtils.sort_items_power_level_descending = function (item_1, item_2)
 	-- function 38
-	local item_1_power_level = not not item_1.power_level
-	local item_2_power_level = not not item_2.power_level
+	local item_1_power_level = item_1.power_level
+	local item_2_power_level = item_2.power_level
 
 	if item_1_power_level == item_2_power_level then
 		return UIUtils.sort_items_rarity_descending(item_1, item_2)
@@ -658,8 +658,8 @@ UIUtils.sort_items_rarity_ascending = function (item_1, item_2)
 	-- function 39
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local item_1_rarity = not not item_1.rarity
-	local item_2_rarity = not not item_2.rarity
+	local item_1_rarity = item_1.rarity
+	local item_2_rarity = item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -671,8 +671,8 @@ UIUtils.sort_items_rarity_descending = function (item_1, item_2)
 	-- function 40
 	local item_data_1 = item_1.data
 	local item_data_2 = item_2.data
-	local item_1_rarity = not not item_1.rarity
-	local item_2_rarity = not not item_2.rarity
+	local item_1_rarity = item_1.rarity
+	local item_2_rarity = item_2.rarity
 	local item_rarity_order = UISettings.item_rarity_order
 	local item_1_rarity_order = item_rarity_order[item_1_rarity]
 	local item_2_rarity_order = item_rarity_order[item_2_rarity]

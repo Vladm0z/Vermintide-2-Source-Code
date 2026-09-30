@@ -33,8 +33,8 @@ ActionMinigun.client_owner_start_action = function (self, new_action, t, chain_a
 
 	ActionMinigun.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	self._visual_heat_generation = not not new_action.visual_heat_generation
-	self._base_anim_speed = not not new_action.base_anim_speed
+	self._visual_heat_generation = new_action.visual_heat_generation
+	self._base_anim_speed = new_action.base_anim_speed
 	self._shot_cost = new_action.ammo_usage
 	self._calculated_attack_speed = false
 	self._initial_rounds_per_second = new_action.initial_rounds_per_second
@@ -141,7 +141,7 @@ ActionMinigun._shoot = function (self, dt, t)
 		local override_extra_shots = true
 		local projectiles_per_shot = self._projectiles_per_shot
 		local total_shots = projectiles_per_shot
-		local buff_shots = not not self:_update_extra_shots(self.buff_extension, 0, override_extra_shots)
+		local buff_shots = self:_update_extra_shots(self.buff_extension, 0, override_extra_shots)
 
 		if buff_shots > 0 then
 			self.extra_buff_shot = true
@@ -370,12 +370,12 @@ ActionMinigun._update_near_wall = function (self)
 	local direction = Quaternion.forward(camera_rotation)
 	local physics_world = World.physics_world(self.world)
 	local _, _, distance = PhysicsWorld.raycast(physics_world, camera_position, direction, near_wall_length, "all", "types", "both", "closest", "collision_filter", raycast_filter)
-	local near_wall = not not distance and distance <= near_wall_length
+	local near_wall = distance and distance <= near_wall_length
 
 	if near_wall ~= self._near_wall then
 		self._near_wall = near_wall
 
-		first_person_extension:animation_set_variable("disable_shooting", near_wall and not not 1 or not near_wall and not not 0)
+		first_person_extension:animation_set_variable("disable_shooting", near_wall and 1 or not near_wall and 0)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "near_wall_updated")
 	end
 end

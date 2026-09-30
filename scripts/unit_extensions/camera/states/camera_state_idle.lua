@@ -42,7 +42,7 @@ CameraStateIdle.update = function (self, unit, input, dt, context, t)
 
 	local unique_id = self.camera_extension.player:unique_id()
 	local side = Managers.state.side:get_side_from_player_unique_id(unique_id)
-	local side_name = not not side and not not side:name()
+	local side_name = side and side:name()
 
 	if side_name == "spectators" then
 		csm:change_state("observer")

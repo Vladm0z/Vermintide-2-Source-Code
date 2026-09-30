@@ -51,7 +51,7 @@ DisruptRitualExtension.start_disrupt_ritual = function (self, unit, volume_name,
 		return
 	end
 
-	sub_type = not not sub_type or not not "any_alive_players_inside"
+	sub_type = sub_type or "any_alive_players_inside"
 
 	if sub_type == "all_alive_players_inside" then
 		self._condition_func = self._volume_system.all_alive_human_players_inside
@@ -114,8 +114,8 @@ DisruptRitualExtension.update = function (self, t)
 
 	local current_damage = self._current_damage
 	local checkpoints = self._checkpoints
-	local current_checkpoint = not not self._current_checkpoint
-	local current_progression_event = not not self._current_progression_event
+	local current_checkpoint = self._current_checkpoint
+	local current_progression_event = self._current_progression_event
 
 	if self._condition_func(self._volume_system, self._volume_name) then
 		self:server_apply_damage(current_damage, checkpoints, current_checkpoint, self._num_checkpoints)
@@ -128,7 +128,7 @@ DisruptRitualExtension.update = function (self, t)
 	self._health_extension:set_current_damage(self._max_damage - current_damage)
 	self:server_update_progression_status(self._progression_event_thresholds, current_progression_event, self._num_progression_events, current_damage)
 	self:print_damage(current_damage)
-	self:server_send_rpc_update_clients(current_damage, not not self._current_checkpoint, self._current_progression_event, self._volume_name)
+	self:server_send_rpc_update_clients(current_damage, self._current_checkpoint, self._current_progression_event, self._volume_name)
 end
 
 DisruptRitualExtension.server_heal = function (self, current_damage, checkpoints, current_checkpoint)

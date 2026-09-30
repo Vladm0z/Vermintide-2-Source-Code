@@ -2,7 +2,7 @@
 
 require("scripts/utils/varargs")
 
-UIAnimation = not not UIAnimation
+UIAnimation = UIAnimation
 
 UIAnimation.init = function (...)
 	-- function 35

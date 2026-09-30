@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/buff_area_helper.lua
 
-local BuffAreaHelper = not not BuffAreaHelper
+local BuffAreaHelper = BuffAreaHelper
 
 BuffAreaHelper.setup_range_check = function (unit, buff, params, world)
 	-- function 1
@@ -25,15 +25,15 @@ BuffAreaHelper.update_range_check = function (unit, buff, params, world)
 	if range_check_state.update_time < params.t then
 		range_check_state.update_time = params.t + range_check_template.update_rate
 
-		local radius = buff_template.custom_radius and not not buff.radius or not buff_template.custom_radius and not not range_check_template.radius
+		local radius = buff_template.custom_radius and buff.radius or not buff_template.custom_radius and range_check_template.radius
 		local units_in_range = range_check_state.units_in_range
 		local unit_entered_range_func_name = range_check_template.unit_entered_range_func
 		local unit_left_range_func_name = range_check_template.unit_left_range_func
 		local temp_new_units_in_range = range_check_state.temp_new_units_in_range
 		local initial_length_temp_new_units_in_range = #temp_new_units_in_range
-		local position = not not POSITION_LOOKUP[unit]
+		local position = POSITION_LOOKUP[unit]
 		local num_hits = 0
-		local side = not not Managers.state.side.side_by_unit[unit]
+		local side = Managers.state.side.side_by_unit[unit]
 
 		if not range_check_template.only_players then
 			num_hits = AiUtils.broadphase_query(position, radius, temp_new_units_in_range, side.enemy_broadphase_categories)
@@ -62,21 +62,21 @@ BuffAreaHelper.update_range_check = function (unit, buff, params, world)
 			table.shuffle(temp_new_units_in_range)
 		end
 
-		local unit_entered_range_func = not not unit_entered_range_func_name and not not BuffFunctionTemplates.functions[unit_entered_range_func_name]
+		local unit_entered_range_func = unit_entered_range_func_name and BuffFunctionTemplates.functions[unit_entered_range_func_name]
 
 		for _, new_unit in ipairs(temp_new_units_in_range) do
 			if not units_in_range[new_unit] then
 				local user_data = true
 
 				if unit_entered_range_func then
-					user_data = not not unit_entered_range_func(new_unit, unit, buff, params, world) or not not true
+					user_data = unit_entered_range_func(new_unit, unit, buff, params, world) or true
 				end
 
 				units_in_range[new_unit] = user_data
 			end
 		end
 
-		local unit_left_range_func = not not unit_left_range_func_name and not not BuffFunctionTemplates.functions[unit_left_range_func_name]
+		local unit_left_range_func = unit_left_range_func_name and BuffFunctionTemplates.functions[unit_left_range_func_name]
 
 		for prev_unit_in_range, _ in pairs(units_in_range) do
 			if not table.contains(temp_new_units_in_range, prev_unit_in_range) then

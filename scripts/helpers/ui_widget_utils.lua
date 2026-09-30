@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/ui_widget_utils.lua
 
-UIWidgetUtils = not not UIWidgetUtils
+UIWidgetUtils = UIWidgetUtils
 
 UIWidgetUtils.animate_default_button = function (widget, dt)
 	-- function 1
@@ -8,11 +8,11 @@ UIWidgetUtils.animate_default_button = function (widget, dt)
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
-	local is_hover = not not is_selected or not not hotspot.is_hover
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local is_hover = is_selected or hotspot.is_hover
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -110,10 +110,10 @@ UIWidgetUtils.animate_default_icon_tabs = function (widget, dt)
 		local hotspot = content[hotspot_name]
 		local is_hover = hotspot.is_hover
 		local is_selected = hotspot.is_selected
-		local input_pressed = not is_selected and not not hotspot.is_clicked
-		local input_progress = not not hotspot.input_progress
-		local hover_progress = not not hotspot.hover_progress
-		local selection_progress = not not hotspot.selection_progress
+		local input_pressed = not is_selected and hotspot.is_clicked
+		local input_progress = hotspot.input_progress
+		local hover_progress = hotspot.hover_progress
+		local selection_progress = hotspot.selection_progress
 
 		if input_pressed then
 			input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -176,12 +176,12 @@ UIWidgetUtils.animate_default_checkbox_button = function (widget, dt)
 	local input_speed = 20
 	local hotspot_name = "button_hotspot"
 	local hotspot = content[hotspot_name]
-	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
-	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
-	local input_pressed = not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local is_hover = not hotspot.disable_button and hotspot.is_hover
+	local is_selected = not hotspot.disable_button and hotspot.is_selected
+	local input_pressed = hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -258,12 +258,12 @@ UIWidgetUtils.animate_default_checkbox_button_console = function (widget, dt)
 	local input_speed = 20
 	local hotspot_name = "button_hotspot"
 	local hotspot = content[hotspot_name]
-	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
-	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
-	local input_pressed = not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local is_hover = not hotspot.disable_button and hotspot.is_hover
+	local is_selected = not hotspot.disable_button and hotspot.is_selected
+	local input_pressed = hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -340,10 +340,10 @@ UIWidgetUtils.animate_default_text_tabs = function (widget, dt)
 		local hotspot = content[hotspot_name]
 		local is_hover = hotspot.is_hover
 		local is_selected = hotspot.is_selected
-		local input_pressed = not is_selected and not not hotspot.is_clicked
-		local input_progress = not not hotspot.input_progress
-		local hover_progress = not not hotspot.hover_progress
-		local selection_progress = not not hotspot.selection_progress
+		local input_pressed = not is_selected and hotspot.is_clicked
+		local input_progress = hotspot.input_progress
+		local hover_progress = hotspot.hover_progress
+		local selection_progress = hotspot.selection_progress
 
 		if input_pressed then
 			input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -413,12 +413,12 @@ UIWidgetUtils.animate_option_button = function (widget, dt)
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local has_focus = content.has_focus
-	local is_hover = not not hotspot.is_hover
+	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -501,7 +501,7 @@ UIWidgetUtils.animate_start_game_console_setting_button = function (widget, dt)
 	local content = widget.content
 	local style = widget.style
 	local is_selected = content.is_selected
-	local selected_progress = not not content.selected_progress
+	local selected_progress = content.selected_progress
 	local speed = 15
 
 	if is_selected then
@@ -521,13 +521,13 @@ UIWidgetUtils.animate_arrow_button = function (widget, dt)
 	-- function 8
 	local content = widget.content
 	local style = widget.style
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 	local has_focus = content.has_focus
-	local is_hover = not not hotspot.is_hover
+	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -553,13 +553,13 @@ UIWidgetUtils.animate_icon_button = function (widget, dt)
 	-- function 9
 	local content = widget.content
 	local style = widget.style
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 	local has_focus = content.has_focus
-	local is_hover = not not hotspot.is_hover
+	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -593,12 +593,12 @@ UIWidgetUtils.animate_play_button = function (widget, dt)
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local is_disabled = hotspot.disable_button
-	local is_selected = not not hotspot.is_selected
-	local is_hover = not not is_selected or not not hotspot.is_hover
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local is_selected = hotspot.is_selected
+	local is_hover = is_selected or hotspot.is_hover
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -639,7 +639,7 @@ UIWidgetUtils.animate_play_button = function (widget, dt)
 	style.texture_icon_hover_id.color[1] = hover_alpha
 	style.texture_text_bg_effect_id.color[1] = hover_alpha
 
-	local active_progress = is_disabled and not not 0 or not is_disabled and not not 1
+	local active_progress = is_disabled and 0 or not is_disabled and 1
 	local active_alpha_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 	local active_alpha = math.max(hover_alpha, active_progress * (active_alpha_progress * 200 + 55))
 
@@ -671,11 +671,11 @@ UIWidgetUtils.animate_game_option_button = function (widget, dt)
 		local on_hover_enter = hotspot.on_hover_enter
 		local is_hover = hotspot.is_hover
 		local gamepad_active = Managers.input:is_device_active("gamepad")
-		local speed = not not 14
+		local speed = 14
 		local pulse_speed = 3
-		local hover_progress = not not hotspot.hover_progress
-		local pulse_progress = not not hotspot.pulse_progress
-		local selection_progress = not not hotspot.selection_progress
+		local hover_progress = hotspot.hover_progress
+		local pulse_progress = hotspot.pulse_progress
+		local selection_progress = hotspot.selection_progress
 
 		if is_hover then
 			hover_progress = math.min(hover_progress + dt * speed, 1)
@@ -850,10 +850,10 @@ UIWidgetUtils.animate_layout_button = function (widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

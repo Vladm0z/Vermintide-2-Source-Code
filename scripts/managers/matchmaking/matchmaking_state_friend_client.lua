@@ -44,7 +44,7 @@ end
 MatchmakingStateFriendClient.on_exit = function (self)
 	-- function 4
 	local mechanism = Managers.mechanism:game_mechanism()
-	local server_id = not not mechanism and not not mechanism.get_server_id
+	local server_id = mechanism and mechanism.get_server_id
 
 	if server_id then
 		print("JOINING MATCH. SERVER NAME: " .. server_id)

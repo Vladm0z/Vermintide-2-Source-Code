@@ -42,7 +42,7 @@ local function reload_condition_func(action_user, input_extension, ammo_extensio
 		return false
 	end
 
-	return not not ammo_extension and not not ammo_extension:can_reload()
+	return ammo_extension and ammo_extension:can_reload()
 end
 
 local function update_ammo(owner_unit, weapon_unit)
@@ -331,7 +331,7 @@ local function set_windup_progress(career_extension, weapon_unit, override_value
 	local ability_data = career_extension:get_activated_ability_data(ability_id)
 	local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
 
-	ability_data.priming_progress = not not override_value or not not weapon_extension:get_custom_data("windup")
+	ability_data.priming_progress = override_value or weapon_extension:get_custom_data("windup")
 end
 
 weapon_template.synced_states = {

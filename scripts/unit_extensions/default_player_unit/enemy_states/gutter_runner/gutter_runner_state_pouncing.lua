@@ -220,7 +220,7 @@ GutterRunnerStatePouncing._update_movement = function (self, unit, dt, t)
 				local player_unit_pos = Unit.world_position(player_unit, Unit.node(player_unit, "j_spine"))
 				local distance_to_hero = Vector3.distance(player_unit_pos, position)
 
-				if not closest_hero_distance and PerceptionUtils.is_position_in_line_of_sight(nil, position, player_unit_pos, self._physics_world) or not not closest_hero_distance and distance_to_hero < closest_hero_distance and PerceptionUtils.is_position_in_line_of_sight(nil, position, player_unit_pos, self._physics_world) then
+				if not closest_hero_distance and PerceptionUtils.is_position_in_line_of_sight(nil, position, player_unit_pos, self._physics_world) or closest_hero_distance and distance_to_hero < closest_hero_distance and PerceptionUtils.is_position_in_line_of_sight(nil, position, player_unit_pos, self._physics_world) then
 					closest_hero_distance = distance_to_hero
 					self._pounce_target = player_unit
 				end

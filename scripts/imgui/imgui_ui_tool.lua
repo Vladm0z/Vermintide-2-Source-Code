@@ -199,21 +199,21 @@ ImguiUITool.texture = function (self, texture_type, texture, pos, size, color)
 	local is_hovered = inside_2d_box_lenient(self._cursor, pos, size)
 
 	if is_hovered then
-		color = not not color or not not WHITE
+		color = color or WHITE
 
 		local buffer = self._data_back_buffer
 		local settings = UIAtlasHelper._ui_atlas_settings[texture]
 
 		buffer[#buffer + 1] = texture_type
 		buffer[#buffer + 1] = tostring(texture)
-		buffer[#buffer + 1] = settings and not not settings.material_name or not settings and not not "n/a"
+		buffer[#buffer + 1] = settings and settings.material_name or not settings and "n/a"
 		buffer[#buffer + 1] = format("Vector3(%d, %d, %d)", pos[1], pos[2], pos[3])
 		buffer[#buffer + 1] = format("Vector2(%d, %d)", size[1], size[2])
 		buffer[#buffer + 1] = format("Color(%d, %d, %d, %d)", color[1], color[2], color[3], color[4])
 	end
 
 	local color
-	local alpha = is_hovered and not not 200 or not is_hovered and not not 30
+	local alpha = is_hovered and 200 or not is_hovered and 30
 
 	if texture_type == "rect" or texture_type == "rounded_rect" then
 		color = Color(alpha, 0, 255, 0)
@@ -240,7 +240,7 @@ ImguiUITool.text = function (self, ui_renderer, text, font_material, font_size, 
 	local is_hovered = inside_2d_box_lenient(self._cursor, pos, size)
 
 	if is_hovered then
-		color = not not color or not not WHITE
+		color = color or WHITE
 
 		local buffer = self._data_back_buffer
 
@@ -252,12 +252,12 @@ ImguiUITool.text = function (self, ui_renderer, text, font_material, font_size, 
 		buffer[#buffer + 1] = format("Color(%d, %d, %d, %d)", color[1], color[2], color[3], color[4])
 	end
 
-	self:draw_border(Vector3(pos[1], pos[2], 999), Vector2(size[1], size[2]), Color(is_hovered and not not 200 or not is_hovered and not not 30, 0, 100, 255))
+	self:draw_border(Vector3(pos[1], pos[2], 999), Vector2(size[1], size[2]), Color(is_hovered and 200 or not is_hovered and 30, 0, 100, 255))
 end
 
 ImguiUITool.node = function (self, node, file)
 	-- function 13
-	if not do_search(self._search, not not node.name, file) then
+	if not do_search(self._search, node.name, file) then
 		return
 	end
 
@@ -271,12 +271,12 @@ ImguiUITool.node = function (self, node, file)
 	if is_hovered then
 		local buffer = self._data_back_buffer
 
-		buffer[#buffer + 1] = not not file or not not "n/a"
+		buffer[#buffer + 1] = file or "n/a"
 		buffer[#buffer + 1] = node.name
 
 		if node.parent then
 			buffer[#buffer + 1] = node.parent
-			buffer[#buffer + 1] = format("%s / %s", not not node.horizontal_alignment, not not node.vertical_alignment)
+			buffer[#buffer + 1] = format("%s / %s", node.horizontal_alignment, node.vertical_alignment)
 		else
 			buffer[#buffer + 1] = "n/a"
 			buffer[#buffer + 1] = "n/a"
@@ -285,10 +285,10 @@ ImguiUITool.node = function (self, node, file)
 		buffer[#buffer + 1] = format("Vector3(%d, %d, %d)", pos[1], pos[2], pos[3])
 		buffer[#buffer + 1] = format("Vector2(%d, %d)", size[1], size[2])
 
-		self:draw_label(node.name, Vector3(screen_pos[1], screen_pos[2], 999), Color(is_hovered and not not 200 or not is_hovered and not not 55, 100, 100, 255))
+		self:draw_label(node.name, Vector3(screen_pos[1], screen_pos[2], 999), Color(is_hovered and 200 or not is_hovered and 55, 100, 100, 255))
 	end
 
-	self:draw_border(Vector3(screen_pos[1], screen_pos[2], 999), screen_size, Color(is_hovered and not not 200 or not is_hovered and not not 55, 100, 100, 255))
+	self:draw_border(Vector3(screen_pos[1], screen_pos[2], 999), screen_size, Color(is_hovered and 200 or not is_hovered and 55, 100, 100, 255))
 
 	return is_hovered
 end
@@ -300,7 +300,7 @@ ImguiUITool.scenegraph = function (self, scenegraph, parent_scenegraph, scenegra
 	end
 
 	local info = debug.getinfo(4, "S")
-	local file = not not info and not not info.short_src
+	local file = info and info.short_src
 	local any_hovered = false
 
 	for idx, node in pairs(scenegraph) do
@@ -595,7 +595,7 @@ ImguiUITool.do_asset_browser = function (self)
 	elseif Vector3.y(Mouse.axis(wheel_axis)) < 0 then
 		self._asset_browser_offset = self._asset_browser_offset - scroll_sense
 	elseif Mouse.button(Mouse.button_index("middle")) > 0.5 then
-		self._scroll_hold_pos = not not self._scroll_hold_pos
+		self._scroll_hold_pos = self._scroll_hold_pos
 		self._asset_browser_offset = self._asset_browser_offset + (Vector3Aux.unbox(cursor)[2] - self._scroll_hold_pos:unbox()[2])
 		self._asset_browser_offset = math.clamp(self._asset_browser_offset, cell_size[2] * (-math.ceil(#table.select_array(texture_registry, function (_, data)
 			-- function 34
@@ -606,7 +606,7 @@ ImguiUITool.do_asset_browser = function (self)
 	end
 
 	local ingame_ui = Managers.ui._ingame_ui
-	local gui = not not ingame_ui and not not ingame_ui.ui_top_renderer.gui
+	local gui = ingame_ui and ingame_ui.ui_top_renderer.gui
 	local cell_index = 0
 
 	for i = 1, #texture_registry do
@@ -672,7 +672,7 @@ ImguiUITool.do_asset_browser = function (self)
 				local display_text = texture_name
 				local t = Managers.time:time("main")
 
-				if t < not not self._copied_t and self._copied_text == texture_name then
+				if t < self._copied_t and self._copied_text == texture_name then
 					display_text = display_text .. " (Copied!)           "
 				else
 					display_text = display_text .. " (Left click to copy)"
@@ -708,14 +708,14 @@ end
 ImguiUITool._setting_checkbox = function (self, key, label)
 	-- function 35
 	if do_search(self._search, label) then
-		self[key] = Imgui.checkbox(label, not not self[key])
+		self[key] = Imgui.checkbox(label, self[key])
 	end
 end
 
 ImguiUITool._setting_color = function (self, key, label)
 	-- function 36
 	if do_search(self._search, label) then
-		local col = not not self[key]
+		local col = self[key]
 
 		Colors.set(col, ImguiX.color_edit_4(label, unpack(col)))
 
@@ -778,7 +778,7 @@ ImguiUITool.draw = function (self)
 
 	if Imgui.begin_menu_bar() then
 		for i, tab in ipairs(self._tabs) do
-			local label = self._selected_tab == tab and not not ("[" .. tab .. "]") or not (self._selected_tab == tab) and not not (" " .. tab .. " ")
+			local label = self._selected_tab == tab and "[" .. tab .. "]" or not (self._selected_tab == tab) and " " .. tab .. " "
 
 			if Imgui.menu_item(label) then
 				self._selected_tab = tab

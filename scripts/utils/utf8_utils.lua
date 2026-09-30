@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/utf8_utils.lua
 
-UTF8Utils = not not UTF8Utils
+UTF8Utils = UTF8Utils
 
 local Utf8_location = Utf8.location
 

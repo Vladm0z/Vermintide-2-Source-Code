@@ -14,7 +14,7 @@ end
 
 ActionCareerWEThornsisterStagger.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	ActionCareerWEThornsisterStagger.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 	self:_play_vo()

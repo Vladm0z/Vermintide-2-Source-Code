@@ -85,7 +85,7 @@ ActPresentationUI.start = function (self, level_key, previous_completed_difficul
 
 	self.animation_params = animation_params
 
-	local animation_name = first_time_completed and not not "enter_first_time" or not first_time_completed and not not "enter"
+	local animation_name = first_time_completed and "enter_first_time" or not first_time_completed and "enter"
 
 	self:start_presentation_animation(animation_name, animation_params)
 
@@ -104,7 +104,7 @@ ActPresentationUI._set_presentation_info = function (self, act_key, level_key)
 	local widgets_by_name = self._widgets_by_name
 
 	widgets_by_name.level.content.icon = level_image
-	widgets_by_name.act_title.content.text = act_display_name and not not Localize(act_display_name) or not act_display_name and not not ""
+	widgets_by_name.act_title.content.text = act_display_name and Localize(act_display_name) or not act_display_name and ""
 	widgets_by_name.level_title.content.text = Localize(level_display_name)
 end
 
@@ -113,16 +113,16 @@ ActPresentationUI._setup_level = function (self, act_key, played_level_key, prev
 	local widgets_by_name = self._widgets_by_name
 	local statistics_db = self.statistics_db
 	local stats_id = self.stats_id
-	local level_stat = not not statistics_db:get_persistent_stat(stats_id, "completed_levels", played_level_key)
+	local level_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", played_level_key)
 	local level_completed = level_stat ~= 0
-	local difficulty_complete_index = level_completed and not not LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, played_level_key) or not level_completed and not not 0
+	local difficulty_complete_index = level_completed and LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, played_level_key) or not level_completed and 0
 	local first_time_completed = previous_difficulty_index_completed < difficulty_complete_index
 	local widget_name = "level"
 	local widget = widgets_by_name[widget_name]
 	local content = widget.content
 	local style = widget.style
 
-	content.locked = not not first_time_completed or not not not level_completed
+	content.locked = first_time_completed or not level_completed
 
 	return first_time_completed, difficulty_complete_index
 end
@@ -159,7 +159,7 @@ ActPresentationUI.presentation_completed = function (self)
 	-- function 8
 	local animation_params = self.animation_params
 
-	return animation_params and not not animation_params.presentation_completed or not animation_params and not not self._presentation_aborted
+	return animation_params and animation_params.presentation_completed or not animation_params and self._presentation_aborted
 end
 
 ActPresentationUI.update = function (self, dt, t)
@@ -199,7 +199,7 @@ end
 
 ActPresentationUI.start_presentation_animation = function (self, animation_name, optional_params)
 	-- function 11
-	local params = not not optional_params or not not {
+	local params = optional_params or {
 		wwise_world = self.wwise_world
 	}
 	local animation_id = self._ui_animator:start_animation(animation_name, self._widgets_by_name, scenegraph_definition, params)

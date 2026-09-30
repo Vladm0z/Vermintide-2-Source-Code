@@ -73,7 +73,7 @@ local BaseStates = {
 			for _, unit_and_extension in ipairs(data.active_locus) do
 				local extension = unit_and_extension[2]
 
-				done_locus = done_locus + (extension:is_complete() and not not 1 or not extension:is_complete() and not not 0)
+				done_locus = done_locus + (extension:is_complete() and 1 or not extension:is_complete() and 0)
 			end
 
 			if data.shared_state:get_server(data.shared_state:get_key("socketed_count")) ~= done_locus then
@@ -145,7 +145,7 @@ ArenaStates = {
 			for _, unit_and_extension in ipairs(data.active_locus) do
 				local extension = unit_and_extension[2]
 
-				done_locus = done_locus + (extension:is_complete() and not not 1 or not extension:is_complete() and not not 0)
+				done_locus = done_locus + (extension:is_complete() and 1 or not extension:is_complete() and 0)
 			end
 
 			if done_locus > 0 and done_locus / #data.active_locus >= 0.5 then
@@ -163,7 +163,7 @@ ArenaStates = {
 			for _, unit_and_extension in ipairs(data.active_locus) do
 				local extension = unit_and_extension[2]
 
-				done_locus = done_locus + (extension:is_complete() and not not 1 or not extension:is_complete() and not not 0)
+				done_locus = done_locus + (extension:is_complete() and 1 or not extension:is_complete() and 0)
 			end
 
 			if done_locus > 0 and done_locus / #data.active_locus >= 1 then
@@ -336,8 +336,8 @@ return {
 		local new_state = id_to_state[new_state_id]
 
 		if current_state ~= new_state then
-			local current_base_state_left = not not current_state.base_state
-			local new_base_state_entered = not not new_state.base_state
+			local current_base_state_left = current_state.base_state
+			local new_base_state_entered = new_state.base_state
 
 			if is_server then
 				if current_state.on_server_exit then

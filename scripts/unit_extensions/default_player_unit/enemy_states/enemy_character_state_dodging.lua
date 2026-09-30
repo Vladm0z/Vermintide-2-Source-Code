@@ -236,7 +236,7 @@ end
 
 EnemyCharacterStateDodging.get_is_dodging = function (self)
 	-- function 7
-	return not not self.dodge_timer
+	return self.dodge_timer
 end
 
 EnemyCharacterStateDodging.start_dodge = function (self, unit, t)

@@ -52,7 +52,7 @@ for i = 1, math.min(#experience_levels, level_used_for_extra_levels_experience) 
 	max_reward_experience = max_reward_experience + experience_levels[i]
 end
 
-ExperienceSettings = not not ExperienceSettings
+ExperienceSettings = ExperienceSettings
 
 ExperienceSettings.get_player_level = function (player)
 	-- function 1
@@ -123,19 +123,19 @@ ExperienceSettings.get_experience = function (hero_name)
 	-- function 4
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 
-	return not not hero_attributes:get(hero_name, "experience")
+	return (hero_attributes:get(hero_name, "experience"))
 end
 
 ExperienceSettings.get_experience_pool = function (hero_name)
 	-- function 5
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 
-	return not not hero_attributes:get(hero_name, "experience_pool")
+	return (hero_attributes:get(hero_name, "experience_pool"))
 end
 
 ExperienceSettings.get_level = function (experience)
 	-- function 6
-	experience = not not experience or not not 0
+	experience = experience or 0
 
 	assert(experience >= 0, "Negative XP!??")
 
@@ -184,7 +184,7 @@ ExperienceSettings.get_total_experience_required_for_level = function (level)
 	local experience = 0
 
 	for i = 1, level do
-		local level_experience = not not experience_levels[i]
+		local level_experience = experience_levels[i]
 
 		experience = experience + level_experience
 	end
@@ -194,7 +194,7 @@ end
 
 ExperienceSettings.get_experience_required_for_level = function (level)
 	-- function 9
-	return not not experience_levels[level]
+	return experience_levels[level]
 end
 
 ExperienceSettings.get_highest_character_level = function ()
@@ -218,7 +218,7 @@ end
 ExperienceSettings.get_character_level = function (display_name)
 	-- function 11
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(display_name, "experience")
+	local hero_experience = hero_attributes:get(display_name, "experience")
 
 	return ExperienceSettings.get_level(hero_experience)
 end

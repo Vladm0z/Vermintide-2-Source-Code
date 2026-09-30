@@ -1,7 +1,7 @@
 -- chunkname: @scripts/unit_extensions/generic/generic_volume_templates.lua
 
-VolumeFilters = not not VolumeFilters
-GenericVolumeTemplates = not not GenericVolumeTemplates
+VolumeFilters = VolumeFilters
+GenericVolumeTemplates = GenericVolumeTemplates
 GenericVolumeTemplates.functions = {
 	damage_volume = {
 		generic_dot = {
@@ -469,9 +469,9 @@ GenericVolumeTemplates.filters = {
 		local volume_system = Managers.state.entity:system("volume_system")
 		local is_inside = volume_system:player_inside(data.volume_name, unit)
 		local all_inside_disabled = volume_system:all_human_players_inside_disabled(data.volume_name)
-		local is_inside_and_disabled = not not is_disabled and not not is_inside
-		local is_outside_and_not_disabled = not is_inside and not not not is_disabled
-		local result = not not not not all_inside_disabled
+		local is_inside_and_disabled = is_disabled and is_inside
+		local is_outside_and_not_disabled = not is_inside and not is_disabled
+		local result = all_inside_disabled
 
 		return result
 	end,
@@ -495,8 +495,8 @@ GenericVolumeTemplates.filters = {
 
 		local conflict_director = Managers.state.conflict
 		local side_manager = Managers.state.side
-		local side = not not side_manager and not not side_manager.side_by_unit[unit]
+		local side = side_manager and side_manager.side_by_unit[unit]
 
-		return (not not conflict_director and not not conflict_director.default_enemy_side_id) == (not not side and not not side.side_id)
+		return (conflict_director and conflict_director.default_enemy_side_id) == (side and side.side_id)
 	end
 }

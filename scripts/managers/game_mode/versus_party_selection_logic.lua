@@ -530,11 +530,11 @@ VersusPartySelectionLogic.hot_join_sync = function (self, peer_id)
 				local picker_data = picker_list[picker_id]
 				local status = picker_data.status
 				local melee_name, ranged_name, skin_name, hat_name, frame_name = slot_data.slot_melee, slot_data.slot_ranged, slot_data.slot_skin, slot_data.slot_hat, slot_data.slot_frame
-				local melee_id = NetworkLookup.item_names[not not melee_name or not not "n/a"]
-				local ranged_id = NetworkLookup.item_names[not not ranged_name or not not "n/a"]
-				local skin_id = NetworkLookup.item_names[not not skin_name or not not "n/a"]
-				local hat_id = NetworkLookup.item_names[not not hat_name or not not "n/a"]
-				local frame_id = NetworkLookup.item_names[not not frame_name or not not "n/a"]
+				local melee_id = NetworkLookup.item_names[melee_name or "n/a"]
+				local ranged_id = NetworkLookup.item_names[ranged_name or "n/a"]
+				local skin_id = NetworkLookup.item_names[skin_name or "n/a"]
+				local hat_id = NetworkLookup.item_names[hat_name or "n/a"]
+				local frame_id = NetworkLookup.item_names[frame_name or "n/a"]
 				local level = status.level
 				local versus_level = status.versus_level
 
@@ -556,7 +556,7 @@ VersusPartySelectionLogic.get_party_data = function (self, party_id)
 	-- function 34
 	local pick_data_per_party = self._pick_data_per_party
 
-	return not not pick_data_per_party and not not pick_data_per_party[party_id]
+	return pick_data_per_party and pick_data_per_party[party_id]
 end
 
 VersusPartySelectionLogic.set_player_state = function (self, new_state, party_id, picker_id)
@@ -656,13 +656,13 @@ end
 
 VersusPartySelectionLogic.get_random_available_character = function (self, party_data, is_bot)
 	-- function 40
-	local random_profile_indices = not not self._random_profile_indices
+	local random_profile_indices = self._random_profile_indices
 
 	self._random_profile_indices = random_profile_indices
 
 	table.shuffle(random_profile_indices)
 
-	local random_career_indices = not not self._random_career_indices
+	local random_career_indices = self._random_career_indices
 
 	self._random_career_indices = random_career_indices
 
@@ -766,7 +766,7 @@ end
 
 VersusPartySelectionLogic.select_character = function (self, profile_index, career_index)
 	-- function 46
-	assert(not not profile_index and not not career_index, "[VersusPartySelectionLogic] Selecting non-character")
+	assert(profile_index and career_index, "[VersusPartySelectionLogic] Selecting non-character")
 
 	local local_party_data = self:_local_party_data()
 	local picker_index = local_party_data.current_picker_index
@@ -915,7 +915,7 @@ end
 VersusPartySelectionLogic.sync_player_loadout = function (self, profile_index, career_index, party_id, picker_list_id)
 	-- function 53
 	local _, local_party, local_picker_list_id = self:_local_party_data()
-	local syncing_own_loadout = (not not local_party and not not local_party.party_id) == party_id and local_picker_list_id == picker_list_id
+	local syncing_own_loadout = (local_party and local_party.party_id) == party_id and local_picker_list_id == picker_list_id
 	local party_data = self._pick_data_per_party[party_id]
 	local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(party_data, picker_list_id)
 	local melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level
@@ -924,7 +924,7 @@ VersusPartySelectionLogic.sync_player_loadout = function (self, profile_index, c
 		melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level = self:_get_loadout(profile_index, career_index, is_bot)
 
 		local peer_id, local_player_id = self:_peer_from_picker_data(party_data, picker_list_id)
-		local sync_cosmetics = not not self:_is_hero_party(party_id)
+		local sync_cosmetics = self:_is_hero_party(party_id)
 
 		if sync_cosmetics then
 			local player = Managers.player:player(peer_id, local_player_id)
@@ -977,20 +977,20 @@ VersusPartySelectionLogic._get_loadout = function (self, profile_index, career_i
 	local career_name = career.display_name
 	local item_slot_types_by_slot_name = career.item_slot_types_by_slot_name
 	local get_loadout_item = BackendUtils.get_loadout_item
-	local melee = not not item_slot_types_by_slot_name.slot_melee
-	local ranged = not not item_slot_types_by_slot_name.slot_ranged
-	local skin = not not item_slot_types_by_slot_name.slot_skin
-	local hat = not not item_slot_types_by_slot_name.slot_hat
-	local portrait_frame = not not item_slot_types_by_slot_name.slot_frame
-	local melee_id = melee and not not NetworkLookup.item_names[melee.key] or not melee and not not 1
-	local ranged_id = ranged and not not NetworkLookup.item_names[ranged.key] or not ranged and not not 1
-	local skin_id = skin and not not NetworkLookup.item_names[skin.key] or not skin and not not 1
-	local hat_id = hat and not not NetworkLookup.item_names[hat.key] or not hat and not not 1
-	local frame_id = hat and not not NetworkLookup.item_names[portrait_frame.key] or not hat and not not 1
+	local melee = item_slot_types_by_slot_name.slot_melee
+	local ranged = item_slot_types_by_slot_name.slot_ranged
+	local skin = item_slot_types_by_slot_name.slot_skin
+	local hat = item_slot_types_by_slot_name.slot_hat
+	local portrait_frame = item_slot_types_by_slot_name.slot_frame
+	local melee_id = melee and NetworkLookup.item_names[melee.key] or not melee and 1
+	local ranged_id = ranged and NetworkLookup.item_names[ranged.key] or not ranged and 1
+	local skin_id = skin and NetworkLookup.item_names[skin.key] or not skin and 1
+	local hat_id = hat and NetworkLookup.item_names[hat.key] or not hat and 1
+	local frame_id = hat and NetworkLookup.item_names[portrait_frame.key] or not hat and 1
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 	local experience = hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(experience)
-	local versus_level = is_bot and not not 0 or not is_bot and not not ExperienceSettings.get_versus_level()
+	local versus_level = is_bot and 0 or not is_bot and ExperienceSettings.get_versus_level()
 
 	return melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level
 end
@@ -1101,9 +1101,9 @@ VersusPartySelectionLogic.player_left_party = function (self, peer_id, local_pla
 
 	if ClientStateLookup[picker_data.state] >= ClientStateLookup.player_picking_character then
 		local new_profile_index, new_career_index = self:_ensure_picker_has_character(party_data, index, true)
-		local old_peer_id = not not old_slot_data.status
+		local old_peer_id = old_slot_data.status
 
-		printf("[VersusPartySelectionLogic] %s in party %s and pick id %s left and was replaced by %s", not not old_peer_id or not not "UNKNOWN", party.party_id, index, SPProfiles[new_profile_index].careers[new_career_index].display_name)
+		printf("[VersusPartySelectionLogic] %s in party %s and pick id %s left and was replaced by %s", old_peer_id or "UNKNOWN", party.party_id, index, SPProfiles[new_profile_index].careers[new_career_index].display_name)
 	end
 end
 
@@ -1135,7 +1135,7 @@ VersusPartySelectionLogic._try_pick_hero = function (self, party_data, picker_in
 		local slot_already_picked = ClientStateLookup[state] > ClientStateLookup.player_picking_character
 
 		if current_profile_idx and slot_already_picked then
-			printf("[VersusPartySelectionLogic] %s %s in party %s and pick id %s tried to pick a hero %s %s after timer ran out. Staying as %s %s", is_bot and not not "BOT in slot" or not is_bot and not not "Peer", is_bot and (not not picker_index or not not peer_id) or not is_bot and not not peer_id, party_id, picker_index, profile_index, career_index, current_profile_idx, current_career_idx)
+			printf("[VersusPartySelectionLogic] %s %s in party %s and pick id %s tried to pick a hero %s %s after timer ran out. Staying as %s %s", is_bot and "BOT in slot" or not is_bot and "Peer", is_bot and (picker_index or peer_id) or not is_bot and peer_id, party_id, picker_index, profile_index, career_index, current_profile_idx, current_career_idx)
 
 			profile_index = current_profile_idx
 			career_index = current_career_idx
@@ -1148,13 +1148,13 @@ VersusPartySelectionLogic._try_pick_hero = function (self, party_data, picker_in
 		if not profile_index or not career_index or profile_index == 0 or career_index == 0 then
 			profile_index, career_index = self:get_character_or_random(profile_index, career_index, party_data, is_bot)
 
-			printf("[VersusPartySelectionLogic] No profile provided for %s %s. Fallbacking to %s %s.", is_bot and not not "BOT in slot" or not is_bot and not not "Peer", is_bot and (not not picker_index or not not peer_id) or not is_bot and not not peer_id, profile_index, career_index)
+			printf("[VersusPartySelectionLogic] No profile provided for %s %s. Fallbacking to %s %s.", is_bot and "BOT in slot" or not is_bot and "Peer", is_bot and (picker_index or peer_id) or not is_bot and peer_id, profile_index, career_index)
 		elseif self:_is_hero_locked(profile_index, party_data, peer_id) then
 			local failed_profile_index, failed_career_index = profile_index, career_index
 
 			profile_index, career_index = self:get_character_or_random(profile_index, career_index, party_data, is_bot)
 
-			printf("[VersusPartySelectionLogic] %s %s tried to pick locked hero %s %s. Fallbacking to %s %s.", is_bot and not not "BOT in slot" or not is_bot and not not "Peer", is_bot and (not not picker_index or not not peer_id) or not is_bot and not not peer_id, failed_profile_index, failed_career_index, profile_index, career_index)
+			printf("[VersusPartySelectionLogic] %s %s tried to pick locked hero %s %s. Fallbacking to %s %s.", is_bot and "BOT in slot" or not is_bot and "Peer", is_bot and (picker_index or peer_id) or not is_bot and peer_id, failed_profile_index, failed_career_index, profile_index, career_index)
 		end
 
 		if is_bot then
@@ -1185,7 +1185,7 @@ VersusPartySelectionLogic.rpc_party_select_request_pick_hero = function (self, c
 	local pick_data_per_party = self._pick_data_per_party
 	local party_data = pick_data_per_party[party_id]
 	local got_profile, got_career = self:_try_pick_hero(party_data, picker_index, profile_index, career_index)
-	local fail_context = got_profile ~= profile_index and not not string.format(", but got hero %s %s", got_profile, got_career) or not (got_profile ~= profile_index) and not not " and succeeded"
+	local fail_context = got_profile ~= profile_index and string.format(", but got hero %s %s", got_profile, got_career) or not (got_profile ~= profile_index) and " and succeeded"
 
 	printf("[VersusPartySelectionLogic] Peer %s in party %s tried to pick hero %s %s%s", CHANNEL_TO_PEER_ID[channel_id], party_id, profile_index, career_index, fail_context)
 end
@@ -1274,7 +1274,7 @@ VersusPartySelectionLogic.rpc_sync_player_loadout = function (self, channel_id, 
 	end
 
 	local _, local_party, local_picker_list_id = self:_local_party_data()
-	local local_party_id = not not local_party and not not local_party.party_id
+	local local_party_id = local_party and local_party.party_id
 
 	if local_party_id == party_id and local_picker_list_id == pick_id then
 		print("[VersusPartySelectionLogic] Local player was assigned to", profile_index, career_index)

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/objective/objective_system.lua
 
-local objective_system_testify = not not script_data.testify
+local objective_system_testify = script_data.testify
 
 require("scripts/entity_system/systems/weaves/weave_essence_handler")
 require("scripts/unit_extensions/objectives/base_objective_extension")
@@ -377,7 +377,7 @@ ObjectiveSystem.on_add_extension = function (self, world, unit, extension_name, 
 	local progress_listener = Unit.get_data(unit, "listen_to_progress")
 
 	if progress_listener then
-		local listeners = not not self._progress_listeners[progress_listener]
+		local listeners = self._progress_listeners[progress_listener]
 
 		listeners[0] = #listeners + 1
 		listeners[listeners[0]] = unit
@@ -395,7 +395,7 @@ ObjectiveSystem.on_add_extension = function (self, world, unit, extension_name, 
 		extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
 	end
 
-	self.extensions[extension_name] = not not self.extensions[extension_name] + 1
+	self.extensions[extension_name] = self.extensions[extension_name] + 1
 	self._units[extension] = unit
 	self._extensions[unit] = extension
 
@@ -625,7 +625,7 @@ ObjectiveSystem._complete_objective_server = function (self, extension, objects_
 	end
 
 	if self._weave_manager then
-		self._weave_manager:increase_bar_score(not not extension:get_score_for_completion())
+		self._weave_manager:increase_bar_score((extension:get_score_for_completion()))
 	end
 
 	if not extension.keep_alive then
@@ -678,7 +678,7 @@ end
 
 ObjectiveSystem.is_last_leaf_objective = function (self, objective_name)
 	-- function 30
-	return not not self:is_leaf_objective(objective_name)
+	return (self:is_leaf_objective(objective_name))
 end
 
 ObjectiveSystem._get_first_objective = function (self)
@@ -703,7 +703,7 @@ ObjectiveSystem.first_active_leaf_objective_unit = function (self)
 	-- function 33
 	local extension = self:_get_first_leaf_objective()
 
-	return not not extension and not not extension:unit()
+	return extension and extension:unit()
 end
 
 ObjectiveSystem.first_active_objective_name = function (self)
@@ -724,7 +724,7 @@ ObjectiveSystem.first_active_objective_description = function (self)
 		local objective_name = active_objectives[i]
 		local extension = self._objective_by_name[objective_name]
 		local objective_data = self._data_by_name[objective_name]
-		local description = not not extension:description()
+		local description = extension:description()
 
 		if description then
 			return Localize(description)
@@ -751,7 +751,7 @@ ObjectiveSystem.current_objective_progress = function (self)
 		if extension.get_percentage_done then
 			total_progress = total_progress + extension:get_percentage_done()
 		else
-			total_progress = extension:is_done() and (not not 1 or not not 0) or not extension:is_done() and not not 0
+			total_progress = extension:is_done() and (1 or 0) or not extension:is_done() and 0
 		end
 	end
 
@@ -768,7 +768,7 @@ ObjectiveSystem.current_objective_icon = function (self)
 		local objective_name = active_objectives[i]
 		local extension = self._objective_by_name[objective_name]
 		local objective_data = self._data_by_name[objective_name]
-		local objective_icon = not not extension:objective_icon()
+		local objective_icon = extension:objective_icon()
 
 		if objective_icon then
 			return objective_icon
@@ -786,7 +786,7 @@ ObjectiveSystem.current_objective_type = function (self)
 		local objective_name = active_objectives[i]
 		local extension = self._objective_by_name[objective_name]
 		local objective_data = self._data_by_name[objective_name]
-		local objective_type = not not extension:objective_type()
+		local objective_type = extension:objective_type()
 
 		if objective_type then
 			return objective_type
@@ -838,8 +838,8 @@ ObjectiveSystem.objective_section_completed_telemetry = function (self, current_
 		return
 	end
 
-	current_section = not not current_section or not not 1
-	total_sections = not not total_sections or not not 1
+	current_section = current_section or 1
+	total_sections = total_sections or 1
 
 	local match_id = Managers.mechanism:game_mechanism():match_id()
 	local objective_id = self._current_objective_list_index
@@ -952,7 +952,7 @@ end
 
 ObjectiveSystem._read_hot_join_sync_completed_objectives = function (self, objective_list, completed_objectives_bit_field, optional_offset)
 	-- function 57
-	optional_offset = not not optional_offset or not not 0
+	optional_offset = optional_offset or 0
 
 	for objective_name, objective_data in pairs(objective_list) do
 		local is_completed = bit.band(bit.rshift(completed_objectives_bit_field, optional_offset), 1)
@@ -973,8 +973,8 @@ end
 
 ObjectiveSystem._write_hot_join_sync_completed_objectives = function (self, objective_list, optional_completed_objectives_bit_field, optional_offset)
 	-- function 58
-	optional_offset = not not optional_offset or not not 0
-	optional_completed_objectives_bit_field = not not optional_completed_objectives_bit_field or not not 0
+	optional_offset = optional_offset or 0
+	optional_completed_objectives_bit_field = optional_completed_objectives_bit_field or 0
 
 	for objective_name, objective_data in pairs(objective_list) do
 		local is_completed = not table.contains(self._active_objectives, objective_name)
@@ -995,7 +995,7 @@ end
 
 ObjectiveSystem.rpc_activate_objective = function (self, sender, objective_index, completed_objectives_bit_field)
 	-- function 59
-	assert(objective_index > self._current_objective_list_index or not not table.is_empty(self._active_objectives), "[ObjectiveSystem] Reactivating objective or activating old objective")
+	assert(objective_index > self._current_objective_list_index or table.is_empty(self._active_objectives), "[ObjectiveSystem] Reactivating objective or activating old objective")
 	self:_read_hot_join_sync_completed_objectives(self._objective_lists[objective_index], completed_objectives_bit_field)
 	self:_activate_objectives_at_index(objective_index)
 end

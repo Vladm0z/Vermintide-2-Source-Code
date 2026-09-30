@@ -2,12 +2,12 @@
 
 local NAME = "tunneling"
 
-WorldMarkerTemplates = not not WorldMarkerTemplates
+WorldMarkerTemplates = WorldMarkerTemplates
 
 require("scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing")
 
 local climbing = WorldMarkerTemplates.climbing
-local template = table.merge(not not WorldMarkerTemplates[NAME], climbing)
+local template = table.merge(WorldMarkerTemplates[NAME], climbing)
 
 WorldMarkerTemplates[NAME] = template
 

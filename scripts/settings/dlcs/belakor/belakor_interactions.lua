@@ -98,13 +98,13 @@ end
 
 base_locus_definition.client.get_progress = function (data, config, t)
 	-- function 4
-	local duration = not not data.duration
+	local duration = data.duration
 
 	if duration == 0 then
 		return 0
 	end
 
-	return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and not not 0
+	return data.start_time ~= nil and math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and 0
 end
 
 base_locus_definition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -131,7 +131,7 @@ base_locus_definition.client.hud_description = function (interactable_unit, data
 	-- function 6
 	local deus_belakor_locus_extension = ScriptUnit.has_extension(interactable_unit, "deus_belakor_locus_system")
 
-	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), not not fail_reason or not not deus_belakor_locus_extension:get_interaction_action()
+	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), fail_reason or deus_belakor_locus_extension:get_interaction_action()
 end
 
 base_locus_definition.client.can_interact = function (interactor_unit, interactable_unit, data, config)

@@ -21,11 +21,11 @@ BTChaosSorcererPlagueSkulkAction.enter = function (self, unit, blackboard, t)
 
 	Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "heard_enemy", DialogueSettings.hear_chaos_corruptor_sorcerer, "enemy_tag", breed.name)
 
-	local skulk_data = not not blackboard.skulk_data
+	local skulk_data = blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-	skulk_data.direction = not not skulk_data.direction
-	skulk_data.radius = not not skulk_data.radius
+	skulk_data.direction = skulk_data.direction
+	skulk_data.radius = skulk_data.radius
 	blackboard.action = action
 
 	if blackboard.move_state ~= "idle" then
@@ -65,7 +65,7 @@ BTChaosSorcererPlagueSkulkAction.enter = function (self, unit, blackboard, t)
 	blackboard.teleport_health_percent = blackboard.health_extension:current_health_percent() - action.part_hp_lost_to_teleport
 	blackboard.travel_teleport_timer = t + ConflictUtils.random_interval(action.teleport_cooldown)
 	blackboard.face_target_while_summoning = true
-	blackboard.summon_vo_timer = not not blackboard.summon_vo_timer
+	blackboard.summon_vo_timer = blackboard.summon_vo_timer
 	blackboard.initial_skulk_finished = true
 
 	if not blackboard.played_foreshadow then
@@ -187,7 +187,7 @@ BTChaosSorcererPlagueSkulkAction.run = function (self, unit, blackboard, t, dt)
 			blackboard.vanish_countdown = t + action.vanish_countdown
 			plague_wave_data.plague_wave_timer = t + skulk_time
 			blackboard.ready_to_summon = true
-			blackboard.num_plague_waves = blackboard.num_plague_waves and not not (blackboard.num_plague_waves + 1) or not blackboard.num_plague_waves and not not 1
+			blackboard.num_plague_waves = blackboard.num_plague_waves and blackboard.num_plague_waves + 1 or not blackboard.num_plague_waves and 1
 
 			if blackboard.num_plague_waves >= 4 then
 				blackboard.num_plague_waves = 0
@@ -398,13 +398,13 @@ BTChaosSorcererPlagueSkulkAction.get_skulk_target = function (self, unit, blackb
 	local to_target_dir = Vector3.normalize(to_target)
 
 	if blackboard.is_close then
-		if dist < not not action.preferred_distance then
+		if dist < action.preferred_distance then
 			to_target = to_target + to_target_dir * (1 + math.random())
 		else
 			blackboard.is_close = false
 			to_target = to_target + to_target_dir
 		end
-	elseif dist < not not action.close_distance then
+	elseif dist < action.close_distance then
 		blackboard.is_close = true
 		to_target = to_target + to_target_dir
 	end

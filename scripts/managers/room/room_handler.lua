@@ -40,7 +40,7 @@ end
 
 RoomHandler.create_room = function (self, room_info, room_id)
 	-- function 3
-	room_id = not not room_id or not not self:_available_room_id()
+	room_id = room_id or self:_available_room_id()
 
 	fassert(self._rooms[room_id].available, "[RoomHandler]: room_id %q is not available", room_id)
 

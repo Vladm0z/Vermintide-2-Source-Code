@@ -42,7 +42,7 @@ local function rshoot_action_debug(blackboard, fill_lines)
 	-- function 1
 	local attack_pattern_data = blackboard.attack_pattern_data
 
-	fill_lines[1] = "State:" .. tostring(not not attack_pattern_data and not not attack_pattern_data.state)
+	fill_lines[1] = "State:" .. tostring(attack_pattern_data and attack_pattern_data.state)
 
 	return 1
 end
@@ -66,8 +66,8 @@ local function chaos_sorc_skulk_action_debug(blackboard, fill_lines)
 	local portal_data = blackboard.portal_data
 
 	if portal_data then
-		local sa = portal_data.portal_search_active and not not "searching" or not portal_data.portal_search_active and not not "no search"
-		local portal_out = blackboard.portal_unit and not not "1" or not blackboard.portal_unit and not not "0"
+		local sa = portal_data.portal_search_active and "searching" or not portal_data.portal_search_active and "no search"
+		local portal_out = blackboard.portal_unit and "1" or not blackboard.portal_unit and "0"
 		local count = portal_data.search_counter
 		local wall_index = tostring(portal_data.cover_point_index)
 
@@ -96,7 +96,7 @@ end
 local function chaos_sorc_exalt_skulk_action_debug(blackboard, fill_lines)
 	-- function 4
 	fill_lines[1] = "phase=" .. tostring(blackboard.phase)
-	fill_lines[2] = "current_spell=" .. tostring(blackboard.current_spell and not not blackboard.current_spell.name or not blackboard.current_spell and not not "nil")
+	fill_lines[2] = "current_spell=" .. tostring(blackboard.current_spell and blackboard.current_spell.name or not blackboard.current_spell and "nil")
 	fill_lines[3] = "spell count=" .. tostring(blackboard.spell_count)
 	fill_lines[4] = "freeze spell casting=" .. tostring(blackboard.freeze_spell_casting)
 
@@ -106,7 +106,7 @@ end
 local function rat_ogre_jump_slam_action_debug(blackboard, fill_lines)
 	-- function 5
 	local jump_data = blackboard.jump_slam_data
-	local landing_time = not not jump_data and not not jump_data.landing_time
+	local landing_time = jump_data and jump_data.landing_time
 
 	if landing_time then
 		local t = Managers.time:time("game")
@@ -269,7 +269,7 @@ local function present_perception(gui, x, y, blackboard)
 			local target_unit = blackboard.target_unit
 
 			if target_unit and BLACKBOARDS[target_unit] then
-				target_unit_text = "u" .. Unit.get_data(target_unit, "unique_id") .. ") " .. BLACKBOARDS[target_unit].breed.name .. "  (" .. (HEALTH_ALIVE[target_unit] and not not "alive" or not HEALTH_ALIVE[target_unit] and not not "dead") .. ")"
+				target_unit_text = "u" .. Unit.get_data(target_unit, "unique_id") .. ") " .. BLACKBOARDS[target_unit].breed.name .. "  (" .. (HEALTH_ALIVE[target_unit] and "alive" or not HEALTH_ALIVE[target_unit] and "dead") .. ")"
 			end
 
 			y2 = y2 + 10
@@ -620,7 +620,7 @@ end
 
 local function draw_node_children(bt, gui, node, node_children, blackboard, row, x1, y1, node_width, extra_node_height, total_width, extra_utility_height, t, dt)
 	-- function 16
-	local row_height = not not row_heights[row]
+	local row_height = row_heights[row]
 	local child_y = y1 + row_height + ROW_SPACING
 	local start_x, start_y
 
@@ -650,7 +650,7 @@ local function draw_node_children(bt, gui, node, node_children, blackboard, row,
 	for k, child in pairs(node_children) do
 		local child_identifier = child._identifier
 		local child_default_width = nodes[child_identifier].w
-		local child_default_total_width = not not nodes[child_identifier].total_w
+		local child_default_total_width = nodes[child_identifier].total_w
 
 		if node.name ~= "BTSequence" then
 			cx = cx + child_default_total_width * 0.5
@@ -781,8 +781,8 @@ DrawAiBehaviour.draw_tree = function (bt, gui, node, blackboard, row, t, dt, x, 
 
 	local extra_utility_height = 0
 	local tree_node = node._tree_node
-	local action_data = not not tree_node and not not tree_node.action_data
-	local considerations = not not action_data and not not action_data.considerations
+	local action_data = tree_node and tree_node.action_data
+	local considerations = action_data and action_data.considerations
 
 	if draw_utility and tree_node and action_data and considerations then
 		extra_utility_height = draw_utility_nodes(gui, blackboard, running, action_data, text, considerations, x1, y1, extra_height, t)

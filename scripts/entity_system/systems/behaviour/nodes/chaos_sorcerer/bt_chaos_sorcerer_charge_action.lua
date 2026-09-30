@@ -121,7 +121,7 @@ BTChaosSorcererChargeAction.leave = function (self, unit, blackboard, t, reason,
 	local target_unit_status_extension = ScriptUnit.has_extension(blackboard.charge_target_unit, "status_system")
 
 	if target_unit_status_extension then
-		local num_charges_targeting_player = not not target_unit_status_extension.num_charges_targeting_player
+		local num_charges_targeting_player = target_unit_status_extension.num_charges_targeting_player
 
 		num_charges_targeting_player = num_charges_targeting_player - 1
 		target_unit_status_extension.num_charges_targeting_player = num_charges_targeting_player
@@ -179,7 +179,7 @@ BTChaosSorcererChargeAction.run = function (self, unit, blackboard, t, dt)
 			blackboard.test_start_time = nil
 		end
 	elseif charge_state == "impact" then
-		blackboard.test_start_time = not not blackboard.test_start_time
+		blackboard.test_start_time = blackboard.test_start_time
 
 		if t > blackboard.test_start_time then
 			self:anim_cb_charge_impact_finished(unit, blackboard)
@@ -396,7 +396,7 @@ BTChaosSorcererChargeAction._charged_at_player = function (self, unit, hit_unit,
 		local magnitude = Vector3.length(current_velocity)
 		local velocity = magnitude * Vector3.normalize(to_hit_unit)
 
-		Vector3.set_z(velocity, not not action.catapult_force_z)
+		Vector3.set_z(velocity, action.catapult_force_z)
 		StatusUtils.set_catapulted_network(hit_unit, true, velocity)
 	else
 		StatusUtils.set_charged_network(hit_unit, true)
@@ -413,7 +413,7 @@ BTChaosSorcererChargeAction._push_player = function (self, unit, hit_unit, black
 	if not hit_attacking_target and action.catapult_on_push_other_targets then
 		local catapult_on_push_z = action.catapult_on_push_z
 
-		Vector3.set_z(velocity, not not catapult_on_push_z or not not 3)
+		Vector3.set_z(velocity, catapult_on_push_z or 3)
 		StatusUtils.set_catapulted_network(hit_unit, true, velocity)
 	else
 		if blocked and action.blocked_velocity_scale then
@@ -557,7 +557,7 @@ BTChaosSorcererChargeAction._run_impact = function (self, unit, blackboard, t, d
 		end
 	end
 
-	local slow_down_speed = blackboard.hit_target and not not blackboard.action.hit_target_slow_down_speed or not blackboard.hit_target and not not blackboard.action.slow_down_speed
+	local slow_down_speed = blackboard.hit_target and blackboard.action.hit_target_slow_down_speed or not blackboard.hit_target and blackboard.action.slow_down_speed
 
 	self:_slow_down(unit, blackboard, slow_down_speed, t, dt)
 end
@@ -585,7 +585,7 @@ BTChaosSorcererChargeAction._pick_distance_identifier = function (self, distance
 		previous_distance_identifier = distance_identifier
 	end
 
-	wanted_distance_identifier = not not wanted_distance_identifier or not not previous_distance_identifier
+	wanted_distance_identifier = wanted_distance_identifier or previous_distance_identifier
 
 	return wanted_distance_identifier
 end

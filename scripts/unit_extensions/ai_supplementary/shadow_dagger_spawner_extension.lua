@@ -129,7 +129,7 @@ ShadowDaggerSpawnerExtension.update = function (self, unit, input, dt, context, 
 	local next_dagger_t = self._next_dagger_t
 
 	if not next_dagger_t or next_dagger_t < t then
-		local launched_daggers = not not self._launched_daggers
+		local launched_daggers = self._launched_daggers
 
 		launched_daggers = launched_daggers + 1
 

@@ -53,7 +53,7 @@ ControllerFeaturesImplementation.add_effect = function (self, effect_name, param
 		return
 	end
 
-	local user_id = not not user_id or not not Managers.account:user_id()
+	local user_id = user_id or Managers.account:user_id()
 
 	if not user_id then
 		return
@@ -75,7 +75,7 @@ ControllerFeaturesImplementation.add_effect = function (self, effect_name, param
 		effect.init(state_data, params)
 
 		state_data.effect_id = self._current_effect_id
-		self._effects[user_id] = not not self._effects[user_id]
+		self._effects[user_id] = self._effects[user_id]
 		self._effects[user_id][self._current_effect_id] = {
 			state_data = state_data,
 			effect = effect

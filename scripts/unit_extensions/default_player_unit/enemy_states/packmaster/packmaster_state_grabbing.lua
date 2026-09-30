@@ -154,10 +154,10 @@ PackmasterStateGrabbing._update_movement = function (self, unit, t, dt)
 	local current_movement_speed_scale = self.current_movement_speed_scale
 
 	if not self.is_bot then
-		local breed_move_acceleration_up = not not self._breed
-		local breed_move_acceleration_down = not not self._breed
-		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
-		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
+		local breed_move_acceleration_up = self._breed
+		local breed_move_acceleration_down = self._breed
+		local move_acceleration_up_dt = breed_move_acceleration_up * dt
+		local move_acceleration_down_dt = breed_move_acceleration_down * dt
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -165,7 +165,7 @@ PackmasterStateGrabbing._update_movement = function (self, unit, t, dt)
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
+		current_movement_speed_scale = is_moving and (1 or 0) or not is_moving and 0
 	end
 
 	local movement_speed_multiplier = math.lerp(self._grab_movement_speed_multiplier_initial, self._grab_movement_speed_multiplier_target, self._move_slow_lerp_constant * dt)

@@ -341,7 +341,7 @@ HeroWindowCharacterSummary._set_career_selection_state = function (self, enabled
 
 	widgets_by_name.summary_title.content.visible = not enabled
 	widgets_by_name.hero_selection_title.content.visible = enabled
-	widgets_by_name.list_scrollbar.content.visible = enabled and not not false or not enabled and not not self._draw_statistics
+	widgets_by_name.list_scrollbar.content.visible = not enabled and self._draw_statistics
 	self._params.changing_hero = enabled
 end
 
@@ -521,7 +521,7 @@ HeroWindowCharacterSummary._toggle_statistics = function (self, enabled)
 
 	local title_widget = widgets_by_name.summary_title
 
-	title_widget.content.selected_option = enabled and not not 2 or not enabled and not not 1
+	title_widget.content.selected_option = enabled and 2 or not enabled and 1
 end
 
 HeroWindowCharacterSummary._update_hero_sync = function (self)
@@ -531,11 +531,11 @@ HeroWindowCharacterSummary._update_hero_sync = function (self)
 	local hero_sync_id = parent.hero_sync_id
 	local talent_sync_id = parent.talent_sync_id
 	local update_hero = self._hero_sync_id ~= hero_sync_id
-	local update_talents = not not update_hero or self._talent_sync_id ~= talent_sync_id
-	local update_loadout = not not update_hero or self._loadout_sync_id ~= loadout_sync_id
-	local any_update = not not update_hero or not not update_talents or not not update_loadout
-	local hero_name = not not any_update and not not parent:current_hero()
-	local career_name = not not any_update and not not parent:current_career()
+	local update_talents = update_hero or self._talent_sync_id ~= talent_sync_id
+	local update_loadout = update_hero or self._loadout_sync_id ~= loadout_sync_id
+	local any_update = update_hero or update_talents or update_loadout
+	local hero_name = any_update and parent:current_hero()
+	local career_name = any_update and parent:current_career()
 
 	if update_hero then
 		self:_commit_talent_changes()
@@ -633,7 +633,7 @@ end
 HeroWindowCharacterSummary._is_button_pressed = function (self, widget)
 	-- function 23
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_pressed then
 		hotspot.on_pressed = false
@@ -645,7 +645,7 @@ end
 HeroWindowCharacterSummary._is_button_hovered = function (self, widget)
 	-- function 24
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_hover_enter then
 		return true
@@ -655,7 +655,7 @@ end
 HeroWindowCharacterSummary._is_button_hover = function (self, widget)
 	-- function 25
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	return hotspot.is_hover
 end
@@ -810,7 +810,7 @@ HeroWindowCharacterSummary._populate_talents = function (self, hero_name, career
 			local talent_data = TalentUtils.get_talent_by_id(hero_name, id)
 			local content = widget.content
 
-			content.icon = talent_data and not not talent_data.icon or not talent_data and not not "icons_placeholder"
+			content.icon = talent_data and talent_data.icon or not talent_data and "icons_placeholder"
 			content.talent = talent_data
 			content.talent_id = id
 
@@ -1055,7 +1055,7 @@ HeroWindowCharacterSummary._animate_title_button = function (self, dt)
 		local text_style = style[style_id]
 		local shadow_text_style = style[shadow_style_id]
 		local is_selected = i == selected_option
-		local selected_progress = not not text_style.selected_progress
+		local selected_progress = text_style.selected_progress
 		local speed = 15
 
 		if is_selected then
@@ -1093,7 +1093,7 @@ HeroWindowCharacterSummary._populate_career_info = function (self, career_name)
 	local character_selection_image = career_settings.character_selection_image
 	local display_name = career_settings.display_name
 	local widgets_by_name = self._carrer_info_widgets_by_name
-	local career_color = Colors.color_definitions[career_name] and not not Colors.get_color_table_with_alpha(career_name, 255) or not Colors.color_definitions[career_name] and not not {
+	local career_color = Colors.color_definitions[career_name] and Colors.get_color_table_with_alpha(career_name, 255) or not Colors.color_definitions[career_name] and {
 		255,
 		255,
 		255,
@@ -1159,11 +1159,11 @@ HeroWindowCharacterSummary._animate_talent_widget = function (self, widget, dt)
 	-- function 40
 	local content = widget.content
 	local style = widget.style
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -1275,7 +1275,7 @@ HeroWindowCharacterSummary._setup_hero_selection_widgets = function (self)
 	for i, profile_index in ipairs(ProfilePriority) do
 		local profile_settings = SPProfiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local hero_experience = not not hero_attributes:get(hero_name, "experience")
+		local hero_experience = hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local careers = profile_settings.careers
 
@@ -1329,11 +1329,11 @@ HeroWindowCharacterSummary._animate_hero_widget = function (self, widget, dt)
 	-- function 45
 	local content = widget.content
 	local style = widget.style
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -1374,7 +1374,7 @@ HeroWindowCharacterSummary._animate_hero_icon_widget = function (self, widget, h
 	-- function 46
 	local content = widget.content
 	local style = widget.style
-	local animation_progress = not not content.animation_progress
+	local animation_progress = content.animation_progress
 	local speed = 8
 
 	if highlight then

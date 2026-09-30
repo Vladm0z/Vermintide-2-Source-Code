@@ -375,7 +375,7 @@ local Sequencer = {
 
 				if zone.travel_dist > sequence_node.travel_dist then
 					if not zone.roaming_set then
-						zone.roaming_set = not not both_breeds
+						zone.roaming_set = both_breeds
 					end
 
 					seek_start_index = i
@@ -392,7 +392,7 @@ return {
 	tweak_zones = function (mutator_context, data, conflict_director_name, zones, num_zones)
 		-- function 5
 		local mechanism = Managers.mechanism:game_mechanism()
-		local deus_run_controller = not not mechanism.get_deus_run_controller
+		local deus_run_controller = mechanism.get_deus_run_controller
 
 		if not conflict_settings[conflict_director_name] or not deus_run_controller then
 			return
@@ -455,8 +455,8 @@ return {
 
 		local _, breed_selection = Math.next_random(seed, 1, 2)
 		local sub_breeds = conflict_settings[conflict_director_name]
-		local breed_a = breed_selection ~= 1 and not not sub_breeds.breed2 or not (breed_selection ~= 1) and not not sub_breeds.breed1
-		local breed_b = breed_selection ~= 1 and not not sub_breeds.breed1 or not (breed_selection ~= 1) and not not sub_breeds.breed2
+		local breed_a = breed_selection ~= 1 and sub_breeds.breed2 or not (breed_selection ~= 1) and sub_breeds.breed1
+		local breed_b = breed_selection ~= 1 and sub_breeds.breed1 or not (breed_selection ~= 1) and sub_breeds.breed2
 
 		Sequencer.tweak_zones_with_sequence(breed_a, breed_b, conflict_director_name, zones, num_zones, sequence_with_travel_dist)
 
@@ -528,6 +528,6 @@ return {
 		local ahead_player_info = conflict_director.main_path_player_info[main_path_info.ahead_unit]
 
 		ahead_player_travel_dist = ahead_player_info.travel_dist
-		data.highest_travel_dist = math.max(not not data.highest_travel_dist, ahead_player_travel_dist)
+		data.highest_travel_dist = math.max(data.highest_travel_dist, ahead_player_travel_dist)
 	end
 }

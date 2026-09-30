@@ -53,7 +53,7 @@ BossDoorExtension.set_door_state = function (self, new_state, breed_name)
 	end
 
 	local unit = self.unit
-	local state_flow_event = new_state ~= "closed" and not not "lua_open" or not (new_state ~= "closed") and not not "lua_close"
+	local state_flow_event = new_state ~= "closed" and "lua_open" or not (new_state ~= "closed") and "lua_close"
 
 	Unit.flow_event(unit, state_flow_event)
 
@@ -91,7 +91,7 @@ BossDoorExtension.hot_join_sync = function (self, peer_id)
 	local level_index = Level.unit_index(level, self.unit)
 	local door_state = self.current_state
 	local door_state_id = NetworkLookup.door_states[door_state]
-	local breed_name = not not self.breed_name
+	local breed_name = self.breed_name
 	local breed_id = NetworkLookup.breeds[breed_name]
 	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 

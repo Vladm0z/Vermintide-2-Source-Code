@@ -158,7 +158,7 @@ DamageIndicatorGui.update = function (self, dt)
 				local attacker = strided_array[index + DamageDataIndex.ATTACKER]
 				local damage_type = strided_array[index + DamageDataIndex.DAMAGE_TYPE]
 				local self_damage = attacker == player_unit
-				local show_direction = not ignored_damage_types[damage_type] and not not not self_damage
+				local show_direction = not ignored_damage_types[damage_type] and not self_damage
 
 				if attacker and Unit.alive(attacker) and show_direction then
 					local next_active_indicator = self.num_active_indicators + 1
@@ -171,7 +171,7 @@ DamageIndicatorGui.update = function (self, dt)
 
 					local widget = indicator_widgets[next_active_indicator]
 					local indicator_position = indicator_positions[next_active_indicator]
-					local attacker_position = not not POSITION_LOOKUP[attacker]
+					local attacker_position = POSITION_LOOKUP[attacker]
 
 					Vector3Aux.box(indicator_position, attacker_position)
 

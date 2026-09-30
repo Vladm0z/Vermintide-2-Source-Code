@@ -20,7 +20,7 @@ EndViewStateSummaryDeus.on_enter = function (self, params)
 	end
 
 	local deus_backend = Managers.backend:get_interface("deus")
-	local coin_count = not not deus_backend:get_rolled_over_soft_currency()
+	local coin_count = deus_backend:get_rolled_over_soft_currency()
 
 	self._widgets_by_name.coins_retained_total_text.content.coin_count_text = string.format("%d", coin_count)
 end

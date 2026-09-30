@@ -35,7 +35,7 @@ end
 
 DiceKeeper.num_new_dices = function (self, die_type)
 	-- function 6
-	return not not self._new_dice[die_type]
+	return self._new_dice[die_type]
 end
 
 DiceKeeper.add_die = function (self, die_type, amount)
@@ -44,22 +44,22 @@ DiceKeeper.add_die = function (self, die_type, amount)
 
 	self._dice[die_type] = self._dice[die_type] + amount
 	self._dice.wood = self._dice.wood - amount
-	self._new_dice[die_type] = not not self._new_dice[die_type] + 1
+	self._new_dice[die_type] = self._new_dice[die_type] + 1
 end
 
 DiceKeeper.bonus_dice_spawned = function (self)
 	-- function 8
-	self._bonus_dice_spawned = self._bonus_dice_spawned and not not (self._bonus_dice_spawned + 1) or not self._bonus_dice_spawned and not not 1
+	self._bonus_dice_spawned = self._bonus_dice_spawned and self._bonus_dice_spawned + 1 or not self._bonus_dice_spawned and 1
 end
 
 DiceKeeper.num_bonus_dice_spawned = function (self)
 	-- function 9
-	return not not self._bonus_dice_spawned
+	return self._bonus_dice_spawned
 end
 
 DiceKeeper.chest_loot_dice_chance = function (self)
 	-- function 10
-	return not not self._chest_loot_dice_chance
+	return self._chest_loot_dice_chance
 end
 
 DiceKeeper.calculcate_loot_die_chance_on_remaining_chests = function (self, percentage_chests_left)

@@ -152,17 +152,17 @@ local body_text_style = {
 
 function create_frameless_button(scenegraph_id, size, background_texture, text, font_size, font_type, upper_case, text_color_name, detail_texture, detail_offset, disable_with_gamepad)
 	-- function 1
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local side_detail_texture = not not detail_texture or not not "button_detail_01"
+	local side_detail_texture = detail_texture or "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
 	local side_detail_texture_size = side_detail_texture_settings.size
-	local font_size = not not font_size or not not 24
-	local font_type = not not font_type or not not "hell_shark"
-	local text_color_name = not not text_color_name or not not "font_button_normal"
-	local upper_case = upper_case == nil or not not upper_case
-	local detail_offset = not not detail_offset or not not 9
+	local font_size = font_size or 24
+	local font_type = font_type or "hell_shark"
+	local text_color_name = text_color_name or "font_button_normal"
+	local upper_case = upper_case == nil or upper_case
+	local detail_offset = detail_offset or 9
 
 	return {
 		element = {
@@ -269,7 +269,7 @@ function create_frameless_button(scenegraph_id, size, background_texture, text, 
 				texture_id = side_detail_texture
 			},
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			background = {
 				uvs = {
 					{

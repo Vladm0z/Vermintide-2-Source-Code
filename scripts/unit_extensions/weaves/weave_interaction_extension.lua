@@ -13,8 +13,8 @@ WeaveInteractionExtension.init = function (self, extension_init_context, unit, e
 	self._on_interact_complete_func = extension_init_data.on_interact_complete_func
 	self._on_progress_func = extension_init_data.on_progress_func
 	self._on_complete_func = extension_init_data.on_complete_func
-	self._num_times_to_complete = not not extension_init_data.num_times_to_complete
-	self._duration = not not extension_init_data.duration
+	self._num_times_to_complete = extension_init_data.num_times_to_complete
+	self._duration = extension_init_data.duration
 	self._audio_system = Managers.state.entity:system("audio_system")
 	self._value = 0
 

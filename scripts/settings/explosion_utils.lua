@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/explosion_utils.lua
 
-ExplosionUtils = not not ExplosionUtils
+ExplosionUtils = ExplosionUtils
 
 ExplosionUtils.get_template = function (template_name)
 	-- function 1

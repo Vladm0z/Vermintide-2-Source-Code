@@ -209,7 +209,7 @@ achievements.cog_kill_barrage = {
 			return
 		end
 
-		template_data.kill_count = not not template_data.kill_count + 1
+		template_data.kill_count = template_data.kill_count + 1
 
 		if template_data.kill_count >= 50 then
 			statistics_db:increment_stat(stats_id, "cog_kill_barrage")
@@ -466,7 +466,7 @@ achievements.cog_steam_alt = {
 			local damage_data = event_data[register_damage_damage_data]
 			local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 			local item = rawget(ItemMasterList, damage_source)
-			local is_steam_pistol = not not item and item.item_type == "dr_steam_pistol"
+			local is_steam_pistol = item and item.item_type == "dr_steam_pistol"
 
 			if not is_steam_pistol then
 				return
@@ -584,7 +584,7 @@ achievements.cog_chain_headshot = {
 				return false
 			end
 
-			template_data.shots_fired = not not template_data.shots_fired
+			template_data.shots_fired = template_data.shots_fired
 			template_data.shots_fired = template_data.shots_fired + 1
 		else
 			local target_number = event_data[on_hit_target_number]
@@ -613,7 +613,7 @@ achievements.cog_chain_headshot = {
 			end
 
 			local hit_unit = event_data[on_hit_hit_unit]
-			local victim_breed = not not hit_unit and not not Unit.get_data(hit_unit, "breed")
+			local victim_breed = hit_unit and Unit.get_data(hit_unit, "breed")
 
 			if not victim_breed or not victim_breed.elite then
 				return
@@ -702,7 +702,7 @@ achievements.cog_pistol_headshot_grind = {
 		end
 
 		local hit_unit = event_data[on_hit_hit_unit]
-		local victim_breed = not not hit_unit and not not Unit.get_data(hit_unit, "breed")
+		local victim_breed = hit_unit and Unit.get_data(hit_unit, "breed")
 
 		if not victim_breed then
 			return
@@ -760,8 +760,8 @@ achievements.cog_clutch_pump = {
 		-- function 27
 		local level_transition_handler = Managers.level_transition_handler
 		local level_key = level_transition_handler:get_current_level_keys()
-		local level_settings = not not level_key and not not LevelSettings[level_key]
-		local is_hub_level = not not level_settings and not not level_settings.hub_level
+		local level_settings = level_key and LevelSettings[level_key]
+		local is_hub_level = level_settings and level_settings.hub_level
 
 		if not is_hub_level then
 			statistics_db:increment_stat(stats_id, "clutch_pumps")
@@ -809,7 +809,7 @@ achievements.cog_hammer_cliff_push = {
 				local recent_damages = target_health_extension:recent_damages()
 				local damage_source = recent_damages[DamageDataIndex.DAMAGE_SOURCE_NAME]
 				local item = rawget(ItemMasterList, damage_source)
-				local is_cog_hammer = not not item and item.item_type == "dr_cog_hammer"
+				local is_cog_hammer = item and item.item_type == "dr_cog_hammer"
 
 				if not is_cog_hammer then
 					return
@@ -1041,27 +1041,27 @@ achievements.cog_kill_register = {
 		local halescourge = statistics_db:get_persistent_stat(stats_id, "weapon_kills_per_breed", "dr_2h_cog_hammer", "chaos_exalted_sorcerer")
 		local completed_third = corruptor >= 1 and vortex >= 1 and halescourge >= 1
 
-		return not not completed_first and not not completed_second and not not completed_third
+		return completed_first and completed_second and completed_third
 	end,
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 38
 		local damage_data = event_data[3]
 		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local item = rawget(ItemMasterList, damage_source)
-		local item_type = not not item and not not item.item_type
+		local item_type = item and item.item_type
 
 		if not kill_register_weapons[item_type] then
 			return
 		end
 
-		local attacker_unit = not not damage_data and not not damage_data[DamageDataIndex.ATTACKER]
+		local attacker_unit = damage_data and damage_data[DamageDataIndex.ATTACKER]
 
 		if not ALIVE[attacker_unit] then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit or local_player_unit ~= attacker_unit then
 			return

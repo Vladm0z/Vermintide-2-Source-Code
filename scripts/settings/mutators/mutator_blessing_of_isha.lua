@@ -15,12 +15,12 @@ local VALID_DISABLE_EVENTS = {
 
 local function stagger_enemies(radius, attacker_unit, explosion_template_name, position)
 	-- function 1
-	position = not not position or not not POSITION_LOOKUP[attacker_unit]
+	position = position or POSITION_LOOKUP[attacker_unit]
 
 	local world = Application.main_world()
 	local rotation = Quaternion.identity()
 	local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
-	local career_power_level = not not career_extension and not not career_extension:get_career_power_level()
+	local career_power_level = career_extension and career_extension:get_career_power_level()
 	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
 
 	explosion_template.explosion.radius = radius
@@ -70,7 +70,7 @@ end
 local function get_not_disabled_units(units, not_disabled_units_out)
 	-- function 5
 	for _, unit in ipairs(units) do
-		local status_extension = not not ALIVE[unit]
+		local status_extension = ALIVE[unit]
 
 		if status_extension then
 			local is_dead = status_extension:is_dead()

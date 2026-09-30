@@ -18,7 +18,7 @@ BackendInterfaceCommon.can_wield = function (self, career_name, item_data)
 	-- function 3
 	local can_wield = item_data.can_wield
 
-	assert(can_wield, "BackendInterfaceCommon - Item %q has not specified what profiles that can use it.", not not item_data.name)
+	assert(can_wield, "BackendInterfaceCommon - Item %q has not specified what profiles that can use it.", item_data.name)
 
 	for _, wield_career_name in ipairs(can_wield) do
 		if career_name == wield_career_name then
@@ -89,7 +89,7 @@ local filter_operators = {
 		2,
 		function (op1, op2)
 			-- function 11
-			return not not op1 and not not op2
+			return op1 and op2
 		end
 	},
 	["or"] = {
@@ -97,7 +97,7 @@ local filter_operators = {
 		2,
 		function (op1, op2)
 			-- function 12
-			return not not op1 or not not op2
+			return op1 or op2
 		end
 	}
 }
@@ -309,8 +309,8 @@ local filter_macros = {
 		local item_data = item.data
 		local profile_synchronizer = Managers.state.network.profile_synchronizer
 		local player = Managers.player:local_player()
-		local profile_index = params and not not params.profile_index or not params and not not player:profile_index()
-		local career_index = params and not not params.career_index or not params and not not player:career_index()
+		local profile_index = params and params.profile_index or not params and player:profile_index()
+		local career_index = params and params.career_index or not params and player:career_index()
 		local hero_data = SPProfiles[profile_index]
 		local career_data = hero_data.careers[career_index]
 		local career_name = career_data.name
@@ -323,8 +323,8 @@ local filter_macros = {
 		local item_data = item.data
 		local profile_synchronizer = Managers.state.network.profile_synchronizer
 		local player = Managers.player:local_player()
-		local profile_index = params and not not params.profile_index or not params and not not player:profile_index()
-		local career_index = params and not not params.career_index or not params and not not player:career_index()
+		local profile_index = params and params.profile_index or not params and player:profile_index()
+		local career_index = params and params.career_index or not params and player:career_index()
 		local hero_data = SPProfiles[profile_index]
 		local careers = hero_data.careers
 		local item_can_wield = item_data.can_wield
@@ -571,7 +571,7 @@ local filter_macros = {
 			"weapon_pose"
 		}, item_data.slot_type)
 
-		return not not is_cosmetic or not not mechanisms and not not table.contains(mechanisms, "versus")
+		return is_cosmetic or mechanisms and table.contains(mechanisms, "versus")
 	end,
 	available_in_mechanism_adventure = function (item, backend_id)
 		-- function 53
@@ -585,7 +585,7 @@ local filter_macros = {
 			"weapon_pose"
 		}, item_data.slot_type)
 
-		return not not is_cosmetic or not mechanisms or not not table.contains(mechanisms, "adventure")
+		return is_cosmetic or not mechanisms or table.contains(mechanisms, "adventure")
 	end,
 	available_in_current_mechanism = function (item, backend_id)
 		-- function 54
@@ -612,10 +612,10 @@ local filter_macros = {
 			return false
 		end
 
-		local is_item_for_mechanism = not not mechanisms and not not table.contains(mechanisms, current_mechanism)
-		local default_mechanism = not mechanisms and not not Managers.mechanism:mechanism_setting("default_inventory")
+		local is_item_for_mechanism = mechanisms and table.contains(mechanisms, current_mechanism)
+		local default_mechanism = not mechanisms and Managers.mechanism:mechanism_setting("default_inventory")
 
-		return not not is_item_for_mechanism or not not default_mechanism or not not false
+		return is_item_for_mechanism or default_mechanism or false
 	end,
 	owned = function (item, backend_id)
 		-- function 55
@@ -644,7 +644,7 @@ local filter_macros = {
 			if rarity == "default" then
 				local unlocked_weapon_poses = backend_items:get_unlocked_weapon_poses()
 				local item_id = string.gsub(item.ItemId, "^vs_", "")
-				local item_weapon_poses = not not unlocked_weapon_poses[item_id]
+				local item_weapon_poses = unlocked_weapon_poses[item_id]
 
 				return not table.is_empty(item_weapon_poses)
 			end
@@ -676,7 +676,7 @@ local filter_macros = {
 
 		if events then
 			local live_events_interface = Managers.backend:get_interface("live_events")
-			local live_events = not not live_events_interface and not not live_events_interface:get_active_events()
+			local live_events = live_events_interface and live_events_interface:get_active_events()
 
 			if live_events then
 				local is_event_item = false
@@ -699,7 +699,7 @@ local filter_macros = {
 	end
 }
 
-BackendInterfaceCommon.filter_postfix_cache = not not BackendInterfaceCommon.filter_postfix_cache
+BackendInterfaceCommon.filter_postfix_cache = BackendInterfaceCommon.filter_postfix_cache
 
 local empty_params = {}
 local _filter_items_stack = {}
@@ -764,7 +764,7 @@ BackendInterfaceCommon.filter_items = function (self, items, filter_infix, param
 						stack_n = stack_n + 1
 						stack[stack_n] = cached
 					else
-						cached = macro_func(item, backend_id, not not params or not not empty_params)
+						cached = macro_func(item, backend_id, params or empty_params)
 
 						if cached ~= nil then
 							cache[token] = cached

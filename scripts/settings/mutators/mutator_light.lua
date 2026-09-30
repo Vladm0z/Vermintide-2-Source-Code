@@ -18,7 +18,7 @@ return {
 	clear_buffs = function (data, buffs, buff_system, player)
 		-- function 2
 		local unit_buff_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
-		local has_buff = not not unit_buff_extension and not not unit_buff_extension:has_buff_type(data.curse_buff_name)
+		local has_buff = unit_buff_extension and unit_buff_extension:has_buff_type(data.curse_buff_name)
 
 		if buffs and has_buff then
 			local num_buffs = #buffs
@@ -69,9 +69,9 @@ return {
 				end
 
 				local unit_buff_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
-				local has_buff = not not unit_buff_extension and not not unit_buff_extension:has_buff_type("mutator_light_cleansing_curse_buff")
+				local has_buff = unit_buff_extension and unit_buff_extension:has_buff_type("mutator_light_cleansing_curse_buff")
 				local status_extension = ScriptUnit.has_extension(player.player_unit, "status_system")
-				local is_waiting_for_assisted_respawn = not not status_extension and not not status_extension.ready_for_assisted_respawn
+				local is_waiting_for_assisted_respawn = status_extension and status_extension.ready_for_assisted_respawn
 
 				if not has_buff and not is_waiting_for_assisted_respawn then
 					local buffs = data.buffs[key]

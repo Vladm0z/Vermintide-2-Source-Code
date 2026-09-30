@@ -73,11 +73,11 @@ end
 
 ImguiObjectivesDebug._temp = function (self, data, current_objectives, depth)
 	-- function 6
-	depth = not not depth or not not 1
+	depth = depth or 1
 
 	for key, value in pairs(data) do
 		if depth == 1 or type(value) == "table" and value.is_objective_root then
-			if Imgui.tree_node(key, not not current_objectives and not not not value.completed) then
+			if Imgui.tree_node(key, current_objectives and not value.completed) then
 				self:_temp(value, current_objectives, depth + 1)
 
 				if current_objectives and not value.completed then

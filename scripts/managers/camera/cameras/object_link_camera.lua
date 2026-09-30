@@ -33,7 +33,7 @@ ObjectLinkCamera.update = function (self, dt, position, rotation, data)
 	table.clear(self._curve_params)
 
 	if curve_data then
-		self._environment_params = not not self._environment_params
+		self._environment_params = self._environment_params
 
 		table.clear(self._environment_params)
 
@@ -57,24 +57,24 @@ ObjectLinkCamera.near_range = function (self)
 	-- function 4
 	local near_clip = self._curve_params.near_clip
 
-	return not not near_clip or not not ObjectLinkCamera.super.near_range(self)
+	return near_clip or ObjectLinkCamera.super.near_range(self)
 end
 
 ObjectLinkCamera.far_range = function (self)
 	-- function 5
 	local far_clip = self._curve_params.far_clip
 
-	return not not far_clip or not not ObjectLinkCamera.super.far_range(self)
+	return far_clip or ObjectLinkCamera.super.far_range(self)
 end
 
 ObjectLinkCamera.fade_to_black = function (self)
 	-- function 6
-	return not not self._curve_params.fade_to_black
+	return self._curve_params.fade_to_black
 end
 
 ObjectLinkCamera.vertical_fov = function (self)
 	-- function 7
 	local yfov = self._curve_params.yfov
 
-	return yfov and not not (yfov * (math.pi / 180)) or not yfov and not not ObjectLinkCamera.super.vertical_fov(self)
+	return yfov and yfov * (math.pi / 180) or not yfov and ObjectLinkCamera.super.vertical_fov(self)
 end

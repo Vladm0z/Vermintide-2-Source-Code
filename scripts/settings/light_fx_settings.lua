@@ -33,7 +33,7 @@ LightFXSettings = {
 			-- function 1
 			assert(#v == 5, "[LightFXManager] You need to pass in 5 values ( red, green, blue, intensity, blendtime )")
 
-			local game = not not Managers.state.network
+			local game = Managers.state.network
 
 			if not game then
 				return v
@@ -70,7 +70,7 @@ LightFXConditionalSettings = {
 		},
 		condition_func = function ()
 			-- function 2
-			local game = not not Managers.state.network
+			local game = Managers.state.network
 
 			if not game then
 				return
@@ -111,7 +111,7 @@ LightFXConditionalSettings = {
 		},
 		condition_func = function ()
 			-- function 4
-			local game = not not Managers.state.network
+			local game = Managers.state.network
 
 			if not game then
 				return false

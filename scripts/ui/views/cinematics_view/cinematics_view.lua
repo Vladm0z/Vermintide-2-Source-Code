@@ -296,7 +296,7 @@ end
 
 CinematicsView._start_animation = function (self, animation_name, callback)
 	-- function 18
-	self._render_settings = not not self._render_settings
+	self._render_settings = self._render_settings
 
 	local params = {
 		render_settings = self._render_settings
@@ -355,7 +355,7 @@ CinematicsView.do_exit = function (self, return_to_game)
 
 	self._exiting = true
 
-	Managers.music:trigger_event(IS_WINDOWS and not not "Play_console_menu_back" or not IS_WINDOWS and not not "Play_console_menu_select")
+	Managers.music:trigger_event(IS_WINDOWS and "Play_console_menu_back" or not IS_WINDOWS and "Play_console_menu_select")
 end
 
 CinematicsView.update = function (self, dt, t)
@@ -391,7 +391,7 @@ CinematicsView._update_input = function (self, dt, t)
 	local current_video_content = self._current_video_content
 	local toggle_menu_input = input_service:get("toggle_menu", true)
 	local back_input = input_service:get("back_menu", true)
-	local left_press_input = not not IS_WINDOWS
+	local left_press_input = IS_WINDOWS
 	local input_device = Managers.input:get_most_recent_device()
 	local any_input_pressed = input_device.any_pressed()
 	local canvas_hotspot_widget = self._widgets_by_name.canvas_hotspot
@@ -411,7 +411,7 @@ CinematicsView._update_input = function (self, dt, t)
 		local widget_content = widget.content
 		local widget_video_content = widget_content.video_content
 		local widget_reference_name = widget_video_content.video_player_reference
-		local current_reference_name = not not current_video_content and not not current_video_content.video_player_reference
+		local current_reference_name = current_video_content and current_video_content.video_player_reference
 
 		if widget_reference_name ~= current_reference_name then
 			self:activate_video(widget_video_content, current_gamepad_selection_index)
@@ -474,7 +474,7 @@ CinematicsView._update_scrollbar = function (self, dt, t, input_service, gamepad
 	local scroller_style = scrollbar_widget_style.scroller
 	local scroll = input_service:get("scroll_axis")
 	local cursor = input_service:get("cursor")
-	local cursor_y = cursor and not not cursor[2] or not cursor and not not 0
+	local cursor_y = cursor and cursor[2] or not cursor and 0
 
 	if IS_WINDOWS and not gamepad_active then
 		cursor_y = cursor_y * RESOLUTION_LOOKUP.inv_scale
@@ -606,7 +606,7 @@ end
 CinematicsView._play_sound = function (self, sound_event)
 	-- function 30
 	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
-		local world_name = IS_CONSOLE and not not "title_screen_world" or not IS_CONSOLE and not not "level_world"
+		local world_name = IS_CONSOLE and "title_screen_world" or not IS_CONSOLE and "level_world"
 		local world = Managers.world:world(world_name)
 		local wwise_world = Managers.world:wwise_world(world)
 
@@ -644,7 +644,7 @@ CinematicsView._reset_sound = function (self)
 		self:_play_sound(sound_stop)
 	end
 
-	self:_play_sound(IS_CONSOLE and not not "Play_console_menu_music" or not IS_CONSOLE and not not "Play_menu_screen_music")
+	self:_play_sound(IS_CONSOLE and "Play_console_menu_music" or not IS_CONSOLE and "Play_menu_screen_music")
 
 	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
 		self:_play_sound("play_gui_amb_hero_screen_loop_begin")
@@ -657,7 +657,7 @@ CinematicsView.activate_video = function (self, video_content, index)
 		return
 	end
 
-	local current_video_content = not not self._current_video_content
+	local current_video_content = self._current_video_content
 	local ui_video_renderer = self._ui_video_renderer
 	local reference_name = video_content.video_player_reference
 	local current_reference_name = current_video_content.video_player_reference
@@ -669,11 +669,11 @@ CinematicsView.activate_video = function (self, video_content, index)
 	local video_data = video_content.video_data
 
 	if not ui_video_renderer.video_players[reference_name] then
-		UIRenderer.create_video_player(ui_video_renderer, reference_name, ui_video_renderer.world, video_data.resource, not not video_data.set_loop)
+		UIRenderer.create_video_player(ui_video_renderer, reference_name, ui_video_renderer.world, video_data.resource, video_data.set_loop)
 	end
 
 	local video_player = ui_video_renderer.video_players[reference_name]
-	local current_video_data = not not current_video_content.video_data
+	local current_video_data = current_video_content.video_data
 	local sound_start = video_data.sound_start
 	local sound_stop = current_video_data.sound_stop
 
@@ -709,7 +709,7 @@ end
 
 CinematicsView.is_video_active = function (self, reference_name)
 	-- function 35
-	local current_video_content = not not self._current_video_content
+	local current_video_content = self._current_video_content
 	local current_reference_name = current_video_content.video_player_reference
 
 	return reference_name == current_reference_name

@@ -146,7 +146,7 @@ achievements.bless_saved_by_perk = {
 			local result = current_health - damage_amount
 
 			if result < 6 and damage_type == "life_tap" then
-				local timer_handles = not not template_data.timer_handles
+				local timer_handles = template_data.timer_handles
 
 				template_data.timer_handles = timer_handles
 
@@ -158,7 +158,7 @@ achievements.bless_saved_by_perk = {
 			end
 		elseif template_data.timer_handles then
 			local player = event_data[1]
-			local victim_unit = not not player and not not player.player_unit
+			local victim_unit = player and player.player_unit
 			local timer_handles = template_data.timer_handles
 			local current_victim_handle = timer_handles[victim_unit]
 
@@ -279,7 +279,7 @@ achievements.bless_fast_shield = {
 				return
 			end
 
-			local is_incapacitated = not not status_extension:is_pounced_down()
+			local is_incapacitated = status_extension:is_pounced_down()
 
 			if not is_incapacitated then
 				return
@@ -298,7 +298,7 @@ achievements.bless_fast_shield = {
 				statistics_db:increment_stat(stats_id, "bless_fast_shield")
 			end
 		else
-			local incapacitated_units = not not template_data.incapacitated_units
+			local incapacitated_units = template_data.incapacitated_units
 			local current_t = Managers.time:time("game")
 
 			for unit, incapacitated_t in pairs(incapacitated_units) do
@@ -393,7 +393,7 @@ achievements.bless_punch_back = {
 		if event_name == "register_damage_taken" then
 			local victim_unit = event_data[1]
 			local damage_data = event_data[2]
-			local attacker_unit = not not damage_data and not not damage_data[DamageDataIndex.ATTACKER]
+			local attacker_unit = damage_data and damage_data[DamageDataIndex.ATTACKER]
 
 			if not ALIVE[attacker_unit] or not ALIVE[victim_unit] then
 				return
@@ -406,14 +406,14 @@ achievements.bless_punch_back = {
 			end
 
 			local attacker_bb = BLACKBOARDS[attacker_unit]
-			local attacker_breed = not not attacker_bb and not not attacker_bb.breed
+			local attacker_breed = attacker_bb and attacker_bb.breed
 
 			if attacker_breed and attacker_breed.name ~= "chaos_warrior" then
 				return
 			end
 
 			local ai_extension = ScriptUnit.has_extension(attacker_unit, "ai_system")
-			local bt_node_name = not not ai_extension and not not ai_extension:current_action_name()
+			local bt_node_name = ai_extension and ai_extension:current_action_name()
 
 			if bt_node_name == "special_attack_quick" then
 				local t = Managers.time:time("game")
@@ -451,8 +451,8 @@ achievements.bless_punch_back = {
 				local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
 				local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 				local item = rawget(ItemMasterList, damage_source)
-				local is_2h_hammer = not not item and item.item_type == "wh_2h_hammer"
-				local is_punch_attack = not not is_2h_hammer and damage_type == "stab_smiter"
+				local is_2h_hammer = item and item.item_type == "wh_2h_hammer"
+				local is_punch_attack = is_2h_hammer and damage_type == "stab_smiter"
 				local t = Managers.time:time("game")
 
 				if is_punch_attack and t - last_attack_t <= bless_punch_back_time_window then
@@ -486,7 +486,7 @@ achievements.bless_cluch_revive = {
 		local reviver = event_data[1]
 		local revivee = event_data[2]
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not ALIVE[revivee] or not ALIVE[reviver] or local_player_unit ~= reviver then
 			return
@@ -559,7 +559,7 @@ achievements.bless_ranged_raki = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 22
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local damage_data = event_data[register_kill_damage_data]
 		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
@@ -704,21 +704,21 @@ achievements.bless_smite_enemies = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 29
 		local damage_data = event_data[register_kill_damage_data]
-		local attacker_unit = not not damage_data and not not damage_data[DamageDataIndex.ATTACKER]
+		local attacker_unit = damage_data and damage_data[DamageDataIndex.ATTACKER]
 
 		if not ALIVE[attacker_unit] then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit or local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local damage_type = not not damage_data and not not damage_data[DamageDataIndex.DAMAGE_TYPE]
-		local damage_source = not not damage_data and not not damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local damage_type = damage_data and damage_data[DamageDataIndex.DAMAGE_TYPE]
+		local damage_source = damage_data and damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 
 		if damage_type ~= "buff" or damage_source ~= "career_ability" then
 			return
@@ -763,7 +763,7 @@ achievements.bless_great_hammer_headshots = {
 		-- function 32
 		local attacker_unit = event_data[on_hit_unit]
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not ALIVE[attacker_unit] or not local_player_unit or local_player_unit ~= attacker_unit then
 			return
@@ -791,7 +791,7 @@ achievements.bless_great_hammer_headshots = {
 
 		if inventory_extension then
 			local slot_data = inventory_extension:get_wielded_slot_data()
-			local item_data = not not slot_data and not not slot_data.item_data
+			local item_data = slot_data and slot_data.item_data
 
 			if item_data and item_data.name == "wh_2h_hammer" then
 				statistics_db:increment_stat(stats_id, "bless_great_hammer_headshots")
@@ -864,7 +864,7 @@ achievements.bless_kill_specials_hammer_book = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 36
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local damage_data = event_data[register_kill_damage_data]
 		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
@@ -905,7 +905,7 @@ achievements.bless_kill_specials_hammer_book = {
 
 		local _, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
 		local current_action_settings = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
-		local current_sub_action = not not current_action_settings and not not current_action_settings.lookup_data.sub_action_name
+		local current_sub_action = current_action_settings and current_action_settings.lookup_data.sub_action_name
 
 		if current_sub_action ~= "heavy_attack_stab_charged" and current_sub_action ~= "heavy_attack_left_charged" then
 			return
@@ -943,24 +943,24 @@ achievements.bless_mighty_blow = {
 		end
 
 		local damage_data = event_data[register_kill_damage_data]
-		local attacker_unit = not not damage_data and not not damage_data[DamageDataIndex.ATTACKER]
+		local attacker_unit = damage_data and damage_data[DamageDataIndex.ATTACKER]
 
 		if not ALIVE[attacker_unit] then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if not local_player_unit or local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local damage_type = not not damage_data and not not damage_data[DamageDataIndex.DAMAGE_TYPE]
+		local damage_type = damage_data and damage_data[DamageDataIndex.DAMAGE_TYPE]
 		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local item = rawget(ItemMasterList, damage_source)
-		local is_2h_hammer = not not item and item.item_type == "wh_2h_hammer"
-		local is_punch_attack = not not is_2h_hammer and damage_type == "stab_smiter"
+		local is_2h_hammer = item and item.item_type == "wh_2h_hammer"
+		local is_punch_attack = is_2h_hammer and damage_type == "stab_smiter"
 
 		if not is_punch_attack then
 			return
@@ -1113,7 +1113,7 @@ achievements.bless_charged_hammer = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 46
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local damage_data = event_data[register_damage_damage_data]
 		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
@@ -1142,7 +1142,7 @@ achievements.bless_charged_hammer = {
 
 		local _, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
 		local current_action_settings = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
-		local current_sub_action = not not current_action_settings and not not current_action_settings.lookup_data.sub_action_name
+		local current_sub_action = current_action_settings and current_action_settings.lookup_data.sub_action_name
 
 		if current_sub_action ~= "heavy_attack_stab_charged" and current_sub_action ~= "heavy_attack_left_charged" then
 			return
@@ -1188,7 +1188,7 @@ achievements.bless_protected_killing = {
 	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 48
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 		local career_extension = ScriptUnit.has_extension(local_player_unit, "career_system")
 
 		if not career_extension or career_extension:career_name() ~= "wh_priest" then
@@ -1209,7 +1209,7 @@ achievements.bless_protected_killing = {
 			local buff = buff_extension:get_buff_type("victor_priest_activated_ability_invincibility")
 
 			if buff then
-				buff._bless_protected_killing_count = not not buff._bless_protected_killing_count + 1
+				buff._bless_protected_killing_count = buff._bless_protected_killing_count + 1
 
 				if buff._bless_protected_killing_count >= bless_protected_killing_count then
 					statistics_db:increment_stat(stats_id, "bless_protected_killing")

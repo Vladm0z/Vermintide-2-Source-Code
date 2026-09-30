@@ -10,7 +10,7 @@ local test_ui = false
 
 DisconnectIndicatorView = class(DisconnectIndicatorView)
 DisconnectIndicatorView.FLASH_CYCLE = 0.5
-DisconnectIndicatorView.SILENCE_THRESHOLD = not not GameSettingsDevelopment.network_silence_warning_delay
+DisconnectIndicatorView.SILENCE_THRESHOLD = GameSettingsDevelopment.network_silence_warning_delay
 
 DisconnectIndicatorView.init = function (self, world)
 	-- function 1
@@ -125,7 +125,7 @@ DisconnectIndicatorView._draw = function (self, dt)
 	local ui_renderer = self._ui_renderer
 	local ui_scenegraph = self._ui_scenegraph
 
-	self._recalc_text_width = not not self._recalc_text_width
+	self._recalc_text_width = self._recalc_text_width
 
 	if self._recalc_text_width then
 		self._recalc_text_width = false

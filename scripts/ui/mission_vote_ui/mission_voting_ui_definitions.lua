@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/mission_vote_ui/mission_voting_ui_definitions.lua
 
-local window_default_settings = IS_PS4 and not not UISettings.game_start_windows_console or not IS_PS4 and not not UISettings.game_start_windows
+local window_default_settings = IS_PS4 and UISettings.game_start_windows_console or not IS_PS4 and UISettings.game_start_windows
 local window_frame = window_default_settings.frame
 local small_window_size = window_default_settings.size
 local small_window_spacing = window_default_settings.spacing
@@ -157,7 +157,7 @@ local scenegraph_definition = {
 		},
 		position = {
 			0,
-			IS_PS4 and not not 15 or not IS_PS4 and not not 25,
+			IS_PS4 and 15 or not IS_PS4 and 25,
 			3
 		}
 	},
@@ -195,7 +195,7 @@ local scenegraph_definition = {
 		horizontal_alignment = "center",
 		size = {
 			game_option_size[1] - 60,
-			IS_PS4 and not not 0 or not IS_PS4 and not not 72
+			IS_PS4 and 0 or not IS_PS4 and 72
 		},
 		position = {
 			0,
@@ -209,7 +209,7 @@ local scenegraph_definition = {
 		horizontal_alignment = "center",
 		size = {
 			game_option_size[1],
-			IS_PS4 and not not 0 or not IS_PS4 and not not 72
+			IS_PS4 and 0 or not IS_PS4 and 72
 		},
 		position = {
 			0,
@@ -804,7 +804,7 @@ local function deus_weekly_event_create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 2
-			return not not header_type
+			return header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -813,7 +813,7 @@ local function deus_weekly_event_create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 3
-			return not not header_type
+			return header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -822,7 +822,7 @@ local function deus_weekly_event_create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 4
-			return not not header_type
+			return header_type
 		end
 	}
 	content.header = header
@@ -839,7 +839,7 @@ local function deus_weekly_event_create_header(header, offset_y, header_type)
 		font_size = font_size,
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			header_type and not not 25 or not header_type and not not 0,
+			header_type and 25 or not header_type and 0,
 			0,
 			2
 		}
@@ -1017,16 +1017,16 @@ end
 
 local function create_settings_option(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 6
-	icon_texture = not not icon_texture or not not "map_frame_fade"
+	icon_texture = icon_texture or "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
+	local icon_texture_size = icon_texture_settings and icon_texture_settings.size or not icon_texture_settings and {
 		150,
 		150
 	}
 
-	icon_visible = icon_visible == nil or not not icon_visible
-	background_texture = not not background_texture or not not "game_options_bg_02"
+	icon_visible = icon_visible == nil or icon_visible
+	background_texture = background_texture or "game_options_bg_02"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 	local frame_name = "menu_frame_08"
@@ -1101,7 +1101,7 @@ local function create_settings_option(scenegraph_id, size, title_text, icon_text
 			title_edge = "game_option_divider",
 			option_text = "",
 			frame = frame_settings.texture,
-			title_text = not not title_text or not not "n/a",
+			title_text = title_text or "n/a",
 			icon = icon_texture,
 			icon_visible = icon_visible,
 			background = {
@@ -1299,15 +1299,15 @@ end
 
 local function create_settings_option_deus(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 9
-	icon_texture = not not icon_texture or not not "map_frame_fade"
+	icon_texture = icon_texture or "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
+	local icon_texture_size = icon_texture_settings and icon_texture_settings.size or not icon_texture_settings and {
 		150,
 		150
 	}
 
-	icon_visible = icon_visible == nil or not not icon_visible
+	icon_visible = icon_visible == nil or icon_visible
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name("vote_background_morris")
 	local frame_settings = UIFrameSettings.menu_frame_02_morris
@@ -1349,7 +1349,7 @@ local function create_settings_option_deus(scenegraph_id, size, title_text, icon
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 12
-						return not not content.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
@@ -1358,7 +1358,7 @@ local function create_settings_option_deus(scenegraph_id, size, title_text, icon
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 13
-						return not not content.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
@@ -1391,7 +1391,7 @@ local function create_settings_option_deus(scenegraph_id, size, title_text, icon
 			option_text = "",
 			icon_mask = "mask_rect",
 			frame = frame_settings.texture,
-			title_text = not not title_text or not not "n/a",
+			title_text = title_text or "n/a",
 			icon = icon_texture,
 			icon_visible = icon_visible,
 			background = {
@@ -1583,15 +1583,15 @@ end
 
 local function create_settings_option_deus_weekly_event(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 14
-	icon_texture = not not icon_texture or not not "map_frame_fade"
+	icon_texture = icon_texture or "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
+	local icon_texture_size = icon_texture_settings and icon_texture_settings.size or not icon_texture_settings and {
 		150,
 		150
 	}
 
-	icon_visible = icon_visible == nil or not not icon_visible
+	icon_visible = icon_visible == nil or icon_visible
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name("vote_background_morris")
 	local frame_settings = UIFrameSettings.menu_frame_02_morris
@@ -1633,7 +1633,7 @@ local function create_settings_option_deus_weekly_event(scenegraph_id, size, tit
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 17
-						return not not content.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
@@ -1642,7 +1642,7 @@ local function create_settings_option_deus_weekly_event(scenegraph_id, size, tit
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 18
-						return not not content.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
@@ -1692,7 +1692,7 @@ local function create_settings_option_deus_weekly_event(scenegraph_id, size, tit
 			option_text = "",
 			icon_mask = "mask_rect",
 			frame = frame_settings.texture,
-			title_text = not not title_text or not not "n/a",
+			title_text = title_text or "n/a",
 			icon = icon_texture,
 			icon_visible = icon_visible,
 			difficulty_title_text = Localize("start_game_window_difficulty"),
@@ -1936,16 +1936,16 @@ end
 
 local function create_weave_settings_option(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 19
-	icon_texture = not not icon_texture or not not "map_frame_fade"
+	icon_texture = icon_texture or "map_frame_fade"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
+	local icon_texture_size = icon_texture_settings and icon_texture_settings.size or not icon_texture_settings and {
 		150,
 		150
 	}
 
-	icon_visible = icon_visible == nil or not not icon_visible
-	background_texture = not not background_texture or not not "game_options_bg_02"
+	icon_visible = icon_visible == nil or icon_visible
+	background_texture = background_texture or "game_options_bg_02"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 	local frame_name = "menu_frame_08"
@@ -2091,7 +2091,7 @@ local function create_weave_settings_option(scenegraph_id, size, title_text, ico
 			title_bg = "playername_bg_02",
 			wind_title = "Wind: ",
 			frame = frame_settings.texture,
-			title_text = not not title_text or not not "n/a",
+			title_text = title_text or "n/a",
 			icon = icon_texture,
 			icon_visible = icon_visible,
 			mission_title = Localize("lb_level") .. ":",
@@ -2546,9 +2546,9 @@ end
 
 local function create_additional_settings_option(scenegraph_id, size, title_text, background_texture, frame_settings_name)
 	-- function 26
-	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(not not background_texture or not not "game_options_bg_02")
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture or "game_options_bg_02")
 
-	frame_settings_name = not not frame_settings_name or not not "menu_frame_08"
+	frame_settings_name = frame_settings_name or "menu_frame_08"
 
 	local frame_settings = UIFrameSettings[frame_settings_name]
 	local frame_width = frame_settings.texture_sizes.corner[1]
@@ -2602,7 +2602,7 @@ local function create_additional_settings_option(scenegraph_id, size, title_text
 			option_text = "",
 			title_edge = "game_option_divider",
 			frame = frame_settings.texture,
-			title_text = not not title_text or not not "n/a",
+			title_text = title_text or "n/a",
 			background = {
 				uvs = {
 					{
@@ -2640,7 +2640,7 @@ local function create_additional_settings_option(scenegraph_id, size, title_text
 					150
 				},
 				color = {
-					background_texture and not not 255 or not background_texture and not not 0,
+					background_texture and 255 or not background_texture and 0,
 					255,
 					255,
 					255
@@ -2766,7 +2766,7 @@ local function create_reward_presentation(scenegraph_id, size, frame_settings_na
 	local background_texture = "game_options_bg_05"
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
-	frame_settings_name = not not frame_settings_name or not not "menu_frame_08"
+	frame_settings_name = frame_settings_name or "menu_frame_08"
 
 	local frame_settings = UIFrameSettings[frame_settings_name]
 	local frame_width = frame_settings.texture_sizes.corner[1]
@@ -3014,7 +3014,7 @@ local function create_versus_reward_presentation(scenegraph_id, size, frame_sett
 	local background_texture = "game_options_versus"
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
-	frame_settings_name = not not frame_settings_name or not not "menu_frame_08"
+	frame_settings_name = frame_settings_name or "menu_frame_08"
 
 	local frame_settings = UIFrameSettings[frame_settings_name]
 	local frame_width = frame_settings.texture_sizes.corner[1]
@@ -3683,7 +3683,7 @@ function create_twitch_disclaimer(is_server)
 		108 / size[2]
 	}
 	local service_name = "Twitch"
-	local disclaimer_text_id = is_server and not not "twitch_warning_text_server" or not is_server and not not "twitch_warning_text_client"
+	local disclaimer_text_id = is_server and "twitch_warning_text_server" or not is_server and "twitch_warning_text_client"
 	local disclaimer_text = string.format(Localize(disclaimer_text_id), service_name, service_name)
 	local widget = {
 		element = {

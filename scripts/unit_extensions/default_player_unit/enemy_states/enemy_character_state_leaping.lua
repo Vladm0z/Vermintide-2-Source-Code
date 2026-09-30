@@ -234,7 +234,7 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 	local distance_travelled = dot / total_distance
 	local move_direction = Vector3.normalize(self._leap_data.direction:unbox())
 	local player_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local movement_settings_table = not not self._leap_data.movement_settings
+	local movement_settings_table = self._leap_data.movement_settings
 	local starting_speed = self._leap_data.speed
 	local speed = starting_speed
 	local move_speed_multiplier = self._status_extension:current_move_speed_multiplier()
@@ -243,12 +243,12 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 	speed = speed * movement_settings_table.player_speed_scale
 
 	local lerp_data = self._leap_data.lerp_data
-	local zero_distance = not not (total_distance * lerp_data.zero_distance)
-	local start_accel_distance = not not (total_distance * lerp_data.start_accel_distance)
-	local end_accel_distance = not not (total_distance * lerp_data.end_accel_distance)
-	local glide_distance = not not (total_distance * lerp_data.glide_distance)
-	local slow_distance = not not (total_distance * lerp_data.slow_distance)
-	local full_distance = not not (total_distance * lerp_data.full_distance)
+	local zero_distance = total_distance * lerp_data.zero_distance
+	local start_accel_distance = total_distance * lerp_data.start_accel_distance
+	local end_accel_distance = total_distance * lerp_data.end_accel_distance
+	local glide_distance = total_distance * lerp_data.glide_distance
+	local slow_distance = total_distance * lerp_data.slow_distance
+	local full_distance = total_distance * lerp_data.full_distance
 
 	self._old_position = current_position
 
@@ -299,7 +299,7 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
 		local new_move_speed = Vector3.length(new_move_velocity)
 
-		new_move_speed = math.clamp(new_move_speed, 0, move_cap * not not movement_settings_table.player_speed_scale)
+		new_move_speed = math.clamp(new_move_speed, 0, move_cap * movement_settings_table.player_speed_scale)
 
 		local new_move_direction = Vector3.normalize(new_move_velocity)
 
@@ -326,7 +326,7 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
 		local new_move_speed = Vector3.length(new_move_velocity)
 
-		new_move_speed = math.clamp(new_move_speed, 0, move_cap * not not movement_settings_table.player_speed_scale)
+		new_move_speed = math.clamp(new_move_speed, 0, move_cap * movement_settings_table.player_speed_scale)
 
 		local new_move_direction = Vector3.normalize(new_move_velocity)
 
@@ -348,7 +348,7 @@ EnemyCharacterStateLeaping._move_in_air = function (self, unit, dt, t)
 		local new_move_velocity = (Vector3.normalize(prev_move_velocity) + move_direction) * speed
 		local new_move_speed = Vector3.length(new_move_velocity)
 
-		new_move_speed = math.clamp(new_move_speed, 0, not not (move_cap * movement_settings_table.player_speed_scale))
+		new_move_speed = math.clamp(new_move_speed, 0, move_cap * movement_settings_table.player_speed_scale)
 
 		local new_move_direction = Vector3.normalize(new_move_velocity)
 
@@ -406,7 +406,7 @@ EnemyCharacterStateLeaping._update_movement = function (self, unit, dt, t)
 		going_backwards = true
 	end
 
-	self._leap_done = not not colliding_down or not not going_backwards
+	self._leap_done = colliding_down or going_backwards
 
 	return self._leap_done, colliding_down, going_backwards
 end
@@ -479,7 +479,7 @@ EnemyCharacterStateLeaping._start_leap = function (self, unit, t)
 	locomotion_extension:set_forced_velocity(velocity)
 	locomotion_extension:set_wanted_velocity(velocity)
 
-	local movement_settings_table = not not self._leap_data.movement_settings
+	local movement_settings_table = self._leap_data.movement_settings
 
 	movement_settings_table.gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration * 0
 	self._leap_done = false

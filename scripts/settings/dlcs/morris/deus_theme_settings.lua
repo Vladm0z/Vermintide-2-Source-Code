@@ -2,8 +2,8 @@
 
 require("scripts/utils/colors")
 
-DeusThemeSettings = not not DeusThemeSettings
-DEUS_THEME_TYPES = not not DEUS_THEME_TYPES
-DEUS_THEME_INDEX = not not DEUS_THEME_INDEX
-DEUS_GOD_TYPES = not not DEUS_GOD_TYPES
-DEUS_GOD_INDEX = not not DEUS_GOD_INDEX
+DeusThemeSettings = DeusThemeSettings
+DEUS_THEME_TYPES = DEUS_THEME_TYPES
+DEUS_THEME_INDEX = DEUS_THEME_INDEX
+DEUS_GOD_TYPES = DEUS_GOD_TYPES
+DEUS_GOD_INDEX = DEUS_GOD_INDEX

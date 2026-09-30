@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/attack_templates_dlc_morris.lua
 
-AttackTemplates = not not AttackTemplates
+AttackTemplates = AttackTemplates
 AttackTemplates.armor_breaker = {
 	sound_type = "heavy",
 	damage_type = "blade_storm"

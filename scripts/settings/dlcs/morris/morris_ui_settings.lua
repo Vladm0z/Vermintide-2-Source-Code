@@ -200,7 +200,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 5
-				return not not overview:is_in_mechanism("deus")
+				return (overview:is_in_mechanism("deus"))
 			end,
 			should_draw_god_info = function (ingame_ui_context)
 				-- function 6
@@ -234,7 +234,7 @@ settings.start_game_window_layout_console = {
 				local live_event_interface = Managers.backend:get_interface("live_events")
 				local game_mode_data = live_event_interface:get_weekly_chaos_wastes_game_mode_data()
 
-				return not not overview:is_in_mechanism("deus")
+				return (overview:is_in_mechanism("deus"))
 			end,
 			save_data_table = deus_save_data_table_map_console.twitch
 		},
@@ -253,7 +253,7 @@ settings.start_game_window_layout_console = {
 			},
 			can_add_function = function (overview)
 				-- function 8
-				return not not overview:is_in_mechanism("deus")
+				return (overview:is_in_mechanism("deus"))
 			end,
 			save_data_table = deus_save_data_table_map_console.lobby_browser
 		},
@@ -531,7 +531,7 @@ settings.start_game_layout_console_generic_inputs = {
 				description_text = "map_friend_button_tooltip",
 				content_check_function = function ()
 					-- function 9
-					return not IS_WINDOWS and not not not Managers.account:offline_mode()
+					return not IS_WINDOWS and not Managers.account:offline_mode()
 				end
 			}
 		}
@@ -571,7 +571,7 @@ settings.start_game_layout_console_generic_inputs = {
 				description_text = "map_friend_button_tooltip",
 				content_check_function = function ()
 					-- function 10
-					return not IS_WINDOWS and not not not Managers.account:offline_mode()
+					return not IS_WINDOWS and not Managers.account:offline_mode()
 				end
 			}
 		}
@@ -606,7 +606,7 @@ settings.start_game_layout_console_generic_inputs = {
 				description_text = "map_friend_button_tooltip",
 				content_check_function = function ()
 					-- function 11
-					return not IS_WINDOWS and not not not Managers.account:offline_mode()
+					return not IS_WINDOWS and not Managers.account:offline_mode()
 				end
 			}
 		}
@@ -704,7 +704,7 @@ settings.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 12
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -736,7 +736,7 @@ settings.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 13
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -768,7 +768,7 @@ settings.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 14
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -800,7 +800,7 @@ settings.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 15
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -821,7 +821,7 @@ settings.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 16
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -842,7 +842,7 @@ settings.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 17
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	}

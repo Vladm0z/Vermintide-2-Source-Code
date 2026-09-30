@@ -1,7 +1,7 @@
 -- chunkname: @scripts/helpers/interaction_helper.lua
 
-script_data.debug_interactions = not not script_data.debug_interactions
-InteractionHelper = not not InteractionHelper
+script_data.debug_interactions = script_data.debug_interactions
+InteractionHelper = InteractionHelper
 InteractionHelper.interactions = {
 	player_generic = {},
 	revive = {},
@@ -51,7 +51,7 @@ DLCUtils.map_list("interactions", function (interaction)
 end)
 
 for _, config_table in pairs(InteractionHelper.interactions) do
-	config_table.request_rpc = not not config_table.request_rpc
+	config_table.request_rpc = config_table.request_rpc
 end
 
 InteractionHelper.printf = function (...)

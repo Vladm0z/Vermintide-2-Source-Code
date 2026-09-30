@@ -2,7 +2,7 @@
 
 require("scripts/network/game_server/game_server_aux")
 
-GameServerInternal = not not GameServerInternal
+GameServerInternal = GameServerInternal
 GameServerInternal.lobby_data_version = 2
 
 GameServerInternal.join_server = function (game_server_info, password)

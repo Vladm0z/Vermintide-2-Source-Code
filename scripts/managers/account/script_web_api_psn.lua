@@ -50,7 +50,7 @@ ScriptWebApiPsn._handle_request_response = function (self, request_index, succes
 	local request = self._requests[request_index]
 	local id = request.id
 	local response_callback = request.response_callback
-	local response_format = not not request.response_format
+	local response_format = request.response_format
 
 	if success then
 		if script_data.debug_psn then

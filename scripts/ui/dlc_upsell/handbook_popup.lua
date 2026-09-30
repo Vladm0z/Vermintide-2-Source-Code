@@ -26,7 +26,7 @@ HandbookPopup.init = function (self, ui_context, hint_name, hint_settings)
 
 	local first_page = hint_settings.pages[1]
 
-	SaveData.seen_handbook_pages = not not SaveData.seen_handbook_pages
+	SaveData.seen_handbook_pages = SaveData.seen_handbook_pages
 	SaveData.seen_handbook_pages[first_page] = true
 	self._has_widget_been_closed = false
 end
@@ -189,12 +189,12 @@ HandbookPopup._update_page_info = function (self)
 	widgets_by_name.page_text_right.content.visible = has_pages
 	widgets_by_name.page_text_area.content.visible = has_pages
 
-	self._menu_input_description:set_input_description(has_pages and not not generic_input_actions.has_pages or not has_pages and not not nil)
+	self._menu_input_description:set_input_description(has_pages and generic_input_actions.has_pages or not has_pages and nil)
 end
 
 HandbookPopup.should_show = function (self)
 	-- function 11
-	return not not self._ui_context.is_in_inn
+	return self._ui_context.is_in_inn
 end
 
 HandbookPopup.update = function (self, dt)
@@ -216,7 +216,7 @@ HandbookPopup._setup_scrollbar = function (self, height, optional_value)
 
 	widget.content.scroll_bar_info.bar_height_percentage = percentage
 
-	self:_set_scrollbar_value(not not optional_value or not not 0)
+	self:_set_scrollbar_value(optional_value or 0)
 
 	local scroll_step_multiplier = 2
 	local scroll_amount = math.max(110 / self._total_scroll_height, 0) * scroll_step_multiplier
@@ -277,7 +277,7 @@ HandbookPopup._set_gamepad_input_buttons_visibility = function (self, visible)
 	local widgets_by_name = self._widgets_by_name
 	local has_pages = self._total_pages > 1
 
-	visible = not not visible and not not has_pages
+	visible = visible and has_pages
 
 	local input_1_widget = widgets_by_name.input_icon_next
 	local input_2_widget = widgets_by_name.input_icon_previous

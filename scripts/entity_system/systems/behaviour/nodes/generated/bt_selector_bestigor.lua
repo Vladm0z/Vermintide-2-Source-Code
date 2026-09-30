@@ -96,7 +96,7 @@ BTSelector_bestigor.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_falling = children[4]
-		local condition_result = not not blackboard.is_falling
+		local condition_result = blackboard.is_falling
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_falling, "aborted")
@@ -168,7 +168,7 @@ BTSelector_bestigor.run = function (self, unit, blackboard, t, dt)
 	do
 		local node_smartobject = children[7]
 		local in_charge_action = blackboard.charge_state ~= nil
-		local at_smartobject = not in_charge_action and not not BTConditions.at_smartobject(blackboard)
+		local at_smartobject = not in_charge_action and BTConditions.at_smartobject(blackboard)
 		local condition_result = at_smartobject
 
 		if condition_result then
@@ -190,7 +190,7 @@ BTSelector_bestigor.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_in_combat = children[8]
-		local condition_result = not not unit_alive(blackboard.target_unit)
+		local condition_result = unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_in_combat, "aborted")
@@ -232,7 +232,7 @@ BTSelector_bestigor.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_alerted = children[10]
-		local condition_result = not not unit_alive(blackboard.target_unit)
+		local condition_result = unit_alive(blackboard.target_unit)
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_alerted, "aborted")

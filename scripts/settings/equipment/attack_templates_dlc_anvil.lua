@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/attack_templates_dlc_anvil.lua
 
-AttackTemplates = not not AttackTemplates
+AttackTemplates = AttackTemplates
 AttackTemplates.pull_smiter = {
 	stagger_value = 2,
 	sound_type = "medium",

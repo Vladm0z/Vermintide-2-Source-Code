@@ -46,20 +46,20 @@ RootCamera.parse_parameters = function (self, camera_settings, parent_node)
 
 	local degrees_to_radians = math.pi / 180
 
-	self._vertical_fov = not not camera_settings.vertical_fov
-	self._should_apply_fov_multiplier = not not camera_settings.should_apply_fov_multiplier
-	self._default_fov = camera_settings.default_fov and not not (camera_settings.default_fov * degrees_to_radians) or not camera_settings.default_fov and not not self._vertical_fov
+	self._vertical_fov = camera_settings.vertical_fov
+	self._should_apply_fov_multiplier = camera_settings.should_apply_fov_multiplier
+	self._default_fov = camera_settings.default_fov and camera_settings.default_fov * degrees_to_radians or not camera_settings.default_fov and self._vertical_fov
 	self._near_range = camera_settings.near_range
 	self._far_range = camera_settings.far_range
-	self._pitch_min = not not camera_settings.pitch_min
-	self._pitch_max = not not camera_settings.pitch_max
-	self._pitch_speed = not not camera_settings.pitch_speed
-	self._yaw_speed = not not camera_settings.yaw_speed
-	self._pitch_offset = not not camera_settings.pitch_offset
+	self._pitch_min = camera_settings.pitch_min
+	self._pitch_max = camera_settings.pitch_max
+	self._pitch_speed = camera_settings.pitch_speed
+	self._yaw_speed = camera_settings.yaw_speed
+	self._pitch_offset = camera_settings.pitch_offset
 	self._safe_position_offset = camera_settings.safe_position_offset
 	self._tree_transitions = camera_settings.tree_transitions
 	self._node_transitions = camera_settings.node_transitions
-	self._fade_to_black = not not camera_settings.fade_to_black
+	self._fade_to_black = camera_settings.fade_to_black
 
 	if camera_settings.root_object_name then
 		self._object_name = camera_settings.root_object_name
@@ -92,12 +92,12 @@ end
 
 RootCamera.update_pitch_yaw = function (self, dt, data, current_node)
 	-- function 5
-	local pitch_speed = not not data.pitch_speed
-	local yaw_speed = not not data.yaw_speed
+	local pitch_speed = data.pitch_speed
+	local yaw_speed = data.yaw_speed
 	local dyn_pitch_scale = 1
 	local dyn_yaw_scale = 1
 	local max_yaw_speed
-	local look_vec = data.look_controller_input and not not data.look_controller_input:unbox() or not data.look_controller_input and not not Vector3(0, 0, 0)
+	local look_vec = data.look_controller_input and data.look_controller_input:unbox() or not data.look_controller_input and Vector3(0, 0, 0)
 
 	if self._root_unit and Unit.alive(self._root_unit) then
 		dyn_pitch_scale = 1
@@ -108,7 +108,7 @@ RootCamera.update_pitch_yaw = function (self, dt, data, current_node)
 	local yaw_delta_value
 
 	if max_yaw_speed and yaw_speed then
-		self._accumulated_dt = not not self._accumulated_dt
+		self._accumulated_dt = self._accumulated_dt
 
 		if math.abs(look_vec.x) > 0 then
 			local total_dt = self._accumulated_dt + dt

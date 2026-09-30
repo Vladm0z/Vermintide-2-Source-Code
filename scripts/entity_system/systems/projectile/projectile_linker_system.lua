@@ -184,13 +184,13 @@ ProjectileLinkerSystem.add_linked_projectile_reference = function (self, owner_u
 		if add_destroy_listener then
 			local unit_spawner = Managers.state.unit_spawner
 
-			unit_spawner:add_destroy_listener(owner_unit, "linked_projectile_owner_" .. self.owner_units_count, self[not not destroy_cb_name or not not "cb_linked_projectile_owner_destroyed"])
+			unit_spawner:add_destroy_listener(owner_unit, "linked_projectile_owner_" .. self.owner_units_count, self[destroy_cb_name or "cb_linked_projectile_owner_destroyed"])
 		end
 	end
 
 	self.linked_projectile_units[owner_unit][linked_projectile_unit] = {
 		end_time = t + LINKED_PROJECTILE_LIFETIME,
-		cb_timeout = self[not not timeout_cb_name or not not "cb_linked_projectile_timeout"]
+		cb_timeout = self[timeout_cb_name or "cb_linked_projectile_timeout"]
 	}
 end
 

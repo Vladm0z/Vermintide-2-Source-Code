@@ -428,7 +428,7 @@ local function create_video_hover()
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 3
-						local increase = content.button_hotspot.is_hover and not not 1 or not content.button_hotspot.is_hover and not not -1
+						local increase = content.button_hotspot.is_hover and 1 or not content.button_hotspot.is_hover and -1
 						local dt = Managers.time:mean_dt()
 						local progress = style.progress
 

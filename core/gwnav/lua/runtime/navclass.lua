@@ -6,7 +6,7 @@ local NavClass = safe_require_guard()
 
 NavClass.NavClass = function (class, super)
 	-- function 1
-	class = not not class or not not {}
+	class = class or {}
 
 	if next(class) == nil then
 		local meta = {}

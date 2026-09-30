@@ -12,7 +12,7 @@ return {
 		end,
 		sound_function = function ()
 			-- function 2
-			return not not script_data.reinforcement_ui_local_sound
+			return script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 3
@@ -30,7 +30,7 @@ return {
 		end,
 		sound_function = function ()
 			-- function 5
-			return not not script_data.reinforcement_ui_local_sound
+			return script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 6
@@ -48,7 +48,7 @@ return {
 		end,
 		sound_function = function ()
 			-- function 8
-			return not not script_data.reinforcement_ui_local_sound
+			return script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 9
@@ -130,7 +130,7 @@ return {
 	collected_isha_reward = {
 		sound_function = function ()
 			-- function 22
-			return not not script_data.reinforcement_ui_local_sound
+			return script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 23
@@ -140,7 +140,7 @@ return {
 	collected_grimnir_reward = {
 		sound_function = function ()
 			-- function 24
-			return not not script_data.reinforcement_ui_local_sound
+			return script_data.reinforcement_ui_local_sound
 		end,
 		icon_function = function (image_1, image_2)
 			-- function 25

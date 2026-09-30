@@ -9,7 +9,7 @@ UnlockDlcBundle.init = function (self, name, bundle_id, backend_reward_id, alway
 	self._backend_reward_id = backend_reward_id
 	self._requires_restart = requires_restart
 	self._status_changed = false
-	self._bundle_contains = not not bundle_contains or not not {}
+	self._bundle_contains = bundle_contains or {}
 	self._installed = false
 
 	if HAS_STEAM and always_unlocked_game_app_ids then
@@ -99,7 +99,7 @@ end
 
 UnlockDlcBundle.requires_restart = function (self)
 	-- function 13
-	return not not self._status_changed
+	return self._status_changed
 end
 
 UnlockDlcBundle.update_is_installed = function (self)

@@ -77,7 +77,7 @@ DeusVictoryEndScreenUI._update = function (self, dt)
 			journey_presentation_ui:update(dt)
 		end
 
-		local journey_presentation_done = not journey_presentation_ui or not not journey_presentation_ui:presentation_completed()
+		local journey_presentation_done = not journey_presentation_ui or journey_presentation_ui:presentation_completed()
 
 		if journey_presentation_done then
 			self._state = states.DONE

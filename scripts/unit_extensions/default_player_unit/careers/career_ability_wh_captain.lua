@@ -87,7 +87,7 @@ CareerAbilityWHCaptain._ability_available = function (self)
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
 
-	return not not career_extension:can_use_activated_ability()
+	return (career_extension:can_use_activated_ability())
 end
 
 CareerAbilityWHCaptain._start_priming = function (self)

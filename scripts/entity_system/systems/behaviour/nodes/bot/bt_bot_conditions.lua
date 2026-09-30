@@ -1,7 +1,7 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/nodes/bot/bt_bot_conditions.lua
 
-BTConditions.can_activate = not not BTConditions.can_activate
-BTConditions.reload_ability_weapon = not not BTConditions.reload_ability_weapon
+BTConditions.can_activate = BTConditions.can_activate
+BTConditions.reload_ability_weapon = BTConditions.reload_ability_weapon
 BTConditions.ability_check_categories = {
 	activate_ability = {
 		dr_ranger = true,
@@ -44,7 +44,7 @@ BTConditions.can_activate.dr_ironbreaker = function (blackboard)
 			local enemy_blackboard = BLACKBOARDS[enemy_unit]
 			local enemy_breed = enemy_blackboard.breed
 			local is_targeting_bot = enemy_blackboard.target_unit == self_unit
-			local threat_value = enemy_breed.threat_value * (is_targeting_bot and not not 1.25 or not is_targeting_bot and not not 1)
+			local threat_value = enemy_breed.threat_value * (is_targeting_bot and 1.25 or not is_targeting_bot and 1)
 
 			total_threat_value = total_threat_value + threat_value
 
@@ -70,8 +70,8 @@ BTConditions.can_activate.dr_slayer = function (blackboard)
 	local self_position = POSITION_LOOKUP[self_unit]
 	local target_unit = blackboard.target_unit
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local target_breed = not not target_blackboard and not not target_blackboard.breed
-	local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_breed = target_blackboard and target_blackboard.breed
+	local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_need_type = blackboard.target_ally_need_type
 	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
@@ -120,10 +120,10 @@ BTConditions.can_activate.dr_ranger = function (blackboard)
 	local num_proximite_enemies = #proximite_enemies
 	local max_distance_sq = 25
 	local total_threat_value = 0
-	local threat_threshold = not not 5
+	local threat_threshold = 5
 	local current_health_percent = blackboard.health_extension:current_health_percent()
 	local is_wounded = blackboard.status_extension:is_wounded()
-	local health_multiplier = 2 - (is_wounded and not not 0 or not is_wounded and not not current_health_percent)
+	local health_multiplier = 2 - (is_wounded and 0 or not is_wounded and current_health_percent)
 
 	for i = 1, num_proximite_enemies do
 		local enemy_unit = proximite_enemies[i]
@@ -133,7 +133,7 @@ BTConditions.can_activate.dr_ranger = function (blackboard)
 			local enemy_blackboard = BLACKBOARDS[enemy_unit]
 			local enemy_breed = enemy_blackboard.breed
 			local is_targeting_bot = enemy_blackboard.target_unit == self_unit
-			local threat_value = enemy_breed.threat_value * (health_multiplier + (is_targeting_bot and not not 0.25 or not is_targeting_bot and not not 0))
+			local threat_value = enemy_breed.threat_value * (health_multiplier + (is_targeting_bot and 0.25 or not is_targeting_bot and 0))
 
 			total_threat_value = total_threat_value + threat_value
 
@@ -169,7 +169,7 @@ BTConditions.can_activate.es_mercenary = function (blackboard)
 	local near_players_percentage
 	local num_players_except_self = num_players - 1
 
-	near_players_percentage = not not (num_players_within_range / num_players_except_self)
+	near_players_percentage = num_players_within_range / num_players_except_self
 
 	local proximite_enemies = blackboard.proximite_enemies
 	local num_proximite_enemies = #proximite_enemies
@@ -178,7 +178,7 @@ BTConditions.can_activate.es_mercenary = function (blackboard)
 	local threat_threshold = math.max(20 * (1 - near_players_percentage), 8)
 	local current_health_percent = blackboard.health_extension:current_health_percent()
 	local is_wounded = blackboard.status_extension:is_wounded()
-	local health_multiplier = 2 - (is_wounded and not not 0 or not is_wounded and not not current_health_percent)
+	local health_multiplier = 2 - (is_wounded and 0 or not is_wounded and current_health_percent)
 
 	for i = 1, num_proximite_enemies do
 		local enemy_unit = proximite_enemies[i]
@@ -188,7 +188,7 @@ BTConditions.can_activate.es_mercenary = function (blackboard)
 			local enemy_blackboard = BLACKBOARDS[enemy_unit]
 			local enemy_breed = enemy_blackboard.breed
 			local is_targeting_bot = enemy_blackboard.target_unit == self_unit
-			local threat_value = enemy_breed.threat_value * (health_multiplier + (is_targeting_bot and not not 0.25 or not is_targeting_bot and not not 0))
+			local threat_value = enemy_breed.threat_value * (health_multiplier + (is_targeting_bot and 0.25 or not is_targeting_bot and 0))
 
 			total_threat_value = total_threat_value + threat_value
 
@@ -214,8 +214,8 @@ BTConditions.can_activate.es_huntsman = function (blackboard)
 	local self_unit = blackboard.unit
 	local self_position = POSITION_LOOKUP[self_unit]
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local target_breed = not not target_blackboard and not not target_blackboard.breed
-	local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_breed = target_blackboard and target_blackboard.breed
+	local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_need_type = blackboard.target_ally_need_type
 	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
@@ -241,8 +241,8 @@ BTConditions.can_activate.es_knight = function (blackboard)
 	local self_position = POSITION_LOOKUP[self_unit]
 	local target_unit = blackboard.target_unit
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local target_breed = not not target_blackboard and not not target_blackboard.breed
-	local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_breed = target_blackboard and target_blackboard.breed
+	local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_need_type = blackboard.target_ally_need_type
 	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
@@ -298,7 +298,7 @@ BTConditions.can_activate.we_waywatcher = function (blackboard)
 	if is_range_ok then
 		local obstruction = blackboard.ranged_obstruction_by_static
 		local t = Managers.time:time("game")
-		local obstructed = not not obstruction and obstruction.unit == target and t <= obstruction.timer + 3
+		local obstructed = obstruction and obstruction.unit == target and t <= obstruction.timer + 3
 
 		return not obstructed
 	else
@@ -312,8 +312,8 @@ BTConditions.can_activate.we_maidenguard = function (blackboard)
 	local self_position = POSITION_LOOKUP[self_unit]
 	local target_unit = blackboard.target_unit
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local target_breed = not not target_blackboard and not not target_blackboard.breed
-	local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_breed = target_blackboard and target_blackboard.breed
+	local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_need_type = blackboard.target_ally_need_type
 	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
@@ -364,8 +364,8 @@ BTConditions.can_activate.we_shade = function (blackboard)
 	local self_unit = blackboard.unit
 	local self_position = POSITION_LOOKUP[self_unit]
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local target_breed = not not target_blackboard and not not target_blackboard.breed
-	local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_breed = target_blackboard and target_blackboard.breed
+	local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_need_type = blackboard.target_ally_need_type
 	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
@@ -409,7 +409,7 @@ BTConditions.can_activate.wh_captain = function (blackboard)
 	local near_players_percentage
 	local num_players_except_self = num_players - 1
 
-	near_players_percentage = not not (num_players_within_range / num_players_except_self)
+	near_players_percentage = num_players_within_range / num_players_except_self
 
 	local proximite_enemies = blackboard.proximite_enemies
 	local num_proximite_enemies = #proximite_enemies
@@ -418,7 +418,7 @@ BTConditions.can_activate.wh_captain = function (blackboard)
 	local threat_threshold = math.max(20 * (1 - near_players_percentage), 8)
 	local current_health_percent = blackboard.health_extension:current_health_percent()
 	local is_wounded = blackboard.status_extension:is_wounded()
-	local health_multiplier = 2 - (is_wounded and not not 0 or not is_wounded and not not current_health_percent)
+	local health_multiplier = 2 - (is_wounded and 0 or not is_wounded and current_health_percent)
 
 	for i = 1, num_proximite_enemies do
 		local enemy_unit = proximite_enemies[i]
@@ -428,7 +428,7 @@ BTConditions.can_activate.wh_captain = function (blackboard)
 			local enemy_blackboard = BLACKBOARDS[enemy_unit]
 			local enemy_breed = enemy_blackboard.breed
 			local is_targeting_bot = enemy_blackboard.target_unit == self_unit
-			local threat_value = enemy_breed.threat_value * (health_multiplier + (is_targeting_bot and not not 0.25 or not is_targeting_bot and not not 0))
+			local threat_value = enemy_breed.threat_value * (health_multiplier + (is_targeting_bot and 0.25 or not is_targeting_bot and 0))
 
 			total_threat_value = total_threat_value + threat_value
 
@@ -459,7 +459,7 @@ BTConditions.can_activate.wh_bountyhunter = function (blackboard)
 	if is_range_ok then
 		local obstruction = blackboard.ranged_obstruction_by_static
 		local t = Managers.time:time("game")
-		local obstructed = not not obstruction and obstruction.unit == target and t <= obstruction.timer + 3
+		local obstructed = obstruction and obstruction.unit == target and t <= obstruction.timer + 3
 
 		return not obstructed
 	else
@@ -473,8 +473,8 @@ BTConditions.can_activate.wh_zealot = function (blackboard)
 	local self_position = POSITION_LOOKUP[self_unit]
 	local target_unit = blackboard.target_unit
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local target_breed = not not target_blackboard and not not target_blackboard.breed
-	local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_breed = target_blackboard and target_blackboard.breed
+	local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_need_type = blackboard.target_ally_need_type
 	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
@@ -517,8 +517,8 @@ BTConditions.can_activate.bw_adept = function (blackboard)
 	local self_position = POSITION_LOOKUP[self_unit]
 	local target_unit = blackboard.target_unit
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local target_breed = not not target_blackboard and not not target_blackboard.breed
-	local target_threat_value = target_breed and not not target_breed.threat_value or not target_breed and not not 0
+	local target_breed = target_blackboard and target_blackboard.breed
+	local target_threat_value = target_breed and target_breed.threat_value or not target_breed and 0
 	local target_ally_unit = blackboard.target_ally_unit
 	local target_ally_need_type = blackboard.target_ally_need_type
 	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
@@ -573,7 +573,7 @@ BTConditions.can_activate.bw_scholar = function (blackboard)
 	if is_range_ok then
 		local obstruction = blackboard.ranged_obstruction_by_static
 		local t = Managers.time:time("game")
-		local obstructed = not not obstruction and obstruction.unit == target and t <= obstruction.timer + 3
+		local obstructed = obstruction and obstruction.unit == target and t <= obstruction.timer + 3
 
 		return not obstructed
 	else
@@ -606,7 +606,7 @@ BTConditions.can_activate.bw_unchained = function (blackboard)
 			local enemy_blackboard = BLACKBOARDS[enemy_unit]
 			local enemy_breed = enemy_blackboard.breed
 			local is_targeting_bot = enemy_blackboard.target_unit == self_unit
-			local threat_value = enemy_breed.threat_value * (is_targeting_bot and not not 1.25 or not is_targeting_bot and not not 1)
+			local threat_value = enemy_breed.threat_value * (is_targeting_bot and 1.25 or not is_targeting_bot and 1)
 
 			total_threat_value = total_threat_value + threat_value
 
@@ -638,10 +638,10 @@ BTConditions.can_activate_ability = function (blackboard, args)
 	local condition_function = BTConditions.can_activate[career_name]
 
 	if ability_check_category_name == "ranged_weapon" or ability_check_category_name == "melee_weapon" then
-		return not not condition_function and not not condition_function(blackboard)
+		return condition_function and condition_function(blackboard)
 	end
 
-	return not not is_using_ability or not not career_extension:can_use_activated_ability()
+	return is_using_ability or career_extension:can_use_activated_ability()
 end
 
 BTConditions.should_reload_ability_weapon = function (blackboard, args)
@@ -654,12 +654,12 @@ BTConditions.should_reload_ability_weapon = function (blackboard, args)
 	local career_name = career_extension:career_name()
 	local condition_function = BTConditions.reload_ability_weapon[career_name]
 
-	return not not condition_function and not not condition_function(blackboard, args)
+	return condition_function and condition_function(blackboard, args)
 end
 
 BTConditions.is_disabled = function (blackboard)
 	-- function 18
-	return not not blackboard.is_knocked_down
+	return blackboard.is_knocked_down
 end
 
 local PUSHED_COOLDOWN = 2
@@ -780,7 +780,7 @@ BTConditions.can_revive = function (blackboard)
 		end
 
 		local self_position = POSITION_LOOKUP[self_unit]
-		local ally_destination_reached = not not has_reached_ally_aid_destination(self_position, blackboard)
+		local ally_destination_reached = has_reached_ally_aid_destination(self_position, blackboard)
 		local can_interact_with_ally = can_interact_with_ally(self_unit, target_ally_unit)
 
 		if can_interact_with_ally and ally_destination_reached then
@@ -797,8 +797,8 @@ end
 BTConditions.can_heal_player = function (blackboard)
 	-- function 25
 	local target_ally_unit = blackboard.target_ally_unit
-	local target_career_ext = not not target_ally_unit and not not ScriptUnit.extension(target_ally_unit, "career_system")
-	local target_status_ext = not not target_ally_unit and not not ScriptUnit.extension(target_ally_unit, "status_system")
+	local target_career_ext = target_ally_unit and ScriptUnit.extension(target_ally_unit, "career_system")
+	local target_status_ext = target_ally_unit and ScriptUnit.extension(target_ally_unit, "status_system")
 
 	if target_career_ext and target_career_ext:career_name() == "wh_zealot" and target_status_ext and target_status_ext:num_wounds_remaining() > 1 then
 		return false
@@ -912,11 +912,11 @@ BTConditions.can_loot = function (blackboard)
 
 	local max_dist = 3.2
 	local is_forced_pickup = blackboard.forced_pickup_unit == blackboard.interaction_unit
-	local loot_health = not not blackboard.health_pickup
-	local loot_ammo = not not blackboard.ammo_pickup
-	local loot_mule = not not blackboard.mule_pickup
+	local loot_health = blackboard.health_pickup
+	local loot_ammo = blackboard.ammo_pickup
+	local loot_mule = blackboard.mule_pickup
 
-	return not not loot_health or not not loot_ammo or not not loot_mule
+	return loot_health or loot_ammo or loot_mule
 end
 
 BTConditions.bot_should_heal = function (blackboard)
@@ -924,8 +924,8 @@ BTConditions.bot_should_heal = function (blackboard)
 	local self_unit = blackboard.unit
 	local inventory_extension = blackboard.inventory_extension
 	local health_slot_data = inventory_extension:get_slot_data("slot_healthkit")
-	local template = not not health_slot_data and not not inventory_extension:get_item_template(health_slot_data)
-	local can_heal_self = not not template and not not template.can_heal_self
+	local template = health_slot_data and inventory_extension:get_item_template(health_slot_data)
+	local can_heal_self = template and template.can_heal_self
 
 	if not can_heal_self then
 		return false
@@ -948,7 +948,7 @@ BTConditions.bot_should_heal = function (blackboard)
 	local target_unit = blackboard.target_unit
 	local is_safe = target_unit ~= blackboard.priority_target_enemy and target_unit ~= blackboard.urgent_target_enemy and target_unit ~= blackboard.proximity_target_enemy and target_unit ~= blackboard.slot_target_enemy
 
-	return not not is_safe and (not not force_use_health_pickup or not has_no_permanent_health_from_item_buff and (not not hurt or wounded and (not not low_on_perma_health or not not heavy_curse or not not has_no_permanent_health_from_item_buff and not not hurt and not not wounded) or not wounded and not not has_no_permanent_health_from_item_buff and not not hurt and not not wounded) or not not has_no_permanent_health_from_item_buff and not not has_no_permanent_health_from_item_buff and not not hurt and not not wounded)
+	return is_safe and (force_use_health_pickup or not has_no_permanent_health_from_item_buff and (hurt or wounded and (low_on_perma_health or heavy_curse or has_no_permanent_health_from_item_buff and hurt and wounded) or not wounded and has_no_permanent_health_from_item_buff and hurt and wounded) or has_no_permanent_health_from_item_buff and has_no_permanent_health_from_item_buff and hurt and wounded)
 end
 
 BTConditions.is_slot_not_wielded = function (blackboard, args)
@@ -991,8 +991,8 @@ BTConditions.has_better_alt_weapon = function (blackboard, args)
 
 		if weapon_scores then
 			local alt_slot = args[2]
-			local main_weapon_score = not not weapon_scores[main_slot].score
-			local alt_weapon_score = not not weapon_scores[alt_slot].score
+			local main_weapon_score = weapon_scores[main_slot].score
+			local alt_weapon_score = weapon_scores[alt_slot].score
 
 			return main_weapon_score < alt_weapon_score
 		end
@@ -1043,10 +1043,10 @@ BTConditions.bot_in_melee_range = function (blackboard)
 	local party_danger = AiUtils.get_party_danger()
 
 	if blackboard.urgent_target_enemy == target_unit or blackboard.opportunity_target_enemy == target_unit or Vector3.is_valid(blackboard.taking_cover.cover_position:unbox()) then
-		melee_range = breed and (not not breed.bot_opportunity_target_melee_range or not not 3) or not breed and not not 3
+		melee_range = breed and (breed.bot_opportunity_target_melee_range or 3) or not breed and 3
 
 		if wielded_slot == "slot_ranged" then
-			melee_range = breed and (not not breed.bot_opportunity_target_melee_range_while_ranged or not not 2) or not breed and not not 2
+			melee_range = breed and (breed.bot_opportunity_target_melee_range_while_ranged or 2) or not breed and 2
 		end
 	elseif wielded_slot == "slot_ranged" then
 		melee_range = math.lerp(10, 3.5, party_danger)
@@ -1060,7 +1060,7 @@ BTConditions.bot_in_melee_range = function (blackboard)
 	local in_range = distance_squared < melee_range^2
 	local z_offset = offset.z
 
-	return not not in_range and z_offset > -1.5 and z_offset < 2
+	return in_range and z_offset > -1.5 and z_offset < 2
 end
 
 BTConditions.has_target_and_ammo_greater_than = function (blackboard, args)
@@ -1080,7 +1080,7 @@ BTConditions.has_target_and_ammo_greater_than = function (blackboard, args)
 	local inventory_extension = blackboard.inventory_extension
 	local ranged_slot_data = inventory_extension:get_slot_data("slot_ranged")
 	local ranged_slot_template = inventory_extension:get_item_template(ranged_slot_data)
-	local ranged_slot_buff_type = not not ranged_slot_template and not not ranged_slot_template.buff_type
+	local ranged_slot_buff_type = ranged_slot_template and ranged_slot_template.buff_type
 	local is_ranged = RangedBuffTypes[ranged_slot_buff_type]
 
 	if not is_ranged then
@@ -1101,10 +1101,10 @@ BTConditions.has_target_and_ammo_greater_than = function (blackboard, args)
 	local overcharge_ok = current_oc / max_oc < args.overcharge_limit
 	local obstruction = blackboard.ranged_obstruction_by_static
 	local t = Managers.time:time("game")
-	local obstructed = not not obstruction and obstruction.unit == blackboard.target_unit and t <= obstruction.timer + 3
+	local obstructed = obstruction and obstruction.unit == blackboard.target_unit and t <= obstruction.timer + 3
 	local effective_target = AiUtils.has_breed_categories(breed.category_mask, ranged_slot_template.attack_meta_data.effective_against_combined)
 
-	return not not ammo_ok and not not overcharge_ok and not obstructed and not not effective_target
+	return ammo_ok and overcharge_ok and not obstructed and effective_target
 end
 
 BTConditions.should_vent_overcharge = function (blackboard, args)
@@ -1161,8 +1161,8 @@ BTConditions.should_reload_weapon = function (blackboard, args)
 	-- function 41
 	local inventory_extension = blackboard.inventory_extension
 	local ranged_slot_data = inventory_extension:get_slot_data("slot_ranged")
-	local right_unit_1p = not not ranged_slot_data and not not ranged_slot_data.right_unit_1p
-	local left_unit_1p = not not ranged_slot_data and not not ranged_slot_data.left_unit_1p
+	local right_unit_1p = ranged_slot_data and ranged_slot_data.right_unit_1p
+	local left_unit_1p = ranged_slot_data and ranged_slot_data.left_unit_1p
 	local ammo_extension = GearUtils.get_ammo_extension(right_unit_1p, left_unit_1p)
 
 	if not ammo_extension then
@@ -1191,7 +1191,7 @@ BTConditions.can_open_door = function (blackboard)
 
 	if blackboard.interaction_type == "door" then
 		local interaction_unit = blackboard.interaction_unit
-		local door_extension = not not Unit.alive(interaction_unit)
+		local door_extension = Unit.alive(interaction_unit)
 
 		if door_extension then
 			can_interact = door_extension:get_current_state() == "closed"
@@ -1205,7 +1205,7 @@ BTConditions.bot_at_breakable = function (blackboard)
 	-- function 44
 	local navigation_extension = blackboard.navigation_extension
 
-	return not not navigation_extension:is_in_transition()
+	return (navigation_extension:is_in_transition())
 end
 
 BTConditions.cant_reach_ally = function (blackboard)
@@ -1245,7 +1245,7 @@ BTConditions.cant_reach_ally = function (blackboard)
 	local navigation_extension = blackboard.navigation_extension
 	local fails, last_success = navigation_extension:successive_failed_paths()
 
-	return not not blackboard.moving_toward_follow_position
+	return blackboard.moving_toward_follow_position
 end
 
 local FOLLOW_TELEPORT_DISTANCE_SQ = 1600
@@ -1260,14 +1260,14 @@ BTConditions.should_teleport = function (blackboard)
 
 	local self_unit = blackboard.unit
 	local conflict_director = Managers.state.conflict
-	local self_segment = not not conflict_director:get_player_unit_segment(self_unit)
+	local self_segment = conflict_director:get_player_unit_segment(self_unit)
 	local target_segment = conflict_director:get_player_unit_segment(follow_unit)
 
 	if not target_segment or target_segment < self_segment then
 		return false
 	end
 
-	local has_priority_target = not not blackboard.target_unit
+	local has_priority_target = blackboard.target_unit
 
 	if blackboard.target_ally_need_type or has_priority_target then
 		return false
@@ -1299,7 +1299,7 @@ BTConditions.should_drop_grimoire = function (blackboard)
 		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 		local order = ai_bot_group_system:get_pickup_order(blackboard.unit, slot_name)
 
-		return not not is_grimoire and (order == nil or order.pickup_name ~= "grimoire")
+		return is_grimoire and (order == nil or order.pickup_name ~= "grimoire")
 	end
 
 	return false

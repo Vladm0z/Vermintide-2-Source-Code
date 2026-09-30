@@ -420,9 +420,9 @@ local function _update_slider_image_size(content, style, options_view)
 	-- function 1
 	local text_padding = 5
 
-	content.slider_image_base_size_x = not not content.slider_image_base_size_x
-	content.slider_image_base_offset_x = not not content.slider_image_base_offset_x
-	content.slider_image_text_base_offset_x = not not content.slider_image_text_base_offset_x
+	content.slider_image_base_size_x = content.slider_image_base_size_x
+	content.slider_image_base_offset_x = content.slider_image_base_offset_x
+	content.slider_image_text_base_offset_x = content.slider_image_text_base_offset_x
 
 	local text = content.slider_image_text
 	local text_width = UIUtils.get_text_width(options_view.ui_renderer, style.slider_image_text, text)
@@ -1227,7 +1227,7 @@ local function set_function(self, user_setting_name, widget_type, content, style
 		new_value = options_values[current_selection]
 	end
 
-	local setting_type = not not content.definition.setting_type
+	local setting_type = content.definition.setting_type
 
 	self:_set_setting(setting_type, user_setting_name, new_value)
 	value_set_function(content, style, new_value, self)
@@ -1235,7 +1235,7 @@ end
 
 local function setup_function(self, user_setting_name, widget_type, options, definition)
 	-- function 9
-	local setting_type = not not definition.setting_type
+	local setting_type = definition.setting_type
 	local default_value = DefaultUserSettings.get(setting_type, user_setting_name)
 	local current_value
 
@@ -1247,7 +1247,7 @@ local function setup_function(self, user_setting_name, widget_type, options, def
 
 	local menu_setting_name = definition.menu_setting_name
 
-	menu_setting_name = not not menu_setting_name or not not ("menu_settings_" .. user_setting_name)
+	menu_setting_name = menu_setting_name or "menu_settings_" .. user_setting_name
 
 	if widget_type == "slider" then
 		local min = options.min
@@ -1273,7 +1273,7 @@ local function setup_function(self, user_setting_name, widget_type, options, def
 
 		fassert(default_option, "Default value %q for %q does not exist in passed options table", tostring(default_value), user_setting_name)
 
-		selection = not not selection or not not default_option
+		selection = selection or default_option
 
 		return selection, options, menu_setting_name, default_option
 	end
@@ -1281,7 +1281,7 @@ end
 
 local function saved_value_function(self, user_setting_name, widget_type, widget, saved_function)
 	-- function 10
-	local setting_type = not not widget.content.definition.setting_type
+	local setting_type = widget.content.definition.setting_type
 	local saved_value = self:_get_setting(setting_type, user_setting_name)
 	local default_value = DefaultUserSettings.get(setting_type, user_setting_name)
 
@@ -1299,7 +1299,7 @@ local function saved_value_function(self, user_setting_name, widget_type, widget
 		content.internal_value = get_slider_value(min, max, saved_value)
 		content.value = saved_value
 	else
-		content.current_selection = not not table.find(content.options_values, saved_value)
+		content.current_selection = table.find(content.options_values, saved_value)
 	end
 
 	saved_function(content, style, saved_value, self)
@@ -1320,7 +1320,7 @@ local function generate_settings(settings_definition)
 
 			OptionsView[callback_name] = function (self, content, style)
 				-- function 12
-				return set_function(self, setting_name, widget_type, content, style, not not definition.value_set_function)
+				return set_function(self, setting_name, widget_type, content, style, definition.value_set_function)
 			end
 
 			local setup_function_name = prefix .. "_setup"
@@ -1336,7 +1336,7 @@ local function generate_settings(settings_definition)
 			definition.saved_value = saved_value_function_name
 			OptionsView[saved_value_function_name] = function (self, widget)
 				-- function 14
-				return saved_value_function(self, setting_name, widget_type, widget, not not definition.value_saved_function)
+				return saved_value_function(self, setting_name, widget_type, widget, definition.value_saved_function)
 			end
 
 			if not definition.tooltip_text then

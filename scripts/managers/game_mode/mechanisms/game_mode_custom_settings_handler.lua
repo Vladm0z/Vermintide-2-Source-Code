@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/game_mode/mechanisms/game_mode_custom_settings_handler.lua
 
-GameModeCustomSettingsHandlerUtility = not not GameModeCustomSettingsHandlerUtility
+GameModeCustomSettingsHandlerUtility = GameModeCustomSettingsHandlerUtility
 
 GameModeCustomSettingsHandlerUtility.parse_packed_custom_settings = function (packed_custom_settings, game_mode_name)
 	-- function 1
@@ -92,7 +92,7 @@ GameModeCustomSettingsHandler.get_packed_custom_settings = function (self)
 		end
 	end
 
-	return has_custom_settings and (not not changed_packaged_settings or not not "n/a") or not has_custom_settings and not not "n/a"
+	return has_custom_settings and (changed_packaged_settings or "n/a") or not has_custom_settings and "n/a"
 end
 
 GameModeCustomSettingsHandler.unpack_settings = function (self, packed_settings, settings_template)
@@ -149,7 +149,7 @@ GameModeCustomSettingsHandler.set_enabled = function (self, enabled, do_sync)
 
 	if do_sync then
 		local network_handler = Managers.mechanism:network_handler()
-		local match_handler = not not network_handler and not not network_handler:get_match_handler()
+		local match_handler = network_handler and network_handler:get_match_handler()
 
 		if match_handler and match_handler:is_match_owner() then
 			printf("GameModeCustomSettingsHandler: match_owner called set_enabled(%s)", tostring(enabled))
@@ -222,7 +222,7 @@ GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_handler_set_enabled 
 	end
 
 	local network_handler = Managers.mechanism:network_handler()
-	local match_handler = not not network_handler and not not network_handler:get_match_handler()
+	local match_handler = network_handler and network_handler:get_match_handler()
 
 	if match_handler then
 		match_handler:propagate_rpc("rpc_game_mode_custom_settings_handler_set_enabled", CHANNEL_TO_PEER_ID[channel_id], enabled)
@@ -262,7 +262,7 @@ GameModeCustomSettingsHandler.get_telemetry_data = function (self)
 		end
 	end
 
-	local is_default_settings = #modified_settings ~= 0 and not not false or not (#modified_settings ~= 0) and not not true
+	local is_default_settings = not (#modified_settings ~= 0)
 
 	return settings_hash_map, is_default_settings, modified_settings
 end

@@ -2,7 +2,7 @@
 
 local_require("scripts/ui/ui_widgets_honduras")
 
-UIWidgets = not not UIWidgets
+UIWidgets = UIWidgets
 
 UIWidgets.create_hover_button = function (scenegraph_id, normal_texture, hover_texture)
 	-- function 1
@@ -35,19 +35,19 @@ local function get_gamepad_text_pass_win32(button_name, optional_style_sufix, co
 	-- function 4
 	local function content_check_function_texture_1_text(content)
 		-- function 5
-		return not not content[button_name]
+		return content[button_name]
 	end
 
 	local function content_check_function_texture_2_text(content)
 		-- function 6
-		return not not content[button_name]
+		return content[button_name]
 	end
 
 	return {
 		pass_type = "text",
 		text_id = button_name,
-		style_id = optional_style_sufix and not not (button_name .. optional_style_sufix) or not optional_style_sufix and not not button_name,
-		content_check_function = optional_style_sufix and (not not content_check_function_texture_2_text or not not content_check_function_texture_1_text) or not optional_style_sufix and not not content_check_function_texture_1_text
+		style_id = optional_style_sufix and button_name .. optional_style_sufix or not optional_style_sufix and button_name,
+		content_check_function = optional_style_sufix and (content_check_function_texture_2_text or content_check_function_texture_1_text) or not optional_style_sufix and content_check_function_texture_1_text
 	}
 end
 
@@ -675,7 +675,7 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 						-- function 15
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not not not button_hotspot.is_selected
+						return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not button_hotspot.is_selected
 					end
 				},
 				{
@@ -685,7 +685,7 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 						-- function 16
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover
 					end
 				},
 				{
@@ -705,7 +705,7 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 						-- function 18
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not not button_hotspot.is_selected
+						return not button_hotspot.disabled and button_hotspot.is_selected
 					end
 				},
 				{
@@ -755,7 +755,7 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 						-- function 23
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover
 					end
 				},
 				{
@@ -777,7 +777,7 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 						-- function 25
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not not button_hotspot.is_selected
+						return not button_hotspot.disabled and button_hotspot.is_selected
 					end
 				},
 				{
@@ -831,10 +831,10 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				word_wrap = optional_word_wrap,
-				font_size = not not optional_text_size or not not 24,
+				font_size = optional_text_size or 24,
 				size = optional_text_area_size,
 				offset = {
-					not not optional_x_offset or not not 0,
+					optional_x_offset or 0,
 					0,
 					2
 				},
@@ -848,10 +848,10 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				word_wrap = optional_word_wrap,
-				font_size = not not optional_text_size or not not 24,
+				font_size = optional_text_size or 24,
 				size = optional_text_area_size,
 				offset = {
-					not not optional_x_offset or not not 0,
+					optional_x_offset or 0,
 					0,
 					2
 				},
@@ -863,10 +863,10 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				word_wrap = optional_word_wrap,
-				font_size = not not optional_text_size or not not 24,
+				font_size = optional_text_size or 24,
 				size = optional_text_area_size,
 				offset = {
-					not not optional_x_offset or not not 0,
+					optional_x_offset or 0,
 					-2,
 					2
 				},
@@ -878,10 +878,10 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				word_wrap = optional_word_wrap,
-				font_size = not not optional_text_size or not not 24,
+				font_size = optional_text_size or 24,
 				size = optional_text_area_size,
 				offset = {
-					not not optional_x_offset or not not 0,
+					optional_x_offset or 0,
 					0,
 					2
 				},
@@ -893,10 +893,10 @@ UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				word_wrap = optional_word_wrap,
-				font_size = not not optional_text_size or not not 24,
+				font_size = optional_text_size or 24,
 				size = optional_text_area_size,
 				offset = {
-					not not optional_x_offset or not not 0,
+					optional_x_offset or 0,
 					0,
 					2
 				},
@@ -955,8 +955,8 @@ UIWidgets.create_menu_button_medium = function (text_field_id, scenegraph_id, di
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				localize = not disable_localization and not not true,
-				font_size = not not optional_font_size or not not 24,
+				localize = not disable_localization and true,
+				font_size = optional_font_size or 24,
 				offset = {
 					0,
 					0,
@@ -970,8 +970,8 @@ UIWidgets.create_menu_button_medium = function (text_field_id, scenegraph_id, di
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
-				font_size = not not optional_font_size or not not 24,
+				localize = not disable_localization and true,
+				font_size = optional_font_size or 24,
 				offset = {
 					0,
 					0,
@@ -983,8 +983,8 @@ UIWidgets.create_menu_button_medium = function (text_field_id, scenegraph_id, di
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
-				font_size = not not optional_font_size or not not 24,
+				localize = not disable_localization and true,
+				font_size = optional_font_size or 24,
 				offset = {
 					0,
 					-2,
@@ -996,8 +996,8 @@ UIWidgets.create_menu_button_medium = function (text_field_id, scenegraph_id, di
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
-				font_size = not not optional_font_size or not not 24,
+				localize = not disable_localization and true,
+				font_size = optional_font_size or 24,
 				offset = {
 					0,
 					0,
@@ -1037,7 +1037,7 @@ UIWidgets.create_popup_button_long = function (text_field_id, scenegraph_id, dis
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					0,
@@ -1052,7 +1052,7 @@ UIWidgets.create_popup_button_long = function (text_field_id, scenegraph_id, dis
 				font_type = "hell_shark",
 				font_size = 32,
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					0,
@@ -1065,7 +1065,7 @@ UIWidgets.create_popup_button_long = function (text_field_id, scenegraph_id, dis
 				font_type = "hell_shark",
 				font_size = 32,
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					-2,
@@ -1078,7 +1078,7 @@ UIWidgets.create_popup_button_long = function (text_field_id, scenegraph_id, dis
 				font_type = "hell_shark",
 				font_size = 32,
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					0,
@@ -1118,7 +1118,7 @@ UIWidgets.create_quest_screen_button = function (text_field_id, scenegraph_id, d
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					0,
@@ -1133,7 +1133,7 @@ UIWidgets.create_quest_screen_button = function (text_field_id, scenegraph_id, d
 				font_type = "hell_shark",
 				font_size = 24,
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					0,
@@ -1146,7 +1146,7 @@ UIWidgets.create_quest_screen_button = function (text_field_id, scenegraph_id, d
 				font_type = "hell_shark",
 				font_size = 24,
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					-2,
@@ -1159,7 +1159,7 @@ UIWidgets.create_quest_screen_button = function (text_field_id, scenegraph_id, d
 				font_type = "hell_shark",
 				font_size = 24,
 				horizontal_alignment = "center",
-				localize = not disable_localization and not not true,
+				localize = not disable_localization and true,
 				offset = {
 					0,
 					0,
@@ -1263,10 +1263,10 @@ UIWidgets.create_octagon_button = function (icons, tooltips, scenegraph_id)
 			toggle_texture = "octagon_button_toggled",
 			hover_texture = "octagon_button_hover",
 			normal_texture = "octagon_button_normal",
-			icon_texture = not not icons[1],
-			icon_hover_texture = not not icons[2],
-			tooltip_text = not not tooltips[1],
-			toggled_tooltip_text = not not tooltips[2],
+			icon_texture = icons[1],
+			icon_hover_texture = icons[2],
+			tooltip_text = tooltips[1],
+			toggled_tooltip_text = tooltips[2],
 			button_hotspot = {}
 		},
 		style = {
@@ -1636,7 +1636,7 @@ UIWidgets.create_chain_scrollbar = function (scenegraph_id, scroll_area_scenegra
 				-- function 41
 				local is_hover = content.scroll_bar_info.is_hover
 				local color = style.color
-				local color_value = is_hover and not not 255 or not is_hover and not not 200
+				local color_value = is_hover and 255 or not is_hover and 200
 
 				color[2] = color_value
 				color[3] = color_value
@@ -1655,7 +1655,7 @@ UIWidgets.create_chain_scrollbar = function (scenegraph_id, scroll_area_scenegra
 				-- function 43
 				local is_hover = content.scroll_bar_info.is_hover
 				local color = style.color
-				local color_value = is_hover and not not 255 or not is_hover and not not 200
+				local color_value = is_hover and 255 or not is_hover and 200
 
 				color[2] = color_value
 				color[3] = color_value
@@ -1674,7 +1674,7 @@ UIWidgets.create_chain_scrollbar = function (scenegraph_id, scroll_area_scenegra
 				-- function 45
 				local is_hover = content.scroll_bar_info.is_hover
 				local color = style.color
-				local color_value = is_hover and not not 255 or not is_hover and not not 200
+				local color_value = is_hover and 255 or not is_hover and 200
 
 				color[2] = color_value
 				color[3] = color_value
@@ -1712,10 +1712,10 @@ UIWidgets.create_chain_scrollbar = function (scenegraph_id, scroll_area_scenegra
 			scroll_length = size[2],
 			gamepad_always_hover = gamepad_always_hover
 		},
-		background = "chain_link_01" .. (not not optional_chain_suffix or not not ""),
-		thumb_top = "chain_scrollbutton_top" .. (not not optional_thumb_suffix or not not ""),
-		thumb_bottom = "chain_scrollbutton_bottom" .. (not not optional_thumb_suffix or not not ""),
-		thumb_middle = "chain_scrollbutton_middle" .. (not not optional_thumb_suffix or not not "")
+		background = "chain_link_01" .. (optional_chain_suffix or ""),
+		thumb_top = "chain_scrollbutton_top" .. (optional_thumb_suffix or ""),
+		thumb_bottom = "chain_scrollbutton_bottom" .. (optional_thumb_suffix or ""),
+		thumb_middle = "chain_scrollbutton_middle" .. (optional_thumb_suffix or "")
 	}
 	local style = {
 		background = {
@@ -1815,15 +1815,15 @@ UIWidgets.create_chain_scrollbar = function (scenegraph_id, scroll_area_scenegra
 				local parent_content = ui_content.parent
 				local scroll_bar_info = parent_content.scroll_bar_info
 				local gamepad_active = scroll_bar_info.gamepad_active
-				local axis_input = scroll_axis.y * -1 * (gamepad_active and not not 0.2 or not gamepad_active and not not 1)
+				local axis_input = scroll_axis.y * -1 * (gamepad_active and 0.2 or not gamepad_active and 1)
 				local total_scroll_height = scroll_bar_info.total_scroll_height
 				local scroll_amount = scroll_bar_info.scroll_amount
-				local gamepad_always_hover = not not gamepad_active and not not scroll_bar_info.gamepad_always_hover
+				local gamepad_always_hover = gamepad_active and scroll_bar_info.gamepad_always_hover
 
 				if axis_input ~= 0 and (ui_content.is_hover or gamepad_always_hover) then
 					scroll_bar_info.axis_input = axis_input
 
-					local previous_scroll_add = not not scroll_bar_info.scroll_add
+					local previous_scroll_add = scroll_bar_info.scroll_add
 
 					scroll_bar_info.scroll_add = previous_scroll_add + axis_input * scroll_amount
 				else
@@ -1833,7 +1833,7 @@ UIWidgets.create_chain_scrollbar = function (scenegraph_id, scroll_area_scenegra
 				local scroll_add = scroll_bar_info.scroll_add
 
 				if scroll_add then
-					local speed = not not scroll_bar_info.scroll_speed
+					local speed = scroll_bar_info.scroll_speed
 					local step = scroll_add * (dt * speed)
 
 					scroll_add = scroll_add - step
@@ -2010,7 +2010,7 @@ UIWidgets.create_horizontal_chain_scrollbar = function (scenegraph_id, scroll_ar
 				-- function 57
 				local is_hover = content.scroll_bar_info.is_hover
 				local color = style.color
-				local color_value = is_hover and not not 255 or not is_hover and not not 200
+				local color_value = is_hover and 255 or not is_hover and 200
 
 				color[2] = color_value
 				color[3] = color_value
@@ -2029,7 +2029,7 @@ UIWidgets.create_horizontal_chain_scrollbar = function (scenegraph_id, scroll_ar
 				-- function 59
 				local is_hover = content.scroll_bar_info.is_hover
 				local color = style.color
-				local color_value = is_hover and not not 255 or not is_hover and not not 200
+				local color_value = is_hover and 255 or not is_hover and 200
 
 				color[2] = color_value
 				color[3] = color_value
@@ -2048,7 +2048,7 @@ UIWidgets.create_horizontal_chain_scrollbar = function (scenegraph_id, scroll_ar
 				-- function 61
 				local is_hover = content.scroll_bar_info.is_hover
 				local color = style.color
-				local color_value = is_hover and not not 255 or not is_hover and not not 200
+				local color_value = is_hover and 255 or not is_hover and 200
 
 				color[2] = color_value
 				color[3] = color_value
@@ -2081,10 +2081,10 @@ UIWidgets.create_horizontal_chain_scrollbar = function (scenegraph_id, scroll_ar
 			scenegraph_id = scenegraph_id,
 			scroll_length = size[1]
 		},
-		background = "chain_link_horizontal_01" .. (not not optional_chain_suffix or not not ""),
-		thumb_left = "chain_scrollbutton_left" .. (not not optional_thumb_suffix or not not ""),
-		thumb_right = "chain_scrollbutton_right" .. (not not optional_thumb_suffix or not not ""),
-		thumb_middle = "chain_scrollbutton_horizontal_middle" .. (not not optional_thumb_suffix or not not "")
+		background = "chain_link_horizontal_01" .. (optional_chain_suffix or ""),
+		thumb_left = "chain_scrollbutton_left" .. (optional_thumb_suffix or ""),
+		thumb_right = "chain_scrollbutton_right" .. (optional_thumb_suffix or ""),
+		thumb_middle = "chain_scrollbutton_horizontal_middle" .. (optional_thumb_suffix or "")
 	}
 	local style = {
 		background = {
@@ -2356,8 +2356,8 @@ UIWidgets.create_scrollbar = function (scenegraph_id, size, scroll_area_scenegra
 	}
 	local style = {
 		background = {
-			corner_radius = not not corner_radius or not not 2,
-			color = not not track_color or not not {
+			corner_radius = corner_radius or 2,
+			color = track_color or {
 				255,
 				5,
 				5,
@@ -2365,9 +2365,9 @@ UIWidgets.create_scrollbar = function (scenegraph_id, size, scroll_area_scenegra
 			}
 		},
 		scroll_bar_box = {
-			corner_radius = not not corner_radius or not not 2,
+			corner_radius = corner_radius or 2,
 			offset = {
-				thumb_width and not not (size[1] / 2 - thumb_width * 0.5) or not thumb_width and not not 0,
+				thumb_width and size[1] / 2 - thumb_width * 0.5 or not thumb_width and 0,
 				0,
 				1
 			},
@@ -2375,7 +2375,7 @@ UIWidgets.create_scrollbar = function (scenegraph_id, size, scroll_area_scenegra
 				thumb_width,
 				size[2]
 			},
-			color = not not thumb_color or not not Colors.get_color_table_with_alpha("font_button_normal", 255)
+			color = thumb_color or Colors.get_color_table_with_alpha("font_button_normal", 255)
 		},
 		hotspot = {
 			offset = {
@@ -2415,7 +2415,7 @@ UIWidgets.create_scrollbar = function (scenegraph_id, size, scroll_area_scenegra
 				if axis_input ~= 0 and (ui_content.is_hover or gamepad_active) then
 					scroll_bar_info.axis_input = axis_input
 
-					local previous_scroll_add = not not scroll_bar_info.scroll_add
+					local previous_scroll_add = scroll_bar_info.scroll_add
 
 					scroll_bar_info.scroll_add = previous_scroll_add + axis_input * scroll_amount
 				else
@@ -2425,7 +2425,7 @@ UIWidgets.create_scrollbar = function (scenegraph_id, size, scroll_area_scenegra
 				local scroll_add = scroll_bar_info.scroll_add
 
 				if scroll_add then
-					local speed = not not scroll_bar_info.scroll_speed
+					local speed = scroll_bar_info.scroll_speed
 					local step = scroll_add * (dt * speed)
 
 					scroll_add = scroll_add - step
@@ -2545,7 +2545,7 @@ UIWidgets.create_quest_navigation_button = function (scenegraph_id, uvs, tooltip
 						-- function 78
 						local button_hotspot = content.parent.button_hotspot
 
-						return not button_hotspot.is_hover and button_hotspot.is_clicked ~= 0 and not not not button_hotspot.disabled
+						return not button_hotspot.is_hover and button_hotspot.is_clicked ~= 0 and not button_hotspot.disabled
 					end
 				},
 				{
@@ -2557,7 +2557,7 @@ UIWidgets.create_quest_navigation_button = function (scenegraph_id, uvs, tooltip
 						-- function 79
 						local button_hotspot = content.parent.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -2567,7 +2567,7 @@ UIWidgets.create_quest_navigation_button = function (scenegraph_id, uvs, tooltip
 					content_id = "texture_click_id",
 					content_check_function = function (content)
 						-- function 80
-						return content.parent.button_hotspot.is_clicked == 0 and not not not content.parent.button_hotspot.disabled
+						return content.parent.button_hotspot.is_clicked == 0 and not content.parent.button_hotspot.disabled
 					end
 				},
 				{
@@ -2586,7 +2586,7 @@ UIWidgets.create_quest_navigation_button = function (scenegraph_id, uvs, tooltip
 					text_id = "tooltip_text",
 					content_check_function = function (content)
 						-- function 82
-						return not not content.tooltip_text
+						return content.tooltip_text
 					end
 				}
 			}
@@ -2723,7 +2723,7 @@ UIWidgets.create_gold_button_3_state = function (text, scenegraph_id, normal_tex
 					texture_id = "texture_hover_id",
 					content_check_function = function (content)
 						-- function 85
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -2743,9 +2743,9 @@ UIWidgets.create_gold_button_3_state = function (text, scenegraph_id, normal_tex
 			}
 		},
 		content = {
-			texture_id = not not normal_texture or not not "small_button_gold_normal",
-			texture_hover_id = not not hover_texture or not not "small_button_gold_hover",
-			texture_click_id = not not click_texture or not not "small_button_gold_selected",
+			texture_id = normal_texture or "small_button_gold_normal",
+			texture_hover_id = hover_texture or "small_button_gold_hover",
+			texture_click_id = click_texture or "small_button_gold_selected",
 			text_field = Localize(text),
 			button_hotspot = {}
 		},
@@ -2788,7 +2788,7 @@ UIWidgets.create_gamepad_bar_input_extension = function (parent_scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 89
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -2797,7 +2797,7 @@ UIWidgets.create_gamepad_bar_input_extension = function (parent_scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 90
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				}
 			}
@@ -2876,7 +2876,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 					content_id = "button_hotspot",
 					content_check_function = function (content)
 						-- function 92
-						return content.charging and not not content.show_cancel_text or not content.charging and not not not content.disabled
+						return content.charging and content.show_cancel_text or not content.charging and not content.disabled
 					end
 				},
 				{
@@ -2886,7 +2886,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 93
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked or not not button_hotspot.is_clicked)
+						return not content.is_gamepad_active and not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked or button_hotspot.is_clicked)
 					end
 				},
 				{
@@ -2896,7 +2896,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 94
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not content.is_gamepad_active and not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -2906,7 +2906,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 95
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -2916,7 +2916,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 96
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not not button_hotspot.disabled
+						return not content.is_gamepad_active and button_hotspot.disabled
 					end
 				},
 				{
@@ -2927,7 +2927,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 97
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not not content.show_tokens
+						return not content.charging and not content.show_cancel_text and content.show_tokens
 					end
 				},
 				{
@@ -2938,7 +2938,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 98
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and (not content.show_cancel_text and (content.show_tokens and (content.texture_token_type and (button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected) or not content.texture_token_type and not not button_hotspot.is_selected) or not content.show_tokens and not not button_hotspot.is_selected) or not not content.show_cancel_text and not not button_hotspot.is_selected) or not not content.charging and not not button_hotspot.is_selected
+						return not content.charging and (not content.show_cancel_text and (content.show_tokens and (content.texture_token_type and (button_hotspot.is_clicked == 0 or button_hotspot.is_selected) or not content.texture_token_type and button_hotspot.is_selected) or not content.show_tokens and button_hotspot.is_selected) or content.show_cancel_text and button_hotspot.is_selected) or content.charging and button_hotspot.is_selected
 					end
 				},
 				{
@@ -2949,7 +2949,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 99
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not not content.show_tokens
+						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and content.show_tokens
 					end
 				},
 				{
@@ -2960,7 +2960,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 100
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -2971,7 +2971,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 101
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -2982,7 +2982,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 102
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled
+						return button_hotspot.disabled
 					end
 				},
 				{
@@ -2993,7 +2993,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 103
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected and not not not content.show_tokens
+						return not content.charging and not content.show_cancel_text and not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected and not content.show_tokens
 					end
 				},
 				{
@@ -3004,7 +3004,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 104
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not content.charging and not content.show_cancel_text and not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -3015,7 +3015,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 105
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -3026,7 +3026,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 106
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not not content.show_tokens
+						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and content.show_tokens
 					end
 				},
 				{
@@ -3037,7 +3037,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 107
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not not button_hotspot.is_hover
+						return not content.charging and not content.show_cancel_text and button_hotspot.is_hover
 					end
 				},
 				{
@@ -3048,7 +3048,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 108
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -3059,7 +3059,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 109
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -3069,7 +3069,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 110
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -3079,7 +3079,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 111
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -3090,7 +3090,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 112
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -3101,7 +3101,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 113
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -3132,7 +3132,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 116
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -3143,7 +3143,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 117
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -3154,7 +3154,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 118
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not not content.use_eye_glow
+						return not content.is_gamepad_active and content.use_eye_glow
 					end
 				},
 				{
@@ -3165,7 +3165,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 						-- function 119
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				}
 			}
@@ -3189,7 +3189,7 @@ UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_i
 			gamepad_glow_texture = "forge_button_gamepad_glow",
 			texture_disabled_id = "forge_button_03_disabled",
 			texture_id = "forge_button_03_normal",
-			use_eye_glow = eye_glow_scenegraph_id and not not true or not eye_glow_scenegraph_id and not not false,
+			use_eye_glow = eye_glow_scenegraph_id,
 			text_field = Localize("merge"),
 			text_field_center = Localize("merge"),
 			button_hotspot = {},
@@ -3501,7 +3501,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked or not not button_hotspot.is_clicked)
+						return not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked or button_hotspot.is_clicked)
 					end
 				},
 				{
@@ -3515,7 +3515,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -3529,7 +3529,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return not button_hotspot.disabled and (button_hotspot.is_clicked and (button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected) or not button_hotspot.is_clicked and not not button_hotspot.is_selected) or not not button_hotspot.disabled and not not button_hotspot.is_selected
+						return not button_hotspot.disabled and (button_hotspot.is_clicked and (button_hotspot.is_clicked == 0 or button_hotspot.is_selected) or not button_hotspot.is_clicked and button_hotspot.is_selected) or button_hotspot.disabled and button_hotspot.is_selected
 					end
 				},
 				{
@@ -3558,7 +3558,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return button_hotspot.disabled and not not button_hotspot.disabled or not button_hotspot.disabled and not not content.texture_token_type
+						return button_hotspot.disabled and button_hotspot.disabled or not button_hotspot.disabled and content.texture_token_type
 					end
 				},
 				{
@@ -3573,7 +3573,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return not button_hotspot.disabled and not not content.texture_token_type
+						return not button_hotspot.disabled and content.texture_token_type
 					end
 				},
 				{
@@ -3588,7 +3588,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return button_hotspot.disabled and not not button_hotspot.disabled or not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked and not not not button_hotspot.is_selected or not not button_hotspot.is_clicked and not not button_hotspot.is_clicked)
+						return button_hotspot.disabled and button_hotspot.disabled or not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked and not button_hotspot.is_selected or button_hotspot.is_clicked and button_hotspot.is_clicked)
 					end
 				},
 				{
@@ -3603,7 +3603,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -3618,7 +3618,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -3629,7 +3629,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 131
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled
+						return button_hotspot.disabled
 					end
 				},
 				{
@@ -3644,7 +3644,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return button_hotspot.disabled and not not button_hotspot.disabled or not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked and not not not button_hotspot.is_selected or not not button_hotspot.is_clicked and not not button_hotspot.is_clicked)
+						return button_hotspot.disabled and button_hotspot.disabled or not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked and not button_hotspot.is_selected or button_hotspot.is_clicked and button_hotspot.is_clicked)
 					end
 				},
 				{
@@ -3659,7 +3659,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 							return false
 						end
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -3670,7 +3670,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 134
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -3679,7 +3679,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 					texture_id = "button_frame_texture",
 					content_check_function = function (content)
 						-- function 135
-						return not content.is_gamepad_active and not not content.show_frame
+						return not content.is_gamepad_active and content.show_frame
 					end
 				},
 				{
@@ -3698,7 +3698,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 137
 						local button_hotspot = content.button_hotspot
 
-						return not not content.enable_charge
+						return content.enable_charge
 					end
 				},
 				{
@@ -3709,7 +3709,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 138
 						local button_hotspot = content.button_hotspot
 
-						return not not content.enable_charge
+						return content.enable_charge
 					end
 				},
 				{
@@ -3720,7 +3720,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 139
 						local button_hotspot = content.button_hotspot
 
-						return not not content.enable_charge
+						return content.enable_charge
 					end
 				},
 				{
@@ -3731,7 +3731,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 140
 						local parent_content = content.parent
 
-						return not not parent_content.enable_charge
+						return parent_content.enable_charge
 					end
 				},
 				{
@@ -3740,7 +3740,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 141
-						return not not content.enable_charge
+						return content.enable_charge
 					end
 				},
 				{
@@ -3751,7 +3751,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 142
 						local button_hotspot = content.button_hotspot
 
-						return not content.disable_input_icon and (content.enable_input_icon and not not content.is_gamepad_active or not content.enable_input_icon and not not content.enable_charge)
+						return not content.disable_input_icon and (content.enable_input_icon and content.is_gamepad_active or not content.enable_input_icon and content.enable_charge)
 					end
 				},
 				{
@@ -3762,7 +3762,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 143
 						local button_hotspot = content.button_hotspot
 
-						return content.enable_input_icon and not not content.is_gamepad_active or not content.enable_input_icon and not not content.enable_charge
+						return content.enable_input_icon and content.is_gamepad_active or not content.enable_input_icon and content.enable_charge
 					end
 				},
 				{
@@ -3773,7 +3773,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 144
 						local button_hotspot = content.button_hotspot
 
-						return content.enable_input_icon and not not content.is_gamepad_active or not content.enable_input_icon and not not content.enable_charge
+						return content.enable_input_icon and content.is_gamepad_active or not content.enable_input_icon and content.enable_charge
 					end
 				},
 				{
@@ -3784,7 +3784,7 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 						-- function 145
 						local button_hotspot = content.button_hotspot
 
-						return not not content.enable_charge
+						return content.enable_charge
 					end
 				}
 			}
@@ -3994,9 +3994,9 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 				font_type = "hell_shark",
 				font_size = 24,
 				text_color = Colors.get_color_table_with_alpha("cheeseburger", 255),
-				horizontal_alignment = text_scenegraph_id and not not "left" or not text_scenegraph_id and not not "center",
+				horizontal_alignment = text_scenegraph_id and "left" or not text_scenegraph_id and "center",
 				offset = {
-					text_scenegraph_id and not not 10 or not text_scenegraph_id and not not 0,
+					text_scenegraph_id and 10 or not text_scenegraph_id and 0,
 					0,
 					2
 				},
@@ -4007,9 +4007,9 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 				font_type = "hell_shark",
 				font_size = 24,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				horizontal_alignment = text_scenegraph_id and not not "left" or not text_scenegraph_id and not not "center",
+				horizontal_alignment = text_scenegraph_id and "left" or not text_scenegraph_id and "center",
 				offset = {
-					text_scenegraph_id and not not 10 or not text_scenegraph_id and not not 0,
+					text_scenegraph_id and 10 or not text_scenegraph_id and 0,
 					0,
 					2
 				},
@@ -4020,9 +4020,9 @@ UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scene
 				font_type = "hell_shark",
 				font_size = 24,
 				text_color = Colors.get_color_table_with_alpha("cheeseburger", 255),
-				horizontal_alignment = text_scenegraph_id and not not "left" or not text_scenegraph_id and not not "center",
+				horizontal_alignment = text_scenegraph_id and "left" or not text_scenegraph_id and "center",
 				offset = {
-					text_scenegraph_id and not not 10 or not text_scenegraph_id and not not 0,
+					text_scenegraph_id and 10 or not text_scenegraph_id and 0,
 					-2,
 					2
 				},
@@ -4104,7 +4104,7 @@ UIWidgets.create_dice_game_button = function (scenegraph_id)
 						-- function 148
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not button_hotspot.is_hover and not not button_hotspot.is_clicked
+						return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked
 					end
 				},
 				{
@@ -4114,7 +4114,7 @@ UIWidgets.create_dice_game_button = function (scenegraph_id)
 						-- function 149
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -4124,7 +4124,7 @@ UIWidgets.create_dice_game_button = function (scenegraph_id)
 						-- function 150
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and (button_hotspot.is_clicked and (button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected) or not button_hotspot.is_clicked and not not button_hotspot.is_selected) or not not button_hotspot.disabled and not not button_hotspot.is_selected
+						return not button_hotspot.disabled and (button_hotspot.is_clicked and (button_hotspot.is_clicked == 0 or button_hotspot.is_selected) or not button_hotspot.is_clicked and button_hotspot.is_selected) or button_hotspot.disabled and button_hotspot.is_selected
 					end
 				},
 				{
@@ -4145,7 +4145,7 @@ UIWidgets.create_dice_game_button = function (scenegraph_id)
 						-- function 152
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not button_hotspot.is_hover and not not not button_hotspot.is_selected
+						return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected
 					end
 				},
 				{
@@ -4156,7 +4156,7 @@ UIWidgets.create_dice_game_button = function (scenegraph_id)
 						-- function 153
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -4167,7 +4167,7 @@ UIWidgets.create_dice_game_button = function (scenegraph_id)
 						-- function 154
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -4280,7 +4280,7 @@ UIWidgets.create_altar_craft_reagent_button = function (scenegraph_id, texture, 
 					text_id = "tooltip_text",
 					content_check_function = function (ui_content)
 						-- function 159
-						return not not ui_content.tooltip_text
+						return ui_content.tooltip_text
 					end
 				}
 			}
@@ -4333,7 +4333,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 					content_id = "button_hotspot",
 					content_check_function = function (content)
 						-- function 161
-						return content.charging and not not content.show_cancel_text or not content.charging and not not not content.disabled
+						return content.charging and content.show_cancel_text or not content.charging and not content.disabled
 					end
 				},
 				{
@@ -4343,7 +4343,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 162
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked or not not button_hotspot.is_clicked)
+						return not content.is_gamepad_active and not button_hotspot.disabled and not button_hotspot.is_hover and (not button_hotspot.is_clicked or button_hotspot.is_clicked)
 					end
 				},
 				{
@@ -4353,7 +4353,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 163
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not content.is_gamepad_active and not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -4363,7 +4363,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 164
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -4373,7 +4373,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 165
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not not button_hotspot.disabled
+						return not content.is_gamepad_active and button_hotspot.disabled
 					end
 				},
 				{
@@ -4385,7 +4385,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						if content.texture_token_type then
 							local button_hotspot = content.button_hotspot
 
-							return not content.charging and not content.show_cancel_text and not content.show_title and not not content.texture_token_type
+							return not content.charging and not content.show_cancel_text and not content.show_title and content.texture_token_type
 						end
 					end
 				},
@@ -4398,7 +4398,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						if content.texture_token_type then
 							local button_hotspot = content.button_hotspot
 
-							return not not button_hotspot.is_selected
+							return button_hotspot.is_selected
 						end
 					end
 				},
@@ -4410,7 +4410,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 168
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not content.show_title and (not button_hotspot.is_clicked or not not button_hotspot.is_clicked)
+						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not content.show_title and (not button_hotspot.is_clicked or button_hotspot.is_clicked)
 					end
 				},
 				{
@@ -4421,7 +4421,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 169
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not not button_hotspot.is_hover
+						return not content.charging and not content.show_cancel_text and button_hotspot.is_hover
 					end
 				},
 				{
@@ -4432,7 +4432,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 170
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not content.show_title and (not button_hotspot.is_clicked or not not button_hotspot.is_clicked)
+						return not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not content.show_title and (not button_hotspot.is_clicked or button_hotspot.is_clicked)
 					end
 				},
 				{
@@ -4443,7 +4443,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 171
 						local button_hotspot = content.button_hotspot
 
-						return not content.charging and not content.show_cancel_text and not not button_hotspot.is_hover
+						return not content.charging and not content.show_cancel_text and button_hotspot.is_hover
 					end
 				},
 				{
@@ -4454,7 +4454,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 172
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -4465,7 +4465,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 173
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -4476,7 +4476,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 174
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled
+						return button_hotspot.disabled
 					end
 				},
 				{
@@ -4487,7 +4487,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 175
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -4497,7 +4497,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 176
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -4507,7 +4507,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 177
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -4518,7 +4518,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 178
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -4529,7 +4529,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 179
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -4560,7 +4560,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 182
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -4571,7 +4571,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 183
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
@@ -4582,7 +4582,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 184
 						local button_hotspot = content.button_hotspot
 
-						return not content.is_gamepad_active and not not content.use_eye_glow
+						return not content.is_gamepad_active and content.use_eye_glow
 					end
 				},
 				{
@@ -4593,7 +4593,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 						-- function 185
 						local button_hotspot = content.button_hotspot
 
-						return not not content.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				}
 			}
@@ -4629,7 +4629,7 @@ UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph
 					}
 				}
 			},
-			use_eye_glow = eye_glow_scenegraph_id and not not true or not eye_glow_scenegraph_id and not not false,
+			use_eye_glow = eye_glow_scenegraph_id,
 			text_field = Localize("upgrade"),
 			button_hotspot = {},
 			text_charge_cancelled = Localize("forge_screen_melt_abort")
@@ -4937,11 +4937,11 @@ UIWidgets.create_menu_selection_bar = function (scenegraph_definition, textures,
 
 		local scenegraph_id = string.format("%s_%d", scenegraph_base, i)
 		local tbl = {
-			parent = not not string.format("%s_%d", scenegraph_base, i - 1),
+			parent = string.format("%s_%d", scenegraph_base, i - 1),
 			size = size
 		}
 
-		tbl.offset = not not nil
+		tbl.offset = nil
 		scenegraph_definition[scenegraph_id] = tbl
 
 		local style_scenegraph_id = string.format("%s_icon_%d", scenegraph_base, i)
@@ -5081,13 +5081,13 @@ UIWidgets.create_tiled_texture = function (scenegraph_id, texture, texture_size,
 		style = {
 			tiling_texture = {
 				masked = masked,
-				offset = not not offset or not not {
+				offset = offset or {
 					0,
 					0,
 					0
 				},
 				texture_tiling_size = texture_size,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5117,13 +5117,13 @@ UIWidgets.create_shader_tiled_texture = function (scenegraph_id, texture, textur
 		style = {
 			tiling_texture = {
 				masked = masked,
-				offset = not not offset or not not {
+				offset = offset or {
 					0,
 					0,
 					0
 				},
 				tile_size = texture_size,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5157,7 +5157,7 @@ UIWidgets.create_texture_with_text = function (texture, text, scenegraph_id, tex
 			text = text
 		},
 		style = {
-			text = not not text_style or not not {
+			text = text_style or {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				word_wrap = true,
@@ -5220,7 +5220,7 @@ UIWidgets.create_texture_with_text_and_tooltip = function (texture, text, toolti
 			text = text
 		},
 		style = {
-			text = not not text_style or not not {
+			text = text_style or {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				word_wrap = true,
@@ -5229,7 +5229,7 @@ UIWidgets.create_texture_with_text_and_tooltip = function (texture, text, toolti
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				scenegraph_id = text_scenegraph_id
 			},
-			tooltip_text = not not tooltip_style or not not {
+			tooltip_text = tooltip_style or {
 				font_size = 24,
 				max_width = 500,
 				localize = true,
@@ -5282,7 +5282,7 @@ UIWidgets.create_simple_tooltip = function (text, scenegraph_id, max_width, opti
 			tooltip_hotspot = {}
 		},
 		style = {
-			tooltip_text = not not optional_style or not not {
+			tooltip_text = optional_style or {
 				font_size = 24,
 				localize = true,
 				horizontal_alignment = "left",
@@ -5315,18 +5315,18 @@ UIWidgets.create_additional_option_tooltip = function (scenegraph_id, size, cont
 					style_id = "tooltip",
 					additional_option_id = "tooltip",
 					pass_type = "additional_option_tooltip",
-					content_passes = not not content_passes or not not {
+					content_passes = content_passes or {
 						"additional_option_info"
 					},
 					content_check_function = function (content)
 						-- function 198
-						return not not content.tooltip
+						return content.tooltip
 					end
 				}
 			}
 		},
 		content = {
-			tooltip = not not tooltip_data or not not nil,
+			tooltip = tooltip_data or nil,
 			button_hotspot = {
 				allow_multi_hover = true
 			}
@@ -5334,10 +5334,10 @@ UIWidgets.create_additional_option_tooltip = function (scenegraph_id, size, cont
 		style = {
 			tooltip = {
 				grow_downwards = grow_downwards,
-				max_width = not not max_width or not not 300,
-				horizontal_alignment = not not horizontal_alignment or not not "center",
-				vertical_alignment = not not vertical_alignment or not not "bottom",
-				offset = not not offset or not not {
+				max_width = max_width or 300,
+				horizontal_alignment = horizontal_alignment or "center",
+				vertical_alignment = vertical_alignment or "bottom",
+				offset = offset or {
 					0,
 					0,
 					0
@@ -5413,16 +5413,16 @@ UIWidgets.create_simple_rect = function (scenegraph_id, color, layer, offset, re
 		style = {
 			rect = {
 				vertical_alignment = "top",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
 					255
 				},
-				offset = not not offset or not not {
+				offset = offset or {
 					0,
 					0,
-					not not layer or not not 0
+					layer or 0
 				},
 				texture_size = rect_size
 			}
@@ -5450,13 +5450,13 @@ UIWidgets.create_simple_rounded_rect = function (scenegraph_id, corner_radius, c
 		content = {},
 		style = {
 			rect = {
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
 					255
 				},
-				corner_radius = not not corner_radius or not not 0,
+				corner_radius = corner_radius or 0,
 				offset = {
 					0,
 					0,
@@ -5474,7 +5474,7 @@ UIWidgets.create_simple_texture = function (texture, scenegraph_id, masked, reta
 		offset = {
 			0,
 			0,
-			not not offset or not not 0
+			offset or 0
 		}
 	end
 
@@ -5505,7 +5505,7 @@ UIWidgets.create_simple_texture = function (texture, scenegraph_id, masked, reta
 		},
 		style = {
 			texture_id = {
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5547,7 +5547,7 @@ UIWidgets.create_aligned_texture = function (texture, texture_size, horizontal_a
 				vertical_alignment = vertical_alignment,
 				horizontal_alignment = horizontal_alignment,
 				texture_size = texture_size,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5561,14 +5561,14 @@ UIWidgets.create_aligned_texture = function (texture, texture_size, horizontal_a
 				masked = masked
 			}
 		},
-		offset = offset and (not not offset or not not {
+		offset = offset and (offset or {
 			0,
 			0,
-			not not layer or not not 0
-		}) or not offset and not not {
+			layer or 0
+		}) or not offset and {
 			0,
 			0,
-			not not layer or not not 0
+			layer or 0
 		},
 		scenegraph_id = scenegraph_id
 	}
@@ -5581,7 +5581,7 @@ UIWidgets.create_simple_centered_texture_amount = function (texture, texture_siz
 
 	for i = 1, amount do
 		textures[i] = texture
-		texture_colors[i] = not not color or not not {
+		texture_colors[i] = color or {
 			255,
 			255,
 			255,
@@ -5608,7 +5608,7 @@ UIWidgets.create_simple_centered_texture_amount = function (texture, texture_siz
 				spacing = 8,
 				texture_size = texture_size,
 				texture_amount = amount,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5646,18 +5646,18 @@ UIWidgets.create_simple_multi_texture = function (textures, texture_sizes, axis,
 			}
 		},
 		content = {
-			texture_id = not not textures or not not {}
+			texture_id = textures or {}
 		},
 		style = {
 			texture_id = {
-				draw_count = textures and not not #textures or not textures and not not 0,
-				axis = not not axis or not not 1,
-				spacing = not not spacing or not not {
+				draw_count = textures and #textures or not textures and 0,
+				axis = axis or 1,
+				spacing = spacing or {
 					0,
 					0
 				},
-				direction = not not direction or not not 1,
-				texture_sizes = not not texture_sizes or not not {},
+				direction = direction or 1,
+				texture_sizes = texture_sizes or {},
 				color = {
 					255,
 					255,
@@ -5721,7 +5721,7 @@ UIWidgets.create_simple_gradient_mask_texture = function (texture, scenegraph_id
 					0,
 					0
 				},
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5754,7 +5754,7 @@ UIWidgets.create_simple_rotated_texture = function (texture, angle, pivot, scene
 				masked = masked,
 				angle = angle,
 				pivot = pivot,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5763,11 +5763,11 @@ UIWidgets.create_simple_rotated_texture = function (texture, angle, pivot, scene
 				offset = {
 					0,
 					0,
-					not not layer or not not 0
+					layer or 0
 				}
 			}
 		},
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			0
@@ -5798,7 +5798,7 @@ UIWidgets.create_simple_uv_rotated_texture = function (texture, uvs, angle, pivo
 				angle = angle,
 				pivot = pivot,
 				uvs = uvs,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5807,11 +5807,11 @@ UIWidgets.create_simple_uv_rotated_texture = function (texture, uvs, angle, pivo
 				offset = {
 					0,
 					0,
-					not not layer or not not 0
+					layer or 0
 				}
 			}
 		},
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			0
@@ -5826,7 +5826,7 @@ UIWidgets.create_simple_uv_texture = function (texture, uvs, scenegraph_id, mask
 		offset = {
 			0,
 			0,
-			not not offset or not not 0
+			offset or 0
 		}
 	end
 
@@ -5867,7 +5867,7 @@ UIWidgets.create_simple_uv_texture = function (texture, uvs, scenegraph_id, mask
 					0,
 					0
 				},
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -5882,7 +5882,7 @@ end
 
 UIWidgets.create_simple_frame = function (texture, texture_size, corner_size, vertical_size, horizontal_size, scenegraph_id, optional_style)
 	-- function 212
-	local style = not not optional_style or not not {
+	local style = optional_style or {
 		color = {
 			255,
 			255,
@@ -5950,32 +5950,32 @@ end
 
 UIWidgets.create_simple_text = function (text, scenegraph_id, size, color, text_style, optional_font_style, retained, disable_with_gamepad)
 	-- function 214
-	local text_offset = text_style and not not text_style.offset or not text_style and not not {
+	local text_offset = text_style and text_style.offset or not text_style and {
 		0,
 		0,
 		2
 	}
-	local text_color = text_style and not not text_style.text_color or not text_style and (not not color or not not {
+	local text_color = text_style and text_style.text_color or not text_style and (color or {
 		255,
 		255,
 		255,
 		255
 	})
 
-	text_style = not not text_style or not not {
+	text_style = text_style or {
 		vertical_alignment = "center",
 		localize = true,
 		horizontal_alignment = "center",
 		word_wrap = true,
 		font_size = size,
-		font_type = not not optional_font_style or not not "hell_shark",
+		font_type = optional_font_style or "hell_shark",
 		text_color = text_color,
 		offset = text_offset
 	}
 
 	local text_shadow_style = table.clone(text_style)
-	local text_shadow_style_color = not not text_style.shadow_color
-	local text_shadow_offset = not not text_style.shadow_offset
+	local text_shadow_style_color = text_style.shadow_color
+	local text_shadow_offset = text_style.shadow_offset
 
 	text_shadow_style_color[1] = text_color[1]
 	text_shadow_style.text_color = text_shadow_style_color
@@ -6011,7 +6011,7 @@ UIWidgets.create_simple_text = function (text, scenegraph_id, size, color, text_
 			text = text,
 			original_text = text,
 			color = text_color,
-			use_shadow = text_style and not not text_style.use_shadow or not text_style and not not false,
+			use_shadow = text_style and text_style.use_shadow,
 			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
@@ -6056,10 +6056,10 @@ UIWidgets.create_simple_text_tooltip = function (text, tooltip_text, scenegraph_
 			text = text,
 			tooltip_text = tooltip_text,
 			tooltip_hotspot = {},
-			color = text_style and not not text_style.text_color or not text_style and not not color
+			color = text_style and text_style.text_color or not text_style and color
 		},
 		style = {
-			text = not not text_style or not not {
+			text = text_style or {
 				vertical_alignment = "center",
 				localize = true,
 				horizontal_alignment = "center",
@@ -6073,7 +6073,7 @@ UIWidgets.create_simple_text_tooltip = function (text, tooltip_text, scenegraph_
 					2
 				}
 			},
-			tooltip_text = not not tooltip_style or not not {
+			tooltip_text = tooltip_style or {
 				font_size = 24,
 				max_width = 500,
 				localize = true,
@@ -6109,14 +6109,14 @@ UIWidgets.create_simple_rect_text = function (scenegraph_id, text, font_size, co
 			text = text
 		},
 		style = {
-			text = not not text_style or not not {
+			text = text_style or {
 				localize = false,
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
-				text_color = not not color or not not Colors.get_color_table_with_alpha("white", 255),
-				rect_color = not not rect_color or not not Colors.get_color_table_with_alpha("black", 150),
+				font_size = font_size or 24,
+				text_color = color or Colors.get_color_table_with_alpha("white", 255),
+				rect_color = rect_color or Colors.get_color_table_with_alpha("black", 150),
 				line_colors = {},
 				offset = {
 					0,
@@ -6144,7 +6144,7 @@ UIWidgets.create_forge_toggle_button = function (normal_texture, normal_hover_te
 					texture_id = "texture_id",
 					content_check_function = function (content)
 						-- function 220
-						return not content.is_selected and not not not content.button_hotspot.is_hover
+						return not content.is_selected and not content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -6152,7 +6152,7 @@ UIWidgets.create_forge_toggle_button = function (normal_texture, normal_hover_te
 					texture_id = "texture_hover_id",
 					content_check_function = function (content)
 						-- function 221
-						return not content.is_selected and not not content.button_hotspot.is_hover
+						return not content.is_selected and content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -6160,7 +6160,7 @@ UIWidgets.create_forge_toggle_button = function (normal_texture, normal_hover_te
 					texture_id = "texture_selected_id",
 					content_check_function = function (content)
 						-- function 222
-						return not not content.is_selected
+						return content.is_selected
 					end
 				},
 				{
@@ -6168,7 +6168,7 @@ UIWidgets.create_forge_toggle_button = function (normal_texture, normal_hover_te
 					texture_id = "texture_selected_hover_id",
 					content_check_function = function (content)
 						-- function 223
-						return not not content.is_selected
+						return content.is_selected
 					end
 				}
 			}
@@ -6284,7 +6284,7 @@ UIWidgets.create_matchmaking_portrait = function (size, scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 229
-						return not content.is_connecting and not not content.is_connected
+						return not content.is_connecting and content.is_connected
 					end
 				},
 				{
@@ -6293,7 +6293,7 @@ UIWidgets.create_matchmaking_portrait = function (size, scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 230
-						return not content.is_connecting and not not content.is_connected
+						return not content.is_connecting and content.is_connected
 					end
 				},
 				{
@@ -6302,7 +6302,7 @@ UIWidgets.create_matchmaking_portrait = function (size, scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 231
-						return not content.is_connecting and not not content.is_connected
+						return not content.is_connecting and content.is_connected
 					end
 				},
 				{
@@ -6311,7 +6311,7 @@ UIWidgets.create_matchmaking_portrait = function (size, scenegraph_id)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 232
-						return not content.is_connecting and not not content.is_connected
+						return not content.is_connecting and content.is_connected
 					end
 				},
 				{
@@ -6452,7 +6452,7 @@ UIWidgets.create_small_trait_button = function (scenegraph_id, hotspot_scenegrap
 					content_id = "button_hotspot",
 					content_check_function = function (content)
 						-- function 235
-						return not content.disabled and not not not content.is_selected
+						return not content.disabled and not content.is_selected
 					end
 				},
 				{
@@ -6481,7 +6481,7 @@ UIWidgets.create_small_trait_button = function (scenegraph_id, hotspot_scenegrap
 						-- function 238
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -6492,7 +6492,7 @@ UIWidgets.create_small_trait_button = function (scenegraph_id, hotspot_scenegrap
 						-- function 239
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -6503,7 +6503,7 @@ UIWidgets.create_small_trait_button = function (scenegraph_id, hotspot_scenegrap
 						-- function 240
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.locked
+						return button_hotspot.locked
 					end
 				},
 				{
@@ -6521,7 +6521,7 @@ UIWidgets.create_small_trait_button = function (scenegraph_id, hotspot_scenegrap
 					texture_id = "texture_trait_cover_id",
 					content_check_function = function (content)
 						-- function 242
-						return not not content.button_hotspot.disabled
+						return content.button_hotspot.disabled
 					end
 				}
 			}
@@ -6667,7 +6667,7 @@ UIWidgets.create_small_reroll_trait_button = function (scenegraph_id, hotspot_sc
 					content_id = "button_hotspot",
 					content_check_function = function (content)
 						-- function 244
-						return not content.disabled and not not not content.is_selected
+						return not content.disabled and not content.is_selected
 					end
 				},
 				{
@@ -6705,7 +6705,7 @@ UIWidgets.create_small_reroll_trait_button = function (scenegraph_id, hotspot_sc
 						-- function 248
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -6716,7 +6716,7 @@ UIWidgets.create_small_reroll_trait_button = function (scenegraph_id, hotspot_sc
 						-- function 249
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_selected
+						return button_hotspot.is_selected
 					end
 				},
 				{
@@ -6727,7 +6727,7 @@ UIWidgets.create_small_reroll_trait_button = function (scenegraph_id, hotspot_sc
 						-- function 250
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.locked
+						return button_hotspot.locked
 					end
 				},
 				{
@@ -6883,7 +6883,7 @@ UIWidgets.create_attach_icon_button = function (background_texture, scenegraph_i
 					text_id = "tooltip_text",
 					content_check_function = function (content)
 						-- function 254
-						return not not content.icon_texture_id
+						return content.icon_texture_id
 					end
 				},
 				{
@@ -6892,7 +6892,7 @@ UIWidgets.create_attach_icon_button = function (background_texture, scenegraph_i
 					text_id = "tooltip_text_no_item",
 					content_check_function = function (content)
 						-- function 255
-						return not content.icon_texture_id and not not content.tooltip_enabled
+						return not content.icon_texture_id and content.tooltip_enabled
 					end
 				},
 				{
@@ -6928,7 +6928,7 @@ UIWidgets.create_attach_icon_button = function (background_texture, scenegraph_i
 					texture_id = "icon_frame_texture_id",
 					content_check_function = function (ui_content)
 						-- function 259
-						return not not ui_content.icon_texture_id
+						return ui_content.icon_texture_id
 					end
 				},
 				{
@@ -6951,7 +6951,7 @@ UIWidgets.create_attach_icon_button = function (background_texture, scenegraph_i
 					texture_id = "hover_texture",
 					content_check_function = function (content)
 						-- function 261
-						return not not content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -6973,7 +6973,7 @@ UIWidgets.create_attach_icon_button = function (background_texture, scenegraph_i
 				disable_interaction = disable_interaction
 			},
 			background_texture_id = background_texture,
-			glow_animation = not not animation_glow_texture or not not "icons_placeholder"
+			glow_animation = animation_glow_texture or "icons_placeholder"
 		},
 		style = {
 			background_texture_id = {
@@ -7218,7 +7218,7 @@ UIWidgets.create_hero_button = function (hero, scenegraph_id, hero_scenegraph_id
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 264
-						return not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
+						return not content.button_hotspot.is_hover and not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -7227,7 +7227,7 @@ UIWidgets.create_hero_button = function (hero, scenegraph_id, hero_scenegraph_id
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 265
-						return not not content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -7247,7 +7247,7 @@ UIWidgets.create_hero_button = function (hero, scenegraph_id, hero_scenegraph_id
 						-- function 267
 						local button_hotspot = content.button_hotspot
 
-						return not not content.hero_texture_normal_id
+						return content.hero_texture_normal_id
 					end
 				},
 				{
@@ -7256,7 +7256,7 @@ UIWidgets.create_hero_button = function (hero, scenegraph_id, hero_scenegraph_id
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 268
-						return not not content.hero_texture_hover_id
+						return content.hero_texture_hover_id
 					end
 				},
 				{
@@ -7265,7 +7265,7 @@ UIWidgets.create_hero_button = function (hero, scenegraph_id, hero_scenegraph_id
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 269
-						return not not content.hero_texture_selected_id
+						return content.hero_texture_selected_id
 					end
 				},
 				{
@@ -7339,7 +7339,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 272
-						return not not content.owned
+						return content.owned
 					end
 				},
 				{
@@ -7348,7 +7348,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 273
-						return not not content.owned
+						return content.owned
 					end
 				},
 				{
@@ -7357,7 +7357,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 274
-						return not not content.owned
+						return content.owned
 					end
 				},
 				{
@@ -7366,7 +7366,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 275
-						return not content.button_hotspot.is_hover and not content.button_hotspot.is_selected and not content.owned and not not not content.locked
+						return not content.button_hotspot.is_hover and not content.button_hotspot.is_selected and not content.owned and not content.locked
 					end
 				},
 				{
@@ -7375,7 +7375,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 276
-						return not not content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -7384,7 +7384,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 277
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -7393,7 +7393,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 278
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -7402,7 +7402,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 279
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -7411,7 +7411,7 @@ UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_i
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 280
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -7912,7 +7912,7 @@ UIWidgets.create_splash_texture = function (input)
 			},
 			texture_style = {
 				size = input.texture_size,
-				offset = not not input.texture_offset
+				offset = input.texture_offset
 			},
 			texts_style = {
 				scenegraph_id = "texts",
@@ -8253,7 +8253,7 @@ UIWidgets.create_map_player_entry = function (scenegraph_id, gamepad_selection_s
 					texture_id = "kick_button_texture",
 					content_check_function = function (content)
 						-- function 311
-						return not content.is_host and not not content.always_show_icons
+						return not content.is_host and content.always_show_icons
 					end
 				},
 				{
@@ -8262,7 +8262,7 @@ UIWidgets.create_map_player_entry = function (scenegraph_id, gamepad_selection_s
 					texture_id = "kick_button_texture",
 					content_check_function = function (content)
 						-- function 312
-						return not not content.kick_enabled
+						return content.kick_enabled
 					end
 				},
 				{
@@ -8271,7 +8271,7 @@ UIWidgets.create_map_player_entry = function (scenegraph_id, gamepad_selection_s
 					text_id = "kick_button_tooltip_text",
 					content_check_function = function (content)
 						-- function 313
-						return not not content.kick_enabled
+						return content.kick_enabled
 					end
 				},
 				{
@@ -8281,7 +8281,7 @@ UIWidgets.create_map_player_entry = function (scenegraph_id, gamepad_selection_s
 					content_check_function = function (content)
 						-- function 314
 						if not content.on_console then
-							return not not content.button_hotspot.is_selected
+							return content.button_hotspot.is_selected
 						end
 					end
 				},
@@ -8292,7 +8292,7 @@ UIWidgets.create_map_player_entry = function (scenegraph_id, gamepad_selection_s
 					content_check_function = function (content)
 						-- function 315
 						if content.on_console then
-							return not not content.button_hotspot.is_selected
+							return content.button_hotspot.is_selected
 						end
 					end
 				}
@@ -8316,13 +8316,13 @@ UIWidgets.create_map_player_entry = function (scenegraph_id, gamepad_selection_s
 			kick_button_hotspot = {}
 		},
 		style = {
-			gamepad_selection = gamepad_selection_scenegraph_id and not not {
+			gamepad_selection = gamepad_selection_scenegraph_id and {
 				texture_size = {
 					30,
 					30
 				},
 				scenegraph_id = gamepad_selection_scenegraph_id
-			} or not gamepad_selection_scenegraph_id and not not nil,
+			} or not gamepad_selection_scenegraph_id and nil,
 			text = {
 				vertical_alignment = "center",
 				font_size = 24,
@@ -8499,7 +8499,7 @@ UIWidgets.create_map_settings_stepper = function (scenegraph_id, gamepad_selecti
 						-- function 317
 						local button_hotspot = content.button_hotspot
 
-						return button_hotspot.gamepad_active and not not button_hotspot.is_hover or not button_hotspot.gamepad_active and not not button_hotspot.is_selected
+						return button_hotspot.gamepad_active and button_hotspot.is_hover or not button_hotspot.gamepad_active and button_hotspot.is_selected
 					end
 				},
 				{
@@ -8591,13 +8591,13 @@ UIWidgets.create_map_settings_stepper = function (scenegraph_id, gamepad_selecti
 			right_button_hotspot = {}
 		},
 		style = {
-			gamepad_selection = gamepad_selection_scenegraph_id and not not {
+			gamepad_selection = gamepad_selection_scenegraph_id and {
 				texture_size = {
 					40,
 					40
 				},
 				scenegraph_id = gamepad_selection_scenegraph_id
-			} or not gamepad_selection_scenegraph_id and not not nil,
+			} or not gamepad_selection_scenegraph_id and nil,
 			hover_texture = {
 				size = {
 					410,
@@ -8937,7 +8937,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 					text_id = "tooltip_text",
 					content_check_function = function (ui_content)
 						-- function 324
-						return not not ui_content.button_hotspot.is_hover
+						return ui_content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -8946,7 +8946,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 					text_id = "tooltip_text_disabled",
 					content_check_function = function (ui_content)
 						-- function 325
-						return not not ui_content.button_hotspot.is_hover
+						return ui_content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -8955,7 +8955,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 					text_id = "setting_text",
 					content_check_function = function (content)
 						-- function 326
-						return not content.button_hotspot.is_hover and not not not content.is_disabled
+						return not content.button_hotspot.is_hover and not content.is_disabled
 					end
 				},
 				{
@@ -8973,7 +8973,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 					text_id = "setting_text",
 					content_check_function = function (content)
 						-- function 328
-						return not not content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -8982,7 +8982,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 					texture_id = "checkbox_marker",
 					content_check_function = function (content)
 						-- function 329
-						return not not content.checked
+						return content.checked
 					end
 				},
 				{
@@ -8991,7 +8991,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 					texture_id = "checkbox_marker",
 					content_check_function = function (content)
 						-- function 330
-						return not not content.checked
+						return content.checked
 					end
 				},
 				{
@@ -9024,7 +9024,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 			button_hotspot = {},
 			tooltip_text = tooltip_text,
 			setting_text = text,
-			tooltip_text_disabled = not not optional_tooltip_text_disabled or not not "",
+			tooltip_text_disabled = optional_tooltip_text_disabled or "",
 			checkbox_frame = frame_settings.texture
 		},
 		style = {
@@ -9163,7 +9163,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 				font_size = 24,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
-				offset = not not optional_text_offset or not not {
+				offset = optional_text_offset or {
 					-50,
 					0,
 					4
@@ -9177,7 +9177,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 				font_size = 24,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 96),
-				offset = not not optional_text_offset or not not {
+				offset = optional_text_offset or {
 					-50,
 					0,
 					4
@@ -9191,7 +9191,7 @@ UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, 
 				font_size = 24,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
-				offset = not not optional_text_offset or not not {
+				offset = optional_text_offset or {
 					-50,
 					0,
 					4
@@ -9498,7 +9498,7 @@ UIWidgets.create_text_button = function (scenegraph_id, text, font_size, optiona
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 336
-						return not not content.button_text.is_selected
+						return content.button_text.is_selected
 					end
 				},
 				{
@@ -9507,7 +9507,7 @@ UIWidgets.create_text_button = function (scenegraph_id, text, font_size, optiona
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 337
-						return not content.button_text.disable_button and not content.button_text.is_hover and not not not content.button_text.is_selected
+						return not content.button_text.disable_button and not content.button_text.is_hover and not content.button_text.is_selected
 					end
 				},
 				{
@@ -9534,9 +9534,9 @@ UIWidgets.create_text_button = function (scenegraph_id, text, font_size, optiona
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
-				text_color = Colors.get_color_table_with_alpha(not not optional_default_color_name or not not "font_button_normal", 255),
-				offset = not not optional_offset or not not {
+				horizontal_alignment = optional_horizontal_alignment or "left",
+				text_color = Colors.get_color_table_with_alpha(optional_default_color_name or "font_button_normal", 255),
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -9549,9 +9549,9 @@ UIWidgets.create_text_button = function (scenegraph_id, text, font_size, optiona
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -9564,9 +9564,9 @@ UIWidgets.create_text_button = function (scenegraph_id, text, font_size, optiona
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				font_size = font_size,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				horizontal_alignment = optional_horizontal_alignment or "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					0,
 					4
@@ -9633,7 +9633,7 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 340
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -9642,7 +9642,7 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 					text_id = "text_field",
 					content_check_function = function (content)
 						-- function 341
-						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -9690,7 +9690,7 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 			selected_texture = "hero_panel_selection_glow",
 			button_hotspot = {},
 			text_field = text,
-			default_font_size = not not optional_font_size or not not 32
+			default_font_size = optional_font_size or 32
 		},
 		style = {
 			text = {
@@ -9700,15 +9700,15 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = not not optional_font_size or not not 32,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
+				font_size = optional_font_size or 32,
+				horizontal_alignment = optional_horizontal_alignment or "center",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				default_offset = not not optional_offset or not not {
+				default_offset = optional_offset or {
 					0,
 					10,
 					4
 				},
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					5,
 					4
@@ -9722,8 +9722,8 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = not not optional_font_size or not not 32,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
+				font_size = optional_font_size or 32,
+				horizontal_alignment = optional_horizontal_alignment or "center",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_offset = shadow_offset,
 				offset = shadow_offset,
@@ -9736,15 +9736,15 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = not not optional_font_size or not not 32,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
+				font_size = optional_font_size or 32,
+				horizontal_alignment = optional_horizontal_alignment or "center",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				default_offset = not not optional_offset or not not {
+				default_offset = optional_offset or {
 					0,
 					10,
 					4
 				},
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					5,
 					4
@@ -9758,15 +9758,15 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = not not optional_font_size or not not 32,
-				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
+				font_size = optional_font_size or 32,
+				horizontal_alignment = optional_horizontal_alignment or "center",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				default_offset = not not optional_offset or not not {
+				default_offset = optional_offset or {
 					0,
 					10,
 					4
 				},
-				offset = not not optional_offset or not not {
+				offset = optional_offset or {
 					0,
 					5,
 					4
@@ -9780,7 +9780,7 @@ UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, opt
 					169,
 					35
 				},
-				color = not not optional_highlight_color or not not Colors.get_color_table_with_alpha("font_title", 255),
+				color = optional_highlight_color or Colors.get_color_table_with_alpha("font_title", 255),
 				offset = selection_offset
 			},
 			marker_left = {
@@ -9864,7 +9864,7 @@ UIWidgets.create_compare_menu_trait_widget = function (scenegraph_id, descriptio
 					texture_id = "texture_lock_id",
 					content_check_function = function (content)
 						-- function 348
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -9935,7 +9935,7 @@ UIWidgets.create_compare_menu_trait_widget = function (scenegraph_id, descriptio
 				horizontal_alignment = "left",
 				localize = false,
 				font_size = 20,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("cheeseburger", 255),
 				offset = {
 					55,
@@ -9949,7 +9949,7 @@ UIWidgets.create_compare_menu_trait_widget = function (scenegraph_id, descriptio
 				font_size = 18,
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
@@ -10044,7 +10044,7 @@ UIWidgets.create_journal_tab = function (scenegraph_id, texture, masked)
 						-- function 352
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -10055,7 +10055,7 @@ UIWidgets.create_journal_tab = function (scenegraph_id, texture, masked)
 						-- function 353
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected)
+						return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or button_hotspot.is_selected)
 					end
 				},
 				{
@@ -10150,7 +10150,7 @@ UIWidgets.create_journal_page_arrow_button = function (scenegraph_id, uvs, maske
 					-- function 357
 					local button_hotspot = content.button_hotspot
 
-					return not button_hotspot.disabled and not not button_hotspot.is_hover
+					return not button_hotspot.disabled and button_hotspot.is_hover
 				end
 			},
 			{
@@ -10161,7 +10161,7 @@ UIWidgets.create_journal_page_arrow_button = function (scenegraph_id, uvs, maske
 					-- function 358
 					local button_hotspot = content.button_hotspot
 
-					return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected)
+					return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or button_hotspot.is_selected)
 				end
 			}
 		}
@@ -10191,7 +10191,7 @@ UIWidgets.create_journal_page_arrow_button = function (scenegraph_id, uvs, maske
 					-- function 360
 					local button_hotspot = content.button_hotspot
 
-					return not button_hotspot.disabled and not not button_hotspot.is_hover
+					return not button_hotspot.disabled and button_hotspot.is_hover
 				end
 			},
 			{
@@ -10202,7 +10202,7 @@ UIWidgets.create_journal_page_arrow_button = function (scenegraph_id, uvs, maske
 					-- function 361
 					local button_hotspot = content.button_hotspot
 
-					return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected)
+					return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or button_hotspot.is_selected)
 				end
 			}
 		}
@@ -10293,7 +10293,7 @@ UIWidgets.create_journal_back_arrow_button = function (scenegraph_id, masked)
 						-- function 364
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and not not button_hotspot.is_hover
+						return not button_hotspot.disabled and button_hotspot.is_hover
 					end
 				},
 				{
@@ -10304,7 +10304,7 @@ UIWidgets.create_journal_back_arrow_button = function (scenegraph_id, masked)
 						-- function 365
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected)
+						return not button_hotspot.disabled and (button_hotspot.is_clicked == 0 or button_hotspot.is_selected)
 					end
 				}
 			}
@@ -10479,7 +10479,7 @@ UIWidgets.create_gamepad_selection = function (scenegraph_id, retained, masked, 
 			texture_top_left = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = not not optional_texture_size or not not {
+				texture_size = optional_texture_size or {
 					40,
 					40
 				},
@@ -10499,7 +10499,7 @@ UIWidgets.create_gamepad_selection = function (scenegraph_id, retained, masked, 
 			texture_top_right = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = not not optional_texture_size or not not {
+				texture_size = optional_texture_size or {
 					40,
 					40
 				},
@@ -10519,7 +10519,7 @@ UIWidgets.create_gamepad_selection = function (scenegraph_id, retained, masked, 
 			texture_bottom_left = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
-				texture_size = not not optional_texture_size or not not {
+				texture_size = optional_texture_size or {
 					40,
 					40
 				},
@@ -10539,7 +10539,7 @@ UIWidgets.create_gamepad_selection = function (scenegraph_id, retained, masked, 
 			texture_bottom_right = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "right",
-				texture_size = not not optional_texture_size or not not {
+				texture_size = optional_texture_size or {
 					40,
 					40
 				},
@@ -10586,7 +10586,7 @@ UIWidgets.create_simple_atlas_texture = function (texture, scenegraph_id, masked
 		style = {
 			texture_id = {
 				texture_size = texture_settings.size,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -10605,7 +10605,7 @@ UIWidgets.create_simple_atlas_texture = function (texture, scenegraph_id, masked
 		offset = {
 			0,
 			0,
-			not not layer or not not 0
+			layer or 0
 		},
 		scenegraph_id = scenegraph_id
 	}

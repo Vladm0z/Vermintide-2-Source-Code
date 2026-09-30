@@ -19,16 +19,16 @@ TimedExplosionExtension.init = function (self, extension_init_context, unit, ext
 		local explosion_settings = wind_settings.timed_explosion_extension_settings
 
 		self._time_to_explode = explosion_settings.time_to_explode[difficulty_name][wind_strength]
-		self._follow_time = not not explosion_settings.follow_time
-		self._scale = wind_settings.radius and not not wind_settings.radius[difficulty_name][wind_strength] or not wind_settings.radius and not not 1
-		self._power = wind_settings.power_level and not not wind_settings.power_level[difficulty_name][wind_strength] or not wind_settings.power_level and not not 0
-		self._buildup_effect_delay = self._time_to_explode + self._follow_time - not not explosion_template.explosion.buildup_effect_time
+		self._follow_time = explosion_settings.follow_time
+		self._scale = wind_settings.radius and wind_settings.radius[difficulty_name][wind_strength] or not wind_settings.radius and 1
+		self._power = wind_settings.power_level and wind_settings.power_level[difficulty_name][wind_strength] or not wind_settings.power_level and 0
+		self._buildup_effect_delay = self._time_to_explode + self._follow_time - explosion_template.explosion.buildup_effect_time
 	else
-		self._time_to_explode = not not explosion_template.time_to_explode
-		self._scale = not not explosion_template.explosion.unit_scale
-		self._follow_time = not not explosion_template.follow_time
-		self._power = not not explosion_template.explosion.power_level
-		self._buildup_effect_delay = self._time_to_explode + self._follow_time - not not explosion_template.explosion.buildup_effect_time
+		self._time_to_explode = explosion_template.time_to_explode
+		self._scale = explosion_template.explosion.unit_scale
+		self._follow_time = explosion_template.follow_time
+		self._power = explosion_template.explosion.power_level
+		self._buildup_effect_delay = self._time_to_explode + self._follow_time - explosion_template.explosion.buildup_effect_time
 	end
 
 	self._buildup_effect_offset = explosion_template.explosion.buildup_effect_offset
@@ -48,7 +48,7 @@ TimedExplosionExtension.init = function (self, extension_init_context, unit, ext
 		self._state = "waiting_to_explode"
 	end
 
-	self._deletion_timer = not not explosion_template.explosion.deletion_timer
+	self._deletion_timer = explosion_template.explosion.deletion_timer
 end
 
 TimedExplosionExtension.update = function (self, unit, input, dt, context, t)
@@ -125,7 +125,7 @@ TimedExplosionExtension._explode = function (self)
 	local rotation = Unit.world_rotation(attacker_unit, 0)
 	local explosion_template_name = self.explosion_template_name
 	local scale = 1
-	local damage_source = not not explosion_template.damage_source
+	local damage_source = explosion_template.damage_source
 	local attacker_power_level = self._power
 
 	self._state = "exploded"

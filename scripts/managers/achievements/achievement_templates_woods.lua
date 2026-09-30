@@ -70,7 +70,7 @@ achievements.woods_javelin_melee = {
 
 		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local item = rawget(ItemMasterList, damage_source)
-		local is_javelin = not not item and item.item_type == "we_javelin"
+		local is_javelin = item and item.item_type == "we_javelin"
 
 		if not is_javelin then
 			return
@@ -115,7 +115,7 @@ achievements.woods_javelin_combo = {
 
 		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local item = rawget(ItemMasterList, damage_source)
-		local is_javelin = not not item and item.item_type == "we_javelin"
+		local is_javelin = item and item.item_type == "we_javelin"
 
 		if not is_javelin then
 			return
@@ -354,7 +354,7 @@ achievements.woods_heal_grind = {
 		local level_transition_handler = Managers.level_transition_handler
 		local level_key = level_transition_handler:get_current_level_keys()
 		local level_settings = LevelSettings[level_key]
-		local is_hub_level = not not level_settings and not not level_settings.hub_level
+		local is_hub_level = level_settings and level_settings.hub_level
 
 		if is_hub_level then
 			return
@@ -407,7 +407,7 @@ achievements.woods_bleed_grind = {
 		local level_transition_handler = Managers.level_transition_handler
 		local level_key = level_transition_handler:get_current_level_keys()
 		local level_settings = LevelSettings[level_key]
-		local is_hub_level = not not level_settings and not not level_settings.hub_level
+		local is_hub_level = level_settings and level_settings.hub_level
 
 		if is_hub_level then
 			return
@@ -569,7 +569,7 @@ achievements.woods_ability_combo = {
 		local level_transition_handler = Managers.level_transition_handler
 		local level_key = level_transition_handler:get_current_level_keys()
 		local level_settings = LevelSettings[level_key]
-		local is_hub_level = not not level_settings and not not level_settings.hub_level
+		local is_hub_level = level_settings and level_settings.hub_level
 
 		if is_hub_level then
 			return
@@ -820,19 +820,19 @@ achievements.woods_wall_kill_gutter = {
 
 		local target_breed = event_data[5]
 		local target_name = target_breed.name
-		local is_gutter_runner = not not target_breed and target_name == "skaven_gutter_runner"
+		local is_gutter_runner = target_breed and target_name == "skaven_gutter_runner"
 		local damage_data = event_data[3]
 		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local is_career_ability = not not damage_data and damage_source == "career_ability"
+		local is_career_ability = damage_data and damage_source == "career_ability"
 		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
-		local is_thornsister = not not career_extension and career_extension:career_name() == "we_thornsister"
+		local is_thornsister = career_extension and career_extension:career_name() == "we_thornsister"
 
 		if is_gutter_runner and is_career_ability and is_thornsister then
 			local target_unit = event_data[2]
 			local blackboard = BLACKBOARDS[target_unit]
 			local jump_data = blackboard.jump_data
-			local is_jumping = not not jump_data and (jump_data.state == "in_air" or jump_data.state == "in_air_no_target" or jump_data.state == "snapping")
+			local is_jumping = jump_data and (jump_data.state == "in_air" or jump_data.state == "in_air_no_target" or jump_data.state == "snapping")
 
 			if is_jumping then
 				rpc_increment_stat(attacker_unit, "woods_wall_kill_gutter")
@@ -893,7 +893,7 @@ achievements.woods_wall_dual_save = {
 
 		if target_breed.name == "skaven_pack_master" then
 			local action = bb.action
-			local action_name = not not action and not not action.name
+			local action_name = action and action.name
 
 			if action_name == "pull" or action_name == "initial_pull" or action_name == "drag" or action_name == "hoist" then
 				hit_disabling_special = true
@@ -959,7 +959,7 @@ achievements.woods_free_ability_grind = {
 		local level_transition_handler = Managers.level_transition_handler
 		local level_key = level_transition_handler:get_current_level_keys()
 		local level_settings = LevelSettings[level_key]
-		local is_hub_level = not not level_settings and not not level_settings.hub_level
+		local is_hub_level = level_settings and level_settings.hub_level
 
 		if is_hub_level then
 			return

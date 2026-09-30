@@ -59,7 +59,7 @@ return {
 	server_start_function = function (context, data)
 		-- function 3
 		local live_events_interface = Managers.backend:get_interface("live_events")
-		local live_events = not not live_events_interface and not not live_events_interface:get_active_events()
+		local live_events = live_events_interface and live_events_interface:get_active_events()
 		local event_levels, fallback_event_name
 
 		if live_events then

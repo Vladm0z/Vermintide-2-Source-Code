@@ -3,22 +3,22 @@
 local release_build = BUILD == "release"
 local script_data = script_data
 
-script_data.disable_debug_position_lookup = release_build and not not true or not release_build and not not nil
+script_data.disable_debug_position_lookup = release_build or nil
 
 local unit_alive = Unit.alive
 
-PACKAGED_BUILD = script_data.packaged_build and not not true or not script_data.packaged_build and not not false
-RESOLUTION_LOOKUP = not not RESOLUTION_LOOKUP
-POSITION_LOOKUP = not not POSITION_LOOKUP
-BLACKBOARDS = not not BLACKBOARDS
-HEALTH_ALIVE = not not HEALTH_ALIVE
+PACKAGED_BUILD = script_data.packaged_build
+RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
+POSITION_LOOKUP = POSITION_LOOKUP
+BLACKBOARDS = BLACKBOARDS
+HEALTH_ALIVE = HEALTH_ALIVE
 ALIVE = POSITION_LOOKUP
-FROZEN = not not FROZEN
+FROZEN = FROZEN
 
 local position_lookup = POSITION_LOOKUP
 local resolution_lookup = RESOLUTION_LOOKUP
 
-BREED_DIE_LOOKUP = not not BREED_DIE_LOOKUP
+BREED_DIE_LOOKUP = BREED_DIE_LOOKUP
 
 function CLEAR_POSITION_LOOKUP()
 	-- function 1
@@ -41,8 +41,8 @@ function UPDATE_RESOLUTION_LOOKUP(force_update, optional_scale_multiplier)
 	local w, h = Application.resolution()
 
 	if is_minimized then
-		w = not not resolution_lookup.res_w or not not 1920
-		h = not not resolution_lookup.res_h or not not 1080
+		w = resolution_lookup.res_w or 1920
+		h = resolution_lookup.res_h or 1080
 	end
 
 	local resolution_modified = w ~= resolution_lookup.res_w or h ~= resolution_lookup.res_h
@@ -50,7 +50,7 @@ function UPDATE_RESOLUTION_LOOKUP(force_update, optional_scale_multiplier)
 	local height_scale = h / 1080
 	local scale = math.min(width_scale, height_scale)
 
-	scale = not Application.user_setting("hud_clamp_ui_scaling") or not not math.min(scale, 1) or not not scale
+	scale = not Application.user_setting("hud_clamp_ui_scaling") or math.min(scale, 1) or scale
 
 	local scale_modified = false
 
@@ -69,7 +69,7 @@ function UPDATE_RESOLUTION_LOOKUP(force_update, optional_scale_multiplier)
 		resolution_lookup.inv_scale = 1 / scale
 	end
 
-	resolution_lookup.modified = not not resolution_modified or not not force_update
+	resolution_lookup.modified = resolution_modified or force_update
 end
 
 function CLEAR_ALL_PLAYER_LISTS()

@@ -318,7 +318,7 @@ end
 
 TwitchView._exit = function (self, return_to_game)
 	-- function 17
-	local exit_transition = return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu"
+	local exit_transition = return_to_game and "exit_menu" or not return_to_game and "ingame_menu"
 
 	self._ingame_ui:handle_transition(exit_transition)
 end

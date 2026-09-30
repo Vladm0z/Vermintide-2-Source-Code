@@ -26,8 +26,8 @@ BTChaosSorcererSummoningAction.enter = function (self, unit, blackboard, t)
 
 	local target_unit = blackboard.target_unit
 
-	blackboard.target_position = target_unit and not not Vector3Box(POSITION_LOOKUP[target_unit]) or not target_unit and not not Vector3Box()
-	blackboard.spell_count = not not blackboard.spell_count
+	blackboard.target_position = target_unit and Vector3Box(POSITION_LOOKUP[target_unit]) or not target_unit and Vector3Box()
+	blackboard.spell_count = blackboard.spell_count
 
 	if not action.is_spawner then
 		local locomotion_extension = blackboard.locomotion_extension
@@ -217,7 +217,7 @@ BTChaosSorcererSummoningAction._start_vortex_summoning = function (self, unit, b
 	local physics_world = vortex_data.physics_world
 	local start_check_position = summon_position + Vector3.up() * VORTEX_MIN_DUMMY_MISSILE_HEIGHT
 	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, start_check_position, Vector3.up(), max_height - VORTEX_MIN_DUMMY_MISSILE_HEIGHT, "closest", "collision_filter", "filter_ai_mover")
-	local max_height = hit and not not (VORTEX_MIN_DUMMY_MISSILE_HEIGHT + hit_distance) or not hit and not not max_height
+	local max_height = hit and VORTEX_MIN_DUMMY_MISSILE_HEIGHT + hit_distance or not hit and max_height
 
 	vortex_data.max_height = max_height
 
@@ -379,11 +379,11 @@ end
 
 BTChaosSorcererSummoningAction._spawn_vortex = function (self, unit, blackboard, t, dt, target_position, vortex_data)
 	-- function 12
-	vortex_data = not not vortex_data or not not blackboard.vortex_data
+	vortex_data = vortex_data or blackboard.vortex_data
 
 	local action = blackboard.action
 	local vortex_pos = vortex_data.vortex_spawn_pos:unbox()
-	local vortex_template_name = not not blackboard.breed.vortex_template_name
+	local vortex_template_name = blackboard.breed.vortex_template_name
 	local vortex_template = VortexTemplates[vortex_template_name]
 	local breed_name = vortex_template.breed_name
 	local breed = Breeds[breed_name]
@@ -397,9 +397,9 @@ BTChaosSorcererSummoningAction._spawn_vortex = function (self, unit, blackboard,
 		prepare_func = function (breed, extension_init_data)
 			-- function 13
 			extension_init_data.ai_supplementary_system = {
-				vortex_template_name = not not vortex_template_name,
-				inner_decal_unit = not not link_decal_units,
-				outer_decal_unit = not not link_decal_units,
+				vortex_template_name = vortex_template_name,
+				inner_decal_unit = link_decal_units,
+				outer_decal_unit = link_decal_units,
 				owner_unit = unit
 			}
 		end,
@@ -420,8 +420,8 @@ BTChaosSorcererSummoningAction._spawn_vortex = function (self, unit, blackboard,
 	local vortex_queue_id = Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(vortex_pos), QuaternionBox(Quaternion.identity()), spawn_category, nil, nil, optional_data)
 
 	vortex_data.queued_vortex[vortex_queue_id] = {
-		inner_decal_unit = not not link_decal_units and not not inner_decal_unit,
-		outer_decal_unit = not not link_decal_units and not not outer_decal_unit
+		inner_decal_unit = link_decal_units and inner_decal_unit,
+		outer_decal_unit = link_decal_units and outer_decal_unit
 	}
 
 	if link_decal_units then
@@ -436,7 +436,7 @@ end
 
 BTChaosSorcererSummoningAction.spawn_portal = function (self, unit, blackboard, t, dt, target_position, portal_data)
 	-- function 15
-	portal_data = not not portal_data or not not blackboard.portal_data
+	portal_data = portal_data or blackboard.portal_data
 
 	local portal_pos = portal_data.portal_spawn_pos:unbox()
 	local portal_rot = portal_data.portal_spawn_rot:unbox()
@@ -454,7 +454,7 @@ BTChaosSorcererSummoningAction.spawn_portal = function (self, unit, blackboard, 
 		QuickDrawerStay:sphere(tentacle_pos, 0.1, Colors.get("light_green"))
 	end
 
-	local tentacle_template_name = not not blackboard.action.tentacle_template_name
+	local tentacle_template_name = blackboard.action.tentacle_template_name
 	local optional_data = {
 		prepare_func = function (breed, extension_init_data)
 			-- function 16
@@ -538,10 +538,10 @@ BTChaosSorcererSummoningAction.update_summon_plague_wave = function (self, unit,
 	-- function 23
 	if t > blackboard.summon_plague_wave_timer then
 		if not blackboard.summoning_unit then
-			local unit_name = DamageWaveTemplates.templates[not not blackboard.damage_wave_template_name].fx_unit
+			local unit_name = DamageWaveTemplates.templates[blackboard.damage_wave_template_name].fx_unit
 			local extension_init_data = {
 				area_damage_system = {
-					damage_wave_template_name = not not blackboard.damage_wave_template_name,
+					damage_wave_template_name = blackboard.damage_wave_template_name,
 					source_unit = unit
 				}
 			}
@@ -715,9 +715,9 @@ BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns = function (self, 
 		}
 	end
 
-	reps = not not action.pattern_repetitions or not not 1
+	reps = action.pattern_repetitions or 1
 
-	local range = not not action.range
+	local range = action.range
 
 	for j = 1, reps do
 		for i = 1, #spawner_set do
@@ -856,7 +856,7 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 		local done = ring.done
 
 		if not done then
-			ring.delay_time = not not ring.delay_time
+			ring.delay_time = ring.delay_time
 
 			if t >= ring.delay_time and not ring.damage_effect_time then
 				if debug and ring.delay > 0 then
@@ -869,8 +869,8 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 				local ring_position = ring.position
 				local max_radius = ring_info[ring_position].max_radius
 				local min_radius = ring_info[ring_position].min_radius
-				local premonition_time = premonition_type ~= "short" and (premonition_type ~= "medium" and (premonition_type ~= "long" and not not 0.75 or not (premonition_type ~= "long") and not not 3) or not (premonition_type ~= "medium") and not not 2) or not (premonition_type ~= "short") and not not 1
-				local premonition_effect = premonition_type ~= "short" and (premonition_type ~= "medium" and premonition_type == "long" and not not ring_info[ring_position].premonition_effect_name_long or not (premonition_type ~= "medium") and not not ring_info[ring_position].premonition_effect_name_medium) or not (premonition_type ~= "short") and not not ring_info[ring_position].premonition_effect_name_short
+				local premonition_time = premonition_type ~= "short" and (premonition_type ~= "medium" and (premonition_type ~= "long" and 0.75 or not (premonition_type ~= "long") and 3) or not (premonition_type ~= "medium") and 2) or not (premonition_type ~= "short") and 1
+				local premonition_effect = premonition_type ~= "short" and (premonition_type ~= "medium" and premonition_type == "long" and ring_info[ring_position].premonition_effect_name_long or not (premonition_type ~= "medium") and ring_info[ring_position].premonition_effect_name_medium) or not (premonition_type ~= "short") and ring_info[ring_position].premonition_effect_name_short
 
 				if premonition_effect then
 					Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects[premonition_effect], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
@@ -964,7 +964,7 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 					local position = POSITION_LOOKUP[player_unit]
 					local distance_squared = Vector3.distance_squared(position, origin_pos)
 					local catapult_direction = ring.catapult_direction
-					local direction = catapult_direction ~= "in" and not not (position - origin_pos) or not (catapult_direction ~= "in") and not not (origin_pos - position)
+					local direction = catapult_direction ~= "in" and position - origin_pos or not (catapult_direction ~= "in") and origin_pos - position
 
 					direction = Vector3.normalize(direction)
 
@@ -973,8 +973,8 @@ BTChaosSorcererSummoningAction.update_boss_rings = function (self, unit, blackbo
 						local damage_profile = DamageProfileTemplates[damage_profile_name]
 						local difficulty_rank = Managers.state.difficulty:get_difficulty()
 						local player = Managers.player:owner(player_unit)
-						local is_bot = not not player and not not not player:is_player_controlled()
-						local actual_power_level = is_bot and not not 0 or not is_bot and not not action.power_level[difficulty_rank]
+						local is_bot = player and not player:is_player_controlled()
+						local actual_power_level = is_bot and 0 or not is_bot and action.power_level[difficulty_rank]
 
 						DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, player_unit, unit, "torso", POSITION_LOOKUP[player_unit], Vector3.up(), "undefined")
 

@@ -3,7 +3,7 @@
 local WwiseVisualization = require("core/wwise/lua/wwise_visualization")
 local WwiseBankReference = require("core/wwise/lua/wwise_bank_reference")
 
-WwiseFlowCallbacks = not not WwiseFlowCallbacks
+WwiseFlowCallbacks = WwiseFlowCallbacks
 
 local M = WwiseFlowCallbacks
 local Application = stingray.Application
@@ -31,7 +31,7 @@ end
 
 M.wwise_load_bank = function (t)
 	-- function 1
-	local name = not not t.Name
+	local name = t.Name
 
 	if name == "" then
 		return
@@ -39,7 +39,7 @@ M.wwise_load_bank = function (t)
 
 	Wwise.load_bank(name)
 
-	local use_ref_count = not not t.Reference_Count
+	local use_ref_count = t.Reference_Count
 
 	if use_ref_count and use_ref_count == true then
 		WwiseBankReference:add(name)
@@ -48,8 +48,8 @@ end
 
 M.wwise_unit_load_bank = function (t)
 	-- function 2
-	local name = not not t.Name
-	local unit = not not t.Unit
+	local name = t.Name
+	local unit = t.Unit
 
 	if unit then
 		if name == "" then
@@ -59,7 +59,7 @@ M.wwise_unit_load_bank = function (t)
 		if name ~= "" then
 			Wwise.load_bank(name)
 
-			local use_ref_count = not not t.Reference_Count
+			local use_ref_count = t.Reference_Count
 
 			if use_ref_count and use_ref_count == true then
 				WwiseBankReference:add(name)
@@ -70,7 +70,7 @@ end
 
 M.wwise_unload_bank = function (t)
 	-- function 3
-	local name = not not t.Name
+	local name = t.Name
 
 	if name == "" then
 		local unit = Application.flow_callback_context_unit()
@@ -84,7 +84,7 @@ M.wwise_unload_bank = function (t)
 		end
 	end
 
-	local use_ref_count = not not t.Reference_Count
+	local use_ref_count = t.Reference_Count
 
 	if use_ref_count and use_ref_count == true then
 		WwiseBankReference:remove(name)
@@ -99,21 +99,21 @@ end
 
 M.wwise_set_language = function (t)
 	-- function 4
-	local name = not not t.Name
+	local name = t.Name
 
 	Wwise.set_language(name)
 end
 
 M.wwise_set_listener_pose = function (t)
 	-- function 5
-	local position = not not t.Position
+	local position = t.Position
 
 	if not position then
 		return
 	end
 
-	local listener = listener_map[not not t.Listener]
-	local rotation = not not t.Rotation
+	local listener = listener_map[t.Listener]
+	local rotation = t.Rotation
 	local pose = Matrix4x4.from_quaternion_position(rotation, position)
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
@@ -122,17 +122,17 @@ end
 
 M.wwise_move_listener_to_unit = function (t)
 	-- function 6
-	local unit = not not t.Unit
+	local unit = t.Unit
 
 	if not unit then
 		return
 	end
 
-	local listener = listener_map[not not t.Listener]
+	local listener = listener_map[t.Listener]
 	local unit_node_index = Script.index_offset()
 
 	if t.Unit_Node or t.unit_node then
-		unit_node_index = Unit.node(unit, not not t.Unit_Node)
+		unit_node_index = Unit.node(unit, t.Unit_Node)
 	end
 
 	local pose = Unit.world_pose(unit, unit_node_index)
@@ -143,31 +143,31 @@ end
 
 M.wwise_trigger_event = function (t)
 	-- function 7
-	local name = not not t.Name
-	local unit = not not t.Unit
-	local use_occlusion = not not t.use_occlusion
+	local name = t.Name
+	local unit = t.Unit
+	local use_occlusion = t.use_occlusion
 	local r1, r2
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	if unit then
 		if name == "" then
-			name = not not Unit.get_data(unit, "Wwise", "event_name") or not not ""
+			name = Unit.get_data(unit, "Wwise", "event_name") or ""
 		end
 
 		local unit_node_index = Script.index_offset()
 
 		if t.Unit_Node or t.unit_node then
-			unit_node_index = Unit.node(unit, not not t.Unit_Node)
+			unit_node_index = Unit.node(unit, t.Unit_Node)
 		end
 
 		r1, r2 = WwiseWorld.trigger_event(wwise_world, name, use_occlusion, unit, unit_node_index)
 	else
-		local position = not not t.Position
+		local position = t.Position
 
 		if position then
 			r1, r2 = WwiseWorld.trigger_event(wwise_world, name, use_occlusion, position)
 		else
-			local source_id = not not t.Existing_Source_Id
+			local source_id = t.Existing_Source_Id
 
 			if source_id then
 				r1, r2 = WwiseWorld.trigger_event(wwise_world, name, use_occlusion, source_id)
@@ -187,7 +187,7 @@ end
 
 local function make_source(t, wwise_world_function)
 	-- function 8
-	local unit = not not t.Unit
+	local unit = t.Unit
 	local r1
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
@@ -195,17 +195,17 @@ local function make_source(t, wwise_world_function)
 		local unit_node_index = Script.index_offset()
 
 		if t.Unit_Node or t.unit_node then
-			unit_node_index = Unit.node(unit, not not t.Unit_Node)
+			unit_node_index = Unit.node(unit, t.Unit_Node)
 		end
 
 		r1 = wwise_world_function(wwise_world, unit, unit_node_index)
 	else
-		local position = not not t.Position
+		local position = t.Position
 
 		if position then
 			r1 = wwise_world_function(wwise_world, position)
 		else
-			local source_id = not not t.Source_Id
+			local source_id = t.Source_Id
 
 			if source_id then
 				r1 = wwise_world_function(wwise_world, source_id)
@@ -240,7 +240,7 @@ end
 
 M.wwise_destroy_manual_source = function (t)
 	-- function 11
-	local id = not not t.Source_Id
+	local id = t.Source_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.destroy_manual_source(wwise_world, id)
@@ -248,7 +248,7 @@ end
 
 M.wwise_stop_event = function (t)
 	-- function 12
-	local id = not not t.Playing_Id
+	local id = t.Playing_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.stop_event(wwise_world, id)
@@ -256,7 +256,7 @@ end
 
 M.wwise_pause_event = function (t)
 	-- function 13
-	local id = not not t.Playing_Id
+	local id = t.Playing_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.pause_event(wwise_world, id)
@@ -264,7 +264,7 @@ end
 
 M.wwise_resume_event = function (t)
 	-- function 14
-	local id = not not t.Playing_Id
+	local id = t.Playing_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.resume_event(wwise_world, id)
@@ -272,8 +272,8 @@ end
 
 M.wwise_set_source_position = function (t)
 	-- function 15
-	local id = not not t.Source_Id
-	local val = not not t.Position
+	local id = t.Source_Id
+	local val = t.Position
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.set_source_position(wwise_world, id, val)
@@ -281,9 +281,9 @@ end
 
 M.wwise_set_source_parameter = function (t)
 	-- function 16
-	local id = not not t.Source_Id
-	local name = not not t.Parameter_Name
-	local val = not not t.Value
+	local id = t.Source_Id
+	local name = t.Parameter_Name
+	local val = t.Value
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.set_source_parameter(wwise_world, id, name, val)
@@ -291,8 +291,8 @@ end
 
 M.wwise_set_global_parameter = function (t)
 	-- function 17
-	local name = not not t.Parameter_Name
-	local val = not not t.Value
+	local name = t.Parameter_Name
+	local val = t.Value
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.set_global_parameter(wwise_world, name, val)
@@ -300,8 +300,8 @@ end
 
 M.wwise_set_state = function (t)
 	-- function 18
-	local group = not not t.Group
-	local state = not not t.State
+	local group = t.Group
+	local state = t.State
 
 	if not group or not state then
 		return
@@ -312,14 +312,14 @@ end
 
 M.wwise_set_switch = function (t)
 	-- function 19
-	local group = not not t.Group
-	local state = not not t.State
+	local group = t.Group
+	local state = t.State
 
 	if not group or not state then
 		return
 	end
 
-	local id = not not t.Source_Id
+	local id = t.Source_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	WwiseWorld.set_switch(wwise_world, group, state, id)
@@ -327,8 +327,8 @@ end
 
 M.wwise_post_trigger = function (t)
 	-- function 20
-	local id = not not t.Source_Id
-	local name = not not t.Name
+	local id = t.Source_Id
+	local name = t.Name
 
 	if id and name then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -339,7 +339,7 @@ end
 
 M.wwise_has_source = function (t)
 	-- function 21
-	local id = not not t.Source_Id
+	local id = t.Source_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	if WwiseWorld.has_source(wwise_world, id) then
@@ -357,7 +357,7 @@ end
 
 M.wwise_is_playing = function (t)
 	-- function 22
-	local id = not not t.Playing_Id
+	local id = t.Playing_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 
 	if WwiseWorld.is_playing(wwise_world, id) then
@@ -375,11 +375,11 @@ end
 
 M.wwise_get_playing_elapsed = function (t)
 	-- function 23
-	local id = not not t.Playing_Id
+	local id = t.Playing_Id
 	local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
 	local elapsed_in_ms = WwiseWorld.get_playing_elapsed(wwise_world, id)
 
-	elapsed_in_ms = not not elapsed_in_ms or not not 0
+	elapsed_in_ms = elapsed_in_ms or 0
 
 	local seconds = elapsed_in_ms / 1000
 
@@ -391,16 +391,16 @@ end
 
 M.wwise_add_soundscape_source = function (t)
 	-- function 24
-	local name = not not t.Name
-	local unit = not not t.Unit
-	local shape = not not t.Shape
-	local positioning = not not t.Positioning
-	local trigger_range = not not t.Trigger_Range
+	local name = t.Name
+	local unit = t.Unit
+	local shape = t.Shape
+	local positioning = t.Positioning
+	local trigger_range = t.Trigger_Range
 	local result_id = -1
 
 	if unit then
 		if name == "" then
-			name = not not Unit.get_data(unit, "Wwise", "event_name") or not not ""
+			name = Unit.get_data(unit, "Wwise", "event_name") or ""
 
 			if name == "" then
 				return {
@@ -410,7 +410,7 @@ M.wwise_add_soundscape_source = function (t)
 			end
 		end
 
-		shape = not not shape or not not Unit.get_data(unit, "Wwise", "shape") or not not "point"
+		shape = shape or Unit.get_data(unit, "Wwise", "shape") or "point"
 		shape = string.lower(shape)
 
 		local shape_map = {
@@ -419,26 +419,26 @@ M.wwise_add_soundscape_source = function (t)
 			box = Wwise.SHAPE_BOX
 		}
 
-		shape = not not shape_map[shape] or not not Wwise.SHAPE_POINT
-		positioning = not not positioning or not not string.lower(Unit.get_data(unit, "Wwise", "positioning")) or not not "closest"
+		shape = shape_map[shape] or Wwise.SHAPE_POINT
+		positioning = positioning or string.lower(Unit.get_data(unit, "Wwise", "positioning")) or "closest"
 
 		local default_scale = 10
 		local scale = default_scale
 
 		if shape == Wwise.SHAPE_SPHERE then
-			scale = not not t.Sphere_Radius or not not t.sphere_radius
+			scale = t.Sphere_Radius or t.sphere_radius
 
 			if not scale then
-				scale = not not Unit.get_data(unit, "Wwise", "sphere_radius") or not not default_scale
+				scale = Unit.get_data(unit, "Wwise", "sphere_radius") or default_scale
 			end
 		elseif shape == Wwise.SHAPE_BOX then
-			scale = not not t.Box_Scale or not not t.box_scale
+			scale = t.Box_Scale or t.box_scale
 
 			if not scale then
 				scale = Vector3(0, 0, 0)
-				scale.x = not not Unit.get_data(unit, "Wwise", "box_extents", 0)
-				scale.y = not not Unit.get_data(unit, "Wwise", "box_extents", 1)
-				scale.z = not not Unit.get_data(unit, "Wwise", "box_extents", 2)
+				scale.x = Unit.get_data(unit, "Wwise", "box_extents", 0)
+				scale.y = Unit.get_data(unit, "Wwise", "box_extents", 1)
+				scale.z = Unit.get_data(unit, "Wwise", "box_extents", 2)
 			end
 		end
 
@@ -448,12 +448,12 @@ M.wwise_add_soundscape_source = function (t)
 			["random around listener"] = Wwise.POSITIONING_RANDOM_AROUND_LISTENER
 		}
 
-		positioning = not not positioning_map[positioning] or not not Wwise.POSITIONING_CLOSEST_TO_LISTENER
+		positioning = positioning_map[positioning] or Wwise.POSITIONING_CLOSEST_TO_LISTENER
 
 		local unit_node_index = Script.index_offset()
 
 		if t.Unit_Node or t.unit_node then
-			unit_node_index = Unit.node(unit, not not t.Unit_Node)
+			unit_node_index = Unit.node(unit, t.Unit_Node)
 		end
 
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -469,7 +469,7 @@ end
 
 M.wwise_remove_soundscape_source = function (t)
 	-- function 25
-	local id = not not t.SS_Source_Id
+	local id = t.SS_Source_Id
 
 	if not id then
 		print("Error: nil soundscape source id, removing soundscape source failed.")
@@ -488,9 +488,9 @@ end
 
 M.wwise_set_obstruction_and_occlusion_for_soundscape_source = function (t)
 	-- function 26
-	local id = not not t.SS_Source_Id
-	local obstruction = not not t.Obstruction
-	local occlusion = not not t.Occlusion
+	local id = t.SS_Source_Id
+	local obstruction = t.Obstruction
+	local occlusion = t.Occlusion
 
 	if id then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -501,7 +501,7 @@ end
 
 M.wwise_add_soundscape_render_unit = function (t)
 	-- function 27
-	local unit = not not t.Unit
+	local unit = t.Unit
 
 	if unit then
 		WwiseVisualization.add_soundscape_unit(unit)
@@ -510,8 +510,8 @@ end
 
 M.wwise_set_environment = function (t)
 	-- function 28
-	local name = not not t.Aux_Bus
-	local value = not not t.Value
+	local name = t.Aux_Bus
+	local value = t.Value
 
 	if name and value then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -522,7 +522,7 @@ end
 
 M.wwise_set_dry_environment = function (t)
 	-- function 29
-	local value = not not t.Value
+	local value = t.Value
 
 	if value then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -540,9 +540,9 @@ end
 
 M.wwise_set_source_environment = function (t)
 	-- function 31
-	local id = not not t.Source_Id
-	local name = not not t.Aux_Bus
-	local value = not not t.Value
+	local id = t.Source_Id
+	local name = t.Aux_Bus
+	local value = t.Value
 
 	if id and name and value then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -553,8 +553,8 @@ end
 
 M.wwise_set_source_dry_environment = function (t)
 	-- function 32
-	local id = not not t.Source_Id
-	local value = not not t.Value
+	local id = t.Source_Id
+	local value = t.Value
 
 	if id and value then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -565,7 +565,7 @@ end
 
 M.wwise_reset_source_environment = function (t)
 	-- function 33
-	local id = not not t.Source_Id
+	local id = t.Source_Id
 
 	if id then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -576,10 +576,10 @@ end
 
 M.wwise_set_obstruction_and_occlusion = function (t)
 	-- function 34
-	local id = not not t.Source_Id
-	local listener = listener_map[not not t.Listener]
-	local obstruction = not not t.Obstruction
-	local occlusion = not not t.Occlusion
+	local id = t.Source_Id
+	local listener = listener_map[t.Listener]
+	local obstruction = t.Obstruction
+	local occlusion = t.Occlusion
 
 	if id and listener then
 		local wwise_world = Wwise.wwise_world(Application.flow_callback_context_world())
@@ -599,8 +599,8 @@ end
 
 M.dialogue_silence_unit = function (t)
 	-- function 36
-	local unit = not not t.Unit
-	local new_silenced_value = not not t.set_silenced
+	local unit = t.Unit
+	local new_silenced_value = t.set_silenced
 
 	if unit then
 		if Unit.alive(unit) then

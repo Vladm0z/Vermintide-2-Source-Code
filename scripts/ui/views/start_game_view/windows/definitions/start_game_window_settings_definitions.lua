@@ -267,15 +267,15 @@ local scenegraph_definition = {
 
 local function create_settings_option(scenegraph_id, size, title_text, button_text, icon_texture, background_texture)
 	-- function 7
-	icon_texture = not not icon_texture or not not "level_icon_01"
+	icon_texture = icon_texture or "level_icon_01"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
+	local icon_texture_size = icon_texture_settings and icon_texture_settings.size or not icon_texture_settings and {
 		150,
 		150
 	}
 
-	background_texture = not not background_texture or not not "game_options_bg_02"
+	background_texture = background_texture or "game_options_bg_02"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 	local frame_name = "menu_frame_08"
@@ -408,7 +408,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 17
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not content.icon
+						return not button_hotspot.disable_button and not content.icon
 					end
 				},
 				{
@@ -419,7 +419,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 18
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -430,7 +430,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 19
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not content.icon
+						return not button_hotspot.disable_button and not content.icon
 					end
 				},
 				{
@@ -441,7 +441,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 20
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not content.icon
+						return not button_hotspot.disable_button and content.icon
 					end
 				},
 				{
@@ -452,7 +452,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 21
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not content.icon
+						return not button_hotspot.disable_button and content.icon
 					end
 				},
 				{
@@ -463,7 +463,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 22
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not content.icon
+						return not button_hotspot.disable_button and content.icon
 					end
 				},
 				{
@@ -474,7 +474,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 23
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not content.icon
+						return not button_hotspot.disable_button and content.icon
 					end
 				},
 				{
@@ -485,7 +485,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 						-- function 24
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -520,7 +520,7 @@ local function create_settings_option(scenegraph_id, size, title_text, button_te
 			frame = frame_settings.texture,
 			glow_frame = glow_frame_settings.texture,
 			button_text = button_text,
-			title_text = not not title_text or not not "n/a",
+			title_text = title_text or "n/a",
 			background = {
 				uvs = {
 					{
@@ -941,7 +941,7 @@ end
 
 local function create_additional_settings_option(scenegraph_id, size, title_text, background_texture)
 	-- function 27
-	background_texture = not not background_texture or not not "game_options_bg_02"
+	background_texture = background_texture or "game_options_bg_02"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 	local frame_name = "menu_frame_08"
@@ -1030,7 +1030,7 @@ local function create_additional_settings_option(scenegraph_id, size, title_text
 				allow_multi_hover = true
 			},
 			frame = frame_settings.texture,
-			title_text = not not title_text or not not "n/a",
+			title_text = title_text or "n/a",
 			background = {
 				uvs = {
 					{

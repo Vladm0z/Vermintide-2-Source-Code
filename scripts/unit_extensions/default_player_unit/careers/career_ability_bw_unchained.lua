@@ -87,7 +87,7 @@ CareerAbilityBWUnchained._ability_available = function (self)
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
 
-	return not not career_extension:can_use_activated_ability()
+	return (career_extension:can_use_activated_ability())
 end
 
 CareerAbilityBWUnchained._start_priming = function (self)
@@ -270,11 +270,11 @@ CareerAbilityBWUnchained._run_ability = function (self, new_initial_speed)
 
 	local inventory_extension = ScriptUnit.has_extension(owner_unit, "inventory_system")
 	local lh_weapon_unit, rh_weapon_unit = inventory_extension:get_all_weapon_unit()
-	local lh_weapon_extension = not not lh_weapon_unit and not not ScriptUnit.has_extension(lh_weapon_unit, "weapon_system")
-	local rh_weapon_extension = not not rh_weapon_unit and not not ScriptUnit.has_extension(rh_weapon_unit, "weapon_system")
-	local has_action = not not lh_weapon_extension and not not lh_weapon_extension:has_current_action()
+	local lh_weapon_extension = lh_weapon_unit and ScriptUnit.has_extension(lh_weapon_unit, "weapon_system")
+	local rh_weapon_extension = rh_weapon_unit and ScriptUnit.has_extension(rh_weapon_unit, "weapon_system")
+	local has_action = lh_weapon_extension and lh_weapon_extension:has_current_action()
 
-	has_action = not not has_action or not not rh_weapon_extension and not not rh_weapon_extension:has_current_action()
+	has_action = has_action or rh_weapon_extension and rh_weapon_extension:has_current_action()
 
 	if not has_action then
 		CharacterStateHelper.play_animation_event(owner_unit, "unchained_ability_explosion")

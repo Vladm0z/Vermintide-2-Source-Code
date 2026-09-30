@@ -70,5 +70,5 @@ DataCounter.analyze_table = function (t, name, ...)
 
 	local num_tables, num_values = count_table(t, seen_data, 1)
 
-	printf("Analyzed table %q with %d table counts and value counts of %d", not not name or not not "unknown", num_tables, num_values)
+	printf("Analyzed table %q with %d table counts and value counts of %d", name or "unknown", num_tables, num_values)
 end

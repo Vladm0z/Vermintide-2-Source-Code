@@ -25,7 +25,7 @@ AISpawner.init = function (self, world, unit)
 		if spawner_name ~= nil then
 			local terror_event_id = Unit.get_data(unit, "terror_event_id")
 
-			terror_event_id = not not terror_event_id and terror_event_id ~= "" and not not terror_event_id
+			terror_event_id = terror_event_id and terror_event_id ~= "" and terror_event_id
 
 			local hidden = Unit.get_data(unit, "hidden")
 
@@ -49,7 +49,7 @@ AISpawner.init = function (self, world, unit)
 	else
 		local terror_event_id = Unit.get_data(self._unit, "terror_event_id")
 
-		terror_event_id = not not terror_event_id and terror_event_id ~= "" and not not terror_event_id
+		terror_event_id = terror_event_id and terror_event_id ~= "" and terror_event_id
 
 		self._spawner_system:register_raw_spawner(self._unit, terror_event_id)
 	end
@@ -165,7 +165,7 @@ AISpawner.spawn_unit = function (self)
 	local parent_world_rotation = Unit.world_rotation(unit, parent_index)
 	local spawn_node_rotation = Unit.local_rotation(unit, node)
 	local spawn_rotation = Quaternion.multiply(parent_world_rotation, spawn_node_rotation)
-	local spawn_type = Unit.get_data(self._unit, "hidden") and not not "horde_hidden" or not Unit.get_data(self._unit, "hidden") and not not "horde"
+	local spawn_type = Unit.get_data(self._unit, "hidden") and "horde_hidden" or not Unit.get_data(self._unit, "hidden") and "horde"
 	local spawn_pos = Unit.world_position(unit, node)
 	local animation_events = self._config.animation_events
 
@@ -173,9 +173,9 @@ AISpawner.spawn_unit = function (self)
 		spawn_type = "horde"
 	end
 
-	local spawn_animation = spawn_type == "horde" and not not animation_events[math.random(#animation_events)]
+	local spawn_animation = spawn_type == "horde" and animation_events[math.random(#animation_events)]
 	local side_id = spawn_data[1]
-	local optional_data = not not spawn_data[3]
+	local optional_data = spawn_data[3]
 
 	optional_data.side_id = side_id
 

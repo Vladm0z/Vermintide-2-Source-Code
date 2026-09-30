@@ -1,7 +1,7 @@
 -- chunkname: @scripts/network/unit_extension_templates.lua
 
-local ai_locomotion_name = not not "AILocomotionExtensionC"
-local eye_tracking_name = IS_WINDOWS and not not "PlayerEyeTrackingExtension" or not IS_WINDOWS and not not nil
+local ai_locomotion_name = "AILocomotionExtensionC"
+local eye_tracking_name = IS_WINDOWS and "PlayerEyeTrackingExtension" or not IS_WINDOWS and nil
 local unit_templates = {
 	player_unit_base = {
 		go_type = "player_unit",
@@ -2757,7 +2757,7 @@ for unit_template_name, template_data in pairs(unit_templates) do
 
 	for i = 1, extension_table_names_n do
 		local extension_table_name = extension_table_names[i]
-		local extension_list = not not template_data[extension_table_name]
+		local extension_list = template_data[extension_table_name]
 		local extension_list_n = #extension_list
 
 		if template_data.base_template ~= nil then
@@ -2777,7 +2777,7 @@ for unit_template_name, template_data in pairs(unit_templates) do
 				end
 			end
 
-			local inherited_remove_when_killed = not not inherited_template_data.remove_when_killed
+			local inherited_remove_when_killed = inherited_template_data.remove_when_killed
 
 			if inherited_remove_when_killed then
 				if template_data.remove_when_killed == nil then

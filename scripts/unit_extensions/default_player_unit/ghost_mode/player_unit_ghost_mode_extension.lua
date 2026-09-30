@@ -93,7 +93,7 @@ PlayerUnitGhostModeExtension._update_allowed_to_leave = function (self, t, force
 	self._leave_ghost_mode_allowance_check_time = t + 0.2
 
 	local world = self._world
-	local always_allow_leave_ghost_mode = not not script_data.always_allow_leave_ghost_mode
+	local always_allow_leave_ghost_mode = script_data.always_allow_leave_ghost_mode
 	local side = self._side
 	local units = side.ENEMY_PLAYER_AND_BOT_UNITS
 	local enemy_positions = {}
@@ -111,7 +111,7 @@ PlayerUnitGhostModeExtension._update_allowed_to_leave = function (self, t, force
 	local in_los = GhostModeUtils.in_line_of_sight_of_enemies(unit, enemy_positions, physics_world)
 	local profile_index = self._player:profile_index()
 	local profile = SPProfiles[profile_index]
-	local is_boss = not not profile.enemy_role
+	local is_boss = profile.enemy_role
 	local in_range = GhostModeUtils.in_range_of_enemies(POSITION_LOOKUP[unit], self._side, is_boss)
 	local round_started = GhostModeUtils.pact_sworn_round_started(unit)
 	local enemies_using_transport = GhostModeUtils.enemy_players_using_transport(unit)
@@ -130,7 +130,7 @@ PlayerUnitGhostModeExtension._update_allowed_to_leave = function (self, t, force
 	local _, reason_prev = self:allowed_to_leave()
 	local owner = self._player
 	local status = Managers.party:get_player_status(owner.peer_id, owner:local_player_id())
-	local spawn_timer = status and not not status.game_mode_data.spawn_timer or not status and not not 0
+	local spawn_timer = status and status.game_mode_data.spawn_timer or not status and 0
 	local reason = "allowed"
 
 	if enemies_using_transport then
@@ -174,7 +174,7 @@ PlayerUnitGhostModeExtension._update_allowed_to_enter = function (self, t, force
 	local enemies_using_transport = GhostModeUtils.enemy_players_using_transport(unit)
 	local far_away_enough = GhostModeUtils.far_enough_to_enter_ghost_mode(unit)
 	local status_extension = ScriptUnit.extension(unit, "status_system")
-	local unit_alive = not not HEALTH_ALIVE[unit] and not not not status_extension:is_dead()
+	local unit_alive = HEALTH_ALIVE[unit] and not status_extension:is_dead()
 	local blocking_action = false
 	local _, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(self._inventory_extension)
 	local current_action_settings = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
@@ -183,9 +183,9 @@ PlayerUnitGhostModeExtension._update_allowed_to_enter = function (self, t, force
 		blocking_action = true
 	end
 
-	local allowed_to_enter = not not enemies_using_transport and not not unit_alive and far_away_enough and not blocking_action and not not self:allowed_to_leave()
+	local allowed_to_enter = enemies_using_transport and unit_alive and far_away_enough and not blocking_action and self:allowed_to_leave()
 	local allowed_to_enter_prev, reason_allowed_to_enter_prev = self:allowed_to_enter()
-	local reason = unit_alive and (far_away_enough and not not "distance" or not far_away_enough and (enemies_using_transport and not not "transport" or not enemies_using_transport and not not blocking_action and not not "blocking_action")) or not unit_alive and not not "dead"
+	local reason = unit_alive and (far_away_enough and "distance" or not far_away_enough and (enemies_using_transport and "transport" or not enemies_using_transport and blocking_action and "blocking_action")) or not unit_alive and "dead"
 
 	if allowed_to_enter ~= allowed_to_enter_prev or not allowed_to_enter and reason ~= reason_allowed_to_enter_prev then
 		self:_set_allowed_to_enter(allowed_to_enter, reason)
@@ -233,9 +233,9 @@ PlayerUnitGhostModeExtension.get_distance_from_players = function (self, unit)
 	local distance_to_spawn = math.huge
 	local profile_index = self._player:profile_index()
 	local profile = SPProfiles[profile_index]
-	local is_boss = not not profile.enemy_role
-	local min_dist = is_boss and not not GameModeSettings.versus.boss_minimum_spawn_distance or not is_boss and not not GameModeSettings.versus.dark_pact_minimum_spawn_distance
-	local setting_name = is_boss and not not "boss_spawn_range_distance" or not is_boss and not not "special_spawn_range_distance"
+	local is_boss = profile.enemy_role
+	local min_dist = is_boss and GameModeSettings.versus.boss_minimum_spawn_distance or not is_boss and GameModeSettings.versus.dark_pact_minimum_spawn_distance
+	local setting_name = is_boss and "boss_spawn_range_distance" or not is_boss and "special_spawn_range_distance"
 	local mechanism_ok, custom_setting_distance_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", setting_name)
 
 	if mechanism_ok and custom_settings_enabled then
@@ -295,7 +295,7 @@ PlayerUnitGhostModeExtension._progress_teleport_target = function (self, last_ta
 		end
 	end
 
-	target_index = not not target_index or not not math.min(self._teleport_target_index_fallback, num_enemy_units)
+	target_index = target_index or math.min(self._teleport_target_index_fallback, num_enemy_units)
 	target_index = math.index_wrapper(target_index + 1, num_enemy_units)
 	self._teleport_target_unit = enemy_units[target_index]
 	self._teleport_target_index_fallback = target_index
@@ -373,7 +373,7 @@ PlayerUnitGhostModeExtension._teleport_to_next_enemy = function (self, find_furt
 
 	self:_set_allowed_to_leave(false, "los", true)
 
-	local target_unit = find_furthest_player and not not self:_furthest_player_enemy_unit() or not find_furthest_player and not not self:_get_target_teleport_unit()
+	local target_unit = find_furthest_player and self:_furthest_player_enemy_unit() or not find_furthest_player and self:_get_target_teleport_unit()
 	local target_pos = POSITION_LOOKUP[target_unit] + Vector3(0, 0, 0.2)
 
 	self._locomotion_extension:teleport_to(target_pos)
@@ -400,7 +400,7 @@ PlayerUnitGhostModeExtension._enter_ghost_mode = function (self, teleport_player
 	end
 
 	local equipment = self._inventory_extension:equipment()
-	local weapon_unit = not not equipment.right_hand_wielded_unit
+	local weapon_unit = equipment.right_hand_wielded_unit
 
 	if not DEDICATED_SERVER and weapon_unit then
 		Unit.flow_event(weapon_unit, "lua_entered_ghost_mode")
@@ -446,7 +446,7 @@ PlayerUnitGhostModeExtension._leave_ghost_mode = function (self)
 
 	local player_unit = self._unit
 	local equipment = self._inventory_extension:equipment()
-	local weapon_unit = not not equipment.right_hand_wielded_unit
+	local weapon_unit = equipment.right_hand_wielded_unit
 	local status_extension = ScriptUnit.extension(self._unit, "status_system")
 
 	status_extension:set_ghost_mode(false)
@@ -571,7 +571,7 @@ end
 
 PlayerUnitGhostModeExtension.set_external_no_spawn_reason = function (self, reason, value)
 	-- function 29
-	self._external_no_spawn_reasons[reason] = not not value or not not nil
+	self._external_no_spawn_reasons[reason] = value or nil
 
 	local t = Managers.time:time("game")
 	local force_update = true

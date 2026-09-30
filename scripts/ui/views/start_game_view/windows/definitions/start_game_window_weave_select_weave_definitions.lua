@@ -215,7 +215,7 @@ local function create_overlay_button(scenegraph_id, size)
 						-- function 9
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not content.has_item
+						return not button_hotspot.disable_button and not content.has_item
 					end
 				},
 				{
@@ -265,7 +265,7 @@ local function create_overlay_button(scenegraph_id, size)
 						-- function 12
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not content.has_item
+						return not button_hotspot.disable_button and not content.has_item
 					end
 				},
 				{
@@ -276,7 +276,7 @@ local function create_overlay_button(scenegraph_id, size)
 						-- function 13
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not content.has_item
+						return not button_hotspot.disable_button and not content.has_item
 					end
 				},
 				{
@@ -287,7 +287,7 @@ local function create_overlay_button(scenegraph_id, size)
 						-- function 14
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -298,7 +298,7 @@ local function create_overlay_button(scenegraph_id, size)
 						-- function 15
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -309,7 +309,7 @@ local function create_overlay_button(scenegraph_id, size)
 						-- function 16
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not content.has_item
+						return not button_hotspot.disable_button and not content.has_item
 					end
 				},
 				{

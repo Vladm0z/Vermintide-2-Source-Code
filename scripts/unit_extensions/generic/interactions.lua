@@ -6,7 +6,7 @@ InteractionResult = table.mirror_array_inplace({
 	"FAILURE",
 	"USER_ENDED"
 })
-InteractionCustomChecks = not not InteractionCustomChecks
+InteractionCustomChecks = InteractionCustomChecks
 
 InteractionCustomChecks.dialogue_not_playing = function (interactor_unit, interactable_unit)
 	-- function 1
@@ -16,7 +16,7 @@ InteractionCustomChecks.dialogue_not_playing = function (interactor_unit, intera
 	return not is_dialogue_playing
 end
 
-InteractionDefinitions = not not InteractionDefinitions
+InteractionDefinitions = InteractionDefinitions
 InteractionDefinitions.player_generic = {
 	default_config = {
 		hud_verb = "player_interaction",
@@ -203,7 +203,7 @@ InteractionDefinitions.revive = {
 			local ledge_hanging = status_extension:get_is_ledge_hanging()
 			local hanging_from_hook = status_extension:is_hanging_from_hook()
 
-			return not not knocked_down and not not alive and not pounced and not grabbed and not ledge_hanging and not not not hanging_from_hook
+			return knocked_down and alive and not pounced and not grabbed and not ledge_hanging and not hanging_from_hook
 		end
 	},
 	client = {
@@ -310,7 +310,7 @@ InteractionDefinitions.revive = {
 				return 0
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 21
@@ -325,7 +325,7 @@ InteractionDefinitions.revive = {
 			local grabbed = status_extension:is_grabbed_by_pack_master()
 			local ledge_hanging = status_extension:get_is_ledge_hanging()
 			local hanging_from_hook = status_extension:is_hanging_from_hook()
-			local can_revive = not status_extension:is_pounced_down() and not grabbed and not ledge_hanging and not hanging_from_hook and not not status_extension:is_knocked_down()
+			local can_revive = not status_extension:is_pounced_down() and not grabbed and not ledge_hanging and not hanging_from_hook and status_extension:is_knocked_down()
 
 			return can_revive
 		end,
@@ -347,9 +347,9 @@ InteractionDefinitions.revive = {
 				end
 
 				local t = Managers.time:time("game")
-				local interaction_progress = not not 0
-				local is_interacting = not not interaction_progress and interaction_progress > 0
-				local interaction_action_description = is_interacting and not not "interaction_action_reviving" or not is_interacting and not not "interaction_action_revive"
+				local interaction_progress = 0
+				local is_interacting = interaction_progress and interaction_progress > 0
+				local interaction_action_description = is_interacting and "interaction_action_reviving" or not is_interacting and "interaction_action_revive"
 
 				return display_name, interaction_action_description
 			end
@@ -388,7 +388,7 @@ InteractionDefinitions.pull_up = {
 		stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
 			-- function 25
 			if result == InteractionResult.SUCCESS then
-				StatusUtils.set_pulled_up_network(interactable_unit, true, Unit.alive(interactor_unit) and (not not interactor_unit or not not nil) or not Unit.alive(interactor_unit) and not not nil)
+				StatusUtils.set_pulled_up_network(interactable_unit, true, Unit.alive(interactor_unit) and (interactor_unit or nil) or not Unit.alive(interactor_unit) and nil)
 			end
 		end,
 		can_interact = function (interactor_unit, interactable_unit)
@@ -399,7 +399,7 @@ InteractionDefinitions.pull_up = {
 			local buff_extension = ScriptUnit.extension(interactable_unit, "buff_system")
 			local can_ledge_self_rescue = buff_extension:has_buff_perk("ledge_self_rescue")
 
-			return not not is_hanging and not is_pulled_up and not not not can_ledge_self_rescue
+			return is_hanging and not is_pulled_up and not can_ledge_self_rescue
 		end
 	},
 	client = {
@@ -464,16 +464,16 @@ InteractionDefinitions.pull_up = {
 				return 0
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 31
 			local status_extension = ScriptUnit.extension(interactable_unit, "status_system")
 			local buff_extension = ScriptUnit.extension(interactable_unit, "buff_system")
 			local can_ledge_self_rescue = buff_extension:has_buff_perk("ledge_self_rescue")
-			local can_pull_up = not not status_extension:get_is_ledge_hanging()
+			local can_pull_up = status_extension:get_is_ledge_hanging()
 
-			return not not can_pull_up and not not not can_ledge_self_rescue
+			return can_pull_up and not can_ledge_self_rescue
 		end,
 		hud_description = function (interactable_unit, data, config)
 			-- function 32
@@ -532,7 +532,7 @@ InteractionDefinitions.release_from_hook = {
 			local is_hooked = status_extension:is_hanging_from_hook()
 			local alive = HEALTH_ALIVE[interactable_unit]
 
-			return not not is_hooked and not not alive
+			return is_hooked and alive
 		end
 	},
 	client = {
@@ -569,7 +569,7 @@ InteractionDefinitions.release_from_hook = {
 				return 0
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 41
@@ -577,7 +577,7 @@ InteractionDefinitions.release_from_hook = {
 			local is_hanging = status_extension:is_hanging_from_hook()
 			local alive = HEALTH_ALIVE[interactable_unit]
 
-			return not not is_hanging and not not alive
+			return is_hanging and alive
 		end,
 		hud_description = function (interactable_unit, data, config)
 			-- function 42
@@ -676,7 +676,7 @@ InteractionDefinitions.assisted_respawn = {
 				return 0
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 51
@@ -723,7 +723,7 @@ InteractionDefinitions.smartobject = {
 
 			fassert(duration, "Interacting with %q that has no interaction length", interactable_unit)
 
-			local stored_progress = not not Unit.get_data(interactable_unit, "interaction_data", "stored_interaction_progress")
+			local stored_progress = Unit.get_data(interactable_unit, "interaction_data", "stored_interaction_progress")
 
 			data.done_time = t + duration - stored_progress
 			data.duration = duration
@@ -799,7 +799,7 @@ InteractionDefinitions.smartobject = {
 			local duration = Unit.get_data(interactable_unit, "interaction_data", "interaction_length")
 
 			data.duration = duration
-			data.stored_progress = not not Unit.get_data(interactable_unit, "interaction_data", "stored_interaction_progress")
+			data.stored_progress = Unit.get_data(interactable_unit, "interaction_data", "stored_interaction_progress")
 
 			local interactor_animation_name = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation")
 			local interactor_animation_time_variable = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation_time_variable")
@@ -834,8 +834,8 @@ InteractionDefinitions.smartobject = {
 		stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
 			-- function 59
 			if Unit.get_data(interactable_unit, "interaction_data", "resumable") then
-				local old_stored_progress = not not data.stored_progress
-				local new_stored_progress = result ~= InteractionResult.SUCCESS and not not (old_stored_progress + math.max(0, t - data.start_time)) or not (result ~= InteractionResult.SUCCESS) and not not 0
+				local old_stored_progress = data.stored_progress
+				local new_stored_progress = result ~= InteractionResult.SUCCESS and old_stored_progress + math.max(0, t - data.start_time) or not (result ~= InteractionResult.SUCCESS) and 0
 
 				Unit.set_data(interactable_unit, "interaction_data", "stored_interaction_progress", new_stored_progress)
 			end
@@ -858,7 +858,7 @@ InteractionDefinitions.smartobject = {
 				return 0
 			end
 
-			local stored_progress = not not data.stored_progress
+			local stored_progress = data.stored_progress
 
 			return math.clamp((t + stored_progress - data.start_time) / data.duration, 0, 1)
 		end,
@@ -873,7 +873,7 @@ InteractionDefinitions.smartobject = {
 			local used = Unit.get_data(interactable_unit, "interaction_data", "used")
 			local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 
-			return not used and not not not being_used
+			return not used and not being_used
 		end,
 		hud_description = function (interactable_unit, data, config)
 			-- function 62
@@ -881,7 +881,7 @@ InteractionDefinitions.smartobject = {
 		end
 	}
 }
-InteractionDefinitions.control_panel = not not InteractionDefinitions.control_panel
+InteractionDefinitions.control_panel = InteractionDefinitions.control_panel
 InteractionDefinitions.control_panel.config.swap_to_3p = true
 InteractionDefinitions.control_panel.config.show_weapons = false
 
@@ -1053,7 +1053,7 @@ InteractionDefinitions.pickup_object = {
 			Unit.animation_event(interactor_unit, "interaction_end")
 
 			if result == InteractionResult.SUCCESS then
-				local is_husk = not not data.is_husk
+				local is_husk = data.is_husk
 				local only_once = Unit.get_data(interactable_unit, "interaction_data", "only_once")
 
 				if only_once and not is_husk then
@@ -1076,7 +1076,7 @@ InteractionDefinitions.pickup_object = {
 				elseif Managers.account:is_online() then
 					local lobby = Managers.state.network:lobby()
 
-					interactor_name = is_player_controlled and (not not lobby:user_name(peer_id) or not not player:name()) or not is_player_controlled and not not player:name()
+					interactor_name = is_player_controlled and (lobby:user_name(peer_id) or player:name()) or not is_player_controlled and player:name()
 				else
 					interactor_name = player:name()
 				end
@@ -1124,7 +1124,7 @@ InteractionDefinitions.pickup_object = {
 						local item_template = BackendUtils.get_item_template(item_data)
 
 						if item_name ~= "wpn_side_objective_tome_01" and item_template.name == "wpn_side_objective_tome_01" then
-							local local_human = not player.remote and not not not player.bot_player
+							local local_human = not player.remote and not player.bot_player
 
 							Managers.state.event:trigger("add_coop_feedback", player:stats_id(), local_human, "discarded_tome", player)
 
@@ -1132,7 +1132,7 @@ InteractionDefinitions.pickup_object = {
 
 							Managers.chat:add_local_system_message(1, message, pop_chat)
 						elseif item_name ~= "wpn_grimoire_01" and item_template.name == "wpn_grimoire_01" then
-							local local_human = not player.remote and not not not player.bot_player
+							local local_human = not player.remote and not player.bot_player
 
 							Managers.state.event:trigger("add_coop_feedback", player:stats_id(), local_human, "discarded_grimoire", player)
 
@@ -1153,11 +1153,11 @@ InteractionDefinitions.pickup_object = {
 
 				local local_bot_or_human = not player.remote
 				local local_pickup_sound = pickup_settings.local_pickup_sound
-				local play_sound = local_pickup_sound and (local_bot_or_human and not not not player.bot_player or not local_bot_or_human and not local_pickup_sound and not not not player.bot_player) or not local_pickup_sound and not local_pickup_sound and not not not player.bot_player
+				local play_sound = local_pickup_sound and (local_bot_or_human and not player.bot_player or not local_bot_or_human and not local_pickup_sound and not player.bot_player) or not local_pickup_sound and not local_pickup_sound and not player.bot_player
 
 				if play_sound then
 					local pickup_sound_event_func = pickup_settings.pickup_sound_event_func
-					local sound_event = pickup_sound_event_func and not not pickup_sound_event_func(interactor_unit, interactable_unit, data) or not pickup_sound_event_func and not not pickup_settings.pickup_sound_event
+					local sound_event = pickup_sound_event_func and pickup_sound_event_func(interactor_unit, interactable_unit, data) or not pickup_sound_event_func and pickup_settings.pickup_sound_event
 
 					if sound_event then
 						local wwise_world = Managers.world:wwise_world(world)
@@ -1239,8 +1239,8 @@ InteractionDefinitions.pickup_object = {
 						end
 
 						local current_slot_data = inventory_extension:get_slot_data(slot_name)
-						local current_item_data = not not current_slot_data and not not current_slot_data.item_data
-						local dont_unwield_current = not not current_item_data and not not current_item_data.dont_unwield_on_pickup
+						local current_item_data = current_slot_data and current_slot_data.item_data
+						local dont_unwield_current = current_item_data and current_item_data.dont_unwield_on_pickup
 						local wielded_slot_name = inventory_extension:get_wielded_slot_name()
 						local should_wield = wielded_slot_name == slot_name
 						local can_store = inventory_extension:can_store_additional_item(slot_name)
@@ -1252,7 +1252,7 @@ InteractionDefinitions.pickup_object = {
 						end
 
 						local sync_equipment = false
-						local slot_full = not not current_item_data and not not not can_store
+						local slot_full = current_item_data and not can_store
 
 						if slot_full then
 							local has_droppable, is_stored, drop_item_data = inventory_extension:has_droppable_item(slot_name, _replaceable_item_filter(item_name))
@@ -1306,7 +1306,7 @@ InteractionDefinitions.pickup_object = {
 								local limited_item_extension = ScriptUnit.extension(interactable_unit, "limited_item_track_system")
 								local id = limited_item_extension.id
 								local spawner_unit = limited_item_extension.spawner_unit
-								local spawner_unit_id = spawner_unit and not not Managers.state.network:level_object_id(spawner_unit) or not spawner_unit and not not NetworkConstants.invalid_game_object_id
+								local spawner_unit_id = spawner_unit and Managers.state.network:level_object_id(spawner_unit) or not spawner_unit and NetworkConstants.invalid_game_object_id
 
 								if data.is_server then
 									network_manager.network_transmit:send_rpc_clients("rpc_add_equipment_limited_item", unit_object_id, slot_id, item_id, spawner_unit_id, id)
@@ -1400,7 +1400,7 @@ InteractionDefinitions.pickup_object = {
 									local limited_item_extension = ScriptUnit.extension(interactable_unit, "limited_item_track_system")
 									local id = limited_item_extension.id
 									local spawner_unit = limited_item_extension.spawner_unit
-									local spawner_unit_id = spawner_unit and not not Managers.state.network:level_object_id(spawner_unit) or not spawner_unit and not not NetworkConstants.invalid_game_object_id
+									local spawner_unit_id = spawner_unit and Managers.state.network:level_object_id(spawner_unit) or not spawner_unit and NetworkConstants.invalid_game_object_id
 
 									network_manager.network_transmit:send_rpc_clients("rpc_add_equipment_limited_item", unit_object_id, slot_id, item_id, spawner_unit_id, id)
 								else
@@ -1410,7 +1410,7 @@ InteractionDefinitions.pickup_object = {
 								local limited_item_extension = ScriptUnit.extension(interactable_unit, "limited_item_track_system")
 								local id = limited_item_extension.id
 								local spawner_unit = limited_item_extension.spawner_unit
-								local spawner_unit_id = spawner_unit and not not Managers.state.network:level_object_id(spawner_unit) or not spawner_unit and not not NetworkConstants.invalid_game_object_id
+								local spawner_unit_id = spawner_unit and Managers.state.network:level_object_id(spawner_unit) or not spawner_unit and NetworkConstants.invalid_game_object_id
 
 								network_manager.network_transmit:send_rpc_server("rpc_add_equipment_limited_item", unit_object_id, slot_id, item_id, spawner_unit_id, id)
 							else
@@ -1509,7 +1509,7 @@ InteractionDefinitions.pickup_object = {
 				return nil
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / data.duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / data.duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config, world)
 			-- function 75
@@ -1552,7 +1552,7 @@ InteractionDefinitions.pickup_object = {
 				end
 			end
 
-			local slot_data = not not slot_name and not not inventory_extension:get_slot_data(slot_name)
+			local slot_data = slot_name and inventory_extension:get_slot_data(slot_name)
 
 			if return_value and slot_name == "slot_potion" and _has_grimoire(inventory_extension) then
 				fail_reason = "grimoire_equipped"
@@ -1560,10 +1560,10 @@ InteractionDefinitions.pickup_object = {
 			end
 
 			local can_hold_more = inventory_extension:can_store_additional_item(slot_name)
-			local slot_item_data = not not slot_data and not not slot_data.item_data
+			local slot_item_data = slot_data and slot_data.item_data
 
 			if return_value and slot_item_data and slot_item_data.is_not_droppable then
-				local can_add_anyway = not not can_hold_more or not not inventory_extension:has_droppable_item(slot_name, _replaceable_item_filter(pickup_settings.item_name))
+				local can_add_anyway = can_hold_more or inventory_extension:has_droppable_item(slot_name, _replaceable_item_filter(pickup_settings.item_name))
 
 				if not can_add_anyway then
 					fail_reason = "not_droppable"
@@ -1613,7 +1613,7 @@ InteractionDefinitions.pickup_object = {
 			if not Managers.state.unit_spawner:is_marked_for_deletion(interactable_unit) then
 				local custom_description = Unit.get_data(interactable_unit, "interaction_action_description")
 
-				interaction_action_description = not not custom_description or not not interaction_action_description
+				interaction_action_description = custom_description or interaction_action_description
 
 				if fail_reason then
 					if fail_reason == "already_equipped" then
@@ -1693,7 +1693,7 @@ InteractionDefinitions.give_item = {
 			-- function 80
 			local status_extension = ScriptUnit.extension(interactable_unit, "status_system")
 			local is_enemy_unit = Managers.state.side:is_enemy(interactor_unit, interactable_unit)
-			local can_receive_item = not status_extension:is_disabled() and not not not is_enemy_unit
+			local can_receive_item = not status_extension:is_disabled() and not is_enemy_unit
 
 			return can_receive_item
 		end
@@ -1755,7 +1755,7 @@ InteractionDefinitions.give_item = {
 				return 0
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 85
@@ -1772,9 +1772,9 @@ InteractionDefinitions.give_item = {
 			end
 
 			local owner_player = Managers.player:unit_owner(interactor_unit)
-			local is_bot = not not owner_player and not not owner_player.bot_player
+			local is_bot = owner_player and owner_player.bot_player
 			local status_extension = ScriptUnit.extension(interactable_unit, "status_system")
-			local is_alive = not not HEALTH_ALIVE[interactable_unit]
+			local is_alive = HEALTH_ALIVE[interactable_unit]
 			local interactor_inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
 			local item_template = interactor_inventory_extension:get_wielded_slot_item_template()
 
@@ -1783,11 +1783,11 @@ InteractionDefinitions.give_item = {
 			end
 
 			local target_inventory_extension = ScriptUnit.extension(interactable_unit, "inventory_system")
-			local slot_name = Managers.input:is_device_active("gamepad") and not not interactor_inventory_extension:get_selected_consumable_slot_name() or not Managers.input:is_device_active("gamepad") and not not interactor_inventory_extension:get_wielded_slot_name()
+			local slot_name = Managers.input:is_device_active("gamepad") and interactor_inventory_extension:get_selected_consumable_slot_name() or not Managers.input:is_device_active("gamepad") and interactor_inventory_extension:get_wielded_slot_name()
 			local slot_occupied = target_inventory_extension:get_slot_data(slot_name)
 			local can_hold_more = target_inventory_extension:can_store_additional_item(slot_name)
 
-			return not not is_alive and not not item_template.can_give_other
+			return is_alive and item_template.can_give_other
 		end,
 		set_interactor_data = function (interactor_unit, interactable_unit, interactor_data)
 			-- function 86
@@ -1905,7 +1905,7 @@ InteractionDefinitions.heal = {
 			local has_max_health = health_extension:current_permanent_health_percent() >= 1
 			local is_wounded = status_extension:is_wounded()
 
-			return not has_max_health or not not not not is_wounded
+			return not has_max_health or is_wounded
 		end
 	},
 	client = {
@@ -1978,7 +1978,7 @@ InteractionDefinitions.heal = {
 				return 0
 			end
 
-			return data.start_time ~= nil and not not math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and not not 0
+			return data.start_time ~= nil and math.min(1, (t - data.start_time) / config.duration) or not (data.start_time ~= nil) and 0
 		end,
 		can_interact = function (interactor_unit, interactable_unit, data, config)
 			-- function 96
@@ -1991,10 +1991,10 @@ InteractionDefinitions.heal = {
 			end
 
 			local owner_player = Managers.player:unit_owner(interactor_unit)
-			local is_bot = not not owner_player and not not owner_player.bot_player
+			local is_bot = owner_player and owner_player.bot_player
 			local health_extension = ScriptUnit.extension(interactable_unit, "health_system")
 			local status_extension = ScriptUnit.extension(interactable_unit, "status_system")
-			local is_alive = not not health_extension:is_alive()
+			local is_alive = health_extension:is_alive()
 			local has_max_health = health_extension:current_permanent_health_percent() >= 1
 			local is_wounded = status_extension:is_wounded()
 			local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
@@ -2006,7 +2006,7 @@ InteractionDefinitions.heal = {
 
 			local interactor_has_medpack = item_template.can_heal_other
 
-			return not has_max_health or not not is_wounded
+			return not has_max_health or is_wounded
 		end,
 		set_interactor_data = function (interactor_unit, interactable_unit, interactor_data)
 			-- function 97
@@ -2033,9 +2033,9 @@ InteractionDefinitions.heal = {
 				end
 
 				local t = Managers.time:time("game")
-				local interaction_progress = not not 0
-				local is_interacting = not not interaction_progress and interaction_progress > 0
-				local interaction_action_description = is_interacting and not not "interaction_action_healing" or not is_interacting and not not "interaction_action_heal"
+				local interaction_progress = 0
+				local is_interacting = interaction_progress and interaction_progress > 0
+				local interaction_action_description = is_interacting and "interaction_action_healing" or not is_interacting and "interaction_action_heal"
 
 				return display_name, interaction_action_description
 			end
@@ -2050,7 +2050,7 @@ InteractionDefinitions.heal = {
 		end
 	}
 }
-InteractionDefinitions.linker_transportation_unit = not not InteractionDefinitions.linker_transportation_unit
+InteractionDefinitions.linker_transportation_unit = InteractionDefinitions.linker_transportation_unit
 InteractionDefinitions.linker_transportation_unit.config.swap_to_3p = false
 
 InteractionDefinitions.linker_transportation_unit.client.hud_description = function (interactable_unit, data, config, key_tail)
@@ -2136,7 +2136,7 @@ InteractionDefinitions.linker_transportation_unit.client.can_interact = function
 	return true
 end
 
-InteractionDefinitions.door = not not InteractionDefinitions.door
+InteractionDefinitions.door = InteractionDefinitions.door
 InteractionDefinitions.door.config.swap_to_3p = false
 InteractionDefinitions.door.config.block_other_interactions = true
 InteractionDefinitions.door.config.allow_movement = true
@@ -2158,14 +2158,14 @@ InteractionDefinitions.door.client.hud_description = function (interactable_unit
 	-- function 104
 	local door_extension = ScriptUnit.extension(interactable_unit, "door_system")
 	local is_open = door_extension:is_open()
-	local interaction_action_description = is_open and not not "interaction_action_close" or not is_open and not not "interaction_action_open"
+	local interaction_action_description = is_open and "interaction_action_close" or not is_open and "interaction_action_open"
 
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), interaction_action_description
 end
 
 local pickup_params = {}
 
-InteractionDefinitions.chest = not not InteractionDefinitions.chest
+InteractionDefinitions.chest = InteractionDefinitions.chest
 InteractionDefinitions.chest.config.swap_to_3p = false
 InteractionDefinitions.chest.config.block_other_interactions = true
 InteractionDefinitions.chest.config.allow_movement = true
@@ -2237,7 +2237,7 @@ InteractionDefinitions.chest.server.stop = function (world, interactor_unit, int
 				}
 			}
 			local unit_name = pickup_settings.unit_name
-			local unit_template_name = not not pickup_settings.unit_template_name
+			local unit_template_name = pickup_settings.unit_template_name
 			local position = Unit.local_position(interactable_unit, 0) + Vector3(0, 0, 0.3)
 			local rotation = Unit.local_rotation(interactable_unit, 0)
 
@@ -2249,7 +2249,7 @@ InteractionDefinitions.chest.server.stop = function (world, interactor_unit, int
 	Unit.set_data(interactable_unit, "interaction_data", "being_used", false)
 end
 
-InteractionDefinitions.inventory_access = not not InteractionDefinitions.inventory_access
+InteractionDefinitions.inventory_access = InteractionDefinitions.inventory_access
 InteractionDefinitions.inventory_access.config.swap_to_3p = false
 
 InteractionDefinitions.inventory_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)
@@ -2275,7 +2275,7 @@ InteractionDefinitions.inventory_access.client.hud_description = function (inter
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.prestige_access = not not InteractionDefinitions.prestige_access
+InteractionDefinitions.prestige_access = InteractionDefinitions.prestige_access
 InteractionDefinitions.prestige_access.config.swap_to_3p = false
 
 InteractionDefinitions.prestige_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)
@@ -2306,7 +2306,7 @@ InteractionDefinitions.prestige_access.client.hud_description = function (intera
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.forge_access = not not InteractionDefinitions.forge_access
+InteractionDefinitions.forge_access = InteractionDefinitions.forge_access
 InteractionDefinitions.forge_access.config.swap_to_3p = false
 
 InteractionDefinitions.forge_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2332,7 +2332,7 @@ InteractionDefinitions.forge_access.client.hud_description = function (interacta
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.talents_access = not not InteractionDefinitions.talents_access
+InteractionDefinitions.talents_access = InteractionDefinitions.talents_access
 InteractionDefinitions.talents_access.config.swap_to_3p = false
 
 InteractionDefinitions.talents_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2358,7 +2358,7 @@ InteractionDefinitions.talents_access.client.hud_description = function (interac
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.loadout_access = not not InteractionDefinitions.loadout_access
+InteractionDefinitions.loadout_access = InteractionDefinitions.loadout_access
 InteractionDefinitions.loadout_access.config.swap_to_3p = false
 
 InteractionDefinitions.loadout_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2383,7 +2383,7 @@ InteractionDefinitions.loadout_access.client.hud_description = function (interac
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.cosmetics_access = not not InteractionDefinitions.cosmetics_access
+InteractionDefinitions.cosmetics_access = InteractionDefinitions.cosmetics_access
 InteractionDefinitions.cosmetics_access.config.swap_to_3p = false
 
 InteractionDefinitions.cosmetics_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2409,7 +2409,7 @@ InteractionDefinitions.cosmetics_access.client.hud_description = function (inter
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.loot_access = not not InteractionDefinitions.loot_access
+InteractionDefinitions.loot_access = InteractionDefinitions.loot_access
 InteractionDefinitions.loot_access.config.swap_to_3p = false
 
 InteractionDefinitions.loot_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2434,7 +2434,7 @@ InteractionDefinitions.loot_access.client.hud_description = function (interactab
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.characters_access = not not InteractionDefinitions.characters_access
+InteractionDefinitions.characters_access = InteractionDefinitions.characters_access
 InteractionDefinitions.characters_access.config.swap_to_3p = false
 
 InteractionDefinitions.characters_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2459,7 +2459,7 @@ InteractionDefinitions.characters_access.client.hud_description = function (inte
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.altar_access = not not InteractionDefinitions.altar_access
+InteractionDefinitions.altar_access = InteractionDefinitions.altar_access
 InteractionDefinitions.altar_access.config.swap_to_3p = false
 
 InteractionDefinitions.altar_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2478,7 +2478,7 @@ InteractionDefinitions.altar_access.client.can_interact = function (interactor_u
 	return false
 end
 
-InteractionDefinitions.quest_access = not not InteractionDefinitions.quest_access
+InteractionDefinitions.quest_access = InteractionDefinitions.quest_access
 InteractionDefinitions.quest_access.config.swap_to_3p = false
 
 InteractionDefinitions.quest_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2496,8 +2496,8 @@ InteractionDefinitions.quest_access.client.can_interact = function (interactor_u
 	-- function 135
 	local can_use = false
 	local backend_settings = GameSettingsDevelopment.backend_settings
-	local can_interact = not not can_use and not not backend_settings.quests_enabled
-	local fail_reason = not can_interact and not not "quest_access_locked"
+	local can_interact = can_use and backend_settings.quests_enabled
+	local fail_reason = not can_interact and "quest_access_locked"
 
 	return can_interact, fail_reason
 end
@@ -2511,7 +2511,7 @@ InteractionDefinitions.quest_access.client.hud_description = function (interacta
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.journal_access = not not InteractionDefinitions.journal_access
+InteractionDefinitions.journal_access = InteractionDefinitions.journal_access
 InteractionDefinitions.journal_access.config.swap_to_3p = false
 
 InteractionDefinitions.journal_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2530,7 +2530,7 @@ InteractionDefinitions.journal_access.client.can_interact = function (interactor
 	return true
 end
 
-InteractionDefinitions.map_access = not not InteractionDefinitions.map_access
+InteractionDefinitions.map_access = InteractionDefinitions.map_access
 InteractionDefinitions.map_access.config.swap_to_3p = false
 
 InteractionDefinitions.map_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2540,7 +2540,7 @@ InteractionDefinitions.map_access.client.stop = function (world, interactor_unit
 	local menu_sub_state_name
 	local is_in_versus_custom_lobby = Managers.matchmaking:is_in_versus_custom_game_lobby()
 
-	menu_sub_state_name = is_in_versus_custom_lobby and (not not "versus_player_hosted_lobby" or not not nil) or not is_in_versus_custom_lobby and not not nil
+	menu_sub_state_name = is_in_versus_custom_lobby and ("versus_player_hosted_lobby" or nil) or not is_in_versus_custom_lobby and nil
 
 	if result == InteractionResult.SUCCESS and not data.is_husk then
 		Managers.ui:handle_transition("start_game_view_force", {
@@ -2564,10 +2564,10 @@ InteractionDefinitions.map_access.client.can_interact = function (interactor_uni
 
 	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 
-	return not is_game_matchmaking or not not is_in_versus_custom_lobby
+	return not is_game_matchmaking or is_in_versus_custom_lobby
 end
 
-InteractionDefinitions.unlock_key_access = not not InteractionDefinitions.unlock_key_access
+InteractionDefinitions.unlock_key_access = InteractionDefinitions.unlock_key_access
 InteractionDefinitions.unlock_key_access.config.swap_to_3p = false
 
 InteractionDefinitions.unlock_key_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2602,7 +2602,7 @@ for k, v in pairs(InteractionDefinitions) do
 	end
 end
 
-InteractionDefinitions.pictureframe = not not InteractionDefinitions.pictureframe
+InteractionDefinitions.pictureframe = InteractionDefinitions.pictureframe
 InteractionDefinitions.pictureframe.config.swap_to_3p = false
 
 InteractionDefinitions.pictureframe.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2628,18 +2628,18 @@ InteractionDefinitions.pictureframe.client.can_interact = function (interactor_u
 	local can_interact = keep_decoration_extension:can_interact()
 	local unit_not_interactable = Unit.get_data(interactable_unit, "painting_data", "not_interactable")
 
-	return not not can_interact and not not not unit_not_interactable
+	return can_interact and not unit_not_interactable
 end
 
 InteractionDefinitions.pictureframe.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
 	-- function 148
-	local view_only = not data.is_server or not not Unit.get_data(interactable_unit, "interaction_data", "view_only")
-	local interaction_action_text = view_only and not not "interaction_action_view" or not view_only and not not Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
+	local view_only = not data.is_server or Unit.get_data(interactable_unit, "interaction_data", "view_only")
+	local interaction_action_text = view_only and "interaction_action_view" or not view_only and Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
 
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), interaction_action_text
 end
 
-InteractionDefinitions.trophy = not not InteractionDefinitions.trophy
+InteractionDefinitions.trophy = InteractionDefinitions.trophy
 InteractionDefinitions.trophy.config.swap_to_3p = false
 
 InteractionDefinitions.trophy.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2665,18 +2665,18 @@ InteractionDefinitions.trophy.client.can_interact = function (interactor_unit, i
 	local can_interact = keep_decoration_extension:can_interact()
 	local unit_not_interactable = Unit.get_data(interactable_unit, "trophy_data", "not_interactable")
 
-	return not not can_interact and not not not unit_not_interactable
+	return can_interact and not unit_not_interactable
 end
 
 InteractionDefinitions.trophy.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
 	-- function 151
-	local view_only = not data.is_server or not not Unit.get_data(interactable_unit, "interaction_data", "view_only")
-	local interaction_action_text = view_only and not not "interaction_action_view" or not view_only and not not Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
+	local view_only = not data.is_server or Unit.get_data(interactable_unit, "interaction_data", "view_only")
+	local interaction_action_text = view_only and "interaction_action_view" or not view_only and Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
 
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), interaction_action_text
 end
 
-InteractionDefinitions.decoration = not not InteractionDefinitions.decoration
+InteractionDefinitions.decoration = InteractionDefinitions.decoration
 InteractionDefinitions.decoration.config.swap_to_3p = false
 
 InteractionDefinitions.decoration.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2704,7 +2704,7 @@ InteractionDefinitions.decoration.client.hud_description = function (interactabl
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
 end
 
-InteractionDefinitions.no_interaction_hud_only = not not InteractionDefinitions.no_interaction_hud_only
+InteractionDefinitions.no_interaction_hud_only = InteractionDefinitions.no_interaction_hud_only
 
 InteractionDefinitions.no_interaction_hud_only.client.hud_description = function (interactable_unit, data, config, key_tail)
 	-- function 155
@@ -2719,7 +2719,7 @@ InteractionDefinitions.no_interaction_hud_only.client.can_interact = function (i
 	return false, ""
 end
 
-InteractionDefinitions.achievement_access = not not InteractionDefinitions.achievement_access
+InteractionDefinitions.achievement_access = InteractionDefinitions.achievement_access
 InteractionDefinitions.achievement_access.config.swap_to_3p = false
 
 InteractionDefinitions.achievement_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2744,7 +2744,7 @@ InteractionDefinitions.achievement_access.client.hud_description = function (int
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.luckstone_access = not not InteractionDefinitions.luckstone_access
+InteractionDefinitions.luckstone_access = InteractionDefinitions.luckstone_access
 InteractionDefinitions.luckstone_access.config.swap_to_3p = false
 
 InteractionDefinitions.luckstone_access.server.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2795,8 +2795,8 @@ InteractionDefinitions.luckstone_access.client.can_interact = function (interact
 	local cemetery = unit_get_data(interactable_unit, "cemetery")
 	local forest = unit_get_data(interactable_unit, "forest")
 	local magnus = unit_get_data(interactable_unit, "magnus")
-	local fulfills = not not cemetery and not not forest and not not magnus
-	local can_interact = not Managers.matchmaking:is_game_matchmaking() and not not fulfills
+	local fulfills = cemetery and forest and magnus
+	local can_interact = not Managers.matchmaking:is_game_matchmaking() and fulfills
 
 	return can_interact
 end
@@ -2806,7 +2806,7 @@ InteractionDefinitions.luckstone_access.client.hud_description = function (inter
 	return unit_get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
 end
 
-InteractionDefinitions.difficulty_selection_access = not not InteractionDefinitions.difficulty_selection_access
+InteractionDefinitions.difficulty_selection_access = InteractionDefinitions.difficulty_selection_access
 InteractionDefinitions.difficulty_selection_access.config.swap_to_3p = false
 
 InteractionDefinitions.difficulty_selection_access.server.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2815,9 +2815,9 @@ InteractionDefinitions.difficulty_selection_access.server.stop = function (world
 		local current_difficulty = unit_get_data(interactable_unit, "current_difficulty")
 		local dlc_name = "scorpion"
 		local has_dlc = Managers.unlock:is_dlc_unlocked(dlc_name)
-		local difficulty_steps = has_dlc and not not 4 or not has_dlc and not not 3
+		local difficulty_steps = has_dlc and 4 or not has_dlc and 3
 
-		current_difficulty = difficulty_steps < current_difficulty and (not not 1 or not not (current_difficulty + 1)) or not (difficulty_steps < current_difficulty) and not not (current_difficulty + 1)
+		current_difficulty = difficulty_steps < current_difficulty and (1 or current_difficulty + 1) or not (difficulty_steps < current_difficulty) and current_difficulty + 1
 
 		local player_manager = Managers.player
 		local statistics_db = player_manager:statistics_db()
@@ -2832,7 +2832,7 @@ end
 InteractionDefinitions.difficulty_selection_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)
 	-- function 165
 	local interactable = unit_get_data(interactable_unit, "is_interactable")
-	local can_interact = not Managers.matchmaking:is_game_matchmaking() and not not interactable
+	local can_interact = not Managers.matchmaking:is_game_matchmaking() and interactable
 
 	return can_interact
 end
@@ -2844,7 +2844,7 @@ InteractionDefinitions.difficulty_selection_access.client.hud_description = func
 	return unit_get_data(interactable_unit, "interaction_data", "hud_description"), DifficultySettings[DefaultDifficulties[current_difficulty]].display_name
 end
 
-InteractionDefinitions.handbook_access = not not InteractionDefinitions.handbook_access
+InteractionDefinitions.handbook_access = InteractionDefinitions.handbook_access
 InteractionDefinitions.handbook_access.config.swap_to_3p = false
 
 InteractionDefinitions.handbook_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2869,7 +2869,7 @@ InteractionDefinitions.handbook_access.client.hud_description = function (intera
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-InteractionDefinitions.inn_door_transition = not not InteractionDefinitions.inn_door_transition
+InteractionDefinitions.inn_door_transition = InteractionDefinitions.inn_door_transition
 InteractionDefinitions.inn_door_transition.config.swap_to_3p = false
 
 InteractionDefinitions.inn_door_transition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2879,7 +2879,7 @@ InteractionDefinitions.inn_door_transition.client.stop = function (world, intera
 		local vote_data = {
 			switch_mechanism = true,
 			mechanism = "adventure",
-			level_key = not not variation_data.hub_level
+			level_key = variation_data.hub_level
 		}
 
 		Managers.state.voting:request_vote("game_settings_vote_switch_mechanism", vote_data, Network.peer_id())
@@ -2896,10 +2896,10 @@ InteractionDefinitions.inn_door_transition.client.can_interact = function (inter
 	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 	local is_vote_in_progress = Managers.state.voting:vote_in_progress()
 
-	return not is_game_matchmaking and not not not is_vote_in_progress
+	return not is_game_matchmaking and not is_vote_in_progress
 end
 
-InteractionDefinitions.deus_door_transition = not not InteractionDefinitions.deus_door_transition
+InteractionDefinitions.deus_door_transition = InteractionDefinitions.deus_door_transition
 InteractionDefinitions.deus_door_transition.config.swap_to_3p = false
 
 InteractionDefinitions.deus_door_transition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2930,10 +2930,10 @@ InteractionDefinitions.deus_door_transition.client.can_interact = function (inte
 	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 	local is_vote_in_progress = Managers.state.voting:vote_in_progress()
 
-	return not is_game_matchmaking and not not not is_vote_in_progress
+	return not is_game_matchmaking and not is_vote_in_progress
 end
 
-InteractionDefinitions.active_event = not not InteractionDefinitions.active_event
+InteractionDefinitions.active_event = InteractionDefinitions.active_event
 InteractionDefinitions.active_event.config.swap_to_3p = false
 
 InteractionDefinitions.active_event.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -2942,7 +2942,7 @@ InteractionDefinitions.active_event.client.stop = function (world, interactor_un
 
 	if result == InteractionResult.SUCCESS and not data.is_husk then
 		local live_events_interface = Managers.backend:get_interface("live_events")
-		local live_events = not not live_events_interface and not not live_events_interface:get_active_events()
+		local live_events = live_events_interface and live_events_interface:get_active_events()
 		local event_name = "default_event"
 
 		if live_events then
@@ -2964,9 +2964,9 @@ end
 InteractionDefinitions.active_event.client.can_interact = function (interactor_unit, interactable_unit, data, config)
 	-- function 177
 	local live_events_interface = Managers.backend:get_interface("live_events")
-	local live_events = not not live_events_interface and not not live_events_interface:get_active_events()
+	local live_events = live_events_interface and live_events_interface:get_active_events()
 
-	return not not live_events and #live_events ~= 0
+	return live_events and #live_events ~= 0
 end
 
 InteractionDefinitions.active_event.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)

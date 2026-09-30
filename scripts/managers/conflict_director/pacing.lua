@@ -1,10 +1,10 @@
 -- chunkname: @scripts/managers/conflict_director/pacing.lua
 
 Pacing = class(Pacing)
-script_data.debug_ai_pacing = not not script_data.debug_ai_pacing
-script_data.debug_player_intensity = not not script_data.debug_player_intensity
+script_data.debug_ai_pacing = script_data.debug_ai_pacing
+script_data.debug_player_intensity = script_data.debug_player_intensity
 
-local CurrentPacing = not not CurrentPacing
+local CurrentPacing = CurrentPacing
 
 Pacing.init = function (self, world)
 	-- function 1
@@ -42,7 +42,7 @@ end
 
 Pacing.enable_hordes = function (self, enable)
 	-- function 5
-	self._horde_population = enable and not not 1 or not enable and not not 0
+	self._horde_population = enable and 1 or not enable and 0
 end
 
 Pacing.pacing_frozen = function (self, t)
@@ -318,7 +318,7 @@ Pacing.annotate_graph = function (self, text, color)
 		x = t,
 		y = annotate_pos,
 		text = text,
-		color = not not color or not not "orange"
+		color = color or "orange"
 	})
 end
 

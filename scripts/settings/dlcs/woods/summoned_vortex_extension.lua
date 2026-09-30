@@ -49,7 +49,7 @@ SummonedVortexExtension.init = function (self, extension_init_context, unit, ext
 	local rotation = Unit.local_rotation(unit, 0)
 	local inner_pose = Matrix4x4.from_quaternion(rotation)
 	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
-	local inner_fx_z_scale_multiplier = not not vortex_template.inner_fx_z_scale_multiplier
+	local inner_fx_z_scale_multiplier = vortex_template.inner_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
 	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
@@ -60,7 +60,7 @@ SummonedVortexExtension.init = function (self, extension_init_context, unit, ext
 	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
 	local outer_pose = Matrix4x4.from_quaternion(rotation)
 	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
-	local outer_fx_z_scale_multiplier = not not vortex_template.outer_fx_z_scale_multiplier
+	local outer_fx_z_scale_multiplier = vortex_template.outer_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
 	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
@@ -105,7 +105,7 @@ SummonedVortexExtension.init = function (self, extension_init_context, unit, ext
 		self:_create_nav_cost_maps(ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
 	end
 
-	self._owner_unit = not not extension_init_data.owner_unit
+	self._owner_unit = extension_init_data.owner_unit
 end
 
 SummonedVortexExtension._create_nav_cost_maps = function (self, ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
@@ -177,7 +177,7 @@ SummonedVortexExtension.extensions_ready = function (self, world, unit)
 		vortex_template = vortex_template
 	}
 
-	local start_sound_event_name = not not vortex_template.start_sound_event_name
+	local start_sound_event_name = vortex_template.start_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
@@ -203,7 +203,7 @@ SummonedVortexExtension.refresh_duration = function (self)
 
 	local breed_name = BLACKBOARDS[target_unit].breed.name
 	local reduce_duration_per_breed = vortex_template.reduce_duration_per_breed
-	local multiplier = reduce_duration_per_breed and not not reduce_duration_per_breed[breed_name] or not reduce_duration_per_breed and not not 1
+	local multiplier = reduce_duration_per_breed and reduce_duration_per_breed[breed_name] or not reduce_duration_per_breed and 1
 	local time_to_add = math.clamp(life_time * multiplier, 0, math.huge)
 
 	self.vortex_data.time_of_death = t + time_to_add
@@ -233,7 +233,7 @@ SummonedVortexExtension.destroy = function (self)
 					locomotion_extension:set_movement_type("constrained_by_mover")
 				end
 
-				local ejected_from_vortex = not not blackboard.ejected_from_vortex
+				local ejected_from_vortex = blackboard.ejected_from_vortex
 
 				ejected_from_vortex:store(velocity)
 
@@ -260,7 +260,7 @@ SummonedVortexExtension.destroy = function (self)
 	self.vortex_data = nil
 
 	local world = self.world
-	local stop_sound_event_name = not not self.vortex_template.stop_sound_event_name
+	local stop_sound_event_name = self.vortex_template.stop_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 
@@ -379,7 +379,7 @@ SummonedVortexExtension._update_height = function (self, unit, t, dt, vortex_tem
 	local current_height = vortex_data.height
 	local max_height = vortex_template.max_height - check_z_offset
 	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, ray_source, Vector3.up(), max_height, "closest", "collision_filter", "filter_ai_mover")
-	local new_height = hit and (not not hit_distance or not not max_height) or not hit and not not max_height
+	local new_height = hit and (hit_distance or max_height) or not hit and max_height
 
 	new_height = math.max(new_height, 4)
 
@@ -423,7 +423,7 @@ SummonedVortexExtension._update_attract_outside_target = function (self, vortex_
 	-- function 11
 	local target_unit = self._target_unit
 	local target_blackboard = BLACKBOARDS[target_unit]
-	local locomotion_extension = not not target_blackboard.locomotion_extension
+	local locomotion_extension = target_blackboard.locomotion_extension
 
 	if not locomotion_extension then
 		return
@@ -487,7 +487,7 @@ SummonedVortexExtension._update_attract_outside_target = function (self, vortex_
 			local t = Managers.time:time("game")
 			local life_time = ConflictUtils.random_interval(vortex_template.time_of_life)
 			local reduce_duration_per_breed = vortex_template.reduce_duration_per_breed
-			local multiplier = reduce_duration_per_breed and not not reduce_duration_per_breed[breed_name] or not reduce_duration_per_breed and not not 1
+			local multiplier = reduce_duration_per_breed and reduce_duration_per_breed[breed_name] or not reduce_duration_per_breed and 1
 			local time_to_add = math.clamp(life_time * multiplier, 0, math.huge)
 
 			self.vortex_data.time_of_death = t + time_to_add
@@ -567,7 +567,7 @@ SummonedVortexExtension.is_position_inside = function (self, position, min_allow
 	-- function 14
 	local vortex_data = self.vortex_data
 	local outer_radius = vortex_data.outer_radius
-	local required_distance_sq = (outer_radius + (not not min_allowed_distance or not not 0))^2
+	local required_distance_sq = (outer_radius + (min_allowed_distance or 0))^2
 	local self_unit = self.unit
 	local self_position = POSITION_LOOKUP[self_unit]
 	local distance_sq = Vector3.distance_squared(position, self_position)

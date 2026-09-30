@@ -59,7 +59,7 @@ AudioSystem._update_global_parameters = function (self, dt)
 		if script_data.debug_music then
 			Debug.text("GLOBAL PARAMETERS")
 
-			local debug_string = string.format(" %s: %.2f", name, not not data.interpolation_current_value)
+			local debug_string = string.format(" %s: %.2f", name, data.interpolation_current_value)
 
 			Debug.text(debug_string)
 		end
@@ -69,7 +69,7 @@ AudioSystem._update_global_parameters = function (self, dt)
 		if progress < 1 then
 			local start_value = data.interpolation_start_value
 			local end_value = data.interpolation_end_value
-			local increment_value = not not LERP_PROGRESS_PER_SECOND[name]
+			local increment_value = LERP_PROGRESS_PER_SECOND[name]
 
 			progress = math.clamp(progress + dt * increment_value, 0, 1)
 
@@ -97,7 +97,7 @@ end
 
 AudioSystem.player_unit_sound_local = function (self, event, unit, object)
 	-- function 6
-	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
+	local object_id = object and Unit.node(unit, object) or not object and 0
 
 	if not DEDICATED_SERVER then
 		self:_play_event(event, unit, object_id)
@@ -139,7 +139,7 @@ AudioSystem.play_audio_unit_event = function (self, event, unit, object)
 		return
 	end
 
-	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
+	local object_id = object and Unit.node(unit, object) or not object and 0
 
 	if not DEDICATED_SERVER then
 		self:_play_event(event, unit, object_id)
@@ -205,7 +205,7 @@ end
 
 AudioSystem.play_audio_unit_param_string_event = function (self, event, param, value, unit, object)
 	-- function 14
-	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
+	local object_id = object and Unit.node(unit, object) or not object and 0
 
 	if not DEDICATED_SERVER then
 		self:_play_param_event(event, param, value, unit, object_id)
@@ -226,7 +226,7 @@ end
 
 AudioSystem.play_audio_unit_param_int_event = function (self, event, param, value, unit, object)
 	-- function 15
-	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
+	local object_id = object and Unit.node(unit, object) or not object and 0
 
 	if not DEDICATED_SERVER then
 		self:_play_param_event(event, param, value, unit, object_id)
@@ -242,8 +242,8 @@ end
 
 AudioSystem.set_global_parameter_with_lerp = function (self, name, value)
 	-- function 16
-	local global_parameter_data = not not self.global_parameter_data[name]
-	local current_value = not not global_parameter_data.interpolation_current_value
+	local global_parameter_data = self.global_parameter_data[name]
+	local current_value = global_parameter_data.interpolation_current_value
 
 	global_parameter_data.interpolation_start_value = current_value
 	global_parameter_data.interpolation_end_value = value
@@ -260,7 +260,7 @@ end
 
 AudioSystem.play_audio_unit_param_float_event = function (self, event, param, value, unit, object)
 	-- function 18
-	local object_id = object and not not Unit.node(unit, object) or not object and not not 0
+	local object_id = object and Unit.node(unit, object) or not object and 0
 
 	if not DEDICATED_SERVER then
 		self:_play_param_event(event, param, value, unit, object_id)

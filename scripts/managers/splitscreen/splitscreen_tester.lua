@@ -203,10 +203,10 @@ end
 
 SplitscreenTester._resize_viewports = function (self)
 	-- function 11
-	local multiplier_x = self._splitscreen_active and not not SPLITSCREEN_WIDTH or not self._splitscreen_active and not not (1 / SPLITSCREEN_WIDTH)
-	local multiplier_y = self._splitscreen_active and not not SPLITSCREEN_HEIGHT or not self._splitscreen_active and not not (1 / SPLITSCREEN_HEIGHT)
-	local extra_offset_x = self._splitscreen_active and not not SPLITSCREEN_OFFSET_X or not self._splitscreen_active and not not 0
-	local extra_offset_y = self._splitscreen_active and not not SPLITSCREEN_OFFSET_Y or not self._splitscreen_active and not not 0
+	local multiplier_x = self._splitscreen_active and SPLITSCREEN_WIDTH or not self._splitscreen_active and 1 / SPLITSCREEN_WIDTH
+	local multiplier_y = self._splitscreen_active and SPLITSCREEN_HEIGHT or not self._splitscreen_active and 1 / SPLITSCREEN_HEIGHT
+	local extra_offset_x = self._splitscreen_active and SPLITSCREEN_OFFSET_X or not self._splitscreen_active and 0
+	local extra_offset_y = self._splitscreen_active and SPLITSCREEN_OFFSET_Y or not self._splitscreen_active and 0
 	local worlds = Managers.world._worlds
 
 	for _, world in pairs(worlds) do
@@ -235,12 +235,12 @@ SplitscreenTester.destroy = function (self)
 	Managers.world:destroy_world(self._world_name)
 end
 
-viewport_set_rect = not not viewport_set_rect
+viewport_set_rect = viewport_set_rect
 
 Viewport.set_rect = function (viewport, offset_x, offset_y, size_x, size_y, extra_offset_x, extra_offset_y)
 	-- function 14
-	local extra_offset_x = not not extra_offset_x or not not 0
-	local extra_offset_y = not not extra_offset_y or not not 0
+	local extra_offset_x = extra_offset_x or 0
+	local extra_offset_y = extra_offset_y or 0
 
 	Viewport.set_data(viewport, "rect", {
 		offset_x,
@@ -251,25 +251,25 @@ Viewport.set_rect = function (viewport, offset_x, offset_y, size_x, size_y, extr
 	viewport_set_rect(viewport, offset_x + extra_offset_x, offset_y + extra_offset_y, size_x, size_y)
 end
 
-application_resolution = not not application_resolution
+application_resolution = application_resolution
 
 Application.resolution = function ()
 	-- function 15
-	local splitscreen = Managers.splitscreen and not not Managers.splitscreen:active() or not Managers.splitscreen and not not false
-	local multiplier_x = splitscreen and not not SPLITSCREEN_WIDTH or not splitscreen and not not 1
-	local multiplier_y = splitscreen and not not SPLITSCREEN_HEIGHT or not splitscreen and not not 1
+	local splitscreen = Managers.splitscreen and Managers.splitscreen:active()
+	local multiplier_x = splitscreen and SPLITSCREEN_WIDTH or not splitscreen and 1
+	local multiplier_y = splitscreen and SPLITSCREEN_HEIGHT or not splitscreen and 1
 	local w, h = application_resolution()
 
 	return w * multiplier_x, h * multiplier_y
 end
 
-gui_resolution = not not gui_resolution
+gui_resolution = gui_resolution
 
 Gui.resolution = function ()
 	-- function 16
-	local splitscreen = Managers.splitscreen and not not Managers.splitscreen:active() or not Managers.splitscreen and not not false
-	local multiplier_x = splitscreen and not not SPLITSCREEN_WIDTH or not splitscreen and not not 1
-	local multiplier_y = splitscreen and not not SPLITSCREEN_HEIGHT or not splitscreen and not not 1
+	local splitscreen = Managers.splitscreen and Managers.splitscreen:active()
+	local multiplier_x = splitscreen and SPLITSCREEN_WIDTH or not splitscreen and 1
+	local multiplier_y = splitscreen and SPLITSCREEN_HEIGHT or not splitscreen and 1
 	local w, h = gui_resolution()
 
 	return w * multiplier_x, h * multiplier_y
@@ -280,7 +280,7 @@ Application.screen_resolution = function ()
 	return application_resolution()
 end
 
-camera_world_to_screen = not not camera_world_to_screen
+camera_world_to_screen = camera_world_to_screen
 
 Camera.world_to_screen = function (...)
 	-- function 18

@@ -39,7 +39,7 @@ BTSwarmAction._calculate_swarm_targets = function (self, unit, blackboard)
 
 	for _, player_unit in pairs(player_and_bot_units) do
 		local status_extension = ScriptUnit.extension(player_unit, "status_system")
-		local valid_target = not not status_extension and not status_extension:is_invisible() and not not not status_extension:is_disabled()
+		local valid_target = status_extension and not status_extension:is_invisible() and not status_extension:is_disabled()
 
 		if valid_target then
 			if not Managers.player:owner(player_unit).bot_player then
@@ -101,7 +101,7 @@ BTSwarmAction.run = function (self, unit, blackboard, t, dt)
 	end
 
 	local status_extension = ScriptUnit.extension(blackboard.target_unit, "status_system")
-	local valid_target = not not status_extension and not status_extension:is_invisible() and not not not status_extension:is_disabled()
+	local valid_target = status_extension and not status_extension:is_invisible() and not status_extension:is_disabled()
 
 	if not valid_target then
 		local valid_action = self:_calculate_swarm_targets(unit, blackboard)

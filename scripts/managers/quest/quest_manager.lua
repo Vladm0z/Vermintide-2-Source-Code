@@ -258,7 +258,7 @@ QuestManager.get_quest_outline = function (self)
 
 					if order then
 						for i = 1, #category_entries do
-							if order < not not quest_templates.quests[category_entries[i]].custom_order then
+							if order < quest_templates.quests[category_entries[i]].custom_order then
 								insert_idx = i
 
 								break
@@ -266,7 +266,7 @@ QuestManager.get_quest_outline = function (self)
 						end
 					end
 
-					table.insert(category_entries, not not insert_idx or not not (#category_entries + 1), quest_key)
+					table.insert(category_entries, insert_idx or #category_entries + 1, quest_key)
 				else
 					local entries = category_table.entries
 					local quest_template = quest_templates.quests[quest_key]
@@ -275,7 +275,7 @@ QuestManager.get_quest_outline = function (self)
 
 					if order then
 						for i = 1, #entries do
-							if order < not not quest_templates.quests[entries[i]].custom_order then
+							if order < quest_templates.quests[entries[i]].custom_order then
 								insert_idx = i
 
 								break
@@ -283,7 +283,7 @@ QuestManager.get_quest_outline = function (self)
 						end
 					end
 
-					table.insert(entries, not not insert_idx or not not (#entries + 1), quest_key)
+					table.insert(entries, insert_idx or #entries + 1, quest_key)
 				end
 			end
 		end
@@ -453,7 +453,7 @@ end
 
 QuestManager.polling_quest_refresh = function (self)
 	-- function 11
-	return self._refresh_poll_id and not not true or not self._refresh_poll_id and not not false
+	return self._refresh_poll_id
 end
 
 QuestManager.claim_reward = function (self, quest_id)
@@ -507,7 +507,7 @@ end
 
 QuestManager.polling_quest_reward = function (self)
 	-- function 14
-	return self._reward_poll_id and not not true or not self._reward_poll_id and not not false
+	return self._reward_poll_id
 end
 
 QuestManager.can_claim_quest_rewards = function (self, quest_id)
@@ -618,19 +618,19 @@ QuestManager.on_quests_updated = function (self)
 	-- function 21
 	local quest_event_mapping = {}
 	local quests = self._backend_interface_quests:get_quests()
-	local event_quests = not not quests.event
+	local event_quests = quests.event
 	local templates = quest_templates.quests
 
 	for quest_key, quest_data in pairs(event_quests) do
 		local quest_name = quest_data.name
 		local template = templates[quest_name]
-		local events = not not template and not not template.events
+		local events = template and template.events
 
 		if events then
 			for i = 1, #events do
 				local event_name = events[i]
 
-				quest_event_mapping[event_name] = not not quest_event_mapping[event_name]
+				quest_event_mapping[event_name] = quest_event_mapping[event_name]
 				quest_event_mapping[event_name][#quest_event_mapping[event_name] + 1] = quest_key
 			end
 		end

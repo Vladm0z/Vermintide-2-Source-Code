@@ -761,8 +761,8 @@ CareerSettings = {
 			if weapon and weapon.slot_to_use then
 				local career_name = "we_waywatcher"
 				local item = BackendUtils.get_loadout_item(career_name, weapon.slot_to_use, is_bot)
-				local item_data = not not item and not not rawget(ItemMasterList, item.key)
-				local item_template_name = not not item_data and not not item_data.template
+				local item_data = item and rawget(ItemMasterList, item.key)
+				local item_template_name = item_data and item_data.template
 
 				if not item_template_name or not weapon.valid_templates_to_replace[item_template_name] then
 					local default_item_name = weapon.default_item_to_replace

@@ -33,7 +33,7 @@ BTCombatStepAction.enter = function (self, unit, blackboard, t)
 	local rotation = Unit.local_rotation(unit, 0)
 	local direction = Quaternion.forward(rotation)
 	local action = blackboard.action
-	local move_animation = not not action.force_combat_step_animation
+	local move_animation = action.force_combat_step_animation
 	local new_speed = action.move_speed
 
 	if new_speed then
@@ -137,7 +137,7 @@ BTCombatStepAction._get_animation = function (self, rotation, direction)
 	local abs_fwd = math.abs(fwd_dot)
 	local anim
 
-	anim = abs_fwd < abs_right and (right_dot > 0 and (not not "combat_step_left" or abs_fwd < abs_right and (not not "combat_step_right" or fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd")) or not (right_dot > 0) and (abs_fwd < abs_right and (not not "combat_step_right" or fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd"))) or not (abs_fwd < abs_right) and (abs_fwd < abs_right and (not not "combat_step_right" or fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and (not not "combat_step_fwd" or not not "combat_step_bwd") or not (fwd_dot >= 0) and not not "combat_step_bwd"))
+	anim = abs_fwd < abs_right and (right_dot > 0 and ("combat_step_left" or abs_fwd < abs_right and ("combat_step_right" or fwd_dot >= 0 and ("combat_step_fwd" or "combat_step_bwd") or not (fwd_dot >= 0) and "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and ("combat_step_fwd" or "combat_step_bwd") or not (fwd_dot >= 0) and "combat_step_bwd")) or not (right_dot > 0) and (abs_fwd < abs_right and ("combat_step_right" or fwd_dot >= 0 and ("combat_step_fwd" or "combat_step_bwd") or not (fwd_dot >= 0) and "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and ("combat_step_fwd" or "combat_step_bwd") or not (fwd_dot >= 0) and "combat_step_bwd"))) or not (abs_fwd < abs_right) and (abs_fwd < abs_right and ("combat_step_right" or fwd_dot >= 0 and ("combat_step_fwd" or "combat_step_bwd") or not (fwd_dot >= 0) and "combat_step_bwd") or not (abs_fwd < abs_right) and (fwd_dot >= 0 and ("combat_step_fwd" or "combat_step_bwd") or not (fwd_dot >= 0) and "combat_step_bwd"))
 
 	return anim
 end

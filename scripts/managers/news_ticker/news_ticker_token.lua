@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/news_ticker/news_ticker_token.lua
 
-NewsTickerToken = not not NewsTickerToken
+NewsTickerToken = NewsTickerToken
 
 NewsTickerToken.init = function (self, loader, job)
 	-- function 1

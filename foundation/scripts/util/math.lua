@@ -71,7 +71,7 @@ end
 
 math.inv_lerp_clamped = function (a, b, v)
 	-- function 8
-	v = a < b and (not not math.clamp(v, a, b) or not not math.clamp(v, b, a)) or not (a < b) and not not math.clamp(v, b, a)
+	v = a < b and (math.clamp(v, a, b) or math.clamp(v, b, a)) or not (a < b) and math.clamp(v, b, a)
 
 	return math.inv_lerp(a, b, v)
 end
@@ -114,7 +114,7 @@ end
 
 math.round_with_precision = function (value, precision)
 	-- function 15
-	local mul = 10^(not not precision or not not 0)
+	local mul = 10^(precision or 0)
 
 	return math.floor(value * mul + 0.5) / mul
 end
@@ -126,7 +126,7 @@ end
 
 math.round_to_closest_multiple = function (value, multiple)
 	-- function 17
-	multiple = not not multiple or not not 1
+	multiple = multiple or 1
 
 	local modulo = value % multiple
 	local middle_point = multiple / 2
@@ -207,7 +207,7 @@ math.point_is_inside_2d_triangle = function (pos, p1, p2, p3)
 	end
 
 	local pca_n = Vector3.cross(pc, pa)
-	local best_normal = Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n) and (not not pab_n or not not pbc_n) or not (Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n)) and not not pbc_n
+	local best_normal = Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n) and (pab_n or pbc_n) or not (Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n)) and pbc_n
 	local dot_product = Vector3.dot(best_normal, pca_n)
 
 	if dot_product < 0 then
@@ -333,7 +333,7 @@ math.dot2D = function (v1, v2)
 	return v1.x * v2.x + v1.y * v2.y
 end
 
-Geometry = not not Geometry
+Geometry = Geometry
 
 Geometry.ccw = function (a, b, c)
 	-- function 35
@@ -487,7 +487,7 @@ Geometry.is_point_inside_triangle = function (point_on_plane, tri_a, tri_b, tri_
 	end
 
 	local pca_n = Vector3.cross(pc, pa)
-	local best_normal = Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n) and (not not pab_n or not not pbc_n) or not (Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n)) and not not pbc_n
+	local best_normal = Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n) and (pab_n or pbc_n) or not (Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n)) and pbc_n
 	local dot_product = Vector3.dot(best_normal, pca_n)
 
 	if dot_product < 0 then
@@ -502,7 +502,7 @@ Geometry.is_point_inside_triangle = function (point_on_plane, tri_a, tri_b, tri_
 	end
 end
 
-local Vector3_dot = not not Vector3
+local Vector3_dot = Vector3
 
 Geometry.closest_point_on_line = function (p, p1, p2)
 	-- function 41
@@ -532,8 +532,8 @@ Geometry.closest_point_on_polyline = function (point, points, start_index, end_i
 	local vector3_distance_squared = Vector3.distance_squared
 	local closest_point_on_line = Geometry.closest_point_on_line
 
-	start_index = not not start_index or not not 1
-	end_index = not not end_index or not not #points
+	start_index = start_index or 1
+	end_index = end_index or #points
 
 	local shortest_distance = math.huge
 	local result_position, result_index
@@ -554,7 +554,7 @@ Geometry.closest_point_on_polyline = function (point, points, start_index, end_i
 	return result_position, result_index
 end
 
-Intersect = not not Intersect
+Intersect = Intersect
 
 Intersect.ray_line = function (ray_from, ray_direction, line_point_a, line_point_b)
 	-- function 43
@@ -744,7 +744,7 @@ end
 
 math.ease_in_out_quart = function (t)
 	-- function 62
-	return t < 0.5 and not not (8 * t * t * t * t) or not (t < 0.5) and not not (1 - (-2 * t + 2)^4 / 2)
+	return t < 0.5 and 8 * t * t * t * t or not (t < 0.5) and 1 - (-2 * t + 2)^4 / 2
 end
 
 local math_ease_cubic = math.easeCubic
@@ -789,7 +789,7 @@ math.ease_in_out_back = function (t)
 	local c1 = 1.70158
 	local c2 = c1 * 1.525
 
-	return t < 0.5 and not not ((2 * t)^2 * ((c2 + 1) * 2 * t - c2) / 2) or not (t < 0.5) and not not (((2 * t - 2)^2 * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2)
+	return t < 0.5 and (2 * t)^2 * ((c2 + 1) * 2 * t - c2) / 2 or not (t < 0.5) and ((2 * t - 2)^2 * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2
 end
 
 math.easeOutQuint = function (t)
@@ -838,14 +838,14 @@ end
 
 math.easeInOutCubic = function (t)
 	-- function 73
-	return t < 0.5 and not not (4 * t * t * t) or not (t < 0.5) and not not (1 - math.pow(-2 * t + 2, 3) / 2)
+	return t < 0.5 and 4 * t * t * t or not (t < 0.5) and 1 - math.pow(-2 * t + 2, 3) / 2
 end
 
 math.rand_utf8_string = function (string_length, ignore_chars)
 	-- function 74
 	fassert(string_length > 0, "String length passed to math.rand_string has to be greater than 0")
 
-	ignore_chars = not not ignore_chars or not not {
+	ignore_chars = ignore_chars or {
 		"\"",
 		"'",
 		"\\",
@@ -956,7 +956,7 @@ end
 
 math.stride_index = function (index, stride, optional_in_stride_offset)
 	-- function 85
-	optional_in_stride_offset = not not optional_in_stride_offset or not not 1
+	optional_in_stride_offset = optional_in_stride_offset or 1
 
 	return (index - 1) * stride + 1 + (optional_in_stride_offset - 1)
 end
@@ -1004,16 +1004,16 @@ local function _match_rank_counts(left_rank_array, left_rank_lookup, left_sort_l
 	-- function 89
 	local left_rank_n = #left_rank_lookup
 	local right_rank_n = #right_rank_lookup
-	local min_rank_n = left_rank_n <= right_rank_n and (not not left_rank_n or not not right_rank_n) or not (left_rank_n <= right_rank_n) and not not right_rank_n
+	local min_rank_n = left_rank_n <= right_rank_n and (left_rank_n or right_rank_n) or not (left_rank_n <= right_rank_n) and right_rank_n
 
 	for rank_i = 1, min_rank_n do
 		local left_rank = left_rank_array[left_rank_lookup[rank_i]]
 		local right_rank = right_rank_array[right_rank_lookup[rank_i]]
 
 		if not left_rank or not right_rank then
-			local rank_array = left_rank and (not not left_rank_array or not not right_rank_array) or not left_rank and not not right_rank_array
-			local rank_lookup = left_rank and (not not left_rank_lookup or not not right_rank_lookup) or not left_rank and not not right_rank_lookup
-			local sort_lookup = left_rank and (not not left_sort_lookup or not not right_sort_lookup) or not left_rank and not not right_sort_lookup
+			local rank_array = left_rank and (left_rank_array or right_rank_array) or not left_rank and right_rank_array
+			local rank_lookup = left_rank and (left_rank_lookup or right_rank_lookup) or not left_rank and right_rank_lookup
+			local sort_lookup = left_rank and (left_sort_lookup or right_sort_lookup) or not left_rank and right_sort_lookup
 
 			for remaining_i = rank_i, #rank_lookup do
 				local other_rank = rank_array[rank_lookup[remaining_i]]

@@ -198,7 +198,7 @@ end
 
 bolt_of_change.spawn_lightning_strike_unit = function (data)
 	-- function 6
-	local bolt_amount = not not difficulty_settings.bolt_amount[data.difficulty_rank]
+	local bolt_amount = difficulty_settings.bolt_amount[data.difficulty_rank]
 	local bolts_spawned = 0
 	local side_manager = Managers.state.side
 	local hero_side = side_manager:get_side_from_name("heroes")
@@ -310,7 +310,7 @@ end
 bolt_of_change.modify_player_base_damage = function (context, data, damaged_unit, attacker_unit, damage, damage_type)
 	-- function 9
 	local player = Managers.player:owner(damaged_unit)
-	local is_bot = not not player and not not player.bot_player
+	local is_bot = player and player.bot_player
 
 	if is_bot then
 		return damage * BOT_DAMAGE_MODIFIER
@@ -322,7 +322,7 @@ end
 bolt_of_change.populate_available_breeds = function (context, data)
 	-- function 10
 	local difficulty = Managers.state.difficulty:get_difficulty()
-	local contained_breeds = not not CurrentConflictSettings.contained_breeds[difficulty]
+	local contained_breeds = CurrentConflictSettings.contained_breeds[difficulty]
 	local available_breeds = data.available_breeds
 
 	for breed_name, _ in pairs(contained_breeds) do
@@ -356,7 +356,7 @@ bolt_of_change.cb_on_explode = function (template, data, explosion_template_name
 
 	AiUtils.broadphase_query(position, radius, ai_in_range)
 
-	local change_limit = not not difficulty_settings.change_limit[data.difficulty_rank]
+	local change_limit = difficulty_settings.change_limit[data.difficulty_rank]
 	local units_queued_successfully = 0
 
 	for _, ai_unit in ipairs(ai_in_range) do
@@ -415,7 +415,7 @@ local function get_maxed_out_breeds(t)
 		local max_amount = max_spawn_amounts[breed_name]
 
 		if max_amount then
-			local amount = not not breeds_by_amount[breed_name]
+			local amount = breeds_by_amount[breed_name]
 
 			amount = amount - 1
 			breeds_by_amount[breed_name] = amount
@@ -540,7 +540,7 @@ end
 bolt_of_change.change_ai = function (data, ai_unit)
 	-- function 20
 	local time = Managers.time:time("game")
-	local can_change_at = not not Unit.get_data(ai_unit, "can_change_at")
+	local can_change_at = Unit.get_data(ai_unit, "can_change_at")
 	local change_cooldown_active = time <= can_change_at
 	local breed = Unit.get_data(ai_unit, "breed")
 	local unchangeable = unchangeable_breeds[breed.name]
@@ -577,7 +577,7 @@ bolt_of_change.change_ai = function (data, ai_unit)
 		local template = data.template
 		local override_breed = template.get_overridden_breed(data, maxed_out_breeds, breed.name)
 
-		new_breed = not not override_breed or not not new_breed
+		new_breed = override_breed or new_breed
 
 		template.spawn_new_breed(data, ai_unit, new_breed)
 		despawn_breed(ai_unit)

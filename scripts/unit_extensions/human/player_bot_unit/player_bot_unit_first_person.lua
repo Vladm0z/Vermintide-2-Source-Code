@@ -15,7 +15,7 @@ PlayerBotUnitFirstPerson.init = function (self, extension_init_context, unit, ex
 	local career = profile.careers[career_index]
 	local unit_name = profile.base_units.first_person_bot
 	local skin_name = extension_init_data.skin_name
-	local first_person_attachment = not not Cosmetics[skin_name].first_person_attachment
+	local first_person_attachment = Cosmetics[skin_name].first_person_attachment
 	local attachment_unit_name = first_person_attachment.unit
 	local attachment_node_linking = first_person_attachment.attachment_node_linking
 	local unit_spawner = Managers.state.unit_spawner
@@ -382,7 +382,7 @@ end
 
 PlayerBotUnitFirstPerson.play_sound_event = function (self, event, position)
 	-- function 45
-	local sound_position = not not position or not not self:current_position()
+	local sound_position = position or self:current_position()
 	local wwise_source_id, wwise_world = WwiseUtils.make_position_auto_source(self.world, sound_position)
 
 	WwiseWorld.set_switch(wwise_world, "husk", "true", wwise_source_id)

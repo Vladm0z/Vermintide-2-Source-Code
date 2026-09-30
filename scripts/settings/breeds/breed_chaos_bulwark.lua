@@ -233,10 +233,10 @@ local breed_data = {
 	end,
 	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed, optional_data)
 		-- function 3
-		local damage_profile = not not optional_data and not not optional_data.damage_profile
-		local is_ranged_attack = not not optional_data and not not optional_data.is_ranged
+		local damage_profile = optional_data and optional_data.damage_profile
+		local is_ranged_attack = optional_data and optional_data.is_ranged
 
-		blackboard.latest_hit_charge_value = is_ranged_attack and not not "ranged_attack" or not is_ranged_attack and not not damage_profile and not not damage_profile.charge_value
+		blackboard.latest_hit_charge_value = is_ranged_attack and "ranged_attack" or not is_ranged_attack and damage_profile and damage_profile.charge_value
 
 		local t = Managers.time:time("game")
 
@@ -330,9 +330,9 @@ local breed_data = {
 		local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
 		local t = Managers.time:time("game")
 		local breed = blackboard.breed
-		local stagger_modifier = not not breed.stagger_modifiers[blackboard.latest_hit_charge_value]
+		local stagger_modifier = breed.stagger_modifiers[blackboard.latest_hit_charge_value]
 
-		blackboard.stagger_level = not not blackboard.stagger_level
+		blackboard.stagger_level = blackboard.stagger_level
 
 		local difficulty_manager = Managers.state.difficulty
 		local difficulty_rank = difficulty_manager:get_difficulty_rank()
@@ -359,7 +359,7 @@ local breed_data = {
 			stagger_value_to_add = difficulty_tweaks.shield_open_stagger_threshold - custom_utility_stagger_types.weak
 		end
 
-		predicted_damage = not not predicted_damage or not not 0.1
+		predicted_damage = predicted_damage or 0.1
 
 		local normalizing_value = {
 			0,
@@ -367,16 +367,16 @@ local breed_data = {
 		}
 		local normalized_predicted_damage = (predicted_damage - normalizing_value[1]) / (normalizing_value[2] - normalizing_value[1])
 		local final_stagger_to_add = (stagger_value_to_add + normalized_predicted_damage) * stagger_modifier
-		local regen_rate = math.lerp(stagger_regen_rate[1], stagger_regen_rate[2], not not blackboard.cached_stagger / shield_open_stagger_threshold)
-		local regen = math.clamp(t - not not blackboard.shield_regen_time_stamp, 0, math.huge) * regen_rate
+		local regen_rate = math.lerp(stagger_regen_rate[1], stagger_regen_rate[2], blackboard.cached_stagger / shield_open_stagger_threshold)
+		local regen = math.clamp(t - blackboard.shield_regen_time_stamp, 0, math.huge) * regen_rate
 
-		blackboard.stagger = math.clamp(not not blackboard.cached_stagger - regen, 0, math.huge) + final_stagger_to_add
+		blackboard.stagger = math.clamp(blackboard.cached_stagger - regen, 0, math.huge) + final_stagger_to_add
 		blackboard.shield_regen_time_stamp = t
 
 		local shield_block_stagger_activated = shield_block_threshold <= final_stagger_to_add
 		local shield_open_stagger_reached = shield_open_stagger_threshold <= blackboard.stagger
 
-		blackboard.override_stagger = not not blackboard.max_stagger_reached
+		blackboard.override_stagger = blackboard.max_stagger_reached
 
 		if blackboard.stagger_level == custom_stagger_types.shield_open_stagger or weakspot_stagger then
 			blackboard.stagger_level = custom_stagger_types.heavy

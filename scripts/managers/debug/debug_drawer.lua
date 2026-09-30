@@ -20,16 +20,16 @@ end
 
 DebugDrawer.line = function (self, from, to, color)
 	-- function 4
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
 	LineObject.add_line(self._line_object, color, from, to)
 end
 
 DebugDrawer.sphere = function (self, center, radius, color, segments, parts)
 	-- function 5
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
-	LineObject.add_sphere(self._line_object, color, center, radius, not not segments or not not 20, not not parts or not not 2)
+	LineObject.add_sphere(self._line_object, color, center, radius, segments or 20, parts or 2)
 end
 
 DebugDrawer.capsule_overlap = function (self, position, size, rotation, color)
@@ -54,8 +54,8 @@ end
 
 DebugDrawer.box_sweep = function (self, pose, extents, movement_vector, color1, color2)
 	-- function 8
-	color1 = not not color1 or not not Color(255, 255, 255)
-	color2 = not not color2 or not not Color(255, 0, 0)
+	color1 = color1 or Color(255, 255, 255)
+	color2 = color2 or Color(255, 0, 0)
 
 	local rot = Matrix4x4.rotation(pose)
 	local pos = Matrix4x4.translation(pose)
@@ -94,37 +94,37 @@ end
 
 DebugDrawer.capsule = function (self, from, to, radius, color)
 	-- function 9
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
 	LineObject.add_capsule(self._line_object, color, from, to, radius)
 end
 
 DebugDrawer.actor = function (self, actor, color, camera_pose)
 	-- function 10
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
 	Actor.debug_draw(actor, self._line_object, color, camera_pose)
 end
 
 DebugDrawer.box = function (self, pose, extents, color)
 	-- function 11
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
 	LineObject.add_box(self._line_object, color, pose, extents)
 end
 
 DebugDrawer.cone = function (self, from, to, radius, color, segments, bars)
 	-- function 12
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
 	LineObject.add_cone(self._line_object, color, from, to, radius, segments, bars)
 end
 
 DebugDrawer.circle = function (self, center, radius, normal, color, segments)
 	-- function 13
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
-	LineObject.add_circle(self._line_object, color, center, radius, normal, not not segments or not not 20)
+	LineObject.add_circle(self._line_object, color, center, radius, normal, segments or 20)
 end
 
 DebugDrawer.arrow_2d = function (self, from, to, color)
@@ -141,8 +141,8 @@ end
 
 DebugDrawer.cylinder = function (self, pos1, pos2, radius, color, segments)
 	-- function 15
-	color = not not color or not not Color(255, 255, 255)
-	segments = not not segments or not not 5
+	color = color or Color(255, 255, 255)
+	segments = segments or 5
 
 	local step = (pos2 - pos1) / segments
 	local pos = pos1
@@ -159,7 +159,7 @@ end
 
 DebugDrawer.vector = function (self, position, vector, color)
 	-- function 16
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
 	local length = Vector3.length(vector)
 	local normalized = Vector3.normalize(vector)
@@ -179,7 +179,7 @@ end
 
 DebugDrawer.quaternion = function (self, position, quaternion, scale)
 	-- function 17
-	scale = not not scale or not not 1
+	scale = scale or 1
 
 	self:vector(position, scale * Quaternion.right(quaternion), Color(255, 0, 0))
 	self:vector(position, scale * Quaternion.forward(quaternion), Color(0, 255, 0))
@@ -188,7 +188,7 @@ end
 
 DebugDrawer.matrix4x4 = function (self, matrix, scale)
 	-- function 18
-	scale = not not scale or not not 1
+	scale = scale or 1
 
 	local position = Matrix4x4.translation(matrix)
 
@@ -201,7 +201,7 @@ end
 
 DebugDrawer.unit = function (self, unit, color)
 	-- function 19
-	color = not not color or not not Color(255, 255, 255)
+	color = color or Color(255, 255, 255)
 
 	local box_pose, box_extents = Unit.box(unit)
 

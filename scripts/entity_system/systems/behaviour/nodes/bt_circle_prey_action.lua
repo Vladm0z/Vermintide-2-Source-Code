@@ -64,7 +64,7 @@ BTCirclePreyAction.run = function (self, unit, blackboard, t, dt)
 		local goal_position = self:get_new_goal(unit, blackboard)
 
 		if goal_position then
-			local skulk_pos_box = not not blackboard.skulk_pos
+			local skulk_pos_box = blackboard.skulk_pos
 
 			skulk_pos_box:store(goal_position)
 
@@ -81,7 +81,7 @@ end
 
 BTCirclePreyAction.get_new_goal = function (self, unit, blackboard)
 	-- function 5
-	local target_unit = not not blackboard.secondary_target
+	local target_unit = blackboard.secondary_target
 
 	if Unit.alive(target_unit) then
 		local target_position = POSITION_LOOKUP[target_unit]

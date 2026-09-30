@@ -187,7 +187,7 @@ local difficulty_description_text_style = {
 	horizontal_alignment = "center",
 	vertical_alignment = "top",
 	font_type = "hell_shark",
-	font_size = IS_WINDOWS and not not 20 or not IS_WINDOWS and not not 28,
+	font_size = IS_WINDOWS and 20 or not IS_WINDOWS and 28,
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
 		0,
@@ -382,7 +382,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 						-- function 13
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -394,7 +394,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 						-- function 14
 						local button_hotspot = content.parent.button_hotspot
 
-						return not not content.is_hover
+						return content.is_hover
 					end
 				}
 			}
@@ -423,7 +423,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 			hover_hotspot = {
 				cancel_matchmaking_tooltip = tooltip_info
 			},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			disable_with_gamepad = disable_with_gamepad,
 			background = {
@@ -493,7 +493,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -513,7 +513,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -532,7 +532,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
@@ -763,7 +763,7 @@ local function create_difficulty_button(scenegraph_id, size, background_icon, ba
 		math.floor(icon_settings.size[1] * icon_scale),
 		math.floor(icon_settings.size[2] * icon_scale)
 	}
-	local background_texture = not not background_texture or not not "button_bg_01"
+	local background_texture = background_texture or "button_bg_01"
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 	local frame_name = "menu_frame_08"
 	local frame_settings = UIFrameSettings[frame_name]

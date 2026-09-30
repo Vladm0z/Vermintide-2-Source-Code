@@ -85,7 +85,7 @@ return {
 			data.unit_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 		end
 
-		local has_buff = not not data.unit_buff_extension
+		local has_buff = data.unit_buff_extension
 
 		return has_buff
 	end,

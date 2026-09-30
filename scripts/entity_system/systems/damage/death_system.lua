@@ -41,7 +41,7 @@ DeathSystem.on_add_extension = function (self, world, unit, extension_name, exte
 
 	self.unit_extensions[unit] = extension
 
-	local template = not not extension_init_data.death_reaction_template
+	local template = extension_init_data.death_reaction_template
 
 	self:set_death_reaction_template(unit, template)
 	fassert(extension.death_reaction_template, "Missing death reaction template in unit data or extension init data.")
@@ -122,7 +122,7 @@ DeathSystem.set_death_reaction_template = function (self, unit, template_name)
 	local network_type = extension.network_type
 	local active_reactions = self.active_reactions[network_type]
 
-	active_reactions[template_name] = not not active_reactions[template_name]
+	active_reactions[template_name] = active_reactions[template_name]
 
 	if not extension.is_alive and not extension.death_is_done then
 		self.active_reactions[network_type][template_name][unit] = extension
@@ -270,7 +270,7 @@ DeathSystem._create_dummy_killing_blow = function (self, unit, damage_type)
 	-- function 16
 	local killing_blow = FrameTable.alloc_table()
 	local hit_position = Unit.world_position(unit, 0)
-	local hit_position_table = not not hit_position and not not Vector3Aux.box(nil, hit_position)
+	local hit_position_table = hit_position and Vector3Aux.box(nil, hit_position)
 	local hit_zone_name = "full"
 	local damage_direction = Vector3.up()
 	local damage_direction_table = Vector3Aux.box(nil, damage_direction)
@@ -348,5 +348,5 @@ DeathSystem.flow_get_killing_blow_attacker_unit = function (self)
 	-- function 20
 	local killing_blow = self._current_death_reaction_killing_blow
 
-	return not not killing_blow and not not killing_blow[DamageDataIndex.ATTACKER]
+	return killing_blow and killing_blow[DamageDataIndex.ATTACKER]
 end

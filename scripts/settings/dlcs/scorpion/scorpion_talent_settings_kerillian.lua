@@ -2,9 +2,9 @@
 
 local buff_tweak_data = {}
 
-TalentBuffTemplates = not not TalentBuffTemplates
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.wood_elf = {}
-TalentTrees = not not TalentTrees
+TalentTrees = TalentTrees
 TalentTrees.wood_elf = {
 	{},
 	{},

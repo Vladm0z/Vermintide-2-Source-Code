@@ -271,7 +271,7 @@ UnitFrameUI.update = function (self, dt, t)
 	local assisted_respawn = data.assisted_respawn
 	local needs_help = data.needs_help
 
-	self.overlay_time = not not self.overlay_time + dt * 1.4
+	self.overlay_time = self.overlay_time + dt * 1.4
 
 	if self:_update_portrait_opacity(is_dead, is_knocked_down, needs_help, assisted_respawn) then
 		dirty = true
@@ -316,7 +316,7 @@ end
 
 UnitFrameUI.on_resolution_modified = function (self)
 	-- function 20
-	self:set_player_name(not not self._player_name)
+	self:set_player_name(self._player_name)
 
 	for _, widget in pairs(self._widgets) do
 		self:_set_widget_dirty(widget)
@@ -385,43 +385,43 @@ UnitFrameUI.draw = function (self, dt)
 
 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	render_settings.alpha_multiplier = not not self._default_alpha_multiplier
+	render_settings.alpha_multiplier = self._default_alpha_multiplier
 
 	for _, widget in pairs(self._default_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	render_settings.alpha_multiplier = not not self._damage_alpha_multiplier
+	render_settings.alpha_multiplier = self._damage_alpha_multiplier
 
 	for _, widget in pairs(self._damage_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	render_settings.alpha_multiplier = not not self._portrait_alpha_multiplier
+	render_settings.alpha_multiplier = self._portrait_alpha_multiplier
 
 	for _, widget in pairs(self._portrait_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	render_settings.alpha_multiplier = not not self._equipment_alpha_multiplier
+	render_settings.alpha_multiplier = self._equipment_alpha_multiplier
 
 	for _, widget in pairs(self._equipment_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	render_settings.alpha_multiplier = not not self._health_alpha_multiplier
+	render_settings.alpha_multiplier = self._health_alpha_multiplier
 
 	for _, widget in pairs(self._health_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	render_settings.alpha_multiplier = not not self._ability_alpha_multiplier
+	render_settings.alpha_multiplier = self._ability_alpha_multiplier
 
 	for _, widget in pairs(self._ability_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	render_settings.alpha_multiplier = not not self._respawn_alpha_multiplier
+	render_settings.alpha_multiplier = self._respawn_alpha_multiplier
 
 	for _, widget in pairs(self._respawn_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
@@ -473,7 +473,7 @@ UnitFrameUI.set_portrait_frame = function (self, frame_settings_name, level_text
 		return
 	end
 
-	local scale = not not previous_widget.content.scale
+	local scale = previous_widget.content.scale
 
 	UIWidget.destroy(self.ui_renderer, previous_widget)
 
@@ -523,19 +523,19 @@ UnitFrameUI.set_versus_level = function (self, versus_level)
 
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 	local insignia_visible_setting = Application.user_setting("toggle_versus_level_in_all_game_modes")
-	local insignia_visible = mechanism_name == "versus" or not not insignia_visible_setting
+	local insignia_visible = mechanism_name == "versus" or insignia_visible_setting
 	local widget_content = widget.content
 
 	widget_content.insignia_main.uvs = insignia_main_uvs
 	widget_content.insignia_addon.uvs = insignia_addon_uvs
 	widget_content.level = versus_level
-	widget_content.visible = not not insignia_visible and versus_level > 0
+	widget_content.visible = insignia_visible and versus_level > 0
 
 	if mechanism_name ~= "versus" then
 		local scenegraph_definition = self.definitions.scenegraph_definition
 
-		self.ui_scenegraph.player_status.position[1] = scenegraph_definition.player_status.position[1] - (insignia_visible_setting and not not 0 or not insignia_visible_setting and not not UISettings.INSIGNIA_OFFSET)
-		self.ui_scenegraph.portrait_pivot_parent.position[1] = scenegraph_definition.portrait_pivot_parent.position[1] - (insignia_visible_setting and not not 0 or not insignia_visible_setting and not not UISettings.INSIGNIA_OFFSET)
+		self.ui_scenegraph.player_status.position[1] = scenegraph_definition.player_status.position[1] - (insignia_visible_setting and 0 or not insignia_visible_setting and UISettings.INSIGNIA_OFFSET)
+		self.ui_scenegraph.portrait_pivot_parent.position[1] = scenegraph_definition.portrait_pivot_parent.position[1] - (insignia_visible_setting and 0 or not insignia_visible_setting and UISettings.INSIGNIA_OFFSET)
 	end
 
 	for _, widget in pairs(self._widgets) do
@@ -562,7 +562,7 @@ UnitFrameUI.set_status_icon = function (self, icon_texture, alpha)
 	local widget_style = widget.style
 
 	widget_content.portrait_icon = icon_texture
-	widget_style.portrait_icon.color[1] = not not alpha or not not 255
+	widget_style.portrait_icon.color[1] = alpha or 255
 
 	self:_set_widget_dirty(widget)
 end
@@ -635,7 +635,7 @@ UnitFrameUI.set_player_name = function (self, name_text)
 
 			player_name_shadow_style.font_size = player_name_shadow_font_size
 		else
-			display_name = widget.style.player_name and (Utf8.length(name_text) > PLAYER_NAME_MAX_LENGTH and (not not UIRenderer.crop_text_width(self.ui_renderer, name_text, max_width, widget.style.player_name) or not not name_text) or not (Utf8.length(name_text) > PLAYER_NAME_MAX_LENGTH) and not not name_text) or not widget.style.player_name and not not name_text
+			display_name = widget.style.player_name and (Utf8.length(name_text) > PLAYER_NAME_MAX_LENGTH and (UIRenderer.crop_text_width(self.ui_renderer, name_text, max_width, widget.style.player_name) or name_text) or not (Utf8.length(name_text) > PLAYER_NAME_MAX_LENGTH) and name_text) or not widget.style.player_name and name_text
 		end
 
 		widget_content.player_name = display_name
@@ -654,8 +654,8 @@ local item_count_slot_names = {
 
 UnitFrameUI.set_inventory_slot_data = function (self, slot_name, slot_visible, item_data, item_count)
 	-- function 35
-	local item_name = not not slot_visible and not not item_data.name
-	local hud_icon = not not slot_visible and not not item_data.hud_icon
+	local item_name = slot_visible and item_data.name
+	local hud_icon = slot_visible and item_data.hud_icon
 	local widget = self:_widget_by_feature("equipment", "dynamic")
 	local widget_content = widget.content
 	local widget_style = widget.style
@@ -666,12 +666,12 @@ UnitFrameUI.set_inventory_slot_data = function (self, slot_name, slot_visible, i
 		local widget_slot_name = "item_slot_" .. slot_index
 		local widget_slot_bg_name = "item_slot_bg_" .. slot_index
 		local widget_slot_frame_name = "item_slot_frame_" .. slot_index
-		local icon_texture = slot_visible and (not not hud_icon or not not "icons_placeholder") or not slot_visible and not not "icons_placeholder"
+		local icon_texture = slot_visible and (hud_icon or "icons_placeholder") or not slot_visible and "icons_placeholder"
 
 		widget_content[widget_slot_name] = icon_texture
-		widget_style[widget_slot_name].color[1] = slot_visible and not not 255 or not slot_visible and not not 0
-		widget_style[widget_slot_bg_name].color[1] = slot_visible and not not 255 or not slot_visible and not not 100
-		widget_style[widget_slot_frame_name].color[1] = slot_visible and not not 255 or not slot_visible and not not 100
+		widget_style[widget_slot_name].color[1] = slot_visible and 255 or not slot_visible and 0
+		widget_style[widget_slot_bg_name].color[1] = slot_visible and 255 or not slot_visible and 100
+		widget_style[widget_slot_frame_name].color[1] = slot_visible and 255 or not slot_visible and 100
 
 		local item_count_slot_name = item_count_slot_names[slot_index]
 
@@ -685,7 +685,7 @@ UnitFrameUI.set_inventory_slot_data = function (self, slot_name, slot_visible, i
 
 		if inventory_consumable_slot_colors then
 			local default_slot_background_color = inventory_consumable_slot_colors.default
-			local slot_background_color = slot_visible and not not inventory_consumable_slot_colors[item_name]
+			local slot_background_color = slot_visible and inventory_consumable_slot_colors[item_name]
 			local slot_bg_style = widget_style[widget_slot_bg_name]
 			local slot_bg_color = slot_bg_style.color
 
@@ -717,7 +717,7 @@ UnitFrameUI.set_equipped_weapon_info = function (self, slot_name, wielded, item_
 
 	for name, field_name in pairs(self.weapon_slot_widget_settings.ammo_fields) do
 		if slot_name == name then
-			local alpha = wielded and not not 255 or not wielded and not not 100
+			local alpha = wielded and 255 or not wielded and 100
 
 			widget_style[field_name].text_color[1] = alpha
 			widget_style[field_name .. "_2"].text_color[1] = alpha
@@ -742,8 +742,8 @@ UnitFrameUI.set_ammo_for_slot = function (self, slot_name, ammo_count, remaining
 		widget_content[text_field_name .. "_3"] = " "
 	else
 		widget_content[text_field_name] = ammo_prefix .. tostring(ammo_count)
-		widget_content[text_field_name .. "_2"] = using_single_clip and not not ammo_prefix or not using_single_clip and not not "|"
-		widget_content[text_field_name .. "_3"] = using_single_clip and not not ammo_prefix or not using_single_clip and not not tostring(remaining_ammo)
+		widget_content[text_field_name .. "_2"] = using_single_clip and ammo_prefix or not using_single_clip and "|"
+		widget_content[text_field_name .. "_3"] = using_single_clip and ammo_prefix or not using_single_clip and tostring(remaining_ammo)
 	end
 
 	self:_set_widget_dirty(widget)
@@ -778,7 +778,7 @@ UnitFrameUI.set_overcharge_percentage = function (self, has_overcharge, overchar
 
 	widget_content.has_overcharge = has_overcharge
 	widget_content.overcharge_fill.has_overcharge = has_overcharge
-	widget_content.overcharge_fill.overcharge_percent = not not overcharge_percent or not not 0
+	widget_content.overcharge_fill.overcharge_percent = overcharge_percent or 0
 
 	self:_set_widget_dirty(widget)
 end
@@ -915,10 +915,10 @@ UnitFrameUI._update_voice_animation = function (self, dt, t, is_talking)
 	local highlight_style = widget.style.talk_indicator_highlight
 	local color = highlight_style.color
 	local old_talk_indicator_alpha = talk_indicator_color[1]
-	local new_talk_indicator_alpha = old_talk_indicator_alpha + (is_talking and not not 1 or not is_talking and not not -1) * 255 * dt
+	local new_talk_indicator_alpha = old_talk_indicator_alpha + (is_talking and 1 or not is_talking and -1) * 255 * dt
 	local old_alpha = color[1]
 
-	old_alpha = old_alpha + (is_talking and not not 1 or not is_talking and not not -1) * 255 * dt
+	old_alpha = old_alpha + (is_talking and 1 or not is_talking and -1) * 255 * dt
 
 	if is_talking then
 		old_alpha = old_alpha + math.sin(t * 3) * 20
@@ -977,7 +977,7 @@ UnitFrameUI.show_respawn_countdown = function (self, player, is_local_player, sp
 	-- function 52
 	self._show_respawn_ui = true
 
-	local widget = self._frame_type ~= "player" and not not self:_widget_by_name("default_dynamic") or not (self._frame_type ~= "player") and not not self:_widget_by_name("respawn_dynamic")
+	local widget = self._frame_type ~= "player" and self:_widget_by_name("default_dynamic") or not (self._frame_type ~= "player") and self:_widget_by_name("respawn_dynamic")
 	local widget_content = widget.content
 
 	widget_content.respawn_timer = spawn_timer
@@ -1007,14 +1007,14 @@ UnitFrameUI.update_respawn_countdown = function (self, dt, t)
 	local ui_scenegraph = self.ui_scenegraph
 	local input_service = self.input_manager:get_service("Player")
 	local player_frame = self._frame_type == "player"
-	local widget = player_frame and not not self:_widget_by_name("respawn_dynamic") or not player_frame and not not self:_widget_by_name("default_dynamic")
+	local widget = player_frame and self:_widget_by_name("respawn_dynamic") or not player_frame and self:_widget_by_name("default_dynamic")
 	local widget_content = widget.content
 	local state = widget_content.state
 	local fallback_fadeout_time = 0.66
 
 	if state == "countdown" then
 		local respawn_delta = widget_content.respawn_timer - Managers.time:time("game")
-		local total_fadeout_time = not not widget_content.total_fadeout_time
+		local total_fadeout_time = widget_content.total_fadeout_time
 
 		if respawn_delta <= total_fadeout_time then
 			widget_content.fadeout_time = total_fadeout_time
@@ -1024,9 +1024,9 @@ UnitFrameUI.update_respawn_countdown = function (self, dt, t)
 		widget_content.respawn_countdown_text = tostring(math.ceil(math.abs(respawn_delta)))
 	elseif state == "fadeout" then
 		local widget_style = widget.style
-		local fadeout_time = not not widget_content.fadeout_time - dt
-		local total_fadeout_time = not not widget_content.total_fadeout_time
-		local normalized_alpha = total_fadeout_time <= 0 and not not 0 or not (total_fadeout_time <= 0) and not not (math.max(fadeout_time, 0) / total_fadeout_time)
+		local fadeout_time = widget_content.fadeout_time - dt
+		local total_fadeout_time = widget_content.total_fadeout_time
+		local normalized_alpha = total_fadeout_time <= 0 and 0 or not (total_fadeout_time <= 0) and math.max(fadeout_time, 0) / total_fadeout_time
 		local alpha = normalized_alpha * 255
 		local style_n = widget_style.respawn_countdown_text
 
@@ -1119,7 +1119,7 @@ UnitFrameUI._on_num_grimoires_changed = function (self, name, widget, health_deb
 		self.bar_animations = {}
 	end
 
-	local bar_animation = not not self.bar_animations[name]
+	local bar_animation = self.bar_animations[name]
 
 	if health_debuff_percent ~= bar_animation.current_health_debuff then
 		local current_bar_health_debuff = widget.content.grimoire_debuff.bar_value
@@ -1159,7 +1159,7 @@ UnitFrameUI._on_overcharge_changed = function (self, name, widget, overcharge_pe
 		self.bar_animations = {}
 	end
 
-	local bar_animation = not not self.bar_animations[name]
+	local bar_animation = self.bar_animations[name]
 
 	if overcharge_percent ~= bar_animation.current_overcharge_percent then
 		local current_overcharge_percent = widget.content.overcharge_fill.bar_value
@@ -1187,7 +1187,7 @@ end
 
 UnitFrameUI._on_player_ammo_changed = function (self, name, widget, ammo_percent)
 	-- function 57
-	local bar_animation = not not self.bar_animations[name]
+	local bar_animation = self.bar_animations[name]
 
 	self.bar_animations[name] = bar_animation
 
@@ -1221,7 +1221,7 @@ end
 
 UnitFrameUI._on_player_ability_changed = function (self, name, widget, ability_percent)
 	-- function 58
-	local bar_animation = not not self.bar_animations[name]
+	local bar_animation = self.bar_animations[name]
 
 	self.bar_animations[name] = bar_animation
 
@@ -1255,7 +1255,7 @@ end
 
 UnitFrameUI._on_player_health_changed = function (self, name, widget, health_percent)
 	-- function 59
-	local bar_animation = not not self.bar_animations[name]
+	local bar_animation = self.bar_animations[name]
 
 	self.bar_animations[name] = bar_animation
 
@@ -1275,9 +1275,9 @@ UnitFrameUI._on_player_health_changed = function (self, name, widget, health_per
 			anim_time = (current_bar_health - health_percent) * lerp_time
 		end
 
-		local animate_damage_highlight = not not false
+		local animate_damage_highlight = false
 
-		bar_animation.animate_damage_highlight = animate_damage_highlight and not not 0 or not animate_damage_highlight and not not bar_animation.animate_damage_highlight
+		bar_animation.animate_damage_highlight = animate_damage_highlight and 0 or not animate_damage_highlight and bar_animation.animate_damage_highlight
 		bar_animation.animate = true
 		bar_animation.new_value = health_percent
 		bar_animation.previous_value = current_bar_health
@@ -1293,7 +1293,7 @@ end
 
 UnitFrameUI._on_player_total_health_changed = function (self, name, widget, total_health_percent)
 	-- function 60
-	local bar_animation = not not self.bar_animations[name]
+	local bar_animation = self.bar_animations[name]
 
 	self.bar_animations[name] = bar_animation
 
@@ -1313,9 +1313,9 @@ UnitFrameUI._on_player_total_health_changed = function (self, name, widget, tota
 			anim_time = (current_bar_total_health - total_health_percent) * lerp_time
 		end
 
-		local animate_bar_flash = not not false
+		local animate_bar_flash = false
 
-		bar_animation.animate_bar_flash = animate_bar_flash and not not 0 or not animate_bar_flash and not not bar_animation.animate_bar_flash
+		bar_animation.animate_bar_flash = animate_bar_flash and 0 or not animate_bar_flash and bar_animation.animate_bar_flash
 		bar_animation.animate = true
 		bar_animation.new_value = total_health_percent
 		bar_animation.previous_value = current_bar_total_health
@@ -1402,7 +1402,7 @@ UnitFrameUI._update_bar_flash = function (self, widget, style, time, dt)
 
 		self:_set_widget_dirty(widget)
 
-		return progress < 1 and (not not time or not not nil) or not (progress < 1) and not not nil
+		return progress < 1 and (time or nil) or not (progress < 1) and nil
 	end
 
 	return nil
@@ -1424,7 +1424,7 @@ UnitFrameUI._update_damage_highlight = function (self, widget, time, dt)
 
 		self:_set_widget_dirty(widget)
 
-		return progress < 1 and (not not time or not not nil) or not (progress < 1) and not not nil
+		return progress < 1 and (time or nil) or not (progress < 1) and nil
 	end
 
 	return nil
@@ -1452,7 +1452,7 @@ UnitFrameUI._update_player_bar_animation = function (self, content, style, time,
 			style.gradient_threshold = bar_fraction
 		end
 
-		return progress < 1 and (not not time or not not nil) or not (progress < 1) and not not nil
+		return progress < 1 and (time or nil) or not (progress < 1) and nil
 	end
 
 	content.bar_value = anim_end_value
@@ -1498,7 +1498,7 @@ UnitFrameUI._animate_slot_equip = function (self, animation_data, dt)
 	style.color[1] = 255 * catmullrom_value
 	animation_data.time = time
 
-	return progress < 1 and (not not animation_data or not not nil) or not (progress < 1) and not not nil
+	return progress < 1 and (animation_data or nil) or not (progress < 1) and nil
 end
 
 UnitFrameUI._update_slot_equip_animations = function (self, dt)
@@ -1546,7 +1546,7 @@ UnitFrameUI.update_numeric_ui_health = function (self, player_data)
 	-- function 69
 	local widget = self:_widget_by_feature("health", "dynamic")
 	local player = player_data.player
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if not ALIVE[player_unit] then
 		widget.content.numeric_health = ""
@@ -1555,7 +1555,7 @@ UnitFrameUI.update_numeric_ui_health = function (self, player_data)
 	end
 
 	local extensions = player_data.extensions
-	local health_extension = not not extensions and not not extensions.health
+	local health_extension = extensions and extensions.health
 
 	if not health_extension then
 		return
@@ -1589,7 +1589,7 @@ UnitFrameUI.update_numeric_ui_ammo = function (self, player_data)
 	local ammo_ui_data = self._ammo_ui_data
 	local widget = self:_widget_by_name("default_dynamic")
 	local player = player_data.player
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if not ALIVE[player_unit] then
 		widget.content.has_ranged_weapon = false
@@ -1598,7 +1598,7 @@ UnitFrameUI.update_numeric_ui_ammo = function (self, player_data)
 	end
 
 	local extensions = player_data.extensions
-	local inventory_extension = not not extensions and not not extensions.inventory
+	local inventory_extension = extensions and extensions.inventory
 
 	if not inventory_extension then
 		return
@@ -1656,7 +1656,7 @@ UnitFrameUI.update_numeric_ui_career_ability = function (self, game, go_id, play
 	-- function 71
 	local widget = self:_widget_by_name("default_dynamic")
 	local player = player_data.player
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if not ALIVE[player_unit] then
 		widget.content.ability_cooldown = ""
@@ -1669,7 +1669,7 @@ UnitFrameUI.update_numeric_ui_career_ability = function (self, game, go_id, play
 	end
 
 	local extensions = player_data.extensions
-	local career_extension = not not extensions and not not extensions.career
+	local career_extension = extensions and extensions.career
 
 	if not career_extension then
 		return
@@ -1677,7 +1677,7 @@ UnitFrameUI.update_numeric_ui_career_ability = function (self, game, go_id, play
 
 	local career_name = career_extension:career_name()
 	local ability_percentage = GameSession.game_object_field(game, go_id, "ability_percentage")
-	local on_cooldown = ability_percentage > 0.01 and not not true or not (ability_percentage > 0.01) and not not false
+	local on_cooldown = ability_percentage > 0.01
 
 	widget.content.on_cooldown = on_cooldown
 
@@ -1730,7 +1730,7 @@ UnitFrameUI.add_damage_feedback = function (self, hash, is_local_player, event_t
 	local dmg_part_pool = self._dmg_part_pool
 	local t = Managers.time:time("game")
 	local existing_event = events[full_hash]
-	local target_name = not not target_player:cached_name()
+	local target_name = target_player:cached_name()
 
 	if not existing_event then
 		existing_event = {
@@ -1781,7 +1781,7 @@ UnitFrameUI.add_damage_feedback = function (self, hash, is_local_player, event_t
 	local integer = math.floor(damage_amount)
 	local dec = damage_amount - integer
 	local dec_lookup = math.floor((dec + 0.125) * 4) * 25
-	local parts = not not dmg_decimals_lookup[dec_lookup]
+	local parts = dmg_decimals_lookup[dec_lookup]
 	local damage_amount_txt = integer .. parts
 
 	dmg_parts[existing_event.num_dmg_parts] = {
@@ -1916,7 +1916,7 @@ UnitFrameUI._update_damage_feedback = function (self, dt, t)
 			local dec = event.shown_amount - math.floor(event.shown_amount)
 			local dec_lookup = math.floor((dec + 0.125) * 4) * 25
 
-			event.shown_amount_decimal = not not dmg_decimals_lookup[dec_lookup]
+			event.shown_amount_decimal = dmg_decimals_lookup[dec_lookup]
 
 			if event.running_parts == 0 then
 				event.first_index = 1
@@ -1955,14 +1955,14 @@ UnitFrameUI._update_damage_feedback = function (self, dt, t)
 		if event.scale_timer then
 			if t <= event.scale_timer then
 				v = math.clamp((event.scale_timer - t) / pop_dmg_time, 0, 1)
-				v2 = v > 0.5 and (not not 0.7 or not not 0) or not (v > 0.5) and not not 0
+				v2 = v > 0.5 and (0.7 or 0) or not (v > 0.5) and 0
 				scale = math.ease_pulse(v)
 			else
 				event.scale_timer = nil
 			end
 		end
 
-		event.text_total_sum = v > 0.5 and not not event.old_shown_amount or not (v > 0.5) and not not event.shown_amount
+		event.text_total_sum = v > 0.5 and event.old_shown_amount or not (v > 0.5) and event.shown_amount
 
 		local font, scaled_font_size = UIFontByResolution(widget.style.text_total_sum)
 		local text_width = UIRenderer.text_size(ui_renderer, math.floor(event.text_total_sum), font[1], scaled_font_size)
@@ -1990,7 +1990,7 @@ UnitFrameUI._update_damage_feedback = function (self, dt, t)
 		damage_icon.size[1] = icon_scale
 		damage_icon.size[2] = icon_scale
 		widget.content.text_total_sum = math.floor(event.text_total_sum)
-		event.text_total_sum_decimal_part = v > 0.5 and not not event.old_shown_amount_decimal or not (v > 0.5) and not not event.shown_amount_decimal
+		event.text_total_sum_decimal_part = v > 0.5 and event.old_shown_amount_decimal or not (v > 0.5) and event.shown_amount_decimal
 		widget.content.text_total_sum_decimal_part = event.text_total_sum_decimal_part
 		widget_style.text_total_sum_decimal_part.offset[1] = total_dmg_offset + event.text_width_total_sum * 0.5
 		widget_style.text_total_sum_decimal_part.text_color = widget_style.text_total_sum.text_color

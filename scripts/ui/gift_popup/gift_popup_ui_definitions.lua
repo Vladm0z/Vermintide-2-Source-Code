@@ -460,7 +460,7 @@ local animation_definitions = {
 
 				if chest_unit and Unit.alive(chest_unit) then
 					local anim_progress = math.easeCubic(progress)
-					local end_scale_fraction = not not params.end_scale_fraction
+					local end_scale_fraction = params.end_scale_fraction
 					local scale_fraction = end_scale_fraction * anim_progress
 					local scale = Vector3(scale_fraction, scale_fraction, scale_fraction)
 
@@ -503,7 +503,7 @@ local animation_definitions = {
 					local unit_center_position = Matrix4x4.translation(unit_box)
 					local unit_root_position = Unit.world_position(chest_unit, 0)
 					local offset = unit_center_position - unit_root_position
-					local scale_fraction = not not params.end_scale_fraction
+					local scale_fraction = params.end_scale_fraction
 
 					offset = offset * scale_fraction
 
@@ -689,7 +689,7 @@ local animation_definitions = {
 
 				if chest_unit and Unit.alive(chest_unit) then
 					local anim_progress = 1 - math.easeOutCubic(progress)
-					local end_scale_fraction = not not params.end_scale_fraction
+					local end_scale_fraction = params.end_scale_fraction
 					local scale_fraction = end_scale_fraction * anim_progress
 					local scale = Vector3(scale_fraction, scale_fraction, scale_fraction)
 

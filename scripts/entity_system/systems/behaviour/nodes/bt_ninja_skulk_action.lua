@@ -37,7 +37,7 @@ BTNinjaSkulkAction.enter = function (self, unit, blackboard, t)
 	navigation_extension:set_max_speed(blackboard.breed.run_speed)
 
 	blackboard.target_skulk_time = t + 0.5
-	blackboard.skulk_jump_tries = not not blackboard.skulk_jump_tries
+	blackboard.skulk_jump_tries = blackboard.skulk_jump_tries
 
 	local locomotion = blackboard.locomotion_extension
 
@@ -421,7 +421,7 @@ BTNinjaSkulkAction.get_new_goal = function (self, unit, blackboard)
 		local max_dist = 15
 		local dir = blackboard.skulk_around_dir
 
-		dir = not not dir or not not (1 - math.random(0, 1) * 2)
+		dir = dir or 1 - math.random(0, 1) * 2
 		blackboard.skulk_around_dir = dir
 
 		local angle = math.random(10, 35) * dir

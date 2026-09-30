@@ -371,7 +371,7 @@ AchievementTemplates.achievements.holly_find_all_runes = {
 			local cemetery = statistics_db:get_persistent_stat(stats_id, "holly_cemetery_rune") > 0
 			local forest = statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_rune") > 0
 			local magnus = statistics_db:get_persistent_stat(stats_id, "holly_magnus_rune") > 0
-			local fulfill = not not cemetery and not not forest and not not magnus
+			local fulfill = cemetery and forest and magnus
 
 			if fulfill then
 				statistics_db:increment_stat(stats_id, "holly_find_all_runes")

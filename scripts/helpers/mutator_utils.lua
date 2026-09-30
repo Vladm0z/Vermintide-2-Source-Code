@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/mutator_utils.lua
 
-MutatorUtils = not not MutatorUtils
+MutatorUtils = MutatorUtils
 
 local function tweak_horde_size_value(value, multiplier)
 	-- function 1
@@ -73,7 +73,7 @@ MutatorUtils.apply_buff_to_alive_player_units = function (context, data, buff_na
 	end
 
 	local side = Managers.state.side:get_side_from_name("heroes")
-	local current_player_units = data.only_affect_players and not not side.PLAYER_UNITS or not data.only_affect_players and not not side.PLAYER_AND_BOT_UNITS
+	local current_player_units = data.only_affect_players and side.PLAYER_UNITS or not data.only_affect_players and side.PLAYER_AND_BOT_UNITS
 	local num_current_player_units = #current_player_units
 	local get_extension = ScriptUnit.extension
 	local new_buff_ids = {}
@@ -157,12 +157,12 @@ MutatorUtils.tweak_pack_spawning_settings_convert_breeds = function (pack_spawni
 	-- function 10
 	local breed_packs = pack_spawning_settings.roaming_set.breed_packs
 
-	pack_spawning_settings.roaming_set.breed_packs = not not conversion_table[breed_packs]
+	pack_spawning_settings.roaming_set.breed_packs = conversion_table[breed_packs]
 
 	for _, breed_pack_override in ipairs(pack_spawning_settings.roaming_set.breed_packs_override) do
 		local breed = breed_pack_override[1]
 
-		breed_pack_override[1] = not not conversion_table[breed]
+		breed_pack_override[1] = conversion_table[breed]
 	end
 
 	if pack_spawning_settings.difficulty_overrides then
@@ -171,7 +171,7 @@ MutatorUtils.tweak_pack_spawning_settings_convert_breeds = function (pack_spawni
 				local breed_pack_override = difficulty_override[i]
 				local breed = breed_pack_override[1]
 
-				breed_pack_override[1] = not not conversion_table[breed]
+				breed_pack_override[1] = conversion_table[breed]
 			end
 		end
 	end

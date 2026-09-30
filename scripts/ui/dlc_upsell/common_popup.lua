@@ -130,7 +130,7 @@ end
 
 CommonPopup.exit_done = function (self)
 	-- function 9
-	return not self._is_visible and not not self._has_widget_been_closed
+	return not self._is_visible and self._has_widget_been_closed
 end
 
 CommonPopup._start_transition_animation = function (self, animation_name)
@@ -202,8 +202,8 @@ CommonPopup.set_fullscreen_effect_enable_state = function (self, enabled)
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or not enabled and 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and 0.75 or not enabled and 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 

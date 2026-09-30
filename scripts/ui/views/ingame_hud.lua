@@ -34,9 +34,9 @@ IngameHud._setup_components = function (self)
 		self._clean_ui.hud = self
 
 		local is_tobii_connected = Tobii.get_is_connected()
-		local clean_ui_enabled = not not Application.user_setting("tobii_eyetracking")
+		local clean_ui_enabled = Application.user_setting("tobii_eyetracking")
 
-		self:enable_clean_ui(not not is_tobii_connected and not not clean_ui_enabled)
+		self:enable_clean_ui(is_tobii_connected and clean_ui_enabled)
 	else
 		self._clean_ui = nil
 	end
@@ -104,7 +104,7 @@ IngameHud._setup_component_definitions = function (self, hud_component_list_path
 
 	local function sort_components_by_hud_scale(a, b)
 		-- function 6
-		return not not b.use_hud_scale
+		return b.use_hud_scale
 	end
 
 	table.sort(components, sort_components_by_hud_scale)
@@ -284,7 +284,7 @@ IngameHud._update_components_post_visibility = function (self)
 		for j = 1, #components_array do
 			local component = components_array[j]
 			local component_name = component.name
-			local status = visible_components and not not visible_components[component_name] or not visible_components and not not false
+			local status = visible_components and visible_components[component_name]
 
 			if component.post_visibility_changed then
 				component:post_visibility_changed(status)
@@ -301,7 +301,7 @@ IngameHud._update_components_visibility = function (self)
 	local visibility_groups = definitions.visibility_groups
 	local num_visibility_groups = #visibility_groups
 	local debug_visibility_group = script_data.debug_hud_visibility_group
-	local handle_debug = not not debug_visibility_group and debug_visibility_group ~= "none"
+	local handle_debug = debug_visibility_group and debug_visibility_group ~= "none"
 
 	for i = 1, num_visibility_groups do
 		local visibility_group = visibility_groups[i]
@@ -324,7 +324,7 @@ IngameHud._update_components_visibility = function (self)
 				for j = 1, #components_array do
 					local component = components_array[j]
 					local component_name = component.name
-					local status = visible_components and not not visible_components[component_name] or not visible_components and not not false
+					local status = visible_components and visible_components[component_name]
 
 					if component.set_visible then
 						component:set_visible(status)
@@ -342,7 +342,7 @@ IngameHud._update_components_visibility = function (self)
 	end
 
 	if handle_debug then
-		Debug.text("HUD visibility group: " .. tostring(not not self._current_group_name))
+		Debug.text("HUD visibility group: " .. tostring(self._current_group_name))
 	end
 end
 
@@ -371,7 +371,7 @@ IngameHud._apply_hud_scale = function (self)
 
 	local scale_modified = self._scale_modified
 	local resolution_modified = self._resolution_modified
-	local force_update = not not scale_modified or not not resolution_modified
+	local force_update = scale_modified or resolution_modified
 	local hud_scale_multiplier = self._hud_scale_multiplier
 
 	UPDATE_RESOLUTION_LOOKUP(force_update, hud_scale_multiplier)
@@ -381,7 +381,7 @@ IngameHud._abort_hud_scale = function (self)
 	-- function 17
 	local scale_modified = self._scale_modified
 	local resolution_modified = self._resolution_modified
-	local force_update = not not scale_modified or not not resolution_modified
+	local force_update = scale_modified or resolution_modified
 
 	UPDATE_RESOLUTION_LOOKUP(force_update)
 end
@@ -488,7 +488,7 @@ end
 
 local function is_own_player_dead_helper(player)
 	-- function 23
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if not ALIVE[player_unit] then
 		return true
@@ -523,7 +523,7 @@ IngameHud.get_crosshair_position = function (self)
 		local position_x = RESOLUTION_LOOKUP.res_w * 0.5 * inv_res_scale
 		local position_y = RESOLUTION_LOOKUP.res_h * 0.5 * inv_res_scale
 		local player = self._player
-		local player_unit = not not player and not not player.player_unit
+		local player_unit = player and player.player_unit
 
 		if ALIVE[player_unit] then
 			local eyetracking_extension = ScriptUnit.has_extension(player_unit, "eyetracking_system")
@@ -563,8 +563,8 @@ IngameHud._update_clean_ui = function (self, dt, t)
 		return
 	end
 
-	local had_tobii = not not self._had_tobii
-	local has_tobii = not not rawget(_G, "Tobii")
+	local had_tobii = self._had_tobii
+	local has_tobii = rawget(_G, "Tobii")
 
 	if had_tobii ~= has_tobii then
 		UICleanUI.update(self._clean_ui, dt)

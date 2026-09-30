@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/pseudo_random_distribution.lua
 
-PseudoRandomDistribution = not not PseudoRandomDistribution
+PseudoRandomDistribution = PseudoRandomDistribution
 
 local p2c
 
@@ -19,7 +19,7 @@ PseudoRandomDistribution.flip_coin = function (state, proc_chance)
 		return proc_chance > math_random(), state
 	end
 
-	local n = not not state or not not math.floor(proc_chance / c)
+	local n = state or math.floor(proc_chance / c)
 
 	if math_random() < n * c then
 		return true, 1

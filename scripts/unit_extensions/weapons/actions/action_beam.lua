@@ -40,7 +40,7 @@ ActionBeam.client_owner_start_action = function (self, new_action, t, chain_acti
 	self.damage_interval = new_action.damage_interval
 	self.charge_damage_profiles = new_action.charge_damage_profiles
 	self.damage_profile = new_action.damage_profile
-	self.charge_level = chain_action_data and not not chain_action_data.charge_level or not chain_action_data and not not 0
+	self.charge_level = chain_action_data and chain_action_data.charge_level or not chain_action_data and 0
 	self.power_level = power_level + power_level * self.charge_level
 	self.damage_interval = self.damage_interval - self.damage_interval / 2 * self.charge_level
 
@@ -101,8 +101,8 @@ ActionBeam._start_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -120,8 +120,8 @@ ActionBeam._stop_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -185,7 +185,7 @@ ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
 		local current_position, current_rotation = first_person_extension:get_projectile_start_position_rotation()
 		local direction = Quaternion.forward(current_rotation)
 		local physics_world = World.get_data(self.world, "physics_world")
-		local range = not not current_action.range
+		local range = current_action.range
 		local result = PhysicsWorld.immediate_raycast_actors(physics_world, current_position, direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
 		local beam_end_position = current_position + direction * range
 		local hit_unit, hit_position
@@ -212,7 +212,7 @@ ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
 						local hit_zone = breed.hit_zones_lookup[node]
 						local hit_zone_name = hit_zone.name
 
-						hit_enemy = allow_friendly_fire and (breed.is_player and hit_zone_name ~= "afro" or not breed.is_player and not not is_enemy and hit_zone_name ~= "afro") or not allow_friendly_fire and not not is_enemy and hit_zone_name ~= "afro"
+						hit_enemy = allow_friendly_fire and (breed.is_player and hit_zone_name ~= "afro" or not breed.is_player and is_enemy and hit_zone_name ~= "afro") or not allow_friendly_fire and is_enemy and hit_zone_name ~= "afro"
 					else
 						hit_enemy = true
 					end
@@ -267,7 +267,7 @@ ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
 							end
 
 							if not self.charge_damage_profiles and self.consecutive_hits < 3 then
-								damage_profile = not not current_action.initial_damage_profile or not not current_action.damage_profile or not not "default"
+								damage_profile = current_action.initial_damage_profile or current_action.damage_profile or "default"
 							end
 
 							first_person_extension:play_hud_sound_event("staff_beam_hit_enemy", nil, false)
@@ -304,7 +304,7 @@ ActionBeam.client_owner_post_update = function (self, dt, t, world, can_damage)
 
 		if self.beam_effect_id then
 			local weapon_unit = self.weapon_unit
-			local weapon_muzzle = not not current_action.weapon_muzzle
+			local weapon_muzzle = current_action.weapon_muzzle
 			local end_of_staff_position = Unit.world_position(weapon_unit, weapon_muzzle)
 			local distance = Vector3.distance(end_of_staff_position, beam_end_position)
 			local beam_direction = Vector3.normalize(end_of_staff_position - beam_end_position)

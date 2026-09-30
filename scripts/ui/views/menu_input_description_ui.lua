@@ -257,21 +257,21 @@ MenuInputDescriptionUI.init = function (self, ingame_ui_context, ui_renderer, in
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	self._max_width = not not optional_max_width or not not math.huge
+	self._max_width = optional_max_width or math.huge
 	self._use_fullscreen_layout = use_fullscreen_layout
-	scenegraph_definition.screen.position[3] = layer and not not (layer + 10) or not layer and not not UILayer.controller_description
+	scenegraph_definition.screen.position[3] = layer and layer + 10 or not layer and UILayer.controller_description
 
 	self:create_ui_elements(ui_renderer, number_of_elements, use_fullscreen_layout)
 end
 
 MenuInputDescriptionUI.create_ui_elements = function (self, ui_renderer, number_of_elements, use_fullscreen_layout)
 	-- function 6
-	self.console_input_description_widgets = create_input_description_widgets(not not number_of_elements or not not 5)
+	self.console_input_description_widgets = create_input_description_widgets(number_of_elements or 5)
 
 	if use_fullscreen_layout then
 		self.background_widget = nil
 	else
-		self.background_widget = UIWidget.init(create_background_widget(not not number_of_elements or not not 3))
+		self.background_widget = UIWidget.init(create_background_widget(number_of_elements or 3))
 	end
 
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
@@ -414,7 +414,7 @@ MenuInputDescriptionUI.set_input_description = function (self, console_selection
 	-- function 12
 	self:clear_input_descriptions()
 
-	local scale = not not optional_scale or not not 1
+	local scale = optional_scale or 1
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
 	local console_input_description_widgets = self.console_input_description_widgets
@@ -425,8 +425,8 @@ MenuInputDescriptionUI.set_input_description = function (self, console_selection
 
 	self.current_console_selection_data = console_selection_data
 
-	local actions_to_add = not not table.clone(console_selection_data.actions)
-	local ignore_generic_actions = not not console_selection_data and not not console_selection_data.ignore_generic_actions
+	local actions_to_add = table.clone(console_selection_data.actions)
+	local ignore_generic_actions = console_selection_data and console_selection_data.ignore_generic_actions
 	local actions = {}
 
 	if not ignore_generic_actions then
@@ -456,7 +456,7 @@ MenuInputDescriptionUI.set_input_description = function (self, console_selection
 
 		if description_text then
 			widget_use_index = widget_use_index + 1
-			description_text = action_data.ignore_localization and (not not description_text or not not Localize(description_text)) or not action_data.ignore_localization and not not Localize(description_text)
+			description_text = action_data.ignore_localization and (description_text or Localize(description_text)) or not action_data.ignore_localization and Localize(description_text)
 
 			local action_texture_data = self:get_gamepad_input_texture_data(input_action, ignore_keybinding)
 			local description_widget = console_input_description_widgets[widget_use_index]
@@ -477,7 +477,7 @@ MenuInputDescriptionUI.set_input_description = function (self, console_selection
 
 			local text_style = widget_style.text
 
-			text_style._original_font_size = not not text_style._original_font_size
+			text_style._original_font_size = text_style._original_font_size
 			text_style.font_size = text_style._original_font_size * scale
 
 			local font, scaled_font_size = UIFontByResolution(text_style)
@@ -502,7 +502,7 @@ MenuInputDescriptionUI.set_input_description = function (self, console_selection
 		return self:set_input_description(console_selection_data, self._max_width / total_width)
 	end
 
-	self.number_of_descriptions_in_use = not not nil
+	self.number_of_descriptions_in_use = nil
 
 	self:_align_inputs(total_width, spacing, widgets_width_list)
 

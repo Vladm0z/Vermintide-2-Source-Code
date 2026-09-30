@@ -213,9 +213,9 @@ HeroWindowGotwfItemPreview._update_previewers = function (self, dt, t)
 			local viewport_button = self._top_widgets_by_name.viewport_button
 			local is_hover = UIUtils.is_button_hover(viewport_button)
 			local gamepad_active = Managers.input:is_device_active("gamepad")
-			local allow_preview_input = not not gamepad_active or not not is_hover
+			local allow_preview_input = gamepad_active or is_hover
 
-			self._item_previewer:update(dt, t, not not allow_preview_input and not not input_service)
+			self._item_previewer:update(dt, t, allow_preview_input and input_service)
 		end
 	end
 end
@@ -313,13 +313,13 @@ HeroWindowGotwfItemPreview._update_environment = function (self, item_preview_en
 		return
 	end
 
-	local item_preview_environment = not not item_preview_environment or not not "default"
+	local item_preview_environment = item_preview_environment or "default"
 	local viewport_widget_content = self._viewport_widget.content
 	local object_set_data = viewport_widget_content.object_set_data
 	local world = object_set_data.world
 	local shading_settings = World.get_data(world, "shading_settings")
 
-	shading_settings[1] = force_default and not not "default" or not force_default and not not item_preview_environment
+	shading_settings[1] = force_default and "default" or not force_default and item_preview_environment
 end
 
 HeroWindowGotwfItemPreview._destroy_viewport_gui = function (self)
@@ -470,7 +470,7 @@ local EMPTY_TABLE = {}
 HeroWindowGotwfItemPreview._render_viewport_mask = function (self)
 	-- function 18
 	local w, h = Application.resolution()
-	local gui_resolution = not not self._gui_resolution
+	local gui_resolution = self._gui_resolution
 
 	if not self._viewport_gui or gui_resolution[1] ~= w or gui_resolution[2] ~= h then
 		self:_destroy_viewport_gui()
@@ -525,7 +525,7 @@ HeroWindowGotwfItemPreview._update_loading_overlay_fadeout_animation = function 
 	local start = 255
 	local target = 0
 	local speed = 9
-	local progress = math.min(1, not not self._fadeout_progress + speed * dt)
+	local progress = math.min(1, self._fadeout_progress + speed * dt)
 	local alpha = math.lerp(start, target, math.easeInCubic(progress))
 	local loading_icon = loading_widgets_by_name.loading_icon
 
@@ -628,12 +628,12 @@ HeroWindowGotwfItemPreview._present_item = function (self, item)
 
 		type_title_text = Localize(matching_item_type)
 		disclaimer_text = Localize(item_type)
-		item_preview_environment = not not item_preview_environment or not not "weapons_default_01"
-		item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_weapon_lights"
+		item_preview_environment = item_preview_environment or "weapons_default_01"
+		item_preview_object_set_name = item_preview_object_set_name or "flow_weapon_lights"
 	elseif slot_type == "hat" then
 		type_title_text = Localize(item_type)
-		item_preview_environment = not not item_preview_environment or not not "hats_default_01"
-		item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_hat_lights"
+		item_preview_environment = item_preview_environment or "hats_default_01"
+		item_preview_object_set_name = item_preview_object_set_name or "flow_hat_lights"
 	elseif slot_type == "skin" then
 		type_title_text = Localize(item_type)
 
@@ -646,7 +646,7 @@ HeroWindowGotwfItemPreview._present_item = function (self, item)
 			disclaimer_text = Localize("menu_store_product_hero_skin_disclaimer_desc")
 		end
 
-		item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_character_lights"
+		item_preview_object_set_name = item_preview_object_set_name or "flow_character_lights"
 	elseif painting then
 		display_name = painting.display_name
 		type_title_text = Localize("interaction_painting")
@@ -658,14 +658,14 @@ HeroWindowGotwfItemPreview._present_item = function (self, item)
 
 		type_title_text = Localize(item_type)
 		description_text = Localize(masterlist_item.description)
-		amount_text = amount and (not not (amount .. " " .. Localize("menu_store_panel_currency_tooltip_title")) or not not "") or not amount and not not ""
+		amount_text = amount and (amount .. " " .. Localize("menu_store_panel_currency_tooltip_title") or "") or not amount and ""
 		sub_title_text = ""
 		career_title_text = ""
 	elseif slot_type == "versus_currency_name" then
 		local amount = item.amount
 
 		description_text = Localize(masterlist_item.description)
-		amount_text = amount and (not not string.format(Localize("achv_menu_vs_currency_reward_claimed"), amount) or not not "") or not amount and not not ""
+		amount_text = amount and (string.format(Localize("achv_menu_vs_currency_reward_claimed"), amount) or "") or not amount and ""
 		type_title_text = Localize("hero_view_prestige_reward")
 		display_name = "versus_currency_name"
 		sub_title_text = ""
@@ -675,7 +675,7 @@ HeroWindowGotwfItemPreview._present_item = function (self, item)
 
 		type_title_text = Localize(item_type)
 		description_text = Localize(masterlist_item.description)
-		amount_text = amount and (not not (amount .. " " .. Localize(masterlist_item.display_name)) or not not "") or not amount and not not ""
+		amount_text = amount and (amount .. " " .. Localize(masterlist_item.display_name) or "") or not amount and ""
 		sub_title_text = ""
 		career_title_text = ""
 	else
@@ -689,8 +689,8 @@ HeroWindowGotwfItemPreview._present_item = function (self, item)
 		local bundle_item_id = item.bundle_item_id
 		local bundle_item = ItemMasterList[bundle_item_id]
 
-		type_title_text = not bundle_item.information_text or not not Localize(bundle_item.information_text) or not not type_title_text
-		description_text = not bundle_item.description or not not Localize(bundle_item.description) or not not description_text
+		type_title_text = not bundle_item.information_text or Localize(bundle_item.information_text) or type_title_text
+		description_text = not bundle_item.description or Localize(bundle_item.description) or description_text
 		sub_title_text = ""
 		career_title_text = ""
 	end
@@ -819,7 +819,7 @@ HeroWindowGotwfItemPreview._setup_painting_presentation = function (self, item)
 		package_name = "resource_packages/keep_paintings/" .. subpath
 	end
 
-	self._reference_id = not not self._reference_id + 1
+	self._reference_id = self._reference_id + 1
 
 	local reference_name = item_name .. "_" .. self._reference_id
 	local texture_name = "keep_painting_" .. item_name
@@ -969,7 +969,7 @@ HeroWindowGotwfItemPreview._setup_item_presentation = function (self, item)
 		self:_spawn_hero_skin(world_previewer, profile_name, career_index, optional_skin)
 	elseif slot_type == "frame" then
 		local scenegraph_id = "item_texture"
-		local frame_name = not not masterlist_item.temporary_template
+		local frame_name = masterlist_item.temporary_template
 		local scale = 1.5
 		local offset
 		local masked = false
@@ -979,7 +979,7 @@ HeroWindowGotwfItemPreview._setup_item_presentation = function (self, item)
 		self._item_texture_widget = UIWidget.init(widget_definition)
 		self._fadeout_loading_overlay = true
 	elseif slot_type == "loot_chest" or slot_type == "chips" or slot_type == "crafting_material" or slot_type == "versus_currency_name" then
-		self._reference_id = not not self._reference_id + 1
+		self._reference_id = self._reference_id + 1
 
 		local reference_name = item_key .. "_" .. self._reference_id
 
@@ -992,7 +992,7 @@ HeroWindowGotwfItemPreview._setup_item_presentation = function (self, item)
 		end
 
 		local store_icon_override_key = masterlist_item.store_icon_override_key
-		local texture_name = "store_item_icon_" .. (not not store_icon_override_key or not not item_key)
+		local texture_name = "store_item_icon_" .. (store_icon_override_key or item_key)
 		local package_name = "resource_packages/store/item_icons/" .. texture_name
 		local package_available = Application.can_get("package", package_name)
 
@@ -1012,8 +1012,8 @@ HeroWindowGotwfItemPreview._setup_item_presentation = function (self, item)
 
 			local ui_top_renderer = self._ui_top_renderer
 			local top_gui = ui_top_renderer.gui
-			local new_material_name = masked and not not (texture_name .. "_masked") or not masked and not not texture_name
-			local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
+			local new_material_name = masked and texture_name .. "_masked" or not masked and texture_name
+			local template_material_name = masked and "template_store_diffuse_masked" or not masked and "template_store_diffuse"
 
 			self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
 
@@ -1123,8 +1123,8 @@ HeroWindowGotwfItemPreview._update_info_text_alignment = function (self)
 	local expire_widget = self._top_widgets_by_name.expire_timer_text
 	local disclaimer_widget = self._top_widgets_by_name.disclaimer_text
 	local divider_widget = self._top_widgets_by_name.disclaimer_divider
-	local has_expire_text = not not self._expire_text
-	local has_disclaimer_text = not not self._disclaimer_text
+	local has_expire_text = self._expire_text
+	local has_disclaimer_text = self._disclaimer_text
 	local text_widget_1, text_widget_2
 
 	if has_expire_text then
@@ -1138,10 +1138,10 @@ HeroWindowGotwfItemPreview._update_info_text_alignment = function (self)
 		text_widget_2 = disclaimer_widget
 	end
 
-	local has_info_text = not not has_expire_text or not not has_disclaimer_text
+	local has_info_text = has_expire_text or has_disclaimer_text
 	local ui_renderer = self._ui_renderer
-	local text_1_width = text_widget_1 and not not UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text) or not text_widget_1 and not not 0
-	local text_2_width = text_widget_2 and not not UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text) or not text_widget_2 and not not 0
+	local text_1_width = text_widget_1 and UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text) or not text_widget_1 and 0
+	local text_2_width = text_widget_2 and UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text) or not text_widget_2 and 0
 	local spacing = 14
 	local divider_width = scenegraph_definition[divider_widget.scenegraph_id].size[1]
 	local total_length = text_1_width + text_2_width + divider_width

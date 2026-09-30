@@ -185,28 +185,28 @@ PayloadExtension._hit_enemies = function (self, abs_speed, t)
 	local payload_position_flat = Vector3.flat(payload_position)
 	local payload_pose, half_extents = Unit.box(payload_unit, true)
 	local payload_forward = Vector3.normalize(Matrix4x4.forward(payload_pose))
-	local largest_extent = half_extents.x > half_extents.y and not not half_extents.x or not (half_extents.x > half_extents.y) and not not half_extents.y
+	local largest_extent = half_extents.x > half_extents.y and half_extents.x or not (half_extents.x > half_extents.y) and half_extents.y
 
-	largest_extent = largest_extent > half_extents.z and (not not largest_extent or not not half_extents.z) or not (largest_extent > half_extents.z) and not not half_extents.z
+	largest_extent = largest_extent > half_extents.z and (largest_extent or half_extents.z) or not (largest_extent > half_extents.z) and half_extents.z
 
 	local radius = largest_extent * 2
 	local small_box_extents = half_extents * 1.2
 	local large_box_extents = half_extents * 2
 	local unit_hazard_type = Unit.get_data(payload_unit, "hazard_type")
-	local hazard_type = not not unit_hazard_type or not not "payload"
+	local hazard_type = unit_hazard_type or "payload"
 	local hazard_settings = EnvironmentalHazards[hazard_type]
 	local hit_zone_name = "torso"
 	local hit_ragdoll_actor
 	local damage_source = hazard_type
 	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local power_level = not not hazard_settings.enemy.difficulty_power_level[difficulty_rank]
-	local damage_profile_name = not not hazard_settings.enemy.damage_profile
+	local power_level = hazard_settings.enemy.difficulty_power_level[difficulty_rank]
+	local damage_profile_name = hazard_settings.enemy.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local target_index
 	local boost_curve_multiplier = 0
 	local is_critical_strike = false
-	local can_damage = not not hazard_settings.enemy.can_damage
-	local can_stagger = not not hazard_settings.enemy.can_stagger
+	local can_damage = hazard_settings.enemy.can_damage
+	local can_stagger = hazard_settings.enemy.can_stagger
 	local blocking = false
 	local shield_breaking_hit = false
 	local num_hits = AiUtils.broadphase_query(payload_position, radius, RESULT_TABLE, self._enemy_broadphase_categories)
@@ -256,8 +256,8 @@ PayloadExtension.update = function (self, unit, input, dt, context, t)
 	if id and game then
 		if self._is_server then
 			local speed_settings = metadata.speed_settings
-			local used_speed_settings = has_players_in_proximity and not not speed_settings.pushed or not has_players_in_proximity and not not speed_settings.not_pushed
-			local bonus_speed = not not used_speed_settings.bonus_speed_per_player * num_players_in_proximity
+			local used_speed_settings = has_players_in_proximity and speed_settings.pushed or not has_players_in_proximity and speed_settings.not_pushed
+			local bonus_speed = used_speed_settings.bonus_speed_per_player * num_players_in_proximity
 			local target_speed = used_speed_settings.speed + bonus_speed
 			local acceleration = used_speed_settings.acceleration
 
@@ -518,8 +518,8 @@ PayloadExtension._init_movement_spline = function (self, world, unit, payload_gi
 			local unit_speed_setting = Unit.get_data(gizmo_unit, "speed_setting")
 			local unit_flow_event = Unit.get_data(gizmo_unit, "flow_event")
 
-			speed_setting = unit_speed_setting == "" or not not unit_speed_setting or not not speed_setting
-			flow_event = unit_flow_event ~= "" and not not unit_flow_event
+			speed_setting = unit_speed_setting == "" or unit_speed_setting or speed_setting
+			flow_event = unit_flow_event ~= "" and unit_flow_event
 		end
 
 		local speed_settings = PayloadSpeedSettings[speed_setting]

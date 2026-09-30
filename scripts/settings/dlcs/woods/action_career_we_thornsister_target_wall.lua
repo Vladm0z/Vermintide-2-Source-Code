@@ -44,7 +44,7 @@ end
 
 ActionCareerWEThornsisterTargetWall.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	ActionCareerWEThornsisterTargetWall.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
@@ -107,7 +107,7 @@ end
 ActionCareerWEThornsisterTargetWall._update_targeting = function (self)
 	-- function 4
 	local start_pos, start_rot = self._first_person_extension:get_projectile_start_position_rotation()
-	local wall_direction_func = self._vertical_rotation and not not Quaternion.right or not self._vertical_rotation and not not Quaternion.forward
+	local wall_direction_func = self._vertical_rotation and Quaternion.right or not self._vertical_rotation and Quaternion.forward
 	local player_direction_flat = Vector3.flat(wall_direction_func(start_rot))
 	local player_rotation_flat = Quaternion.look(player_direction_flat, Vector3.up())
 	local velocity = Quaternion.forward(start_rot) * self._target_sim_speed
@@ -333,7 +333,7 @@ ActionCareerWEThornsisterTargetWall._check_segment = function (self, prev_positi
 				local sweep_from = prev_position + Vector3.up() * WALL_OVERLAP_HEIGHT_OFFSET
 				local sweep_results = PhysicsWorld.linear_obb_sweep(physics_world, sweep_from, overlap_pos, overlap_size, overlap_rot, 5, "collision_filter", "filter_player_mover", "report_initial_overlap")
 
-				actor_count = sweep_results and (not not #sweep_results or not not 0) or not sweep_results and not not 0
+				actor_count = sweep_results and (#sweep_results or 0) or not sweep_results and 0
 			else
 				local hit_actors
 

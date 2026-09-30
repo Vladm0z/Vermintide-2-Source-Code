@@ -58,7 +58,7 @@ BackendInterfaceDLCsPlayfab._update_owned_dlcs_cb = function (self, result)
 	local execute_logic = not GameSettingsDevelopment.read_only_backend and (not new_dlcs or not revoked_dlcs or #new_dlcs > 0 or #revoked_dlcs > 0)
 
 	self._owner_dlcs_cb_data = table.shallow_copy(function_result)
-	self._owner_dlcs_cb_data.dlcs_dirty = not not HAS_STEAM
+	self._owner_dlcs_cb_data.dlcs_dirty = HAS_STEAM
 
 	if execute_logic then
 		self:_execute_dlc_specific_logic()
@@ -78,7 +78,7 @@ BackendInterfaceDLCsPlayfab._handle_owned_dlcs_data = function (self)
 	local new_dlcs = function_result.new_dlcs
 	local revoked_dlcs = function_result.revoked_dlcs
 
-	self._owned_dlcs = not not owned_dlcs or not not {}
+	self._owned_dlcs = owned_dlcs or {}
 	self._platform_dlcs = platform_dlcs
 
 	local unlock_manager = Managers.unlock
@@ -138,7 +138,7 @@ BackendInterfaceDLCsPlayfab._execute_dlc_logic_cb = function (self, result)
 
 	local unseen_rewards = self._backend_mirror:get_user_data("unseen_rewards")
 
-	unseen_rewards = unseen_rewards and (not not cjson.decode(unseen_rewards) or not not {}) or not unseen_rewards and not not {}
+	unseen_rewards = unseen_rewards and (cjson.decode(unseen_rewards) or {}) or not unseen_rewards and {}
 
 	for i = 1, #new_rewards do
 		local item = new_rewards[i]

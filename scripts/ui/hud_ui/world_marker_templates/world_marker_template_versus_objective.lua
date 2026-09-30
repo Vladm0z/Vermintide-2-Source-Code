@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_objective.lua
 
-WorldMarkerTemplates = not not WorldMarkerTemplates
+WorldMarkerTemplates = WorldMarkerTemplates
 
 local template = WorldMarkerTemplates.versus_objective
 
@@ -61,7 +61,7 @@ template.create_widget_definition = function (scenegraph_id)
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 3
-						return not not content.is_clamped
+						return content.is_clamped
 					end
 				},
 				{
@@ -70,7 +70,7 @@ template.create_widget_definition = function (scenegraph_id)
 					text_id = "text",
 					content_check_function = function (content)
 						-- function 4
-						return not not content.is_clamped
+						return content.is_clamped
 					end
 				}
 			}
@@ -293,7 +293,7 @@ template.update_function = function (ui_renderer, widget, marker, settings, dt, 
 
 	local distance = content.distance
 
-	content.text = distance > 1 and not not (UIUtils.comma_value(math.floor(distance)) .. "m") or not (distance > 1) and not not ""
+	content.text = distance > 1 and UIUtils.comma_value(math.floor(distance)) .. "m" or not (distance > 1) and ""
 
 	local df = math.min(1, 15 / distance)
 	local ct = content.t + dt * df

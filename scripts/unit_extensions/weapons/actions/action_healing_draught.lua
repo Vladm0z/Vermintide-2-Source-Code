@@ -47,7 +47,7 @@ ActionHealingDraught.finish = function (self, reason)
 		heal_type = "healing_draught_temp_health"
 	end
 
-	local heal_amount = not not Managers.state.game_mode:setting("healing_draught_heal_amount")
+	local heal_amount = Managers.state.game_mode:setting("healing_draught_heal_amount")
 
 	if self.is_server or LEVEL_EDITOR_TEST then
 		DamageUtils.heal_network(owner_unit, owner_unit, heal_amount, heal_type)

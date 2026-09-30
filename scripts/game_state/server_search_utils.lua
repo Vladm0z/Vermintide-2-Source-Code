@@ -131,8 +131,8 @@ ServerSearchUtils.filter_game_server_search = function (servers, network_options
 				return false
 			end
 
-			local num_players = not not server_info.num_players
-			local max_players = not not server_info.max_players
+			local num_players = server_info.num_players
+			local max_players = server_info.max_players
 
 			return max_players <= num_players
 		end)
@@ -146,7 +146,7 @@ ServerSearchUtils.filter_game_server_search = function (servers, network_options
 	end)
 	table.array_remove_if(servers, function (server)
 		-- function 12
-		local ping = not not server.server_info.ping
+		local ping = server.server_info.ping
 
 		if search_time >= 300 then
 			return false

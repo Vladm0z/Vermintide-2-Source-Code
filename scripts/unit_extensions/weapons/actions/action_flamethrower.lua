@@ -39,13 +39,13 @@ ActionFlamethrower.client_owner_start_action = function (self, new_action, t, ch
 	self.time_to_shoot = t + new_action.fire_time
 	self.overcharge_timer = 0
 	self.damage_timer = 1
-	self.stop_sound_event = not not new_action.stop_fire_event
-	self.muzzle_node_name = not not new_action.fx_node
+	self.stop_sound_event = new_action.stop_fire_event
+	self.muzzle_node_name = new_action.fx_node
 	self._fx_stopped = false
-	self.dot_check = not not new_action.dot_check
-	self.spray_range = new_action.spray_range and not not (math.abs(POSITION_TWEAK) + new_action.spray_range) or not new_action.spray_range and not not SPRAY_RANGE
-	self.charge_level = chain_action_data and not not chain_action_data.charge_level or not chain_action_data and not not 1
-	self.max_flame_time = new_action.fire_stop_time and not not (t + new_action.fire_stop_time) or not new_action.fire_stop_time and not not (t + self.charge_level * not not new_action.charge_fuel_time_multiplier)
+	self.dot_check = new_action.dot_check
+	self.spray_range = new_action.spray_range and math.abs(POSITION_TWEAK) + new_action.spray_range or not new_action.spray_range and SPRAY_RANGE
+	self.charge_level = chain_action_data and chain_action_data.charge_level or not chain_action_data and 1
+	self.max_flame_time = new_action.fire_stop_time and t + new_action.fire_stop_time or not new_action.fire_stop_time and t + self.charge_level * new_action.charge_fuel_time_multiplier
 
 	local full_charge_boost = self.buff_extension:has_buff_perk("full_charge_boost")
 
@@ -76,7 +76,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
 		self.state = "shooting"
 
-		local muzzle_unit = current_action.first_person_muzzle and (not not first_person_unit or not not self.weapon_unit) or not current_action.first_person_muzzle and not not self.weapon_unit
+		local muzzle_unit = current_action.first_person_muzzle and (first_person_unit or self.weapon_unit) or not current_action.first_person_muzzle and self.weapon_unit
 		local muzzle_node_name = self.muzzle_node_name
 		local go_id = self.unit_id
 		local muzzle_node = Unit.node(muzzle_unit, muzzle_node_name)
@@ -109,7 +109,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 				local owner = self.owner_player
 				local is_husk = not owner.local_player
 
-				WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and not not "true" or not is_husk and not not "false", self._source_id)
+				WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and "true" or not is_husk and "false", self._source_id)
 				WwiseWorld.trigger_event(self.wwise_world, self.stop_sound_event, self._source_id)
 			else
 				self._source_id = WwiseWorld.make_auto_source(self.wwise_world, self.weapon_unit)
@@ -118,7 +118,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 			local owner = self.owner_player
 			local is_husk = not owner.local_player
 
-			WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and not not "true" or not is_husk and not not "false", self._source_id)
+			WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and "true" or not is_husk and "false", self._source_id)
 			WwiseWorld.trigger_event(self.wwise_world, current_action.fire_sound_event, self._source_id)
 		end
 	end
@@ -198,23 +198,23 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 
 						if result then
 							local power_level = self.power_level
-							local consecutive_hits = not not self.old_targets
+							local consecutive_hits = self.old_targets
 							local override_damage_profile
 
 							if consecutive_hits then
 								power_level = power_level * (math.clamp(consecutive_hits, 0, 4) * 0.5)
 
 								if consecutive_hits < 5 then
-									override_damage_profile = not not current_action.initial_damage_profile or not not current_action.damage_profile or not not "default"
+									override_damage_profile = current_action.initial_damage_profile or current_action.damage_profile or "default"
 								end
 							else
-								override_damage_profile = not not current_action.initial_damage_profile or not not current_action.damage_profile or not not "default"
+								override_damage_profile = current_action.initial_damage_profile or current_action.damage_profile or "default"
 							end
 
 							local data = DamageUtils.process_projectile_hit(world, self.item_name, owner_unit, is_server, result, current_action, direction, check_buffs, current_target, nil, self._is_critical_strike, power_level, override_damage_profile, buff_target_number)
 
 							if data.buffs_checked then
-								check_buffs = not not check_buffs and not not false
+								check_buffs = check_buffs and false
 							end
 
 							processed_hit = true
@@ -224,7 +224,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 					targets[current_target] = processed_hit
 				end
 
-				local flamethrower_range = not not current_action.spray_range
+				local flamethrower_range = current_action.spray_range
 				local physics_world = World.get_data(world, "physics_world")
 				local player_rotation = Unit.world_rotation(first_person_unit, 0)
 				local player_direction = Vector3.normalize(Quaternion.forward(player_rotation))
@@ -240,7 +240,7 @@ ActionFlamethrower.client_owner_post_update = function (self, dt, t, world, can_
 					for _, hit in pairs(result) do
 						local hit_actor = hit[INDEX_ACTOR]
 						local potential_hit_unit = Actor.unit(hit_actor)
-						local breed = not not hit_unit and not not Unit.get_data(hit_unit, "breed")
+						local breed = hit_unit and Unit.get_data(hit_unit, "breed")
 
 						if potential_hit_unit ~= self.owner_unit and not targets[potential_hit_unit] and not breed then
 							if table.contains(player_and_bot_units, potential_hit_unit) then
@@ -305,7 +305,7 @@ ActionFlamethrower._stop_fx = function (self)
 		local owner = self.owner_player
 		local is_husk = not owner.local_player
 
-		WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and not not "true" or not is_husk and not not "false", source_id)
+		WwiseWorld.set_switch(self.wwise_world, "husk", is_husk and "true" or not is_husk and "false", source_id)
 		WwiseWorld.trigger_event(self.wwise_world, self.stop_sound_event, source_id)
 
 		self._source_id = nil
@@ -351,7 +351,7 @@ ActionFlamethrower._clear_targets = function (self)
 	local current_targets = {}
 
 	for i = 1, #targets do
-		local current_target_count = old_targets and not not old_targets[targets[i]] or not old_targets and not not 0
+		local current_target_count = old_targets and old_targets[targets[i]] or not old_targets and 0
 
 		current_targets[targets[i]] = current_target_count + 1
 	end
@@ -418,7 +418,7 @@ ActionFlamethrower._check_within_cone = function (self, player_position, player_
 	local target_position = Unit.world_position(target, Unit.node(target, "j_neck"))
 	local target_direction = Vector3.normalize(target_position - player_position)
 	local target_cos_alpha = Vector3.dot(player_direction, target_direction)
-	local dot_threshold = is_enemy and not not self.dot_check or not is_enemy and not not 0.99
+	local dot_threshold = is_enemy and self.dot_check or not is_enemy and 0.99
 
 	if dot_threshold <= target_cos_alpha then
 		return true

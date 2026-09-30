@@ -152,7 +152,7 @@ weapon_template.actions = {
 					action = "spells",
 					condition = function (talent_extension, buff_extension, weapon_extension)
 						-- function 5
-						return not not weapon_extension and not not weapon_extension:get_mode()
+						return weapon_extension and weapon_extension:get_mode()
 					end
 				}
 			},
@@ -171,7 +171,7 @@ weapon_template.actions = {
 					action = "spells",
 					condition = function (talent_extension, buff_extension, weapon_extension)
 						-- function 6
-						return not not weapon_extension and not not weapon_extension:get_mode()
+						return weapon_extension and weapon_extension:get_mode()
 					end
 				}
 			},

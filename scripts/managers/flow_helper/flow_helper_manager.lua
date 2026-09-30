@@ -39,7 +39,7 @@ FlowHelperManager._update_line_of_sight_checks = function (self, t)
 					local hit_pos = to
 					local result = true
 					local is_in_los = data.is_in_los
-					local status_extension = not not data.ignore_if_invisible
+					local status_extension = data.ignore_if_invisible
 
 					if status_extension and status_extension:is_invisible() then
 						result = false
@@ -65,7 +65,7 @@ FlowHelperManager._update_line_of_sight_checks = function (self, t)
 					if is_in_los ~= result then
 						data.is_in_los = result
 
-						Unit.flow_event(owner_unit, result and not not data.flow_cb_enter or not result and not not data.flow_cb_leave)
+						Unit.flow_event(owner_unit, result and data.flow_cb_enter or not result and data.flow_cb_leave)
 					end
 				end
 			end
@@ -76,7 +76,7 @@ end
 FlowHelperManager.register_line_of_sight_check = function (self, owner_unit, source_unit, source_node, unit_to_check, ignore_if_invisible, flow_cb_enter, flow_cb_leave, collision_filter, debug_draw)
 	-- function 4
 	local los_checks = self._line_of_sight_checks
-	local source_checks = not not los_checks[owner_unit]
+	local source_checks = los_checks[owner_unit]
 
 	los_checks[owner_unit] = source_checks
 	source_checks[unit_to_check] = {
@@ -89,8 +89,8 @@ FlowHelperManager.register_line_of_sight_check = function (self, owner_unit, sou
 		source_unit = source_unit,
 		source_node = source_node,
 		collision_filter = collision_filter,
-		target_node = Unit.has_node(unit_to_check, "j_spine") and not not Unit.node(unit_to_check, "j_spine") or not Unit.has_node(unit_to_check, "j_spine") and not not 0,
-		debug_draw = not not debug_draw and not not {
+		target_node = Unit.has_node(unit_to_check, "j_spine") and Unit.node(unit_to_check, "j_spine") or not Unit.has_node(unit_to_check, "j_spine") and 0,
+		debug_draw = debug_draw and {
 			from = Vector3Box(),
 			to = Vector3Box()
 		}

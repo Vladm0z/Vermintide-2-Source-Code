@@ -26,8 +26,8 @@ LobbyHost.init = function (self, network_options, lobby)
 		fassert(network_options.max_members, "Must provide max members to LobbyHost")
 	end
 
-	self.max_members = IS_WINDOWS and not not network_options.max_members or not IS_WINDOWS and not not IS_LINUX
-	self.lobby = not not lobby or not not LobbyInternal.create_lobby(network_options)
+	self.max_members = IS_WINDOWS and network_options.max_members or not IS_WINDOWS and IS_LINUX
+	self.lobby = lobby or LobbyInternal.create_lobby(network_options)
 	self.peer_id = Network.peer_id()
 	self._network_initialized = false
 	self.platform = PLATFORM
@@ -37,7 +37,7 @@ end
 LobbyHost.kick_all_except = function (self, ignored_peers)
 	-- function 3
 	if self.lobby ~= nil and self.lobby.kick then
-		ignored_peers = not not ignored_peers or not not {}
+		ignored_peers = ignored_peers or {}
 
 		local my_peer_id = self.peer_id
 
@@ -64,7 +64,7 @@ LobbyHost.update = function (self, dt)
 	-- function 5
 	local lobby = self.lobby
 	local new_state = lobby:state()
-	local old_state = not not self.state
+	local old_state = self.state
 
 	if new_state ~= old_state then
 		printf("[LobbyHost] Changed state from %s to %s", old_state, new_state)
@@ -73,7 +73,7 @@ LobbyHost.update = function (self, dt)
 
 		if new_state == LobbyState.JOINED then
 			if IS_PS4 then
-				local lobby_data_table = not not self.lobby_data_table
+				local lobby_data_table = self.lobby_data_table
 
 				lobby_data_table.network_hash = self.network_hash
 
@@ -90,7 +90,7 @@ LobbyHost.update = function (self, dt)
 				end
 			end
 
-			self.lobby_members = not not self.lobby_members
+			self.lobby_members = self.lobby_members
 
 			Managers.party:set_leader(lobby:lobby_host())
 			Managers.account:update_presence()
@@ -127,7 +127,7 @@ LobbyHost._update_debug = function (self)
 			local peer_id = members[i]
 
 			if peer_id ~= my_peer_id then
-				self._min_remaining_buffer = not not self._min_remaining_buffer
+				self._min_remaining_buffer = self._min_remaining_buffer
 
 				local remaining_buffer_size = Network.reliable_send_buffer_left(peer_id)
 				local min_buffer = self._min_remaining_buffer[peer_id]
@@ -137,7 +137,7 @@ LobbyHost._update_debug = function (self)
 					self._min_remaining_buffer[peer_id] = min_buffer
 				end
 
-				Debug.text("    %s : %d %s", peer_id, remaining_buffer_size, min_buffer and not not string.format("(min: %d)", min_buffer) or not min_buffer and not not "")
+				Debug.text("    %s : %d %s", peer_id, remaining_buffer_size, min_buffer and string.format("(min: %d)", min_buffer) or not min_buffer and "")
 			end
 		end
 	end
@@ -224,7 +224,7 @@ end
 
 LobbyHost.id = function (self)
 	-- function 19
-	return LobbyInternal.lobby_id and not not LobbyInternal.lobby_id(self.lobby) or not LobbyInternal.lobby_id and not not "no_id"
+	return LobbyInternal.lobby_id and LobbyInternal.lobby_id(self.lobby) or not LobbyInternal.lobby_id and "no_id"
 end
 
 LobbyHost.is_joined = function (self)
@@ -256,7 +256,7 @@ LobbyHost.set_lobby = function (self, lobby)
 
 	self.lobby = lobby
 
-	local lobby_data_table = not not self.lobby_data_table
+	local lobby_data_table = self.lobby_data_table
 
 	self:set_lobby_data(lobby_data_table)
 

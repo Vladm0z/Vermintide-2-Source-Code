@@ -6,7 +6,7 @@ for name, setting in pairs(BossSettings) do
 	if name ~= "disabled" then
 		for i = 1, #boss_events do
 			local event_name = boss_events[i]
-			local exists = not not TerrorEventBlueprints[event_name]
+			local exists = TerrorEventBlueprints[event_name]
 
 			fassert(exists, "BossSettings '%s'.boss_events in conflict_settings.lua, points to a non-existing terror_event '%s'. There is no such event defined in terror_event_blueprints.lua", name, event_name)
 		end
@@ -17,7 +17,7 @@ for name, setting in pairs(BossSettings) do
 	if name ~= "disabled" then
 		for i = 1, #rare_events do
 			local event_name = rare_events[i]
-			local exists = not not TerrorEventBlueprints[event_name]
+			local exists = TerrorEventBlueprints[event_name]
 
 			fassert(exists, "BossSettings '%s'.rare_events in conflict_settings.lua, points to a non-existing terror_event '%s'. There is no such event defined in terror_event_blueprints.lua", name, event_name)
 		end
@@ -30,7 +30,7 @@ for i = 1, #BreedPacks do
 	fassert(pack_data.pack_type, "BreedPack %d has a missing 'pack_type' field", i)
 	fassert(type(pack_data.spawn_weight) == "number", "BreedPack %d has a missing/faulty spawn_weight. ('%s') ", i, tostring(pack_data.spawn_weight))
 
-	local okay = not not pack_data.members
+	local okay = pack_data.members
 
 	fassert(okay, "BreedPack %d is missing table filed 'member'.", i)
 end

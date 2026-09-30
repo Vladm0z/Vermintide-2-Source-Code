@@ -192,7 +192,7 @@ TitleMainUI._create_menu_option_widget = function (self, layout, menu_hierarchy)
 			menu_hierarchy[index] = widget
 
 			if menu_option_layout then
-				menu_hierarchy.sub_menu = not not menu_hierarchy.sub_menu
+				menu_hierarchy.sub_menu = menu_hierarchy.sub_menu
 				menu_hierarchy.sub_menu[index] = {}
 
 				local sub_menu_hierarchy = menu_hierarchy.sub_menu[index]
@@ -274,7 +274,7 @@ end
 TitleMainUI._update_information_text = function (self, dt, t)
 	-- function 14
 	if not self._show_menu then
-		local current_api_call = not not Managers.backend
+		local current_api_call = Managers.backend
 
 		if current_api_call and Managers.localizer:exists(current_api_call) then
 			local widget = self._information_text
@@ -395,7 +395,7 @@ TitleMainUI._activate_menu_widget = function (self, index)
 	local current_index = self._current_menu_index
 	local menu_widget = self._current_menu_widgets[index]
 	local content = menu_widget.content
-	local callback = not not content.callback
+	local callback = content.callback
 	local result = callback()
 
 	if result then
@@ -410,7 +410,7 @@ TitleMainUI._activate_menu_widget = function (self, index)
 			menu_hierarchy = menu_hierarchy.sub_menu[breadcrumb_index]
 		end
 
-		local sub_menu = not not menu_hierarchy.sub_menu
+		local sub_menu = menu_hierarchy.sub_menu
 
 		if sub_menu then
 			table.clear(self._menu_item_animations)
@@ -430,7 +430,7 @@ end
 
 TitleMainUI._update_mouse_input = function (self, dt, t, input_service)
 	-- function 22
-	local current_index = not not self._current_menu_index
+	local current_index = self._current_menu_index
 	local menu_item = self._current_menu_widgets[current_index]
 	local menu_item_content = menu_item.content
 	local breadcrumbs = self._breadcrumbs
@@ -455,7 +455,7 @@ end
 
 TitleMainUI._update_gamepad_input = function (self, dt, t, input_service)
 	-- function 23
-	local current_index = not not self._current_menu_index
+	local current_index = self._current_menu_index
 	local menu_item = self._current_menu_widgets[current_index]
 	local menu_item_content = menu_item.content
 	local breadcrumbs = self._breadcrumbs
@@ -501,12 +501,12 @@ local EMPTY_TABLE = {}
 TitleMainUI._populate_additional_data = function (self, menu_option_widget)
 	-- function 25
 	local content = menu_option_widget.content
-	local menu_option_data = not not content.menu_option_data
+	local menu_option_data = content.menu_option_data
 	local tag = menu_option_data.tag
 	local logo_texture = menu_option_data.logo_texture
 	local description = menu_option_data.description
 	local info_slate = menu_option_data.info_slate
-	local video = not not menu_option_data.video
+	local video = menu_option_data.video
 	local info_slate_widget = self._info_slate_widget
 
 	info_slate_widget.content.text = info_slate
@@ -518,7 +518,7 @@ TitleMainUI._populate_additional_data = function (self, menu_option_widget)
 	local game_type_description_widget = self._game_type_description_widget
 
 	game_type_description_widget.content.text = description
-	self._sub_logo_widget = logo_texture and not not UIWidget.init(create_sub_logo_func(logo_texture)) or not logo_texture and not not nil
+	self._sub_logo_widget = logo_texture and UIWidget.init(create_sub_logo_func(logo_texture)) or not logo_texture and nil
 
 	self:_change_video(video)
 end
@@ -559,7 +559,7 @@ TitleMainUI._draw_menu_background = function (self, dt, t, ui_renderer, ui_scene
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	local alpha_multiplier = not not render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
 	render_settings.alpha_multiplier = self._alpha_multiplier
 
@@ -727,14 +727,14 @@ TitleMainUI.anim_select_button = function (self, animation_data, index, dt)
 		return
 	end
 
-	animation_data.timer = not not animation_data.timer
+	animation_data.timer = animation_data.timer
 	animation_data.timer = animation_data.timer + dt
 	animation_data.progress = math.clamp(animation_data.timer / MENU_ITEM_FADE_IN, 0, 1)
 
 	local menu_item = self._current_menu_widgets[index]
 	local item_disabled = menu_item.content.disabled
-	local color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.font_title
-	local select_color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.white
+	local color = item_disabled and Colors.color_definitions.gray or not item_disabled and Colors.color_definitions.font_title
+	local select_color = item_disabled and Colors.color_definitions.gray or not item_disabled and Colors.color_definitions.white
 
 	if menu_item.style.text then
 		menu_item.style.text.text_color[2] = math.lerp(color[2], select_color[2], math.smoothstep(animation_data.progress, 0, 1))
@@ -754,11 +754,11 @@ TitleMainUI.anim_select_button = function (self, animation_data, index, dt)
 	if text then
 		local spacing = 20
 
-		spacing = not not menu_item.content.spacing or not not spacing
+		spacing = menu_item.content.spacing or spacing
 
 		local text_width, text_height = self:_get_word_wrap_size(Localize(text), widget_style.text, 1000)
 
-		ui_scenegraph.selection_anchor.size[1] = (not not text_width or not not 0) + spacing
+		ui_scenegraph.selection_anchor.size[1] = (text_width or 0) + spacing
 		self._menu_selection_left.offset[1] = math.lerp(-50, 0, math.smoothstep(animation_data.progress, 0, 1))
 		self._menu_selection_right.offset[1] = math.lerp(50, 0, math.smoothstep(animation_data.progress, 0, 1))
 	end
@@ -773,7 +773,7 @@ TitleMainUI.anim_deselect_button = function (self, animation_data, index, dt, op
 	local progress = 0
 
 	if not optional_progress then
-		animation_data.timer = not not animation_data.timer
+		animation_data.timer = animation_data.timer
 		animation_data.timer = animation_data.timer - dt
 		animation_data.progress = math.clamp(animation_data.timer / MENU_ITEM_FADE_OUT, 0, 1)
 		progress = animation_data.progress
@@ -782,9 +782,9 @@ TitleMainUI.anim_deselect_button = function (self, animation_data, index, dt, op
 	end
 
 	local menu_item = self._current_menu_widgets[index]
-	local item_disabled = not not menu_item and not not menu_item.content.disabled
-	local color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.font_title
-	local select_color = item_disabled and not not Colors.color_definitions.gray or not item_disabled and not not Colors.color_definitions.white
+	local item_disabled = menu_item and menu_item.content.disabled
+	local color = item_disabled and Colors.color_definitions.gray or not item_disabled and Colors.color_definitions.font_title
+	local select_color = item_disabled and Colors.color_definitions.gray or not item_disabled and Colors.color_definitions.white
 
 	if menu_item and menu_item.style.text then
 		menu_item.style.text.text_color[2] = math.lerp(color[2], select_color[2], math.smoothstep(progress, 0, 1))
@@ -821,7 +821,7 @@ end
 TitleMainUI._add_menu_item_animation = function (self, index, func, widgets)
 	-- function 40
 	self._menu_item_animations[index] = {
-		progress = self._menu_item_animations[index] and not not self._menu_item_animations[index].progress or not self._menu_item_animations[index] and not not 0,
+		progress = self._menu_item_animations[index] and self._menu_item_animations[index].progress or not self._menu_item_animations[index] and 0,
 		func = func
 	}
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/sound/sound_sector_event_templates.lua
 
-SoundSectorEventTemplates = not not SoundSectorEventTemplates
+SoundSectorEventTemplates = SoundSectorEventTemplates
 
 local last_horde_unit
 local horde_units = {}
@@ -19,7 +19,7 @@ SoundSectorEventTemplates.distant_horde = {
 		end
 
 		local unit, death_extension
-		local iterate_first_unit = not last_horde_unit or not Unit.alive(last_horde_unit) or not not not sector[last_horde_unit]
+		local iterate_first_unit = not last_horde_unit or not Unit.alive(last_horde_unit) or not sector[last_horde_unit]
 
 		if iterate_first_unit then
 			unit, death_extension = next(sector, nil)
@@ -97,7 +97,7 @@ SoundSectorEventTemplates.distant_horde_chaos = {
 		end
 
 		local unit, death_extension
-		local iterate_first_unit = not last_horde_unit_chaos or not Unit.alive(last_horde_unit_chaos) or not not not sector[last_horde_unit_chaos]
+		local iterate_first_unit = not last_horde_unit_chaos or not Unit.alive(last_horde_unit_chaos) or not sector[last_horde_unit_chaos]
 
 		if iterate_first_unit then
 			unit, death_extension = next(sector, nil)
@@ -175,7 +175,7 @@ SoundSectorEventTemplates.distant_horde_beastmen = {
 		end
 
 		local unit, death_extension
-		local iterate_first_unit = not last_horde_unit_beastmen or not Unit.alive(last_horde_unit_beastmen) or not not not sector[last_horde_unit_beastmen]
+		local iterate_first_unit = not last_horde_unit_beastmen or not Unit.alive(last_horde_unit_beastmen) or not sector[last_horde_unit_beastmen]
 
 		if iterate_first_unit then
 			unit, death_extension = next(sector, nil)

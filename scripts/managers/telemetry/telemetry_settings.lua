@@ -11,8 +11,8 @@ TelemetrySettings = {
 		environment = BUILD,
 		version = {
 			game = VersionSettings.version,
-			engine_revision = string.value_or_nil(not not script_data.build_identifier),
-			content_revision = string.value_or_nil(script_data.settings.content_revision ~= "" and not not script_data.settings.content_revision or not (script_data.settings.content_revision ~= "") and not not Development.parameter("content_revision"))
+			engine_revision = string.value_or_nil(script_data.build_identifier),
+			content_revision = string.value_or_nil(script_data.settings.content_revision ~= "" and script_data.settings.content_revision or not (script_data.settings.content_revision ~= "") and Development.parameter("content_revision"))
 		},
 		data = {
 			testify = string.value_or_nil(script_data.testify),
@@ -34,6 +34,6 @@ TelemetrySettings = {
 		interval = 300
 	},
 	blacklist = {},
-	collect_memory = BUILD ~= "release" and not not Development.parameter("telemetry-collect-memory"),
+	collect_memory = BUILD ~= "release" and Development.parameter("telemetry-collect-memory"),
 	use_session_survey = Development.parameter("use-session-survey")
 }

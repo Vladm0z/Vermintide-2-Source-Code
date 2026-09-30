@@ -78,7 +78,7 @@ local FORMATION_COLORS = {
 
 FormationUtils.draw_encampment = function (encampment, pos, rot, drawer)
 	-- function 3
-	drawer = not not drawer or not not QuickDrawer
+	drawer = drawer or QuickDrawer
 
 	drawer:sphere(pos, 0.25, Color(0, 180, 0))
 
@@ -98,7 +98,7 @@ FormationUtils.draw_formation = function (formation, pos, rot, color, drawer)
 	drawer:line(pos, pos + Vector3(0, 0, 3), color)
 
 	local dir = formation.formation_template.dir
-	local formation_rot = dir and not not Quaternion.look(Vector3(dir[1], dir[2], 0)) or not dir and not not Quaternion.look(Vector3(0, 1, 0))
+	local formation_rot = dir and Quaternion.look(Vector3(dir[1], dir[2], 0)) or not dir and Quaternion.look(Vector3(0, 1, 0))
 
 	formation_rot = Quaternion.multiply(rot, formation_rot)
 
@@ -118,7 +118,7 @@ FormationUtils.spawn_formation = function (formation, pos, rot, breed_name, grou
 	local nav_world = conflict_director.nav_world
 	local arrangement = formation.arrangement
 	local dir = formation.formation_template.dir
-	local formation_rot = dir and not not Quaternion.look(Vector3(dir[1], dir[2], 0)) or not dir and not not Quaternion.look(Vector3(0, 1, 0))
+	local formation_rot = dir and Quaternion.look(Vector3(dir[1], dir[2], 0)) or not dir and Quaternion.look(Vector3(0, 1, 0))
 
 	formation_rot = Quaternion.multiply(rot, formation_rot)
 

@@ -43,7 +43,7 @@ end
 
 ActionCareerBWNecromancerTargetting.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 3
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	ActionCareerBWNecromancerTargetting.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 

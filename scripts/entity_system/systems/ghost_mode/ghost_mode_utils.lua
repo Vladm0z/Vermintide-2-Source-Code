@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/ghost_mode/ghost_mode_utils.lua
 
-GhostModeUtils = not not GhostModeUtils
+GhostModeUtils = GhostModeUtils
 
 GhostModeUtils.in_line_of_sight_of_enemies = function (unit, enemy_positions, physics_world)
 	-- function 1
@@ -24,9 +24,9 @@ GhostModeUtils.in_range_of_enemies = function (position, side, is_boss)
 	-- function 2
 	local enemy_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
 	local in_range = false
-	local min_dist = is_boss and not not GameModeSettings.versus.boss_minimum_spawn_distance or not is_boss and not not GameModeSettings.versus.dark_pact_minimum_spawn_distance
+	local min_dist = is_boss and GameModeSettings.versus.boss_minimum_spawn_distance or not is_boss and GameModeSettings.versus.dark_pact_minimum_spawn_distance
 	local min_dist_vertical = GameModeSettings.versus.dark_pact_minimum_spawn_distance_vertical
-	local setting_name = is_boss and not not "boss_spawn_range_distance" or not is_boss and not not "special_spawn_range_distance"
+	local setting_name = is_boss and "boss_spawn_range_distance" or not is_boss and "special_spawn_range_distance"
 	local mechanism_ok, custom_setting_distance_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", setting_name)
 
 	if mechanism_ok and custom_settings_enabled then

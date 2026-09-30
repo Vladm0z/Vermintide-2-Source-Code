@@ -4,7 +4,7 @@ BEQueueItem = class(BEQueueItem)
 
 BEQueueItem.init = function (self, caller, queue_id, script_name, ...)
 	-- function 1
-	fassert(not not caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
+	fassert(caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 
 	self._queue_id = queue_id
 	self._script_name = script_name
@@ -20,13 +20,13 @@ end
 
 BEQueueItem.submit_request = function (self, caller)
 	-- function 3
-	fassert(not not caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
+	fassert(caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 	BackendSession.item_server_script(self._script_name, "queue_id", self._queue_id, unpack(self._data))
 end
 
 BEQueueItem.poll_backend = function (self, caller)
 	-- function 4
-	fassert(not not caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
+	fassert(caller and caller == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 
 	local items, parameters, error_message = BackendSession.poll_item_server()
 

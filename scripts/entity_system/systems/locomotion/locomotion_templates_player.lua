@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_player.lua
 
-LocomotionTemplates = not not LocomotionTemplates
+LocomotionTemplates = LocomotionTemplates
 
 local LocomotionTemplates = LocomotionTemplates
 local LEVEL_EDITOR_TEST = LEVEL_EDITOR_TEST
@@ -136,7 +136,7 @@ T.update_movement = function (data, t, dt)
 			extension.collides_down = true
 		else
 			extension.time_since_last_down_collide = extension.time_since_last_down_collide + dt
-			extension.collides_down = extension.time_since_last_down_collide < MAX_TIME_SINCE_LAST_DOWN_COLLIDE and not not extension.collides_down
+			extension.collides_down = extension.time_since_last_down_collide < MAX_TIME_SINCE_LAST_DOWN_COLLIDE and extension.collides_down
 		end
 
 		local on_ground = extension.on_ground
@@ -236,7 +236,7 @@ T.update_network = function (data, dt)
 		GameSession_set_game_object_field(game, go_id, "position", Vector3.clamp(position, min, max))
 		GameSession_set_game_object_field(game, go_id, "has_moved_from_start_position", extension.has_moved_from_start_position)
 
-		local speed = math.min(not not extension.anim_move_speed, MAX_MOVE_SPEED)
+		local speed = math.min(extension.anim_move_speed, MAX_MOVE_SPEED)
 
 		Unit.animation_set_variable(unit, extension.move_speed_anim_var, speed)
 		GameSession_set_game_object_field(game, go_id, "velocity", Vector3.clamp(velocity, min_vel, max_vel))

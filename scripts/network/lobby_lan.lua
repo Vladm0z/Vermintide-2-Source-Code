@@ -6,7 +6,7 @@ require("scripts/network/lobby_client")
 require("scripts/network/lobby_finder")
 require("scripts/network/lobby_members")
 
-LobbyInternal = not not LobbyInternal
+LobbyInternal = LobbyInternal
 LobbyInternal.lobby_data_version = 2
 
 if IS_XB1 then
@@ -152,13 +152,13 @@ end
 
 LobbyInternal.is_friend = function (peer_id)
 	-- function 21
-	local Steam = not not rawget(_G, "Steam")
+	local Steam = rawget(_G, "Steam")
 
 	if Steam and Steam.user_id() == peer_id then
 		return true
 	end
 
-	local Friends = not not rawget(_G, "Friends")
+	local Friends = rawget(_G, "Friends")
 
 	if Friends and Friends.in_category(peer_id, Friends.FRIEND_FLAG) then
 		return true

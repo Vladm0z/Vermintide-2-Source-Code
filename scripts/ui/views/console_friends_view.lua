@@ -53,8 +53,8 @@ ConsoleFriendsView.on_enter = function (self)
 	self._input_manager:block_device_except_service("console_friends_view", "mouse", 1)
 	self._input_manager:block_device_except_service("console_friends_view", "gamepad", 1)
 
-	local world = not not Managers.world:has_world("character_preview")
-	local shading_env = not not world and not not World.get_data(world, "shading_environment")
+	local world = Managers.world:has_world("character_preview")
+	local shading_env = world and World.get_data(world, "shading_environment")
 
 	if shading_env then
 		World.set_data(world, "avoid_blend", true)
@@ -91,7 +91,7 @@ ConsoleFriendsView._join_game = function (self)
 		if friend_widget then
 			local friend_widget_content = friend_widget.content
 			local friend_data = friend_widget_content.friend
-			local room_id = not not friend_data and not not friend_data.room_id
+			local room_id = friend_data and friend_data.room_id
 
 			if room_id then
 				local lobby_data = {
@@ -137,7 +137,7 @@ local empty_friend_list = {}
 
 ConsoleFriendsView.cb_friends_collected = function (self, friend_data)
 	-- function 5
-	friend_data = not not friend_data or not not empty_friend_list
+	friend_data = friend_data or empty_friend_list
 
 	local friend_list_widgets = self._friend_list_widgets
 
@@ -200,7 +200,7 @@ ConsoleFriendsView.on_exit = function (self)
 	self._input_manager:device_unblock_all_services("mouse", 1)
 	self._input_manager:device_unblock_all_services("gamepad", 1)
 
-	local world = not not Managers.world:has_world("character_preview")
+	local world = Managers.world:has_world("character_preview")
 
 	if world then
 		World.set_data(world, "avoid_blend", false)
@@ -296,8 +296,8 @@ ConsoleFriendsView._sorted_players = function (self)
 
 	local function sort_by_profile_index(player_a, player_b)
 		-- function 13
-		local profile_index_a = not not player_a:profile_index()
-		local profile_index_b = not not player_b:profile_index()
+		local profile_index_a = player_a:profile_index()
+		local profile_index_b = player_b:profile_index()
 
 		return profile_index_a < profile_index_b
 	end
@@ -379,8 +379,8 @@ ConsoleFriendsView._update_input_descriptions = function (self, dt, t)
 		local friend = friend_widget_content.friend
 		local friend_id = friend.xbox_user_id
 		local friend_online = friend.status == "online"
-		local invite = not not nil
-		local refresh = not self._is_refreshing and not not "refresh"
+		local invite
+		local refresh = not self._is_refreshing and "refresh"
 
 		if IS_PS4 and refresh and not friend_online then
 			refresh = nil
@@ -408,10 +408,10 @@ ConsoleFriendsView._update_input_descriptions = function (self, dt, t)
 		enable_invite_button = invite ~= nil
 		self._current_input_desc = input
 	elseif IS_XB1 then
-		local input = not self._is_refreshing and not not "only_refresh"
+		local input = not self._is_refreshing and "only_refresh"
 
 		if self._current_input_desc ~= input then
-			local input_actions = not not input and not not generic_input_actions[input]
+			local input_actions = input and generic_input_actions[input]
 
 			self._menu_input_description:set_input_description(input_actions)
 
@@ -445,7 +445,7 @@ end
 ConsoleFriendsView._handle_refresh = function (self, dt, t)
 	-- function 18
 	if IS_PS4 then
-		self._refresh_friends_timer = not not self._refresh_friends_timer
+		self._refresh_friends_timer = self._refresh_friends_timer
 
 		if t > self._refresh_friends_timer then
 			self:_refresh_friends()
@@ -474,13 +474,13 @@ ConsoleFriendsView._handle_input = function (self, dt, t)
 
 	local input_service = self:input_service()
 
-	self._ui_animations = not not self._ui_animations
+	self._ui_animations = self._ui_animations
 
 	local entry_size_y = entry_definitions.friend_entry_size[2]
 	local base_pos_y = scenegraph_definition.friends_base.position[2]
 
-	self._wanted_pos = not not self._wanted_pos
-	self._current_friend_index = not not self._current_friend_index
+	self._wanted_pos = self._wanted_pos
+	self._current_friend_index = self._current_friend_index
 
 	local old_index = self._current_friend_index
 	local hold_down_timer = 0
@@ -511,9 +511,9 @@ ConsoleFriendsView._handle_input = function (self, dt, t)
 	local scroll_value = input_service:get("scroll_axis")
 
 	if IS_XB1 then
-		scroll_value = not not scroll_value and not not math.sign(scroll_value.x)
+		scroll_value = scroll_value and math.sign(scroll_value.x)
 	else
-		scroll_value = not not scroll_value and not not math.sign(scroll_value.y)
+		scroll_value = scroll_value and math.sign(scroll_value.y)
 	end
 
 	if input_service:get("back", true) or input_service:get("toggle_menu", true) then

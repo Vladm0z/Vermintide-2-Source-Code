@@ -74,7 +74,7 @@ StartGameWindowWeavePanel._create_ui_elements = function (self, params, offset)
 	for index, settings in ipairs(window_layouts) do
 		if settings.panel_sorting and parent:can_add_layout(settings) then
 			local settings_name = settings.name
-			local display_name = not not settings.display_name
+			local display_name = settings.display_name
 			local text_width = self:_get_text_width(temp_text_style, display_name)
 			local option_size = {
 				math.min(text_width + 40, 400),
@@ -164,7 +164,7 @@ end
 StartGameWindowWeavePanel._is_button_pressed = function (self, widget)
 	-- function 7
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -240,11 +240,11 @@ StartGameWindowWeavePanel._handle_input = function (self, dt, t)
 	end
 
 	if not input_made then
-		local current_index = not not self._selected_index
+		local current_index = self._selected_index
 		local max_index = #title_button_widgets
 
 		if input_service:get(INPUT_ACTION_PREVIOUS) then
-			local next_index = current_index > 1 and not not (current_index - 1) or not (current_index > 1) and not not max_index
+			local next_index = current_index > 1 and current_index - 1 or not (current_index > 1) and max_index
 
 			self:_on_panel_button_selected(next_index)
 		elseif input_service:get(INPUT_ACTION_NEXT) then
@@ -427,10 +427,10 @@ StartGameWindowWeavePanel._animate_title_entry = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -491,7 +491,7 @@ StartGameWindowWeavePanel._start_panel_selection_animation = function (self, pre
 	local entry_panel_selection = widgets_by_name.entry_panel_selection
 	local selection_offset = entry_panel_selection.offset
 	local selection_size = entry_panel_selection.content.size
-	local panel_selection_animation = not not self._panel_selection_animation
+	local panel_selection_animation = self._panel_selection_animation
 
 	self._panel_selection_animation = panel_selection_animation
 

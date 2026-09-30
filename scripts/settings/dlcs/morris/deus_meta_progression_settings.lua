@@ -4,4 +4,4 @@ require("scripts/settings/dlcs/morris/deus_weapons")
 
 DeusPlayerSetupVersion = 3
 DeusStartingMetaProgressionAmount = 0
-DeusRollOverSettings = not not DeusRollOverSettings
+DeusRollOverSettings = DeusRollOverSettings

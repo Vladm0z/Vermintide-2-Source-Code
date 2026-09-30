@@ -81,7 +81,7 @@ local breed_data = {
 		200,
 		0
 	},
-	disabled = not not Development.setting("disable_pack_master"),
+	disabled = Development.setting("disable_pack_master"),
 	status_effect_settings = {
 		category = "small",
 		ignored_statuses = table.set({

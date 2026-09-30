@@ -158,7 +158,7 @@ StoreWindowCategoryItemList._is_list_hovered = function (self)
 	-- function 9
 	local list_mask = self._widgets_by_name.list
 
-	return not not list_mask.content.list_hotspot.is_hover
+	return list_mask.content.list_hotspot.is_hover
 end
 
 StoreWindowCategoryItemList._handle_input = function (self, dt, t)
@@ -203,8 +203,8 @@ StoreWindowCategoryItemList._draw = function (self, dt)
 	local ui_scenegraph = self._ui_scenegraph
 	local input_service = self._parent:window_input_service()
 	local render_settings = self._render_settings
-	local alpha_multiplier = not not render_settings.alpha_multiplier
-	local list_alpha_multiplier = not not render_settings.list_alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
+	local list_alpha_multiplier = render_settings.list_alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
@@ -251,7 +251,7 @@ StoreWindowCategoryItemList._update_gamepad_focus = function (self)
 		if category_focused then
 			self:_on_list_index_selected(nil)
 		elseif self._gamepad_active_last_frame then
-			self:_on_list_index_selected(not not self._previous_gamepad_grid_index)
+			self:_on_list_index_selected(self._previous_gamepad_grid_index)
 		end
 	end
 end
@@ -279,7 +279,7 @@ StoreWindowCategoryItemList._list_index_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot = not not content.hotspot
+			local hotspot = content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -303,7 +303,7 @@ StoreWindowCategoryItemList._animate_list_entries = function (self, dt)
 	for _, widget in ipairs(list_widgets) do
 		local content = widget.content
 		local style = widget.style
-		local hotspot = not not content.button_hotspot
+		local hotspot = content.button_hotspot
 
 		if hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
@@ -346,7 +346,7 @@ StoreWindowCategoryItemList._update_item_list = function (self)
 
 	for backend_id, item in pairs(items) do
 		local bundle_item_data = item.data
-		local bundle = not not bundle_item_data and not not bundle_item_data.bundle
+		local bundle = bundle_item_data and bundle_item_data.bundle
 
 		if bundle then
 			for _, item_key in ipairs(bundle.BundledItems) do
@@ -397,7 +397,7 @@ StoreWindowCategoryItemList._update_item_list = function (self)
 	self._create_widgets = self:_create_product_widgets(layout, true)
 
 	local current_page_name = path[#path]
-	local current_page = not not pages[current_page_name]
+	local current_page = pages[current_page_name]
 	local current_page_display_name = current_page.display_name
 
 	self:_set_title_texts(Localize(current_page_display_name))
@@ -448,7 +448,7 @@ StoreWindowCategoryItemList._on_list_index_selected = function (self, index, scr
 	if list_widgets then
 		for i, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot = not not content.hotspot
+			local hotspot = content.hotspot
 
 			if hotspot then
 				local is_selected = i == index
@@ -656,7 +656,7 @@ StoreWindowCategoryItemList._sync_layout_path = function (self, force_update)
 	local path = parent:get_store_path()
 	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
-	local saved_path = not not self._saved_path
+	local saved_path = self._saved_path
 	local path_differs = false
 	local path_length = #path
 	local saved_path_length = #saved_path
@@ -817,7 +817,7 @@ StoreWindowCategoryItemList._update_visible_list_entries = function (self)
 
 		content.visible = not is_outside
 
-		local hotspot = not not content.button_hotspot
+		local hotspot = content.button_hotspot
 
 		if is_outside then
 			table.clear(hotspot)

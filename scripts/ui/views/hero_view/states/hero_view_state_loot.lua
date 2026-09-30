@@ -513,7 +513,7 @@ HeroViewStateLoot._setup_reward_option_widgets = function (self)
 		local background_widget_name = "loot_background_" .. i
 		local data = {
 			widget = self._option_widgets_by_name[widget_name],
-			preview_widget = USE_DELAYED_SPAWN and not not nil or not USE_DELAYED_SPAWN and not not self._preview_loot_widgets_by_name[widget_name],
+			preview_widget = USE_DELAYED_SPAWN and nil or not USE_DELAYED_SPAWN and self._preview_loot_widgets_by_name[widget_name],
 			background_widget = self._option_background_widgets_by_name[background_widget_name]
 		}
 
@@ -592,7 +592,7 @@ HeroViewStateLoot._position_camera = function (self, optional_pose)
 	-- function 23
 	local world, viewport = self:get_viewport_world()
 	local camera = ScriptViewport.camera(viewport)
-	local camera_pose = not not optional_pose or not not self._camera_pose:unbox()
+	local camera_pose = optional_pose or self._camera_pose:unbox()
 
 	if camera_pose then
 		local fov = 65
@@ -736,7 +736,7 @@ HeroViewStateLoot.update = function (self, dt, t)
 			end
 		end
 
-		return not not wanted_state or not not self._new_state
+		return wanted_state or self._new_state
 	end
 end
 
@@ -830,15 +830,15 @@ HeroViewStateLoot._update_animations = function (self, dt)
 			if not button_hotspot.disable_button then
 				local rarity = content.rarity
 				local anim_progress = 0
-				local glow_alpha_progress = not not content.glow_alpha_progress
+				local glow_alpha_progress = content.glow_alpha_progress
 				local speed = dt * 3
 
 				if button_hotspot.on_hover_enter then
-					local sound_event = rarity and not not ("play_gui_chest_reward_hover_start_" .. tostring(rarity)) or not rarity and not not "play_gui_chest_reward_start"
+					local sound_event = rarity and "play_gui_chest_reward_hover_start_" .. tostring(rarity) or not rarity and "play_gui_chest_reward_start"
 
 					self:play_sound(sound_event)
 				elseif button_hotspot.on_hover_exit then
-					local sound_event = rarity and not not ("play_gui_chest_reward_hover_stop_" .. tostring(rarity)) or not rarity and not not "play_gui_chest_reward_stop"
+					local sound_event = rarity and "play_gui_chest_reward_hover_stop_" .. tostring(rarity) or not rarity and "play_gui_chest_reward_stop"
 
 					self:play_sound(sound_event)
 				end
@@ -910,7 +910,7 @@ HeroViewStateLoot.draw = function (self, dt)
 		end
 	end
 
-	render_settings.alpha_multiplier = not not self._grid_alpha_multiplier
+	render_settings.alpha_multiplier = self._grid_alpha_multiplier
 
 	for _, widget in ipairs(self._widgets) do
 		UIRenderer.draw_widget(loot_ui_renderer, widget)
@@ -1001,7 +1001,7 @@ HeroViewStateLoot.draw = function (self, dt)
 			end
 
 			if self._rewards_presented then
-				render_settings.alpha_multiplier = not not self._continue_button_alpha_multiplier
+				render_settings.alpha_multiplier = self._continue_button_alpha_multiplier
 
 				UIRenderer.draw_widget(ui_top_renderer, self._continue_button_widget)
 
@@ -1056,7 +1056,7 @@ HeroViewStateLoot._set_debug_buttons_disable_state = function (self, is_disabled
 
 	for _, widget in ipairs(debug_widgets) do
 		local content = widget.content
-		local hotspot = not not content.hotspot
+		local hotspot = content.hotspot
 
 		hotspot.disable_button = is_disabled
 	end
@@ -1065,7 +1065,7 @@ end
 HeroViewStateLoot._is_button_pressed = function (self, widget)
 	-- function 32
 	local content = widget.content
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -1077,7 +1077,7 @@ end
 HeroViewStateLoot._is_button_hovered = function (self, widget)
 	-- function 33
 	local content = widget.content
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 
 	if hotspot.on_hover_enter then
 		return true
@@ -1131,7 +1131,7 @@ HeroViewStateLoot._select_grid_item = function (self, item, t, reset_num_chests)
 	local item_grid = self._item_grid
 	local backend_items = Managers.backend:get_interface("items")
 
-	item = not not item and not not backend_items:get_item_from_id(item.backend_id)
+	item = item and backend_items:get_item_from_id(item.backend_id)
 
 	item_grid:set_item_selected(item)
 
@@ -1148,7 +1148,7 @@ HeroViewStateLoot._select_grid_item = function (self, item, t, reset_num_chests)
 
 		chest_category_scratch_tbl[1] = item_data.chest_category
 
-		local chest_categories = not not item_data.chest_categories
+		local chest_categories = item_data.chest_categories
 		local chest_tier = item_data.chest_tier
 		local chests_by_category = LootChestData.chests_by_category
 
@@ -1199,7 +1199,7 @@ HeroViewStateLoot._select_grid_item = function (self, item, t, reset_num_chests)
 
 		local _, display_name, _ = UIUtils.get_ui_information_from_item(item)
 		local item_type = item_data.item_type
-		local info_text_box_text_id = not not item_data.info_text_box_text_id
+		local info_text_box_text_id = item_data.info_text_box_text_id
 
 		widgets_by_name.info_text_box.content.text = info_text_box_text_id
 		widgets_by_name.chest_title.content.text = Localize(display_name)
@@ -1228,9 +1228,9 @@ HeroViewStateLoot._select_grid_item = function (self, item, t, reset_num_chests)
 	local has_space_for_one = items_per_chest <= free_inventory_slots
 	local has_space_for_multiple = free_inventory_slots >= items_per_chest * num_chests_to_multi_open
 
-	self._open_chests_enabled = num_chests >= 1 and not not has_space_for_one
-	self._open_multiple_chests_enabled = num_chests >= 2 and not not has_space_for_multiple
-	widgets_by_name.item_cap_warning_text.content.visible = not has_space_for_one or not not not has_space_for_multiple
+	self._open_chests_enabled = num_chests >= 1 and has_space_for_one
+	self._open_multiple_chests_enabled = num_chests >= 2 and has_space_for_multiple
+	widgets_by_name.item_cap_warning_text.content.visible = not has_space_for_one or not has_space_for_multiple
 	widgets_by_name.open_button.content.button_hotspot.disable_button = not self._open_chests_enabled
 	widgets_by_name.open_multiple_button.content.button_hotspot.disable_button = not self._open_multiple_chests_enabled
 
@@ -1363,17 +1363,17 @@ HeroViewStateLoot._handle_page_selection = function (self, dt)
 	-- function 41
 	local next_button = self._arrow_widgets_by_name.arrow_right
 	local prev_button = self._arrow_widgets_by_name.arrow_left
-	local next_multiplier = UIUtils.is_button_hover(next_button) and not not 1 or not UIUtils.is_button_hover(next_button) and not not -1
+	local next_multiplier = UIUtils.is_button_hover(next_button) and 1 or not UIUtils.is_button_hover(next_button) and -1
 	local next_button_lit_style = next_button.style.arrow_lit
-	local progress = not not next_button_lit_style.progress
+	local progress = next_button_lit_style.progress
 
 	progress = math.clamp(progress + dt * 6 * next_multiplier, 0, 1)
 	next_button_lit_style.color[1] = progress * 255
 	next_button_lit_style.progress = progress
 
-	local prev_multiplier = UIUtils.is_button_hover(prev_button) and not not 1 or not UIUtils.is_button_hover(prev_button) and not not -1
+	local prev_multiplier = UIUtils.is_button_hover(prev_button) and 1 or not UIUtils.is_button_hover(prev_button) and -1
 	local prev_button_lit_style = prev_button.style.arrow_lit
-	local progress = not not prev_button_lit_style.progress
+	local progress = prev_button_lit_style.progress
 
 	progress = math.clamp(progress + dt * 6 * prev_multiplier, 0, 1)
 	prev_button_lit_style.color[1] = progress * 255
@@ -1462,7 +1462,7 @@ HeroViewStateLoot._handle_input = function (self, dt, t)
 	UIWidgetUtils.animate_default_button(open_multiple_button, dt)
 	UIWidgetUtils.animate_default_button(continue_button, dt)
 
-	local back_button_pressed = not not gamepad_active and not not input_service:get("back_menu")
+	local back_button_pressed = gamepad_active and input_service:get("back_menu")
 
 	if self._wait_for_backend_reload then
 		self._wait_for_backend_reload = math.max(self._wait_for_backend_reload - dt, 0)
@@ -1510,7 +1510,7 @@ HeroViewStateLoot._handle_input = function (self, dt, t)
 			end
 		end
 
-		local skip_reward_presentation = not not self._rewards_presented
+		local skip_reward_presentation = self._rewards_presented
 
 		if self._rewards_presented and (self:_is_button_pressed(continue_button) or input_service:get("toggle_menu") or skip_reward_presentation or back_button_pressed) then
 			self:play_sound("play_gui_chest_opening_return")
@@ -1617,8 +1617,8 @@ HeroViewStateLoot._handle_input = function (self, dt, t)
 			self:_select_grid_item(item, t, reset_num_chests)
 		end
 
-		local open_button_pressed = not not self._open_chests_enabled
-		local open_multiple_button_pressed = not not self._open_multiple_chests_enabled
+		local open_button_pressed = self._open_chests_enabled
+		local open_multiple_button_pressed = self._open_multiple_chests_enabled
 		local gamepad_active = Managers.input:is_device_active("gamepad")
 
 		if not gamepad_active and IS_WINDOWS and open_button_pressed and self._last_open_pressed == "multiple" then
@@ -1665,8 +1665,8 @@ HeroViewStateLoot._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -1801,9 +1801,9 @@ HeroViewStateLoot._setup_rewards = function (self, rewards)
 			local reward_a = rewards[reward_index]
 			local reward_rarity_a = backend_items:get_item_rarity(reward_a)
 			local reward_b = rewards[reward_index + 1]
-			local reward_rarity_b = not not reward_b and not not backend_items:get_item_rarity(reward_b)
+			local reward_rarity_b = reward_b and backend_items:get_item_rarity(reward_b)
 			local reward_c = rewards[reward_index + 2]
-			local reward_rarity_c = not not reward_c and not not backend_items:get_item_rarity(reward_c)
+			local reward_rarity_c = reward_c and backend_items:get_item_rarity(reward_c)
 			local widget_definition = create_chest_indicator_func(i, self._current_page_index, reward_rarity_a, reward_rarity_b, reward_rarity_c)
 
 			self._chest_indicators[#self._chest_indicators + 1] = UIWidget.init(widget_definition)
@@ -2033,8 +2033,8 @@ HeroViewStateLoot._update_active_viewports = function (self, force_update)
 
 	for i = 1, num_loot_options * 3 do
 		local data = self._active_reward_options[i]
-		local item_previewer = not not data and not not data.item_previewer
-		local world_previewer = not not data and not not data.world_previewer
+		local item_previewer = data and data.item_previewer
+		local world_previewer = data and data.world_previewer
 
 		if item_previewer then
 			item_previewer:activate(false)
@@ -2061,8 +2061,8 @@ HeroViewStateLoot._update_active_viewports = function (self, force_update)
 	for i = 1, 3 do
 		local widget_index = i + (page_index - 1) * 3
 		local data = self._active_reward_options[widget_index]
-		local item_previewer = not not data and not not data.item_previewer
-		local world_previewer = not not data and not not data.world_previewer
+		local item_previewer = data and data.item_previewer
+		local world_previewer = data and data.world_previewer
 		local preview_loot_widget = preview_loot_widgets[i]
 
 		preview_loot_widget.scenegraph_id = "loot_option_" .. widget_index
@@ -2251,7 +2251,7 @@ end
 
 HeroViewStateLoot._create_player_portrait = function (self, scenegraph_id, portrait_frame, portrait_image, player_level_text, optional_scale)
 	-- function 60
-	local definition = UIWidgets.create_portrait_frame(scenegraph_id, portrait_frame, player_level_text, not not optional_scale or not not 1, nil, portrait_image)
+	local definition = UIWidgets.create_portrait_frame(scenegraph_id, portrait_frame, player_level_text, optional_scale or 1, nil, portrait_image)
 	local widget = UIWidget.init(definition, self.ui_top_renderer)
 
 	return widget
@@ -2288,7 +2288,7 @@ end
 
 HeroViewStateLoot._start_animation = function (self, key, animation_name, widget, optional_params)
 	-- function 64
-	local params = not not optional_params or not not {
+	local params = optional_params or {
 		wwise_world = self.wwise_world
 	}
 	local animation_id = self.ui_animator:start_animation(animation_name, widget, scenegraph_definition, params)
@@ -2327,7 +2327,7 @@ HeroViewStateLoot._open_chest = function (self, selected_item, num_chests)
 
 	chest_category_scratch_tbl[1] = selected_item_data.chest_category
 
-	local chest_categories = not not selected_item_data.chest_categories
+	local chest_categories = selected_item_data.chest_categories
 	local chest_tier = selected_item_data.chest_tier
 	local chests_by_category = LootChestData.chests_by_category
 
@@ -2364,7 +2364,7 @@ end
 HeroViewStateLoot.loot_chest_opened = function (self, loot)
 	-- function 66
 	local selected_item = self._selected_item
-	local num_loot = not not loot and not not #loot
+	local num_loot = loot and #loot
 	local has_chest = BackendUtils.has_loot_chest()
 
 	if not has_chest then
@@ -2417,7 +2417,7 @@ HeroViewStateLoot._animate_reward_options_entry = function (self, dt)
 		local num_pages = math.ceil(#active_reward_options / 3)
 		local input_desc
 
-		input_desc = num_pages > 1 and (not not "chest_opened_pages" or not not "chest_opened") or not (num_pages > 1) and not not "chest_opened"
+		input_desc = num_pages > 1 and ("chest_opened_pages" or "chest_opened") or not (num_pages > 1) and "chest_opened"
 		self._reward_options_entry_progress = nil
 
 		self.menu_input_description:set_input_description(generic_input_actions[input_desc])
@@ -2821,19 +2821,19 @@ HeroViewStateLoot.add_camera_shake = function (self, settings, start_time, scale
 	-- function 90
 	local data = {}
 	local current_rot = self:get_camera_rotation()
-	local settings = not not settings or not not camera_default_shake_settings
+	local settings = settings or camera_default_shake_settings
 	local duration = settings.duration
 	local fade_in = settings.fade_in
 	local fade_out = settings.fade_out
 
-	duration = (not not duration or not not 0) + (not not fade_in or not not 0) + (not not fade_out or not not 0)
+	duration = (duration or 0) + (fade_in or 0) + (fade_out or 0)
 	data.shake_settings = settings
 	data.start_time = start_time
-	data.end_time = not not duration and not not (start_time + duration)
-	data.fade_in_time = not not fade_in and not not (start_time + fade_in)
-	data.fade_out_time = not not fade_out and not not (data.end_time - fade_out)
-	data.seed = not not settings.seed
-	data.scale = not not scale or not not 1
+	data.end_time = duration and start_time + duration
+	data.fade_in_time = fade_in and start_time + fade_in
+	data.fade_out_time = fade_out and data.end_time - fade_out
+	data.seed = settings.seed
+	data.scale = scale or 1
 	data.camera_rotation_boxed = QuaternionBox(current_rot)
 	self._active_camera_shakes = {
 		[data] = true
@@ -2883,8 +2883,8 @@ HeroViewStateLoot._calculate_perlin_value = function (self, x, settings)
 		total = total + self:_interpolated_noise(x * frequency, settings) * amplitude
 	end
 
-	local amplitude_multiplier = not not shake_settings.amplitude
-	local fade_multiplier = not not settings.fade_progress
+	local amplitude_multiplier = shake_settings.amplitude
+	local fade_multiplier = settings.fade_progress
 
 	total = total * amplitude_multiplier * fade_multiplier
 
@@ -2952,7 +2952,7 @@ HeroViewStateLoot._setup_info_window = function (self)
 	local player = self.player
 	local player_unit = player.player_unit
 	local player_level = ExperienceSettings.get_player_level(player)
-	local player_level_text = player_level and not not tostring(player_level) or not player_level and not not "-"
+	local player_level_text = player_level and tostring(player_level) or not player_level and "-"
 	local portrait_frame = "default"
 	local portrait_widget = self:_create_portrait_frame_widget(portrait_frame, portrait_image, player_level_text)
 

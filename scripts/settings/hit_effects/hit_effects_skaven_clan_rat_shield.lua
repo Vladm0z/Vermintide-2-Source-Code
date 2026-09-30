@@ -2740,13 +2740,13 @@ local function get_variable(template, ...)
 		end
 	end
 
-	return not not get_variable(HitEffectsSkavenClanRatShield[template.inherits], ...)
+	return (get_variable(HitEffectsSkavenClanRatShield[template.inherits], ...))
 end
 
 for hit_effect_name, hit_effect_data in pairs(HitEffectsSkavenClanRatShield) do
 	local death = get_variable(hit_effect_data, "extra_conditions", "death")
 	local timed_status = get_variable(hit_effect_data, "timed_status")
-	local critical_variant = rawget(StatusEffectNames, (not not timed_status or not not "") .. "_death_critical")
+	local critical_variant = rawget(StatusEffectNames, (timed_status or "") .. "_death_critical")
 
 	if death and critical_variant then
 		local new_hit_effect_name = hit_effect_name .. "_critical"

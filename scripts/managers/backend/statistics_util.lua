@@ -139,10 +139,10 @@ local function _track_level_complete_with_weapon_stats(statistics_db, stats_id, 
 		return
 	end
 
-	local is_level_tracked = not not level and not not _tracked_levels_complted_w_weapons_levels[level]
+	local is_level_tracked = level and _tracked_levels_complted_w_weapons_levels[level]
 
 	if is_level_tracked then
-		local weapon_stats_dlcs = not not weapon_name and not not _tracked_levels_complted_w_weapons_weapons[weapon_name]
+		local weapon_stats_dlcs = weapon_name and _tracked_levels_complted_w_weapons_weapons[weapon_name]
 
 		if weapon_stats_dlcs then
 			local dlc_manager = Managers.unlock
@@ -175,7 +175,7 @@ StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db
 	local player_manager = Managers.player
 	local victim_player = player_manager:owner(victim_unit)
 	local breed_killed = Unit_get_data(victim_unit, "breed")
-	local breed_killed_name = not not breed_killed and not not breed_killed.name
+	local breed_killed_name = breed_killed and breed_killed.name
 	local breed_attacker = victim_damage_data.breed
 	local attacker_side = victim_damage_data.attacker_side
 	local attacker_unique_id = victim_damage_data.attacker_unique_id
@@ -183,7 +183,7 @@ StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db
 	local side_manager = Managers.state.side
 	local victim_side = side_manager.side_by_unit[victim_unit]
 	local local_player = Managers.player:local_player()
-	local recent_attack = not not victim_player and not not victim_health_extension:was_attacked_by(not not local_player and not not local_player:unique_id())
+	local recent_attack = victim_player and victim_health_extension:was_attacked_by(local_player and local_player:unique_id())
 
 	if recent_attack and victim_player ~= local_player and side_manager:is_enemy_by_side(attacker_side, victim_side) then
 		local local_stats_id = local_player:stats_id()
@@ -237,7 +237,7 @@ StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db
 				local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
 
 				if attack_type then
-					slot_type = attack_type == "heavy_attack" and (not not "melee" or not not "ranged") or not (attack_type == "heavy_attack") and (attack_type == "light_attack" and (not not "melee" or not not "ranged") or not (attack_type == "light_attack") and not not "ranged")
+					slot_type = attack_type == "heavy_attack" and ("melee" or "ranged") or not (attack_type == "heavy_attack") and (attack_type == "light_attack" and ("melee" or "ranged") or not (attack_type == "light_attack") and "ranged")
 				end
 
 				if not slot_type then
@@ -245,7 +245,7 @@ StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db
 
 					if weapon_template_name then
 						local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
-						local buff_type = not not weapon_template and not not weapon_template.buff_type
+						local buff_type = weapon_template and weapon_template.buff_type
 
 						if MeleeBuffTypes[buff_type] then
 							slot_type = "melee"
@@ -280,7 +280,7 @@ StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db
 				stats_id = attacker_player:stats_id()
 			end
 
-			local hash = stats_id .. not not breed_killed.killfeed_fold_with
+			local hash = stats_id .. breed_killed.killfeed_fold_with
 
 			Managers.state.event:trigger("add_coop_feedback_kill", hash, local_human, predicate, breed_attacker_name, breed_killed_name, attacker_player, victim_player)
 		end
@@ -324,7 +324,7 @@ StatisticsUtil.register_knockdown = function (victim_unit, damage_data, statisti
 	local player_manager = Managers.player
 	local victim_player = player_manager:owner(victim_unit)
 	local breed_killed = Unit_get_data(victim_unit, "breed")
-	local breed_killed_name = not not breed_killed and not not breed_killed.name
+	local breed_killed_name = breed_killed and breed_killed.name
 	local breed_attacker = victim_damage_data.breed
 	local attacker_unique_id = victim_damage_data.attacker_unique_id
 	local attacker_player = player_manager:player_from_unique_id(attacker_unique_id)
@@ -337,7 +337,7 @@ StatisticsUtil.register_knockdown = function (victim_unit, damage_data, statisti
 			statistics_db:increment_stat(stats_id, "vs_knockdowns_per_breed", breed_killed_name)
 		end
 
-		local recent_attack = victim_health_extension:was_attacked_by(not not local_player and not not local_player:unique_id())
+		local recent_attack = victim_health_extension:was_attacked_by(local_player and local_player:unique_id())
 
 		if recent_attack and victim_player ~= local_player then
 			local attacker_breed_name = recent_attack.attacker_breed.name
@@ -399,7 +399,7 @@ StatisticsUtil.check_save = function (savior_unit, enemy_unit)
 	local saved_unit_dir
 	local network_manager = Managers.state.network
 	local game = network_manager:game()
-	local game_object_id = not not game and not not network_manager:unit_game_object_id(saved_unit)
+	local game_object_id = game and network_manager:unit_game_object_id(saved_unit)
 
 	if game_object_id then
 		saved_unit_dir = Vector3.normalize(Vector3.flat(GameSession.game_object_field(game, game_object_id, "aim_direction")))
@@ -413,7 +413,7 @@ StatisticsUtil.check_save = function (savior_unit, enemy_unit)
 	local attack_dir = saved_unit_pos - enemy_unit_pos
 	local is_behind = Vector3.distance(saved_unit_pos, enemy_unit_pos) < 3 and Vector3.dot(attack_dir, saved_unit_dir) > 0 and Vector3.dot(attack_dir, enemy_unit_dir) > 0
 	local status_ext = ScriptUnit.extension(saved_unit, "status_system")
-	local grabber_unit = not not status_ext:get_pouncer_unit()
+	local grabber_unit = status_ext:get_pouncer_unit()
 	local is_disabled = status_ext:is_disabled()
 	local predicate
 	local statistics_db = player_manager:statistics_db()
@@ -430,7 +430,7 @@ StatisticsUtil.check_save = function (savior_unit, enemy_unit)
 	end
 
 	if predicate then
-		local local_human = not savior_player.remote and not not not savior_player.bot_player
+		local local_human = not savior_player.remote and not savior_player.bot_player
 
 		Managers.state.event:trigger("add_coop_feedback", savior_player_stats_id .. saved_player:stats_id(), local_human, predicate, savior_player, saved_player)
 
@@ -462,7 +462,7 @@ StatisticsUtil.register_pull_up = function (puller_up_unit, pulled_up_unit, stat
 
 	if player1 and player2 then
 		local predicate = "assisted_respawn"
-		local local_human = not player1.remote and not not not player1.bot_player
+		local local_human = not player1.remote and not player1.bot_player
 
 		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
 	end
@@ -476,7 +476,7 @@ StatisticsUtil.register_assisted_respawn = function (reviver_unit, revivee_unit,
 
 	if player1 and player2 then
 		local predicate = "assisted_respawn"
-		local local_human = not player1.remote and not not not player1.bot_player
+		local local_human = not player1.remote and not player1.bot_player
 
 		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
 	end
@@ -503,7 +503,7 @@ StatisticsUtil.register_revive = function (reviver_unit, revivee_unit, statistic
 
 	if player1 and player2 then
 		local predicate = "revive"
-		local local_human = not player1.remote and not not not player1.bot_player
+		local local_human = not player1.remote and not player1.bot_player
 
 		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
 		Managers.state.achievement:trigger_event("register_revive", reviver_unit, revivee_unit)
@@ -518,7 +518,7 @@ StatisticsUtil.register_heal = function (healer_unit, healed_unit, statistics_db
 
 	if player1 and player2 and player1 ~= player2 then
 		local predicate = "heal"
-		local local_human = not player1.remote and not not not player1.bot_player
+		local local_human = not player1.remote and not player1.bot_player
 
 		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
 
@@ -539,13 +539,13 @@ StatisticsUtil.register_damage = function (victim_unit, damage_data, statistics_
 	if attacker_player then
 		attacker_unit = attacker_player.player_unit
 	else
-		attacker_unit = not not damage_data[DamageDataIndex.SOURCE_ATTACKER_UNIT] or not not attacker_unit
+		attacker_unit = damage_data[DamageDataIndex.SOURCE_ATTACKER_UNIT] or attacker_unit
 		attacker_unit = AiUtils.get_actual_attacker_unit(attacker_unit)
 		attacker_player = player_manager:owner(attacker_unit)
 	end
 
-	local victim_breed = not not Unit_alive(victim_unit)
-	local attacker_breed = not not Unit_alive(attacker_unit)
+	local victim_breed = Unit_alive(victim_unit)
+	local attacker_breed = Unit_alive(attacker_unit)
 	local actual_attacker_breed = AiUtils.get_actual_attacker_breed(attacker_breed, victim_unit, damage_source_name, damage_data_attacker_unit, attacker_player)
 
 	if attacker_breed and attacker_breed ~= actual_attacker_breed then
@@ -618,7 +618,7 @@ StatisticsUtil.register_damage = function (victim_unit, damage_data, statistics_
 				statistics_db:increment_stat(stats_id, "headshots")
 			end
 
-			local attacker_breed_name = not not attacker_breed and not not attacker_breed.name
+			local attacker_breed_name = attacker_breed and attacker_breed.name
 
 			if is_enemy then
 				if Managers.mechanism:current_mechanism_name() == "versus" then
@@ -633,8 +633,8 @@ StatisticsUtil.register_damage = function (victim_unit, damage_data, statistics_
 
 				if victim_player and attacker_side.show_damage_feedback and HEALTH_ALIVE[victim_unit] then
 					local target_player = player_manager:owner(victim_unit)
-					local local_human = not attacker_player.remote and not not not attacker_player.bot_player
-					local event_type = local_human and not not "dealing_damage" or not local_human and not not "other_dealing_damage"
+					local local_human = not attacker_player.remote and not attacker_player.bot_player
+					local event_type = local_human and "dealing_damage" or not local_human and "other_dealing_damage"
 					local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
 
 					Managers.state.event:trigger("add_damage_feedback_event", stats_id .. breed_name, local_human, event_type, attacker_player, target_player, damage_amount, damage_type)
@@ -802,16 +802,16 @@ StatisticsUtil.register_complete_level = function (statistics_db)
 
 	local item_interface = Managers.backend:get_interface("items")
 	local melee_backend_id = BackendUtils.get_loadout_item_id(career_name, "slot_melee")
-	local melee_item_name = not not melee_backend_id and not not item_interface:get_item_name(melee_backend_id)
+	local melee_item_name = melee_backend_id and item_interface:get_item_name(melee_backend_id)
 	local ranged_backend_id = BackendUtils.get_loadout_item_id(career_name, "slot_ranged")
-	local ranged_item_name = not not ranged_backend_id and not not item_interface:get_item_name(ranged_backend_id)
+	local ranged_item_name = ranged_backend_id and item_interface:get_item_name(ranged_backend_id)
 
 	_track_level_complete_with_weapon_stats(statistics_db, stats_id, level_id, melee_item_name, difficulty_name)
 	_track_level_complete_with_weapon_stats(statistics_db, stats_id, level_id, ranged_item_name, difficulty_name)
 
 	if Managers.unlock:is_dlc_unlocked("holly") then
 		local min_difficulty_rank = DifficultySettings.hardest.rank
-		local completed_difficulty_rank = DifficultySettings[difficulty_name] and not not DifficultySettings[difficulty_name].rank or not DifficultySettings[difficulty_name] and not not 0
+		local completed_difficulty_rank = DifficultySettings[difficulty_name] and DifficultySettings[difficulty_name].rank or not DifficultySettings[difficulty_name] and 0
 		local above_legend_difficulty = min_difficulty_rank <= completed_difficulty_rank
 		local is_lord_level = level_id == "ground_zero" or level_id == "warcamp" or level_id == "skaven_stronghold" or level_id == "skittergate"
 
@@ -844,7 +844,7 @@ StatisticsUtil.register_versus_game_won = function (statistics_db, player, game_
 	-- function 18
 	local stats_id = player:stats_id()
 
-	statistics_db:increment_stat(stats_id, game_won and not not "vs_game_won" or not game_won and not not "vs_game_lost")
+	statistics_db:increment_stat(stats_id, game_won and "vs_game_won" or not game_won and "vs_game_lost")
 end
 
 StatisticsUtil.register_weave_complete = function (statistics_db, player, is_quick_game, difficulty_key)
@@ -1135,7 +1135,7 @@ StatisticsUtil.get_survival_stat = function (statistics_db, level_id, difficulty
 	local player_manager = Managers.player
 	local local_player = player_manager:local_player()
 
-	stats_id = not not stats_id or not not local_player:stats_id()
+	stats_id = stats_id or local_player:stats_id()
 
 	local value = statistics_db:get_persistent_stat(stats_id, stat)
 
@@ -1246,7 +1246,7 @@ StatisticsUtil.register_complete_survival_level = function (statistics_db)
 		if started_on_unlocked_difficulty then
 			local difficulty = difficulty_manager:get_difficulty()
 			local difficulty_index = table.find(level_difficulties, difficulty)
-			local completed_difficulty_index = difficulty_index == #level_difficulties and (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1) and (not not difficulty_index or not not (difficulty_index - 1)) or not (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1)) and not not (difficulty_index - 1)) or not (difficulty_index == #level_difficulties) and not not (difficulty_index - 1)
+			local completed_difficulty_index = difficulty_index == #level_difficulties and (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1) and (difficulty_index or difficulty_index - 1) or not (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1)) and difficulty_index - 1) or not (difficulty_index == #level_difficulties) and difficulty_index - 1
 
 			if completed_difficulty_index > 0 then
 				completed_difficulty = level_difficulties[completed_difficulty_index]

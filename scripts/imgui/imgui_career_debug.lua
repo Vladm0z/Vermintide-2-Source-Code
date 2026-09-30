@@ -35,9 +35,9 @@ ImguiCareerDebug._get_profile_requester = function (self)
 	local network_manager = Managers.state.network
 
 	if network_manager then
-		local network = not not network_manager.network_server
+		local network = network_manager.network_server
 
-		self._profile_requester = not not network and not not network:profile_requester()
+		self._profile_requester = network and network:profile_requester()
 	end
 
 	return self._profile_requester
@@ -52,9 +52,9 @@ ImguiCareerDebug._get_profile_synchronizer = function (self)
 	local network_manager = Managers.state.network
 
 	if network_manager then
-		local network = not not network_manager.network_server
+		local network = network_manager.network_server
 
-		self._profile_synchronizer = not not network and not not network.profile_synchronizer
+		self._profile_synchronizer = network and network.profile_synchronizer
 	end
 
 	return self._profile_synchronizer
@@ -134,7 +134,7 @@ ImguiCareerDebug.draw = function (self)
 	Imgui.same_line()
 	Imgui.push_item_width(100)
 
-	script_data.cap_num_bots = Imgui.combo("Num bots", not not script_data.cap_num_bots + 1, BOT_COUNT_TABLE) - 1
+	script_data.cap_num_bots = Imgui.combo("Num bots", script_data.cap_num_bots + 1, BOT_COUNT_TABLE) - 1
 
 	Imgui.pop_item_width()
 	Imgui.separator()
@@ -174,7 +174,7 @@ ImguiCareerDebug._draw_players = function (self)
 		Imgui.next_column()
 		self:_draw_career_combo(player)
 		Imgui.next_column()
-		Imgui.text(tostring(not not player.bot_player))
+		Imgui.text(tostring(player.bot_player))
 		Imgui.next_column()
 		Imgui.text(tostring(is_server))
 		Imgui.next_column()
@@ -261,7 +261,7 @@ end
 
 ImguiCareerDebug._set_columns = function (self, num_columns, border, columns_width)
 	-- function 16
-	border = not not border or not not false
+	border = border or false
 
 	Imgui.columns(num_columns, border)
 

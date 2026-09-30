@@ -21,16 +21,16 @@ WeaveKillEnemiesExtension.init = function (self, extension_init_context, unit, e
 	self._on_progress_func = extension_init_data.on_progress_func
 	self._on_complete_func = extension_init_data.on_complete_func
 	self._num_killed = 0
-	self._kills_required = not not extension_init_data.amount
-	self._base_score_per_kill = not not extension_init_data.base_score_per_kill
-	self._breed_score_multipliers = not not extension_init_data.breed_score_multipliers
+	self._kills_required = extension_init_data.amount
+	self._base_score_per_kill = extension_init_data.base_score_per_kill
+	self._breed_score_multipliers = extension_init_data.breed_score_multipliers
 
-	local score_multiplier = not not extension_init_data.score_multiplier
+	local score_multiplier = extension_init_data.score_multiplier
 	local difficulty_manager = Managers.state.difficulty
 	local difficulty = difficulty_manager:get_difficulty()
 
 	if type(score_multiplier) == "table" then
-		score_multiplier = not not score_multiplier[difficulty] or not not BASE_SCORE_MULTIPLIER[difficulty] or not not 1
+		score_multiplier = score_multiplier[difficulty] or BASE_SCORE_MULTIPLIER[difficulty] or 1
 	end
 
 	self._weave_manager = Managers.weave
@@ -218,10 +218,10 @@ WeaveKillEnemiesExtension.on_ai_killed = function (self, killed_unit, killer_uni
 
 	if self._method == "score" then
 		local roaming_multiplier = WeaveSettings.roaming_multiplier[PLATFORM]
-		local spawn_type = not not Unit.get_data(killed_unit, "spawn_type")
+		local spawn_type = Unit.get_data(killed_unit, "spawn_type")
 		local score_multiplier_per_breed = self._breed_score_multipliers
-		local breed_score_multiplier = not not score_multiplier_per_breed[breed_name]
-		local score_multiplier = spawn_type ~= "roam" and not not self._score_multiplier or not (spawn_type ~= "roam") and not not (self._score_multiplier * roaming_multiplier)
+		local breed_score_multiplier = score_multiplier_per_breed[breed_name]
+		local score_multiplier = spawn_type ~= "roam" and self._score_multiplier or not (spawn_type ~= "roam") and self._score_multiplier * roaming_multiplier
 		local score = score_multiplier * breed_score_multiplier
 		local despawned = death_data.despawned
 

@@ -85,7 +85,7 @@ PlayerInputTutorialExtension.update = function (self, unit, input, dt, context, 
 	end
 
 	if self.new_input_buffer then
-		if t > self.last_added_buffer_time + not not self.new_buffer_key_doubleclick_window then
+		if t > self.last_added_buffer_time + self.new_buffer_key_doubleclick_window then
 			self.input_buffer_timer = self.new_input_buffer_timer
 			self.input_buffer = self.new_input_buffer
 			self.buffer_key = self.new_buffer_key
@@ -131,7 +131,7 @@ PlayerInputTutorialExtension.was_double_tap = function (self, input_key, t, max_
 	-- function 8
 	local last_double_tap = self.double_tap_timers[input_key]
 
-	return not not last_double_tap and t < last_double_tap + max_duration
+	return last_double_tap and t < last_double_tap + max_duration
 end
 
 PlayerInputTutorialExtension.is_input_blocked = function (self)
@@ -179,7 +179,7 @@ PlayerInputTutorialExtension.set_input_key_scale = function (self, input_key, sc
 
 	local start_scale = 1
 	local t = self._t
-	local lerp_end_t = lerp_time and not not (t + lerp_time) or not lerp_time and not not nil
+	local lerp_end_t = lerp_time and t + lerp_time or not lerp_time and nil
 	local input_key_scale_data = self.input_key_scale[input_key]
 
 	if input_key_scale_data then
@@ -203,12 +203,12 @@ end
 
 PlayerInputTutorialExtension.set_allowed_inputs = function (self, allowed_table)
 	-- function 13
-	self.allowed_table = not not allowed_table or not not {}
+	self.allowed_table = allowed_table or {}
 end
 
 PlayerInputTutorialExtension.set_disallowed_inputs = function (self, disallowed_table)
 	-- function 14
-	self.disallowed_table = not not disallowed_table or not not {}
+	self.disallowed_table = disallowed_table or {}
 end
 
 PlayerInputTutorialExtension.allowed_input_table = function (self)

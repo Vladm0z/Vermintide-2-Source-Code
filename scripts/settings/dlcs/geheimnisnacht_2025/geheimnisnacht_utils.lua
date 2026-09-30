@@ -98,7 +98,7 @@ end
 GeheimnisnachtUtils.maps_by_live_event = function (allow_fallback)
 	-- function 4
 	local live_events_interface = Managers.backend:get_interface("live_events")
-	local live_events = not not live_events_interface and not not live_events_interface:get_active_events()
+	local live_events = live_events_interface and live_events_interface:get_active_events()
 
 	if live_events then
 		for i = 1, #live_events do

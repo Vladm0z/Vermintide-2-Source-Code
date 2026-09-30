@@ -91,7 +91,7 @@ Storm.update = function (self, dt, t)
 			end
 		end
 	else
-		ferror("unknown state %d", not not self._state)
+		ferror("unknown state %d", self._state)
 	end
 end
 
@@ -201,14 +201,14 @@ Storm.get_vortex_unit = function (self)
 	-- function 11
 	local active_storm_data = self._active_storm_data
 
-	return not not active_storm_data and not not active_storm_data.summoned_vortex_unit
+	return active_storm_data and active_storm_data.summoned_vortex_unit
 end
 
 Storm.get_vortex_extension = function (self)
 	-- function 12
 	local active_storm_data = self._active_storm_data
 
-	return not not active_storm_data and not not active_storm_data.vortex_extension
+	return active_storm_data and active_storm_data.vortex_extension
 end
 
 Storm._clear_active_storm = function (self)
@@ -333,7 +333,7 @@ return {
 								local buff_system = Managers.state.entity:system("buff_system")
 								local difficulty = Managers.state.difficulty:get_difficulty()
 								local power_level = DIFFICULTY_POWER_LEVEL[difficulty]
-								local buff = player.bot_player and not not BLEED_BUFF_BOTS or not player.bot_player and not not BLEED_BUFF
+								local buff = player.bot_player and BLEED_BUFF_BOTS or not player.bot_player and BLEED_BUFF
 
 								buff_system:add_buff(player_unit, buff, vortex_unit, false, power_level)
 							end

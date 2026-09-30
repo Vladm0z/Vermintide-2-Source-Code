@@ -37,11 +37,11 @@ PlayerProjectileUnitExtension.init = function (self, extension_init_context, uni
 
 			if wielded_item_data then
 				local item_units = BackendUtils.get_item_units(wielded_item_data)
-				local is_ammo_weapon = not not item_units and not not item_units.is_ammo_weapon
+				local is_ammo_weapon = item_units and item_units.is_ammo_weapon
 
 				if is_ammo_weapon then
 					local wielded_item_template = BackendUtils.get_item_template(wielded_item_data)
-					local material_settings_name = not not item_units.material_settings_name
+					local material_settings_name = item_units.material_settings_name
 
 					if material_settings_name then
 						self._material_settings_name = material_settings_name
@@ -88,7 +88,7 @@ PlayerProjectileUnitExtension.init = function (self, extension_init_context, uni
 	if impact_data then
 		self._impact_data = impact_data
 
-		local impact_damage_profile_name = not not impact_data.damage_profile
+		local impact_damage_profile_name = impact_data.damage_profile
 
 		self._impact_damage_profile_id = NetworkLookup.damage_profiles[impact_damage_profile_name]
 	end
@@ -96,14 +96,14 @@ PlayerProjectileUnitExtension.init = function (self, extension_init_context, uni
 	if timed_data then
 		self._timed_data = timed_data
 
-		local timed_damage_profile_name = not not timed_data.damage_profile
+		local timed_damage_profile_name = timed_data.damage_profile
 
 		self._timed_damage_profile_id = NetworkLookup.damage_profiles[timed_damage_profile_name]
 	end
 
 	self._time_initialized = extension_init_data.time_initialized
 	self.scale = extension_init_data.scale
-	self.charge_level = not not extension_init_data.charge_level / 100
+	self.charge_level = extension_init_data.charge_level / 100
 	self._num_targets_hit = 0
 	self._hit_units = {}
 	self._hit_afro_units = {}
@@ -139,14 +139,14 @@ PlayerProjectileUnitExtension.initialize_projectile = function (self, projectile
 		self._stop_impacts = false
 		self._amount_of_mass_hit = 0
 
-		local damage_profile_name = not not impact_data.damage_profile
+		local damage_profile_name = impact_data.damage_profile
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local owner_unit = self._owner_unit
 		local difficulty_level = Managers.state.difficulty:get_difficulty()
 		local cleave_power_level = ActionUtils.scale_power_levels(self.power_level, "cleave", owner_unit, difficulty_level)
 		local max_mass_attack, max_mass_impact = ActionUtils.get_max_targets(damage_profile, cleave_power_level)
 
-		self._max_mass = max_mass_impact < max_mass_attack and (not not max_mass_attack or not not max_mass_impact) or not (max_mass_impact < max_mass_attack) and not not max_mass_impact
+		self._max_mass = max_mass_impact < max_mass_attack and (max_mass_attack or max_mass_impact) or not (max_mass_impact < max_mass_attack) and max_mass_impact
 	end
 
 	local timed_data = self._timed_data
@@ -186,7 +186,7 @@ PlayerProjectileUnitExtension.initialize_projectile = function (self, projectile
 		local link_node = projectile_info.anim_blend_settings.link_node
 
 		self._owner_unit_1p = owner_unit_1p
-		self._anim_node_id = Unit.has_node(owner_unit_1p, link_node) and not not Unit.node(owner_unit_1p, link_node) or not Unit.has_node(owner_unit_1p, link_node) and not not 0
+		self._anim_node_id = Unit.has_node(owner_unit_1p, link_node) and Unit.node(owner_unit_1p, link_node) or not Unit.has_node(owner_unit_1p, link_node) and 0
 		self._anim_blend_enabled = true
 	end
 
@@ -235,7 +235,7 @@ PlayerProjectileUnitExtension.stop = function (self, hit_unit, hit_zone_name, hi
 	end
 
 	local timed_data = self._timed_data
-	local activate_life_time_on_impact = not not timed_data and not not timed_data.activate_life_time_on_impact
+	local activate_life_time_on_impact = timed_data and timed_data.activate_life_time_on_impact
 
 	if not activate_life_time_on_impact then
 		self:mark_for_deletion()
@@ -571,7 +571,7 @@ end
 PlayerProjectileUnitExtension.hit_enemy = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, breed, has_ranged_boost, ranged_boost_curve_multiplier)
 	-- function 15
 	local shield_blocked = false
-	local damage_profile_name = not not impact_data.damage_profile
+	local damage_profile_name = impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_link = true
 	local forced_penetration = false
@@ -592,7 +592,7 @@ PlayerProjectileUnitExtension.hit_enemy = function (self, impact_data, hit_unit,
 		hit_zone_name = hit_zone.name
 
 		local send_to_server = true
-		local charge_value = not not damage_profile.charge_value
+		local charge_value = damage_profile.charge_value
 		local is_critical_strike = self._is_critical_strike
 		local owner_unit = self._owner_unit
 		local num_targets_hit = self._num_targets_hit + 1
@@ -600,7 +600,7 @@ PlayerProjectileUnitExtension.hit_enemy = function (self, impact_data, hit_unit,
 
 		if hit_zone_name ~= "head" and HEALTH_ALIVE[hit_unit] and breed and breed.hit_zones and breed.hit_zones.head then
 			local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
-			local auto_headshot = not not owner_buff_extension and not not owner_buff_extension:has_buff_perk("auto_headshot")
+			local auto_headshot = owner_buff_extension and owner_buff_extension:has_buff_perk("auto_headshot")
 
 			if auto_headshot and hit_zone_name ~= "afro" then
 				hit_zone_name = "head"
@@ -656,7 +656,7 @@ PlayerProjectileUnitExtension.hit_enemy = function (self, impact_data, hit_unit,
 
 		if self.chain_hit_settings then
 			local t = Managers.time:time("game")
-			local source_pos = Unit.has_node(hit_unit, "j_spine") and not not Unit.world_position(hit_unit, Unit.node(hit_unit, "j_spine")) or not Unit.has_node(hit_unit, "j_spine") and not not (POSITION_LOOKUP[hit_unit] + Vector3(0, 0, 1.5))
+			local source_pos = Unit.has_node(hit_unit, "j_spine") and Unit.world_position(hit_unit, Unit.node(hit_unit, "j_spine")) or not Unit.has_node(hit_unit, "j_spine") and POSITION_LOOKUP[hit_unit] + Vector3(0, 0, 1.5)
 
 			self._weapon_system:try_fire_chained_projectile(self.chain_hit_settings, self.item_name, self._is_critical_strike, self.power_level, ranged_boost_curve_multiplier, t, self._owner_unit, source_pos, nil, hit_unit, 1)
 
@@ -703,10 +703,10 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 	local is_server = self._is_server
 	local node = Actor.node(hit_actor)
 	local hit_zone = breed.hit_zones_lookup[node]
-	local hit_zone_name = not not action.projectile_info.forced_hitzone
+	local hit_zone_name = action.projectile_info.forced_hitzone
 	local attack_direction = hit_direction
 	local forced_penetration = false
-	local was_alive = is_server and not not HEALTH_ALIVE[hit_unit] or not is_server and not not AiUtils.client_predicted_unit_alive(hit_unit)
+	local was_alive = is_server and HEALTH_ALIVE[hit_unit] or not is_server and AiUtils.client_predicted_unit_alive(hit_unit)
 
 	if was_alive then
 		self._num_targets_hit = self._num_targets_hit + 1
@@ -714,7 +714,7 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 
 	if hit_zone_name ~= "head" and HEALTH_ALIVE[hit_unit] and breed and breed.hit_zones and breed.hit_zones.head then
 		local owner_buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
-		local auto_headshot = not not owner_buff_extension and not not owner_buff_extension:has_buff_perk("auto_headshot")
+		local auto_headshot = owner_buff_extension and owner_buff_extension:has_buff_perk("auto_headshot")
 
 		if auto_headshot and hit_zone_name ~= "afro" then
 			hit_zone_name = "head"
@@ -754,12 +754,12 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 	if was_alive then
 		local action_mass_override = action.hit_mass_count
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and not not breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and not not breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and not not breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and not not breed.hit_mass_count)
+		local hit_mass_total = shield_blocked and (breed.hit_mass_counts_block and breed.hit_mass_counts_block[difficulty_rank] or not breed.hit_mass_counts_block and breed.hit_mass_count_block) or not shield_blocked and (breed.hit_mass_counts and breed.hit_mass_counts[difficulty_rank] or not breed.hit_mass_counts and breed.hit_mass_count)
 
 		if action_mass_override and action_mass_override[breed.name] then
 			local mass_cost_multiplier = action_mass_override[breed.name]
 
-			hit_mass_total = hit_mass_total * (not not mass_cost_multiplier or not not 1)
+			hit_mass_total = hit_mass_total * (mass_cost_multiplier or 1)
 		end
 
 		self._amount_of_mass_hit = self._amount_of_mass_hit + hit_mass_total
@@ -778,7 +778,7 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 	local predicted_damage, invulnerable = DamageUtils.calculate_damage(DamageOutput, hit_unit, owner_unit, hit_zone_name, power_level, BoostCurves[target_settings.boost_curve_type], ranged_boost_curve_multiplier, is_critical_strike, damage_profile, actual_target_index, nil, damage_source)
 
 	if not is_server then
-		local target_health_extension = not not Unit.alive(hit_unit)
+		local target_health_extension = Unit.alive(hit_unit)
 
 		if target_health_extension then
 			local networked_damage = DamageUtils.networkify_damage(predicted_damage)
@@ -837,7 +837,7 @@ PlayerProjectileUnitExtension.hit_enemy_damage = function (self, damage_profile,
 		local _, procced = buff_extension:apply_buffs_to_value(0, "coop_stamina")
 
 		if procced and HEALTH_ALIVE[hit_unit] or not procced and script_data.debug_legendary_traits and HEALTH_ALIVE[hit_unit] then
-			local headshot_coop_stamina_fatigue_type = not not breed.headshot_coop_stamina_fatigue_type
+			local headshot_coop_stamina_fatigue_type = breed.headshot_coop_stamina_fatigue_type
 			local fatigue_type_id = NetworkLookup.fatigue_types[headshot_coop_stamina_fatigue_type]
 
 			if is_server then
@@ -862,7 +862,7 @@ PlayerProjectileUnitExtension.hit_player = function (self, impact_data, hit_unit
 	local shield_blocked = false
 	local forced_penetration = false
 	local owner_player = self._owner_player
-	local damage_profile_name = not not impact_data.damage_profile
+	local damage_profile_name = impact_data.damage_profile
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 
 	if damage_profile and DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player) then
@@ -966,7 +966,7 @@ end
 PlayerProjectileUnitExtension.hit_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, level_index, has_ranged_boost, ranged_boost_curve_multiplier)
 	-- function 19
 	local health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
-	local damage_profile_name = not not impact_data.damage_profile_prop
+	local damage_profile_name = impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local allow_ranged_damage = Unit.get_data(hit_unit, "allow_ranged_damage") ~= false
 
@@ -1009,7 +1009,7 @@ PlayerProjectileUnitExtension.hit_level_unit = function (self, impact_data, hit_
 
 	if bounce then
 		local num_bounces = self._num_bounces
-		local max_bounces = not not impact_data.max_bounces
+		local max_bounces = impact_data.max_bounces
 		local locomotion_extension = self.locomotion_extension
 
 		max_bounces = max_bounces + buffed_bounces
@@ -1063,7 +1063,7 @@ end
 
 PlayerProjectileUnitExtension.hit_non_level_unit = function (self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, has_ranged_boost, ranged_boost_curve_multiplier)
 	-- function 21
-	local damage_profile_name = not not impact_data.damage_profile_prop
+	local damage_profile_name = impact_data.damage_profile_prop
 	local damage_profile = DamageProfileTemplates[damage_profile_name]
 	local stop_impacts = false
 
@@ -1159,7 +1159,7 @@ PlayerProjectileUnitExtension._get_projectile_units_names = function (self, proj
 			local slot_name = "slot_ranged"
 			local slot_data = inventory_extension:get_slot_data(slot_name)
 
-			projectile_units_template = not slot_data or not not slot_data.projectile_units_template or not not projectile_units_template
+			projectile_units_template = not slot_data or slot_data.projectile_units_template or projectile_units_template
 		end
 	end
 
@@ -1178,7 +1178,7 @@ PlayerProjectileUnitExtension._get_weapon_unit = function (self)
 		local right_hand_unit = slot_data.right_unit_1p
 		local left_hand_unit = slot_data.left_unit_1p
 
-		return not not right_hand_unit or not not left_hand_unit
+		return right_hand_unit or left_hand_unit
 	end
 end
 
@@ -1191,8 +1191,8 @@ PlayerProjectileUnitExtension._handle_linking = function (self, impact_data, hit
 	local projectile_info = self.projectile_info
 	local projectile_units = self:_get_projectile_units_names(projectile_info)
 	local dummy_linker_unit_name = projectile_units.dummy_linker_unit_name
-	local depth = not not impact_data.depth
-	local depth_offset = not not impact_data.depth_offset
+	local depth = impact_data.depth
+	local depth_offset = impact_data.depth_offset
 
 	if projectile_units.dummy_linker_broken_units then
 		local broken_chance = Math.random()
@@ -1217,8 +1217,8 @@ PlayerProjectileUnitExtension._handle_linking = function (self, impact_data, hit
 			end
 		end
 	elseif damage_amount and not shield_blocked then
-		local min = not not impact_data.depth_damage_modifier_min
-		local max = not not impact_data.depth_damage_modifier_max
+		local min = impact_data.depth_damage_modifier_min
+		local max = impact_data.depth_damage_modifier_max
 
 		depth = depth * math.clamp(damage_amount, min, max)
 	end
@@ -1261,11 +1261,11 @@ PlayerProjectileUnitExtension._handle_linking = function (self, impact_data, hit
 		end
 
 		if allow_link then
-			local pickup_name = not not slot_data.link_pickup_template_name
+			local pickup_name = slot_data.link_pickup_template_name
 
 			self:_spawn_linked_pickup_projectile(pickup_name, hit_unit, hit_actor, hit_position, hit_direction, hit_normal, hit_unit_id, is_level_unit, depth, shield_blocked)
 		else
-			local pickup_name = not not slot_data.pickup_template_name
+			local pickup_name = slot_data.pickup_template_name
 
 			self:_spawn_pickup_projectile(pickup_name, hit_position, hit_direction, hit_normal, hit_enemy_or_player)
 		end
@@ -1275,7 +1275,7 @@ end
 PlayerProjectileUnitExtension._redirect_shield_linking = function (self, hit_unit, node_index, link_position, depth_position_offset)
 	-- function 26
 	local breed = AiUtils.unit_breed(hit_unit)
-	local do_redirect = not not HEALTH_ALIVE[hit_unit]
+	local do_redirect = HEALTH_ALIVE[hit_unit]
 
 	if not do_redirect then
 		return hit_unit, node_index, link_position
@@ -1368,7 +1368,7 @@ PlayerProjectileUnitExtension._spawn_linked_pickup_projectile = function (self, 
 	if weapon_unit then
 		local ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
 
-		spawn_limit = not not ammo_extension and not not ammo_extension:max_ammo()
+		spawn_limit = ammo_extension and ammo_extension:max_ammo()
 	end
 
 	local random_pitch = Math.random_range(math.pi / 6, math.pi / 3)
@@ -1382,7 +1382,7 @@ PlayerProjectileUnitExtension._spawn_linked_pickup_projectile = function (self, 
 	local pickup_name_id = NetworkLookup.pickup_names[pickup_name]
 	local pickup_spawn_type = "dropped"
 	local pickup_spawn_type_id = NetworkLookup.pickup_spawn_types[pickup_spawn_type]
-	local material_settings_name_id = NetworkLookup.material_settings_templates[not not self._material_settings_name]
+	local material_settings_name_id = NetworkLookup.material_settings_templates[self._material_settings_name]
 
 	Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_linked_pickup", pickup_name_id, link_position, link_rotation, pickup_spawn_type_id, hit_unit_id, node_index, is_level_unit, spawn_limit, material_settings_name_id)
 end
@@ -1395,11 +1395,11 @@ PlayerProjectileUnitExtension._spawn_pickup_projectile = function (self, pickup_
 	if weapon_unit then
 		local ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
 
-		spawn_limit = not not ammo_extension and not not ammo_extension:max_ammo()
+		spawn_limit = ammo_extension and ammo_extension:max_ammo()
 	end
 
 	local random_angle = math.random(-math.half_pi, math.half_pi)
-	local bounce_dir = hit_enemy_or_player and (not not hit_direction or not not Vector3.reflect(hit_direction, hit_normal)) or not hit_enemy_or_player and not not Vector3.reflect(hit_direction, hit_normal)
+	local bounce_dir = hit_enemy_or_player and (hit_direction or Vector3.reflect(hit_direction, hit_normal)) or not hit_enemy_or_player and Vector3.reflect(hit_direction, hit_normal)
 	local position = hit_position + bounce_dir * 0.2
 	local rotation = Quaternion.axis_angle(bounce_dir, random_angle)
 	local pickup_name_id = NetworkLookup.pickup_names[pickup_name]
@@ -1419,7 +1419,7 @@ PlayerProjectileUnitExtension._spawn_pickup_projectile = function (self, pickup_
 	local network_rotation = AiAnimUtils.rotation_network_scale(rotation, true)
 	local network_velocity = AiAnimUtils.velocity_network_scale(velocity, true)
 	local network_angular_velocity = AiAnimUtils.velocity_network_scale(angular_velocity_transformed, true)
-	local material_settings_name_id = NetworkLookup.material_settings_templates[not not self._material_settings_name]
+	local material_settings_name_id = NetworkLookup.material_settings_templates[self._material_settings_name]
 
 	Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_projectile", pickup_unit_name_id, pickup_unit_template_name_id, network_position, network_rotation, network_velocity, network_angular_velocity, pickup_name_id, pickup_spawn_type_id, spawn_limit, false, false, material_settings_name_id)
 end
@@ -1503,7 +1503,7 @@ end
 PlayerProjectileUnitExtension.trigger_external_event = function (self, event_name, network_sync)
 	-- function 33
 	local external_events = self.projectile_info.external_events
-	local event = not not external_events and not not external_events[event_name]
+	local event = external_events and external_events[event_name]
 
 	if event then
 		event(self)

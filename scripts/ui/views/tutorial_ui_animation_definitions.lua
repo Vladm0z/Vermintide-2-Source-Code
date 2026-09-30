@@ -31,7 +31,7 @@ local info_slate_enter = {
 
 			for name, style_data in pairs(widget.style) do
 				if style_data.color then
-					style_data.color[1] = style_data.background_component and not not 0 or not style_data.background_component and not not style_data.default_alpha
+					style_data.color[1] = style_data.background_component and 0 or not style_data.background_component and style_data.default_alpha
 				end
 			end
 
@@ -39,7 +39,7 @@ local info_slate_enter = {
 		end,
 		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 2
-			local catmullrom_value = local_progress ~= 1 and not not math.catmullrom(local_progress, 2, 0, 1, -1) or not (local_progress ~= 1) and not not 1
+			local catmullrom_value = local_progress ~= 1 and math.catmullrom(local_progress, 2, 0, 1, -1) or not (local_progress ~= 1) and 1
 			local smooth_value = math.smoothstep(local_progress, 0, 1)
 
 			for name, style_data in pairs(widget.style) do
@@ -69,7 +69,7 @@ local info_slate_enter = {
 		end,
 		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 5
-			local catmullrom_value = local_progress ~= 1 and not not math.catmullrom(local_progress, -15, 0, 1, 1) or not (local_progress ~= 1) and not not 1
+			local catmullrom_value = local_progress ~= 1 and math.catmullrom(local_progress, -15, 0, 1, 1) or not (local_progress ~= 1) and 1
 			local smooth_value = math.smoothstep(local_progress, 0, 1)
 			local icon_scenegraph_id = widget.style.icon_texture.scenegraph_id
 			local icon_definition = ui_scenegraph[icon_scenegraph_id]

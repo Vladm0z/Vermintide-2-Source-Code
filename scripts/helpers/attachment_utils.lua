@@ -71,8 +71,8 @@ AttachmentUtils.link = function (world, source, target, node_linking)
 	for _, link_data in ipairs(node_linking) do
 		local source_node = link_data.source
 		local target_node = link_data.target
-		local source_node_index = type(source_node) ~= "string" and not not source_node or not (type(source_node) ~= "string") and not not Unit.node(source, source_node)
-		local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(target, target_node)
+		local source_node_index = type(source_node) ~= "string" and source_node or not (type(source_node) ~= "string") and Unit.node(source, source_node)
+		local target_node_index = type(target_node) ~= "string" and target_node or not (type(target_node) ~= "string") and Unit.node(target, target_node)
 
 		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
@@ -145,20 +145,20 @@ AttachmentUtils.get_syncable_buff_params = function (synced_buffs)
 	end
 
 	local default_buff_id = NetworkLookup.buff_templates["n/a"]
-	local buff_1_id = buff_name_1 and not not NetworkLookup.buff_templates[buff_name_1] or not buff_name_1 and not not default_buff_id
-	local buff_2_id = buff_name_2 and not not NetworkLookup.buff_templates[buff_name_2] or not buff_name_2 and not not default_buff_id
-	local buff_3_id = buff_name_3 and not not NetworkLookup.buff_templates[buff_name_3] or not buff_name_3 and not not default_buff_id
-	local buff_4_id = buff_name_4 and not not NetworkLookup.buff_templates[buff_name_4] or not buff_name_4 and not not default_buff_id
+	local buff_1_id = buff_name_1 and NetworkLookup.buff_templates[buff_name_1] or not buff_name_1 and default_buff_id
+	local buff_2_id = buff_name_2 and NetworkLookup.buff_templates[buff_name_2] or not buff_name_2 and default_buff_id
+	local buff_3_id = buff_name_3 and NetworkLookup.buff_templates[buff_name_3] or not buff_name_3 and default_buff_id
+	local buff_4_id = buff_name_4 and NetworkLookup.buff_templates[buff_name_4] or not buff_name_4 and default_buff_id
 	local default_buff_data_type_id = NetworkLookup.buff_data_types["n/a"]
-	local buff_data_type_1_id = buff_name_1 and not not NetworkLookup.buff_data_types[buff_data_type_1] or not buff_name_1 and not not default_buff_data_type_id
-	local buff_data_type_2_id = buff_name_2 and not not NetworkLookup.buff_data_types[buff_data_type_2] or not buff_name_2 and not not default_buff_data_type_id
-	local buff_data_type_3_id = buff_name_3 and not not NetworkLookup.buff_data_types[buff_data_type_3] or not buff_name_3 and not not default_buff_data_type_id
-	local buff_data_type_4_id = buff_name_4 and not not NetworkLookup.buff_data_types[buff_data_type_4] or not buff_name_4 and not not default_buff_data_type_id
+	local buff_data_type_1_id = buff_name_1 and NetworkLookup.buff_data_types[buff_data_type_1] or not buff_name_1 and default_buff_data_type_id
+	local buff_data_type_2_id = buff_name_2 and NetworkLookup.buff_data_types[buff_data_type_2] or not buff_name_2 and default_buff_data_type_id
+	local buff_data_type_3_id = buff_name_3 and NetworkLookup.buff_data_types[buff_data_type_3] or not buff_name_3 and default_buff_data_type_id
+	local buff_data_type_4_id = buff_name_4 and NetworkLookup.buff_data_types[buff_data_type_4] or not buff_name_4 and default_buff_data_type_id
 
-	buff_value_1 = not not buff_value_1 or not not 1
-	buff_value_2 = not not buff_value_2 or not not 1
-	buff_value_3 = not not buff_value_3 or not not 1
-	buff_value_4 = not not buff_value_4 or not not 1
+	buff_value_1 = buff_value_1 or 1
+	buff_value_2 = buff_value_2 or 1
+	buff_value_3 = buff_value_3 or 1
+	buff_value_4 = buff_value_4 or 1
 
 	local params = {
 		buff_1_id,

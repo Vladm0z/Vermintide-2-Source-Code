@@ -41,7 +41,7 @@ CorruptorBeamExtension.remove_vfx_and_sfx = function (self, unit)
 	-- function 4
 	local world = self.world
 	local target_unit = self.target_unit
-	local self_unit = not not unit or not not self.unit
+	local self_unit = unit or self.unit
 	local wwise_world = Managers.world:wwise_world(world)
 
 	if self.beam_start_sound_id and WwiseWorld.is_playing(wwise_world, self.beam_start_sound_id) then

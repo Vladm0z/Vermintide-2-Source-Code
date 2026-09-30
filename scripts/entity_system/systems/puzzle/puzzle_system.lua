@@ -61,7 +61,7 @@ end
 
 PuzzleSystem._get_or_add_group = function (self, group_name)
 	-- function 4
-	local puzzle_group = not not self._puzzle_groups[group_name]
+	local puzzle_group = self._puzzle_groups[group_name]
 
 	self._puzzle_groups[group_name] = puzzle_group
 
@@ -121,7 +121,7 @@ PuzzleSystem.register_puzzle = function (self, group_name, puzzle_name, puzzle_c
 		end
 
 		combination_tbl[i] = trimmed
-		num_per_combination_value[trimmed] = not not num_per_combination_value[trimmed] + 1
+		num_per_combination_value[trimmed] = num_per_combination_value[trimmed] + 1
 	end
 
 	puzzle.ordered = ordered
@@ -129,12 +129,12 @@ PuzzleSystem.register_puzzle = function (self, group_name, puzzle_name, puzzle_c
 	puzzle.hot_join_sync_completion = hot_join_sync_completion
 	self._puzzles_to_update[puzzle_name] = puzzle
 
-	local group_hash = not not self._group_id_hash_lookup[group_name]
+	local group_hash = self._group_id_hash_lookup[group_name]
 
 	self._group_id_hash_lookup[group_hash] = group_name
 	self._group_id_hash_lookup[group_name] = group_hash
 
-	local puzzle_hash = not not self._puzzle_id_hash_lookup[puzzle_name]
+	local puzzle_hash = self._puzzle_id_hash_lookup[puzzle_name]
 
 	self._puzzle_id_hash_lookup[puzzle_hash] = puzzle_name
 	self._puzzle_id_hash_lookup[puzzle_name] = puzzle_hash
@@ -205,7 +205,7 @@ PuzzleSystem._update_puzzle = function (self, puzzle)
 			local index
 
 			while index ~= -1 do
-				index = table.index_of(combination, value, (not not index or not not 0) + 1)
+				index = table.index_of(combination, value, (index or 0) + 1)
 
 				if INDICES_READ[index] then
 					if NUM_FOUND_PER_VALUE[value] >= num_per_combination_value[value] then
@@ -213,7 +213,7 @@ PuzzleSystem._update_puzzle = function (self, puzzle)
 					end
 				elseif index ~= -1 then
 					INDICES_READ[index] = true
-					NUM_FOUND_PER_VALUE[value] = not not NUM_FOUND_PER_VALUE[value] + 1
+					NUM_FOUND_PER_VALUE[value] = NUM_FOUND_PER_VALUE[value] + 1
 					num_done = num_done + 1
 
 					break
@@ -321,13 +321,13 @@ PuzzleSystem._debug_draw_values = function (self)
 					local fallback_i = 1
 
 					for ext in pairs(extensions) do
-						values[not not ext:order_id()] = ext:puzzle_value()
+						values[ext:order_id()] = ext:puzzle_value()
 						fallback_i = fallback_i + 1
 					end
 
 					local values_string = table.concat(values, ", ")
 
-					Debug.text("            %s: Combination: %s, Values: %s, (Ordered=%s)", puzzle_name ~= "" and not not puzzle_name or not (puzzle_name ~= "") and not not "<no_name>", combination_string, values_string, puzzle.ordered)
+					Debug.text("            %s: Combination: %s, Values: %s, (Ordered=%s)", puzzle_name ~= "" and puzzle_name or not (puzzle_name ~= "") and "<no_name>", combination_string, values_string, puzzle.ordered)
 				end
 			end
 		end

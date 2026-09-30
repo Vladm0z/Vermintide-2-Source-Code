@@ -3430,7 +3430,7 @@ AchievementTemplates.achievements.skaven_ratling_gunner_3 = {
 		end
 
 		local attacker_unit = event_data[2]
-		local breed = not not Unit.alive(attacker_unit)
+		local breed = Unit.alive(attacker_unit)
 
 		if breed and breed.name == "skaven_ratling_gunner" then
 			statistics_db:increment_stat(stats_id, "ratling_gunner_blocked_shot")
@@ -3613,7 +3613,7 @@ for _, diff_key in ipairs(AchievementTemplates.difficulties) do
 			local champion_completed = statistics_db:get_persistent_stat(stats_id, "kill_chaos_exalted_champion_difficulty_rank") >= difficulty_rank
 			local sorcerer_completed = statistics_db:get_persistent_stat(stats_id, "kill_chaos_exalted_sorcerer_difficulty_rank") >= difficulty_rank
 
-			return not not champion_completed and not not sorcerer_completed
+			return champion_completed and sorcerer_completed
 		end,
 		requirements = function (statistics_db, stats_id)
 			-- function 230
@@ -3642,7 +3642,7 @@ for _, diff_key in ipairs(AchievementTemplates.difficulties) do
 			local gray_seer_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_grey_seer_difficulty_rank") >= difficulty_rank
 			local storm_vermin_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_storm_vermin_warlord_difficulty_rank") >= difficulty_rank
 
-			return not not gray_seer_completed and not not storm_vermin_completed
+			return gray_seer_completed and storm_vermin_completed
 		end,
 		requirements = function (statistics_db, stats_id)
 			-- function 232

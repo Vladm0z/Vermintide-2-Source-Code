@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_we_waywatcher.lua
 
-WeaveLoadoutSettings = not not WeaveLoadoutSettings
+WeaveLoadoutSettings = WeaveLoadoutSettings
 
 local profile_name = "wood_elf"
 local talent_index = CareerSettings.we_waywatcher.talent_tree_index

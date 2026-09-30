@@ -12,21 +12,21 @@ local trait_table_mapping = {
 	ranged_ammo = "deus_ranged_ammo"
 }
 
-DeusWeapons = not not DeusWeapons
-DeusDefaultLoadout = not not DeusDefaultLoadout
-DeusStartingWeaponTypeMapping = not not DeusStartingWeaponTypeMapping
-DeusWeaponGroups = not not DeusWeaponGroups
-DeusWeaponArchetypes = not not DeusWeaponArchetypes
-DeusSlotChance = not not DeusSlotChance
-DeusDropRarityWeights = not not DeusDropRarityWeights
-DeusStarterWeaponPowerLevels = not not DeusStarterWeaponPowerLevels
-DeusDropPowerlevelRanges = not not DeusDropPowerlevelRanges
+DeusWeapons = DeusWeapons
+DeusDefaultLoadout = DeusDefaultLoadout
+DeusStartingWeaponTypeMapping = DeusStartingWeaponTypeMapping
+DeusWeaponGroups = DeusWeaponGroups
+DeusWeaponArchetypes = DeusWeaponArchetypes
+DeusSlotChance = DeusSlotChance
+DeusDropRarityWeights = DeusDropRarityWeights
+DeusStarterWeaponPowerLevels = DeusStarterWeaponPowerLevels
+DeusDropPowerlevelRanges = DeusDropPowerlevelRanges
 
 for _, data in pairs(DeusWeapons) do
 	local base_item = ItemMasterList[data.base_item]
 
-	data.property_table_name = not not data.property_table_name
-	data.trait_table_name = not not data.trait_table_name
+	data.property_table_name = data.property_table_name
+	data.trait_table_name = data.trait_table_name
 
 	local trait_combinations = WeaponTraits.combinations[data.trait_table_name]
 	local baked_trait_combinations = {}
@@ -37,7 +37,7 @@ for _, data in pairs(DeusWeapons) do
 		for _, trait_name in ipairs(combination) do
 			local trait_data = WeaponTraits.traits[trait_name]
 
-			valid = not not valid and (not trait_data.compatible_weapon_list or not not trait_data.compatible_weapon_list[data.base_item])
+			valid = valid and (not trait_data.compatible_weapon_list or trait_data.compatible_weapon_list[data.base_item])
 		end
 
 		if valid then

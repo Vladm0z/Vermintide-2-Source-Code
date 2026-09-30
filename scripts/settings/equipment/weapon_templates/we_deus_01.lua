@@ -7,7 +7,7 @@ local function check_energy_condition_func(unit, input_extension, ammo_extension
 	-- function 1
 	local energy_extension = ScriptUnit.has_extension(unit, "energy_system")
 
-	return not not energy_extension and not not energy_extension:is_drainable()
+	return energy_extension and energy_extension:is_drainable()
 end
 
 local weapon_template = {}

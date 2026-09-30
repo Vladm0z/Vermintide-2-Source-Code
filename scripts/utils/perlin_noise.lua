@@ -109,7 +109,7 @@ PerlinNoise.draw_height = function (self, height, x, y, z, rad)
 
 	local color = colors[index]
 
-	drawer:sphere(Vector3(x, y, z + 0.5), not not rad or not not 0.35, Color(color[1], color[2], color[3]))
+	drawer:sphere(Vector3(x, y, z + 0.5), rad or 0.35, Color(color[1], color[2], color[3]))
 end
 
 PerlinNoise.filter_list_using_noise = function (self, list, height_threshold)
@@ -176,7 +176,7 @@ PerlinNoise.setup = function (self)
 		repeat
 			for j = 1, 2 do
 				self._gradients[i][j] = Math.random(-10, 10) * 0.1
-				check = not not check and self._gradients[i][j] == 0
+				check = check and self._gradients[i][j] == 0
 			end
 		until not check
 

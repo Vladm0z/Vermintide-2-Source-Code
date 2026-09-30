@@ -113,8 +113,8 @@ StoreWindowFeatured.on_enter = function (self, params, offset)
 	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
 	local current_page = pages[page_name]
-	local slideshow_content = not not current_page.slideshow
-	local grid_content = not not current_page.grid
+	local slideshow_content = current_page.slideshow
+	local grid_content = current_page.grid
 
 	self._page_name = page_name
 
@@ -245,14 +245,14 @@ StoreWindowFeatured._sync_login_rewards = function (self)
 	if can_claim then
 		active_content.is_claimable = true
 		active_content.subtitle = Localize("available_now")
-		active_content.title = not not login_rewards.title
+		active_content.title = login_rewards.title
 	else
 		active_content.is_claimable = false
 
 		local timer = UIUtils.format_duration(cooldown)
 
 		active_content.subtitle = Localize("store_login_rewards_next_available_in") .. timer
-		active_content.title = not not login_rewards.title
+		active_content.title = login_rewards.title
 	end
 end
 
@@ -388,12 +388,12 @@ StoreWindowFeatured._draw = function (self, dt)
 	local ui_scenegraph = self.ui_scenegraph
 	local input_service = parent:window_input_service()
 	local render_settings = self._render_settings
-	local alpha_multiplier = not not render_settings.alpha_multiplier
-	local content_alpha_multiplier = not not render_settings.content_alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
+	local content_alpha_multiplier = render_settings.content_alpha_multiplier
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	render_settings.alpha_multiplier = math.min(not not content_alpha_multiplier or not not alpha_multiplier)
+	render_settings.alpha_multiplier = math.min(content_alpha_multiplier or alpha_multiplier)
 
 	for _, widget in ipairs(self._content_widgets) do
 		UIRenderer.draw_widget(ui_top_renderer, widget)
@@ -449,7 +449,7 @@ StoreWindowFeatured._list_index_pressed = function (self)
 	if grid_widgets then
 		for index, widget in ipairs(grid_widgets) do
 			local content = widget.content
-			local hotspot = not not content.hotspot
+			local hotspot = content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -468,7 +468,7 @@ StoreWindowFeatured._animate_grid_entries = function (self, dt)
 	for _, widget in ipairs(grid_widgets) do
 		local content = widget.content
 		local style = widget.style
-		local hotspot = not not content.button_hotspot
+		local hotspot = content.button_hotspot
 
 		if hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
@@ -598,9 +598,9 @@ StoreWindowFeatured._append_filtered_slideshow_content = function (self, slidesh
 				texture = settings.slideshow_texture,
 				description = settings.slideshow_text,
 				header = settings.name,
-				product_id = not not settings.dlc_name,
+				product_id = settings.dlc_name,
 				product_type = product_type,
-				prio = not not settings.prio
+				prio = settings.prio
 			}
 		end
 	end
@@ -615,7 +615,7 @@ StoreWindowFeatured._get_default_featured_slideshow_content = function (self)
 		-- function 26
 		local available_platforms = settings.available_platforms
 
-		return not available_platforms or not not table.find(available_platforms, platform)
+		return not available_platforms or table.find(available_platforms, platform)
 	end)
 
 	local backend_store = Managers.backend:get_interface("peddler")
@@ -643,8 +643,8 @@ StoreWindowFeatured._get_default_featured_grid_content = function (self, optiona
 	local hero_filter = "can_wield_by_current_hero and not owned and ( not is_event_item or is_active_event_item )"
 	local hero_items = backend_common:filter_items(peddler_items, hero_filter)
 	local os_time = os.time() * 1000
-	local num_items = not not optional_num_items or not not 9
-	local used_ids = not not optional_used_ids or not not {}
+	local num_items = optional_num_items or 9
+	local used_ids = optional_used_ids or {}
 	local item_currency_settings = DLCSettings.store.currency_ui_settings
 
 	local function comparator(a, b)
@@ -669,8 +669,8 @@ StoreWindowFeatured._get_default_featured_grid_content = function (self, optiona
 			return sale_percentage_a < sale_percentage_b
 		end
 
-		local a_end_time = not not a.end_time
-		local b_end_time = not not b.end_time
+		local a_end_time = a.end_time
+		local b_end_time = b.end_time
 		local a_time_left = a_end_time - os_time
 		local b_time_left = b_end_time - os_time
 
@@ -685,7 +685,7 @@ StoreWindowFeatured._get_default_featured_grid_content = function (self, optiona
 	while i <= #hero_items and cnt < num_items do
 		local item = hero_items[i]
 		local item_key = item.key
-		local item_owned = not not backend_items:has_item(item_key)
+		local item_owned = backend_items:has_item(item_key)
 		local item_data = item.data
 		local item_type = item_data.item_type
 
@@ -768,7 +768,7 @@ StoreWindowFeatured._add_product = function (self, product_data)
 		printf("[StoreWindowFeatured] Warning: %s %q not found", product_type, product_id)
 	end
 
-	return product, not not item_type or not not product_type
+	return product, item_type or product_type
 end
 
 StoreWindowFeatured._setup_slideshow = function (self, widget, data)
@@ -777,7 +777,7 @@ StoreWindowFeatured._setup_slideshow = function (self, widget, data)
 	local unlock_manager = Managers.unlock
 	local backend_store = Managers.backend:get_interface("peddler")
 
-	self._reference_id = not not self._reference_id + 1
+	self._reference_id = self._reference_id + 1
 
 	for index, slideshow in ipairs(data) do
 		local valid = true
@@ -792,16 +792,16 @@ StoreWindowFeatured._setup_slideshow = function (self, widget, data)
 					valid = true
 
 					local dlc_id = unlock_manager:dlc_id(product_id)
-					local price_data = backend_store:get_app_price(IS_WINDOWS and (not not dlc_id or not not product_id) or not IS_WINDOWS and not not product_id)
+					local price_data = backend_store:get_app_price(IS_WINDOWS and (dlc_id or product_id) or not IS_WINDOWS and product_id)
 
-					is_discounted = not not price_data and price_data.current_price ~= price_data.regular_price
+					is_discounted = price_data and price_data.current_price ~= price_data.regular_price
 				end
 			elseif product_type == "item" then
 				local item = self._parent:get_item_by_key(product_id)
 
 				if item then
 					valid = true
-					is_discounted = not not item.steam_data and not not item.steam_data.discount_is_active
+					is_discounted = item.steam_data and item.steam_data.discount_is_active
 				end
 			end
 		else
@@ -859,7 +859,7 @@ StoreWindowFeatured._setup_backend_image_material = function (self, reference_na
 	-- function 33
 	local material_name = "StoreWindowFeatured_" .. reference_name
 	local gui = self._ui_top_renderer.gui
-	local template_material_name = masked and not not "template_store_diffuse_masked" or not masked and not not "template_store_diffuse"
+	local template_material_name = masked and "template_store_diffuse_masked" or not masked and "template_store_diffuse"
 
 	self:_create_material_instance(gui, material_name, template_material_name, reference_name)
 
@@ -1003,7 +1003,7 @@ StoreWindowFeatured._handle_slideshow_logic = function (self, widget, dt, input_
 			self:_set_slideshow_animation_progress(widget, 1)
 			self:_play_sound("Play_hud_store_button_select")
 		else
-			local hotspot = not not widget.content.button_hotspot
+			local hotspot = widget.content.button_hotspot
 
 			if hotspot and hotspot.on_pressed then
 				hotspot.on_pressed = false
@@ -1034,11 +1034,11 @@ StoreWindowFeatured._handle_slideshow_logic = function (self, widget, dt, input_
 		return
 	end
 
-	local progress = not not content.progress
+	local progress = content.progress
 
 	progress = progress - dt * 0.3
 
-	local current_read_index = not not content.read_index
+	local current_read_index = content.read_index
 	local read_index = current_read_index
 
 	if progress >= 1 then
@@ -1070,18 +1070,18 @@ StoreWindowFeatured._set_slideshow_selected_read_index = function (self, widget,
 	content.delay_timer = wait_time
 	content.show_hourglass = slide_content.is_discounted
 
-	local header = not not slide_content.header
+	local header = slide_content.header
 
 	content.title_text = Localize(header)
 
-	local description = not not slide_content.description
+	local description = slide_content.description
 	local description_func_name = slide_content.description_func
 
 	if description_func_name then
 		local func = self[description_func_name]
 
 		if func then
-			content.description_text = not not func(self, slide_content.description_params)
+			content.description_text = func(self, slide_content.description_params)
 		else
 			Application.warning(string.format("[StoreWindowFeatured] There is no description function called %q in StoreWindowFeatured", description_func_name))
 		end
@@ -1100,7 +1100,7 @@ StoreWindowFeatured.gotwf_description = function (self, params)
 		return
 	end
 
-	local num_rewards = not not params.num_rewards
+	local num_rewards = params.num_rewards
 	local start_date = os.date("%x", start_time * 0.001)
 	local end_date = os.date("%x", start_time * 0.001 + 86400 * (num_rewards - 1))
 
@@ -1190,7 +1190,7 @@ StoreWindowFeatured._set_slideshow_animation_progress = function (self, widget, 
 	local style = widget.style
 	local slideshow_content = content.slideshow_content
 	local num_slideshows = #slideshow_content
-	local read_index = not not content.read_index
+	local read_index = content.read_index
 	local default_size = content.size
 	local default_width = default_size[1]
 
@@ -1224,9 +1224,9 @@ StoreWindowFeatured._update_hotspot_progress = function (self, hotspot, dt)
 	-- function 46
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then

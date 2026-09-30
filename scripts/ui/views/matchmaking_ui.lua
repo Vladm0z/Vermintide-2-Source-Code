@@ -20,7 +20,7 @@ local function get_portrait_name_by_profile_index(profile_index, career_index)
 	local career_settings = careers[career_index]
 	local portrait_image = career_settings.portrait_image
 
-	return portrait_image and not not ("small_" .. portrait_image) or not portrait_image and not not "icons_placeholder"
+	return portrait_image and "small_" .. portrait_image or not portrait_image and "icons_placeholder"
 end
 
 local WIND_COLORS = {
@@ -169,33 +169,33 @@ MatchmakingUI.update = function (self, dt, t)
 	local menu_active = ingame_ui.menu_active
 	local in_menu_current_view = ingame_ui.current_view ~= nil
 	local ingame_player_list_ui = parent:component("IngamePlayerListUI")
-	local player_list_active = not not ingame_player_list_ui and not not ingame_player_list_ui:is_active()
-	local show_detailed_matchmaking_info = not menu_active and not player_list_active and not not not in_menu_current_view
+	local player_list_active = ingame_player_list_ui and ingame_player_list_ui:is_active()
+	local show_detailed_matchmaking_info = not menu_active and not player_list_active and not in_menu_current_view
 	local is_in_store_view = false
 
 	if in_menu_current_view then
 		local current_view = ingame_ui.views[ingame_ui.current_view]
-		local state = not not current_view and not not current_view.current_state
+		local state = current_view and current_view.current_state
 
-		is_in_store_view = not not state and state.NAME == "HeroViewStateStore"
+		is_in_store_view = state and state.NAME == "HeroViewStateStore"
 	end
 
 	local versus_slot_status_ui = parent:component("VersusSlotStatusUI")
-	local versus_slot_status_ui_active = not not versus_slot_status_ui and not not versus_slot_status_ui:is_active()
+	local versus_slot_status_ui_active = versus_slot_status_ui and versus_slot_status_ui:is_active()
 
-	show_detailed_matchmaking_info = not not show_detailed_matchmaking_info and not not not versus_slot_status_ui_active
+	show_detailed_matchmaking_info = show_detailed_matchmaking_info and not versus_slot_status_ui_active
 
 	local ui_top_renderer = self.ui_top_renderer
 	local input_manager = self.input_manager
 	local input_service = input_manager:get_service("ingame_menu")
-	local is_matchmaking = not not self.matchmaking_manager:is_game_matchmaking()
+	local is_matchmaking = self.matchmaking_manager:is_game_matchmaking()
 	local ingame_ui = self.ingame_ui
 	local ingame_hud = ingame_ui.ingame_hud
 	local countdown_ui = ingame_hud:component("LevelCountdownUI")
-	local is_enter_game = not not countdown_ui and not not countdown_ui:is_enter_game()
+	local is_enter_game = countdown_ui and countdown_ui:is_enter_game()
 	local ui_suspended = ingame_ui.menu_suspended
 	local voting_manager = self.voting_manager
-	local has_mission_vote = not not voting_manager:vote_in_progress()
+	local has_mission_vote = voting_manager:vote_in_progress()
 
 	if ui_suspended and not is_enter_game then
 		return
@@ -265,7 +265,7 @@ MatchmakingUI.update = function (self, dt, t)
 		if match_handler:is_leader(self._my_peer_id) then
 			local allow_cancel_matchmaking = self.matchmaking_manager:allow_cancel_matchmaking()
 
-			self._allow_cancel_matchmaking = not not allow_cancel_matchmaking and not not not has_mission_vote
+			self._allow_cancel_matchmaking = allow_cancel_matchmaking and not has_mission_vote
 		end
 
 		self:_draw(ui_top_renderer, input_service, is_matchmaking, dt)
@@ -276,7 +276,7 @@ MatchmakingUI._handle_gamepad_activity = function (self)
 	-- function 10
 	local gamepad_active = self.input_manager:is_device_active("gamepad")
 	local most_recent_device = Managers.input:get_most_recent_device()
-	local force_update = self.gamepad_active_last_frame == nil or not not gamepad_active and most_recent_device ~= self._most_recent_device
+	local force_update = self.gamepad_active_last_frame == nil or gamepad_active and most_recent_device ~= self._most_recent_device
 
 	if gamepad_active then
 		if not self.gamepad_active_last_frame or force_update then
@@ -386,22 +386,22 @@ MatchmakingUI._update_matchmaking_info = function (self, t)
 			self:_set_detail_level_text(text, true)
 
 			local difficulty = matchmaking_info.difficulty
-			local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
-			local difficulty_display_name = difficulty_setting and not not difficulty_setting.display_name or not difficulty_setting and not not "dlc1_2_difficulty_unavailable"
+			local difficulty_setting = difficulty and DifficultySettings[difficulty]
+			local difficulty_display_name = difficulty_setting and difficulty_setting.display_name or not difficulty_setting and "dlc1_2_difficulty_unavailable"
 
 			self:_set_detail_difficulty_text(difficulty_display_name, nil, false)
 		else
 			local weave_name = matchmaking_info.mission_id
 			local weave_templates = WeaveSettings.templates
-			local weave_template = not not weave_name and not not weave_templates[weave_name]
-			local weave_index = weave_template and not not table.find(WeaveSettings.templates_ordered, weave_template) or not weave_template and not not nil
-			local weave_display_name = weave_template and not not (weave_index .. ". " .. Localize(weave_template.display_name)) or not weave_template and not not Localize("level_display_name_unavailable")
+			local weave_template = weave_name and weave_templates[weave_name]
+			local weave_index = weave_template and table.find(WeaveSettings.templates_ordered, weave_template) or not weave_template and nil
+			local weave_display_name = weave_template and weave_index .. ". " .. Localize(weave_template.display_name) or not weave_template and Localize("level_display_name_unavailable")
 
 			self:_set_detail_level_text(weave_display_name, false)
 
-			local wind = not not weave_template and not not weave_template.wind
-			local wind_settings = not not wind and not not WindSettings[wind]
-			local wind_display_name = wind_settings and not not wind_settings.display_name or not wind_settings and not not ""
+			local wind = weave_template and weave_template.wind
+			local wind_settings = wind and WindSettings[wind]
+			local wind_display_name = wind_settings and wind_settings.display_name or not wind_settings and ""
 
 			self:_set_detail_difficulty_text(wind_display_name, WIND_COLORS[wind])
 		end
@@ -410,9 +410,9 @@ MatchmakingUI._update_matchmaking_info = function (self, t)
 
 		if not matchmaking_info.quick_game then
 			local journey_name = matchmaking_info.mission_id
-			local journey_settings = not not journey_name and not not DeusJourneySettings[journey_name]
+			local journey_settings = journey_name and DeusJourneySettings[journey_name]
 
-			detail_text = journey_settings and (not not journey_settings.display_name or not not "deus_matching") or not journey_settings and not not "deus_matching"
+			detail_text = journey_settings and (journey_settings.display_name or "deus_matching") or not journey_settings and "deus_matching"
 		end
 
 		self:_set_detail_level_text(detail_text, true)
@@ -422,8 +422,8 @@ MatchmakingUI._update_matchmaking_info = function (self, t)
 		if difficulty ~= cached_matchmaking_info.difficulty then
 			cached_matchmaking_info.difficulty = difficulty
 
-			local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
-			local difficulty_display_name = difficulty_setting and not not difficulty_setting.display_name or not difficulty_setting and not not "dlc1_2_difficulty_unavailable"
+			local difficulty_setting = difficulty and DifficultySettings[difficulty]
+			local difficulty_display_name = difficulty_setting and difficulty_setting.display_name or not difficulty_setting and "dlc1_2_difficulty_unavailable"
 
 			self:_set_detail_difficulty_text(difficulty_display_name)
 		end
@@ -437,10 +437,10 @@ MatchmakingUI._update_matchmaking_info = function (self, t)
 			if mission_id == "any" then
 				detail_text = "map_screen_quickplay_button"
 			else
-				local level_settings = not not mission_id and not not LevelSettings[mission_id]
-				local display_name = not not level_settings and not not level_settings.display_name
+				local level_settings = mission_id and LevelSettings[mission_id]
+				local display_name = level_settings and level_settings.display_name
 
-				detail_text = not not display_name or not not detail_text
+				detail_text = display_name or detail_text
 			end
 
 			difficulty_text = "player_hosted_title"
@@ -454,8 +454,8 @@ MatchmakingUI._update_matchmaking_info = function (self, t)
 		if difficulty ~= cached_matchmaking_info.difficulty then
 			cached_matchmaking_info.difficulty = difficulty
 
-			local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
-			local difficulty_display_name = difficulty_setting and not not difficulty_setting.display_name or not difficulty_setting and not not "dlc1_2_difficulty_unavailable"
+			local difficulty_setting = difficulty and DifficultySettings[difficulty]
+			local difficulty_display_name = difficulty_setting and difficulty_setting.display_name or not difficulty_setting and "dlc1_2_difficulty_unavailable"
 
 			self:_set_detail_difficulty_text(difficulty_display_name)
 		end
@@ -475,13 +475,13 @@ MatchmakingUI._update_matchmaking_info = function (self, t)
 			if quick_game then
 				text = "mission_vote_quick_play"
 			elseif is_event_game then
-				local level_settings = not not mission_id and mission_id ~= "n/a" and not not LevelSettings[mission_id]
-				local level_display_name = level_settings and not not level_settings.display_name or not level_settings and not not "random_level"
+				local level_settings = mission_id and mission_id ~= "n/a" and LevelSettings[mission_id]
+				local level_display_name = level_settings and level_settings.display_name or not level_settings and "random_level"
 
 				text = level_display_name
 			else
-				local level_settings = not not mission_id and mission_id ~= "n/a" and not not LevelSettings[mission_id]
-				local level_display_name = level_settings and not not level_settings.display_name or not level_settings and not not "level_display_name_unavailable"
+				local level_settings = mission_id and mission_id ~= "n/a" and LevelSettings[mission_id]
+				local level_display_name = level_settings and level_settings.display_name or not level_settings and "level_display_name_unavailable"
 
 				text = level_display_name
 			end
@@ -501,7 +501,7 @@ end
 
 MatchmakingUI._update_status = function (self, dt)
 	-- function 14
-	local rotation_progresss = (not not self._rotation_progresss + dt * 0.2) % 1
+	local rotation_progresss = (self._rotation_progresss + dt * 0.2) % 1
 
 	self._rotation_progresss = rotation_progresss
 
@@ -525,7 +525,7 @@ MatchmakingUI._update_status = function (self, dt)
 			local is_connecting = content.is_connecting
 			local connecting_icon_style = style.connecting_icon
 
-			connecting_icon_style.angle = is_connecting and not not (connecting_icon_style.angle + connecting_radians) or not is_connecting and not not 0
+			connecting_icon_style.angle = is_connecting and connecting_icon_style.angle + connecting_radians or not is_connecting and 0
 		end
 	end
 end
@@ -546,7 +546,7 @@ MatchmakingUI._update_mission_vote_status = function (self)
 
 	if switch_mechanism then
 		local mechanism_settings = MechanismSettings[mechanism]
-		local level_key = not not active_vote_data.level_key
+		local level_key = active_vote_data.level_key
 		local level_settings = LevelSettings[level_key]
 
 		self:_set_detail_level_text(mechanism_settings.display_name, true)
@@ -557,22 +557,22 @@ MatchmakingUI._update_mission_vote_status = function (self)
 
 			self:_set_detail_level_text(text, true)
 
-			local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
-			local difficulty_display_name = difficulty_setting and not not difficulty_setting.display_name or not difficulty_setting and not not "dlc1_2_difficulty_unavailable"
+			local difficulty_setting = difficulty and DifficultySettings[difficulty]
+			local difficulty_display_name = difficulty_setting and difficulty_setting.display_name or not difficulty_setting and "dlc1_2_difficulty_unavailable"
 
 			self:_set_detail_difficulty_text(difficulty_display_name, nil, false)
 		else
 			local weave_name = mission_id
 			local weave_templates = WeaveSettings.templates
-			local weave_template = not not weave_name and not not weave_templates[weave_name]
-			local weave_index = weave_template and not not table.find(WeaveSettings.templates_ordered, weave_template) or not weave_template and not not nil
-			local weave_display_name = weave_template and not not (weave_index .. ". " .. Localize(weave_template.display_name)) or not weave_template and not not Localize("level_display_name_unavailable")
+			local weave_template = weave_name and weave_templates[weave_name]
+			local weave_index = weave_template and table.find(WeaveSettings.templates_ordered, weave_template) or not weave_template and nil
+			local weave_display_name = weave_template and weave_index .. ". " .. Localize(weave_template.display_name) or not weave_template and Localize("level_display_name_unavailable")
 
 			self:_set_detail_level_text(weave_display_name, false)
 
-			local wind = not not weave_template and not not weave_template.wind
-			local wind_settings = not not wind and not not WindSettings[wind]
-			local wind_display_name = wind_settings and not not wind_settings.display_name or not wind_settings and not not ""
+			local wind = weave_template and weave_template.wind
+			local wind_settings = wind and WindSettings[wind]
+			local wind_display_name = wind_settings and wind_settings.display_name or not wind_settings and ""
 
 			self:_set_detail_difficulty_text(wind_display_name, WIND_COLORS[wind])
 		end
@@ -580,9 +580,9 @@ MatchmakingUI._update_mission_vote_status = function (self)
 		self:_set_detail_level_text("deus_matching", true)
 
 		local difficulty_settings = DifficultySettings[difficulty]
-		local difficulty_display_name = not not difficulty_settings and not not difficulty_settings.display_name
+		local difficulty_display_name = difficulty_settings and difficulty_settings.display_name
 
-		self:_set_detail_difficulty_text(not not difficulty_display_name or not not "")
+		self:_set_detail_difficulty_text(difficulty_display_name or "")
 	elseif mechanism == "versus" then
 		local detail_text = "mission_vote_quick_play"
 		local difficulty_text = "vs_ui_versus_tag"
@@ -591,10 +591,10 @@ MatchmakingUI._update_mission_vote_status = function (self)
 			if mission_id == "any" then
 				detail_text = "map_screen_quickplay_button"
 			else
-				local level_settings = not not mission_id and not not LevelSettings[mission_id]
-				local display_name = not not level_settings and not not level_settings.display_name
+				local level_settings = mission_id and LevelSettings[mission_id]
+				local display_name = level_settings and level_settings.display_name
 
-				detail_text = not not display_name or not not detail_text
+				detail_text = display_name or detail_text
 			end
 
 			difficulty_text = "player_hosted_title"
@@ -604,7 +604,7 @@ MatchmakingUI._update_mission_vote_status = function (self)
 		self:_set_detail_difficulty_text(difficulty_text)
 	else
 		local difficulty_settings = DifficultySettings[difficulty]
-		local difficulty_display_name = not not difficulty_settings and not not difficulty_settings.display_name
+		local difficulty_display_name = difficulty_settings and difficulty_settings.display_name
 		local level_display_name
 
 		if quick_game then
@@ -617,7 +617,7 @@ MatchmakingUI._update_mission_vote_status = function (self)
 			level_display_name = level_settings.display_name
 		end
 
-		self:_set_detail_difficulty_text(not not difficulty_display_name or not not "")
+		self:_set_detail_difficulty_text(difficulty_display_name or "")
 		self:_set_detail_level_text(level_display_name, true)
 	end
 
@@ -659,7 +659,7 @@ MatchmakingUI._update_show_timer = function (self, has_mission_vote)
 	-- function 18
 	local alpha
 
-	alpha = has_mission_vote and (not not 255 or not not 0) or not has_mission_vote and not not 0
+	alpha = has_mission_vote and (255 or 0) or not has_mission_vote and 0
 
 	local bg = self:_get_detail_widget("timer_bg")
 	local fg = self:_get_detail_widget("timer_fg")
@@ -680,11 +680,11 @@ MatchmakingUI.update_debug = function (self)
 
 	local debug_text = ""
 
-	debug_text = debug_text .. "\nStatename: " .. not not Managers.matchmaking.debug.statename
+	debug_text = debug_text .. "\nStatename: " .. Managers.matchmaking.debug.statename
 	debug_text = debug_text .. "\nState: " .. Managers.matchmaking.debug.state
-	debug_text = not not (debug_text .. "\nInfo: " .. Managers.matchmaking.debug.text) or not not "matchmaking debug"
+	debug_text = debug_text .. "\nInfo: " .. Managers.matchmaking.debug.text or "matchmaking debug"
 	debug_text = debug_text .. "\n"
-	debug_text = debug_text .. "\nDistance: " .. not not Managers.matchmaking.debug.distance
+	debug_text = debug_text .. "\nDistance: " .. Managers.matchmaking.debug.distance
 	debug_text = debug_text .. "\nLevel: " .. Managers.matchmaking.debug.level
 	debug_text = debug_text .. "\nDifficulty: " .. Managers.matchmaking.debug.difficulty
 	debug_text = debug_text .. "\nHero: " .. Managers.matchmaking.debug.hero
@@ -710,7 +710,7 @@ MatchmakingUI.get_input_texture_data = function (self, input_action)
 		platform = "win32"
 	elseif IS_WINDOWS and gamepad_active then
 		platform = "xb1"
-		platform = most_recent_device.type() ~= "sce_pad" or not not "ps_pad" or not not platform
+		platform = most_recent_device.type() ~= "sce_pad" or "ps_pad" or platform
 	end
 
 	local keymap_binding = input_service:get_keymapping(input_action, platform)
@@ -724,7 +724,7 @@ MatchmakingUI.get_input_texture_data = function (self, input_action)
 	end
 
 	if device_type == "keyboard" then
-		return nil, not not Keyboard.button_locale_name(key_index), prefix_text
+		return nil, Keyboard.button_locale_name(key_index), prefix_text
 	elseif device_type == "mouse" then
 		return nil, Mouse.button_name(key_index), prefix_text
 	elseif device_type == "gamepad" or device_type == "ps_pad" then
@@ -751,7 +751,7 @@ MatchmakingUI._update_button_prompts = function (self)
 		local input_action = mapping.input_action
 		local texture_data, input_text, prefix_text = self:get_input_texture_data(input_action)
 
-		text_widget_prefix.content.text = prefix_text and not not Localize(prefix_text) or not prefix_text and not not ""
+		text_widget_prefix.content.text = prefix_text and Localize(prefix_text) or not prefix_text and ""
 
 		if not texture_data then
 			text_widget.content.text = "[" .. input_text .. "] "
@@ -813,7 +813,7 @@ MatchmakingUI._update_portraits = function (self, has_mission_vote)
 	local player_manager = Managers.player
 	local lobby = self.lobby
 	local lobby_members = lobby:members()
-	local members = not not lobby_members and not not lobby_members:members_map()
+	local members = lobby_members and lobby_members:members_map()
 
 	if members then
 		local portrait_index_table = self.portrait_index_table
@@ -913,8 +913,8 @@ end
 
 MatchmakingUI.large_window_set_difficulty = function (self, difficulty)
 	-- function 28
-	local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
-	local difficulty_display_name = difficulty_setting and not not difficulty_setting.display_name or not difficulty_setting and not not "dlc1_2_difficulty_unavailable"
+	local difficulty_setting = difficulty and DifficultySettings[difficulty]
+	local difficulty_display_name = difficulty_setting and difficulty_setting.display_name or not difficulty_setting and "dlc1_2_difficulty_unavailable"
 	local widget = self:_get_detail_widget("difficulty_text")
 
 	widget.content.text = Localize(difficulty_display_name)
@@ -930,7 +930,7 @@ MatchmakingUI.large_window_set_player_portrait = function (self, index, peer_id)
 	if peer_id then
 		local player_manager = Managers.player
 		local player = player_manager:player(peer_id, 1)
-		local player_unit = not not player and not not player.player_unit
+		local player_unit = player and player.player_unit
 
 		if Unit.alive(player_unit) then
 			local career_index = player:career_index()
@@ -945,7 +945,7 @@ MatchmakingUI.large_window_set_player_portrait = function (self, index, peer_id)
 	content.is_connected = portrait_texture ~= nil
 	content.peer_id = peer_id
 	status_widget.content.is_connected = portrait_texture ~= nil
-	portrait_texture = not not portrait_texture or not not "small_unit_frame_portrait_default"
+	portrait_texture = portrait_texture or "small_unit_frame_portrait_default"
 	content.portrait = portrait_texture
 end
 
@@ -994,7 +994,7 @@ MatchmakingUI._set_player_ready_state = function (self, index, is_ready)
 
 	widget.content.is_ready = is_ready
 	status_widget.content.is_ready = is_ready
-	status_widget.content.texture_id = is_ready and not not "matchmaking_light_01" or not is_ready and not not "matchmaking_light_02"
+	status_widget.content.texture_id = is_ready and "matchmaking_light_01" or not is_ready and "matchmaking_light_02"
 end
 
 MatchmakingUI.large_window_set_player_connecting = function (self, index, is_connecting)
@@ -1028,22 +1028,22 @@ MatchmakingUI._set_detail_difficulty_text = function (self, text, optional_color
 	-- function 36
 	local widget = self:_get_detail_widget("difficulty_text")
 
-	widget.content.text = disable_localization and (not not text or not not Localize(text)) or not disable_localization and not not Localize(text)
-	widget.style.text.text_color = not not optional_color or not not widget.style.text.default_color
+	widget.content.text = disable_localization and (text or Localize(text)) or not disable_localization and Localize(text)
+	widget.style.text.text_color = optional_color or widget.style.text.default_color
 end
 
 MatchmakingUI._set_detail_level_text = function (self, text, localize)
 	-- function 37
 	local widget = self:_get_detail_widget("title_text")
 
-	widget.content.text = localize and not not Localize(text) or not localize and not not text
+	widget.content.text = localize and Localize(text) or not localize and text
 end
 
 MatchmakingUI._set_status_text = function (self, text)
 	-- function 38
 	local widget = self:_get_widget("status_text")
 
-	text = not not state_to_display_name_overrides[text] or not not text
+	text = state_to_display_name_overrides[text] or text
 	widget.content.text = Localize(text)
 end
 
@@ -1068,9 +1068,9 @@ MatchmakingUI._set_in_view_ui_visibility = function (self, show_detailed_ui)
 	local deus_window_status_text = self._widgets_deus_by_name.status_text
 	local versus_window_widget = self._widgets_versus_by_name.window
 	local versus_window_status_text = self._widgets_versus_by_name.status_text
-	local uv1_1 = show_detailed_ui and not not 0 or not show_detailed_ui and not not 0.765
-	local size_x = show_detailed_ui and not not 506 or not show_detailed_ui and not not 118.91
-	local horz_alignment = show_detailed_ui and not not "left" or not show_detailed_ui and not not "right"
+	local uv1_1 = show_detailed_ui and 0 or not show_detailed_ui and 0.765
+	local size_x = show_detailed_ui and 506 or not show_detailed_ui and 118.91
+	local horz_alignment = show_detailed_ui and "left" or not show_detailed_ui and "right"
 
 	adventure_window_widget.content.texture_id.uvs[1][1] = uv1_1
 	adventure_window_widget.style.texture_id.texture_size[1] = size_x
@@ -1088,7 +1088,7 @@ end
 
 MatchmakingUI.on_matchmaking_num_players_in_matchmaking = function (self, mechanism, num_players)
 	-- function 41
-	local is_matchmaking = not not self.matchmaking_manager:is_game_matchmaking()
+	local is_matchmaking = self.matchmaking_manager:is_game_matchmaking()
 
 	if not is_matchmaking then
 		return

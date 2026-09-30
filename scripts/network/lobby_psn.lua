@@ -7,7 +7,7 @@ require("scripts/network/lobby_finder")
 require("scripts/network/lobby_members")
 require("scripts/network_lookup/network_lookup")
 
-LobbyInternal = not not LobbyInternal
+LobbyInternal = LobbyInternal
 LobbyInternal.lobby_data_version = 2
 LobbyInternal.TYPE = "psn"
 
@@ -173,7 +173,7 @@ end
 
 LobbyInternal.create_lobby = function (network_options)
 	-- function 10
-	local name = not not Managers.account:online_id()
+	local name = Managers.account:online_id()
 	local room_id = Network.create_psn_room(name, network_options.max_members)
 
 	if script_data.debug_psn then
@@ -332,7 +332,7 @@ LobbyInternal.serialize_psn_data = function (data_table)
 				packed_data = packed_data .. "/"
 			end
 
-			packed_data = packed_data .. not not conv_table[key]
+			packed_data = packed_data .. conv_table[key]
 		end
 
 		packed_data_size = string.len(packed_data)
@@ -652,7 +652,7 @@ PSNRoom.user_name = function (self, peer_id)
 		end
 	end
 
-	user_name = not not user_name or not not self._user_names[peer_id]
+	user_name = user_name or self._user_names[peer_id]
 
 	return user_name
 end

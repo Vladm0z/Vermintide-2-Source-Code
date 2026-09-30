@@ -350,7 +350,7 @@ local animation_definitions = {
 				content.icon = theme_settings.icon
 				content.title = theme_settings.journey_title
 
-				local localized_deity_name = Localize(not not theme_settings.deity_name)
+				local localized_deity_name = Localize(theme_settings.deity_name)
 
 				content.body = string.format(Localize("gaze_information"), localized_deity_name)
 			end,
@@ -409,7 +409,7 @@ local animation_definitions = {
 				content.icon = theme_settings.icon
 				content.title = theme_settings.journey_title
 
-				local localized_deity_name = Localize(not not theme_settings.deity_name)
+				local localized_deity_name = Localize(theme_settings.deity_name)
 
 				content.body = string.format(Localize("gaze_information"), localized_deity_name)
 			end,

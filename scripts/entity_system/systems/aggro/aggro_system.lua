@@ -25,7 +25,7 @@ end
 
 AggroSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 2
-	local side = not not extension_init_data.side
+	local side = extension_init_data.side
 	local side_id = side.side_id
 
 	self.aggroable_units[side_id][unit] = true

@@ -5,7 +5,7 @@ require("scripts/unit_extensions/default_player_unit/inventory/gear_utils")
 require("scripts/managers/backend/backend_utils")
 
 SimpleInventoryExtension = class(SimpleInventoryExtension)
-SwapFromStorageType = not not SwapFromStorageType
+SwapFromStorageType = SwapFromStorageType
 
 local consumable_slots = {
 	"slot_potion",
@@ -29,12 +29,12 @@ SimpleInventoryExtension.init = function (self, extension_init_context, unit, ex
 	local player = extension_init_data.player
 
 	self.is_server = Managers.player.is_server
-	self.is_bot = not not player.bot_player
+	self.is_bot = player.bot_player
 	self.player = player
 
 	local career_name = player:career_name()
-	local career_data = not not career_name and not not CareerSettings[career_name]
-	local additional_item_slots = not not career_data and not not career_data.additional_item_slots
+	local career_data = career_name and CareerSettings[career_name]
+	local additional_item_slots = career_data and career_data.additional_item_slots
 
 	if additional_item_slots then
 		for slot_name, slot_count in pairs(additional_item_slots) do
@@ -73,7 +73,7 @@ end
 SimpleInventoryExtension.get_weapon_unit = function (self)
 	-- function 2
 	local equipment = self._equipment
-	local weapon_unit = not not equipment.left_hand_wielded_unit
+	local weapon_unit = equipment.left_hand_wielded_unit
 
 	return weapon_unit
 end
@@ -81,7 +81,7 @@ end
 SimpleInventoryExtension.get_weapon_unit_3p = function (self)
 	-- function 3
 	local equipment = self._equipment
-	local weapon_unit_3p = not not equipment.left_hand_wielded_unit_3p
+	local weapon_unit_3p = equipment.left_hand_wielded_unit_3p
 
 	return weapon_unit_3p
 end
@@ -117,8 +117,8 @@ SimpleInventoryExtension.extensions_ready = function (self, world, unit)
 	self:add_equipment_by_category("weapon_slots")
 	self:add_equipment_by_category("enemy_weapon_slots")
 
-	local skill_index = talent_extension and not not talent_extension:get_talent_career_skill_index() or not talent_extension and not not 1
-	local weapon_index = not not talent_extension and not not talent_extension:get_talent_career_weapon_index()
+	local skill_index = talent_extension and talent_extension:get_talent_career_skill_index() or not talent_extension and 1
+	local weapon_index = talent_extension and talent_extension:get_talent_career_weapon_index()
 
 	self.initial_inventory.slot_career_skill_weapon = career_extension:career_skill_weapon_name(skill_index, weapon_index)
 
@@ -223,8 +223,8 @@ SimpleInventoryExtension._update_career_skill_weapon_slot = function (self)
 
 	local career_extension = self.career_extension
 	local talent_extension = self.talent_extension
-	local skill_index = talent_extension and not not talent_extension:get_talent_career_skill_index() or not talent_extension and not not 1
-	local weapon_index = not not talent_extension and not not talent_extension:get_talent_career_weapon_index()
+	local skill_index = talent_extension and talent_extension:get_talent_career_skill_index() or not talent_extension and 1
+	local weapon_index = talent_extension and talent_extension:get_talent_career_weapon_index()
 	local career_skill_weapon_name = career_extension:career_skill_weapon_name(skill_index, weapon_index)
 
 	if career_skill_weapon_name then
@@ -264,7 +264,7 @@ SimpleInventoryExtension.game_object_initialized = function (self, unit, unit_go
 		local item_data = slot_data.item_data
 		local slot_id = NetworkLookup.equipment_slots[slot_name]
 		local item_id = NetworkLookup.item_names[item_data.name]
-		local weapon_skin_id = NetworkLookup.weapon_skins[not not slot_data.skin]
+		local weapon_skin_id = NetworkLookup.weapon_skins[slot_data.skin]
 
 		if is_server then
 			network_manager.network_transmit:send_rpc_clients("rpc_add_equipment", unit_go_id, slot_id, item_id, weapon_skin_id)
@@ -409,18 +409,18 @@ SimpleInventoryExtension.add_equipment_by_category = function (self, category)
 					if slot.stored_in_backend then
 						backend_id = BackendUtils.get_loadout_item_id(career_name, slot_name, self.is_bot)
 
-						local backend_id_string = backend_id and not not tostring(backend_id) or not backend_id and not not "No backend ID"
+						local backend_id_string = backend_id and tostring(backend_id) or not backend_id and "No backend ID"
 						local backend_items = Managers.backend:get_interface("items")
 						local item_string = "No item"
 
 						if backend_id then
 							local item = backend_items:get_item_from_id(backend_id)
 
-							item_string = item and (not not item.name or not not "Item exists") or not item and not not "Item exists"
+							item_string = item and (item.name or "Item exists") or not item and "Item exists"
 						end
 
 						local loadout_interface_override = Managers.backend._current_loadout_interface_override
-						local loadout_interface_override_string = not not loadout_interface_override or not not "No override"
+						local loadout_interface_override_string = loadout_interface_override or "No override"
 						local career_loadout = backend_items:get_loadout_by_career_name(career_name, self.is_bot)
 
 						printf("self.initial_inventory: \n%s", table.tostring(self.initial_inventory))
@@ -488,13 +488,13 @@ SimpleInventoryExtension._unlink_unit = function (self, unit, reason, attachment
 	-- function 14
 	World.unlink_unit(self._world, unit)
 
-	local node_linking_data = not not attachment_node_linking.wielded
+	local node_linking_data = attachment_node_linking.wielded
 
 	for i, attachment_nodes in ipairs(node_linking_data) do
 		local target_node = attachment_nodes.target
 
 		if target_node ~= 0 then
-			local target_node_index = type(target_node) ~= "string" and not not target_node or not (type(target_node) ~= "string") and not not Unit.node(unit, target_node)
+			local target_node_index = type(target_node) ~= "string" and target_node or not (type(target_node) ~= "string") and Unit.node(unit, target_node)
 			local parent = Unit.scene_graph_parent(unit, target_node_index)
 
 			Unit.scene_graph_link(unit, target_node_index, 0)
@@ -910,7 +910,7 @@ SimpleInventoryExtension.add_equipment = function (self, slot_name, item_name, u
 	CosmeticUtils.update_cosmetic_slot(self.player, slot_name, item_data.name, slot_equipment_data.skin)
 
 	local backend_interface_items = Managers.backend:get_interface("items")
-	local item = not not backend_interface_items:get_item_from_id(item_data.backend_id)
+	local item = backend_interface_items:get_item_from_id(item_data.backend_id)
 
 	LoadoutUtils.sync_loadout_slot(self.player, slot_name, item)
 
@@ -1181,7 +1181,7 @@ SimpleInventoryExtension.destroy_slot = function (self, slot_name, allow_destroy
 		return
 	end
 
-	local weapon_unit_1p = not not slot_data.right_unit_1p
+	local weapon_unit_1p = slot_data.right_unit_1p
 
 	if Managers.player.is_server and ScriptUnit.has_extension(weapon_unit_1p, "limited_item_track_system") then
 		local weapon_limited_item_track_extension = ScriptUnit.extension(weapon_unit_1p, "limited_item_track_system")
@@ -1306,7 +1306,7 @@ SimpleInventoryExtension.add_ammo_from_pickup = function (self, pickup_settings)
 	local refill_percentage = pickup_settings.refill_percentage
 	local refill_amount = pickup_settings.refill_amount
 
-	fassert(not refill_percentage or not not not refill_amount, "ammo pickups has to contain either refill_percentage or refill_amount, not both")
+	fassert(not refill_percentage or not refill_amount, "ammo pickups has to contain either refill_percentage or refill_amount, not both")
 
 	for slot_name, slot_data in pairs(slots) do
 		local item_template = self:get_item_template(slot_data)
@@ -1346,7 +1346,7 @@ SimpleInventoryExtension._add_ammo_to_slot = function (self, slot_name, slot_dat
 
 	ammo_extension:add_ammo(refill_amount)
 
-	local should_reload_now = not not ammo_extension:reload_on_ammo_pickup()
+	local should_reload_now = ammo_extension:reload_on_ammo_pickup()
 
 	if should_reload_now and self._equipment.wielded_slot == slot_name and ammo_extension:can_reload() then
 		local play_reload_animation = true
@@ -1406,8 +1406,8 @@ end
 SimpleInventoryExtension.get_item_name = function (self, slot_name)
 	-- function 50
 	local slot_data = self:get_slot_data(slot_name)
-	local item_data = not not slot_data and not not slot_data.item_data
-	local item_name = not not item_data and not not item_data.name
+	local item_data = slot_data and slot_data.item_data
+	local item_name = item_data and item_data.name
 
 	return item_name
 end
@@ -1415,7 +1415,7 @@ end
 SimpleInventoryExtension.get_item_data = function (self, slot_name)
 	-- function 51
 	local slot_data = self:get_slot_data(slot_name)
-	local item_data = not not slot_data and not not slot_data.item_data
+	local item_data = slot_data and slot_data.item_data
 
 	return item_data
 end
@@ -1460,8 +1460,8 @@ SimpleInventoryExtension.create_equipment_in_slot = function (self, slot_id, bac
 	self:_queue_item_spawn(slot_id, item_data, item_units.skin, ammo_percent)
 
 	local talent_extension = self.talent_extension
-	local skill_index = talent_extension and not not talent_extension:get_talent_career_skill_index() or not talent_extension and not not 1
-	local weapon_index = not not talent_extension and not not talent_extension:get_talent_career_weapon_index()
+	local skill_index = talent_extension and talent_extension:get_talent_career_skill_index() or not talent_extension and 1
+	local weapon_index = talent_extension and talent_extension:get_talent_career_weapon_index()
 	local career_skill_weapon_name = self.career_extension:career_skill_weapon_name(skill_index, weapon_index)
 
 	if career_skill_weapon_name then
@@ -1502,7 +1502,7 @@ SimpleInventoryExtension._spawn_resynced_loadout = function (self, equipment_to_
 	local unit_go_id = Managers.state.unit_storage:go_id(self._unit)
 	local slot_id = NetworkLookup.equipment_slots[slot_name]
 	local item_id = NetworkLookup.item_names[item_data.name]
-	local weapon_skin_id = NetworkLookup.weapon_skins[not not equipment_to_spawn.skin]
+	local weapon_skin_id = NetworkLookup.weapon_skins[equipment_to_spawn.skin]
 	local is_server = self.is_server
 
 	if is_server then
@@ -1562,7 +1562,7 @@ SimpleInventoryExtension.has_ammo_consuming_weapon_equipped = function (self, am
 	for slot_name, slot_data in pairs(inventory_slots) do
 		if slots_to_check[slot_name] then
 			local left_hand_unit = slot_data.left_unit_1p
-			local left_hand_ammo_extension = not not left_hand_unit and not not ScriptUnit.has_extension(left_hand_unit, "ammo_system")
+			local left_hand_ammo_extension = left_hand_unit and ScriptUnit.has_extension(left_hand_unit, "ammo_system")
 
 			if left_hand_ammo_extension then
 				if ammo_type then
@@ -1573,7 +1573,7 @@ SimpleInventoryExtension.has_ammo_consuming_weapon_equipped = function (self, am
 			end
 
 			local right_hand_unit = slot_data.right_unit_1p
-			local right_hand_ammo_extension = not not right_hand_unit and not not ScriptUnit.has_extension(right_hand_unit, "ammo_system")
+			local right_hand_ammo_extension = right_hand_unit and ScriptUnit.has_extension(right_hand_unit, "ammo_system")
 
 			if right_hand_ammo_extension then
 				if ammo_type then
@@ -1601,14 +1601,14 @@ SimpleInventoryExtension.has_infinite_ammo = function (self)
 	for slot_name, slot_data in pairs(inventory_slots) do
 		if slots_to_check[slot_name] then
 			local left_hand_unit = slot_data.left_unit_1p
-			local left_hand_ammo_extension = not not left_hand_unit and not not ScriptUnit.has_extension(left_hand_unit, "ammo_system")
+			local left_hand_ammo_extension = left_hand_unit and ScriptUnit.has_extension(left_hand_unit, "ammo_system")
 
 			if left_hand_ammo_extension and left_hand_ammo_extension:infinite_ammo() then
 				return true
 			end
 
 			local right_hand_unit = slot_data.right_unit_1p
-			local right_hand_ammo_extension = not not right_hand_unit and not not ScriptUnit.has_extension(right_hand_unit, "ammo_system")
+			local right_hand_ammo_extension = right_hand_unit and ScriptUnit.has_extension(right_hand_unit, "ammo_system")
 
 			if right_hand_ammo_extension and right_hand_ammo_extension:infinite_ammo() then
 				return true
@@ -1623,14 +1623,14 @@ SimpleInventoryExtension.reset_ammo = function (self, slot_name)
 	-- function 58
 	local slot_data = self._equipment.slots[slot_name]
 	local right_hand_unit = slot_data.right_unit_1p
-	local right_ammo_extension = not not ScriptUnit.has_extension(right_hand_unit, "ammo_system")
+	local right_ammo_extension = ScriptUnit.has_extension(right_hand_unit, "ammo_system")
 
 	if right_ammo_extension then
 		right_ammo_extension:reset()
 	end
 
 	local left_hand_unit = slot_data.left_unit_1p
-	local left_ammo_extension = not not ScriptUnit.has_extension(left_hand_unit, "ammo_system")
+	local left_ammo_extension = ScriptUnit.has_extension(left_hand_unit, "ammo_system")
 
 	if left_ammo_extension then
 		left_ammo_extension:reset()
@@ -1647,9 +1647,9 @@ SimpleInventoryExtension.has_full_ammo = function (self)
 		if slots_to_check[slot_name] then
 			local left_hand_unit = slot_data.left_unit_1p
 			local right_hand_unit = slot_data.right_unit_1p
-			local ammo_extension = not not ScriptUnit.has_extension(right_hand_unit, "ammo_system")
+			local ammo_extension = ScriptUnit.has_extension(right_hand_unit, "ammo_system")
 
-			ammo_extension = not not ammo_extension or not not ScriptUnit.has_extension(left_hand_unit, "ammo_system") and not not ScriptUnit.extension(left_hand_unit, "ammo_system")
+			ammo_extension = ammo_extension or ScriptUnit.has_extension(left_hand_unit, "ammo_system") and ScriptUnit.extension(left_hand_unit, "ammo_system")
 
 			if ammo_extension and not ammo_extension:full_ammo() then
 				full_ammo = false
@@ -1672,9 +1672,9 @@ SimpleInventoryExtension.is_ammo_blocked = function (self)
 		if slots_to_check[slot_name] then
 			local left_hand_unit = slot_data.left_unit_1p
 			local right_hand_unit = slot_data.right_unit_1p
-			local ammo_extension = not not ScriptUnit.has_extension(right_hand_unit, "ammo_system")
+			local ammo_extension = ScriptUnit.has_extension(right_hand_unit, "ammo_system")
 
-			ammo_extension = not not ammo_extension or not not ScriptUnit.has_extension(left_hand_unit, "ammo_system") and not not ScriptUnit.extension(left_hand_unit, "ammo_system")
+			ammo_extension = ammo_extension or ScriptUnit.has_extension(left_hand_unit, "ammo_system") and ScriptUnit.extension(left_hand_unit, "ammo_system")
 
 			if ammo_extension and ammo_extension:ammo_blocked() then
 				blocked_ammo = true
@@ -1743,7 +1743,7 @@ SimpleInventoryExtension.drop_level_event_item = function (self, slot_data)
 		return
 	end
 
-	local weapon_unit = not not slot_data.right_unit_1p
+	local weapon_unit = slot_data.right_unit_1p
 	local action = item_template.actions.action_dropped.default
 
 	fassert(action, "Action template needs a action_dropped defined if it's supposed to be force-dropped")
@@ -1768,7 +1768,7 @@ end
 
 local function get_pickup_drop_pos_dir(drop_position, override_dir, pickup_idx)
 	-- function 64
-	local random_vector = not not override_dir or not not Vector3(math.random(-1, 1) * pickup_idx, math.random(-1, 1) * pickup_idx, 2)
+	local random_vector = override_dir or Vector3(math.random(-1, 1) * pickup_idx, math.random(-1, 1) * pickup_idx, 2)
 	local random_direction = Vector3.normalize(random_vector)
 	local position = drop_position + random_vector * 0.2
 
@@ -1798,7 +1798,7 @@ SimpleInventoryExtension.check_and_drop_pickups = function (self, drop_reason, o
 	local slot_settings = InventorySettings.slots_by_name
 	local current_wielded_slot = self:get_wielded_slot_name()
 	local i = 0
-	local drop_position = not not override_pos or not not POSITION_LOOKUP[unit]
+	local drop_position = override_pos or POSITION_LOOKUP[unit]
 
 	for slot_name, slot_data in pairs(inventory_slots) do
 		if slot_data then
@@ -1806,7 +1806,7 @@ SimpleInventoryExtension.check_and_drop_pickups = function (self, drop_reason, o
 			local item_template = BackendUtils.get_item_template(item_data)
 			local pickup_data = item_template.pickup_data
 			local slot_drop_reasons = slot_settings[slot_name].drop_reasons
-			local should_drop = not not slot_drop_reasons and not not slot_drop_reasons[drop_reason]
+			local should_drop = slot_drop_reasons and slot_drop_reasons[drop_reason]
 
 			if should_drop then
 				if pickup_data and slot_name ~= "slot_level_event" then
@@ -1946,8 +1946,8 @@ SimpleInventoryExtension.get_item_slot_extension = function (self, slot_name, sy
 	local slot_data = self:get_slot_data(slot_name)
 	local right_unit_1p = slot_data.right_unit_1p
 	local left_unit_1p = slot_data.left_unit_1p
-	local right_hand_extension = not not ScriptUnit.has_extension(right_unit_1p, system_name)
-	local left_hand_extension = not not ScriptUnit.has_extension(left_unit_1p, system_name)
+	local right_hand_extension = ScriptUnit.has_extension(right_unit_1p, system_name)
+	local left_hand_extension = ScriptUnit.has_extension(left_unit_1p, system_name)
 	local extension = right_hand_extension
 
 	if not extension and left_hand_extension then
@@ -1998,7 +1998,7 @@ end
 
 local function get_wield_anim(default, optional_switch, career_name)
 	-- function 78
-	return optional_switch and not not optional_switch[career_name] or not optional_switch and not not default
+	return optional_switch and optional_switch[career_name] or not optional_switch and default
 end
 
 SimpleInventoryExtension._wield_slot = function (self, equipment, slot_data, unit_1p, unit_3p, buff_extension)
@@ -2087,7 +2087,7 @@ SimpleInventoryExtension._wield_slot = function (self, equipment, slot_data, uni
 	local wield_anim = get_wield_anim(item_template.wield_anim, item_template.wield_anim_career, self._career_name)
 
 	if not script_data.disable_third_person_weapon_animation_events then
-		local wield_anim_3p = not not get_wield_anim(item_template.wield_anim_3p, item_template.wield_anim_career_3p, self._career_name)
+		local wield_anim_3p = get_wield_anim(item_template.wield_anim_3p, item_template.wield_anim_career_3p, self._career_name)
 
 		Unit.animation_event(unit_3p, wield_anim_3p)
 	end
@@ -2128,7 +2128,7 @@ SimpleInventoryExtension._wield_slot = function (self, equipment, slot_data, uni
 			if ammo_extension:can_reload() and ammo_extension:ammo_count() == 0 then
 				local wield_anim_not_loaded = get_wield_anim(item_template.wield_anim_not_loaded, item_template.wield_anim_not_loaded_career, self._career_name)
 
-				wield_anim = not not wield_anim_not_loaded or not not wield_anim
+				wield_anim = wield_anim_not_loaded or wield_anim
 
 				local play_reload_animation = ammo_extension:play_reload_anim_on_wield_reload()
 				local has_wield_reload_anim = ammo_extension:has_wield_reload_anim()
@@ -2143,7 +2143,7 @@ SimpleInventoryExtension._wield_slot = function (self, equipment, slot_data, uni
 			elseif ammo_extension:total_remaining_ammo() == 0 then
 				local wield_anim_no_ammo = get_wield_anim(item_template.wield_anim_no_ammo, item_template.wield_anim_no_ammo_career, self._career_name)
 
-				wield_anim = not not wield_anim_no_ammo or not not wield_anim
+				wield_anim = wield_anim_no_ammo or wield_anim
 			end
 		end
 
@@ -2153,7 +2153,7 @@ SimpleInventoryExtension._wield_slot = function (self, equipment, slot_data, uni
 			if ammo_extension:can_reload() and ammo_extension:ammo_count() == 0 then
 				local wield_anim_not_loaded = get_wield_anim(item_template.wield_anim_not_loaded, item_template.wield_anim_not_loaded_career, self._career_name)
 
-				wield_anim = not not wield_anim_not_loaded or not not wield_anim
+				wield_anim = wield_anim_not_loaded or wield_anim
 
 				local play_reload_animation = ammo_extension:play_reload_anim_on_wield_reload()
 				local has_wield_reload_anim = ammo_extension:has_wield_reload_anim()
@@ -2168,13 +2168,13 @@ SimpleInventoryExtension._wield_slot = function (self, equipment, slot_data, uni
 			elseif ammo_extension:total_remaining_ammo() == 0 then
 				local wield_anim_no_ammo = get_wield_anim(item_template.wield_anim_no_ammo, item_template.wield_anim_no_ammo_career, self._career_name)
 
-				wield_anim = not not wield_anim_no_ammo or not not wield_anim
+				wield_anim = wield_anim_no_ammo or wield_anim
 			end
 		end
 
 		local state_machine = WeaponUtils.get_item_state_machine(item_template, self._career_name)
 
-		state_machine = not not state_machine or not not self._profile.default_state_machine
+		state_machine = state_machine or self._profile.default_state_machine
 
 		if state_machine then
 			self.first_person_extension:set_state_machine(state_machine)
@@ -2183,8 +2183,8 @@ SimpleInventoryExtension._wield_slot = function (self, equipment, slot_data, uni
 		if play_wield_animation then
 			if Unit.animation_has_variable(unit_1p, "animation_variation_id") then
 				local weapon_skin_data = WeaponSkins.skins[slot_data.skin]
-				local weapon_skin_anim_overrides = not not weapon_skin_data and not not weapon_skin_data.action_anim_overrides
-				local animation_variation_id = weapon_skin_anim_overrides and not not weapon_skin_anim_overrides.animation_variation_id or not weapon_skin_anim_overrides and not not 0
+				local weapon_skin_anim_overrides = weapon_skin_data and weapon_skin_data.action_anim_overrides
+				local animation_variation_id = weapon_skin_anim_overrides and weapon_skin_anim_overrides.animation_variation_id or not weapon_skin_anim_overrides and 0
 
 				self.first_person_extension:animation_set_variable("animation_variation_id", animation_variation_id, true)
 			end
@@ -2270,7 +2270,7 @@ SimpleInventoryExtension.start_weapon_fx = function (self, fx_name, network_sync
 	local slot_data = equipment.slots[slot_name]
 	local item_template = self:get_item_template(slot_data)
 	local item_particle_fx = item_template.particle_fx
-	local particle_fx = not not item_particle_fx and not not item_particle_fx[fx_name]
+	local particle_fx = item_particle_fx and item_particle_fx[fx_name]
 
 	if particle_fx then
 		self._weapon_fx[fx_name] = GearUtils.create_attached_particles(self._world, particle_fx, equipment, self._unit, self._first_person_unit, not self.is_bot)
@@ -2306,8 +2306,8 @@ SimpleInventoryExtension.stop_weapon_fx = function (self, fx_name, network_sync)
 			local slot_name = equipment.wielded_slot
 			local slot_data = equipment.slots[slot_name]
 			local item_template = self:get_item_template(slot_data)
-			local item_particle_fx = not not item_template and not not item_template.particle_fx
-			local particle_fx = not not item_particle_fx and not not item_particle_fx[fx_name]
+			local item_particle_fx = item_template and item_template.particle_fx
+			local particle_fx = item_particle_fx and item_particle_fx[fx_name]
 
 			if particle_fx then
 				local item_data = slot_data.item_data
@@ -2352,21 +2352,21 @@ SimpleInventoryExtension.can_store_additional_item = function (self, slot_name)
 	-- function 86
 	local additional_items_slot = self._additional_items[slot_name]
 
-	return not not additional_items_slot and #additional_items_slot.items < additional_items_slot.max_slots
+	return additional_items_slot and #additional_items_slot.items < additional_items_slot.max_slots
 end
 
 SimpleInventoryExtension.has_additional_items = function (self, slot_name)
 	-- function 87
 	local additional_items_slot = self._additional_items[slot_name]
 
-	return not not additional_items_slot and #additional_items_slot.items > 0
+	return additional_items_slot and #additional_items_slot.items > 0
 end
 
 SimpleInventoryExtension.get_additional_items = function (self, slot_name)
 	-- function 88
 	local additional_items_slot = self._additional_items[slot_name]
 
-	return not not additional_items_slot and not not additional_items_slot.items
+	return additional_items_slot and additional_items_slot.items
 end
 
 SimpleInventoryExtension.get_additional_items_table = function (self)
@@ -2478,11 +2478,11 @@ SimpleInventoryExtension.get_additional_item_swap_id = function (self, stored_it
 				end
 			end
 		elseif swap_type == SwapFromStorageType.UnwieldPrio then
-			local highest_prio = current_item and not not current_item.unwield_prio or not current_item and not not -1
+			local highest_prio = current_item and current_item.unwield_prio or not current_item and -1
 			local highest_prio_id
 
 			for i = 1, #stored_items do
-				local prio = not not stored_items[i].unwield_prio
+				local prio = stored_items[i].unwield_prio
 
 				if highest_prio < prio then
 					highest_prio = prio
@@ -2492,11 +2492,11 @@ SimpleInventoryExtension.get_additional_item_swap_id = function (self, stored_it
 
 			return highest_prio_id
 		elseif swap_type == SwapFromStorageType.LowestUnwieldPrio then
-			local lowest_prio = current_item and not not current_item.unwield_prio or not current_item and not not math.huge
+			local lowest_prio = current_item and current_item.unwield_prio or not current_item and math.huge
 			local lowest_prio_id
 
 			for i = 1, #stored_items do
-				local prio = not not stored_items[i].unwield_prio
+				local prio = stored_items[i].unwield_prio
 
 				if prio < lowest_prio then
 					lowest_prio = prio
@@ -2514,8 +2514,8 @@ end
 SimpleInventoryExtension.can_swap_from_storage = function (self, slot_name, swap_type, optional_compare_item)
 	-- function 95
 	if self:has_additional_items(slot_name) then
-		swap_type = not not swap_type or not not SwapFromStorageType.First
-		optional_compare_item = not not optional_compare_item or not not self:get_item_data(slot_name)
+		swap_type = swap_type or SwapFromStorageType.First
+		optional_compare_item = optional_compare_item or self:get_item_data(slot_name)
 
 		local stored_items = self:get_additional_items(slot_name)
 		local item_id = self:get_additional_item_swap_id(stored_items, swap_type, optional_compare_item)

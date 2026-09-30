@@ -424,7 +424,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 				text_id = "real_text",
 				content_check_function = function (content)
 					-- function 7
-					return not content.active and not not not content.button_hotspot.is_hover
+					return not content.active and not content.button_hotspot.is_hover
 				end
 			},
 			{
@@ -433,7 +433,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 				text_id = "real_text",
 				content_check_function = function (content)
 					-- function 8
-					return not not content.active
+					return content.active
 				end
 			},
 			{
@@ -498,7 +498,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "invite_button",
 						content_check_function = function (content)
 							-- function 14
-							return not not content.allow_invite
+							return content.allow_invite
 						end
 					},
 					{
@@ -508,7 +508,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "invite_button",
 						content_check_function = function (content)
 							-- function 15
-							return not not content.allow_invite
+							return content.allow_invite
 						end
 					},
 					{
@@ -527,7 +527,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "profile_button",
 						content_check_function = function (content)
 							-- function 17
-							return not not content.allow_profile
+							return content.allow_profile
 						end
 					},
 					{
@@ -537,7 +537,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "profile_button",
 						content_check_function = function (content)
 							-- function 18
-							return not not content.allow_profile
+							return content.allow_profile
 						end
 					},
 					{
@@ -556,7 +556,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "join_button",
 						content_check_function = function (content)
 							-- function 20
-							return not not content.allow_join
+							return content.allow_join
 						end
 					},
 					{
@@ -566,7 +566,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 						content_id = "join_button",
 						content_check_function = function (content)
 							-- function 21
-							return not not content.allow_join
+							return content.allow_join
 						end
 					}
 				}
@@ -767,7 +767,7 @@ local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_ta
 			},
 			content_check_function = function (content)
 				-- function 22
-				return not content.edge_tab or not not not content.active
+				return not content.edge_tab or not content.active
 			end
 		}
 	}

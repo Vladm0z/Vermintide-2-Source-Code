@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/deus_gen_utils.lua
 
-DeusGenUtils = not not DeusGenUtils
+DeusGenUtils = DeusGenUtils
 
 DeusGenUtils.create_random_generator = function (seed)
 	-- function 1

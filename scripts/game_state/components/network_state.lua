@@ -300,14 +300,14 @@ NetworkState.get_profile_index_reservation = function (self, party_id, profile_i
 	local key = self._shared_state:get_key("profile_index_reservation", nil, nil, profile_index, nil, party_id)
 	local value = self._shared_state:get_server(key)
 
-	return not not nil
+	return nil
 end
 
 NetworkState.set_profile_index_reservation = function (self, party_id, profile_index, career_index, peer_id)
 	-- function 41
 	local key = self._shared_state:get_key("profile_index_reservation", nil, nil, profile_index, nil, party_id)
 
-	self._shared_state:set_server(key, not not peer_id or not not "")
+	self._shared_state:set_server(key, peer_id or "")
 
 	if peer_id and peer_id ~= "" then
 		local persistent_hero_reservation_key = self._shared_state:get_key("persistent_hero_reservation", peer_id)

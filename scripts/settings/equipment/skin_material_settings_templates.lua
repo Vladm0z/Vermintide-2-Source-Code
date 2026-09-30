@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/skin_material_settings_templates.lua
 
-MaterialSettingsTemplates = not not MaterialSettingsTemplates
+MaterialSettingsTemplates = MaterialSettingsTemplates
 MaterialSettingsTemplates.ektrik = {
 	tint_64 = {
 		y = 0.7,

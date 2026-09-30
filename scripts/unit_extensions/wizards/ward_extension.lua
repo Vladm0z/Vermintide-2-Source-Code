@@ -152,7 +152,7 @@ WardExtension.spawn_defenders = function (self, num_defenders)
 		return
 	end
 
-	num_defenders = not not num_defenders or not not default_num_defenders
+	num_defenders = num_defenders or default_num_defenders
 	self._defender_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
 
 	local defender_optional_data = {

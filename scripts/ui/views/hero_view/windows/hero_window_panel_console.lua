@@ -50,7 +50,7 @@ HeroWindowPanelConsole.on_enter = function (self, params, offset)
 	self._stats_id = local_player:stats_id()
 	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
-	self.is_in_inn = not not ingame_ui_context.is_in_inn
+	self.is_in_inn = ingame_ui_context.is_in_inn
 	self.force_ingame_menu = params.force_ingame_menu
 	self.hero_name = params.hero_name
 	self.career_index = params.career_index
@@ -164,7 +164,7 @@ HeroWindowPanelConsole.create_ui_elements = function (self, params, offset)
 		window_position[3] = window_position[3] + offset[3]
 	end
 
-	self._widgets_by_name.bot_customization_button.content.visible = not self.force_ingame_menu and not not self.is_in_inn
+	self._widgets_by_name.bot_customization_button.content.visible = not self.force_ingame_menu and self.is_in_inn
 end
 
 HeroWindowPanelConsole.on_exit = function (self, params)
@@ -287,7 +287,7 @@ end
 HeroWindowPanelConsole._is_button_pressed = function (self, widget)
 	-- function 10
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -402,14 +402,14 @@ HeroWindowPanelConsole._handle_input = function (self, dt, t)
 		end
 
 		if not input_made and not self.parent.parent:input_blocked() then
-			local current_index = not not self._selected_index
+			local current_index = self._selected_index
 			local max_index = #layout_name_by_index
 			local next_index
 
 			if input_service:get(INPUT_ACTION_PREVIOUS) then
 				for i = #layout_name_by_index, 1, -1 do
 					if i == current_index then
-						next_index = current_index > 1 and (not not (current_index - 1) or not not max_index) or not (current_index > 1) and not not max_index
+						next_index = current_index > 1 and (current_index - 1 or max_index) or not (current_index > 1) and max_index
 
 						if self.parent:can_add(layout_name_by_index[next_index]) then
 							break
@@ -497,7 +497,7 @@ HeroWindowPanelConsole._update_selected_option = function (self)
 	local widget = self._widgets_by_name.bot_customization_button
 
 	widget.content.button_hotspot.is_selected = selected_layout_name == "character_selection"
-	widget.content.button_hotspot.hover_progress = widget.content.button_hotspot.is_selected and not not 1 or not widget.content.button_hotspot.is_selected and not not widget.content.button_hotspot.hover_progress
+	widget.content.button_hotspot.hover_progress = widget.content.button_hotspot.is_selected and 1 or not widget.content.button_hotspot.is_selected and widget.content.button_hotspot.hover_progress
 end
 
 HeroWindowPanelConsole.draw = function (self, dt)
@@ -621,14 +621,14 @@ HeroWindowPanelConsole._handle_gamepad_activity = function (self)
 	-- function 25
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local most_recent_device = Managers.input:get_most_recent_device()
-	local force_update = self.gamepad_active_last_frame == nil or not not gamepad_active and most_recent_device ~= self._most_recent_device
+	local force_update = self.gamepad_active_last_frame == nil or gamepad_active and most_recent_device ~= self._most_recent_device
 
 	if gamepad_active then
 		if not self.gamepad_active_last_frame or force_update then
 			self.gamepad_active_last_frame = true
 
 			local widgets_by_name = self._widgets_by_name
-			local show_selection_buttons = self.is_in_inn and (not self.force_ingame_menu or not not false) or not self.is_in_inn and not not false
+			local show_selection_buttons = self.is_in_inn and not self.force_ingame_menu
 
 			widgets_by_name.panel_input_area_1.content.visible = show_selection_buttons
 			widgets_by_name.panel_input_area_2.content.visible = show_selection_buttons
@@ -763,10 +763,10 @@ HeroWindowPanelConsole._animate_title_entry = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 
@@ -830,10 +830,10 @@ HeroWindowPanelConsole._animate_back_button = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

@@ -86,10 +86,10 @@ SmartMatch = class(SmartMatch)
 
 SmartMatch.init = function (self, hopper_name, is_host, ticket_params, timeout)
 	-- function 3
-	self._hopper_name = not not hopper_name or not not LobbyInternal.HOPPER_NAME
-	self._is_host = not not is_host or not not false
-	self._ticket_params = not not ticket_params or not not {}
-	self._timout = not not timeout or not not 90
+	self._hopper_name = hopper_name or LobbyInternal.HOPPER_NAME
+	self._is_host = is_host or false
+	self._ticket_params = ticket_params or {}
+	self._timout = timeout or 90
 	self._ticket_id = nil
 	self._user_id = Managers.account:user_id()
 
@@ -123,7 +123,7 @@ SmartMatch._handle_smartmatch_session = function (self)
 	local status = MultiplayerSession.status(self._session_id)
 
 	if status ~= self._status then
-		dprintf("Session status changed from: %s to %s", self._status and not not SMARTMATCH_SESSION_STATUS_LUT[self._status] or not self._status and not not "NONE", status and not not SMARTMATCH_SESSION_STATUS_LUT[status] or not status and not not "NONE")
+		dprintf("Session status changed from: %s to %s", self._status and SMARTMATCH_SESSION_STATUS_LUT[self._status] or not self._status and "NONE", status and SMARTMATCH_SESSION_STATUS_LUT[status] or not status and "NONE")
 
 		self._status = status
 		self._ready = status == MultiplayerSession.READY
@@ -137,10 +137,10 @@ SmartMatch._start_smartmatch = function (self, dt)
 		return
 	end
 
-	local timeout_in_seconds = self._is_host and not not (self._timout * 10) or not self._is_host and not not self._timout
-	local preserve_session_mode = self._is_host and not not PreserveSessionMode.ALWAYS or not self._is_host and not not PreserveSessionMode.NEVER
+	local timeout_in_seconds = self._is_host and self._timout * 10 or not self._is_host and self._timout
+	local preserve_session_mode = self._is_host and PreserveSessionMode.ALWAYS or not self._is_host and PreserveSessionMode.NEVER
 
-	dprintf("PreserveSessionMode %s. is host %s", preserve_session_mode ~= PreserveSessionMode.ALWAYS and not not "NEVER" or not (preserve_session_mode ~= PreserveSessionMode.ALWAYS) and not not "ALWAYS", self._is_host and not not "TRUE" or not self._is_host and not not "FALSE")
+	dprintf("PreserveSessionMode %s. is host %s", preserve_session_mode ~= PreserveSessionMode.ALWAYS and "NEVER" or not (preserve_session_mode ~= PreserveSessionMode.ALWAYS) and "ALWAYS", self._is_host and "TRUE" or not self._is_host and "FALSE")
 
 	local ticket_param_str
 
@@ -150,7 +150,7 @@ SmartMatch._start_smartmatch = function (self, dt)
 		dprintf("Ticket Params: %s Hopper Name: %s", ticket_param_str, self._hopper_name)
 	end
 
-	dprintf("Starting SmartMatch with session_id: %s Hopper name: %s PreserveSessionMode: %s Ticket params: %s Timeout: %i", tostring(self._session_id), self._hopper_name, preserve_session_mode ~= PreserveSessionMode.ALWAYS and not not "NEVER" or not (preserve_session_mode ~= PreserveSessionMode.ALWAYS) and not not "ALWAYS", ticket_param_str, timeout_in_seconds)
+	dprintf("Starting SmartMatch with session_id: %s Hopper name: %s PreserveSessionMode: %s Ticket params: %s Timeout: %i", tostring(self._session_id), self._hopper_name, preserve_session_mode ~= PreserveSessionMode.ALWAYS and "NEVER" or not (preserve_session_mode ~= PreserveSessionMode.ALWAYS) and "ALWAYS", ticket_param_str, timeout_in_seconds)
 	MultiplayerSession.start_smartmatch(self._session_id, self._hopper_name, timeout_in_seconds, preserve_session_mode, ticket_param_str)
 
 	self._smartmatch_started = true
@@ -165,7 +165,7 @@ SmartMatch._check_smartmatch_result = function (self, dt)
 
 	local ticket_id, estimated_waiting_time = MultiplayerSession.start_smartmatch_result(self._session_id)
 
-	if not self._ticket_id and ticket_id ~= "" or not not self._ticket_id and self._ticket_id ~= ticket_id and ticket_id ~= "" then
+	if not self._ticket_id and ticket_id ~= "" or self._ticket_id and self._ticket_id ~= ticket_id and ticket_id ~= "" then
 		dprintf("Started smartmatch with ticket_id: %s", ticket_id)
 
 		self._ticket_id = ticket_id
@@ -180,11 +180,11 @@ SmartMatch._check_smartmatch_result = function (self, dt)
 	local smartmatch_status = MultiplayerSession.smartmatch_status(self._session_id)
 	local session_name, session_template_name, estimated_waiting_time = MultiplayerSession.smartmatch_result(self._session_id)
 
-	self._estimated_waiting_time = estimated_waiting_time > 0 and (not not estimated_waiting_time or not not self._estimated_waiting_time) or not (estimated_waiting_time > 0) and not not self._estimated_waiting_time
+	self._estimated_waiting_time = estimated_waiting_time > 0 and (estimated_waiting_time or self._estimated_waiting_time) or not (estimated_waiting_time > 0) and self._estimated_waiting_time
 
 	if self._smartmatch_status ~= smartmatch_status then
 		if DEBUG_SMARTMATCH then
-			dprintf("SmartMatch Status Changed from %s to %s", self._smartmatch_status and not not SMARTMATCH_STATUS_LUT[self._smartmatch_status] or not self._smartmatch_status and not not "NONE", smartmatch_status and not not SMARTMATCH_STATUS_LUT[smartmatch_status] or not smartmatch_status and not not "NONE")
+			dprintf("SmartMatch Status Changed from %s to %s", self._smartmatch_status and SMARTMATCH_STATUS_LUT[self._smartmatch_status] or not self._smartmatch_status and "NONE", smartmatch_status and SMARTMATCH_STATUS_LUT[smartmatch_status] or not smartmatch_status and "NONE")
 
 			if session_name ~= "" then
 				dprintf("Current session name: %s. Smartmatch session name: %s. Smartmatch session template: %s", self._session_name, session_name, session_template_name)
@@ -196,7 +196,7 @@ SmartMatch._check_smartmatch_result = function (self, dt)
 		if self._smartmatch_status == SmartMatchStatus.FOUND then
 			local is_my_own_session = session_name == self._session_name
 
-			dprintf("Found session - Session name: %s %s Session template: %s", session_name, is_my_own_session and not not "(My own session)" or not is_my_own_session and not not "", session_template_name)
+			dprintf("Found session - Session name: %s %s Session template: %s", session_name, is_my_own_session and "(My own session)" or not is_my_own_session and "", session_template_name)
 
 			self._found_session_name = session_name
 			self._found_session_template = session_template_name
@@ -239,7 +239,7 @@ SmartMatch._convert_to_json = function (self, hopper_name, params)
 		local var_type = HOPPER_PARAM_TYPE_LUT[var]
 		local val = params[var]
 
-		fassert(not not val or not not optional_lut_variables[var], "[SmartMatch::_convert_to_json] Missing variable [%s] in params", var)
+		fassert(val or optional_lut_variables[var], "[SmartMatch::_convert_to_json] Missing variable [%s] in params", var)
 
 		if val then
 			if var_type == "number" then
@@ -278,7 +278,7 @@ SmartMatch.update = function (self, dt)
 	self:_handle_smartmatch_session()
 	self[self._state](self, dt)
 
-	return not not self._ready
+	return self._ready
 end
 
 SmartMatch.is_search_done = function (self)

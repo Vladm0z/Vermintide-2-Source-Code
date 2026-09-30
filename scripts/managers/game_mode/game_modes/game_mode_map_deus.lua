@@ -2,7 +2,7 @@
 
 require("scripts/managers/game_mode/game_modes/game_mode_base")
 require("scripts/ui/views/deus_menu/deus_map_decision_view")
-require(script_data.FEATURE_old_map_ui and not not "scripts/ui/views/deus_menu/deus_shop_view" or not script_data.FEATURE_old_map_ui and not not "scripts/ui/views/deus_menu/deus_shop_view_v2")
+require(script_data.FEATURE_old_map_ui and "scripts/ui/views/deus_menu/deus_shop_view" or not script_data.FEATURE_old_map_ui and "scripts/ui/views/deus_menu/deus_shop_view_v2")
 
 local UI_RENDERER_MATERIALS = {
 	"material",
@@ -79,7 +79,7 @@ GameModeMapDeus.init = function (self, settings, world, network_handler, is_serv
 
 	local server_peer_id = self._deus_run_controller:get_server_peer_id()
 
-	self._shared_state = SharedState:new("deus_game_mode_map_" .. self._deus_run_controller:get_run_id(), shared_state_spec, is_server, is_server and (not not network_handler or not not nil) or not is_server and not not nil, server_peer_id, self._own_peer_id)
+	self._shared_state = SharedState:new("deus_game_mode_map_" .. self._deus_run_controller:get_run_id(), shared_state_spec, is_server, is_server and (network_handler or nil) or not is_server and nil, server_peer_id, self._own_peer_id)
 	self._is_server = is_server
 	self._ui_done = true
 	self._adventure_profile_rules = AdventureProfileRules:new(self._profile_synchronizer, self._network_server)
@@ -95,7 +95,7 @@ GameModeMapDeus.init = function (self, settings, world, network_handler, is_serv
 		input_manager = Managers.input,
 		deus_run_controller = self._deus_run_controller,
 		wwise_world = Managers.world:wwise_world(world),
-		network_server = is_server and (not not network_handler or not not nil) or not is_server and not not nil,
+		network_server = is_server and (network_handler or nil) or not is_server and nil,
 		own_peer_id = self._own_peer_id,
 		world = world
 	}

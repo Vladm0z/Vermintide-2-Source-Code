@@ -195,7 +195,7 @@ StartGameWindowWeaveBackground._update_background_animations = function (self, d
 
 	local matchmaking_manager = Managers.matchmaking
 	local is_game_matchmaking = matchmaking_manager:is_game_matchmaking()
-	local speed = is_game_matchmaking and not not 4 or not is_game_matchmaking and not not 2.5
+	local speed = is_game_matchmaking and 4 or not is_game_matchmaking and 2.5
 	local progress = 0.5 + math.sin(Managers.time:time("ui") * speed) * 0.5
 
 	self:_set_background_bloom_intensity(progress, is_game_matchmaking)
@@ -204,7 +204,7 @@ end
 StartGameWindowWeaveBackground._set_background_bloom_intensity = function (self, fraction, is_game_matchmaking)
 	-- function 9
 	local min = 1.39
-	local max = is_game_matchmaking and not not 10 or not is_game_matchmaking and not not 2
+	local max = is_game_matchmaking and 10 or not is_game_matchmaking and 2
 	local value = min + math.clamp(fraction, 0, 1) * max
 	local ui_hdr_renderer = self._ui_hdr_renderer
 	local gui = ui_hdr_renderer.gui
@@ -306,7 +306,7 @@ StartGameWindowWeaveBackground._animate_wheel_position = function (self, dt)
 	local parent = self._parent
 	local selected_layout_name = parent:get_selected_layout_name()
 	local speed = 3
-	local wheel_position_progress = not not self._wheel_position_progress
+	local wheel_position_progress = self._wheel_position_progress
 	local anim_progress = 0
 
 	if selected_layout_name == "weave" then

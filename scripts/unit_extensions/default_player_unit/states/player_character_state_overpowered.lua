@@ -13,7 +13,7 @@ PlayerCharacterStateOverpowered.on_enter = function (self, unit, input, dt, cont
 	CharacterStateHelper.stop_career_abilities(self.career_extension, "overpowered")
 
 	local player = Managers.player:owner(unit)
-	local is_bot = not not player and not not not player:is_player_controlled()
+	local is_bot = player and not player:is_player_controlled()
 
 	if params.start_sound_event and not is_bot then
 		local wwise_world = Managers.world:wwise_world(self.world)
@@ -41,7 +41,7 @@ end
 PlayerCharacterStateOverpowered.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 3
 	local player = Managers.player:owner(unit)
-	local is_bot = not not player and not not not player:is_player_controlled()
+	local is_bot = player and not player:is_player_controlled()
 
 	if self.params.end_sound_event and not is_bot then
 		local wwise_world = Managers.world:wwise_world(self.world)

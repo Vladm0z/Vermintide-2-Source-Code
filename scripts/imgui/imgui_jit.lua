@@ -248,10 +248,10 @@ end
 ImguiJIT.draw = function (self)
 	-- function 8
 	local do_close = Imgui.begin_window("JIT utilities")
-	local enabled = Imgui.checkbox("JIT enabled", not not self._enabled)
+	local enabled = Imgui.checkbox("JIT enabled", self._enabled)
 
 	if enabled ~= self._enabled then
-		jit[enabled and not not "on" or not enabled and not not "off"]()
+		jit[enabled and "on" or not enabled and "off"]()
 
 		self._enabled = enabled
 	end
@@ -285,7 +285,7 @@ ImguiJIT.draw = function (self)
 			local v = Imgui.checkbox(t.k, t.v)
 
 			if v ~= t.v then
-				jopt(format("%s%s", v and not not "+" or not v and not not "-", t.k))
+				jopt(format("%s%s", v and "+" or not v and "-", t.k))
 
 				t.v = v
 			end
@@ -394,7 +394,7 @@ ImguiJIT.draw = function (self)
 		if self._root_path == "" then
 			root = _G
 		else
-			root = not not success and not not val
+			root = success and val
 		end
 
 		if root then

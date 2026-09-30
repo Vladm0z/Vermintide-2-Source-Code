@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/perfhud/perfhud_manager.lua
 
 PerfhudManager = class(PerfhudManager)
-PerfhudSettings = not not PerfhudSettings
+PerfhudSettings = PerfhudSettings
 PerfhudSettings.artist = {
 	key = "f1",
 	custom_parameters = {}
@@ -56,7 +56,7 @@ end
 
 PerfhudManager._update_peer_index = function (self, dt, t)
 	-- function 3
-	local ctrl_pressed = not not Keyboard.pressed(Keyboard.button_index("left ctrl"))
+	local ctrl_pressed = Keyboard.pressed(Keyboard.button_index("left ctrl"))
 
 	if ctrl_pressed and not self._accumulated_index then
 		self._accumulated_index = ""

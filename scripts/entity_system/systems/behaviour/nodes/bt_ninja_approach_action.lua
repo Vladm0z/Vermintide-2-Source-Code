@@ -25,7 +25,7 @@ BTNinjaApproachAction.enter = function (self, unit, blackboard, t)
 	local action = self._tree_node.action_data
 
 	blackboard.action = action
-	blackboard.approach_fail_into_vanish_timer = not not blackboard.approach_fail_into_vanish_timer
+	blackboard.approach_fail_into_vanish_timer = blackboard.approach_fail_into_vanish_timer
 
 	LocomotionUtils.set_animation_driven_movement(unit, false)
 
@@ -40,7 +40,7 @@ BTNinjaApproachAction.enter = function (self, unit, blackboard, t)
 	navigation_extension:set_max_speed(blackboard.breed.run_speed)
 
 	blackboard.target_skulk_time = t + 0.5
-	blackboard.skulk_jump_tries = not not blackboard.skulk_jump_tries
+	blackboard.skulk_jump_tries = blackboard.skulk_jump_tries
 
 	local locomotion = blackboard.locomotion_extension
 
@@ -479,7 +479,7 @@ end
 
 BTNinjaApproachAction.check_high_point_on_line = function (self, nav_world, from_pos, dir, dist_left_to_rat, base_z, height_advantage, above, below)
 	-- function 13
-	dist_left_to_rat = not not dist_left_to_rat or not not math.floor(Vector3.distance(p1, rat_pos))
+	dist_left_to_rat = dist_left_to_rat or math.floor(Vector3.distance(p1, rat_pos))
 
 	for i = 2, dist_left_to_rat + 1 do
 		local check_height_pos = from_pos + dir * i
@@ -508,7 +508,7 @@ BTNinjaApproachAction.get_new_goal = function (self, unit, blackboard, t)
 		local max_dist = 15
 		local dir = blackboard.skulk_around_dir
 
-		dir = not not dir or not not (1 - math.random(0, 1) * 2)
+		dir = dir or 1 - math.random(0, 1) * 2
 		blackboard.skulk_around_dir = dir
 
 		local angle = math.random(10, 35) * dir

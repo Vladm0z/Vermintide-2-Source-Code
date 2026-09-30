@@ -12,7 +12,7 @@ IngameViewLayoutLogic.init = function (self, ingame_ui_context, params, menu_lay
 	local is_in_inn = ingame_ui_context.is_in_inn
 
 	self.is_server = ingame_ui_context.is_server
-	self.layout_list = is_in_inn and not not menu_layouts.in_menu or not is_in_inn and not not menu_layouts.in_game
+	self.layout_list = is_in_inn and menu_layouts.in_menu or not is_in_inn and menu_layouts.in_game
 end
 
 IngameViewLayoutLogic.setup_button_layout = function (self, layout_data)
@@ -71,7 +71,7 @@ IngameViewLayoutLogic._update_menu_options = function (self)
 		end
 	else
 		local num_human_players = Managers.player:num_human_players()
-		local update_layout = not not self.pause_menu_full_access
+		local update_layout = self.pause_menu_full_access
 
 		self.pause_menu_full_access = nil
 
@@ -111,12 +111,12 @@ IngameViewLayoutLogic._update_menu_options_enabled_states = function (self)
 		local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
 		local player_manager = Managers.player
 		local local_player = player_manager:local_player()
-		local has_player = not not local_player and local_player.player_unit ~= nil
+		local has_player = local_player and local_player.player_unit ~= nil
 		local mechanism_name = Managers.mechanism:current_mechanism_name()
 
 		for index, menu_option in ipairs(active_button_data) do
 			local disable_when_matchmaking, disable_when_matchmaking_ready, disable_not_matchmaking
-			local disable_for_mechanism = not not menu_option.disable_for_mechanism
+			local disable_for_mechanism = menu_option.disable_for_mechanism
 
 			if disable_for_mechanism then
 				disable_when_matchmaking = disable_for_mechanism.matchmaking
@@ -125,7 +125,7 @@ IngameViewLayoutLogic._update_menu_options_enabled_states = function (self)
 			end
 
 			local requires_player_unit = menu_option.requires_player_unit
-			local transition_not_allowed = not not disable_not_matchmaking and not not not is_game_matchmaking
+			local transition_not_allowed = disable_not_matchmaking and not is_game_matchmaking
 
 			if transition_not_allowed and not menu_option.disabled then
 				menu_option.disabled = true

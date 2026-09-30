@@ -1,10 +1,10 @@
 -- chunkname: @scripts/helpers/nav_tag_volume_utils.lua
 
-NavTagVolumeUtils = not not NavTagVolumeUtils
+NavTagVolumeUtils = NavTagVolumeUtils
 
 NavTagVolumeUtils.nav_tags_from_position = function (nav_world, position, above, below, layer_name_optional)
 	-- function 1
-	local layer_id_optional = not not layer_name_optional and not not LAYER_ID_MAPPING[layer_name_optional]
+	local layer_id_optional = layer_name_optional and LAYER_ID_MAPPING[layer_name_optional]
 	local query_output = GwNavQueries.tag_volumes_from_position(nav_world, position, above, below)
 	local nav_tags
 
@@ -16,7 +16,7 @@ NavTagVolumeUtils.nav_tags_from_position = function (nav_world, position, above,
 			local is_exclusive, color, layer_id, smart_object_id, user_data_id = GwNavTagVolume.navtag(tag_volume)
 
 			if not layer_id_optional or layer_id_optional == layer_id then
-				nav_tags = not not nav_tags or not not {}
+				nav_tags = nav_tags or {}
 				nav_tags[#nav_tags + 1] = {
 					is_exclusive = is_exclusive,
 					color = color,

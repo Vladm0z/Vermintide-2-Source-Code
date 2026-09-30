@@ -14,11 +14,11 @@ BigBoyDestructibleExtension.init = function (self, extension_init_context, unit,
 
 	local move_to_exit_when_opened = Unit.get_data(unit, "move_to_exit_when_opened")
 
-	self.move_to_exit_when_opened = move_to_exit_when_opened == nil or not not move_to_exit_when_opened
+	self.move_to_exit_when_opened = move_to_exit_when_opened == nil or move_to_exit_when_opened
 
 	local door_state = Unit.get_data(unit, "door_state")
 
-	self.current_state = door_state ~= 0 and (door_state ~= 1 and door_state == 2 and not not "open_backward" or not (door_state ~= 1) and not not "closed") or not (door_state ~= 0) and not not "open_forward"
+	self.current_state = door_state ~= 0 and (door_state ~= 1 and door_state == 2 and "open_backward" or not (door_state ~= 1) and "closed") or not (door_state ~= 0) and "open_forward"
 	self.state_to_nav_obstacle_map = {}
 	self.animation_stop_time = 0
 	self.dead = false

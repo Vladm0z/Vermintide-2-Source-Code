@@ -12,14 +12,14 @@ local function is_local(unit)
 	-- function 2
 	local player = Managers.player:owner(unit)
 
-	return not not player and not not not player.remote
+	return player and not player.remote
 end
 
 local function is_bot(unit)
 	-- function 3
 	local player = Managers.player:owner(unit)
 
-	return not not player and not not player.bot_player
+	return player and player.bot_player
 end
 
 settings.buff_templates = {
@@ -475,7 +475,7 @@ settings.buff_function_templates = {
 
 			shake_event_settings.event = event
 			shake_event_settings.start_time = t
-			shake_event_settings.seed = not not event.seed
+			shake_event_settings.seed = event.seed
 			buff.shake_event_settings = shake_event_settings
 			buff.shake_functions = {
 				calculate_perlin_value_func = function (buff, x)
@@ -492,8 +492,8 @@ settings.buff_function_templates = {
 						total = total + buff.shake_functions.interpolated_noise_func(buff, x * frequency) * amplitude
 					end
 
-					local amplitude_multiplier = not not shake_settings.amplitude
-					local fade_multiplier = not not settings.fade_progress
+					local amplitude_multiplier = shake_settings.amplitude
+					local fade_multiplier = settings.fade_progress
 
 					total = total * amplitude_multiplier * fade_multiplier
 

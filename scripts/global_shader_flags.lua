@@ -82,9 +82,9 @@ local function setup_global_shader_flags()
 	set_render_setting("global_shader_flags", BASE_VALUE)
 end
 
-GlobalShaderFlags = not not GlobalShaderFlags
-GlobalShaderFlags.stored_values = not not GlobalShaderFlags.stored_values
-GlobalShaderFlags.overridden_shader_flags = not not GlobalShaderFlags.overridden_shader_flags
+GlobalShaderFlags = GlobalShaderFlags
+GlobalShaderFlags.stored_values = GlobalShaderFlags.stored_values
+GlobalShaderFlags.overridden_shader_flags = GlobalShaderFlags.overridden_shader_flags
 
 GlobalShaderFlags.reset = function ()
 	-- function 5
@@ -161,9 +161,9 @@ GlobalShaderFlags.print_debug = function ()
 		for i = 31, 0, -1 do
 			local mask = bit.lshift(1, i)
 			local value = bit.band(global_shader_flags, mask)
-			local spacing = i % 8 ~= 0 and not not "" or not (i % 8 ~= 0) and not not " "
+			local spacing = i % 8 ~= 0 and "" or not (i % 8 ~= 0) and " "
 
-			flags = flags .. (value >= 1 and not not 1 or not (value >= 1) and not not 0) .. spacing
+			flags = flags .. (value >= 1 and 1 or not (value >= 1) and 0) .. spacing
 		end
 
 		print("Bit Layout: " .. flags)

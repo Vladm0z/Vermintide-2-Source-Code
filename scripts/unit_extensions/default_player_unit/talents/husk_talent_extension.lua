@@ -82,7 +82,7 @@ HuskTalentExtension.apply_buffs_from_talents = function (self)
 			local buffer = talent_data.buffer
 
 			if player.local_player and (not buffer or buffer == "client" or self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) or not player.local_player and (self.is_server and (buffer == "server" or self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all")) or not self.is_server and (self.is_server and (buffer == "both" or buffer == "all") or not self.is_server and (player.local_player and (buffer == "both" or buffer == "all") or not player.local_player and buffer == "all"))) then
-				local num_buffs = buffs and not not #buffs or not buffs and not not 0
+				local num_buffs = buffs and #buffs or not buffs and 0
 
 				if num_buffs > 0 then
 					for j = 1, num_buffs do
@@ -183,7 +183,7 @@ HuskTalentExtension.get_talent_names = function (self, talent_names)
 	local talent_ids = self._talent_ids
 	local hero_name = self._hero_name
 
-	talent_names = not not talent_names or not not {}
+	talent_names = talent_names or {}
 
 	for i = 1, #talent_ids do
 		local talent_id = talent_ids[i]

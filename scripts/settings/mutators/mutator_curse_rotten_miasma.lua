@@ -94,7 +94,7 @@ local function setup_rotten_miasma(buff_name)
 	local rotation = Quaternion.identity()
 	local target_to_follow = get_new_target_to_follow()
 
-	target_to_follow = not not target_to_follow or not not create_default_target(position, rotation)
+	target_to_follow = target_to_follow or create_default_target(position, rotation)
 
 	local extension_init_data = {
 		buff_system = {
@@ -132,7 +132,7 @@ return {
 			data.target_to_follow = new_target_to_follow
 			data.target_respawn_at = nil
 		else
-			data.target_respawn_at = not not data.target_respawn_at
+			data.target_respawn_at = data.target_respawn_at
 
 			local position = get_path_position()
 

@@ -4,10 +4,10 @@ require("scripts/managers/game_mode/mechanisms/mechanism_overrides")
 
 local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-BuffUtils = not not BuffUtils
+BuffUtils = BuffUtils
 
 if script_data then
-	script_data.debug_legendary_traits = not not script_data.debug_legendary_traits
+	script_data.debug_legendary_traits = script_data.debug_legendary_traits
 end
 
 BuffUtils.apply_buff_tweak_data = function (buffs, tweak_data)
@@ -37,14 +37,14 @@ end
 BuffUtils.get_max_stacks = function (buff_name, buff_index)
 	-- function 3
 	local buffs = BuffUtils.get_buff_template(buff_name).buffs
-	local max_stacks = buffs[not not buff_index or not not 1].max_stacks
+	local max_stacks = buffs[buff_index or 1].max_stacks
 
-	return not not max_stacks or not not nil
+	return max_stacks or nil
 end
 
 BuffUtils.remove_stacked_buffs = function (buffed_unit, stacked_buff_ids)
 	-- function 4
-	local buff_extension = not not buffed_unit and not not ScriptUnit.has_extension(buffed_unit, "buff_system")
+	local buff_extension = buffed_unit and ScriptUnit.has_extension(buffed_unit, "buff_system")
 
 	if not buff_extension then
 		return
@@ -92,11 +92,11 @@ BuffUtils.buffs_to_rpc_params = function (buffs)
 
 		local id = lookup_templates[name]
 		local data_type, value = next(data)
-		local data_type_id = lookup_data_types[not not data_type or not not "n/a"]
+		local data_type_id = lookup_data_types[data_type or "n/a"]
 
 		buff_ids[num_buffs] = id
 		buff_data_type_ids[num_buffs] = data_type_id
-		buff_values[num_buffs] = not not value or not not 1
+		buff_values[num_buffs] = value or 1
 	end
 
 	return {
@@ -111,7 +111,7 @@ local unit_node = Unit.node
 
 local function _get_particle_link_node(fx, link_target)
 	-- function 7
-	return fx.link_node and not not unit_node(link_target, fx.link_node) or not fx.link_node and not not 0
+	return fx.link_node and unit_node(link_target, fx.link_node) or not fx.link_node and 0
 end
 
 BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_first_person, buff_id, end_t)
@@ -134,7 +134,7 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 				local node_id = _get_particle_link_node(fx, link_target)
 				local pose = fx.pose
 
-				pose = pose and (not not Matrix4x4.from_quaternion_position_scale(Quaternion.from_euler_angles_xyz(pose.rotation[1], pose.rotation[2], pose.rotation[3]), Vector3Aux.unbox(pose.position), Vector3Aux.unbox(pose.scale)) or not not nil) or not pose and not not nil
+				pose = pose and (Matrix4x4.from_quaternion_position_scale(Quaternion.from_euler_angles_xyz(pose.rotation[1], pose.rotation[2], pose.rotation[3]), Vector3Aux.unbox(pose.position), Vector3Aux.unbox(pose.scale)) or nil) or not pose and nil
 
 				local fx_id = ScriptWorld.create_particles_linked(world, fx.effect, link_target, node_id, fx.orphaned_policy, pose)
 
@@ -143,9 +143,9 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 						local data = fx.custom_variables[variable_i]
 						local name = data.name
 
-						data.cached_id = not not data.cached_id
+						data.cached_id = data.cached_id
 
-						local value = not not data.value
+						local value = data.value
 						local unit_scale = Unit.local_scale(unit, 0)
 						local effect_variable = Vector3.divide_elements(Vector3Aux.unbox(value), unit_scale)
 
@@ -158,7 +158,7 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 						local data = fx.material_variables[variable_i]
 						local cloud_name = data.cloud_name
 						local material_variable = data.material_variable
-						local value = not not data.value
+						local value = data.value
 
 						ScriptWorld.set_material_variable_for_particles(world, fx_id, cloud_name, material_variable, value)
 					end
@@ -166,12 +166,12 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 
 				if fx.continuous then
 					if fx.destroy_policy == "stop" then
-						local stop_fx = not not fx_state.stop_fx
+						local stop_fx = fx_state.stop_fx
 
 						fx_state.stop_fx = stop_fx
 						stop_fx[#stop_fx + 1] = fx_id
 					else
-						local destroy_fx = not not fx_state.destroy_fx
+						local destroy_fx = fx_state.destroy_fx
 
 						fx_state.destroy_fx = destroy_fx
 						destroy_fx[#destroy_fx + 1] = fx_id
@@ -179,7 +179,7 @@ BuffUtils.create_attached_particles = function (world, particle_fx, unit, is_fir
 				end
 
 				if fx.update then
-					local update_fx = not not fx_state.update_fx
+					local update_fx = fx_state.update_fx
 
 					fx_state.update_fx = update_fx
 					update_fx[fx_id] = fx.update
@@ -274,8 +274,8 @@ BuffUtils.get_buff_template = function (name, optional_mechanism_name)
 	return MechanismOverrides.get(BuffTemplates[name], optional_mechanism_name)
 end
 
-BalefireDots = not not BalefireDots
-BalefireBurnDotLookup = not not BalefireBurnDotLookup
+BalefireDots = BalefireDots
+BalefireBurnDotLookup = BalefireBurnDotLookup
 
 BuffUtils.generate_balefire_burn_variants = function (buff_templates)
 	-- function 14
@@ -313,7 +313,7 @@ BuffUtils.generate_balefire_burn_variants = function (buff_templates)
 	end
 end
 
-InfiniteBurnDotLookup = not not InfiniteBurnDotLookup
+InfiniteBurnDotLookup = InfiniteBurnDotLookup
 
 BuffUtils.generate_infinite_burn_variants = function (buff_templates)
 	-- function 15

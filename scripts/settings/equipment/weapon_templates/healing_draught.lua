@@ -23,7 +23,7 @@ weapon_template.actions = {
 				local full_health = health_extension:current_permanent_health_percent() >= 1
 				local is_wounded = status_extension:is_wounded()
 
-				return not not is_wounded or not not not full_health
+				return is_wounded or not full_health
 			end,
 			chain_condition_func = function (user_unit)
 				-- function 2
@@ -32,7 +32,7 @@ weapon_template.actions = {
 				local full_health = health_extension:current_permanent_health_percent() >= 1
 				local is_wounded = status_extension:is_wounded()
 
-				return not not is_wounded or not not not full_health
+				return is_wounded or not full_health
 			end
 		}
 	},

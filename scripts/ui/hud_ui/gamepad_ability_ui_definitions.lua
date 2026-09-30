@@ -13,7 +13,7 @@ local scenegraph_definition = {
 			SIZE_X,
 			SIZE_Y
 		},
-		scale = IS_WINDOWS and not not "hud_scale_fit" or not IS_WINDOWS and not not "hud_fit"
+		scale = IS_WINDOWS and "hud_scale_fit" or not IS_WINDOWS and "hud_fit"
 	},
 	ability_root = {
 		vertical_alignment = "bottom",
@@ -60,12 +60,12 @@ local function create_ability_widget()
 						-- function 2
 						content.gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return content.on_cooldown and not not content.usable or not content.on_cooldown and not not not content.hide_effect
+						return content.on_cooldown and content.usable or not content.on_cooldown and not content.hide_effect
 					end,
 					content_change_function = function (content, style)
 						-- function 3
 						local player = Managers.player:local_player()
-						local player_unit = not not player and not not player.player_unit
+						local player_unit = player and player.player_unit
 
 						if not ALIVE[player_unit] then
 							return
@@ -73,7 +73,7 @@ local function create_ability_widget()
 
 						local career_ext = ScriptUnit.extension(player_unit, "career_system")
 						local career_name = career_ext:career_name()
-						local career_data = not not UISettings.gamepad_ability_ui_data[career_name]
+						local career_data = UISettings.gamepad_ability_ui_data[career_name]
 
 						for content_id, content_value in pairs(career_data) do
 							content[content_id] = content_value
@@ -87,7 +87,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 4
-						return content.on_cooldown and not not content.usable or not content.on_cooldown and not not not content.hide_effect
+						return content.on_cooldown and content.usable or not content.on_cooldown and not content.hide_effect
 					end
 				},
 				{
@@ -97,7 +97,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 5
-						return content.on_cooldown and not not content.usable or not content.on_cooldown and not not content.lit_frame_id
+						return content.on_cooldown and content.usable or not content.on_cooldown and content.lit_frame_id
 					end
 				},
 				{
@@ -107,7 +107,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 6
-						return not not content.usable
+						return content.usable
 					end
 				},
 				{
@@ -117,7 +117,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 7
-						return not not content.usable
+						return content.usable
 					end
 				},
 				{
@@ -127,7 +127,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 8
-						return not not content.usable
+						return content.usable
 					end
 				},
 				{
@@ -137,7 +137,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 9
-						return not not Application.user_setting("numeric_ui")
+						return (Application.user_setting("numeric_ui"))
 					end
 				},
 				{
@@ -147,7 +147,7 @@ local function create_ability_widget()
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content)
 						-- function 10
-						return not not Application.user_setting("numeric_ui")
+						return (Application.user_setting("numeric_ui"))
 					end
 				}
 			}
@@ -326,7 +326,7 @@ local thornsister_passive_widget_definition = {
 				retained_mode = RETAINED_MODE_ENABLED,
 				content_check_function = function (content)
 					-- function 12
-					return not not content.is_active
+					return content.is_active
 				end
 			}
 		}

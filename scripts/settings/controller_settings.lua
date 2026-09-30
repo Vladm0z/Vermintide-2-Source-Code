@@ -4,14 +4,14 @@ require("scripts/utils/input_helper")
 
 UNASSIGNED_KEY = "unassigned_keymap"
 PlayerControllerKeymaps = {}
-PlayerControllerKeymaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-PlayerControllerKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-PlayerControllerKeymaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-PlayerControllerKeymaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+PlayerControllerKeymaps.win32 = InputUtils.keymaps_key_approved("win32")
+PlayerControllerKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+PlayerControllerKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+PlayerControllerKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 TutorialPlayerControllerKeymaps = table.clone(PlayerControllerKeymaps)
 PlayerControllerFilters = {}
-PlayerControllerFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-PlayerControllerFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+PlayerControllerFilters.win32 = InputUtils.keymaps_key_approved("win32")
+PlayerControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 
 local PlayerControllerFilters_ps4 = {
 	look_controller = {
@@ -193,21 +193,21 @@ local PlayerControllerFilters_ps4 = {
 	}
 }
 
-PlayerControllerFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-PlayerControllerFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+PlayerControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+PlayerControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 TutorialPlayerControllerFilters = table.clone(PlayerControllerFilters)
 TwitchControllerSettings = {}
-TwitchControllerSettings.win32 = not not InputUtils.keymaps_key_approved("win32")
+TwitchControllerSettings.win32 = InputUtils.keymaps_key_approved("win32")
 TwitchControllerFilters = {}
-TwitchControllerFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
+TwitchControllerFilters.win32 = InputUtils.keymaps_key_approved("win32")
 ChatControllerSettings = {}
-ChatControllerSettings.win32 = not not InputUtils.keymaps_key_approved("win32")
-ChatControllerSettings.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-ChatControllerSettings.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-ChatControllerSettings.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+ChatControllerSettings.win32 = InputUtils.keymaps_key_approved("win32")
+ChatControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1")
+ChatControllerSettings.ps4 = InputUtils.keymaps_key_approved("ps4")
+ChatControllerSettings.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 ChatControllerFilters = {}
-ChatControllerFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-ChatControllerFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+ChatControllerFilters.win32 = InputUtils.keymaps_key_approved("win32")
+ChatControllerFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 
 local ChatControllerFilters_ps4 = {
 	unallowed_activate_chat_input = {
@@ -227,20 +227,20 @@ local ChatControllerFilters_ps4 = {
 	}
 }
 
-ChatControllerFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-ChatControllerFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+ChatControllerFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+ChatControllerFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 RconControllerSettings = {}
-RconControllerSettings.win32 = not not InputUtils.keymaps_key_approved("win32")
-RconControllerSettings.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+RconControllerSettings.win32 = InputUtils.keymaps_key_approved("win32")
+RconControllerSettings.xb1 = InputUtils.keymaps_key_approved("xb1")
 RconControllerFilters = {}
 FreeFlightKeymaps = {}
-FreeFlightKeymaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-FreeFlightKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-FreeFlightKeymaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-FreeFlightKeymaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+FreeFlightKeymaps.win32 = InputUtils.keymaps_key_approved("win32")
+FreeFlightKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+FreeFlightKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+FreeFlightKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 FreeFlightFilters = {}
-FreeFlightFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-FreeFlightFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+FreeFlightFilters.win32 = InputUtils.keymaps_key_approved("win32")
+FreeFlightFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 
 local FreeFlightFilters_ps4 = {
 	look = {
@@ -331,26 +331,26 @@ local FreeFlightFilters_ps4 = {
 	}
 }
 
-FreeFlightFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-FreeFlightFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+FreeFlightFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+FreeFlightFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 SplashScreenKeymaps = {}
-SplashScreenKeymaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-SplashScreenKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-SplashScreenKeymaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-SplashScreenKeymaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+SplashScreenKeymaps.win32 = InputUtils.keymaps_key_approved("win32")
+SplashScreenKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+SplashScreenKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+SplashScreenKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 SplashScreenFilters = {}
-SplashScreenFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-SplashScreenFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-SplashScreenFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-SplashScreenFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+SplashScreenFilters.win32 = InputUtils.keymaps_key_approved("win32")
+SplashScreenFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
+SplashScreenFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+SplashScreenFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 TitleLoadingKeyMaps = {}
-TitleLoadingKeyMaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-TitleLoadingKeyMaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-TitleLoadingKeyMaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-TitleLoadingKeyMaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+TitleLoadingKeyMaps.win32 = InputUtils.keymaps_key_approved("win32")
+TitleLoadingKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+TitleLoadingKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+TitleLoadingKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 TitleLoadingFilters = {}
-TitleLoadingFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-TitleLoadingFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+TitleLoadingFilters.win32 = InputUtils.keymaps_key_approved("win32")
+TitleLoadingFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 
 local TitleLoadingFilters_ps4 = {
 	cancel_video = {
@@ -361,16 +361,16 @@ local TitleLoadingFilters_ps4 = {
 	}
 }
 
-TitleLoadingFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-TitleLoadingFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+TitleLoadingFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+TitleLoadingFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 TitleScreenKeyMaps = {}
-TitleScreenKeyMaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-TitleScreenKeyMaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-TitleScreenKeyMaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-TitleScreenKeyMaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+TitleScreenKeyMaps.win32 = InputUtils.keymaps_key_approved("win32")
+TitleScreenKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+TitleScreenKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+TitleScreenKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 TitleScreenFilters = {}
-TitleScreenFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-TitleScreenFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+TitleScreenFilters.win32 = InputUtils.keymaps_key_approved("win32")
+TitleScreenFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 
 local TitleScreenFilters_ps4 = {
 	start = {
@@ -461,26 +461,26 @@ local TitleScreenFilters_ps4 = {
 	}
 }
 
-TitleScreenFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-TitleScreenFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+TitleScreenFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+TitleScreenFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 DemoUIKeyMaps = {}
-DemoUIKeyMaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-DemoUIKeyMaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-DemoUIKeyMaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-DemoUIKeyMaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+DemoUIKeyMaps.win32 = InputUtils.keymaps_key_approved("win32")
+DemoUIKeyMaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+DemoUIKeyMaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+DemoUIKeyMaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 DemoUIFilters = {}
-DemoUIFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-DemoUIFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-DemoUIFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-DemoUIFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+DemoUIFilters.win32 = InputUtils.keymaps_key_approved("win32")
+DemoUIFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
+DemoUIFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+DemoUIFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 IngamePlayerListKeymaps = {}
-IngamePlayerListKeymaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-IngamePlayerListKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-IngamePlayerListKeymaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-IngamePlayerListKeymaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+IngamePlayerListKeymaps.win32 = InputUtils.keymaps_key_approved("win32")
+IngamePlayerListKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+IngamePlayerListKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+IngamePlayerListKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 IngamePlayerListFilters = {}
-IngamePlayerListFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-IngamePlayerListFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+IngamePlayerListFilters.win32 = InputUtils.keymaps_key_approved("win32")
+IngamePlayerListFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 
 local IngamePlayerListFilters_ps4 = {
 	cursor = {
@@ -499,16 +499,16 @@ local IngamePlayerListFilters_ps4 = {
 	}
 }
 
-IngamePlayerListFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-IngamePlayerListFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+IngamePlayerListFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+IngamePlayerListFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 IngameMenuKeymaps = {}
-IngameMenuKeymaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-IngameMenuKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-IngameMenuKeymaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-IngameMenuKeymaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+IngameMenuKeymaps.win32 = InputUtils.keymaps_key_approved("win32")
+IngameMenuKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+IngameMenuKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+IngameMenuKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 IngameMenuFilters = {}
-IngameMenuFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-IngameMenuFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+IngameMenuFilters.win32 = InputUtils.keymaps_key_approved("win32")
+IngameMenuFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 
 local IngameMenuFilters_ps4 = {
 	debug_pixeldistance = {
@@ -736,24 +736,24 @@ local IngameMenuFilters_ps4 = {
 	}
 }
 
-IngameMenuFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-IngameMenuFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+IngameMenuFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+IngameMenuFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 CutsceneKeymaps = {}
-CutsceneKeymaps.win32 = not not InputUtils.keymaps_key_approved("win32")
-CutsceneKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-CutsceneKeymaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-CutsceneKeymaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+CutsceneKeymaps.win32 = InputUtils.keymaps_key_approved("win32")
+CutsceneKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+CutsceneKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4")
+CutsceneKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 CutsceneFilters = {}
-CutsceneFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-CutsceneFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-CutsceneFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-CutsceneFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+CutsceneFilters.win32 = InputUtils.keymaps_key_approved("win32")
+CutsceneFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
+CutsceneFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+CutsceneFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 ControllerDisconnectKeymaps = {}
-ControllerDisconnectKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+ControllerDisconnectKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
 ControllerDisconnectFilters = {}
-ControllerDisconnectFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
+ControllerDisconnectFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
 BenchmarkControllerSettings = {}
-BenchmarkControllerSettings.win32 = not not InputUtils.keymaps_key_approved("win32")
+BenchmarkControllerSettings.win32 = InputUtils.keymaps_key_approved("win32")
 EndLevelViewKeymapsFilters = table.clone(IngameMenuFilters)
 
 if EndLevelViewKeymapsFilters.xb1 then
@@ -769,12 +769,12 @@ if EndLevelViewKeymapsFilters.ps_pad then
 end
 
 DarkPactSelectionUIKeymaps = {}
-DarkPactSelectionUIKeymaps.win32 = not not InputUtils.keymaps_key_approved("win32")
+DarkPactSelectionUIKeymaps.win32 = InputUtils.keymaps_key_approved("win32")
 DarkPactSelectionUIFilters = {}
-DarkPactSelectionUIFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-DarkPactSelectionUIKeymaps.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-DarkPactSelectionUIFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-DarkPactSelectionUIKeymaps.ps4 = not not InputUtils.keymaps_key_approved("ps4")
+DarkPactSelectionUIFilters.win32 = InputUtils.keymaps_key_approved("win32")
+DarkPactSelectionUIKeymaps.xb1 = InputUtils.keymaps_key_approved("xb1")
+DarkPactSelectionUIFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
+DarkPactSelectionUIKeymaps.ps4 = InputUtils.keymaps_key_approved("ps4")
 DarkPactSelectionUIFilters_ps4 = {
 	move_left = {
 		filter_type = "move_filter",
@@ -807,9 +807,9 @@ DarkPactSelectionUIFilters_ps4 = {
 		}
 	}
 }
-DarkPactSelectionUIKeymaps.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
-DarkPactSelectionUIFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-DarkPactSelectionUIFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+DarkPactSelectionUIKeymaps.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
+DarkPactSelectionUIFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+DarkPactSelectionUIFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 GamepadSettings = {
 	menu_cooldown = 0.25,
 	menu_analog_deadzone = 0.5,

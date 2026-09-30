@@ -279,7 +279,7 @@ local buff_tweak_data = {
 	}
 }
 
-TalentBuffTemplates = not not TalentBuffTemplates
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.dwarf_ranger = {
 	bardin_ironbreaker_ability_cooldown_on_hit = {
 		buffs = {
@@ -1307,7 +1307,7 @@ TalentBuffTemplates.dwarf_ranger = {
 		}
 	}
 }
-TalentTrees = not not TalentTrees
+TalentTrees = TalentTrees
 TalentTrees.dwarf_ranger = {
 	{
 		{

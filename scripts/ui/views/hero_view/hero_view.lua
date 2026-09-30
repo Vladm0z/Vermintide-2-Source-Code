@@ -91,7 +91,7 @@ HeroView._setup_state_machine = function (self, state_machine_params, optional_s
 		self._machine = nil
 	end
 
-	local start_state = not not optional_start_state or not not HeroViewStateOverview
+	local start_state = optional_start_state or HeroViewStateOverview
 	local profiling_debugging_enabled = false
 
 	state_machine_params.start_state = optional_start_sub_state
@@ -113,7 +113,7 @@ end
 
 HeroView.input_service = function (self)
 	-- function 8
-	return self._draw_loading and not not FAKE_INPUT_SERVICE or not self._draw_loading and not not self.input_manager:get_service("hero_view")
+	return self._draw_loading and FAKE_INPUT_SERVICE or not self._draw_loading and self.input_manager:get_service("hero_view")
 end
 
 HeroView.set_input_blocked = function (self, blocked)
@@ -267,7 +267,7 @@ HeroView.update = function (self, dt, t)
 	local input_manager = self.input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local input_blocked = self:input_blocked()
-	local input_service = input_blocked and not not FAKE_INPUT_SERVICE or not input_blocked and not not self:input_service()
+	local input_service = input_blocked and FAKE_INPUT_SERVICE or not input_blocked and self:input_service()
 
 	self._state_machine_params.input_service = input_service
 
@@ -313,7 +313,7 @@ HeroView.on_enter = function (self, params)
 
 	self:create_ui_elements()
 
-	local profile_index = not not self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
+	local profile_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
 
 	self:set_current_hero(profile_index)
 
@@ -348,7 +348,7 @@ HeroView._fetch_initial_loadout_index = function (self, params)
 	self._peer_id = ingame_ui_context.peer_id
 	self._local_player_id = ingame_ui_context.local_player_id
 
-	local network_handler = not not ingame_ui_context.network_server
+	local network_handler = ingame_ui_context.network_server
 
 	self._profile_requester = network_handler:profile_requester()
 	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
@@ -395,12 +395,12 @@ HeroView._handle_new_ui_disclaimer = function (self)
 			keep_decorations = false
 		}
 	}
-	local disclaimer_states = not not global_disclaimer_states[mechanism_name]
+	local disclaimer_states = global_disclaimer_states[mechanism_name]
 	local on_enter_transition_params = self._on_enter_transition_params
-	local menu_state_name = on_enter_transition_params and not not on_enter_transition_params.menu_state_name or not on_enter_transition_params and not not "default"
-	local menu_sub_state_name = not not on_enter_transition_params and not not on_enter_transition_params.menu_sub_state_name
+	local menu_state_name = on_enter_transition_params and on_enter_transition_params.menu_state_name or not on_enter_transition_params and "default"
+	local menu_sub_state_name = on_enter_transition_params and on_enter_transition_params.menu_sub_state_name
 
-	menu_state_name = disclaimer_states[menu_sub_state_name] == nil or not not menu_sub_state_name or not not menu_state_name
+	menu_state_name = disclaimer_states[menu_sub_state_name] == nil or menu_sub_state_name or menu_state_name
 
 	Managers.ui:handle_new_ui_disclaimer(disclaimer_states, menu_state_name)
 end
@@ -429,7 +429,7 @@ HeroView._get_sorted_players = function (self)
 
 	table.sort(player_order, function (a, b)
 		-- function 25
-		return not not a.local_player
+		return a.local_player
 	end)
 
 	return player_order
@@ -476,7 +476,7 @@ HeroView.hotkey_allowed = function (self, input, mapping_data)
 		end
 
 		if name == transition_state then
-			local active_sub_settings_name = not not current_state.get_selected_layout_name
+			local active_sub_settings_name = current_state.get_selected_layout_name
 
 			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
@@ -716,11 +716,11 @@ HeroView._set_loading_overlay_enabled = function (self, enabled, message)
 	local loading_widgets = self._loading_widgets
 	local loading_text_widget = loading_widgets.text
 	local loading_bg_widget = loading_widgets.background
-	local alpha = enabled and not not 255 or not enabled and not not 0
+	local alpha = enabled and 255 or not enabled and 0
 
 	loading_bg_widget.style.color[1] = alpha
 	loading_text_widget.style.text.text_color[1] = alpha
-	loading_text_widget.content.text = not not message or not not ""
+	loading_text_widget.content.text = message or ""
 	self._draw_loading = enabled
 end
 

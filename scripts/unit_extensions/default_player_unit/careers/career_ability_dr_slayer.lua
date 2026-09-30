@@ -136,7 +136,7 @@ CareerAbilityDRSlayer._ability_available = function (self)
 	local status_extension = self._status_extension
 	local locomotion_extension = self._locomotion_extension
 
-	return not not career_extension:can_use_activated_ability()
+	return (career_extension:can_use_activated_ability())
 end
 
 CareerAbilityDRSlayer._start_priming = function (self)
@@ -281,9 +281,9 @@ CareerAbilityDRSlayer._do_stomp = function (self, t)
 	local has_impact_damage_buff = talent_extension:has_talent("bardin_slayer_activated_ability_impact_damage")
 	local position = POSITION_LOOKUP[owner_unit]
 	local rotation = Quaternion.identity()
-	local explosion_template = has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger_impact" or not has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger"
+	local explosion_template = has_impact_damage_buff and "bardin_slayer_activated_ability_landing_stagger_impact" or not has_impact_damage_buff and "bardin_slayer_activated_ability_landing_stagger"
 	local scale = 1
-	local career_power_level = career_extension:get_career_power_level() * (has_impact_damage_buff and not not 2 or not has_impact_damage_buff and not not 1)
+	local career_power_level = career_extension:get_career_power_level() * (has_impact_damage_buff and 2 or not has_impact_damage_buff and 1)
 	local area_damage_system = Managers.state.entity:system("area_damage_system")
 
 	area_damage_system:create_explosion(owner_unit, position, rotation, explosion_template, scale, "career_ability", career_power_level, false)
@@ -346,8 +346,8 @@ CareerAbilityDRSlayer._do_leap = function (self)
 		speed = speed,
 		initial_vertical_speed = PlayerUnitMovementSettings.leap.jump_speed * vertical_speed_modifier,
 		projected_hit_pos = Vector3Box(hit_pos),
-		sfx_event_jump = not not local_player and not not "Play_career_ability_bardin_slayer_jump",
-		sfx_event_land = not not local_player and not not "Play_career_ability_bardin_slayer_impact",
+		sfx_event_jump = local_player and "Play_career_ability_bardin_slayer_jump",
+		sfx_event_land = local_player and "Play_career_ability_bardin_slayer_impact",
 		leap_events = {
 			start = function (this)
 				-- function 14
@@ -363,9 +363,9 @@ CareerAbilityDRSlayer._do_leap = function (self)
 
 				if not aborted then
 					local rotation = Quaternion.identity()
-					local explosion_template = has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger_impact" or not has_impact_damage_buff and not not "bardin_slayer_activated_ability_landing_stagger"
+					local explosion_template = has_impact_damage_buff and "bardin_slayer_activated_ability_landing_stagger_impact" or not has_impact_damage_buff and "bardin_slayer_activated_ability_landing_stagger"
 					local scale = 1
-					local career_power_level = career_extension:get_career_power_level() * (has_impact_damage_buff and not not 2 or not has_impact_damage_buff and not not 1)
+					local career_power_level = career_extension:get_career_power_level() * (has_impact_damage_buff and 2 or not has_impact_damage_buff and 1)
 					local area_damage_system = Managers.state.entity:system("area_damage_system")
 
 					area_damage_system:create_explosion(unit_3p, final_position, rotation, explosion_template, scale, "career_ability", career_power_level, false)

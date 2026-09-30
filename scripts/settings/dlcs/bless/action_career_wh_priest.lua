@@ -115,11 +115,11 @@ end
 
 ActionCareerWHPriest.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 4
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	ActionCareerWHPriest.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
-	local spell_target = not not chain_action_data and not not chain_action_data.target
+	local spell_target = chain_action_data and chain_action_data.target
 
 	if new_action.target_self and not self.is_bot then
 		spell_target = self.owner_unit

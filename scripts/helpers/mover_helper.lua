@@ -1,7 +1,7 @@
 -- chunkname: @scripts/helpers/mover_helper.lua
 
-MoverHelper = not not MoverHelper
-Unit._set_mover = not not Unit._set_mover
+MoverHelper = MoverHelper
+Unit._set_mover = Unit._set_mover
 
 Unit.set_mover = function ()
 	-- function 1

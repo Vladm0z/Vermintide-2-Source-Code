@@ -87,7 +87,7 @@ CareerAbilityWEMaidenGuard._ability_available = function (self)
 	local career_extension = self._career_extension
 	local status_extension = self._status_extension
 
-	return not not career_extension:can_use_activated_ability()
+	return (career_extension:can_use_activated_ability())
 end
 
 CareerAbilityWEMaidenGuard._start_priming = function (self)
@@ -198,7 +198,7 @@ CareerAbilityWEMaidenGuard._run_ability = function (self)
 			width = 1.5,
 			allow_backstab = true,
 			damage_profile = damage_profile,
-			power_level_multiplier = bleed and not not 1 or not bleed and not not 0,
+			power_level_multiplier = bleed and 1 or not bleed and 0,
 			stagger_angles = {
 				max = 90,
 				min = 90

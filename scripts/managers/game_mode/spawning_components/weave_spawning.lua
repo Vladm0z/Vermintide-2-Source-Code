@@ -14,7 +14,7 @@ WeaveSpawning._get_spawn_position_close_to_server = function (self)
 		local status = occupied_slots[i]
 		local peer_id = status.peer_id
 		local local_player_id = status.local_player_id
-		local player = not not peer_id and not not local_player_id and not not player_manager:player(peer_id, local_player_id)
+		local player = peer_id and local_player_id and player_manager:player(peer_id, local_player_id)
 
 		if player and player.is_server and player.player_unit then
 			local whereabouts_extension = ScriptUnit.extension(player.player_unit, "whereabouts_system")
@@ -30,7 +30,7 @@ WeaveSpawning._find_spawn_point = function (self, status)
 	local data = status.game_mode_data
 	local position = self:_get_spawn_position_close_to_server()
 
-	position = not not position or not not data.position:unbox()
+	position = position or data.position:unbox()
 
 	local rotation = data.rotation:unbox()
 

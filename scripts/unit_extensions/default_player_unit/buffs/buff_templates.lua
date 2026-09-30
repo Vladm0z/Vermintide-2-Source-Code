@@ -170,7 +170,7 @@ WeaponSpecificStatBuffs = {}
 local function add_stat_buff(weapon_type, stat_buff_name, application_method, buff_type)
 	-- function 1
 	StatBuffApplicationMethods[stat_buff_name] = application_method
-	WeaponSpecificStatBuffs[weapon_type] = not not WeaponSpecificStatBuffs[weapon_type]
+	WeaponSpecificStatBuffs[weapon_type] = WeaponSpecificStatBuffs[weapon_type]
 	WeaponSpecificStatBuffs[weapon_type][buff_type] = stat_buff_name
 end
 
@@ -310,7 +310,7 @@ local function is_local(unit)
 	-- function 3
 	local player = Managers.player:owner(unit)
 
-	return not not player and not not not player.remote
+	return player and not player.remote
 end
 
 local function is_server()
@@ -322,7 +322,7 @@ local function is_bot(unit)
 	-- function 5
 	local player = Managers.player:owner(unit)
 
-	return not not player and not not player.bot_player
+	return player and player.bot_player
 end
 
 ProcFunctions = {
@@ -345,7 +345,7 @@ ProcFunctions = {
 	metal_mutator_stacks_on_hit = function (owner_unit, buff, params)
 		-- function 8
 		if ALIVE[owner_unit] and Managers.player.is_server then
-			local current_stacks = not not buff.current_stacks
+			local current_stacks = buff.current_stacks
 
 			current_stacks = current_stacks + 1
 
@@ -462,7 +462,7 @@ ProcFunctions = {
 				local breed = params[2]
 
 				if breed and not breed.is_hero then
-					local heal_amount = not not breed.bloodlust_health
+					local heal_amount = breed.bloodlust_health
 
 					DamageUtils.heal_network(owner_unit, owner_unit, heal_amount, "heal_from_proc")
 				end
@@ -527,7 +527,7 @@ ProcFunctions = {
 			local breed = AiUtils.unit_breed(hit_unit)
 			local multiplier = buff.multiplier
 			local is_push = damage_profile.is_push
-			local stagger_calulation = not not stagger_type or not not stagger_value
+			local stagger_calulation = stagger_type or stagger_value
 			local heal_amount = stagger_calulation * multiplier
 
 			if is_push then
@@ -685,7 +685,7 @@ ProcFunctions = {
 				local breed = params[2]
 
 				if breed and not breed.is_hero then
-					local thp_return = not not breed.bloodlust_health
+					local thp_return = breed.bloodlust_health
 					local heal_amount = thp_return
 
 					if script_data.show_player_health then
@@ -727,7 +727,7 @@ ProcFunctions = {
 				1,
 				2
 			}
-			local stagger_multiplier = not not stagger_index[stagger_calculation]
+			local stagger_multiplier = stagger_index[stagger_calculation]
 			local heal_amount = base_value * stagger_multiplier
 
 			if attack_type == "light_attack" or attack_type == "heavy_attack" or attack_type == "action_push" then
@@ -1025,8 +1025,8 @@ ProcFunctions = {
 			local player_position = POSITION_LOOKUP[owner_unit]
 			local rotation = Quaternion.identity()
 			local player = Managers.player:owner(owner_unit)
-			local owner_is_bot = not not player and not not player.bot_player
-			local is_husk = owner_is_bot and not not true or not owner_is_bot and not not false
+			local owner_is_bot = player and player.bot_player
+			local is_husk = owner_is_bot
 			local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
 			local career_power_level = career_extension:get_career_power_level()
 
@@ -1036,7 +1036,7 @@ ProcFunctions = {
 	bardin_ironbreaker_gromril_trigger_rising_anger = function (owner_unit, buff, params)
 		-- function 38
 		if ALIVE[owner_unit] then
-			buff.buff_ids = not not buff.buff_ids
+			buff.buff_ids = buff.buff_ids
 
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 			local buff_amount = #buff.buff_ids
@@ -1119,7 +1119,7 @@ ProcFunctions = {
 		end
 
 		local status_extension = ScriptUnit.has_extension(owner_unit, "status_system")
-		local fatigued = not not status_extension and not not status_extension:fatigued()
+		local fatigued = status_extension and status_extension:fatigued()
 
 		if fatigued then
 			return
@@ -1241,7 +1241,7 @@ ProcFunctions = {
 		if ALIVE[owner_unit] and not status_extension:is_knocked_down() then
 			local health_extension = ScriptUnit.extension(owner_unit, "health_system")
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
-			local already_unkillable = not not buff_extension:has_buff_perk("invulnerable")
+			local already_unkillable = buff_extension:has_buff_perk("invulnerable")
 
 			if already_unkillable then
 				return false
@@ -1629,7 +1629,7 @@ ProcFunctions = {
 		local can_trigger
 
 		if breed_data then
-			can_trigger = not not breed_data.elite or not not breed_data.special
+			can_trigger = breed_data.elite or breed_data.special
 		end
 
 		if ALIVE[owner_unit] and can_trigger and owner_unit == killer_unit and damage_source == "kerillian_waywatcher_career_skill_weapon" then
@@ -1641,7 +1641,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 			local ammo_bonus_fraction = buff_template.ammo_bonus_fraction
 
 			if ammo_extension then
@@ -1674,7 +1674,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 			if ammo_extension then
 				local ammo_bonus_fraction = buff_template.ammo_bonus_fraction
@@ -1914,7 +1914,7 @@ ProcFunctions = {
 			local attacker_unit = params[1]
 
 			if disabler_unit == attacker_unit and Unit.alive(disabler_unit) then
-				local disabler_breed = not not disabler_unit and not not Unit.get_data(disabler_unit, "breed")
+				local disabler_breed = disabler_unit and Unit.get_data(disabler_unit, "breed")
 
 				if not disabler_breed or not disabler_breed.boss then
 					local buff_extension = ScriptUnit.extension(disabler_unit, "buff_system")
@@ -2794,7 +2794,7 @@ ProcFunctions = {
 				local left_unit_1p = slot_data.left_unit_1p
 				local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 				local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-				local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+				local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 				if ammo_extension then
 					ammo_extension:add_ammo_to_reserve(ammo_amount)
@@ -2863,7 +2863,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 			if ammo_extension then
 				ammo_extension:add_ammo_to_reserve(ammo_amount)
@@ -2887,7 +2887,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 			local ammo_bonus_fraction = buff_template.ammo_bonus_fraction
 			local ammo_amount = math.max(math.round(ammo_extension:max_ammo() * ammo_bonus_fraction), 1)
 
@@ -2954,7 +2954,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 			local current_ammo = ammo_extension:remaining_ammo()
 
 			if current_ammo >= 1 and ammo_extension and not ammo_extension:clip_full() then
@@ -2982,7 +2982,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 			if ammo_extension and not ammo_extension:clip_full() then
 				ammo_extension._ammo_immediately_available = true
@@ -3178,7 +3178,7 @@ ProcFunctions = {
 				local left_unit_1p = slot_data.left_unit_1p
 				local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 				local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-				local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+				local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 				local current_ammo = ammo_extension:remaining_ammo()
 				local clip_ammo = ammo_extension:ammo_count()
 
@@ -3247,7 +3247,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 			local ammo_percent = ammo_extension:total_ammo_fraction()
 			local activate_bonus = ammo_percent < buff_template.activation_ammo
 			local ammo_bonus_fraction = buff_template.ammo_bonus_fraction
@@ -3299,7 +3299,7 @@ ProcFunctions = {
 			local left_unit_1p = slot_data.left_unit_1p
 			local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 			local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-			local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+			local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 			if ammo_extension and not ammo_extension:clip_full() then
 				ammo_extension._ammo_immediately_available = true
@@ -3429,7 +3429,7 @@ ProcFunctions = {
 				for i = 1, #remove_buff_stack_data_array do
 					local remove_buff_stack_data = remove_buff_stack_data_array[i]
 					local buff_to_remove_name = remove_buff_stack_data.buff_to_remove
-					local num_stacks = not not remove_buff_stack_data.num_stacks
+					local num_stacks = remove_buff_stack_data.num_stacks
 
 					if remove_buff_stack_data.server_controlled then
 						fassert(buff_to_remove_name == template.buff_to_add, "Trying to remove different type of server controlled buff, only same types are allowed right now.")
@@ -3437,7 +3437,7 @@ ProcFunctions = {
 						local buff_system = Managers.state.entity:system("buff_system")
 						local server_buff_ids = buff.server_buff_ids
 
-						num_stacks = server_buff_ids and (not not math.min(#server_buff_ids, num_stacks) or not not 0) or not server_buff_ids and not not 0
+						num_stacks = server_buff_ids and (math.min(#server_buff_ids, num_stacks) or 0) or not server_buff_ids and 0
 
 						for _ = 1, num_stacks do
 							local buff_to_remove = table.remove(server_buff_ids)
@@ -3459,7 +3459,7 @@ ProcFunctions = {
 					if remove_buff_stack_data.reset_update_timer then
 						local t = Managers.time:time("game")
 
-						buff._next_update_t = t + not not template.update_frequency
+						buff._next_update_t = t + template.update_frequency
 					end
 				end
 			end
@@ -3630,7 +3630,7 @@ ProcFunctions = {
 		local hit_unit = params[1]
 		local breed = Unit.get_data(hit_unit, "breed")
 		local buff_name = buff_template.buff_to_add
-		local enemy_type_list = not not buff_template.enemy_type
+		local enemy_type_list = buff_template.enemy_type
 		local add_buff = false
 
 		if breed and enemy_type_list then
@@ -4047,7 +4047,7 @@ ProcFunctions = {
 		local buff_template = buff.template
 		local hit_unit = params[1]
 		local breed = Unit.get_data(hit_unit, "breed")
-		local enemy_type_list = not not buff_template.enemy_type
+		local enemy_type_list = buff_template.enemy_type
 		local add_buff = false
 
 		if breed and enemy_type_list then
@@ -4269,7 +4269,7 @@ ProcFunctions = {
 				return
 			end
 
-			local damage_to_deal = current_health - damage_amount > 1 and (not not damage_amount or not not (current_health - 1)) or not (current_health - damage_amount > 1) and not not (current_health - 1)
+			local damage_to_deal = current_health - damage_amount > 1 and (damage_amount or current_health - 1) or not (current_health - damage_amount > 1) and current_health - 1
 
 			DamageUtils.add_damage_network(owner_unit, owner_unit, damage_to_deal, "torso", "life_tap", nil, Vector3(0, 0, 0), "life_tap", nil, owner_unit, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 
@@ -4291,14 +4291,14 @@ ProcFunctions = {
 
 		local damage_profile, target_index
 		local career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
-		local full_power_level = career_extension and not not career_extension:get_career_power_level() or not career_extension and not not DefaultPowerLevel
+		local full_power_level = career_extension and career_extension:get_career_power_level() or not career_extension and DefaultPowerLevel
 		local hit_unit = params[1]
 		local hit_zone_name
 		local damage_source = "buff"
 		local boost_curve_multiplier
 		local is_critical_strike = false
 		local explosion_data
-		local source_attacker_unit = not not buff.source_attacker_unit
+		local source_attacker_unit = buff.source_attacker_unit
 		local custom_dot = FrameTable.alloc_table()
 
 		custom_dot.dot_template_name = buff.template.dot_template_name
@@ -4471,20 +4471,20 @@ StackingBuffFunctions = {
 			end
 
 			if oldest_buff then
-				if not Unit.alive(not not oldest_buff.source_attacker_unit) then
+				if not Unit.alive(oldest_buff.source_attacker_unit) then
 					buff_extension:remove_buff(oldest_buff.id)
 
 					return true
 				end
 
-				local old_power_level = not not oldest_buff.power_level
-				local new_power_level = not not new_buff_params.power_level
+				local old_power_level = oldest_buff.power_level
+				local new_power_level = new_buff_params.power_level
 				local is_same_buff = oldest_buff.template == sub_buff_template and new_power_level <= old_power_level
 
 				if not is_same_buff then
 					local hit_zone = "full"
-					local old_damage = DamageUtils.calculate_dot_buff_damage(unit, not not oldest_buff.source_attacker_unit, hit_zone, oldest_buff.damage_source, oldest_buff.power_level, oldest_buff.template.damage_profile)
-					local new_damage = DamageUtils.calculate_dot_buff_damage(unit, not not new_buff_params.source_attacker_unit, hit_zone, new_buff_params.damage_source, new_buff_params.power_level, sub_buff_template.damage_profile)
+					local old_damage = DamageUtils.calculate_dot_buff_damage(unit, oldest_buff.source_attacker_unit, hit_zone, oldest_buff.damage_source, oldest_buff.power_level, oldest_buff.template.damage_profile)
+					local new_damage = DamageUtils.calculate_dot_buff_damage(unit, new_buff_params.source_attacker_unit, hit_zone, new_buff_params.damage_source, new_buff_params.power_level, sub_buff_template.damage_profile)
 					local old_prio = old_damage / oldest_buff.template.time_between_dot_damages
 					local new_prio = new_damage / sub_buff_template.time_between_dot_damages
 

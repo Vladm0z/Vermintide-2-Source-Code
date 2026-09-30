@@ -16,12 +16,12 @@ COLD_CAMERA_BACKLIGHT = {
 	start_falloff = 0,
 	color = Vector3Box(0.9, 0.7, 0.6)
 }
-LevelSettings = not not LevelSettings
+LevelSettings = LevelSettings
 
 require("scripts/settings/dlc_settings")
 DLCUtils.dofile("level_settings")
 
-LevelSettingsDefaultStartLevel = Development.parameter("gdc") and not not "magnus" or not Development.parameter("gdc") and not not "inn_level"
+LevelSettingsDefaultStartLevel = Development.parameter("gdc") and "magnus" or not Development.parameter("gdc") and "inn_level"
 DummyAnyLevel = {
 	level_image = "level_image_any",
 	small_level_image = "any_small_image",
@@ -1883,11 +1883,11 @@ LevelSettings.warcamp = {
 for level_key, level_data in pairs(LevelSettings) do
 	if level_data.display_name then
 		level_data.level_id = level_key
-		level_data.mechanism = not not level_data.mechanism
-		level_data.act_unlock_order = not not level_data.act_unlock_order
+		level_data.mechanism = level_data.mechanism
+		level_data.act_unlock_order = level_data.act_unlock_order
 
 		if level_data.mechanism == "adventure" then
-			level_data.loot_objectives = not not level_data.loot_objectives
+			level_data.loot_objectives = level_data.loot_objectives
 		end
 	end
 end

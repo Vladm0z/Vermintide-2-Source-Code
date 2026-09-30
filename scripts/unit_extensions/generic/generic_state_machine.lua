@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/generic/generic_state_machine.lua
 
-script_data.debug_state_machines = not not script_data.debug_state_machines
+script_data.debug_state_machines = script_data.debug_state_machines
 
 local no_write_meta = {
 	__index = function (t, k)
@@ -63,7 +63,7 @@ GenericStateMachine.update = function (self, unit, input, dt, context, t)
 
 		local state = self.states[self.state_next]
 
-		state:on_enter(unit, input, dt, context, t, self.state_current.name, not not self.state_next_params)
+		state:on_enter(unit, input, dt, context, t, self.state_current.name, self.state_next_params)
 
 		self.state_current = state
 		self.state_next = nil
@@ -97,5 +97,5 @@ end
 
 GenericStateMachine.current_state = function (self)
 	-- function 10
-	return self.state_current and not not self.state_current.name or not self.state_current and not not "none"
+	return self.state_current and self.state_current.name or not self.state_current and "none"
 end

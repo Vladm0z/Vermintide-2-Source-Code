@@ -41,7 +41,7 @@ settings.buff_function_templates = {
 		WwiseUtils.trigger_unit_event(world, "Play_mutator_ticking_bomb_tick", unit, 0)
 
 		local local_player = Managers.player:local_player()
-		local local_player_unit = not not local_player and not not local_player.player_unit
+		local local_player_unit = local_player and local_player.player_unit
 
 		if unit == local_player_unit then
 			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")

@@ -221,7 +221,7 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 		end,
 		leave = function (parent, unit)
 			-- function 11
-			local position = not not unit and not not position_lookup[unit]
+			local position = unit and position_lookup[unit]
 
 			if position then
 				parent.locomotion_extension:teleport_to(position)
@@ -278,7 +278,7 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 			local equipment = inventory_extension:equipment()
 			local weapon_unit = equipment.right_hand_wielded_unit_3p
 			local slot_name = inventory_extension:get_wielded_slot_name()
-			local is_wielding_packmaster_claw = slot_name == "slot_packmaster_claw" and not not weapon_unit
+			local is_wielding_packmaster_claw = slot_name == "slot_packmaster_claw" and weapon_unit
 
 			if not is_wielding_packmaster_claw then
 				inventory_extension:wield("slot_packmaster_claw")
@@ -492,7 +492,7 @@ PlayerCharacterStateGrabbedByPackMaster.update = function (self, unit, input, dt
 	local new_neck_pos = hand_pos + hand_to_neck_vec
 
 	wanted_position = new_neck_pos + neck_to_feet_vec
-	wanted_position = not not wanted_position or not not position
+	wanted_position = wanted_position or position
 
 	local wanted_change = wanted_position - position
 
@@ -519,7 +519,7 @@ PlayerCharacterStateGrabbedByPackMaster.update = function (self, unit, input, dt
 	local radius = 0.9
 	local half_height = 0.6
 	local size = Vector3(radius, half_height, radius)
-	local shape = half_height - radius > 0 and not not "capsule" or not (half_height - radius > 0) and not not "sphere"
+	local shape = half_height - radius > 0 and "capsule" or not (half_height - radius > 0) and "sphere"
 	local actors, num_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", position + Vector3(0, 0, 0.9), "size", size, "collision_filter", "filter_player_mover")
 
 	if num_actors == 0 then

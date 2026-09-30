@@ -59,7 +59,7 @@ BackendInterfaceHeroAttributesPlayFab._refresh = function (self)
 		for attribute_name, default_value in pairs(DEFAULT_READ_ONLY_ATTRIBUTES) do
 			local backend_value = mirror:get_read_only_data(attribute_name)
 
-			self._attributes[attribute_name] = not not backend_value or not not default_value
+			self._attributes[attribute_name] = backend_value or default_value
 		end
 	end
 
@@ -70,7 +70,7 @@ BackendInterfaceHeroAttributesPlayFab._refresh = function (self)
 		for attribute_name, default_value in pairs(DEFAULT_CHARACTER_ATTRIBUTES) do
 			local key = string.format("%s_%s", character, attribute_name)
 
-			attributes[key] = not not data[attribute_name]
+			attributes[key] = data[attribute_name]
 		end
 	end
 

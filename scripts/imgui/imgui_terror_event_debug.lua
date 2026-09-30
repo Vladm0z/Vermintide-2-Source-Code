@@ -72,7 +72,7 @@ ImguiTerrorEventDebug.draw = function (self, is_open)
 
 		self._level_specific_index = 1
 		self._current_level = current_level
-		self._seed = not not Managers.mechanism:get_level_seed()
+		self._seed = Managers.mechanism:get_level_seed()
 	end
 
 	self._seed = Imgui.input_int("seed", self._seed)
@@ -118,7 +118,7 @@ ImguiTerrorEventDebug.draw = function (self, is_open)
 	Imgui.spacing()
 	Imgui.spacing()
 
-	script_data.debug_terror = Imgui.checkbox("Terror Event Debugging On", not not script_data.debug_terror)
+	script_data.debug_terror = Imgui.checkbox("Terror Event Debugging On", script_data.debug_terror)
 
 	local conflict_director = Managers.state.conflict
 

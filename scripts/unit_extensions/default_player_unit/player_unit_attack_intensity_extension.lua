@@ -58,7 +58,7 @@ PlayerUnitAttackIntensityExtension.update = function (self, unit, input, dt, con
 			local intensity = self._attack_intensity[type]
 
 			if intensity > 0 then
-				local decay = self._attack_allowed[type] and not not (self._attack_intensity_decay[type] * 0.25) or not self._attack_allowed[type] and not not self._attack_intensity_decay[type]
+				local decay = self._attack_allowed[type] and self._attack_intensity_decay[type] * 0.25 or not self._attack_allowed[type] and self._attack_intensity_decay[type]
 				local threshold = self._attack_intensity_threshold[type]
 				local reset = self._attack_intensity_reset[type]
 				local buff_extension = self._buff_extension
@@ -87,7 +87,7 @@ PlayerUnitAttackIntensityExtension.add_attack_intensity = function (self, attack
 	fassert(AttackIntensitySettings.attack_type_intesities[attack_intensity_type], "No attack intesity settings defined for attack type \"%s\"", attack_intensity_type)
 
 	self._attack_intensity_decay_grace[attack_intensity_type] = self._attack_intensity_difficulty[attack_intensity_type].decay_grace
-	self._attack_intensity[attack_intensity_type] = math.clamp(self._attack_intensity[attack_intensity_type] + added_attack_intensity, 0, not not clamp_override or not not DEFAULT_ATTACK_INTENSITY_CLAMP)
+	self._attack_intensity[attack_intensity_type] = math.clamp(self._attack_intensity[attack_intensity_type] + added_attack_intensity, 0, clamp_override or DEFAULT_ATTACK_INTENSITY_CLAMP)
 
 	if self._attack_intensity[attack_intensity_type] > self._attack_intensity_threshold[attack_intensity_type] then
 		self._attack_allowed[attack_intensity_type] = false

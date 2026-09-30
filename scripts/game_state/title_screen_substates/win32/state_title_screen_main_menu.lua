@@ -27,7 +27,7 @@ end
 StateTitleScreenMainMenu._check_prologue_status = function (self)
 	-- function 2
 	local success = true
-	local has_completed_tutorial = not not Managers.backend:get_user_data("has_completed_tutorial")
+	local has_completed_tutorial = Managers.backend:get_user_data("has_completed_tutorial")
 
 	if has_completed_tutorial or script_data.disable_tutorial_at_start then
 		success = false
@@ -49,7 +49,7 @@ StateTitleScreenMainMenu._start_game = function (self, level_key)
 
 	self.parent.parent.loading_context.restart_network = true
 	self.parent.parent.loading_context.level_key = level_key
-	self.parent.parent.loading_context.play_trailer = not not is_tutorial or not not Application.user_setting("play_intro_cinematic")
+	self.parent.parent.loading_context.play_trailer = is_tutorial or Application.user_setting("play_intro_cinematic")
 	self.parent.parent.loading_context.force_run_tutorial = is_tutorial
 	self.parent.parent.loading_context.first_time = is_tutorial
 
@@ -101,8 +101,8 @@ end
 
 StateTitleScreenMainMenu._setup_sound = function (self)
 	-- function 8
-	local master_bus_volume = not not Application.user_setting("master_bus_volume")
-	local music_bus_volume = not not Application.user_setting("music_bus_volume")
+	local master_bus_volume = Application.user_setting("master_bus_volume")
+	local music_bus_volume = Application.user_setting("music_bus_volume")
 	local wwise_world
 
 	if GLOBAL_MUSIC_WORLD then
@@ -250,14 +250,14 @@ StateTitleScreenMainMenu.cb_fade_in_done = function (self, level_key, profile_na
 	self._new_state = StateTitleScreenLoadSave
 	self.parent.parent.loading_context.restart_network = true
 	self.parent.parent.loading_context.level_key = level_key
-	self.parent.parent.loading_context.play_trailer = level_key == "prologue" or not not Application.user_setting("play_intro_cinematic")
+	self.parent.parent.loading_context.play_trailer = level_key == "prologue" or Application.user_setting("play_intro_cinematic")
 
 	if level_key == "tutorial" then
 		Managers.backend:make_tutorial()
 
 		self.parent.parent.loading_context.wanted_profile_index = 4
 	elseif script_data.honduras_demo then
-		self.parent.parent.loading_context.wanted_profile_index = profile_name and not not FindProfileIndex(profile_name) or not profile_name and not not DemoSettings.wanted_profile_index
+		self.parent.parent.loading_context.wanted_profile_index = profile_name and FindProfileIndex(profile_name) or not profile_name and DemoSettings.wanted_profile_index
 		GameSettingsDevelopment.disable_free_flight = DemoSettings.disable_free_flight
 		GameSettingsDevelopment.disable_intro_trailer = DemoSettings.disable_intro_trailer
 	end

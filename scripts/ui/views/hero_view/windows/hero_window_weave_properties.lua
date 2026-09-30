@@ -95,9 +95,9 @@ local localized_strings = {
 	ranged_ammo = Localize("inventory_screen_ranged_weapon_title"),
 	ranged_heat = Localize("inventory_screen_ranged_weapon_title"),
 	ranged_energy = Localize("inventory_screen_ranged_weapon_title"),
-	slot_clear_input_description_property = IS_WINDOWS and not not Localize("menu_weave_forge_option_property_remove_desc") or not IS_WINDOWS and not not "",
-	slot_clear_input_description_trait = IS_WINDOWS and not not Localize("menu_weave_forge_option_trait_remove_desc") or not IS_WINDOWS and not not "",
-	slot_clear_input_description_talent = IS_WINDOWS and not not Localize("menu_weave_forge_option_talent_remove_desc") or not IS_WINDOWS and not not "",
+	slot_clear_input_description_property = IS_WINDOWS and Localize("menu_weave_forge_option_property_remove_desc") or not IS_WINDOWS and "",
+	slot_clear_input_description_trait = IS_WINDOWS and Localize("menu_weave_forge_option_trait_remove_desc") or not IS_WINDOWS and "",
+	slot_clear_input_description_talent = IS_WINDOWS and Localize("menu_weave_forge_option_talent_remove_desc") or not IS_WINDOWS and "",
 	tooltip_slot_title_trait = Localize("menu_weave_forge_option_tooltip_title_trait"),
 	tooltip_slot_title_talent = Localize("menu_weave_forge_option_tooltip_title_talent"),
 	tooltip_slot_title_property = Localize("menu_weave_forge_option_tooltip_title_property"),
@@ -211,7 +211,7 @@ HeroWindowWeaveProperties.on_enter = function (self, params, offset)
 	local onboarding_step = WeaveOnboardingUtils.get_onboarding_step(ingame_ui_context.statistics_db, local_player:stats_id())
 	local upgrage_tutorial_reached = WeaveOnboardingUtils.reached_requirements(onboarding_step, WeaveUITutorials.mastery)
 
-	self.upgrage_tutorial = not upgrage_tutorial_completed and not not upgrage_tutorial_reached
+	self.upgrage_tutorial = not upgrage_tutorial_completed and upgrage_tutorial_reached
 
 	if self.upgrage_tutorial then
 		local widgets_by_name = self._widgets_by_name
@@ -238,7 +238,7 @@ HeroWindowWeaveProperties._selected_item = function (self)
 	-- function 3
 	local params = self._params
 
-	return params.selected_item, not not params.selected_item
+	return params.selected_item, params.selected_item
 end
 
 HeroWindowWeaveProperties._selected_unit_name = function (self)
@@ -380,7 +380,7 @@ HeroWindowWeaveProperties._setup_menu_options = function (self, career_name, slo
 
 			for _, trait_key in ipairs(traits) do
 				local trait_data = WeaveTraits.traits[trait_key]
-				local required_forge_level = not not backend_interface_weaves:get_trait_required_forge_level(trait_key)
+				local required_forge_level = backend_interface_weaves:get_trait_required_forge_level(trait_key)
 				local display_name = trait_data.display_name
 				local trait_advanced_description = trait_data.advanced_description
 				local trait_icon = trait_data.icon
@@ -395,7 +395,7 @@ HeroWindowWeaveProperties._setup_menu_options = function (self, career_name, slo
 				local entry = {
 					title = title_text,
 					text = description_text,
-					icon = not not trait_icon or not not "icons_placeholder",
+					icon = trait_icon or "icons_placeholder",
 					category = category,
 					key = trait_key,
 					widget = widget,
@@ -466,10 +466,10 @@ HeroWindowWeaveProperties._setup_menu_options = function (self, career_name, slo
 			for _, talent_name in ipairs(talents) do
 				local talent_id = TalentIDLookup[talent_name].talent_id
 				local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
-				local required_forge_level = not not backend_interface_weaves:get_talent_required_forge_level(talent_name)
-				local icon = talent_data and not not talent_data.icon or not talent_data and not not "icons_placeholder"
-				local title_text = talent_data and not not Localize(not not talent_data.display_name) or not talent_data and not not "Undefined"
-				local description_text = talent_data and not not UIUtils.get_talent_description(talent_data) or not talent_data and not not "Undefined"
+				local required_forge_level = backend_interface_weaves:get_talent_required_forge_level(talent_name)
+				local icon = talent_data and talent_data.icon or not talent_data and "icons_placeholder"
+				local title_text = talent_data and Localize(talent_data.display_name) or not talent_data and "Undefined"
+				local description_text = talent_data and UIUtils.get_talent_description(talent_data) or not talent_data and "Undefined"
 				local widget = UIWidget.init(widget_definition)
 				local entry = {
 					title = title_text,
@@ -541,12 +541,12 @@ HeroWindowWeaveProperties._setup_menu_options = function (self, career_name, slo
 
 			for _, property_key in ipairs(properties) do
 				local property_data = WeaveProperties.properties[property_key]
-				local required_forge_level = not not backend_interface_weaves:get_property_required_forge_level(property_key)
+				local required_forge_level = backend_interface_weaves:get_property_required_forge_level(property_key)
 				local buff_name = property_data.buff_name
 				local buff_template = BuffUtils.get_buff_template(buff_name)
 				local buff_data = buff_template.buffs[1]
 				local has_multiplier = buff_data.variable_multiplier ~= nil
-				local icon = not not property_data.icon
+				local icon = property_data.icon
 				local display_name = property_data.display_name
 				local mastery_costs = backend_interface_weaves:get_property_mastery_costs(property_key)
 				local title_text = UIUtils.get_weave_property_description(property_key, property_data, mastery_costs)
@@ -652,7 +652,7 @@ HeroWindowWeaveProperties._populate_menu_option_widget = function (self, entry_d
 
 	button_hotspot.disable_button = locked
 
-	local current_mastery = not not self._current_mastery
+	local current_mastery = self._current_mastery
 	local loadout = self._loadout
 	local backend_interface_weaves = Managers.backend:get_interface("weaves")
 
@@ -664,14 +664,14 @@ HeroWindowWeaveProperties._populate_menu_option_widget = function (self, entry_d
 		if current_talents then
 			local slot_index = current_talents[talent_key]
 
-			used_amount = not not slot_index or not not 0
+			used_amount = slot_index or 0
 		end
 
 		content.used_amount = used_amount
 
 		local num_uses = 1
 		local cost = backend_interface_weaves:get_talent_mastery_cost(talent_key)
-		local value_text = not locked and used_amount < num_uses and not not tostring(cost)
+		local value_text = not locked and used_amount < num_uses and tostring(cost)
 		local price_text
 
 		if value_text then
@@ -699,14 +699,14 @@ HeroWindowWeaveProperties._populate_menu_option_widget = function (self, entry_d
 		if current_traits then
 			local slot_index = current_traits[trait_key]
 
-			used_amount = not not slot_index or not not 0
+			used_amount = slot_index or 0
 		end
 
 		content.used_amount = used_amount
 
 		local num_uses = 1
 		local cost = backend_interface_weaves:get_trait_mastery_cost(trait_key)
-		local value_text = not locked and used_amount < num_uses and not not tostring(cost)
+		local value_text = not locked and used_amount < num_uses and tostring(cost)
 		local price_text
 
 		if value_text then
@@ -736,7 +736,7 @@ HeroWindowWeaveProperties._populate_menu_option_widget = function (self, entry_d
 		if current_properties then
 			local slot_indices = current_properties[property_key]
 
-			used_amount = slot_indices and (not not #slot_indices or not not 0) or not slot_indices and not not 0
+			used_amount = slot_indices and (#slot_indices or 0) or not slot_indices and 0
 		end
 
 		local costs = backend_interface_weaves:get_property_mastery_costs(property_key)
@@ -746,8 +746,8 @@ HeroWindowWeaveProperties._populate_menu_option_widget = function (self, entry_d
 		content.used_amount = used_amount
 
 		local num_uses = #costs
-		local next_cost = used_amount < num_uses and not not costs[used_amount + 1] or not (used_amount < num_uses) and not not nil
-		local value_text = not locked and not not next_cost and not not tostring(next_cost)
+		local next_cost = used_amount < num_uses and costs[used_amount + 1] or not (used_amount < num_uses) and nil
+		local value_text = not locked and next_cost and tostring(next_cost)
 		local price_text
 
 		if value_text then
@@ -758,7 +758,7 @@ HeroWindowWeaveProperties._populate_menu_option_widget = function (self, entry_d
 			price_text = localized_strings.property_cost_cap
 		end
 
-		local can_afford = not not next_cost and next_cost <= current_mastery
+		local can_afford = next_cost and next_cost <= current_mastery
 
 		self:_align_menu_option_price_text(style, content.price_icon, price_text, value_text, can_afford, locked)
 
@@ -817,7 +817,7 @@ HeroWindowWeaveProperties._align_menu_option_price_text = function (self, style,
 		local color_override = price_text_style.color_override
 
 		color_override[1] = color_override_table
-		color_override_table.color = can_afford and not not mastery_price_colors.affordable or not can_afford and not not mastery_price_colors.unaffordable
+		color_override_table.color = can_afford and mastery_price_colors.affordable or not can_afford and mastery_price_colors.unaffordable
 
 		local price_icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(price_icon)
 		local price_icon_size = price_icon_texture_settings.size
@@ -835,7 +835,7 @@ HeroWindowWeaveProperties._align_menu_option_price_text = function (self, style,
 	end
 
 	local spacing = 0
-	local style_price_text = locked and not not style.price_text_disabled or not locked and not not style.price_text
+	local style_price_text = locked and style.price_text_disabled or not locked and style.price_text
 	local price_text_width = UIUtils.get_text_width(ui_renderer, style_price_text, price_text)
 	local total_price_width = price_icon_width + price_text_width + spacing
 
@@ -967,24 +967,24 @@ HeroWindowWeaveProperties._create_slot_grid = function (self, slot_layout, slots
 			progression_table = slots_progression.properties
 		end
 
-		parent_x = not not parent_x or not not 0
-		parent_y = not not parent_y or not not 0
+		parent_x = parent_x or 0
+		parent_y = parent_y or 0
 
 		local layers = 1
-		local start_angle = not not layout.start_angle
+		local start_angle = layout.start_angle
 
 		for i = 1, layers do
 			local layer_start_angle_increment = layout.layer_start_angle_increment
 
 			if layer_start_angle_increment then
-				start_angle = start_angle + ((not not layer_index or not not i) - 1) * layer_start_angle_increment
+				start_angle = start_angle + ((layer_index or i) - 1) * layer_start_angle_increment
 			end
 
-			local settings = not not layer_settings and not not layer_settings[i]
+			local settings = layer_settings and layer_settings[i]
 
-			amount_per_layer = not settings or not not settings.amount_per_layer or not not amount_per_layer
-			degrees = not settings or not not settings.degrees or not not degrees
-			radius = not settings or not not settings.radius or not not radius
+			amount_per_layer = not settings or settings.amount_per_layer or amount_per_layer
+			degrees = not settings or settings.degrees or degrees
+			radius = not settings or settings.radius or radius
 
 			local radians = math.degrees_to_radians(degrees)
 			local start_index = #slot_table + 1
@@ -1014,8 +1014,8 @@ HeroWindowWeaveProperties._create_slot_grid = function (self, slot_layout, slots
 					x = math.floor(parent_x + position_x),
 					y = math.floor(parent_y + position_y),
 					index = entry_index,
-					category = not not entry_progression and not not entry_progression.category,
-					unlock_level = not not entry_progression and not not entry_progression.unlock_level
+					category = entry_progression and entry_progression.category,
+					unlock_level = entry_progression and entry_progression.unlock_level
 				}
 
 				slot_table[entry_index] = entry
@@ -1117,17 +1117,17 @@ HeroWindowWeaveProperties.update = function (self, dt, t)
 	local viewport_button = widgets_by_name.viewport_button
 	local is_hover = self:_is_button_hover(viewport_button)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local allow_preview_input = not not gamepad_active or not not is_hover
+	local allow_preview_input = gamepad_active or is_hover
 	local item_previewer = self._item_previewer
 
 	if item_previewer then
-		item_previewer:update(dt, t, not not allow_preview_input and not not input_service)
+		item_previewer:update(dt, t, allow_preview_input and input_service)
 	end
 
 	local unit_previewer = self._unit_previewer
 
 	if unit_previewer then
-		unit_previewer:update(dt, t, not not allow_preview_input and not not input_service)
+		unit_previewer:update(dt, t, allow_preview_input and input_service)
 	end
 
 	local options_list_button = widgets_by_name.options_list_button
@@ -1271,7 +1271,7 @@ HeroWindowWeaveProperties._update_animations = function (self, dt)
 	-- function 21
 	local params = self._params
 	local is_upgrading = params.upgrading
-	local upgrading_anim_progress = not not self._upgrading_anim_progress
+	local upgrading_anim_progress = self._upgrading_anim_progress
 	local upgrading_speed = 3
 
 	if is_upgrading then
@@ -1330,7 +1330,7 @@ end
 HeroWindowWeaveProperties._is_button_hover = function (self, widget)
 	-- function 23
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	return hotspot.is_hover
 end
@@ -1340,7 +1340,7 @@ HeroWindowWeaveProperties._is_button_hover_enter = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_enter
+	return hotspot.on_hover_enter
 end
 
 HeroWindowWeaveProperties._is_button_hover_exit = function (self, widget)
@@ -1348,7 +1348,7 @@ HeroWindowWeaveProperties._is_button_hover_exit = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_exit
+	return hotspot.on_hover_exit
 end
 
 HeroWindowWeaveProperties._is_button_selected = function (self, widget)
@@ -1362,9 +1362,9 @@ end
 HeroWindowWeaveProperties._is_button_hovered = function (self, widget)
 	-- function 27
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
-	return not not hotspot.is_hover
+	return hotspot.is_hover
 end
 
 HeroWindowWeaveProperties._handle_input = function (self, dt, t)
@@ -1405,7 +1405,7 @@ HeroWindowWeaveProperties._upgrade_magic_level = function (self)
 
 	local career_name = self._career_name
 	local item = self:_selected_item()
-	local item_backend_id = not not item and not not item.backend_id
+	local item_backend_id = item and item.backend_id
 	local backend_manger = Managers.backend
 	local backend_interface_weaves = backend_manger:get_interface("weaves")
 	local num_levels = 1
@@ -1489,10 +1489,10 @@ HeroWindowWeaveProperties._magic_level_and_power = function (self)
 	else
 		magic_level = backend_interface_weaves:get_career_magic_level(career_name)
 		magic_power = backend_interface_weaves:get_career_power_level(career_name)
-		magic_power = not not magic_power and not not UIUtils.presentable_hero_power_level_weaves(magic_power)
+		magic_power = magic_power and UIUtils.presentable_hero_power_level_weaves(magic_power)
 	end
 
-	return not not magic_level or not not 0, not not magic_power or not not 0
+	return magic_level or 0, magic_power or 0
 end
 
 HeroWindowWeaveProperties._forge_level = function (self)
@@ -1511,7 +1511,7 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 	local backend_interface_weaves = backend_manger:get_interface("weaves")
 	local properties = backend_interface_weaves:get_loadout_properties(career_name, item_backend_id)
 	local traits = backend_interface_weaves:get_loadout_traits(career_name, item_backend_id)
-	local talents = not item_backend_id and not not backend_interface_weaves:get_loadout_talents(career_name)
+	local talents = not item_backend_id and backend_interface_weaves:get_loadout_talents(career_name)
 	local initial_mastery, current_mastery = backend_interface_weaves:get_mastery(career_name, item_backend_id)
 	local play_sound = self._current_mastery ~= nil
 
@@ -1568,10 +1568,10 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 	end
 
 	local is_max_level = max_magic_level <= magic_level
-	local can_afford_upgrade = not not upgrade_cost and upgrade_cost <= essence_amount
+	local can_afford_upgrade = upgrade_cost and upgrade_cost <= essence_amount
 	local magic_cap_reached = not is_max_level and magic_level_cap <= magic_level
 
-	self:_set_essence_upgrade_cost(not is_max_level and not not upgrade_cost, can_afford_upgrade, magic_cap_reached)
+	self:_set_essence_upgrade_cost(not is_max_level and upgrade_cost, can_afford_upgrade, magic_cap_reached)
 
 	local slots = self._slots
 
@@ -1600,12 +1600,12 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 			local widget = slot.widget
 			local content = widget.content
 			local property_key = properties_index_map[slot_index]
-			local add_tooltip = magic_level < unlock_level or not not property_key
-			local tooltip_data = add_tooltip and not not {} or not add_tooltip and not not nil
+			local add_tooltip = magic_level < unlock_level or property_key
+			local tooltip_data = add_tooltip and {} or not add_tooltip and nil
 
 			content.tooltip = tooltip_data
 
-			local is_new = not not upgraded and previous_level_if_upgraded < unlock_level and unlock_level <= magic_level and not not upgraded
+			local is_new = upgraded and previous_level_if_upgraded < unlock_level and unlock_level <= magic_level and upgraded
 
 			if is_new then
 				content.new = is_new
@@ -1613,7 +1613,7 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 			end
 
 			local tooltip_slot_title = localized_strings.tooltip_slot_title_property
-			local tooltip_slot_sub_title = not not slot_type_strings[slot_category]
+			local tooltip_slot_sub_title = slot_type_strings[slot_category]
 
 			if property_key then
 				if not slot.presentation_data then
@@ -1629,7 +1629,7 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 				local cost_value = mastery_costs[num_uses]
 				local display_name = property_data.display_name
 				local title_text = UIUtils.get_weave_property_description(property_key, property_data, mastery_costs)
-				local icon = not not property_data.icon
+				local icon = property_data.icon
 				local presentation_data = slot.presentation_data
 
 				presentation_data.icon = icon
@@ -1664,12 +1664,12 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 			local widget = slot.widget
 			local content = widget.content
 			local trait_key = table.find(traits, slot_index)
-			local add_tooltip = magic_level < unlock_level or not not trait_key
-			local tooltip_data = add_tooltip and not not {} or not add_tooltip and not not nil
+			local add_tooltip = magic_level < unlock_level or trait_key
+			local tooltip_data = add_tooltip and {} or not add_tooltip and nil
 
 			content.tooltip = tooltip_data
 
-			local is_new = not not upgraded and previous_level_if_upgraded < unlock_level and unlock_level <= magic_level and not not upgraded
+			local is_new = upgraded and previous_level_if_upgraded < unlock_level and unlock_level <= magic_level and upgraded
 
 			if is_new then
 				content.new = is_new
@@ -1677,7 +1677,7 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 			end
 
 			local tooltip_slot_title = localized_strings.tooltip_slot_title_trait
-			local tooltip_slot_sub_title = not not slot_type_strings[slot_category]
+			local tooltip_slot_sub_title = slot_type_strings[slot_category]
 
 			if trait_key then
 				if not slot.presentation_data then
@@ -1687,7 +1687,7 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 				end
 
 				local trait_data = WeaveTraits.traits[trait_key]
-				local icon = not not trait_data.icon
+				local icon = trait_data.icon
 				local cost_value = backend_interface_weaves:get_trait_mastery_cost(trait_key)
 				local display_name = trait_data.display_name
 				local trait_advanced_description = trait_data.advanced_description
@@ -1735,14 +1735,14 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 			local widget = slot.widget
 			local content = widget.content
 			local tooltip_slot_title = localized_strings.tooltip_slot_title_talent
-			local tooltip_slot_sub_title = not not slot_type_strings[slot_category]
+			local tooltip_slot_sub_title = slot_type_strings[slot_category]
 			local talent_key = table.find(talents, slot_index)
-			local add_tooltip = magic_level < unlock_level or not not talent_key
-			local tooltip_data = add_tooltip and not not {} or not add_tooltip and not not nil
+			local add_tooltip = magic_level < unlock_level or talent_key
+			local tooltip_data = add_tooltip and {} or not add_tooltip and nil
 
 			content.tooltip = tooltip_data
 
-			local is_new = not not upgraded and previous_level_if_upgraded < unlock_level and unlock_level <= magic_level and not not upgraded
+			local is_new = upgraded and previous_level_if_upgraded < unlock_level and unlock_level <= magic_level and upgraded
 
 			if is_new then
 				content.new = is_new
@@ -1759,7 +1759,7 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 				local talent_id = TalentIDLookup[talent_key].talent_id
 				local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
 				local cost_value = backend_interface_weaves:get_talent_mastery_cost(talent_key)
-				local icon = talent_data and not not talent_data.icon or not talent_data and not not "icons_placeholder"
+				local icon = talent_data and talent_data.icon or not talent_data and "icons_placeholder"
 				local presentation_data = slot.presentation_data
 
 				presentation_data.icon = icon
@@ -1767,9 +1767,9 @@ HeroWindowWeaveProperties._sync_backend_loadout = function (self, upgraded, prev
 				presentation_data.value = cost_value
 
 				if tooltip_data then
-					tooltip_data.talent_title = talent_data and not not Localize(not not talent_data.display_name) or not talent_data and not not "n/a"
+					tooltip_data.talent_title = talent_data and Localize(talent_data.display_name) or not talent_data and "n/a"
 					tooltip_data.sub_title = tooltip_slot_title .. " - " .. tooltip_slot_sub_title
-					tooltip_data.description = talent_data and not not UIUtils.get_talent_description(talent_data) or not talent_data and not not "n/a"
+					tooltip_data.description = talent_data and UIUtils.get_talent_description(talent_data) or not talent_data and "n/a"
 					tooltip_data.input = localized_strings.slot_clear_input_description_talent
 					tooltip_data.value = Localize("menu_weave_forge_option_tooltip_value_title") .. " " .. cost_value
 				end
@@ -1815,7 +1815,7 @@ HeroWindowWeaveProperties._setup_upgrade_tooltip = function (self, num_levels)
 		}
 
 		local is_item = item ~= nil
-		local progression_table = is_item and not not WeaveWeaponProgression or not is_item and not not WeaveCareerProgression
+		local progression_table = is_item and WeaveWeaponProgression or not is_item and WeaveCareerProgression
 		local progression_properties = progression_table.properties
 
 		if progression_properties then
@@ -1830,7 +1830,7 @@ HeroWindowWeaveProperties._setup_upgrade_tooltip = function (self, num_levels)
 			end
 
 			if counter > 0 then
-				local suffix = counter > 1 and not not Localize("menu_weave_forge_tooltip_upgrade_property_slots") or not (counter > 1) and not not Localize("menu_weave_forge_tooltip_upgrade_property_slot")
+				local suffix = counter > 1 and Localize("menu_weave_forge_tooltip_upgrade_property_slots") or not (counter > 1) and Localize("menu_weave_forge_tooltip_upgrade_property_slot")
 
 				upgrade_tooltip_data.upgrade_property_text = "+" .. counter .. " " .. suffix
 			end
@@ -1868,13 +1868,13 @@ HeroWindowWeaveProperties._setup_upgrade_tooltip = function (self, num_levels)
 			end
 
 			if counter > 0 then
-				local suffix = counter > 1 and not not Localize("menu_weave_forge_tooltip_upgrade_trait_slots") or not (counter > 1) and not not Localize("menu_weave_forge_tooltip_upgrade_trait_slot")
+				local suffix = counter > 1 and Localize("menu_weave_forge_tooltip_upgrade_trait_slots") or not (counter > 1) and Localize("menu_weave_forge_tooltip_upgrade_trait_slot")
 
 				upgrade_tooltip_data.upgrade_trait_text = "+" .. counter .. " " .. suffix
 			end
 		end
 
-		local mastery_per_level = is_item and not not WeaveMasterySettings.item_mastery_per_magic_level or not is_item and not not WeaveMasterySettings.career_mastery_per_magic_level
+		local mastery_per_level = is_item and WeaveMasterySettings.item_mastery_per_magic_level or not is_item and WeaveMasterySettings.career_mastery_per_magic_level
 
 		upgrade_tooltip_data.upgrade_mastery_text = "+" .. mastery_per_level * num_levels .. " " .. Localize("menu_weave_forge_tooltip_mastery_title")
 
@@ -1927,8 +1927,8 @@ HeroWindowWeaveProperties._set_essence_upgrade_cost = function (self, essence_am
 		button_style.price_icon_disabled.color[1] = 0
 	end
 
-	widget_warning.content.visible = not not false
-	button_content.button_hotspot.disable_button = not not GameSettingsDevelopment.read_only_backend
+	widget_warning.content.visible = false
+	button_content.button_hotspot.disable_button = GameSettingsDevelopment.read_only_backend
 	button_content.title_text = button_text
 end
 
@@ -1961,13 +1961,13 @@ HeroWindowWeaveProperties._draw_slots = function (self, ui_renderer, dt)
 			if widget_type == "talent" then
 				local text
 
-				text = not not "VI"
+				text = "VI"
 				content.text = text
 			end
 
-			local key = not not presentation_data and not not presentation_data.key
+			local key = presentation_data and presentation_data.key
 
-			content.highlight = not not self._highlighted_key
+			content.highlight = self._highlighted_key
 
 			if presentation_data then
 				content.icon = presentation_data.icon
@@ -1975,7 +1975,7 @@ HeroWindowWeaveProperties._draw_slots = function (self, ui_renderer, dt)
 				local animation_duration = presentation_data.animation_duration
 
 				if animation_duration then
-					local animation_time = not not presentation_data.animation_time
+					local animation_time = presentation_data.animation_time
 					local animation_progress = 1 - animation_time / animation_duration
 
 					if animation_progress == 1 then
@@ -2152,7 +2152,7 @@ HeroWindowWeaveProperties._animate_menu_option_entry = function (self, entry, me
 	local content = widget.content
 	local locked = content.locked
 	local style = widget.style
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 	local disabled = hotspot.disable_button
 	local highlight_slot = false
 	local is_hover = hotspot.is_hover
@@ -2162,10 +2162,10 @@ HeroWindowWeaveProperties._animate_menu_option_entry = function (self, entry, me
 	end
 
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local highlight_progress = not not hotspot.highlight_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local highlight_progress = hotspot.highlight_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 15
 
 	if is_hover then
@@ -2187,7 +2187,7 @@ HeroWindowWeaveProperties._animate_menu_option_entry = function (self, entry, me
 	end
 
 	local combined_progress = math.max(hover_progress, selection_progress)
-	local background_color = disabled and not not 100 or not disabled and not not 255
+	local background_color = disabled and 100 or not disabled and 255
 
 	style.background.color[2] = background_color
 	style.background.color[3] = background_color
@@ -2199,7 +2199,7 @@ HeroWindowWeaveProperties._animate_menu_option_entry = function (self, entry, me
 
 	local used_amount = content.used_amount
 	local has_value = used_amount >= 1
-	local value_progress = not not hotspot.value_progress
+	local value_progress = hotspot.value_progress
 
 	if has_value then
 		value_progress = math.min(value_progress + dt * speed, 1)
@@ -2233,14 +2233,14 @@ HeroWindowWeaveProperties._animate_slot = function (self, slot, dt)
 	local locked = content.locked
 	local new = content.new
 	local style = widget.style
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 	local highlight_slot = not locked and active_menu_category == category and widget_type == active_menu_option
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local highlight_progress = not not hotspot.highlight_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local highlight_progress = hotspot.highlight_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 15
 
 	if is_hover then
@@ -2266,7 +2266,7 @@ HeroWindowWeaveProperties._animate_slot = function (self, slot, dt)
 	local new_progress = 0.5 + math.sin(Managers.time:time("ui") * new_pulse_speed) * 0.5
 
 	style.highlight_texture.color[1] = 255 * highlight_progress
-	style.hover.color[1] = 255 * (new and (not not new_progress or not not hover_progress) or not new and not not hover_progress)
+	style.hover.color[1] = 255 * (new and (new_progress or hover_progress) or not new and hover_progress)
 
 	local slot_locked_style = style.slot_locked
 
@@ -2317,14 +2317,14 @@ HeroWindowWeaveProperties._enable_menu_options = function (self, enabled, widget
 	local menu_options = self._menu_options
 	local options = menu_options[widget_type]
 
-	self._active_menu_option = enabled and (not not widget_type or not not nil) or not enabled and not not nil
-	self._active_menu_category = enabled and (not not category or not not nil) or not enabled and not not nil
+	self._active_menu_option = enabled and (widget_type or nil) or not enabled and nil
+	self._active_menu_category = enabled and (category or nil) or not enabled and nil
 
 	if enabled then
 		for category_key, option in pairs(options) do
 			local correct_option = category_key == category
 
-			option.anim_duration = correct_option and not not 0 or not correct_option and not not nil
+			option.anim_duration = correct_option and 0 or not correct_option and nil
 		end
 
 		if widget_type == "trait" then
@@ -2408,7 +2408,7 @@ HeroWindowWeaveProperties._draw_menu_selection = function (self, ui_renderer, re
 			local num_entries = #entries
 			local curve_multiplier = 0.00058
 			local entry_height = widget_size[2]
-			local spacing = not not menu_data.spacing
+			local spacing = menu_data.spacing
 			local total_length = menu_data.total_length
 			local scroll_length = menu_data.scroll_length
 			local draw_count = menu_data.draw_count
@@ -2482,7 +2482,7 @@ HeroWindowWeaveProperties._draw_menu_selection = function (self, ui_renderer, re
 						end
 
 						if next_slot and next_cost then
-							local current_mastery = not not self._current_mastery
+							local current_mastery = self._current_mastery
 							local approved = not occupied and next_cost <= current_mastery
 
 							if occupied then
@@ -2491,7 +2491,7 @@ HeroWindowWeaveProperties._draw_menu_selection = function (self, ui_renderer, re
 								local occupied_value = presentation_data.value
 								local can_afford = next_cost <= current_mastery + occupied_value
 
-								approved = not not can_afford and occupied_key ~= key
+								approved = can_afford and occupied_key ~= key
 
 								if approved and occupied_key then
 									self:_clear_slot(next_slot, occupied_key, active_menu_option)
@@ -2523,7 +2523,7 @@ HeroWindowWeaveProperties._highlight_slots_by_key = function (self, key, menu_op
 			local presentation_data = slot.presentation_data
 
 			if presentation_data then
-				presentation_data.highlight = not not correct_type and presentation_data.key == key
+				presentation_data.highlight = correct_type and presentation_data.key == key
 			end
 		end
 	end
@@ -2567,7 +2567,7 @@ HeroWindowWeaveProperties._find_next_available_slot = function (self, menu_optio
 		local presentation_data = slot.presentation_data
 		local unlock_level = slot.unlock_level
 		local occupied = presentation_data ~= nil
-		local valid = not not allow_occupied_slots or not not not occupied
+		local valid = allow_occupied_slots or not occupied
 
 		if valid and unlock_level <= magic_level then
 			return slot, occupied
@@ -2641,7 +2641,7 @@ HeroWindowWeaveProperties._clear_slots = function (self, menu_option, category)
 	local backend_manger = Managers.backend
 	local backend_interface_weaves = backend_manger:get_interface("weaves")
 	local item = self:_selected_item()
-	local item_backend_id = not not item and not not item.backend_id
+	local item_backend_id = item and item.backend_id
 	local loadout = self._loadout
 	local loadout_slots = loadout[menu_option]
 
@@ -2691,7 +2691,7 @@ HeroWindowWeaveProperties._clear_slot = function (self, slot, key, menu_option)
 	local backend_manger = Managers.backend
 	local backend_interface_weaves = backend_manger:get_interface("weaves")
 	local item = self:_selected_item()
-	local item_backend_id = not not item and not not item.backend_id
+	local item_backend_id = item and item.backend_id
 	local slot_index = slot.index
 
 	if menu_option == "property" then
@@ -2712,7 +2712,7 @@ HeroWindowWeaveProperties._add_key_to_slot = function (self, slot, key, menu_opt
 	local backend_manger = Managers.backend
 	local backend_interface_weaves = backend_manger:get_interface("weaves")
 	local item = self:_selected_item()
-	local item_backend_id = not not item and not not item.backend_id
+	local item_backend_id = item and item.backend_id
 	local slot_index = slot.index
 
 	if menu_option == "property" then
@@ -2815,7 +2815,7 @@ HeroWindowWeaveProperties._draw = function (self, dt)
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
 	for _, widget in ipairs(self._bottom_hdr_widgets) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_renderer, widget)
 	end
@@ -2826,7 +2826,7 @@ HeroWindowWeaveProperties._draw = function (self, dt)
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
 	for _, widget in ipairs(self._top_hdr_widgets) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_top_renderer, widget)
 	end
@@ -2845,7 +2845,7 @@ HeroWindowWeaveProperties._draw = function (self, dt)
 			render_settings.snap_pixel_positions = snap_pixel_positions
 		end
 
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
@@ -2874,7 +2874,7 @@ HeroWindowWeaveProperties._draw = function (self, dt)
 			render_settings.snap_pixel_positions = snap_pixel_positions
 		end
 
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -2963,7 +2963,7 @@ end
 
 HeroWindowWeaveProperties._set_mastery_amount = function (self, initial_mastery, current_mastery, play_sound)
 	-- function 67
-	self._previous_mastery = not not self._current_mastery
+	self._previous_mastery = self._current_mastery
 	self._current_mastery = current_mastery
 	self._mastery_anim_time = 0
 

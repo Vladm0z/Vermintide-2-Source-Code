@@ -80,7 +80,7 @@ PlayerManager.rpc_sync_loadout_slot = function (self, channel_id, peer_id, local
 	local slot_name, item = LoadoutUtils.create_loadout_item_from_rpc_data(slot_id, item_id, rarity_id, power_level, buff_ids, buff_value_type_ids, buff_values)
 	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
 
-	self._player_loadouts[unique_id] = not not self._player_loadouts[unique_id]
+	self._player_loadouts[unique_id] = self._player_loadouts[unique_id]
 	self._player_loadouts[unique_id][slot_name] = item
 
 	if self.is_server and peer_id ~= Network.peer_id() then
@@ -292,7 +292,7 @@ PlayerManager.add_player = function (self, input_source, viewport_name, viewport
 
 	local player_table = self._players_by_peer
 
-	player_table[peer_id] = not not player_table[peer_id]
+	player_table[peer_id] = player_table[peer_id]
 	player_table[peer_id][local_player_id] = player
 
 	local stats = Managers.backend:get_interface("statistics"):get_stats()
@@ -340,7 +340,7 @@ PlayerManager.add_remote_player = function (self, peer_id, player_controlled, lo
 
 	local player_table = self._players_by_peer
 
-	player_table[peer_id] = not not player_table[peer_id]
+	player_table[peer_id] = player_table[peer_id]
 	player_table[peer_id][local_player_id] = player
 
 	self._statistics_db:register(player:stats_id(), "player")
@@ -354,7 +354,7 @@ PlayerManager.player_exists = function (self, peer_id, local_player_id)
 	-- function 19
 	local peer_table = self._players_by_peer[peer_id]
 
-	return peer_table and not not peer_table[not not local_player_id or not not 1] or not peer_table and not not false
+	return peer_table and peer_table[local_player_id or 1]
 end
 
 PlayerManager.owner = function (self, unit)
@@ -391,7 +391,7 @@ PlayerManager.add_bot_player = function (self, player_name, bot_player_peer_id, 
 
 	local player_table = self._players_by_peer
 
-	player_table[peer_id] = not not player_table[peer_id]
+	player_table[peer_id] = player_table[peer_id]
 	player_table[peer_id][local_player_id] = player
 
 	local stats_id = player:stats_id()
@@ -433,7 +433,7 @@ end
 PlayerManager.remove_player = function (self, peer_id, local_player_id)
 	-- function 27
 	if script_data.network_debug_connections then
-		printf("PlayerManager:remove_player peer_id=%s %i", tostring(peer_id), not not local_player_id or not not -1)
+		printf("PlayerManager:remove_player peer_id=%s %i", tostring(peer_id), local_player_id or -1)
 	end
 
 	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
@@ -483,7 +483,7 @@ end
 
 PlayerManager.player = function (self, peer_id, local_player_id)
 	-- function 28
-	fassert(not not peer_id and not not local_player_id, "Required peer id and local player id.")
+	fassert(peer_id and local_player_id, "Required peer id and local player id.")
 
 	return self:player_from_peer_id(peer_id, local_player_id)
 end
@@ -496,7 +496,7 @@ PlayerManager.player_from_peer_id = function (self, peer_id, local_player_id)
 		return nil
 	end
 
-	return player_table[not not local_player_id or not not 1]
+	return player_table[local_player_id or 1]
 end
 
 PlayerManager.players_at_peer = function (self, peer_id)
@@ -551,7 +551,7 @@ PlayerManager.server_player = function (self)
 	local network_manager = Managers.state.network
 	local network_transmit = network_manager.network_transmit
 	local server_peer_id = network_transmit.server_peer_id
-	local game_owner_peer_id = not not server_peer_id or not not network_transmit.peer_id
+	local game_owner_peer_id = server_peer_id or network_transmit.peer_id
 
 	return self:player_from_peer_id(game_owner_peer_id, 1)
 end
@@ -622,18 +622,18 @@ PlayerManager.local_player = function (self, local_player_id)
 		return nil
 	end
 
-	return self:player(Network.peer_id(), not not local_player_id or not not 1)
+	return self:player(Network.peer_id(), local_player_id or 1)
 end
 
 PlayerManager.local_player_safe = function (self, local_player_id)
 	-- function 41
-	local network_manager = not not Managers.state
+	local network_manager = Managers.state
 
 	if not network_manager or not network_manager:game() then
 		return
 	end
 
-	return self:player(Network.peer_id(), not not local_player_id or not not 1)
+	return self:player(Network.peer_id(), local_player_id or 1)
 end
 
 PlayerManager.local_human_player = function (self)

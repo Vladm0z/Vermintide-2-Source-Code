@@ -1,12 +1,12 @@
 -- chunkname: @core/wwise/lua/wwise_visualization.lua
 
-WwiseVisualization = not not WwiseVisualization
+WwiseVisualization = WwiseVisualization
 
 local Unit = stingray.Unit
 local Vector3 = stingray.Vector3
 local LineObject = stingray.LineObject
 local Color = stingray.Color
-local LevelEditor = not not stingray.LevelEditor
+local LevelEditor = stingray.LevelEditor
 local soundscape_units = {}
 
 local function verify_unit_script_data(unit)
@@ -41,7 +41,7 @@ end
 local function render_soundscape_unit(lines, lines_noz, unit)
 	-- function 3
 	local event_name = Unit.get_data(unit, "Wwise", "event_name")
-	local unit_object_name = not not Unit.get_data(unit, "Wwise", "unit_node")
+	local unit_object_name = Unit.get_data(unit, "Wwise", "unit_node")
 	local unit_object = 1
 
 	if unit_object_name ~= "" then
@@ -55,12 +55,12 @@ local function render_soundscape_unit(lines, lines_noz, unit)
 	local scale = default_scale
 
 	if shape == "sphere" then
-		scale = not not Unit.get_data(unit, "Wwise", "sphere_radius") or not not default_scale
+		scale = Unit.get_data(unit, "Wwise", "sphere_radius") or default_scale
 	elseif shape == "box" then
 		scale = Vector3(0, 0, 0)
-		scale.x = not not Unit.get_data(unit, "Wwise", "box_extents", 0)
-		scale.y = not not Unit.get_data(unit, "Wwise", "box_extents", 1)
-		scale.z = not not Unit.get_data(unit, "Wwise", "box_extents", 2)
+		scale.x = Unit.get_data(unit, "Wwise", "box_extents", 0)
+		scale.y = Unit.get_data(unit, "Wwise", "box_extents", 1)
+		scale.z = Unit.get_data(unit, "Wwise", "box_extents", 2)
 	end
 
 	local range

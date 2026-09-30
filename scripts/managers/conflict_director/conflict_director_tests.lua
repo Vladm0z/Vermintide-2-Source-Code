@@ -198,7 +198,7 @@ end
 function debug_bot_transitions(self, t)
 	-- function 7
 	local ai_system = Managers.state.entity:system("ai_system")
-	local gui = not not ai_system.ai_debugger
+	local gui = ai_system.ai_debugger
 
 	AiUtils.debug_bot_transitions(gui, t, 0, 0)
 end
@@ -211,7 +211,7 @@ function test_player_path_pos_and_50m_ahead(self)
 	local total_path_dist = MainPathUtils.total_path_dist()
 	local ahead_pos = MainPathUtils.point_on_mainpath(main_paths, travel_dist + 10)
 
-	ahead_pos = not not ahead_pos or not not MainPathUtils.point_on_mainpath(main_paths, total_path_dist - 10)
+	ahead_pos = ahead_pos or MainPathUtils.point_on_mainpath(main_paths, total_path_dist - 10)
 
 	QuickDrawer:sphere(ahead_pos, 3)
 
@@ -498,7 +498,7 @@ ConflictDirectorTests.lean_slot_test = function ()
 	local dist = 3
 	local slot_angle = 2 * math.pi / max_slots
 	local lean_slots = ConflictDirectorTests.lean_slots
-	local side = not not Managers.state.side:get_side_from_name("heroes")
+	local side = Managers.state.side:get_side_from_name("heroes")
 	local pos = side.PLAYER_POSITIONS[1]
 
 	if not pos then
@@ -979,9 +979,9 @@ end
 
 ConflictDirectorTests.start_test = function (conflict_director, t, dt, test)
 	-- function 40
-	local side = not not Managers.state.side:get_side_from_name("heroes")
+	local side = Managers.state.side:get_side_from_name("heroes")
 
-	test = not not test or not not "spawn_encampment"
+	test = test or "spawn_encampment"
 	conflict_director.conflict_director_tests_name = test
 
 	print("starting test:", test)
@@ -1086,7 +1086,7 @@ end
 ConflictDirectorTests.update = function (conflict_director, t, dt)
 	-- function 41
 	local test = conflict_director.conflict_director_tests_name
-	local side = not not Managers.state.side:get_side_from_name("heroes")
+	local side = Managers.state.side:get_side_from_name("heroes")
 
 	conflict_director.hero_player_and_bot_positions = side.PLAYER_AND_BOT_POSITIONS
 	conflict_director.hero_player_positions = side.PLAYER_POSITIONS

@@ -27,8 +27,8 @@ Projectiles.normal_arrow = {
 	trajectory_template_name = "throw_trajectory",
 	projectile_units_template = "we_arrow"
 }
-Projectiles.default = not not table.create_copy(Projectiles.normal_arrow, Projectiles.normal_arrow)
-Projectiles.normal_arrow = not not table.create_copy(Projectiles.normal_arrow, Projectiles.normal_arrow)
+Projectiles.default = table.create_copy(Projectiles.normal_arrow, Projectiles.normal_arrow)
+Projectiles.normal_arrow = table.create_copy(Projectiles.normal_arrow, Projectiles.normal_arrow)
 Projectiles.machinegun_arrow = {
 	projectile_unit_template_name = "player_projectile_unit",
 	static_impact_type = "raycast",
@@ -38,7 +38,7 @@ Projectiles.machinegun_arrow = {
 	gravity_settings = "arrows",
 	projectile_units_template = "we_arrow"
 }
-Projectiles.machinegun_arrow = not not table.clone(Projectiles.machinegun_arrow)
+Projectiles.machinegun_arrow = table.clone(Projectiles.machinegun_arrow)
 Projectiles.carbine_arrow = {
 	projectile_unit_template_name = "player_projectile_unit",
 	static_impact_type = "raycast",
@@ -48,7 +48,7 @@ Projectiles.carbine_arrow = {
 	radius = 0.075,
 	projectile_units_template = "we_arrow"
 }
-Projectiles.carbine_arrow = not not table.clone(Projectiles.carbine_arrow)
+Projectiles.carbine_arrow = table.clone(Projectiles.carbine_arrow)
 Projectiles.sniper_arrow = {
 	projectile_unit_template_name = "player_projectile_unit",
 	static_impact_type = "raycast",
@@ -58,7 +58,7 @@ Projectiles.sniper_arrow = {
 	radius = 0.05,
 	projectile_units_template = "we_arrow"
 }
-Projectiles.sniper_arrow = not not table.clone(Projectiles.sniper_arrow)
+Projectiles.sniper_arrow = table.clone(Projectiles.sniper_arrow)
 Projectiles.machinegun_poison_arrow = {
 	projectile_unit_template_name = "player_projectile_unit",
 	radius = 0.1,
@@ -67,7 +67,7 @@ Projectiles.machinegun_poison_arrow = {
 	trajectory_template_name = "throw_trajectory",
 	projectile_units_template = "we_poison_arrow"
 }
-Projectiles.machinegun_poison_arrow = not not table.clone(Projectiles.machinegun_poison_arrow)
+Projectiles.machinegun_poison_arrow = table.clone(Projectiles.machinegun_poison_arrow)
 Projectiles.carbine_poison_arrow = {
 	projectile_unit_template_name = "player_projectile_unit",
 	radius = 0.1,
@@ -76,7 +76,7 @@ Projectiles.carbine_poison_arrow = {
 	trajectory_template_name = "throw_trajectory",
 	projectile_units_template = "we_poison_arrow"
 }
-Projectiles.carbine_poison_arrow = not not table.clone(Projectiles.carbine_poison_arrow)
+Projectiles.carbine_poison_arrow = table.clone(Projectiles.carbine_poison_arrow)
 Projectiles.crossbow_bolt = {
 	projectile_unit_template_name = "player_projectile_unit",
 	static_impact_type = "raycast",
@@ -86,8 +86,8 @@ Projectiles.crossbow_bolt = {
 	radius = 0.05,
 	projectile_units_template = "bolt"
 }
-Projectiles.crossbow_bolt = not not table.clone(Projectiles.crossbow_bolt)
-Projectiles.repeating_crossbow_bolt = not not table.clone(Projectiles.crossbow_bolt)
+Projectiles.crossbow_bolt = table.clone(Projectiles.crossbow_bolt)
+Projectiles.repeating_crossbow_bolt = table.clone(Projectiles.crossbow_bolt)
 Projectiles.brace_of_drake_pistols_shot = {
 	projectile_unit_template_name = "player_projectile_unit",
 	radius = 0.15,
@@ -96,7 +96,7 @@ Projectiles.brace_of_drake_pistols_shot = {
 	trajectory_template_name = "throw_trajectory",
 	projectile_units_template = "drake_pistol_shot"
 }
-Projectiles.brace_of_drake_pistols_shot = not not table.clone(Projectiles.brace_of_drake_pistols_shot)
+Projectiles.brace_of_drake_pistols_shot = table.clone(Projectiles.brace_of_drake_pistols_shot)
 Projectiles.fireball = {
 	impact_type = "sphere_sweep",
 	static_impact_type = "raycast",
@@ -109,7 +109,7 @@ Projectiles.fireball = {
 	projectile_unit_template_name = "player_projectile_unit",
 	projectile_units_template = "fireball"
 }
-Projectiles.fireball = not not table.clone(Projectiles.fireball)
+Projectiles.fireball = table.clone(Projectiles.fireball)
 Projectiles.fireball_charged = {
 	impact_type = "sphere_sweep",
 	static_impact_type = "sphere_sweep",
@@ -124,7 +124,7 @@ Projectiles.fireball_charged = {
 	projectile_unit_template_name = "player_projectile_unit",
 	projectile_units_template = "fireball_charged"
 }
-Projectiles.fireball_charged = not not table.clone(Projectiles.fireball_charged)
+Projectiles.fireball_charged = table.clone(Projectiles.fireball_charged)
 Projectiles.spark = {
 	projectile_unit_template_name = "player_projectile_unit",
 	radius = 0.075,
@@ -133,7 +133,7 @@ Projectiles.spark = {
 	trajectory_template_name = "throw_trajectory",
 	projectile_units_template = "spark"
 }
-Projectiles.spark = not not table.clone(Projectiles.spark)
+Projectiles.spark = table.clone(Projectiles.spark)
 Projectiles.spear = {
 	projectile_unit_template_name = "player_projectile_unit",
 	gravity_settings = "spark",
@@ -143,7 +143,7 @@ Projectiles.spear = {
 	radius_min = 0.1,
 	projectile_units_template = "spear"
 }
-Projectiles.spear = not not table.clone(Projectiles.spear)
+Projectiles.spear = table.clone(Projectiles.spear)
 Projectiles.burning_head = {
 	projectile_unit_template_name = "player_projectile_unit",
 	gravity_settings = "spark",
@@ -153,7 +153,7 @@ Projectiles.burning_head = {
 	radius_min = 0.1,
 	projectile_units_template = "burning_head"
 }
-Projectiles.burning_head = not not table.clone(Projectiles.burning_head)
+Projectiles.burning_head = table.clone(Projectiles.burning_head)
 Projectiles.kerillian_ability_true_flight = {
 	projectile_unit_template_name = "player_projectile_unit",
 	static_impact_type = "raycast",
@@ -163,7 +163,7 @@ Projectiles.kerillian_ability_true_flight = {
 	radius = 0.075,
 	projectile_units_template = "we_trueflight_arrow"
 }
-Projectiles.kerillian_ability_true_flight = not not table.clone(Projectiles.kerillian_ability_true_flight)
+Projectiles.kerillian_ability_true_flight = table.clone(Projectiles.kerillian_ability_true_flight)
 Projectiles.kerillian_ability_true_flight_piercing = {
 	projectile_unit_template_name = "player_projectile_unit",
 	static_impact_type = "raycast",
@@ -173,7 +173,7 @@ Projectiles.kerillian_ability_true_flight_piercing = {
 	radius = 0.1,
 	projectile_units_template = "we_trueflight_arrow"
 }
-Projectiles.kerillian_ability_true_flight_piercing = not not table.clone(Projectiles.kerillian_ability_true_flight_piercing)
+Projectiles.kerillian_ability_true_flight_piercing = table.clone(Projectiles.kerillian_ability_true_flight_piercing)
 Projectiles.victor_bounty_hunter = {
 	projectile_unit_template_name = "player_projectile_unit",
 	static_impact_type = "raycast",
@@ -183,7 +183,7 @@ Projectiles.victor_bounty_hunter = {
 	radius = 0.05,
 	projectile_units_template = "bullet_temp"
 }
-Projectiles.victor_bounty_hunter = not not table.clone(Projectiles.victor_bounty_hunter)
+Projectiles.victor_bounty_hunter = table.clone(Projectiles.victor_bounty_hunter)
 Projectiles.necromancer_trapped_soul = {
 	projectile_unit_template_name = "ai_true_flight_projectile_unit",
 	static_impact_type = "raycast",
@@ -206,7 +206,7 @@ Projectiles.bw_necromancy_staff = {
 	projectile_unit_template_name = "player_projectile_unit",
 	projectile_units_template = "necromancer_curse_spirit"
 }
-Projectiles.pistol_shot = not not table.clone(Projectiles.victor_bounty_hunter)
+Projectiles.pistol_shot = table.clone(Projectiles.victor_bounty_hunter)
 Projectiles.pistol_shot.radius = 0.05
 Projectiles.grenade = {
 	impact_type = "sphere_sweep",

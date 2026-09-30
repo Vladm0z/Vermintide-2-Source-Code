@@ -108,7 +108,7 @@ HeroWindowCraftingConsole.on_enter = function (self, params, offset)
 	self.unblocked_services = {}
 	self.unblocked_services_n = 0
 
-	local recipe_index = not not params.recipe_index
+	local recipe_index = params.recipe_index
 
 	self:_change_recipe_page(recipe_index)
 	self:_start_transition_animation("on_enter")
@@ -182,7 +182,7 @@ HeroWindowCraftingConsole.set_input_description = function (self, input_desc_nam
 		self._current_input_desc_name = input_desc_name
 
 		if not self.parent:filter_selected() then
-			self._menu_input_description:set_input_description(not not input_desc_name and not not input_actions[input_desc_name])
+			self._menu_input_description:set_input_description(input_desc_name and input_actions[input_desc_name])
 		end
 	else
 		Application.warning("[HeroWindowCraftingConsole:set_input_description] Could not set input desc: " .. tostring(input_desc_name))
@@ -252,7 +252,7 @@ HeroWindowCraftingConsole._update_input_desc = function (self)
 		local input_desc_name = self._current_input_desc_name
 
 		self._menu_input_description:change_generic_actions(generic_input_actions.default)
-		self._menu_input_description:set_input_description(not not input_desc_name and not not input_actions[input_desc_name])
+		self._menu_input_description:set_input_description(input_desc_name and input_actions[input_desc_name])
 	end
 
 	self._filter_selected = filter_selected
@@ -389,7 +389,7 @@ HeroWindowCraftingConsole._change_recipe_page = function (self, current_page)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
+		current_page = current_page or 1
 
 		self:_set_page_index(current_page)
 	end

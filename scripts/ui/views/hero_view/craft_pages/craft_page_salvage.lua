@@ -185,7 +185,7 @@ CraftPageSalvage._handle_input = function (self, dt, t)
 	local widget = widgets_by_name.craft_button
 	local is_button_enabled = not widget.content.button_hotspot.disable_button
 	local craft_input = self:_is_button_held(widgets_by_name.craft_button)
-	local craft_input_gamepad = not not is_button_enabled and not not gamepad_active and not not input_service:get("refresh_hold")
+	local craft_input_gamepad = is_button_enabled and gamepad_active and input_service:get("refresh_hold")
 	local craft_input_accepted = false
 
 	if craft_input == 0 or craft_input_gamepad then
@@ -280,7 +280,7 @@ CraftPageSalvage._fill_by_rarity = function (self, rarity)
 			if item_rarity == rarity and not table.find(craft_items, backend_id) then
 				local success = self:_add_craft_item(backend_id, nil, audio_triggered)
 
-				audio_triggered = not not audio_triggered or not not success
+				audio_triggered = audio_triggered or success
 
 				if table.size(craft_items) == CraftingSettings.NUM_SALVAGE_SLOTS then
 					break
@@ -316,7 +316,7 @@ CraftPageSalvage.clear_craft_items = function (self)
 	for _, backend_id in pairs(self._craft_items) do
 		local success = self:_remove_craft_item(backend_id, nil, audio_triggered)
 
-		audio_triggered = not not audio_triggered or not not success
+		audio_triggered = audio_triggered or success
 	end
 
 	self.super_parent:clear_disabled_backend_ids()
@@ -385,7 +385,7 @@ CraftPageSalvage._update_craft_items = function (self)
 	-- function 17
 	local super_parent = self.super_parent
 	local item_grid = self._item_grid
-	local is_dragging_craft_item = not not item_grid:is_dragging_item()
+	local is_dragging_craft_item = item_grid:is_dragging_item()
 	local pressed_backend_id, is_drag_item = super_parent:get_pressed_item_backend_id()
 
 	if pressed_backend_id then
@@ -434,7 +434,7 @@ CraftPageSalvage._remove_craft_item = function (self, backend_id, slot_index, ig
 		self._item_grid:add_item_to_slot_index(slot_index, nil)
 
 		craft_items[slot_index] = nil
-		self._num_craft_items = math.max(not not self._num_craft_items - 1, 0)
+		self._num_craft_items = math.max(self._num_craft_items - 1, 0)
 
 		if self._num_craft_items == 0 then
 			self:_set_craft_button_disabled(true)
@@ -473,12 +473,12 @@ CraftPageSalvage._add_craft_item = function (self, backend_id, slot_index, ignor
 		craft_items[slot_index] = backend_id
 
 		local item_interface = Managers.backend:get_interface("items")
-		local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+		local item = backend_id and item_interface:get_item_from_id(backend_id)
 
 		self._item_grid:add_item_to_slot_index(slot_index, item, specific_amount)
 		self.super_parent:set_disabled_backend_id(backend_id, true)
 
-		self._num_craft_items = math.min(not not self._num_craft_items + 1, CraftingSettings.NUM_SALVAGE_SLOTS)
+		self._num_craft_items = math.min(self._num_craft_items + 1, CraftingSettings.NUM_SALVAGE_SLOTS)
 
 		if self._num_craft_items > 0 then
 			self:_set_craft_button_disabled(false)
@@ -531,5 +531,5 @@ CraftPageSalvage._set_craft_button_text = function (self, text, localize)
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
 
-	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
+	widget.content.button_text = localize and Localize(text) or not localize and text
 end

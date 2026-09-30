@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/store_interactions.lua
 
-InteractionDefinitions.store_access = not not InteractionDefinitions.store_access
+InteractionDefinitions.store_access = InteractionDefinitions.store_access
 InteractionDefinitions.store_access.config.swap_to_3p = false
 
 InteractionDefinitions.store_access.client.can_interact = function (interactor_unit, interactable_unit, data, config)

@@ -59,7 +59,7 @@ ActionInspectGeheimnisnacht2021.client_owner_post_update = function (self, dt, t
 		local skull_look_dir = Quaternion.forward(skull_rotation)
 		local owner_look_dir = Quaternion.forward(look_rotation)
 		local angle = Vector3.dot(skull_look_dir, owner_look_dir)
-		local max_influence_at_angle = angle > 0.9 and not not math.max(angle * MAX_INFLUENCE_AT_ANGLE_MULT, MAX_INFLUENCE_FLOOR) or not (angle > 0.9) and not not 0
+		local max_influence_at_angle = angle > 0.9 and math.max(angle * MAX_INFLUENCE_AT_ANGLE_MULT, MAX_INFLUENCE_FLOOR) or not (angle > 0.9) and 0
 		local influence_inc = INFLUENCE_RATE_MULT * dt
 
 		if max_influence_at_angle < self._influence_str then

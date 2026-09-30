@@ -185,7 +185,7 @@ StartGameWindowEventSettings._handle_input = function (self, dt, t)
 
 	local input_service = self.parent:window_input_service()
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local play_pressed = not not gamepad_active and not not self._enable_play
+	local play_pressed = gamepad_active and self._enable_play
 
 	if self:_is_button_released(widgets_by_name.play_button) or play_pressed then
 		parent:play(t, "event")
@@ -220,13 +220,13 @@ end
 StartGameWindowEventSettings._set_difficulty_option = function (self, difficulty_key)
 	-- function 14
 	local difficulty_settings = DifficultySettings[difficulty_key]
-	local display_name = not not difficulty_settings and not not difficulty_settings.display_name
-	local display_image = not not difficulty_settings and not not difficulty_settings.display_image
-	local completed_frame_texture = difficulty_settings and not not difficulty_settings.completed_frame_texture or not difficulty_settings and not not "map_frame_00"
+	local display_name = difficulty_settings and difficulty_settings.display_name
+	local display_image = difficulty_settings and difficulty_settings.display_image
+	local completed_frame_texture = difficulty_settings and difficulty_settings.completed_frame_texture or not difficulty_settings and "map_frame_00"
 	local widgets_by_name = self._widgets_by_name
 
-	widgets_by_name.game_option_difficulty.content.option_text = display_name and not not Localize(display_name) or not display_name and not not ""
-	widgets_by_name.game_option_difficulty.content.icon = not not display_image or not not nil
+	widgets_by_name.game_option_difficulty.content.option_text = display_name and Localize(display_name) or not display_name and ""
+	widgets_by_name.game_option_difficulty.content.icon = display_image or nil
 	widgets_by_name.game_option_difficulty.content.icon_frame = completed_frame_texture
 end
 

@@ -47,7 +47,7 @@ BTZombieExplodeAction.run = function (self, unit, blackboard, t, dt)
 		local action = blackboard.action
 		local position = POSITION_LOOKUP[unit]
 		local size = Vector3(0, action.radius, 1)
-		local bot_threat_duration = not not action.bot_threat_duration
+		local bot_threat_duration = action.bot_threat_duration
 
 		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(position, "cylinder", size, nil, bot_threat_duration, "Chaos Zombie")
 

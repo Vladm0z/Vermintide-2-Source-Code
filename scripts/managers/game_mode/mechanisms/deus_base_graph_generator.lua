@@ -273,7 +273,7 @@ local function count_ancestors_in_straight_line(nodes, node_key)
 	local type = nodes[node_key].type
 	local is_traversed_node = type ~= "DUMMY" and type ~= "SHOP"
 
-	return (is_traversed_node and not not 1 or not is_traversed_node and not not 0) + count_ancestors_in_straight_line(nodes, prev_key)
+	return (is_traversed_node and 1 or not is_traversed_node and 0) + count_ancestors_in_straight_line(nodes, prev_key)
 end
 
 local function is_crossing(from_1, to_1, from_2, to_2)
@@ -398,11 +398,11 @@ local CONNECTION_VALIDATIONS = {
 
 				for visible_node_key, visible_node in pairs(visible_nodes) do
 					if visible_node.label and visible_node.label ~= 0 then
-						local type_lookup = not not lookup[visible_node.type]
+						local type_lookup = lookup[visible_node.type]
 
 						lookup[visible_node.type] = type_lookup
 
-						local label_lookup = not not type_lookup[visible_node.label]
+						local label_lookup = type_lookup[visible_node.label]
 
 						if #label_lookup > 0 and not table.contains(label_lookup, visible_node_key) then
 							return false
@@ -805,8 +805,8 @@ function create_new_node_action(context, nodes, node_key, name_override)
 		-- function 53
 		local prev_node_count = context.node_count
 
-		context.node_count = prev_node_count and not not (prev_node_count + 1) or not prev_node_count and not not 1
-		new_node_key = not not name_override
+		context.node_count = prev_node_count and prev_node_count + 1 or not prev_node_count and 1
+		new_node_key = name_override
 		layer = node.layout_x + 1
 
 		local nodes_for_layer = context.nodes_per_layer[layer]
@@ -1092,7 +1092,7 @@ function create_connect_action(context, nodes, node_key)
 
 			random_connection_count[#random_connection_count] = nil
 
-			if not last_attempt and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) or not not last_attempt and new_connection_count < last_attempt and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) then
+			if not last_attempt and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) or last_attempt and new_connection_count < last_attempt and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) then
 				node.connected_to = new_connection_count
 
 				break
@@ -1397,7 +1397,7 @@ function deus_base_graph_generator(seed, config)
 			if not error_message then
 				nodes = remove_dummy_nodes(nodes)
 			else
-				Application.warning("[deus_base_graph_generator.lua] failed to generate base graph, maybe the settings are impossible to solve? error: " .. (not not error_message or not not "N/A"))
+				Application.warning("[deus_base_graph_generator.lua] failed to generate base graph, maybe the settings are impossible to solve? error: " .. (error_message or "N/A"))
 			end
 		end
 

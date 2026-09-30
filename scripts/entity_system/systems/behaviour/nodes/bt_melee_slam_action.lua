@@ -48,7 +48,7 @@ BTMeleeSlamAction.init_attack = function (self, unit, blackboard, action, t)
 	-- function 4
 	local attack_anim, anim_driven = LocomotionUtils.get_attack_anim(unit, blackboard, action.attack_anims)
 
-	anim_driven = not not anim_driven or not not action.anim_driven or not not false
+	anim_driven = anim_driven or action.anim_driven or false
 	blackboard.attack_anim_driven = anim_driven
 
 	LocomotionUtils.set_animation_driven_movement(unit, anim_driven, false, false)
@@ -61,7 +61,7 @@ BTMeleeSlamAction.init_attack = function (self, unit, blackboard, action, t)
 		blackboard.navigation_extension:stop()
 	end
 
-	local attack_animation = randomize(not not attack_anim or not not action.attack_anim)
+	local attack_animation = randomize(attack_anim or action.attack_anim)
 
 	Managers.state.network:anim_event(unit, attack_animation)
 
@@ -74,7 +74,7 @@ BTMeleeSlamAction.init_attack = function (self, unit, blackboard, action, t)
 
 	blackboard.attack_rotation = QuaternionBox(to_target_rotation)
 
-	local bot_threats = not not action.bot_threats
+	local bot_threats = action.bot_threats
 
 	if bot_threats then
 		local current_threat_index = 1
@@ -122,9 +122,9 @@ end
 
 BTMeleeSlamAction._calculate_cylinder_collision = function (self, action, bot_threat, self_pos, self_rot)
 	-- function 7
-	local radius = not not bot_threat.radius
-	local height = not not bot_threat.height
-	local offset_forward = not not bot_threat.offset_forward
+	local radius = bot_threat.radius
+	local height = bot_threat.height
+	local offset_forward = bot_threat.offset_forward
 	local half_height = height * 0.5
 	local size = Vector3(0, radius, half_height)
 	local forward = Quaternion.forward(self_rot)
@@ -159,7 +159,7 @@ BTMeleeSlamAction.anim_cb_damage = function (self, unit, blackboard)
 	local unit_forward = Quaternion.forward(Unit.local_rotation(unit, 0))
 	local self_pos = POSITION_LOOKUP[unit]
 	local pos, rotation, size = self:_calculate_collision(action, self_pos, unit_forward)
-	local shape = size.y - size.x > 0 and not not "capsule" or not (size.y - size.x > 0) and not not "sphere"
+	local shape = size.y - size.x > 0 and "capsule" or not (size.y - size.x > 0) and "sphere"
 
 	PhysicsWorld.prepare_actors_for_overlap(physics_world, pos, math.max(action.radius, action.height))
 
@@ -184,11 +184,11 @@ BTMeleeSlamAction.anim_cb_damage = function (self, unit, blackboard)
 				end
 
 				if not dodge then
-					local attack_direction_name = not not action.attack_directions
+					local attack_direction_name = action.attack_directions
 
 					if target_status_extension:is_disabled() then
 						damage = action.damage
-					elseif DamageUtils.check_ranged_block(unit, hit_unit, not not action.shield_blocked_fatigue_type) then
+					elseif DamageUtils.check_ranged_block(unit, hit_unit, action.shield_blocked_fatigue_type) then
 						local blocked_velocity = action.player_push_speed_blocked * Vector3.normalize(POSITION_LOOKUP[hit_unit] - self_pos)
 						local locomotion_extension = ScriptUnit.extension(hit_unit, "locomotion_system")
 

@@ -150,7 +150,7 @@ return {
 			local right = Quaternion.right(rotation) * 0.5
 			local left = -right
 			local lower_tier_breed = Breeds[lower_tier_breed_name]
-			local explosion_template_name = not not breed_explosion_templates[breed_name]
+			local explosion_template_name = breed_explosion_templates[breed_name]
 
 			AiUtils.generic_mutator_explosion(killed_unit, blackboard, explosion_template_name)
 
@@ -204,7 +204,7 @@ return {
 			local unit_spawner = Managers.state.unit_spawner
 
 			if not unit_spawner:is_marked_for_deletion(killed_unit) then
-				local froze_unit_successfully = not not conflict_director.breed_freezer
+				local froze_unit_successfully = conflict_director.breed_freezer
 
 				if not froze_unit_successfully then
 					unit_spawner:mark_for_deletion(killed_unit)

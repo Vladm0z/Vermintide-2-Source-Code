@@ -53,7 +53,7 @@ AILocomotionExtension.init = function (self, extension_init_context, unit, exten
 		self._collision_state = MoverHelper.create_collision_state(unit, collision_actor_name)
 	end
 
-	MoverHelper.set_active_mover(unit, self._mover_state, not not self.breed.default_mover)
+	MoverHelper.set_active_mover(unit, self._mover_state, self.breed.default_mover)
 	self:set_movement_type("snap_to_navmesh")
 end
 
@@ -139,7 +139,7 @@ local LINKED_TRANSPORT_FUNCTION_NAME = "update_linked_transport"
 
 AILocomotionExtension.set_animation_driven = function (self, is_animation_driven, is_affected_by_gravity, script_driven_rotation, is_on_transport)
 	-- function 7
-	is_affected_by_gravity = not not is_affected_by_gravity or not not false
+	is_affected_by_gravity = is_affected_by_gravity or false
 
 	local unit = self._unit
 
@@ -147,7 +147,7 @@ AILocomotionExtension.set_animation_driven = function (self, is_animation_driven
 
 	local network_manager = Managers.state.network
 	local network_transmit = network_manager.network_transmit
-	local game_object_id = not not network_manager:game()
+	local game_object_id = network_manager:game()
 
 	if not game_object_id then
 		return
@@ -279,7 +279,7 @@ end
 
 AILocomotionExtension.set_gravity = function (self, gravity)
 	-- function 17
-	self._gravity = not not gravity or not not LOCOMOTION_GRAVITY
+	self._gravity = gravity or LOCOMOTION_GRAVITY
 end
 
 AILocomotionExtension.set_mover_disable_reason = function (self, reason, state)
@@ -316,7 +316,7 @@ AILocomotionExtension.set_movement_type = function (self, movement_type, overrid
 		self._system_data.snap_to_navmesh_update_units[unit] = nil
 		self._system_data.get_to_navmesh_update_units[unit] = nil
 		self._system_data.mover_constrained_update_units[unit] = nil
-		self._system_data.affected_by_gravity_update_units[unit] = self._affected_by_gravity and (not not self or not not nil) or not self._affected_by_gravity and not not nil
+		self._system_data.affected_by_gravity_update_units[unit] = self._affected_by_gravity and (self or nil) or not self._affected_by_gravity and nil
 
 		MoverHelper.set_disable_reason(unit, self._mover_state, "constrained_by_mover", true)
 	elseif movement_type == "snap_to_navmesh" then
@@ -345,12 +345,12 @@ AILocomotionExtension.set_movement_type = function (self, movement_type, overrid
 		self._system_data.snap_to_navmesh_update_units[unit] = nil
 		self._system_data.get_to_navmesh_update_units[unit] = nil
 		self._system_data.mover_constrained_update_units[unit] = self
-		self._system_data.affected_by_gravity_update_units[unit] = self._affected_by_gravity and (not not self or not not nil) or not self._affected_by_gravity and not not nil
+		self._system_data.affected_by_gravity_update_units[unit] = self._affected_by_gravity and (self or nil) or not self._affected_by_gravity and nil
 
 		MoverHelper.set_disable_reason(unit, self._mover_state, "constrained_by_mover", false)
 
 		local mover = Unit.mover(unit)
-		local allowed_mover_move_distance = not not override_mover_move_distance or not not ALLOWED_MOVER_MOVE_DISTANCE
+		local allowed_mover_move_distance = override_mover_move_distance or ALLOWED_MOVER_MOVE_DISTANCE
 		local is_colliding, colliding_actor, move_vector, new_position = Mover.separate(mover, allowed_mover_move_distance)
 
 		if is_colliding then
@@ -375,7 +375,7 @@ AILocomotionExtension.set_movement_type = function (self, movement_type, overrid
 		local half_height = 1.5
 		local size = Vector3(radius, half_height, radius)
 		local rotation = Quaternion.look(Vector3(0, 0, 1))
-		local shape = half_height - radius > 0 and not not "capsule" or not (half_height - radius > 0) and not not "sphere"
+		local shape = half_height - radius > 0 and "capsule" or not (half_height - radius > 0) and "sphere"
 		local hit_actors, num_hit_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", mover_position, "rotation", rotation, "size", size, "collision_filter", "filter_environment_overlap")
 
 		self._is_falling = num_hit_actors == 0

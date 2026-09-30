@@ -37,7 +37,7 @@ PlayerCharacterStateCatapulted.on_enter = function (self, unit, input, dt, conte
 	local anim_1p = DIRECTIONS[direction].start_animation_1p
 
 	CharacterStateHelper.play_animation_event(unit, anim)
-	CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, not not anim_1p or not not anim)
+	CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, anim_1p or anim)
 
 	local first_person_extension = self.first_person_extension
 

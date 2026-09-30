@@ -63,7 +63,7 @@ local function diff(x, ref, b)
 		d = nil
 	end
 
-	return d, not not b or not not bb
+	return d, b or bb
 end
 
 local function accumulate(f)

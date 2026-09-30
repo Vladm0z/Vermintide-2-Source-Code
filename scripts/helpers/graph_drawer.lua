@@ -166,7 +166,7 @@ end
 
 Graph.add_point = function (self, x, y, plot_name)
 	-- function 10
-	plot_name = not not plot_name or not not "default"
+	plot_name = plot_name or "default"
 
 	local plot = self.plots[plot_name]
 
@@ -202,7 +202,7 @@ Graph.add_point = function (self, x, y, plot_name)
 		self.visual_frame.y_max = self.range_y[2]
 	end
 
-	self.valid = not not self.valid
+	self.valid = self.valid
 end
 
 Graph.add_annotation = function (self, annotation)
@@ -251,7 +251,7 @@ Graph.update = function (self, input_service, t)
 	local origin = Vector3(100, 100, 0)
 	local graph_size_x, graph_size_y = 800, 400
 
-	self.state = not not self.state
+	self.state = self.state
 
 	if self.state == "waiting_for_zoom_window" then
 		if input_service:get("mouse_left_held") then
@@ -462,7 +462,7 @@ Graph.draw = function (self, gui, input_service, t)
 	local font_size = 26
 	local font = "arial"
 	local font_mtrl = "materials/fonts/" .. font
-	local color_bg = Colors.get_color_with_alpha("navy", Window.show_cursor() and not not 100 or not Window.show_cursor() and not not 50)
+	local color_bg = Colors.get_color_with_alpha("navy", Window.show_cursor() and 100 or not Window.show_cursor() and 50)
 	local color_point_line = Colors.get("aqua_marine")
 	local color_point_bg = Colors.get("white")
 	local color_point_fg = Colors.get("black")
@@ -472,7 +472,7 @@ Graph.draw = function (self, gui, input_service, t)
 	local color_annotation_text_bg = Colors.get_color_with_alpha("black", 100)
 	local color_annotation_bg = Colors.get_color_with_alpha("black", 150)
 	local color_axis = Colors.get("white")
-	local color_zoom_window = Colors.get_color_with_alpha("white", self.anim_done_t ~= nil and not not math.lerp(100, 0, 1 - (self.anim_done_t - t)) or not (self.anim_done_t ~= nil) and not not 100)
+	local color_zoom_window = Colors.get_color_with_alpha("white", self.anim_done_t ~= nil and math.lerp(100, 0, 1 - (self.anim_done_t - t)) or not (self.anim_done_t ~= nil) and 100)
 	local color_zoom_window_too_small = Colors.get_color_with_alpha("red", 100)
 	local origin = Vector3(100, 100, 0)
 	local graph_size_x, graph_size_y = 800, 400
@@ -517,8 +517,8 @@ Graph.draw = function (self, gui, input_service, t)
 	local scale_y = graph_size_y / (visual_y_max - visual_y_min)
 
 	for plot_name, plot in pairs(self.plots) do
-		local line_color = plot.line_color and not not Colors.get(plot.line_color) or not plot.line_color and not not color_point_line
-		local point_color = plot.line_color and not not Colors.get(plot.line_color) or not plot.line_color and not not color_point_bg
+		local line_color = plot.line_color and Colors.get(plot.line_color) or not plot.line_color and color_point_line
+		local point_color = plot.line_color and Colors.get(plot.line_color) or not plot.line_color and color_point_bg
 		local xs = array.items(plot.points_x)
 		local ys = array.items(plot.points_y)
 		local p1 = Vector3((xs[1] - visual_x_min) * scale_x, (ys[1] - visual_y_min) * scale_y, 0)

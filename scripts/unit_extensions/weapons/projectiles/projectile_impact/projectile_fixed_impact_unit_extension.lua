@@ -11,7 +11,7 @@ ProjectileFixedImpactUnitExtension.init = function (self, extension_init_context
 
 	local owner_player = Managers.player:owner(self.owner_unit)
 
-	self.owner_is_local = owner_player and not not owner_player.local_player or not owner_player and (owner_player and not not owner_player.bot_player or not owner_player and not not false)
+	self.owner_is_local = owner_player and owner_player.local_player or not owner_player and owner_player and owner_player.bot_player
 	self.last_position = nil
 	self.impact_data = extension_init_data.impact_data
 	self._time_to_impact = self.impact_data.time

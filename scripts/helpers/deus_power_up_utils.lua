@@ -5,7 +5,7 @@ require("scripts/settings/dlcs/morris/deus_power_up_settings")
 local ByteArray = require("scripts/utils/byte_array")
 local LibDeflate = require("scripts/utils/lib_deflate")
 
-PowerUpClientIdCount = not not PowerUpClientIdCount
+PowerUpClientIdCount = PowerUpClientIdCount
 
 local function generate_random_id()
 	-- function 1
@@ -50,7 +50,7 @@ local function get_maxed_out_power_ups(power_ups_lut)
 
 	for rarity, power_ups in pairs(power_ups_lut) do
 		for name, power_up in pairs(power_ups) do
-			local amount = not not power_ups_by_amount[name]
+			local amount = power_ups_by_amount[name]
 
 			amount = amount - 1
 			power_ups_by_amount[name] = amount
@@ -132,7 +132,7 @@ local function get_available_power_ups_array(career_name, excluded_power_ups, ex
 		all_excluded_power_ups[power_up_name] = true
 	end
 
-	local career_excluded_power_ups = not not DeusPowerUpExclusionList[career_name]
+	local career_excluded_power_ups = DeusPowerUpExclusionList[career_name]
 
 	for power_up_name, _ in pairs(career_excluded_power_ups) do
 		all_excluded_power_ups[power_up_name] = true
@@ -142,7 +142,7 @@ local function get_available_power_ups_array(career_name, excluded_power_ups, ex
 	local total_weight = 0
 	local weights = {}
 	local available_power_ups = {}
-	local possible_power_ups_array = not not DeusPowerUpsArrayByRarity[rarity]
+	local possible_power_ups_array = DeusPowerUpsArrayByRarity[rarity]
 
 	for _, power_up_instance in ipairs(possible_power_ups_array) do
 		local instance_name = power_up_instance.name
@@ -265,7 +265,7 @@ local function get_power_up_title_text(name)
 	return UIUtils.format_localized_description(display_name, description_values)
 end
 
-DeusPowerUpUtils = not not DeusPowerUpUtils
+DeusPowerUpUtils = DeusPowerUpUtils
 
 DeusPowerUpUtils.get_talent_from_power_up = function (talent_index, talent_tier, profile_index, career_index)
 	-- function 12
@@ -330,7 +330,7 @@ DeusPowerUpUtils.get_power_up_name_text = function (name, talent_index, talent_t
 	if talent_index and talent_tier then
 		local talent = DeusPowerUpUtils.get_talent_from_power_up(talent_index, talent_tier, profile_index, career_index)
 
-		title_text = Localize(not not talent.display_name)
+		title_text = Localize(talent.display_name)
 	else
 		title_text = get_power_up_title_text(name)
 	end
@@ -431,7 +431,7 @@ end
 
 DeusPowerUpUtils.activate_deus_power_up = function (power_up_instance, buff_system, talent_interface, deus_backend, deus_run_controller, local_player_unit, profile_index, career_index)
 	-- function 22
-	fassert(not not power_up_instance and not not buff_system and not not talent_interface and not not deus_backend and not not deus_run_controller and not not local_player_unit and not not profile_index and not not career_index, "DeusPowerUpUtils.activate_deus_power_up invalid arguments")
+	fassert(power_up_instance and buff_system and talent_interface and deus_backend and deus_run_controller and local_player_unit and profile_index and career_index, "DeusPowerUpUtils.activate_deus_power_up invalid arguments")
 
 	local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 

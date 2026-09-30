@@ -52,7 +52,7 @@ Rewards.award_end_of_level_rewards = function (self, game_won, hero_name, is_in_
 			game_won = game_won
 		}
 
-		local loot_profile_name = is_in_event_game_mode and not not "event" or not is_in_event_game_mode and not not "default"
+		local loot_profile_name = is_in_event_game_mode and "event" or not is_in_event_game_mode and "default"
 
 		self:_award_end_of_level_rewards(game_won, hero_name, loot_profile_name, game_time, end_of_level_rewards_arguments, extra_mission_results)
 	end
@@ -175,9 +175,9 @@ Rewards._mission_results = function (self, game_won, extra_mission_results, end_
 		end
 
 		local current_level_settings = LevelHelper:current_level_settings()
-		local disable_percentage_completed = not not current_level_settings and not not current_level_settings.disable_percentage_completed
+		local disable_percentage_completed = current_level_settings and current_level_settings.disable_percentage_completed
 
-		best_completed_distance = disable_percentage_completed and (not not 0 or not not math.clamp(best_completed_distance, 0, 1)) or not disable_percentage_completed and not not math.clamp(best_completed_distance, 0, 1)
+		best_completed_distance = disable_percentage_completed and (0 or math.clamp(best_completed_distance, 0, 1)) or not disable_percentage_completed and math.clamp(best_completed_distance, 0, 1)
 
 		local mission_failed_reward = {
 			text = "mission_failed",
@@ -208,13 +208,13 @@ Rewards._mission_results = function (self, game_won, extra_mission_results, end_
 		end
 
 		local current_level_settings = LevelHelper:current_level_settings()
-		local disable_percentage_completed = not not current_level_settings and not not current_level_settings.disable_percentage_completed
+		local disable_percentage_completed = current_level_settings and current_level_settings.disable_percentage_completed
 
-		best_completed_distance = disable_percentage_completed and (not not 0 or not not math.clamp(best_completed_distance, 0, 1)) or not disable_percentage_completed and not not math.clamp(best_completed_distance, 0, 1)
+		best_completed_distance = disable_percentage_completed and (0 or math.clamp(best_completed_distance, 0, 1)) or not disable_percentage_completed and math.clamp(best_completed_distance, 0, 1)
 
 		local expedition_failed_reward = {
 			affected_by_multipliers = true,
-			text = difficulty ~= "cataclysm" and not not "expedition_failed" or not (difficulty ~= "cataclysm") and not not "expedition_failed_cataclysm",
+			text = difficulty ~= "cataclysm" and "expedition_failed" or not (difficulty ~= "cataclysm") and "expedition_failed_cataclysm",
 			experience = EXPERIENCE_REWARD * best_completed_distance
 		}
 
@@ -231,9 +231,9 @@ Rewards._mission_results = function (self, game_won, extra_mission_results, end_
 		end
 
 		local current_level_settings = LevelHelper:current_level_settings()
-		local disable_percentage_completed = not not current_level_settings and not not current_level_settings.disable_percentage_completed
+		local disable_percentage_completed = current_level_settings and current_level_settings.disable_percentage_completed
 
-		best_completed_distance = disable_percentage_completed and (not not 0 or not not math.clamp(best_completed_distance, 0, 1)) or not disable_percentage_completed and not not math.clamp(best_completed_distance, 0, 1)
+		best_completed_distance = disable_percentage_completed and (0 or math.clamp(best_completed_distance, 0, 1)) or not disable_percentage_completed and math.clamp(best_completed_distance, 0, 1)
 
 		local mission_failed_reward = {
 			affected_by_multipliers = true,
@@ -267,10 +267,10 @@ Rewards._mission_results = function (self, game_won, extra_mission_results, end_
 		local players_session_score = Managers.mechanism:get_players_session_score(statistics_db, profile_synchronizer)
 		local stats_id = Managers.player:local_player():unique_id()
 		local local_player_session_score = players_session_score[stats_id]
-		local scores = local_player_session_score and not not local_player_session_score.scores or not local_player_session_score and not not {}
-		local hero_kills = scores and not not scores.kills_heroes or not scores and not not 0
+		local scores = local_player_session_score and local_player_session_score.scores or not local_player_session_score and {}
+		local hero_kills = scores and scores.kills_heroes or not scores and 0
 		local hero_kill_score = hero_kills * experience_settings.hero_kills
-		local special_kills = scores and not not scores.kills_specials or not scores and not not 0
+		local special_kills = scores and scores.kills_specials or not scores and 0
 		local special_kill_score = special_kills * experience_settings.special_kills
 
 		mission_results[#mission_results + 1] = {
@@ -325,7 +325,7 @@ Rewards._mission_results = function (self, game_won, extra_mission_results, end_
 
 	if num_multipliers > 0 then
 		local game_mode_settings = Managers.state.game_mode:settings()
-		local max_rewards = not not game_mode_settings.max_num_rewards_displayed
+		local max_rewards = game_mode_settings.max_num_rewards_displayed
 		local can_display_all = max_rewards >= num_results + num_multipliers
 
 		if can_display_all then
@@ -383,9 +383,9 @@ Rewards._add_missions_from_mission_system = function (self, mission_rewards, dif
 
 	for mission_name, data in pairs(completed_missions) do
 		if not data.is_goal and not data.mission_data.disable_rewards then
-			local experience = not not data.experience
-			local bonus_dice = not not data.bonus_dice
-			local bonus_tokens = not not data.bonus_tokens
+			local experience = data.experience
+			local bonus_dice = data.bonus_dice
+			local bonus_tokens = data.bonus_tokens
 			local dice_type = data.dice_type
 			local token_type = data.token_type
 
@@ -415,9 +415,9 @@ Rewards._add_missions_from_mission_system = function (self, mission_rewards, dif
 
 			if data.evaluation_type == "percent" then
 				local percent_completed = amount * 100
-				local experience_per_percent = not not data.experience_per_percent
-				local dice_per_percent = not not data.dice_per_percent
-				local tokens_per_percent = not not data.tokens_per_percent
+				local experience_per_percent = data.experience_per_percent
+				local dice_per_percent = data.dice_per_percent
+				local tokens_per_percent = data.tokens_per_percent
 
 				experience = math.ceil(percent_completed * experience_per_percent)
 				bonus_dice = math.floor(percent_completed * dice_per_percent)
@@ -433,9 +433,9 @@ Rewards._add_missions_from_mission_system = function (self, mission_rewards, dif
 				end
 			elseif data.evaluation_type == "amount" then
 				local collected_amount = amount
-				local experience_per_amount = not not data.experience_per_amount
-				local dice_per_amount = not not data.dice_per_amount
-				local tokens_per_amount = not not data.tokens_per_amount
+				local experience_per_amount = data.experience_per_amount
+				local dice_per_amount = data.dice_per_amount
+				local tokens_per_amount = data.tokens_per_amount
 
 				experience = collected_amount * experience_per_amount
 				bonus_dice = collected_amount * dice_per_amount
@@ -536,8 +536,8 @@ Rewards._evaluate_backend_mission_results = function (self)
 		local settings = Managers.state.game_mode:settings()
 		local experience_settings = settings.experience
 		local versus_interface = Managers.backend:get_interface("versus")
-		local first_win_of_the_day_timestamp = not not versus_interface:get_profile_data("first_win_of_the_day_timestamp")
-		local last_win_timestamp = not not versus_interface:get_profile_data("last_win_timestamp")
+		local first_win_of_the_day_timestamp = versus_interface:get_profile_data("first_win_of_the_day_timestamp")
+		local last_win_timestamp = versus_interface:get_profile_data("last_win_timestamp")
 
 		if last_win_timestamp == first_win_of_the_day_timestamp then
 			table.insert(self._mission_results, 3, {
@@ -577,15 +577,15 @@ end
 
 Rewards.get_level_start = function (self)
 	-- function 14
-	local start_experience = not not self._start_experience
-	local start_experience_pool = not not self._start_experience_pool
+	local start_experience = self._start_experience
+	local start_experience_pool = self._start_experience_pool
 
 	return ExperienceSettings.get_level(start_experience), start_experience, start_experience_pool
 end
 
 Rewards.get_versus_level_start = function (self)
 	-- function 15
-	local versus_start_experience = not not self._versus_start_experience
+	local versus_start_experience = self._versus_start_experience
 
 	return ExperienceSettings.get_versus_level_from_experience(versus_start_experience), versus_start_experience
 end
@@ -601,10 +601,10 @@ Rewards.get_level_end = function (self)
 	local gained_xp = 0
 
 	for _, mission_reward in ipairs(mission_results) do
-		gained_xp = gained_xp + not not mission_reward.experience
+		gained_xp = gained_xp + mission_reward.experience
 	end
 
-	local start_experience = not not self._start_experience
+	local start_experience = self._start_experience
 	local experience = start_experience + gained_xp
 
 	return ExperienceSettings.get_level(experience), experience
@@ -616,10 +616,10 @@ Rewards.get_versus_level_end = function (self)
 	local gained_xp = 0
 
 	for _, mission_reward in ipairs(mission_results) do
-		gained_xp = gained_xp + not not mission_reward.experience
+		gained_xp = gained_xp + mission_reward.experience
 	end
 
-	local start_experience = not not self._versus_start_experience
+	local start_experience = self._versus_start_experience
 	local experience = start_experience + gained_xp
 
 	return ExperienceSettings.get_versus_level_from_experience(experience), experience
@@ -629,7 +629,7 @@ Rewards._experience_multipliers = function (self, allow_commendation)
 	-- function 19
 	local multipliers = {}
 	local backend_manager = Managers.backend
-	local event_xp_multiplier = not not backend_manager:get_title_data("experience_multiplier")
+	local event_xp_multiplier = backend_manager:get_title_data("experience_multiplier")
 
 	if event_xp_multiplier > 1 then
 		multipliers[#multipliers + 1] = {
@@ -640,7 +640,7 @@ Rewards._experience_multipliers = function (self, allow_commendation)
 
 	local difficulty_manager = Managers.state.difficulty
 	local difficulty_settings = difficulty_manager:get_difficulty_settings()
-	local xp_multiplier = not not difficulty_settings.xp_multiplier
+	local xp_multiplier = difficulty_settings.xp_multiplier
 
 	if xp_multiplier > 1 then
 		multipliers[#multipliers + 1] = {

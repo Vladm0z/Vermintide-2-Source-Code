@@ -28,7 +28,7 @@ local function generate_non_refreshable_potion_template(potion_name)
 					local buff_extension = ScriptUnit.extension(action_user, "buff_system")
 					local has_normal_buff = buff_extension:has_buff_type(potion_name .. "_potion")
 					local has_increased_buff = buff_extension:has_buff_type(potion_name .. "_potion_increased")
-					local has_buff = not not has_normal_buff or not not has_increased_buff
+					local has_buff = has_normal_buff or has_increased_buff
 
 					return not has_buff
 				end,

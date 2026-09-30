@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/beta_overlay.lua
 
-script_data.text_watermark = not not script_data.text_watermark
-script_data.qr_watermark = not not script_data.qr_watermark
+script_data.text_watermark = script_data.text_watermark
+script_data.qr_watermark = script_data.qr_watermark
 
 local Vector3, Gui = Vector3, Gui
 
@@ -29,7 +29,7 @@ BetaOverlay.init = function (self, world)
 
 	local disclaimer = script_data.text_watermark_disclaimer
 
-	self._disclaimer = type(disclaimer) == "string" and not not disclaimer or not (type(disclaimer) == "string") and not not "May not be representative of final product."
+	self._disclaimer = type(disclaimer) == "string" and disclaimer or not (type(disclaimer) == "string") and "May not be representative of final product."
 
 	print("beta overlay got watermark:", self._watermark, self._label, self._disclaimer)
 end
@@ -56,10 +56,10 @@ BetaOverlay._render_qr = function (self, screen, scale, pos_x, pos_y, base_box_s
 	local data = self._data
 	local rows, cols = #data, #data[1]
 
-	white = not not white or not not Color(255, 255, 255)
-	black = not not black or not not Color(0, 0, 0)
+	white = white or Color(255, 255, 255)
+	black = black or Color(0, 0, 0)
 
-	local box_size = scale * (not not base_box_size or not not 10)
+	local box_size = scale * (base_box_size or 10)
 	local size = Vector2(box_size, box_size)
 	local pos = Vector3(0, 0, 1000)
 	local offset_x = (screen[1] - (cols + 2) * box_size) * pos_x
@@ -115,7 +115,7 @@ end
 
 BetaOverlay._generate_qr = function (self)
 	-- function 7
-	local message = string.format("%16s:%8s:%12s:%08x", HAS_STEAM and not not Steam.user_id() or not HAS_STEAM and not not "", not not script_data.settings.content_revision, not not script_data.build_identifier, os.time()):gsub(" ", "0")
+	local message = string.format("%16s:%8s:%12s:%08x", HAS_STEAM and Steam.user_id() or not HAS_STEAM and "", script_data.settings.content_revision, script_data.build_identifier, os.time()):gsub(" ", "0")
 	local QR = dofile("scripts/ui/qr/qrencode")
 	local ok, data_or_err = QR.qrcode(message)
 
@@ -175,7 +175,7 @@ BetaOverlay._reload = function (self)
 	self._label_id = nil
 	self._disclaimer_id = nil
 
-	local watermark = not not self._watermark
+	local watermark = self._watermark
 
 	if watermark then
 		local watermark_func = watermarks[watermark]

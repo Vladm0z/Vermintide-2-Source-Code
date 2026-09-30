@@ -50,7 +50,7 @@ return {
 
 				local respawn_time = math.random(data.respawn_times[1], data.respawn_times[2])
 
-				data.spawn_at_time = data.is_initial_spawn and not not (t + data.initial_spawn_time) or not data.is_initial_spawn and not not (t + respawn_time)
+				data.spawn_at_time = data.is_initial_spawn and t + data.initial_spawn_time or not data.is_initial_spawn and t + respawn_time
 				data.has_wanted_position = true
 				data.is_initial_spawn = nil
 			elseif t > data.spawn_at_time then

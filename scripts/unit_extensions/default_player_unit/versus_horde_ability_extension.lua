@@ -39,7 +39,7 @@ VersusHordeAbilityExtension._activate = function (self, t)
 		self._audio_system:play_audio_position_event("Play_versus_pactsworn_horde_ability", POSITION_LOOKUP[self._unit])
 	end
 
-	local game_mode = not not Managers.state.game_mode
+	local game_mode = Managers.state.game_mode
 	local local_player = Managers.player:local_player()
 
 	if local_player then
@@ -71,9 +71,9 @@ VersusHordeAbilityExtension.update = function (self, t)
 		self._fully_charged = true
 	end
 
-	local input_activated = not not self._input_extension
+	local input_activated = self._input_extension
 	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local is_activation_allowed = not not cooldown_ready and not not self._horde_ability_system:is_activation_allowed(is_in_ghost_mode)
+	local is_activation_allowed = cooldown_ready and self._horde_ability_system:is_activation_allowed(is_in_ghost_mode)
 
 	if input_activated then
 		if is_activation_allowed then

@@ -42,7 +42,7 @@ StateLoadingMigrateHost._init_network = function (self)
 	local loading_context = self.parent.parent.loading_context
 	local host_migration_info = loading_context.host_migration_info
 	local host_to_migrate_to = host_migration_info.host_to_migrate_to
-	local host_peer_id = not not host_to_migrate_to and not not host_to_migrate_to.peer_id
+	local host_peer_id = host_to_migrate_to and host_to_migrate_to.peer_id
 
 	if host_peer_id == Network.peer_id() then
 		network_printf("creating host for people to migrate to")
@@ -118,7 +118,7 @@ end
 StateLoadingMigrateHost.on_exit = function (self, application_shutdown)
 	-- function 6
 	local host_migration_info = self.parent.parent.loading_context.host_migration_info
-	local game_mode_event_data = not not host_migration_info and not not host_migration_info.game_mode_event_data
+	local game_mode_event_data = host_migration_info and host_migration_info.game_mode_event_data
 
 	if game_mode_event_data then
 		self.parent.parent.loading_context.host_migration_info = {
@@ -138,7 +138,7 @@ StateLoadingMigrateHost.cb_server_created = function (self)
 	end
 
 	local lobby_host = self.parent:get_lobby()
-	local stored_lobby_data = not not lobby_host:get_stored_lobby_data()
+	local stored_lobby_data = lobby_host:get_stored_lobby_data()
 	local lobby_data = self.parent.parent.loading_context.host_migration_info.lobby_data
 
 	for key, value in pairs(lobby_data) do

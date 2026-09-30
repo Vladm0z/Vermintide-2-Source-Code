@@ -50,7 +50,7 @@ BTBotTeleportToAllyAction.run = function (self, unit, blackboard, t, dt)
 	local angle_sign = 1
 
 	for i = 0, CHECKS_PER_DIRECTION do
-		local directions_to_check = i > 0 and not not 2 or not (i > 0) and not not 1
+		local directions_to_check = i > 0 and 2 or not (i > 0) and 1
 		local done = false
 
 		for j = 1, directions_to_check do

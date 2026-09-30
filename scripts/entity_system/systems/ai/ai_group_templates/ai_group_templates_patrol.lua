@@ -44,7 +44,7 @@ local CIRCULAR_SPLINE_THRESHOLD = 5
 local CIRCULAR_SPLINE_THRESHOLD_SQ = CIRCULAR_SPLINE_THRESHOLD^2
 local play_sound, pick_sound_source_unit, update_animation_triggered_sounds, init_group, set_state, remove_dead_units, calculate_group_middle_position, change_path_direction, unit_animation_event, set_patrol_path_broken, enter_state_find_path_entry, set_path_direction, enter_state_forming, set_forming_positions, set_end_of_spline_positions, debug_draw_formation, check_is_in_formation, update_units, find_position_on_navmesh, enter_state_patrolling, update_spline_anchor_points, update_anchor_positions, update_anchor_direction, check_for_players, check_for_doors, check_prepare_for_combat, enter_state_opening_door, update_state_opening_door, enter_state_controlled_advance, acquire_targets, controlled_advance, prepare_for_combat, cleanup_after_combat, enter_state_combat
 
-AIGroupTemplates = not not AIGroupTemplates
+AIGroupTemplates = AIGroupTemplates
 AIGroupTemplates.spline_patrol = {
 	in_patrol = true,
 	pre_unit_init = function (unit, group)
@@ -114,9 +114,9 @@ AIGroupTemplates.spline_patrol = {
 		return {
 			"GROUP_SYSTEM:",
 			tostring(group.template),
-			"state:" .. not not group.state,
-			"previous_state:" .. not not group.previous_state,
-			"num members: " .. not not group.members_n
+			"state:" .. group.state,
+			"previous_state:" .. group.previous_state,
+			"num members: " .. group.members_n
 		}
 	end
 }
@@ -177,7 +177,7 @@ local function set_spline_speed(spline, speed, group)
 	-- function 11
 	local nav_data = group.nav_data
 	local direction = nav_data.node_direction
-	local direction_modifier = direction ~= "reversed" and not not 1 or not (direction ~= "reversed") and not not -1
+	local direction_modifier = direction ~= "reversed" and 1 or not (direction ~= "reversed") and -1
 	local spline_speed = speed * direction_modifier
 	local movement = spline:movement()
 
@@ -326,7 +326,7 @@ function change_path_direction(group)
 	-- function 16
 	local nav_data = group.nav_data
 	local current_direction = nav_data.node_direction
-	local new_direction = current_direction ~= "reversed" and not not "reversed" or not (current_direction ~= "reversed") and not not "forward"
+	local new_direction = current_direction ~= "reversed" and "reversed" or not (current_direction ~= "reversed") and "forward"
 
 	set_path_direction(group, new_direction, current_direction)
 end
@@ -495,7 +495,7 @@ function init_group(nav_world, group, world, t)
 
 			positions[c] = column_position
 			anchor_start_position = anchor_start_position + column_position:unbox()
-			anchor_start_direction = not not anchor_start_direction or not not data.start_direction:unbox()
+			anchor_start_direction = anchor_start_direction or data.start_direction:unbox()
 		end
 
 		anchor_start_position = anchor_start_position / num_columns
@@ -581,7 +581,7 @@ function init_group(nav_world, group, world, t)
 	group.door_unit = nil
 	group.use_controlled_advance = formation_settings.use_controlled_advance
 	group.patrol_sound_at_t = t
-	group.end_of_spline_forming_positions_function = is_spline_patrol and not not set_end_of_spline_positions or not is_spline_patrol and not not set_forming_positions
+	group.end_of_spline_forming_positions_function = is_spline_patrol and set_end_of_spline_positions or not is_spline_patrol and set_forming_positions
 
 	local node_data = find_patrol_spline(world, group)
 
@@ -755,7 +755,7 @@ function set_forming_positions(nav_world, group, target_node_index)
 	local node_list = nav_data.node_list
 	local anchors = group.anchors
 	local num_anchors = #anchors
-	local target_node_index = not not target_node_index or not not 2
+	local target_node_index = target_node_index or 2
 	local start_node_index = math.max(target_node_index - 1, 2)
 	local anchor_offset = group.formation_settings.offsets.ANCHOR_OFFSET
 	local wanted_distance = (num_anchors - 1) * anchor_offset.x
@@ -950,7 +950,7 @@ function check_is_in_formation(group, dt)
 			local navigation_extension = blackboard.navigation_extension
 			local has_reached_destination = navigation_extension:has_reached_destination()
 
-			in_formation = not not has_reached_destination and not not not blackboard.climb_state
+			in_formation = has_reached_destination and not blackboard.climb_state
 
 			if not in_formation then
 				break
@@ -984,7 +984,7 @@ function enter_state_patrolling(group)
 
 		navigation_extension:set_max_speed(walk_speed)
 
-		blackboard.stored_goal_destination = not not blackboard.goal_destination
+		blackboard.stored_goal_destination = blackboard.goal_destination
 		blackboard.goal_destination = blackboard.stored_goal_destination
 		blackboard.patrolling = true
 	end
@@ -1071,7 +1071,7 @@ function update_anchor_positions(nav_world, group)
 		local current_spline_index = movement:current_spline_index()
 		local current_subdivision_index = movement:current_subdivision_index()
 		local jump_data = jump_points[current_spline_index]
-		local jump_data_direction = not not jump_data and not not jump_data[current_direction]
+		local jump_data_direction = jump_data and jump_data[current_direction]
 
 		if jump_data_direction and jump_data_direction.start_subdivision_index == current_subdivision_index then
 			local next_subdivsion_index = jump_data_direction.next_subdivsion_index
@@ -1220,20 +1220,20 @@ function check_for_players(group, nav_world, t, dt)
 	for i = 1, num_indexed_members do
 		local unit = indexed_members[i]
 		local blackboard = BLACKBOARDS[unit]
-		local target_unit = not not blackboard.target_unit
+		local target_unit = blackboard.target_unit
 
 		if use_controlled_advance and blackboard.climb_state then
 			someone_is_climbing = true
 		end
 
 		local target_blackboard = BLACKBOARDS[target_unit]
-		local is_player = not not target_blackboard and not not target_blackboard.is_player
+		local is_player = target_blackboard and target_blackboard.is_player
 		local is_valid
 
 		if is_player then
 			is_valid = valid_players[target_unit]
 		else
-			is_valid = not not enemy_units[target_unit] and not not HEALTH_ALIVE[target_unit]
+			is_valid = enemy_units[target_unit] and HEALTH_ALIVE[target_unit]
 		end
 
 		if is_valid then
@@ -1587,7 +1587,7 @@ function set_patrol_path_broken(group)
 	-- function 45
 	group.patrol_path_broken = true
 
-	local spline_name = not not group.spline_name
+	local spline_name = group.spline_name
 
 	print("[Patrol] Broken patrol path, spline_name", spline_name)
 

@@ -103,15 +103,15 @@ BTAttackAction.enter = function (self, unit, blackboard, t)
 	blackboard.attack_rotation_lock_timer = t
 
 	local dodge_window_start = action.dodge_window_start
-	local dodge_window_duration = not not action.dodge_window_duration
+	local dodge_window_duration = action.dodge_window_duration
 	local difficulty = Managers.state.difficulty:get_difficulty()
 
 	if dodge_window_start and type(dodge_window_start) == "table" then
 		dodge_window_start = dodge_window_start[difficulty]
 	end
 
-	blackboard.attack_dodge_window_start = dodge_window_start and not not (dodge_window_start + t) or not dodge_window_start and not not t
-	blackboard.attack_dodge_window_duration = not not dodge_window_duration[difficulty]
+	blackboard.attack_dodge_window_start = dodge_window_start and dodge_window_start + t or not dodge_window_start and t
+	blackboard.attack_dodge_window_duration = dodge_window_duration[difficulty]
 
 	if action.attack_finished_duration then
 		local attack_finished_duration = action.attack_finished_duration[difficulty]
@@ -141,13 +141,13 @@ end
 BTAttackAction._select_attack = function (self, action, unit, target_unit, blackboard, target_unit_status_extension)
 	-- function 4
 	local target_type = Unit.get_data(target_unit, "target_type")
-	local target_exception_attack = not not target_type and not not action.target_type_exceptions
+	local target_exception_attack = target_type and action.target_type_exceptions
 
 	if target_exception_attack then
 		return target_exception_attack
 	else
 		local self_pos = POSITION_LOOKUP[unit]
-		local target_pos = not not POSITION_LOOKUP[target_unit]
+		local target_pos = POSITION_LOOKUP[target_unit]
 		local z_offset = target_pos.z - self_pos.z
 		local flat_distance = Vector3.distance(Vector3.flat(self_pos), Vector3.flat(target_pos))
 		local default_attack = action.default_attack
@@ -166,7 +166,7 @@ BTAttackAction._select_attack = function (self, action, unit, target_unit, black
 			return low_attack
 		elseif knocked_down_attack and z_offset < knocked_down_attack.z_threshold and target_unit_status_extension and target_unit_status_extension:is_knocked_down() then
 			return knocked_down_attack
-		elseif step_attack_with_callback and blackboard.target_speed_away > not not step_attack_with_callback.step_speed_moving then
+		elseif step_attack_with_callback and blackboard.target_speed_away > step_attack_with_callback.step_speed_moving then
 			blackboard.moving_attack_with_callback = true
 
 			if step_attack_with_callback.attack_hit_animation then
@@ -174,7 +174,7 @@ BTAttackAction._select_attack = function (self, action, unit, target_unit, black
 			end
 
 			return step_attack_with_callback
-		elseif step_attack and blackboard.target_speed_away > not not step_attack.step_speed_moving then
+		elseif step_attack and blackboard.target_speed_away > step_attack.step_speed_moving then
 			blackboard.moving_attack = step_attack.moving_attack
 
 			return step_attack
@@ -373,8 +373,8 @@ BTAttackAction.attack_blocked = function (self, unit, blackboard, direction)
 		local status_ext = ScriptUnit.has_extension(target_unit, "status_system")
 
 		if status_ext and not status_ext:is_disabled() then
-			local attacker_pos = not not POSITION_LOOKUP[unit]
-			local target_pos = not not POSITION_LOOKUP[target_unit]
+			local attacker_pos = POSITION_LOOKUP[unit]
+			local target_pos = POSITION_LOOKUP[target_unit]
 			local damage_direction = Vector3.normalize(target_pos - attacker_pos)
 			local target_locomotion = ScriptUnit.has_extension(target_unit, "locomotion_system")
 
@@ -402,15 +402,15 @@ BTAttackAction._handle_movement = function (self, unit, t, dt, blackboard)
 	-- function 12
 	local bb = blackboard
 	local distance = blackboard.target_dist
-	local is_in_dodge_window = not not bb.attack_dodge_window_start
+	local is_in_dodge_window = bb.attack_dodge_window_start
 
 	if is_in_dodge_window and not bb.past_damage_in_attack then
 		local target_status_ext = bb.target_unit_status_extension
 
 		if target_status_ext then
-			local target_is_dodging = not not target_status_ext:get_is_dodging()
+			local target_is_dodging = target_status_ext:get_is_dodging()
 			local should_rotate = not target_is_dodging and t > bb.attack_rotation_lock_timer
-			local should_lock_rotation = not not target_is_dodging and not bb.locked_attack_rotation and distance < DEFAULT_DODGE_DISTANCE_THRESHOLD
+			local should_lock_rotation = target_is_dodging and not bb.locked_attack_rotation and distance < DEFAULT_DODGE_DISTANCE_THRESHOLD
 
 			if should_rotate then
 				local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, bb.attacking_target)

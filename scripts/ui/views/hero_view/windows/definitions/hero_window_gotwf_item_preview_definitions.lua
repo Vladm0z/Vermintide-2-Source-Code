@@ -430,7 +430,7 @@ local loading_widgets = {
 					texture_id = "texture_id",
 					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress = not not style.progress
+						local progress = style.progress
 
 						progress = (progress + dt) % 1
 
@@ -707,7 +707,7 @@ local function create_texture_widget(texture, scenegraph_id, masked, retained, c
 		offset = {
 			0,
 			0,
-			not not offset or not not 0
+			offset or 0
 		}
 	end
 
@@ -744,7 +744,7 @@ local function create_texture_widget(texture, scenegraph_id, masked, retained, c
 			texture_id = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -810,9 +810,9 @@ local claimed_text_shadow_style = {
 
 local function create_base_portrait_frame(scenegraph_id, frame_settings_name, scale)
 	-- function 8
-	scale = not not scale or not not 1
+	scale = scale or 1
 
-	local frame_settings_name = not not frame_settings_name or not not "default"
+	local frame_settings_name = frame_settings_name or "default"
 	local frame_settings = UIPlayerPortraitFrameSettings[frame_settings_name]
 	local default_color = {
 		255,
@@ -837,7 +837,7 @@ local function create_base_portrait_frame(scenegraph_id, frame_settings_name, sc
 
 	for index, data in ipairs(frame_settings) do
 		local name = "texture_" .. index
-		local texture_name = not not data.texture
+		local texture_name = data.texture
 		local size = data.size
 
 		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
@@ -848,21 +848,21 @@ local function create_base_portrait_frame(scenegraph_id, frame_settings_name, sc
 			size = data.size
 		end
 
-		size = size and (not not table.clone(size) or not not {
+		size = size and (table.clone(size) or {
 			0,
 			0
-		}) or not size and not not {
+		}) or not size and {
 			0,
 			0
 		}
 		size[1] = size[1] * scale
 		size[2] = size[2] * scale
 
-		local offset = table.clone(not not data.offset)
+		local offset = table.clone(data.offset)
 
 		offset[1] = offset[1] * scale
 		offset[2] = offset[2] * scale
-		offset[3] = not not data.layer
+		offset[3] = data.layer
 		passes[#passes + 1] = {
 			pass_type = "texture",
 			texture_id = name,
@@ -872,7 +872,7 @@ local function create_base_portrait_frame(scenegraph_id, frame_settings_name, sc
 		style[name] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			color = not not data.color,
+			color = data.color,
 			offset = offset,
 			texture_size = size
 		}

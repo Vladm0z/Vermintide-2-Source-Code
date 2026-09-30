@@ -70,7 +70,7 @@ local breed_data = {
 		200,
 		0
 	},
-	disabled = not not Development.setting("disable_globadier"),
+	disabled = Development.setting("disable_globadier"),
 	hitzone_multiplier_types = {
 		head = "headshot"
 	},

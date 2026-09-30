@@ -18,12 +18,12 @@ FindServerState.init = function (self, state_machine, network_options, network_h
 		"internet",
 		"lan"
 	}
-	state_machine._search_index = not not state_machine._search_index
-	state_machine._servers_by_type = not not state_machine._servers_by_type
+	state_machine._search_index = state_machine._search_index
+	state_machine._servers_by_type = state_machine._servers_by_type
 	self._finder = nil
 	self._delay = 0
 	self._search_time = 0
-	self._soft_filters = not not user_data.soft_filters
+	self._soft_filters = user_data.soft_filters
 end
 
 FindServerState.enter = function (self)
@@ -50,7 +50,7 @@ FindServerState.update = function (self, dt, t)
 
 	local sm = self._state_machine
 	local search_type = self._search_types[sm._search_index]
-	local server_list = not not sm._servers_by_type[search_type]
+	local server_list = sm._servers_by_type[search_type]
 
 	if table.is_empty(server_list) then
 		if self._finder == nil then
@@ -107,7 +107,7 @@ FindServerState._pick_server = function (self, search_type)
 
 	local server_index
 
-	server_index = not not Math.random(#servers)
+	server_index = Math.random(#servers)
 
 	local server = servers[server_index]
 
@@ -128,7 +128,7 @@ FindServerState._trigger_search = function (self, search_type)
 	-- function 6
 	print("Attempting " .. search_type .. " search for game server")
 
-	local disable_dedicated_servers = not not Development.parameter("use_lan_backend")
+	local disable_dedicated_servers = Development.parameter("use_lan_backend")
 	local supported_on_platform = IS_WINDOWS
 	local game_server_finder
 
@@ -232,7 +232,7 @@ ServerPartyReserveStateMachine.init = function (self, network_options, peers_to_
 	local project_hash = network_options.project_hash
 	local network_hash = LobbyAux.create_network_hash(config_file_name, project_hash)
 
-	self.super.init(self, "ServerPartyReserveStateMachine", parent, network_options, network_hash, peers_to_reserve, not not optional_black_listed_servers or not not {}, not not optional_filters or not not {}, optional_order_func, not not user_data or not not {})
+	self.super.init(self, "ServerPartyReserveStateMachine", parent, network_options, network_hash, peers_to_reserve, optional_black_listed_servers or {}, optional_filters or {}, optional_order_func, user_data or {})
 
 	self._has_result = false
 	self._user_data = user_data

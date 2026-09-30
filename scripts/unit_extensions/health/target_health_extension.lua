@@ -9,8 +9,8 @@ TargetHealthExtension.init = function (self, extension_init_context, unit, exten
 	self._dead = false
 	self._out_of_combat_timer = 0
 	self._health_regen_timer = 0
-	self._damage_per_hit = not not extension_init_data.damage_per_hit
-	self._health = not not extension_init_data.health
+	self._damage_per_hit = extension_init_data.damage_per_hit
+	self._health = extension_init_data.health
 	self._max_health = self._health
 	self._health_regen = {
 		interval = 1,
@@ -19,7 +19,7 @@ TargetHealthExtension.init = function (self, extension_init_context, unit, exten
 		amount = 0
 	}
 
-	for key, value in pairs(not not extension_init_data.health_regen) do
+	for key, value in pairs(extension_init_data.health_regen) do
 		self._health_regen[key] = value
 	end
 

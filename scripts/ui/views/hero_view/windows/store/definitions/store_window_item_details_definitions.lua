@@ -469,7 +469,7 @@ local function create_career_icon(scenegraph_id)
 					},
 					content_check_function = function (content)
 						-- function 2
-						return not not content.tooltip
+						return content.tooltip
 					end
 				},
 				{

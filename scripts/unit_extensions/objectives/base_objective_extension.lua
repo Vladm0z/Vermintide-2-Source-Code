@@ -8,15 +8,15 @@ BaseObjectiveExtension.init = function (self, extension_init_context, unit, exte
 	self._is_server = extension_init_context.is_server
 	self._unit = unit
 	self._world = extension_init_context.world
-	self._objective_name = not not extension_init_data.objective_name
+	self._objective_name = extension_init_data.objective_name
 	self._objecive_system = Managers.state.entity:system("objective_system")
-	self._objective_name = not not self._objective_name
+	self._objective_name = self._objective_name
 
 	assert(self._objective_name, "[BaseObjectiveExtension] Missing objective name")
 
 	self._audio_system = Managers.state.entity:system("audio_system")
 	self._wwise_world = Managers.world:wwise_world(self._world)
-	self._scale = not not extension_init_data.scale
+	self._scale = extension_init_data.scale
 	self._num_sections = 1
 	self._current_section = 0
 	self._percentage = 0
@@ -30,11 +30,11 @@ BaseObjectiveExtension.set_objective_data = function (self, objective_data)
 	self._objective_type = objective_data.objective_type
 	self._objective_tag = objective_data.objective_tag
 	self._on_complete_func = objective_data.on_complete_func
-	self._description = not not objective_data.description
+	self._description = objective_data.description
 	self._display_name = objective_data.display_name
-	self._objective_icon = not not objective_data.objective_type
-	self._score_for_completion = not not objective_data.score_for_completion
-	self._time_for_completion = not not objective_data.time_for_completion
+	self._objective_icon = objective_data.objective_type
+	self._score_for_completion = objective_data.score_for_completion
+	self._time_for_completion = objective_data.time_for_completion
 	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
 	self._on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
 	self._on_section_progress_sound_event = objective_data.on_section_progress_sound_event
@@ -99,7 +99,7 @@ BaseObjectiveExtension.complete = function (self, is_root_objective, is_leaf_obj
 
 	if not DEDICATED_SERVER then
 		local leaf_complete_sound_event = self._on_leaf_complete_sound_event
-		local last_leaf_complete_sound_event = not not self._on_last_leaf_complete_sound_event
+		local last_leaf_complete_sound_event = self._on_last_leaf_complete_sound_event
 
 		if is_last_leaf_objective and last_leaf_complete_sound_event then
 			local side_name = self:_local_side():name()

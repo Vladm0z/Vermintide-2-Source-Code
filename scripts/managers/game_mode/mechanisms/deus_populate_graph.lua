@@ -322,7 +322,7 @@ local MINOR_MODIFIER_VALIDATORS = {
 		-- function 18
 		local node = working_graph[node_key]
 
-		return node.curse ~= "curse_abundance_of_life" or not table.contains(modifier_group, "increased_grenades") and not not not table.contains(modifier_group, "increased_healing")
+		return node.curse ~= "curse_abundance_of_life" or not table.contains(modifier_group, "increased_grenades") and not table.contains(modifier_group, "increased_healing")
 	end
 }
 
@@ -605,8 +605,8 @@ local function apply_progress(working_graph, path, start_index, end_index)
 	-- function 42
 	local node_before = working_graph[path[start_index - 1]]
 	local node_after = working_graph[path[end_index + 1]]
-	local start_prog = node_before and not not node_before.run_progress or not node_before and not not 0
-	local end_prog = node_after and not not node_after.run_progress or not node_after and not not 0.9999
+	local start_prog = node_before and node_before.run_progress or not node_before and 0
+	local end_prog = node_after and node_after.run_progress or not node_after and 0.9999
 	local length_of_lerp = end_index - start_index
 	local index_offset = 0
 
@@ -804,7 +804,7 @@ local function spread_belakor(context, working_graph)
 				until possible_node.type == "SIGNATURE" or possible_node.type == "TRAVEL"
 
 				if possible_node then
-					final_nodes = not not final_nodes or not not {}
+					final_nodes = final_nodes or {}
 					final_nodes[possible_node_key] = true
 				end
 			end
@@ -903,7 +903,7 @@ local function assign_conflict_settings(context, working_graph)
 	-- function 52
 	for _, base_node in pairs(working_graph) do
 		if base_node.type == "SIGNATURE" or base_node.type == "TRAVEL" or base_node.type == "ARENA" then
-			local possible_conflict_settings = not not context.config.CONFLICT_DIRECTORS[base_node.god]
+			local possible_conflict_settings = context.config.CONFLICT_DIRECTORS[base_node.god]
 
 			base_node.conflict_settings = possible_conflict_settings[context.random_generator(1, #possible_conflict_settings)]
 		end
@@ -1069,7 +1069,7 @@ function deus_populate_graph(base_graph, seed, config, dominant_god, with_belako
 
 		if result then
 			if error_message then
-				Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (not not error_message or not not "N/A"))
+				Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (error_message or "N/A"))
 
 				return nil
 			end
@@ -1079,7 +1079,7 @@ function deus_populate_graph(base_graph, seed, config, dominant_god, with_belako
 	end
 
 	if not result then
-		Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (not not error_message or not not "N/A"))
+		Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (error_message or "N/A"))
 
 		return nil
 	end
@@ -1116,10 +1116,10 @@ function deus_populate_graph(base_graph, seed, config, dominant_god, with_belako
 				blessings = blessings_seed,
 				power_ups = power_ups_seed
 			},
-			theme = not not base_node.god,
+			theme = base_node.god,
 			minor_modifier_group = base_node.minor_modifier_group,
 			run_progress = base_node.run_progress,
-			conflict_settings = not not base_node.conflict_settings,
+			conflict_settings = base_node.conflict_settings,
 			level_type = base_node.type,
 			mutators = config.MUTATORS[base_node.type],
 			terror_event_power_up = base_node.terror_event_power_up,
@@ -1143,14 +1143,14 @@ function deus_populate_graph(base_graph, seed, config, dominant_god, with_belako
 
 			local themes = config.LEVEL_AVAILABILITY[base_node.type][base_node.level].themes
 
-			if not table.contains(themes, not not base_node.god) then
+			if not table.contains(themes, base_node.god) then
 				local any_theme = themes[1]
 
-				Application.warning(string.format("[deus_populate_graph.lua] theme %s not found for level %s, using %s", not not base_node.god, base_node.level, any_theme))
+				Application.warning(string.format("[deus_populate_graph.lua] theme %s not found for level %s, using %s", base_node.god, base_node.level, any_theme))
 
 				node.level = get_level_name(base_node.level, base_node.path, any_theme)
 			else
-				node.level = get_level_name(base_node.level, base_node.path, not not base_node.god)
+				node.level = get_level_name(base_node.level, base_node.path, base_node.god)
 			end
 
 			local level_alias = config.LEVEL_ALIAS[node.level]

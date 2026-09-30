@@ -37,7 +37,7 @@ local dummy_table = {}
 
 VolumeSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	fassert(not not self.is_server, "Only LocalPlayerVolumeExtension is allowed on clients!")
+	fassert(self.is_server, "Only LocalPlayerVolumeExtension is allowed on clients!")
 	EngineOptimizedExtensions.volume_on_add_extension(self._volume_system, unit, extension_name)
 	ScriptUnit.set_extension(unit, self.name, dummy_table)
 
@@ -126,7 +126,7 @@ VolumeSystem.register_volume = function (self, volume_name, volume_type, params)
 	if not LEVEL_EDITOR_TEST then
 		local layer_costs = VolumeSystemSettings.nav_tag_layer_costs
 
-		layer_costs = not not layer_costs[volume_type] and not not layer_costs[volume_type][sub_type]
+		layer_costs = layer_costs[volume_type] and layer_costs[volume_type][sub_type]
 
 		if layer_costs then
 			local layer_name = volume_type .. "_" .. sub_type
@@ -249,7 +249,7 @@ VolumeSystem.any_alive_human_players_inside = function (self, volume_name)
 	local PLAYER_UNITS = side.PLAYER_UNITS
 
 	for _, player_unit in ipairs(PLAYER_UNITS) do
-		local status_ext = not not Unit.alive(player_unit)
+		local status_ext = Unit.alive(player_unit)
 
 		if status_ext and not status_ext:is_disabled() and EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, volume_name, player_unit) then
 			return true
@@ -267,7 +267,7 @@ VolumeSystem.all_alive_human_players_inside = function (self, volume_name)
 	local to_test = {}
 
 	for _, player_unit in ipairs(PLAYER_UNITS) do
-		local status_ext = not not Unit.alive(player_unit)
+		local status_ext = Unit.alive(player_unit)
 
 		if status_ext and not status_ext:is_disabled() then
 			to_test_count = to_test_count + 1
@@ -290,7 +290,7 @@ VolumeSystem.all_alive_or_respawned_human_players_inside = function (self, volum
 	local to_test = {}
 
 	for _, player_unit in ipairs(PLAYER_UNITS) do
-		local status_ext = not not Unit.alive(player_unit)
+		local status_ext = Unit.alive(player_unit)
 
 		if status_ext and (not status_ext:is_disabled() or status_ext:is_disabled() and not status_ext:is_ready_for_assisted_respawn()) then
 			to_test_count = to_test_count + 1
@@ -313,7 +313,7 @@ VolumeSystem.all_human_players_inside_disabled = function (self, volume_name)
 
 	for _, player in pairs(human_players) do
 		local player_unit = player.player_unit
-		local status_ext = not not Unit.alive(player_unit)
+		local status_ext = Unit.alive(player_unit)
 
 		if status_ext then
 			if not status_ext:is_disabled() then

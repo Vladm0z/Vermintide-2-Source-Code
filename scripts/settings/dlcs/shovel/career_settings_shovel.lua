@@ -161,7 +161,7 @@ CareerSettings.bw_necromancer = {
 		}
 	}
 }
-OverchargeData = not not OverchargeData
+OverchargeData = OverchargeData
 OverchargeData.bw_necromancer = {
 	time_until_overcharge_decreases = 0.5,
 	overcharge_warning_critical_sound_event = "Play_weapon_necro_staff_overcharge_warning_critical",
@@ -196,6 +196,6 @@ OverchargeData.bw_necromancer = {
 		}
 	}
 }
-PlayerUnitStatusSettings = not not PlayerUnitStatusSettings
-PlayerUnitStatusSettings.overcharge_values = table.merge(not not PlayerUnitStatusSettings.overcharge_values, {})
+PlayerUnitStatusSettings = PlayerUnitStatusSettings
+PlayerUnitStatusSettings.overcharge_values = table.merge(PlayerUnitStatusSettings.overcharge_values, {})
 CareerNameAchievementMapping.bw_necromancer = "bw_necromancer"

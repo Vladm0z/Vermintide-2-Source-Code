@@ -338,7 +338,7 @@ StatusSystem.rpc_status_change_bool = function (self, channel_id, status_id, sta
 		if set_valid then
 			Managers.state.network.network_transmit:send_rpc_clients_except("rpc_status_change_bool", peer_id, status_id, status_bool, game_object_id, other_object_id)
 		else
-			other_object_id = not not self.unit_storage:go_id(actual_other_unit) or not not NetworkConstants.invalid_game_object_id
+			other_object_id = self.unit_storage:go_id(actual_other_unit) or NetworkConstants.invalid_game_object_id
 
 			Managers.state.network.network_transmit:send_rpc("rpc_status_change_bool", peer_id, status_id, actual_status_bool, game_object_id, other_object_id)
 		end
@@ -389,9 +389,9 @@ StatusSystem.rpc_status_change_int_and_unit = function (self, channel_id, status
 
 	if status == "overpowered" then
 		local is_overpowered = status_int ~= 0
-		local overpowered_template = not not is_overpowered and not not NetworkLookup.overpowered_templates[status_int]
+		local overpowered_template = is_overpowered and NetworkLookup.overpowered_templates[status_int]
 
-		status_ext:set_overpowered(is_overpowered, is_overpowered and (not not overpowered_template or not not status_int) or not is_overpowered and not not status_int, other_unit)
+		status_ext:set_overpowered(is_overpowered, is_overpowered and (overpowered_template or status_int) or not is_overpowered and status_int, other_unit)
 	else
 		assert("Unhandled status %s", tostring(status))
 	end
@@ -446,7 +446,7 @@ StatusSystem.rpc_set_override_blocking = function (self, channel_id, unit_id, bl
 
 	local status_extension = ScriptUnit.extension(unit, "status_system")
 
-	status_extension:set_override_blocking(not not blocking or not not nil)
+	status_extension:set_override_blocking(blocking or nil)
 end
 
 StatusSystem.rpc_leap_start = function (self, channel_id, unit_id)

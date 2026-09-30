@@ -40,7 +40,7 @@ EnemyCharacterStateInVortex.on_enter = function (self, unit, input, dt, context,
 	self.rotation_speed = vortex_template.player_rotation_speed
 	self.radius_change_speed = vortex_template.player_radius_change_speed
 	self.player_actions_allowed = player_actions_allowed
-	self.vortex_max_height = not not vortex_template.max_height_player_target
+	self.vortex_max_height = vortex_template.max_height_player_target
 	self.post_vortex_buff = vortex_template.post_vortex_buff
 
 	local interactor_extension = self._interactor_extension
@@ -123,7 +123,7 @@ EnemyCharacterStateInVortex.update_spin_velocity = function (self, unit, vortex_
 	-- function 4
 	local game = self.game
 	local radius_percentage = GameSession.game_object_field(game, vortex_unit_go_id, "inner_radius_percentage")
-	local wanted_inner_radius = not not self.keep_enemies_within_radius * radius_percentage
+	local wanted_inner_radius = self.keep_enemies_within_radius * radius_percentage
 	local ascend_speed = self.ascend_speed
 	local rotation_speed = self.rotation_speed
 	local radius_change_speed = self.radius_change_speed

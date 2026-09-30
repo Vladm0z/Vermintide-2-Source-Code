@@ -85,17 +85,17 @@ VersusDarkPactCareerDelegator._roll_career_options = function (self, num_career_
 		rolls[i] = 0
 	end
 
-	local delegated_careers = not not self._picks_per_player[peer_id]
+	local delegated_careers = self._picks_per_player[peer_id]
 
 	self._picks_per_player[peer_id] = delegated_careers
 
 	for i = 1, #available_careers do
 		local career = available_careers[i]
 
-		self._picks_per_career[career] = not not self._picks_per_career[career]
+		self._picks_per_career[career] = self._picks_per_career[career]
 
 		local num_times_picked = self._picks_per_career[career]
-		local career_weights = not not weights_by_career[career]
+		local career_weights = weights_by_career[career]
 		local repetition_weight = self:_weight_by_repetition(peer_id, career)
 		local custom_spawn_chance_multiplier = 1
 
@@ -103,7 +103,7 @@ VersusDarkPactCareerDelegator._roll_career_options = function (self, num_career_
 			custom_spawn_chance_multiplier = self._custom_settings_spawn_chance_multipliers[career]
 		end
 
-		local weighted_roll = math.random() * not not career_weights[num_times_picked] * repetition_weight * custom_spawn_chance_multiplier
+		local weighted_roll = math.random() * career_weights[num_times_picked] * repetition_weight * custom_spawn_chance_multiplier
 		local smallest_roll = table.min(rolls)
 
 		if weighted_roll >= rolls[smallest_roll] then
@@ -128,7 +128,7 @@ VersusDarkPactCareerDelegator.request_careers = function (self, peer_id)
 	self:_release_career_for_player(peer_id)
 
 	local settings = Managers.state.game_mode:game_mode():settings()
-	local num_career_options = not not self._custom_num_special_pick_options
+	local num_career_options = self._custom_num_special_pick_options
 	local career_options = self:_roll_career_options(num_career_options, self._all_careers, peer_id)
 
 	if self._playable_boss_can_be_picked then
@@ -149,7 +149,7 @@ VersusDarkPactCareerDelegator.request_careers = function (self, peer_id)
 
 			table.insert(self._picks_per_player[peer_id], boss_profile)
 
-			self._picks_per_career[boss_profile] = not not self._picks_per_career[boss_profile] + 1
+			self._picks_per_career[boss_profile] = self._picks_per_career[boss_profile] + 1
 
 			self:set_playable_boss_can_be_picked(false)
 		end
@@ -215,9 +215,9 @@ VersusDarkPactCareerDelegator._career_picked = function (self, peer_id, career)
 	self:_picking_telemetry(peer_id, career)
 	self:_release_career_for_player(peer_id)
 
-	self._picks_per_career[career] = not not self._picks_per_career[career] + 1
+	self._picks_per_career[career] = self._picks_per_career[career] + 1
 
-	local delegated_careers = not not self._picks_per_player[peer_id]
+	local delegated_careers = self._picks_per_player[peer_id]
 
 	self._picks_per_player[peer_id] = delegated_careers
 
@@ -276,7 +276,7 @@ VersusDarkPactCareerDelegator._picking_telemetry = function (self, peer_id, sele
 		return
 	end
 
-	local player_backend_id = not not self._mechanism:get_peer_backend_id(peer_id)
+	local player_backend_id = self._mechanism:get_peer_backend_id(peer_id)
 	local career_options = table.shallow_copy(self._picks_per_player[peer_id])
 	local match_id = Managers.mechanism:game_mechanism():match_id()
 	local career_selection_time_elapsed = Managers.time:time("game") - self._rolled_careers_time_stamp[peer_id]
@@ -305,7 +305,7 @@ end
 
 VersusDarkPactCareerDelegator._register_player_career = function (self, peer_id, career)
 	-- function 15
-	local last_picks = not not self._last_picked_by_player[peer_id]
+	local last_picks = self._last_picked_by_player[peer_id]
 
 	self._last_picked_by_player[peer_id] = last_picks
 

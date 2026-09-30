@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/projectile_test.lua
 
-ProjectileTest = not not ProjectileTest
+ProjectileTest = ProjectileTest
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 local projectiles = {}
@@ -64,7 +64,7 @@ ProjectileTest.simulate_projectiles = function (physics_world, dt)
 
 	for i = 1, #projectiles do
 		local p = projectiles[i]
-		local color = p.type ~= "known_angle" and not not Color(80, 180, 70) or not (p.type ~= "known_angle") and not not Color(180, 180, 0)
+		local color = p.type ~= "known_angle" and Color(80, 180, 70) or not (p.type ~= "known_angle") and Color(180, 180, 0)
 		local target_pos = p.p2:unbox()
 		local last_pos = p.last_pos:unbox()
 		local pos = WeaponHelper.draw_ball_at_time(physics_world, p.p1:unbox(), p.vec_flat:unbox(), -p.gravity, p.x_vel_0, p.y_vel_0, p.t, color)
@@ -174,7 +174,7 @@ ProjectileTest.draw_projectile_trajectory = function (p1, p2, gravity, projectil
 	local distance_vector = p2 - p1
 	local above = p1.z > p2.z
 	local a1, a2 = WeaponHelper:wanted_projectile_angle(distance_vector, gravity, projectile_speed)
-	local angle = not not a1 or not not a2
+	local angle = a1 or a2
 
 	QuickDrawer:sphere(p1, 0.05, Color(255, 0, 128, 0))
 	QuickDrawer:sphere(p2, 0.05, Color(255, 0, 0, 128))

@@ -42,7 +42,7 @@ BTPrepareForCrazyJumpAction.enter = function (self, unit, blackboard, t)
 	}
 	blackboard.remembered_threat_pos = nil
 
-	local tutorial_message_template = not not action and not not action.tutorial_message_template
+	local tutorial_message_template = action and action.tutorial_message_template
 
 	if tutorial_message_template then
 		local template_id = NetworkLookup.tutorials[tutorial_message_template]
@@ -185,10 +185,10 @@ BTPrepareForCrazyJumpAction.start_crawling = function (unit, blackboard, t, data
 
 	network_manager:anim_event(unit, "to_crouch")
 
-	local prepare_jump_time = not not action.difficulty_prepare_jump_time[Managers.state.difficulty:get_difficulty_rank()]
+	local prepare_jump_time = action.difficulty_prepare_jump_time[Managers.state.difficulty:get_difficulty_rank()]
 
 	data.crouching = true
-	data.ready_crouch_time = t + (not not prepare_jump_time or not not 0.5)
+	data.ready_crouch_time = t + (prepare_jump_time or 0.5)
 end
 
 BTPrepareForCrazyJumpAction.ready_to_jump = function (unit, blackboard, data, set_data)

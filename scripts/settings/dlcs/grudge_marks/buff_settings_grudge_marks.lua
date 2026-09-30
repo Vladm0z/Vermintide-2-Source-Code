@@ -750,7 +750,7 @@ settings.buff_function_templates = {
 			local chunk_size = health_extension:get_max_health() / template.chunk_amount
 			local total_damage_taken = health_extension:get_damage_taken()
 
-			buff.next_chunk = not not buff.next_chunk
+			buff.next_chunk = buff.next_chunk
 
 			if total_damage_taken >= buff.next_chunk then
 				buff_system:add_buff_synced(unit, buff_to_add, BuffSyncType.All)
@@ -842,7 +842,7 @@ settings.buff_function_templates = {
 				end
 
 				local name_index = parent_attributes.grudge_marked.name_index
-				local old_mirrors = not not buff._mirror_units
+				local old_mirrors = buff._mirror_units
 
 				buff._mirror_units = old_mirrors
 
@@ -921,9 +921,9 @@ settings.buff_function_templates = {
 						}
 						local target_position = ConflictUtils.get_closest_position(mirror_pos, side.ENEMY_PLAYER_AND_BOT_POSITIONS)
 
-						target_position = not not target_position or not not teleport_position or not not Vector3.zero()
+						target_position = target_position or teleport_position or Vector3.zero()
 
-						local rot = not not target_position and not not ConflictUtils.look_at_position_flat(mirror_pos, target_position)
+						local rot = target_position and ConflictUtils.look_at_position_flat(mirror_pos, target_position)
 
 						Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(mirror_pos), QuaternionBox(rot), "mirror_spawn", nil, nil, optional_data, nil)
 
@@ -968,7 +968,7 @@ settings.buff_function_templates = {
 
 				local blob_unit = AiUtils.spawn_nurgle_liquid_blob_dynamic(Managers.state.network, mesh_pos, unit)
 				local side_manager = Managers.state.side
-				local side = not not side_manager.side_by_unit[unit]
+				local side = side_manager.side_by_unit[unit]
 				local side_id = side.side_id
 
 				side_manager:add_unit_to_side(blob_unit, side_id)
@@ -1008,8 +1008,8 @@ settings.buff_function_templates = {
 		local max_distance = template.max_distance
 		local position = POSITION_LOOKUP[unit]
 
-		buff.cursed_players = not not buff.cursed_players
-		buff.inside_last_frame = not not buff.inside_last_frame
+		buff.cursed_players = buff.cursed_players
+		buff.inside_last_frame = buff.inside_last_frame
 
 		local inside_last_frame = buff.inside_last_frame
 		local cursed_players = buff.cursed_players
@@ -1046,7 +1046,7 @@ settings.buff_function_templates = {
 		if is_server() then
 			local t = Managers.time:time("game")
 
-			buff.last_curse_t = not not buff.last_curse_t
+			buff.last_curse_t = buff.last_curse_t
 
 			local time_between_curses = template.time_between_curses
 			local next_curse_t = buff.last_curse_t + time_between_curses
@@ -1064,12 +1064,12 @@ settings.buff_function_templates = {
 					end
 				end
 
-				inside_last_frame[cursed_player] = inside_this_frame[cursed_player] and not not true or not inside_this_frame[cursed_player] and not not nil
+				inside_last_frame[cursed_player] = inside_this_frame[cursed_player] or nil
 			end
 
-			buff.last_curse_t = should_apply_buff and (not not next_curse_t or not not buff.last_curse_t) or not should_apply_buff and not not buff.last_curse_t
+			buff.last_curse_t = should_apply_buff and (next_curse_t or buff.last_curse_t) or not should_apply_buff and buff.last_curse_t
 		elseif ALIVE[local_player] then
-			inside_last_frame[local_player] = inside_this_frame[local_player] and not not true or not inside_this_frame[local_player] and not not nil
+			inside_last_frame[local_player] = inside_this_frame[local_player] or nil
 		end
 	end,
 	ai_create_explosion = function (owner_unit, buff, params, world)
@@ -1080,8 +1080,8 @@ settings.buff_function_templates = {
 
 		local buff_template = buff.template
 		local explosion_template_name = buff_template.explosion_template_name
-		local damage_source_name = not not buff_template.damage_source_name
-		local explosion_position = not not POSITION_LOOKUP[owner_unit]
+		local damage_source_name = buff_template.damage_source_name
+		local explosion_position = POSITION_LOOKUP[owner_unit]
 		local explosion_template = ExplosionUtils.get_template(explosion_template_name)
 
 		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source_name, true, false, owner_unit, 0, false)
@@ -1095,7 +1095,7 @@ settings.buff_function_templates = {
 	ai_add_hit_sfx = function (unit, buff, params)
 		-- function 18
 		local template = buff.template
-		local override_sfx = not not template and not not template.hit_sfx_name
+		local override_sfx = template and template.hit_sfx_name
 
 		if override_sfx then
 			local ai_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
@@ -1122,7 +1122,7 @@ settings.buff_function_templates = {
 
 		if local_player then
 			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
-			local first_person_unit = not not first_person_extension and not not first_person_extension:get_first_person_unit()
+			local first_person_unit = first_person_extension and first_person_extension:get_first_person_unit()
 
 			if first_person_unit then
 				Unit.flow_event(first_person_unit, flow_event)
@@ -1150,10 +1150,10 @@ settings.buff_function_templates = {
 		local buff_template = buff.template
 		local faction_terror_events = buff_template.faction_terror_events
 		local blackboard = BLACKBOARDS[owner_unit]
-		local breed = not not blackboard and not not blackboard.breed
-		local faction = not not breed and not not breed.race
-		local terror_event = not not faction_terror_events[faction]
-		local seed = not not buff.seed
+		local breed = blackboard and blackboard.breed
+		local faction = breed and breed.race
+		local terror_event = faction_terror_events[faction]
+		local seed = buff.seed
 
 		Managers.state.conflict:start_terror_event(terror_event, seed, owner_unit)
 
@@ -1242,7 +1242,7 @@ settings.buff_function_templates = {
 		local num_allies = AiUtils.broadphase_query(position, radius, nearby_allies, broadphase_categories)
 		local buff_name = buff.template.buff_to_add
 		local inside_this_frame = FrameTable.alloc_table()
-		local inside_allies = not not buff.inside_allies
+		local inside_allies = buff.inside_allies
 
 		buff.inside_allies = inside_allies
 
@@ -1389,8 +1389,8 @@ settings.proc_functions = {
 			if health_extension and health_extension:is_alive() then
 				local damage_amount = params[param_order.damage_amount]
 				local buff_template = buff.template
-				local multiplier = not not buff_template.multiplier
-				local bonus = not not buff_template.bonus
+				local multiplier = buff_template.multiplier
+				local bonus = buff_template.bonus
 				local amount_to_heal = math.clamp(damage_amount * multiplier + bonus, 0, 255)
 
 				health_extension:add_heal(owner_unit, amount_to_heal, nil, "leech")

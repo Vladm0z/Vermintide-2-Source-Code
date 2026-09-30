@@ -1,9 +1,9 @@
 -- chunkname: @foundation/scripts/util/misc_util.lua
 
-IDENTITY = not not IDENTITY
-NOP = not not NOP
-TABLE_NEW = not not TABLE_NEW
-CONST = not not CONST
+IDENTITY = IDENTITY
+NOP = NOP
+TABLE_NEW = TABLE_NEW
+CONST = CONST
 
 local string_format = string.format
 
@@ -60,7 +60,7 @@ end
 
 function bool_string(b)
 	-- function 12
-	return to_boolean(b) and not not "true" or not to_boolean(b) and not not "false"
+	return to_boolean(b) and "true" or not to_boolean(b) and "false"
 end
 
 function vector_string(v)
@@ -79,7 +79,7 @@ function T(v1, v2)
 	end
 end
 
-varargs = not not varargs
+varargs = varargs
 
 varargs.to_table = function (...)
 	-- function 15

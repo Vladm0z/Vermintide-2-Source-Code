@@ -137,7 +137,7 @@ end
 
 function flow_callback_query_server_seeded_random_int(params)
 	-- function 15
-	local rnd = server_seeded_random(not not params.min, not not params.max, params.debug_name)
+	local rnd = server_seeded_random(params.min, params.max, params.debug_name)
 
 	flow_return_table.value = rnd
 
@@ -146,8 +146,8 @@ end
 
 function flow_callback_query_server_seeded_random_float(params)
 	-- function 16
-	local min = not not params.min
-	local max = not not params.max
+	local min = params.min
+	local max = params.max
 	local rnd = server_seeded_random(nil, nil, params.debug_name)
 
 	flow_return_table.value = min + rnd * (max - min)
@@ -157,7 +157,7 @@ end
 
 function flow_callback_server_seeded_randomize(params)
 	-- function 17
-	local max = not not params.max
+	local max = params.max
 	local rnd = server_seeded_random(1, max, params.debug_name)
 	local ret = {}
 
@@ -521,9 +521,9 @@ end
 function flow_callback_force_move_dead_players(params)
 	-- function 48
 	local state = Managers.state
-	local game_mode_manager = not not state and not not state.game_mode
-	local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-	local respawn_handler = not not game_mode and not not game_mode:get_respawn_handler()
+	local game_mode_manager = state and state.game_mode
+	local game_mode = game_mode_manager and game_mode_manager:game_mode()
+	local respawn_handler = game_mode and game_mode:get_respawn_handler()
 
 	if respawn_handler then
 		respawn_handler:queue_force_move_dead_players()
@@ -622,7 +622,7 @@ function flow_callback_disable_torch(params)
 
 	if weapon_data then
 		local item_data = weapon_data.item_data
-		local item_name = not not item_data and not not item_data.name
+		local item_name = item_data and item_data.name
 
 		if item_name == "torch" then
 			CharacterStateHelper.stop_weapon_actions(inventory_extension, "wield")
@@ -681,14 +681,14 @@ function flow_query_wielded_weapon(params)
 	local left_hand_wielded_unit = equipment.left_hand_wielded_unit
 	local left_hand_ammo_unit_1p = equipment.left_hand_ammo_unit_1p
 
-	flow_return_table.righthandweapon3p = not not right_hand_wielded_unit_3p or not not null_reference
-	flow_return_table.righthandammo3p = not not right_hand_ammo_unit_3p or not not null_reference
-	flow_return_table.righthandweapon = not not right_hand_wielded_unit or not not null_reference
-	flow_return_table.righthandammo1p = not not right_hand_ammo_unit_1p or not not null_reference
-	flow_return_table.lefthandweapon3p = not not left_hand_wielded_unit_3p or not not null_reference
-	flow_return_table.lefthandammo3p = not not left_hand_ammo_unit_3p or not not null_reference
-	flow_return_table.lefthandweapon = not not left_hand_wielded_unit or not not null_reference
-	flow_return_table.lefthandammo1p = not not left_hand_ammo_unit_1p or not not null_reference
+	flow_return_table.righthandweapon3p = right_hand_wielded_unit_3p or null_reference
+	flow_return_table.righthandammo3p = right_hand_ammo_unit_3p or null_reference
+	flow_return_table.righthandweapon = right_hand_wielded_unit or null_reference
+	flow_return_table.righthandammo1p = right_hand_ammo_unit_1p or null_reference
+	flow_return_table.lefthandweapon3p = left_hand_wielded_unit_3p or null_reference
+	flow_return_table.lefthandammo3p = left_hand_ammo_unit_3p or null_reference
+	flow_return_table.lefthandweapon = left_hand_wielded_unit or null_reference
+	flow_return_table.lefthandammo1p = left_hand_ammo_unit_1p or null_reference
 
 	if right_hand_ammo_unit_1p and Unit.alive(right_hand_ammo_unit_1p) then
 		flow_return_table.aliverighthandammo1p = true
@@ -720,7 +720,7 @@ function flow_query_ai_wielded_weapons(params)
 	local inventory_item_units = inventory_extension.inventory_item_units
 
 	for i = 1, 2 do
-		flow_return_table["weapon" .. i] = not not inventory_item_units[i]
+		flow_return_table["weapon" .. i] = inventory_item_units[i]
 	end
 
 	return flow_return_table
@@ -770,7 +770,7 @@ function flow_query_wielded_weapon_rarity(params)
 
 	local rarity = item.rarity
 
-	flow_return_table.rarity = not not rarity or not not ""
+	flow_return_table.rarity = rarity or ""
 
 	return flow_return_table
 end
@@ -874,18 +874,18 @@ function flow_callback_play_network_synched_particle_effect(params)
 	local effect_name = params.effect
 	local unit = params.unit
 	local object_name = params.object
-	local offset = not not params.offset
-	local rotation_offset = not not params.rotation_offset
-	local linked = not not params.linked
+	local offset = params.offset
+	local rotation_offset = params.rotation_offset
+	local linked = params.linked
 	local network_manager = Managers.state.network
 	local game = network_manager:game()
-	local game_object_id = not not unit and not not linked and not not network_manager:unit_game_object_id(unit)
+	local game_object_id = unit and linked and network_manager:unit_game_object_id(unit)
 
 	fassert(game, "[flow_callback_play_network_synched_particle_effect] Trying to spawn effect with no network game running.")
-	fassert(not unit or not linked or not not game_object_id, "[flow_callback_play_network_synched_particle_effect] Trying to spawn effect linked to unit not network_synched.")
-	fassert(not not unit or not not not object_name, "[flow_callback_play_network_synched_particle_effect] Trying to spawn effect at object in unit without defining unit.")
+	fassert(not unit or not linked or game_object_id, "[flow_callback_play_network_synched_particle_effect] Trying to spawn effect linked to unit not network_synched.")
+	fassert(unit or not object_name, "[flow_callback_play_network_synched_particle_effect] Trying to spawn effect at object in unit without defining unit.")
 
-	local object = not not Unit.node(unit, object_name)
+	local object = Unit.node(unit, object_name)
 
 	Managers.state.event:trigger("event_play_particle_effect", effect_name, unit, object, offset, rotation_offset, linked)
 
@@ -899,9 +899,9 @@ function flow_callback_play_network_synched_particle_effect(params)
 	end
 
 	if Managers.player.is_server then
-		network_manager.network_transmit:send_rpc_clients("rpc_play_particle_effect", NetworkLookup.effects[effect_name], not not game_object_id or not not 0, object, offset, rotation_offset, linked)
+		network_manager.network_transmit:send_rpc_clients("rpc_play_particle_effect", NetworkLookup.effects[effect_name], game_object_id or 0, object, offset, rotation_offset, linked)
 	else
-		network_manager.network_transmit:send_rpc_server("rpc_play_particle_effect", NetworkLookup.effects[effect_name], not not game_object_id or not not 0, object, offset, rotation_offset, linked)
+		network_manager.network_transmit:send_rpc_server("rpc_play_particle_effect", NetworkLookup.effects[effect_name], game_object_id or 0, object, offset, rotation_offset, linked)
 	end
 end
 
@@ -913,7 +913,7 @@ end
 function flow_callback_debug_crash_game(params)
 	-- function 69
 	if Application.crash then
-		local crash_type = not not params.type
+		local crash_type = params.type
 
 		Application.crash(crash_type)
 	end
@@ -921,7 +921,7 @@ end
 
 function flow_callback_debug_draw_line(params)
 	-- function 70
-	local drawer = params.stay and not not QuickDrawerStay or not params.stay and not not QuickDrawer
+	local drawer = params.stay and QuickDrawerStay or not params.stay and QuickDrawer
 	local from = params.from
 	local to = params.to
 	local color = params.color
@@ -931,7 +931,7 @@ end
 
 function flow_callback_debug_draw_vector(params)
 	-- function 71
-	local drawer = params.stay and not not QuickDrawerStay or not params.stay and not not QuickDrawer
+	local drawer = params.stay and QuickDrawerStay or not params.stay and QuickDrawer
 	local vector = params.vector
 	local color = params.color
 
@@ -940,7 +940,7 @@ end
 
 function flow_callback_debug_draw_sphere(params)
 	-- function 72
-	local drawer = params.stay and not not QuickDrawerStay or not params.stay and not not QuickDrawer
+	local drawer = params.stay and QuickDrawerStay or not params.stay and QuickDrawer
 	local center = params.center
 	local radius = params.radius
 	local color = params.color
@@ -952,7 +952,7 @@ end
 
 function flow_callback_debug_draw_capsule(params)
 	-- function 73
-	local drawer = params.stay and not not QuickDrawerStay or not params.stay and not not QuickDrawer
+	local drawer = params.stay and QuickDrawerStay or not params.stay and QuickDrawer
 	local from = params.from
 	local to = params.to
 	local radius = params.radius
@@ -963,7 +963,7 @@ end
 
 function flow_callback_debug_draw_box(params)
 	-- function 74
-	local drawer = params.stay and not not QuickDrawerStay or not params.stay and not not QuickDrawer
+	local drawer = params.stay and QuickDrawerStay or not params.stay and QuickDrawer
 	local position = params.position
 	local rotation = params.rotation
 	local extents = params.extents
@@ -975,7 +975,7 @@ end
 
 function flow_callback_debug_draw_circle(params)
 	-- function 75
-	local drawer = params.stay and not not QuickDrawerStay or not params.stay and not not QuickDrawer
+	local drawer = params.stay and QuickDrawerStay or not params.stay and QuickDrawer
 	local center = params.center
 	local radius = params.radius
 	local normal = params.normal
@@ -1050,9 +1050,9 @@ function flow_callback_set_actor_enabled(params)
 
 	fassert(unit, "Set Actor Enabled flow node is missing unit")
 
-	local actor = not not params.actor
+	local actor = params.actor
 
-	fassert(actor, "Set Actor Enabled flow node referring to unit %s is missing actor %s", tostring(unit), tostring(not not params.actor))
+	fassert(actor, "Set Actor Enabled flow node referring to unit %s is missing actor %s", tostring(unit), tostring(params.actor))
 	Actor.set_collision_enabled(actor, params.enabled)
 	Actor.set_scene_query_enabled(actor, params.enabled)
 end
@@ -1063,9 +1063,9 @@ function flow_callback_set_actor_kinematic(params)
 
 	fassert(unit, "Set Actor Kinematic flow node is missing unit")
 
-	local actor = not not params.actor
+	local actor = params.actor
 
-	fassert(actor, "Set Actor Kinematic flow node referring to unit %s is missing actor %s", tostring(unit), tostring(not not params.actor))
+	fassert(actor, "Set Actor Kinematic flow node referring to unit %s is missing actor %s", tostring(unit), tostring(params.actor))
 	Actor.set_kinematic(actor, params.enabled)
 end
 
@@ -1163,7 +1163,7 @@ end
 
 function flow_callback_play_footstep_surface_material_effects(params)
 	-- function 95
-	EffectHelper.flow_cb_play_footstep_surface_material_effects(params.effect_name, params.unit, params.object, params.foot_direction, not not params.use_occlusion)
+	EffectHelper.flow_cb_play_footstep_surface_material_effects(params.effect_name, params.unit, params.object, params.foot_direction, params.use_occlusion)
 end
 
 function flow_callback_play_surface_material_effect(params)
@@ -1191,7 +1191,7 @@ function flow_callback_play_voice(params)
 	-- function 98
 	local playing_unit = params.playing_unit
 	local event_name = params.event_name
-	local use_occlusion = not not params.use_occlusion
+	local use_occlusion = params.use_occlusion
 	local dialogue_input = ScriptUnit.has_extension_input(playing_unit, "dialogue_system")
 
 	if dialogue_input then
@@ -1312,8 +1312,8 @@ function flow_callback_game_mode_event(params)
 	-- function 106
 	local announcement = params.announcement
 	local side = params.side
-	local param_1 = not not params.param_1
-	local param_2 = not not params.param_2
+	local param_1 = params.param_1
+	local param_2 = params.param_2
 
 	Managers.state.game_mode:trigger_event("flow", announcement, side, param_1, param_2)
 end
@@ -1333,7 +1333,7 @@ function flow_callback_projectile_impacts_stopped(params)
 	-- function 108
 	local unit = params.unit
 	local impacts_stopped = true
-	local projectile_extension = not not ALIVE[unit]
+	local projectile_extension = ALIVE[unit]
 
 	if projectile_extension and projectile_extension.are_impacts_stopped then
 		impacts_stopped = projectile_extension:are_impacts_stopped()
@@ -1550,7 +1550,7 @@ end
 
 function flow_callback_get_random_player(params)
 	-- function 127
-	local unit = not not PlayerUtils.get_random_alive_hero()
+	local unit = PlayerUtils.get_random_alive_hero()
 
 	flow_return_table.playerunit = unit
 
@@ -1560,7 +1560,7 @@ end
 function flow_callback_get_local_player_unit(params)
 	-- function 128
 	local player = Managers.player:local_player()
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if player_unit and Unit.alive(player_unit) then
 		flow_return_table.localplayer = player_unit
@@ -1642,15 +1642,15 @@ function flow_callback_trigger_dialogue_event(params)
 		local event_table = FrameTable.alloc_table()
 
 		if params.argument1_name then
-			event_table[params.argument1_name] = not not tonumber(params.argument1)
+			event_table[params.argument1_name] = tonumber(params.argument1)
 		end
 
 		if params.argument2_name then
-			event_table[params.argument2_name] = not not tonumber(params.argument2)
+			event_table[params.argument2_name] = tonumber(params.argument2)
 		end
 
 		if params.argument3_name then
-			event_table[params.argument3_name] = not not tonumber(params.argument3)
+			event_table[params.argument3_name] = tonumber(params.argument3)
 		end
 
 		dialogue_input:trigger_dialogue_event(params.concept, event_table, params.identifier)
@@ -1670,15 +1670,15 @@ function flow_callback_trigger_networked_dialogue_event(params)
 		local event_table = FrameTable.alloc_table()
 
 		if params.argument1_name then
-			event_table[params.argument1_name] = not not tonumber(params.argument1)
+			event_table[params.argument1_name] = tonumber(params.argument1)
 		end
 
 		if params.argument2_name then
-			event_table[params.argument2_name] = not not tonumber(params.argument2)
+			event_table[params.argument2_name] = tonumber(params.argument2)
 		end
 
 		if params.argument3_name then
-			event_table[params.argument3_name] = not not tonumber(params.argument3)
+			event_table[params.argument3_name] = tonumber(params.argument3)
 		end
 
 		dialogue_input:trigger_networked_dialogue_event(params.concept, event_table, params.identifier)
@@ -1811,8 +1811,8 @@ function flow_callback_objective_entered_socket_zone(params)
 	if Managers.player.is_server then
 		local socket_unit = params.socket_unit
 		local objective_unit = params.objective_unit
-		local socket_data = not not Unit.get_data(socket_unit, "socket_type")
-		local objective_data = not not Unit.get_data(objective_unit, "socket_type")
+		local socket_data = Unit.get_data(socket_unit, "socket_type")
+		local objective_data = Unit.get_data(objective_unit, "socket_type")
 
 		if socket_data == objective_data then
 			local objective_socket_extension = ScriptUnit.extension(socket_unit, "objective_socket_system")
@@ -1886,7 +1886,7 @@ end
 
 function flow_callback_register_environment_volume(params)
 	-- function 146
-	local particle_light_intensity = not not params.particle_light_intensity
+	local particle_light_intensity = params.particle_light_intensity
 
 	if params.shading_environment then
 		Managers.state.event:trigger("register_environment_volume", params.volume_name, params.shading_environment, params.priority, params.blend_time, params.override_sun_snap, particle_light_intensity)
@@ -1998,7 +1998,7 @@ function flow_callback_local_player_profile_available(params)
 
 	local profile_index = player:profile_index()
 	local profile = SPProfiles[profile_index]
-	local profile_name = not not profile and not not profile.display_name
+	local profile_name = profile and profile.display_name
 
 	return {
 		is_available = profile_name ~= nil
@@ -2061,11 +2061,11 @@ function flow_callback_trigger_wwise_event_for_target_player(params)
 	end
 
 	local blackboard = BLACKBOARDS[params.ai_unit]
-	local target_unit = not not blackboard and not not blackboard.target_unit
+	local target_unit = blackboard and blackboard.target_unit
 	local player_manager = Managers.player
 	local local_player = player_manager:local_player()
-	local local_player_unit = not not local_player and not not local_player.player_unit
-	local local_player_is_target = not not target_unit and target_unit == local_player_unit
+	local local_player_unit = local_player and local_player.player_unit
+	local local_player_is_target = target_unit and target_unit == local_player_unit
 
 	if not local_player_is_target then
 		return
@@ -2101,10 +2101,10 @@ function flow_callback_wwise_trigger_event_with_environment(params)
 	local unit = params.unit
 	local node_name = params.unit_node
 	local event = params.name
-	local use_occlusion = not not params.use_occlusion
+	local use_occlusion = params.use_occlusion
 	local sound_environment_system = Managers.state.entity:system("sound_environment_system")
 	local wwise_world = sound_environment_system.wwise_world
-	local existing_source_id = not not params.existing_source_id
+	local existing_source_id = params.existing_source_id
 	local source
 
 	if unit and node_name and node_name ~= "" then
@@ -2112,13 +2112,13 @@ function flow_callback_wwise_trigger_event_with_environment(params)
 
 		fassert(node, "Node %s doesn't exist in unit %s", unit, node_name)
 
-		source = not not existing_source_id or not not WwiseWorld.make_auto_source(wwise_world, unit, node)
+		source = existing_source_id or WwiseWorld.make_auto_source(wwise_world, unit, node)
 		position = Unit.world_position(unit, node)
 	elseif unit then
-		source = not not existing_source_id or not not WwiseWorld.make_auto_source(wwise_world, unit)
+		source = existing_source_id or WwiseWorld.make_auto_source(wwise_world, unit)
 		position = Unit.world_position(unit, 0)
 	elseif position then
-		source = not not existing_source_id or not not WwiseWorld.make_auto_source(wwise_world, position)
+		source = existing_source_id or WwiseWorld.make_auto_source(wwise_world, position)
 	else
 		ferror("Missing unit or position in wwise trigger even with environment flow node in unit %s", unit)
 	end
@@ -2471,7 +2471,7 @@ function flow_is_carrying_explosive_barrel(params)
 		equipment = Unit.get_data(player_unit, "equipment")
 	end
 
-	local weapon_unit = not not equipment.left_hand_wielded_unit
+	local weapon_unit = equipment.left_hand_wielded_unit
 
 	if weapon_unit then
 		local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
@@ -2503,7 +2503,7 @@ function flow_is_carrying_torch(params)
 		equipment = Unit.get_data(player_unit, "equipment")
 	end
 
-	local weapon_unit = not not equipment.left_hand_wielded_unit
+	local weapon_unit = equipment.left_hand_wielded_unit
 
 	if weapon_unit then
 		local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
@@ -2590,7 +2590,7 @@ end
 function flow_callback_damage_player_bot_ai(params)
 	-- function 194
 	local unit = params.unit
-	local attacker_unit = Unit.alive(params.attacker_unit) and not not params.attacker_unit or not Unit.alive(params.attacker_unit) and not not unit
+	local attacker_unit = Unit.alive(params.attacker_unit) and params.attacker_unit or not Unit.alive(params.attacker_unit) and unit
 	local damage = params.damage
 
 	if unit_alive(unit) then
@@ -2801,7 +2801,7 @@ function flow_callback_fire_light_weight_projectile(params)
 	end
 
 	local unit = params.unit
-	local shots_to_fire = not not params.shots_to_fire
+	local shots_to_fire = params.shots_to_fire
 	local light_weight_projectile_template_name = params.light_weight_projectile_template_name
 	local light_weight_projectile_template = LightWeightProjectiles[light_weight_projectile_template_name]
 	local item_name = "skaven_ratling_gunner"
@@ -2817,7 +2817,7 @@ function flow_callback_fire_light_weight_projectile(params)
 		local spread_direction = Quaternion.forward(spread_rot)
 		local collision_filter = "filter_enemy_player_afro_ray_projectile"
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local power_level = not not light_weight_projectile_template.attack_power_level[difficulty_rank]
+		local power_level = light_weight_projectile_template.attack_power_level[difficulty_rank]
 		local action_data = {
 			power_level = power_level,
 			damage_profile = light_weight_projectile_template.damage_profile,
@@ -3157,7 +3157,7 @@ function flow_callback_external_broadphase_unit_event(params)
 	local target_breed = params.target_breed
 	local event_name = params.event_name
 	local value = params.value
-	local num_hits = AiUtils.broadphase_query(Unit.world_position(source_unit, 0), not not radius or not not 5, UNIT_EVENT_RESULT_TABLE)
+	local num_hits = AiUtils.broadphase_query(Unit.world_position(source_unit, 0), radius or 5, UNIT_EVENT_RESULT_TABLE)
 	local BLACKBOARDS = BLACKBOARDS
 
 	for i = 1, num_hits do
@@ -3179,7 +3179,7 @@ function flow_callback_force_unit_animation(params)
 	local radius = params.radius
 	local target_breed = params.target_breed
 	local anim_event_name = params.animation_event_name
-	local num_hits = AiUtils.broadphase_query(Unit.world_position(source_unit, 0), not not radius or not not 5, UNIT_EVENT_RESULT_TABLE)
+	local num_hits = AiUtils.broadphase_query(Unit.world_position(source_unit, 0), radius or 5, UNIT_EVENT_RESULT_TABLE)
 	local BLACKBOARDS = BLACKBOARDS
 
 	for i = 1, num_hits do
@@ -3393,11 +3393,11 @@ function flow_callback_material_dissolve(params)
 	fassert(params.unit, "[flow_callback_material_dissolve] You need to specify the Unit")
 	fassert(params.duration, "[flow_callback_material_dissolve] You need to specify duration")
 
-	local timer_var = not not params.timer_var_name
+	local timer_var = params.timer_var_name
 	local start_time = World.time(Application.main_world())
 	local timer_data = Vector2(start_time, start_time + params.duration)
-	local start_state_var = not not params.dissolve_start_state_var_name
-	local start_state = math.floor(not not (0.5 + params.dissolve_start_state))
+	local start_state_var = params.dissolve_start_state_var_name
+	local start_state = math.floor(0.5 + params.dissolve_start_state)
 	local unit = params.unit
 	local mesh
 	local mesh_name = params.mesh_name
@@ -3538,11 +3538,11 @@ function flow_callback_material_fade(params)
 	fassert(params.unit, "[flow_callback_material_fade] You need to specify the Unit")
 	fassert(params.duration, "[flow_callback_material_fade] You need to specify duration")
 
-	local timer_var = not not params.timer_var_name
+	local timer_var = params.timer_var_name
 	local start_time = World.time(Application.main_world())
 	local timer_data = Vector2(start_time, start_time + params.duration)
-	local fade_range_var = not not params.fade_range_var_name
-	local fade_interval = Vector2(not not params.fade_range_from, not not params.fade_range_to)
+	local fade_range_var = params.fade_range_var_name
+	local fade_interval = Vector2(params.fade_range_from, params.fade_range_to)
 	local unit = params.unit
 	local mesh
 	local mesh_name = params.mesh_name
@@ -3765,15 +3765,15 @@ function flow_callback_start_fade(params)
 	local start_time = World.time(Application.main_world())
 	local fade_duration = Vector2(start_time, start_time + params.duration)
 	local fade_switch = math.floor(params.fade_switch + 0.5)
-	local fade_switch_name = not not params.fade_switch_name
-	local start_end_time_name = not not params.start_end_time_name
+	local fade_switch_name = params.fade_switch_name
+	local start_end_time_name = params.start_end_time_name
 	local unit = params.unit
 	local mesh
 	local mesh_name = params.mesh_name
-	local start_fade_name = not not params.start_fade_value_name
-	local start_fade_value = not not params.start_fade_value
-	local end_fade_name = not not params.end_fade_value_name
-	local end_fade_value = not not params.end_fade_value
+	local start_fade_name = params.start_fade_value_name
+	local start_fade_value = params.start_fade_value
+	local end_fade_name = params.end_fade_value_name
+	local end_fade_value = params.end_fade_value
 
 	if mesh_name then
 		fassert(Unit.has_mesh(unit, mesh_name), string.format("[flow_callback_start_fade] The mesh %s doesn't exist in unit %s", mesh_name, tostring(unit)))
@@ -3879,9 +3879,9 @@ end
 function flow_callback_unit_spawner_spawn_local_unit(params)
 	-- function 261
 	local unit = params.unit
-	local position = not not params.position
-	local rotation = not not params.rotation
-	local scale = not not params.scale
+	local position = params.position
+	local rotation = params.rotation
+	local scale = params.scale
 	local spawn_pose = Matrix4x4.from_quaternion_position(rotation, position)
 
 	Matrix4x4.set_scale(spawn_pose, scale)
@@ -3900,7 +3900,7 @@ function flow_callback_unit_spawner_mark_for_deletion(params)
 		return
 	end
 
-	fassert(not not Managers.state.network.is_server, "'flow_callback_unit_spawner_mark_for_deletion' can only delete units spawned locally on client")
+	fassert(Managers.state.network.is_server, "'flow_callback_unit_spawner_mark_for_deletion' can only delete units spawned locally on client")
 
 	local unit_spawner = Managers.state.unit_spawner
 
@@ -4318,8 +4318,8 @@ function flow_callback_broadphase_deal_damage(params)
 		local t = Managers.time:time("game")
 		local damage_source = hazard_type
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local power_level = not not hazard_settings.enemy.difficulty_power_level[difficulty_rank]
-		local damage_profile_name = not not hazard_settings.enemy.damage_profile
+		local power_level = hazard_settings.enemy.difficulty_power_level[difficulty_rank]
+		local damage_profile_name = hazard_settings.enemy.damage_profile
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local target_index
 		local boost_curve_multiplier = 0
@@ -4450,7 +4450,7 @@ function flow_callback_set_deus_curse_active(params)
 	end
 
 	local mechanism = Managers.mechanism:game_mechanism()
-	local mutator_name = not not mechanism.get_current_node_curse
+	local mutator_name = mechanism.get_current_node_curse
 
 	if not mutator_name then
 		return
@@ -4541,13 +4541,13 @@ function flow_callback_prioritize_objective_tooltips(params)
 	local objective_tooltip_name = params.objective_tooltip_name
 	local reset = params.reset
 
-	fassert(not not objective_tooltip_name or not not reset, "[flow_callback_prioritize_objective_tooltips] You need to provide objective_tooltip_name and/or reset")
+	fassert(objective_tooltip_name or reset, "[flow_callback_prioritize_objective_tooltips] You need to provide objective_tooltip_name and/or reset")
 	Managers.state.entity:system("tutorial_system"):prioritize_objective_tooltip(objective_tooltip_name, reset)
 end
 
 local function split_string(text, sep)
 	-- function 300
-	sep = not not sep or not not "\n"
+	sep = sep or "\n"
 
 	local lines = {}
 	local pos = 1
@@ -4600,7 +4600,7 @@ function flow_callback_link_objects_in_units_and_store(params)
 		end
 	end
 
-	local unit_attachments = not not Unit.get_data(parentunit, "flow_unit_attachments")
+	local unit_attachments = Unit.get_data(parentunit, "flow_unit_attachments")
 
 	table.insert(unit_attachments, childunit)
 	Unit.set_data(parentunit, "flow_unit_attachments", unit_attachments)
@@ -4618,7 +4618,7 @@ function flow_callback_unlink_objects_in_units_and_remove(params)
 
 	World.unlink_unit(world, childunit)
 
-	local unit_attachments = not not Unit.get_data(parentunit, "flow_unit_attachments")
+	local unit_attachments = Unit.get_data(parentunit, "flow_unit_attachments")
 	local key = table.find(unit_attachments, childunit)
 
 	if key then
@@ -4661,8 +4661,8 @@ function flow_callback_attach_unit(params)
 	for _, link_data in ipairs(node_link_table) do
 		local parent_node = link_data.source
 		local child_node = link_data.target
-		local parent_node_index = type(parent_node) ~= "string" and not not (parent_node + index_offset) or not (type(parent_node) ~= "string") and not not Unit.node(parentunit, parent_node)
-		local child_node_index = type(child_node) ~= "string" and not not (child_node + index_offset) or not (type(child_node) ~= "string") and not not Unit.node(childunit, child_node)
+		local parent_node_index = type(parent_node) ~= "string" and parent_node + index_offset or not (type(parent_node) ~= "string") and Unit.node(parentunit, parent_node)
+		local child_node_index = type(child_node) ~= "string" and child_node + index_offset or not (type(child_node) ~= "string") and Unit.node(childunit, child_node)
 
 		World.link_unit(world, childunit, child_node_index, parentunit, parent_node_index)
 	end
@@ -4676,7 +4676,7 @@ function flow_callback_attach_unit(params)
 	end
 
 	if params.store_in_parent then
-		local unit_attachments = not not Unit.get_data(parentunit, "flow_unit_attachments")
+		local unit_attachments = Unit.get_data(parentunit, "flow_unit_attachments")
 
 		table.insert(unit_attachments, childunit)
 		Unit.set_data(parentunit, "flow_unit_attachments", unit_attachments)
@@ -4695,7 +4695,7 @@ function flow_callback_unattach_unit(params)
 
 	World.unlink_unit(world, childunit)
 
-	local unit_attachments = not not Unit.get_data(parentunit, "flow_unit_attachments")
+	local unit_attachments = Unit.get_data(parentunit, "flow_unit_attachments")
 	local key = table.find(unit_attachments, childunit)
 
 	if key then
@@ -4726,7 +4726,7 @@ end
 
 function flow_callback_trigger_event_on_attachments(params)
 	-- function 308
-	local unit_attachments = not not Unit.get_data(params.unit, "flow_unit_attachments")
+	local unit_attachments = Unit.get_data(params.unit, "flow_unit_attachments")
 
 	for i = 1, #unit_attachments do
 		Unit.flow_event(unit_attachments[i], params.event)
@@ -4907,9 +4907,9 @@ function flow_callbacks_add_tutorial_animation_hook(params)
 	local animation_hook_name = params.animation_hook
 	local animation_hook_free_text_name = params.animation_hook_free_text
 
-	animation_hook_name = animation_hook_free_text_name == "" or not not animation_hook_free_text_name or not not animation_hook_name
+	animation_hook_name = animation_hook_free_text_name == "" or animation_hook_free_text_name or animation_hook_name
 
-	fassert(not not animation_hook_name and not not PauseEvents.animation_hook_templates[animation_hook_name], "[flow_callbacks] There is no animation hook called: %s", tostring(animation_hook_name))
+	fassert(animation_hook_name and PauseEvents.animation_hook_templates[animation_hook_name], "[flow_callbacks] There is no animation hook called: %s", tostring(animation_hook_name))
 
 	local animation_hook = table.clone(PauseEvents.animation_hook_templates[animation_hook_name])
 
@@ -4921,7 +4921,7 @@ function flow_callbacks_trigger_pause_event(params)
 	local pause_event_name = params.pause_event_name
 	local look_position = params.look_position
 
-	fassert(not not pause_event_name and not not PauseEvents.pause_events[pause_event_name], "[flow_callbacks] There is not pause events called: %s", tostring(pause_event_name))
+	fassert(pause_event_name and PauseEvents.pause_events[pause_event_name], "[flow_callbacks] There is not pause events called: %s", tostring(pause_event_name))
 
 	local pause_event = table.clone(PauseEvents.pause_events[pause_event_name])
 
@@ -4932,9 +4932,9 @@ function flow_callbacks_add_tutorial_equipment(params)
 	-- function 315
 	local slot_name = params.slot_name
 	local item_name = params.item_name
-	local starting_ammo = params.starting_ammo and not not math.floor(params.starting_ammo) or not params.starting_ammo and not not 0
+	local starting_ammo = params.starting_ammo and math.floor(params.starting_ammo) or not params.starting_ammo and 0
 
-	fassert(not not item_name and not not ItemMasterList[item_name], "[flow_callbacks_add_tutorial_equipment] There is no item called %s in ItemMasterList", tostring(item_name))
+	fassert(item_name and ItemMasterList[item_name], "[flow_callbacks_add_tutorial_equipment] There is no item called %s in ItemMasterList", tostring(item_name))
 
 	local item_data = ItemMasterList[item_name]
 	local player = Managers.player:local_player()
@@ -5161,7 +5161,7 @@ function flow_callback_switch_player_class(params)
 		local side = Managers.state.side.side_by_party[party]
 		local available_profiles = side.available_profiles
 
-		available_profiles = not not available_profiles or not not PROFILES_BY_AFFILIATION.heroes
+		available_profiles = available_profiles or PROFILES_BY_AFFILIATION.heroes
 
 		for k = 1, #available_profiles do
 			profile_name = available_profiles[k]
@@ -5173,7 +5173,7 @@ function flow_callback_switch_player_class(params)
 	if profile_name then
 		local profile_index = FindProfileIndex(profile_name)
 		local careers = SPProfiles[profile_index].careers
-		local career = not not careers[script_data.wanted_career_index]
+		local career = careers[script_data.wanted_career_index]
 		local force_respawn = true
 
 		if career.display_name == "vs_undecided" then
@@ -5250,7 +5250,7 @@ function flow_callback_set_player_in_hanging_cage(params)
 		fassert(status_extension, "Tried to set in_hanging_cage status on unit %s from flow but the unit has no status extension", player_unit)
 		fassert(state, "Need to set in_hanging_cage state!")
 
-		local animations = not not status_extension.in_hanging_cage_animations
+		local animations = status_extension.in_hanging_cage_animations
 
 		status_extension:set_in_hanging_cage(true, cage_unit, state, animations)
 	end
@@ -5278,7 +5278,7 @@ end
 
 function flow_callback_set_local_player_gravity_scale(params)
 	-- function 327
-	local gravity_scale = not not params.gravity_scale
+	local gravity_scale = params.gravity_scale
 	local player_manager = Managers.player
 	local players = player_manager:human_and_bot_players()
 
@@ -5449,12 +5449,12 @@ end
 function flow_callback_predict_hitscan(params)
 	-- function 340
 	local player_unit = params.player_unit
-	local range = not not params.range
-	local spread = not not params.spread
+	local range = params.range
+	local spread = params.spread
 	local returns = {
 		success = false
 	}
-	local world = not not Managers.world
+	local world = Managers.world
 
 	if not world then
 		return returns
@@ -5482,11 +5482,11 @@ function flow_callback_predict_hitscan(params)
 		local result = PhysicsWorld.immediate_raycast_actors(physics_world, aim_position, aim_direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
 		local INDEX_POSITION = 1
 		local INDEX_DISTANCE = 2
-		local end_position = result and not not result[1][INDEX_POSITION] or not result and not not (aim_position + aim_direction * range)
+		local end_position = result and result[1][INDEX_POSITION] or not result and aim_position + aim_direction * range
 
 		returns.end_position = end_position
 		returns.success = true
-		returns.distance = result and not not result[1][INDEX_DISTANCE] or not result and not not range
+		returns.distance = result and result[1][INDEX_DISTANCE] or not result and range
 	end
 
 	return returns
@@ -5532,7 +5532,7 @@ function flow_callback_cog_collision(params)
 		local damage_source = hazard_type
 		local hit_ragdoll_actor
 		local push_direction = Vector3.normalize(hit_unit_position_flat - cog_flat_position)
-		local damage_profile_name = not not hazard_settings.enemy.damage_profile
+		local damage_profile_name = hazard_settings.enemy.damage_profile
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local target_index
 		local boost_curve_multiplier = 0
@@ -5542,7 +5542,7 @@ function flow_callback_cog_collision(params)
 		local blocking = false
 		local shield_breaking_hit = false
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local power_level = not not hazard_settings.enemy.difficulty_power_level[difficulty_rank]
+		local power_level = hazard_settings.enemy.difficulty_power_level[difficulty_rank]
 		local t = Managers.time:time("game")
 
 		DamageUtils.server_apply_hit(t, cog_unit, hit_unit, hit_zone_name, nil, push_direction, hit_ragdoll_actor, damage_source, power_level, damage_profile, target_index, boost_curve_multiplier, is_critical_strike, can_damage, can_stagger, blocking, shield_breaking_hit)
@@ -5562,7 +5562,7 @@ function flow_callback_environment_hazard_damage_collision(params)
 		local hit_unit = params.touching_unit
 		local hazard_unit = params.unit
 		local hazard_type = params.hazard_type
-		local hazard_position = not not POSITION_LOOKUP[hazard_unit]
+		local hazard_position = POSITION_LOOKUP[hazard_unit]
 		local hazard_flat_position = Vector3.flat(hazard_position)
 		local hit_unit_position = POSITION_LOOKUP[hit_unit]
 		local hit_unit_position_flat = Vector3.flat(hit_unit_position)
@@ -5571,7 +5571,7 @@ function flow_callback_environment_hazard_damage_collision(params)
 		local damage_source = hazard_type
 		local hit_ragdoll_actor = true
 		local push_direction = Vector3.normalize(hit_unit_position_flat - hazard_flat_position)
-		local damage_profile_name = not not hazard_settings.enemy.damage_profile
+		local damage_profile_name = hazard_settings.enemy.damage_profile
 		local damage_profile = DamageProfileTemplates[damage_profile_name]
 		local target_index
 		local boost_curve_multiplier = 0
@@ -5579,12 +5579,12 @@ function flow_callback_environment_hazard_damage_collision(params)
 		local can_damage = true
 		local can_stagger = true
 		local blocking = false
-		local shield_breaking_hit = not not params.shield_breaking_hit
+		local shield_breaking_hit = params.shield_breaking_hit
 		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local power_level = not not hazard_settings.enemy.difficulty_power_level[difficulty_rank]
+		local power_level = hazard_settings.enemy.difficulty_power_level[difficulty_rank]
 		local t = Managers.time:time("game")
 		local health_extension = ScriptUnit.extension(hit_unit, "health_system")
-		local damage = not not hazard_settings.enemy.difficulty_damage[difficulty_rank]
+		local damage = hazard_settings.enemy.difficulty_damage[difficulty_rank]
 
 		health_extension:add_damage(hit_unit, damage, hit_zone_name, "cutting", hit_unit_position, push_direction, "wounded_degen", nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 
@@ -5610,7 +5610,7 @@ function flow_callback_hazard_push_damage_player_and_husks(params)
 		local hit_unit = params.touching_unit
 		local push_multiplier = params.push_multiplier
 		local damage = params.damage
-		local hazard_position = not not POSITION_LOOKUP[hazard_unit]
+		local hazard_position = POSITION_LOOKUP[hazard_unit]
 		local hazard_flat_position = Vector3.flat(hazard_position)
 		local hit_unit_position = POSITION_LOOKUP[hit_unit]
 		local hit_unit_flat_position = Vector3.flat(hit_unit_position)
@@ -5635,15 +5635,15 @@ function flow_callback_push_nearby_players(params)
 	-- function 346
 	local source_unit = params.source_unit
 	local source_pos = Unit.local_position(source_unit, 0)
-	local radius_sq = (not not params.range)^2
-	local magnitude = not not params.force
+	local radius_sq = params.range^2
+	local magnitude = params.force
 	local local_player_only = params.local_player_only
 	local direction = Quaternion.forward(Unit.local_rotation(source_unit, 0))
 	local velocity = direction * magnitude
 
 	if local_player_only then
 		local player = Managers.player:local_player()
-		local player_unit = not not player and not not player.player_unit
+		local player_unit = player and player.player_unit
 
 		if player_unit and radius_sq > Vector3.distance_squared(POSITION_LOOKUP[player_unit], source_pos) then
 			local locomotion_extension = ScriptUnit.extension(player_unit, "locomotion_system")
@@ -5805,10 +5805,10 @@ function flow_callback_spawn_magic_missile_two_targets(params)
 	end
 
 	local unit_name = projectile_unit.projectile_unit_name
-	local spawn_node = not not Unit.node(unit, spawn_node_name)
+	local spawn_node = Unit.node(unit, spawn_node_name)
 	local spawn_position = Unit.world_position(unit, spawn_node)
 	local spawn_rotation = Unit.local_rotation(unit, 0)
-	local target_node = not not Unit.node(target, target_node_name)
+	local target_node = Unit.node(target, target_node_name)
 	local target_position = Unit.world_position(target, target_node)
 	local target_direction = Vector3.normalize(target_position - spawn_position)
 
@@ -5823,7 +5823,7 @@ function flow_callback_spawn_magic_missile_two_targets(params)
 	target_units[1] = target
 
 	if Unit.alive(second_target) then
-		local second_target_node = not not Unit.node(second_target, second_target_node_name)
+		local second_target_node = Unit.node(second_target, second_target_node_name)
 		local second_target_position = Unit.world_position(second_target, second_target_node)
 
 		target_positions[2] = Vector3Box(second_target_position)
@@ -5975,7 +5975,7 @@ function flow_callback_get_intro_wwise_id(params)
 		return
 	end
 
-	flow_return_table.wwise_id = not not Level.get_data(level, "intro_wwise_id")
+	flow_return_table.wwise_id = Level.get_data(level, "intro_wwise_id")
 
 	return flow_return_table
 end
@@ -6036,7 +6036,7 @@ function flow_callback_once_in_play_session(params)
 	-- function 370
 	local key = params.key
 
-	script_data.once_in_play_session = not not script_data.once_in_play_session
+	script_data.once_in_play_session = script_data.once_in_play_session
 	flow_return_table.out = not script_data.once_in_play_session[key]
 	script_data.once_in_play_session[key] = true
 
@@ -6352,7 +6352,7 @@ end
 function flow_callback_register_combination_puzzle(params)
 	-- function 416
 	local group_name_id = params.puzzle_group
-	local puzzle_id = not not params.puzzle_name
+	local puzzle_id = params.puzzle_name
 	local puzzle_combination = params.puzzle_combination
 	local ordered = params.ordered
 	local completed_level_event = params.completed_level_event
@@ -6363,7 +6363,7 @@ function flow_callback_register_combination_puzzle(params)
 	end
 
 	local entity_manager = Managers.state.entity
-	local puzzle_system = not not entity_manager and not not entity_manager:system("puzzle_system")
+	local puzzle_system = entity_manager and entity_manager:system("puzzle_system")
 
 	if puzzle_system then
 		puzzle_system:register_puzzle(group_name_id, puzzle_id, puzzle_combination, ordered, completed_level_event, hot_join_sync_completion)
@@ -6375,7 +6375,7 @@ end
 function flow_callback_register_random_match_puzzle(params)
 	-- function 417
 	local group_name_id = params.puzzle_group
-	local puzzle_id = not not params.puzzle_name
+	local puzzle_id = params.puzzle_name
 	local possible_values = params.possible_values
 	local num_needed_matches = params.num_needed_matches
 	local completed_level_event = params.completed_level_event
@@ -6419,7 +6419,7 @@ function flow_callback_register_random_match_puzzle(params)
 
 	local ordered = false
 	local entity_manager = Managers.state.entity
-	local puzzle_system = not not entity_manager and not not entity_manager:system("puzzle_system")
+	local puzzle_system = entity_manager and entity_manager:system("puzzle_system")
 
 	if puzzle_system then
 		puzzle_system:register_puzzle(group_name_id, puzzle_id, combination, ordered, completed_level_event, hot_join_sync_completion)
@@ -6432,7 +6432,7 @@ function flow_callback_string_to_numeric(params)
 	-- function 418
 	local value = tonumber(params.string)
 
-	flow_return_table.value = not not value or not not 0
+	flow_return_table.value = value or 0
 	flow_return_table.success = not not value
 
 	return flow_return_table
@@ -6451,7 +6451,7 @@ function flow_callback_string_to_bool(params)
 	-- function 419
 	local value = bool_lut[params.string]
 
-	flow_return_table.value = not not value or not not false
+	flow_return_table.value = value or false
 	flow_return_table.success = value ~= nil
 
 	return flow_return_table
@@ -6461,7 +6461,7 @@ function flow_callback_string_to_bool(params)
 	-- function 420
 	local value = bool_lut[params.string]
 
-	flow_return_table.value = not not value or not not false
+	flow_return_table.value = value or false
 	flow_return_table.success = value ~= nil
 
 	return flow_return_table
@@ -6484,7 +6484,7 @@ function flow_callbacks_flow_helper_register_check_unit_line_of_sight(params)
 
 	local owner_unit = params.owner_unit
 	local source_unit = params.raycast_from_unit
-	local source_node = not not Unit.node(source_unit, params.raycast_from_node)
+	local source_node = Unit.node(source_unit, params.raycast_from_node)
 	local unit_to_check = params.unit_to_check
 	local ignore_if_invisible = params.ignore_if_invisible
 	local flow_event_enter = params.flow_event_enter
@@ -6555,7 +6555,7 @@ function flow_callbacks_get_death_reaction_attacker_unit(params)
 	local death_system = Managers.state.entity:system("death_system")
 	local attacker_unit = death_system:flow_get_killing_blow_attacker_unit()
 
-	flow_return_table.attacker_unit = Unit.alive(attacker_unit) and (not not attacker_unit or not not Unit.null_reference()) or not Unit.alive(attacker_unit) and not not Unit.null_reference()
+	flow_return_table.attacker_unit = Unit.alive(attacker_unit) and (attacker_unit or Unit.null_reference()) or not Unit.alive(attacker_unit) and Unit.null_reference()
 
 	return flow_return_table
 end
@@ -6565,7 +6565,7 @@ function flow_callbacks_get_owner_of_unit_that_occupied_objective_socket(params)
 	local objective_socket_system = Managers.state.entity:system("objective_socket_system")
 	local owner_unit = objective_socket_system:get_owner_of_unit_that_occupied_socket(params.socket_unit, params.socket_name)
 
-	flow_return_table.owner_unit = Unit.alive(owner_unit) and (not not owner_unit or not not Unit.null_reference()) or not Unit.alive(owner_unit) and not not Unit.null_reference()
+	flow_return_table.owner_unit = Unit.alive(owner_unit) and (owner_unit or Unit.null_reference()) or not Unit.alive(owner_unit) and Unit.null_reference()
 
 	return flow_return_table
 end
@@ -6595,7 +6595,7 @@ function flow_query_global_listener(params)
 	if entity_manager then
 		local surrounding_aware_system = Managers.state.entity:system("surrounding_aware_system")
 
-		flow_return_table.unit = not not surrounding_aware_system:query_global_listener(dialogue_profile)
+		flow_return_table.unit = surrounding_aware_system:query_global_listener(dialogue_profile)
 	else
 		flow_return_table.unit = Unit.null_reference()
 	end

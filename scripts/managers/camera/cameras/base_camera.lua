@@ -30,22 +30,22 @@ BaseCamera.parse_parameters = function (self, camera_settings, parent_node)
 	local degrees_to_radians = math.pi / 180
 
 	self._fade_to_black = camera_settings.fade_to_black
-	self._vertical_fov = not not camera_settings.vertical_fov
-	self._should_apply_fov_multiplier = not not camera_settings.should_apply_fov_multiplier
-	self._default_fov = camera_settings.default_fov and not not (camera_settings.default_fov * degrees_to_radians) or not camera_settings.default_fov and not not parent_node:default_fov()
-	self._near_range = not not camera_settings.near_range
-	self._far_range = not not camera_settings.far_range
-	self._pitch_min = camera_settings.pitch_min and not not (camera_settings.pitch_min * degrees_to_radians) or not camera_settings.pitch_min and not not parent_node:pitch_min()
-	self._pitch_max = camera_settings.pitch_max and not not (camera_settings.pitch_max * degrees_to_radians) or not camera_settings.pitch_max and not not parent_node:pitch_max()
-	self._pitch_speed = camera_settings.pitch_speed and not not (camera_settings.pitch_speed * degrees_to_radians) or not camera_settings.pitch_speed and not not parent_node:pitch_speed()
-	self._yaw_speed = camera_settings.yaw_speed and not not (camera_settings.yaw_speed * degrees_to_radians) or not camera_settings.yaw_speed and not not parent_node:yaw_speed()
-	self._pitch_offset = camera_settings.pitch_offset and not not (camera_settings.pitch_offset * degrees_to_radians) or not camera_settings.pitch_offset and not not parent_node:pitch_offset()
-	self._safe_position_offset = not not camera_settings.safe_position_offset
-	self._tree_transitions = not not camera_settings.tree_transitions
-	self._node_transitions = not not camera_settings.node_transitions
+	self._vertical_fov = camera_settings.vertical_fov
+	self._should_apply_fov_multiplier = camera_settings.should_apply_fov_multiplier
+	self._default_fov = camera_settings.default_fov and camera_settings.default_fov * degrees_to_radians or not camera_settings.default_fov and parent_node:default_fov()
+	self._near_range = camera_settings.near_range
+	self._far_range = camera_settings.far_range
+	self._pitch_min = camera_settings.pitch_min and camera_settings.pitch_min * degrees_to_radians or not camera_settings.pitch_min and parent_node:pitch_min()
+	self._pitch_max = camera_settings.pitch_max and camera_settings.pitch_max * degrees_to_radians or not camera_settings.pitch_max and parent_node:pitch_max()
+	self._pitch_speed = camera_settings.pitch_speed and camera_settings.pitch_speed * degrees_to_radians or not camera_settings.pitch_speed and parent_node:pitch_speed()
+	self._yaw_speed = camera_settings.yaw_speed and camera_settings.yaw_speed * degrees_to_radians or not camera_settings.yaw_speed and parent_node:yaw_speed()
+	self._pitch_offset = camera_settings.pitch_offset and camera_settings.pitch_offset * degrees_to_radians or not camera_settings.pitch_offset and parent_node:pitch_offset()
+	self._safe_position_offset = camera_settings.safe_position_offset
+	self._tree_transitions = camera_settings.tree_transitions
+	self._node_transitions = camera_settings.node_transitions
 
 	if camera_settings.dof_enabled then
-		self._environment_params = not not self._environment_params
+		self._environment_params = self._environment_params
 		self._environment_params.dof_enabled = camera_settings.dof_enabled
 		self._environment_params.focal_distance = camera_settings.focal_distance
 		self._environment_params.focal_region = camera_settings.focal_region
@@ -53,9 +53,9 @@ BaseCamera.parse_parameters = function (self, camera_settings, parent_node)
 		self._environment_params.focal_scale = camera_settings.focal_scale
 	end
 
-	self._yaw_origin = not not camera_settings.yaw_origin
-	self._pitch_origin = not not camera_settings.pitch_origin
-	self._constraint_function = not not camera_settings.constraint
+	self._yaw_origin = camera_settings.yaw_origin
+	self._pitch_origin = camera_settings.pitch_origin
+	self._constraint_function = camera_settings.constraint
 end
 
 BaseCamera.should_apply_fov_multiplier = function (self)
@@ -140,17 +140,17 @@ end
 
 BaseCamera.vertical_fov = function (self)
 	-- function 18
-	return not not self._vertical_fov
+	return self._vertical_fov
 end
 
 BaseCamera.fade_to_black = function (self)
 	-- function 19
-	return not not self._fade_to_black
+	return self._fade_to_black
 end
 
 BaseCamera.shading_environment = function (self)
 	-- function 20
-	return not not self._environment_params
+	return self._environment_params
 end
 
 BaseCamera.near_range = function (self)
@@ -252,7 +252,7 @@ end
 BaseCamera.set_root_unit = function (self, unit, object_name)
 	-- function 35
 	self._root_unit = unit
-	object_name = not not object_name or not not self._object_name
+	object_name = object_name or self._object_name
 	self._root_object = Unit.node(unit, object_name)
 
 	for _, child in ipairs(self._children) do
@@ -384,7 +384,7 @@ end
 
 BaseCamera._debug_draw = function (self)
 	-- function 49
-	local parent_pos = not not self._parent_node
+	local parent_pos = self._parent_node
 	local pos = self._position
 	local rot = self._rotation
 	local drawer = Managers.state.debug:drawer({

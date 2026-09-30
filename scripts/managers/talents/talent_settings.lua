@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/talents/talent_settings.lua
 
-Talents = not not Talents
+Talents = Talents
 
 require("scripts/managers/talents/talent_settings_bardin")
 require("scripts/managers/talents/talent_settings_sienna")

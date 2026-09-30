@@ -17,7 +17,7 @@ SimpleDoorExtension.init = function (self, extension_init_context, unit, extensi
 
 	local door_state = Unit.get_data(unit, "door_state")
 
-	self.current_state = door_state ~= 0 and door_state == 1 and not not "closed" or not (door_state ~= 0) and not not "open_forward"
+	self.current_state = door_state ~= 0 and door_state == 1 and "closed" or not (door_state ~= 0) and "open_forward"
 	self.animation_stop_time = 0
 end
 
@@ -50,7 +50,7 @@ end
 
 SimpleDoorExtension.is_opening = function (self)
 	-- function 6
-	return self.current_state ~= "closed" and not not self.animation_stop_time
+	return self.current_state ~= "closed" and self.animation_stop_time
 end
 
 SimpleDoorExtension.is_open = function (self)

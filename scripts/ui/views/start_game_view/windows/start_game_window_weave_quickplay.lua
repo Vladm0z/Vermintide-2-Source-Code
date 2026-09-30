@@ -227,7 +227,7 @@ StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 		self:_play_sound("Play_hud_hover")
 	end
 
-	local play_pressed = mouse_active and not not input_service:get("skip_press") or not mouse_active and not not input_service:get("refresh_press")
+	local play_pressed = mouse_active and input_service:get("skip_press") or not mouse_active and input_service:get("refresh_press")
 
 	if self._is_matchmaking then
 		if play_pressed then
@@ -256,7 +256,7 @@ StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 				parent:set_difficulty_option(difficulty_key)
 
 				local difficulties_select_sounds = UISettings.difficulties_select_sounds
-				local sound_event = not not difficulties_select_sounds[i]
+				local sound_event = difficulties_select_sounds[i]
 
 				self:_play_sound(sound_event)
 			end
@@ -264,7 +264,7 @@ StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 	else
 		local old_current_difficulty_index = self._current_difficulty_index
 
-		self._current_difficulty_index = not not self._current_difficulty_index
+		self._current_difficulty_index = self._current_difficulty_index
 
 		if input_service:get("move_left") then
 			self._current_difficulty_index = math.clamp(self._current_difficulty_index - 1, 1, #difficulty_widgets)
@@ -279,7 +279,7 @@ StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 				parent:set_difficulty_option(difficulty_key)
 
 				local difficulties_select_sounds = UISettings.difficulties_select_sounds
-				local sound_event = not not difficulties_select_sounds[self._current_difficulty_index]
+				local sound_event = difficulties_select_sounds[self._current_difficulty_index]
 
 				self:_play_sound(sound_event)
 
@@ -308,7 +308,7 @@ end
 StartGameWindowWeaveQuickplay._is_button_released = function (self, widget)
 	-- function 11
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -320,7 +320,7 @@ end
 StartGameWindowWeaveQuickplay._is_button_hover_enter = function (self, widget)
 	-- function 12
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	return hotspot.on_hover_enter
 end
@@ -479,13 +479,13 @@ StartGameWindowWeaveQuickplay._animate_difficulty_button = function (self, widge
 	-- function 24
 	local content = widget.content
 	local style = widget.style
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 	local has_focus = content.has_focus
-	local is_hover = not not hotspot.is_hover
+	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 3
 
 	if is_hover then

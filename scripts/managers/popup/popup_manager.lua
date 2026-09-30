@@ -45,7 +45,7 @@ PopupManager.update = function (self, dt)
 		if poll_data.current_popup_id == popup_id then
 			poll_data.num_updates = poll_data.num_updates + 1
 
-			fassert(poll_data.num_updates <= 1, "Not polling current popup %q: %q", not not popup.topic, not not popup.text)
+			fassert(poll_data.num_updates <= 1, "Not polling current popup %q: %q", popup.topic, popup.text)
 		else
 			poll_data.current_popup_id = popup_id
 			poll_data.num_updates = 1

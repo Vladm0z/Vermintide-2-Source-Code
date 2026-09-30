@@ -30,7 +30,7 @@ DefaultAnimationFunctions = {
 
 		local first_person_ext = ScriptUnit.extension(player_unit, "first_person_system")
 		local player_head_pos = Unit.world_position(player_unit, Unit.node(player_unit, "j_neck"))
-		local enemy_head_pos = not not position or not not Unit.world_position(unit, Unit.node(unit, "j_neck"))
+		local enemy_head_pos = position or Unit.world_position(unit, Unit.node(unit, "j_neck"))
 		local dir = enemy_head_pos - player_head_pos
 		local rotation = Quaternion.look(dir, Vector3.up())
 
@@ -66,7 +66,7 @@ DefaultAnimationFunctions = {
 
 				Managers.time:set_global_time_scale(0.01)
 
-				local play_sound_event = not not this.play_sound_event
+				local play_sound_event = this.play_sound_event
 
 				Managers.music:trigger_event(play_sound_event)
 
@@ -75,7 +75,7 @@ DefaultAnimationFunctions = {
 				Level.trigger_event(level, "lua_" .. this.name .. "_triggered")
 			end
 		else
-			local stop_delay = not not this.stop_delay
+			local stop_delay = this.stop_delay
 
 			if this.stop_timer and t > this.stop_timer + stop_delay then
 				Managers.time:set_global_time_scale(0)
@@ -94,7 +94,7 @@ DefaultAnimationFunctions = {
 
 				for _, input in ipairs(inputs) do
 					local result
-					local keymap_data = not gamepad_active and not not input_service:get_keymapping(input)
+					local keymap_data = not gamepad_active and input_service:get_keymapping(input)
 
 					if not gamepad_active and (not keymap_data or keymap_data[2] == UNASSIGNED_KEY) then
 						result = alternate_input_service:get(input)
@@ -130,7 +130,7 @@ DefaultAnimationFunctions = {
 
 					for _, input in ipairs(inputs) do
 						local result
-						local keymap_data = not gamepad_active and not not input_service:get_keymapping(input)
+						local keymap_data = not gamepad_active and input_service:get_keymapping(input)
 
 						if not gamepad_active and (not keymap_data or keymap_data[2] == UNASSIGNED_KEY) then
 							result = alternate_input_service:get(input)
@@ -176,7 +176,7 @@ DefaultAnimationFunctions = {
 				Managers.time:set_global_time_scale(0.01)
 			end
 		else
-			local stop_delay = not not this.stop_delay
+			local stop_delay = this.stop_delay
 
 			if this.stop_timer and t > this.stop_timer + stop_delay then
 				Managers.time:set_global_time_scale(0)
@@ -195,7 +195,7 @@ DefaultAnimationFunctions = {
 		-- function 4
 		Managers.time:set_global_time_scale(1)
 
-		local stop_sound_event = not not this.stop_sound_event
+		local stop_sound_event = this.stop_sound_event
 
 		Managers.music:trigger_event(stop_sound_event)
 

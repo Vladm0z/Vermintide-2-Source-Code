@@ -88,7 +88,7 @@ local function _check_globadier_globe_vo(position, radius, owner_unit)
 		end
 
 		if num_players_hit == 1 and all_hit_disabled then
-			local dialogue_input = not not ALIVE[owner_unit]
+			local dialogue_input = ALIVE[owner_unit]
 
 			dialogue_input:trigger_dialogue_event("vs_globe_on_disabled_hero")
 		end
@@ -499,7 +499,7 @@ ProjectileTemplates.impact_templates = {
 				local radius = 3
 				local area_damage_extension = ScriptUnit.has_extension(unit, "area_damage_system")
 
-				radius = not area_damage_extension or not not area_damage_extension.radius or not not radius
+				radius = not area_damage_extension or area_damage_extension.radius or radius
 
 				local ai_base_extension = ScriptUnit.has_extension(owner_unit, "ai_system")
 
@@ -555,7 +555,7 @@ ProjectileTemplates.impact_templates = {
 
 				if is_player_unit then
 					local owner_player = Managers.player:owner(owner_unit)
-					local owner_is_local = not not owner_player and not not owner_player.local_player
+					local owner_is_local = owner_player and owner_player.local_player
 
 					if owner_is_local and not (impact_counter > 1) then
 						WwiseUtils.trigger_position_event(world, "player_versus_globadier_fps_globe_impact", hit_position)
@@ -595,7 +595,7 @@ ProjectileTemplates.impact_templates = {
 					end
 
 					if explosion_template.server_hit_func then
-						first_hit_position = not not first_hit_position or not not Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+						first_hit_position = first_hit_position or Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
 
 						explosion_template.server_hit_func(projectile_unit, damage_source, owner_unit, first_hit_position, recent_impacts, explosion_template)
 					end
@@ -634,7 +634,7 @@ ProjectileTemplates.impact_templates = {
 					end
 
 					if explosion_template.server_hit_func then
-						first_hit_position = not not first_hit_position or not not Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
+						first_hit_position = first_hit_position or Vector3Box.unbox(recent_impacts[ProjectileImpactDataIndex.POSITION])
 
 						explosion_template.server_hit_func(projectile_unit, damage_source, owner_unit, first_hit_position, recent_impacts, explosion_template)
 					end
@@ -702,7 +702,7 @@ ProjectileTemplates.impact_templates = {
 						local actor = Unit.actor(hit_unit, actor_index)
 						local node = Actor.node(actor)
 
-						hit_zone_name = not not breed.hit_zones_lookup[node] or not not hit_zone_name
+						hit_zone_name = breed.hit_zones_lookup[node] or hit_zone_name
 					end
 
 					local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
@@ -745,7 +745,7 @@ ProjectileTemplates.impact_templates = {
 ProjectileTemplates.get_trajectory_template = function (trajectory_template_name, is_husk)
 	-- function 25
 	local templates = ProjectileTemplates.trajectory_templates
-	local husk_key = is_husk ~= true and is_husk == false and not not "unit" or not (is_husk ~= true) and not not "husk"
+	local husk_key = is_husk ~= true and is_husk == false and "unit" or not (is_husk ~= true) and "husk"
 	local template = templates[trajectory_template_name][husk_key]
 
 	return template

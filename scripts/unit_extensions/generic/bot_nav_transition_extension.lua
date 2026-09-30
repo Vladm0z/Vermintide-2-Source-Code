@@ -14,7 +14,7 @@ end
 
 BotNavTransitionExtension.try_create_transition = function (unit, index_offset, bot_nav_transition_manager, drawer, called_from_editor)
 	-- function 2
-	local index_offset = not not index_offset or not not 0
+	local index_offset = index_offset or 0
 	local from = Unit.world_position(unit, index_offset)
 	local via = Unit.world_position(unit, Unit.node(unit, "waypoint"))
 	local to = Unit.world_position(unit, Unit.node(unit, "destination"))

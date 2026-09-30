@@ -22,8 +22,8 @@ LoadTimeManager.start_timer = function (self, time_spent_in_level, end_reason)
 
 	self._current_lobby = nil
 	self._lobby_failed = false
-	self._time_spent_in_level = not not time_spent_in_level or not not -1
-	self._end_reason = not not end_reason or not not "unknown"
+	self._time_spent_in_level = time_spent_in_level or -1
+	self._end_reason = end_reason or "unknown"
 
 	table.clear(self._members_joined)
 	table.clear(self._members_left)
@@ -117,9 +117,9 @@ LoadTimeManager.end_timer = function (self)
 	end
 
 	local local_player = Managers.player:local_player()
-	local is_server = local_player and not not local_player.is_server or not local_player and not not "unknown"
+	local is_server = local_player and local_player.is_server or not local_player and "unknown"
 	local previous_level_key = self._previous_level_key
-	local time = not not Managers.time:time("loading_timer")
+	local time = Managers.time:time("loading_timer")
 	local seconds = math.floor(time % 60 + 0.5)
 	local minutes = math.floor(time / 60)
 	local hours = math.floor(minutes / 60)

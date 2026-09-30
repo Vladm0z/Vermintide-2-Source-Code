@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/debug_breeds/debug_globadier.lua
 
-DebugGlobadier = not not DebugGlobadier
+DebugGlobadier = DebugGlobadier
 
 DebugGlobadier.update = function (unit, blackboard, t)
 	-- function 1
@@ -17,7 +17,7 @@ DebugGlobadier.update = function (unit, blackboard, t)
 	local advance_towards_players_action = BreedActions.skaven_poison_wind_globadier.advance_towards_players
 	local lurk_radius = skulk_approach_action.skulk_init_distance
 	local commit_radius = BreedActions.skaven_poison_wind_globadier.skulk_approach.commit_distance
-	local current_lurk_radius = not not blackboard.skulk_data
+	local current_lurk_radius = blackboard.skulk_data
 
 	QuickDrawer:circle(target_position + offset, lurk_radius, Vector3.up(), Colors.get("light_green"))
 	QuickDrawer:circle(target_position + offset, commit_radius, Vector3.up(), Colors.get("medium_orchid"))
@@ -26,10 +26,10 @@ DebugGlobadier.update = function (unit, blackboard, t)
 		QuickDrawer:circle(target_position + offset, lurk_radius, Vector3.up(), Colors.get("light_green"))
 	end
 
-	local target_distance = blackboard.target_dist and not not math.round_with_precision(blackboard.target_dist, 2) or not blackboard.target_dist and not not "-"
-	local wanted_distance = blackboard.wanted_distance and not not math.round_with_precision(blackboard.wanted_distance, 2) or not blackboard.wanted_distance and not not "-"
+	local target_distance = blackboard.target_dist and math.round_with_precision(blackboard.target_dist, 2) or not blackboard.target_dist and "-"
+	local wanted_distance = blackboard.wanted_distance and math.round_with_precision(blackboard.wanted_distance, 2) or not blackboard.wanted_distance and "-"
 	local slot_count = blackboard.total_slots_count
-	local ai_node = not not blackboard.action
+	local ai_node = blackboard.action
 	local time_until_first_throw_string = "-"
 	local time_until_first_throw
 	local distance_until_throw = "-"
@@ -44,7 +44,7 @@ DebugGlobadier.update = function (unit, blackboard, t)
 		time_until_first_throw = advance_data.time_until_first_throw + slot_count_time_modifier * slot_count
 		time_until_first_throw = math.max(time_until_first_throw - advance_data.timer, 0)
 		time_until_first_throw = math.round_with_precision(time_until_first_throw, 2)
-		time_until_first_throw_string = not not time_until_first_throw or not not "-"
+		time_until_first_throw_string = time_until_first_throw or "-"
 
 		if time_unit_first_throw_raw ~= time_until_first_throw then
 			time_until_first_throw_string = time_until_first_throw .. " [" .. time_unit_first_throw_raw .. "]"

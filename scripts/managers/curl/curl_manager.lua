@@ -58,7 +58,7 @@ end
 
 Request.OnResponse = function (self, data)
 	-- function 5
-	self.data = self.data and not not (self.data .. data) or not self.data and not not data
+	self.data = self.data and self.data .. data or not self.data and data
 end
 
 Request.OnHeader = function (self, data)

@@ -65,7 +65,7 @@ StartGameWindowVersusPlayerHostedLobby.on_enter = function (self, params, offset
 
 	local game_mechanism = Managers.mechanism:game_mechanism()
 
-	self._custom_settings_toggled = game_mechanism:is_hosting_versus_custom_game() and not not game_mechanism:custom_settings_enabled() or not game_mechanism:is_hosting_versus_custom_game() and not not false
+	self._custom_settings_toggled = game_mechanism:is_hosting_versus_custom_game() and game_mechanism:custom_settings_enabled()
 	self._game_mechanism = game_mechanism
 
 	self:_create_ui_elements()
@@ -114,11 +114,11 @@ StartGameWindowVersusPlayerHostedLobby._create_ui_elements = function (self)
 	self._host_widgets = host_widgets
 	self._widgets_by_name = widgets_by_name
 
-	local lobby = not not Managers.lobby:query_lobby("matchmaking_join_lobby")
-	local custom_server_name = lobby and not not lobby:lobby_data("custom_server_name") or not lobby and not not ""
-	local valid_custom_server_name = not not rawget(_G, "Steam")
+	local lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
+	local custom_server_name = lobby and lobby:lobby_data("custom_server_name") or not lobby and ""
+	local valid_custom_server_name = rawget(_G, "Steam")
 
-	self._widgets_by_name.lobby_name.content.input.default_text = valid_custom_server_name and (not not custom_server_name or not not Localize("start_game_window_custom_lobby_name_hint")) or not valid_custom_server_name and not not Localize("start_game_window_custom_lobby_name_hint")
+	self._widgets_by_name.lobby_name.content.input.default_text = valid_custom_server_name and (custom_server_name or Localize("start_game_window_custom_lobby_name_hint")) or not valid_custom_server_name and Localize("start_game_window_custom_lobby_name_hint")
 
 	local toggle_custom_settings_button = self._widgets_by_name.toggle_custom_settings_button
 
@@ -144,7 +144,7 @@ end
 StartGameWindowVersusPlayerHostedLobby._exit_layout = function (self)
 	-- function 5
 	local is_match_host = self._match_handler:query_peer_data(self._peer_id, "is_match_owner")
-	local return_layout_name = is_match_host and not not "versus_custom_game" or not is_match_host and not not "versus_lobby_browser"
+	local return_layout_name = is_match_host and "versus_custom_game" or not is_match_host and "versus_lobby_browser"
 	local parent = self._parent
 
 	parent:set_layout_by_name(return_layout_name)
@@ -195,7 +195,7 @@ StartGameWindowVersusPlayerHostedLobby.update = function (self, dt, t)
 	local match_owner = Managers.mechanism:network_handler():get_match_handler():get_match_owner()
 	local has_slot_reservation_handler = Managers.mechanism:mechanism_try_call("get_all_reservation_handlers_by_owner", match_owner)
 
-	self._is_loading = not has_slot_reservation_handler or not not not self._matchmaking_manager:is_in_versus_custom_game_lobby()
+	self._is_loading = not has_slot_reservation_handler or not self._matchmaking_manager:is_in_versus_custom_game_lobby()
 end
 
 StartGameWindowVersusPlayerHostedLobby.post_update = function (self, t, dt)
@@ -236,10 +236,10 @@ StartGameWindowVersusPlayerHostedLobby._can_play = function (self)
 		local match_owner = match_handler:get_match_owner()
 		local is_match_owner = match_owner == Network.peer_id()
 		local game_mechanism = Managers.mechanism:game_mechanism()
-		local slot_reservation_handler = not not game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
+		local slot_reservation_handler = game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
 		local all_teams_have_members = slot_reservation_handler:all_teams_have_members()
 		local network_server = Managers.state.network.network_server
-		local all_players_joined = not not is_match_owner and not not network_server:are_all_peers_ingame(nil, true)
+		local all_players_joined = is_match_owner and network_server:are_all_peers_ingame(nil, true)
 
 		if not all_players_joined then
 			can_play = false
@@ -355,7 +355,7 @@ StartGameWindowVersusPlayerHostedLobby._handle_input = function (self, t)
 	end
 
 	widget = self._widgets_by_name.mission_setting
-	widget.style.bg_effect.color[1] = self._is_match_host and not not 255 or not self._is_match_host and not not 0
+	widget.style.bg_effect.color[1] = self._is_match_host and 255 or not self._is_match_host and 0
 
 	if self._is_match_host then
 		widget.content.is_selected = UIUtils.is_button_hover(widget)
@@ -378,7 +378,7 @@ StartGameWindowVersusPlayerHostedLobby._handle_input = function (self, t)
 				local match_handler = self._match_handler
 				local match_owner = match_handler:get_match_owner()
 				local game_mechanism = Managers.mechanism:game_mechanism()
-				local slot_reservation_handler = not not game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
+				local slot_reservation_handler = game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
 
 				slot_reservation_handler:request_party_change(wanted_party_id)
 				self._parent:play_sound("versus_hud_player_lobby_switch_slot")
@@ -546,7 +546,7 @@ StartGameWindowVersusPlayerHostedLobby._update_custom_lobby_slots = function (se
 	local match_handler = self._match_handler
 	local match_owner = match_handler:get_match_owner()
 	local game_mechanism = Managers.mechanism:game_mechanism()
-	local slot_reservation_handler = not not game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
+	local slot_reservation_handler = game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
 	local no_join_sound = false
 
 	for peer_id, slot_data in pairs(self._player_slots_by_peer_id) do
@@ -586,7 +586,7 @@ StartGameWindowVersusPlayerHostedLobby._update_custom_lobby_slots = function (se
 
 	local leave_game_button = self._widgets_by_name.leave_game_button
 
-	leave_game_button.content.title_text = is_match_host and not not Localize("vs_ui_cancel_hosting") or not is_match_host and not not Localize("leave_game_menu_button_name")
+	leave_game_button.content.title_text = is_match_host and Localize("vs_ui_cancel_hosting") or not is_match_host and Localize("leave_game_menu_button_name")
 
 	local peers = slot_reservation_handler:peers()
 
@@ -630,7 +630,7 @@ StartGameWindowVersusPlayerHostedLobby._update_custom_lobby_slots = function (se
 				widget.content.player_name = UIRenderer.crop_text(player_name, 18)
 				slot_data.has_avatar = not HAS_AVATARS
 
-				self:_apply_team_color(widget, not not team_2_color)
+				self:_apply_team_color(widget, team_2_color)
 
 				if peer_id == self._peer_id then
 					self:_apply_team_color(self._widgets_by_name.team_1, team_1_color)
@@ -641,9 +641,9 @@ StartGameWindowVersusPlayerHostedLobby._update_custom_lobby_slots = function (se
 				widget.content.show_chat_button = peer_id ~= self._peer_id
 				widget.content.chat_button_hotspot.is_selected = Managers.chat:ignoring_peer_id(peer_id)
 
-				local is_match_host_friend = not not is_match_host and match_handler:query_peer_data(peer_id, "leader_peer_id") == self._peer_id
+				local is_match_host_friend = is_match_host and match_handler:query_peer_data(peer_id, "leader_peer_id") == self._peer_id
 
-				widget.content.show_kick_button = not not is_match_host and not is_peer_match_host and not not not is_match_host_friend
+				widget.content.show_kick_button = is_match_host and not is_peer_match_host and not is_match_host_friend
 
 				local versus_level = match_handler:query_peer_data(peer_id, "versus_level")
 
@@ -654,7 +654,7 @@ StartGameWindowVersusPlayerHostedLobby._update_custom_lobby_slots = function (se
 				widget.content.insignia_main.uvs = insignia_main_uvs
 				widget.content.insignia_addon.uvs = insignia_addon_uvs
 
-				local friend_party_id = not not Managers.party:get_friend_party_id_from_peer(peer_id)
+				local friend_party_id = Managers.party:get_friend_party_id_from_peer(peer_id)
 
 				widget.style.party_color.color = Colors.get_categorical_color(friend_party_id - 1)
 				has_changes = true
@@ -692,7 +692,7 @@ StartGameWindowVersusPlayerHostedLobby._apply_team_color = function (self, widge
 
 	for _, style_name in pairs(widget.content.styles_with_team_color) do
 		local style = styles[style_name]
-		local dst_color = not not style.color
+		local dst_color = style.color
 
 		if dst_color then
 			Colors.copy_no_alpha_to(dst_color, team_color)
@@ -715,12 +715,12 @@ StartGameWindowVersusPlayerHostedLobby._update_mission_option = function (self)
 	if is_match_host then
 		selected_level_id = self._parent:get_selected_level_id()
 	else
-		local lobby = not not Managers.lobby:query_lobby("matchmaking_join_lobby")
+		local lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-		selected_level_id = not not lobby and not not lobby:lobby_data("selected_mission_id")
+		selected_level_id = lobby and lobby:lobby_data("selected_mission_id")
 	end
 
-	selected_level_id = not not selected_level_id or not not "any"
+	selected_level_id = selected_level_id or "any"
 
 	if selected_level_id == self._selected_level_id then
 		return
@@ -728,7 +728,7 @@ StartGameWindowVersusPlayerHostedLobby._update_mission_option = function (self)
 
 	self._selected_level_id = selected_level_id
 
-	local level_settings = not not LevelSettings[selected_level_id]
+	local level_settings = LevelSettings[selected_level_id]
 	local display_name = level_settings.display_name
 	local icon_texture = level_settings.level_image
 	local completed_difficulty_index = 0
@@ -754,9 +754,9 @@ StartGameWindowVersusPlayerHostedLobby._handle_gamepad_input = function (self, d
 	local game_mechanism = Managers.mechanism:game_mechanism()
 	local match_handler = self._match_handler
 	local match_owner = match_handler:get_match_owner()
-	local slot_reservation_handler = not not game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
-	local selected_row = not not self._selected_row
-	local selected_column = not not self._selected_column
+	local slot_reservation_handler = game_mechanism:get_slot_reservation_handler(match_owner, ReservationHandlerTypes.pending_custom_game)
+	local selected_row = self._selected_row
+	local selected_column = self._selected_column
 	local mission_selection_widget = self._widgets_by_name.mission_setting
 	local mission_selection_content = mission_selection_widget.content
 	local toggle_custom_settings_button = self._widgets_by_name.toggle_custom_settings_button
@@ -930,11 +930,11 @@ StartGameWindowVersusPlayerHostedLobby._update_server_name = function (self)
 	-- function 27
 	local widget = self._widgets_by_name.lobby_name
 	local input = widget.content.input
-	local lobby = not not Managers.lobby:query_lobby("matchmaking_join_lobby")
+	local lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
 	local is_match_host = self._match_handler:query_peer_data(self._peer_id, "is_match_owner")
 
 	if not is_match_host then
-		local custom_server_name = lobby and not not lobby:lobby_data("custom_server_name") or not lobby and not not ""
+		local custom_server_name = lobby and lobby:lobby_data("custom_server_name") or not lobby and ""
 
 		if custom_server_name == "n/a" then
 			custom_server_name = Localize("lb_game_type_versus_custom_game")
@@ -948,7 +948,7 @@ StartGameWindowVersusPlayerHostedLobby._update_server_name = function (self)
 
 	if input.active then
 		local input_service = self._parent:window_input_service()
-		local escape_pressed = not not input_service:get("toggle_menu", true)
+		local escape_pressed = input_service:get("toggle_menu", true)
 		local enter_pressed = input_service:get("execute_chat_input", true)
 
 		if escape_pressed or enter_pressed then
@@ -1038,7 +1038,7 @@ StartGameWindowVersusPlayerHostedLobby._lobby_member_game_mode_custom_settings_h
 		self._custom_settings_toggled = enabled
 		custom_settings_toggle.content.button_hotspot.is_selected = enabled
 
-		local gamepad_enabled = not not Managers.input
+		local gamepad_enabled = Managers.input
 
 		if not gamepad_enabled then
 			Managers.state.event:trigger("event_focus_custom_game_settings_input", enabled)

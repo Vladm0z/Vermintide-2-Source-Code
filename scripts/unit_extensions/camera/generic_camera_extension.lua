@@ -75,7 +75,7 @@ end
 GenericCameraExtension.set_follow_unit = function (self, follow_unit, follow_node)
 	-- function 10
 	self.override_follow_unit = follow_unit
-	self.override_follow_node = follow_node and not not Unit.node(follow_unit, follow_node) or not follow_node and not not nil
+	self.override_follow_node = follow_node and Unit.node(follow_unit, follow_node) or not follow_node and nil
 end
 
 GenericCameraExtension.get_follow_data = function (self)

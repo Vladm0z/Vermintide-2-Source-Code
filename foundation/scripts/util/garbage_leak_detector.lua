@@ -1,6 +1,6 @@
 -- chunkname: @foundation/scripts/util/garbage_leak_detector.lua
 
-GarbageLeakDetector = not not GarbageLeakDetector
+GarbageLeakDetector = GarbageLeakDetector
 
 GarbageLeakDetector.register_object = function (object, object_name)
 	-- function 1
@@ -136,7 +136,7 @@ local function debug_search_stack(what, path, path_n)
 			break
 		end
 
-		path[path_n] = string.format("Stack function %s [%d]", not not function_info.name, stack_level)
+		path[path_n] = string.format("Stack function %s [%d]", function_info.name, stack_level)
 
 		local func = function_info.func
 

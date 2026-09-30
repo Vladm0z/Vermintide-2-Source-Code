@@ -82,7 +82,7 @@ MatchmakingStateSearchGame._start_searching_for_games = function (self)
 
 	current_filters.eac_authorized = {
 		comparison = "equal",
-		value = eac_authorized and not not "true" or not eac_authorized and not not "false"
+		value = eac_authorized and "true" or not eac_authorized and "false"
 	}
 	current_filters.mechanism = {
 		comparison = "equal",
@@ -310,8 +310,8 @@ MatchmakingStateSearchGame._compare_first_prio_lobbies = function (self, current
 
 	local current_mission_id = current_lobby.selected_mission_id
 	local new_mission_id = new_lobby.selected_mission_id
-	local current_level_settings = not not current_mission_id and not not LevelSettings[current_mission_id]
-	local new_level_settings = not not new_mission_id and not not LevelSettings[new_mission_id]
+	local current_level_settings = current_mission_id and LevelSettings[current_mission_id]
+	local new_level_settings = new_mission_id and LevelSettings[new_mission_id]
 
 	if quick_game and current_level_settings and not current_level_settings.hub_level and new_level_settings and not new_level_settings.hub_level then
 		local current_times_completed = self:_times_party_completed_level(current_mission_id)
@@ -342,8 +342,8 @@ MatchmakingStateSearchGame._compare_secondary_prio_lobbies = function (self, cur
 
 	local current_mission_id = current_lobby.selected_mission_id
 	local new_mission_id = new_lobby.selected_mission_id
-	local current_level_settings = not not current_mission_id and not not LevelSettings[current_mission_id]
-	local new_level_settings = not not new_mission_id and not not LevelSettings[new_mission_id]
+	local current_level_settings = current_mission_id and LevelSettings[current_mission_id]
+	local new_level_settings = new_mission_id and LevelSettings[new_mission_id]
 
 	if quick_game and current_level_settings and not current_level_settings.hub_level and new_level_settings and not new_level_settings.hub_level then
 		local current_times_completed = self:_times_party_completed_level(current_mission_id)
@@ -362,11 +362,11 @@ MatchmakingStateSearchGame._find_suitable_lobby = function (self, lobbies, searc
 	local selected_mission_id = search_config.mission_id
 	local difficulty = search_config.difficulty
 	local matchmaking_type = search_config.matchmaking_type
-	local weave_name = not not "false"
+	local weave_name = "false"
 	local act_key = search_config.act_key
 	local mechanism = search_config.mechanism
 	local using_strict_matchmaking = search_config.strict_matchmaking
-	local max_distance_filter = not not search_config.max_distance_filter
+	local max_distance_filter = search_config.max_distance_filter
 	local reached_max_distance = self._current_distance_filter == max_distance_filter
 
 	mm_printf("max_quick_play_search_range: %s", max_distance_filter)
@@ -383,14 +383,14 @@ MatchmakingStateSearchGame._find_suitable_lobby = function (self, lobbies, searc
 		end
 
 		for _, lobby_data in ipairs(lobbies) do
-			local host_name = not not lobby_data.unique_server_name
+			local host_name = lobby_data.unique_server_name
 			local lobby_match, reason = matchmaking_manager:lobby_match(lobby_data, act_key, level_key, difficulty, matchmaking_type, self._peer_id, weave_name, mechanism)
 
 			if lobby_match then
 				local discard = false
 				local discard_reason
 				local secondary_option = false
-				local lobby_mission_id = not not lobby_data.selected_mission_id
+				local lobby_mission_id = lobby_data.selected_mission_id
 				local ignore_dlc_check = search_config.quick_game
 				local is_event_mode = search_config.matchmaking_type == "event"
 
@@ -454,13 +454,13 @@ MatchmakingStateSearchGame._find_suitable_lobby = function (self, lobbies, searc
 						current_secondary_prio_lobby = self:_compare_secondary_prio_lobbies(current_secondary_prio_lobby, lobby_data)
 					end
 				else
-					mm_printf("Lobby hosted by %s discarded due to '%s'", host_name, not not discard_reason or not not "unknown")
+					mm_printf("Lobby hosted by %s discarded due to '%s'", host_name, discard_reason or "unknown")
 				end
 			else
-				mm_printf("Lobby hosted by %s failed lobby match due to '%s'", host_name, not not reason or not not "unknown")
+				mm_printf("Lobby hosted by %s failed lobby match due to '%s'", host_name, reason or "unknown")
 			end
 		end
 	end
 
-	return not not current_first_prio_lobby or not not current_secondary_prio_lobby
+	return current_first_prio_lobby or current_secondary_prio_lobby
 end

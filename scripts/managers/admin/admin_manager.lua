@@ -13,7 +13,7 @@ AdminManager.init = function (self)
 			window_title = table.concat(window_title, " ")
 		end
 
-		CommandWindow.open(not not window_title or not not "Dedicated Server")
+		CommandWindow.open(window_title or "Dedicated Server")
 		cprintf("Version: content '%s', engine '%s'", script_data.settings.content_revision, script_data.build_identifier)
 
 		local start_port_range = script_data.start_port_range
@@ -23,12 +23,12 @@ AdminManager.init = function (self)
 			start_port_range = tonumber(start_port_range)
 			rcon_port = start_port_range + 3
 		else
-			rcon_port = not not script_data.rcon_port or not not script_data.settings.rcon_port or not not Managers.mechanism:mechanism_setting("rcon_port")
+			rcon_port = script_data.rcon_port or script_data.settings.rcon_port or Managers.mechanism:mechanism_setting("rcon_port")
 		end
 
 		local settings = {
 			port = rcon_port,
-			rcon_password = not not script_data.rcon_password
+			rcon_password = script_data.rcon_password
 		}
 
 		self._dedicated_server_commands = DedicatedServerCommands:new()

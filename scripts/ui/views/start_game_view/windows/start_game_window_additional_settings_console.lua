@@ -356,7 +356,7 @@ StartGameWindowAdditionalSettingsConsole._handle_input = function (self, dt, t)
 		local consume = true
 
 		if input_service:get("back_menu", consume) or input_service:get("refresh", consume) or input_service:get("right_stick_press", consume) then
-			parent:set_window_input_focus(not not self._parent_window_name)
+			parent:set_window_input_focus(self._parent_window_name)
 		end
 	end
 end
@@ -372,7 +372,7 @@ StartGameWindowAdditionalSettingsConsole._update_additional_options = function (
 	local private_enabled = parent:is_private_option_enabled()
 	local always_host_enabled = parent:is_always_host_option_enabled()
 	local strict_matchmaking_enabled = parent:is_strict_matchmaking_option_enabled()
-	local twitch_active = not not Managers.twitch
+	local twitch_active = Managers.twitch
 	local lobby = self._network_lobby
 	local num_members = lobby:members():get_member_count()
 	local is_alone = num_members == 1
@@ -386,15 +386,15 @@ StartGameWindowAdditionalSettingsConsole._update_additional_options = function (
 		private_hotspot.disable_button = private_is_disabled
 		private_hotspot.is_selected = private_is_selected
 
-		local always_host_is_selected = not not private_enabled or not is_alone or not not always_host_enabled
-		local always_host_is_disabled = not not private_enabled or not is_alone or not not twitch_active
+		local always_host_is_selected = private_enabled or not is_alone or always_host_enabled
+		local always_host_is_disabled = private_enabled or not is_alone or twitch_active
 		local host_hotspot = widgets_by_name.host_button.content.button_hotspot
 
 		host_hotspot.disable_button = always_host_is_disabled
 		host_hotspot.is_selected = always_host_is_selected
 
-		local strict_matchmaking_is_selected = not always_host_enabled and not private_enabled and not not is_alone and not not strict_matchmaking_enabled
-		local strict_matchmaking_is_disabled = not not private_enabled or not not always_host_enabled or not is_alone or not not twitch_active
+		local strict_matchmaking_is_selected = not always_host_enabled and not private_enabled and is_alone and strict_matchmaking_enabled
+		local strict_matchmaking_is_disabled = private_enabled or always_host_enabled or not is_alone or twitch_active
 		local strict_matchmaking_hotspot = widgets_by_name.strict_matchmaking_button.content.button_hotspot
 
 		strict_matchmaking_hotspot.disable_button = strict_matchmaking_is_disabled
@@ -440,7 +440,7 @@ StartGameWindowAdditionalSettingsConsole._handle_gamepad_activity = function (se
 		self.gamepad_active_last_frame = false
 
 		if self._is_focused then
-			self.parent:set_window_input_focus(not not self._parent_window_name)
+			self.parent:set_window_input_focus(self._parent_window_name)
 		end
 
 		self.render_settings.alpha_multiplier = 1

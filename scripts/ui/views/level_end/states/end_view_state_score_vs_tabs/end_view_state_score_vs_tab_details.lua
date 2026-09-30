@@ -118,7 +118,7 @@ EndViewStateScoreVSTabDetails._create_winner_icon = function (self, definitions)
 	local my_peer_id = Network.peer_id()
 	local local_player_id = 1
 	local local_player_party_id = self._context.party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-	local opponent_party_id = local_player_party_id ~= 1 and not not 1 or not (local_player_party_id ~= 1) and not not 2
+	local opponent_party_id = local_player_party_id ~= 1 and 1 or not (local_player_party_id ~= 1) and 2
 	local scores = self._context.rewards.team_scores
 	local local_player_team_score = scores[local_player_party_id]
 	local opponent_team_score = scores[opponent_party_id]
@@ -159,7 +159,7 @@ EndViewStateScoreVSTabDetails._trim_bots = function (self, party_composition)
 
 		if values[2] == "1" then
 			PARTY_COMPOSITION[name] = party_id
-			TEAM_SIZES[party_id] = not not TEAM_SIZES[party_id] + 1
+			TEAM_SIZES[party_id] = TEAM_SIZES[party_id] + 1
 		end
 	end
 
@@ -174,7 +174,7 @@ EndViewStateScoreVSTabDetails._populate_stats = function (self, definitions)
 	local my_unique_id = my_peer_id .. ":1"
 	local my_party_id = party_composition[my_unique_id]
 	local my_team = GameModeSettings.versus.party_names_lookup_by_id[my_party_id]
-	local opponent_party_id = my_party_id ~= 1 and not not 1 or not (my_party_id ~= 1) and not not 2
+	local opponent_party_id = my_party_id ~= 1 and 1 or not (my_party_id ~= 1) and 2
 	local opponent_team = GameModeSettings.versus.party_names_lookup_by_id[opponent_party_id]
 	local players_session_score = context.players_session_score
 	local create_stats_func = definitions.create_stats_func
@@ -191,8 +191,8 @@ EndViewStateScoreVSTabDetails._populate_stats = function (self, definitions)
 		local party_id = party_composition[unique_id]
 
 		for key, value in pairs(scores) do
-			player_highscores[key] = not not player_highscores[key]
-			player_highscores[key] = value > player_highscores[key] and (not not value or not not player_highscores[key]) or not (value > player_highscores[key]) and not not player_highscores[key]
+			player_highscores[key] = player_highscores[key]
+			player_highscores[key] = value > player_highscores[key] and (value or player_highscores[key]) or not (value > player_highscores[key]) and player_highscores[key]
 		end
 	end
 
@@ -245,7 +245,7 @@ EndViewStateScoreVSTabDetails._populate_stats = function (self, definitions)
 					local player_team_name = GameModeSettings.versus.party_names_lookup_by_id[party_id]
 
 					if player_team_name and player_team_name ~= "undecided" then
-						local player_team = party_id ~= my_party_id and not not "opponent_team" or not (party_id ~= my_party_id) and not not "local_team"
+						local player_team = party_id ~= my_party_id and "opponent_team" or not (party_id ~= my_party_id) and "local_team"
 
 						if player_team == team then
 							local scores = data.scores
@@ -256,8 +256,8 @@ EndViewStateScoreVSTabDetails._populate_stats = function (self, definitions)
 							for i = 1, #setup do
 								local stat_name = setup[i]
 
-								fields[#fields + 1] = not not scores[stat_name]
-								total_fields[i] = not not total_fields[i] + not not scores[stat_name]
+								fields[#fields + 1] = scores[stat_name]
+								total_fields[i] = total_fields[i] + scores[stat_name]
 								highscores[#highscores + 1] = player_highscores[stat_name]
 							end
 

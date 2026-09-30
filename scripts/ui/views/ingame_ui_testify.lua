@@ -24,7 +24,7 @@ local IngameUITestify = {
 			return Testify.RETRY
 		end
 
-		local game_mode = not not Managers.state.game_mode
+		local game_mode = Managers.state.game_mode
 
 		if not game_mode then
 			return Testify.RETRY

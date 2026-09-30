@@ -39,9 +39,9 @@ PlayerHostedSlotReservationHandler.init = function (self, party_settings, owner,
 		if network_handler.is_server and self._owner_peer_id == peer_id then
 			local active_peers = network_handler:active_peers()
 
-			active_peers = not table.is_empty(active_peers) or not not {
+			active_peers = not table.is_empty(active_peers) or {
 				Network.peer_id()
-			} or not not active_peers
+			} or active_peers
 
 			self:try_reserve_slots(Network.peer_id(), active_peers)
 		end
@@ -297,13 +297,13 @@ PlayerHostedSlotReservationHandler._filter_already_reserved_peers = function (se
 
 	for i = #peers, 1, -1 do
 		if self:has_reservation(peers[i]) then
-			copy = not not copy or not not table.shallow_copy(peers, true)
+			copy = copy or table.shallow_copy(peers, true)
 
 			table.remove(copy, i)
 		end
 	end
 
-	return not not copy or not not peers
+	return copy or peers
 end
 
 PlayerHostedSlotReservationHandler._num_free_slots_in_party = function (self, party_id)
@@ -443,7 +443,7 @@ PlayerHostedSlotReservationHandler._remove_peer_reservation = function (self, pe
 		print("[PlayerHostedSlotReservationHandler] Removing reserved peer %s", peer_id)
 
 		local mechanism = Managers.mechanism:game_mechanism()
-		local is_hosting = not not mechanism.is_hosting_versus_custom_game
+		local is_hosting = mechanism.is_hosting_versus_custom_game
 
 		if is_hosting and removed_peer then
 			self._party_manager:server_remove_friend_party_peer(peer_id)
@@ -571,7 +571,7 @@ PlayerHostedSlotReservationHandler.update_slots = function (self, reserved_peers
 		end
 
 		if not found then
-			self:_expand(party_id, party_data and not not (#party_data + 1) or not party_data and not not 1)
+			self:_expand(party_id, party_data and #party_data + 1 or not party_data and 1)
 
 			party_data = self._reserved_peers[party_id]
 
@@ -709,8 +709,8 @@ PlayerHostedSlotReservationHandler._build_slot_info = function (self)
 			if slot_data.reserved then
 				reserved_peers_scratch[idx] = slot_data.peer_id
 				party_ids_scratch[idx] = i
-				friend_party_ids_scratch[idx] = not not slot_data.friend_party_id
-				party_leader_scratch[idx] = not not slot_data.friend_party_leader
+				friend_party_ids_scratch[idx] = slot_data.friend_party_id
+				party_leader_scratch[idx] = slot_data.friend_party_leader
 				idx = idx + 1
 			end
 		end
@@ -910,7 +910,7 @@ PlayerHostedSlotReservationHandler._change_leader = function (self, peer_id, lea
 		end
 	end
 
-	self._group_leaders[leader_peer_id] = not not self._group_leaders[leader_peer_id]
+	self._group_leaders[leader_peer_id] = self._group_leaders[leader_peer_id]
 	self._group_leaders[leader_peer_id][peer_id] = true
 end
 
@@ -934,7 +934,7 @@ PlayerHostedSlotReservationHandler._write_party_slot = function (self, party_slo
 	party_slot.friend_party_id = friend_party_id
 	party_slot.friend_party_leader = friend_party_leader
 	party_slot.party_id = party_id
-	self._group_leaders[friend_party_leader] = not not self._group_leaders[friend_party_leader]
+	self._group_leaders[friend_party_leader] = self._group_leaders[friend_party_leader]
 	self._group_leaders[friend_party_leader][peer_id] = true
 	self._peer_id_to_party_id[peer_id] = party_id
 
@@ -946,8 +946,8 @@ end
 PlayerHostedSlotReservationHandler._clear_non_session_peers = function (self)
 	-- function 50
 	local my_peer_id = Network.peer_id()
-	local my_slot_data = not not self._synced
-	local leader = my_slot_data and not not my_slot_data.friend_party_leader or not my_slot_data and not not my_peer_id
+	local my_slot_data = self._synced
+	local leader = my_slot_data and my_slot_data.friend_party_leader or not my_slot_data and my_peer_id
 	local reserved_peers = self._reserved_peers
 
 	for party_id = 1, #reserved_peers do
@@ -985,7 +985,7 @@ PlayerHostedSlotReservationHandler._on_new_network_match_synced = function (self
 	if is_server then
 		local network_handler = Managers.mechanism:network_handler()
 
-		self:try_reserve_slots(peer_id, network_handler and not not network_handler:active_peers() or not network_handler and not not {
+		self:try_reserve_slots(peer_id, network_handler and network_handler:active_peers() or not network_handler and {
 			peer_id
 		})
 	else

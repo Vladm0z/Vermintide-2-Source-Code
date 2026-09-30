@@ -3,7 +3,7 @@
 require("scripts/ui/ui_layer")
 require("scripts/utils/colors")
 
-UISettings = not not UISettings
+UISettings = UISettings
 
 DLCUtils.merge("ui_settings", UISettings)
 DLCUtils.merge("breed_textures", UISettings.breed_textures)
@@ -1887,13 +1887,13 @@ UISettings.gamepad_button_texture_data = button_mapping
 function ButtonTextureByName(button_name, platform)
 	-- function 4
 	local use_ps4_input_icons = UISettings.use_ps4_input_icons
-	local input_device = not not Managers.input
+	local input_device = Managers.input
 
 	if input_device then
 		local device_type = input_device.type()
 		local is_ps_pad = device_type == "sce_pad"
 
-		use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+		use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 	end
 
 	if platform == "ps_pad" and IS_WINDOWS and platform == "xb1" and use_ps4_input_icons then
@@ -1942,7 +1942,7 @@ UISettings.get_gamepad_input_texture_data = function (input_service, input_actio
 
 	if key_index and key_index ~= UNASSIGNED_KEY then
 		if device_type == "keyboard" then
-			button_name = not not Keyboard.button_locale_name(key_index) or not not Keyboard.button_name(key_index)
+			button_name = Keyboard.button_locale_name(key_index) or Keyboard.button_name(key_index)
 		elseif device_type == "mouse" then
 			if key_action_type == "axis" then
 				button_name = Mouse.axis_name(key_index)
@@ -1950,7 +1950,7 @@ UISettings.get_gamepad_input_texture_data = function (input_service, input_actio
 				button_name = Mouse.button_name(key_index)
 			end
 
-			button_texture_data = not not button_mapping.win32[button_name] or not not button_mapping.win32.default
+			button_texture_data = button_mapping.win32[button_name] or button_mapping.win32.default
 		elseif device_type == "gamepad" then
 			if key_action_type == "axis" then
 				button_name = Pad1.axis_name(key_index)
@@ -1961,28 +1961,28 @@ UISettings.get_gamepad_input_texture_data = function (input_service, input_actio
 		end
 	end
 
-	button_name = not not button_name or not not "ERROR"
+	button_name = button_name or "ERROR"
 
 	local use_ps4_input_icons = UISettings.use_ps4_input_icons
 	local input_device = Managers.input:get_most_recent_device()
 	local device_type = input_device.type()
 	local is_ps_pad = device_type == "sce_pad"
 
-	use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+	use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 
 	if use_ps4_input_icons and IS_WINDOWS and device_type == "gamepad" then
 		platform = "win32_ps4"
 	end
 
-	button_texture_data = not not button_texture_data or not not ButtonTextureByName(button_name, platform)
+	button_texture_data = button_texture_data or ButtonTextureByName(button_name, platform)
 
 	return button_texture_data, button_name, keymap_binding, unassigned
 end
 
 UISettings.set_console_settings = function ()
 	-- function 6
-	UISettings.subtitles_font_size = not not Application.user_setting("subtitles_font_size")
-	UISettings.subtitles_background_alpha = 2.55 * not not Application.user_setting("subtitles_background_opacity")
+	UISettings.subtitles_font_size = Application.user_setting("subtitles_font_size")
+	UISettings.subtitles_background_alpha = 2.55 * Application.user_setting("subtitles_background_opacity")
 
 	local use_subtitles = Application.user_setting("use_subtitles")
 

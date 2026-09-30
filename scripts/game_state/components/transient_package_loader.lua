@@ -14,7 +14,7 @@ end
 local function add_ref(unit, value, t)
 	-- function 2
 	t.units[unit] = value
-	t.refs[value] = not not t.refs[value] + 1
+	t.refs[value] = t.refs[value] + 1
 end
 
 local function remove_ref(unit, t)
@@ -175,7 +175,7 @@ end
 
 TransientPackageLoader.add_unit = function (self, unit, unit_name)
 	-- function 14
-	add_ref(unit, not not unit_name or not not Unit_get_data(unit, "unit_name"), self._tracked_units)
+	add_ref(unit, unit_name or Unit_get_data(unit, "unit_name"), self._tracked_units)
 end
 
 TransientPackageLoader.remove_projectile = function (self, unit)

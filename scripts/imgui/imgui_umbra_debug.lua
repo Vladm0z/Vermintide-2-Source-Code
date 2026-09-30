@@ -157,7 +157,7 @@ ImguiUmbraDebug._has_floater = function (self)
 	end
 
 	for i, v in ipairs(self.sub_windows) do
-		subwindow_count = subwindow_count + (v.option.enabled ~= true and not not 0 or not (v.option.enabled ~= true) and not not 1)
+		subwindow_count = subwindow_count + (v.option.enabled ~= true and 0 or not (v.option.enabled ~= true) and 1)
 	end
 
 	return subwindow_count > 0

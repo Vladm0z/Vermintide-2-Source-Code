@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/handbook_settings.lua
 
-HandbookSettings = not not HandbookSettings
+HandbookSettings = HandbookSettings
 HandbookSettings.outline = {
 	{
 		display_name = "tutorials_progression_header",

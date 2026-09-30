@@ -81,7 +81,7 @@ WeaveEssenceHandler.spawn_essence_unit = function (self, position, size)
 		return
 	end
 
-	local essence_unit_name = self._essence_unit_names[not not size or not not 1]
+	local essence_unit_name = self._essence_unit_names[size or 1]
 	local essence_unit = Managers.state.unit_spawner:spawn_local_unit(essence_unit_name, position, Quaternion.identity())
 	local data = self._essence_unit_data[index]
 
@@ -90,7 +90,7 @@ WeaveEssenceHandler.spawn_essence_unit = function (self, position, size)
 	data.spawn_pos = Vector3Box(position)
 	data.right_vector_multiplier = 1 - math.random() * 2
 	data.forward_vector_multiplier = 1 - math.random() * 2
-	data.sound_event = self._essence_sound_events[not not size or not not 1]
+	data.sound_event = self._essence_sound_events[size or 1]
 end
 
 WeaveEssenceHandler._collect_dropped_essence = function (self, dt)

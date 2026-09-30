@@ -49,7 +49,7 @@ local scenegraph_definition = {
 			0,
 			UILayer.hud
 		},
-		scale = IS_WINDOWS and not not "fit" or not IS_WINDOWS and not not "hud_fit"
+		scale = IS_WINDOWS and "fit" or not IS_WINDOWS and "hud_fit"
 	},
 	pivot = {
 		vertical_alignment = "top",

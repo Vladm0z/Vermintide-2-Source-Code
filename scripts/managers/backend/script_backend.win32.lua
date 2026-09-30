@@ -101,7 +101,7 @@ end
 local function print_result(result, action)
 	-- function 2
 	if result and result.reason ~= Backend.ERR_OK then
-		local error_message = string.format("%q failed with %d, %s", action, result.reason, not not result.details)
+		local error_message = string.format("%q failed with %d, %s", action, result.reason, result.details)
 
 		print_error(error_message)
 
@@ -270,7 +270,7 @@ ScriptBackend.check_for_errors = function (self)
 		self._commit_error = nil
 	end
 
-	return not not backend_error or not not session_error or not not commit_error
+	return backend_error or session_error or commit_error
 end
 
 ScriptBackend._new_id = function (self)
@@ -305,7 +305,7 @@ end
 ScriptBackend._commit_internal = function (self, queued_id)
 	-- function 14
 	local commit_id, result = Backend.commit()
-	local new_id = not not queued_id or not not self:_new_id()
+	local new_id = queued_id or self:_new_id()
 	local commit_data = {
 		id = commit_id,
 		timeout = os.time() + 15,
@@ -402,7 +402,7 @@ end
 
 ScriptBackend.refresh_log_level = function (self)
 	-- function 20
-	local log_index = not not script_data.backend_logging_level
+	local log_index = script_data.backend_logging_level
 	local log_level = LOG_LEVELS[log_index]
 
 	Backend.set_log_level(log_level)

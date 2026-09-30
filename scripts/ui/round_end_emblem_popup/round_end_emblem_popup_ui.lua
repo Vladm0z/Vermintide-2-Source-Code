@@ -18,7 +18,7 @@ RoundEndEmblemPopupUI.init = function (self, ui_context, viewport_world, title_t
 
 	local wwise_world = ui_context.wwise_world
 
-	self._wwise_world = not not wwise_world or not not Managers.world:wwise_world(self._world)
+	self._wwise_world = wwise_world or Managers.world:wwise_world(self._world)
 	self._render_settings = {
 		alpha_multiplier = 0,
 		blur_progress = 0,
@@ -27,8 +27,8 @@ RoundEndEmblemPopupUI.init = function (self, ui_context, viewport_world, title_t
 	self._viewport_world = viewport_world
 
 	self:_create_ui_elements()
-	self:_set_title_text(not not title_text or not not "")
-	self:_set_sub_title_text(not not sub_title_text or not not "")
+	self:_set_title_text(title_text or "")
+	self:_set_sub_title_text(sub_title_text or "")
 end
 
 RoundEndEmblemPopupUI._set_title_text = function (self, text)
@@ -99,7 +99,7 @@ RoundEndEmblemPopupUI._update_animations = function (self, dt)
 
 	if self._animation_key and animations[self._animation_key] and self._viewport_world then
 		local render_settings = self._render_settings
-		local blur_progress = not not render_settings.blur_progress
+		local blur_progress = render_settings.blur_progress
 
 		self:set_fullscreen_effect_enable_state(true, blur_progress, self._viewport_world)
 	end
@@ -134,15 +134,15 @@ RoundEndEmblemPopupUI._draw = function (self, dt)
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	render_settings.alpha_multiplier = not not self._emblem_widget.alpha_multiplier
+	render_settings.alpha_multiplier = self._emblem_widget.alpha_multiplier
 
 	UIRenderer.draw_widget(ui_top_renderer, self._emblem_widget)
 
-	render_settings.alpha_multiplier = not not self._title_title_widget.alpha_multiplier
+	render_settings.alpha_multiplier = self._title_title_widget.alpha_multiplier
 
 	UIRenderer.draw_widget(ui_top_renderer, self._title_title_widget)
 
-	render_settings.alpha_multiplier = not not self._sub_title_text_widget.alpha_multiplier
+	render_settings.alpha_multiplier = self._sub_title_text_widget.alpha_multiplier
 
 	UIRenderer.draw_widget(ui_top_renderer, self._sub_title_text_widget)
 	UIRenderer.end_pass(ui_top_renderer)
@@ -162,7 +162,7 @@ RoundEndEmblemPopupUI.start_presentation_animation = function (self, animation_n
 		wwise_world = self._wwise_world,
 		render_settings = self._render_settings
 	}
-	local widgets = not not widgets or not not {
+	local widgets = widgets or {
 		title_title = self._title_title_widget,
 		sub_title_text = self._sub_title_text_widget,
 		emblem = self._emblem_widget
@@ -180,11 +180,11 @@ RoundEndEmblemPopupUI.set_fullscreen_effect_enable_state = function (self, enabl
 	-- function 12
 	local shading_env = World.get_data(world, "shading_environment")
 
-	progress = not not 1 or not not progress or enabled or not not 0
+	progress = 1 or progress or enabled or 0
 
 	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not (progress * 0.75) or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or not enabled and 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and progress * 0.75 or not enabled and 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 

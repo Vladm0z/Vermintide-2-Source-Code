@@ -361,9 +361,9 @@ GDCStartUI.check_start_input = function (self, input_service)
 	end
 
 	local ignore_player_count = Development.parameter("gdc_ignore_minimum_players")
-	local expected_num_of_players = not not Development.parameter("gdc_player_count")
+	local expected_num_of_players = Development.parameter("gdc_player_count")
 
-	expected_num_of_players = not ignore_player_count or not not 1 or not not expected_num_of_players
+	expected_num_of_players = not ignore_player_count or 1 or expected_num_of_players
 
 	local human_players = Managers.player:human_players()
 	local num_of_human_players = 0
@@ -385,7 +385,7 @@ GDCStartUI.check_start_input = function (self, input_service)
 	end
 
 	if self.num_of_human_players ~= num_of_human_players then
-		local optional_text = num_of_human_players < expected_num_of_players and not not (Localize("waiting_for_other_players") .. " - " .. num_of_human_players .. "/" .. expected_num_of_players) or not (num_of_human_players < expected_num_of_players) and not not nil
+		local optional_text = num_of_human_players < expected_num_of_players and Localize("waiting_for_other_players") .. " - " .. num_of_human_players .. "/" .. expected_num_of_players or not (num_of_human_players < expected_num_of_players) and nil
 
 		self:set_input_text(optional_text)
 
@@ -448,7 +448,7 @@ GDCStartUI.set_input_text = function (self, optinal_text)
 				end
 
 				texture_size_x = texture_size_x + sizes[i][1]
-				texture_size_y = not (texture_size_y < sizes[i][2]) or not not sizes[i][2] or not not texture_size_y
+				texture_size_y = not (texture_size_y < sizes[i][2]) or sizes[i][2] or texture_size_y
 			end
 
 			widget_content.icon_textures = textures
@@ -472,7 +472,7 @@ GDCStartUI.set_input_text = function (self, optinal_text)
 
 	widget_content.text = text
 	widget_content.prefix_text = prefix_text
-	ui_scenegraph.input_text.position[2] = scaled_font_size ~= text_style.font_size and not not 0 or not (scaled_font_size ~= text_style.font_size) and not not 3
+	ui_scenegraph.input_text.position[2] = scaled_font_size ~= text_style.font_size and 0 or not (scaled_font_size ~= text_style.font_size) and 3
 	ui_scenegraph.input_prefix_text.position[2] = ui_scenegraph.input_text.position[2]
 	ui_scenegraph.input.position[1] = -((text_width + texture_size_x) * 0.5) + prefix_text_width
 end

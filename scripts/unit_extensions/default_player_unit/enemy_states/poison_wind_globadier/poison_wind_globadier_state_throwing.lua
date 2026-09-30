@@ -245,7 +245,7 @@ PoisonWindGlobadierStateThrowing._calculate_trajectory = function (self)
 	for t = interval, 10, interval do
 		local new_position = WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, t)
 		local result = PhysicsWorld.linear_sphere_sweep(physics_world, current_position, new_position, radius, max_hits, "collision_filter", "filter_player_ray_projectile_static_only")
-		local num_results = result and not not #result or not result and not not 0
+		local num_results = result and #result or not result and 0
 
 		if num_results > 0 then
 			local done = false
@@ -431,9 +431,9 @@ PoisonWindGlobadierStateThrowing._throw = function (self)
 	local initial_radius = breed.globe_throw_initial_radius
 	local cloud_life_time = breed.globe_throw_aoe_life_time
 	local damage_source = "vs_poison_wind_globadier"
-	local aoe_dot_damage_table = not not aoe_dot_difficulty_damage[difficulty_rank]
+	local aoe_dot_damage_table = aoe_dot_difficulty_damage[difficulty_rank]
 	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
-	local aoe_init_damage_table = not not aoe_init_difficulty_damage[difficulty_rank]
+	local aoe_init_damage_table = aoe_init_difficulty_damage[difficulty_rank]
 	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
 	local create_nav_tag_volume = true
 	local instant_explosion = false
@@ -499,10 +499,10 @@ PoisonWindGlobadierStateThrowing._update_movement = function (self, unit, t, dt,
 	local current_movement_speed_scale = self.current_movement_speed_scale
 
 	if not self.is_bot then
-		local breed_move_acceleration_up = not not self._breed
-		local breed_move_acceleration_down = not not self._breed
-		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
-		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
+		local breed_move_acceleration_up = self._breed
+		local breed_move_acceleration_down = self._breed
+		local move_acceleration_up_dt = breed_move_acceleration_up * dt
+		local move_acceleration_down_dt = breed_move_acceleration_down * dt
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -510,10 +510,10 @@ PoisonWindGlobadierStateThrowing._update_movement = function (self, unit, t, dt,
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
+		current_movement_speed_scale = is_moving and (1 or 0) or not is_moving and 0
 	end
 
-	local movement_speed = math.lerp(self._wind_up_movement_speed, 0.6, (not not progress or not not 1)^2)
+	local movement_speed = math.lerp(self._wind_up_movement_speed, 0.6, (progress or 1)^2)
 	local current_max_move_speed = movement_speed
 	local buffed_move_speed = buff_extension:apply_buffs_to_value(current_max_move_speed, "movement_speed")
 	local final_move_speed = buffed_move_speed * current_movement_speed_scale * movement_settings_table.player_speed_scale

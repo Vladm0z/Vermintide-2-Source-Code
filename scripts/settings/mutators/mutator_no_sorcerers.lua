@@ -50,7 +50,7 @@ return {
 			local new_breeds = {}
 
 			for _, breed in ipairs(breeds) do
-				new_breeds[#new_breeds + 1] = not not conversion_table[breed]
+				new_breeds[#new_breeds + 1] = conversion_table[breed]
 			end
 
 			return new_breeds
@@ -88,8 +88,8 @@ return {
 						local different_breed = conversion_table[breed_name]
 
 						if different_breed then
-							cloned_element = not not cloned_element or not not table.clone(element)
-							cloned_breed_name = not not cloned_breed_name or not not table.clone(element.breed_name)
+							cloned_element = cloned_element or table.clone(element)
+							cloned_breed_name = cloned_breed_name or table.clone(element.breed_name)
 							cloned_breed_name[breed_name_index] = different_breed
 						end
 					end
@@ -108,7 +108,7 @@ return {
 	server_ai_spawned_function = function (context, data, spawned_unit)
 		-- function 7
 		local blackboard = BLACKBOARDS[spawned_unit]
-		local breed = not not blackboard and not not blackboard.breed.name
+		local breed = blackboard and blackboard.breed.name
 
 		if ai_tweak_spawn_table[breed] then
 			local process = ai_tweak_spawn_table[breed](spawned_unit, blackboard)
@@ -126,7 +126,7 @@ return {
 			for i = #data.processed_units, 1, -1 do
 				local unit = data.processed_units[i]
 				local blackboard = BLACKBOARDS[unit]
-				local done = not not blackboard and not not ai_tweak_update_table[blackboard.breed.name](unit, blackboard)
+				local done = blackboard and ai_tweak_update_table[blackboard.breed.name](unit, blackboard)
 
 				if blackboard == nil or done then
 					table.swap_delete(data.processed_units, i)

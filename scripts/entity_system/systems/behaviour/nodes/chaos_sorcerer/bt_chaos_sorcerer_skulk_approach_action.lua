@@ -21,11 +21,11 @@ BTChaosSorcererSkulkApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	local action = self._tree_node.action_data
 	local breed = blackboard.breed
-	local skulk_data = not not blackboard.skulk_data
+	local skulk_data = blackboard.skulk_data
 
 	blackboard.skulk_data = skulk_data
-	skulk_data.direction = not not skulk_data.direction
-	skulk_data.radius = not not skulk_data.radius
+	skulk_data.direction = skulk_data.direction
+	skulk_data.radius = skulk_data.radius
 	blackboard.action = action
 
 	if blackboard.move_state ~= "idle" then
@@ -44,7 +44,7 @@ BTChaosSorcererSkulkApproachAction.enter = function (self, unit, blackboard, t)
 	end
 
 	blackboard.ready_to_summon = false
-	blackboard.num_summons = not not blackboard.num_summons
+	blackboard.num_summons = blackboard.num_summons
 
 	if action.sorcerer_type == "tentacle" then
 		if not blackboard.portal_data then
@@ -289,7 +289,7 @@ BTChaosSorcererSkulkApproachAction.get_skulk_target = function (self, unit, blac
 	for i = 1, TRIES do
 		local rot_vec = to_target - to_target_dir * 0.5
 
-		if blackboard.num_summons and blackboard.num_summons >= not not action.teleport_closer_summon_limit then
+		if blackboard.num_summons and blackboard.num_summons >= action.teleport_closer_summon_limit then
 			rot_vec = Vector3.normalize(target_position - unit_position) * action.teleport_closer_range
 		end
 
@@ -344,7 +344,7 @@ BTChaosSorcererSkulkApproachAction._update_vortex_search = function (self, unit,
 
 		local action = blackboard.action
 		local target_distance = blackboard.target_dist
-		local target_within_reach = not not target_distance and target_distance > action.min_cast_vortex_distance and target_distance < action.max_cast_vortex_distance
+		local target_within_reach = target_distance and target_distance > action.min_cast_vortex_distance and target_distance < action.max_cast_vortex_distance
 
 		if not blackboard.freeze_spell_casting and num_vortex_units < blackboard.max_vortex_units and target_within_reach then
 			local target_unit = blackboard.target_unit
@@ -446,7 +446,7 @@ BTChaosSorcererSkulkApproachAction.update_portal_search = function (self, unit, 
 			local target_position = POSITION_LOOKUP[blackboard.target_unit]
 			local success = BTChaosSorcererSkulkApproachAction.get_portal_location_list(portal_data, target_position)
 
-			portal_data.search_counter = success and not not 0 or not success and not not (portal_data.search_counter + 1)
+			portal_data.search_counter = success and 0 or not success and portal_data.search_counter + 1
 			portal_data.portal_search_active = success
 			portal_data.portal_search_timer = t + 1
 		end

@@ -197,7 +197,7 @@ end
 
 HeroViewStateWeaveForge._setup_menu_layout = function (self)
 	-- function 10
-	local use_gamepad_layout = not not IS_CONSOLE
+	local use_gamepad_layout = IS_CONSOLE
 
 	self._layout_settings = local_require("scripts/ui/views/hero_view/states/weave_forge_window_layout")
 	self._windows_settings = self._layout_settings.windows
@@ -329,7 +329,7 @@ end
 
 HeroViewStateWeaveForge.window_input_service = function (self)
 	-- function 18
-	return self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
+	return self._input_blocked and FAKE_INPUT_SERVICE or not self._input_blocked and self:input_service()
 end
 
 HeroViewStateWeaveForge._close_window_at_index = function (self, window_index)
@@ -366,10 +366,10 @@ HeroViewStateWeaveForge._change_window = function (self, window_index, window_na
 	local window_offset
 
 	if not ignore_alignment then
-		local alignment_index = not not new_window_settings.alignment_index
+		local alignment_index = new_window_settings.alignment_index
 		local window_default_settings = UISettings.game_start_windows
 		local window_size = window_default_settings.size
-		local window_spacing = not not window_default_settings.spacing
+		local window_spacing = window_default_settings.spacing
 		local window_width = window_size[1]
 		local total_spacing = window_spacing * 2
 		local total_windows_width = 3 * window_width
@@ -471,7 +471,7 @@ HeroViewStateWeaveForge.set_window_input_focus = function (self, window_name)
 	local layout_index = self._selected_layout_index
 	local layout_setting = self:_get_layout_setting(layout_index)
 	local window_setting = self._windows_settings[window_name]
-	local window_class_name = not not window_setting and not not window_setting.class_name
+	local window_class_name = window_setting and window_setting.class_name
 	local window_found = false
 	local active_windows = self._active_windows
 
@@ -727,9 +727,9 @@ end
 HeroViewStateWeaveForge._has_active_level_vote = function (self)
 	-- function 45
 	local voting_manager = self.voting_manager
-	local is_mission_vote = not not voting_manager:vote_in_progress()
+	local is_mission_vote = voting_manager:vote_in_progress()
 
-	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
+	return is_mission_vote and not voting_manager:has_voted(Network.peer_id())
 end
 
 HeroViewStateWeaveForge.post_update = function (self, dt, t)
@@ -799,7 +799,7 @@ HeroViewStateWeaveForge._handle_input = function (self, dt, t)
 	local input_service = self.parent:input_service()
 	local input_pressed = input_service:get("toggle_menu", true)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local back_pressed = not not gamepad_active and not not input_service:get("back_menu", true)
+	local back_pressed = gamepad_active and input_service:get("back_menu", true)
 	local close_on_exit = self._close_on_exit
 	local exit_button = widgets_by_name.exit_button
 	local back_button = widgets_by_name.back_button
@@ -900,7 +900,7 @@ end
 HeroViewStateWeaveForge._is_button_pressed = function (self, widget)
 	-- function 53
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -932,8 +932,8 @@ HeroViewStateWeaveForge.set_fullscreen_effect_enable_state = function (self, ena
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or not enabled and 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and 0.75 or not enabled and 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 

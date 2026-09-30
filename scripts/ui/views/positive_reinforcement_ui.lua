@@ -236,18 +236,18 @@ PositiveReinforcementUI.event_add_positive_enforcement = function (self, hash, i
 		return
 	end
 
-	local player_1_name = player1 and not not player1:name() or not player1 and not not nil
-	local player_2_name = player2 and not not player2:name() or not player2 and not not nil
-	local player_1_unit = not not player1 and not not player1.player_unit
-	local player_2_unit = not not player2 and not not player2.player_unit
-	local player_1_career_extension = not not Unit.alive(player_1_unit)
-	local player_2_career_extension = not not Unit.alive(player_2_unit)
-	local player_1_profile_index = player1 and not not player1:profile_index() or not player1 and not not nil
-	local player_2_profile_index = player2 and not not player2:profile_index() or not player2 and not not nil
-	local player_1_career_index = player_1_career_extension and not not player_1_career_extension:career_index() or not player_1_career_extension and not not player1 and not not player1:career_index()
-	local player_2_career_index = player_2_career_extension and not not player_2_career_extension:career_index() or not player_2_career_extension and not not player2 and not not player2:career_index()
-	local player_1_profile_image = not not player_1_profile_index and not not player_1_career_index and not not self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
-	local player_2_profile_image = not not player_2_profile_index and not not player_2_career_index and not not self:_get_hero_portrait(player_2_profile_index, player_2_career_index)
+	local player_1_name = player1 and player1:name() or not player1 and nil
+	local player_2_name = player2 and player2:name() or not player2 and nil
+	local player_1_unit = player1 and player1.player_unit
+	local player_2_unit = player2 and player2.player_unit
+	local player_1_career_extension = Unit.alive(player_1_unit)
+	local player_2_career_extension = Unit.alive(player_2_unit)
+	local player_1_profile_index = player1 and player1:profile_index() or not player1 and nil
+	local player_2_profile_index = player2 and player2:profile_index() or not player2 and nil
+	local player_1_career_index = player_1_career_extension and player_1_career_extension:career_index() or not player_1_career_extension and player1 and player1:career_index()
+	local player_2_career_index = player_2_career_extension and player_2_career_extension:career_index() or not player_2_career_extension and player2 and player2:career_index()
+	local player_1_profile_image = player_1_profile_index and player_1_career_index and self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
+	local player_2_profile_image = player_2_profile_index and player_2_career_index and self:_get_hero_portrait(player_2_profile_index, player_2_career_index)
 
 	if not player_1_profile_image or not player_2_profile_image then
 		return

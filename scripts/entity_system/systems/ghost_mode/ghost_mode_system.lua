@@ -152,7 +152,7 @@ GhostModeSystem.rpc_set_safe_spot = function (self, sender, safe_spot_position)
 	self._safe_spot = Vector3Box(safe_spot_position)
 
 	local player = Managers.player:local_player()
-	local unit = not not player and not not player.player_unit
+	local unit = player and player.player_unit
 
 	if not unit then
 		return

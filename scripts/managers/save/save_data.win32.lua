@@ -3,7 +3,7 @@
 require("scripts/settings/player_data")
 
 local steam = rawget(_G, "Steam")
-local branch_name = not not steam and not not steam.branch_name
+local branch_name = steam and steam.branch_name
 
 if branch_name and branch_name ~= "public" then
 	SaveFileName = "save_data_" .. tostring(branch_name)
@@ -11,7 +11,7 @@ else
 	SaveFileName = "save_data"
 end
 
-SaveData = not not SaveData
+SaveData = SaveData
 
 function populate_save_data(save_data)
 	-- function 1
@@ -59,7 +59,7 @@ function populate_save_data(save_data)
 
 	local id
 
-	id = script_data.use_local_backend and (not not "local_save" or not not Steam.user_id()) or not script_data.use_local_backend and (not rawget(_G, "Steam") and (not not "local_save" or not not Steam.user_id()) or not not rawget(_G, "Steam") and not not Steam.user_id())
+	id = script_data.use_local_backend and ("local_save" or Steam.user_id()) or not script_data.use_local_backend and (not rawget(_G, "Steam") and ("local_save" or Steam.user_id()) or rawget(_G, "Steam") and Steam.user_id())
 
 	populate_player_data_from_save(SaveData, id, version_match)
 

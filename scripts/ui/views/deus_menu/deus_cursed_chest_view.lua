@@ -49,7 +49,7 @@ end
 
 DeusCursedChestView.on_enter = function (self, params)
 	-- function 3
-	self._interactable = not not params and not not params.interactable_unit
+	self._interactable = params and params.interactable_unit
 	self._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 	self._circle_speed_modifier = CIRCLE_SPEED
 	self._circle_max_speed_modifier = CIRCLE_SPEED
@@ -170,7 +170,7 @@ DeusCursedChestView._init_power_up_widget = function (self, widget, power_up_ins
 	content.current_value_text = nil
 
 	local style = widget.style
-	local power_up_sets = not not DeusPowerUpSetLookup[power_up_instance.rarity]
+	local power_up_sets = DeusPowerUpSetLookup[power_up_instance.rarity]
 	local is_part_of_set = false
 
 	if power_up_sets then
@@ -189,7 +189,7 @@ DeusCursedChestView._init_power_up_widget = function (self, widget, power_up_ins
 
 		is_part_of_set = true
 
-		local num_required_pieces = not not set.num_required_pieces
+		local num_required_pieces = set.num_required_pieces
 
 		content.set_progression = string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -441,13 +441,13 @@ DeusCursedChestView._animate_power_up_widget = function (self, dt, widget)
 	-- function 23
 	local content = widget.content
 	local style = widget.style
-	local hotspot = not not content.hotspot
+	local hotspot = content.hotspot
 	local is_hover = hotspot.is_hover
 	local is_bought = content.is_bought
 	local is_selected = hotspot.is_selected
-	local hover_progress = not not hotspot.hover_progress
-	local highlight_progress = not not hotspot.highlight_progress
-	local selection_progress = not not hotspot.selection_progress
+	local hover_progress = hotspot.hover_progress
+	local highlight_progress = hotspot.highlight_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 15
 
 	if is_bought then
@@ -483,7 +483,7 @@ DeusCursedChestView._animate_power_up_widget = function (self, dt, widget)
 	style.hover.color[1] = 255 * hover_progress
 	style.icon_hover_frame.color[1] = 255 * hover_progress
 
-	local value_progress = not not hotspot.value_progress
+	local value_progress = hotspot.value_progress
 
 	value_progress = math.max(value_progress - dt * speed, 0)
 
@@ -521,7 +521,7 @@ DeusCursedChestView._update_background_animations = function (self, dt)
 		local angle_add = 0
 		local circle_speed
 
-		circle_speed = not not 0.05
+		circle_speed = 0.05
 		angle_add = current_angle + dt * circle_speed * speed_modifier
 		wheel_widget.style.texture_id.angle = angle_add
 	end

@@ -32,7 +32,7 @@ WorldManager.create_world = function (self, name, shading_environment, shading_c
 	local world = Application.new_world(name, ...)
 
 	World.set_data(world, "name", name)
-	World.set_data(world, "layer", not not layer or not not 1)
+	World.set_data(world, "layer", layer or 1)
 	World.set_data(world, "active", true)
 	World.set_data(world, "has_physics_world", has_physics_world)
 
@@ -110,7 +110,7 @@ end
 
 WorldManager.has_world = function (self, name)
 	-- function 5
-	return not not self._worlds
+	return self._worlds
 end
 
 WorldManager.world = function (self, name)

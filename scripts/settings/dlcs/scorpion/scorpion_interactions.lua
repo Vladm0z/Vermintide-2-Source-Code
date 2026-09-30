@@ -43,7 +43,7 @@ local function _fullfill_requirements_for_weave_leaderboards()
 	return not Managers.account:offline_mode()
 end
 
-InteractionDefinitions.weave_level_select_access = not not InteractionDefinitions.weave_level_select_access
+InteractionDefinitions.weave_level_select_access = InteractionDefinitions.weave_level_select_access
 InteractionDefinitions.weave_level_select_access.config.swap_to_3p = false
 
 InteractionDefinitions.weave_level_select_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -60,7 +60,7 @@ InteractionDefinitions.weave_level_select_access.client.stop = function (world, 
 			return
 		end
 
-		local twitch_connection = not not Managers.twitch
+		local twitch_connection = Managers.twitch
 
 		if twitch_connection then
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.twitch_not_supported_for_weaves)
@@ -101,7 +101,7 @@ InteractionDefinitions.weave_level_select_access.client.hud_description = functi
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
 end
 
-InteractionDefinitions.weave_magic_forge_access = not not InteractionDefinitions.weave_magic_forge_access
+InteractionDefinitions.weave_magic_forge_access = InteractionDefinitions.weave_magic_forge_access
 InteractionDefinitions.weave_magic_forge_access.config.swap_to_3p = false
 
 InteractionDefinitions.weave_magic_forge_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
@@ -142,7 +142,7 @@ InteractionDefinitions.weave_magic_forge_access.client.hud_description = functio
 	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
 end
 
-InteractionDefinitions.weave_leaderboard_access = not not InteractionDefinitions.weave_leaderboard_access
+InteractionDefinitions.weave_leaderboard_access = InteractionDefinitions.weave_leaderboard_access
 InteractionDefinitions.weave_leaderboard_access.config.swap_to_3p = false
 
 InteractionDefinitions.weave_leaderboard_access.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)

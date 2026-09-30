@@ -69,8 +69,8 @@ local margin = 0.0001
 ChaosTrollHuskHealthExtension.respawn_thresholds = function (self, optional_max_health, optional_new_health)
 	-- function 5
 	local action = self.action
-	local max_health = not not optional_max_health or not not self.current_max_health
-	local health = not not optional_new_health or not not self.health
+	local max_health = optional_max_health or self.current_max_health
+	local health = optional_new_health or self.health
 	local go_down_health, respawn_hp_min, phase
 
 	if action.fixed_hp_chunks then
@@ -106,7 +106,7 @@ ChaosTrollHuskHealthExtension.update = function (self, dt, context, t)
 		if t > self.start_reset_time then
 			self.down_reset_timer = self.down_reset_timer + dt
 
-			local percent_damage = 1 - (self.action.reset_duration > 0 and not not (self.down_reset_timer / self.action.reset_duration) or not (self.action.reset_duration > 0) and not not 0)
+			local percent_damage = 1 - (self.action.reset_duration > 0 and self.down_reset_timer / self.action.reset_duration or not (self.action.reset_duration > 0) and 0)
 
 			if self.skin_unit ~= nil then
 				set_material_property(self.skin_unit, "damage_value", "mtr_skin", percent_damage, true)
@@ -197,7 +197,7 @@ end
 
 ChaosTrollHuskHealthExtension.rpc_sync_current_max_health = function (self, channel_id, go_id, new_max_health)
 	-- function 11
-	local game_object_id = not not self.game_object_id
+	local game_object_id = self.game_object_id
 
 	if game_object_id ~= go_id then
 		return

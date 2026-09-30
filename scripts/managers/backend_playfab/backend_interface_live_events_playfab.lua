@@ -18,8 +18,8 @@ end
 BackendInterfaceLiveEventsPlayfab._refresh = function (self)
 	-- function 2
 	local backend_manager = Managers.backend
-	local live_events_string = not not backend_manager:get_title_data("live_events_v2")
-	local live_events = live_events_string and not not cjson.decode(live_events_string) or not live_events_string and not not {}
+	local live_events_string = backend_manager:get_title_data("live_events_v2")
+	local live_events = live_events_string and cjson.decode(live_events_string) or not live_events_string and {}
 
 	if is_array(live_events) then
 		self._live_events = {
@@ -29,7 +29,7 @@ BackendInterfaceLiveEventsPlayfab._refresh = function (self)
 		self._live_events = live_events
 	end
 
-	self._weekly_event_rewards = cjson.decode(not not self._backend_mirror:get_read_only_data("weekly_event_rewards"))
+	self._weekly_event_rewards = cjson.decode((self._backend_mirror:get_read_only_data("weekly_event_rewards")))
 	self._dirty = false
 end
 
@@ -178,7 +178,7 @@ BackendInterfaceLiveEventsPlayfab.get_weekly_chaos_wastes_game_mode_data = funct
 		self:_refresh()
 	end
 
-	local weekly_event_data = not not self._live_events.weekly_chaos_wastes
+	local weekly_event_data = self._live_events.weekly_chaos_wastes
 
 	for i = 1, #weekly_event_data do
 		local event = weekly_event_data[i]

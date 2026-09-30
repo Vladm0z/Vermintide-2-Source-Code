@@ -743,7 +743,7 @@ local scenegraph_definition = {
 
 local function create_masked_portrait_frame(scenegraph_id, frame_settings_name, level_text, scale, retained_mode, portrait_texture, masked_portrait_texture)
 	-- function 1
-	scale = not not scale or not not 1
+	scale = scale or 1
 
 	local widget = UIWidgets.create_portrait_frame(scenegraph_id, frame_settings_name, level_text, scale, retained_mode, portrait_texture)
 	local passes = widget.element.passes

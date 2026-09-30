@@ -115,7 +115,7 @@ VortexTemplates = {
 						blackboard.num_ai_units_sucked_in = 0
 					end
 
-					local num_ai_units_sucked_in = not not blackboard.num_ai_units_sucked_in
+					local num_ai_units_sucked_in = blackboard.num_ai_units_sucked_in
 
 					blackboard.num_ai_units_sucked_in = num_ai_units_sucked_in + 1
 

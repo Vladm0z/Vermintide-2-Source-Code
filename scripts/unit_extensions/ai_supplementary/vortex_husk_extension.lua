@@ -23,7 +23,7 @@ VortexHuskExtension.init = function (self, extension_init_context, unit, extensi
 	local rotation = Unit.local_rotation(unit, 0)
 	local inner_pose = Matrix4x4.from_quaternion(rotation)
 	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
-	local inner_fx_z_scale_multiplier = not not vortex_template.inner_fx_z_scale_multiplier
+	local inner_fx_z_scale_multiplier = vortex_template.inner_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
 	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
@@ -34,7 +34,7 @@ VortexHuskExtension.init = function (self, extension_init_context, unit, extensi
 	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
 	local outer_pose = Matrix4x4.from_quaternion(rotation)
 	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
-	local outer_fx_z_scale_multiplier = not not vortex_template.outer_fx_z_scale_multiplier
+	local outer_fx_z_scale_multiplier = vortex_template.outer_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
 	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
@@ -61,7 +61,7 @@ VortexHuskExtension.init = function (self, extension_init_context, unit, extensi
 		self._outer_decal_unit = outer_decal_unit
 	end
 
-	self._owner_unit = not not extension_init_data.owner_unit
+	self._owner_unit = extension_init_data.owner_unit
 
 	local unit_storage = Managers.state.unit_storage
 	local go_id = unit_storage:go_id(unit)
@@ -71,7 +71,7 @@ end
 
 VortexHuskExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	local start_sound_event_name = not not self.vortex_template.start_sound_event_name
+	local start_sound_event_name = self.vortex_template.start_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
@@ -80,7 +80,7 @@ VortexHuskExtension.destroy = function (self)
 	-- function 3
 	local world = self.world
 	local unit = self.unit
-	local stop_sound_event_name = not not self.vortex_template.stop_sound_event_name
+	local stop_sound_event_name = self.vortex_template.stop_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 

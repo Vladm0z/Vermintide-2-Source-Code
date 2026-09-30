@@ -5,8 +5,8 @@ AIShieldUserExtension = class(AIShieldUserExtension)
 AIShieldUserExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	self._unit = unit
-	self.is_blocking = not not extension_init_data.is_blocking
-	self.is_dodging = not not extension_init_data.is_dodging
+	self.is_blocking = extension_init_data.is_blocking
+	self.is_dodging = extension_init_data.is_dodging
 	self.shield_broken = false
 end
 

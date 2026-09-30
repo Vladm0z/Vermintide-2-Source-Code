@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/scoreboard_helper.lua
 
-ScoreboardHelper = not not ScoreboardHelper
+ScoreboardHelper = ScoreboardHelper
 ScoreboardHelper.scoreboard_topic_stats = {
 	{
 		name = "kills_elites",
@@ -278,8 +278,8 @@ local function get_score_by_name(statistics_db, stats_id, stat_name, saved_score
 		table.clear(TEMP_TABLE)
 
 		local player_data = saved_scoreboard_data[stats_id]
-		local player_data_scores = player_data and not not player_data.scores or not player_data and not not TEMP_TABLE
-		local saved_score_amount = not not player_data_scores[stat_name]
+		local player_data_scores = player_data and player_data.scores or not player_data and TEMP_TABLE
+		local saved_score_amount = player_data_scores[stat_name]
 
 		if saved_score_amount > 0 then
 			print(string.format("### Adding saved score for %q: %i ID: %s", stat_name, saved_score_amount, stats_id))
@@ -370,11 +370,11 @@ ScoreboardHelper.get_grouped_topic_statistics = function (statistics_db, profile
 		local profile_index = profile_synchronizer:profile_by_peer(player_peer_id, player:local_player_id())
 		local player_unit = player.player_unit
 		local unit_alive = Unit.alive(player_unit)
-		local career_extension = not not unit_alive and not not ScriptUnit.extension(player_unit, "career_system")
-		local career_index = career_extension and not not career_extension:career_index() or not career_extension and not not player:career_index()
+		local career_extension = unit_alive and ScriptUnit.extension(player_unit, "career_system")
+		local career_index = career_extension and career_extension:career_index() or not career_extension and player:career_index()
 		local is_player_controlled = player:is_player_controlled()
 		local player_level = ExperienceSettings.get_player_level(player)
-		local versus_player_level = is_player_controlled and not not ExperienceSettings.get_versus_player_level(player) or not is_player_controlled and not not 0
+		local versus_player_level = is_player_controlled and ExperienceSettings.get_versus_player_level(player) or not is_player_controlled and 0
 		local profile = SPProfiles[profile_index]
 		local careers = profile.careers
 		local career_settings = careers[career_index]
@@ -413,8 +413,8 @@ ScoreboardHelper.get_grouped_topic_statistics = function (statistics_db, profile
 			is_player_controlled = is_player_controlled,
 			player_level = player_level,
 			versus_player_level = versus_player_level,
-			portrait_frame = not not portrait_frame and not not portrait_frame.item_name,
-			hero_skin = not not hero_skin and not not hero_skin.item_name,
+			portrait_frame = portrait_frame and portrait_frame.item_name,
+			hero_skin = hero_skin and hero_skin.item_name,
 			weapon = weapon,
 			weapon_pose = weapon_pose,
 			hat = hat
@@ -515,7 +515,7 @@ ScoreboardHelper.debug_get_grouped_topic_statistics = function ()
 			local_player_id = i,
 			stats_id = i,
 			profile_index = i,
-			is_player_controlled = i ~= 1 and not not false or not (i ~= 1) and not not true
+			is_player_controlled = not (i ~= 1)
 		}
 	end
 
@@ -1025,7 +1025,7 @@ ScoreboardHelper.get_versus_stats = function (statistics_db, saved_scoreboard_st
 			local local_player_id = player:local_player_id()
 			local player_level = ExperienceSettings.get_player_level(player)
 			local is_player_controlled = player:is_player_controlled()
-			local versus_player_level = is_player_controlled and not not ExperienceSettings.get_versus_player_level(player) or not is_player_controlled and not not 0
+			local versus_player_level = is_player_controlled and ExperienceSettings.get_versus_player_level(player) or not is_player_controlled and 0
 			local weapon, weapon_pose, weapon_pose_skin, hero_skin, hat, portrait_frame, pactsworn_cosmetics = mechanism:get_hero_cosmetics(player_peer_id, local_player_id)
 
 			player_list[stats_id] = {
@@ -1072,16 +1072,16 @@ ScoreboardHelper.get_versus_stats = function (statistics_db, saved_scoreboard_st
 				end
 
 				local data = player_list[stats_id]
-				local saved_data = not not saved_scoreboard_stats and not not saved_scoreboard_stats[stats_id]
+				local saved_data = saved_scoreboard_stats and saved_scoreboard_stats[stats_id]
 
-				data.scores[topic.name] = score + not not saved_data.scores[topic.name]
+				data.scores[topic.name] = score + saved_data.scores[topic.name]
 			else
 				local stat_type = topic.stat_type
 				local score = get_score(statistics_db, player_data.stats_id, stat_type)
 				local data = player_list[stats_id]
-				local saved_data = not not saved_scoreboard_stats and not not saved_scoreboard_stats[stats_id]
+				local saved_data = saved_scoreboard_stats and saved_scoreboard_stats[stats_id]
 
-				data.scores[topic.name] = score + not not saved_data.scores[topic.name]
+				data.scores[topic.name] = score + saved_data.scores[topic.name]
 			end
 		end
 	end

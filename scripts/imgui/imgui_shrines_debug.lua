@@ -68,13 +68,13 @@ end
 ImguiShrinesDebug._update_controls = function (self)
 	-- function 8
 	local chest_types = self:_shrine_types()
-	local shrine_type_index = table.index_of(chest_types, not not self._selected_shrine_type)
+	local shrine_type_index = table.index_of(chest_types, self._selected_shrine_type)
 
 	self._selected_shrine_type = chest_types[Imgui.combo("Shrine Type", shrine_type_index, chest_types)]
 
 	if self._selected_shrine_type == "deus_cursed_chest" then
 		local challenges = self:_cursed_chest_challenges()
-		local challenge_index = table.index_of(challenges, not not self._selected_cursed_challenge)
+		local challenge_index = table.index_of(challenges, self._selected_cursed_challenge)
 
 		self._selected_cursed_challenge = challenges[Imgui.combo("Challenge", challenge_index, challenges, 20)]
 	end
@@ -86,7 +86,7 @@ ImguiShrinesDebug._update_controls = function (self)
 	end
 
 	if Imgui.button("Spawn", 100, 20) then
-		local local_player = not not Managers.player
+		local local_player = Managers.player
 
 		if not local_player or not local_player.player_unit then
 			return
@@ -98,7 +98,7 @@ ImguiShrinesDebug._update_controls = function (self)
 		if self._selected_shrine_type == "deus_cursed_chest" then
 			pickup_system:debug_spawn_pickup("deus_cursed_chest", position, function (shrine_unit)
 				-- function 9
-				local terror_event = self._selected_cursed_challenge ~= "default" and not not self._selected_cursed_challenge or not (self._selected_cursed_challenge ~= "default") and not not "cursed_chest_prototype"
+				local terror_event = self._selected_cursed_challenge ~= "default" and self._selected_cursed_challenge or not (self._selected_cursed_challenge ~= "default") and "cursed_chest_prototype"
 
 				Unit.set_data(shrine_unit, "debug_override_terror_event", terror_event)
 			end)

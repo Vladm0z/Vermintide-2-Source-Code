@@ -38,7 +38,7 @@ StartGameWindowDifficultyConsole.on_enter = function (self, params, offset)
 	self:create_ui_elements(params, offset)
 	self:_setup_difficulties()
 
-	local difficulty_key = self:_verify_difficulty(not not self.parent:get_difficulty_option())
+	local difficulty_key = self:_verify_difficulty((self.parent:get_difficulty_option()))
 
 	self:_update_selected_difficulty_option(difficulty_key)
 
@@ -233,7 +233,7 @@ StartGameWindowDifficultyConsole._is_button_hover_enter = function (self, widget
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_enter
+	return hotspot.on_hover_enter
 end
 
 StartGameWindowDifficultyConsole._handle_input = function (self, dt, t)
@@ -283,7 +283,7 @@ StartGameWindowDifficultyConsole._handle_input = function (self, dt, t)
 		self:_show_storepage(store_page_url, dlc_name)
 	end
 
-	local gamepad_confirm_pressed = not mouse_active and not not input_service:get(SELECTION_INPUT, true)
+	local gamepad_confirm_pressed = not mouse_active and input_service:get(SELECTION_INPUT, true)
 
 	if gamepad_confirm_pressed then
 		if self._difficulty_approved then
@@ -305,7 +305,7 @@ StartGameWindowDifficultyConsole._on_difficulty_selection_confirmed = function (
 	parent:set_difficulty_option(self._selected_difficulty_key)
 
 	local difficulties_select_sounds = UISettings.difficulties_select_sounds
-	local sound_event = not not difficulties_select_sounds[self._difficulty_navigation_id]
+	local sound_event = difficulties_select_sounds[self._difficulty_navigation_id]
 
 	self:_play_sound(sound_event)
 
@@ -378,7 +378,7 @@ StartGameWindowDifficultyConsole._set_info_window = function (self, difficulty_k
 	local description = difficulty_settings.description
 	local display_name = difficulty_settings.display_name
 	local display_image = difficulty_settings.display_image
-	local xp_multiplier_number = not not difficulty_settings.xp_multiplier
+	local xp_multiplier_number = difficulty_settings.xp_multiplier
 	local chest_max_powerlevel = difficulty_settings.max_chest_power_level
 	local widgets_by_name = self._widgets_by_name
 
@@ -407,7 +407,7 @@ StartGameWindowDifficultyConsole._update_difficulty_locks = function (self)
 		local widget = widgets_by_name[widget_name]
 
 		widget.content.locked = not approved
-		widget.style.icon_texture.offset[3] = approved and not not widget.content.icon_unlocked_z_offset or not approved and not not widget.content.icon_locked_z_offset
+		widget.style.icon_texture.offset[3] = approved and widget.content.icon_unlocked_z_offset or not approved and widget.content.icon_locked_z_offset
 	end
 
 	local buy_button = widgets_by_name.buy_button
@@ -450,9 +450,9 @@ StartGameWindowDifficultyConsole._update_difficulty_locks = function (self)
 					local difficulty_lock_text = Localize("required_power_level")
 
 					widgets_by_name.difficulty_lock_text.content.text = string.format("%s: %s", difficulty_lock_text, tostring(UIUtils.presentable_hero_power_level(required_power_level)))
-					widgets_by_name.difficulty_second_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
+					widgets_by_name.difficulty_second_lock_text.content.text = extra_requirement_failed and Localize(extra_requirement_failed) or not extra_requirement_failed and ""
 				else
-					widgets_by_name.difficulty_lock_text.content.text = extra_requirement_failed and not not Localize(extra_requirement_failed) or not extra_requirement_failed and not not ""
+					widgets_by_name.difficulty_lock_text.content.text = extra_requirement_failed and Localize(extra_requirement_failed) or not extra_requirement_failed and ""
 				end
 			end
 
@@ -489,7 +489,7 @@ end
 
 StartGameWindowDifficultyConsole._update_selected_difficulty_option = function (self, difficulty_key)
 	-- function 21
-	difficulty_key = not not difficulty_key or not not Managers.state.difficulty:get_difficulty()
+	difficulty_key = difficulty_key or Managers.state.difficulty:get_difficulty()
 
 	if difficulty_key ~= self._selected_difficulty_key then
 		self:_set_selected_difficulty_option(difficulty_key)

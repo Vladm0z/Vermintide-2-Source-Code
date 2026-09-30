@@ -59,7 +59,7 @@ NavigationPath.draw = function (self, color, offset)
 		mode = "immediate",
 		name = "nav_path"
 	})
-	local offset = not not offset or not not Vector3(0, 0, 0)
+	local offset = offset or Vector3(0, 0, 0)
 	local previous_node
 
 	for _, node in ipairs(self._path) do

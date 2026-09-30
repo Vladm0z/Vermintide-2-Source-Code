@@ -370,7 +370,7 @@ ImguiManager._draw_keybind_settings = function (self)
 
 			for i = 1, #keybind do
 				local selected_for_rebind = self._rebind_action == name and self._rebind_category == category and self._rebind_id == i
-				local button_name = selected_for_rebind and not not "<?>" or not selected_for_rebind and not not keybind[i]
+				local button_name = selected_for_rebind and "<?>" or not selected_for_rebind and keybind[i]
 
 				if Imgui.button(button_name) then
 					self._rebind_id = i
@@ -456,14 +456,14 @@ end
 
 ImguiManager._load_settings = function (self)
 	-- function 22
-	local keybinds = not not Development.setting("ImguiManager_keybinds")
+	local keybinds = Development.setting("ImguiManager_keybinds")
 
 	for category, items in pairs(self._key_bindings) do
 		local category_binds = keybinds[category]
 
 		if category_binds then
 			for name, val in pairs(items) do
-				items[name].keybind = category_binds[name] and not not category_binds[name].keybind or not category_binds[name] and not not items[name].keybind
+				items[name].keybind = category_binds[name] and category_binds[name].keybind or not category_binds[name] and items[name].keybind
 			end
 		end
 	end
@@ -501,7 +501,7 @@ ImguiManager._release_input = function (self)
 	self._input_stack = input_stack
 end
 
-ImguiX = not not ImguiX
+ImguiX = ImguiX
 
 ImguiX.color_edit_4 = function (label, a, r, g, b)
 	-- function 25

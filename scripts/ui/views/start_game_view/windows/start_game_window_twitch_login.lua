@@ -225,7 +225,7 @@ end
 
 StartGameWindowTwitchLogin._set_disconnect_button_text = function (self)
 	-- function 10
-	local user_name = Managers.twitch and not not Managers.twitch:user_name() or not Managers.twitch and not not "N/A"
+	local user_name = Managers.twitch and Managers.twitch:user_name() or not Managers.twitch and "N/A"
 	local disconnect_button_widget = self._widgets_by_name.button_2
 
 	disconnect_button_widget.content.button_hotspot.text = string.format(Localize("start_game_window_twitch_disconnect"), user_name)
@@ -300,8 +300,8 @@ StartGameWindowTwitchLogin._animate_button = function (self, widget, dt)
 	local hotspot_name = "button_hotspot"
 	local hotspot = content[hotspot_name]
 	local input_speed = 20
-	local input_progress = not not hotspot.input_progress
-	local input_pressed = not not hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local input_pressed = hotspot.is_clicked
 
 	if input_pressed then
 		input_progress = math.min(input_progress + dt * input_speed, 1)
@@ -310,8 +310,8 @@ StartGameWindowTwitchLogin._animate_button = function (self, widget, dt)
 	end
 
 	local speed = 8
-	local hover_progress = not not hotspot.hover_progress
-	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
+	local hover_progress = hotspot.hover_progress
+	local is_hover = not hotspot.disable_button and hotspot.is_hover
 
 	if is_hover then
 		hover_progress = math.min(hover_progress + dt * speed, 1)
@@ -319,8 +319,8 @@ StartGameWindowTwitchLogin._animate_button = function (self, widget, dt)
 		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local selection_progress = not not hotspot.selection_progress
-	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
+	local selection_progress = hotspot.selection_progress
+	local is_selected = not hotspot.disable_button and hotspot.is_selected
 
 	if is_selected then
 		selection_progress = math.min(selection_progress + dt * speed, 1)

@@ -32,7 +32,7 @@ BTSpawnAllies.enter = function (self, unit, blackboard, t)
 
 	if blackboard.has_call_position then
 		data = blackboard.spawning_allies
-		call_position = not not action.stay_still or not not data.call_position:unbox()
+		call_position = action.stay_still or data.call_position:unbox()
 		blackboard.has_call_position = false
 	elseif find_spawn_points then
 		data = {
@@ -83,7 +83,7 @@ BTSpawnAllies.enter = function (self, unit, blackboard, t)
 				blackboard.move_animation_name = nil
 			end
 
-			Managers.state.network:anim_event(unit, not not start_anim or not not action.move_anim)
+			Managers.state.network:anim_event(unit, start_anim or action.move_anim)
 
 			blackboard.move_state = "moving"
 		end
@@ -118,7 +118,7 @@ BTSpawnAllies.leave = function (self, unit, blackboard, t, reason)
 			if type(blackboard.action.defensive_mode_duration) == "table" then
 				local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 
-				blackboard.defensive_mode_duration = not not blackboard.action.defensive_mode_duration[difficulty_rank]
+				blackboard.defensive_mode_duration = blackboard.action.defensive_mode_duration[difficulty_rank]
 			else
 				blackboard.defensive_mode_duration = blackboard.action.defensive_mode_duration
 			end
@@ -135,9 +135,9 @@ BTSpawnAllies.leave = function (self, unit, blackboard, t, reason)
 		if blackboard.action.defensive_mode_duration and type(blackboard.action.defensive_mode_duration) == "table" then
 			local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 
-			blackboard.defensive_mode_duration = not not blackboard.action.defensive_mode_duration[difficulty_rank]
+			blackboard.defensive_mode_duration = blackboard.action.defensive_mode_duration[difficulty_rank]
 		else
-			blackboard.defensive_mode_duration = not not blackboard.action.defensive_mode_duration
+			blackboard.defensive_mode_duration = blackboard.action.defensive_mode_duration
 		end
 
 		blackboard.action = nil
@@ -181,7 +181,7 @@ local SPAWN_POS_TEMP = {}
 
 BTSpawnAllies.find_spawn_point = function (unit, blackboard, action, data, override_spawn_group)
 	-- function 8
-	local spawn_group = not not override_spawn_group or not not action.optional_go_to_spawn
+	local spawn_group = override_spawn_group or action.optional_go_to_spawn
 	local spawner_system = Managers.state.entity:system("spawner_system")
 	local spawners_raw = spawner_system._id_lookup[spawn_group]
 
@@ -338,7 +338,7 @@ BTSpawnAllies._spawn = function (self, unit, data, blackboard, t)
 	local difficulty = Managers.state.difficulty:get_difficulty()
 
 	if action.difficulty_spawn_list or action.spawn_list then
-		local spawn_list = not not action.difficulty_spawn_list
+		local spawn_list = action.difficulty_spawn_list
 		local spawners = data.spawners
 
 		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.enemy_spawn_allies, "attack_tag", "spawn_allies")
@@ -361,7 +361,7 @@ BTSpawnAllies._spawn = function (self, unit, data, blackboard, t)
 
 		spawn = action.phase_spawn[phase]
 	else
-		spawn = action.difficulty_spawn and (not not action.difficulty_spawn[difficulty] or not not action.spawn) or not action.difficulty_spawn and not not action.spawn
+		spawn = action.difficulty_spawn and (action.difficulty_spawn[difficulty] or action.spawn) or not action.difficulty_spawn and action.spawn
 	end
 
 	if spawn then

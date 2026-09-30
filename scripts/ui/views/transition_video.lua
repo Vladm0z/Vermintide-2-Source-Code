@@ -19,7 +19,7 @@ TransitionVideo.init = function (self, world, video_data_table)
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._video_data_table = not not video_data_table or not not demo_video
+	self._video_data_table = video_data_table or demo_video
 	self._ui_renderer = UIRenderer.create(world, "material", self._video_data_table.video_name)
 
 	self:_create_ui_elements()

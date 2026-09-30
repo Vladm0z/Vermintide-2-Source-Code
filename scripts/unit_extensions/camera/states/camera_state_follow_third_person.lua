@@ -16,7 +16,7 @@ CameraStateFollowThirdPerson.on_enter = function (self, unit, input, dt, context
 	local follow_unit, follow_node = camera_extension:get_follow_data()
 	local viewport_name = camera_extension.viewport_name
 
-	self._min_leave_t = not not params.min_leave_t
+	self._min_leave_t = params.min_leave_t
 
 	local override_follow_unit = params.override_follow_unit
 
@@ -42,19 +42,19 @@ CameraStateFollowThirdPerson.on_enter = function (self, unit, input, dt, context
 
 	local camera_offset = params.camera_offset
 
-	self._camera_offset = not not camera_offset and not not Vector3Box(camera_offset)
+	self._camera_offset = camera_offset and Vector3Box(camera_offset)
 	self._allow_camera_movement = params.allow_camera_movement
-	self._follow_unit_rotation = params.follow_unit_rotation ~= nil and not not params.follow_unit_rotation or not (params.follow_unit_rotation ~= nil) and not not true
+	self._follow_unit_rotation = not (params.follow_unit_rotation ~= nil) or params.follow_unit_rotation
 	self._follow_unit = follow_unit
 	self._follow_node = follow_node
-	self._fallback_pose = Matrix4x4Box(Unit.alive(follow_unit) and not not Unit.world_pose(follow_unit, 0) or not Unit.alive(follow_unit) and not not Matrix4x4.identity())
+	self._fallback_pose = Matrix4x4Box(Unit.alive(follow_unit) and Unit.world_pose(follow_unit, 0) or not Unit.alive(follow_unit) and Matrix4x4.identity())
 
 	local camera_manager = Managers.state.camera
 	local root_look_dir = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(follow_unit, 0))))
 	local yaw = math.atan2(root_look_dir.y, root_look_dir.x)
 
 	camera_manager:set_pitch_yaw(viewport_name, -0.6, yaw)
-	Unit.set_data(unit, "camera", "settings_node", not not params.camera_node)
+	Unit.set_data(unit, "camera", "settings_node", params.camera_node)
 end
 
 CameraStateFollowThirdPerson.on_exit = function (self, unit, input, dt, context, t, next_state)
@@ -74,10 +74,10 @@ CameraStateFollowThirdPerson.update = function (self, unit, input, dt, context, 
 	local unit = self.unit
 	local camera_extension = self.camera_extension
 	local follow_unit = self._follow_unit
-	local follow_node = not not self._follow_node
+	local follow_node = self._follow_node
 	local external_state_change = camera_extension.external_state_change
 	local external_state_change_params = camera_extension.external_state_change_params
-	local force_state_change = not not external_state_change_params and not not external_state_change_params.force_state_change
+	local force_state_change = external_state_change_params and external_state_change_params.force_state_change
 
 	if external_state_change and (external_state_change ~= self.name or force_state_change) then
 		csm:change_state(external_state_change, external_state_change_params)
@@ -128,7 +128,7 @@ CameraStateFollowThirdPerson.update = function (self, unit, input, dt, context, 
 			CameraStateHelper.set_camera_rotation(unit, camera_extension)
 		end
 
-		local camera_offset = not not self._camera_offset
+		local camera_offset = self._camera_offset
 		local position
 
 		if Unit.alive(follow_unit) then

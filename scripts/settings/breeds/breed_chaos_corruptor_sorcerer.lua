@@ -179,7 +179,7 @@ local breed_data = {
 		200,
 		0
 	},
-	disabled = not not Development.setting("disable_plague_sorcerer"),
+	disabled = Development.setting("disable_plague_sorcerer"),
 	allowed_layers = {
 		planks = 1.5,
 		ledges = 5,

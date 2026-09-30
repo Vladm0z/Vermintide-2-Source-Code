@@ -449,7 +449,7 @@ local lobby_name = {
 				pass_type = "texture",
 				content_change_function = function (content, style)
 					-- function 2
-					style.color[1] = content.input.active and not not 255 or not content.input.active and not not 127
+					style.color[1] = content.input.active and 255 or not content.input.active and 127
 				end
 			},
 			{
@@ -722,7 +722,7 @@ local function create_player_panel_widget(team_index, player_index)
 	local hover_frame_settings = UIFrameSettings.frame_outer_glow_04
 	local empty_hover_frame_settings = UIFrameSettings.frame_outer_glow_01
 	local empty_frame_settings = UIFrameSettings.frame_bevel_01
-	local team_color = team_index ~= 1 and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (team_index ~= 1) and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+	local team_color = team_index ~= 1 and Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (team_index ~= 1) and Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 	local insignia_scale_factor = size[2] / 138
 	local insignia_texture_size = {
 		50 * insignia_scale_factor,
@@ -753,7 +753,7 @@ local function create_player_panel_widget(team_index, player_index)
 					texture_id = "empty_hover_frame",
 					content_check_function = function (content)
 						-- function 9
-						return content.empty and not not content.button_hotspot.is_hover or not content.empty and not not content.is_gamepad_active
+						return content.empty and content.button_hotspot.is_hover or not content.empty and content.is_gamepad_active
 					end
 				},
 				{
@@ -785,13 +785,13 @@ local function create_player_panel_widget(team_index, player_index)
 					pass_type = "texture_frame",
 					content_check_function = function (content)
 						-- function 10
-						return content.empty and not not content.is_gamepad_active or not content.empty and not not content.button_hotspot.is_hover
+						return content.empty and content.is_gamepad_active or not content.empty and content.button_hotspot.is_hover
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 11
 						local focused = content.focused
 
-						style.color[1] = focused and not not (150 + 105 * math.sin(Managers.time:time("ui") * 7.5)) or not focused and not not 255
+						style.color[1] = focused and 150 + 105 * math.sin(Managers.time:time("ui") * 7.5) or not focused and 255
 					end
 				},
 				{
@@ -812,7 +812,7 @@ local function create_player_panel_widget(team_index, player_index)
 					texture_id = "player_avatar",
 					content_check_function = function (content)
 						-- function 12
-						return not content.empty and not not content.player_avatar
+						return not content.empty and content.player_avatar
 					end
 				},
 				{
@@ -821,7 +821,7 @@ local function create_player_panel_widget(team_index, player_index)
 					texture_id = "host_texture",
 					content_check_function = function (content)
 						-- function 13
-						return not content.empty and not not content.show_host
+						return not content.empty and content.show_host
 					end
 				},
 				{
@@ -851,7 +851,7 @@ local function create_player_panel_widget(team_index, player_index)
 					content_id = "insignia_addon",
 					content_check_function = function (content)
 						-- function 15
-						return not content.parent.empty and not not content.uvs
+						return not content.parent.empty and content.uvs
 					end
 				},
 				{
@@ -891,7 +891,7 @@ local function create_player_panel_widget(team_index, player_index)
 					content_id = "kick_button_hotspot",
 					content_check_function = function (content)
 						-- function 19
-						return not not content.parent.show_kick_button
+						return content.parent.show_kick_button
 					end
 				},
 				{
@@ -900,7 +900,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "kick_tooltip_text",
 					content_check_function = function (content)
 						-- function 20
-						return not not content.show_kick_button
+						return content.show_kick_button
 					end
 				},
 				{
@@ -936,7 +936,7 @@ local function create_player_panel_widget(team_index, player_index)
 					texture_id = "disabled_texture",
 					content_check_function = function (content)
 						-- function 24
-						return not not content.show_chat_button
+						return content.show_chat_button
 					end
 				},
 				{
@@ -945,7 +945,7 @@ local function create_player_panel_widget(team_index, player_index)
 					content_id = "chat_button_hotspot",
 					content_check_function = function (content)
 						-- function 25
-						return not not content.parent.show_chat_button
+						return content.parent.show_chat_button
 					end
 				},
 				{
@@ -954,7 +954,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "chat_tooltip_text_mute",
 					content_check_function = function (content)
 						-- function 26
-						return not not content.show_chat_button
+						return content.show_chat_button
 					end
 				},
 				{
@@ -963,7 +963,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "chat_tooltip_text_unmute",
 					content_check_function = function (content)
 						-- function 27
-						return not not content.show_chat_button
+						return content.show_chat_button
 					end
 				},
 				{
@@ -998,7 +998,7 @@ local function create_player_panel_widget(team_index, player_index)
 					content_id = "profile_button_hotspot",
 					content_check_function = function (content)
 						-- function 31
-						return not not content.parent.show_profile_button
+						return content.parent.show_profile_button
 					end
 				},
 				{
@@ -1007,7 +1007,7 @@ local function create_player_panel_widget(team_index, player_index)
 					text_id = "profile_tooltip_text",
 					content_check_function = function (content)
 						-- function 32
-						return not not content.show_profile_button
+						return content.show_profile_button
 					end
 				}
 			}
@@ -1675,8 +1675,8 @@ local animation_definitions = {
 				-- function 33
 				local roll = math.random() < 0.01
 
-				params.ease = roll and not not math.ease_out_elastic or not roll and not not math.easeOutCubic
-				params.offset = roll and not not 100 or not roll and not not 200
+				params.ease = roll and math.ease_out_elastic or not roll and math.easeOutCubic
+				params.offset = roll and 100 or not roll and 200
 
 				local s = params.offset
 

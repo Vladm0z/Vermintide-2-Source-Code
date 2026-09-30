@@ -56,7 +56,7 @@ PlayerCharacterStateGrabbedByTentacle.on_enter = function (self, unit, input, dt
 	end
 
 	self.physics_world = World.physics_world(self.world)
-	self.nav_world = not not self.nav_world
+	self.nav_world = self.nav_world
 
 	local locomotion_extension = self.locomotion_extension
 
@@ -99,7 +99,7 @@ PlayerCharacterStateGrabbedByTentacle.on_exit = function (self, unit, input, dt,
 	status_extension:set_grabbed_by_tentacle(false)
 
 	local camera_state = self.camera_state
-	local include_local_player = camera_state ~= "first_person" or not not false
+	local include_local_player = camera_state ~= "first_person" or false
 
 	CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
 
@@ -147,7 +147,7 @@ PlayerCharacterStateGrabbedByTentacle.states = {
 	grabbed = {
 		enter = function (parent, unit, t)
 			-- function 5
-			local include_local_player = parent.camera_state ~= "first_person" or not not false
+			local include_local_player = parent.camera_state ~= "first_person" or false
 
 			CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, parent.is_server, parent.inventory_extension)
 			anim_event(unit, "tentacle_grabbed_loop")
@@ -291,7 +291,7 @@ PlayerCharacterStateGrabbedByTentacle.get_drag_velocity = function (self, player
 
 	local spline = self.tentacle_spline_extension.spline
 	local tentacle_data = self.tentacle_spline_extension.tentacle_data
-	local out_dist = tentacle_data.portal_spawn_type ~= "floor" and not not 2.5 or not (tentacle_data.portal_spawn_type ~= "floor") and not not 3.3
+	local out_dist = tentacle_data.portal_spawn_type ~= "floor" and 2.5 or not (tentacle_data.portal_spawn_type ~= "floor") and 3.3
 	local spline_pos = spline:get_point_at_distance(self.winding_dist - out_dist)
 	local travel_to_node_index = self.tentacle_spline_extension.tentacle_data.travel_to_node_index
 	local to_portal_along_spline, swing_vec

@@ -14,7 +14,7 @@ local function spawn_custom_horde(breed_name, difficulty_amounts)
 	local difficulty = Managers.state.difficulty:get_difficulty()
 	local num_enemies_range = difficulty_amounts[difficulty]
 
-	num_enemies_range = not not num_enemies_range or not not difficulty_amounts.hardest
+	num_enemies_range = num_enemies_range or difficulty_amounts.hardest
 
 	local amount_of_enemies = math.ceil(math.random(num_enemies_range[1], num_enemies_range[2]) * twitch_settings.spawn_amount_multiplier)
 	local side = Managers.state.side:get_side_from_name("dark_pact")
@@ -39,7 +39,7 @@ local function spawn_hidden(breed_name, difficulty_amounts)
 	local difficulty = Managers.state.difficulty:get_difficulty()
 	local num_enemies = difficulty_amounts[difficulty]
 
-	num_enemies = not not num_enemies or not not difficulty_amounts.hardest
+	num_enemies = num_enemies or difficulty_amounts.hardest
 
 	local amount_of_enemies
 
@@ -58,7 +58,7 @@ local function spawn_hidden(breed_name, difficulty_amounts)
 	end
 end
 
-TwitchVoteTemplates = not not TwitchVoteTemplates
+TwitchVoteTemplates = TwitchVoteTemplates
 TwitchVoteTemplates.twitch_spawn_rat_ogre = {
 	text = "twitch_vote_spawn_rat_ogre",
 	breed_name = "skaven_rat_ogre",

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/ui_passes_tooltips.lua
 
-UITooltipPasses = not not UITooltipPasses
+UITooltipPasses = UITooltipPasses
 
 local UIRenderer = UIRenderer
 local UIRenderer_draw_texture = UIRenderer.draw_texture
@@ -45,7 +45,7 @@ UITooltipPasses = {
 			-- function 3
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
@@ -120,14 +120,14 @@ UITooltipPasses = {
 			-- function 5
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
 
 			if draw then
 				local item_data = item.data
-				local rarity = not not item.rarity
+				local rarity = item.rarity
 				local rarity_color = Colors.get_table(rarity)
 
 				position[2] = position[2] - size[2] - edge_height * 2
@@ -179,7 +179,7 @@ UITooltipPasses = {
 			-- function 7
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 210 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
@@ -251,7 +251,7 @@ UITooltipPasses = {
 			-- function 9
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
@@ -259,7 +259,7 @@ UITooltipPasses = {
 
 			if draw then
 				local item_data = item.data
-				local rarity = not not item.rarity
+				local rarity = item.rarity
 				local rarity_color = Colors.get_table(rarity)
 
 				position[2] = position[2] + edge_height
@@ -316,14 +316,14 @@ UITooltipPasses = {
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 			local alpha = (55 + 200 * progress) * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_texture_name = data.frame_name
 			local frame_settings = UIFrameSettings[frame_texture_name]
 			local edge_height = frame_settings.texture_sizes.horizontal[2]
 
 			if draw then
 				local item_data = item.data
-				local rarity = not not item.rarity
+				local rarity = item.rarity
 				local rarity_color = Colors.get_table(rarity)
 
 				position[1] = position[1] - edge_height
@@ -412,10 +412,10 @@ UITooltipPasses = {
 			-- function 13
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
-			local rarity = not not item.rarity
+			local rarity = item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local style = data.style
 			local content = data.content
@@ -580,8 +580,8 @@ UITooltipPasses = {
 			-- function 15
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local slot_type = item_data.slot_type
 			local is_weapon = slot_type == "melee" or slot_type == "ranged"
@@ -669,8 +669,8 @@ UITooltipPasses = {
 
 			for index, attacks_data in ipairs(weapon_stats_data) do
 				for attack_index, attack_data in ipairs(attacks_data) do
-					local title = not not attack_data.title
-					local value = not not attack_data.value
+					local title = attack_data.title
+					local value = attack_data.value
 					local key = attack_data.key
 
 					if attack_index == 1 then
@@ -831,9 +831,9 @@ UITooltipPasses = {
 			-- function 17
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local backend_id = item.backend_id
 			local item_data = item.data
 			local slot_type = item_data.slot_type
@@ -1016,9 +1016,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local properties = item.properties
 			local style = data.style
 			local content = data.content
@@ -1031,7 +1031,7 @@ UITooltipPasses = {
 			position[2] = position[2]
 
 			local loop_func = pairs
-			local show_advanced_description = not not input_service:get("item_compare")
+			local show_advanced_description = input_service:get("item_compare")
 
 			if properties then
 				position[1] = position[1] + frame_margin
@@ -1080,8 +1080,8 @@ UITooltipPasses = {
 							text = HIDDEN_DESCRIPTION_TEXT
 						else
 							local description, advanced_description = UIUtils.get_property_description(property_key, property_value)
-							local additional_text_length = advanced_description and not not Utf8.length(advanced_description) or not advanced_description and not not 0
-							local default_text_length = text and not not Utf8.length(text) or not text and not not 0
+							local additional_text_length = advanced_description and Utf8.length(advanced_description) or not advanced_description and 0
+							local default_text_length = text and Utf8.length(text) or not text and 0
 
 							text = description .. advanced_description
 
@@ -1267,10 +1267,10 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
 			local top_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local traits = item.traits
 			local total_height = 0
 
@@ -1286,7 +1286,7 @@ UITooltipPasses = {
 				position[3] = start_layer + 2
 
 				local trait_spacing = 10
-				local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
+				local loop_func = draw_downwards and ipairs or not draw_downwards and ripairs
 
 				for index, trait_key in loop_func(traits) do
 					local trait_data = WeaponTraits.traits[trait_key]
@@ -1308,7 +1308,7 @@ UITooltipPasses = {
 						local icon_style = data.style.icon
 						local icon_size = data.icon_size
 
-						content.icon = not not trait_icon or not not data.default_icon
+						content.icon = trait_icon or data.default_icon
 
 						if trait_advanced_description then
 							description_text = UIUtils.get_trait_description(trait_key)
@@ -1502,8 +1502,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local properties = item.properties
 			local style = data.style
 			local content = data.content
@@ -1596,7 +1596,7 @@ UITooltipPasses = {
 						local position = position
 						local text = content.text
 						local start_index, end_index = string.find(text, macro_replacement)
-						local prefix = string.sub(text, 1, (not not start_index or not not 1) + 1)
+						local prefix = string.sub(text, 1, (start_index or 1) + 1)
 						local font, scaled_font_size = UIFontByResolution(text_style)
 						local text_width = UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size)
 						local prefix_width = UIRenderer.text_size(ui_renderer, prefix, font[1], scaled_font_size)
@@ -1692,7 +1692,7 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 25
 			local backend_id = item.backend_id
-			local slot_type = not not item and not not item.data
+			local slot_type = item and item.data
 
 			if not pass_data.force_equipped then
 				if slot_type then
@@ -1735,8 +1735,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -1940,8 +1940,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local slot_type = item_data.slot_type
 
@@ -2146,8 +2146,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local slot_type = item_data.slot_type
 
@@ -2293,8 +2293,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local text_styles = data.text_styles
 			local text_content = data.text_content
 
@@ -2351,7 +2351,7 @@ UITooltipPasses = {
 							local highest_compared_power_level = 0
 
 							for _, item_to_check in ipairs(pass_data.items) do
-								if item_to_check.backend_id ~= item.backend_id and highest_compared_power_level < not not item_to_check.power_level then
+								if item_to_check.backend_id ~= item.backend_id and highest_compared_power_level < item_to_check.power_level then
 									highest_compared_power_level = item_to_check.power_level
 								end
 							end
@@ -2587,10 +2587,10 @@ UITooltipPasses = {
 			-- function 33
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
-			local rarity = not not item.rarity
+			local rarity = item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local style = data.style
 			local content = data.content
@@ -2600,8 +2600,8 @@ UITooltipPasses = {
 			local total_height = 0
 			local item_type = item_data.item_type
 			local _, display_name, _ = UIUtils.get_ui_information_from_item(item)
-			local title_text = item.hidden_description and not not HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and not not Localize(display_name)
-			local type_text = item.hidden_description and not not HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and not not Localize(item_type)
+			local title_text = item.hidden_description and HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and Localize(display_name)
+			local type_text = item.hidden_description and HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and Localize(item_type)
 			local text_style = style.text
 			local text_shadow_style = style.text_shadow
 			local player = pass_data.player
@@ -2617,8 +2617,8 @@ UITooltipPasses = {
 					career_name = profile.careers[career_index].name
 				end
 
-				local can_wield_table = not not item_data and not not item_data.can_wield
-				local can_wield = can_wield_table and not not table.contains(can_wield_table, career_name) or not can_wield_table and not not pass_definition.disable_unsupported
+				local can_wield_table = item_data and item_data.can_wield
+				local can_wield = can_wield_table and table.contains(can_wield_table, career_name) or not can_wield_table and pass_definition.disable_unsupported
 
 				if not can_wield then
 					text_style.text_color = text_style.disabled_text_color
@@ -2846,10 +2846,10 @@ UITooltipPasses = {
 			-- function 35
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
-			local rarity = not not item.rarity
+			local rarity = item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local style = data.style
 			local content = data.content
@@ -2882,8 +2882,8 @@ UITooltipPasses = {
 					career_name = profile.careers[career_index].name
 				end
 
-				local can_wield_table = not not item_data and not not item_data.can_wield
-				local can_wield = can_wield_table and not not table.contains(can_wield_table, career_name) or not can_wield_table and not not pass_definition.disable_unsupported
+				local can_wield_table = item_data and item_data.can_wield
+				local can_wield = can_wield_table and table.contains(can_wield_table, career_name) or not can_wield_table and pass_definition.disable_unsupported
 
 				if not can_wield then
 					text_style.text_color = text_style.disabled_text_color
@@ -3084,8 +3084,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local text_styles = data.text_styles
 			local text_content = data.text_content
 
@@ -3093,14 +3093,14 @@ UITooltipPasses = {
 
 			local backend_id = item.backend_id
 			local item_data = item.data
-			local rarity = not not item.rarity
+			local rarity = item.rarity
 			local rarity_color = Colors.get_table(rarity)
 			local slot_type = item_data.slot_type
-			local item_template = slot_type ~= ItemType.LOOT_CHEST and not not BackendUtils.get_item_template(item_data, backend_id)
-			local max_fatigue_points = slot_type == ItemType.MELEE and not not item_template.max_fatigue_points
+			local item_template = slot_type ~= ItemType.LOOT_CHEST and BackendUtils.get_item_template(item_data, backend_id)
+			local max_fatigue_points = slot_type == ItemType.MELEE and item_template.max_fatigue_points
 
 			if max_fatigue_points then
-				text_content.stat = not not ("+" .. max_fatigue_points .. Localize("tooltip_stamina"))
+				text_content.stat = "+" .. max_fatigue_points .. Localize("tooltip_stamina")
 			end
 
 			if item_template and item_template.buffs and item_template.buffs[1] then
@@ -3121,13 +3121,13 @@ UITooltipPasses = {
 				end
 			end
 
-			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
+			local loop_func = draw_downwards and ipairs or not draw_downwards and ripairs
 			local position_x = position[1]
 			local position_y = position[2]
 			local position_z = position[3]
 
 			position[1] = position[1] + frame_margin
-			position[2] = draw_downwards and not not (position[2] - size[2] - frame_margin) or not draw_downwards and not not (position[2] + frame_margin)
+			position[2] = draw_downwards and position[2] - size[2] - frame_margin or not draw_downwards and position[2] + frame_margin
 			position[3] = start_layer + 5
 
 			local text_pass_data = data.text_pass_data
@@ -3141,7 +3141,7 @@ UITooltipPasses = {
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
 
-				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "bottom"
+				text_style.vertical_alignment = draw_downwards and "top" or not draw_downwards and "bottom"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -3220,8 +3220,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local item_data = item.data
@@ -3238,8 +3238,8 @@ UITooltipPasses = {
 					career_name = profile.careers[career_index].name
 				end
 
-				local can_wield_table = not not item_data and not not item_data.can_wield
-				local can_wield = can_wield_table and not not table.contains(can_wield_table, career_name) or not can_wield_table and not not pass_definition.disable_unsupported
+				local can_wield_table = item_data and item_data.can_wield
+				local can_wield = can_wield_table and table.contains(can_wield_table, career_name) or not can_wield_table and pass_definition.disable_unsupported
 
 				if not can_wield then
 					local text = ""
@@ -3340,18 +3340,18 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local item_data = item.data
 			local item_skin = item.skin
 			local item_type = item_data.item_type
-			local item_id = not not item.ItemId
-			local trimmed_item_id = not not item_id and not not string.gsub(item_id, "^vs_", "")
+			local item_id = item.ItemId
+			local trimmed_item_id = item_id and string.gsub(item_id, "^vs_", "")
 
 			if item_skin and item_type ~= "weapon_skin" and WeaponSkins.default_skins[trimmed_item_id] ~= item_skin then
-				content.text = item.hidden_description and not not HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and not not content.prefix_text
+				content.text = item.hidden_description and HIDDEN_DESCRIPTION_TEXT or not item.hidden_description and content.prefix_text
 
 				local position_x = position[1]
 				local position_y = position[2]
@@ -3427,8 +3427,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local text
@@ -3588,8 +3588,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local text
@@ -3790,8 +3790,8 @@ UITooltipPasses = {
 			-- function 47
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local text_styles = data.text_styles
 			local text_content = data.text_content
 
@@ -3800,27 +3800,27 @@ UITooltipPasses = {
 			local disabled = ui_content.disabled
 			local is_selected = ui_content.is_selected
 
-			text_content.title = not not talent.display_name
+			text_content.title = talent.display_name
 
 			local requirement_text, information_text
 
 			if disabled then
 				requirement_text = Localize("talent_locked_desc")
 			elseif not is_selected then
-				information_text = ui_content.gamepad_active and (not not Localize("menu_select") or not not Localize("talent_can_select_desc")) or not ui_content.gamepad_active and not not Localize("talent_can_select_desc")
+				information_text = ui_content.gamepad_active and (Localize("menu_select") or Localize("talent_can_select_desc")) or not ui_content.gamepad_active and Localize("talent_can_select_desc")
 			end
 
 			text_content.requirement = requirement_text
 			text_content.information = information_text
 			text_content.description = UIUtils.get_talent_description(talent)
 
-			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
+			local loop_func = draw_downwards and ipairs or not draw_downwards and ripairs
 			local position_x = position[1]
 			local position_y = position[2]
 			local position_z = position[3]
 
 			position[1] = position[1] + frame_margin
-			position[2] = draw_downwards and not not (position[2] - size[2] - frame_margin) or not draw_downwards and not not (position[2] + frame_margin)
+			position[2] = draw_downwards and position[2] - size[2] - frame_margin or not draw_downwards and position[2] + frame_margin
 			position[3] = start_layer + 5
 
 			local text_pass_data = data.text_pass_data
@@ -3834,7 +3834,7 @@ UITooltipPasses = {
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
 
-				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "bottom"
+				text_style.vertical_alignment = draw_downwards and "top" or not draw_downwards and "bottom"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -3945,7 +3945,7 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 			-- function 49
 			local text_id = pass_definition.text_id
-			local text = not not text_id and not not ui_content[text_id]
+			local text = text_id and ui_content[text_id]
 
 			if not text then
 				return 0
@@ -3954,8 +3954,8 @@ UITooltipPasses = {
 			local style_id = pass_definition.style_id
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -3968,7 +3968,7 @@ UITooltipPasses = {
 
 			text_pass_data.text_id = text_id
 
-			local localize = not style_id or not not ui_style.localize
+			local localize = not style_id or ui_style.localize
 
 			title_text_style.localize = localize
 			title_text_shadow_style.localize = localize
@@ -4076,8 +4076,8 @@ UITooltipPasses = {
 			-- function 51
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local text_styles = style.text_styles
@@ -4093,7 +4093,7 @@ UITooltipPasses = {
 
 			text_content.title = Localize(display_name)
 			position[1] = position[1] + frame_margin
-			position[2] = draw_downwards and not not (position[2] - total_height) or not draw_downwards and not not (position[2] + frame_edge_height)
+			position[2] = draw_downwards and position[2] - total_height or not draw_downwards and position[2] + frame_edge_height
 			position[3] = start_layer + 5
 
 			local text_size = data.text_size
@@ -4103,12 +4103,12 @@ UITooltipPasses = {
 
 			local text_total_height = -frame_edge_height
 			local text_pass_data = data.text_pass_data
-			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
+			local loop_func = draw_downwards and ipairs or not draw_downwards and ripairs
 
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
 
-				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "top"
+				text_style.vertical_alignment = draw_downwards and "top" or not draw_downwards and "top"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -4209,13 +4209,13 @@ UITooltipPasses = {
 			-- function 53
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local text_styles = style.text_styles
 			local text_content = content.text_content
-			local title = not not additional_option_data.title
+			local title = additional_option_data.title
 			local description = additional_option_data.description
 
 			if ui_style and ui_style.localize then
@@ -4237,7 +4237,7 @@ UITooltipPasses = {
 			text_content.title = title
 			text_content.description = description
 			position[1] = position[1] + frame_margin
-			position[2] = draw_downwards and not not (position[2] - total_height) or not draw_downwards and not not (position[2] + frame_edge_height)
+			position[2] = draw_downwards and position[2] - total_height or not draw_downwards and position[2] + frame_edge_height
 			position[3] = start_layer + 5
 
 			local text_size = data.text_size
@@ -4247,12 +4247,12 @@ UITooltipPasses = {
 
 			local text_total_height = -frame_edge_height
 			local text_pass_data = data.text_pass_data
-			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
+			local loop_func = draw_downwards and ipairs or not draw_downwards and ripairs
 
 			for index, text_style in loop_func(text_styles) do
 				local ignore_line_change = text_style.ignore_line_change
 
-				text_style.vertical_alignment = draw_downwards and not not "top" or not draw_downwards and not not "top"
+				text_style.vertical_alignment = draw_downwards and "top" or not draw_downwards and "top"
 
 				local style_name = text_style.name
 				local text = text_content[style_name]
@@ -4374,8 +4374,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -4517,8 +4517,8 @@ UITooltipPasses = {
 			-- function 57
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -4532,7 +4532,7 @@ UITooltipPasses = {
 			local position_y = position[2]
 			local position_z = position[3]
 			local title_text = Localize("start_game_window_difficulty")
-			local difficulty_key = not not item.difficulty
+			local difficulty_key = item.difficulty
 			local difficulty_settings = DifficultySettings[difficulty_key]
 			local difficulty_display_name = difficulty_settings.display_name
 			local type_text = Localize(difficulty_display_name)
@@ -4618,7 +4618,7 @@ UITooltipPasses = {
 					icon = "icons_placeholder"
 				},
 				style = {
-					text = pass_style and not not pass_style.text or not pass_style and not not {
+					text = pass_style and pass_style.text or not pass_style and {
 						vertical_alignment = "center",
 						horizontal_alignment = "left",
 						word_wrap = true,
@@ -4630,7 +4630,7 @@ UITooltipPasses = {
 							Colors.get_color_table_with_alpha("font_default", 255)
 						}
 					},
-					text_shadow = pass_style and not not pass_style.text_shadow or not pass_style and not not {
+					text_shadow = pass_style and pass_style.text_shadow or not pass_style and {
 						vertical_alignment = "center",
 						horizontal_alignment = "left",
 						word_wrap = true,
@@ -4643,7 +4643,7 @@ UITooltipPasses = {
 							-1
 						}
 					},
-					icon = pass_style and not not pass_style.icon or not pass_style and not not {
+					icon = pass_style and pass_style.icon or not pass_style and {
 						color = {
 							255,
 							255,
@@ -4664,7 +4664,7 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 59
 			local item_data = item.data
-			local mutators = not not item.mutators
+			local mutators = item.mutators
 
 			if mutators == nil then
 				return 0
@@ -4675,8 +4675,8 @@ UITooltipPasses = {
 			local top_spacing = 20
 			local bottom_spacing = 20
 			local total_height = top_spacing
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -4688,7 +4688,7 @@ UITooltipPasses = {
 			position[3] = start_layer + 2
 
 			local trait_spacing = 10
-			local loop_func = draw_downwards and not not ipairs or not draw_downwards and not not ripairs
+			local loop_func = draw_downwards and ipairs or not draw_downwards and ripairs
 
 			for index, name in loop_func(mutators) do
 				local mutator_template = MutatorTemplates[name]
@@ -4709,7 +4709,7 @@ UITooltipPasses = {
 				local icon_style = data.style.icon
 				local icon_size = data.icon_size
 
-				content.icon = not not icon or not not data.default_icon
+				content.icon = icon or data.default_icon
 
 				local text = title_text .. "\n" .. description_text
 				local text_size = data.text_size
@@ -4876,8 +4876,8 @@ UITooltipPasses = {
 			-- function 61
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -4950,7 +4950,7 @@ UITooltipPasses = {
 					local item_key = rewards[index]
 					local reward_item_data = ItemMasterList[item_key]
 					local inventory_icon = reward_item_data.inventory_icon
-					local item_texture = not not inventory_icon or not not data.default_item_texture
+					local item_texture = inventory_icon or data.default_item_texture
 					local item_style = style.item
 					local item_color = item_style.color
 
@@ -5084,8 +5084,8 @@ UITooltipPasses = {
 			-- function 63
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -5210,8 +5210,8 @@ UITooltipPasses = {
 			-- function 65
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -5316,8 +5316,8 @@ UITooltipPasses = {
 			-- function 67
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -5349,7 +5349,7 @@ UITooltipPasses = {
 
 			local difficulty_names = table.select_array(difficulty_keys, function (_, difficulty_key)
 				-- function 68
-				return not not DifficultySettings[difficulty_key]
+				return DifficultySettings[difficulty_key]
 			end)
 
 			if table.is_empty(difficulty_names) then
@@ -5448,8 +5448,8 @@ UITooltipPasses = {
 			-- function 70
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -5496,7 +5496,7 @@ UITooltipPasses = {
 						local statistics_interface = Managers.backend:get_interface("statistics")
 						local level_on_complete = statistics_interface:get_achievement_reward_level(achievement_id)
 
-						chest_level = not not level_on_complete and not not math.min(level_on_complete, LootChestData.LEVEL_USED_FOR_POOL_LEVELS)
+						chest_level = level_on_complete and math.min(level_on_complete, LootChestData.LEVEL_USED_FOR_POOL_LEVELS)
 					else
 						return 0
 					end
@@ -5509,13 +5509,13 @@ UITooltipPasses = {
 				chest_level = loot_interface:get_highest_chest_level(reward_name)
 			end
 
-			chest_level = not not chest_level or not not ExperienceSettings.get_reward_level()
+			chest_level = chest_level or ExperienceSettings.get_reward_level()
 
 			local min, max, absolute_max = LootChestData.calculate_power_level(chest_level, power_level_pivots)
 
 			max = math.min(max, absolute_max)
 
-			local chest_tier = not not item_data.chest_tier
+			local chest_tier = item_data.chest_tier
 			local bonus_pl_per_tier = power_level_settings.bonus_min_power_level_per_tier
 
 			min = math.min(min + (chest_tier - 1) * bonus_pl_per_tier, max)
@@ -5595,7 +5595,7 @@ UITooltipPasses = {
 					local rate = rarity_table[rarity]
 					local val
 
-					val = rate < 1 and (not not "<1" or not not math.round(rate)) or not (rate < 1) and not not math.round(rate)
+					val = rate < 1 and ("<1" or math.round(rate)) or not (rate < 1) and math.round(rate)
 
 					local color = Colors.color_definitions[rarity]
 
@@ -5622,8 +5622,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -5727,8 +5727,8 @@ UITooltipPasses = {
 			-- function 75
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local item_data = item.data
 			local item_type = item_data.item_type
 
@@ -5740,7 +5740,7 @@ UITooltipPasses = {
 				local position_z = position[3]
 				local total_height = frame_margin
 				local information_text = item_data.information_text
-				local title_text = information_text and not not Localize(information_text) or not information_text and not not "n/a"
+				local title_text = information_text and Localize(information_text) or not information_text and "n/a"
 				local title_text_style = style.title_text
 				local title_text_shadow_style = style.title_text_shadow
 				local text_pass_data = data.text_pass_data
@@ -5827,8 +5827,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local item_data = item.data
@@ -5841,9 +5841,9 @@ UITooltipPasses = {
 
 			if item_skin then
 				local skin_item_name = WeaponSkins.matching_weapon_skin_item_key(item_skin)
-				local base_item_name = not not skin_item_name and not not string.match(skin_item_name, "^([%w_]+)_skin$")
+				local base_item_name = skin_item_name and string.match(skin_item_name, "^([%w_]+)_skin$")
 				local base_item = rawget(ItemMasterList, base_item_name)
-				local base_item_type = base_item and not not base_item.item_type or not base_item and not not "lb_unknown"
+				local base_item_type = base_item and base_item.item_type or not base_item and "lb_unknown"
 
 				content.text = Localize(base_item_type) .. content.sufix_text
 
@@ -5921,8 +5921,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local backend_id = item.backend_id
@@ -6095,8 +6095,8 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local backend_id = item.backend_id
@@ -6334,9 +6334,9 @@ UITooltipPasses = {
 				career_name = profile.careers[career_index].name
 			end
 
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 0
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local total_power_level = BackendUtils.get_total_power_level(hero_name, career_name)
@@ -6392,8 +6392,8 @@ UITooltipPasses = {
 				local entry_text = entry.text .. " "
 				local power_level_text = tostring(power_level)
 				local text = entry_text .. power_level_text
-				local power_text_length = not not Utf8.length(power_level_text)
-				local entry_text_length = not not Utf8.length(entry_text)
+				local power_text_length = Utf8.length(power_level_text)
+				local entry_text_length = Utf8.length(entry_text)
 				local entry_text_style = style.entry_text
 				local color_override_table = entry_text_style.color_override_table
 
@@ -6542,9 +6542,9 @@ UITooltipPasses = {
 		end,
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 			-- function 85
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 0
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local alpha_multiplier = pass_data.alpha_multiplier
@@ -6716,8 +6716,8 @@ UITooltipPasses = {
 			-- function 87
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 			local position_x = position[1]
@@ -6823,8 +6823,8 @@ UITooltipPasses = {
 			-- function 89
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
-			local frame_margin = not not data.frame_margin
+			local start_layer = pass_data.start_layer
+			local frame_margin = data.frame_margin
 			local content = data.content
 			local style = data.style
 
@@ -6948,9 +6948,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -7054,10 +7054,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
+					local text = stat_descriptor.empty and "" or not stat_descriptor.empty and stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
+					local value = stat_descriptor.empty and "" or not stat_descriptor.empty and UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -7258,9 +7258,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -7365,10 +7365,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
+					local text = stat_descriptor.empty and "" or not stat_descriptor.empty and stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
+					local value = stat_descriptor.empty and "" or not stat_descriptor.empty and UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -7564,9 +7564,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -7684,10 +7684,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
+					local text = stat_descriptor.empty and "" or not stat_descriptor.empty and stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
+					local value = stat_descriptor.empty and "" or not stat_descriptor.empty and UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -7846,9 +7846,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -7966,10 +7966,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
+					local text = stat_descriptor.empty and "" or not stat_descriptor.empty and stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
+					local value = stat_descriptor.empty and "" or not stat_descriptor.empty and UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -8128,9 +8128,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -8194,10 +8194,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
+					local text = stat_descriptor.empty and "" or not stat_descriptor.empty and stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
+					local value = stat_descriptor.empty and "" or not stat_descriptor.empty and UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -8356,9 +8356,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -8476,10 +8476,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
+					local text = stat_descriptor.empty and "" or not stat_descriptor.empty and stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
+					local value = stat_descriptor.empty and "" or not stat_descriptor.empty and UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -8638,9 +8638,9 @@ UITooltipPasses = {
 
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local style = data.style
 			local content = data.content
 			local position_x = position[1]
@@ -8758,10 +8758,10 @@ UITooltipPasses = {
 				local value_style = style.stat_value
 
 				for _, stat_descriptor in pairs(stats) do
-					local text = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not stat_descriptor.description
+					local text = stat_descriptor.empty and "" or not stat_descriptor.empty and stat_descriptor.description
 					local player = Managers.player:local_player()
 					local player_unit = player.player_unit
-					local value = stat_descriptor.empty and not not "" or not stat_descriptor.empty and not not UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
+					local value = stat_descriptor.empty and "" or not stat_descriptor.empty and UIUtils.get_item_tooltip_value(player_unit, item, stat_descriptor)
 					local text_size = data.text_size
 					local text_height
 
@@ -9354,9 +9354,9 @@ UITooltipPasses = {
 			-- function 105
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local styles = data.styles
 			local pass_content = data.pass_content
 
@@ -9388,12 +9388,12 @@ UITooltipPasses = {
 				local pass_type = style.pass_type
 				local style_name = style.name
 				local ignore_line_change = style.ignore_line_change
-				local minimum_height = not not style.minimum_height
+				local minimum_height = style.minimum_height
 				local height_spacing = style.height_spacing
 				local offset = style.offset
 
 				if pass_type == "text" then
-					pass_content[style_name] = not not additional_option_data[style_name]
+					pass_content[style_name] = additional_option_data[style_name]
 				elseif pass_type == "texture" then
 					pass_content[style_name] = style.texture
 				end
@@ -9450,8 +9450,8 @@ UITooltipPasses = {
 						local texture_size = style.texture_size
 						local texture_width = texture_size[1]
 						local texture_height = texture_size[2]
-						local height_margin = not not style.height_margin
-						local width_margin = not not style.width_margin
+						local height_margin = style.height_margin
+						local width_margin = style.width_margin
 
 						if texture_height < minimum_height then
 							texture_height = minimum_height
@@ -9583,9 +9583,9 @@ UITooltipPasses = {
 			-- function 107
 			local alpha_multiplier = pass_data.alpha_multiplier
 			local alpha = 255 * alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local bottom_spacing = 20
-			local frame_margin = not not data.frame_margin
+			local frame_margin = data.frame_margin
 			local styles = data.styles
 			local pass_content = data.pass_content
 
@@ -9652,7 +9652,7 @@ UITooltipPasses = {
 
 				local pass_type = style.pass_type
 				local ignore_line_change = style.ignore_line_change
-				local minimum_height = not not style.minimum_height
+				local minimum_height = style.minimum_height
 				local height_spacing = style.height_spacing
 				local offset = style.offset
 				local offset_x = offset[1]
@@ -9707,8 +9707,8 @@ UITooltipPasses = {
 					local texture_size = style.texture_size
 					local texture_width = texture_size[1]
 					local texture_height = texture_size[2]
-					local height_margin = not not style.height_margin
-					local width_margin = not not style.width_margin
+					local height_margin = style.height_margin
+					local width_margin = style.width_margin
 
 					if texture_height < minimum_height then
 						texture_height = minimum_height
@@ -9794,16 +9794,16 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 109
 			local item_data = item.data
-			local template_name = not not item_data.temporary_template
+			local template_name = item_data.temporary_template
 			local item_template = WeaponUtils.get_weapon_template(template_name)
-			local tooltip_special_action_description = not not item_template and not not item_template.tooltip_special_action_description
+			local tooltip_special_action_description = item_template and item_template.tooltip_special_action_description
 
 			if not tooltip_special_action_description then
 				return 0
 			end
 
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content
@@ -9889,16 +9889,16 @@ UITooltipPasses = {
 		draw = function (data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 			-- function 111
 			local item_data = item.data
-			local template_name = not not item_data.temporary_template
+			local template_name = item_data.temporary_template
 			local item_template = WeaponUtils.get_weapon_template(template_name)
-			local tooltip_special_action_description = not not item_template and not not item_template.tooltip_special_action_description
+			local tooltip_special_action_description = item_template and item_template.tooltip_special_action_description
 
 			if not tooltip_special_action_description then
 				return 0
 			end
 
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content
@@ -10057,7 +10057,7 @@ UITooltipPasses = {
 
 				for i = 1, #loadouts do
 					local loadout_index = loadouts[i]
-					local final_career_name = localized_career_name .. (num_loadouts > 1 and not not string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index) or not (num_loadouts > 1) and not not "")
+					local final_career_name = localized_career_name .. (num_loadouts > 1 and string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index) or not (num_loadouts > 1) and "")
 
 					if not dupes[final_career_name] then
 						dupes[final_career_name] = true
@@ -10068,7 +10068,7 @@ UITooltipPasses = {
 
 			local career_names_string = table.concat(career_names_arr, ", ")
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content
@@ -10223,7 +10223,7 @@ UITooltipPasses = {
 
 				for i = 1, #loadouts do
 					local loadout_index = loadouts[i]
-					local final_career_name = localized_career_name .. (num_loadouts > 1 and not not string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index) or not (num_loadouts > 1) and not not "")
+					local final_career_name = localized_career_name .. (num_loadouts > 1 and string.format("{#color(193,91,36)} (%d){#reset()}", loadout_index) or not (num_loadouts > 1) and "")
 
 					if not dupes[final_career_name] then
 						dupes[final_career_name] = true
@@ -10234,7 +10234,7 @@ UITooltipPasses = {
 
 			local career_names_string = table.concat(career_names_arr, ", ")
 			local alpha = 255 * pass_data.alpha_multiplier
-			local start_layer = not not pass_data.start_layer
+			local start_layer = pass_data.start_layer
 			local frame_margin = data.frame_margin
 			local text_pass_data = data.text_pass_data
 			local content = data.content

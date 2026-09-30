@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_conditions.lua
 
-BTConditions = not not BTConditions
+BTConditions = BTConditions
 
 require("scripts/entity_system/systems/behaviour/nodes/bot/bt_bot_conditions")
 
@@ -29,7 +29,7 @@ end
 
 BTConditions.start_or_continue = function (blackboard)
 	-- function 5
-	return blackboard.attack_token == nil or not not blackboard.attack_token
+	return blackboard.attack_token == nil or blackboard.attack_token
 end
 
 BTConditions.ask_target_before_attacking = function (blackboard, condition_args, action)
@@ -43,7 +43,7 @@ BTConditions.ask_target_before_attacking = function (blackboard, condition_args,
 	local target_unit_attack_intensity_extension = ScriptUnit.has_extension(target_unit, "attack_intensity_system")
 
 	if target_unit_attack_intensity_extension then
-		local attack_type = not not action.attack_intensity_type
+		local attack_type = action.attack_intensity_type
 
 		want_an_attack = target_unit_attack_intensity_extension:want_an_attack(attack_type)
 	end
@@ -96,7 +96,7 @@ BTConditions.lord_intro = function (blackboard)
 	-- function 12
 	local t = Managers.time:time("game")
 
-	return not not blackboard.intro_timer
+	return blackboard.intro_timer
 end
 
 BTConditions.warlord_jump_down = function (blackboard)
@@ -152,7 +152,7 @@ BTConditions.target_changed_and_distant = function (blackboard)
 		elseif blackboard.target_dist and blackboard.target_dist > 15 then
 			local t = Managers.time:time("game")
 
-			return not not blackboard.next_rage_time
+			return blackboard.next_rage_time
 		else
 			blackboard.target_changed = nil
 		end
@@ -168,19 +168,19 @@ end
 
 BTConditions.ratogre_target_reachable = function (blackboard)
 	-- function 24
-	return not not blackboard.jump_slam_data
+	return blackboard.jump_slam_data
 end
 
 BTConditions.chaos_spawn_grabbed_combat = function (blackboard)
 	-- function 25
-	return not not HEALTH_ALIVE[blackboard.victim_grabbed]
+	return HEALTH_ALIVE[blackboard.victim_grabbed]
 end
 
 BTConditions.chaos_spawn_grabbed_throw = function (blackboard)
 	-- function 26
 	local knocked_down = AiUtils.unit_knocked_down(blackboard.victim_grabbed)
 
-	return not not HEALTH_ALIVE[blackboard.victim_grabbed]
+	return HEALTH_ALIVE[blackboard.victim_grabbed]
 end
 
 BTConditions.path_found = function (blackboard)
@@ -190,7 +190,7 @@ end
 
 BTConditions.ratogre_jump_dist = function (blackboard)
 	-- function 28
-	return not blackboard.target_outside_navmesh and not not blackboard.target_dist
+	return not blackboard.target_outside_navmesh and blackboard.target_dist
 end
 
 BTConditions.ratogre_walking = function (blackboard)
@@ -224,7 +224,7 @@ BTConditions.at_smartobject = function (blackboard)
 
 	local is_smart_objecting = blackboard.is_smart_objecting
 	local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-	local smart_object_unit = not not next_smart_object_data.smart_object_data
+	local smart_object_unit = next_smart_object_data.smart_object_data
 	local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 	if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting then
@@ -234,7 +234,7 @@ BTConditions.at_smartobject = function (blackboard)
 	local is_in_smartobject_range = blackboard.is_in_smartobject_range
 	local moving_state = blackboard.move_state == "moving"
 
-	return is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
+	return is_in_smartobject_range and (moving_state or is_smart_objecting) or not is_in_smartobject_range and is_smart_objecting
 end
 
 BTConditions.gutter_runner_at_smartobject = function (blackboard)
@@ -259,7 +259,7 @@ BTConditions.stormfiend_boss_intro_jump_down = function (blackboard)
 	-- function 36
 	local is_in_intro = blackboard.jump_down_intro
 
-	return not not BTConditions.at_smartobject(blackboard)
+	return (BTConditions.at_smartobject(blackboard))
 end
 
 BTConditions.at_teleport_smartobject = function (blackboard)
@@ -268,7 +268,7 @@ BTConditions.at_teleport_smartobject = function (blackboard)
 	local is_smart_object_teleporter = smart_object_type == "teleporters"
 	local is_teleporting = blackboard.is_teleporting
 
-	return not not is_smart_object_teleporter or not not is_teleporting
+	return is_smart_object_teleporter or is_teleporting
 end
 
 BTConditions.vortex_at_climb_or_jump = function (blackboard)
@@ -276,7 +276,7 @@ BTConditions.vortex_at_climb_or_jump = function (blackboard)
 	local at_climb = BTConditions.at_climb_smartobject(blackboard)
 	local at_jump = BTConditions.at_jump_smartobject(blackboard)
 
-	return not not at_climb or not not at_jump or not not blackboard.is_flying
+	return at_climb or at_jump or blackboard.is_flying
 end
 
 BTConditions.at_climb_smartobject = function (blackboard)
@@ -285,7 +285,7 @@ BTConditions.at_climb_smartobject = function (blackboard)
 	local is_smart_object_ledge = smart_object_type == "ledges" or smart_object_type == "ledges_with_fence"
 	local is_climbing = blackboard.is_climbing
 
-	return not not is_smart_object_ledge or not not is_climbing
+	return is_smart_object_ledge or is_climbing
 end
 
 BTConditions.at_jump_smartobject = function (blackboard)
@@ -293,7 +293,7 @@ BTConditions.at_jump_smartobject = function (blackboard)
 	local is_smart_object_jump = blackboard.next_smart_object_data.smart_object_type == "jumps"
 	local is_jumping = blackboard.is_jumping
 
-	return not not is_smart_object_jump or not not is_jumping
+	return is_smart_object_jump or is_jumping
 end
 
 BTConditions.at_door_smartobject = function (blackboard)
@@ -303,12 +303,12 @@ BTConditions.at_door_smartobject = function (blackboard)
 	local is_smashing_door = blackboard.is_smashing_door
 	local is_scurrying_under_door = blackboard.is_scurrying_under_door
 
-	return not not is_smart_object_door or not not is_smashing_door or not not is_scurrying_under_door
+	return is_smart_object_door or is_smashing_door or is_scurrying_under_door
 end
 
 BTConditions.at_smart_object_and_door = function (blackboard)
 	-- function 42
-	return not not BTConditions.at_smartobject(blackboard)
+	return (BTConditions.at_smartobject(blackboard))
 end
 
 BTConditions.has_destructible_as_target = function (blackboard)
@@ -316,7 +316,7 @@ BTConditions.has_destructible_as_target = function (blackboard)
 	local target = blackboard.target_unit
 	local is_destructible_static = not ScriptUnit.has_extension(target, "locomotion_system")
 
-	return not not unit_alive(target)
+	return (unit_alive(target))
 end
 
 BTConditions.can_see_player = function (blackboard)
@@ -336,7 +336,7 @@ end
 
 BTConditions.tentacle_found_target = function (blackboard)
 	-- function 47
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.at_half_health = function (blackboard)
@@ -371,12 +371,12 @@ end
 
 BTConditions.can_transition_half_health = function (blackboard)
 	-- function 54
-	return blackboard.current_health_percent <= 0.5 and not not not blackboard.half_transition_done
+	return blackboard.current_health_percent <= 0.5 and not blackboard.half_transition_done
 end
 
 BTConditions.can_transition_one_third_health = function (blackboard)
 	-- function 55
-	return blackboard.current_health_percent <= 0.33 and not not not blackboard.one_third_transition_done
+	return blackboard.current_health_percent <= 0.33 and not blackboard.one_third_transition_done
 end
 
 BTConditions.dummy_not_escaped = function (blackboard)
@@ -386,42 +386,42 @@ end
 
 BTConditions.can_transition_two_thirds_health = function (blackboard)
 	-- function 57
-	return blackboard.current_health_percent <= 0.66 and not not not blackboard.two_thirds_transition_done
+	return blackboard.current_health_percent <= 0.66 and not blackboard.two_thirds_transition_done
 end
 
 BTConditions.can_transition_one_fifth_health = function (blackboard)
 	-- function 58
-	return blackboard.current_health_percent <= 0.2 and not not not blackboard.one_fifth_transition_done
+	return blackboard.current_health_percent <= 0.2 and not blackboard.one_fifth_transition_done
 end
 
 BTConditions.can_transition_three_fifths_health = function (blackboard)
 	-- function 59
-	return blackboard.current_health_percent <= 0.6 and not not not blackboard.three_fifths_transition_done
+	return blackboard.current_health_percent <= 0.6 and not blackboard.three_fifths_transition_done
 end
 
 BTConditions.transitioned_half_health = function (blackboard)
 	-- function 60
-	return blackboard.current_health_percent <= 0.5 and not not blackboard.half_transition_done
+	return blackboard.current_health_percent <= 0.5 and blackboard.half_transition_done
 end
 
 BTConditions.transitioned_three_fifths_health = function (blackboard)
 	-- function 61
-	return blackboard.current_health_percent <= 0.6 and not not blackboard.three_fifths_transition_done
+	return blackboard.current_health_percent <= 0.6 and blackboard.three_fifths_transition_done
 end
 
 BTConditions.transitioned_one_fifth_health = function (blackboard)
 	-- function 62
-	return blackboard.current_health_percent <= 0.2 and not not blackboard.one_fifth_transition_done
+	return blackboard.current_health_percent <= 0.2 and blackboard.one_fifth_transition_done
 end
 
 BTConditions.transitioned_one_third_health = function (blackboard)
 	-- function 63
-	return blackboard.current_health_percent <= 0.33 and not not blackboard.one_third_transition_done
+	return blackboard.current_health_percent <= 0.33 and blackboard.one_third_transition_done
 end
 
 BTConditions.transitioned_two_thirds_health = function (blackboard)
 	-- function 64
-	return blackboard.current_health_percent <= 0.66 and not not blackboard.two_thirds_transition_done
+	return blackboard.current_health_percent <= 0.66 and blackboard.two_thirds_transition_done
 end
 
 BTConditions.sorcerer_allow_tricke_spawn = function (blackboard)
@@ -431,7 +431,7 @@ end
 
 BTConditions.spawned_allies_dead_or_time = function (blackboard)
 	-- function 66
-	return blackboard.spawn_allies_horde and not not blackboard.spawn_allies_horde.is_dead or not blackboard.spawn_allies_horde and blackboard.defensive_phase_duration == 0
+	return blackboard.spawn_allies_horde and blackboard.spawn_allies_horde.is_dead or not blackboard.spawn_allies_horde and blackboard.defensive_phase_duration == 0
 end
 
 BTConditions.first_ring_summon = function (blackboard)
@@ -466,7 +466,7 @@ end
 
 BTConditions.ready_to_summon = function (blackboard)
 	-- function 73
-	return not not blackboard.ready_to_summon
+	return blackboard.ready_to_summon
 end
 
 BTConditions.ready_to_summon_vortex = function (blackboard)
@@ -496,12 +496,12 @@ end
 
 BTConditions.sorcerer_in_defensive_mode = function (blackboard)
 	-- function 79
-	return blackboard.mode == "defensive" and not not not blackboard.is_summoning
+	return blackboard.mode == "defensive" and not blackboard.is_summoning
 end
 
 BTConditions.sorcerer_in_setup_mode = function (blackboard)
 	-- function 80
-	return blackboard.mode == "setup" and not not not blackboard.setup_done
+	return blackboard.mode == "setup" and not blackboard.setup_done
 end
 
 BTConditions.escape_teleport = function (blackboard)
@@ -531,12 +531,12 @@ end
 
 BTConditions.player_spotted = function (blackboard)
 	-- function 86
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.in_melee_range = function (blackboard)
 	-- function 87
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.approach_target = function (blackboard)
@@ -549,12 +549,12 @@ BTConditions.comitted_to_target = function (blackboard)
 	local t = Managers.time:time("game")
 	local pounce_timer_is_finished = t > blackboard.initial_pounce_timer
 
-	return blackboard.target_unit and not not pounce_timer_is_finished or not blackboard.target_unit and not not blackboard.comitted_to_target
+	return blackboard.target_unit and pounce_timer_is_finished or not blackboard.target_unit and blackboard.comitted_to_target
 end
 
 BTConditions.in_sprint_dist = function (blackboard)
 	-- function 90
-	return not not blackboard.closing
+	return blackboard.closing
 end
 
 BTConditions.in_run_dist = function (blackboard)
@@ -564,7 +564,7 @@ end
 
 BTConditions.troll_downed = function (blackboard)
 	-- function 92
-	return not not blackboard.can_get_downed
+	return blackboard.can_get_downed
 end
 
 BTConditions.troll_chief_phase_success = function (blackboard)
@@ -576,7 +576,7 @@ end
 
 BTConditions.needs_to_crouch = function (blackboard)
 	-- function 94
-	return not not blackboard.needs_to_crouch
+	return blackboard.needs_to_crouch
 end
 
 BTConditions.reset_utility = function (blackboard)
@@ -586,43 +586,43 @@ end
 
 BTConditions.is_alerted = function (blackboard)
 	-- function 96
-	local alerted = not not unit_alive(blackboard.target_unit)
+	local alerted = unit_alive(blackboard.target_unit)
 	local is_taunted = unit_alive(blackboard.taunt_unit)
-	local taunt_hesitate = not not is_taunted and not blackboard.taunt_hesitate_finished and not not not blackboard.no_taunt_hesitate
+	local taunt_hesitate = is_taunted and not blackboard.taunt_hesitate_finished and not blackboard.no_taunt_hesitate
 
-	return not not alerted or not not taunt_hesitate
+	return alerted or taunt_hesitate
 end
 
 BTConditions.confirmed_player_sighting = function (blackboard)
 	-- function 97
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.commander_disabled_or_resuming = function (blackboard)
 	-- function 98
-	return ALIVE[blackboard.commander_unit] and not not ScriptUnit.extension(blackboard.commander_unit, "status_system"):is_disabled() or not ALIVE[blackboard.commander_unit] and not not blackboard.disabled_resume_time
+	return ALIVE[blackboard.commander_unit] and ScriptUnit.extension(blackboard.commander_unit, "status_system"):is_disabled() or not ALIVE[blackboard.commander_unit] and blackboard.disabled_resume_time
 end
 
 BTConditions.commander_disabled = function (blackboard)
 	-- function 99
-	return not not ALIVE[blackboard.commander_unit]
+	return ALIVE[blackboard.commander_unit]
 end
 
 BTConditions.has_commander_and_follow_node = function (blackboard)
 	-- function 100
 	local commander_unit = Managers.state.entity:system("ai_commander_system"):get_commander_unit(blackboard.unit)
 
-	return not not commander_unit and not not blackboard.is_navbot_following_path
+	return commander_unit and blackboard.is_navbot_following_path
 end
 
 BTConditions.confirmed_enemy_sighting_within_commander = function (blackboard)
 	-- function 101
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.confirmed_enemy_sighting_within_commander_sticky = function (blackboard)
 	-- function 102
-	return ALIVE[blackboard.target_unit] and not not blackboard.confirmed_enemy_sighting_within_commander or not ALIVE[blackboard.target_unit] and not not blackboard.attack_locked_in_t
+	return ALIVE[blackboard.target_unit] and blackboard.confirmed_enemy_sighting_within_commander or not ALIVE[blackboard.target_unit] and blackboard.attack_locked_in_t
 end
 
 BTConditions.should_teleport_to_commander = function (blackboard)
@@ -649,7 +649,7 @@ end
 
 BTConditions.has_command_attack = function (blackboard)
 	-- function 104
-	return blackboard.new_command_attack and (ALIVE[blackboard.target_unit] and not not blackboard.new_command_attack or not ALIVE[blackboard.target_unit] and (ALIVE[blackboard.locked_target_unit] and not not blackboard.undergoing_command_attack or not ALIVE[blackboard.locked_target_unit] and not not blackboard.attack_locked_in_t)) or not blackboard.new_command_attack and not not blackboard.undergoing_command_attack
+	return blackboard.new_command_attack and (ALIVE[blackboard.target_unit] and blackboard.new_command_attack or not ALIVE[blackboard.target_unit] and (ALIVE[blackboard.locked_target_unit] and blackboard.undergoing_command_attack or not ALIVE[blackboard.locked_target_unit] and blackboard.attack_locked_in_t)) or not blackboard.new_command_attack and blackboard.undergoing_command_attack
 end
 
 BTConditions.pet_skeleton_is_armored = function (blackboard)
@@ -689,7 +689,7 @@ end
 
 BTConditions.suiciding_whilst_staggering = function (blackboard)
 	-- function 112
-	return not not blackboard.stagger
+	return blackboard.stagger
 end
 
 BTConditions.has_goal_destination = function (blackboard)
@@ -704,7 +704,7 @@ end
 
 BTConditions.is_falling = function (blackboard)
 	-- function 115
-	return not not blackboard.is_falling
+	return blackboard.is_falling
 end
 
 BTConditions.is_gutter_runner_falling = function (blackboard)
@@ -729,32 +729,32 @@ end
 
 BTConditions.should_use_interest_point = function (blackboard)
 	-- function 120
-	return not blackboard.ignore_interest_points and not not not blackboard.confirmed_player_sighting
+	return not blackboard.ignore_interest_points and not blackboard.confirmed_player_sighting
 end
 
 BTConditions.give_command = function (blackboard)
 	-- function 121
-	return not not blackboard.give_command
+	return blackboard.give_command
 end
 
 BTConditions.is_fleeing = function (blackboard)
 	-- function 122
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.loot_rat_stagger = function (blackboard)
 	-- function 123
-	return not not BTConditions.stagger(blackboard)
+	return (BTConditions.stagger(blackboard))
 end
 
 BTConditions.loot_rat_dodge = function (blackboard)
 	-- function 124
-	return not not blackboard.dodge_vector
+	return blackboard.dodge_vector
 end
 
 BTConditions.loot_rat_flee = function (blackboard)
 	-- function 125
-	return not not BTConditions.confirmed_player_sighting(blackboard)
+	return (BTConditions.confirmed_player_sighting(blackboard))
 end
 
 BTConditions.defend = function (blackboard)
@@ -770,9 +770,9 @@ end
 BTConditions.can_trigger_move_to = function (blackboard)
 	-- function 128
 	local t = Managers.time:time("game")
-	local trigger_time = not not blackboard.trigger_time
+	local trigger_time = blackboard.trigger_time
 
-	return trigger_time < t and not not unit_alive(blackboard.target_unit)
+	return trigger_time < t and unit_alive(blackboard.target_unit)
 end
 
 BTConditions.globadier_skulked_for_too_long = function (blackboard)
@@ -799,7 +799,7 @@ BTConditions.ratling_gunner_skulked_for_too_long = function (blackboard)
 	if unit_alive(blackboard.target_unit) then
 		local skulk_timeout = 15
 		local pattern_data = blackboard.attack_pattern_data
-		local last_fired = not not pattern_data and not not pattern_data.last_fired
+		local last_fired = pattern_data and pattern_data.last_fired
 		local t = Managers.time:time("game")
 		local lurk_start = blackboard.lurk_start
 
@@ -818,12 +818,12 @@ BTConditions.should_defensive_idle = function (blackboard)
 	local t = Managers.time:time("game")
 	local time_since_surrounding_players = t - blackboard.surrounding_players_last
 
-	return not not blackboard.defensive_mode_duration
+	return blackboard.defensive_mode_duration
 end
 
 BTConditions.should_be_defensive = function (blackboard)
 	-- function 132
-	return not not blackboard.defensive_mode_duration
+	return blackboard.defensive_mode_duration
 end
 
 BTConditions.boss_phase_two = function (blackboard)
@@ -843,34 +843,34 @@ end
 
 BTConditions.switching_weapons = function (blackboard)
 	-- function 136
-	return not not blackboard.switching_weapons
+	return blackboard.switching_weapons
 end
 
 BTConditions.warcamp_retaliation_aoe = function (blackboard)
 	-- function 137
-	return not not Unit.alive(blackboard.target_unit)
+	return (Unit.alive(blackboard.target_unit))
 end
 
 BTConditions.is_mounted = function (blackboard)
 	-- function 138
 	local mount_unit = blackboard.mounted_data.mount_unit
 
-	return not blackboard.knocked_off_mount and not not HEALTH_ALIVE[mount_unit]
+	return not blackboard.knocked_off_mount and HEALTH_ALIVE[mount_unit]
 end
 
 BTConditions.knocked_off_mount = function (blackboard)
 	-- function 139
-	return blackboard.knocked_off_mount and not not HEALTH_ALIVE[blackboard.target_unit] or not blackboard.knocked_off_mount and not HEALTH_ALIVE[blackboard.mounted_data.mount_unit] and not not HEALTH_ALIVE[blackboard.target_unit]
+	return blackboard.knocked_off_mount and HEALTH_ALIVE[blackboard.target_unit] or not blackboard.knocked_off_mount and not HEALTH_ALIVE[blackboard.mounted_data.mount_unit] and HEALTH_ALIVE[blackboard.target_unit]
 end
 
 BTConditions.ready_to_cast_spell = function (blackboard)
 	-- function 140
-	return not not blackboard.ready_to_summon
+	return blackboard.ready_to_summon
 end
 
 BTConditions.grey_seer_teleport_spell = function (blackboard)
 	-- function 141
-	return blackboard.current_spell_name == "teleport" and not not blackboard.quick_teleport
+	return blackboard.current_spell_name == "teleport" and blackboard.quick_teleport
 end
 
 BTConditions.grey_seer_vermintide_spell = function (blackboard)
@@ -922,7 +922,7 @@ end
 
 BTConditions.beastmen_standard_bearer_place_standard = function (blackboard)
 	-- function 150
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.beastmen_standard_bearer_pickup_standard = function (blackboard)
@@ -936,7 +936,7 @@ BTConditions.beastmen_standard_bearer_pickup_standard = function (blackboard)
 	if blackboard.moving_to_pick_up_standard then
 		return true
 	else
-		return not not blackboard.has_placed_standard
+		return blackboard.has_placed_standard
 	end
 end
 
@@ -949,57 +949,57 @@ end
 
 BTConditions.ungor_archer_enter_melee_combat = function (blackboard)
 	-- function 153
-	return not not blackboard.confirmed_player_sighting
+	return blackboard.confirmed_player_sighting
 end
 
 BTConditions.bestigor_at_smartobject = function (blackboard)
 	-- function 154
 	local in_charge_action = blackboard.charge_state ~= nil
-	local at_smartobject = not in_charge_action and not not BTConditions.at_smartobject(blackboard)
+	local at_smartobject = not in_charge_action and BTConditions.at_smartobject(blackboard)
 
 	return at_smartobject
 end
 
 BTConditions.confirmed_player_sighting_standard_bearer = function (blackboard)
 	-- function 155
-	return not not unit_alive(blackboard.target_unit)
+	return (unit_alive(blackboard.target_unit))
 end
 
 BTConditions.standard_bearer_should_be_defensive = function (blackboard)
 	-- function 156
 	local pickup_standard_distance = blackboard.breed.pickup_standard_distance
 	local defensive_threshold_distance = blackboard.breed.defensive_threshold_distance
-	local in_combat = not not unit_alive(blackboard.target_unit)
+	local in_combat = unit_alive(blackboard.target_unit)
 	local target_distance_to_standard = blackboard.target_distance_to_standard
-	local target_is_within_range = not not target_distance_to_standard and defensive_threshold_distance <= target_distance_to_standard and target_distance_to_standard <= pickup_standard_distance
+	local target_is_within_range = target_distance_to_standard and defensive_threshold_distance <= target_distance_to_standard and target_distance_to_standard <= pickup_standard_distance
 	local not_attacking = blackboard.move_state ~= "attacking"
 
-	return not not in_combat and not not target_is_within_range and not not not_attacking
+	return in_combat and target_is_within_range and not_attacking
 end
 
 BTConditions.switch_to_melee_weapon = function (blackboard)
 	-- function 157
-	return not not BTConditions.ungor_archer_enter_melee_combat(blackboard)
+	return (BTConditions.ungor_archer_enter_melee_combat(blackboard))
 end
 
 BTConditions.confirmed_player_sighting_and_has_switched_weapons = function (blackboard)
 	-- function 158
-	return not not blackboard.confirmed_player_sighting
+	return blackboard.confirmed_player_sighting
 end
 
 BTConditions.player_controller_is_alive = function (blackboard)
 	-- function 159
-	return not not blackboard.player_controller_unit
+	return blackboard.player_controller_unit
 end
 
 BTConditions.player_controller_is_in_combat = function (blackboard)
 	-- function 160
-	return not not blackboard.player_controller_unit
+	return blackboard.player_controller_unit
 end
 
 BTConditions.is_in_inn = function (blackboard)
 	-- function 161
-	return not not blackboard.inn_idle_spots
+	return blackboard.inn_idle_spots
 end
 
 BTConditions.has_no_idle_spot = function (blackboard)

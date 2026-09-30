@@ -3,7 +3,7 @@
 local font, font_size = "arial", 26
 local font_mtrl = "materials/fonts/" .. font
 
-Debug = not not Debug
+Debug = Debug
 
 Debug.setup = function (world, world_name)
 	-- function 1
@@ -82,7 +82,7 @@ Debug.update = function (t, dt)
 		local instance_text_color = data.color
 		local text_pos = Vector3(130, pos, 700)
 
-		Gui.text(gui, text, font_mtrl, font_size, font, text_pos, instance_text_color and not not instance_text_color:unbox() or not instance_text_color and not not text_color, bitmaskflags)
+		Gui.text(gui, text, font_mtrl, font_size, font, text_pos, instance_text_color and instance_text_color:unbox() or not instance_text_color and text_color, bitmaskflags)
 
 		if show_debug_text_background then
 			local text_min, text_max = Gui.text_extents(gui, text, font_mtrl, font_size)
@@ -128,14 +128,14 @@ Debug.update = function (t, dt)
 
 	if script_data.debug_cycle_select_inventory_item then
 		local matchmaking_manager = Managers.matchmaking
-		local ingame_ui = not not matchmaking_manager and not not matchmaking_manager._ingame_ui
-		local inventory_view = not not ingame_ui and ingame_ui.current_view == "inventory_view"
+		local ingame_ui = matchmaking_manager and matchmaking_manager._ingame_ui
+		local inventory_view = ingame_ui and ingame_ui.current_view == "inventory_view"
 
 		if inventory_view then
-			local next_select_at = not not Debug.next_select_at
+			local next_select_at = Debug.next_select_at
 
 			if next_select_at < t then
-				local selected_item = not not Debug.previous_selected_item
+				local selected_item = Debug.previous_selected_item
 				local next_select_item = selected_item + 1
 
 				if next_select_item > 7 then
@@ -306,7 +306,7 @@ Debug.world_text = function (pos, text, color_name)
 	end
 
 	local wt = Debug.world_texts
-	local color = not not debug_colors[color_name]
+	local color = debug_colors[color_name]
 	local index = #wt + 1
 
 	if wt[index] then
@@ -347,7 +347,7 @@ Debug.world_sticky_text = function (pos, text, color_name)
 
 	Debug.num_world_sticky_texts = math.clamp(Debug.num_world_sticky_texts + 1, 0, max_world_sticky)
 
-	local color = not not debug_colors[color_name]
+	local color = debug_colors[color_name]
 
 	if wt[index] then
 		wt[index][1] = text
@@ -389,7 +389,7 @@ Debug.sticky_text = function (...)
 	}
 	local delay = 3
 
-	delay = t[#t - 1] ~= "delay" or not not t[#t] or not not delay
+	delay = t[#t - 1] ~= "delay" or t[#t] or delay
 
 	table.insert(Debug.sticky_texts, {
 		string.format(...),
@@ -399,11 +399,11 @@ end
 
 Debug.drawer = function (name, disabled)
 	-- function 14
-	name = not not name or not not "default"
+	name = name or "default"
 
 	local lo = Debug.line_objects[name]
 
-	lo = not not lo or not not Debug.create_line_object(name)
+	lo = lo or Debug.create_line_object(name)
 
 	return DebugDrawer:new(lo, to_boolean(not disabled))
 end
@@ -411,10 +411,10 @@ end
 Debug.draw_text = function (text, text_pos, opt_font_size, opt_color)
 	-- function 15
 	local gui = Debug.gui
-	local size = not not opt_font_size or not not font_size
+	local size = opt_font_size or font_size
 	local pos = Vector3(text_pos.x, RESOLUTION_LOOKUP.res_h - text_pos.y - size, text_pos.z)
 
-	Gui.text(gui, text, font_mtrl, not not opt_font_size or not not font_size, font, pos, not not opt_color or not not Color(120, 220, 0), "shadow")
+	Gui.text(gui, text, font_mtrl, opt_font_size or font_size, font, pos, opt_color or Color(120, 220, 0), "shadow")
 end
 
 Debug.draw_rect = function (pos, size, color)
@@ -511,7 +511,7 @@ Debug.level_loaded = function (level_name)
 
 	local peer_id = Network.peer_id()
 	local player = Managers.player:player_from_peer_id(peer_id)
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if not Unit.alive(player_unit) then
 		return false
@@ -574,16 +574,16 @@ end
 
 Debug.test_spawn_unit = function (profile_name, career_index)
 	-- function 24
-	profile_name = not not profile_name or not not "wood_elf"
-	career_index = not not career_index or not not 1
+	profile_name = profile_name or "wood_elf"
+	career_index = career_index or 1
 
 	local profile_index = FindProfileIndex(profile_name)
 	local profile = SPProfiles[profile_index]
 	local career = profile.careers[career_index]
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
-	local item_data = not not skin_item and not not skin_item.data
-	local skin_name = item_data and not not item_data.name or not item_data and not not career.base_skin
+	local item_data = skin_item and skin_item.data
+	local skin_name = item_data and item_data.name or not item_data and career.base_skin
 	local package_names = {}
 	local skin_data = Cosmetics[skin_name]
 	local unit_name = skin_data.third_person
@@ -631,16 +631,16 @@ Debug.test_despawn_unit = function (profile_name, career_index)
 
 	World.destroy_unit(world, character_unit)
 
-	profile_name = not not profile_name or not not "wood_elf"
-	career_index = not not career_index or not not 1
+	profile_name = profile_name or "wood_elf"
+	career_index = career_index or 1
 
 	local profile_index = FindProfileIndex(profile_name)
 	local profile = SPProfiles[profile_index]
 	local career = profile.careers[career_index]
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
-	local item_data = not not skin_item and not not skin_item.data
-	local skin_name = item_data and not not item_data.name or not item_data and not not career.base_skin
+	local item_data = skin_item and skin_item.data
+	local skin_name = item_data and item_data.name or not item_data and career.base_skin
 	local package_names = {}
 	local skin_data = Cosmetics[skin_name]
 	local unit_name = skin_data.third_person
@@ -668,7 +668,7 @@ Debug.create_jira_issue = function ()
 	end
 end
 
-Debug._hook_data = not not Debug._hook_data
+Debug._hook_data = Debug._hook_data
 
 Debug.hook = function (obj, method, handler)
 	-- function 27

@@ -21,7 +21,7 @@ BTPackMasterAttackAction.enter = function (self, unit, blackboard, t)
 	blackboard.attack_aborted = nil
 	blackboard.attack_success = nil
 	blackboard.drag_target_unit = blackboard.target_unit
-	blackboard.target_unit_status_extension = not not ScriptUnit.has_extension(blackboard.target_unit, "status_system")
+	blackboard.target_unit_status_extension = ScriptUnit.has_extension(blackboard.target_unit, "status_system")
 
 	blackboard.navigation_extension:set_enabled(false)
 	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())

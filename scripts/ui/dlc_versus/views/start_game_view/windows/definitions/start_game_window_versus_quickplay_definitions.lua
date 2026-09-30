@@ -494,7 +494,7 @@ local selector_input_definitions = {
 			-- function 22
 			local gamepad_active = Managers.input:is_device_active("gamepad")
 
-			return not not gamepad_active and not not not self.gamepad_active_last_frame
+			return gamepad_active and not self.gamepad_active_last_frame
 		end,
 		on_enter = function (self, dt, t)
 			-- function 23

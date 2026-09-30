@@ -9,7 +9,7 @@ local function debug_print(message, ...)
 	end
 end
 
-TwitchVoteTemplates = not not TwitchVoteTemplates
+TwitchVoteTemplates = TwitchVoteTemplates
 
 local function add_buff_to_all_players(buff_name)
 	-- function 2
@@ -38,7 +38,7 @@ TwitchVoteTemplates.twitch_vote_activate_splitting_enemies = {
 	},
 	condition_func = function (current_vote)
 		-- function 3
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("splitting_enemies") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("splitting_enemies") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 4
@@ -69,7 +69,7 @@ TwitchVoteTemplates.twitch_vote_activate_leash = {
 		-- function 5
 		local num_human_players = Managers.player:num_human_players()
 
-		return num_human_players > 1 and not Managers.state.game_mode._mutator_handler:has_activated_mutator("leash") and not not not twitch_settings.disable_mutators
+		return num_human_players > 1 and not Managers.state.game_mode._mutator_handler:has_activated_mutator("leash") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 6
@@ -98,7 +98,7 @@ TwitchVoteTemplates.twitch_vote_activate_slayer_curse = {
 	},
 	condition_func = function (current_vote)
 		-- function 7
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("slayer_curse") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("slayer_curse") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 8
@@ -127,7 +127,7 @@ TwitchVoteTemplates.twitch_vote_activate_bloodlust = {
 	},
 	condition_func = function (current_vote)
 		-- function 9
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("bloodlust") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("bloodlust") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 10
@@ -156,7 +156,7 @@ TwitchVoteTemplates.twitch_vote_activate_realism = {
 	},
 	condition_func = function (current_vote)
 		-- function 11
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("realism") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("realism") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 12
@@ -184,7 +184,7 @@ TwitchVoteTemplates.twitch_vote_activate_darkness = {
 	},
 	condition_func = function (current_vote)
 		-- function 13
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("darkness") and not Managers.state.game_mode._mutator_handler:has_activated_mutator("twitch_darkness") and not Managers.state.game_mode._mutator_handler:has_activated_mutator("night_mode") and Managers.level_transition_handler:get_current_environment_variation_id() ~= 0 and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("darkness") and not Managers.state.game_mode._mutator_handler:has_activated_mutator("twitch_darkness") and not Managers.state.game_mode._mutator_handler:has_activated_mutator("night_mode") and Managers.level_transition_handler:get_current_environment_variation_id() ~= 0 and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 14
@@ -212,7 +212,7 @@ TwitchVoteTemplates.twitch_vote_activate_ticking_bomb = {
 	},
 	condition_func = function (current_vote)
 		-- function 15
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("ticking_bomb") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("ticking_bomb") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 16
@@ -241,7 +241,7 @@ TwitchVoteTemplates.twitch_vote_activate_lightning_strike = {
 	},
 	condition_func = function (current_vote)
 		-- function 17
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("lightning_strike") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("lightning_strike") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 18
@@ -270,7 +270,7 @@ TwitchVoteTemplates.twitch_vote_activate_chasing_spirits = {
 	},
 	condition_func = function (current_vote)
 		-- function 19
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("chasing_spirits") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("chasing_spirits") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 20
@@ -299,7 +299,7 @@ TwitchVoteTemplates.twitch_vote_activate_flames = {
 	},
 	condition_func = function (current_vote)
 		-- function 21
-		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("flames") and not not not twitch_settings.disable_mutators
+		return not Managers.state.game_mode._mutator_handler:has_activated_mutator("flames") and not twitch_settings.disable_mutators
 	end,
 	on_success = function (is_server)
 		-- function 22

@@ -53,7 +53,7 @@ TagQueryLoader.init = function (self, tagquery_database, dialogues_destination_t
 		add_dialogues = function (dialogues)
 			-- function 4
 			for name, dialogue in pairs(dialogues) do
-				dialogue.category = not not dialogue.category
+				dialogue.category = dialogue.category
 				dialogues_destination_table[name] = dialogue
 			end
 		end

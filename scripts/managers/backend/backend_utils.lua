@@ -132,7 +132,7 @@ BackendUtils.get_total_power_level = function (profile_name, career_name, option
 		return MIN_POWER_LEVEL_CAP
 	end
 
-	local game_mode_key = not not optional_game_mode_key or not not game_mode_manager:game_mode_key()
+	local game_mode_key = optional_game_mode_key or game_mode_manager:game_mode_key()
 	local game_mode_setting = GameModeSettings[game_mode_key]
 
 	if game_mode_setting and game_mode_setting.power_level_override then
@@ -145,7 +145,7 @@ end
 BackendUtils.get_item_template = function (item_data, backend_id)
 	-- function 10
 	local backend_items = Managers.backend:get_interface("items")
-	local backend_id = not not item_data.backend_id
+	local backend_id = item_data.backend_id
 	local template = backend_items:get_item_template(item_data, backend_id)
 
 	return template
@@ -164,12 +164,12 @@ BackendUtils.get_item_units = function (item_data, backend_id, skin, career_name
 	local unit = item_data.unit
 	local material = item_data.material
 	local icon = item_data.hud_icon
-	local backend_id = not not item_data.backend_id
+	local backend_id = item_data.backend_id
 	local skin_name, material_settings_name
 
 	if career_name then
-		left_hand_unit = not item_data.left_hand_unit_override or not not item_data.left_hand_unit_override[career_name] or not not left_hand_unit
-		right_hand_unit = not item_data.right_hand_unit_override or not not item_data.right_hand_unit_override[career_name] or not not right_hand_unit
+		left_hand_unit = not item_data.left_hand_unit_override or item_data.left_hand_unit_override[career_name] or left_hand_unit
+		right_hand_unit = not item_data.right_hand_unit_override or item_data.right_hand_unit_override[career_name] or right_hand_unit
 	end
 
 	if backend_id or skin then
@@ -194,8 +194,8 @@ BackendUtils.get_item_units = function (item_data, backend_id, skin, career_name
 			material_settings_name = skin_template.material_settings_name
 
 			if career_name then
-				left_hand_unit = not skin_template.left_hand_unit_override or not not skin_template.left_hand_unit_override[career_name] or not not left_hand_unit
-				right_hand_unit = not skin_template.right_hand_unit_override or not not skin_template.right_hand_unit_override[career_name] or not not right_hand_unit
+				left_hand_unit = not skin_template.left_hand_unit_override or skin_template.left_hand_unit_override[career_name] or left_hand_unit
+				right_hand_unit = not skin_template.right_hand_unit_override or skin_template.right_hand_unit_override[career_name] or right_hand_unit
 			end
 		end
 	end
@@ -221,7 +221,7 @@ BackendUtils.get_item_units = function (item_data, backend_id, skin, career_name
 	end
 
 	if item_data.item_type ~= "chips" then
-		fassert(false, "no left hand or right hand unit defined for : " .. not not item_data.backend_id)
+		fassert(false, "no left hand or right hand unit defined for : " .. item_data.backend_id)
 	end
 end
 

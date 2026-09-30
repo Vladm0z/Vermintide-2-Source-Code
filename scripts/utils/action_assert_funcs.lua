@@ -138,7 +138,7 @@ ActionAssertFuncs = {
 		fassert(default_linked_action, "No default_action set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
 		fassert(actions, "No default_action set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
 
-		local default_action_name = not not default_linked_action.action
+		local default_action_name = default_linked_action.action
 		local default_action = actions[default_action_name]
 
 		fassert(default_action, "Linked to invalid default action [\"%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", default_action_name, action_name, sub_action_name, weapon_name)
@@ -158,7 +158,7 @@ ActionAssertFuncs = {
 
 			fassert(condition, "No linked sub action condition set for [\"%s.%s\"] in weapon [\"%s\"]", action_name, sub_action_name, weapon_name)
 
-			local linked_action = not not conditional_actions[i].action
+			local linked_action = conditional_actions[i].action
 			local action = actions[linked_action]
 
 			fassert(action, "Linked to invalid action [\"%s\"] for [\"%s.%s\"] in weapon [\"%s\"]", linked_action, action_name, sub_action_name, weapon_name)

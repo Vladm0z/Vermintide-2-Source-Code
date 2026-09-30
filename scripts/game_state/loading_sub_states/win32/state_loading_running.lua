@@ -28,7 +28,7 @@ StateLoadingRunning.on_enter = function (self, params)
 
 		loading_context.previous_session_error = nil
 
-		self.parent:create_popup(previous_session_error, not not self._previous_session_error_headers_lookup[previous_session_error], "continue")
+		self.parent:create_popup(previous_session_error, self._previous_session_error_headers_lookup[previous_session_error], "continue")
 	end
 end
 

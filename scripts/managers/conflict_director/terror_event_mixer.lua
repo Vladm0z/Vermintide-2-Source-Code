@@ -19,12 +19,12 @@ end
 
 local function add_spawned_counting(event, optional_data, spawn_counter_category)
 	-- function 3
-	optional_data = not not optional_data or not not {}
+	optional_data = optional_data or {}
 
 	local function spawned_func_counter(_, _, _)
 		-- function 4
-		event.data.spawn_counter = not not event.data.spawn_counter
-		event.data.spawn_counter[spawn_counter_category] = not not event.data.spawn_counter[spawn_counter_category] + 1
+		event.data.spawn_counter = event.data.spawn_counter
+		event.data.spawn_counter[spawn_counter_category] = event.data.spawn_counter[spawn_counter_category] + 1
 	end
 
 	local function despawned_func_counter(_, _, _)
@@ -59,15 +59,15 @@ local function add_spawned_counting(event, optional_data, spawn_counter_category
 	return optional_data
 end
 
-TerrorEventMixer = not not TerrorEventMixer
+TerrorEventMixer = TerrorEventMixer
 
 local TerrorEventMixer = TerrorEventMixer
 
-TerrorEventMixer.active_events = not not TerrorEventMixer.active_events
+TerrorEventMixer.active_events = TerrorEventMixer.active_events
 TerrorEventMixer.active_event_i = -1
-TerrorEventMixer.start_event_list = not not TerrorEventMixer.start_event_list
-TerrorEventMixer.finished_events = not not TerrorEventMixer.finished_events
-TerrorEventMixer.optional_data = not not TerrorEventMixer.optional_data
+TerrorEventMixer.start_event_list = TerrorEventMixer.start_event_list
+TerrorEventMixer.finished_events = TerrorEventMixer.finished_events
+TerrorEventMixer.optional_data = TerrorEventMixer.optional_data
 TerrorEventMixer.incrementing_id = 1
 TerrorEventMixer.init_functions = {
 	text = function (event, element, t)
@@ -116,7 +116,7 @@ TerrorEventMixer.init_functions = {
 
 		if not breed_spawn_table_per_difficulty then
 			local breed_name = element.breed_name
-			local num_to_spawn = not not element.amount
+			local num_to_spawn = element.amount
 			local num_to_spawn_scaled = element.difficulty_amount
 
 			if type(breed_name) == "table" then
@@ -126,7 +126,7 @@ TerrorEventMixer.init_functions = {
 			if num_to_spawn_scaled then
 				local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
 
-				chosen_amount = not not chosen_amount or not not num_to_spawn_scaled.hardest
+				chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
 
 				if type(chosen_amount) == "table" then
 					num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
@@ -149,13 +149,13 @@ TerrorEventMixer.init_functions = {
 		end
 
 		local difficulty, difficulty_tweak = Managers.state.difficulty:get_difficulty()
-		local spawn_table = not not breed_spawn_table_per_difficulty[difficulty]
+		local spawn_table = breed_spawn_table_per_difficulty[difficulty]
 		local num_to_spawn = #spawn_table
-		local distance_to_enemies = not not element.distance_to_enemies
+		local distance_to_enemies = element.distance_to_enemies
 		local optional_data_table = {}
 
 		for i = 1, num_to_spawn do
-			local optional_data = element.optional_data and not not table.clone(element.optional_data) or not element.optional_data and not not {}
+			local optional_data = element.optional_data and table.clone(element.optional_data) or not element.optional_data and {}
 
 			if element.spawn_counter_category then
 				optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
@@ -176,7 +176,7 @@ TerrorEventMixer.init_functions = {
 		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 		local spawn_positions = {}
 
-		event.spawn_at = t + not not element.spawn_delay
+		event.spawn_at = t + element.spawn_delay
 		event.spawn_positions = spawn_positions
 		event.optional_data_table = optional_data_table
 		event.spawn_table = spawn_table
@@ -200,8 +200,8 @@ TerrorEventMixer.init_functions = {
 		local max_distance = element.max_distance
 		local above_max = element.above_max
 		local below_max = element.below_max
-		local tries = not not element.tries
-		local check_line_of_sight = center_unit and not not element.check_line_of_sight or not center_unit and not not false
+		local tries = element.tries
+		local check_line_of_sight = center_unit and element.check_line_of_sight
 		local world = Managers.world:world("level_world")
 		local physics_world = World.physics_world(world)
 
@@ -283,15 +283,15 @@ TerrorEventMixer.init_functions = {
 	end,
 	debug_horde = function (event, element, t)
 		-- function 25
-		event.ends_at = t + (element.duration and not not ConflictUtils.random_interval(element.duration) or not element.duration and not not 0)
+		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or not element.duration and 0)
 	end,
 	event_horde = function (event, element, t)
 		-- function 26
-		event.ends_at = t + (element.duration and not not ConflictUtils.random_interval(element.duration) or not element.duration and not not 0)
+		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or not element.duration and 0)
 
 		local conflict_director = Managers.state.conflict
-		local terror_event_type = not not element.spawner_id
-		local optional_data = not not element.optional_data
+		local terror_event_type = element.spawner_id
+		local optional_data = element.optional_data
 
 		if element.spawn_counter_category then
 			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
@@ -315,13 +315,13 @@ TerrorEventMixer.init_functions = {
 	end,
 	ambush_horde = function (event, element, t)
 		-- function 27
-		local optional_data = not not element.optional_data
+		local optional_data = element.optional_data
 
 		if element.spawn_counter_category then
 			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
 		end
 
-		event.ends_at = t + (element.duration and not not ConflictUtils.random_interval(element.duration) or not element.duration and not not 0)
+		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or not element.duration and 0)
 
 		local conflict_director = Managers.state.conflict
 		local override_epicenter_pos
@@ -345,10 +345,10 @@ TerrorEventMixer.init_functions = {
 	end,
 	force_horde = function (event, element, t)
 		-- function 29
-		event.ends_at = t + (element.duration and not not ConflictUtils.random_interval(element.duration) or not element.duration and not not 0)
+		event.ends_at = t + (element.duration and ConflictUtils.random_interval(element.duration) or not element.duration and 0)
 
 		local horde_type = element.horde_type
-		local valid_horde_type = horde_type == "vector" or horde_type == "ambush" or horde_type == "" or horde_type == "random" or not not not horde_type
+		local valid_horde_type = horde_type == "vector" or horde_type == "ambush" or horde_type == "" or horde_type == "random" or not horde_type
 
 		assert(valid_horde_type, "Bad terror events element 'horde_type' was set to %s", horde_type)
 
@@ -422,10 +422,10 @@ TerrorEventMixer.init_functions = {
 	end,
 	play_stinger = function (event, element, t)
 		-- function 37
-		local stinger_name = not not element.stinger_name
+		local stinger_name = element.stinger_name
 		local use_origin_unit_position = element.use_origin_unit_position
 		local origin_unit = event.data.origin_unit
-		local optional_pos = not not element.optional_pos
+		local optional_pos = element.optional_pos
 		local world = Managers.state.conflict._world
 		local wwise_world = Managers.world:wwise_world(world)
 
@@ -436,7 +436,7 @@ TerrorEventMixer.init_functions = {
 				WwiseUtils.trigger_position_event(world, stinger_name, pos)
 			end
 
-			local rpc = optional_pos and not not "rpc_server_audio_position_event" or not optional_pos and not not "rpc_server_audio_event"
+			local rpc = optional_pos and "rpc_server_audio_position_event" or not optional_pos and "rpc_server_audio_event"
 
 			Managers.state.network.network_transmit:send_rpc_clients(rpc, NetworkLookup.sound_events[stinger_name], pos)
 		else
@@ -482,7 +482,7 @@ TerrorEventMixer.init_functions = {
 	end,
 	set_freeze_condition = function (event, element, t)
 		-- function 43
-		event.max_active_enemies = not not element.max_active_enemies
+		event.max_active_enemies = element.max_active_enemies
 	end,
 	set_breed_event_horde_spawn_limit = function (event, element, t)
 		-- function 44
@@ -503,7 +503,7 @@ TerrorEventMixer.init_functions = {
 	close_boss_doors = function (event, element, t)
 		-- function 46
 		local data = event.data
-		local map_section = not not data.map_section
+		local map_section = data.map_section
 		local group_data = data.group_data
 		local group_id = group_data.id
 
@@ -529,10 +529,10 @@ TerrorEventMixer.init_functions = {
 
 			local dir = event_data.dir
 
-			rotation = dir and (not not Quaternion.look(Vector3(dir[1], dir[2], 0)) or not not Quaternion.look(Vector3(0, 1, 0))) or not dir and not not Quaternion.look(Vector3(0, 1, 0))
+			rotation = dir and (Quaternion.look(Vector3(dir[1], dir[2], 0)) or Quaternion.look(Vector3(0, 1, 0))) or not dir and Quaternion.look(Vector3(0, 1, 0))
 		end
 
-		local side_id = not not event_data.side_id
+		local side_id = event_data.side_id
 		local position
 		local pos_from_recycler = event_data.optional_pos
 
@@ -688,14 +688,14 @@ TerrorEventMixer.run_functions = {
 	spawn = function (event, element, t, dt)
 		-- function 61
 		local data = event.data
-		local optional_data = not not element.optional_data
+		local optional_data = element.optional_data
 		local gizmo_unit = data.gizmo_unit
 
 		if gizmo_unit then
 			local spawn_behind_door = Unit.get_data(gizmo_unit, "is_behind_door")
 
 			if spawn_behind_door then
-				optional_data = not not optional_data or not not {}
+				optional_data = optional_data or {}
 				optional_data.spawn_behind_door = spawn_behind_door
 			end
 		end
@@ -704,7 +704,7 @@ TerrorEventMixer.run_functions = {
 			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
 		end
 
-		local position = data.optional_pos and not not data.optional_pos:unbox() or not data.optional_pos and not not data.origin_position
+		local position = data.optional_pos and data.optional_pos:unbox() or not data.optional_pos and data.origin_position
 		local conflict_director = Managers.state.conflict
 		local group_data = data.group_data
 		local breed_name = element.breed_name
@@ -727,9 +727,9 @@ TerrorEventMixer.run_functions = {
 		-- function 62
 		local breed_name
 		local check_name = element.breed_name
-		local num_to_spawn = not not element.amount
+		local num_to_spawn = element.amount
 		local num_to_spawn_scaled = element.difficulty_amount
-		local optional_data = not not element.optional_data
+		local optional_data = element.optional_data
 
 		if element.spawn_counter_category then
 			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
@@ -740,7 +740,7 @@ TerrorEventMixer.run_functions = {
 		if num_to_spawn_scaled then
 			local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
 
-			chosen_amount = not not chosen_amount or not not num_to_spawn_scaled.hardest
+			chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
 
 			if type(chosen_amount) == "table" then
 				num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
@@ -768,11 +768,11 @@ TerrorEventMixer.run_functions = {
 	spawn_weave_special = function (event, element, t, dt)
 		-- function 63
 		local check_name = element.breed_name
-		local num_to_spawn = not not element.amount
+		local num_to_spawn = element.amount
 		local conflict_director = Managers.state.conflict
 		local data = event.data
 		local main_path_trigger_distance = data.main_path_trigger_distance
-		local optional_data = not not element.optional_data
+		local optional_data = element.optional_data
 
 		if element.spawn_counter_category then
 			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
@@ -801,9 +801,9 @@ TerrorEventMixer.run_functions = {
 		-- function 64
 		local breed_name
 		local check_name = element.breed_name
-		local num_to_spawn = not not element.amount
+		local num_to_spawn = element.amount
 		local num_to_spawn_scaled = element.difficulty_amount
-		local optional_data = not not element.optional_data
+		local optional_data = element.optional_data
 
 		if element.spawn_counter_category then
 			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
@@ -816,7 +816,7 @@ TerrorEventMixer.run_functions = {
 		if num_to_spawn_scaled then
 			local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
 
-			chosen_amount = not not chosen_amount or not not num_to_spawn_scaled.hardest
+			chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
 
 			if type(chosen_amount) == "table" then
 				local index
@@ -857,9 +857,9 @@ TerrorEventMixer.run_functions = {
 		if Managers.player.is_server then
 			local breed_name
 			local check_name = element.breed_name
-			local num_to_spawn = not not element.amount
+			local num_to_spawn = element.amount
 			local num_to_spawn_scaled = element.difficulty_amount
-			local optional_data = not not element.optional_data
+			local optional_data = element.optional_data
 
 			if element.spawn_counter_category then
 				optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
@@ -868,7 +868,7 @@ TerrorEventMixer.run_functions = {
 			if num_to_spawn_scaled then
 				local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
 
-				chosen_amount = not not chosen_amount or not not num_to_spawn_scaled.hardest
+				chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
 
 				if type(chosen_amount) == "table" then
 					num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
@@ -914,7 +914,7 @@ TerrorEventMixer.run_functions = {
 	spawn_patrol = function (event, element, t, dt)
 		-- function 66
 		local data = event.data
-		local position = not not data and not not data.optional_pos
+		local position = data and data.optional_pos
 		local conflict_director = Managers.state.conflict
 		local patrol_template = element.patrol_template
 		local main_path_patrol = element.main_path_patrol
@@ -931,9 +931,9 @@ TerrorEventMixer.run_functions = {
 
 			conflict_director:spawn_group(patrol_template, position, patrol_data)
 		else
-			local formations = data and not not data.formations or not data and not not element.formations
+			local formations = data and data.formations or not data and element.formations
 			local num_formations = #formations
-			local random_index = num_formations > 1 and not not math.random(num_formations) or not (num_formations > 1) and not not 1
+			local random_index = num_formations > 1 and math.random(num_formations) or not (num_formations > 1) and 1
 			local formation_name = formations[random_index]
 
 			assert(PatrolFormationSettings[formation_name], "No such formation exists in PatrolFormationSettings")
@@ -943,11 +943,11 @@ TerrorEventMixer.run_functions = {
 
 			if splines then
 				local num_splines = #splines
-				local random_index = num_splines > 1 and not not math.random(num_splines) or not (num_splines > 1) and not not 1
+				local random_index = num_splines > 1 and math.random(num_splines) or not (num_splines > 1) and 1
 
 				spline_name = splines[random_index]
 			else
-				spline_name = not not data and not not data.spline_id
+				spline_name = data and data.spline_id
 			end
 
 			local spline_start_position
@@ -956,7 +956,7 @@ TerrorEventMixer.run_functions = {
 
 			formation.settings = PatrolFormationSettings[formation_name].settings
 
-			local spline_way_points = not not data and not not data.spline_way_points
+			local spline_way_points = data and data.spline_way_points
 
 			if not spline_way_points then
 				local route_data, waypoints, start_pos, one_directional = conflict_director.level_analysis:get_waypoint_spline(spline_name)
@@ -968,7 +968,7 @@ TerrorEventMixer.run_functions = {
 				end
 			end
 
-			local spline_type = data and not not data.spline_type or not data and not not element.spline_type
+			local spline_type = data and data.spline_type or not data and element.spline_type
 
 			patrol_data.spline_name = spline_name
 			patrol_data.formation = formation
@@ -986,9 +986,9 @@ TerrorEventMixer.run_functions = {
 	roaming_patrol = function (event, element, t, dt)
 		-- function 67
 		local data = event.data
-		local position = not not data.optional_pos
+		local position = data.optional_pos
 		local conflict_director = Managers.state.conflict
-		local patrol_template = not not element.patrol_template
+		local patrol_template = element.patrol_template
 		local patrol_data = {}
 		local spline_name = data.spline_name
 		local pack = data.pack
@@ -1011,7 +1011,7 @@ TerrorEventMixer.run_functions = {
 		-- function 68
 		local breed_name
 		local check_name = element.breed_name
-		local num_to_spawn = not not element.amount
+		local num_to_spawn = element.amount
 		local num_to_spawn_scaled = element.difficulty_amount
 
 		if type(check_name) == "table" then
@@ -1023,7 +1023,7 @@ TerrorEventMixer.run_functions = {
 		if num_to_spawn_scaled then
 			local chosen_amount = Managers.state.difficulty:get_difficulty_value_from_table(num_to_spawn_scaled)
 
-			chosen_amount = not not chosen_amount or not not num_to_spawn_scaled.hardest
+			chosen_amount = chosen_amount or num_to_spawn_scaled.hardest
 
 			if type(chosen_amount) == "table" then
 				num_to_spawn = chosen_amount[Math.random(1, #chosen_amount)]
@@ -1034,7 +1034,7 @@ TerrorEventMixer.run_functions = {
 			num_to_spawn = num_to_spawn[Math.random(1, #num_to_spawn)]
 		end
 
-		local optional_data = not not element.optional_data
+		local optional_data = element.optional_data
 
 		if element.spawn_counter_category then
 			optional_data = add_spawned_counting(event, optional_data, element.spawn_counter_category)
@@ -1042,8 +1042,8 @@ TerrorEventMixer.run_functions = {
 
 		local hero_side = Managers.state.side:get_side_from_name("heroes")
 		local player_positions = hero_side.PLAYER_AND_BOT_POSITIONS
-		local distance_to_players = not not element.distance_to_players
-		local distance_to_enemies = not not element.distance_to_enemies
+		local distance_to_players = element.distance_to_players
+		local distance_to_enemies = element.distance_to_enemies
 
 		local function filter_func(pos, invalid_pos_list)
 			-- function 69
@@ -1079,8 +1079,8 @@ TerrorEventMixer.run_functions = {
 		for i = 1, num_to_spawn do
 			local random_player = PlayerUtils.get_random_alive_hero()
 			local player_position = POSITION_LOOKUP[random_player]
-			local distance = not not element.spawn_distance
-			local spread = not not element.spread
+			local distance = element.spawn_distance
+			local spread = element.spread
 			local spawn_pos = ConflictUtils.get_spawn_pos_on_circle_with_func(nav_world, player_position, distance, spread, 30, filter_func, invalid_pos_list)
 
 			if spawn_pos then
@@ -1151,7 +1151,7 @@ TerrorEventMixer.run_functions = {
 					end
 				end
 
-				rotation = not not rotation or not not Quaternion.identity()
+				rotation = rotation or Quaternion.identity()
 
 				conflict_director:spawn_one(breed, spawn_pos_unboxed, group_data, optional_data, rotation)
 
@@ -1187,7 +1187,7 @@ TerrorEventMixer.run_functions = {
 
 			local center_position_unboxed = event.center_position:unbox()
 			local num_to_spawn = #spawn_positions
-			local num_spawned = event.num_spawned and not not (event.num_spawned + 1) or not event.num_spawned and not not 1
+			local num_spawned = event.num_spawned and event.num_spawned + 1 or not event.num_spawned and 1
 			local spawn_batch_size = Math.random(element.staggered_spawn_batch_size[1], element.staggered_spawn_batch_size[2])
 			local next_spawn_count = math.min(num_spawned + spawn_batch_size, num_to_spawn)
 
@@ -1290,7 +1290,7 @@ TerrorEventMixer.run_functions = {
 			if pos then
 				local dir = center_pos - pos
 				local spawn_rot = Quaternion.look(Vector3(dir.x, dir.y, 1))
-				local breed = Breeds[not not conflict_director._debug_breed]
+				local breed = Breeds[conflict_director._debug_breed]
 				local optional_data
 
 				conflict_director:spawn_queued_unit(breed, Vector3Box(pos), QuaternionBox(spawn_rot), "constant_70", nil, "horde_hidden", optional_data)
@@ -1503,9 +1503,9 @@ TerrorEventMixer.run_functions = {
 			return true
 		end
 
-		event.data.spawn_counter = not not event.data.spawn_counter
+		event.data.spawn_counter = event.data.spawn_counter
 
-		return not element.condition or not not element.condition(event.data.spawn_counter)
+		return not element.condition or element.condition(event.data.spawn_counter)
 	end,
 	run_func = function (event, element, t, dt)
 		-- function 112
@@ -1521,11 +1521,11 @@ TerrorEventMixer.debug_functions = {
 	end,
 	control_pacing = function (event, element, t, dt)
 		-- function 114
-		return element.enable and not not "enable" or not element.enable and not not "disable"
+		return element.enable and "enable" or not element.enable and "disable"
 	end,
 	control_specials = function (event, element, t, dt)
 		-- function 115
-		return element.enable and not not "enable" or not element.enable and not not "disable"
+		return element.enable and "enable" or not element.enable and "disable"
 	end,
 	delay = function (event, element, t, dt)
 		-- function 116
@@ -1600,7 +1600,7 @@ TerrorEventMixer.debug_functions = {
 			debug_text = element.breed_name
 		end
 
-		local terror_event_type = not not element.spawner_id
+		local terror_event_type = element.spawner_id
 
 		return terror_event_type .. " -> " .. debug_text
 	end,
@@ -1869,7 +1869,7 @@ function process_terror_event_recursive(processed_elements, data, depth, event_n
 
 	local level_transition_handler = Managers.level_transition_handler
 	local level_key = level_transition_handler:get_current_level_keys()
-	local injected_elements = not not TerrorEventBlueprints[level_key][event_name]
+	local injected_elements = TerrorEventBlueprints[level_key][event_name]
 
 	fassert(injected_elements, "No terror event called '%s', exists. Make sure it is added to level %s, or generic, terror event file if its supposed to be there.", event_name, level_key)
 
@@ -1911,7 +1911,7 @@ TerrorEventMixer.start_event = function (event_name, data, id)
 	end
 
 	if data then
-		data.seed = not not data.seed
+		data.seed = data.seed
 	else
 		data = {
 			seed = 0
@@ -2068,10 +2068,10 @@ TerrorEventMixer.run_event = function (event, t, dt)
 	local active_enemies = Managers.state.performance:num_active_enemies()
 
 	if active_enemies > event.max_active_enemies then
-		element.ends_at = not not element.ends_at + dt
+		element.ends_at = element.ends_at + dt
 	else
 		local func_name = element[1]
-		local element_name = element and not not element.composition_type or not element and not not element.breed_name
+		local element_name = element and element.composition_type or not element and element.breed_name
 
 		if script_data.debug_terror and element_name then
 			printf("[Terror event] Started terror even function: %s with %s", func_name, element_name)
@@ -2186,7 +2186,7 @@ TerrorEventMixer.debug_event = function (gui, event, t, dt, x1, y1, panning_x, r
 		local element = elements[i]
 		local func_name = element[1]
 		local base_event_name = element.base_event_name
-		local debug_text = TerrorEventMixer.debug_functions[func_name] and not not TerrorEventMixer.debug_functions[func_name](event, element, t, dt) or not TerrorEventMixer.debug_functions[func_name] and not not ""
+		local debug_text = TerrorEventMixer.debug_functions[func_name] and TerrorEventMixer.debug_functions[func_name](event, element, t, dt) or not TerrorEventMixer.debug_functions[func_name] and ""
 		local text = string.format(" %d] %s: %s %s", i, base_event_name, func_name, debug_text)
 
 		ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1, y2, layer, completed_color)
@@ -2204,8 +2204,8 @@ TerrorEventMixer.debug_event = function (gui, event, t, dt, x1, y1, panning_x, r
 	local element = elements[index]
 	local func_name = element[1]
 	local base_event_name = element.base_event_name
-	local debug_text = TerrorEventMixer.debug_functions[func_name] and not not TerrorEventMixer.debug_functions[func_name](event, element, t, dt) or not TerrorEventMixer.debug_functions[func_name] and not not ""
-	local ends_at = element.duration and not not string.format("time: %.1f", event.ends_at - t) or not element.duration and not not ""
+	local debug_text = TerrorEventMixer.debug_functions[func_name] and TerrorEventMixer.debug_functions[func_name](event, element, t, dt) or not TerrorEventMixer.debug_functions[func_name] and ""
+	local ends_at = element.duration and string.format("time: %.1f", event.ends_at - t) or not element.duration and ""
 	local text
 
 	if event_frozen then
@@ -2214,8 +2214,8 @@ TerrorEventMixer.debug_event = function (gui, event, t, dt, x1, y1, panning_x, r
 		text = string.format(" %d] %s: %s %s %s", index, base_event_name, func_name, debug_text, ends_at)
 	end
 
-	ScriptGUI.ictext(gui, resx, resy, "==>", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 20, y2, layer, event_frozen and (not not frozen_color or not not running_color) or not event_frozen and not not running_color)
-	ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1, y2, layer, event_frozen and (not not frozen_color or not not running_color) or not event_frozen and not not running_color)
+	ScriptGUI.ictext(gui, resx, resy, "==>", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 20, y2, layer, event_frozen and (frozen_color or running_color) or not event_frozen and running_color)
+	ScriptGUI.ictext(gui, resx, resy, text, tiny_font_mtrl, tiny_font_size, tiny_font, x1, y2, layer, event_frozen and (frozen_color or running_color) or not event_frozen and running_color)
 
 	y2 = y2 + 20
 
@@ -2246,7 +2246,7 @@ TerrorEventMixer.debug_event = function (gui, event, t, dt, x1, y1, panning_x, r
 			ScriptGUI.ictext(gui, resx, resy, "disabled", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10 + 75, bordery - 6, layer, disabled_color)
 		end
 
-		ScriptGUI.ictext(gui, resx, resy, string.format("Active enemies: %d / %d", active_enemies, event.max_active_enemies), tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, bordery + 12, layer, event_frozen and (not not disabled_color or not not master_color) or not event_frozen and not not master_color)
+		ScriptGUI.ictext(gui, resx, resy, string.format("Active enemies: %d / %d", active_enemies, event.max_active_enemies), tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, bordery + 12, layer, event_frozen and (disabled_color or master_color) or not event_frozen and master_color)
 		ScriptGUI.icrect(gui, resx, resy, borderx, bordery - 22, x1 + debug_win_width, bordery, layer - 1, Color(200, 20, 20, 20))
 	end
 end

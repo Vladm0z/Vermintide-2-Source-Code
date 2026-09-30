@@ -141,9 +141,9 @@ PerlinPath.fill_spawns = function (nav_world, main_path, path_length, density_pa
 
 			if not lookup[key] then
 				local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, neighbour)
-				local a = seed_a and not not vector3_distance_squared(seed_a, tri_center) or not seed_a and not not math.huge
-				local b = seed_b and not not vector3_distance_squared(seed_b, tri_center) or not seed_b and not not math.huge
-				local c = seed_c and not not vector3_distance_squared(seed_c, tri_center) or not seed_c and not not math.huge
+				local a = seed_a and vector3_distance_squared(seed_a, tri_center) or not seed_a and math.huge
+				local b = seed_b and vector3_distance_squared(seed_b, tri_center) or not seed_b and math.huge
+				local c = seed_c and vector3_distance_squared(seed_c, tri_center) or not seed_c and math.huge
 				local closest
 
 				if a < b then

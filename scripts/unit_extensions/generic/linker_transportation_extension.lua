@@ -347,7 +347,7 @@ LinkerTransportationExtension._try_link_player = function (self, unit, skip_insi
 	local is_disabled = status_ext:is_disabled()
 
 	if not is_dead and (is_inside_transportation_unit or skip_inside_check) then
-		self:_link_player_unit(unit, not not self:_is_bot(player), soft)
+		self:_link_player_unit(unit, self:_is_bot(player), soft)
 	elseif self:_is_bot(player) and not is_disabled then
 		self:_link_player_unit(player.player_unit, not soft, soft)
 	elseif player.local_player and not is_dead and not is_disabled and not is_inside_transportation_unit then
@@ -362,7 +362,7 @@ LinkerTransportationExtension._is_inside_transportation_unit = function (self, u
 	local unit_pos = Unit.world_position(unit, 0)
 	local lag_compensation = Vector3.distance(Unit.world_position(self.unit, 0), Unit.local_position(self.unit, 0))
 
-	size_modifier = (not not size_modifier or not not 0) + lag_compensation
+	size_modifier = (size_modifier or 0) + lag_compensation
 	oobb_size[1] = oobb_size[1] + size_modifier
 	oobb_size[2] = oobb_size[2] + size_modifier
 	oobb_size[3] = oobb_size[3] + size_modifier
@@ -450,7 +450,7 @@ LinkerTransportationExtension.update_units_inside_oobb = function (self)
 
 	for u, is_inside in pairs(location.human) do
 		local status_extension = ScriptUnit.extension(u, "status_system")
-		local arg = is_inside and (not not unit or not not nil) or not is_inside and not not nil
+		local arg = is_inside and (unit or nil) or not is_inside and nil
 
 		status_extension:set_inside_transport_unit(arg)
 	end
@@ -534,7 +534,7 @@ LinkerTransportationExtension.update = function (self, unit, input, dt, context,
 	if units_inside_oobb and t >= self.oobb_next_update then
 		self:update_units_inside_oobb()
 
-		local update_interval = units_inside_oobb.human.count > 0 and not not UPDATE_INTERVAL_OOBB_HUMANS_INSIDE or not (units_inside_oobb.human.count > 0) and not not UPDATE_INTERVAL_OOBB_NO_HUMANS_INSIDE
+		local update_interval = units_inside_oobb.human.count > 0 and UPDATE_INTERVAL_OOBB_HUMANS_INSIDE or not (units_inside_oobb.human.count > 0) and UPDATE_INTERVAL_OOBB_NO_HUMANS_INSIDE
 
 		self.oobb_next_update = t + update_interval
 	end
@@ -644,7 +644,7 @@ end
 
 LinkerTransportationExtension.can_interact = function (self, interactor_unit)
 	-- function 22
-	return self.story_state == "stopped_beginning" or self.story_state == "stopped_end" and not self.auto_exit and not not self.transported_units[interactor_unit]
+	return self.story_state == "stopped_beginning" or self.story_state == "stopped_end" and not self.auto_exit and self.transported_units[interactor_unit]
 end
 
 LinkerTransportationExtension.destroy = function (self)
@@ -716,7 +716,7 @@ LinkerTransportationExtension._update_passive_linking = function (self)
 		local unit = player.player_unit
 
 		if unit_alive(unit) then
-			if self:_is_inside_transportation_unit(unit, transported_units[unit] and not not 1 or not transported_units[unit] and not not nil) then
+			if self:_is_inside_transportation_unit(unit, transported_units[unit] and 1 or not transported_units[unit] and nil) then
 				if not transported_units[unit] then
 					self:_try_link_player(unit, skip_inside_check, soft_link)
 				end
@@ -738,7 +738,7 @@ LinkerTransportationExtension._update_passive_linking = function (self)
 	local generic_units = self._transported_generic_units
 
 	for generic_unit, relative_pose_boxed in pairs(generic_units) do
-		if not unit_alive(generic_unit) or not self:_is_inside_transportation_unit(generic_unit, generic_units[generic_unit] and not not 1 or not generic_units[generic_unit] and not not nil) then
+		if not unit_alive(generic_unit) or not self:_is_inside_transportation_unit(generic_unit, generic_units[generic_unit] and 1 or not generic_units[generic_unit] and nil) then
 			generic_units[generic_unit] = nil
 		end
 	end
@@ -898,7 +898,7 @@ LinkerTransportationExtension.get_ai_slot = function (self, slot_id)
 				end
 			end
 
-			selected_group_index = not not selected_group_index or not not (#groups + 1)
+			selected_group_index = selected_group_index or #groups + 1
 
 			local group = groups[selected_group_index]
 
@@ -942,8 +942,8 @@ LinkerTransportationExtension.get_ai_slot = function (self, slot_id)
 			max = max - from_center
 
 			local size = max - min
-			local slots_x = size.x > 0 and not not math.ceil(size.x / AI_SLOT_SIZE) or not (size.x > 0) and not not 1
-			local slots_y = size.y > 0 and not not math.ceil(size.y / AI_SLOT_SIZE) or not (size.y > 0) and not not 1
+			local slots_x = size.x > 0 and math.ceil(size.x / AI_SLOT_SIZE) or not (size.x > 0) and 1
+			local slots_y = size.y > 0 and math.ceil(size.y / AI_SLOT_SIZE) or not (size.y > 0) and 1
 
 			group.num_slots_x = slots_x
 			group.num_slots_y = slots_y
@@ -971,7 +971,7 @@ LinkerTransportationExtension.add_transporting_ai_unit = function (self, unit)
 	local free_list = self._transported_ai_unit_freelist
 	local next_transport_i = #transported_ai_units + 1
 	local next_data_i = #free_list
-	local next_data = not not free_list[next_data_i]
+	local next_data = free_list[next_data_i]
 
 	free_list[next_data_i] = nil
 	next_data.unit = unit
@@ -1000,7 +1000,7 @@ LinkerTransportationExtension.add_transporting_generic_unit = function (self, ge
 		return
 	end
 
-	local relative_pose = not not optional_pose or not not Matrix4x4.multiply(Unit.world_pose(generic_unit, 0), Matrix4x4.inverse(self:_pose()))
+	local relative_pose = optional_pose or Matrix4x4.multiply(Unit.world_pose(generic_unit, 0), Matrix4x4.inverse(self:_pose()))
 
 	self._transported_generic_units[generic_unit] = Matrix4x4Box(relative_pose)
 
@@ -1033,7 +1033,7 @@ end
 LinkerTransportationExtension.queue_ai_transport_unit_for_removal = function (self, unit, soft)
 	-- function 35
 	if self.is_server then
-		self._queued_ai_units_to_remove[unit] = soft and not not "soft" or not soft and not not "hard"
+		self._queued_ai_units_to_remove[unit] = soft and "soft" or not soft and "hard"
 	elseif soft then
 		self:_transporting_ai_unit_soft_removal(unit)
 	else
@@ -1133,7 +1133,7 @@ LinkerTransportationExtension._update_player_positions = function (self, dt)
 			Unit.set_local_position(player_unit, 0, new_pos)
 
 			local moved = new_pos - old_pos
-			local accumulated_movement = not not Unit.get_data(player_unit, "accumulated_movement")
+			local accumulated_movement = Unit.get_data(player_unit, "accumulated_movement")
 
 			Unit.set_data(player_unit, "accumulated_movement", accumulated_movement + moved)
 
@@ -1152,7 +1152,7 @@ end
 LinkerTransportationExtension._update_transported_ai_positions = function (self)
 	-- function 40
 	local use_pos_delta = not TRANSPORTING_STATES[self.story_state]
-	local delta_pos = not not use_pos_delta and not not self._movement_delta:unbox()
+	local delta_pos = use_pos_delta and self._movement_delta:unbox()
 	local transported_ai_units = self._transported_ai_units
 
 	for i = #transported_ai_units, 1, -1 do
@@ -1161,7 +1161,7 @@ LinkerTransportationExtension._update_transported_ai_positions = function (self)
 
 		if ALIVE[ai_unit] then
 			local unit_pos = POSITION_LOOKUP[ai_unit]
-			local final_position = use_pos_delta and not not (unit_pos + delta_pos) or not use_pos_delta and not not self:get_ai_slot(slot_id)
+			local final_position = use_pos_delta and unit_pos + delta_pos or not use_pos_delta and self:get_ai_slot(slot_id)
 			local locomotion_ext = ScriptUnit.has_extension(ai_unit, "locomotion_system")
 
 			if locomotion_ext then
@@ -1351,7 +1351,7 @@ end
 LinkerTransportationExtension.teleport_non_character_elevator_units = function (self, reference_unit)
 	-- function 47
 	self._reference_teleport_unit = reference_unit
-	self._reference_teleport_seed = not not self._reference_teleport_seed
+	self._reference_teleport_seed = self._reference_teleport_seed
 
 	local function safe_navigation_callback()
 		-- function 48
@@ -1381,7 +1381,7 @@ LinkerTransportationExtension.teleport_non_character_elevator_units = function (
 				tries = tries + 1
 			end
 
-			pos = not not pos or not not reference_pos
+			pos = pos or reference_pos
 
 			if optional_teleport_extension then
 				optional_teleport_extension:teleport_to(pos)
@@ -1398,8 +1398,8 @@ LinkerTransportationExtension.teleport_non_character_elevator_units = function (
 
 		table.sort(units, function (a, b)
 			-- function 50
-			local go_id_a = not not Managers.state.unit_storage:go_id(a)
-			local go_id_b = not not Managers.state.unit_storage:go_id(b)
+			local go_id_a = Managers.state.unit_storage:go_id(a)
+			local go_id_b = Managers.state.unit_storage:go_id(b)
 
 			return go_id_a < go_id_b
 		end)

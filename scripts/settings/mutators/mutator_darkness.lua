@@ -40,7 +40,7 @@ return {
 
 		for i = 1, num_player_units do
 			local inventory_extension = ScriptUnit.has_extension(player_units[i], "inventory_system")
-			local has_torch = not not inventory_extension and not not inventory_extension:has_inventory_item("slot_level_event", "mutator_torch")
+			local has_torch = inventory_extension and inventory_extension:has_inventory_item("slot_level_event", "mutator_torch")
 
 			if has_torch then
 				data.should_spawn_torch = false

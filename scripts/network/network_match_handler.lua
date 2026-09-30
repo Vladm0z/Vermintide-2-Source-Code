@@ -29,10 +29,10 @@ NetworkMatchHandler.init = function (self, network_handler, is_server, peer_id, 
 		[peer_id] = self:_create_data({
 			is_synced = true,
 			is_dedicated_server = DEDICATED_SERVER,
-			player_name = DEDICATED_SERVER and not not nil or not DEDICATED_SERVER and not not PlayerUtils.player_name(peer_id, lobby),
+			player_name = DEDICATED_SERVER and nil or not DEDICATED_SERVER and PlayerUtils.player_name(peer_id, lobby),
 			leader_peer_id = self._server_peer_id,
-			is_match_owner = not not is_server and not not true,
-			versus_level = DEDICATED_SERVER and not not nil or not DEDICATED_SERVER and not not ExperienceSettings.get_versus_level()
+			is_match_owner = is_server and true,
+			versus_level = DEDICATED_SERVER and nil or not DEDICATED_SERVER and ExperienceSettings.get_versus_level()
 		})
 	}
 
@@ -56,7 +56,7 @@ NetworkMatchHandler.register_pending_peer = function (self, peer_id, leader)
 	-- function 3
 	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-	self._data_by_peer[peer_id] = not not self:_try_unstore_data(peer_id)
+	self._data_by_peer[peer_id] = self:_try_unstore_data(peer_id)
 	self._data_by_peer[peer_id].leader_peer_id = leader
 
 	printf("[NetworkMatchHandler] Registering pending peer %s with leader %s", peer_id, leader)
@@ -127,7 +127,7 @@ end
 NetworkMatchHandler.rpc_network_match_sync_player_data = function (self, channel_id, peer_id, player_name, leader_peer_id, is_match_owner, versus_level)
 	-- function 7
 	local from_peer = CHANNEL_TO_PEER_ID[channel_id]
-	local peer_data = not not self:_try_unstore_data(peer_id)
+	local peer_data = self:_try_unstore_data(peer_id)
 
 	self._data_by_peer[peer_id] = peer_data
 	peer_data.player_name = player_name
@@ -188,7 +188,7 @@ NetworkMatchHandler._network_match_changed = function (self, new_match_owner_pee
 	end
 
 	if self._is_server then
-		self:send_rpc_down("rpc_network_match_changed", not not new_match_owner_peer_id or not not self._my_peer_id)
+		self:send_rpc_down("rpc_network_match_changed", new_match_owner_peer_id or self._my_peer_id)
 	end
 
 	Managers.persistent_event:trigger("network_match_changed", new_match_owner_peer_id)
@@ -256,7 +256,7 @@ end
 
 NetworkMatchHandler.is_leader = function (self, optional_peer_id)
 	-- function 14
-	local peer_id = not not optional_peer_id or not not self._my_peer_id
+	local peer_id = optional_peer_id or self._my_peer_id
 
 	return self:query_peer_data(peer_id, "leader_peer_id") == peer_id
 end
@@ -471,7 +471,7 @@ NetworkMatchHandler.query_peer_data = function (self, peer_id, key, disallow_def
 		return peer_data[key]
 	end
 
-	return disallow_default and not not nil or not disallow_default and not not self:default_data(key)
+	return disallow_default and nil or not disallow_default and self:default_data(key)
 end
 
 NetworkMatchHandler.default_data = function (self, key)
@@ -485,7 +485,7 @@ NetworkMatchHandler._try_unstore_data = function (self, peer_id)
 
 	self._stored_data[peer_id] = nil
 
-	return not not stored_data or not not self._data_by_peer[peer_id]
+	return stored_data or self._data_by_peer[peer_id]
 end
 
 NetworkMatchHandler._store_data = function (self, peer_id)

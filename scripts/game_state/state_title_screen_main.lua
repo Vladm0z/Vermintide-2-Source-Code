@@ -10,7 +10,7 @@ end
 StateTitleScreenMain = class(StateTitleScreenMain)
 StateTitleScreenMain.NAME = "StateTitleScreenMain"
 
-local ATTRACT_MODE_TIMER = script_data.honduras_demo and not not DemoSettings.attract_timer or not script_data.honduras_demo and not not nil
+local ATTRACT_MODE_TIMER = script_data.honduras_demo and DemoSettings.attract_timer or not script_data.honduras_demo and nil
 
 StateTitleScreenMain.on_enter = function (self, params)
 	-- function 1
@@ -104,7 +104,7 @@ end
 
 StateTitleScreenMain._setup_account_manager = function (self)
 	-- function 5
-	Managers.account = not not Managers.account
+	Managers.account = Managers.account
 
 	Crashify.print_property("region", Managers.account:region())
 end
@@ -325,7 +325,7 @@ StateTitleScreenMain._update_input = function (self, dt, t)
 				return
 			end
 
-			local user_id = not not controller and not not controller.user_id()
+			local user_id = controller and controller.user_id()
 
 			if Application.is_constrained() then
 				self._has_engaged = false
@@ -334,7 +334,7 @@ StateTitleScreenMain._update_input = function (self, dt, t)
 			local can_proceed = true
 
 			if self._has_engaged then
-				can_proceed = not not user_id and not not self:_user_exists(user_id)
+				can_proceed = user_id and self:_user_exists(user_id)
 			end
 
 			if can_proceed and user_id and Managers.account:user_exists(user_id) then

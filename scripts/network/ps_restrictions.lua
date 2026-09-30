@@ -177,7 +177,7 @@ end
 
 PSRestrictions.cb_network_availability = function (self, user_id, restriction, info)
 	-- function 16
-	local error = not not info.error
+	local error = info.error
 
 	if error then
 		error_print("Error (%#x) when checking (%s) access for user (%d)", error, restriction, user_id)
@@ -203,7 +203,7 @@ end
 
 PSRestrictions.cb_playstation_plus = function (self, user_id, restriction, info)
 	-- function 17
-	local error = not not info.error
+	local error = info.error
 
 	if error then
 		error_print("Error (%#x) when checking (%s) access for user (%d)", error, restriction, user_id)
@@ -229,7 +229,7 @@ end
 
 PSRestrictions.cb_parental_control = function (self, user_id, restriction, info)
 	-- function 18
-	local error = not not info.error
+	local error = info.error
 
 	if error then
 		error_print("Error (%#x) when checking parental control access for user (%d)", error, user_id)

@@ -222,11 +222,11 @@ local function encode_game_mode_event_data(data)
 	local lookup_data = table.clone(data, true)
 	local mutators = lookup_data.mutators
 
-	mutators = not not mutators and not not table.convert_lookup(mutators, NetworkLookup.mutator_templates)
+	mutators = mutators and table.convert_lookup(mutators, NetworkLookup.mutator_templates)
 
 	local boons = lookup_data.boons
 
-	boons = not not boons and not not table.convert_lookup(boons, NetworkLookup.deus_power_up_templates)
+	boons = boons and table.convert_lookup(boons, NetworkLookup.deus_power_up_templates)
 
 	return cjson.encode(lookup_data)
 end
@@ -236,11 +236,11 @@ local function decode_game_mode_event_data(string)
 	local data = cjson.decode(string)
 	local mutators = data.mutators
 
-	mutators = not not mutators and not not table.convert_lookup(mutators, NetworkLookup.mutator_templates)
+	mutators = mutators and table.convert_lookup(mutators, NetworkLookup.mutator_templates)
 
 	local boons = data.boons
 
-	boons = not not boons and not not table.convert_lookup(boons, NetworkLookup.deus_power_up_templates)
+	boons = boons and table.convert_lookup(boons, NetworkLookup.deus_power_up_templates)
 
 	return data
 end
@@ -263,7 +263,7 @@ end
 
 local function encode_level_transition_type(level_transition_type_string)
 	-- function 22
-	return level_transition_type_string ~= "load_next_level" and not not 1 or not (level_transition_type_string ~= "load_next_level") and not not 0
+	return level_transition_type_string ~= "load_next_level" and 1 or not (level_transition_type_string ~= "load_next_level") and 0
 end
 
 local function decode_level_transition_type(level_transition_type_number)

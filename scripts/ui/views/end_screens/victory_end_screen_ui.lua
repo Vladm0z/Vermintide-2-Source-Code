@@ -66,7 +66,7 @@ VictoryEndScreenUI._update = function (self, dt)
 		act_presentation_ui:update(dt)
 	end
 
-	local act_presentation_done = not act_presentation_ui or not not act_presentation_ui:presentation_completed()
+	local act_presentation_done = not act_presentation_ui or act_presentation_ui:presentation_completed()
 
 	if self._victory_anim_id == nil and act_presentation_done then
 		if Managers.state.game_mode:setting("display_end_of_match_score_view") then

@@ -73,7 +73,7 @@ MusicManager.init = function (self)
 	local sound_panning_rule = Application.user_setting("sound_panning_rule")
 
 	if sound_panning_rule ~= nil then
-		local rule = sound_panning_rule ~= "headphones" and not not "PANNING_RULE_SPEAKERS" or not (sound_panning_rule ~= "headphones") and not not "PANNING_RULE_HEADPHONES"
+		local rule = sound_panning_rule ~= "headphones" and "PANNING_RULE_SPEAKERS" or not (sound_panning_rule ~= "headphones") and "PANNING_RULE_HEADPHONES"
 
 		self:set_panning_rule(rule)
 	end
@@ -100,7 +100,7 @@ MusicManager.unduck_sounds = function (self, forced)
 		self:trigger_event("hud_in_inventory_state_off")
 	end
 
-	self._duck_sounds_stack = forced and not not 0 or not forced and not not math.max(0, self._duck_sounds_stack - 1)
+	self._duck_sounds_stack = forced and 0 or not forced and math.max(0, self._duck_sounds_stack - 1)
 end
 
 MusicManager._update_window_focus = function (self)
@@ -156,7 +156,7 @@ MusicManager.trigger_event_queue = function (self, event_queue_name, event_queue
 	local wwise_playing_id, wwise_source_id = self:trigger_event(first_event)
 
 	self._event_queues[event_queue_name] = {
-		delay = not not delay or not not 0.5,
+		delay = delay or 0.5,
 		event_index = event_index,
 		wwise_playing_id = wwise_playing_id,
 		wwise_source_id = wwise_source_id,
@@ -279,7 +279,7 @@ MusicManager.on_enter_level = function (self, network_event_delegate, is_server)
 		local boss_state_id = NetworkLookup.music_group_states.no_boss
 		local dwarf_fest_dlc_state_id = NetworkLookup.music_group_states.None
 		local is_weave = Managers.mechanism:game_mechanism():get_state() == "weave"
-		local override_state_id = is_weave and not not NetworkLookup.music_group_states.winds or not is_weave and not not NetworkLookup.music_group_states["false"]
+		local override_state_id = is_weave and NetworkLookup.music_group_states.winds or not is_weave and NetworkLookup.music_group_states["false"]
 		local init_data = {
 			go_type = go_type,
 			combat_intensity = intensity_state_id,
@@ -290,7 +290,7 @@ MusicManager.on_enter_level = function (self, network_event_delegate, is_server)
 
 		if self._override_init_fields then
 			for group, state in pairs(self._override_init_fields) do
-				local state_id = not not NetworkLookup.music_group_states[state]
+				local state_id = NetworkLookup.music_group_states[state]
 
 				init_data[group] = state_id
 			end
@@ -521,9 +521,9 @@ MusicManager._update_boss_state = function (self, conflict_director)
 	local state
 
 	if not is_versus then
-		local angry_boss = not not conflict_director:angry_boss()
+		local angry_boss = conflict_director:angry_boss()
 
-		state = angry_boss and (not not self:_get_combat_music_state(conflict_director) or not not "no_boss") or not angry_boss and not not "no_boss"
+		state = angry_boss and (self:_get_combat_music_state(conflict_director) or "no_boss") or not angry_boss and "no_boss"
 	else
 		state = self:_get_versus_combat_music_state()
 	end
@@ -564,7 +564,7 @@ MusicManager._get_combat_music_state = function (self, conflict_director)
 		if blackboard and blackboard.is_angry then
 			local breed = blackboard.breed
 
-			state = not not breed.combat_music_state or not not state
+			state = breed.combat_music_state or state
 
 			if breed.combat_music_state ~= "no_boss" then
 				break
@@ -599,14 +599,14 @@ MusicManager._update_boss_music_intensity = function (self, conflict_director)
 				local unit_position = Unit.local_position(unit, 0)
 				local distance_sq = Vector3.distance_squared(player_position, unit_position)
 
-				min_distance_sq = not (distance_sq < min_distance_sq) or not not distance_sq or not not min_distance_sq
+				min_distance_sq = not (distance_sq < min_distance_sq) or distance_sq or min_distance_sq
 			end
 
 			for _, unit in pairs(additional_contributing_units) do
 				local unit_position = Unit.local_position(unit, 0)
 				local distance_sq = Vector3.distance_squared(player_position, unit_position)
 
-				min_distance_sq = not (distance_sq < min_distance_sq) or not not distance_sq or not not min_distance_sq
+				min_distance_sq = not (distance_sq < min_distance_sq) or distance_sq or min_distance_sq
 			end
 
 			for _, boss_intensity_data in ipairs(BossFightMusicIntensity) do
@@ -624,7 +624,7 @@ end
 
 MusicManager.set_wwise_state = function (self, group_name, state_name)
 	-- function 37
-	self._group_states[group_name] = not not self._group_states[group_name]
+	self._group_states[group_name] = self._group_states[group_name]
 
 	if state_name ~= self._group_states[group_name] then
 		Wwise.set_state(group_name, state_name)
@@ -645,7 +645,7 @@ MusicManager.check_last_man_standing_music_state = function (self)
 	end
 
 	local local_player = self:_get_player()
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if Unit.alive(player_unit) then
 		local status_extension = ScriptUnit.has_extension(player_unit, "status_system")
@@ -679,7 +679,7 @@ local function get_horde_music_state(state, sound_settings)
 	local music_state_settings = sound_settings.music_states
 	local music_state = music_state_settings[state]
 
-	return not not music_state or not not state
+	return music_state or state
 end
 
 local HORDE_MUSIC_STATES = {
@@ -743,7 +743,7 @@ MusicManager._get_game_state_for_player = function (self, dt, t, conflict_direct
 
 			local level_settings = LevelHelper:current_level_settings()
 
-			return level_settings and not not level_settings.music_won_state or not level_settings and not not "won"
+			return level_settings and level_settings.music_won_state or not level_settings and "won"
 		elseif game_mode_manager:game_lost(player) then
 			return "lost"
 		elseif game_mode_key == "versus" and Managers.mechanism:get_state() == "round_1" then
@@ -762,7 +762,7 @@ MusicManager._get_game_state_for_player = function (self, dt, t, conflict_direct
 
 		local level_settings = LevelHelper:current_level_settings()
 
-		return level_settings and not not level_settings.music_won_state or not level_settings and not not "won"
+		return level_settings and level_settings.music_won_state or not level_settings and "won"
 	end
 
 	local is_pre_horde = old_state == "pre_horde" or old_state == "pre_ambush" or old_state == "pre_ambush_beastmen" or old_state == "pre_ambush_chaos"
@@ -809,7 +809,7 @@ local ai_units = {}
 
 MusicManager._horde_done_spawning = function (self, horde)
 	-- function 42
-	local engage_distance = horde ~= "ambush" and not not 25 or not (horde ~= "ambush") and not not 25
+	local engage_distance = horde ~= "ambush" and 25 or not (horde ~= "ambush") and 25
 	local pos
 	local players = Managers.player:players()
 
@@ -849,13 +849,13 @@ MusicManager._update_player_state = function (self, dt, t)
 		if Unit.alive(player_unit) then
 			local status_ext = ScriptUnit.extension(player_unit, "status_system")
 
-			state = Managers.state.game_mode:game_mode():is_about_to_end_game_early() and (not not "normal" or status_ext:is_ready_for_assisted_respawn() and (not not "normal" or status_ext:is_dead() and (not not "dead" or status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")))) or not status_ext:is_ready_for_assisted_respawn() and (status_ext:is_dead() and (not not "dead" or status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))))) or not Managers.state.game_mode:game_mode():is_about_to_end_game_early() and (status_ext:is_ready_for_assisted_respawn() and (not not "normal" or status_ext:is_dead() and (not not "dead" or status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")))) or not status_ext:is_ready_for_assisted_respawn() and (status_ext:is_dead() and (not not "dead" or status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and (not not "knocked_down" or status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and (not not "normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")))))
+			state = Managers.state.game_mode:game_mode():is_about_to_end_game_early() and ("normal" or status_ext:is_ready_for_assisted_respawn() and ("normal" or status_ext:is_dead() and ("dead" or status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")))) or not status_ext:is_ready_for_assisted_respawn() and (status_ext:is_dead() and ("dead" or status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))))) or not Managers.state.game_mode:game_mode():is_about_to_end_game_early() and (status_ext:is_ready_for_assisted_respawn() and ("normal" or status_ext:is_dead() and ("dead" or status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")))) or not status_ext:is_ready_for_assisted_respawn() and (status_ext:is_dead() and ("dead" or status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help"))) or not status_ext:is_dead() and (status_ext:is_knocked_down() and ("knocked_down" or status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")) or not status_ext:is_knocked_down() and (status_ext:is_in_vortex() and ("normal" or not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help") or not status_ext:is_in_vortex() and (not status_ext:is_disabled() or status_ext:is_grabbed_by_chaos_spawn() or status_ext:is_grabbed_by_corruptor() or not "need_help")))))
 
 			music_player:set_group_state("player_state", state)
 		else
 			local side_name = self:_get_side_name()
 
-			state = not not "normal"
+			state = "normal"
 
 			music_player:set_group_state("player_state", state)
 		end
@@ -892,7 +892,7 @@ MusicManager._update_enemy_aggro_state = function (self, dt, t)
 
 	if music_player and local_player_id then
 		local player = self:_get_player()
-		local player_unit = not not player and not not player.player_unit
+		local player_unit = player and player.player_unit
 
 		if Unit.alive(player_unit) then
 			local sound_effect_extension = ScriptUnit.extension(player_unit, "sound_effect_system")
@@ -1012,9 +1012,9 @@ MusicManager._update_versus_game_state = function (self, music_player, dt, t)
 
 	if side_close_to_winning or heroes_close_to_safe_zone then
 		local state
-		local player_team_close_to_safe_zone = not not heroes_close_to_safe_zone and side_name == "heroes"
+		local player_team_close_to_safe_zone = heroes_close_to_safe_zone and side_name == "heroes"
 
-		state = side_name == side_close_to_winning and (not not "close_to_win" or not not "time_is_running_out") or not (side_name == side_close_to_winning) and (player_team_close_to_safe_zone and (not not "close_to_win" or not not "time_is_running_out") or not player_team_close_to_safe_zone and not not "time_is_running_out")
+		state = side_name == side_close_to_winning and ("close_to_win" or "time_is_running_out") or not (side_name == side_close_to_winning) and (player_team_close_to_safe_zone and ("close_to_win" or "time_is_running_out") or not player_team_close_to_safe_zone and "time_is_running_out")
 
 		music_player:set_group_state("versus_state", state)
 	elseif is_dark_pact then
@@ -1048,12 +1048,12 @@ MusicManager.set_music_group_state = function (self, music_player, group, state)
 
 	if self._is_server then
 		if game_object_id then
-			local state_id = not not NetworkLookup.music_group_states[state]
+			local state_id = NetworkLookup.music_group_states[state]
 			local session = Managers.state.network:game()
 
 			GameSession.set_game_object_field(session, game_object_id, group, state_id)
 		else
-			self._override_init_fields = not not self._override_init_fields
+			self._override_init_fields = self._override_init_fields
 			self._override_init_fields[group] = state
 		end
 	end
@@ -1156,7 +1156,7 @@ MusicManager._get_side_name = function (self)
 
 	self._side = self._side_manager.side_by_party[party]
 
-	return not not self._side
+	return self._side
 end
 
 MusicManager.on_player_party_changed = function (self, player, is_local_player, old_party_id, new_party_id)

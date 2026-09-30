@@ -94,7 +94,7 @@ achievements.termite2_water_challenge = {
 			end
 
 			local damage_data = event_data[2]
-			local attacker_unit = not not damage_data and not not damage_data[DamageDataIndex.ATTACKER]
+			local attacker_unit = damage_data and damage_data[DamageDataIndex.ATTACKER]
 
 			if not Unit.alive(attacker_unit) then
 				return

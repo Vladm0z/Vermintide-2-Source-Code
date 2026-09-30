@@ -192,7 +192,7 @@ local function create_party_entry(name, career, offset_y)
 			}
 		},
 		content = {
-			text_id = not not name or not not Localize("friends_view_free_slot"),
+			text_id = name or Localize("friends_view_free_slot"),
 			texture_id = career_portrait
 		},
 		style = {
@@ -203,7 +203,7 @@ local function create_party_entry(name, career, offset_y)
 				horizontal_alignment = "left",
 				word_wrap = true,
 				font_type = "hell_shark",
-				text_color = career and not not Colors.get_color_table_with_alpha("white", 255) or not career and not not {
+				text_color = career and Colors.get_color_table_with_alpha("white", 255) or not career and {
 					255,
 					80,
 					80,
@@ -232,7 +232,7 @@ local function create_party_entry(name, career, offset_y)
 		},
 		offset = {
 			0,
-			offset_y and (not not offset_y or not not 0) or not offset_y and not not 0,
+			offset_y and (offset_y or 0) or not offset_y and 0,
 			0
 		}
 	}
@@ -274,7 +274,7 @@ local function create_friend_entry(name, online, offset_y, friend)
 					texture_id = "texture_id",
 					content_check_function = function (content)
 						-- function 4
-						return not not content.entry_hotspot.is_hover
+						return content.entry_hotspot.is_hover
 					end
 				},
 				{
@@ -301,7 +301,7 @@ local function create_friend_entry(name, online, offset_y, friend)
 				horizontal_alignment = "left",
 				word_wrap = true,
 				font_type = "hell_shark_masked",
-				text_color = online and not not Colors.get_color_table_with_alpha("font_title", 255) or not online and not not {
+				text_color = online and Colors.get_color_table_with_alpha("font_title", 255) or not online and {
 					255,
 					80,
 					80,
@@ -314,12 +314,12 @@ local function create_friend_entry(name, online, offset_y, friend)
 				}
 			},
 			texture = {
-				color = online and not not {
+				color = online and {
 					255,
 					0,
 					255,
 					0
-				} or not online and not not {
+				} or not online and {
 					255,
 					255,
 					0,
@@ -384,12 +384,12 @@ local function create_friend_entry(name, online, offset_y, friend)
 					20,
 					20
 				},
-				color = online and not not {
+				color = online and {
 					255,
 					0,
 					255,
 					0
-				} or not online and not not {
+				} or not online and {
 					255,
 					255,
 					0,
@@ -404,7 +404,7 @@ local function create_friend_entry(name, online, offset_y, friend)
 		},
 		offset = {
 			0,
-			offset_y and (not not offset_y or not not 0) or not offset_y and not not 0,
+			offset_y and (offset_y or 0) or not offset_y and 0,
 			0
 		}
 	}
@@ -686,7 +686,7 @@ local generic_input_actions = {
 			{
 				input_action = "special_1",
 				priority = 1,
-				description_text = IS_PS4 and not not "matchmaking_join_game" or not IS_PS4 and not not "menu_description_refresh"
+				description_text = IS_PS4 and "matchmaking_join_game" or not IS_PS4 and "menu_description_refresh"
 			}
 		}
 	},
@@ -704,7 +704,7 @@ local generic_input_actions = {
 			{
 				input_action = "special_1",
 				priority = 1,
-				description_text = IS_PS4 and not not "matchmaking_join_game" or not IS_PS4 and not not "menu_description_refresh"
+				description_text = IS_PS4 and "matchmaking_join_game" or not IS_PS4 and "menu_description_refresh"
 			},
 			{
 				input_action = "confirm",
@@ -732,7 +732,7 @@ local generic_input_actions = {
 			{
 				input_action = "special_1",
 				priority = 1,
-				description_text = IS_PS4 and not not "matchmaking_join_game" or not IS_PS4 and not not "menu_description_refresh"
+				description_text = IS_PS4 and "matchmaking_join_game" or not IS_PS4 and "menu_description_refresh"
 			},
 			{
 				input_action = "confirm",

@@ -7,9 +7,9 @@ require("scripts/ui/ui_resolution")
 require("scripts/utils/debug_key_handler")
 require("scripts/helpers/ui_atlas_helper")
 
-script_data.ui_debug_scenegraph = not not script_data.ui_debug_scenegraph
-script_data.ui_debug_pixeldistance = not not script_data.ui_debug_pixeldistance
-script_data.ui_debug_draw_texture = not not script_data.ui_debug_draw_texture
+script_data.ui_debug_scenegraph = script_data.ui_debug_scenegraph
+script_data.ui_debug_pixeldistance = script_data.ui_debug_pixeldistance
+script_data.ui_debug_draw_texture = script_data.ui_debug_draw_texture
 
 local Color, Vector2, Vector3 = Color, Vector2, Vector3
 local Gui_bitmap_uv, Gui_bitmap = Gui.bitmap_uv, Gui.bitmap
@@ -61,7 +61,7 @@ end
 
 UIRenderer.script_draw_bitmap = function (gui, render_settings, material, gui_position, gui_size, color, masked, saturated, retained_id, point_sample, viewport_mask)
 	-- function 3
-	local snap_pixel_positions = not not render_settings and not not render_settings.snap_pixel_positions
+	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
 
 	if snap_pixel_positions == nil then
 		snap_pixel_positions = SNAP_PIXEL_POSITIONS
@@ -71,7 +71,7 @@ UIRenderer.script_draw_bitmap = function (gui, render_settings, material, gui_po
 		gui_position = snap_to_position(gui_position)
 	end
 
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 	local texture_settings
 
 	if UIAtlasHelper.has_atlas_settings_by_texture_name(material) then
@@ -123,7 +123,7 @@ end
 
 UIRenderer.script_draw_bitmap_uv = function (gui, render_settings, material, uvs, gui_position, gui_size, color, masked, saturated, retained_id, point_sample, viewport_mask)
 	-- function 4
-	local snap_pixel_positions = not not render_settings and not not render_settings.snap_pixel_positions
+	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
 
 	if snap_pixel_positions == nil then
 		snap_pixel_positions = SNAP_PIXEL_POSITIONS
@@ -133,9 +133,9 @@ UIRenderer.script_draw_bitmap_uv = function (gui, render_settings, material, uvs
 		gui_position = snap_to_position(gui_position)
 	end
 
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
 	local texture_settings
 
@@ -181,9 +181,9 @@ local Gui_update_bitmap_3d_uv, Gui_bitmap_3d_uv, Gui_update_bitmap_3d, Gui_bitma
 
 UIRenderer.script_draw_bitmap_3d = function (gui, render_settings, material, tm, gui_layer, gui_size, color, optional_uvs, masked, retained_id)
 	-- function 5
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
 	local texture_settings
 
@@ -293,7 +293,7 @@ UIRenderer.create_video_player = function (self, reference_name, world, resource
 
 	assert(not video_players[reference_name])
 
-	local video_world = not not world or not not self.world
+	local video_world = world or self.world
 	local video_player = World.create_video_player(video_world, resource, set_loop)
 
 	video_players[reference_name] = video_player
@@ -313,7 +313,7 @@ UIRenderer.destroy_video_player = function (self, reference_name, world)
 	local video_player = video_players[reference_name]
 
 	assert(video_player)
-	World.destroy_video_player(not not world or not not self.world, video_player)
+	World.destroy_video_player(world or self.world, video_player)
 
 	video_players[reference_name] = nil
 end
@@ -323,12 +323,12 @@ UIRenderer.destroy = function (self, world)
 	local video_players = self.video_players
 
 	for reference_name, video_player in pairs(video_players) do
-		World.destroy_video_player(not not world or not not self.world, video_player)
+		World.destroy_video_player(world or self.world, video_player)
 
 		video_players[reference_name] = nil
 	end
 
-	world = not not world or not not self.world
+	world = world or self.world
 
 	World.destroy_gui(world, self.gui)
 	World.destroy_gui(world, self.gui_retained)
@@ -384,12 +384,12 @@ local DUMMY = {
 
 UIRenderer.draw_all_widgets = function (self, widget_list)
 	-- function 15
-	local render_settings = not not self.render_settings
-	local base_alpha_multiplier = not not render_settings.alpha_multiplier
+	local render_settings = self.render_settings
+	local base_alpha_multiplier = render_settings.alpha_multiplier
 	local draw_widget = UIRenderer.draw_widget
 
 	for _, widget in pairs(widget_list) do
-		render_settings.alpha_multiplier = not not widget.content.alpha_multiplier * base_alpha_multiplier
+		render_settings.alpha_multiplier = widget.content.alpha_multiplier * base_alpha_multiplier
 
 		draw_widget(self, widget)
 	end
@@ -420,7 +420,7 @@ UIRenderer.draw_widget = function (self, widget)
 	local dt = self.dt
 	local scenegraph_id = widget.scenegraph_id
 	local world_pos = ui_scenegraph[scenegraph_id].world_position
-	local offset = not not widget.offset
+	local offset = widget.offset
 	local pos_x = world_pos[1] + offset[1]
 	local pos_y = world_pos[2] + offset[2]
 	local pos_z = world_pos[3] + offset[3]
@@ -539,7 +539,7 @@ UIRenderer.draw_widget = function (self, widget)
 				local pass_pos_x, pass_pos_y, pass_pos_z = pos_x, pos_y, pos_z
 
 				do
-					local pass_scenegraph_id = not not pass_style.scenegraph_id
+					local pass_scenegraph_id = pass_style.scenegraph_id
 
 					if pass_scenegraph_id then
 						pass_size = UISceneGraph_get_size_scaled(ui_scenegraph, pass_scenegraph_id)
@@ -554,7 +554,7 @@ UIRenderer.draw_widget = function (self, widget)
 					local pass_style_size = pass_style.size
 
 					if pass_style_size then
-						pass_size = Vector2(not not pass_style_size[1], not not pass_style_size[2])
+						pass_size = Vector2(pass_style_size[1], pass_style_size[2])
 					end
 				end
 
@@ -564,7 +564,7 @@ UIRenderer.draw_widget = function (self, widget)
 					if style_offset then
 						pass_pos_x = pass_pos_x + style_offset[1]
 						pass_pos_y = pass_pos_y + style_offset[2]
-						pass_pos_z = pass_pos_z + not not style_offset[3]
+						pass_pos_z = pass_pos_z + style_offset[3]
 					end
 				end
 
@@ -609,7 +609,7 @@ end
 UIRenderer.draw_rect = function (self, lower_left_corner, size, color, retained_id)
 	-- function 18
 	local render_settings = self.render_settings
-	local snap_pixel_positions = not not render_settings and not not render_settings.snap_pixel_positions
+	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
 
 	if snap_pixel_positions == nil then
 		snap_pixel_positions = SNAP_PIXEL_POSITIONS
@@ -621,7 +621,7 @@ UIRenderer.draw_rect = function (self, lower_left_corner, size, color, retained_
 
 	local scaled_position = UIScaleVectorToResolution(lower_left_corner)
 	local scaled_size = UIScaleVectorToResolution(size)
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
 	color = Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
@@ -637,7 +637,7 @@ end
 UIRenderer.draw_triangle = function (self, lower_left_corner, size, ui_style, retained_id)
 	-- function 19
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 	local color = Color(ui_style.color[1] * alpha_multiplier, ui_style.color[2], ui_style.color[3], ui_style.color[4])
 	local layer = lower_left_corner[3]
 	local base_pos = Vector3(lower_left_corner[1], 0, lower_left_corner[2])
@@ -701,7 +701,7 @@ UIRenderer.draw_rect_rotated = function (self, size, position, angle, pivot, col
 	Matrix4x4.set_translation(tm, translation)
 
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
 	color = Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
@@ -825,7 +825,7 @@ UIRenderer.draw_texture = function (self, material, position, size, color, maske
 
 	local scale = RESOLUTION_LOOKUP.scale
 
-	return UIRenderer.script_draw_bitmap(gui, self.render_settings, material, Vector3(position[1] * scale, position[2] * scale, not not position[3]), Vector3(size[1] * scale, size[2] * scale, not not size[3]), color, masked, saturated, retained_id, point_sample, viewport_mask)
+	return UIRenderer.script_draw_bitmap(gui, self.render_settings, material, Vector3(position[1] * scale, position[2] * scale, position[3]), Vector3(size[1] * scale, size[2] * scale, size[3]), color, masked, saturated, retained_id, point_sample, viewport_mask)
 end
 
 UIRenderer.draw_texture_uv = function (self, material, lower_left_corner, size, uvs, color, masked, saturated, retained_id, point_sample, viewport_mask)
@@ -857,8 +857,8 @@ UIRenderer.draw_gradient_mask_texture = function (self, material, lower_left_cor
 	local gui_retained = self.gui_retained
 	local gui_position = UIScaleVectorToResolution(lower_left_corner)
 	local gui_size = UIScaleVectorToResolution(size)
-	local texture_settings = not not UIAtlasHelper.has_atlas_settings_by_texture_name(material)
-	local gui_material = Gui.material(retained_id and (not not gui_retained or not not gui) or not retained_id and not not gui, texture_settings and not not texture_settings.material_name or not texture_settings and not not material)
+	local texture_settings = UIAtlasHelper.has_atlas_settings_by_texture_name(material)
+	local gui_material = Gui.material(retained_id and (gui_retained or gui) or not retained_id and gui, texture_settings and texture_settings.material_name or not texture_settings and material)
 
 	Material.set_scalar(gui_material, "gradient_threshold", gradient_threshold)
 
@@ -878,22 +878,22 @@ UIRenderer.draw_multi_texture = function (self, materials, lower_left_corner, te
 	local UIRenderer_script_draw_bitmap = UIRenderer.script_draw_bitmap
 	local UIRenderer_draw_tiled_texture = UIRenderer.draw_tiled_texture
 
-	axis = not not axis or not not 1
-	direction = not not direction or not not 1
+	axis = axis or 1
+	direction = direction or 1
 
 	local position = UIScaleVectorToResolution(lower_left_corner)
 	local draw_position = Vector3(lower_left_corner[1], lower_left_corner[2], lower_left_corner[3])
 	local unscaled_position = Vector3(lower_left_corner[1], lower_left_corner[2], lower_left_corner[3])
 
-	spacing = not not spacing and not not UIScaleVectorToResolution(spacing)
+	spacing = spacing and UIScaleVectorToResolution(spacing)
 
 	local gui = self.gui
 	local gui_retained = self.gui_retained
 
-	tile_sizes = not not tile_sizes or not not tile_sizes_dummy
+	tile_sizes = tile_sizes or tile_sizes_dummy
 
 	local draw_backwards = direction == 2
-	local num_draws = not not draw_count or not not #materials
+	local num_draws = draw_count or #materials
 
 	if num_draws <= 0 then
 		return
@@ -908,17 +908,17 @@ UIRenderer.draw_multi_texture = function (self, materials, lower_left_corner, te
 	for i = 1, num_draws do
 		local material = materials[i]
 
-		texture_size = not texture_sizes or not not texture_sizes[i] or not not texture_size
+		texture_size = not texture_sizes or texture_sizes[i] or texture_size
 
 		local draw_color = color
 		local draw_saturated = saturated
 
 		if texture_colors then
-			draw_color = not not texture_colors[i] or not not color
+			draw_color = texture_colors[i] or color
 		end
 
 		if texture_saturation then
-			draw_saturated = not not texture_saturation[i] or not not saturated
+			draw_saturated = texture_saturation[i] or saturated
 		end
 
 		local tile_size = tile_sizes[i]
@@ -931,7 +931,7 @@ UIRenderer.draw_multi_texture = function (self, materials, lower_left_corner, te
 				unscaled_position[axis] = unscaled_position[axis] - tile_size[axis]
 			end
 
-			local texture_offset = not not texture_offsets and not not texture_offsets[i]
+			local texture_offset = texture_offsets and texture_offsets[i]
 
 			if texture_offset then
 				local offset = UIScaleVectorToResolution(texture_offset)
@@ -976,7 +976,7 @@ UIRenderer.draw_multi_texture = function (self, materials, lower_left_corner, te
 				unscaled_position[axis] = unscaled_position[axis] - texture_size[axis]
 			end
 
-			local texture_offset = not not texture_offsets and not not texture_offsets[i]
+			local texture_offset = texture_offsets and texture_offsets[i]
 
 			if texture_offset then
 				local offset = UIScaleVectorToResolution(texture_offset)
@@ -1046,7 +1046,7 @@ UIRenderer.draw_tiled_texture = function (self, material, position, total_size, 
 	local position_x = scale * position[1]
 	local position_y = scale * position[2]
 
-	position = Vector3(position_x, position_y, not not position[3])
+	position = Vector3(position_x, position_y, position[3])
 
 	local texture_size_x = texture_size[1]
 	local texture_size_y = texture_size[2]
@@ -1116,21 +1116,21 @@ UIRenderer.draw_centered_texture_amount = function (self, material, lower_left_c
 	end
 
 	for i = 1, texture_amount do
-		local texture_color = not not texture_colors[i]
+		local texture_color = texture_colors[i]
 		local texture_position = Vector3(position.x, position.y, position.z)
 
 		texture_position[axis] = texture_position[axis] + (distance_between_textures * i - texture_size[axis] * 0.5)
 
 		if retained_ids == true then
-			local retained_id = UIRenderer.script_draw_bitmap(gui_retained, self.render_settings, is_material_table and not not material[i] or not is_material_table and not not material, texture_position, draw_size, texture_color, masked, nil, nil)
+			local retained_id = UIRenderer.script_draw_bitmap(gui_retained, self.render_settings, is_material_table and material[i] or not is_material_table and material, texture_position, draw_size, texture_color, masked, nil, nil)
 
 			new_retained_ids[i] = retained_id
 		elseif retained_ids then
 			local retained_id = retained_ids[i]
 
-			UIRenderer.script_draw_bitmap(gui_retained, self.render_settings, is_material_table and not not material[i] or not is_material_table and not not material, texture_position, draw_size, texture_color, masked, nil, retained_id)
+			UIRenderer.script_draw_bitmap(gui_retained, self.render_settings, is_material_table and material[i] or not is_material_table and material, texture_position, draw_size, texture_color, masked, nil, retained_id)
 		else
-			UIRenderer.script_draw_bitmap(gui, self.render_settings, is_material_table and not not material[i] or not is_material_table and not not material, texture_position, draw_size, texture_color, masked, nil)
+			UIRenderer.script_draw_bitmap(gui, self.render_settings, is_material_table and material[i] or not is_material_table and material, texture_position, draw_size, texture_color, masked, nil)
 		end
 	end
 
@@ -1150,7 +1150,7 @@ UIRenderer.draw_texture_rotated = function (self, material, size, position, angl
 	translation.z = translation.z + scaled_position.y
 
 	local render_settings = self.render_settings
-	local snap_pixel_positions = not not render_settings and not not render_settings.snap_pixel_positions
+	local snap_pixel_positions = render_settings and render_settings.snap_pixel_positions
 
 	if snap_pixel_positions == nil then
 		snap_pixel_positions = SNAP_PIXEL_POSITIONS
@@ -1179,7 +1179,7 @@ local draw_text_var_args = {}
 UIRenderer.draw_text = function (self, text, font_material, font_size, font_name, position, color, retained_id, color_override)
 	-- function 30
 	local ui_position = UIScaleVectorToResolution(position)
-	local use_color_override = color_override and (#color_override > 0 or not not nil) or not color_override and not not nil
+	local use_color_override = color_override and (#color_override > 0 or nil) or not color_override and nil
 
 	if use_color_override then
 		draw_text_var_args[#draw_text_var_args + 1] = "color_override"
@@ -1189,11 +1189,11 @@ UIRenderer.draw_text = function (self, text, font_material, font_size, font_name
 	local use_var_args = #draw_text_var_args > 0
 	local return_value
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
-	local offscreen_target = not not render_settings and not not render_settings.offscreen_target
+	local offscreen_target = render_settings and render_settings.offscreen_target
 
 	if offscreen_target then
 		font_name = font_name .. "_offscreen"
@@ -1201,7 +1201,7 @@ UIRenderer.draw_text = function (self, text, font_material, font_size, font_name
 
 	local flags = Gui.FormatDirectives
 	local font = Fonts[font_name]
-	local font_flags = not not font and not not font[4]
+	local font_flags = font and font[4]
 
 	if font_flags then
 		flags = bit.bor(flags, font_flags)
@@ -1234,13 +1234,13 @@ UIRenderer.draw_justified_text = function (self, text, font_material, font_size,
 	-- function 31
 	local ui_position = UIScaleVectorToResolution(position)
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
 	local flags = Gui.FormatDirectives
 	local font = Fonts[font_name]
-	local font_flags = not not font and not not font[4]
+	local font_flags = font and font[4]
 
 	if font_flags then
 		flags = bit.bor(flags, font_flags)
@@ -1267,7 +1267,7 @@ UIRenderer.word_wrap = function (self, text, font_material, size, width, option,
 
 	if optional_font_name then
 		local font = Fonts[optional_font_name]
-		local font_flags = not not font and not not font[4]
+		local font_flags = font and font[4]
 
 		if font[4] then
 			flags = bit.bor(flags, font_flags)
@@ -1322,12 +1322,12 @@ UIRenderer.draw_video = function (self, material_name, position, size, color, vi
 	end
 
 	local gui = self.gui
-	local video_player = not not optional_video_player or not not self.video_players[video_player_reference]
+	local video_player = optional_video_player or self.video_players[video_player_reference]
 	local pixel_snap = true
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
 	Gui.video(gui, material_name, video_player, UIScaleVectorToResolution(position), UIScaleVectorToResolution(size, pixel_snap), color)
 
@@ -1342,7 +1342,7 @@ UIRenderer.draw_splash_video = function (self, material_name, position, size, co
 		return true
 	end
 
-	local video_player = not not optional_video_player or not not self.video_players[video_player_reference]
+	local video_player = optional_video_player or self.video_players[video_player_reference]
 
 	if VideoPlayer.current_frame(video_player) == VideoPlayer.number_of_frames(video_player) then
 		return true
@@ -1366,9 +1366,9 @@ UIRenderer.draw_splash_video = function (self, material_name, position, size, co
 	end
 
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
 	Gui.video(gui, material_name, video_player, Vector3(w * 0.5 - width * 0.5, h * 0.5 - height * 0.5, position[3]), Vector2(width, height), color)
 end
@@ -1388,9 +1388,9 @@ UIRenderer.draw_circle = function (self, position, radius, size, color)
 	local gui = self.gui
 	local Gui_triangle = Gui.triangle
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
 	local layer = 999
 	local p1 = Vector3(unpack(position))
@@ -1433,9 +1433,9 @@ UIRenderer.draw_rounded_rect = function (self, position, size, radius, color)
 	local p1 = Vector3(position[1] + w / 2, 0, position[2] + h / 2)
 	local p2 = Vector3(x + w - radius + circleVerts[1] * radius, 0, y + h - radius + circleVerts[2] * radius)
 	local render_settings = self.render_settings
-	local alpha_multiplier = render_settings and not not render_settings.alpha_multiplier or not render_settings and not not 1
+	local alpha_multiplier = render_settings and render_settings.alpha_multiplier or not render_settings and 1
 
-	color = not not color and not not Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
+	color = color and Color(color[1] * alpha_multiplier, color[2], color[3], color[4])
 
 	for i = 2, n do
 		local p3 = Vector3(x + w - radius + circleVerts[i * 2 - 1] * radius, 0, y + h - radius + circleVerts[i * 2] * radius)
@@ -1487,8 +1487,8 @@ local NilCursor = {
 
 UIRenderer.scaled_cursor_position_by_scenegraph = function (input_service, scenegraph, scenegraph_id, ignore_scale)
 	-- function 40
-	local cursor = not not input_service:get("cursor")
-	local scaled_cursor = ignore_scale and not not cursor or not ignore_scale and not not UIInverseScaleVectorToResolution(cursor)
+	local cursor = input_service:get("cursor")
+	local scaled_cursor = ignore_scale and cursor or not ignore_scale and UIInverseScaleVectorToResolution(cursor)
 	local scenegraph_position = UISceneGraph.get_world_position(scenegraph, scenegraph_id)
 
 	scaled_cursor.x = scaled_cursor.x - scenegraph_position[1]

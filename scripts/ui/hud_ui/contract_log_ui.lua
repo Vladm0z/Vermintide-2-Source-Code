@@ -261,7 +261,7 @@ end
 
 ContractLogUI._add_contract = function (self, contract_id)
 	-- function 9
-	local num_added_contracts = not not self.num_added_contracts
+	local num_added_contracts = self.num_added_contracts
 
 	if num_added_contracts >= MAX_NUM_CONTRACT_ENTRIES then
 		return
@@ -283,7 +283,7 @@ ContractLogUI._add_contract = function (self, contract_id)
 	local contract_name = self.quest_manager:get_title_for_contract_id(contract_id)
 	local rewards = contract_template.rewards
 	local quest_reward = rewards.quest
-	local contract_color = quest_reward and not not QuestSettings.contract_ui_dlc_colors[quest_reward.quest_type] or not quest_reward and not not Colors.get_table("white")
+	local contract_color = quest_reward and QuestSettings.contract_ui_dlc_colors[quest_reward.quest_type] or not quest_reward and Colors.get_table("white")
 	local icon_color = widget_style.texture_icon_bg.color
 
 	icon_color[2] = contract_color[2]
@@ -342,7 +342,7 @@ end
 
 ContractLogUI._remove_contract = function (self, contract_id)
 	-- function 10
-	local num_added_contracts = not not self.num_added_contracts
+	local num_added_contracts = self.num_added_contracts
 
 	if num_added_contracts <= 0 then
 		return

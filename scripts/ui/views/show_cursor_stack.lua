@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/show_cursor_stack.lua
 
-ShowCursorStack = not not ShowCursorStack
+ShowCursorStack = ShowCursorStack
 
 local set_clip_cursor = Window.set_clip_cursor
 
@@ -9,20 +9,20 @@ ShowCursorStack.render_cursor = function (allow_cursor_rendering)
 	ShowCursorStack.allow_cursor_rendering = allow_cursor_rendering
 
 	if ShowCursorStack.stack_depth > 0 then
-		local is_fullscreen = not not Application.is_fullscreen
+		local is_fullscreen = Application.is_fullscreen
 
 		Window.set_show_cursor(allow_cursor_rendering)
-		set_clip_cursor(not allow_cursor_rendering or not not is_fullscreen)
+		set_clip_cursor(not allow_cursor_rendering or is_fullscreen)
 	end
 end
 
 ShowCursorStack.push = function (skip_error)
 	-- function 2
 	if ShowCursorStack.stack_depth == 0 and ShowCursorStack.allow_cursor_rendering then
-		local is_fullscreen = not not Application.is_fullscreen
+		local is_fullscreen = Application.is_fullscreen
 
 		Window.set_show_cursor(true)
-		set_clip_cursor(not not is_fullscreen or not not false)
+		set_clip_cursor(is_fullscreen or false)
 	end
 
 	ShowCursorStack.stack_depth = ShowCursorStack.stack_depth + 1
@@ -69,11 +69,11 @@ end
 
 ShowCursorStack.update_clip_cursor = function ()
 	-- function 6
-	local is_fullscreen = not not Application.is_fullscreen
+	local is_fullscreen = Application.is_fullscreen
 	local allow_cursor_rendering = ShowCursorStack.allow_cursor_rendering
 
 	if ShowCursorStack.stack_depth == 0 and allow_cursor_rendering then
-		set_clip_cursor(not not is_fullscreen or not not false)
+		set_clip_cursor(is_fullscreen or false)
 	elseif ShowCursorStack.stack_depth > 0 then
 		set_clip_cursor(is_fullscreen)
 	end
@@ -89,7 +89,7 @@ ShowCursorStack.dump = function ()
 	local out = {}
 
 	table.insert(out, "Stack size: " .. ShowCursorStack.stack_depth)
-	table.insert(out, "Reasons:" .. (table.is_empty(ShowCursorStack.reasons) and not not " (none)" or not table.is_empty(ShowCursorStack.reasons) and not not ""))
+	table.insert(out, "Reasons:" .. (table.is_empty(ShowCursorStack.reasons) and " (none)" or not table.is_empty(ShowCursorStack.reasons) and ""))
 
 	for reason in pairs(ShowCursorStack.reasons) do
 		table.insert(out, "\t" .. reason)

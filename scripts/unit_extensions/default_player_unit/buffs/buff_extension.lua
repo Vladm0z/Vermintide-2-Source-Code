@@ -6,7 +6,7 @@ dofile("scripts/settings/bpc")
 local buff_perk_functions = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_functions")
 local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-script_data.buff_debug = not not script_data.buff_debug
+script_data.buff_debug = script_data.buff_debug
 
 local function debug_sync_print(...)
 	-- function 1
@@ -16,7 +16,7 @@ local function debug_sync_print(...)
 end
 
 BuffExtension = class(BuffExtension)
-buff_extension_function_params = not not buff_extension_function_params
+buff_extension_function_params = buff_extension_function_params
 
 local _removed_buff = {
 	removed = true
@@ -53,9 +53,9 @@ BuffExtension.init = function (self, extension_init_context, unit, extension_ini
 
 	self.is_server = Managers.player.is_server
 
-	local is_player = not not extension_init_data.breed
+	local is_player = extension_init_data.breed
 
-	self.is_local = is_player and not not is_player and not not not extension_init_data.is_husk or not is_player and not not self.is_server
+	self.is_local = is_player and is_player and not extension_init_data.is_husk or not is_player and self.is_server
 	self.is_husk = extension_init_data.is_husk
 	self.id = 1
 	self.individual_stat_buff_index = 1
@@ -180,13 +180,13 @@ BuffExtension.add_buff = function (self, template_name, params)
 	local buffs = self._buffs
 	local buff_template = BuffUtils.get_buff_template(template_name)
 	local sub_buffs = buff_template.buffs
-	local time_offset = params and not not params._hot_join_sync_buff_age or not params and not not 0
+	local time_offset = params and params._hot_join_sync_buff_age or not params and 0
 	local start_time = Managers.time:time("game") - time_offset
 	local id = self:claim_buff_id(template_name)
 	local world = self.world
 	local is_server = self.is_server
 	local first_buff
-	local parent_buff_shared_table = not not buff_template.create_parent_buff_shared_table
+	local parent_buff_shared_table = buff_template.create_parent_buff_shared_table
 	local sub_buffs_added = 0
 
 	for i = 1, #sub_buffs do
@@ -201,7 +201,7 @@ BuffExtension.add_buff = function (self, template_name, params)
 			local duration = sub_buff_template.duration
 			local ticks = sub_buff_template.ticks
 			local update_frequency = sub_buff_template.update_frequency
-			local max_stacks = sub_buff_template.max_stacks_func and not not sub_buff_template.max_stacks_func(self._unit, sub_buff_template) or not sub_buff_template.max_stacks_func and not not sub_buff_template.max_stacks
+			local max_stacks = sub_buff_template.max_stacks_func and sub_buff_template.max_stacks_func(self._unit, sub_buff_template) or not sub_buff_template.max_stacks_func and sub_buff_template.max_stacks
 			local is_stacking_buff = max_stacks
 			local bonus = sub_buff_template.bonus
 			local value = sub_buff_template.value
@@ -218,7 +218,7 @@ BuffExtension.add_buff = function (self, template_name, params)
 					local variable_bonus_table = sub_buff_template.variable_bonus
 
 					if variable_bonus_table then
-						local bonus_index = variable_value ~= 1 and not not (1 + math.floor(variable_value / (1 / #variable_bonus_table))) or not (variable_value ~= 1) and not not #variable_bonus_table
+						local bonus_index = variable_value ~= 1 and 1 + math.floor(variable_value / (1 / #variable_bonus_table)) or not (variable_value ~= 1) and #variable_bonus_table
 
 						bonus = variable_bonus_table[bonus_index]
 					end
@@ -245,17 +245,17 @@ BuffExtension.add_buff = function (self, template_name, params)
 					end
 				end
 
-				bonus = not not params.external_optional_bonus or not not bonus
-				multiplier = not not params.external_optional_multiplier or not not multiplier
-				value = not not params.external_optional_value or not not value
-				proc_chance = not not params.external_optional_proc_chance or not not proc_chance
-				duration = not not params.external_optional_duration or not not duration
-				ticks = not not params.external_optional_ticks or not not ticks
-				range = not not params.external_optional_range or not not range
-				damage_source = not not params.damage_source or not not damage_source
-				power_level = not not params.power_level or not not power_level
-				attacker_unit = not not params.attacker_unit or not not attacker_unit
-				source_attacker_unit = not not params.source_attacker_unit or not not source_attacker_unit
+				bonus = params.external_optional_bonus or bonus
+				multiplier = params.external_optional_multiplier or multiplier
+				value = params.external_optional_value or value
+				proc_chance = params.external_optional_proc_chance or proc_chance
+				duration = params.external_optional_duration or duration
+				ticks = params.external_optional_ticks or ticks
+				range = params.external_optional_range or range
+				damage_source = params.damage_source or damage_source
+				power_level = params.power_level or power_level
+				attacker_unit = params.attacker_unit or attacker_unit
+				source_attacker_unit = params.source_attacker_unit or source_attacker_unit
 			end
 
 			if sub_buff_template.duration_modifier_func then
@@ -265,19 +265,19 @@ BuffExtension.add_buff = function (self, template_name, params)
 			local perks = sub_buff_template.perks
 
 			if perks and table.find(perks, buff_perk_names.burning_balefire) then
-				local source = not not source_attacker_unit or not not attacker_unit
+				local source = source_attacker_unit or attacker_unit
 				local source_buff_extension = ScriptUnit.has_extension(source, "buff_system")
 
 				if source_buff_extension and not Managers.state.side:is_ally(unit, source) then
 					local duration_multiplier = source_buff_extension:apply_buffs_to_value(1, "increased_balefire_dot_duration")
 
-					duration = not not duration and not not (duration * duration_multiplier)
-					ticks = not not ticks and not not math.floor(ticks * duration_multiplier)
-					update_frequency = not not update_frequency and not not (update_frequency * duration_multiplier)
+					duration = duration and duration * duration_multiplier
+					ticks = ticks and math.floor(ticks * duration_multiplier)
+					update_frequency = update_frequency and update_frequency * duration_multiplier
 				end
 			end
 
-			local end_time = not not duration and not not (start_time + duration)
+			local end_time = duration and start_time + duration
 
 			if is_stacking_buff and not self:_add_stacking_buff(sub_buff_template, max_stacks, start_time, duration, end_time, params) then
 				break
@@ -319,7 +319,7 @@ BuffExtension.add_buff = function (self, template_name, params)
 				proc_cooldown = proc_cooldown,
 				duration = duration,
 				ticks = ticks,
-				current_ticks = ticks and not not 0 or not ticks and not not nil,
+				current_ticks = ticks and 0 or not ticks and nil,
 				update_frequency = update_frequency,
 				range = range,
 				damage_source = damage_source,
@@ -330,7 +330,7 @@ BuffExtension.add_buff = function (self, template_name, params)
 				parent_buff_shared_table = parent_buff_shared_table
 			}
 
-			first_buff = not not first_buff or not not buff
+			first_buff = first_buff or buff
 			self._num_buffs = self._num_buffs + 1
 			buffs[self._num_buffs] = buff
 			sub_buffs_added = sub_buffs_added + 1
@@ -355,7 +355,7 @@ BuffExtension.add_buff = function (self, template_name, params)
 			if perks then
 				for perk_i = 1, #perks do
 					local perk = perks[perk_i]
-					local perk_count = not not self._perks[perk]
+					local perk_count = self._perks[perk]
 
 					if perk_count == 0 then
 						local perk_funcs = buff_perk_functions[perk]
@@ -372,7 +372,7 @@ BuffExtension.add_buff = function (self, template_name, params)
 			if sub_buff_template.buff_area then
 				local unit_spawner = Managers.state.unit_spawner
 				local side_by_unit = Managers.state.side.side_by_unit
-				local owner_side = not not side_by_unit[source_attacker_unit]
+				local owner_side = side_by_unit[source_attacker_unit]
 				local extension_init_data = {
 					buff_area_system = {
 						duration = duration,
@@ -381,10 +381,10 @@ BuffExtension.add_buff = function (self, template_name, params)
 						sub_buff_id = i,
 						owner_unit = unit,
 						source_unit = source_attacker_unit,
-						side_id = owner_side and not not owner_side.side_id or not owner_side and not not 0
+						side_id = owner_side and owner_side.side_id or not owner_side and 0
 					}
 				}
-				local position = params and not not params.buff_area_position or not params and not not POSITION_LOOKUP[self._unit]
+				local position = params and params.buff_area_position or not params and POSITION_LOOKUP[self._unit]
 				local buff_unit = unit_spawner:spawn_network_unit(sub_buff_template.area_unit_name, "buff_aoe_unit", extension_init_data, position, Quaternion.identity(), nil)
 
 				buff.area_buff_unit = buff_unit
@@ -411,7 +411,7 @@ BuffExtension.add_buff = function (self, template_name, params)
 			local delayed_apply_buff_func = sub_buff_template.delayed_apply_buff_func
 
 			if delayed_apply_buff_func then
-				local delayed_funcs = not not self._delayed_apply_funcs
+				local delayed_funcs = self._delayed_apply_funcs
 
 				delayed_funcs[#delayed_funcs + 1] = buff
 				self._delayed_apply_funcs = delayed_funcs
@@ -528,10 +528,10 @@ end
 BuffExtension._add_stacking_buff = function (self, sub_buff_template, max_stacks, start_time, duration, end_time, params)
 	-- function 9
 	local current_buff_stacks = self._stacking_buffs[sub_buff_template.name]
-	local num_stacks = current_buff_stacks and not not #current_buff_stacks or not current_buff_stacks and not not 0
+	local num_stacks = current_buff_stacks and #current_buff_stacks or not current_buff_stacks and 0
 
 	if duration then
-		local refresh_duration = sub_buff_template.refresh_durations_func and not not sub_buff_template.refresh_durations_func(self._unit, sub_buff_template) or not sub_buff_template.refresh_durations_func and not not sub_buff_template.refresh_durations
+		local refresh_duration = sub_buff_template.refresh_durations_func and sub_buff_template.refresh_durations_func(self._unit, sub_buff_template) or not sub_buff_template.refresh_durations_func and sub_buff_template.refresh_durations
 
 		if refresh_duration then
 			for stack_idx = 1, num_stacks do
@@ -569,8 +569,8 @@ BuffExtension._add_stacking_buff = function (self, sub_buff_template, max_stacks
 		if on_max_stacks_overflow_func then
 			local is_overflow = true
 
-			params = not not params or not not FrameTable.alloc_table()
-			should_add_buff = not not should_add_buff and not not on_max_stacks_overflow_func(self._unit, sub_buff_template, params, is_overflow)
+			params = params or FrameTable.alloc_table()
+			should_add_buff = should_add_buff and on_max_stacks_overflow_func(self._unit, sub_buff_template, params, is_overflow)
 		else
 			should_add_buff = false
 		end
@@ -581,7 +581,7 @@ BuffExtension._add_stacking_buff = function (self, sub_buff_template, max_stacks
 			on_max_stacks_func(self._unit, sub_buff_template, params)
 		end
 
-		local reset_on_max_stacks = sub_buff_template.reset_on_max_stacks_func and not not sub_buff_template.reset_on_max_stacks_func(self._unit, sub_buff_template) or not sub_buff_template.reset_on_max_stacks_func and not not sub_buff_template.reset_on_max_stacks
+		local reset_on_max_stacks = sub_buff_template.reset_on_max_stacks_func and sub_buff_template.reset_on_max_stacks_func(self._unit, sub_buff_template) or not sub_buff_template.reset_on_max_stacks_func and sub_buff_template.reset_on_max_stacks
 
 		if reset_on_max_stacks then
 			local buffs = self._buffs
@@ -594,7 +594,7 @@ BuffExtension._add_stacking_buff = function (self, sub_buff_template, max_stacks
 					buff_extension_function_params.multiplier = buff.multiplier
 					buff_extension_function_params.value = buff.value
 					buff_extension_function_params.t = start_time
-					buff_extension_function_params.end_time = not not buff.duration
+					buff_extension_function_params.end_time = buff.duration
 					buff_extension_function_params.attacker_unit = buff.attacker_unit
 					buff_extension_function_params.source_attacker_unit = buff.source_attacker_unit
 
@@ -622,8 +622,8 @@ BuffExtension._refresh_duration = function (self, buff, start_time, duration, en
 	buff.start_time = start_time
 	buff.duration = duration
 	buff.end_time = end_time
-	buff.attacker_unit = params and not not params.attacker_unit or not params and not not nil
-	buff.source_attacker_unit = params and not not params.source_attacker_unit or not params and not not nil
+	buff.attacker_unit = params and params.attacker_unit or not params and nil
+	buff.source_attacker_unit = params and params.source_attacker_unit or not params and nil
 
 	local reapply_buff_func = template.reapply_buff_func
 
@@ -648,9 +648,9 @@ BuffExtension._add_stat_buff = function (self, sub_buff_template, buff)
 		return
 	end
 
-	local bonus = not not buff.bonus
-	local multiplier = not not buff.multiplier
-	local proc_chance = not not buff.proc_chance
+	local bonus = buff.bonus
+	local multiplier = buff.multiplier
+	local proc_chance = buff.proc_chance
 	local value = buff.value
 	local stat_buffs = self._stat_buffs
 	local stat_buff_type = sub_buff_template.stat_buff
@@ -678,7 +678,7 @@ BuffExtension._add_stat_buff = function (self, sub_buff_template, buff)
 		}
 		self.individual_stat_buff_index = index + 1
 	else
-		index = application_method ~= "stacking_multiplier_multiplicative" or not not sub_buff_template.stacking_name
+		index = application_method ~= "stacking_multiplier_multiplicative" or sub_buff_template.stacking_name
 
 		if not stat_buff[index] then
 			stat_buff[index] = {
@@ -712,7 +712,7 @@ BuffExtension._add_stat_buff = function (self, sub_buff_template, buff)
 
 			min_stat_buff.all_values[#min_stat_buff.all_values + 1] = value
 
-			local prev_value = not not min_stat_buff.value
+			local prev_value = min_stat_buff.value
 
 			min_stat_buff.value = math.min(prev_value, value)
 		end
@@ -761,7 +761,7 @@ BuffExtension.update = function (self, unit, input, dt, context, t)
 
 		if not buff.removed then
 			local template = buff.template
-			local end_time = not not buff.duration
+			local end_time = buff.duration
 			local ticks = buff.ticks
 			local current_ticks = buff.current_ticks
 
@@ -772,7 +772,7 @@ BuffExtension.update = function (self, unit, input, dt, context, t)
 			buff_extension_function_params.attacker_unit = buff.attacker_unit
 			buff_extension_function_params.source_attacker_unit = buff.source_attacker_unit
 
-			local done_ticking = not not ticks and ticks <= current_ticks
+			local done_ticking = ticks and ticks <= current_ticks
 
 			if not end_time and done_ticking then
 				if template.remove_buff_on_duration_end then
@@ -795,17 +795,17 @@ BuffExtension.update = function (self, unit, input, dt, context, t)
 					local next_update_t = buff._next_update_t
 
 					if not next_update_t then
-						next_update_t = t + not not buff.template.update_start_delay
+						next_update_t = t + buff.template.update_start_delay
 						buff._next_update_t = next_update_t
 					end
 
 					if next_update_t <= t then
 						buff_extension_function_params.time_into_buff = t - buff.start_time
-						buff_extension_function_params.time_left_on_buff = not not end_time and not not (end_time - t)
+						buff_extension_function_params.time_left_on_buff = end_time and end_time - t
 
 						local override_update_t = BuffFunctionTemplates.functions[update_func](unit, buff, buff_extension_function_params, world)
 
-						buff._next_update_t = not not override_update_t or not not (t + not not buff.update_frequency)
+						buff._next_update_t = override_update_t or t + buff.update_frequency
 
 						if current_ticks then
 							buff.current_ticks = current_ticks + 1
@@ -852,7 +852,7 @@ BuffExtension.update_stat_buff = function (self, stat_buff_type, difference, ind
 	local stat_buff = stat_buffs[stat_buff_type]
 	local application_method = StatBuffApplicationMethods[stat_buff_type]
 
-	index = not not index or not not 0
+	index = index or 0
 
 	if application_method == "stacking_bonus" then
 		local current_bonus = stat_buff[index].bonus
@@ -946,7 +946,7 @@ end
 
 BuffExtension.queue_remove_buff = function (self, id)
 	-- function 16
-	local queue = not not self._remove_buff_queue
+	local queue = self._remove_buff_queue
 
 	queue[#queue + 1] = id
 	self._remove_buff_queue = queue
@@ -1037,7 +1037,7 @@ BuffExtension._remove_sub_buff = function (self, buff, index, buff_extension_fun
 	buffs[index] = _removed_buff
 	self._any_buff_removed = true
 
-	local is_stacking_buff = not not template.max_stacks
+	local is_stacking_buff = template.max_stacks
 
 	if is_stacking_buff then
 		local buff_stacks = self._stacking_buffs[buff.template.name]
@@ -1054,7 +1054,7 @@ BuffExtension._remove_sub_buff = function (self, buff, index, buff_extension_fun
 				local stack_buff = buff_stacks[i]
 				local start_time = t
 				local duration = stack_buff.duration
-				local end_time = not not duration and not not (start_time + duration)
+				local end_time = duration and start_time + duration
 
 				self:_refresh_duration(stack_buff, start_time, duration, end_time, buff_extension_function_params, template)
 			end
@@ -1078,7 +1078,7 @@ BuffExtension._remove_sub_buff = function (self, buff, index, buff_extension_fun
 	end
 
 	local id = buff.id
-	local buff_id_refs = not not self._buff_id_refs[id] - 1
+	local buff_id_refs = self._buff_id_refs[id] - 1
 
 	if buff_id_refs > 0 then
 		self._buff_id_refs[id] = buff_id_refs
@@ -1135,8 +1135,8 @@ end
 BuffExtension._remove_stat_buff = function (self, buff)
 	-- function 18
 	local sub_buff_template = buff.template
-	local bonus = not not buff.bonus
-	local multiplier = not not buff.multiplier
+	local bonus = buff.bonus
+	local multiplier = buff.multiplier
 	local value = buff.value
 	local stat_buff = sub_buff_template.stat_buff
 	local stat_buffs = self._stat_buffs[stat_buff]
@@ -1249,12 +1249,12 @@ BuffExtension.has_buff_perk = function (self, perk_name)
 	-- function 22
 	local perk_count = self._perks[perk_name]
 
-	return not not perk_count and perk_count > 0
+	return perk_count and perk_count > 0
 end
 
 BuffExtension.num_buff_perk = function (self, perk_name)
 	-- function 23
-	return not not self._perks[perk_name]
+	return self._perks[perk_name]
 end
 
 BuffExtension.get_non_stacking_buff = function (self, buff_type)
@@ -1283,7 +1283,7 @@ BuffExtension.num_buff_stacks = function (self, buff_type)
 	-- function 26
 	local buff_stacks = self._stacking_buffs[buff_type]
 
-	return buff_stacks and not not #buff_stacks or not buff_stacks and not not 0
+	return buff_stacks and #buff_stacks or not buff_stacks and 0
 end
 
 BuffExtension.num_buff_type = function (self, buff_type)
@@ -1327,7 +1327,7 @@ local function has_authority(buff, is_server, is_local)
 	-- function 30
 	local authority = buff.template.authority
 
-	return not not is_local
+	return is_local
 end
 
 BuffExtension.trigger_procs = function (self, event, ...)
@@ -1357,12 +1357,12 @@ BuffExtension.trigger_procs = function (self, event, ...)
 	local temp_weighted_procs = FrameTable.alloc_table()
 
 	for index, buff in pairs(event_buffs) do
-		local proc_chance = not not buff.proc_chance
+		local proc_chance = buff.proc_chance
 
-		if has_authority(buff, is_server, is_local) and current_time > not not buff._next_proc_t and self:has_procced(proc_chance, buff) then
-			buff._next_proc_t = not not buff.template.proc_cooldown
+		if has_authority(buff, is_server, is_local) and current_time > buff._next_proc_t and self:has_procced(proc_chance, buff) then
+			buff._next_proc_t = buff.template.proc_cooldown
 
-			local proc_weight = not not buff.template.proc_weight
+			local proc_weight = buff.template.proc_weight
 
 			temp_weighted_procs[weigthed_proc_keys] = {
 				buff = buff,
@@ -1380,7 +1380,7 @@ BuffExtension.trigger_procs = function (self, event, ...)
 		local buff = temp_weighted_procs[i].buff
 		local buff_func_name = buff.buff_func
 		local buff_func = ProcFunctions[buff_func_name]
-		local success = not buff_func or not not buff_func(owner, buff, params, world, ProcEventParams[event])
+		local success = not buff_func or buff_func(owner, buff, params, world, ProcEventParams[event])
 
 		if success and buff.template.remove_on_proc then
 			event_buffs_to_remove[#event_buffs_to_remove + 1] = buff
@@ -1567,7 +1567,7 @@ end
 
 BuffExtension.apply_sync_id = function (self, local_sync_id, server_sync_id)
 	-- function 42
-	local buff_id = not not self._local_sync_to_id
+	local buff_id = self._local_sync_to_id
 
 	if buff_id then
 		self:_initalize_sync_tables()
@@ -1616,7 +1616,7 @@ BuffExtension.generate_sync_id = function (self)
 
 		table.swap_delete(free_sync_ids, 1)
 	else
-		sync_id = not not self._next_sync_id or not not 1
+		sync_id = self._next_sync_id or 1
 
 		if sync_id > NetworkConstants.server_controlled_buff_id.max then
 			self:_build_free_sync_ids_array()
@@ -1645,12 +1645,12 @@ end
 
 BuffExtension.sync_id_to_id = function (self, server_sync_id)
 	-- function 47
-	return not not self._server_sync_to_id
+	return self._server_sync_to_id
 end
 
 BuffExtension.id_to_sync_id = function (self, id)
 	-- function 48
-	return not not self._id_to_server_sync
+	return self._id_to_server_sync
 end
 
 BuffExtension.buff_sync_type = function (self, id)
@@ -1721,7 +1721,7 @@ end
 
 BuffExtension.create_shared_lifetime_buff_unit = function (self, position)
 	-- function 53
-	self._shared_buff_units = not not self._shared_buff_units
+	self._shared_buff_units = self._shared_buff_units
 	self._shared_buff_units[#self._shared_buff_units + 1] = Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "buff_unit", self._buff_unit_params, position, Quaternion.identity(), nil)
 
 	return self._shared_buff_units[#self._shared_buff_units]

@@ -1194,8 +1194,8 @@ local function sort_level_list(a, b)
 	local level_settings = LevelSettings
 	local a_map_settings = level_settings[a].map_settings
 	local b_map_settings = level_settings[b].map_settings
-	local a_sorting_index = a_map_settings and not not a_map_settings.sorting or not a_map_settings and not not 0
-	local b_sorting_index = b_map_settings and not not b_map_settings.sorting or not b_map_settings and not not 0
+	local a_sorting_index = a_map_settings and a_map_settings.sorting or not a_map_settings and 0
+	local b_sorting_index = b_map_settings and b_map_settings.sorting or not b_map_settings and 0
 
 	return a_sorting_index < b_sorting_index
 end
@@ -1208,10 +1208,10 @@ local function setup_game_mode_data(statistics_db, player_stats_id)
 
 	for name, level_data in pairs(LevelSettings) do
 		if type(level_data) == "table" and (not only_release or not DebugLevels[name]) then
-			local game_mode = not not level_data.game_mode
+			local game_mode = level_data.game_mode
 
 			if game_mode and game_mode ~= "tutorial" and game_mode ~= "demo" then
-				local unlockable = not not level_data.unlockable
+				local unlockable = level_data.unlockable
 
 				if unlockable and LevelUnlockUtils.level_unlocked(statistics_db, player_stats_id, name) then
 					if not game_mode_index[game_mode] then
@@ -1230,7 +1230,7 @@ local function setup_game_mode_data(statistics_db, player_stats_id)
 						game_mode_index[game_mode] = #game_mode_data
 					end
 
-					if not level_data.supported_game_modes and not level_data.ommit_from_lobby_browser or not not level_data.supported_game_modes and level_data.supported_game_modes[game_mode] and not level_data.ommit_from_lobby_browser then
+					if not level_data.supported_game_modes and not level_data.ommit_from_lobby_browser or level_data.supported_game_modes and level_data.supported_game_modes[game_mode] and not level_data.ommit_from_lobby_browser then
 						local data = game_mode_data[game_mode_index[game_mode]]
 						local levels = data.levels
 
@@ -1299,11 +1299,11 @@ local show_lobbies_array = {
 	"lb_show_joinable",
 	"lb_show_all"
 }
-local distance_array = IS_PS4 and not not {
+local distance_array = IS_PS4 and {
 	"map_zone_options_2",
 	"map_zone_options_3",
 	"map_zone_options_5"
-} or not IS_PS4 and not not {
+} or not IS_PS4 and {
 	"map_zone_options_2",
 	"map_zone_options_4",
 	"map_zone_options_5"
@@ -1586,7 +1586,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 						-- function 15
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -1673,9 +1673,9 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 			bottom_edge = "menu_frame_09_divider",
 			use_bottom_edge = use_bottom_edge,
 			button_hotspot = {},
-			button_text = not not button_text or not not "n/a",
-			hover_glow = optional_color_name and not not ("button_state_hover_" .. optional_color_name) or not optional_color_name and not not "button_state_hover",
-			glow = optional_color_name and not not ("button_state_normal_" .. optional_color_name) or not optional_color_name and not not "button_state_normal",
+			button_text = button_text or "n/a",
+			hover_glow = optional_color_name and "button_state_hover_" .. optional_color_name or not optional_color_name and "button_state_hover",
+			glow = optional_color_name and "button_state_normal_" .. optional_color_name or not optional_color_name and "button_state_normal",
 			button_background = {
 				uvs = {
 					{
@@ -1833,7 +1833,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
@@ -1848,7 +1848,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
 					0,
@@ -1863,7 +1863,7 @@ local function create_window_button(scenegraph_id, size, button_text, font_size,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,

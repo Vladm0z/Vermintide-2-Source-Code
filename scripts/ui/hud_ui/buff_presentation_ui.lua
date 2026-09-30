@@ -129,7 +129,7 @@ BuffPresentationUI._sync_buffs = function (self)
 			if not buff.removed then
 				local buff_template = buff.template
 				local name = buff_template.name
-				local handle_buff = not not debug_buffs or buff_template.icon ~= nil and not not buff_template.priority_buff
+				local handle_buff = debug_buffs or buff_template.icon ~= nil and buff_template.priority_buff
 
 				if handle_buff then
 					self:_add_buff(buff)
@@ -243,7 +243,7 @@ end
 BuffPresentationUI._set_buff_to_present = function (self, buff)
 	-- function 13
 	local widget = self.presentation_widget
-	local icon = not not buff.icon
+	local icon = buff.icon
 
 	widget.content.texture_icon = icon
 end

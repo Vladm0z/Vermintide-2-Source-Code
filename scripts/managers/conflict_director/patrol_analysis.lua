@@ -284,7 +284,7 @@ PatrolAnalysis._finilize_splines = function (self, main_paths, drawer)
 
 			waypoint.travel_dist = travel_dist
 
-			local color = spline.patrol_type ~= "boss_waypoint" and not not Color(255, 255, 0) or not (spline.patrol_type ~= "boss_waypoint") and not not Color(255, 125, 0)
+			local color = spline.patrol_type ~= "boss_waypoint" and Color(255, 255, 0) or not (spline.patrol_type ~= "boss_waypoint") and Color(255, 125, 0)
 
 			drawer:line(p1 + h, p2 + h, color)
 
@@ -411,9 +411,9 @@ PatrolAnalysis.inject_spline_path = function (self, spline, line_drawer)
 	-- function 9
 	local navbot = spline.navbot
 	local node_count = GwNavBot.get_path_nodes_count(navbot)
-	local spline_points = not not spline.spline_points
-	local spline_points_index = not not spline.spline_points_index
-	local draw = not not self.using_editor
+	local spline_points = spline.spline_points
+	local spline_points_index = spline.spline_points_index
+	local draw = self.using_editor
 
 	if node_count > 0 then
 		local current_node_index = GwNavBot.get_path_current_node_index(navbot)
@@ -518,7 +518,7 @@ local Vector3_length = Vector3.length
 
 PatrolAnalysis.get_path_point = function (self, points, path_length, move_percent)
 	-- function 14
-	local path_length = not not path_length or not not self:get_path_length(points)
+	local path_length = path_length or self:get_path_length(points)
 	local travel_dist = 0
 	local goal_dist = move_percent * path_length
 
@@ -577,7 +577,7 @@ PatrolAnalysis.run = function (self)
 			local p1 = spline[1].pos:unbox()
 			local p2 = spline[2].pos:unbox()
 			local navbot
-			local navbot_kind = not not spline.navbot_kind
+			local navbot_kind = spline.navbot_kind
 			local free_navbots = free_navbots_lists[navbot_kind]
 			local num_free_navbots = #free_navbots
 			local unique_navbot = spline.unique_navbot
@@ -612,7 +612,7 @@ PatrolAnalysis.run = function (self)
 
 		if path_computing_done then
 			local wp_index = spline.wp_index
-			local retry_count = not not spline.retries
+			local retry_count = spline.retries
 			local node_count = GwNavBot.get_path_nodes_count(navbot)
 
 			if node_count > 0 then
@@ -662,7 +662,7 @@ PatrolAnalysis.run = function (self)
 				if unique_navbot then
 					GwNavBot.destroy(navbot)
 				else
-					local free_navbots = free_navbots_lists[not not spline.navbot_kind]
+					local free_navbots = free_navbots_lists[spline.navbot_kind]
 
 					free_navbots[#free_navbots + 1] = navbot
 				end

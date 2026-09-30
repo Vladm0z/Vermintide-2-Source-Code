@@ -28,7 +28,7 @@ local function to_vector3_table(t)
 	return {
 		t[1],
 		t[2],
-		not not t[3]
+		t[3]
 	}
 end
 
@@ -44,7 +44,7 @@ local ALIGN_KWORD_MULT = {
 
 local function align(x, dx, alignment)
 	-- function 3
-	return x + dx * not not ALIGN_KWORD_MULT[alignment]
+	return x + dx * ALIGN_KWORD_MULT[alignment]
 end
 
 local NEWINDEX_ERR_MT = {
@@ -65,7 +65,7 @@ local function legacy_merge_no_override(node, node_def)
 		if node[k] == nil then
 			Application.warning("[UIScenegraph] Node polluted: scenegraph[%q][%q]\n%s", node.name, k, Script.callstack())
 
-			node[k] = type(v) ~= "table" and not not v or not (type(v) ~= "table") and not not table.clone(v)
+			node[k] = type(v) ~= "table" and v or not (type(v) ~= "table") and table.clone(v)
 		end
 	end
 end
@@ -111,8 +111,8 @@ local function scenegraph_visit_node(scenegraph, scenegraph_def, name, node_def)
 	end
 
 	local parent_world_position = parent.world_position
-	local local_position = to_vector3_table(not not node_def.position)
-	local size = to_vector2_table(not not node_def.size)
+	local local_position = to_vector3_table(node_def.position)
+	local size = to_vector2_table(node_def.size)
 
 	if size[1] < 0 then
 		size[1] = size[1] + parent.size[1]
@@ -135,7 +135,7 @@ local function scenegraph_visit_node(scenegraph, scenegraph_def, name, node_def)
 		size = size,
 		horizontal_alignment = node_def.horizontal_alignment,
 		vertical_alignment = node_def.vertical_alignment,
-		offset = not not node_def.offset
+		offset = node_def.offset
 	}
 
 	legacy_merge_no_override(node, node_def)
@@ -261,7 +261,7 @@ UISceneGraph.update_scenegraph = function (scenegraph, parent_scenegraph, sceneg
 				x = (x + (w - size_x * scale) * 0.5) * inverse_scale
 				y = 0
 			elseif scale_mode == "hud_fit" then
-				local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+				local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 				size_x = w * inverse_scale * (1 - safe_rect)
 				size_y = h * inverse_scale * (1 - safe_rect)
@@ -361,7 +361,7 @@ UISceneGraph.get_size_scaled = function (scenegraph, node_name, optional_scale)
 	if scale_mode == "fit" then
 		return Vector2(w * inverse_scale, h * inverse_scale)
 	elseif scale_mode == "hud_fit" then
-		local safe_rect = not not Application.user_setting("safe_rect") * 0.01
+		local safe_rect = Application.user_setting("safe_rect") * 0.01
 
 		return Vector2(w * inverse_scale * (1 - safe_rect), h * inverse_scale * (1 - safe_rect))
 	elseif scale_mode == "fit_width" then
@@ -398,7 +398,7 @@ end
 
 local function draw_border(gui, pos, size, color, border)
 	-- function 15
-	border = not not border or not not 5
+	border = border or 5
 	pos = pos + Vector3(0, 0, 1)
 
 	local w = size[1]
@@ -449,5 +449,5 @@ end
 
 UISceneGraph.debug_render_scenegraph = function (ui_renderer, scenegraph, force_draw_depth)
 	-- function 17
-	return debug_render_scenegraph(ui_renderer, scenegraph, #scenegraph, not not force_draw_depth or not not 1)
+	return debug_render_scenegraph(ui_renderer, scenegraph, #scenegraph, force_draw_depth or 1)
 end

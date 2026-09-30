@@ -10,8 +10,8 @@ local SLOT_Z_MAX_DOWN = 7.5
 
 AISlotUtils.clamp_position_on_navmesh = function (position, nav_world, above, below)
 	-- function 1
-	below = not not below or not not Z_MAX_DIFFERENCE_BELOW
-	above = not not above or not not Z_MAX_DIFFERENCE_ABOVE
+	below = below or Z_MAX_DIFFERENCE_BELOW
+	above = above or Z_MAX_DIFFERENCE_ABOVE
 
 	local is_on_navmesh, altitude = GwNavQueries_triangle_from_position(nav_world, position, above, below)
 

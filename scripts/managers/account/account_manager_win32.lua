@@ -73,15 +73,15 @@ AccountManager.update_presence = function (self)
 
 	local is_in_hub_level = Managers.level_transition_handler:in_hub_level()
 	local state = Managers.state
-	local network = not not state and not not state.network
-	local lobby = not not network and not not network:lobby()
+	local network = state and state.network
+	local lobby = network and network:lobby()
 
 	if not lobby then
 		return
 	end
 
 	local is_server = Managers.player.is_server
-	local lobby_data = is_server and not not lobby:get_stored_lobby_data() or not is_server and not not LobbyInternal.get_lobby_data_from_id(lobby:id())
+	local lobby_data = is_server and lobby:get_stored_lobby_data() or not is_server and LobbyInternal.get_lobby_data_from_id(lobby:id())
 
 	if not lobby_data then
 		return
@@ -90,12 +90,12 @@ AccountManager.update_presence = function (self)
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 
 	if is_in_hub_level then
-		Presence.set_presence("steam_display", to_boolean(MODDED_REALM) and not not "#presence_modded_hub" or not to_boolean(MODDED_REALM) and not not "#presence_official_hub")
+		Presence.set_presence("steam_display", to_boolean(MODDED_REALM) and "#presence_modded_hub" or not to_boolean(MODDED_REALM) and "#presence_official_hub")
 		Presence.set_presence("steam_player_group_size", PresenceHelper.lobby_num_players())
 		Presence.set_presence("hub_string", PresenceHelper.get_hub_presence())
 		Presence.set_presence("level", PresenceHelper.lobby_level())
 	elseif mechanism_name ~= "versus" then
-		Presence.set_presence("steam_display", MODDED_REALM and not not "#presence_modded" or not MODDED_REALM and not not "#presence_official")
+		Presence.set_presence("steam_display", MODDED_REALM and "#presence_modded" or not MODDED_REALM and "#presence_official")
 		Presence.set_presence("steam_player_group", lobby:id())
 		Presence.set_presence("steam_player_group_size", PresenceHelper.lobby_num_players())
 		Presence.set_presence("gamemode", PresenceHelper.lobby_gamemode(lobby_data))

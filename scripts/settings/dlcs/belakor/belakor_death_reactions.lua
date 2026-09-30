@@ -20,7 +20,7 @@ local death_reactions = {
 				local damage_data = health_extension.last_damage_data
 				local attacker_unique_id = damage_data.attacker_unique_id
 				local attacker_player = Managers.player:player_from_unique_id(attacker_unique_id)
-				local stats_id = not not attacker_player and not not attacker_player:stats_id()
+				local stats_id = attacker_player and attacker_player:stats_id()
 
 				Managers.state.achievement:trigger_event("explosive_barrel_destroyed", stats_id, unit, killing_blow)
 
@@ -64,7 +64,7 @@ local death_reactions = {
 						local item_name = health_extension.item_name
 						local last_damage_data = health_extension.last_damage_data
 						local network_manager = Managers.state.network
-						local last_attacker_unit = not not network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
+						local last_attacker_unit = network_manager:game_object_or_level_unit(last_damage_data.attacker_unit_id, false)
 
 						Managers.state.entity:system("area_damage_system"):create_explosion(last_attacker_unit, position, rotation, explosion_template, 1, item_name, nil, false)
 
@@ -102,7 +102,7 @@ local death_reactions = {
 				local damage_data = health_extension.last_damage_data
 				local attacker_unique_id = damage_data.attacker_unique_id
 				local attacker_player = Managers.player:player_from_unique_id(attacker_unique_id)
-				local stats_id = not not attacker_player and not not attacker_player:stats_id()
+				local stats_id = attacker_player and attacker_player:stats_id()
 
 				Managers.state.achievement:trigger_event("explosive_barrel_destroyed", stats_id, unit, killing_blow)
 

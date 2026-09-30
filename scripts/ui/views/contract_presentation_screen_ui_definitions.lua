@@ -182,7 +182,7 @@ local function create_entry(index)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 3
-						return content.task_amount > 0 and not not not content.texture_task_icon_1
+						return content.task_amount > 0 and not content.texture_task_icon_1
 					end
 				},
 				{
@@ -202,7 +202,7 @@ local function create_entry(index)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 5
-						return not not content.texture_task_icon_1
+						return content.texture_task_icon_1
 					end
 				},
 				{
@@ -212,7 +212,7 @@ local function create_entry(index)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 6
-						return not not content.task_completed_1
+						return content.task_completed_1
 					end
 				},
 				{
@@ -234,7 +234,7 @@ local function create_entry(index)
 						-- function 8
 						local task_amount = content.task_amount
 
-						return task_amount > 1 and not not not content.texture_task_icon_2
+						return task_amount > 1 and not content.texture_task_icon_2
 					end
 				},
 				{
@@ -256,7 +256,7 @@ local function create_entry(index)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 10
-						return not not content.texture_task_icon_2
+						return content.texture_task_icon_2
 					end
 				},
 				{
@@ -268,7 +268,7 @@ local function create_entry(index)
 						-- function 11
 						local task_amount = content.task_amount
 
-						return not not content.task_completed_2
+						return content.task_completed_2
 					end
 				},
 				{
@@ -290,7 +290,7 @@ local function create_entry(index)
 						-- function 13
 						local task_amount = content.task_amount
 
-						return task_amount > 2 and not not not content.texture_task_icon_3
+						return task_amount > 2 and not content.texture_task_icon_3
 					end
 				},
 				{
@@ -312,7 +312,7 @@ local function create_entry(index)
 					retained_mode = RETAINED_MODE_ENABLED,
 					content_check_function = function (content, style)
 						-- function 15
-						return not not content.texture_task_icon_3
+						return content.texture_task_icon_3
 					end
 				},
 				{
@@ -324,7 +324,7 @@ local function create_entry(index)
 						-- function 16
 						local task_amount = content.task_amount
 
-						return not not content.task_completed_3
+						return content.task_completed_3
 					end
 				},
 				{

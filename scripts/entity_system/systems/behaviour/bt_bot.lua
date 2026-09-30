@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/bt_bot.lua
 
-BotBehaviors = not not BotBehaviors
+BotBehaviors = BotBehaviors
 
 local ACTIONS_DEFAULT = BotActions.default
 

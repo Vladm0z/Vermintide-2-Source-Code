@@ -50,7 +50,7 @@ StartGameWindowPanelConsole._create_ui_elements = function (self, definitions, p
 		if settings.panel_sorting and parent:can_add_layout(settings) then
 			local scenegraph_id = "game_mode_option"
 			local size = scenegraph_definition[scenegraph_id].size
-			local display_name = not not settings.display_name
+			local display_name = settings.display_name
 			local font_size = 32
 			local horizontal_alignment = "center"
 			local widget_definition = definitions.create_panel_button(scenegraph_id, size, display_name, font_size, nil, horizontal_alignment)
@@ -291,7 +291,7 @@ StartGameWindowPanelConsole._handle_input = function (self, dt, t)
 			params.return_layout_name = nil
 		end
 
-		return_layout_name = not not return_layout_name or not not parent:get_previous_selected_layout_name()
+		return_layout_name = return_layout_name or parent:get_previous_selected_layout_name()
 
 		if return_layout_name then
 			self:_reset_back_button()
@@ -309,7 +309,7 @@ StartGameWindowPanelConsole._handle_input = function (self, dt, t)
 
 	if not input_made and not self.parent:panel_title_buttons_hidden() then
 		local input_service = parent:window_input_service()
-		local direction = input_service:get(INPUT_ACTION_PREVIOUS) and not not -1 or not input_service:get(INPUT_ACTION_PREVIOUS) and not not input_service:get(INPUT_ACTION_NEXT)
+		local direction = input_service:get(INPUT_ACTION_PREVIOUS) and -1 or not input_service:get(INPUT_ACTION_PREVIOUS) and input_service:get(INPUT_ACTION_NEXT)
 
 		if direction then
 			selected_layout_name = self:_find_next_layout_name(direction)
@@ -413,7 +413,7 @@ StartGameWindowPanelConsole._handle_gamepad_activity = function (self)
 	local force_update = self.gamepad_active_last_frame == nil
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local most_recent_device = Managers.input:get_most_recent_device()
-	local force_update = self.gamepad_active_last_frame == nil or not not gamepad_active and most_recent_device ~= self._most_recent_device
+	local force_update = self.gamepad_active_last_frame == nil or gamepad_active and most_recent_device ~= self._most_recent_device
 
 	if gamepad_active then
 		if not self.gamepad_active_last_frame or force_update then
@@ -461,22 +461,22 @@ end
 
 StartGameWindowPanelConsole._event_disable_function = function (self)
 	-- function 22
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._adventure_disable_function = function (self)
 	-- function 23
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._custom_game_disable_function = function (self)
 	-- function 24
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._heroic_deed_disable_function = function (self)
 	-- function 25
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._lobby_browser_disable_function = function (self)
@@ -486,27 +486,27 @@ end
 
 StartGameWindowPanelConsole._weave_disable_function = function (self)
 	-- function 27
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._deus_quickplay_disable_function = function (self)
 	-- function 28
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._deus_custom_disable_function = function (self)
 	-- function 29
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._versus_quickplay_disable_function = function (self)
 	-- function 30
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._versus_custom_disable_function = function (self)
 	-- function 31
-	return not not self:_is_in_quickplay_weave_menu()
+	return (self:_is_in_quickplay_weave_menu())
 end
 
 StartGameWindowPanelConsole._streaming_disable_function = function (self)
@@ -518,7 +518,7 @@ StartGameWindowPanelConsole._streaming_disable_function = function (self)
 	local twitch_enabled = GameSettingsDevelopment.twitch_enabled
 	local is_offline = Managers.account:offline_mode()
 
-	return not twitch_enabled or not not is_offline
+	return not twitch_enabled or is_offline
 end
 
 StartGameWindowPanelConsole._animate_title_entry = function (self, widget, dt, t)
@@ -527,11 +527,11 @@ StartGameWindowPanelConsole._animate_title_entry = function (self, widget, dt, t
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
 	local input_speed = 20
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local input_progress = UIUtils.animate_value(not not hotspot.input_progress, dt * input_speed, input_pressed)
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local input_progress = UIUtils.animate_value(hotspot.input_progress, dt * input_speed, input_pressed)
 	local speed = 8
-	local hover_progress = UIUtils.animate_value(not not hotspot.hover_progress, dt * speed, hotspot.is_hover)
-	local selection_progress = UIUtils.animate_value(not not hotspot.selection_progress, dt * speed, is_selected)
+	local hover_progress = UIUtils.animate_value(hotspot.hover_progress, dt * speed, hotspot.is_hover)
+	local selection_progress = UIUtils.animate_value(hotspot.selection_progress, dt * speed, is_selected)
 	local combined_progress = math.max(hover_progress, selection_progress)
 	local hover_alpha = 255 * combined_progress
 	local style = widget.style
@@ -559,12 +559,12 @@ StartGameWindowPanelConsole._animate_back_button = function (self, widget, dt)
 	local style = widget.style
 	local hotspot = content.button_hotspot
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
+	local input_pressed = not is_selected and hotspot.is_clicked
 	local input_speed = 20
-	local input_progress = UIUtils.animate_value(not not hotspot.input_progress, dt * input_speed, input_pressed)
+	local input_progress = UIUtils.animate_value(hotspot.input_progress, dt * input_speed, input_pressed)
 	local speed = 8
-	local hover_progress = UIUtils.animate_value(not not hotspot.hover_progress, speed * dt, hotspot.is_hover)
-	local selection_progress = UIUtils.animate_value(not not hotspot.selection_progress, speed * dt, is_selected)
+	local hover_progress = UIUtils.animate_value(hotspot.hover_progress, speed * dt, hotspot.is_hover)
+	local selection_progress = UIUtils.animate_value(hotspot.selection_progress, speed * dt, is_selected)
 	local combined_progress = math.max(hover_progress, selection_progress)
 	local hover_alpha = 255 * combined_progress
 

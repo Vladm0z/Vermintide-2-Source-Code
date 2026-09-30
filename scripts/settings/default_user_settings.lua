@@ -126,20 +126,20 @@ local default_user_settings = {
 	chat_font_size = 20,
 	char_texture_quality = TextureQuality.default_characters,
 	env_texture_quality = TextureQuality.default_environment,
-	local_light_shadow_quality = not not script_data.settings.default_local_light_shadow_quality,
-	particles_quality = not not script_data.settings.default_particles_quality,
-	sun_shadow_quality = not not script_data.settings.default_sun_shadow_quality,
-	use_physic_debris = not not script_data.settings.default_use_physic_debris,
-	num_blood_decals = not not BloodSettings.blood_decals.num_decals,
-	volumetric_fog_quality = not not script_data.settings.default_volumetric_fog_quality,
-	ambient_light_quality = not not script_data.settings.default_ambient_light_quality,
-	ao_quality = not not script_data.settings.default_ao_quality,
+	local_light_shadow_quality = script_data.settings.default_local_light_shadow_quality,
+	particles_quality = script_data.settings.default_particles_quality,
+	sun_shadow_quality = script_data.settings.default_sun_shadow_quality,
+	use_physic_debris = script_data.settings.default_use_physic_debris,
+	num_blood_decals = BloodSettings.blood_decals.num_decals,
+	volumetric_fog_quality = script_data.settings.default_volumetric_fog_quality,
+	ambient_light_quality = script_data.settings.default_ambient_light_quality,
+	ao_quality = script_data.settings.default_ao_quality,
 	playerlist_build_privacy = PrivacyLevels.friends,
 	crosshair_kill_confirm = CrosshairKillConfirmSettingsGroups.off,
 	sound_channel_configuration = Wwise.AK_SPEAKER_SETUP_AUTO,
 	overriden_settings = {
 		dlss_frame_generation = not not dlss_g_supported,
-		dlss_super_resolution = dlss_supported and not not "auto" or not dlss_supported and not not "none"
+		dlss_super_resolution = dlss_supported and "auto" or not dlss_supported and "none"
 	}
 }
 local default_render_settings = {
@@ -173,8 +173,8 @@ local default_render_settings = {
 	nv_low_latency_boost = false,
 	upscaling_enabled = false,
 	motion_blur_enabled = true,
-	max_shadow_casting_lights = IS_WINDOWS and not not 1 or not IS_WINDOWS and not not 2,
-	fov = not not script_data.settings.default_fov,
+	max_shadow_casting_lights = IS_WINDOWS and 1 or not IS_WINDOWS and 2,
+	fov = script_data.settings.default_fov,
 	nv_low_latency_mode = not not reflex_supported
 }
 local default_versus_settings = {
@@ -344,7 +344,7 @@ DefaultUserSettings.setup_resolution = function ()
 	local set_user_setting = Application.set_user_setting
 	local save_user_settings = Application.save_user_settings
 	local apply_user_settings = Application.apply_user_settings
-	local application_settings = not not Application:settings()
+	local application_settings = Application:settings()
 
 	table.dump(application_settings, "Application Settings", 4)
 
@@ -373,7 +373,7 @@ DefaultUserSettings.setup_resolution = function ()
 		table.dump(resolution, "resolution", 2)
 
 		local fullscreen_output = 0
-		local display_modes = not not Application.enum_display_modes()
+		local display_modes = Application.enum_display_modes()
 
 		if #display_modes == 0 then
 			display_modes = DefaultDisplayModes

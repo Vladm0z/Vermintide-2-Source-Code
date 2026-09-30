@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/steak/steak_utility_considerations.lua
 
-UtilityConsiderations = not not UtilityConsiderations
+UtilityConsiderations = UtilityConsiderations
 UtilityConsiderations.minotaur_melee_shove = {
 	distance_to_target = {
 		max_value = 5,

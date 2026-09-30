@@ -15,9 +15,9 @@ local quaternion_look = Quaternion.look
 local function get_with_override(settings, key, difficulty, fallback_difficulty)
 	-- function 1
 	local overrides = settings.difficulty_overrides
-	local override_settings = not not overrides[fallback_difficulty]
+	local override_settings = overrides[fallback_difficulty]
 
-	return override_settings and not not override_settings[key] or not override_settings and not not settings[key]
+	return override_settings and override_settings[key] or not override_settings and settings[key]
 end
 
 ConflictUtils.random_interval = function (numbers)
@@ -132,23 +132,23 @@ ConflictUtils.cluster_weight_and_loneliness = function (positions, min_dist)
 		ad = distance_squared(a, d)
 		bd = distance_squared(b, d)
 		cd = distance_squared(c, d)
-		utility_sum = utility_sum + (ad < min_dist and not not 1 or not (ad < min_dist) and not not 0)
-		utility_sum = utility_sum + (bd < min_dist and not not 1 or not (bd < min_dist) and not not 0)
-		utility_sum = utility_sum + (cd < min_dist and not not 1 or not (cd < min_dist) and not not 0)
+		utility_sum = utility_sum + (ad < min_dist and 1 or not (ad < min_dist) and 0)
+		utility_sum = utility_sum + (bd < min_dist and 1 or not (bd < min_dist) and 0)
+		utility_sum = utility_sum + (cd < min_dist and 1 or not (cd < min_dist) and 0)
 		loneliness[4] = ad + bd + cd
 	end
 
 	if c then
 		ac = distance_squared(a, c)
 		bc = distance_squared(b, c)
-		utility_sum = utility_sum + (ac < min_dist and not not 1 or not (ac < min_dist) and not not 0)
-		utility_sum = utility_sum + (bc < min_dist and not not 1 or not (bc < min_dist) and not not 0)
+		utility_sum = utility_sum + (ac < min_dist and 1 or not (ac < min_dist) and 0)
+		utility_sum = utility_sum + (bc < min_dist and 1 or not (bc < min_dist) and 0)
 		loneliness[3] = ac + bc + cd
 	end
 
 	if b then
 		ab = distance_squared(a, b)
-		utility_sum = utility_sum + (ab < min_dist and not not 1 or not (ab < min_dist) and not not 0)
+		utility_sum = utility_sum + (ab < min_dist and 1 or not (ab < min_dist) and 0)
 		loneliness[2] = ab + bc + bd
 	end
 
@@ -204,7 +204,7 @@ ConflictUtils.hidden_cover_points = function (center_position, avoid_pos_list, m
 	local bp = Managers.state.conflict.level_analysis.cover_points_broadphase
 
 	min_rad = min_rad * min_rad
-	dot_threshold = dot_threshold and (not not math.max(dot_threshold, -0.9) or not not -0.9) or not dot_threshold and not not -0.9
+	dot_threshold = dot_threshold and (math.max(dot_threshold, -0.9) or -0.9) or not dot_threshold and -0.9
 
 	local MAX_RANGE = 40
 	local num_found_cover_units = Broadphase.query(bp, center_position, math.min(max_rad, MAX_RANGE), found_cover_units)
@@ -231,7 +231,7 @@ ConflictUtils.hidden_cover_points = function (center_position, avoid_pos_list, m
 
 				Vector3.set_z(to_cover_point, 0)
 
-				local dot = dist_squared < 50 and (not not dot_threshold or not not -0.6) or not (dist_squared < 50) and not not -0.6
+				local dot = dist_squared < 50 and (dot_threshold or -0.6) or not (dist_squared < 50) and -0.6
 				local valid = dot > vector3_dot(quaternion_forward(rot), to_cover_point)
 
 				if valid then
@@ -282,7 +282,7 @@ ConflictUtils.is_cover_point_hidden = function (cover_point_unit, avoid_pos_list
 	local unit_local_rotation = Unit.local_rotation
 	local unit_local_position = Unit.local_position
 	local vector3_dot = Vector3.dot
-	local long_distance_sqr = not not long_distance_sqr or not not 10000
+	local long_distance_sqr = long_distance_sqr or 10000
 	local pos = unit_local_position(cover_point_unit, 0)
 	local rot = unit_local_rotation(cover_point_unit, 0)
 	local num_to_avoid = #avoid_pos_list
@@ -297,7 +297,7 @@ ConflictUtils.is_cover_point_hidden = function (cover_point_unit, avoid_pos_list
 		end
 
 		local to_cover_point = vector3_normalize(pos - avoid_pos)
-		local dot = dist_squared < 225 and not not -0.9 or not (dist_squared < 225) and not not -0.6
+		local dot = dist_squared < 225 and -0.9 or not (dist_squared < 225) and -0.6
 		local valid = dot > vector3_dot(quaternion_forward(rot), to_cover_point) or long_distance_sqr < dist_squared
 
 		if valid then
@@ -477,7 +477,7 @@ ConflictUtils.get_hidden_pos = function (world, nav_world, level, nav_tag_volume
 
 			for j = 1, #avoid_positions do
 				local avoid_pos = avoid_positions[j]
-				local los = not not ignore_umbra or not not World.umbra_has_line_of_sight(world, check_pos + h, avoid_pos + h)
+				local los = ignore_umbra or World.umbra_has_line_of_sight(world, check_pos + h, avoid_pos + h)
 
 				if los then
 					hidden = false
@@ -495,12 +495,12 @@ end
 
 ConflictUtils.is_position_inside_no_spawn_volume = function (level, nav_tag_volume_handler, pos)
 	-- function 16
-	return not not NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_SPAWN")
+	return (NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_SPAWN"))
 end
 
 ConflictUtils.find_center_tri = function (nav_world, pos, above_max, below_max)
 	-- function 17
-	local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, not not above_max or not not 30, not not below_max or not not 30)
+	local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, above_max or 30, below_max or 30)
 
 	if success then
 		pos.z = altitude
@@ -511,7 +511,7 @@ end
 
 ConflictUtils.find_center_tri_with_fallback = function (nav_world, pos, above_max, below_max)
 	-- function 18
-	above_max, below_max = not not above_max or not not 30, not not below_max or not not 30
+	above_max, below_max = above_max or 30, below_max or 30
 
 	local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, above_max, below_max)
 
@@ -624,7 +624,7 @@ end
 
 ConflictUtils.get_pos_towards_goal = function (nav_world, center_pos, dist, spread, tries, optional_dir, check_no_spawn_volumes, level, nav_tag_volume_handler)
 	-- function 23
-	tries = not not tries or not not 1
+	tries = tries or 1
 
 	for i = 1, tries do
 		local add_vec, goal_pos
@@ -806,7 +806,7 @@ ConflictUtils.generate_spawn_point_lookup = function (world)
 				while Unit.has_data(unit, "interest_point", "points", i) do
 					local node_name = Unit.get_data(unit, "interest_point", "points", i, "node")
 					local node = Unit.node(unit, node_name)
-					local point_position = node_name ~= "root_point" and not not Unit.local_position(unit, node) or not (node_name ~= "root_point") and not not Vector3(0, 0, 0)
+					local point_position = node_name ~= "root_point" and Unit.local_position(unit, node) or not (node_name ~= "root_point") and Vector3(0, 0, 0)
 					local point_rotation = Unit.local_rotation(unit, node)
 
 					p[#p + 1] = {
@@ -851,10 +851,10 @@ ConflictUtils.display_number_of_breeds_in_segment = function (header, units_spaw
 		for _, ai_unit in pairs(unit_list) do
 			local health_extension = ScriptUnit.has_extension(ai_unit, "health_system")
 			local hi_data1 = zone_data.hi_data
-			local hi_data2 = not not health_extension.zone_data
+			local hi_data2 = health_extension.zone_data
 
 			if hi_data1 and hi_data1 == hi_data2 then
-				count_list[breed_name] = not not count_list[breed_name] + 1
+				count_list[breed_name] = count_list[breed_name] + 1
 
 				QuickDrawer:sphere(POSITION_LOOKUP[ai_unit], 0.75, Color(200, 0, 200))
 			end
@@ -892,7 +892,7 @@ ConflictUtils.make_roaming_spawns = function (nav_world, level_analysis)
 		return list
 	end
 
-	local density = not not CurrentConflictSettings.roaming.density
+	local density = CurrentConflictSettings.roaming.density
 	local seed_pos = level_analysis:get_start_and_finish()
 
 	if seed_pos then
@@ -1006,7 +1006,7 @@ local function add_breeds_from_breed_action(output, breed_name, difficulty)
 	if actions then
 		for _, action in pairs(actions) do
 			if action.difficulty_spawn_list or action.spawn_list then
-				local spawn_list = action.difficulty_spawn_list and not not action.difficulty_spawn_list[difficulty] or not action.difficulty_spawn_list and not not action.spawn_list
+				local spawn_list = action.difficulty_spawn_list and action.difficulty_spawn_list[difficulty] or not action.difficulty_spawn_list and action.spawn_list
 
 				for i = 1, #spawn_list do
 					output[spawn_list[i]] = true
@@ -1020,7 +1020,7 @@ local function add_breeds_from_breed_action(output, breed_name, difficulty)
 			end
 
 			if action.difficulty_spawn or action.spawn then
-				local composition_type = action.difficulty_spawn and not not action.difficulty_spawn[difficulty] or not action.difficulty_spawn and not not action.spawn
+				local composition_type = action.difficulty_spawn and action.difficulty_spawn[difficulty] or not action.difficulty_spawn and action.spawn
 
 				add_breeds_from_horde_composition(output, composition_type, difficulty)
 			end
@@ -1053,7 +1053,7 @@ ConflictUtils.add_breeds_from_event = function (event_name, event, difficulty, d
 			local sub_event_name = sub_event[1]
 			local difficulty_requirement = sub_event.difficulty_requirement
 
-			if difficulty_requirement and difficulty_requirement > (not not difficulty_rank or not not DifficultySettings.normal.rank) then
+			if difficulty_requirement and difficulty_requirement > (difficulty_rank or DifficultySettings.normal.rank) then
 				break
 			end
 
@@ -1142,7 +1142,7 @@ local function add_breeds_from_special_settings(special_settings, difficulty, fa
 		output[breed_name] = true
 	end
 
-	local speed_running_intervention = not not get_with_override(special_settings, "speed_running_intervention", difficulty, fallback_difficulty)
+	local speed_running_intervention = get_with_override(special_settings, "speed_running_intervention", difficulty, fallback_difficulty)
 	local speed_running_intervention_breeds = speed_running_intervention.breeds
 
 	for i = 1, #speed_running_intervention_breeds do
@@ -1385,12 +1385,12 @@ end
 ConflictUtils.patch_settings_with_difficulty = function (source_settings, difficulty, fallback_difficulty)
 	-- function 46
 	local overrides = source_settings.difficulty_overrides
-	local override_settings = not not overrides[fallback_difficulty]
+	local override_settings = overrides[fallback_difficulty]
 
 	if override_settings then
 		for key, _ in pairs(source_settings) do
 			if key ~= "difficulty_overrides" then
-				source_settings[key] = not not override_settings[key]
+				source_settings[key] = override_settings[key]
 			end
 		end
 
@@ -1409,7 +1409,7 @@ ConflictUtils.patch_terror_events_with_weaves = function (level_key, weave_data,
 	local objectives = weave_template.objectives
 	local weave_terror_events = TerrorEventBlueprints.weaves
 
-	TerrorEventBlueprints[level_key] = not not TerrorEventBlueprints[level_key]
+	TerrorEventBlueprints[level_key] = TerrorEventBlueprints[level_key]
 
 	table.clear(TerrorEventBlueprints[level_key])
 
@@ -1542,7 +1542,7 @@ local function check_if_in_line_of_sight(physics_world, unit, from, to)
 	dir = Vector3.normalize(dir)
 
 	local hit, hit_position, _, _, hit_actor = PhysicsWorld.raycast(physics_world, from, dir, dist, "closest", "collision_filter", "filter_ai_line_of_sight_check")
-	local hit_unit = not not hit and not not Actor.unit(hit_actor)
+	local hit_unit = hit and Actor.unit(hit_actor)
 
 	return not hit or hit_unit == unit
 end
@@ -1550,7 +1550,7 @@ end
 ConflictUtils.raise_dead = function (pos, radius, side_id)
 	-- function 54
 	if pos then
-		radius = not not radius or not not 10
+		radius = radius or 10
 
 		local result_table = {}
 		local raise_list = {}
@@ -1581,7 +1581,7 @@ ConflictUtils.raise_dead = function (pos, radius, side_id)
 		if amount > 0 then
 			local local_player = Managers.player:local_player()
 			local resurrected_group_id = local_player.resurrected_group_id
-			local group_id = not not resurrected_group_id or not not Managers.state.entity:system("ai_group_system"):generate_group_id()
+			local group_id = resurrected_group_id or Managers.state.entity:system("ai_group_system"):generate_group_id()
 			local group_data = {
 				insert_into_group = true,
 				template = "resurrected",
@@ -1654,7 +1654,7 @@ end
 
 ConflictUtils.find_positions_around_position = function (center_position, output_position_list, nav_world, min_distance, max_distance, num_of_positions, forbidden_position_list, distance_to_forbidden_position_list, tries, circle_subdivision, row_distance, above_max, below_max, check_line_of_sight, physics_world, line_of_sight_target)
 	-- function 56
-	distance_to_forbidden_position_list = not not distance_to_forbidden_position_list or not not 1
+	distance_to_forbidden_position_list = distance_to_forbidden_position_list or 1
 
 	local function filter_func(pos)
 		-- function 57
@@ -1693,10 +1693,10 @@ ConflictUtils.find_positions_around_position = function (center_position, output
 	local spread = max_distance - min_distance
 	local distance = min_distance + spread * 0.5
 
-	circle_subdivision = not not circle_subdivision or not not 4
+	circle_subdivision = circle_subdivision or 4
 
 	local radian_subdivision = math.pi * 2 / circle_subdivision
-	local spread_delta = not not row_distance or not not 2
+	local spread_delta = row_distance or 2
 	local two_pi = 2 * math.pi
 	local start_spread = (math.random() - 0.5) * spread
 	local current_spread = start_spread
@@ -1704,7 +1704,7 @@ ConflictUtils.find_positions_around_position = function (center_position, output
 	local current_radians = start_radians
 	local current_subdivision_count = 0
 
-	tries = not not tries or not not 30
+	tries = tries or 30
 
 	local function get_next_pos()
 		-- function 58
@@ -1762,7 +1762,7 @@ end
 
 ConflictUtils.find_visible_positions_in_sphere_around_player = function (physics_world, position_count, player_unit, radius, from_pitch, to_pitch, pitch_delta, from_yaw, to_yaw, yaw_delta, forbidden_position_list, distance_to_forbidden_position_list, distance_between_positions, min_distance_from_floor)
 	-- function 60
-	distance_to_forbidden_position_list = not not distance_to_forbidden_position_list or not not 0
+	distance_to_forbidden_position_list = distance_to_forbidden_position_list or 0
 
 	local distance_between_positions_sqr = math.pow(distance_between_positions, 2)
 	local distance_to_forbidden_position_list_sqr = math.pow(distance_to_forbidden_position_list, 2)

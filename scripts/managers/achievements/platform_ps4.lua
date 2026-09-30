@@ -56,7 +56,7 @@ local platform_functions = {
 		if result == Trophies.COMPLETED then
 			return true
 		elseif result == Trophies.ERROR then
-			printf("[Trophies] Failed unlocking trophy - %q", not not template_id or not not "Unknown")
+			printf("[Trophies] Failed unlocking trophy - %q", template_id or "Unknown")
 
 			return true, "error"
 		elseif result == Trophies.UNKNOWN then

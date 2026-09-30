@@ -40,8 +40,8 @@ GameObjectSystem.on_add_extension = function (self, world, unit, extension_name,
 		extension.ignored = ignored
 
 		if not ignored then
-			local sync_name = not not extension_init_data.sync_name
-			local go_type = not not extension_init_data.go_type
+			local sync_name = extension_init_data.sync_name
+			local go_type = extension_init_data.go_type
 
 			fassert(sync_name, "Game object extension couldn't find sync_name for unit %s", unit)
 			fassert(go_type, "Game object extension couldn't find go_type for unit %s", unit)

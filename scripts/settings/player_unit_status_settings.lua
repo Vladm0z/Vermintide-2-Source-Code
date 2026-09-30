@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/player_unit_status_settings.lua
 
-PlayerUnitStatusSettings = not not PlayerUnitStatusSettings
+PlayerUnitStatusSettings = PlayerUnitStatusSettings
 PlayerUnitStatusSettings.MAX_FATIGUE = 100
 PlayerUnitStatusSettings.FATIGUE_DEGEN_DELAY = 1
 PlayerUnitStatusSettings.FATIGUE_POINTS_DEGEN_AMOUNT = 1.5
@@ -87,7 +87,7 @@ PlayerUnitStatusSettings.charge_values_defensive = {
 	catapulted = 0.02,
 	pounced = 0.02
 }
-PlayerUnitStatusSettings.overcharge_values = table.merge(not not PlayerUnitStatusSettings.overcharge_values, {
+PlayerUnitStatusSettings.overcharge_values = table.merge(PlayerUnitStatusSettings.overcharge_values, {
 	drakegun_basic = 2,
 	beam_staff_alternate = 0.85,
 	beam_staff_shotgun = 7,

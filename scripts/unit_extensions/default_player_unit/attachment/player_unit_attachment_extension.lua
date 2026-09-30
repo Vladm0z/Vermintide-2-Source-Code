@@ -4,7 +4,7 @@ require("scripts/helpers/attachment_utils")
 require("scripts/managers/backend/backend_utils")
 
 PlayerUnitAttachmentExtension = class(PlayerUnitAttachmentExtension)
-script_data.attachment_debug = not not script_data.attachment_debug
+script_data.attachment_debug = script_data.attachment_debug
 
 PlayerUnitAttachmentExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
@@ -242,7 +242,7 @@ PlayerUnitAttachmentExtension.show_attachments = function (self, show)
 			end
 		end
 
-		local attachment_event = show and not not "lua_attachment_unhidden" or not show and not not "lua_attachment_hidden"
+		local attachment_event = show and "lua_attachment_unhidden" or not show and "lua_attachment_hidden"
 
 		Unit.flow_event(self._tp_unit_mesh, attachment_event)
 
@@ -261,7 +261,7 @@ PlayerUnitAttachmentExtension.create_attachment_in_slot = function (self, slot_n
 	end
 
 	local slot_data = self._attachments.slots[slot_name]
-	local attachment_already_equiped = not not slot_data and slot_data.item_data == item_data
+	local attachment_already_equiped = slot_data and slot_data.item_data == item_data
 	local item_name = item_data.name
 
 	if attachment_already_equiped then
@@ -381,7 +381,7 @@ local params = {}
 PlayerUnitAttachmentExtension._apply_buffs = function (self, buffs_by_buffer, item_name, slot_name)
 	-- function 18
 	local buff_extension = self.buff_extension
-	local current_item_buffs = not not self.current_item_buffs[slot_name]
+	local current_item_buffs = self.current_item_buffs[slot_name]
 	local index = 1
 
 	for buffer, buffs in pairs(buffs_by_buffer) do

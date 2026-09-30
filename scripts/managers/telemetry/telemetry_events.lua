@@ -15,7 +15,7 @@ TelemetryEvents.init = function (self, manager)
 	self._subject = {}
 
 	if script_data.testify then
-		self._subject.machine_id = not not Application.machine_id
+		self._subject.machine_id = Application.machine_id
 		self._subject.machine_name = script_data.machine_name
 	end
 
@@ -27,7 +27,7 @@ TelemetryEvents.init = function (self, manager)
 	if IS_XB1 then
 		SOURCE.console_type = XboxOne.console_type_string()
 	elseif IS_PS4 then
-		SOURCE.console_type = PS4.is_pro() and not not "pro" or not PS4.is_pro() and not not "not_pro"
+		SOURCE.console_type = PS4.is_pro() and "pro" or not PS4.is_pro() and "not_pro"
 	end
 
 	self:game_startup()
@@ -308,7 +308,7 @@ TelemetryEvents.ai_despawned = function (self, breed, position, reason)
 	event:set_data({
 		breed = breed,
 		position = position,
-		reason = not not reason or not not "unknown"
+		reason = reason or "unknown"
 	})
 	self._manager:register_event(event)
 end
@@ -331,7 +331,7 @@ local function matchmaking_peers()
 		end)
 	end
 
-	return not not party_peers or not not {}
+	return party_peers or {}
 end
 
 TelemetryEvents.matchmaking_search = function (self, player, data)
@@ -672,13 +672,13 @@ TelemetryEvents.player_spawned = function (self, player)
 		career = player:career_name(),
 		human = player.local_player == true,
 		power_level = career_system:get_career_power_level(),
-		slot_melee = not not slot_melee and not not slot_melee.item_data.name,
-		slot_melee_skin = cosmetic_slot_melee and not not cosmetic_slot_melee.skin_name or not cosmetic_slot_melee and not not "default",
-		slot_ranged = not not slot_ranged and not not slot_ranged.item_data.name,
-		slot_ranged_skin = cosmetic_slot_ranged and not not cosmetic_slot_ranged.skin_name or not cosmetic_slot_ranged and not not "default",
-		slot_hat = not not cosmetic_slot_hat and not not cosmetic_slot_hat.item_name,
-		slot_skin = not not cosmetic_slot_skin and not not cosmetic_slot_skin.item_name,
-		slot_frame = not not cosmetic_slot_frame and not not cosmetic_slot_frame.item_name,
+		slot_melee = slot_melee and slot_melee.item_data.name,
+		slot_melee_skin = cosmetic_slot_melee and cosmetic_slot_melee.skin_name or not cosmetic_slot_melee and "default",
+		slot_ranged = slot_ranged and slot_ranged.item_data.name,
+		slot_ranged_skin = cosmetic_slot_ranged and cosmetic_slot_ranged.skin_name or not cosmetic_slot_ranged and "default",
+		slot_hat = cosmetic_slot_hat and cosmetic_slot_hat.item_name,
+		slot_skin = cosmetic_slot_skin and cosmetic_slot_skin.item_name,
+		slot_frame = cosmetic_slot_frame and cosmetic_slot_frame.item_name,
 		talents = talents
 	})
 	self._manager:register_event(event)
@@ -914,10 +914,10 @@ end
 
 TelemetryEvents.store_product_purchased = function (self, product)
 	-- function 65
-	local item = not not product.product_item
+	local item = product.product_item
 	local currency_type = "SM"
-	local regular_prices = not not item and not not item.regular_prices
-	local current_prices = not not item and not not item.current_prices
+	local regular_prices = item and item.regular_prices
+	local current_prices = item and item.current_prices
 
 	for currency, settings in pairs(DLCSettings.store.currency_ui_settings) do
 		local has_regular_price = regular_prices[currency]
@@ -935,7 +935,7 @@ TelemetryEvents.store_product_purchased = function (self, product)
 	local prod = {
 		id = product.product_id,
 		type = item.data.item_type,
-		current_price = not not current_price or not not regular_price,
+		current_price = current_price or regular_price,
 		regular_price = regular_price,
 		currency = currency_type
 	}
@@ -947,7 +947,7 @@ local function find_steam_currency(product)
 	-- function 66
 	local price = tonumber(product.item.steam_price)
 	local steam_data = product.item.steam_data
-	local price_table = steam_data.discount_is_active and not not steam_data.discount_prices or not steam_data.discount_is_active and not not steam_data.regular_prices
+	local price_table = steam_data.discount_is_active and steam_data.discount_prices or not steam_data.discount_is_active and steam_data.regular_prices
 
 	for currency, currency_price in pairs(price_table) do
 		if price == currency_price then
@@ -970,7 +970,7 @@ TelemetryEvents.steam_store_product_purchased = function (self, steam_product)
 		id = steam_product.item.id,
 		type = steam_product.item.data.item_type,
 		current_price = tonumber(steam_product.item.steam_price),
-		currency = steam_data and not not find_steam_currency(steam_product) or not steam_data and not not "?"
+		currency = steam_data and find_steam_currency(steam_product) or not steam_data and "?"
 	}
 
 	if steam_data and steam_data.discount_is_active then
@@ -995,9 +995,9 @@ TelemetryEvents.store_rewards_claimed = function (self, claim, offset)
 	local event_data = claim
 
 	if event_data.event_type == "personal_time_strike" then
-		event_data.reward_index = not not event_data.total_claims
+		event_data.reward_index = event_data.total_claims
 	else
-		event_data.reward_index = #event_data.rewards + (not not offset or not not 0)
+		event_data.reward_index = #event_data.rewards + (offset or 0)
 	end
 
 	event:set_data(event_data)
@@ -1150,7 +1150,7 @@ TelemetryEvents.chat_message = function (self, message)
 	}, "chat_message", self._session)
 
 	event:set_data({
-		message_length = message and not not #message or not message and not not 0
+		message_length = message and #message or not message and 0
 	})
 	self._manager:register_event(event)
 end
@@ -1228,7 +1228,7 @@ end
 TelemetryEvents.geheimnisnacht_hard_mode_toggled = function (self, activated)
 	-- function 91
 	local event = self:_create_event("geheimnisnacht_hard_mode_toggled")
-	local state = activated and not not "activated" or not activated and not not "deactivated"
+	local state = activated and "activated" or not activated and "deactivated"
 
 	event:set_data({
 		state = state

@@ -55,7 +55,7 @@ InputService.get = function (self, input_data_name, consume)
 	local keymaps, default_data_types = self:get_active_keymaps(nil, input_data_name)
 	local keymap_binding = keymaps[input_data_name]
 	local input_filters = self:get_active_filters(nil, input_data_name)
-	local filter_binding = not not input_filters and not not input_filters[input_data_name]
+	local filter_binding = input_filters and input_filters[input_data_name]
 
 	if keymap_binding and (keymap_binding.n > 0 or not filter_binding) then
 		local mapped_devices = self.mapped_devices
@@ -83,11 +83,11 @@ InputService.get = function (self, input_data_name, consume)
 
 							if input_device:active() and not input_device_data.blocked_access[name] then
 								if key_action_type == "soft_button" then
-									action_value = math_max(not not action_value or not not 0, input_device_data[key_action_type][key_index])
+									action_value = math_max(action_value or 0, input_device_data[key_action_type][key_index])
 								elseif key_action_type == "axis" and (not action_value or action_value and Vector3.length_squared(action_value) < 0.01) then
 									action_value = input_device_data[key_action_type][key_index]
 								else
-									action_value = not not action_value or not not input_device_data[key_action_type][key_index]
+									action_value = action_value or input_device_data[key_action_type][key_index]
 								end
 
 								if action_value == true then
@@ -104,7 +104,7 @@ InputService.get = function (self, input_data_name, consume)
 							end
 						end
 
-						action_value = device_list.n > 0 and (not not action_value or not not nil) or not (device_list.n > 0) and not not nil
+						action_value = device_list.n > 0 and (action_value or nil) or not (device_list.n > 0) and nil
 					end
 				end
 			end
@@ -149,14 +149,14 @@ end
 
 InputService.get_active_keymaps = function (self, optional_platform, optional_input_name)
 	-- function 7
-	local platform = not not optional_platform or not not self.platform
+	local platform = optional_platform or self.platform
 
 	if not optional_platform and IS_WINDOWS and self.input_manager:is_device_active("gamepad") then
 		local active_controller = Managers.input:get_most_recent_device()
-		local controller_type = not not active_controller and not not active_controller.type()
+		local controller_type = active_controller and active_controller.type()
 		local is_ps_pad = controller_type == "sce_pad"
 
-		platform = is_ps_pad and (not not "ps_pad" or not not "xb1") or not is_ps_pad and not not "xb1"
+		platform = is_ps_pad and ("ps_pad" or "xb1") or not is_ps_pad and "xb1"
 	end
 
 	if self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse") then
@@ -186,14 +186,14 @@ InputService.get_active_filters = function (self, optional_platform, optional_in
 		return
 	end
 
-	local platform = not not optional_platform or not not self.platform
+	local platform = optional_platform or self.platform
 
 	if not optional_platform and IS_WINDOWS and self.input_manager:is_device_active("gamepad") then
 		platform = "xb1"
 
 		local most_recent_device = Managers.input:get_most_recent_device()
 
-		platform = most_recent_device.type() ~= "sce_pad" or not not "ps_pad" or not not platform
+		platform = most_recent_device.type() ~= "sce_pad" or "ps_pad" or platform
 	end
 
 	if self.input_manager:is_device_active("keyboard") or self.input_manager:is_device_active("mouse") then
@@ -311,12 +311,12 @@ InputService.has = function (self, keymap_name)
 	local keymaps = self:get_active_keymaps(nil, keymap_name)
 	local input_filters = self:get_active_filters(nil, keymap_name)
 
-	return not not keymaps[keymap_name]
+	return keymaps[keymap_name]
 end
 
 InputService.is_blocked = function (self)
 	-- function 15
-	return not not self.service_is_blocked
+	return self.service_is_blocked
 end
 
 InputService.set_blocked = function (self, is_blocked, disabled_input_group)
@@ -338,12 +338,12 @@ InputService.set_input_blocked = function (self, input_data_name, blocked, optio
 		return
 	end
 
-	reasons = not not reasons or not not {}
+	reasons = reasons or {}
 	blocked_input[input_data_name] = reasons
 
-	local reason = not not optional_reason or not not "_no_reason"
+	local reason = optional_reason or "_no_reason"
 
-	reasons[reason] = not not blocked or not not nil
+	reasons[reason] = blocked or nil
 
 	if not next(reasons) then
 		blocked_input[input_data_name] = nil
@@ -356,7 +356,7 @@ end
 
 InputService.set_hover = function (self, hover)
 	-- function 19
-	self.hovering = not not self.hovering
+	self.hovering = self.hovering
 end
 
 InputService.is_hovering = function (self)

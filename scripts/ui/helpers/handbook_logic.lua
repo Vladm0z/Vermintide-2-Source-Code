@@ -9,7 +9,7 @@ HandbookLogic.init = function (self, context, blueprints)
 	}, context)
 
 	self._context = context_copy
-	self._reference_name = not not context.reference_name
+	self._reference_name = context.reference_name
 	self._blueprints = blueprints
 	self._video_references = {}
 	self._loaded_packages = {}
@@ -159,7 +159,7 @@ HandbookLogic.create_entry_widgets = function (self, page_settings)
 
 			local content = widget.content
 			local widget_height = content.size[2]
-			local padding = not not content.padding
+			local padding = content.padding
 
 			total_height = total_height + widget_height + padding
 			widget.offset[2] = -total_height

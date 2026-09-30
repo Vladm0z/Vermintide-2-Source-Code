@@ -57,7 +57,7 @@ TelemetryManager.reload_settings = function (self)
 	-- function 4
 	dprintf("[TelemetryManager] Refreshing settings")
 
-	self._blacklisted_events = table.set(not not TelemetrySettings.blacklist)
+	self._blacklisted_events = table.set(TelemetrySettings.blacklist)
 end
 
 TelemetryManager.update = function (self, dt, t)
@@ -168,7 +168,7 @@ end
 
 TelemetryManager.has_events_to_post = function (self)
 	-- function 10
-	return not not ENABLED
+	return ENABLED
 end
 
 TelemetryManager.batch_in_flight = function (self)

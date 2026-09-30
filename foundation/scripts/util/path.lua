@@ -23,7 +23,7 @@ Path.path_from_string = function (string_path)
 
 	while index ~= nil do
 		local next_slash_index = string_path:find("/", index)
-		local path_part = string_path:sub(index, next_slash_index and not not (next_slash_index - 1) or not next_slash_index and not not nil)
+		local path_part = string_path:sub(index, next_slash_index and next_slash_index - 1 or not next_slash_index and nil)
 
 		path_n = path_n + 1
 		path[path_n] = path_part
@@ -84,7 +84,7 @@ end
 
 Path.join = function (path1, path2, result)
 	-- function 7
-	result = not not result or not not {}
+	result = result or {}
 	result.size = 0
 
 	for i = 1, path1.size do
@@ -102,7 +102,7 @@ end
 
 Path.tostring = function (path, separator)
 	-- function 8
-	separator = not not separator or not not "/"
+	separator = separator or "/"
 
 	local string_path = ""
 

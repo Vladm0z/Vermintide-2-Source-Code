@@ -8040,13 +8040,13 @@ for roaming_set_name, breed_packs in pairs(BreedPacks) do
 	BreedPacksBySize[roaming_set_name] = generate_breed_pack_by_size(breed_packs, roaming_set_name)
 end
 
-InterestPointUnitsLookup = not not InterestPointUnitsLookup
-SizeOfInterestPoint = not not SizeOfInterestPoint
-InterestPointPickListIndexLookup = not not InterestPointPickListIndexLookup
-InterestPointPickList = not not InterestPointPickList
+InterestPointUnitsLookup = InterestPointUnitsLookup
+SizeOfInterestPoint = SizeOfInterestPoint
+InterestPointPickListIndexLookup = InterestPointPickListIndexLookup
+InterestPointPickList = InterestPointPickList
 
 if #InterestPointPickListIndexLookup == 0 then
-	local weight_lookup = not not InterestPointPickList
+	local weight_lookup = InterestPointPickList
 	local items = 0
 
 	for i, data in ipairs(InterestPointUnits) do
@@ -8079,11 +8079,11 @@ for pack_name, pack_data in pairs(BreedPacks) do
 	local zone_checks = pack_data.zone_checks
 	local clamp_breeds_hi = zone_checks.clamp_breeds_hi
 
-	fassert(not clamp_breeds_hi or not not clamp_breeds_hi.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_hi' setting for versus and won't be able to limit amount of breeds.", pack_name)
+	fassert(not clamp_breeds_hi or clamp_breeds_hi.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_hi' setting for versus and won't be able to limit amount of breeds.", pack_name)
 
 	local clamp_breeds_low = zone_checks.clamp_breeds_low
 
-	fassert(not clamp_breeds_low or not not clamp_breeds_low.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_low' setting for versus and won't be able to limit amount of breeds.", pack_name)
+	fassert(not clamp_breeds_low or clamp_breeds_low.versus_base, "[BreedPacks] '%s' is missing a 'clamp_breeds_low' setting for versus and won't be able to limit amount of breeds.", pack_name)
 end
 
 BenchmarkSettings.demo_mode_overrides()

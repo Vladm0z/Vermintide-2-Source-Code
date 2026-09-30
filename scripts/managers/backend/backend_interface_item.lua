@@ -84,7 +84,7 @@ local function clean_inventory(items, loadout, whitelist)
 
 	for backend_id, item in pairs(items) do
 		if not rawget(ItemMasterList, item.key) then
-			missing_items = not not missing_items or not not {}
+			missing_items = missing_items or {}
 			missing_items[backend_id] = item.key
 		end
 	end
@@ -189,7 +189,7 @@ Items.get_filtered_items = function (self, filter, params)
 	-- function 7
 	local all_items = self:get_all_backend_items()
 	local backend_common = Managers.backend:get_interface("common")
-	local items = backend_common:filter_items(all_items, filter, not not params or not not empty_params)
+	local items = backend_common:filter_items(all_items, filter, params or empty_params)
 
 	return items
 end
@@ -290,7 +290,7 @@ end
 
 Items.generate_item_server_loot = function (self, dice, difficulty, start_level, end_level, hero_name, dlc_name)
 	-- function 15
-	fassert(not self._dice_game_data and not not not self._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", not not self._dice_game_data, not not self._upgrades_failed_game_data)
+	fassert(not self._dice_game_data and not self._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", self._dice_game_data, self._upgrades_failed_game_data)
 
 	local time_out = Managers.time:time("main") + 20
 	local parameters = {
@@ -322,7 +322,7 @@ end
 
 Items.upgrades_failed_game = function (self, start_level, end_level)
 	-- function 16
-	fassert(not self._dice_game_data and not not not self._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", not not self._dice_game_data, not not self._upgrades_failed_game_data)
+	fassert(not self._dice_game_data and not self._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", self._dice_game_data, self._upgrades_failed_game_data)
 
 	local time_out = Managers.time:time("main") + 20
 
@@ -470,7 +470,7 @@ BackendInterfaceItem.set_loadout_item = function (self, item_id, profile, slot)
 	local items = self._backend_items:get_all_backend_items()
 
 	if item_id then
-		fassert(items[item_id], "Trying to equip item that doesn't exist %d", not not item_id or not not "nil")
+		fassert(items[item_id], "Trying to equip item that doesn't exist %d", item_id or "nil")
 	end
 
 	local loadout = self._backend_items:get_loadout()
@@ -642,7 +642,7 @@ BackendInterfaceItem.is_salvageable = function (self, backend_id)
 	local salvageable_slot_type = SalvageableSlotTypes[item_config.slot_type]
 	local salvageable_rarity = SalvageableRarities[item_config.rarity]
 
-	return not not unequipped and not not salvageable_slot_type and not not salvageable_rarity
+	return unequipped and salvageable_slot_type and salvageable_rarity
 end
 
 local FuseableSlotTypes = {
@@ -664,7 +664,7 @@ BackendInterfaceItem.is_fuseable = function (self, backend_id)
 	local fuseable_slot_type = FuseableSlotTypes[item_config.slot_type]
 	local fuseable_rarity = FuseableRarities[item_config.rarity]
 
-	return not not unequipped and not not fuseable_slot_type and not not fuseable_rarity
+	return unequipped and fuseable_slot_type and fuseable_rarity
 end
 
 BackendInterfaceItem.set_data_server_queue = function (self, queue)
@@ -764,7 +764,7 @@ BackendInterfaceItem.clean_inventory_for_prestige = function (self, profile_inde
 			local slot_type = InventorySettings.slots_by_name[slot].type
 
 			if slot_type == "melee" or slot_type == "ranged" then
-				local slot = slot_type ~= "melee" and not not "slot_ranged" or not (slot_type ~= "melee") and not not "slot_melee"
+				local slot = slot_type ~= "melee" and "slot_ranged" or not (slot_type ~= "melee") and "slot_melee"
 
 				inventory_extension:create_equipment_in_slot(slot, backend_id)
 				inventory_extension:wield(slot)
@@ -821,7 +821,7 @@ end
 
 BackendInterfaceItem.get_item_template = function (self, item_data, backend_id)
 	-- function 54
-	local template_name = not not item_data.temporary_template
+	local template_name = item_data.temporary_template
 	local item_template = WeaponUtils.get_weapon_template(template_name)
 
 	if item_template then

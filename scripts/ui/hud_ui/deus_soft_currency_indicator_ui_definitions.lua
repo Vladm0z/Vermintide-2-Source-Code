@@ -400,12 +400,12 @@ local animation_definitions = {
 
 				local coin_delta_color = coin_widget.style.coin_delta.text_color
 
-				coin_delta_color[2] = params.delta_dir <= 0 and not not 255 or not (params.delta_dir <= 0) and not not 200
+				coin_delta_color[2] = params.delta_dir <= 0 and 255 or not (params.delta_dir <= 0) and 200
 			end,
 			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 4
 				local p = 1 - (1 - progress)^2
-				local coin_count = math.lerp(not not params.from_coin_count, not not params.to_coin_count, p)
+				local coin_count = math.lerp(params.from_coin_count, params.to_coin_count, p)
 
 				coin_widget.content.coin_count_text = string.format("%d", coin_count)
 			end,

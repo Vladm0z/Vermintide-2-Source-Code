@@ -284,7 +284,7 @@ local function create_auto_fill_button(scenegraph_id, icon_name, hover_color, ho
 				},
 				texture_id = background_texture
 			},
-			texture_hover = not not hover_texture or not not "crafting_icon_hover",
+			texture_hover = hover_texture or "crafting_icon_hover",
 			texture_icon = {
 				uvs = {
 					{

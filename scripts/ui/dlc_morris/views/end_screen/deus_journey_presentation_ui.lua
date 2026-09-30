@@ -28,7 +28,7 @@ DeusJourneyPresentationUI.start = function (self, journey_name, previous_complet
 
 	local statistics_db = self.statistics_db
 	local stats_id = self.stats_id
-	local difficulty_complete_index = not not LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
+	local difficulty_complete_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
 	local first_time_completed = previous_completed_difficulty_index < difficulty_complete_index
 	local widget_name = "level"
 	local widget = widgets_by_name[widget_name]
@@ -48,7 +48,7 @@ DeusJourneyPresentationUI.start = function (self, journey_name, previous_complet
 
 	self.animation_params = animation_params
 
-	local animation_name = first_time_completed and not not "enter_first_time" or not first_time_completed and not not "enter"
+	local animation_name = first_time_completed and "enter_first_time" or not first_time_completed and "enter"
 
 	self:start_presentation_animation(animation_name, animation_params)
 

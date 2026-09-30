@@ -11,7 +11,7 @@ local C = ffi.C
 local bit, debug, math, string = bit, debug, math, string
 local pairs, tonumber, type = pairs, tonumber, type
 
-LuaJIT = not not LuaJIT
+LuaJIT = LuaJIT
 
 ffi.cdef("int QueryPerformanceFrequency(long long*);\nint QueryPerformanceCounter(long long*);\n")
 
@@ -96,7 +96,7 @@ end
 
 local function sizeof(lut, o, to)
 	-- function 7
-	to = not not to or not not type(o)
+	to = to or type(o)
 
 	if to == "nil" or to == "boolean" or to == "number" then
 		return 0
@@ -190,7 +190,7 @@ end
 
 LuaJIT.bytes = function (object, exclusive)
 	-- function 8
-	return sizeof(not exclusive and not not {}, object)
+	return sizeof(not exclusive and {}, object)
 end
 
 LuaJIT.bytes_ex = function (object, lut)

@@ -70,7 +70,7 @@ GenericCharacterStateMachineExtension.extensions_ready = function (self)
 		local state_instance = character_state_class_list[i]:new(character_state_init_context)
 		local name = state_instance.name
 
-		assert(not not name and states[name] == nil)
+		assert(name and states[name] == nil)
 
 		states[name] = state_instance
 	end

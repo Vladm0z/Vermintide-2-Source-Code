@@ -41,7 +41,7 @@ local function is_local_player_seeing_totem(world, camera_forward, camera_positi
 	local player_to_hb = Vector3.normalize(raised_totem_position - camera_position)
 	local dot = Vector3.dot(camera_forward, player_to_hb)
 
-	return dot > 0 and (not World.umbra_available(world) or not not World.umbra_has_line_of_sight(world, raised_totem_position, camera_position))
+	return dot > 0 and (not World.umbra_available(world) or World.umbra_has_line_of_sight(world, raised_totem_position, camera_position))
 end
 
 local function spawn_pre_spawn_decal(spawn_pos)

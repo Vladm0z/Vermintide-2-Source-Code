@@ -11,7 +11,7 @@ local function can_spawn_deus_pickup(params, is_debug_spawn)
 	local level_transition_handler = Managers.level_transition_handler
 	local level_key = level_transition_handler:get_current_level_keys()
 	local level_settings = LevelSettings[level_key]
-	local is_hub_level = not not level_settings and not not level_settings.hub_level
+	local is_hub_level = level_settings and level_settings.hub_level
 
 	if is_hub_level then
 		return false

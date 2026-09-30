@@ -83,7 +83,7 @@ PlayerHuskGhostModeExtension.husk_enter_ghost_mode = function (self)
 
 	local inventory_extension = ScriptUnit.extension(self._unit, "inventory_system")
 	local equipment = inventory_extension:equipment()
-	local weapon_unit = not not equipment.right_hand_wielded_unit_3p
+	local weapon_unit = equipment.right_hand_wielded_unit_3p
 
 	if not DEDICATED_SERVER then
 		if weapon_unit then
@@ -139,23 +139,23 @@ end
 PlayerHuskGhostModeExtension.cb_world_marker_spawned = function (self, unit, marker_id, widget)
 	-- function 11
 	local owner = Managers.player:owner(unit)
-	local profile_index = not not owner and not not owner:profile_index()
+	local profile_index = owner and owner:profile_index()
 	local profile = SPProfiles[profile_index]
-	local player_name = not not owner and not not owner:name()
+	local player_name = owner and owner:name()
 
-	player_name = player_name and (player_name ~= "" and (not not player_name or not not "n/a") or not (player_name ~= "") and not not "n/a") or not player_name and not not "n/a"
+	player_name = player_name and (player_name ~= "" and (player_name or "n/a") or not (player_name ~= "") and "n/a") or not player_name and "n/a"
 	widget.content.player_name = player_name
 
 	local peer_id = owner:network_id()
 	local local_player_id = owner:local_player_id()
 	local owner_game_mode_data = Managers.party:get_player_status(peer_id, local_player_id).game_mode_data
-	local respawn_timer = not not owner_game_mode_data and not not owner_game_mode_data.spawn_timer
+	local respawn_timer = owner_game_mode_data and owner_game_mode_data.spawn_timer
 
 	if respawn_timer then
 		widget.content.respawn_timer = respawn_timer
 	end
 
-	widget.content.icon = profile and not not profile.ui_portrait or not profile and not not "unit_frame_portrait_default"
+	widget.content.icon = profile and profile.ui_portrait or not profile and "unit_frame_portrait_default"
 	self._marker_id = marker_id
 end
 
@@ -167,7 +167,7 @@ PlayerHuskGhostModeExtension.husk_leave_ghost_mode = function (self)
 	local player_unit = self._unit
 	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 	local equipment = inventory_extension:equipment()
-	local weapon_unit = not not equipment.right_hand_wielded_unit_3p
+	local weapon_unit = equipment.right_hand_wielded_unit_3p
 	local status_extension = ScriptUnit.extension(self._unit, "status_system")
 
 	status_extension:set_ghost_mode(false)

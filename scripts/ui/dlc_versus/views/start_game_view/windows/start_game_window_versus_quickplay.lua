@@ -30,7 +30,7 @@ StartGameWindowVersusQuickplay.on_enter = function (self, params, offset)
 
 	self:_create_ui_elements(params, offset)
 
-	self._input_index = not not params.input_index
+	self._input_index = params.input_index
 
 	self:_handle_new_selection(self._input_index)
 
@@ -240,7 +240,7 @@ StartGameWindowVersusQuickplay._can_play = function (self)
 	local quickplay_enabled, disabled_reason = Managers.backend:get_interface("versus"):matchmaking_enabled("quickplay")
 
 	if not quickplay_enabled then
-		disabled_reason = not not disabled_reason or not not "Temporarily disabled"
+		disabled_reason = disabled_reason or "Temporarily disabled"
 
 		return false, disabled_reason
 	end
@@ -316,7 +316,7 @@ StartGameWindowVersusQuickplay._handle_new_selection = function (self, input_ind
 	for i = 1, #selector_input_definitions do
 		local widget_name = selector_input_definitions[i].widget_name
 		local widget = widgets_by_name[widget_name]
-		local is_selected = i == input_index and not not self._gamepad_active
+		local is_selected = i == input_index and self._gamepad_active
 
 		widget.content.is_selected = is_selected
 	end

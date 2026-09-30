@@ -299,9 +299,9 @@ StoreWindowItemPreview.update = function (self, dt, t)
 			local viewport_button = self._top_widgets_by_name.viewport_button
 			local is_hover = self:_is_button_hover(viewport_button)
 			local gamepad_active = Managers.input:is_device_active("gamepad")
-			local allow_preview_input = not not gamepad_active or not not is_hover
+			local allow_preview_input = gamepad_active or is_hover
 
-			self._item_previewer:update(dt, t, not not allow_preview_input and not not input_service)
+			self._item_previewer:update(dt, t, allow_preview_input and input_service)
 		end
 	end
 end
@@ -399,13 +399,13 @@ StoreWindowItemPreview._update_environment = function (self, item_preview_enviro
 		return
 	end
 
-	local item_preview_environment = not not item_preview_environment or not not "default"
+	local item_preview_environment = item_preview_environment or "default"
 	local viewport_widget_content = self._viewport_widget.content
 	local object_set_data = viewport_widget_content.object_set_data
 	local world = object_set_data.world
 	local shading_settings = World.get_data(world, "shading_settings")
 
-	shading_settings[1] = force_default and not not "default" or not force_default and not not item_preview_environment
+	shading_settings[1] = force_default and "default" or not force_default and item_preview_environment
 end
 
 StoreWindowItemPreview.post_update = function (self, dt, t)
@@ -510,7 +510,7 @@ StoreWindowItemPreview._animate_dlc_list_entries = function (self, dt)
 	for _, widget in ipairs(dlc_list_widgets) do
 		local content = widget.content
 		local style = widget.style
-		local hotspot = not not content.button_hotspot
+		local hotspot = content.button_hotspot
 
 		if hotspot and hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
@@ -526,13 +526,13 @@ StoreWindowItemPreview._is_dlc_list_hovered = function (self)
 	-- function 15
 	local list_mask = self._dlc_top_widgets_by_name.list
 
-	return not not list_mask.content.list_hotspot.is_hover
+	return list_mask.content.list_hotspot.is_hover
 end
 
 StoreWindowItemPreview._is_button_hover = function (self, widget)
 	-- function 16
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	return hotspot.is_hover
 end
@@ -564,7 +564,7 @@ StoreWindowItemPreview._dlc_list_index_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot = not not content.hotspot
+			local hotspot = content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -582,7 +582,7 @@ StoreWindowItemPreview._bundle_item_pressed = function (self)
 	if list_widgets then
 		for index, widget in ipairs(list_widgets) do
 			local content = widget.content
-			local hotspot = not not content.hotspot
+			local hotspot = content.hotspot
 
 			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
@@ -670,7 +670,7 @@ StoreWindowItemPreview._handle_input = function (self, input_service, dt, t)
 
 			for i = 1, #self._required_dlcs do
 				local settings = StoreDlcSettingsByName[self._required_dlcs[i]]
-				local dlc_name = settings and not not Localize(settings.name) or not settings and not not Localize("lb_unknown")
+				local dlc_name = settings and Localize(settings.name) or not settings and Localize("lb_unknown")
 
 				missing_dlcs_text = missing_dlcs_text .. dlc_name .. "\n"
 			end
@@ -691,8 +691,8 @@ StoreWindowItemPreview._handle_input = function (self, input_service, dt, t)
 		local path = parent:get_store_path()
 		local new_path = table.clone(path)
 		local product = self._selected_product
-		local product_settings = not not product and not not product.settings
-		local part_of_bundle = not not product_settings and not not product_settings.part_of_bundle
+		local product_settings = product and product.settings
+		local part_of_bundle = product_settings and product_settings.part_of_bundle
 
 		if part_of_bundle then
 			self:_play_sound("Play_hud_select")
@@ -860,7 +860,7 @@ StoreWindowItemPreview._update_loading_overlay_fadeout_animation = function (sel
 	local start = 255
 	local target = 0
 	local speed = 9
-	local progress = math.min(1, not not self._fadeout_progress + speed * dt)
+	local progress = math.min(1, self._fadeout_progress + speed * dt)
 	local alpha = math.lerp(start, target, math.easeInCubic(progress))
 	local loading_icon = loading_widgets_by_name.loading_icon
 
@@ -934,7 +934,7 @@ StoreWindowItemPreview._sync_presentation_item = function (self, force_update)
 					local item_data = item.data
 					local item_type = item_data.item_type
 
-					already_owned = not not false
+					already_owned = false
 				else
 					local all_owned, any_owned, missing_dlcs = backend_items:has_bundle_contents(item.data.bundle_contains)
 
@@ -965,7 +965,7 @@ StoreWindowItemPreview._sync_presentation_item = function (self, force_update)
 				local product_item = selected_product.product_item
 				local product_item_data = product_item.data
 				local bundle = product_item_data.bundle
-				local bundled_items = not not bundle.BundledItems
+				local bundled_items = bundle.BundledItems
 
 				already_owned = true
 
@@ -987,8 +987,8 @@ StoreWindowItemPreview._sync_presentation_item = function (self, force_update)
 			self._required_dlcs = required_dlcs
 
 			local selected_product_settings = selected_product.settings
-			local acquire_disabled = not not selected_product_settings and not not selected_product_settings.acquire_disabled
-			local acquire_hidden = not not selected_product_settings and not not selected_product_settings.acquire_hidden
+			local acquire_disabled = selected_product_settings and selected_product_settings.acquire_disabled
+			local acquire_hidden = selected_product_settings and selected_product_settings.acquire_hidden
 
 			self:_set_unlock_button_states(already_owned, can_afford, is_item_useable, acquire_disabled, acquire_hidden, owns_required_dlc)
 		end
@@ -1302,7 +1302,7 @@ StoreWindowItemPreview._present_dlc = function (self, settings, product_id)
 	end
 
 	local is_console = not IS_WINDOWS
-	local layout = is_console and not not settings.layout_console or not is_console and not not settings.layout
+	local layout = is_console and settings.layout_console or not is_console and settings.layout
 
 	if not layout and settings.is_bundle then
 		layout = self:_create_dlc_bundle_layout(settings, product_id)
@@ -1335,8 +1335,8 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 	else
 		local currency_type = "SM"
 		local product_item = product.product_item
-		local regular_prices = product_item and not not product_item.regular_prices or not product_item and not not item.regular_prices
-		local current_prices = product_item and not not product_item.current_prices or not product_item and not not item.current_prices
+		local regular_prices = product_item and product_item.regular_prices or not product_item and item.regular_prices
+		local current_prices = product_item and product_item.current_prices or not product_item and item.current_prices
 
 		for currency, settings in pairs(self._item_currency_settings) do
 			local has_regular_price = regular_prices[currency]
@@ -1349,19 +1349,19 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 			end
 		end
 
-		local price = not not current_prices[currency_type]
+		local price = current_prices[currency_type]
 
 		self:_set_price(price, currency_type)
 	end
 
-	local item_preview_layout_name = not not item.product_layout
-	local item_preview_layout = not not item_preview_layout_name and not not StoreBundleLayouts[item_preview_layout_name]
+	local item_preview_layout_name = item.product_layout
+	local item_preview_layout = item_preview_layout_name and StoreBundleLayouts[item_preview_layout_name]
 
 	if item_type ~= "cosmetic_bundle" and item_data.bundle_contains and not item_preview_layout_name then
 		item_preview_layout = self:_create_item_bundle_layout(steam_itemdefid, item_data)
 	end
 
-	local missing_required_dlc = not not item_data.required_dlc
+	local missing_required_dlc = item_data.required_dlc
 
 	if item_preview_layout then
 		local inventory_icon, display_name, _ = UIUtils.get_ui_information_from_item(item)
@@ -1377,7 +1377,7 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 		if missing_required_dlc then
 			local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-			disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
+			disclaimer_text = settings and (string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or Localize("dlc_required")) or not settings and Localize("dlc_required")
 		end
 
 		self:_set_disclaimer_text(disclaimer_text)
@@ -1398,25 +1398,25 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 			local matching_item_type = ItemMasterList[item_data.matching_item_key].item_type
 
 			type_title_text = Localize(matching_item_type)
-			item_preview_environment = not not item_preview_environment or not not "weapons_default_01"
-			item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_weapon_lights"
+			item_preview_environment = item_preview_environment or "weapons_default_01"
+			item_preview_object_set_name = item_preview_object_set_name or "flow_weapon_lights"
 
 			if missing_required_dlc then
 				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
+				disclaimer_text = settings and (string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or Localize("dlc_required")) or not settings and Localize("dlc_required")
 			else
 				disclaimer_text = Localize(item_type)
 			end
 		elseif slot_type == "hat" then
 			type_title_text = Localize(item_type)
-			item_preview_environment = not not item_preview_environment or not not "hats_default_01"
-			item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_hat_lights"
+			item_preview_environment = item_preview_environment or "hats_default_01"
+			item_preview_object_set_name = item_preview_object_set_name or "flow_hat_lights"
 
 			if missing_required_dlc then
 				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
+				disclaimer_text = settings and (string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or Localize("dlc_required")) or not settings and Localize("dlc_required")
 			end
 		elseif slot_type == "skin" or slot_type == "cosmetic_bundle" or slot_type == "weapon_pose" then
 			local hero_skin = true
@@ -1427,13 +1427,13 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 				hero_skin = false
 			end
 
-			type_title_text = hero_skin and (not not Localize(item_type) or not not Localize("dark_pact_skin")) or not hero_skin and not not Localize("dark_pact_skin")
-			item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_character_lights"
+			type_title_text = hero_skin and (Localize(item_type) or Localize("dark_pact_skin")) or not hero_skin and Localize("dark_pact_skin")
+			item_preview_object_set_name = item_preview_object_set_name or "flow_character_lights"
 
 			if missing_required_dlc then
 				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				disclaimer_text = settings and (not not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or not not Localize("dlc_required")) or not settings and not not Localize("dlc_required")
+				disclaimer_text = settings and (string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name)) or Localize("dlc_required")) or not settings and Localize("dlc_required")
 			elseif slot_type == "weapon_pose" then
 				disclaimer_text = ""
 			elseif slot_type == "cosmetic_bundle" then
@@ -1480,7 +1480,7 @@ StoreWindowItemPreview._present_item = function (self, item, product)
 		self._delayed_item_unit_presentation_delay = 0.3
 	end
 
-	local expire_timer_text = end_time and not not self:_calculate_expire_timer_text(end_time) or not end_time and not not ""
+	local expire_timer_text = end_time and self:_calculate_expire_timer_text(end_time) or not end_time and ""
 
 	self:_set_expire_timer_text(expire_timer_text)
 
@@ -1500,7 +1500,7 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 	local item_data = item.data
 	local item_key = item_data.key
 	local slot_type = item_data.slot_type
-	local product_settings = not not self._selected_product.settings
+	local product_settings = self._selected_product.settings
 	local viewport_widget = self._viewport_widget
 	local viewport_pass_data = viewport_widget.element.pass_data[1]
 	local viewport = viewport_pass_data.viewport
@@ -1562,7 +1562,7 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 
 		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
 		local career_settings = CareerSettings[career_name]
-		local skin = product_settings.part_of_bundle and not not item_data.store_optional_skin or not product_settings.part_of_bundle and not not career_settings.base_skin
+		local skin = product_settings.part_of_bundle and item_data.store_optional_skin or not product_settings.part_of_bundle and career_settings.base_skin
 		local hat_name = item_data.key
 
 		self:_spawn_hero_with_hat(world_previewer, profile_name, career_index, skin, hat_name)
@@ -1586,7 +1586,7 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 
 			self:_spawn_hero_with_linked_weapon(world_previewer, profile_name, career_index, optional_skin, optional_weapon_skin)
 		else
-			local optional_hat = product_settings.part_of_bundle and not not item_data.store_optional_hat or not product_settings.part_of_bundle and not not nil
+			local optional_hat = product_settings.part_of_bundle and item_data.store_optional_hat or not product_settings.part_of_bundle and nil
 
 			self:_spawn_hero_with_hat(world_previewer, profile_name, career_index, optional_skin, optional_hat)
 		end
@@ -1607,7 +1607,7 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 		local optional_weapon_skin
 
 		if contents.melee or contents.ranged then
-			optional_weapon_skin = not not contents.melee or not not content.ranged
+			optional_weapon_skin = contents.melee or content.ranged
 		end
 
 		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
@@ -1741,42 +1741,42 @@ StoreWindowItemPreview._setup_ps4_price_data = function (self, widget, price_dat
 	local console_third_price_stroke_style = style.console_third_price_stroke
 
 	if not original_price and not display_plus_upsell_price and not is_plus_price then
-		content.console_first_price_text = not not display_original_price or not not display_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_original_price or display_price or Localize("dlc_price_unavailable")
 		content.console_secondary_price_text = ""
 		content.console_third_price_text = ""
 		content.show_ps4_plus = false
 		content.show_secondary_stroke = false
 		content.show_third_stroke = false
 	elseif original_price and not display_plus_upsell_price and not is_plus_price then
-		content.console_first_price_text = not not display_price or not not Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_price or Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = display_original_price or Localize("dlc_price_unavailable")
 		content.console_third_price_text = ""
 		content.show_ps4_plus = false
 		content.show_secondary_stroke = true
 		content.show_third_stroke = false
 	elseif original_price and not display_plus_upsell_price and is_plus_price then
-		content.console_first_price_text = not not display_price or not not Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_price or Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = display_original_price or Localize("dlc_price_unavailable")
 		content.console_third_price_text = ""
 		content.show_ps4_plus = true
 		content.show_secondary_stroke = has_ps_plus
 		content.show_third_stroke = false
 	elseif not original_price and display_plus_upsell_price and not is_plus_price then
-		content.console_first_price_text = not not display_plus_upsell_price or not not Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = not not display_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_plus_upsell_price or Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = display_price or Localize("dlc_price_unavailable")
 		content.console_third_price_text = ""
 		content.show_ps4_plus = true
 		content.show_secondary_stroke = false
 		content.show_third_stroke = false
 	elseif original_price and display_plus_upsell_price and not is_plus_price then
-		content.console_first_price_text = not not display_plus_upsell_price or not not Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = not not display_price or not not Localize("dlc_price_unavailable")
-		content.console_third_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_plus_upsell_price or Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = display_price or Localize("dlc_price_unavailable")
+		content.console_third_price_text = display_original_price or Localize("dlc_price_unavailable")
 		content.show_ps4_plus = true
 		content.show_secondary_stroke = false
 		content.show_third_stroke = true
 	else
-		content.console_first_price_text = not not display_price or not not display_original_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_price or display_original_price or Localize("dlc_price_unavailable")
 		content.console_secondary_price_text = ""
 		content.console_third_price_text = ""
 		content.show_ps4_plus = false
@@ -1827,17 +1827,17 @@ StoreWindowItemPreview._setup_xb1_price_data = function (self, widget, price_dat
 	local style = widget.style
 	local spacing = 20
 	local size = content.size
-	local availability = price_data.availabilities and not not price_data.availabilities[1] or not price_data.availabilities and not not {}
+	local availability = price_data.availabilities and price_data.availabilities[1] or not price_data.availabilities and {}
 	local display_original_price = availability.DisplayListPrice
 	local display_price = availability.DisplayPrice
 
 	if display_price == display_original_price then
-		content.console_first_price_text = not not display_original_price or not not display_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_original_price or display_price or Localize("dlc_price_unavailable")
 		content.console_secondary_price_text = ""
 		content.show_secondary_stroke = false
 	elseif display_price ~= display_original_price then
-		content.console_first_price_text = not not display_price or not not Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
+		content.console_first_price_text = display_price or Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = display_original_price or Localize("dlc_price_unavailable")
 		content.show_secondary_stroke = true
 	end
 
@@ -1912,7 +1912,7 @@ end
 
 StoreWindowItemPreview._set_unlock_button_states = function (self, already_owned, can_afford, dlc_unlocked, acquire_disabled, acquire_hidden, owns_required_dlc)
 	-- function 42
-	local enabled = not GameSettingsDevelopment.read_only_backend and not already_owned and not not can_afford and not not dlc_unlocked and not acquire_disabled and not not owns_required_dlc
+	local enabled = not GameSettingsDevelopment.read_only_backend and not already_owned and can_afford and dlc_unlocked and not acquire_disabled and owns_required_dlc
 	local widget = self._top_widgets_by_name.unlock_button
 
 	widget.content.button_hotspot.disable_button = not enabled
@@ -1999,8 +1999,8 @@ StoreWindowItemPreview._update_info_text_alignment = function (self)
 	local expire_widget = self._top_widgets_by_name.expire_timer_text
 	local disclaimer_widget = self._top_widgets_by_name.disclaimer_text
 	local divider_widget = self._top_widgets_by_name.disclaimer_divider
-	local has_expire_text = not not self._expire_text
-	local has_disclaimer_text = not not self._disclaimer_text
+	local has_expire_text = self._expire_text
+	local has_disclaimer_text = self._disclaimer_text
 	local text_widget_1, text_widget_2
 
 	if has_expire_text then
@@ -2014,10 +2014,10 @@ StoreWindowItemPreview._update_info_text_alignment = function (self)
 		text_widget_2 = disclaimer_widget
 	end
 
-	local has_info_text = not not has_expire_text or not not has_disclaimer_text
+	local has_info_text = has_expire_text or has_disclaimer_text
 	local ui_renderer = self._ui_renderer
-	local text_1_width = text_widget_1 and not not UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text) or not text_widget_1 and not not 0
-	local text_2_width = text_widget_2 and not not UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text) or not text_widget_2 and not not 0
+	local text_1_width = text_widget_1 and UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text) or not text_widget_1 and 0
+	local text_2_width = text_widget_2 and UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text) or not text_widget_2 and 0
 	local spacing = 14
 	local divider_width = scenegraph_definition[divider_widget.scenegraph_id].size[1]
 	local total_length = text_1_width + text_2_width + divider_width
@@ -2074,7 +2074,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	local timer_text = Localize("menu_store_expire_timer_expires_in") .. " "
 
 	if days > 0 then
-		local day_string = days ~= 1 and not not "datetime_days" or not (days ~= 1) and not not "datetime_day"
+		local day_string = days ~= 1 and "datetime_days" or not (days ~= 1) and "datetime_day"
 
 		timer_text = timer_text .. string.format(Localize(day_string), days)
 
@@ -2082,7 +2082,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	end
 
 	if hours > 0 then
-		local hour_string = hours ~= 1 and not not "datetime_hours" or not (hours ~= 1) and not not "datetime_hour"
+		local hour_string = hours ~= 1 and "datetime_hours" or not (hours ~= 1) and "datetime_hour"
 
 		timer_text = timer_text .. string.format(Localize(hour_string), hours)
 
@@ -2090,7 +2090,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	end
 
 	if minutes > 0 then
-		local minute_string = minutes ~= 1 and not not "datetime_minutes" or not (minutes ~= 1) and not not "datetime_minute"
+		local minute_string = minutes ~= 1 and "datetime_minutes" or not (minutes ~= 1) and "datetime_minute"
 
 		timer_text = timer_text .. string.format(Localize(minute_string), minutes)
 
@@ -2098,7 +2098,7 @@ StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	end
 
 	local seconds_left = math.max(time_left / 1000, 0)
-	local second_string = seconds ~= 1 and not not "datetime_seconds" or not (seconds ~= 1) and not not "datetime_second"
+	local second_string = seconds ~= 1 and "datetime_seconds" or not (seconds ~= 1) and "datetime_second"
 
 	timer_text = timer_text .. string.format(Localize(second_string), seconds)
 
@@ -2395,7 +2395,7 @@ StoreWindowItemPreview._sync_layout_path = function (self)
 	local path = parent:get_store_path()
 	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
-	local saved_path = not not self._saved_path
+	local saved_path = self._saved_path
 	local path_differs = false
 	local path_length = #path
 	local saved_path_length = #saved_path
@@ -2417,7 +2417,7 @@ StoreWindowItemPreview._sync_layout_path = function (self)
 
 		if page_name == "item_details" then
 			local selected_product_settings = self._selected_product.settings
-			local part_of_bundle = not not selected_product_settings and not not selected_product_settings.part_of_bundle
+			local part_of_bundle = selected_product_settings and selected_product_settings.part_of_bundle
 
 			if not part_of_bundle and not self._expanded then
 				self:_set_window_expanded(true)
@@ -2464,9 +2464,9 @@ StoreWindowItemPreview._animate_detail_button = function (self, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not is_selected and not not hotspot.is_clicked
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = not is_selected and hotspot.is_clicked
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 
 	if is_hover then
@@ -2498,7 +2498,7 @@ StoreWindowItemPreview._set_title_edge_length = function (self, length, animatio
 	local target_length = math.max(length - title_edge_detail_size[1], 0)
 	local title_edge = item_widgets_by_name.title_edge
 	local start_length = ui_scenegraph[title_edge.scenegraph_id].size[1]
-	local title_edge_animation_data = not not self._title_edge_animation_data
+	local title_edge_animation_data = self._title_edge_animation_data
 
 	self._title_edge_animation_data = title_edge_animation_data
 	title_edge_animation_data.duration = animation_duration
@@ -2553,7 +2553,7 @@ StoreWindowItemPreview._update_unlock_button_width = function (self, width_offse
 	local style = widget.style
 	local side_padding = 65
 	local frame_width = content.frame_width
-	local title_text = already_owned and not not Localize(content.owned_text) or not already_owned and not not content.title_text
+	local title_text = already_owned and Localize(content.owned_text) or not already_owned and content.title_text
 	local title_text_style = style.title_text
 	local title_text_width = self:_get_text_width(title_text_style, title_text)
 
@@ -2568,12 +2568,12 @@ StoreWindowItemPreview._update_unlock_button_width = function (self, width_offse
 
 	local currency_icon_style = style.currency_icon
 	local currency_icon_disabled_style = style.currency_icon_disabled
-	local currency_icon_width = not not currency_icon_style.texture_size[1]
+	local currency_icon_width = currency_icon_style.texture_size[1]
 
 	currency_icon_style.offset[1] = side_padding + title_text_width
 	currency_icon_disabled_style.offset[1] = currency_icon_style.offset[1]
 
-	local currency_text = not not "9999"
+	local currency_text = "9999"
 	local currency_text_style = style.currency_text
 	local currency_text_disabled_style = style.currency_text_disabled
 	local currency_text_width = self:_get_text_width(currency_text_style, currency_text)
@@ -2609,7 +2609,7 @@ StoreWindowItemPreview._update_unlock_button_width = function (self, width_offse
 	owned_text_style.offset[1] = style.owned_icon.texture_size[1] * 0.5
 	style.owned_icon.offset[1] = -(owned_text_length * 0.5)
 	style.owned_icon_bg.offset[1] = -(owned_text_length * 0.5)
-	widget.offset[1] = not not width_offset or not not 0
+	widget.offset[1] = width_offset or 0
 end
 
 StoreWindowItemPreview._get_text_width = function (self, text_style, text)

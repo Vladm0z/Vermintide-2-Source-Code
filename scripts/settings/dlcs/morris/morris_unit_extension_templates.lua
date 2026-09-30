@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_unit_extension_templates.lua
 
-local ai_locomotion_name = not not "AILocomotionExtensionC"
+local ai_locomotion_name = "AILocomotionExtensionC"
 local unit_extension_templates = {
 	deus_weapon_chest = {
 		go_type = "deus_weapon_chest",

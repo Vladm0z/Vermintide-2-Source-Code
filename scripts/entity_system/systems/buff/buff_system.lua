@@ -88,7 +88,7 @@ BuffSystem.hot_join_sync = function (self, peer_id)
 					local template_name = buff_data.template_name
 					local attacker_unit = buff_data.attacker_unit
 					local buff_template_name_id = NetworkLookup.buff_templates[template_name]
-					local attacker_unit_object_id = not not network_manager:unit_game_object_id(attacker_unit)
+					local attacker_unit_object_id = network_manager:unit_game_object_id(attacker_unit)
 
 					network_transmit:send_rpc("rpc_add_buff", peer_id, unit_object_id, buff_template_name_id, attacker_unit_object_id, server_buff_id, false)
 				end
@@ -293,13 +293,13 @@ BuffSystem.add_buff = function (self, unit, template_name, attacker_unit, is_ser
 		return
 	end
 
-	fassert(not not self.is_server, "[BuffSystem]: Trying to add a server controlled buff from a client!")
+	fassert(self.is_server, "[BuffSystem]: Trying to add a server controlled buff from a client!")
 
 	if is_server_controlled and not HEALTH_ALIVE[unit] then
 		return nil
 	end
 
-	local server_buff_id = is_server_controlled and not not self:_next_free_server_buff_id() or not is_server_controlled and not not 0
+	local server_buff_id = is_server_controlled and self:_next_free_server_buff_id() or not is_server_controlled and 0
 
 	if ScriptUnit.has_extension(unit, "buff_system") then
 		self:_add_buff_helper_function(unit, template_name, attacker_unit, server_buff_id, power_level, source_attacker_unit)
@@ -333,7 +333,7 @@ BuffSystem.remove_server_controlled_buff = function (self, unit, server_buff_id)
 	if ALIVE[unit] and server_buff_id then
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 		local server_buffs = self.server_controlled_buffs
-		local unit_server_buffs = not not server_buffs and not not server_buffs[unit]
+		local unit_server_buffs = server_buffs and server_buffs[unit]
 
 		if unit_server_buffs then
 			local unit_server_buff_table = unit_server_buffs[server_buff_id]
@@ -341,9 +341,9 @@ BuffSystem.remove_server_controlled_buff = function (self, unit, server_buff_id)
 			if unit_server_buff_table then
 				unit_server_buffs[server_buff_id] = nil
 
-				local id = not not unit_server_buff_table and not not unit_server_buff_table.local_buff_id
+				local id = unit_server_buff_table and unit_server_buff_table.local_buff_id
 
-				num_buffs_removed = not not buff_extension:remove_buff(id) or not not 0
+				num_buffs_removed = buff_extension:remove_buff(id) or 0
 				self.free_server_buff_ids[#self.free_server_buff_ids + 1] = server_buff_id
 			end
 		end
@@ -363,7 +363,7 @@ BuffSystem.has_server_controlled_buff = function (self, unit, server_buff_id)
 	-- function 16
 	fassert(self.is_server, "[BuffSystem]: Only the server can explicitly can check server controlled buffs!")
 
-	return not not self.server_controlled_buffs[unit]
+	return self.server_controlled_buffs[unit]
 end
 
 BuffSystem.add_volume_buff_multiplier = function (self, unit, buff_template_name, multiplier)
@@ -461,7 +461,7 @@ BuffSystem.rpc_remove_server_controlled_buff = function (self, channel_id, unit_
 
 	if Unit.alive(unit) then
 		local unit_buffs = self.server_controlled_buffs[unit]
-		local buff = not not unit_buffs and not not unit_buffs[server_buff_id]
+		local buff = unit_buffs and unit_buffs[server_buff_id]
 
 		if buff then
 			local id = buff.local_buff_id
@@ -660,7 +660,7 @@ end
 
 local function buff_param_pack_unit(input, ctx)
 	-- function 37
-	return not not ctx.network_manager:unit_game_object_id(input)
+	return (ctx.network_manager:unit_game_object_id(input))
 end
 
 local function buff_param_unpack_unit(input, ctx)
@@ -916,7 +916,7 @@ BuffSystem.add_buff_synced = function (self, target_unit, template_name, sync_ty
 			buff_extension:set_pending_sync_id(buff_id, local_sync_id, sync_type)
 
 			if self.is_server then
-				buff_extension:apply_remote_sync_id(buff_id, local_sync_id, sync_type, not not optional_peer_id or not not Network.peer_id())
+				buff_extension:apply_remote_sync_id(buff_id, local_sync_id, sync_type, optional_peer_id or Network.peer_id())
 			end
 		else
 			buff_id = -1
@@ -1155,7 +1155,7 @@ BuffSystem._hot_join_sync_synced_buffs = function (self, peer_id)
 						buff_params.power_level = buff.power_level
 						buff_params.attacker_unit = buff.attacker_unit
 						buff_params.source_attacker_unit = buff.source_attacker_unit
-						buff_params._hot_join_sync_buff_age = not not buff.duration
+						buff_params._hot_join_sync_buff_age = buff.duration
 
 						self:_pack_buff_params(buff_params, packed_buff_param_ids, packed_buff_param_vals, unit)
 						network_transmit:send_rpc("rpc_add_buff_synced_relay_params", peer_id, unit_id, template_name_id, server_sync_id, sync_type_id, packed_buff_param_ids, packed_buff_param_vals)

@@ -67,7 +67,7 @@ CosmeticsUtils.get_third_person_mesh_unit = function (unit)
 
 	local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
 
-	return not not cosmetic_extension and not not cosmetic_extension:get_third_person_mesh_unit()
+	return cosmetic_extension and cosmetic_extension:get_third_person_mesh_unit()
 end
 
 local unit_flow_event = Unit.flow_event

@@ -17,7 +17,7 @@ EventManager.register = function (self, object, ...)
 
 		fassert(type(object) == "table" and type(object[callback_name]) == "function", "No function found with name %q on supplied object", callback_name)
 
-		self._events[event_name] = not not self._events[event_name]
+		self._events[event_name] = self._events[event_name]
 		self._events[event_name][object] = callback_name
 	end
 end
@@ -53,7 +53,7 @@ end
 EventManager.register_referenced = function (self, reference, object, ...)
 	-- function 5
 	local referenced_events = self._referenced_events
-	local registered_events = not not referenced_events[reference]
+	local registered_events = referenced_events[reference]
 
 	referenced_events[reference] = registered_events
 
@@ -61,7 +61,7 @@ EventManager.register_referenced = function (self, reference, object, ...)
 		local event_name = select(i, ...)
 		local callback_name = select(i + 1, ...)
 
-		registered_events[event_name] = not not registered_events[event_name]
+		registered_events[event_name] = registered_events[event_name]
 		registered_events[event_name][object] = callback_name
 	end
 end
@@ -99,7 +99,7 @@ end
 EventManager.trigger_referenced = function (self, reference, event_name, ...)
 	-- function 8
 	local registered_events = self._referenced_events[reference]
-	local registered_objects = not not registered_events and not not registered_events[event_name]
+	local registered_objects = registered_events and registered_events[event_name]
 
 	if registered_objects then
 		for object, callback_name in pairs(registered_objects) do

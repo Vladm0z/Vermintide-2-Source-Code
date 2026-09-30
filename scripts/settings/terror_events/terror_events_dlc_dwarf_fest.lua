@@ -26,7 +26,7 @@ local CATACLYSM = 5
 local function add_grudgemark(optional_data)
 	-- function 4
 	local grudge_mark = optional_data.enhancements[1]
-	local list = not not optional_data.enhancements
+	local list = optional_data.enhancements
 
 	optional_data.enhancements = list
 

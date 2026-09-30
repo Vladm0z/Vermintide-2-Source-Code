@@ -57,9 +57,9 @@ local function create_scrollbar(scenegraph_id, area_size, scroll_size, horizonta
 						local device_type = input_device.type()
 						local is_ps_pad = device_type == "sce_pad"
 
-						use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+						use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 
-						return not not gamepad_active and not use_ps4_input_icons and not not not content.gamepad_input_disabled
+						return gamepad_active and not use_ps4_input_icons and not content.gamepad_input_disabled
 					end,
 					content_change_function = function (content, style)
 						-- function 4
@@ -90,9 +90,9 @@ local function create_scrollbar(scenegraph_id, area_size, scroll_size, horizonta
 						local device_type = input_device.type()
 						local is_ps_pad = device_type == "sce_pad"
 
-						use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+						use_ps4_input_icons = is_ps_pad or use_ps4_input_icons
 
-						return not not gamepad_active and not not use_ps4_input_icons and not not not content.gamepad_input_disabled
+						return gamepad_active and use_ps4_input_icons and not content.gamepad_input_disabled
 					end,
 					content_change_function = function (content, style)
 						-- function 6
@@ -127,81 +127,81 @@ local function create_scrollbar(scenegraph_id, area_size, scroll_size, horizonta
 					32,
 					33
 				},
-				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
-				vertical_alignment = horizontal_scrollbar and not not "bottom" or not horizontal_scrollbar and not not "top",
-				offset = horizontal_scrollbar and not not {
+				horizontal_alignment = horizontal_scrollbar and "left" or not horizontal_scrollbar and (left_aligned or "right"),
+				vertical_alignment = horizontal_scrollbar and "bottom" or not horizontal_scrollbar and "top",
+				offset = horizontal_scrollbar and {
 					0,
 					16.5,
 					103
-				} or not horizontal_scrollbar and not not {
-					(left_aligned and not not -1 or not left_aligned and not not 1) * 16,
+				} or not horizontal_scrollbar and {
+					(left_aligned and -1 or not left_aligned and 1) * 16,
 					0,
 					103
 				}
 			},
 			scroller_hotspot = {
-				area_size = horizontal_scrollbar and not not {
+				area_size = horizontal_scrollbar and {
 					math.max((1 - scroll_size / (scroll_size + area_size[1])) * area_size[1], 40),
 					18
-				} or not horizontal_scrollbar and not not {
+				} or not horizontal_scrollbar and {
 					18,
 					math.max((1 - scroll_size / (scroll_size + area_size[2])) * area_size[2], 40)
 				},
-				vertical_alignment = horizontal_scrollbar and not not "bottom" or not horizontal_scrollbar and not not "top",
-				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
-				offset = horizontal_scrollbar and not not {
+				vertical_alignment = horizontal_scrollbar and "bottom" or not horizontal_scrollbar and "top",
+				horizontal_alignment = horizontal_scrollbar and "left" or not horizontal_scrollbar and (left_aligned or "right"),
+				offset = horizontal_scrollbar and {
 					0,
 					-1,
 					102
-				} or not horizontal_scrollbar and not not {
-					(left_aligned and not not -1 or not left_aligned and not not 1) * 9,
+				} or not horizontal_scrollbar and {
+					(left_aligned and -1 or not left_aligned and 1) * 9,
 					0,
 					102
 				}
 			},
 			scrollbar_hotspot = {
 				vertical_alignment = "bottom",
-				area_size = horizontal_scrollbar and not not {
+				area_size = horizontal_scrollbar and {
 					area_size[1] + 2,
 					22
-				} or not horizontal_scrollbar and not not {
+				} or not horizontal_scrollbar and {
 					22,
 					area_size[2] + 2
 				},
-				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
-				offset = horizontal_scrollbar and not not {
+				horizontal_alignment = horizontal_scrollbar and "left" or not horizontal_scrollbar and (left_aligned or "right"),
+				offset = horizontal_scrollbar and {
 					-1,
 					1,
 					101
-				} or not horizontal_scrollbar and not not {
-					(left_aligned and not not -1 or not left_aligned and not not 1) * 11,
+				} or not horizontal_scrollbar and {
+					(left_aligned and -1 or not left_aligned and 1) * 11,
 					-1,
 					101
 				}
 			},
 			scroller = {
 				corner_radius = 4,
-				rect_size = horizontal_scrollbar and not not {
+				rect_size = horizontal_scrollbar and {
 					math.max((1 - scroll_size / (scroll_size + area_size[1])) * area_size[1], 40),
 					8
-				} or not horizontal_scrollbar and not not {
+				} or not horizontal_scrollbar and {
 					8,
 					math.max((1 - scroll_size / (scroll_size + area_size[2])) * area_size[2], 40)
 				},
-				vertical_alignment = horizontal_scrollbar and not not "bottom" or not horizontal_scrollbar and not not "top",
-				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				vertical_alignment = horizontal_scrollbar and "bottom" or not horizontal_scrollbar and "top",
+				horizontal_alignment = horizontal_scrollbar and "left" or not horizontal_scrollbar and (left_aligned or "right"),
 				color = {
 					128,
 					255,
 					255,
 					255
 				},
-				offset = horizontal_scrollbar and not not {
+				offset = horizontal_scrollbar and {
 					0,
 					6,
 					102
-				} or not horizontal_scrollbar and not not {
-					(left_aligned and not not -1 or not left_aligned and not not 1) * 4,
+				} or not horizontal_scrollbar and {
+					(left_aligned and -1 or not left_aligned and 1) * 4,
 					0,
 					102
 				}
@@ -209,26 +209,26 @@ local function create_scrollbar(scenegraph_id, area_size, scroll_size, horizonta
 			scrollbar_bg = {
 				vertical_alignment = "bottom",
 				corner_radius = 4,
-				rect_size = horizontal_scrollbar and not not {
+				rect_size = horizontal_scrollbar and {
 					area_size[1],
 					10
-				} or not horizontal_scrollbar and not not {
+				} or not horizontal_scrollbar and {
 					10,
 					area_size[2]
 				},
-				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				horizontal_alignment = horizontal_scrollbar and "left" or not horizontal_scrollbar and (left_aligned or "right"),
 				color = {
 					255,
 					0,
 					0,
 					0
 				},
-				offset = horizontal_scrollbar and not not {
+				offset = horizontal_scrollbar and {
 					0,
 					5,
 					101
-				} or not horizontal_scrollbar and not not {
-					(left_aligned and not not -1 or not left_aligned and not not 1) * 5,
+				} or not horizontal_scrollbar and {
+					(left_aligned and -1 or not left_aligned and 1) * 5,
 					0,
 					101
 				}
@@ -236,26 +236,26 @@ local function create_scrollbar(scenegraph_id, area_size, scroll_size, horizonta
 			scrollbar_bg_bg = {
 				vertical_alignment = "bottom",
 				corner_radius = 4,
-				rect_size = horizontal_scrollbar and not not {
+				rect_size = horizontal_scrollbar and {
 					area_size[1] + 2,
 					12
-				} or not horizontal_scrollbar and not not {
+				} or not horizontal_scrollbar and {
 					12,
 					area_size[2] + 2
 				},
-				horizontal_alignment = horizontal_scrollbar and not not "left" or not horizontal_scrollbar and (not not left_aligned or not not "right"),
+				horizontal_alignment = horizontal_scrollbar and "left" or not horizontal_scrollbar and (left_aligned or "right"),
 				color = {
 					128,
 					255,
 					255,
 					255
 				},
-				offset = horizontal_scrollbar and not not {
+				offset = horizontal_scrollbar and {
 					-1,
 					4,
 					100
-				} or not horizontal_scrollbar and not not {
-					(left_aligned and not not -1 or not left_aligned and not not 1) * 6,
+				} or not horizontal_scrollbar and {
+					(left_aligned and -1 or not left_aligned and 1) * 6,
 					-1,
 					100
 				}

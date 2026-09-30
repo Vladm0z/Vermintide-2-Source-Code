@@ -38,7 +38,7 @@ IkChain.init = function (self, joints, start_pos, target_pos, tolerance, use_max
 	end
 
 	self.n = #joints
-	self.tolerance = not not tolerance or not not 0.1
+	self.tolerance = tolerance or 0.1
 	self.target_pos = Vector3Box(target_pos)
 	self.aim_pos = Vector3Box(joints[self.n])
 	self.joints = boxed_joints
@@ -61,7 +61,7 @@ IkChain.set_target_pos = function (self, target_pos, acceleration)
 	-- function 5
 	self.target_pos:store(target_pos)
 
-	self.acc = not not acceleration or not not 1
+	self.acc = acceleration or 1
 end
 
 IkChain.set_whip = function (self, angle_velocity)
@@ -86,7 +86,7 @@ end
 
 IkChain.debug_draw = function (self, joints, num_joints)
 	-- function 8
-	local line_color = self.constrain_angle and not not Color(120, 0, 120) or not self.constrain_angle and not not Color(120, 255, 0)
+	local line_color = self.constrain_angle and Color(120, 0, 120) or not self.constrain_angle and Color(120, 255, 0)
 	local ball_color = Color(0, 155, 255)
 
 	for i = 1, num_joints - 1 do
@@ -166,7 +166,7 @@ IkChain.solve = function (self, t, dt)
 	local target_pos = self.target_pos:unbox()
 	local aim_pos = self.aim_pos:unbox()
 	local to_target = target_pos - aim_pos
-	local target_pos = aim_pos + to_target * not not self.acc * dt
+	local target_pos = aim_pos + to_target * self.acc * dt
 
 	self.aim_pos:store(target_pos)
 
@@ -220,7 +220,7 @@ IkChain.solve_dragging = function (self, t, dt)
 	local target_pos = self.target_pos:unbox()
 	local aim_pos = self.aim_pos:unbox()
 	local to_target = target_pos - aim_pos
-	local target_pos = aim_pos + to_target * not not self.acc * dt
+	local target_pos = aim_pos + to_target * self.acc * dt
 
 	self.aim_pos:store(target_pos)
 

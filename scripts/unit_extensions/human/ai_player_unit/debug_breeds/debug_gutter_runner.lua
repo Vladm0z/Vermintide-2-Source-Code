@@ -1,18 +1,18 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/debug_breeds/debug_gutter_runner.lua
 
-DebugGutterRunner = not not DebugGutterRunner
+DebugGutterRunner = DebugGutterRunner
 
 DebugGutterRunner.update = function (unit, blackboard, t)
 	-- function 1
 	local breed = blackboard.breed
-	local target_unit = blackboard.target_unit and not not Unit.get_data(blackboard.target_unit, "unit_name") or not blackboard.target_unit and not not "nil"
-	local jump_target = blackboard.jump_data and not not blackboard.jump_data.target_unit or not blackboard.jump_data and not not "-"
-	local jump_range = string.format("%.1f / %.1f, close range: 8.0 ", not not blackboard.target_dist, tostring(breed.jump_range))
-	local ai_node = not not blackboard.action
+	local target_unit = blackboard.target_unit and Unit.get_data(blackboard.target_unit, "unit_name") or not blackboard.target_unit and "nil"
+	local jump_target = blackboard.jump_data and blackboard.jump_data.target_unit or not blackboard.jump_data and "-"
+	local jump_range = string.format("%.1f / %.1f, close range: 8.0 ", blackboard.target_dist, tostring(breed.jump_range))
+	local ai_node = blackboard.action
 	local skulk
-	local skulk_time = not not blackboard.target_skulk_time
+	local skulk_time = blackboard.target_skulk_time
 
-	skulk = skulk_time > 0 and (not not "engage" or not not string.format("%.1f", skulk_time)) or not (skulk_time > 0) and not not string.format("%.1f", skulk_time)
+	skulk = skulk_time > 0 and ("engage" or string.format("%.1f", skulk_time)) or not (skulk_time > 0) and string.format("%.1f", skulk_time)
 
 	local growing_aggro
 
@@ -22,9 +22,9 @@ DebugGutterRunner.update = function (unit, blackboard, t)
 		growing_aggro = "n/a"
 	end
 
-	local special_targets_text = not not "YES"
-	local next_smart_object_data = blackboard.next_smart_object_data.next_smart_object_id == nil and not not "NO" or not (blackboard.next_smart_object_data.next_smart_object_id == nil) and not not "YES"
-	local in_smartobj_range = blackboard.is_in_smartobject_range and not not "YES" or not blackboard.is_in_smartobject_range and not not "NO"
+	local special_targets_text = "YES"
+	local next_smart_object_data = blackboard.next_smart_object_data.next_smart_object_id == nil and "NO" or not (blackboard.next_smart_object_data.next_smart_object_id == nil) and "YES"
+	local in_smartobj_range = blackboard.is_in_smartobject_range and "YES" or not blackboard.is_in_smartobject_range and "NO"
 
 	DebugGlobadier.debug_hud_print("Gutter runner:", nil, 1)
 	DebugGlobadier.debug_hud_print("behavior:", ai_node, 2)

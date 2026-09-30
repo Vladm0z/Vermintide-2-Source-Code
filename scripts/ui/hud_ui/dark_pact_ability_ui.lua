@@ -92,7 +92,7 @@ DarkPactAbilityUI._update_abilities = function (self, dt, t)
 	-- function 5
 	local career_extension = self:_get_extension("career_system")
 	local horde_ability_extension = self:_get_extension("versus_horde_ability_system")
-	local career_name = not not career_extension and not not career_extension:career_name()
+	local career_name = career_extension and career_extension:career_name()
 	local ui_renderer = self._ui_renderer
 
 	if self._career_name ~= career_name then
@@ -105,7 +105,7 @@ DarkPactAbilityUI._update_abilities = function (self, dt, t)
 
 	local player, unit = self:_get_player_unit()
 	local ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
-	local is_in_ghost_mode = not not ghost_mode_extension and not not ghost_mode_extension:is_in_ghost_mode()
+	local is_in_ghost_mode = ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode()
 
 	self:_handle_career_abilities(dt, t, career_name, career_extension, horde_ability_extension, ui_renderer, is_in_ghost_mode)
 end
@@ -201,8 +201,8 @@ DarkPactAbilityUI.draw = function (self, dt, t)
 	end
 
 	local player, _ = self:_get_player_unit()
-	local profile_index = not not player and not not player:profile_index()
-	local profile_settings = not not profile_index and not not SPProfiles[profile_index]
+	local profile_index = player and player:profile_index()
+	local profile_settings = profile_index and SPProfiles[profile_index]
 
 	if profile_settings and profile_settings.affiliation ~= "dark_pact" then
 		self:set_visible(false)
@@ -263,7 +263,7 @@ DarkPactAbilityUI.event_input_changed = function (self)
 	if ability_widgets then
 		for _, widget in ipairs(ability_widgets) do
 			local content = widget.content
-			local input_action = not not content.input_action
+			local input_action = content.input_action
 
 			self:_set_input(widget, input_action)
 			self:_set_widget_dirty(widget)
@@ -280,8 +280,8 @@ DarkPactAbilityUI._set_input = function (self, widget, input_action)
 	local input_style = widget.style.input_text
 	local ui_renderer = self._ui_renderer
 
-	input_text = not not input_text and not not UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
-	widget.content.input_text = not not input_text or not not ""
+	input_text = input_text and UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
+	widget.content.input_text = input_text or ""
 	widget.content.input_action = input_action
 end
 
@@ -317,15 +317,15 @@ DarkPactAbilityUI._get_input_texture_data = function (self, input_action)
 	local button_name = ""
 
 	if device_type == "keyboard" then
-		button_name = is_button_unassigned and (not not "" or not not Keyboard.button_locale_name(key_index)) or not is_button_unassigned and not not Keyboard.button_locale_name(key_index)
+		button_name = is_button_unassigned and ("" or Keyboard.button_locale_name(key_index)) or not is_button_unassigned and Keyboard.button_locale_name(key_index)
 
 		return nil, button_name, prefix_text
 	elseif device_type == "mouse" then
-		button_name = is_button_unassigned and (not not "" or not not Mouse.button_name(key_index)) or not is_button_unassigned and not not Mouse.button_name(key_index)
+		button_name = is_button_unassigned and ("" or Mouse.button_name(key_index)) or not is_button_unassigned and Mouse.button_name(key_index)
 
 		return nil, button_name, prefix_text
 	elseif device_type == "gamepad" then
-		button_name = is_button_unassigned and (not not "" or not not Pad1.button_name(key_index)) or not is_button_unassigned and not not Pad1.button_name(key_index)
+		button_name = is_button_unassigned and ("" or Pad1.button_name(key_index)) or not is_button_unassigned and Pad1.button_name(key_index)
 
 		local button_texture_data = ButtonTextureByName(button_name, platform)
 
@@ -395,7 +395,7 @@ end
 
 DarkPactAbilityUI.event_on_dark_pact_ammo_changed = function (self, unit, current_ammo)
 	-- function 24
-	local ability_widgets = not not self._ability_hud_widgets_by_name
+	local ability_widgets = self._ability_hud_widgets_by_name
 
 	if not ability_widgets then
 		return
@@ -409,7 +409,7 @@ DarkPactAbilityUI.event_on_dark_pact_ammo_changed = function (self, unit, curren
 
 	if not current_ammo then
 		local blackboard = BLACKBOARDS[unit]
-		local data = not not blackboard.attack_pattern_data
+		local data = blackboard.attack_pattern_data
 
 		if data.current_ammo then
 			current_ammo = data.current_ammo
@@ -450,7 +450,7 @@ DarkPactAbilityUI._handle_career_abilities = function (self, dt, t, career_name,
 	local career_settings = profile_settings.careers[career_index]
 	local career_info_settings = career_settings.career_info_settings
 	local ability_amount = #career_info_settings
-	local career_name = not not career_extension and not not career_extension:career_name()
+	local career_name = career_extension and career_extension:career_name()
 	local widgets_by_ability_name = self._widgets_by_ability_name
 	local ability_templates = profile_ability_templates[career_name]
 	local status_extension = self:_get_extension("status_system")
@@ -512,12 +512,12 @@ DarkPactAbilityUI._handle_career_abilities = function (self, dt, t, career_name,
 		local ability_widgets = self._ability_hud_widgets_by_name[i]
 
 		for widget_name, widget in pairs(ability_widgets) do
-			local update_function = not not update_functions and not not update_functions[widget_name]
+			local update_function = update_functions and update_functions[widget_name]
 
 			if update_function then
 				if ability_ui_data.ability_name then
 					local ability, ability_id = career_extension:ability_by_name(ability_ui_data.ability_name)
-					local should_draw_in_ghost_mode = not not is_in_ghost_mode and not not ability.draw_ui_in_ghost_mode
+					local should_draw_in_ghost_mode = is_in_ghost_mode and ability.draw_ui_in_ghost_mode
 
 					if should_draw_in_ghost_mode or not is_in_ghost_mode then
 						update_function(dt, t, ui_renderer, career_extension, ability_id, widget, is_dead, player_unit, horde_ability_extension)

@@ -42,7 +42,7 @@ StateTitleScreenLoadSave._handle_tutorial_auto_start = function (self)
 		end
 	end
 
-	local has_completed_tutorial = not not Managers.backend:get_user_data("has_completed_tutorial")
+	local has_completed_tutorial = Managers.backend:get_user_data("has_completed_tutorial")
 	local run_tutorial, tutorial_state = Managers.mechanism:should_run_tutorial()
 
 	if not force_run_tutorial and (has_completed_tutorial or script_data.disable_tutorial_at_start or not run_tutorial) then

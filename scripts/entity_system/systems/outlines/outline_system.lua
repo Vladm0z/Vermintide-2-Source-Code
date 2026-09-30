@@ -43,7 +43,7 @@ OutlineSystem.init = function (self, context, system_name)
 
 	local game_mode_manager = Managers.state.game_mode
 
-	self._game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
+	self._game_mode = game_mode_manager and game_mode_manager:game_mode()
 	self._pulsing_units = {}
 	self._event_manager = Managers.state.event
 
@@ -83,7 +83,7 @@ OutlineSystem.add_ext_functions = {
 			local user_outline_method
 			local outline_user_setting = Application.user_setting("player_outlines")
 
-			user_outline_method = not not "outside_distance_or_not_visible"
+			user_outline_method = "outside_distance_or_not_visible"
 
 			extension:update_outline({
 				method = user_outline_method
@@ -111,7 +111,7 @@ OutlineSystem.add_ext_functions = {
 			local user_outline_method
 			local outline_user_setting = Application.user_setting("minion_outlines")
 
-			user_outline_method = not not "outside_distance_or_not_visible"
+			user_outline_method = "outside_distance_or_not_visible"
 
 			extension:update_outline({
 				method = user_outline_method
@@ -338,7 +338,7 @@ OutlineSystem.add_ext_functions = {
 
 		local id = extension:add_outline({
 			method = "always_same_side",
-			outline_color = is_ally and not not OutlineSettingsVS.colors.ally or not is_ally and not not OutlineSettings.colors.knocked_down,
+			outline_color = is_ally and OutlineSettingsVS.colors.ally or not is_ally and OutlineSettings.colors.knocked_down,
 			distance = OutlineSettings.ranges.player_husk,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
@@ -498,14 +498,14 @@ OutlineSystem._is_cutscene_active = function (self)
 		return false
 	end
 
-	return not not cutscene_system.active_camera
+	return cutscene_system.active_camera
 end
 
 OutlineSystem._is_photomode_active = function (self)
 	-- function 33
 	local game_mode = self._game_mode
 
-	return not not game_mode and not not game_mode:photomode_enabled()
+	return game_mode and game_mode:photomode_enabled()
 end
 
 OutlineSystem.set_disabled = function (self, disabled)
@@ -549,7 +549,7 @@ OutlineSystem.update = function (self, context, t)
 		return
 	end
 
-	local active_cutscene = not not self:_is_cutscene_active()
+	local active_cutscene = self:_is_cutscene_active()
 	local dirty_units = self._dirty_units
 
 	for unit in pairs(dirty_units) do
@@ -587,7 +587,7 @@ OutlineSystem._update_unit_outline = function (self, unit, active_cutscene)
 		local slow_checks_done = 0
 		local outline_settings = extension.outline_color
 		local method = extension.method
-		local flag_swiched = not not extension.prev_flag
+		local flag_swiched = extension.prev_flag
 
 		if flag_swiched then
 			self:outline_unit(unit, extension.prev_flag, Color(0, 0, 0, 0), false, extension.apply_method, outline_settings)
@@ -692,7 +692,7 @@ OutlineSystem.outline_unit = function (self, unit, flag, color, do_outline, appl
 					local material = Mesh.material(mesh, j)
 
 					Material.set_color(material, "outline_color", color)
-					Material.set_scalar(material, "outline_pulse_multiplier", outline_settings.pulsate and not not outline_settings.pulse_multiplier or not outline_settings.pulsate and not not 0)
+					Material.set_scalar(material, "outline_pulse_multiplier", outline_settings.pulsate and outline_settings.pulse_multiplier or not outline_settings.pulsate and 0)
 				end
 			end
 
@@ -701,17 +701,17 @@ OutlineSystem.outline_unit = function (self, unit, flag, color, do_outline, appl
 	elseif apply_method == "unit_and_childs" then
 		Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(unit, flag, do_outline)
 		Unit.set_color_for_materials_in_unit_and_childs(unit, "outline_color", color)
-		Unit.set_scalar_for_materials_in_unit_and_childs(unit, "outline_pulse_multiplier", outline_settings.pulsate and not not outline_settings.pulse_multiplier or not outline_settings.pulsate and not not 0)
+		Unit.set_scalar_for_materials_in_unit_and_childs(unit, "outline_pulse_multiplier", outline_settings.pulsate and outline_settings.pulse_multiplier or not outline_settings.pulsate and 0)
 	elseif apply_method == "unit" then
 		Unit.set_shader_pass_flag_for_meshes(unit, flag, do_outline)
 		Unit.set_color_for_materials(unit, "outline_color", color)
-		Unit.set_scalar_for_materials(unit, "outline_pulse_multiplier", outline_settings.pulsate and not not outline_settings.pulse_multiplier or not outline_settings.pulsate and not not 0)
+		Unit.set_scalar_for_materials(unit, "outline_pulse_multiplier", outline_settings.pulsate and outline_settings.pulse_multiplier or not outline_settings.pulsate and 0)
 	else
 		error(sprintf("Non-existant apply method %s", apply_method))
 	end
 
 	local locomotion_extension = ScriptUnit.has_extension(unit, "locomotion_system")
-	local bone_lod_id = not not locomotion_extension and not not locomotion_extension.bone_lod_extension_id
+	local bone_lod_id = locomotion_extension and locomotion_extension.bone_lod_extension_id
 
 	if bone_lod_id then
 		EngineOptimized.bone_lod_set_ignore_umbra(bone_lod_id, do_outline)
@@ -777,10 +777,10 @@ OutlineSystem.same_side_in_ghost_mode = function (self, unit, extension)
 
 	if status_extension == nil then
 		status_extension = ScriptUnit.has_extension(unit, "status_system")
-		extension.status_extension = not not status_extension or not not false
+		extension.status_extension = status_extension or false
 	end
 
-	return not not status_extension and not not status_extension:get_in_ghost_mode()
+	return status_extension and status_extension:get_in_ghost_mode()
 end
 
 OutlineSystem.visible = function (self, unit, extension)
@@ -789,7 +789,7 @@ OutlineSystem.visible = function (self, unit, extension)
 	local unit_center = Matrix4x4.translation(pose)
 	local in_darkness = self.darkness_system:is_in_darkness(unit_center)
 
-	return not in_darkness and not not not self:raycast_result(unit_center), IS_SLOW_CHECK
+	return not in_darkness and not self:raycast_result(unit_center), IS_SLOW_CHECK
 end
 
 OutlineSystem.not_in_dark = function (self, unit, extension)
@@ -874,14 +874,14 @@ OutlineSystem.in_ghost_mode = function (self, unit, extension)
 	-- function 58
 	local ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
 
-	return not not ghost_mode_extension and not not ghost_mode_extension:is_in_ghost_mode()
+	return ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode()
 end
 
 OutlineSystem.has_gutter_runner_invisible_buff = function (self, unit, extension)
 	-- function 59
 	local buff_system = ScriptUnit.extension(unit, "buff_system")
 
-	return not not buff_system and not not buff_system:has_buff_type("vs_gutter_runner_smoke_bomb_invisible")
+	return buff_system and buff_system:has_buff_type("vs_gutter_runner_smoke_bomb_invisible")
 end
 
 OutlineSystem.show_versus_dark_pact_outline = function (self, unit, extension)

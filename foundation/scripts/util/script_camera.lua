@@ -1,6 +1,6 @@
 -- chunkname: @foundation/scripts/util/script_camera.lua
 
-ScriptCamera = not not ScriptCamera
+ScriptCamera = ScriptCamera
 
 ScriptCamera.position = function (camera)
 	-- function 1

@@ -86,7 +86,7 @@ ImguiDeusLoadLevel.draw = function (self, is_open)
 
 		local full_name
 
-		full_name = not not (level_name .. "_" .. deus_level.themes[self._theme_index] .. "_path" .. deus_level.paths[self._path_index])
+		full_name = level_name .. "_" .. deus_level.themes[self._theme_index] .. "_path" .. deus_level.paths[self._path_index]
 
 		if Imgui.button("Load") then
 			local mechanism = Managers.mechanism:game_mechanism()

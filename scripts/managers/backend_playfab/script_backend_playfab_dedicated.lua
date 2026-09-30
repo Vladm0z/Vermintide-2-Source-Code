@@ -74,7 +74,7 @@ end
 
 ScriptBackendPlayFabDedicated._validate_version_cb = function (self, result)
 	-- function 4
-	local valid = not not result.FunctionResult
+	local valid = result.FunctionResult
 
 	self._validating_version = nil
 
@@ -105,7 +105,7 @@ ScriptBackendPlayFabDedicated._generate_unique_id = function ()
 	-- function 6
 	local machine_id = Application.machine_id()
 	local ip_address = Network.default_network_address()
-	local server_port = not not script_data.server_port
+	local server_port = script_data.server_port
 
 	if machine_id == nil then
 		machine_id = Application.guid()

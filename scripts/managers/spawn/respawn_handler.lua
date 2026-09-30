@@ -274,7 +274,7 @@ RespawnHandler.update = function (self, dt, t)
 		local respawn_data = respawn_queue[i]
 		local player = respawn_data[1]
 		local status = respawn_data[9]
-		local current_slot_player = not not is_server and not not Managers.player:player(status.peer_id, status.local_player_id)
+		local current_slot_player = is_server and Managers.player:player(status.peer_id, status.local_player_id)
 
 		if is_server and current_slot_player ~= player then
 			local data = status.game_mode_data
@@ -429,7 +429,7 @@ RespawnHandler.server_update = function (self, dt, t, slots)
 			end
 		end
 
-		any_player_respawned = not not any_player_respawned or data.health_state == "respawn"
+		any_player_respawned = any_player_respawned or data.health_state == "respawn"
 	end
 
 	if self._move_players and self:_check_all_synced() then
@@ -601,7 +601,7 @@ RespawnHandler.get_next_boss_door_dist = function (self, main_path_info, ahead_u
 	local conflict = Managers.state.conflict
 	local enemy_recycler = conflict.enemy_recycler
 	local current_terror_event = enemy_recycler.main_path_events[enemy_recycler.current_main_path_event_id]
-	local current_terror_event_type = not not current_terror_event and not not current_terror_event[3]
+	local current_terror_event_type = current_terror_event and current_terror_event[3]
 	local has_upcoming_boss_terror_event = BOSS_TERROR_EVENT_LOOKUP[current_terror_event_type]
 	local current_terror_event_travel_dist = enemy_recycler.current_main_path_event_activation_dist
 	local door_system = Managers.state.entity:system("door_system")

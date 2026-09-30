@@ -120,7 +120,7 @@ ScriptBackendPlayFab.login_request_cb = function (self, result)
 	local account_set_up = read_only_data.account_set_up
 	local initial_inventory_setup = read_only_data.initial_inventory_setup
 
-	self._setup_initial_account_needed = not not result.NewlyCreated
+	self._setup_initial_account_needed = result.NewlyCreated
 	self._setup_initial_inventory_needed = not initial_inventory_setup or initial_inventory_setup.Value == "false"
 
 	self:_validate_version()
@@ -156,7 +156,7 @@ end
 
 ScriptBackendPlayFab._validate_version_cb = function (self, result)
 	-- function 7
-	local valid = not not result.FunctionResult
+	local valid = result.FunctionResult
 
 	self._validating_version = nil
 
@@ -210,7 +210,7 @@ ScriptBackendPlayFab._set_up_initial_inventory = function (self, start_index)
 	local initial_account_data_set_up = {
 		FunctionName = "initialInventorySetup",
 		FunctionParameter = {
-			start_index = not not start_index or not not 0,
+			start_index = start_index or 0,
 			metadata = self._metadata
 		}
 	}

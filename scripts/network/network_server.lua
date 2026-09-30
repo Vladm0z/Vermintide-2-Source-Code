@@ -10,8 +10,8 @@ require("scripts/network/network_match_handler")
 
 local ReservationHandlerTypes = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
 
-PEER_ID_TO_CHANNEL = not not PEER_ID_TO_CHANNEL
-CHANNEL_TO_PEER_ID = not not CHANNEL_TO_PEER_ID
+PEER_ID_TO_CHANNEL = PEER_ID_TO_CHANNEL
+CHANNEL_TO_PEER_ID = CHANNEL_TO_PEER_ID
 
 local NUM_PROFILES = #PROFILES_BY_AFFILIATION.heroes
 local KICK_PEER_WAIT_TIMER = 5
@@ -23,7 +23,7 @@ local function network_printf(format, ...)
 	end
 end
 
-PeerState = not not PeerState
+PeerState = PeerState
 NetworkServer = class(NetworkServer)
 
 NetworkServer.init = function (self, player_manager, lobby_host, wanted_profile_index, game_server_manager)
@@ -81,15 +81,15 @@ NetworkServer.init = function (self, player_manager, lobby_host, wanted_profile_
 	end
 
 	if not DEDICATED_SERVER then
-		self.wanted_profile_index = not not wanted_profile_index or not not SaveData.wanted_profile_index
+		self.wanted_profile_index = wanted_profile_index or SaveData.wanted_profile_index
 
 		local profile = SPProfiles[self.wanted_profile_index]
 
 		if profile then
 			local hero_name = profile.display_name
 			local hero_attributes = Managers.backend:get_interface("hero_attributes")
-			local wanted_career_index = not not hero_attributes:get(hero_name, "career")
-			local hero_experience = not not hero_attributes:get(hero_name, "experience")
+			local wanted_career_index = hero_attributes:get(hero_name, "career")
+			local hero_experience = hero_attributes:get(hero_name, "experience")
 			local hero_level = ExperienceSettings.get_level(hero_experience)
 			local career = profile.careers[wanted_career_index]
 
@@ -115,7 +115,7 @@ NetworkServer.init = function (self, player_manager, lobby_host, wanted_profile_
 
 	Managers.eac:server_create(server_name)
 
-	self._using_gamelift = not not DEDICATED_SERVER
+	self._using_gamelift = DEDICATED_SERVER
 
 	if DEDICATED_SERVER then
 		if self._using_gamelift then
@@ -206,20 +206,20 @@ NetworkServer.rpc_notify_connected = function (self, channel_id)
 		if level_settings and level_settings.game_mode == "tutorial" then
 			profile_index = self.wanted_profile_index
 		else
-			local wanted_profile_index = not not FindProfileIndex(Development.parameter("wanted_profile"))
-			local any_party = not not self.wanted_party_index
+			local wanted_profile_index = FindProfileIndex(Development.parameter("wanted_profile"))
+			local any_party = self.wanted_party_index
 
-			profile_index = not not wanted_profile_index or not not self.profile_synchronizer:get_first_free_profile(any_party)
+			profile_index = wanted_profile_index or self.profile_synchronizer:get_first_free_profile(any_party)
 		end
 
 		if profile_index == self.wanted_profile_index then
-			career_index = not not Development.parameter("wanted_career_index") or not not self.wanted_career_index
+			career_index = Development.parameter("wanted_career_index") or self.wanted_career_index
 		else
 			local profile = SPProfiles[profile_index]
 			local hero_name = profile.display_name
 			local hero_attributes = Managers.backend:get_interface("hero_attributes")
 
-			career_index = not not hero_attributes:get(hero_name, "career") or not not 1
+			career_index = hero_attributes:get(hero_name, "career") or 1
 		end
 
 		self.peer_state_machines[peer_id].rpc_notify_lobby_joined(profile_index, career_index, self.wanted_party_index)
@@ -349,7 +349,7 @@ NetworkServer.rpc_is_ingame = function (self, channel_id)
 	local peer_state_machine = self.peer_state_machines[peer_id]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_is_ingame") then
-		local state_name = not not peer_state_machine.current_state.state_name
+		local state_name = peer_state_machine.current_state.state_name
 
 		printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_is_ingame", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -664,7 +664,7 @@ NetworkServer.rpc_notify_lobby_joined = function (self, channel_id, wanted_profi
 	local peer_state_machine = self.peer_state_machines[remote_peer]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_notify_lobby_joined") then
-		local state_name = not not peer_state_machine.current_state.state_name
+		local state_name = peer_state_machine.current_state.state_name
 
 		network_printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_notify_lobby_joined", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -690,7 +690,7 @@ NetworkServer.rpc_provide_slot_reservation_info = function (self, channel_id, pe
 	local peer_state_machine = self.peer_state_machines[sender_peer_id]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_provide_slot_reservation_info") then
-		local state_name = not not peer_state_machine.current_state.state_name
+		local state_name = peer_state_machine.current_state.state_name
 
 		network_printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_provide_slot_reservation_info", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -708,7 +708,7 @@ NetworkServer.rpc_post_game_notified = function (self, channel_id, in_post_game)
 	local peer_state_machine = self.peer_state_machines[remote_peer]
 
 	if not peer_state_machine or not peer_state_machine:has_function("rpc_post_game_notified") then
-		local state_name = not not peer_state_machine.current_state.state_name
+		local state_name = peer_state_machine.current_state.state_name
 
 		network_printf("RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join) %s (state: %s)", "rpc_post_game_notified", state_name)
 		RPC.rpc_connection_failed(channel_id, NetworkLookup.connection_fails.no_peer_data_on_join)
@@ -778,9 +778,9 @@ NetworkServer.game_object_sync_done = function (self, peer_id)
 		local session_id = self._host_migration_session_id
 		local session_template_name = self.lobby_host:session_template_name()
 
-		RPC.rpc_set_migration_host_xbox(channel_id, not not self.host_to_migrate_to, self.host_to_migrate_to and not not true or not self.host_to_migrate_to and not not false, session_id, session_template_name)
+		RPC.rpc_set_migration_host_xbox(channel_id, self.host_to_migrate_to, self.host_to_migrate_to, session_id, session_template_name)
 	else
-		RPC.rpc_set_migration_host(channel_id, not not self.host_to_migrate_to, self.host_to_migrate_to and not not true or not self.host_to_migrate_to and not not false)
+		RPC.rpc_set_migration_host(channel_id, self.host_to_migrate_to, self.host_to_migrate_to)
 	end
 end
 
@@ -811,7 +811,7 @@ end
 
 NetworkServer.set_peer_synced_game_objects = function (self, peer_id, synced)
 	-- function 48
-	self._peers_completed_game_object_sync[peer_id] = not not synced or not not nil
+	self._peers_completed_game_object_sync[peer_id] = synced or nil
 end
 
 NetworkServer.approve_channel = function (self, channel_id, peer_id, instance_id)
@@ -890,7 +890,7 @@ NetworkServer._update_connections = function (self, peer_state_machines)
 		local state, reason = Network.channel_state(connection.channel_id)
 
 		if state ~= connection.channel_state then
-			printf("CHANNEL_STATE changed: %s -> %s for peer_id: '%s'%s", connection.channel_state, state, peer_id, reason and not not (". With reason: " .. reason) or not reason and not not "")
+			printf("CHANNEL_STATE changed: %s -> %s for peer_id: '%s'%s", connection.channel_state, state, peer_id, reason and ". With reason: " .. reason or not reason and "")
 
 			if state == "connected" then
 				local state_id = NetworkLookup.connection_states[state]
@@ -973,7 +973,7 @@ NetworkServer.update = function (self, dt, t)
 		table.clear(joined_peers)
 	end
 
-	local game_session = not not self.game_network_manager
+	local game_session = self.game_network_manager
 
 	if game_session then
 		local peer_id = GameSession.wants_to_leave(game_session)
@@ -987,7 +987,7 @@ NetworkServer.update = function (self, dt, t)
 	for peer_id, peer_state_machine in pairs(peer_state_machines) do
 		peer_state_machine:update(dt)
 
-		local state_name = not not peer_state_machine and not not peer_state_machine.current_state.state_name
+		local state_name = peer_state_machine and peer_state_machine.current_state.state_name
 		local ingame = state_name == "InGame"
 
 		if self._network_state:is_peer_ingame(peer_id) ~= ingame then
@@ -1034,9 +1034,9 @@ NetworkServer.update = function (self, dt, t)
 				local session_id = self._host_migration_session_id
 				local session_template_name = self.lobby_host:session_template_name()
 
-				self.network_transmit:send_rpc_clients("rpc_set_migration_host_xbox", not not host_to_migrate_to or not not "", host_to_migrate_to and not not true or not host_to_migrate_to and not not false, session_id, session_template_name)
+				self.network_transmit:send_rpc_clients("rpc_set_migration_host_xbox", host_to_migrate_to or "", host_to_migrate_to, session_id, session_template_name)
 			else
-				self.network_transmit:send_rpc_clients("rpc_set_migration_host", not not host_to_migrate_to or not not "", host_to_migrate_to and not not true or not host_to_migrate_to and not not false)
+				self.network_transmit:send_rpc_clients("rpc_set_migration_host", host_to_migrate_to or "", host_to_migrate_to)
 			end
 		end
 	end
@@ -1046,7 +1046,7 @@ NetworkServer.update = function (self, dt, t)
 	self:_update_eac_match()
 
 	if DEDICATED_SERVER then
-		local using_gamelift = not not DEDICATED_SERVER
+		local using_gamelift = DEDICATED_SERVER
 
 		if using_gamelift then
 			if GameliftServer.should_terminate() then
@@ -1055,7 +1055,7 @@ NetworkServer.update = function (self, dt, t)
 			elseif not self._gamelift_session_id and GameliftServer.can_get_session() then
 				local session_id, ip_addr, port, name, matchmaking = GameliftServer.get_session()
 
-				name = not not name or not not "Gamelift Server Unknown"
+				name = name or "Gamelift Server Unknown"
 
 				print("Got gamelift session data (NS):", session_id, ip_addr, port, name, matchmaking)
 				Crashify.print_exception("[AWSDedicatedServer]", string.format("Got gamelift session data (NS): %s", name))
@@ -1294,7 +1294,7 @@ local dummy_ignore_map = {}
 
 NetworkServer.are_all_peers_ingame = function (self, ignore_map, ignore_other_session_peers)
 	-- function 64
-	ignore_map = not not ignore_map or not not dummy_ignore_map
+	ignore_map = ignore_map or dummy_ignore_map
 
 	local peer_state_machines = self.peer_state_machines
 
@@ -1450,7 +1450,7 @@ end
 
 NetworkServer.get_peers = function (self)
 	-- function 75
-	return self._network_state and not not self._network_state:get_peers() or not self._network_state and not not {}
+	return self._network_state and self._network_state:get_peers() or not self._network_state and {}
 end
 
 NetworkServer.hot_join_sync_party_and_profiles = function (self, peer_id)
@@ -1477,7 +1477,7 @@ end
 
 NetworkServer.get_side_order_state = function (self, side_order_state)
 	-- function 78
-	return not not self._network_state
+	return self._network_state
 end
 
 NetworkServer.get_network_state = function (self)
@@ -1517,7 +1517,7 @@ NetworkServer.rpc_slot_reservation_request_party_change = function (self, channe
 		local mechanism = Managers.mechanism:game_mechanism()
 
 		if mechanism.get_slot_reservation_handler then
-			local slot_reservation_handler = not not mechanism:get_slot_reservation_handler(match_host, ReservationHandlerTypes.pending_custom_game)
+			local slot_reservation_handler = mechanism:get_slot_reservation_handler(match_host, ReservationHandlerTypes.pending_custom_game)
 
 			slot_reservation_handler:move_player(peer_id, wanted_party_index)
 		end

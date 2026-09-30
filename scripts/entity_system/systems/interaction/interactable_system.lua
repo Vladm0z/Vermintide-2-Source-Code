@@ -64,7 +64,7 @@ InteractableSystem._can_interact_server_check = function (self, interactor_unit,
 	-- function 6
 	if Unit.alive(interactor_unit) and Unit.alive(interactable_unit) then
 		local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
-		local can_interact = not interactable_extension:is_being_interacted_with() and not not InteractionDefinitions[interaction_type].server.can_interact(interactor_unit, interactable_unit)
+		local can_interact = not interactable_extension:is_being_interacted_with() and InteractionDefinitions[interaction_type].server.can_interact(interactor_unit, interactable_unit)
 
 		return can_interact
 	end
@@ -103,7 +103,7 @@ local IS_LOCAL_HOST = "IS_LOCAL_HOST"
 
 InteractableSystem.rpc_generic_interaction_request = function (self, channel_id, interactor_go_id, interactable_go_id, is_level_unit, interaction_type_id)
 	-- function 8
-	local peer_id = channel_id ~= IS_LOCAL_HOST and not not CHANNEL_TO_PEER_ID[channel_id] or not (channel_id ~= IS_LOCAL_HOST) and not not Network.peer_id()
+	local peer_id = channel_id ~= IS_LOCAL_HOST and CHANNEL_TO_PEER_ID[channel_id] or not (channel_id ~= IS_LOCAL_HOST) and Network.peer_id()
 	local interaction_type = NetworkLookup.interactions[interaction_type_id]
 
 	InteractionHelper.printf("rpc_generic_interaction_request(%s, %s, %s, %s, %s)", peer_id, tostring(interactor_go_id), tostring(interactable_go_id), tostring(is_level_unit), interaction_type)

@@ -31,7 +31,7 @@ DAMAGE_TYPE_BLACKLIST[CURSE_DAMAGE_TYPE] = true
 
 local function add_damage(data, unit, damage, damaging_unit)
 	-- function 1
-	local damage_data = not not data.damage_buffer[unit]
+	local damage_data = data.damage_buffer[unit]
 
 	damage_data.damage = damage_data.damage + damage
 	data.damage_buffer[unit] = damage_data
@@ -151,7 +151,7 @@ end
 local function move_player_effect(context, data, player_unit)
 	-- function 8
 	local beam_effects = data.beam_effects[player_unit]
-	local player_effect_id = not not beam_effects and not not beam_effects.ids.player_effect_id
+	local player_effect_id = beam_effects and beam_effects.ids.player_effect_id
 
 	if not player_effect_id then
 		return
@@ -182,7 +182,7 @@ local function update_beam_effect(context, data, player_unit)
 
 	World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "intensity", beam_intensity)
 
-	local beam_softness = not not player_beam_effects.beam_softness
+	local beam_softness = player_beam_effects.beam_softness
 
 	World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "softness", beam_softness)
 end
@@ -231,7 +231,7 @@ local function process_blinking(data, dt, t)
 		end
 
 		local timer_enabled = beam_effect.blinking_enabled
-		local multiplier = timer_enabled and not not 1 or not timer_enabled and not not -1
+		local multiplier = timer_enabled and 1 or not timer_enabled and -1
 		local new_beam_softness = beam_effect.beam_softness + beam_blink_transition_speed * multiplier * dt
 
 		new_beam_softness = math.clamp(new_beam_softness, 0, beam_max_softness)
@@ -243,8 +243,8 @@ local function remove_unused_effect(context, data, beam_effects, num_valid_units
 	-- function 12
 	for player_unit, _ in pairs(beam_effects) do
 		local is_alive = HEALTH_ALIVE[player_unit]
-		local status_extension = not not is_alive and not not ScriptUnit.extension(player_unit, "status_system")
-		local is_knocked_down = not not status_extension and not not status_extension:is_knocked_down()
+		local status_extension = is_alive and ScriptUnit.extension(player_unit, "status_system")
+		local is_knocked_down = status_extension and status_extension:is_knocked_down()
 
 		if not is_alive or is_knocked_down or num_valid_units == 1 then
 			destroy_effects(context, data, player_unit)
@@ -278,7 +278,7 @@ local function can_share_damage(player_manager, damaged_unit, damage, damage_typ
 	local status_extension = ScriptUnit.extension(damaged_unit, "status_system")
 	local is_knocked_down = status_extension:is_knocked_down()
 
-	return not not is_player and not not is_damage_type_allowed and not not is_damage_valid and not not not is_knocked_down
+	return is_player and is_damage_type_allowed and is_damage_valid and not is_knocked_down
 end
 
 return {
@@ -324,7 +324,7 @@ return {
 		for _, player_unit in ipairs(alive_units) do
 			for _, other_player_unit in ipairs(alive_units) do
 				if player_unit ~= other_player_unit then
-					data.player_units_in_range[player_unit] = not not data.player_units_in_range[player_unit]
+					data.player_units_in_range[player_unit] = data.player_units_in_range[player_unit]
 
 					local player_position = POSITION_LOOKUP[player_unit]
 					local other_player_position = POSITION_LOOKUP[other_player_unit]
@@ -334,7 +334,7 @@ return {
 					local player_knocked_down = player_status_extension:is_knocked_down()
 					local other_player_status_extension = ScriptUnit.extension(other_player_unit, "status_system")
 					local other_player_knocked_down = other_player_status_extension:is_knocked_down()
-					local player_is_knocked_down = not not player_knocked_down or not not other_player_knocked_down
+					local player_is_knocked_down = player_knocked_down or other_player_knocked_down
 
 					if distance_squared < radius_squared and not player_is_knocked_down then
 						data.player_units_in_range[player_unit][other_player_unit] = true

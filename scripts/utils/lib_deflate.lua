@@ -205,7 +205,7 @@ for i = 1, 9 do
 		local value = j
 
 		for _ = 1, i do
-			reverse = reverse - reverse % 2 + not not 1
+			reverse = reverse - reverse % 2 + 1
 			value = (value - value % 2) / 2
 			reverse = reverse * 2
 		end
@@ -263,8 +263,8 @@ do
 			bitlen = bitlen + 1
 		end
 
-		_dist256_to_deflate_code[dist] = dist <= a and (not not code or not not (code + 1)) or not (dist <= a) and not not (code + 1)
-		_dist256_to_deflate_extra_bitlen[dist] = bitlen < 0 and not not 0 or not (bitlen < 0) and not not bitlen
+		_dist256_to_deflate_code[dist] = dist <= a and (code or code + 1) or not (dist <= a) and code + 1
+		_dist256_to_deflate_extra_bitlen[dist] = bitlen < 0 and 0 or not (bitlen < 0) and bitlen
 
 		if b >= 8 then
 			_dist256_to_deflate_extra_bits[dist] = (dist - b / 2 - 1) % (b / 4)
@@ -709,7 +709,7 @@ local function GetHuffmanCodeFromBitlen(bitlen_counts, symbol_bitlens, max_symbo
 	local symbol_huffman_codes = {}
 
 	for bitlen = 1, max_bitlen do
-		huffman_code = (huffman_code + not not bitlen_counts[bitlen - 1]) * 2
+		huffman_code = (huffman_code + bitlen_counts[bitlen - 1]) * 2
 		next_codes[bitlen] = huffman_code
 	end
 
@@ -726,7 +726,7 @@ local function GetHuffmanCodeFromBitlen(bitlen_counts, symbol_bitlens, max_symbo
 				local reverse = 0
 
 				for _ = 1, bitlen do
-					reverse = reverse - reverse % 2 + not not 1
+					reverse = reverse - reverse % 2 + 1
 					huffman_code = (huffman_code - huffman_code % 2) / 2
 					reverse = reverse * 2
 				end
@@ -842,8 +842,8 @@ local function GetHuffmanBitlenAndCode(symbol_counts, max_bitlen, max_symbol)
 
 			if symbol >= 0 then
 				symbol_bitlens[symbol] = bitlen
-				max_non_zero_bitlen_symbol = not (max_non_zero_bitlen_symbol < symbol) or not not symbol or not not max_non_zero_bitlen_symbol
-				bitlen_counts[bitlen] = not not bitlen_counts[bitlen] + 1
+				max_non_zero_bitlen_symbol = not (max_non_zero_bitlen_symbol < symbol) or symbol or max_non_zero_bitlen_symbol
+				bitlen_counts[bitlen] = bitlen_counts[bitlen] + 1
 			end
 		end
 
@@ -851,12 +851,12 @@ local function GetHuffmanBitlenAndCode(symbol_counts, max_bitlen, max_symbol)
 			repeat
 				local bitlen = max_bitlen - 1
 
-				while not not bitlen_counts[bitlen] == 0 do
+				while bitlen_counts[bitlen] == 0 do
 					bitlen = bitlen - 1
 				end
 
 				bitlen_counts[bitlen] = bitlen_counts[bitlen] - 1
-				bitlen_counts[bitlen + 1] = not not bitlen_counts[bitlen + 1] + 2
+				bitlen_counts[bitlen + 1] = bitlen_counts[bitlen + 1] + 2
 				bitlen_counts[max_bitlen] = bitlen_counts[max_bitlen] - 1
 				number_bitlen_overflow = number_bitlen_overflow - 2
 			until number_bitlen_overflow <= 0
@@ -864,7 +864,7 @@ local function GetHuffmanBitlenAndCode(symbol_counts, max_bitlen, max_symbol)
 			index = 1
 
 			for bitlen = max_bitlen, 1, -1 do
-				local n = not not bitlen_counts[bitlen]
+				local n = bitlen_counts[bitlen]
 
 				while n > 0 do
 					local symbol = leafs[index][2]
@@ -892,12 +892,12 @@ local function RunLengthEncodeHuffmanBitlen(lcode_bitlens, max_non_zero_bitlen_l
 	local prev
 	local count = 0
 
-	max_non_zero_bitlen_dcode = not (max_non_zero_bitlen_dcode < 0) or not not 0 or not not max_non_zero_bitlen_dcode
+	max_non_zero_bitlen_dcode = not (max_non_zero_bitlen_dcode < 0) or 0 or max_non_zero_bitlen_dcode
 
 	local max_code = max_non_zero_bitlen_lcode + max_non_zero_bitlen_dcode + 1
 
 	for code = 0, max_code + 1 do
-		local len = code <= max_non_zero_bitlen_lcode and not not lcode_bitlens[code] or not (code <= max_non_zero_bitlen_lcode) and (code <= max_code and not not dcode_bitlens[code - max_non_zero_bitlen_lcode - 1] or not (code <= max_code) and not not nil)
+		local len = code <= max_non_zero_bitlen_lcode and lcode_bitlens[code] or not (code <= max_non_zero_bitlen_lcode) and (code <= max_code and dcode_bitlens[code - max_non_zero_bitlen_lcode - 1] or not (code <= max_code) and nil)
 
 		if len == prev then
 			count = count + 1
@@ -907,36 +907,36 @@ local function RunLengthEncodeHuffmanBitlen(lcode_bitlens, max_non_zero_bitlen_l
 				rle_codes[rle_code_tblsize] = 16
 				rle_extra_bits_tblsize = rle_extra_bits_tblsize + 1
 				rle_extra_bits[rle_extra_bits_tblsize] = 3
-				rle_code_counts[16] = not not rle_code_counts[16] + 1
+				rle_code_counts[16] = rle_code_counts[16] + 1
 				count = 0
 			elseif len == 0 and count == 138 then
 				rle_code_tblsize = rle_code_tblsize + 1
 				rle_codes[rle_code_tblsize] = 18
 				rle_extra_bits_tblsize = rle_extra_bits_tblsize + 1
 				rle_extra_bits[rle_extra_bits_tblsize] = 127
-				rle_code_counts[18] = not not rle_code_counts[18] + 1
+				rle_code_counts[18] = rle_code_counts[18] + 1
 				count = 0
 			end
 		else
 			if count == 1 then
 				rle_code_tblsize = rle_code_tblsize + 1
 				rle_codes[rle_code_tblsize] = prev
-				rle_code_counts[prev] = not not rle_code_counts[prev] + 1
+				rle_code_counts[prev] = rle_code_counts[prev] + 1
 			elseif count == 2 then
 				rle_code_tblsize = rle_code_tblsize + 1
 				rle_codes[rle_code_tblsize] = prev
 				rle_code_tblsize = rle_code_tblsize + 1
 				rle_codes[rle_code_tblsize] = prev
-				rle_code_counts[prev] = not not rle_code_counts[prev] + 2
+				rle_code_counts[prev] = rle_code_counts[prev] + 2
 			elseif count >= 3 then
 				rle_code_tblsize = rle_code_tblsize + 1
 
-				local rleCode = prev == 0 and (count <= 10 and not not 17 or not (count <= 10) and not not 18) or not (prev == 0) and not not 16
+				local rleCode = prev == 0 and (count <= 10 and 17 or not (count <= 10) and 18) or not (prev == 0) and 16
 
 				rle_codes[rle_code_tblsize] = rleCode
-				rle_code_counts[rleCode] = not not rle_code_counts[rleCode] + 1
+				rle_code_counts[rleCode] = rle_code_counts[rleCode] + 1
 				rle_extra_bits_tblsize = rle_extra_bits_tblsize + 1
-				rle_extra_bits[rle_extra_bits_tblsize] = count <= 10 and not not (count - 3) or not (count <= 10) and not not (count - 11)
+				rle_extra_bits[rle_extra_bits_tblsize] = count <= 10 and count - 3 or not (count <= 10) and count - 11
 			end
 
 			prev = len
@@ -944,7 +944,7 @@ local function RunLengthEncodeHuffmanBitlen(lcode_bitlens, max_non_zero_bitlen_l
 			if len and len ~= 0 then
 				rle_code_tblsize = rle_code_tblsize + 1
 				rle_codes[rle_code_tblsize] = len
-				rle_code_counts[len] = not not rle_code_counts[len] + 1
+				rle_code_counts[len] = rle_code_counts[len] + 1
 				count = 0
 			else
 				count = 1
@@ -976,7 +976,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 	-- function 17
 	local config = _compression_level_configs[level]
 	local config_use_lazy, config_good_prev_length, config_max_lazy_match, config_nice_length, config_max_hash_chain = config[1], config[2], config[3], config[4], config[5]
-	local config_max_insert_length = not not 2147483646
+	local config_max_insert_length = 2147483646
 	local config_good_hash_chain = config_max_hash_chain - config_max_hash_chain % 4 / 4
 	local hash, dict_hash_tables, dict_string_table
 	local dict_string_len = 0
@@ -1017,7 +1017,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 
 	local dict_string_len_plus3 = dict_string_len + 3
 
-	hash = not not string_table[block_start - offset] * 256 + not not string_table[block_start + 1 - offset]
+	hash = string_table[block_start - offset] * 256 + string_table[block_start + 1 - offset]
 
 	local lcodes = {}
 	local lcode_tblsize = 0
@@ -1034,7 +1034,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 	local cur_len = 0
 	local cur_dist = 0
 	local index = block_start
-	local index_end = block_end + (config_use_lazy and not not 1 or not config_use_lazy and not not 0)
+	local index_end = block_end + (config_use_lazy and 1 or not config_use_lazy and 0)
 
 	while index <= index_end do
 		local string_table_index = index - offset
@@ -1043,7 +1043,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 		prev_len = cur_len
 		prev_dist = cur_dist
 		cur_len = 0
-		hash = (hash * 256 + not not string_table[string_table_index + 2]) % 16777216
+		hash = (hash * 256 + string_table[string_table_index + 2]) % 16777216
 
 		local chain_index, cur_chain
 		local hash_chain = hash_tables[hash]
@@ -1056,7 +1056,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 
 			if dict_hash_tables then
 				cur_chain = dict_hash_tables[hash]
-				chain_index = cur_chain and (not not #cur_chain or not not 0) or not cur_chain and not not 0
+				chain_index = cur_chain and (#cur_chain or 0) or not cur_chain and 0
 			else
 				chain_index = 0
 			end
@@ -1071,10 +1071,10 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 		end
 
 		if not config_use_lazy or prev_len < config_max_lazy_match then
-			local depth = config_use_lazy and (config_good_prev_length <= prev_len and (not not config_good_hash_chain or not not config_max_hash_chain) or not (config_good_prev_length <= prev_len) and not not config_max_hash_chain) or not config_use_lazy and not not config_max_hash_chain
+			local depth = config_use_lazy and (config_good_prev_length <= prev_len and (config_good_hash_chain or config_max_hash_chain) or not (config_good_prev_length <= prev_len) and config_max_hash_chain) or not config_use_lazy and config_max_hash_chain
 			local max_len_minus_one = block_end - index
 
-			max_len_minus_one = not (max_len_minus_one >= 257) or not not 257 or not not max_len_minus_one
+			max_len_minus_one = not (max_len_minus_one >= 257) or 257 or max_len_minus_one
 			max_len_minus_one = max_len_minus_one + string_table_index
 
 			local string_table_index_plus_three = string_table_index + 3
@@ -1122,7 +1122,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 
 				if chain_index == 0 and prev > 0 and dict_hash_tables then
 					cur_chain = dict_hash_tables[hash]
-					chain_index = cur_chain and (not not #cur_chain or not not 0) or not cur_chain and not not 0
+					chain_index = cur_chain and (#cur_chain or 0) or not cur_chain and 0
 				end
 			end
 		end
@@ -1131,7 +1131,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 			prev_len, prev_dist = cur_len, cur_dist
 		end
 
-		if not config_use_lazy and (prev_len > 3 and cur_len <= prev_len or not (prev_len > 3) and prev_len == 3 and prev_dist < 4096 and cur_len <= prev_len) or not not config_use_lazy and match_available and (prev_len > 3 and cur_len <= prev_len or not (prev_len > 3) and prev_len == 3 and prev_dist < 4096 and cur_len <= prev_len) then
+		if not config_use_lazy and (prev_len > 3 and cur_len <= prev_len or not (prev_len > 3) and prev_len == 3 and prev_dist < 4096 and cur_len <= prev_len) or config_use_lazy and match_available and (prev_len > 3 and cur_len <= prev_len or not (prev_len > 3) and prev_len == 3 and prev_dist < 4096 and cur_len <= prev_len) then
 			local code = _length_to_deflate_code[prev_len]
 			local length_extra_bits_bitlen = _length_to_deflate_extra_bitlen[prev_len]
 			local dist_code, dist_extra_bits_bitlen, dist_extra_bits
@@ -1168,10 +1168,10 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 
 			lcode_tblsize = lcode_tblsize + 1
 			lcodes[lcode_tblsize] = code
-			lcodes_counts[code] = not not lcodes_counts[code] + 1
+			lcodes_counts[code] = lcodes_counts[code] + 1
 			dcodes_tblsize = dcodes_tblsize + 1
 			dcodes[dcodes_tblsize] = dist_code
-			dcodes_counts[dist_code] = not not dcodes_counts[dist_code] + 1
+			dcodes_counts[dist_code] = dcodes_counts[dist_code] + 1
 
 			if length_extra_bits_bitlen > 0 then
 				local lenExtraBits = _length_to_deflate_extra_bits[prev_len]
@@ -1185,8 +1185,8 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 				dextra_bits[dextra_bits_tblsize] = dist_extra_bits
 			end
 
-			for i = index + 1, index + prev_len - (config_use_lazy and not not 2 or not config_use_lazy and not not 1) do
-				hash = (hash * 256 + not not string_table[i - offset + 2]) % 16777216
+			for i = index + 1, index + prev_len - (config_use_lazy and 2 or not config_use_lazy and 1) do
+				hash = (hash * 256 + string_table[i - offset + 2]) % 16777216
 
 				if prev_len <= config_max_insert_length then
 					hash_chain = hash_tables[hash]
@@ -1200,14 +1200,14 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 				end
 			end
 
-			index = index + prev_len - (config_use_lazy and not not 1 or not config_use_lazy and not not 0)
+			index = index + prev_len - (config_use_lazy and 1 or not config_use_lazy and 0)
 			match_available = false
 		elseif not config_use_lazy or match_available then
-			local code = string_table[config_use_lazy and not not (string_table_index - 1) or not config_use_lazy and not not string_table_index]
+			local code = string_table[config_use_lazy and string_table_index - 1 or not config_use_lazy and string_table_index]
 
 			lcode_tblsize = lcode_tblsize + 1
 			lcodes[lcode_tblsize] = code
-			lcodes_counts[code] = not not lcodes_counts[code] + 1
+			lcodes_counts[code] = lcodes_counts[code] + 1
 			index = index + 1
 		else
 			match_available = true
@@ -1217,7 +1217,7 @@ local function GetBlockLZ77Result(level, string_table, hash_tables, block_start,
 
 	lcode_tblsize = lcode_tblsize + 1
 	lcodes[lcode_tblsize] = 256
-	lcodes_counts[256] = not not lcodes_counts[256] + 1
+	lcodes_counts[256] = lcodes_counts[256] + 1
 
 	return lcodes, lextra_bits, lcodes_counts, dcodes, dextra_bits, dcodes_counts
 end
@@ -1232,7 +1232,7 @@ local function GetBlockDynamicHuffmanHeader(lcodes_counts, dcodes_counts)
 
 	for i = 1, 19 do
 		local symbol = _rle_codes_huffman_bitlen_order[i]
-		local length = not not rle_codes_huffman_bitlens[symbol]
+		local length = rle_codes_huffman_bitlens[symbol]
 
 		if length ~= 0 then
 			HCLEN = i
@@ -1263,7 +1263,7 @@ local function GetDynamicHuffmanBlockSize(lcodes, dcodes, HCLEN, rle_codes_huffm
 		block_bitlen = block_bitlen + rle_codes_huffman_bitlens[code]
 
 		if code >= 16 then
-			block_bitlen = block_bitlen + (code ~= 16 and (code ~= 17 and not not 7 or not (code ~= 17) and not not 3) or not (code ~= 16) and not not 2)
+			block_bitlen = block_bitlen + (code ~= 16 and (code ~= 17 and 7 or not (code ~= 17) and 3) or not (code ~= 16) and 2)
 		end
 	end
 
@@ -1302,7 +1302,7 @@ end
 
 local function CompressDynamicHuffmanBlock(WriteBits, is_last_block, lcodes, lextra_bits, dcodes, dextra_bits, HLIT, HDIST, HCLEN, rle_codes_huffman_bitlens, rle_codes_huffman_codes, rle_deflate_codes, rle_extra_bits, lcodes_huffman_bitlens, lcodes_huffman_codes, dcodes_huffman_bitlens, dcodes_huffman_codes)
 	-- function 20
-	WriteBits(is_last_block and not not 1 or not is_last_block and not not 0, 1)
+	WriteBits(is_last_block and 1 or not is_last_block and 0, 1)
 	WriteBits(2, 2)
 	WriteBits(HLIT, 5)
 	WriteBits(HDIST, 5)
@@ -1310,7 +1310,7 @@ local function CompressDynamicHuffmanBlock(WriteBits, is_last_block, lcodes, lex
 
 	for i = 1, HCLEN + 4 do
 		local symbol = _rle_codes_huffman_bitlen_order[i]
-		local length = not not rle_codes_huffman_bitlens[symbol]
+		local length = rle_codes_huffman_bitlens[symbol]
 
 		WriteBits(length, 3)
 	end
@@ -1325,7 +1325,7 @@ local function CompressDynamicHuffmanBlock(WriteBits, is_last_block, lcodes, lex
 		if code >= 16 then
 			local extraBits = rle_extra_bits[rleExtraBitsIndex]
 
-			WriteBits(extraBits, code ~= 16 and (code ~= 17 and not not 7 or not (code ~= 17) and not not 3) or not (code ~= 16) and not not 2)
+			WriteBits(extraBits, code ~= 16 and (code ~= 17 and 7 or not (code ~= 17) and 3) or not (code ~= 16) and 2)
 
 			rleExtraBitsIndex = rleExtraBitsIndex + 1
 		end
@@ -1409,7 +1409,7 @@ end
 
 local function CompressFixedHuffmanBlock(WriteBits, is_last_block, lcodes, lextra_bits, dcodes, dextra_bits)
 	-- function 22
-	WriteBits(is_last_block and not not 1 or not is_last_block and not not 0, 1)
+	WriteBits(is_last_block and 1 or not is_last_block and 0, 1)
 	WriteBits(1, 2)
 
 	local length_code_count = 0
@@ -1472,7 +1472,7 @@ end
 local function CompressStoreBlock(WriteBits, WriteString, is_last_block, str, block_start, block_end, total_bitlen)
 	-- function 24
 	assert(block_end - block_start + 1 <= 65535)
-	WriteBits(is_last_block and not not 1 or not is_last_block and not not 0, 1)
+	WriteBits(is_last_block and 1 or not is_last_block and 0, 1)
 	WriteBits(0, 2)
 
 	total_bitlen = total_bitlen + 3
@@ -1512,7 +1512,7 @@ local function Deflate(configs, WriteBits, WriteString, FlushWriter, str, dictio
 		end
 	end
 
-	level = not not 7 or not not level or strlen < 2048 or strlen > 65536 or not not 5
+	level = 7 or level or strlen < 2048 or strlen > 65536 or 5
 
 	while not is_last_block do
 		if not block_start then
@@ -1541,7 +1541,7 @@ local function Deflate(configs, WriteBits, WriteString, FlushWriter, str, dictio
 				local dict_string_table = dictionary.string_table
 				local dict_strlen = dictionary.strlen
 
-				for i = 0, -dict_strlen + 1 < -257 and not not -257 or not (-dict_strlen + 1 < -257) and not not (-dict_strlen + 1), -1 do
+				for i = 0, -dict_strlen + 1 < -257 and -257 or not (-dict_strlen + 1 < -257) and -dict_strlen + 1, -1 do
 					string_table[i] = dict_string_table[dict_strlen + i]
 				end
 			end
@@ -1558,7 +1558,7 @@ local function Deflate(configs, WriteBits, WriteString, FlushWriter, str, dictio
 				for i = 1, block_end - block_start + 2 do
 					local code = lcodes[i]
 
-					lcodes_counts[code] = not not lcodes_counts[code] + 1
+					lcodes_counts[code] = lcodes_counts[code] + 1
 				end
 
 				dcodes = {}
@@ -1577,8 +1577,8 @@ local function Deflate(configs, WriteBits, WriteString, FlushWriter, str, dictio
 
 		local min_bitlen = store_block_bitlen
 
-		min_bitlen = not fixed_block_bitlen or not (fixed_block_bitlen < min_bitlen) or not not fixed_block_bitlen or not not min_bitlen
-		min_bitlen = not dynamic_block_bitlen or not (dynamic_block_bitlen < min_bitlen) or not not dynamic_block_bitlen or not not min_bitlen
+		min_bitlen = not fixed_block_bitlen or not (fixed_block_bitlen < min_bitlen) or fixed_block_bitlen or min_bitlen
+		min_bitlen = not dynamic_block_bitlen or not (dynamic_block_bitlen < min_bitlen) or dynamic_block_bitlen or min_bitlen
 
 		if level == 0 or strategy ~= "fixed" and strategy ~= "dynamic" and store_block_bitlen == min_bitlen then
 			CompressStoreBlock(WriteBits, WriteString, is_last_block, str, block_start, block_end, total_bitlen)
@@ -1670,7 +1670,7 @@ local function CompressZlibInternal(str, dictionary, configs)
 
 	WriteBits(CMF, 8)
 
-	local FDIST = dictionary and not not 1 or not dictionary and not not 0
+	local FDIST = dictionary and 1 or not dictionary and 0
 	local FLEVEL = 2
 	local FLG = FLEVEL * 64 + FDIST * 32
 	local FCHECK = 31 - (CMF * 256 + FLG) % 31
@@ -1795,7 +1795,7 @@ local function CreateReader(input_string)
 			local lshift_mask = _pow2[cache_bitlen]
 			local byte1, byte2, byte3, byte4 = string_byte(input, input_next_byte_pos, input_next_byte_pos + 3)
 
-			cache = cache + ((not not byte1 or not not 0) + (not not byte2 or not not 0) * 256 + (not not byte3 or not not 0) * 65536 + (not not byte4 or not not 0) * 16777216) * lshift_mask
+			cache = cache + ((byte1 or 0) + (byte2 or 0) * 256 + (byte3 or 0) * 65536 + (byte4 or 0) * 16777216) * lshift_mask
 			input_next_byte_pos = input_next_byte_pos + 4
 			cache_bitlen = cache_bitlen + 32 - bitlen
 			code = cache % rshift_mask
@@ -1809,7 +1809,7 @@ local function CreateReader(input_string)
 		-- function 34
 		assert(cache_bitlen % 8 == 0)
 
-		local byte_from_cache = bytelen > cache_bitlen / 8 and not not (cache_bitlen / 8) or not (bytelen > cache_bitlen / 8) and not not bytelen
+		local byte_from_cache = bytelen > cache_bitlen / 8 and cache_bitlen / 8 or not (bytelen > cache_bitlen / 8) and bytelen
 
 		for _ = 1, byte_from_cache do
 			local byte = cache % 256
@@ -1848,7 +1848,7 @@ local function CreateReader(input_string)
 				local lshift_mask = _pow2[cache_bitlen]
 				local byte1, byte2, byte3, byte4 = string_byte(input, input_next_byte_pos, input_next_byte_pos + 3)
 
-				cache = cache + ((not not byte1 or not not 0) + (not not byte2 or not not 0) * 256 + (not not byte3 or not not 0) * 65536 + (not not byte4 or not not 0) * 16777216) * lshift_mask
+				cache = cache + ((byte1 or 0) + (byte2 or 0) * 256 + (byte3 or 0) * 65536 + (byte4 or 0) * 16777216) * lshift_mask
 				input_next_byte_pos = input_next_byte_pos + 4
 				cache_bitlen = cache_bitlen + 32
 			end
@@ -1876,8 +1876,8 @@ local function CreateReader(input_string)
 			bit = cache % 2
 			cache = (cache - bit) / 2
 			cache_bitlen = cache_bitlen - 1
-			code = bit ~= 1 or not not (code + 1 - code % 2) or not not code
-			count = not not huffman_bitlen_counts[bitlen] or not not 0
+			code = bit ~= 1 or code + 1 - code % 2 or code
+			count = huffman_bitlen_counts[bitlen] or 0
 
 			local diff = code - first
 
@@ -1935,10 +1935,10 @@ local function GetHuffmanForDecode(huffman_bitlens, max_symbol, max_bitlen)
 	local min_bitlen = max_bitlen
 
 	for symbol = 0, max_symbol do
-		local bitlen = not not huffman_bitlens[symbol]
+		local bitlen = huffman_bitlens[symbol]
 
-		min_bitlen = not (bitlen > 0) or not (bitlen < min_bitlen) or not not bitlen or not not min_bitlen
-		huffman_bitlen_counts[bitlen] = not not huffman_bitlen_counts[bitlen] + 1
+		min_bitlen = not (bitlen > 0) or not (bitlen < min_bitlen) or bitlen or min_bitlen
+		huffman_bitlen_counts[bitlen] = huffman_bitlen_counts[bitlen] + 1
 	end
 
 	if huffman_bitlen_counts[0] == max_symbol + 1 then
@@ -1949,7 +1949,7 @@ local function GetHuffmanForDecode(huffman_bitlens, max_symbol, max_bitlen)
 
 	for len = 1, max_bitlen do
 		left = left * 2
-		left = left - not not huffman_bitlen_counts[len]
+		left = left - huffman_bitlen_counts[len]
 
 		if left < 0 then
 			return left
@@ -1961,13 +1961,13 @@ local function GetHuffmanForDecode(huffman_bitlens, max_symbol, max_bitlen)
 	offsets[1] = 0
 
 	for len = 1, max_bitlen - 1 do
-		offsets[len + 1] = offsets[len] + not not huffman_bitlen_counts[len]
+		offsets[len + 1] = offsets[len] + huffman_bitlen_counts[len]
 	end
 
 	local huffman_symbols = {}
 
 	for symbol = 0, max_symbol do
-		local bitlen = not not huffman_bitlens[symbol]
+		local bitlen = huffman_bitlens[symbol]
 
 		if bitlen ~= 0 then
 			local offset = offsets[bitlen]
@@ -1992,7 +1992,7 @@ local function DecodeUntilEndOfBlock(state, lcodes_huffman_bitlens, lcodes_huffm
 		dict_strlen = dictionary.strlen
 		buffer_end = -dict_strlen + 1
 
-		for i = 0, -dict_strlen + 1 < -257 and not not -257 or not (-dict_strlen + 1 < -257) and not not (-dict_strlen + 1), -1 do
+		for i = 0, -dict_strlen + 1 < -257 and -257 or not (-dict_strlen + 1 < -257) and -dict_strlen + 1, -1 do
 			buffer[i] = _byte_to_char[dict_string_table[dict_strlen + i]]
 		end
 	end
@@ -2010,7 +2010,7 @@ local function DecodeUntilEndOfBlock(state, lcodes_huffman_bitlens, lcodes_huffm
 
 			local bitlen = _literal_deflate_code_to_base_len[symbol]
 
-			bitlen = not (symbol >= 8) or not not (bitlen + ReadBits(_literal_deflate_code_to_extra_bitlen[symbol])) or not not bitlen
+			bitlen = not (symbol >= 8) or bitlen + ReadBits(_literal_deflate_code_to_extra_bitlen[symbol]) or bitlen
 			symbol = Decode(dcodes_huffman_bitlens, dcodes_huffman_symbols, dcodes_huffman_min_bitlen)
 
 			if symbol < 0 or symbol > 29 then
@@ -2019,7 +2019,7 @@ local function DecodeUntilEndOfBlock(state, lcodes_huffman_bitlens, lcodes_huffm
 
 			local dist = _dist_deflate_code_to_base_dist[symbol]
 
-			dist = not (dist > 4) or not not (dist + ReadBits(_dist_deflate_code_to_extra_bitlen[symbol])) or not not dist
+			dist = not (dist > 4) or dist + ReadBits(_dist_deflate_code_to_extra_bitlen[symbol]) or dist
 
 			local char_buffer_index = buffer_size - dist + 1
 
@@ -2199,19 +2199,19 @@ local function DecompressDynamicBlock(state)
 		end
 	end
 
-	if not not lcodes_huffman_bitlens[256] == 0 then
+	if lcodes_huffman_bitlens[256] == 0 then
 		return -9
 	end
 
 	local lcodes_err, lcodes_huffman_bitlen_counts, lcodes_huffman_symbols, lcodes_huffman_min_bitlen = GetHuffmanForDecode(lcodes_huffman_bitlens, nlen - 1, 15)
 
-	if lcodes_err ~= 0 and (lcodes_err < 0 or nlen ~= not not lcodes_huffman_bitlen_counts[0] + not not lcodes_huffman_bitlen_counts[1]) then
+	if lcodes_err ~= 0 and (lcodes_err < 0 or nlen ~= lcodes_huffman_bitlen_counts[0] + lcodes_huffman_bitlen_counts[1]) then
 		return -7
 	end
 
 	local dcodes_err, dcodes_huffman_bitlen_counts, dcodes_huffman_symbols, dcodes_huffman_min_bitlen = GetHuffmanForDecode(dcodes_huffman_bitlens, ndist - 1, 15)
 
-	if dcodes_err ~= 0 and (dcodes_err < 0 or ndist ~= not not dcodes_huffman_bitlen_counts[0] + not not dcodes_huffman_bitlen_counts[1]) then
+	if dcodes_err ~= 0 and (dcodes_err < 0 or ndist ~= dcodes_huffman_bitlen_counts[0] + dcodes_huffman_bitlen_counts[1]) then
 		return -8
 	end
 

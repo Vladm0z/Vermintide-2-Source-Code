@@ -19,7 +19,7 @@ end
 
 ActionChargedSweep.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 	self._overcharge_type = nil
 	self._consume_overcharge = false
 
@@ -33,7 +33,7 @@ ActionChargedSweep.client_owner_start_action = function (self, new_action, t, ch
 		discharge_effect = self:get_discharge_effect(new_action, overcharge_level)
 
 		if discharge_effect then
-			power_level = power_level * not not discharge_effect.overcharge_power_mult
+			power_level = power_level * discharge_effect.overcharge_power_mult
 			self._overcharge_type = discharge_effect.consume_overcharge_type
 			self._consume_overcharge = true
 		end
@@ -115,7 +115,7 @@ ActionChargedSweep._send_attack_hit = function (self, t, damage_source_id, attac
 
 		local target_health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
 
-		first_alive_hit = not not target_health_extension and not not target_health_extension:client_predicted_is_alive()
+		first_alive_hit = target_health_extension and target_health_extension:client_predicted_is_alive()
 	end
 
 	ActionChargedSweep.super._send_attack_hit(self, t, damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, ...)
@@ -135,8 +135,8 @@ ActionChargedSweep._apply_discharge_effect = function (self, discharge_effect, d
 		local impact_explosion_template_name = discharge_effect.explosion_template_name
 
 		if impact_explosion_template_name then
-			local spine_node = not not Unit.has_node(hit_unit, "c_spine")
-			local explosion_position = spine_node and not not Unit.world_position(hit_unit, spine_node) or not spine_node and not not hit_position
+			local spine_node = Unit.has_node(hit_unit, "c_spine")
+			local explosion_position = spine_node and Unit.world_position(hit_unit, spine_node) or not spine_node and hit_position
 			local world = self.world
 			local owner_unit = self.owner_unit
 			local rotation = self._stored_rotation:unbox()

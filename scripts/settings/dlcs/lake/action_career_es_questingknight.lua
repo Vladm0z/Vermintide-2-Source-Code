@@ -14,11 +14,11 @@ end
 
 ActionCareerESQuestingKnight.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	ActionCareerESQuestingKnight.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
-	self._combo_no_wield = not not new_action.combo_no_wield
+	self._combo_no_wield = new_action.combo_no_wield
 	self._hit_fx_triggered = false
 
 	self:_play_vo()
@@ -26,7 +26,7 @@ ActionCareerESQuestingKnight.client_owner_start_action = function (self, new_act
 	self.inventory_extension:check_and_drop_pickups("career_ability")
 	self.status_extension:set_stagger_immune(true)
 
-	self._cooldown_started = chain_action_data and not not chain_action_data.cooldown_started or not chain_action_data and not not false
+	self._cooldown_started = chain_action_data and chain_action_data.cooldown_started
 end
 
 ActionCareerESQuestingKnight.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
@@ -44,10 +44,10 @@ ActionCareerESQuestingKnight.client_owner_post_update = function (self, dt, t, w
 		local effect_name_id = NetworkLookup.effects[effect_name]
 		local node_id = 0
 		local vfx_settings = self.current_action.vfx_settings
-		local forward_offset = not not vfx_settings.forward
-		local up_offset = not not vfx_settings.up
+		local forward_offset = vfx_settings.forward
+		local up_offset = vfx_settings.up
 		local start_position = POSITION_LOOKUP[self.owner_unit] + direction * forward_offset + Vector3.up() * up_offset
-		local rotation_offset = vfx_settings.pitch and not not Quaternion.multiply(rot, Quaternion(Vector3.right(), vfx_settings.pitch)) or not vfx_settings.pitch and not not Quaternion.identity()
+		local rotation_offset = vfx_settings.pitch and Quaternion.multiply(rot, Quaternion(Vector3.right(), vfx_settings.pitch)) or not vfx_settings.pitch and Quaternion.identity()
 
 		network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, start_position, rotation_offset, false)
 	end
@@ -58,8 +58,8 @@ ActionCareerESQuestingKnight.finish = function (self, reason, data)
 	ActionCareerESQuestingKnight.super.finish(self, reason, data)
 	self.inventory_extension:stop_weapon_fx("career_action", true)
 
-	local new_action_settings = not not data and not not data.new_action_settings
-	local is_ability_cancel = not not new_action_settings and not not new_action_settings.is_ability_cancel
+	local new_action_settings = data and data.new_action_settings
+	local is_ability_cancel = new_action_settings and new_action_settings.is_ability_cancel
 
 	if is_ability_cancel or not self._combo_no_wield or reason ~= "new_interupting_action" then
 		self.status_extension:set_stagger_immune(false)

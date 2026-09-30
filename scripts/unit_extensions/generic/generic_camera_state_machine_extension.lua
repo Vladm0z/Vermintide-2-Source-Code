@@ -27,7 +27,7 @@ GenericCameraStateMachineExtension.extensions_ready = function (self)
 		local state_instance = camera_state_class_list[i]:new(character_state_init_context)
 		local name = state_instance.name
 
-		assert(not not name and states[name] == nil)
+		assert(name and states[name] == nil)
 
 		states[name] = state_instance
 	end
@@ -54,8 +54,8 @@ end
 
 GenericCameraStateMachineExtension.reinitialize_camera_states = function (self, camera_state_class_list, start_state)
 	-- function 6
-	start_state = not not start_state or not not self.start_state
-	camera_state_class_list = not not camera_state_class_list or not not table.clone(self.camera_state_class_list)
+	start_state = start_state or self.start_state
+	camera_state_class_list = camera_state_class_list or table.clone(self.camera_state_class_list)
 	self.state_machine = nil
 
 	table.clear(self.camera_state_class_list)

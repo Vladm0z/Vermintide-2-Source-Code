@@ -145,7 +145,7 @@ weapon_template.actions = {
 					sub_action = "armor_pierce_fire",
 					condition = function (talent_extension, buff_extension)
 						-- function 6
-						return not not talent_extension and not not talent_extension:has_talent("bardin_engineer_armor_piercing_ability")
+						return talent_extension and talent_extension:has_talent("bardin_engineer_armor_piercing_ability")
 					end
 				}
 			},

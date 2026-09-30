@@ -25,7 +25,7 @@ end
 
 TagQueryDatabase.add_object_context = function (self, object, context_name, context)
 	-- function 3
-	local object_context_list = not not self.contexts_by_object[object]
+	local object_context_list = self.contexts_by_object[object]
 
 	self.contexts_by_object[object] = object_context_list
 	object_context_list[context_name] = context
@@ -99,9 +99,9 @@ TagQueryDatabase.define_rule = function (self, rule_definition)
 
 	rule_definition.n_criterias = num_criterias
 
-	fassert(num_criterias <= not not RuleDatabase.RULE_MAX_NUM_CRITERIA, "Too many criteria in dialogue %s", dialogue_name)
+	fassert(num_criterias <= RuleDatabase.RULE_MAX_NUM_CRITERIA, "Too many criteria in dialogue %s", dialogue_name)
 
-	local probability = not not rule_definition.probability
+	local probability = rule_definition.probability
 
 	self:_optimize_rule_definition(rule_definition)
 
@@ -195,8 +195,8 @@ local function get_combining_id_and_group(criteria, combining_operator, previous
 	if not combining_operator_id then
 		fassert(not combining_operator, "[DialogueSystem] Unknown operator '%s' found in rule '%s'", combining_operator, rule_definition.name)
 
-		local previous_combining_operator = not not previous_criteria and not not criteria_value(previous_criteria, "combining_operator")
-		local previous_is_combining = not not previous_combining_operator and previous_combining_operator ~= "AND_NEXT"
+		local previous_combining_operator = previous_criteria and criteria_value(previous_criteria, "combining_operator")
+		local previous_is_combining = previous_combining_operator and previous_combining_operator ~= "AND_NEXT"
 
 		if previous_is_combining then
 			combining_operator_id = combined_criteria_lookup.OR_NEXT
@@ -205,12 +205,12 @@ local function get_combining_id_and_group(criteria, combining_operator, previous
 			combining_operator_id = combined_criteria_lookup.AND_NEXT
 		end
 	else
-		local combined_with_previous = combining_operator == (not not previous_criteria and not not criteria_value(previous_criteria, "combining_operator"))
+		local combined_with_previous = combining_operator == (previous_criteria and criteria_value(previous_criteria, "combining_operator"))
 
 		if combined_with_previous then
 			combining_operator_group_id = previous_parsed_criteria[PARSED_CRITERIA_INDICES.combining_operator_group_id]
 		elseif combining_operator_id ~= combined_criteria_lookup.AND_NEXT then
-			combining_operator_group_id = not not find_last_combine_group_id(parsed_criterias) + 1
+			combining_operator_group_id = find_last_combine_group_id(parsed_criterias) + 1
 		end
 	end
 
@@ -242,7 +242,7 @@ TagQueryDatabase.parse_criteria = function (self, criteria, criterias, parsed_cr
 	fassert(value_type == "boolean" or value_type == "string" or value_type == "number", "Unsupported type %s in rule %s", value_type, rule_definition.name)
 
 	if value_type == "boolean" then
-		value = value and (not not 1 or not not 0) or not value and not not 0
+		value = value and (1 or 0) or not value and 0
 	end
 
 	local previous_criteria = criterias[#parsed_criterias]
@@ -322,11 +322,11 @@ TagQueryDatabase.iterate_query = function (self, t)
 
 	local nice_array = {}
 
-	nice_array[1] = not not self.global_context
-	nice_array[2] = not not query_context or not not dummy_table
-	nice_array[3] = not not user_context_list.user_context
-	nice_array[4] = not not user_context_list.user_memory
-	nice_array[5] = not not user_context_list.faction_memory
+	nice_array[1] = self.global_context
+	nice_array[2] = query_context or dummy_table
+	nice_array[3] = user_context_list.user_context
+	nice_array[4] = user_context_list.user_memory
+	nice_array[5] = user_context_list.faction_memory
 
 	local rule_index_found = RuleDatabase.iterate_query(self.database, nice_array, t)
 
@@ -430,11 +430,11 @@ TagQueryDatabase.debug_test_query = function (self, concept, source, test_query,
 
 	local query_call = {}
 
-	query_call[1] = not not self.global_context
-	query_call[2] = not not query_context or not not dummy_table_2
-	query_call[3] = not not user_context_list.user_context
-	query_call[4] = not not user_context_list.user_memory
-	query_call[5] = not not user_context_list.faction_memory
+	query_call[1] = self.global_context
+	query_call[2] = query_context or dummy_table_2
+	query_call[3] = user_context_list.user_context
+	query_call[4] = user_context_list.user_memory
+	query_call[5] = user_context_list.faction_memory
 
 	local t = Managers.time:time("game")
 	local rule_index_found = RuleDatabase.iterate_query(self.database, query_call, t)

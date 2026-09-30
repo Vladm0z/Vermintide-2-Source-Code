@@ -16,7 +16,7 @@ local scenegraph_definition = {
 			SIZE_X,
 			SIZE_Y
 		},
-		scale = IS_WINDOWS and not not "fit" or not IS_WINDOWS and not not "hud_fit"
+		scale = IS_WINDOWS and "fit" or not IS_WINDOWS and "hud_fit"
 	},
 	level_name = {
 		vertical_alignment = "top",
@@ -933,7 +933,7 @@ local function create_empty_frame_widget(scenegraph_id)
 					texture_id = "hover_frame",
 					content_check_function = function (content)
 						-- function 3
-						return not content.empty and not not content.hotspot.is_hover
+						return not content.empty and content.hotspot.is_hover
 					end
 				},
 				{
@@ -942,7 +942,7 @@ local function create_empty_frame_widget(scenegraph_id)
 					texture_id = "empty_hover",
 					content_check_function = function (content)
 						-- function 4
-						return not not content.empty
+						return content.empty
 					end
 				},
 				{
@@ -1051,15 +1051,15 @@ end
 
 local function create_settings_widget(scenegraph_id, data, ui_data, start_value, start_idx, setting_id, on_setting_changed_cb)
 	-- function 6
-	local settings = not not data.values
-	local num_settings = not not #settings
+	local settings = data.values
+	local num_settings = #settings
 	local setting_name = "menu_settings_" .. data.setting_name
 	local tooltip_text = "tooltip_" .. data.setting_name
 
 	local function update_hotspot(content, style, dt)
 		-- function 7
 		local parent = content.parent
-		local hover_progress = not not content.hover_progress
+		local hover_progress = content.hover_progress
 		local hover_speed = 15
 
 		if content.is_hover then
@@ -1070,7 +1070,7 @@ local function create_settings_widget(scenegraph_id, data, ui_data, start_value,
 
 		content.hover_progress = hover_progress
 
-		local press_progress = not not content.press_progress
+		local press_progress = content.press_progress
 		local press_speed = 25
 
 		if content.is_held then
@@ -1084,8 +1084,8 @@ local function create_settings_widget(scenegraph_id, data, ui_data, start_value,
 
 	local function animate_button(content, style, hotspot, dt)
 		-- function 8
-		local hover_progress = not not hotspot.hover_progress
-		local press_progress = not not hotspot.press_progress
+		local hover_progress = hotspot.hover_progress
+		local press_progress = hotspot.press_progress
 
 		style.color[1] = 255 * hover_progress
 
@@ -1121,7 +1121,7 @@ local function create_settings_widget(scenegraph_id, data, ui_data, start_value,
 						if content.value ~= new_value then
 							content.value = new_value
 
-							local localization_options = not not ui_data and not not ui_data.localization_options
+							local localization_options = ui_data and ui_data.localization_options
 							local value_text = ""
 
 							if localization_options and localization_options[new_value] then
@@ -1134,8 +1134,8 @@ local function create_settings_widget(scenegraph_id, data, ui_data, start_value,
 								value_text = string.format("%s", content.value)
 							end
 
-							if not localization_options and ui_data and ui_data.setting_type or not not localization_options and not localization_options[new_value] and ui_data and ui_data.setting_type then
-								local value_suffixes = not not DLCSettings.carousel
+							if not localization_options and ui_data and ui_data.setting_type or localization_options and not localization_options[new_value] and ui_data and ui_data.setting_type then
+								local value_suffixes = DLCSettings.carousel
 
 								if ui_data and value_suffixes and value_suffixes[ui_data.setting_type] then
 									value_text = value_text .. value_suffixes[ui_data.setting_type]
@@ -1163,7 +1163,7 @@ local function create_settings_widget(scenegraph_id, data, ui_data, start_value,
 					content_id = "setting_highlight_hotspot",
 					content_change_function = function (content, style, _, dt)
 						-- function 10
-						local hover_progress = not not content.hover_progress
+						local hover_progress = content.hover_progress
 						local hover_speed = 15
 
 						if content.is_hover or content.parent.is_gamepad_active and content.parent.focused and content.parent.is_selected then
@@ -1181,7 +1181,7 @@ local function create_settings_widget(scenegraph_id, data, ui_data, start_value,
 					pass_type = "texture",
 					content_change_function = function (content, style, _, dt)
 						-- function 11
-						local hover_progress = not not content.setting_highlight_hotspot.hover_progress
+						local hover_progress = content.setting_highlight_hotspot.hover_progress
 
 						style.color[1] = 255 * hover_progress
 					end

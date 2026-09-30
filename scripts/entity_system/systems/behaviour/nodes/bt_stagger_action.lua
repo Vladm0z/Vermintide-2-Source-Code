@@ -23,7 +23,7 @@ BTStaggerAction.enter = function (self, unit, blackboard, t)
 	navigation_extension:set_enabled(false)
 
 	local breed = blackboard.breed
-	local was_already_in_stagger = not not blackboard.staggering_id
+	local was_already_in_stagger = blackboard.staggering_id
 
 	if not was_already_in_stagger then
 		local override_mover_move_distance = breed.override_mover_move_distance
@@ -68,12 +68,12 @@ BTStaggerAction.enter = function (self, unit, blackboard, t)
 	local impact_dir = blackboard.stagger_direction:unbox()
 	local push_anim, impact_rot = self:_select_animation(unit, blackboard, impact_dir, stagger_anims)
 
-	Unit.set_local_rotation(unit, 0, not not override_rotation or not not impact_rot)
+	Unit.set_local_rotation(unit, 0, override_rotation or impact_rot)
 
 	local network_manager = Managers.state.network
 
 	if action_data.scale_animation_speeds then
-		local anim_scale = not not action_data.stagger_animation_scale
+		local anim_scale = action_data.stagger_animation_scale
 
 		network_manager:anim_event_with_variable_float(unit, push_anim, "stagger_scale", anim_scale)
 	else
@@ -128,14 +128,14 @@ BTStaggerAction._select_animation = function (self, unit, blackboard, impact_vec
 	local velocity = locomotion_extension:current_velocity()
 	local impact_rot, anim_table
 	local moving_stagger_distance = action.moving_stagger_minimum_destination_distance
-	local in_moving_stagger_distane = not not moving_stagger_distance and moving_stagger_distance < blackboard.destination_dist
+	local in_moving_stagger_distane = moving_stagger_distance and moving_stagger_distance < blackboard.destination_dist
 	local moving_stagger_threshold = action.moving_stagger_threshold
 	local velocy_my_fwd_dot = Vector3.dot(velocity, my_fwd)
-	local in_moving_stagger_velocity = not not moving_stagger_threshold and moving_stagger_threshold < velocy_my_fwd_dot
+	local in_moving_stagger_velocity = moving_stagger_threshold and moving_stagger_threshold < velocy_my_fwd_dot
 	local moving_stagger = false
 
 	if not blackboard.always_stagger_suffered then
-		moving_stagger = not not in_moving_stagger_distane and not not in_moving_stagger_velocity
+		moving_stagger = in_moving_stagger_distane and in_moving_stagger_velocity
 	end
 
 	blackboard.always_stagger_suffered = nil
@@ -143,26 +143,26 @@ BTStaggerAction._select_animation = function (self, unit, blackboard, impact_vec
 	if impact_vec.z == -1 and stagger_anims.dwn then
 		impact_dir.z = 0
 		impact_rot = Quaternion.look(-impact_dir)
-		anim_table = moving_stagger and (not not stagger_anims.moving_dwn or not not stagger_anims.dwn) or not moving_stagger and not not stagger_anims.dwn
+		anim_table = moving_stagger and (stagger_anims.moving_dwn or stagger_anims.dwn) or not moving_stagger and stagger_anims.dwn
 	else
 		impact_dir.z = 0
 
 		if angle > math.pi * 0.75 then
 			impact_rot = Quaternion.look(-impact_dir)
-			anim_table = moving_stagger and (not not stagger_anims.moving_bwd or not not stagger_anims.bwd) or not moving_stagger and not not stagger_anims.bwd
+			anim_table = moving_stagger and (stagger_anims.moving_bwd or stagger_anims.bwd) or not moving_stagger and stagger_anims.bwd
 		elseif angle < math.pi * 0.25 then
 			impact_rot = Quaternion.look(impact_dir)
-			anim_table = moving_stagger and (not not stagger_anims.moving_fwd or not not stagger_anims.fwd) or not moving_stagger and not not stagger_anims.fwd
+			anim_table = moving_stagger and (stagger_anims.moving_fwd or stagger_anims.fwd) or not moving_stagger and stagger_anims.fwd
 		elseif Vector3.cross(my_fwd, impact_dir).z > 0 then
 			local dir = Vector3.cross(Vector3(0, 0, -1), impact_dir)
 
 			impact_rot = Quaternion.look(dir)
-			anim_table = moving_stagger and (not not stagger_anims.moving_left or not not stagger_anims.left) or not moving_stagger and not not stagger_anims.left
+			anim_table = moving_stagger and (stagger_anims.moving_left or stagger_anims.left) or not moving_stagger and stagger_anims.left
 		else
 			local dir = Vector3.cross(Vector3(0, 0, 1), impact_dir)
 
 			impact_rot = Quaternion.look(dir)
-			anim_table = moving_stagger and (not not stagger_anims.moving_right or not not stagger_anims.right) or not moving_stagger and not not stagger_anims.right
+			anim_table = moving_stagger and (stagger_anims.moving_right or stagger_anims.right) or not moving_stagger and stagger_anims.right
 		end
 	end
 

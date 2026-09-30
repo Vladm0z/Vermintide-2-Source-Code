@@ -71,7 +71,7 @@ AmmoSystem.give_ammo_fraction_to_owner = function (self, owner_unit, fraction, t
 	local player = Managers.player:owner(owner_unit)
 
 	if player then
-		local is_local = not not player and not not not player.remote
+		local is_local = player and not player.remote
 
 		if is_local then
 			local extensions = self._unit_extensions_by_owener[owner_unit]

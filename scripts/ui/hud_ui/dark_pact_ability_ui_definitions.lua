@@ -1046,7 +1046,7 @@ local pre_defined_widgets = {
 			local display_on_cooldown = false
 			local content = widget.content
 			local style = widget.style
-			local stored_ability_cooldown = not not content.ability_cooldown
+			local stored_ability_cooldown = content.ability_cooldown
 			local cooldown_fraction = 0
 
 			if uses_cooldown then
@@ -1094,10 +1094,10 @@ local pre_defined_widgets = {
 			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
 			local ability_data = career_extension:get_activated_ability_data(ability_id)
 			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local priming_progress = not not ability_data.priming_progress
+			local priming_progress = ability_data.priming_progress
 			local content = widget.content
 			local style = widget.style
-			local stored_ability_cooldown = not not content.ability_cooldown
+			local stored_ability_cooldown = content.ability_cooldown
 
 			content.progress = priming_progress
 
@@ -1128,7 +1128,7 @@ local pre_defined_widgets = {
 			if uses_cooldown then
 				cooldown_fraction = ability_cooldown / full_cooldown
 			else
-				cooldown_fraction = ability_available and (not not 0 or not not 1) or not ability_available and not not 1
+				cooldown_fraction = ability_available and (0 or 1) or not ability_available and 1
 			end
 
 			local content = widget.content
@@ -1153,15 +1153,15 @@ local pre_defined_widgets = {
 			local ability_cooldown, full_cooldown = career_extension:current_ability_cooldown(ability_id)
 			local ability_data = career_extension:get_activated_ability_data(ability_id)
 			local uses_cooldown = career_extension:uses_cooldown(ability_id)
-			local priming_progress = not not ability_data.priming_progress
+			local priming_progress = ability_data.priming_progress
 			local content = widget.content
 			local style = widget.style
-			local current_priming_progress = not not content.progress
+			local current_priming_progress = content.progress
 			local visible = current_priming_progress < priming_progress
 
-			style.cooldown_mask.color[1] = visible and not not (255 * priming_progress) or not visible and not not 0
+			style.cooldown_mask.color[1] = visible and 255 * priming_progress or not visible and 0
 
-			local stored_ability_cooldown = not not content.ability_cooldown
+			local stored_ability_cooldown = content.ability_cooldown
 
 			content.visible = priming_progress > 0 and priming_progress < 1
 			content.progress = priming_progress
@@ -1189,7 +1189,7 @@ local pre_defined_widgets = {
 		update_function = function (dt, t, ui_renderer, career_extension, ability_id, widget, is_player_dead)
 			-- function 26
 			local ability_data = career_extension:get_activated_ability_data(ability_id)
-			local duration_progress = not not ability_data.duration_progress
+			local duration_progress = ability_data.duration_progress
 			local buff_name = "vs_gutter_runner_smoke_bomb_invisible"
 			local player = Managers.player:local_player(1)
 			local player_unit = player.player_unit
@@ -1208,8 +1208,8 @@ local pre_defined_widgets = {
 			local duration = buff.duration
 			local start_time = buff.start_time
 			local game_time = Managers.time:time("game")
-			local end_time = duration and not not (start_time + duration) or not duration and not not 0
-			local remaining_duration = not not end_time and not not math.max(end_time - game_time, 0)
+			local end_time = duration and start_time + duration or not duration and 0
+			local remaining_duration = end_time and math.max(end_time - game_time, 0)
 			local style = widget.style
 			local default_size = style.progress.default_size
 			local texture_size = style.progress.texture_size
@@ -1233,7 +1233,7 @@ local pre_defined_widgets = {
 			local ability_charge = horde_ability_extension:get_ability_charge(game_time)
 			local ability_cooldown = math.clamp(cooldown - ability_charge, 0, cooldown)
 			local content = widget.content
-			local cooldown_fraction = ability_cooldown ~= 0 and not not (ability_cooldown / cooldown) or not (ability_cooldown ~= 0) and not not 0
+			local cooldown_fraction = ability_cooldown ~= 0 and ability_cooldown / cooldown or not (ability_cooldown ~= 0) and 0
 
 			cooldown_fraction = 1 - cooldown_fraction
 
@@ -1329,7 +1329,7 @@ local function create_dark_pact_hud_ability_icon_widget()
 						end
 
 						local gamepad_active = Managers.input:is_device_active("gamepad")
-						local input = gamepad_active and not not content.settings.gamepad_input or not gamepad_active and not not content.settings.input_action
+						local input = gamepad_active and content.settings.gamepad_input or not gamepad_active and content.settings.input_action
 						local input_service = Managers.input:get_service("Player")
 						local _, input_text, keymap_binding = UISettings.get_gamepad_input_texture_data(input_service, input, gamepad_active)
 
@@ -1352,7 +1352,7 @@ local function create_dark_pact_hud_ability_icon_widget()
 
 							content.has_subtitles = has_subtitles
 
-							local fade_progress = not not content.fade_progress
+							local fade_progress = content.fade_progress
 
 							if has_subtitles then
 								fade_progress = math.max(fade_progress - dt * 5, 0)
@@ -1534,7 +1534,7 @@ local function chaos_troll_cooldown_update(dt, t, ui_renderer, career_extension,
 	content.is_cooldown = on_cooldown
 
 	if on_cooldown then
-		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, not not content.current_progress)
+		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, content.current_progress)
 	end
 
 	UIRenderer.draw_widget(ui_renderer, widget)
@@ -1556,7 +1556,7 @@ local function rat_ogre_cooldown_update(dt, t, ui_renderer, career_extension, ab
 	content.is_cooldown = on_cooldown
 
 	if on_cooldown then
-		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, not not content.current_progress)
+		content.progress = 1 - math.clamp(ability_cooldown / full_cooldown, 0, content.current_progress)
 	end
 
 	UIRenderer.draw_widget(ui_renderer, widget)
@@ -1569,7 +1569,7 @@ local function gutter_runner_foff_duration_update(dt, t, ui_renderer, career_ext
 	end
 
 	local ability_data = career_extension:get_activated_ability_data(ability_id)
-	local duration_progress = not not ability_data.duration_progress
+	local duration_progress = ability_data.duration_progress
 	local can_use_ability = career_extension:can_use_activated_ability(ability_id)
 	local content = widget.content
 	local progress = 0
@@ -1601,8 +1601,8 @@ local function gutter_runner_foff_duration_update(dt, t, ui_renderer, career_ext
 		local duration = buff.duration
 		local start_time = buff.start_time
 		local game_time = Managers.time:time("game")
-		local end_time = duration and not not (start_time + duration) or not duration and not not 0
-		local remaining_duration = not not end_time and not not math.max(end_time - game_time, 0)
+		local end_time = duration and start_time + duration or not duration and 0
+		local remaining_duration = end_time and math.max(end_time - game_time, 0)
 		local progress = remaining_duration / duration
 
 		on_cooldown = progress ~= 1
@@ -1638,7 +1638,7 @@ local function poison_wind_globadier_reload_update(dt, t, ui_renderer, career_ex
 	local display_on_cooldown = false
 	local content = widget.content
 	local style = widget.style
-	local stored_ability_cooldown = not not content.ability_cooldown
+	local stored_ability_cooldown = content.ability_cooldown
 	local cooldown_fraction = 0
 
 	if uses_cooldown then

@@ -42,10 +42,10 @@ end
 
 TransitionManager.set_multiplayer_values = function (self, type, data, string)
 	-- function 3
-	self._multiplayer_tracking = not not self._multiplayer_tracking
-	self._multiplayer_tracking[type] = not not self._multiplayer_tracking[type]
+	self._multiplayer_tracking = self._multiplayer_tracking
+	self._multiplayer_tracking[type] = self._multiplayer_tracking[type]
 	self._multiplayer_tracking[type][#self._multiplayer_tracking[type] + 1] = data
-	self._multiplayer_tracking.string = not not self._multiplayer_tracking.string
+	self._multiplayer_tracking.string = self._multiplayer_tracking.string
 	self._multiplayer_tracking.string[#self._multiplayer_tracking.string + 1] = string
 end
 
@@ -55,13 +55,13 @@ TransitionManager.dump_multiplayer_data = function (self)
 	Application.warning("##################################")
 	Application.warning(" ")
 	Application.warning("############## START #############")
-	table.dump(not not self._multiplayer_tracking.start, "MultiplayerRoundStart", 2, Application.warning)
+	table.dump(self._multiplayer_tracking.start, "MultiplayerRoundStart", 2, Application.warning)
 	Application.warning(" ")
 	Application.warning("############### END ##############")
-	table.dump(not not self._multiplayer_tracking["end"], "MultiplayerRoundEnd", 2, Application.warning)
+	table.dump(self._multiplayer_tracking["end"], "MultiplayerRoundEnd", 2, Application.warning)
 	Application.warning(" ")
 	Application.warning("############# STRINGS ############")
-	table.dump(not not self._multiplayer_tracking.string, "Strings", 2, Application.warning)
+	table.dump(self._multiplayer_tracking.string, "Strings", 2, Application.warning)
 	Application.warning(" ")
 	Application.warning("##################################")
 	Application.warning(" ")
@@ -168,7 +168,7 @@ end
 
 TransitionManager.loading_icon_active = function (self)
 	-- function 15
-	return not not self._loading_icon_view
+	return self._loading_icon_view
 end
 
 TransitionManager.fade_in = function (self, speed, callback)

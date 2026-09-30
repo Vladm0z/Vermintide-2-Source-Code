@@ -1,7 +1,7 @@
 -- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_physics_unit_locomotion_extension.lua
 
 ProjectilePhysicsUnitLocomotionExtension = class(ProjectilePhysicsUnitLocomotionExtension)
-script_data.debug_projectiles = not not script_data.debug_projectiles
+script_data.debug_projectiles = script_data.debug_projectiles
 
 ProjectilePhysicsUnitLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
@@ -70,7 +70,7 @@ ProjectilePhysicsUnitLocomotionExtension.update = function (self, unit, input, d
 		return
 	end
 
-	local stop_time = not not self.stop_time
+	local stop_time = self.stop_time
 
 	stop_time = stop_time + dt
 	self.stop_time = stop_time

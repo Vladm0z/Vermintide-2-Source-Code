@@ -866,7 +866,7 @@ local function create_checkbox_button(scenegraph_id, size, text, font_size, tool
 		style_id = checkbox_marker_name,
 		content_check_function = function (content)
 			-- function 8
-			return not not content.is_selected
+			return content.is_selected
 		end
 	}
 	hotspot_content[checkbox_marker_name] = "matchmaking_checkbox"
@@ -896,7 +896,7 @@ local function create_checkbox_button(scenegraph_id, size, text, font_size, tool
 		style_id = checkbox_marker_disabled_name,
 		content_check_function = function (content)
 			-- function 9
-			return not not content.is_selected
+			return content.is_selected
 		end
 	}
 	style[checkbox_marker_disabled_name] = {
@@ -946,11 +946,11 @@ local function create_player_widget(scenegraph_id, size)
 					texture_id = "search_icon",
 					content_check_function = function (content)
 						-- function 13
-						return not content.occupied and not not content.searching
+						return not content.occupied and content.searching
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 14
-						local progress = not not style.progress
+						local progress = style.progress
 
 						progress = (progress + dt) % 1
 
@@ -966,7 +966,7 @@ local function create_player_widget(scenegraph_id, size)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 15
-						return not content.occupied and not not not content.searching
+						return not content.occupied and not content.searching
 					end
 				}
 			}
@@ -1057,12 +1057,12 @@ end
 
 function create_tooltip_button(scenegraph_id, size, frame_name, background_texture, text, font_size, optional_color_name, optional_detail_texture, optional_detail_offset, disable_with_gamepad, find_party_tooltip_info, find_party_disabled_tooltip_info)
 	-- function 16
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
-	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
+	local side_detail_texture = optional_detail_texture or "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
 	local side_detail_texture_size = side_detail_texture_settings.size
 
@@ -1170,7 +1170,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 						-- function 20
 						local button_hotspot = content.parent.button_hotspot
 
-						return not not content.is_hover
+						return content.is_hover
 					end
 				},
 				{
@@ -1182,7 +1182,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 						-- function 21
 						local button_hotspot = content.parent.button_hotspot
 
-						return not not content.is_hover
+						return content.is_hover
 					end
 				}
 			}
@@ -1209,7 +1209,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 				find_party_disabled_tooltip = find_party_disabled_tooltip_info,
 				find_party_tooltip = find_party_tooltip_info
 			},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -1307,7 +1307,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -1328,7 +1328,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -1348,7 +1348,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
@@ -1418,7 +1418,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 					255
 				},
 				offset = {
-					optional_detail_offset and not not -optional_detail_offset or not optional_detail_offset and not not -9,
+					optional_detail_offset and -optional_detail_offset or not optional_detail_offset and -9,
 					size[2] / 2 - side_detail_texture_size[2] / 2,
 					9
 				},
@@ -1435,7 +1435,7 @@ function create_tooltip_button(scenegraph_id, size, frame_name, background_textu
 					255
 				},
 				offset = {
-					size[1] - side_detail_texture_size[1] + (not not optional_detail_offset or not not 9),
+					size[1] - side_detail_texture_size[1] + (optional_detail_offset or 9),
 					size[2] / 2 - side_detail_texture_size[2] / 2,
 					9
 				},
@@ -1662,7 +1662,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 						-- function 34
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover
+						return button_hotspot.is_hover
 					end
 				},
 				{
@@ -1674,7 +1674,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 						-- function 35
 						local button_hotspot = content.parent.button_hotspot
 
-						return not not content.is_hover
+						return content.is_hover
 					end
 				}
 			}
@@ -1703,7 +1703,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 			hover_hotspot = {
 				cancel_matchmaking_tooltip = tooltip_info
 			},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			disable_with_gamepad = disable_with_gamepad,
 			background = {
@@ -1773,7 +1773,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -1793,7 +1793,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -1812,7 +1812,7 @@ function create_play_button(scenegraph_id, size, text, font_size, disable_with_g
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,

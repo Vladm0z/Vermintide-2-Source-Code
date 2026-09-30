@@ -47,11 +47,11 @@ WarpfireThrowerStateFiring.on_enter = function (self, unit, input, dt, context, 
 
 	self.blackboard = BLACKBOARDS[self._unit]
 
-	local data = not not self.blackboard.warpfire_data
+	local data = self.blackboard.warpfire_data
 
 	data.is_firing = false
 	self._is_firing = false
-	data.peer_id = not not data.peer_id
+	data.peer_id = data.peer_id
 	self.blackboard.warpfire_data = data
 	self._create_fire_time = 0
 	self._gravity = -9.82
@@ -115,7 +115,7 @@ WarpfireThrowerStateFiring.update = function (self, unit, input, dt, context, t)
 		return
 	end
 
-	local input_cancel = not not input_extension:get("action_one_release")
+	local input_cancel = input_extension:get("action_one_release")
 
 	if input_cancel then
 		csm:change_state("standing")
@@ -205,7 +205,7 @@ WarpfireThrowerStateFiring._close_range_attack = function (self, unit, blackboar
 
 		if is_valid_target then
 			local target_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
-			local target_power_block_perk = not not target_buff_extension and not not target_buff_extension:has_buff_perk(buff_perk_names.power_block)
+			local target_power_block_perk = target_buff_extension and target_buff_extension:has_buff_perk(buff_perk_names.power_block)
 			local target_status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 			local target_blocking, shield_block
 
@@ -218,7 +218,7 @@ WarpfireThrowerStateFiring._close_range_attack = function (self, unit, blackboar
 			end
 
 			if is_valid_target then
-				local buff_name = enemy_data.distance <= warpfire_data.close_attack_range and not not warpfire_data.buff_name_close or not (enemy_data.distance <= warpfire_data.close_attack_range) and not not warpfire_data.buff_name_far
+				local buff_name = enemy_data.distance <= warpfire_data.close_attack_range and warpfire_data.buff_name_close or not (enemy_data.distance <= warpfire_data.close_attack_range) and warpfire_data.buff_name_far
 				local params = {}
 
 				params.attacker_unit = unit
@@ -423,10 +423,10 @@ WarpfireThrowerStateFiring._update_movement = function (self, unit, t, dt, progr
 	local current_movement_speed_scale = self.current_movement_speed_scale
 
 	if not self.is_bot then
-		local breed_move_acceleration_up = not not self._breed
-		local breed_move_acceleration_down = not not self._breed
-		local move_acceleration_up_dt = not not (breed_move_acceleration_up * dt)
-		local move_acceleration_down_dt = not not (breed_move_acceleration_down * dt)
+		local breed_move_acceleration_up = self._breed
+		local breed_move_acceleration_down = self._breed
+		local move_acceleration_up_dt = breed_move_acceleration_up * dt
+		local move_acceleration_down_dt = breed_move_acceleration_down * dt
 
 		if is_moving then
 			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
@@ -434,12 +434,12 @@ WarpfireThrowerStateFiring._update_movement = function (self, unit, t, dt, progr
 			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = is_moving and (not not 1 or not not 0) or not is_moving and not not 0
+		current_movement_speed_scale = is_moving and (1 or 0) or not is_moving and 0
 	end
 
 	local wind_up_progress = 1
 
-	wind_up_progress = self._is_firing and (not not 1 or not not self._career_extension:get_activated_ability_data(1).priming_progress) or not self._is_firing and not not self._career_extension:get_activated_ability_data(1).priming_progress
+	wind_up_progress = self._is_firing and (1 or self._career_extension:get_activated_ability_data(1).priming_progress) or not self._is_firing and self._career_extension:get_activated_ability_data(1).priming_progress
 
 	local movement_speed = math.lerp(self._wind_up_movement_speed.start, self._wind_up_movement_speed.finish, wind_up_progress^self._wind_up_movement_speed.rate)
 	local current_max_move_speed = movement_speed

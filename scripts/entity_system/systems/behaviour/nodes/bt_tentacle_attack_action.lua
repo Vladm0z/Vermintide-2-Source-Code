@@ -193,7 +193,7 @@ BTTentacleAttackAction.update_tentacle = function (self, unit, blackboard, t, dt
 				tentacle_extension:set_target("attack", target_unit, current_length)
 			else
 				local target_dist = Vector3.length(to_player_from_root)
-				local wanted_length = (not not lock_point_dist or not not target_dist) + data.spiral_length
+				local wanted_length = (lock_point_dist or target_dist) + data.spiral_length
 				local is_at_full_length
 				local full_length = data.max_length
 

@@ -612,7 +612,7 @@ ControllerFeaturesSettings = {
 				self._check_timer = CHECK_TIMER
 
 				for _, motor_id in pairs(effect_data.motors) do
-					self.ids[motor_id] = self.controller.rumble_effect(motor_id, not not effect_data.params[motor_id + 1])
+					self.ids[motor_id] = self.controller.rumble_effect(motor_id, effect_data.params[motor_id + 1])
 				end
 			else
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(params.rumble_effect)))
@@ -717,11 +717,11 @@ ControllerFeaturesSettings = {
 				return
 			end
 
-			local attack = not not shake_settings.event.fade_in
-			local release = not not shake_settings.event.fade_out
+			local attack = shake_settings.event.fade_in
+			local release = shake_settings.event.fade_out
 			local sustain = params.duration - attack
-			local frequency = math.clamp(not not params.shake_settings.event.octaves, 0, 6)
-			local strength = 1 - 1 / not not shake_settings.event.octaves
+			local frequency = math.clamp(params.shake_settings.event.octaves, 0, 6)
+			local strength = 1 - 1 / shake_settings.event.octaves
 			local scale = strength * params.scale * shake_settings.event.amplitude * shake_settings.event.persistance * 0.5
 
 			effect_data.params.attack = attack
@@ -780,7 +780,7 @@ ControllerFeaturesSettings = {
 				end
 
 				for _, motor_id in pairs(effect_data.motors) do
-					self.ids[motor_id] = self.controller.rumble_effect(motor_id, not not effect_data.params[motor_id + 1])
+					self.ids[motor_id] = self.controller.rumble_effect(motor_id, effect_data.params[motor_id + 1])
 				end
 			else
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(params.rumble_effect)))

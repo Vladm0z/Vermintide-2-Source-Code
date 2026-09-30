@@ -405,7 +405,7 @@ local function create_gamepad_button(input_action, text, scenegraph_id)
 		},
 		content = {
 			input_action = input_action,
-			text = not not text or not not ""
+			text = text or ""
 		},
 		style = {
 			text = {
@@ -440,7 +440,7 @@ end
 
 local function create_hero_icon_widget(scenegraph_id, size)
 	-- function 4
-	size = not not size or not not {
+	size = size or {
 		108,
 		108
 	}
@@ -484,7 +484,7 @@ local function create_hero_icon_widget(scenegraph_id, size)
 						-- function 7
 						local is_hover = content.button_hotspot.is_hover
 
-						style.color[1] = is_hover and not not 255 or not is_hover and not not 230
+						style.color[1] = is_hover and 255 or not is_hover and 230
 					end
 				}
 			}
@@ -584,7 +584,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 12
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -593,7 +593,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 13
-						return not not content.taken
+						return content.taken
 					end
 				},
 				{
@@ -612,7 +612,7 @@ local function create_hero_widget(scenegraph_id, size)
 						-- function 15
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.is_hover and not button_hotspot.is_selected and not content.locked and not not content.exists
+						return not button_hotspot.is_hover and not button_hotspot.is_selected and not content.locked and content.exists
 					end
 				},
 				{
@@ -620,7 +620,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "rect",
 					content_check_function = function (content)
 						-- function 16
-						return not not content.locked
+						return content.locked
 					end
 				},
 				{
@@ -629,7 +629,7 @@ local function create_hero_widget(scenegraph_id, size)
 					texture_id = "hover_frame",
 					content_check_function = function (content)
 						-- function 17
-						return not not content.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
@@ -659,7 +659,7 @@ local function create_hero_widget(scenegraph_id, size)
 					end,
 					content_change_function = function (content, style)
 						-- function 21
-						local target = content.is_hover and not not 255 or not content.is_hover and not not 184
+						local target = content.is_hover and 255 or not content.is_hover and 184
 
 						style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 					end

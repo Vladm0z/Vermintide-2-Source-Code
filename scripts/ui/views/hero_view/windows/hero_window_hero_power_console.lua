@@ -189,7 +189,7 @@ HeroWindowHeroPowerConsole._calculate_power_level = function (self)
 	local widgets_by_name = self._widgets_by_name
 	local content = widgets_by_name.power_text.content
 	local selected_loadout_index = Managers.backend:get_interface("items"):get_selected_career_loadout(career_name)
-	local play_effect = not not content.power
+	local play_effect = content.power
 
 	if play_effect then
 		self._hero_power_effect_time = HERO_POWER_EFFECT_DURATION

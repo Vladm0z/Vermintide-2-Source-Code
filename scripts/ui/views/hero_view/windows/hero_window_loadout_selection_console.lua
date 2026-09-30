@@ -130,7 +130,7 @@ HeroWindowLoadoutSelectionConsole._create_ui_elements = function (self, params, 
 
 	local bot_checkbox_widget = widgets_by_name.bot_checkbox
 
-	bot_checkbox_widget.content.visible = not not InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key]
+	bot_checkbox_widget.content.visible = InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key]
 	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
@@ -177,8 +177,8 @@ HeroWindowLoadoutSelectionConsole._populate_loadout_buttons = function (self)
 	self._selected_loadout_index = selected_loadout_index
 
 	if InventorySettings.bot_loadout_allowed_game_modes[self._game_mode_key] then
-		PlayerData.loadout_selection = not not PlayerData.loadout_selection
-		PlayerData.loadout_selection.bot_equipment = not not PlayerData.loadout_selection.bot_equipment
+		PlayerData.loadout_selection = PlayerData.loadout_selection
+		PlayerData.loadout_selection.bot_equipment = PlayerData.loadout_selection.bot_equipment
 
 		local bot_equipment_index = PlayerData.loadout_selection.bot_equipment[career_name]
 
@@ -217,7 +217,7 @@ HeroWindowLoadoutSelectionConsole.on_exit = function (self, params)
 	end
 
 	local local_player = Managers.player:local_player()
-	local career_name = not not local_player and not not local_player:career_name()
+	local career_name = local_player and local_player:career_name()
 
 	if career_name and self._selected_loadout_index then
 		local selected_loadout_index
@@ -238,8 +238,8 @@ HeroWindowLoadoutSelectionConsole.on_exit = function (self, params)
 
 		local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-		PlayerData.loadout_selection = not not PlayerData.loadout_selection
-		PlayerData.loadout_selection[mechanism_name] = not not PlayerData.loadout_selection[mechanism_name]
+		PlayerData.loadout_selection = PlayerData.loadout_selection
+		PlayerData.loadout_selection[mechanism_name] = PlayerData.loadout_selection[mechanism_name]
 		PlayerData.loadout_selection[mechanism_name][career_name] = selected_loadout_index
 
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
@@ -330,7 +330,7 @@ end
 
 HeroWindowLoadoutSelectionConsole._get_input_service = function (self)
 	-- function 11
-	return not not Managers.input:get_service("hero_view")
+	return (Managers.input:get_service("hero_view"))
 end
 
 HeroWindowLoadoutSelectionConsole._update_selection_frame = function (self, loadout_button_widget)
@@ -354,7 +354,7 @@ HeroWindowLoadoutSelectionConsole._update_button_hover = function (self, loadout
 	-- function 13
 	self:_update_selection_frame(loadout_button_widget)
 
-	local hover_enter_time = not not loadout_button_widget.content.hover_enter_time
+	local hover_enter_time = loadout_button_widget.content.hover_enter_time
 
 	if hover_enter_time < t and not self._context_menu_active then
 		self:_show_context_menu(loadout_button_widget)
@@ -406,7 +406,7 @@ HeroWindowLoadoutSelectionConsole._handle_mouse_input = function (self, input_se
 		self:_handle_context_menu_input(input_service, dt, t)
 
 		context_menu_widget_hotspot.content.hover_timer = t + 0.1
-	elseif self._context_menu_active and (loadout_button_index_hovered or t > not not context_menu_widget_hotspot.content.hover_timer) then
+	elseif self._context_menu_active and (loadout_button_index_hovered or t > context_menu_widget_hotspot.content.hover_timer) then
 		self:_hide_context_menu()
 	end
 
@@ -586,8 +586,8 @@ HeroWindowLoadoutSelectionConsole._handle_context_menu_gamepad_input = function 
 	local new_selection = false
 	local row_index = self._gamepad_grid_index[1]
 	local column_index = self._gamepad_grid_index[2]
-	local new_row_index = not not row_index or not not #self._gamepad_loadout_grid
-	local new_column_index = not not column_index or not not 1
+	local new_row_index = row_index or #self._gamepad_loadout_grid
+	local new_column_index = column_index or 1
 
 	if input_service:get("move_left") then
 		new_column_index = math.max(column_index - 1, 1)
@@ -640,7 +640,7 @@ HeroWindowLoadoutSelectionConsole._handle_delete_input = function (self, input_s
 
 	local delete_button = self._widgets_by_name.delete_button
 	local time = 1
-	local delete_progress = not not self._delete_progress
+	local delete_progress = self._delete_progress
 
 	if input_service:get("refresh_hold") or UIUtils.is_button_held(delete_button) and UIUtils.is_button_hover(delete_button) then
 		if not self._delete_started then
@@ -708,8 +708,8 @@ end
 
 HeroWindowLoadoutSelectionConsole._update_gamepad_selections = function (self, unselect_all)
 	-- function 25
-	local row_index = unselect_all and not not 0 or not unselect_all and not not self._gamepad_grid_index[1]
-	local column_index = unselect_all and not not 0 or not unselect_all and not not self._gamepad_grid_index[2]
+	local row_index = unselect_all and 0 or not unselect_all and self._gamepad_grid_index[1]
+	local column_index = unselect_all and 0 or not unselect_all and self._gamepad_grid_index[2]
 
 	for row, row_content in ipairs(self._gamepad_loadout_grid) do
 		for column, content in ipairs(row_content) do
@@ -805,7 +805,7 @@ HeroWindowLoadoutSelectionConsole._show_context_menu = function (self, loadout_b
 	end
 
 	for idx, loadout_button in ipairs(self._loadout_button_widgets) do
-		loadout_button.offset[3] = idx ~= loadout_index and not not -100 or not (idx ~= loadout_index) and not not -20
+		loadout_button.offset[3] = idx ~= loadout_index and -100 or not (idx ~= loadout_index) and -20
 	end
 
 	self._delete_progress = 0
@@ -859,7 +859,7 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 	local icon_widget = self._widgets_by_name.icon
 	local header_widget = self._widgets_by_name.header
 
-	icon_widget.content.texture_id = not not loadout_settings.loadout_icon
+	icon_widget.content.texture_id = loadout_settings.loadout_icon
 	header_widget.content.text = Localize("custom_loadout_" .. loadout_settings.loadout_index .. "_title")
 
 	local item_interface = Managers.backend:get_interface("items")
@@ -877,20 +877,20 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 			item = item_interface:get_item_from_id(backend_id)
 		elseif cosmetic_slot == "slot_pose" then
 			local item_id = loadout[cosmetic_slot]
-			local backend_id = not not item_id and not not item_interface:get_backend_id_from_unlocked_weapon_poses(item_id)
+			local backend_id = item_id and item_interface:get_backend_id_from_unlocked_weapon_poses(item_id)
 
-			item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+			item = backend_id and item_interface:get_item_from_id(backend_id)
 		else
 			item = BackendUtils.get_loadout_item(career_name, cosmetic_slot)
 		end
 
 		if item then
 			content[cosmetic_slot].item = item
-			content[cosmetic_slot].icon = not not item.data.inventory_icon
+			content[cosmetic_slot].icon = item.data.inventory_icon
 			content[cosmetic_slot].profile_index = self._profile_index
 			content[cosmetic_slot].career_index = self._career_index
 			content[cosmetic_slot].rarity = UISettings.item_rarity_textures[item.rarity]
-			cosmetic_gamepad_grid = not not cosmetic_gamepad_grid or not not {}
+			cosmetic_gamepad_grid = cosmetic_gamepad_grid or {}
 			cosmetic_gamepad_grid[#cosmetic_gamepad_grid + 1] = content[cosmetic_slot]
 		else
 			Application.warning(string.format("[HeroWindowLoadoutSelectionConsole] Missing %q for loadout_index: %q", cosmetic_slot, loadout_index))
@@ -915,7 +915,7 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 		if loadout_talents[i] ~= 0 then
 			local id = loadout_talent_ids[talent_num]
 			local talent = TalentUtils.get_talent_by_id(profile_name, id)
-			local talent_icon = not not talent and not not talent.icon
+			local talent_icon = talent and talent.icon
 
 			if not talent_icon then
 				talent = nil
@@ -926,7 +926,7 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 			talent_num = talent_num + 1
 
 			if talent then
-				talent_gamepad_grid = not not talent_gamepad_grid or not not {}
+				talent_gamepad_grid = talent_gamepad_grid or {}
 				talent_gamepad_grid[#talent_gamepad_grid + 1] = talent_content
 			end
 		else
@@ -958,15 +958,15 @@ HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (sel
 		content[eqiupment_slot].icon = inventory_icon
 		content[eqiupment_slot].profile_index = self._profile_index
 		content[eqiupment_slot].career_index = self._career_index
-		equipment_gamepad_grid = not not equipment_gamepad_grid or not not {}
+		equipment_gamepad_grid = equipment_gamepad_grid or {}
 		equipment_gamepad_grid[#equipment_gamepad_grid + 1] = content[eqiupment_slot]
 	end
 
 	self._gamepad_loadout_grid[#self._gamepad_loadout_grid + 1] = equipment_gamepad_grid
 
-	local bot_equipment = not not PlayerData.loadout_selection
+	local bot_equipment = PlayerData.loadout_selection
 	local bot_equipped
-	local bot_equipped_index = not not bot_equipment and not not bot_equipment[career_name]
+	local bot_equipped_index = bot_equipment and bot_equipment[career_name]
 
 	if bot_equipped_index then
 		bot_equipped = bot_equipped_index == loadout_index

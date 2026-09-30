@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_properties.lua
 
-WeaponProperties = not not WeaponProperties
+WeaponProperties = WeaponProperties
 
 local buff_tweak_data = {
 	properties_crit_chance = {

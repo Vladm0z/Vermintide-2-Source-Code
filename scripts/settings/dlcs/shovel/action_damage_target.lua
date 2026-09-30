@@ -49,7 +49,7 @@ ActionDamageTarget.client_owner_start_action = function (self, new_action, t, ch
 	self._done = false
 
 	local target_unit = self._target_unit
-	local target_node_id = Unit.has_node(target_unit, "j_spine") and not not Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and not not 0
+	local target_node_id = Unit.has_node(target_unit, "j_spine") and Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and 0
 
 	self._target_node_id = target_node_id
 	self._target_hit_zone = new_action.target_node
@@ -78,7 +78,7 @@ ActionDamageTarget._apply_damage_step = function (self, hit_unit, power_level, s
 	local breed = Unit.get_data(hit_unit, "breed")
 
 	if breed then
-		overcharge_amount = not breed.is_player or not not step_data.overcharge_amount_player_target or not not overcharge_amount
+		overcharge_amount = not breed.is_player or step_data.overcharge_amount_player_target or overcharge_amount
 
 		if step_data.can_crit then
 			self._is_critical_strike = ActionUtils.is_critical_strike(self.owner_unit, self.current_action, t)
@@ -92,7 +92,7 @@ ActionDamageTarget._apply_damage_step = function (self, hit_unit, power_level, s
 			local hit_index = 1
 			local send_to_server = true
 			local damage_profile_template = DamageProfileTemplates[damage_profile]
-			local charge_value = not not damage_profile_template.charge_value
+			local charge_value = damage_profile_template.charge_value
 			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
 			DamageUtils.buff_on_attack(self.owner_unit, hit_unit, charge_value, self._is_critical_strike, self._target_hit_zone, hit_index, send_to_server, buff_type, nil, self.item_name)

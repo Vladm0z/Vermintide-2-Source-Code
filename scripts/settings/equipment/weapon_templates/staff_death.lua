@@ -281,7 +281,7 @@ weapon_template.actions = {
 				if weapon_extension then
 					local action = weapon_extension:get_current_action()
 
-					return not not action and not not ALIVE[action.target]
+					return action and ALIVE[action.target]
 				end
 
 				return false

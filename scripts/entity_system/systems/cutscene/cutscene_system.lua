@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/cutscene/cutscene_system.lua
 
-local cut_scene_system_testify = not not script_data.testify
+local cut_scene_system_testify = script_data.testify
 
 CutsceneSystem = class(CutsceneSystem, ExtensionSystemBase)
 
@@ -243,7 +243,7 @@ end
 
 CutsceneSystem.has_intro_cutscene_finished_playing = function (self)
 	-- function 16
-	return not not self.cutscene_started
+	return self.cutscene_started
 end
 
 CutsceneSystem.fade_game_logo = function (self, is_fade_in, time)

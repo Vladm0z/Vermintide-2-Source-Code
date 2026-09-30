@@ -71,7 +71,7 @@ EnemyCharacterStateJumping.on_enter = function (self, unit, input, dt, context, 
 
 	local move_anim
 
-	move_anim = CharacterStateHelper.has_move_input(input_extension) and (not not "jump_fwd" or not not "jump_idle") or not CharacterStateHelper.has_move_input(input_extension) and not not "jump_idle"
+	move_anim = CharacterStateHelper.has_move_input(input_extension) and ("jump_fwd" or "jump_idle") or not CharacterStateHelper.has_move_input(input_extension) and "jump_idle"
 
 	CharacterStateHelper.play_animation_event(unit, move_anim)
 	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")

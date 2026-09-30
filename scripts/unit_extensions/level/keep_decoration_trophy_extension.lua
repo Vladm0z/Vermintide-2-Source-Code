@@ -14,7 +14,7 @@ KeepDecorationTrophyExtension.init = function (self, extension_init_context, uni
 	self._world = world
 	self._level_unit_index = Level.unit_index(level, unit)
 	self._is_leader = Managers.party:is_leader(Network.peer_id())
-	self._trophies_lookup = not not NetworkLookup.keep_decoration_trophies
+	self._trophies_lookup = NetworkLookup.keep_decoration_trophies
 	self._currently_set_trophy = nil
 	self._is_hidden = nil
 	self._next_trophy = {}
@@ -73,7 +73,7 @@ end
 KeepDecorationTrophyExtension.reset_selection = function (self)
 	-- function 8
 	local current_preview_trophy = self._current_preview_trophy
-	local selected_trophy = not not self._currently_set_trophy
+	local selected_trophy = self._currently_set_trophy
 
 	if selected_trophy ~= current_preview_trophy then
 		self:_load_trophy(selected_trophy)
@@ -84,7 +84,7 @@ end
 
 KeepDecorationTrophyExtension.unequip_decoration = function (self, new_trophy)
 	-- function 9
-	local trophy = not not new_trophy or not not "hub_trophy_empty"
+	local trophy = new_trophy or "hub_trophy_empty"
 
 	self:_load_trophy(trophy)
 	self:sync_decoration()
@@ -158,7 +158,7 @@ KeepDecorationTrophyExtension.get_selected_decoration = function (self)
 		local backend_interface = Managers.backend:get_interface("keep_decorations")
 		local selected_trophy = backend_interface:get_decoration(backend_key)
 
-		selected_trophy = not not selected_trophy or not not DefaultTrophies[1]
+		selected_trophy = selected_trophy or DefaultTrophies[1]
 
 		return selected_trophy
 	else

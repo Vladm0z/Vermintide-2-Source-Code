@@ -19,7 +19,7 @@ BTErraticFollowAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 	blackboard.remembered_threat_pos = nil
-	blackboard.chasing_timer = not not blackboard.unreachable_timer
+	blackboard.chasing_timer = blackboard.unreachable_timer
 	blackboard.active_node = self
 
 	local move_state = blackboard.move_state
@@ -162,7 +162,7 @@ BTErraticFollowAction.follow = function (self, unit, t, dt, blackboard, locomoti
 
 	if breed.use_big_boy_turning and blackboard.move_state == "moving" then
 		local is_turning = blackboard.is_turning
-		local turning = is_turning and not not "true" or not is_turning and not not "false"
+		local turning = is_turning and "true" or not is_turning and "false"
 
 		Debug.text("move_state:%s turning:%s", blackboard.move_state, turning)
 
@@ -256,7 +256,7 @@ BTErraticFollowAction.check_for_high_jump = function (self, unit, blackboard)
 	local infront_pos = above_pos + fwd * 2
 	local result, hit_position = PhysicsWorld.immediate_raycast(physics_world, infront_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
 	local result2, hit_position2 = PhysicsWorld.immediate_raycast(physics_world, above_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
-	local can_jump_high = not result2 or not not not hit_position2
+	local can_jump_high = not result2 or not hit_position2
 
 	return can_jump_high
 end
@@ -357,7 +357,7 @@ BTErraticFollowAction.investigate_jump = function (self, unit, t, blackboard, un
 			print("moving away from target, need to turn right to get back")
 
 			jump_data = self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_right_anims)
-			jump_data = not not jump_data or not not self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_fwd_right_anims)
+			jump_data = jump_data or self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_fwd_right_anims)
 
 			if not jump_data then
 				print("fail! could not turn back with, a jump")
@@ -416,7 +416,7 @@ BTErraticFollowAction.anim_cb_move_jump_finished = function (self, unit, blackbo
 	local pos = POSITION_LOOKUP[unit]
 	local locomotion_extension = blackboard.locomotion_extension
 	local move_dir = Quaternion.forward(Unit.local_rotation(unit, 0))
-	local travel_dir = not not self:get_travel_dir(unit, blackboard, pos)
+	local travel_dir = self:get_travel_dir(unit, blackboard, pos)
 	local dot = Vector3.dot(move_dir, travel_dir)
 	local consecutive_jump = blackboard.target_dist > 10
 	local target_pos = POSITION_LOOKUP[blackboard.target_unit]

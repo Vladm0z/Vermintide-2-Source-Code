@@ -27,7 +27,7 @@ PingTargetExtension.set_pinged = function (self, pinged, flash, pinger_unit, sho
 	-- function 3
 	local owner_unit = self._unit
 
-	show_outline = show_outline ~= nil or not not true or not not show_outline
+	show_outline = show_outline ~= nil or true or show_outline
 
 	if pinged then
 		self._pinged = self._pinged + 1
@@ -118,7 +118,7 @@ PingTargetExtension._add_witch_hunter_buff = function (self, pinger_unit)
 			local player_unit = player_and_bot_units[i]
 			local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
 			local talent_extension = ScriptUnit.has_extension(player_unit, "talent_system")
-			local career_name = not not career_extension and not not career_extension:career_name()
+			local career_name = career_extension and career_extension:career_name()
 
 			if career_name == "wh_captain" then
 				buff_extension:add_buff(wh_buff_name)

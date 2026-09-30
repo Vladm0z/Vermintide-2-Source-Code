@@ -37,7 +37,7 @@ ActionCareerBWNecromancerCommandAttack.pre_calculate_target = function (owner_un
 
 	for i = 1, num_hit_player_units do
 		local status_extension = ScriptUnit.has_extension(HIT_PLAYER_UNITS[i], "status_system")
-		local is_invisible = not not status_extension and not not status_extension:is_invisible()
+		local is_invisible = status_extension and status_extension:is_invisible()
 
 		if not is_invisible then
 			ALL_HIT_UNITS[#ALL_HIT_UNITS + 1] = HIT_PLAYER_UNITS[i]
@@ -54,7 +54,7 @@ ActionCareerBWNecromancerCommandAttack.pre_calculate_target = function (owner_un
 		repeat
 			local hit_unit = ALL_HIT_UNITS[i]
 			local blackboard = BLACKBOARDS[hit_unit]
-			local breed_name = not not blackboard and not not blackboard.breed.name
+			local breed_name = blackboard and blackboard.breed.name
 
 			if scores[hit_unit] == 0 then
 				return false
@@ -98,7 +98,7 @@ ActionCareerBWNecromancerCommandAttack.client_owner_start_action = function (sel
 	CALCULATED_TARGET_BY_OWNER[self._owner_unit] = nil
 
 	if ALIVE[target_unit] then
-		local should_charge = not not self:_is_charge_off_cooldown()
+		local should_charge = self:_is_charge_off_cooldown()
 
 		self._command_ability:command_attack_enemy(target_unit, should_charge, t)
 	end

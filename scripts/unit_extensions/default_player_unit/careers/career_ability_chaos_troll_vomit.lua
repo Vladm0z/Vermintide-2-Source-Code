@@ -78,7 +78,7 @@ CareerAbilityChaosTrollVomit._ability_available = function (self)
 	local ghost_mode_extension = self._ghost_mode_extension
 	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
 
-	return not not career_extension:can_use_activated_ability(self._ability_data.ability_id)
+	return (career_extension:can_use_activated_ability(self._ability_data.ability_id))
 end
 
 CareerAbilityChaosTrollVomit.finish = function (self, reason)

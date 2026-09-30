@@ -182,7 +182,7 @@ HeroWindowBackgroundConsole.on_enter = function (self, params, offset)
 	self.hero_name = params.hero_name
 	self.career_index = params.career_index
 	self.skin_sync_id = self.parent.skin_sync_id
-	self._camera_move_duration = not IS_WINDOWS and not not UISettings.console_menu_camera_move_duration
+	self._camera_move_duration = not IS_WINDOWS and UISettings.console_menu_camera_move_duration
 	self._animations = {}
 
 	self:create_ui_elements(params, offset)
@@ -194,7 +194,7 @@ HeroWindowBackgroundConsole._get_with_mechanism = function (self, lookup)
 	-- function 2
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-	return not not lookup[mechanism_name]
+	return lookup[mechanism_name]
 end
 
 local MOOD_PER_MECHANISM = {
@@ -367,7 +367,7 @@ end
 
 HeroWindowBackgroundConsole._update_character_visibility = function (self, layout_name)
 	-- function 8
-	local draw_character = not not character_visibility_per_layout[layout_name]
+	local draw_character = character_visibility_per_layout[layout_name]
 	local camera_move_duration = camera_move_duration_per_layout[layout_name]
 	local disable_camera_position_update = disable_camera_position_per_layout[layout_name]
 
@@ -382,9 +382,9 @@ HeroWindowBackgroundConsole._update_character_visibility = function (self, layou
 	end
 
 	if draw_character then
-		local character_location = not not character_camera_location[layout_name]
+		local character_location = character_camera_location[layout_name]
 
-		character_location = not not character_location[self.hero_name] or not not character_location
+		character_location = character_location[self.hero_name] or character_location
 
 		self.world_previewer:set_hero_location_lerped(character_location, 0.5)
 	end
@@ -394,7 +394,7 @@ local EMPTY_TABLE = {}
 
 HeroWindowBackgroundConsole._update_level_events = function (self, layout_name)
 	-- function 9
-	local level_events_to_trigger = not not level_events_per_layout[layout_name]
+	local level_events_to_trigger = level_events_per_layout[layout_name]
 
 	for _, event_name in ipairs(level_events_to_trigger) do
 		self.world_previewer:trigger_level_event(event_name)
@@ -410,7 +410,7 @@ HeroWindowBackgroundConsole._update_object_sets = function (self, layout_name)
 	end
 
 	for object_set_name, object_set_units in pairs(self._object_sets) do
-		local enable_visibility = object_set_to_enable and not not object_set_to_enable[object_set_name] or not object_set_to_enable and not not false
+		local enable_visibility = object_set_to_enable and object_set_to_enable[object_set_name]
 
 		self.world_previewer:show_level_units(object_set_units, enable_visibility)
 	end
@@ -632,7 +632,7 @@ HeroWindowBackgroundConsole._hero_affiliation = function (self)
 	local profile_index = FindProfileIndex(hero_name)
 	local profile = SPProfiles[profile_index]
 
-	return not not profile and not not profile.affiliation
+	return profile and profile.affiliation
 end
 
 HeroWindowBackgroundConsole._populate_loadout = function (self)
@@ -647,10 +647,10 @@ HeroWindowBackgroundConsole._populate_loadout = function (self)
 	local affiliation = self:_hero_affiliation()
 	local slots = InventorySettings.slots_per_affiliation[affiliation]
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(hero_name, "experience")
+	local hero_experience = hero_attributes:get(hero_name, "experience")
 	local hero_level = ExperienceSettings.get_level(hero_experience)
 	local is_career_unlocked, reason, dlc_name, localized = career_data:is_unlocked_function(hero_name, hero_level)
-	local is_dlc = not is_career_unlocked and not not dlc_name
+	local is_dlc = not is_career_unlocked and dlc_name
 
 	if is_dlc then
 		local preview_items = career_data.preview_items
@@ -687,9 +687,9 @@ HeroWindowBackgroundConsole._populate_loadout = function (self)
 		end
 
 		local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
-		local skin_item_data = not not skin_item and not not skin_item.data
+		local skin_item_data = skin_item and skin_item.data
 
-		preview_animation = not skin_item_data or not not skin_item_data.career_select_preview_animation or not not preview_animation
+		preview_animation = not skin_item_data or skin_item_data.career_select_preview_animation or preview_animation
 
 		if preview_animation then
 			self.world_previewer:play_character_animation(preview_animation)
@@ -700,7 +700,7 @@ HeroWindowBackgroundConsole._populate_loadout = function (self)
 		for _, slot_name in pairs(slots) do
 			local slot = InventorySettings.slots_by_name[slot_name]
 			local slot_type = slot.type
-			local item, skip_wield_anim = not not self.parent:get_temporary_loadout_item(slot_type)
+			local item, skip_wield_anim = (self.parent:get_temporary_loadout_item(slot_type))
 
 			if item then
 				local item_data = item.data
@@ -859,7 +859,7 @@ HeroWindowBackgroundConsole._update_loading_overlay_fadeout_animation = function
 	local start = 255
 	local target = 0
 	local speed = 9
-	local progress = math.min(1, not not self._fadeout_progress + speed * dt)
+	local progress = math.min(1, self._fadeout_progress + speed * dt)
 	local alpha = math.lerp(start, target, math.easeInCubic(progress))
 	local loading_overlay = loading_overlay_widgets_by_name.loading_overlay
 	local loading_overlay_loading_glow = loading_overlay_widgets_by_name.loading_overlay_loading_glow

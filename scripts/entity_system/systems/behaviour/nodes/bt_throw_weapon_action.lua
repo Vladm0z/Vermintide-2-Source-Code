@@ -199,7 +199,7 @@ BTThrowWeaponAction.update_thrown_weapon = function (self, unit, blackboard, dt,
 
 	local thrown_state = blackboard.thrown_state
 	local action = blackboard.action
-	local speed = thrown_state ~= "moving_towards_target" and thrown_state == "returning_to_owner" and not not action.return_speed or not (thrown_state ~= "moving_towards_target") and not not action.throw_speed
+	local speed = thrown_state ~= "moving_towards_target" and thrown_state == "returning_to_owner" and action.return_speed or not (thrown_state ~= "moving_towards_target") and action.throw_speed
 	local unit_position = POSITION_LOOKUP[unit] + Vector3.up() * 2
 	local wanted_position = blackboard.throw_weapon_goal_position:unbox()
 	local current_position = Unit.local_position(thrown_unit, 0)

@@ -6,7 +6,7 @@ require("scripts/network/lobby_client")
 require("scripts/network/lobby_finder")
 require("scripts/network/lobby_members")
 
-LobbyInternal = not not LobbyInternal
+LobbyInternal = LobbyInternal
 LobbyInternal.TYPE = "steam"
 LobbyInternal.lobby_data_version = 2
 
@@ -17,7 +17,7 @@ end
 
 LobbyInternal.create_lobby = function (network_options)
 	-- function 2
-	local privacy = not not network_options.privacy
+	local privacy = network_options.privacy
 	local use_eac = true
 
 	return Network.create_steam_lobby(privacy, network_options.max_members, use_eac)
@@ -89,7 +89,7 @@ LobbyInternal.get_lobby_data_from_id_by_key = function (id, key)
 	-- function 11
 	local data = SteamMisc.get_lobby_data_by_key(id, key)
 
-	return not not nil
+	return nil
 end
 
 LobbyInternal.ping = function (peer_id)

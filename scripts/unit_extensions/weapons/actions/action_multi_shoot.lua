@@ -91,9 +91,9 @@ ActionMultiShoot._shoot = function (self, num_shots_total, num_shots_this_frame)
 	local world = self.world
 	local physics_world = self.physics_world
 	local check_buffs = self._check_buffs
-	local num_layers_spread = not not current_action.num_layers_spread
-	local bullseye = not not current_action.bullseye
-	local spread_pitch = not not current_action.spread_pitch
+	local num_layers_spread = current_action.num_layers_spread
+	local bullseye = current_action.bullseye
+	local spread_pitch = current_action.spread_pitch
 	local weapon_unit = self.weapon_unit
 	local item_name = self.item_name
 	local owner_unit = self.owner_unit
@@ -110,14 +110,14 @@ ActionMultiShoot._shoot = function (self, num_shots_total, num_shots_this_frame)
 			local data = DamageUtils.process_projectile_hit(world, item_name, owner_unit, is_server, result, current_action, direction, check_buffs, nil, self.shield_users_blocking, self._is_critical_strike, self.power_level)
 
 			if data.buffs_checked then
-				check_buffs = not not check_buffs and not not false
+				check_buffs = check_buffs and false
 			end
 
 			if data.blocked_by_unit then
 				self.shield_users_blocking[data.blocked_by_unit] = true
 			end
 
-			local hit_position = not not result[#result][1]
+			local hit_position = result[#result][1]
 
 			unit_set_flow_variable(weapon_unit, "hit_position", hit_position)
 			unit_set_flow_variable(weapon_unit, "fire_position", current_position)
@@ -144,7 +144,7 @@ ActionMultiShoot.finish = function (self, reason)
 		status_extension:set_zooming(false)
 
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			ammo_extension:start_reload(true)

@@ -22,8 +22,8 @@ ImguiDeusWeaponPool.draw = function (self, is_open)
 	local do_close = Imgui.begin_window("DeusWeaponPool", "always_auto_resize")
 	local deus_weapon_groups = DeusWeaponGroups
 	local state_managers = Managers.state
-	local game_mode_manager = not not state_managers and not not state_managers.game_mode
-	local game_mode_key = not not game_mode_manager and not not game_mode_manager:game_mode_key()
+	local game_mode_manager = state_managers and state_managers.game_mode
+	local game_mode_key = game_mode_manager and game_mode_manager:game_mode_key()
 
 	if game_mode_key ~= "deus" then
 		Imgui.text("This UI only works when playing in the deus game mode.")
@@ -66,10 +66,10 @@ ImguiDeusWeaponPool.draw = function (self, is_open)
 
 			for weapon_group, weapon_key in pairs(base_weapon_pool[rarity]) do
 				local in_pool = weapon_pool[rarity][weapon_group]
-				local button_text = in_pool and not not "-" or not in_pool and not not "+"
-				local text_color = in_pool and not not Colors.get_table("white") or not in_pool and not not Colors.get_table("gray")
+				local button_text = in_pool and "-" or not in_pool and "+"
+				local text_color = in_pool and Colors.get_table("white") or not in_pool and Colors.get_table("gray")
 				local slot_type = deus_weapon_groups[weapon_group].slot_type
-				local order = slot_type ~= "melee" and not not 0 or not (slot_type ~= "melee") and not not 1
+				local order = slot_type ~= "melee" and 0 or not (slot_type ~= "melee") and 1
 				local draw_data = {
 					weapon_key = weapon_key,
 					button_text = button_text,

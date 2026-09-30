@@ -71,7 +71,7 @@ BTBotActivateAbilityAction._start_ability = function (self, activate_ability_dat
 		input_extension:activate_ability()
 
 		local enter_time = activate_ability_data.enter_time
-		local min_hold_time = not not activation_data.min_hold_time
+		local min_hold_time = activation_data.min_hold_time
 
 		if t >= enter_time + min_hold_time then
 			if activation_action == "aim_at_target" then
@@ -84,7 +84,7 @@ BTBotActivateAbilityAction._start_ability = function (self, activate_ability_dat
 				local aim_dot = Vector3.dot(current_forward, aim_direction)
 
 				if aim_dot >= 0.995 then
-					do_start_input = not not activation_data.max_distance_sq and Vector3.distance_squared(camera_position, aim_position) > activation_data.max_distance_sq
+					do_start_input = activation_data.max_distance_sq and Vector3.distance_squared(camera_position, aim_position) > activation_data.max_distance_sq
 				else
 					do_start_input = true
 				end
@@ -190,7 +190,7 @@ BTBotActivateAbilityAction.run = function (self, unit, blackboard, t, dt)
 	local activation_data = data.activation
 
 	if activation_data.dynamic_target_unit then
-		local target_unit = activation_data.custom_target_unit and not not data.target_unit or not activation_data.custom_target_unit and not not blackboard.target_unit
+		local target_unit = activation_data.custom_target_unit and data.target_unit or not activation_data.custom_target_unit and blackboard.target_unit
 
 		if ALIVE[target_unit] then
 			if target_unit == unit then

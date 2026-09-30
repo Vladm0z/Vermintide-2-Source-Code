@@ -12,7 +12,7 @@ GameServerFinder.init = function (self, network_options, max_num_servers)
 	self._network_hash = GameServerAux.create_network_hash(config_file_name, project_hash)
 	self._cached_servers = {}
 	self._pending_refresh_request = false
-	self._browser_wrapper = not not GameServerInternal.server_browser()
+	self._browser_wrapper = GameServerInternal.server_browser()
 end
 
 GameServerFinder.destroy = function (self)

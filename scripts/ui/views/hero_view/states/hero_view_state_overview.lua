@@ -43,7 +43,7 @@ local rarity_index = {
 	rare = 3,
 	unique = 5
 }
-local hero_view_state_overview_testify = not not script_data.testify
+local hero_view_state_overview_testify = script_data.testify
 
 HeroViewStateOverview = class(HeroViewStateOverview)
 HeroViewStateOverview.NAME = "HeroViewStateOverview"
@@ -86,8 +86,8 @@ HeroViewStateOverview.on_enter = function (self, params)
 
 	local profile_index, career_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
 
-	self.profile_index = not not profile_index or not not 1
-	self.career_index = not not career_index or not not 1
+	self.profile_index = profile_index or 1
+	self.career_index = career_index or 1
 	self.hero_name = SPProfiles[self.profile_index].display_name
 	self._animations = {}
 	self._ui_animations = {}
@@ -143,7 +143,7 @@ end
 
 HeroViewStateOverview._setup_menu_layout = function (self, params)
 	-- function 2
-	local use_gamepad_layout = not not IS_CONSOLE
+	local use_gamepad_layout = IS_CONSOLE
 
 	if use_gamepad_layout then
 		self._layout_settings = local_require("scripts/ui/views/hero_view/states/hero_window_layout_console")
@@ -269,7 +269,7 @@ end
 
 HeroViewStateOverview.window_input_service = function (self)
 	-- function 10
-	return self._input_blocked and not not FAKE_INPUT_SERVICE or not self._input_blocked and not not self:input_service()
+	return self._input_blocked and FAKE_INPUT_SERVICE or not self._input_blocked and self:input_service()
 end
 
 HeroViewStateOverview.change_profile = function (self, profile_index, career_index)
@@ -321,10 +321,10 @@ HeroViewStateOverview._change_window = function (self, window_index, window_name
 	local window_offset
 
 	if not ignore_alignment then
-		local alignment_index = not not new_window_settings.alignment_index
+		local alignment_index = new_window_settings.alignment_index
 		local window_default_settings = UISettings.game_start_windows
 		local window_size = window_default_settings.size
-		local window_spacing = not not window_default_settings.spacing
+		local window_spacing = window_default_settings.spacing
 		local window_width = window_size[1]
 		local total_spacing = window_spacing * 2
 		local total_windows_width = 3 * window_width
@@ -438,7 +438,7 @@ HeroViewStateOverview.set_window_input_focus = function (self, window_name)
 	local layout_index = self._selected_game_mode_index
 	local layout_setting = self:_get_layout_setting(layout_index)
 	local window_setting = self._windows_settings[window_name]
-	local window_class_name = not not window_setting and not not window_setting.class_name
+	local window_class_name = window_setting and window_setting.class_name
 	local window_found = false
 	local active_windows = self._active_windows
 
@@ -730,9 +730,9 @@ end
 HeroViewStateOverview._has_active_level_vote = function (self)
 	-- function 42
 	local voting_manager = self.voting_manager
-	local is_mission_vote = not not voting_manager:vote_in_progress()
+	local is_mission_vote = voting_manager:vote_in_progress()
 
-	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
+	return is_mission_vote and not voting_manager:has_voted(Network.peer_id())
 end
 
 HeroViewStateOverview.post_update = function (self, dt, t)
@@ -801,7 +801,7 @@ HeroViewStateOverview._handle_input = function (self, dt, t)
 	-- function 46
 	local input_blocked = self._input_blocked
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local input_paused = not not self._input_paused
+	local input_paused = self._input_paused
 
 	if input_blocked or input_paused then
 		return
@@ -814,7 +814,7 @@ HeroViewStateOverview._handle_input = function (self, dt, t)
 	local widgets_by_name = self._widgets_by_name
 	local input_service = self.parent:input_service()
 	local input_pressed = input_service:get("toggle_menu", true)
-	local back_pressed = not not gamepad_active and not not input_service:get("back_menu", true)
+	local back_pressed = gamepad_active and input_service:get("back_menu", true)
 	local close_on_exit = self._close_on_exit
 	local exit_button = widgets_by_name.exit_button
 	local back_button = widgets_by_name.back_button
@@ -880,7 +880,7 @@ end
 HeroViewStateOverview._is_button_pressed = function (self, widget)
 	-- function 49
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -982,7 +982,7 @@ end
 HeroViewStateOverview.set_pressed_item_backend_id = function (self, backend_id, is_drag_item)
 	-- function 65
 	self._pressed_item_backend_id = backend_id
-	self._pressed_item_by_drag = backend_id and (not not is_drag_item or not not nil) or not backend_id and not not nil
+	self._pressed_item_by_drag = backend_id and (is_drag_item or nil) or not backend_id and nil
 end
 
 HeroViewStateOverview.get_disabled_backend_ids = function (self)
@@ -1038,8 +1038,8 @@ HeroViewStateOverview.set_fullscreen_effect_enable_state = function (self, enabl
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or not enabled and 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and 0.75 or not enabled and 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -1088,7 +1088,7 @@ end
 
 HeroViewStateOverview.get_selected_loadout_slot_index = function (self)
 	-- function 83
-	return not not self._selected_loadout_slot_index
+	return self._selected_loadout_slot_index
 end
 
 HeroViewStateOverview.set_selected_cosmetic_slot_index = function (self, index)
@@ -1098,7 +1098,7 @@ end
 
 HeroViewStateOverview.get_selected_cosmetic_slot_index = function (self)
 	-- function 85
-	return not not self._selected_cosmetic_slot_index
+	return self._selected_cosmetic_slot_index
 end
 
 HeroViewStateOverview.set_temporary_loadout_item = function (self, item, skip_wield_anim)
@@ -1146,7 +1146,7 @@ HeroViewStateOverview.clear_character_animation = function (self, blueprint_name
 	local career_name = career_data.name
 	local weapon_pose_backend_id = backend_items:get_loadout_item_id(career_name, "slot_pose")
 	local unlocked_weapon_poses = backend_items:get_unlocked_weapon_poses()
-	local unlocked_weapon_poses_for_blueprint = not not unlocked_weapon_poses[blueprint_name]
+	local unlocked_weapon_poses_for_blueprint = unlocked_weapon_poses[blueprint_name]
 
 	if table.find(unlocked_weapon_poses_for_blueprint, weapon_pose_backend_id) then
 		local weapon_pose = backend_items:get_item_from_id(weapon_pose_backend_id)

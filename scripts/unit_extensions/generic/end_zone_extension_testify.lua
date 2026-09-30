@@ -9,7 +9,7 @@ local function has_end_zone_extension_name(end_zone_name, end_zone_extension)
 	-- function 2
 	local current_end_zone_name = zone_name(end_zone_extension)
 
-	return not not end_zone_name and end_zone_name == current_end_zone_name
+	return end_zone_name and end_zone_name == current_end_zone_name
 end
 
 local EndZoneExtensionTestify = {

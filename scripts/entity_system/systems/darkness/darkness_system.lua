@@ -85,7 +85,7 @@ DarknessSystem.on_add_extension = function (self, world, unit, extension_name, e
 
 	local script_data_intensity = Unit.get_data(unit, "light_intensity")
 	local extension = {
-		intensity = extension_init_data and not not extension_init_data.intensity or not extension_init_data and (not not script_data_intensity or not not 1)
+		intensity = extension_init_data and extension_init_data.intensity or not extension_init_data and (script_data_intensity or 1)
 	}
 
 	ScriptUnit.set_extension(unit, self.name, extension)
@@ -147,7 +147,7 @@ end
 DarknessSystem._update_player_unit_darkness = function (self, dt, t)
 	-- function 11
 	for unit, data in pairs(self._player_unit_darkness_data) do
-		local unit_position = not not POSITION_LOOKUP[unit]
+		local unit_position = POSITION_LOOKUP[unit]
 		local pos = unit_position + Vector3(0, 0, 1)
 		local in_darkness = self:is_in_darkness_volume(pos)
 		local light_value
@@ -192,8 +192,8 @@ DarknessSystem._update_darkness_fx = function (self, dt, t)
 		end
 
 		local data = self._player_unit_darkness_data[unit]
-		local in_darkness = not not data and not not data.in_darkness
-		local intensity = data and not not data.intensity or not data and not not 0
+		local in_darkness = data and data.in_darkness
+		local intensity = data and data.intensity or not data and 0
 		local wwise_world = Managers.world:wwise_world(world)
 
 		if not in_darkness and self._in_darkness then
@@ -307,7 +307,7 @@ DarknessSystem.is_in_darkness = function (self, position, darkness_treshold)
 	local side = Managers.state.side:get_side_from_name("heroes")
 	local light_value = self:calculate_light_value(position, side.PLAYER_UNITS)
 
-	return light_value < (not not darkness_treshold or not not DarknessSystem.DARKNESS_THRESHOLD)
+	return light_value < (darkness_treshold or DarknessSystem.DARKNESS_THRESHOLD)
 end
 
 DarknessSystem._update_shadow_flare_extensions = function (self, dt, t)
@@ -347,7 +347,7 @@ DarknessSystem.remove_mutator_torches = function (self)
 
 			if weapon_data then
 				local item_data = weapon_data.item_data
-				local item_name = not not item_data and not not item_data.name
+				local item_name = item_data and item_data.name
 
 				if item_name == "mutator_torch" then
 					CharacterStateHelper.stop_weapon_actions(inventory_extension, "wield")

@@ -52,7 +52,7 @@ BTIdleAction.enter = function (self, unit, blackboard, t)
 	end
 
 	local optional_spawn_data = blackboard.optional_spawn_data
-	local idle_animation = not not optional_spawn_data and not not optional_spawn_data.idle_animation
+	local idle_animation = optional_spawn_data and optional_spawn_data.idle_animation
 
 	if idle_animation and idle_animation ~= "" then
 		animation = idle_animation
@@ -90,7 +90,7 @@ end
 
 BTIdleAction._discovery_sound_when_close = function (self, unit, blackboard)
 	-- function 6
-	local near_distance_sqr = not not blackboard.action
+	local near_distance_sqr = blackboard.action
 
 	if near_distance_sqr and not blackboard.sound_when_near_played then
 		local player_unit = player_within_distance(unit, near_distance_sqr, blackboard.side)
@@ -116,7 +116,7 @@ BTIdleAction.run = function (self, unit, blackboard, t, dt)
 	-- function 7
 	local target_unit = blackboard.target_unit
 	local action = blackboard.action
-	local should_not_face_target = not not action and not not action.dont_face_target
+	local should_not_face_target = action and action.dont_face_target
 
 	if Unit_alive(target_unit) and not should_not_face_target then
 		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)

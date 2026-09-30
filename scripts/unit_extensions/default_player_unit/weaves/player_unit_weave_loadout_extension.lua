@@ -86,7 +86,7 @@ PlayerUnitWeaveLoadoutExtension._get_weave_buffs = function (self)
 		local costs = weaves_interface:get_property_mastery_costs(property_key)
 		local max_num_upgrades = #costs
 		local varable_value = num_upgrades / max_num_upgrades
-		local buffer = not not property_data.buffer
+		local buffer = property_data.buffer
 
 		buffs[buffer][buff_name] = {
 			variable_value = varable_value
@@ -101,7 +101,7 @@ PlayerUnitWeaveLoadoutExtension._get_weave_buffs = function (self)
 
 		fassert(BuffUtils.get_buff_template(buff_name), "Weave buff %q does not exist", buff_name)
 
-		local buffer = not not trait_data.buffer
+		local buffer = trait_data.buffer
 
 		buffs[buffer][buff_name] = {
 			variable_value = 1

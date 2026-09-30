@@ -57,7 +57,7 @@ WeaveSpawner._update_main_path_spawning = function (self, t, dt, main_path_spawn
 	-- function 6
 	if self.players_has_left_safe_zone and self.conflict_director_setup_done then
 		local main_path_spawning_index = self.main_path_spawning_index
-		local main_path_spawning_setting = not not main_path_spawning_settings and not not main_path_spawning_settings[main_path_spawning_index]
+		local main_path_spawning_setting = main_path_spawning_settings and main_path_spawning_settings[main_path_spawning_index]
 
 		if main_path_spawning_setting then
 			local conflict_director = Managers.state.conflict
@@ -93,7 +93,7 @@ end
 
 WeaveSpawner.set_seed = function (self, seed)
 	-- function 7
-	fassert(not not seed and type(seed) == "number", "Bad seed input!")
+	fassert(seed and type(seed) == "number", "Bad seed input!")
 
 	self.seed = seed
 	self.original_seed = seed
@@ -143,7 +143,7 @@ WeaveSpawner.get_hidden_spawn_pos_from_position_seeded = function (self, epicent
 
 			for j = 1, #avoid_positions do
 				local avoid_pos = avoid_positions[j]
-				local los = not not ignore_umbra or not not World.umbra_has_line_of_sight(world, check_pos + h, avoid_pos + h)
+				local los = ignore_umbra or World.umbra_has_line_of_sight(world, check_pos + h, avoid_pos + h)
 
 				if los then
 					hidden = false

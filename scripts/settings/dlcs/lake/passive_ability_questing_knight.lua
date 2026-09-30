@@ -9,20 +9,20 @@ local function has_loot_objective(objective)
 	-- function 1
 	local level_transition_handler = Managers.level_transition_handler
 	local level_key = level_transition_handler:get_current_level_keys()
-	local level_settings = not not level_key and not not LevelSettings[level_key]
-	local loot_objectives = not not level_settings and not not level_settings.loot_objectives
+	local level_settings = level_key and LevelSettings[level_key]
+	local loot_objectives = level_settings and level_settings.loot_objectives
 
-	return not not loot_objectives and not not loot_objectives[objective]
+	return loot_objectives and loot_objectives[objective]
 end
 
 local function only_when_tomes_allowed_and_there_from_the_start()
 	-- function 2
-	return not Managers.state.game_mode:is_round_started() and not not has_loot_objective("tome")
+	return not Managers.state.game_mode:is_round_started() and has_loot_objective("tome")
 end
 
 local function only_when_grims_allowed_and_there_from_the_start()
 	-- function 3
-	return not Managers.state.game_mode:is_round_started() and not not has_loot_objective("grimoire")
+	return not Managers.state.game_mode:is_round_started() and has_loot_objective("grimoire")
 end
 
 local challenge_settings = {
@@ -295,8 +295,8 @@ PassiveAbilityQuestingKnight.extensions_ready = function (self, world, unit)
 
 	local level_transition_handler = Managers.level_transition_handler
 	local level_key = level_transition_handler:get_current_level_keys()
-	local level_settings = not not level_key and not not LevelSettings[level_key]
-	local is_hub_level = not not level_settings and not not level_settings.hub_level
+	local level_settings = level_key and LevelSettings[level_key]
+	local is_hub_level = level_settings and level_settings.hub_level
 
 	if is_hub_level then
 		return
@@ -372,7 +372,7 @@ end
 PassiveAbilityQuestingKnight._get_possible_challenges = function (self)
 	-- function 8
 	local game_mode_name = Managers.state.game_mode:game_mode_key()
-	local settings = not not challenge_settings[game_mode_name]
+	local settings = challenge_settings[game_mode_name]
 	local possible_challenges = settings.possible_challenges
 
 	fassert(possible_challenges, "[PassiveAbilityQuestingKnight] possible_challenges not defined for the current game mode")
@@ -393,7 +393,7 @@ end
 PassiveAbilityQuestingKnight._get_side_quest_challenge = function (self)
 	-- function 9
 	local game_mode_name = Managers.state.game_mode:game_mode_key()
-	local settings = not not challenge_settings[game_mode_name]
+	local settings = challenge_settings[game_mode_name]
 	local side_quest_challenge = settings.side_quest_challenge
 
 	fassert(side_quest_challenge, "[PassiveAbilityQuestingKnight] side_quest_challenge not defined for the current game mode")
@@ -404,9 +404,9 @@ end
 PassiveAbilityQuestingKnight._always_reset_quest_pool = function (self)
 	-- function 10
 	local game_mode_name = Managers.state.game_mode:game_mode_key()
-	local settings = not not challenge_settings[game_mode_name]
+	local settings = challenge_settings[game_mode_name]
 
-	return not not settings.always_reset_quest_pool
+	return settings.always_reset_quest_pool
 end
 
 PassiveAbilityQuestingKnight._start_quest_from_pool = function (self, quest_pool, num_to_start)

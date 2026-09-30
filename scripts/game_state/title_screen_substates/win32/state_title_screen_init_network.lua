@@ -101,7 +101,7 @@ end
 StateTitleScreenInitNetwork._next_state = function (self)
 	-- function 6
 	local eac_initialized, eac_error = Managers.eac:is_initialized()
-	local ready_to_exit = not not Managers.backend:profiles_loaded()
+	local ready_to_exit = Managers.backend:profiles_loaded()
 
 	if ready_to_exit then
 		if eac_error then

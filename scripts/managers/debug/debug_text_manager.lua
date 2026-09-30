@@ -127,8 +127,8 @@ DebugTextManager.output_unit_text = function (self, text, text_size, unit, node_
 		return
 	end
 
-	node_index = not not node_index or not not 0
-	text_size = not not text_size or not not self._unit_text_size
+	node_index = node_index or 0
+	text_size = text_size or self._unit_text_size
 
 	local gui = self._world_gui
 	local material = "arial"
@@ -148,9 +148,9 @@ DebugTextManager.output_unit_text = function (self, text, text_size, unit, node_
 	local text_height = text_extent_max[2] - text_extent_min[2]
 	local text_offset = Vector3(-text_width / 2, -text_height / 2, 0)
 
-	offset = not not offset or not not Vector3(0, 0, 0)
-	category = not not category or not not "none"
-	color = not not color or not not Vector3(255, 255, 255)
+	offset = offset or Vector3(0, 0, 0)
+	category = category or "none"
+	color = color or Vector3(255, 255, 255)
 
 	local floating_position_box
 
@@ -179,14 +179,14 @@ DebugTextManager.output_unit_text = function (self, text, text_size, unit, node_
 			g = color.y,
 			b = color.z
 		},
-		time = self._time + (not not time or not not self._unit_text_time),
+		time = self._time + (time or self._unit_text_time),
 		floating_position_box = floating_position_box,
 		fade = fade,
 		starting_time = self._time
 	}
 
-	self._unit_texts[unit] = not not self._unit_texts[unit]
-	self._unit_texts[unit][category] = not not self._unit_texts[unit][category]
+	self._unit_texts[unit] = self._unit_texts[unit]
+	self._unit_texts[unit][category] = self._unit_texts[unit][category]
 	self._unit_texts[unit][category][#self._unit_texts[unit][category] + 1] = new_text
 end
 
@@ -216,7 +216,7 @@ DebugTextManager.output_world_text = function (self, text, text_size, position, 
 		return
 	end
 
-	text_size = not not text_size or not not self._world_text_size
+	text_size = text_size or self._world_text_size
 
 	local gui = self._world_gui
 	local material = "arial"
@@ -228,7 +228,7 @@ DebugTextManager.output_world_text = function (self, text, text_size, position, 
 
 		tm = Matrix4x4.from_quaternion_position(camera_rotation, position)
 	else
-		tm = Matrix4x4.from_quaternion_position(rotation and not not Quaternion.inverse(rotation) or not rotation and not not Quaternion.identity(), position)
+		tm = Matrix4x4.from_quaternion_position(rotation and Quaternion.inverse(rotation) or not rotation and Quaternion.identity(), position)
 	end
 
 	local text_extent_min, text_extent_max = Gui.text_extents(gui, text, font, text_size)
@@ -236,8 +236,8 @@ DebugTextManager.output_world_text = function (self, text, text_size, position, 
 	local text_height = text_extent_max[2] - text_extent_min[2]
 	local text_offset = Vector3(-text_width / 2, -text_height / 2, 0)
 
-	category = not not category or not not "none"
-	color = not not color or not not Vector3(255, 255, 255)
+	category = category or "none"
+	color = color or Vector3(255, 255, 255)
 
 	local new_text = {
 		id = Gui.text_3d(gui, text, font, text_size, material, tm, text_offset, 0, Color(color.x, color.y, color.z)),
@@ -258,10 +258,10 @@ DebugTextManager.output_world_text = function (self, text, text_size, position, 
 			g = color.y,
 			b = color.z
 		},
-		time = self._time + (not not time or not not self._world_text_time)
+		time = self._time + (time or self._world_text_time)
 	}
 
-	self._world_texts[category] = not not self._world_texts[category]
+	self._world_texts[category] = self._world_texts[category]
 	self._world_texts[category][#self._world_texts[category] + 1] = new_text
 end
 
@@ -285,8 +285,8 @@ DebugTextManager.output_screen_text = function (self, text, text_size, time, col
 		return
 	end
 
-	text_size = not not text_size or not not self._screen_text_size
-	color = not not color or not not Vector3(255, 255, 255)
+	text_size = text_size or self._screen_text_size
+	color = color or Vector3(255, 255, 255)
 
 	local gui = self._gui
 	local resolution = Vector2(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
@@ -308,12 +308,12 @@ DebugTextManager.output_screen_text = function (self, text, text_size, time, col
 		Gui.update_text(gui, self._screen_text.text_id, text, font, text_size, material, text_position, Color(color.x, color.y, color.z))
 		Gui.update_rect(gui, self._screen_text.bgr_id, bgr_position, bgr_size, Color(120, 0, 0, 0))
 
-		self._screen_text.time = self._time + (not not time or not not self._screen_text_time)
+		self._screen_text.time = self._time + (time or self._screen_text_time)
 	else
 		local screen_text = {
 			text_id = Gui.text(gui, text, font, text_size, material, text_position, Color(color.x, color.y, color.z)),
 			bgr_id = Gui.rect(gui, bgr_position, bgr_size, Color(120, 0, 0, 0)),
-			time = self._time + (not not time or not not self._screen_text_time)
+			time = self._time + (time or self._screen_text_time)
 		}
 
 		self._screen_text = screen_text

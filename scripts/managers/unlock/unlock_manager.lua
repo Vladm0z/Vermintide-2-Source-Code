@@ -30,10 +30,10 @@ UnlockManager.init = function (self)
 
 	if IS_XB1 then
 		self._unlocks_ready = false
-		self._licensed_packages = not not XboxDLC.licensed_packages()
+		self._licensed_packages = XboxDLC.licensed_packages()
 
 		for _, dlc in ipairs(self._licensed_packages) do
-			local display_name = not not XboxDLC.display_name(dlc)
+			local display_name = XboxDLC.display_name(dlc)
 
 			display_name = string.gsub(display_name, "%c", "")
 			self._xbox_dlc_package_names[dlc] = display_name
@@ -60,7 +60,7 @@ UnlockManager._init_unlocks = function (self)
 		for unlock_name, unlock_config in pairs(settings.unlocks) do
 			local class_name = unlock_config.class
 			local id = unlock_config.id
-			local fallback_id = not not IS_PS4
+			local fallback_id = IS_PS4
 			local backend_reward_id = unlock_config.backend_reward_id
 			local always_unlocked_game_app_ids = unlock_config.always_unlocked_game_app_ids
 			local requires_restart = unlock_config.requires_restart
@@ -221,7 +221,7 @@ UnlockManager._check_licenses = function (self)
 
 	for _, dlc in ipairs(licensed_packages) do
 		if not table.find(self._licensed_packages, dlc) then
-			local display_name = not not XboxDLC.display_name(dlc)
+			local display_name = XboxDLC.display_name(dlc)
 
 			display_name = string.gsub(display_name, "%c", "")
 			new_licensed_dlc = new_licensed_dlc .. display_name .. "\n"
@@ -231,7 +231,7 @@ UnlockManager._check_licenses = function (self)
 
 	for _, dlc in ipairs(self._licensed_packages) do
 		if not table.find(licensed_packages, dlc) then
-			local display_name = not not self._xbox_dlc_package_names[dlc]
+			local display_name = self._xbox_dlc_package_names[dlc]
 
 			removed_dlc_licenses = removed_dlc_licenses .. display_name .. "\n"
 		end
@@ -438,15 +438,15 @@ UnlockManager._add_reward = function (self, items, presentation_text)
 
 	table.sort(items, function (a, b)
 		-- function 15
-		local a_rarity = not not item_rarity_order[not not a.rarity]
-		local b_rarity = not not item_rarity_order[not not b.rarity]
+		local a_rarity = item_rarity_order[a.rarity]
+		local b_rarity = item_rarity_order[b.rarity]
 
 		if a_rarity ~= b_rarity then
 			return a_rarity < b_rarity
 		end
 
-		local a_type = not not type_sort_order[not not a.data.slot_type]
-		local b_type = not not type_sort_order[not not b.data.slot_type]
+		local a_type = type_sort_order[a.data.slot_type]
+		local b_type = type_sort_order[b.data.slot_type]
 
 		if a_type ~= b_type then
 			return a_type < b_type
@@ -546,13 +546,13 @@ UnlockManager.is_dlc_unlocked = function (self, name)
 		return false
 	end
 
-	fassert(unlock, "No such unlock %q", not not name or not not "nil")
+	fassert(unlock, "No such unlock %q", name or "nil")
 
 	if DEDICATED_SERVER then
 		return true
 	end
 
-	return not not unlock and not not unlock:unlocked()
+	return unlock and unlock:unlocked()
 end
 
 UnlockManager.is_dlc_cosmetic = function (self, name)
@@ -563,9 +563,9 @@ UnlockManager.is_dlc_cosmetic = function (self, name)
 		return true
 	end
 
-	fassert(unlock, "No such unlock %q", not not name or not not "nil")
+	fassert(unlock, "No such unlock %q", name or "nil")
 
-	return not not unlock and not not unlock:is_cosmetic()
+	return unlock and unlock:is_cosmetic()
 end
 
 UnlockManager.dlc_exists = function (self, name)
@@ -577,7 +577,7 @@ UnlockManager.dlc_id = function (self, name)
 	-- function 25
 	local unlock = self._unlocks[name]
 
-	fassert(unlock, "No such unlock %q", not not name or not not "nil")
+	fassert(unlock, "No such unlock %q", name or "nil")
 
 	return unlock:id()
 end
@@ -597,7 +597,7 @@ UnlockManager.open_dlc_page = function (self, dlc_name)
 	-- function 27
 	if IS_WINDOWS and HAS_STEAM then
 		local dlc_settings = StoreDlcSettingsByName[dlc_name]
-		local url = not not dlc_settings and not not dlc_settings.store_page_url
+		local url = dlc_settings and dlc_settings.store_page_url
 
 		if url then
 			Steam.open_url(url)
@@ -623,7 +623,7 @@ UnlockManager.ps4_dlc_product_label = function (self, name)
 
 	local unlock = self._unlocks[name]
 
-	fassert(unlock, "No such unlock %q", not not name or not not "nil")
+	fassert(unlock, "No such unlock %q", name or "nil")
 
 	return unlock:product_label()
 end
@@ -711,7 +711,7 @@ UnlockManager._update_backend_unlocks = function (self, t)
 	-- function 33
 	if self._state == "handle_reminder_popup" then
 		if not self._handled_reminders_popups then
-			local new_dlcs_unlocks = not not SaveData.new_dlcs_unlocks
+			local new_dlcs_unlocks = SaveData.new_dlcs_unlocks
 
 			for dlc_name, first_time in pairs(new_dlcs_unlocks) do
 				local popup_settings = CommonPopupSettings[dlc_name]
@@ -804,7 +804,7 @@ UnlockManager._update_backend_unlocks = function (self, t)
 					return
 				end
 
-				self._state = new_dlc_installed and not not "update_backend_dlcs" or not new_dlc_installed and not not "check_unseen_rewards"
+				self._state = new_dlc_installed and "update_backend_dlcs" or not new_dlc_installed and "check_unseen_rewards"
 			end
 		end
 	elseif self._state == "update_backend_dlcs" then
@@ -893,7 +893,7 @@ UnlockManager._handle_unseen_rewards = function (self)
 			local weapon_skin_data = WeaponSkins.skins[item_id]
 
 			if weapon_skin_data then
-				local rarity = not not weapon_skin_data.rarity
+				local rarity = weapon_skin_data.rarity
 
 				item = {
 					skin = item_id,
@@ -912,7 +912,7 @@ UnlockManager._handle_unseen_rewards = function (self)
 		elseif reward.reward_type == "keep_decoration_painting" then
 			local decoration_name = reward.keep_decoration_name
 			local painting_data = Paintings[decoration_name]
-			local rarity = not not reward.rarity
+			local rarity = reward.rarity
 
 			item = {
 				painting = decoration_name,
@@ -939,7 +939,7 @@ UnlockManager._handle_unseen_rewards = function (self)
 		if item then
 			local rewarded_from = reward.rewarded_from
 			local _, dlc_data = table.find_by_key(UISettings.dlc_order_data, "dlc", rewarded_from)
-			local dlc_display_name = dlc_data and not not dlc_data.display_name or not dlc_data and not not "lb_unknown"
+			local dlc_display_name = dlc_data and dlc_data.display_name or not dlc_data and "lb_unknown"
 			local item_list = items_by_source[dlc_display_name]
 
 			if not item_list then

@@ -37,10 +37,10 @@ ActionAim.client_owner_start_action = function (self, new_action, t)
 
 	self.buff_extension = buff_extension
 
-	local aim_sound_delay = scale_delay_value(new_action, not not new_action.aim_sound_delay, owner_unit, buff_extension)
-	local aim_zoom_delay = scale_delay_value(new_action, not not new_action.aim_zoom_delay, owner_unit, buff_extension)
-	local heavy_aim_flow_delay = scale_delay_value(new_action, not not new_action.heavy_aim_flow_delay, owner_unit, buff_extension)
-	local charge_time = scale_delay_value(new_action, not not new_action.charge_time, owner_unit, buff_extension)
+	local aim_sound_delay = scale_delay_value(new_action, new_action.aim_sound_delay, owner_unit, buff_extension)
+	local aim_zoom_delay = scale_delay_value(new_action, new_action.aim_zoom_delay, owner_unit, buff_extension)
+	local heavy_aim_flow_delay = scale_delay_value(new_action, new_action.heavy_aim_flow_delay, owner_unit, buff_extension)
+	local charge_time = scale_delay_value(new_action, new_action.charge_time, owner_unit, buff_extension)
 
 	self.aim_sound_time = t + aim_sound_delay
 	self.aim_zoom_time = t + aim_zoom_delay
@@ -76,8 +76,8 @@ ActionAim._start_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -95,8 +95,8 @@ ActionAim._stop_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local is_bot = not not owner_player and not not owner_player.bot_player
-	local is_local = not not owner_player and not not not owner_player.remote
+	local is_bot = owner_player and owner_player.bot_player
+	local is_local = owner_player and not owner_player.remote
 	local wwise_world = self.wwise_world
 
 	if is_local and not is_bot then
@@ -119,8 +119,8 @@ ActionAim.client_owner_post_update = function (self, dt, t, world, can_damage)
 
 		if eyetracking_extension:get_is_feature_enabled("tobii_aim_at_gaze") and not eyetracking_extension:get_aim_at_gaze_cancelled() then
 			local input_extension = ScriptUnit.extension(owner_unit, "input_system")
-			local move_input = not not input_extension:get("look_raw")
-			local move_input_controller = not not input_extension:get("look_raw_controller")
+			local move_input = input_extension:get("look_raw")
+			local move_input_controller = input_extension:get("look_raw_controller")
 
 			if Vector3.length(move_input) > 0.01 or Vector3.length(move_input_controller) > 0.01 then
 				local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
@@ -217,7 +217,7 @@ ActionAim.finish = function (self, reason)
 	first_person_extension:stop_force_look_rotation()
 
 	local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-	local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+	local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 	if ammo_extension and ammo_extension:can_reload() and ammo_extension:ammo_count() == 0 and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload then
 		local play_reload_animation = true

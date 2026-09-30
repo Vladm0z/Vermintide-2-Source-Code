@@ -101,7 +101,7 @@ end
 
 HintUI.exit_done = function (self)
 	-- function 9
-	return not self._is_visible and not not self._has_widget_been_closed
+	return not self._is_visible and self._has_widget_been_closed
 end
 
 HintUI._start_transition_animation = function (self, animation_name)
@@ -176,7 +176,7 @@ end
 
 HintUI.start_animation = function (self, animation_name, widget, optional_params)
 	-- function 18
-	local params = not not optional_params or not not {
+	local params = optional_params or {
 		wwise_world = self._wwise_world,
 		render_settings = self._render_settings
 	}

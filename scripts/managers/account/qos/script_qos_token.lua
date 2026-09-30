@@ -28,10 +28,10 @@ ScriptQoSToken.info = function (self)
 
 	if up_failed or down_failed then
 		local str = "Your"
-		local up_str = up_failed and not not " upload bandwidth " or not up_failed and not not ""
-		local down_str = down_failed and not not " download bandwidth " or not down_failed and not not ""
+		local up_str = up_failed and " upload bandwidth " or not up_failed and ""
+		local down_str = down_failed and " download bandwidth " or not down_failed and ""
 
-		info.error = str .. up_str .. not not "and" .. down_str .. not not "are too low"
+		info.error = str .. up_str .. "and" .. down_str .. "are too low"
 	end
 
 	return info

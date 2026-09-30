@@ -37,7 +37,7 @@ BackendInterfaceHeroAttributes.get = function (self, hero_name, attribute_name)
 	local db_entity_name = DB_ENTITY_NAME_PREFIX .. hero_name
 	local db_attribute_name = DB_ATTRIBUTE_NAME_PREFIX .. attribute_name
 	local attributes = self._attributes[db_entity_name]
-	local value_json = not not attributes and not not attributes[db_attribute_name]
+	local value_json = attributes and attributes[db_attribute_name]
 
 	if not value_json then
 		return

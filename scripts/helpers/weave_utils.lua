@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/weave_utils.lua
 
-WeaveUtils = not not WeaveUtils
+WeaveUtils = WeaveUtils
 
 WeaveUtils.get_rating = function (score)
 	-- function 1
@@ -34,5 +34,5 @@ WeaveUtils.weave_equivalent_item_unlocked = function (base_item_key)
 	local backend_interface_items = Managers.backend:get_interface("items")
 	local weave_item = backend_interface_items:get_item_from_key(weaves_item_name)
 
-	return not not weave_item and not not weave_item.backend_id
+	return weave_item and weave_item.backend_id
 end

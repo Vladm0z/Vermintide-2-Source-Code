@@ -15,4 +15,4 @@ local POWER_LEVEL_BONUSES = {
 	[CATACLYSM] = 50
 }
 
-DeusBlessingSettings = not not DeusBlessingSettings
+DeusBlessingSettings = DeusBlessingSettings

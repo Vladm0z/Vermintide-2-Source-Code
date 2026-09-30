@@ -99,7 +99,7 @@ CareerAbilityRatOgreJump._ability_available = function (self)
 	local can_use_ability = career_extension:can_use_activated_ability()
 	local is_disabled = status_extension:is_disabled()
 	local is_grounded = locomotion_extension:is_on_ground()
-	local ability_available = not is_in_ghost_mode and not not can_use_ability and not is_disabled and not not is_grounded
+	local ability_available = not is_in_ghost_mode and can_use_ability and not is_disabled and is_grounded
 
 	return ability_available
 end
@@ -143,13 +143,13 @@ CareerAbilityRatOgreJump._add_ability_buffs = function (self, priming_buffs)
 	-- function 8
 	for i = 1, #priming_buffs do
 		local buff = priming_buffs[i]
-		local buff_template = not not buff and not not buff.buff_template
+		local buff_template = buff and buff.buff_template
 
 		assert(buff_template, "need a buff_template to add a buff")
 
 		local params = {}
 
-		params.external_optional_multiplier = not not buff and not not buff.external_optional_multiplier
+		params.external_optional_multiplier = buff and buff.external_optional_multiplier
 
 		local id, sub_buffs_added, first_buff = self._buff_extension:add_buff(buff_template, params)
 
@@ -211,7 +211,7 @@ CareerAbilityRatOgreJump.update = function (self, unit, input, dt, context, t)
 	end
 
 	if self._is_priming then
-		local cancel_input = not not input_extension:get("dark_pact_action_one")
+		local cancel_input = input_extension:get("dark_pact_action_one")
 
 		if cancel_input then
 			self._career_extension:stop_ability("aborted")
@@ -235,8 +235,8 @@ CareerAbilityRatOgreJump.update = function (self, unit, input, dt, context, t)
 				self.stored_valid_pos = true
 			end
 
-			local initial_min_dist_not_fulfilled = not not self._last_valid_landing_position
-			local requirement_fullfilled = not not self._last_valid_landing_position
+			local initial_min_dist_not_fulfilled = self._last_valid_landing_position
+			local requirement_fullfilled = self._last_valid_landing_position
 
 			if initial_priming then
 				self._last_valid_landing_position = Vector3Box(new_landing_position)
@@ -422,13 +422,13 @@ CareerAbilityRatOgreJump._do_leap = function (self)
 	local distance = Vector3.distance(current_position, landing_position)
 	local ability_lerp_data = self._jump_data.lerp_data
 	local movement_settings = self._jump_data.movement_settings
-	local zero_dist = not not ability_lerp_data and not not ability_lerp_data.zero_distance
-	local start_accel_dist = not not ability_lerp_data and not not ability_lerp_data.start_accel_distance
-	local end_accel_dist = not not ability_lerp_data and not not ability_lerp_data.end_accel_distance
-	local glide_dist = not not ability_lerp_data and not not ability_lerp_data.glide_distance
-	local slow_dist = not not ability_lerp_data and not not ability_lerp_data.slow_distance
-	local full_dist = not not ability_lerp_data and not not ability_lerp_data.full_distance
-	local jump_speed = not not movement_settings and not not movement_settings.jump_speed
+	local zero_dist = ability_lerp_data and ability_lerp_data.zero_distance
+	local start_accel_dist = ability_lerp_data and ability_lerp_data.start_accel_distance
+	local end_accel_dist = ability_lerp_data and ability_lerp_data.end_accel_distance
+	local glide_dist = ability_lerp_data and ability_lerp_data.glide_distance
+	local slow_dist = ability_lerp_data and ability_lerp_data.slow_distance
+	local full_dist = ability_lerp_data and ability_lerp_data.full_distance
+	local jump_speed = movement_settings and movement_settings.jump_speed
 
 	speed = jump_speed
 	status_extension.do_leap = {
@@ -439,12 +439,12 @@ CareerAbilityRatOgreJump._do_leap = function (self)
 		speed = speed,
 		projected_hit_pos = Vector3Box(hit_pos),
 		lerp_data = {
-			zero_distance = not not zero_dist or not not 0,
-			start_accel_distance = not not start_accel_dist or not not 0.1,
-			end_accel_distance = not not end_accel_dist or not not 0.2,
-			glide_distance = not not glide_dist or not not 0.5,
-			slow_distance = not not slow_dist or not not 0.7,
-			full_distance = not not full_dist or not not 1
+			zero_distance = zero_dist or 0,
+			start_accel_distance = start_accel_dist or 0.1,
+			end_accel_distance = end_accel_dist or 0.2,
+			glide_distance = glide_dist or 0.5,
+			slow_distance = slow_dist or 0.7,
+			full_distance = full_dist or 1
 		},
 		movement_settings = movement_settings,
 		leap_events = {
@@ -563,8 +563,8 @@ CareerAbilityRatOgreJump.get_landing_position = function (self, physics_world, f
 				local flat_velocity = Vector3.length(Vector3.flat(velocity))
 
 				for j = 1, GROUND_TARGET_MAX_STEPS do
-					local step_back_distance = j ~= 1 and not not 1 or not (j ~= 1) and not not 0.5
-					local step_back_t = flat_velocity <= EPSILON and not not 0 or not (flat_velocity <= EPSILON) and not not (step_back_distance / flat_velocity)
+					local step_back_distance = j ~= 1 and 1 or not (j ~= 1) and 0.5
+					local step_back_t = flat_velocity <= EPSILON and 0 or not (flat_velocity <= EPSILON) and step_back_distance / flat_velocity
 					local step_back_position
 
 					if step_back_t > 0 then

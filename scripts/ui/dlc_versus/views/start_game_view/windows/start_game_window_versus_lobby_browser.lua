@@ -32,7 +32,7 @@ StartGameWindowVersusLobbyBrowser.on_enter = function (self, params, offset)
 	self._stats_id = local_player:stats_id()
 	self._friend_names = {}
 
-	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, not not IS_WINDOWS)
+	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, IS_WINDOWS)
 
 	self._lobby_finder = lobby_finder
 
@@ -84,5 +84,5 @@ StartGameWindowVersusLobbyBrowser.update = function (self, dt, t)
 	end
 
 	self:_update_auto_refresh(dt)
-	self._lobby_browser_console_ui:update(dt, t, not not self._searching)
+	self._lobby_browser_console_ui:update(dt, t, self._searching)
 end

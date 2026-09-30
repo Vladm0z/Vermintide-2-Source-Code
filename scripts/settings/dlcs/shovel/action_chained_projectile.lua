@@ -79,14 +79,14 @@ ActionChainedProjectile._shoot = function (self, t)
 	local player_position, player_rotation = first_person_extension:get_projectile_start_position_rotation()
 	local direction = Quaternion.forward(player_rotation)
 	local static_hit, _, ray_length, hit_surface_normal, static_hit_actor = PhysicsWorld.immediate_raycast(physics_world, player_position, direction, length, "closest", "collision_filter", "filter_player_ray_projectile_static_only")
-	local max_length = not not ray_length or not not length
+	local max_length = ray_length or length
 	local halfway_position = player_position + direction * max_length / 2
 	local prepare_radius = max_length / 2
 
 	PhysicsWorld.prepare_actors_for_overlap(physics_world, halfway_position, prepare_radius * prepare_radius)
 
 	local results = PhysicsWorld.linear_sphere_sweep(physics_world, player_position + direction * (hit_radius / 2), player_position + direction * max_length, hit_radius, 100, "types", "both", "collision_filter", "filter_player_ray_projectile", "report_initial_overlap")
-	local num_results = results and not not #results or not results and not not 0
+	local num_results = results and #results or not results and 0
 	local best_target_unit
 
 	for i = 1, num_results do
@@ -103,7 +103,7 @@ ActionChainedProjectile._shoot = function (self, t)
 				if not side or not hit_unit_side or side_manager:is_enemy_by_side(side, hit_unit_side) then
 					local node = Actor.node(hit_actor)
 					local breed = AiUtils.unit_breed(hit_unit)
-					local hit_zone = not not breed and not not breed.hit_zones_lookup[node]
+					local hit_zone = breed and breed.hit_zones_lookup[node]
 
 					if not hit_zone or hit_zone.name ~= "afro" then
 						best_target_unit = hit_unit
@@ -128,7 +128,7 @@ ActionChainedProjectile._shoot = function (self, t)
 		local _, is_level_unit = Managers.state.network:game_object_or_level_id(hit_unit)
 
 		if not is_level_unit then
-			local node = Unit.has_node(best_target_unit, "j_spine") and not not Unit.node(best_target_unit, "j_spine") or not Unit.has_node(best_target_unit, "j_spine") and not not 0
+			local node = Unit.has_node(best_target_unit, "j_spine") and Unit.node(best_target_unit, "j_spine") or not Unit.has_node(best_target_unit, "j_spine") and 0
 
 			end_pos = Unit.world_position(best_target_unit, node)
 		end
@@ -153,7 +153,7 @@ ActionChainedProjectile._shoot = function (self, t)
 			local hit_index = 1
 			local send_to_server = true
 			local damage_profile = DamageProfileTemplates[chain_hit_settings.damage_profile]
-			local charge_value = not not damage_profile.charge_value
+			local charge_value = damage_profile.charge_value
 			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
 			DamageUtils.buff_on_attack(self.owner_unit, hit_unit, charge_value, self._is_critical_strike, "full", hit_index, send_to_server, buff_type, nil, self.item_name)
@@ -280,7 +280,7 @@ ActionChainedProjectile.passive_update = function (self, dt, t)
 	local side_manager = Managers.state.side
 	local side_by_unit = side_manager.side_by_unit
 	local side = side_by_unit[owner_unit]
-	local enemy_categories = not not side and not not side.enemy_broadphase_categories
+	local enemy_categories = side and side.enemy_broadphase_categories
 	local active_projectiles = self._active_projectiles
 
 	for i = self._active_projectiles_n, 1, -1 do
@@ -329,7 +329,7 @@ ActionChainedProjectile._select_next_target = function (self, chain_data, ai_bro
 		if not hit_units[target_unit] and HEALTH_ALIVE[target_unit] then
 			hit_units[target_unit] = true
 
-			local node = Unit.has_node(target_unit, "j_spine") and not not Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and not not 0
+			local node = Unit.has_node(target_unit, "j_spine") and Unit.node(target_unit, "j_spine") or not Unit.has_node(target_unit, "j_spine") and 0
 			local next_chain_pos = Unit.world_position(target_unit, node)
 			local mid_offset = Vector3(math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()))
 			local mid_point = last_chain_pos + (next_chain_pos - last_chain_pos) / 2 + mid_offset

@@ -32,7 +32,7 @@ VortexExtension.init = function (self, extension_init_context, unit, extension_i
 	local rotation = Unit.local_rotation(unit, 0)
 	local inner_pose = Matrix4x4.from_quaternion(rotation)
 	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
-	local inner_fx_z_scale_multiplier = not not vortex_template.inner_fx_z_scale_multiplier
+	local inner_fx_z_scale_multiplier = vortex_template.inner_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
 	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
@@ -43,7 +43,7 @@ VortexExtension.init = function (self, extension_init_context, unit, extension_i
 	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
 	local outer_pose = Matrix4x4.from_quaternion(rotation)
 	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
-	local outer_fx_z_scale_multiplier = not not vortex_template.outer_fx_z_scale_multiplier
+	local outer_fx_z_scale_multiplier = vortex_template.outer_fx_z_scale_multiplier
 
 	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
 	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
@@ -83,7 +83,7 @@ VortexExtension.init = function (self, extension_init_context, unit, extension_i
 		self._use_nav_cost_map_volumes = true
 	end
 
-	self._owner_unit = not not extension_init_data.owner_unit
+	self._owner_unit = extension_init_data.owner_unit
 end
 
 VortexExtension._create_nav_cost_maps = function (self, ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
@@ -133,7 +133,7 @@ VortexExtension.extensions_ready = function (self, world, unit)
 		players_inside = {},
 		players_ejected = {},
 		physics_world = World.get_data(world, "physics_world"),
-		wander_state = vortex_template.forced_standing_still and not not "forced_standing_still" or not vortex_template.forced_standing_still and not not "recalc_path",
+		wander_state = vortex_template.forced_standing_still and "forced_standing_still" or not vortex_template.forced_standing_still and "recalc_path",
 		wanted_height = vortex_template.max_height,
 		height_ring_buffer = {
 			write_index = 1,
@@ -165,7 +165,7 @@ VortexExtension.extensions_ready = function (self, world, unit)
 		navigation_extension:set_max_speed(vortex_template.override_movement_speed)
 	end
 
-	local start_sound_event_name = not not vortex_template.start_sound_event_name
+	local start_sound_event_name = vortex_template.start_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
@@ -221,7 +221,7 @@ VortexExtension.destroy = function (self)
 				locomotion_extension:set_affected_by_gravity(true)
 				locomotion_extension:set_movement_type("constrained_by_mover")
 
-				local ejected_from_vortex = not not target_blackboard.ejected_from_vortex
+				local ejected_from_vortex = target_blackboard.ejected_from_vortex
 
 				ejected_from_vortex:store(velocity)
 
@@ -248,7 +248,7 @@ VortexExtension.destroy = function (self)
 	blackboard.vortex_data = nil
 
 	local world = self.world
-	local stop_sound_event_name = not not self.vortex_template.stop_sound_event_name
+	local stop_sound_event_name = self.vortex_template.stop_sound_event_name
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 
@@ -377,7 +377,7 @@ VortexExtension._update_height = function (self, unit, t, dt, vortex_template, v
 	local current_height = vortex_data.height
 	local max_height = vortex_template.max_height - check_z_offset
 	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, ray_source, Vector3.up(), max_height, "closest", "collision_filter", "filter_ai_mover")
-	local new_height = hit and (not not hit_distance or not not max_height) or not hit and not not max_height
+	local new_height = hit and (hit_distance or max_height) or not hit and max_height
 
 	new_height = math.max(new_height, 4)
 
@@ -482,7 +482,7 @@ VortexExtension._update_radius = function (self, unit, t, dt, nav_world, travers
 	if wanted_fx_radius ~= current_fx_radius then
 		local start_lerp_fx_radius = vortex_data.start_lerp_fx_radius
 		local current_lerp_value = math.abs(current_fx_radius - start_lerp_fx_radius) / math.abs(wanted_fx_radius - start_lerp_fx_radius)
-		local lerp_constant = current_fx_radius < wanted_fx_radius and not not INCREASE_RADIUS_LERP_PROGRESS_PER_SECOND or not (current_fx_radius < wanted_fx_radius) and not not DECREASE_RADIUS_LERP_PROGRESS_PER_SECOND
+		local lerp_constant = current_fx_radius < wanted_fx_radius and INCREASE_RADIUS_LERP_PROGRESS_PER_SECOND or not (current_fx_radius < wanted_fx_radius) and DECREASE_RADIUS_LERP_PROGRESS_PER_SECOND
 		local new_lerp_value = math.clamp(current_lerp_value + dt * lerp_constant, 0, 1)
 
 		vortex_data.fx_radius = math.lerp(start_lerp_fx_radius, wanted_fx_radius, new_lerp_value)
@@ -546,7 +546,7 @@ VortexExtension._update_attract_players = function (self, unit, blackboard, vort
 			local player_blackboard = BLACKBOARDS[player_unit]
 			local player_breed = player_blackboard.breed
 			local target_status_extension = ScriptUnit.extension(player_unit, "status_system")
-			local valid_vortex_target = not not player_breed.vortexable
+			local valid_vortex_target = player_breed.vortexable
 			local locomotion_extension = ScriptUnit.extension(player_unit, "locomotion_system")
 			local player_position = position_lookup[player_unit]
 			local suck_dir = center_pos - player_position
@@ -723,7 +723,7 @@ VortexExtension._update_attract_inside_ai = function (self, blackboard, vortex_d
 				locomotion_extension:set_wanted_velocity(velocity)
 
 				if new_height > target_blackboard.eject_height or vortex_height < new_height or allowed_distance < new_radius then
-					local ejected_from_vortex = not not target_blackboard.ejected_from_vortex
+					local ejected_from_vortex = target_blackboard.ejected_from_vortex
 
 					ejected_from_vortex:store(velocity)
 
@@ -765,7 +765,7 @@ VortexExtension.is_position_inside = function (self, position, min_allowed_dista
 	local blackboard = self.blackboard
 	local vortex_data = blackboard.vortex_data
 	local outer_radius = vortex_data.outer_radius
-	local required_distance_sq = (outer_radius + (not not min_allowed_distance or not not 0))^2
+	local required_distance_sq = (outer_radius + (min_allowed_distance or 0))^2
 	local self_unit = self.unit
 	local self_position = POSITION_LOOKUP[self_unit]
 	local distance_sq = Vector3.distance_squared(position, self_position)

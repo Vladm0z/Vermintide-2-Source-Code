@@ -238,7 +238,7 @@ VoiceChatUI.init = function (self, ingame_ui_context)
 	self._push_to_talk_end_t = 0
 	self._push_to_talk_talking = false
 	self._dirty = true
-	self._safe_rect = not not Application.user_setting("safe_rect")
+	self._safe_rect = Application.user_setting("safe_rect")
 
 	self:create_ui_elements()
 end
@@ -321,7 +321,7 @@ end
 VoiceChatUI._update_safe_rect = function (self)
 	-- function 6
 	if IS_PS4 then
-		local safe_rect = not not Application.user_setting("safe_rect")
+		local safe_rect = Application.user_setting("safe_rect")
 
 		if safe_rect ~= self._safe_rect then
 			self._safe_rect = safe_rect
@@ -334,15 +334,15 @@ local EMPTY_TABLE = {}
 
 VoiceChatUI._update_talking_state = function (self)
 	-- function 7
-	local members = not not self._voip:members_in_own_room()
-	local members_table = members.get_members and not not members:get_members() or not members.get_members and not not members
+	local members = self._voip:members_in_own_room()
+	local members_table = members.get_members and members:get_members() or not members.get_members and members
 
 	for _, peer_id in pairs(members_table) do
 		local is_talking = self._voip:is_talking(peer_id)
 		local was_talking = self._talking_peers[peer_id]
 
-		self._talking_peers[peer_id] = is_talking and not not (self._timer + UI_REMOVE_DELAY) or not is_talking and not not was_talking
-		self._dirty = not not was_talking == not not is_talking or not not self._dirty
+		self._talking_peers[peer_id] = is_talking and self._timer + UI_REMOVE_DELAY or not is_talking and was_talking
+		self._dirty = not not was_talking == not not is_talking or self._dirty
 	end
 
 	for peer_id, timer in pairs(self._talking_peers) do
@@ -366,13 +366,13 @@ VoiceChatUI._evaluate_push_to_talk = function (self)
 	local talking = self._voip:is_talking(my_peer_id)
 	local push_to_talk_was_talking = self._push_to_talk_talking
 
-	self._push_to_talk_end_t = not not (self._timer + UI_REMOVE_DELAY)
+	self._push_to_talk_end_t = self._timer + UI_REMOVE_DELAY
 	self._push_to_talk_talking = self._push_to_talk_end_t > self._timer
 
 	local push_to_talk_is_talking = self._push_to_talk_talking
 
-	self._talking_peers[my_peer_id] = push_to_talk_is_talking and not not self._push_to_talk_end_t or not push_to_talk_is_talking and not not nil
-	self._dirty = push_to_talk_was_talking ~= push_to_talk_is_talking or not not self._dirty
+	self._talking_peers[my_peer_id] = push_to_talk_is_talking and self._push_to_talk_end_t or not push_to_talk_is_talking and nil
+	self._dirty = push_to_talk_was_talking ~= push_to_talk_is_talking or self._dirty
 end
 
 VoiceChatUI._update_widgets = function (self)
@@ -406,7 +406,7 @@ VoiceChatUI._update_widgets = function (self)
 		else
 			local player = Managers.player:player_from_peer_id(peer_id, 1)
 
-			name = not not player and not not player:name()
+			name = player and player:name()
 		end
 
 		if not name or name == "" then
@@ -414,7 +414,7 @@ VoiceChatUI._update_widgets = function (self)
 		end
 
 		local name_widget = self.name_widgets[index]
-		local cropped_name = Utf8.length(name) > PLAYER_NAME_MAX_LENGTH and not not UIRenderer.crop_text_width(self.ui_top_renderer, name, 250, name_widget.style.text) or not (Utf8.length(name) > PLAYER_NAME_MAX_LENGTH) and not not name
+		local cropped_name = Utf8.length(name) > PLAYER_NAME_MAX_LENGTH and UIRenderer.crop_text_width(self.ui_top_renderer, name, 250, name_widget.style.text) or not (Utf8.length(name) > PLAYER_NAME_MAX_LENGTH) and name
 		local name_widget_content = name_widget.content
 		local name_widget_element = name_widget.element
 

@@ -59,7 +59,7 @@ EnergyBarUI.update = function (self, dt, t, player)
 	local has_twitch = Managers.twitch:is_activated()
 
 	if has_twitch ~= self._has_twitch then
-		self.charge_bar.offset[2] = has_twitch and not not 140 or not has_twitch and not not 0
+		self.charge_bar.offset[2] = has_twitch and 140 or not has_twitch and 0
 		self._has_twitch = has_twitch
 		is_dirty = true
 	end
@@ -96,7 +96,7 @@ EnergyBarUI._set_charge_bar_fraction = function (self, energy_fraction, is_drain
 	local style = widget.style
 	local content = widget.content
 
-	energy_fraction = math.lerp(not not content.internal_gradient_threshold, math.min(energy_fraction, 1), 0.3)
+	energy_fraction = math.lerp(content.internal_gradient_threshold, math.min(energy_fraction, 1), 0.3)
 	content.internal_gradient_threshold = energy_fraction
 	style.bar_1.gradient_threshold = energy_fraction
 

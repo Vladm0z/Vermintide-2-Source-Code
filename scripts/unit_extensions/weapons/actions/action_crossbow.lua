@@ -25,7 +25,7 @@ ActionCrossbow.client_owner_start_action = function (self, new_action, t, chain_
 	self.owner_buff_extension = buff_extension
 	self.current_action = new_action
 	self.num_projectiles = new_action.num_projectiles
-	self.multi_projectile_spread = not not new_action.multi_projectile_spread
+	self.multi_projectile_spread = new_action.multi_projectile_spread
 
 	if self.ammo_extension and self.num_projectiles then
 		self.num_projectiles = math.min(self.num_projectiles, self.ammo_extension:current_ammo())
@@ -33,16 +33,16 @@ ActionCrossbow.client_owner_start_action = function (self, new_action, t, chain_
 
 	self.num_projectiles_shot = 1
 	self.state = "waiting_to_shoot"
-	self.time_to_shoot = t + not not new_action.fire_time
+	self.time_to_shoot = t + new_action.fire_time
 	self.extra_buff_shot = false
-	self.active_reload_time = not not new_action.active_reload_time
+	self.active_reload_time = new_action.active_reload_time
 
 	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
 	self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, nil, "on_critical_shot", nil)
 
 	self._is_critical_strike = is_critical_strike
-	self._unhide_ammo_at_action_end = not not new_action.unhide_ammo_on_infinite_ammo
+	self._unhide_ammo_at_action_end = new_action.unhide_ammo_on_infinite_ammo
 end
 
 ActionCrossbow.client_owner_post_update = function (self, dt, t, world, can_damage)
@@ -78,7 +78,7 @@ ActionCrossbow.client_owner_post_update = function (self, dt, t, world, can_dama
 						end
 					elseif self.num_projectiles_shot > 1 and not current_action.burst then
 						local spread_horizontal_angle = math.pi * (self.num_projectiles_shot % 2 + 0.5)
-						local shot_count_offset = self.num_projectiles_shot ~= 1 and not not math.round((self.num_projectiles_shot - 1) / 2, 0) or not (self.num_projectiles_shot ~= 1) and not not 0
+						local shot_count_offset = self.num_projectiles_shot ~= 1 and math.round((self.num_projectiles_shot - 1) / 2, 0) or not (self.num_projectiles_shot ~= 1) and 0
 						local angle_offset = self.multi_projectile_spread * shot_count_offset
 
 						fire_rotation = spread_extension:combine_spread_rotations(spread_horizontal_angle, angle_offset, fire_rotation)
@@ -228,7 +228,7 @@ ActionCrossbow.finish = function (self, reason)
 		status_extension:set_zooming(false)
 
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true

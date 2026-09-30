@@ -144,7 +144,7 @@ local DEFAULT_SPEED_LERP_TIME_ON_TARGET_DODGE_DAMAGE_DONE = 0.3
 AnimationCallbackTemplates.server.anim_cb_damage = function (unit, param)
 	-- function 13
 	local blackboard = BLACKBOARDS[unit]
-	local target_unit = blackboard.smash_door and not not blackboard.smash_door.target_unit or not blackboard.smash_door and not not blackboard.attacking_target
+	local target_unit = blackboard.smash_door and blackboard.smash_door.target_unit or not blackboard.smash_door and blackboard.attacking_target
 	local action = blackboard.action
 
 	if not action then
@@ -195,7 +195,7 @@ AnimationCallbackTemplates.server.anim_cb_damage = function (unit, param)
 		return
 	end
 
-	local attack_direction = not not action.attack_directions
+	local attack_direction = action.attack_directions
 
 	if not action.unblockable and DamageUtils.check_block(unit, target_unit, action.fatigue_type, attack_direction) then
 		if blackboard.active_node and blackboard.active_node.attack_blocked then
@@ -207,8 +207,8 @@ AnimationCallbackTemplates.server.anim_cb_damage = function (unit, param)
 
 		if not target_blackboard.is_player then
 			local attacker_blackboard = BLACKBOARDS[unit]
-			local attacker_pos = not not POSITION_LOOKUP[unit]
-			local target_pos = not not POSITION_LOOKUP[target_unit]
+			local attacker_pos = POSITION_LOOKUP[unit]
+			local target_pos = POSITION_LOOKUP[target_unit]
 			local damage_direction = Vector3.normalize(target_pos - attacker_pos)
 			local stagger_strength = AiUtils.calculate_ai_stagger_strength(attacker_blackboard, target_blackboard, t, true, stagger_types.medium, 0.25)
 
@@ -454,7 +454,7 @@ AnimationCallbackTemplates.server.anim_cb_transform_finished = function (unit, p
 	-- function 32
 	local blackboard = BLACKBOARDS[unit]
 	local active_node = blackboard.active_node
-	local anim_cb = not not active_node and not not active_node.anim_cb_transform_finished
+	local anim_cb = active_node and active_node.anim_cb_transform_finished
 
 	if anim_cb then
 		anim_cb(anim_cb, unit, blackboard)
@@ -476,7 +476,7 @@ AnimationCallbackTemplates.server.anim_cb_throw_finished = function (unit, param
 	-- function 34
 	local blackboard = BLACKBOARDS[unit]
 	local active_node = blackboard.active_node
-	local anim_cb = not not active_node and not not active_node.anim_cb_throw_finished
+	local anim_cb = active_node and active_node.anim_cb_throw_finished
 
 	if anim_cb then
 		anim_cb(anim_cb, unit, blackboard)
@@ -786,7 +786,7 @@ AnimationCallbackTemplates.server.anim_cb_placed_standard = function (unit, para
 	-- function 66
 	local blackboard = BLACKBOARDS[unit]
 	local active_node = blackboard.active_node
-	local anim_cb = not not active_node and not not active_node.anim_cb_placed_standard
+	local anim_cb = active_node and active_node.anim_cb_placed_standard
 
 	if anim_cb then
 		anim_cb(active_node, unit, blackboard)
@@ -1094,7 +1094,7 @@ AnimationCallbackTemplates.client.anim_cb_enable_skeleton_collison = function (u
 	local breed = Unit.get_data(unit, "breed")
 	local ai_extension = ScriptUnit.extension(unit, "ai_system")
 
-	ai_extension.player_locomotion_constrain_radius = not not breed.player_locomotion_constrain_radius
+	ai_extension.player_locomotion_constrain_radius = breed.player_locomotion_constrain_radius
 end
 
 AnimationCallbackTemplates.server.anim_cb_shielded = function (unit, param)

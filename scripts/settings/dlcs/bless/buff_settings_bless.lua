@@ -248,7 +248,7 @@ settings.proc_functions = {
 		if attack_type == "light_attack" or attack_type == "heavy_attack" then
 			local buff_to_add = buff.template.buff_to_add
 			local talent_extension = ScriptUnit.has_extension(owner_unit, "talent_system")
-			local has_talent = not not talent_extension and not not talent_extension:has_talent("victor_priest_4_2_new")
+			local has_talent = talent_extension and talent_extension:has_talent("victor_priest_4_2_new")
 
 			if has_talent then
 				buff_to_add = buff.template.buff_to_add_upgraded
@@ -322,7 +322,7 @@ settings.proc_functions = {
 		if ALIVE[owner_unit] then
 			local side = Managers.state.side.side_by_unit[owner_unit]
 			local breed = params[2]
-			local amount_to_heal = not not breed.bloodlust_health
+			local amount_to_heal = breed.bloodlust_health
 
 			amount_to_heal = amount_to_heal / 2
 
@@ -371,7 +371,7 @@ settings.proc_functions = {
 			local damage_taken = inital_damage_taken
 			local t = Managers.time:time("game")
 			local health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
-			local current_temporary_health = not not health_extension and not not health_extension:current_temporary_health()
+			local current_temporary_health = health_extension and health_extension:current_temporary_health()
 
 			if current_temporary_health then
 				damage_taken = damage_taken - current_temporary_health
@@ -447,7 +447,7 @@ settings.proc_functions = {
 
 			if damage_stagger_dot then
 				local current_damage = damage_stagger_dot.value
-				local current_damage_dealt = not not damage_stagger_dot.damage_dealt
+				local current_damage_dealt = damage_stagger_dot.damage_dealt
 				local remaining_damage = current_damage - current_damage_dealt
 				local new_damage = percentage_of_original + remaining_damage
 
@@ -593,7 +593,7 @@ settings.proc_functions = {
 				buff_extension:add_buff(buff_to_add)
 
 				local player = Managers.player:owner(owner_unit)
-				local is_local = not not player and not not not player.remote
+				local is_local = player and not player.remote
 
 				if is_local then
 					local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
@@ -646,7 +646,7 @@ settings.proc_functions = {
 		local breed = params[2]
 
 		if breed and not breed.is_hero then
-			local heal_amount = not not breed.bloodlust_health
+			local heal_amount = breed.bloodlust_health
 			local side = Managers.state.side.side_by_unit[owner_unit]
 
 			if not side then
@@ -677,7 +677,7 @@ settings.proc_functions = {
 		local position = POSITION_LOOKUP[owner_unit]
 		local broadphase_results = FrameTable.alloc_table()
 
-		buff.broadphase_categories = not not buff.broadphase_categories
+		buff.broadphase_categories = buff.broadphase_categories
 
 		local num_results = AiUtils.broadphase_query(position, push_radius, broadphase_results, buff.broadphase_categories)
 
@@ -820,8 +820,8 @@ settings.buff_function_templates = {
 			local hit_zone_id = NetworkLookup.hit_zones.body
 			local damage_profile = buff.template.damage_profile
 			local damage_profile_id = NetworkLookup.damage_profiles[damage_profile]
-			local hit_unit_pos = not not POSITION_LOOKUP[owner_unit]
-			local attacker_pos = not not POSITION_LOOKUP[attacker_unit]
+			local hit_unit_pos = POSITION_LOOKUP[owner_unit]
+			local attacker_pos = POSITION_LOOKUP[attacker_unit]
 			local attack_direction = Vector3.normalize(hit_unit_pos - attacker_pos)
 
 			weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, position, attack_direction, damage_profile_id, "power_level", career_power_level)
@@ -888,7 +888,7 @@ settings.buff_function_templates = {
 				buff.screen_space_id = first_person_extension:create_screen_particles(local_screen_space_effect)
 			end
 		else
-			local node = not not Unit.node(owner_unit, "j_spine")
+			local node = Unit.node(owner_unit, "j_spine")
 			local attach_pos = Unit.world_position(owner_unit, node)
 
 			buff._tp_node = node
@@ -926,7 +926,7 @@ settings.buff_function_templates = {
 					StatisticsUtil.register_revive(attacker_unit, owner_unit, Managers.player:statistics_db())
 				end
 
-				local heal_window = not not BuffUtils.get_buff_template("victor_priest_6_3_buff").buffs[1].heal_window
+				local heal_window = BuffUtils.get_buff_template("victor_priest_6_3_buff").buffs[1].heal_window
 				local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 				local damage_store_buff = buff_extension:get_buff_type("victor_priest_6_3_buff")
 
@@ -1018,7 +1018,7 @@ settings.buff_function_templates = {
 		-- function 24
 		if buff.third_person_effect_id then
 			if ALIVE[owner_unit] then
-				local node = not not buff._tp_node
+				local node = buff._tp_node
 				local attach_pos = Unit.world_position(owner_unit, node)
 
 				World.move_particles(world, buff.third_person_effect_id, attach_pos)
@@ -1089,7 +1089,7 @@ settings.buff_function_templates = {
 		end
 
 		local player = Managers.player:owner(owner_unit)
-		local is_husk = player and not not player.remote or not player and not not false
+		local is_husk = player and player.remote
 
 		if ALIVE[owner_unit] and is_husk then
 			WwiseUtils.trigger_unit_event(world, "career_ability_priest_buildup_husk", owner_unit, 0)
@@ -1116,7 +1116,7 @@ settings.buff_function_templates = {
 		end
 
 		local node = Unit.node(owner_unit, "j_spine")
-		local position = not not Unit.world_position(owner_unit, node)
+		local position = Unit.world_position(owner_unit, node)
 
 		if not position then
 			return
@@ -1131,7 +1131,7 @@ settings.buff_function_templates = {
 		local career_power_level = career_extension:get_career_power_level()
 		local is_server = Managers.state.network.is_server
 		local player = Managers.player:owner(owner_unit)
-		local is_husk = player and not not player.remote or not player and not not false
+		local is_husk = player and player.remote
 
 		if ALIVE[owner_unit] and is_husk then
 			WwiseUtils.trigger_unit_event(world, "career_ability_priest_buildup_husk_stop", owner_unit, 0)
@@ -1181,7 +1181,7 @@ settings.buff_function_templates = {
 
 		for i = 1, num_results do
 			local hit_unit = broadphase_results[i]
-			local push_t = not not pushed_units[hit_unit]
+			local push_t = pushed_units[hit_unit]
 
 			if push_t < t then
 				pushed_units[hit_unit] = t + push_cooldown

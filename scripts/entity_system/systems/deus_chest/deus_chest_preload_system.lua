@@ -215,14 +215,14 @@ DeusChestPreloadSystem.update = function (self, context, t)
 		return
 	end
 
-	self._timer = not not self._timer
+	self._timer = self._timer
 
 	if t <= self._timer then
 		return
 	end
 
 	local local_player = Managers.player:local_player()
-	local local_player_unit = not not local_player and not not local_player.player_unit
+	local local_player_unit = local_player and local_player.player_unit
 
 	if not ALIVE[local_player_unit] then
 		return

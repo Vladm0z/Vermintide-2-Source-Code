@@ -2,7 +2,7 @@
 
 require("scripts/managers/game_mode/mechanisms/adventure_mechanism")
 
-local mechanism_manager_testify = not not script_data.testify
+local mechanism_manager_testify = script_data.testify
 
 MechanismSettings = {
 	adventure = {
@@ -85,12 +85,12 @@ MechanismSettings = {
 				if level_settings.game_mode == "adventure" then
 					if optional_statistics_db then
 						local value = optional_statistics_db:get_persistent_stat(optional_stats_id, "completed_levels", level_key)
-						local level_completed = not not value and value ~= 0
+						local level_completed = value and value ~= 0
 
 						if not level_completed then
 							return false
 						end
-					elseif not not tonumber(backend_stats["completed_levels_" .. level_key]) < 1 then
+					elseif tonumber(backend_stats["completed_levels_" .. level_key]) < 1 then
 						return false
 					end
 				end
@@ -104,12 +104,12 @@ MechanismSettings = {
 				if level_settings.game_mode == "adventure" then
 					if optional_statistics_db then
 						local value = optional_statistics_db:get_persistent_stat(optional_stats_id, "completed_levels", level_key)
-						local level_completed = not not value and value ~= 0
+						local level_completed = value and value ~= 0
 
 						if not level_completed then
 							return false
 						end
-					elseif not not tonumber(backend_stats["completed_levels_" .. level_key]) < 1 then
+					elseif tonumber(backend_stats["completed_levels_" .. level_key]) < 1 then
 						return false
 					end
 				end
@@ -208,7 +208,7 @@ end
 
 GameMechanismManager.generate_level_seed = function (self)
 	-- function 6
-	local seed = not not self._game_mechanism.generate_level_seed
+	local seed = self._game_mechanism.generate_level_seed
 
 	if seed then
 		self._level_seed = seed
@@ -287,7 +287,7 @@ end
 
 GameMechanismManager.network_handler = function (self)
 	-- function 13
-	return not not self._network_server
+	return self._network_server
 end
 
 GameMechanismManager.set_level_seed = function (self, seed)
@@ -350,12 +350,12 @@ end
 
 GameMechanismManager.get_level_end_view = function (self)
 	-- function 20
-	return not not self._game_mechanism
+	return self._game_mechanism
 end
 
 GameMechanismManager.get_level_end_view_packages = function (self)
 	-- function 21
-	return not not self._game_mechanism
+	return self._game_mechanism
 end
 
 GameMechanismManager.handle_ingame_enter = function (self, game_mode)
@@ -522,7 +522,7 @@ GameMechanismManager._init_mechanism = function (self)
 	fassert(MechanismSettings[mechanism_key], "[GameMechanismManager] Tried to set unknown mechanism %q", tostring(mechanism_key))
 
 	local settings = MechanismSettings[mechanism_key]
-	local switching_mechanism = not not self._mechanism_key
+	local switching_mechanism = self._mechanism_key
 
 	self._mechanism_key = mechanism_key
 
@@ -654,7 +654,7 @@ GameMechanismManager.create_host_migration_info = function (self, gm_event_end_c
 	local is_private = self._network_client.lobby_client:lobby_data("is_private")
 	local matchmaking_type
 
-	matchmaking_type = IS_PS4 and (not not "n/a" or not not NetworkLookup.matchmaking_types["n/a"]) or not IS_PS4 and not not NetworkLookup.matchmaking_types["n/a"]
+	matchmaking_type = IS_PS4 and ("n/a" or NetworkLookup.matchmaking_types["n/a"]) or not IS_PS4 and NetworkLookup.matchmaking_types["n/a"]
 	host_migration_info.lobby_data = {
 		matchmaking_type = matchmaking_type,
 		is_private = is_private,
@@ -738,7 +738,7 @@ GameMechanismManager.mechanism_setting_for_title = function (self, setting_name)
 	fassert(self._mechanism_key, "No mechanism set yet.")
 
 	local data = self._title_settings[self._mechanism_key]
-	local setting = not not data and not not data[setting_name]
+	local setting = data and data[setting_name]
 
 	if setting then
 		return setting
@@ -847,7 +847,7 @@ GameMechanismManager.get_players_session_score = function (self, statistics_db, 
 			scoreboard = self._game_mechanism:get_players_session_score(statistics_db, profile_synchronizer, saved_scoreboard_stats)
 		end
 
-		scoreboard = not not scoreboard or not not ScoreboardHelper.get_grouped_topic_statistics(statistics_db, profile_synchronizer, saved_scoreboard_stats)
+		scoreboard = scoreboard or ScoreboardHelper.get_grouped_topic_statistics(statistics_db, profile_synchronizer, saved_scoreboard_stats)
 	end
 
 	return scoreboard
@@ -889,21 +889,21 @@ end
 
 GameMechanismManager.get_starting_level = function (self)
 	-- function 70
-	local level_key = self._game_mechanism.get_starting_level and not not self._game_mechanism:get_starting_level() or not self._game_mechanism.get_starting_level and not not LevelSettings.default_start_level
+	local level_key = self._game_mechanism.get_starting_level and self._game_mechanism:get_starting_level() or not self._game_mechanism.get_starting_level and LevelSettings.default_start_level
 
 	return level_key
 end
 
 GameMechanismManager.default_level_key = function (self)
 	-- function 71
-	local boot_level_name = not not Boot.loading_context
+	local boot_level_name = Boot.loading_context
 
 	if boot_level_name then
 		return boot_level_name
 	end
 
-	local attract_mode_level = not not check_bool_string(Development.parameter("attract_mode"))
-	local level_name = not not check_bool_string(Development.parameter("auto_host_level"))
+	local attract_mode_level = check_bool_string(Development.parameter("attract_mode"))
+	local level_name = check_bool_string(Development.parameter("auto_host_level"))
 
 	return level_name
 end
@@ -1033,7 +1033,7 @@ GameMechanismManager.is_venture_over = function (self)
 
 	local game_mode_manager = Managers.state.game_mode
 
-	return not not game_mode_manager and not not game_mode_manager:is_game_mode_ended()
+	return game_mode_manager and game_mode_manager:is_game_mode_ended()
 end
 
 GameMechanismManager.rpc_set_current_mechanism_state = function (self, channel_id, state_id)
@@ -1151,10 +1151,10 @@ GameMechanismManager.rpc_sync_players_session_score = function (self, channel_id
 
 	if self._game_mechanism.get_players_session_score then
 		unsynced_players_session_score, mechanism_stats_by_player = self._game_mechanism:get_players_session_score(statistics_db, self._profile_synchronizer)
-		mechanism_stats_by_player = not not mechanism_stats_by_player or not not ScoreboardHelper.num_stats_per_player
+		mechanism_stats_by_player = mechanism_stats_by_player or ScoreboardHelper.num_stats_per_player
 	end
 
-	unsynced_players_session_score = not not unsynced_players_session_score or not not ScoreboardHelper.get_grouped_topic_statistics(statistics_db, self._profile_synchronizer)
+	unsynced_players_session_score = unsynced_players_session_score or ScoreboardHelper.get_grouped_topic_statistics(statistics_db, self._profile_synchronizer)
 
 	if mechanism_stats_by_player ~= num_stats_per_player then
 		Crashify.print_exception("GameMechanismManager", "rpc_sync_players_session_score received with mismatching stats_per_player count, probably the host was modded. Ignoring the host score and using client's.")
@@ -1205,7 +1205,7 @@ end
 
 GameMechanismManager.send_rpc_clients = function (self, rpc_name, ...)
 	-- function 94
-	local peers = not not self._network_server
+	local peers = self._network_server
 
 	if not peers then
 		return
@@ -1229,7 +1229,7 @@ end
 
 GameMechanismManager.get_custom_lobby_sort = function (self)
 	-- function 96
-	return not not self._game_mechanism.get_custom_lobby_sort
+	return self._game_mechanism.get_custom_lobby_sort
 end
 
 GameMechanismManager.get_state = function (self)
@@ -1333,7 +1333,7 @@ GameMechanismManager.get_social_wheel_class = function (self)
 	-- function 107
 	local social_wheel_class = MechanismSettings[self._mechanism_key].social_wheel
 
-	return social_wheel_class and (not not social_wheel_class or not not "SocialWheelUI") or not social_wheel_class and not not "SocialWheelUI"
+	return social_wheel_class and (social_wheel_class or "SocialWheelUI") or not social_wheel_class and "SocialWheelUI"
 end
 
 GameMechanismManager.load_end_screen_resources = function (self)
@@ -1412,7 +1412,7 @@ local EMPTY_TABLE = {}
 
 GameMechanismManager.get_challenge_progression_status = function (self, optional_category)
 	-- function 118
-	return Managers.state.achievement and not not Managers.state.achievement:get_challenge_progression(optional_category) or not Managers.state.achievement and not not EMPTY_TABLE
+	return Managers.state.achievement and Managers.state.achievement:get_challenge_progression(optional_category) or not Managers.state.achievement and EMPTY_TABLE
 end
 
 GameMechanismManager.store_challenge_progression_status = function (self, force_store, optional_category)

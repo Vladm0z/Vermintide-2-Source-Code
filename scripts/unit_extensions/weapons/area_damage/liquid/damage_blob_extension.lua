@@ -413,7 +413,7 @@ DamageBlobExtension.insert_fx = function (self, position, rot, t)
 	local fx_list = self.fx_list
 	local blob_life_time = t + self.blob_life_time
 	local fx_name_filled = self.fx_name_filled
-	local fx_id_filled = World.create_particles(world, fx_name_filled, position, not not rot or not not Quaternion.identity())
+	local fx_id_filled = World.create_particles(world, fx_name_filled, position, rot or Quaternion.identity())
 
 	fx_list[#fx_list + 1] = {
 		position = Vector3Box(position),
@@ -423,7 +423,7 @@ DamageBlobExtension.insert_fx = function (self, position, rot, t)
 	}
 
 	local fx_name_rim = self.fx_name_rim
-	local fx_id_rim = World.create_particles(world, fx_name_rim, position, not not rot or not not Quaternion.identity())
+	local fx_id_rim = World.create_particles(world, fx_name_rim, position, rot or Quaternion.identity())
 
 	fx_list[#fx_list + 1] = {
 		position = Vector3Box(position),
@@ -456,7 +456,7 @@ DamageBlobExtension.update_blobs_fx_and_sfx = function (self, t, dt)
 	local fx_list = self.fx_list
 
 	if #fx_list >= 1 then
-		local index = not not next(self.fx_list, self.current_fx_index)
+		local index = next(self.fx_list, self.current_fx_index)
 		local fx_entry = fx_list[index]
 
 		if fx_entry then

@@ -335,12 +335,12 @@ local keyboard_keymaps = {
 	}
 }
 
-DebugKeymap.win32 = not not InputUtils.keymaps_key_approved("win32")
-DebugInputFilters.win32 = not not InputUtils.keymaps_key_approved("win32")
-DebugKeymap.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-DebugInputFilters.xb1 = not not InputUtils.keymaps_key_approved("xb1")
-DebugKeymap.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-DebugKeymap.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+DebugKeymap.win32 = InputUtils.keymaps_key_approved("win32")
+DebugInputFilters.win32 = InputUtils.keymaps_key_approved("win32")
+DebugKeymap.xb1 = InputUtils.keymaps_key_approved("xb1")
+DebugInputFilters.xb1 = InputUtils.keymaps_key_approved("xb1")
+DebugKeymap.ps4 = InputUtils.keymaps_key_approved("ps4")
+DebugKeymap.ps_pad = InputUtils.keymaps_key_approved("ps_pad")
 
 local DebugInputFilters_ps4 = {
 	n_switch = {
@@ -446,5 +446,5 @@ local DebugInputFilters_ps4 = {
 	}
 }
 
-DebugInputFilters.ps4 = not not InputUtils.keymaps_key_approved("ps4")
-DebugInputFilters.ps_pad = not not InputUtils.keymaps_key_approved("ps_pad")
+DebugInputFilters.ps4 = InputUtils.keymaps_key_approved("ps4")
+DebugInputFilters.ps_pad = InputUtils.keymaps_key_approved("ps_pad")

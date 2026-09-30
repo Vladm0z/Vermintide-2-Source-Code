@@ -190,7 +190,7 @@ IngameNewsTickerUI.update = function (self, dt, t)
 		end
 
 		if not self.message_refresh_delay then
-			self.message_refresh_delay = news_ticker_text and not not REFRESH_TIMER_MESSAGE or not news_ticker_text and not not REFRESH_TIMER_NO_MESSAGE
+			self.message_refresh_delay = news_ticker_text and REFRESH_TIMER_MESSAGE or not news_ticker_text and REFRESH_TIMER_NO_MESSAGE
 		end
 	end
 
@@ -221,7 +221,7 @@ IngameNewsTickerUI.handle_delay = function (self, dt)
 
 	if delay_time then
 		delay_time = delay_time - dt
-		self.delay = delay_time > 0 and (not not delay_time or not not nil) or not (delay_time > 0) and not not nil
+		self.delay = delay_time > 0 and (delay_time or nil) or not (delay_time > 0) and nil
 
 		return true
 	end
@@ -233,7 +233,7 @@ IngameNewsTickerUI.handle_message_refresh_delay = function (self, dt)
 
 	if delay_time then
 		delay_time = delay_time - dt
-		self.message_refresh_delay = delay_time > 0 and (not not delay_time or not not nil) or not (delay_time > 0) and not not nil
+		self.message_refresh_delay = delay_time > 0 and (delay_time or nil) or not (delay_time > 0) and nil
 
 		return true
 	end

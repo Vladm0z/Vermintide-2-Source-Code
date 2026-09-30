@@ -56,13 +56,13 @@ ActionPushStagger.client_owner_start_action = function (self, new_action, t, cha
 		})
 	end
 
-	local action_hand = not not action_init_data and not not action_init_data.action_hand
-	local damage_profile_name_inner = action_hand and not not new_action["damage_profile_inner_" .. action_hand] or not action_hand and not not new_action.damage_profile_inner
+	local action_hand = action_init_data and action_init_data.action_hand
+	local damage_profile_name_inner = action_hand and new_action["damage_profile_inner_" .. action_hand] or not action_hand and new_action.damage_profile_inner
 
 	self.damage_profile_inner_id = NetworkLookup.damage_profiles[damage_profile_name_inner]
 	self.damage_profile_inner = DamageProfileTemplates[damage_profile_name_inner]
 
-	local damage_profile_name_outer = action_hand and not not new_action["damage_profile_outer_" .. action_hand] or not action_hand and not not new_action.damage_profile_outer
+	local damage_profile_name_outer = action_hand and new_action["damage_profile_outer_" .. action_hand] or not action_hand and new_action.damage_profile_outer
 
 	self.damage_profile_outer_id = NetworkLookup.damage_profiles[damage_profile_name_outer]
 	self.damage_profile_outer = DamageProfileTemplates[damage_profile_name_outer]
@@ -170,8 +170,8 @@ ActionPushStagger.client_owner_post_update = function (self, dt, t, world, can_d
 		local player_direction = self._player_direction:unbox()
 		local player_direction_flat = Vector3.flat(player_direction)
 		local buff_extension = self.owner_buff_extension
-		local push_half_angle = math.rad(buff_extension:apply_buffs_to_value(not not current_action.push_angle, "block_angle") * 0.5)
-		local outer_push_half_angle = math.rad(buff_extension:apply_buffs_to_value(not not current_action.outer_push_angle, "block_angle") * 0.5)
+		local push_half_angle = math.rad(buff_extension:apply_buffs_to_value(current_action.push_angle, "block_angle") * 0.5)
+		local outer_push_half_angle = math.rad(buff_extension:apply_buffs_to_value(current_action.outer_push_angle, "block_angle") * 0.5)
 		local total_hits = 0
 
 		for i = 1, num_hits do
@@ -247,24 +247,24 @@ ActionPushStagger.client_owner_post_update = function (self, dt, t, world, can_d
 				local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
 				local hit_zone_id = NetworkLookup.hit_zones[info.hit_zone_name]
 				local power_level = self.power_level
-				local damage_profile_id_to_use = info.inner_push and not not self.damage_profile_inner_id or not info.inner_push and not not self.damage_profile_outer_id
-				local damage_profile_to_use = info.inner_push and not not self.damage_profile_inner or not info.inner_push and not not self.damage_profile_outer
+				local damage_profile_id_to_use = info.inner_push and self.damage_profile_inner_id or not info.inner_push and self.damage_profile_outer_id
+				local damage_profile_to_use = info.inner_push and self.damage_profile_inner or not info.inner_push and self.damage_profile_outer
 				local target_settings = damage_profile_to_use.default_target
 				local hit_position = Unit.world_position(hit_unit, info.node)
-				local hit_effect = not not current_action.impact_particle_effect
-				local hit_unit_root_pos = not not POSITION_LOOKUP[hit_unit]
-				local attacker_unit_root_pos = not not POSITION_LOOKUP[owner_unit]
+				local hit_effect = current_action.impact_particle_effect
+				local hit_unit_root_pos = POSITION_LOOKUP[hit_unit]
+				local attacker_unit_root_pos = POSITION_LOOKUP[owner_unit]
 				local attack_direction = Vector3.normalize(hit_unit_root_pos - attacker_unit_root_pos)
 
 				if hit_effect then
 					EffectHelper.player_melee_hit_particles(world, hit_effect, hit_position, attack_direction, nil, hit_unit)
 				end
 
-				local sound_event = not not current_action.stagger_impact_sound_event
+				local sound_event = current_action.stagger_impact_sound_event
 
 				if sound_event then
 					local attack_template = DamageUtils.get_attack_template(target_settings.attack_template)
-					local sound_type = attack_template and not not attack_template.sound_type or not attack_template and not not "stun_heavy"
+					local sound_type = attack_template and attack_template.sound_type or not attack_template and "stun_heavy"
 					local husk = self.bot_player
 
 					EffectHelper.play_melee_hit_effects(sound_event, world, hit_position, sound_type, husk, hit_unit)
@@ -287,7 +287,7 @@ ActionPushStagger.client_owner_post_update = function (self, dt, t, world, can_d
 				local damage_source = self.item_name
 				local damage_source_id = NetworkLookup.damage_sources[damage_source]
 				local is_critical_strike = self._is_critical_strike
-				local target_index = not not info.target_index
+				local target_index = info.target_index
 
 				weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id_to_use, "power_level", power_level, "hit_target_index", target_index, "blocking", shield_blocked, "shield_break_procced", false, "boost_curve_multiplier", self.melee_boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", false, "can_stagger", true, "total_hits", total_hits)
 
@@ -342,7 +342,7 @@ ActionPushStagger.finish = function (self, reason)
 
 	if reason ~= "new_interupting_action" then
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true

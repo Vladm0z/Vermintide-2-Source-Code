@@ -164,7 +164,7 @@ local option_element = {
 			pass_type = "rect",
 			content_check_function = function (content)
 				-- function 1
-				return not not content.can_vote
+				return content.can_vote
 			end
 		},
 		{
@@ -172,7 +172,7 @@ local option_element = {
 			pass_type = "rect",
 			content_check_function = function (content)
 				-- function 2
-				return not not content.can_vote
+				return content.can_vote
 			end
 		},
 		{
@@ -181,7 +181,7 @@ local option_element = {
 			text_id = "option_text",
 			content_check_function = function (content)
 				-- function 3
-				return not not content.can_vote
+				return content.can_vote
 			end
 		},
 		{
@@ -190,7 +190,7 @@ local option_element = {
 			text_id = "option_text",
 			content_check_function = function (content)
 				-- function 4
-				return not not content.can_vote
+				return content.can_vote
 			end
 		},
 		{
@@ -217,7 +217,7 @@ local option_element = {
 			text_id = "input_text",
 			content_check_function = function (content)
 				-- function 7
-				return not not content.can_vote
+				return content.can_vote
 			end
 		},
 		{
@@ -226,7 +226,7 @@ local option_element = {
 			text_id = "input_text",
 			content_check_function = function (content)
 				-- function 8
-				return not not content.can_vote
+				return content.can_vote
 			end
 		},
 		{
@@ -235,7 +235,7 @@ local option_element = {
 			texture_id = "input_icon",
 			content_check_function = function (content)
 				-- function 9
-				return not not content.can_vote
+				return content.can_vote
 			end
 		}
 	}
@@ -266,7 +266,7 @@ local widget_definitions = {
 					texture_id = "input_glow",
 					content_check_function = function (content)
 						-- function 10
-						return not content.can_vote and not not not content.has_voted
+						return not content.can_vote and not content.has_voted
 					end
 				},
 				{
@@ -275,7 +275,7 @@ local widget_definitions = {
 					text_id = "input_text",
 					content_check_function = function (content)
 						-- function 11
-						return not content.has_voted and not not not content.can_vote
+						return not content.has_voted and not content.can_vote
 					end
 				},
 				{
@@ -284,7 +284,7 @@ local widget_definitions = {
 					text_id = "input_text",
 					content_check_function = function (content)
 						-- function 12
-						return not content.has_voted and not not not content.can_vote
+						return not content.has_voted and not content.can_vote
 					end
 				},
 				{
@@ -318,7 +318,7 @@ local widget_definitions = {
 					texture_id = "gamepad_input_icon",
 					content_check_function = function (content)
 						-- function 13
-						return not not content.gamepad_input_icon
+						return content.gamepad_input_icon
 					end
 				}
 			}

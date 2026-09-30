@@ -2,7 +2,7 @@
 
 require("scripts/entity_system/systems/behaviour/utility/utility_considerations")
 
-Utility = not not Utility
+Utility = Utility
 
 local Utility = Utility
 
@@ -33,7 +33,7 @@ Utility.get_action_utility = function (breed_action, action_name, blackboard, fr
 
 	for name, consideration in pairs(considerations) do
 		local input = consideration.blackboard_input
-		local blackboard_value = not not blackboard_action_data[input]
+		local blackboard_value = blackboard_action_data[input]
 		local utility = 0
 
 		if consideration.is_condition then
@@ -41,7 +41,7 @@ Utility.get_action_utility = function (breed_action, action_name, blackboard, fr
 
 			utility = blackboard_value and invert
 		else
-			local min_value = not not consideration.min_value
+			local min_value = consideration.min_value
 			local norm_value = math.clamp((blackboard_value - min_value) / (consideration.max_value - min_value), 0, 1)
 
 			utility = get_utility_from_spline(consideration.spline, norm_value)

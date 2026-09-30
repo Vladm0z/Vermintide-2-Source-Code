@@ -48,7 +48,7 @@ local function check_if_in_line_of_sight(physics_world, unit, from, to)
 
 	local collision_filter = LINE_OF_SIGHT_COLLISION_FILTER
 	local hit, hit_position, _, _, hit_actor = PhysicsWorld.raycast(physics_world, from, dir, dist, "closest", "collision_filter", collision_filter)
-	local hit_unit = not not hit and not not Actor.unit(hit_actor)
+	local hit_unit = hit and Actor.unit(hit_actor)
 
 	return not hit or hit_unit == unit
 end

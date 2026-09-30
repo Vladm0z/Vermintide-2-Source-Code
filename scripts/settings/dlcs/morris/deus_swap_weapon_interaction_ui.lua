@@ -66,14 +66,14 @@ end
 DeusSwapWeaponInteractionUI._evaluate_interactable = function (self, player_unit)
 	-- function 5
 	local mechanism = Managers.mechanism:game_mechanism()
-	local deus_run_controller = not not mechanism.get_deus_run_controller
+	local deus_run_controller = mechanism.get_deus_run_controller
 
 	if not deus_run_controller then
 		return
 	end
 
 	local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
-	local wielded_slot_name = not not inventory_extension and not not inventory_extension:get_wielded_slot_name()
+	local wielded_slot_name = inventory_extension and inventory_extension:get_wielded_slot_name()
 	local interactable_ext = ScriptUnit.extension(player_unit, "interactor_system")
 	local interactable_unit = interactable_ext:interactable_unit()
 	local network_manager = Managers.state.network
@@ -88,7 +88,7 @@ DeusSwapWeaponInteractionUI._evaluate_interactable = function (self, player_unit
 		self:_start_animation("on_enter")
 	else
 		local melee_weapon, ranged_weapon = deus_run_controller:get_own_loadout()
-		local weapon_slot_name = wielded_slot_name ~= "slot_melee" and not not "slot_ranged" or not (wielded_slot_name ~= "slot_melee") and not not "slot_melee"
+		local weapon_slot_name = wielded_slot_name ~= "slot_melee" and "slot_ranged" or not (wielded_slot_name ~= "slot_melee") and "slot_melee"
 		local new_weapon = not self._weapon_slot_name or weapon_slot_name ~= self._weapon_slot_name
 
 		self._weapon_slot_name = weapon_slot_name
@@ -104,7 +104,7 @@ end
 
 DeusSwapWeaponInteractionUI._start_animation = function (self, animation_name)
 	-- function 6
-	self._render_settings = not not self._render_settings
+	self._render_settings = self._render_settings
 
 	local params = {
 		render_settings = self._render_settings
@@ -133,7 +133,7 @@ DeusSwapWeaponInteractionUI._populate_widget = function (self, interactable_unit
 	end
 
 	local melee, ranged = deus_run_controller:get_own_loadout()
-	local equipped_item = not not ranged
+	local equipped_item = ranged
 	local tooltip_widget = self._widgets_by_name.weapon_tooltip
 
 	tooltip_widget.content.item = equipped_item
@@ -146,12 +146,12 @@ DeusSwapWeaponInteractionUI._populate_widget = function (self, interactable_unit
 	chest_info_widget.content.rarity_text = RaritySettings[rarity].display_name
 	chest_info_widget.style.rarity.text_color = rarity_color
 	chest_info_widget.content.cost_text = soft_currency_amount .. "/" .. cost
-	chest_info_widget.style.cost_text.text_color = cost <= soft_currency_amount and not not {
+	chest_info_widget.style.cost_text.text_color = cost <= soft_currency_amount and {
 		255,
 		255,
 		255,
 		255
-	} or not (cost <= soft_currency_amount) and not not {
+	} or not (cost <= soft_currency_amount) and {
 		255,
 		255,
 		0,

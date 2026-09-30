@@ -15,7 +15,7 @@ local function setup_altar_chaos_warrior(optional_data, difficulty, breed_name, 
 	}
 	local base_grudgemark_name = "elite_base"
 	local grudge_mark_name = names[math.random(1, #names)]
-	local list = not not optional_data.enhancements
+	local list = optional_data.enhancements
 
 	list[#list + 1] = BreedEnhancements[base_grudgemark_name]
 	list[#list + 1] = BreedEnhancements[grudge_mark_name]

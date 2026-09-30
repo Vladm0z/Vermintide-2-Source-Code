@@ -328,7 +328,7 @@ achievements.blk_hitless_skull = {
 		if event_name == "register_skull_hit" then
 			local hit_unit = event_data[1]
 			local local_player = Managers.player:local_player()
-			local local_player_unit = not not local_player and not not local_player.player_unit
+			local local_player_unit = local_player and local_player.player_unit
 
 			if hit_unit == local_player_unit then
 				template_data.failed = true

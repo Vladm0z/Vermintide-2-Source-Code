@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/deadlock_stack.lua
 
-DeadlockStack = not not DeadlockStack
+DeadlockStack = DeadlockStack
 
 DeadlockStack.pause = function ()
 	-- function 1

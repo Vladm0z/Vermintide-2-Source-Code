@@ -651,15 +651,15 @@ StoreLayoutConfig.make_sort_key = function (item)
 	local data = item.data
 	local key = item.key
 	local item_type = key
-	local prio = not not item.prio
+	local prio = item.prio
 	local price = 0
-	local rarity = not not item.rarity
+	local rarity = item.rarity
 	local part_of_active_event = ""
-	local owned = not not 2
+	local owned = 2
 
 	if data then
 		local live_events_interface = Managers.backend:get_interface("live_events")
-		local live_events = not not live_events_interface and not not live_events_interface:get_active_events()
+		local live_events = live_events_interface and live_events_interface:get_active_events()
 
 		if live_events then
 			local best_event
@@ -671,29 +671,29 @@ StoreLayoutConfig.make_sort_key = function (item)
 					local event = data.events[i]
 
 					if table.contains(live_events, event) then
-						best_event = math.min(not not best_event or not not math.huge, live_events[event])
+						best_event = math.min(best_event or math.huge, live_events[event])
 					end
 				end
 			end
 
-			part_of_active_event = (not not best_event or not not (#live_events + 1)) .. ".event"
+			part_of_active_event = (best_event or #live_events + 1) .. ".event"
 		end
 
-		item_type = not not data.item_type or not not item.item_type
+		item_type = data.item_type or item.item_type
 
 		if item_type == "weapon_skin" then
-			item_type = not not data.matching_item_key or not not "weapon_skin"
+			item_type = data.matching_item_key or "weapon_skin"
 		else
-			item_type = not not key
+			item_type = key
 		end
 
-		prio = not not data.prio or not not prio
-		rarity = not not data.rarity or not not rarity
+		prio = data.prio or prio
+		rarity = data.rarity or rarity
 
 		local current_prices = item.current_prices
 
 		if current_prices then
-			price = not not current_prices.SM or not not 0
+			price = current_prices.SM or 0
 		end
 
 		if not owned and backend_items:has_bundle_contents(data.bundle_contains) then
@@ -707,7 +707,7 @@ StoreLayoutConfig.make_sort_key = function (item)
 		prio = 1
 	end
 
-	local sort_key = string.format("%01x%s%-16.16s%03x%04x%01x", owned, part_of_active_event, item_type, prio, price, not not ORDER_RARITY[rarity])
+	local sort_key = string.format("%01x%s%-16.16s%03x%04x%01x", owned, part_of_active_event, item_type, prio, price, ORDER_RARITY[rarity])
 
 	return sort_key
 end
@@ -722,10 +722,10 @@ StoreLayoutConfig.get_item_filter = function (path, temporary_page_func)
 	local structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
 	local item_filter = StoreLayoutConfig.base_filter
-	local added_filters = item_filter ~= "" and not not 1 or not (item_filter ~= "") and not not 0
+	local added_filters = item_filter ~= "" and 1 or not (item_filter ~= "") and 0
 
 	for index, path_name in ipairs(path) do
-		local page = not not pages[path_name]
+		local page = pages[path_name]
 		local page_item_filter = page.item_filter
 		local page_exclusive_filter = page.exclusive_filter
 

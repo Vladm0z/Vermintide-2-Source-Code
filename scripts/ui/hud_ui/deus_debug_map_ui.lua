@@ -6,7 +6,7 @@ require("scripts/managers/game_mode/mechanisms/deus_populate_graph")
 require("scripts/settings/dlcs/morris/deus_default_graph_settings")
 
 DeusDebugMapUI = class(DeusDebugMapUI)
-DeusDebugDrawMapSettings = not not DeusDebugDrawMapSettings
+DeusDebugDrawMapSettings = DeusDebugDrawMapSettings
 
 local color_map_for_label = {
 	[0] = ColorBox(Colors.get("black")),
@@ -48,7 +48,7 @@ DeusDebugMapUI.update = function (self, dt, t)
 	Gui.rect(self._gui, Vector2(0, 0), Vector2(width, height), Color(255, 255, 255, 255))
 
 	local mechanism = Managers.mechanism:game_mechanism()
-	local deus_run_controller = not not mechanism and not not mechanism:get_deus_run_controller()
+	local deus_run_controller = mechanism and mechanism:get_deus_run_controller()
 
 	if deus_run_controller then
 		self:_draw_final_graph(deus_run_controller:get_graph_data())
@@ -78,35 +78,35 @@ DeusDebugMapUI._draw_base_graph = function (self, graph, dt, t)
 		local pos_y = min_y + layout_height * graph[key].layout_y
 
 		if node.type == "SIGNATURE" then
-			Gui.rect(gui, Vector2(pos_x - 10, pos_y - 10), Vector2(20, 20), color_map_for_label[not not node.label]:unbox())
+			Gui.rect(gui, Vector2(pos_x - 10, pos_y - 10), Vector2(20, 20), color_map_for_label[node.label]:unbox())
 		elseif node.type == "TRAVEL" then
 			local axis_y_p1 = Vector3(pos_x + 10, 0, pos_y - 10)
 			local axis_y_p2 = Vector3(pos_x - 10, 0, pos_y - 10)
 			local axis_y_p3 = Vector3(pos_x, 0, pos_y + 10)
 
-			Gui.triangle(gui, axis_y_p1, axis_y_p2, axis_y_p3, 1, color_map_for_label[not not node.label]:unbox())
+			Gui.triangle(gui, axis_y_p1, axis_y_p2, axis_y_p3, 1, color_map_for_label[node.label]:unbox())
 		else
-			Gui.rect(gui, Vector2(pos_x - 10, pos_y - 10), Vector2(15, 15), color_map_for_label[not not node.label]:unbox())
+			Gui.rect(gui, Vector2(pos_x - 10, pos_y - 10), Vector2(15, 15), color_map_for_label[node.label]:unbox())
 		end
 
-		local min, max = Gui.text_extents(gui, not not node.type, font, font_size)
+		local min, max = Gui.text_extents(gui, node.type, font, font_size)
 		local text_width = max.x - min.x
 
-		Gui.text(gui, not not node.type, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 20, 0), Color(255, 0, 0, 0))
+		Gui.text(gui, node.type, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 20, 0), Color(255, 0, 0, 0))
 
-		local connected_to_text = "connected_to:" .. not not node.connected_to
+		local connected_to_text = "connected_to:" .. node.connected_to
 
 		min, max = Gui.text_extents(gui, connected_to_text, font, font_size)
 		text_width = max.x - min.x
 
 		Gui.text(gui, connected_to_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 40, 0), Color(255, 0, 0, 0))
 
-		local label_text = "label:" .. not not node.label
+		local label_text = "label:" .. node.label
 
 		min, max = Gui.text_extents(gui, label_text, font, font_size)
 		text_width = max.x - min.x
 
-		Gui.text(gui, label_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 50, 0), color_map_for_label[not not node.label]:unbox())
+		Gui.text(gui, label_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 50, 0), color_map_for_label[node.label]:unbox())
 
 		min, max = Gui.text_extents(gui, key, font, font_size)
 		text_width = max.x - min.x
@@ -145,7 +145,7 @@ DeusDebugMapUI._draw_final_graph = function (self, graph, dt, t)
 		Gui.text(gui, level_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 
 		local director_name = node.conflict_settings
-		local conflict_text = not not director_name or not not ""
+		local conflict_text = director_name or ""
 
 		min, max = Gui.text_extents(gui, conflict_text, font, font_size)
 		text_width = max.x - min.x
@@ -156,7 +156,7 @@ DeusDebugMapUI._draw_final_graph = function (self, graph, dt, t)
 		local director = ConflictDirectors[director_name]
 
 		if director and director.description then
-			local conflict_description_text = not not ("breed: " .. Localize(director.description))
+			local conflict_description_text = "breed: " .. Localize(director.description)
 
 			min, max = Gui.text_extents(gui, conflict_description_text, font, font_size)
 			text_width = max.x - min.x

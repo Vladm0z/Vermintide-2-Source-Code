@@ -41,7 +41,7 @@ return {
 			data.update_timer = 0
 
 			local host_player = Managers.player:local_player()
-			local host_unit = not not host_player and not not host_player.player_unit
+			local host_unit = host_player and host_player.player_unit
 
 			if not host_unit then
 				return
@@ -89,7 +89,7 @@ return {
 			local to_remove = {}
 
 			for ai_unit, buff_id in pairs(data.old_ai_units_inside) do
-				if not data.ai_units_inside[ai_unit] and Unit.alive(ai_unit) and data.buff_system:has_server_controlled_buff(ai_unit, buff_id) or not not data.ai_units_inside[ai_unit] and not HEALTH_ALIVE[ai_unit] and Unit.alive(ai_unit) and data.buff_system:has_server_controlled_buff(ai_unit, buff_id) then
+				if not data.ai_units_inside[ai_unit] and Unit.alive(ai_unit) and data.buff_system:has_server_controlled_buff(ai_unit, buff_id) or data.ai_units_inside[ai_unit] and not HEALTH_ALIVE[ai_unit] and Unit.alive(ai_unit) and data.buff_system:has_server_controlled_buff(ai_unit, buff_id) then
 					data.buff_system:remove_server_controlled_buff(ai_unit, buff_id)
 
 					to_remove[#to_remove + 1] = ai_unit

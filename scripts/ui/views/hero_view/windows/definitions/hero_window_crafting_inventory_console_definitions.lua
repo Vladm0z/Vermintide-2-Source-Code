@@ -398,7 +398,7 @@ local function create_search_input_widget(parent)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 2
-						style.color = content.hotspot.disable_button and not not style.disabled_color or not content.hotspot.disable_button and not not style.base_color
+						style.color = content.hotspot.disable_button and style.disabled_color or not content.hotspot.disable_button and style.base_color
 					end
 				},
 				{
@@ -436,7 +436,7 @@ local function create_search_input_widget(parent)
 					text_id = "search_placeholder",
 					content_check_function = function (content)
 						-- function 4
-						return content.search_query == "" and not content.input_active and not not not content.hotspot.disable_button
+						return content.search_query == "" and not content.input_active and not content.hotspot.disable_button
 					end
 				},
 				{
@@ -505,7 +505,7 @@ local function create_search_input_widget(parent)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 10
-						style.color = content.search_filters_hotspot.disable_button and not not style.disabled_color or not content.search_filters_hotspot.disable_button and not not style.base_color
+						style.color = content.search_filters_hotspot.disable_button and style.disabled_color or not content.search_filters_hotspot.disable_button and style.base_color
 					end
 				},
 				{
@@ -514,7 +514,7 @@ local function create_search_input_widget(parent)
 					pass_type = "texture",
 					content_change_function = function (content, style)
 						-- function 11
-						style.color = content.search_filters_hotspot.disable_button and not not style.disabled_color or not content.search_filters_hotspot.disable_button and not not style.base_color
+						style.color = content.search_filters_hotspot.disable_button and style.disabled_color or not content.search_filters_hotspot.disable_button and style.base_color
 					end
 				},
 				{
@@ -533,7 +533,7 @@ local function create_search_input_widget(parent)
 						local filter_selected = parent:filter_selected()
 						local filter_active = parent:filter_active()
 
-						style.parent.search_filters_glow.color[1] = not not 255
+						style.parent.search_filters_glow.color[1] = 255
 					end
 				},
 				{
@@ -547,7 +547,7 @@ local function create_search_input_widget(parent)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 13
-						return content.search_query ~= "" and not not not content.hotspot.disable_button
+						return content.search_query ~= "" and not content.hotspot.disable_button
 					end,
 					content_change_function = function (content, style)
 						-- function 14
@@ -974,7 +974,7 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 							end
 						end
 
-						style.parent.reset_filter_fg.color[1] = hotspot.is_hover and not not 255 or not hotspot.is_hover and not not 0
+						style.parent.reset_filter_fg.color[1] = hotspot.is_hover and 255 or not hotspot.is_hover and 0
 					end
 				},
 				{
@@ -1311,14 +1311,14 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 				local current_column = current_gamepad_index[2]
 				local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
 				local hotspot_name = name .. "_hotspot"
-				local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
+				local gamepad_selected = gamepad_active and hotspot_name == current_gamepad_hotspot
 				local hotspot = content[hotspot_name]
-				local is_hover = not not hotspot.is_hover
+				local is_hover = hotspot.is_hover
 
-				style.text_color[1] = is_hover and not not 255 or not is_hover and not not 128
-				style.text_color[2] = not not 255
-				style.text_color[3] = not not 255
-				style.text_color[4] = not not 255
+				style.text_color[1] = is_hover and 255 or not is_hover and 128
+				style.text_color[2] = 255
+				style.text_color[3] = 255
+				style.text_color[4] = 255
 			end
 		}
 		passes[#passes + 1] = {
@@ -1332,7 +1332,7 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 				-- function 21
 				local hotspot = content[name .. "_hotspot"]
 
-				style.color[1] = content.query.sort[name] and not not 255 or not content.query.sort[name] and not not 128
+				style.color[1] = content.query.sort[name] and 255 or not content.query.sort[name] and 128
 			end
 		}
 		passes[#passes + 1] = {
@@ -1369,7 +1369,7 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 		}
 		content[name .. "_text"] = text
 		content[name .. "_hotspot"] = {}
-		content.gamepad_input_matrix[current_input_row] = not not content.gamepad_input_matrix[current_input_row]
+		content.gamepad_input_matrix[current_input_row] = content.gamepad_input_matrix[current_input_row]
 		content.gamepad_input_matrix[current_input_row][#content.gamepad_input_matrix[current_input_row] + 1] = name .. "_hotspot"
 		style[name .. "_hotspot"] = {
 			vertical_alignment = "top",
@@ -1589,7 +1589,7 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 			end
 		}
 		content[rarity_data.name .. "_hotspot"] = {}
-		content.gamepad_input_matrix[current_input_row] = not not content.gamepad_input_matrix[current_input_row]
+		content.gamepad_input_matrix[current_input_row] = content.gamepad_input_matrix[current_input_row]
 		content.gamepad_input_matrix[current_input_row][#content.gamepad_input_matrix[current_input_row] + 1] = rarity_data.name .. "_hotspot"
 		style[rarity_data.name .. "_hotspot"] = {
 			vertical_alignment = "top",
@@ -1617,10 +1617,10 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 				local current_column = current_gamepad_index[2]
 				local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
 				local hotspot_name = rarity_data.name .. "_hotspot"
-				local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
+				local gamepad_selected = gamepad_active and hotspot_name == current_gamepad_hotspot
 
 				if content[hotspot_name].is_hover or gamepad_selected then
-					style.border_color = content.query.filter[rarity_data.name] and not not style.default_border_color or not content.query.filter[rarity_data.name] and not not style.hovered_border_color
+					style.border_color = content.query.filter[rarity_data.name] and style.default_border_color or not content.query.filter[rarity_data.name] and style.hovered_border_color
 					style.text_color = style.hovered_text_color
 				elseif not content.query.filter[rarity_data.name] then
 					style.border_color = style.selected_border_color
@@ -1714,7 +1714,7 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 				local query = content.parent.query
 				local only_new = not query.only_new
 
-				content.parent.query.only_new = not not only_new and not not true
+				content.parent.query.only_new = only_new and true
 				content.gamepad_pressed = false
 			end
 		end
@@ -1732,9 +1732,9 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 			local current_column = current_gamepad_index[2]
 			local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
 			local hotspot_name = "checkbox_hotspot"
-			local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
+			local gamepad_selected = gamepad_active and hotspot_name == current_gamepad_hotspot
 
-			style.text_color = not not style.selected_color
+			style.text_color = style.selected_color
 		end
 	}
 	passes[#passes + 1] = {
@@ -1762,9 +1762,9 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 			local current_column = current_gamepad_index[2]
 			local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
 			local hotspot_name = "checkbox_hotspot"
-			local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
+			local gamepad_selected = gamepad_active and hotspot_name == current_gamepad_hotspot
 
-			style.text_color = not not style.selected_color
+			style.text_color = style.selected_color
 		end
 	}
 	passes[#passes + 1] = {
@@ -1780,7 +1780,7 @@ local function create_search_filters_widget(scenegraph_id, ui_renderer, search_d
 	content.checkbox_hotspot = {}
 	content.checkbox_text = Localize("only_new_filter")
 	current_input_row = current_input_row + 1
-	content.gamepad_input_matrix[current_input_row] = not not content.gamepad_input_matrix[current_input_row]
+	content.gamepad_input_matrix[current_input_row] = content.gamepad_input_matrix[current_input_row]
 	content.gamepad_input_matrix[current_input_row][#content.gamepad_input_matrix[current_input_row] + 1] = "checkbox_hotspot"
 
 	local width = UIRenderer.text_size(ui_renderer, content.checkbox_text, font_material, font_size, size[1])

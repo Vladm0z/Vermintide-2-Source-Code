@@ -341,7 +341,7 @@ HeroWindowWeaveForgePanel._update_animations = function (self, dt)
 	-- function 17
 	local params = self._params
 	local is_upgrading = params.upgrading
-	local upgrading_anim_progress = not not self._upgrading_anim_progress
+	local upgrading_anim_progress = self._upgrading_anim_progress
 	local upgrading_speed = 3
 
 	if is_upgrading then
@@ -395,7 +395,7 @@ HeroWindowWeaveForgePanel._draw = function (self, dt)
 	local alpha_multiplier = render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._bottom_hdr_widgets) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(hdr_renderer, widget)
 	end
@@ -406,7 +406,7 @@ HeroWindowWeaveForgePanel._draw = function (self, dt)
 	local alpha_multiplier = render_settings.alpha_multiplier
 
 	for _, widget in ipairs(self._bottom_widgets) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_renderer, widget)
 	end
@@ -415,7 +415,7 @@ HeroWindowWeaveForgePanel._draw = function (self, dt)
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for _, widget in ipairs(self._top_widgets) do
-		render_settings.alpha_multiplier = not not widget.alpha_multiplier
+		render_settings.alpha_multiplier = widget.alpha_multiplier
 
 		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end

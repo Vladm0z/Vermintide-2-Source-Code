@@ -56,7 +56,7 @@ local RELOAD = true
 
 ImguiDeusMapGen.init = function (self)
 	-- function 3
-	self._seed = not not tonumber(script_data.debug_draw_base_map_seed)
+	self._seed = tonumber(script_data.debug_draw_base_map_seed)
 	self._journey_index = 1
 	self._dominant_god_index = 1
 
@@ -91,8 +91,8 @@ ImguiDeusMapGen._reset_configs_for_journey = function (self)
 	-- function 7
 	local journey_name = journey_names[self._journey_index]
 
-	self._original_populate_config = not not DEUS_MAP_POPULATE_SETTINGS[journey_name]
-	self._populate_config = not not self._populate_configs[journey_name]
+	self._original_populate_config = DEUS_MAP_POPULATE_SETTINGS[journey_name]
+	self._populate_config = self._populate_configs[journey_name]
 end
 
 ImguiDeusMapGen.draw = function (self, is_open)
@@ -108,7 +108,7 @@ ImguiDeusMapGen.draw = function (self, is_open)
 
 	self._dominant_god_index = Imgui.combo("Dominant God", self._dominant_god_index, gods)
 
-	local with_belakor = not not self._with_belakor
+	local with_belakor = self._with_belakor
 
 	with_belakor = Imgui.checkbox("With Be'lakor", with_belakor)
 	self._with_belakor = with_belakor
@@ -120,7 +120,7 @@ ImguiDeusMapGen.draw = function (self, is_open)
 
 	Imgui.spacing()
 
-	script_data.deus_populate_graph_debug = Imgui.checkbox("print populate debug info", not not script_data.deus_populate_graph_debug)
+	script_data.deus_populate_graph_debug = Imgui.checkbox("print populate debug info", script_data.deus_populate_graph_debug)
 
 	Imgui.spacing()
 

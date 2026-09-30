@@ -57,7 +57,7 @@ ActionHandgun.client_owner_start_action = function (self, new_action, t, chain_a
 	self.overcharge_type = new_action.overcharge_type
 	self.uses_ability_cooldown = new_action.use_ability_cooldown
 	self.used_ammo = false
-	self.active_reload_time = not not new_action.active_reload_time
+	self.active_reload_time = new_action.active_reload_time
 
 	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
@@ -84,7 +84,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 		local overcharge_type = self.overcharge_type
 
 		if overcharge_type then
-			local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type] * not not self.charge_multiplier
+			local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type] * self.charge_multiplier
 			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
 			if self._is_critical_strike and buff_extension:has_buff_perk("no_overcharge_crit") then
@@ -138,7 +138,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 		end
 
 		local physics_world = World.get_data(world, "physics_world")
-		local auto_hit_chance = not not current_action.aim_assist_auto_hit_chance
+		local auto_hit_chance = current_action.aim_assist_auto_hit_chance
 		local direction
 
 		if auto_hit_chance >= math.random() and Managers.input:is_device_active("gamepad") and ScriptUnit.has_extension(owner_unit, "smart_targeting_system") then
@@ -151,7 +151,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 			end
 		end
 
-		direction = not not direction or not not Quaternion.forward(rotation)
+		direction = direction or Quaternion.forward(rotation)
 
 		local result
 
@@ -190,7 +190,7 @@ ActionHandgun.client_owner_post_update = function (self, dt, t, world, can_damag
 			Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], current_action.alert_sound_range_fire)
 		end
 
-		local hit_position = result and not not result[#result][1] or not result and not not (position + direction * 100)
+		local hit_position = result and result[#result][1] or not result and position + direction * 100
 
 		Unit.set_flow_variable(weapon_unit, "hit_position", hit_position)
 		Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - position) * 0.1)
@@ -231,7 +231,7 @@ ActionHandgun.finish = function (self, reason)
 		status_extension:set_zooming(false)
 
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			ammo_extension:start_reload(true)

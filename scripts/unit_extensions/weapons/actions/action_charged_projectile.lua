@@ -101,7 +101,7 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 				projectile_context.ammo_extension:use_ammo(ammo_usage)
 			end
 
-			trigger_wield = projectile_context.rewield_grenade and (not not "rewield_wielded_weapon" or not not "wield_previous_weapon") or not projectile_context.rewield_grenade and not not "wield_previous_weapon"
+			trigger_wield = projectile_context.rewield_grenade and ("rewield_wielded_weapon" or "wield_previous_weapon") or not projectile_context.rewield_grenade and "wield_previous_weapon"
 		end
 	end
 
@@ -110,7 +110,7 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 	local projectile_info = action_data.projectile_info
 
 	if projectile_info.fire_from_muzzle then
-		local muzzle_name = not not projectile_info.muzzle_name
+		local muzzle_name = projectile_info.muzzle_name
 		local node = Unit.node(weapon_unit, muzzle_name)
 		local muzzle_pos = Unit.world_position(weapon_unit, node)
 		local life_time = 1
@@ -133,8 +133,8 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 	local flatten_target_vector = action_data.flatten_target_vector ~= false
 
 	if flatten_target_vector then
-		angle = not not angle or not not ActionUtils.pitch_from_rotation(rotation)
-		target_vector = not not target_vector or not not Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
+		angle = angle or ActionUtils.pitch_from_rotation(rotation)
+		target_vector = target_vector or Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
 	else
 		angle = 0
 		target_vector = Quaternion.forward(rotation)
@@ -166,7 +166,7 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 	end
 
 	local owner_player = Managers.player:owner(owner_unit)
-	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_bot = owner_player and owner_player.bot_player
 	local throw_up_factor = action_data.throw_up_this_much_in_target_direction
 
 	if throw_up_factor and not is_bot then
@@ -180,7 +180,7 @@ ActionChargedProjectileUtility.fire_charged_projectile = function (projectile_co
 	local sub_action_name = lookup_data.sub_action_name
 	local scaled_charge = math.round(math.max(charge_level, 0) * 100)
 	local scale_projectile = action_data.scale_projectile ~= false
-	local scale = scale_projectile and (not not scaled_charge or not not 1) or not scale_projectile and not not 1
+	local scale = scale_projectile and (scaled_charge or 1) or not scale_projectile and 1
 	local projectile_power_level = projectile_context.power_level
 	local full_charge_boost = buff_extension:has_buff_perk("full_charge_boost")
 
@@ -248,7 +248,7 @@ ActionChargedProjectile.client_owner_start_action = function (self, new_action, 
 	self.current_action = new_action
 	self.state = "waiting_to_shoot"
 
-	local chained_charge_level = chain_action_data and not not chain_action_data.charge_level or not chain_action_data and not not 0
+	local chained_charge_level = chain_action_data and chain_action_data.charge_level or not chain_action_data and 0
 
 	self._projectile_context = ActionChargedProjectileUtility.prepare_charged_projectile(new_action, owner_unit, self._weapon_unit, self.item_name, chained_charge_level, power_level)
 	self.time_to_shoot = t + new_action.fire_time
@@ -400,7 +400,7 @@ ActionChargedProjectile.finish = function (self, reason)
 
 	if reason ~= "new_interupting_action" then
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			ammo_extension:start_reload(true)

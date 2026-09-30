@@ -2,8 +2,8 @@
 
 require("scripts/entity_system/systems/buff/buff_sync_type")
 
-Pickups = not not Pickups
-Pickups.healing = not not Pickups.healing
+Pickups = Pickups
+Pickups.healing = Pickups.healing
 Pickups.healing.first_aid_kit = {
 	only_once = true,
 	individual_pickup = false,
@@ -36,7 +36,7 @@ Pickups.healing.healing_draught = {
 	local_pickup_sound = true,
 	hud_description = "potion_healing_draught_01"
 }
-Pickups.potions = not not Pickups.potions
+Pickups.potions = Pickups.potions
 Pickups.potions.damage_boost_potion = {
 	only_once = true,
 	individual_pickup = false,
@@ -88,7 +88,7 @@ Pickups.potions.cooldown_reduction_potion = {
 	local_pickup_sound = true,
 	hud_description = "potion_cooldown_reduction_01"
 }
-Pickups.level_events = not not Pickups.level_events
+Pickups.level_events = Pickups.level_events
 Pickups.level_events.grain_sack = {
 	only_once = true,
 	individual_pickup = false,
@@ -517,7 +517,7 @@ Pickups.level_events.shadow_gargoyle_head = {
 	wield_on_pickup = true,
 	hud_description = "gargoyle_head"
 }
-Pickups.ammo = not not Pickups.ammo
+Pickups.ammo = Pickups.ammo
 Pickups.ammo.all_ammo = {
 	only_once = false,
 	individual_pickup = false,
@@ -534,7 +534,7 @@ Pickups.ammo.all_ammo = {
 		local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
 		local full_ammo = inventory_extension:has_full_ammo()
 
-		return full_ammo and not not "pickup_ammo_full" or not full_ammo and not not "pickup_ammo"
+		return full_ammo and "pickup_ammo_full" or not full_ammo and "pickup_ammo"
 	end,
 	can_interact_func = function (interactor_unit, interactable_unit, data)
 		-- function 12
@@ -549,7 +549,7 @@ Pickups.ammo.all_ammo = {
 		local infinite_ammo = inventory_extension:has_infinite_ammo()
 
 		if not is_throwing_axe then
-			return not not has_ammo_consuming_weapon and not not not infinite_ammo
+			return has_ammo_consuming_weapon and not infinite_ammo
 		end
 
 		return true
@@ -579,7 +579,7 @@ Pickups.ammo.all_ammo_small = {
 		local is_throwing_axe = inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 		local infinite_ammo = inventory_extension:has_infinite_ammo()
 
-		return not not has_ammo_consuming_weapon and not is_throwing_axe and not not not infinite_ammo
+		return has_ammo_consuming_weapon and not is_throwing_axe and not infinite_ammo
 	end
 }
 Pickups.ammo.ammo_ranger = {
@@ -608,7 +608,7 @@ Pickups.ammo.ammo_ranger = {
 		local is_throwing_axe = inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 		local infinite_ammo = inventory_extension:has_infinite_ammo()
 
-		return not not has_ammo_consuming_weapon and not is_throwing_axe and not not not infinite_ammo
+		return has_ammo_consuming_weapon and not is_throwing_axe and not infinite_ammo
 	end
 }
 Pickups.ammo.ammo_ranger_improved = {
@@ -637,10 +637,10 @@ Pickups.ammo.ammo_ranger_improved = {
 		local is_throwing_axe = inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 		local infinite_ammo = inventory_extension:has_infinite_ammo()
 
-		return not not has_ammo_consuming_weapon and not is_throwing_axe and not not not infinite_ammo
+		return has_ammo_consuming_weapon and not is_throwing_axe and not infinite_ammo
 	end
 }
-Pickups.grenades = not not Pickups.grenades
+Pickups.grenades = Pickups.grenades
 Pickups.grenades.frag_grenade_t1 = {
 	only_once = true,
 	individual_pickup = false,
@@ -675,7 +675,7 @@ Pickups.grenades.fire_grenade_t1 = {
 	local_pickup_sound = true,
 	hud_description = "grenade_fire"
 }
-Pickups.improved_grenades = not not Pickups.improved_grenades
+Pickups.improved_grenades = Pickups.improved_grenades
 Pickups.improved_grenades.frag_grenade_t2 = {
 	only_once = true,
 	individual_pickup = false,
@@ -785,7 +785,7 @@ Pickups.special.bardin_survival_ale = {
 		local is_in_cooldown = buff_extension:has_buff_type("beer_bottle_pickup_cooldown")
 		local is_falling_down = buff_extension:has_buff_perk("falling_down")
 
-		return not is_in_cooldown and not not not is_falling_down
+		return not is_in_cooldown and not is_falling_down
 	end
 }
 Pickups.special.necromancer_ripped_soul = {
@@ -825,7 +825,7 @@ Pickups.special.necromancer_ripped_soul = {
 }
 
 if script_data then
-	script_data.lorebook_enabled = not not script_data.lorebook_enabled
+	script_data.lorebook_enabled = script_data.lorebook_enabled
 end
 
 Pickups.lorebook_pages = {}
@@ -953,7 +953,7 @@ for _, pickup_settings in pairs(LootRatPickups) do
 	end
 end
 
-NearPickupSpawnChance = not not NearPickupSpawnChance
+NearPickupSpawnChance = NearPickupSpawnChance
 AllPickups = {}
 
 for group, pickups in pairs(Pickups) do
@@ -969,5 +969,5 @@ for group, pickups in pairs(Pickups) do
 		AllPickups[pickup_name] = settings
 	end
 
-	NearPickupSpawnChance[group] = not not NearPickupSpawnChance[group]
+	NearPickupSpawnChance[group] = NearPickupSpawnChance[group]
 end

@@ -155,7 +155,7 @@ local window_layouts = {
 		},
 		can_add_function = function (overview)
 			-- function 4
-			return not not overview:is_in_mechanism("adventure")
+			return (overview:is_in_mechanism("adventure"))
 		end
 	},
 	{
@@ -175,7 +175,7 @@ local window_layouts = {
 		},
 		can_add_function = function (overview)
 			-- function 5
-			return not not overview:is_in_mechanism("adventure")
+			return (overview:is_in_mechanism("adventure"))
 		end
 	},
 	{
@@ -259,7 +259,7 @@ local generic_input_actions = {
 			description_text = "input_description_level_preferences",
 			content_check_function = function ()
 				-- function 6
-				return PLATFORM == "xb1" and not not DLCSettings.quick_play_preferences
+				return PLATFORM == "xb1" and DLCSettings.quick_play_preferences
 			end
 		},
 		{
@@ -268,7 +268,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 7
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -300,7 +300,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 8
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -350,7 +350,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 9
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -382,7 +382,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 10
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -403,7 +403,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 11
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -424,7 +424,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 12
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -451,7 +451,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 13
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		},
 		{
@@ -478,7 +478,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 14
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		},
 		{
@@ -499,7 +499,7 @@ local generic_input_actions = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 15
-				return not IS_WINDOWS and not not not Managers.account:offline_mode()
+				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -573,7 +573,7 @@ local generic_input_actions = {
 			{
 				input_action = "confirm",
 				priority = 2,
-				description_text = IS_XB1 and not not "dlc1_4_input_description_storepage" or not IS_XB1 and not not "buy_now"
+				description_text = IS_XB1 and "dlc1_4_input_description_storepage" or not IS_XB1 and "buy_now"
 			},
 			{
 				input_action = "back",
@@ -1004,7 +1004,7 @@ local HUGE = math.huge
 
 table.sort(window_layouts, function (a, b)
 	-- function 17
-	return not not a.panel_sorting < not not b.panel_sorting
+	return a.panel_sorting < b.panel_sorting
 end)
 
 local video_resources = {}

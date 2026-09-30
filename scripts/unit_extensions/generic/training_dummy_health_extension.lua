@@ -83,20 +83,20 @@ TrainingDummyHealthExtension.add_damage = function (self, attacker_unit, damage_
 		local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(attacker_unit)
 		local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
 		local damage_type_id = NetworkLookup.damage_types[damage_type]
-		local damage_source_id = NetworkLookup.damage_sources[not not damage_source_name or not not "n/a"]
-		local hit_ragdoll_actor_id = NetworkLookup.hit_ragdoll_actors[not not hit_ragdoll_actor or not not "n/a"]
-		local hit_react_type_id = NetworkLookup.hit_react_types[not not hit_react_type or not not "light"]
-		local attack_type_id = NetworkLookup.buff_attack_types[not not attack_type or not not "n/a"]
+		local damage_source_id = NetworkLookup.damage_sources[damage_source_name or "n/a"]
+		local hit_ragdoll_actor_id = NetworkLookup.hit_ragdoll_actors[hit_ragdoll_actor or "n/a"]
+		local hit_react_type_id = NetworkLookup.hit_react_types[hit_react_type or "light"]
+		local attack_type_id = NetworkLookup.buff_attack_types[attack_type or "n/a"]
 		local source_attacker_unit_id = NetworkConstants.invalid_game_object_id
 		local network_transmit = self.network_transmit
-		local is_dead = not not self.dead
+		local is_dead = self.dead
 
-		is_critical_strike = not not is_critical_strike or not not false
-		added_dot = not not added_dot or not not false
-		first_hit = not not first_hit or not not false
-		total_hits = not not total_hits or not not 0
-		backstab_multiplier = not not backstab_multiplier or not not 1
-		target_index = not not target_index or not not 1
+		is_critical_strike = is_critical_strike or false
+		added_dot = added_dot or false
+		first_hit = first_hit or false
+		total_hits = total_hits or 0
+		backstab_multiplier = backstab_multiplier or 1
+		target_index = target_index or 1
 
 		network_transmit:send_rpc_clients("rpc_add_damage", unit_id, is_level_unit, attacker_unit_id, attacker_is_level_unit, source_attacker_unit_id, damage_amount, hit_zone_id, damage_type_id, hit_position, damage_direction, damage_source_id, hit_ragdoll_actor_id, hit_react_type_id, is_dead, is_critical_strike, added_dot, first_hit, total_hits, attack_type_id, backstab_multiplier, target_index)
 	end

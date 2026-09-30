@@ -315,7 +315,7 @@ local action_data = {
 		spawn_rot_func = function (unit, blackboard, spawner_unit, index)
 			-- function 3
 			local spawn_rot = Unit.local_rotation(spawner_unit, 0)
-			local radians = blackboard.random_flower_angles and not not blackboard.random_flower_angles[blackboard.wave_counter] or not blackboard.random_flower_angles and not not (angle_between_flower_waves * blackboard.wave_counter)
+			local radians = blackboard.random_flower_angles and blackboard.random_flower_angles[blackboard.wave_counter] or not blackboard.random_flower_angles and angle_between_flower_waves * blackboard.wave_counter
 			local turn_rot = Quaternion(Vector3.up(), radians)
 
 			spawn_rot = Quaternion.multiply(spawn_rot, turn_rot)

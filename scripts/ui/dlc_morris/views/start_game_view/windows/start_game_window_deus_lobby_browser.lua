@@ -31,7 +31,7 @@ StartGameWindowDeusLobbyBrowser.on_enter = function (self, params, offset)
 	self._stats_id = local_player:stats_id()
 	self._friend_names = {}
 
-	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, not not IS_WINDOWS)
+	local lobby_finder = LobbyFinder:new(network_options, MatchmakingSettings.MAX_NUM_LOBBIES, IS_WINDOWS)
 
 	self._lobby_finder = lobby_finder
 

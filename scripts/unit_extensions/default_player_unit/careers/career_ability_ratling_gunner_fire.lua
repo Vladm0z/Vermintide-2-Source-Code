@@ -32,9 +32,9 @@ CareerAbilityRatlingGunnerReload._start = function (self)
 	local first_person_extension = self._first_person_extension
 	local breed = Unit.get_data(self._unit, "breed")
 	local blackboard = BLACKBOARDS[self._unit]
-	local data = not not blackboard.attack_pattern_data
+	local data = blackboard.attack_pattern_data
 
-	if not self._career_extension:can_use_activated_ability(2) or not not data.current_ammo >= 120 then
+	if not self._career_extension:can_use_activated_ability(2) or data.current_ammo >= 120 then
 		return
 	end
 
@@ -55,5 +55,5 @@ CareerAbilityRatlingGunnerReload._ability_available = function (self)
 	local can_use = career_extension:can_use_activated_ability(2)
 	local is_disabled = status_extension:is_disabled()
 
-	return not not can_use and not not not is_disabled
+	return can_use and not is_disabled
 end

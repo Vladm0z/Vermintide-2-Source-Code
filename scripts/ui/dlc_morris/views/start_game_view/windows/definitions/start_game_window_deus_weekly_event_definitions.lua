@@ -358,7 +358,7 @@ local function create_weekly_event_information_box(event_data, offset)
 	widget_definition.content = content
 	widget_definition.style = style
 	widget_definition.scenegraph_id = "right_window"
-	widget_definition.offset = not not offset or not not {
+	widget_definition.offset = offset or {
 		0,
 		0,
 		0
@@ -386,7 +386,7 @@ local function create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 3
-			return not not header_type
+			return header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -395,7 +395,7 @@ local function create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 4
-			return not not header_type
+			return header_type
 		end
 	}
 	passes[#passes + 1] = {
@@ -404,7 +404,7 @@ local function create_header(header, offset_y, header_type)
 		texture_id = "masked_rect",
 		content_check_function = function (content, style)
 			-- function 5
-			return not not header_type
+			return header_type
 		end
 	}
 	content.header = header
@@ -421,7 +421,7 @@ local function create_header(header, offset_y, header_type)
 		font_size = font_size,
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			header_type and not not 25 or not header_type and not not 0,
+			header_type and 25 or not header_type and 0,
 			0,
 			2
 		}
@@ -652,9 +652,9 @@ local function create_reward_widget(reward_data, offset_y)
 		end
 	}
 	content.frame = "button_frame_01"
-	content.difficulty = not not reward_data.difficulty_name
-	content.desc = not not reward_data.desc
-	content.icon = not not reward_data.icon
+	content.difficulty = reward_data.difficulty_name
+	content.desc = reward_data.desc
+	content.icon = reward_data.icon
 	content.num_rewards = reward_data.num_rewards
 	content.num_rewards_text = "x" .. content.num_rewards
 	content.checkmark = "plain_checkmark"

@@ -24,13 +24,13 @@ VersusSocketObjectiveExtension._set_objective_data = function (self, objective_d
 	-- function 3
 	local socket_default_settings = GameModeSettings.versus.objectives.socket
 
-	self._score_per_section = not not objective_data.score_per_socket
-	self._time_per_section = not not objective_data.time_per_socket
-	self._score_for_completion = not not objective_data.score_for_completion
-	self._time_for_completion = not not objective_data.time_for_completion
-	self._on_last_leaf_complete_sound_event = not not objective_data.on_last_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = not not objective_data.on_leaf_complete_sound_event
-	self._on_section_progress_sound_event = not not objective_data.on_section_progress_sound_event
+	self._score_per_section = objective_data.score_per_socket
+	self._time_per_section = objective_data.time_per_socket
+	self._score_for_completion = objective_data.score_for_completion
+	self._time_for_completion = objective_data.time_for_completion
+	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
+	self._on_section_progress_sound_event = objective_data.on_section_progress_sound_event
 end
 
 VersusSocketObjectiveExtension._activate = function (self)

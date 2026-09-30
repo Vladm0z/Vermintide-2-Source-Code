@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_bw_unchained.lua
 
-WeaveLoadoutSettings = not not WeaveLoadoutSettings
+WeaveLoadoutSettings = WeaveLoadoutSettings
 
 local profile_name = "bright_wizard"
 local talent_index = CareerSettings.bw_unchained.talent_tree_index

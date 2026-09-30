@@ -107,11 +107,11 @@ PassiveAbilityNecromancerCharges._on_talents_changed = function (self, unit, tal
 		self._army_definition = table.fill({}, 6, "pet_skeleton")
 	end
 
-	self._extra_army_skeletons = not not self._has_army
+	self._extra_army_skeletons = self._has_army
 
 	local is_in_inn_level = Managers.level_transition_handler:in_hub_level()
 
-	self._pets_forbidden_in_level = not not script_data.pets_forbidden_in_hub
+	self._pets_forbidden_in_level = script_data.pets_forbidden_in_hub
 
 	if self._is_server then
 		self:warm_up_skeletons(self._army_definition)
@@ -494,10 +494,10 @@ end
 PassiveAbilityNecromancerCharges.resummon_pet = function (self, controlled_unit)
 	-- function 25
 	local commander_extension = ScriptUnit.extension(self._owner_unit, "ai_commander_system")
-	local controlled_units = not not commander_extension:get_controlled_units()
+	local controlled_units = commander_extension:get_controlled_units()
 	local controlled_unit_data = controlled_units[controlled_unit]
 	local template = controlled_unit_data.template
-	local template_name = template and not not template.name or not template and not not self._spawned_pets[controlled_unit]
+	local template_name = template and template.name or not template and self._spawned_pets[controlled_unit]
 
 	self:_gather_resummon_data(controlled_unit, template_name)
 
@@ -522,13 +522,13 @@ PassiveAbilityNecromancerCharges._gather_resummon_data = function (self, control
 	end
 
 	local commander_extension = ScriptUnit.extension(self._owner_unit, "ai_commander_system")
-	local controlled_units = not not commander_extension:get_controlled_units()
+	local controlled_units = commander_extension:get_controlled_units()
 	local controlled_unit_data = controlled_units[controlled_unit]
 	local start_t = controlled_unit_data.start_t
 	local health_extension = ScriptUnit.extension(controlled_unit, "health_system")
 	local damage_taken = health_extension:get_damage_taken()
 
-	self._resummon_spawn_data[template_name] = not not self._resummon_spawn_data[template_name]
+	self._resummon_spawn_data[template_name] = self._resummon_spawn_data[template_name]
 	self._resummon_spawn_data[template_name][#self._resummon_spawn_data[template_name] + 1] = {
 		damage_taken = damage_taken,
 		start_t = start_t

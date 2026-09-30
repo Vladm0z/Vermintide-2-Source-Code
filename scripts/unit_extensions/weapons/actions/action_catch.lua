@@ -16,7 +16,7 @@ ActionCatch.client_owner_start_action = function (self, new_action, t, chain_act
 	self._inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
 
 	local buffed_anim_time_scale = ActionUtils.get_action_time_scale(owner_unit, new_action)
-	local catch_time = not not new_action.catch_time * (1 / buffed_anim_time_scale)
+	local catch_time = new_action.catch_time * (1 / buffed_anim_time_scale)
 
 	self._catch_time = t + catch_time
 	self._state = "waiting_to_catch"
@@ -75,14 +75,14 @@ ActionCatch._add_ammo = function (self)
 
 	if slot_data then
 		local left_hand_unit = slot_data.left_unit_1p
-		local left_hand_ammo_extension = not not left_hand_unit and not not ScriptUnit.has_extension(left_hand_unit, "ammo_system")
+		local left_hand_ammo_extension = left_hand_unit and ScriptUnit.has_extension(left_hand_unit, "ammo_system")
 
 		if left_hand_ammo_extension then
 			ammo_extension = left_hand_ammo_extension
 		end
 
 		local right_hand_unit = slot_data.right_unit_1p
-		local right_hand_ammo_extension = not not right_hand_unit and not not ScriptUnit.has_extension(right_hand_unit, "ammo_system")
+		local right_hand_ammo_extension = right_hand_unit and ScriptUnit.has_extension(right_hand_unit, "ammo_system")
 
 		if right_hand_ammo_extension then
 			ammo_extension = right_hand_ammo_extension

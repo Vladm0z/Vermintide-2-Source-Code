@@ -216,8 +216,8 @@ VolumetricFogQuality = {
 	}
 }
 TextureQuality = {
-	default_characters = not not script_data.settings.default_characters_texture_quality,
-	default_environment = not not script_data.settings.default_environment_texture_quality,
+	default_characters = script_data.settings.default_characters_texture_quality,
+	default_environment = script_data.settings.default_environment_texture_quality,
 	characters = {
 		low = {
 			{

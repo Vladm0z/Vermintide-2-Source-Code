@@ -23,7 +23,7 @@ local SPAWN_PARTICLE_NAME = "fx/cursed_chest_spawn_01_portal"
 
 local function spawn_decal_func(event, element, boxed_spawn_pos, breed_name)
 	-- function 1
-	local decal_map = not not event.decal_map
+	local decal_map = event.decal_map
 
 	event.decal_map = decal_map
 
@@ -67,7 +67,7 @@ end
 local function cursed_chest_enemy_despawn_decal_func(event, element, boxed_spawn_pos)
 	-- function 2
 	local decal_map = event.decal_map
-	local unit = not not decal_map and not not decal_map[boxed_spawn_pos]
+	local unit = decal_map and decal_map[boxed_spawn_pos]
 
 	if unit then
 		Managers.state.unit_spawner:mark_for_deletion(unit)

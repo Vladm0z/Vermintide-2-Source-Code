@@ -24,7 +24,7 @@ BTCorruptorGrabAction.enter = function (self, unit, blackboard, t)
 	blackboard.has_dealed_damage = false
 	blackboard.projectile_position = Vector3Box()
 	blackboard.corruptor_target = blackboard.target_unit
-	blackboard.target_unit_status_extension = not not ScriptUnit.has_extension(blackboard.corruptor_target, "status_system")
+	blackboard.target_unit_status_extension = ScriptUnit.has_extension(blackboard.corruptor_target, "status_system")
 
 	blackboard.navigation_extension:set_enabled(false)
 	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
@@ -292,9 +292,9 @@ BTCorruptorGrabAction.set_beam_state = function (self, unit, blackboard, state)
 	-- function 10
 	local network_manager = Managers.state.network
 	local unit_id = network_manager:unit_game_object_id(unit)
-	local target_unit_id = network_manager:unit_game_object_id(not not blackboard.corruptor_target)
+	local target_unit_id = network_manager:unit_game_object_id(blackboard.corruptor_target)
 
 	if unit_id then
-		Managers.state.network.network_transmit:send_rpc_all("rpc_set_corruptor_beam_state", unit_id, state, not not target_unit_id or not not unit_id)
+		Managers.state.network.network_transmit:send_rpc_all("rpc_set_corruptor_beam_state", unit_id, state, target_unit_id or unit_id)
 	end
 end

@@ -383,12 +383,12 @@ local category_settings = {
 
 function create_button(scenegraph_id, size, frame_name, background_texture, text, font_size, optional_color_name, optional_detail_texture, optional_detail_offset, disable_with_gamepad, skip_side_detail)
 	-- function 1
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
-	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
+	local side_detail_texture = optional_detail_texture or "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
 	local side_detail_texture_size = side_detail_texture_settings.size
 	local extra_detail_offset_x, extra_detail_offset_y
@@ -522,7 +522,7 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 				skip_side_detail = skip_side_detail
 			},
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -620,7 +620,7 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -641,7 +641,7 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -661,7 +661,7 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
@@ -731,8 +731,8 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 					255
 				},
 				offset = {
-					extra_detail_offset_x and not not -extra_detail_offset_x or not extra_detail_offset_x and not not -9,
-					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					extra_detail_offset_x and -extra_detail_offset_x or not extra_detail_offset_x and -9,
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (extra_detail_offset_y or 0),
 					9
 				},
 				size = {
@@ -748,8 +748,8 @@ function create_button(scenegraph_id, size, frame_name, background_texture, text
 					255
 				},
 				offset = {
-					size[1] - side_detail_texture_size[1] + (not not extra_detail_offset_x or not not 9),
-					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					size[1] - side_detail_texture_size[1] + (extra_detail_offset_x or 9),
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (extra_detail_offset_y or 0),
 					9
 				},
 				size = {
@@ -791,7 +791,7 @@ local function create_illusion_button()
 						-- function 9
 						local hotspot = content.button_hotspot
 
-						return hotspot.is_hover and not not not content.equipped or not hotspot.is_hover and not not hotspot.is_selected
+						return hotspot.is_hover and not content.equipped or not hotspot.is_hover and hotspot.is_selected
 					end
 				},
 				{

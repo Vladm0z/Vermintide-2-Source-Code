@@ -269,7 +269,7 @@ IngameView.update = function (self, dt)
 
 			if not ingame_ui:pending_transition() then
 				local mouse_input_approved = widget.content.button_hotspot.on_release
-				local gamepad_input_approved = self.controller_cooldown < 0 and self.controller_selection_index == index and not not input_service:get("confirm", true)
+				local gamepad_input_approved = self.controller_cooldown < 0 and self.controller_selection_index == index and input_service:get("confirm", true)
 
 				if mouse_input_approved or gamepad_input_approved then
 					widget.content.button_hotspot.on_release = nil
@@ -370,7 +370,7 @@ IngameView.update_controller_input = function (self, input_service, dt)
 	if self.controller_cooldown > 0 then
 		self.controller_cooldown = self.controller_cooldown - dt
 
-		local speed_multiplier = not not self.speed_multiplier
+		local speed_multiplier = self.speed_multiplier
 		local decrease = GamepadSettings.menu_speed_multiplier_frame_decrease
 		local min_multiplier = GamepadSettings.menu_min_speed_multiplier
 
@@ -378,12 +378,12 @@ IngameView.update_controller_input = function (self, input_service, dt)
 
 		return
 	else
-		local speed_multiplier = not not self.speed_multiplier
+		local speed_multiplier = self.speed_multiplier
 
 		repeat
 			local move_up = input_service:get("move_up")
 			local move_up_hold = input_service:get("move_up_hold")
-			local controller_selection_index = not not self.controller_selection_index
+			local controller_selection_index = self.controller_selection_index
 
 			if move_up or move_up_hold then
 				local new_index = math.max(controller_selection_index - 1, 1)

@@ -24,7 +24,7 @@ local scenegraph_definition = {
 			0,
 			UILayer.hud
 		},
-		scale = IS_WINDOWS and not not "fit" or not IS_WINDOWS and not not "hud_fit"
+		scale = IS_WINDOWS and "fit" or not IS_WINDOWS and "hud_fit"
 	},
 	pivot = {
 		vertical_alignment = "top",
@@ -1404,7 +1404,7 @@ local animation_definitions = {
 				local anim_progress_inverted = 1 - math.easeOutCubic(progress)
 				local style = widget.style
 				local content = widget.content
-				local text_height = not not content.text_height
+				local text_height = content.text_height
 				local anim_distance = (90 - text_height) / 2
 
 				ui_scenegraph.top_center.local_position[2] = scenegraph_definition.top_center.position[2] + 45 - anim_distance * anim_progress

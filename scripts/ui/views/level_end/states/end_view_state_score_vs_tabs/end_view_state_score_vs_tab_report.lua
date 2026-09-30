@@ -253,7 +253,7 @@ EndViewStateScoreVSTabReport._populate_hero_progression = function (self)
 	local level_text = tostring(self._current_level)
 	local scale = 1
 	local retained_mode = false
-	local portrait_texture = career_index and not not UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or not career_index and not not "unit_frame_portrait_default"
+	local portrait_texture = career_index and UIUtils.get_portrait_image_by_profile_index(profile_index, career_index) or not career_index and "unit_frame_portrait_default"
 	local widget_definition = UIWidgets.create_portrait_frame(scenegraph_id, frame_settings_name, level_text, scale, retained_mode, portrait_texture)
 	local widget = UIWidget.init(widget_definition)
 
@@ -309,7 +309,7 @@ EndViewStateScoreVSTabReport._animate_experience_bar = function (self, dt, displ
 			extra_levels = extra_levels + self._progress_data.start_extra_level
 		end
 
-		has_reached_level = not not has_reached_level or extra_levels ~= self._extra_levels
+		has_reached_level = has_reached_level or extra_levels ~= self._extra_levels
 	end
 
 	if has_reached_level then
@@ -361,7 +361,7 @@ EndViewStateScoreVSTabReport._gather_challenge_progression = function (self)
 				start_progress = start_progress,
 				end_progress = end_progress
 			}
-			num_completed = num_completed + (end_progress >= 1 and not not 1 or not (end_progress >= 1) and not not 0)
+			num_completed = num_completed + (end_progress >= 1 and 1 or not (end_progress >= 1) and 0)
 		end
 	end
 
@@ -516,7 +516,7 @@ EndViewStateScoreVSTabReport._handle_rewards = function (self, rewards)
 				offset = table.clone(offset)
 			}
 
-			tbl.sound = not not "Play_vs_hud_progression_hero_chest_appear"
+			tbl.sound = "Play_vs_hud_progression_hero_chest_appear"
 
 			local data = tbl
 
@@ -575,7 +575,7 @@ EndViewStateScoreVSTabReport._create_summary_entries = function (self)
 	local summary_index = 1
 
 	for index, mission_reward in ipairs(mission_rewards) do
-		local experience = not not mission_reward.experience
+		local experience = mission_reward.experience
 
 		if experience and experience > 0 then
 			local name = "summary_entry_" .. summary_index
@@ -594,8 +594,8 @@ EndViewStateScoreVSTabReport._create_summary_entries = function (self)
 			local value = mission_reward.value
 			local bonus = mission_reward.bonus
 			local icon = mission_reward.icon
-			local value_text = experience and not not tostring(experience) or not experience and (value and not not tostring(value) or not value and not not "")
-			local localized_text = title_text .. (value and not not (" (" .. tostring(value) .. ")") or not value and not not "")
+			local value_text = experience and tostring(experience) or not experience and (value and tostring(value) or not value and "")
+			local localized_text = title_text .. (value and " (" .. tostring(value) .. ")" or not value and "")
 			local entry = {
 				name = name,
 				title_text = localized_text,
@@ -833,7 +833,7 @@ EndViewStateScoreVSTabReport._start_level_up_reward_presentation = function (sel
 			item = backend_items:get_item_from_id(backend_id)
 		else
 			item = {
-				data = BackendUtils.get_fake_currency_item(not not level_up_reward.currency, level_up_reward.awarded)
+				data = BackendUtils.get_fake_currency_item(level_up_reward.currency, level_up_reward.awarded)
 			}
 		end
 
@@ -1006,7 +1006,7 @@ EndViewStateScoreVSTabReport._draw = function (self, input_service, dt, t)
 
 	local alpha_multiplier = render_settings.alpha_multiplier
 
-	render_settings.alpha_multiplier = not not render_settings.hero_progress_alpha_multiplier
+	render_settings.alpha_multiplier = render_settings.hero_progress_alpha_multiplier
 
 	for _, widget in ipairs(self._hero_progress_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)
@@ -1016,7 +1016,7 @@ EndViewStateScoreVSTabReport._draw = function (self, input_service, dt, t)
 
 	local alpha_multiplier = render_settings.alpha_multiplier
 
-	render_settings.alpha_multiplier = not not render_settings.challenge_alpha_multiplier
+	render_settings.alpha_multiplier = render_settings.challenge_alpha_multiplier
 
 	for _, widget in ipairs(self._challenge_widgets) do
 		UIRenderer.draw_widget(ui_renderer, widget)

@@ -415,7 +415,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 2
-					style.color = content.info_hotspot.is_hover and not not style.selected_color or not content.info_hotspot.is_hover and not not style.base_color
+					style.color = content.info_hotspot.is_hover and style.selected_color or not content.info_hotspot.is_hover and style.base_color
 				end
 			},
 			{
@@ -436,7 +436,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 5
-					style.text_color = content.info_hotspot.is_hover and not not style.selected_color or not content.info_hotspot.is_hover and not not style.base_color
+					style.text_color = content.info_hotspot.is_hover and style.selected_color or not content.info_hotspot.is_hover and style.base_color
 				end
 			},
 			{
@@ -453,7 +453,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 7
-					style.color = content.enlarge_hotspot.is_hover and not not style.selected_color or not content.enlarge_hotspot.is_hover and not not style.base_color
+					style.color = content.enlarge_hotspot.is_hover and style.selected_color or not content.enlarge_hotspot.is_hover and style.base_color
 				end
 			},
 			{
@@ -478,7 +478,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 10
-					style.color = content.filter_hotspot.is_hover and not not style.selected_color or not content.filter_hotspot.is_hover and not not style.base_color
+					style.color = content.filter_hotspot.is_hover and style.selected_color or not content.filter_hotspot.is_hover and style.base_color
 				end
 			},
 			{
@@ -503,7 +503,7 @@ local chat_input_widget = {
 				end,
 				content_change_function = function (content, style)
 					-- function 13
-					style.color = content.target_hotspot.is_hover and not not style.selected_color or not content.target_hotspot.is_hover and not not style.base_color
+					style.color = content.target_hotspot.is_hover and style.selected_color or not content.target_hotspot.is_hover and style.base_color
 				end
 			},
 			{
@@ -1218,18 +1218,18 @@ function create_additional_chat_tooltip(scenegraph_id, size, content_passes, too
 					style_id = "tooltip",
 					additional_option_id = "tooltip",
 					pass_type = "additional_option_tooltip",
-					content_passes = not not content_passes or not not {
+					content_passes = content_passes or {
 						"additional_option_info"
 					},
 					content_check_function = function (content)
 						-- function 25
-						return not not content.tooltip
+						return content.tooltip
 					end
 				}
 			}
 		},
 		content = {
-			tooltip = not not tooltip_data or not not nil,
+			tooltip = tooltip_data or nil,
 			button_hotspot = {
 				allow_multi_hover = true
 			}
@@ -1237,10 +1237,10 @@ function create_additional_chat_tooltip(scenegraph_id, size, content_passes, too
 		style = {
 			tooltip = {
 				grow_downwards = grow_downwards,
-				max_width = not not max_width or not not 300,
-				horizontal_alignment = not not horizontal_alignment or not not "center",
-				vertical_alignment = not not vertical_alignment or not not "bottom",
-				offset = not not offset or not not {
+				max_width = max_width or 300,
+				horizontal_alignment = horizontal_alignment or "center",
+				vertical_alignment = vertical_alignment or "bottom",
+				offset = offset or {
 					0,
 					0,
 					0

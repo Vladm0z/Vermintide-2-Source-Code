@@ -48,7 +48,7 @@ PlayerCharacterStateClimbingLadder.on_enter = function (self, unit, input, dt, c
 	self.ladder_unit = ladder_unit
 	self.movement_speed = 1
 	self.animation_state = "no_animation"
-	self.climb_sfx_event = not not Unit.get_data(ladder_unit, "sfx_footstep_event")
+	self.climb_sfx_event = Unit.get_data(ladder_unit, "sfx_footstep_event")
 
 	local jump_node = Unit.node(ladder_unit, "c_platform")
 

@@ -109,7 +109,7 @@ PlayerUnitVisualEffectsExtension._set_weapons_energy_drainable = function (self)
 	local inventory_extension = self.inventory_extension
 	local wielded_slot_data = inventory_extension:get_wielded_slot_data()
 	local unit = self.unit
-	local energy_extension = not not unit and not not ScriptUnit.has_extension(unit, "energy_system")
+	local energy_extension = unit and ScriptUnit.has_extension(unit, "energy_system")
 
 	if wielded_slot_data and energy_extension then
 		local is_energy_drainable = energy_extension:is_drainable()

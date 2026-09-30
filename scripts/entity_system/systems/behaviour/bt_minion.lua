@@ -2,7 +2,7 @@
 
 local USE_PRECOMPILED_ROOT_TABLES = true
 
-BreedBehaviors = not not BreedBehaviors
+BreedBehaviors = BreedBehaviors
 
 dofile("scripts/entity_system/systems/behaviour/trees/skaven/skaven_gutter_runner_behavior")
 dofile("scripts/entity_system/systems/behaviour/trees/skaven/skaven_horde_rat_behavior")

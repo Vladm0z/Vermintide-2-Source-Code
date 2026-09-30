@@ -59,7 +59,7 @@ local function create_quest_entry(scenegraph_id, size)
 				font_size = 22,
 				horizontal_alignment = "left",
 				word_wrap = true,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					31,
@@ -73,7 +73,7 @@ local function create_quest_entry(scenegraph_id, size)
 				font_size = 22,
 				horizontal_alignment = "left",
 				word_wrap = true,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 0),
 				offset = {
 					33,
@@ -171,7 +171,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "close_icon",
 			content_check_function = function (content)
 				-- function 5
-				return not not content.can_close
+				return content.can_close
 			end
 		},
 		{
@@ -180,7 +180,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "close_icon_hover",
 			content_check_function = function (content)
 				-- function 6
-				return not not content.can_close
+				return content.can_close
 			end
 		},
 		{
@@ -225,7 +225,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "arrow",
 			content_check_function = function (content)
 				-- function 11
-				return not not content.expandable
+				return content.expandable
 			end
 		},
 		{
@@ -234,7 +234,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "arrow_hover",
 			content_check_function = function (content)
 				-- function 12
-				return not not content.expandable
+				return content.expandable
 			end
 		},
 		{
@@ -243,7 +243,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "progress_frame",
 			content_check_function = function (content)
 				-- function 13
-				return not not content.draw_bar
+				return content.draw_bar
 			end
 		},
 		{
@@ -288,7 +288,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "progress_button_text",
 			content_check_function = function (content)
 				-- function 18
-				return not not content.completed
+				return content.completed
 			end
 		},
 		{
@@ -297,7 +297,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "progress_button_text",
 			content_check_function = function (content)
 				-- function 19
-				return not not content.completed
+				return content.completed
 			end
 		},
 		{
@@ -306,7 +306,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "progress_button_text",
 			content_check_function = function (content)
 				-- function 20
-				return not not content.completed
+				return content.completed
 			end
 		},
 		{
@@ -317,7 +317,7 @@ local function create_quest_entry(scenegraph_id, size)
 				-- function 21
 				local parent = content.parent
 
-				return not not parent.completed
+				return parent.completed
 			end
 		},
 		{
@@ -326,7 +326,7 @@ local function create_quest_entry(scenegraph_id, size)
 			texture_id = "background_fade",
 			content_check_function = function (content)
 				-- function 22
-				return not not content.completed
+				return content.completed
 			end
 		},
 		{
@@ -337,7 +337,7 @@ local function create_quest_entry(scenegraph_id, size)
 				-- function 23
 				local parent = content.parent
 
-				return not not parent.completed
+				return parent.completed
 			end
 		},
 		{
@@ -346,7 +346,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 24
-				return not not content.draw_bar
+				return content.draw_bar
 			end
 		},
 		{
@@ -355,7 +355,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 25
-				return not not content.draw_bar
+				return content.draw_bar
 			end
 		},
 		{
@@ -364,7 +364,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture",
 			content_check_function = function (content)
 				-- function 26
-				return not not content.completed
+				return content.completed
 			end
 		},
 		{
@@ -373,7 +373,7 @@ local function create_quest_entry(scenegraph_id, size)
 			pass_type = "texture_frame",
 			content_check_function = function (content)
 				-- function 27
-				return not not content.completed
+				return content.completed
 			end,
 			content_change_function = function (content, style)
 				-- function 28
@@ -390,7 +390,7 @@ local function create_quest_entry(scenegraph_id, size)
 				-- function 29
 				local parent_content = content.parent
 
-				return not not parent_content.draw_bar
+				return parent_content.draw_bar
 			end
 		},
 		{
@@ -402,7 +402,7 @@ local function create_quest_entry(scenegraph_id, size)
 				-- function 30
 				local parent_content = content.parent
 
-				return not not parent_content.draw_bar
+				return parent_content.draw_bar
 			end
 		},
 		{
@@ -448,7 +448,7 @@ local function create_quest_entry(scenegraph_id, size)
 				-- function 31
 				local reward_button_hotspot = content.reward_button_hotspot
 
-				return not not reward_button_hotspot.is_hover
+				return reward_button_hotspot.is_hover
 			end
 		},
 		{
@@ -459,7 +459,7 @@ local function create_quest_entry(scenegraph_id, size)
 				-- function 32
 				local reward_button_hotspot = content.reward_button_hotspot
 
-				return not not reward_button_hotspot.is_hover
+				return reward_button_hotspot.is_hover
 			end,
 			content_change_function = function (content)
 				-- function 33
@@ -486,7 +486,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "claimed_text",
 			content_check_function = function (content)
 				-- function 35
-				return not not content.completed
+				return content.completed
 			end
 		},
 		{
@@ -495,7 +495,7 @@ local function create_quest_entry(scenegraph_id, size)
 			text_id = "claimed_text",
 			content_check_function = function (content)
 				-- function 36
-				return not not content.completed
+				return content.completed
 			end
 		},
 		{
@@ -1333,7 +1333,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = false,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			size = {
 				progress_bar_size[1],
@@ -1350,7 +1350,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = false,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
 				progress_bar_size[1],
@@ -1367,7 +1367,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = true,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			size = {
 				progress_bar_size[1],
@@ -1384,7 +1384,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = true,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
 				progress_bar_size[1],
@@ -1401,7 +1401,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = true,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("red", 255),
 			size = {
 				progress_bar_size[1],
@@ -1418,7 +1418,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = true,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
 				progress_bar_size[1],
@@ -1435,7 +1435,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = false,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			size = {
 				progress_bar_size[1],
@@ -1452,7 +1452,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = false,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("white", 255),
 			size = {
 				progress_bar_size[1],
@@ -1469,7 +1469,7 @@ local function create_quest_entry(scenegraph_id, size)
 			upper_case = false,
 			font_size = 18,
 			horizontal_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
 				progress_bar_size[1],
@@ -1487,7 +1487,7 @@ local function create_quest_entry(scenegraph_id, size)
 			font_size = 18,
 			horizontal_alignment = "center",
 			vertical_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			size = {
 				size[1] - 300,
@@ -1505,7 +1505,7 @@ local function create_quest_entry(scenegraph_id, size)
 			font_size = 18,
 			horizontal_alignment = "center",
 			vertical_alignment = "center",
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
 				size[1] - 300,
@@ -1523,7 +1523,7 @@ local function create_quest_entry(scenegraph_id, size)
 			horizontal_alignment = "center",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			offset = {
 				size[1] / 2 - 200,
@@ -1541,7 +1541,7 @@ local function create_quest_entry(scenegraph_id, size)
 			horizontal_alignment = "center",
 			vertical_alignment = "top",
 			dynamic_font_size = true,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				size[1] / 2 - 200 + 2,

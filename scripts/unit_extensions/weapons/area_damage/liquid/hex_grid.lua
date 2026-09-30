@@ -149,12 +149,12 @@ HexGrid.sample_grid = function (self, samples, z, multiplier)
 		local color
 
 		if i < min_i or max_i < i or j < min_j or max_j < j then
-			color = not not render_outside and not not black
+			color = render_outside and black
 		else
 			local i_val = i - min_i
 			local j_val = j - min_j
-			local r = i_val % 2 ~= 0 and not not (125 + 125 * i_val / i_span) or not (i_val % 2 ~= 0) and not not (125 * i_val / i_span)
-			local g = j_val % 2 ~= 0 and not not (125 + 125 * j_val / j_span) or not (j_val % 2 ~= 0) and not not (125 * j_val / j_span)
+			local r = i_val % 2 ~= 0 and 125 + 125 * i_val / i_span or not (i_val % 2 ~= 0) and 125 * i_val / i_span
+			local g = j_val % 2 ~= 0 and 125 + 125 * j_val / j_span or not (j_val % 2 ~= 0) and 125 * j_val / j_span
 			local b = 0
 
 			color = Color(r, g, b)

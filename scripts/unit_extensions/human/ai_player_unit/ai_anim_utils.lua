@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_anim_utils.lua
 
-AiAnimUtils = not not AiAnimUtils
+AiAnimUtils = AiAnimUtils
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 
@@ -51,7 +51,7 @@ AiAnimUtils.get_start_move_animation = function (unit, target_pos, anims_table)
 	elseif dot_product > -inv_sqrt_2 then
 		local is_to_the_left = Vector3.cross(forward_vector_flat, target_vector_flat).z > 0
 
-		animation_name = is_to_the_left and (not not anims_table.left or not not anims_table.right) or not is_to_the_left and not not anims_table.right
+		animation_name = is_to_the_left and (anims_table.left or anims_table.right) or not is_to_the_left and anims_table.right
 	else
 		animation_name = anims_table.bwd
 	end
@@ -65,7 +65,7 @@ AiAnimUtils.set_idle_animation_merge = function (unit, blackboard)
 	-- function 4
 	local breed = blackboard.breed
 	local animation_merge_options = breed.animation_merge_options
-	local idle_animation_merge_options = not not animation_merge_options and not not animation_merge_options.idle_animation_merge_options
+	local idle_animation_merge_options = animation_merge_options and animation_merge_options.idle_animation_merge_options
 
 	if idle_animation_merge_options then
 		Unit.set_animation_merge_options(unit, unpack(idle_animation_merge_options))
@@ -76,7 +76,7 @@ AiAnimUtils.set_move_animation_merge = function (unit, blackboard)
 	-- function 5
 	local breed = blackboard.breed
 	local animation_merge_options = breed.animation_merge_options
-	local move_animation_merge_options = not not animation_merge_options and not not animation_merge_options.move_animation_merge_options
+	local move_animation_merge_options = animation_merge_options and animation_merge_options.move_animation_merge_options
 
 	if move_animation_merge_options then
 		Unit.set_animation_merge_options(unit, unpack(move_animation_merge_options))
@@ -87,7 +87,7 @@ AiAnimUtils.set_walk_animation_merge = function (unit, blackboard)
 	-- function 6
 	local breed = blackboard.breed
 	local animation_merge_options = breed.animation_merge_options
-	local walk_animation_merge_options = not not animation_merge_options and not not animation_merge_options.walk_animation_merge_options
+	local walk_animation_merge_options = animation_merge_options and animation_merge_options.walk_animation_merge_options
 
 	if walk_animation_merge_options then
 		Unit.set_animation_merge_options(unit, unpack(walk_animation_merge_options))
@@ -98,7 +98,7 @@ AiAnimUtils.set_interest_point_animation_merge = function (unit, blackboard)
 	-- function 7
 	local breed = blackboard.breed
 	local animation_merge_options = breed.animation_merge_options
-	local interest_point_animation_merge_options = not not animation_merge_options and not not animation_merge_options.interest_point_animation_merge_options
+	local interest_point_animation_merge_options = animation_merge_options and animation_merge_options.interest_point_animation_merge_options
 
 	if interest_point_animation_merge_options then
 		Unit.set_animation_merge_options(unit, unpack(interest_point_animation_merge_options))

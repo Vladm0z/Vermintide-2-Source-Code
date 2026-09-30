@@ -24,7 +24,7 @@ BTSpawningAction.enter = function (self, unit, blackboard, t)
 
 	local breed = blackboard.breed
 
-	blackboard.uses_spawn_animation = blackboard.spawn_type == "horde" or not not breed.uses_spawn_animation
+	blackboard.uses_spawn_animation = blackboard.spawn_type == "horde" or breed.uses_spawn_animation
 
 	if blackboard.uses_spawn_animation then
 		local ai_extension = ScriptUnit.extension(unit, "ai_system")
@@ -51,7 +51,7 @@ BTSpawningAction.enter = function (self, unit, blackboard, t)
 		network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
 	end
 
-	local spawn_animation = not not blackboard.spawn_animation
+	local spawn_animation = blackboard.spawn_animation
 
 	if type(spawn_animation) == "table" then
 		local random_index = Math.random(1, #spawn_animation)
@@ -148,7 +148,7 @@ BTSpawningAction.run = function (self, unit, blackboard, t, dt)
 
 	local locomotion_extension = blackboard.locomotion_extension
 	local spawning_finished = blackboard.spawning_finished
-	local spawn_exit_time_finished = blackboard.spawn_exit_time and t > blackboard.spawn_exit_time or not blackboard.spawn_exit_time and not not true
+	local spawn_exit_time_finished = not blackboard.spawn_exit_time or t > blackboard.spawn_exit_time
 	local nav_world = blackboard.nav_world
 	local current_pos = POSITION_LOOKUP[unit]
 
@@ -249,7 +249,7 @@ BTSpawningAction._apply_anim_varations = function (self, unit)
 				if Unit.animation_has_variable(unit, variation_data.name) then
 					local min = variation_data.min
 					local max = variation_data.max
-					local val = not not variation_data.value
+					local val = variation_data.value
 
 					variation_data.value = math.wrap_index_between(val + 1, min, max)
 
@@ -270,7 +270,7 @@ end
 BTSpawningAction._play_spawning_effect = function (self, unit)
 	-- function 6
 	local action_data = self._tree_node.action_data
-	local effect_name = not not action_data and not not action_data.spawning_effect
+	local effect_name = action_data and action_data.spawning_effect
 
 	if effect_name then
 		local effect_name_id = NetworkLookup.effects[effect_name]

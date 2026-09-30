@@ -214,7 +214,7 @@ BTChargePositionAction._start_approaching = function (self, unit, blackboard)
 	blackboard.goal_destination = blackboard.requested_charge_position
 
 	local navigation_extension = blackboard.navigation_extension
-	local speed = not not blackboard.current_charge_speed
+	local speed = blackboard.current_charge_speed
 
 	navigation_extension:set_enabled(true)
 	navigation_extension:set_max_speed(speed)
@@ -241,7 +241,7 @@ BTChargePositionAction._start_impact = function (self, unit, blackboard, hit_tar
 		locomotion_extension:set_wanted_velocity(Vector3.zero())
 		locomotion_extension:set_rotation_speed(nil)
 	elseif hit_target or target_avoided_attack then
-		local wanted_animation = hit_target_blocked and not not action.charge_blocked_animation or not hit_target_blocked and not not action.impact_animation
+		local wanted_animation = hit_target_blocked and action.charge_blocked_animation or not hit_target_blocked and action.impact_animation
 		local impact_animation = randomize(wanted_animation)
 
 		Managers.state.network:anim_event(unit, impact_animation)
@@ -387,7 +387,7 @@ BTChargePositionAction._hit_player = function (self, unit, blackboard, hit_unit,
 	-- function 16
 	local hit_unit_status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 	local blocked = DamageUtils.check_block(unit, hit_unit, action.fatigue_type)
-	local blocked_with_shield = DamageUtils.check_ranged_block(unit, hit_unit, not not action.shield_blocked_fatigue_type)
+	local blocked_with_shield = DamageUtils.check_ranged_block(unit, hit_unit, action.shield_blocked_fatigue_type)
 
 	if not blocked_with_shield and not blocked then
 		AiUtils.damage_target(hit_unit, unit, action, action.damage)
@@ -397,7 +397,7 @@ BTChargePositionAction._hit_player = function (self, unit, blackboard, hit_unit,
 		if not blocked_with_shield then
 			self:_charged_at_player(unit, hit_unit, blackboard, action)
 		else
-			self:_push_player(unit, hit_unit, blackboard, action, not not blocked_with_shield or not not blocked)
+			self:_push_player(unit, hit_unit, blackboard, action, blocked_with_shield or blocked)
 		end
 	end
 
@@ -408,7 +408,7 @@ BTChargePositionAction._hit_ai = function (self, unit, hit_unit, action, blackbo
 	-- function 17
 	local push_data = action.push_ai
 	local hit_unit_blackboard = BLACKBOARDS[hit_unit]
-	local breed_name = not not hit_unit_blackboard.breed
+	local breed_name = hit_unit_blackboard.breed
 	local unit_side = Managers.state.side.side_by_unit[unit]
 	local hit_unit_side = Managers.state.side.side_by_unit[hit_unit]
 
@@ -438,7 +438,7 @@ BTChargePositionAction._hit_ai = function (self, unit, hit_unit, action, blackbo
 			AiUtils.stagger(hit_unit, hit_unit_blackboard, unit, push_direction, push_data.stagger_distance, stagger_type, stagger_duration, nil, t, nil, nil, nil, true)
 
 			if breed_name == "chaos_warrior" then
-				local attacker_name = not not blackboard.breed
+				local attacker_name = blackboard.breed
 
 				if attacker_name == "beastmen_bestigor" then
 					local stat_name = "scorpion_bestigor_charge_chaos_warrior"
@@ -700,8 +700,8 @@ BTChargePositionAction._run_charging = function (self, unit, blackboard, t, dt)
 	local last_frame_pos = blackboard.last_frame_pos:unbox()
 
 	if not action.allow_target_unit_override or not blackboard.using_override_target or not ALIVE[blackboard.target_unit] then
-		local distance_to_target_sq = not not blackboard.distance_to_target_sq
-		local charge_start_pos = not not blackboard.charge_start_pos
+		local distance_to_target_sq = blackboard.distance_to_target_sq
+		local charge_start_pos = blackboard.charge_start_pos
 		local charge_distance_ran_sq = Vector3.distance_squared(charge_start_pos:unbox(), current_pos)
 
 		if distance_to_target_sq < charge_distance_ran_sq then
@@ -733,7 +733,7 @@ end
 
 BTChargePositionAction._run_impact = function (self, unit, blackboard, t, dt)
 	-- function 24
-	local slow_down_speed = blackboard.hit_target and not not blackboard.action.hit_target_slow_down_speed or not blackboard.hit_target and not not blackboard.action.slow_down_speed
+	local slow_down_speed = blackboard.hit_target and blackboard.action.hit_target_slow_down_speed or not blackboard.hit_target and blackboard.action.slow_down_speed
 
 	self:_slow_down(unit, blackboard, slow_down_speed, t, dt)
 

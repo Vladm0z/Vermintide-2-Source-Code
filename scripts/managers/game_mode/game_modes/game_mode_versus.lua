@@ -11,9 +11,9 @@ require("scripts/managers/game_mode/versus_party_selection_logic")
 
 local ReservationHandlerTypes = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
 
-script_data.disable_gamemode_end = not not script_data.disable_gamemode_end
+script_data.disable_gamemode_end = script_data.disable_gamemode_end
 
-local game_mode_versus_testify = not not script_data.testify
+local game_mode_versus_testify = script_data.testify
 
 GameModeVersus = class(GameModeVersus, GameModeBase)
 GameModeVersus.WAIT_FOR_CLIENTS_TO_LEAVE_TIMEOUT = 30
@@ -110,7 +110,7 @@ GameModeVersus.init = function (self, settings, world, ...)
 
 	if self._mechanism:custom_settings_enabled() then
 		self._hero_bots_enabled = self._mechanism:get_custom_game_setting("hero_bots_enabled")
-		self._hero_rescues_enabled = not not self._mechanism:get_custom_game_setting("hero_rescues_enabled")
+		self._hero_rescues_enabled = self._mechanism:get_custom_game_setting("hero_rescues_enabled")
 	end
 end
 
@@ -125,7 +125,7 @@ GameModeVersus._create_game_mode_data_game_object = function (self)
 	local objective_settings = self._mechanism:get_objective_settings()
 	local game_mode_data = {
 		go_type = NetworkLookup.go_types.game_mode_data,
-		round_timer = not not objective_settings.round_timer
+		round_timer = objective_settings.round_timer
 	}
 	local go_id = network_manager:create_game_object("game_mode_data_carousel", game_mode_data)
 	local game_session = network_manager:game()
@@ -207,7 +207,7 @@ GameModeVersus.event_local_player_spawned = function (self, is_initial_spawn)
 	local win_conditions = self._win_conditions
 	local player = Managers.player:local_player()
 	local side = Managers.state.side:get_side_from_player_unique_id(player:unique_id())
-	local is_hero = not not side and side:name() == "heroes"
+	local is_hero = side and side:name() == "heroes"
 
 	if is_hero and not self._local_player_spawned then
 		Managers.transition:force_fade_in()
@@ -310,7 +310,7 @@ GameModeVersus.evaluate_end_conditions = function (self, round_started, dt, t)
 	local party_won_early_data = self._win_conditions.party_won_early
 	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
 	local heroes_disabled = GameModeHelper.side_is_disabled("heroes")
-	local heroes_dead_or_disabled = not not humans_dead or not not heroes_disabled
+	local heroes_dead_or_disabled = humans_dead or heroes_disabled
 	local party = Managers.state.side:get_party_from_side_name("dark_pact")
 	local no_pactsworn_players = party.num_used_slots == 0
 
@@ -319,10 +319,10 @@ GameModeVersus.evaluate_end_conditions = function (self, round_started, dt, t)
 		no_pactsworn_players = false
 	end
 
-	local game_should_end_early = self._lose_condition_disabled and (not not round_timer_over or not not all_objectives_completed or not not party_won_early_data or not not script_data.auto_complete_rounds) or not self._lose_condition_disabled and (not not heroes_dead_or_disabled or not not no_pactsworn_players or not not self._level_failed)
+	local game_should_end_early = self._lose_condition_disabled and (round_timer_over or all_objectives_completed or party_won_early_data or script_data.auto_complete_rounds) or not self._lose_condition_disabled and (heroes_dead_or_disabled or no_pactsworn_players or self._level_failed)
 
 	if self._level_completed then
-		self._level_complete_timer = not not self._level_complete_timer
+		self._level_complete_timer = self._level_complete_timer
 		round_ended = t >= self._level_complete_timer
 
 		if not self._last_hero_down_riser_played then
@@ -393,10 +393,10 @@ end
 
 GameModeVersus._handle_round_end = function (self, reason, reason_data, all_objectives_completed)
 	-- function 15
-	local all_rounds_played = not not Development.parameter("versus_quick_match_end")
+	local all_rounds_played = Development.parameter("versus_quick_match_end")
 	local hero_party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
-	local heroes_won_early = reason_data and (reason_data.party_id == hero_party_id or not not false) or not reason_data and not not false
-	local heroes_won = not not all_objectives_completed or not not heroes_won_early
+	local heroes_won_early = reason_data and reason_data.party_id == hero_party_id
+	local heroes_won = all_objectives_completed or heroes_won_early
 
 	if reason == "party_one_won_early" or reason == "party_two_won_early" then
 		self:_trigger_early_win_vo(reason_data.party_id)
@@ -434,7 +434,7 @@ GameModeVersus._get_end_reason = function (self, party_won_early_data)
 	end
 
 	if party_won_early_data then
-		reason = not not "party_two_won_early"
+		reason = "party_two_won_early"
 		reason_data = party_won_early_data
 	end
 
@@ -443,7 +443,7 @@ end
 
 GameModeVersus.ready_to_transition = function (self)
 	-- function 17
-	local all_rounds_played = self._current_mechanism_state == "round_2" and not not not self._mechanism:should_start_next_set()
+	local all_rounds_played = self._current_mechanism_state == "round_2" and not self._mechanism:should_start_next_set()
 
 	if all_rounds_played or self._win_conditions.party_won_early then
 		self._network_transmit:send_rpc_clients("rpc_rejoin_parties")
@@ -502,7 +502,7 @@ end
 
 GameModeVersus.player_ready = function (self)
 	-- function 21
-	return not not self._local_player_spawned
+	return self._local_player_spawned
 end
 
 GameModeVersus.update = function (self, t, dt)
@@ -807,8 +807,8 @@ GameModeVersus.server_update = function (self, t, dt)
 
 		local lobby_host = self._network_server.lobby_host
 		local members_map = lobby_host:members():members_map()
-		local dedicated_server_peers_have_joined = not not DEDICATED_SERVER
-		local player_hosted_initial_peers_ready = not DEDICATED_SERVER and not not self._initial_peers_ready
+		local dedicated_server_peers_have_joined = DEDICATED_SERVER
+		local player_hosted_initial_peers_ready = not DEDICATED_SERVER and self._initial_peers_ready
 
 		if dedicated_server_peers_have_joined or player_hosted_initial_peers_ready then
 			if self._current_mechanism_state == "round_1" and self._mechanism:get_current_set() == 1 then
@@ -939,17 +939,17 @@ GameModeVersus._delay_abort_game = function (self, t)
 	-- function 33
 	local batch_in_flight = Managers.telemetry:batch_in_flight()
 	local has_events_to_post = Managers.telemetry:has_events_to_post()
-	local should_delay = not not batch_in_flight or not not has_events_to_post
+	local should_delay = batch_in_flight or has_events_to_post
 
 	if should_delay then
-		self._delay_abort_game_timer = not not self._delay_abort_game_timer
+		self._delay_abort_game_timer = self._delay_abort_game_timer
 	end
 
 	if has_events_to_post and not batch_in_flight then
 		Managers.telemetry:post_batch()
 	end
 
-	return not not self._delay_abort_game_timer
+	return self._delay_abort_game_timer
 end
 
 GameModeVersus._client_update = function (self, t, dt)
@@ -1528,7 +1528,7 @@ GameModeVersus._handle_bots = function (self, t, dt)
 		return
 	end
 
-	local in_session = Managers.state.network ~= nil and not not not Managers.state.network.game_session_shutdown
+	local in_session = Managers.state.network ~= nil and not Managers.state.network.game_session_shutdown
 
 	if not in_session then
 		return
@@ -1586,17 +1586,17 @@ GameModeVersus.update_local_hero_cosmetics = function (self)
 	local weapon_slot = preview_wield_slot[1]
 	local weapon = BackendUtils.get_loadout_item(career_name, weapon_slot)
 	local weapon_pose = BackendUtils.get_loadout_item(career_name, "slot_pose")
-	local weapon_pose_skin = not not weapon_pose and not not CosmeticUtils.get_weapon_pose_skin(weapon_pose.key)
+	local weapon_pose_skin = weapon_pose and CosmeticUtils.get_weapon_pose_skin(weapon_pose.key)
 	local hero_skin = BackendUtils.get_loadout_item(career_name, "slot_skin")
 	local hat = BackendUtils.get_loadout_item(career_name, "slot_hat")
 	local frame = BackendUtils.get_loadout_item(career_name, "slot_frame")
 
-	weapon = weapon and (not not weapon.data.name or not not CosmeticUtils.get_default_cosmetic_slot(career_settings, weapon_slot).item_name) or not weapon and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, weapon_slot).item_name
-	weapon_pose = weapon_pose and (not not weapon_pose.data.name or not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_pose").item_name) or not weapon_pose and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_pose").item_name
-	weapon_pose_skin = weapon_pose_skin and (not not weapon_pose_skin.skin or not not "n/a") or not weapon_pose_skin and not not "n/a"
-	hero_skin = hero_skin and (not not hero_skin.data.name or not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name) or not hero_skin and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name
-	hat = hat and (not not hat.data.name or not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_hat").item_name) or not hat and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_hat").item_name
-	frame = frame and (not not frame.data.name or not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_frame").item_name) or not frame and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_frame").item_name
+	weapon = weapon and (weapon.data.name or CosmeticUtils.get_default_cosmetic_slot(career_settings, weapon_slot).item_name) or not weapon and CosmeticUtils.get_default_cosmetic_slot(career_settings, weapon_slot).item_name
+	weapon_pose = weapon_pose and (weapon_pose.data.name or CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_pose").item_name) or not weapon_pose and CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_pose").item_name
+	weapon_pose_skin = weapon_pose_skin and (weapon_pose_skin.skin or "n/a") or not weapon_pose_skin and "n/a"
+	hero_skin = hero_skin and (hero_skin.data.name or CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name) or not hero_skin and CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name
+	hat = hat and (hat.data.name or CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_hat").item_name) or not hat and CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_hat").item_name
+	frame = frame and (frame.data.name or CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_frame").item_name) or not frame and CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_frame").item_name
 
 	local pactsworn_cosmetics = self:_pack_pactsworn_cosmetics()
 	local existing_weapon, existing_pose, exisiting_weapon_pose_skin, existing_hero_skin, existing_hat, existing_frame, exisiting_pactsworn_cosmetics = self._mechanism:get_hero_cosmetics(peer_id, local_player_id)
@@ -1626,8 +1626,8 @@ GameModeVersus._pack_pactsworn_cosmetics = function (self)
 				local weapon = BackendUtils.get_loadout_item(career_name, weapon_slot)
 				local pactsworn_skin = BackendUtils.get_loadout_item(career_name, "slot_skin")
 
-				pactsworn_skin = pactsworn_skin and (not not pactsworn_skin.data.name or not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name) or not pactsworn_skin and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name
-				weapon = weapon and (not not weapon.data.name or not not career_settings.base_weapon) or not weapon and not not career_settings.base_weapon
+				pactsworn_skin = pactsworn_skin and (pactsworn_skin.data.name or CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name) or not pactsworn_skin and CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name
+				weapon = weapon and (weapon.data.name or career_settings.base_weapon) or not weapon and career_settings.base_weapon
 				pactsworn_cosmetics[career_name] = {
 					weapon_slot = weapon_slot,
 					skin = pactsworn_skin,
@@ -1843,7 +1843,7 @@ end
 GameModeVersus.get_end_screen_config = function (self, game_won, game_lost, player, reason)
 	-- function 94
 	local screen_name, screen_config, params
-	local ended_early = reason == "party_one_won_early" or reason == "party_two_won_early" or not not Development.parameter("versus_quick_match_end")
+	local ended_early = reason == "party_one_won_early" or reason == "party_two_won_early" or Development.parameter("versus_quick_match_end")
 
 	if not ended_early and self._mechanism:should_start_next_set() then
 		screen_name = "carousel_round_end"
@@ -1853,7 +1853,7 @@ GameModeVersus.get_end_screen_config = function (self, game_won, game_lost, play
 			display_screen_delay = self._settings.end_of_match_view_display_screen_delay
 		}
 	else
-		screen_name = game_won and (not not "victory" or game_lost and (not not "defeat" or not not "draw") or not game_lost and not not "draw") or not game_won and (game_lost and (not not "defeat" or not not "draw") or not game_lost and not not "draw")
+		screen_name = game_won and ("victory" or game_lost and ("defeat" or "draw") or not game_lost and "draw") or not game_won and (game_lost and ("defeat" or "draw") or not game_lost and "draw")
 		screen_config = {
 			show_act_presentation = false,
 			display_screen_delay = self._settings.end_of_match_view_display_screen_delay
@@ -1863,7 +1863,7 @@ GameModeVersus.get_end_screen_config = function (self, game_won, game_lost, play
 		}
 	end
 
-	return not not screen_name or not not "none", not not screen_config or not not {}, params
+	return screen_name or "none", screen_config or {}, params
 end
 
 GameModeVersus.get_end_of_round_screen_settings = function (self)
@@ -1981,7 +1981,7 @@ end
 GameModeVersus._server_on_round_over = function (self, heroes_win)
 	-- function 105
 	local audio_system = Managers.state.entity:system("audio_system")
-	local round_over_sfx = heroes_win and not not "Play_versus_hud_round_end_heroes_win" or not heroes_win and not not "Play_versus_hud_round_end_heroes_fail"
+	local round_over_sfx = heroes_win and "Play_versus_hud_round_end_heroes_win" or not heroes_win and "Play_versus_hud_round_end_heroes_fail"
 
 	audio_system:play_2d_audio_event(round_over_sfx)
 end
@@ -2022,8 +2022,8 @@ GameModeVersus._round_start_telemetry = function (self)
 			return
 		end
 
-		slot_melee = not not loadout.slot_melee and not not loadout.slot_melee.key
-		slot_ranged = not not loadout.slot_ranged and not not loadout.slot_ranged.key
+		slot_melee = loadout.slot_melee and loadout.slot_melee.key
+		slot_ranged = loadout.slot_ranged and loadout.slot_ranged.key
 
 		if ScriptUnit.has_extension(local_player_unit, "talent_system") then
 			talents = ScriptUnit.extension(local_player_unit, "talent_system"):get_talent_names()
@@ -2059,7 +2059,7 @@ GameModeVersus._match_end_telemetry = function (self, results)
 	-- function 110
 	local is_draw, winning_party
 	local match_id = self._mechanism:match_id()
-	local winning_party_id = not not 1
+	local winning_party_id = 1
 	local winning_party = {}
 
 	if winning_party_id then
@@ -2067,7 +2067,7 @@ GameModeVersus._match_end_telemetry = function (self, results)
 
 		for i = 1, #slots do
 			local peer_id = slots[i].peer_id
-			local backend_id = not not peer_id and not not self._mechanism:get_peer_backend_id(peer_id)
+			local backend_id = peer_id and self._mechanism:get_peer_backend_id(peer_id)
 
 			winning_party[i] = backend_id
 		end
@@ -2224,7 +2224,7 @@ end
 
 GameModeVersus.projectile_hit_character = function (self, attacker_player, source_attacker_unit, attacker_unit, hit_unit, hit_position, hit_breed, attack_direction, predicted_damage)
 	-- function 126
-	attacker_unit = not not source_attacker_unit or not not attacker_unit
+	attacker_unit = source_attacker_unit or attacker_unit
 
 	if DamageUtils.is_player_unit(attacker_unit) then
 		local is_enemy = Managers.state.side:is_enemy(attacker_unit, hit_unit)
@@ -2233,8 +2233,8 @@ GameModeVersus.projectile_hit_character = function (self, attacker_player, sourc
 			return
 		end
 
-		attacker_player = not not attacker_player or not not Managers.player:owner(attacker_unit)
-		hit_breed = not not hit_breed or not not AiUtils.unit_breed(hit_unit)
+		attacker_player = attacker_player or Managers.player:owner(attacker_unit)
+		hit_breed = hit_breed or AiUtils.unit_breed(hit_unit)
 
 		if hit_breed.is_player then
 			local husk = not attacker_player.local_player
@@ -2248,7 +2248,7 @@ GameModeVersus.projectile_hit_character = function (self, attacker_player, sourc
 			local audio_system = Managers.state.entity:system("audio_system")
 			local is_local_player = attacker_player.local_player
 
-			predicted_damage = not not predicted_damage or not not 0
+			predicted_damage = predicted_damage or 0
 
 			audio_system:vs_play_pactsworn_hit_enemy(hit_position, is_local_player, attacker_player, predicted_damage, Managers.time:time("game"))
 		end
@@ -2259,7 +2259,7 @@ GameModeVersus._trigger_early_win_vo = function (self, winning_party_id)
 	-- function 127
 	local party = Managers.party:get_party(winning_party_id)
 	local side = Managers.state.side.side_by_party[party]
-	local losing_party_id = winning_party_id ~= 1 and not not 1 or not (winning_party_id ~= 1) and not not 2
+	local losing_party_id = winning_party_id ~= 1 and 1 or not (winning_party_id ~= 1) and 2
 	local losing_party = Managers.party:get_party(losing_party_id)
 	local losing_side = Managers.state.side.side_by_party[losing_party]
 	local dialogue_system = Managers.state.entity:system("dialogue_system")
@@ -2286,7 +2286,7 @@ GameModeVersus._update_hero_rushing = function (self, t)
 		return
 	end
 
-	local last_played_hero_rushed_t = not not self._last_played_hero_rushed_t
+	local last_played_hero_rushed_t = self._last_played_hero_rushed_t
 
 	if t - last_played_hero_rushed_t < 60 then
 		return
@@ -2322,7 +2322,7 @@ GameModeVersus._update_hero_rushing = function (self, t)
 		local behind_dist = hero_rush_distance_scratch[behind_unit]
 
 		if ahead_dist - behind_dist > hero_rush_min_dist then
-			local grace_delay = not not self._hero_rush_grace_delay
+			local grace_delay = self._hero_rush_grace_delay
 
 			self._hero_rush_grace_delay = grace_delay
 

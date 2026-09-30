@@ -25,8 +25,8 @@ WorldInteractionManager.add_world_interaction = function (self, material, unit)
 	-- function 3
 	self:remove_world_interaction(unit, material)
 
-	self._units[material] = not not self._units[material]
-	self._units[material][unit] = not not self._units[material][unit]
+	self._units[material] = self._units[material]
+	self._units[material][unit] = self._units[material][unit]
 end
 
 WorldInteractionManager.remove_world_interaction = function (self, unit, material_to_ignore)
@@ -48,7 +48,7 @@ WorldInteractionManager._add_water_ripple = function (self, pos, angle, material
 		pos = Vector3Box(pos),
 		size_variable = 1 - random_ripple_size_diff * 0.5 + Math.random() * random_ripple_size_diff,
 		angle = angle,
-		material = not not material or not not water_settings.default_ripple_material,
+		material = material or water_settings.default_ripple_material,
 		stretch_multiplier = stretch_multiplier,
 		ref_time = ref_time,
 		default_size = size,
@@ -60,7 +60,7 @@ WorldInteractionManager.add_simple_effect = function (self, material, hit_unit, 
 	-- function 6
 	local player_manager = Managers.player
 	local local_player = player_manager:local_player()
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if Unit.alive(player_unit) then
 		local material_settings = WorldInteractionSettings[material]
@@ -77,7 +77,7 @@ end
 WorldInteractionManager._add_simple_water_effect = function (self, hit_unit, position, unit)
 	-- function 7
 	local water_settings = WorldInteractionSettings.water
-	local water_type_settings = unit and not not water_settings.default_unit_water or not unit and not not water_settings.default_water
+	local water_type_settings = unit and water_settings.default_unit_water or not unit and water_settings.default_water
 	local material = water_type_settings.default_material
 	local window_size = math.clamp(water_settings.window_size, 1, 100)
 	local stretch_multiplier = water_type_settings.stretch_multiplier
@@ -85,7 +85,7 @@ WorldInteractionManager._add_simple_water_effect = function (self, hit_unit, pos
 	local timer_ref = water_type_settings.timer_ref
 	local random_size_diff = water_type_settings.random_size_diff
 	local local_player = Managers.player:local_player()
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if Unit.alive(player_unit) then
 		local window_distance = window_size * 0.5
@@ -110,7 +110,7 @@ WorldInteractionManager._update_water = function (self, dt, t)
 	-- function 9
 	local available_units = self._units.water
 	local local_player = Managers.player:local_player()
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if Unit.alive(player_unit) and (#self._water_ripples > 0 or available_units and next(available_units)) then
 		self:_cleanup_removed_units()
@@ -154,14 +154,14 @@ WorldInteractionManager._update_water_data = function (self, dt, t)
 	local ripple_time_step = water_settings.ripple_time_step
 	local max_contributing_units = water_settings.max_contributing_units
 
-	self._water_timer = not not self._water_timer
+	self._water_timer = self._water_timer
 
 	local current_index = 1
 
 	if ripple_time_step <= self._water_timer then
 		local available_units = self._units.water
 		local local_player = Managers.player:local_player()
-		local player_unit = not not local_player and not not local_player.player_unit
+		local player_unit = local_player and local_player.player_unit
 		local window_distance = window_size * 0.5
 		local player_pos = POSITION_LOOKUP[player_unit]
 
@@ -204,13 +204,13 @@ WorldInteractionManager._update_water_data = function (self, dt, t)
 					local locomotion_ext = ScriptUnit.has_extension(unit, "locomotion_system")
 
 					if locomotion_ext then
-						local dir = not not locomotion_ext.current_velocity
+						local dir = locomotion_ext.current_velocity
 
 						if dir and speed_limit_squared < Vector3.distance_squared(Vector3.flat(dir), origo) then
 							local flat_dir = Vector3.normalize(Vector3(dir[1], dir[2], 0))
 							local dot_value = Vector3.dot(flat_dir, Vector3(0, 1, 0))
 							local safe_dot_value = math.clamp(dot_value, -1, 1)
-							local angle = math.acos(safe_dot_value) * (flat_dir[1] < 0 and not not 1 or not (flat_dir[1] < 0) and not not -1)
+							local angle = math.acos(safe_dot_value) * (flat_dir[1] < 0 and 1 or not (flat_dir[1] < 0) and -1)
 							local pos = POSITION_LOOKUP[unit]
 
 							if angle == angle then
@@ -262,12 +262,12 @@ WorldInteractionManager._update_water_ripples = function (self, dt, t)
 	for idx = 1, num_water_data do
 		water_data = self._water_ripples[idx]
 
-		local ref_time = not not water_data.ref_time
+		local ref_time = water_data.ref_time
 		local pos = water_data.pos:unbox()
-		local stretch_multiplier = not not water_data.stretch_multiplier
-		local multiplier = not not water_data.multiplier
-		local default_size = not not water_data.default_size
-		local start_size = default_size[1] * not not water_data.size_variable
+		local stretch_multiplier = water_data.stretch_multiplier
+		local multiplier = water_data.multiplier
+		local default_size = water_data.default_size
+		local start_size = default_size[1] * water_data.size_variable
 		local t = math.easeOutCubic(water_data.timer / ref_time)
 		local size = math.lerp(start_size, start_size * multiplier, t)
 		local relative_world_pos = Vector2(pos[1] % window_size, pos[2] % window_size)
@@ -339,7 +339,7 @@ end
 WorldInteractionManager._update_foliage = function (self, dt, t)
 	-- function 13
 	local local_player = Managers.player:local_player()
-	local local_player_unit = not not local_player and not not local_player.player_unit
+	local local_player_unit = local_player and local_player.player_unit
 
 	if Unit.alive(local_player_unit) then
 		self:_update_foliage_players(dt, t)

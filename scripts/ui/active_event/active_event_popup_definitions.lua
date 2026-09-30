@@ -198,16 +198,16 @@ local widget_definitions = {
 
 function create_simple_action_button(scenegraph_id, size, button_text, frame_name, background_texture, icon_name)
 	-- function 1
-	background_texture = not not background_texture or not not "menu_frame_bg_06"
+	background_texture = background_texture or "menu_frame_bg_06"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.menu_frame_02
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.menu_frame_02
 	local frame_width = frame_settings.texture_sizes.corner[1]
 
 	local function animate_button(content, style, hotspot, dt)
 		-- function 2
-		local hover_progress = not not hotspot.hover_progress
-		local press_progress = not not hotspot.press_progress
+		local hover_progress = hotspot.hover_progress
+		local press_progress = hotspot.press_progress
 
 		if style.color then
 			style.color[1] = 255 * hover_progress
@@ -234,7 +234,7 @@ function create_simple_action_button(scenegraph_id, size, button_text, frame_nam
 					content_change_function = function (content, style, _, dt)
 						-- function 3
 						local parent = content.parent
-						local hover_progress = not not content.hover_progress
+						local hover_progress = content.hover_progress
 						local hover_speed = 15
 
 						if content.is_hover or parent.is_gamepad_active and content.is_selected then
@@ -245,7 +245,7 @@ function create_simple_action_button(scenegraph_id, size, button_text, frame_nam
 
 						content.hover_progress = hover_progress
 
-						local press_progress = not not content.press_progress
+						local press_progress = content.press_progress
 						local press_speed = 25
 
 						if content.is_held then
@@ -301,7 +301,7 @@ function create_simple_action_button(scenegraph_id, size, button_text, frame_nam
 						-- function 5
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and (not button_hotspot.is_selected or not not not button_hotspot.is_hover)
+						return not button_hotspot.disable_button and (not button_hotspot.is_selected or not button_hotspot.is_hover)
 					end
 				},
 				{
@@ -339,7 +339,7 @@ function create_simple_action_button(scenegraph_id, size, button_text, frame_nam
 				},
 				texture_id = background_texture
 			},
-			button_text = not not button_text or not not "n/a"
+			button_text = button_text or "n/a"
 		},
 		style = {
 			button_hotspot = {

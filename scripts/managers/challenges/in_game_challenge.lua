@@ -1,8 +1,8 @@
 -- chunkname: @scripts/managers/challenges/in_game_challenge.lua
 
 InGameChallenge = class(InGameChallenge)
-InGameChallengeStatus = not not InGameChallengeStatus
-InGameChallengeResult = not not InGameChallengeResult
+InGameChallengeStatus = InGameChallengeStatus
+InGameChallengeResult = InGameChallengeResult
 
 InGameChallenge.init = function (self, challenge_template, is_repeatable, category, reward, owner_unique_id, is_server, custom_amount, unique_id, auto_resume)
 	-- function 1
@@ -16,7 +16,7 @@ InGameChallenge.init = function (self, challenge_template, is_repeatable, catego
 	self._is_server = is_server
 	self._unique_id = unique_id
 	self._auto_resume = auto_resume
-	self._required_progress = not not custom_amount or not not self._challenge_template.default_target
+	self._required_progress = custom_amount or self._challenge_template.default_target
 	self._events_registered = false
 	self._callback_table = nil
 
@@ -183,7 +183,7 @@ InGameChallenge._register_events = function (self)
 				callback_table[event_name] = function (_, ...)
 					-- function 24
 					local t = Managers.time:time("main")
-					local progress_by = not not event_function(t, self._challenge_data, ...)
+					local progress_by = event_function(t, self._challenge_data, ...)
 
 					if progress_by ~= 0 then
 						self._progress = math.clamp(self._progress + progress_by, 0, self._required_progress)

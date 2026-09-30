@@ -33,7 +33,7 @@ BackendInterfaceCdnResourcesPlayFab.load_backend_localizations = function (self,
 
 		if backend_localizations then
 			for key, localizations_by_language in pairs(backend_localizations) do
-				local resource_id = not not localizations_by_language[language_id]
+				local resource_id = localizations_by_language[language_id]
 
 				backend_resource_ids[#backend_resource_ids + 1] = resource_id
 				localizations_to_load[resource_id] = key

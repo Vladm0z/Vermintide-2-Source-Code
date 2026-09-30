@@ -90,7 +90,7 @@ StartMenuStateOverview.on_enter = function (self, params)
 
 	if hero_name then
 		local hero_attributes = Managers.backend:get_interface("hero_attributes")
-		local career_index = not not hero_attributes:get(hero_name, "career")
+		local career_index = hero_attributes:get(hero_name, "career")
 
 		self:_populate_career_page(hero_name, career_index)
 	end
@@ -207,7 +207,7 @@ StartMenuStateOverview.update = function (self, dt, t)
 		if self.world_previewer:has_units_spawned() then
 			self._prepare_exit = true
 		elseif not self._prepare_exit then
-			return not not wanted_state or not not self._new_state
+			return wanted_state or self._new_state
 		end
 	end
 
@@ -229,7 +229,7 @@ StartMenuStateOverview.post_update = function (self, dt, t)
 		elseif self._spawn_hero then
 			self._spawn_hero = nil
 
-			local hero_name = not not self._selected_hero_name
+			local hero_name = self._selected_hero_name
 
 			self:_spawn_hero_unit(hero_name)
 		end
@@ -360,7 +360,7 @@ StartMenuStateOverview._populate_career_page = function (self, hero_name, career
 		level = ExperienceSettings.get_versus_profile_level_from_experience(experience)
 	else
 		local hero_attributes = Managers.backend:get_interface("hero_attributes")
-		local exp = not not hero_attributes:get(hero_name, "experience")
+		local exp = hero_attributes:get(hero_name, "experience")
 
 		level = ExperienceSettings.get_level(exp)
 	end
@@ -384,7 +384,7 @@ StartMenuStateOverview._get_portrait_frame = function (self, profile_index, care
 		local item_data = item.data
 		local frame_name = item_data.temporary_template
 
-		player_portrait_frame = not not frame_name or not not player_portrait_frame
+		player_portrait_frame = frame_name or player_portrait_frame
 	end
 
 	return player_portrait_frame
@@ -400,7 +400,7 @@ end
 
 StartMenuStateOverview._create_player_portrait = function (self, portrait_image, level, player_portrait_frame)
 	-- function 20
-	local level_text = level and not not tostring(level) or not level and not not "-"
+	local level_text = level and tostring(level) or not level and "-"
 	local scale = 1
 	local retained_mode = false
 	local definition = UIWidgets.create_portrait_frame("portrait_root", player_portrait_frame, level_text, scale, retained_mode, portrait_image)
@@ -483,9 +483,9 @@ StartMenuStateOverview._handle_keyboard_input = function (self)
 			self.parent:requested_screen_change_by_name("character")
 		end
 	}
-	local keyboard_grid_selection = not not self._keyboard_grid_selection
-	local index_x = not not keyboard_grid_selection[1]
-	local index_y = not not keyboard_grid_selection[2]
+	local keyboard_grid_selection = self._keyboard_grid_selection
+	local index_x = keyboard_grid_selection[1]
+	local index_y = keyboard_grid_selection[2]
 	local input_service = self:input_service(true)
 
 	if input_service:get("move_down_hold_continuous") then

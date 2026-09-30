@@ -13,7 +13,7 @@ local spawn_unit_templates_vs = {
 				local extension_init_data = {
 					area_damage_system = {
 						flow_dir = dir,
-						liquid_template = state_int ~= 1 and not not "vs_bile_troll_vomit" or not (state_int ~= 1) and not not "vs_bile_troll_vomit_near",
+						liquid_template = state_int ~= 1 and "vs_bile_troll_vomit" or not (state_int ~= 1) and "vs_bile_troll_vomit_near",
 						source_unit = source_unit
 					}
 				}
@@ -39,7 +39,7 @@ local spawn_unit_templates_vs = {
 				BLACKBOARDS[source_unit] = blackboard
 			end
 
-			blackboard.world = not not blackboard.world
+			blackboard.world = blackboard.world
 
 			local t = Managers.time:time("game")
 			local dt = 0
@@ -103,8 +103,8 @@ local spawn_unit_templates_vs = {
 				BLACKBOARDS[source_unit] = blackboard
 			end
 
-			blackboard.world = not not blackboard.world
-			blackboard.vortex_data = not not blackboard.vortex_data
+			blackboard.world = blackboard.world
+			blackboard.vortex_data = blackboard.vortex_data
 
 			local vortex_data = blackboard.vortex_data
 
@@ -113,7 +113,7 @@ local spawn_unit_templates_vs = {
 			vortex_data.num_dummy_missiles = 0
 
 			local action = BreedActions.chaos_vortex_sorcerer.spawn_vortex
-			local summon_position = vortex_data.summon_position and not not vortex_data.summon_position:unbox() or not vortex_data.summon_position and not not POSITION_LOOKUP[source_unit]
+			local summon_position = vortex_data.summon_position and vortex_data.summon_position:unbox() or not vortex_data.summon_position and POSITION_LOOKUP[source_unit]
 			local summon_direction = Quaternion.forward(summon_rotation)
 
 			return BTChaosSorcererSummoningAction._launch_vortex_dummy_missile(nil, source_unit, action, vortex_data, hand_position, summon_position, summon_direction)

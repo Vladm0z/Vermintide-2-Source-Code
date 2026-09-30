@@ -7,8 +7,8 @@ GenericUnitAimExtension = class(GenericUnitAimExtension)
 GenericUnitAimExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	self.unit = unit
-	self.template = AimTemplates[not not extension_init_data.template]
-	self.network_type = extension_init_data.is_husk and not not "husk" or not extension_init_data.is_husk and not not "owner"
+	self.template = AimTemplates[extension_init_data.template]
+	self.network_type = extension_init_data.is_husk and "husk" or not extension_init_data.is_husk and "owner"
 	self.data = {}
 	self.enabled = false
 end
@@ -21,7 +21,7 @@ GenericUnitAimExtension.extensions_ready = function (self)
 
 	local breed = Unit.get_data(self.unit, "breed")
 
-	self.always_aim = not not DEDICATED_SERVER
+	self.always_aim = DEDICATED_SERVER
 end
 
 GenericUnitAimExtension.destroy = function (self)
@@ -49,7 +49,7 @@ GenericUnitAimExtension.update = function (self, unit, input, dt, context, t)
 	local data = self.data
 	local template = self.template
 	local is_player = DamageUtils.is_player_unit(unit)
-	local should_aim = not not self.enabled
+	local should_aim = self.enabled
 
 	if should_aim then
 		template[self.network_type].update(unit, t, dt, data)

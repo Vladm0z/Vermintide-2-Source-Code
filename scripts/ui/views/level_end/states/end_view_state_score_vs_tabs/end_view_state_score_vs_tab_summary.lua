@@ -46,7 +46,7 @@ EndViewStateScoreVSTabSummary._calculate_awards = function (self)
 		local winner_peer_id = award_settings.evaluate(players_session_scores)
 
 		if winner_peer_id then
-			self._awards[winner_peer_id] = not not self._awards[winner_peer_id]
+			self._awards[winner_peer_id] = self._awards[winner_peer_id]
 			self._awards[winner_peer_id][#self._awards[winner_peer_id] + 1] = award_settings.name
 		end
 	end
@@ -81,9 +81,9 @@ EndViewStateScoreVSTabSummary._calculate_awards = function (self)
 		local my_peer_id = Network.peer_id()
 		local local_player_id = 1
 		local local_player_party_id = self._context.party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
-		local opponent_party_id = local_player_party_id ~= 1 and not not 1 or not (local_player_party_id ~= 1) and not not 2
+		local opponent_party_id = local_player_party_id ~= 1 and 1 or not (local_player_party_id ~= 1) and 2
 		local game_won = self._context.game_won
-		local winning_party_id = game_won and (not not local_player_party_id or not not opponent_party_id) or not game_won and not not opponent_party_id
+		local winning_party_id = game_won and (local_player_party_id or opponent_party_id) or not game_won and opponent_party_id
 		local party_composition = self._context.party_composition
 
 		for _, peer_id in ipairs(potential_mvp_peer_ids) do

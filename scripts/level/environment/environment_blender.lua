@@ -42,8 +42,8 @@ EnvironmentBlender.event_register_environment_volume = function (self, volume_na
 		blend_time = blend_time,
 		override_sun_snap = override_sun_snap,
 		particle_light_intensity = particle_light_intensity,
-		is_sphere = not not sphere_pos and not not sphere_radius,
-		sphere_pos = not not sphere_pos and not not Vector3Box(sphere_pos),
+		is_sphere = sphere_pos and sphere_radius,
+		sphere_pos = sphere_pos and Vector3Box(sphere_pos),
 		sphere_radius = sphere_radius
 	}
 

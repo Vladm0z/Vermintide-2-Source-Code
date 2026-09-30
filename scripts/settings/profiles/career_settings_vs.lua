@@ -777,7 +777,7 @@ CareerSettings.spectator = {
 		return false
 	end
 }
-OverchargeData = not not OverchargeData
+OverchargeData = OverchargeData
 OverchargeData.vs_warpfire_thrower = {
 	max_value = 40,
 	overcharge_value_decrease_rate = 12.5,
@@ -798,7 +798,7 @@ OverchargeData.vs_warpfire_thrower = {
 		color_high = Colors.get_color_table_with_alpha("pactsworn_green", 255)
 	}
 }
-PlayerUnitStatusSettings = not not PlayerUnitStatusSettings
-PlayerUnitStatusSettings.overcharge_values = table.merge(not not PlayerUnitStatusSettings.overcharge_values, {
+PlayerUnitStatusSettings = PlayerUnitStatusSettings
+PlayerUnitStatusSettings.overcharge_values = table.merge(PlayerUnitStatusSettings.overcharge_values, {
 	vs_warpfire_thrower_normal = 5
 })

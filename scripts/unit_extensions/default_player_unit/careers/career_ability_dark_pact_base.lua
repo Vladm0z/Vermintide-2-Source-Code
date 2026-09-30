@@ -96,7 +96,7 @@ CareerAbilityDarkPactBase._cooldown_ready = function (self)
 	-- function 9
 	local inventory_extension = self._inventory_extension
 	local equipment = inventory_extension:equipment()
-	local weapon_unit = not not equipment.right_hand_wielded_unit
+	local weapon_unit = equipment.right_hand_wielded_unit
 
 	if weapon_unit then
 		Unit.flow_event(weapon_unit, "cooldown_ready")
@@ -115,9 +115,9 @@ CareerAbilityDarkPactBase._ability_available = function (self)
 	local locomotion_extension = self._locomotion_extension
 	local ghost_mode_extension = self._ghost_mode_extension
 	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
-	local ability_available = not status_extension:is_disabled() and not not not in_ghost_mode
+	local ability_available = not status_extension:is_disabled() and not in_ghost_mode
 
-	return not not ability_available and not not career_extension:can_use_activated_ability(self._ability_data.ability_id)
+	return ability_available and career_extension:can_use_activated_ability(self._ability_data.ability_id)
 end
 
 CareerAbilityDarkPactBase._start = function (self)

@@ -16,7 +16,7 @@ WeaveDoomWheelExtension.init = function (self, extension_init_context, unit, ext
 	self._on_fuze_start_func = extension_init_data.on_fuze_start_func
 	self._on_fuze_progress_func = extension_init_data.on_fuze_progress_func
 	self._on_fuze_complete_func = extension_init_data.on_fuze_complete_func
-	self._max_timer = not not extension_init_data.timer
+	self._max_timer = extension_init_data.timer
 	self._timer = self._max_timer
 	self.keep_alive = true
 

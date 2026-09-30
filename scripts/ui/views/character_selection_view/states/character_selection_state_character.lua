@@ -63,7 +63,7 @@ CharacterSelectionStateCharacter.on_enter = function (self, params)
 	self._ui_animations = {}
 	self._available_profiles = {}
 
-	local network_handler = not not ingame_ui_context.network_server
+	local network_handler = ingame_ui_context.network_server
 
 	self._profile_requester = network_handler:profile_requester()
 
@@ -72,7 +72,7 @@ CharacterSelectionStateCharacter.on_enter = function (self, params)
 	local gui_layer = UILayer.default + 130
 	local input_description_input_service = parent:input_service(true)
 
-	self.menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self.ui_top_renderer, input_description_input_service, 6, gui_layer, params.allow_back_button and not not generic_input_actions.default_back or not params.allow_back_button and not not generic_input_actions.default, true)
+	self.menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self.ui_top_renderer, input_description_input_service, 6, gui_layer, params.allow_back_button and generic_input_actions.default_back or not params.allow_back_button and generic_input_actions.default, true)
 
 	self.menu_input_description:set_input_description(nil)
 	self:create_ui_elements(params)
@@ -252,7 +252,7 @@ CharacterSelectionStateCharacter._setup_hero_selection_widgets = function (self)
 	for i, profile_index in ipairs(profiles) do
 		local profile_settings = SPProfiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local hero_experience = not not hero_attributes:get(hero_name, "experience")
+		local hero_experience = hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local careers = profile_settings.careers
 		local icon_widget = UIWidget.init(hero_icon_widget_definition)
@@ -302,7 +302,7 @@ CharacterSelectionStateCharacter._setup_hero_selection_widgets = function (self)
 				end
 
 				local career_index = hero_attributes:get(hero_name, "career")
-				local bot_career_index = not not hero_attributes:get(hero_name, "bot_career")
+				local bot_career_index = hero_attributes:get(hero_name, "bot_career")
 				local bot_priority = table.find(profiles, profile_index)
 
 				if bot_career_index == j and bot_priority <= 5 then
@@ -333,8 +333,8 @@ CharacterSelectionStateCharacter._update_available_profiles = function (self)
 	local hero_widgets = self._hero_widgets
 	local player = Managers.player:local_player()
 	local profile_synchronizer = self.profile_synchronizer
-	local own_player_profile_index = player ~= nil and not not player:profile_index()
-	local own_player_career_index = player ~= nil and not not player:career_index()
+	local own_player_profile_index = player ~= nil and player:profile_index()
+	local own_player_career_index = player ~= nil and player:career_index()
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 	local profiles = ProfilePriority
 	local profiles = PlayerData.bot_spawn_priority
@@ -360,7 +360,7 @@ CharacterSelectionStateCharacter._update_available_profiles = function (self)
 		end
 
 		local is_currently_played_profile = own_player_profile_index == profile_index
-		local can_play_profile = not not is_currently_played_profile or not not is_profile_available
+		local can_play_profile = is_currently_played_profile or is_profile_available
 		local careers = profile_settings.careers
 
 		for j, career in ipairs(careers) do
@@ -373,7 +373,7 @@ CharacterSelectionStateCharacter._update_available_profiles = function (self)
 				content.taken = not can_play_profile
 
 				if j == selected_career_index and selected_profile_index == profile_index then
-					self:_set_select_button_enabled(not not can_play_profile and not not not is_career_locked, not not is_career_locked and not not content.dlc_name, content.dlc_name)
+					self:_set_select_button_enabled(can_play_profile and not is_career_locked, is_career_locked and content.dlc_name, content.dlc_name)
 				end
 			end
 
@@ -438,7 +438,7 @@ CharacterSelectionStateCharacter._update_equipped_bots = function (self)
 			local widget = self._hero_widgets[widget_index]
 			local content = widget.content
 			local heor_career_index = hero_attributes:get(hero_name, "career")
-			local bot_career_index = not not hero_attributes:get(hero_name, "bot_career")
+			local bot_career_index = hero_attributes:get(hero_name, "bot_career")
 			local bot_priority = table.find(bot_spawn_priority, profile_index)
 
 			if bot_career_index == career_index and bot_priority <= 5 then
@@ -478,7 +478,7 @@ CharacterSelectionStateCharacter._exit_bot_selection = function (self)
 
 	self._ui_animations.background = UIAnimation.init(UIAnimation.function_by_time, background_widget_style.rect.color, 1, background_widget_style.rect.color[1], 0, 0.4, math.easeOutCubic)
 
-	self.menu_input_description:change_generic_actions(self.allow_back_button and not not generic_input_actions.default_back or not self.allow_back_button and not not generic_input_actions.default)
+	self.menu_input_description:change_generic_actions(self.allow_back_button and generic_input_actions.default_back or not self.allow_back_button and generic_input_actions.default)
 
 	self.render_settings.info_alpha_multiplier = 0
 	self.render_settings.bot_selection_alpha_multiplier = 0
@@ -612,7 +612,7 @@ CharacterSelectionStateCharacter._is_selected_hero_unlocked = function (self)
 				local widget = self._hero_widgets[widget_index]
 				local content = widget.content
 
-				return not content.locked_reason or not not not content.locked
+				return not content.locked_reason or not content.locked
 			end
 
 			widget_index = widget_index + 1
@@ -729,9 +729,9 @@ CharacterSelectionStateCharacter._set_bot_selection = function (self, index)
 	local cursor = input_service:get("cursor")
 
 	if IS_XB1 then
-		self._base_cursor_y_offset = not not cursor and not not (1080 - cursor[2])
+		self._base_cursor_y_offset = cursor and 1080 - cursor[2]
 	else
-		self._base_cursor_y_offset = not not cursor and not not (cursor[2] * RESOLUTION_LOOKUP.inv_scale)
+		self._base_cursor_y_offset = cursor and cursor[2] * RESOLUTION_LOOKUP.inv_scale
 	end
 
 	local hero_widget_index = 1
@@ -945,7 +945,7 @@ CharacterSelectionStateCharacter._select_hero = function (self, profile_index, c
 	local hero_display_name = Localize(character_name)
 	local career_display_name = Localize(character_career_name)
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(hero_name, "experience")
+	local hero_experience = hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(hero_experience)
 
 	self:_set_hero_info(hero_display_name, career_display_name, level)
@@ -988,7 +988,7 @@ CharacterSelectionStateCharacter._select_hero = function (self, profile_index, c
 					message = content.locked_reason
 				end
 
-				locked_info_text_content.locked = not not content.locked_reason
+				locked_info_text_content.locked = content.locked_reason
 				locked_info_text_content.text = message
 				locked_info_text_content.visible = message ~= nil
 			end
@@ -1032,11 +1032,11 @@ CharacterSelectionStateCharacter.on_exit = function (self, params)
 
 	if player then
 		local player_unit = player.player_unit
-		local career_extension = not not ALIVE[player_unit]
-		local profile_index = not not self._requested_profile_index
-		local career_index = not not self._requested_career_index
-		local profile = not not profile_index and not not SPProfiles[profile_index]
-		local profile_name = not not profile and not not profile.display_name
+		local career_extension = ALIVE[player_unit]
+		local profile_index = self._requested_profile_index
+		local career_index = self._requested_career_index
+		local profile = profile_index and SPProfiles[profile_index]
+		local profile_name = profile and profile.display_name
 
 		if not DEDICATED_SERVER and profile_name == "bright_wizard" then
 			local careers = profile.careers
@@ -1113,7 +1113,7 @@ CharacterSelectionStateCharacter._handle_transitions = function (self)
 		if self.world_previewer:has_units_spawned() then
 			self._prepare_exit = true
 		elseif not self._prepare_exit then
-			return not not wanted_state or not not self._new_state
+			return wanted_state or self._new_state
 		end
 	end
 end
@@ -1133,7 +1133,7 @@ CharacterSelectionStateCharacter.post_update = function (self, dt, t)
 		elseif self._spawn_hero then
 			self._spawn_hero = nil
 
-			local hero_name = not not self._selected_hero_name
+			local hero_name = self._selected_hero_name
 
 			self:_spawn_hero_unit(hero_name)
 		end
@@ -1288,7 +1288,7 @@ CharacterSelectionStateCharacter.cb_hero_unit_spawned = function (self, hero_nam
 	if self.use_loadout_items then
 		table.clear(preview_items)
 
-		preview_wield_slot = not not preview_wield_slot or not not "melee"
+		preview_wield_slot = preview_wield_slot or "melee"
 
 		local slot_names = InventorySettings.slot_names_by_type[preview_wield_slot]
 		local slot_name = slot_names[1]
@@ -1343,9 +1343,9 @@ CharacterSelectionStateCharacter.cb_hero_unit_spawned = function (self, hero_nam
 		end
 
 		local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
-		local skin_item_data = not not skin_item and not not skin_item.data
+		local skin_item_data = skin_item and skin_item.data
 
-		preview_animation = not skin_item_data or not not skin_item_data.career_select_preview_animation or not not preview_animation
+		preview_animation = not skin_item_data or skin_item_data.career_select_preview_animation or preview_animation
 	end
 
 	if preview_animation and not self.use_loadout_items then
@@ -1461,7 +1461,7 @@ end
 
 CharacterSelectionStateCharacter._setup_additional_career_info = function (self, career_settings, optional_base_excess)
 	-- function 38
-	local base_excess = not not optional_base_excess or not not 0
+	local base_excess = optional_base_excess or 0
 
 	if career_settings.additional_ui_info_file then
 		local additional_info_definitions = local_require(career_settings.additional_ui_info_file)
@@ -1510,7 +1510,7 @@ CharacterSelectionStateCharacter._handle_input = function (self, dt, t)
 		self:_handle_mouse_bot_selection(input_service)
 
 		local back_button = self._widgets_by_name.back_button
-		local back_pressed = gamepad_active and not not input_service:get("back_menu_alt", true) or not gamepad_active and not not input_service:get("toggle_menu", true)
+		local back_pressed = gamepad_active and input_service:get("back_menu_alt", true) or not gamepad_active and input_service:get("toggle_menu", true)
 
 		if back_pressed or UIUtils.is_button_pressed(back_button) then
 			self:_exit_bot_selection()
@@ -1523,8 +1523,8 @@ CharacterSelectionStateCharacter._handle_input = function (self, dt, t)
 		local select_button = self._widgets_by_name.select_button
 		local confirm_available = not select_button.content.button_hotspot.disable_button
 		local bot_priority_button = self._widgets_by_name.bot_priority_button
-		local confirm_pressed = not not confirm_available and not not input_service:get("confirm_press", true)
-		local back_pressed = self.allow_back_button and not not input_service:get("back_menu_alt", true) or not self.allow_back_button and not not input_service:get("back", true)
+		local confirm_pressed = confirm_available and input_service:get("confirm_press", true)
+		local back_pressed = self.allow_back_button and input_service:get("back_menu_alt", true) or not self.allow_back_button and input_service:get("back", true)
 
 		if self:_is_button_pressed(select_button) or confirm_pressed then
 			self:_play_sound("play_gui_start_menu_button_click")
@@ -1796,5 +1796,5 @@ end
 
 CharacterSelectionStateCharacter.input_service = function (self)
 	-- function 57
-	return not not FAKE_INPUT_SERVICE
+	return FAKE_INPUT_SERVICE
 end

@@ -24,7 +24,7 @@ end
 
 ImguiPhysgun._delayed_initialization = function (self)
 	-- function 3
-	local ai_system = not not Managers.state
+	local ai_system = Managers.state
 
 	if not ai_system then
 		return
@@ -79,7 +79,7 @@ end
 ImguiPhysgun.get_player_pos_rot = function (self)
 	-- function 7
 	local player = Managers.player:local_player()
-	local player_unit = not not player and not not player.player_unit
+	local player_unit = player and player.player_unit
 
 	if not ALIVE[player_unit] then
 		return
@@ -117,7 +117,7 @@ ImguiPhysgun.show_unit_info = function (self, unit)
 	Imgui_datum("Actor#", Unit.num_actors(unit))
 	Imgui_datum("Light#", Unit.num_lights(unit))
 	Imgui_datum("Cameras#", Unit.num_cameras(unit))
-	Imgui_datum("Is frozen?", Unit.is_frozen(unit) and not not "yes" or not Unit.is_frozen(unit) and not not "no")
+	Imgui_datum("Is frozen?", Unit.is_frozen(unit) and "yes" or not Unit.is_frozen(unit) and "no")
 end
 
 local function input_device(DEVICE)
@@ -141,7 +141,7 @@ local function input_device(DEVICE)
 					return DEVICE.button(id) > 0.5
 				end
 
-				return DEVICE[not not method or not not default_method](id)
+				return DEVICE[method or default_method](id)
 			end
 
 			self[key] = func
@@ -267,7 +267,7 @@ local function arcball_cursor()
 	local y = (2 * cursor.y - h) * s
 	local l = x * x + y * y
 
-	return V3(x, y, l < 0.5 and not not math.sqrt(1 - l) or not (l < 0.5) and not not (0.5 / math.sqrt(l)))
+	return V3(x, y, l < 0.5 and math.sqrt(1 - l) or not (l < 0.5) and 0.5 / math.sqrt(l))
 end
 
 ImguiPhysgun.grab_update = function (self, dt, pos, rot)
@@ -373,7 +373,7 @@ ImguiPhysgun.grab_update = function (self, dt, pos, rot)
 		Actor.teleport_pose(actor, M4.multiply(actor_pose:unbox(), unit_pose))
 	end
 
-	local color = is_rotating and (input_get("arcball", "held") and not not Color(255, 0, 0) or not input_get("arcball", "held") and not not Color(0, 255, 0)) or not is_rotating and not not Color(255, 255, 0)
+	local color = is_rotating and (input_get("arcball", "held") and Color(255, 0, 0) or not input_get("arcball", "held") and Color(0, 255, 0)) or not is_rotating and Color(255, 255, 0)
 
 	Actor.debug_draw(actor, self._line_object, color)
 	self:laser_update(rot)
@@ -470,7 +470,7 @@ ImguiPhysgun.draw = function (self, is_open, t, dt)
 			end
 		end
 
-		local info_unit = not not self._physgun_unit
+		local info_unit = self._physgun_unit
 
 		if info_unit then
 			self:show_unit_info(info_unit)

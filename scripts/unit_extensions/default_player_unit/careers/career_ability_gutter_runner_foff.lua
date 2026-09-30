@@ -8,7 +8,7 @@ CareerAbilityGutterRunnerFoff._ability_available = function (self)
 	local career_extension = self._career_extension
 	local in_foff_invis = career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
 
-	return not not ability_available and not not not in_foff_invis
+	return ability_available and not in_foff_invis
 end
 
 CareerAbilityGutterRunnerFoff._start = function (self)

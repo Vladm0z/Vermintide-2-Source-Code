@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/item_master_list_test_items.lua
 
-local store_item_hidden = not Application or not not not Application.user_setting("show_test_item")
+local store_item_hidden = not Application or not Application.user_setting("show_test_item")
 
 ItemMasterList.test_item_1001 = {
 	description = "test_item_1001_desc",

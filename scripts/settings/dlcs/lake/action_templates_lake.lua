@@ -19,7 +19,7 @@ ActionTemplates.action_career_es_4 = {
 			local career_extension = ScriptUnit.extension(action_user, "career_system")
 			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return activated_ability_data.action_name == "action_career_es_4" and not not career_extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_es_4" and career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",

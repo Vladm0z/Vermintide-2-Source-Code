@@ -316,7 +316,7 @@ local function create_hero_widget(scenegraph_id, size)
 					pass_type = "texture",
 					content_check_function = function (content)
 						-- function 3
-						return not not content.taken
+						return content.taken
 					end
 				},
 				{
@@ -367,7 +367,7 @@ local function create_hero_widget(scenegraph_id, size)
 						-- function 8
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.is_hover and not button_hotspot.is_selected and not not not content.locked
+						return not button_hotspot.is_hover and not button_hotspot.is_selected and not content.locked
 					end
 				},
 				{
@@ -378,7 +378,7 @@ local function create_hero_widget(scenegraph_id, size)
 						if content.dlc_name then
 							local button_hotspot = content.button_hotspot
 
-							return not button_hotspot.is_hover and not button_hotspot.is_selected and not not content.locked
+							return not button_hotspot.is_hover and not button_hotspot.is_selected and content.locked
 						else
 							return content.locked
 						end
@@ -391,7 +391,7 @@ local function create_hero_widget(scenegraph_id, size)
 						-- function 10
 						local button_hotspot = content.button_hotspot
 
-						return not not content.dlc_name
+						return content.dlc_name
 					end
 				},
 				{
@@ -409,7 +409,7 @@ local function create_hero_widget(scenegraph_id, size)
 					texture_id = "currently_selected_frame",
 					content_check_function = function (content)
 						-- function 12
-						return not content.button_hotspot.is_selected and not not content.is_currently_selected_character
+						return not content.button_hotspot.is_selected and content.is_currently_selected_character
 					end
 				}
 			}
@@ -802,7 +802,7 @@ local empty_hero_widget = {
 				pass_type = "texture",
 				content_change_function = function (content, style)
 					-- function 16
-					local target = content.is_hover and not not 255 or not content.is_hover and not not 184
+					local target = content.is_hover and 255 or not content.is_hover and 184
 
 					style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 				end

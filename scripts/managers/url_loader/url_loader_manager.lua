@@ -66,9 +66,9 @@ end
 
 UrlLoaderManager.load_resource = function (self, reference_name, url, callback, cache_key, cache_version, texture_category)
 	-- function 10
-	cache_key = not not cache_key or not not url
-	cache_version = not not cache_version or not not "1"
-	texture_category = not not texture_category or not not "downloaded_textures"
+	cache_key = cache_key or url
+	cache_version = cache_version or "1"
+	texture_category = texture_category or "downloaded_textures"
 
 	if not self._jobs[cache_key] then
 		local url_job = UrlLoader.load_texture(self._url_loader, url, cache_key, cache_version, texture_category)

@@ -32,7 +32,7 @@ GameServerLobbyClient.init = function (self, network_options, game_server_data, 
 	self._network_hash = GameServerAux.create_network_hash(config_file_name, project_hash)
 	self.lobby = self._game_server_lobby
 	self.network_hash = self._network_hash
-	self._is_party_host = not Managers.state.network or not not Managers.state.network.is_server
+	self._is_party_host = not Managers.state.network or Managers.state.network.is_server
 	self._advertising_playing = true
 	self.is_host = false
 end
@@ -84,15 +84,15 @@ GameServerLobbyClient.update = function (self, dt)
 		self._state = new_state
 
 		if new_state == "failed" then
-			local versus_interface = not not Managers.backend
+			local versus_interface = Managers.backend
 
 			if versus_interface then
 				local matchmaking_session_id = versus_interface:get_matchmaking_session_id()
 
 				if matchmaking_session_id then
-					local ip_port = not not self._game_server_info.ip_port
+					local ip_port = self._game_server_info.ip_port
 
-					Crashify.print_exception("GameServerLobbyClient", "State changed from %s to %s for flexmatch server. matchmaking_session_id: %s | ip_port: %s", old_state, new_state, not not matchmaking_session_id or not not "MISSING", ip_port)
+					Crashify.print_exception("GameServerLobbyClient", "State changed from %s to %s for flexmatch server. matchmaking_session_id: %s | ip_port: %s", old_state, new_state, matchmaking_session_id or "MISSING", ip_port)
 				end
 			end
 		elseif new_state == "reserved" then
@@ -119,7 +119,7 @@ GameServerLobbyClient.update = function (self, dt)
 				CHANNEL_TO_PEER_ID[channel_id] = game_server_peer_id
 			end
 
-			self._members = not not self._members
+			self._members = self._members
 		end
 
 		if old_state == "joined" and self._members then
@@ -207,7 +207,7 @@ end
 
 GameServerLobbyClient.id = function (self)
 	-- function 19
-	return GameServerInternal.lobby_id and not not GameServerInternal.lobby_id(self._game_server_lobby) or not GameServerInternal.lobby_id and not not "no_id"
+	return GameServerInternal.lobby_id and GameServerInternal.lobby_id(self._game_server_lobby) or not GameServerInternal.lobby_id and "no_id"
 end
 
 GameServerLobbyClient.request_data = function (self)

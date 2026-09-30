@@ -45,16 +45,16 @@ PlayerProjectileImpactUnitExtension.init = function (self, extension_init_contex
 		collision_filter = "filter_player_ray_projectile"
 	end
 
-	self.enemy_collision_filter = not not extension_init_data.collision_filter
-	self.static_collision_filter = not not extension_init_data.collision_filter
-	self.collision_filter = not not extension_init_data.collision_filter
+	self.enemy_collision_filter = extension_init_data.collision_filter
+	self.static_collision_filter = extension_init_data.collision_filter
+	self.collision_filter = extension_init_data.collision_filter
 	self.radius = extension_init_data.radius
-	self.scene_query_height_offset = not not projectile_info.scene_query_height_offset
+	self.scene_query_height_offset = projectile_info.scene_query_height_offset
 	self.last_position = nil
 
 	local t = Managers.time:time("game")
 
-	self._friendly_fire_grace_period = t + not not projectile_info.friendly_fire_grace_period
+	self._friendly_fire_grace_period = t + projectile_info.friendly_fire_grace_period
 end
 
 PlayerProjectileImpactUnitExtension.extensions_ready = function (self, world, unit)
@@ -106,7 +106,7 @@ PlayerProjectileImpactUnitExtension.update_raycast = function (self, unit, input
 	local cached_position = locomotion_extension:last_position()
 	local moved_position = locomotion_extension:current_position()
 	local physics_world = self.physics_world
-	local collision_filter = not not override_collision_filter or not not self.collision_filter
+	local collision_filter = override_collision_filter or self.collision_filter
 	local last_position = self.last_position
 
 	if last_position then

@@ -3,7 +3,7 @@
 require("scripts/managers/player/bulldozer_player")
 
 PlayerBot = class(PlayerBot, BulldozerPlayer)
-EnergyData = not not EnergyData
+EnergyData = EnergyData
 
 local BOT_COLORS = {
 	bright_wizard = QuaternionBox(255, 255, 127, 0),
@@ -92,7 +92,7 @@ end
 PlayerBot.profile_display_name = function (self)
 	-- function 12
 	local profile = SPProfiles[self._profile_index]
-	local display_name = not not profile and not not profile.display_name
+	local display_name = profile and profile.display_name
 
 	return display_name
 end
@@ -148,20 +148,20 @@ PlayerBot.spawn = function (self, position, rotation, is_initial_spawn, ammo_mel
 	local base_frame = "default"
 	local career_name = career.name
 	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin", is_bot)
-	local skin_name = skin_item and not not skin_item.data.name or not skin_item and not not base_skin
+	local skin_name = skin_item and skin_item.data.name or not skin_item and base_skin
 	local skin_data = Cosmetics[skin_name]
 	local frame_item = BackendUtils.get_loadout_item(career_name, "slot_frame", is_bot)
-	local frame_name = frame_item and not not frame_item.data.name or not frame_item and not not base_frame
-	local overcharge_data = not not OverchargeData[career_name]
-	local energy_data = not not EnergyData[career_name]
+	local frame_name = frame_item and frame_item.data.name or not frame_item and base_frame
+	local overcharge_data = OverchargeData[career_name]
+	local energy_data = EnergyData[career_name]
 	local base_pose = "default_weapon_pose_01"
 	local pose_item = BackendUtils.get_loadout_item(career_name, "slot_pose")
-	local pose_item_data = pose_item and not not pose_item.data or not pose_item and not not pose_item
-	local pose_name = pose_item_data and not not pose_item_data.name or not pose_item_data and not not base_pose
+	local pose_item_data = pose_item and pose_item.data or not pose_item and pose_item
+	local pose_name = pose_item_data and pose_item_data.name or not pose_item_data and base_pose
 	local status = Managers.party:get_status_from_unique_id(self._unique_id)
 	local party = Managers.party:get_party(status.party_id)
 	local side = Managers.state.side.side_by_party[party]
-	local breed = not not career.breed
+	local breed = career.breed
 	local extension_init_data = {
 		ai_system = {
 			player = self,
@@ -302,7 +302,7 @@ PlayerBot.spawn = function (self, position, rotation, is_initial_spawn, ammo_mel
 	Unit.create_actor(unit, "bot_collision", false)
 
 	local level_settings = LevelHelper:current_level_settings()
-	local climate_type = not not level_settings.climate_type
+	local climate_type = level_settings.climate_type
 
 	Unit.set_flow_variable(unit, "climate_type", climate_type)
 	Unit.flow_event(unit, "climate_type_set")

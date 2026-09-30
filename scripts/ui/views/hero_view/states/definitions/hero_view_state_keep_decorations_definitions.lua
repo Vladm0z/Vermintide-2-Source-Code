@@ -13,8 +13,8 @@ local info_window_size = {
 	list_window_size[2] + 20
 }
 local IS_PC = IS_WINDOWS
-local entry_height = IS_PC and not not 35 or not IS_PC and not not 50
-local entry_font_size = IS_PC and not not 22 or not IS_PC and not not 28
+local entry_height = IS_PC and 35 or not IS_PC and 50
+local entry_font_size = IS_PC and 22 or not IS_PC and 28
 local list_entry_size = {
 	400,
 	entry_height
@@ -380,7 +380,7 @@ local function create_entry_widget()
 			pass_type = "texture_frame",
 			content_check_function = function (content)
 				-- function 4
-				return not not content.new
+				return content.new
 			end,
 			content_change_function = function (content, style)
 				-- function 5
@@ -400,7 +400,7 @@ local function create_entry_widget()
 				local new = content.new
 				local in_use = content.in_use
 
-				return not locked and not equipped and not new and not not not in_use
+				return not locked and not equipped and not new and not in_use
 			end
 		},
 		{
@@ -436,7 +436,7 @@ local function create_entry_widget()
 			texture_id = "equipped_texture",
 			content_check_function = function (content)
 				-- function 10
-				return not not content.in_use
+				return content.in_use
 			end
 		},
 		{
@@ -483,7 +483,7 @@ local function create_entry_widget()
 			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			font_size = entry_font_size,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			hover_text_color = Colors.get_color_table_with_alpha("white", 255),
 			default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
@@ -502,7 +502,7 @@ local function create_entry_widget()
 			horizontal_alignment = "left",
 			vertical_alignment = "center",
 			font_size = entry_font_size,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = {
 				255,
 				80,
@@ -536,7 +536,7 @@ local function create_entry_widget()
 			horizontal_alignment = "left",
 			localize = false,
 			font_size = entry_font_size,
-			font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+			font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				41,
@@ -883,7 +883,7 @@ local function create_rect_with_frame(scenegraph_id, size, rect_color)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = size,
-			color = not not rect_color or not not {
+			color = rect_color or {
 				255,
 				255,
 				255,
@@ -921,7 +921,7 @@ local function create_rect_with_frame(scenegraph_id, size, rect_color)
 				-27,
 				-27
 			},
-			color = not not rect_color or not not {
+			color = rect_color or {
 				255,
 				255,
 				255,
@@ -950,7 +950,7 @@ end
 
 local function create_list_mask(scenegraph_id, size, fade_height)
 	-- function 15
-	fade_height = not not fade_height or not not 20
+	fade_height = fade_height or 20
 
 	local element = {
 		passes = {

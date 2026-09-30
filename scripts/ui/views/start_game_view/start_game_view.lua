@@ -148,7 +148,7 @@ StartGameView._setup_state_machine = function (self, state_machine_params, optio
 		self._machine = nil
 	end
 
-	local start_state = not not optional_start_state or not not StartGameStateSettingsOverview
+	local start_state = optional_start_state or StartGameStateSettingsOverview
 	local profiling_debugging_enabled = false
 
 	state_machine_params.start_state = optional_start_sub_state
@@ -170,7 +170,7 @@ end
 
 StartGameView.input_service = function (self)
 	-- function 13
-	return self._draw_loading and not not FAKE_INPUT_SERVICE or not self._draw_loading and not not self.input_manager:get_service("start_game_view")
+	return self._draw_loading and FAKE_INPUT_SERVICE or not self._draw_loading and self.input_manager:get_service("start_game_view")
 end
 
 StartGameView.set_input_blocked = function (self, blocked)
@@ -190,7 +190,7 @@ end
 
 StartGameView.play_mechanism_sound = function (self, event_setting_name, default_event)
 	-- function 17
-	local sound_event = not not Managers.mechanism:mechanism_setting(event_setting_name)
+	local sound_event = Managers.mechanism:mechanism_setting(event_setting_name)
 
 	if sound_event then
 		self:play_sound(sound_event)
@@ -277,7 +277,7 @@ StartGameView.update = function (self, dt, t)
 	local input_manager = self.input_manager
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local input_blocked = self:input_blocked()
-	local input_service = input_blocked and not not FAKE_INPUT_SERVICE or not input_blocked and not not self:input_service()
+	local input_service = input_blocked and FAKE_INPUT_SERVICE or not input_blocked and self:input_service()
 
 	self._state_machine_params.input_service = input_service
 
@@ -362,9 +362,9 @@ StartGameView._handle_new_ui_disclaimer = function (self)
 			leaderboard = false
 		}
 	}
-	local disclaimer_states = not not global_disclaimer_states[mechanism_name]
+	local disclaimer_states = global_disclaimer_states[mechanism_name]
 	local on_enter_transition_params = self._on_enter_transition_params
-	local menu_state_name = on_enter_transition_params and not not on_enter_transition_params.menu_state_name or not on_enter_transition_params and not not "default"
+	local menu_state_name = on_enter_transition_params and on_enter_transition_params.menu_state_name or not on_enter_transition_params and "default"
 
 	Managers.ui:handle_new_ui_disclaimer(disclaimer_states, menu_state_name)
 end
@@ -398,7 +398,7 @@ StartGameView._get_sorted_players = function (self)
 
 	table.sort(player_order, function (a, b)
 		-- function 27
-		return not not a.local_player
+		return a.local_player
 	end)
 
 	return player_order
@@ -465,7 +465,7 @@ StartGameView.hotkey_allowed = function (self, input, mapping_data)
 		local name = current_screen_settings.name
 
 		if name == transition_state then
-			local active_sub_settings_name = not not current_state.get_selected_layout_name
+			local active_sub_settings_name = current_state.get_selected_layout_name
 
 			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
@@ -587,7 +587,7 @@ end
 
 StartGameView.exit = function (self, return_to_game, ignore_sound)
 	-- function 39
-	local exit_transition = return_to_game and not not "exit_menu" or not return_to_game and not not "ingame_menu"
+	local exit_transition = return_to_game and "exit_menu" or not return_to_game and "ingame_menu"
 
 	self.ingame_ui:transition_with_fade(exit_transition)
 
@@ -662,9 +662,9 @@ end
 StartGameView._has_active_level_vote = function (self)
 	-- function 46
 	local voting_manager = self.voting_manager
-	local is_mission_vote = not not voting_manager:vote_in_progress()
+	local is_mission_vote = voting_manager:vote_in_progress()
 
-	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
+	return is_mission_vote and not voting_manager:has_voted(Network.peer_id())
 end
 
 StartGameView._set_loading_overlay_enabled = function (self, enabled, message)
@@ -672,11 +672,11 @@ StartGameView._set_loading_overlay_enabled = function (self, enabled, message)
 	local loading_widgets = self._loading_widgets
 	local loading_text_widget = loading_widgets.text
 	local loading_bg_widget = loading_widgets.background
-	local alpha = enabled and not not 255 or not enabled and not not 0
+	local alpha = enabled and 255 or not enabled and 0
 
 	loading_bg_widget.style.color[1] = alpha
 	loading_text_widget.style.text.text_color[1] = alpha
-	loading_text_widget.content.text = not not message or not not ""
+	loading_text_widget.content.text = message or ""
 	self._draw_loading = enabled
 end
 

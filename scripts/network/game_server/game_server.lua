@@ -3,7 +3,7 @@
 require("scripts/network/game_server/game_server_aux")
 require("scripts/network/lobby_members")
 
-local game_server_testify = not not script_data.testify
+local game_server_testify = script_data.testify
 
 GameServer = class(GameServer)
 
@@ -36,7 +36,7 @@ end
 GameServer.kick_all_except = function (self, ignored_peers)
 	-- function 3
 	if GameServerInternal.remove_member then
-		ignored_peers = not not ignored_peers or not not {}
+		ignored_peers = ignored_peers or {}
 
 		local my_peer_id = self._data_table.host
 
@@ -82,7 +82,7 @@ GameServer.update = function (self, dt, t)
 				game_server:set_data(key, value)
 			end
 
-			self._members = not not self._members
+			self._members = self._members
 
 			if not GameServer._peer_id_property_set then
 				GameServer._peer_id_property_set = true
@@ -208,7 +208,7 @@ end
 
 GameServer.id = function (self)
 	-- function 22
-	return GameServerInternal.server_id and not not GameServerInternal.server_id(self._game_server) or not GameServerInternal.server_id and not not "no_id"
+	return GameServerInternal.server_id and GameServerInternal.server_id(self._game_server) or not GameServerInternal.server_id and "no_id"
 end
 
 GameServer.server_name = function (self)

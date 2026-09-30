@@ -67,7 +67,7 @@ CareerAbilityESHuntsman._ability_available = function (self)
 	local slot_data = self._inventory_extension:get_slot_data(weapon_slot)
 	local has_weapon = slot_data ~= nil
 
-	return not not can_use and not disabled and not not has_weapon
+	return can_use and not disabled and has_weapon
 end
 
 CareerAbilityESHuntsman.force_trigger_ability = function (self)
@@ -177,7 +177,7 @@ CareerAbilityESHuntsman._run_ability = function (self, skip_cooldown)
 	local left_unit_1p = slot_data.left_unit_1p
 	local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 	local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-	local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+	local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 	if ammo_extension then
 		local clip_size = ammo_extension:clip_size()

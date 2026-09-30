@@ -27,7 +27,7 @@ LevelAnalysis.init = function (self, nav_world, using_editor, level_name, level_
 		local level_key = Managers.mechanism:get_current_level_keys()
 		local level_settings = LevelSettings[level_key]
 
-		self._skip_to_map_section = not not level_settings.override_map_start_section
+		self._skip_to_map_section = level_settings.override_map_start_section
 	end
 
 	self.terror_spawners = terror_spawners
@@ -74,7 +74,7 @@ LevelAnalysis.set_random_seed = function (self, checkpoint_data, override_seed)
 	if checkpoint_data then
 		seed = checkpoint_data.seed
 	else
-		seed = not not override_seed or not not math.random_seed()
+		seed = override_seed or math.random_seed()
 	end
 
 	self.starting_seed = seed
@@ -169,12 +169,12 @@ LevelAnalysis._add_path_marker_data = function (self, pos, marker_type, order, m
 	for i = 1, #path_markers do
 		if order < path_markers[i].order then
 			index = i
-			kind = not not kind or not not "good"
+			kind = kind or "good"
 
 			break
 		elseif order == path_markers[i].order then
 			index = i
-			kind = not not kind or not not "duplicate"
+			kind = kind or "duplicate"
 
 			printf("Two path markers in the level has the same order: %s (%s)", tostring(order), tostring(pos))
 
@@ -182,7 +182,7 @@ LevelAnalysis._add_path_marker_data = function (self, pos, marker_type, order, m
 		end
 	end
 
-	kind = not not kind or not not "good"
+	kind = kind or "good"
 
 	table.insert(path_markers, index, {
 		pos = Vector3Box(pos),
@@ -220,10 +220,10 @@ LevelAnalysis._initialize_path_markers_from_editor = function (self, path_marker
 			local crossroads_string = Unit_get_data(unit, "crossroads")
 			local roaming_set_string = Unit_get_data(unit, "roaming_set")
 			local mutators_string = Unit_get_data(unit, "mutators")
-			local peak_boolean = not not Unit_get_data(unit, "peak")
+			local peak_boolean = Unit_get_data(unit, "peak")
 
-			roaming_set_string = not not nil
-			mutators_string = not not nil
+			roaming_set_string = nil
+			mutators_string = nil
 
 			local entry_success = self:_add_path_marker_data(pos, marker_type, order, 1, crossroads_string, roaming_set_string, mutators_string, peak_boolean, nav_world, path_markers)
 
@@ -253,10 +253,10 @@ LevelAnalysis._initialize_path_markers_from_ingame = function (self, path_marker
 		local crossroads_string = DynamicData_get(unit_data, "crossroads")
 		local roaming_set_string = DynamicData_get(unit_data, "roaming_set")
 		local mutators_string = DynamicData_get(unit_data, "mutators")
-		local peak_boolean = not not DynamicData_get(unit_data, "peak")
+		local peak_boolean = DynamicData_get(unit_data, "peak")
 
-		mutators_string = not not nil
-		roaming_set_string = not not nil
+		mutators_string = nil
+		roaming_set_string = nil
 
 		local entry_success = self:_add_path_marker_data(pos, marker_type, order, 1, crossroads_string, roaming_set_string, mutators_string, peak_boolean, nav_world, path_markers)
 
@@ -344,7 +344,7 @@ LevelAnalysis.generate_main_path = function (self, level_name, path_markers, in_
 				num_crossroads = num_crossroads + 1
 			end
 
-			crossroad.roads[road_id] = not not crossroad.roads[road_id] + 1
+			crossroad.roads[road_id] = crossroad.roads[road_id] + 1
 			crossroad.num_roads = crossroad.num_roads + 1
 		end
 
@@ -888,7 +888,7 @@ LevelAnalysis.pick_boss_spline = function (self, map_section, padding, last_trav
 	local section_travel_dist = section_waypoints[1].travel_dist
 	local safe_start_dist = last_travel_dist + padding
 
-	safe_start_dist = section_travel_dist < safe_start_dist and (not not safe_start_dist or not not section_travel_dist) or not (section_travel_dist < safe_start_dist) and not not section_travel_dist
+	safe_start_dist = section_travel_dist < safe_start_dist and (safe_start_dist or section_travel_dist) or not (section_travel_dist < safe_start_dist) and section_travel_dist
 
 	local start_index
 
@@ -1059,7 +1059,7 @@ LevelAnalysis._give_events = function (self, main_paths, terror_spawners, genera
 	local spawn_distance = 0
 	local padding = 10
 	local start_index, end_index
-	local map_start_section = not not self._skip_to_map_section
+	local map_start_section = self._skip_to_map_section
 
 	for i = map_start_section, #conflict_director_section_list do
 		local boxed_pos, gizmo_unit, event_data
@@ -1221,8 +1221,8 @@ LevelAnalysis._give_events = function (self, main_paths, terror_spawners, genera
 			if event_settings.terror_events_using_packs then
 				self.enemy_recycler:add_terror_event_in_area(boxed_pos, terror_event_name, event_data)
 			else
-				local override_boss_activation_distance = terror_event_kind == "event_boss" and not not Managers.mechanism:mechanism_setting_for_title("override_boss_activation_distance")
-				local activation_distance = not not override_boss_activation_distance or not not 45
+				local override_boss_activation_distance = terror_event_kind == "event_boss" and Managers.mechanism:mechanism_setting_for_title("override_boss_activation_distance")
+				local activation_distance = override_boss_activation_distance or 45
 				local spawn_dist
 
 				if override_spawn_distance then
@@ -1233,7 +1233,7 @@ LevelAnalysis._give_events = function (self, main_paths, terror_spawners, genera
 			end
 		end
 
-		local debug_color_name = event_settings and not not event_settings.debug_color or not event_settings and not not "deep_pink"
+		local debug_color_name = event_settings and event_settings.debug_color or not event_settings and "deep_pink"
 
 		terror_event_list[#terror_event_list + 1] = {
 			boxed_pos,
@@ -1344,7 +1344,7 @@ LevelAnalysis._hand_placed_terror_creation = function (self, main_paths, terror_
 		num_sections, conflict_director_section_list = self:group_spawners(data.spawners, data.level_sections)
 
 		if last_num_sections and num_sections ~= last_num_sections then
-			error("Not all sectors has boss event gizmos in level for  " .. (num_sections < last_num_sections and (not not event_type or not not last_event_type) or not (num_sections < last_num_sections) and not not last_event_type))
+			error("Not all sectors has boss event gizmos in level for  " .. (num_sections < last_num_sections and (event_type or last_event_type) or not (num_sections < last_num_sections) and last_event_type))
 		end
 
 		last_num_sections = num_sections
@@ -1355,7 +1355,7 @@ LevelAnalysis._hand_placed_terror_creation = function (self, main_paths, terror_
 
 	local level_settings = self.level_settings
 	local level_overrides = level_settings[terror_event_category]
-	local max_events_of_this_kind = level_overrides and not not level_overrides.max_events_of_this_kind or not level_overrides and not not {
+	local max_events_of_this_kind = level_overrides and level_overrides.max_events_of_this_kind or not level_overrides and {
 		event_boss = 2
 	}
 	local generated_event_list = self:_generate_event_name_list(conflict_director_section_list, max_events_of_this_kind, terror_event_category)
@@ -1393,7 +1393,7 @@ LevelAnalysis._automatic_terror_creation = function (self, main_paths, total_mai
 	local num_event_places_f = adjusted_path_distance / event_every_x_meter
 	local num_event_places = math.floor(num_event_places_f)
 	local trailing_event_fraction = num_event_places_f % 1
-	local trailing_event = trailing_event_fraction >= self:_random() and not not 1 or not (trailing_event_fraction >= self:_random()) and not not 0
+	local trailing_event = trailing_event_fraction >= self:_random() and 1 or not (trailing_event_fraction >= self:_random()) and 0
 	local num_events = num_event_places + trailing_event
 
 	print("[LevelAnalysis] num_event_places_f:", num_event_places_f, ", num_event_places:", num_event_places, ", trailing_event_fraction:", trailing_event_fraction, ", num_events:", num_events)
@@ -1445,7 +1445,7 @@ LevelAnalysis._automatic_terror_creation = function (self, main_paths, total_mai
 
 	local level_settings = self.level_settings
 	local level_overrides = level_settings[terror_event_category]
-	local max_events_of_this_kind = level_overrides and not not level_overrides.max_events_of_this_kind or not level_overrides and not not {
+	local max_events_of_this_kind = level_overrides and level_overrides.max_events_of_this_kind or not level_overrides and {
 		event_boss = 2
 	}
 	local event_list = self:_generate_event_name_list(conflict_director_section_list, max_events_of_this_kind, terror_event_category)
@@ -1552,8 +1552,8 @@ LevelAnalysis.generate_boss_paths = function (self)
 		-- Nothing
 	else
 		local level_overrides = level_settings.boss_events
-		local event_every_x_meter = level_overrides and not not level_overrides.recurring_distance or not level_overrides and not not 300
-		local safe_distance = level_overrides and not not level_overrides.safe_dist or not level_overrides and not not 150
+		local event_every_x_meter = level_overrides and level_overrides.recurring_distance or not level_overrides and 300
+		local safe_distance = level_overrides and level_overrides.safe_dist or not level_overrides and 150
 
 		self:_automatic_terror_creation(self.main_paths, self.total_main_path_dist, self.boss_event_list, "boss_events", event_every_x_meter, safe_distance)
 	end
@@ -1561,8 +1561,8 @@ LevelAnalysis.generate_boss_paths = function (self)
 	local level_overrides = level_settings.rare_events
 
 	if not level_overrides or level_overrides and not level_overrides.disabled then
-		local event_every_x_meter = level_overrides and not not level_overrides.recurring_distance or not level_overrides and not not 1500
-		local safe_distance = level_overrides and not not level_overrides.safe_dist or not level_overrides and not not 50
+		local event_every_x_meter = level_overrides and level_overrides.recurring_distance or not level_overrides and 1500
+		local safe_distance = level_overrides and level_overrides.safe_dist or not level_overrides and 50
 
 		self:_automatic_terror_creation(self.main_paths, self.total_main_path_dist, self.boss_event_list, "rare_events", event_every_x_meter, safe_distance)
 	end
@@ -1873,7 +1873,7 @@ end
 
 LevelAnalysis.get_waypoint_spline = function (self, spline_id)
 	-- function 54
-	local route_data = not not self.waypoint_lookup_table
+	local route_data = self.waypoint_lookup_table
 
 	if route_data then
 		local waypoints = route_data.waypoints
@@ -1974,7 +1974,7 @@ LevelAnalysis.get_closest_roaming_spline = function (self, pos, exact)
 	for i = 1, #roaming_waypoints do
 		if not used_roaming_waypoints[i] then
 			local route_data = roaming_waypoints[i]
-			local wp = exact and not not self:get_closest_pos_to_waypoint_list(route_data.waypoints, pos) or not exact and not not route_data.waypoints[1]
+			local wp = exact and self:get_closest_pos_to_waypoint_list(route_data.waypoints, pos) or not exact and route_data.waypoints[1]
 
 			start_pos = Vector3(wp[1], wp[2], wp[3])
 
@@ -2015,8 +2015,8 @@ end
 
 LevelAnalysis.remove_crossroads_extra_path_branches = function (self, main_paths, crossroads, total_main_path_length_unmodified, zones, num_main_zones, path_markers)
 	-- function 59
-	main_paths = not not main_paths or not not self.main_paths
-	crossroads = not not crossroads or not not self.crossroads
+	main_paths = main_paths or self.main_paths
+	crossroads = crossroads or self.crossroads
 
 	local seed = self.starting_seed
 	local chosen_crossroads = self.chosen_crossroads
@@ -2331,7 +2331,7 @@ LevelAnalysis.get_zone_segment_from_travel_dist = function (travel_dist, zones, 
 		local zone_travel_dist = zone.travel_dist - 5
 
 		if travel_dist < zone_travel_dist then
-			local zone_index = i > 1 and not not (i - 1) or not (i > 1) and not not i
+			local zone_index = i > 1 and i - 1 or not (i > 1) and i
 			local closest_zone = zones[zone_index]
 
 			return zone_index, closest_zone
@@ -2352,17 +2352,17 @@ LevelAnalysis.setup_unreachable_processing = function (nav_world, main_paths, po
 		main_paths = main_paths,
 		nav_world = nav_world,
 		point_list = point_list,
-		max_running_astars = optional and not not optional.max_concurrent_astars or not optional and not not 25,
-		delete_failed_points = not not optional and not not optional.delete_failed_points,
-		get_pos_func = not not optional and not not optional.get_pos_func,
-		get_pos_func2 = not not optional and not not optional.get_pos_func2,
-		path_found_func = not not optional and not not optional.path_found_func,
-		path_not_found_func = not not optional and not not optional.path_not_found_func,
-		traverse_logic = optional and not not optional.traverse_logic or not optional and not not GwNavTraverseLogic.create(nav_world),
-		line_object = not not optional and not not optional.line_object,
-		fail_color = not not optional and not not optional.fail_color,
-		ok_color = not not optional and not not optional.ok_color,
-		translate_vec = not not optional and not not optional.translate_vec
+		max_running_astars = optional and optional.max_concurrent_astars or not optional and 25,
+		delete_failed_points = optional and optional.delete_failed_points,
+		get_pos_func = optional and optional.get_pos_func,
+		get_pos_func2 = optional and optional.get_pos_func2,
+		path_found_func = optional and optional.path_found_func,
+		path_not_found_func = optional and optional.path_not_found_func,
+		traverse_logic = optional and optional.traverse_logic or not optional and GwNavTraverseLogic.create(nav_world),
+		line_object = optional and optional.line_object,
+		fail_color = optional and optional.fail_color,
+		ok_color = optional and optional.ok_color,
+		translate_vec = optional and optional.translate_vec
 	}
 
 	return setup
@@ -2372,10 +2372,10 @@ LevelAnalysis.process_unreachable = function (work_data)
 	-- function 72
 	local point_list = work_data.point_list
 	local delete_failed_points = work_data.delete_failed_points
-	local path_found_func = not not work_data.path_found_func
-	local path_not_found_func = not not work_data.path_not_found_func
-	local get_pos_func = not not work_data.get_pos_func
-	local get_pos_func2 = not not work_data.get_pos_func2
+	local path_found_func = work_data.path_found_func
+	local path_not_found_func = work_data.path_not_found_func
+	local get_pos_func = work_data.get_pos_func
+	local get_pos_func2 = work_data.get_pos_func2
 	local max_running_astars = work_data.max_running_astars
 	local running_astars = work_data.running_astar_list
 	local free_astars = work_data.free_astar_list
@@ -2384,9 +2384,9 @@ LevelAnalysis.process_unreachable = function (work_data)
 	local j = work_data.num_points_started
 	local total_points = #point_list
 	local line_object = work_data.line_object
-	local fail_color = work_data.fail_color and not not Color(unpack(work_data.fail_color)) or not work_data.fail_color and not not Color(255, 0, 0)
-	local ok_color = work_data.ok_color and not not Color(unpack(work_data.ok_color)) or not work_data.ok_color and not not Color(255, 255, 255)
-	local translate_vec = work_data.translate_vec and not not Vector3(unpack(work_data.translate_vec)) or not work_data.translate_vec and not not Vector3(0, 0, 0)
+	local fail_color = work_data.fail_color and Color(unpack(work_data.fail_color)) or not work_data.fail_color and Color(255, 0, 0)
+	local ok_color = work_data.ok_color and Color(unpack(work_data.ok_color)) or not work_data.ok_color and Color(255, 255, 255)
+	local translate_vec = work_data.translate_vec and Vector3(unpack(work_data.translate_vec)) or not work_data.translate_vec and Vector3(0, 0, 0)
 
 	Debug.text("Processing points: %d, %d/%d, astars: free %d running %d", work_data.num_points_started, work_data.investigated_points, total_points, #free_astars, #running_astars)
 	printf("[LevelAnalysis] Processing points: %d, %d/%d, astars: free %d running %d", work_data.num_points_started, work_data.investigated_points, total_points, #free_astars, #running_astars)
@@ -2462,7 +2462,7 @@ LevelAnalysis.process_unreachable = function (work_data)
 			end
 
 			local pos1 = get_pos_func(point_list, j + 1)
-			local pos2 = not not get_pos_func2(point_list, j + 1)
+			local pos2 = get_pos_func2(point_list, j + 1)
 
 			data.goal_pos_boxed = Vector3Box(pos2)
 			j = j + 1
@@ -2563,8 +2563,8 @@ LevelAnalysis.setup_main_path_breaks_check = function (nav_world, main_paths, tr
 			local to_main_path = main_paths[j]
 			local to_nodes = to_main_path.nodes
 			local to_node = to_nodes[#to_nodes]
-			local is_crossroad = not not from_main_path.crossroads_id
-			local has_crossroad_break = not not is_crossroad and not not MainPathSpawningGenerator.main_path_has_marker_type(path_markers, j, "crossroad_break")
+			local is_crossroad = from_main_path.crossroads_id
+			local has_crossroad_break = is_crossroad and MainPathSpawningGenerator.main_path_has_marker_type(path_markers, j, "crossroad_break")
 			local shares_crossroad_id = from_main_path.crossroads_id == to_main_path.crossroads_id
 			local shares_road_id = from_main_path.road_id == to_main_path.road_id
 
@@ -2619,7 +2619,7 @@ LevelAnalysis.setup_main_path_breaks_check = function (nav_world, main_paths, tr
 					local to_main_path_road_id = to_main_path.road_id
 
 					if to_main_path_crossroad_id then
-						chosen_crossroad_id = not not chosen_crossroad_id or not not to_main_path_crossroad_id
+						chosen_crossroad_id = chosen_crossroad_id or to_main_path_crossroad_id
 
 						if to_main_path_crossroad_id == chosen_crossroad_id and not checked_road_ids[to_main_path_road_id] then
 							nodes_to_check[#nodes_to_check + 1] = {
@@ -2752,7 +2752,7 @@ LevelAnalysis.process_main_path_breaks_check = function (work_data)
 				if crossroad_break_check then
 					printf("[LevelAnalysis] Found path from crossroad break between main_path_index %d and %d (start=%s end=%s). But that's ok since it will be stitched", from_main_path_index, to_main_path_index, tostring(from_node_box:unbox()), tostring(to_node_box:unbox()))
 				elseif not is_crossroad or not has_crossroad_break and (not shares_crossroad_id or shares_road_id) then
-					local failed_data = not not failed_main_path_breaks[from_main_path_index]
+					local failed_data = failed_main_path_breaks[from_main_path_index]
 
 					failed_data[to_main_path_index] = {
 						node = to_node_box,
@@ -2765,7 +2765,7 @@ LevelAnalysis.process_main_path_breaks_check = function (work_data)
 					printf("[LevelAnalysis] Path exist between main_path_index %d and %d (start=%s end=%s), but it is between two diffrent roads in the same crossroad that wont exist together.", from_main_path_index, to_main_path_index, tostring(from_node_box:unbox()), tostring(to_node_box:unbox()))
 				end
 			elseif crossroad_break_check then
-				local failed_data = not not failed_main_path_breaks[from_main_path_index]
+				local failed_data = failed_main_path_breaks[from_main_path_index]
 
 				failed_data[to_main_path_index] = {
 					node = to_node_box,

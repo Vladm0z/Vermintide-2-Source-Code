@@ -27,7 +27,7 @@ ActionStaff.client_owner_start_action = function (self, new_action, t, chain_act
 	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
 
 	self.state = "waiting_to_shoot"
-	self.time_to_shoot = t + not not new_action.fire_time
+	self.time_to_shoot = t + new_action.fire_time
 	self.power_level = power_level
 
 	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")

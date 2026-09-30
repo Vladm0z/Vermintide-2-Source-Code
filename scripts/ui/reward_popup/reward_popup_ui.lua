@@ -13,18 +13,18 @@ local INPUT_SERVICE_NAME = "rewards_popups"
 
 local function speed_up_popup_pressed(input_service)
 	-- function 1
-	return not not input_service:get("toggle_menu", true)
+	return (input_service:get("toggle_menu", true))
 end
 
 RewardPopupUI.init = function (self, level_end_view_context)
 	-- function 2
 	self._ui_top_renderer = level_end_view_context.ui_top_renderer
 	self._input_manager = level_end_view_context.input_manager
-	self.world = not not level_end_view_context.world
+	self.world = level_end_view_context.world
 
 	local wwise_world = level_end_view_context.wwise_world
 
-	self._wwise_world = not not wwise_world or not not level_end_view_context.world_manager:wwise_world(self.world)
+	self._wwise_world = wwise_world or level_end_view_context.world_manager:wwise_world(self.world)
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
@@ -117,7 +117,7 @@ RewardPopupUI.update = function (self, dt, t)
 	local animation_params = self._animation_params
 
 	if animation_params then
-		local blur_progress = not not animation_params.blur_progress
+		local blur_progress = animation_params.blur_progress
 
 		self:set_fullscreen_effect_enable_state(true, blur_progress)
 	end
@@ -263,7 +263,7 @@ RewardPopupUI.start_presentation_animation = function (self, animation_name, wid
 		wwise_world = self._wwise_world
 	}
 
-	widgets = not not widgets or not not {
+	widgets = widgets or {
 		background_top = self.background_top_widget,
 		background_center = self.background_center_widget,
 		background_bottom = self.background_bottom_widget,
@@ -314,7 +314,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 	-- function 17
 	local widget_definitions = definitions.widget_definitions
 	local value = entry_data.value
-	local widget_type = not not entry_data.widget_type
+	local widget_type = entry_data.widget_type
 	local ignore_height = entry_data.ignore_height
 	local widget = UIWidget.init(widget_definitions[widget_type])
 	local scenegraph_id = widget.scenegraph_id
@@ -360,9 +360,9 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		widget_height = widget_size[2] / 2
 	elseif widget_type == "weapon_skin" or widget_type == "skin" or widget_type == "keep_decoration_painting" then
 		local data = value.data
-		local rarity = not not value.rarity
+		local rarity = value.rarity
 
-		widget.content.texture_id = not not value.icon
+		widget.content.texture_id = value.icon
 		widget.content.rarity_texture = UISettings.item_rarity_textures[rarity]
 		widget_height = 0
 	elseif widget_type == "career" then
@@ -374,7 +374,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		local backend_id = value.backend_id
 		local item_interface = Managers.backend:get_interface("items")
 		local item = item_interface:get_item_from_id(backend_id)
-		local rarity = not not item.rarity
+		local rarity = item.rarity
 		local inventory_icon = UIUtils.get_ui_information_from_item(item)
 
 		widget.content.texture_id = inventory_icon
@@ -420,12 +420,12 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 
 			local item = value[i]
 			local item_data = item.data
-			local rarity = not not item.rarity
+			local rarity = item.rarity
 
-			content[icon_key] = not not UIUtils.get_ui_information_from_item(item)
-			content[rarity_key] = not not UISettings.item_rarity_textures[rarity]
+			content[icon_key] = UIUtils.get_ui_information_from_item(item)
+			content[rarity_key] = UISettings.item_rarity_textures[rarity]
 			content[item_key] = item
-			content[illusion_key] = not not item_data and item_data.item_type == "weapon_skin"
+			content[illusion_key] = item_data and item_data.item_type == "weapon_skin"
 		end
 
 		for i = item_count + 1, definitions.item_list_max_rows * max_columns do
@@ -437,7 +437,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		local backend_id = value.backend_id
 		local item_interface = Managers.backend:get_interface("items")
 		local item = item_interface:get_item_from_id(backend_id)
-		local rarity = not not item.rarity
+		local rarity = item.rarity
 		local inventory_icon, _, _ = UIUtils.get_ui_information_from_item(item)
 
 		widget.content.texture_id = inventory_icon
@@ -480,7 +480,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 
 		style.rarity_text.text_color = rarity_color
 
-		local power_up_sets = not not DeusPowerUpSetLookup[power_up.rarity]
+		local power_up_sets = DeusPowerUpSetLookup[power_up.rarity]
 		local is_part_of_set = false
 
 		if power_up_sets then
@@ -501,7 +501,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 
 			is_part_of_set = true
 
-			local num_required_pieces = not not set.num_required_pieces
+			local num_required_pieces = set.num_required_pieces
 
 			widget.content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
 
@@ -520,7 +520,7 @@ RewardPopupUI._setup_entry_widget = function (self, entry_data, index)
 		widget_height = 0
 	end
 
-	return widget, ignore_height and not not 0 or not ignore_height and not not widget_height
+	return widget, ignore_height and 0 or not ignore_height and widget_height
 end
 
 RewardPopupUI._setup_presentation = function (self, presentation_data)
@@ -536,7 +536,7 @@ RewardPopupUI._setup_presentation = function (self, presentation_data)
 		amount = amount,
 		entries = entries
 	}
-	local presentation_animation_data = not not presentation_data.animation_data
+	local presentation_animation_data = presentation_data.animation_data
 
 	for key, value in pairs(presentation_animation_data) do
 		animation_data[key] = value
@@ -544,13 +544,13 @@ RewardPopupUI._setup_presentation = function (self, presentation_data)
 
 	local animation_wait_time = presentation_animation_data.animation_wait_time
 
-	animation_wait_time = not not 0 or not not animation_wait_time or animation_data.claim_button or not not 2
+	animation_wait_time = 0 or animation_wait_time or animation_data.claim_button or 2
 
 	local spacing = 20
 	local min_height = 80
 
 	self._skip_blur = presentation_data.skip_blur
-	self._bg_alpha = not not presentation_data.bg_alpha
+	self._bg_alpha = presentation_data.bg_alpha
 
 	for i = 1, #presentation_data do
 		local presentation_entries = presentation_data[i]
@@ -590,7 +590,7 @@ RewardPopupUI._setup_presentation = function (self, presentation_data)
 	end
 
 	scenegraph_definition.background_center.size[2] = min_height + spacing
-	self._ui_scenegraph.background.local_position = not not presentation_data.offset
+	self._ui_scenegraph.background.local_position = presentation_data.offset
 
 	return animation_data
 end
@@ -700,7 +700,7 @@ RewardPopupUI._handle_input = function (self, entry)
 	-- function 22
 	local input_service = self:input_service()
 
-	entry.claimed = not not entry.claimed
+	entry.claimed = entry.claimed
 
 	local i = table.find_by_key(entry.widgets_data, "widget_type", "item_list")
 
@@ -740,7 +740,7 @@ RewardPopupUI._handle_input = function (self, entry)
 	if cursor_x > 1 and input_service:get("move_left") then
 		cursor_x = cursor_x - 1
 		modified = true
-	elseif cursor_x < not not max_columns and input_service:get("move_right") then
+	elseif cursor_x < max_columns and input_service:get("move_right") then
 		cursor_x = cursor_x + 1
 		modified = true
 	end
@@ -776,11 +776,11 @@ RewardPopupUI.set_fullscreen_effect_enable_state = function (self, enabled, prog
 	local world = self.world
 	local shading_env = World.get_data(world, "shading_environment")
 
-	progress = not not 1 or not not progress or enabled or not not 0
+	progress = 1 or progress or enabled or 0
 
 	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not (progress * 0.75) or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or not enabled and 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and progress * 0.75 or not enabled and 0)
 		ShadingEnvironment.apply(shading_env)
 
 		self.screen_background_widget.style.rect.color[1] = self._bg_alpha * progress

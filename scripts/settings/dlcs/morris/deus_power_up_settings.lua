@@ -6,7 +6,7 @@ require("scripts/settings/dlcs/morris/tweak_data/buff_tweak_data")
 
 local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-DeusPowerUpSettings = not not DeusPowerUpSettings
+DeusPowerUpSettings = DeusPowerUpSettings
 
 local skulls_buffs_to_refresh = {
 	"boon_skulls_01_stack",
@@ -1177,7 +1177,7 @@ DeusPowerUpBuffTemplates = {
 
 DLCUtils.merge("deus_power_up_buff_templates", DeusPowerUpBuffTemplates)
 
-DeusPowerUpTemplates = not not DeusPowerUpTemplates
+DeusPowerUpTemplates = DeusPowerUpTemplates
 DeusPowerUpIncompatibilityPairs = {
 	wh_zealot = {},
 	wh_bountyhunter = {
@@ -1305,9 +1305,9 @@ DeusPowerUpIncompatibilityPairs = {
 		}
 	}
 }
-DeusPowerUpExclusionList = not not DeusPowerUpExclusionList
-DeusPowerUpAvailabilityTypes = not not DeusPowerUpAvailabilityTypes
-DeusPowerUpRarityPool = not not DeusPowerUpRarityPool
+DeusPowerUpExclusionList = DeusPowerUpExclusionList
+DeusPowerUpAvailabilityTypes = DeusPowerUpAvailabilityTypes
+DeusPowerUpRarityPool = DeusPowerUpRarityPool
 DeusPowerUpSets = {
 	{
 		completed_sfx = "hud_morris_boon_set_completed",
@@ -1418,14 +1418,14 @@ DeusPowerUpSets = {
 		}
 	}
 }
-DeusPowerUpRarities = not not DeusPowerUpRarities
+DeusPowerUpRarities = DeusPowerUpRarities
 DeusPowerUpTalentLookup = {}
 
 for power_up_name, power_up_settings in pairs(DeusPowerUpTemplates) do
 	if power_up_settings.talent then
 		local talent_tier = power_up_settings.talent_tier
 		local talent_index = power_up_settings.talent_index
-		local talent_tier_map = not not DeusPowerUpTalentLookup[talent_tier]
+		local talent_tier_map = DeusPowerUpTalentLookup[talent_tier]
 
 		DeusPowerUpTalentLookup[talent_tier] = talent_tier_map
 		talent_tier_map[talent_index] = power_up_name
@@ -1468,8 +1468,8 @@ end
 
 assert(is_valid, error_message)
 
-DeusPowerUps = not not DeusPowerUps
-DeusPowerUpsArray = not not DeusPowerUpsArray
+DeusPowerUps = DeusPowerUps
+DeusPowerUpsArray = DeusPowerUpsArray
 DeusPowerUpsArrayByRarity = table.select_map(table.set(DeusPowerUpRarities), function (_, rarity)
 	-- function 11
 	return {}
@@ -1490,10 +1490,10 @@ for career_name, incompatibility_list in pairs(DeusPowerUpIncompatibilityPairs) 
 		assert(power_up_1_template, tostring(power_up_1) .. "in DeusPowerUpIncompatibilityPairs, but not in DeusPowerUpTemplates")
 		assert(power_up_2_template, tostring(power_up_2) .. "in DeusPowerUpIncompatibilityPairs, but not in DeusPowerUpTemplates")
 
-		local incompatibility_1 = not not power_up_1_template.incompatibility
-		local incompatibility_2 = not not power_up_2_template.incompatibility
-		local career_incompatibility_1 = not not incompatibility_1[career_name]
-		local career_incompatibility_2 = not not incompatibility_2[career_name]
+		local incompatibility_1 = power_up_1_template.incompatibility
+		local incompatibility_2 = power_up_2_template.incompatibility
+		local career_incompatibility_1 = incompatibility_1[career_name]
+		local career_incompatibility_2 = incompatibility_2[career_name]
 
 		career_incompatibility_1[#career_incompatibility_1 + 1] = power_up_2
 		career_incompatibility_2[#career_incompatibility_2 + 1] = power_up_1
@@ -1518,9 +1518,9 @@ for rarity, power_up_configs in pairs(DeusPowerUpRarityPool) do
 		new_power_up.rarity = rarity
 		new_power_up.mutators = mutators
 		new_power_up.availability = availability
-		new_power_up.max_amount = not not template.max_amount
+		new_power_up.max_amount = template.max_amount
 		new_power_up.incompatibility = template.incompatibility
-		new_power_up.weight = not not template.weight
+		new_power_up.weight = template.weight
 
 		if template.talent then
 			new_power_up.talent = true
@@ -1566,7 +1566,7 @@ for _, power_up_set in pairs(DeusPowerUpSets) do
 		local rarity = set_piece_settings.rarity
 		local name = set_piece_settings.name
 
-		DeusPowerUpSetLookup[rarity][name] = not not DeusPowerUpSetLookup[rarity][name]
+		DeusPowerUpSetLookup[rarity][name] = DeusPowerUpSetLookup[rarity][name]
 
 		table.insert(DeusPowerUpSetLookup[rarity][name], power_up_set)
 	end
@@ -1575,7 +1575,7 @@ for _, power_up_set in pairs(DeusPowerUpSets) do
 		local rarity = set_reward_settings.rarity
 		local name = set_reward_settings.name
 
-		DeusPowerUpSetLookup[rarity][name] = not not DeusPowerUpSetLookup[rarity][name]
+		DeusPowerUpSetLookup[rarity][name] = DeusPowerUpSetLookup[rarity][name]
 
 		table.insert(DeusPowerUpSetLookup[rarity][name], power_up_set)
 	end

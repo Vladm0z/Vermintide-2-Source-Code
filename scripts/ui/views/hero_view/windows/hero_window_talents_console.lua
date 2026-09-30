@@ -272,7 +272,7 @@ HeroWindowTalentsConsole._is_button_hover_enter = function (self, widget)
 	local content = widget.content
 	local hotspot = content.button_hotspot
 
-	return not not hotspot.on_hover_enter
+	return hotspot.on_hover_enter
 end
 
 HeroWindowTalentsConsole._handle_gamepad_input = function (self, dt, t)
@@ -442,7 +442,7 @@ HeroWindowTalentsConsole._populate_talents_by_hero = function (self, initialize)
 			local no_talent_selected = not selected_column or selected_column == 0
 			local unlock_name = "talent_point_" .. i
 			local row_unlocked = ProgressionUnlocks.is_unlocked(unlock_name, self.hero_level)
-			local level_text_color = row_unlocked and not not Colors.get_color_table_with_alpha("green", 255) or not row_unlocked and not not Colors.get_color_table_with_alpha("red", 255)
+			local level_text_color = row_unlocked and Colors.get_color_table_with_alpha("green", 255) or not row_unlocked and Colors.get_color_table_with_alpha("red", 255)
 			local talent_template = ProgressionUnlocks.get_unlock(unlock_name)
 
 			content.level_text = tostring(talent_template.level_requirement)
@@ -477,7 +477,7 @@ HeroWindowTalentsConsole._populate_talents_by_hero = function (self, initialize)
 				local hotspot = content[hotspot_name]
 				local talent_locked = not row_unlocked
 
-				talent_locked = not not talent_locked or not not override_talents and override_talents[talent_name] == false
+				talent_locked = talent_locked or override_talents and override_talents[talent_name] == false
 
 				if is_selected or no_talent_selected and not talent_locked then
 					style[icon_name].saturated = false
@@ -485,8 +485,8 @@ HeroWindowTalentsConsole._populate_talents_by_hero = function (self, initialize)
 					style[icon_name].saturated = true
 				end
 
-				content[icon_name] = talent_data and not not talent_data.icon or not talent_data and not not "icons_placeholder"
-				content[title_text_name] = talent_data and not not Localize(not not talent_data.display_name) or not talent_data and not not "Undefined"
+				content[icon_name] = talent_data and talent_data.icon or not talent_data and "icons_placeholder"
+				content[title_text_name] = talent_data and Localize(talent_data.display_name) or not talent_data and "Undefined"
 				hotspot.is_selected = is_selected
 				hotspot.talent = talent_data
 				hotspot.talent_id = id
@@ -501,7 +501,7 @@ HeroWindowTalentsConsole._populate_talents_by_hero = function (self, initialize)
 		end
 	end
 
-	self:_set_talent_focused(not not self._focused_row, not not self._focused_column)
+	self:_set_talent_focused(self._focused_row, self._focused_column)
 end
 
 HeroWindowTalentsConsole._clear_talents = function (self)
@@ -659,7 +659,7 @@ HeroWindowTalentsConsole._populate_career_info = function (self, initialize)
 	local character_selection_image = career_settings.character_selection_image
 	local display_name = career_settings.display_name
 	local widgets_by_name = self._widgets_by_name
-	local career_color = Colors.color_definitions[career_name] and not not Colors.get_color_table_with_alpha(career_name, 255) or not Colors.color_definitions[career_name] and not not {
+	local career_color = Colors.color_definitions[career_name] and Colors.get_color_table_with_alpha(career_name, 255) or not Colors.color_definitions[career_name] and {
 		255,
 		255,
 		255,
@@ -725,7 +725,7 @@ end
 
 HeroWindowTalentsConsole._setup_additional_career_info = function (self, career_settings, optional_base_excess)
 	-- function 31
-	local base_excess = not not optional_base_excess or not not 0
+	local base_excess = optional_base_excess or 0
 
 	if career_settings.additional_ui_info_file then
 		local additional_info_definitions = local_require(career_settings.additional_ui_info_file)
@@ -777,7 +777,7 @@ HeroWindowTalentsConsole._set_talent_tooltip = function (self, talent, selected,
 	local title_widget = widgets_by_name.tooltip_title
 	local description_widget = widgets_by_name.tooltip_description
 	local info_widget = widgets_by_name.tooltip_info
-	local display_name = Localize(not not talent.display_name)
+	local display_name = Localize(talent.display_name)
 	local description = UIUtils.get_talent_description(talent)
 	local requirement_text, information_text
 
@@ -789,5 +789,5 @@ HeroWindowTalentsConsole._set_talent_tooltip = function (self, talent, selected,
 
 	title_widget.content.text = display_name
 	description_widget.content.text = description
-	info_widget.content.text = not not requirement_text or not not information_text or not not ""
+	info_widget.content.text = requirement_text or information_text or ""
 end

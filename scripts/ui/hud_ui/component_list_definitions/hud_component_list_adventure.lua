@@ -82,7 +82,7 @@ local components = {
 		},
 		validation_function = function (context, is_in_inn)
 			-- function 1
-			return not not is_in_inn or Managers.mechanism:current_mechanism_name() == "deus"
+			return is_in_inn or Managers.mechanism:current_mechanism_name() == "deus"
 		end
 	},
 	{
@@ -205,7 +205,7 @@ local components = {
 			local backend_settings = GameSettingsDevelopment.backend_settings
 			local quests_enabled = backend_settings.quests_enabled
 
-			return not not quests_enabled and not not not is_in_inn
+			return quests_enabled and not is_in_inn
 		end
 	},
 	{
@@ -219,7 +219,7 @@ local components = {
 			-- function 5
 			local debug_show_damage_numbers = script_data.debug_show_damage_numbers
 			local debug_ai_attack_pattern = script_data.debug_ai_attack_pattern
-			local activate = not not is_in_inn or not not debug_show_damage_numbers or not not debug_ai_attack_pattern
+			local activate = is_in_inn or debug_show_damage_numbers or debug_ai_attack_pattern
 
 			return activate
 		end
@@ -353,7 +353,7 @@ local components = {
 	},
 	{
 		class_name = "IngamePlayerListUI",
-		filename = GameSettingsDevelopment.use_new_tab_menu and not not "scripts/ui/views/ingame_player_list_ui_v2" or not GameSettingsDevelopment.use_new_tab_menu and not not "scripts/ui/views/ingame_player_list_ui",
+		filename = GameSettingsDevelopment.use_new_tab_menu and "scripts/ui/views/ingame_player_list_ui_v2" or not GameSettingsDevelopment.use_new_tab_menu and "scripts/ui/views/ingame_player_list_ui",
 		visibility_groups = {
 			"tab_menu",
 			"realism",
@@ -384,7 +384,7 @@ local components = {
 			local level_settings = LevelHelper.current_level_settings()
 			local is_valid = level_settings.tutorial_level
 
-			is_valid = not not is_valid or level_settings.game_mode == "inn_vs"
+			is_valid = is_valid or level_settings.game_mode == "inn_vs"
 
 			return is_valid
 		end
@@ -544,7 +544,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 12
 			local component = ingame_hud:component("LevelCountdownUI")
-			local is_enter_game = not not component and not not component:is_enter_game()
+			local is_enter_game = component and component:is_enter_game()
 
 			return is_enter_game
 		end
@@ -563,7 +563,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 14
 			local component = ingame_hud:component("MissionVotingUI")
-			local is_active = not not component and not not component:is_active()
+			local is_active = component and component:is_active()
 
 			return is_active
 		end
@@ -576,7 +576,7 @@ local visibility_groups = {
 			local end_screen_active = ingame_ui:end_screen_active()
 			local in_score_screen = ingame_ui.end_of_level_ui ~= nil
 
-			return not not in_score_screen or not not end_screen_active
+			return in_score_screen or end_screen_active
 		end
 	},
 	{
@@ -586,7 +586,7 @@ local visibility_groups = {
 			local ingame_ui = ingame_hud:parent()
 			local menu_active = ingame_ui.menu_active
 			local current_view = ingame_ui.current_view
-			local is_menu_active = not not menu_active or current_view ~= nil
+			local is_menu_active = menu_active or current_view ~= nil
 
 			return is_menu_active
 		end
@@ -596,7 +596,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 17
 			local component = ingame_hud:component("GiftPopupUI")
-			local is_active = not not component and not not component:active()
+			local is_active = component and component:active()
 
 			return is_active
 		end
@@ -606,7 +606,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 18
 			local cutscene_system = Managers.state.entity:system("cutscene_system")
-			local cutscene_active = not not cutscene_system.active_camera
+			local cutscene_active = cutscene_system.active_camera
 
 			return cutscene_active
 		end
@@ -616,10 +616,10 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 19
 			local component = ingame_hud:component("IngamePlayerListUI")
-			local is_active = not not component and not not component:is_active()
+			local is_active = component and component:is_active()
 			local component = ingame_hud:component("VersusSlotStatusUI")
 
-			is_active = not component or not not component:is_active() or not not is_active
+			is_active = not component or component:is_active() or is_active
 
 			return is_active
 		end
@@ -629,7 +629,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 20
 			local game_mode_manager = Managers.state.game_mode
-			local has_realism = not not game_mode_manager and not not game_mode_manager:has_activated_mutator("realism")
+			local has_realism = game_mode_manager and game_mode_manager:has_activated_mutator("realism")
 
 			return has_realism
 		end
@@ -639,8 +639,8 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 21
 			local game_mode_manager = Managers.state.game_mode
-			local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-			local game_mode_disable_hud = not not game_mode and not not game_mode.game_mode_hud_disabled
+			local game_mode = game_mode_manager and game_mode_manager:game_mode()
+			local game_mode_disable_hud = game_mode and game_mode.game_mode_hud_disabled
 
 			return game_mode_disable_hud
 		end
@@ -650,8 +650,8 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 22
 			local game_mode_manager = Managers.state.game_mode
-			local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-			local photomode_enabled = not not game_mode and not not game_mode:photomode_enabled()
+			local game_mode = game_mode_manager and game_mode_manager:game_mode()
+			local photomode_enabled = game_mode and game_mode:photomode_enabled()
 
 			return photomode_enabled
 		end

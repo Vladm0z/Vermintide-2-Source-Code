@@ -36,7 +36,7 @@ StartGameWindowVersusCustomGame.on_enter = function (self, params, offset)
 
 	self:_create_ui_elements(params, offset)
 
-	self._input_index = not not params.input_index
+	self._input_index = params.input_index
 
 	self:_handle_new_selection(self._input_index)
 
@@ -219,15 +219,15 @@ StartGameWindowVersusCustomGame._can_play = function (self)
 	local local_player_peer_id = Managers.player:local_player():network_id()
 	local is_player_alone_in_party, is_party_leader
 	local party = Managers.party:get_local_player_party()
-	local is_player_alone_in_party = not not party and party.num_used_slots == 1
+	local is_player_alone_in_party = party and party.num_used_slots == 1
 
 	if DEDICATED_SERVER then
-		is_party_leader = not not Managers.party:client_is_friend_party_leader(local_player_peer_id) or not not Managers.party:is_leader(local_player_peer_id)
+		is_party_leader = Managers.party:client_is_friend_party_leader(local_player_peer_id) or Managers.party:is_leader(local_player_peer_id)
 	else
-		is_party_leader = not not Managers.party:is_leader(local_player_peer_id) or not not self._ingame_ui_context.is_server
+		is_party_leader = Managers.party:is_leader(local_player_peer_id) or self._ingame_ui_context.is_server
 	end
 
-	local can_play = not not is_player_alone_in_party or not not is_party_leader
+	local can_play = is_player_alone_in_party or is_party_leader
 
 	return can_play
 end
@@ -237,7 +237,7 @@ StartGameWindowVersusCustomGame._play = function (self)
 	self._parent:play_sound("Play_vs_hud_play_menu_host_lobby")
 	self._parent:set_layout_by_name("versus_player_hosted_lobby")
 
-	local mission_id = not not self._parent:get_selected_level_id()
+	local mission_id = self._parent:get_selected_level_id()
 	local is_private = self._parent:is_private_option_enabled()
 	local lobby = Managers.state.network:lobby()
 	local search_config = {
@@ -250,7 +250,7 @@ StartGameWindowVersusCustomGame._play = function (self)
 		difficulty = "versus_base",
 		mission_id = mission_id,
 		any_level = mission_id == "any",
-		private_game = not not is_private or not not false,
+		private_game = is_private or false,
 		party_lobby_host = lobby,
 		max_num_players = GameModeSettings.versus.max_num_players
 	}
@@ -261,7 +261,7 @@ end
 StartGameWindowVersusCustomGame._option_selected = function (self, input_index, t)
 	-- function 12
 	local parent = self._parent
-	local custom_game_settings = not not parent:get_custom_game_settings(self._mechanism_name)
+	local custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
 	local selected_widget_name = selector_input_definition[input_index]
 
 	if selected_widget_name == "mission_setting" then
@@ -295,7 +295,7 @@ StartGameWindowVersusCustomGame._handle_new_selection = function (self, input_in
 	for i = 1, #selector_input_definition do
 		local widget_name = selector_input_definition[i]
 		local widget = widgets_by_name[widget_name]
-		local is_selected = i == input_index and not not self._gamepad_active
+		local is_selected = i == input_index and self._gamepad_active
 
 		widget.content.is_selected = is_selected
 	end

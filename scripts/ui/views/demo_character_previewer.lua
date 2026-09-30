@@ -7,9 +7,9 @@ DemoCharacterPreviewer.init = function (self, world, profile_name, career_index,
 	self._world = world
 	self._profile_name = profile_name
 	self._career_index = career_index
-	self._position = not not position or not not Vector3Box(0, 0, 0)
-	self._rotation = not not rotation or not not QuaternionBox(Quaternion.identity())
-	self._zoom_offset = not not zoom_offset or not not Vector3Box(Vector3.identity())
+	self._position = position or Vector3Box(0, 0, 0)
+	self._rotation = rotation or QuaternionBox(Quaternion.identity())
+	self._zoom_offset = zoom_offset or Vector3Box(Vector3.identity())
 	self.item_spawn_data = {}
 	self.item_names = {}
 	self._packages_to_load = {}
@@ -35,7 +35,7 @@ end
 
 DemoCharacterPreviewer._spawn_character = function (self, position)
 	-- function 3
-	self._position = not not position or not not self._position
+	self._position = position or self._position
 
 	self:_reset_hero()
 
@@ -64,7 +64,7 @@ DemoCharacterPreviewer.outline_unit = function (self, enable_outline, outline_se
 
 		if enable_outline then
 			local channel = self:_color_from_table(outline_settings.channel)
-			local extra_time = not not extra_time or not not 0
+			local extra_time = extra_time or 0
 
 			Unit.set_color_for_materials_in_unit_and_childs(unit, "outline_color", channel)
 			Unit.set_scalar_for_materials_in_unit_and_childs(unit, "outline_time", World.time(self._world) + extra_time)
@@ -171,7 +171,7 @@ DemoCharacterPreviewer.cb_spawn_hero_unit = function (self, profile, career, ski
 		local default_unit_height_dimension = 1.7
 		local default_diff = box_dimension.z - default_unit_height_dimension
 
-		self.unit_max_look_height = default_unit_height_dimension < box_dimension.z and not not 1.5 or not (default_unit_height_dimension < box_dimension.z) and not not 0.9
+		self.unit_max_look_height = default_unit_height_dimension < box_dimension.z and 1.5 or not (default_unit_height_dimension < box_dimension.z) and 0.9
 	else
 		self.unit_max_look_height = 0.9
 	end
@@ -266,7 +266,7 @@ DemoCharacterPreviewer.cb_on_select_animation_complete = function (self)
 	local unit = self._character_unit
 
 	if Unit.alive(unit) then
-		local node_index = not not Unit.has_node(unit, node)
+		local node_index = Unit.has_node(unit, node)
 		local pos = Unit.world_position(unit, node_index)
 		local wwise_world = Managers.world:wwise_world(self._world)
 		local wwise_source_id = WwiseWorld.make_auto_source(wwise_world, pos)
@@ -285,7 +285,7 @@ DemoCharacterPreviewer.pressed_pose = function (self)
 	local camera_rot = Quaternion.look(camera_forward_flat, Vector3.up())
 	local node = "j_neck"
 	local unit = self._character_unit
-	local node_index = not not Unit.has_node(unit, node)
+	local node_index = Unit.has_node(unit, node)
 	local pos = Unit.world_position(unit, node_index)
 	local zoom_offset = self._zoom_offset:unbox()
 	local camera_pos = pos + camera_right_flat * zoom_offset[1] + camera_forward_flat * zoom_offset[2] + Vector3.up() * zoom_offset[3]

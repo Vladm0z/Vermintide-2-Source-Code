@@ -5,7 +5,7 @@ local CameraStateObserverTestify = {
 		-- function 1
 		local first_bot = Managers.player:bots()[1]
 		local party = Managers.party:get_party_from_unique_id(first_bot:unique_id())
-		local side = not not Managers.state.side.side_by_party[party]
+		local side = Managers.state.side.side_by_party[party]
 
 		if side then
 			local observe_unit = CameraStateHelper.get_valid_unit_to_observe(true, side, first_bot.player_unit)

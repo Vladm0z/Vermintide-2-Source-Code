@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/cosmetic_utils.lua
 
-CosmeticUtils = not not CosmeticUtils
+CosmeticUtils = CosmeticUtils
 
 CosmeticUtils.color_tint_unit = function (unit, hero_name, gradient_variation, gradient_value)
 	-- function 1
@@ -164,9 +164,9 @@ CosmeticUtils.get_cosmetic_name = function (slot, optional_item_id)
 	local item_name
 
 	if slot == "slot_frame" or slot == "slot_skin" then
-		item_name = NetworkLookup.cosmetics[not not optional_item_id or not not 1]
+		item_name = NetworkLookup.cosmetics[optional_item_id or 1]
 	else
-		item_name = NetworkLookup.item_names[not not optional_item_id or not not 1]
+		item_name = NetworkLookup.item_names[optional_item_id or 1]
 	end
 
 	return item_name
@@ -177,9 +177,9 @@ CosmeticUtils.get_weapon_skin_name = function (slot, optional_skin_id)
 	local skin_name
 
 	if CosmeticUtils.is_weapon_slot(slot) then
-		skin_name = NetworkLookup.weapon_skins[not not optional_skin_id or not not 1]
+		skin_name = NetworkLookup.weapon_skins[optional_skin_id or 1]
 	elseif slot == "slot_pose" then
-		skin_name = NetworkLookup.item_names[not not optional_skin_id or not not 1]
+		skin_name = NetworkLookup.item_names[optional_skin_id or 1]
 	end
 
 	return skin_name
@@ -188,9 +188,9 @@ end
 CosmeticUtils.get_cosmetic_id = function (slot, optional_item_name)
 	-- function 9
 	if slot == "slot_frame" or slot == "slot_skin" then
-		return NetworkLookup.cosmetics[not not optional_item_name or not not "default"]
+		return NetworkLookup.cosmetics[optional_item_name or "default"]
 	else
-		return NetworkLookup.item_names[not not optional_item_name or not not "n/a"]
+		return NetworkLookup.item_names[optional_item_name or "n/a"]
 	end
 end
 
@@ -206,7 +206,7 @@ CosmeticUtils.get_weapon_pose_skin = function (item_name)
 	if equipped_weapon_pose_skin_name then
 		local weapon_pose_skin_backend_id = backend_items:get_weapon_skin_from_skin_key(equipped_weapon_pose_skin_name)
 
-		weapon_pose_skin = not not weapon_pose_skin_backend_id and not not backend_items:get_item_from_id(weapon_pose_skin_backend_id)
+		weapon_pose_skin = weapon_pose_skin_backend_id and backend_items:get_item_from_id(weapon_pose_skin_backend_id)
 	end
 
 	return weapon_pose_skin
@@ -217,7 +217,7 @@ CosmeticUtils.get_weapon_skin_id = function (slot, optional_skin_name)
 	local skin_id
 
 	if CosmeticUtils.is_weapon_slot(slot) then
-		skin_id = NetworkLookup.weapon_skins[not not optional_skin_name or not not "n/a"]
+		skin_id = NetworkLookup.weapon_skins[optional_skin_name or "n/a"]
 	elseif slot == "slot_pose" then
 		local item = ItemMasterList[optional_skin_name]
 		local backend_items = Managers.backend:get_interface("items")
@@ -313,7 +313,7 @@ end
 
 CosmeticUtils.is_valid = function (item_data)
 	-- function 15
-	return not not item_data and not not item_data.item_name
+	return item_data and item_data.item_name
 end
 
 CosmeticUtils.get_default_cosmetic_slot = function (career_settings, slot_name)
@@ -395,8 +395,8 @@ CosmeticUtils.sync_local_player_cosmetics = function (player, profile_index, car
 			local item_data = item.data
 			local backend_id = item.backend_id
 			local item_units = BackendUtils.get_item_units(item_data, backend_id, nil, career_name)
-			local item_name = not not item_data and not not item_data.name
-			local item_skin = not not item_units and not not item_units.skin
+			local item_name = item_data and item_data.name
+			local item_skin = item_units and item_units.skin
 
 			CosmeticUtils.update_cosmetic_slot(player, slot_name, item_name, item_skin)
 		end

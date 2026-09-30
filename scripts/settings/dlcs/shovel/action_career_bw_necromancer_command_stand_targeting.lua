@@ -13,7 +13,7 @@ ActionCareerBwNecromancerCommandStandTargetingUtility = {}
 
 ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions = function (target_center, fp_rotation, num_positions, optional_cached_positions)
 	-- function 1
-	local navified_spawn_positions = not not optional_cached_positions or not not {}
+	local navified_spawn_positions = optional_cached_positions or {}
 	local num_per_rank = math.min(num_positions, CareerConstants.bw_necromancer.pets_per_rank)
 
 	if num_per_rank == 0 then
@@ -42,8 +42,8 @@ ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions = funct
 		local right_delta = right_bound - target_center
 		local left_actual_wanted = left_wanted * 0.5
 		local right_actual_wanted = right_wanted * 0.5
-		local offset_left = Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted) and not not (right_delta - right_actual_wanted) or not (Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted)) and not not Vector3.zero()
-		local offset_right = Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted) and not not (left_delta - left_actual_wanted) or not (Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted)) and not not Vector3.zero()
+		local offset_left = Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted) and right_delta - right_actual_wanted or not (Vector3.length_squared(right_delta) < Vector3.length_squared(right_actual_wanted)) and Vector3.zero()
+		local offset_right = Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted) and left_delta - left_actual_wanted or not (Vector3.length_squared(left_delta) < Vector3.length_squared(left_actual_wanted)) and Vector3.zero()
 
 		right_bound = Geometry.closest_point_on_line(target_center + right_actual_wanted + offset_right, left_bound, right_bound)
 		left_bound = Geometry.closest_point_on_line(target_center + left_actual_wanted + offset_left, left_bound, right_bound)
@@ -64,7 +64,7 @@ ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions = funct
 
 			if nav_position then
 				navified_spawn_positions[idx] = Vector3Box(nav_position)
-				valid_position = not not valid_position or not not nav_position
+				valid_position = valid_position or nav_position
 			else
 				navified_spawn_positions[idx] = false
 			end
@@ -119,7 +119,7 @@ end
 
 ActionCareerBwNecromancerCommandStandTargeting.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 4
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	ActionCareerBwNecromancerCommandStandTargeting.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 	self._weapon_extension:set_mode(true)

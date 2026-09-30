@@ -81,7 +81,7 @@ return {
 
 			local blackboard = BLACKBOARDS[unit]
 
-			blackboard.optional_spawn_data = not not blackboard.optional_spawn_data
+			blackboard.optional_spawn_data = blackboard.optional_spawn_data
 			blackboard.optional_spawn_data.prevent_killed_enemy_dialogue = true
 
 			local dialogue_system = Managers.state.entity:system("dialogue_system")
@@ -131,7 +131,7 @@ return {
 
 			local peer_id = Network.peer_id()
 			local player = Managers.player:player_from_peer_id(peer_id)
-			local local_human = not not player and not not player.local_player
+			local local_human = player and player.local_player
 
 			if local_human then
 				Managers.state.event:trigger("add_coop_feedback", player:stats_id(), local_human, "collected_grimnir_reward", player, player)

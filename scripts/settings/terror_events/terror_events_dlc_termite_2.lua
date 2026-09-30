@@ -10,7 +10,7 @@ local HARDEST = TerrorEventUtils.HARDEST
 local function setup_grudgemarked_stormfiend(optional_data, difficulty, breed_name, event, difficulty_tweak, enhancement_list)
 	-- function 1
 	local base_grudgemark_name = "termite_base"
-	local list = not not optional_data.enhancements
+	local list = optional_data.enhancements
 
 	list[#list + 1] = BreedEnhancements[base_grudgemark_name]
 	optional_data.enhancements = list

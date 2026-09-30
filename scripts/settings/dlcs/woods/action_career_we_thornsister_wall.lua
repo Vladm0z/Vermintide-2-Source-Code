@@ -19,12 +19,12 @@ end
 
 ActionCareerWEThornsisterWall.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	ActionCareerWEThornsisterWall.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
 	local target_data = chain_action_data
-	local num_segments = target_data and not not target_data.num_segments or not target_data and not not 0
+	local num_segments = target_data and target_data.num_segments or not target_data and 0
 
 	if num_segments > 0 then
 		self:_play_vo()

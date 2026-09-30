@@ -74,7 +74,7 @@ PingTemplates = {
 	generic_item = {
 		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 1
-			return not not Managers.state.network:level_object_id(pinged_unit)
+			return (Managers.state.network:level_object_id(pinged_unit))
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
@@ -131,15 +131,15 @@ PingTemplates = {
 
 			if response then
 				local ping_messages = PingMessagesByPingType[mechanism_key]
-				local messages = not not ping_messages and not not ping_messages[ping_type]
+				local messages = ping_messages and ping_messages[ping_type]
 
 				if messages then
-					local lookat_tag = not not pinged_unit and not not Unit.get_data(pinged_unit, "lookat_tag")
+					local lookat_tag = pinged_unit and Unit.get_data(pinged_unit, "lookat_tag")
 
 					if lookat_tag then
 						local do_ping, chat_messages, ping_icon = unpack(response)
 
-						chat_messages[1] = not not messages[lookat_tag]
+						chat_messages[1] = messages[lookat_tag]
 
 						return do_ping, chat_messages, ping_icon
 					end
@@ -154,7 +154,7 @@ PingTemplates = {
 	enemy_unit = {
 		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 3
-			return not not pinged_unit and not not Managers.state.side:is_enemy(pinger_unit, pinged_unit)
+			return pinged_unit and Managers.state.side:is_enemy(pinger_unit, pinged_unit)
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
@@ -201,16 +201,16 @@ PingTemplates = {
 
 			if response then
 				local ping_messages = PingMessagesByPingType[mechanism_key]
-				local messages = not not ping_messages and not not ping_messages[ping_type]
+				local messages = ping_messages and ping_messages[ping_type]
 
 				if messages then
-					local breed = not not pinged_unit and not not Unit.get_data(pinged_unit, "breed")
+					local breed = pinged_unit and Unit.get_data(pinged_unit, "breed")
 
 					if breed then
 						local do_ping, chat_messages, ping_icon = unpack(response)
 						local breed_name = breed.name
 
-						chat_messages[1] = not not messages[breed_name]
+						chat_messages[1] = messages[breed_name]
 
 						return do_ping, chat_messages, ping_icon
 					end
@@ -225,7 +225,7 @@ PingTemplates = {
 	friendly_unit = {
 		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 5
-			return not not pinged_unit and not not not Managers.state.side:is_enemy(pinger_unit, pinged_unit)
+			return pinged_unit and not Managers.state.side:is_enemy(pinger_unit, pinged_unit)
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {

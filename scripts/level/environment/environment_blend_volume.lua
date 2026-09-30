@@ -12,13 +12,13 @@ EnvironmentBlendVolume.init = function (self, data)
 	self._viewport = data.viewport
 	self._player = data.player
 	self._value = 0
-	self._blend_time = not not data.blend_time
+	self._blend_time = data.blend_time
 	self._current_timer = 0
 	self._enabled = true
 	self._is_inside = false
 	self._override_values = {
 		self._environment,
-		data.override_sun_snap and not not nil or not data.override_sun_snap and not not "sun_direction"
+		data.override_sun_snap and nil or not data.override_sun_snap and "sun_direction"
 	}
 	self._data = data
 
@@ -95,10 +95,10 @@ EnvironmentBlendVolume.update = function (self, dt)
 		end
 	end
 
-	local target = self._is_inside and not not 1 or not self._is_inside and not not -1
+	local target = self._is_inside and 1 or not self._is_inside and -1
 
 	if self._blend_time <= 0 or self._force_blend then
-		self._current_timer = self._is_inside and not not 1 or not self._is_inside and not not 0
+		self._current_timer = self._is_inside and 1 or not self._is_inside and 0
 		self._force_blend = false
 	else
 		self._current_timer = math.clamp(self._current_timer + 1 / self._blend_time * (dt * target), 0, 1)

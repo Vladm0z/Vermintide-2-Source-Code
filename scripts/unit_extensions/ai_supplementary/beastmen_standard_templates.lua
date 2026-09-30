@@ -53,7 +53,7 @@ BeastmenStandardTemplates = {
 		composition = "standard_bearer_ambush",
 		custom_update_func = function (template, data, t, dt, unit, units_inside)
 			-- function 2
-			local next_horde_t = not not data.next_horde_t
+			local next_horde_t = data.next_horde_t
 
 			if next_horde_t < t then
 				local conflict_director = Managers.state.conflict

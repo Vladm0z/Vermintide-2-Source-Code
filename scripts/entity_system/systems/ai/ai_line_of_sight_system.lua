@@ -110,7 +110,7 @@ AILineOfSightSystem.target_changed = function (self, unit)
 end
 
 local is_win32 = PLATFORM == Application.WIN32
-local MAX_RAYCASTS = is_win32 and not not 10 or not is_win32 and not not 2
+local MAX_RAYCASTS = is_win32 and 10 or not is_win32 and 2
 
 AILineOfSightSystem.update = function (self, context, t)
 	-- function 12

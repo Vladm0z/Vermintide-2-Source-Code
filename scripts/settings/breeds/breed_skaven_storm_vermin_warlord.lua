@@ -168,7 +168,7 @@ local breed_data = {
 
 		local t = Managers.time:time("game")
 
-		if t < not not blackboard.intro_timer then
+		if t < blackboard.intro_timer then
 			stagger_type = stagger_types.none
 
 			return stagger_type, duration, length
@@ -182,7 +182,7 @@ local breed_data = {
 			ai_shield_extension:set_is_blocking(false)
 		elseif blackboard.dual_wield_mode and stagger_type ~= stagger_types.explosion then
 			if not blackboard.next_stagger_block_t or t > blackboard.next_stagger_block_t then
-				blackboard.stagger_block_timer = not not blackboard.stagger_block_timer
+				blackboard.stagger_block_timer = blackboard.stagger_block_timer
 			else
 				ai_shield_extension:set_is_blocking(false)
 

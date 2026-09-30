@@ -64,7 +64,7 @@ BTSelector_chaos_greed_pinata.run = function (self, unit, blackboard, t, dt)
 
 		local is_smart_objecting = blackboard.is_smart_objecting
 		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
-		local smart_object_unit = not not next_smart_object_data.smart_object_data
+		local smart_object_unit = next_smart_object_data.smart_object_data
 		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
 		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
@@ -75,7 +75,7 @@ BTSelector_chaos_greed_pinata.run = function (self, unit, blackboard, t, dt)
 		local moving_state = blackboard.move_state == "moving"
 
 		if condition_result == nil then
-			condition_result = is_in_smartobject_range and (not not moving_state or not not is_smart_objecting) or not is_in_smartobject_range and not not is_smart_objecting
+			condition_result = is_in_smartobject_range and (moving_state or is_smart_objecting) or not is_in_smartobject_range and is_smart_objecting
 		end
 
 		if condition_result then

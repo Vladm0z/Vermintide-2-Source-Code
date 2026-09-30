@@ -58,7 +58,7 @@ GenericHuskInteractorExtension.update = function (self, unit, input, dt, context
 
 	local interaction_type = interaction_context.interaction_type
 	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and not not interaction_template.config or not interaction_template and not not nil
+	local interaction_config = interaction_template and interaction_template.config or not interaction_template and nil
 
 	if self.state == "starting_interaction" then
 		interaction_template.client.start(world, unit, interactable_unit, interaction_data, interaction_config, t)
@@ -99,7 +99,7 @@ GenericHuskInteractorExtension._stop_interaction = function (self, interactable_
 
 	local interaction_type = interaction_context.interaction_type
 	local interaction_template = InteractionDefinitions[interaction_type]
-	local interaction_config = interaction_template and not not interaction_template.config or not interaction_template and not not nil
+	local interaction_config = interaction_template and interaction_template.config or not interaction_template and nil
 	local local_only = interaction_context.local_only
 	local go_id, is_level_unit = Managers.state.network:game_object_or_level_id(interactable_unit)
 
@@ -160,7 +160,7 @@ GenericHuskInteractorExtension.hot_join_sync = function (self, peer_id)
 	local interactable_unit_id, is_level_unit = network_manager:game_object_or_level_id(context.interactable_unit)
 	local data = context.data
 	local start_time = data.start_time
-	local duration = not not data.duration
+	local duration = data.duration
 	local unit_id = network_manager:unit_game_object_id(self.unit)
 	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/weave_tutorial/weave_onboarding_utils.lua
 
-WeaveOnboardingUtils = not not WeaveOnboardingUtils
+WeaveOnboardingUtils = WeaveOnboardingUtils
 
 local onboarding_step_stat = "scorpion_onboarding_step"
 local ui_onboarding_state_stat = "scorpion_ui_onboarding_state"

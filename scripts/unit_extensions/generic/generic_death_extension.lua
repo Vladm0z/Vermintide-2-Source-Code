@@ -8,10 +8,10 @@ GenericDeathExtension.init = function (self, extension_init_context, unit, exten
 	-- function 1
 	self.network_type = extension_init_data.is_husk
 
-	local is_husk = not not extension_init_data.is_husk
+	local is_husk = extension_init_data.is_husk
 
 	self.is_husk = is_husk
-	self.network_type = is_husk and not not "husk" or not is_husk and not not "unit"
+	self.network_type = is_husk and "husk" or not is_husk and "unit"
 	self.is_alive = true
 	self.unit = unit
 	self.extension_init_data = extension_init_data
@@ -42,7 +42,7 @@ end
 
 GenericDeathExtension.is_wall_nailed = function (self)
 	-- function 5
-	return next(self.wall_nail_data) and not not true or not next(self.wall_nail_data) and not not false
+	return (next(self.wall_nail_data))
 end
 
 GenericDeathExtension.nailing_hit = function (self, hit_ragdoll_actor, attack_direction, hit_speed)
@@ -51,7 +51,7 @@ GenericDeathExtension.nailing_hit = function (self, hit_ragdoll_actor, attack_di
 
 	local data = self.wall_nail_data
 
-	data[hit_ragdoll_actor] = not not data[hit_ragdoll_actor]
+	data[hit_ragdoll_actor] = data[hit_ragdoll_actor]
 end
 
 GenericDeathExtension.enable_second_hit_ragdoll = function (self)

@@ -9,11 +9,11 @@ NewsTickerManager.init = function (self)
 	self._server_name = "cdn.fatsharkgames.se"
 
 	if IS_WINDOWS then
-		self._loading_screen_url = not not Development.parameter("news_ticker_url")
-		self._ingame_url = not not Development.parameter("news_ticker_ingame_url")
+		self._loading_screen_url = Development.parameter("news_ticker_url")
+		self._ingame_url = Development.parameter("news_ticker_ingame_url")
 	else
-		self._loading_screen_url = not not Development.parameter("news_ticker_url_xb1")
-		self._ingame_url = not not Development.parameter("news_ticker_ingame_url_xb1")
+		self._loading_screen_url = Development.parameter("news_ticker_url_xb1")
+		self._ingame_url = Development.parameter("news_ticker_ingame_url_xb1")
 	end
 
 	self._loading_screen_text = nil
@@ -68,7 +68,7 @@ NewsTickerManager._load = function (self, url, callback)
 		local message = Http.get_uri(self._server_name, 80, url)
 
 		if message then
-			local is_ok = not not string.find(message, "HTTP/1.1 200 OK")
+			local is_ok = string.find(message, "HTTP/1.1 200 OK")
 
 			if is_ok then
 				local start_idx, end_idx = string.find(message, "\r\n\r\n")
@@ -108,7 +108,7 @@ NewsTickerManager.refresh_loading_screen_message = function (self)
 	self._loading_screen_text = nil
 	self._refreshing_loading_screen_message = true
 
-	self:_load(not not Development.parameter("news_ticker_url_xb1"), callback(self, "cb_loading_screen_loaded"))
+	self:_load(Development.parameter("news_ticker_url_xb1"), callback(self, "cb_loading_screen_loaded"))
 end
 
 NewsTickerManager.cb_loading_screen_loaded = function (self, info)
@@ -138,7 +138,7 @@ NewsTickerManager.refresh_ingame_message = function (self)
 	self._ingame_text = nil
 	self._refreshing_ingame_message = true
 
-	self:_load(not not Development.parameter("news_ticker_ingame_url_xb1"), callback(self, "cb_ingame_loaded"))
+	self:_load(Development.parameter("news_ticker_ingame_url_xb1"), callback(self, "cb_ingame_loaded"))
 end
 
 NewsTickerManager.refreshing_ingame_message = function (self)

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend_playfab/playfab_request_queue.lua
 
 local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
-local guid = IS_PS4 and not not math.uuid or not IS_PS4 and not not Application.guid
+local guid = IS_PS4 and math.uuid or not IS_PS4 and Application.guid
 
 PlayFabRequestQueue = class(PlayFabRequestQueue)
 
@@ -21,7 +21,7 @@ end
 
 PlayFabRequestQueue.is_pending_request = function (self)
 	-- function 2
-	return not not self._active_entry
+	return self._active_entry
 end
 
 PlayFabRequestQueue.enqueue = function (self, request, success_callback, send_eac_challenge, error_callback)
@@ -44,7 +44,7 @@ PlayFabRequestQueue.enqueue = function (self, request, success_callback, send_ea
 		request = table.clone(request),
 		success_callback = success_callback,
 		error_callback = error_callback,
-		send_eac_challenge = not not IS_WINDOWS,
+		send_eac_challenge = IS_WINDOWS,
 		timeout = TIMEOUT_TIME,
 		id = id
 	}
@@ -81,7 +81,7 @@ end
 
 PlayFabRequestQueue._need_throttle = function (self, func_name, t)
 	-- function 5
-	local data = not not self._throttle_per_func[func_name]
+	local data = self._throttle_per_func[func_name]
 	local new_num_requests = #data + 1
 
 	if new_num_requests >= MAX_THROTTLE_REQUESTS then
@@ -97,12 +97,12 @@ end
 PlayFabRequestQueue._update_throttling = function (self, t, entry)
 	-- function 6
 	for key, data in pairs(self._throttle_per_func) do
-		local expire_date = not not data[1]
+		local expire_date = data[1]
 
 		while expire_date < t do
 			table.remove(data, 1)
 
-			expire_date = not not data[1] or not not (t + 1)
+			expire_date = data[1] or t + 1
 		end
 	end
 
@@ -110,7 +110,7 @@ PlayFabRequestQueue._update_throttling = function (self, t, entry)
 		return false
 	end
 
-	local name = entry.request and not not entry.request.FunctionName or not entry.request and not not entry.api_function_name
+	local name = entry.request and entry.request.FunctionName or not entry.request and entry.api_function_name
 
 	if self:_need_throttle(name, t) then
 		return false
@@ -225,7 +225,7 @@ PlayFabRequestQueue._challenge_response_received = function (self, response)
 	entry.timeout = TIMEOUT_TIME
 
 	local request = entry.request
-	local function_params = not not request.FunctionParameter
+	local function_params = request.FunctionParameter
 
 	function_params.response = response
 	request.FunctionParameter = function_params
@@ -241,7 +241,7 @@ PlayFabRequestQueue._send_request = function (self, entry)
 	local success_callback = entry.success_callback
 	local success_cb = callback(self, "playfab_request_success_cb", success_callback, entry.id)
 	local error_callback = entry.error_callback
-	local error_cb = not not error_callback and not not callback(self, "playfab_request_error_cb", error_callback, entry.id)
+	local error_cb = error_callback and callback(self, "playfab_request_error_cb", error_callback, entry.id)
 
 	PlayFabClientApi[api_function_name](request, success_cb, error_cb)
 

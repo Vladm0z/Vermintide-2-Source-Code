@@ -37,7 +37,7 @@ end
 
 BackendInterfacePeddlerPlayFab.ready = function (self)
 	-- function 2
-	return not not self._login_rewards
+	return self._login_rewards
 end
 
 BackendInterfacePeddlerPlayFab.destroy = function (self)
@@ -58,7 +58,7 @@ BackendInterfacePeddlerPlayFab.get_filtered_items = function (self, filter, para
 	-- function 5
 	local all_items = self._peddler_stock
 	local backend_common = Managers.backend:get_interface("common")
-	local items = backend_common:filter_items(all_items, filter, not not params or not not empty_params)
+	local items = backend_common:filter_items(all_items, filter, params or empty_params)
 
 	return items
 end
@@ -102,7 +102,7 @@ BackendInterfacePeddlerPlayFab.get_unseen_currency_rewards = function (self)
 		local currency_type = reward.currency_type
 
 		if reward_type == "currency" and currency_ui_settings[currency_type] ~= nil then
-			unseen_items = not not unseen_items or not not {}
+			unseen_items = unseen_items or {}
 			unseen_items[#unseen_items + 1] = reward
 
 			table.remove(unseen_rewards, index)
@@ -203,7 +203,7 @@ BackendInterfacePeddlerPlayFab._refresh_stock_cb = function (self, external_cb, 
 					end_time = item.CustomData.end_time,
 					owned = owned,
 					dlc_name = data.dlc_name,
-					steam_itemdefid = not not has_steam and not not data.steam_itemdefid
+					steam_itemdefid = has_steam and data.steam_itemdefid
 				}
 
 				peddler_stock[stock_index] = item_data
@@ -331,7 +331,7 @@ end
 
 BackendInterfacePeddlerPlayFab._refresh_layout_override_cb = function (self, external_cb, result)
 	-- function 18
-	local override = not not result.Data
+	local override = result.Data
 	local mirror = self._backend_mirror
 
 	mirror:set_title_data("store_layout_override", override)
@@ -344,7 +344,7 @@ BackendInterfacePeddlerPlayFab.store_display_items = function (self)
 	local title_data = mirror:get_title_data()
 	local store_display_items_str = title_data.store_display_items
 
-	return not not store_display_items_str and not not cjson.decode(store_display_items_str)
+	return store_display_items_str and cjson.decode(store_display_items_str)
 end
 
 BackendInterfacePeddlerPlayFab.refresh_platform_item_prices = function (self, external_cb)
@@ -445,7 +445,7 @@ BackendInterfacePeddlerPlayFab._refresh_steam_item_prices_cb = function (self, e
 			for j = 1, #bundle_contains do
 				local steam_itemdefid = bundle_contains[j]
 
-				price_sum = price_sum + not not self._steam_item_prices[steam_itemdefid]
+				price_sum = price_sum + self._steam_item_prices[steam_itemdefid]
 			end
 		end
 
@@ -533,7 +533,7 @@ BackendInterfacePeddlerPlayFab._refresh_app_prices_psn = function (self, externa
 		local unlock_settings_ps4 = dlc_data.unlock_settings_ps4
 
 		if unlock_settings_ps4 then
-			local regional_unlock_settings = not not unlock_settings_ps4[title_id]
+			local regional_unlock_settings = unlock_settings_ps4[title_id]
 
 			for name, unlock_settings in pairs(regional_unlock_settings) do
 				local product_label = unlock_settings.product_label
@@ -588,7 +588,7 @@ BackendInterfacePeddlerPlayFab._refresh_app_prices_psn_cb = function (self, exte
 		for idx, product in pairs(result) do
 			local product_label = product.label
 			local skus = product.skus
-			local sku = skus and not not skus[1] or not skus and not not empty_table
+			local sku = skus and skus[1] or not skus and empty_table
 			local dlc_name = product_label_lookup[product_label]
 
 			self._app_prices[dlc_name] = {
@@ -635,7 +635,7 @@ BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive = function (self, ex
 	table.clear(self._app_prices)
 
 	for name, dlc_data in pairs(DLCSettings) do
-		local unlock_settings_xb1 = not not dlc_data.unlock_settings_xb1
+		local unlock_settings_xb1 = dlc_data.unlock_settings_xb1
 
 		for name, unlock_settings in pairs(unlock_settings_xb1) do
 			local product_id = unlock_settings.id
@@ -758,7 +758,7 @@ BackendInterfacePeddlerPlayFab._store_purchase_made_cb = function (self, items, 
 	local updated_statistics = function_result.updated_statistics
 
 	if updated_statistics then
-		local player = not not Managers.player
+		local player = Managers.player
 		local statistics_db = Managers.player:statistics_db()
 
 		if not player or not statistics_db then
@@ -781,7 +781,7 @@ BackendInterfacePeddlerPlayFab._store_purchase_made_cb = function (self, items, 
 			local cosmetic = function_result.new_cosmetics[i]
 			local _, item = table.find_by_key(items, "ItemId", cosmetic)
 
-			self._backend_mirror:add_item(not not item and not not item.ItemInstanceId, {
+			self._backend_mirror:add_item(item and item.ItemInstanceId, {
 				ItemId = function_result.new_cosmetics[i]
 			})
 		end
@@ -881,7 +881,7 @@ BackendInterfacePeddlerPlayFab._claim_store_rewards_cb = function (self, externa
 		for i = 1, #granted_items do
 			local item = granted_items[i]
 			local backend_id = item.ItemInstanceId
-			local amount = not not item.UsesIncrementedBy
+			local amount = item.UsesIncrementedBy
 
 			backend_mirror:add_item(backend_id, item)
 
@@ -939,7 +939,7 @@ BackendInterfacePeddlerPlayFab._claim_store_rewards_cb = function (self, externa
 		for i = 1, #currency_added do
 			local data = currency_added[i]
 
-			self:set_chips(data.code, not not self._chips[data.code] + data.amount)
+			self:set_chips(data.code, self._chips[data.code] + data.amount)
 		end
 
 		rewards_claimed = true

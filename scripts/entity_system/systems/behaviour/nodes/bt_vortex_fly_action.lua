@@ -21,7 +21,7 @@ BTVortexFlyAction.enter = function (self, unit, blackboard, t)
 	blackboard.fly_exit_pos = Vector3Box(exit_pos)
 
 	local smart_object_data = next_smart_object_data.smart_object_data
-	local ledge_position = not not smart_object_data.ledge_position
+	local ledge_position = smart_object_data.ledge_position
 
 	if ledge_position then
 		blackboard.fly_middle_pos = Vector3Box(ledge_position)

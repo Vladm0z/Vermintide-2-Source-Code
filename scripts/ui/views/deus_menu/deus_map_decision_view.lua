@@ -141,7 +141,7 @@ DeusMapDecisionView._start = function (self)
 
 	if self._is_server then
 		local twitch_manager = Managers.twitch
-		local is_twitch_voting = not not twitch_manager:is_connected()
+		local is_twitch_voting = twitch_manager:is_connected()
 		local map_state_key = self._shared_state:get_key("map_state")
 
 		if is_twitch_voting then
@@ -156,7 +156,7 @@ DeusMapDecisionView._start = function (self)
 		local start_dialogue_event
 		local next_node_types = get_next_node_types(self._deus_run_controller)
 
-		start_dialogue_event = table.contains(next_node_types, "shop") and (not not "deus_before_shrine_tutorial" or not not "deus_map_tutorial") or not table.contains(next_node_types, "shop") and not not "deus_map_tutorial"
+		start_dialogue_event = table.contains(next_node_types, "shop") and ("deus_before_shrine_tutorial" or "deus_map_tutorial") or not table.contains(next_node_types, "shop") and "deus_map_tutorial"
 
 		local vo_unit = LevelHelper:find_dialogue_unit(self._world, "ferry_lady_01")
 		local dialogue_input = ScriptUnit.extension_input(vo_unit, "dialogue_system")
@@ -337,7 +337,7 @@ DeusMapDecisionView._node_pressed = function (self, node_key)
 		return
 	end
 
-	local previous_node_key = not not self._shared_state:get_own(self._shared_state:get_key("vote"))
+	local previous_node_key = self._shared_state:get_own(self._shared_state:get_key("vote"))
 	local current_node_key = self._deus_run_controller:get_current_node_key()
 	local graph_data = self._deus_run_controller:get_graph_data()
 	local node = graph_data[node_key]
@@ -464,7 +464,7 @@ DeusMapDecisionView._enable_hover = function (self, node_key)
 	local own_peer_id = self._deus_run_controller:get_own_peer_id()
 	local profile_index, career_index = self._deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
 
-	self._ui:enable_hover_text(self._scene:get_screen_pos_of_node(node_key), node.level_type, reveal_base_level and not not node.base_level or not reveal_base_level and not not nil, reveal_theme and not not node.theme or not reveal_theme and not not nil, reveal_minor_modifier and not not node.minor_modifier_group or not reveal_minor_modifier and not not nil, reveal_conflict_settings and not not node.conflict_settings or not reveal_conflict_settings and not not nil, reveal_terror_event_power_up and not not node.terror_event_power_up or not reveal_terror_event_power_up and not not nil, reveal_terror_event_power_up and not not node.grant_random_power_up_count or not reveal_terror_event_power_up and not not nil, reveal_terror_event_power_up and not not node.terror_event_power_up_rarity or not reveal_terror_event_power_up and not not nil, self._shared_state:get_own(self._shared_state:get_key("vote")) == node_key, table.contains(current_node.next, node_key), profile_index, career_index)
+	self._ui:enable_hover_text(self._scene:get_screen_pos_of_node(node_key), node.level_type, reveal_base_level and node.base_level or not reveal_base_level and nil, reveal_theme and node.theme or not reveal_theme and nil, reveal_minor_modifier and node.minor_modifier_group or not reveal_minor_modifier and nil, reveal_conflict_settings and node.conflict_settings or not reveal_conflict_settings and nil, reveal_terror_event_power_up and node.terror_event_power_up or not reveal_terror_event_power_up and nil, reveal_terror_event_power_up and node.grant_random_power_up_count or not reveal_terror_event_power_up and nil, reveal_terror_event_power_up and node.terror_event_power_up_rarity or not reveal_terror_event_power_up and nil, self._shared_state:get_own(self._shared_state:get_key("vote")) == node_key, table.contains(current_node.next, node_key), profile_index, career_index)
 	self._scene:hover_node(node_key)
 
 	self._hovered_node = node_key
@@ -562,7 +562,7 @@ DeusMapDecisionView._on_enter_finishing = function (self, dt, t)
 
 	local current_node_key = self._deus_run_controller:get_current_node_key()
 	local current_node = self._deus_run_controller:get_current_node()
-	local vote = not not self._shared_state:get_own(self._shared_state:get_key("vote"))
+	local vote = self._shared_state:get_own(self._shared_state:get_key("vote"))
 
 	if vote ~= "" then
 		self._scene:unselect_node(vote)
@@ -647,16 +647,16 @@ DeusMapDecisionView._update_player_state = function (self)
 			data.versus_level = self._deus_run_controller:get_versus_player_level(peer_id)
 			data.frame = self._deus_run_controller:get_player_frame(peer_id, data.profile_index, data.career_index)
 			data.name = self._deus_run_controller:get_player_name(peer_id)
-			data.health_percentage = not not self._deus_run_controller:get_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID)
+			data.health_percentage = self._deus_run_controller:get_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.healthkit_consumable = self._deus_run_controller:get_player_consumable_healthkit_slot(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.potion_consumable = self._deus_run_controller:get_player_consumable_potion_slot(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.grenade_consumable = self._deus_run_controller:get_player_consumable_grenade_slot(peer_id, REAL_PLAYER_LOCAL_ID)
 			data.ammo_percentage = self._deus_run_controller:get_player_ranged_ammo(peer_id, REAL_PLAYER_LOCAL_ID)
-			data.soft_currency = not not self._deus_run_controller:get_player_soft_currency(peer_id)
+			data.soft_currency = self._deus_run_controller:get_player_soft_currency(peer_id)
 
-			local vote = not not self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
+			local vote = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
 
-			data.vote = vote == "" and not not nil or not (vote == "") and not not deus_graph_data[vote].base_level
+			data.vote = vote == "" and nil or not (vote == "") and deus_graph_data[vote].base_level
 		else
 			data.profile_index = 0
 			data.career_index = 0
@@ -694,7 +694,7 @@ DeusMapDecisionView._update_player_state = function (self)
 
 		if profile_index ~= 0 then
 			local vote = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
-			local node_key = final_node_selected and (final_node_selected ~= "" and (not not final_node_selected or vote and (vote ~= "" and (not not vote or not not current_node_key) or not (vote ~= "") and not not current_node_key) or not vote and not not current_node_key) or not (final_node_selected ~= "") and (vote and (vote ~= "" and (not not vote or not not current_node_key) or not (vote ~= "") and not not current_node_key) or not vote and not not current_node_key)) or not final_node_selected and (vote and (vote ~= "" and (not not vote or not not current_node_key) or not (vote ~= "") and not not current_node_key) or not vote and not not current_node_key)
+			local node_key = final_node_selected and (final_node_selected ~= "" and (final_node_selected or vote and (vote ~= "" and (vote or current_node_key) or not (vote ~= "") and current_node_key) or not vote and current_node_key) or not (final_node_selected ~= "") and (vote and (vote ~= "" and (vote or current_node_key) or not (vote ~= "") and current_node_key) or not vote and current_node_key)) or not final_node_selected and (vote and (vote ~= "" and (vote or current_node_key) or not (vote ~= "") and current_node_key) or not vote and current_node_key)
 
 			self._scene:place_token(profile_index, index, node_key)
 
@@ -726,12 +726,12 @@ DeusMapDecisionView._handle_voting_end = function (self)
 	local max_vote_count = 0
 
 	for _, peer_id in ipairs(deus_run_controller:get_peers()) do
-		local vote = not not self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
+		local vote = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
 
 		if vote ~= "" then
 			local vote_count = votes[vote]
 
-			vote_count = vote_count and (not not (vote_count + 1) or not not 1) or not vote_count and not not 1
+			vote_count = vote_count and (vote_count + 1 or 1) or not vote_count and 1
 			votes[vote] = vote_count
 
 			printf("[DeusMapDecisionView] Voting ended. %s voted for %s.", peer_id, vote)
@@ -795,7 +795,7 @@ end
 
 DeusMapDecisionView._get_twitch_vote = function (self)
 	-- function 31
-	local twitch_vote = not not self._is_server
+	local twitch_vote = self._is_server
 
 	if twitch_vote then
 		return twitch_vote
@@ -820,7 +820,7 @@ end
 DeusMapDecisionView._did_everyone_vote = function (self)
 	-- function 33
 	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
-		local vote = not not self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
+		local vote = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
 
 		if vote == "" then
 			return false

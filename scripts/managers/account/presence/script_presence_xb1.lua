@@ -36,7 +36,7 @@ ScriptPresence.update = function (self, dt)
 		return
 	end
 
-	self._presence_update_timer = not not self._presence_update_timer - dt
+	self._presence_update_timer = self._presence_update_timer - dt
 
 	if self._presence_update_timer < 0 then
 		local user_id = account_manager:user_id()
@@ -73,12 +73,12 @@ local ACTIVE_PRESENCE_DATA = {}
 
 ScriptPresence.update_playing = function (self, user_id)
 	-- function 6
-	local mechanism_key = not not Managers.mechanism
-	local game_mode_key = not not Managers.state.game_mode
-	local current_level = not not Managers.state.game_mode
-	local current_difficulty = not not Managers.state.difficulty
-	local current_num_players = not not Managers.player
-	local is_private = not not Managers.matchmaking
+	local mechanism_key = Managers.mechanism
+	local game_mode_key = Managers.state.game_mode
+	local current_level = Managers.state.game_mode
+	local current_difficulty = Managers.state.difficulty
+	local current_num_players = Managers.player
+	local is_private = Managers.matchmaking
 
 	if not current_level or not current_difficulty or not current_num_players then
 		self:set_presence("menu")
@@ -86,15 +86,15 @@ ScriptPresence.update_playing = function (self, user_id)
 		local prefix = ""
 
 		if self:_has_new_data(current_level, current_difficulty, current_num_players, is_private) then
-			prefix = current_num_players == 4 and (not not "playing" or not not "needs_assistance") or not (current_num_players == 4) and (is_private and (not not "playing" or not not "needs_assistance") or not is_private and not not "needs_assistance")
+			prefix = current_num_players == 4 and ("playing" or "needs_assistance") or not (current_num_players == 4) and (is_private and ("playing" or "needs_assistance") or not is_private and "needs_assistance")
 
 			self:_setup_stat_data(current_level, current_difficulty, current_num_players)
 
 			local presence_string
 
 			if game_mode_key == "weave" then
-				local lobby = not not Managers.state.network
-				local weave_quick_game = not not lobby and lobby:lobby_data("weave_quick_game") == "true"
+				local lobby = Managers.state.network
+				local weave_quick_game = lobby and lobby:lobby_data("weave_quick_game") == "true"
 
 				if weave_quick_game then
 					presence_string = prefix .. "_" .. "weave_quick_game_" .. current_difficulty
@@ -155,9 +155,9 @@ ScriptPresence._extract_stat_data = function (self, current_level, current_diffi
 		current_difficulty = nil
 	end
 
-	data.CurrentNumPlayers = not not current_num_players or not not ""
-	data.CurrentMap = not not current_level or not not ""
-	data.CurrentDifficulty = not not current_difficulty or not not ""
+	data.CurrentNumPlayers = current_num_players or ""
+	data.CurrentMap = current_level or ""
+	data.CurrentDifficulty = current_difficulty or ""
 
 	return data
 end

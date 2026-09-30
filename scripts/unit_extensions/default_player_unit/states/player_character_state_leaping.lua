@@ -149,7 +149,7 @@ PlayerCharacterStateLeaping.update = function (self, unit, input, dt, context, t
 			local finished_event_function = leap_events.finished
 
 			if finished_event_function then
-				finished_event_function(self, true, not not final_position or not not POSITION_LOOKUP[unit])
+				finished_event_function(self, true, final_position or POSITION_LOOKUP[unit])
 			end
 		end
 
@@ -518,8 +518,8 @@ PlayerCharacterStateLeaping._update_movement = function (self, unit, dt, t)
 
 	local colliding_down = CharacterStateHelper.is_colliding_down(unit)
 
-	self._leap_done = not not leap_done or not not colliding_down
-	self._final_position = Vector3Box(leap_done and (not not final_position or not not POSITION_LOOKUP[unit]) or not leap_done and not not POSITION_LOOKUP[unit])
+	self._leap_done = leap_done or colliding_down
+	self._final_position = Vector3Box(leap_done and (final_position or POSITION_LOOKUP[unit]) or not leap_done and POSITION_LOOKUP[unit])
 
 	return self._leap_done, final_position
 end
@@ -568,7 +568,7 @@ PlayerCharacterStateLeaping._finish = function (self, unit, t, aborted, final_po
 		local finished_event_function = leap_events.finished
 
 		if finished_event_function then
-			finished_event_function(self, not not aborted or not not not landed, not not final_position or not not POSITION_LOOKUP[unit])
+			finished_event_function(self, aborted or not landed, final_position or POSITION_LOOKUP[unit])
 		end
 	end
 

@@ -53,7 +53,7 @@ StartGameWindowHostVersusAdditionalSettings._handle_input = function (self, dt, 
 		local consume = true
 
 		if input_service:get("back_menu", consume) or input_service:get("refresh", consume) or input_service:get("right_stick_press", consume) then
-			parent:set_window_input_focus(not not self._parent_window_name)
+			parent:set_window_input_focus(self._parent_window_name)
 		end
 	end
 end

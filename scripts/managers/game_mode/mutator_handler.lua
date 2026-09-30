@@ -626,7 +626,7 @@ MutatorHandler.get_terror_event_tags = function (self)
 		local template = mutator_data.template
 
 		if template.get_terror_event_tags then
-			terror_event_tags = not not terror_event_tags or not not {}
+			terror_event_tags = terror_event_tags or {}
 
 			template.get_terror_event_tags(mutator_context, mutator_data, terror_event_tags)
 		end
@@ -701,7 +701,7 @@ MutatorHandler._activate_mutator = function (self, name, active_mutators, mutato
 
 	local template = MutatorTemplates[name]
 
-	mutator_data = not not mutator_data or not not {
+	mutator_data = mutator_data or {
 		template = template
 	}
 
@@ -807,7 +807,7 @@ MutatorHandler.tweak_pack_spawning_settings = function (zone_mutator_list, mutat
 	run_mutators(mutator_list)
 	run_mutators(zone_mutator_list)
 
-	return not not new_pack_spawning_settings or not not pack_spawning_settings
+	return new_pack_spawning_settings or pack_spawning_settings
 end
 
 MutatorHandler.rpc_activate_mutator_client = function (self, channel_id, mutator_id, activated_by_twitch)

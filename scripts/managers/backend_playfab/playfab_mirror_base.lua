@@ -33,7 +33,7 @@ local ALLOWED_DATA_TYPES = {
 }
 local REDUCTION_INTERVAL = 80
 local DELAY_MULTIPLIER = 5
-local guid = IS_PS4 and not not math.uuid or not IS_PS4 and not not Application.guid
+local guid = IS_PS4 and math.uuid or not IS_PS4 and Application.guid
 
 PlayFabMirrorBase = class(PlayFabMirrorBase)
 
@@ -71,7 +71,7 @@ PlayFabMirrorBase.init = function (self, signin_result)
 	self._playfab_id = signin_result.PlayFabId
 
 	local info_result_payload = signin_result.InfoResultPayload
-	local read_only_data = not not info_result_payload.UserReadOnlyData
+	local read_only_data = info_result_payload.UserReadOnlyData
 	local read_only_data_values = {}
 
 	for key, data in pairs(read_only_data) do
@@ -92,7 +92,7 @@ PlayFabMirrorBase.init = function (self, signin_result)
 	self._read_only_data = read_only_data_values
 	self._read_only_data_mirror = table.clone(read_only_data_values)
 
-	local title_data = not not info_result_payload.TitleData
+	local title_data = info_result_payload.TitleData
 
 	self._title_data = {}
 
@@ -100,7 +100,7 @@ PlayFabMirrorBase.init = function (self, signin_result)
 		self:set_title_data(key, value)
 	end
 
-	local user_data = not not info_result_payload.UserData
+	local user_data = info_result_payload.UserData
 	local user_data_values = {}
 
 	for key, value_table in pairs(user_data) do
@@ -138,7 +138,7 @@ end
 
 PlayFabMirrorBase._register_dlc_filtered_data = function (self, dlc_name, item, backend_id)
 	-- function 5
-	self._filtered_data[dlc_name][item] = not not backend_id or not not true
+	self._filtered_data[dlc_name][item] = backend_id or true
 end
 
 PlayFabMirrorBase._grant_filtered_data = function (self, dlc_name)
@@ -200,7 +200,7 @@ PlayFabMirrorBase._parse_unlocked_weapon_skins = function (self)
 	local unlocked_weapon_skins = {}
 	local unlocked_weapon_skins_string = self:get_read_only_data("unlocked_weapon_skins")
 	local unlock_manager = Managers.unlock
-	local existing_weapon_skins = not not self._unlocked_weapon_skins
+	local existing_weapon_skins = self._unlocked_weapon_skins
 
 	if unlocked_weapon_skins_string then
 		local decoded = cjson.decode(unlocked_weapon_skins_string)
@@ -209,10 +209,10 @@ PlayFabMirrorBase._parse_unlocked_weapon_skins = function (self)
 			for i = 1, #decoded do
 				local skin_name = decoded[i]
 				local item_data = rawget(ItemMasterList, skin_name)
-				local required_dlc = not not item_data and not not item_data.required_dlc
+				local required_dlc = item_data and item_data.required_dlc
 
 				if not required_dlc then
-					unlocked_weapon_skins[skin_name] = not not existing_weapon_skins[skin_name]
+					unlocked_weapon_skins[skin_name] = existing_weapon_skins[skin_name]
 				elseif not unlock_manager:dlc_exists(required_dlc) then
 					assert_or_print_exception(false, "Tried to check if unexisting DLC was unlocked %s", required_dlc)
 
@@ -238,7 +238,7 @@ PlayFabMirrorBase._parse_unlocked_weapon_poses = function (self)
 	local unlocked_weapon_poses = {}
 	local unlocked_weapon_poses_string = self:get_read_only_data("unlocked_weapon_poses")
 	local unlock_manager = Managers.unlock
-	local existing_weapon_poses = not not self._unlocked_weapon_poses
+	local existing_weapon_poses = self._unlocked_weapon_poses
 
 	if unlocked_weapon_poses_string then
 		local decoded = cjson.decode(unlocked_weapon_poses_string)
@@ -246,7 +246,7 @@ PlayFabMirrorBase._parse_unlocked_weapon_poses = function (self)
 		if decoded then
 			for _, pose_item_name in ipairs(decoded) do
 				local item_data = rawget(ItemMasterList, pose_item_name)
-				local required_dlc = not not item_data and not not item_data.required_dlc
+				local required_dlc = item_data and item_data.required_dlc
 				local pose_parent = item_data.parent
 
 				if not item_data then
@@ -254,20 +254,20 @@ PlayFabMirrorBase._parse_unlocked_weapon_poses = function (self)
 				elseif not pose_parent then
 					assert_or_print_exception(false, "%q doesn't have a prent", pose_item_name)
 				elseif not required_dlc then
-					unlocked_weapon_poses[pose_parent] = not not unlocked_weapon_poses[pose_parent]
+					unlocked_weapon_poses[pose_parent] = unlocked_weapon_poses[pose_parent]
 					unlocked_weapon_poses[pose_parent][pose_item_name] = true
 				elseif not unlock_manager:dlc_exists(required_dlc) then
 					assert_or_print_exception(false, "Tried to check if unexisting DLC was unlocked %s", required_dlc)
 
-					unlocked_weapon_poses[pose_parent] = not not unlocked_weapon_poses[pose_parent]
+					unlocked_weapon_poses[pose_parent] = unlocked_weapon_poses[pose_parent]
 					unlocked_weapon_poses[pose_parent][pose_item_name] = true
 				elseif unlock_manager:is_dlc_unlocked(required_dlc) then
-					unlocked_weapon_poses[pose_parent] = not not unlocked_weapon_poses[pose_parent]
+					unlocked_weapon_poses[pose_parent] = unlocked_weapon_poses[pose_parent]
 					unlocked_weapon_poses[pose_parent][pose_item_name] = true
 				else
 					self:_register_dlc_filtered_data(required_dlc, {
 						ItemId = pose_item_name
-					}, not not existing_weapon_poses[pose_parent])
+					}, existing_weapon_poses[pose_parent])
 				end
 			end
 		else
@@ -282,7 +282,7 @@ PlayFabMirrorBase._parse_equipped_weapon_pose_skins = function (self)
 	-- function 11
 	local equipped_weapon_pose_skins = {}
 	local equipped_weapon_pose_skins_string = self:get_read_only_data("equipped_weapon_pose_skins")
-	local existing_equipped_weapon_pose_skins = not not self._equipped_weapon_pose_skins
+	local existing_equipped_weapon_pose_skins = self._equipped_weapon_pose_skins
 
 	if equipped_weapon_pose_skins_string then
 		local decoded = cjson.decode(equipped_weapon_pose_skins_string)
@@ -299,11 +299,11 @@ end
 
 PlayFabMirrorBase._parse_unlocked_cosmetics = function (self, unlocked_cosmetics_string)
 	-- function 12
-	unlocked_cosmetics_string = not not unlocked_cosmetics_string or not not self:get_read_only_data("unlocked_cosmetics")
+	unlocked_cosmetics_string = unlocked_cosmetics_string or self:get_read_only_data("unlocked_cosmetics")
 
 	local unlocked_cosmetics = {}
 	local unlock_manager = Managers.unlock
-	local existing_cosmetics = not not self._unlocked_cosmetics
+	local existing_cosmetics = self._unlocked_cosmetics
 
 	if unlocked_cosmetics_string then
 		local decoded = cjson.decode(unlocked_cosmetics_string)
@@ -313,10 +313,10 @@ PlayFabMirrorBase._parse_unlocked_cosmetics = function (self, unlocked_cosmetics
 				for i = 1, #cosmetics do
 					local cosmetic_name = cosmetics[i]
 					local item_data = rawget(ItemMasterList, cosmetic_name)
-					local required_dlc = not not item_data and not not item_data.required_dlc
+					local required_dlc = item_data and item_data.required_dlc
 
 					if not required_dlc then
-						unlocked_cosmetics[cosmetic_name] = not not existing_cosmetics[cosmetic_name]
+						unlocked_cosmetics[cosmetic_name] = existing_cosmetics[cosmetic_name]
 					elseif not unlock_manager:dlc_exists(required_dlc) then
 						assert_or_print_exception(false, "Tried to check if unexisting DLC was unlocked %s", required_dlc)
 
@@ -504,7 +504,7 @@ PlayFabMirrorBase._handle_owned_dlcs_data = function (self)
 	local new_dlcs = function_result.new_dlcs
 	local revoked_dlcs = function_result.revoked_dlcs
 
-	self._owned_dlcs = not not owned_dlcs or not not {}
+	self._owned_dlcs = owned_dlcs or {}
 	self._platform_dlcs = platform_dlcs
 
 	local unlock_manager = Managers.unlock
@@ -543,7 +543,7 @@ PlayFabMirrorBase._handle_owned_dlcs_data = function (self)
 	self._unlocked_weapon_poses = self:_parse_unlocked_weapon_poses()
 	self._equipped_weapon_pose_skins = self:_parse_equipped_weapon_pose_skins()
 
-	local unlocked_keep_decorations_json = not not self:get_read_only_data("unlocked_keep_decorations")
+	local unlocked_keep_decorations_json = self:get_read_only_data("unlocked_keep_decorations")
 
 	self._unlocked_keep_decorations = cjson.decode(unlocked_keep_decorations_json)
 
@@ -614,7 +614,7 @@ PlayFabMirrorBase._sync_unseen_rewards = function (self, new_rewards)
 		else
 			local data = get_item_from_item_master_list(item_id)
 			local custom_data = item.CustomData
-			local rewarded_from = not not custom_data and not not custom_data.rewarded_from
+			local rewarded_from = custom_data and custom_data.rewarded_from
 
 			if data and rewarded_from then
 				if data.bundle then
@@ -661,7 +661,7 @@ PlayFabMirrorBase._apply_unseen_rewards = function (self, rewards)
 	-- function 27
 	local unseen_rewards = self:get_user_data("unseen_rewards")
 
-	unseen_rewards = unseen_rewards and (not not cjson.decode(unseen_rewards) or not not {}) or not unseen_rewards and not not {}
+	unseen_rewards = unseen_rewards and (cjson.decode(unseen_rewards) or {}) or not unseen_rewards and {}
 
 	table.append(unseen_rewards, rewards)
 	self:set_user_data("unseen_rewards", cjson.encode(unseen_rewards))
@@ -679,13 +679,13 @@ PlayFabMirrorBase.execute_dlc_logic_request_cb = function (self, result)
 		local info = function_result.missing_dlc_info
 
 		if info then
-			local popup_text = info.presentation_text_localized and not not Localize(info.presentation_text_localized) or not info.presentation_text_localized and not not info.presentation_text
-			local popup_title = info.presentation_title_localized and not not Localize(info.presentation_title_localized) or not info.presentation_title_localized and not not info.presentation_title
+			local popup_text = info.presentation_text_localized and Localize(info.presentation_text_localized) or not info.presentation_text_localized and info.presentation_text
+			local popup_title = info.presentation_title_localized and Localize(info.presentation_title_localized) or not info.presentation_title_localized and info.presentation_title
 			local popup_url_button
 
 			if info.presentation_url_button then
 				popup_url_button = {
-					text = info.presentation_url_button.text_localized and not not Localize(info.presentation_url_button.text_localized) or not info.presentation_url_button.text_localized and not not info.presentation_url_button.text,
+					text = info.presentation_url_button.text_localized and Localize(info.presentation_url_button.text_localized) or not info.presentation_url_button.text_localized and info.presentation_url_button.text,
 					url = info.presentation_url_button.url
 				}
 			end
@@ -888,8 +888,8 @@ PlayFabMirrorBase.fix_inventory_data_1_request_cb = function (self, result)
 	self._num_items_to_load = self._num_items_to_load - 1
 
 	local function_result = result.FunctionResult
-	local updated_xp_data = not not function_result and not not function_result.updated_xp_data
-	local new_read_only_data = not not function_result and not not function_result.new_read_only_data
+	local updated_xp_data = function_result and function_result.updated_xp_data
+	local new_read_only_data = function_result and function_result.new_read_only_data
 
 	if updated_xp_data then
 		for key, value in pairs(updated_xp_data) do
@@ -932,7 +932,7 @@ PlayFabMirrorBase.fix_inventory_data_2_request_cb = function (self, result)
 	self._num_items_to_load = self._num_items_to_load - 1
 
 	local function_result = result.FunctionResult
-	local new_magic_level = not not function_result and not not function_result.new_magic_level
+	local new_magic_level = function_result and function_result.new_magic_level
 
 	if new_magic_level then
 		local progress_json = self:get_read_only_data("weaves_career_progress")
@@ -993,7 +993,7 @@ PlayFabMirrorBase.handle_fix_data_ids_request_cb = function (self, result)
 			elseif value == "false" then
 				self:set_read_only_data(key, false, true)
 			else
-				self:set_read_only_data(key, not not tonumber(value), true)
+				self:set_read_only_data(key, tonumber(value), true)
 			end
 		end
 	end
@@ -1011,7 +1011,7 @@ PlayFabMirrorBase.handle_fix_data_ids_request_cb = function (self, result)
 			elseif value == "false" then
 				self:set_user_data(key, false, true)
 			else
-				self:set_user_data(key, not not tonumber(value), true)
+				self:set_user_data(key, tonumber(value), true)
 			end
 		end
 	end
@@ -1151,15 +1151,15 @@ PlayFabMirrorBase.read_only_data_request_cb = function (self, result)
 
 	local weaves_progression_settings = function_result.weaves_progression_settings
 
-	self._weaves_progression_settings = weaves_progression_settings and not not cjson.decode(weaves_progression_settings) or not weaves_progression_settings and not not {}
+	self._weaves_progression_settings = weaves_progression_settings and cjson.decode(weaves_progression_settings) or not weaves_progression_settings and {}
 
 	local power_level_data = function_result.power_level_data
 
-	self._power_level_data = power_level_data and not not cjson.decode(power_level_data) or not power_level_data and not not {}
+	self._power_level_data = power_level_data and cjson.decode(power_level_data) or not power_level_data and {}
 
 	local rarity_tables = function_result.rarity_tables
 
-	self._rarity_tables = rarity_tables and not not cjson.decode(rarity_tables) or not rarity_tables and not not {}
+	self._rarity_tables = rarity_tables and cjson.decode(rarity_tables) or not rarity_tables and {}
 
 	self:_generate_formatted_rarity_tables(self._rarity_tables)
 	self:_request_user_data()
@@ -1183,7 +1183,7 @@ PlayFabMirrorBase.user_data_request_cb = function (self, result)
 		if key == "unseen_rewards" then
 			local new_unseen_rewards = cjson.decode(data.Value)
 			local unseen_rewards_string = self:get_user_data("unseen_rewards")
-			local existing_unseen_rewards = unseen_rewards_string and not not cjson.decode(unseen_rewards_string) or not unseen_rewards_string and not not {}
+			local existing_unseen_rewards = unseen_rewards_string and cjson.decode(unseen_rewards_string) or not unseen_rewards_string and {}
 			local is_fake_item = ItemHelper.is_fake_item
 
 			for i = 1, #new_unseen_rewards do
@@ -1536,15 +1536,15 @@ PlayFabMirrorBase.inventory_request_cb = function (self, result)
 
 	local unlocked_weapon_skins = self:get_unlocked_weapon_skins()
 
-	unlocked_weapon_skins = not not unlocked_weapon_skins or not not {}
+	unlocked_weapon_skins = unlocked_weapon_skins or {}
 
 	local unlocked_cosmetics = self:get_unlocked_cosmetics()
 
-	unlocked_cosmetics = not not unlocked_cosmetics or not not {}
+	unlocked_cosmetics = unlocked_cosmetics or {}
 
 	local unlocked_weapon_poses = self:get_unlocked_weapon_poses()
 
-	unlocked_weapon_poses = not not unlocked_weapon_poses or not not {}
+	unlocked_weapon_poses = unlocked_weapon_poses or {}
 
 	self:_create_fake_inventory_items(unlocked_weapon_skins, "weapon_skins")
 	self:_create_fake_inventory_items(unlocked_cosmetics, "cosmetics")
@@ -1634,7 +1634,7 @@ PlayFabMirrorBase._cb_steam_user_inventory = function (self, result, item_list, 
 				if not steam_item.CustomData or not steam_item.CustomData.power_level then
 					local custom_data = {
 						power_level = 5,
-						rarity = not not item_data.rarity
+						rarity = item_data.rarity
 					}
 
 					steam_item.CustomData = custom_data
@@ -1673,7 +1673,7 @@ PlayFabMirrorBase._set_inital_career_data = function (self, career_name, charact
 		for j = 1, #slots_to_verify do
 			local slot_name = slots_to_verify[j]
 			local slot_data = loadout[slot_name]
-			local slot_item_value = type(slot_data) ~= "table" and not not slot_data or not (type(slot_data) ~= "table") and not not slot_data.Value
+			local slot_item_value = type(slot_data) ~= "table" and slot_data or not (type(slot_data) ~= "table") and slot_data.Value
 
 			if not slot_item_value then
 				broken_slots[slot_name] = true
@@ -1686,7 +1686,7 @@ PlayFabMirrorBase._set_inital_career_data = function (self, career_name, charact
 			elseif slot_name == "slot_pose" then
 				local item = ItemMasterList[slot_item_value]
 				local parent = item.parent
-				local pose = not not self._unlocked_weapon_poses[parent]
+				local pose = self._unlocked_weapon_poses[parent]
 
 				if not pose then
 					broken_slots[slot_name] = true
@@ -1699,7 +1699,7 @@ PlayFabMirrorBase._set_inital_career_data = function (self, career_name, charact
 
 					if mechanism_name == "versus" then
 						local custom_data = item.CustomData
-						local rarity = not not custom_data and not not custom_data.rarity
+						local rarity = custom_data and custom_data.rarity
 
 						if rarity ~= "default" then
 							broken_slots[slot_name] = true
@@ -1717,7 +1717,7 @@ PlayFabMirrorBase._set_inital_career_data = function (self, career_name, charact
 		local loadout_career_mirror_data = {}
 
 		for key, data in pairs(loadout) do
-			local value = type(data) ~= "table" and not not data or not (type(data) ~= "table") and not not data.Value
+			local value = type(data) ~= "table" and data or not (type(data) ~= "table") and data.Value
 
 			loadout_career_data[key] = value
 			loadout_career_mirror_data[key] = value
@@ -1753,7 +1753,7 @@ PlayFabMirrorBase._verify_items_are_usable = function (self, broken_slots, chara
 
 		if not broken_slots[slot_name] then
 			local slot_data = character_data[slot_name]
-			local value = type(slot_data) ~= "table" and not not slot_data or not (type(slot_data) ~= "table") and not not slot_data.Value
+			local value = type(slot_data) ~= "table" and slot_data or not (type(slot_data) ~= "table") and slot_data.Value
 
 			if value then
 				local item = self._inventory_items[value]
@@ -1868,7 +1868,7 @@ end
 
 PlayFabMirrorBase.ready = function (self)
 	-- function 81
-	return not not self._inventory_items
+	return self._inventory_items
 end
 
 PlayFabMirrorBase.current_api_call = function (self)
@@ -1998,8 +1998,8 @@ end
 PlayFabMirrorBase.get_character_data = function (self, career_name, key, optional_loadout_index)
 	-- function 90
 	local career_data = self._career_data
-	local career_loadout_index = not not optional_loadout_index or not not self._career_loadouts[career_name]
-	local loadout_career_data = not not career_data[career_name]
+	local career_loadout_index = optional_loadout_index or self._career_loadouts[career_name]
+	local loadout_career_data = career_data[career_name]
 
 	if loadout_career_data ~= nil then
 		return loadout_career_data[key]
@@ -2011,7 +2011,7 @@ end
 PlayFabMirrorBase.has_loadout = function (self, career_name, loadout_index)
 	-- function 91
 	local career_data = self._career_data
-	local loadout_career_data = not not career_data[career_name]
+	local loadout_career_data = career_data[career_name]
 
 	return loadout_career_data ~= nil
 end
@@ -2019,7 +2019,7 @@ end
 PlayFabMirrorBase.set_character_data = function (self, career_name, key, value, set_mirror, optional_loadout_index)
 	-- function 92
 	local career_data = self._career_data[career_name]
-	local career_loadout_index = not not optional_loadout_index or not not self._career_loadouts[career_name]
+	local career_loadout_index = optional_loadout_index or self._career_loadouts[career_name]
 	local loadout_career_data = career_data[career_loadout_index]
 
 	loadout_career_data[key] = value
@@ -2053,7 +2053,7 @@ PlayFabMirrorBase.get_default_loadouts = function (self, career_name)
 		return nil
 	end
 
-	local default_loadouts = not not self._character_default_loadouts[mechanism_name]
+	local default_loadouts = self._character_default_loadouts[mechanism_name]
 	local career_default_loadouts = default_loadouts[career_name]
 
 	return career_default_loadouts
@@ -2252,7 +2252,7 @@ PlayFabMirrorBase.get_read_only_data = function (self, key)
 	local value = self._read_only_data[key]
 	local value_type = type(value)
 
-	assert_or_print_exception(value == nil or not not ALLOWED_DATA_TYPES[value_type], "Tried to get read_only_data's '%s'. Got value '%s' ('%s')", key, tostring(value), value_type)
+	assert_or_print_exception(value == nil or ALLOWED_DATA_TYPES[value_type], "Tried to get read_only_data's '%s'. Got value '%s' ('%s')", key, tostring(value), value_type)
 
 	return value
 end
@@ -2433,7 +2433,7 @@ PlayFabMirrorBase._create_fake_inventory_items = function (self, fake_inventory_
 
 				new_fake_inventory_items[#new_fake_inventory_items + 1] = {
 					ItemId = item_key,
-					ItemInstanceId = not not guid(),
+					ItemInstanceId = guid(),
 					CustomData = {
 						skin = skin_name,
 						rarity = rarity
@@ -2483,7 +2483,7 @@ PlayFabMirrorBase._create_fake_inventory_items = function (self, fake_inventory_
 
 				if master_list_item then
 					local parent_pose_name = master_list_item.parent
-					local existing_backend_id = not not lookup_table[parent_pose_name]
+					local existing_backend_id = lookup_table[parent_pose_name]
 					local backend_id
 
 					if type(existing_backend_id) == "string" then
@@ -2514,7 +2514,7 @@ PlayFabMirrorBase._create_fake_inventory_items = function (self, fake_inventory_
 	for i = 1, #new_fake_inventory_items do
 		local fake_item = new_fake_inventory_items[i]
 		local backend_id = fake_item.ItemInstanceId
-		local id = not not fake_item.override_id
+		local id = fake_item.override_id
 
 		if items_type == "weapon_poses" then
 			local item_name = fake_item.ItemId
@@ -2552,7 +2552,7 @@ PlayFabMirrorBase.set_console_dlc_reward_claimed = function (self, reward_id, cl
 	-- function 134
 	local claimed_rewards = self._claimed_console_dlc_rewards
 
-	claimed_rewards[reward_id] = claimed and not not true or not claimed and not not nil
+	claimed_rewards[reward_id] = claimed or nil
 end
 
 PlayFabMirrorBase.get_quest_data = function (self)
@@ -2614,17 +2614,17 @@ end
 PlayFabMirrorBase._add_new_weapon_skin = function (self, item, generate_new_id, optional_skin_name)
 	-- function 139
 	local fake_item_id
-	local skin_name = not not optional_skin_name or not not item.ItemId
-	local create_new_id = not generate_new_id and not not Managers.account:offline_mode()
+	local skin_name = optional_skin_name or item.ItemId
+	local create_new_id = not generate_new_id and Managers.account:offline_mode()
 
 	if create_new_id then
 		local ids = self:add_unlocked_weapon_skin(skin_name, item.ItemInstanceId)
 
-		fake_item_id = not not ids and not not ids[1]
+		fake_item_id = ids and ids[1]
 	else
 		local ids = self:add_unlocked_weapon_skin(skin_name)
 
-		fake_item_id = not not ids and not not ids[1]
+		fake_item_id = ids and ids[1]
 	end
 
 	return fake_item_id
@@ -2674,7 +2674,7 @@ PlayFabMirrorBase.add_item = function (self, backend_id, item, skip_autosave, sk
 		self:_re_evaluate_best_power_level(item)
 		ItemHelper.on_inventory_item_added(item)
 
-		local skin_name = not not item.CustomData
+		local skin_name = item.CustomData
 
 		if skin_name and WeaponSkins.skins[skin_name] then
 			local unlocked_weapon_skins = self:get_unlocked_weapon_skins()
@@ -2730,7 +2730,7 @@ PlayFabMirrorBase.add_unlocked_weapon_skin = function (self, weapon_skin, offlin
 		self._unlocked_weapon_skins[weapon_skin] = true
 
 		return self:_create_fake_inventory_items({
-			[weapon_skin] = not not offline_backend_id or not not true
+			[weapon_skin] = offline_backend_id or true
 		}, "weapon_skins")
 	else
 		assert_or_print_exception(false, "Tried to add_unlocked_weapon_skin '%s' before unlocked_weapon_skins was created", weapon_skin)
@@ -2741,7 +2741,7 @@ PlayFabMirrorBase.add_unlocked_cosmetic = function (self, cosmetic_name, offline
 	-- function 145
 	if self._unlocked_cosmetics then
 		local backend_id = self:_create_fake_inventory_items({
-			[cosmetic_name] = not not offline_backend_id or not not true
+			[cosmetic_name] = offline_backend_id or true
 		}, "cosmetics")
 
 		if #backend_id > 0 then
@@ -2758,14 +2758,14 @@ PlayFabMirrorBase.add_unlocked_weapon_pose = function (self, weapon_pose_name, o
 	-- function 146
 	if self._unlocked_weapon_poses then
 		local backend_id = self:_create_fake_inventory_items({
-			[weapon_pose_name] = not not offline_backend_id or not not true
+			[weapon_pose_name] = offline_backend_id or true
 		}, "cosmetics")
 
 		if #backend_id > 0 then
 			local master_list_item = ItemMasterList[weapon_pose_name]
 			local parent = master_list_item.parent
 
-			self._unlocked_weapon_poses[parent] = not not self._unlocked_weapon_poses[parent]
+			self._unlocked_weapon_poses[parent] = self._unlocked_weapon_poses[parent]
 			self._unlocked_weapon_poses[parent][weapon_pose_name] = backend_id[1]
 
 			return backend_id[1]
@@ -2807,7 +2807,7 @@ end
 
 PlayFabMirrorBase.get_deus_rolled_over_soft_currency = function (self)
 	-- function 153
-	return not not self._deus_rolled_over_soft_currency
+	return self._deus_rolled_over_soft_currency
 end
 
 PlayFabMirrorBase.get_deus_journey_cycle_data = function (self)
@@ -2865,7 +2865,7 @@ local function add_callback(commit, callback)
 		return
 	end
 
-	commit.commit_complete_callbacks = not not commit.commit_complete_callbacks
+	commit.commit_complete_callbacks = commit.commit_complete_callbacks
 	commit.commit_complete_callbacks[#commit.commit_complete_callbacks + 1] = callback
 
 	return commit.commit_complete_callbacks
@@ -2911,7 +2911,7 @@ PlayFabMirrorBase.commit = function (self, skip_queue, commit_complete_callback)
 		self._commit_limit_total = self._commit_limit_total + 1
 	end
 
-	return not not id or not not queued_commit.id
+	return id or queued_commit.id
 end
 
 PlayFabMirrorBase._new_id = function (self)
@@ -2949,7 +2949,7 @@ local function split_request_data(data)
 		assert(size <= max_size, "Exceeding max size")
 
 		if total_size + size > max_size then
-			additional_data = not not additional_data or not not {}
+			additional_data = additional_data or {}
 			additional_data[k] = v
 			data[k] = nil
 		else
@@ -2966,7 +2966,7 @@ PlayFabMirrorBase._commit_internal = function (self, queue_id, commit_complete_c
 	-- function 165
 	debug_printf("_commit_internal %q", queue_id)
 
-	local commit_id = not not queue_id or not not self:_new_id()
+	local commit_id = queue_id or self:_new_id()
 	local commit = {
 		num_updates = 0,
 		status = "success",
@@ -3131,7 +3131,7 @@ PlayFabMirrorBase.update_read_only_data_request_cb = function (self, commit_id, 
 	for key, new_value in pairs(hero_attributes) do
 		local number_value = tonumber(new_value)
 
-		self:set_read_only_data(key, not not number_value or not not new_value, true)
+		self:set_read_only_data(key, number_value or new_value, true)
 	end
 
 	local new_characters_data_string = hero_attributes[self._characters_data_key]
@@ -3194,7 +3194,7 @@ PlayFabMirrorBase.save_statistics_cb = function (self, commit_id, stats, result)
 	end
 
 	local function_result = result.FunctionResult
-	local achievement_reward_levels = not not function_result and not not function_result.achievement_reward_levels
+	local achievement_reward_levels = function_result and function_result.achievement_reward_levels
 
 	if achievement_reward_levels then
 		self:set_read_only_data("achievement_reward_levels", achievement_reward_levels, true)
@@ -3380,7 +3380,7 @@ PlayFabMirrorBase._setup_careers = function (self)
 						local profile_index = profile.index
 						local career_index = career_index_from_name(profile_index, career_name)
 
-						self._career_loadouts[career_name] = careers_loadout and not not careers_loadout[career_index] or not careers_loadout and not not 1
+						self._career_loadouts[career_name] = careers_loadout and careers_loadout[career_index] or not careers_loadout and 1
 
 						local broken_slots = self:_set_inital_career_data(career_name, career_data, slots_to_verify)
 
@@ -3460,10 +3460,10 @@ PlayFabMirrorBase._fix_career_data = function (self, broken_slots_data, override
 		FunctionName = "fixCareerData",
 		FunctionParameter = {
 			broken_slots = broken_slots_data,
-			mechanism = override_mechanism and (not not override_mechanism or not not Managers.mechanism:current_mechanism_name()) or not override_mechanism and not not Managers.mechanism:current_mechanism_name()
+			mechanism = override_mechanism and (override_mechanism or Managers.mechanism:current_mechanism_name()) or not override_mechanism and Managers.mechanism:current_mechanism_name()
 		}
 	}
-	local success_callback = callback(self, not not override_cb_func or not not "fix_career_data_request_cb")
+	local success_callback = callback(self, override_cb_func or "fix_career_data_request_cb")
 
 	self._request_queue:enqueue(request, success_callback)
 
@@ -3486,7 +3486,7 @@ PlayFabMirrorBase.fix_career_data_request_cb = function (self, result)
 	for character_names, character_data in pairs(character_starting_gear) do
 		local mirror_data = self._characters_data_mirror[character_names]
 		local careers = character_data.careers
-		local mirror_careers = not not mirror_data and not not mirror_data.careers
+		local mirror_careers = mirror_data and mirror_data.careers
 
 		table.merge_recursive(current_career_data, careers)
 		table.merge_recursive(mirror_career_data, mirror_careers)
@@ -3538,7 +3538,7 @@ PlayFabMirrorBase.unequip_disabled_items = function (self)
 	local table_contains = table.contains
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-	mechanism_name = not not nil
+	mechanism_name = nil
 
 	for career_name, slot_data in pairs(self._career_data) do
 		local character = profiles_by_career_names[career_name]
@@ -3580,7 +3580,7 @@ PlayFabMirrorBase._find_valid_item_for_slot = function (self, override_item_avai
 			local can_wield = master_list_item.can_wield
 
 			if correct_slot and can_wield and table_contains(can_wield, career_name) then
-				local item_for_mechanism = not mechanism_name or not not table_contains(not not master_list_item.mechanisms, mechanism_name)
+				local item_for_mechanism = not mechanism_name or table_contains(master_list_item.mechanisms, mechanism_name)
 
 				if item_for_mechanism then
 					return inventory_id, inventory_item
@@ -3610,14 +3610,14 @@ PlayFabMirrorBase._check_career_data = function (self, careers_data, career_data
 		if data_mirror then
 			local character_dirty = not table.compare(data, data_mirror, ignore_keys)
 
-			character_dirty = not not character_dirty or table.size(data) ~= table.size(data_mirror)
+			character_dirty = character_dirty or table.size(data) ~= table.size(data_mirror)
 
 			if character_dirty then
 				debug_printf("[CheckCareerData] Found profile data changes: %s", name)
 
 				dirty = true
 
-				local tbl = not not dirty_hero_data[name]
+				local tbl = dirty_hero_data[name]
 
 				tbl.selected_career = data.career
 				tbl.selected_bot_career = data.bot_career
@@ -3641,7 +3641,7 @@ PlayFabMirrorBase._check_career_data = function (self, careers_data, career_data
 
 					dirty = true
 
-					local tbl = not not dirty_hero_data[name]
+					local tbl = dirty_hero_data[name]
 
 					tbl.selected_loadouts = loadouts
 					dirty_hero_data[name] = tbl
@@ -3692,8 +3692,8 @@ PlayFabMirrorBase._check_career_data = function (self, careers_data, career_data
 
 								dirty = true
 
-								local hero_table = not not dirty_hero_data[profile.display_name]
-								local career_table = not not hero_table.careers[career_name]
+								local hero_table = dirty_hero_data[profile.display_name]
+								local career_table = hero_table.careers[career_name]
 
 								hero_table.careers[career_name] = career_table
 								career_table.loadouts[tostring(i)] = loadout
@@ -3705,8 +3705,8 @@ PlayFabMirrorBase._check_career_data = function (self, careers_data, career_data
 
 						dirty = true
 
-						local hero_table = not not dirty_hero_data[profile.display_name]
-						local career_table = not not hero_table.careers[career_name]
+						local hero_table = dirty_hero_data[profile.display_name]
+						local career_table = hero_table.careers[career_name]
 
 						hero_table.careers[career_name] = career_table
 						career_table.loadouts[tostring(i)] = loadout
@@ -3778,8 +3778,8 @@ PlayFabMirrorBase._check_career_data = function (self, careers_data, career_data
 
 					dirty = true
 
-					local hero_table = not not dirty_hero_data[profile.display_name]
-					local career_table = not not hero_table.careers[career_name]
+					local hero_table = dirty_hero_data[profile.display_name]
+					local career_table = hero_table.careers[career_name]
 
 					hero_table.careers[career_name] = career_table
 					career_table.deleted_loadouts[#career_table.deleted_loadouts + 1] = i
@@ -3789,7 +3789,7 @@ PlayFabMirrorBase._check_career_data = function (self, careers_data, career_data
 		end
 	end
 
-	dirty = not not dirty or not not Managers.account:offline_mode()
+	dirty = dirty or Managers.account:offline_mode()
 
 	return dirty, characters_data, dirty_hero_data
 end
@@ -3798,15 +3798,15 @@ PlayFabMirrorBase.set_career_read_only_data = function (self, character, key, va
 	-- function 187
 	local characters_data = self._characters_data
 
-	loadout_index = not not career and (not not loadout_index or not not self._career_loadouts[career])
+	loadout_index = career and (loadout_index or self._career_loadouts[career])
 
-	local data = career and not not characters_data[character].careers[career][loadout_index] or not career and not not characters_data[character]
+	local data = career and characters_data[character].careers[career][loadout_index] or not career and characters_data[character]
 
 	data[key] = value
 
 	if set_mirror then
 		local characters_data_mirror = self._characters_data_mirror
-		local data_mirror = career and not not characters_data_mirror[character].careers[career][loadout_index] or not career and not not characters_data_mirror[character]
+		local data_mirror = career and characters_data_mirror[character].careers[career][loadout_index] or not career and characters_data_mirror[character]
 
 		if type(value) == "table" then
 			data_mirror[key] = table.clone(value)
@@ -3851,7 +3851,7 @@ end
 
 PlayFabMirrorBase.handle_new_dlcs = function (self, new_dlcs)
 	-- function 190
-	SaveData.new_dlcs_unlocks = not not SaveData.new_dlcs_unlocks
+	SaveData.new_dlcs_unlocks = SaveData.new_dlcs_unlocks
 
 	if new_dlcs then
 		for i = 1, #new_dlcs do

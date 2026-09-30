@@ -245,10 +245,10 @@ local scenegraph_definition = {
 
 local function create_setting_button(scenegraph_id, title_text, input_text, icon_texture, icon_frame_texture)
 	-- function 7
-	icon_texture = not not icon_texture or not not "level_icon_01"
+	icon_texture = icon_texture or "level_icon_01"
 
 	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
-	local icon_texture_size = icon_texture_settings and not not icon_texture_settings.size or not icon_texture_settings and not not {
+	local icon_texture_size = icon_texture_settings and icon_texture_settings.size or not icon_texture_settings and {
 		150,
 		150
 	}
@@ -553,7 +553,7 @@ local function create_setting_button(scenegraph_id, title_text, input_text, icon
 			end
 		end
 	}
-	content[icon_frame_texture_name] = not not icon_frame_texture or not not "map_frame_00"
+	content[icon_frame_texture_name] = icon_frame_texture or "map_frame_00"
 	style[icon_frame_texture_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",

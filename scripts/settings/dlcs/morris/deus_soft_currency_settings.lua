@@ -37,4 +37,4 @@ local DEFAULT_RANGE = {
 	}
 }
 
-DeusSoftCurrencySettings = not not DeusSoftCurrencySettings
+DeusSoftCurrencySettings = DeusSoftCurrencySettings

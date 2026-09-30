@@ -39,7 +39,7 @@ table.clone = function (t, skip_metatable)
 	if not skip_metatable then
 		local mt = getmetatable(t)
 
-		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or mt.__mt_cloneable, "Metatables will be sliced off")
 	end
 
 	for key, value in pairs(t) do
@@ -55,12 +55,12 @@ end
 
 table.shallow_copy = function (t, skip_metatable, out_t)
 	-- function 6
-	local copy = not not out_t or not not {}
+	local copy = out_t or {}
 
 	if not skip_metatable then
 		local mt = getmetatable(t)
 
-		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or mt.__mt_cloneable, "Metatables will be sliced off")
 	end
 
 	for key, value in pairs(t) do
@@ -72,12 +72,12 @@ end
 
 table.copy_array = function (t, skip_metatable, out_t)
 	-- function 7
-	local copy = not not out_t or not not {}
+	local copy = out_t or {}
 
 	if not skip_metatable then
 		local mt = getmetatable(t)
 
-		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or mt.__mt_cloneable, "Metatables will be sliced off")
 	end
 
 	for i = 1, #t do
@@ -102,7 +102,7 @@ end
 
 table.compare = function (t1, t2, ignore_keys)
 	-- function 9
-	ignore_keys = not not ignore_keys or not not {}
+	ignore_keys = ignore_keys or {}
 
 	for key_t1, value_t1 in pairs(t1) do
 		if not table.contains(ignore_keys, key_t1) then
@@ -155,7 +155,7 @@ table.create_copy = function (copy, original)
 	else
 		local mt = getmetatable(original)
 
-		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or mt.__mt_cloneable, "Metatables will be sliced off")
 
 		for key, value in pairs(original) do
 			if type(value) ~= "table" or is_class_instance(value) then
@@ -317,7 +317,7 @@ end
 
 table.index_of = function (t, element, start_index)
 	-- function 24
-	start_index = not not start_index or not not 1
+	start_index = start_index or 1
 
 	for i = start_index, #t do
 		if t[i] == element then
@@ -342,7 +342,7 @@ end
 
 table.sorted = function (t, order_func, use_frame_table)
 	-- function 26
-	local keys = use_frame_table and not not FrameTable.alloc_table() or not use_frame_table and not not {}
+	local keys = use_frame_table and FrameTable.alloc_table() or not use_frame_table and {}
 
 	for k, _ in pairs(t) do
 		keys[#keys + 1] = k
@@ -391,7 +391,7 @@ end
 
 table.clear_array = function (t, n)
 	-- function 31
-	for i = 1, not not n or not not #t do
+	for i = 1, n or #t do
 		t[i] = nil
 	end
 end
@@ -402,10 +402,10 @@ local function table_dump(key, value, depth, max_depth, print_func)
 		return
 	end
 
-	local prefix = string.rep("  ", depth + 1) .. (key ~= nil and not not ("[" .. tostring(key) .. "]") or not (key ~= nil) and not not "")
+	local prefix = string.rep("  ", depth + 1) .. (key ~= nil and "[" .. tostring(key) .. "]" or not (key ~= nil) and "")
 
 	if type(value) == "table" then
-		prefix = prefix .. (key ~= nil and not not " = " or not (key ~= nil) and not not "")
+		prefix = prefix .. (key ~= nil and " = " or not (key ~= nil) and "")
 
 		print(prefix .. "table")
 
@@ -437,7 +437,7 @@ end
 
 table.dump = function (t, tag, max_depth, print_func)
 	-- function 33
-	print_func = not not print_func or not not print
+	print_func = print_func or print
 
 	if tag then
 		print_func(string.format("<%s>", tag))
@@ -445,7 +445,7 @@ table.dump = function (t, tag, max_depth, print_func)
 
 	if t then
 		for key, value in pairs(t) do
-			table_dump(key, value, 0, not not max_depth or not not 0, print_func)
+			table_dump(key, value, 0, max_depth or 0, print_func)
 		end
 	else
 		print_func("no table!")
@@ -515,9 +515,9 @@ end
 table.dump_string = function (t, depth)
 	-- function 38
 	if is_array(t) then
-		return array_dump_string(t, not not depth or not not 1)
+		return array_dump_string(t, depth or 1)
 	else
-		return table_dump_string(t, not not depth or not not 1)
+		return table_dump_string(t, depth or 1)
 	end
 end
 
@@ -696,12 +696,12 @@ end
 
 table.tostring = function (t, max_depth, skip_private)
 	-- function 48
-	return table.concat(_table_tostring_array(t, 1, not not max_depth or not not 1, skip_private))
+	return table.concat(_table_tostring_array(t, 1, max_depth or 1, skip_private))
 end
 
 table.set = function (list, set)
 	-- function 49
-	set = not not set or not not {}
+	set = set or {}
 
 	for _, l in ipairs(list) do
 		set[l] = true
@@ -714,7 +714,7 @@ table.mirror_table = function (source, dest)
 	-- function 50
 	assert(source ~= dest)
 
-	local result = not not dest or not not {}
+	local result = dest or {}
 
 	for k, v in pairs(source) do
 		result[k] = v
@@ -728,7 +728,7 @@ table.mirror_array = function (source, dest)
 	-- function 51
 	assert(source ~= dest)
 
-	local result = not not dest or not not {}
+	local result = dest or {}
 
 	for index, value in ipairs(source) do
 		result[index] = value
@@ -749,9 +749,9 @@ end
 
 table.keys = function (t, out, optional_offset)
 	-- function 53
-	out = not not out or not not {}
+	out = out or {}
 
-	local n = not not optional_offset or not not 0
+	local n = optional_offset or 0
 
 	for key in pairs(t) do
 		n = n + 1
@@ -781,7 +781,7 @@ end
 
 table.keys_if = function (t, out, conditional_func)
 	-- function 55
-	out = not not out or not not {}
+	out = out or {}
 
 	local n = 0
 
@@ -797,7 +797,7 @@ end
 
 table.values = function (t, out)
 	-- function 56
-	out = not not out or not not {}
+	out = out or {}
 
 	local n = 0
 
@@ -848,7 +848,7 @@ end
 
 table.add_meta_logging = function (real_table, debug_enabled, debug_name)
 	-- function 60
-	local real_table = not not real_table or not not {}
+	local real_table = real_table or {}
 
 	if debug_enabled then
 		local front_table = {}
@@ -985,7 +985,7 @@ end
 
 table.filter = function (t, func, out)
 	-- function 73
-	out = not not out or not not {}
+	out = out or {}
 
 	for k, v in pairs(t) do
 		if func(v) == true then
@@ -998,7 +998,7 @@ end
 
 table.filter_to_array = function (t, func, out)
 	-- function 74
-	out = not not out or not not {}
+	out = out or {}
 
 	local n = 0
 
@@ -1014,7 +1014,7 @@ end
 
 table.filter_array = function (t, func, out)
 	-- function 75
-	out = not not out or not not {}
+	out = out or {}
 
 	local n = 0
 
@@ -1032,12 +1032,12 @@ end
 
 table.get_value_or_last = function (t, index)
 	-- function 76
-	return not not t[index]
+	return t[index]
 end
 
 table.autovivified = function (new)
 	-- function 77
-	new = not not new or not not TNEW
+	new = new or TNEW
 
 	return setmetatable({}, {
 		__index = function (self, key)
@@ -1109,8 +1109,8 @@ end
 
 table.flat = function (t, max_depth, current_depth)
 	-- function 85
-	max_depth = not not max_depth or not not 1
-	current_depth = (not not current_depth or not not 0) + 1
+	max_depth = max_depth or 1
+	current_depth = (current_depth or 0) + 1
 
 	local out = {}
 
@@ -1129,8 +1129,8 @@ table.make_strict = function (tab, interface, interface_name)
 	-- function 86
 	assert(getmetatable(tab) == nil, "Cannot call make_strict on a table with a metatable")
 
-	interface_name = not not interface_name or not not "strict table"
-	interface = not not interface or not not tab
+	interface_name = interface_name or "strict table"
+	interface = interface or tab
 
 	return setmetatable(tab, {
 		__class_name = interface_name,
@@ -1279,7 +1279,7 @@ end
 table.array_average = function (t, max_num, next_val)
 	-- function 97
 	if next_val then
-		local idx = math.index_wrapper(not not t.index + 1, max_num)
+		local idx = math.index_wrapper(t.index + 1, max_num)
 
 		t[idx] = next_val
 		t.index = idx
@@ -1292,8 +1292,8 @@ table.array_average = function (t, max_num, next_val)
 		local d = t[i]
 
 		sum = sum + d
-		min = not (d < min) or not not d or not not min
-		max = not (max < d) or not not d or not not max
+		min = not (d < min) or d or min
+		max = not (max < d) or d or max
 	end
 
 	return sum / num_elements, min, max

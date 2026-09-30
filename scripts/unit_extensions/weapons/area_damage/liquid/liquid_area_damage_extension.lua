@@ -33,15 +33,15 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 	local unit_position = Unit.world_position(unit, 0)
 	local above = template.above
 	local below = template.below
-	local position = not not self:_find_point(unit_position, above, below)
+	local position = self:_find_point(unit_position, above, below)
 	local cell_size = template.cell_size
-	local max_liquid = not not extension_init_data.max_liquid
+	local max_liquid = extension_init_data.max_liquid
 	local xy_extents = math.min(max_liquid + 10, 50)
 
 	self._grid = HexGrid:new(position, xy_extents, 10, cell_size, 1)
 
 	local t = Managers.time:time("game")
-	local delay = not not template.delay
+	local delay = template.delay
 
 	self._next_pulse = t + delay
 	self._time_to_start = t + delay
@@ -56,8 +56,8 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 	self._inactive_flow = {}
 	self._num_liquid = 0
 	self._max_liquid = max_liquid
-	self._starting_pressure = not not template.starting_pressure
-	self._end_pressure = not not template.end_pressure
+	self._starting_pressure = template.starting_pressure
+	self._end_pressure = template.end_pressure
 	self._spawned_unit_index = 1
 	self._cell_radius = cell_size / 2
 	self._do_direct_damage_ai = template.do_direct_damage_ai
@@ -66,7 +66,7 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 
 	local difficulty_name = Managers.state.difficulty:get_difficulty()
 
-	self._damage_table = not not extension_init_data.damage_table
+	self._damage_table = extension_init_data.damage_table
 	self._damage_type = template.damage_type
 
 	local use_nav_cost_map_volumes = template.use_nav_cost_map_volumes
@@ -103,7 +103,7 @@ LiquidAreaDamageExtension.init = function (self, extension_init_context, unit, e
 	self._colliding_units = {}
 	self._buff_affected_units = {}
 	self._affected_player_units = {}
-	self._source_attacker_unit = not not extension_init_data.source_unit
+	self._source_attacker_unit = extension_init_data.source_unit
 	self._done = false
 	self._started = delay <= 0
 
@@ -321,7 +321,7 @@ LiquidAreaDamageExtension._create_liquid = function (self, real_index, angle)
 		position = Vector3Box(from),
 		rotation = QuaternionBox(rotation),
 		fx_id = fx_id,
-		angle = not not angle or not not 0
+		angle = angle or 0
 	}
 
 	self._flow[real_index] = liquid
@@ -331,12 +331,12 @@ end
 LiquidAreaDamageExtension._find_point = function (self, position, above, below)
 	-- function 7
 	local nav_world = self._nav_world
-	local success, z = GwNavQueries.triangle_from_position(nav_world, position, not not above or not not 2, not not below or not not 2)
+	local success, z = GwNavQueries.triangle_from_position(nav_world, position, above or 2, below or 2)
 
 	if success then
 		return Vector3(position.x, position.y, z)
 	else
-		local navmesh_pos = GwNavQueries.inside_position_from_outside_position(nav_world, position, not not above or not not 2, not not below or not not 2, 2, 0.5)
+		local navmesh_pos = GwNavQueries.inside_position_from_outside_position(nav_world, position, above or 2, below or 2, 2, 0.5)
 
 		if navmesh_pos then
 			return navmesh_pos
@@ -379,7 +379,7 @@ LiquidAreaDamageExtension.destroy = function (self)
 
 			if Unit.alive(player_unit) then
 				local is_colliding = self._colliding_units[player_unit]
-				local status_extension = not not is_colliding and not not ScriptUnit.extension(player_unit, "status_system")
+				local status_extension = is_colliding and ScriptUnit.extension(player_unit, "status_system")
 
 				if is_colliding and status_extension.in_liquid_unit == liquid_unit then
 					StatusUtils.set_in_liquid_network(player_unit, false)
@@ -645,7 +645,7 @@ LiquidAreaDamageExtension._update_collision_detection = function (self, dt, t)
 	local apply_buff_to_player = self._apply_buff_to_player
 	local do_direct_damage_player = self._do_direct_damage_player
 
-	self._check_player_units = apply_buff_to_player and not not self._check_player_units or not apply_buff_to_player and not not do_direct_damage_player and not not self._check_player_units
+	self._check_player_units = apply_buff_to_player and self._check_player_units or not apply_buff_to_player and do_direct_damage_player and self._check_player_units
 
 	local buff_system = self._buff_system
 	local buff_name = self._buff_name
@@ -722,7 +722,7 @@ LiquidAreaDamageExtension._update_collision_detection = function (self, dt, t)
 
 		if breed and not immune_breeds[breed.name] then
 			if self:_is_unit_colliding(grid, unit) then
-				self._colliding_units[unit] = not not breed.armor_category
+				self._colliding_units[unit] = breed.armor_category
 
 				local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
@@ -789,7 +789,7 @@ LiquidAreaDamageExtension._pulse_damage = function (self)
 	local damage_dir = self._damage_direction:unbox()
 	local damage_type = self._damage_type
 	local source_attacker_unit = self._source_attacker_unit
-	local is_player_attacker = not not source_attacker_unit and not not DamageUtils.is_player_unit(source_attacker_unit)
+	local is_player_attacker = source_attacker_unit and DamageUtils.is_player_unit(source_attacker_unit)
 	local do_direct_damage_player = self._do_direct_damage_player
 	local do_direct_damage_ai = self._do_direct_damage_ai
 	local damage_buff_template_name = self._damage_buff_name
@@ -801,7 +801,7 @@ LiquidAreaDamageExtension._pulse_damage = function (self)
 
 		if HEALTH_ALIVE[unit] then
 			if not is_player and do_direct_damage_ai then
-				local damage = not not damage_table[armor_category]
+				local damage = damage_table[armor_category]
 
 				DamageUtils.add_damage_network(unit, unit, damage, "torso", damage_type, nil, damage_dir, self._liquid_area_damage_template, nil, source_attacker_unit, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 
@@ -823,7 +823,7 @@ LiquidAreaDamageExtension._pulse_damage = function (self)
 			remove_i = remove_i + 1
 			remove_list[remove_i] = unit
 
-			local status_extension = not not is_player and not not ScriptUnit.extension(unit, "status_system")
+			local status_extension = is_player and ScriptUnit.extension(unit, "status_system")
 
 			if is_player and status_extension.in_liquid_unit == liquid_unit then
 				StatusUtils.set_in_liquid_network(unit, false)

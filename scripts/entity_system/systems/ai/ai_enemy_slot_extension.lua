@@ -92,7 +92,7 @@ AIEnemySlotExtension._improve_slot_position = function (self, self_unit, t, nav_
 	local ai_unit_position = Unit.local_position(self_unit, 0)
 
 	if in_queue then
-		self.wait_slot_distance = not not Vector3_distance(new_position, ai_unit_position)
+		self.wait_slot_distance = Vector3_distance(new_position, ai_unit_position)
 	end
 
 	local navigation_extension = self._navigation_ext
@@ -168,7 +168,7 @@ AIEnemySlotExtension.update = function (self, self_unit, all_slot_extensions, na
 	end
 
 	local target_unit_extension = all_slot_extensions[target_unit]
-	local target_is_player = not not target_unit_extension and not not target_unit_extension.belongs_to_player
+	local target_is_player = target_unit_extension and target_unit_extension.belongs_to_player
 
 	if not target_is_player and not AiUtils.unit_breed(target_unit) then
 		return
@@ -284,9 +284,9 @@ end
 
 AIEnemySlotExtension._detach_from_slot = function (self)
 	-- function 12
-	local slot = not not self.slot
+	local slot = self.slot
 	local waiting_on_slot = self.waiting_on_slot
-	local slot_owner_extension = not not slot and not not slot.owner_extension
+	local slot_owner_extension = slot and slot.owner_extension
 
 	if slot_owner_extension then
 		slot_owner_extension:free_slot(self, slot, waiting_on_slot ~= nil)
@@ -414,12 +414,12 @@ end
 
 AIEnemySlotExtension.get_current_slot = function (self)
 	-- function 20
-	return not not self.slot, self.waiting_on_slot ~= nil
+	return self.slot, self.waiting_on_slot ~= nil
 end
 
 AIEnemySlotExtension.get_preferred_slot_type = function (self)
 	-- function 21
-	return not not self.use_slot_type
+	return self.use_slot_type
 end
 
 AIEnemySlotExtension.on_ai_slot_gained = function (self, defender_unit, system)
@@ -433,13 +433,13 @@ AIEnemySlotExtension.on_ai_slot_gained = function (self, defender_unit, system)
 	local defender_pos = Unit.local_position(defender_unit, 0)
 	local attacker_pos = Unit.local_position(unit, 0)
 	local infighting = target_blackboard.breed.infighting
-	local distance = USE_ENGINE_SLOID_SYSTEM and not not 3 or not USE_ENGINE_SLOID_SYSTEM and not not infighting.distance
+	local distance = USE_ENGINE_SLOID_SYSTEM and 3 or not USE_ENGINE_SLOID_SYSTEM and infighting.distance
 	local attacker_infighting = blackboard.breed.infighting
-	local boid_radius = not not attacker_infighting.boid_radius
+	local boid_radius = attacker_infighting.boid_radius
 	local to_attacker = Vector3.normalize(attacker_pos - defender_pos) * (distance + boid_radius)
 
 	if USE_ENGINE_SLOID_SYSTEM then
-		self.sloid_id = EngineOptimized.add_sloid(defender_pos + to_attacker, boid_radius, blackboard.side.side_id, unit, defender_unit, tonumber(not not Unit.get_data(unit, "unique_id")))
+		self.sloid_id = EngineOptimized.add_sloid(defender_pos + to_attacker, boid_radius, blackboard.side.side_id, unit, defender_unit, tonumber((Unit.get_data(unit, "unique_id"))))
 
 		local dogpiled_attackers = Managers.state.conflict.dogpiled_attackers_on_unit[defender_unit]
 

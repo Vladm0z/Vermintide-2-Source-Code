@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/projectile_units.lua
 
-ProjectileUnits = not not ProjectileUnits
+ProjectileUnits = ProjectileUnits
 ProjectileUnits.we_arrow = {
 	dummy_linker_unit_name = "units/weapons/player/wpn_we_quiver_t1/wpn_we_arrow_t1_3p",
 	projectile_unit_name = "units/weapons/player/wpn_we_quiver_t1/wpn_we_arrow_t1_3ps",
@@ -56,7 +56,7 @@ ProjectileUnits.necromancer_trapped_soul = {
 
 DLCUtils.merge("projectile_units", ProjectileUnits)
 
-ProjectileUnitsFromUnitName = not not ProjectileUnitsFromUnitName
+ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName
 
 for key, data in pairs(ProjectileUnits) do
 	ProjectileUnitsFromUnitName[data.projectile_unit_name] = key

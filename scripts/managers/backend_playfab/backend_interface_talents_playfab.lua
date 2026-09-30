@@ -64,14 +64,14 @@ BackendInterfaceTalentsPlayfab.refresh_bot_talents = function (self)
 
 	local talents = self._bot_talents
 	local backend_mirror = self._backend_mirror
-	local loadout_selection = not not PlayerData.loadout_selection
-	local bot_equipment = not not loadout_selection.bot_equipment
+	local loadout_selection = PlayerData.loadout_selection
+	local bot_equipment = loadout_selection.bot_equipment
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_mechanisms[mechanism_name]
 
 	for career_name, settings in pairs(CareerSettings) do
 		if settings.playfab_name then
-			local bot_loadout_index = not not bot_loadout_allowed and not not bot_equipment[career_name]
+			local bot_loadout_index = bot_loadout_allowed and bot_equipment[career_name]
 
 			if bot_loadout_index then
 				local talent_string = backend_mirror:get_character_data(career_name, "talents", bot_loadout_index)
@@ -106,7 +106,7 @@ BackendInterfaceTalentsPlayfab._refresh_default_loadouts_talents = function (sel
 		if settings.playfab_name then
 			local career_loadouts = backend_mirror:get_default_loadouts(career_name)
 
-			talents[career_name] = not not talents[career_name]
+			talents[career_name] = talents[career_name]
 
 			if career_loadouts then
 				local career_loadouts_talents = talents[career_name]
@@ -158,7 +158,7 @@ BackendInterfaceTalentsPlayfab._refresh_career_loadouts_talents = function (self
 			self._selected_career_custom_talents[career_name] = selected_career_loadout
 
 			if career_loadouts then
-				talents[career_name] = not not talents[career_name]
+				talents[career_name] = talents[career_name]
 
 				local career_loadouts_talents = talents[career_name]
 
@@ -197,7 +197,7 @@ end
 BackendInterfaceTalentsPlayfab._setup_default_overrides = function (self)
 	-- function 7
 	local mechanism_name = Managers.mechanism:current_mechanism_name()
-	local loadout_selection = PlayerData.loadout_selection and not not PlayerData.loadout_selection[mechanism_name] or not PlayerData.loadout_selection and not not {}
+	local loadout_selection = PlayerData.loadout_selection and PlayerData.loadout_selection[mechanism_name] or not PlayerData.loadout_selection and {}
 
 	table.clear(self._default_talents_overrides)
 
@@ -205,14 +205,14 @@ BackendInterfaceTalentsPlayfab._setup_default_overrides = function (self)
 		return
 	end
 
-	local game_mode_key = not not Managers.state.game_mode
+	local game_mode_key = Managers.state.game_mode
 
 	if not game_mode_key or not InventorySettings.default_loadout_allowed_game_modes[game_mode_key] then
 		return
 	end
 
 	for career_name, settings in pairs(CareerSettings) do
-		local loadout_index = not not loadout_selection[career_name]
+		local loadout_index = loadout_selection[career_name]
 
 		if loadout_index then
 			local loadout_settings = InventorySettings.loadouts[loadout_index]
@@ -228,7 +228,7 @@ BackendInterfaceTalentsPlayfab.set_default_override = function (self, career_nam
 	-- function 8
 	local default_career_talents = self._default_loadouts_talents[career_name]
 
-	self._default_talents_overrides[career_name] = not not default_career_talents and not not default_career_talents[loadout_index]
+	self._default_talents_overrides[career_name] = default_career_talents and default_career_talents[loadout_index]
 end
 
 BackendInterfaceTalentsPlayfab._validate_talents = function (self, career_name, career_talents, talent_tree_index, skip_quipping_talents, optional_loadout_index)
@@ -244,7 +244,7 @@ BackendInterfaceTalentsPlayfab._validate_talents = function (self, career_name, 
 	local hero_level = ExperienceSettings.get_level(hero_experience)
 	local override_talents = PlayerUtils.get_talent_overrides_by_career(career_name)
 	local talent_trees = TalentTrees[profile_name]
-	local talent_tree = not not talent_trees and not not talent_trees[talent_tree_index]
+	local talent_tree = talent_trees and talent_trees[talent_tree_index]
 	local changed = false
 
 	for i = 1, #career_talents do
@@ -290,16 +290,16 @@ BackendInterfaceTalentsPlayfab.get_talent_ids = function (self, career_name, opt
 	local career_settings = CareerSettings[career_name]
 	local profile_name = career_settings.profile_name
 	local talent_tree_index = career_settings.talent_tree_index
-	local talent_tree = not not talent_tree_index and not not TalentTrees[profile_name][talent_tree_index]
+	local talent_tree = talent_tree_index and TalentTrees[profile_name][talent_tree_index]
 	local talent_ids = {}
-	local game_mode_key = not not Managers.state.game_mode
+	local game_mode_key = Managers.state.game_mode
 	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
 	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
-	local bot_talents = not not bot_loadout_allowed and not not self:get_bot_talents(career_name)
-	local default_talent_sets = not not default_loadouts_allowed and not not self:get_default_talents(career_name)
-	local default_talents = not not default_loadouts_allowed and not not default_talent_sets and not not default_talent_sets[1]
+	local bot_talents = bot_loadout_allowed and self:get_bot_talents(career_name)
+	local default_talent_sets = default_loadouts_allowed and self:get_default_talents(career_name)
+	local default_talents = default_loadouts_allowed and default_talent_sets and default_talent_sets[1]
 	local base_talents = self:get_talents(career_name)
-	local talents = bot_loadout_allowed and (is_bot and (not not bot_talents or is_bot and (default_loadouts_allowed and (not not default_talents or not not optional_talents or not not base_talents) or not default_loadouts_allowed and (not not optional_talents or not not base_talents)) or not is_bot and (not not optional_talents or not not base_talents)) or not is_bot and (is_bot and (default_loadouts_allowed and (not not default_talents or not not optional_talents or not not base_talents) or not default_loadouts_allowed and (not not optional_talents or not not base_talents)) or not is_bot and (not not optional_talents or not not base_talents))) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (not not default_talents or not not optional_talents or not not base_talents) or not default_loadouts_allowed and (not not optional_talents or not not base_talents)) or not is_bot and (not not optional_talents or not not base_talents))
+	local talents = bot_loadout_allowed and (is_bot and (bot_talents or is_bot and (default_loadouts_allowed and (default_talents or optional_talents or base_talents) or not default_loadouts_allowed and (optional_talents or base_talents)) or not is_bot and (optional_talents or base_talents)) or not is_bot and (is_bot and (default_loadouts_allowed and (default_talents or optional_talents or base_talents) or not default_loadouts_allowed and (optional_talents or base_talents)) or not is_bot and (optional_talents or base_talents))) or not bot_loadout_allowed and (is_bot and (default_loadouts_allowed and (default_talents or optional_talents or base_talents) or not default_loadouts_allowed and (optional_talents or base_talents)) or not is_bot and (optional_talents or base_talents))
 
 	if talents then
 		for i = 1, #talents do
@@ -324,7 +324,7 @@ BackendInterfaceTalentsPlayfab.get_talent_tree = function (self, career_name)
 	local career_settings = CareerSettings[career_name]
 	local profile_name = career_settings.profile_name
 	local talent_tree_index = career_settings.talent_tree_index
-	local talent_tree = not not talent_tree_index and not not TalentTrees[profile_name][talent_tree_index]
+	local talent_tree = talent_tree_index and TalentTrees[profile_name][talent_tree_index]
 
 	return talent_tree
 end
@@ -401,7 +401,7 @@ BackendInterfaceTalentsPlayfab.get_career_talent_ids = function (self, career_na
 	local career_settings = CareerSettings[career_name]
 	local profile_name = career_settings.profile_name
 	local talent_tree_index = career_settings.talent_tree_index
-	local talent_tree = not not talent_tree_index and not not TalentTrees[profile_name][talent_tree_index]
+	local talent_tree = talent_tree_index and TalentTrees[profile_name][talent_tree_index]
 	local talent_ids = {}
 	local talents = self:get_career_talents(career_name)
 	local loadout_talents = talents[loadout_index]

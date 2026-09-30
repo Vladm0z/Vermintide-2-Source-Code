@@ -44,7 +44,7 @@ StateDedicatedServerInit._init_network = function (self)
 	end
 
 	local network_options = LobbySetup.network_options()
-	local game_server_name = not not script_data.server_name
+	local game_server_name = script_data.server_name
 
 	cprint("Network Options:")
 	cprint("----------------------------------------")
@@ -61,7 +61,7 @@ StateDedicatedServerInit._init_network = function (self)
 	self:_load_save_data()
 
 	self._state = "waiting_for_backend"
-	Managers.ban_list = not not Managers.ban_list
+	Managers.ban_list = Managers.ban_list
 end
 
 StateDedicatedServerInit._load_save_data = function (self)

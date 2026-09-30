@@ -38,7 +38,7 @@ BTPackMasterDragAction.enter = function (self, unit, blackboard, t)
 	local walk_speed = blackboard.breed.walk_speed
 	local navigation_extension = blackboard.navigation_extension
 
-	navigation_extension:set_max_speed(not not action.override_movement_speed)
+	navigation_extension:set_max_speed(action.override_movement_speed)
 	AiUtils.allow_smart_object_layers(navigation_extension, false)
 
 	blackboard.destination_test_astar = GwNavAStar.create()
@@ -313,7 +313,7 @@ BTPackMasterDragAction.find_destinations = function (self, unit, blackboard, t, 
 
 	if script_data.debug_ai_movement then
 		QuickDrawerStay:vector(position, blackboard.last_path_direction:unbox() * 2, Colors.get("purple"))
-		QuickDrawerStay:sphere(position + Vector3.up() * 1.7, 0.5, blackboard.threatened and not not Colors.get("red") or not blackboard.threatened and not not Colors.get("yellow"))
+		QuickDrawerStay:sphere(position + Vector3.up() * 1.7, 0.5, blackboard.threatened and Colors.get("red") or not blackboard.threatened and Colors.get("yellow"))
 	end
 end
 
@@ -504,8 +504,8 @@ BTPackMasterDragAction.find_nav_group_neighbour = function (self, blackboard, po
 		local dir_score_modifier = math.max(0, dir_dot)
 
 		if script_data.debug_ai_movement then
-			QuickDrawerStay:sphere(nav_group_position, 3, dir_dot > -0.25 and not not Colors.get("yellow") or not (dir_dot > -0.25) and not not Colors.get("red"))
-			QuickDrawerStay:line(nav_group_position, position, dir_dot > -0.25 and not not Colors.get("yellow") or not (dir_dot > -0.25) and not not Colors.get("red"))
+			QuickDrawerStay:sphere(nav_group_position, 3, dir_dot > -0.25 and Colors.get("yellow") or not (dir_dot > -0.25) and Colors.get("red"))
+			QuickDrawerStay:line(nav_group_position, position, dir_dot > -0.25 and Colors.get("yellow") or not (dir_dot > -0.25) and Colors.get("red"))
 		end
 
 		if dir_dot > -0.25 then
@@ -723,12 +723,12 @@ BTPackMasterDragAction.test_destinations = function (self, unit, blackboard)
 				for i = 1, count do
 					local node = GwNavAStar.node_at_index(astar, i)
 
-					QuickDrawerStay:sphere(node, 0.1, good_path and not not Colors.get("yellow") or not good_path and not not Colors.get("red"))
+					QuickDrawerStay:sphere(node, 0.1, good_path and Colors.get("yellow") or not good_path and Colors.get("red"))
 
 					local next_node = GwNavAStar.node_at_index(astar, i + 1)
 
 					if next_node then
-						QuickDrawerStay:line(node, next_node, good_path and not not Colors.get("yellow") or not good_path and not not Colors.get("red"))
+						QuickDrawerStay:line(node, next_node, good_path and Colors.get("yellow") or not good_path and Colors.get("red"))
 					end
 				end
 			end

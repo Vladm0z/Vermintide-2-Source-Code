@@ -32,7 +32,7 @@ EnemyCharacterStateCatapulted.on_enter = function (self, unit, input, dt, contex
 	local anim_1p = "idle"
 
 	CharacterStateHelper.play_animation_event(unit, anim)
-	CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, not not anim_1p or not not anim)
+	CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, anim_1p or anim)
 
 	local first_person_extension = self._first_person_extension
 

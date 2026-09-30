@@ -97,7 +97,7 @@ achievements.trail_sleigher = {
 	desc = "achv_onions_sleigh_kills_desc",
 	progress = function (statistics_db, stats_id, template_data)
 		-- function 4
-		local kills = not not statistics_db:get_persistent_stat(stats_id, "trail_sleigher")
+		local kills = statistics_db:get_persistent_stat(stats_id, "trail_sleigher")
 
 		return {
 			kills,
@@ -116,9 +116,9 @@ achievements.trail_beacons_are_lit = {
 	desc = "achv_onions_light_beacons_desc",
 	progress = function (statistics_db, stats_id, template_data)
 		-- function 6
-		local watch_tower_beacon = not not statistics_db:get_persistent_stat(stats_id, "trail_bonfire_watch_tower")
-		local river_path_beacon = not not statistics_db:get_persistent_stat(stats_id, "trail_bonfire_river_path")
-		local look_out_beacon = not not statistics_db:get_persistent_stat(stats_id, "trail_bonfire_lookout_point")
+		local watch_tower_beacon = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_watch_tower")
+		local river_path_beacon = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_river_path")
+		local look_out_beacon = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_lookout_point")
 
 		if watch_tower_beacon > 1 then
 			watch_tower_beacon = 1

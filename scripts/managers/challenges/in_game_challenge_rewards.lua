@@ -3,7 +3,7 @@
 require("scripts/managers/challenges/boon_reactivation_rules")
 require("scripts/managers/challenges/pickup_spawn_type")
 
-InGameChallengeRewards = not not InGameChallengeRewards
+InGameChallengeRewards = InGameChallengeRewards
 InGameChallengeRewards.test_buff = {
 	target = "party",
 	type = "buff",
@@ -473,7 +473,7 @@ InGameChallengeRewardTypes = {
 					local item_id = NetworkLookup.item_names[item_name]
 					local weapon_skin_id = NetworkLookup.weapon_skins["n/a"]
 					local player = Managers.player:owner(unit)
-					local is_remote = not not player and not not player.remote
+					local is_remote = player and player.remote
 
 					if is_remote then
 						network_transmit:send_rpc("rpc_add_inventory_slot_item", player.peer_id, go_id, slot_id, item_id, weapon_skin_id)
@@ -539,7 +539,7 @@ InGameChallengeRewardTargets = {
 		-- function 7
 		local party_manager = Managers.party
 		local status = party_manager:get_status_from_unique_id(owner_unique_id)
-		local party_members = not not status and not not party_manager:get_players_in_party(status.party_id)
+		local party_members = status and party_manager:get_players_in_party(status.party_id)
 
 		if party_members then
 			local targets = {}
@@ -547,7 +547,7 @@ InGameChallengeRewardTargets = {
 
 			for i = 1, #party_members do
 				local player = party_members[i].player
-				local unit = not not player and not not player.player_unit
+				local unit = player and player.player_unit
 
 				if unit then
 					target_idx = target_idx + 1

@@ -32,7 +32,7 @@ DarkPactSelectionUI.init = function (self, ingame_hud, ingame_ui_context)
 	self._peer_id = ingame_ui_context.peer_id
 	self._local_player_id = ingame_ui_context.local_player_id
 
-	local network = not not ingame_ui_context.network_server
+	local network = ingame_ui_context.network_server
 
 	self._profile_requester = network:profile_requester()
 	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
@@ -164,13 +164,13 @@ DarkPactSelectionUI._can_switch_profile = function (self)
 
 	if status then
 		local player = self._player
-		local player_unit = not not player and not not player.player_unit
+		local player_unit = player and player.player_unit
 		local ghost_mode_extension = ScriptUnit.has_extension(player_unit, "ghost_mode_system")
 
 		if ghost_mode_extension then
 			local is_in_ghost_mode, has_left_once = ghost_mode_extension:is_in_ghost_mode()
 
-			return not not is_in_ghost_mode and not not not has_left_once
+			return is_in_ghost_mode and not has_left_once
 		else
 			return true
 		end
@@ -305,7 +305,7 @@ DarkPactSelectionUI._handle_mouse_input = function (self, dt, t, input_service, 
 		local hotspot = content.hotspot
 		local profile_name = content.profile_name
 
-		any_hotspot_hovered = not not any_hotspot_hovered or not not hotspot.is_hover
+		any_hotspot_hovered = any_hotspot_hovered or hotspot.is_hover
 
 		if hotspot.on_release or input_service:get(content.input_key) then
 			self._ingame_ui:play_sound("menu_versus_pactsworn_select")
@@ -485,7 +485,7 @@ DarkPactSelectionUI._create_selection_widgets = function (self, enemy_role, care
 	local offset_x = PROTRAIT_WIDTH + 10
 	local even_offset = -(half_picks * offset_x)
 	local odd_offset = -(half_picks * offset_x) - PROTRAIT_WIDTH / 2
-	local offset = not not odd_offset
+	local offset = odd_offset
 
 	self._ui_scenegraph.selection_pivot.position[1] = offset
 
@@ -504,7 +504,7 @@ DarkPactSelectionUI._create_selection_widgets = function (self, enemy_role, care
 		local profile_name = careers[i]
 
 		widget.content.profile_name = profile_name
-		widget.content.profile_texture = not not CareerSettings[profile_name].picking_image_square
+		widget.content.profile_texture = CareerSettings[profile_name].picking_image_square
 		widget.content.input_key = "keyboard_" .. i
 		widget.offset[1] = (i - 1) * offset_x
 		selector_widgets[#selector_widgets + 1] = widget

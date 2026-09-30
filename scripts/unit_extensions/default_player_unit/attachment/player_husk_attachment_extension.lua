@@ -134,7 +134,7 @@ PlayerHuskAttachmentExtension.show_attachments = function (self, show)
 			end
 		end
 
-		local attachment_event = show and not not "lua_attachment_unhidden" or not show and not not "lua_attachment_hidden"
+		local attachment_event = show and "lua_attachment_unhidden" or not show and "lua_attachment_hidden"
 
 		Unit.flow_event(self._tp_unit_mesh, attachment_event)
 
@@ -170,7 +170,7 @@ local params = {}
 PlayerHuskAttachmentExtension._apply_buffs = function (self, buffs, slot_name)
 	-- function 12
 	local buff_extension = ScriptUnit.extension(self._unit, "buff_system")
-	local current_item_buffs = not not self.current_item_buffs[slot_name]
+	local current_item_buffs = self.current_item_buffs[slot_name]
 	local index = 1
 
 	for buff_name, variable_data in pairs(buffs) do
@@ -203,7 +203,7 @@ end
 
 PlayerHuskAttachmentExtension.set_buffs_to_slot = function (self, slot_name, buffs)
 	-- function 14
-	local slot_buffs = not not self._synced_slot_buffs[slot_name]
+	local slot_buffs = self._synced_slot_buffs[slot_name]
 
 	table.clear(slot_buffs)
 

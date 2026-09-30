@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/weaves/weave_loadout/weave_loadout_settings_wh_zealot.lua
 
-WeaveLoadoutSettings = not not WeaveLoadoutSettings
+WeaveLoadoutSettings = WeaveLoadoutSettings
 
 local profile_name = "witch_hunter"
 local talent_index = CareerSettings.wh_zealot.talent_tree_index

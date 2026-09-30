@@ -20,7 +20,7 @@ PassiveAbilityWarriorPriest.init = function (self, extension_init_context, unit,
 	self._activation_time = 0
 	self.uses_resource = true
 	self._is_local_human = self._player.local_player
-	self._is_local_player = not not self._is_local_human
+	self._is_local_player = self._is_local_human
 	self._game = Managers.state.network:game()
 end
 
@@ -169,7 +169,7 @@ PassiveAbilityWarriorPriest.modify_resource = function (self, amount, ignore_dif
 	if amount > 0 then
 		self:set_in_combat()
 
-		local difficulty = not ignore_difficulty and not not Managers.state.difficulty:get_difficulty()
+		local difficulty = not ignore_difficulty and Managers.state.difficulty:get_difficulty()
 
 		if difficulty then
 			self._difficulty_rank = DifficultySettings[difficulty].rank - 1
@@ -303,7 +303,7 @@ end
 
 PassiveAbilityWarriorPriest._set_fury_glow_enabled = function (self, enabled)
 	-- function 20
-	local flow_event = enabled and not not "lua_enable_eye_glow" or not enabled and not not "lua_disable_eye_glow"
+	local flow_event = enabled and "lua_enable_eye_glow" or not enabled and "lua_disable_eye_glow"
 	local inventory_extension = self._inventory_extension
 
 	if self._is_local_human then

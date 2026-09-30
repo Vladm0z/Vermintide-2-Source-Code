@@ -1,9 +1,9 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/player_unit_first_person.lua
 
-local player_unit_first_person_testify = not not script_data.testify
+local player_unit_first_person_testify = script_data.testify
 
 PlayerUnitFirstPerson = class(PlayerUnitFirstPerson)
-script_data.disable_aim_lead_rig_motion = not not script_data.disable_aim_lead_rig_motion
+script_data.disable_aim_lead_rig_motion = script_data.disable_aim_lead_rig_motion
 
 local Unit_alive = Unit.alive
 local Unit_animation_find_variable = Unit.animation_find_variable
@@ -26,9 +26,9 @@ PlayerUnitFirstPerson.init = function (self, extension_init_context, unit, exten
 	local profile = extension_init_data.profile
 	local skin_name = extension_init_data.skin_name
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local career_index = not not hero_attributes:get(profile.display_name, "career")
-	local first_person_attachment = not not Cosmetics[skin_name].first_person_attachment
-	local unit_name = not not Cosmetics[skin_name].first_person
+	local career_index = hero_attributes:get(profile.display_name, "career")
+	local first_person_attachment = Cosmetics[skin_name].first_person_attachment
+	local unit_name = Cosmetics[skin_name].first_person
 	local attachment_unit_name = first_person_attachment.unit
 	local attachment_node_linking = first_person_attachment.attachment_node_linking
 	local unit_spawner = Managers.state.unit_spawner
@@ -177,7 +177,7 @@ PlayerUnitFirstPerson.set_state_machine = function (self, new_state_machine)
 	Unit.set_animation_state_machine_blend_base_layer(unit, new_state_machine)
 
 	if self.profile.supports_motion_sickness_modes then
-		Unit.animation_event(unit, self._head_bob and not not "enable_headbob" or not self._head_bob and not not "disable_headbob")
+		Unit.animation_event(unit, self._head_bob and "enable_headbob" or not self._head_bob and "disable_headbob")
 		Unit.animation_event(unit, "motion_sickness_hit_" .. self._motion_sickness_hit)
 		Unit.animation_event(unit, "motion_sickness_swing_" .. self._motion_sickness_swing)
 		Unit.animation_event(unit, "motion_sickness_misc_" .. self._motion_sickness_misc_cam)
@@ -210,7 +210,7 @@ PlayerUnitFirstPerson.update_game_options = function (self)
 	local head_bob = Application.user_setting("head_bob")
 
 	if self._head_bob ~= head_bob then
-		Unit.animation_event(self.first_person_unit, head_bob and not not "enable_headbob" or not head_bob and not not "disable_headbob")
+		Unit.animation_event(self.first_person_unit, head_bob and "enable_headbob" or not head_bob and "disable_headbob")
 
 		self._head_bob = head_bob
 	end
@@ -297,7 +297,7 @@ PlayerUnitFirstPerson.check_for_jumps = function (self, unit, t)
 		local level_jump_id = BROADPHASE_RESULTS[i]
 		local jump_data = level_jumps[level_jump_id]
 		local jump_object_data = jump_data.jump_object_data
-		local tp = jump_data.swap_entrance_exit and not not jump_object_data.pos1 or not jump_data.swap_entrance_exit and not not jump_object_data.pos2
+		local tp = jump_data.swap_entrance_exit and jump_object_data.pos1 or not jump_data.swap_entrance_exit and jump_object_data.pos2
 		local smart_object_pos = Vector3(tp[1], tp[2], tp[3])
 		local to_pos_dir = Vector3.normalize(Vector3.flat(smart_object_pos - camera_position))
 		local dot = Vector3.dot(to_pos_dir, camera_forward)
@@ -331,7 +331,7 @@ PlayerUnitFirstPerson.check_for_jumps = function (self, unit, t)
 				self._valid_jump_data = jump_data
 
 				local swapped = jump_data.swap_entrance_exit
-				local to_vec = swapped and not not (p2 - p1) or not swapped and not not (p1 - p2)
+				local to_vec = swapped and p2 - p1 or not swapped and p1 - p2
 				local to_vec_flat = Vector3.flat(to_vec)
 				local rot = Quaternion.look(to_vec_flat)
 
@@ -495,7 +495,7 @@ PlayerUnitFirstPerson.update_aim_assist_multiplier = function (self, dt)
 		local inventory_extension = self.inventory_extension
 		local action_settings
 		local equipment = inventory_extension:equipment()
-		local weapon_unit = not not equipment.right_hand_wielded_unit
+		local weapon_unit = equipment.right_hand_wielded_unit
 
 		if Unit.alive(weapon_unit) then
 			local weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
@@ -511,17 +511,17 @@ PlayerUnitFirstPerson.update_aim_assist_multiplier = function (self, dt)
 		if action_settings and action_settings.aim_assist_settings then
 			aim_assist_settings = action_settings.aim_assist_settings
 		else
-			aim_assist_settings = not not weapon_template and not not weapon_template.aim_assist_settings
+			aim_assist_settings = weapon_template and weapon_template.aim_assist_settings
 		end
 
-		local aim_assist_multiplier = aim_assist_settings and not not aim_assist_settings.base_multiplier or not aim_assist_settings and not not 0
-		local no_aim_input_multiplier = aim_assist_settings and not not aim_assist_settings.no_aim_input_multiplier or not aim_assist_settings and not not (aim_assist_multiplier * 0.5)
+		local aim_assist_multiplier = aim_assist_settings and aim_assist_settings.base_multiplier or not aim_assist_settings and 0
+		local no_aim_input_multiplier = aim_assist_settings and aim_assist_settings.no_aim_input_multiplier or not aim_assist_settings and aim_assist_multiplier * 0.5
 		local input_extension = self.input_extension
 		local look_raw = input_extension:get("look_raw_controller")
 		local move = input_extension:get("move_controller")
 		local has_input = true
 
-		if not aim_assist_settings and Vector3.length(look_raw) < 0.01 or not not aim_assist_settings and not aim_assist_settings.always_auto_aim and Vector3.length(look_raw) < 0.01 then
+		if not aim_assist_settings and Vector3.length(look_raw) < 0.01 or aim_assist_settings and not aim_assist_settings.always_auto_aim and Vector3.length(look_raw) < 0.01 then
 			aim_assist_multiplier = no_aim_input_multiplier
 
 			if Vector3.length(move) < 0.01 then
@@ -538,7 +538,7 @@ PlayerUnitFirstPerson.update_aim_assist_multiplier = function (self, dt)
 			aim_assist_ramp_multiplier = math.max(self.aim_assist_ramp_multiplier - dt, 0)
 		end
 
-		self.aim_assist_multiplier = has_input and not not math.min(aim_assist_multiplier + aim_assist_ramp_multiplier, 1) or not has_input and not not 0
+		self.aim_assist_multiplier = has_input and math.min(aim_assist_multiplier + aim_assist_ramp_multiplier, 1) or not has_input and 0
 		self.aim_assist_ramp_multiplier = aim_assist_ramp_multiplier
 		self.aim_assist_ramp_multiplier_timer = aim_assist_ramp_multiplier_timer
 	else
@@ -550,7 +550,7 @@ end
 
 PlayerUnitFirstPerson.increase_aim_assist_multiplier = function (self, value, max_value, delay)
 	-- function 14
-	local delay = not not delay or not not 2
+	local delay = delay or 2
 
 	self.aim_assist_ramp_multiplier = math.min(self.aim_assist_ramp_multiplier + value, max_value)
 	self.aim_assist_ramp_multiplier_timer = delay
@@ -609,7 +609,7 @@ PlayerUnitFirstPerson.update_rotation = function (self, t, dt)
 	local aim_assist_data = self.smart_targeting_extension:get_targeting_data()
 
 	if self.forced_look_rotation ~= nil then
-		local total_lerp_time = not not self.forced_total_lerp_time
+		local total_lerp_time = self.forced_total_lerp_time
 
 		self.forced_lerp_timer = self.forced_lerp_timer + dt
 
@@ -646,8 +646,8 @@ PlayerUnitFirstPerson.update_rotation = function (self, t, dt)
 
 		self.has_look_delta = false
 
-		local weapon_sway_settings = not not self._weapon_sway_settings
-		local camera_look_sensitivity = not not weapon_sway_settings.camera_look_sensitivity
+		local weapon_sway_settings = self._weapon_sway_settings
+		local camera_look_sensitivity = weapon_sway_settings.camera_look_sensitivity
 		local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(self.unit)
 		local look_input_limit = movement_settings_table.look_input_limit
 
@@ -734,7 +734,7 @@ PlayerUnitFirstPerson.calculate_aim_assisted_rotation = function (self, look_rot
 	local target_rotation = Quaternion.look(direction, Vector3.up())
 	local aim_score = aim_assist_data.aim_score
 	local aim_assist_multiplier = self.aim_assist_multiplier
-	local horizontal_lerp = aim_assist_data.vertical_only and (not not look_rotation or not not Quaternion.lerp(look_rotation, target_rotation, dt * 33 * aim_score * aim_assist_multiplier)) or not aim_assist_data.vertical_only and not not Quaternion.lerp(look_rotation, target_rotation, dt * 33 * aim_score * aim_assist_multiplier)
+	local horizontal_lerp = aim_assist_data.vertical_only and (look_rotation or Quaternion.lerp(look_rotation, target_rotation, dt * 33 * aim_score * aim_assist_multiplier)) or not aim_assist_data.vertical_only and Quaternion.lerp(look_rotation, target_rotation, dt * 33 * aim_score * aim_assist_multiplier)
 	local vertical_lerp = Quaternion.lerp(look_rotation, target_rotation, aim_assist_multiplier * 0.5 * dt * 33 * aim_score * aim_assist_multiplier)
 	local yaw = Quaternion.yaw(horizontal_lerp)
 	local pitch = Quaternion.pitch(vertical_lerp)
@@ -773,7 +773,7 @@ PlayerUnitFirstPerson.is_infront = function (self, position, cos_angle_limit)
 	local camera_forward = Vector3.normalize(Quaternion.forward(camera_rotation))
 	local to_pos_dir = Vector3.normalize(position - camera_position)
 	local dot = Vector3.dot(to_pos_dir, camera_forward)
-	local is_infront = dot > (not not cos_angle_limit or not not 0)
+	local is_infront = dot > (cos_angle_limit or 0)
 
 	return is_infront
 end
@@ -812,7 +812,7 @@ PlayerUnitFirstPerson.apply_recoil = function (self, factor)
 		camera_rotation = eyetracking_extension:get_direction_without_extended_view(camera_rotation)
 	end
 
-	local recoil_rotation = Quaternion.lerp(current_rotation, camera_rotation, not not factor or not not 1)
+	local recoil_rotation = Quaternion.lerp(current_rotation, camera_rotation, factor or 1)
 
 	Unit.set_local_rotation(self.first_person_unit, 0, recoil_rotation)
 	self.look_rotation:store(recoil_rotation)
@@ -972,7 +972,7 @@ PlayerUnitFirstPerson.set_first_person_mode = function (self, active, override, 
 			end
 		end
 
-		self.inventory_extension:show_third_person_inventory(not active and not not not unarmed)
+		self.inventory_extension:show_third_person_inventory(not active and not unarmed)
 		self.attachment_extension:show_attachments(not active)
 	end
 
@@ -1112,7 +1112,7 @@ PlayerUnitFirstPerson.animation_set_variable = function (self, variable_name, va
 	local anim_var_id = self._anim_var_id_lookup[variable_name]
 
 	if anim_var_id == nil then
-		anim_var_id = not not Unit_animation_find_variable(fp_unit, variable_name) or not not false
+		anim_var_id = Unit_animation_find_variable(fp_unit, variable_name) or false
 		self._anim_var_id_lookup[variable_name] = anim_var_id
 	end
 
@@ -1134,7 +1134,7 @@ PlayerUnitFirstPerson.create_screen_particles = function (self, name, pos, ...)
 		return
 	end
 
-	return World.create_particles(self.world, name, not not pos or not not Vector3.zero(), ...)
+	return World.create_particles(self.world, name, pos or Vector3.zero(), ...)
 end
 
 PlayerUnitFirstPerson.stop_spawning_screen_particles = function (self, id)
@@ -1193,7 +1193,7 @@ end
 
 PlayerUnitFirstPerson.play_sound_event = function (self, event, position)
 	-- function 64
-	local sound_position = not not position or not not self:current_position()
+	local sound_position = position or self:current_position()
 	local wwise_source_id, wwise_world = WwiseUtils.make_position_auto_source(self.world, sound_position)
 
 	WwiseWorld.set_switch(wwise_world, "husk", "false", wwise_source_id)
@@ -1302,7 +1302,7 @@ PlayerUnitFirstPerson.update_rig_movement = function (self, look_delta)
 	local is_ranged = item_slot_name == "slot_ranged"
 	local is_melee = not is_ranged
 	local item_data = self.inventory_extension:get_item_data(item_slot_name)
-	local weapon_template_name = not not item_data and not not item_data.template
+	local weapon_template_name = item_data and item_data.template
 	local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
 	local position = Unit.local_position(self.first_person_unit, 0)
 	local orientation = Unit.local_rotation(self.first_person_unit, 0)
@@ -1316,7 +1316,7 @@ PlayerUnitFirstPerson.update_rig_movement = function (self, look_delta)
 	local motion_offset = rig_settings.motion_offset
 	local horizontal_motion_damping = rig_settings.horizontal_motion_damping
 	local vertical_motion_damping = rig_settings.vertical_motion_damping
-	local vertical_look_multiplier = is_ranged and not not rig_settings.vertical_look_multiplier_ranged or not is_ranged and not not rig_settings.vertical_look_multiplier_melee
+	local vertical_look_multiplier = is_ranged and rig_settings.vertical_look_multiplier_ranged or not is_ranged and rig_settings.vertical_look_multiplier_melee
 	local lead_multiplier = Vector3(10, 10, 0)
 	local lead_decay = 10
 	local lead_max = Vector2(0.1, 0.1)
@@ -1327,15 +1327,15 @@ PlayerUnitFirstPerson.update_rig_movement = function (self, look_delta)
 		lead_max = Vector2(0.5, 0.5)
 	end
 
-	lead_multiplier = lead_multiplier * (weapon_template and not not weapon_template.rig_motion_multiplier or not weapon_template and not not 1)
-	lead_decay = lead_decay * (weapon_template and not not weapon_template.rig_motion_multiplier or not weapon_template and not not 1)
-	lead_max = lead_max * (weapon_template and not not weapon_template.rig_motion_multiplier or not weapon_template and not not 1)
+	lead_multiplier = lead_multiplier * (weapon_template and weapon_template.rig_motion_multiplier or not weapon_template and 1)
+	lead_decay = lead_decay * (weapon_template and weapon_template.rig_motion_multiplier or not weapon_template and 1)
+	lead_max = lead_max * (weapon_template and weapon_template.rig_motion_multiplier or not weapon_template and 1)
 
 	local inv_mass = 1 / mass
 
-	self.spring_velocity = not not self.spring_velocity
-	self.spring_position = not not self.spring_position
-	self.lead_offset = not not self.lead_offset
+	self.spring_velocity = self.spring_velocity
+	self.spring_position = self.spring_position
+	self.lead_offset = self.lead_offset
 
 	local spring_velocity = self.spring_velocity:unbox()
 	local spring_position = self.spring_position:unbox()
@@ -1485,10 +1485,10 @@ end
 
 PlayerUnitFirstPerson._update_state_machine_variables = function (self, dt, t)
 	-- function 77
-	local weapon_sway_settings = not not self._weapon_sway_settings
+	local weapon_sway_settings = self._weapon_sway_settings
 	local input_extension = self.input_extension
-	local move_controller_input = not not input_extension:get("look_raw_controller")
-	local move_mouse_input = not not input_extension:get("look_raw")
+	local move_controller_input = input_extension:get("look_raw_controller")
+	local move_mouse_input = input_extension:get("look_raw")
 	local mouse_input = Vector3(move_mouse_input.x * MOUSE_SCALE, -move_mouse_input.y * MOUSE_SCALE, 0)
 	local look_delta = mouse_input + move_controller_input * dt
 	local look_target_x = self._look_target_x + look_delta.x * weapon_sway_settings.look_sensitivity
@@ -1513,10 +1513,10 @@ PlayerUnitFirstPerson._update_state_machine_variables = function (self, dt, t)
 
 	if weapon_sway_settings.recenter_acc then
 		local recenter_acc = weapon_sway_settings.recenter_acc
-		local recetner_dampening = not not weapon_sway_settings.recetner_dampening
-		local recenter_max_vel = not not weapon_sway_settings.recenter_max_vel
-		local recenter_vel_x = not not self._look_target_recentering_vel_x
-		local recenter_vel_y = not not self._look_target_recentering_vel_y
+		local recetner_dampening = weapon_sway_settings.recetner_dampening
+		local recenter_max_vel = weapon_sway_settings.recenter_max_vel
+		local recenter_vel_x = self._look_target_recentering_vel_x
+		local recenter_vel_y = self._look_target_recentering_vel_y
 
 		recenter_vel_x = recenter_vel_x - bi_clamp(recenter_vel_x * recetner_dampening * dt, -recenter_vel_x, recenter_vel_x)
 		recenter_vel_y = recenter_vel_y - bi_clamp(recenter_vel_y * recetner_dampening * dt, -recenter_vel_y, recenter_vel_y)
@@ -1529,7 +1529,7 @@ PlayerUnitFirstPerson._update_state_machine_variables = function (self, dt, t)
 		self._look_target_x = math_clamp(look_target_x + recenter_vel_x * dt, -sway_range, sway_range)
 		self._look_target_y = math_clamp(look_target_y + recenter_vel_y * dt, -sway_range, sway_range)
 	else
-		local recentering_lerp_speed = math_min(not not weapon_sway_settings.recentering_lerp_speed * dt, 1)
+		local recentering_lerp_speed = math_min(weapon_sway_settings.recentering_lerp_speed * dt, 1)
 
 		self._look_target_x = math_clamp(math_lerp(look_target_x, 0, recentering_lerp_speed), -sway_range, sway_range)
 		self._look_target_y = math_clamp(math_lerp(look_target_y, 0, recentering_lerp_speed), -sway_range, sway_range)

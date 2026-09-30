@@ -1195,7 +1195,7 @@ StoreDlcSettings = {
 		prio = 10,
 		slideshow_texture = "store_slideshow_dlc_premium_career_bundle",
 		slideshow_text = "description_five_premium_career_bundle",
-		dlc_name = not IS_CONSOLE and not not "premium_career_bundle",
+		dlc_name = not IS_CONSOLE and "premium_career_bundle",
 		available_platforms = {
 			"win32"
 		},
@@ -1492,7 +1492,7 @@ StoreDlcSettings = {
 		information_text = "description_premium_career_bundle_upgrade",
 		slideshow_texture = "store_slideshow_dlc_premium_career_bundle_upgrade",
 		slideshow_text = "description_premium_career_bundle_upgrade",
-		dlc_name = IS_CONSOLE and not not "premium_career_bundle" or not IS_CONSOLE and not not "premium_career_bundle_upgrade",
+		dlc_name = IS_CONSOLE and "premium_career_bundle" or not IS_CONSOLE and "premium_career_bundle_upgrade",
 		available_platforms = {
 			"win32",
 			"xb1",

@@ -82,7 +82,7 @@ ImguiSoundDebug._update_music_flags = function (self)
 	for key, value in pairs(flags) do
 		self._music_flags[key] = {
 			value = value,
-			update_disabled = not not flags_update_disabled[key]
+			update_disabled = flags_update_disabled[key]
 		}
 	end
 end
@@ -94,13 +94,13 @@ ImguiSoundDebug._update_music_players = function (self)
 
 	for name, player in pairs(music_players) do
 		local playing = player._playing
-		local states = playing and not not playing._group_states or not playing and not not {}
+		local states = playing and playing._group_states or not playing and {}
 		local parsed_states = {}
 
 		for key, value in pairs(states) do
 			parsed_states[key] = {
 				value = value,
-				update_disabled = not not playing and not not playing.states_update_disabled[key]
+				update_disabled = playing and playing.states_update_disabled[key]
 			}
 		end
 
@@ -242,7 +242,7 @@ ImguiSoundDebug._draw_music_players = function (self)
 
 			Imgui.next_column()
 
-			new_value = Imgui.checkbox("Update Disabled", not not state_data.update_disabled)
+			new_value = Imgui.checkbox("Update Disabled", state_data.update_disabled)
 
 			if new_value ~= state_data.update_disabled then
 				Managers.music._music_players[name]._playing.states_update_disabled[key] = new_value
@@ -269,7 +269,7 @@ local keys = {
 
 ImguiSoundDebug._draw_history = function (self)
 	-- function 14
-	local history_text = self._history_running and not not "Stop" or not self._history_running and not not "Start"
+	local history_text = self._history_running and "Stop" or not self._history_running and "Start"
 
 	if Imgui.button(history_text) then
 		if self._history_running then
@@ -337,14 +337,14 @@ ImguiSoundDebug._draw_sort_button = function (self, text)
 	local final_text
 
 	if self._sort_history_by == text then
-		final_text = string.format("%s %s", text, self._sort_direction ~= "asc" and not not "\\/" or not (self._sort_direction ~= "asc") and not not "/\\")
+		final_text = string.format("%s %s", text, self._sort_direction ~= "asc" and "\\/" or not (self._sort_direction ~= "asc") and "/\\")
 	else
 		final_text = text
 	end
 
 	if Imgui.button(final_text) then
 		self._sort_history_by = text
-		self._sort_direction = self._sort_direction ~= "asc" and not not "asc" or not (self._sort_direction ~= "asc") and not not "desc"
+		self._sort_direction = self._sort_direction ~= "asc" and "asc" or not (self._sort_direction ~= "asc") and "desc"
 
 		return true
 	end
@@ -356,8 +356,8 @@ ImguiSoundDebug.on_music_flag_change = function (self, flag, old_value, new_valu
 		name = "flag",
 		timestamp = format_timestamp(os.time()),
 		key = flag,
-		old_value = not not old_value or not not "",
-		new_value = not not new_value or not not ""
+		old_value = old_value or "",
+		new_value = new_value or ""
 	}
 
 	self._history[#self._history + 1] = data
@@ -370,8 +370,8 @@ ImguiSoundDebug.on_music_player_state_change = function (self, music_player_name
 		timestamp = format_timestamp(os.time()),
 		name = music_player_name,
 		key = state_name,
-		old_value = not not old_value or not not "",
-		new_value = not not new_value or not not ""
+		old_value = old_value or "",
+		new_value = new_value or ""
 	}
 
 	self._history[#self._history + 1] = data
@@ -380,7 +380,7 @@ end
 
 ImguiSoundDebug._set_columns = function (self, num_columns, border, columns_width)
 	-- function 19
-	border = not not border or not not false
+	border = border or false
 
 	Imgui.columns(num_columns, border)
 

@@ -163,7 +163,7 @@ end
 
 AccountManager.set_round_id = function (self, round_id)
 	-- function 12
-	self._current_round_id = not not round_id or not not Application.guid()
+	self._current_round_id = round_id or Application.guid()
 end
 
 AccountManager.round_id = function (self)
@@ -254,7 +254,7 @@ end
 
 AccountManager.is_guest = function (self)
 	-- function 29
-	return not not self._user_info
+	return self._user_info
 end
 
 AccountManager.is_online = function (self)
@@ -305,7 +305,7 @@ end
 
 AccountManager.has_popup = function (self)
 	-- function 34
-	return not not self._popup_id
+	return self._popup_id
 end
 
 AccountManager.cancel_all_popups = function (self)
@@ -328,7 +328,7 @@ AccountManager._check_trigger_popups = function (self)
 
 		local wanted_profile_id = self._user_info.xbox_user_id
 		local wanted_profile = self._gamertags[wanted_profile_id]
-		local cropped_profile = wanted_profile and not not Managers.popup:fit_text_width_to_popup(wanted_profile) or not wanted_profile and not not "?"
+		local cropped_profile = wanted_profile and Managers.popup:fit_text_width_to_popup(wanted_profile) or not wanted_profile and "?"
 		local wrong_profile_str = string.format(Localize("controller_pairing"), cropped_profile)
 
 		self:_create_popup(wrong_profile_str, "controller_pairing_header", "verify_profile", "menu_retry", "restart_network", "menu_return_to_title_screen", "show_profile_picker", "menu_select_profile", true)
@@ -478,7 +478,7 @@ AccountManager._verify_user_profile = function (self)
 
 	local most_recent_device = Managers.input:get_most_recent_device()
 	local current_device_type = most_recent_device.type()
-	local using_keyboard = not not KEYBOARD_DEVICES[current_device_type]
+	local using_keyboard = KEYBOARD_DEVICES[current_device_type]
 	local active_controller = self._active_controller
 	local controller_changed = false
 
@@ -488,15 +488,15 @@ AccountManager._verify_user_profile = function (self)
 		controller_changed = controller_id ~= self._controller_id
 	end
 
-	local user_id = not not active_controller.user_id()
-	local user_info = not not user_id and not not self:_user_id_in_cache(user_id)
-	local controller_disconnected = using_keyboard and not not false or not using_keyboard and not not active_controller.disconnected()
-	local controller_user_id = using_keyboard and not not self._user_id or not using_keyboard and not not active_controller.user_id()
+	local user_id = active_controller.user_id()
+	local user_info = user_id and self:_user_id_in_cache(user_id)
+	local controller_disconnected = not using_keyboard and active_controller.disconnected()
+	local controller_user_id = using_keyboard and self._user_id or not using_keyboard and active_controller.user_id()
 
 	if not active_controller or not controller_user_id or controller_disconnected or not user_info or self._user_info.xbox_user_id ~= user_info.xbox_user_id or not user_info.signed_in or controller_changed then
 		local wanted_profile_id = self._user_info.xbox_user_id
 		local wanted_profile = self._gamertags[wanted_profile_id]
-		local cropped_profile = wanted_profile and not not Managers.popup:fit_text_width_to_popup(wanted_profile) or not wanted_profile and not not "?"
+		local cropped_profile = wanted_profile and Managers.popup:fit_text_width_to_popup(wanted_profile) or not wanted_profile and "?"
 		local wrong_profile_str = string.format(Localize("controller_pairing"), cropped_profile)
 
 		if Managers.matchmaking then
@@ -594,7 +594,7 @@ end
 
 AccountManager.has_fatal_error = function (self)
 	-- function 53
-	return not not self._fatal_error
+	return self._fatal_error
 end
 
 AccountManager._create_popup = function (self, error, header, right_action, right_button, left_action, left_button, extra_action, extra_button, disable_localize_error)
@@ -602,14 +602,14 @@ AccountManager._create_popup = function (self, error, header, right_action, righ
 	Managers.input:set_all_gamepads_available()
 	assert(error, "[AccountManager] No error was passed to popup handler")
 
-	local header = not not header or not not "popup_error_topic"
+	local header = header or "popup_error_topic"
 	local right_action = right_action
 	local left_action = left_action
 	local extra_action = extra_action
-	local right_button = not not right_button and not not Localize(right_button)
-	local left_button = not not left_button and not not Localize(left_button)
-	local extra_button = not not extra_button and not not Localize(extra_button)
-	local localized_error = disable_localize_error and (not not error or not not Localize(error)) or not disable_localize_error and not not Localize(error)
+	local right_button = right_button and Localize(right_button)
+	local left_button = left_button and Localize(left_button)
+	local extra_button = extra_button and Localize(extra_button)
+	local localized_error = disable_localize_error and (error or Localize(error)) or not disable_localize_error and Localize(error)
 
 	assert(self._popup_id == nil, "Tried to show popup even though we already had one.")
 	print(error, header, right_action, right_button, left_action, left_button, extra_action, extra_button, disable_localize_error)
@@ -718,7 +718,7 @@ AccountManager.verify_profile = function (self)
 	end
 
 	local most_recent_device = Managers.input:get_most_recent_device()
-	local user_id = not not most_recent_device.user_id
+	local user_id = most_recent_device.user_id
 
 	if not user_id then
 		show_wrong_profile_popup(self)
@@ -1093,7 +1093,7 @@ AccountManager.query_bandwidth = function (self, down_kbps, up_kbps, timeout_in_
 		return
 	end
 
-	local token = QoS.query_bandwidth(not not down_kbps or not not 192, not not up_kbps or not not 192, not not timeout_in_ms or not not 5000)
+	local token = QoS.query_bandwidth(down_kbps or 192, up_kbps or 192, timeout_in_ms or 5000)
 
 	if token then
 		local script_token = ScriptQoSToken:new(token)
@@ -1159,7 +1159,7 @@ end
 AccountManager.console_type = function (self)
 	-- function 94
 	local console_type = XboxOne.console_type()
-	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
+	local console_settings = CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings.console_type_name
 end
@@ -1167,7 +1167,7 @@ end
 AccountManager.should_throttle = function (self)
 	-- function 95
 	local console_type = XboxOne.console_type()
-	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
+	local console_settings = CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings.should_throttle
 end
@@ -1175,7 +1175,7 @@ end
 AccountManager.console_type_setting = function (self, setting)
 	-- function 96
 	local console_type = XboxOne.console_type()
-	local console_settings = not not CONSOLE_TYPE_SETTINGS[console_type]
+	local console_settings = CONSOLE_TYPE_SETTINGS[console_type]
 
 	return console_settings[setting]
 end

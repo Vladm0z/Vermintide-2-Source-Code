@@ -46,9 +46,9 @@ GameplayInfoUI._update_spawn_info_texts = function (self, state_text, sub_text, 
 	local spawn_text = self._widgets_by_name.spawn_text
 	local spawn_reason = self._widgets_by_name.spawn_reason
 
-	spawn_text.content.text = state_text and (not not state_text or not not "") or not state_text and not not ""
+	spawn_text.content.text = state_text and (state_text or "") or not state_text and ""
 	spawn_text.content.visible = state_text ~= nil
-	spawn_reason.content.text = sub_text and (not not sub_text or not not "") or not sub_text and not not ""
+	spawn_reason.content.text = sub_text and (sub_text or "") or not sub_text and ""
 	spawn_reason.content.visible = sub_text ~= nil
 end
 
@@ -92,7 +92,7 @@ GameplayInfoUI._update_button_prompts = function (self)
 		elseif keymap_binding and (keymap_binding[1] == "mouse" or self._gamepad_active) or not keymap_binding and self._gamepad_active then
 			spawn_input_text = string.format(input_text_format, input_service_name, input_action)
 		else
-			spawn_input_text = input_text and (not not ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}") or not not "") or not input_text and not not ""
+			spawn_input_text = input_text and ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}" or "") or not input_text and ""
 		end
 
 		spawn_state_text = string.format(Localize("versus_gameplay_info_spawn_here"), spawn_input_text)
@@ -119,7 +119,7 @@ GameplayInfoUI._update_button_prompts = function (self)
 
 		if reason == "range" then
 			sub_text = Localize("vs_spawning_hero_range")
-			sub_text = not not (sub_text .. self._range) or not not 20
+			sub_text = sub_text .. self._range or 20
 		elseif reason == "los" then
 			sub_text = Localize("vs_spawning_hero_los")
 		elseif reason == "start_zone" then
@@ -159,7 +159,7 @@ GameplayInfoUI._set_sub_text = function (self, text)
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.ghost_mode_text_sub
 
-	widget.content.text = not not text or not not ""
+	widget.content.text = text or ""
 	widget.content.visible = text ~= nil
 end
 
@@ -256,8 +256,8 @@ GameplayInfoUI._draw = function (self, dt)
 	end
 
 	local player_unit = Managers.player:local_player().player_unit
-	local ghost_mode_extension = not not player_unit and not not ScriptUnit.has_extension(player_unit, "ghost_mode_system")
-	local is_in_ghost_mode = not not ghost_mode_extension and not not ghost_mode_extension:is_in_ghost_mode()
+	local ghost_mode_extension = player_unit and ScriptUnit.has_extension(player_unit, "ghost_mode_system")
+	local is_in_ghost_mode = ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode()
 
 	if is_in_ghost_mode then
 		for _, widget in ipairs(self._spawn_info_widgets) do
@@ -274,7 +274,7 @@ GameplayInfoUI._set_tele_prompt = function (self, input_service_name, input_acti
 	local ui_scenegraph = self._ui_scenegraph
 	local input_manager = Managers.input
 	local ui_renderer = self._ui_renderer
-	local input_service = not not input_service_name and not not input_manager:get_service(input_service_name)
+	local input_service = input_service_name and input_manager:get_service(input_service_name)
 	local gamepad_active = input_manager:is_device_active("gamepad")
 	local teleport_text_widget = widgets_by_name.teleport_text
 	local texture_data, input_text
@@ -289,7 +289,7 @@ GameplayInfoUI._set_tele_prompt = function (self, input_service_name, input_acti
 	if gamepad_active then
 		input_string = "$KEY;" .. input_service_name .. "__" .. input_action .. ":"
 	else
-		input_string = input_text and (not not ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}") or not not "") or not input_text and not not ""
+		input_string = input_text and ("{#color(193,91,36)}[" .. input_text .. "] {#reset()}" or "") or not input_text and ""
 	end
 
 	teleport_text_widget.content.text = string.format(str, input_string, suffix_text)

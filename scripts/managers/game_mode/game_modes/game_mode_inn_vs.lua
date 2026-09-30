@@ -89,10 +89,10 @@ GameModeInnVs.local_player_game_starts = function (self, player, loading_context
 		elseif GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") then
 			local first_hero_selection_made = SaveData.first_hero_selection_made
 			local backend_waiting_for_input = Managers.backend:is_waiting_for_user_input()
-			local show_hero_selection = not backend_waiting_for_input and not not not first_hero_selection_made
+			local show_hero_selection = not backend_waiting_for_input and not first_hero_selection_made
 
 			Managers.ui:handle_transition("initial_start_menu_view_force", {
-				menu_state_name = show_hero_selection and not not "character" or not show_hero_selection and not not "overview",
+				menu_state_name = show_hero_selection and "character" or not show_hero_selection and "overview",
 				on_exit_callback = callback(self, "_cb_start_menu_closed")
 			})
 		else
@@ -332,10 +332,10 @@ end
 
 GameModeInnVs._start_hosting_server = function (self)
 	-- function 27
-	local map_pool = not not self._force_map_pool
+	local map_pool = self._force_map_pool
 	local difficulty = self._settings.forced_difficulty
 	local override_level_key = Managers.mechanism:game_mechanism():get_level_override_key()
-	local override_map_pool = not not override_level_key and not not {
+	local override_map_pool = override_level_key and {
 		override_level_key
 	}
 	local search_config = {
@@ -347,7 +347,7 @@ GameModeInnVs._start_hosting_server = function (self)
 		dedicated_server = false,
 		mechanism = "versus",
 		quick_game = false,
-		preferred_level_keys = not not override_map_pool or not not table.clone(map_pool),
+		preferred_level_keys = override_map_pool or table.clone(map_pool),
 		difficulty = difficulty
 	}
 
@@ -372,7 +372,7 @@ end
 
 GameModeInnVs.is_joinable = function (self)
 	-- function 30
-	return not not self:is_reservable()
+	return (self:is_reservable())
 end
 
 GameModeInnVs.update_auto_force_start_conditions = function (self, peers)

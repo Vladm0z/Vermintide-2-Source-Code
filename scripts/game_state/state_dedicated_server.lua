@@ -80,17 +80,17 @@ end
 
 StateDedicatedServer._setup_chat_manager = function (self)
 	-- function 7
-	Managers.chat = not not Managers.chat
+	Managers.chat = Managers.chat
 end
 
 StateDedicatedServer._setup_account_manager = function (self)
 	-- function 8
-	Managers.account = not not Managers.account
+	Managers.account = Managers.account
 end
 
 StateDedicatedServer._setup_eac_manager = function (self)
 	-- function 9
-	Managers.eac = not not Managers.eac
+	Managers.eac = Managers.eac
 end
 
 StateDedicatedServer._load_packages = function (self)
@@ -159,7 +159,7 @@ StateDedicatedServer.update = function (self, dt, t)
 
 		if start_game_params then
 			local level_key = start_game_params.level_key
-			local environment_variation_id = not not start_game_params.environment_variation_id
+			local environment_variation_id = start_game_params.environment_variation_id
 			local game_mode = start_game_params.game_mode
 			local difficulty = start_game_params.difficulty
 			local level_transition_handler = Managers.level_transition_handler
@@ -193,7 +193,7 @@ StateDedicatedServer.setup_network_server = function (self)
 
 	Managers.game_server = GameServerManager:new()
 	self._network_server = NetworkServer:new(Managers.player, game_server, nil, Managers.game_server)
-	self._network_transmit = not not loading_context.network_transmit
+	self._network_transmit = loading_context.network_transmit
 
 	self._network_transmit:set_network_event_delegate(self._network_event_delegate)
 	self._network_server:register_rpcs(self._network_event_delegate, self._network_transmit)

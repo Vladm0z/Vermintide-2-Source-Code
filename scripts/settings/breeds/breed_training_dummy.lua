@@ -142,15 +142,15 @@ local breed_data = {
 	},
 	modify_extension_init_data = function (breed, extension_init_data, optional_data, position, rotation)
 		-- function 1
-		local data1 = not not extension_init_data.projectile_locomotion_system
+		local data1 = extension_init_data.projectile_locomotion_system
 
-		data1.network_position = not not extension_init_data.network_position
-		data1.network_rotation = not not extension_init_data.network_rotation
-		data1.network_velocity = not not extension_init_data.network_velocity
-		data1.network_angular_velocity = not not extension_init_data.network_angular_velocity
+		data1.network_position = extension_init_data.network_position
+		data1.network_rotation = extension_init_data.network_rotation
+		data1.network_velocity = extension_init_data.network_velocity
+		data1.network_angular_velocity = extension_init_data.network_angular_velocity
 		extension_init_data.projectile_locomotion_system = data1
 
-		local data2 = not not extension_init_data.pickup_system
+		local data2 = extension_init_data.pickup_system
 
 		data2.has_physics = false
 		data2.spawn_type = "debug"

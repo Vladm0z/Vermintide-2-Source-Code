@@ -66,7 +66,7 @@ PingManager._stats = function (self)
 
 	for i = 1, #self._latency_results do
 		for target, result in pairs(self._latency_results[i]) do
-			local target_data = not not ping_by_region[target]
+			local target_data = ping_by_region[target]
 
 			target_data[#target_data + 1] = result
 			ping_by_region[target] = target_data

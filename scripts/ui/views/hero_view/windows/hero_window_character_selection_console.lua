@@ -29,8 +29,8 @@ HeroWindowCharacterSelectionConsole.on_enter = function (self, params, offset)
 		snap_pixel_positions = true
 	}
 	self._hero_name = params.hero_name
-	self._career_index = not not params.career_index
-	self._profile_index = not not params.profile_index
+	self._career_index = params.career_index
+	self._profile_index = params.profile_index
 	self._profile_selectable = false
 	self._animations = {}
 	self._ui_animations = {}
@@ -82,7 +82,7 @@ HeroWindowCharacterSelectionConsole._select_hero = function (self, profile_index
 	local hero_display_name = Localize(character_name)
 	local career_display_name = Localize(character_career_name)
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = not not hero_attributes:get(hero_name, "experience")
+	local hero_experience = hero_attributes:get(hero_name, "experience")
 	local level = ExperienceSettings.get_level(hero_experience)
 
 	self:_set_hero_info(hero_display_name, career_display_name, level)
@@ -141,7 +141,7 @@ HeroWindowCharacterSelectionConsole._update_selectable = function (self, selecta
 	local select_button = self._widgets_by_name.select_button
 
 	select_button.content.button_hotspot.disable_button = not selectable
-	select_button.content.dlc_name = not selectable and not not dlc_name
+	select_button.content.dlc_name = not selectable and dlc_name
 	self._widgets_by_name.info_text.content.visible = selectable
 
 	local input_action = "default"
@@ -240,7 +240,7 @@ HeroWindowCharacterSelectionConsole._setup_hero_selection_widgets = function (se
 	for i, profile_index in ipairs(ProfilePriority) do
 		local profile_settings = SPProfiles[profile_index]
 		local hero_name = profile_settings.display_name
-		local hero_experience = not not hero_attributes:get(hero_name, "experience")
+		local hero_experience = hero_attributes:get(hero_name, "experience")
 		local hero_level = ExperienceSettings.get_level(hero_experience)
 		local careers = profile_settings.careers
 
@@ -285,7 +285,7 @@ HeroWindowCharacterSelectionConsole._setup_hero_selection_widgets = function (se
 			end
 
 			local career_index = hero_attributes:get(hero_name, "career")
-			local bot_career_index = not not hero_attributes:get(hero_name, "bot_career")
+			local bot_career_index = hero_attributes:get(hero_name, "bot_career")
 
 			if bot_career_index == j then
 				content.bot_selected = true
@@ -398,7 +398,7 @@ HeroWindowCharacterSelectionConsole._update_input = function (self, dt)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local confirm_available = not select_button.content.button_hotspot.disable_button
 	local confirm_pressed = input_service:get("confirm", true)
-	local back_pressed = not not gamepad_active and not not self.allow_back_button
+	local back_pressed = gamepad_active and self.allow_back_button
 
 	if UIUtils.is_button_pressed(select_button) and confirm_available or not UIUtils.is_button_pressed(select_button) and confirm_pressed and confirm_available then
 		self:_play_sound("play_gui_start_menu_button_click")
@@ -415,7 +415,7 @@ HeroWindowCharacterSelectionConsole._update_input = function (self, dt)
 
 		local previous_layout_key = self._parent:get_previous_selected_game_mode_index()
 
-		self._parent:set_layout(not not previous_layout_key or not not 1)
+		self._parent:set_layout(previous_layout_key or 1)
 	elseif confirm_pressed and select_button.content.dlc_name then
 		self:_play_sound("play_gui_start_menu_button_click")
 		Managers.state.event:trigger("ui_show_popup", select_button.content.dlc_name, "upsell")

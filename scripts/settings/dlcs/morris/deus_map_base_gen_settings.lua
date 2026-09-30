@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_map_base_gen_settings.lua
 
-DEUS_BASE_MAP_GEN_SETTINGS = not not DEUS_BASE_MAP_GEN_SETTINGS
+DEUS_BASE_MAP_GEN_SETTINGS = DEUS_BASE_MAP_GEN_SETTINGS
 DEUS_BASE_MAP_GEN_SETTINGS.journey_cave = table.clone(DEUS_BASE_MAP_GEN_SETTINGS.default)
 DEUS_BASE_MAP_GEN_SETTINGS.journey_ice = table.clone(DEUS_BASE_MAP_GEN_SETTINGS.default)
 DEUS_BASE_MAP_GEN_SETTINGS.journey_citadel = table.clone(DEUS_BASE_MAP_GEN_SETTINGS.default)

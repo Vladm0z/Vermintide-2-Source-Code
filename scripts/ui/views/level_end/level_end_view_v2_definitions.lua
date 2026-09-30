@@ -597,7 +597,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 2
-						return not not GameSettingsDevelopment.allow_retry_weave
+						return GameSettingsDevelopment.allow_retry_weave
 					end
 				},
 				{
@@ -606,7 +606,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 3
-						return not not GameSettingsDevelopment.allow_retry_weave
+						return GameSettingsDevelopment.allow_retry_weave
 					end
 				},
 				{
@@ -615,7 +615,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 4
-						return not not GameSettingsDevelopment.allow_retry_weave
+						return GameSettingsDevelopment.allow_retry_weave
 					end
 				},
 				{
@@ -624,7 +624,7 @@ local function create_checkboxes(scenegraph_id, color)
 					pass_type = "texture",
 					content_check_function = function (content, style)
 						-- function 5
-						return not not GameSettingsDevelopment.allow_retry_weave
+						return GameSettingsDevelopment.allow_retry_weave
 					end
 				}
 			}
@@ -637,7 +637,7 @@ local function create_checkboxes(scenegraph_id, color)
 			checkbox_1 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -653,7 +653,7 @@ local function create_checkboxes(scenegraph_id, color)
 			checkbox_2 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -669,7 +669,7 @@ local function create_checkboxes(scenegraph_id, color)
 			checkbox_3 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -685,7 +685,7 @@ local function create_checkboxes(scenegraph_id, color)
 			checkbox_4 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -737,7 +737,7 @@ local player_title_style = {
 		2
 	}
 }
-local leave_party_text = IS_XB1 and not not "leave_party_xb1" or not IS_XB1 and not not "leave_party"
+local leave_party_text = IS_XB1 and "leave_party_xb1" or not IS_XB1 and "leave_party"
 local masked = true
 local disable_with_gamepad = true
 local widgets_definitions = {

@@ -202,7 +202,7 @@ weapon_template.actions = {
 					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 				end
 
-				return not not ammo_extension and not not ammo_extension:can_reload()
+				return ammo_extension and ammo_extension:can_reload()
 			end,
 			chain_condition_func = function (action_user, input_extension)
 				-- function 5
@@ -223,7 +223,7 @@ weapon_template.actions = {
 					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 				end
 
-				return not not ammo_extension and not not ammo_extension:can_reload()
+				return ammo_extension and ammo_extension:can_reload()
 			end,
 			allowed_chain_actions = {}
 		},
@@ -250,7 +250,7 @@ weapon_template.actions = {
 					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 				end
 
-				return not not ammo_extension and ammo_extension:ammo_count() == 0 and not not ammo_extension:can_reload()
+				return ammo_extension and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload()
 			end,
 			chain_condition_func = function (action_user, input_extension)
 				-- function 7
@@ -271,7 +271,7 @@ weapon_template.actions = {
 					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 				end
 
-				return not not ammo_extension and ammo_extension:ammo_count() == 0 and not not ammo_extension:can_reload()
+				return ammo_extension and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload()
 			end,
 			allowed_chain_actions = {}
 		}

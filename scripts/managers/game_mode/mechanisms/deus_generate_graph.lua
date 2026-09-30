@@ -39,7 +39,7 @@ function deus_generate_graph(seed, journey_name, dominant_god, populate_config, 
 
 		start_node.level = level
 		start_node.base_level = base_level
-		start_node.run_progress = progress == "" and not not 0 or not (progress == "") and not not (tonumber(progress) / 1000)
+		start_node.run_progress = progress == "" and 0 or not (progress == "") and tonumber(progress) / 1000
 
 		if string.starts_with(level, "pat") then
 			start_node.level_type = "TRAVEL"
@@ -67,7 +67,7 @@ function deus_generate_graph(seed, journey_name, dominant_god, populate_config, 
 
 		if script_data.deus_force_load_curse then
 			start_node.curse = script_data.deus_force_load_curse
-			start_node.theme = not not "khorne"
+			start_node.theme = "khorne"
 		end
 
 		return graph
@@ -76,8 +76,8 @@ function deus_generate_graph(seed, journey_name, dominant_god, populate_config, 
 	elseif DeusDefaultGraphs[seed] then
 		return DeusDefaultGraphs[seed]
 	else
-		local seed_number = type(seed) ~= "string" and (type(seed) ~= "number" or not seed) or not (type(seed) ~= "string") and not not tonumber(seed)
-		local graphs = not not base_graphs[journey_name]
+		local seed_number = type(seed) ~= "string" and (type(seed) ~= "number" or not seed) or not (type(seed) ~= "string") and tonumber(seed)
+		local graphs = base_graphs[journey_name]
 
 		seed_number = Math.next_random(seed_number)
 

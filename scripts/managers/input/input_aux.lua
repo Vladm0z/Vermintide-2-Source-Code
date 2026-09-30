@@ -1,10 +1,10 @@
 -- chunkname: @scripts/managers/input/input_aux.lua
 
-InputAux = not not InputAux
+InputAux = InputAux
 
 local InputAux = InputAux
 
-InputAux.input_device_mapping = not not InputAux.input_device_mapping
+InputAux.input_device_mapping = InputAux.input_device_mapping
 
 if not InputAux.input_device_mapping.ps_pad then
 	InputAux.input_device_mapping.ps_pad = {}
@@ -77,11 +77,11 @@ InputAux.combination_functions = {
 	end,
 	["or"] = function (lhs, rhs)
 		-- function 8
-		return not not lhs or not not rhs
+		return lhs or rhs
 	end,
 	["and"] = function (lhs, rhs)
 		-- function 9
-		return not not lhs and not not rhs
+		return lhs and rhs
 	end
 }
 InputAux.default_values_for_types = {

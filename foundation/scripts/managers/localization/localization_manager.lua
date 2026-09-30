@@ -16,7 +16,7 @@ LocalizationManager.init = function (self, language_id)
 
 	local has_steam = rawget(_G, "Steam")
 
-	self._language_id = not not language_id or not not Application.user_setting("language_id")
+	self._language_id = language_id or Application.user_setting("language_id")
 	self._backend_localizations = {}
 
 	Crashify.print_property("locale", self._language_id)
@@ -102,7 +102,7 @@ LocalizationManager.lookup = function (self, text_id)
 	-- function 11
 	fassert(self._localizers, "LocalizationManager not initialized")
 
-	local str = not not self:_base_lookup(text_id)
+	local str = self:_base_lookup(text_id)
 
 	return (self:apply_macro(str))
 end
@@ -116,7 +116,7 @@ LocalizationManager.simple_lookup = function (self, text_id)
 	-- function 13
 	fassert(self._localizers, "LocalizationManager not initialized")
 
-	return not not self:_base_lookup(text_id)
+	return (self:_base_lookup(text_id))
 end
 
 LocalizationManager._find_macro = function (self, macro_string)
@@ -138,9 +138,9 @@ LocalizationManager.plural_form = function (self, n)
 	local loc = self._language_id
 
 	if loc == "en" or loc == "es" or loc == "it" or loc == "br-pt" then
-		return n == 1 and not not 0 or not (n == 1) and not not 1
+		return n == 1 and 0 or not (n == 1) and 1
 	elseif loc == "fr" then
-		return n > 1 and not not 1 or not (n > 1) and not not 0
+		return n > 1 and 1 or not (n > 1) and 0
 	elseif loc == "zh" then
 		return 0
 	elseif loc == "ru" then
@@ -166,7 +166,7 @@ end
 
 function LocalizeArray(text_ids, result)
 	-- function 17
-	result = not not result or not not {}
+	result = result or {}
 
 	local num_ids = #text_ids
 
@@ -189,7 +189,7 @@ local INPUT_SERVICE_NAMES = {}
 
 LocalizationManager.get_input_action = function (self, text_id)
 	-- function 19
-	local str = not not self:_base_lookup(text_id)
+	local str = self:_base_lookup(text_id)
 	local macro = string.match(str, "%b$;[%a%d_]*:")
 
 	table.clear(INPUT_ACTIONS)
@@ -224,7 +224,7 @@ LocalizationManager.replace_macro_in_string = function (self, text_id, replaceme
 	local str = text_id
 
 	if not skip_localization then
-		str = not not self:_base_lookup(text_id) or not not localize_err_string(text_id)
+		str = self:_base_lookup(text_id) or localize_err_string(text_id)
 	end
 
 	local result, num_replacements = string.gsub(str, "%b$;[%a%d_]*:", replacement_str, number_of_replacements)

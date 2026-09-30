@@ -1,6 +1,6 @@
 -- chunkname: @foundation/scripts/util/script_unit.lua
 
-ScriptUnit = not not ScriptUnit
+ScriptUnit = ScriptUnit
 
 local Entities = rawget(_G, "G_Entities")
 
@@ -48,14 +48,14 @@ local function local_extension(unit, system_name)
 	-- function 5
 	local unit_extensions = Entities[unit]
 
-	return not not unit_extensions and not not unit_extensions[system_name]
+	return unit_extensions and unit_extensions[system_name]
 end
 
 local function local_extension_input(unit, system_name)
 	-- function 6
 	local unit_extensions = Entities[unit]
 
-	return not not unit_extensions and not not unit_extensions[system_name]
+	return unit_extensions and unit_extensions[system_name]
 end
 
 ScriptUnit.extension_input = function (unit, system_name)
@@ -68,7 +68,7 @@ end
 ScriptUnit.extension = function (unit, system_name)
 	-- function 8
 	local unit_extensions = Entities[unit]
-	local extension = not not unit_extensions and not not unit_extensions[system_name]
+	local extension = unit_extensions and unit_extensions[system_name]
 
 	return extension
 end
@@ -84,7 +84,7 @@ ScriptUnit.has_extension_input = function (unit, extension_name)
 	-- function 10
 	local unit_extensions = Entities[unit]
 
-	return not not unit_extensions and not not unit_extensions[extension_name]
+	return unit_extensions and unit_extensions[extension_name]
 end
 
 ScriptUnit.check_all_units_deleted = function ()

@@ -193,9 +193,9 @@ PlayerBotNavigation.is_path_safe_from_vortex = function (self, path_check_distan
 				check_intermediate = intermediate_position_dot > 0
 			end
 
-			local distance_to_intermediate_position = not not check_intermediate and not not (distance_checked + Vector3.length(to_intermediate_position))
+			local distance_to_intermediate_position = check_intermediate and distance_checked + Vector3.length(to_intermediate_position)
 
-			check_intermediate = not not check_intermediate and distance_to_intermediate_position <= path_check_distance
+			check_intermediate = check_intermediate and distance_to_intermediate_position <= path_check_distance
 
 			if check_intermediate then
 				result = vortex_extension:is_position_inside(intermediate_position, min_allowed_vortex_distance)
@@ -374,7 +374,7 @@ PlayerBotNavigation._goal_reached = function (self, position, goal, previous_goa
 	end
 
 	local at_goal = flat_distance < flat_threshold and distance_z > -0.35 and distance_z < 0.5
-	local goal_reached = not not passed_goal or not not at_goal
+	local goal_reached = passed_goal or at_goal
 
 	if goal_reached then
 		self._close_to_goal_time = nil

@@ -196,7 +196,7 @@ SoundSectorSystem.update = function (self, context, t, dt)
 
 	local camera_position = Unit.local_position(self.camera_unit, 0)
 
-	camera_position = Vector3.is_valid(camera_position) and (not not camera_position or not not Vector3(0, 0, 0)) or not Vector3.is_valid(camera_position) and not not Vector3(0, 0, 0)
+	camera_position = Vector3.is_valid(camera_position) and (camera_position or Vector3(0, 0, 0)) or not Vector3.is_valid(camera_position) and Vector3(0, 0, 0)
 
 	local sector_sound_source_ids = self._sector_sound_source_ids
 
@@ -257,7 +257,7 @@ end
 SoundSectorSystem._play_sector_sound_event = function (self, sector_index, sound_id, num_of_units_in_sector, units_center, sound_event)
 	-- function 12
 	local level_settings = LevelHelper:current_level_settings()
-	local terrain = not not level_settings.terrain
+	local terrain = level_settings.terrain
 	local sound_source_unit = self._sector_sound_source_units[sector_index]
 	local sound_environment_system = Managers.state.entity:system("sound_environment_system")
 	local wwise_world = self.wwise_world
@@ -268,7 +268,7 @@ SoundSectorSystem._play_sector_sound_event = function (self, sector_index, sound
 	sound_environment_system:register_source_environment_update(wwise_source_id, sound_source_unit)
 
 	self._sector_sound_source_ids[sound_id] = wwise_source_id
-	self._sector_sound_source_refs[wwise_source_id] = not not self._sector_sound_source_refs[wwise_source_id] + 1
+	self._sector_sound_source_refs[wwise_source_id] = self._sector_sound_source_refs[wwise_source_id] + 1
 	self.current_audio_event = sound_event
 end
 

@@ -304,7 +304,7 @@ settings.proc_functions = {
 
 				if not thornsister_status_extension:is_knocked_down() then
 					local thornsister_health_extension = ScriptUnit.has_extension(thornsister_unit, "health_system")
-					local thornsister_current_health = not not thornsister_health_extension and not not thornsister_health_extension:current_health_percent()
+					local thornsister_current_health = thornsister_health_extension and thornsister_health_extension:current_health_percent()
 
 					if thornsister_current_health and thornsister_current_health < 1 then
 						DamageUtils.heal_network(thornsister_unit, owner_unit, heal_amount, "heal_from_proc")
@@ -534,7 +534,7 @@ settings.proc_functions = {
 		if ALIVE[owner_unit] then
 			local career_extension = ScriptUnit.extension(owner_unit, "career_system")
 			local template = buff.template
-			local time_to_remove = not not template.time_removed_per_kill
+			local time_to_remove = template.time_removed_per_kill
 
 			career_extension:modify_extra_ability_charge(time_to_remove)
 		end
@@ -627,7 +627,7 @@ settings.buff_function_templates = {
 
 		for i = 1, num_units do
 			local unit = player_and_bot_units[i]
-			local buff_instance = not not buff.buff_instances
+			local buff_instance = buff.buff_instances
 
 			if ALIVE[unit] then
 				local unit_position = POSITION_LOOKUP[unit]
@@ -682,7 +682,7 @@ settings.buff_function_templates = {
 			local health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
 			local template = buff.template
 			local thp_to_lose = template.thp_to_lose
-			local has_thp = not not health_extension and thp_to_lose < health_extension:current_temporary_health()
+			local has_thp = health_extension and thp_to_lose < health_extension:current_temporary_health()
 
 			if buff_extension:has_buff_type("kerillian_thorn_sister_free_ability_stack") and has_thp then
 				local hp_to_gain = template.hp_to_gain

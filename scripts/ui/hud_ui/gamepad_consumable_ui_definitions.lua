@@ -108,7 +108,7 @@ local function create_consumable_widget(angle, icon_offset, ammo_offset)
 					retained_mode = true,
 					content_check_function = function (content)
 						-- function 2
-						return not not content.has_data
+						return content.has_data
 					end
 				},
 				{
@@ -118,7 +118,7 @@ local function create_consumable_widget(angle, icon_offset, ammo_offset)
 					retained_mode = true,
 					content_check_function = function (content)
 						-- function 3
-						return not not content.has_data
+						return content.has_data
 					end
 				}
 			}

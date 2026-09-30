@@ -47,18 +47,18 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 		})
 	end
 
-	local action_hand = not not action_init_data and not not action_init_data.action_hand
-	local damage_profile_name = action_hand and not not new_action["damage_profile_" .. action_hand] or not action_hand and not not new_action.damage_profile
+	local action_hand = action_init_data and action_init_data.action_hand
+	local damage_profile_name = action_hand and new_action["damage_profile_" .. action_hand] or not action_hand and new_action.damage_profile
 
 	self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
 	self.damage_profile = DamageProfileTemplates[damage_profile_name]
 
-	local damage_profile_name_aoe = action_hand and not not new_action["damage_profile_aoe_" .. action_hand] or not action_hand and not not new_action.damage_profile_aoe
+	local damage_profile_name_aoe = action_hand and new_action["damage_profile_aoe_" .. action_hand] or not action_hand and new_action.damage_profile_aoe
 
 	self.damage_profile_aoe_id = NetworkLookup.damage_profiles[damage_profile_name_aoe]
 	self.damage_profile_aoe = DamageProfileTemplates[damage_profile_name_aoe]
 
-	local damage_profile_target_name = action_hand and not not new_action["damage_profile_target" .. action_hand] or not action_hand and not not new_action.damage_profile_target
+	local damage_profile_target_name = action_hand and new_action["damage_profile_target" .. action_hand] or not action_hand and new_action.damage_profile_target
 
 	self.damage_profile_target_id = NetworkLookup.damage_profiles[damage_profile_target_name]
 	self.damage_profile_target = DamageProfileTemplates[damage_profile_target_name]
@@ -86,7 +86,7 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
 	local owner_player = Managers.player:owner(owner_unit)
 	local melee_friendly_fire = DamageUtils.allow_friendly_fire_melee(difficulty_settings, owner_player)
-	local collision_filter = melee_friendly_fire and not not "filter_melee_sweep" or not melee_friendly_fire and not not "filter_melee_sweep_no_player"
+	local collision_filter = melee_friendly_fire and "filter_melee_sweep" or not melee_friendly_fire and "filter_melee_sweep_no_player"
 	local results = PhysicsWorld.immediate_raycast(physics_world, pos, direction, new_action.dedicated_target_range, "all", "collision_filter", collision_filter)
 
 	if results then
@@ -124,9 +124,9 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 		local smart_targeting_unit = targeting_data.unit
 
 		if HEALTH_ALIVE[smart_targeting_unit] then
-			local smart_targeting_position = not not Unit.has_node(smart_targeting_unit, "j_spine")
-			local target_world_position = not not POSITION_LOOKUP[smart_targeting_unit]
-			local target_position = not not smart_targeting_position or not not target_world_position
+			local smart_targeting_position = Unit.has_node(smart_targeting_unit, "j_spine")
+			local target_world_position = POSITION_LOOKUP[smart_targeting_unit]
+			local target_position = smart_targeting_position or target_world_position
 			local distance = Vector3.length(pos - target_position)
 
 			if HEALTH_ALIVE[smart_targeting_unit] and distance < new_action.dedicated_target_range then
@@ -139,7 +139,7 @@ ActionShieldSlam.client_owner_start_action = function (self, new_action, t, chai
 
 	local anim_time_scale = ActionUtils.get_action_time_scale(owner_unit, new_action)
 
-	self.time_to_hit = t + not not new_action.hit_time / anim_time_scale
+	self.time_to_hit = t + new_action.hit_time / anim_time_scale
 
 	table.clear(self.hit_units)
 	table.clear(self.inner_hit_units)
@@ -187,7 +187,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 	local unit_forward = Quaternion.forward(Unit.local_rotation(first_person_unit, 0))
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 	local self_pos = first_person_extension:current_position()
-	local forward_offset = not not current_action.forward_offset
+	local forward_offset = current_action.forward_offset
 	local attack_pos = self_pos + unit_forward * forward_offset
 	local radius = current_action.push_radius
 	local collision_filter = "filter_melee_sweep"
@@ -195,7 +195,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 	local inner_forward_offset = forward_offset + radius * 0.65
 	local inner_attack_pos = self_pos + unit_forward * inner_forward_offset
 	local inner_attack_pos_near = self_pos + unit_forward
-	local inner_radius = not not current_action.inner_push_radius
+	local inner_radius = current_action.inner_push_radius
 	local inner_radius_sq = inner_radius * inner_radius
 	local inner_hit_units = self.inner_hit_units
 	local hit_units = self.hit_units
@@ -242,11 +242,11 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 
 				do
 					local node = Actor.node(hit_actor)
-					local hit_zone = not not breed and not not breed.hit_zones_lookup[node]
-					local target_hit_zone_name = hit_zone and not not hit_zone.name or not hit_zone and not not "torso"
-					local target_hit_position = not not Unit.has_node(hit_unit, "j_spine")
-					local target_world_position = not not POSITION_LOOKUP[hit_unit]
-					local hit_position = not not target_hit_position or not not target_world_position
+					local hit_zone = breed and breed.hit_zones_lookup[node]
+					local target_hit_zone_name = hit_zone and hit_zone.name or not hit_zone and "torso"
+					local target_hit_position = Unit.has_node(hit_unit, "j_spine")
+					local target_world_position = POSITION_LOOKUP[hit_unit]
+					local hit_position = target_hit_position or target_world_position
 
 					self.target_hit_zones_names[hit_unit] = target_hit_zone_name
 					self.target_hit_unit_positions[hit_unit] = hit_position
@@ -319,7 +319,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 					break
 				end
 
-				local hit_position = not not POSITION_LOOKUP[hit_unit]
+				local hit_position = POSITION_LOOKUP[hit_unit]
 				local distance_to_inner_position_sq = math.min(Vector3.distance_squared(hit_position, inner_attack_pos), Vector3.distance_squared(hit_position, inner_attack_pos_near))
 
 				if distance_to_inner_position_sq <= inner_radius_sq then
@@ -346,10 +346,10 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 
 	for hit_unit, _ in pairs(inner_hit_units) do
 		local breed = unit_get_data(hit_unit, "breed")
-		local hit_zone_name = not not self.target_hit_zones_names[hit_unit]
-		local target_hit_position = not not Unit.has_node(hit_unit, "j_spine")
-		local target_world_position = not not POSITION_LOOKUP[hit_unit]
-		local hit_position = not not target_hit_position or not not target_world_position
+		local hit_zone_name = self.target_hit_zones_names[hit_unit]
+		local target_hit_position = Unit.has_node(hit_unit, "j_spine")
+		local target_world_position = POSITION_LOOKUP[hit_unit]
+		local hit_position = target_hit_position or target_world_position
 		local attack_direction = Vector3.normalize(hit_position - self_pos)
 		local hit_unit_id, is_level_unit = network_manager:game_object_or_level_id(hit_unit)
 		local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
@@ -357,14 +357,14 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 		if breed and self:_is_infront_player(self_pos, unit_forward, hit_position, current_action.push_dot) then
 			local is_server = self.is_server
 			local hit_default_target = hit_unit == target_breed_unit
-			local damage_profile = hit_default_target and not not self.damage_profile_target or not hit_default_target and not not self.damage_profile
-			local damage_profile_id = hit_default_target and not not self.damage_profile_target_id or not hit_default_target and not not self.damage_profile_id
+			local damage_profile = hit_default_target and self.damage_profile_target or not hit_default_target and self.damage_profile
+			local damage_profile_id = hit_default_target and self.damage_profile_target_id or not hit_default_target and self.damage_profile_id
 			local target_index = 1
 			local power_level = self.power_level
 			local is_critical_strike = self._is_critical_strike
 			local shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit)
-			local actor = not not Unit.find_actor(hit_unit, "c_spine")
-			local actor_position_hit = not not actor and not not Actor.center_of_mass(actor)
+			local actor = Unit.find_actor(hit_unit, "c_spine")
+			local actor_position_hit = actor and Actor.center_of_mass(actor)
 
 			if actor_position_hit then
 				self._overridable_settings = current_action
@@ -373,7 +373,7 @@ ActionShieldSlam._hit = function (self, world, can_damage, owner_unit, current_a
 			end
 
 			local send_to_server = true
-			local charge_value = not not damage_profile.charge_value
+			local charge_value = damage_profile.charge_value
 			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
 
 			DamageUtils.buff_on_attack(owner_unit, hit_unit, charge_value, is_critical_strike, hit_zone_name, hit_index, send_to_server, buff_type, nil, self.item_name)
@@ -456,7 +456,7 @@ ActionShieldSlam.finish = function (self, reason)
 
 	if reason ~= "new_interupting_action" then
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true
@@ -471,7 +471,7 @@ ActionShieldSlam._is_infront_player = function (self, player_position, player_di
 	local player_to_hit_unit_dir = Vector3.normalize(hit_position - player_position)
 	local dot = Vector3.dot(player_to_hit_unit_dir, player_direction)
 
-	if dot > (not not push_dot or not not 0.35) then
+	if dot > (push_dot or 0.35) then
 		return true
 	end
 end

@@ -69,7 +69,7 @@ end
 
 function unpack_unbox(t, k)
 	-- function 6
-	k = not not k or not not 1
+	k = k or 1
 
 	local var = t[k]
 
@@ -192,7 +192,7 @@ end
 
 SplineMovementMetered._set_spline_lengths = function (self, splines, spline_class, segments_per_spline)
 	-- function 15
-	segments_per_spline = not not segments_per_spline or not not 10
+	segments_per_spline = segments_per_spline or 10
 
 	for index, spline in ipairs(splines) do
 		local points = spline.points
@@ -207,7 +207,7 @@ SplineMovementMetered.draw = function (self, script_drawer, radius, color)
 	-- function 16
 	local pos = self:current_position()
 
-	script_drawer:sphere(pos, not not radius or not not 1, color)
+	script_drawer:sphere(pos, radius or 1, color)
 end
 
 SplineMovementMetered.current_position = function (self)
@@ -264,7 +264,7 @@ SplineMovementHermiteInterpolatedMetered = class(SplineMovementHermiteInterpolat
 
 SplineMovementHermiteInterpolatedMetered.init = function (self, spline_curve, splines, spline_class, subdivisions, cached_spline)
 	-- function 21
-	self._splines = not not cached_spline or not not splines
+	self._splines = cached_spline or splines
 	self._spline_curve = spline_curve
 	self._spline_class = spline_class
 	self._speed = 0
@@ -335,7 +335,7 @@ end
 
 SplineMovementHermiteInterpolatedMetered._set_spline_lengths = function (self, splines, spline_class, segments_per_spline)
 	-- function 24
-	segments_per_spline = not not segments_per_spline or not not 10
+	segments_per_spline = segments_per_spline or 10
 
 	for index, spline in ipairs(splines) do
 		local points = spline.points
@@ -350,7 +350,7 @@ SplineMovementHermiteInterpolatedMetered.draw = function (self, script_drawer, r
 	-- function 25
 	local pos = self:current_position()
 
-	script_drawer:sphere(pos, not not radius or not not 1, color)
+	script_drawer:sphere(pos, radius or 1, color)
 end
 
 SplineMovementHermiteInterpolatedMetered.draw_subdivisions = function (self, script_drawer, color)

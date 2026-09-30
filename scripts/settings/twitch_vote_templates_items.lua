@@ -41,7 +41,7 @@ local function default_condition_func(vote_data)
 
 		for id, player_validation_data in pairs(validation_data) do
 			if not players[id] or players[id] and players[id]:name() ~= player_validation_data.name then
-				debug_print(string.format("[TWITCH VOTE DATA VALIDATION] Resetting %q since a bot/player has been removed or replaced (%q ~= %q or id: %q is missing)", tostring(player_validation_data.variable), tostring(players[id] and not not players[id]:name() or not players[id] and not not nil), tostring(player_validation_data.name), id))
+				debug_print(string.format("[TWITCH VOTE DATA VALIDATION] Resetting %q since a bot/player has been removed or replaced (%q ~= %q or id: %q is missing)", tostring(player_validation_data.variable), tostring(players[id] and players[id]:name() or not players[id] and nil), tostring(player_validation_data.name), id))
 
 				vote_data.options[player_validation_data.option] = 0
 				reset_validation_data = true
@@ -143,7 +143,7 @@ local function add_item(is_server, player_unit, pickup_type)
 	end
 end
 
-TwitchVoteTemplates = not not TwitchVoteTemplates
+TwitchVoteTemplates = TwitchVoteTemplates
 TwitchVoteTemplates.twitch_give_first_aid_kit = {
 	cost = -100,
 	use_frame_texture = true,
@@ -156,7 +156,7 @@ TwitchVoteTemplates.twitch_give_first_aid_kit = {
 	},
 	condition_func = function ()
 		-- function 4
-		return not twitch_settings.disable_giving_items and not not not twitch_settings.disable_positive_votes
+		return not twitch_settings.disable_giving_items and not twitch_settings.disable_positive_votes
 	end,
 	on_success = function (is_server, vote_index)
 		-- function 5
@@ -194,7 +194,7 @@ TwitchVoteTemplates.twitch_give_healing_draught = {
 	},
 	condition_func = function ()
 		-- function 6
-		return not twitch_settings.disable_giving_items and not not not twitch_settings.disable_positive_votes
+		return not twitch_settings.disable_giving_items and not twitch_settings.disable_positive_votes
 	end,
 	on_success = function (is_server, vote_index)
 		-- function 7
@@ -232,7 +232,7 @@ TwitchVoteTemplates.twitch_give_damage_boost_potion = {
 	},
 	condition_func = function ()
 		-- function 8
-		return not twitch_settings.disable_giving_items and not not not twitch_settings.disable_positive_votes
+		return not twitch_settings.disable_giving_items and not twitch_settings.disable_positive_votes
 	end,
 	on_success = function (is_server, vote_index)
 		-- function 9
@@ -270,7 +270,7 @@ TwitchVoteTemplates.twitch_give_speed_boost_potion = {
 	},
 	condition_func = function ()
 		-- function 10
-		return not twitch_settings.disable_giving_items and not not not twitch_settings.disable_positive_votes
+		return not twitch_settings.disable_giving_items and not twitch_settings.disable_positive_votes
 	end,
 	on_success = function (is_server, vote_index)
 		-- function 11
@@ -308,7 +308,7 @@ TwitchVoteTemplates.twitch_give_cooldown_reduction_potion = {
 	},
 	condition_func = function ()
 		-- function 12
-		return not twitch_settings.disable_giving_items and not not not twitch_settings.disable_positive_votes
+		return not twitch_settings.disable_giving_items and not twitch_settings.disable_positive_votes
 	end,
 	on_success = function (is_server, vote_index)
 		-- function 13
@@ -346,7 +346,7 @@ TwitchVoteTemplates.twitch_give_frag_grenade_t1 = {
 	},
 	condition_func = function ()
 		-- function 14
-		return not twitch_settings.disable_giving_items and not not not twitch_settings.disable_positive_votes
+		return not twitch_settings.disable_giving_items and not twitch_settings.disable_positive_votes
 	end,
 	on_success = function (is_server, vote_index)
 		-- function 15
@@ -384,7 +384,7 @@ TwitchVoteTemplates.twitch_give_fire_grenade_t1 = {
 	},
 	condition_func = function ()
 		-- function 16
-		return not twitch_settings.disable_giving_items and not not not twitch_settings.disable_positive_votes
+		return not twitch_settings.disable_giving_items and not twitch_settings.disable_positive_votes
 	end,
 	on_success = function (is_server, vote_index)
 		-- function 17

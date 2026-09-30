@@ -38,10 +38,10 @@ ActionThrownProjectile.client_owner_start_action = function (self, new_action, t
 	self.state = "waiting_to_shoot"
 
 	local buffed_anim_time_scale = ActionUtils.get_action_time_scale(owner_unit, new_action)
-	local fire_time = not not new_action.fire_time * (1 / buffed_anim_time_scale)
+	local fire_time = new_action.fire_time * (1 / buffed_anim_time_scale)
 
 	self._time_to_shoot = t + fire_time
-	self._time_to_unzoom = new_action.unzoom_time and not not (t + new_action.unzoom_time) or not new_action.unzoom_time and not not nil
+	self._time_to_unzoom = new_action.unzoom_time and t + new_action.unzoom_time or not new_action.unzoom_time and nil
 	self._extra_buff_shot = false
 
 	self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, nil, "on_critical_shot", nil)

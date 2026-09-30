@@ -55,7 +55,7 @@ BTSelector_grey_seer.run = function (self, unit, blackboard, t, dt)
 	do
 		local node_intro_sequence = children[2]
 		local t = Managers.time:time("game")
-		local condition_result = not not blackboard.intro_timer
+		local condition_result = blackboard.intro_timer
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_intro_sequence, "aborted")
@@ -119,7 +119,7 @@ BTSelector_grey_seer.run = function (self, unit, blackboard, t, dt)
 	do
 		local node_mounted_combat = children[5]
 		local mount_unit = blackboard.mounted_data.mount_unit
-		local condition_result = not blackboard.knocked_off_mount and not not HEALTH_ALIVE[mount_unit]
+		local condition_result = not blackboard.knocked_off_mount and HEALTH_ALIVE[mount_unit]
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_mounted_combat, "aborted")
@@ -232,7 +232,7 @@ BTSelector_grey_seer.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_spell_casting = children[10]
-		local condition_result = not not blackboard.ready_to_summon
+		local condition_result = blackboard.ready_to_summon
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_spell_casting, "aborted")
@@ -253,7 +253,7 @@ BTSelector_grey_seer.run = function (self, unit, blackboard, t, dt)
 
 	do
 		local node_ground_combat = children[11]
-		local condition_result = blackboard.knocked_off_mount and not not HEALTH_ALIVE[blackboard.target_unit] or not blackboard.knocked_off_mount and not HEALTH_ALIVE[blackboard.mounted_data.mount_unit] and not not HEALTH_ALIVE[blackboard.target_unit]
+		local condition_result = blackboard.knocked_off_mount and HEALTH_ALIVE[blackboard.target_unit] or not blackboard.knocked_off_mount and not HEALTH_ALIVE[blackboard.mounted_data.mount_unit] and HEALTH_ALIVE[blackboard.target_unit]
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_ground_combat, "aborted")

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/attack_intensity_settings.lua
 
-AttackIntensitySettings = not not AttackIntensitySettings
+AttackIntensitySettings = AttackIntensitySettings
 AttackIntensitySettings.attack_type_intesities = {
 	cleave = true,
 	sweep = true,

@@ -93,11 +93,11 @@ CameraStateObserverSpectator.update = function (self, unit, input, dt, context, 
 	local camera_manager = Managers.state.camera
 	local viewport_name = camera_extension.viewport_name
 	local gamepad_active = input_manager:is_device_active("gamepad")
-	local look_input = gamepad_active and not not input_source:get("look_controller_3p") or not gamepad_active and not not input_source:get("look")
+	local look_input = gamepad_active and input_source:get("look_controller_3p") or not gamepad_active and input_source:get("look")
 	local look_delta = Vector3(0, 0, 0)
 
 	if look_input then
-		local look_sensitivity = camera_manager:has_viewport(viewport_name) and not not (camera_manager:fov(viewport_name) / 0.785) or not camera_manager:has_viewport(viewport_name) and not not 1
+		local look_sensitivity = camera_manager:has_viewport(viewport_name) and camera_manager:fov(viewport_name) / 0.785 or not camera_manager:has_viewport(viewport_name) and 1
 
 		look_delta = look_delta + look_input * look_sensitivity
 	end

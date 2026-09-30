@@ -454,7 +454,7 @@ local animation_definitions = {
 				widget.offset[1] = params.src[1]
 				widget.offset[2] = params.src[2]
 
-				local gui = RETAINED_MODE_ENABLED and not not params.ui_renderer.gui_retained or not RETAINED_MODE_ENABLED and not not params.ui_renderer.gui
+				local gui = RETAINED_MODE_ENABLED and params.ui_renderer.gui_retained or not RETAINED_MODE_ENABLED and params.ui_renderer.gui
 				local content = widget.content
 				local material = Gui.material(gui, widget.content.progress_id)
 
@@ -483,14 +483,14 @@ local animation_definitions = {
 				local content = widget.content
 				local p, mp = content.progress, content.max_progress
 
-				content.start_anim_progress = not not content.start_anim_progress
+				content.start_anim_progress = content.start_anim_progress
 				content.end_anim_progress = p / mp
 				content.progress_text = tostring(mp - p)
 			end,
 			update = function (ui_scenegraph, scenegraph_def, widget, progress, params)
 				-- function 7
 				local content = widget.content
-				local gui = RETAINED_MODE_ENABLED and not not params.ui_renderer.gui_retained or not RETAINED_MODE_ENABLED and not not params.ui_renderer.gui
+				local gui = RETAINED_MODE_ENABLED and params.ui_renderer.gui_retained or not RETAINED_MODE_ENABLED and params.ui_renderer.gui
 				local material = Gui.material(gui, widget.content.progress_id)
 				local start_anim_progress = content.start_anim_progress
 				local end_anim_progress = content.end_anim_progress

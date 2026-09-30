@@ -278,7 +278,7 @@ EacManager.server_create = function (self, server_name)
 
 	if self._eac_supported then
 		if USE_EOS then
-			local network_model = EOS_EAC.has_eac_server() and not not "client_server" or not EOS_EAC.has_eac_server() and not not "peer_to_peer"
+			local network_model = EOS_EAC.has_eac_server() and "client_server" or not EOS_EAC.has_eac_server() and "peer_to_peer"
 
 			EOS_EAC.begin_session(network_model)
 		else
@@ -474,8 +474,8 @@ EacManager._pump_eos_actions = function (self)
 	-- function 24
 	while EOS_EAC.has_eac_action() do
 		local a = EOS_EAC.next_eac_action()
-		local action_str = not not table.find(EOS_EAC_ACCCA, a.action)
-		local reason_str = not not table.find(EOS_EAC_ACCCAR, a.reason)
+		local action_str = table.find(EOS_EAC_ACCCA, a.action)
+		local reason_str = table.find(EOS_EAC_ACCCAR, a.reason)
 
 		eac_printf("Got action { action=%d %q, reason=%d %q, details=%q, peer=%q }", a.action, action_str, a.reason, reason_str, a.details, a.peer)
 
@@ -565,12 +565,12 @@ local AUTH_STATE_MACHINE = {
 			self._user_id = EOS_EAC.user_id()
 			self._eos_auth_error = nil
 		else
-			self._eos_auth_error = string.format("EOS auth status=%s, result=%s", status, not not table.find(EOS_Result, result))
+			self._eos_auth_error = string.format("EOS auth status=%s, result=%s", status, (table.find(EOS_Result, result)))
 		end
 
 		self._eos_auth_complete = true
 
-		eac_printf("Login complete. Error: %s", not not self._eos_auth_error)
+		eac_printf("Login complete. Error: %s", self._eos_auth_error)
 
 		return "poll_valid"
 	end,
@@ -591,7 +591,7 @@ EacManager._handle_eos = function (self, t)
 	end
 
 	if not DEDICATED_SERVER then
-		local auth_state = not not self._auth_state
+		local auth_state = self._auth_state
 		local handler = AUTH_STATE_MACHINE[auth_state]
 		local next_state = handler(self, t)
 
@@ -644,7 +644,7 @@ EacManager._handle_violations = function (self)
 			violation, cause = "AUTH_ERROR", self._eos_auth_error
 		else
 			violation, cause = EOS_EAC.get_integrity_violation()
-			violation = not not violation and (not not table.find(EOS_EAC_ACCVT, violation) or not not "UNKNOWN")
+			violation = violation and (table.find(EOS_EAC_ACCVT, violation) or "UNKNOWN")
 		end
 
 		if violation then
@@ -663,7 +663,7 @@ EacManager._handle_violations = function (self)
 			local KEYWORD_START = "{#color(193,91,36)}"
 			local VALUE_START = "{#color(255,255,255)}: "
 			local BODY_START = "{#reset()}"
-			local message = KEYWORD_START .. Localize("eac_state") .. VALUE_START .. Localize("eac_state_untrusted") .. "\n" .. KEYWORD_START .. Localize("eac_violation_type") .. VALUE_START .. violation .. "\n" .. KEYWORD_START .. Localize("eac_cause") .. VALUE_START .. cause .. "\n" .. BODY_START .. Localize(state ~= EacState.banned and not not "eac_untrusted_explanation" or not (state ~= EacState.banned) and not not "eac_banned_explanation")
+			local message = KEYWORD_START .. Localize("eac_state") .. VALUE_START .. Localize("eac_state_untrusted") .. "\n" .. KEYWORD_START .. Localize("eac_violation_type") .. VALUE_START .. violation .. "\n" .. KEYWORD_START .. Localize("eac_cause") .. VALUE_START .. cause .. "\n" .. BODY_START .. Localize(state ~= EacState.banned and "eac_untrusted_explanation" or not (state ~= EacState.banned) and "eac_banned_explanation")
 
 			self._eac_violation_message = message
 			self._eac_violation_type = violation

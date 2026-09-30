@@ -153,7 +153,7 @@ end
 CrosshairUI.update_crosshair_style = function (self, equipment)
 	-- function 5
 	local game_mode_manager = Managers.state.game_mode
-	local has_realism = not not game_mode_manager and not not game_mode_manager:has_activated_mutator("realism")
+	local has_realism = game_mode_manager and game_mode_manager:has_activated_mutator("realism")
 
 	if has_realism then
 		self.crosshair_style = "dot"
@@ -164,7 +164,7 @@ CrosshairUI.update_crosshair_style = function (self, equipment)
 	local wielded_item_data = equipment.wielded
 	local item_template = BackendUtils.get_item_template(wielded_item_data)
 	local crosshair_style = item_template.crosshair_style
-	local weapon_unit = not not equipment.right_hand_wielded_unit
+	local weapon_unit = equipment.right_hand_wielded_unit
 	local fire_at_gaze_setting = item_template.fire_at_gaze_setting
 
 	if Unit.alive(weapon_unit) then
@@ -344,7 +344,7 @@ CrosshairUI.update_spread = function (self, dt, t, equipment)
 	local pitch, yaw = 0, 0
 
 	if item_template.default_spread_template then
-		local weapon_unit = not not equipment.right_hand_wielded_unit
+		local weapon_unit = equipment.right_hand_wielded_unit
 
 		if weapon_unit and ScriptUnit.has_extension(weapon_unit, "spread_system") then
 			local spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
@@ -492,8 +492,8 @@ CrosshairUI._set_widget_point_offset = function (self, widget, point_index, max_
 	local offset = widget_style.offset
 	local pivot = widget_style.pivot
 
-	pitch_offset = not not pitch_offset or not not 0
-	yaw_offset = not not yaw_offset or not not 0
+	pitch_offset = pitch_offset or 0
+	yaw_offset = yaw_offset or 0
 	offset[1] = ptx + pitch_offset * math.sign(ptx)
 	offset[2] = pty + yaw_offset * math.sign(pty)
 	widget_style.angle = -angle
@@ -505,7 +505,7 @@ CrosshairUI._get_point_offset = function (self, point_index, max_points, pitch_p
 	local x, y = 0, 0
 	local pitch_radius = max_radius * pitch_percentage
 	local yaw_radius = max_radius * yaw_percentage
-	local start_progress = (not not start_degrees or not not 0) / 360 % 1
+	local start_progress = (start_degrees or 0) / 360 % 1
 	local real_index = point_index - 1
 	local fraction = real_index / max_points
 	local rotation_progress = (start_progress + fraction) % 1
@@ -522,9 +522,9 @@ CrosshairUI._set_crosshair_target_info = function (self, portrait, state)
 	local content = self.wh_priest.content
 
 	content.state = state
-	content.career_portrait = portrait and (not not portrait or not not self._small_career_portrait) or not portrait and not not self._small_career_portrait
+	content.career_portrait = portrait and (portrait or self._small_career_portrait) or not portrait and self._small_career_portrait
 	content.text_id = "$KEY;Player__action_one:"
-	self._small_career_portrait = portrait and (not not portrait or not not self._small_career_portrait) or not portrait and not not self._small_career_portrait
+	self._small_career_portrait = portrait and (portrait or self._small_career_portrait) or not portrait and self._small_career_portrait
 end
 
 CrosshairUI._update_self_to_ally_transition = function (self)
@@ -532,7 +532,7 @@ CrosshairUI._update_self_to_ally_transition = function (self)
 	local content = self.wh_priest.content
 
 	if content.state ~= self.state then
-		local animation_name = content.state ~= "wh_priest_self" and not not "self_to_ally" or not (content.state ~= "wh_priest_self") and not not "ally_to_self"
+		local animation_name = content.state ~= "wh_priest_self" and "self_to_ally" or not (content.state ~= "wh_priest_self") and "ally_to_self"
 
 		self.wh_crosshair_anim = self._ui_animator:start_animation(animation_name, self.wh_priest, scenegraph_definition)
 	end

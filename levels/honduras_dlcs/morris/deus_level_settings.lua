@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/morris/deus_theme_settings")
 
-DEUS_LEVEL_PICKUP_SETTINGS = not not DEUS_LEVEL_PICKUP_SETTINGS
+DEUS_LEVEL_PICKUP_SETTINGS = DEUS_LEVEL_PICKUP_SETTINGS
 DEUS_LEVEL_PICKUP_SETTINGS.default_signature_pickup_settings = {
 	default = {
 		primary = {
@@ -163,8 +163,8 @@ DEUS_LEVEL_PICKUP_SETTINGS.default_arena_pickup_settings = {
 		}
 	}
 }
-DEUS_CHEST_TYPES = not not DEUS_CHEST_TYPES
-DEUS_WEAPON_CHEST_DISTRIBUTION = not not DEUS_WEAPON_CHEST_DISTRIBUTION
+DEUS_CHEST_TYPES = DEUS_CHEST_TYPES
+DEUS_WEAPON_CHEST_DISTRIBUTION = DEUS_WEAPON_CHEST_DISTRIBUTION
 DEUS_WEAPON_CHEST_DISTRIBUTION.default_signature = {
 	[DEUS_CHEST_TYPES.swap_ranged] = 1.5,
 	[DEUS_CHEST_TYPES.swap_melee] = 1.5,
@@ -183,7 +183,7 @@ DEUS_WEAPON_CHEST_DISTRIBUTION.default_arena = {
 	[DEUS_CHEST_TYPES.upgrade] = 1,
 	[DEUS_CHEST_TYPES.power_up] = 0
 }
-DEUS_LEVEL_SETTINGS = not not DEUS_LEVEL_SETTINGS
+DEUS_LEVEL_SETTINGS = DEUS_LEVEL_SETTINGS
 DEUS_LEVEL_SETTINGS.pat_mountain = {
 	ambient_sound_event = "silent_default_world_sound",
 	environment_state = "exterior",
@@ -1078,7 +1078,7 @@ DEUS_LEVEL_SETTINGS.arena_belakor = {
 		DEUS_THEME_TYPES.BELAKOR
 	}
 }
-DEUS_SHRINE_LEVEL_SETTINGS = not not DEUS_SHRINE_LEVEL_SETTINGS
+DEUS_SHRINE_LEVEL_SETTINGS = DEUS_SHRINE_LEVEL_SETTINGS
 DEUS_SHRINE_LEVEL_SETTINGS.shop_fortune = {
 	display_name = "deus_shop",
 	texture_id = "twitch_icon_shrine",

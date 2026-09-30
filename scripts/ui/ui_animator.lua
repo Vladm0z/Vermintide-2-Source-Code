@@ -15,7 +15,7 @@ UIAnimator.start_animation = function (self, anim_name, widget, scenegraph_def, 
 	local ui_scenegraph = self._ui_scenegraph
 	local times = {}
 
-	initial_delay = not not initial_delay or not not 0
+	initial_delay = initial_delay or 0
 
 	local anim_def = self._animation_definitions[anim_name]
 
@@ -31,7 +31,7 @@ UIAnimator.start_animation = function (self, anim_name, widget, scenegraph_def, 
 		if anim.start_progress then
 			t0, t1 = anim.start_progress, anim.end_progress
 		else
-			t0 = not not anim.delay or not not 0
+			t0 = anim.delay or 0
 			t1 = t0 + anim.duration
 		end
 
@@ -49,7 +49,7 @@ UIAnimator.start_animation = function (self, anim_name, widget, scenegraph_def, 
 		widget = widget,
 		scenegraph_def = scenegraph_def,
 		completed_animations = {},
-		params = not not params or not not {},
+		params = params or {},
 		times = times
 	}
 

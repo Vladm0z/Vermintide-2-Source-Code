@@ -416,7 +416,7 @@ weapon_template.attack_meta_data = {
 			if current_action_settings then
 				local action_lookup = current_action_settings.lookup_data
 
-				return not not action_lookup and action_lookup.action_name == "action_one" and action_lookup.sub_action_name == "default"
+				return action_lookup and action_lookup.action_name == "action_one" and action_lookup.sub_action_name == "default"
 			end
 		end
 

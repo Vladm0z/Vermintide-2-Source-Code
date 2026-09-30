@@ -1485,7 +1485,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 					},
 					content_check_function = function (content)
 						-- function 4
-						return not not content.tooltip
+						return content.tooltip
 					end
 				},
 				{
@@ -1520,7 +1520,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 					end,
 					content_change_function = function (content, style, _, dt)
 						-- function 8
-						local progress = not not style.progress
+						local progress = style.progress
 
 						progress = (progress + dt) % 1
 
@@ -1538,7 +1538,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 						-- function 9
 						local button_hotspot = content.button_hotspot
 
-						return not button_hotspot.disable_button and not not not content.upgrading
+						return not button_hotspot.disable_button and not content.upgrading
 					end
 				},
 				{
@@ -1549,7 +1549,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 						-- function 10
 						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1655,7 +1655,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 			tooltip_hotspot = {},
 			icon = icon,
 			loading_icon = loading_icon,
-			title_text = not not text or not not "n/a"
+			title_text = text or "n/a"
 		},
 		style = {
 			tooltip = {
@@ -1900,7 +1900,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -1926,7 +1926,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -1951,7 +1951,7 @@ local function create_upgrade_button(scenegraph_id, size, text, font_size)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = not not font_size or not not 24,
+				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {

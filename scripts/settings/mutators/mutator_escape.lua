@@ -70,7 +70,7 @@ return {
 
 			if active_enemies < ACTIVE_ENEMIES_TO_SPAWN_HORDE then
 				local factions = ConflictDirectors[conflict_director.current_conflict_settings].factions
-				local faction = not not factions and not not get_compatible_faction(factions)
+				local faction = factions and get_compatible_faction(factions)
 
 				if faction then
 					local side_manager = Managers.state.side

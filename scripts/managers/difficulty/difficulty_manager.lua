@@ -21,7 +21,7 @@ end
 
 DifficultyManager.set_difficulty = function (self, difficulty, tweak)
 	-- function 2
-	fassert(not not tweak and tweak >= -10 and tweak <= 10, "tweak must be a number from -10 to 10")
+	fassert(tweak and tweak >= -10 and tweak <= 10, "tweak must be a number from -10 to 10")
 
 	if difficulty == "versus_base" then
 		tweak = 0

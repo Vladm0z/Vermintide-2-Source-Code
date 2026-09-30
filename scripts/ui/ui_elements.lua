@@ -21,7 +21,7 @@ UIElements.ButtonMenuSteps = {
 				-- function 2
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not not not button_hotspot.is_selected
+				return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not button_hotspot.is_selected
 			end
 		},
 		{
@@ -32,7 +32,7 @@ UIElements.ButtonMenuSteps = {
 				-- function 3
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover
 			end
 		},
 		{
@@ -54,7 +54,7 @@ UIElements.ButtonMenuSteps = {
 				-- function 5
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not not button_hotspot.is_selected
+				return not button_hotspot.disabled and button_hotspot.is_selected
 			end
 		},
 		{
@@ -87,7 +87,7 @@ UIElements.ButtonMenuSteps = {
 				-- function 8
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover
 			end
 		},
 		{
@@ -131,7 +131,7 @@ UIElements.ButtonMenuStepsWithTimer = {
 				-- function 12
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not not not button_hotspot.is_selected
+				return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not button_hotspot.is_selected
 			end
 		},
 		{
@@ -141,7 +141,7 @@ UIElements.ButtonMenuStepsWithTimer = {
 				-- function 13
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover
 			end
 		},
 		{
@@ -161,7 +161,7 @@ UIElements.ButtonMenuStepsWithTimer = {
 				-- function 15
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not not button_hotspot.is_selected
+				return not button_hotspot.disabled and button_hotspot.is_selected
 			end
 		},
 		{
@@ -193,7 +193,7 @@ UIElements.ButtonMenuStepsWithTimer = {
 				-- function 18
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover
 			end
 		},
 		{
@@ -237,7 +237,7 @@ UIElements.ButtonMenuStepsWithTimer = {
 				-- function 22
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.disabled and not button_hotspot.is_selected and not not button_hotspot.is_hover
+				return not button_hotspot.disabled and not button_hotspot.is_selected and button_hotspot.is_hover
 			end
 		},
 		{
@@ -289,7 +289,7 @@ UIElements.ToggleIconButton = {
 				-- function 26
 				local button_hotspot = content.button_hotspot
 
-				return not not button_hotspot.is_hover
+				return button_hotspot.is_hover
 			end
 		},
 		{
@@ -300,7 +300,7 @@ UIElements.ToggleIconButton = {
 				-- function 27
 				local button_hotspot = content.button_hotspot
 
-				return not not button_hotspot.is_hover
+				return button_hotspot.is_hover
 			end
 		},
 		{
@@ -311,7 +311,7 @@ UIElements.ToggleIconButton = {
 				-- function 28
 				local button_hotspot = content.button_hotspot
 
-				return not not content.toggled
+				return content.toggled
 			end
 		},
 		{
@@ -322,7 +322,7 @@ UIElements.ToggleIconButton = {
 				-- function 29
 				local button_hotspot = content.button_hotspot
 
-				return not not content.toggled
+				return content.toggled
 			end
 		},
 		{
@@ -333,7 +333,7 @@ UIElements.ToggleIconButton = {
 				-- function 30
 				local button_hotspot = content.button_hotspot
 
-				return not button_hotspot.is_hover and not not not content.toggled
+				return not button_hotspot.is_hover and not content.toggled
 			end
 		},
 		{
@@ -344,7 +344,7 @@ UIElements.ToggleIconButton = {
 				-- function 31
 				local button_hotspot = content.button_hotspot
 
-				return button_hotspot.is_hover and button_hotspot.is_clicked ~= 0 or not button_hotspot.is_hover and not not content.toggled
+				return button_hotspot.is_hover and button_hotspot.is_clicked ~= 0 or not button_hotspot.is_hover and content.toggled
 			end
 		},
 		{
@@ -355,7 +355,7 @@ UIElements.ToggleIconButton = {
 				-- function 32
 				local button_hotspot = content.button_hotspot
 
-				return not not button_hotspot.is_hover
+				return button_hotspot.is_hover
 			end
 		},
 		{
@@ -366,7 +366,7 @@ UIElements.ToggleIconButton = {
 				-- function 33
 				local button_hotspot = content.button_hotspot
 
-				return not content.toggled and not not button_hotspot.is_hover
+				return not content.toggled and button_hotspot.is_hover
 			end
 		},
 		{
@@ -377,7 +377,7 @@ UIElements.ToggleIconButton = {
 				-- function 34
 				local button_hotspot = content.button_hotspot
 
-				return not not content.toggled
+				return content.toggled
 			end
 		}
 	}
@@ -712,7 +712,7 @@ UIElements.Button3States = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 46
-				return not not content.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -720,7 +720,7 @@ UIElements.Button3States = {
 			texture_id = "texture_click_id",
 			content_check_function = function (content)
 				-- function 47
-				return content.button_hotspot.is_clicked == 0 or not not content.button_hotspot.is_selected
+				return content.button_hotspot.is_clicked == 0 or content.button_hotspot.is_selected
 			end
 		},
 		{
@@ -754,7 +754,7 @@ UIElements.Button4States = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 50
-				return not content.disabled and not not content.button_hotspot.is_hover
+				return not content.disabled and content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -762,7 +762,7 @@ UIElements.Button4States = {
 			texture_id = "texture_click_id",
 			content_check_function = function (content)
 				-- function 51
-				return not not content.button_hotspot.is_selected
+				return content.button_hotspot.is_selected
 			end
 		},
 		{
@@ -811,7 +811,7 @@ UIElements.Button3StatesNoText = {
 			texture_id = "texture_hover_id",
 			content_check_function = function (content)
 				-- function 55
-				return not not content.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -819,7 +819,7 @@ UIElements.Button3StatesNoText = {
 			texture_id = "texture_click_id",
 			content_check_function = function (content)
 				-- function 56
-				return content.button_hotspot.is_clicked == 0 or not not content.button_hotspot.is_selected
+				return content.button_hotspot.is_clicked == 0 or content.button_hotspot.is_selected
 			end
 		}
 	}
@@ -858,7 +858,7 @@ UIElements.GamepadButton = function (button_type)
 				texture_id = "texture_hover_id",
 				content_check_function = function (content)
 					-- function 60
-					return not not content.button_hotspot.is_hover
+					return content.button_hotspot.is_hover
 				end
 			},
 			{
@@ -866,7 +866,7 @@ UIElements.GamepadButton = function (button_type)
 				texture_id = "texture_click_id",
 				content_check_function = function (content)
 					-- function 61
-					return content.button_hotspot.is_clicked == 0 or content.gamepad_button.is_clicked == 0 or not not content.button_hotspot.is_selected
+					return content.button_hotspot.is_clicked == 0 or content.gamepad_button.is_clicked == 0 or content.button_hotspot.is_selected
 				end
 			},
 			{

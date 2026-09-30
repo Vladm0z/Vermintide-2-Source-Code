@@ -98,7 +98,7 @@ end
 
 CutsceneUI.do_draw = function (self)
 	-- function 5
-	return not not self.letterbox_enabled
+	return self.letterbox_enabled
 end
 
 CutsceneUI.prepare_draw = function (self)
@@ -224,12 +224,12 @@ CutsceneUI.fx_fade = function (self, fade_in_time, hold_time, fade_out_time, col
 	-- function 12
 	local settings = ui_settings.fx_fade
 
-	fade_in_time = not not fade_in_time or not not settings.fade_in_time
-	hold_time = not not hold_time or not not settings.hold_time
-	fade_out_time = not not fade_out_time or not not settings.fade_out_time
-	color = not not color or not not settings.color
+	fade_in_time = fade_in_time or settings.fade_in_time
+	hold_time = hold_time or settings.hold_time
+	fade_out_time = fade_out_time or settings.fade_out_time
+	color = color or settings.color
 
-	local widget = not not table.remove(self.fx_fade_widgets_pool)
+	local widget = table.remove(self.fx_fade_widgets_pool)
 	local target = widget.content
 	local target_index = "fx_fade_alpha"
 	local start_alpha = 0
@@ -262,12 +262,12 @@ CutsceneUI.fx_text_popup = function (self, fade_in_time, hold_time, fade_out_tim
 	-- function 14
 	local settings = ui_settings.fx_text_popup
 
-	fade_in_time = not not fade_in_time or not not settings.fade_in_time
-	hold_time = not not hold_time or not not settings.hold_time
-	fade_out_time = not not fade_out_time or not not settings.fade_out_time
-	text = not not text or not not "no text set"
+	fade_in_time = fade_in_time or settings.fade_in_time
+	hold_time = hold_time or settings.hold_time
+	fade_out_time = fade_out_time or settings.fade_out_time
+	text = text or "no text set"
 
-	local widget = not not table.remove(self.fx_text_popup_widgets_pool)
+	local widget = table.remove(self.fx_text_popup_widgets_pool)
 	local target = widget.content
 	local target_index = "fx_text_popup_alpha"
 	local start_alpha = 0

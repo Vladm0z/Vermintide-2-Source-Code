@@ -119,7 +119,7 @@ CraftPageApplySkinConsole.setup_recipe_requirements = function (self)
 			end
 
 			local has_required_amount = required_amount <= amount_owned
-			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and not not tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and not not "*") .. "/" .. tostring(required_amount)
+			local presentation_amount = (amount_owned < UISettings.max_craft_material_presentation_amount and tostring(amount_owned) or not (amount_owned < UISettings.max_craft_material_presentation_amount) and "*") .. "/" .. tostring(required_amount)
 
 			self:_add_crafting_material_requirement(requirement_index, item_key, presentation_amount, has_required_amount)
 
@@ -188,8 +188,8 @@ CraftPageApplySkinConsole._weapon_slot_updated = function (self)
 	-- function 5
 	local item_interface = Managers.backend:get_interface("items")
 	local added_backend_id = self._craft_item
-	local item_data = not not added_backend_id and not not item_interface:get_item_masterlist_data(added_backend_id)
-	local added_item_slot_type = not not item_data and not not item_data.slot_type
+	local item_data = added_backend_id and item_interface:get_item_masterlist_data(added_backend_id)
+	local added_item_slot_type = item_data and item_data.slot_type
 
 	if item_data then
 		local weapon_skin_name = item_data.key .. "_skin"
@@ -303,8 +303,8 @@ CraftPageApplySkinConsole._handle_input = function (self, dt, t)
 	local widget = widgets_by_name.craft_button
 	local is_button_enabled = not widget.content.button_hotspot.disable_button
 	local craft_input = self:_is_button_held(widgets_by_name.craft_button)
-	local craft_input_gamepad = not not is_button_enabled and not not gamepad_active and not not input_service:get("refresh_hold")
-	local craft_input_keyboard = not not is_button_enabled and not gamepad_active and not not input_service:get("skip")
+	local craft_input_gamepad = is_button_enabled and gamepad_active and input_service:get("refresh_hold")
+	local craft_input_keyboard = is_button_enabled and not gamepad_active and input_service:get("skip")
 	local craft_input_accepted = false
 
 	if input_service:get("special_1") or self._craft_item and input_service:get("toggle_menu", true) then
@@ -535,7 +535,7 @@ CraftPageApplySkinConsole._add_item = function (self, item_grid, backend_id, ign
 
 	if slot_index then
 		local item_interface = Managers.backend:get_interface("items")
-		local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+		local item = backend_id and item_interface:get_item_from_id(backend_id)
 
 		item_grid:add_item_to_slot_index(slot_index, item)
 		self.super_parent:set_disabled_backend_id(backend_id, true)
@@ -550,7 +550,7 @@ CraftPageApplySkinConsole._set_craft_button_disabled = function (self, disabled)
 	-- function 22
 	self._widgets_by_name.craft_button.content.button_hotspot.disable_button = disabled
 
-	self.parent:set_input_description(disabled and not not "disabled" or not disabled and not not self.settings.name)
+	self.parent:set_input_description(disabled and "disabled" or not disabled and self.settings.name)
 end
 
 CraftPageApplySkinConsole._exit = function (self, selected_level)
@@ -585,7 +585,7 @@ CraftPageApplySkinConsole._set_craft_button_text = function (self, text, localiz
 	local widgets_by_name = self._widgets_by_name
 	local widget = widgets_by_name.craft_button
 
-	widget.content.button_text = localize and not not Localize(text) or not localize and not not text
+	widget.content.button_text = localize and Localize(text) or not localize and text
 end
 
 CraftPageApplySkinConsole._add_crafting_material_requirement = function (self, index, item_key, amount_text, has_required_amount)

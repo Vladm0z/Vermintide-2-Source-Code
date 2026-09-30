@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/twitch_settings.lua
 
-TwitchSettings = not not TwitchSettings
-TwitchVoteTemplates = not not TwitchVoteTemplates
+TwitchSettings = TwitchSettings
+TwitchVoteTemplates = TwitchVoteTemplates
 
 require("scripts/settings/twitch_vote_templates_buffs")
 require("scripts/settings/twitch_vote_templates_items")
@@ -10,7 +10,7 @@ require("scripts/settings/twitch_vote_templates_mutators")
 
 for _, dlc in pairs(DLCSettings) do
 	local dlc_twitch_settings = dlc.twitch_settings
-	local dlc_vote_templates_file = not not dlc_twitch_settings and not not dlc_twitch_settings.vote_templates_file
+	local dlc_vote_templates_file = dlc_twitch_settings and dlc_twitch_settings.vote_templates_file
 
 	if dlc_vote_templates_file then
 		require(dlc_vote_templates_file)
@@ -76,7 +76,7 @@ for name, template in pairs(TwitchVoteTemplates) do
 	end
 end
 
-TwitchVoteWhitelists = not not TwitchVoteWhitelists
+TwitchVoteWhitelists = TwitchVoteWhitelists
 
 for _, dlc in pairs(DLCSettings) do
 	local dlc_twitch_settings = dlc.twitch_settings

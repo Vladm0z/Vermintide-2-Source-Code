@@ -13,7 +13,7 @@ DebugListPicker.init = function (self, list, save_data_name, item_validation_fun
 	-- function 1
 	self.pick_list = list
 	self.save_data_name = save_data_name
-	self._item_validation_func = not not item_validation_func or not not function ()
+	self._item_validation_func = item_validation_func or function ()
 		-- function 2
 		return true
 	end
@@ -27,7 +27,7 @@ DebugListPicker.init = function (self, list, save_data_name, item_validation_fun
 	self:setup(save_data_name)
 
 	self.column = self.pick_list[self.column_index]
-	self.item = not not self.column[self.row_index]
+	self.item = self.column[self.row_index]
 	self.max_cols_seen = 3
 end
 
@@ -40,7 +40,7 @@ DebugListPicker.setup = function (self)
 	-- function 4
 	local save_data = SaveData[self.save_data_name]
 
-	save_data = not not {
+	save_data = {
 		last_column_index = 1,
 		columns = {}
 	}
@@ -48,23 +48,23 @@ DebugListPicker.setup = function (self)
 
 	local columns = save_data.columns
 
-	self.column_index = columns[save_data.last_column_index] and not not save_data.last_column_index or not columns[save_data.last_column_index] and not not 1
-	self.row_index = columns[self.column_index] and not not columns[self.column_index].row_index or not columns[self.column_index] and not not 1
+	self.column_index = columns[save_data.last_column_index] and save_data.last_column_index or not columns[save_data.last_column_index] and 1
+	self.row_index = columns[self.column_index] and columns[self.column_index].row_index or not columns[self.column_index] and 1
 
 	local start_item
 	local max_width, max_height = 0, 0
 	local pick_list = self.pick_list
 	local max_rows = 0
 
-	self.column_index = pick_list[self.column_index] and not not self.column_index or not pick_list[self.column_index] and not not 1
+	self.column_index = pick_list[self.column_index] and self.column_index or not pick_list[self.column_index] and 1
 	self.column = pick_list[self.column_index]
-	self.row_index = self.column[self.row_index] and not not self.row_index or not self.column[self.row_index] and not not 1
+	self.row_index = self.column[self.row_index] and self.row_index or not self.column[self.row_index] and 1
 	self.item = self.column[self.row_index]
 
 	for i = 1, #pick_list do
 		local column = pick_list[i]
 
-		column.last_row_index = columns[i] and not not columns[i].row_index or not columns[i] and not not 1
+		column.last_row_index = columns[i] and columns[i].row_index or not columns[i] and 1
 
 		local num_rows = #column
 
@@ -103,7 +103,7 @@ DebugListPicker.activate = function (self)
 	if not self.active and self.save_data_name then
 		local pick_list = self.pick_list
 		local save_data = self.save_data
-		local columns = not not save_data.columns
+		local columns = save_data.columns
 
 		save_data.columns = columns
 		save_data.last_column_index = self.column_index
@@ -111,7 +111,7 @@ DebugListPicker.activate = function (self)
 		for i = 1, #pick_list do
 			local column = pick_list[i]
 
-			columns[i] = not not columns[i]
+			columns[i] = columns[i]
 			columns[i].row_index = column.last_row_index
 		end
 
@@ -165,14 +165,14 @@ DebugListPicker.update = function (self, t, dt)
 		self.column_index = self.column_index + 1
 		self.column_index = (self.column_index - 1) % #pick_list + 1
 		self.column = self.pick_list[self.column_index]
-		self.row_index = math.clamp(not not self.column.last_row_index, 1, #self.column)
+		self.row_index = math.clamp(self.column.last_row_index, 1, #self.column)
 	end
 
 	if DebugKeyHandler.key_pressed("left_key", "switch spawn category", "ai") then
 		self.column_index = self.column_index - 1
 		self.column_index = (self.column_index - 1) % #pick_list + 1
 		self.column = self.pick_list[self.column_index]
-		self.row_index = math.clamp(not not self.column.last_row_index, 1, #self.column)
+		self.row_index = math.clamp(self.column.last_row_index, 1, #self.column)
 	end
 
 	if DebugKeyHandler.key_pressed("up_key", "switch spawn category", "ai") and wall_time > self.move_cursor_timer then
@@ -276,9 +276,9 @@ DebugListPicker.update = function (self, t, dt)
 			end
 
 			if i == self.row_index then
-				Gui.text(self.gui, " > " .. item_text:upper(), self.font_mtrl, self.font_size, self.font, item_pos, loaded and not not Color(200, 200, 200) or not loaded and not not Color(100, 50, 200, 0))
+				Gui.text(self.gui, " > " .. item_text:upper(), self.font_mtrl, self.font_size, self.font, item_pos, loaded and Color(200, 200, 200) or not loaded and Color(100, 50, 200, 0))
 			else
-				Gui.text(self.gui, "     " .. item_text, self.font_mtrl, self.font_size, self.font, item_pos, loaded and not not Color(50, 200, 0) or not loaded and not not Color(100, 50, 200, 0))
+				Gui.text(self.gui, "     " .. item_text, self.font_mtrl, self.font_size, self.font, item_pos, loaded and Color(50, 200, 0) or not loaded and Color(100, 50, 200, 0))
 			end
 		end
 

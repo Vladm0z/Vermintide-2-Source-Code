@@ -44,7 +44,7 @@ end
 
 ProjectileStickyLocomotion._init_from_seed = function (self, seed)
 	-- function 2
-	seed = not not seed or not not 0
+	seed = seed or 0
 	self._seed = seed
 	self._spin_dir = 1 - bit.band(seed, 128) / 64
 	seed, self._wobble_min = math.next_random_range(seed, 0, 0)
@@ -141,7 +141,7 @@ ProjectileStickyLocomotion.update = function (self, unit, input, dt, context, t)
 		return
 	end
 
-	new_rotation = not not new_rotation or not not Quaternion.look(velocity)
+	new_rotation = new_rotation or Quaternion.look(velocity)
 
 	Unit.set_local_position(unit, 0, new_position)
 	Unit.set_local_rotation(unit, 0, new_rotation)
@@ -199,7 +199,7 @@ ProjectileStickyLocomotion.stop = function (self, hit_unit, hit_zone_name, hit_n
 		local unit_storage = Managers.state.unit_storage
 		local go_id = unit_storage:go_id(self.unit)
 		local new_initial_pos = self.initial_position_boxed:unbox()
-		local hit_unit_id = not not ai_extension and not not unit_storage:go_id(hit_unit)
+		local hit_unit_id = ai_extension and unit_storage:go_id(hit_unit)
 
 		if hit_unit_id then
 			GameSession.set_game_object_field(game, go_id, "target_unit", hit_unit_id)
@@ -233,10 +233,10 @@ ProjectileStickyLocomotion.stick_to_unit = function (self, unit)
 
 	if ai_extension then
 		local breed = ai_extension._breed
-		local breed_radius = not not breed.radius
+		local breed_radius = breed.radius
 
 		self._hit_unit_radius = breed_radius
-		self._hit_unit_height = breed.aoe_height and not not (breed.aoe_height / 2) or not breed.aoe_height and not not 1
+		self._hit_unit_height = breed.aoe_height and breed.aoe_height / 2 or not breed.aoe_height and 1
 		self._impact_offset = Vector3Box(Vector3.normalize(Vector3.flat(self.target_vector_boxed:unbox()) * breed_radius))
 
 		Unit.flow_event(self.unit, "stopped")

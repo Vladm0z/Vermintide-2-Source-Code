@@ -24,7 +24,7 @@ VersusTeamParadingView.init = function (self, ingame_ui_context)
 	self._ingame_ui = ingame_ui_context.ingame_ui
 	self._is_server = ingame_ui_context.is_server
 	self._ingame_ui_context = ingame_ui_context
-	self._network_handler = not not ingame_ui_context.network_server
+	self._network_handler = ingame_ui_context.network_server
 
 	self.super.init(self, ingame_ui_context, definitions)
 end
@@ -99,10 +99,10 @@ VersusTeamParadingView.get_loadout = function (self, slot_data, use_dark_pact_pr
 		local ranged_id = current_loadout.slot_ranged
 		local hat_id = current_loadout.slot_hat
 
-		melee_name = not not melee_id and not not backend_items:get_item_name(current_loadout.slot_melee)
-		ranged_name = not not ranged_id and not not backend_items:get_item_name(current_loadout.slot_ranged)
+		melee_name = melee_id and backend_items:get_item_name(current_loadout.slot_melee)
+		ranged_name = ranged_id and backend_items:get_item_name(current_loadout.slot_ranged)
 		skin_name = backend_items:get_item_name(current_loadout.slot_skin)
-		hat_name = not not hat_id and not not backend_items:get_item_name(hat_id)
+		hat_name = hat_id and backend_items:get_item_name(hat_id)
 	else
 		melee_name = slot_melee
 		ranged_name = slot_data.slot_ranged
@@ -152,7 +152,7 @@ end
 
 VersusTeamParadingView._initialize_timers = function (self)
 	-- function 6
-	self._screen_timer = not not Managers.state.game_mode:setting("character_picking_settings").parading_duration
+	self._screen_timer = Managers.state.game_mode:setting("character_picking_settings").parading_duration
 	self._screen_timer_ended = nil
 end
 
@@ -163,7 +163,7 @@ VersusTeamParadingView._present_team = function (self, party_id)
 	local slots_data = party.slots_data
 	local side = Managers.state.side.side_by_party[party]
 	local available_profiles = side.available_profiles
-	local use_dark_pact_profile = not not parade_dark_pact and side:name() == "dark_pact"
+	local use_dark_pact_profile = parade_dark_pact and side:name() == "dark_pact"
 	local team_name_text_widget = self._widgets_by_name.team_name_text
 
 	team_name_text_widget = "Your Team"
@@ -174,10 +174,10 @@ VersusTeamParadingView._present_team = function (self, party_id)
 	for i = 1, #slots_data do
 		local status = party.slots[i]
 		local slot_data = slots_data[i]
-		local career_index = not not status.career_index
+		local career_index = status.career_index
 		local profile_index = status.profile_index
 
-		profile_index = profile_index and (profile_index > 0 and (not not profile_index or not not 1) or not (profile_index > 0) and not not 1) or not profile_index and not not 1
+		profile_index = profile_index and (profile_index > 0 and (profile_index or 1) or not (profile_index > 0) and 1) or not profile_index and 1
 
 		local profile = SPProfiles[profile_index]
 		local career = profile.careers[career_index]
@@ -196,7 +196,7 @@ VersusTeamParadingView._present_team = function (self, party_id)
 		if status.peer_id then
 			local player = Managers.player:player(status.peer_id, status.local_player_id)
 
-			player_name = player and (not not player:name() or not not ("Bot-" .. i)) or not player and not not ("Bot-" .. i)
+			player_name = player and (player:name() or "Bot-" .. i) or not player and "Bot-" .. i
 		else
 			player_name = Localize(loadout_data.hero_name)
 		end
@@ -275,7 +275,7 @@ VersusTeamParadingView._update_screen_timer = function (self, widget, screen_tim
 	local value = math.clamp(screen_timer, 0, 999999)
 	local time_text
 
-	time_text = value <= 0 and (not not "" or not not string.format("%.0f", value)) or not (value <= 0) and not not string.format("%.0f", value)
+	time_text = value <= 0 and ("" or string.format("%.0f", value)) or not (value <= 0) and string.format("%.0f", value)
 	widget.content.text = time_text
 end
 
@@ -299,7 +299,7 @@ VersusTeamParadingView._animate_font_size_bounce = function (self, dt, t)
 	text_shadow_style.font_size = new_font_size
 
 	local previous_alpha = text_style.text_color[1]
-	local alpha = timer_ended and not not 0 or not timer_ended and not not (15 * (1 - progress))
+	local alpha = timer_ended and 0 or not timer_ended and 15 * (1 - progress)
 
 	self:_set_text_widget_alpha(widget, alpha)
 
@@ -344,7 +344,7 @@ VersusTeamParadingView.update = function (self, dt, t)
 		self._screen_timer_ended = true
 	end
 
-	local play_sound = self._screen_timer > 0 and not not previous_time and math.round(previous_time) ~= math.round(self._screen_timer)
+	local play_sound = self._screen_timer > 0 and previous_time and math.round(previous_time) ~= math.round(self._screen_timer)
 
 	if play_sound then
 		if self._screen_timer < 1 then

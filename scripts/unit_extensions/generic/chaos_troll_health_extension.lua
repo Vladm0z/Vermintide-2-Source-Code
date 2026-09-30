@@ -45,8 +45,8 @@ local margin = 0.0001
 ChaosTrollHealthExtension.respawn_thresholds = function (self, optional_max_health, optional_new_health)
 	-- function 4
 	local action = self.action
-	local max_health = not not optional_max_health or not not self.current_max_health
-	local health = not not optional_new_health or not not self.health
+	local max_health = optional_max_health or self.current_max_health
+	local health = optional_new_health or self.health
 	local go_down_health, respawn_hp_min, phase
 
 	if action.fixed_hp_chunks then
@@ -81,7 +81,7 @@ ChaosTrollHealthExtension.set_max_health = function (self, value)
 
 	self:_setup_initial_health_variables(value)
 
-	local go_id = not not self._game_object_id
+	local go_id = self._game_object_id
 
 	if go_id then
 		local max_health = self.current_max_health
@@ -116,7 +116,7 @@ end
 
 ChaosTrollHealthExtension.hot_join_sync = function (self, peer_id)
 	-- function 8
-	local go_id = not not self._game_object_id
+	local go_id = self._game_object_id
 
 	if go_id then
 		local state = NetworkLookup.health_statuses[self.state]
@@ -164,7 +164,7 @@ ChaosTrollHealthExtension.update = function (self, dt, context, t)
 		if t > self.start_reset_time then
 			self.down_reset_timer = self.down_reset_timer + dt
 
-			local percent_damage = 1 - (self.action.reset_duration > 0 and not not (self.down_reset_timer / self.action.reset_duration) or not (self.action.reset_duration > 0) and not not 0)
+			local percent_damage = 1 - (self.action.reset_duration > 0 and self.down_reset_timer / self.action.reset_duration or not (self.action.reset_duration > 0) and 0)
 
 			if self.skin_unit ~= nil then
 				set_material_property(self.skin_unit, "damage_value", "mtr_skin", percent_damage, true)
@@ -234,7 +234,7 @@ ChaosTrollHealthExtension.add_damage = function (self, attacker_unit, damage_amo
 		else
 			local diff = self.health - self.go_down_health
 
-			percent_damage = not not 0
+			percent_damage = 0
 		end
 
 		if self.skin_unit ~= nil then
@@ -343,7 +343,7 @@ ChaosTrollHealthExtension.die = function (self, damage_type)
 	local unit = self.unit
 
 	if ScriptUnit.has_extension(unit, "ai_system") then
-		damage_type = not not damage_type or not not "undefined"
+		damage_type = damage_type or "undefined"
 
 		self:force_set_wounded()
 		AiUtils.kill_unit(unit, nil, nil, damage_type, nil)
@@ -352,7 +352,7 @@ end
 
 ChaosTrollHealthExtension.sync_health_to_clients = function (self, set_max_health)
 	-- function 16
-	self._game_object_id = not not self._game_object_id
+	self._game_object_id = self._game_object_id
 
 	local state_id = NetworkLookup.health_statuses[self.state]
 	local is_level_unit = false
@@ -364,7 +364,7 @@ ChaosTrollHealthExtension.sync_health_to_clients = function (self, set_max_healt
 		value = math.max(0, self.damage)
 	end
 
-	self.network_transmit:send_rpc_clients("rpc_sync_damage_taken", self._game_object_id, is_level_unit, not not set_max_health or not not false, value, state_id)
+	self.network_transmit:send_rpc_clients("rpc_sync_damage_taken", self._game_object_id, is_level_unit, set_max_health or false, value, state_id)
 end
 
 ChaosTrollHealthExtension.min_health_reached = function (self)

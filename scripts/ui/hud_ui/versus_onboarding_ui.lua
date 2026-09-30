@@ -80,7 +80,7 @@ VersusOnboardingUI._setup_career_info_widget = function (self, profile_index, ca
 	if profile_index and career_index then
 		profile_settings = SPProfiles[profile_index]
 		career_settings = profile_settings.careers[career_index]
-		info_settings = is_hero_side and (not not self:_get_hero_side_info(career_settings) or not not career_settings.career_info_settings) or not is_hero_side and not not career_settings.career_info_settings
+		info_settings = is_hero_side and (self:_get_hero_side_info(career_settings) or career_settings.career_info_settings) or not is_hero_side and career_settings.career_info_settings
 	end
 
 	if info_settings then
@@ -107,7 +107,7 @@ VersusOnboardingUI._populate_help_widget_info = function (self, profile_settings
 				local input_action = info.keybind
 
 				if input_action then
-					input_str = gamepad_active and (not not (" $KEY;Player__" .. input_action .. ": ") or not not ("{#color(193,91,36)}[" .. input_action .. "]{#reset()} : ")) or not gamepad_active and not not ("{#color(193,91,36)}[" .. input_action .. "]{#reset()} : ")
+					input_str = gamepad_active and (" $KEY;Player__" .. input_action .. ": " or "{#color(193,91,36)}[" .. input_action .. "]{#reset()} : ") or not gamepad_active and "{#color(193,91,36)}[" .. input_action .. "]{#reset()} : "
 				end
 
 				content["ability_" .. i .. "_icon"] = info.icon
@@ -116,18 +116,18 @@ VersusOnboardingUI._populate_help_widget_info = function (self, profile_settings
 			else
 				local input_action
 
-				input_action = gamepad_active and (not not info.gamepad_input or not not info.input_action) or not gamepad_active and not not info.input_action
+				input_action = gamepad_active and (info.gamepad_input or info.input_action) or not gamepad_active and info.input_action
 
 				if input_action then
 					local str = " $KEY;Player__" .. input_action .. ":"
 
 					if info.double_input then
-						abilities_string = abilities_string .. string.format(Localize(info.description), str, str) .. (is_last and not not "" or not is_last and not not "\n\n")
+						abilities_string = abilities_string .. string.format(Localize(info.description), str, str) .. (is_last and "" or not is_last and "\n\n")
 					else
-						abilities_string = abilities_string .. string.format(Localize(info.description), str) .. (is_last and not not "" or not is_last and not not "\n\n")
+						abilities_string = abilities_string .. string.format(Localize(info.description), str) .. (is_last and "" or not is_last and "\n\n")
 					end
 				else
-					abilities_string = abilities_string .. Localize(info.description) .. (is_last and not not "" or not is_last and not not "\n\n")
+					abilities_string = abilities_string .. Localize(info.description) .. (is_last and "" or not is_last and "\n\n")
 				end
 
 				content.abilities_tooltip = abilities_string
@@ -173,7 +173,7 @@ VersusOnboardingUI._update_visibility = function (self)
 	local is_dark_pact = self._side:name() == "dark_pact"
 	local local_player_unit = self._local_player.player_unit
 	local ghost_mode_ext = ScriptUnit.has_extension(local_player_unit, "ghost_mode_system")
-	local is_in_ghost_mode = not not ghost_mode_ext and not not ghost_mode_ext:is_in_ghost_mode()
+	local is_in_ghost_mode = ghost_mode_ext and ghost_mode_ext:is_in_ghost_mode()
 
 	if is_in_ghost_mode and Application.user_setting("toggle_pactsworn_help_ui") then
 		local ingame_ui = Managers.ui:ingame_ui()
@@ -188,7 +188,7 @@ VersusOnboardingUI._update_visibility = function (self)
 
 	local input_service = Managers.input:get_service("Player")
 	local held = input_service:get("show_career_help")
-	local show = not not held and not not not is_in_ghost_mode
+	local show = held and not is_in_ghost_mode
 
 	return show
 end
@@ -203,7 +203,7 @@ VersusOnboardingUI.update = function (self, dt, t)
 		end
 
 		if not self._anim_id then
-			local animation_name = should_draw and not not "enter" or not should_draw and not not "exit"
+			local animation_name = should_draw and "enter" or not should_draw and "exit"
 			local widget = self._onboarding_widget
 			local params = {
 				self = self
@@ -257,22 +257,22 @@ VersusOnboardingUI._get_hero_side_info = function (self, career_settings)
 	local career_index = career_index_from_name(profile_index, career_name)
 	local activated_ability_data = CareerUtils.get_ability_data(profile_index, career_index, 1)
 
-	career_skill_data.title = not not activated_ability_data.display_name
-	career_skill_data.description = not not UIUtils.get_ability_description(activated_ability_data)
-	career_skill_data.icon = not not activated_ability_data.icon
+	career_skill_data.title = activated_ability_data.display_name
+	career_skill_data.description = UIUtils.get_ability_description(activated_ability_data)
+	career_skill_data.icon = activated_ability_data.icon
 	career_skill_data.ability_type = Localize("hero_view_activated_ability")
 
-	local input_action = gamepad_active and not not "ability" or not gamepad_active and not not "action_career"
+	local input_action = gamepad_active and "ability" or not gamepad_active and "action_career"
 	local button_texture_data, button_name = self:get_input_texture_data(input_action, gamepad_active)
 
-	career_skill_data.keybind = gamepad_active and (not not input_action or not not button_name) or not gamepad_active and not not button_name
+	career_skill_data.keybind = gamepad_active and (input_action or button_name) or not gamepad_active and button_name
 
 	local passive_skill_data = {}
 	local passive_ability_data = CareerUtils.get_passive_ability_by_career(career_settings)
 
-	passive_skill_data.title = not not passive_ability_data.display_name
-	passive_skill_data.description = not not UIUtils.get_ability_description(passive_ability_data)
-	passive_skill_data.icon = not not passive_ability_data.icon
+	passive_skill_data.title = passive_ability_data.display_name
+	passive_skill_data.description = UIUtils.get_ability_description(passive_ability_data)
+	passive_skill_data.icon = passive_ability_data.icon
 	passive_skill_data.ability_type = Localize("hero_view_passive_ability")
 
 	table.insert(info_settings, career_skill_data)

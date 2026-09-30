@@ -55,8 +55,8 @@ settings.game_object_initializers = {
 			spawn_type = NetworkLookup.pickup_spawn_types[spawn_type],
 			position = Unit.local_position(unit, 0),
 			rotation = Unit.local_rotation(unit, 0),
-			orb_flight_target_position = not not orb_flight_target_position and not not orb_flight_target_position:unbox(),
-			flight_enabled = orb_flight_target_position and not not true or not orb_flight_target_position and not not false
+			orb_flight_target_position = orb_flight_target_position and orb_flight_target_position:unbox(),
+			flight_enabled = orb_flight_target_position
 		}
 
 		return data_table
@@ -250,7 +250,7 @@ settings.game_object_extractors = {
 				pickup_name = NetworkLookup.pickup_names[pickup_name],
 				has_physics = has_physics,
 				spawn_type = NetworkLookup.pickup_spawn_types[spawn_type],
-				orb_flight_target_position = not not orb_flight_target_position and not not Vector3Box(orb_flight_target_position),
+				orb_flight_target_position = orb_flight_target_position and Vector3Box(orb_flight_target_position),
 				flight_enabled = flight_enabled
 			}
 		}

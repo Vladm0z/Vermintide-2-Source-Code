@@ -74,7 +74,7 @@ NavBoxObstacle.update = function (self, dt)
 	local linear_velocity = (pos - self.lastpos:unbox()) / dt
 	local rotation = Unit.local_rotation(self.unit, 1)
 
-	self:set_does_trigger_tagvolume(not not self.does_trigger_tag_volume)
+	self:set_does_trigger_tagvolume(self.does_trigger_tag_volume)
 
 	local angular_velocity = Vector3(0, 0, 0)
 	local last_rot = self.last_rotation:unbox()

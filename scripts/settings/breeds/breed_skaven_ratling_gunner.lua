@@ -86,7 +86,7 @@ local breed_data = {
 		200,
 		0
 	},
-	disabled = not not Development.setting("disable_ratling_gunner"),
+	disabled = Development.setting("disable_ratling_gunner"),
 	line_of_sight_cast_template = {
 		"c_spine",
 		"c_head",

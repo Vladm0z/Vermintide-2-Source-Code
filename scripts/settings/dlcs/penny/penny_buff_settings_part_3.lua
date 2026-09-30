@@ -51,7 +51,7 @@ settings.buff_function_templates = {
 
 			for _, player_unit in pairs(nearby_player_units) do
 				local player = Managers.player:owner(player_unit)
-				local is_bot = not not player and not not not player:is_player_controlled()
+				local is_bot = player and not player:is_player_controlled()
 
 				if not is_bot and side_manager:is_enemy(unit, player_unit) then
 					buff_system:add_buff(player_unit, "enemy_penny_curse", unit, false)

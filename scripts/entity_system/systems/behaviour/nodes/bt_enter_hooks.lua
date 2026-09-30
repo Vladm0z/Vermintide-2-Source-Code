@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/nodes/bt_enter_hooks.lua
 
-BTEnterHooks = not not BTEnterHooks
+BTEnterHooks = BTEnterHooks
 
 local BTEnterHooks = BTEnterHooks
 local unit_local_position = Unit.local_position
@@ -123,7 +123,7 @@ end
 
 BTEnterHooks.grey_seer_death_sequence_teleport = function (unit, blackboard, t)
 	-- function 11
-	local index = not not blackboard.current_death_sequence_index
+	local index = blackboard.current_death_sequence_index
 	local teleport_position = blackboard.death_sequence_positions[index]
 
 	if teleport_position then
@@ -390,7 +390,7 @@ BTEnterHooks.target_furthest_player_in_sight = function (unit, blackboard, t)
 	-- function 25
 	local side = Managers.state.side:get_side_from_name("heroes")
 	local player_units = side.PLAYER_AND_BOT_UNITS
-	local physics_world = not not blackboard.physics_world
+	local physics_world = blackboard.physics_world
 	local pos = POSITION_LOOKUP[unit]
 	local furthest_unit
 	local furthest_distance = 0
@@ -405,7 +405,7 @@ BTEnterHooks.target_furthest_player_in_sight = function (unit, blackboard, t)
 		end
 	end
 
-	blackboard.target_unit = not not furthest_unit or not not blackboard.target_unit
+	blackboard.target_unit = furthest_unit or blackboard.target_unit
 end
 
 BTEnterHooks.sorcerer_spawn_horde = function (unit, blackboard, t)
@@ -531,7 +531,7 @@ BTEnterHooks.warlord_defensive_on_enter = function (unit, blackboard, t)
 		end
 	end
 
-	wanted_pos = not not wanted_pos or not not self_position
+	wanted_pos = wanted_pos or self_position
 	blackboard.override_spawn_allies_call_position = Vector3Box(wanted_pos)
 end
 

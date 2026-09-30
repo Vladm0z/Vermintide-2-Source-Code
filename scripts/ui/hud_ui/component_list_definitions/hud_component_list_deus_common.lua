@@ -40,7 +40,7 @@ local visibility_groups = {
 		validation_function = function (ingame_hud)
 			-- function 1
 			local component = ingame_hud:component("DeusRunStatsView")
-			local is_active = not not component and not not component:is_ui_active()
+			local is_active = component and component:is_ui_active()
 
 			return is_active
 		end

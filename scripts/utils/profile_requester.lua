@@ -71,7 +71,7 @@ ProfileRequester._request_profile = function (self, peer_id, local_player_id, re
 
 	local party_id = Managers.mechanism:reserved_party_id_by_peer(peer_id)
 
-	allowed_to_switch_to_profile = not not self:profile_is_specator() or not not Managers.mechanism:profile_available_for_peer(party_id, peer_id, profile_index)
+	allowed_to_switch_to_profile = self:profile_is_specator() or Managers.mechanism:profile_available_for_peer(party_id, peer_id, profile_index)
 
 	if allowed_to_switch_to_profile then
 		local override_profile_index, override_career_index

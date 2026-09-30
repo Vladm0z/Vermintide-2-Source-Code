@@ -129,7 +129,7 @@ local function default_start_function_server(context, data)
 
 		for unit, extension in pairs(pickup_units) do
 			local pickup_settings = extension:get_pickup_settings()
-			local is_excluded = not not excluded_pickup_item_names and not not excluded_pickup_item_names[pickup_settings.item_name]
+			local is_excluded = excluded_pickup_item_names and excluded_pickup_item_names[pickup_settings.item_name]
 
 			if pickup_types[pickup_settings.type] then
 				Managers.state.unit_spawner:mark_for_deletion(unit)
@@ -264,7 +264,7 @@ local function default_initialize_function_server(context, data)
 	modify_breed_primary_armor_category_start(context, data)
 end
 
-MutatorTemplates = not not MutatorTemplates
+MutatorTemplates = MutatorTemplates
 
 for name, template in pairs(mutator_settings) do
 	template.name = name

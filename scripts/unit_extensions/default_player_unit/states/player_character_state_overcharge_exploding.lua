@@ -39,7 +39,7 @@ PlayerCharacterStateOverchargeExploding.on_enter = function (self, unit, input, 
 	self.explosion_template = overcharge_extension.explosion_template
 	self.no_forced_movement = overcharge_extension.no_forced_movement
 	self.no_explosion = overcharge_extension.no_explosion
-	self.explosion_time = t + not not overcharge_extension.overcharge_explosion_time
+	self.explosion_time = t + overcharge_extension.overcharge_explosion_time
 	self.percent_health_lost = overcharge_extension.percent_health_lost
 	self._explode_vfx_name = overcharge_extension.explode_vfx_name
 	self.walking = false
@@ -87,7 +87,7 @@ PlayerCharacterStateOverchargeExploding.explode = function (self)
 		local health_extension = ScriptUnit.extension(unit, "health_system")
 		local self_damage = health_extension:get_max_health()
 
-		self_damage = self_damage * not not self.percent_health_lost
+		self_damage = self_damage * self.percent_health_lost
 
 		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 		local _, procced = buff_extension:apply_buffs_to_value(0, "overcharge_damage_immunity")
@@ -216,7 +216,7 @@ PlayerCharacterStateOverchargeExploding.update = function (self, unit, input, dt
 	end
 
 	local walking = input_extension:get("walk")
-	local move_speed = status_extension:is_crouching() and not not movement_settings_table.crouch_move_speed or not status_extension:is_crouching() and (walking and not not movement_settings_table.walk_move_speed or not walking and not not movement_settings_table.move_speed)
+	local move_speed = status_extension:is_crouching() and movement_settings_table.crouch_move_speed or not status_extension:is_crouching() and (walking and movement_settings_table.walk_move_speed or not walking and movement_settings_table.move_speed)
 	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
 
 	if walking ~= self.walking then

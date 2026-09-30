@@ -354,7 +354,7 @@ MainPathSpawningGenerator.generate_great_cycles = function (conflict_director, m
 		for j = 2, #zone_layer.sub do
 			local area = zone_layer.sub_areas[j]
 
-			total_zone_area = total_zone_area + (not not area or not not 0)
+			total_zone_area = total_zone_area + (area or 0)
 			outer[#outer + 1] = {
 				nodes = zone_layer.sub[j],
 				area = area

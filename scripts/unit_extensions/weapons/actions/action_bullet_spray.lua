@@ -143,14 +143,14 @@ ActionBulletSpray.client_owner_post_update = function (self, dt, t, world, can_d
 				local data = DamageUtils.process_projectile_hit(world, self.item_name, self.owner_unit, self.is_server, result, current_action, direction, check_buffs, target, nil, self._is_critical_strike, self.power_level)
 
 				if data.buffs_checked then
-					check_buffs = not not check_buffs and not not false
+					check_buffs = check_buffs and false
 				end
 
 				self._check_buffs = check_buffs
 			end
 
 			local weapon_unit = self.weapon_unit
-			local hit_position = result and not not result[#result][1] or not result and not not (player_position + direction * 100)
+			local hit_position = result and result[#result][1] or not result and player_position + direction * 100
 
 			Unit.set_flow_variable(weapon_unit, "hit_position", hit_position)
 			Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - player_position) * 0.1)
@@ -176,7 +176,7 @@ ActionBulletSpray.finish = function (self, reason)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-	local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+	local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 	if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 		local play_reload_animation = true

@@ -110,7 +110,7 @@ PlayerCharacterStateEmote.update = function (self, unit, input, dt, context, t)
 	else
 		local is_crouching = status_extension:is_crouching()
 
-		if input_extension:get("jump") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or not not is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) or not input_extension:get("jump") and input_extension:get("jump_only") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or not not is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) then
+		if input_extension:get("jump") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) or not input_extension:get("jump") and input_extension:get("jump_only") and not status_extension:is_crouching() and (not is_crouching and locomotion_extension:jump_allowed() or is_crouching and CharacterStateHelper.can_uncrouch(unit) and locomotion_extension:jump_allowed()) then
 			if is_crouching then
 				CharacterStateHelper.uncrouch(unit, t, first_person_extension, status_extension)
 			end
@@ -144,7 +144,7 @@ PlayerCharacterStateEmote.update = function (self, unit, input, dt, context, t)
 
 	local social_wheel_class = Managers.mechanism:get_social_wheel_class()
 	local social_wheel = Managers.ui:get_hud_component(social_wheel_class)
-	local is_social_wheel_active = not not social_wheel and not not social_wheel:is_active()
+	local is_social_wheel_active = social_wheel and social_wheel:is_active()
 
 	if not is_social_wheel_active and input_service:get("emote_toggle_hud_visibility", true) then
 		local game_mode = Managers.state.game_mode:game_mode()

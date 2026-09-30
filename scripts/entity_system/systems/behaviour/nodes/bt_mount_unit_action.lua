@@ -18,7 +18,7 @@ BTMountUnitAction.enter = function (self, unit, blackboard, t)
 
 	blackboard.action = action
 
-	local animation = not not action.animation
+	local animation = action.animation
 	local optional_spawn_data = blackboard.optional_spawn_data
 
 	blackboard.navigation_extension:set_enabled(false)

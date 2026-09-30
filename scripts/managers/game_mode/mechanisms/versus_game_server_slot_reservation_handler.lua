@@ -49,7 +49,7 @@ VersusGameServerSlotReservationHandler._register_party = function (self, party_d
 	-- function 3
 	local party_slots = {}
 	local party_id = party_data.party_id
-	local num_slots = num_slot_override and not not tonumber(num_slot_override[party_id]) or not num_slot_override and not not party_data.num_slots
+	local num_slots = num_slot_override and tonumber(num_slot_override[party_id]) or not num_slot_override and party_data.num_slots
 
 	if party_data.game_participating then
 		self._num_slots_total = self._num_slots_total + num_slots
@@ -151,7 +151,7 @@ VersusGameServerSlotReservationHandler._send_peer_updates_to_clients = function 
 				local name = Managers.game_server:peer_name(slot.peer_id)
 
 				party_members[i] = name
-				slot_state[i] = slot.reserver and not not 3 or not slot.reserver and not not 2
+				slot_state[i] = slot.reserver and 3 or not slot.reserver and 2
 			else
 				party_members[i] = "-"
 				slot_state[i] = 1
@@ -248,7 +248,7 @@ end
 VersusGameServerSlotReservationHandler.is_fully_reserved = function (self)
 	-- function 15
 	local spectator_party = self._party_manager:get_party_from_name("spectators")
-	local spectator_party_id = not not spectator_party and not not spectator_party.party_id
+	local spectator_party_id = spectator_party and spectator_party.party_id
 	local reserved_peers = self._reserved_peers
 	local num_total_unreserved_slots = 0
 
@@ -276,7 +276,7 @@ end
 VersusGameServerSlotReservationHandler.is_empty = function (self)
 	-- function 16
 	local spectator_party = self._party_manager:get_party_from_name("spectators")
-	local spectator_party_id = not not spectator_party and not not spectator_party.party_id
+	local spectator_party_id = spectator_party and spectator_party.party_id
 	local reserved_peers = self._reserved_peers
 
 	for party_id = 0, #reserved_peers do
@@ -316,7 +316,7 @@ end
 
 VersusGameServerSlotReservationHandler.peers = function (self, peers)
 	-- function 18
-	peers = not not peers or not not {}
+	peers = peers or {}
 
 	local reserved_peers = self._reserved_peers
 
@@ -482,7 +482,7 @@ VersusGameServerSlotReservationHandler._find_party_with_least_peers_and_enough_r
 	local best_party
 	local most_free_slots = 0
 	local spectator_party = self._party_manager:get_party_from_name("spectators")
-	local spectator_party_id = not not spectator_party and not not spectator_party.party_id
+	local spectator_party_id = spectator_party and spectator_party.party_id
 
 	print("_find_party_with_least_peers_and_enough_room ------------------------------------>")
 
@@ -530,7 +530,7 @@ VersusGameServerSlotReservationHandler._find_party_with_most_peers_and_enough_ro
 	local best_party
 	local least_free_slots = math.huge
 	local spectator_party = self._party_manager:get_party_from_name("spectators")
-	local spectator_party_id = not not spectator_party and not not spectator_party.party_id
+	local spectator_party_id = spectator_party and spectator_party.party_id
 
 	print("_find_party_with_most_peers_and_enough_room ------------------------------------>")
 
@@ -1004,8 +1004,8 @@ end
 VersusGameServerSlotReservationHandler._is_state_waiting_for_fully_reserved = function (self)
 	-- function 51
 	local game_mode_manager = Managers.state.game_mode
-	local game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
-	local game_mode_state = not not game_mode and not not game_mode:game_mode_state()
+	local game_mode = game_mode_manager and game_mode_manager:game_mode()
+	local game_mode_state = game_mode and game_mode:game_mode_state()
 
 	return game_mode_state == "dedicated_server_waiting_for_fully_reserved"
 end

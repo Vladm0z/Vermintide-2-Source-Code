@@ -144,7 +144,7 @@ StartGameStateSettingsOverview._calculate_current_weave = function (self)
 		end
 	end
 
-	local weave_template = highest_consecutive_unlocked_weave and not not weave_templates[highest_consecutive_unlocked_weave] or not highest_consecutive_unlocked_weave and not not weave_templates[1]
+	local weave_template = highest_consecutive_unlocked_weave and weave_templates[highest_consecutive_unlocked_weave] or not highest_consecutive_unlocked_weave and weave_templates[1]
 	local weave_name = weave_template.name
 
 	self._next_weave = weave_name
@@ -158,7 +158,7 @@ end
 StartGameStateSettingsOverview._setup_menu_layout = function (self, mechanism_name)
 	-- function 3
 	local layout_settings
-	local use_gamepad_layout = not not IS_CONSOLE
+	local use_gamepad_layout = IS_CONSOLE
 
 	if use_gamepad_layout then
 		layout_settings = local_require("scripts/ui/views/start_game_view/states/start_game_window_layout_console")
@@ -388,7 +388,7 @@ StartGameStateSettingsOverview.can_add_layout = function (self, layout_setting)
 		return false
 	end
 
-	return not not can_add_function and not not can_add_function(self)
+	return can_add_function and can_add_function(self)
 end
 
 StartGameStateSettingsOverview._initial_windows_setups = function (self, params)
@@ -400,7 +400,7 @@ StartGameStateSettingsOverview._initial_windows_setups = function (self, params)
 
 	local start_layout_name
 
-	start_layout_name = Managers.twitch and (Managers.twitch:is_connecting() and (Managers.mechanism:current_mechanism_name() ~= "deus" or not "deus_twitch") or not Managers.twitch:is_connecting() and (Managers.twitch:is_connected() and (Managers.mechanism:current_mechanism_name() ~= "deus" or not "deus_twitch") or not Managers.twitch:is_connected() and (not not params.start_state or not not self:_start_layout_name()))) or not Managers.twitch and (not not params.start_state or not not self:_start_layout_name())
+	start_layout_name = Managers.twitch and (Managers.twitch:is_connecting() and (Managers.mechanism:current_mechanism_name() ~= "deus" or not "deus_twitch") or not Managers.twitch:is_connecting() and (Managers.twitch:is_connected() and (Managers.mechanism:current_mechanism_name() ~= "deus" or not "deus_twitch") or not Managers.twitch:is_connected() and (params.start_state or self:_start_layout_name()))) or not Managers.twitch and (params.start_state or self:_start_layout_name())
 
 	self:set_layout_by_name(start_layout_name)
 	self:set_top_level_layout_name(start_layout_name)
@@ -408,7 +408,7 @@ end
 
 StartGameStateSettingsOverview.window_input_service = function (self)
 	-- function 19
-	return self._show_difficulty_option and not not FAKE_INPUT_SERVICE or not self._show_difficulty_option and not not self:input_service()
+	return self._show_difficulty_option and FAKE_INPUT_SERVICE or not self._show_difficulty_option and self:input_service()
 end
 
 StartGameStateSettingsOverview._close_window_at_index = function (self, window_index)
@@ -448,9 +448,9 @@ StartGameStateSettingsOverview._change_window = function (self, window_index, wi
 	if not ignore_alignment then
 		local window_default_settings = UISettings.game_start_windows
 		local window_size = window_default_settings.size
-		local window_spacing = not not window_default_settings.spacing
+		local window_spacing = window_default_settings.spacing
 		local window_width = window_size[1]
-		local max_active_windows = not not self._max_alignment_windows
+		local max_active_windows = self._max_alignment_windows
 		local total_spacing = window_spacing * (max_active_windows - 1)
 		local total_windows_width = max_active_windows * window_width
 		local start_width_offset = -(total_windows_width / 2 + window_width / 2) - (total_spacing / 2 + window_spacing)
@@ -500,7 +500,7 @@ end
 
 StartGameStateSettingsOverview._validate_mission_save_data = function (self, mission_save_data)
 	-- function 23
-	local level_id = not not mission_save_data and not not mission_save_data.level_id
+	local level_id = mission_save_data and mission_save_data.level_id
 
 	if not level_id then
 		return true
@@ -564,9 +564,9 @@ StartGameStateSettingsOverview.is_in_mechanism = function (self, mechanism_name)
 	local is_in_weave_menu = self.parent:on_enter_sub_state() == "weave_quickplay"
 
 	if mechanism_name == "weave" then
-		return self._mechanism_name == "adventure" and not not is_in_weave_menu
+		return self._mechanism_name == "adventure" and is_in_weave_menu
 	else
-		return self._mechanism_name == mechanism_name and not not not is_in_weave_menu
+		return self._mechanism_name == mechanism_name and not is_in_weave_menu
 	end
 end
 
@@ -580,22 +580,22 @@ end
 
 StartGameStateSettingsOverview.get_quickplay_settings = function (self, mechanism_name)
 	-- function 33
-	return self._mechanism_quickplay_settings[not not mechanism_name or not not self._mechanism_name]
+	return self._mechanism_quickplay_settings[mechanism_name or self._mechanism_name]
 end
 
 StartGameStateSettingsOverview.get_custom_game_settings = function (self, mechanism_name)
 	-- function 34
-	return self._mechanism_custom_game_settings[not not mechanism_name or not not self._mechanism_name]
+	return self._mechanism_custom_game_settings[mechanism_name or self._mechanism_name]
 end
 
 StartGameStateSettingsOverview.get_twitch_settings = function (self, mechanism_name)
 	-- function 35
-	return self._mechanism_twitch_settings[not not mechanism_name or not not self._mechanism_name]
+	return self._mechanism_twitch_settings[mechanism_name or self._mechanism_name]
 end
 
 StartGameStateSettingsOverview.get_save_data_table_map = function (self, mechanism_name)
 	-- function 36
-	return self._save_data_table_maps[not not mechanism_name or not not self._mechanism_name]
+	return self._save_data_table_maps[mechanism_name or self._mechanism_name]
 end
 
 StartGameStateSettingsOverview.set_layout = function (self, index)
@@ -608,9 +608,9 @@ StartGameStateSettingsOverview.set_layout = function (self, index)
 	end
 
 	local save_data_table_name = layout_setting.save_data_table
-	local save_data_table_map = not not self:get_save_data_table_map(self._mechanism_name)
+	local save_data_table_map = self:get_save_data_table_map(self._mechanism_name)
 
-	save_data_table_name = not save_data_table_map or not not save_data_table_map[save_data_table_name] or not not save_data_table_name
+	save_data_table_name = not save_data_table_map or save_data_table_map[save_data_table_name] or save_data_table_name
 
 	self:_set_new_save_data_table(save_data_table_name)
 
@@ -623,7 +623,7 @@ StartGameStateSettingsOverview.set_layout = function (self, index)
 	end
 
 	content.visible = close_on_exit
-	self._widgets_by_name.back_button.content.visible = not not reset_on_exit or not not not close_on_exit
+	self._widgets_by_name.back_button.content.visible = reset_on_exit or not close_on_exit
 	self._close_on_exit = close_on_exit
 	self._reset_on_exit = reset_on_exit
 
@@ -671,7 +671,7 @@ end
 StartGameStateSettingsOverview.set_window_input_focus = function (self, window_name)
 	-- function 38
 	local window_setting = self._windows_settings[window_name]
-	local window_class_name = not not window_setting and not not window_setting.class_name
+	local window_class_name = window_setting and window_setting.class_name
 	local window_found = false
 	local active_windows = self._active_windows
 
@@ -746,7 +746,7 @@ StartGameStateSettingsOverview._get_first_game_mode_option_layout = function (se
 		local layout_name = layout_setting.name
 		local is_valid = self:can_add_layout(layout_setting)
 
-		is_valid = not not is_valid and not not not Managers.ui:is_ui_layout_disabled(layout_name)
+		is_valid = is_valid and not Managers.ui:is_ui_layout_disabled(layout_name)
 
 		if is_valid then
 			return layout_name, layout_setting
@@ -933,7 +933,7 @@ StartGameStateSettingsOverview.update = function (self, dt, t)
 	if not self._transition_timer and (wanted_state or self._new_state) then
 		self.parent:clear_wanted_state()
 
-		return not not wanted_state or not not self._new_state
+		return wanted_state or self._new_state
 	end
 end
 
@@ -987,7 +987,7 @@ StartGameStateSettingsOverview._handle_input = function (self, dt, t)
 	local input_service = self.parent:input_service()
 	local input_pressed = input_service:get("toggle_menu", true)
 	local gamepad_active = Managers.input:is_device_active("gamepad")
-	local back_pressed = not not gamepad_active and not not input_service:get("back_menu", true)
+	local back_pressed = gamepad_active and input_service:get("back_menu", true)
 	local close_on_exit = self._close_on_exit
 	local reset_on_exit = self._reset_on_exit
 	local back_button = widgets_by_name.back_button
@@ -1025,7 +1025,7 @@ StartGameStateSettingsOverview._handle_input = function (self, dt, t)
 			local layout_settings = self:get_layout_setting_by_name(self._selected_layout_name)
 
 			if layout_settings.return_to_top_level then
-				return_layout_name = not not self:get_top_level_layout_name() or not not self:get_previous_selected_layout_name()
+				return_layout_name = self:get_top_level_layout_name() or self:get_previous_selected_layout_name()
 			else
 				return_layout_name = self:get_previous_selected_layout_name()
 			end
@@ -1106,10 +1106,10 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		local num_members = network_lobby:members():get_member_count()
 		local is_private = self:is_private_option_enabled()
 
-		is_private = not IS_CONSOLE or not not is_offline or not not is_private
+		is_private = not IS_CONSOLE or is_offline or is_private
 
 		local is_alone = num_members == 1
-		local always_host = not not is_private or not not self:is_always_host_option_enabled()
+		local always_host = is_private or self:is_always_host_option_enabled()
 		local params = {
 			mechanism = "adventure",
 			matchmaking_type = "custom",
@@ -1121,7 +1121,7 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 			difficulty = self._selected_difficulty_key,
 			private_game = is_private,
 			always_host = always_host,
-			strict_matchmaking = not not is_alone and not is_private and not always_host and not not self:is_strict_matchmaking_option_enabled(),
+			strict_matchmaking = is_alone and not is_private and not always_host and self:is_strict_matchmaking_option_enabled(),
 			request_type = vote_type
 		}
 
@@ -1238,13 +1238,13 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		local network_lobby = self._network_lobby
 		local num_members = network_lobby:members():get_member_count()
 		local is_alone = num_members == 1
-		local private_game = not not is_offline or not not self:is_private_option_enabled()
-		local always_host = not not private_game or not not self:is_always_host_option_enabled()
+		local private_game = is_offline or self:is_private_option_enabled()
+		local always_host = private_game or self:is_always_host_option_enabled()
 		local backend_deus = Managers.backend:get_interface("deus")
 		local journey_cycle = backend_deus:get_journey_cycle()
 		local journey_name = self:get_selected_level_id()
 
-		journey_name = DeusJourneySettings[journey_name] and (not not journey_name or not not AvailableJourneyOrder[1]) or not DeusJourneySettings[journey_name] and not not AvailableJourneyOrder[1]
+		journey_name = DeusJourneySettings[journey_name] and (journey_name or AvailableJourneyOrder[1]) or not DeusJourneySettings[journey_name] and AvailableJourneyOrder[1]
 
 		local dominant_god = journey_cycle.journey_data[journey_name].dominant_god
 		local params = {
@@ -1255,7 +1255,7 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 			difficulty = self._selected_difficulty_key,
 			private_game = private_game,
 			always_host = always_host,
-			strict_matchmaking = not not is_alone and not private_game and not always_host and not not self:is_strict_matchmaking_option_enabled(),
+			strict_matchmaking = is_alone and not private_game and not always_host and self:is_strict_matchmaking_option_enabled(),
 			dominant_god = dominant_god,
 			request_type = vote_type
 		}
@@ -1266,7 +1266,7 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		local journey_cycle = backend_deus:get_journey_cycle()
 		local journey_name = self:get_selected_level_id()
 
-		journey_name = DeusJourneySettings[journey_name] and (not not journey_name or not not AvailableJourneyOrder[1]) or not DeusJourneySettings[journey_name] and not not AvailableJourneyOrder[1]
+		journey_name = DeusJourneySettings[journey_name] and (journey_name or AvailableJourneyOrder[1]) or not DeusJourneySettings[journey_name] and AvailableJourneyOrder[1]
 
 		local dominant_god = journey_cycle.journey_data[journey_name].dominant_god
 		local params = {
@@ -1299,16 +1299,16 @@ StartGameStateSettingsOverview.play = function (self, t, vote_type, force_close_
 		self.parent:start_game(params)
 	elseif vote_type == "deus_weekly" then
 		local live_event_interface = Managers.backend:get_interface("live_events")
-		local game_mode_data = not not live_event_interface:get_weekly_chaos_wastes_game_mode_data()
+		local game_mode_data = live_event_interface:get_weekly_chaos_wastes_game_mode_data()
 		local event_data
 
 		if game_mode_data.mutators then
-			event_data = not not event_data or not not {}
+			event_data = event_data or {}
 			event_data.mutators = game_mode_data.mutators
 		end
 
 		if game_mode_data.boons then
-			event_data = not not event_data or not not {}
+			event_data = event_data or {}
 			event_data.boons = game_mode_data.boons
 		end
 
@@ -1350,7 +1350,7 @@ StartGameStateSettingsOverview.set_input_description = function (self, input_des
 		return
 	end
 
-	fassert(not input_description or not not self._generic_input_actions[input_description], "[StartGameStateSettingsOverview:set_input_description] There is no such input_description (%s)", input_description)
+	fassert(not input_description or self._generic_input_actions[input_description], "[StartGameStateSettingsOverview:set_input_description] There is no such input_description (%s)", input_description)
 	self._menu_input_description:set_input_description(self._generic_input_actions[input_description])
 end
 
@@ -1407,7 +1407,7 @@ end
 StartGameStateSettingsOverview._is_button_pressed = function (self, widget)
 	-- function 75
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -1482,7 +1482,7 @@ StartGameStateSettingsOverview.get_selected_level_id = function (self)
 	-- function 85
 	local dlc_approved = true
 	local extra_requirements_approved = true
-	local level_settings = not not self._specific_level_id
+	local level_settings = self._specific_level_id
 
 	if level_settings and level_settings.dlc_name then
 		dlc_approved = Managers.unlock:is_dlc_unlocked(level_settings.dlc_name)
@@ -1498,7 +1498,7 @@ StartGameStateSettingsOverview.get_selected_level_id = function (self)
 		end
 	end
 
-	return not not self._specific_level_id
+	return self._specific_level_id
 end
 
 StartGameStateSettingsOverview.set_selected_level_id = function (self, level_id)
@@ -1692,7 +1692,7 @@ StartGameStateSettingsOverview.get_difficulty_option = function (self, ignore_ap
 	-- function 99
 	local default_mechanism_difficulty = Managers.mechanism:mechanism_setting("default_difficulty")
 	local selected_difficulty_key = self._selected_difficulty_key
-	local difficulty_index = not not table.find(Difficulties, selected_difficulty_key)
+	local difficulty_index = table.find(Difficulties, selected_difficulty_key)
 
 	for i = difficulty_index, 1, -1 do
 		selected_difficulty_key = Difficulties[i]
@@ -1709,9 +1709,9 @@ end
 
 StartGameStateSettingsOverview.set_dedicated_or_player_hosted_search = function (self, use_dedicated_win_servers, use_dedicated_aws_servers, use_player_hosted)
 	-- function 100
-	self._use_dedicated_win_servers = use_dedicated_win_servers ~= nil and not not use_dedicated_win_servers or not (use_dedicated_win_servers ~= nil) and not not true
-	self._use_dedicated_aws_servers = use_dedicated_aws_servers ~= nil and not not use_dedicated_aws_servers or not (use_dedicated_aws_servers ~= nil) and not not true
-	self._use_player_hosted = use_player_hosted ~= nil and not not use_player_hosted or not (use_player_hosted ~= nil) and not not true
+	self._use_dedicated_win_servers = not (use_dedicated_win_servers ~= nil) or use_dedicated_win_servers
+	self._use_dedicated_aws_servers = not (use_dedicated_aws_servers ~= nil) or use_dedicated_aws_servers
+	self._use_player_hosted = not (use_player_hosted ~= nil) or use_player_hosted
 
 	if self._layout_save_settings then
 		self._layout_save_settings.use_dedicated_win_servers = use_dedicated_win_servers
@@ -1746,8 +1746,8 @@ StartGameStateSettingsOverview.set_fullscreen_effect_enable_state = function (se
 	local shading_env = World.get_data(world, "shading_environment")
 
 	if shading_env then
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and not not 1 or not enabled and not not 0)
-		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and not not 0.75 or not enabled and not not 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", enabled and 1 or not enabled and 0)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", enabled and 0.75 or not enabled and 0)
 		ShadingEnvironment.apply(shading_env)
 	end
 
@@ -1766,7 +1766,7 @@ end
 
 StartGameStateSettingsOverview.get_completed_level_difficulty_index = function (self, statistics_db, stats_id, level_id)
 	-- function 108
-	local settings = not not self:get_custom_game_settings(self._mechanism_name)
+	local settings = self:get_custom_game_settings(self._mechanism_name)
 	local function_name = settings.difficulty_index_getter_name
 
 	return LevelUnlockUtils[function_name](statistics_db, stats_id, level_id)
@@ -1781,7 +1781,7 @@ StartGameStateSettingsOverview.can_use_streaming = function (self)
 	local twitch_enabled = GameSettingsDevelopment.twitch_enabled
 	local is_offline = Managers.account:offline_mode()
 
-	return not not twitch_enabled and not not not is_offline
+	return twitch_enabled and not is_offline
 end
 
 StartGameStateSettingsOverview.setup_backend_image_material = function (self, gui, reference_name, texture_name, masked)
@@ -1793,7 +1793,7 @@ StartGameStateSettingsOverview.setup_backend_image_material = function (self, gu
 		return material_name
 	end
 
-	local template_material_name = masked and not not "template_menu_diffuse_masked" or not masked and not not "template_menu_diffuse"
+	local template_material_name = masked and "template_menu_diffuse_masked" or not masked and "template_menu_diffuse"
 
 	self:_create_material_instance(gui, material_name, template_material_name, reference_name)
 

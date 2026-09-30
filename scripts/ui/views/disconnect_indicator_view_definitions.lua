@@ -75,7 +75,7 @@ local function create_texture_with_text(texture, text, scenegraph_id, text_scene
 			text = text
 		},
 		style = {
-			text = not not text_style or not not {
+			text = text_style or {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				word_wrap = true,

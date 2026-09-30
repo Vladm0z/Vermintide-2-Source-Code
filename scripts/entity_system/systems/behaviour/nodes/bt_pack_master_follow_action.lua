@@ -30,7 +30,7 @@ BTPackMasterFollowAction.enter = function (self, unit, blackboard, t)
 	end
 
 	blackboard.start_anim_done = true
-	blackboard.physics_world = not not blackboard.physics_world
+	blackboard.physics_world = blackboard.physics_world
 end
 
 BTPackMasterFollowAction.leave = function (self, unit, blackboard, t, reason, destroy)
@@ -107,7 +107,7 @@ BTPackMasterFollowAction.run = function (self, unit, blackboard, t, dt)
 
 		blackboard.move_state = "moving"
 
-		network_manager:anim_event(unit, not not blackboard.action.move_animation)
+		network_manager:anim_event(unit, blackboard.action.move_animation)
 		navigation_extension:set_enabled(true)
 	end
 

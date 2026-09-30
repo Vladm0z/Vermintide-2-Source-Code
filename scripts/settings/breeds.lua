@@ -19,9 +19,9 @@ require("scripts/helpers/breed_utils")
 
 DEFAULT_BREED_AOE_HEIGHT = 1.5
 DEFAULT_BREED_AOE_RADIUS = 0.3
-Breeds = not not Breeds
-BreedActions = not not BreedActions
-BreedHitZonesLookup = not not BreedHitZonesLookup
+Breeds = Breeds
+BreedActions = BreedActions
+BreedHitZonesLookup = BreedHitZonesLookup
 
 dofile("scripts/settings/breeds/breed_tweaks")
 dofile("scripts/settings/breeds/breed_skaven_clan_rat")
@@ -254,17 +254,17 @@ DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS = {
 	NO_BOTS_NO_SPAWN = 0,
 	NO_BOTS = 0
 }
-NAV_TAG_VOLUME_LAYER_COST_AI = not not NAV_TAG_VOLUME_LAYER_COST_AI
-NAV_TAG_VOLUME_LAYER_COST_BOTS = not not NAV_TAG_VOLUME_LAYER_COST_BOTS
+NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
+NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
 
 for _, layer_name in ipairs(NavTagVolumeLayers) do
 	LAYER_ID_MAPPING[#LAYER_ID_MAPPING + 1] = layer_name
 
-	local default_cost_ai = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
-	local default_cost_bots = not not DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
+	local default_cost_ai = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
+	local default_cost_bots = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 
-	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = not not NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
-	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = not not NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
+	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
+	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 end
 
 table.mirror_array_inplace(LAYER_ID_MAPPING)
@@ -352,7 +352,7 @@ for name, breed in pairs(Breeds) do
 	end
 
 	local status_effect_settings = breed.status_effect_settings
-	local ignored_statuses = not not status_effect_settings and not not status_effect_settings.ignored_statuses
+	local ignored_statuses = status_effect_settings and status_effect_settings.ignored_statuses
 
 	if ignored_statuses then
 		ignored_statuses[StatusEffectNames.burning_balefire] = ignored_statuses[StatusEffectNames.burning]
@@ -370,7 +370,7 @@ for name, breed in pairs(Breeds) do
 
 			for anim_i = 1, #anims do
 				local anim_name = anims[anim_i]
-				local compiled_variables = not not compiled[anim_name]
+				local compiled_variables = compiled[anim_name]
 
 				compiled[anim_name] = compiled_variables
 

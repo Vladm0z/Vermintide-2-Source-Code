@@ -820,11 +820,11 @@ local animation_definitions = {
 				style_eye_left.color[1] = 0
 				style_eye_left.horizontal_alignment = "center"
 				style_eye_left.vertical_alignment = "center"
-				style_eye_left.texture_size = not not style_eye_left.texture_size
+				style_eye_left.texture_size = style_eye_left.texture_size
 				style_eye_right.color[1] = 0
 				style_eye_right.horizontal_alignment = "center"
 				style_eye_right.vertical_alignment = "center"
-				style_eye_right.texture_size = not not style_eye_right.texture_size
+				style_eye_right.texture_size = style_eye_right.texture_size
 
 				local effect_width = 39
 				local effect_height = 189
@@ -834,7 +834,7 @@ local animation_definitions = {
 				style_lock_top_effect.color[1] = 0
 				style_lock_top_effect.horizontal_alignment = "center"
 				style_lock_top_effect.vertical_alignment = "center"
-				style_lock_top_effect.texture_size = not not style_lock_top_effect.texture_size
+				style_lock_top_effect.texture_size = style_lock_top_effect.texture_size
 
 				local craft_effect_bottom_left = widgets.craft_effect_bottom_left
 				local style_effect_bottom_left = craft_effect_bottom_left.style.texture_id
@@ -842,7 +842,7 @@ local animation_definitions = {
 				style_effect_bottom_left.color[1] = 0
 				style_effect_bottom_left.horizontal_alignment = "center"
 				style_effect_bottom_left.vertical_alignment = "center"
-				style_effect_bottom_left.texture_size = not not style_effect_bottom_left.texture_size
+				style_effect_bottom_left.texture_size = style_effect_bottom_left.texture_size
 
 				local craft_effect_bottom_right = widgets.craft_effect_bottom_right
 				local style_effect_bottom_right = craft_effect_bottom_right.style.texture_id
@@ -850,7 +850,7 @@ local animation_definitions = {
 				style_effect_bottom_right.color[1] = 0
 				style_effect_bottom_right.horizontal_alignment = "center"
 				style_effect_bottom_right.vertical_alignment = "center"
-				style_effect_bottom_right.texture_size = not not style_effect_bottom_right.texture_size
+				style_effect_bottom_right.texture_size = style_effect_bottom_right.texture_size
 			end,
 			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
@@ -892,11 +892,11 @@ local animation_definitions = {
 				style_eye_left.color[1] = 0
 				style_eye_left.horizontal_alignment = "center"
 				style_eye_left.vertical_alignment = "center"
-				style_eye_left.texture_size = not not style_eye_left.texture_size
+				style_eye_left.texture_size = style_eye_left.texture_size
 				style_eye_right.color[1] = 0
 				style_eye_right.horizontal_alignment = "center"
 				style_eye_right.vertical_alignment = "center"
-				style_eye_right.texture_size = not not style_eye_right.texture_size
+				style_eye_right.texture_size = style_eye_right.texture_size
 
 				local effect_width = 39
 				local effect_height = 189
@@ -906,7 +906,7 @@ local animation_definitions = {
 				style_lock_top_effect.color[1] = 0
 				style_lock_top_effect.horizontal_alignment = "center"
 				style_lock_top_effect.vertical_alignment = "top"
-				style_lock_top_effect.texture_size = not not style_lock_top_effect.texture_size
+				style_lock_top_effect.texture_size = style_lock_top_effect.texture_size
 
 				local craft_effect_bottom_left = widgets.craft_effect_bottom_left
 				local style_effect_bottom_left = craft_effect_bottom_left.style.texture_id
@@ -914,7 +914,7 @@ local animation_definitions = {
 				style_effect_bottom_left.color[1] = 0
 				style_effect_bottom_left.horizontal_alignment = "center"
 				style_effect_bottom_left.vertical_alignment = "center"
-				style_effect_bottom_left.texture_size = not not style_effect_bottom_left.texture_size
+				style_effect_bottom_left.texture_size = style_effect_bottom_left.texture_size
 
 				local craft_effect_bottom_right = widgets.craft_effect_bottom_right
 				local style_effect_bottom_right = craft_effect_bottom_right.style.texture_id
@@ -922,7 +922,7 @@ local animation_definitions = {
 				style_effect_bottom_right.color[1] = 0
 				style_effect_bottom_right.horizontal_alignment = "center"
 				style_effect_bottom_right.vertical_alignment = "center"
-				style_effect_bottom_right.texture_size = not not style_effect_bottom_right.texture_size
+				style_effect_bottom_right.texture_size = style_effect_bottom_right.texture_size
 			end,
 			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 12

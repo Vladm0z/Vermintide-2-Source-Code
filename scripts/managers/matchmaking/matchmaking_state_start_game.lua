@@ -42,7 +42,7 @@ MatchmakingStateStartGame._verify_requirements = function (self)
 	local mechanism_settings = {}
 
 	if matchmaking_type or mechanism then
-		mechanism_settings = not not MechanismSettings[mechanism] or not not mechanism_settings
+		mechanism_settings = MechanismSettings[mechanism] or mechanism_settings
 
 		if mechanism_settings.required_dlc and not ADDED_DLCS[mechanism_settings.required_dlc] then
 			DLCS_TO_CHECK[#DLCS_TO_CHECK + 1] = NetworkLookup.dlcs[mechanism_settings.required_dlc]
@@ -105,7 +105,7 @@ MatchmakingStateStartGame._verify_requirements = function (self)
 		if difficulty_settings.dlc_requirement and not ADDED_DLCS[difficulty_settings.dlc_requirement] then
 			DLCS_TO_CHECK[#DLCS_TO_CHECK + 1] = NetworkLookup.dlcs[difficulty_settings.dlc_requirement]
 			ADDED_DLCS[difficulty_settings.dlc_requirement] = true
-			votes_require_type = not not "any"
+			votes_require_type = "any"
 		end
 	end
 
@@ -211,7 +211,7 @@ MatchmakingStateStartGame._setup_lobby_data = function (self)
 
 			Managers.mechanism:set_vote_data(vote_data)
 		elseif mechanism == "versus" then
-			local map_pool = not not script_data.versus_map_pool
+			local map_pool = script_data.versus_map_pool
 
 			mission_id = map_pool[Math.random(#map_pool)]
 
@@ -250,7 +250,7 @@ MatchmakingStateStartGame._setup_lobby_data = function (self)
 			end
 		end
 	elseif mechanism == "versus" and not search_config.player_hosted then
-		local map_pool = not not script_data.versus_map_pool
+		local map_pool = script_data.versus_map_pool
 
 		mission_id = map_pool[Math.random(#map_pool)]
 
@@ -324,7 +324,7 @@ MatchmakingStateStartGame._setup_lobby_data = function (self)
 		local strict_matchmaking = 0
 		local network_hash = self._lobby:get_network_hash()
 		local weave_template = WeaveSettings.templates[mission_id]
-		local weave_index = not not weave_template and not not table.find(WeaveSettings.templates_ordered, weave_template)
+		local weave_index = weave_template and table.find(WeaveSettings.templates_ordered, weave_template)
 		local ticket_params = {
 			level = {
 				ticket_mission_id

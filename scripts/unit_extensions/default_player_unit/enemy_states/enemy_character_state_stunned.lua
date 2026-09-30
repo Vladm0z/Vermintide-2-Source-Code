@@ -37,7 +37,7 @@ EnemyCharacterStateStunned.on_enter = function (self, unit, input, dt, context, 
 	local status_extension = self._status_extension
 	local buff_extension = ScriptUnit.extension(unit, "buff_system")
 	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local hit_react_type = not not params.hit_react_type
+	local hit_react_type = params.hit_react_type
 
 	assert(movement_settings_table.hit_react_settings[hit_react_type])
 
@@ -131,7 +131,7 @@ EnemyCharacterStateStunned.update = function (self, unit, input, dt, context, t)
 	end
 
 	local walking = input_extension:get("walk")
-	local move_speed = status_extension:is_crouching() and not not movement_settings_table.crouch_move_speed or not status_extension:is_crouching() and (walking and not not movement_settings_table.walk_move_speed or not walking and not not movement_settings_table.move_speed)
+	local move_speed = status_extension:is_crouching() and movement_settings_table.crouch_move_speed or not status_extension:is_crouching() and (walking and movement_settings_table.walk_move_speed or not walking and movement_settings_table.move_speed)
 	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
 
 	if walking ~= self.walking then

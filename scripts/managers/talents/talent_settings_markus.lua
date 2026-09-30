@@ -241,7 +241,7 @@ local buff_tweak_data = {
 	}
 }
 
-TalentBuffTemplates = not not TalentBuffTemplates
+TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.empire_soldier = {
 	markus_huntsman_ability_cooldown_on_hit = {
 		buffs = {
@@ -1593,7 +1593,7 @@ TalentBuffTemplates.empire_soldier = {
 		}
 	}
 }
-TalentTrees = not not TalentTrees
+TalentTrees = TalentTrees
 TalentTrees.empire_soldier = {
 	{
 		{

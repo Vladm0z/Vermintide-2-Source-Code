@@ -35,14 +35,14 @@ EnemyCharacterStateClimbing.setup_transition = function (self, unit, smart_objec
 	local correction_vector = entrance_pos - unit_position
 	local correction_amount = Vector3.length(correction_vector)
 
-	self._correction_dir = Vector3Box(correction_amount > 0 and not not Vector3.divide(correction_vector, correction_amount) or not (correction_amount > 0) and not not Vector3.zero())
+	self._correction_dir = Vector3Box(correction_amount > 0 and Vector3.divide(correction_vector, correction_amount) or not (correction_amount > 0) and Vector3.zero())
 	self._correction_amount = correction_amount
 
 	if not smart_object_data.is_on_edge then
 		if smart_object_data.ledge_position1 then
 			local ledge_position1 = Vector3Aux.unbox(smart_object_data.ledge_position1)
 			local ledge_position2 = Vector3Aux.unbox(smart_object_data.ledge_position2)
-			local closest_ledge_position = Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos) and (not not ledge_position1 or not not ledge_position2) or not (Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos)) and not not ledge_position2
+			local closest_ledge_position = Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos) and (ledge_position1 or ledge_position2) or not (Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos)) and ledge_position2
 
 			self._climb_jump_height = closest_ledge_position.z - entrance_pos.z
 
@@ -96,13 +96,13 @@ EnemyCharacterStateClimbing.do_the_transition = function (self, unit, t, dt, loc
 				local jump_anim_threshold = jump_anim_thresholds[i]
 
 				if climb_jump_height < jump_anim_threshold.height_threshold then
-					local jump_anim_name = is_on_edge and not not jump_anim_threshold.animation_edge or not is_on_edge and not not jump_anim_threshold.animation_fence
+					local jump_anim_name = is_on_edge and jump_anim_threshold.animation_edge or not is_on_edge and jump_anim_threshold.animation_fence
 
 					Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-					local fence_vertical_length = not not jump_anim_threshold.fence_vertical_length
+					local fence_vertical_length = jump_anim_threshold.fence_vertical_length
 					local edge_vertical_length = jump_anim_threshold.vertical_length
-					local anim_distance = is_on_edge and (not not edge_vertical_length or not not fence_vertical_length) or not is_on_edge and not not fence_vertical_length
+					local anim_distance = is_on_edge and (edge_vertical_length or fence_vertical_length) or not is_on_edge and fence_vertical_length
 
 					animation_translation_scale = animation_translation_scale * climb_jump_height / anim_distance
 
@@ -123,11 +123,11 @@ EnemyCharacterStateClimbing.do_the_transition = function (self, unit, t, dt, loc
 				local jump_anim_threshold = jump_anim_thresholds[i]
 
 				if climb_jump_height < jump_anim_threshold.height_threshold then
-					local jump_anim_name = is_on_edge and not not jump_anim_threshold.animation_edge or not is_on_edge and not not jump_anim_threshold.animation_fence
+					local jump_anim_name = is_on_edge and jump_anim_threshold.animation_edge or not is_on_edge and jump_anim_threshold.animation_fence
 
 					Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-					local land_animations = not not jump_anim_threshold.animation_land
+					local land_animations = jump_anim_threshold.animation_land
 
 					self._jump_down_land_animation = randomize(land_animations)
 
@@ -146,7 +146,7 @@ EnemyCharacterStateClimbing.do_the_transition = function (self, unit, t, dt, loc
 			blackboard.jump_climb_finished = nil
 
 			local exit_pos = self._exit_pos:unbox()
-			local move_target = is_on_edge and (not not exit_pos or not not self._ledge_position:unbox()) or not is_on_edge and not not self._ledge_position:unbox()
+			local move_target = is_on_edge and (exit_pos or self._ledge_position:unbox()) or not is_on_edge and self._ledge_position:unbox()
 
 			if is_on_edge then
 				self._sub_state = "done"
@@ -172,7 +172,7 @@ EnemyCharacterStateClimbing.do_the_transition = function (self, unit, t, dt, loc
 
 						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-						local land_animations = not not jump_anim_threshold.animation_land
+						local land_animations = jump_anim_threshold.animation_land
 
 						self._jump_down_land_animation = randomize(land_animations)
 

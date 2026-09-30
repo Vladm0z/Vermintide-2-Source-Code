@@ -2,7 +2,7 @@
 
 local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-WeaveTraits = not not WeaveTraits
+WeaveTraits = WeaveTraits
 
 local buff_tweak_data = {
 	weave_traits_melee_attack_speed_on_crit_proc = {

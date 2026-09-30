@@ -78,4 +78,4 @@ local function nearest_table_value(difficulty, difficulty_tweak, table)
 	return nil
 end
 
-DifficultyTweak = not not DifficultyTweak
+DifficultyTweak = DifficultyTweak

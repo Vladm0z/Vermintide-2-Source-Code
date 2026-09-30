@@ -143,14 +143,14 @@ PlayerInputExtension.was_double_tap = function (self, input_key, t, max_duration
 	-- function 9
 	local last_double_tap = self.double_tap_timers[input_key]
 
-	return not not last_double_tap and t < last_double_tap + max_duration
+	return last_double_tap and t < last_double_tap + max_duration
 end
 
 local is_windows_platform = IS_WINDOWS
 
 PlayerInputExtension.is_input_blocked = function (self)
 	-- function 10
-	return self.input_service:is_blocked() and not DamageUtils.is_in_inn and not not not Managers.state.entity:system("cutscene_system"):is_active() or not self.input_service:is_blocked() and (is_windows_platform and (Window.has_focus() and not not HAS_STEAM or not Window.has_focus() and not DamageUtils.is_in_inn and not not not Managers.state.entity:system("cutscene_system"):is_active()) or not is_windows_platform and not not HAS_STEAM)
+	return self.input_service:is_blocked() and not DamageUtils.is_in_inn and not Managers.state.entity:system("cutscene_system"):is_active() or not self.input_service:is_blocked() and (is_windows_platform and (Window.has_focus() and HAS_STEAM or not Window.has_focus() and not DamageUtils.is_in_inn and not Managers.state.entity:system("cutscene_system"):is_active()) or not is_windows_platform and HAS_STEAM)
 end
 
 PlayerInputExtension.get = function (self, input_key, consume)
@@ -198,7 +198,7 @@ PlayerInputExtension.set_input_key_scale = function (self, input_key, scale, ler
 
 	local start_scale = 1
 	local t = self._t
-	local lerp_end_t = lerp_time and not not (t + lerp_time) or not lerp_time and not not nil
+	local lerp_end_t = lerp_time and t + lerp_time or not lerp_time and nil
 	local input_key_scale_data = self.input_key_scale[input_key]
 
 	if input_key_scale_data then
@@ -278,7 +278,7 @@ end
 
 PlayerInputExtension.reset_release_input_with_delay = function (self, delay)
 	-- function 20
-	self._release_input_delay = self._release_input_delay and not not (self._release_input_delay + delay) or not self._release_input_delay and not not delay
+	self._release_input_delay = self._release_input_delay and self._release_input_delay + delay or not self._release_input_delay and delay
 end
 
 PlayerInputExtension.get_wield_cooldown = function (self, override_cooldown_time)
@@ -373,7 +373,7 @@ PlayerInputExtension.add_buffer = function (self, input_key, doubleclick_window)
 		local priority = priority_lookup[input_key]
 
 		if priority then
-			local last_priority = not not priority_lookup[self.buffer_key]
+			local last_priority = priority_lookup[self.buffer_key]
 
 			if last_priority <= priority then
 				self.input_buffer_timer = self.priority_input_buffer_user_setting
@@ -387,7 +387,7 @@ PlayerInputExtension.add_buffer = function (self, input_key, doubleclick_window)
 			if not action_one_variants[self.buffer_key] or not action_one_variants[input_key] then
 				self.new_buffer_key_doubleclick_window = 0
 			else
-				self.new_buffer_key_doubleclick_window = not not doubleclick_window or not not 0.1
+				self.new_buffer_key_doubleclick_window = doubleclick_window or 0.1
 			end
 
 			self.new_buffer_key = input_key

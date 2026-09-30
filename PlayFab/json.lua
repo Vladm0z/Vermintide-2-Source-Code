@@ -23,7 +23,7 @@ end
 
 local function escape_char(c)
 	-- function 1
-	return not not escape_char_map[c]
+	return escape_char_map[c]
 end
 
 local function encode_nil(val)
@@ -35,7 +35,7 @@ local function encode_table(val, stack)
 	-- function 3
 	local res = {}
 
-	stack = not not stack or not not {}
+	stack = stack or {}
 
 	if stack[val] then
 		error("circular reference")

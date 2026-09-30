@@ -136,19 +136,19 @@ ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (self)
 	local local_player_id = 1
 	local party_manager = Managers.party
 	local _, party_id = party_manager:get_party_from_player_id(peer_id, local_player_id)
-	local local_player_party_id = self._local_player_party_id and not not self._local_player_party_id or not self._local_player_party_id and (party_id ~= 0 and not not party_id or not (party_id ~= 0) and not not 1)
-	local opponent_party_id = self._opponent_party_id and not not self._opponent_party_id or not self._opponent_party_id and (party_id ~= 1 and not not 1 or not (party_id ~= 1) and not not 2)
+	local local_player_party_id = self._local_player_party_id and self._local_player_party_id or not self._local_player_party_id and (party_id ~= 0 and party_id or not (party_id ~= 0) and 1)
+	local opponent_party_id = self._opponent_party_id and self._opponent_party_id or not self._opponent_party_id and (party_id ~= 1 and 1 or not (party_id ~= 1) and 2)
 	local local_player_team_score = win_conditions:get_total_score(local_player_party_id)
 	local local_player_team_sets_data = win_conditions:get_sets_data_for_party(local_player_party_id)
 	local opponent_team_score = win_conditions:get_total_score(opponent_party_id)
 	local opponent_team_sets_data = win_conditions:get_sets_data_for_party(opponent_party_id)
 	local local_player_available_score, opponent_team_available_score = max_level_score, max_level_score
 	local player = Managers.player:local_player()
-	local side = not not Managers.state.side
-	local is_hero = not not side and side:name() == "heroes"
+	local side = Managers.state.side
+	local is_hero = side and side:name() == "heroes"
 	local match_state = Managers.mechanism:get_state()
-	local game_mode = not not Managers.state.game_mode
-	local is_round_over = not not game_mode and not not game_mode:match_in_round_over_state()
+	local game_mode = Managers.state.game_mode
+	local is_round_over = game_mode and game_mode:match_in_round_over_state()
 	local local_player_has_played_round, opponent_has_played_round = false, false
 
 	if current_round % current_set ~= 0 then
@@ -164,18 +164,18 @@ ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (self)
 		local opponent_team_set_data = opponent_team_sets_data[i]
 
 		if i < current_set then
-			local unclaimed_points = not not (local_player_set_data.max_points - local_player_set_data.claimed_points)
+			local unclaimed_points = local_player_set_data.max_points - local_player_set_data.claimed_points
 
 			local_player_available_score = local_player_available_score - unclaimed_points
-			unclaimed_points = not not (opponent_team_set_data.max_points - opponent_team_set_data.claimed_points) or not not 0
+			unclaimed_points = opponent_team_set_data.max_points - opponent_team_set_data.claimed_points or 0
 			opponent_team_available_score = opponent_team_available_score - unclaimed_points
 		end
 	end
 
-	local score_threshold = local_player_available_score < opponent_team_available_score and (not not local_player_available_score or not not opponent_team_available_score) or not (local_player_available_score < opponent_team_available_score) and not not opponent_team_available_score
+	local score_threshold = local_player_available_score < opponent_team_available_score and (local_player_available_score or opponent_team_available_score) or not (local_player_available_score < opponent_team_available_score) and opponent_team_available_score
 	local local_player_score_to_win = score_threshold - local_player_team_score
 	local opponent_team_score_to_win = score_threshold - opponent_team_score
-	local next_round_id = num_rounds >= current_set + 1 and not not (current_set + 1) or not (num_rounds >= current_set + 1) and not not num_rounds
+	local next_round_id = num_rounds >= current_set + 1 and current_set + 1 or not (num_rounds >= current_set + 1) and num_rounds
 	local is_next_round_last = next_round_id == num_rounds
 	local opp_predicted_score = 0
 	local loc_predicted_score = 0
@@ -225,7 +225,7 @@ ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (self)
 	self._opponent_party_id = opponent_party_id
 	self._level_name = level_key
 	self._match_state = match_state
-	self._game_mode_state = not not game_mode and not not game_mode:game_mode_state()
+	self._game_mode_state = game_mode and game_mode:game_mode_state()
 	self._max_score = max_level_score
 	self._local_player_team_available_score = local_player_available_score
 	self._opponent_team_available_score = opponent_team_available_score

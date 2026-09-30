@@ -254,7 +254,7 @@ local function update_warpfire_vfx(owner_unit, weapon_unit, state_data, world)
 	local aim_direction = GameSession.game_object_field(game, game_object_id, "aim_direction")
 	local _, _, length = PhysicsWorld.raycast(physics_world, muzzle_position, aim_direction, max_length, "all", "types", "both", "closest", "collision_filter", raycast_filter)
 
-	length = not not length or not not max_length
+	length = length or max_length
 
 	local muzzle_forward = Quaternion.forward(muzzle_rotation)
 	local effect_variable_id = World.find_particles_variable(world, flamethrower_effect_name, "firepoint_1")
@@ -271,7 +271,7 @@ local function update_warpfire_vfx(owner_unit, weapon_unit, state_data, world)
 
 	local lifetime = length / 4
 	local particle_life_time = state_data.particle_life_time
-	local particle_life_time_vector = particle_life_time and not not particle_life_time:unbox() or not particle_life_time and not not Vector3(1, 0, 0)
+	local particle_life_time_vector = particle_life_time and particle_life_time:unbox() or not particle_life_time and Vector3(1, 0, 0)
 
 	particle_life_time_vector.x = lifetime
 

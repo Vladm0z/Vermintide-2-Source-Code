@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/dialogues/tag_query.lua
 
-TagQuery = not not TagQuery
+TagQuery = TagQuery
 TagQuery.__index = TagQuery
 
 TagQuery.add = function (self, ...)
@@ -32,6 +32,6 @@ TagQuery.finalize = function (self)
 	self.finalized = true
 end
 
-TagQuery.OP = not not TagQuery.OP
-TagQuery.CombiningOP = not not TagQuery.CombiningOP
-TagQuery.FilterOP = not not TagQuery.FilterOP
+TagQuery.OP = TagQuery.OP
+TagQuery.CombiningOP = TagQuery.CombiningOP
+TagQuery.FilterOP = TagQuery.FilterOP

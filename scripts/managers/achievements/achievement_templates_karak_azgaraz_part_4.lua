@@ -76,7 +76,7 @@ achievements.dwarf_statue_emote = {
 		end
 
 		local player = Managers.player:local_player()
-		local unit = not not player and not not player.player_unit
+		local unit = player and player.player_unit
 
 		if not unit then
 			return
@@ -84,8 +84,8 @@ achievements.dwarf_statue_emote = {
 
 		local character_state_machine_ext = ScriptUnit.extension(unit, "character_state_machine_system")
 		local state_machine = character_state_machine_ext.state_machine
-		local current_state = not not state_machine and not not state_machine.state_current
-		local is_emoting = not not current_state and current_state.name == "emote"
+		local current_state = state_machine and state_machine.state_current
+		local is_emoting = current_state and current_state.name == "emote"
 
 		if not is_emoting then
 			template_data.end_t = nil

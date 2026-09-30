@@ -21,7 +21,7 @@ end
 local function IS_HUSK_UNIT(owner_unit)
 	-- function 3
 	local is_network_unit = NetworkUnit.is_network_unit(owner_unit)
-	local is_husk = not not is_network_unit and not not NetworkUnit.is_husk_unit(owner_unit)
+	local is_husk = is_network_unit and NetworkUnit.is_husk_unit(owner_unit)
 
 	return is_husk
 end

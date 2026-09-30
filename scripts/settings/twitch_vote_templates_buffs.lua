@@ -7,7 +7,7 @@ local function debug_print(message, ...)
 	end
 end
 
-TwitchVoteTemplates = not not TwitchVoteTemplates
+TwitchVoteTemplates = TwitchVoteTemplates
 
 local twitch_settings = TwitchSettings
 
@@ -176,7 +176,7 @@ TwitchVoteTemplates.twitch_no_overcharge_no_ammo_reloads = {
 					local left_unit_1p = slot_data.left_unit_1p
 					local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 					local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-					local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+					local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 					if ammo_extension and not inventory_extension:is_ammo_blocked() then
 						ammo_extension:add_ammo(ammo_amount)

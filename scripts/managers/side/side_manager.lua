@@ -2,7 +2,7 @@
 
 require("scripts/managers/side/side")
 
-local side_manager_testify = not not script_data.testify
+local side_manager_testify = script_data.testify
 
 SideManager = class(SideManager)
 ALL_PLAYER_AND_BOT_UNITS = {}
@@ -130,7 +130,7 @@ SideManager.versus_is_dark_pact = function (self, unit)
 	-- function 10
 	local side = self.side_by_unit[unit]
 
-	return not not side and side:name() == "dark_pact"
+	return side and side:name() == "dark_pact"
 end
 
 SideManager.add_unit_to_side = function (self, unit, side_id)
@@ -233,7 +233,7 @@ end
 SideManager.is_enemy = function (self, unit1, unit2)
 	-- function 15
 	local side = self.side_by_unit[unit1]
-	local is_enemy = not not side and not not side.enemy_units_lookup[unit2]
+	local is_enemy = side and side.enemy_units_lookup[unit2]
 
 	return is_enemy, side
 end
@@ -267,7 +267,7 @@ end
 SideManager.is_ally = function (self, unit1, unit2)
 	-- function 19
 	local side = self.side_by_unit[unit1]
-	local is_ally = not not side and not not side.allied_units_lookup[unit2]
+	local is_ally = side and side.allied_units_lookup[unit2]
 
 	return is_ally, side
 end
@@ -361,7 +361,7 @@ local unit_alive = Unit.alive
 
 local function is_valid(unit)
 	-- function 25
-	return not not unit_alive(unit)
+	return (unit_alive(unit))
 end
 
 local function is_valid_target(unit)
@@ -373,7 +373,7 @@ local function is_valid_target(unit)
 		dlc_valid = false
 	end
 
-	return not status_ext:is_in_end_zone() and not status_ext:is_invisible() and not not dlc_valid and not status_ext.spawn_grace and not not HEALTH_ALIVE[unit]
+	return not status_ext:is_in_end_zone() and not status_ext:is_invisible() and dlc_valid and not status_ext.spawn_grace and HEALTH_ALIVE[unit]
 end
 
 SideManager.is_valid_target = is_valid_target
@@ -387,7 +387,7 @@ local function is_valid_aggro_target(unit)
 	local status_ext = ScriptUnit.has_extension(unit, "status_system")
 
 	if status_ext then
-		return not status_ext.ready_for_assisted_respawn and not status_ext:is_in_end_zone() and not status_ext:is_invisible() and not status_ext.spawn_grace and not not HEALTH_ALIVE[unit]
+		return not status_ext.ready_for_assisted_respawn and not status_ext:is_in_end_zone() and not status_ext:is_invisible() and not status_ext.spawn_grace and HEALTH_ALIVE[unit]
 	end
 
 	return true

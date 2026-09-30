@@ -21,14 +21,14 @@ BTInGravityWellAction.enter = function (self, unit, blackboard, t)
 	navigation_extension:set_enabled(false)
 
 	local breed = blackboard.breed
-	local overlap_radius = not not breed.stagger_in_air_mover_check_radius
+	local overlap_radius = breed.stagger_in_air_mover_check_radius
 	local overlap_pos = POSITION_LOOKUP[unit]
 	local overlap_half_height = 1
 	local overlap_size = Vector3(overlap_radius, overlap_half_height, overlap_radius)
 	local overlap_rotation = Quaternion.look(Vector3.down(), Vector3.forward())
 	local world = blackboard.world
 	local physics_world = World.get_data(world, "physics_world")
-	local shape = overlap_half_height - overlap_radius > 0 and not not "capsule" or not (overlap_half_height - overlap_radius > 0) and not not "sphere"
+	local shape = overlap_half_height - overlap_radius > 0 and "capsule" or not (overlap_half_height - overlap_radius > 0) and "sphere"
 	local _, actor_count = PhysicsWorld.immediate_overlap(physics_world, "position", overlap_pos, "rotation", overlap_rotation, "size", overlap_size, "shape", shape, "types", "both", "collision_filter", "filter_environment_overlap")
 
 	if actor_count == 0 then
@@ -126,5 +126,5 @@ BTInGravityWellAction.run = function (self, unit, blackboard, t, dt)
 		end
 	end
 
-	return not not "done"
+	return "done"
 end

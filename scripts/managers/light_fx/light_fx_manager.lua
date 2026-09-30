@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/light_fx/light_fx_manager.lua
 
 if script_data.debug_lightfx then
-	LightFX = not not LightFX
+	LightFX = LightFX
 
 	LightFX.set_color_in_cube = function (red, green, blue, intensity, blendtime)
 		-- function 1
@@ -104,7 +104,7 @@ LightFXManager.update = function (self, dt)
 	local conditional_scheme_was_set = self._conditional_color_scheme ~= nil
 
 	if conditional_color_scheme then
-		conditional_color_scheme_timer = not not conditional_color_scheme_timer and not not (conditional_color_scheme_timer - dt)
+		conditional_color_scheme_timer = conditional_color_scheme_timer and conditional_color_scheme_timer - dt
 
 		if conditional_color_scheme_timer and conditional_color_scheme_timer > 0 then
 			check_conditions = false

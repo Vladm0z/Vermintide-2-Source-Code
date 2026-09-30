@@ -152,7 +152,7 @@ TextPopupUI._setup_scrollbar = function (self, height, optional_value)
 
 	widget.content.scroll_bar_info.bar_height_percentage = percentage
 
-	self:_set_scrollbar_value(not not optional_value or not not 0)
+	self:_set_scrollbar_value(optional_value or 0)
 
 	local scroll_step_multiplier = 2
 	local scroll_amount = math.max(WINDOW_INSIDE_HEIGHT / self._total_scroll_height, 0) * scroll_step_multiplier
@@ -177,7 +177,7 @@ TextPopupUI._update_mouse_scroll_input = function (self)
 	end
 
 	local scroll_bar_value = widget.content.scroll_bar_info.value
-	local current_scroll_value = not not self._scroll_value
+	local current_scroll_value = self._scroll_value
 
 	if current_scroll_value ~= mouse_scroll_value then
 		self:_set_scrollbar_value(mouse_scroll_value)
@@ -261,7 +261,7 @@ TextPopupUI._button_clicked = function (self, button_name)
 	if gamepad_active and button_name == "ok_button" then
 		local input_service = self._input_manager:get_service("Text")
 
-		is_pressed = not not input_service:get("confirm") or not not is_pressed
+		is_pressed = input_service:get("confirm") or is_pressed
 	end
 
 	if is_pressed then
@@ -278,10 +278,10 @@ TextPopupUI._animate_button = function (self, widget, dt)
 	local hotspot = content.button_hotspot
 	local is_hover = hotspot.is_hover
 	local is_selected = hotspot.is_selected
-	local input_pressed = not not hotspot.is_clicked
-	local input_progress = not not hotspot.input_progress
-	local hover_progress = not not hotspot.hover_progress
-	local selection_progress = not not hotspot.selection_progress
+	local input_pressed = hotspot.is_clicked
+	local input_progress = hotspot.input_progress
+	local hover_progress = hotspot.hover_progress
+	local selection_progress = hotspot.selection_progress
 	local speed = 8
 	local input_speed = 20
 

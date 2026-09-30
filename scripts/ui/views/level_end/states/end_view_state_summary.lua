@@ -104,7 +104,7 @@ end
 
 EndViewStateSummary.exit_done = function (self)
 	-- function 3
-	return not not self._exit_started
+	return self._exit_started
 end
 
 EndViewStateSummary._get_definitions = function (self)
@@ -208,7 +208,7 @@ EndViewStateSummary.update = function (self, dt, t)
 	if not self._transition_timer and (wanted_state or self._new_state) then
 		self.parent:clear_wanted_menu_state()
 
-		return not not wanted_state or not not self._new_state
+		return wanted_state or self._new_state
 	end
 
 	local parent = self.parent
@@ -269,7 +269,7 @@ EndViewStateSummary._update_animations = function (self, dt)
 		if max_level > self._current_level then
 			level = self._current_level
 		else
-			level = self._current_level + not not self._extra_levels
+			level = self._current_level + self._extra_levels
 		end
 
 		self.parent:present_level_up(self._hero_name, level)
@@ -367,7 +367,7 @@ EndViewStateSummary._get_summary_entries = function (self, game_won, game_mode_k
 		local name = "entry_" .. index
 		local text = mission_reward.text
 		local format_values = mission_reward.format_values
-		local experience = not not mission_reward.experience
+		local experience = mission_reward.experience
 		local value = mission_reward.value
 		local bonus = mission_reward.bonus
 		local icon = mission_reward.icon
@@ -382,7 +382,7 @@ EndViewStateSummary._get_summary_entries = function (self, game_won, game_mode_k
 			end
 		end
 
-		local value_text = experience and not not tostring(experience) or not experience and (value and not not tostring(value) or not value and not not "")
+		local value_text = experience and tostring(experience) or not experience and (value and tostring(value) or not value and "")
 		local entry = {
 			spacing = 8,
 			start_counter_sound = true,
@@ -476,7 +476,7 @@ EndViewStateSummary._setup_essence_presentation = function (self)
 	-- function 23
 	local essence_gained = self:_get_essence_earned()
 	local has_wom_dlc = Managers.unlock:is_dlc_unlocked("scorpion")
-	local draw_essence_presentation = not not has_wom_dlc and essence_gained ~= nil
+	local draw_essence_presentation = has_wom_dlc and essence_gained ~= nil
 	local widgets_by_name = self._widgets_by_name
 	local draw_essence_icon = true
 
@@ -512,9 +512,9 @@ EndViewStateSummary._setup_essence_presentation = function (self)
 	widgets_by_name.essence_background_effect_left.content.visible = draw_essence_presentation
 	widgets_by_name.essence_background_effect_right.content.visible = draw_essence_presentation
 	widgets_by_name.total_essence_title.content.visible = draw_essence_presentation
-	widgets_by_name.icon_essence.content.visible = draw_essence_icon and (not not draw_essence_presentation or not not false) or not draw_essence_icon and not not false
-	widgets_by_name.essence_total_text.content.visible = not not false
-	widgets_by_name.essence_total_text_max.content.visible = not not draw_essence_presentation and not not not draw_essence_icon
+	widgets_by_name.icon_essence.content.visible = draw_essence_icon and draw_essence_presentation
+	widgets_by_name.essence_total_text.content.visible = false
+	widgets_by_name.essence_total_text_max.content.visible = draw_essence_presentation and not draw_essence_icon
 end
 
 EndViewStateSummary._get_total_experience_progress_data = function (self, start_experience, start_experience_pool)
@@ -595,7 +595,7 @@ EndViewStateSummary._animate_experience_bar = function (self, dt, displaying_rew
 			extra_levels = extra_levels + self._progress_data.start_extra_level
 		end
 
-		has_reached_level = not not has_reached_level or extra_levels ~= self._extra_levels
+		has_reached_level = has_reached_level or extra_levels ~= self._extra_levels
 	end
 
 	if has_reached_level then
@@ -659,7 +659,7 @@ end
 
 EndViewStateSummary.done = function (self)
 	-- function 27
-	return not not self._experience_presentation_completed
+	return self._experience_presentation_completed
 end
 
 EndViewStateSummary._play_sound = function (self, event)

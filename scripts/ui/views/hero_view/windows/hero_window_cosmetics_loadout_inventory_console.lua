@@ -16,8 +16,8 @@ local function item_sort_func(item_1, item_2)
 	local item_data_2 = item_2.data
 	local item_key_1 = item_data_1.key
 	local item_key_2 = item_data_2.key
-	local item_1_power_level = not not item_1.power_level
-	local item_2_power_level = not not item_2.power_level
+	local item_1_power_level = item_1.power_level
+	local item_2_power_level = item_2.power_level
 	local item_1_backend_id = item_1.backend_id
 	local item_2_backend_id = item_2.backend_id
 	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
@@ -25,8 +25,8 @@ local function item_sort_func(item_1, item_2)
 
 	if item_1_favorited == item_2_favorited then
 		if item_1_power_level == item_2_power_level then
-			local item_1_rarity = not not item_1.rarity
-			local item_2_rarity = not not item_2.rarity
+			local item_1_rarity = item_1.rarity
+			local item_2_rarity = item_2.rarity
 			local item_rarity_order = UISettings.item_rarity_order
 			local item_1_rarity_order = item_rarity_order[item_1_rarity]
 			local item_2_rarity_order = item_rarity_order[item_2_rarity]
@@ -112,7 +112,7 @@ HeroWindowCosmeticsLoadoutInventoryConsole.on_enter = function (self, params, of
 	item_grid:apply_item_sorting_function(item_sort_func)
 	self:_set_item_compare_enable_state(false)
 
-	local player_unit = not not local_player and not not local_player.player_unit
+	local player_unit = local_player and local_player.player_unit
 
 	if player_unit then
 		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
@@ -192,7 +192,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole.set_focus = function (self, focused)
 	-- function 6
 	self._focused = focused
-	self.render_settings.alpha_multiplier = focused and not not 1 or not focused and not not 0.5
+	self.render_settings.alpha_multiplier = focused and 1 or not focused and 0.5
 	self._widgets_by_name.item_tooltip.content.visible = focused
 end
 
@@ -270,7 +270,7 @@ HeroWindowCosmeticsLoadoutInventoryConsole._update_equipped_item_tooltip = funct
 	local slot_name = slot.name
 	local item_interface = Managers.backend:get_interface("items")
 	local backend_id = BackendUtils.get_loadout_item_id(self.career_name, slot_name)
-	local item = not not backend_id and not not item_interface:get_item_from_id(backend_id)
+	local item = backend_id and item_interface:get_item_from_id(backend_id)
 	local widget = self._widgets_by_name.item_tooltip_compare
 
 	widget.content.item = item
@@ -279,7 +279,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole._update_selected_item_tooltip = function (self)
 	-- function 13
 	local selected_item = self._item_grid:selected_item()
-	local backend_id = not not selected_item and not not selected_item.backend_id
+	local backend_id = selected_item and selected_item.backend_id
 
 	if backend_id ~= self._selected_backend_id then
 		local widget = self._widgets_by_name.item_tooltip
@@ -316,7 +316,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole._is_button_pressed = function (self, widget)
 	-- function 15
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -328,7 +328,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole._is_button_hovered = function (self, widget)
 	-- function 16
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_hover_enter then
 		return true
@@ -456,8 +456,8 @@ HeroWindowCosmeticsLoadoutInventoryConsole._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -536,7 +536,7 @@ end
 HeroWindowCosmeticsLoadoutInventoryConsole._change_category_by_index = function (self, index, force_update)
 	-- function 25
 	if force_update then
-		index = not not self._current_category_index or not not 1
+		index = self._current_category_index or 1
 	end
 
 	if self._current_category_index == index then

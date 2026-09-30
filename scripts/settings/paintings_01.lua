@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/paintings_01.lua
 
-Paintings = not not Paintings
+Paintings = Paintings
 Paintings.hidden = {
 	sound_event = "painting_none_description",
 	rarity = "common",
@@ -2262,7 +2262,7 @@ local painting_order = {
 	"ver_high_elves_page_099"
 }
 
-PaintingOrder = not not PaintingOrder
+PaintingOrder = PaintingOrder
 
 for _, painting in ipairs(painting_order) do
 	if not table.contains(PaintingOrder, painting) and not table.contains(DefaultPaintings, painting) then
@@ -2272,7 +2272,7 @@ end
 
 local prefix = "resource_packages/keep_paintings/keep_painting_"
 
-PaintingPackageNames = not not PaintingPackageNames
+PaintingPackageNames = PaintingPackageNames
 
 for painting_name, _ in pairs(Paintings) do
 	PaintingPackageNames[prefix .. painting_name] = true

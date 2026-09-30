@@ -262,7 +262,7 @@ end
 HeroWindowCraftingInventoryConsole._is_button_pressed = function (self, widget)
 	-- function 11
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_release then
 		hotspot.on_release = false
@@ -274,7 +274,7 @@ end
 HeroWindowCraftingInventoryConsole._is_button_hovered = function (self, widget)
 	-- function 12
 	local content = widget.content
-	local hotspot = not not content.button_hotspot
+	local hotspot = content.button_hotspot
 
 	if hotspot.on_hover_enter then
 		return true
@@ -384,7 +384,7 @@ HeroWindowCraftingInventoryConsole._handle_gamepad_filter_input = function (self
 
 		local filter_widget = self._filter_widget
 		local filter_content = filter_widget.content
-		local current_gamepad_index = not not filter_content.current_gamepad_index
+		local current_gamepad_index = filter_content.current_gamepad_index
 		local gamepad_input_matrix = filter_content.gamepad_input_matrix
 		local rows = #gamepad_input_matrix
 		local columns = #gamepad_input_matrix[current_gamepad_index[1]]
@@ -452,7 +452,7 @@ HeroWindowCraftingInventoryConsole._handle_gamepad_filter_input = function (self
 		end
 	end
 
-	return not not filter_active or not not filter_selected
+	return filter_active or filter_selected
 end
 
 HeroWindowCraftingInventoryConsole.filter_selected = function (self)
@@ -656,7 +656,7 @@ HeroWindowCraftingInventoryConsole._handle_search_input = function (self, dt, t)
 		input_content.input_active = false
 
 		local filter_selected = self.parent:filter_selected()
-		local toggle_keyboard_pressed = not not gamepad_active and not not filter_selected and not not input_service:get("refresh")
+		local toggle_keyboard_pressed = gamepad_active and filter_selected and input_service:get("refresh")
 
 		if input_content.hotspot.on_pressed or toggle_keyboard_pressed then
 			input_content.input_active = true
@@ -711,7 +711,7 @@ HeroWindowCraftingInventoryConsole._handle_search_input = function (self, dt, t)
 		if not XboxInterface.interface_active() then
 			local search_query = XboxInterface.get_keyboard_result()
 
-			input_content.caret_index = gamepad_active and not not 1 or not gamepad_active and not not #search_query
+			input_content.caret_index = gamepad_active and 1 or not gamepad_active and #search_query
 
 			self:_do_search(search_query)
 
@@ -726,7 +726,7 @@ HeroWindowCraftingInventoryConsole._handle_search_input = function (self, dt, t)
 
 		if done then
 			if success then
-				input_content.caret_index = gamepad_active and not not 1 or not gamepad_active and not not #search_query
+				input_content.caret_index = gamepad_active and 1 or not gamepad_active and #search_query
 
 				self:_do_search(search_query)
 			end
@@ -751,7 +751,7 @@ local EMPTY_TABLE = {}
 HeroWindowCraftingInventoryConsole._do_search = function (self, search_query, filter_query)
 	-- function 23
 	self._search_query = search_query
-	self._filter_query = not not filter_query or not not self._filter_query
+	self._filter_query = filter_query or self._filter_query
 
 	local search_widget = self._widgets_by_name.input
 	local search_widget_content = search_widget.content
@@ -765,7 +765,7 @@ HeroWindowCraftingInventoryConsole._do_search = function (self, search_query, fi
 	local career_specific_filter = recipe.career_specific_filter
 
 	if hero_specific_filter then
-		local temp_item_filter = item_filter and not not ("and " .. item_filter) or not item_filter and not not ""
+		local temp_item_filter = item_filter and "and " .. item_filter or not item_filter and ""
 
 		item_filter = "can_wield_by_current_hero " .. temp_item_filter
 	end
@@ -825,8 +825,8 @@ HeroWindowCraftingInventoryConsole._update_page_info = function (self)
 	if current_page ~= self._current_page or total_pages ~= self._total_pages then
 		self._total_pages = total_pages
 		self._current_page = current_page
-		current_page = not not current_page or not not 1
-		total_pages = not not total_pages or not not 1
+		current_page = current_page or 1
+		total_pages = total_pages or 1
 
 		local widgets_by_name = self._widgets_by_name
 
@@ -849,9 +849,9 @@ HeroWindowCraftingInventoryConsole._update_crafting_material_panel = function (s
 		local texture = material_textures[item_key]
 		local item_filter = "item_key == " .. item_key
 		local items = backend_items:get_filtered_items(item_filter)
-		local item = not not items and not not items[1]
-		local backend_id = not not item and not not item.backend_id
-		local amount = backend_id and not not backend_items:get_item_amount(backend_id) or not backend_id and not not 0
+		local item = items and items[1]
+		local backend_id = item and item.backend_id
+		local amount = backend_id and backend_items:get_item_amount(backend_id) or not backend_id and 0
 		local widget = widgets_by_name["material_text_" .. index]
 		local content = widget.content
 		local amount_text
@@ -868,7 +868,7 @@ HeroWindowCraftingInventoryConsole._update_crafting_material_panel = function (s
 		content.icon = texture
 
 		if not content.item then
-			content.item = not not item or not not {
+			content.item = item or {
 				data = table.clone(ItemMasterList[item_key])
 			}
 		end
@@ -965,7 +965,7 @@ HeroWindowCraftingInventoryConsole.draw = function (self, dt)
 		UIRenderer.end_pass(ui_top_renderer)
 	end
 
-	input_service = not filter_active or not not FAKE_INPUT_SERVICE or not not input_service
+	input_service = not filter_active or FAKE_INPUT_SERVICE or input_service
 
 	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
@@ -995,7 +995,7 @@ end
 HeroWindowCraftingInventoryConsole._change_category_by_index = function (self, index, force_update)
 	-- function 34
 	if force_update then
-		index = not not self._current_category_index or not not 1
+		index = self._current_category_index or 1
 	end
 
 	if self._current_category_index == index and not force_update then
@@ -1034,7 +1034,7 @@ end
 
 HeroWindowCraftingInventoryConsole.change_item_filter = function (self, item_filter, change_page, optional_search_query)
 	-- function 35
-	change_page = not not change_page or change_page == nil
+	change_page = change_page or change_page == nil
 
 	self._item_grid:change_item_filter(item_filter, change_page, optional_search_query)
 end
@@ -1042,7 +1042,7 @@ end
 HeroWindowCraftingInventoryConsole._update_selected_item_tooltip = function (self, forced_update)
 	-- function 36
 	local selected_item = self._item_grid:selected_item()
-	local backend_id = not not selected_item and not not selected_item.backend_id
+	local backend_id = selected_item and selected_item.backend_id
 
 	if backend_id ~= self._selected_backend_id or forced_update then
 		local widget = self._widgets_by_name.item_tooltip
@@ -1104,7 +1104,7 @@ HeroWindowCraftingInventoryConsole._handle_gamepad_activity = function (self, fo
 
 	local mouse_active = Managers.input:is_device_active("mouse")
 
-	forced_update = not not forced_update or self.gamepad_active_last_frame == nil
+	forced_update = forced_update or self.gamepad_active_last_frame == nil
 
 	if not mouse_active then
 		if not self.gamepad_active_last_frame or forced_update then
@@ -1119,7 +1119,7 @@ HeroWindowCraftingInventoryConsole._handle_gamepad_activity = function (self, fo
 			else
 				local first_item = item_grid:get_item_in_slot(1, 1)
 
-				selected_item_backend_id = not not first_item and not not first_item.backend_id
+				selected_item_backend_id = first_item and first_item.backend_id
 			end
 
 			if selected_item_backend_id then

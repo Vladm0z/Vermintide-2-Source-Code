@@ -29,7 +29,7 @@ KillVolumeHandlerExtension.on_hit_kill_volume = function (self)
 	for i = 1, #self._callbacks do
 		local cb = self._callbacks[i]
 
-		handled = not not cb() or not not handled
+		handled = cb() or handled
 	end
 
 	return handled

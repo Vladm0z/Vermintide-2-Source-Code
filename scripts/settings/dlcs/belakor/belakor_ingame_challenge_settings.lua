@@ -57,7 +57,7 @@ dlc_settings.ingame_challenge_rewards_description = {
 dlc_settings.ingame_challenge_validation_functions = {
 	deus_power_up = function (data)
 		-- function 2
-		fassert(not not data.granted_power_up_name, "power_up challenges must set a power_up that is granting the challenge", data.reward_id)
+		fassert(data.granted_power_up_name, "power_up challenges must set a power_up that is granting the challenge", data.reward_id)
 		fassert(DeusPowerUps[data.granted_power_up_rarity], "reward power_up %s not valid: power_up rarity %s not found in power_ups list", data.reward_id, data.granted_power_up_rarity)
 		fassert(DeusPowerUps[data.granted_power_up_rarity][data.granted_power_up_name], "reward power_up %s not valid: granted_power_up %s with rarity %s not found in power_ups list", data.reward_id, data.granted_power_up_name, data.granted_power_up_rarity)
 		fassert(not DeusPowerUps[data.granted_power_up_rarity][data.granted_power_up_name].talent, "reward power_up %s not valid: can't grant talent power_ups at the moment", data.reward_id, data.quest_power_up_rarity)

@@ -18,11 +18,11 @@ EventLightSpawnerExtension.init = function (self, extension_init_context, unit, 
 	self._spawn_pool_spawn_index = 1
 	self._spawn_pool_add_index = 1
 	self._num_raycasts = 0
-	self._speed = not not extension_init_data.speed
-	self._respawn_timer = not not extension_init_data.respawn_timer
-	self._first_spawn_delay = not not extension_init_data.first_spawn_delay
-	self._unit_to_spawn = not not extension_init_data.unit_to_spawn
-	self._light_intensity = not not Unit.get_data(unit, "light_intensity")
+	self._speed = extension_init_data.speed
+	self._respawn_timer = extension_init_data.respawn_timer
+	self._first_spawn_delay = extension_init_data.first_spawn_delay
+	self._unit_to_spawn = extension_init_data.unit_to_spawn
+	self._light_intensity = Unit.get_data(unit, "light_intensity")
 	self._active = false
 
 	Unit.set_unit_visibility(self.unit, false)
@@ -85,7 +85,7 @@ EventLightSpawnerExtension._update_units = function (self, context, dt)
 	local units = self._units
 
 	for _, light_unit in pairs(units) do
-		local unit = not not light_unit and not not light_unit.unit
+		local unit = light_unit and light_unit.unit
 		local player_unit = light_unit.chase_target
 
 		if not player_unit then
@@ -94,11 +94,11 @@ EventLightSpawnerExtension._update_units = function (self, context, dt)
 
 		if player_unit and Unit.alive(player_unit) and unit and Unit.alive(unit) then
 			local unit_position = Unit.local_position(unit, 0)
-			local player_pos = not not player_unit and not not (POSITION_LOOKUP[player_unit] + Vector3.up())
+			local player_pos = player_unit and POSITION_LOOKUP[player_unit] + Vector3.up()
 			local physics_world = World.physics_world(context.world)
 			local direction = player_pos - unit_position
 
-			direction = not not Vector3.normalize(direction)
+			direction = Vector3.normalize(direction)
 
 			local length = 1
 
@@ -127,7 +127,7 @@ EventLightSpawnerExtension._update_units = function (self, context, dt)
 						hit_direction = Vector3.normalize(hit_direction)
 
 						local player = Managers.player:owner(player_unit)
-						local is_player = not not player and not not player:is_player_controlled()
+						local is_player = player and player:is_player_controlled()
 
 						if is_player then
 							DamageUtils.add_damage_network_player(damage_profile, nil, power_level, player_unit, unit, "full", player_pos, hit_direction, "undefined", nil, 0, false, nil, false, 0, 1)
@@ -150,9 +150,9 @@ EventLightSpawnerExtension._update_units = function (self, context, dt)
 			local player_unit = light_unit.chase_target
 
 			if Unit.alive(player_unit) then
-				local player_pos = not not player_unit and not not POSITION_LOOKUP[player_unit]
+				local player_pos = player_unit and POSITION_LOOKUP[player_unit]
 				local player = Managers.player:owner(player_unit)
-				local is_player = not not player and not not player:is_player_controlled()
+				local is_player = player and player:is_player_controlled()
 
 				if player_pos and is_player then
 					local chase_target_position = player_pos + Vector3(0, 0, 1)
@@ -168,7 +168,7 @@ EventLightSpawnerExtension._update_units = function (self, context, dt)
 					local chase_target_position = player_pos + Vector3(0, 0, 1)
 					local direction_vector = chase_target_position - unit_position
 					local magnitude = Vector3.length(direction_vector)
-					local move_vector_modifier = magnitude < 3 and not not math.max(0, magnitude - 2) or not (magnitude < 3) and not not 1
+					local move_vector_modifier = magnitude < 3 and math.max(0, magnitude - 2) or not (magnitude < 3) and 1
 
 					direction_vector = Vector3.normalize(direction_vector)
 
@@ -292,7 +292,7 @@ EventLightSpawnerExtension._sync_light_units = function (self)
 					break
 				end
 			else
-				available_unit = not not available_unit or not not light_unit
+				available_unit = available_unit or light_unit
 			end
 		end
 

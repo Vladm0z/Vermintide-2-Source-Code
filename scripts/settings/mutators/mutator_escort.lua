@@ -25,8 +25,8 @@ return {
 			if ALIVE[player_unit] then
 				local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 				local slot_data = inventory_extension:get_slot_data(slot_name)
-				local item_data = not not slot_data and not not slot_data.item_data
-				local item_name = not not item_data and not not item_data.name
+				local item_data = slot_data and slot_data.item_data
+				local item_name = item_data and item_data.name
 
 				if item_name == pickup_name then
 					return true
@@ -149,7 +149,7 @@ return {
 		local t = Managers.time:time("game")
 		local delay = 2
 
-		return not not server_data.explosion_t, delay
+		return server_data.explosion_t, delay
 	end,
 	end_zone_activation_condition_function = function (context, data)
 		-- function 7

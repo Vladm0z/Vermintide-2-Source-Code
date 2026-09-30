@@ -643,7 +643,7 @@ local opponent_uneven_field_color = Colors.get_table("opponent_scoreboard_entry"
 
 local function create_grid(scenegraph_id, num_rows, num_columns, line_width, color)
 	-- function 1
-	local color = not not color or not not {
+	local color = color or {
 		255,
 		10,
 		10,
@@ -1012,16 +1012,16 @@ local function create_stats(scenegraph_id, fields, optional_font_size, offset, i
 	}
 	local internal_score_style = table.clone(score_style)
 
-	internal_score_style.font_size = not not optional_font_size or not not internal_score_style.font_size
-	internal_score_style.text_color = is_me and not not {
+	internal_score_style.font_size = optional_font_size or internal_score_style.font_size
+	internal_score_style.text_color = is_me and {
 		255,
 		177,
 		144,
 		31
-	} or not is_me and not not internal_score_style.text_color
+	} or not is_me and internal_score_style.text_color
 
 	if optional_team then
-		internal_score_style.text_color = optional_team ~= "local_team" and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (optional_team ~= "local_team") and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+		internal_score_style.text_color = optional_team ~= "local_team" and Colors.get_color_table_with_alpha("opponent_team_lighter", 255) or not (optional_team ~= "local_team") and Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 	end
 
 	local widget = {
@@ -1031,7 +1031,7 @@ local function create_stats(scenegraph_id, fields, optional_font_size, offset, i
 		content = {},
 		style = {},
 		scenegraph_id = scenegraph_id,
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			0
@@ -1087,7 +1087,7 @@ local function create_stats(scenegraph_id, fields, optional_font_size, offset, i
 		content[id] = tostring(value)
 		content.highscore_marker = "scoreboard_marker"
 		content.offset = offset
-		content[id .. "_is_highscore"] = not not false
+		content[id .. "_is_highscore"] = false
 		style[id] = table.clone(internal_score_style)
 		style[id].offset[1] = (i - 1) * cell_size[1] + padding
 		style[id].size = {
@@ -1165,13 +1165,13 @@ local function create_title(scenegraph_id, title, optional_font_size, offset, is
 	local team_color = selected_color
 	local internal_title_style = table.clone(title_style)
 
-	internal_title_style.font_size = not not optional_font_size or not not internal_title_style.font_size
-	internal_title_style.text_color = is_me and not not {
+	internal_title_style.font_size = optional_font_size or internal_title_style.font_size
+	internal_title_style.text_color = is_me and {
 		255,
 		177,
 		144,
 		31
-	} or not is_me and not not team_color
+	} or not is_me and team_color
 	internal_title_style.size = size
 
 	local widget = {
@@ -1181,7 +1181,7 @@ local function create_title(scenegraph_id, title, optional_font_size, offset, is
 		content = {},
 		style = {},
 		scenegraph_id = scenegraph_id,
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			0
@@ -1223,15 +1223,15 @@ end
 local function create_team_title(team, local_team_name, opponent_team_name)
 	-- function 7
 	local is_local_team = team == "local_team"
-	local scenegraph_id = is_local_team and not not "local_title" or not is_local_team and not not "opponent_title"
+	local scenegraph_id = is_local_team and "local_title" or not is_local_team and "opponent_title"
 	local scenegraph_data = scenegraph_definition[scenegraph_id]
 	local size = table.clone(scenegraph_data.size)
-	local team_name = is_local_team and (not not local_team_name or not not opponent_team_name) or not is_local_team and not not opponent_team_name
+	local team_name = is_local_team and (local_team_name or opponent_team_name) or not is_local_team and opponent_team_name
 	local team_settings = UISettings.teams_ui_assets[team_name]
-	local team_color = is_local_team and not not local_team_color or not is_local_team and not not opponent_team_color
-	local team_color_light = is_local_team and not not local_team_color_light or not is_local_team and not not opponent_team_color_light
-	local team_color_dark = is_local_team and not not local_team_color_dark or not is_local_team and not not opponent_team_color_dark
-	local title_color = is_local_team and not not Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_local_team and not not Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+	local team_color = is_local_team and local_team_color or not is_local_team and opponent_team_color
+	local team_color_light = is_local_team and local_team_color_light or not is_local_team and opponent_team_color_light
+	local team_color_dark = is_local_team and local_team_color_dark or not is_local_team and opponent_team_color_dark
+	local title_color = is_local_team and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or not is_local_team and Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local internal_title_style = table.clone(team_title_style)
 
 	internal_title_style.size = size
@@ -1287,7 +1287,7 @@ local function create_team_title(team, local_team_name, opponent_team_name)
 		pass_type = "text",
 		text_id = "team_type"
 	}
-	content.team_type = is_local_team and not not "vs_lobby_your_team" or not is_local_team and not not "vs_lobby_enemy_team"
+	content.team_type = is_local_team and "vs_lobby_your_team" or not is_local_team and "vs_lobby_enemy_team"
 
 	local internal_type_style = table.clone(team_type_style)
 
@@ -1350,7 +1350,7 @@ local widget_definitions = {
 
 local function create_winner_icon(winning_team)
 	-- function 8
-	local scenegraph_id = winning_team ~= "local_team" and not not "opponent_winner_icon" or not (winning_team ~= "local_team") and not not "local_winner_icon"
+	local scenegraph_id = winning_team ~= "local_team" and "opponent_winner_icon" or not (winning_team ~= "local_team") and "local_winner_icon"
 
 	return {
 		element = {
@@ -1445,12 +1445,12 @@ local function create_flag(team, local_team_name, opponent_team_name)
 	if team == "local_team" then
 		local team_settings = UISettings.teams_ui_assets[local_team_name]
 
-		texture_name = not not team_settings.local_flag_texture or not not texture_name
+		texture_name = team_settings.local_flag_texture or texture_name
 		scenegraph_id = "local_flag"
 	else
 		local team_settings = UISettings.teams_ui_assets[opponent_team_name]
 
-		texture_name = not not team_settings.opponent_flag_texture or not not texture_name
+		texture_name = team_settings.opponent_flag_texture or texture_name
 		scenegraph_id = "opponent_flag"
 	end
 
@@ -1475,7 +1475,7 @@ local function create_edge(scenegraph_id, color, size_y)
 			rect = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,

@@ -101,8 +101,8 @@ CameraManager.set_elevation_offset = function (self, offset, scale, min, max)
 	-- function 4
 	self._listener_elevation_offset = offset
 	self._listener_elevation_scale = scale
-	self._listener_elevation_min = not not min or not not -math.huge
-	self._listener_elevation_max = not not max or not not math.huge
+	self._listener_elevation_min = min or -math.huge
+	self._listener_elevation_max = max or math.huge
 end
 
 CameraManager.register_shadow_lights = function (self, set)
@@ -311,7 +311,7 @@ local EMPTY_TABLE = {}
 CameraManager.shading_callback = function (self, world, shading_env, viewport)
 	-- function 29
 	if self._world == world then
-		local shading_env_settings = not not self._shading_environment[viewport]
+		local shading_env_settings = self._shading_environment[viewport]
 
 		if shading_env_settings.dof_enabled then
 			local dof_enabled = shading_env_settings.dof_enabled
@@ -359,7 +359,7 @@ CameraManager.shading_callback = function (self, world, shading_env, viewport)
 			ShadingEnvironment.set_vector3(shading_env, "vignette_scale_falloff_opacity", new_scale_falloff_opacity)
 		end
 
-		local gamma = not not Application.user_setting("gamma")
+		local gamma = Application.user_setting("gamma")
 
 		ShadingEnvironment.set_scalar(shading_env, "exposure", ShadingEnvironment.scalar(shading_env, "exposure") * gamma)
 
@@ -374,7 +374,7 @@ CameraManager.shading_callback = function (self, world, shading_env, viewport)
 
 		self.mood_handler:apply_environment_variables(shading_env)
 
-		local blur_value = not not World.get_data(world, "fullscreen_blur")
+		local blur_value = World.get_data(world, "fullscreen_blur")
 
 		if blur_value > 0 then
 			ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", 1)
@@ -384,7 +384,7 @@ CameraManager.shading_callback = function (self, world, shading_env, viewport)
 			ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", 0)
 		end
 
-		local greyscale_value = not not World.get_data(world, "greyscale")
+		local greyscale_value = World.get_data(world, "greyscale")
 
 		if greyscale_value > 0 then
 			ShadingEnvironment.set_scalar(shading_env, "grey_scale_enabled", 1)
@@ -429,11 +429,11 @@ CameraManager.set_camera_node = function (self, viewport_name, tree_id, node_nam
 		if old_tree_id ~= tree_id then
 			local tree_transitions = current_node.node:tree_transitions()
 
-			transition_template = not not tree_transitions[tree_id] or not not tree_transitions.default
+			transition_template = tree_transitions[tree_id] or tree_transitions.default
 		else
 			local node_transitions = current_node.node:node_transitions()
 
-			transition_template = not not node_transitions[next_node.node:name()] or not not node_transitions.default
+			transition_template = node_transitions[next_node.node:name()] or node_transitions.default
 		end
 
 		if transition_template then
@@ -546,7 +546,7 @@ CameraManager._setup_child_nodes = function (self, node_table, viewport_name, tr
 	local node_settings = settings._node
 	local node = self:_setup_node(node_settings, parent_node, root_node)
 
-	root_node = not not root_node or not not node
+	root_node = root_node or node
 	node_table[node:name()] = node
 
 	for key, child_settings in pairs(settings) do
@@ -855,16 +855,16 @@ CameraManager.camera_effect_shake_event = function (self, event_name, start_time
 	local fade_out = event.fade_out
 
 	if duration and fade_out then
-		duration = duration + (not not fade_in or not not 0) + fade_out
+		duration = duration + (fade_in or 0) + fade_out
 	end
 
 	data.event = event
 	data.start_time = start_time
-	data.end_time = not not duration and not not (start_time + duration)
-	data.fade_in_time = not not fade_in and not not (start_time + fade_in)
-	data.fade_out_time = not not fade_out and not not (data.end_time - fade_out)
-	data.seed = not not event.seed
-	data.scale = not not scale or not not 1
+	data.end_time = duration and start_time + duration
+	data.fade_in_time = fade_in and start_time + fade_in
+	data.fade_out_time = fade_out and data.end_time - fade_out
+	data.seed = event.seed
+	data.scale = scale or 1
 	self._shake_event_settings[data] = true
 
 	local use_rumble = not event.no_rumble
@@ -872,7 +872,7 @@ CameraManager.camera_effect_shake_event = function (self, event_name, start_time
 	if use_rumble and Managers.state.controller_features then
 		Managers.state.controller_features:add_effect("camera_shake", {
 			shake_settings = data,
-			scale = not not scale or not not 1,
+			scale = scale or 1,
 			duration = duration,
 			event_name = event_name
 		})
@@ -888,7 +888,7 @@ end
 
 CameraManager.is_recoiling = function (self)
 	-- function 58
-	return not not self._recoil_event_settings, self._total_recoil_offset
+	return self._recoil_event_settings, self._total_recoil_offset
 end
 
 CameraManager.weapon_recoil = function (self, recoil_settings)
@@ -928,13 +928,13 @@ end
 
 CameraManager.set_offset = function (self, x, y, z)
 	-- function 61
-	self._camera_offset = self._camera_offset and not not self._camera_offset:store(Vector3(x, y, z)) or not self._camera_offset and not not Vector3Box(x, y, z)
+	self._camera_offset = self._camera_offset and self._camera_offset:store(Vector3(x, y, z)) or not self._camera_offset and Vector3Box(x, y, z)
 end
 
 CameraManager._apply_offset = function (self, current_data, t)
 	-- function 62
 	local new_data = current_data
-	local offset = self._camera_offset and not not self._camera_offset:unbox() or not self._camera_offset and not not Vector3(0, 0, 0)
+	local offset = self._camera_offset and self._camera_offset:unbox() or not self._camera_offset and Vector3(0, 0, 0)
 	local offset_x = offset.x
 	local offset_y = offset.y
 	local offset_z = offset.z
@@ -989,7 +989,7 @@ CameraManager._update_camera = function (self, dt, t, viewport_name)
 		camera_data = self:_apply_recoil_event(settings, table.clone(camera_data), dt, t)
 	end
 
-	local HAS_TOBII = not not rawget(_G, "Tobii")
+	local HAS_TOBII = rawget(_G, "Tobii")
 
 	if HAS_TOBII and Application.user_setting("tobii_eyetracking") and Application.user_setting("tobii_extended_view") then
 		self:_apply_extended_view(camera_data)
@@ -1089,7 +1089,7 @@ CameraManager._calculate_sequence_event_values_normal = function (self, event_va
 		for index, settings in ipairs(modifiers) do
 			if total_progress < settings.time_stamp then
 				local next_settings = settings
-				local current_settings = not not modifiers[index - 1]
+				local current_settings = modifiers[index - 1]
 				local progress = total_progress - current_settings.time_stamp
 				local time_stamp_difference = next_settings.time_stamp - current_settings.time_stamp
 
@@ -1181,19 +1181,19 @@ CameraManager._apply_recoil_event = function (self, settings, current_data, dt, 
 	local new_data = current_data
 	local current_rotation = current_data.rotation
 	local climbing = t < climb_end_time
-	local done_percentage = climbing and not not (current_climb_time / climb_duration) or not climbing and not not (current_restore_time / restore_duration)
+	local done_percentage = climbing and current_climb_time / climb_duration or not climbing and current_restore_time / restore_duration
 
-	done_percentage = climbing and (not not climb_function(done_percentage) or not not restore_function(done_percentage)) or not climbing and not not restore_function(done_percentage)
+	done_percentage = climbing and (climb_function(done_percentage) or restore_function(done_percentage)) or not climbing and restore_function(done_percentage)
 
-	local starting_yaw_rotation = climbing and not not 0 or not climbing and not not math.degrees_to_radians(horizontal_climb)
-	local starting_pitch_rotation = climbing and not not 0 or not climbing and not not math.degrees_to_radians(vertical_climb)
-	local current_yaw_rotation = math.degrees_to_radians(climbing and (not not horizontal_climb or not not -horizontal_climb) or not climbing and not not -horizontal_climb) * done_percentage
-	local current_pitch_rotation = math.degrees_to_radians(climbing and (not not vertical_climb or not not -vertical_climb) or not climbing and not not -vertical_climb) * done_percentage
+	local starting_yaw_rotation = climbing and 0 or not climbing and math.degrees_to_radians(horizontal_climb)
+	local starting_pitch_rotation = climbing and 0 or not climbing and math.degrees_to_radians(vertical_climb)
+	local current_yaw_rotation = math.degrees_to_radians(climbing and (horizontal_climb or -horizontal_climb) or not climbing and -horizontal_climb) * done_percentage
+	local current_pitch_rotation = math.degrees_to_radians(climbing and (vertical_climb or -vertical_climb) or not climbing and -vertical_climb) * done_percentage
 	local yaw_offset = Quaternion(Vector3.up(), starting_yaw_rotation + current_yaw_rotation)
 	local pitch_offset = Quaternion(Vector3.right(), starting_pitch_rotation + current_pitch_rotation)
 	local total_offset = Quaternion.multiply(yaw_offset, pitch_offset)
 
-	self._total_recoil_offset = self._total_recoil_offset and not not self._total_recoil_offset:store(total_offset) or not self._total_recoil_offset and not not QuaternionBox(total_offset)
+	self._total_recoil_offset = self._total_recoil_offset and self._total_recoil_offset:store(total_offset) or not self._total_recoil_offset and QuaternionBox(total_offset)
 
 	local final_rotation = Quaternion.multiply(current_rotation, total_offset)
 
@@ -1245,8 +1245,8 @@ CameraManager._calculate_perlin_value = function (self, x, settings)
 		total = total + self:_interpolated_noise(x * frequency, settings) * amplitude
 	end
 
-	local amplitude_multiplier = not not event_settings.amplitude
-	local fade_multiplier = not not settings.fade_progress
+	local amplitude_multiplier = event_settings.amplitude
+	local fade_multiplier = settings.fade_progress
 
 	total = total * amplitude_multiplier * fade_multiplier
 
@@ -1304,7 +1304,7 @@ CameraManager._update_camera_properties = function (self, camera, shadow_cull_ca
 
 		if root_unit and Unit.alive(root_unit) then
 			local safe_position_offset = current_node:safe_position_offset()
-			local safe_pos = Unit.world_position(root_unit, root_object and not not Unit.node(root_unit, root_object) or not root_object and not not 0) + safe_position_offset:unbox()
+			local safe_pos = Unit.world_position(root_unit, root_object and Unit.node(root_unit, root_object) or not root_object and 0) + safe_position_offset:unbox()
 
 			assert(Vector3.is_valid(safe_pos), "Trying to use invalid safe position")
 
@@ -1376,7 +1376,7 @@ CameraManager._update_camera_properties = function (self, camera, shadow_cull_ca
 	end
 
 	if camera_data.far_range then
-		local far_range = not not Camera.get_data(camera, "far_range")
+		local far_range = Camera.get_data(camera, "far_range")
 
 		Camera.set_far_range(camera, far_range)
 		Camera.set_far_range(shadow_cull_camera, far_range)

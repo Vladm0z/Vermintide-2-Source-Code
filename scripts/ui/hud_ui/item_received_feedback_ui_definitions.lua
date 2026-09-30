@@ -282,7 +282,7 @@ end
 
 local function create_reinforcement_widget(index, scenegraph_id, frame_settings_name, scale, retained_mode)
 	-- function 8
-	scale = not not scale or not not 1
+	scale = scale or 1
 
 	local frame_settings = UIPlayerPortraitFrameSettings[frame_settings_name]
 	local default_color = {
@@ -383,7 +383,7 @@ local function create_reinforcement_widget(index, scenegraph_id, frame_settings_
 			retained_mode = retained_mode
 		}
 
-		local uvs = i ~= 1 and not not {
+		local uvs = i ~= 1 and {
 			{
 				1,
 				0
@@ -392,7 +392,7 @@ local function create_reinforcement_widget(index, scenegraph_id, frame_settings_
 				0,
 				1
 			}
-		} or not (i ~= 1) and not not {
+		} or not (i ~= 1) and {
 			{
 				0,
 				0

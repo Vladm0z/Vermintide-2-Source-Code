@@ -29597,7 +29597,7 @@ for horde_composition_name, horde_composition in pairs(HordeCompositions) do
 
 			if not already_printed and (not IS_CONSOLE or not (i <= console_max)) then
 				already_printed = true
-				missing_composition_difficulty = (not not missing_composition_difficulty or not not 0) + 1
+				missing_composition_difficulty = (missing_composition_difficulty or 0) + 1
 			end
 
 			horde_composition[i] = max_composition

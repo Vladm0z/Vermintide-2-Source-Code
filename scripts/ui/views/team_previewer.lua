@@ -134,7 +134,7 @@ TeamPreviewer.cb_hero_unit_spawned_skin_preview = function (self, hero_previewer
 				local slot_name = slot_names[1]
 				local slot = InventorySettings.slots_by_name[slot_name]
 
-				hero_previewer:equip_item(item_name, slot, nil, item.skin_name ~= "n/a" and not not item.skin_name)
+				hero_previewer:equip_item(item_name, slot, nil, item.skin_name ~= "n/a" and item.skin_name)
 			end
 		end
 	end
@@ -146,9 +146,9 @@ TeamPreviewer.cb_hero_unit_spawned_skin_preview = function (self, hero_previewer
 	local preview_idle_animation = "idle"
 	local weapon_pose_anim_event = hero_data.weapon_pose_anim_event
 
-	if weapon_pose_anim_event and table.is_empty(not not hero_data.breed) then
+	if weapon_pose_anim_event and table.is_empty(hero_data.breed) then
 		hero_previewer:play_character_animation(weapon_pose_anim_event)
-	elseif hero_data.breed and not table.is_empty(not not hero_data.breed) then
+	elseif hero_data.breed and not table.is_empty(hero_data.breed) then
 		local random_value = Math.random(6)
 
 		if hero_data.random_seed then
@@ -211,5 +211,5 @@ TeamPreviewer.get_hero_previewer = function (self, index)
 	-- function 15
 	fassert(self.hero_previewers[index], "[TeamPreviewer] The hero previewer at the index %d you are trying to access does not exist!", index)
 
-	return not not self.hero_previewers[index]
+	return self.hero_previewers[index]
 end

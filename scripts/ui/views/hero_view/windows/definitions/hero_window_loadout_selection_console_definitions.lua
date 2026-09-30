@@ -359,7 +359,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slots)
 	local passes = {}
 	local content = {}
 	local style = {}
-	local offset = not not offset or not not {
+	local offset = offset or {
 		0,
 		0,
 		0
@@ -386,7 +386,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slots)
 			style_id = slot_name .. "_frame",
 			content_check_function = function (content, style)
 				-- function 3
-				return not not content[slot_name].is_hover
+				return content[slot_name].is_hover
 			end
 		}
 		passes[#passes + 1] = {
@@ -396,7 +396,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slots)
 			content_id = slot_name,
 			content_check_function = function (content)
 				-- function 4
-				return not not content.item
+				return content.item
 			end
 		}
 		passes[#passes + 1] = {
@@ -418,7 +418,7 @@ local function create_loadout_equipment(scenegraph_id, offset, slots)
 			content_id = slot_name,
 			content_check_function = function (content)
 				-- function 5
-				return not not content.item
+				return content.item
 			end
 		}
 		content[slot_name] = {
@@ -525,7 +525,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 	local passes = {}
 	local content = {}
 	local style = {}
-	local offset = not not offset or not not {
+	local offset = offset or {
 		0,
 		0,
 		0
@@ -547,7 +547,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			style_id = talent_id .. "_hover_frame",
 			content_check_function = function (content, style)
 				-- function 7
-				return not not content[talent_id].is_hover
+				return content[talent_id].is_hover
 			end
 		}
 		passes[#passes + 1] = {
@@ -566,7 +566,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			content_id = talent_id,
 			content_check_function = function (content)
 				-- function 9
-				return not not content.talent
+				return content.talent
 			end
 		}
 		passes[#passes + 1] = {
@@ -577,7 +577,7 @@ local function create_loadout_talents(scenegraph_id, offset)
 			content_id = talent_id,
 			content_check_function = function (content)
 				-- function 10
-				return not not content.talent
+				return content.talent
 			end
 		}
 		content[talent_id] = {
@@ -643,12 +643,12 @@ end
 
 local function create_tweaked_default_button(scenegraph_id, size, frame_name, background_texture, text, font_size, optional_color_name, optional_detail_texture, optional_detail_offset, disable_with_gamepad, skip_side_detail, masked, optional_offset, fit_background_texture, optional_area_size)
 	-- function 11
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
-	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
+	local side_detail_texture = optional_detail_texture or "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
 	local side_detail_texture_size = side_detail_texture_settings.size
 	local extra_detail_offset_x, extra_detail_offset_y
@@ -810,16 +810,16 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 				skip_side_detail = skip_side_detail
 			},
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - (fit_background_texture and not not 1 or not fit_background_texture and not not (size[2] / background_texture_settings.size[2]))
+						1 - (fit_background_texture and 1 or not fit_background_texture and size[2] / background_texture_settings.size[2])
 					},
 					{
-						fit_background_texture and not not 1 or not fit_background_texture and not not (size[1] / background_texture_settings.size[1]),
+						fit_background_texture and 1 or not fit_background_texture and size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
@@ -843,10 +843,10 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 					1
 				},
 				masked = masked,
-				texture_size = fit_background_texture and not not {
+				texture_size = fit_background_texture and {
 					size[1] * 0.7,
 					size[2] * 0.7
-				} or not fit_background_texture and not not nil
+				} or not fit_background_texture and nil
 			},
 			background_rect = {
 				vertical_alignment = "center",
@@ -933,8 +933,8 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_size = not not font_size or not not 24,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_size = font_size or 24,
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -955,8 +955,8 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_size = not not font_size or not not 24,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_size = font_size or 24,
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -976,8 +976,8 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_size = not not font_size or not not 24,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_size = font_size or 24,
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
@@ -1051,8 +1051,8 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 					255
 				},
 				offset = {
-					extra_detail_offset_x and not not -extra_detail_offset_x or not extra_detail_offset_x and not not -9,
-					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					extra_detail_offset_x and -extra_detail_offset_x or not extra_detail_offset_x and -9,
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (extra_detail_offset_y or 0),
 					9
 				},
 				size = {
@@ -1069,8 +1069,8 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 					255
 				},
 				offset = {
-					size[1] - side_detail_texture_size[1] + (not not extra_detail_offset_x or not not 9),
-					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					size[1] - side_detail_texture_size[1] + (extra_detail_offset_x or 9),
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (extra_detail_offset_y or 0),
 					9
 				},
 				size = {
@@ -1100,7 +1100,7 @@ local function create_tweaked_default_button(scenegraph_id, size, frame_name, ba
 			}
 		},
 		scenegraph_id = scenegraph_id,
-		offset = not not optional_offset or not not {
+		offset = optional_offset or {
 			0,
 			0,
 			0

@@ -420,7 +420,7 @@ local function create_reward_item_widget(day_index, reward_index)
 						-- function 3
 						local gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return not not content.is_hover
+						return content.is_hover
 					end
 				},
 				{
@@ -590,7 +590,7 @@ local function create_day_widget(day_index)
 						-- function 6
 						local gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return not not gamepad_active and content.selection_index == content.day_index
+						return gamepad_active and content.selection_index == content.day_index
 					end
 				},
 				{
@@ -675,7 +675,7 @@ local function create_day_widget(day_index)
 					pass_type = "rect",
 					content_check_function = function (content)
 						-- function 15
-						return content.calendar_type == "calendar" and not content.is_claimed and content.day_index <= content.current_day and not not not content.is_loop
+						return content.calendar_type == "calendar" and not content.is_claimed and content.day_index <= content.current_day and not content.is_loop
 					end,
 					content_change_function = function (content, style)
 						-- function 16
@@ -1032,7 +1032,7 @@ local loading_icon_widget = {
 				texture_id = "loading_icon",
 				content_change_function = function (content, style, _, dt)
 					-- function 17
-					local progress = not not style.progress
+					local progress = style.progress
 
 					progress = (progress + dt) % 1
 

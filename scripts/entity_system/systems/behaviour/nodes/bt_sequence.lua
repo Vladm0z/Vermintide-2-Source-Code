@@ -23,7 +23,7 @@ end
 BTSequence.run = function (self, unit, blackboard, t, dt)
 	-- function 3
 	local node_data = blackboard.node_data[self._identifier]
-	local child_to_run_index = not not node_data or not not 1
+	local child_to_run_index = node_data or 1
 	local num_children = #self._children
 
 	for i = child_to_run_index, num_children do

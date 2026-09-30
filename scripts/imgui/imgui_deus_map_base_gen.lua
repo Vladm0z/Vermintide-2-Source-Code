@@ -170,7 +170,7 @@ local RELOAD = true
 
 ImguiDeusMapBaseGen.init = function (self)
 	-- function 7
-	self._seed = not not tonumber(script_data.debug_draw_base_map_seed)
+	self._seed = tonumber(script_data.debug_draw_base_map_seed)
 	self._journey_index = 1
 	self._draw_realtime = false
 	self._start_paused = false
@@ -304,10 +304,10 @@ ImguiDeusMapBaseGen._reset_configs_for_journey = function (self)
 	-- function 11
 	local journey_name = journey_names[self._journey_index]
 
-	self._original_layout_config = not not DEUS_MAP_LAYOUT_SETTINGS[journey_name]
-	self._layout_config = not not self._layout_configs[journey_name]
-	self._original_base_config = not not DEUS_BASE_MAP_GEN_SETTINGS[journey_name]
-	self._base_config = not not self._base_configs[journey_name]
+	self._original_layout_config = DEUS_MAP_LAYOUT_SETTINGS[journey_name]
+	self._layout_config = self._layout_configs[journey_name]
+	self._original_base_config = DEUS_BASE_MAP_GEN_SETTINGS[journey_name]
+	self._base_config = self._base_configs[journey_name]
 end
 
 ImguiDeusMapBaseGen.draw = function (self, is_open)
@@ -337,7 +337,7 @@ ImguiDeusMapBaseGen.draw = function (self, is_open)
 			Imgui.tree_pop()
 		end
 
-		self._configs_changed = not not have_configs_changed(base_gen_editable_keys, self._base_config, self._original_base_config)
+		self._configs_changed = have_configs_changed(base_gen_editable_keys, self._base_config, self._original_base_config)
 
 		Imgui.spacing()
 	end
@@ -345,7 +345,7 @@ ImguiDeusMapBaseGen.draw = function (self, is_open)
 	self._draw_realtime = Imgui.checkbox("see realtime layouting", self._draw_realtime)
 
 	if self._draw_realtime then
-		script_data.deus_base_graph_generator_debug = Imgui.checkbox("print gen debug info", not not script_data.deus_base_graph_generator_debug)
+		script_data.deus_base_graph_generator_debug = Imgui.checkbox("print gen debug info", script_data.deus_base_graph_generator_debug)
 	else
 		script_data.deus_base_graph_generator_debug = false
 	end

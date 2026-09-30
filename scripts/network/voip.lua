@@ -17,7 +17,7 @@ end
 Voip = class(Voip)
 
 local TALKING_THRESHOLD = -65
-local has_steam = not not rawget(_G, "Steam")
+local has_steam = rawget(_G, "Steam")
 local disable_voip = Development.parameter("disable_voip")
 
 if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DEDICATED_SERVER then
@@ -148,7 +148,7 @@ if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DED
 		-- function 11
 		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		assert(self._is_server, "[Voip] Got request from %s to %s but is not server", peer_id, enter and not not "enter" or not enter and not not "leave")
+		assert(self._is_server, "[Voip] Got request from %s to %s but is not server", peer_id, enter and "enter" or not enter and "leave")
 
 		local party = Managers.party:get_party_from_player_id(peer_id, 1)
 
@@ -180,7 +180,7 @@ if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DED
 			return
 		end
 
-		voip_info_print("[Voip] Joining room %s (host %q) as %s.", room_id, host_peer_id, host_peer_id ~= self._own_peer_id and not not "client" or not (host_peer_id ~= self._own_peer_id) and not not "host")
+		voip_info_print("[Voip] Joining room %s (host %q) as %s.", room_id, host_peer_id, host_peer_id ~= self._own_peer_id and "client" or not (host_peer_id ~= self._own_peer_id) and "host")
 
 		self._room_host = host_peer_id
 		self._own_voip_room_id = room_id
@@ -242,7 +242,7 @@ if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DED
 						self:unmute_member(peer_id)
 					end
 
-					local mute_out = not not self._push_to_talk
+					local mute_out = self._push_to_talk
 
 					if mute_out then
 						voip_info_print("[Voip] Muting voip out for %q due to push_to_talk", peer_id)
@@ -299,7 +299,7 @@ if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DED
 		if script_data.debug_voip and not DEDICATED_SERVER then
 			if self._own_voip_client then
 				Debug.text("VoIP")
-				Debug.text("VoIP - PushToTalk %s (%s)", self._push_to_talk and not not "on" or not self._push_to_talk and not not "off", self._push_to_talk_active and not not "pushing" or not self._push_to_talk_active and not not "-")
+				Debug.text("VoIP - PushToTalk %s (%s)", self._push_to_talk and "on" or not self._push_to_talk and "off", self._push_to_talk_active and "pushing" or not self._push_to_talk_active and "-")
 				Debug.text("VoIP - Client members")
 
 				for peer_index, peer_id in pairs(SteamVoipClient.members(self._own_voip_client)) do
@@ -316,17 +316,17 @@ if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DED
 							if room_id == self._own_voip_room_id then
 								local speaking = self:is_talking(peer_id)
 
-								self._debug_talking_delay = not not self._debug_talking_delay
+								self._debug_talking_delay = self._debug_talking_delay
 
 								if speaking then
 									self._debug_talking_delay[peer_id] = t + 0.3
-								elseif t > not not self._debug_talking_delay[peer_id] then
+								elseif t > self._debug_talking_delay[peer_id] then
 									self._debug_talking_delay[peer_id] = nil
 								end
 
-								speaking = not self._push_to_talk and not not not not self._debug_talking_delay[peer_id] or not not self._push_to_talk and not not self._push_to_talk_active and not not not not self._debug_talking_delay[peer_id]
+								speaking = not self._push_to_talk and self._debug_talking_delay[peer_id] or self._push_to_talk and self._push_to_talk_active and self._debug_talking_delay[peer_id]
 
-								Debug.text("[%s] Speaking: %s", peer_id, speaking and not not "Yes" or not speaking and not not "No")
+								Debug.text("[%s] Speaking: %s", peer_id, speaking and "Yes" or not speaking and "No")
 							else
 								Debug.text("[%s] In another room", peer_id)
 							end
@@ -342,19 +342,19 @@ if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DED
 	Voip._update_push_to_talk = function (self, force_update)
 		-- function 17
 		local input_service = Managers.input:get_service("chat_input")
-		local push_to_talk_active = not not self._push_to_talk
+		local push_to_talk_active = self._push_to_talk
 
-		push_to_talk_active = not not push_to_talk_active and not not not Managers.chat:chat_is_focused()
+		push_to_talk_active = push_to_talk_active and not Managers.chat:chat_is_focused()
 
 		if push_to_talk_active ~= self._push_to_talk_active or force_update then
 			self._push_to_talk_active = push_to_talk_active
 
-			local should_be_heard = not self._push_to_talk or not not push_to_talk_active
+			local should_be_heard = not self._push_to_talk or push_to_talk_active
 
 			for index, member_peer_id in pairs(SteamVoipClient.members(self._own_voip_client)) do
 				if not self._muted_peers[member_peer_id] then
 					SteamVoipClient.select_out(self._own_voip_client, should_be_heard, member_peer_id)
-					voip_info_print("[Voip] %s voip out for %s due to %s", should_be_heard and not not "unmuting" or not should_be_heard and not not "muting", member_peer_id, self._push_to_talk and not not "push_to_talk" or not self._push_to_talk and not not "push_to_talk not being active")
+					voip_info_print("[Voip] %s voip out for %s due to %s", should_be_heard and "unmuting" or not should_be_heard and "muting", member_peer_id, self._push_to_talk and "push_to_talk" or not self._push_to_talk and "push_to_talk not being active")
 				end
 			end
 		end
@@ -493,7 +493,7 @@ if has_steam and (not disable_voip or DEDICATED_SERVER) or not has_steam and DED
 
 	Voip.is_push_to_talk_active = function (self)
 		-- function 27
-		return not not self._push_to_talk
+		return self._push_to_talk
 	end
 
 	Voip.push_to_talk_enabled = function (self)

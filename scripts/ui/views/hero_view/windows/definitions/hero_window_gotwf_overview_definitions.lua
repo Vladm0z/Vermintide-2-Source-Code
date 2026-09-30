@@ -895,7 +895,7 @@ local function create_simple_item(scenegraph_id, texture_name, size, offset, mas
 	widget.element.passes = passes
 	widget.content = content
 	widget.style = style
-	widget.offset = not not offset or not not {
+	widget.offset = offset or {
 		0,
 		0,
 		0
@@ -920,10 +920,10 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 	local painting_frame_name = "menu_frame_08"
 	local painting_frame_settings = UIFrameSettings[painting_frame_name]
 	local painting_frame_spacing = painting_frame_settings.texture_sizes.horizontal[2]
-	local icon_intensity = expired and (owned and not not 255 or not owned and not not 60) or not expired and not not 255
+	local icon_intensity = expired and (owned and 255 or not owned and 60) or not expired and 255
 	local current_reward_offset = 75
-	local is_bundle = not not rewards and not not rewards.bundle
-	local num_rewards = is_bundle and not not 1 or not is_bundle and (hidden and not not 1 or not hidden and (rewards and not not #rewards or not rewards and not not 1))
+	local is_bundle = rewards and rewards.bundle
+	local num_rewards = is_bundle and 1 or not is_bundle and (hidden and 1 or not hidden and (rewards and #rewards or not rewards and 1))
 	local size_multiplier = 1 - (num_rewards - 1) * 0.25
 	local offset = 0
 	local widget = {
@@ -977,11 +977,11 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 					end
 				end
 
-				return not has_icon and not content.hidden and not not not content.disable_loading_icon
+				return not has_icon and not content.hidden and not content.disable_loading_icon
 			end,
 			content_change_function = function (content, style, _, dt)
 				-- function 9
-				local progress = not not style.progress
+				local progress = style.progress
 
 				progress = (progress + dt) % 1
 
@@ -1035,11 +1035,11 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
 			dynamic_font_size = false,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
-			text_color = current_reward and not not Colors.get_color_table_with_alpha("font_title", 255) or not current_reward and not not Colors.get_color_table_with_alpha("gray", 255),
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
+			text_color = current_reward and Colors.get_color_table_with_alpha("font_title", 255) or not current_reward and Colors.get_color_table_with_alpha("gray", 255),
 			offset = {
 				0,
-				-20 - (current_reward and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not current_reward and (claimable and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not claimable and not not 0)),
+				-20 - (current_reward and (not owned and (current_reward_offset or 0) or owned and 0) or not current_reward and (claimable and (not owned and (current_reward_offset or 0) or owned and 0) or not claimable and 0)),
 				10
 			}
 		},
@@ -1050,11 +1050,11 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
 			dynamic_font_size = false,
-			font_type = masked and not not "hell_shark_header_masked" or not masked and not not "hell_shark_header",
+			font_type = masked and "hell_shark_header_masked" or not masked and "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
 				2,
-				-22 - (current_reward and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not current_reward and (claimable and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not claimable and not not 0)),
+				-22 - (current_reward and (not owned and (current_reward_offset or 0) or owned and 0) or not current_reward and (claimable and (not owned and (current_reward_offset or 0) or owned and 0) or not claimable and 0)),
 				9
 			}
 		},
@@ -1240,7 +1240,7 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 				style_id = "icon_" .. i,
 				content_check_function = function (content)
 					-- function 14
-					return not not content["icon_" .. i]
+					return content["icon_" .. i]
 				end
 			},
 			{
@@ -1536,7 +1536,7 @@ local function create_item_definition_func(scenegraph_id, size, masked, index, c
 	widget.style = style
 	widget.offset = {
 		10 + (index - 1) * (size[1] + gotwf_item_spacing),
-		current_reward and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not current_reward and (claimable and (not owned and (not not current_reward_offset or not not 0) or not not owned and not not 0) or not claimable and not not 0),
+		current_reward and (not owned and (current_reward_offset or 0) or owned and 0) or not current_reward and (claimable and (not owned and (current_reward_offset or 0) or owned and 0) or not claimable and 0),
 		5
 	}
 	widget.scenegraph_id = scenegraph_id
@@ -1578,7 +1578,7 @@ local function create_arrow(texture, texture_hover, angle, pivot, scenegraph_id,
 		},
 		style = {
 			hotspot = {
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -1587,7 +1587,7 @@ local function create_arrow(texture, texture_hover, angle, pivot, scenegraph_id,
 				offset = {
 					-25,
 					-25,
-					not not layer or not not 0
+					layer or 0
 				}
 			},
 			arrow = {
@@ -1595,7 +1595,7 @@ local function create_arrow(texture, texture_hover, angle, pivot, scenegraph_id,
 				angle = angle,
 				pivot = pivot,
 				texture_size = arrow_size,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -1604,7 +1604,7 @@ local function create_arrow(texture, texture_hover, angle, pivot, scenegraph_id,
 				offset = {
 					0,
 					0,
-					not not layer or not not 0
+					layer or 0
 				}
 			},
 			arrow_hover = {
@@ -1612,7 +1612,7 @@ local function create_arrow(texture, texture_hover, angle, pivot, scenegraph_id,
 				angle = angle,
 				pivot = pivot,
 				texture_size = arrow_size,
-				color = not not color or not not {
+				color = color or {
 					255,
 					255,
 					255,
@@ -1621,11 +1621,11 @@ local function create_arrow(texture, texture_hover, angle, pivot, scenegraph_id,
 				offset = {
 					0,
 					0,
-					(not not layer or not not 0) + 1
+					(layer or 0) + 1
 				}
 			}
 		},
-		offset = not not offset or not not {
+		offset = offset or {
 			0,
 			0,
 			0
@@ -1636,12 +1636,12 @@ end
 
 function create_claim_button_definition(scenegraph_id, size, frame_name, background_texture, text, font_size, optional_color_name, optional_detail_texture, optional_detail_offset, disable_with_gamepad, skip_side_detail, masked)
 	-- function 18
-	background_texture = not not background_texture or not not "button_bg_01"
+	background_texture = background_texture or "button_bg_01"
 
 	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
-	local frame_settings = frame_name and not not UIFrameSettings[frame_name] or not frame_name and not not UIFrameSettings.button_frame_01
+	local frame_settings = frame_name and UIFrameSettings[frame_name] or not frame_name and UIFrameSettings.button_frame_01
 	local frame_width = frame_settings.texture_sizes.corner[1]
-	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
+	local side_detail_texture = optional_detail_texture or "button_detail_01"
 	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
 	local side_detail_texture_size = side_detail_texture_settings.size
 	local extra_detail_offset_x, extra_detail_offset_y
@@ -1813,7 +1813,7 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 				skip_side_detail = skip_side_detail
 			},
 			button_hotspot = {},
-			title_text = not not text or not not "n/a",
+			title_text = text or "n/a",
 			frame = frame_settings.texture,
 			background = {
 				uvs = {
@@ -1914,8 +1914,8 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_size = not not font_size or not not 24,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_size = font_size or 24,
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -1935,8 +1935,8 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_size = not not font_size or not not 24,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_size = font_size or 24,
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
@@ -1955,8 +1955,8 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				dynamic_font_size = true,
-				font_size = not not font_size or not not 24,
-				font_type = masked and not not "hell_shark_masked" or not masked and not not "hell_shark",
+				font_size = font_size or 24,
+				font_type = masked and "hell_shark_masked" or not masked and "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
@@ -2029,8 +2029,8 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 					255
 				},
 				offset = {
-					extra_detail_offset_x and not not -extra_detail_offset_x or not extra_detail_offset_x and not not -9,
-					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					extra_detail_offset_x and -extra_detail_offset_x or not extra_detail_offset_x and -9,
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (extra_detail_offset_y or 0),
 					9
 				},
 				size = {
@@ -2047,8 +2047,8 @@ function create_claim_button_definition(scenegraph_id, size, frame_name, backgro
 					255
 				},
 				offset = {
-					size[1] - side_detail_texture_size[1] + (not not extra_detail_offset_x or not not 9),
-					size[2] / 2 - side_detail_texture_size[2] / 2 + (not not extra_detail_offset_y or not not 0),
+					size[1] - side_detail_texture_size[1] + (extra_detail_offset_x or 9),
+					size[2] / 2 - side_detail_texture_size[2] / 2 + (extra_detail_offset_y or 0),
 					9
 				},
 				size = {

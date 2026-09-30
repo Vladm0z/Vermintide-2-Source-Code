@@ -101,7 +101,7 @@ AchievementManager.init = function (self, world, statistics_db)
 
 		if events then
 			for _, event_name in ipairs(events) do
-				self._event_mappings[event_name] = not not self._event_mappings[event_name]
+				self._event_mappings[event_name] = self._event_mappings[event_name]
 				self._event_mappings[event_name][#self._event_mappings[event_name] + 1] = template
 				self._template_event_data[template.id] = {}
 			end
@@ -162,14 +162,14 @@ AchievementManager.trigger_event = function (self, event_name, ...)
 
 				if not profile_index then
 					local player_unit = player.player_unit
-					local owner_player = not not player_unit and not not player_manager:owner(player_unit)
+					local owner_player = player_unit and player_manager:owner(player_unit)
 
-					profile_index = not not owner_player and not not owner_player:profile_index()
+					profile_index = owner_player and owner_player:profile_index()
 				end
 
 				if profile_index then
 					local profile = SPProfiles[profile_index]
-					local career = not not profile and not not profile.careers[player._career_index]
+					local career = profile and profile.careers[player._career_index]
 
 					if career then
 						available_careers[career.display_name] = true
@@ -181,8 +181,8 @@ AchievementManager.trigger_event = function (self, event_name, ...)
 		for _, template in ipairs(template_list) do
 			local completed = unlocked_achievements[template.id]
 			local required_career = template.required_career
-			local required_career_in_play = not required_career or not not available_careers[required_career]
-			local allowed_level = not not template.allow_in_inn
+			local required_career_in_play = not required_career or available_careers[required_career]
+			local allowed_level = template.allow_in_inn
 			local always_run = template.always_run
 
 			if not completed or always_run then
@@ -209,7 +209,7 @@ AchievementManager.register_timed_event = function (self, achievement_id, event_
 		valid = true
 	}
 
-	self._timed_events[handle] = t + (not not delay or not not 0)
+	self._timed_events[handle] = t + (delay or 0)
 
 	return handle
 end
@@ -375,7 +375,7 @@ AchievementManager.update = function (self, dt, t)
 	local statistics_db = self._statistics_db
 	local stats_id = player:stats_id()
 	local template_event_data = self._template_event_data
-	local should_process = not unlocked_achievements[template_id] and not not not unlock_tasks[template_id]
+	local should_process = not unlocked_achievements[template_id] and not unlock_tasks[template_id]
 
 	if should_process then
 		local token, error_msg, achievement_completed
@@ -444,7 +444,7 @@ AchievementManager._search_sub_categories = function (self, categories, in_categ
 		return
 	end
 
-	local result = not not result or not not {}
+	local result = result or {}
 
 	for i = 1, #categories do
 		local category = categories[i]
@@ -620,7 +620,7 @@ AchievementManager.has_any_unclaimed_achievement = function (self)
 		if data.completed and not data.claimed then
 			local required_dlc = data.required_dlc
 			local required_dlc_extra = data.required_dlc_extra
-			local is_unlocked = required_dlc and not not unlock_manager:is_dlc_unlocked(required_dlc) or not required_dlc and (not required_dlc_extra or not not unlock_manager:is_dlc_unlocked(required_dlc_extra))
+			local is_unlocked = required_dlc and unlock_manager:is_dlc_unlocked(required_dlc) or not required_dlc and (not required_dlc_extra or unlock_manager:is_dlc_unlocked(required_dlc_extra))
 
 			if is_unlocked then
 				return true
@@ -642,7 +642,7 @@ AchievementManager.evaluate_end_of_level_achievements = function (self, statisti
 			local evaluation_func = data.evaluation_func
 			local allowed_difficulties = data.allowed_difficulties
 
-			if not allowed_difficulties and evaluation_func(statistics_db, stats_id) or not not allowed_difficulties and allowed_difficulties[difficulty_key] and evaluation_func(statistics_db, stats_id) then
+			if not allowed_difficulties and evaluation_func(statistics_db, stats_id) or allowed_difficulties and allowed_difficulties[difficulty_key] and evaluation_func(statistics_db, stats_id) then
 				local stat_to_increment = data.stat_to_increment
 
 				statistics_db:increment_stat(stats_id, stat_to_increment)
@@ -926,7 +926,7 @@ AchievementManager._setup_achievement_data = function (self, achievement_id, ach
 		progress = progress,
 		requirements = requirements,
 		reward = reward,
-		claimed = not not claimed or not not false
+		claimed = claimed or false
 	}
 
 	self._achievement_data[achievement_id] = achievement_data
@@ -942,7 +942,7 @@ end
 AchievementManager._verify_platform_achievements = function (self)
 	-- function 38
 	local platform_functions = self._platform_functions
-	local verify_data = not not self._verify_platform_achievements_data
+	local verify_data = self._verify_platform_achievements_data
 
 	if verify_data.in_progress then
 		local done = platform_functions.unlock_result(verify_data.token, verify_data.template_id)
@@ -1041,7 +1041,7 @@ AchievementManager.get_challenge_progression = function (self, optional_category
 
 				achievement_progress[achievement_id] = progress_data[1] / progress_data[2]
 			elseif achievement_data then
-				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and not not 1 or not achievement_data.completed(statistics_db, stats_id) and not not 0
+				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and 1 or not achievement_data.completed(statistics_db, stats_id) and 0
 			end
 		end
 	else
@@ -1051,7 +1051,7 @@ AchievementManager.get_challenge_progression = function (self, optional_category
 
 				achievement_progress[achievement_id] = progress_data[1] / progress_data[2]
 			elseif achievement_data then
-				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and not not 1 or not achievement_data.completed(statistics_db, stats_id) and not not 0
+				achievement_progress[achievement_id] = achievement_data.completed(statistics_db, stats_id) and 1 or not achievement_data.completed(statistics_db, stats_id) and 0
 			end
 		end
 	end

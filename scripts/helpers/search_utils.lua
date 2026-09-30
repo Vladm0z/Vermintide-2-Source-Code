@@ -1,6 +1,6 @@
 -- chunkname: @scripts/helpers/search_utils.lua
 
-SearchUtils = not not SearchUtils
+SearchUtils = SearchUtils
 
 local function find_synonym_match(query, query_index, tuple_list)
 	-- function 1

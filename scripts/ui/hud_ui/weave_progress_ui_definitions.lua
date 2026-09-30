@@ -1139,7 +1139,7 @@ local function create_bonus_objective_func(display_name, index, stack_name, obje
 			bullet_id = bullet_texture,
 			base_objective_name_id = Localize(display_name),
 			objective_name_id = Localize(display_name),
-			stack = not not objective_name and not not {
+			stack = objective_name and {
 				objective_name
 			},
 			done_stack = {},

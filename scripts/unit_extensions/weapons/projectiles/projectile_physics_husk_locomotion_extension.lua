@@ -1,7 +1,7 @@
 -- chunkname: @scripts/unit_extensions/weapons/projectiles/projectile_physics_husk_locomotion_extension.lua
 
 ProjectilePhysicsHuskLocomotionExtension = class(ProjectilePhysicsHuskLocomotionExtension)
-script_data.debug_projectiles = not not script_data.debug_projectiles
+script_data.debug_projectiles = script_data.debug_projectiles
 
 ProjectilePhysicsHuskLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1

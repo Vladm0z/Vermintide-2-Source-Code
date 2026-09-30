@@ -74,7 +74,7 @@ Music.set_group_state = function (self, state, value)
 		self._group_states[state] = value
 
 		if state == "game_state" then
-			local voice_threshold = not not self._game_state_voice_thresholds[value]
+			local voice_threshold = self._game_state_voice_thresholds[value]
 
 			Wwise.set_volume_threshold(voice_threshold)
 		end
@@ -83,7 +83,7 @@ end
 
 Music.has_game_faction = function (self)
 	-- function 10
-	return not not self._group_states.game_faction
+	return self._group_states.game_faction
 end
 
 Music._trigger_event = function (self, event)

@@ -116,9 +116,9 @@ UIManager.update = function (self)
 	end
 
 	local t, dt = Managers.time:time_and_delta("ui")
-	local disable_ingame_ui = script_data.disable_ui and Managers.state.network:game_session_host() ~= nil or not script_data.disable_ui and not not DebugScreen.active
+	local disable_ingame_ui = script_data.disable_ui and Managers.state.network:game_session_host() ~= nil or not script_data.disable_ui and DebugScreen.active
 	local level_end_view_wrapper = self._level_end_view_wrapper
-	local level_end_view = not not level_end_view_wrapper and not not level_end_view_wrapper:level_end_view()
+	local level_end_view = level_end_view_wrapper and level_end_view_wrapper:level_end_view()
 
 	ingame_ui:update(dt, t, disable_ingame_ui, level_end_view)
 
@@ -276,7 +276,7 @@ UIManager._fetch_disabled_ui_layouts = function (self)
 
 		local title_settings = backend_manager:get_title_settings()
 
-		disabled_ui_layouts = title_settings and (not not title_settings.disabled_ui_layouts or not not {}) or not title_settings and not not {}
+		disabled_ui_layouts = title_settings and (title_settings.disabled_ui_layouts or {}) or not title_settings and {}
 		self._disabled_ui_layouts = disabled_ui_layouts
 	end
 
@@ -290,7 +290,7 @@ end
 
 local function _is_disabled(status)
 	-- function 27
-	return status == "disable" or status == true or not not _is_hidden(status)
+	return status == "disable" or status == true or _is_hidden(status)
 end
 
 UIManager.is_ui_layout_disabled = function (self, layout_name)

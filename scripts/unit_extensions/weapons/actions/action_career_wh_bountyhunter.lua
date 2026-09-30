@@ -13,7 +13,7 @@ end
 
 ActionCareerWHBountyhunter.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	action_init_data = not not action_init_data or not not {}
+	action_init_data = action_init_data or {}
 
 	local talent_extension = self.talent_extension
 
@@ -70,7 +70,7 @@ ActionCareerWHBountyhunter.finish = function (self, reason)
 		local left_unit_1p = slot_data.left_unit_1p
 		local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
 		local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-		local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
+		local ammo_extension = right_hand_ammo_extension or left_hand_ammo_extension
 
 		if ammo_extension then
 			ammo_extension:instant_reload(true)

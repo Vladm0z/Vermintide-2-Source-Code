@@ -18,10 +18,10 @@ AILocomotionExtensionC.init = function (self, extension_init_context, unit, exte
 	local go_type = unit_template.go_type
 	local game_object_template = Managers.state.network:game_object_template(go_type)
 
-	fassert(not not game_object_template.syncs_rotation, "AI Locomotion error. AI units must have syncs_rotation or syncs_yaw set in its game_object_template.")
+	fassert(game_object_template.syncs_rotation, "AI Locomotion error. AI units must have syncs_rotation or syncs_yaw set in its game_object_template.")
 
 	local breed_run_speed = breed.run_speed
-	local sync_full_rotation = not not game_object_template.syncs_rotation
+	local sync_full_rotation = game_object_template.syncs_rotation
 
 	self._engine_extension_id = EngineOptimizedExtensions.ai_locomotion_register_extension(unit, LOCOMOTION_GRAVITY, breed_run_speed, sync_full_rotation)
 	self._animation_rotation_scale = 1
@@ -35,7 +35,7 @@ AILocomotionExtensionC.init = function (self, extension_init_context, unit, exte
 		self._collision_state = MoverHelper.create_collision_state(unit, collision_actor_name)
 	end
 
-	MoverHelper.set_active_mover(unit, self._mover_state, not not breed.default_mover)
+	MoverHelper.set_active_mover(unit, self._mover_state, breed.default_mover)
 end
 
 AILocomotionExtensionC.ready = function (self, go_id, blackboard)
@@ -71,13 +71,13 @@ AILocomotionExtensionC.unfreeze = function (self, unit)
 	local unit_template = Managers.state.unit_spawner.unit_template_lut[breed.unit_template]
 	local go_type = unit_template.go_type
 	local game_object_template = Managers.state.network:game_object_template(go_type)
-	local sync_full_rotation = not not game_object_template.syncs_rotation
+	local sync_full_rotation = game_object_template.syncs_rotation
 
 	self._engine_extension_id = EngineOptimizedExtensions.ai_locomotion_register_extension(unit, LOCOMOTION_GRAVITY, breed_run_speed, sync_full_rotation)
 	self._animation_rotation_scale = 1
 
 	self._animation_translation_scale_box:store(1, 1, 1)
-	MoverHelper.set_active_mover(unit, self._mover_state, not not breed.default_mover)
+	MoverHelper.set_active_mover(unit, self._mover_state, breed.default_mover)
 	self:teleport_to(POSITION_LOOKUP[unit], Unit.local_rotation(unit, 0))
 end
 
@@ -121,7 +121,7 @@ AILocomotionExtensionC.set_animation_driven = function (self, is_animation_drive
 		return
 	end
 
-	is_affected_by_gravity = not not is_affected_by_gravity or not not false
+	is_affected_by_gravity = is_affected_by_gravity or false
 
 	local r, param1, param2, param3 = EngineOptimizedExtensions.ai_locomotion_set_animation_driven(self._engine_extension_id, is_animation_driven, is_affected_by_gravity, script_driven_rotation, is_on_transport)
 

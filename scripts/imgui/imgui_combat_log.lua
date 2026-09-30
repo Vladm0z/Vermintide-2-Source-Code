@@ -227,67 +227,67 @@ end
 
 ImguiCombatLog.log_damage = function (self, attacker_unit, victim_unit, networkified_damage_amount, hit_zone_name, damage_type, damage_source, is_critical_strike, backstab_multiplier, added_dot, target_index, first_hit, total_hits, power_level)
 	-- function 11
-	local attacker_unit_breed = not not Unit.alive(attacker_unit)
-	local victim_unit_breed = not not Unit.alive(victim_unit)
+	local attacker_unit_breed = Unit.alive(attacker_unit)
+	local victim_unit_breed = Unit.alive(victim_unit)
 	local network_manager = Managers.state.network
-	local unit_id = not not network_manager and not not network_manager:unit_game_object_id(victim_unit)
+	local unit_id = network_manager and network_manager:unit_game_object_id(victim_unit)
 	local line = self:_add_line("damage")
 
-	self:_add_colored_segment(line, string.format("%s -> %s (%d) (%.2f %s), Power(%.2f), hit (%s) using (%s) Crit: %s, Backstab Mult: %.2f, Target Index: %d", tostring(attacker_unit_breed and not not attacker_unit_breed.name or not attacker_unit_breed and not not attacker_unit), tostring(victim_unit_breed and not not victim_unit_breed.name or not victim_unit_breed and not not victim_unit), not not unit_id or not not 0, not not networkified_damage_amount or not not 0, tostring(damage_type), not not power_level or not not 0, tostring(hit_zone_name), tostring(damage_source), tostring(is_critical_strike), not not backstab_multiplier or not not 1, not not target_index or not not 0), Colors.get_table("orange"))
+	self:_add_colored_segment(line, string.format("%s -> %s (%d) (%.2f %s), Power(%.2f), hit (%s) using (%s) Crit: %s, Backstab Mult: %.2f, Target Index: %d", tostring(attacker_unit_breed and attacker_unit_breed.name or not attacker_unit_breed and attacker_unit), tostring(victim_unit_breed and victim_unit_breed.name or not victim_unit_breed and victim_unit), unit_id or 0, networkified_damage_amount or 0, tostring(damage_type), power_level or 0, tostring(hit_zone_name), tostring(damage_source), tostring(is_critical_strike), backstab_multiplier or 1, target_index or 0), Colors.get_table("orange"))
 end
 
 ImguiCombatLog.log_heal = function (self, healer_unit, unit, buffed_heal_amount, heal_type)
 	-- function 12
-	local healer_unit_breed = not not Unit.alive(healer_unit)
-	local unit_breed = not not Unit.alive(unit)
+	local healer_unit_breed = Unit.alive(healer_unit)
+	local unit_breed = Unit.alive(unit)
 	local line = self:_add_line("heal")
 
-	self:_add_colored_segment(line, string.format("%s -> %s (%.2f %s)", tostring(healer_unit_breed and not not healer_unit_breed.name or not healer_unit_breed and not not healer_unit), tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), not not buffed_heal_amount or not not 0, tostring(heal_type)), Colors.get_table("lime"))
+	self:_add_colored_segment(line, string.format("%s -> %s (%.2f %s)", tostring(healer_unit_breed and healer_unit_breed.name or not healer_unit_breed and healer_unit), tostring(unit_breed and unit_breed.name or not unit_breed and unit), buffed_heal_amount or 0, tostring(heal_type)), Colors.get_table("lime"))
 end
 
 ImguiCombatLog.log_action = function (self, unit, item_name, kind, action_name, sub_action_name, power_level, started, reason)
 	-- function 13
-	local unit_breed = not not Unit.alive(unit)
+	local unit_breed = Unit.alive(unit)
 	local line = self:_add_line("action")
 
 	if started then
-		self:_add_colored_segment(line, string.format("[Start] %s (%s - power %.2f) - %s/%s/%s", tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), tostring(kind), not not power_level or not not 0, tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
+		self:_add_colored_segment(line, string.format("[Start] %s (%s - power %.2f) - %s/%s/%s", tostring(unit_breed and unit_breed.name or not unit_breed and unit), tostring(kind), power_level or 0, tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
 	else
-		self:_add_colored_segment(line, string.format("[End] %s (%s - power %.2f), Reason: %s - %s/%s/%s ", tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), tostring(kind), not not power_level or not not 0, tostring(reason), tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
+		self:_add_colored_segment(line, string.format("[End] %s (%s - power %.2f), Reason: %s - %s/%s/%s ", tostring(unit_breed and unit_breed.name or not unit_breed and unit), tostring(kind), power_level or 0, tostring(reason), tostring(item_name), tostring(action_name), tostring(sub_action_name)), Colors.get_table("white"))
 	end
 end
 
 ImguiCombatLog.log_proc = function (self, player, event, buff, params, success)
 	-- function 14
-	local unit = not not player and not not player.player_unit
-	local unit_breed = not not Unit.alive(unit)
+	local unit = player and player.player_unit
+	local unit_breed = Unit.alive(unit)
 	local line = self:_add_line("buff_proc")
 
-	self:_add_colored_segment(line, string.format("%s (%s) -> %s", tostring(unit_breed and not not unit_breed.name or not unit_breed and not not unit), not not event or not not "-", tostring(buff.buff_type)), Colors.get_table("silver"))
+	self:_add_colored_segment(line, string.format("%s (%s) -> %s", tostring(unit_breed and unit_breed.name or not unit_breed and unit), event or "-", tostring(buff.buff_type)), Colors.get_table("silver"))
 end
 
 ImguiCombatLog.log_buff = function (self, unit, buff, added, stack_count, max_stacks)
 	-- function 15
-	local owner_breed = not not Unit.alive(unit)
-	local attacker_unit = not not buff and not not buff.attacker_unit
-	local attacker_breed = not not Unit.alive(attacker_unit)
+	local owner_breed = Unit.alive(unit)
+	local attacker_unit = buff and buff.attacker_unit
+	local attacker_breed = Unit.alive(attacker_unit)
 	local line = self:_add_line("buff")
 
 	if added then
-		self:_add_colored_segment(line, string.format("[Added] %s -> %s (mult: %.2f)", tostring(owner_breed and not not owner_breed.name or not owner_breed and not not unit), tostring(buff.buff_type), type(buff.multiplier) ~= "function" and not not buff.multiplier or not (type(buff.multiplier) ~= "function") and not not buff.multiplier(unit, ScriptUnit.extension(unit, "buff_system"))), Colors.get_table("lime"))
+		self:_add_colored_segment(line, string.format("[Added] %s -> %s (mult: %.2f)", tostring(owner_breed and owner_breed.name or not owner_breed and unit), tostring(buff.buff_type), type(buff.multiplier) ~= "function" and buff.multiplier or not (type(buff.multiplier) ~= "function") and buff.multiplier(unit, ScriptUnit.extension(unit, "buff_system"))), Colors.get_table("lime"))
 
 		if stack_count and max_stacks then
 			self:_add_colored_segment(line, string.format("(stacks: %d/%d)", stack_count, max_stacks), Colors.get_table("lime"))
 		end
 
 		if attacker_unit then
-			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and not not attacker_breed.name or not attacker_breed and not not attacker_unit)), Colors.get_table("lime"))
+			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and attacker_breed.name or not attacker_breed and attacker_unit)), Colors.get_table("lime"))
 		end
 	else
-		self:_add_colored_segment(line, string.format("[Removed] %s -> %s", tostring(owner_breed and not not owner_breed.name or not owner_breed and not not unit), tostring(buff.buff_type)), Colors.get_table("yellow"))
+		self:_add_colored_segment(line, string.format("[Removed] %s -> %s", tostring(owner_breed and owner_breed.name or not owner_breed and unit), tostring(buff.buff_type)), Colors.get_table("yellow"))
 
 		if attacker_unit then
-			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and not not attacker_breed.name or not attacker_breed and not not attacker_unit)), Colors.get_table("yellow"))
+			self:_add_colored_segment(line, string.format("(%s)", tostring(attacker_breed and attacker_breed.name or not attacker_breed and attacker_unit)), Colors.get_table("yellow"))
 		end
 	end
 end
@@ -306,7 +306,7 @@ ImguiCombatLog._get_type_name = function (self, type)
 	if type then
 		local id = self._type_ids[type]
 		local category = self.categories[id]
-		local type_name = category and not not category.name or not category and not not tostring(type)
+		local type_name = category and category.name or not category and tostring(type)
 
 		return type_name
 	end
@@ -320,7 +320,7 @@ ImguiCombatLog._add_line = function (self, type)
 
 	new_line.timestamp = "[" .. format_timestamp(self._start_time + os.clock()) .. "]"
 	new_line.content = {}
-	new_line.type_id = not not self._type_ids[type]
+	new_line.type_id = self._type_ids[type]
 	new_line.type_name = "[" .. self:_get_type_name(type) .. "]"
 
 	table.insert(self._log, 1, new_line)
@@ -336,8 +336,8 @@ end
 
 ImguiCombatLog._add_colored_segment = function (self, line, text, color)
 	-- function 19
-	local text_to_add = not not text or not not ""
-	local color_to_add = not not color or not not Colors.get_table("white")
+	local text_to_add = text or ""
+	local color_to_add = color or Colors.get_table("white")
 
 	table.insert(line.content, {
 		text_to_add,

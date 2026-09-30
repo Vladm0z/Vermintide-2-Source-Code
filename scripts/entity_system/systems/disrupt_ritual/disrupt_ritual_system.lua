@@ -21,7 +21,7 @@ DisruptRitualSystem.on_add_extension = function (self, world, unit, extension_na
 	local extension_pool_table
 	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
 
-	self.extensions[extension_name] = not not self.extensions[extension_name] + 1
+	self.extensions[extension_name] = self.extensions[extension_name] + 1
 
 	local index = self.extensions[extension_name]
 

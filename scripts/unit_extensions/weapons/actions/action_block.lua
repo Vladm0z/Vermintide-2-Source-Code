@@ -62,7 +62,7 @@ end
 ActionBlock.finish = function (self, reason, data)
 	-- function 4
 	local stop_blocking = true
-	local new_action_settings = not not data and not not data.new_action_settings
+	local new_action_settings = data and data.new_action_settings
 
 	if new_action_settings and new_action_settings.keep_block then
 		stop_blocking = false
@@ -74,7 +74,7 @@ ActionBlock.finish = function (self, reason, data)
 		local ammo_extension = self._ammo_extension
 		local current_action = self.current_action
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
-		local do_out_of_ammo_reload = reload_when_out_of_ammo_condition_func and not not reload_when_out_of_ammo_condition_func(owner_unit, reason) or not reload_when_out_of_ammo_condition_func and not not true
+		local do_out_of_ammo_reload = not reload_when_out_of_ammo_condition_func or reload_when_out_of_ammo_condition_func(owner_unit, reason)
 
 		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
 			local play_reload_animation = true
@@ -105,8 +105,8 @@ end
 
 ActionBlock.streak_available = function (self, t, streak_action)
 	-- function 5
-	local relative_start = not not streak_action and not not streak_action.relative_start_time
-	local relative_end = not not streak_action and not not streak_action.relative_end_time
+	local relative_start = streak_action and streak_action.relative_start_time
+	local relative_end = streak_action and streak_action.relative_end_time
 
 	if not self._blocked_flag or not relative_start or not relative_end then
 		return false

@@ -63,7 +63,7 @@ SoundEnvironmentSystem.register_sound_environment = function (self, volume_name,
 	-- function 3
 	fassert(self._environments[volume_name] == nil, "Already registered sound environment with name %q", volume_name)
 
-	local environment = not not self._environments[volume_name]
+	local environment = self._environments[volume_name]
 
 	environment.prio = prio
 
@@ -72,7 +72,7 @@ SoundEnvironmentSystem.register_sound_environment = function (self, volume_name,
 		environment.ambient_sound_event_stop = "Stop_" .. ambient_sound_event
 	end
 
-	environment.fade_time = not not fade_time or not not 1
+	environment.fade_time = fade_time or 1
 
 	assert(aux_bus_name, "Sound environment lacks auxiliary bus")
 
@@ -136,9 +136,9 @@ SoundEnvironmentSystem.set_source_environment = function (self, source, position
 	local volume_name = self:_highest_prio_environment_at_position(position)
 	local environments = self._environments
 	local wwise_world = self.wwise_world
-	local bus_name = environments[not not volume_name or not not "global"].source_aux_bus_name
+	local bus_name = environments[volume_name or "global"].source_aux_bus_name
 
-	assert(bus_name, "No source aux environment in %s", not not volume_name or not not "global")
+	assert(bus_name, "No source aux environment in %s", volume_name or "global")
 	WwiseWorld.reset_environment_for_source(wwise_world, source)
 	WwiseWorld.set_environment_for_source(wwise_world, source, bus_name, SOURCE_WEIGHT)
 
@@ -152,7 +152,7 @@ SoundEnvironmentSystem.set_source_environment = function (self, source, position
 
 		WwiseWorld.set_environment(wwise_world, environment.player_aux_bus_name, fade_info.current_value * LISTENER_WEIGHT)
 
-		added_current_environment = not not added_current_environment or volume_name == current_environment_name
+		added_current_environment = added_current_environment or volume_name == current_environment_name
 	end
 
 	if not added_current_environment then
@@ -169,7 +169,7 @@ SoundEnvironmentSystem.register_source_environment_update = function (self, sour
 	self._updated_sources[#self._updated_sources + 1] = {
 		unit = unit,
 		source = source,
-		node = object and not not Unit.node(unit, object) or not object and not not 0
+		node = object and Unit.node(unit, object) or not object and 0
 	}
 	self._num_sources = self._num_sources + 1
 end

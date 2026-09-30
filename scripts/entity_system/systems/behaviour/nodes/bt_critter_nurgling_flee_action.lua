@@ -110,7 +110,7 @@ BTCritterNurglingFleeAction.get_random_move_pos = function (self, unit, blackboa
 	local below = data.below
 	local move_pos = LocomotionUtils.new_random_goal(nav_world, blackboard, start_pos, min_dist, max_dist, max_tries, nil, above, below)
 
-	move_pos = not not move_pos or not not start_pos
+	move_pos = move_pos or start_pos
 
 	return move_pos
 end

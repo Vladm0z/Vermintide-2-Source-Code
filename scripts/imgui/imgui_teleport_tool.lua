@@ -53,7 +53,7 @@ ImguiTeleportTool.update = function (self)
 	end
 
 	local game_mode_manager = Managers.state.game_mode
-	local level_key = not not game_mode_manager and not not game_mode_manager:level_key()
+	local level_key = game_mode_manager and game_mode_manager:level_key()
 
 	if level_key ~= self._current_level then
 		self._current_level = level_key
@@ -111,7 +111,7 @@ ImguiTeleportTool.draw = function (self, is_open)
 
 	if Imgui.button("Teleport") or self._key_states.teleport and not Imgui.is_popup_open("register_point_popup") then
 		local local_player = Managers.player:local_player()
-		local player_unit = not not local_player and not not local_player.player_unit
+		local player_unit = local_player and local_player.player_unit
 
 		self:_teleport_to_selected(player_unit)
 	end
@@ -120,7 +120,7 @@ ImguiTeleportTool.draw = function (self, is_open)
 
 	if Imgui.button("Save to Clipboard") or self._key_states.save_to_clipboatd then
 		local local_player = Managers.player:local_player()
-		local unit = not not local_player and not not local_player.player_unit
+		local unit = local_player and local_player.player_unit
 		local data_point = self:_get_unit_location(unit)
 
 		self:_save_point_to_clipboard(data_point)
@@ -130,7 +130,7 @@ ImguiTeleportTool.draw = function (self, is_open)
 
 	if Imgui.button("Teleport from Clipboard") or self._key_states.teleport_from_clipboard then
 		local local_player = Managers.player:local_player()
-		local unit = not not local_player and not not local_player.player_unit
+		local unit = local_player and local_player.player_unit
 		local data_point = self:_get_point_from_clipboard()
 
 		self:_teleport_to_point(unit, data_point)
@@ -146,7 +146,7 @@ ImguiTeleportTool.draw = function (self, is_open)
 
 	if Imgui.button("Teleport to position") then
 		local local_player = Managers.player:local_player()
-		local unit = not not local_player and not not local_player.player_unit
+		local unit = local_player and local_player.player_unit
 
 		self:_teleport_to_point(unit, ctp)
 	end
@@ -176,7 +176,7 @@ ImguiTeleportTool.draw = function (self, is_open)
 			Imgui.tree_push(name)
 
 			local selected_for_rebind = self._rebind_action == name
-			local button_name = selected_for_rebind and not not "<?>" or not selected_for_rebind and not not val
+			local button_name = selected_for_rebind and "<?>" or not selected_for_rebind and val
 
 			if Imgui.button(button_name, 100, 20) then
 				self._rebind_action = name
@@ -193,7 +193,7 @@ ImguiTeleportTool.draw = function (self, is_open)
 			if input then
 				local input_name = Keyboard.button_name(input)
 
-				self._key_bindings[self._rebind_action] = input_name ~= "esc" and not not input_name or not (input_name ~= "esc") and not not ""
+				self._key_bindings[self._rebind_action] = input_name ~= "esc" and input_name or not (input_name ~= "esc") and ""
 				self._rebind_action = nil
 
 				self:_save_points()
@@ -222,7 +222,7 @@ ImguiTeleportTool._update_input = function (self)
 	for name, val in pairs(self._key_bindings) do
 		local key_index = Keyboard.button_index(val)
 
-		self._key_states[name] = not not key_index and not not Keyboard.pressed(key_index)
+		self._key_states[name] = key_index and Keyboard.pressed(key_index)
 	end
 end
 
@@ -255,7 +255,7 @@ ImguiTeleportTool._handle_input = function (self)
 
 	if self._key_states.quick_teleport then
 		local local_player = Managers.player:local_player()
-		local player_unit = not not local_player and not not local_player.player_unit
+		local player_unit = local_player and local_player.player_unit
 
 		self:_teleport_to_selected(player_unit)
 	end
@@ -301,7 +301,7 @@ ImguiTeleportTool._register_point = function (self, name)
 	end
 
 	local local_player = Managers.player:local_player()
-	local unit = not not local_player and not not local_player.player_unit
+	local unit = local_player and local_player.player_unit
 	local data_point = self:_get_unit_location(unit)
 
 	if data_point then
@@ -346,7 +346,7 @@ ImguiTeleportTool._get_selected_teleport_coords = function (self)
 
 	if level_key and teleport_id then
 		local point_map = self._teleport_point_map[level_key]
-		local point = not not point_map and not not point_map[teleport_id]
+		local point = point_map and point_map[teleport_id]
 
 		return point
 	end
@@ -379,7 +379,7 @@ end
 
 ImguiTeleportTool._get_teleport_names = function (self, level_key)
 	-- function 14
-	return level_key and not not self._teleport_name_map[level_key] or not level_key and not not EMPTY_LIST
+	return level_key and self._teleport_name_map[level_key] or not level_key and EMPTY_LIST
 end
 
 ImguiTeleportTool._get_selected_teleport_id = function (self)
@@ -406,9 +406,9 @@ end
 
 ImguiTeleportTool._load_points = function (self)
 	-- function 17
-	self._teleport_name_map = not not Development.setting("ImguiTeleportTool_names")
-	self._teleport_point_map = not not Development.setting("ImguiTeleportTool_points")
-	self._key_bindings = not not Development.setting("ImguiTeleportTool_keybinds")
+	self._teleport_name_map = Development.setting("ImguiTeleportTool_names")
+	self._teleport_point_map = Development.setting("ImguiTeleportTool_points")
+	self._key_bindings = Development.setting("ImguiTeleportTool_keybinds")
 end
 
 ImguiTeleportTool._save_point_to_clipboard = function (self, data_point)
@@ -426,17 +426,17 @@ ImguiTeleportTool._get_point_from_clipboard = function (self)
 	local data = string.split_deprecated(input, "##")
 	local is_valid = true
 
-	is_valid = not not is_valid and #data == 4
-	is_valid = not not is_valid and data[1] == "ITT"
-	is_valid = not not is_valid and data[2] == self._current_level
-	is_valid = not not is_valid and string.sub(data[4], 1, 3) == "END"
+	is_valid = is_valid and #data == 4
+	is_valid = is_valid and data[1] == "ITT"
+	is_valid = is_valid and data[2] == self._current_level
+	is_valid = is_valid and string.sub(data[4], 1, 3) == "END"
 
 	if is_valid then
 		local point = cjson.decode(data[3])
 
 		if point then
 			local local_player = Managers.player:local_player()
-			local unit = not not local_player and not not local_player.player_unit
+			local unit = local_player and local_player.player_unit
 
 			self:_teleport_to_point(unit, point)
 		end

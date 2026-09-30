@@ -137,7 +137,7 @@ CareerAbilityBWAdept._ability_available = function (self)
 	local is_overcharge_exploding = status_extension:is_overcharge_exploding()
 	local is_on_ground = locomotion_extension:is_on_ground()
 
-	return not not can_use and not is_disabled and not is_overcharge_exploding and not not is_on_ground
+	return can_use and not is_disabled and not is_overcharge_exploding and is_on_ground
 end
 
 CareerAbilityBWAdept._start_priming = function (self)
@@ -234,7 +234,7 @@ CareerAbilityBWAdept._run_ability = function (self)
 		local below = 30
 		local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, unit_pos, above, below)
 
-		projected_start_pos = not not projected_start_pos or not not GwNavQueries.inside_position_from_outside_position(nav_world, unit_pos, above, below, 2, 0.5)
+		projected_start_pos = projected_start_pos or GwNavQueries.inside_position_from_outside_position(nav_world, unit_pos, above, below, 2, 0.5)
 
 		if projected_start_pos then
 			local damage_wave_template_name = "sienna_adept_ability_trail"
@@ -271,8 +271,8 @@ CareerAbilityBWAdept._run_ability = function (self)
 		speed = speed,
 		initial_vertical_speed = PlayerUnitMovementSettings.teleleap.jump_speed,
 		projected_hit_pos = Vector3Box(hit_pos),
-		sfx_event_jump = not not local_player and not not "Play_career_ability_bardin_slayer_jump",
-		sfx_event_land = not not local_player and not not "Play_career_ability_bardin_slayer_impact",
+		sfx_event_jump = local_player and "Play_career_ability_bardin_slayer_jump",
+		sfx_event_land = local_player and "Play_career_ability_bardin_slayer_impact",
 		leap_events = {
 			{
 				distance_percentage = 0.1,
@@ -290,7 +290,7 @@ CareerAbilityBWAdept._run_ability = function (self)
 					-- function 13
 					local unit_3p = this.unit
 					local career_ext = ScriptUnit.extension(unit_3p, "career_system")
-					local position = not not POSITION_LOOKUP[unit_3p]
+					local position = POSITION_LOOKUP[unit_3p]
 					local rotation = Unit.local_rotation(unit_3p, 0)
 					local explosion_template = "sienna_adept_activated_ability_step_stagger"
 					local scale = 1
@@ -304,7 +304,7 @@ CareerAbilityBWAdept._run_ability = function (self)
 				-- function 14
 				local unit_3p = this.unit
 				local career_ext = ScriptUnit.extension(unit_3p, "career_system")
-				local position = not not POSITION_LOOKUP[unit_3p]
+				local position = POSITION_LOOKUP[unit_3p]
 				local rotation = Unit.local_rotation(unit_3p, 0)
 				local explosion_template = "sienna_adept_activated_ability_start_stagger"
 				local scale = 1
@@ -353,7 +353,7 @@ CareerAbilityBWAdept._run_ability = function (self)
 		local buff_extension = self._buff_extension
 		local double_buff = buff_extension:get_buff_type("sienna_adept_ability_trail_double")
 		local has_double_talent = talent_extension:has_talent("sienna_adept_ability_trail_double")
-		local consume_ability = not not double_buff or not not not has_double_talent
+		local consume_ability = double_buff or not has_double_talent
 
 		if consume_ability then
 			if double_buff then

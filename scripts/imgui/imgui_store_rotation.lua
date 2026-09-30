@@ -94,7 +94,7 @@ ImguiStoreRotation._cleanup_slideshow = function (self)
 	for i = 1, #self._item_keys_list do
 		local key = self._item_keys_list[i]
 		local is_dlc = self:_is_a_dlc(key)
-		local item = is_dlc and not not StoreDlcSettingsByName[key] or not is_dlc and not not rawget(ItemMasterList, key)
+		local item = is_dlc and StoreDlcSettingsByName[key] or not is_dlc and rawget(ItemMasterList, key)
 
 		if not item or item.item_type ~= "bundle" and not is_dlc and not item.store_bundle_big_image then
 			-- Nothing
@@ -117,12 +117,12 @@ ImguiStoreRotation._filter_item_keys_list = function (self)
 	for i = 1, #self._item_keys_list do
 		local key = self._item_keys_list[i]
 		local is_dlc = self:_is_a_dlc(key)
-		local item = is_dlc and not not StoreDlcSettingsByName[key] or not is_dlc and not not rawget(ItemMasterList, key)
+		local item = is_dlc and StoreDlcSettingsByName[key] or not is_dlc and rawget(ItemMasterList, key)
 
 		if not item or item.item_type == "deed" then
 			-- Nothing
 		else
-			local localized_name = _clean_loc(not not item.display_name)
+			local localized_name = _clean_loc(item.display_name)
 
 			if item.item_type == "bundle" or is_dlc then
 				slideshow_items[#slideshow_items + 1] = key
@@ -195,13 +195,13 @@ end
 
 ImguiStoreRotation._setup_timpestamp_fields = function (self)
 	-- function 7
-	self._timestamp_year = self._save_data.featured.end_year and not not self._save_data.featured.end_year or not self._save_data.featured.end_year and not not os.date("%Y")
-	self._timestamp_month = self._save_data.featured.end_month and not not self._save_data.featured.end_month or not self._save_data.featured.end_month and not not os.date("%m")
-	self._timestamp_day = self._save_data.featured.end_day and not not self._save_data.featured.end_day or not self._save_data.featured.end_day and not not os.date("%d")
+	self._timestamp_year = self._save_data.featured.end_year and self._save_data.featured.end_year or not self._save_data.featured.end_year and os.date("%Y")
+	self._timestamp_month = self._save_data.featured.end_month and self._save_data.featured.end_month or not self._save_data.featured.end_month and os.date("%m")
+	self._timestamp_day = self._save_data.featured.end_day and self._save_data.featured.end_day or not self._save_data.featured.end_day and os.date("%d")
 	self._timestamp_hour = "12"
 	self._timestamp_minutes = "00"
 	self._timestamp_seconds = "00"
-	self._timestamp = self._save_data.featured.timestamp and not not self._save_data.featured.timestamp or not self._save_data.featured.timestamp and not not 0
+	self._timestamp = self._save_data.featured.timestamp and self._save_data.featured.timestamp or not self._save_data.featured.timestamp and 0
 	self._new_rotation_file_name = string.format("layout_%s_%s_%s", os.date("%Y"), os.date("%m"), os.date("%d"))
 	self._new_discount_file_name = string.format("rotation_%s_%s_%s", os.date("%Y"), os.date("%m"), os.date("%d"))
 end
@@ -211,9 +211,9 @@ ImguiStoreRotation._setup_discount_begin_end_date = function (self)
 	self._begin_discount_year = os.date("%Y")
 	self._begin_discount_month = os.date("%m")
 	self._begin_discount_day = os.date("%d")
-	self._end_discount_year = self._save_data.discounts.end_year and not not self._save_data.discounts.end_year or not self._save_data.discounts.end_year and not not "00"
-	self._end_discount_month = self._save_data.discounts.end_month and not not self._save_data.discounts.end_month or not self._save_data.discounts.end_month and not not "00"
-	self._end_discount_day = self._save_data.discounts.end_day and not not self._save_data.discounts.end_day or not self._save_data.discounts.end_day and not not "00"
+	self._end_discount_year = self._save_data.discounts.end_year and self._save_data.discounts.end_year or not self._save_data.discounts.end_year and "00"
+	self._end_discount_month = self._save_data.discounts.end_month and self._save_data.discounts.end_month or not self._save_data.discounts.end_month and "00"
+	self._end_discount_day = self._save_data.discounts.end_day and self._save_data.discounts.end_day or not self._save_data.discounts.end_day and "00"
 end
 
 ImguiStoreRotation._setup_layout_template = function (self)
@@ -282,7 +282,7 @@ ImguiStoreRotation.draw = function (self, is_open)
 
 	if Imgui.begin_menu_bar() then
 		for i, tab in ipairs(self._tabs) do
-			local label = self._selected_tab == tab and not not ("[" .. tab .. "]") or not (self._selected_tab == tab) and not not (" " .. tab .. " ")
+			local label = self._selected_tab == tab and "[" .. tab .. "]" or not (self._selected_tab == tab) and " " .. tab .. " "
 
 			if Imgui.menu_item(label) then
 				self._selected_tab = tab
@@ -499,7 +499,7 @@ end
 
 local function _is_steam_item(item)
 	-- function 22
-	return item.steam_itemdefid and not not true or not item.steam_itemdefid and not not false
+	return item.steam_itemdefid
 end
 
 ImguiStoreRotation._is_a_dlc = function (self, key)
@@ -511,7 +511,7 @@ end
 
 ImguiStoreRotation._get_layout_item = function (self, key)
 	-- function 24
-	key = not not self._name_to_key[key] or not not key
+	key = self._name_to_key[key] or key
 
 	local layout_item = {}
 	local is_dlc = self:_is_a_dlc(key)
@@ -539,13 +539,13 @@ end
 
 ImguiStoreRotation._get_slideshow_item = function (self, key)
 	-- function 25
-	key = not not self._name_to_key[key] or not not key
+	key = self._name_to_key[key] or key
 
 	local slideshow_item = {}
 	local product_type, header, texture, product_id, description, prio
 	local is_dlc = self:_is_a_dlc(key)
-	local product_type = is_dlc and not not "dlc" or not is_dlc and not not "item"
-	local item = is_dlc and not not StoreDlcSettingsByName[key] or not is_dlc and not not rawget(ItemMasterList, key)
+	local product_type = is_dlc and "dlc" or not is_dlc and "item"
+	local item = is_dlc and StoreDlcSettingsByName[key] or not is_dlc and rawget(ItemMasterList, key)
 
 	if not item or item.item_type ~= "bundle" and not is_dlc and not item.store_bundle_big_image then
 		slideshow_item.error_text = "Item " .. key .. " Cannot be used as a slideshow item."
@@ -577,13 +577,13 @@ ImguiStoreRotation._get_slideshow_item = function (self, key)
 
 		if not found then
 			header = item.display_name
-			texture = item.store_bundle_big_image and (not not string.match(item.store_bundle_big_image, "[^/]+$") or not not "") or not item.store_bundle_big_image and not not ""
+			texture = item.store_bundle_big_image and (string.match(item.store_bundle_big_image, "[^/]+$") or "") or not item.store_bundle_big_image and ""
 			product_id = key
 			description = item.description
 		end
 	else
 		header = item.display_name
-		texture = item.store_bundle_big_image and (not not string.match(item.store_bundle_big_image, "[^/]+$") or not not "") or not item.store_bundle_big_image and not not ""
+		texture = item.store_bundle_big_image and (string.match(item.store_bundle_big_image, "[^/]+$") or "") or not item.store_bundle_big_image and ""
 		product_id = key
 		description = item.description
 	end
@@ -623,7 +623,7 @@ ImguiStoreRotation._draw_selcted_layout_items = function (self, items_list)
 	-- function 27
 	for i = 1, #items_list do
 		local item = items_list[i]
-		local item_id = not not item.key
+		local item_id = item.key
 
 		if self._localize then
 			local item = rawget(ItemMasterList, item_id)
@@ -653,7 +653,7 @@ ImguiStoreRotation._draw_selcted_slideshow_items = function (self, items_list)
 		local item = items_list[i]
 
 		if not item.error_text then
-			local item_id = not not item.product_id
+			local item_id = item.product_id
 
 			Imgui.text_colored("Slideshow Item: " .. item_id, 245, 245, 207, 255)
 		end
@@ -676,7 +676,7 @@ ImguiStoreRotation._draw_selcted_slideshow_items = function (self, items_list)
 			end
 		end
 
-		local item_id = not not item.product_id
+		local item_id = item.product_id
 
 		self:_draw_selected_item_image(item_id)
 		Imgui.dummy(2, 5)
@@ -976,8 +976,8 @@ ImguiStoreRotation._make_bundle_def = function (self, key, item, discount)
 	-- function 42
 	local steam_id = item.steam_itemdefid
 	local original_price = SteamInventory.get_item_definition_property(steam_id, "price")
-	local loc_name = _clean_loc(item and not not item.display_name or not item and not not "not_assigned")
-	local loc_description = _clean_loc(item and not not item.description or not item and not not "not_assigned")
+	local loc_name = _clean_loc(item and item.display_name or not item and "not_assigned")
+	local loc_description = _clean_loc(item and item.description or not item and "not_assigned")
 
 	return {
 		item_quality = 2,
@@ -1139,7 +1139,7 @@ ImguiStoreRotation._do_discount_item_selection = function (self, is_valid_end_da
 			if is_valid_discount and is_valid_end_date then
 				local selected_item_key = self._item_search_results[self._selected_item_index]
 
-				selected_item_key = not not self._name_to_key[selected_item_key] or not not selected_item_key
+				selected_item_key = self._name_to_key[selected_item_key] or selected_item_key
 
 				local item = rawget(ItemMasterList, selected_item_key)
 
@@ -1460,7 +1460,7 @@ ImguiStoreRotation._collect_cosmetic_items_data = function (self)
 
 				local data = {
 					item_key = item_name,
-					icon = not not item_data.inventory_icon
+					icon = item_data.inventory_icon
 				}
 				local frame_items_data = cosmetics_items.frame
 				local display_name = item_data.display_name
@@ -1479,7 +1479,7 @@ ImguiStoreRotation._collect_cosmetic_items_data = function (self)
 				local data = {
 					item_key = item_name,
 					can_wield = item_data.can_wield,
-					icon = not not item_data.inventory_icon
+					icon = item_data.inventory_icon
 				}
 				local profile_data = cosmetics_items[profile_name]
 

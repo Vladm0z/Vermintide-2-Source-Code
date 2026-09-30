@@ -198,7 +198,7 @@ BTSelector_gutter_runner.run = function (self, unit, blackboard, t, dt)
 		local node_approach_target = children[8]
 		local t = Managers.time:time("game")
 		local pounce_timer_is_finished = t > blackboard.initial_pounce_timer
-		local condition_result = blackboard.target_unit and not not pounce_timer_is_finished or not blackboard.target_unit and not not blackboard.comitted_to_target
+		local condition_result = blackboard.target_unit and pounce_timer_is_finished or not blackboard.target_unit and blackboard.comitted_to_target
 
 		if condition_result then
 			self:set_running_child(unit, blackboard, t, node_approach_target, "aborted")

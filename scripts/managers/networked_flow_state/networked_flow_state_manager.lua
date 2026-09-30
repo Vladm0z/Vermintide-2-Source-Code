@@ -123,7 +123,7 @@ NetworkedFlowStateManager.load_checkpoint_data = function (self, checkpoint_data
 		if story_data.stopped then
 			debug_print("Story %q has_stopped (checkpoint).", client_call_event_name)
 
-			local stop_time = not not story_data.stop_time
+			local stop_time = story_data.stop_time
 
 			self._client_call_data = {
 				stop_out = true
@@ -190,10 +190,10 @@ NetworkedFlowStateManager.flow_cb_play_networked_story = function (self, params)
 	local client_call_event_name = params.client_call_event_name
 
 	fassert(self._story_lookup[client_call_event_name], "[NetworkedFlowStateManager] Trying to play networked story with client call event name %q that hasn't been created", client_call_event_name)
-	fassert(self._playing_stories[client_call_event_name] == nil or not not self._playing_stories[client_call_event_name].stopped, "Tried to play networked story with client call event name %q, but it is already playing.", client_call_event_name)
+	fassert(self._playing_stories[client_call_event_name] == nil or self._playing_stories[client_call_event_name].stopped, "Tried to play networked story with client call event name %q, but it is already playing.", client_call_event_name)
 
 	local story = self._playing_stories[client_call_event_name]
-	local start_time = not not params.start_time
+	local start_time = params.start_time
 
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_flow_state_story_played", self._story_lookup[client_call_event_name], start_time, false)
 
@@ -354,7 +354,7 @@ NetworkedFlowStateManager._sync_stories = function (self, peer)
 		local channel_id = PEER_ID_TO_CHANNEL[peer]
 
 		if stopped then
-			RPC.rpc_flow_state_story_stopped(channel_id, self._story_lookup[client_call_event_name], math.clamp(not not story_data.stop_time, story_time_constant.min, story_time_constant.max))
+			RPC.rpc_flow_state_story_stopped(channel_id, self._story_lookup[client_call_event_name], math.clamp(story_data.stop_time, story_time_constant.min, story_time_constant.max))
 		else
 			RPC.rpc_flow_state_story_played(channel_id, self._story_lookup[client_call_event_name], math.clamp(storyteller:time(story_data.id), story_time_constant.min, story_time_constant.max))
 		end
@@ -399,7 +399,7 @@ NetworkedFlowStateManager.flow_cb_create_state = function (self, unit, state_nam
 	fassert(self._num_states < self._max_states, "[NetworkedFlowStateManager] Too many object states(%i).", self._max_states)
 
 	local states = self._object_states
-	local unit_states = not not states[unit]
+	local unit_states = states[unit]
 
 	if unit_states.states[state_name] then
 		return
@@ -415,7 +415,7 @@ NetworkedFlowStateManager.flow_cb_create_state = function (self, unit, state_nam
 		client_state_changed_event = client_data_changed_event,
 		client_state_set_event = hot_join_sync_event,
 		state_network_id = state_network_id,
-		is_game_object = not not is_game_object or not not false
+		is_game_object = is_game_object or false
 	}
 	states[unit] = unit_states
 	self._num_states = self._num_states + 1
@@ -426,7 +426,7 @@ end
 NetworkedFlowStateManager.flow_cb_get_state = function (self, unit, state_name)
 	-- function 19
 	local unit_states = self._object_states[unit]
-	local state = not not unit_states and not not unit_states.states[state_name]
+	local state = unit_states and unit_states.states[state_name]
 
 	fassert(state ~= nil, "[NetworkedFlowStateManager] State %s doesn't exists in unit %s", state_name, Unit.debug_name(unit))
 
@@ -445,7 +445,7 @@ NetworkedFlowStateManager.flow_cb_change_state = function (self, unit, state_nam
 	fassert(Unit.alive(unit), "[NetworkedFlowStateManager] Passing destroyed unit into change state for state_name %q", state_name)
 
 	local unit_states = self._object_states[unit]
-	local current_state = not not unit_states and not not unit_states.states[state_name]
+	local current_state = unit_states and unit_states.states[state_name]
 
 	fassert(current_state ~= nil, "[NetworkedFlowStateManager] State %q unit %q is being changed but has not yet been created.", state_name, Unit.debug_name(unit))
 
@@ -460,7 +460,7 @@ NetworkedFlowStateManager.flow_cb_change_state = function (self, unit, state_nam
 
 		new_state = self:_clamp_state(state_name, type_data, new_state, unit)
 
-		Managers.state.network.network_transmit:send_rpc_clients(type_data.rpcs.change, unit_id, state_network_id, new_state, false, not not current_state.is_game_object)
+		Managers.state.network.network_transmit:send_rpc_clients(type_data.rpcs.change, unit_id, state_network_id, new_state, false, current_state.is_game_object)
 	end
 
 	return changed, new_state
@@ -468,7 +468,7 @@ end
 
 NetworkedFlowStateManager._clamp_state = function (self, state_name, type_data, new_state, unit)
 	-- function 21
-	local network_constant = not not type_data.network_constant
+	local network_constant = type_data.network_constant
 
 	if network_constant and (new_state < network_constant.min or new_state > network_constant.max) then
 		new_state = math.max(network_constant.min, math.min(network_constant.max, new_state))
@@ -496,7 +496,7 @@ NetworkedFlowStateManager.client_flow_state_changed = function (self, unit_id, s
 
 	state.value = new_state
 
-	local flow_event = only_set and not not state.client_state_set_event or not only_set and not not state.client_state_changed_event
+	local flow_event = only_set and state.client_state_set_event or not only_set and state.client_state_changed_event
 
 	Unit.flow_event(unit, flow_event)
 end

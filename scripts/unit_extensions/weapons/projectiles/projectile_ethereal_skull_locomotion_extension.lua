@@ -284,7 +284,7 @@ ProjectileEtherealSkullLocomotionExtension.get_vertical_offset = function (self,
 	local cross_vector = Vector3(target_direction.x, target_direction.y, math.abs(direction.z) + 1)
 	local u_vector = Vector3.cross(target_direction, cross_vector)
 	local v_vector = Vector3.cross(target_direction, u_vector)
-	local curve_func = self._use_sin_for_vertical_trajectory and not not math.sin or not self._use_sin_for_vertical_trajectory and not not math.cos
+	local curve_func = self._use_sin_for_vertical_trajectory and math.sin or not self._use_sin_for_vertical_trajectory and math.cos
 	local v_offset = Vector3.normalize(v_vector) * settings.vertical_offset_multiplier * curve_func(lifetime * settings.vertical_offset_frequency_multiplier)
 
 	return v_offset
@@ -320,7 +320,7 @@ end
 ProjectileEtherealSkullLocomotionExtension.get_target_node_position = function (self, unit)
 	-- function 13
 	local blackboard = BLACKBOARDS[unit]
-	local breed = not not blackboard and not not blackboard.breed
+	local breed = blackboard and blackboard.breed
 	local is_pickup = ScriptUnit.has_extension(unit, "pickup_system")
 
 	if breed and breed.target_head_node then
@@ -334,12 +334,12 @@ end
 
 ProjectileEtherealSkullLocomotionExtension.has_target = function (self)
 	-- function 14
-	return not not self._target_unit
+	return self._target_unit
 end
 
 ProjectileEtherealSkullLocomotionExtension.moved_this_frame = function (self)
 	-- function 15
-	return not self._stopped and not not self._moved
+	return not self._stopped and self._moved
 end
 
 ProjectileEtherealSkullLocomotionExtension.destroy = function (self)

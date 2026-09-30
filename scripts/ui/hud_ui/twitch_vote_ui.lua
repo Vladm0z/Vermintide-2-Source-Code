@@ -124,7 +124,7 @@ TwitchVoteUI.start_standard_vote = function (self, vote_template_a_name, vote_te
 		vote_type = "standard_vote",
 		vote_template_a = table.clone(vote_template_a),
 		vote_template_b = table.clone(vote_template_b),
-		inputs = not not vote_inputs or not not {
+		inputs = vote_inputs or {
 			"#a",
 			"#b"
 		},
@@ -149,7 +149,7 @@ TwitchVoteUI.start_multiple_choice_vote = function (self, vote_template_name, vo
 	local vote = {
 		vote_type = "multiple_choice",
 		vote_template = table.clone(vote_template),
-		inputs = not not vote_inputs or not not {
+		inputs = vote_inputs or {
 			"#a",
 			"#b",
 			"#c",
@@ -363,7 +363,7 @@ TwitchVoteUI._update_active_vote = function (self, dt, t)
 
 	local options = vote_data.options
 
-	self._vote_count = not not self._vote_count
+	self._vote_count = self._vote_count
 
 	local a_diff = options[1] - self._vote_count[1]
 	local b_diff = options[2] - self._vote_count[2]
@@ -411,13 +411,13 @@ TwitchVoteUI._update_active_vote = function (self, dt, t)
 	local percentages = {}
 
 	for i = 1, 5 do
-		percentages[i] = total_amount > 0 and not not (options[i] / total_amount) or not (total_amount > 0) and not not 0
+		percentages[i] = total_amount > 0 and options[i] / total_amount or not (total_amount > 0) and 0
 	end
 
-	self._active_vote.vote_percentages = not not self._active_vote.vote_percentages
+	self._active_vote.vote_percentages = self._active_vote.vote_percentages
 
 	for i = 1, 5 do
-		self._active_vote.vote_percentages[i] = math.lerp(not not self._active_vote.vote_percentages[i], percentages[i], dt * 2)
+		self._active_vote.vote_percentages[i] = math.lerp(self._active_vote.vote_percentages[i], percentages[i], dt * 2)
 	end
 
 	if DEBUG_VOTE_UI then
@@ -538,7 +538,7 @@ TwitchVoteUI._update_multiple_votes_ui = function (self, dt)
 		local widget = self._widgets[widget_name]
 		local content = widget.content
 		local profile_index = content.profile_index
-		local percentage = not not active_vote.vote_percentages[profile_index]
+		local percentage = active_vote.vote_percentages[profile_index]
 		local style = widget.style
 		local height = style.mask.base_size[2] * percentage
 
