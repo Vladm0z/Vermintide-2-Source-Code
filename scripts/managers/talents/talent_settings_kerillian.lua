@@ -867,7 +867,7 @@ TalentBuffTemplates.wood_elf = {
 	kerillian_maidenguard_activated_ability_invis_duration = {
 		buffs = {
 			{
-				icon = "kerillian_maidenguard_activated_ability_invis_duration",
+				icon = "maidenguard_6_1",
 				remove_buff_func = "end_maidenguard_ability_stealth",
 				apply_buff_func = "start_maidenguard_ability_stealth"
 			}
@@ -1050,7 +1050,7 @@ TalentBuffTemplates.wood_elf = {
 	kerillian_maidenguard_power_on_dodge = {
 		buffs = {
 			{
-				icon = "kerillian_maidenguard_cooldown_on_nearby_allies",
+				icon = "maidenguard_4_2",
 				refresh_durations = true,
 				stat_buff = "power_level",
 				max_stacks = 1,
@@ -1062,7 +1062,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				stat_buff = "cooldown_regen",
-				icon = "kerillian_maidenguard_cooldown_on_nearby_allies"
+				icon = "maidenguard_4_2"
 			}
 		}
 	},
@@ -1079,7 +1079,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				refresh_durations = true,
-				icon = "kerillian_maidenguard_passive_attack_speed_on_dodge",
+				icon = "maidenguard_4_1",
 				stat_buff = "attack_speed"
 			}
 		}
@@ -1165,7 +1165,7 @@ TalentBuffTemplates.wood_elf = {
 	kerillian_maidenguard_activated_ability_crit_buff = {
 		buffs = {
 			{
-				icon = "kerillian_maidenguard_activated_ability_buff_on_enemy_hit",
+				icon = "maidenguard_6_3",
 				refresh_durations = true,
 				stat_buff = "critical_strike_chance"
 			}
@@ -1334,7 +1334,7 @@ TalentBuffTemplates.wood_elf = {
 		buffs = {
 			{
 				max_stacks = 1,
-				icon = "kerillian_waywatcher_attack_speed_on_ranged_headshot",
+				icon = "ww_2_3",
 				stat_buff = "attack_speed",
 				refresh_durations = true
 			}
@@ -1355,7 +1355,7 @@ TalentBuffTemplates.wood_elf = {
 				remove_buff_func = "remove_movement_buff",
 				refresh_durations = true,
 				max_stacks = 1,
-				icon = "kerillian_waywatcher_movement_speed_on_special_kill",
+				icon = "ww_5_1",
 				apply_buff_func = "apply_movement_buff",
 				path_to_movement_setting_to_modify = {
 					"move_speed"
@@ -1592,7 +1592,7 @@ Talents.wood_elf = {
 		name = "kerillian_shade_increased_damage_on_poisoned_or_bleeding_enemy",
 		buffer = "server",
 		num_ranks = 1,
-		icon = "kerillian_shade_increased_damage_on_poisoned_or_bleeding_enemy",
+		icon = "shade_2_2",
 		description_values = {
 			{
 				value_type = "percent",
@@ -1953,7 +1953,7 @@ Talents.wood_elf = {
 		name = "kerillian_maidenguard_crit_chance",
 		buffer = "client",
 		num_ranks = 1,
-		icon = "kerillian_maidenguard_damage_reduction_on_last_standing",
+		icon = "maidenguard_2_2",
 		description_values = {
 			{
 				value_type = "percent",
@@ -1969,7 +1969,7 @@ Talents.wood_elf = {
 		name = "kerillian_maidenguard_versatile_dodge",
 		buffer = "both",
 		num_ranks = 1,
-		icon = "kerillian_maidenguard_cooldown_on_nearby_allies",
+		icon = "maidenguard_4_2",
 		description_values = {
 			{
 				value_type = "baked_percent",
@@ -1988,7 +1988,7 @@ Talents.wood_elf = {
 		description = "kerillian_maidenguard_passive_attack_speed_on_dodge_desc",
 		name = "kerillian_maidenguard_passive_attack_speed_on_dodge",
 		num_ranks = 1,
-		icon = "kerillian_maidenguard_passive_attack_speed_on_dodge",
+		icon = "maidenguard_4_1",
 		description_values = {
 			{
 				value_type = "percent",
@@ -2088,7 +2088,7 @@ Talents.wood_elf = {
 		description = "kerillian_maidenguard_activated_ability_invis_duration_desc",
 		name = "kerillian_maidenguard_activated_ability_invis_duration",
 		num_ranks = 1,
-		icon = "kerillian_maidenguard_activated_ability_invis_duration",
+		icon = "maidenguard_6_1",
 		description_values = {
 			{
 				value = buff_tweak_data.kerillian_maidenguard_activated_ability_invis_duration.duration
@@ -2110,7 +2110,7 @@ Talents.wood_elf = {
 		name = "kerillian_maidenguard_activated_ability_buff_on_enemy_hit",
 		buffer = "both",
 		num_ranks = 1,
-		icon = "kerillian_maidenguard_activated_ability_buff_on_enemy_hit",
+		icon = "maidenguard_6_3",
 		description_values = {
 			{
 				value_type = "percent",
@@ -2300,7 +2300,7 @@ Talents.wood_elf = {
 		description = "kerillian_waywatcher_attack_speed_on_ranged_headshot_desc",
 		name = "kerillian_waywatcher_attack_speed_on_ranged_headshot",
 		num_ranks = 1,
-		icon = "kerillian_waywatcher_attack_speed_on_ranged_headshot",
+		icon = "ww_2_3",
 		description_values = {
 			{
 				value_type = "percent",
@@ -2351,7 +2351,7 @@ Talents.wood_elf = {
 		description = "kerillian_waywatcher_movement_speed_on_special_kill_desc",
 		name = "kerillian_waywatcher_movement_speed_on_special_kill",
 		num_ranks = 1,
-		icon = "kerillian_waywatcher_movement_speed_on_special_kill",
+		icon = "ww_5_1",
 		description_values = {
 			{
 				value_type = "baked_percent",
@@ -2399,7 +2399,7 @@ Talents.wood_elf = {
 		description = "kerillian_waywatcher_activated_ability_restore_ammo_on_career_skill_special_kill_desc",
 		name = "kerillian_waywatcher_activated_ability_restore_ammo_on_career_skill_special_kill",
 		num_ranks = 1,
-		icon = "kerillian_waywatcher_activated_ability_restore_ammo_on_career_skill_special_kill",
+		icon = "ww_6_3",
 		description_values = {
 			{
 				value_type = "percent",
@@ -2414,7 +2414,7 @@ Talents.wood_elf = {
 		description = "kerillian_waywatcher_activated_ability_additional_projectile_desc",
 		name = "kerillian_waywatcher_activated_ability_additional_projectile",
 		num_ranks = 1,
-		icon = "kerillian_waywatcher_activated_ability_additional_projectile",
+		icon = "ww_6_2",
 		description_values = {},
 		buffs = {}
 	},
@@ -2422,7 +2422,7 @@ Talents.wood_elf = {
 		description = "kerillian_waywatcher_activated_ability_piercing_shot_desc",
 		name = "kerillian_waywatcher_activated_ability_piercing_shot",
 		num_ranks = 1,
-		icon = "kerillian_waywatcher_activated_ability_piercing_shot",
+		icon = "ww_6_1",
 		talent_career_skill_index = 2,
 		description_values = {
 			{

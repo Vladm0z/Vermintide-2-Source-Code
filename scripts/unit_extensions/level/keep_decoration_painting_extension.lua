@@ -367,7 +367,7 @@ end
 
 KeepDecorationPaintingExtension._load_painting_material = function (self, name, cb_done)
 	-- function 23
-	local subpath = "keep_painting_" .. name
+	local subpath = "kp_" .. name
 	local no_package_required = string.find(name, "_none") ~= nil
 	local package_name
 	local reference_name = self._decoration_settings_key
@@ -416,7 +416,7 @@ KeepDecorationPaintingExtension._apply_material_by_sub_path = function (self, su
 	local painting_unit = self._painting_unit
 
 	if Unit.alive(painting_unit) then
-		local material_path = "units/gameplay/keep_paintings/materials/" .. subpath .. "/" .. subpath
+		local material_path = "units/gameplay/keep_paintings/materials/" .. subpath
 		local slot = self._slot
 
 		Unit.set_material(painting_unit, slot, material_path)

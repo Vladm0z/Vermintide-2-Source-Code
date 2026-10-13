@@ -483,7 +483,7 @@ HeroWindowGotwfOverview._populate_painting_data = function (self, widget, index,
 	local content = widget.content
 	local style = widget.style
 	local package_name
-	local subpath = "keep_painting_" .. item_name
+	local subpath = "kp_" .. item_name
 	local no_package_required = string.find(item_name, "_none") ~= nil
 
 	if not no_package_required then
@@ -493,14 +493,14 @@ HeroWindowGotwfOverview._populate_painting_data = function (self, widget, index,
 	self._reference_id = self._reference_id + 1
 
 	local reference_name = item_name .. "_" .. self._reference_id .. "_" .. reward_index
-	local texture_name = "keep_painting_" .. item_name
+	local texture_name = "kp_" .. item_name
 	local template_material_name = "template_store_diffuse_masked"
 
 	self:_create_material_instance(top_gui, texture_name, template_material_name, reference_name)
 
 	local function callback()
 		-- function 22
-		local texture_path = "units/gameplay/keep_paintings/materials/" .. subpath .. "/" .. subpath .. "_df"
+		local texture_path = "units/gameplay/keep_paintings/materials/" .. subpath .. "_df"
 
 		self:_set_material_diffuse(top_gui, texture_name, texture_path)
 
@@ -657,7 +657,7 @@ HeroWindowGotwfOverview._populate_item_data = function (self, widget, index, ite
 	end
 
 	local store_icon_override_key = masterlist_item.store_icon_override_key
-	local texture_name = "store_item_icon_" .. (store_icon_override_key or item_name)
+	local texture_name = "sii_" .. (store_icon_override_key or item_name)
 	local package_name = "resource_packages/store/item_icons/" .. texture_name
 
 	if item_type == "frame" then
@@ -697,7 +697,7 @@ HeroWindowGotwfOverview._populate_item_data = function (self, widget, index, ite
 
 			local function callback()
 				-- function 25
-				local texture_path = "gui/1080p/single_textures/store_item_icons/" .. texture_name .. "/" .. texture_name
+				local texture_path = "gui/1080p/single_textures/store_item_icons/" .. texture_name
 
 				self:_set_material_diffuse(top_gui, new_material_name, texture_path)
 

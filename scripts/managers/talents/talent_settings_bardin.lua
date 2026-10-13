@@ -698,7 +698,7 @@ TalentBuffTemplates.dwarf_ranger = {
 		buffs = {
 			{
 				max_stacks = 1,
-				icon = "bardin_ironbreaker_activated_ability_power_buff_allies",
+				icon = "dr_i_6_1",
 				stat_buff = "power_level",
 				refresh_durations = true
 			}
@@ -857,7 +857,7 @@ TalentBuffTemplates.dwarf_ranger = {
 		buffs = {
 			{
 				max_stacks = 1,
-				icon = "bardin_slayer_attack_speed_on_double_one_handed_weapons",
+				icon = "slayer_2_1",
 				stat_buff = "attack_speed"
 			}
 		}
@@ -1507,7 +1507,7 @@ Talents.dwarf_ranger = {
 		name = "bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed",
 		buffer = "both",
 		num_ranks = 1,
-		icon = "bardin_ironbreaker_increased_overcharge_increased_range_power",
+		icon = "dr_i_2_1",
 		description_values = {
 			{
 				value_type = "percent",
@@ -1631,7 +1631,7 @@ Talents.dwarf_ranger = {
 		description = "bardin_ironbreaker_cooldown_reduction_on_kill_while_full_stamina_desc",
 		name = "bardin_ironbreaker_cooldown_reduction_on_kill_while_full_stamina",
 		num_ranks = 1,
-		icon = "bardin_ironbreaker_cooldown_reduction_on_kill_while_full_stamina",
+		icon = "dr_i_5_2",
 		description_values = {
 			{
 				value_type = "percent",
@@ -1646,7 +1646,7 @@ Talents.dwarf_ranger = {
 		description = "bardin_ironbreaker_activated_ability_power_buff_allies_desc",
 		name = "bardin_ironbreaker_activated_ability_power_buff_allies",
 		num_ranks = 1,
-		icon = "bardin_ironbreaker_activated_ability_power_buff_allies",
+		icon = "dr_i_6_1",
 		description_values = {
 			{
 				value_type = "percent",
@@ -1863,7 +1863,7 @@ Talents.dwarf_ranger = {
 		name = "bardin_slayer_attack_speed_on_double_one_handed_weapons",
 		buffer = "server",
 		num_ranks = 1,
-		icon = "bardin_slayer_attack_speed_on_double_one_handed_weapons",
+		icon = "slayer_2_1",
 		description_values = {
 			{
 				value_type = "percent",
@@ -2329,7 +2329,7 @@ Talents.dwarf_ranger = {
 		description = "bardin_ranger_activated_ability_stealth_outside_of_smoke_desc",
 		name = "bardin_ranger_activated_ability_stealth_outside_of_smoke",
 		num_ranks = 1,
-		icon = "bardin_ranger_activated_ability_stealth_outside_of_smoke",
+		icon = "ranger_6_2",
 		description_values = {},
 		buffs = {}
 	},

@@ -29,6 +29,7 @@ This repository tracks the decompiled source code across different game updates.
 -------------------------------------------------------------
 Date      |  Patch  | Notes
 --------: | :-----: | :--------------
+10-13-26   |  6.13.0 | 
 09-01-26   |  6.12.1 | 
 08-25-26   |  6.12.0 | 
 06-02-26   |  6.11.3 | 

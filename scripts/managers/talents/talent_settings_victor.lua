@@ -910,7 +910,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				stat_buff = "damage_taken",
-				icon = "victor_bountyhunter_stacking_damage_reduction_on_elite_or_special_kill"
+				icon = "bh_5_3"
 			}
 		}
 	},
@@ -944,7 +944,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				event = "on_hit",
-				icon = "victor_bountyhunter_activated_ability_reset_cooldown_on_stacks",
+				icon = "bh_6_1",
 				max_stacks = 20,
 				buff_func = "victor_bounty_blast_streak_buff"
 			}
@@ -1150,7 +1150,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				max_stacks = 1,
-				icon = "victor_witchhunter_critical_hit_chance_on_ping_target_killed",
+				icon = "wh_4_3",
 				stat_buff = "critical_strike_chance",
 				refresh_durations = true
 			}
@@ -1246,7 +1246,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				max_stacks = 1,
-				icon = "victor_witchhunter_activated_ability_guaranteed_crit_self_buff",
+				icon = "wh_6_2",
 				stat_buff = "critical_strike_chance_melee",
 				refresh_durations = true
 			}
@@ -1917,7 +1917,7 @@ Talents.witch_hunter = {
 		name = "victor_bountyhunter_stacking_damage_reduction_on_elite_or_special_kill",
 		buffer = "server",
 		num_ranks = 1,
-		icon = "victor_bountyhunter_stacking_damage_reduction_on_elite_or_special_kill",
+		icon = "bh_5_3",
 		description_values = {
 			{
 				value_type = "percent",
@@ -1968,7 +1968,7 @@ Talents.witch_hunter = {
 		description = "victor_bountyhunter_activated_ability_reset_cooldown_on_stacks_2_desc",
 		name = "victor_bountyhunter_activated_ability_reset_cooldown_on_stacks",
 		num_ranks = 1,
-		icon = "victor_bountyhunter_activated_ability_reset_cooldown_on_stacks",
+		icon = "bh_6_1",
 		description_values = {
 			{
 				value_type = "percent",
@@ -2172,7 +2172,7 @@ Talents.witch_hunter = {
 		name = "victor_witchhunter_critical_hit_chance_on_ping_target_killed",
 		buffer = "both",
 		num_ranks = 1,
-		icon = "victor_witchhunter_critical_hit_chance_on_ping_target_killed",
+		icon = "wh_4_3",
 		description_values = {
 			{
 				value_type = "percent",
@@ -2272,7 +2272,7 @@ Talents.witch_hunter = {
 		description = "victor_captain_activated_ability_stagger_ping_debuff_desc",
 		name = "victor_captain_activated_ability_stagger_ping_debuff",
 		num_ranks = 1,
-		icon = "victor_captain_activated_ability_stagger_ping_debuff",
+		icon = "wh_6_1",
 		description_values = {},
 		buffs = {}
 	},
@@ -2280,7 +2280,7 @@ Talents.witch_hunter = {
 		description = "victor_witchhunter_activated_ability_guaranteed_crit_self_buff_desc",
 		name = "victor_witchhunter_activated_ability_guaranteed_crit_self_buff",
 		num_ranks = 1,
-		icon = "victor_witchhunter_activated_ability_guaranteed_crit_self_buff",
+		icon = "wh_6_2",
 		description_values = {
 			{
 				value_type = "baked_percent",
@@ -2296,7 +2296,7 @@ Talents.witch_hunter = {
 		description = "victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit_desc",
 		name = "victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit",
 		num_ranks = 1,
-		icon = "victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit",
+		icon = "wh_5_3",
 		description_values = {
 			{
 				value = buff_tweak_data.victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit.required_targets

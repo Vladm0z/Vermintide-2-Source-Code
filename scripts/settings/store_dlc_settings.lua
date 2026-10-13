@@ -2,7 +2,7 @@
 
 StoreDlcSettings = {
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_legacy_edition_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_legacy_edition_bundle",
 		name = "legacy_bundle_display_name",
 		dlc_name = "legacy_bundle",
 		show_in_slideshow = true,
@@ -259,7 +259,7 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_ultimate_edition_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_ultimate_edition_bundle",
 		name = "ultimate_bundle_display_name",
 		dlc_name = "ultimate_bundle",
 		show_in_slideshow = true,
@@ -840,12 +840,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_five_career_bundle_0008",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_five_career_bundle_0008",
 		name = "display_name_five_career_bundle_0008",
 		slideshow_texture = "store_slideshow_bundle_five_career_bundle_0008",
 		show_in_slideshow = true,
 		information_text = "description_five_career_bundle_0008",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0008",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0008",
 		optional_dlc_display_name = "display_name_five_career_bundle_0008",
 		dlc_name = "five_career_bundle_0008",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0008",
@@ -872,7 +872,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0008",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0008",
+					texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0008",
 					image_size = {
 						800.4,
 						591.6
@@ -1081,11 +1081,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_skin_dr_slayer_1003",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_skin_dr_slayer_1003",
 		name = "display_name_skin_dr_slayer_1003",
 		slideshow_texture = "store_slideshow_bundle_skin_dr_slayer_1003",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_slayer_skin_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_slayer_skin_0001",
 		optional_dlc_display_name = "display_name_skin_dr_slayer_1003",
 		information_text = "description_skin_dr_slayer_1003",
 		dlc_name = "slayer_skin_0001",
@@ -1102,11 +1102,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_skin_ww_thornsister_1001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_skin_ww_thornsister_1001",
 		name = "display_name_skin_ww_thornsister_1001",
 		slideshow_texture = "store_slideshow_bundle_skin_ww_thornsister_1001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_sister_of_the_thorn_skin_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_sister_of_the_thorn_skin_0001",
 		optional_dlc_display_name = "display_name_skin_ww_thornsister_1001",
 		information_text = "description_skin_ww_thornsister_1001",
 		dlc_name = "sister_of_the_thorn_skin_0001",
@@ -1123,11 +1123,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_skin_es_mercenary_1003",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_skin_es_mercenary_1003",
 		name = "display_name_skin_es_mercenary_1003",
 		slideshow_texture = "store_slideshow_bundle_skin_es_mercenary_1003",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_mercenary_skin_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_mercenary_skin_0001",
 		optional_dlc_display_name = "display_name_skin_es_mercenary_1003",
 		information_text = "description_skin_es_mercenary_1003",
 		dlc_name = "mercenary_skin_0001",
@@ -1144,11 +1144,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_skin_bw_scholar_1003",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_skin_bw_scholar_1003",
 		name = "display_name_skin_bw_scholar_1003",
 		slideshow_texture = "store_slideshow_bundle_skin_bw_scholar_1003",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_pyromancer_skin_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_pyromancer_skin_0001",
 		optional_dlc_display_name = "display_name_skin_bw_scholar_1003",
 		information_text = "description_skin_bw_scholar_1003",
 		dlc_name = "pyromancer_skin_0001",
@@ -1165,11 +1165,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_skin_wh_bountyhunter_1003",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_skin_wh_bountyhunter_1003",
 		name = "display_name_skin_wh_bountyhunter_1003",
 		slideshow_texture = "store_slideshow_bundle_skin_wh_bountyhunter_1003",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_bountyhunter_skin_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_bountyhunter_skin_0001",
 		optional_dlc_display_name = "display_name_skin_wh_bountyhunter_1003",
 		information_text = "description_skin_wh_bountyhunter_1003",
 		dlc_name = "bountyhunter_skin_0001",
@@ -1186,7 +1186,7 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_premium_career_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_premium_career_bundle",
 		name = "display_name_premium_career_bundle",
 		show_in_slideshow = true,
 		store_page_url = "https://store.steampowered.com/bundle/38849",
@@ -1483,7 +1483,7 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_premium_career_bundle_upgrade",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_premium_career_bundle_upgrade",
 		name = "display_name_premium_career_bundle_upgrade",
 		prio = 10,
 		show_in_slideshow = true,
@@ -1865,12 +1865,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_five_career_bundle_0007",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_five_career_bundle_0007",
 		name = "display_name_five_career_bundle_0007",
 		slideshow_texture = "store_slideshow_bundle_five_career_bundle_0007",
 		show_in_slideshow = true,
 		information_text = "description_five_career_bundle_0007",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0007",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0007",
 		optional_dlc_display_name = "display_name_five_career_bundle_0007",
 		dlc_name = "five_career_bundle_0007",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0007",
@@ -1902,7 +1902,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0007",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0007",
+					texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0007",
 					image_size = {
 						800.4,
 						591.6
@@ -2151,11 +2151,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_slayer_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_slayer_bundle_0002",
 		name = "display_name_slayer_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_slayer_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_slayer_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_slayer_bundle_0002",
 		optional_dlc_display_name = "display_name_slayer_bundle_0002",
 		information_text = "description_slayer_bundle_0002",
 		dlc_name = "slayer_bundle_0002",
@@ -2173,11 +2173,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_waywatcher_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_waywatcher_bundle_0001",
 		name = "display_name_waywatcher_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_waywatcher_bundle_0001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_waywatcher_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_waywatcher_bundle_0001",
 		optional_dlc_display_name = "display_name_waywatcher_bundle_0001",
 		information_text = "description_waywatcher_bundle_0001",
 		dlc_name = "waywatcher_bundle_0001",
@@ -2195,11 +2195,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_mercenary_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_mercenary_bundle_0002",
 		name = "display_name_mercenary_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_mercenary_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_mercenary_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_mercenary_bundle_0002",
 		optional_dlc_display_name = "display_name_mercenary_bundle_0002",
 		information_text = "description_mercenary_bundle_0002",
 		dlc_name = "mercenary_bundle_0002",
@@ -2217,11 +2217,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_scholar_bundle_0003",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_scholar_bundle_0003",
 		name = "display_name_scholar_bundle_0003",
 		slideshow_texture = "store_slideshow_bundle_scholar_bundle_0003",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_scholar_bundle_0003",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_scholar_bundle_0003",
 		optional_dlc_display_name = "display_name_scholar_bundle_0003",
 		information_text = "description_scholar_bundle_0003",
 		dlc_name = "scholar_bundle_0003",
@@ -2239,11 +2239,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_witchhunter_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_witchhunter_bundle_0001",
 		name = "display_name_witchhunter_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_witchhunter_bundle_0001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_witchhunter_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_witchhunter_bundle_0001",
 		optional_dlc_display_name = "display_name_witchhunter_bundle_0001",
 		information_text = "description_witchhunter_bundle_0001",
 		dlc_name = "witchhunter_bundle_0001",
@@ -2652,12 +2652,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_q2_2023_hat_collection",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_q2_2023_hat_collection",
 		name = "display_name_q2_2023_hat_collection",
 		slideshow_texture = "store_slideshow_bundle_five_career_bundle_0004",
 		show_in_slideshow = true,
 		information_text = "description_q2_2023_hat_collection",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_q2_2023_hat_collection",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_q2_2023_hat_collection",
 		optional_dlc_display_name = "display_name_q2_2023_hat_collection",
 		dlc_name = "q2_2023_hat_collection",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_q2_2023_hat_collection",
@@ -2684,7 +2684,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_q2_2023_hat_collection",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_q2_2023_hat_collection",
+					texture_package = "resource_packages/store/bundle_icons/sii_q2_2023_hat_collection",
 					image_size = {
 						800.4,
 						591.6
@@ -2893,11 +2893,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_adept_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_adept_bundle_0002",
 		name = "display_name_adept_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_adept_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_adept_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_adept_bundle_0002",
 		optional_dlc_display_name = "display_name_adept_bundle_0002",
 		information_text = "description_adept_bundle_0002",
 		dlc_name = "adept_bundle_0002",
@@ -2915,11 +2915,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_maidenguard_bundle_0003",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_maidenguard_bundle_0003",
 		name = "display_name_maidenguard_bundle_0003",
 		slideshow_texture = "store_slideshow_bundle_maidenguard_bundle_0003",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_maidenguard_bundle_0003",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_maidenguard_bundle_0003",
 		optional_dlc_display_name = "display_name_maidenguard_bundle_0003",
 		information_text = "description_maidenguard_bundle_0003",
 		dlc_name = "maidenguard_bundle_0003",
@@ -2937,12 +2937,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_five_career_bundle_0005",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_five_career_bundle_0005",
 		name = "display_name_five_career_bundle_0005",
 		slideshow_texture = "store_slideshow_bundle_five_career_bundle_0005",
 		show_in_slideshow = true,
 		information_text = "description_five_career_bundle_0005",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0005",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0005",
 		optional_dlc_display_name = "display_name_five_career_bundle_0005",
 		dlc_name = "five_career_bundle_0005",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0005",
@@ -2974,7 +2974,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0005",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0005",
+					texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0005",
 					image_size = {
 						800.4,
 						591.6
@@ -3223,11 +3223,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_ranger_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_ranger_bundle_0002",
 		name = "display_name_ranger_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_ranger_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_ranger_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_ranger_bundle_0002",
 		optional_dlc_display_name = "display_name_ranger_bundle_0002",
 		information_text = "description_ranger_bundle_0002",
 		dlc_name = "ranger_bundle_0002",
@@ -3245,11 +3245,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_shade_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_shade_bundle_0002",
 		name = "display_name_shade_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_shade_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_shade_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_shade_bundle_0002",
 		optional_dlc_display_name = "display_name_shade_bundle_0002",
 		information_text = "description_shade_bundle_0002",
 		dlc_name = "shade_bundle_0002",
@@ -3267,11 +3267,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_knight_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_knight_bundle_0002",
 		name = "display_name_knight_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_knight_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_knight_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_knight_bundle_0002",
 		optional_dlc_display_name = "display_name_knight_bundle_0002",
 		information_text = "description_knight_bundle_0002",
 		dlc_name = "footknight_bundle_0002",
@@ -3289,11 +3289,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_unchained_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_unchained_bundle_0002",
 		name = "display_name_unchained_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_unchained_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_unchained_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_unchained_bundle_0002",
 		optional_dlc_display_name = "display_name_unchained_bundle_0002",
 		information_text = "description_unchained_bundle_0002",
 		dlc_name = "unchained_bundle_0002",
@@ -3311,11 +3311,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_bountyhunter_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_bountyhunter_bundle_0002",
 		name = "display_name_bountyhunter_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_bountyhunter_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_bountyhunter_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_bountyhunter_bundle_0002",
 		optional_dlc_display_name = "display_name_bountyhunter_bundle_0002",
 		information_text = "description_bountyhunter_bundle_0002",
 		dlc_name = "bountyhunter_bundle_0002",
@@ -3333,12 +3333,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_five_career_bundle_0004",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_five_career_bundle_0004",
 		name = "display_name_five_career_bundle_0004",
 		slideshow_texture = "store_slideshow_bundle_five_career_bundle_0004",
 		show_in_slideshow = true,
 		information_text = "description_five_career_bundle_0004",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0004",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0004",
 		optional_dlc_display_name = "display_name_five_career_bundle_0004",
 		dlc_name = "five_career_bundle_0004",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0004",
@@ -3370,7 +3370,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0004",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0004",
+					texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0004",
 					image_size = {
 						800.4,
 						591.6
@@ -3619,11 +3619,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_ironbreaker_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_ironbreaker_bundle_0002",
 		name = "display_name_ironbreaker_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_ironbreaker_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_ironbreaker_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_ironbreaker_bundle_0002",
 		optional_dlc_display_name = "display_name_ironbreaker_bundle_0002",
 		information_text = "description_ironbreaker_bundle_0002",
 		dlc_name = "ironbreaker_bundle_0002",
@@ -3641,11 +3641,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_maidenguard_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_maidenguard_bundle_0002",
 		name = "display_name_maidenguard_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_maidenguard_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_maidenguard_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_maidenguard_bundle_0002",
 		optional_dlc_display_name = "display_name_maidenguard_bundle_0002",
 		information_text = "description_maidenguard_bundle_0002",
 		dlc_name = "maidenguard_bundle_0002",
@@ -3663,11 +3663,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_huntsman_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_huntsman_bundle_0002",
 		name = "display_name_huntsman_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_huntsman_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_huntsman_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_huntsman_bundle_0002",
 		optional_dlc_display_name = "display_name_huntsman_bundle_0002",
 		information_text = "description_huntsman_bundle_0002",
 		dlc_name = "huntsman_bundle_0002",
@@ -3685,11 +3685,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_scholar_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_scholar_bundle_0002",
 		name = "display_name_scholar_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_scholar_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_scholar_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_scholar_bundle_0002",
 		optional_dlc_display_name = "display_name_scholar_bundle_0002",
 		information_text = "description_scholar_bundle_0002",
 		dlc_name = "scholar_bundle_0002",
@@ -3707,11 +3707,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_zealot_bundle_0002",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_zealot_bundle_0002",
 		name = "display_name_zealot_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_zealot_bundle_0002",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_zealot_bundle_0002",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_zealot_bundle_0002",
 		optional_dlc_display_name = "display_name_zealot_bundle_0002",
 		information_text = "description_zealot_bundle_0002",
 		dlc_name = "zealot_bundle_0002",
@@ -3729,12 +3729,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_q1_collection_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_q1_collection_bundle",
 		name = "display_name_q1_collection_bundle",
 		slideshow_texture = "store_slideshow_bundle_q1_collection_bundle",
 		show_in_slideshow = true,
 		information_text = "description_q1_collection_bundle",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_q1_collection_bundle",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_q1_collection_bundle",
 		optional_dlc_display_name = "display_name_q1_collection_bundle",
 		dlc_name = "q1_collection_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_q1_collection_bundle",
@@ -3766,7 +3766,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_q1_collection_bundle",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_q1_collection_bundle",
+					texture_package = "resource_packages/store/bundle_icons/sii_q1_collection_bundle",
 					image_size = {
 						800.4,
 						591.6
@@ -4015,11 +4015,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_q1_ranger_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_q1_ranger_bundle",
 		name = "display_name_q1_ranger_bundle",
 		slideshow_texture = "store_slideshow_bundle_q1_ranger_bundle",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_q1_ranger_bundle",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_q1_ranger_bundle",
 		optional_dlc_display_name = "display_name_q1_ranger_bundle",
 		information_text = "description_q1_ranger_bundle",
 		dlc_name = "q1_ranger_bundle",
@@ -4037,11 +4037,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_q1_waywatcher_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_q1_waywatcher_bundle",
 		name = "display_name_q1_waywatcher_bundle",
 		slideshow_texture = "store_slideshow_bundle_q1_waywatcher_bundle",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_q1_waywatcher_bundle",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_q1_waywatcher_bundle",
 		optional_dlc_display_name = "display_name_q1_waywatcher_bundle",
 		information_text = "description_q1_waywatcher_bundle",
 		dlc_name = "q1_waywatcher_bundle",
@@ -4059,11 +4059,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_q1_footknight_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_q1_footknight_bundle",
 		name = "display_name_q1_footknight_bundle",
 		slideshow_texture = "store_slideshow_bundle_q1_footknight_bundle",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_q1_footknight_bundle",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_q1_footknight_bundle",
 		optional_dlc_display_name = "display_name_q1_footknight_bundle",
 		information_text = "description_q1_footknight_bundle",
 		dlc_name = "q1_footknight_bundle",
@@ -4081,11 +4081,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_q1_unchained_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_q1_unchained_bundle",
 		name = "display_name_q1_unchained_bundle",
 		slideshow_texture = "store_slideshow_bundle_q1_unchained_bundle",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_q1_unchained_bundle",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_q1_unchained_bundle",
 		optional_dlc_display_name = "display_name_q1_unchained_bundle",
 		information_text = "description_q1_unchained_bundle",
 		dlc_name = "q1_unchained_bundle",
@@ -4103,11 +4103,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_q1_wh_captain_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_q1_wh_captain_bundle",
 		name = "display_name_q1_wh_captain_bundle",
 		slideshow_texture = "store_slideshow_bundle_q1_wh_captain_bundle",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_q1_wh_captain_bundle",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_q1_wh_captain_bundle",
 		optional_dlc_display_name = "display_name_q1_wh_captain_bundle",
 		information_text = "description_q1_wh_captain_bundle",
 		dlc_name = "q1_wh_captain_bundle",
@@ -4304,10 +4304,10 @@ StoreDlcSettings = {
 				type = "dlc_feature_vertical",
 				settings = {
 					text = "display_name_skin_wh_priest_1001_2023_q1",
-					texture_path = "gui/1080p/single_textures/store_item_icons/store_item_icon_skin_wh_priest_1001/store_item_icon_skin_wh_priest_1001",
+					texture_path = "gui/1080p/single_textures/store_item_icons/sii_skin_wh_priest_1001",
 					localize = true,
 					add_frame = true,
-					texture_package = "resource_packages/store/item_icons/store_item_icon_skin_wh_priest_1001"
+					texture_package = "resource_packages/store/item_icons/sii_skin_wh_priest_1001"
 				}
 			},
 			{
@@ -4315,10 +4315,10 @@ StoreDlcSettings = {
 				type = "dlc_feature_vertical",
 				settings = {
 					text = "display_name_priest_hat_1001_2023_q1",
-					texture_path = "gui/1080p/single_textures/store_item_icons/store_item_icon_priest_hat_1001/store_item_icon_priest_hat_1001",
+					texture_path = "gui/1080p/single_textures/store_item_icons/sii_priest_hat_1001",
 					localize = true,
 					add_frame = true,
-					texture_package = "resource_packages/store/item_icons/store_item_icon_priest_hat_1001"
+					texture_package = "resource_packages/store/item_icons/sii_priest_hat_1001"
 				}
 			},
 			{
@@ -5026,11 +5026,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_fall_collection_2021_bundle",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_fall_collection_2021_bundle",
 		name = "display_name_five_career_bundle_0002",
 		slideshow_texture = "store_slideshow_bundle_fall_collection_2021_bundle",
 		information_text = "description_fall_collection_2021_bundle",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_fall_collection_2021_bundle",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_fall_collection_2021_bundle",
 		optional_dlc_display_name = "display_name_five_career_bundle_0002",
 		dlc_name = "fall_collection_2021_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_fall_collection_2021_bundle",
@@ -5062,7 +5062,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_fall_collection_2021_bundle",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_fall_collection_2021_bundle",
+					texture_package = "resource_packages/store/bundle_icons/sii_fall_collection_2021_bundle",
 					image_size = {
 						800.4,
 						591.6
@@ -5311,11 +5311,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_adept_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_adept_bundle_0001",
 		name = "display_name_adept_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_adept_bundle_0001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_adept_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_adept_bundle_0001",
 		optional_dlc_display_name = "display_name_adept_bundle_0001",
 		information_text = "description_adept_bundle_0001",
 		dlc_name = "adept_bundle_0001",
@@ -5333,11 +5333,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_slayer_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_slayer_bundle_0001",
 		name = "display_name_slayer_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_slayer_bundle_0001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_slayer_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_slayer_bundle_0001",
 		optional_dlc_display_name = "display_name_slayer_bundle_0001",
 		information_text = "description_slayer_bundle_0001",
 		dlc_name = "slayer_bundle_0001",
@@ -5355,11 +5355,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_huntsman_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_huntsman_bundle_0001",
 		name = "display_name_huntsman_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_huntsman_bundle_0001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_huntsman_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_huntsman_bundle_0001",
 		optional_dlc_display_name = "display_name_huntsman_bundle_0001",
 		information_text = "description_huntsman_bundle_0001",
 		dlc_name = "huntsman_bundle_0001",
@@ -5377,11 +5377,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_maidenguard_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_maidenguard_bundle_0001",
 		name = "display_name_maidenguard_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_maidenguard_bundle_0001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_maidenguard_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_maidenguard_bundle_0001",
 		optional_dlc_display_name = "display_name_maidenguard_bundle_0001",
 		information_text = "description_maidenguard_bundle_0001",
 		dlc_name = "maidenguard_bundle_0001",
@@ -5399,11 +5399,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_zealot_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_zealot_bundle_0001",
 		name = "display_name_zealot_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_zealot_bundle_0001",
 		show_in_slideshow = true,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_zealot_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_zealot_bundle_0001",
 		optional_dlc_display_name = "display_name_zealot_bundle_0001",
 		information_text = "description_zealot_bundle_0001",
 		dlc_name = "zealot_bundle_0001",
@@ -5421,11 +5421,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_five_career_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_five_career_bundle_0001",
 		name = "five_career_bundle_0001",
 		slideshow_texture = "store_slideshow_bundle_five_career_bundle_0001",
 		information_text = "five_career_bundle_0001_desc",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0001",
 		optional_dlc_display_name = "five_career_bundle_0001",
 		dlc_name = "five_career_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0001",
@@ -5457,7 +5457,7 @@ StoreDlcSettings = {
 					texture_path = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_five_career_bundle_0001",
 					localize = false,
 					show_frame = true,
-					texture_package = "resource_packages/store/bundle_icons/store_item_icon_five_career_bundle_0001",
+					texture_package = "resource_packages/store/bundle_icons/sii_five_career_bundle_0001",
 					image_size = {
 						800.4,
 						591.6
@@ -5706,12 +5706,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_shade_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_shade_bundle_0001",
 		name = "shade_bundle_01",
 		slideshow_texture = "store_slideshow_bundle_shade_bundle_0001",
 		show_in_slideshow = true,
 		prio = 2,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_shade_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_shade_bundle_0001",
 		optional_dlc_display_name = "shade_bundle_01",
 		dlc_name = "shade_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_shade_bundle_0001",
@@ -5729,12 +5729,12 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_bountyhunter_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_bountyhunter_bundle_0001",
 		name = "bounty_hunter_bundle_01",
 		slideshow_texture = "store_slideshow_bundle_bountyhunter_bundle_0001",
 		show_in_slideshow = true,
 		prio = 1,
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_bountyhunter_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_bountyhunter_bundle_0001",
 		optional_dlc_display_name = "bounty_hunter_bundle_01",
 		dlc_name = "bountyhunter_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_bountyhunter_bundle_0001",
@@ -5752,11 +5752,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_ironbreaker_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_ironbreaker_bundle_0001",
 		name = "ironbreaker_bundle_01",
 		slideshow_texture = "store_slideshow_bundle_ironbreaker_bundle_0001",
 		information_text = "ironbreaker_bundle_01_desc",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_ironbreaker_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_ironbreaker_bundle_0001",
 		optional_dlc_display_name = "ironbreaker_bundle_01",
 		dlc_name = "ironbreaker_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_ironbreaker_bundle_0001",
@@ -5773,11 +5773,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_mercenary_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_mercenary_bundle_0001",
 		name = "mercenary_bundle_01",
 		slideshow_texture = "store_slideshow_bundle_mercenary_bundle_0001",
 		information_text = "mercenary_bundle_01_desc",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_mercenary_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_mercenary_bundle_0001",
 		optional_dlc_display_name = "mercenary_bundle_01",
 		dlc_name = "mercenary_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_mercenary_bundle_0001",
@@ -5794,11 +5794,11 @@ StoreDlcSettings = {
 		}
 	},
 	{
-		store_texture = "gui/1080p/single_textures/store_bundle/store_item_icon_scholar_bundle_0001",
+		store_texture = "gui/1080p/single_textures/store_bundle/sii_scholar_bundle_0001",
 		name = "pyromancer_bundle_01",
 		slideshow_texture = "store_slideshow_bundle_scholar_bundle_0001",
 		information_text = "pyromancer_bundle_01_desc",
-		store_texture_package = "resource_packages/store/bundle_icons/store_item_icon_scholar_bundle_0001",
+		store_texture_package = "resource_packages/store/bundle_icons/sii_scholar_bundle_0001",
 		optional_dlc_display_name = "pyromancer_bundle_01",
 		dlc_name = "scholar_bundle",
 		store_bundle_big_image = "gui/1080p/single_textures/store/slideshow/store_slideshow_bundle_scholar_bundle_0001",
@@ -6132,10 +6132,10 @@ StoreDlcSettings = {
 				type = "dlc_feature_vertical",
 				settings = {
 					text = "display_name_skin_dr_engineer_1001",
-					texture_path = "gui/1080p/single_textures/store_item_icons/store_item_icon_skin_dr_engineer_1001/store_item_icon_skin_dr_engineer_1001",
+					texture_path = "gui/1080p/single_textures/store_item_icons/sii_skin_dr_engineer_1001",
 					localize = true,
 					add_frame = true,
-					texture_package = "resource_packages/store/item_icons/store_item_icon_skin_dr_engineer_1001"
+					texture_package = "resource_packages/store/item_icons/sii_skin_dr_engineer_1001"
 				}
 			},
 			{
@@ -6143,10 +6143,10 @@ StoreDlcSettings = {
 				type = "dlc_feature_vertical",
 				settings = {
 					text = "display_name_engineer_hat_1002",
-					texture_path = "gui/1080p/single_textures/store_item_icons/store_item_icon_engineer_hat_1002/store_item_icon_engineer_hat_1002",
+					texture_path = "gui/1080p/single_textures/store_item_icons/sii_engineer_hat_1002",
 					localize = true,
 					add_frame = true,
-					texture_package = "resource_packages/store/item_icons/store_item_icon_engineer_hat_1002"
+					texture_package = "resource_packages/store/item_icons/sii_engineer_hat_1002"
 				}
 			},
 			{
@@ -6545,10 +6545,10 @@ StoreDlcSettings = {
 				type = "dlc_feature_vertical",
 				settings = {
 					text = "display_name_skin_es_questing_knight_1001",
-					texture_path = "gui/1080p/single_textures/store_item_icons/store_item_icon_skin_es_questingknight_1001/store_item_icon_skin_es_questingknight_1001",
+					texture_path = "gui/1080p/single_textures/store_item_icons/sii_skin_es_questingknight_1001",
 					localize = true,
 					add_frame = true,
-					texture_package = "resource_packages/store/item_icons/store_item_icon_skin_es_questingknight_1001"
+					texture_package = "resource_packages/store/item_icons/sii_skin_es_questingknight_1001"
 				}
 			},
 			{
@@ -6556,10 +6556,10 @@ StoreDlcSettings = {
 				type = "dlc_feature_vertical",
 				settings = {
 					text = "display_name_questing_knight_hat_1001",
-					texture_path = "gui/1080p/single_textures/store_item_icons/store_item_icon_questing_knight_hat_1001/store_item_icon_questing_knight_hat_1001",
+					texture_path = "gui/1080p/single_textures/store_item_icons/sii_questing_knight_hat_1001",
 					localize = true,
 					add_frame = true,
-					texture_package = "resource_packages/store/item_icons/store_item_icon_questing_knight_hat_1001"
+					texture_package = "resource_packages/store/item_icons/sii_questing_knight_hat_1001"
 				}
 			},
 			{
